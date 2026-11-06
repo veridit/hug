@@ -36,9 +36,6 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 		defer cancel()
 		e := embed.NewOllama("http://127.0.0.1:11434", "nomic-embed-text", 0)
-		if !e.Available(ctx) {
-			fail(fmt.Errorf("local embedding model unavailable"))
-		}
 		vecs, err := e.Embed(ctx, texts)
 		if err != nil {
 			fail(fmt.Errorf("local embedding request failed"))
