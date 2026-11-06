@@ -104,7 +104,7 @@ func longmem(input, dir string) {
 		panic("Ollama unavailable")
 	}
 	cache := diskEmbed{em, filepath.Join(dir, "vectors")}
-	variants := []string{"baseline", "retrieval", "fts", "semantic", "no-community", "no-reserve", "no-gates", "heuristic", "recency", "normalised-time", "union"}
+	variants := []string{"baseline", "retrieval", "fts", "semantic", "no-community", "no-reserve", "no-gates", "no-semantic-gate", "no-relative-gate", "heuristic", "recency", "normalised-time", "union"}
 	for n, q := range qs {
 		path := filepath.Join(dir, q.ID)
 		must(os.MkdirAll(path, 0700))
@@ -145,7 +145,7 @@ func longmem(input, dir string) {
 			rs, err := s.Search(ctx, query, o)
 			must(err)
 			if v != "retrieval" && v != "no-gates" && v != "union" {
-				rs = benchmarkGates(rs)
+				rs = benchmarkGatesFor(rs, v)
 			}
 			must(enc.Encode(map[string]any{"id": q.ID, "variant": v, "results": rs, "latency_ms": float64(time.Since(t).Microseconds()) / 1000}))
 		}
@@ -177,15 +177,19 @@ func longmem(input, dir string) {
 }
 
 func benchmarkGates(rs []search.Result) []search.Result {
+	return benchmarkGatesFor(rs, "baseline")
+}
+
+func benchmarkGatesFor(rs []search.Result, variant string) []search.Result {
 	var kept []search.Result
 	for _, r := range rs {
-		if !r.SemanticOn || r.Semantic >= .64 || r.Coverage >= 1 && r.Semantic >= .58 {
+		if variant == "no-semantic-gate" || !r.SemanticOn || r.Semantic >= .64 || r.Coverage >= 1 && r.Semantic >= .58 {
 			kept = append(kept, r)
 		}
 	}
 	var out []search.Result
 	for _, r := range kept {
-		if r.Total >= .62*kept[0].Total {
+		if variant == "no-relative-gate" || r.Total >= .62*kept[0].Total {
 			out = append(out, r)
 		}
 	}

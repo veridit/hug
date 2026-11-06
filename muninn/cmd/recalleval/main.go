@@ -113,6 +113,13 @@ func main() {
 		e.MinSemanticFull = 0
 		e.RelativeFloor = 0
 	}
+	if *variant == "no-semantic-gate" {
+		e.MinSemantic = 0
+		e.MinSemanticFull = 0
+	}
+	if *variant == "no-relative-gate" {
+		e.RelativeFloor = 0
+	}
 	_, err = em.Embed(ctx, []string{"warmup"})
 	must(err)
 	data, err := os.ReadFile(*input)
@@ -129,6 +136,9 @@ func main() {
 		q := m.Message
 		if *variant == "heuristic" {
 			q = focused(q)
+		}
+		if recall.IsOwnOutput(m.Message) {
+			q = m.Message
 		}
 		if tm, err := time.Parse(time.RFC3339Nano, m.Timestamp); err == nil {
 			e.Options.RecencyNow = tm
