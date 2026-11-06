@@ -104,7 +104,7 @@ func longmem(input, dir string) {
 		panic("Ollama unavailable")
 	}
 	cache := diskEmbed{em, filepath.Join(dir, "vectors")}
-	variants := []string{"baseline", "retrieval", "fts", "semantic", "no-community", "no-reserve", "no-gates", "no-semantic-gate", "no-relative-gate", "heuristic", "recency", "normalised-time", "union"}
+	variants := []string{"baseline", "retrieval", "fts-retrieval", "semantic-retrieval", "fts", "semantic", "no-community", "no-reserve", "no-gates", "no-semantic-gate", "no-relative-gate", "heuristic", "recency", "normalised-time", "union"}
 	for n, q := range qs {
 		path := filepath.Join(dir, q.ID)
 		must(os.MkdirAll(path, 0700))
@@ -132,10 +132,7 @@ func longmem(input, dir string) {
 		must(err)
 		enc := json.NewEncoder(f)
 		for _, v := range variants {
-			o := options(search.Options{Limit: 10, MinScore: 6, SemanticWeight: 10, SemanticFloor: .5, SemanticSlots: 3, Scopes: []string{"benchmark"}}, v)
-			if v == "retrieval" {
-				o.MinScore = 0
-			}
+			o := benchmarkOptions(v)
 			o.RecencyNow = dateValue(q.Date)
 			query := q.Question
 			if v == "heuristic" {
@@ -144,7 +141,7 @@ func longmem(input, dir string) {
 			t := time.Now()
 			rs, err := s.Search(ctx, query, o)
 			must(err)
-			if v != "retrieval" && v != "no-gates" && v != "union" {
+			if v != "retrieval" && !strings.HasSuffix(v, "-retrieval") && v != "no-gates" && v != "union" {
 				rs = benchmarkGatesFor(rs, v)
 			}
 			must(enc.Encode(map[string]any{"id": q.ID, "variant": v, "results": rs, "latency_ms": float64(time.Since(t).Microseconds()) / 1000}))
@@ -174,6 +171,17 @@ func longmem(input, dir string) {
 		must(os.WriteFile(filepath.Join(path, "done"), []byte("ok\n"), 0600))
 		fmt.Fprintf(os.Stderr, "JCODE_PROGRESS {\"current\":%d,\"total\":%d,\"unit\":\"LongMemEval questions\"}\n", n+1, len(qs))
 	}
+}
+
+func benchmarkOptions(variant string) search.Options {
+	o := options(search.Options{Limit: 10, MinScore: 6, SemanticWeight: 10, SemanticFloor: .5, SemanticSlots: 3, Scopes: []string{"benchmark"}}, variant)
+	if variant == "retrieval" || strings.HasSuffix(variant, "-retrieval") {
+		o.MinScore = 0
+	}
+	if variant == "semantic-retrieval" {
+		o.SemanticFloor = -1
+	}
+	return o
 }
 
 func benchmarkGates(rs []search.Result) []search.Result {

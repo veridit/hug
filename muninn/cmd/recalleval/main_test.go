@@ -42,6 +42,21 @@ func TestBenchmarkGatesAreIndependent(t *testing.T) {
 		t.Fatal("empty input produced hits")
 	}
 }
+func TestBenchmarkUngatedReferenceOptions(t *testing.T) {
+	base := benchmarkOptions("baseline")
+	if base.MinScore != 6 || base.SemanticFloor != .5 || base.Limit != 10 {
+		t.Fatal("baseline options changed")
+	}
+	dense := benchmarkOptions("semantic-retrieval")
+	if dense.MinScore != 0 || dense.SemanticFloor != -1 || !dense.DisableFTS || !dense.DisableConcepts || dense.DisableSemantic {
+		t.Fatalf("not a flat dense reference: %+v", dense)
+	}
+	lexical := benchmarkOptions("fts-retrieval")
+	if lexical.MinScore != 0 || !lexical.DisableSemantic || !lexical.DisableConcepts || lexical.DisableFTS {
+		t.Fatalf("not a lexical reference: %+v", lexical)
+	}
+}
+
 func TestKeyphrasesDeterministicAndCapped(t *testing.T) {
 	s := "zebra zebra quartz quartz violet deployment database configuration snapshots scopes semantic embedding memories sources passages"
 	a, b := keyphrases(s), keyphrases(s)

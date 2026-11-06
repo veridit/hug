@@ -46,11 +46,11 @@ func focused(s string) string {
 }
 func options(o search.Options, variant string) search.Options {
 	switch variant {
-	case "fts":
+	case "fts", "fts-retrieval":
 		o.DisableConcepts = true
 		o.DisableSemantic = true
 		o.SemanticSlots = 0
-	case "semantic":
+	case "semantic", "semantic-retrieval":
 		o.DisableConcepts = true
 		o.DisableFTS = true
 	case "no-community":
