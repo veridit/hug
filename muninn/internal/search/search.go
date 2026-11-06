@@ -365,6 +365,19 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 			now = time.Now()
 		}
 		lo, hi := results[0].Total, results[0].Total
+		recencies := make([]float64, len(results))
+		rlo, rhi := math.Inf(1), math.Inf(-1)
+		for i, r := range results {
+			if !r.Unit.Updated.IsZero() {
+				hours := math.Max(0, now.Sub(r.Unit.Updated).Hours())
+				recencies[i] = math.Exp(-hours / (24 * 30))
+				if o.NormalisedRelevance {
+					recencies[i] = math.Pow(.995, hours)
+				}
+			}
+			rlo = math.Min(rlo, recencies[i])
+			rhi = math.Max(rhi, recencies[i])
+		}
 		for _, r := range results {
 			lo = math.Min(lo, r.Total)
 			hi = math.Max(hi, r.Total)
@@ -378,9 +391,12 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 					relevance = (r.Total - lo) / (hi - lo)
 				}
 			}
-			recency := 0.0
-			if !r.Unit.Updated.IsZero() {
-				recency = math.Exp(-math.Max(0, now.Sub(r.Unit.Updated).Hours()) / (24 * 30))
+			recency := recencies[i]
+			if o.NormalisedRelevance {
+				recency = 0
+				if rhi > rlo {
+					recency = (recencies[i] - rlo) / (rhi - rlo)
+				}
 			}
 			r.Total = relevance + o.RecencyWeight*recency
 		}
@@ -401,7 +417,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		if len(top) >= o.SemanticSlots || r.Semantic <= 0 {
 			break
 		}
-		if r.Total >= o.MinScore {
+		{ // Original-score eligibility was already applied before temporal scoring.
 			chosen[r.Unit.ID] = true
 			top = append(top, r)
 		}
@@ -410,7 +426,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		if len(top) >= o.Limit {
 			break
 		}
-		if !chosen[r.Unit.ID] && r.Total >= o.MinScore {
+		if !chosen[r.Unit.ID] {
 			chosen[r.Unit.ID] = true
 			top = append(top, r)
 		}

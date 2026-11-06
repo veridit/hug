@@ -104,7 +104,7 @@ func longmem(input, dir string) {
 		panic("Ollama unavailable")
 	}
 	cache := diskEmbed{em, filepath.Join(dir, "vectors")}
-	variants := []string{"baseline", "fts", "semantic", "no-community", "no-reserve", "no-gates", "heuristic", "recency", "normalised-time"}
+	variants := []string{"baseline", "retrieval", "fts", "semantic", "no-community", "no-reserve", "no-gates", "heuristic", "recency", "normalised-time", "union"}
 	for n, q := range qs {
 		path := filepath.Join(dir, q.ID)
 		must(os.MkdirAll(path, 0700))
@@ -132,7 +132,10 @@ func longmem(input, dir string) {
 		must(err)
 		enc := json.NewEncoder(f)
 		for _, v := range variants {
-			o := options(search.Options{Limit: 10, SemanticWeight: 10, SemanticFloor: .5, SemanticSlots: 3, Scopes: []string{"benchmark"}}, v)
+			o := options(search.Options{Limit: 10, MinScore: 6, SemanticWeight: 10, SemanticFloor: .5, SemanticSlots: 3, Scopes: []string{"benchmark"}}, v)
+			if v == "retrieval" {
+				o.MinScore = 0
+			}
 			o.RecencyNow = dateValue(q.Date)
 			query := q.Question
 			if v == "heuristic" {
@@ -141,9 +144,17 @@ func longmem(input, dir string) {
 			t := time.Now()
 			rs, err := s.Search(ctx, query, o)
 			must(err)
+			if v != "retrieval" && v != "no-gates" && v != "union" {
+				rs = benchmarkGates(rs)
+			}
 			must(enc.Encode(map[string]any{"id": q.ID, "variant": v, "results": rs, "latency_ms": float64(time.Since(t).Microseconds()) / 1000}))
 		}
 		// Source-backed keyword augmentation is deliberately not called LLM fact extraction.
+		baselineCopy := filepath.Join(path, "baseline.db")
+		if _, err := os.Stat(baselineCopy); os.IsNotExist(err) {
+			_, err = db.Exec(`VACUUM INTO ?`, baselineCopy)
+			must(err)
+		}
 		for i := range mems {
 			mems[i].Title = keyphrases(mems[i].Content)
 		}
@@ -154,12 +165,29 @@ func longmem(input, dir string) {
 			panic("key augmentation embedding failed")
 		}
 		t := time.Now()
-		rs, err := s.Search(ctx, q.Question, search.Options{Limit: 10, SemanticWeight: 10, SemanticFloor: .5, SemanticSlots: 3, Scopes: []string{"benchmark"}})
+		rs, err := s.Search(ctx, q.Question, search.Options{Limit: 10, MinScore: 6, SemanticWeight: 10, SemanticFloor: .5, SemanticSlots: 3, Scopes: []string{"benchmark"}})
 		must(err)
+		rs = benchmarkGates(rs)
 		must(enc.Encode(map[string]any{"id": q.ID, "variant": "keyphrases", "results": rs, "latency_ms": float64(time.Since(t).Microseconds()) / 1000}))
 		must(f.Close())
 		must(db.Close())
 		must(os.WriteFile(filepath.Join(path, "done"), []byte("ok\n"), 0600))
 		fmt.Fprintf(os.Stderr, "JCODE_PROGRESS {\"current\":%d,\"total\":%d,\"unit\":\"LongMemEval questions\"}\n", n+1, len(qs))
 	}
+}
+
+func benchmarkGates(rs []search.Result) []search.Result {
+	var kept []search.Result
+	for _, r := range rs {
+		if !r.SemanticOn || r.Semantic >= .64 || r.Coverage >= 1 && r.Semantic >= .58 {
+			kept = append(kept, r)
+		}
+	}
+	var out []search.Result
+	for _, r := range kept {
+		if r.Total >= .62*kept[0].Total {
+			out = append(out, r)
+		}
+	}
+	return out
 }

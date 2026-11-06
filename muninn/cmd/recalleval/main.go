@@ -65,6 +65,9 @@ func options(o search.Options, variant string) search.Options {
 	case "union":
 		o.Limit = 20
 		o.MinScore = 0
+	case "tool-search":
+		o.Limit = 30
+		o.MinScore = 0
 	}
 	return o
 }
@@ -105,14 +108,11 @@ func main() {
 	a := &app.App{Cfg: cfg, DB: db, Searcher: s, Embedder: em}
 	o := options(a.RecallOptions(), *variant)
 	e := &recall.Engine{DB: db, Searcher: s, Options: o, RelativeFloor: cfg.RelativeFloor, MinSemantic: cfg.RecallMinSemantic, MinSemanticFull: cfg.RecallMinSemanticFull}
-	if *variant == "no-gates" || *variant == "union" {
+	if *variant == "no-gates" || *variant == "union" || *variant == "tool-search" {
 		e.MinSemantic = 0
 		e.MinSemanticFull = 0
 		e.RelativeFloor = 0
 	}
-	if *variant == "normalised-time" {
-		e.RelativeFloor = 0
-	} // score scale changes, must report this limitation
 	_, err = em.Embed(ctx, []string{"warmup"})
 	must(err)
 	data, err := os.ReadFile(*input)
@@ -134,6 +134,9 @@ func main() {
 			e.Options.RecencyNow = tm
 		}
 		r := recall.Request{Session: "jcode:" + m.Session, Harness: "jcode", Message: q, Scopes: b.Scopes, ScopeFor: b.ScopeFor}
+		if *variant == "union" || *variant == "tool-search" {
+			r.Session = ""
+		}
 		t := time.Now()
 		c, cancel := context.WithTimeout(ctx, 8*time.Second)
 		resp, err := e.Recall(c, r)
