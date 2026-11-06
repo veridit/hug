@@ -10,11 +10,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/veridit/muninn/internal/app"
 	"io"
 	"os"
 	"time"
 
+	"github.com/veridit/muninn/internal/app"
 	"github.com/veridit/muninn/internal/embed"
 	"github.com/veridit/muninn/internal/extract"
 	"github.com/veridit/muninn/internal/harness"
