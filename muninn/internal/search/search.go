@@ -22,6 +22,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/veridit/muninn/internal/embed"
 	"github.com/veridit/muninn/internal/index"
@@ -30,14 +31,22 @@ import (
 
 // Options tunes a search.
 type Options struct {
-	Limit          int
-	MinScore       float64 // drop results below this total (0 = keep all)
-	SemanticWeight float64
-	SemanticFloor  float64
-	SemanticSlots  int
-	Scopes         []string // empty = all
-	ScopeFor       func(store.Unit) (string, bool)
-	Kinds          []string // empty = all
+	// Experimental controls are opt-in and leave production defaults unchanged.
+	DisableConcepts     bool
+	DisableCommunity    bool
+	DisableFTS          bool
+	DisableSemantic     bool
+	RecencyWeight       float64
+	RecencyNow          time.Time
+	NormalisedRelevance bool
+	Limit               int
+	MinScore            float64 // drop results below this total (0 = keep all)
+	SemanticWeight      float64
+	SemanticFloor       float64
+	SemanticSlots       int
+	Scopes              []string // empty = all
+	ScopeFor            func(store.Unit) (string, bool)
+	Kinds               []string // empty = all
 }
 
 // DefaultOptions mirrors seid search.
@@ -146,7 +155,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 			return nil, err
 		}
 	}
-	if len(concepts) > 0 {
+	if len(concepts) > 0 && !o.DisableConcepts {
 		ids := intList(concepts)
 		// 4. direct hits: 2 points per matching concept in a unit.
 		rows, err := s.DB.QueryContext(ctx, `SELECT unit_id, COUNT(*) FROM unit_concepts WHERE concept_id IN (`+ids+`) GROUP BY unit_id`)
@@ -173,7 +182,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 			var u int64
 			var n int
 			rows.Scan(&u, &n)
-			if c := n - direct[u]; c > 0 {
+			if c := n - direct[u]; c > 0 && !o.DisableCommunity {
 				get(u).comm += c
 			}
 		}
@@ -182,6 +191,9 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 
 	// 5. FTS5 per word: title +2, content (body or tags) +1.
 	match := func(col, term string, f func(int64)) error {
+		if o.DisableFTS {
+			return nil
+		}
 		rows, err := s.DB.QueryContext(ctx, `SELECT rowid FROM units_fts WHERE `+col+` MATCH ?`, fts5Quote(term))
 		if err != nil {
 			return nil // a malformed term never fails the whole search
@@ -228,7 +240,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 	// 5c. semantic similarity.
 	sem := map[int64]float64{}
 	semOn := false
-	if s.Embedder != nil && strings.TrimSpace(query) != "" {
+	if !o.DisableSemantic && s.Embedder != nil && strings.TrimSpace(query) != "" {
 		// Embed the query the way the active pipeline's documents were
 		// embedded (mid-migration that may be the previous prompt recipe).
 		qtext := embed.Query(s.Embedder, query)
@@ -346,6 +358,32 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 			r.Coverage = math.Min(1, float64(a.words)/float64(len(words)))
 		}
 		results = append(results, r)
+	}
+	if o.RecencyWeight != 0 && len(results) > 0 {
+		now := o.RecencyNow
+		if now.IsZero() {
+			now = time.Now()
+		}
+		lo, hi := results[0].Total, results[0].Total
+		for _, r := range results {
+			lo = math.Min(lo, r.Total)
+			hi = math.Max(hi, r.Total)
+		}
+		for i := range results {
+			r := &results[i]
+			relevance := r.Total
+			if o.NormalisedRelevance {
+				relevance = 0
+				if hi > lo {
+					relevance = (r.Total - lo) / (hi - lo)
+				}
+			}
+			recency := 0.0
+			if !r.Unit.Updated.IsZero() {
+				recency = math.Exp(-math.Max(0, now.Sub(r.Unit.Updated).Hours()) / (24 * 30))
+			}
+			r.Total = relevance + o.RecencyWeight*recency
+		}
 	}
 	sort.Slice(results, func(i, j int) bool {
 		if results[i].Total != results[j].Total {
