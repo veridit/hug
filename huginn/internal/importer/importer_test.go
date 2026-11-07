@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -569,4 +570,24 @@ func FuzzParsing(f *testing.F) {
 			_, _ = merge(converted, converted, converted)
 		}
 	})
+}
+
+// A backlog-md root (config.yml + tasks/) imports its tasks; an empty folder
+// is an error, never a silent zero (statbus trial demo, 2026-11-07).
+func TestRunAcceptsBacklogRootAndRejectsEmpty(t *testing.T) {
+	tasks, dst := setup(t)
+	root := t.TempDir()
+	if err := os.Rename(tasks, filepath.Join(root, "tasks")); err != nil {
+		t.Fatal(err)
+	}
+	write(t, filepath.Join(root, "config.yml"), []byte("project_name: demo\n"))
+	r := run(t, root, dst, Options{})
+	if r.Added != 2 {
+		t.Fatalf("root import added %d, want 2: %+v", r.Added, r)
+	}
+	_, err := Run(context.Background(), t.TempDir(), &task.Store{Root: t.TempDir()}, Options{})
+	var none *NoTasksError
+	if !errors.As(err, &none) {
+		t.Fatalf("empty source: %v, want NoTasksError", err)
+	}
 }

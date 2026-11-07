@@ -2,6 +2,9 @@ package cli
 
 import (
 	"context"
+	"errors"
+	"path/filepath"
+
 	"github.com/veridit/huginn/internal/importer"
 	"github.com/veridit/huginn/internal/task"
 	"github.com/veridit/huginn/internal/tui"
@@ -16,6 +19,10 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 		return nil, usage("unknown import format "+f.args[0]+"; valid: backlog; closest: backlog", "huginn import backlog "+f.args[1])
 	}
 	report, e := importer.Run(ctx, f.args[1], s.s, importer.Options{})
+	var none *importer.NoTasksError
+	if errors.As(e, &none) {
+		return nil, usage(none.Error()+"; point at the backlog folder (holding tasks/) or the tasks folder itself", "huginn import backlog "+filepath.Join(f.args[1], "tasks"))
+	}
 	if e != nil {
 		return nil, e
 	}

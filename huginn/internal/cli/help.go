@@ -13,7 +13,7 @@ func commandHelp(command string) string {
 		"take": "take ID", "done": "done ID", "check": "check ID N", "note": `note ID "text"`,
 		"set":  `set ID [--title "title"] [--type TYPE] [--priority LABEL] [--label LABEL] [--status STATUS] [--assignee NAME]`,
 		"drop": "drop ID", "dep": "dep ID [--add REF ...] [--remove REF ...]", "next": "next [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]",
-		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY", "tui": "tui", "mcp": "mcp", "help": "help [COMMAND]",
+		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY", "board": "board [--all] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]", "tui": "tui", "mcp": "mcp", "help": "help [COMMAND]",
 	}
 	details := map[string]string{
 		"install":   "Adds huginn -> huginn mcp to Jcode mcp.json. Keeps a timestamped backup and other servers. Default: JCODE_HOME or ~/.jcode. --all-instances discovers the static zsh registry. Restart Jcode afterward.\n",
@@ -35,8 +35,9 @@ func commandHelp(command string) string {
 		"rebalance": "Rekeys ranked filenames without changing task contents. Usually unnecessary.\n",
 		"lint":      "Reports file:line: problem for malformed tasks, cycles and dangling dependencies.\nJSON uses findings, an array (empty when clean).\n",
 		"sync":      "Commits local task edits, pulls with rebase and pushes only the huginn branch.\n",
-		"import":    "Imports backlog-md tasks idempotently, preserving old ids as aliases.\n",
-		"tui":       "Interactive ranked list and board. For non-interactive output use ls --json.\n",
+		"import":    "Imports backlog-md tasks idempotently, preserving old ids as aliases.\nDIRECTORY is the backlog folder (e.g. .backlog, its tasks/ is used) or a folder of task files.\nArchived tasks are not imported unless you name their folder.\n",
+		"tui":       "Interactive ranked list and board. For non-interactive output use board or ls --json.\n",
+		"board":     "Prints todo, doing and done side by side in rank order; blocked tasks are marked.\nDone shows the last 5 unless --all. Filters match ls. --json gives the columns.\n",
 		"mcp":       "Runs the standard-I/O MCP server with ten flat tools and next-step hints.\n",
 	}
 	return "huginn " + usage[command] + "\n" + details[command] + "Refs accept ids, unique prefixes, slugs and aliases case-insensitively.\nAdd --json for structured output.\nnext: huginn next\n"

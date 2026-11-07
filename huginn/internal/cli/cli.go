@@ -55,7 +55,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: huginn next
 `
 
-var Commands = []string{"init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "tui", "mcp", "install", "uninstall", "help"}
+var Commands = []string{"init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -186,7 +186,7 @@ func parse(args []string, allowed string) (flags, error) {
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "huginn help")
 		}
-		if slices.Contains([]string{"json", "help", "mine", "top", "dry-run", "all-instances"}, key) {
+		if slices.Contains([]string{"json", "help", "mine", "top", "dry-run", "all-instances", "all"}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "huginn help")
 			}
@@ -300,7 +300,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "huginn "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee"}
 	f, e := parse(args, allowed[cmd])
 	if e != nil {
 		return nil, e
@@ -576,6 +576,8 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		return reply, err
 	case "import":
 		return a.runImport(ctx, s, f)
+	case "board":
+		return a.runBoard(ctx, s, f, filter)
 	case "tui":
 		return a.runTUI(ctx, s, f)
 	default:
@@ -690,6 +692,9 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if h, ok := reply["help"].(string); ok {
 		fmt.Fprint(a.Out, h)
 		return 0
+	}
+	if cols, ok := reply["board"].([]BoardColumn); ok {
+		writeBoard(a.Out, cols)
 	}
 	if ts, ok := reply["tasks"].([]Reply); ok {
 		for _, t := range ts {

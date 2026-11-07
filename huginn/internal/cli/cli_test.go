@@ -224,3 +224,46 @@ func TestJSONErrors(t *testing.T) {
 		t.Fatal(r)
 	}
 }
+
+// board prints todo/doing/done side by side, marks blocked tasks and keeps
+// done short unless --all; the JSON carries the same columns.
+func TestBoardColumns(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	first := execute(t, a, "new", "First quartz", "--goal", "g", "--accept", "a")["task"].(Reply)["id"].(string)
+	execute(t, a, "new", "Second quartz", "--goal", "g", "--accept", "a", "--dep", first)
+	for i := 0; i < 7; i++ {
+		id := execute(t, a, "new", "Old quartz", "--goal", "g", "--accept", "a")["task"].(Reply)["id"].(string)
+		execute(t, a, "check", id, "1")
+		execute(t, a, "done", id)
+	}
+	execute(t, a, "take", first)
+	r := execute(t, a, "board")
+	cols := r["board"].([]BoardColumn)
+	if len(cols) != 3 || cols[0].Total != 1 || cols[1].Total != 1 || cols[2].Total != 7 || len(cols[2].Cards) != 5 || cols[2].Hidden != 2 {
+		t.Fatalf("columns: %+v", cols)
+	}
+	if !cols[0].Cards[0].Blocked {
+		t.Fatal("dependent todo not marked blocked")
+	}
+	if all := execute(t, a, "board", "--all")["board"].([]BoardColumn); len(all[2].Cards) != 7 || all[2].Hidden != 0 {
+		t.Fatalf("--all: %+v", all[2])
+	}
+	var out bytes.Buffer
+	a.Out = &out
+	t.Setenv("COLUMNS", "90")
+	if code := a.Run(context.Background(), []string{"board"}); code != 0 {
+		t.Fatalf("exit %d", code)
+	}
+	text := out.String()
+	for _, want := range []string{"TODO (1)", "DOING (1)", "DONE (7)", "! Second quartz", "2 more (--all)"} {
+		if !strings.Contains(text, want) {
+			t.Fatalf("board text missing %q:\n%s", want, text)
+		}
+	}
+	for _, line := range strings.Split(text, "\n") {
+		if len([]rune(line)) > 90 {
+			t.Fatalf("line wider than COLUMNS: %q", line)
+		}
+	}
+}

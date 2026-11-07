@@ -50,7 +50,8 @@ huginn done ship-greeting
 huginn sync
 ```
 
-Use `huginn tui` for an interactive view, `huginn help COMMAND` for flags.
+Use `huginn board` to print todo, doing and done side by side (`--all` for every
+done task), `huginn tui` for an interactive view, and `huginn help COMMAND` for flags.
 Dependencies and unchecked acceptance items block completion. `drop` preserves
 history instead of deleting a task. Ranking and priority are separate concepts.
 
@@ -99,11 +100,13 @@ the same validation, completion checks and next-step hints as the CLI.
 ## Import backlog-md
 
 ```sh
-huginn import backlog ./backlog/tasks
+huginn import backlog ./backlog
 huginn lint
-huginn ls
+huginn board
 ```
 
+The backlog folder or its `tasks/` folder both work. Archived tasks stay out
+unless you name their folder.
 The source is read-only. Source IDs remain aliases, dependencies are resolved,
 and repeat imports conservatively preserve local edits. See
 [importer details](internal/importer/README.md) for mapping and merge rules.

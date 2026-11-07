@@ -189,9 +189,13 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 	if err := checkDestination(dst.Root); err != nil {
 		return report, err
 	}
+	src = BacklogTasksDir(src)
 	entries, err := os.ReadDir(src)
 	if err != nil {
 		return report, err
+	}
+	if countMarkdown(entries) == 0 {
+		return report, &NoTasksError{Dir: src}
 	}
 	var sources []source
 	seen := map[string]bool{}
@@ -740,4 +744,37 @@ func merge(base, local, incoming []byte) ([]byte, error) {
 		}
 	}
 	return []byte(out.String()), nil
+}
+
+// BacklogTasksDir accepts a backlog-md root (for example .backlog) as well as
+// its tasks folder: a root holds config.yml and tasks/, not task files.
+// Archived and completed tasks stay where they are; import them by naming
+// their folder explicitly.
+func BacklogTasksDir(src string) string {
+	entries, err := os.ReadDir(src)
+	if err != nil || countMarkdown(entries) > 0 {
+		return src
+	}
+	tasks := filepath.Join(src, "tasks")
+	if fi, err := os.Stat(tasks); err == nil && fi.IsDir() {
+		return tasks
+	}
+	return src
+}
+
+func countMarkdown(entries []os.DirEntry) int {
+	n := 0
+	for _, e := range entries {
+		if strings.HasSuffix(strings.ToLower(e.Name()), ".md") {
+			n++
+		}
+	}
+	return n
+}
+
+// NoTasksError reports a source folder with no task files, never a silent zero.
+type NoTasksError struct{ Dir string }
+
+func (e *NoTasksError) Error() string {
+	return "no backlog task files (*.md) in " + e.Dir
 }
