@@ -263,8 +263,36 @@ func TestMetadataDoesNotClobberUnknownFields(t *testing.T) {
 		}
 	}
 	d := task.Parse("000001.synthetic.md", converted)
-	if d.Task.Status != "Waiting" || len(d.Task.Aliases) != 2 {
-		t.Fatal(d.Task)
+	// Unknown backlog statuses become a valid huginn status; the original
+	// text is kept as backlog_status so nothing is lost (seid trial, 2026-11-09).
+	if d.Task.Status != "todo" || len(d.Task.Aliases) != 2 || !bytes.Contains(converted, []byte(`backlog_status: "Waiting"`)) {
+		t.Fatal(d.Task, string(converted))
+	}
+}
+
+// Every backlog-md status maps to a huginn status, and a second file that
+// claims an already-imported id is skipped with a finding, not fatal.
+func TestStatusMappingAndDuplicateIDs(t *testing.T) {
+	for in, want := range map[string]string{"To Do": "todo", "Draft": "todo", "In Progress": "doing", "Done": "done", "Cancelled": "dropped", "Waiting": "todo"} {
+		raw := strings.Replace(fixture, "status: To Do", "status: "+in, 1)
+		fields, _, err := front([]byte(raw))
+		if err != nil {
+			t.Fatal(err)
+		}
+		converted, err := convert(source{raw: []byte(raw), fields: fields, alias: "DEMO-001", title: "Synthetic"}, "000001", map[string]string{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := task.Parse("000001.synthetic.md", converted).Task.Status; got != want {
+			t.Errorf("status %q -> %q, want %q", in, got, want)
+		}
+	}
+	src, dst := setup(t)
+	dup := strings.Replace(fixture, "title: >-", "title: >-\n  Second claim of", 1)
+	write(t, filepath.Join(src, "zz-dup.md"), []byte(dup))
+	r := run(t, src, dst, Options{})
+	if r.Added != 2 || r.Skipped != 1 {
+		t.Fatalf("duplicate id: %+v", r)
 	}
 }
 

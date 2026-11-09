@@ -233,7 +233,10 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 			continue
 		}
 		if seen[alias] {
-			return report, fmt.Errorf("duplicate source id %s", alias)
+			// Two source files claim one id: import the first, report the rest so
+			// the owner can renumber them, instead of aborting the whole import.
+			skip("duplicate source id " + alias + " (first file kept)")
+			continue
 		}
 		seen[alias] = true
 		s := source{path: path, alias: alias, title: str(fields["title"]), raw: raw, fields: fields, report: idx}
@@ -555,13 +558,18 @@ func convert(s source, id string, ids map[string]string) ([]byte, error) {
 	raw := append(bytes.Clone(s.raw[:end]), []byte(body)...)
 	d := task.Parse(task.BuildName("", id, task.Slug(s.title)), raw)
 	status := str(s.fields["status"])
-	switch status {
-	case "To Do":
+	switch strings.ToLower(strings.TrimSpace(status)) {
+	case "to do", "todo", "draft", "":
+		// Backlog drafts are unstarted ideas: todo, with a draft label kept below.
 		status = "todo"
-	case "In Progress":
+	case "in progress", "doing":
 		status = "doing"
-	case "Done":
+	case "done", "completed":
 		status = "done"
+	case "dropped", "cancelled", "canceled", "won't do", "wontfix":
+		status = "dropped"
+	default:
+		status = "todo"
 	}
 	typ, reason := "feature", "default: no explicit bug/docs/chore/spike label"
 	for _, label := range list(s.fields["labels"]) {
@@ -592,6 +600,12 @@ func convert(s source, id string, ids map[string]string) ([]byte, error) {
 		k string
 		v any
 	}{{"id", id}, {"origin", "backlog:" + s.alias}, {"aliases", aliases}, {"status", status}, {"type", typ}, {metadataKey("import_type_inference"), reason}}
+	if raw := str(s.fields["status"]); raw != "" && canonicalStatus(raw) != raw {
+		updates = append(updates, struct {
+			k string
+			v any
+		}{metadataKey("backlog_status"), raw})
+	}
 	if value, ok := s.fields["type"]; ok {
 		updates = append(updates, struct {
 			k string
@@ -777,4 +791,12 @@ type NoTasksError struct{ Dir string }
 
 func (e *NoTasksError) Error() string {
 	return "no backlog task files (*.md) in " + e.Dir
+}
+
+func canonicalStatus(s string) string {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "todo", "doing", "done", "dropped":
+		return strings.ToLower(strings.TrimSpace(s))
+	}
+	return ""
 }
