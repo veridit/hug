@@ -24,6 +24,7 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 	root := filepath.Join(home, "client")
 	a := makePlacementRepo(t, filepath.Join(root, "project-a"))
 	b := makePlacementRepo(t, filepath.Join(root, "project-b"))
+	nestedProject := makePlacementRepo(t, filepath.Join(a.Root, "nested-project"))
 	sub := filepath.Join(a.Root, "sub")
 	folder := filepath.Join(root, "plain'folder")
 	child := filepath.Join(folder, "child")
@@ -34,6 +35,10 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 		}
 	}
 	if err := os.Symlink(a.Root, alias); err != nil {
+		t.Fatal(err)
+	}
+	crossAlias := filepath.Join(b.Root, "link-to-a-sub")
+	if err := os.Symlink(sub, crossAlias); err != nil {
 		t.Fatal(err)
 	}
 	native := f.Units["Client"].SourceID
@@ -90,6 +95,7 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 		t.Fatal(err)
 	}
 	add("legacy-file-alias", "jcode@old-name", fileAlias, "jcode", a.Scope())
+	add("hashed-markdown", "notes", filepath.Join(root, ".jcode", "memory", "projects", harness.JcodeProjectHash(b.Root)+".json"), "markdown", "client:acme")
 	legacy("legacy-b", b.Root, b.Scope())
 	legacy("legacy-folder", folder, folderScope)
 	// A non-jcode source that happens to have a hashed name is not a folder store.
@@ -97,7 +103,7 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 	if err := f.App.RebuildLegacyFolders(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	top := []string{"top", "legacy-root", "legacy-unknown", "client-note"}
+	top := []string{"top", "legacy-root", "legacy-unknown", "client-note", "hashed-markdown"}
 	ownA := []string{"native-a", "legacy-a", "legacy-a-sub", "legacy-a-alias", "legacy-a-tilde", "legacy-root-alias", "legacy-file-alias"}
 	ownB := []string{"native-b", "legacy-b"}
 	ownFolder := []string{"native-folder", "legacy-folder"}
@@ -108,6 +114,8 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 		{"root", root, [][]string{top, ownA, ownB, ownFolder}},
 		{"project", a.Root, [][]string{top, ownA}},
 		{"project-child", sub, [][]string{top, ownA}},
+		{"cross-project-symlink", crossAlias, [][]string{top, ownA}},
+		{"nested-project", nestedProject.Root, [][]string{top}},
 		{"sibling", b.Root, [][]string{top, ownB}},
 		{"folder", folder, [][]string{top, ownFolder}},
 		{"folder-child", child, [][]string{top, ownFolder}},
@@ -194,6 +202,8 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 		{root, map[string]bool{"legacy-a": true, "legacy-b": true, "legacy-folder": true, "legacy-unknown": true, "legacy-root": true}},
 		{a.Root, map[string]bool{"legacy-a": true, "legacy-root": true}},
 		{sub, map[string]bool{"legacy-a": true, "legacy-a-sub": true, "legacy-root": true}},
+		{crossAlias, map[string]bool{"legacy-a": true, "legacy-a-sub": true, "legacy-root": true}},
+		{nestedProject.Root, map[string]bool{"legacy-root": true}},
 		{folder, map[string]bool{"legacy-folder": true, "legacy-root": true}},
 	} {
 		binding := f.App.Bound(filepath.Join(home, ".jcode"), tc.cwd)

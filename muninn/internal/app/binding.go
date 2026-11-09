@@ -394,13 +394,16 @@ func (a *App) sourceClients(client string, all bool, own map[string]string) (map
 			out[s.id] = "!native"
 			continue
 		}
-		root, ok := a.sourceRoots[s.path]
+		// Hash recognition depends on source kind. The same physical file
+		// can be indexed by two importers without sharing that classification.
+		key := s.kind + "\x00" + s.path
+		root, ok := a.sourceRoots[key]
 		if !ok {
 			root.client, root.root, root.err = project.SourceClientRoot(s.path)
 			if root.client != "" {
 				root.hash = project.LegacyStoreHash(s.path, s.kind)
 			}
-			a.sourceRoots[s.path] = root
+			a.sourceRoots[key] = root
 		}
 		if root.err != nil {
 			out[s.id] = "!invalid"

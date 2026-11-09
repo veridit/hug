@@ -54,6 +54,13 @@ func clientFolderStores(cwd, physical, root, projectRoot, here, top string, rule
 			out[harness.JcodeProjectHash("~/"+rel)] = scope
 		}
 	}
+	addAlias := func(logical, physical, scope string) {
+		if logical != physical {
+			if resolved, err := placementDir(logical); err == nil && resolved == physical {
+				add(logical, scope)
+			}
+		}
+	}
 	logical, err := filepath.Abs(cwd)
 	if err != nil {
 		logical = physical
@@ -63,7 +70,7 @@ func clientFolderStores(cwd, physical, root, projectRoot, here, top string, rule
 	if projectRoot != "" {
 		for p, l := physical, logical; ; p, l = filepath.Dir(p), filepath.Dir(l) {
 			add(p, here)
-			add(l, here)
+			addAlias(l, p, here)
 			if p == projectRoot || filepath.Dir(p) == p {
 				break
 			}
@@ -74,7 +81,10 @@ func clientFolderStores(cwd, physical, root, projectRoot, here, top string, rule
 		if !ok {
 			continue
 		}
-		if projectRoot != "" && (dir == projectRoot || strings.HasPrefix(dir, projectRoot+string(filepath.Separator))) {
+		// Git ancestry stops at this repository. Folder rules above it may
+		// own native folder notes, but their hash could be a parent repo's
+		// project store and must never be guessed client-wide/ancestral.
+		if projectRoot != "" {
 			continue
 		}
 		alias := logical
@@ -84,7 +94,7 @@ func clientFolderStores(cwd, physical, root, projectRoot, here, top string, rule
 			}
 		}
 		add(dir, scope)
-		add(alias, scope)
+		addAlias(alias, dir, scope)
 	}
 	// Ascend the same number of components in the lexical spelling.
 	logicalRoot := logical
@@ -94,6 +104,6 @@ func clientFolderStores(cwd, physical, root, projectRoot, here, top string, rule
 		}
 	}
 	add(root, top)
-	add(logicalRoot, top)
+	addAlias(logicalRoot, root, top)
 	return out
 }
