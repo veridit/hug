@@ -229,7 +229,7 @@ func TestRememberPlacementDefaultPrecedenceAndQuestion(t *testing.T) {
 func TestCaptureRetryKeepsPersistedPlace(t *testing.T) {
 	f := scopetest.New(t)
 	b := f.Bind(t, "global")
-	candidate := extract.Candidate{Category: "decision", Trust: "high", Content: "Synthetic portable capture rule.", Place: "global", PlaceReason: "Synthetic cross-project preference."}
+	candidate := extract.Candidate{Category: "decision", Trust: "high", Content: "Synthetic portable capture rule applies across projects.", Place: "global", PlaceReason: "Synthetic cross-project preference."}
 	raw, _ := json.Marshal(candidate)
 	model := fakeCapture(t, f, string(raw))
 	if _, err := f.App.DB.Exec(`CREATE TRIGGER interrupt_place_checkpoint BEFORE INSERT ON capture_seen BEGIN SELECT RAISE(FAIL,'synthetic interruption'); END;`); err != nil {
@@ -272,7 +272,7 @@ func TestCapturePlacementMappingAndAudit(t *testing.T) {
 	b := f.Bind(t, "global")
 	var lines []string
 	for i, name := range []string{"here", "global", "unsure", "invalid", "", "client"} {
-		c := extract.Candidate{Content: "Synthetic work placement fact " + string(rune('a'+i)), Category: "fact", Trust: "high", Place: name, PlaceReason: "Synthetic explicit placement explanation."}
+		c := extract.Candidate{Content: "Synthetic work placement fact remains durable version " + string(rune('a'+i)), Category: "fact", Trust: "high", Place: name, PlaceReason: "Synthetic explicit placement explanation."}
 		raw, _ := json.Marshal(c)
 		lines = append(lines, string(raw))
 	}

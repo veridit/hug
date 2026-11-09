@@ -60,7 +60,7 @@ func TestCaptureLegacyCollisionPrivateCopy(t *testing.T) {
 			t.Fatal("payload fields changed")
 		}
 	}
-	fakeCapture(t, f, line("fact", "high", "Synthetic dry-run repair verification.", ""))
+	fakeCapture(t, f, line("fact", "high", "Synthetic dry-run repair verification preserves durable facts.", ""))
 	opts := captureOpts("legacy-copy-dry-run")
 	opts.DryRun = true
 	before, _ := os.ReadFile(app.NativePath())
@@ -110,7 +110,7 @@ func TestCaptureRetryAfterNativeSaveCheckpointInterruption(t *testing.T) {
 		t.Run(fmt.Sprintf("regenerated=%v", changed), func(t *testing.T) {
 			f := scopetest.New(t)
 			b := f.Bind(t, "alpha")
-			model := fakeCapture(t, f, line("decision", "high", "Original synthetic quartz capture proposal.", ""))
+			model := fakeCapture(t, f, line("decision", "high", "Original synthetic quartz capture proposal remains durable.", ""))
 			before, _ := ingest.LoadNative(app.NativePath())
 			if _, err := f.App.DB.Exec(`CREATE TRIGGER interrupt_checkpoint BEFORE INSERT ON capture_seen BEGIN SELECT RAISE(FAIL,'synthetic interruption after native save'); END;`); err != nil {
 				t.Fatal(err)
@@ -139,7 +139,7 @@ func TestCaptureRetryAfterNativeSaveCheckpointInterruption(t *testing.T) {
 				t.Fatalf("retry duplicated native row: %v", err)
 			}
 			for _, m := range after {
-				if strings.HasPrefix(m.Origin, "capture:stdin:interrupted-after-save:") && (m.Content != "Original synthetic quartz capture proposal." || m.Strength != 1) {
+				if strings.HasPrefix(m.Origin, "capture:stdin:interrupted-after-save:") && (m.Content != "Original synthetic quartz capture proposal remains durable." || m.Strength != 1) {
 					t.Fatal("retry overwrote/reinforced committed proposal")
 				}
 			}
@@ -154,7 +154,7 @@ func TestCaptureRetryAfterNativeSaveCheckpointInterruption(t *testing.T) {
 
 func TestCaptureKilledAfterSaveBeforeCheckpoint(t *testing.T) {
 	f := scopetest.New(t)
-	model := fakeCapture(t, f, line("decision", "high", "Synthetic killed-process quartz policy.", ""))
+	model := fakeCapture(t, f, line("decision", "high", "Synthetic killed-process quartz policy remains authoritative forever.", ""))
 	requested, release := make(chan struct{}), make(chan struct{})
 	model.beforeReply.Store(func() {
 		if model.calls.Load() == 1 {
@@ -247,7 +247,7 @@ func TestCaptureKillChild(t *testing.T) {
 func TestCaptureFreshNativeSnapshotDedupesBeforeLazyIndex(t *testing.T) {
 	f := scopetest.New(t)
 	b := f.Bind(t, "alpha")
-	fakeCapture(t, f, line("decision", "high", "Synthetic quartz pending-index preference.", ""))
+	fakeCapture(t, f, line("decision", "high", "Synthetic quartz pending-index preference remains useful forever.", ""))
 	before, _ := ingest.LoadNative(app.NativePath())
 	first, err := b.Capture(context.Background(), f.App, captureOpts("snapshot-first"))
 	if err != nil || first.Actions[0].Action != "add" {
@@ -262,7 +262,7 @@ func TestCaptureFreshNativeSnapshotDedupesBeforeLazyIndex(t *testing.T) {
 		t.Fatalf("unindexed native was duplicated: %v", err)
 	}
 	for _, m := range mems {
-		if m.Content == "Synthetic quartz pending-index preference." && m.Strength != 2 {
+		if m.Content == "Synthetic quartz pending-index preference remains useful forever." && m.Strength != 2 {
 			t.Fatalf("strength=%d", m.Strength)
 		}
 	}

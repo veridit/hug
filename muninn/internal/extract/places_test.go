@@ -4,7 +4,7 @@ import "testing"
 
 func TestParseInvalidPlaceDefaultsWithoutDiscardingMemory(t *testing.T) {
 	for _, value := range []string{`null`, `42`, `false`, `{}`, `[]`, `""`, `"unknown"`, `"here"`, `"client"`, `"global"`} {
-		text := `{"category":"fact","trust":"high","content":"Synthetic durable placement fact.","place":` + value + `,"place_reason":"Synthetic local explanation."}`
+		text := `{"category":"fact","trust":"high","content":"Synthetic durable placement fact remains useful forever.","place":` + value + `,"place_reason":"Synthetic local explanation."}`
 		candidates, rejected := Parse(text)
 		if rejected != 0 || len(candidates) != 1 || candidates[0].PlaceReason == "" {
 			t.Fatalf("place %s: %+v rejected=%d", value, candidates, rejected)
@@ -16,7 +16,7 @@ func TestParseInvalidPlaceDefaultsWithoutDiscardingMemory(t *testing.T) {
 		}
 	}
 	// Relaxing place metadata must not relax the existing secret/schema gate.
-	text := `{"category":"fact","trust":"high","content":"Synthetic durable placement fact.","unexpected":"not allowed"}`
+	text := `{"category":"fact","trust":"high","content":"Synthetic durable placement fact remains useful forever.","unexpected":"not allowed"}`
 	if candidates, rejected := Parse(text); len(candidates) != 0 || rejected != 1 {
 		t.Fatal("unknown fields accepted")
 	}

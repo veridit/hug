@@ -17,13 +17,37 @@ import (
 
 type TidyMove struct{ Ref, Source, Target, Upstream string }
 type TidyResult struct {
-	Backup string
-	Moves  []TidyMove
+	Backup      string
+	Moves       []TidyMove
+	Retirements []TidyRetirement
+}
+
+func (a *App) tidyLease(ctx context.Context) (func(), error) {
+	token := fmt.Sprintf("tidy-%d", time.Now().UnixNano())
+	now := time.Now()
+	r, err := a.DB.ExecContext(ctx, `INSERT INTO capture_lock(id,token,expires_ns) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,expires_ns=excluded.expires_ns WHERE capture_lock.expires_ns<?`, token, now.Add(time.Hour).UnixNano(), now.UnixNano())
+	if err != nil {
+		return nil, err
+	}
+	n, err := r.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+	if n != 1 {
+		return nil, fmt.Errorf("capture is busy, retry tidy when idle")
+	}
+	return func() { a.DB.Exec(`DELETE FROM capture_lock WHERE id=1 AND token=?`, token) }, nil
 }
 
 // ApplyTidy is deliberately owner CLI only. It is not registered with any agent
 // or network surface. Dry runs neither acquire a write lock nor repair files.
 func (a *App) ApplyTidy(ctx context.Context, p tidy.Plan, only string, dry bool) (result TidyResult, err error) {
+	if p.Kind == "dupes" {
+		if only != "" {
+			return result, fmt.Errorf("--only is for placement plans; set duplicate cluster decision to keep instead")
+		}
+		return a.applyDuplicates(ctx, p, dry)
+	}
 	entries, err := tidy.Selected(p, only)
 	if err != nil {
 		return result, err
@@ -36,20 +60,11 @@ func (a *App) ApplyTidy(ctx context.Context, p tidy.Plan, only string, dry bool)
 	}
 	// Share the capture lease so hooks cannot rewrite memories during the batch.
 	if !dry {
-		token := fmt.Sprintf("tidy-%d", time.Now().UnixNano())
-		now := time.Now()
-		r, e := a.DB.ExecContext(ctx, `INSERT INTO capture_lock(id,token,expires_ns) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,expires_ns=excluded.expires_ns WHERE capture_lock.expires_ns<?`, token, now.Add(time.Hour).UnixNano(), now.UnixNano())
+		release, e := a.tidyLease(ctx)
 		if e != nil {
 			return result, e
 		}
-		n, e := r.RowsAffected()
-		if e != nil {
-			return result, e
-		}
-		if n != 1 {
-			return result, fmt.Errorf("capture is busy, retry tidy when idle")
-		}
-		defer a.DB.Exec(`DELETE FROM capture_lock WHERE id=1 AND token=?`, token)
+		defer release()
 	}
 	type pending struct {
 		entry      tidy.Entry

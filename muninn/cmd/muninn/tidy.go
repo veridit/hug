@@ -18,7 +18,7 @@ import (
 // tidyCmd is registered only on the executable's owner CLI. It never uses a
 // session binding for scanning and never reindexes or loads an embedder there.
 func tidyCmd() *cobra.Command {
-	root := &cobra.Command{Use: "tidy", Short: "Owner-only: review misplaced memories and deliberately apply moves"}
+	root := &cobra.Command{Use: "tidy", Short: "Owner-only: review placement or duplicates and deliberately apply a plan"}
 	o := tidy.Defaults()
 	var out string
 	var judge bool
@@ -93,6 +93,47 @@ func tidyCmd() *cobra.Command {
 		if p.Database != "" && filepath.Clean(p.Database) != filepath.Clean(config.DBPath()) {
 			return fmt.Errorf("plan belongs to a different database")
 		}
+		if p.Kind == "dupes" {
+			if only != "" {
+				return fmt.Errorf("--only is for placement plans; set duplicate cluster decision to keep instead")
+			}
+			if dry {
+				g, err := tidy.ReadGraph(cmd.Context(), config.DBPath())
+				if err != nil {
+					return err
+				}
+				clusters, err := tidy.SelectedDuplicates(p, g)
+				if err != nil {
+					return err
+				}
+				n := 0
+				for _, c := range clusters {
+					for _, m := range c.Retire {
+						fmt.Fprintf(cmd.OutOrStdout(), "would retire %s into %s (strength +%d)\n", m.SID, c.Keeper.SID, m.Strength)
+						n++
+					}
+				}
+				fmt.Fprintf(cmd.OutOrStdout(), "Dry run: %d retirements, no writes.\n", n)
+				return nil
+			}
+			return withApp(func(ctx context.Context, a *app.App) error {
+				result, err := a.ApplyTidy(ctx, p, "", false)
+				if err != nil {
+					if result.Backup != "" {
+						fmt.Fprintf(cmd.ErrOrStderr(), "Recovery backup: %s\n", result.Backup)
+					}
+					return err
+				}
+				for _, r := range result.Retirements {
+					fmt.Fprintf(cmd.OutOrStdout(), "retired %s into %s (strength +%d, origin %s)\n", r.SID, r.Keeper, r.Strength, r.Origin)
+				}
+				fmt.Fprintf(cmd.OutOrStdout(), "Retired %d memories. Backup and receipt: %s\n", len(result.Retirements), result.Backup)
+				if result.Backup != "" {
+					fmt.Fprintf(cmd.OutOrStdout(), "Undo: muninn tidy undo %s\n", shellQuote(result.Backup))
+				}
+				return nil
+			})
+		}
 		if dry {
 			g, err := tidy.ReadGraph(cmd.Context(), config.DBPath())
 			if err != nil {
@@ -128,8 +169,82 @@ func tidyCmd() *cobra.Command {
 	}}
 	apply.Flags().BoolVar(&dry, "dry-run", false, "validate and print moves without any writes")
 	apply.Flags().StringVar(&only, "only", "", "apply only this exact SRC->DST pair (quote it in the shell)")
-	root.AddCommand(scan, apply)
+	undo := &cobra.Command{Use: "undo BACKUP", Short: "Undo a duplicate batch, refusing to overwrite later memory writes", Args: cobra.ExactArgs(1), RunE: func(cmd *cobra.Command, args []string) error {
+		return withApp(func(ctx context.Context, a *app.App) error {
+			if err := a.UndoTidy(ctx, args[0]); err != nil {
+				return err
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), "Duplicate batch undone. Original memory bytes restored.")
+			return nil
+		})
+	}}
+	root.AddCommand(scan, apply, duplicatesCmd(), undo)
 	return root
+}
+
+func duplicatesCmd() *cobra.Command {
+	var out string
+	var judge bool
+	var maxJudge int
+	var duplicateThreshold, reviewThreshold float64
+	c := &cobra.Command{Use: "dupes", Short: "Read-only duplicate clusters and reasons for deliberate review", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error {
+		if maxJudge < 0 {
+			return fmt.Errorf("--max-judge must be nonnegative")
+		}
+		cfg, err := config.Load()
+		if err != nil {
+			return err
+		}
+		g, err := tidy.ReadGraph(cmd.Context(), config.DBPath())
+		if err != nil {
+			return err
+		}
+		automatic, review := cfg.Extract.DedupeThresholds()
+		if cmd.Flags().Changed("dedupe-cosine") {
+			automatic = duplicateThreshold
+		}
+		if cmd.Flags().Changed("review-cosine") {
+			review = reviewThreshold
+		}
+		p, err := tidy.ScanDuplicates(g, automatic, review)
+		if err != nil {
+			return err
+		}
+		p.Database = config.DBPath()
+		if judge {
+			if err = tidy.JudgeDuplicates(cmd.Context(), &p, g, cfg.Extract, maxJudge); err != nil {
+				return err
+			}
+		}
+		if out == "" {
+			out = filepath.Join(config.DataDir(), "tidy", "dupes-"+time.Now().UTC().Format("20060102T150405.000000000Z")+".json")
+		}
+		if err = saveTidyPlan(out, p); err != nil {
+			return err
+		}
+		autoClusters, judgedClusters, retire, judgedPairs := 0, 0, 0, 0
+		for _, c := range p.Duplicates {
+			if c.Band == "automatic" {
+				autoClusters++
+			} else {
+				judgedClusters++
+			}
+			retire += len(c.Retire)
+		}
+		for _, pair := range p.DuplicatePairs {
+			if pair.Judged {
+				judgedPairs++
+			}
+		}
+		fmt.Fprintf(cmd.OutOrStdout(), "%d active canonical units; %d duplicate clusters (automatic=%d judged=%d); %d memories would retire; %d pairs judged\nPlan: %s\nSummary: %s.md\nReview before apply. No memory or index writes performed.\n", p.Units, len(p.Duplicates), autoClusters, judgedClusters, retire, judgedPairs, out, out)
+		return nil
+	}}
+	c.Flags().StringVar(&out, "out", "", "new private JSON plan path")
+	c.Flags().BoolVar(&judge, "judge", false, "ask the configured cheap extraction model about review-band pairs")
+	c.Flags().IntVar(&maxJudge, "max-judge", 100, "maximum review-band pairs to judge (0 disables calls)")
+	c.Flags().Float64Var(&duplicateThreshold, "dedupe-cosine", .95, "override configured automatic duplicate threshold for this scan")
+	c.Flags().Float64Var(&reviewThreshold, "review-cosine", .88, "override configured same-fact review threshold for this scan")
+	return c
 }
 func shellQuote(s string) string { return "'" + strings.ReplaceAll(s, "'", "'\\''") + "'" }
 func saveTidyPlan(path string, p tidy.Plan) error {

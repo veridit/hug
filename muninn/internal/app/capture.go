@@ -34,13 +34,14 @@ type CaptureAction struct {
 }
 type CaptureReport struct {
 	CaptureTimings
-	Actions        []CaptureAction `json:"actions"`
-	Usage          extract.Usage   `json:"usage"`
-	LatencyMS      int64           `json:"latency_ms"`
-	Processed      int             `json:"processed"`
-	BacklogSkipped int             `json:"backlog_skipped"`
-	Rejected       int             `json:"rejected"`
-	Skipped        string          `json:"skipped,omitempty"`
+	Actions         []CaptureAction `json:"actions"`
+	Usage           extract.Usage   `json:"usage"`
+	LatencyMS       int64           `json:"latency_ms"`
+	Processed       int             `json:"processed"`
+	BacklogSkipped  int             `json:"backlog_skipped"`
+	Rejected        int             `json:"rejected"`
+	RejectedTrivial int             `json:"rejected_trivial"`
+	Skipped         string          `json:"skipped,omitempty"`
 }
 
 type CaptureTimings struct {
@@ -293,7 +294,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 				opts.Limit = 12
 			}
 			opts.Scopes = b.Scopes
-			opts.ScopeFor = b.ScopeFor
+			opts.ScopeFor = b.writableScopeFor
 			opts.Kinds = []string{"memory"}
 			// Limit query words so transcript-sized FTS expressions remain bounded.
 			query := text
@@ -309,6 +310,9 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			var known []extract.Known
 			knownBytes := 0
 			for _, r := range hits {
+				if _, err := b.WriteScope(r.Unit.Scope); err != nil {
+					continue
+				}
 				if !project.HasCredential(r.Unit.Body) {
 					if hook && knownBytes+len(r.Unit.Body) > 4096 {
 						continue
@@ -356,6 +360,11 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 		report.Usage.TotalTokens += result.Usage.TotalTokens
 		report.LatencyMS += result.LatencyMS
 		report.Rejected += result.Rejected
+		for _, rejection := range result.Rejections {
+			if strings.HasPrefix(rejection.Reason, "trivial:") {
+				report.RejectedTrivial++
+			}
+		}
 		// Stable batch fingerprint makes retries idempotent after native-file save
 		// but before the SQLite high-water checkpoint commits.
 		ids := make([]string, 0, end-start)
@@ -389,15 +398,15 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			action, found := writes.exact(b, a, c)
 			// Reuse exact known-memory matches, never the transcript query's
 			// cosine as if it were the candidate's own embedding score.
-			if !found && !(c.Supersedes != "" && c.Trust == "high") {
+			if !found && c.SameAs == "" && c.Updates == "" && c.Supersedes == "" {
 				if sid := knownByContent[c.Content]; sid != "" {
 					clean := c
 					clean.Supersedes = ""
-					action = CaptureAction{Candidate: clean, Action: "reinforce", Reason: "exact duplicate in known-memory snapshot", Target: sid}
+					action = CaptureAction{Candidate: clean, Action: "reinforce", Reason: "exact duplicate in known-memory snapshot", Target: sid, Score: 1}
 					found = true
 				}
 			}
-			if !found || (c.Supersedes != "" && c.Trust == "high") {
+			if !found || c.SameAs != "" || c.Updates != "" || c.Supersedes != "" {
 				action, err = b.capturePlan(ctx, a, c)
 			}
 			report.PlanMS += time.Since(planStart).Milliseconds()
@@ -477,7 +486,23 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 func (b Binding) capturePlan(ctx context.Context, a *App, c extract.Candidate) (CaptureAction, error) {
 	b = b.Refresh(a)
 	out := CaptureAction{Candidate: c, Action: "add", Reason: "new memory in bound scope"}
-	if c.Supersedes != "" && c.Trust == "high" {
+	if c.Updates != "" {
+		old, err := b.Resolve(a, c.Updates)
+		if err == nil && old.Active {
+			if _, err := b.WriteScope(old.Scope); err == nil {
+				out.Target = old.SID
+				out.Reason = "newer version linked to existing fact; old note retained"
+				if c.Category == "correction" && c.Trust == "high" {
+					out.Action, out.Reason = "supersede", "high-trust correction in writable scope"
+				}
+				return out, nil
+			}
+		}
+		out.Updates = ""
+		out.Reason = "new memory; update target unavailable or outside writable scope"
+		return out, nil
+	}
+	if c.Supersedes != "" && c.Trust == "high" && c.Category == "correction" {
 		old, err := b.Resolve(a, c.Supersedes)
 		if err == nil && old.Active {
 			if _, err := b.WriteScope(old.Scope); err == nil {
@@ -491,63 +516,36 @@ func (b Binding) capturePlan(ctx context.Context, a *App, c extract.Candidate) (
 	// Ignore invalid/low-trust supersession requests entirely, including display.
 	out.Supersedes = ""
 	if c.Supersedes != "" {
-		out.Reason = "new memory, supersede target unavailable, outside writable scope, or not high trust"
-	}
-	// Exact matching searches every visible memory, not merely the model's top-K.
-	where, args := b.SQL("u.scope", "u.source_id")
-	args = append(args, c.Content)
-	var id int64
-	rows, err := a.DB.QueryContext(ctx, `SELECT u.id FROM units u WHERE u.active=1 AND u.kind='memory' AND (`+where+`) AND u.body=? AND NOT EXISTS (SELECT 1 FROM suppressed s WHERE s.sid=u.sid) AND u.id=(SELECT c.id FROM units c JOIN sources s ON s.id=c.source_id WHERE c.sid=u.sid ORDER BY (s.kind='native') DESC,c.updated_ns DESC,c.id LIMIT 1) ORDER BY u.id LIMIT 1`, args...)
-	if err != nil {
-		return out, err
-	}
-	if rows.Next() {
-		err = rows.Scan(&id)
-	}
-	rowErr := rows.Err()
-	rows.Close()
-	if err != nil {
-		return out, err
-	}
-	if rowErr != nil {
-		return out, rowErr
-	}
-	if id != 0 {
-		u, err := a.DB.GetUnit(id)
-		if err != nil {
-			return out, err
-		}
-		out.Action = "reinforce"
-		out.Reason = "exact duplicate"
-		out.Target = u.SID
+		out.Reason = "new memory, supersede target unavailable, outside writable scope, or not a high-trust correction"
 		return out, nil
 	}
-	// Cosine alone, not total keyword score, decides near-duplicate reinforcement.
-	if a.Searcher.Embedder != nil {
-		opts := a.RecallOptions()
-		opts.Limit = 8
-		opts.MinScore = 0
-		opts.SemanticSlots = 8
-		opts.SemanticFloor = 0
-		opts.Scopes = b.Scopes
-		opts.ScopeFor = b.ScopeFor
-		opts.Kinds = []string{"memory"}
-		hits, err := a.Searcher.Search(ctx, c.Content, opts)
-		if err != nil {
-			return out, err
-		}
-		threshold := a.Cfg.Extract.DedupeCosine
-		if threshold <= 0 {
-			threshold = extract.Defaults().DedupeCosine
-		}
-		for _, hit := range hits {
-			if hit.SemanticOn && hit.Semantic >= threshold {
-				out.Action = "reinforce"
-				out.Reason = "cosine exceeds dedupe threshold"
-				out.Score = hit.Semantic
-				out.Target = hit.Unit.SID
+	hits, err := b.memoryMatches(ctx, a, c.Content)
+	if err != nil {
+		return out, err
+	}
+	if c.SameAs != "" {
+		old, err := b.Resolve(a, c.SameAs)
+		if err == nil && old.Active {
+			if _, err := b.WriteScope(old.Scope); err == nil {
+				out.Action, out.Target, out.Reason = "reinforce", old.SID, "extractor judged same fact in Known (same call)"
+				for _, h := range hits {
+					if h.Unit.SID == old.SID {
+						out.Score = h.Semantic
+					}
+				}
 				return out, nil
 			}
+		}
+		out.SameAs = ""
+		out.Reason = "new memory; same-fact target unavailable or outside writable scope"
+	}
+	automatic, review := a.Cfg.Extract.DedupeThresholds()
+	if len(hits) > 0 {
+		h := hits[0]
+		if h.Semantic >= automatic {
+			out.Action, out.Target, out.Score, out.Reason = "reinforce", h.Unit.SID, h.Semantic, "cosine meets dedupe threshold"
+		} else if h.Semantic >= review {
+			out.Target, out.Score, out.Reason = h.Unit.SID, h.Semantic, "similar fact without same_as judgment; retained as new (no second provider call)"
 		}
 	}
 	return out, nil

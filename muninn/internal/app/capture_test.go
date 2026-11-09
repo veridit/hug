@@ -138,7 +138,7 @@ func TestCaptureClientRootBoundAndSecretDropped(t *testing.T) {
 	f := scopetest.New(t)
 	b := f.App.Bound(filepath.Join(f.Root, "alpha", ".jcode"), f.ClientCwd)
 	secret := "sk-" + strings.Repeat("z", 30)
-	m := fakeCapture(t, f, line("fact", "high", "Client quartz policy remains isolated.", "")+"\n"+line("fact", "high", secret, ""))
+	m := fakeCapture(t, f, line("fact", "high", "Client quartz policy remains permanently isolated here.", "")+"\n"+line("fact", "high", secret, ""))
 	o := captureOpts("client")
 	o.Messages = append(o.Messages, harness.CaptureMessage{ID: "secret", Role: "user", Text: secret})
 	r, err := b.Capture(context.Background(), f.App, o)
@@ -157,7 +157,7 @@ func TestCaptureClientRootBoundAndSecretDropped(t *testing.T) {
 		if strings.Contains(v.Content, secret) {
 			t.Fatal("secret stored")
 		}
-		if v.Content == "Client quartz policy remains isolated." {
+		if v.Content == "Client quartz policy remains permanently isolated here." {
 			found = true
 			if v.Scope != b.Places()[0].Scope {
 				t.Fatal(v.Scope)
@@ -235,7 +235,7 @@ func TestCaptureUpstreamReadOnlyReinforcement(t *testing.T) {
 	home := filepath.Join(f.Root, "alpha", ".jcode")
 	p := filepath.Join(home, "memory", "global.json")
 	os.MkdirAll(filepath.Dir(p), 0700)
-	body := `{"memories":{"upstream":{"id":"upstream","content":"Quartz upstream policy.","category":"fact"}}}`
+	body := `{"memories":{"upstream":{"id":"upstream","content":"Quartz upstream policy remains durable for deployments.","category":"fact"}}}`
 	if err := os.WriteFile(p, []byte(body), 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -243,7 +243,7 @@ func TestCaptureUpstreamReadOnlyReinforcement(t *testing.T) {
 		t.Fatal(err)
 	}
 	b := f.Bind(t, "alpha")
-	fakeCapture(t, f, line("fact", "medium", "Quartz upstream policy.", ""))
+	fakeCapture(t, f, line("fact", "medium", "Quartz upstream policy remains durable for deployments.", ""))
 	r, err := b.Capture(context.Background(), f.App, captureOpts("upstream"))
 	if err != nil || len(r.Actions) != 1 || r.Actions[0].Action != "reinforce" {
 		t.Fatalf("%+v %v", r, err)
@@ -289,8 +289,8 @@ func TestCaptureNearDuplicateCosine(t *testing.T) {
 		t.Fatal(err)
 	}
 	b := f.Bind(t, "alpha")
-	m := fakeCapture(t, f, line("fact", "medium", "Quartz paraphrase protocol.", ""))
-	for i, tc := range []struct{ content, want string }{{"Quartz paraphrase protocol.", "reinforce"}, {"Quartz distant protocol.", "add"}} {
+	m := fakeCapture(t, f, line("fact", "medium", "Quartz paraphrase protocol remains durable for deployments.", ""))
+	for i, tc := range []struct{ content, want string }{{"Quartz paraphrase protocol remains durable for deployments.", "reinforce"}, {"Quartz distant protocol remains durable for deployments.", "add"}} {
 		m.reply = line("fact", "medium", tc.content, "")
 		r, err := b.Capture(context.Background(), f.App, captureOpts(fmt.Sprintf("cosine-%d", i)))
 		if err != nil || len(r.Actions) != 1 || r.Actions[0].Action != tc.want {
@@ -308,7 +308,7 @@ func TestCaptureModelJudgesLookalikeSecrets(t *testing.T) {
 	url := "https://example.org/tour-" + strings.Repeat("Xq7Tm2Lk9V", 3) + "/"
 	judged := extract.Candidate{Category: "fact", Trust: "medium", Content: "Quartz tour is shared with the family at " + url, SafeReason: "shared on purpose with family, holds no account access"}
 	jb, _ := json.Marshal(judged)
-	fakeCapture(t, f, string(jb)+"\n"+line("fact", "medium", "Quartz admin panel at "+url, ""))
+	fakeCapture(t, f, string(jb)+"\n"+line("fact", "medium", "Quartz admin panel is permanently available at "+url, ""))
 	o := captureOpts("judge")
 	r, err := b.Capture(context.Background(), f.App, o)
 	if err != nil || r.Rejected != 1 {

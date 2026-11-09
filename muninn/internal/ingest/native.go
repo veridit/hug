@@ -19,6 +19,10 @@ import (
 
 // NativeMemory is a memory muninn owns (created with `muninn remember`).
 type NativeMemory struct {
+	Updates           string    `json:"updates,omitempty"`
+	NewReason         string    `json:"new_reason,omitempty"`
+	RetiredInto       string    `json:"retired_into,omitempty"`
+	RetiredOrigin     string    `json:"retired_origin,omitempty"`
 	CaptureSupersedes string    `json:"capture_supersedes,omitempty"`
 	Trust             string    `json:"trust,omitempty"`
 	CaptureEvents     []string  `json:"capture_events,omitempty"`
@@ -193,7 +197,7 @@ func Remember(path, content, category, scope string, tags []string) (NativeMemor
 
 // RememberSafe is Remember with the writer's reason for storing text that
 // looked secret. The reason is kept on the memory for later review.
-func RememberSafe(path, content, category, scope string, tags []string, safeReason string) (NativeMemory, bool, error) {
+func RememberSafe(path, content, category, scope string, tags []string, safeReason string, newReasons ...string) (NativeMemory, bool, error) {
 	content = strings.TrimSpace(content)
 	if content == "" {
 		return NativeMemory{}, false, errors.New("empty memory")
@@ -219,6 +223,9 @@ func RememberSafe(path, content, category, scope string, tags []string, safeReas
 	}
 	m := NativeMemory{ID: newID(), Content: content, Category: category, Tags: tags, Scope: scope,
 		Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason)}
+	if len(newReasons) > 0 {
+		m.NewReason = strings.TrimSpace(newReasons[0])
+	}
 	mems = append(mems, m)
 	assignNativeSIDs(mems)
 	m = mems[len(mems)-1]

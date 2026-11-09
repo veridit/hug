@@ -38,6 +38,7 @@ type Options struct {
 	Scopes         []string // empty = all
 	ScopeFor       func(store.Unit) (string, bool)
 	Kinds          []string // empty = all
+	DocumentQuery  bool     // dedupe compares a proposed document to indexed documents
 }
 
 // DefaultOptions mirrors seid search.
@@ -228,11 +229,15 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 	// 5c. semantic similarity.
 	sem := map[int64]float64{}
 	semOn := false
-	if s.Embedder != nil && strings.TrimSpace(query) != "" {
+	if s.Embedder != nil && strings.TrimSpace(query) != "" &&
+		(!o.DocumentQuery || s.DB.GetMeta("pipeline_hash") == index.PipelineHash(s.Embedder.Model())) {
 		// Embed the query the way the active pipeline's documents were
 		// embedded (mid-migration that may be the previous prompt recipe).
 		qtext := embed.Query(s.Embedder, query)
-		if s.DB.GetMeta("pipeline_hash") != index.PipelineHash(s.Embedder.Model()) {
+		if o.DocumentQuery {
+			qtext = embed.Documents(s.Embedder, []string{index.EmbeddingText("", query)})[0]
+		}
+		if !o.DocumentQuery && s.DB.GetMeta("pipeline_hash") != index.PipelineHash(s.Embedder.Model()) {
 			qtext = s.DB.GetMeta("pipeline_query_prefix") + query
 		}
 		vecs, err := s.Embedder.Embed(ctx, []string{qtext})

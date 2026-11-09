@@ -130,6 +130,93 @@ this moves the native copy back and intentionally keeps the upstream suppressed
 to prevent duplicates. Recovery backups retain the original native file bytes;
 ordinary errors roll back files and newly added suppressions.
 
+## Duplicate prevention and durable extraction
+
+Capture and every remember surface (CLI, MCP, web) compare against **visible memories
+in writable scopes**, never other clients or hidden stores. The thresholds are
+independent of recall tuning and configurable under `extract` in `config.json`:
+
+```json
+{"extract":{"dedupe_cosine":0.95,"review_cosine":0.88}}
+```
+
+- Exact matches and cosine **>= 0.95** reinforce the existing note, preserving its
+  text and scope. Capture and remember audit actions record the target and cosine.
+- At **0.88 <= cosine < 0.95**, capture asks its existing extraction model to compare
+  with the top Known memories **in the same call**, not a second call per candidate.
+  `same_as: "<sid>"` reinforces that fact. `updates: "<sid>"` adds a linked newer
+  version while retaining the old note. Only an explicit high-trust user correction
+  (`category: "correction", trust: "high"`) can supersede the old note. Unknown or
+  mutually conflicting relationship fields are rejected. If no known-memory
+  judgment is available, capture retains a new fact and audits the similar target,
+  rather than silently treating related information as identical.
+- Remember asks: “This looks like memory <sid> ... Same fact?” Re-call with
+  `--reinforce <sid>` / MCP or web `reinforce`, or store a distinct fact with
+  `--new-reason "why it differs"` / `new_reason`. The latter reason is retained on
+  the new note. It does not bypass the automatic high-similarity band, placement,
+  visibility or secret checks.
+- Below **0.88**, a candidate is new unless the extractor identifies the same known
+  fact. Without embeddings, exact matching and same-call Known judgments still
+  work, but cosine-only detection cannot run. No keyword score is used as cosine.
+  Dedupe uses document-to-document embeddings with the index's model and document
+  recipe, not recall's retrieval-query prefix. During a mixed-recipe model
+  migration it falls back to exact matching and Known judgments until reindexing
+  finishes, rather than comparing incompatible cosine scores.
+
+Existing explicit settings are honored: if your config still says `0.98`, change
+it deliberately to enable the new `0.95` automatic band. No live settings are
+silently migrated. The values are calibrated defaults, not a proof of equivalence.
+
+The extraction prompt excludes task progress and status snapshots (including
+“tests pass at commit Y”, a commit approval, release verification or one-review
+checkout ownership/report paths), conversation
+restatements such as “user approved the plan” without the decision's content,
+pleasantries and closers. Settled decisions **with their content** remain useful.
+The parser additionally rejects facts and decisions shorter than six whitespace-
+separated words. Short preferences and corrections are allowed. This is a cheap
+backstop, not a language-aware durability classifier. Parser rejections, including
+`rejected_trivial`, are visible in capture reports and audits. Facts omitted by the
+model are not counted as parser rejections.
+
+### Deliberate duplicate cleanup
+
+```sh
+muninn tidy dupes --out /private/path/dupes.json
+muninn tidy dupes --judge --max-judge 60 --out /private/path/judged-dupes.json
+# Read the JSON and Markdown, including reasons and exact keeper/retirement IDs.
+# Set a cluster's decision to "keep" to exclude it. Apply only after approval.
+muninn tidy apply /private/path/dupes.json --dry-run
+muninn tidy apply /private/path/dupes.json
+muninn tidy undo /path/printed/in/the/apply/result
+```
+
+The scan is read-only apart from private proposal files. It reuses stored kNN
+edges and adds exact-text matches, without loading an embedder, refreshing the
+index, changing memories, or calling a provider unless `--judge` is requested.
+It can miss semantic pairs absent from the stored graph. `--dedupe-cosine` and
+`--review-cosine` override configured thresholds for one scan without changing
+config. The judge handles only review-band pairs, at most `--max-judge` pairs,
+in bounded batches. Different facts, changed values or material new detail are
+not duplicate judgments. Invalid or incomplete responses fail closed.
+
+Accepted same-fact edges form transitive clusters. Both stored and effective
+scopes must match exactly, so no cluster crosses clients, projects, folders or
+other scope boundaries. A keeper prefers a native-store copy over an upstream
+source, then the most recent timestamp, then highest strength, then SID for a
+stable tie. Review chains as well as their chosen keeper: transitivity can connect
+notes whose direct cosine is below the threshold.
+
+Apply uses tidy's capture lease, stale-plan checks, private backup/plan/receipt
+layout and rollback on ordinary errors. It retires duplicate native rows with
+`active=false`, records `retired_into` and `retired_origin`, and adds their strength
+to the keeper. Historical text and timestamps are never rewritten. Upstream
+files remain byte-identical: their duplicate identities are suppressed locally
+and exact inactive archival copies are kept in muninn. An upstream-only keeper
+gets an exact native mirror carrying the strength. Undo restores the original
+native bytes and removes only this batch's suppressions. It refuses to overwrite
+any later change to an affected native file. Interrupted applies retain backups
+and receipts for manual recovery. Stop other manual memory writers before tidy.
+
 ## How it works
 
 ```mermaid

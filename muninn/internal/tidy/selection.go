@@ -12,7 +12,7 @@ func literalScope(s string) bool {
 // Selected validates every selected move before any mutation, including duplicate
 // identities. --only is an exact source/target pair, never a pattern.
 func Selected(p Plan, only string) ([]Entry, error) {
-	if p.Version != 1 {
+	if p.Version != 1 || p.Kind != "" {
 		return nil, fmt.Errorf("unsupported tidy plan version")
 	}
 	if only != "" {

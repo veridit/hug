@@ -64,6 +64,8 @@
       <input id="mscope" placeholder="literal scope (optional override)">
       <input id="mreason" placeholder="place reason, if asked">
       <input id="msafe" placeholder="safe reason, if asked">
+      <input id="mnewreason" placeholder="why a different fact, if asked">
+      <input id="mreinforce" placeholder="existing SID to reinforce, if same fact">
       <input id="mtags" placeholder="tags, comma separated" style="flex:1">
       <button class="primary" id="mgo">Remember</button>
     </div>
@@ -124,12 +126,15 @@ $('#mgo').onclick = async () => {
  try {
   const body = {content: $('#mtext').value, category: $('#mcat').value, scope: $('#mscope').value,
     place: $('#mplace').value, place_reason: $('#mreason').value, safe_reason: $('#msafe').value,
+    new_reason: $('#mnewreason').value, reinforce: $('#mreinforce').value,
     tags: $('#mtags').value.split(',').map(s => s.trim()).filter(Boolean)};
   const d = await api('/api/remember', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
   $('#mout').textContent = `${d.reinforced ? 'reinforced' : 'remembered'} ${d.id}, place: ${d.place}; available: ${d.places.map(p => p.name).join(', ')}`;
   $('#mtext').value = '';
   $('#mreason').value = '';
   $('#msafe').value = '';
+  $('#mnewreason').value = '';
+  $('#mreinforce').value = '';
  } catch (error) { $('#mout').textContent = error.message; }
 };
 async function loadLog() {

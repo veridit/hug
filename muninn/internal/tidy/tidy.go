@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/veridit/muninn/internal/ingest"
 	"github.com/veridit/muninn/internal/project"
 	"github.com/veridit/muninn/internal/store"
 )
@@ -87,26 +88,32 @@ type Entry struct {
 	Judged             bool                `json:"judged"`
 }
 type Plan struct {
-	DroppedAmbiguousTarget int               `json:"dropped_ambiguous_target"`
-	DroppedBoundary        int               `json:"dropped_boundary"`
-	DroppedInvalidTarget   int               `json:"dropped_invalid_target"`
-	ClientGroups           []ClientGroup     `json:"client_groups"`
-	Classes                map[string]int    `json:"class_counts"`
-	Transitions            []ClassTransition `json:"class_transitions"`
-	Version                int               `json:"version"`
-	Created                time.Time         `json:"created"`
-	Database               string            `json:"database"`
-	Options                Options           `json:"options"`
-	Units                  int               `json:"units"`
-	Entries                []Entry           `json:"entries"`
-	General                []Entry           `json:"maybe_general"`
-	Scopes                 []string          `json:"scopes"`
+	Kind                   string             `json:"kind,omitempty"`
+	DuplicateThreshold     float64            `json:"duplicate_threshold,omitempty"`
+	ReviewThreshold        float64            `json:"review_threshold,omitempty"`
+	DuplicatePairs         []DuplicatePair    `json:"duplicate_pairs,omitempty"`
+	Duplicates             []DuplicateCluster `json:"duplicates,omitempty"`
+	DroppedAmbiguousTarget int                `json:"dropped_ambiguous_target"`
+	DroppedBoundary        int                `json:"dropped_boundary"`
+	DroppedInvalidTarget   int                `json:"dropped_invalid_target"`
+	ClientGroups           []ClientGroup      `json:"client_groups"`
+	Classes                map[string]int     `json:"class_counts"`
+	Transitions            []ClassTransition  `json:"class_transitions"`
+	Version                int                `json:"version"`
+	Created                time.Time          `json:"created"`
+	Database               string             `json:"database"`
+	Options                Options            `json:"options"`
+	Units                  int                `json:"units"`
+	Entries                []Entry            `json:"entries"`
+	General                []Entry            `json:"maybe_general"`
+	Scopes                 []string           `json:"scopes"`
 }
 type Edge struct {
 	From, To int64
 	Sim      float64
 }
 type Graph struct {
+	MemoryMeta      map[int64]MemoryMeta
 	EffectiveScopes map[int64]string
 	Topics          []TopicGroup
 	Units           []store.Unit
@@ -143,7 +150,7 @@ func ReadGraph(ctx context.Context, path string) (Graph, error) {
 	rows, err := tx.QueryContext(ctx, `WITH ranked AS (
  SELECT u.*, ROW_NUMBER() OVER(PARTITION BY u.sid ORDER BY (s.kind='native') DESC,u.updated_ns DESC,u.id) AS rn
  FROM units u JOIN sources s ON s.id=u.source_id)
- SELECT id,sid,origin,scope,title,body,category,tags,source_id,key,updated_ns FROM ranked
+	 SELECT id,sid,origin,scope,title,body,category,tags,source_id,key,updated_ns,kind FROM ranked
  WHERE rn=1 AND active=1 AND NOT EXISTS(SELECT 1 FROM suppressed s WHERE s.sid=ranked.sid) ORDER BY id`)
 	if err != nil {
 		return g, err
@@ -152,12 +159,12 @@ func ReadGraph(ctx context.Context, path string) (Graph, error) {
 		var u store.Unit
 		var tags string
 		var ns int64
-		if err = rows.Scan(&u.ID, &u.SID, &u.Origin, &u.Scope, &u.Title, &u.Body, &u.Category, &tags, &u.SourceID, &u.Key, &ns); err != nil {
+		if err = rows.Scan(&u.ID, &u.SID, &u.Origin, &u.Scope, &u.Title, &u.Body, &u.Category, &tags, &u.SourceID, &u.Key, &ns, &u.Kind); err != nil {
 			rows.Close()
 			return g, err
 		}
 		u.Active = true
-		u.Updated = time.Unix(0, ns)
+		u.Updated = time.Unix(0, ns).UTC()
 		u.Tags = strings.Fields(tags)
 		g.Units = append(g.Units, u)
 	}
@@ -222,6 +229,80 @@ func ReadGraph(ctx context.Context, path string) (Graph, error) {
 	g.Topics, err = readTopicGroups(ctx, tx, targets)
 	if err != nil {
 		return g, err
+	}
+	g.MemoryMeta = map[int64]MemoryMeta{}
+	rows, err = tx.QueryContext(ctx, `SELECT id,kind,path FROM sources`)
+	if err != nil {
+		return g, err
+	}
+	type sourceMeta struct{ kind, path string }
+	sources := map[int64]sourceMeta{}
+	for rows.Next() {
+		var id int64
+		var s sourceMeta
+		if err = rows.Scan(&id, &s.kind, &s.path); err != nil {
+			rows.Close()
+			return g, err
+		}
+		sources[id] = s
+	}
+	err = rows.Err()
+	rows.Close()
+	if err != nil {
+		return g, err
+	}
+	native := map[int64]map[string]ingest.NativeMemory{}
+	for id, s := range sources {
+		if s.kind != "native" {
+			continue
+		}
+		// Never use LoadNative here: its legacy repair path can write.
+		raw, e := os.ReadFile(s.path)
+		if os.IsNotExist(e) {
+			continue
+		}
+		if e != nil {
+			return g, e
+		}
+		var f struct{ Memories []ingest.NativeMemory }
+		if e = json.Unmarshal(raw, &f); e != nil {
+			return g, e
+		}
+		native[id] = map[string]ingest.NativeMemory{}
+		for _, m := range f.Memories {
+			native[id][m.ID] = m
+		}
+	}
+	// Upstream reinforcement events are local evidence of strength. Native
+	// mirrors already carry their incorporated strength in the owned file.
+	counts := map[string]int{}
+	rows, err = tx.QueryContext(ctx, `SELECT sid,COUNT(*) FROM capture_reinforcements GROUP BY sid`)
+	if err != nil {
+		return g, err
+	}
+	for rows.Next() {
+		var sid string
+		var n int
+		if err = rows.Scan(&sid, &n); err != nil {
+			rows.Close()
+			return g, err
+		}
+		counts[sid] = n
+	}
+	err = rows.Err()
+	rows.Close()
+	if err != nil {
+		return g, err
+	}
+	for _, u := range g.Units {
+		m := MemoryMeta{Native: sources[u.SourceID].kind == "native", Strength: 1}
+		if n, ok := native[u.SourceID][u.Key]; ok {
+			m.Strength = n.Strength
+		}
+		if !m.Native {
+			m.Strength += counts[u.SID]
+		}
+		g.MemoryMeta[u.ID] = m
 	}
 	return g, tx.Commit()
 }
@@ -428,6 +509,9 @@ func (p Plan) Groups() []Group {
 	return out
 }
 func (p Plan) Markdown() string {
+	if p.Kind == "dupes" {
+		return p.duplicatesMarkdown()
+	}
 	var b strings.Builder
 	fmt.Fprintf(&b, "# Muninn tidy review\n\n%d active canonical units, %d suspects, %d maybe-general candidates.\n\nUnjudged proposals are unsure, never automatically approved. Review decisions and targets in the JSON before apply. Memory text is never rewritten.\n", p.Units, len(p.Entries), len(p.General))
 	fmt.Fprintf(&b, "\nDropped before judging: %d provenance-boundary proposals, %d without a concrete writable target, %d ambiguous zero-vote concrete targets.\n", p.DroppedBoundary, p.DroppedInvalidTarget, p.DroppedAmbiguousTarget)

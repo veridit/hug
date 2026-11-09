@@ -135,6 +135,8 @@ func (s *Server) Handler() http.Handler {
 			LegacySafeReason         string `json:"SafeReason"`
 			Place                    string `json:"place"`
 			PlaceReason              string `json:"place_reason"`
+			NewReason                string `json:"new_reason"`
+			Reinforce                string `json:"reinforce"`
 			Tags                     []string
 		}
 		if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -146,7 +148,7 @@ func (s *Server) Handler() http.Handler {
 		if in.SafeReason == "" {
 			in.SafeReason = in.LegacySafeReason
 		}
-		u, re, err := b.RememberPlaced(r.Context(), s.App, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason)
+		u, re, err := b.RememberPlaced(r.Context(), s.App, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce})
 		if err != nil {
 			fail(w, 400, err)
 			return

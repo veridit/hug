@@ -490,7 +490,7 @@ func (b Binding) RememberSafe(ctx context.Context, a *App, content, category, sc
 
 // RememberPlaced accepts a session-relative place alongside an optional literal
 // scope. Both advisory checks ask the writer, never silently reclassify text.
-func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, scope string, tags []string, safeReason, place, placeReason string) (store.Unit, bool, error) {
+func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, scope string, tags []string, safeReason, place, placeReason string, decisions ...RememberDecision) (store.Unit, bool, error) {
 	b = b.Refresh(a)
 	safeReason = strings.TrimSpace(safeReason)
 	if hint := project.SecretHint(content); hint != "" && safeReason == "" {
@@ -509,7 +509,41 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 	if category == "" {
 		category = "fact"
 	}
-	m, reinforced, err := ingest.RememberSafe(NativePath(), content, category, scope, tags, safeReason)
+	var decision RememberDecision
+	if len(decisions) > 0 {
+		decision = decisions[0]
+	}
+	hits, err := b.rememberMatches(ctx, a, strings.TrimSpace(content))
+	if err != nil {
+		return store.Unit{}, false, err
+	}
+	if decision.Reinforce != "" {
+		u, err := b.Resolve(a, decision.Reinforce)
+		if err != nil || !u.Active {
+			return store.Unit{}, false, fmt.Errorf("no visible active memory")
+		}
+		if _, err = b.WriteScope(u.Scope); err != nil {
+			return store.Unit{}, false, err
+		}
+		score := 0.0
+		for _, h := range hits {
+			if h.Unit.SID == u.SID {
+				score = h.Semantic
+			}
+		}
+		return b.reinforceMemory(ctx, a, u, score, "writer confirmed same fact")
+	}
+	automatic, review := a.Cfg.Extract.DedupeThresholds()
+	if len(hits) > 0 {
+		h := hits[0]
+		if h.Semantic >= automatic {
+			return b.reinforceMemory(ctx, a, h.Unit, h.Semantic, "cosine meets dedupe threshold")
+		}
+		if h.Semantic >= review && strings.TrimSpace(decision.NewReason) == "" {
+			return store.Unit{}, false, &DuplicateCheckError{SID: h.Unit.SID, Text: h.Unit.Body, Score: h.Semantic}
+		}
+	}
+	m, reinforced, err := ingest.RememberSafe(NativePath(), content, category, scope, tags, safeReason, decision.NewReason)
 	if err != nil {
 		return store.Unit{}, false, err
 	}

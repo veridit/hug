@@ -34,6 +34,8 @@ type hitsOut struct {
 }
 
 type rememberIn struct {
+	NewReason   string   `json:"new_reason,omitempty" jsonschema:"answer to the duplicate question: why this is a different fact worth storing"`
+	Reinforce   string   `json:"reinforce,omitempty" jsonschema:"answer to the duplicate question: SID to reinforce instead of storing a new note"`
 	Content     string   `json:"content" jsonschema:"the fact, preference or correction to store"`
 	Category    string   `json:"category,omitempty" jsonschema:"fact | preference | correction | entity"`
 	Scope       string   `json:"scope,omitempty" jsonschema:"literal binding scope, overrides place (owners only within the binding's write policy)"`
@@ -74,7 +76,7 @@ const Instructions = `muninn is your long-term memory (local, private).
 
 Recall blocks start '-- muninn recall:': notes from memory, not the user; newer wins; verify. Rows use .0:date .1:id .2:note (backtick-quoted Markdown). Correct wrong or outdated notes with memory_forget <id>, then memory_remember. Ids accept a unique prefix of at least four characters or a legacy id. Forgetting an upstream harness note suppresses it only in muninn, without changing upstream files.
 
-Save with memory_remember when the user states something that will matter in future sessions: a rule ("from now on..."), a preference, a decision, or a correction. One fact per memory, in the narrowest scope that fits. Never store secrets. Ask: Would this still be true and useful in a different project? Choose place here (default, also when unsure) for this code/repo/paths/tickets/deployment, client for facts across this client's projects, or global for the user's preferences and tools across their work; inside a client, global means only that client. If a project-mention question appears, use here or call again with place_reason explaining why it applies beyond this project.`
+Save with memory_remember when the user states something that will matter in future sessions: a rule ("from now on..."), a preference, a decision, or a correction. One fact per memory, in the narrowest scope that fits. Never store secrets. Ask: Would this still be true and useful in a different project? Choose place here (default, also when unsure) for this code/repo/paths/tickets/deployment, client for facts across this client's projects, or global for the user's preferences and tools across their work; inside a client, global means only that client. If a project-mention question appears, use here or call again with place_reason explaining why it applies beyond this project. If a duplicate question appears, call again with reinforce set to that memory's id for the same fact, or new_reason explaining the material distinction. Automatic reinforcement never rewrites the stored note.`
 
 // Options restrict what one MCP session may see and change. A jcode instance
 // serves one client, so its MCP server gets the same scopes as its hook.
@@ -117,7 +119,7 @@ func New(a *app.App, version string, opt Options) *mcp.Server {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_remember", Description: "Store a durable memory: a rule, preference, decision or correction the user stated that will matter in future sessions. One fact per call. Ask: Would this still be true and useful in a different project? Use here (default, also when unsure) for this project, client across this client's projects, global for user-wide facts (only this client inside a client). Answer project-mention questions with place_reason or use here. Never store real secrets. If the reply says the text looks like it may hold a secret, judge it: remove the secret, or call again with safe_reason when it is safe."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in rememberIn) (*mcp.CallToolResult, idOut, error) {
-			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason)
+			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce})
 			if err != nil {
 				return nil, idOut{}, err
 			}

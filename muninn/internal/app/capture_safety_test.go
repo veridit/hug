@@ -12,7 +12,7 @@ import (
 func TestCaptureIgnoresOwnerReadView(t *testing.T) {
 	f := scopetest.New(t)
 	b := f.Bind(t, "alpha").View(true, nil)
-	m := fakeCapture(t, f, line("fact", "high", "Quartz owner view remains bound.", ""))
+	m := fakeCapture(t, f, line("fact", "high", "Quartz owner view remains permanently bound here.", ""))
 	if _, err := b.Capture(context.Background(), f.App, captureOpts("owner-view")); err != nil {
 		t.Fatal(err)
 	}
@@ -25,7 +25,7 @@ func TestCaptureIgnoresOwnerReadView(t *testing.T) {
 
 func TestCaptureSessionCannotChangeClientBinding(t *testing.T) {
 	f := scopetest.New(t)
-	m := fakeCapture(t, f, line("fact", "high", "Quartz client policy.", ""))
+	m := fakeCapture(t, f, line("fact", "high", "Quartz client policy remains durable for deployments.", ""))
 	o := captureOpts("fixed-binding")
 	b := f.Bind(t, "client")
 	if _, err := b.Capture(context.Background(), f.App, o); err != nil {
@@ -42,7 +42,7 @@ func TestCaptureSessionCannotChangeClientBinding(t *testing.T) {
 func TestCaptureFinalObserverWaitsForLeaseWithinBudget(t *testing.T) {
 	f := scopetest.New(t)
 	b := f.Bind(t, "alpha")
-	m := fakeCapture(t, f, line("fact", "high", "Quartz final preference.", ""))
+	m := fakeCapture(t, f, line("fact", "high", "Quartz final preference remains durable for deployments.", ""))
 	_, err := f.App.DB.Exec(`INSERT INTO capture_lock(id,token,expires_ns) VALUES(1,'fixture',?)`, time.Now().Add(time.Minute).UnixNano())
 	if err != nil {
 		t.Fatal(err)

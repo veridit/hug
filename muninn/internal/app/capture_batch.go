@@ -47,7 +47,7 @@ func (c *captureBatch) exact(b Binding, a *App, candidate extract.Candidate) (Ca
 			continue
 		}
 		candidate.Supersedes = ""
-		return CaptureAction{Candidate: candidate, Action: "reinforce", Reason: "exact duplicate in native chunk snapshot", Target: m.SID}, true
+		return CaptureAction{Candidate: candidate, Action: "reinforce", Reason: "exact duplicate in native chunk snapshot", Target: m.SID, Score: 1}, true
 	}
 	return CaptureAction{}, false
 }
@@ -93,7 +93,7 @@ func (c *captureBatch) apply(ctx context.Context, b Binding, a *App, scope strin
 		// Recovery must replay the stored intent, not a regenerated model's
 		// potentially different target at the same deterministic position.
 		retireTarget = m.CaptureSupersedes
-	} else if !c.receipts[receipt] && action.Action == "supersede" && action.Trust == "high" {
+	} else if !c.receipts[receipt] && action.Action == "supersede" && action.Trust == "high" && action.Category == "correction" {
 		retireTarget = action.Target
 	}
 	if retireTarget != "" {
@@ -196,7 +196,7 @@ func (c *captureBatch) apply(ctx context.Context, b Binding, a *App, scope strin
 		return nil
 	}
 	c.byID[id] = len(c.mems)
-	c.mems = append(c.mems, ingest.NativeMemory{ID: id, Origin: action.Origin, Content: action.Content, Category: action.Category, Trust: action.Trust, Scope: scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureEvents: []string{receipt}, CaptureSupersedes: retireTarget, SafeReason: action.SafeReason})
+	c.mems = append(c.mems, ingest.NativeMemory{ID: id, Origin: action.Origin, Content: action.Content, Category: action.Category, Trust: action.Trust, Scope: scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureEvents: []string{receipt}, CaptureSupersedes: retireTarget, Updates: action.Updates, SafeReason: action.SafeReason})
 	c.receipts[receipt] = true
 	c.dirty = true
 	return nil

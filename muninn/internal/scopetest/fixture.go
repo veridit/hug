@@ -70,7 +70,7 @@ func New(t *testing.T) *Fixture {
 		{"Beta", "jcode@beta"}, {"BetaProject", "jcode@beta:project"},
 		{"Shared", "global"}, {"Personal", "personal"}, {"JcodeGlobal", "jcode@global"}, {"Engram", "engram:frogs"}, {"Named", "sql_saga"}, {"Project", "project:matrix-project"}, {"OtherProject", "project:other-project"}, {"Client", "client:acme"}, {"ClientProject", "client:acme:client-project"}, {"OtherClient", "client:other"},
 	} {
-		mems = append(mems, ingest.NativeMemory{ID: "mem_matrix_" + row.name, Content: "Matrix(" + row.name + ") quartz deployment policy marker", Category: "fact", Scope: row.scope, Active: true, Created: time.Now(), Updated: time.Now()})
+		mems = append(mems, ingest.NativeMemory{ID: "mem_matrix_" + row.name, Content: "Matrix(" + row.name + ") quartz deployment policy marker remains durable", Category: "fact", Scope: row.scope, Active: true, Created: time.Now(), Updated: time.Now()})
 	}
 	if err := ingest.SaveNative(app.NativePath(), mems); err != nil {
 		t.Fatal(err)
@@ -114,7 +114,7 @@ func New(t *testing.T) *Fixture {
 			}
 		}
 		path := filepath.Join(dir, row.name+".md")
-		body := "Matrix(" + row.name + ") quartz deployment policy marker"
+		body := "Matrix(" + row.name + ") quartz deployment policy marker remains durable"
 		if err := os.WriteFile(path, []byte("# "+row.name+"\n"+body), 0600); err != nil {
 			t.Fatal(err)
 		}
@@ -191,7 +191,7 @@ func (f *Fixture) Clean(t *testing.T, binding, out string) {
 	}
 	for _, name := range hidden {
 		u := f.Units[name]
-		for _, secret := range []string{"Matrix(" + name + ") quartz deployment policy marker", u.SID, u.Key} {
+		for _, secret := range []string{"Matrix(" + name + ") quartz deployment policy marker remains durable", u.SID, u.Key} {
 			if strings.Contains(out, secret) {
 				t.Fatalf("%s leaked %s (%q):\n%s", binding, name, secret, out)
 			}
@@ -210,7 +210,7 @@ func (f *Fixture) Read(t *testing.T, binding, out string) {
 		expected = append(expected, "Personal", "JcodeGlobal", "Engram", "Named", "OutsideNote")
 	}
 	for _, name := range expected {
-		if !strings.Contains(out, "Matrix("+name+") quartz deployment policy marker") {
+		if !strings.Contains(out, "Matrix("+name+") quartz deployment policy marker remains durable") {
 			t.Fatalf("%s missing %s:\n%s", binding, name, out)
 		}
 	}
