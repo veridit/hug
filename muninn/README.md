@@ -526,7 +526,20 @@ muninn rescope k7m2qx --to personal --cross-client
 
 Rescoping retains the sid and upstream identity. It requires an owned native
 memory (import an upstream harness note first), never edits harness files,
-and is not exposed over MCP, hooks, TUI or HTTP. These are memory visibility
+and is not exposed over MCP, hooks, TUI or HTTP.
+
+To move many memories, put one `<memory-id> <scope>` per line in a file and
+pass it with `--from` (`-` reads stdin). Every line is checked first, and one
+bad line moves nothing. The memories file is written once and the index is
+rebuilt once, with capture held off. A backup of the original file goes to
+`tidy/rescope-*` under the data folder:
+
+```sh
+muninn rescope --from moves.tsv --dry-run
+muninn rescope --from moves.tsv
+```
+
+These are memory visibility
 rules, not an operating-system sandbox against code that opens the local
 memory files directly.
 

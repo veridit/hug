@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -292,23 +293,94 @@ func forgetCmd() *cobra.Command {
 }
 
 func rescopeCmd() *cobra.Command {
-	var target string
-	var cross bool
-	c := &cobra.Command{Use: "rescope <memory-id>", Short: "Admin: move an owned memory to another scope", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
-		return withApp(func(ctx context.Context, a *app.App) error {
-			cwd, _ := os.Getwd()
-			id, err := a.Bound("", cwd).Rescope(ctx, a, args[0], target, cross)
-			if err != nil {
-				return err
+	var target, from string
+	var cross, dry bool
+	c := &cobra.Command{Use: "rescope <memory-id> --to SCOPE | --from FILE", Short: "Admin: move owned memories to another scope (one, or a batch from a file)",
+		Example: "  muninn rescope k7m2qx --to project:rc-0b343f3c990286d6\n  muninn rescope --from moves.tsv --dry-run   # lines: <memory-id> <scope>, # comments\n  cut -f1,3 plan.tsv | muninn rescope --from -",
+		Args: func(_ *cobra.Command, args []string) error {
+			if from != "" {
+				if len(args) != 0 || target != "" {
+					return fmt.Errorf("--from takes no memory id or --to; put both on each line: <memory-id> <scope>")
+				}
+				return nil
 			}
-			fmt.Printf("rescoped %s to %s\n", id, target)
+			if len(args) != 1 || target == "" {
+				return fmt.Errorf("give <memory-id> --to SCOPE, or --from FILE for a batch")
+			}
 			return nil
-		})
-	}}
+		}, RunE: func(_ *cobra.Command, args []string) error {
+			return withApp(func(ctx context.Context, a *app.App) error {
+				cwd, _ := os.Getwd()
+				if from != "" {
+					items, err := readRescopeItems(from)
+					if err != nil {
+						return err
+					}
+					res, err := a.Bound("", cwd).RescopeBatch(ctx, a, items, cross, dry)
+					if err != nil {
+						return err
+					}
+					counts := map[string]int{}
+					for _, m := range res.Moved {
+						counts[m.Target]++
+					}
+					verb := "rescoped"
+					if dry {
+						verb = "would rescope"
+					}
+					for t, n := range counts {
+						fmt.Printf("%s %d to %s\n", verb, n, t)
+					}
+					fmt.Printf("%s %d memories\n", verb, len(res.Moved))
+					if res.Backup != "" {
+						fmt.Printf("backup: %s (each file next to a .path naming where it goes back)\n", res.Backup)
+					}
+					return nil
+				}
+				id, err := a.Bound("", cwd).Rescope(ctx, a, args[0], target, cross)
+				if err != nil {
+					return err
+				}
+				fmt.Printf("rescoped %s to %s\n", id, target)
+				return nil
+			})
+		}}
 	c.Flags().StringVar(&target, "to", "", "literal target scope")
 	c.Flags().BoolVar(&cross, "cross-client", false, "admin approval to cross a client boundary")
-	c.MarkFlagRequired("to")
+	c.Flags().StringVar(&from, "from", "", "batch: file of '<memory-id> <scope>' lines ('-' for stdin); all checked first, one write, one reindex")
+	c.Flags().BoolVar(&dry, "dry-run", false, "with --from: check every line and print counts without writing")
 	return c
+}
+
+// readRescopeItems reads "<memory-id> <scope>" lines, separated by tabs or
+// spaces. Blank lines and lines starting with # are skipped.
+func readRescopeItems(path string) ([]app.RescopeItem, error) {
+	var raw []byte
+	var err error
+	if path == "-" {
+		raw, err = io.ReadAll(os.Stdin)
+	} else {
+		raw, err = os.ReadFile(path)
+	}
+	if err != nil {
+		return nil, err
+	}
+	var items []app.RescopeItem
+	for n, line := range strings.Split(string(raw), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		f := strings.Fields(line)
+		if len(f) != 2 {
+			return nil, fmt.Errorf("%s line %d: want '<memory-id> <scope>', got %q", path, n+1, line)
+		}
+		items = append(items, app.RescopeItem{Ref: f[0], Target: f[1]})
+	}
+	if len(items) == 0 {
+		return nil, fmt.Errorf("%s: no moves found", path)
+	}
+	return items, nil
 }
 
 func showCmd() *cobra.Command {

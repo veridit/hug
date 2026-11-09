@@ -30,13 +30,6 @@ func (b Binding) rescope(ctx context.Context, a *App, ref, target string, crossC
 	if err != nil {
 		return "", fmt.Errorf("no visible memory")
 	}
-	clientOf := func(scope string) string {
-		if !strings.HasPrefix(scope, "client:") {
-			return ""
-		}
-		name, _, _ := strings.Cut(strings.TrimPrefix(scope, "client:"), ":")
-		return name
-	}
 	crossing := clientOf(u.Scope) != clientOf(target)
 	if crossing && !crossClient {
 		return "", fmt.Errorf("crossing a client boundary requires --cross-client")
