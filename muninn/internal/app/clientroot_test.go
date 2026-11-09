@@ -95,7 +95,7 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 		t.Fatal(err)
 	}
 	add("legacy-file-alias", "jcode@old-name", fileAlias, "jcode", a.Scope())
-	add("hashed-markdown", "notes", filepath.Join(root, ".jcode", "memory", "projects", harness.JcodeProjectHash(b.Root)+".json"), "markdown", "client:acme")
+	add("hashed-markdown", "notes", filepath.Join(root, ".jcode", "memory", "projects", harness.JcodeProjectHash(filepath.Join(root, "markdown-only"))+".json"), "markdown", "client:acme")
 	legacy("legacy-b", b.Root, b.Scope())
 	legacy("legacy-folder", folder, folderScope)
 	// A non-jcode source that happens to have a hashed name is not a folder store.
@@ -170,6 +170,22 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 			}
 			scopetest.Pass(t, "client-root-legacy.SQL-Go", tc.name)
 		})
+	}
+	// Source paths are unique in the index, but their importer kind can change.
+	// Refresh must not reuse a previous kind's folder-store classification.
+	for _, tc := range []struct {
+		kind, scope string
+	}{
+		{"markdown", "client:acme"},
+		{"jcode", b.Scope()},
+	} {
+		if _, err := f.App.DB.Exec("UPDATE sources SET kind=? WHERE id=?", tc.kind, units["legacy-b"].SourceID); err != nil {
+			t.Fatal(err)
+		}
+		binding := f.App.Bound(filepath.Join(home, ".jcode"), root)
+		if scope, ok := binding.ScopeFor(units["legacy-b"]); !ok || scope != tc.scope {
+			t.Fatalf("changed source kind=%s scope=%s visible=%t want=%s", tc.kind, scope, ok, tc.scope)
+		}
 	}
 	// Tidy uses exactly the same resolver without changing stored scopes or ids.
 	graph, err := tidy.ReadGraph(context.Background(), f.App.DB.Path)

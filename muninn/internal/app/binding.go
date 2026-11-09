@@ -394,8 +394,8 @@ func (a *App) sourceClients(client string, all bool, own map[string]string) (map
 			out[s.id] = "!native"
 			continue
 		}
-		// Hash recognition depends on source kind. The same physical file
-		// can be indexed by two importers without sharing that classification.
+		// Hash recognition depends on source kind, which can change between
+		// refreshes without changing the unique source path.
 		key := s.kind + "\x00" + s.path
 		root, ok := a.sourceRoots[key]
 		if !ok {
