@@ -57,7 +57,9 @@ func (a *App) Bound(jcodeHome, cwd string) Binding {
 	}
 	b := a.bound(jcodeHome, cwd)
 	b.context = &bindingContext{home: jcodeHome, cwd: cwd}
-	return b.Refresh(a)
+	// Already resolved above. Refresh would repeat project identity discovery
+	// (including git subprocesses) before anything could have changed.
+	return b.withSources(a)
 }
 
 // Refresh discovers newly indexed sources while keeping an owner's explicit
@@ -68,6 +70,10 @@ func (b Binding) Refresh(a *App) Binding {
 		fresh.context = c
 		b = fresh
 	}
+	return b.withSources(a)
+}
+
+func (b Binding) withSources(a *App) Binding {
 	if b.Err == nil {
 		b.sourceClients, b.sourceScopes, b.Err = a.sourceClients(b.Client, b.legacyAll, b.legacyOwn)
 	}
