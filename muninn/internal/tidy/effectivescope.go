@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/veridit/muninn/internal/config"
 
 	"github.com/veridit/muninn/internal/project"
 	"github.com/veridit/muninn/internal/store"
@@ -18,7 +19,7 @@ func readEffectiveScopes(ctx context.Context, tx *sql.Tx, units []store.Unit) (m
 		wanted[u.SourceID] = true
 	}
 	scopes := map[int64]string{}
-	var resolver project.ClientScopes
+	cache := project.LoadLegacyCache(config.DataDir())
 	rows, err := tx.QueryContext(ctx, `SELECT id,path,kind FROM sources`)
 	if err != nil {
 		return nil, err
@@ -39,7 +40,7 @@ func readEffectiveScopes(ctx context.Context, tx *sql.Tx, units []store.Unit) (m
 			return nil, fmt.Errorf("effective scope for source %d: %w", id, e)
 		}
 		if client != "" {
-			scopes[id] = resolver.Scope(path, kind, client, root)
+			scopes[id], _ = project.ClientSourceScope(cache, path, kind, client, root, project.LegacyStoreHash(path, kind), true, nil)
 		}
 	}
 	err = rows.Err()

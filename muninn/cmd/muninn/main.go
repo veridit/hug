@@ -117,6 +117,9 @@ func indexCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if err := a.RebuildLegacyFolders(ctx); err != nil {
+				return fmt.Errorf("legacy folder cache: %w", err)
+			}
 			fmt.Println(st)
 			if st.EmbedErr != nil {
 				fmt.Fprintln(os.Stderr, "embedding skipped:", st.EmbedErr)

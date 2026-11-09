@@ -11,6 +11,8 @@
 *.db-shm
 *.sqlite
 *.sqlite3
+# Derived client-folder ownership, rebuilt by index/serve and never synced.
+legacy-folders.json
 /data/
 /export/
 *.memories.json

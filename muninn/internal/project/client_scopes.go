@@ -46,6 +46,7 @@ func (r *ClientScopes) Scope(path, kind, client, root string) string {
 	if scope, ok := r.scopes[key]; ok {
 		return scope
 	}
+	original := path
 	if physical, err := filepath.EvalSymlinks(path); err == nil {
 		path = physical
 	}
@@ -61,10 +62,12 @@ func (r *ClientScopes) Scope(path, kind, client, root string) string {
 	if r.folders == nil {
 		r.folders = map[string]map[string]string{}
 	}
-	folders, ok := r.folders[root]
+	alias := sourceRootAlias(original, root)
+	folderKey := root + "\x00" + alias
+	folders, ok := r.folders[folderKey]
 	if !ok {
-		folders = clientFolders(root)
-		r.folders[root] = folders
+		folders = clientFolders(root, alias)
+		r.folders[folderKey] = folders
 	}
 	scope := top
 	if dir := folders[hash]; dir != "" && dir != root {
@@ -76,6 +79,22 @@ func (r *ClientScopes) Scope(path, kind, client, root string) string {
 	}
 	r.scopes[key] = scope
 	return scope
+}
+
+// Recover the lexical root spelling from a source under a symlinked client.
+// An arbitrary file symlink outside a client is not a root alias.
+func sourceRootAlias(path, root string) string {
+	if strings.HasPrefix(path, root+string(filepath.Separator)) {
+		return ""
+	}
+	for d := filepath.Dir(path); ; d = filepath.Dir(d) {
+		if physical, err := filepath.EvalSymlinks(d); err == nil && physical == root {
+			return d
+		}
+		if filepath.Dir(d) == d {
+			return ""
+		}
+	}
 }
 
 // Match the same identity as Find, sharing git identities between hashes
@@ -108,13 +127,24 @@ func (r *ClientScopes) folderScope(dir, root, client string) string {
 // work (16,384 entries). Symlinks are hashed in their original spelling and
 // physical spelling, but followed only inside this root and never in a cycle.
 // Unresolved/out-of-budget hashes intentionally retain client-top ownership.
-func clientFolders(root string) map[string]string {
+func clientFolders(root string, aliases ...string) map[string]string {
 	out := map[string]string{}
 	home, _ := os.UserHomeDir()
-	add := func(path, physical string) {
+	addPath := func(path, physical string) {
 		out[harness.JcodeProjectHash(path)] = physical
 		if rel, err := filepath.Rel(home, path); home != "" && err == nil && rel != "." && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
 			out[harness.JcodeProjectHash("~/"+rel)] = physical
+		}
+	}
+	add := func(path, physical string) {
+		addPath(path, physical)
+		for _, alias := range aliases {
+			if alias == "" {
+				continue
+			}
+			if rel, err := filepath.Rel(root, path); err == nil {
+				addPath(filepath.Join(alias, rel), physical)
+			}
 		}
 	}
 	budget := 16384

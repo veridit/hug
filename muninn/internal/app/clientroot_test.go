@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/veridit/muninn/internal/config"
 	"github.com/veridit/muninn/internal/harness"
 	"github.com/veridit/muninn/internal/project"
 	"github.com/veridit/muninn/internal/scopetest"
@@ -78,12 +79,26 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 	legacy("legacy-a-sub", sub, a.Scope())
 	legacy("legacy-a-alias", alias, a.Scope())
 	legacy("legacy-a-tilde", "~/client/project-a", a.Scope())
+	rootAlias := filepath.Join(home, "client-link")
+	if err := os.Symlink(root, rootAlias); err != nil {
+		t.Fatal(err)
+	}
+	aliasHash := harness.JcodeProjectHash(filepath.Join(rootAlias, "project-a"))
+	add("legacy-root-alias", "jcode@old-name:"+aliasHash, filepath.Join(rootAlias, ".jcode", "memory", "projects", aliasHash+".json"), "jcode", a.Scope())
+	fileAlias := filepath.Join(home, "external-source.json")
+	if err := os.Symlink(filepath.Join(root, ".jcode", "memory", "projects", harness.JcodeProjectHash(a.Root)+".json"), fileAlias); err != nil {
+		t.Fatal(err)
+	}
+	add("legacy-file-alias", "jcode@old-name", fileAlias, "jcode", a.Scope())
 	legacy("legacy-b", b.Root, b.Scope())
 	legacy("legacy-folder", folder, folderScope)
 	// A non-jcode source that happens to have a hashed name is not a folder store.
 	add("client-note", "notes", filepath.Join(root, "note.md"), "markdown", "client:acme")
+	if err := f.App.RebuildLegacyFolders(context.Background()); err != nil {
+		t.Fatal(err)
+	}
 	top := []string{"top", "legacy-root", "legacy-unknown", "client-note"}
-	ownA := []string{"native-a", "legacy-a", "legacy-a-sub", "legacy-a-alias", "legacy-a-tilde"}
+	ownA := []string{"native-a", "legacy-a", "legacy-a-sub", "legacy-a-alias", "legacy-a-tilde", "legacy-root-alias", "legacy-file-alias"}
 	ownB := []string{"native-b", "legacy-b"}
 	ownFolder := []string{"native-folder", "legacy-folder"}
 	tests := []struct {
@@ -168,4 +183,35 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 		t.Fatal("plain folder identity was created")
 	}
 	scopetest.Pass(t, "client-root-legacy.tidy-identity", "all")
+	cachePath := filepath.Join(config.DataDir(), project.LegacyCacheFile)
+	if err := os.Remove(cachePath); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		cwd  string
+		sees map[string]bool
+	}{
+		{root, map[string]bool{"legacy-a": true, "legacy-b": true, "legacy-folder": true, "legacy-unknown": true, "legacy-root": true}},
+		{a.Root, map[string]bool{"legacy-a": true, "legacy-root": true}},
+		{sub, map[string]bool{"legacy-a": true, "legacy-a-sub": true, "legacy-root": true}},
+		{folder, map[string]bool{"legacy-folder": true, "legacy-root": true}},
+	} {
+		binding := f.App.Bound(filepath.Join(home, ".jcode"), tc.cwd)
+		where, args := binding.SQL("u.scope", "u.source_id")
+		for _, name := range []string{"legacy-a", "legacy-b", "legacy-folder", "legacy-unknown", "legacy-root"} {
+			u := units[name]
+			_, visible := binding.Present(u)
+			if visible != tc.sees[name] {
+				t.Errorf("cache absent cwd=%s %s visible=%t", tc.cwd, name, visible)
+			}
+			var n int
+			if err := f.App.DB.QueryRow("SELECT count(*) FROM units u WHERE id=? AND ("+where+")", append([]any{u.ID}, args...)...).Scan(&n); err != nil || (n == 1) != visible {
+				t.Fatalf("absent SQL/Go %s %d %t %v", name, n, visible, err)
+			}
+		}
+	}
+	if _, err := os.Stat(cachePath); !os.IsNotExist(err) {
+		t.Fatal("read path regenerated cache", err)
+	}
+	scopetest.Pass(t, "client-root-legacy.missing-cache", "root/project/folder")
 }

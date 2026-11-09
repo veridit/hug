@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 
 	"github.com/veridit/muninn/internal/app"
 	"github.com/veridit/muninn/internal/index"
+	"github.com/veridit/muninn/internal/project"
 )
 
 // Watch reindexes (debounced) whenever a watched source changes. Directories
@@ -60,16 +62,26 @@ func Watch(ctx context.Context, a *app.App, mu *sync.Mutex, logf func(string, ..
 		if st.Added+st.Changed+st.Removed > 0 {
 			logf("reindex: %s", st)
 		}
+		if err := a.RebuildLegacyFolders(ctx); err != nil {
+			logf("legacy folder cache: %v", err)
+		}
 	}
 	run()
 	var timer *time.Timer
+	maintenance := time.NewTicker(5 * time.Minute)
+	defer maintenance.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
+		case <-maintenance.C:
+			run()
 		case ev, ok := <-w.Events:
 			if !ok {
 				return nil
+			}
+			if filepath.Base(ev.Name) == project.LegacyCacheFile || strings.HasPrefix(filepath.Base(ev.Name), ".legacy-folders-") {
+				continue
 			}
 			if filepath.Ext(ev.Name) != ".json" && filepath.Ext(ev.Name) != ".md" {
 				continue

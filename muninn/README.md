@@ -519,12 +519,25 @@ presented at their folder's effective scope: `client:<name>:<project-id>` within
 a project, otherwise `client:<name>:folder:<absolute-path>`. The root's store
 and unknown or deleted folders stay at `client:<name>` top level. Other
 non-native client sources keep that top-level overlay. Folder hashes are
-resolved by a process-local breadth-first walk, at most three directory levels
-and 16,384 entries, skipping `.git`, `node_modules`, `vendor`, `.muninn` and
-`.muninn-notes`. Both physical paths and `~/` forms are tried, with in-client
-symlink aliases supported. Out-of-budget hashes stay at the top level, never
-silently disappear. Nothing is persisted in the index or harness files.
-Source ancestry and folder ownership are cached only within the process.
+resolved during background maintenance (`muninn index`, or `muninn serve` at
+startup, on source changes and every five minutes), at lowered priority (nice
+10). The walk is breadth-first, at most three directory levels and 16,384
+entries, skipping `.git`, `node_modules`, `vendor`, `.muninn` and `.muninn-notes`.
+Both physical paths and `~/` forms are tried, with source-file, in-client and
+client-root symlink aliases supported. Out-of-budget hashes stay at the top
+level after maintenance resolves them as unknown.
+
+The derived, owner-only `legacy-folders.json` lives in the data directory, never
+in the index, a harness file, project sync or git. Replacement is atomic, and
+it is always safe to delete. Missing directories lose their cached ownership
+at read time and are dropped by the next rebuild. A missing, corrupt, expired
+(24-hour) cache or a new source absent from it is not rebuilt on recall: root
+sessions still see every legacy client store, while nested sessions see the
+client top level, the root store and their own cwd/ancestor stores. Other
+unresolved legacy stores stay hidden until maintenance rebuilds the cache.
+This is a deliberate temporary under-show, never a sibling-memory leak.
+Hooks do no recursive walk or additional project identity lookup. Source
+ancestry is cached only within the process.
 Invalid source-root markers hide those sources from every binding.
 
 Only an explicit admin CLI operation can move an owned memory across it:

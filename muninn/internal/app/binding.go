@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/veridit/muninn/internal/config"
 	"github.com/veridit/muninn/internal/harness"
 	"github.com/veridit/muninn/internal/ingest"
 	"github.com/veridit/muninn/internal/project"
@@ -28,6 +29,8 @@ type Binding struct {
 	writeScopes   []string
 	sourceClients map[int64]string
 	sourceScopes  map[int64]string
+	legacyOwn     map[string]string
+	legacyAll     bool
 	context       *bindingContext
 }
 
@@ -66,7 +69,7 @@ func (b Binding) Refresh(a *App) Binding {
 		b = fresh
 	}
 	if b.Err == nil {
-		b.sourceClients, b.sourceScopes, b.Err = a.sourceClients(b.Client)
+		b.sourceClients, b.sourceScopes, b.Err = a.sourceClients(b.Client, b.legacyAll, b.legacyOwn)
 	}
 	return b
 }
@@ -79,6 +82,7 @@ func (a *App) bound(jcodeHome, cwd string) Binding {
 	if client != "" {
 		scope := "client:" + client
 		rules := []string{scope}
+		here, projectRoot := scope, ""
 		physical, err := placementDir(cwd)
 		if err != nil {
 			return Binding{Name: scope, Client: client, Err: err, Scopes: []string{"!*"}, writeScopes: []string{"!*"}}
@@ -86,8 +90,10 @@ func (a *App) bound(jcodeHome, cwd string) Binding {
 		// Root reads include the whole client. Writes retain the original
 		// top-level-only policy. Nested sessions never gain sibling scopes.
 		if physical != clientRoot {
+			here = scope + ":folder:" + physical
 			if p, err := project.Find(physical, false); err == nil && p.Root != clientRoot && FolderOwns(p.Root, physical) {
 				rules = append(rules, p.Scope())
+				here, projectRoot = p.Scope(), p.Root
 			}
 			for dir := physical; dir != clientRoot && filepath.Dir(dir) != dir; dir = filepath.Dir(dir) {
 				if FolderOwns(dir, physical) {
@@ -99,7 +105,7 @@ func (a *App) bound(jcodeHome, cwd string) Binding {
 		if physical == clientRoot {
 			rules = append(rules, scope+":*")
 		}
-		return Binding{Name: scope, Client: client, DefaultScope: scope, Scopes: rules, writeScopes: writes}
+		return Binding{Name: scope, Client: client, DefaultScope: scope, Scopes: rules, writeScopes: writes, legacyAll: physical == clientRoot, legacyOwn: clientFolderStores(cwd, physical, clientRoot, projectRoot, here, scope, writes)}
 	}
 	if jcodeHome == "" {
 		jcodeHome = os.Getenv("JCODE_HOME")
@@ -337,12 +343,13 @@ func (b Binding) Forget(ctx context.Context, a *App, ref string) (ForgetResult, 
 type sourceBoundary struct {
 	client string
 	root   string
+	hash   string
 	err    error
 }
 
 // Cache filesystem ancestry only in this process, never in the index. Native
 // storage pools many scopes, so only non-native paths carry source provenance.
-func (a *App) sourceClients(client string) (map[int64]string, map[int64]string, error) {
+func (a *App) sourceClients(client string, all bool, own map[string]string) (map[int64]string, map[int64]string, error) {
 	rows, err := a.DB.Query(`SELECT id,path,kind FROM sources`)
 	if err != nil {
 		return nil, nil, err
@@ -372,6 +379,10 @@ func (a *App) sourceClients(client string) (map[int64]string, map[int64]string, 
 	}
 	out := map[int64]string{}
 	scopes := map[int64]string{}
+	var cache *project.LegacyCache
+	if client != "" {
+		cache = project.LoadLegacyCache(config.DataDir())
+	}
 	for _, s := range sources {
 		if s.kind == "native" {
 			out[s.id] = "!native"
@@ -380,6 +391,9 @@ func (a *App) sourceClients(client string) (map[int64]string, map[int64]string, 
 		root, ok := a.sourceRoots[s.path]
 		if !ok {
 			root.client, root.root, root.err = project.SourceClientRoot(s.path)
+			if root.client != "" {
+				root.hash = project.LegacyStoreHash(s.path, s.kind)
+			}
 			a.sourceRoots[s.path] = root
 		}
 		if root.err != nil {
@@ -387,7 +401,7 @@ func (a *App) sourceClients(client string) (map[int64]string, map[int64]string, 
 		} else {
 			out[s.id] = root.client
 			if root.client != "" && root.client == client {
-				scopes[s.id] = a.clientScopes.Scope(s.path, s.kind, root.client, root.root)
+				scopes[s.id], _ = project.ClientSourceScope(cache, s.path, s.kind, root.client, root.root, root.hash, all, own)
 			}
 		}
 	}
@@ -412,7 +426,8 @@ func (b Binding) ScopeFor(u store.Unit) (string, bool) {
 			return "", false
 		}
 		if client != "" {
-			return b.sourceScopes[u.SourceID], true
+			scope := b.sourceScopes[u.SourceID]
+			return scope, scope != ""
 		}
 	}
 	return u.Scope, true
@@ -441,7 +456,7 @@ func (b Binding) ScopeExpr(scopeCol, sourceCol string) string {
 	for _, id := range ids {
 		scope := b.sourceScopes[id]
 		if scope == "" {
-			scope = "client:" + b.sourceClients[id]
+			scope = "!unresolved-legacy"
 		}
 		fmt.Fprintf(&out, " WHEN %d THEN '%s'", id, strings.ReplaceAll(scope, "'", "''"))
 	}
