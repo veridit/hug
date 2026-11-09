@@ -17,7 +17,8 @@ func readEffectiveScopes(ctx context.Context, tx *sql.Tx, units []store.Unit) (m
 	for _, u := range units {
 		wanted[u.SourceID] = true
 	}
-	clients := map[int64]string{}
+	scopes := map[int64]string{}
+	var resolver project.ClientScopes
 	rows, err := tx.QueryContext(ctx, `SELECT id,path,kind FROM sources`)
 	if err != nil {
 		return nil, err
@@ -32,12 +33,14 @@ func readEffectiveScopes(ctx context.Context, tx *sql.Tx, units []store.Unit) (m
 		if !wanted[id] || kind == "native" {
 			continue
 		}
-		client, e := project.SourceClient(path)
+		client, root, e := project.SourceClientRoot(path)
 		if e != nil {
 			rows.Close()
 			return nil, fmt.Errorf("effective scope for source %d: %w", id, e)
 		}
-		clients[id] = client
+		if client != "" {
+			scopes[id] = resolver.Scope(path, kind, client, root)
+		}
 	}
 	err = rows.Err()
 	rows.Close()
@@ -47,8 +50,8 @@ func readEffectiveScopes(ctx context.Context, tx *sql.Tx, units []store.Unit) (m
 	out := map[int64]string{}
 	for _, u := range units {
 		out[u.ID] = u.Scope
-		if client := clients[u.SourceID]; client != "" {
-			out[u.ID] = "client:" + client
+		if scope := scopes[u.SourceID]; scope != "" {
+			out[u.ID] = scope
 		}
 	}
 	return out, nil

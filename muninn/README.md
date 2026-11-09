@@ -498,8 +498,10 @@ and fail closed: no memory reads or writes, not a fallback to global.
 The marker wins over `JCODE_HOME` and `--jcode-home`. Within `acme`, a session
 sees `client:acme` plus its own project scope and folder scopes that own its
 working directory, never sibling projects or folders. A session at the client
-root sees only `client:acme`. There are no shared user-global, personal or jcode
-memories. Writes follow the same policy and default to `here`: the project's
+root sees everything in that client: its top level, all projects and folder
+scopes, and its legacy client sources. There are no shared user-global, personal
+or jcode memories. Writes are unchanged, even at the root, and default to `here`:
+the root's `client:acme`, a project's
 `client:acme:<project-id>` or a plain folder's readable
 `client:acme:folder:<absolute-path>`. No project marker is created for placement.
 `--place client` and `--place global` both mean `client:acme`, never personal
@@ -512,9 +514,17 @@ markdown notes, project memory files and jcode memory files under `acme`
 are visible only to `acme`, regardless of their old stored scope. Notes
 outside client roots are never visible inside one. This applies to search,
 related ids, show, recall, stats and injection history without changing ids
-or migrating the index. Legacy non-native client sources are still presented
-at `client:<name>` top level, so this placement change does not reclassify their
-project ownership. Source ancestry is cached only within the process.
+or migrating the index. Legacy jcode `memory/projects/<hash>.json` stores are
+presented at their folder's effective scope: `client:<name>:<project-id>` within
+a project, otherwise `client:<name>:folder:<absolute-path>`. The root's store
+and unknown or deleted folders stay at `client:<name>` top level. Other
+non-native client sources keep that top-level overlay. Folder hashes are
+resolved by a process-local breadth-first walk, at most three directory levels
+and 16,384 entries, skipping `.git`, `node_modules`, `vendor`, `.muninn` and
+`.muninn-notes`. Both physical paths and `~/` forms are tried, with in-client
+symlink aliases supported. Out-of-budget hashes stay at the top level, never
+silently disappear. Nothing is persisted in the index or harness files.
+Source ancestry and folder ownership are cached only within the process.
 Invalid source-root markers hide those sources from every binding.
 
 Only an explicit admin CLI operation can move an owned memory across it:

@@ -138,7 +138,7 @@ func TestClientPlacesDoNotLeakSiblingMemories(t *testing.T) {
 	for i, binding := range []app.Binding{a, b, plain, top} {
 		for j, u := range units {
 			_, err := binding.Resolve(f.App, u.id)
-			if (err == nil) != (i == j) {
+			if (err == nil) != (i == j || i == 3) {
 				t.Fatalf("binding %d reading %d: %v", i, j, err)
 			}
 			_, err = binding.WriteScope(u.scope)
@@ -157,7 +157,7 @@ func TestClientPlacesDoNotLeakSiblingMemories(t *testing.T) {
 		}
 		want := 1
 		if i == 3 {
-			want = 0
+			want = 3
 		}
 		if count != want {
 			t.Fatalf("SQL binding %d count=%d want=%d", i, count, want)

@@ -27,6 +27,7 @@ type Binding struct {
 	Err           error
 	writeScopes   []string
 	sourceClients map[int64]string
+	sourceScopes  map[int64]string
 	context       *bindingContext
 }
 
@@ -65,7 +66,7 @@ func (b Binding) Refresh(a *App) Binding {
 		b = fresh
 	}
 	if b.Err == nil {
-		b.sourceClients, b.Err = a.sourceClients()
+		b.sourceClients, b.sourceScopes, b.Err = a.sourceClients(b.Client)
 	}
 	return b
 }
@@ -82,8 +83,8 @@ func (a *App) bound(jcodeHome, cwd string) Binding {
 		if err != nil {
 			return Binding{Name: scope, Client: client, Err: err, Scopes: []string{"!*"}, writeScopes: []string{"!*"}}
 		}
-		// A client's root is its global, not a project. Other sessions see only
-		// that top level, their own project, and folder scopes that own their cwd.
+		// Root reads include the whole client. Writes retain the original
+		// top-level-only policy. Nested sessions never gain sibling scopes.
 		if physical != clientRoot {
 			if p, err := project.Find(physical, false); err == nil && p.Root != clientRoot && FolderOwns(p.Root, physical) {
 				rules = append(rules, p.Scope())
@@ -94,7 +95,11 @@ func (a *App) bound(jcodeHome, cwd string) Binding {
 				}
 			}
 		}
-		return Binding{Name: scope, Client: client, DefaultScope: scope, Scopes: rules, writeScopes: append([]string(nil), rules...)}
+		writes := append([]string(nil), rules...)
+		if physical == clientRoot {
+			rules = append(rules, scope+":*")
+		}
+		return Binding{Name: scope, Client: client, DefaultScope: scope, Scopes: rules, writeScopes: writes}
 	}
 	if jcodeHome == "" {
 		jcodeHome = os.Getenv("JCODE_HOME")
@@ -331,15 +336,16 @@ func (b Binding) Forget(ctx context.Context, a *App, ref string) (ForgetResult, 
 
 type sourceBoundary struct {
 	client string
+	root   string
 	err    error
 }
 
 // Cache filesystem ancestry only in this process, never in the index. Native
 // storage pools many scopes, so only non-native paths carry source provenance.
-func (a *App) sourceClients() (map[int64]string, error) {
+func (a *App) sourceClients(client string) (map[int64]string, map[int64]string, error) {
 	rows, err := a.DB.Query(`SELECT id,path,kind FROM sources`)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	type source struct {
 		id         int64
@@ -350,14 +356,14 @@ func (a *App) sourceClients() (map[int64]string, error) {
 		var s source
 		if err := rows.Scan(&s.id, &s.path, &s.kind); err != nil {
 			rows.Close()
-			return nil, err
+			return nil, nil, err
 		}
 		sources = append(sources, s)
 	}
 	err = rows.Err()
 	rows.Close()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	a.sourceMu.Lock()
 	defer a.sourceMu.Unlock()
@@ -365,6 +371,7 @@ func (a *App) sourceClients() (map[int64]string, error) {
 		a.sourceRoots = map[string]sourceBoundary{}
 	}
 	out := map[int64]string{}
+	scopes := map[int64]string{}
 	for _, s := range sources {
 		if s.kind == "native" {
 			out[s.id] = "!native"
@@ -372,16 +379,19 @@ func (a *App) sourceClients() (map[int64]string, error) {
 		}
 		root, ok := a.sourceRoots[s.path]
 		if !ok {
-			root.client, root.err = project.SourceClient(s.path)
+			root.client, root.root, root.err = project.SourceClientRoot(s.path)
 			a.sourceRoots[s.path] = root
 		}
 		if root.err != nil {
 			out[s.id] = "!invalid"
 		} else {
 			out[s.id] = root.client
+			if root.client != "" && root.client == client {
+				scopes[s.id] = a.clientScopes.Scope(s.path, s.kind, root.client, root.root)
+			}
 		}
 	}
-	return out, nil
+	return out, scopes, nil
 }
 
 // ScopeFor overlays a physical client's scope without changing stored ids,
@@ -402,7 +412,7 @@ func (b Binding) ScopeFor(u store.Unit) (string, bool) {
 			return "", false
 		}
 		if client != "" {
-			return "client:" + client, true
+			return b.sourceScopes[u.SourceID], true
 		}
 	}
 	return u.Scope, true
@@ -429,7 +439,11 @@ func (b Binding) ScopeExpr(scopeCol, sourceCol string) string {
 	var out strings.Builder
 	out.WriteString("CASE " + sourceCol)
 	for _, id := range ids {
-		fmt.Fprintf(&out, " WHEN %d THEN 'client:%s'", id, b.sourceClients[id])
+		scope := b.sourceScopes[id]
+		if scope == "" {
+			scope = "client:" + b.sourceClients[id]
+		}
+		fmt.Fprintf(&out, " WHEN %d THEN '%s'", id, strings.ReplaceAll(scope, "'", "''"))
 	}
 	out.WriteString(" ELSE " + scopeCol + " END")
 	return out.String()

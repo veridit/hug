@@ -13,6 +13,7 @@ import (
 	"github.com/veridit/muninn/internal/embed"
 	"github.com/veridit/muninn/internal/harness"
 	"github.com/veridit/muninn/internal/index"
+	"github.com/veridit/muninn/internal/project"
 	"github.com/veridit/muninn/internal/recall"
 	"github.com/veridit/muninn/internal/search"
 	"github.com/veridit/muninn/internal/store"
@@ -20,15 +21,16 @@ import (
 
 // App is an opened muninn instance.
 type App struct {
-	sourceMu    sync.Mutex
-	sourceRoots map[string]sourceBoundary
-	Cfg         config.Config
-	DB          *store.DB
-	Embedder    embed.Embedder // nil = keyword-only
-	EmbedNote   string         // which embedder was chosen and why
-	Indexer     *index.Indexer
-	Searcher    *search.Searcher
-	Recall      *recall.Engine
+	sourceMu     sync.Mutex
+	sourceRoots  map[string]sourceBoundary
+	clientScopes project.ClientScopes
+	Cfg          config.Config
+	DB           *store.DB
+	Embedder     embed.Embedder // nil = keyword-only
+	EmbedNote    string         // which embedder was chosen and why
+	Indexer      *index.Indexer
+	Searcher     *search.Searcher
+	Recall       *recall.Engine
 }
 
 // NativePath is muninn's own memory file.

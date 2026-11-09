@@ -15,11 +15,7 @@ var clientName = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]*$`)
 // Resolve the file itself before its directory, including file symlinks, so
 // recall and owner-side analysis agree on the effective scope.
 func SourceClient(path string) (string, error) {
-	physical := path
-	if resolved, err := filepath.EvalSymlinks(physical); err == nil {
-		physical = resolved
-	}
-	client, _, err := ClientRoot(filepath.Dir(physical))
+	client, _, err := SourceClientRoot(path)
 	return client, err
 }
 
