@@ -63,13 +63,13 @@ try:
         if select.select([fd],[],[],0.1)[0]:
             try: screen+=os.read(fd,65536)
             except OSError: pass
-        if b'Huginn' in screen and not quit_sent:
+        if b'HUGINN' in screen and not quit_sent:
             os.write(fd,b'q');quit_sent=True
         done,value=os.waitpid(pid,os.WNOHANG)
         if done: status=value;break
     if status is None:
         os.kill(pid,signal.SIGKILL);os.waitpid(pid,0)
-    assert status is not None and os.waitstatus_to_exitcode(status)==0 and b'Huginn' in screen,screen[-4000:]
+    assert status is not None and os.waitstatus_to_exitcode(status)==0 and b'HUGINN' in screen,screen[-4000:]
 finally: os.close(fd)
 # Real standard-I/O MCP handshake and one tool request.
 p=subprocess.Popen([binary,'mcp'],cwd=repo,env=env,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)

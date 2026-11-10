@@ -1,0 +1,40 @@
+HUGINN · help   60/60 tasks · ! 5 findings
+ overview   [list]   board    lint
+todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+NAVIGATION AND FIND                                     EDIT · every action requires confirmation
+j/k ↑/↓         move / scroll                                           [ / ]       previous / next acceptance or dependency in detail
+gg / < / Home   top                                                     Space       toggle acceptance (default first)
+G / > / End     bottom                                                  Tab + Enter focus dependencies and follow selected task
+ctrl-d / ctrl-u half page down / up                                     t / d / x   take / done / drop task
+PgDn / PgUp     full page down / up                                     J / K       move down / up in global rank order
+h/← Shift-Tab   previous pane / column                                  n           new title, goal and one verification item
+l/→ Tab         next pane / column                                      e           $EDITOR (default vi), then refresh + lint
+Enter           open full task detail                                   Enter / Esc confirm / cancel every editing action
+Esc             back one level, never quits
+q / ctrl-c      quit (q only outside inputs)
+/               live find; Enter keeps, Esc clears
+:               palette with command + value completion
+Tab / Enter     complete palette choice; Enter runs complete command
+ctrl-n/p / ↑↓   select palette completion
+?               help overlay, including from inputs
+#               jump by id prefix / TASK-number alias
+f               filter picker: s/t/p/g/l/o
+1 / 2 / 3 / 4   filter todo / doing / done / blocked
+Backspace / F   remove last chip / clear all filters
+o / v / b / !   overview / list / board / lint
+s / y           status / type palette shortcut
+c               clear all filters
+r               refresh files and lint
+
+PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, owner <o>,
+goto <id>, lint, clear, help
+Filter fields: s status, t type, p priority, g group, l label, o owner. Blocked is derived from unmet dependencies and overlaps todo/doing.
+Filters combine.
+
+
+
+
+All tasks · : filters and commands
+
+j/k scroll · gg/G ends · PgUp/PgDn page · Esc back · ? close · q quit

@@ -1,0 +1,24 @@
+HUGINN · filter   15/60 tasks · ! 5 findings
+ overview   [list]   board    lint
+todo 15  ·  doing 0  ·  blocked 7  ·  done 0  ·  dropped 0
+[status:todo ×] · ⌫ last · F clear
+QUICK FILTER · type · counts include your other filters
+type
+
+> bug                          3
+  chore                        3
+  docs                         3
+  feature                      3
+  spike                        3
+
+
+
+
+
+
+
+
+
+status=todo · Esc clears
+
+j/k ↑↓ pick · Enter add chip · type narrow · Esc back · ? help

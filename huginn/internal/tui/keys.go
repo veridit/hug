@@ -31,7 +31,7 @@ func (m model) keyBar() string {
 			hints = append(hints, hint("q", "quit"))
 		}
 	case m.confirm != "":
-		hints = []bkey.Binding{hint("Enter", "confirm"), hint("Esc", "cancel"), hint("?", "help")}
+		hints = []bkey.Binding{hint("Enter", "confirm"), hint("Esc", "cancel"), hint("?", "help"), hint("q", "quit")}
 	case m.prompt == ":":
 		hints = []bkey.Binding{hint("Tab/Enter", "complete/run"), hint("↑↓ ^n/^p", "pick"), hint("Esc", "close"), hint("?", "help")}
 	case m.prompt == "#":
@@ -47,6 +47,13 @@ func (m model) keyBar() string {
 	default:
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
+	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" {
+		if m.detail {
+			hints = []bkey.Binding{hint("j/k", "scroll"), hint("[/]", "pick"), hint("Tab", "section"), hint("Esc", "back"), hint("?", "help"), hint("q", "quit")}
+		} else {
+			hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
+		}
+	}
 	h := m.helpModel
 	h.ShortSeparator = " · "
 	return h.ShortHelpView(hints)
@@ -60,7 +67,7 @@ func (m model) helpText() string {
 		hint("/", "live find; Enter keeps, Esc clears"), hint(":", "palette with command + value completion"),
 		hint("Tab / Enter", "complete palette choice; Enter runs complete command"),
 		hint("ctrl-n/p / ↑↓", "select palette completion"), hint("?", "help overlay, including from inputs"),
-		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter: s status, t type, p priority, g group, l label, o owner"),
+		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/o"),
 		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
 		hint("o / v / b / !", "overview / list / board / lint"),
 		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh files and lint"),
@@ -71,6 +78,9 @@ func (m model) helpText() string {
 		hint("t / d / x", "take / done / drop task"), hint("J / K", "move down / up in global rank order"),
 		hint("n", "new title, goal and one verification item"), hint("e", "$EDITOR (default vi), then refresh + lint"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),
+	}
+	if m.width >= 130 {
+		return m.styles.accent.Render("NAVIGATION AND FIND                                     EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation, actions}) + "\n\n" + wrap("PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, owner <o>, goto <id>, lint, clear, help", m.width) + "\n" + wrap("Filter fields: s status, t type, p priority, g group, l label, o owner. Blocked is derived from unmet dependencies and overlaps todo/doing. Filters combine.", m.width)
 	}
 	return m.styles.accent.Render("NAVIGATION AND FIND") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation}) + "\n\n" +
 		m.styles.accent.Render("EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{actions}) + "\n\n" +

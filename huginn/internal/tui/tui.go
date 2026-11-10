@@ -120,13 +120,13 @@ func (m *model) applyFilter() {
 	m.visible = nil
 	for _, t := range m.all {
 		status := m.filter.Status
-		if status == "blocked" && !m.blocked[t.Path] || status != "" && status != "blocked" && t.Status != status || m.filter.Type != "" && t.Type != m.filter.Type || m.filter.Group != "" && t.Group != m.filter.Group {
+		if status == "blocked" && !m.blocked[t.Path] || status != "" && status != "blocked" && t.Status != status || m.filter.Type != "" && !optionalMatches(t.Type, m.filter.Type) || m.filter.Group != "" && !groupMatches(t.Group, m.filter.Group) {
 			continue
 		}
 		if m.filter.Label != "" && !contains(t.Labels, m.filter.Label) {
 			continue
 		}
-		if m.filter.Priority != "" && t.Priority != m.filter.Priority || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
+		if m.filter.Priority != "" && !optionalMatches(t.Priority, m.filter.Priority) || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
 			continue
 		}
 		if m.query != "" && !strings.Contains(strings.ToLower(t.Slug+" "+t.Title+" "+t.ID+" "+strings.Join(t.Assignee, " ")), strings.ToLower(m.query)) {
@@ -135,6 +135,7 @@ func (m *model) applyFilter() {
 		m.visible = append(m.visible, t)
 	}
 	m.offset = 0
+	m.cursor = 0
 	m.clamp()
 }
 
@@ -404,6 +405,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if m.confirm != "" {
+			if k == "q" {
+				return m, tea.Quit
+			}
 			if k == "enter" {
 				cmd := m.executeAction()
 				return m, cmd
@@ -430,6 +434,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		m.pendingG = false
+		// Filtering remains available from detail, without interfering with focused inputs.
+		if k == "F" {
+			m.clearFilters()
+			m.syncDetail()
+			return m, nil
+		}
+		if k == "backspace" {
+			m.removeChip()
+			m.syncDetail()
+			return m, nil
+		}
+		if k == "1" || k == "2" || k == "3" || k == "4" {
+			m.setFilter("status", []string{"todo", "doing", "done", "blocked"}[int(k[0]-'1')])
+			m.setView("list")
+			return m, nil
+		}
 		if m.detail {
 			switch k {
 			case "[", "]":
@@ -461,6 +481,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.openInput(k, "")
 			case "f":
 				return m, m.openFilter()
+			case "n":
+				return m, m.openInput("new title", "")
+			case "s":
+				return m, m.openInput(":", "status ")
+			case "y":
+				return m, m.openInput(":", "type ")
 			case "r":
 				if t, ok := m.selected(); ok {
 					m.refresh(t.Path)
@@ -510,12 +536,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.openInput("#", "")
 		case k == "f":
 			return m, m.openFilter()
-		case k == "backspace":
-			m.removeChip()
-		case k == "1" || k == "2" || k == "3" || k == "4":
-			m.setFilter("status", []string{"todo", "doing", "done", "blocked"}[int(k[0]-'1')])
-			m.setView("list")
-		case k == "c" || k == "F":
+		case k == "c":
 			m.clearFilters()
 		case k == "b":
 			m.setView("board")

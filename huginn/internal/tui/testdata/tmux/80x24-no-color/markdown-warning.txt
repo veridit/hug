@@ -1,0 +1,24 @@
+HUGINN · detail   60/60 tasks · ! 5 findings
+ overview   [list]   board    lint
+todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+Render compiler-lang task detail without storage markers
+[done]  [feature]  [medium]  [000003]  group:compiler  owner:unassigned
+created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task-detail-with…
+⚠ Acceptance requires at least one item
+────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+Provide compiler-lang support with  huginn  and clear sections.
+
+• Render Markdown, not source
+• Keep the header fixed while scrolling
+
+Read the guide https://example.invalid/guide.
+
+fmt.Println("rendered code")
+
+no acceptance items yet
+
+Detail · 0% · Esc back
+
+j/k scroll · [/] pick · Tab section · Esc back · ? help · q quit

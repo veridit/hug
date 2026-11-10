@@ -15,6 +15,12 @@ var filterFields = []struct{ letter, name string }{{"s", "status"}, {"t", "type"
 func ownerMatches(t task.Task, value string) bool {
 	return value == "(unassigned)" && len(t.Assignee) == 0 || contains(t.Assignee, value)
 }
+func groupMatches(value, filter string) bool {
+	return value == filter || value == "" && filter == "(root)"
+}
+func optionalMatches(value, filter string) bool {
+	return value == filter || value == "" && filter == "(none)"
+}
 func (m *model) writeFilter(name, value string) {
 	switch name {
 	case "status":
@@ -206,7 +212,7 @@ func (m model) jumpChoices() []task.Task {
 	return choices
 }
 func (m *model) openTask(t task.Task) {
-	m.clearFilters()
+	// Jump is global, but returning from detail retains the user's filter context.
 	m.setView("list")
 	for i, v := range m.visible {
 		if v.Path == t.Path {

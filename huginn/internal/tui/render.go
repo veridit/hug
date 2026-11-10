@@ -85,7 +85,7 @@ func (m model) taskRow(t task.Task, width int, selected, compact bool) string {
 	row += styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(oneLine(t.Title), max(0, titleWidth))
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {
-		row = m.styles.dim.Render(ansi.Strip(row))
+		row = pointer + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 10, width)))
 	}
 	if selected {
 		row = m.styles.selected.Render(row)
@@ -250,13 +250,19 @@ func (m model) View() string {
 	if m.prompt == ":" {
 		mode = "palette"
 	}
+	if m.prompt == "#" {
+		mode = "jump"
+	}
+	if m.prompt == "filter" {
+		mode = "filter"
+	}
 	if m.help {
 		mode = "help"
 	}
 	header := m.styles.accent.Render("HUGINN · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
 	tabs := []string{}
 	for _, v := range []string{"overview", "list", "board", "lint"} {
-		s := fmt.Sprintf("%s", v)
+		s := v
 		if v == m.view {
 			s = m.styles.selected.Render("[" + s + "]")
 		} else {
@@ -311,6 +317,10 @@ func (m model) View() string {
 		lines = append(lines, line)
 	}
 	footer := m.message
+	messageLines := strings.Split(m.message, "\n")
+	if len(messageLines) > 1 {
+		footer = messageLines[0]
+	}
 	if footer == "" {
 		filters := []string{}
 		for _, f := range []struct{ k, v string }{{"status", m.filter.Status}, {"type", m.filter.Type}, {"group", m.filter.Group}, {"label", m.filter.Label}, {"find", m.query}} {
@@ -328,6 +338,14 @@ func (m model) View() string {
 	}
 	lines = append(lines, m.styles.dim.Render(oneLine(footer)))
 	inputLine := ""
+	if len(messageLines) > 1 {
+		for _, line := range messageLines[1:] {
+			if strings.HasPrefix(line, "fix: ") {
+				inputLine = safe(line)
+				break
+			}
+		}
+	}
 	if m.confirm != "" {
 		inputLine = "Confirm " + actionNames[m.confirm] + " "
 		if m.confirm == "n" {

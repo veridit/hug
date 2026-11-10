@@ -38,10 +38,16 @@ func (m model) values(name string) []string {
 			set[t.ID] = true
 		case "type":
 			set[t.Type] = true
+			if t.Type == "" {
+				set["(none)"] = true
+			}
 		case "status":
 			set[t.Status] = true
 		case "priority":
 			set[t.Priority] = true
+			if t.Priority == "" {
+				set["(none)"] = true
+			}
 		case "owner":
 			if len(t.Assignee) == 0 {
 				set["(unassigned)"] = true
@@ -51,6 +57,9 @@ func (m model) values(name string) []string {
 			}
 		case "group":
 			set[t.Group] = true
+			if t.Group == "" {
+				set["(root)"] = true
+			}
 		case "label":
 			for _, s := range t.Labels {
 				set[s] = true
