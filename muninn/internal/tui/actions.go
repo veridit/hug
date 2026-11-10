@@ -289,6 +289,7 @@ func (m *model) command(value string) tea.Cmd {
 			break
 		}
 		m.block = r.block
+		m.sizeViewport()
 		m.viewport.SetContent(wrapText(r.block, m.width-4))
 		m.viewport.GotoTop()
 	default:

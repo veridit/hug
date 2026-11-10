@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import shlex
 import shutil
+import signal
 import sqlite3
 import subprocess
 import tempfile
@@ -21,11 +22,15 @@ import time
 import uuid
 
 REPO = Path(__file__).resolve().parent.parent
+TMUX_SOCKET = None
 
 
 def command(*args, **kwargs):
+    # Never share the owner's or another worker's server/configuration.
+    if args[0] == "tmux" and TMUX_SOCKET:
+        args = (args[0], "-L", TMUX_SOCKET, "-f", "/dev/null", *args[1:])
     return subprocess.run(args, check=True, text=True, stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE, **kwargs).stdout
+                          stderr=subprocess.PIPE, timeout=30, **kwargs).stdout
 
 
 def fixture(root, binary):
@@ -76,10 +81,12 @@ def normalized(screen, root, project):
 
 
 def exercise(binary, root, width, height, no_color):
+    global TMUX_SOCKET
     env, project, ids = fixture(root, binary)
     if no_color:
         env["NO_COLOR"] = "1"
     name = "muninn-tui-" + uuid.uuid4().hex[:12]
+    TMUX_SOCKET = name
     exports = [f"{k}={v}" for k, v in env.items() if k in {
         "HOME", "MUNINN_HOME", "JCODE_HOME", "MUNINN_NO_EMBED", "TERM", "COLORTERM",
         "COLORFGBG", "GOMAXPROCS", "GOFLAGS", "TZ", "LANG", "NO_COLOR"}]
@@ -162,7 +169,8 @@ def exercise(binary, root, width, height, no_color):
             raise AssertionError("q did not exit cleanly: " + dead)
         return shots
     finally:
-        subprocess.run(["tmux", "kill-session", "-t", name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["tmux", "-L", name, "kill-server"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+        TMUX_SOCKET = None
 
 
 def main():
@@ -195,5 +203,11 @@ def main():
     return bool(failures)
 
 
+def interrupted(*_):
+    raise KeyboardInterrupt
+
+
 if __name__ == "__main__":
+    # A coordinator cancelling this harness still reaches the tmux cleanup.
+    signal.signal(signal.SIGTERM, interrupted)
     raise SystemExit(main())

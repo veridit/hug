@@ -73,7 +73,8 @@ Stale fingerprints still fail closed. Skips are local to the current TUI session
 
 ## Presentation
 
-Dark accent is `#00bfff`, with readable adaptive light variants. Category colours
+Dark accent is `#00bfff`, light accent `#006c9c`. Accent, dim text and selection
+background tokens match huginn's shared palette. Category colours
 are stable, and places use a stable FNV-1a colour mapping. Ids/dates/scores are dim.
 `NO_COLOR` suppresses foreground/background colours without changing the layout.
 All clipping uses display-cell widths, not byte counts. Resize keeps fixed
@@ -96,5 +97,7 @@ nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 go build -o /path/in/scratch/muninn ./c
 nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 python3 scripts/tui-pty.py /path/in/scratch/muninn --update
 ```
 
-All fixtures have a throwaway HOME/MUNINN_HOME and every tmux session is killed
-in a finally block. No checked-in golden contains live memories.
+All fixtures have a throwaway HOME/MUNINN_HOME and a private tmux socket with no
+owner configuration. Every test-owned server is killed in a finally block,
+including on SIGTERM. Commands have bounded timeouts. No checked-in golden
+contains live memories.

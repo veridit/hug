@@ -278,6 +278,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			offset := m.viewport.YOffset
 			m.viewport.SetContent(m.detailText())
 			m.viewport.SetYOffset(offset)
+		} else if m.screen == preview {
+			offset := m.viewport.YOffset
+			m.viewport.SetContent(wrapText(m.block, m.width-4))
+			m.viewport.SetYOffset(offset)
 		}
 		return m, nil
 	case snapshot:

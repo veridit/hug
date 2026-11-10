@@ -37,7 +37,7 @@ func renderMarkdown(s string, width int) string {
 	}
 	colour := "#00bfff"
 	if !lipgloss.HasDarkBackground() {
-		colour = "#0077aa"
+		colour = "#006c9c"
 	}
 	zero := uint(0)
 	style.Document.Margin = &zero

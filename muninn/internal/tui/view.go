@@ -14,9 +14,12 @@ import (
 	"github.com/veridit/muninn/internal/search"
 )
 
-var accent = lipgloss.AdaptiveColor{Dark: "#00bfff", Light: "#0077aa"}
-var muted = lipgloss.AdaptiveColor{Dark: "#888888", Light: "#666666"}
-var typeColours = []lipgloss.AdaptiveColor{{Dark: "#5fafdf", Light: "#005f87"}, {Dark: "#af87ff", Light: "#6f35aa"}, {Dark: "#5fd7af", Light: "#007755"}, {Dark: "#ffaf5f", Light: "#995000"}, {Dark: "#ff87af", Light: "#aa3366"}}
+// Shared huginn/muninn palette. Categories and places have their own stable
+// meanings, but accent, dim text and selection use identical adaptive tokens.
+var accent = lipgloss.AdaptiveColor{Dark: "#00bfff", Light: "#006c9c"}
+var muted = lipgloss.AdaptiveColor{Dark: "#8795a8", Light: "#586474"}
+var selection = lipgloss.AdaptiveColor{Dark: "#16364a", Light: "#d8eef8"}
+var typeColours = []lipgloss.AdaptiveColor{{Dark: "#75bfff", Light: "#215da1"}, {Dark: "#bc9dff", Light: "#7143a8"}, {Dark: "#8ac987", Light: "#31732c"}, {Dark: "#ffb454", Light: "#995200"}, {Dark: "#ff8585", Light: "#ae2525"}}
 
 func paint(s string, c lipgloss.TerminalColor, bold bool) string {
 	if os.Getenv("NO_COLOR") != "" {
@@ -79,7 +82,9 @@ func selectedLine(s string, selected bool, w int) string {
 	marker := "  "
 	if selected {
 		marker = "› "
-		s = paint(s, accent, true)
+		if os.Getenv("NO_COLOR") == "" {
+			return lipgloss.NewStyle().Background(selection).Bold(true).Render(pad(marker+s, w))
+		}
 	}
 	return fit(marker+s, w)
 }
