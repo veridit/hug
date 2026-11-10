@@ -1,0 +1,24 @@
+muninn · ~/project                                         6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Needs a look · dupes ────────────────────────────────────────────────────────┐
+│Cluster 1 / 1 · y merges into keeper · n skips · Esc stops                    │
+│                                                                              │
+│KEEP fkyvwc                                                                   │
+│Use ripgrep for repository searches, not recursive grep.                      │
+│                                                                              │
+│RETIRE gwdjet                                                                 │
+│Use ripgrep for repository searches, not recursive grep.                      │
+│                                                                              │
+│Approval preserves keeper text and combines strength. Existing tidy apply cre…│
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+j/k scroll enter full memory y approve n skip esc stop ? help q quit

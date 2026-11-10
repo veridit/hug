@@ -1,0 +1,40 @@
+muninn · ~/project                                                                                                     6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Find ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│/ banana · filter kept                                                                                                                    │
+│  id       date       place              category   score  text                                                                           │
+│› pka0js   2026-11-09 scope:global       fact         4.95 Bake banana cake at 175 degrees. Use a skewer to check the centre.             │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+j/k move · h/l pane · enter open · / find · : command · ? help · esc back · q quit · e correct · m move · x retire

@@ -19,51 +19,62 @@ func TestScopeMatrixTUI(t *testing.T) {
 				cwd = f.ClientCwd
 			}
 			t.Chdir(cwd)
-			m := newModel(f.App)
-			m.width = 400
-			m.height = 40
-			m.input.SetValue(scopetest.Query)
+			m := startModel(t, f.App, 400, 40)
+			f.Clean(t, binding, m.View())
+			scopetest.Pass(t, "tui.overview", binding)
+			m.command("search " + scopetest.Query)
 			var tm tea.Model = drive(t, m, m.run()())
 			f.Read(t, binding, tm.View())
 			if !strings.Contains(tm.View(), b.Name) {
-				t.Fatal("binding missing from status")
+				t.Fatal("binding missing")
 			}
 			scopetest.Pass(t, "tui.search", binding)
-			tm = drive(t, tm, tea.KeyMsg{Type: tea.KeyTab})
-			f.Read(t, binding, tm.View())
+			preview := tm.(model)
+			preview.command("recall " + scopetest.Query)
+			f.Read(t, binding, preview.View())
 			scopetest.Pass(t, "tui.recall", binding)
-			tm = drive(t, tm, tea.KeyMsg{Type: tea.KeyTab})
-			tm = drive(t, tm, tea.KeyMsg{Type: tea.KeyCtrlR})
+			tm = keypress(t, tm, tea.KeyCtrlR)
 			f.Clean(t, binding, tm.View())
 			if !strings.Contains(tm.View(), "quartz deployment") {
 				t.Fatal("empty related")
 			}
 			scopetest.Pass(t, "tui.related", binding)
-			// A stale selection or injected id cannot use either action to bypass binding.
 			for _, ref := range f.HiddenRefs(binding) {
 				u, err := f.App.DB.Resolve(ref)
 				if err != nil {
 					t.Fatal(err)
 				}
-				for _, key := range []tea.KeyType{tea.KeyCtrlR, tea.KeyCtrlD} {
+				for _, key := range []string{"related", "x", "e", "m"} {
 					forged := tm.(model)
+					forged.screen = listing
+					forged.focus = noInput
 					forged.results = []search.Result{{Unit: u}}
 					forged.cursor = 0
-					tm = drive(t, forged, tea.KeyMsg{Type: key})
+					if key == "related" {
+						tm = keypress(t, forged, tea.KeyCtrlR)
+					} else {
+						tm = typeText(t, forged, key)
+					}
 					f.Clean(t, binding, tm.View())
+					if tm.(model).focus != noInput {
+						t.Fatalf("hidden %s reached owner action", key)
+					}
+				}
+				forged := tm.(model)
+				forged.command("goto " + ref)
+				f.Clean(t, binding, forged.View())
+				if forged.screen == detail {
+					t.Fatal("hidden goto opened")
 				}
 				if got, err := f.App.DB.Resolve(u.SID); err != nil || !got.Active {
 					t.Fatal("hidden memory changed")
 				}
 			}
-			// Forget a legitimate selection through the real key handler.
-			m = newModel(f.App)
-			m.width = 400
-			m.height = 40
-			m.input.SetValue(scopetest.Query)
-			tm = drive(t, m, m.run()())
+			m = startModel(t, f.App, 400, 40)
+			cmd := m.command("search " + scopetest.Query)
+			tm = drive(t, m, cmd())
 			selected := tm.(model).results[0].Unit
-			tm = drive(t, tm, tea.KeyMsg{Type: tea.KeyCtrlD})
+			tm = typeText(t, tm, "xy")
 			f.Clean(t, binding, tm.View())
 			if !strings.Contains(tm.View(), "forgot ") {
 				t.Fatal(tm.View())
@@ -75,12 +86,12 @@ func TestScopeMatrixTUI(t *testing.T) {
 		})
 	}
 }
-
 func TestScopeMatrixInvalidClientTUI(t *testing.T) {
 	f := scopetest.New(t)
 	f.Invalidate(t)
 	m := newModel(f.App)
 	m.input.SetValue(scopetest.Query)
+	m.filter = scopetest.Query
 	var tm tea.Model = drive(t, m, m.run()())
 	if !strings.Contains(tm.View(), "invalid client name") {
 		t.Fatal(tm.View())

@@ -1,0 +1,24 @@
+muninn · ~/project                                         6 memories · 4 places
+[category:fact] · ⌫ remove · F clear
+┌ Filtered memories ───────────────────────────────────────────────────────────┐
+│  id      date       place        category   text                             │
+│› fkyvwc  2026-11-09 scope:global fact       Use ripgrep for repository searc…│
+│  gwdjet  2026-11-09 scope:global fact       Use ripgrep for repository searc…│
+│  pka0js  2026-11-09 scope:global fact       Bake banana cake at 175 degrees.…│
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+j/k row h/l pane ↵ open / find # id f filter : cmd ? help esc back q quit

@@ -1,0 +1,40 @@
+muninn · ~/project                                                                                                     6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Places ────────────────────────┐┌ Recent ────────────────────────────────────────────────────────────────────────────────────────────────┐
+│› here  terminal-fixture       1││  11-09 15:30 preference Tea is best after lunch.                                                       │
+│  global                       0││  11-09 14:30 fact       Use ripgrep for repository searches, not recursive grep.                       │
+│  scope:global                 4││  11-09 13:30 fact       Use ripgrep for repository searches, not recursive grep.                       │
+│  personal                     1││  11-09 12:30 preference Prefer Vim navigation and a visible overview before searching.                 │
+│                                ││  11-09 11:30 decision   Deploys go through staging first. **Always** review the checklist. Use `releas…│
+│                                ││  11-09 10:30 fact       Bake banana cake at 175 degrees. Use a skewer to check the centre.             │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+│                                ││                                                                                                        │
+└────────────────────────────────┘└────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌ Told agents lately ──────────────────────────────────────────────────────────────┐┌ Needs a look ────────────────────────────────────────┐
+│  11-09 12:30 crab       pka0js  Bake banana cake at 175 degrees. Use a skewer to…││  1 look like duplicates                              │
+│                                                                                  ││  Run muninn tidy scan                                │
+│                                                                                  ││                                                      │
+│                                                                                  ││  Enter reviews · no automatic changes                │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+└──────────────────────────────────────────────────────────────────────────────────┘└──────────────────────────────────────────────────────┘
+jcode@global · 6 visible memories
+j/k move · h/l pane · enter open · / find · : command · ? help · esc back · q quit

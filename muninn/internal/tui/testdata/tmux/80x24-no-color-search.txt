@@ -1,0 +1,24 @@
+muninn · ~/project                                         6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Find ────────────────────────────────────────────────────────────────────────┐
+│/ banana · filter kept                                                        │
+│  id      date       place        category   score  text                      │
+│› pka0js  2026-11-09 scope:global fact         4.95 Bake banana cake at 175 d…│
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+j/k row h/l pane ↵ open / find # id f filter : cmd ? help esc back q quit

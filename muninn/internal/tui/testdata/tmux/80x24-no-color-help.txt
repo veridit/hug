@@ -1,0 +1,24 @@
+muninn · ~/project                                         6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Help · Vim keys · Esc always goes back ──────────────────────────────────────┐
+│j/k ↓/↑ row · gg/G </> Home/End top/bottom                                    │
+│ctrl-d/u half page · PgDn/Up full page                                        │
+│h/l ←/→ Tab/Shift-Tab pane · Enter opens                                      │
+│Esc closes input, clears filter, detail, then overview                        │
+│/ live find · Enter keeps · Esc clears                                        │
+│# id/prefix jump · Enter opens · Tab completes                                │
+│f picker: p place, c category, d date · j/k + Enter                           │
+│1/2/3/4 here/client/global/all · ⌫ chip · F clears                            │
+│: palette · Tab/Enter completes, next Enter runs                              │
+│ctrl-n/p ↑/↓ completion · ctrl-e explain · ctrl-r related                     │
+│e correction · ctrl-s reviews · m move · x retire                             │
+│y confirms owner action · n/Esc cancels                                       │
+│Tidy: y approve · n skip · Esc stop (backed up)                               │
+│q quit outside input · ctrl-c quit · ?/Esc closes help                        │
+│Commands: overview recent place <p> told search <q>                           │
+│category <c> date <d> today yesterday dupes moves                             │
+│goto <id> clear recall <q> (read-only preview)                                │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+?/esc close help
