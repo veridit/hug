@@ -1,0 +1,40 @@
+muninn · ~/project                                                                                                     6 memories · 4 places
+[place:here] · ⌫ remove · F clear
+┌ Recent ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  id       date       place              category   text                                                                                  │
+│› 3tenwg   2026-11-09 here               decision   Deploys go through staging first. **Always** review the checklist. Use `release verif…│
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+j/k move · h/l pane · enter open · / find · : command · ? help · esc back · q quit · e correct · m move · x retire

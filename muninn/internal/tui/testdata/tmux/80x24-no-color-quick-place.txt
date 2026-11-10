@@ -1,0 +1,24 @@
+muninn · ~/project                                         6 memories · 4 places
+[place:here] · ⌫ remove · F clear
+┌ Recent ──────────────────────────────────────────────────────────────────────┐
+│  id      date       place        category   text                             │
+│› 3tenwg  2026-11-09 here         decision   Deploys go through staging first…│
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+j/k row h/l pane ↵ open / find # id f filter : cmd ? help esc back q quit

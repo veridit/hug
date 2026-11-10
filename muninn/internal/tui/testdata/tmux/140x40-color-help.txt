@@ -37,4 +37,4 @@ Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
 │                                                                                                                                          │
 └──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 jcode@global · 1 results in <time>
-?/esc close help
+?/esc close help · q quit
