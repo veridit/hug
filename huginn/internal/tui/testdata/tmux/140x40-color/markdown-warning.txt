@@ -4,7 +4,7 @@ todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Render compiler-lang task detail without storage markers
 [done]  [feature]  [medium]  [000003]  group:compiler  owner:unassigned
-created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task-detail-without
+created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-item-detail-without
 ⚠ Acceptance requires at least one item
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION

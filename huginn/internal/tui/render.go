@@ -148,7 +148,11 @@ func (m model) overviewText() string {
 		if len(indices) > per {
 			label += fmt.Sprintf(" · %d–%d shown", start+1, end)
 		}
-		lines = append(lines, m.styles.accent.Render(fit(label, m.width)))
+		label = m.styles.accent.Render(fit(label, m.width))
+		if p == m.pane {
+			label = m.styles.selected.Render(label)
+		}
+		lines = append(lines, label)
 		if len(indices) == 0 {
 			lines = append(lines, m.styles.dim.Render("  None"))
 		}

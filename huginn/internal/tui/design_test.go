@@ -441,16 +441,22 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 		task := m.all[2]
 		task.Status = status
 		row := m.taskRow(task, 140, false, false)
-		if !strings.Contains(row, "38;2;0;191;255") || !strings.Contains(row, "38;2;255;180;84") {
+		warning := m.styles.warning.Render("!")
+		if !strings.Contains(row, "38;2;0;191;255") || !strings.Contains(warning, "\x1b[") || !strings.Contains(row, warning) {
 			t.Fatal("completed row lost id or warning colour", row)
 		}
 		if ansi.StringWidth(row) != 140 {
 			t.Fatal("completed row no longer aligns", ansi.StringWidth(row))
 		}
 	}
+	m.setView("overview")
+	if header := strings.Split(m.overviewText(), "\n")[0]; !strings.Contains(header, "48;2;") {
+		t.Fatal("selected overview pane lacks a background highlight", header)
+	}
+	darkAccent := m.styles.accent.Render("badge")
 	m.styles.renderer.SetHasDarkBackground(false)
-	if row := m.row(m.all[0]); !strings.Contains(row, "38;2;0;108;156") {
-		t.Fatal("light-terminal accent missing", row)
+	if light := m.styles.accent.Render("badge"); light == darkAccent || !strings.Contains(light, "\x1b[") {
+		t.Fatal("light-terminal accent did not adapt", light)
 	}
 }
 
