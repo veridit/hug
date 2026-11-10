@@ -10,6 +10,8 @@ import (
 	"time"
 
 	_ "modernc.org/sqlite"
+
+	"github.com/veridit/muninn/internal/flock"
 )
 
 // Unit is one recallable piece of text: a memory, or a markdown section.
@@ -165,14 +167,26 @@ func Open(path string) (*DB, error) {
 	// commits, and SQLite returns SQLITE_BUSY at once without consulting
 	// busy_timeout (2026-11-06: 4 concurrent capture hooks failed this way).
 	// BEGIN IMMEDIATE takes the write lock up front and waits instead.
-	dsn := "file:" + path + "?_pragma=journal_mode(WAL)&_pragma=busy_timeout(30000)&_pragma=foreign_keys(1)&_pragma=synchronous(NORMAL)" +
+	// busy_timeout comes first: pragmas run in order, and switching a new
+	// database to WAL needs a lock (2026-11-10: two first runs at once failed
+	// "schema: database is locked" when busy_timeout came second).
+	dsn := "file:" + path + "?_pragma=busy_timeout(30000)&_pragma=journal_mode(WAL)&_pragma=foreign_keys(1)&_pragma=synchronous(NORMAL)" +
 		"&_pragma=mmap_size(1073741824)&_pragma=cache_size(-32768)&_txlock=immediate"
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, err
 	}
 	db.SetMaxOpenConns(1) // single writer; WAL lets other processes read
-	if _, err := db.Exec(schema); err != nil {
+	// Two processes creating the schema at once got SQLITE_BUSY despite
+	// busy_timeout (2026-11-10, two first runs in parallel). Take turns.
+	unlockInit, err := flock.Acquire(path + ".init.lock")
+	if err != nil {
+		db.Close()
+		return nil, err
+	}
+	_, err = db.Exec(schema)
+	unlockInit()
+	if err != nil {
 		db.Close()
 		return nil, fmt.Errorf("schema: %w", err)
 	}

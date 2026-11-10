@@ -205,6 +205,11 @@ func RememberSafe(path, content, category, scope string, tags []string, safeReas
 	if scope == "" {
 		scope = "global"
 	}
+	unlock, err := LockNative(path)
+	if err != nil {
+		return NativeMemory{}, false, err
+	}
+	defer unlock()
 	mems, err := LoadNative(path)
 	if err != nil {
 		return NativeMemory{}, false, err
@@ -234,6 +239,11 @@ func RememberSafe(path, content, category, scope string, tags []string, safeReas
 
 // Forget deactivates a memory by id (kept on disk, excluded from recall).
 func Forget(path, id string) (bool, error) {
+	unlock, err := LockNative(path)
+	if err != nil {
+		return false, err
+	}
+	defer unlock()
 	mems, err := LoadNative(path)
 	if err != nil {
 		return false, err

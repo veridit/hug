@@ -63,9 +63,14 @@ func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out sto
 	}
 	files := map[string][]ingest.NativeMemory{}
 	var originals []tidyFile
+	locks := nativeLocks{}
+	defer locks.release()
 	load := func(path string) error {
 		if _, ok := files[path]; ok {
 			return nil
+		}
+		if e := locks.hold(path); e != nil {
+			return e
 		}
 		raw, e := os.ReadFile(path)
 		if e != nil && !errors.Is(e, os.ErrNotExist) {
@@ -145,7 +150,7 @@ func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out sto
 	wasSuppressed := a.DB.IsSuppressed(u.SID)
 	defer func() {
 		if err != nil {
-			err = errors.Join(err, restoreTidyFiles(originals))
+			err = errors.Join(err, locks.restore(originals))
 			if !wasSuppressed {
 				_, e := a.DB.Exec(`DELETE FROM suppressed WHERE sid=?`, u.SID)
 				err = errors.Join(err, e)
@@ -159,6 +164,7 @@ func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out sto
 			return out, backup, err
 		}
 	}
+	locks.release()
 	if err = a.DB.Suppress(u.SID); err != nil {
 		return out, backup, err
 	}

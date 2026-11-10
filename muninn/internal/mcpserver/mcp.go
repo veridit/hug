@@ -168,15 +168,21 @@ func New(a *app.App, version string, opt Options) *mcp.Server {
 			return text(st), st, err
 		})
 
-	mcp.AddTool(s, &mcp.Tool{Name: "memory_recall", Description: "The automatic-recall block muninn would inject for a message (thresholded, at most a few memories, may be empty)."},
+	mcp.AddTool(s, &mcp.Tool{Name: "memory_recall", Description: "The automatic-recall block muninn would inject for a message (thresholded, at most a few memories, may be empty). " +
+		"A harness adapter that calls this on every user message should pass a stable session id, as the CLI hooks do, so memories already shown in that session are not repeated."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in struct {
 			Message string `json:"message"`
+			Session string `json:"session,omitempty" jsonschema:"stable id of the conversation; omit for a one-off lookup"`
 		}) (*mcp.CallToolResult, recall.Response, error) {
 			opt := opt.Refresh(a)
 			if opt.Err != nil {
 				return nil, recall.Response{}, opt.Err
 			}
-			resp, err := a.Recall.Recall(ctx, recall.Request{Message: in.Message, Harness: "mcp", Scopes: opt.Scopes, ScopeFor: opt.ScopeFor})
+			session := ""
+			if s := strings.TrimSpace(in.Session); s != "" {
+				session = "mcp:" + s
+			}
+			resp, err := a.Recall.Recall(ctx, recall.Request{Session: session, Message: in.Message, Harness: "mcp", Scopes: opt.Scopes, ScopeFor: opt.ScopeFor})
 			if err != nil {
 				return nil, recall.Response{}, err
 			}

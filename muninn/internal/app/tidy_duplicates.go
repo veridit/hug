@@ -86,9 +86,16 @@ func (a *App) applyDuplicates(ctx context.Context, p tidy.Plan, dry bool) (resul
 	}
 	files := map[string][]ingest.NativeMemory{}
 	var originals []tidyFile
+	locks := nativeLocks{}
+	defer locks.release()
 	load := func(path string) error {
 		if _, ok := files[path]; ok {
 			return nil
+		}
+		if !dry {
+			if e := locks.hold(path); e != nil {
+				return e
+			}
 		}
 		raw, e := os.ReadFile(path)
 		if e != nil && !errors.Is(e, os.ErrNotExist) {
@@ -201,7 +208,7 @@ func (a *App) applyDuplicates(ctx context.Context, p tidy.Plan, dry bool) (resul
 		if err == nil {
 			return
 		}
-		err = errors.Join(err, restoreTidyFiles(originals))
+		err = errors.Join(err, locks.restore(originals))
 		for _, sid := range receipt.Suppressed {
 			_, e := a.DB.Exec(`DELETE FROM suppressed WHERE sid=?`, sid)
 			err = errors.Join(err, e)
@@ -265,6 +272,7 @@ func (a *App) applyDuplicates(ctx context.Context, p tidy.Plan, dry bool) (resul
 		}
 		receipt.After[path] = rawHash(raw)
 	}
+	locks.release()
 	tx, err := a.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return result, err
@@ -303,6 +311,8 @@ func (a *App) UndoTidy(ctx context.Context, backup string) (err error) {
 		return err
 	}
 	defer release()
+	locks := nativeLocks{}
+	defer locks.release()
 	raw, err := os.ReadFile(filepath.Join(backup, "receipt.json"))
 	if err != nil {
 		return err
@@ -319,6 +329,9 @@ func (a *App) UndoTidy(ctx context.Context, backup string) (err error) {
 		var kind string
 		if err = a.DB.QueryRowContext(ctx, `SELECT kind FROM sources WHERE path=?`, f.Path).Scan(&kind); err != nil || kind != "native" {
 			return fmt.Errorf("undo file is not an owned native source")
+		}
+		if err = locks.hold(f.Path); err != nil {
+			return err
 		}
 		current, e := os.ReadFile(f.Path)
 		if e != nil {
@@ -347,6 +360,7 @@ func (a *App) UndoTidy(ctx context.Context, backup string) (err error) {
 		_ = restoreTidyFiles(applied)
 		return err
 	}
+	locks.release()
 	if _, err = a.Reindex(ctx); err != nil {
 		return err
 	}

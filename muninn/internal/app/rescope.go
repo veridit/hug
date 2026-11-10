@@ -49,23 +49,21 @@ func (b Binding) rescope(ctx context.Context, a *App, ref, target string, crossC
 	if kind != "native" {
 		return "", fmt.Errorf("rescope requires an owned native memory; import the upstream memory first")
 	}
-	mems, err := ingest.LoadNative(path)
-	if err != nil {
-		return "", err
-	}
 	found := false
-	for i := range mems {
-		if mems[i].ID == u.Key {
-			mems[i].Scope = target
-			mems[i].Updated = time.Now().UTC()
-			found = true
+	if err := ingest.UpdateNative(path, func(mems []ingest.NativeMemory) ([]ingest.NativeMemory, bool, error) {
+		for i := range mems {
+			if mems[i].ID == u.Key {
+				mems[i].Scope = target
+				mems[i].Updated = time.Now().UTC()
+				found = true
+			}
 		}
+		return mems, found, nil
+	}); err != nil {
+		return "", err
 	}
 	if !found {
 		return "", fmt.Errorf("no visible memory")
-	}
-	if err := ingest.SaveNative(path, mems); err != nil {
-		return "", err
 	}
 	if reindex {
 		if _, err := a.Reindex(ctx); err != nil {

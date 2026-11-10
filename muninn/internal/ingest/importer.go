@@ -64,6 +64,11 @@ func importID(origin string) string {
 // deletions are not propagated: an import is a copy, not a mirror.
 func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 	var st ImportStats
+	unlock, err := LockNative(path)
+	if err != nil {
+		return st, err
+	}
+	defer unlock()
 	mems, err := LoadNative(path)
 	if err != nil {
 		return st, err
@@ -144,6 +149,11 @@ func clientBoundary(scope string) string {
 // OriginHash is set to the current text. The next merge of that file is then
 // a no-op, and later edits on either side are detected again.
 func MarkSynced(path, scope string, origin func(id string) string) error {
+	unlock, err := LockNative(path)
+	if err != nil {
+		return err
+	}
+	defer unlock()
 	mems, err := LoadNative(path)
 	if err != nil {
 		return err

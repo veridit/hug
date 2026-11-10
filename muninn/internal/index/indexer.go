@@ -211,7 +211,22 @@ func (ix *Indexer) IndexNative(ctx context.Context, path string, st *Stats) ([]i
 		}
 	}
 	if changed {
-		err = ingest.SaveNative(path, loaded)
+		// Write back only the SIDs, onto the file as it is now: another process
+		// may have written since it was read.
+		sids := map[string]string{}
+		for _, m := range loaded {
+			sids[m.ID] = m.SID
+		}
+		err = ingest.UpdateNative(path, func(cur []ingest.NativeMemory) ([]ingest.NativeMemory, bool, error) {
+			save := false
+			for i := range cur {
+				if sid, ok := sids[cur[i].ID]; ok && cur[i].SID != sid {
+					cur[i].SID = sid
+					save = true
+				}
+			}
+			return cur, save, nil
+		})
 	}
 	return dirty, removed, err
 }

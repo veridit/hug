@@ -16,6 +16,7 @@ import (
 // live in the same atomic file write as the memory, before the SQL checkpoint.
 type captureBatch struct {
 	mems        []ingest.NativeMemory
+	base        []ingest.NativeMemory // as loaded; save merges onto the current file
 	byID, bySID map[string]int
 	receipts    map[string]bool
 	retire      map[string]bool   // sid -> has upstream mirrors
@@ -29,6 +30,7 @@ func newCaptureBatch() (*captureBatch, error) {
 		return nil, err
 	}
 	c := &captureBatch{mems: mems, byID: map[string]int{}, bySID: map[string]int{}, receipts: map[string]bool{}, retire: map[string]bool{}, reinforce: map[string]string{}}
+	c.base = ingest.CloneNative(mems)
 	for i, m := range mems {
 		c.byID[m.ID] = i
 		c.bySID[m.SID] = i
@@ -203,9 +205,12 @@ func (c *captureBatch) apply(ctx context.Context, b Binding, a *App, scope strin
 }
 func (c *captureBatch) save(ctx context.Context, a *App) error {
 	if c.dirty {
-		if err := ingest.SaveNative(NativePath(), c.mems); err != nil {
+		// The batch spans model calls, so it does not hold the write lock. Merge
+		// its own edits onto the file as it is now, keeping other writers' work.
+		if err := ingest.MergeSave(NativePath(), c.base, c.mems); err != nil {
 			return err
 		}
+		c.base = ingest.CloneNative(c.mems)
 	}
 	// No reindex here: graph/community work belongs to the next recall/index pass.
 	// Suppress retired units immediately, so a stale index cannot recall them.

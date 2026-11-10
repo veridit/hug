@@ -98,8 +98,23 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 		}
 		defer release()
 	}
+	// Plain remember/forget from other processes do not take the capture
+	// lease, so also hold the store's write lock from load to save.
+	locks := map[string]*ingest.NativeLock{}
+	defer func() {
+		for _, l := range locks {
+			l.Release()
+		}
+	}()
 	loaded := map[string][]ingest.NativeMemory{}
 	for path, moves := range byPath {
+		if !dry {
+			l := &ingest.NativeLock{Path: path}
+			if err := l.Hold(); err != nil {
+				return result, err
+			}
+			locks[path] = l
+		}
 		mems, err := ingest.LoadNative(path)
 		if err != nil {
 			return result, err
@@ -151,6 +166,9 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 		if err := ingest.SaveNative(path, mems); err != nil {
 			return result, err
 		}
+	}
+	for _, l := range locks {
+		l.Release()
 	}
 	if _, err := a.Reindex(ctx); err != nil {
 		return result, err
