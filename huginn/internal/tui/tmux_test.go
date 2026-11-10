@@ -22,17 +22,21 @@ func loadGuard(t *testing.T) {
 	if runtime.GOOS != "darwin" {
 		return
 	}
-	out, err := exec.Command("sysctl", "-n", "vm.loadavg").Output()
-	if err != nil {
-		t.Fatal(err)
-	}
-	values := regexp.MustCompile(`[0-9]+[.,][0-9]+`).FindAllString(string(out), -1)
-	if len(values) != 3 {
-		t.Fatalf("cannot read load guard: %s", out)
-	}
-	load, _ := strconv.ParseFloat(strings.ReplaceAll(values[1], ",", "."), 64)
-	if load > 120 {
-		t.Fatalf("load guard: paused before heavy work, 5-minute load %.2f > 120", load)
+	for {
+		out, err := exec.Command("sysctl", "-n", "vm.loadavg").Output()
+		if err != nil {
+			t.Fatal(err)
+		}
+		values := regexp.MustCompile(`[0-9]+[.,][0-9]+`).FindAllString(string(out), -1)
+		if len(values) != 3 {
+			t.Fatalf("cannot read load guard: %s", out)
+		}
+		load, _ := strconv.ParseFloat(strings.ReplaceAll(values[1], ",", "."), 64)
+		if load <= 120 {
+			return
+		}
+		t.Logf("load guard: paused before heavy work, 5-minute load %.2f > 120", load)
+		time.Sleep(30 * time.Second)
 	}
 }
 func shellQuote(s string) string { return "'" + strings.ReplaceAll(s, "'", "'\\''") + "'" }
