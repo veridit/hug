@@ -40,6 +40,9 @@ func loadGuard(t *testing.T) {
 	}
 }
 func shellQuote(s string) string { return "'" + strings.ReplaceAll(s, "'", "'\\''") + "'" }
+// ansiColour matches any SGR sequence that sets a foreground or background colour.
+var ansiColour = regexp.MustCompile(`\x1b\[(?:[0-9;]*;)?(?:3[0-7]|4[0-7]|9[0-7]|10[0-7]|38;|48;)[0-9;]*m`)
+
 func normalizeCapture(s string) string {
 	lines := strings.Split(strings.TrimSuffix(s, "\n"), "\n")
 	for i := range lines {
@@ -213,7 +216,9 @@ func TestTmuxGolden(t *testing.T) {
 							t.Fatalf("capture exceeds width: %q", line)
 						}
 					}
-					hasColor := strings.Contains(colored, "38;") || strings.Contains(colored, "48;")
+					// Any foreground/background SGR counts: truecolor/256 (38;/48;) on a
+					// rich terminal, basic 30-37/90-97/40-47/100-107 on CI's tmux.
+					hasColor := ansiColour.MatchString(colored)
 					if noColor && hasColor || !noColor && !hasColor {
 						t.Fatalf("colour contract noColor=%v hasColor=%v\n%q", noColor, hasColor, colored)
 					}
