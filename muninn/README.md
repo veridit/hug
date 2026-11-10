@@ -130,6 +130,47 @@ this moves the native copy back and intentionally keeps the upstream suppressed
 to prevent duplicates. Recovery backups retain the original native file bytes;
 ordinary errors roll back files and newly added suppressions.
 
+### Reader-assisted placement
+
+`muninn tidy place` uses the configured cheap capture model to read memories
+whose correct place cannot be inferred from neighbors. It **only writes a review
+plan**, never applies one or refreshes the index:
+
+```sh
+muninn tidy place --from-scope jcode@global \
+  --cwd-origin "$HOME" --cwd-origin "$HOME/Projects" --max 0 --out /private/path/place.json
+muninn tidy place --from-scope 'jcode@global:folderhash' --max 0 --out /private/path/folder.json
+muninn tidy place --sids /private/path/memories.tsv --out /private/path/selected.json
+# Review the JSON and the complete, target-grouped .md summary first.
+muninn tidy apply /private/path/place.json --dry-run
+```
+
+Repeated scopes or origin directories are OR filters, and different filter
+families are ANDed. `--sids` accepts one SID per line or the first column of TSV.
+Origin directories match exact absolute `working_dir` metadata from captured
+jcode sessions, not the current process directory. Missing or conflicting session
+metadata does not match. `--max` defaults to 100 in stable SID order, and 0 means
+all matches. `--out` is required and neither review artifact may already exist.
+
+Candidates are observed git projects beneath `~/Projects` and `~/Veridit/src`,
+with stable scopes, names and their first README line, plus `folder:$HOME` and
+`global` (the user, tools, machine and preferences across work). No project
+marker is created. Calls run sequentially in batches of at most 20 using capture's
+provider, credential loading and call deadline. The plan records tokens, call
+failures and elapsed time, but not a guessed dollar price. Invalid, missing,
+invented-scope or failed answers become `unsure`. Cancellation saves the partial
+plan with remaining entries unsure.
+
+Client-owned memories and known client mentions stay put and are flagged before
+provider egress. Additional client mentions recognized by the reader also stay
+put. Client project descriptions are excluded from unrelated model batches.
+Personal preferences remain global; several named projects remain global unless
+one clearly dominates. All provider input and review text use capture's credential
+mask. A secret-looking memory needs the reader's `safe_reason` before any move
+can be proposed. The full original text remains untouched and fingerprinted.
+Approved non-native moves reuse tidy's exact native-copy plus upstream-suppression
+path, including jcode folder stores.
+
 ## Duplicate prevention and durable extraction
 
 Capture and every remember surface (CLI, MCP, web) compare against **visible memories

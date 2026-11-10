@@ -67,6 +67,8 @@ type Neighbor struct {
 	Text  string  `json:"text"`
 }
 type Entry struct {
+	SafeReason         string              `json:"safe_reason,omitempty"`
+	Flags              []string            `json:"flags,omitempty"`
 	ConcreteVotes      map[string]int      `json:"concrete_votes"`
 	EffectiveSource    string              `json:"effective_source,omitempty"`
 	GroupScores        map[string]int      `json:"group_scores"`
@@ -88,6 +90,7 @@ type Entry struct {
 	Judged             bool                `json:"judged"`
 }
 type Plan struct {
+	Placement              *PlacementReport   `json:"placement,omitempty"`
 	Kind                   string             `json:"kind,omitempty"`
 	DuplicateThreshold     float64            `json:"duplicate_threshold,omitempty"`
 	ReviewThreshold        float64            `json:"review_threshold,omitempty"`
@@ -509,6 +512,9 @@ func (p Plan) Groups() []Group {
 	return out
 }
 func (p Plan) Markdown() string {
+	if p.Placement != nil {
+		return p.placementMarkdown()
+	}
 	if p.Kind == "dupes" {
 		return p.duplicatesMarkdown()
 	}

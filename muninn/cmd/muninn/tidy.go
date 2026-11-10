@@ -178,7 +178,7 @@ func tidyCmd() *cobra.Command {
 			return nil
 		})
 	}}
-	root.AddCommand(scan, apply, duplicatesCmd(), undo)
+	root.AddCommand(scan, apply, placeCmd(), duplicatesCmd(), undo)
 	return root
 }
 
