@@ -39,8 +39,9 @@ func (a *App) tidyLease(ctx context.Context) (func(), error) {
 	return func() { a.DB.Exec(`DELETE FROM capture_lock WHERE id=1 AND token=?`, token) }, nil
 }
 
-// ApplyTidy is deliberately owner CLI only. It is not registered with any agent
-// or network surface. Dry runs neither acquire a write lock nor repair files.
+// ApplyTidy is owner-operated through the CLI or confirmed TUI review. It is not
+// registered with any agent or network surface. Dry runs never repair files or
+// acquire a write lock.
 func (a *App) ApplyTidy(ctx context.Context, p tidy.Plan, only string, dry bool) (result TidyResult, err error) {
 	if p.Kind == "dupes" {
 		if only != "" {

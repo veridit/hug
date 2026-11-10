@@ -12,6 +12,7 @@ import (
 	"github.com/veridit/muninn/internal/app"
 	"github.com/veridit/muninn/internal/config"
 	"github.com/veridit/muninn/internal/ingest"
+	"github.com/veridit/muninn/internal/project"
 	"github.com/veridit/muninn/internal/store"
 	"github.com/veridit/muninn/internal/tidy"
 )
@@ -32,6 +33,7 @@ type snapshot struct {
 	told               []injection
 	dupes, moves       tidy.Plan
 	dupePath, movePath string
+	hereLabel          string
 	err                error
 }
 
@@ -84,6 +86,13 @@ func loadSnapshot(a *app.App, b app.Binding) snapshot {
 		}
 		s.places = append(s.places, placeCount{p, counts[p.Scope]})
 		seen[p.Scope] = true
+		if p.Name == "here" {
+			s.hereLabel = scopeLabel(p.Scope)
+			cwd, _ := os.Getwd()
+			if pr, err := project.Find(cwd, false); err == nil && pr.Scope() == p.Scope {
+				s.hereLabel = pr.Label
+			}
+		}
 	}
 	var scopes []string
 	for scope := range counts {
@@ -145,7 +154,9 @@ func loadSnapshot(a *app.App, b app.Binding) snapshot {
 		}
 		name := names[r.session]
 		if name == "" {
-			name = sessionName(a, r.session)
+			// Hooks namespace the session as harness + ":" + id. Metadata
+			// files and the friendly session_<animal> prefix use the bare id.
+			name = sessionName(a, strings.TrimPrefix(r.session, r.harness+":"))
 			names[r.session] = name
 		}
 		s.told = append(s.told, injection{u, name, r.harness, time.Unix(0, r.ns)})

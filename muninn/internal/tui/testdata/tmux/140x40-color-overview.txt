@@ -1,7 +1,7 @@
 muninn · ~/project                                                                                                     6 memories · 4 places
 Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
 ┌ Places ────────────────────────┐┌ Recent ────────────────────────────────────────────────────────────────────────────────────────────────┐
-│› here  terminal-fixture       1││  11-09 15:30 preference Tea is best after lunch.                                                       │
+│› here  project                1││  11-09 15:30 preference Tea is best after lunch.                                                       │
 │  global                       0││  11-09 14:30 fact       Use ripgrep for repository searches, not recursive grep.                       │
 │  scope:global                 4││  11-09 13:30 fact       Use ripgrep for repository searches, not recursive grep.                       │
 │  personal                     1││  11-09 12:30 preference Prefer Vim navigation and a visible overview before searching.                 │

@@ -22,7 +22,7 @@ func TestScopeMatrixOverviewHistoryAndPlans(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, u := range []string{visible.SID, hidden.SID} {
-		if _, err := f.App.DB.Exec(`INSERT INTO injections(session,unit_id,content_hash,harness,at_ns) SELECT 'session_crab_12345_abcdef',id,content_hash,'jcode',? FROM units WHERE sid=?`, time.Now().UnixNano(), u); err != nil {
+		if _, err := f.App.DB.Exec(`INSERT INTO injections(session,unit_id,content_hash,harness,at_ns) SELECT 'jcode:session_crab_12345_abcdef',id,content_hash,'jcode',? FROM units WHERE sid=?`, time.Now().UnixNano(), u); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -64,6 +64,21 @@ func TestScopeMatrixOverviewHistoryAndPlans(t *testing.T) {
 		t.Fatal("review rendered untrusted plan text instead of current visible memory")
 	}
 	scopetest.Pass(t, "tui.history-and-plans", "alpha")
+}
+
+func TestTUIHereUsesProjectLabelNotIdentityHash(t *testing.T) {
+	cwd := filepath.Join(t.TempDir(), "friendly-repo")
+	if err := os.MkdirAll(filepath.Join(cwd, ".muninn"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(cwd, ".muninn", "project"), []byte("rc-0123456789abcdef\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(cwd)
+	m := startModel(t, testApp(t), 140, 40)
+	if m.snapshot.hereLabel != "friendly-repo" || !strings.Contains(m.View(), "here  friendly-repo") || strings.Contains(m.View(), "rc-0123456789abcdef") {
+		t.Fatal("overview must label here with its project name, not an opaque identity")
+	}
 }
 
 func TestScopeMatrixQuickPlaceShortcuts(t *testing.T) {

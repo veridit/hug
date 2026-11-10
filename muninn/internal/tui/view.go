@@ -220,7 +220,7 @@ func (m model) overviewView(h int) string {
 		p := m.snapshot.places[i]
 		name := p.Name
 		if p.Name == "here" {
-			name += "  " + scopeLabel(p.Scope)
+			name += "  " + m.snapshot.hereLabel
 		}
 		line := pad(colourPlace(fit(name, leftW-10)), leftW-10) + fmt.Sprintf(" %5d", p.count)
 		places = append(places, selectedLine(line, m.pane == 0 && i == m.selections[0], leftW-2))
