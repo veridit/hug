@@ -10,7 +10,7 @@ else
   (cd "$root" && go build -o "$binary" ./cmd/huginn)
 fi
 python3 - "$binary" <<'PY'
-import json, os, pathlib, pty, select, signal, subprocess, sys, tempfile, time
+import fcntl, json, os, pathlib, pty, select, signal, struct, subprocess, sys, tempfile, termios, time
 binary=str(pathlib.Path(sys.argv[1]).resolve())
 base=pathlib.Path(tempfile.mkdtemp(prefix='huginn-e2e-',dir=os.environ.get('JCODE_SCRATCH_DIR')))
 env=dict(os.environ, GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=str(base/'no-global'), GIT_AUTHOR_NAME='Test', GIT_COMMITTER_NAME='Test', GIT_AUTHOR_EMAIL='test@example.invalid', GIT_COMMITTER_EMAIL='test@example.invalid', HUGINN_USER='tester', TERM='xterm-256color')
@@ -56,6 +56,7 @@ run('sync');assert git(repo/'.huginn','rev-parse','HEAD')==git(remote,'rev-parse
 run('tui','--help',json_mode=False);run('tui',code=2)
 pid,fd=pty.fork()
 if pid==0:
+    fcntl.ioctl(0,termios.TIOCSWINSZ,struct.pack('HHHH',24,80,0,0))
     os.chdir(repo);os.execve(binary,[binary,'tui'],env)
 screen=b'';quit_sent=False;deadline=time.monotonic()+12;status=None
 try:

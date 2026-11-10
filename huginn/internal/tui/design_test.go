@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
 	"github.com/veridit/huginn/internal/task"
@@ -26,6 +27,23 @@ func manyModel(t *testing.T) model {
 	m.move(0, true)
 	return m
 }
+
+func TestUnknownWindowSizeKeepsUsableLayout(t *testing.T) {
+	m := manyModel(t)
+	for _, size := range []tea.WindowSizeMsg{{Width: 0, Height: 0}, {Width: 0, Height: 24}, {Width: 80, Height: 0}, {Width: -1, Height: -1}} {
+		next, _ := m.Update(size)
+		m = next.(model)
+		if m.width != 80 || m.height != 24 || !strings.Contains(ansi.Strip(m.View()), "HUGINN · list") {
+			t.Fatalf("invalid size %v replaced the usable layout: %dx%d", size, m.width, m.height)
+		}
+	}
+	next, _ := m.Update(tea.WindowSizeMsg{Width: 140, Height: 40})
+	m = next.(model)
+	if m.width != 140 || m.height != 40 {
+		t.Fatalf("valid resize ignored: %dx%d", m.width, m.height)
+	}
+}
+
 func TestKeyTableListNavigation(t *testing.T) {
 	for _, down := range []string{"j", "down"} {
 		t.Run(down, func(t *testing.T) {

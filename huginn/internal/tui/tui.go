@@ -357,9 +357,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.width = msg.Width
-		m.height = msg.Height
-		m.resize()
+		// Some PTYs report zero before their first usable size is available.
+		// Keep the default or last layout until both dimensions are known.
+		if msg.Width > 0 && msg.Height > 0 {
+			m.width = msg.Width
+			m.height = msg.Height
+			m.resize()
+		}
 	case editorMsg:
 		m.refresh("")
 		if msg.err != nil {
