@@ -48,6 +48,48 @@ func normalizeCapture(s string) string {
 	return strings.Join(lines, "\n") + "\n"
 }
 
+// A foreground server gives the test an exact process to wait for and clean up.
+// Clients never auto-start a replacement server during startup or shutdown.
+func startTmuxServer(t *testing.T, socket string) func() {
+	t.Helper()
+	server := exec.Command("tmux", "-D", "-L", socket, "-f", "/dev/null")
+	server.Stdout, server.Stderr = os.Stderr, os.Stderr
+	if err := server.Start(); err != nil {
+		t.Fatal(err)
+	}
+	cleanup := func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		kill := exec.CommandContext(ctx, "tmux", "-N", "-L", socket, "kill-server")
+		killErr := kill.Run()
+		done := make(chan error, 1)
+		go func() { done <- server.Wait() }()
+		select {
+		case err := <-done:
+			if err != nil || killErr != nil {
+				t.Errorf("tmux server cleanup: command %v, process %v", killErr, err)
+			}
+		case <-time.After(3 * time.Second):
+			_ = server.Process.Kill()
+			<-done
+			t.Error("tmux server did not exit after explicit cleanup")
+		}
+	}
+	deadline := time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		err := exec.CommandContext(ctx, "tmux", "-N", "-L", socket, "show-options", "-s", "-v", "exit-empty").Run()
+		cancel()
+		if err == nil {
+			return cleanup
+		}
+		time.Sleep(25 * time.Millisecond)
+	}
+	cleanup()
+	t.Fatal("foreground tmux server did not become ready")
+	return nil
+}
+
 // TestTmuxGolden exercises the actual CLI binary, not a copied model renderer.
 // Update deliberately with HUGINN_UPDATE_GOLDEN=1, review the diff, then test normally.
 func TestTmuxGolden(t *testing.T) {
@@ -70,18 +112,19 @@ func TestTmuxGolden(t *testing.T) {
 		t.Fatalf("build: %v\n%s", err, out)
 	}
 	socket := fmt.Sprintf("huginn-golden-%d", os.Getpid())
-	tmux := func(args ...string) string {
+	cleanupServer := startTmuxServer(t, socket)
+	defer cleanupServer()
+	tmux := func(t *testing.T, args ...string) string {
 		t.Helper()
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
-		cmd := exec.CommandContext(ctx, "tmux", append([]string{"-L", socket, "-f", "/dev/null"}, args...)...)
+		cmd := exec.CommandContext(ctx, "tmux", append([]string{"-N", "-L", socket, "-f", "/dev/null"}, args...)...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			t.Fatalf("tmux %v: %v\n%s", args, err, out)
 		}
 		return string(out)
 	}
-	defer exec.Command("tmux", "-L", socket, "kill-server").Run()
 	home := filepath.Join(root, "home")
 	repo := filepath.Join(root, "repo")
 	for _, p := range []string{home, repo} {
@@ -124,26 +167,26 @@ func TestTmuxGolden(t *testing.T) {
 					env[i] = shellQuote(env[i])
 				}
 				launch := "/bin/sh -c " + shellQuote("env "+strings.Join(env, " ")+" "+shellQuote(binary)+" tui\nexit_code=$?\nprintf '%s\\n' \"$exit_code\" > "+shellQuote(exitFile)+"\nexit \"$exit_code\"")
-				tmux("new-session", "-d", "-s", name, "-x", strconv.Itoa(size[0]), "-y", strconv.Itoa(size[1]), "-c", repo, launch)
+				tmux(t, "new-session", "-d", "-s", name, "-x", strconv.Itoa(size[0]), "-y", strconv.Itoa(size[1]), "-c", repo, launch)
 				// Keep the dedicated server alive until explicit cleanup, rather than
 				// connecting a cleanup client during automatic last-session shutdown.
-				tmux("set-option", "-s", "exit-empty", "off")
-				defer exec.Command("tmux", "-L", socket, "kill-session", "-t", name).Run()
-				tmux("set-option", "-g", "status", "off")
-				tmux("resize-window", "-t", name, "-x", strconv.Itoa(size[0]), "-y", strconv.Itoa(size[1]))
-				dimensions := strings.TrimSpace(tmux("display-message", "-p", "-t", target, "#{pane_width}x#{pane_height}"))
+				tmux(t, "set-option", "-s", "exit-empty", "off")
+				defer exec.Command("tmux", "-N", "-L", socket, "kill-session", "-t", name).Run()
+				tmux(t, "set-option", "-g", "status", "off")
+				tmux(t, "resize-window", "-t", name, "-x", strconv.Itoa(size[0]), "-y", strconv.Itoa(size[1]))
+				dimensions := strings.TrimSpace(tmux(t, "display-message", "-p", "-t", target, "#{pane_width}x#{pane_height}"))
 				if dimensions != fmt.Sprintf("%dx%d", size[0], size[1]) {
 					t.Fatal("wrong terminal size", dimensions)
 				}
-				send := func(text string) { tmux("send-keys", "-t", target, "-l", text) }
-				special := func(key string) { tmux("send-keys", "-t", target, key) }
+				send := func(text string) { tmux(t, "send-keys", "-t", target, "-l", text) }
+				special := func(key string) { tmux(t, "send-keys", "-t", target, key) }
 				wait := func(contains string) string {
 					t.Helper()
 					deadline := time.Now().Add(12 * time.Second)
 					last := ""
 					stable := 0
 					for time.Now().Before(deadline) {
-						current := tmux("capture-pane", "-p", "-t", target)
+						current := tmux(t, "capture-pane", "-p", "-t", target)
 						if strings.Contains(current, contains) && current == last {
 							stable++
 							if stable >= 2 {
@@ -161,7 +204,7 @@ func TestTmuxGolden(t *testing.T) {
 				snapshot := func(view, contains string) {
 					t.Helper()
 					plain := normalizeCapture(wait(contains))
-					colored := tmux("capture-pane", "-p", "-e", "-t", target)
+					colored := tmux(t, "capture-pane", "-p", "-e", "-t", target)
 					if len(strings.Split(strings.TrimSuffix(plain, "\n"), "\n")) != size[1] {
 						t.Fatalf("capture height: %q", plain)
 					}
