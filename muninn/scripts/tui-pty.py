@@ -159,9 +159,10 @@ def exercise(binary, root, width, height, no_color):
 
         shot("overview", "6 visible memories")
         styled = command("tmux", "capture-pane", "-p", "-e", "-t", name)
-        # Bright colours (90-97, 100-107) are what CI's tmux emits.
-        colours = re.search(r"\x1b\[[0-9;:]*(?:38|48|3[0-7]|4[0-7]|9[0-7]|10[0-7])[;:]?[0-9;:]*m", styled)
-        assert bool(colours) != no_color, "NO_COLOR or terminal colour detection regressed"
+        # Any colour SGR counts (truecolor/256, basic, bright). Bold/dim alone does not.
+        sgr = re.findall(r"\x1b\[([0-9;:]*)m", styled)
+        colours = [s for s in sgr if any(p in ("38", "48") or (p.isdigit() and (30 <= int(p) <= 37 or 40 <= int(p) <= 47 or 90 <= int(p) <= 97 or 100 <= int(p) <= 107)) for p in re.split(r"[;:]", s))]
+        assert bool(colours) != no_color, f"NO_COLOR or terminal colour detection regressed (no_color={no_color}, TERM={env.get('TERM')}, sgr sample={sorted(set(sgr))[:12]})"
         send(text="/banana")
         wait_for("results in")
         send(key="Enter")
