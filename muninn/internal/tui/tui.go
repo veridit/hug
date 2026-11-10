@@ -155,7 +155,7 @@ func (m *model) push() {
 	m.history = append(m.history, location{m.screen, m.title, m.results, m.cursor, m.pane, m.filter, m.unit, m.viewport.YOffset})
 }
 func (m *model) back() {
-	if m.filter != "" {
+	if (m.screen == listing || m.screen == overview) && m.filter != "" {
 		m.filter = ""
 		m.input.SetValue("")
 		m.searchSeq++
@@ -164,7 +164,7 @@ func (m *model) back() {
 		m.cursor = 0
 		return
 	}
-	if m.screen == listing && len(m.chips) > 0 {
+	if (m.screen == listing || m.screen == overview) && len(m.chips) > 0 {
 		m.chips = m.chips[:len(m.chips)-1]
 		m.cursor = 0
 		return

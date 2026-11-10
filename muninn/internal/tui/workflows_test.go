@@ -387,3 +387,35 @@ func TestTUIHelpQuitAndLongMovePicker(t *testing.T) {
 		t.Fatal("move picker must keep its selected destination in view")
 	}
 }
+
+func TestTUIEscUnwindsOpenScreensBeforeUnderlyingFilters(t *testing.T) {
+	base := startModel(t, testApp(t), 140, 40)
+	base.chips = []chip{{field: "category", value: "fact"}}
+	base.filter = "banana"
+	base.screen = listing
+	base.title = "Find"
+	base.results = base.allResults()
+	for _, open := range []screen{review, preview} {
+		m := base
+		m.push()
+		m.screen = open
+		m.title = "Open review or preview"
+		m = keypress(t, m, tea.KeyEsc).(model)
+		if m.screen != listing || m.filter != "banana" || len(m.chips) != 1 {
+			t.Fatal("Esc must close the open screen before clearing its underlying query or chips")
+		}
+		m = keypress(t, m, tea.KeyEsc).(model)
+		if m.filter != "" || len(m.chips) != 1 {
+			t.Fatal("the next Esc must clear only the query")
+		}
+		m = keypress(t, m, tea.KeyEsc).(model)
+		if len(m.chips) != 0 {
+			t.Fatal("the next Esc must remove the chip")
+		}
+	}
+	base.command("overview")
+	base = keypress(t, base, tea.KeyEsc).(model)
+	if len(base.chips) != 0 {
+		t.Fatal("Esc must not leave an active overview filter open")
+	}
+}
