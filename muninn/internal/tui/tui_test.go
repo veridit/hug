@@ -2,10 +2,11 @@ package tui
 
 import (
 	"context"
-	"github.com/charmbracelet/bubbles/cursor"
+	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/charmbracelet/bubbles/cursor"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/veridit/muninn/internal/app"
@@ -20,6 +21,11 @@ import (
 
 func testApp(t *testing.T) *app.App {
 	t.Helper()
+	// Standalone owner-workflow fixtures use an isolated global instance, not
+	// whichever client/instance JCODE_HOME the outer test process inherited.
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("JCODE_HOME", filepath.Join(home, ".jcode"))
 	t.Setenv("MUNINN_HOME", t.TempDir())
 	db, err := store.Open(config.DBPath())
 	if err != nil {
