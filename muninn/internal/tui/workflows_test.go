@@ -419,3 +419,39 @@ func TestTUIEscUnwindsOpenScreensBeforeUnderlyingFilters(t *testing.T) {
 		t.Fatal("Esc must not leave an active overview filter open")
 	}
 }
+
+func TestTUIReviewRendersMarkdownAndStripsMarkers(t *testing.T) {
+	a := testApp(t)
+	mems, err := ingest.LoadNative(app.NativePath())
+	if err != nil {
+		t.Fatal(err)
+	}
+	mems[0].Content = "**Review this memory** with `safe code`.\n\n<!-- STORAGE:PRIVATE -->\n\n<span>Visible text</span>"
+	if err = ingest.SaveNative(app.NativePath(), mems); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = a.Reindex(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	m := startModel(t, a, 140, 40)
+	var sid string
+	for _, u := range m.snapshot.units {
+		if strings.Contains(u.Body, "Review this memory") {
+			sid = u.SID
+		}
+	}
+	if sid == "" {
+		t.Fatal("review fixture not indexed")
+	}
+	m.screen, m.title, m.reviewKind = review, "Needs a look · moves", "moves"
+	m.snapshot.moves = tidy.Plan{Version: 1, Entries: []tidy.Entry{{SID: sid, Source: "global", Target: "personal"}}}
+	view := ansi.Strip(m.View())
+	if !strings.Contains(view, "Review this memory") || !strings.Contains(view, "Visible text") {
+		t.Fatal("review lost readable memory text")
+	}
+	for _, marker := range []string{"**Review", "`safe code`", "STORAGE:PRIVATE", "<span>"} {
+		if strings.Contains(view, marker) {
+			t.Fatalf("review exposed source marker %q", marker)
+		}
+	}
+}

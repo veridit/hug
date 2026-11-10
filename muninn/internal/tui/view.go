@@ -381,12 +381,12 @@ func (m model) reviewLines() []string {
 		c := m.snapshot.dupes.Duplicates[m.reviewIndex]
 		lines = append(lines, fmt.Sprintf("Cluster %d / %d · y merges into keeper · n skips · Esc stops", m.reviewIndex+1, m.reviewCount()), "", "KEEP "+c.Keeper.SID)
 		if u, err := m.binding.Resolve(m.a, c.Keeper.SID); err == nil {
-			lines = append(lines, strings.Split(wrapText(u.Body, m.width-6), "\n")...)
+			lines = append(lines, strings.Split(renderMarkdown(u.Body, m.width-6), "\n")...)
 		}
 		for _, r := range c.Retire {
 			lines = append(lines, "", "RETIRE "+r.SID)
 			if u, err := m.binding.Resolve(m.a, r.SID); err == nil {
-				lines = append(lines, strings.Split(wrapText(u.Body, m.width-6), "\n")...)
+				lines = append(lines, strings.Split(renderMarkdown(u.Body, m.width-6), "\n")...)
 			}
 		}
 		lines = append(lines, "", "Approval preserves keeper text and combines strength. Existing tidy apply creates a backup.")
@@ -394,7 +394,7 @@ func (m model) reviewLines() []string {
 		e := m.snapshot.moves.Entries[m.reviewIndex]
 		lines = append(lines, fmt.Sprintf("Move %d / %d · y approves · n skips · Esc stops", m.reviewIndex+1, m.reviewCount()), "", e.SID+" · "+e.Source+" → "+e.Target, "", "Current memory:")
 		if u, err := m.binding.Resolve(m.a, e.SID); err == nil {
-			lines = append(lines, strings.Split(wrapText(u.Body, m.width-6), "\n")...)
+			lines = append(lines, strings.Split(renderMarkdown(u.Body, m.width-6), "\n")...)
 		}
 		lines = append(lines, "", "Only this entry is applied, through muninn tidy apply with its backup.")
 	}
