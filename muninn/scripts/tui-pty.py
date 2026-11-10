@@ -159,7 +159,8 @@ def exercise(binary, root, width, height, no_color):
 
         shot("overview", "6 visible memories")
         styled = command("tmux", "capture-pane", "-p", "-e", "-t", name)
-        colours = re.search(r"\x1b\[[0-9;:]*(?:38|48|3[0-7]|4[0-7])[;:]?[0-9;:]*m", styled)
+        # Bright colours (90-97, 100-107) are what CI's tmux emits.
+        colours = re.search(r"\x1b\[[0-9;:]*(?:38|48|3[0-7]|4[0-7]|9[0-7]|10[0-7])[;:]?[0-9;:]*m", styled)
         assert bool(colours) != no_color, "NO_COLOR or terminal colour detection regressed"
         send(text="/banana")
         wait_for("results in")
