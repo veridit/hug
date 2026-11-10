@@ -20,7 +20,8 @@ func TestEditorRepairsMalformedFileAndRejectsEscapes(t *testing.T) {
 		}
 	}
 	t.Setenv("EDITOR", "true")
-	_, cmd := key(m, "e")
+	m = press(m, "e")
+	_, cmd := key(m, "enter")
 	if cmd == nil {
 		t.Fatal("malformed task must be editable")
 	}

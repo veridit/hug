@@ -16,7 +16,7 @@ func TestTransactionalRaceRefreshesWinner(t *testing.T) {
 		}
 		return task.Result{}, errors.New("taken by alice")
 	}
-	m = press(m, "t")
+	m = act(m, "t")
 	if m.message != "taken by alice" || !contains(m.visible[0].Assignee, "alice") || m.visible[0].Status != "doing" {
 		t.Fatal(m.View())
 	}
@@ -34,7 +34,7 @@ func TestTransactionalTakeOwnsCommit(t *testing.T) {
 		return m.store.Take(ref, "remote-user")
 	}
 	m.opts.Commit = func(string) error { commits++; return nil }
-	m = press(m, "t")
+	m = act(m, "t")
 	if calls != 1 || commits != 0 {
 		t.Fatalf("take=%d commits=%d", calls, commits)
 	}
@@ -42,7 +42,7 @@ func TestTransactionalTakeOwnsCommit(t *testing.T) {
 	if err != nil || d.Task.Status != "doing" || !contains(d.Task.Assignee, "remote-user") {
 		t.Fatal(d, err)
 	}
-	m = press(m, "x")
+	m = act(m, "x")
 	if commits != 1 {
 		t.Fatal("ordinary mutation must still commit")
 	}
@@ -51,7 +51,7 @@ func TestTransactionalTakeErrorsStayInline(t *testing.T) {
 	m := fixture(t)
 	m.opts.Take = func(string) (task.Result, error) { return task.Result{}, errors.New("taken by alice") }
 	m.opts.Commit = func(string) error { t.Fatal("must not commit failed transaction"); return nil }
-	m = press(m, "t")
+	m = act(m, "t")
 	if !strings.Contains(m.View(), "taken by alice") {
 		t.Fatal(m.View())
 	}

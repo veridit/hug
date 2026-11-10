@@ -20,15 +20,15 @@ func TestMoveRepairsTiesAndUsesGlobalOrder(t *testing.T) {
 	}
 	m.refresh("")
 	first := m.visible[0].ID
-	m = press(m, "J")
+	m = act(m, "J")
 	if m.visible[1].ID != first || strings.Contains(m.message, "error") {
 		t.Fatal(m.View())
 	}
-	m = press(m, "K")
+	m = act(m, "K")
 	if m.visible[0].ID != first {
 		t.Fatal(m.View())
 	}
-	m = press(m, "/", m.visible[0].Slug, "enter", "J", "c")
+	m = press(m, "/", m.visible[0].Slug, "enter", "J", "enter", "c")
 	if m.visible[1].ID != first {
 		t.Fatal("filtered move did not use global order", m.View())
 	}
@@ -36,7 +36,11 @@ func TestMoveRepairsTiesAndUsesGlobalOrder(t *testing.T) {
 
 func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 	m := fixture(t)
-	m = press(m, "s", "todo", "enter", "y", "bug", "enter", "g", "auth", "enter", "l", "urgent", "enter", "/", "Alpha", "enter")
+	m = commandLine(m, "status todo")
+	m = commandLine(m, "type bug")
+	m = commandLine(m, "group auth")
+	m = commandLine(m, "label urgent")
+	m = press(m, "/", "Alpha", "enter")
 	if len(m.visible) != 1 {
 		t.Fatal(m.View())
 	}
@@ -56,7 +60,7 @@ func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 
 func TestAcceptanceSelectionClampedAcrossTasks(t *testing.T) {
 	m := fixture(t)
-	m = press(m, "enter", "j", "esc", "j", " ")
+	m = press(m, "enter", "]", "esc", "j", " ", "enter")
 	if !m.visible[1].Acceptance[0].Checked {
 		t.Fatal(m.View())
 	}
@@ -65,12 +69,13 @@ func TestAcceptanceSelectionClampedAcrossTasks(t *testing.T) {
 func TestErrorAndTerminalInputSafety(t *testing.T) {
 	m := fixture(t)
 	m.opts.Commit = func(string) error { return os.ErrPermission }
-	m = press(m, " ")
+	m = act(m, " ")
 	if m.message != os.ErrPermission.Error() {
 		t.Fatal(m.message)
 	}
 	t.Setenv("EDITOR", "   ")
-	m, cmd := key(m, "e")
+	m = press(m, "e")
+	m, cmd := key(m, "enter")
 	if cmd != nil || m.message != "$EDITOR is empty" {
 		t.Fatal(m.message)
 	}

@@ -1,24 +1,25 @@
-// Package tui provides Huginn's human-facing ranked task browser.
+// Package tui provides Huginn's overview, ranked list and task board.
 package tui
 
 import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
-	"unicode"
 
+	"github.com/charmbracelet/bubbles/help"
+	bkey "github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/textinput"
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/veridit/huginn/internal/task"
 )
 
 type Options struct {
 	User   string
 	Commit func(msg string) error
-	// Take optionally owns the complete distributed take transaction, including commit.
+	// Take owns the complete distributed take transaction, including commit.
 	Take func(ref string) (task.Result, error)
 }
 
@@ -26,28 +27,53 @@ func Run(ctx context.Context, store *task.Store, opts Options) error {
 	if store == nil {
 		return fmt.Errorf("task store is required")
 	}
-	m := newModel(store, opts)
-	_, err := tea.NewProgram(m, tea.WithContext(ctx), tea.WithAltScreen()).Run()
+	_, err := tea.NewProgram(newModel(store, opts), tea.WithContext(ctx), tea.WithAltScreen()).Run()
 	return err
 }
 
 type editorMsg struct{ err error }
 type model struct {
-	store                         *task.Store
-	opts                          Options
-	all, visible                  []task.Task
-	findings                      []task.Finding
-	docs                          map[string]*task.Document
-	cursor, acceptance, offset    int
-	width, height                 int
-	detail, board, help           bool
-	prompt, input, query, message string
-	filter                        task.Filter
+	store                              *task.Store
+	opts                               Options
+	all, visible                       []task.Task
+	findings                           []task.Finding
+	docs                               map[string]*task.Document
+	blocked, linted                    map[string]bool
+	cursor, acceptance, offset         int
+	dependency, detailPane             int
+	detailStack                        []string
+	width, height                      int
+	view                               string
+	pane                               int
+	detail, help, pendingG             bool
+	prompt, query, message, detailPath string
+	confirm, confirmPath, pendingValue string
+	filter                             task.Filter
+	input                              textinput.Model
+	viewport, helpViewport             viewport.Model
+	helpModel                          help.Model
+	completion                         int
+	chips                              []filterChip
+	pickerField                        string
+	styles                             theme
 }
 
 func newModel(s *task.Store, o Options) model {
-	m := model{store: s, opts: o, width: 100, height: 30}
+	input := textinput.New()
+	input.CharLimit = 512
+	input.Cursor.Blink = false
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", input: input,
+		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	m.refresh("")
+	// Prefer an occupied overview pane, while retaining the same pane order.
+	for p := 0; p < 4; p++ {
+		m.pane = p
+		if len(m.indices()) > 0 {
+			break
+		}
+	}
+	m.clamp()
+	m.resize()
 	return m
 }
 func (m model) Init() tea.Cmd { return nil }
@@ -72,6 +98,14 @@ func (m *model) refresh(path string) {
 		m.docs[t.Path] = d
 	}
 	m.findings = task.Lint(docs)
+	m.blocked = map[string]bool{}
+	m.linted = map[string]bool{}
+	for _, t := range ts {
+		m.blocked[t.Path] = t.Status != "done" && t.Status != "dropped" && len(task.Blocked(t, ts)) > 0
+	}
+	for _, f := range m.findings {
+		m.linted[f.Path] = true
+	}
 	m.applyFilter()
 	for i, t := range m.visible {
 		if t.Path == path {
@@ -80,74 +114,251 @@ func (m *model) refresh(path string) {
 		}
 	}
 	m.clamp()
-}
-func (m *model) clamp() {
-	if m.cursor >= len(m.visible) {
-		m.cursor = len(m.visible) - 1
-	}
-	if m.cursor < 0 {
-		m.cursor = 0
-	}
-	if t, ok := m.selected(); ok && m.acceptance >= len(t.Acceptance) {
-		m.acceptance = max(0, len(t.Acceptance)-1)
-	}
+	m.syncDetail()
 }
 func (m *model) applyFilter() {
 	m.visible = nil
 	for _, t := range m.all {
-		if m.filter.Status != "" && t.Status != m.filter.Status || m.filter.Type != "" && t.Type != m.filter.Type || m.filter.Group != "" && t.Group != m.filter.Group {
+		status := m.filter.Status
+		if status == "blocked" && !m.blocked[t.Path] || status != "" && status != "blocked" && t.Status != status || m.filter.Type != "" && t.Type != m.filter.Type || m.filter.Group != "" && t.Group != m.filter.Group {
 			continue
 		}
-		if m.filter.Label != "" {
-			found := false
-			for _, l := range t.Labels {
-				if l == m.filter.Label {
-					found = true
-				}
-			}
-			if !found {
-				continue
-			}
+		if m.filter.Label != "" && !contains(t.Labels, m.filter.Label) {
+			continue
 		}
-		if m.query != "" && !strings.Contains(strings.ToLower(t.Slug+" "+t.Title+" "+t.ID), strings.ToLower(m.query)) {
+		if m.filter.Priority != "" && t.Priority != m.filter.Priority || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
+			continue
+		}
+		if m.query != "" && !strings.Contains(strings.ToLower(t.Slug+" "+t.Title+" "+t.ID+" "+strings.Join(t.Assignee, " ")), strings.ToLower(m.query)) {
 			continue
 		}
 		m.visible = append(m.visible, t)
 	}
+	m.offset = 0
 	m.clamp()
 }
+
+var boardStatuses = []string{"todo", "doing", "blocked", "done", "dropped"}
+
+func (m model) boardStatus(t task.Task) string {
+	if m.blocked[t.Path] {
+		return "blocked"
+	}
+	if contains(boardStatuses, t.Status) {
+		return t.Status
+	}
+	return "todo" // Malformed tasks remain visible and repairable, marked with !.
+}
+func (m model) paneIndices(p int) []int {
+	var out []int
+	for i, t := range m.visible {
+		match := true
+		switch m.view {
+		case "overview":
+			switch p {
+			case 0:
+				match = t.Status == "doing"
+			case 1:
+				match = t.Status == "todo" && !m.blocked[t.Path]
+			case 2:
+				match = m.blocked[t.Path]
+			case 3:
+				match = m.linted[t.Path]
+			}
+		case "board":
+			match = m.boardStatus(t) == boardStatuses[p]
+		case "lint":
+			match = m.linted[t.Path]
+		}
+		if match {
+			out = append(out, i)
+		}
+	}
+	return out
+}
+func (m model) indices() []int { return m.paneIndices(m.pane) }
+func (m *model) clamp() {
+	indices := m.indices()
+	found := false
+	for _, i := range indices {
+		if m.cursor == i {
+			found = true
+			break
+		}
+	}
+	if !found {
+		m.cursor = 0
+		if len(indices) > 0 {
+			m.cursor = indices[0]
+		}
+	}
+	if t, ok := m.selected(); ok {
+		m.acceptance = min(m.acceptance, max(0, len(t.Acceptance)-1))
+	}
+	m.acceptance = max(0, m.acceptance)
+}
 func (m model) selected() (task.Task, bool) {
-	if len(m.visible) == 0 {
+	if m.detail && m.detailPath != "" {
+		for _, t := range m.all {
+			if t.Path == m.detailPath {
+				return t, true
+			}
+		}
+	}
+	if m.cursor < 0 || m.cursor >= len(m.visible) {
 		return task.Task{}, false
 	}
-	return m.visible[m.cursor], true
-}
-func (m *model) finish(r task.Result, err error, action string) {
-	if err != nil {
-		path := ""
-		if t, ok := m.selected(); ok {
-			path = t.Path
+	for _, i := range m.indices() {
+		if i == m.cursor {
+			return m.visible[i], true
 		}
-		m.refresh(path)
-		m.message = err.Error()
+	}
+	return task.Task{}, false
+}
+func (m *model) setView(view string) {
+	m.view = view
+	m.pane = 0
+	m.offset = 0
+	m.detail = false
+	m.detailPath = ""
+	m.detailStack = nil
+	m.detailPane = 0
+	m.pendingG = false
+	m.clamp()
+}
+func (m *model) move(n int, absolute bool) {
+	indices := m.indices()
+	if len(indices) == 0 {
 		return
 	}
-	m.message = action + " " + r.Task.ID
-	if len(r.Warnings) > 0 {
-		m.message += "\n" + strings.Join(r.Warnings, "\n")
-	}
-	if r.Changed && m.opts.Commit != nil && !(action == "take" && m.opts.Take != nil) {
-		if e := m.opts.Commit("huginn: " + action + " " + r.Task.ID); e != nil {
-			m.message = e.Error()
+	pos := 0
+	for p, i := range indices {
+		if i == m.cursor {
+			pos = p
+			break
 		}
 	}
-	m.refresh(r.Task.Path)
+	if absolute {
+		pos = n
+	} else {
+		pos += n
+	}
+	pos = max(0, min(pos, len(indices)-1))
+	m.cursor = indices[pos]
+	m.clamp()
+}
+func (m *model) changePane(delta int) {
+	switch m.view {
+	case "overview":
+		m.pane = (m.pane + delta + 4) % 4
+	case "board":
+		m.pane = (m.pane + delta + len(boardStatuses)) % len(boardStatuses)
+	default:
+		views := []string{"overview", "list", "board", "lint"}
+		for i, v := range views {
+			if m.view == v {
+				m.setView(views[(i+delta+len(views))%len(views)])
+				return
+			}
+		}
+	}
+	m.offset = 0
+	m.clamp()
+}
+func (m *model) resize() {
+	m.width = max(1, m.width)
+	m.height = max(1, m.height)
+	m.input.Width = max(1, m.width-6)
+	m.viewport.Width = m.width
+	m.viewport.Height = m.bodyHeight()
+	m.helpViewport.Width = m.width
+	m.helpViewport.Height = m.bodyHeight()
+	m.helpModel.Width = m.width
+	m.helpModel.Styles.ShortKey = m.styles.accent
+	m.helpModel.Styles.ShortDesc = m.styles.dim
+	m.helpModel.Styles.ShortSeparator = m.styles.dim
+	m.helpModel.Styles.FullKey = m.styles.accent
+	m.helpModel.Styles.FullDesc = m.styles.normal
+	m.helpModel.Styles.FullSeparator = m.styles.dim
+	m.helpViewport.SetContent(m.helpText())
+	m.syncDetail()
+}
+func (m *model) syncDetail() {
+	if t, ok := m.selected(); ok {
+		m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-1)
+		m.viewport.SetContent(m.detailText(t))
+	}
+}
+func (m *model) openInput(prompt, value string) tea.Cmd {
+	m.prompt = prompt
+	m.pendingG = false
+	m.completion = 0
+	m.input.Prompt = prompt + " "
+	m.input.SetValue(value)
+	m.input.CursorEnd()
+	m.input.PromptStyle = m.styles.accent
+	m.input.TextStyle = m.styles.normal
+	return m.input.Focus()
+}
+func (m *model) clearFilters() {
+	m.query = ""
+	m.filter = task.Filter{}
+	m.chips = nil
+	m.applyFilter()
+}
+func (m *model) back() {
+	m.pendingG = false
+	switch {
+	case m.help:
+		m.help = false
+	case m.confirm != "":
+		m.confirm = ""
+		m.pendingValue = ""
+	case m.prompt == "filter" && m.pickerField != "":
+		m.pickerField = ""
+		m.input.SetValue("")
+		m.completion = 0
+	case m.prompt != "":
+		if m.prompt == "/" {
+			m.query = ""
+			m.applyFilter()
+		}
+		m.prompt = ""
+		m.input.Blur()
+	case m.detail && len(m.detailStack) > 0:
+		m.detailPath = m.detailStack[len(m.detailStack)-1]
+		m.detailStack = m.detailStack[:len(m.detailStack)-1]
+		m.detailPane = 0
+		m.syncDetail()
+		m.viewport.GotoTop()
+	case m.detail:
+		m.detail = false
+		m.detailPath = ""
+		m.clamp()
+	case m.query != "" || m.filter != (task.Filter{}):
+		m.clearFilters()
+	case m.view != "overview":
+		m.setView("overview")
+	}
 }
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Bubble Tea coalesces fast typing, including gg, into rune batches.
+	if event, ok := msg.(tea.KeyMsg); ok && event.Type == tea.KeyRunes && len(event.Runes) > 1 {
+		var cmds []tea.Cmd
+		for _, r := range event.Runes {
+			next, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{r}})
+			m = next.(model)
+			if cmd != nil {
+				cmds = append(cmds, cmd)
+			}
+		}
+		return m, tea.Batch(cmds...)
+	}
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+		m.resize()
 	case editorMsg:
 		m.refresh("")
 		if msg.err != nil {
@@ -155,8 +366,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.message = "editor closed; re-linted"
 			if m.opts.Commit != nil {
-				if e := m.opts.Commit("huginn: edit task"); e != nil {
-					m.message = e.Error()
+				if err := m.opts.Commit("huginn: edit task"); err != nil {
+					m.message = err.Error()
 				}
 			}
 		}
@@ -165,348 +376,240 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k == "ctrl+c" {
 			return m, tea.Quit
 		}
-		if m.prompt != "" {
-			switch k {
-			case "esc":
-				m.prompt = ""
-				m.input = ""
-			case "backspace":
-				rs := []rune(m.input)
-				if len(rs) > 0 {
-					m.input = string(rs[:len(rs)-1])
+		// Help always wins over text input, and leaves that input intact underneath.
+		if k == "?" {
+			m.help = !m.help
+			m.helpViewport.GotoTop()
+			return m, nil
+		}
+		if k == "esc" {
+			m.back()
+			return m, nil
+		}
+		if m.help {
+			if k == "g" {
+				if m.pendingG {
+					m.helpViewport.GotoTop()
+					m.pendingG = false
+				} else {
+					m.pendingG = true
 				}
-			case "enter":
-				value := strings.TrimSpace(m.input)
-				switch m.prompt {
-				case "/":
-					m.query = value
-					m.applyFilter()
-				case "new title":
-					if value != "" {
-						r, e := m.store.New(task.NewOptions{Title: value, Goal: value, Acceptance: []string{"Verify " + value}})
-						m.finish(r, e, "new")
-					}
-				case "status":
-					m.filter.Status = value
-					m.applyFilter()
-				case "type":
-					m.filter.Type = value
-					m.applyFilter()
-				case "group":
-					m.filter.Group = value
-					m.applyFilter()
-				case "label":
-					m.filter.Label = value
-					m.applyFilter()
-				}
-				m.prompt = ""
-				m.input = ""
-			default:
-				if msg.Type == tea.KeyRunes || k == " " {
-					m.input += string(msg.Runes)
-					if k == " " && len(msg.Runes) == 0 {
-						m.input += " "
-					}
-				}
+				return m, nil
+			}
+			m.pendingG = false
+			if k == "q" && m.prompt == "" {
+				return m, tea.Quit
+			}
+			m.scroll(&m.helpViewport, k)
+			return m, nil
+		}
+		if m.confirm != "" {
+			if k == "enter" {
+				cmd := m.executeAction()
+				return m, cmd
 			}
 			return m, nil
 		}
-		t, ok := m.selected()
-		switch k {
-		case "q":
+		if m.prompt != "" {
+			return m.updateInput(msg)
+		}
+		if k == "q" {
 			return m, tea.Quit
-		case "?":
-			m.help = !m.help
-		case "tab", "b":
-			m.board = !m.board
-		case "enter":
-			m.detail = !m.detail
-			m.offset = 0
-		case "esc":
-			m.detail = false
-			m.help = false
-		case "j", "down":
-			if m.detail {
-				m.acceptance++
-				m.clamp()
-			} else if m.cursor+1 < len(m.visible) {
-				m.cursor++
-			}
-		case "k", "up":
-			if m.detail {
-				m.acceptance = max(0, m.acceptance-1)
+		}
+		if k == "g" {
+			if m.pendingG {
+				m.pendingG = false
+				if m.detail {
+					m.viewport.GotoTop()
+				} else {
+					m.move(0, true)
+				}
 			} else {
-				m.cursor = max(0, m.cursor-1)
+				m.pendingG = true
 			}
-		case "pgdown":
-			m.offset += max(1, m.height/2)
-		case "pgup":
-			m.offset = max(0, m.offset-max(1, m.height/2))
-		case "/":
-			m.prompt = "/"
-			m.input = m.query
-		case "s":
-			m.prompt = "status"
-		case "y":
-			m.prompt = "type"
-		case "g":
-			m.prompt = "group"
-		case "l":
-			m.prompt = "label"
-		case "c":
-			m.filter = task.Filter{}
-			m.query = ""
-			m.applyFilter()
-		case "n":
-			m.prompt = "new title"
-		case "r":
-			m.refresh(t.Path)
-		case "t":
-			if ok {
-				var r task.Result
-				var e error
-				if m.opts.Take != nil {
-					r, e = m.opts.Take(t.ID)
-				} else {
-					r, e = m.store.Take(t.ID, m.opts.User)
+			return m, nil
+		}
+		m.pendingG = false
+		if m.detail {
+			switch k {
+			case "[", "]":
+				step := 1
+				if k == "[" {
+					step = -1
 				}
-				m.finish(r, e, "take")
-			}
-		case "d":
-			if ok {
-				r, e := m.store.Done(t.ID)
-				m.finish(r, e, "done")
-			}
-		case "x":
-			if ok {
-				r, e := m.store.Drop(t.ID)
-				m.finish(r, e, "drop")
-			}
-		case "J", "K":
-			if ok {
-				i := 0
-				for i < len(m.all) && m.all[i].Path != t.Path {
-					i++
-				}
-				o := task.MoveOptions{}
-				if k == "J" && i+1 < len(m.all) {
-					o.After = m.all[i+1].ID
-				} else if k == "K" && i > 0 {
-					o.Before = m.all[i-1].ID
+				if m.detailPane == 0 {
+					m.acceptance += step
 				} else {
-					break
-				}
-				r, e := m.store.Move(t.ID, o)
-				m.finish(r, e, "move")
-			}
-		case " ":
-			if ok && len(t.Acceptance) > 0 {
-				n := m.acceptance + 1
-				if !t.Acceptance[n-1].Checked {
-					r, e := m.store.Check(t.ID, n)
-					m.finish(r, e, "check")
-				} else {
-					d, e := m.store.Get(t.ID)
-					if e == nil {
-						lines := strings.Split(string(d.Bytes()), "\n")
-						line := d.Task.Acceptance[n-1].Line - 1
-						if line >= 0 && line < len(lines) {
-							lines[line] = strings.Replace(strings.Replace(lines[line], "[x]", "[ ]", 1), "[X]", "[ ]", 1)
-							e = task.AtomicWrite(filepath.Join(m.store.Root, d.Task.Path), []byte(strings.Join(lines, "\n")))
-						}
+					if t, ok := m.selected(); ok {
+						m.dependency = max(0, min(m.dependency+step, len(t.Dependencies)-1))
 					}
-					m.finish(task.Result{Task: t, Changed: e == nil}, e, "uncheck")
 				}
+				m.clamp()
+				m.syncDetail()
+				m.revealAcceptance()
+			case "h", "l", "left", "right", "tab", "shift+tab":
+				m.detailPane = 1 - m.detailPane
+				m.syncDetail()
+				m.revealAcceptance()
+			case "enter":
+				if m.detailPane == 1 {
+					m.followDependency()
+				}
+			case "t", "d", "x", "J", "K", " ", "e":
+				m.requestAction(k, "")
+			case "/", ":", "#":
+				return m, m.openInput(k, "")
+			case "f":
+				return m, m.openFilter()
+			case "r":
+				if t, ok := m.selected(); ok {
+					m.refresh(t.Path)
+				}
+			default:
+				m.scroll(&m.viewport, k)
 			}
-		case "e":
-			if ok {
-				path, e := m.editorPath(t)
-				if e != nil {
-					m.message = e.Error()
-					break
-				}
-				editor := os.Getenv("EDITOR")
-				if editor == "" {
-					editor = "vi"
-				}
-				args := strings.Fields(editor)
-				if len(args) == 0 {
-					m.message = "$EDITOR is empty"
-					break
-				}
-				cmd := exec.Command(args[0], append(args[1:], path)...)
-				return m, tea.ExecProcess(cmd, func(e error) tea.Msg { return editorMsg{e} })
+			return m, nil
+		}
+		switch {
+		case bkey.Matches(msg, keys.down):
+			m.move(1, false)
+		case bkey.Matches(msg, keys.up):
+			m.move(-1, false)
+		case bkey.Matches(msg, keys.top):
+			m.move(0, true)
+		case bkey.Matches(msg, keys.bottom):
+			m.move(len(m.visible), true)
+		case k == "ctrl+d":
+			m.move(max(1, m.bodyHeight()/2), false)
+		case k == "ctrl+u":
+			m.move(-max(1, m.bodyHeight()/2), false)
+		case k == "pgdown":
+			m.move(m.bodyHeight(), false)
+		case k == "pgup":
+			m.move(-m.bodyHeight(), false)
+		case bkey.Matches(msg, keys.prev):
+			m.changePane(-1)
+		case bkey.Matches(msg, keys.next):
+			m.changePane(1)
+		case k == "enter":
+			if t, ok := m.selected(); ok {
+				m.detailPath = t.Path
+				m.detail = true
+				m.syncDetail()
+				m.viewport.GotoTop()
 			}
+		case k == "/":
+			return m, m.openInput("/", m.query)
+		case k == ":":
+			return m, m.openInput(":", "")
+		case k == "s":
+			return m, m.openInput(":", "status ")
+		case k == "y":
+			return m, m.openInput(":", "type ")
+		case k == "#":
+			return m, m.openInput("#", "")
+		case k == "f":
+			return m, m.openFilter()
+		case k == "backspace":
+			m.removeChip()
+		case k == "1" || k == "2" || k == "3" || k == "4":
+			m.setFilter("status", []string{"todo", "doing", "done", "blocked"}[int(k[0]-'1')])
+			m.setView("list")
+		case k == "c" || k == "F":
+			m.clearFilters()
+		case k == "b":
+			m.setView("board")
+		case k == "o":
+			m.setView("overview")
+		case k == "v":
+			m.setView("list")
+		case k == "!":
+			m.setView("lint")
+		case k == "n":
+			return m, m.openInput("new title", "")
+		case k == "r":
+			path := ""
+			if t, ok := m.selected(); ok {
+				path = t.Path
+			}
+			m.refresh(path)
+		case contains([]string{"t", "d", "x", "J", "K", " ", "e"}, k):
+			m.requestAction(k, "")
 		}
 	}
-	m.clamp()
 	return m, nil
 }
-
-// editorPath deliberately uses the selected path, not the possibly broken id.
-// A malformed task must remain repairable, but cannot escape the task tree.
-func (m model) editorPath(t task.Task) (string, error) {
-	if t.Path == "" || filepath.IsAbs(t.Path) {
-		return "", fmt.Errorf("invalid task path")
+func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	k := msg.String()
+	if m.prompt == "filter" {
+		return m.updateFilter(msg)
 	}
-	root, err := filepath.EvalSymlinks(m.store.Root)
-	if err != nil {
-		return "", err
+	if m.prompt == "#" {
+		return m.updateJump(msg)
 	}
-	root, err = filepath.Abs(root)
-	if err != nil {
-		return "", err
-	}
-	path := filepath.Join(root, t.Path)
-	rel, err := filepath.Rel(root, path)
-	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
-		return "", fmt.Errorf("task path escapes store")
-	}
-	actual, err := filepath.EvalSymlinks(path)
-	if err != nil {
-		return "", err
-	}
-	if actual != path {
-		return "", fmt.Errorf("symlinked task paths cannot be edited")
-	}
-	info, err := os.Stat(path)
-	if err != nil {
-		return "", err
-	}
-	if !info.Mode().IsRegular() {
-		return "", fmt.Errorf("task is not a regular file")
-	}
-	return path, nil
-}
-
-var dim = lipgloss.NewStyle().Faint(true)
-var heading = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("6"))
-
-func safe(s string) string {
-	return strings.Map(func(r rune) rune {
-		if unicode.IsControl(r) && r != '\n' && r != '\t' {
-			return -1
-		}
-		return r
-	}, s)
-}
-func (m model) marker(path string) string {
-	for _, f := range m.findings {
-		if f.Path == path {
-			return " !lint: " + safe(f.Problem)
-		}
-	}
-	return ""
-}
-func (m model) row(t task.Task) string {
-	pointer := "  "
-	if selected, ok := m.selected(); ok && selected.Path == t.Path {
-		pointer = "> "
-	}
-	return safe(fmt.Sprintf("%s%s  %s  [%s] %s %s", pointer, t.Slug, t.Title, t.Status, t.Type, t.Priority)) + "  " + dim.Render(safe(t.ID)) + m.marker(t.Path)
-}
-func (m model) detailText(t task.Task) string {
-	var b strings.Builder
-	fmt.Fprintf(&b, "%s\nGoal\n%s\n\nAcceptance (j/k select, space toggle)\n", m.row(t), safe(t.Goal))
-	for i, a := range t.Acceptance {
-		box := " "
-		if a.Checked {
-			box = "x"
-		}
-		p := " "
-		if i == m.acceptance {
-			p = ">"
-		}
-		fmt.Fprintf(&b, "%s [%s] %d. %s\n", p, box, i+1, safe(a.Text))
-	}
-	b.WriteString("\nDependencies\n")
-	for _, d := range task.DependencyDetails(t, m.all) {
-		state := d.Status
-		if d.Missing {
-			state = "missing"
-		}
-		blocked := ""
-		if state != "done" && state != "dropped" {
-			blocked = " BLOCKED"
-		}
-		fmt.Fprintf(&b, "%s %s [%s]%s\n", safe(d.ID), safe(d.Title), safe(state), blocked)
-	}
-	if d := m.docs[t.Path]; d != nil {
-		lines := strings.Split(string(d.Bytes()), "\n")
-		in := false
-		b.WriteString("\nNotes\n")
-		for _, line := range lines {
-			if strings.HasPrefix(line, "## ") {
-				in = strings.TrimSpace(line) == "## Notes"
-				continue
+	if m.prompt == ":" {
+		cs := m.completions()
+		switch k {
+		case "ctrl+n", "down":
+			if len(cs) > 0 {
+				m.completion = (m.completion + 1) % len(cs)
 			}
-			if in {
-				b.WriteString(safe(line) + "\n")
+			return m, nil
+		case "ctrl+p", "up":
+			if len(cs) > 0 {
+				m.completion = (m.completion + len(cs) - 1) % len(cs)
 			}
-		}
-	}
-	for _, f := range m.findings {
-		if f.Path == t.Path {
-			b.WriteString("\n!lint " + safe(f.String()))
-		}
-	}
-	return b.String()
-}
-func (m model) View() string {
-	title := "Huginn · ranked list"
-	if m.board {
-		title = "Huginn · board"
-	}
-	var content string
-	switch {
-	case m.help:
-		content = "j/k navigate · enter detail · space toggle selected acceptance\nt take · d done (blocked until checks/deps complete) · x drop\nJ/K global move down/up · n new title · e $EDITOR then lint\ns status · y type · g group · l label · / search · c clear filters\nb/tab list/board · r refresh · PgUp/PgDown scroll · ? help · q quit\nEmpty filter input clears it. New tasks start with a goal and one unchecked verification item."
-	case m.detail:
-		if t, ok := m.selected(); ok {
-			content = m.detailText(t)
-		}
-	case m.board:
-		cols := []string{}
-		for _, status := range task.Statuses {
-			col := heading.Render(status) + "\n"
-			for _, t := range m.visible {
-				if t.Status == status {
-					col += m.row(t) + "\n"
+			return m, nil
+		case "tab":
+			m.complete()
+			return m, nil
+		case "enter":
+			if m.commandReady() {
+				if m.executeCommand() {
+					m.prompt = ""
+					m.input.Blur()
 				}
+			} else {
+				m.complete()
 			}
-			cols = append(cols, lipgloss.NewStyle().Width(max(12, (m.width-6)/4)).MaxWidth(max(12, (m.width-6)/4)).Render(col))
+			return m, nil
 		}
-		content = lipgloss.JoinHorizontal(lipgloss.Top, cols...)
-		for _, t := range m.visible {
-			if !contains(task.Statuses, t.Status) {
-				content += "\n" + m.row(t)
-			}
+	} else if k == "enter" {
+		if m.prompt == "new title" && strings.TrimSpace(m.input.Value()) != "" {
+			m.requestAction("n", strings.TrimSpace(m.input.Value()))
 		}
-	default:
-		for _, t := range m.visible {
-			content += m.row(t) + "\n"
-		}
-		if len(m.visible) == 0 {
-			content = "No tasks match. c clears filters; n creates a task."
-		}
+		m.prompt = ""
+		m.input.Blur()
+		return m, nil
 	}
-	if m.detail {
-		content = lipgloss.NewStyle().Width(max(1, m.width)).Render(content)
+	var cmd tea.Cmd
+	m.input, cmd = m.input.Update(msg)
+	m.completion = 0
+	if m.prompt == "/" {
+		m.query = m.input.Value()
+		m.applyFilter()
 	}
-	lines := strings.Split(content, "\n")
-	height := max(3, m.height-8)
-	start := min(m.offset, max(0, len(lines)-height))
-	if !m.detail && !m.board && !m.help {
-		start = max(start, m.cursor-height+1)
-		start = min(start, m.cursor)
+	return m, cmd
+}
+func (m *model) scroll(v *viewport.Model, k string) {
+	switch k {
+	case "j", "down":
+		v.ScrollDown(1)
+	case "k", "up":
+		v.ScrollUp(1)
+	case "G", ">", "end":
+		v.GotoBottom()
+	case "<", "home":
+		v.GotoTop()
+	case "ctrl+d":
+		v.HalfViewDown()
+	case "ctrl+u":
+		v.HalfViewUp()
+	case "pgdown":
+		v.ViewDown()
+	case "pgup":
+		v.ViewUp()
 	}
-	end := min(len(lines), start+height)
-	footer := fmt.Sprintf("%d tasks · status=%s type=%s group=%s label=%s search=%s", len(m.visible), m.filter.Status, m.filter.Type, m.filter.Group, m.filter.Label, m.query)
-	prompt := "j/k move · enter detail · b board · / search · ? help · q quit"
-	if m.prompt != "" {
-		prompt = m.prompt + "> " + safe(m.input)
-	}
-	return heading.Render(title) + "\n" + strings.Join(lines[start:end], "\n") + "\n" + dim.Render(safe(footer)) + "\n" + safe(m.message) + "\n" + prompt + "\n"
 }
 func contains(values []string, s string) bool {
 	for _, v := range values {
