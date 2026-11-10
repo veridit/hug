@@ -46,7 +46,9 @@ func TestRenderCarriesIDsAndFixRule(t *testing.T) {
 	if short != b || !strings.Contains(short, ".0:2026-03-01 .1:k7m2qx .2:`Uses tabs`") || !IsOwnOutput(short) {
 		t.Fatalf("short block wrong:\n%s", short)
 	}
-	for _, want := range []string{".0:2026-03-01 .1:k7m2qx .2:`Uses tabs`", ".0: .1:abc123 .2:`Port 8443`", "muninn help", "newer wins"} {
+	// 2026-11-10: header chosen by a 5-agent test (F1, 38/40): it must say the
+	// notes are not the user's, newer wins, and how to fix one.
+	for _, want := range []string{".0:2026-03-01 .1:k7m2qx .2:`Uses tabs`", ".0: .1:abc123 .2:`Port 8443`", "AI memory", "not the user", "newer wins", "memory_forget <id>", "memory_remember"} {
 		if !contains(b, want) {
 			t.Errorf("block missing %q:\n%s", want, b)
 		}

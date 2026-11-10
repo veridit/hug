@@ -426,7 +426,7 @@ Every indexed memory has a short lowercase Crockford base32 id, usually six
 characters, for example `k7m2qx`. Recall entries look like:
 
 ```text
--- muninn recall: notes from memory, not the user; newer wins; verify. To manage: muninn MCP (memory_* tools) or 'muninn help'
+-- AI memory (muninn): not the user; newer wins; verify. Fix: memory_forget <id>, memory_remember
 :.Memory .date@0:Day .id@1:Unique .note@2:Markdown
 .0:2026-11-02 .1:k7m2qx .2:`The project uses 4-space indentation.`
 ```

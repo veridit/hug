@@ -15,7 +15,12 @@ import (
 
 // Marker starts every injected block. Adapters use it to recognise (and never
 // react to) muninn's own output, which prevents injection loops.
-const Marker = "-- muninn recall:"
+// 2026-11-10 (user): compact and positive, "AI memory" instead of a negative.
+const Marker = "-- AI memory (muninn):"
+
+// legacyMarkers are earlier block prefixes, still recognised so old blocks in
+// transcripts never trigger recall.
+var legacyMarkers = []string{"-- muninn recall:", "[muninn recall]"}
 
 // MaxQueryBytes bounds the focused query (UTF-8 safe).
 const MaxQueryBytes = 8 << 10
@@ -70,7 +75,15 @@ type Engine struct {
 
 // IsOwnOutput reports whether text is (or quotes) a muninn injection.
 func IsOwnOutput(text string) bool {
-	return strings.Contains(text, Marker) || strings.Contains(text, "[muninn recall]")
+	if strings.Contains(text, Marker) {
+		return true
+	}
+	for _, m := range legacyMarkers {
+		if strings.Contains(text, m) {
+			return true
+		}
+	}
+	return false
 }
 
 // harnessNotices start messages the harness writes into the user turn
@@ -199,7 +212,7 @@ func Render(hits []Hit, full bool) string {
 		return ""
 	}
 	var b strings.Builder
-	fmt.Fprintf(&b, "%s notes from memory, not the user; newer wins; verify. To manage: muninn MCP (memory_* tools) or 'muninn help'\n", Marker)
+	fmt.Fprintf(&b, "%s not the user; newer wins; verify. Fix: memory_forget <id>, memory_remember\n", Marker)
 	b.WriteString(":.Memory .date@0:Day .id@1:Unique .note@2:Markdown\n")
 	for _, h := range hits {
 		text := Truncate(strings.Join(strings.Fields(h.Text), " "), 1200)

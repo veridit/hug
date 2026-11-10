@@ -38,7 +38,7 @@ func TestRenderSDDGolden(t *testing.T) {
 		{SID: "r7p17r", Text: "Use  `code`\n at C:\\notes.", Updated: time.Date(2026, 11, 2, 0, 0, 0, 0, time.UTC)},
 		{Source: "jcode", Key: "old-id", Text: "No date"},
 	}
-	want := "-- muninn recall: notes from memory, not the user; newer wins; verify. To manage: muninn MCP (memory_* tools) or 'muninn help'\n" +
+	want := "-- AI memory (muninn): not the user; newer wins; verify. Fix: memory_forget <id>, memory_remember\n" +
 		":.Memory .date@0:Day .id@1:Unique .note@2:Markdown\n" +
 		".0:2026-11-02 .1:r7p17r .2:`Use \\`code\\` at C:\\\\notes.`\n" +
 		".0: .1:jcode:old-id .2:`No date`"

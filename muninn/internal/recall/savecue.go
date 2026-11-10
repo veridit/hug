@@ -22,7 +22,7 @@ func SaveCue(msg string) string {
 	}
 	for _, c := range cues {
 		if c.re.MatchString(m) {
-			return "Looks like a lasting " + c.kind + ": if it matters beyond this session, memory_remember it (narrowest scope; forget any memory it contradicts)."
+			return "Sounds like a lasting " + c.kind + ": memory_remember it if it outlives this session."
 		}
 	}
 	return ""
