@@ -20,7 +20,10 @@ import (
 
 // App is an opened muninn instance.
 type App struct {
-	sourceMu    sync.Mutex
+	sourceMu sync.Mutex
+	// reindexMu keeps one incremental pass at a time in this process (the MCP
+	// server's background startup pass and a write tool's pass).
+	reindexMu   sync.Mutex
 	sourceRoots map[string]sourceBoundary
 	Cfg         config.Config
 	DB          *store.DB
@@ -138,6 +141,8 @@ func (a *App) IndexOptions() index.Options {
 
 // Reindex runs one incremental pass.
 func (a *App) Reindex(ctx context.Context) (index.Stats, error) {
+	a.reindexMu.Lock()
+	defer a.reindexMu.Unlock()
 	st, err := a.Indexer.Run(ctx, a.IndexOptions())
 	if err != nil {
 		return st, fmt.Errorf("index: %w", err)

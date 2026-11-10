@@ -66,9 +66,15 @@ func mcpCmd() *cobra.Command {
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 			defer stop()
 			return withApp(func(_ context.Context, a *app.App) error {
-				if _, err := a.Reindex(ctx); err != nil {
-					fmt.Fprintln(os.Stderr, "muninn: reindex:", err)
-				}
+				// 2026-11-10: the Claude app gave up on muninn after 2 minutes without an
+				// initialize reply, because startup reindex waited on another process's
+				// write lock. Serve at once; tools read the index as it stands, and the
+				// background pass brings it up to date.
+				go func() {
+					if _, err := a.Reindex(ctx); err != nil && ctx.Err() == nil {
+						fmt.Fprintln(os.Stderr, "muninn: reindex:", err)
+					}
+				}()
 				cwd, _ := os.Getwd()
 				return mcpserver.RunStdio(ctx, a, version, a.Bound(jcodeHome, cwd))
 			})
