@@ -120,8 +120,9 @@ def exercise(binary, root, width, height, no_color):
     exports = [f"{k}={v}" for k, v in env.items() if k in {
         "HOME", "MUNINN_HOME", "JCODE_HOME", "MUNINN_NO_EMBED", "TERM", "COLORTERM",
         "COLORFGBG", "GOMAXPROCS", "GOFLAGS", "TZ", "LANG", "NO_COLOR"}]
-    # env -u prevents an inherited NO_COLOR from contaminating the colour lane.
-    shell = shlex.join(["env", "-u", "NO_COLOR", *exports, "nice", "-n", "19", binary, "tui"])
+    # env -u prevents an inherited NO_COLOR from contaminating the colour lane, and
+    # CI too: termenv reports no colour when CI is set (GitHub Actions sets it).
+    shell = shlex.join(["env", "-u", "NO_COLOR", "-u", "CI", *exports, "nice", "-n", "19", binary, "tui"])
     shots = {}
     try:
         # macOS DirectoryServices may briefly stall tmux's getpwuid during
