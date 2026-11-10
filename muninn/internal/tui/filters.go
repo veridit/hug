@@ -183,12 +183,19 @@ func (m *model) filterChoices() []filterValue {
 }
 func (m *model) jumpChoices() {
 	prefix := m.input.Value()
-	m.jumpIDs = nil
+	var exactSID, exactNumber, prefixes []string
 	for _, u := range m.snapshot.units {
-		if strings.HasPrefix(u.SID, prefix) || strings.HasPrefix(strconv.FormatInt(u.ID, 10), prefix) {
-			m.jumpIDs = append(m.jumpIDs, u.SID)
+		number := strconv.FormatInt(u.ID, 10)
+		switch {
+		case u.SID == prefix:
+			exactSID = append(exactSID, u.SID)
+		case number == prefix:
+			exactNumber = append(exactNumber, u.SID)
+		case strings.HasPrefix(u.SID, prefix) || strings.HasPrefix(number, prefix):
+			prefixes = append(prefixes, u.SID)
 		}
 	}
+	m.jumpIDs = append(append(exactSID, exactNumber...), prefixes...)
 	m.completion = 0
 }
 func (m model) updatePicker(msg tea.KeyMsg) (tea.Model, tea.Cmd) {

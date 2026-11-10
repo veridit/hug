@@ -7,6 +7,7 @@ The historical filename is retained, but tmux now supplies the real PTY and
 screen emulator, avoiding false positives from concatenated ANSI output.
 """
 import argparse
+from contextlib import contextmanager
 import difflib
 import json
 import os
@@ -29,8 +30,39 @@ def command(*args, **kwargs):
     # Never share the owner's or another worker's server/configuration.
     if args[0] == "tmux" and TMUX_SOCKET:
         args = (args[0], "-L", TMUX_SOCKET, "-f", "/dev/null", *args[1:])
+    timeout = kwargs.pop("timeout", 30)
     return subprocess.run(args, check=True, text=True, stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE, timeout=30, **kwargs).stdout
+                          stderr=subprocess.PIPE, timeout=timeout, **kwargs).stdout
+
+
+@contextmanager
+def private_server():
+    """Keep a known foreground PID, even when a server command blocks in the OS."""
+    global TMUX_SOCKET
+    TMUX_SOCKET = "muninn-tui-" + uuid.uuid4().hex[:12]
+    socket = Path(os.environ.get("TMUX_TMPDIR", "/tmp")) / f"tmux-{os.getuid()}" / TMUX_SOCKET
+    server = subprocess.Popen(["tmux", "-D", "-L", TMUX_SOCKET, "-f", "/dev/null"],
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        deadline = time.monotonic() + 30
+        while not socket.exists():
+            if server.poll() is not None or time.monotonic() > deadline:
+                raise RuntimeError("private tmux server did not create its socket")
+            time.sleep(.05)
+        yield
+    finally:
+        try:
+            command("tmux", "kill-server", timeout=3)
+        except (subprocess.SubprocessError, OSError):
+            pass
+        if server.poll() is None:
+            server.terminate()
+            try:
+                server.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                server.kill()
+        server.wait(timeout=3)
+        TMUX_SOCKET = None
 
 
 def fixture(root, binary):
@@ -81,12 +113,10 @@ def normalized(screen, root, project):
 
 
 def exercise(binary, root, width, height, no_color):
-    global TMUX_SOCKET
     env, project, ids = fixture(root, binary)
     if no_color:
         env["NO_COLOR"] = "1"
     name = "muninn-tui-" + uuid.uuid4().hex[:12]
-    TMUX_SOCKET = name
     exports = [f"{k}={v}" for k, v in env.items() if k in {
         "HOME", "MUNINN_HOME", "JCODE_HOME", "MUNINN_NO_EMBED", "TERM", "COLORTERM",
         "COLORFGBG", "GOMAXPROCS", "GOFLAGS", "TZ", "LANG", "NO_COLOR"}]
@@ -94,7 +124,9 @@ def exercise(binary, root, width, height, no_color):
     shell = shlex.join(["env", "-u", "NO_COLOR", *exports, "nice", "-n", "19", binary, "tui"])
     shots = {}
     try:
-        command("tmux", "new-session", "-d", "-x", str(width), "-y", str(height), "-s", name, "-c", str(project), shell)
+        # macOS DirectoryServices may briefly stall tmux's getpwuid during
+        # session creation. The foreground server remains owned and cancellable.
+        command("tmux", "new-session", "-d", "-x", str(width), "-y", str(height), "-s", name, "-c", str(project), shell, timeout=120)
         command("tmux", "set-option", "-t", name, "status", "off")
         command("tmux", "set-option", "-t", name, "remain-on-exit", "on")
 
@@ -152,6 +184,8 @@ def exercise(binary, root, width, height, no_color):
         shot("filter-picker", "Quick filter · category")
         send(key="Enter")
         shot("filter-chips", "[category:fact]")
+        send(text="F1")
+        shot("quick-place", "[place:here]")
         send(text="F#" + ids["fixture_banana"][:3])
         shot("id-jump", "Jump to memory")
         send(key="Enter")
@@ -169,8 +203,10 @@ def exercise(binary, root, width, height, no_color):
             raise AssertionError("q did not exit cleanly: " + dead)
         return shots
     finally:
-        subprocess.run(["tmux", "-L", name, "kill-server"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
-        TMUX_SOCKET = None
+        try:
+            command("tmux", "kill-session", "-t", name, timeout=3)
+        except (subprocess.SubprocessError, OSError):
+            pass
 
 
 def main():
@@ -185,7 +221,7 @@ def main():
     scratch = Path(os.environ.get("JCODE_SCRATCH_DIR", str(REPO.parent / "tui" / "muninn")))
     scratch.mkdir(parents=True, exist_ok=True)
     failures = 0
-    with tempfile.TemporaryDirectory(prefix="terminal-fixture-", dir=scratch) as tmp:
+    with tempfile.TemporaryDirectory(prefix="terminal-fixture-", dir=scratch) as tmp, private_server():
         for width, height in ((80, 24), (140, 40)):
             for no_color in (False, True):
                 label = f"{width}x{height}-" + ("no-color" if no_color else "color")

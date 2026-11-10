@@ -126,5 +126,13 @@ func (m model) loadDetailMetadata() detailMetadata {
 }
 func (m model) detailBadges() string {
 	u := m.unit
-	return colourCategory("["+flat(u.Category)+"]") + " " + colourPlace("["+flat(m.placeName(u.Scope))+"]") + " " + dim("["+u.Updated.Local().Format("2006-01-02")+"] ["+u.SID+"]") + " " + paint(fmt.Sprintf("[strength %d]", m.metadata.strength), typeColours[2], false)
+	category := colourCategory("[" + flat(u.Category) + "]")
+	dateID := dim("[" + u.Updated.Local().Format("2006-01-02") + "] [" + u.SID + "]")
+	strength := paint(fmt.Sprintf("[strength %d]", m.metadata.strength), typeColours[2], false)
+	name := flat(m.placeName(u.Scope))
+	// Place labels are variable length. Reserve the fixed badges before clipping
+	// the label, retaining its original stable colour and closing bracket.
+	remaining := max(3, m.width-2-ansi.StringWidth(category+dateID+strength)-3)
+	place := paint("["+fit(name, remaining-2)+"]", placeColour(name), false)
+	return category + " " + place + " " + dateID + " " + strength
 }

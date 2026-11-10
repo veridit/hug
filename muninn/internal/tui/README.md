@@ -21,7 +21,7 @@ indexing still runs before the terminal browser starts.
   Binding's visibility boundary or other chips. Backspace removes the last chip.
   `F` and `:clear` clear all chips and the text query.
 - `?` opens help, including from an input without inserting a question mark.
-- Ctrl-E toggles existing score explanations. Ctrl-R focuses related memories.
+- Ctrl-E toggles existing score explanations. Ctrl-R opens related memories.
   Enter follows a related memory, with Esc returning to the previous detail.
 
 The `:` palette completes commands and values. Tab or Enter inserts the selected
@@ -86,7 +86,7 @@ Model tests exercise visibility, input routing, completion, filtering, stale
 search responses, resizing, complete details, confirmations, correction rollback
 and the existing tidy apply path. `go test ./...` also builds the real binary and
 runs `scripts/tui-pty.py` when tmux, Python 3 and nice are installed. That test
-checks 36 committed text goldens: nine screens at 80x24 and 140x40, each with and
+checks 40 committed text goldens: ten screens at 80x24 and 140x40, each with and
 without colour. It asserts actual ANSI colour presence/absence and clean exit.
 It skips only in `-short` mode or when terminal prerequisites are unavailable.
 

@@ -17,6 +17,7 @@ import (
 	"github.com/veridit/muninn/internal/config"
 	"github.com/veridit/muninn/internal/ingest"
 	"github.com/veridit/muninn/internal/search"
+	"github.com/veridit/muninn/internal/store"
 	"github.com/veridit/muninn/internal/tidy"
 )
 
@@ -266,5 +267,123 @@ func TestBatchedTerminalInput(t *testing.T) {
 	packet("gg")
 	if tm.(model).cursor != 0 {
 		t.Fatal("gg navigation was swallowed in a PTY packet")
+	}
+}
+
+func TestFindCancelPreservesChipsAndPreviewPaging(t *testing.T) {
+	a := testApp(t)
+	mems, err := ingest.LoadNative(app.NativePath())
+	if err != nil {
+		t.Fatal(err)
+	}
+	mems[1].Category = "preference"
+	if err = ingest.SaveNative(app.NativePath(), mems); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = a.Reindex(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	var tm tea.Model = startModel(t, a, 140, 40)
+	tm = typeText(t, tm, "fc")
+	tm = keypress(t, tm, tea.KeyEnter)
+	tm = typeText(t, tm, "/banana")
+	tm = keypress(t, tm, tea.KeyEsc)
+	m := tm.(model)
+	if len(m.chips) != 1 || m.filter != "" || len(m.filtered(m.results)) != 2 || m.focus != noInput {
+		t.Fatal("cancelling text find must retain the category chip and restore its list")
+	}
+	tm = typeText(t, tm, "/")
+	tm = keypress(t, tm, tea.KeyEnter)
+	tm = keypress(t, tm, tea.KeyBackspace)
+	m = tm.(model)
+	if len(m.filtered(m.results)) != 3 {
+		t.Fatal("removing a chip after an empty find must restore every visible row")
+	}
+	m.screen = preview
+	m.block = strings.Repeat("A readable recall preview line.\n", 100)
+	m.sizeViewport()
+	m.viewport.SetContent(wrapText(m.block, m.width-4))
+	tm = typeText(t, m, "G")
+	if !tm.(model).viewport.AtBottom() {
+		t.Fatal("G did not scroll recall preview to the bottom")
+	}
+	tm = typeText(t, tm, "gg")
+	if !tm.(model).viewport.AtTop() {
+		t.Fatal("gg did not scroll recall preview to the top")
+	}
+	for _, screen := range []screen{review, preview} {
+		m = tm.(model)
+		m.screen = screen
+		for _, action := range []string{"e", "m", "x"} {
+			got := typeText(t, m, action).(model)
+			if got.focus != noInput {
+				t.Fatal("review/preview must not edit a stale, invisible list selection")
+			}
+		}
+	}
+}
+
+func TestJumpExactIDPrecedesPrefixes(t *testing.T) {
+	m := newModel(testApp(t))
+	m.snapshot.units = []store.Unit{{ID: 17850, SID: "1785qr"}, {ID: 1785, SID: "k7m2ab"}}
+	m.input.SetValue("1785")
+	m.jumpChoices()
+	if len(m.jumpIDs) != 2 || m.jumpIDs[0] != "k7m2ab" {
+		t.Fatal("exact numeric id must win over longer row numbers and SID prefixes")
+	}
+	m.snapshot.units = append(m.snapshot.units, store.Unit{ID: 12, SID: "1785"})
+	m.jumpChoices()
+	if m.jumpIDs[0] != "1785" {
+		t.Fatal("an exact stable id must win over a numeric row id")
+	}
+}
+
+func TestDetailsBadgesKeepFixedFieldsWithLongPlace(t *testing.T) {
+	m := newModel(testApp(t))
+	m.width = 80
+	m.unit = store.Unit{SID: "k7m2ab", Scope: "folder:/very/long/place", Category: "preference", Updated: time.Date(2026, 11, 10, 12, 0, 0, 0, time.Local)}
+	m.snapshot.places = []placeCount{{Place: app.Place{Name: strings.Repeat("long-place-", 20), Scope: m.unit.Scope}}}
+	m.metadata.strength = 7
+	badges := ansi.Strip(m.detailBadges())
+	for _, required := range []string{"[preference]", "[2026-11-10]", "[k7m2ab]", "[strength 7]"} {
+		if !strings.Contains(badges, required) {
+			t.Fatalf("fixed badge %s hidden: %s", required, badges)
+		}
+	}
+	if ansi.StringWidth(badges) > m.width-2 {
+		t.Fatal("detail badges overflow the pane")
+	}
+}
+
+func TestTUIHelpQuitAndLongMovePicker(t *testing.T) {
+	m := startModel(t, testApp(t), 80, 24)
+	m.help = true
+	_, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+	if cmd == nil {
+		t.Fatal("q outside input must still quit from help")
+	}
+	if _, ok := cmd().(tea.QuitMsg); !ok {
+		t.Fatal("help q did not quit")
+	}
+	m.busy = true
+	_, cmd = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+	if cmd != nil {
+		t.Fatal("help must not abandon a confirmed write")
+	}
+	m.busy = false
+	m.focus = findInput
+	_, cmd = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+	if cmd != nil {
+		t.Fatal("q must not quit while an input retains focus behind help")
+	}
+	m.help = false
+	m.focus = moveInput
+	for i := range 40 {
+		m.pending.places = append(m.pending.places, placeCount{Place: app.Place{Name: fmt.Sprintf("destination-%02d", i), Scope: fmt.Sprintf("scope-%02d", i)}})
+	}
+	m.pending.choice = 39
+	view := ansi.Strip(m.View())
+	if !strings.Contains(view, "destination-39") || strings.Contains(view, "destination-00") {
+		t.Fatal("move picker must keep its selected destination in view")
 	}
 }

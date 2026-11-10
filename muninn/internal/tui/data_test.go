@@ -65,3 +65,40 @@ func TestScopeMatrixOverviewHistoryAndPlans(t *testing.T) {
 	}
 	scopetest.Pass(t, "tui.history-and-plans", "alpha")
 }
+
+func TestScopeMatrixQuickPlaceShortcuts(t *testing.T) {
+	f := scopetest.New(t)
+	for _, name := range []string{"alpha", "global", "client"} {
+		t.Run(name, func(t *testing.T) {
+			b := f.Bind(t, name)
+			cwd := f.Cwd
+			if name == "client" {
+				cwd = f.ClientCwd
+			}
+			t.Chdir(cwd)
+			m := startModel(t, f.App, 140, 40)
+			for i, alias := range []string{"here", "client", "global"} {
+				got := typeText(t, m, string(rune('1'+i))).(model)
+				p, err := b.Placement("", alias)
+				if alias == "client" && b.Client == "" {
+					if len(got.chips) != 0 || !strings.Contains(got.status, "No client") {
+						t.Fatal("unavailable client shortcut must explain without silently selecting here")
+					}
+				} else if err != nil {
+					if len(got.chips) != 0 {
+						t.Fatalf("unavailable %s created a chip", alias)
+					}
+				} else if len(got.chips) != 1 || got.chips[0].value != p.Scope {
+					t.Fatalf("%s shortcut did not select its Binding place", alias)
+				}
+				f.Clean(t, name, got.View())
+				all := typeText(t, got, "4").(model)
+				if len(all.chips) != 0 {
+					t.Fatal("all did not remove the place filter")
+				}
+				f.Clean(t, name, all.View())
+			}
+			scopetest.Pass(t, "tui.quick-places", name)
+		})
+	}
+}

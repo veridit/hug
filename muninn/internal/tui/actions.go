@@ -144,7 +144,7 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.filter = m.input.Value()
 			m.searchSeq++
 			if strings.TrimSpace(m.filter) == "" {
-				m.results = m.visibleResults()
+				m.results = m.allResults()
 				m.cursor = 0
 				return m, cmd
 			}

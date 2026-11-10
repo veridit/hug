@@ -48,10 +48,13 @@ func colourCategory(s string) string {
 	return paint(s, typeColours[i], false)
 }
 func colourPlace(s string) string {
+	return paint(s, placeColour(s), false)
+}
+func placeColour(s string) lipgloss.TerminalColor {
 	h := fnv.New32a()
 	value := strings.TrimPrefix(strings.Trim(s, "[]"), "place:")
 	_, _ = h.Write([]byte(value))
-	return paint(s, typeColours[h.Sum32()%uint32(len(typeColours))], false)
+	return typeColours[h.Sum32()%uint32(len(typeColours))]
 }
 func safe(s string) string {
 	return strings.Map(func(r rune) rune {
@@ -151,7 +154,10 @@ func (m model) View() string {
 	case m.focus == moveInput:
 		var lines []string
 		lines = append(lines, "Choose a destination. Enter reviews the move.", "")
-		for i, p := range m.pending.places {
+		visible := max(1, contentH-4)
+		start := windowStart(m.pending.choice, visible)
+		for i := start; i < len(m.pending.places) && i < start+visible; i++ {
+			p := m.pending.places[i]
 			lines = append(lines, selectedLine(colourPlace(p.Name)+" · "+dim(p.Scope), i == m.pending.choice, w-2))
 		}
 		content = box("Move · "+m.pending.unit.SID, lines, w, contentH, true)
@@ -415,6 +421,9 @@ func (m model) keyBar() string {
 	switch {
 	case m.help:
 		keys = []key.Binding{binding([]string{"?", "esc"}, "close help")}
+		if m.focus == noInput && !m.busy {
+			keys = append(keys, binding([]string{"q"}, "quit"))
+		}
 	case m.busy:
 		keys = []key.Binding{binding([]string{"ctrl+c"}, "quit after current write")}
 	case m.focus == confirmInput:
@@ -433,6 +442,8 @@ func (m model) keyBar() string {
 		keys = []key.Binding{binding([]string{"enter"}, "keep filter"), binding([]string{"↑", "↓"}, "move"), binding([]string{"esc"}, "clear"), binding([]string{"?"}, "help")}
 	case m.screen == review:
 		keys = []key.Binding{binding([]string{"j", "k"}, "scroll"), binding([]string{"enter"}, "full memory"), binding([]string{"y"}, "approve"), binding([]string{"n"}, "skip"), binding([]string{"esc"}, "stop"), binding([]string{"?"}, "help"), binding([]string{"q"}, "quit")}
+	case m.screen == preview:
+		keys = []key.Binding{binding([]string{"j", "k"}, "scroll"), binding([]string{"gg", "G"}, "top/bottom"), binding([]string{"ctrl-d", "ctrl-u"}, "page"), binding([]string{"esc"}, "back"), binding([]string{"?"}, "help"), binding([]string{"q"}, "quit")}
 	default:
 		keys = []key.Binding{binding([]string{"j", "k"}, "move"), binding([]string{"h", "l"}, "pane"), binding([]string{"enter"}, "open"), binding([]string{"/"}, "find"), binding([]string{":"}, "command"), binding([]string{"?"}, "help"), binding([]string{"esc"}, "back"), binding([]string{"q"}, "quit")}
 		if m.width >= 120 {

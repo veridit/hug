@@ -159,7 +159,7 @@ func (m *model) back() {
 		m.filter = ""
 		m.input.SetValue("")
 		m.searchSeq++
-		m.results = m.visibleResults()
+		m.results = m.allResults()
 		m.title = "Recent"
 		m.cursor = 0
 		return
@@ -172,16 +172,19 @@ func (m *model) back() {
 	if n := len(m.history); n > 0 {
 		p := m.history[n-1]
 		m.history = m.history[:n-1]
-		m.screen, m.title, m.results, m.cursor, m.pane, m.filter, m.unit = p.screen, p.title, p.results, p.cursor, p.pane, p.filter, p.unit
-		if m.screen == detail {
-			m.setDetail()
-			m.viewport.SetYOffset(p.offset)
-		}
+		m.restore(p)
 		return
 	}
 	m.screen = overview
 	m.title = "Overview"
 	m.pane = 0
+}
+func (m *model) restore(p location) {
+	m.screen, m.title, m.results, m.cursor, m.pane, m.filter, m.unit = p.screen, p.title, p.results, p.cursor, p.pane, p.filter, p.unit
+	if m.screen == detail {
+		m.setDetail()
+		m.viewport.SetYOffset(p.offset)
+	}
 }
 func (m *model) showList(title string, rows []search.Result) {
 	m.push()
@@ -244,6 +247,9 @@ func (m model) visibleResults() []search.Result {
 func (m model) selected() (store.Unit, bool) {
 	if m.screen == detail {
 		return m.unit, m.unit.SID != ""
+	}
+	if m.screen == review || m.screen == preview {
+		return store.Unit{}, false
 	}
 	rows := m.filtered(m.results)
 	c := m.cursor
@@ -363,6 +369,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		if m.help {
+			if k == "q" && m.focus == noInput && !m.busy {
+				return m, tea.Quit
+			}
 			if k == "esc" || k == "?" {
 				m.help = false
 			}
@@ -413,7 +422,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.input.SetValue("")
 			m.input.Prompt = "/ "
 			m.input.Placeholder = "find memories"
-			m.results = m.visibleResults()
+			m.results = m.allResults()
 			m.cursor = 0
 			return m, m.input.Focus()
 		case "#":
@@ -542,7 +551,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) backFind() {
 	m.filter = ""
 	if n := len(m.history); n > 0 {
-		m.back()
+		p := m.history[n-1]
+		m.history = m.history[:n-1]
+		m.restore(p)
 	} else {
 		m.screen = overview
 		m.title = "Overview"
@@ -560,7 +571,7 @@ func (m *model) changePane(delta int) {
 	m.g = false
 }
 func (m *model) moveTo(n int) {
-	if m.screen == detail && m.pane == 0 {
+	if (m.screen == detail && m.pane == 0) || m.screen == preview {
 		if n == 0 {
 			m.viewport.GotoTop()
 		} else {
@@ -620,13 +631,8 @@ func (m *model) openSelected() {
 		case 0:
 			if c < len(m.snapshot.places) {
 				p := m.snapshot.places[c]
-				var rows []search.Result
-				for _, u := range m.snapshot.units {
-					if u.Scope == p.Scope {
-						rows = append(rows, search.Result{Unit: u})
-					}
-				}
-				m.showList("Place · "+p.Name, rows)
+				m.showList("Place · "+p.Name, m.allResults())
+				m.addChip("place", p.Scope)
 			}
 		case 3:
 			if c == 0 {
