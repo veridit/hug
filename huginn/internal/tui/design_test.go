@@ -433,6 +433,27 @@ func TestColorAndNoColorLayout(t *testing.T) {
 	}
 }
 
+func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
+	m := manyModel(t)
+	m.styles.renderer.SetColorProfile(termenv.TrueColor)
+	m.styles.renderer.SetHasDarkBackground(true)
+	for _, status := range []string{"done", "dropped"} {
+		task := m.all[2]
+		task.Status = status
+		row := m.taskRow(task, 140, false, false)
+		if !strings.Contains(row, "38;2;0;191;255") || !strings.Contains(row, "38;2;255;180;84") {
+			t.Fatal("completed row lost id or warning colour", row)
+		}
+		if ansi.StringWidth(row) != 140 {
+			t.Fatal("completed row no longer aligns", ansi.StringWidth(row))
+		}
+	}
+	m.styles.renderer.SetHasDarkBackground(false)
+	if row := m.row(m.all[0]); !strings.Contains(row, "38;2;0;108;156") {
+		t.Fatal("light-terminal accent missing", row)
+	}
+}
+
 func TestJumpRetainsFiltersAndDetailShortcuts(t *testing.T) {
 	m := press(manyModel(t), "2", "#", "1785", "enter")
 	selected, _ := m.selected()

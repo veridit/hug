@@ -65,7 +65,7 @@ escaping the store are rejected.
   2026-11-10 clarification rather than the earlier dim-id design wording.
   Dates are dim. Status, type and priority have stable adaptive colours, with
   `#00bfff` accent on dark terminals. Completed/dropped row text is subdued while
-  the id remains identifiable. `NO_COLOR` removes colour without changing layout.
+  the id and lint marker retain their colours. `NO_COLOR` removes colour without changing layout.
 - List columns are cell-aligned and titles truncate with `…`. Slugs are reserved
   for detail, where they add information rather than duplicate list titles.
 - The board has five logical columns, horizontally paged to fit. Status lives in

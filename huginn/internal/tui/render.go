@@ -85,7 +85,7 @@ func (m model) taskRow(t task.Task, width int, selected, compact bool) string {
 	row += styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(oneLine(t.Title), max(0, titleWidth))
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {
-		row = pointer + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 10, width)))
+		row = pointer + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + " " + m.marker(t.Path) + " " + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 13, width)))
 	}
 	if selected {
 		row = m.styles.selected.Render(row)
