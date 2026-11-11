@@ -137,6 +137,18 @@ func Resolve(tasks []Task, ref string) (Task, error) {
 	if len(exact) == 0 {
 		exact = prefix
 	}
+	// A bare number is the natural shorthand for imported ids: "2035" finds
+	// TASK-2035 when nothing else matched (seid-lang feedback, 2026-11-09).
+	if len(exact) == 0 && ref != "" && strings.Trim(ref, "0123456789.") == "" {
+		for _, t := range tasks {
+			for _, a := range t.Aliases {
+				if i := strings.LastIndex(a, "-"); i > 0 && strings.EqualFold(a[i+1:], ref) {
+					exact = append(exact, t)
+					break
+				}
+			}
+		}
+	}
 	if len(exact) == 1 {
 		return exact[0], nil
 	}

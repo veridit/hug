@@ -261,3 +261,19 @@ func TestCommitPathsAndRename(t *testing.T) {
 	clean(t, r.Dir)
 	clean(t, root)
 }
+
+// The host repo's hooks must not run on the data branch (seid-lang,
+// 2026-11-09: a shared core.hooksPath pre-commit refused huginn's import).
+func TestHostHooksDoNotBlockDataBranch(t *testing.T) {
+	root, _ := fixture(t, false)
+	hooks := filepath.Join(root, ".githooks")
+	must(t, os.MkdirAll(hooks, 0o755))
+	must(t, os.WriteFile(filepath.Join(hooks, "pre-commit"), []byte("#!/bin/sh\necho BLOCKED >&2\nexit 1\n"), 0o755))
+	command(t, root, "config", "core.hooksPath", hooks)
+	r := openRepo(t, root, "notes", ".notes")
+	writeFile(t, r, "a.md", "data\n")
+	must(t, r.Commit(nil, "data"))
+	if _, e := r.Head(); e != nil {
+		t.Fatal(e)
+	}
+}

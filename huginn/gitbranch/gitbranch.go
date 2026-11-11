@@ -64,6 +64,12 @@ func quote(s string) string {
 }
 func (r *Repository) fix(args string) string { return "git -C " + quote(r.Dir) + " " + args }
 func (r *Repository) runAt(dir string, args ...string) (string, error) {
+	// The data branch is not code: the host project's hooks (core.hooksPath is
+	// shared by every worktree) check files that do not exist here and refused
+	// huginn's commits in seid-lang, 2026-11-09. Never run them on this branch.
+	if dir == r.Dir && len(args) > 0 && (args[0] == "commit" || args[0] == "rebase" || args[0] == "merge") {
+		args = append([]string{"-c", "core.hooksPath=" + os.DevNull}, args...)
+	}
 	c := exec.Command("git", append([]string{"-C", dir}, args...)...)
 	c.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_EDITOR=true", "GIT_MERGE_AUTOEDIT=no")
 	if r.Identity.Name != "" {

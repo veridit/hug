@@ -263,8 +263,26 @@ func Parse(path string, data []byte) *Document {
 			}
 		}
 	}
-	d.Task.Goal = strings.ToValidUTF8(d.Task.Goal, "\ufffd")
+	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
 	return d
+}
+
+// stripBacklogMarkers drops Backlog.md's <!-- SECTION:...:BEGIN/END -->
+// comment lines from displayed text. The file keeps them, so a re-import
+// still merges against the same bytes (seid-lang feedback, 2026-11-09).
+func stripBacklogMarkers(s string) string {
+	if !strings.Contains(s, "<!-- SECTION:") && !strings.Contains(s, "<!-- AC:") {
+		return s
+	}
+	var out []string
+	for _, l := range strings.Split(s, "\n") {
+		t := strings.TrimSpace(l)
+		if strings.HasPrefix(t, "<!-- SECTION:") || strings.HasPrefix(t, "<!-- AC:") {
+			continue
+		}
+		out = append(out, l)
+	}
+	return strings.TrimSpace(strings.Join(out, "\n"))
 }
 func (d *Document) add(line int, p string) {
 	d.Findings = append(d.Findings, Finding{d.Task.Path, line, p})
