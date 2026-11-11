@@ -6,7 +6,8 @@ A git-branch task tracker for people and agents. Markdown is the source of truth
 Git is the sync protocol, and the CLI, terminal UI and MCP server share the same
 operations. Sister of [muninn](https://github.com/veridit/muninn), the raven of memory.
 Huginn is the raven of thought: what to do next, why, and how to know it is done.
-Licensed under MPL-2.0.
+Licensed under MPL-2.0. Contributions need the contributor agreement in
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Install
 
