@@ -221,7 +221,10 @@ def main():
     if not shutil.which("tmux"):
         parser.error("tmux is required for real-terminal golden tests")
     binary = str(Path(args.binary).resolve())
-    scratch = Path(os.environ.get("JCODE_SCRATCH_DIR", str(REPO.parent / "tui" / "muninn")))
+    # Never inside a git checkout: the fixture project must not inherit a
+    # repository's identity (hug monorepo, 2026-11-11: REPO.parent became
+    # the hug checkout, and the TUI showed "here hug" with one memory less).
+    scratch = Path(os.environ.get("JCODE_SCRATCH_DIR") or tempfile.gettempdir()) / "muninn-tui"
     scratch.mkdir(parents=True, exist_ok=True)
     failures = 0
     with tempfile.TemporaryDirectory(prefix="terminal-fixture-", dir=scratch) as tmp, private_server():
