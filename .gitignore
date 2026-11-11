@@ -1,0 +1,5 @@
+# Each part keeps its own .gitignore in its folder. Root-level only:
+.DS_Store
+/.hug/
+/.huginn/
+/.muninn-notes/

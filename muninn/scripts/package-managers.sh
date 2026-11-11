@@ -6,7 +6,7 @@
 set -euo pipefail
 ver="${1:?version}"; sums="${2:?SHA256SUMS}"; tap="${3:?tap dir}"
 v="${ver#v}"
-base="https://github.com/veridit/muninn/releases/download/${ver}"
+base="https://github.com/veridit/hug/releases/download/muninn-${ver}"
 sha() { awk -v f="$1" '$2==f {print $1}' "$sums"; }
 need() { [ -n "$(sha "$1")" ] || { echo "missing $1 in $sums" >&2; exit 1; }; }
 for f in darwin_arm64.tar.gz darwin_amd64.tar.gz linux_arm64.tar.gz linux_amd64.tar.gz windows_amd64.zip windows_arm64.zip; do
@@ -92,15 +92,15 @@ cat > "$tap/bucket/muninn.json" <<EOF
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/veridit/muninn/releases/download/v\$version/muninn_\$version_windows_amd64.zip",
+                "url": "https://github.com/veridit/hug/releases/download/muninn-v\$version/muninn_\$version_windows_amd64.zip",
                 "extract_dir": "muninn_\$version_windows_amd64"
             },
             "arm64": {
-                "url": "https://github.com/veridit/muninn/releases/download/v\$version/muninn_\$version_windows_arm64.zip",
+                "url": "https://github.com/veridit/hug/releases/download/muninn-v\$version/muninn_\$version_windows_arm64.zip",
                 "extract_dir": "muninn_\$version_windows_arm64"
             }
         },
-        "hash": { "url": "https://github.com/veridit/muninn/releases/download/v\$version/SHA256SUMS" }
+        "hash": { "url": "https://github.com/veridit/hug/releases/download/muninn-v\$version/SHA256SUMS" }
     }
 }
 EOF

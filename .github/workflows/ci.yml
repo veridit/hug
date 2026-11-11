@@ -13,21 +13,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: No-secrets gate
-        run: ./scripts/check-secrets.sh --all
+      - name: No-secrets gate (whole repository)
+        run: ./muninn/scripts/check-secrets.sh --all
 
   test:
     needs: secrets
     strategy:
       fail-fast: false
       matrix:
+        part: [muninn, huginn]
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.part }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version-file: ${{ matrix.part }}/go.mod
+          cache-dependency-path: ${{ matrix.part }}/go.sum
       - name: Vet
         run: go vet ./...
       - name: Test
@@ -35,6 +40,6 @@ jobs:
         env:
           CGO_ENABLED: "1"
       - name: Build (pure Go)
-        run: go build ./cmd/huginn
+        run: go build ./cmd/${{ matrix.part }}
         env:
           CGO_ENABLED: "0"

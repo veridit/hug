@@ -1,0 +1,61 @@
+name: release
+
+# Tags name the part: muninn-v0.5.3 releases muninn, huginn-v0.1.5 releases
+# huginn. Until the parts become one hug binary, each keeps its own version.
+on:
+  push:
+    tags: ["muninn-v*", "huginn-v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Part and version from the tag
+        id: tag
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          echo "part=${tag%%-v*}" >> "$GITHUB_OUTPUT"
+          echo "version=v${tag#*-v}" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ${{ steps.tag.outputs.part }}/go.mod
+          cache-dependency-path: ${{ steps.tag.outputs.part }}/go.sum
+      - name: No-secrets gate
+        run: ./muninn/scripts/check-secrets.sh --all
+      - name: Test
+        working-directory: ${{ steps.tag.outputs.part }}
+        run: go test ./...
+      - name: Build all platforms
+        working-directory: ${{ steps.tag.outputs.part }}
+        run: ./scripts/build-release.sh "${{ steps.tag.outputs.version }}"
+      - name: Publish
+        working-directory: ${{ steps.tag.outputs.part }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/* --generate-notes --title "${{ steps.tag.outputs.part }} ${{ steps.tag.outputs.version }}"
+      - name: Update Homebrew formula and Scoop manifest
+        working-directory: ${{ steps.tag.outputs.part }}
+        env:
+          TAP_DEPLOY_KEY: ${{ secrets.TAP_DEPLOY_KEY }}
+          PART: ${{ steps.tag.outputs.part }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          trap 'rm -f ~/.ssh/tap' EXIT
+          mkdir -p ~/.ssh && printf '%s\n' "$TAP_DEPLOY_KEY" > ~/.ssh/tap && chmod 600 ~/.ssh/tap
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/tap -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+          git clone git@github.com:veridit/homebrew-tap.git tap
+          ./scripts/package-managers.sh "$VERSION" dist/SHA256SUMS tap
+          cd tap
+          git config user.name "hug release"
+          git config user.email "hug-release@users.noreply.github.com"
+          git add "Formula/$PART.rb" "bucket/$PART.json"
+          git diff --cached --quiet || git commit -m "$PART $VERSION"
+          for attempt in 1 2 3; do
+            git pull --rebase
+            if git push origin HEAD; then exit 0; fi
+          done
+          exit 1
