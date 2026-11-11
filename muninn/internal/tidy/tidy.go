@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-	"net/url"
 	"os"
 	"sort"
 	"strings"
@@ -138,7 +137,7 @@ func Fingerprint(u store.Unit) string {
 // embedder loading or native-file repair. One read transaction is a snapshot.
 func ReadGraph(ctx context.Context, path string) (Graph, error) {
 	var g Graph
-	dsn := (&url.URL{Scheme: "file", Path: path}).String() + "?mode=ro&_pragma=query_only(1)&_pragma=busy_timeout(30000)"
+	dsn := store.FileURI(path) + "?mode=ro&_pragma=query_only(1)&_pragma=busy_timeout(30000)"
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return g, err

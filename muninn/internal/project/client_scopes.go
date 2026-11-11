@@ -133,7 +133,7 @@ func clientFolders(root string, aliases ...string) map[string]string {
 	addPath := func(path, physical string) {
 		out[harness.JcodeProjectHash(path)] = physical
 		if rel, err := filepath.Rel(home, path); home != "" && err == nil && rel != "." && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
-			out[harness.JcodeProjectHash("~/"+rel)] = physical
+			out[harness.JcodeProjectHash("~/"+filepath.ToSlash(rel))] = physical
 		}
 	}
 	add := func(path, physical string) {

@@ -20,6 +20,7 @@ func TestPlaceCLIToDryApplyReadOnly(t *testing.T) {
 	f := scopetest.New(t)
 	home := filepath.Join(t.TempDir(), "owner")
 	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home) // os.UserHomeDir on Windows
 	os.MkdirAll(filepath.Join(home, ".jcode"), 0700)
 	root := filepath.Join(home, "Projects", "example")
 	os.MkdirAll(filepath.Join(root, ".git"), 0700)

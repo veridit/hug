@@ -16,6 +16,7 @@ func TestClientFoldersBoundsAndSymlinks(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Setenv("HOME", root)
+	t.Setenv("USERPROFILE", root) // os.UserHomeDir on Windows
 	for _, path := range []string{"visible/child/grandchild", "visible/child/grandchild/too-deep", ".git/hidden", "node_modules/hidden", "vendor/hidden"} {
 		if err := os.MkdirAll(filepath.Join(root, path), 0700); err != nil {
 			t.Fatal(err)

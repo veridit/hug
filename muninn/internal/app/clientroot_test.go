@@ -21,6 +21,7 @@ func TestClientRootAndLegacyFolderVisibility(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home) // os.UserHomeDir on Windows
 	root := filepath.Join(home, "client")
 	a := makePlacementRepo(t, filepath.Join(root, "project-a"))
 	b := makePlacementRepo(t, filepath.Join(root, "project-b"))

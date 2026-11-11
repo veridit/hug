@@ -25,6 +25,7 @@ func testApp(t *testing.T) *app.App {
 	// whichever client/instance JCODE_HOME the outer test process inherited.
 	home := t.TempDir()
 	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home) // os.UserHomeDir on Windows
 	t.Setenv("JCODE_HOME", filepath.Join(home, ".jcode"))
 	t.Setenv("MUNINN_HOME", t.TempDir())
 	db, err := store.Open(config.DBPath())

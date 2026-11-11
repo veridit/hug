@@ -29,6 +29,12 @@ type Fixture struct {
 func New(t *testing.T) *Fixture {
 	t.Helper()
 	root := t.TempDir()
+	// Scopes store real paths. On macOS the temp dir is /var/... which is a
+	// symlink to /private/var/..., so tests that build expected scopes from
+	// the root must start from the resolved path (macOS CI, 2026-11-11).
+	if real, err := filepath.EvalSymlinks(root); err == nil {
+		root = real
+	}
 	t.Setenv("MUNINN_HOME", filepath.Join(root, "muninn"))
 	t.Setenv("MUNINN_NO_EMBED", "1")
 	t.Setenv("JCODE_HOME", "")
