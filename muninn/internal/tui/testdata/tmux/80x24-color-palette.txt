@@ -1,0 +1,24 @@
+muninn · ~/project                                         6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Command palette ─────────────────────────────────────────────────────────────┐
+│: category pref                                                               │
+│Tab/Enter completes · next Enter runs · ↑↓ or ctrl-n/p selects                │
+│                                                                              │
+│› category preference                                                         │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+tab/enter complete/run ↑/↓ completion esc close ? help

@@ -1,0 +1,353 @@
+package index
+
+import (
+	"context"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/veridit/muninn/internal/embed"
+	"github.com/veridit/muninn/internal/ingest"
+	"github.com/veridit/muninn/internal/shortid"
+	"github.com/veridit/muninn/internal/store"
+)
+
+// Stats summarises one indexing pass.
+type Stats struct {
+	SourcesScanned, SourcesSkipped     int
+	Added, Changed, Removed, Unchanged int
+	Embedded, EmbedReused              int
+	EmbedPending                       int // left for a later pass (MaxEmbed)
+	Elapsed                            time.Duration
+	Phases                             []Phase
+	EmbedErr                           error
+}
+
+// Phase is one timed step of an indexing pass.
+type Phase struct {
+	Name string
+	Dur  time.Duration
+}
+
+func (s Stats) String() string {
+	out := fmt.Sprintf("sources scanned=%d skipped=%d | units added=%d changed=%d removed=%d unchanged=%d | embedded=%d reused=%d | %s",
+		s.SourcesScanned, s.SourcesSkipped, s.Added, s.Changed, s.Removed, s.Unchanged, s.Embedded, s.EmbedReused, s.Elapsed.Round(time.Millisecond))
+	if s.EmbedPending > 0 {
+		out += fmt.Sprintf(" | %d still to embed (run `muninn index`)", s.EmbedPending)
+	}
+	if s.Elapsed > time.Second {
+		for _, p := range s.Phases {
+			out += fmt.Sprintf(" %s=%s", p.Name, p.Dur.Round(time.Millisecond))
+		}
+	}
+	return out
+}
+
+// Indexer applies sources to the store incrementally.
+type Indexer struct {
+	DB       *store.DB
+	Embedder embed.Embedder // nil = keyword-only
+	// MaxEmbed caps embeddings per pass (0 = no cap); hooks set it.
+	MaxEmbed int
+	// NoWait makes Run return ErrBusy instead of waiting for another
+	// process's write transaction (hooks).
+	NoWait bool
+
+	deltas           []UnitDelta // concept-set changes collected during a pass
+	pipelineSwitched bool        // this pass completed a new embedding pipeline
+	embeddedHashes   []string    // vectors materialized during this pass
+}
+
+// Candidate is a unit as produced by a source, before storage.
+type Candidate struct {
+	Key, Kind, Title, Body, Category, Scope string
+	SID, Origin                             string
+	Tags                                    []string
+	Active                                  bool
+	Updated                                 time.Time
+}
+
+// SyncSource reconciles one source with its current candidates. Units whose
+// content hash is unchanged are not touched at all: no write, no re-embed, no
+// graph work. Only dirty units flow onward (seid search's incremental rule).
+func (ix *Indexer) SyncSource(sourceID int64, cands []Candidate, st *Stats) (dirty []int64, removed []int64, err error) {
+	existing, err := ix.DB.UnitHashes(sourceID)
+	if err != nil {
+		return nil, nil, err
+	}
+	seen := map[string]bool{}
+	for _, c := range cands {
+		seen[c.Key] = true
+		text := EmbeddingText(c.Title, c.Body)
+		ident := ContentHash(text + "\x00" + c.Category + "\x00" + c.Scope + "\x00" +
+			strconv.FormatBool(c.Active) + "\x00" + c.Origin + "\x00" + strings.Join(c.Tags, " "))
+		if old, ok := existing[c.Key]; ok && old[1] == ident {
+			st.Unchanged++
+			continue
+		}
+		var oldConcepts []int
+		if old, ok := existing[c.Key]; ok {
+			oldID, _ := strconv.ParseInt(old[0], 10, 64)
+			if oldConcepts, err = ix.unitConcepts(oldID); err != nil {
+				return nil, nil, err
+			}
+		}
+		id, err := ix.DB.UpsertUnit(store.Unit{
+			SourceID: sourceID, SID: c.SID, Origin: c.Origin, Key: c.Key, ContentHash: ContentHash(text), Ident: ident, Kind: c.Kind,
+			Title: c.Title, Body: c.Body, Category: c.Category, Tags: c.Tags, Scope: c.Scope,
+			Active: c.Active, Updated: c.Updated,
+		})
+		if err != nil {
+			return nil, nil, err
+		}
+		var newConcepts []int
+		if c.Active {
+			if newConcepts, err = ix.setUnitConcepts(id, Concepts(c.Title+" "+c.Body+" "+strings.Join(c.Tags, " "))); err != nil {
+				return nil, nil, err
+			}
+		} else if _, err = ix.setUnitConcepts(id, nil); err != nil {
+			return nil, nil, err
+		}
+		ix.deltas = append(ix.deltas, UnitDelta{Old: oldConcepts, New: newConcepts})
+		if _, ok := existing[c.Key]; ok {
+			st.Changed++
+		} else {
+			st.Added++
+		}
+		dirty = append(dirty, id)
+	}
+	for key, old := range existing {
+		if seen[key] {
+			continue
+		}
+		id, _ := strconv.ParseInt(old[0], 10, 64)
+		oldConcepts, err := ix.unitConcepts(id)
+		if err != nil {
+			return nil, nil, err
+		}
+		ix.deltas = append(ix.deltas, UnitDelta{Old: oldConcepts})
+		if err := ix.DB.DeleteUnit(id); err != nil {
+			return nil, nil, err
+		}
+		removed = append(removed, id)
+		st.Removed++
+	}
+	return dirty, removed, nil
+}
+
+// statOf returns a file's (mtime ns, size).
+func statOf(path string) (int64, int64, error) {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return 0, 0, err
+	}
+	return fi.ModTime().UnixNano(), fi.Size(), nil
+}
+
+// IndexJcode indexes the jcode memory store under dir with scope prefix
+// (e.g. "jcode@brovs").
+func (ix *Indexer) IndexJcode(ctx context.Context, dir, prefix string, st *Stats) ([]int64, []int64, error) {
+	files, err := ingest.JcodeFiles(dir, prefix)
+	if err != nil {
+		return nil, nil, err
+	}
+	var dirtyAll, removedAll []int64
+	for path, scope := range files {
+		d, r, err := ix.indexFile(path, "jcode", st, func() ([]Candidate, error) {
+			mems, err := ingest.ReadJcodeFile(path)
+			if err != nil {
+				return nil, err
+			}
+			out := make([]Candidate, 0, len(mems))
+			for _, m := range mems {
+				out = append(out, Candidate{Key: m.Key, Kind: "memory", Body: m.Content, Category: m.Category,
+					Tags: m.Tags, Scope: scope, Active: m.Active, Updated: m.Updated})
+			}
+			return out, nil
+		})
+		if err != nil {
+			return nil, nil, fmt.Errorf("%s: %w", path, err)
+		}
+		dirtyAll, removedAll = append(dirtyAll, d...), append(removedAll, r...)
+	}
+	return dirtyAll, removedAll, nil
+}
+
+// IndexNative indexes muninn's own memory store.
+func (ix *Indexer) IndexNative(ctx context.Context, path string, st *Stats) ([]int64, []int64, error) {
+	var loaded []ingest.NativeMemory
+	dirty, removed, err := ix.indexFile(path, "native", st, func() ([]Candidate, error) {
+		mems, err := ingest.LoadNative(path)
+		if err != nil {
+			return nil, err
+		}
+		loaded = mems
+		out := make([]Candidate, 0, len(mems))
+		for _, m := range mems {
+			origin := m.Origin
+			if strings.HasPrefix(m.ID, "cap_repair_") {
+				origin = shortid.Identity(m.ID, m.Origin)
+			}
+			out = append(out, Candidate{Key: m.ID, SID: m.SID, Origin: origin, Kind: "memory", Title: m.Title, Body: m.Content, Category: m.Category,
+				Tags: m.Tags, Scope: m.Scope, Active: m.Active, Updated: m.Updated})
+		}
+		return out, nil
+	})
+	if err != nil {
+		return dirty, removed, err
+	}
+	// The database sees all sources, so its collision extension is authoritative.
+	changed := false
+	for i := range loaded {
+		var sid string
+		if err := ix.DB.QueryRow(`SELECT u.sid FROM units u JOIN sources s ON s.id=u.source_id WHERE s.path=? AND u.key=?`, path, loaded[i].ID).Scan(&sid); err != nil {
+			return dirty, removed, err
+		}
+		if sid != loaded[i].SID {
+			loaded[i].SID = sid
+			changed = true
+		}
+	}
+	if changed {
+		// Write back only the SIDs, onto the file as it is now: another process
+		// may have written since it was read.
+		sids := map[string]string{}
+		for _, m := range loaded {
+			sids[m.ID] = m.SID
+		}
+		err = ingest.UpdateNative(path, func(cur []ingest.NativeMemory) ([]ingest.NativeMemory, bool, error) {
+			save := false
+			for i := range cur {
+				if sid, ok := sids[cur[i].ID]; ok && cur[i].SID != sid {
+					cur[i].SID = sid
+					save = true
+				}
+			}
+			return cur, save, nil
+		})
+	}
+	return dirty, removed, err
+}
+
+// IndexMarkdown indexes markdown files under roots, split by heading.
+func (ix *Indexer) IndexMarkdown(ctx context.Context, files []string, st *Stats) ([]int64, []int64, error) {
+	var dirtyAll, removedAll []int64
+	for _, path := range files {
+		d, r, err := ix.indexFile(path, "markdown", st, func() ([]Candidate, error) {
+			b, err := os.ReadFile(path)
+			if err != nil {
+				return nil, err
+			}
+			secs := ingest.SplitMarkdown(path, string(b))
+			out := make([]Candidate, 0, len(secs))
+			for _, s := range secs {
+				out = append(out, Candidate{Key: "L" + strconv.Itoa(s.Line) + ":" + s.Heading, Kind: "section",
+					Title: s.Heading, Body: s.Content, Scope: "notes", Active: true})
+			}
+			return out, nil
+		})
+		if err != nil {
+			return nil, nil, fmt.Errorf("%s: %w", path, err)
+		}
+		dirtyAll, removedAll = append(dirtyAll, d...), append(removedAll, r...)
+	}
+	return dirtyAll, removedAll, nil
+}
+
+// indexFile skips a file whose (mtime, size) is unchanged; otherwise it parses
+// and reconciles it.
+func (ix *Indexer) indexFile(path, kind string, st *Stats, parse func() ([]Candidate, error)) ([]int64, []int64, error) {
+	mtime, size, err := statOf(path)
+	if err != nil {
+		return nil, nil, err
+	}
+	id, oldM, oldS, err := ix.DB.Source(kind, path)
+	if err != nil {
+		return nil, nil, err
+	}
+	if oldM == mtime && oldS == size {
+		st.SourcesSkipped++
+		return nil, nil, nil
+	}
+	st.SourcesScanned++
+	cands, err := parse()
+	if err != nil {
+		return nil, nil, err
+	}
+	dirty, removed, err := ix.SyncSource(id, cands, st)
+	if err != nil {
+		return nil, nil, err
+	}
+	return dirty, removed, ix.DB.SetSourceStat(id, mtime, size)
+}
+
+// EmbedDirty embeds units that lack a vector under the current pipeline.
+// Identical text across units shares one vector (content-addressed).
+func (ix *Indexer) EmbedDirty(ctx context.Context, st *Stats) error {
+	ix.embeddedHashes = nil
+	if ix.Embedder == nil {
+		return nil
+	}
+	pipeline := PipelineHash(ix.Embedder.Model())
+	rows, err := ix.DB.Query(`SELECT DISTINCT u.content_hash, u.title, u.body FROM units u
+	  LEFT JOIN embeddings e ON e.content_hash=u.content_hash AND e.pipeline_hash=?
+	  WHERE e.content_hash IS NULL`, pipeline)
+	if err != nil {
+		return err
+	}
+	type job struct{ hash, text string }
+	var jobs []job
+	for rows.Next() {
+		var h, t, b string
+		if err := rows.Scan(&h, &t, &b); err != nil {
+			rows.Close()
+			return err
+		}
+		jobs = append(jobs, job{h, EmbeddingText(t, b)})
+	}
+	rows.Close()
+	var total int
+	ix.DB.QueryRow(`SELECT COUNT(DISTINCT content_hash) FROM units`).Scan(&total)
+	st.EmbedReused = total - len(jobs)
+	// A hook must answer in milliseconds: it embeds at most MaxEmbed texts and
+	// leaves the rest (e.g. a full re-embed after a model change) to
+	// `muninn index` or `muninn serve`. Search keeps using the previous
+	// pipeline until every vector of the new one exists.
+	pending := len(jobs)
+	if ix.MaxEmbed > 0 && len(jobs) > ix.MaxEmbed {
+		jobs = jobs[:ix.MaxEmbed]
+	}
+	for start := 0; start < len(jobs); start += embed.BatchSize {
+		end := min(start+embed.BatchSize, len(jobs))
+		texts := make([]string, 0, end-start)
+		for _, j := range jobs[start:end] {
+			texts = append(texts, j.text)
+		}
+		vecs, err := ix.Embedder.Embed(ctx, embed.Documents(ix.Embedder, texts))
+		if err != nil {
+			st.EmbedErr = err
+			return nil // degrade to keyword-only; never fail indexing
+		}
+		for i, v := range vecs {
+			if err := ix.DB.PutEmbedding(jobs[start+i].hash, pipeline, len(v),
+				embed.EncodeF32(v), embed.Quantize(v), embed.Sketch(v)); err != nil {
+				return err
+			}
+			st.Embedded++
+			ix.embeddedHashes = append(ix.embeddedHashes, jobs[start+i].hash)
+		}
+	}
+	if st.Embedded < pending {
+		st.EmbedPending = pending - st.Embedded
+		return nil
+	}
+	if ix.DB.GetMeta("pipeline_hash") != pipeline {
+		ix.pipelineSwitched = true // every stored similarity is stale
+	}
+	if err := ix.DB.SetMeta("pipeline_query_prefix", embed.PromptsFor(ix.Embedder.Model()).Query); err != nil {
+		return err
+	}
+	return ix.DB.SetMeta("pipeline_hash", pipeline)
+}

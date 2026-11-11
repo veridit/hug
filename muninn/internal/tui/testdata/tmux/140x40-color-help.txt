@@ -1,0 +1,40 @@
+muninn · ~/project                                                                                                     6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Help · Vim keys · Esc always goes back ──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│Movement                                                                                                                                  │
+│  j/k or ↓/↑             next / previous row (scroll full text)                                                                           │
+│  gg / G · < / >         top / bottom · Home / End also work                                                                              │
+│  ctrl-d / ctrl-u        half page down / up                                                                                              │
+│  PgDn / PgUp            full page down / up                                                                                              │
+│  h/l · Tab / Shift-Tab  previous / next pane (or related memories)                                                                       │
+│  Enter                  open detail (in find: first keep filter)                                                                         │
+│  Esc                    back one level, clear filter or close input                                                                      │
+│Find and commands                                                                                                                         │
+│  /                      live search · Enter keeps · Esc clears                                                                           │
+│  :                      palette · Tab/Enter completes, next Enter runs                                                                   │
+│  ctrl-n/p · ↓/↑         select palette completion                                                                                        │
+│  ctrl-e / ctrl-r        toggle score explanation / related list                                                                          │
+│Owner actions (each confirmed)                                                                                                            │
+│  e · ctrl-s             new correction · review before y confirms                                                                        │
+│  m / x                  choose move destination / retire · y confirms                                                                    │
+│  y / n                  approve / skip a tidy entry · Esc stops                                                                          │
+│  ?                      help, even while typing · ?/Esc closes                                                                           │
+│  q / ctrl-c             quit (q only outside input)                                                                                      │
+│Commands: overview, recent, place <p>, told, search <q>, category <c>,                                                                    │
+│          today, yesterday, dupes, moves, goto <id>, clear, recall <q>                                                                    │
+│  #                      id/prefix jump · Enter opens · Tab completes                                                                     │
+│  f                      picker: p place, c category, d date · counts                                                                     │
+│  1/2/3/4 · ⌫ · F        here/client/global/all · remove chip · clear filters                                                             │
+│  Filters combine with / search · :date today|yesterday|YYYY-MM-DD                                                                        │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+?/esc close help · q quit

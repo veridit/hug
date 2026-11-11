@@ -1,0 +1,40 @@
+muninn · ~/project                                                                                                     6 memories · 4 places
+Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
+┌ Quick filter · category ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│filter › type to narrow values                                                                                                            │
+│Type to narrow · j/k or ↑↓ selects · Enter adds a chip                                                                                    │
+│                                                                                                                                          │
+│› fact                                         3                                                                                          │
+│  preference                                   2                                                                                          │
+│  correction                                   0                                                                                          │
+│  decision                                     1                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+│                                                                                                                                          │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+jcode@global · 1 results in <time>
+p/c/d field · j/k value · enter add chip · esc back · ? help
