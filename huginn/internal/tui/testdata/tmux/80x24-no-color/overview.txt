@@ -1,5 +1,5 @@
 HUGINN · overview   60/60 tasks · ! 5 findings
-[overview]   list    board    lint
+[o overview]   v list    b board    ! lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 > IN PROGRESS · who is working  [15] · 1–2 shown

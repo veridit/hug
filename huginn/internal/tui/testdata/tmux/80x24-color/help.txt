@@ -1,11 +1,11 @@
 HUGINN · help   60/60 tasks · ! 5 findings
- overview   [list]   board    lint
+ o overview   [v list]   b board    ! lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 NAVIGATION AND FIND
 j/k ↑/↓         move / scroll
-gg / < / Home   top
-G / > / End     bottom
+< / gg / Home   top
+> / G / End     bottom
 ctrl-d / ctrl-u half page down / up
 PgDn / PgUp     full page down / up
 h/← Shift-Tab   previous pane / column
@@ -21,4 +21,4 @@ ctrl-n/p / ↑↓   select palette completion
 #               jump by id prefix / TASK-number alias
 All tasks · : filters and commands
 
-j/k scroll · gg/G ends · PgUp/PgDn page · Esc back · ? close · q quit
+j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · q quit

@@ -1,5 +1,5 @@
 HUGINN · list   3/60 tasks · ! 5 findings
- overview   [list]   board    lint
+ o overview   [v list]   b board    ! lint
 todo 3  ·  doing 0  ·  blocked 1  ·  done 0  ·  dropped 0
 [status:todo ×] [type:feature ×] [/ task] · ⌫ last · F clear
   ID       ! STATUS  TYPE    PRIORITY TITLE

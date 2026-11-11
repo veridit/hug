@@ -13,8 +13,8 @@ func binding(keys []string, label, description string) bkey.Binding {
 var keys = struct{ down, up, top, bottom, prev, next bkey.Binding }{
 	binding([]string{"j", "down"}, "j/k ↑/↓", "move / scroll"),
 	binding([]string{"k", "up"}, "k/↑", "up"),
-	binding([]string{"<", "home"}, "gg / < / Home", "top"),
-	binding([]string{"G", ">", "end"}, "G / > / End", "bottom"),
+	binding([]string{"<", "home"}, "< / gg / Home", "top"),
+	binding([]string{"G", ">", "end"}, "> / G / End", "bottom"),
 	binding([]string{"h", "left", "shift+tab"}, "h/← Shift-Tab", "previous pane / column"),
 	binding([]string{"l", "right", "tab"}, "l/→ Tab", "next pane / column"),
 }
@@ -26,7 +26,7 @@ func (m model) keyBar() string {
 	var hints []bkey.Binding
 	switch {
 	case m.help:
-		hints = []bkey.Binding{hint("j/k", "scroll"), hint("gg/G", "ends"), hint("PgUp/PgDn", "page"), hint("Esc", "back"), hint("?", "close")}
+		hints = []bkey.Binding{hint("j/k", "scroll"), hint("</>", "ends"), hint("PgUp/PgDn", "page"), hint("Esc", "back"), hint("?", "close")}
 		if m.prompt == "" {
 			hints = append(hints, hint("q", "quit"))
 		}
@@ -69,7 +69,7 @@ func (m model) helpText() string {
 		hint("ctrl-n/p / ↑↓", "select palette completion"), hint("?", "help overlay, including from inputs"),
 		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/o"),
 		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
-		hint("o / v / b / !", "overview / list / board / lint"),
+		hint("o / v / b / !", "views: overview / list / board / lint"),
 		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh files and lint"),
 	}
 	actions := []bkey.Binding{

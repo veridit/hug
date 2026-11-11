@@ -265,12 +265,14 @@ func (m model) View() string {
 	}
 	header := m.styles.accent.Render("HUGINN · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
 	tabs := []string{}
-	for _, v := range []string{"overview", "list", "board", "lint"} {
-		s := v
-		if v == m.view {
+	// Each tab shows the key that opens it (2026-11-11: the row read like
+	// labels and nothing said how to reach list, board or lint).
+	for _, v := range []struct{ key, name string }{{"o", "overview"}, {"v", "list"}, {"b", "board"}, {"!", "lint"}} {
+		s := v.key + " " + v.name
+		if v.name == m.view {
 			s = m.styles.selected.Render("[" + s + "]")
 		} else {
-			s = m.styles.dim.Render(" " + s + " ")
+			s = m.styles.accent.Render(" "+v.key) + m.styles.dim.Render(" "+v.name+" ")
 		}
 		tabs = append(tabs, s)
 	}
