@@ -1,0 +1,942 @@
+// Package importer migrates backlog-md files without changing their source.
+package importer
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/binary"
+	"encoding/json"
+	"fmt"
+	"math"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
+
+	"github.com/veridit/huginn/internal/id"
+	"github.com/veridit/huginn/internal/task"
+	"gopkg.in/yaml.v3"
+)
+
+type Options struct {
+	DryRun bool `json:"dry_run"`
+}
+type Report struct {
+	Added     int          `json:"added"`
+	Updated   int          `json:"updated"`
+	Unchanged int          `json:"unchanged"`
+	Skipped   int          `json:"skipped"`
+	Files     []FileReport `json:"files"`
+}
+type FileReport struct {
+	Source   string         `json:"source"`
+	ID       string         `json:"id,omitempty"`
+	Path     string         `json:"path,omitempty"`
+	Action   string         `json:"action"`
+	Findings []task.Finding `json:"findings"`
+}
+type source struct {
+	path, alias, title string
+	raw                []byte
+	fields             map[string]any
+	ordinal            float64
+	ranked             bool
+	report             int
+}
+
+// front separates valid line-oriented YAML from Markdown. YAML nodes supply
+// field boundaries, so block scalars and nested unknown keys stay untouched.
+func front(raw []byte) (map[string]any, int, error) {
+	lines := strings.SplitAfter(string(raw), "\n")
+	if len(lines) < 2 || strings.TrimSpace(lines[0]) != "---" {
+		return nil, 0, fmt.Errorf("missing frontmatter")
+	}
+	offset := len(lines[0])
+	for i := 1; i < len(lines); i++ {
+		if strings.TrimSpace(lines[i]) == "---" {
+			if bytes.Contains(bytes.ReplaceAll(raw[:offset], []byte("\r\n"), nil), []byte("\r")) {
+				return nil, 0, fmt.Errorf("frontmatter contains unsupported bare carriage return")
+			}
+			var node yaml.Node
+			if err := yaml.Unmarshal(raw[len(lines[0]):offset], &node); err != nil {
+				return nil, 0, err
+			}
+			if len(node.Content) != 1 || node.Content[0].Kind != yaml.MappingNode || node.Content[0].Style&yaml.FlowStyle != 0 {
+				return nil, 0, fmt.Errorf("frontmatter must be a line-oriented mapping")
+			}
+			fields := map[string]any{}
+			if err := node.Content[0].Decode(&fields); err != nil {
+				return nil, 0, err
+			}
+			return fields, offset + len(lines[i]), nil
+		}
+		offset += len(lines[i])
+	}
+	return nil, 0, fmt.Errorf("unterminated frontmatter")
+}
+func str(v any) string {
+	if v == nil {
+		return ""
+	}
+	return fmt.Sprint(v)
+}
+func list(v any) []string {
+	var out []string
+	switch x := v.(type) {
+	case []any:
+		for _, v := range x {
+			out = append(out, str(v))
+		}
+	case []string:
+		out = append(out, x...)
+	case string:
+		if x != "" {
+			out = append(out, x)
+		}
+	}
+	return out
+}
+func canonical(s string) string { return strings.ToUpper(strings.TrimSpace(s)) }
+func originKey(s string) string {
+	s = strings.TrimSpace(s)
+	parts := strings.SplitN(s, ":", 2)
+	if len(parts) != 2 {
+		return s
+	}
+	return strings.ToLower(parts[0]) + ":" + canonical(parts[1])
+}
+
+// LintOrigins reports every destination document sharing an explicit origin.
+// It supplements core lint until origin becomes part of the core task schema.
+func LintOrigins(docs []*task.Document) []task.Finding {
+	byOrigin := map[string][]task.Finding{}
+	for _, doc := range docs {
+		fields, _, err := front(doc.Bytes())
+		if err != nil {
+			continue
+		}
+		origin := originKey(str(fields["origin"]))
+		if origin == "" {
+			continue
+		}
+		line := 1
+		for i, text := range strings.Split(string(doc.Bytes()), "\n") {
+			if strings.HasPrefix(text, "origin:") {
+				line = i + 1
+				break
+			}
+		}
+		byOrigin[origin] = append(byOrigin[origin], task.Finding{Path: doc.Task.Path, Line: line, Problem: "duplicate origin " + origin})
+	}
+	findings := []task.Finding{}
+	for _, group := range byOrigin {
+		if len(group) > 1 {
+			findings = append(findings, group...)
+		}
+	}
+	sort.Slice(findings, func(i, j int) bool {
+		if findings[i].Path != findings[j].Path {
+			return findings[i].Path < findings[j].Path
+		}
+		return findings[i].Line < findings[j].Line
+	})
+	return findings
+}
+func stableID(alias string, attempt int) string {
+	sum := sha256.Sum256([]byte(fmt.Sprintf("backlog:%s:%d", canonical(alias), attempt)))
+	n := binary.BigEndian.Uint32(sum[:4]) & 0x3fffffff
+	const alphabet = "0123456789abcdefghjkmnpqrstvwxyz"
+	b := make([]byte, 6)
+	for i := 5; i >= 0; i-- {
+		b[i] = alphabet[n&31]
+		n >>= 5
+	}
+	return string(b)
+}
+
+// Run imports regular Markdown files from src. Existing aliases determine identity.
+// Source changes merge by field and top-level section against the previous import.
+// A locally edited unit wins, including when upstream also edited it. Existing
+// paths are never renamed. Import baselines are written beside tasks, not in cache.
+func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report, error) {
+	report := Report{Files: []FileReport{}}
+	if dst == nil || dst.Root == "" {
+		return report, fmt.Errorf("destination store root is required")
+	}
+	srcAbs, err := filepath.Abs(src)
+	if err != nil {
+		return report, err
+	}
+	dstAbs, err := filepath.Abs(dst.Root)
+	if err != nil {
+		return report, err
+	}
+	storeCopy := *dst
+	storeCopy.Root = dstAbs
+	dst = &storeCopy
+	if resolved, e := filepath.EvalSymlinks(srcAbs); e == nil {
+		srcAbs = resolved
+	}
+	if resolved, e := filepath.EvalSymlinks(dstAbs); e == nil {
+		dstAbs = resolved
+		dst.Root = resolved
+	}
+	if srcAbs == dstAbs || strings.HasPrefix(dstAbs, srcAbs+string(os.PathSeparator)) || strings.HasPrefix(srcAbs, dstAbs+string(os.PathSeparator)) {
+		return report, fmt.Errorf("source and destination must not overlap")
+	}
+	if err := checkDestination(dst.Root); err != nil {
+		return report, err
+	}
+	type entryIn struct {
+		dir   string
+		entry os.DirEntry
+	}
+	var all []entryIn
+	for _, dir := range BacklogTaskDirs(src) {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			return report, err
+		}
+		for _, e := range entries {
+			all = append(all, entryIn{dir, e})
+		}
+	}
+	{
+		n := 0
+		for _, e := range all {
+			if strings.HasSuffix(strings.ToLower(e.entry.Name()), ".md") {
+				n++
+			}
+		}
+		if n == 0 {
+			return report, &NoTasksError{Dir: BacklogTasksDir(src)}
+		}
+	}
+	var sources []source
+	// One id can live in several folders (backlog-md copies a task into
+	// archive/ and completed/). The copy with the newest updated_date wins;
+	// on a tie the later folder in BacklogTaskDirs order wins. 2026-11-11:
+	// importing folders one at a time let an older copy overwrite newer state
+	// (185 such ids in seid-lang).
+	seen := map[string]int{} // alias -> index in sources
+	type collision struct {
+		plain, qualified string
+		firstPath        string // the copy that got the plain id on first sight
+		secondPath       string // the copy that got plain@folder
+	}
+	var collisions []collision
+	for _, in := range all {
+		entry := in.entry
+		if err := ctx.Err(); err != nil {
+			return report, err
+		}
+		if !strings.HasSuffix(strings.ToLower(entry.Name()), ".md") {
+			continue
+		}
+		path := filepath.Join(in.dir, entry.Name())
+		fr := FileReport{Source: path, Action: "skipped", Findings: []task.Finding{}}
+		report.Files = append(report.Files, fr)
+		idx := len(report.Files) - 1
+		skip := func(problem string) {
+			report.Skipped++
+			report.Files[idx].Findings = append(report.Files[idx].Findings, task.Finding{Path: path, Line: 1, Problem: problem})
+		}
+		if !entry.Type().IsRegular() {
+			skip("source is not a regular file")
+			continue
+		}
+		raw, e := os.ReadFile(path)
+		if e != nil {
+			return report, e
+		}
+		fields, _, e := front(raw)
+		if e != nil {
+			skip(e.Error())
+			continue
+		}
+		alias := canonical(str(fields["id"]))
+		if alias == "" {
+			skip("missing source id")
+			continue
+		}
+		s := source{path: path, alias: alias, title: str(fields["title"]), raw: raw, fields: fields, report: idx}
+		if at, dup := seen[alias]; dup {
+			old := sources[at]
+			if in.dir == filepath.Dir(old.path) {
+				// Two files in one folder claim one id: keep the first and report
+				// the rest so the owner can renumber them.
+				skip("duplicate source id " + alias + " (first file kept)")
+				continue
+			}
+			if !sameTitle(fields, old.fields) {
+				// Different titles: two different tasks were given one id (6 in
+				// seid-lang, 2026-11-11, e.g. a live security bug and an archived
+				// incident). Neither is an older copy of the other. Import both;
+				// which one keeps the plain id is decided once the destination
+				// is read (the one already linked there keeps it).
+				qualified := alias + "@" + canonical(relDir(srcAbs, in.dir))
+				if _, taken := seen[qualified]; taken {
+					skip("duplicate source id " + qualified + " (first file kept)")
+					continue
+				}
+				collisions = append(collisions, collision{plain: alias, qualified: qualified, firstPath: old.path, secondPath: path})
+				alias = qualified
+				s.alias = qualified
+			} else if updatedOf(fields) < updatedOf(old.fields) {
+				skip("older copy of " + alias + " than " + old.path)
+				continue
+			} else {
+				report.Skipped++
+				report.Files[old.report].Action = "skipped"
+				report.Files[old.report].Findings = append(report.Files[old.report].Findings, task.Finding{Path: old.path, Line: 1, Problem: "older copy of " + alias + " than " + path})
+				s.ordinal, s.ranked = 0, false
+				if value, ok := fields["ordinal"]; ok {
+					s.ordinal, e = strconv.ParseFloat(str(value), 64)
+					s.ranked = e == nil && !math.IsNaN(s.ordinal) && !math.IsInf(s.ordinal, 0)
+					if !s.ranked {
+						s.ordinal = 0
+					}
+				}
+				sources[at] = s
+				continue
+			}
+		}
+		seen[alias] = len(sources)
+		if value, ok := fields["ordinal"]; ok {
+			s.ordinal, e = strconv.ParseFloat(str(value), 64)
+			s.ranked = e == nil && !math.IsNaN(s.ordinal) && !math.IsInf(s.ordinal, 0)
+			if !s.ranked {
+				s.ordinal = 0
+			}
+		}
+		sources = append(sources, s)
+	}
+	sort.Slice(sources, func(i, j int) bool {
+		a, b := sources[i], sources[j]
+		if a.ranked != b.ranked {
+			return a.ranked
+		}
+		if a.ordinal != b.ordinal {
+			return a.ordinal < b.ordinal
+		}
+		return a.alias < b.alias
+	})
+	existing, err := dst.Tasks()
+	if err != nil && !os.IsNotExist(err) {
+		return report, err
+	}
+	ids := map[string]string{}
+	occupied := map[string]bool{}
+	byID := map[string]task.Task{}
+	hasOrigin := map[string]bool{}
+	origins := map[string]string{}
+	var originDocs []*task.Document
+	for _, t := range existing {
+		if !id.Valid(t.ID) {
+			return report, fmt.Errorf("invalid destination id %q: run huginn lint", t.ID)
+		}
+		if occupied[t.ID] {
+			return report, fmt.Errorf("duplicate destination id %s", t.ID)
+		}
+		occupied[t.ID] = true
+		byID[t.ID] = t
+		path := t.Path
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(dst.Root, path)
+		}
+		if rel, e := filepath.Rel(dst.Root, path); e != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+			return report, fmt.Errorf("destination task path escapes root: %s", path)
+		}
+		raw, e := os.ReadFile(path)
+		if e != nil {
+			return report, e
+		}
+		originDocs = append(originDocs, task.Parse(path, raw))
+		fields, _, e := front(raw)
+		if e == nil {
+			origin := originKey(str(fields["origin"]))
+			if origin != "" {
+				hasOrigin[t.ID] = true
+				origins[origin] = t.ID
+			}
+		}
+	}
+	if findings := LintOrigins(originDocs); len(findings) != 0 {
+		for _, f := range findings {
+			report.Files = append(report.Files, FileReport{Path: f.Path, Action: "conflict", Findings: []task.Finding{f}})
+		}
+		return report, fmt.Errorf("duplicate destination origin: resolve the reported provenance conflicts")
+	}
+	// The copy already linked in huginn keeps the plain id, so re-runs never
+	// move a task's identity to a different backlog file. With no link yet,
+	// the first copy found keeps it. Both copies get a finding to renumber.
+	for _, c := range collisions {
+		plainPath, otherPath := c.firstPath, c.secondPath
+		if origins["backlog:"+c.plain] == "" && origins["backlog:"+c.qualified] != "" {
+			// nothing linked to the plain id but the qualified one is linked:
+			// keep as is.
+		} else if linked := origins["backlog:"+c.plain]; linked != "" {
+			if t, ok := byID[linked]; ok {
+				for i := range sources {
+					if sources[i].path == c.secondPath && sameTitle(sources[i].fields, map[string]any{"title": t.Title}) {
+						plainPath, otherPath = c.secondPath, c.firstPath
+					}
+				}
+			}
+		}
+		for i := range sources {
+			switch sources[i].path {
+			case plainPath:
+				sources[i].alias = c.plain
+			case otherPath:
+				sources[i].alias = c.qualified
+				report.Files[sources[i].report].Findings = append(report.Files[sources[i].report].Findings, task.Finding{Path: otherPath, Line: 1, Problem: "id collision " + c.plain + " with a different task in " + plainPath + "; imported as " + c.qualified + ", renumber one in backlog"})
+			}
+		}
+	}
+	for _, s := range sources {
+		if existingID := origins["backlog:"+s.alias]; existingID != "" {
+			ids[s.alias] = existingID
+		}
+	}
+	primary := map[string]bool{}
+	for alias := range ids {
+		primary[alias] = true
+	}
+	for _, t := range existing {
+		// An explicit origin is authoritative, including a human re-link to a
+		// different source. Its aliases must never reattach the old source.
+		if hasOrigin[t.ID] {
+			continue
+		}
+		for _, a := range t.Aliases {
+			a = canonical(a)
+			if primary[a] {
+				continue
+			}
+			if old := ids[a]; old != "" && old != t.ID {
+				return report, fmt.Errorf("ambiguous destination alias %s", a)
+			}
+			ids[a] = t.ID
+		}
+	}
+	// Resolve through persisted baselines too: deleting an alias locally must not
+	// cause a second task to appear on the next import.
+	states, err := os.ReadDir(filepath.Join(dst.Root, ".backlog-import"))
+	if err != nil && !os.IsNotExist(err) {
+		return report, err
+	}
+	for _, entry := range states {
+		if !entry.Type().IsRegular() || !strings.HasSuffix(entry.Name(), ".json") {
+			continue
+		}
+		b, e := os.ReadFile(filepath.Join(dst.Root, ".backlog-import", entry.Name()))
+		if e != nil {
+			return report, e
+		}
+		var raw []byte
+		if e = json.Unmarshal(b, &raw); e != nil {
+			return report, fmt.Errorf("invalid import baseline %s: %w", entry.Name(), e)
+		}
+		t := task.Parse("", raw).Task
+		if _, exists := byID[t.ID]; !exists {
+			continue
+		}
+		if hasOrigin[t.ID] {
+			continue
+		}
+		for _, alias := range t.Aliases {
+			a := canonical(alias)
+			if primary[a] {
+				continue
+			}
+			if old := ids[a]; old != "" && old != t.ID {
+				return report, fmt.Errorf("ambiguous import baseline alias %s", a)
+			}
+			ids[a] = t.ID
+		}
+	}
+	for _, s := range sources {
+		if ids[s.alias] != "" {
+			continue
+		}
+		for attempt := 0; ; attempt++ {
+			id := stableID(s.alias, attempt)
+			if !occupied[id] {
+				ids[s.alias] = id
+				occupied[id] = true
+				break
+			}
+		}
+	}
+	for _, s := range sources {
+		for _, alias := range list(s.fields["aliases"]) {
+			a := canonical(alias)
+			if a == "" {
+				continue
+			}
+			if old := ids[a]; old != "" && old != ids[s.alias] {
+				return report, fmt.Errorf("ambiguous source alias %s", a)
+			}
+			ids[a] = ids[s.alias]
+		}
+	}
+	for i, s := range sources {
+		if err := ctx.Err(); err != nil {
+			return report, err
+		}
+		id := ids[s.alias]
+		fr := &report.Files[s.report]
+		fr.ID = id
+		// Fixed-width ordinal position keys preserve numeric order and source-id ties.
+		r := ""
+		if s.ranked {
+			r = fmt.Sprintf("%012d", i+1)
+		}
+		path := filepath.Join(dst.Root, task.BuildName(r, id, task.Slug(s.title)))
+		old, exists := byID[id]
+		if !exists {
+			if _, e := os.Lstat(path); e == nil {
+				return report, fmt.Errorf("destination filename already exists: %s", path)
+			} else if !os.IsNotExist(e) {
+				return report, e
+			}
+		}
+		if exists {
+			path = old.Path
+			if !filepath.IsAbs(path) {
+				path = filepath.Join(dst.Root, path)
+			}
+		}
+		if rel, e := filepath.Rel(dstAbs, path); e != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+			return report, fmt.Errorf("destination task path escapes root: %s", path)
+		}
+		fr.Path = path
+		generated, e := convert(s, id, ids)
+		if e != nil {
+			return report, e
+		}
+		baselinePath := filepath.Join(dst.Root, ".backlog-import", id+".json")
+		result := generated
+		if exists {
+			local, e := os.ReadFile(path)
+			if e != nil {
+				return report, e
+			}
+			baseline, e := os.ReadFile(baselinePath)
+			if e != nil && !os.IsNotExist(e) {
+				return report, e
+			}
+			if os.IsNotExist(e) {
+				result = local
+				if !hasOrigin[id] {
+					doc := task.Parse(path, local)
+					if e = doc.SetField("origin", "backlog:"+s.alias); e != nil {
+						return report, e
+					}
+					result = doc.Bytes()
+				}
+				fr.Findings = append(fr.Findings, task.Finding{Path: path, Line: 1, Problem: "existing alias has no import baseline: kept destination content, back-filled missing origin"})
+			} else {
+				var base []byte
+				if e = json.Unmarshal(baseline, &base); e != nil {
+					return report, fmt.Errorf("import baseline %s: %w", baselinePath, e)
+				}
+				result, e = merge(base, local, generated)
+				if e != nil {
+					return report, fmt.Errorf("merge %s: %w", path, e)
+				}
+			}
+			if bytes.Equal(local, result) {
+				report.Unchanged++
+				fr.Action = "unchanged"
+			} else {
+				report.Updated++
+				fr.Action = "updated"
+			}
+		} else {
+			report.Added++
+			fr.Action = "added"
+		}
+		fr.Findings = append(fr.Findings, task.Parse(path, result).Findings...)
+		for _, dep := range list(s.fields["dependencies"]) {
+			if ids[canonical(dep)] == "" {
+				fr.Findings = append(fr.Findings, task.Finding{Path: path, Line: 1, Problem: "unresolved source dependency: " + dep})
+			}
+		}
+		if !opts.DryRun {
+			if fr.Action != "unchanged" {
+				if e = task.AtomicWrite(path, result); e != nil {
+					return report, e
+				}
+			}
+			state, _ := json.Marshal(generated)
+			previous, e := os.ReadFile(baselinePath)
+			if e != nil && !os.IsNotExist(e) {
+				return report, e
+			}
+			if !bytes.Equal(previous, state) {
+				if e = task.AtomicWrite(baselinePath, state); e != nil {
+					return report, e
+				}
+			}
+		}
+	}
+	return report, nil
+}
+
+func checkDestination(root string) error {
+	return filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
+		if os.IsNotExist(err) && path == root {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if entry.Type()&os.ModeSymlink != 0 {
+			return fmt.Errorf("destination contains symlink: %s", path)
+		}
+		if entry.IsDir() && strings.HasPrefix(entry.Name(), ".") && entry.Name() != ".backlog-import" && path != root {
+			return filepath.SkipDir
+		}
+		return nil
+	})
+}
+
+func convert(s source, id string, ids map[string]string) ([]byte, error) {
+	_, end, err := front(s.raw)
+	if err != nil {
+		return nil, err
+	}
+	body := string(s.raw[end:])
+	// Only headings outside fenced code blocks are semantic.
+	lines := strings.SplitAfter(body, "\n")
+	fence := ""
+	for i, line := range lines {
+		trim := strings.TrimSpace(line)
+		if strings.HasPrefix(trim, "```") || strings.HasPrefix(trim, "~~~") {
+			if fence == "" {
+				fence = trim[:3]
+			} else if strings.HasPrefix(trim, fence) {
+				fence = ""
+			}
+			continue
+		}
+		if fence != "" {
+			continue
+		}
+		switch strings.TrimSpace(line) {
+		case "## Description":
+			lines[i] = strings.Replace(line, "Description", "Goal", 1)
+		case "## Acceptance Criteria":
+			lines[i] = strings.Replace(line, "Acceptance Criteria", "Acceptance", 1)
+		}
+	}
+	body = strings.Join(lines, "")
+	deps := list(s.fields["dependencies"])
+	if len(deps) > 0 {
+		body += "\n## Depends on\n"
+		for _, dep := range deps {
+			ref := ids[canonical(dep)]
+			if ref == "" {
+				ref = dep
+			}
+			body += "- " + ref + "\n"
+		}
+	}
+	raw := append(bytes.Clone(s.raw[:end]), []byte(body)...)
+	d := task.Parse(task.BuildName("", id, task.Slug(s.title)), raw)
+	status := str(s.fields["status"])
+	switch strings.ToLower(strings.TrimSpace(status)) {
+	case "to do", "todo", "draft", "":
+		// Backlog drafts are unstarted ideas: todo, with a draft label kept below.
+		status = "todo"
+	case "in progress", "doing":
+		status = "doing"
+	case "done", "completed":
+		status = "done"
+	case "dropped", "cancelled", "canceled", "won't do", "wontfix":
+		status = "dropped"
+	default:
+		status = "todo"
+	}
+	typ, reason := "feature", "default: no explicit bug/docs/chore/spike label"
+	for _, label := range list(s.fields["labels"]) {
+		v := strings.ToLower(label)
+		if v == "bug" || v == "docs" || v == "chore" || v == "spike" {
+			typ = v
+			reason = "label: " + label
+			break
+		}
+	}
+	// The old type remains available even when it is not a Huginn enum.
+	metadataKey := func(want string) string {
+		key := want
+		for n := 2; ; n++ {
+			if _, exists := s.fields[key]; !exists {
+				return key
+			}
+			key = fmt.Sprintf("%s_%d", want, n)
+		}
+	}
+	aliases := []string{s.alias}
+	for _, a := range list(s.fields["aliases"]) {
+		if canonical(a) != s.alias {
+			aliases = append(aliases, a)
+		}
+	}
+	updates := []struct {
+		k string
+		v any
+	}{{"id", id}, {"origin", "backlog:" + s.alias}, {"aliases", aliases}, {"status", status}, {"type", typ}, {metadataKey("import_type_inference"), reason}}
+	if raw := str(s.fields["status"]); raw != "" && canonicalStatus(raw) != raw {
+		updates = append(updates, struct {
+			k string
+			v any
+		}{metadataKey("backlog_status"), raw})
+	}
+	if value, ok := s.fields["type"]; ok {
+		updates = append(updates, struct {
+			k string
+			v any
+		}{metadataKey("backlog_type"), value})
+	}
+	for _, pair := range [][2]string{{"created_date", "created"}, {"updated_date", "updated"}} {
+		_, alreadyPresent := s.fields[pair[1]]
+		if v, ok := s.fields[pair[0]]; ok && !alreadyPresent {
+			updates = append(updates, struct {
+				k string
+				v any
+			}{pair[1], str(v)})
+		}
+	}
+	for _, u := range updates {
+		if err := d.SetField(u.k, u.v); err != nil {
+			return nil, err
+		}
+	}
+	return d.Bytes(), nil
+}
+
+// units exposes raw field/section spans for conservative three-way merging.
+// No YAML reserialization occurs, including for unknown nested fields.
+type unit struct{ key, raw string }
+
+func units(raw []byte) ([]unit, error) {
+	_, end, err := front(raw)
+	if err != nil {
+		return nil, err
+	}
+	lines := strings.SplitAfter(string(raw), "\n")
+	var node yaml.Node
+	header := string(raw[:end])
+	last := strings.LastIndex(strings.TrimSuffix(header, "\n"), "---")
+	if err = yaml.Unmarshal([]byte(header[len(lines[0]):last]), &node); err != nil {
+		return nil, err
+	}
+	offsets := []int{0}
+	for _, line := range lines {
+		offsets = append(offsets, offsets[len(offsets)-1]+len(line))
+	}
+	var out []unit
+	mapping := node.Content[0]
+	start := len(lines[0])
+	out = append(out, unit{"open", string(raw[:start])})
+	for i := 0; i < len(mapping.Content); i += 2 {
+		if mapping.Content[i].Line < 1 || mapping.Content[i].Line >= len(offsets) {
+			return nil, fmt.Errorf("invalid YAML field line")
+		}
+		a := offsets[mapping.Content[i].Line]
+		if i == 0 && a > start {
+			out = append(out, unit{"header", string(raw[start:a])})
+		}
+		b := last
+		if i+2 < len(mapping.Content) {
+			if mapping.Content[i+2].Line < 1 || mapping.Content[i+2].Line >= len(offsets) {
+				return nil, fmt.Errorf("invalid YAML field boundary")
+			}
+			b = offsets[mapping.Content[i+2].Line]
+		}
+		if a < start || a > b || b > last {
+			return nil, fmt.Errorf("unsupported overlapping YAML field spans")
+		}
+		out = append(out, unit{"field:" + mapping.Content[i].Value, string(raw[a:b])})
+	}
+	out = append(out, unit{"close", string(raw[last:end])})
+	start = end
+	key := "body"
+	fence := ""
+	counts := map[string]int{}
+	for n, line := range lines {
+		a := offsets[n]
+		if a < end {
+			continue
+		}
+		trim := strings.TrimSpace(line)
+		if strings.HasPrefix(trim, "```") || strings.HasPrefix(trim, "~~~") {
+			if fence == "" {
+				fence = trim[:3]
+			} else if strings.HasPrefix(trim, fence) {
+				fence = ""
+			}
+			continue
+		}
+		if fence == "" && strings.HasPrefix(line, "## ") {
+			out = append(out, unit{key, string(raw[start:a])})
+			key = "section:" + strings.TrimSpace(line[3:])
+			counts[key]++
+			key += fmt.Sprint(":", counts[key])
+			start = a
+		}
+	}
+	out = append(out, unit{key, string(raw[start:])})
+	return out, nil
+}
+func merge(base, local, incoming []byte) ([]byte, error) {
+	b, err := units(base)
+	if err != nil {
+		return nil, err
+	}
+	l, err := units(local)
+	if err != nil {
+		return local, nil
+	}
+	n, err := units(incoming)
+	if err != nil {
+		return nil, err
+	}
+	bm, lm, nm := map[string]string{}, map[string]string{}, map[string]string{}
+	for _, u := range b {
+		bm[u.key] = u.raw
+	}
+	for _, u := range l {
+		lm[u.key] = u.raw
+	}
+	for _, u := range n {
+		nm[u.key] = u.raw
+	}
+	var out strings.Builder
+	// Follow local ordering, inserting newly introduced fields before closing YAML
+	// and new sections at the end. Local deletions are edits and remain deleted.
+	used := map[string]bool{}
+	for _, u := range l {
+		if u.key == "close" {
+			for _, v := range n {
+				if strings.HasPrefix(v.key, "field:") {
+					_, was := bm[v.key]
+					_, has := lm[v.key]
+					if !was && !has {
+						out.WriteString(v.raw)
+						used[v.key] = true
+					}
+				}
+			}
+		}
+		value := u.raw
+		if previous, ok := bm[u.key]; ok && value == previous {
+			value = nm[u.key]
+		}
+		out.WriteString(value)
+		used[u.key] = true
+	}
+	for _, u := range n {
+		if !used[u.key] {
+			if _, was := bm[u.key]; !was && !strings.HasPrefix(u.key, "field:") {
+				out.WriteString(u.raw)
+			}
+		}
+	}
+	return []byte(out.String()), nil
+}
+
+// BacklogTaskDirs lists the folders one import reads. A backlog-md root (it
+// has config.yml or tasks/) yields every task folder it holds, oldest state
+// first: archive/drafts, archive/tasks, drafts, completed, tasks. Any other
+// folder is read as is. 2026-11-11: one run over the whole root, so the
+// newest copy of an id wins instead of the folder imported last.
+func BacklogTaskDirs(src string) []string {
+	if entries, err := os.ReadDir(src); err != nil || countMarkdown(entries) > 0 {
+		return []string{src}
+	}
+	var dirs []string
+	for _, sub := range []string{"archive/drafts", "archive/tasks", "drafts", "completed", "tasks"} {
+		d := filepath.Join(src, filepath.FromSlash(sub))
+		if fi, err := os.Stat(d); err == nil && fi.IsDir() {
+			dirs = append(dirs, d)
+		}
+	}
+	if len(dirs) == 0 {
+		return []string{src}
+	}
+	return dirs
+}
+
+// sameTitle compares titles ignoring case and whitespace, so a folded YAML
+// title and its one-line copy match.
+func sameTitle(a, b map[string]any) bool {
+	norm := func(m map[string]any) string {
+		return strings.Join(strings.Fields(strings.ToLower(str(m["title"]))), " ")
+	}
+	return norm(a) == norm(b)
+}
+
+// updatedOf returns a sortable timestamp: updated_date, else created_date.
+func updatedOf(fields map[string]any) string {
+	for _, k := range []string{"updated_date", "created_date"} {
+		if v := strings.TrimSpace(str(fields[k])); v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
+// BacklogTasksDir accepts a backlog-md root (for example .backlog) as well as
+// its tasks folder: a root holds config.yml and tasks/, not task files.
+// Run reads every task folder of a root through BacklogTaskDirs.
+func BacklogTasksDir(src string) string {
+	entries, err := os.ReadDir(src)
+	if err != nil || countMarkdown(entries) > 0 {
+		return src
+	}
+	tasks := filepath.Join(src, "tasks")
+	if fi, err := os.Stat(tasks); err == nil && fi.IsDir() {
+		return tasks
+	}
+	return src
+}
+
+func countMarkdown(entries []os.DirEntry) int {
+	n := 0
+	for _, e := range entries {
+		if strings.HasSuffix(strings.ToLower(e.Name()), ".md") {
+			n++
+		}
+	}
+	return n
+}
+
+// NoTasksError reports a source folder with no task files, never a silent zero.
+type NoTasksError struct{ Dir string }
+
+func (e *NoTasksError) Error() string {
+	return "no backlog task files (*.md) in " + e.Dir
+}
+
+func canonicalStatus(s string) string {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "todo", "doing", "done", "dropped":
+		return strings.ToLower(strings.TrimSpace(s))
+	}
+	return ""
+}
+
+// relDir names a source folder relative to the import root, for qualified ids.
+func relDir(root, dir string) string {
+	rel, err := filepath.Rel(root, dir)
+	if err != nil || rel == "." || strings.HasPrefix(rel, "..") {
+		return filepath.Base(dir)
+	}
+	return filepath.ToSlash(rel)
+}

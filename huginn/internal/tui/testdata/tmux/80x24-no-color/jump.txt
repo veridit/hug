@@ -1,0 +1,24 @@
+HUGINN · jump   60/60 tasks · ! 5 findings
+ overview   [list]   board    !lint
+todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+JUMP TO ID · prefixes and TASK-number aliases
+# 178
+
+> 000001  TASK-1783         Feature task 01: make the terminal workflow observa…
+  000002  TASK-1784         Bug task 02: make the terminal workflow observable
+  000003  TASK-1785         Render compiler-lang task detail without storage ma…
+  000004  TASK-1786         Spike task 04: make the terminal workflow observable
+  000005  TASK-1787         Docs task 05: make the terminal workflow observable
+  000006  TASK-1788         Feature task 06: make the terminal workflow observa…
+  000007  TASK-1789         Bug task 07: make the terminal workflow observable
+
+
+
+
+
+
+
+All tasks · : filters and commands
+
+Enter open · Tab complete · ↑↓ ^n/^p pick · Esc back · ? help

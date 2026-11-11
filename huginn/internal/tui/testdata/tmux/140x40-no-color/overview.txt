@@ -1,0 +1,40 @@
+HUGINN · overview   60/60 tasks · ! 5 findings
+[overview]   list    board    !lint
+todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+> IN PROGRESS · who is working  [15] · 1–6 shown
+> [000002]   doing   bug     critical Bug task 02: make the terminal workflow observable                                    alice
+  [000006]   doing   feature high     Feature task 06: make the terminal workflow observable                                bob
+  [000010]   doing   docs    high     Docs task 10: make the terminal workflow observable                                   bob
+  [000014]   doing   spike   medium   Spike task 14: make the terminal workflow observable                                  carol
+  [000018]   doing   chore   low      Chore task 18: make the terminal workflow observable                                  alice
+  [000022]   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long title t…  bob
+
+  NEXT UP · rank order  [8] · 1–6 shown
+  [000001]   todo    feature critical Feature task 01: make the terminal workflow observable with a deliberately long title that must trunc…
+  [000009]   todo    spike   high     Spike task 09: make the terminal workflow observable
+  [000017]   todo    bug     low      Bug task 17: make the terminal workflow observable
+  [000025]   todo    docs    critical Docs task 25: make the terminal workflow observable
+  [000033]   todo    chore   medium   Chore task 33: make the terminal workflow observable
+  [000041]   todo    feature critical Feature task 41: make the terminal workflow observable
+
+  BLOCKED · unmet dependencies  [8] · 1–6 shown
+  [000005]   blocked docs    critical Docs task 05: make the terminal workflow observable
+  [000013] ! blocked chore   medium   Chore task 13: make the terminal workflow observable
+  [000021]   blocked feature critical Feature task 21: make the terminal workflow observable
+  [000026] ! blocked feature high     Feature task 26: make the terminal workflow observable
+  [000029]   blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncat…
+  [000037]   blocked bug     low      Bug task 37: make the terminal workflow observable
+
+  LINT · tasks needing attention  [5] · 5 findings
+  [000003] ! done    feature medium   Render compiler-lang task detail without storage markers
+  [000013] ! blocked chore   medium   Chore task 13: make the terminal workflow observable
+  [000026] ! blocked feature high     Feature task 26: make the terminal workflow observable
+  [000039] ! done    spike   low      Spike task 39: make the terminal workflow observable
+  [000052] ! dropped bug     medium   Bug task 52: make the terminal workflow observable
+
+
+
+All tasks · : filters and commands
+
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit

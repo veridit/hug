@@ -1,0 +1,40 @@
+HUGINN · detail   60/60 tasks · ! 5 findings
+ overview   [list]   board    !lint
+todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖
+[todo]  [feature]  [critical]  [000001]  group:compiler  owner:unassigned
+created 2026-11-01 · updated 2026-11-10 · feature-item-01-make-the-terminal
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+Deliver compiler-lang support with  huginn  and readable evidence.
+
+• Preserve the public interface
+• See the guide https://example.invalid/guide for the synthetic contract.
+
+Verification
+
+fmt.Println("synthetic acceptance")
+
+ACCEPTANCE · [ / ] SELECT · SPACE TOGGLE
+> ☐ 1. First acceptance check
+  ☐ 2. Second acceptance check
+
+no dependencies
+
+NOTES
+Evidence: integration tests are synthetic.
+
+HISTORY
+2026-11-10: created by the terminal acceptance fixture.
+
+
+
+
+
+
+
+
+Detail · 100% · Esc back
+
+j/k scroll · [/] select · Tab section · Enter follow · Esc back · : cmd · ? help · q quit

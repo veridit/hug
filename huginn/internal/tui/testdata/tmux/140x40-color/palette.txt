@@ -1,0 +1,40 @@
+HUGINN · palette   60/60 tasks · ! 5 findings
+ overview   [list]   board    !lint
+todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+COMMAND PALETTE
+: type
+
+> type bug
+  type chore
+  type docs
+  type feature
+  type spike
+
+5 completions · Tab or Enter completes · Enter runs a complete command
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+All tasks · : filters and commands
+
+Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc close · ? help

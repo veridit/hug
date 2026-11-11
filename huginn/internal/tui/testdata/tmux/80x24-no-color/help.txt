@@ -1,0 +1,24 @@
+HUGINN · help   60/60 tasks · ! 5 findings
+ overview   [list]   board    !lint
+todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+NAVIGATION AND FIND
+j/k ↑/↓         move / scroll
+< / gg / Home   top
+> / G / End     bottom
+ctrl-d / ctrl-u half page down / up
+PgDn / PgUp     full page down / up
+h/← Shift-Tab   previous pane / column
+l/→ Tab         next pane / column
+Enter           open full task detail
+Esc             back one level, never quits
+q / ctrl-c      quit (q only outside inputs)
+/               live find; Enter keeps, Esc clears
+:               palette with command + value completion
+Tab / Enter     complete palette choice; Enter runs complete command
+ctrl-n/p / ↑↓   select palette completion
+?               help overlay, including from inputs
+#               jump by id prefix / TASK-number alias
+All tasks · : filters and commands
+
+/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · q quit
