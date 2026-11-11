@@ -147,15 +147,19 @@ func TestPlaceSequentialBatchesAndProviderFailure(t *testing.T) {
 
 func TestPlaceSelectionOriginMetadataAndFilters(t *testing.T) {
 	dir := t.TempDir()
-	os.WriteFile(filepath.Join(dir, "one.json"), []byte(`{"working_dir": "/home/owner", "messages":[]}`), 0600)
-	os.WriteFile(filepath.Join(dir, "two.journal.jsonl"), []byte("{\"meta\":{\"working_dir\":\"/home/owner/Projects\"}}\n{torn"), 0600)
+	// Absolute on every OS ("/home/owner" is not absolute on Windows).
+	owner := filepath.Join(t.TempDir(), "owner")
+	projects := filepath.Join(owner, "Projects")
+	jsonPath := func(p string) string { b, _ := json.Marshal(p); return string(b) }
+	os.WriteFile(filepath.Join(dir, "one.json"), []byte(`{"working_dir": `+jsonPath(owner)+`, "messages":[]}`), 0600)
+	os.WriteFile(filepath.Join(dir, "two.journal.jsonl"), []byte(`{"meta":{"working_dir":`+jsonPath(projects)+"}}\n{torn"), 0600)
 	g := Graph{Units: []store.Unit{
 		{SID: "b", Active: true, Scope: "jcode@global", Origin: "capture:jcode:one:0"},
 		{SID: "a", Active: true, Scope: "jcode@global", Origin: "capture:jcode:two:0"},
 		{SID: "c", Active: true, Scope: "global", Origin: "capture:jcode:one:0"},
 		{SID: "d", Active: true, Scope: "jcode@global", Origin: "capture:jcode:missing:0"},
 	}}
-	o := PlaceSelection{FromScopes: []string{"jcode@global"}, CwdOrigins: []string{"/home/owner", "/home/owner/Projects"}, SessionDirs: []string{dir}, Max: 1}
+	o := PlaceSelection{FromScopes: []string{"jcode@global"}, CwdOrigins: []string{owner, projects}, SessionDirs: []string{dir}, Max: 1}
 	units, err := SelectPlace(context.Background(), g, o)
 	if err != nil || len(units) != 1 || units[0].SID != "a" {
 		t.Fatalf("%+v %v", units, err)

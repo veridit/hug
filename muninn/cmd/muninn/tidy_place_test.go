@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/veridit/muninn/internal/testutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -69,10 +70,7 @@ func TestPlaceCLIToDryApplyReadOnly(t *testing.T) {
 		t.Fatal("placement or dry apply wrote store")
 	}
 	for _, artifact := range []string{path, path + ".md"} {
-		fi, err := os.Stat(artifact)
-		if err != nil || fi.Mode().Perm() != 0600 {
-			t.Fatal("review artifact not private")
-		}
+		testutil.AssertPrivate(t, artifact, "review artifact")
 	}
 	cmd = tidyCmd()
 	cmd.SetArgs([]string{"place", "--out", path})

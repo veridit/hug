@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/veridit/muninn/internal/testutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -170,10 +171,7 @@ func TestPrivateJudgeDebugAndPerEntryAllowlist(t *testing.T) {
 	if err != nil || !strings.Contains(string(data), "normalized decision or non-move target") {
 		t.Fatalf("debug=%s err=%v", data, err)
 	}
-	info, _ := os.Stat(path)
-	if info.Mode().Perm() != 0600 {
-		t.Fatalf("debug permissions %v", info.Mode())
-	}
+	testutil.AssertPrivate(t, path, "judge debug file")
 	raw, _ := json.Marshal(p)
 	if strings.Contains(string(raw), "normalized decision or non-move target") {
 		t.Fatal("raw debug leaked to plan")

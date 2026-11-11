@@ -3,6 +3,7 @@ package app_test
 import (
 	"bytes"
 	"context"
+	"github.com/veridit/muninn/internal/testutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -70,9 +71,7 @@ func TestTidyApplyNativeUpstreamAndUndo(t *testing.T) {
 	if err != nil || !bytes.Equal(backup, raw) {
 		t.Fatal("backup not byte exact")
 	}
-	if fi, err := os.Stat(filepath.Join(result.Backup, "receipt.json")); err != nil || fi.Mode().Perm() != 0600 {
-		t.Fatal("missing private receipt")
-	}
+	testutil.AssertPrivate(t, filepath.Join(result.Backup, "receipt.json"), "receipt")
 	n, err := f.App.DB.Resolve(native.SID)
 	if err != nil || n.Scope != "client:other" || n.Body != native.Body || n.SID != native.SID {
 		t.Fatalf("native=%+v err=%v", n, err)

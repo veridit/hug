@@ -1,6 +1,7 @@
 package project
 
 import (
+	"github.com/veridit/muninn/internal/testutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -35,10 +36,7 @@ func TestLegacyCacheLifecycleAndReadFallback(t *testing.T) {
 		t.Fatal(err)
 	}
 	saved := filepath.Join(dataDir, LegacyCacheFile)
-	info, err := os.Stat(saved)
-	if err != nil || info.Mode().Perm() != 0600 {
-		t.Fatalf("cache mode: %v %v", info, err)
-	}
+	testutil.AssertPrivate(t, saved, "legacy cache")
 	loaded := LoadLegacyCache(dataDir)
 	if loaded == nil {
 		t.Fatal("saved cache missing")

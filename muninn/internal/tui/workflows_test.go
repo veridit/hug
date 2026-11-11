@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/veridit/muninn/internal/testutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -186,10 +187,7 @@ func TestCorrectionIsConfirmedAndPreservesHistory(t *testing.T) {
 	if len(backups) != 1 {
 		t.Fatal("correction backup missing")
 	}
-	info, _ := os.Stat(backups[0])
-	if info.Mode().Perm() != 0600 {
-		t.Fatal("backup not private")
-	}
+	testutil.AssertPrivate(t, backups[0], "correction backup")
 }
 func TestTidyReviewSkipAndApplyUseExistingBackup(t *testing.T) {
 	a := testApp(t)

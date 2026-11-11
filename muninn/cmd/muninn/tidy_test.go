@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/veridit/muninn/internal/testutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -56,10 +57,7 @@ func TestTidyCLIPlanFilesPrivateAndNoOverwrite(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, p := range []string{path, path + ".md"} {
-		fi, err := os.Stat(p)
-		if err != nil || fi.Mode().Perm() != 0600 {
-			t.Fatal("plan not private")
-		}
+		testutil.AssertPrivate(t, p, "plan")
 	}
 	if err := saveTidyPlan(path, p); err == nil {
 		t.Fatal("overwrote existing plan")
