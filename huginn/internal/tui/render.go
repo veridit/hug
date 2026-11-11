@@ -265,16 +265,27 @@ func (m model) View() string {
 	}
 	header := m.styles.accent.Render("HUGINN · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
 	tabs := []string{}
-	// Each tab shows the key that opens it (2026-11-11: the row read like
-	// labels and nothing said how to reach list, board or lint).
-	for _, v := range []struct{ key, name string }{{"o", "overview"}, {"v", "list"}, {"b", "board"}, {"!", "lint"}} {
-		s := v.key + " " + v.name
+	// The shortcut letter is bold and underlined inside the tab name, which
+	// costs no width (2026-11-11, user). lint has no letter of its own; its
+	// key "!" shows as a prefix. The full list is on the help screen.
+	for _, v := range []struct{ key, name string }{{"o", "overview"}, {"i", "list"}, {"b", "board"}, {"!", "lint"}} {
+		base := m.styles.dim
 		if v.name == m.view {
-			s = m.styles.selected.Render("[" + s + "]")
-		} else {
-			s = m.styles.accent.Render(" "+v.key) + m.styles.dim.Render(" "+v.name+" ")
+			base = m.styles.selected
 		}
-		tabs = append(tabs, s)
+		keyStyle := base.Bold(true).Underline(true)
+		label := ""
+		if i := strings.Index(v.name, v.key); i >= 0 {
+			label = base.Render(v.name[:i]) + keyStyle.Render(v.key) + base.Render(v.name[i+1:])
+		} else {
+			label = keyStyle.Render(v.key) + base.Render(v.name)
+		}
+		if v.name == m.view {
+			label = base.Render("[") + label + base.Render("]")
+		} else {
+			label = base.Render(" ") + label + base.Render(" ")
+		}
+		tabs = append(tabs, label)
 	}
 	counts := map[string]int{}
 	blocked := 0

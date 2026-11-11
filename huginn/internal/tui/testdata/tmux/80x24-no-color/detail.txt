@@ -1,5 +1,5 @@
 HUGINN · detail   60/60 tasks · ! 5 findings
- o overview   [v list]   b board    ! lint
+ overview   [list]   board    !lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Feature task 01: make the terminal workflow observable with a deliberately long…

@@ -46,6 +46,8 @@ type model struct {
 	view                               string
 	pane                               int
 	detail, help, pendingG             bool
+	helpTyping                         bool   // typing a help search after "/"
+	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
 	confirm, confirmPath, pendingValue string
 	filter                             task.Filter
@@ -310,6 +312,12 @@ func (m *model) clearFilters() {
 func (m *model) back() {
 	m.pendingG = false
 	switch {
+	case m.help && (m.helpTyping || m.helpQuery != ""):
+		// Esc clears a help search first; the next Esc closes help.
+		m.helpTyping = false
+		m.helpQuery = ""
+		m.helpViewport.SetContent(m.helpText())
+		m.helpViewport.GotoTop()
 	case m.help:
 		m.help = false
 	case m.confirm != "":
@@ -382,8 +390,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		// Help always wins over text input, and leaves that input intact underneath.
-		if k == "?" {
+		if k == "?" && !(m.help && m.helpTyping) {
 			m.help = !m.help
+			m.helpTyping = false
+			m.helpQuery = ""
+			m.helpViewport.SetContent(m.helpText())
 			m.helpViewport.GotoTop()
 			return m, nil
 		}
@@ -392,6 +403,26 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if m.help {
+			if m.helpTyping {
+				switch {
+				case k == "enter":
+					m.helpTyping = false
+				case k == "backspace":
+					if r := []rune(m.helpQuery); len(r) > 0 {
+						m.helpQuery = string(r[:len(r)-1])
+					}
+				case msg.Type == tea.KeyRunes || k == " ":
+					m.helpQuery += string(msg.Runes)
+				}
+				m.helpViewport.SetContent(m.helpText())
+				m.helpViewport.GotoTop()
+				return m, nil
+			}
+			if k == "/" {
+				m.helpTyping = true
+				m.pendingG = false
+				return m, nil
+			}
 			if k == "g" {
 				if m.pendingG {
 					m.helpViewport.GotoTop()
@@ -546,7 +577,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.setView("board")
 		case k == "o":
 			m.setView("overview")
-		case k == "v":
+		case k == "v" || k == "i":
 			m.setView("list")
 		case k == "!":
 			m.setView("lint")

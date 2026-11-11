@@ -1,5 +1,5 @@
 HUGINN · help   60/60 tasks · ! 5 findings
- o overview   [v list]   b board    ! lint
+ overview   [list]   board    !lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 NAVIGATION AND FIND                                     EDIT · every action requires confirmation
@@ -9,7 +9,7 @@ j/k ↑/↓         move / scroll                                           [ / 
 ctrl-d / ctrl-u half page down / up                                     t / d / x   take / done / drop task
 PgDn / PgUp     full page down / up                                     J / K       move down / up in global rank order
 h/← Shift-Tab   previous pane / column                                  n           new title, goal and one verification item
-l/→ Tab         next pane / column                                      e           $EDITOR (default vi), then refresh + lint
+l/→ Tab         next pane / column                                      e           edit in $EDITOR, then refresh + lint
 Enter           open full task detail                                   Enter / Esc confirm / cancel every editing action
 Esc             back one level, never quits
 q / ctrl-c      quit (q only outside inputs)
@@ -22,7 +22,7 @@ ctrl-n/p / ↑↓   select palette completion
 f               filter picker: s/t/p/g/l/o
 1 / 2 / 3 / 4   filter todo / doing / done / blocked
 Backspace / F   remove last chip / clear all filters
-o / v / b / !   views: overview / list / board / lint
+o / i / b / !   views: overview / list (also v) / board / lint
 s / y           status / type palette shortcut
 c               clear all filters
 r               refresh files and lint
@@ -37,4 +37,4 @@ Filters combine.
 
 All tasks · : filters and commands
 
-j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · q quit
+/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · q quit

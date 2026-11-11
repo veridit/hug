@@ -16,6 +16,7 @@ import (
 
 	"github.com/veridit/huginn/gitbranch"
 	"github.com/veridit/huginn/internal/cache"
+	"github.com/veridit/huginn/internal/editor"
 	"github.com/veridit/huginn/internal/harness"
 	"github.com/veridit/huginn/internal/task"
 )
@@ -546,11 +547,8 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if err != nil {
 			return nil, err
 		}
-		editor := strings.Fields(os.Getenv("EDITOR"))
-		if len(editor) == 0 {
-			return nil, usage("EDITOR is not configured", "export EDITOR=vi")
-		}
-		c := exec.CommandContext(ctx, editor[0], append(editor[1:], filepath.Join(s.r.Dir, d.Task.Path))...)
+		ed := editor.Command()
+		c := exec.CommandContext(ctx, ed[0], append(ed[1:], filepath.Join(s.r.Dir, d.Task.Path))...)
 		c.Stdin = a.In
 		c.Stdout = a.Out
 		if f.has("json") {

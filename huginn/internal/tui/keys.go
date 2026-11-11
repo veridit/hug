@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"strings"
 
 	bkey "github.com/charmbracelet/bubbles/key"
@@ -26,7 +27,11 @@ func (m model) keyBar() string {
 	var hints []bkey.Binding
 	switch {
 	case m.help:
-		hints = []bkey.Binding{hint("j/k", "scroll"), hint("</>", "ends"), hint("PgUp/PgDn", "page"), hint("Esc", "back"), hint("?", "close")}
+		if m.helpTyping {
+			hints = []bkey.Binding{hint("type", "find"), hint("Enter", "keep"), hint("Esc", "clear")}
+			break
+		}
+		hints = []bkey.Binding{hint("/", "find"), hint("j/k", "scroll"), hint("</>", "ends"), hint("PgUp/PgDn", "page"), hint("Esc", "back"), hint("?", "close")}
 		if m.prompt == "" {
 			hints = append(hints, hint("q", "quit"))
 		}
@@ -69,15 +74,18 @@ func (m model) helpText() string {
 		hint("ctrl-n/p / ↑↓", "select palette completion"), hint("?", "help overlay, including from inputs"),
 		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/o"),
 		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
-		hint("o / v / b / !", "views: overview / list / board / lint"),
+		hint("o / i / b / !", "views: overview / list (also v) / board / lint"),
 		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh files and lint"),
 	}
 	actions := []bkey.Binding{
 		hint("[ / ]", "previous / next acceptance or dependency in detail"), hint("Space", "toggle acceptance (default first)"),
 		hint("Tab + Enter", "focus dependencies and follow selected task"),
 		hint("t / d / x", "take / done / drop task"), hint("J / K", "move down / up in global rank order"),
-		hint("n", "new title, goal and one verification item"), hint("e", "$EDITOR (default vi), then refresh + lint"),
+		hint("n", "new title, goal and one verification item"), hint("e", "edit in $EDITOR, then refresh + lint"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),
+	}
+	if m.helpQuery != "" || m.helpTyping {
+		return m.helpSearchText(append(navigation, actions...))
 	}
 	if m.width >= 130 {
 		return m.styles.accent.Render("NAVIGATION AND FIND                                     EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation, actions}) + "\n\n" + wrap("PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, owner <o>, goto <id>, lint, clear, help", m.width) + "\n" + wrap("Filter fields: s status, t type, p priority, g group, l label, o owner. Blocked is derived from unmet dependencies and overlaps todo/doing. Filters combine.", m.width)
@@ -86,4 +94,34 @@ func (m model) helpText() string {
 		m.styles.accent.Render("EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{actions}) + "\n\n" +
 		wrap("PALETTE: "+strings.Join([]string{"overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, group <g>, label <l>, priority <p>, owner <o>, goto <id>, lint, clear, help"}, ""), m.width) + "\n" +
 		wrap("Blocked is derived from unmet dependencies, not a persisted status. Counts overlap todo/doing. Board pages columns to fit. Slug is in detail only. Filters combine.", m.width)
+}
+
+// helpSearchText lists the help rows whose key or description contains every
+// word of the query, case-insensitively (2026-11-11: find one action fast).
+func (m model) helpSearchText(all []bkey.Binding) string {
+	words := strings.Fields(strings.ToLower(m.helpQuery))
+	var hits []bkey.Binding
+	for _, b := range all {
+		h := b.Help()
+		text := strings.ToLower(h.Key + " " + h.Desc)
+		ok := true
+		for _, w := range words {
+			if !strings.Contains(text, w) {
+				ok = false
+				break
+			}
+		}
+		if ok {
+			hits = append(hits, b)
+		}
+	}
+	cursor := ""
+	if m.helpTyping {
+		cursor = "█"
+	}
+	head := m.styles.accent.Render("FIND IN HELP / ") + m.helpQuery + cursor + m.styles.dim.Render(fmt.Sprintf("   %d of %d", len(hits), len(all)))
+	if len(hits) == 0 {
+		return head + "\n\n" + m.styles.dim.Render("No key matches. Backspace edits, Esc clears.")
+	}
+	return head + "\n\n" + m.helpModel.FullHelpView([][]bkey.Binding{hits})
 }

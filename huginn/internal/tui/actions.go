@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/veridit/huginn/internal/editor"
 	"github.com/veridit/huginn/internal/task"
 )
 
@@ -103,15 +104,7 @@ func (m *model) executeAction() tea.Cmd {
 			m.message = e.Error()
 			return nil
 		}
-		editor := os.Getenv("EDITOR")
-		if editor == "" {
-			editor = "vi"
-		}
-		args := strings.Fields(editor)
-		if len(args) == 0 {
-			m.message = "$EDITOR is empty"
-			return nil
-		}
+		args := editor.Command()
 		cmd := exec.Command(args[0], append(args[1:], filename)...)
 		return tea.ExecProcess(cmd, func(e error) tea.Msg { return editorMsg{e} })
 	}

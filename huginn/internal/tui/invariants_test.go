@@ -73,11 +73,14 @@ func TestErrorAndTerminalInputSafety(t *testing.T) {
 	if m.message != os.ErrPermission.Error() {
 		t.Fatal(m.message)
 	}
+	// A blank $EDITOR falls through to git's editor (2026-11-11), so the
+	// action still launches an editor instead of refusing.
+	t.Setenv("VISUAL", "")
 	t.Setenv("EDITOR", "   ")
 	m = press(m, "e")
 	m, cmd := key(m, "enter")
-	if cmd != nil || m.message != "$EDITOR is empty" {
-		t.Fatal(m.message)
+	if cmd == nil {
+		t.Fatal("blank EDITOR must fall back to an editor", m.message)
 	}
 	next, _ := m.Update(editorMsg{os.ErrPermission})
 	if next.(model).message != os.ErrPermission.Error() {

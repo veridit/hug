@@ -1,5 +1,5 @@
 HUGINN · filter   15/60 tasks · ! 5 findings
- o overview   [v list]   b board    ! lint
+ overview   [list]   board    !lint
 todo 15  ·  doing 0  ·  blocked 7  ·  done 0  ·  dropped 0
 [status:todo ×] · ⌫ last · F clear
 QUICK FILTER · type · counts include your other filters
