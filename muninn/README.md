@@ -734,4 +734,5 @@ of Veridit's Seid language tooling. The incremental community update follows
 
 ## License
 
-[MPL-2.0](LICENSE).
+[MPL-2.0](LICENSE). Contributions need the contributor agreement in
+[CONTRIBUTING.md](CONTRIBUTING.md).
