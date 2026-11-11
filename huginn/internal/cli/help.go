@@ -6,6 +6,7 @@ import "strings"
 func commandHelp(command string) string {
 	usage := map[string]string{
 		"install":   "install jcode [--all-instances | --jcode-home PATH] [--dry-run]",
+		"setup":     "setup",
 		"uninstall": "uninstall jcode [--all-instances | --jcode-home PATH] [--dry-run]",
 		"init":      "init", "new": `new "title" --goal "outcome" --accept "observable check" [flags]`,
 		"ls":   "ls [--status todo|doing|done|dropped] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]",
@@ -16,6 +17,7 @@ func commandHelp(command string) string {
 		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY [--dry-run]", "board": "board [--all] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]", "tui": "tui", "mcp": "mcp", "help": "help [COMMAND]",
 	}
 	details := map[string]string{
+		"setup":     "Prints what an agent needs to switch this repository to huginn, then a checklist of the steps still open, each with the exact command or edit. Reads only; changes nothing. Re-run after each step.\n",
 		"install":   "Adds huginn -> huginn mcp to Jcode mcp.json. Keeps a timestamped backup and other servers. Default: JCODE_HOME or ~/.jcode. --all-instances discovers the static zsh registry. Restart Jcode afterward.\n",
 		"uninstall": "Removes only the huginn MCP entry, keeping backups and other servers. Same instance selection as install.\n",
 		"new":       "Required: --goal TEXT and at least one --accept TEXT. Repeat --accept for each check.\nOptional: --type feature|bug|chore|spike|docs (default feature), --priority LABEL.\nRepeat --dep REF for dependencies and --label LABEL for labels.\nUse --group FOLDER, --top, or --after REF to choose placement.\nExample: huginn new \"Form\" --goal \"Submit works\" --accept \"Saved\" --dep k7m2qx --group auth\n",

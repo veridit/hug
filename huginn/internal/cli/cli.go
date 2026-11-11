@@ -22,7 +22,9 @@ import (
 )
 
 const Help = `huginn: tasks on a Git branch, for humans and agents.
+New here, or switching a repo from another tracker? Run: huginn setup
 Use --json with any command. IDs, unique prefixes, slugs and aliases work.
+  setup                     huginn setup
   init                      huginn init
   new                       huginn new "Fix retry" --type bug --goal "Retries work" --accept "Test passes"
   ls                        huginn ls --status todo --label api --mine
@@ -56,7 +58,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: huginn next
 `
 
-var Commands = []string{"init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -334,6 +336,9 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		return Reply{"types": task.TypeDescriptions, "next": "huginn next"}, nil
+	}
+	if cmd == "setup" {
+		return a.runSetup(ctx, f)
 	}
 	if cmd == "install" || cmd == "uninstall" {
 		return a.runInstall(cmd, f)
@@ -690,6 +695,20 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if h, ok := reply["help"].(string); ok {
 		fmt.Fprint(a.Out, h)
 		return 0
+	}
+	if steps, ok := reply["setup"].([]SetupStep); ok {
+		fmt.Fprint(a.Out, reply["intro"])
+		fmt.Fprintf(a.Out, "Checklist for this repository (%d open):\n", reply["open"])
+		for _, s := range steps {
+			mark := "[x]"
+			if !s.Done {
+				mark = "[ ]"
+			}
+			fmt.Fprintf(a.Out, "%s %s: %s\n", mark, s.Step, s.Detail)
+			if s.Do != "" {
+				fmt.Fprintf(a.Out, "    do: %s\n", strings.ReplaceAll(s.Do, "\n", "\n        "))
+			}
+		}
 	}
 	if cols, ok := reply["board"].([]BoardColumn); ok {
 		writeBoard(a.Out, cols)
