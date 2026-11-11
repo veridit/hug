@@ -189,24 +189,53 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 	if err := checkDestination(dst.Root); err != nil {
 		return report, err
 	}
-	src = BacklogTasksDir(src)
-	entries, err := os.ReadDir(src)
-	if err != nil {
-		return report, err
+	type entryIn struct {
+		dir   string
+		entry os.DirEntry
 	}
-	if countMarkdown(entries) == 0 {
-		return report, &NoTasksError{Dir: src}
+	var all []entryIn
+	for _, dir := range BacklogTaskDirs(src) {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			return report, err
+		}
+		for _, e := range entries {
+			all = append(all, entryIn{dir, e})
+		}
+	}
+	{
+		n := 0
+		for _, e := range all {
+			if strings.HasSuffix(strings.ToLower(e.entry.Name()), ".md") {
+				n++
+			}
+		}
+		if n == 0 {
+			return report, &NoTasksError{Dir: BacklogTasksDir(src)}
+		}
 	}
 	var sources []source
-	seen := map[string]bool{}
-	for _, entry := range entries {
+	// One id can live in several folders (backlog-md copies a task into
+	// archive/ and completed/). The copy with the newest updated_date wins;
+	// on a tie the later folder in BacklogTaskDirs order wins. 2026-11-11:
+	// importing folders one at a time let an older copy overwrite newer state
+	// (185 such ids in seid-lang).
+	seen := map[string]int{} // alias -> index in sources
+	type collision struct {
+		plain, qualified string
+		firstPath        string // the copy that got the plain id on first sight
+		secondPath       string // the copy that got plain@folder
+	}
+	var collisions []collision
+	for _, in := range all {
+		entry := in.entry
 		if err := ctx.Err(); err != nil {
 			return report, err
 		}
 		if !strings.HasSuffix(strings.ToLower(entry.Name()), ".md") {
 			continue
 		}
-		path := filepath.Join(src, entry.Name())
+		path := filepath.Join(in.dir, entry.Name())
 		fr := FileReport{Source: path, Action: "skipped", Findings: []task.Finding{}}
 		report.Files = append(report.Files, fr)
 		idx := len(report.Files) - 1
@@ -232,14 +261,49 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 			skip("missing source id")
 			continue
 		}
-		if seen[alias] {
-			// Two source files claim one id: import the first, report the rest so
-			// the owner can renumber them, instead of aborting the whole import.
-			skip("duplicate source id " + alias + " (first file kept)")
-			continue
-		}
-		seen[alias] = true
 		s := source{path: path, alias: alias, title: str(fields["title"]), raw: raw, fields: fields, report: idx}
+		if at, dup := seen[alias]; dup {
+			old := sources[at]
+			if in.dir == filepath.Dir(old.path) {
+				// Two files in one folder claim one id: keep the first and report
+				// the rest so the owner can renumber them.
+				skip("duplicate source id " + alias + " (first file kept)")
+				continue
+			}
+			if !sameTitle(fields, old.fields) {
+				// Different titles: two different tasks were given one id (6 in
+				// seid-lang, 2026-11-11, e.g. a live security bug and an archived
+				// incident). Neither is an older copy of the other. Import both;
+				// which one keeps the plain id is decided once the destination
+				// is read (the one already linked there keeps it).
+				qualified := alias + "@" + canonical(relDir(srcAbs, in.dir))
+				if _, taken := seen[qualified]; taken {
+					skip("duplicate source id " + qualified + " (first file kept)")
+					continue
+				}
+				collisions = append(collisions, collision{plain: alias, qualified: qualified, firstPath: old.path, secondPath: path})
+				alias = qualified
+				s.alias = qualified
+			} else if updatedOf(fields) < updatedOf(old.fields) {
+				skip("older copy of " + alias + " than " + old.path)
+				continue
+			} else {
+				report.Skipped++
+				report.Files[old.report].Action = "skipped"
+				report.Files[old.report].Findings = append(report.Files[old.report].Findings, task.Finding{Path: old.path, Line: 1, Problem: "older copy of " + alias + " than " + path})
+				s.ordinal, s.ranked = 0, false
+				if value, ok := fields["ordinal"]; ok {
+					s.ordinal, e = strconv.ParseFloat(str(value), 64)
+					s.ranked = e == nil && !math.IsNaN(s.ordinal) && !math.IsInf(s.ordinal, 0)
+					if !s.ranked {
+						s.ordinal = 0
+					}
+				}
+				sources[at] = s
+				continue
+			}
+		}
+		seen[alias] = len(sources)
 		if value, ok := fields["ordinal"]; ok {
 			s.ordinal, e = strconv.ParseFloat(str(value), 64)
 			s.ranked = e == nil && !math.IsNaN(s.ordinal) && !math.IsInf(s.ordinal, 0)
@@ -304,6 +368,33 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 			report.Files = append(report.Files, FileReport{Path: f.Path, Action: "conflict", Findings: []task.Finding{f}})
 		}
 		return report, fmt.Errorf("duplicate destination origin: resolve the reported provenance conflicts")
+	}
+	// The copy already linked in huginn keeps the plain id, so re-runs never
+	// move a task's identity to a different backlog file. With no link yet,
+	// the first copy found keeps it. Both copies get a finding to renumber.
+	for _, c := range collisions {
+		plainPath, otherPath := c.firstPath, c.secondPath
+		if origins["backlog:"+c.plain] == "" && origins["backlog:"+c.qualified] != "" {
+			// nothing linked to the plain id but the qualified one is linked:
+			// keep as is.
+		} else if linked := origins["backlog:"+c.plain]; linked != "" {
+			if t, ok := byID[linked]; ok {
+				for i := range sources {
+					if sources[i].path == c.secondPath && sameTitle(sources[i].fields, map[string]any{"title": t.Title}) {
+						plainPath, otherPath = c.secondPath, c.firstPath
+					}
+				}
+			}
+		}
+		for i := range sources {
+			switch sources[i].path {
+			case plainPath:
+				sources[i].alias = c.plain
+			case otherPath:
+				sources[i].alias = c.qualified
+				report.Files[sources[i].report].Findings = append(report.Files[sources[i].report].Findings, task.Finding{Path: otherPath, Line: 1, Problem: "id collision " + c.plain + " with a different task in " + plainPath + "; imported as " + c.qualified + ", renumber one in backlog"})
+			}
+		}
 	}
 	for _, s := range sources {
 		if existingID := origins["backlog:"+s.alias]; existingID != "" {
@@ -760,10 +851,50 @@ func merge(base, local, incoming []byte) ([]byte, error) {
 	return []byte(out.String()), nil
 }
 
+// BacklogTaskDirs lists the folders one import reads. A backlog-md root (it
+// has config.yml or tasks/) yields every task folder it holds, oldest state
+// first: archive/drafts, archive/tasks, drafts, completed, tasks. Any other
+// folder is read as is. 2026-11-11: one run over the whole root, so the
+// newest copy of an id wins instead of the folder imported last.
+func BacklogTaskDirs(src string) []string {
+	if entries, err := os.ReadDir(src); err != nil || countMarkdown(entries) > 0 {
+		return []string{src}
+	}
+	var dirs []string
+	for _, sub := range []string{"archive/drafts", "archive/tasks", "drafts", "completed", "tasks"} {
+		d := filepath.Join(src, filepath.FromSlash(sub))
+		if fi, err := os.Stat(d); err == nil && fi.IsDir() {
+			dirs = append(dirs, d)
+		}
+	}
+	if len(dirs) == 0 {
+		return []string{src}
+	}
+	return dirs
+}
+
+// sameTitle compares titles ignoring case and whitespace, so a folded YAML
+// title and its one-line copy match.
+func sameTitle(a, b map[string]any) bool {
+	norm := func(m map[string]any) string {
+		return strings.Join(strings.Fields(strings.ToLower(str(m["title"]))), " ")
+	}
+	return norm(a) == norm(b)
+}
+
+// updatedOf returns a sortable timestamp: updated_date, else created_date.
+func updatedOf(fields map[string]any) string {
+	for _, k := range []string{"updated_date", "created_date"} {
+		if v := strings.TrimSpace(str(fields[k])); v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
 // BacklogTasksDir accepts a backlog-md root (for example .backlog) as well as
 // its tasks folder: a root holds config.yml and tasks/, not task files.
-// Archived and completed tasks stay where they are; import them by naming
-// their folder explicitly.
+// Run reads every task folder of a root through BacklogTaskDirs.
 func BacklogTasksDir(src string) string {
 	entries, err := os.ReadDir(src)
 	if err != nil || countMarkdown(entries) > 0 {
@@ -799,4 +930,13 @@ func canonicalStatus(s string) string {
 		return strings.ToLower(strings.TrimSpace(s))
 	}
 	return ""
+}
+
+// relDir names a source folder relative to the import root, for qualified ids.
+func relDir(root, dir string) string {
+	rel, err := filepath.Rel(root, dir)
+	if err != nil || rel == "." || strings.HasPrefix(rel, "..") {
+		return filepath.Base(dir)
+	}
+	return filepath.ToSlash(rel)
 }

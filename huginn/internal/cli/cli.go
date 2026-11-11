@@ -301,7 +301,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "huginn "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee", "import": "dry-run"}
 	f, e := parse(args, allowed[cmd])
 	if e != nil {
 		return nil, e

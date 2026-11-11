@@ -18,13 +18,17 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	if f.args[0] != "backlog" {
 		return nil, usage("unknown import format "+f.args[0]+"; valid: backlog; closest: backlog", "huginn import backlog "+f.args[1])
 	}
-	report, e := importer.Run(ctx, f.args[1], s.s, importer.Options{})
+	dry := f.has("dry-run")
+	report, e := importer.Run(ctx, f.args[1], s.s, importer.Options{DryRun: dry})
 	var none *importer.NoTasksError
 	if errors.As(e, &none) {
 		return nil, usage(none.Error()+"; point at the backlog folder (holding tasks/) or the tasks folder itself", "huginn import backlog "+filepath.Join(f.args[1], "tasks"))
 	}
 	if e != nil {
 		return nil, e
+	}
+	if dry {
+		return Reply{"import": report, "dry_run": true, "next": "huginn import backlog " + f.args[1]}, nil
 	}
 	if e = s.r.Commit(nil, "huginn import backlog"); e != nil {
 		return nil, e

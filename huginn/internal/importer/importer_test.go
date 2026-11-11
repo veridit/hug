@@ -619,3 +619,116 @@ func TestRunAcceptsBacklogRootAndRejectsEmpty(t *testing.T) {
 		t.Fatalf("empty source: %v, want NoTasksError", err)
 	}
 }
+
+// 2026-11-11 seid-lang: TASK-366 was Done with notes in completed/ and an
+// older To Do copy in archive/tasks/. Importing folder by folder turned it
+// back into todo and dropped the notes. One run over the root keeps the newest.
+func TestRootImportKeepsNewestCopyAndIsIdempotent(t *testing.T) {
+	root := t.TempDir()
+	write(t, filepath.Join(root, "config.yml"), []byte("project_name: demo\n"))
+	older := strings.Replace(fixture, "status: To Do", "status: To Do\nupdated_date: '2026-06-12 08:38'", 1)
+	newer := strings.Replace(fixture, "status: To Do", "status: Done\nupdated_date: '2026-08-16 19:14'", 1) + "\nNEWEST NOTES\n"
+	other := strings.NewReplacer("DEMO-001", "DEMO-002", "dependencies: [DEMO-002]", "dependencies: []").Replace(fixture)
+	write(t, filepath.Join(root, "archive", "tasks", "demo-001.md"), []byte(older))
+	write(t, filepath.Join(root, "completed", "demo-001.md"), []byte(newer))
+	write(t, filepath.Join(root, "tasks", "demo-002.md"), []byte(other))
+	dst := &task.Store{Root: t.TempDir()}
+
+	dry := run(t, root, dst, Options{DryRun: true})
+	if dry.Added != 2 {
+		t.Fatalf("dry run: %+v", dry)
+	}
+	if ts, _ := dst.Tasks(); len(ts) != 0 {
+		t.Fatalf("dry run wrote %d tasks", len(ts))
+	}
+	first := run(t, root, dst, Options{})
+	if first.Added != 2 || first.Skipped != 1 {
+		t.Fatalf("first import: %+v", first)
+	}
+	ts, err := dst.Tasks()
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, tk := range ts {
+		raw, _ := os.ReadFile(filepath.Join(dst.Root, tk.Path))
+		if strings.Contains(string(raw), "DEMO-001") {
+			found = true
+			if tk.Status != "done" || !strings.Contains(string(raw), "NEWEST NOTES") {
+				t.Fatalf("older copy won: status=%s\n%s", tk.Status, raw)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("DEMO-001 missing")
+	}
+	again := run(t, root, dst, Options{})
+	if again.Added != 0 || again.Updated != 0 || again.Unchanged != 2 {
+		t.Fatalf("second import must change nothing: %+v", again)
+	}
+}
+
+// Two different tasks with one id: neither may replace the other.
+func TestRootImportReportsIDCollisionWithoutOverwrite(t *testing.T) {
+	root := t.TempDir()
+	write(t, filepath.Join(root, "config.yml"), []byte("project_name: demo\n"))
+	first := strings.Replace(fixture, "status: To Do", "status: Done\nupdated_date: '2026-10-12 21:34'", 1)
+	second := strings.NewReplacer("Synthetic task with\n  multiline title", "A different task", "status: To Do", "status: To Do\nupdated_date: '2026-11-10 19:03'").Replace(fixture)
+	write(t, filepath.Join(root, "archive", "tasks", "demo-001.md"), []byte(first))
+	write(t, filepath.Join(root, "tasks", "demo-001.md"), []byte(second))
+	dst := &task.Store{Root: t.TempDir()}
+	r := run(t, root, dst, Options{})
+	if r.Added != 2 || r.Skipped != 0 {
+		t.Fatalf("collision: both tasks must be imported: %+v", r)
+	}
+	reported := false
+	for _, f := range r.Files {
+		for _, x := range f.Findings {
+			if strings.Contains(x.Problem, "id collision DEMO-001") && strings.Contains(x.Problem, "DEMO-001@TASKS") {
+				reported = true
+			}
+		}
+	}
+	if !reported {
+		t.Fatalf("collision not reported: %+v", r.Files)
+	}
+	ts, _ := dst.Tasks()
+	titles := ""
+	for _, tk := range ts {
+		titles += strings.ToLower(tk.Title) + "|"
+	}
+	if len(ts) != 2 || !strings.Contains(titles, "synthetic") || !strings.Contains(titles, "a different task") {
+		t.Fatalf("both tasks must exist: %s", titles)
+	}
+	if again := run(t, root, dst, Options{}); again.Added != 0 || again.Updated != 0 {
+		t.Fatalf("collision import must be idempotent: %+v", again)
+	}
+}
+
+// The task already linked in huginn keeps the plain id even when the other
+// colliding copy is found first (seid-lang TASK-199: archive copy found first,
+// completed copy linked; 2026-11-11 the import swapped them).
+func TestCollisionKeepsAlreadyLinkedTask(t *testing.T) {
+	root := t.TempDir()
+	write(t, filepath.Join(root, "config.yml"), []byte("project_name: demo\n"))
+	linked := strings.Replace(fixture, "status: To Do", "status: Done", 1)
+	write(t, filepath.Join(root, "completed", "demo-001.md"), []byte(linked))
+	dst := &task.Store{Root: t.TempDir()}
+	run(t, root, dst, Options{})
+	before, _ := dst.Tasks()
+	if len(before) != 1 {
+		t.Fatalf("setup: %d tasks", len(before))
+	}
+	other := strings.Replace(fixture, "Synthetic task with\n  multiline title", "An unrelated archived task", 1)
+	write(t, filepath.Join(root, "archive", "tasks", "demo-001.md"), []byte(other))
+	r := run(t, root, dst, Options{})
+	if r.Added != 1 || r.Updated != 0 {
+		t.Fatalf("archive copy must be added, linked task untouched: %+v", r)
+	}
+	after, _ := dst.Tasks()
+	for _, tk := range after {
+		if tk.ID == before[0].ID && (tk.Status != "done" || !strings.Contains(strings.ToLower(tk.Title), "synthetic")) {
+			t.Fatalf("linked task changed: %+v", tk)
+		}
+	}
+}
