@@ -98,10 +98,10 @@ type Candidate struct {
 	// Source is who said it in the transcript: "user", or "assistant" for
 	// the agent's own statements, proposals and observations (2026-11-11:
 	// an agent's proposal was stored as "the user's idea", d8jb1b).
-	Source      string `json:"source,omitempty"`
-	SameAs      string `json:"same_as,omitempty"`
-	Updates     string `json:"updates,omitempty"`
-	Supersedes  string `json:"supersedes,omitempty"`
+	Source     string `json:"source,omitempty"`
+	SameAs     string `json:"same_as,omitempty"`
+	Updates    string `json:"updates,omitempty"`
+	Supersedes string `json:"supersedes,omitempty"`
 	// SafeReason is the model's judgment that content which looks secret
 	// (key-shaped token, random-path URL) is safe to keep.
 	SafeReason string `json:"safe_reason,omitempty"`
