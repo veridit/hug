@@ -17,6 +17,6 @@ Old repos say where the code went and are archived
 
 ## Acceptance
 - [x] README notice in both old repos
-- [ ] both archived after the user approves
+- [x] both archived after the user approves
 
 ## Notes
