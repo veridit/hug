@@ -21,7 +21,7 @@ muninn dream runs while idle at low priority, applies safe mechanical consolidat
 - [x] items handed only to sessions whose scope can see them (WebKit item only in WebKit)
 - [x] Claude Code and Codex hooks carry the same one-line cue
 - [x] morning summary line: merged, handed out, open
-- [ ] dated memory text is never rewritten (decision rxw6w7)
+- [x] dated memory text is never rewritten (decision rxw6w7)
 
 ## Notes
 
