@@ -24,3 +24,5 @@ muninn dream runs while idle at low priority, applies safe mechanical consolidat
 - [ ] dated memory text is never rewritten (decision rxw6w7)
 
 ## Notes
+
+2026-11-12: shipped in muninn v0.6.0 (hug 0075ad1). First live pass: 15 duplicates retired (undo tidy/apply-20261112T143206Z-1006002259), 9 items queued; client item (brovs) only visible in Brovs; item 4 resolved end to end via memory_dream (kept veeeg8, forgot ywc8z5). Hand-out: start / return after 20 min / wrap-up, once per 6 h per session; tune with the user.
