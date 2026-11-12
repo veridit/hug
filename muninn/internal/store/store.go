@@ -53,6 +53,20 @@ CREATE TABLE IF NOT EXISTS capture_reinforcements (
  event TEXT PRIMARY KEY, sid TEXT NOT NULL, at_ns INTEGER NOT NULL
 );
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+-- Judgement items queued by "muninn dream" for the driving agent (2026-11-12).
+-- kind: dupes (keep which), place (where it belongs), ...; sids are space
+-- separated; scope is the effective scope a session must see to get the item.
+CREATE TABLE IF NOT EXISTS dream_items (
+  id INTEGER PRIMARY KEY, kind TEXT NOT NULL, key TEXT NOT NULL UNIQUE,
+  sids TEXT NOT NULL, scope TEXT NOT NULL, instruction TEXT NOT NULL,
+  created_ns INTEGER NOT NULL, handed_ns INTEGER NOT NULL DEFAULT 0,
+  handed_to TEXT NOT NULL DEFAULT '', resolved_ns INTEGER NOT NULL DEFAULT 0,
+  resolution TEXT NOT NULL DEFAULT '');
+-- Last user turn per harness session, to notice breaks (start, return after
+-- an absence, wrap-up) for handing out dream items.
+CREATE TABLE IF NOT EXISTS session_turns (
+  session TEXT PRIMARY KEY, last_ns INTEGER NOT NULL, turns INTEGER NOT NULL,
+  dream_cued_ns INTEGER NOT NULL DEFAULT 0);
 CREATE TABLE IF NOT EXISTS sources (
   id INTEGER PRIMARY KEY,
   kind TEXT NOT NULL,          -- jcode | markdown | native

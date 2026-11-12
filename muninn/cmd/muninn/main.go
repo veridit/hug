@@ -60,7 +60,7 @@ func main() {
 			}
 		},
 	}
-	root.AddCommand(versionCmd(), indexCmd(), searchCmd(), recallCmd(), rememberCmd(), forgetCmd(), showCmd(), rescopeCmd(),
+	root.AddCommand(versionCmd(), dreamCmd(), indexCmd(), searchCmd(), recallCmd(), rememberCmd(), forgetCmd(), showCmd(), rescopeCmd(),
 		listCmd(), relatedCmd(), statsCmd(), gcCmd(), hookCmd(), serveCmd(), mcpCmd(), tuiCmd(),
 		installCmd(), uninstallCmd(), configCmd(), jcodeCmd(), importCmd(), projectCmd(), syncCmd(), modelCmd(), captureCmd(), tidyCmd())
 	if p := os.Getenv("MUNINN_CPUPROFILE"); p != "" {
@@ -79,7 +79,7 @@ func main() {
 // backgroundCommands run at lowered priority with bounded parallelism.
 var backgroundCommands = map[string]bool{
 	"capture": true, "index": true, "serve": true, "mcp": true,
-	"gc": true, "import": true, "sync": true, "tidy": true,
+	"gc": true, "import": true, "sync": true, "tidy": true, "dream": true,
 }
 
 func topLevel(c *cobra.Command) string {
@@ -597,7 +597,7 @@ func hookRecallWith(ctx context.Context, a *app.App, harnessName, session, msg s
 		logHook("reindex: %v", err)
 	}
 	b = b.Refresh(a)
-	return a.Recall.Recall(ctx, recall.Request{Session: harnessName + ":" + session, Harness: harnessName, Message: msg, Scopes: b.Scopes, ScopeFor: b.ScopeFor})
+	return a.Recall.Recall(ctx, recall.Request{Session: harnessName + ":" + session, Harness: harnessName, Message: msg, Scopes: b.Scopes, ScopeFor: b.ScopeFor, DreamOpen: func() int { return b.OpenDreamCount(a) }})
 }
 
 func dirExists(p string) bool {

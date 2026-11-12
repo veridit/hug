@@ -76,6 +76,7 @@ func Watch(ctx context.Context, a *app.App, mu *sync.Mutex, logf func(string, ..
 			return nil
 		case <-maintenance.C:
 			run()
+			dreamWhenQuiet(ctx, a, mu, logf)
 		case ev, ok := <-w.Events:
 			if !ok {
 				return nil

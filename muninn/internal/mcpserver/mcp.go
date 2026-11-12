@@ -167,6 +167,34 @@ func New(a *app.App, version string, opt Options) *mcp.Server {
 			return text(out), out, nil
 		})
 
+	mcp.AddTool(s, &mcp.Tool{Name: "memory_dream", Description: "Memory housekeeping that needs your judgement (at most 5 items, only ones this session may see). " +
+		"For each item follow its instruction using memory_forget and memory_remember, then call memory_dream again with resolve set to the item id and a short note. " +
+		"Call it when a recall block says items are waiting, at a pause in the work, not mid-task."},
+		func(ctx context.Context, _ *mcp.CallToolRequest, in struct {
+			Resolve int64  `json:"resolve,omitempty" jsonschema:"id of an item you have handled"`
+			Note    string `json:"note,omitempty" jsonschema:"what you did, for the undo trail"`
+			Session string `json:"session,omitempty" jsonschema:"the session id passed to memory_recall, if any"`
+		}) (*mcp.CallToolResult, dreamOut, error) {
+			opt := opt.Refresh(a)
+			if opt.Err != nil {
+				return nil, dreamOut{}, opt.Err
+			}
+			if in.Resolve > 0 {
+				if err := opt.ResolveDream(a, in.Resolve, in.Note); err != nil {
+					return nil, dreamOut{}, err
+				}
+			}
+			items, err := opt.DreamItems(a, "mcp:"+strings.TrimSpace(in.Session), 5)
+			if err != nil {
+				return nil, dreamOut{}, err
+			}
+			out := dreamOut{Items: items, Open: opt.OpenDreamCount(a)}
+			if len(items) == 0 {
+				out.Message = "Nothing waiting. Carry on."
+			}
+			return text(out), out, nil
+		})
+
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_stats", Description: "Index statistics."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, app.IndexStats, error) {
 			st, err := app.Stats(ctx, a, opt)
@@ -187,7 +215,7 @@ func New(a *app.App, version string, opt Options) *mcp.Server {
 			if s := strings.TrimSpace(in.Session); s != "" {
 				session = "mcp:" + s
 			}
-			resp, err := a.Recall.Recall(ctx, recall.Request{Session: session, Message: in.Message, Harness: "mcp", Scopes: opt.Scopes, ScopeFor: opt.ScopeFor})
+			resp, err := a.Recall.Recall(ctx, recall.Request{Session: session, Message: in.Message, Harness: "mcp", Scopes: opt.Scopes, ScopeFor: opt.ScopeFor, DreamOpen: func() int { return opt.OpenDreamCount(a) }})
 			if err != nil {
 				return nil, recall.Response{}, err
 			}
@@ -211,4 +239,10 @@ func placesText(places []app.Place) string {
 // RunStdio serves MCP over stdin/stdout until the client disconnects.
 func RunStdio(ctx context.Context, a *app.App, version string, opt Options) error {
 	return New(a, version, opt).Run(ctx, &mcp.StdioTransport{})
+}
+
+type dreamOut struct {
+	Items   []app.DreamItem `json:"items"`
+	Open    int             `json:"open"`
+	Message string          `json:"message,omitempty"`
 }

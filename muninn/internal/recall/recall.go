@@ -32,6 +32,9 @@ type Request struct {
 	Message  string // the user's latest message
 	Scopes   []string
 	ScopeFor func(store.Unit) (string, bool) `json:"-"`
+	// DreamOpen counts dream items this session's binding could be handed.
+	// When > 0 and the turn is a break, the block carries a one-line cue.
+	DreamOpen func() int `json:"-"`
 }
 
 // Hit is one recalled memory.
@@ -56,6 +59,7 @@ type Response struct {
 	Block   string `json:"block"`
 	Elapsed string `json:"elapsed"`
 	Skipped string `json:"skipped,omitempty"`
+	Break   string `json:"break,omitempty"` // start | return | wrap-up
 }
 
 // Engine runs recall.
@@ -177,6 +181,19 @@ func (e *Engine) Recall(ctx context.Context, r Request) (Response, error) {
 		}
 	} else if cue := SaveCue(msg); cue != "" {
 		resp.Block += "\n" + cue
+	}
+	if r.Session != "" {
+		now := time.Now()
+		resp.Break = e.noteTurn(r.Session, msg, now)
+		if resp.Break != "" && r.DreamOpen != nil {
+			if cue := e.dreamCue(r.Session, resp.Break, r.DreamOpen(), now); cue != "" {
+				if resp.Block == "" {
+					resp.Block = Marker + " " + cue
+				} else {
+					resp.Block += "\n" + cue
+				}
+			}
+		}
 	}
 	return resp, nil
 }
