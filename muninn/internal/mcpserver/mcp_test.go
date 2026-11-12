@@ -8,14 +8,14 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/recall"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/testutil"
 )
 
 // Two client instances share one index. Each MCP session must see only its

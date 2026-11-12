@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/store"
 	"os"
 	"strings"
 	"time"

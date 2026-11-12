@@ -9,13 +9,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/embed"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/recall"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // App is an opened muninn instance.

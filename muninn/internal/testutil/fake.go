@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/veridit/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/embed"
 )
 
 // FakeEmbedder maps words to fixed pseudo-random directions and sums them,

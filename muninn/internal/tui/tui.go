@@ -12,10 +12,10 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/recall"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 type screen int

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // A combined remove/add is atomic even though the library exposes two methods.

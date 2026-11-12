@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 func projectCmd() *cobra.Command {

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 // Rescope is owner-only (CLI or confirmed terminal action), never a hook, MCP or HTTP route.

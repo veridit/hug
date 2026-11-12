@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/veridit/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/extract"
 )
 
 // Config is the user-editable settings file (config.json in ConfigDir).

@@ -12,9 +12,9 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 // Watch reindexes (debounced) whenever a watched source changes. Directories

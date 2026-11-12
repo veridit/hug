@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/shortid"
+	"github.com/veridit/hug/muninn/internal/shortid"
 )
 
 func testShortDB(t *testing.T) *DB {

@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/veridit/muninn/internal/shortid"
+	"github.com/veridit/hug/muninn/internal/shortid"
 )
 
 // NativeMemory is a memory muninn owns (created with `muninn remember`).

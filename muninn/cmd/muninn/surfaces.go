@@ -13,14 +13,14 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/daemon"
-	"github.com/veridit/muninn/internal/embed"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/mcpserver"
-	"github.com/veridit/muninn/internal/tui"
-	"github.com/veridit/muninn/internal/web"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/daemon"
+	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/mcpserver"
+	"github.com/veridit/hug/muninn/internal/tui"
+	"github.com/veridit/hug/muninn/internal/web"
 )
 
 func ioReadAll(r io.Reader) ([]byte, error) { return io.ReadAll(io.LimitReader(r, 4<<20)) }

@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/veridit/huginn/gitbranch"
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/gitbranch"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // take is the one push-lock path, shared by CLI, MCP and the TUI callback.

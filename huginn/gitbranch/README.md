@@ -1,6 +1,6 @@
 # gitbranch
 
-Public reusable Git worktree storage for `github.com/veridit/huginn/gitbranch`.
+Public reusable Git worktree storage for `github.com/veridit/hug/huginn/gitbranch`.
 Requires the system Git executable, version **2.42 or newer**. Older Git returns
 `*Error` with the detected version and an OS-specific upgrade command. On Linux,
 the distribution's Git package must actually provide >= 2.42.

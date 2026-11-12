@@ -11,8 +11,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 func matrixRequest(h http.Handler, method, path, body string) (string, int) {

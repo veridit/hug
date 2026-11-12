@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/embed"
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/store"
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/testutil"
 )
 
 func TestNeighborsRepeatedDirtyOffersAreIdempotent(t *testing.T) {

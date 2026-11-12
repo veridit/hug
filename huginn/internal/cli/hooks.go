@@ -5,9 +5,9 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/veridit/huginn/internal/importer"
-	"github.com/veridit/huginn/internal/task"
-	"github.com/veridit/huginn/internal/tui"
+	"github.com/veridit/hug/huginn/internal/importer"
+	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/tui"
 )
 
 // Import and TUI hooks are deliberately thin: their packages own their behavior.

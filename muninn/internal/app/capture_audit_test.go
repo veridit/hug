@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 func TestCaptureAuditPrivateDryRunAndRetention(t *testing.T) {

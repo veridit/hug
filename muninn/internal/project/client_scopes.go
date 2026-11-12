@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/veridit/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/harness"
 )
 
 // ClientScopes resolves legacy jcode folder stores without changing the index.

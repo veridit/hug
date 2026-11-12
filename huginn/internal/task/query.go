@@ -2,7 +2,7 @@ package task
 
 import (
 	"fmt"
-	"github.com/veridit/huginn/internal/rank"
+	"github.com/veridit/hug/huginn/internal/rank"
 	"sort"
 	"strings"
 )

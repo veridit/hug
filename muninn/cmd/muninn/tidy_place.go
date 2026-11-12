@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/tidy"
 )
 
 func placeCmd() *cobra.Command {

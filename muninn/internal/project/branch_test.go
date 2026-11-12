@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
 func branchGit(t *testing.T, dir string, args ...string) string {

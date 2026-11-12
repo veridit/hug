@@ -9,8 +9,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // Marker starts every injected block. Adapters use it to recognise (and never

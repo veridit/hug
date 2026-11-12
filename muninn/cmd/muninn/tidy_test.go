@@ -3,16 +3,16 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/testutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/tidy"
 )
 
 func TestTidyCLIDryRunNoWrites(t *testing.T) {

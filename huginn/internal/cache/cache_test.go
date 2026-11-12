@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 	"fmt"
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/task"
 	"math/rand"
 	"os"
 	"path/filepath"

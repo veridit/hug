@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/veridit/huginn/internal/editor"
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/editor"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 var actionNames = map[string]string{"t": "take", "d": "done", "x": "drop", "J": "move down", "K": "move up", " ": "toggle acceptance", "e": "edit", "n": "new"}

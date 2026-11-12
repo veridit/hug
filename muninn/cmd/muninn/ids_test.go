@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 func TestShowListsCanonicalTextAndAllOrigins(t *testing.T) {

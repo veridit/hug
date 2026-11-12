@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 type MemoryMeta struct {

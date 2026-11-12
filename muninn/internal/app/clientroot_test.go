@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/project"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/store"
-	"github.com/veridit/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/tidy"
 )
 
 func TestClientRootAndLegacyFolderVisibility(t *testing.T) {

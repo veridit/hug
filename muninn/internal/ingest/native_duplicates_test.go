@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
 func TestNativeDuplicateIDsRejectedAndLegacyRepairOnce(t *testing.T) {

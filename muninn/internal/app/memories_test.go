@@ -7,11 +7,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/recall"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 func TestHarnessForgetSuppressesRecall(t *testing.T) {

@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/tidy"
 )
 
 func TestScopeMatrixOverviewHistoryAndPlans(t *testing.T) {

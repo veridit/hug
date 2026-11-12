@@ -11,7 +11,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/veridit/muninn/internal/flock"
+	"github.com/veridit/hug/muninn/internal/flock"
 )
 
 // Unit is one recallable piece of text: a memory, or a markdown section.

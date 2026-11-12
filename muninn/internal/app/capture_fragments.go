@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"unicode/utf8"
 
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 // captureFragments bounds hook requests without dropping the tail of a large

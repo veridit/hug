@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/huginn/internal/editor"
+	"github.com/veridit/hug/huginn/internal/editor"
 )
 
 func TestHelpSearchFindsOneActionAndEscBacksOut(t *testing.T) {

@@ -10,8 +10,8 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/recall"
 )
 
 type searchIn struct {

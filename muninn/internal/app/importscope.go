@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 // ImportScopeForDir places a memory imported from another system by the

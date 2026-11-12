@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 type command struct{ name, argument, description string }

@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // Seed writes 60 tasks covering all statuses, types, priorities, owners and lint.

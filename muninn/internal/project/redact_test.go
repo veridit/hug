@@ -16,7 +16,7 @@ func TestSecretHint(t *testing.T) {
 	}{
 		{"Public URL is https://heneld.no/" + slug + "/ after upload", true},
 		{"key in query https://x.example/share?id=AbCdEfGhIjKlMnOpQrStUv12345", false},
-		{"see https://github.com/veridit/muninn/pull/42 for details", false},
+		{"see https://github.com/veridit/hug/muninn/pull/42 for details", false},
 		{"commit https://github.com/x/y/commit/8759b7b3c1d2e4f5a6b7c8d9e0f1a2b3c4d5e6f7", false},
 		{"long word https://example.com/internationalization-guidelines-handbook", false},
 		{"token " + "sk-" + strings.Repeat("z", 30) + " leaked", true},

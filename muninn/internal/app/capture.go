@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 type CaptureOptions struct {

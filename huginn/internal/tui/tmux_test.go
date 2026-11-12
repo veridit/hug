@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/veridit/huginn/internal/tui/testfixture"
+	"github.com/veridit/hug/huginn/internal/tui/testfixture"
 )
 
 func loadGuard(t *testing.T) {

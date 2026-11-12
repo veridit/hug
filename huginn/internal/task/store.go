@@ -3,7 +3,7 @@ package task
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/veridit/huginn/internal/id"
+	"github.com/veridit/hug/huginn/internal/id"
 	"os"
 	"path/filepath"
 	"sort"

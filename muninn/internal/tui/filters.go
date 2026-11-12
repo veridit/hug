@@ -8,8 +8,8 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 type chip struct{ field, value string }

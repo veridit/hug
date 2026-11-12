@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 func TestScopeMatrixMCP(t *testing.T) {

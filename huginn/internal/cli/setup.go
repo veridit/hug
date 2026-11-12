@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/veridit/huginn/internal/importer"
+	"github.com/veridit/hug/huginn/internal/importer"
 )
 
 // SetupStep is one item of the setup checklist.

@@ -14,10 +14,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/veridit/muninn/internal/app"
-	embedpkg "github.com/veridit/muninn/internal/embed"
-	"github.com/veridit/muninn/internal/recall"
-	"github.com/veridit/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/app"
+	embedpkg "github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/search"
 )
 
 //go:embed static

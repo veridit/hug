@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 type theme struct {

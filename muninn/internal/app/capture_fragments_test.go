@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/harness"
 )
 
 // Masking precedes splitting: a fragment boundary must never cut a token in

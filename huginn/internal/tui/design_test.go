@@ -9,8 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
-	"github.com/veridit/huginn/internal/task"
-	"github.com/veridit/huginn/internal/tui/testfixture"
+	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/tui/testfixture"
 )
 
 func manyModel(t *testing.T) model {

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 func selectionFixture(owner, other, scopeSize int, terms map[string]int) Graph {

@@ -1,13 +1,13 @@
 package project
 
 import (
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/testutil"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/harness"
 )
 
 func TestLegacyCacheLifecycleAndReadFallback(t *testing.T) {

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 func TestOwnerCorrectionBindingAndRollback(t *testing.T) {

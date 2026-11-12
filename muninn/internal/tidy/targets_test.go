@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/testutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/extract"
 )
 
 func TestProvenanceBoundaryDropsBeforeJudging(t *testing.T) {

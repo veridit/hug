@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/tidy"
 )
 
 // tidyCmd is registered only on the executable's owner CLI. It never uses a

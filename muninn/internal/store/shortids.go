@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/veridit/muninn/internal/shortid"
+	"github.com/veridit/hug/muninn/internal/shortid"
 )
 
 type sidQueries interface {

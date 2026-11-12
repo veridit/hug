@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 // RebuildLegacyFolders is explicit background maintenance, never part of

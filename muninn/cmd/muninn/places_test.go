@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 	"os"
 	"path/filepath"
 	"strings"

@@ -23,9 +23,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/veridit/muninn/internal/embed"
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // Options tunes a search.

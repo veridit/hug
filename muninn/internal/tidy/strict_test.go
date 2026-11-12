@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 func TestStrictVerdictRequiredDuplicateAndNullFields(t *testing.T) {

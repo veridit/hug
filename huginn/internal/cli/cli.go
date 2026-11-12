@@ -14,11 +14,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/veridit/huginn/gitbranch"
-	"github.com/veridit/huginn/internal/cache"
-	"github.com/veridit/huginn/internal/editor"
-	"github.com/veridit/huginn/internal/harness"
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/gitbranch"
+	"github.com/veridit/hug/huginn/internal/cache"
+	"github.com/veridit/hug/huginn/internal/editor"
+	"github.com/veridit/hug/huginn/internal/harness"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 const Help = `huginn: tasks on a Git branch, for humans and agents.

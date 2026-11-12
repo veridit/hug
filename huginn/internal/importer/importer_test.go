@@ -14,7 +14,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 const fixture = `---

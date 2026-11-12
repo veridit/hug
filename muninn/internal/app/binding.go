@@ -9,12 +9,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/project"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // Binding is the single visibility and write policy shared by every surface.

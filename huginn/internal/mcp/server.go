@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/task"
 	"math"
 	"slices"
 	"sort"
@@ -14,7 +14,7 @@ import (
 	"sync"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/veridit/huginn/internal/cli"
+	"github.com/veridit/hug/huginn/internal/cli"
 )
 
 const Instructions = "Huginn keeps project tasks on a dedicated Git branch.\nUse list or next, then take, update acceptance, and done.\nEvery result includes a next step, and errors include exact fixes."

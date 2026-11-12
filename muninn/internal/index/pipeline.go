@@ -17,7 +17,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/veridit/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/embed"
 )
 
 // unitConcepts returns a unit's concept ids.

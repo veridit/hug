@@ -11,7 +11,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
-	"github.com/veridit/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/config"
 )
 
 var htmlComments = regexp.MustCompile(`(?s)<!--.*?(?:-->|$)`)

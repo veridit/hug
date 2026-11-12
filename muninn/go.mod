@@ -1,4 +1,4 @@
-module github.com/veridit/muninn
+module github.com/veridit/hug/muninn
 
 go 1.26.4
 
@@ -13,7 +13,6 @@ require (
 	github.com/muesli/termenv v0.16.0
 	github.com/rostamlabs/rembed v0.3.0
 	github.com/spf13/cobra v1.10.2
-	github.com/veridit/huginn v0.1.0
 	golang.org/x/sys v0.49.0
 	modernc.org/sqlite v1.61.1
 )
@@ -51,6 +50,7 @@ require (
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
+	github.com/veridit/hug/huginn v0.0.0
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
@@ -65,3 +65,5 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
 )
+
+replace github.com/veridit/hug/huginn => ../huginn

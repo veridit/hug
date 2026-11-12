@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 // 2026-11-09 (user): moving 1,526 memories one process at a time took ~2.6 s

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/veridit/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
 // Line is one memory in .muninn-notes/memories.jsonl. The file is sorted by id

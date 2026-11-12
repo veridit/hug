@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/testutil"
 )
 
 func writeJcodeStore(t *testing.T, home, content string) {

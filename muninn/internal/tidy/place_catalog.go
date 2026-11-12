@@ -12,8 +12,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/veridit/muninn/internal/project"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // PlaceCandidate is an observed, concrete destination, never model-created.

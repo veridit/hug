@@ -1,4 +1,4 @@
-module github.com/veridit/huginn
+module github.com/veridit/hug/huginn
 
 go 1.26.4
 

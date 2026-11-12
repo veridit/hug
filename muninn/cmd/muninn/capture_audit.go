@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/veridit/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/app"
 	"strconv"
 	"text/tabwriter"
 	"time"

@@ -15,8 +15,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/veridit/huginn/internal/id"
-	"github.com/veridit/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/id"
+	"github.com/veridit/hug/huginn/internal/task"
 	"gopkg.in/yaml.v3"
 )
 

@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/veridit/huginn/internal/harness"
+	"github.com/veridit/hug/huginn/internal/harness"
 )
 
 func (a *App) runInstall(cmd string, f flags) (Reply, error) {

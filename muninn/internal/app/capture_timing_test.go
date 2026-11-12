@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // This is a production wall-clock acceptance, run explicitly on all CI OSes.

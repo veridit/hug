@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // A hook-mode pass must not queue behind another process's write

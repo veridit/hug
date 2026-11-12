@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/search"
 )
 
 func TestScopeMatrixTUI(t *testing.T) {

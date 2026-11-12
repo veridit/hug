@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/veridit/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/config"
 
-	"github.com/veridit/muninn/internal/project"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // readEffectiveScopes shares Binding.ScopeFor's source-client provenance rule,

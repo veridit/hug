@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/veridit/huginn/internal/id"
+	"github.com/veridit/hug/huginn/internal/id"
 	"os"
 	"path/filepath"
 	"strings"

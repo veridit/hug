@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"slices"
 
-	"github.com/veridit/huginn/internal/cli"
-	"github.com/veridit/huginn/internal/mcp"
+	"github.com/veridit/hug/huginn/internal/cli"
+	"github.com/veridit/hug/huginn/internal/mcp"
 )
 
-var version = "v0.1.4"
+var version = "v0.1.5"
 
 func main() { os.Exit(run()) }
 func run() int {

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/veridit/huginn/gitbranch"
-	"github.com/veridit/muninn/internal/ingest"
+	"github.com/veridit/hug/huginn/gitbranch"
+	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
 type BranchOptions struct{ DryRun, Migrate bool }

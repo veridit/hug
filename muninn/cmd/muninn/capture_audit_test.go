@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 func TestCaptureAuditCommands(t *testing.T) {

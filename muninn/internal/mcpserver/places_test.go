@@ -2,7 +2,7 @@ package mcpserver
 
 import (
 	"encoding/json"
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 	"strings"
 	"testing"
 )

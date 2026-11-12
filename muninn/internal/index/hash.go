@@ -12,7 +12,7 @@ import (
 	"encoding/hex"
 	"strconv"
 
-	"github.com/veridit/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/embed"
 )
 
 // SchemaVersion bumps when the representation of persisted vectors changes

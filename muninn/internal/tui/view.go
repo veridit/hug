@@ -11,7 +11,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/veridit/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/search"
 )
 
 // Shared huginn/muninn palette. Categories and places have their own stable

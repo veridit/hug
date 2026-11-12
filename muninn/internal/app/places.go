@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/project"
 )
 
 // Place is a session-relative destination. Scope never comes from model output.

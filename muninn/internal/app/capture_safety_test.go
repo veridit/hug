@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 func TestCaptureIgnoresOwnerReadView(t *testing.T) {

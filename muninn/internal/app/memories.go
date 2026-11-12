@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // ForgetResult distinguishes retirement of an owned memory from local suppression.

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/veridit/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/harness"
 )
 
 func TestClientFoldersBoundsAndSymlinks(t *testing.T) {

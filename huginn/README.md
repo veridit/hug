@@ -4,7 +4,7 @@
 
 A git-branch task tracker for people and agents. Markdown is the source of truth,
 Git is the sync protocol, and the CLI, terminal UI and MCP server share the same
-operations. Sister of [muninn](https://github.com/veridit/muninn), the raven of memory.
+operations. Sister of [muninn](https://github.com/veridit/hug/tree/main/muninn), the raven of memory.
 Huginn is the raven of thought: what to do next, why, and how to know it is done.
 Licensed under MPL-2.0. Contributions need the contributor agreement in
 [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -23,14 +23,14 @@ scoop install veridit/huginn
 ```
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/veridit/huginn/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/huginn/install.sh | sh
 # Optional: HUGINN_VERSION=v0.1.0 HUGINN_BIN_DIR=$HOME/.local/bin
 ```
 
 Or with Go (see go.mod for the required toolchain):
 
 ```sh
-go install github.com/veridit/huginn/cmd/huginn@latest
+git clone https://github.com/veridit/hug && cd hug/huginn && go install ./cmd/huginn
 huginn version
 ```
 

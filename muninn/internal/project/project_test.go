@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
 func gitInit(t *testing.T, dir string) {

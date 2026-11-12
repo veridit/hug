@@ -6,10 +6,10 @@ import (
 	"slices"
 	"time"
 
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/project"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // captureBatch is a chunk-local native snapshot. Receipts and deterministic IDs

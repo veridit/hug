@@ -330,8 +330,8 @@ model load (measured 420-650 ms). muninn asks Ollama to keep the ~300 MB
 |---|---|---|
 | macOS, Linux (Homebrew) | `brew trust --formula veridit/tap/muninn`<br>`brew install veridit/tap/muninn` | `brew upgrade muninn` |
 | Windows (Scoop) | `scoop bucket add veridit https://github.com/veridit/homebrew-tap`<br>`scoop install muninn` | `scoop update muninn` |
-| macOS, Linux (no package manager) | `curl -fsSL https://raw.githubusercontent.com/veridit/muninn/main/install.sh \| sh` | run it again |
-| Go | `go install github.com/veridit/muninn/cmd/muninn@latest` | run it again |
+| macOS, Linux (no package manager) | `curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/muninn/install.sh \| sh` | run it again |
+| Go (from a clone) | `git clone https://github.com/veridit/hug && cd hug/muninn && go install ./cmd/muninn` | pull, run again |
 
 Then wire it into your agents and, optionally, keep it running in the background:
 

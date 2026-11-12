@@ -13,10 +13,10 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/harness"
 )
 
 func captureCmd() *cobra.Command {

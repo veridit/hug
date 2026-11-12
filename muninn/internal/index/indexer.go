@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/veridit/muninn/internal/embed"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/shortid"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/shortid"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // Stats summarises one indexing pass.

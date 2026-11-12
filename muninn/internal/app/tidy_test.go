@@ -3,17 +3,17 @@ package app_test
 import (
 	"bytes"
 	"context"
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/testutil"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/config"
-	"github.com/veridit/muninn/internal/ingest"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/store"
-	"github.com/veridit/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/config"
+	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/tidy"
 )
 
 func reviewedPlan(units ...store.Unit) tidy.Plan {

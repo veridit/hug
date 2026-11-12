@@ -10,8 +10,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/veridit/muninn/internal/app"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 func TestAPIResolvesShortIDsAndSuppressesHarness(t *testing.T) {

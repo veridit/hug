@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/veridit/huginn/internal/cli"
+	"github.com/veridit/hug/huginn/internal/cli"
 )
 
 type recorder struct{ args []string }

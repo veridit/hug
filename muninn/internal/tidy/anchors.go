@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/veridit/muninn/internal/project"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 var wordRE = regexp.MustCompile(`[\pL][\pL\pN_-]{2,}`)

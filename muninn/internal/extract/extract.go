@@ -18,8 +18,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/veridit/muninn/internal/project"
-	"github.com/veridit/muninn/internal/shortid"
+	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/shortid"
 )
 
 // Config is nested under extract in config.json. No credentials belong here.

@@ -7,7 +7,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/veridit/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/recall"
 )
 
 func parseNote(t *testing.T, row string) string {

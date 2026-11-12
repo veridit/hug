@@ -6,9 +6,9 @@ import (
 	"sort"
 	"time"
 
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/search"
-	"github.com/veridit/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // DuplicateCheckError is an advisory question. Re-call with Reinforce set to

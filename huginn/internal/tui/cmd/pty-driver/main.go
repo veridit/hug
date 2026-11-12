@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/veridit/huginn/internal/task"
-	"github.com/veridit/huginn/internal/tui"
+	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/huginn/internal/tui"
 )
 
 func main() {

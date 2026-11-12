@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/store"
-	"github.com/veridit/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/tidy"
 )
 
 func TestPlacePlanReusesJcodeCopyAndSuppress(t *testing.T) {

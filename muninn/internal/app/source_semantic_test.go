@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/veridit/muninn/internal/embed"
-	"github.com/veridit/muninn/internal/index"
-	"github.com/veridit/muninn/internal/scopetest"
-	"github.com/veridit/muninn/internal/store"
-	"github.com/veridit/muninn/internal/testutil"
+	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/index"
+	"github.com/veridit/hug/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/testutil"
 )
 
 func TestPhysicalSourceBoundarySemantic(t *testing.T) {

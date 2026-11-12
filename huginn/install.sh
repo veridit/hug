@@ -1,11 +1,12 @@
 #!/bin/sh
 # Install or update huginn from the latest GitHub release.
-#   curl -fsSL https://raw.githubusercontent.com/veridit/huginn/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/huginn/install.sh | sh
 # Options (environment): HUGINN_VERSION=v0.1.0  HUGINN_BIN_DIR=$HOME/.local/bin
 # Verifies the archive against the release's SHA256SUMS before installing.
 set -eu
 
-repo="veridit/huginn"
+repo="veridit/hug"
+# Releases of this part are tagged huginn-vX.Y.Z in the shared hug repository.
 bin_dir="${HUGINN_BIN_DIR:-$HOME/.local/bin}"
 
 say() { printf 'huginn-install: %s\n' "$*" >&2; }
@@ -29,12 +30,12 @@ esac
 
 ver="${HUGINN_VERSION:-}"
 if [ -z "$ver" ]; then
-  ver=$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest" | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -1)
+  ver=$(curl -fsSL "https://api.github.com/repos/$repo/releases?per_page=50" | sed -n 's/.*"tag_name": *"huginn-\(v[^"]*\)".*/\1/p' | head -1)
   [ -n "$ver" ] || die "could not find the latest release"
 fi
 v="${ver#v}"
 name="huginn_${v}_${os}_${arch}"
-base="https://github.com/$repo/releases/download/$ver"
+base="https://github.com/$repo/releases/download/huginn-$ver"
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT

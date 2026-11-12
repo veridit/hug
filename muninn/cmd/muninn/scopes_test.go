@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 func captureSurface(t *testing.T, fn func() error) (string, error) {

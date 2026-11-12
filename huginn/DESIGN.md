@@ -315,7 +315,7 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
      model passes every scenario in at least 2 of 3 runs. Same scenarios
      again via MCP only.
 - **D14 (foreman 22:40, reversible) the shared git package is public:**
-  `github.com/veridit/huginn/gitbranch` (top-level, not `internal/`), so
+  `github.com/veridit/hug/huginn/gitbranch` (top-level, not `internal/`), so
   muninn can import it for its own `muninn` branch.
 - **D15 (foreman 22:53, from D13) `move` always succeeds.** When no key fits
   between the neighbours (`A` vs `A0`, tied keys) or the key would pass 12

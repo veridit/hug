@@ -12,9 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/veridit/muninn/internal/extract"
-	"github.com/veridit/muninn/internal/harness"
-	"github.com/veridit/muninn/internal/scopetest"
+	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
 func TestCaptureHookBoundsInitialBacklogAndBackfills(t *testing.T) {

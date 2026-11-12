@@ -1,6 +1,6 @@
 package app
 
-import "github.com/veridit/muninn/internal/ingest"
+import "github.com/veridit/hug/muninn/internal/ingest"
 
 // nativeLocks holds the write lock of each native store a multi-file flow
 // (correction, duplicate tidy) loads, from load until save. Release them all
