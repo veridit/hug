@@ -1,7 +1,7 @@
 ---
 id: 4k35r1
 title: "Save cue fires repeatedly on one message"
-status: todo
+status: "done"
 type: bug
 priority: "medium"
 assignee: []
