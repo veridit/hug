@@ -283,7 +283,7 @@ func forgetCmd() *cobra.Command {
 			if _, err := a.Reindex(ctx); err != nil {
 				return err
 			}
-			out, err := view.binding(a).Forget(ctx, a, args[0])
+			out, err := view.binding(a).Forget(ctx, a, args[0], app.HarnessSessions()...)
 			if err != nil {
 				return err
 			}

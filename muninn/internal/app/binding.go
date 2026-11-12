@@ -312,7 +312,7 @@ func (b Binding) Resolve(a *App, ref string) (store.Unit, error) {
 	}
 	return units[0], nil
 }
-func (b Binding) Forget(ctx context.Context, a *App, ref string) (ForgetResult, error) {
+func (b Binding) Forget(ctx context.Context, a *App, ref string, sessions ...string) (ForgetResult, error) {
 	b = b.Refresh(a)
 	if b.Err != nil {
 		return ForgetResult{}, b.Err
@@ -321,6 +321,15 @@ func (b Binding) Forget(ctx context.Context, a *App, ref string) (ForgetResult, 
 	units, err := a.DB.ResolveAll(ref)
 	if err != nil {
 		return ForgetResult{}, fmt.Errorf("no visible memory")
+	}
+	// The recall block tells the agent "Fix: memory_forget <id>". A memory
+	// recalled into this session must be forgettable from it, even when the
+	// command runs in another folder than the session started in (2026-11-11:
+	// d8jb1b, scope folder:~/Projects, recalled into a session started in
+	// ~/Projects, refused from ~/Projects/muninn). Client sealing still holds:
+	// a memory is only ever recalled into a session that may see it.
+	if a.shownInSession(units[0].ID, sessions) {
+		return a.Forget(ctx, ref)
 	}
 	if _, ok := b.Present(units[0]); !ok {
 		return ForgetResult{}, fmt.Errorf("no visible memory")
@@ -689,4 +698,33 @@ func isParentFolder(dir string) bool {
 		}
 	}
 	return false
+}
+
+// shownInSession reports whether recall showed this unit to any of the given
+// harness sessions ("jcode:<id>", "mcp:<id>", ...), per the injections log.
+func (a *App) shownInSession(unitID int64, sessions []string) bool {
+	for _, s := range sessions {
+		if s == "" || strings.HasSuffix(s, ":") {
+			continue
+		}
+		var one int
+		if a.DB.QueryRow(`SELECT 1 FROM injections WHERE session=? AND unit_id=? LIMIT 1`, s, unitID).Scan(&one) == nil {
+			return true
+		}
+	}
+	return false
+}
+
+// HarnessSessions lists the session keys this process may belong to, from the
+// environment each harness sets (jcode: JCODE_SESSION_ID; Claude Code:
+// CLAUDE_SESSION_ID; Codex: CODEX_SESSION_ID). Used to honour forget for
+// memories recalled into the calling session.
+func HarnessSessions() []string {
+	var out []string
+	for env, harness := range map[string]string{"JCODE_SESSION_ID": "jcode", "CLAUDE_SESSION_ID": "claude", "CODEX_SESSION_ID": "codex"} {
+		if v := strings.TrimSpace(os.Getenv(env)); v != "" {
+			out = append(out, harness+":"+v)
+		}
+	}
+	return out
 }

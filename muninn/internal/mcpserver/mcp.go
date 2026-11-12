@@ -56,7 +56,8 @@ type idOut struct {
 }
 
 type forgetIn struct {
-	ID string `json:"id" jsonschema:"short memory id, unique prefix (4+ chars), or legacy id"`
+	ID      string `json:"id" jsonschema:"short memory id, unique prefix (4+ chars), or legacy id"`
+	Session string `json:"session,omitempty" jsonschema:"the session id passed to memory_recall, if any; lets you forget a memory recalled there"`
 }
 
 type relatedIn struct {
@@ -129,7 +130,11 @@ func New(a *app.App, version string, opt Options) *mcp.Server {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_forget", Description: "Retire a wrong or outdated memory by short id, unique prefix (4+ chars), or legacy id. Upstream harness notes are suppressed only in muninn, leaving upstream files unchanged. Follow with memory_remember for the correction."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in forgetIn) (*mcp.CallToolResult, idOut, error) {
-			result, err := opt.Forget(ctx, a, in.ID)
+			sessions := app.HarnessSessions()
+			if s := strings.TrimSpace(in.Session); s != "" {
+				sessions = append(sessions, "mcp:"+s)
+			}
+			result, err := opt.Forget(ctx, a, in.ID, sessions...)
 			if err != nil {
 				return nil, idOut{}, err
 			}

@@ -38,6 +38,8 @@ type cue struct {
 var cues = []cue{
 	{"correction", regexp.MustCompile(`\b(no|nope),? (that'?s|it'?s) (wrong|not right|incorrect)\b|\bthat'?s (wrong|incorrect|outdated)\b|\b(actually|correction):? \b|\bnot true anymore\b|\bno longer (true|the case|used)\b|\b(det|dette) er (feil|ikke riktig)\b|\bstemmer ikke\b`)},
 	{"rule", regexp.MustCompile(`\bfrom now on\b|\bgoing forward\b|\b(always|never) (use|do|run|put|write|commit|push|ask|call|start|add|keep|prefer|reply|answer|test)\b|\bdon'?t ever\b|\bmake sure (to|you) always\b|\bheretter\b|\bfra nå av\b|\b(alltid|aldri) (bruk|gjør|kjør|skriv|svar)\b`)},
-	{"preference", regexp.MustCompile(`\bi (prefer|like|want|hate|dislike) (it )?(when|to|that|you)\b|\bmy preference is\b|\bi'?d rather\b|\bjeg foretrekker\b|\bjeg liker (ikke )?(at|når)\b`)},
+	// "I want to upgrade you" is a request for now, not a preference
+	// (2026-11-11: it cued "lasting preference"). Only standing wants count.
+	{"preference", regexp.MustCompile(`\bi (prefer|like|hate|dislike) (it )?(when|that)\b|\bi prefer to\b|\bi want you to (always|never)\b|\bi (don'?t|do not) (like|want) (it )?when\b|\bmy preference is\b|\bi'?d rather\b|\bjeg foretrekker\b|\bjeg liker (ikke )?(at|når)\b`)},
 	{"decision", regexp.MustCompile(`\b(we|i) (have )?decided\b|\b(the )?decision is\b|\blet'?s go with\b|\bwe'?ll use\b|\bvi (har )?bestemt\b|\bvi går for\b`)},
 }

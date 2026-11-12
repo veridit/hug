@@ -75,3 +75,27 @@ func TestDedupeThresholdConfiguration(t *testing.T) {
 		}
 	}
 }
+
+// 2026-11-11: the agent proposed building the hub into huginn; capture stored
+// "The user's cross-harness communication hub idea ..." at trust low (d8jb1b).
+func TestAssistantIdeasAreNotTheUsers(t *testing.T) {
+	for _, tc := range []struct {
+		line string
+		keep bool
+	}{
+		{`{"category":"fact","content":"The user's cross-harness communication hub idea: make it part of huginn, since every harness can reach it.","trust":"low"}`, false},
+		{`{"category":"decision","content":"The user decided the hub becomes part of huginn for every harness.","trust":"medium","source":"assistant"}`, false},
+		{`{"category":"preference","content":"Prefers tabs","trust":"high","source":"assistant"}`, false},
+		{`{"category":"fact","content":"Proposed by the agent, not yet accepted: build the cross-harness hub into huginn.","trust":"medium","source":"assistant"}`, true},
+		{`{"category":"preference","content":"User prefers Vim keys in every TUI.","trust":"high","source":"user"}`, true},
+	} {
+		got, _ := Parse(tc.line)
+		if (len(got) == 1) != tc.keep {
+			t.Errorf("keep=%v got %d for %s", tc.keep, len(got), tc.line)
+		}
+	}
+	got, _ := Parse(`{"category":"decision","content":"Ship the release on Friday after the tests pass.","trust":"high","source":"assistant"}`)
+	if len(got) != 1 || got[0].Trust != "medium" {
+		t.Fatalf("assistant trust must cap at medium: %+v", got)
+	}
+}

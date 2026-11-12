@@ -12,6 +12,8 @@ func TestSaveCue(t *testing.T) {
 		"No, that's wrong, the staging port is 8443.",
 		"Never use Chrome for browser automation here.",
 		"I prefer when you keep answers short.",
+		"I want you to always use Vim keys.",
+		"I don't like it when you add em dashes.",
 		"We decided to drop the legacy importer.",
 		"Fra nå av skal du alltid svare på norsk.",
 		"Dette er feil, vi bruker ikke Docker lenger.",
@@ -24,6 +26,10 @@ func TestSaveCue(t *testing.T) {
 		"should we always run the tests first?",
 		"walk down the hallways and never look back", // "never look" is not a listed verb
 		"refactor this function",
+		// 2026-11-11 misfires: requests about now, not standing preferences.
+		"Good morning. I want to upgrade you to Smarter Agent and discuss what is theoretically possible.",
+		"I want you to look at the CI failure.",
+		"I like to think about this a bit more before we start.",
 		"[muninn recall] From now on use tabs",
 		"",
 	}
