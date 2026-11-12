@@ -75,6 +75,7 @@ func (a *App) Dream(ctx context.Context, dry bool) (DreamResult, error) {
 			return res, err
 		}
 		res.Retired, res.Backup = len(r.Retirements), r.Backup
+		a.logRetired(res.Retired)
 	} else {
 		for _, c := range safe {
 			res.Retired += len(c.Retire)
@@ -91,6 +92,50 @@ func (a *App) Dream(ctx context.Context, dry bool) (DreamResult, error) {
 	}
 	err = a.DB.QueryRow(`SELECT count(*) FROM dream_items WHERE resolved_ns=0`).Scan(&res.Open)
 	return res, err
+}
+
+// DreamSummary counts the last day of dreaming: merged by the pass, items
+// handed out to agents, resolved, and still open.
+type DreamSummary struct {
+	Retired  int `json:"retired"`
+	Handed   int `json:"handed"`
+	Resolved int `json:"resolved"`
+	Open     int `json:"open"`
+}
+
+// DreamSummarySince reports dream activity since t. Retired counts memories
+// suppressed by dream undo receipts written since t.
+func (a *App) DreamSummarySince(t time.Time) DreamSummary {
+	var s DreamSummary
+	ns := t.UnixNano()
+	a.DB.QueryRow(`SELECT count(*) FROM dream_items WHERE handed_ns>=?`, ns).Scan(&s.Handed)
+	a.DB.QueryRow(`SELECT count(*) FROM dream_items WHERE resolved_ns>=?`, ns).Scan(&s.Resolved)
+	a.DB.QueryRow(`SELECT count(*) FROM dream_items WHERE resolved_ns=0`).Scan(&s.Open)
+	var v string
+	if a.DB.QueryRow(`SELECT value FROM meta WHERE key='dream_retired_log'`).Scan(&v) == nil {
+		for _, line := range strings.Split(v, "\n") {
+			var at int64
+			var n int
+			if _, err := fmt.Sscanf(line, "%d %d", &at, &n); err == nil && at >= ns {
+				s.Retired += n
+			}
+		}
+	}
+	return s
+}
+
+func (a *App) logRetired(n int) {
+	if n <= 0 {
+		return
+	}
+	var v string
+	a.DB.QueryRow(`SELECT value FROM meta WHERE key='dream_retired_log'`).Scan(&v)
+	lines := strings.Split(strings.TrimSpace(v), "\n")
+	if len(lines) > 60 {
+		lines = lines[len(lines)-60:]
+	}
+	lines = append(lines, fmt.Sprintf("%d %d", time.Now().UnixNano(), n))
+	a.DB.Exec(`INSERT INTO meta(key,value) VALUES('dream_retired_log',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, strings.TrimSpace(strings.Join(lines, "\n")))
 }
 
 // losesDetail reports a cluster where a copy to retire is clearly longer than

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/veridit/hug/muninn/internal/app"
@@ -13,7 +14,7 @@ import (
 // dreamCmd runs one dream pass: mechanical duplicates are retired with an
 // undo receipt, judgement items are queued for agents (memory_dream).
 func dreamCmd() *cobra.Command {
-	var dry, list, asJSON bool
+	var dry, list, asJSON, summary bool
 	c := &cobra.Command{Use: "dream", Short: "Tidy memories: retire exact duplicates (with undo), queue the rest for agents",
 		Long: `dream runs one memory housekeeping pass.
 
@@ -25,6 +26,14 @@ memory_dream MCP tool. Undo a pass with: muninn tidy undo <receipt>.`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return withApp(func(ctx context.Context, a *app.App) error {
+				if summary {
+					s := a.DreamSummarySince(time.Now().Add(-24 * time.Hour))
+					if asJSON {
+						return json.NewEncoder(cmd.OutOrStdout()).Encode(s)
+					}
+					fmt.Fprintf(cmd.OutOrStdout(), "Last 24 h: %d duplicates merged, %d items handed to agents, %d resolved, %d open.\n", s.Retired, s.Handed, s.Resolved, s.Open)
+					return nil
+				}
 				if list {
 					cwd, _ := os.Getwd()
 					items, err := a.Bound("", cwd).DreamItems(a, "cli", 5)
@@ -54,5 +63,6 @@ memory_dream MCP tool. Undo a pass with: muninn tidy undo <receipt>.`,
 	c.Flags().BoolVar(&dry, "dry-run", false, "report what would change, write nothing")
 	c.Flags().BoolVar(&list, "list", false, "show the items an agent here would be handed (marks them handed)")
 	c.Flags().BoolVar(&asJSON, "json", false, "print JSON")
+	c.Flags().BoolVar(&summary, "summary", false, "one line: merged, handed out, resolved and open in the last 24 hours")
 	return c
 }
