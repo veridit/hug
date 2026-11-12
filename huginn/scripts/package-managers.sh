@@ -19,6 +19,9 @@ cat > "$tap/Formula/huginn.rb" <<EOF
 class Huginn < Formula
   desc "Git-branch task tracker for people and agents"
   homepage "https://github.com/veridit/hug/tree/main/huginn"
+  # Explicit: Homebrew cannot parse the version from a prefixed tag URL
+  # (muninn-v0.5.3 read as "64" from "arm64", 2026-11-12).
+  version "${v}"
   license "MPL-2.0"
 
   on_macos do

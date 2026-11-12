@@ -19,6 +19,9 @@ cat > "$tap/Formula/muninn.rb" <<EOF
 class Muninn < Formula
   desc "Local-first memory recall for AI coding agents (jcode, Claude Code, Codex, MCP)"
   homepage "https://github.com/veridit/hug/tree/main/muninn"
+  # Explicit: Homebrew cannot parse the version from a prefixed tag URL
+  # (muninn-v0.5.3 read as "64" from "arm64", 2026-11-12).
+  version "${v}"
   license "MPL-2.0"
 
   on_macos do
