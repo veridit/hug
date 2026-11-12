@@ -18,7 +18,7 @@ muninn dream runs while idle at low priority, applies safe mechanical consolidat
 ## Acceptance
 - [x] muninn dream exists; exact duplicates retired automatically with an undo receipt
 - [x] judgement items queued; memory_dream MCP tool returns at most 5 with instruction and allowed tools
-- [ ] items handed only to sessions whose scope can see them (WebKit item only in WebKit)
+- [x] items handed only to sessions whose scope can see them (WebKit item only in WebKit)
 - [ ] Claude Code and Codex hooks carry the same one-line cue
 - [ ] morning summary line: merged, handed out, open
 - [ ] dated memory text is never rewritten (decision rxw6w7)
