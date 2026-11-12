@@ -21,3 +21,5 @@ memory_forget accepts every id recall showed in this session
 ## Notes
 
 2026-11-11: d8jb1b (scope folder:~/Projects) was recalled at ~/Projects/muninn, but 'muninn forget d8jb1b' there said 'no visible memory'. Worked only from ~/Projects.
+
+Fixed in hug 819fde8 (2026-11-12) with regression tests.
