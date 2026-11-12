@@ -16,7 +16,7 @@ memory_forget accepts every id recall showed in this session
 ## Depends on
 
 ## Acceptance
-- [ ] forget of a parent-folder memory from ~/Projects/muninn succeeds when recalled there
+- [x] forget of a parent-folder memory from ~/Projects/muninn succeeds when recalled there
 
 ## Notes
 
