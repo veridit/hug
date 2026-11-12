@@ -21,3 +21,5 @@ a captured memory never attributes an agent's proposal to the user
 ## Notes
 
 2026-11-11: capture stored d8jb1b 'The user's cross-harness communication hub idea: make it part of huginn'. crab proposed it; the user never accepted. Retired, corrected as sycq96.
+
+Fixed in hug 819fde8 (2026-11-12) with regression tests.
