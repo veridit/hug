@@ -20,3 +20,5 @@ The 'Sounds like a lasting preference' cue appears at most once per user message
 - [x] hook log shows no repeated cue injections for one message
 
 ## Notes
+
+Fixed in hug 819fde8 (2026-11-12) with regression tests.
