@@ -17,6 +17,6 @@ The 'Sounds like a lasting preference' cue appears at most once per user message
 
 ## Acceptance
 - [x] regression test: one message, one cue
-- [ ] hook log shows no repeated cue injections for one message
+- [x] hook log shows no repeated cue injections for one message
 
 ## Notes
