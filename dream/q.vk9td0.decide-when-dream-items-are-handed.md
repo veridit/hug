@@ -19,3 +19,5 @@ Choose session start vs turn end/idle for handing dream items to the agent, with
 - [ ] decision recorded in DESIGN.md with reason
 
 ## Notes
+
+Built a first answer (2026-11-12): cue at a break (session start, return after 20 min, wrap-up), at most once per 6 h per session; Response.Break reports which fired. User wants to discuss after trying it.
