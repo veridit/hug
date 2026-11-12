@@ -396,6 +396,11 @@ func showCmd() *cobra.Command {
 			}
 			canonical := units[0]
 			fmt.Printf("[%s] %s\ncategory: %s\n", canonical.SID, canonical.Body, canonical.Category)
+			if rs := a.Recalled(canonical.SID); rs.Count > 0 {
+				fmt.Printf("recalled: %d times in %d sessions, last %s\n", rs.Count, rs.Sessions, rs.Last.Format("2006-01-02"))
+			} else if since := a.RecallLogSince(); !since.IsZero() {
+				fmt.Printf("recalled: never (logged since %s)\n", since.Format("2006-01-02"))
+			}
 			for _, u := range units {
 				o, err := a.Origin(u)
 				if err != nil {

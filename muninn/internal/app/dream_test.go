@@ -97,3 +97,61 @@ func TestDreamCueOnlyAtBreaks(t *testing.T) {
 	}
 	var _ app.DreamItem
 }
+
+// 2026-11-12 (user): an unrecalled memory is vetted, never archived. Rare
+// knowledge is often the most critical.
+func TestDreamVetsUnrecalledNeverArchives(t *testing.T) {
+	f := scopetest.New(t)
+	ctx := context.Background()
+	old := time.Now().Add(-90 * 24 * time.Hour).UnixNano()
+	if _, err := f.App.DB.Exec(`UPDATE units SET updated_ns=?`, old); err != nil {
+		t.Fatal(err)
+	}
+	recalled := f.Units["Shared"]
+	// The fixture's own setup recalls everything; start from a clean log.
+	if _, err := f.App.DB.Exec(`DELETE FROM injections`); err != nil {
+		t.Fatal(err)
+	}
+	// Recall logging began 90 days ago; Shared was recalled, the rest never.
+	if _, err := f.App.DB.Exec(`INSERT INTO injections(session,unit_id,content_hash,harness,at_ns) VALUES('jcode:x',?,'h','jcode',?)`, recalled.ID, old); err != nil {
+		t.Fatal(err)
+	}
+	before := 0
+	f.App.DB.QueryRow(`SELECT count(*) FROM units WHERE active=1`).Scan(&before)
+	r, err := f.App.Dream(ctx, false)
+	if err != nil || r.Queued == 0 {
+		t.Fatalf("vetting items expected: %+v %v", r, err)
+	}
+	after := 0
+	f.App.DB.QueryRow(`SELECT count(*) FROM units WHERE active=1`).Scan(&after)
+	if after != before {
+		t.Fatalf("dream must never archive unrecalled memories: %d -> %d", before, after)
+	}
+	var vetRecalled int
+	f.App.DB.QueryRow(`SELECT count(*) FROM dream_items WHERE kind='vet' AND sids=?`, recalled.SID).Scan(&vetRecalled)
+	if vetRecalled != 0 {
+		t.Fatal("a recalled memory must not be vetted")
+	}
+	here := f.App.Bound("", f.Cwd)
+	items, _ := here.DreamItems(f.App, "jcode:v", 5)
+	var vet app.DreamItem
+	for _, it := range items {
+		if it.Kind == "vet" {
+			vet = it
+		}
+	}
+	if vet.ID == 0 || len(vet.SIDs) != 1 || !strings.Contains(vet.Instruction, "rare knowledge") {
+		t.Fatalf("vet item not handed out with its instruction: %+v", items)
+	}
+	// Later passes drain the backlog VetPerPass at a time, never twice per memory.
+	for i := 0; i < 3; i++ {
+		if _, err := f.App.Dream(ctx, false); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var dupes int
+	f.App.DB.QueryRow(`SELECT count(*) FROM (SELECT sids FROM dream_items WHERE kind='vet' GROUP BY sids HAVING count(*)>1)`).Scan(&dupes)
+	if dupes != 0 {
+		t.Fatalf("%d memories got more than one vet item", dupes)
+	}
+}

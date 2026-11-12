@@ -90,6 +90,11 @@ func (a *App) Dream(ctx context.Context, dry bool) (DreamResult, error) {
 			res.Queued++
 		}
 	}
+	n, err := a.queueUnrecalled(dry, time.Now())
+	if err != nil {
+		return res, err
+	}
+	res.Queued += n
 	err = a.DB.QueryRow(`SELECT count(*) FROM dream_items WHERE resolved_ns=0`).Scan(&res.Open)
 	return res, err
 }
@@ -225,7 +230,11 @@ func (b Binding) DreamItems(a *App, session string, max int) ([]DreamItem, error
 		if !visible {
 			continue
 		}
-		if active < 2 {
+		need := 2 // dupes: done once one copy is left
+		if r.kind == "vet" {
+			need = 1 // vet: done once the memory is gone
+		}
+		if active < need {
 			// Someone already resolved it (forgot all but one).
 			a.DB.Exec(`UPDATE dream_items SET resolved_ns=?, resolution='resolved outside dream' WHERE id=?`, now, r.id)
 			continue
@@ -279,4 +288,89 @@ func (b Binding) OpenDreamCount(a *App) int {
 		}
 	}
 	return n
+}
+
+// RecallStats is how often recall has put a memory into a prompt.
+type RecallStats struct {
+	Count    int       `json:"recalled"` // injections across all sessions
+	Sessions int       `json:"sessions"` // distinct sessions
+	Last     time.Time `json:"last_recalled,omitempty"`
+}
+
+// Recalled reports recall statistics for a unit (and its mirrors by SID).
+func (a *App) Recalled(sid string) RecallStats {
+	var s RecallStats
+	var last int64
+	a.DB.QueryRow(`SELECT count(*), count(DISTINCT i.session), COALESCE(MAX(i.at_ns),0)
+		FROM injections i JOIN units u ON u.id=i.unit_id WHERE u.sid=?`, sid).Scan(&s.Count, &s.Sessions, &last)
+	if last > 0 {
+		s.Last = time.Unix(0, last)
+	}
+	return s
+}
+
+// RecallLogSince is when recall logging began (first injection), zero if never.
+func (a *App) RecallLogSince() time.Time {
+	var first int64
+	a.DB.QueryRow(`SELECT COALESCE(MIN(at_ns),0) FROM injections`).Scan(&first)
+	if first == 0 {
+		return time.Time{}
+	}
+	return time.Unix(0, first)
+}
+
+// UnusedAfter is how long recall must have been logging, and how long a
+// memory must have gone unchanged and unrecalled, before it is vetted.
+var UnusedAfter = 60 * 24 * time.Hour
+
+// VetPerPass caps vetting items queued by one dream pass, so the queue stays
+// a few minutes of agent work, not a backlog.
+var VetPerPass = 10
+
+// queueUnrecalled queues "still true?" items for memories recall has never
+// used. Never archived automatically (user, 2026-11-12, memory 156x77): rare
+// knowledge is often the most critical, needed almost never but crucial when
+// it is. The agent keeps anything still true and retires only what is wrong.
+func (a *App) queueUnrecalled(dry bool, now time.Time) (int, error) {
+	since := a.RecallLogSince()
+	if since.IsZero() || now.Sub(since) < UnusedAfter {
+		return 0, nil
+	}
+	cutoff := now.Add(-UnusedAfter).UnixNano()
+	rows, err := a.DB.Query(`SELECT u.sid, u.scope FROM units u JOIN sources s ON s.id=u.source_id
+		WHERE u.active=1 AND u.kind='memory' AND u.updated_ns < ? AND u.sid IS NOT NULL
+		AND NOT EXISTS (SELECT 1 FROM suppressed x WHERE x.sid=u.sid)
+		AND NOT EXISTS (SELECT 1 FROM injections i WHERE i.unit_id=u.id)
+		AND NOT EXISTS (SELECT 1 FROM dream_items d WHERE d.kind='vet' AND d.sids=u.sid)
+		ORDER BY u.updated_ns LIMIT ?`, cutoff, VetPerPass)
+	if err != nil {
+		return 0, err
+	}
+	type cand struct{ sid, scope string }
+	var cs []cand
+	for rows.Next() {
+		var c cand
+		if rows.Scan(&c.sid, &c.scope) == nil {
+			cs = append(cs, c)
+		}
+	}
+	rows.Close()
+	if dry {
+		return len(cs), nil
+	}
+	instruction := "Recall has never used this memory in 60+ days. Vet it, do not judge by usefulness: " +
+		"rare knowledge is often the most critical. If it is still true, leave it (resolve with note kept). " +
+		"If it is wrong, memory_remember the correction then memory_forget it. If it is obsolete, memory_forget it."
+	n := 0
+	for _, c := range cs {
+		r, err := a.DB.Exec(`INSERT OR IGNORE INTO dream_items(kind,key,sids,scope,instruction,created_ns) VALUES('vet',?,?,?,?,?)`,
+			"vet:"+c.sid, c.sid, c.scope, instruction, now.UnixNano())
+		if err != nil {
+			return n, err
+		}
+		if k, _ := r.RowsAffected(); k > 0 {
+			n++
+		}
+	}
+	return n, nil
 }
