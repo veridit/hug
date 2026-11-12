@@ -16,7 +16,7 @@ a captured memory never attributes an agent's proposal to the user
 ## Depends on
 
 ## Acceptance
-- [ ] replay of 2026-11-10 bridge turns stores hub-in-huginn as an agent proposal
+- [x] replay of 2026-11-10 bridge turns stores hub-in-huginn as an agent proposal
 
 ## Notes
 
