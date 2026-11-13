@@ -1,7 +1,7 @@
 ---
 id: rzbgqe
 title: "Apply tidy place plan for home and Projects captures"
-status: todo
+status: "done"
 type: chore
 priority: "high"
 assignee: []
