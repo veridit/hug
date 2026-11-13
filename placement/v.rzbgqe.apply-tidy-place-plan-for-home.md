@@ -17,6 +17,6 @@ The 840 jcode@global captures from ~ and ~/Projects sessions, the 540 in the hom
 
 ## Acceptance
 - [x] muninn tidy place plan reviewed (scratch/tidy-place/REPORT.md has 40 samples)
-- [ ] applied with backup; a search from ~ no longer shows WebKit/syncthing notes
+- [x] applied with backup; a search from ~ no longer shows WebKit/syncthing notes
 
 ## Notes
