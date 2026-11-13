@@ -20,3 +20,5 @@ Live duplicate clusters retired after review
 - [x] applied with tidy apply, undo receipt kept
 
 ## Notes
+
+2026-11-12: fresh plan, 207 retired (receipt tidy/apply-20261112T134406Z-2415413268); 14 clusters held for dream judgement.
