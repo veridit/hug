@@ -105,6 +105,9 @@ func TestCaptureLargeSnapshotStreams(t *testing.T) {
 	if err != nil {
 		t.Fatalf("large snapshot: %v", err)
 	}
+	// Collect first: the claim is about what the result retains, and
+	// uncollected streaming garbage made this flaky on macOS CI (4.5 MB).
+	runtime.GC()
 	runtime.ReadMemStats(&after)
 	if got.Cwd != home || len(got.Messages) != n || got.Messages[n-1].Text != "note "+strconv.Itoa(n-1) {
 		t.Fatalf("cwd=%q messages=%d last=%q", got.Cwd, len(got.Messages), got.Messages[len(got.Messages)-1].Text)
