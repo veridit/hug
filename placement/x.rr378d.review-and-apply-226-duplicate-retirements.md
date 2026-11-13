@@ -1,7 +1,7 @@
 ---
 id: rr378d
 title: "Review and apply 226 duplicate retirements"
-status: todo
+status: "done"
 type: chore
 priority: "medium"
 assignee: []
