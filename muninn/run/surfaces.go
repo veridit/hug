@@ -106,8 +106,12 @@ func selfPath() string {
 	if err != nil {
 		return "muninn"
 	}
-	if r, err := filepath.EvalSymlinks(p); err == nil {
-		p = r
+	// Keep the path as invoked: resolving links would write a versioned
+	// Homebrew Cellar path into hooks, which breaks on the next upgrade.
+	if _, err := os.Stat(p); err != nil {
+		if r, err := filepath.EvalSymlinks(p); err == nil {
+			p = r
+		}
 	}
 	if base := strings.TrimSuffix(filepath.Base(p), ".exe"); base != "muninn" {
 		sib := filepath.Join(filepath.Dir(p), "muninn"+filepath.Ext(p))
