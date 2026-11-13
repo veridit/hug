@@ -20,3 +20,5 @@ The 840 jcode@global captures from ~ and ~/Projects sessions, the 540 in the hom
 - [x] applied with backup; a search from ~ no longer shows WebKit/syncthing notes
 
 ## Notes
+
+2026-11-12: 921 of 961 moves applied (receipt tidy/apply-20261112T134611Z-274833971); 423 unsure left for dreaming.
