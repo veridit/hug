@@ -113,11 +113,11 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	mcpPath := filepath.Join(root, ".mcp.json")
 	hasHuginn, hasBacklog := mcpServers(mcpPath)
 	if _, e := os.Stat(mcpPath); e == nil || hasBacklog {
-		do := `add to "mcpServers" in .mcp.json: "huginn": {"type": "stdio", "command": "huginn", "args": ["mcp"]}`
+		do := `add to "mcpServers" in .mcp.json: "hug": {"type": "stdio", "command": "hug", "args": ["mcp"]}`
 		if hasBacklog {
 			do += `; remove the "backlog" server once the import is done`
 		}
-		add("project MCP (.mcp.json)", hasHuginn && !hasBacklog, "Claude Code and other clients that read .mcp.json start huginn mcp in this repo", do)
+		add("project MCP (.mcp.json)", hasHuginn && !hasBacklog, "Claude Code and other clients that read .mcp.json start hug mcp (memory and tasks) in this repo", do)
 	}
 	jcodeDone := false
 	for _, p := range []string{filepath.Join(root, ".jcode", "mcp.json"), filepath.Join(os.Getenv("HOME"), ".jcode", "mcp.json")} {
@@ -173,6 +173,9 @@ func mcpServers(path string) (huginn, backlog bool) {
 		var servers map[string]json.RawMessage
 		if json.Unmarshal(cfg[key], &servers) == nil {
 			if _, ok := servers["huginn"]; ok {
+				huginn = true
+			}
+			if _, ok := servers["hug"]; ok {
 				huginn = true
 			}
 			if _, ok := servers["backlog"]; ok {

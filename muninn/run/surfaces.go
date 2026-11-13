@@ -12,6 +12,7 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 
 	"github.com/veridit/hug/muninn/internal/app"
@@ -258,3 +259,26 @@ func jcodeCmd() *cobra.Command {
 
 func installCmd() *cobra.Command   { return installLike(true) }
 func uninstallCmd() *cobra.Command { return installLike(false) }
+
+// OpenMCP opens memory bound as "muninn mcp --jcode-home jcodeHome" would be,
+// starts the background reindex, and returns the server instructions plus a
+// function that adds the memory_* tools to a server. close releases the store.
+func OpenMCP(ctx context.Context, jcodeHome string) (instructions string, register func(*mcp.Server), closeFn func(), err error) {
+	a, err := app.Open(ctx)
+	if err != nil {
+		return "", nil, nil, err
+	}
+	cwd, _ := os.Getwd()
+	b := a.Bound(jcodeHome, cwd)
+	if b.Err != nil {
+		a.Close()
+		return "", nil, nil, b.Err
+	}
+	go func() {
+		if _, err := a.Reindex(ctx); err != nil && ctx.Err() == nil {
+			fmt.Fprintln(os.Stderr, "muninn: reindex:", err)
+		}
+	}()
+	b = mcpserver.Bind(a, b)
+	return mcpserver.InstructionsFor(b), func(s *mcp.Server) { mcpserver.Register(s, a, b) }, func() { a.Close() }, nil
+}

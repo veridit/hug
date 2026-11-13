@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"slices"
 
+	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
+
 	"github.com/veridit/hug/huginn/internal/cli"
 	"github.com/veridit/hug/huginn/internal/mcp"
 )
@@ -43,3 +45,17 @@ func Main(args []string) int {
 	}
 	return a.Run(ctx, args)
 }
+
+// RegisterMCP adds the task tools to s under prefix (hug mcp uses "task_"),
+// working on the repository at the process's current directory.
+func RegisterMCP(s *sdk.Server, prefix string) error {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	mcp.Register(s, &cli.App{Cwd: cwd, In: os.Stdin, Out: os.Stderr, Err: os.Stderr}, prefix)
+	return nil
+}
+
+// MCPInstructions describes the task tools registered under prefix.
+func MCPInstructions(prefix string) string { return mcp.PrefixedInstructions(prefix) }

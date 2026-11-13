@@ -26,6 +26,18 @@ type Executor interface {
 // New creates ten flat tools with the CLI's canonical JSON contract and errors.
 func New(e Executor) *sdk.Server {
 	s := sdk.NewServer(&sdk.Implementation{Name: "huginn", Version: "0.1.1"}, &sdk.ServerOptions{Instructions: Instructions})
+	Register(s, e, "")
+	return s
+}
+
+// PrefixedInstructions describes the task tools when they carry prefix
+// (hug mcp registers them as task_list, task_show, ...).
+func PrefixedInstructions(prefix string) string {
+	return "Tasks (" + prefix + "* tools) live on a dedicated Git branch of the current repository.\nUse " + prefix + "list or " + prefix + "next, then " + prefix + "take, " + prefix + "update acceptance, and " + prefix + "done.\nEvery result includes a next step, and errors include exact fixes."
+}
+
+// Register adds the task tools to s, each named prefix+name.
+func Register(s *sdk.Server, e Executor, prefix string) {
 	var mu sync.Mutex
 	str := func(desc string) map[string]any { return map[string]any{"type": "string", "description": desc} }
 	enum := func(values ...string) map[string]any { return map[string]any{"type": "string", "enum": values} }
@@ -38,7 +50,7 @@ func New(e Executor) *sdk.Server {
 			schema["required"] = required
 		}
 		// Raw registration lets even schema errors carry the same actionable next hint.
-		s.AddTool(&sdk.Tool{Name: name, Description: desc, InputSchema: schema}, func(ctx context.Context, req *sdk.CallToolRequest) (*sdk.CallToolResult, error) {
+		s.AddTool(&sdk.Tool{Name: prefix + name, Description: desc, InputSchema: schema}, func(ctx context.Context, req *sdk.CallToolRequest) (*sdk.CallToolResult, error) {
 			mu.Lock()
 			defer mu.Unlock()
 			input := map[string]any{}
@@ -200,7 +212,6 @@ func New(e Executor) *sdk.Server {
 	for _, cmd := range []string{"lint", "sync", "types"} {
 		add(cmd, map[string]string{"lint": "Report malformed files, dangling dependencies, cycles and unchecked done tasks.", "sync": "Commit local edits, rebase and push the task branch only.", "types": "List the five supported task types and their meanings."}[cmd], map[string]any{}, nil, func(map[string]any) ([]string, error) { return []string{cmd}, nil })
 	}
-	return s
 }
 func validate(input map[string]any, props map[string]any, required []string) error {
 	bad := func(message string) error { return &cli.UsageError{Problem: message, Fix: "huginn help"} }

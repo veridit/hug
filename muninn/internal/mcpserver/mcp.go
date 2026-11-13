@@ -85,12 +85,29 @@ type Options = app.Binding
 
 // New builds the MCP server over an opened app.
 func New(a *app.App, version string, opt Options) *mcp.Server {
+	opt = Bind(a, opt)
+	s := mcp.NewServer(&mcp.Implementation{Name: "muninn", Version: version}, &mcp.ServerOptions{Instructions: InstructionsFor(opt)})
+	Register(s, a, opt)
+	return s
+}
+
+// Bind resolves the binding New would use for opt.
+func Bind(a *app.App, opt Options) Options {
 	if opt.Name == "" && opt.Scopes == nil && opt.DefaultScope == "" {
 		cwd, _ := os.Getwd()
 		opt = a.Bound("", cwd)
 	}
-	s := mcp.NewServer(&mcp.Implementation{Name: "muninn", Version: version}, &mcp.ServerOptions{Instructions: Instructions + "\nActive binding: " + opt.Name + ". New memories default to place here. Available places: " + placesText(opt.Places()) + ". Other instances and client boundaries are not available."})
+	return opt
+}
 
+// InstructionsFor is the server instructions text for a binding.
+func InstructionsFor(opt Options) string {
+	return Instructions + "\nActive binding: " + opt.Name + ". New memories default to place here. Available places: " + placesText(opt.Places()) + ". Other instances and client boundaries are not available."
+}
+
+// Register adds the memory_* tools to s (used alone by muninn mcp, and next
+// to the task tools by hug mcp). opt must already be bound (see Bind).
+func Register(s *mcp.Server, a *app.App, opt Options) {
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_search", Description: "Search local memories (keyword + concept community + semantic). Use before answering questions about the user, their projects or past decisions."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in searchIn) (*mcp.CallToolResult, hitsOut, error) {
 			opt := opt.Refresh(a)
@@ -225,7 +242,6 @@ func New(a *app.App, version string, opt Options) *mcp.Server {
 			}
 			return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: msg}}}, resp, nil
 		})
-	return s
 }
 
 func placesText(places []app.Place) string {

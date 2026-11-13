@@ -27,6 +27,7 @@ Usage:
   hug task <command> ...    tasks on the git branch (next, take, show, done, new, ls, tui, ...)
   hug mem <command> ...     memory (recall, search, remember, forget, show, dream, tui, ...)
   hug tui                   task board (hug mem tui for memories)
+  hug mcp                   one MCP server: memory_* and task_* tools
   hug version
 
 Details: hug task help, hug mem --help.
@@ -52,6 +53,8 @@ func run(name string, args []string) int {
 		return huginn.Main(args[1:])
 	case "mem", "memory", "muninn":
 		return muninn.Main(args[1:])
+	case "mcp":
+		return runMCP(args[1:])
 	case "setup", "tui":
 		return huginn.Main(args)
 	case "version", "--version":

@@ -39,6 +39,16 @@ func editServers(root map[string]json.RawMessage, bin string, install bool) (boo
 		}
 		want, _ = json.Marshal(map[string]any{"command": bin, "args": []string{"mcp"}, "env": map[string]string{}})
 	}
+	if install {
+		for _, k := range []string{"servers", "mcpServers"} {
+			_, hug := maps[k]["hug"]
+			_, own := maps[k]["huginn"]
+			if hug && !own {
+				// hug mcp already serves the task tools (task_*).
+				return false, nil
+			}
+		}
+	}
 	servers := map[string]json.RawMessage{}
 	found := false
 	for _, k := range []string{"servers", "mcpServers"} {

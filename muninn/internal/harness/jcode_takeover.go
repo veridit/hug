@@ -132,6 +132,11 @@ func editJcodeMCP(raw []byte, bin, jcodeHome string, install bool) ([]byte, bool
 	}
 	want, _ := json.Marshal(map[string]any{"command": bin, "args": args, "env": map[string]string{}})
 	cur, has := servers["muninn"]
+	if _, hug := servers["hug"]; hug && install && !has {
+		// hug mcp already serves the memory tools; a second server would
+		// duplicate every memory_* tool.
+		return raw, false, nil
+	}
 	switch {
 	case install && has && jsonEqual(cur, want):
 		return raw, false, nil
