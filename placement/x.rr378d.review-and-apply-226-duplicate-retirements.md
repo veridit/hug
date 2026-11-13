@@ -17,6 +17,6 @@ Live duplicate clusters retired after review
 
 ## Acceptance
 - [x] plan scratch/memquality/live-dupes-judged.json reviewed; session-summary blobs from other projects excluded
-- [ ] applied with tidy apply, undo receipt kept
+- [x] applied with tidy apply, undo receipt kept
 
 ## Notes
