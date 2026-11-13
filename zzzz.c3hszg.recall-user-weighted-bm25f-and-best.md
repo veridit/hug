@@ -22,3 +22,5 @@ Find out whether the two ideas that survived recall4 on LongMemEval_S also help 
 - [ ] recall4 report linked: $JCODE_SCRATCH_DIR/recall4/report-{dev,heldout}.md
 
 ## Notes
+
+recall4 (LongMemEval_S, round level, all@5, paired bootstrap vs plain BM25): heldout n=379: user-weight x5 +0.084 [+0.053,+0.119]; best-passage 0.65 +0.045 [+0.016,+0.077]; stemming +0.008 (n.s.); coverage +0.008..0.011 (n.s.); recency +0.008..0.016 (n.s.); session-spread -0.053 [-0.090,-0.016]. dev n=91: user x10 +0.066 [0.000,+0.132]; dense alone 0.527 vs bm25 0.692. Script: $JCODE_SCRATCH_DIR/recall4/recall4.py
