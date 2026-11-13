@@ -1,15 +1,15 @@
 #!/bin/sh
-# Install or update muninn from the latest GitHub release.
-#   curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/muninn/install.sh | sh
-# Options (environment): MUNINN_VERSION=v0.2.0  MUNINN_BIN_DIR=$HOME/.local/bin
+# Install or update hug from the latest GitHub release.
+#   curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/install.sh | sh
+# Options (environment): HUG_VERSION=v0.7.0  HUG_BIN_DIR=$HOME/.local/bin
+# Installs hug plus the muninn and huginn names (the same program).
 # Verifies the archive against the release's SHA256SUMS before installing.
 set -eu
 
 repo="veridit/hug"
-# Releases of this part are tagged muninn-vX.Y.Z in the shared hug repository.
-bin_dir="${MUNINN_BIN_DIR:-$HOME/.local/bin}"
+bin_dir="${HUG_BIN_DIR:-${MUNINN_BIN_DIR:-$HOME/.local/bin}}"
 
-say() { printf 'muninn-install: %s\n' "$*" >&2; }
+say() { printf 'hug-install: %s\n' "$*" >&2; }
 die() { say "error: $*"; exit 1; }
 have() { command -v "$1" >/dev/null 2>&1; }
 
@@ -19,7 +19,7 @@ have tar || die "tar is required"
 os=$(uname -s | tr '[:upper:]' '[:lower:]')
 case "$os" in
   darwin|linux) ;;
-  *) die "unsupported OS '$os' (on Windows use: scoop bucket add veridit https://github.com/veridit/homebrew-tap && scoop install muninn)" ;;
+  *) die "unsupported OS '$os' (on Windows use: scoop bucket add veridit https://github.com/veridit/homebrew-tap && scoop install hug)" ;;
 esac
 arch=$(uname -m)
 case "$arch" in
@@ -28,14 +28,15 @@ case "$arch" in
   *) die "unsupported architecture '$arch'" ;;
 esac
 
-ver="${MUNINN_VERSION:-}"
+ver="${HUG_VERSION:-}"
 if [ -z "$ver" ]; then
-  ver=$(curl -fsSL "https://api.github.com/repos/$repo/releases?per_page=50" | sed -n 's/.*"tag_name": *"muninn-\(v[^"]*\)".*/\1/p' | head -1)
+  # Plain vX.Y.Z tags are hug releases (older muninn-v*/huginn-v* tags are parts).
+  ver=$(curl -fsSL "https://api.github.com/repos/$repo/releases?per_page=50" | sed -n 's/.*"tag_name": *"\(v[0-9][^"]*\)".*/\1/p' | head -1)
   [ -n "$ver" ] || die "could not find the latest release"
 fi
 v="${ver#v}"
-name="muninn_${v}_${os}_${arch}"
-base="https://github.com/$repo/releases/download/muninn-$ver"
+name="hug_${v}_${os}_${arch}"
+base="https://github.com/$repo/releases/download/$ver"
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
@@ -53,14 +54,17 @@ else die "need sha256sum or shasum to verify the download"; fi
 tar -C "$tmp" -xzf "$tmp/$name.tar.gz"
 mkdir -p "$bin_dir"
 # Replace atomically so a running hook never sees a half-written binary.
-cp "$tmp/$name/muninn" "$bin_dir/muninn.new"
-chmod 755 "$bin_dir/muninn.new"
-mv "$bin_dir/muninn.new" "$bin_dir/muninn"
-say "installed $("$bin_dir/muninn" version) to $bin_dir/muninn"
+cp "$tmp/$name/hug" "$bin_dir/hug.new"
+chmod 755 "$bin_dir/hug.new"
+mv "$bin_dir/hug.new" "$bin_dir/hug"
+for part in muninn huginn; do
+  ln -sf hug "$bin_dir/$part.new" && mv -f "$bin_dir/$part.new" "$bin_dir/$part"
+done
+say "installed $("$bin_dir/hug" version) to $bin_dir (hug, muninn, huginn)"
 
 case ":$PATH:" in
   *":$bin_dir:"*) ;;
   *) say "add $bin_dir to your PATH" ;;
 esac
-say "next: muninn install all   (wires Claude Code, Codex and jcode; keeps backups)"
+say "next, in a repository: hug setup"
 say "update later by running this same command again"

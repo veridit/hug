@@ -2,7 +2,9 @@ package cli
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/veridit/hug/huginn/internal/harness"
 )
@@ -53,6 +55,16 @@ func (a *App) runInstall(cmd string, f flags) (Reply, error) {
 	bin, err := os.Executable()
 	if err != nil {
 		return nil, err
+	}
+	// From the hug binary, write the huginn name (a link next to hug) so the
+	// MCP config runs "huginn mcp", not "hug mcp".
+	if base := strings.TrimSuffix(filepath.Base(bin), ".exe"); base != "huginn" {
+		sib := filepath.Join(filepath.Dir(bin), "huginn"+filepath.Ext(bin))
+		if _, e := os.Stat(sib); e == nil {
+			bin = sib
+		} else if lp, e := exec.LookPath("huginn"); e == nil {
+			bin = lp
+		}
 	}
 	// Preflight every instance before modifying any of them.
 	for _, h := range homes {

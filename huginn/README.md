@@ -13,24 +13,11 @@ Licensed under MPL-2.0. Contributions need the contributor agreement in
 
 Requires Git 2.42 or newer on PATH. No database service or account needed.
 
-```sh
-brew install veridit/tap/huginn
-```
-
-```powershell
-scoop bucket add veridit https://github.com/veridit/homebrew-tap
-scoop install veridit/huginn
-```
+huginn ships inside [hug](../README.md#install): install hug and you get the
+`huginn` command too.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/huginn/install.sh | sh
-# Optional: HUGINN_VERSION=v0.1.0 HUGINN_BIN_DIR=$HOME/.local/bin
-```
-
-Or with Go (see go.mod for the required toolchain):
-
-```sh
-git clone https://github.com/veridit/hug && cd hug/huginn && go install ./cmd/huginn
+brew install veridit/tap/hug
 huginn version
 ```
 

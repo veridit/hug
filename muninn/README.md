@@ -326,22 +326,19 @@ model load (measured 420-650 ms). muninn asks Ollama to keep the ~300 MB
 
 ## Install
 
-| Platform | Install | Update |
-|---|---|---|
-| macOS, Linux (Homebrew) | `brew trust --formula veridit/tap/muninn`<br>`brew install veridit/tap/muninn` | `brew upgrade muninn` |
-| Windows (Scoop) | `scoop bucket add veridit https://github.com/veridit/homebrew-tap`<br>`scoop install muninn` | `scoop update muninn` |
-| macOS, Linux (no package manager) | `curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/muninn/install.sh \| sh` | run it again |
-| Go (from a clone) | `git clone https://github.com/veridit/hug && cd hug/muninn && go install ./cmd/muninn` | pull, run again |
+muninn ships inside [hug](../README.md#install): install hug and you get the
+`muninn` command too (`brew install veridit/tap/hug`, or the other ways listed
+there). `brew install veridit/tap/muninn` also still works.
 
 Then wire it into your agents and, optionally, keep it running in the background:
 
 ```sh
 muninn install all            # Claude Code, Codex and jcode; keeps backups, idempotent
-brew services start muninn    # Homebrew: watcher + web UI on http://127.0.0.1:7431
+brew services start hug       # Homebrew: watcher + web UI on http://127.0.0.1:7431
 ```
 
 Every release publishes the formula and manifest automatically, pinned to the
-release's SHA-256 sums; `install.sh` verifies the archive the same way.
+release's SHA-256 sums; the root `install.sh` verifies the archive the same way.
 Recent Homebrew asks you to trust a third-party formula once (`brew trust`);
 upgrades need nothing extra.
 

@@ -3,3 +3,7 @@
 /.hug/
 /.huginn/
 /.muninn-notes/
+/dist/
+/bin/
+/hug
+/hug.exe

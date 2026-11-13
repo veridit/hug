@@ -21,25 +21,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        part: [muninn, huginn]
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: ${{ matrix.part }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ${{ matrix.part }}/go.mod
-          cache-dependency-path: ${{ matrix.part }}/go.sum
+          go-version-file: go.mod
       - name: Vet
         run: go vet ./...
       - name: Test
         run: go test -race ./...
         env:
           CGO_ENABLED: "1"
-      - name: Build (pure Go)
-        run: go build ./cmd/${{ matrix.part }}
+      - name: Build hug (pure Go)
+        run: go build ./cmd/hug
         env:
           CGO_ENABLED: "0"

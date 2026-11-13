@@ -1,10 +1,11 @@
-package main
+package run
 
 import (
 	"context"
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"strings"
@@ -76,7 +77,7 @@ func mcpCmd() *cobra.Command {
 					}
 				}()
 				cwd, _ := os.Getwd()
-				return mcpserver.RunStdio(ctx, a, version, a.Bound(jcodeHome, cwd))
+				return mcpserver.RunStdio(ctx, a, Version, a.Bound(jcodeHome, cwd))
 			})
 		}}
 	c.Flags().StringVar(&jcodeHome, "jcode-home", "", "serve one jcode instance: same scopes as its recall hook (default $JCODE_HOME when set)")
@@ -97,13 +98,25 @@ func tuiCmd() *cobra.Command {
 	return c
 }
 
+// selfPath is the command hooks and MCP configs should run: this binary under
+// the name muninn. In the hug release, muninn is a link next to hug; writing
+// .../hug into a hook would run "hug hook jcode", which hug does not know.
 func selfPath() string {
 	p, err := os.Executable()
 	if err != nil {
 		return "muninn"
 	}
 	if r, err := filepath.EvalSymlinks(p); err == nil {
-		return r
+		p = r
+	}
+	if base := strings.TrimSuffix(filepath.Base(p), ".exe"); base != "muninn" {
+		sib := filepath.Join(filepath.Dir(p), "muninn"+filepath.Ext(p))
+		if _, err := os.Stat(sib); err == nil {
+			return sib
+		}
+		if lp, err := exec.LookPath("muninn"); err == nil {
+			return lp
+		}
 	}
 	return p
 }

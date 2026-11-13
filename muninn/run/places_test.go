@@ -1,4 +1,4 @@
-package main
+package run
 
 import (
 	"github.com/veridit/hug/muninn/internal/scopetest"
