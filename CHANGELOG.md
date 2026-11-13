@@ -4,6 +4,22 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.1 - 2026-11-13
+
+### Added
+
+- `hug mcp`: one MCP server with the memory tools (`memory_*`) and the task
+  tools (`task_list`, `task_next`, `task_take`, ...). If memory cannot open, the
+  task tools are still served. `muninn mcp` and `huginn mcp` are unchanged.
+- The installers leave a configured `hug` server alone instead of adding
+  separate muninn/huginn servers; `hug setup` suggests `hug mcp`.
+
+### Fixed
+
+- Hooks record the path the program was started from (e.g.
+  `/opt/homebrew/bin/muninn`), not the versioned Cellar path, which broke on
+  every Homebrew upgrade.
+
 ## v0.7.0 - 2026-11-13
 
 ### Added
