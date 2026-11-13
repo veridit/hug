@@ -169,7 +169,7 @@ func TestTmuxGolden(t *testing.T) {
 				for i := range env {
 					env[i] = shellQuote(env[i])
 				}
-				launch := "/bin/sh -c " + shellQuote("env "+strings.Join(env, " ")+" "+shellQuote(binary)+" tui\nexit_code=$?\nprintf '%s\\n' \"$exit_code\" > "+shellQuote(exitFile)+"\nexit \"$exit_code\"")
+				launch := "/bin/sh -c " + shellQuote("env "+strings.Join(env, " ")+" "+shellQuote(binary)+" tui\nexit_code=$?\nprintf '%s\\n' \"$exit_code\" > "+shellQuote(exitFile+".tmp")+" && mv "+shellQuote(exitFile+".tmp")+" "+shellQuote(exitFile)+"\nexit \"$exit_code\"")
 				tmux(t, "new-session", "-d", "-s", name, "-x", strconv.Itoa(size[0]), "-y", strconv.Itoa(size[1]), "-c", repo, launch)
 				// Keep the dedicated server alive until explicit cleanup, rather than
 				// connecting a cleanup client during automatic last-session shutdown.
