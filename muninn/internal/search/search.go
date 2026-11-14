@@ -39,6 +39,12 @@ type Options struct {
 	ScopeFor       func(store.Unit) (string, bool)
 	Kinds          []string // empty = all
 	DocumentQuery  bool     // dedupe compares a proposed document to indexed documents
+	// BM25Scale > 0 scores full-text matches with FTS5 BM25 (title weighted
+	// 2, body and tags 1), multiplied by this scale, instead of flat points
+	// per word (title +2, body +1). BM25 weighs rare words (ticket ids,
+	// branch and project names) up and common words down, and normalises
+	// for memory length. 0 keeps the flat points.
+	BM25Scale float64
 }
 
 // DefaultOptions mirrors seid search.
@@ -73,7 +79,10 @@ type Searcher struct {
 	Embedder embed.Embedder // nil = keyword-only
 }
 
-type acc struct{ kw, comm, words int }
+type acc struct {
+	kw, comm, words int
+	bm              float64 // BM25 keyword score (Options.BM25Scale)
+}
 
 // QueryWords tokenises a query, dropping stopwords and 1-char tokens.
 func QueryWords(q string) []string {
@@ -181,7 +190,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		rows.Close()
 	}
 
-	// 5. FTS5 per word: title +2, content (body or tags) +1.
+	// 5. FTS5 per word: title +2, content (body or tags) +1, or BM25.
 	match := func(col, term string, f func(int64)) error {
 		rows, err := s.DB.QueryContext(ctx, `SELECT rowid FROM units_fts WHERE `+col+` MATCH ?`, fts5Quote(term))
 		if err != nil {
@@ -195,7 +204,15 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		}
 		return rows.Err()
 	}
+	if o.BM25Scale > 0 {
+		if err := s.bm25(ctx, words, o, get); err != nil {
+			return nil, err
+		}
+	}
 	for _, w := range words {
+		if o.BM25Scale > 0 {
+			break
+		}
 		hit := map[int64]bool{}
 		if err := match("title", w, func(id int64) { get(id).kw += 2; hit[id] = true }); err != nil {
 			return nil, err
@@ -300,7 +317,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		if !visible[id] {
 			continue
 		}
-		t := float64(a.kw) + math.Log(1+float64(a.comm)) + sem[id]*o.SemanticWeight
+		t := float64(a.kw) + a.bm + math.Log(1+float64(a.comm)) + sem[id]*o.SemanticWeight
 		if t > 0.001 && t >= o.MinScore {
 			cands = append(cands, cand{id, a, t})
 		}
@@ -346,7 +363,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		}
 		seenText[u.ContentHash] = true
 		seenSID[u.SID] = true
-		r := Result{Unit: u, Keyword: a.kw, Community: a.comm, Semantic: sem[id], Total: c.total, SemanticOn: semOn}
+		r := Result{Unit: u, Keyword: a.kw + int(math.Round(a.bm)), Community: a.comm, Semantic: sem[id], Total: c.total, SemanticOn: semOn}
 		if len(words) > 0 {
 			r.Coverage = math.Min(1, float64(a.words)/float64(len(words)))
 		}
@@ -604,4 +621,37 @@ func intList(m map[int]bool) string {
 		parts[i] = fmt.Sprint(id)
 	}
 	return strings.Join(parts, ",")
+}
+
+// bm25 adds FTS5 BM25 scores per query word (title weight 2, body and tags 1).
+func (s *Searcher) bm25(ctx context.Context, words []string, o Options, get func(int64) *acc) error {
+	seen := map[string]bool{}
+	for _, w := range words {
+		if seen[w] {
+			continue
+		}
+		seen[w] = true
+		// Per word, so coverage and the all-words bonus count words as before.
+		rows, err := s.DB.QueryContext(ctx, `SELECT rowid, -bm25(units_fts, 2.0, 1.0, 1.0) FROM units_fts WHERE units_fts MATCH ?`, fts5Quote(w))
+		if err != nil {
+			continue // a malformed term never fails the whole search
+		}
+		for rows.Next() {
+			var id int64
+			var v float64
+			if err := rows.Scan(&id, &v); err != nil {
+				rows.Close()
+				return err
+			}
+			a := get(id)
+			a.bm += v * o.BM25Scale
+			a.words++
+		}
+		err = rows.Err()
+		rows.Close()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

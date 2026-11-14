@@ -158,5 +158,6 @@ func (a *App) RecallOptions() search.Options {
 	o.SemanticWeight = a.Cfg.SemanticWeight
 	o.SemanticFloor = a.Cfg.SemanticFloor
 	o.SemanticSlots = a.Cfg.SemanticSlots
+	o.BM25Scale = a.Cfg.BM25Scale
 	return o
 }

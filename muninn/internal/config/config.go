@@ -41,6 +41,12 @@ type Config struct {
 	SemanticWeight float64 `json:"semantic_weight"`
 	SemanticFloor  float64 `json:"semantic_floor"`
 	SemanticSlots  int     `json:"semantic_slots"`
+	// BM25Scale weighs full-text matches by BM25 (rare words count more,
+	// common words less) times this scale; 0 restores flat points per word.
+	// 2.0 measured 2026-11-14 on 277 replayed real messages (recall4): long
+	// messages +0.39 relevant memories each [CI +0.25, +0.55] with no more
+	// irrelevant ones (-0.07 [-0.22, +0.10]); short messages unchanged.
+	BM25Scale float64 `json:"bm25_scale"`
 	// RelativeFloor drops recall hits scoring below this fraction of the top
 	// hit, so one strong match does not drag weak neighbours along.
 	RelativeFloor float64 `json:"relative_floor"`
@@ -71,7 +77,8 @@ func Defaults() Config {
 		MaxResults:             5,
 		SemanticWeight:         10.0, // seid search: semantic_weight
 		SemanticFloor:          0.5,
-		SemanticSlots:          3,    // seid search: reserved semantic slots
+		SemanticSlots:          3, // seid search: reserved semantic slots
+		BM25Scale:              2.0,
 		RelativeFloor:          0.62, // e2e: weak neighbours land at 0.51-0.60 of the top hit
 		RecallMinSemantic:      0.64,
 		RecallMinSemanticFull:  0.58,
