@@ -4,6 +4,17 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.2 - 2026-11-14
+
+### Changed
+
+- Recall scores keyword matches with BM25 (`bm25_scale: 2.0`): rare words such
+  as ticket ids and branch names count more, common words less. On 277 replayed
+  real messages, judged blind, long messages got 0.39 more relevant memories
+  each [95% CI +0.25, +0.55] with no more irrelevant ones; short messages are
+  unchanged. `bm25_scale: 0` restores the old scoring. Details:
+  muninn/docs/RECALL4.md.
+
 ## v0.7.1 - 2026-11-13
 
 ### Added
