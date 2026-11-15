@@ -122,7 +122,7 @@ func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 			continue
 		}
 		if clientBoundary(m.Scope) != clientBoundary(it.Scope) {
-			return st, fmt.Errorf("import cannot cross a client boundary; use muninn rescope --cross-client")
+			return st, fmt.Errorf("import cannot cross a client boundary; use hug mem rescope --cross-client")
 		}
 		m.Title, m.Content, m.Category, m.Tags, m.Active = it.Title, it.Content, it.Category, it.Tags, it.Active
 		m.Scope, m.OriginHash, m.Updated = it.Scope, h, now

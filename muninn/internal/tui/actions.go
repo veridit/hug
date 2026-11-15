@@ -375,7 +375,7 @@ func (m *model) startReview(kind string) {
 		path = m.snapshot.dupePath
 	}
 	if path == "" {
-		m.status = "No plan yet. Run muninn tidy " + map[string]string{"dupes": "dupes", "moves": "scan"}[kind]
+		m.status = "No plan yet. Run hug mem tidy " + map[string]string{"dupes": "dupes", "moves": "scan"}[kind]
 		return
 	}
 	m.push()

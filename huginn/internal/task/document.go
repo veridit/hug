@@ -308,7 +308,7 @@ func (d *Document) replace(lines []string) {
 }
 func (d *Document) SetField(k string, value any) error {
 	if d.frontEnd < 0 || !d.frontmatterValid {
-		return &Error{Kind: "broken-file", ID: d.Task.ID, Fix: "huginn lint"}
+		return &Error{Kind: "broken-file", ID: d.Task.ID, Fix: "hug task lint"}
 	}
 	b, e := json.Marshal(value)
 	if e != nil {
@@ -331,7 +331,7 @@ func (d *Document) SetField(k string, value any) error {
 }
 func (d *Document) Check(n int) error {
 	if n < 1 || n > len(d.Task.Acceptance) {
-		return &Error{Kind: "acceptance-index", ID: d.Task.ID, Value: fmt.Sprint(n), Fix: fmt.Sprintf("huginn show %s", d.Task.ID)}
+		return &Error{Kind: "acceptance-index", ID: d.Task.ID, Value: fmt.Sprint(n), Fix: fmt.Sprintf("hug task show %s", d.Task.ID)}
 	}
 	a := d.Task.Acceptance[n-1]
 	if a.Checked {

@@ -236,7 +236,7 @@ func (m model) overviewView(h int) string {
 		recent = append(recent, selectedLine(line, m.pane == 1 && i == m.selections[1], rightW-2))
 	}
 	if len(recent) == 0 {
-		recent = []string{dim("  No memories visible here yet."), "  Add one with muninn remember."}
+		recent = []string{dim("  No memories visible here yet."), "  Add one with hug mem remember."}
 	}
 	toldW := max(30, w*3/5)
 	needsW := w - toldW
@@ -259,11 +259,11 @@ func (m model) overviewView(h int) string {
 	}
 	dupe := fmt.Sprintf("%d look like duplicates", duplicateMemories)
 	if m.snapshot.dupePath == "" {
-		dupe = "Run muninn tidy dupes"
+		dupe = "Run hug mem tidy dupes"
 	}
 	move := fmt.Sprintf("%d may be in the wrong place", len(m.snapshot.moves.Entries))
 	if m.snapshot.movePath == "" {
-		move = "Run muninn tidy scan"
+		move = "Run hug mem tidy scan"
 	}
 	needs = append(needs, selectedLine(dupe, m.pane == 3 && m.selections[3] == 0, needsW-2), selectedLine(move, m.pane == 3 && m.selections[3] == 1, needsW-2), "", dim("  Enter reviews · no automatic changes"))
 	if bottomH < 3 {
@@ -396,7 +396,7 @@ func (m model) reviewLines() []string {
 		if u, err := m.binding.Resolve(m.a, e.SID); err == nil {
 			lines = append(lines, strings.Split(renderMarkdown(u.Body, m.width-6), "\n")...)
 		}
-		lines = append(lines, "", "Only this entry is applied, through muninn tidy apply with its backup.")
+		lines = append(lines, "", "Only this entry is applied, through hug mem tidy apply with its backup.")
 	}
 	return lines
 }

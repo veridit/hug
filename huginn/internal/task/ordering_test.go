@@ -293,7 +293,7 @@ func TestAcceptanceBlockFixesAndMineDoing(t *testing.T) {
 	before := d.Bytes()
 	_, e = s.Done(b.ID)
 	var te *Error
-	if !errors.As(e, &te) || te.ExitCode() != 3 || len(te.Unchecked) != 1 || te.Unchecked[0].Fix != "huginn check "+b.ID+" 1" {
+	if !errors.As(e, &te) || te.ExitCode() != 3 || len(te.Unchecked) != 1 || te.Unchecked[0].Fix != "hug task check "+b.ID+" 1" {
 		t.Fatal(e)
 	}
 	d, e = s.Get(b.ID)

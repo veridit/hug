@@ -43,7 +43,7 @@ func (a *App) take(ctx context.Context, s *session, ref string) (task.Result, er
 		if err != nil {
 			return task.Result{}, err
 		}
-		return task.Result{}, &OperationError{Problem: "taken by " + strings.Join(d.Task.Assignee, ", ") + " (" + d.Task.ID + ")", Fix: "huginn next"}
+		return task.Result{}, &OperationError{Problem: "taken by " + strings.Join(d.Task.Assignee, ", ") + " (" + d.Task.ID + ")", Fix: "hug task next"}
 	}
 	if e == nil {
 		_, e = s.s.Tasks()

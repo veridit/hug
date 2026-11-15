@@ -78,14 +78,14 @@ func Invalid(field, value string, valid []string) *Error {
 			closest = s
 		}
 	}
-	return &Error{Kind: "invalid-value", Field: field, Value: value, Valid: valid, Closest: closest, Fix: fmt.Sprintf("huginn set <id> --%s %s", field, closest)}
+	return &Error{Kind: "invalid-value", Field: field, Value: value, Valid: valid, Closest: closest, Fix: fmt.Sprintf("hug task set <id> --%s %s", field, closest)}
 }
 func invalidFor(id, field, value string, valid []string) *Error {
 	e := Invalid(field, value, valid)
 	e.ID = id
 	e.Fix = strings.ReplaceAll(e.Fix, "<id>", id)
 	if field == "field" {
-		e.Fix = "huginn set " + id + " --type feature"
+		e.Fix = "hug task set " + id + " --type feature"
 	}
 	return e
 }
@@ -152,7 +152,7 @@ func Resolve(tasks []Task, ref string) (Task, error) {
 	if len(exact) == 1 {
 		return exact[0], nil
 	}
-	e := &Error{Kind: "not-found", Value: ref, Fix: "huginn ls"}
+	e := &Error{Kind: "not-found", Value: ref, Fix: "hug task ls"}
 	if len(exact) > 1 {
 		e.Kind = "ambiguous"
 		sort.Slice(exact, func(i, j int) bool { return exact[i].ID < exact[j].ID })
@@ -175,7 +175,7 @@ func ResolveDependency(tasks []Task, ref string) (Task, error) {
 		return ids[0], nil
 	}
 	if len(ids) > 1 {
-		return Task{}, &Error{Kind: "duplicate-id", ID: ref, Fix: "huginn lint"}
+		return Task{}, &Error{Kind: "duplicate-id", ID: ref, Fix: "hug task lint"}
 	}
 	var found []Task
 	for _, t := range tasks {
@@ -190,7 +190,7 @@ func ResolveDependency(tasks []Task, ref string) (Task, error) {
 	if len(found) == 1 {
 		return found[0], nil
 	}
-	return Task{}, &Error{Kind: "dangling-dependency", Value: ref, Fix: "huginn lint"}
+	return Task{}, &Error{Kind: "dangling-dependency", Value: ref, Fix: "hug task lint"}
 }
 func Blocked(t Task, tasks []Task) []Task {
 	var out []Task

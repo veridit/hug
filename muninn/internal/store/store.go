@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS capture_reinforcements (
  event TEXT PRIMARY KEY, sid TEXT NOT NULL, at_ns INTEGER NOT NULL
 );
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
--- Judgement items queued by "muninn dream" for the driving agent (2026-11-12).
+-- Judgement items queued by "hug mem dream" for the driving agent (2026-11-12).
 -- kind: dupes (keep which), place (where it belongs), ...; sids are space
 -- separated; scope is the effective scope a session must see to get the item.
 CREATE TABLE IF NOT EXISTS dream_items (
@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS graph_state (id INTEGER PRIMARY KEY CHECK (id = 1), s
 -- Memory types inferred for memories whose source has no type field (jcode
 -- memory files, untyped native memories): keyed by content hash, so a type
 -- follows the text and survives re-indexing. A type stated on the memory
--- itself always wins. Written by "muninn types".
+-- itself always wins. Written by "hug mem types".
 CREATE TABLE IF NOT EXISTS inferred_types (
   content_hash TEXT PRIMARY KEY, mtype TEXT NOT NULL, model TEXT NOT NULL, at_ns INTEGER NOT NULL
 ) WITHOUT ROWID;

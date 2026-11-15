@@ -121,7 +121,7 @@ func (s *Store) ReadFile(ref, name string) ([]byte, error) {
 	}
 	b, e := os.ReadFile(p)
 	if os.IsNotExist(e) {
-		return nil, &Error{Kind: "file-not-found", ID: d.Task.ID, Value: name, Fix: "huginn show " + d.Task.ID}
+		return nil, &Error{Kind: "file-not-found", ID: d.Task.ID, Value: name, Fix: "hug task show " + d.Task.ID}
 	}
 	return b, e
 }
@@ -165,7 +165,7 @@ func (s *Store) Attach(ref, name string, content []byte, why string, replace boo
 		}
 		if !replace {
 			return Result{}, ar, &Error{Kind: "file-exists", ID: d.Task.ID, Value: name + " has other content (sha256:" + digest(old)[:8] + ")",
-				Fix: "huginn attach " + d.Task.ID + " FILE --name " + name + " --replace"}
+				Fix: "hug task attach " + d.Task.ID + " FILE --name " + name + " --replace"}
 		}
 		ar.Old = digest(old)
 	}
@@ -204,7 +204,7 @@ func (s *Store) Detach(ref, name string) (Result, error) {
 	}
 	b, e := os.ReadFile(p)
 	if os.IsNotExist(e) {
-		return Result{}, &Error{Kind: "file-not-found", ID: d.Task.ID, Value: name, Fix: "huginn show " + d.Task.ID}
+		return Result{}, &Error{Kind: "file-not-found", ID: d.Task.ID, Value: name, Fix: "hug task show " + d.Task.ID}
 	}
 	if e != nil {
 		return Result{}, e

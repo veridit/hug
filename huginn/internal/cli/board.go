@@ -64,9 +64,9 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 		done.Hidden = len(done.Cards) - boardDoneTail
 		done.Cards = done.Cards[len(done.Cards)-boardDoneTail:]
 	}
-	next := "huginn next"
+	next := "hug task next"
 	if len(cols[1].Cards) > 0 {
-		next = "huginn show " + cols[1].Cards[0].ID
+		next = "hug task show " + cols[1].Cards[0].ID
 	}
 	return Reply{"board": cols, "next": next}, nil
 }

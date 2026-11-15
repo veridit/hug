@@ -36,7 +36,7 @@ func TestOutsideRepositoryToolError(t *testing.T) {
 		t.Fatal("tool unexpectedly succeeded")
 	}
 	b, _ := json.Marshal(r)
-	if !strings.Contains(string(b), "Git checkout") || !strings.Contains(string(b), "huginn init") {
+	if !strings.Contains(string(b), "Git checkout") || !strings.Contains(string(b), "hug task init") {
 		t.Fatal(string(b))
 	}
 }
@@ -44,9 +44,9 @@ func TestOutsideRepositoryToolError(t *testing.T) {
 func (r *recorder) Execute(_ context.Context, args []string) (cli.Reply, error) {
 	r.args = args
 	if args[0] == "done" {
-		return nil, &cli.UsageError{Problem: "blocked example", Fix: "huginn check abc123 1"}
+		return nil, &cli.UsageError{Problem: "blocked example", Fix: "hug task check abc123 1"}
 	}
-	return cli.Reply{"next": "huginn take abc123", "args": args}, nil
+	return cli.Reply{"next": "hug task take abc123", "args": args}, nil
 }
 func TestToolsSchemasAndRoundTrip(t *testing.T) {
 	ctx := context.Background()
@@ -153,7 +153,7 @@ func TestToolsSchemasAndRoundTrip(t *testing.T) {
 		t.Fatal("error should be a tool error")
 	}
 	b, _ := json.Marshal(out)
-	if !strings.Contains(string(b), "huginn check abc123 1") {
+	if !strings.Contains(string(b), "hug task check abc123 1") {
 		t.Fatal(string(b))
 	}
 	out = call("new", map[string]any{"title": "A", "goal": "G", "accept": []string{"C"}, "type": "typo"})

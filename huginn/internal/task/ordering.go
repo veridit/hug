@@ -19,7 +19,7 @@ type rankChange struct {
 
 func rankPlan(tasks []Task, moved Task, o MoveOptions) ([]rankChange, error) {
 	if o.Before != "" && o.After != "" || o.Top && (o.Before != "" || o.After != "") {
-		return nil, &Error{Kind: "conflicting-position", ID: moved.ID, Fix: "huginn move " + moved.ID + " --top"}
+		return nil, &Error{Kind: "conflicting-position", ID: moved.ID, Fix: "hug task move " + moved.ID + " --top"}
 	}
 	var ordered []Task
 	for _, t := range tasks {
@@ -83,7 +83,7 @@ func rankPlan(tasks []Task, moved Task, o MoveOptions) ([]rankChange, error) {
 			return plan, nil
 		}
 	}
-	return nil, &Error{Kind: "rank-capacity", ID: moved.ID, Fix: "huginn lint"}
+	return nil, &Error{Kind: "rank-capacity", ID: moved.ID, Fix: "hug task lint"}
 }
 func (s *Store) applyRanks(plan []rankChange, focus Task) (Result, error) {
 	result := Result{Task: focus, Next: hint(focus)}
@@ -109,7 +109,7 @@ func (s *Store) applyRanks(plan []rankChange, focus Task) (Result, error) {
 			return Result{}, e
 		}
 		if !available {
-			return Result{}, &Error{Kind: "path-exists", ID: p.Task.ID, Value: dest, Fix: "huginn lint"}
+			return Result{}, &Error{Kind: "path-exists", ID: p.Task.ID, Value: dest, Fix: "hug task lint"}
 		}
 	}
 	local := *s
@@ -183,7 +183,7 @@ func (s *Store) Rebalance(refs []string) (Result, error) {
 		}
 	}
 	if end <= start {
-		return Result{Next: "huginn next"}, nil
+		return Result{Next: "hug task next"}, nil
 	}
 	a, b := "", ""
 	if start > 0 {
@@ -219,6 +219,6 @@ func (s *Store) Rebalance(refs []string) (Result, error) {
 		plan = append(plan, rankChange{ordered[start+n], key})
 	}
 	r, e := s.applyRanks(plan, ordered[start])
-	r.Next = "huginn next"
+	r.Next = "hug task next"
 	return r, e
 }

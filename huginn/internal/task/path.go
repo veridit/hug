@@ -74,11 +74,11 @@ func (s *Store) diskPath(rel string) (string, error) {
 		return "", e
 	}
 	if filepath.IsAbs(rel) {
-		return "", &Error{Kind: "unsafe-path", Value: rel, Fix: "huginn lint"}
+		return "", &Error{Kind: "unsafe-path", Value: rel, Fix: "hug task lint"}
 	}
 	clean := filepath.Clean(rel)
 	if clean == ".." || strings.HasPrefix(clean, ".."+string(filepath.Separator)) {
-		return "", &Error{Kind: "unsafe-path", Value: rel, Fix: "huginn lint"}
+		return "", &Error{Kind: "unsafe-path", Value: rel, Fix: "hug task lint"}
 	}
 	p := root
 	for _, part := range strings.Split(clean, string(filepath.Separator)) {
@@ -91,7 +91,7 @@ func (s *Store) diskPath(rel string) (string, error) {
 			return "", e
 		}
 		if st.Mode()&os.ModeSymlink != 0 {
-			return "", &Error{Kind: "unsafe-symlink", Value: rel, Fix: "huginn lint"}
+			return "", &Error{Kind: "unsafe-symlink", Value: rel, Fix: "hug task lint"}
 		}
 	}
 	return filepath.Join(root, clean), nil

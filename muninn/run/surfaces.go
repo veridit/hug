@@ -176,7 +176,7 @@ func installLike(install bool) *cobra.Command {
 			if cfg.Embedder == "builtin" || (cfg.Embedder == "auto" && !o.Available(context.Background())) {
 				fmt.Fprintln(os.Stderr, "fetching the built-in embedding model (~127 MB, once; pinned and sha256-verified)")
 				if err := embed.Builtin.Download(context.Background(), config.DataDir(), nil); err != nil {
-					fmt.Fprintln(os.Stderr, "model download failed (muninn works keyword-only until `muninn model download` succeeds):", err)
+					fmt.Fprintln(os.Stderr, "model download failed (muninn works keyword-only until `hug mem model download` succeeds):", err)
 				}
 			}
 		}

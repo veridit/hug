@@ -57,7 +57,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 			var err error
 			if len(req.Params.Arguments) > 0 {
 				if e := json.Unmarshal(req.Params.Arguments, &input); e != nil {
-					err = &cli.UsageError{Problem: "invalid tool arguments: " + e.Error(), Fix: "huginn help"}
+					err = &cli.UsageError{Problem: "invalid tool arguments: " + e.Error(), Fix: "hug task help"}
 				}
 			}
 			// Flat-tool bridges may materialize omitted optional properties as null.
@@ -156,12 +156,12 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 					delete(m, key)
 					continue
 				}
-				fix := "huginn help"
+				fix := "hug task help"
 				if key == "group" {
-					fix = "huginn mv " + id + " " + get(m, "group")
+					fix = "hug task mv " + id + " " + get(m, "group")
 				}
 				if key == "before" || key == "after" || key == "top" {
-					fix = "huginn move " + id + " --" + key
+					fix = "hug task move " + id + " --" + key
 					if key != "top" {
 						fix += " " + get(m, key)
 					}
@@ -207,14 +207,14 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		case "check":
 			n, ok := m["item"].(float64)
 			if !ok {
-				return nil, &cli.UsageError{Problem: "check needs item", Fix: "huginn show " + id}
+				return nil, &cli.UsageError{Problem: "check needs item", Fix: "hug task show " + id}
 			}
 			args = append(args, strconv.Itoa(int(n)))
 		case "note":
 			args = append(args, get(m, "text"))
 		case "mv", "move_group":
 			if _, ok := m["group"]; !ok {
-				return nil, &cli.UsageError{Problem: "move_group needs group", Fix: "huginn show " + id}
+				return nil, &cli.UsageError{Problem: "move_group needs group", Fix: "hug task show " + id}
 			}
 			args = []string{"mv", id, get(m, "group")}
 		case "dep":
@@ -228,7 +228,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 			}
 		case "move":
 			if _, ok := m["group"]; ok {
-				return nil, &cli.UsageError{Problem: "action move reorders rank; to change folder use action move_group with group", Fix: "huginn mv " + id + " " + get(m, "group")}
+				return nil, &cli.UsageError{Problem: "action move reorders rank; to change folder use action move_group with group", Fix: "hug task mv " + id + " " + get(m, "group")}
 			}
 			for _, key := range []string{"before", "after"} {
 				if get(m, key) == "" {
@@ -250,7 +250,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	}
 }
 func validate(input map[string]any, props map[string]any, required []string) error {
-	bad := func(message string) error { return &cli.UsageError{Problem: message, Fix: "huginn help"} }
+	bad := func(message string) error { return &cli.UsageError{Problem: message, Fix: "hug task help"} }
 	for _, key := range required {
 		if _, ok := input[key]; !ok {
 			return bad("missing argument " + key)
@@ -291,7 +291,7 @@ func validate(input map[string]any, props map[string]any, required []string) err
 		}
 		if options, ok := spec["enum"].([]string); ok && !slices.Contains(options, value.(string)) {
 			e := task.Invalid(key, value.(string), options)
-			e.Fix = "huginn help"
+			e.Fix = "hug task help"
 			return e
 		}
 	}

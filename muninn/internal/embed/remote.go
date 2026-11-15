@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// Remote asks a running `muninn serve` to embed with the model it keeps
+// Remote asks a running `hug mem serve` to embed with the model it keeps
 // loaded. Hooks are short-lived processes; loading the built-in model costs
 // ~0.4 s and ~560 MB each time, while serve answers in tens of milliseconds.
 type Remote struct {
@@ -63,14 +63,14 @@ func (r *Remote) Embed(ctx context.Context, texts []string) ([][]float32, error)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("muninn serve /api/embed: %s", resp.Status)
+		return nil, fmt.Errorf("hug mem serve /api/embed: %s", resp.Status)
 	}
 	var out EmbedResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}
 	if out.Model != r.Name || len(out.Vectors) != len(texts) {
-		return nil, fmt.Errorf("muninn serve returned %d vectors from %q, want %d from %q", len(out.Vectors), out.Model, len(texts), r.Name)
+		return nil, fmt.Errorf("hug mem serve returned %d vectors from %q, want %d from %q", len(out.Vectors), out.Model, len(texts), r.Name)
 	}
 	return out.Vectors, nil
 }

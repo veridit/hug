@@ -35,7 +35,7 @@ func (s Stats) String() string {
 	out := fmt.Sprintf("sources scanned=%d skipped=%d | units added=%d changed=%d removed=%d unchanged=%d | embedded=%d reused=%d | %s",
 		s.SourcesScanned, s.SourcesSkipped, s.Added, s.Changed, s.Removed, s.Unchanged, s.Embedded, s.EmbedReused, s.Elapsed.Round(time.Millisecond))
 	if s.EmbedPending > 0 {
-		out += fmt.Sprintf(" | %d still to embed (run `muninn index`)", s.EmbedPending)
+		out += fmt.Sprintf(" | %d still to embed (run `hug mem index`)", s.EmbedPending)
 	}
 	if s.Elapsed > time.Second {
 		for _, p := range s.Phases {
@@ -319,7 +319,7 @@ func (ix *Indexer) EmbedDirty(ctx context.Context, st *Stats) error {
 	st.EmbedReused = total - len(jobs)
 	// A hook must answer in milliseconds: it embeds at most MaxEmbed texts and
 	// leaves the rest (e.g. a full re-embed after a model change) to
-	// `muninn index` or `muninn serve`. Search keeps using the previous
+	// `hug mem index` or `hug mem serve`. Search keeps using the previous
 	// pipeline until every vector of the new one exists.
 	pending := len(jobs)
 	if ix.MaxEmbed > 0 && len(jobs) > ix.MaxEmbed {

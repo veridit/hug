@@ -50,7 +50,7 @@ func Main(args []string) int {
 	root := &cobra.Command{
 		Use:           "muninn",
 		Short:         "Local-first memory recall for AI coding agents",
-		Example:       "  muninn search \"banana mode\"\n  muninn forget k7m2qx\n  muninn remember \"The corrected fact\"",
+		Example:       "  hug mem search \"banana mode\"\n  hug mem forget k7m2qx\n  hug mem remember \"The corrected fact\"",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		// Background work must not spike the machine: it may take longer.
@@ -217,7 +217,7 @@ func recallCmd() *cobra.Command {
 func ensureFresh(ctx context.Context, a *app.App) (index.Stats, error) {
 	// Recall paths must stay fast: never embed inline beyond a handful of
 	// brand-new memories (one Ollama batch is ~0.2-2 s). Larger backlogs,
-	// including a model or prompt change, are left to `muninn index`/`serve`.
+	// including a model or prompt change, are left to `hug mem index`/`serve`.
 	a.Indexer.MaxEmbed = 8
 	// If another process is indexing, do not queue behind it: WAL still lets
 	// this process read a consistent snapshot, so recall just runs on that.
@@ -277,7 +277,7 @@ func rememberCmd() *cobra.Command {
 	c.Flags().StringVar(&home, "jcode-home", "", "bind to this JCODE_HOME")
 	c.Flags().StringSliceVar(&tags, "tag", nil, "tag (repeatable)")
 	c.Flags().StringVar(&safeReason, "safe-reason", "", "why text that looks secret is safe to store (asked for when the secret check fires)")
-	c.Flags().BoolVar(&inProject, "project", false, "store in this repository's project scope (shareable with `muninn sync`)")
+	c.Flags().BoolVar(&inProject, "project", false, "store in this repository's project scope (shareable with `hug mem sync`)")
 	return c
 }
 
@@ -304,7 +304,7 @@ func rescopeCmd() *cobra.Command {
 	var target, from string
 	var cross, dry bool
 	c := &cobra.Command{Use: "rescope <memory-id> --to SCOPE | --from FILE", Short: "Admin: move owned memories to another scope (one, or a batch from a file)",
-		Example: "  muninn rescope k7m2qx --to project:rc-0b343f3c990286d6\n  muninn rescope --from moves.tsv --dry-run   # lines: <memory-id> <scope>, # comments\n  cut -f1,3 plan.tsv | muninn rescope --from -",
+		Example: "  hug mem rescope k7m2qx --to project:rc-0b343f3c990286d6\n  hug mem rescope --from moves.tsv --dry-run   # lines: <memory-id> <scope>, # comments\n  cut -f1,3 plan.tsv | hug mem rescope --from -",
 		Args: func(_ *cobra.Command, args []string) error {
 			if from != "" {
 				if len(args) != 0 || target != "" {

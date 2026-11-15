@@ -61,7 +61,7 @@ func Open(ctx context.Context) (*App, error) {
 }
 
 // pickEmbedder resolves cfg.Embedder. For the built-in model it prefers a
-// running `muninn serve` (model already loaded) over loading it in-process.
+// running `hug mem serve` (model already loaded) over loading it in-process.
 func pickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, string) {
 	if os.Getenv("MUNINN_NO_EMBED") != "" || cfg.Embedder == "none" {
 		return nil, "keyword-only (embedder disabled)"
@@ -76,7 +76,7 @@ func pickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, strin
 	builtin := func() (embed.Embedder, string) {
 		if os.Getenv("MUNINN_SERVE") == "" {
 			if r := embed.DialRemote(ctx, cfg.ListenAddr, embed.Builtin.Name); r != nil {
-				return r, "built-in model via muninn serve"
+				return r, "built-in model via hug mem serve"
 			}
 		}
 		l, err := embed.NewLocal(config.DataDir())
@@ -100,7 +100,7 @@ func pickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, strin
 		if e, note := builtin(); e != nil {
 			return e, note
 		}
-		return nil, "keyword-only (no Ollama, built-in model not downloaded: run `muninn model download`)"
+		return nil, "keyword-only (no Ollama, built-in model not downloaded: run `hug mem model download`)"
 	}
 }
 

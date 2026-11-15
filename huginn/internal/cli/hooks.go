@@ -21,7 +21,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	}
 	if len(f.args) >= 1 && f.args[0] == "files" {
 		if e := f.count(2); e != nil {
-			return nil, usage("import files needs the folder of per-task folders", "huginn import files DIR [--cite PREFIX] [--dry-run]")
+			return nil, usage("import files needs the folder of per-task folders", "hug task import files DIR [--cite PREFIX] [--dry-run]")
 		}
 		dry := f.has("dry-run")
 		r, e := importer.ImportFiles(f.args[1], f.get("cite"), s.s, dry)
@@ -29,55 +29,55 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 			return nil, e
 		}
 		if dry {
-			return Reply{"import": r, "next": "huginn import files " + f.args[1]}, nil
+			return Reply{"import": r, "next": "hug task import files " + f.args[1]}, nil
 		}
-		if e = s.r.Commit(nil, "huginn import files "+f.args[1]); e != nil {
+		if e = s.r.Commit(nil, "hug task import files "+f.args[1]); e != nil {
 			return nil, e
 		}
-		return Reply{"import": r, "next": "huginn lint"}, nil
+		return Reply{"import": r, "next": "hug task lint"}, nil
 	}
 	if e := f.count(2); e != nil {
 		return nil, e
 	}
 	if f.args[0] != "backlog" {
-		return nil, usage("unknown import format "+f.args[0]+"; valid: backlog, github, files; closest: backlog", "huginn import backlog "+f.args[1])
+		return nil, usage("unknown import format "+f.args[0]+"; valid: backlog, github, files; closest: backlog", "hug task import backlog "+f.args[1])
 	}
 	dry := f.has("dry-run")
 	report, e := importer.Run(ctx, f.args[1], s.s, importer.Options{DryRun: dry})
 	var none *importer.NoTasksError
 	if errors.As(e, &none) {
-		return nil, usage(none.Error()+"; point at the backlog folder (holding tasks/) or the tasks folder itself", "huginn import backlog "+filepath.Join(f.args[1], "tasks"))
+		return nil, usage(none.Error()+"; point at the backlog folder (holding tasks/) or the tasks folder itself", "hug task import backlog "+filepath.Join(f.args[1], "tasks"))
 	}
 	if e != nil {
 		return nil, e
 	}
 	if dry {
-		return Reply{"import": report, "dry_run": true, "next": "huginn import backlog " + f.args[1]}, nil
+		return Reply{"import": report, "dry_run": true, "next": "hug task import backlog " + f.args[1]}, nil
 	}
-	if e = s.r.Commit(nil, "huginn import backlog"); e != nil {
+	if e = s.r.Commit(nil, "hug task import backlog"); e != nil {
 		return nil, e
 	}
 	if _, e = s.s.Tasks(); e != nil {
 		return nil, e
 	}
-	return Reply{"import": report, "next": "huginn ls"}, nil
+	return Reply{"import": report, "next": "hug task ls"}, nil
 }
 func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	if e := f.count(0); e != nil {
 		return nil, e
 	}
 	if f.has("json") {
-		return nil, usage("tui is interactive; use ls --json for structured output", "huginn ls --json")
+		return nil, usage("tui is interactive; use ls --json for structured output", "hug task ls --json")
 	}
 	user, _ := a.identity(ctx)
 	e := tui.Run(ctx, s.s, tui.Options{User: user, Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref) }, Commit: func(msg string) error { return s.r.Commit(nil, msg) }})
 	if e != nil {
 		return nil, e
 	}
-	if e = s.r.Commit(nil, "huginn tui"); e != nil {
+	if e = s.r.Commit(nil, "hug task tui"); e != nil {
 		return nil, e
 	}
-	return Reply{"next": "huginn next"}, nil
+	return Reply{"next": "hug task next"}, nil
 }
 
 // runImportGitHub imports a repository's issues (open and closed) through
@@ -85,7 +85,7 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 // merges GitHub changes; edits made in huginn win, as with backlog imports.
 func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, error) {
 	if len(f.args) > 2 {
-		return nil, usage("too many arguments", "huginn import github [OWNER/REPO] [--dry-run]")
+		return nil, usage("too many arguments", "hug task import github [OWNER/REPO] [--dry-run]")
 	}
 	repo := ""
 	if len(f.args) == 2 {
@@ -93,7 +93,7 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 	}
 	issues, e := importer.FetchIssues(ctx, a.Cwd, repo)
 	if e != nil {
-		return nil, &OperationError{Problem: e.Error(), Fix: "gh auth status, then huginn import github OWNER/REPO --dry-run"}
+		return nil, &OperationError{Problem: e.Error(), Fix: "gh auth status, then hug task import github OWNER/REPO --dry-run"}
 	}
 	stage, e := os.MkdirTemp("", "huginn-github-*")
 	if e != nil {
@@ -107,25 +107,25 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 	report, e := importer.Run(ctx, stage, s.s, importer.Options{DryRun: dry, Origin: "github"})
 	var none *importer.NoTasksError
 	if errors.As(e, &none) {
-		return Reply{"import": report, "issues": 0, "next": "huginn ls"}, nil
+		return Reply{"import": report, "issues": 0, "next": "hug task ls"}, nil
 	}
 	if e != nil {
 		return nil, e
 	}
-	again := "huginn import github"
+	again := "hug task import github"
 	if repo != "" {
 		again += " " + repo
 	}
 	if dry {
 		return Reply{"import": report, "issues": len(issues), "dry_run": true, "next": again}, nil
 	}
-	if e = s.r.Commit(nil, "huginn import github"); e != nil {
+	if e = s.r.Commit(nil, "hug task import github"); e != nil {
 		return nil, e
 	}
 	if _, e = s.s.Tasks(); e != nil {
 		return nil, e
 	}
-	return Reply{"import": report, "issues": len(issues), "next": "huginn ls"}, nil
+	return Reply{"import": report, "issues": len(issues), "next": "hug task ls"}, nil
 }
 
 // runUpgrade moves the old huginn layout to hug's: branch huginn becomes

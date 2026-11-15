@@ -199,10 +199,10 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 	}
 	if srcAbs == dstAbs || strings.HasPrefix(dstAbs, srcAbs+string(os.PathSeparator)) || strings.HasPrefix(srcAbs, dstAbs+string(os.PathSeparator)) {
 		// Usually the repository root was given: it contains .huginn/ itself.
-		fix := "huginn import backlog DIRECTORY (the backlog folder, not the repository root)"
+		fix := "hug task import backlog DIRECTORY (the backlog folder, not the repository root)"
 		for _, d := range []string{".backlog", "backlog"} {
 			if fi, e := os.Stat(filepath.Join(srcAbs, d)); e == nil && fi.IsDir() {
-				fix = "huginn import backlog " + d + " --dry-run"
+				fix = "hug task import backlog " + d + " --dry-run"
 				break
 			}
 		}
@@ -357,7 +357,7 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 	var originDocs []*task.Document
 	for _, t := range existing {
 		if !id.Valid(t.ID) {
-			return report, fmt.Errorf("invalid destination id %q: run huginn lint", t.ID)
+			return report, fmt.Errorf("invalid destination id %q: run hug task lint", t.ID)
 		}
 		if occupied[t.ID] {
 			return report, fmt.Errorf("duplicate destination id %s", t.ID)

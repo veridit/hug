@@ -17,7 +17,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/shortid"
 )
 
-// NativeMemory is a memory muninn owns (created with `muninn remember`).
+// NativeMemory is a memory muninn owns (created with `hug mem remember`).
 type NativeMemory struct {
 	Updates           string   `json:"updates,omitempty"`
 	NewReason         string   `json:"new_reason,omitempty"`

@@ -251,8 +251,8 @@ func TestUnsafePaths(t *testing.T) {
 	os.MkdirAll(filepath.Join(repo, ".backlog", "tasks"), 0o755)
 	_, err := Run(context.Background(), repo, &task.Store{Root: filepath.Join(repo, ".huginn")}, Options{})
 	var te *task.Error
-	if !errors.As(err, &te) || te.Fix != "huginn import backlog .backlog --dry-run" {
-		t.Fatalf("overlap fix = %+v, want huginn import backlog .backlog --dry-run", err)
+	if !errors.As(err, &te) || te.Fix != "hug task import backlog .backlog --dry-run" {
+		t.Fatalf("overlap fix = %+v, want hug task import backlog .backlog --dry-run", err)
 	}
 }
 

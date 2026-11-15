@@ -46,7 +46,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 		tracked = err == nil
 	}
 	if (hasLegacy || tracked) && !o.Migrate {
-		return st, fmt.Errorf("legacy .muninn/memories.jsonl exists, run muninn sync --migrate (or --migrate --dry-run)")
+		return st, fmt.Errorf("legacy .muninn/memories.jsonl exists, run hug mem sync --migrate (or --migrate --dry-run)")
 	}
 	if tracked {
 		status, err := git(p.Root, "status", "--porcelain", "--untracked-files=no")

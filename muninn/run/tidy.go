@@ -129,7 +129,7 @@ func tidyCmd() *cobra.Command {
 				}
 				fmt.Fprintf(cmd.OutOrStdout(), "Retired %d memories. Backup and receipt: %s\n", len(result.Retirements), result.Backup)
 				if result.Backup != "" {
-					fmt.Fprintf(cmd.OutOrStdout(), "Undo: muninn tidy undo %s\n", shellQuote(result.Backup))
+					fmt.Fprintf(cmd.OutOrStdout(), "Undo: hug mem tidy undo %s\n", shellQuote(result.Backup))
 				}
 				return nil
 			})
@@ -158,7 +158,7 @@ func tidyCmd() *cobra.Command {
 				return err
 			}
 			for _, m := range result.Moves {
-				fmt.Fprintf(cmd.OutOrStdout(), "moved %s: %s -> %s\nUndo placement: muninn rescope %s --to %s --cross-client\n", m.Ref, m.Source, m.Target, shellQuote(m.Ref), shellQuote(m.Source))
+				fmt.Fprintf(cmd.OutOrStdout(), "moved %s: %s -> %s\nUndo placement: hug mem rescope %s --to %s --cross-client\n", m.Ref, m.Source, m.Target, shellQuote(m.Ref), shellQuote(m.Source))
 				if m.Upstream != "" {
 					fmt.Fprintf(cmd.OutOrStdout(), "Upstream %s remains unchanged and suppressed. Undo moves the native copy back, keeping upstream suppressed to avoid duplicates.\n", m.Upstream)
 				}

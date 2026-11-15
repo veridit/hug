@@ -22,24 +22,24 @@ type SetupStep struct {
 
 // setupIntro is printed above the checklist. It is written for the agent
 // that runs it: everything it needs to switch a repo to huginn itself.
-const setupIntro = `huginn setup: switch this repository's task tracking to huginn.
+const setupIntro = `hug task setup: switch this repository's task tracking to hug.
 For the agent reading this: work through the checklist top to bottom. Each
-open step has the exact command or edit. Run "huginn setup" again after each
+open step has the exact command or edit. Run "hug task setup" again after each
 step until every step is done. setup itself only reads; it changes nothing.
 
 How huginn works, in short:
 - Tasks are Markdown files on the git branch "hug/tasks", checked out at .hug/tasks/.
-  Code branches never see them. "huginn sync" shares them through the remote.
+  Code branches never see them. "hug task sync" shares them through the remote.
 - Every task has a goal and observable acceptance checks. Work it like this
   (CLI shown; MCP has list, show, new, next, take, done and update):
-    huginn next            pick the top task (or huginn take ID)
-    huginn show ID         read goal, checks, notes, dependencies
-    huginn check ID N      tick check N when you have evidence
-    huginn note ID "..."   record evidence, commands, findings
-    huginn done ID         only when every check is ticked
-- New work: huginn new "title" --goal "outcome" --accept "observable check"
+    hug task next            pick the top task (or hug task take ID)
+    hug task show ID         read goal, checks, notes, dependencies
+    hug task check ID N      tick check N when you have evidence
+    hug task note ID "..."   record evidence, commands, findings
+    hug task done ID         only when every check is ticked
+- New work: hug task new "title" --goal "outcome" --accept "observable check"
 - Use --json for structured replies; every reply has a "next" hint.
-- Humans browse with "huginn tui".
+- Humans browse with "hug task tui".
 
 `
 
@@ -54,7 +54,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	}
 	out, err := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel").Output()
 	if err != nil {
-		return nil, &OperationError{Problem: "huginn setup needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && huginn setup"}
+		return nil, &OperationError{Problem: "hug task setup needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && hug task setup"}
 	}
 	root := strings.TrimSpace(string(out))
 	var steps []SetupStep
@@ -91,7 +91,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 			}
 		}
 		add("import backlog-md", done, detail,
-			"huginn import backlog "+backlogDir+" --dry-run && huginn import backlog "+backlogDir)
+			"hug task import backlog "+backlogDir+" --dry-run && hug task import backlog "+backlogDir)
 	}
 
 	// Per-task file folders kept outside the task branch (any layout: a folder
@@ -156,17 +156,17 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 			jcodeDone = true
 		}
 	}
-	add("jcode MCP", jcodeDone, "jcode agents get the huginn tools", "huginn install jcode --all-instances")
+	add("jcode MCP", jcodeDone, "jcode agents get the huginn tools", "hug task install jcode --all-instances")
 
 	open := 0
-	next := "huginn next"
+	next := "hug task next"
 	for _, s := range steps {
 		if !s.Done {
 			open++
 		}
 	}
 	if open > 0 {
-		next = "do the first open step above, then run huginn setup again"
+		next = "do the first open step above, then run hug task setup again"
 	}
 	return Reply{"setup": steps, "open": open, "intro": setupIntro, "next": next}, nil
 }
@@ -182,10 +182,10 @@ func agentInstructionsEdit(backlog []string) string {
 // agentSection is the text projects paste into AGENTS.md.
 const agentSection = `## Tasks: huginn
 Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
-Start: huginn next (or huginn take ID), then huginn show ID.
-While working: huginn check ID N with evidence, huginn note ID "evidence".
-Finish: huginn done ID when every acceptance check is ticked.
-New work: huginn new "title" --goal "outcome" --accept "observable check".
+Start: hug task next (or hug task take ID), then hug task show ID.
+While working: hug task check ID N with evidence, hug task note ID "evidence".
+Finish: hug task done ID when every acceptance check is ticked.
+New work: hug task new "title" --goal "outcome" --accept "observable check".
 MCP tools: task_list, task_show, task_new, task_next, task_take, task_done and task_update (action check, note, set, move, dep, drop) from hug mcp; the older huginn mcp server names them without the task_ prefix.
 Old backlog ids (TASK-123) work as aliases.
 Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.`

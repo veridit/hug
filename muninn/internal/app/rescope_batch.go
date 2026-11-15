@@ -127,7 +127,7 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 		for _, mv := range moves {
 			i, ok := at[mv.key]
 			if !ok {
-				return result, fmt.Errorf("nothing moved: %s is not in %s; run muninn index and retry", mv.sid, path)
+				return result, fmt.Errorf("nothing moved: %s is not in %s; run hug mem index and retry", mv.sid, path)
 			}
 			mems[i].Scope = mv.item.Target
 			mems[i].Updated = now

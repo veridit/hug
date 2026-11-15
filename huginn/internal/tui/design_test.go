@@ -534,7 +534,7 @@ func TestFullHelpFits140AndRepairStaysVisible(t *testing.T) {
 	m = press(m, "esc")
 	id := m.visible[0].ID
 	m = act(m, "d")
-	if !strings.Contains(m.View(), "fix: huginn check "+id+" 1") {
+	if !strings.Contains(m.View(), "fix: hug task check "+id+" 1") {
 		t.Fatal(m.View())
 	}
 }

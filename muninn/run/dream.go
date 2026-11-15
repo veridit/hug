@@ -22,7 +22,7 @@ Mechanical changes are applied automatically, with an undo receipt:
   near-identical duplicates in the same place, where the keeper keeps all text.
 Everything that needs judgement is queued and handed to agents at a pause in
 their work (session start, return after a break, wrap-up) through the
-memory_dream MCP tool. Undo a pass with: muninn tidy undo <receipt>.`,
+memory_dream MCP tool. Undo a pass with: hug mem tidy undo <receipt>.`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return withApp(func(ctx context.Context, a *app.App) error {
@@ -55,7 +55,7 @@ memory_dream MCP tool. Undo a pass with: muninn tidy undo <receipt>.`,
 				}
 				fmt.Fprintf(cmd.OutOrStdout(), "%s %d duplicate memories. Queued %d new items for agents; %d waiting.\n", verb, r.Retired, r.Queued, r.Open)
 				if r.Backup != "" {
-					fmt.Fprintf(cmd.OutOrStdout(), "Undo: muninn tidy undo %s\n", shellQuote(r.Backup))
+					fmt.Fprintf(cmd.OutOrStdout(), "Undo: hug mem tidy undo %s\n", shellQuote(r.Backup))
 				}
 				return nil
 			})

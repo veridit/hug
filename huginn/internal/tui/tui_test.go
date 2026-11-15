@@ -96,7 +96,7 @@ func TestActions(t *testing.T) {
 		return nil
 	}
 	m = act(m, "d")
-	if !strings.Contains(m.message, "huginn check "+first+" 1") {
+	if !strings.Contains(m.message, "hug task check "+first+" 1") {
 		t.Fatal(m.message)
 	}
 	m = press(m, "enter")

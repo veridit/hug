@@ -21,41 +21,41 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-const Help = `huginn: tasks on a Git branch, for humans and agents.
-New here, or switching a repo from another tracker? Run: huginn setup
+const Help = `hug task: tasks on a Git branch, for humans and agents.
+New here, or switching a repo from another tracker? Run: hug task setup
 Use --json with any command. IDs, unique prefixes, slugs and aliases work.
-  setup                     huginn setup
-  init                      huginn init
-  new                       huginn new "Fix retry" --type bug --goal "Retries work" --accept "Test passes"
-  ls                        huginn ls --status todo --label api --mine
-  show                      huginn show k7m2qx
-  edit                      huginn edit k7m2qx
-  move                      huginn move k7m2qx --before p3rt9a
-  mv                        huginn mv k7m2qx auth
-  take                      huginn take k7m2qx
-  done                      huginn done k7m2qx
-  check                     huginn check k7m2qx 1
-  note                      huginn note k7m2qx "Test evidence"
-  dep                       huginn dep k7m2qx --add p3rt9a
-  set                       huginn set k7m2qx --priority high --label api
-  drop                      huginn drop k7m2qx
-  next                      huginn next --type bug --priority high --group auth
-  rebalance                 huginn rebalance
-  types                     huginn types
-  lint                      huginn lint
-  sync                      huginn sync
-  import                    huginn import backlog ./backlog
-  tui                       huginn tui
-  mcp                       huginn mcp
-  install                   huginn install jcode --all-instances
-  uninstall                 huginn uninstall jcode
-  version                   huginn version
-  help                      huginn help
+  setup                     hug task setup
+  init                      hug task init
+  new                       hug task new "Fix retry" --type bug --goal "Retries work" --accept "Test passes"
+  ls                        hug task ls --status todo --label api --mine
+  show                      hug task show k7m2qx
+  edit                      hug task edit k7m2qx
+  move                      hug task move k7m2qx --before p3rt9a
+  mv                        hug task mv k7m2qx auth
+  take                      hug task take k7m2qx
+  done                      hug task done k7m2qx
+  check                     hug task check k7m2qx 1
+  note                      hug task note k7m2qx "Test evidence"
+  dep                       hug task dep k7m2qx --add p3rt9a
+  set                       hug task set k7m2qx --priority high --label api
+  drop                      hug task drop k7m2qx
+  next                      hug task next --type bug --priority high --group auth
+  rebalance                 hug task rebalance
+  types                     hug task types
+  lint                      hug task lint
+  sync                      hug task sync
+  import                    hug task import backlog ./backlog
+  tui                       hug task tui
+  mcp                       hug task mcp
+  install                   hug task install jcode --all-instances
+  uninstall                 hug task uninstall jcode
+  version                   hug task version
+  help                      hug task help
 New flags: --dep ID (repeatable), --group FOLDER, --label LABEL, --top, --after ID.
-Details: huginn help COMMAND (for every flat flag and examples).
+Details: hug task help COMMAND (for every flat flag and examples).
 Identity: HUGINN_USER, otherwise git config user.name.
 Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
-next: huginn next
+next: hug task next
 `
 
 var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "help"}
@@ -117,7 +117,7 @@ func (a *App) open(ctx context.Context) (*session, error) {
 		cwd = "."
 	}
 	if check := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel"); check.Run() != nil {
-		return nil, &OperationError{Problem: "Huginn needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && huginn init"}
+		return nil, &OperationError{Problem: "hug task needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && hug task init"}
 	}
 	if top, e := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel").Output(); e == nil {
 		if root := strings.TrimSpace(string(top)); oldLayout(ctx, root) {
@@ -211,11 +211,11 @@ func parse(args []string, allowed string) (flags, error) {
 		key, val, eq := strings.Cut(strings.TrimPrefix(v, "--"), "=")
 		if !slices.Contains(valid, key) {
 			e := task.Invalid("flag", key, valid)
-			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "huginn help")
+			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "help", "mine", "top", "dry-run", "all-instances", "all", "replace"}, key) {
+		if slices.Contains([]string{"json", "jsonl", "help", "mine", "top", "dry-run", "all-instances", "all", "replace"}, key) {
 			if eq && val != "true" {
-				return f, usage("--"+key+" is a boolean flag", "huginn help")
+				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
 			f.values[key] = []string{"true"}
 			continue
@@ -223,7 +223,7 @@ func parse(args []string, allowed string) (flags, error) {
 		if !eq {
 			i++
 			if i >= len(args) || strings.HasPrefix(args[i], "--") {
-				return f, usage("missing value for --"+key, "huginn help")
+				return f, usage("missing value for --"+key, "hug task help")
 			}
 			val = args[i]
 		}
@@ -241,7 +241,7 @@ func (f flags) get(k string) string {
 func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
 func (f flags) count(n int) error {
 	if len(f.args) != n {
-		return usage(fmt.Sprintf("expected %d positional arguments, got %d", n, len(f.args)), "huginn help")
+		return usage(fmt.Sprintf("expected %d positional arguments, got %d", n, len(f.args)), "hug task help")
 	}
 	return nil
 }
@@ -325,9 +325,9 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 	}
 	if !slices.Contains(Commands, cmd) {
 		e := task.Invalid("command", cmd, Commands)
-		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "huginn "+e.Closest+" --help")
+		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee", "import": "dry-run cite", "show": "file", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine jsonl", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee", "import": "dry-run cite", "show": "file", "attach": "name note replace safe-reason content"}
 	f, e := parse(args, allowed[cmd])
 	if e != nil {
 		return nil, e
@@ -339,18 +339,18 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		target := cmd
 		if cmd == "help" {
 			if len(f.args) > 1 {
-				return nil, usage("help expects at most one command", "huginn help")
+				return nil, usage("help expects at most one command", "hug task help")
 			}
 			if len(f.args) == 0 {
-				return Reply{"help": Help, "next": "huginn next"}, nil
+				return Reply{"help": Help, "next": "hug task next"}, nil
 			}
 			target = f.args[0]
 		}
 		if !slices.Contains(Commands, target) {
 			e := task.Invalid("command", target, Commands)
-			return nil, usage("unknown command "+target+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "huginn help "+e.Closest)
+			return nil, usage("unknown command "+target+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task help "+e.Closest)
 		}
-		return Reply{"help": commandHelp(target), "next": "huginn next"}, nil
+		return Reply{"help": commandHelp(target), "next": "hug task next"}, nil
 	}
 	if cmd == "types" {
 		if e = a.refreshExisting(ctx); e != nil {
@@ -359,7 +359,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(0); e != nil {
 			return nil, e
 		}
-		return Reply{"types": task.TypeDescriptions, "next": "huginn next"}, nil
+		return Reply{"types": task.TypeDescriptions, "next": "hug task next"}, nil
 	}
 	if cmd == "setup" {
 		return a.runSetup(ctx, f)
@@ -380,7 +380,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e != nil {
 			return nil, e
 		}
-		next := "huginn new \"title\" --goal \"outcome\" --accept \"observable check\""
+		next := "hug task new \"title\" --goal \"outcome\" --accept \"observable check\""
 		if r, e := task.Next(ts, task.Filter{}); e == nil {
 			next = r.Next
 		}
@@ -395,25 +395,25 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 	}
 	if filter.Type != "" && !slices.Contains(task.Types, filter.Type) {
 		e := task.Invalid("type", filter.Type, task.Types)
-		e.Fix = "huginn " + cmd + " --type " + e.Closest
+		e.Fix = "hug task " + cmd + " --type " + e.Closest
 		if cmd == "set" && len(f.args) == 1 {
 			if d, err := s.s.Get(f.args[0]); err == nil {
 				e.ID = d.Task.ID
-				e.Fix = "huginn set " + d.Task.ID + " --type " + e.Closest
+				e.Fix = "hug task set " + d.Task.ID + " --type " + e.Closest
 			}
 		}
 		if cmd == "new" {
-			e.Fix = `huginn new "title" --goal "outcome" --accept "observable check" --type ` + e.Closest
+			e.Fix = `hug task new "title" --goal "outcome" --accept "observable check" --type ` + e.Closest
 		}
 		return nil, e
 	}
 	if filter.Status != "" && !slices.Contains(task.Statuses, filter.Status) {
 		e := task.Invalid("status", filter.Status, task.Statuses)
-		e.Fix = "huginn ls --status " + e.Closest
+		e.Fix = "hug task ls --status " + e.Closest
 		if cmd == "set" && len(f.args) == 1 {
 			if d, err := s.s.Get(f.args[0]); err == nil {
 				e.ID = d.Task.ID
-				e.Fix = "huginn set " + d.Task.ID + " --status " + e.Closest
+				e.Fix = "hug task set " + d.Task.ID + " --status " + e.Closest
 			}
 		}
 		return nil, e
@@ -424,7 +424,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(0); e != nil {
 			return nil, e
 		}
-		e = s.r.Commit(nil, "huginn init")
+		e = s.r.Commit(nil, "hug task init")
 		if e != nil {
 			return nil, e
 		}
@@ -446,7 +446,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		}
 		reply, e := empty()
 		if len(out) > 0 {
-			reply["next"] = "huginn show " + out[0]["id"].(string)
+			reply["next"] = "hug task show " + out[0]["id"].(string)
 		}
 		reply["tasks"] = out
 		return reply, e
@@ -459,7 +459,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			if e != nil {
 				return nil, e
 			}
-			return Reply{"file": name, "content": string(b), "next": "huginn show " + f.args[0]}, nil
+			return Reply{"file": name, "content": string(b), "next": "hug task show " + f.args[0]}, nil
 		}
 		d, e := s.s.Get(f.args[0])
 		if e != nil {
@@ -479,16 +479,16 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		return Reply{"task": taskJSON(d.Task, s.r.Dir, ts), "files": files, "next": task.NextHint(d.Task)}, nil
 	case "attach":
 		if len(f.args) < 2 && !(len(f.args) == 1 && f.has("content")) {
-			return nil, usage("attach needs a task and at least one file", `huginn attach ID FILE... [--name NAME] [--note "what this shows"] [--replace]`)
+			return nil, usage("attach needs a task and at least one file", `hug task attach ID FILE... [--name NAME] [--note "what this shows"] [--replace]`)
 		}
 		if f.has("name") && !f.has("content") && len(f.args) != 2 {
-			return nil, usage("--name renames one file; attach one file at a time with --name", "huginn attach "+f.args[0]+" FILE --name NAME")
+			return nil, usage("--name renames one file; attach one file at a time with --name", "hug task attach "+f.args[0]+" FILE --name NAME")
 		}
 		// Read and check every file first, so a refusal writes nothing.
 		var ins []attachIn
 		if f.has("content") {
 			if f.get("name") == "" || len(f.args) != 1 {
-				return nil, usage("--content needs --name and no file arguments", "huginn attach ID --content TEXT --name NAME")
+				return nil, usage("--content needs --name and no file arguments", "hug task attach ID --content TEXT --name NAME")
 			}
 			b := []byte(f.get("content"))
 			if e := task.CheckText(f.get("name"), b); e != nil {
@@ -524,7 +524,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			r = res
 			results = append(results, ar)
 		}
-		if e = s.r.Commit(nil, "huginn attach "+r.Task.ID); e != nil {
+		if e = s.r.Commit(nil, "hug task attach "+r.Task.ID); e != nil {
 			return nil, e
 		}
 		reply, e := resultJSON(r, s)
@@ -532,7 +532,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		reply["attached"] = results
-		reply["next"] = "huginn show " + r.Task.ID
+		reply["next"] = "hug task show " + r.Task.ID
 		return reply, nil
 	case "detach":
 		if e = f.count(2); e != nil {
@@ -590,7 +590,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		if !f.has("add") && !f.has("remove") {
-			return nil, usage("dep needs --add REF or --remove REF", "huginn dep "+f.args[0]+" --help")
+			return nil, usage("dep needs --add REF or --remove REF", "hug task dep "+f.args[0]+" --help")
 		}
 		r, e = changeDependencies(s.s, f.args[0], f.values["add"], f.values["remove"])
 	case "done", "drop":
@@ -608,7 +608,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		}
 		n, err := strconv.Atoi(f.args[1])
 		if err != nil || n < 1 {
-			return nil, usage("acceptance index must be a positive integer", "huginn show "+f.args[0])
+			return nil, usage("acceptance index must be a positive integer", "hug task show "+f.args[0])
 		}
 		r, e = s.s.Check(f.args[0], n)
 	case "note":
@@ -628,10 +628,10 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			}
 		}
 		if count == 0 {
-			return nil, usage("set needs a field: --priority, --type, --label, --status, --title, --assignee", "huginn show "+f.args[0])
+			return nil, usage("set needs a field: --priority, --type, --label, --status, --title, --assignee", "hug task show "+f.args[0])
 		}
 		if f.has("title") && strings.TrimSpace(f.get("title")) == "" {
-			return nil, usage("title must not be empty", "huginn show "+f.args[0])
+			return nil, usage("title must not be empty", "hug task show "+f.args[0])
 		}
 		if v := f.get("status"); v != "" && !slices.Contains(task.Statuses, v) {
 			return nil, task.Invalid("status", v, task.Statuses)
@@ -649,7 +649,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		if !f.has("before") && !f.has("after") && !f.has("top") {
-			return nil, usage("move needs --before ID, --after ID or --top; use mv for a group change", "huginn move "+f.args[0]+" --help")
+			return nil, usage("move needs --before ID, --after ID or --top; use mv for a group change", "hug task move "+f.args[0]+" --help")
 		}
 		r, e = s.s.Move(f.args[0], task.MoveOptions{Before: f.get("before"), After: f.get("after"), Top: f.has("top")})
 	case "mv":
@@ -678,7 +678,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = c.Run(); e != nil {
 			return nil, e
 		}
-		if e = s.r.Commit(nil, "huginn edit "+d.Task.ID); e != nil {
+		if e = s.r.Commit(nil, "hug task edit "+d.Task.ID); e != nil {
 			return nil, e
 		}
 		fs, err := s.c.Lint(ctx)
@@ -690,7 +690,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			fs = []task.Finding{}
 		}
 		reply["findings"] = fs
-		reply["next"] = "huginn show " + d.Task.ID
+		reply["next"] = "hug task show " + d.Task.ID
 		return reply, err
 	case "import":
 		return a.runImport(ctx, s, f)
@@ -699,13 +699,13 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 	case "tui":
 		return a.runTUI(ctx, s, f)
 	default:
-		return nil, usage("command requires its dedicated transport", "huginn help")
+		return nil, usage("command requires its dedicated transport", "hug task help")
 	}
 	if e != nil {
 		var detail *task.Error
 		if errors.As(e, &detail) && strings.Contains(detail.Fix, "<id>") {
 			if cmd == "new" {
-				detail.Fix = "huginn help new"
+				detail.Fix = "hug task help new"
 			} else if len(f.args) > 0 {
 				if d, err := s.s.Get(f.args[0]); err == nil {
 					detail.ID = d.Task.ID
@@ -715,8 +715,20 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		}
 		return nil, e
 	}
+	if cmd == "rebalance" {
+		// Rebalance touches filenames only: say so in one line instead of
+		// printing the first task and every renamed id (2026-11-15: 2,172 ids
+		// on seid-lang looked like damage). JSON keeps the full lists.
+		msg := fmt.Sprintf("rebalanced: %d filenames rekeyed, task order and contents unchanged", len(r.Renamed))
+		if len(r.Renamed) == 0 {
+			msg = "rebalance: nothing to rekey"
+		} else if e = s.r.Commit(nil, fmt.Sprintf("hug task rebalance (%d files)", len(r.Renamed))); e != nil {
+			return nil, e
+		}
+		return Reply{"changed": r.Changed, "next": r.Next, "renamed": r.Renamed, "renames": r.Renames, "message": msg}, nil
+	}
 	if cmd != "next" && cmd != "take" {
-		if e = s.r.Commit(nil, "huginn "+cmd+" "+r.Task.ID); e != nil {
+		if e = s.r.Commit(nil, "hug task "+cmd+" "+r.Task.ID); e != nil {
 			return nil, e
 		}
 	}
@@ -724,7 +736,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 }
 
 func ErrorDetails(err error) (int, string, string) {
-	code, problem, fix := 1, strings.ReplaceAll(err.Error(), "\n", "; "), "huginn help"
+	code, problem, fix := 1, strings.ReplaceAll(err.Error(), "\n", "; "), "hug task help"
 	var op *OperationError
 	if errors.As(err, &op) {
 		return 1, op.Problem, op.Fix
@@ -737,7 +749,7 @@ func ErrorDetails(err error) (int, string, string) {
 	if errors.As(err, &t) {
 		code = t.ExitCode()
 		if t.Kind == "taken" {
-			return 1, "taken by " + t.Value + " (" + t.ID + ")", "huginn next"
+			return 1, "taken by " + t.Value + " (" + t.ID + ")", "hug task next"
 		}
 		fix = t.Fix
 		problem = t.Kind
@@ -759,7 +771,7 @@ func ErrorDetails(err error) (int, string, string) {
 		fixes := []string{}
 		for _, d := range t.Dependencies {
 			problem += "; " + d.ID + " " + d.Title
-			fixes = append(fixes, "huginn show "+d.ID)
+			fixes = append(fixes, "hug task show "+d.ID)
 		}
 		for _, v := range t.Unchecked {
 			problem += fmt.Sprintf("; %d. %s", v.Index, v.Text)
@@ -778,7 +790,7 @@ func ErrorDetails(err error) (int, string, string) {
 		fix = c.Fix
 	}
 	if fix == "" {
-		fix = "huginn help"
+		fix = "hug task help"
 	}
 	problem = strings.ReplaceAll(strings.SplitN(problem, "; fix:", 2)[0], "\r", " ")
 	return code, strings.ReplaceAll(problem, "\n", "; "), fix
@@ -800,6 +812,16 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	if jsonMode {
 		_ = json.NewEncoder(a.Out).Encode(reply)
+		return 0
+	}
+	if isJSONL(args) {
+		// One task per line, for grep, head and jq -c pipelines.
+		if ts, ok := reply["tasks"].([]Reply); ok {
+			enc := json.NewEncoder(a.Out)
+			for _, t := range ts {
+				_ = enc.Encode(t)
+			}
+		}
 		return 0
 	}
 	if rs, ok := reply["installations"].([]harness.InstallResult); ok {
@@ -829,8 +851,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		writeBoard(a.Out, cols)
 	}
 	if ts, ok := reply["tasks"].([]Reply); ok {
+		// Fixed-width columns first, the free-text title last, so the
+		// id is always field 1 (2026-11-15, user: "id type slug desc").
+		w := 0
 		for _, t := range ts {
-			fmt.Fprintf(a.Out, "%s  %s  %s  %s\n", t["slug"], t["title"], t["id"], t["status"])
+			w = min(40, max(w, len(fmt.Sprint(t["slug"]))))
+		}
+		for _, t := range ts {
+			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-*s  %s\n", t["id"], t["status"], t["type"], w, t["slug"], t["title"])
 		}
 	}
 	if t, ok := reply["task"].(Reply); ok {
@@ -868,8 +896,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			fmt.Fprintln(a.Out, "warning: "+v)
 		}
 	}
-	if ids, ok := reply["renamed"].([]string); ok {
-		fmt.Fprintln(a.Out, "renamed: "+strings.Join(ids, ", "))
+	if msg, ok := reply["message"].(string); ok {
+		fmt.Fprintln(a.Out, msg)
+	} else if ids, ok := reply["renamed"].([]string); ok && len(ids) > 0 {
+		if len(ids) > 10 {
+			fmt.Fprintf(a.Out, "renamed: %s and %d more (files only, see --json)\n", strings.Join(ids[:10], ", "), len(ids)-10)
+		} else {
+			fmt.Fprintln(a.Out, "renamed: "+strings.Join(ids, ", "))
+		}
 	}
 	fmt.Fprintln(a.Out, "next: "+reply["next"].(string))
 	return 0

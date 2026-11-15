@@ -91,7 +91,7 @@ func (b Binding) MergeImport(path string, items []ingest.Imported, dry bool, sou
 		if client != "" {
 			items[i].Scope = "client:" + client
 		} else if strings.HasPrefix(items[i].Scope, "client:") {
-			return ingest.ImportStats{}, fmt.Errorf("external input has no client provenance; import outside the client then use muninn rescope --cross-client")
+			return ingest.ImportStats{}, fmt.Errorf("external input has no client provenance; import outside the client then use hug mem rescope --cross-client")
 		}
 	}
 	mems, err := ingest.LoadNative(path)

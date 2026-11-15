@@ -54,7 +54,7 @@ func TestOutsideGitFix(t *testing.T) {
 		t.Fatal("expected error")
 	}
 	_, problem, fix := ErrorDetails(err)
-	if !strings.Contains(problem, "Git checkout") || !strings.Contains(fix, "huginn init") {
+	if !strings.Contains(problem, "Git checkout") || !strings.Contains(fix, "hug task init") {
 		t.Fatal(problem, fix)
 	}
 }

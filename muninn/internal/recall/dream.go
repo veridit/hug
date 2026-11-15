@@ -8,7 +8,7 @@ import (
 )
 
 // Dream hand-out (2026-11-12, user: "find when there's a break"). Judgement
-// items from "muninn dream" are offered to the agent only at a natural pause,
+// items from "hug mem dream" are offered to the agent only at a natural pause,
 // never mid-task. A pause is one of:
 //
 //   - start:   the first user turn of a session

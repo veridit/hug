@@ -304,7 +304,7 @@ func SelectedDuplicates(p Plan, g Graph) ([]DuplicateCluster, error) {
 }
 func (p Plan) duplicatesMarkdown() string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "# Muninn duplicate review\n\n%d active canonical units, %d duplicate clusters. Read-only proposal from stored kNN edges plus exact text, no embedder or index writes. Review before `muninn tidy apply PLAN`. Set decision to keep to exclude a cluster. No text is ever rewritten.\n", p.Units, len(p.Duplicates))
+	fmt.Fprintf(&b, "# Muninn duplicate review\n\n%d active canonical units, %d duplicate clusters. Read-only proposal from stored kNN edges plus exact text, no embedder or index writes. Review before `hug mem tidy apply PLAN`. Set decision to keep to exclude a cluster. No text is ever rewritten.\n", p.Units, len(p.Duplicates))
 	for _, c := range p.Duplicates {
 		fmt.Fprintf(&b, "\n## Keeper %s (%s, %s, %s)\n\n%s\n\nReason: %s\n", c.Keeper.SID, c.Keeper.Scope, c.Band, c.Decision, c.Keeper.Text, c.Reason)
 		for _, m := range c.Retire {

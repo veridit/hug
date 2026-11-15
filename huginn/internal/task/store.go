@@ -101,16 +101,16 @@ func (s *Store) load(ref string) (*Document, []Task, error) {
 func hint(t Task) string {
 	switch t.Status {
 	case "todo":
-		return "huginn take " + t.ID
+		return "hug task take " + t.ID
 	case "doing":
 		for n, a := range t.Acceptance {
 			if !a.Checked {
-				return fmt.Sprintf("huginn check %s %d", t.ID, n+1)
+				return fmt.Sprintf("hug task check %s %d", t.ID, n+1)
 			}
 		}
-		return "huginn done " + t.ID
+		return "hug task done " + t.ID
 	default:
-		return "huginn next"
+		return "hug task next"
 	}
 }
 func (s *Store) finish(d *Document, changed bool) (Result, error) {
@@ -132,22 +132,22 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 }
 func safeGroup(g string) error {
 	if filepath.IsAbs(g) || g == ".." || strings.HasPrefix(filepath.Clean(g), ".."+string(filepath.Separator)) || strings.Contains(g, "\\") {
-		return &Error{Kind: "invalid-group", Value: g, Fix: "huginn mv <id> auth"}
+		return &Error{Kind: "invalid-group", Value: g, Fix: "hug task mv <id> auth"}
 	}
 	for _, p := range strings.Split(filepath.ToSlash(g), "/") {
 		if strings.HasPrefix(p, ".") && p != "" && p != "." {
-			return &Error{Kind: "invalid-group", Value: g, Fix: "huginn mv <id> auth"}
+			return &Error{Kind: "invalid-group", Value: g, Fix: "hug task mv <id> auth"}
 		}
 	}
 	return nil
 }
 func (s *Store) New(o NewOptions) (Result, error) {
 	if strings.TrimSpace(o.Title) == "" || strings.TrimSpace(o.Goal) == "" || len(o.Acceptance) == 0 {
-		return Result{}, &Error{Kind: "missing-required", Fix: "huginn new \"title\" --goal \"outcome\" --accept \"observable check\""}
+		return Result{}, &Error{Kind: "missing-required", Fix: "hug task new \"title\" --goal \"outcome\" --accept \"observable check\""}
 	}
 	for _, a := range o.Acceptance {
 		if strings.TrimSpace(a) == "" {
-			return Result{}, &Error{Kind: "empty-acceptance", Fix: "huginn new \"title\" --goal \"outcome\" --accept \"observable check\""}
+			return Result{}, &Error{Kind: "empty-acceptance", Fix: "hug task new \"title\" --goal \"outcome\" --accept \"observable check\""}
 		}
 	}
 	if e := safeGroup(o.Group); e != nil {
@@ -209,7 +209,7 @@ func (s *Store) New(o NewOptions) (Result, error) {
 	body += "\n## Notes\n"
 	d := Parse(path, []byte(body))
 	if len(d.Findings) > 0 {
-		return Result{}, &Error{Kind: "invalid-task-content", ID: i, Value: d.Findings[0].Problem, Fix: "huginn new \"title\" --goal \"outcome\" --accept \"observable check\""}
+		return Result{}, &Error{Kind: "invalid-task-content", ID: i, Value: d.Findings[0].Problem, Fix: "hug task new \"title\" --goal \"outcome\" --accept \"observable check\""}
 	}
 	created, e := s.finish(d, true)
 	if e != nil {
@@ -289,7 +289,7 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 		return s.finish(d, false)
 	}
 	if status == "doing" && user != "" && len(d.Task.Assignee) > 0 && !contains(d.Task.Assignee, user) {
-		return Result{}, &Error{Kind: "taken", ID: d.Task.ID, Value: strings.Join(d.Task.Assignee, ", "), Fix: "huginn next"}
+		return Result{}, &Error{Kind: "taken", ID: d.Task.ID, Value: strings.Join(d.Task.Assignee, ", "), Fix: "hug task next"}
 	}
 	var warnings []string
 	if status == "doing" || status == "done" {
@@ -306,7 +306,7 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 		blocked := Blocked(d.Task, ts)
 		if len(blocked) > 0 {
 			if policy != "warn" {
-				return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Dependencies: blocked, Fix: "huginn show " + blocked[0].ID}
+				return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Dependencies: blocked, Fix: "hug task show " + blocked[0].ID}
 			}
 			warnings = append(warnings, "open dependencies")
 		}
@@ -325,7 +325,7 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 		unchecked := []Unchecked{}
 		for n, a := range d.Task.Acceptance {
 			if !a.Checked {
-				unchecked = append(unchecked, Unchecked{Index: n + 1, Text: a.Text, Fix: fmt.Sprintf("huginn check %s %d", d.Task.ID, n+1)})
+				unchecked = append(unchecked, Unchecked{Index: n + 1, Text: a.Text, Fix: fmt.Sprintf("hug task check %s %d", d.Task.ID, n+1)})
 			}
 		}
 		if len(unchecked) > 0 && policy != "warn" {
@@ -376,7 +376,7 @@ func Next(tasks []Task, f Filter) (Result, error) {
 		}
 		return Result{Task: t, Next: hint(t)}, nil
 	}
-	return Result{}, &Error{Kind: "nothing-matches", Fix: "huginn ls"}
+	return Result{}, &Error{Kind: "nothing-matches", Fix: "hug task ls"}
 }
 func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	oldPath := d.Task.Path
@@ -384,7 +384,7 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 		return Result{}, e
 	}
 	if slug == "" || strings.ContainsAny(slug, "/\\.\x00") {
-		return Result{}, &Error{Kind: "invalid-slug", Value: slug, Fix: "huginn show " + d.Task.ID}
+		return Result{}, &Error{Kind: "invalid-slug", Value: slug, Fix: "hug task show " + d.Task.ID}
 	}
 	path := filepath.ToSlash(filepath.Join(group, BuildName(r, d.Task.ID, slug)))
 	if path == d.Task.Path {
@@ -403,7 +403,7 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 		return Result{}, e
 	}
 	if !available {
-		return Result{}, &Error{Kind: "path-exists", ID: d.Task.ID, Value: path, Fix: "huginn lint"}
+		return Result{}, &Error{Kind: "path-exists", ID: d.Task.ID, Value: path, Fix: "hug task lint"}
 	}
 	if e := os.MkdirAll(filepath.Dir(dest), 0755); e != nil {
 		return Result{}, e
@@ -416,7 +416,7 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	if oldDir, newDir := filepath.Join(filepath.Dir(source), d.Task.ID), filepath.Join(filepath.Dir(dest), d.Task.ID); oldDir != newDir {
 		if st, e := os.Lstat(oldDir); e == nil && st.IsDir() {
 			if _, e := os.Lstat(newDir); e == nil {
-				return Result{}, &Error{Kind: "path-exists", ID: d.Task.ID, Value: filepath.ToSlash(filepath.Join(group, d.Task.ID)), Fix: "huginn lint"}
+				return Result{}, &Error{Kind: "path-exists", ID: d.Task.ID, Value: filepath.ToSlash(filepath.Join(group, d.Task.ID)), Fix: "hug task lint"}
 			}
 			if e := os.Rename(oldDir, newDir); e != nil {
 				return Result{}, e

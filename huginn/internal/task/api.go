@@ -1,6 +1,6 @@
 package task
 
-// TypeInfo is the short, agent-readable description used by `huginn types`.
+// TypeInfo is the short, agent-readable description used by `hug task types`.
 type TypeInfo struct {
 	Value       string `json:"value"`
 	Description string `json:"description"`

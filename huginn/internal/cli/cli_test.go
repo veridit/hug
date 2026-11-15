@@ -130,7 +130,7 @@ func TestUsageAndText(t *testing.T) {
 			t.Fatalf("%v code %d: %s", args, code, a.Err)
 		}
 		lines := strings.Split(strings.TrimSpace(a.Out.(*bytes.Buffer).String()), "\n")
-		if !strings.HasPrefix(lines[len(lines)-1], "next: huginn ") {
+		if !strings.HasPrefix(lines[len(lines)-1], "next: hug task ") {
 			t.Fatal(lines)
 		}
 	}
@@ -165,7 +165,7 @@ func TestRejectedSetIsUnchanged(t *testing.T) {
 	expectCode(t, a, 2, "set", id, "--type", "bugs")
 	_, groupError := a.Execute(context.Background(), []string{"mv", "keep-title", "../bad"})
 	_, _, groupFix := ErrorDetails(groupError)
-	if groupFix != "huginn mv "+id+" auth" {
+	if groupFix != "hug task mv "+id+" auth" {
 		t.Fatal(groupFix)
 	}
 	r = execute(t, a, "show", id)

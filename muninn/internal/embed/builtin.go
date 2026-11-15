@@ -146,10 +146,10 @@ func fileSHA(p string) (string, error) {
 }
 
 // ErrNotDownloaded means the built-in model has not been fetched yet.
-var ErrNotDownloaded = errors.New("built-in embedding model not downloaded (run `muninn model download`)")
+var ErrNotDownloaded = errors.New("built-in embedding model not downloaded (run `hug mem model download`)")
 
 // Local runs the built-in model in this process. Loading takes ~0.3-0.6 s
-// and ~560 MB of RAM, so it is loaded lazily on first use; `muninn serve`
+// and ~560 MB of RAM, so it is loaded lazily on first use; `hug mem serve`
 // keeps one loaded for every hook.
 type Local struct {
 	model   BuiltinModel

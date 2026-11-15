@@ -14,10 +14,10 @@ func (a *App) runInstall(cmd string, f flags) (Reply, error) {
 		return nil, err
 	}
 	if f.args[0] != "jcode" {
-		return nil, usage("supported harness: jcode", "huginn "+cmd+" jcode")
+		return nil, usage("supported harness: jcode", "hug task "+cmd+" jcode")
 	}
 	if f.has("all-instances") && f.has("jcode-home") {
-		return nil, usage("--all-instances and --jcode-home are mutually exclusive", "huginn "+cmd+" jcode --help")
+		return nil, usage("--all-instances and --jcode-home are mutually exclusive", "hug task "+cmd+" jcode --help")
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -34,11 +34,11 @@ func (a *App) runInstall(cmd string, f flags) (Reply, error) {
 			homes = append(homes, i.Home)
 		}
 		if len(homes) == 0 {
-			return nil, usage("no Jcode instances found", "huginn "+cmd+" jcode --jcode-home PATH")
+			return nil, usage("no Jcode instances found", "hug task "+cmd+" jcode --jcode-home PATH")
 		}
 	case f.has("jcode-home"):
 		if f.get("jcode-home") == "" {
-			return nil, usage("--jcode-home cannot be empty", "huginn "+cmd+" jcode --help")
+			return nil, usage("--jcode-home cannot be empty", "hug task "+cmd+" jcode --help")
 		}
 		h := f.get("jcode-home")
 		if !filepath.IsAbs(h) {
@@ -57,7 +57,7 @@ func (a *App) runInstall(cmd string, f flags) (Reply, error) {
 		return nil, err
 	}
 	// From the hug binary, write the huginn name (a link next to hug) so the
-	// MCP config runs "huginn mcp", not "hug mcp".
+	// MCP config runs "huginn mcp" (task tools only), not "hug mcp".
 	if base := strings.TrimSuffix(filepath.Base(bin), ".exe"); base != "huginn" {
 		sib := filepath.Join(filepath.Dir(bin), "huginn"+filepath.Ext(bin))
 		if _, e := os.Stat(sib); e == nil {
@@ -80,5 +80,5 @@ func (a *App) runInstall(cmd string, f flags) (Reply, error) {
 		}
 		results = append(results, r)
 	}
-	return Reply{"installations": results, "dry_run": f.has("dry-run"), "next": "huginn next"}, nil
+	return Reply{"installations": results, "dry_run": f.has("dry-run"), "next": "hug task next"}, nil
 }

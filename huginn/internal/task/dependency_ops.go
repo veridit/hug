@@ -50,7 +50,7 @@ func (s *Store) AddDependencies(ref string, refs []string) (Result, error) {
 					}
 				}
 			}
-			return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Field: "dependencies", Value: "dependency cycle: " + strings.Join(cycle, " -> "), Cycle: cycle, Dependencies: involved, Fix: "huginn dep " + from + " --remove " + to}
+			return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Field: "dependencies", Value: "dependency cycle: " + strings.Join(cycle, " -> "), Cycle: cycle, Dependencies: involved, Fix: "hug task dep " + from + " --remove " + to}
 		}
 		present[target.ID] = true
 		added = append(added, target.ID)
@@ -65,7 +65,7 @@ func (s *Store) AddDependencies(ref string, refs []string) (Result, error) {
 			found = found || dep.Ref == id
 		}
 		if !found {
-			return Result{}, &Error{Kind: "broken-file", ID: d.Task.ID, Field: "dependencies", Fix: "huginn lint"}
+			return Result{}, &Error{Kind: "broken-file", ID: d.Task.ID, Field: "dependencies", Fix: "hug task lint"}
 		}
 	}
 	return s.finish(d, true)

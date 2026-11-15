@@ -41,7 +41,7 @@ func TestDependenciesLosslessAndIdempotent(t *testing.T) {
 			}
 			others := hashes(t, s.Root)
 			r, err := s.AddDependencies("000001", []string{"OLD-000002", "old-000003", "000003"})
-			if err != nil || !r.Changed || r.Next != "huginn take 000001" {
+			if err != nil || !r.Changed || r.Next != "hug task take 000001" {
 				t.Fatal(r, err)
 			}
 			want := strings.Replace(raw, "## Acceptance", "- 000003"+newline+"## Acceptance", 1)
@@ -127,7 +127,7 @@ func TestDependencyCycleRejectsBatchAtomically(t *testing.T) {
 	_, err := s.AddDependencies(a.ID, []string{d.ID, c.ID})
 	var typed *Error
 	want := []string{a.ID, c.ID, b.ID, a.ID}
-	if !errors.As(err, &typed) || typed.Kind != "blocked" || typed.ExitCode() != 3 || !reflect.DeepEqual(typed.Cycle, want) || typed.Fix != "huginn dep "+c.ID+" --remove "+b.ID {
+	if !errors.As(err, &typed) || typed.Kind != "blocked" || typed.ExitCode() != 3 || !reflect.DeepEqual(typed.Cycle, want) || typed.Fix != "hug task dep "+c.ID+" --remove "+b.ID {
 		t.Fatalf("missing canonical cycle/fix: %#v %v", typed, err)
 	}
 	if !strings.Contains(err.Error(), strings.Join(want, " -> ")) {
