@@ -262,7 +262,7 @@ func TestMetadataDoesNotClobberUnknownFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	converted, err := convert(source{raw: []byte(raw), fields: fields, alias: "DEMO-001", title: "Synthetic"}, "000001", map[string]string{})
+	converted, err := convert(source{raw: []byte(raw), fields: fields, alias: "DEMO-001", title: "Synthetic"}, "000001", map[string]string{}, Options{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -288,7 +288,7 @@ func TestStatusMappingAndDuplicateIDs(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		converted, err := convert(source{raw: []byte(raw), fields: fields, alias: "DEMO-001", title: "Synthetic"}, "000001", map[string]string{})
+		converted, err := convert(source{raw: []byte(raw), fields: fields, alias: "DEMO-001", title: "Synthetic"}, "000001", map[string]string{}, Options{})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -602,7 +602,7 @@ func FuzzParsing(f *testing.F) {
 		}
 		_, _ = units(b)
 		s := source{alias: canonical(str(fields["id"])), fields: fields, raw: b, title: str(fields["title"])}
-		converted, e := convert(s, "000001", map[string]string{})
+		converted, e := convert(s, "000001", map[string]string{}, Options{})
 		if e == nil {
 			_, _ = merge(converted, converted, converted)
 		}

@@ -14,7 +14,7 @@ func commandHelp(command string) string {
 		"take": "take ID", "done": "done ID", "check": "check ID N", "note": `note ID "text"`,
 		"set":  `set ID [--title "title"] [--type TYPE] [--priority LABEL] [--label LABEL] [--status STATUS] [--assignee NAME]`,
 		"drop": "drop ID", "dep": "dep ID [--add REF ...] [--remove REF ...]", "next": "next [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]",
-		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY [--dry-run]", "board": "board [--all] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]", "tui": "tui", "mcp": "mcp", "help": "help [COMMAND]",
+		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY [--dry-run] | import github [OWNER/REPO] [--dry-run]", "board": "board [--all] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]", "tui": "tui", "mcp": "mcp", "help": "help [COMMAND]",
 	}
 	details := map[string]string{
 		"setup":     "Prints what an agent needs to switch this repository to huginn, then a checklist of the steps still open, each with the exact command or edit. Reads only; changes nothing. Re-run after each step.\n",
@@ -37,10 +37,13 @@ func commandHelp(command string) string {
 		"rebalance": "Rekeys ranked filenames without changing task contents. Usually unnecessary.\n",
 		"lint":      "Reports file:line: problem for malformed tasks, cycles and dangling dependencies.\nJSON uses findings, an array (empty when clean).\n",
 		"sync":      "Commits local task edits, pulls with rebase and pushes only the huginn branch.\n",
-		"import":    "Imports or re-syncs backlog-md tasks idempotently, preserving old ids as aliases.\nDIRECTORY is the backlog root (e.g. .backlog: reads tasks, drafts, completed and archive in one run;\nwhen an id is in several folders the newest updated_date wins) or a single folder of task files.\nRe-running merges backlog changes; edits made in huginn win. --dry-run reports without writing.\n",
-		"tui":       "Interactive ranked list and board. For non-interactive output use board or ls --json.\n",
-		"board":     "Prints todo, doing and done side by side in rank order; blocked tasks are marked.\nDone shows the last 5 unless --all. Filters match ls. --json gives the columns.\n",
-		"mcp":       "Runs the standard-I/O MCP server with ten flat tools and next-step hints.\n",
+		"import": "Imports or re-syncs backlog-md tasks idempotently, preserving old ids as aliases.\nDIRECTORY is the backlog root (e.g. .backlog: reads tasks, drafts, completed and archive in one run;\nwhen an id is in several folders the newest updated_date wins) or a single folder of task files.\nRe-running merges backlog changes; edits made in huginn win. --dry-run reports without writing.\n" +
+			"import github reads every issue (open and closed) of OWNER/REPO, or of this repository, through the gh CLI:\n" +
+			"alias GH-<number>, labels and assignees kept, task-list checkboxes become acceptance items,\n" +
+			"closed becomes done, closed as not planned becomes dropped. Re-run to sync; huginn edits win.\n",
+		"tui":   "Interactive ranked list and board. For non-interactive output use board or ls --json.\n",
+		"board": "Prints todo, doing and done side by side in rank order; blocked tasks are marked.\nDone shows the last 5 unless --all. Filters match ls. --json gives the columns.\n",
+		"mcp":   "Runs the standard-I/O MCP server with ten flat tools and next-step hints.\n",
 	}
 	return "huginn " + usage[command] + "\n" + details[command] + "Refs accept ids, unique prefixes, slugs and aliases case-insensitively.\nAdd --json for structured output.\nnext: huginn next\n"
 }

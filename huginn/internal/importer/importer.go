@@ -22,6 +22,9 @@ import (
 
 type Options struct {
 	DryRun bool `json:"dry_run"`
+	// Origin prefixes each task's origin (default "backlog"). The GitHub
+	// importer uses "github" so issue tasks never collide with backlog ones.
+	Origin string `json:"origin,omitempty"`
 }
 type Report struct {
 	Added     int          `json:"added"`
@@ -99,6 +102,13 @@ func list(v any) []string {
 	return out
 }
 func canonical(s string) string { return strings.ToUpper(strings.TrimSpace(s)) }
+func (o Options) origin() string {
+	if o.Origin == "" {
+		return "backlog"
+	}
+	return o.Origin
+}
+
 func originKey(s string) string {
 	s = strings.TrimSpace(s)
 	parts := strings.SplitN(s, ":", 2)
@@ -382,10 +392,10 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 	// the first copy found keeps it. Both copies get a finding to renumber.
 	for _, c := range collisions {
 		plainPath, otherPath := c.firstPath, c.secondPath
-		if origins["backlog:"+c.plain] == "" && origins["backlog:"+c.qualified] != "" {
+		if origins[opts.origin()+":"+c.plain] == "" && origins[opts.origin()+":"+c.qualified] != "" {
 			// nothing linked to the plain id but the qualified one is linked:
 			// keep as is.
-		} else if linked := origins["backlog:"+c.plain]; linked != "" {
+		} else if linked := origins[opts.origin()+":"+c.plain]; linked != "" {
 			if t, ok := byID[linked]; ok {
 				for i := range sources {
 					if sources[i].path == c.secondPath && sameTitle(sources[i].fields, map[string]any{"title": t.Title}) {
@@ -405,7 +415,7 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 		}
 	}
 	for _, s := range sources {
-		if existingID := origins["backlog:"+s.alias]; existingID != "" {
+		if existingID := origins[opts.origin()+":"+s.alias]; existingID != "" {
 			ids[s.alias] = existingID
 		}
 	}
@@ -522,7 +532,7 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 			return report, fmt.Errorf("destination task path escapes root: %s", path)
 		}
 		fr.Path = path
-		generated, e := convert(s, id, ids)
+		generated, e := convert(s, id, ids, opts)
 		if e != nil {
 			return report, e
 		}
@@ -541,7 +551,7 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 				result = local
 				if !hasOrigin[id] {
 					doc := task.Parse(path, local)
-					if e = doc.SetField("origin", "backlog:"+s.alias); e != nil {
+					if e = doc.SetField("origin", opts.origin()+":"+s.alias); e != nil {
 						return report, e
 					}
 					result = doc.Bytes()
@@ -613,7 +623,7 @@ func checkDestination(root string) error {
 	})
 }
 
-func convert(s source, id string, ids map[string]string) ([]byte, error) {
+func convert(s source, id string, ids map[string]string, opts Options) ([]byte, error) {
 	_, end, err := front(s.raw)
 	if err != nil {
 		return nil, err
@@ -698,7 +708,7 @@ func convert(s source, id string, ids map[string]string) ([]byte, error) {
 	updates := []struct {
 		k string
 		v any
-	}{{"id", id}, {"origin", "backlog:" + s.alias}, {"aliases", aliases}, {"status", status}, {"type", typ}, {metadataKey("import_type_inference"), reason}}
+	}{{"id", id}, {"origin", opts.origin() + ":" + s.alias}, {"aliases", aliases}, {"status", status}, {"type", typ}, {metadataKey("import_type_inference"), reason}}
 	if raw := str(s.fields["status"]); raw != "" && canonicalStatus(raw) != raw {
 		updates = append(updates, struct {
 			k string
