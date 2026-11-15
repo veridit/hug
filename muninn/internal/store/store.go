@@ -27,6 +27,7 @@ type Unit struct {
 	Title       string
 	Body        string
 	Category    string
+	Type        string // memory type: rule | preference | fact | record | "" (ingest.NativeMemory.Type)
 	Tags        []string
 	Scope       string // "global" or a project identifier
 	Active      bool
@@ -279,12 +280,12 @@ func (d *DB) UpsertUnit(u Unit) (int64, error) {
 	if u.Active {
 		active = 1
 	}
-	_, err := d.Exec(`INSERT INTO units(sid, origin, source_id, key, content_hash, ident, kind, title, body, category, tags, scope, active, updated_ns)
-	  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+	_, err := d.Exec(`INSERT INTO units(sid, origin, source_id, key, content_hash, ident, kind, title, body, category, mtype, tags, scope, active, updated_ns)
+	  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 	  ON CONFLICT(source_id, key) DO UPDATE SET sid=excluded.sid, origin=excluded.origin, content_hash=excluded.content_hash, ident=excluded.ident, kind=excluded.kind,
-	    title=excluded.title, body=excluded.body, category=excluded.category, tags=excluded.tags,
+	    title=excluded.title, body=excluded.body, category=excluded.category, mtype=excluded.mtype, tags=excluded.tags,
 	    scope=excluded.scope, active=excluded.active, updated_ns=excluded.updated_ns`,
-		u.SID, u.Origin, u.SourceID, u.Key, u.ContentHash, u.Ident, u.Kind, u.Title, u.Body, u.Category,
+		u.SID, u.Origin, u.SourceID, u.Key, u.ContentHash, u.Ident, u.Kind, u.Title, u.Body, u.Category, u.Type,
 		strings.Join(u.Tags, " "), u.Scope, active, u.Updated.UnixNano())
 	if err != nil {
 		return 0, err
@@ -316,9 +317,9 @@ func (d *DB) GetUnit(id int64) (Unit, error) {
 	var tags string
 	var active int
 	var upd int64
-	err := d.QueryRow(`SELECT id, sid, origin, source_id, key, content_hash, kind, title, body, category, tags, scope, active, updated_ns
+	err := d.QueryRow(`SELECT id, sid, origin, source_id, key, content_hash, kind, title, body, category, mtype, tags, scope, active, updated_ns
 	  FROM units WHERE id=?`, id).Scan(&u.ID, &u.SID, &u.Origin, &u.SourceID, &u.Key, &u.ContentHash, &u.Kind, &u.Title, &u.Body,
-		&u.Category, &tags, &u.Scope, &active, &upd)
+		&u.Category, &u.Type, &tags, &u.Scope, &active, &upd)
 	u.Tags = strings.Fields(tags)
 	u.Active = active == 1 && !d.IsSuppressed(u.SID)
 	u.Updated = time.Unix(0, upd)

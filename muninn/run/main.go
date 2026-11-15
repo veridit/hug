@@ -231,7 +231,7 @@ func ensureFresh(ctx context.Context, a *app.App) (index.Stats, error) {
 }
 
 func rememberCmd() *cobra.Command {
-	var category, scope, home, safeReason, place, placeReason, newReason, reinforce string
+	var category, scope, home, safeReason, place, placeReason, newReason, reinforce, typ string
 	var tags []string
 	var inProject bool
 	c := &cobra.Command{Use: "remember <text>", Short: "Store a memory", Args: cobra.MinimumNArgs(1),
@@ -252,7 +252,7 @@ func rememberCmd() *cobra.Command {
 						b = b.Refresh(a)
 					}
 				}
-				u, reinforced, err := b.RememberPlaced(ctx, a, strings.Join(args, " "), category, scope, tags, safeReason, place, placeReason, app.RememberDecision{NewReason: newReason, Reinforce: reinforce})
+				u, reinforced, err := b.RememberPlaced(ctx, a, strings.Join(args, " "), category, scope, tags, safeReason, place, placeReason, app.RememberDecision{NewReason: newReason, Reinforce: reinforce, Type: typ})
 				if err != nil {
 					return err
 				}
@@ -268,6 +268,7 @@ func rememberCmd() *cobra.Command {
 			})
 		}}
 	c.Flags().StringVar(&category, "category", "fact", "fact | preference | correction | entity")
+	c.Flags().StringVar(&typ, "type", "", "rule (an instruction) | preference | fact (durable knowledge) | record (something that happened)")
 	c.Flags().StringVar(&scope, "scope", "", "literal memory scope (overrides --place)")
 	c.Flags().StringVar(&place, "place", "", "here (default), client, or global; when unsure choose here")
 	c.Flags().StringVar(&placeReason, "place-reason", "", "why this applies beyond this project, when the project-mention check asks")

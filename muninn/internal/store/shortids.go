@@ -137,6 +137,11 @@ func (d *DB) migrateShortIDs() error {
 			}
 		}
 	}
+	if !columns["mtype"] { // memory type (rule|preference|fact|record), 2026-11-15
+		if _, err := tx.Exec(`ALTER TABLE units ADD COLUMN mtype TEXT NOT NULL DEFAULT ''`); err != nil {
+			return err
+		}
+	}
 	// A sid names a memory, not a row. Live harness and imported native rows
 	// may share it. Uniqueness belongs in memory_ids (sid <-> identity).
 	var unique int

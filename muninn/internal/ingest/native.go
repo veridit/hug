@@ -19,24 +19,30 @@ import (
 
 // NativeMemory is a memory muninn owns (created with `muninn remember`).
 type NativeMemory struct {
-	Updates           string    `json:"updates,omitempty"`
-	NewReason         string    `json:"new_reason,omitempty"`
-	RetiredInto       string    `json:"retired_into,omitempty"`
-	RetiredOrigin     string    `json:"retired_origin,omitempty"`
-	CaptureSupersedes string    `json:"capture_supersedes,omitempty"`
-	Trust             string    `json:"trust,omitempty"`
-	CaptureEvents     []string  `json:"capture_events,omitempty"`
-	ID                string    `json:"id"`
-	SID               string    `json:"sid"`
-	Title             string    `json:"title,omitempty"`
-	Content           string    `json:"content"`
-	Category          string    `json:"category,omitempty"`
-	Tags              []string  `json:"tags,omitempty"`
-	Scope             string    `json:"scope,omitempty"`
-	Active            bool      `json:"active"`
-	Strength          int       `json:"strength"`
-	Created           time.Time `json:"created"`
-	Updated           time.Time `json:"updated"`
+	Updates           string   `json:"updates,omitempty"`
+	NewReason         string   `json:"new_reason,omitempty"`
+	RetiredInto       string   `json:"retired_into,omitempty"`
+	RetiredOrigin     string   `json:"retired_origin,omitempty"`
+	CaptureSupersedes string   `json:"capture_supersedes,omitempty"`
+	Trust             string   `json:"trust,omitempty"`
+	CaptureEvents     []string `json:"capture_events,omitempty"`
+	ID                string   `json:"id"`
+	SID               string   `json:"sid"`
+	Title             string   `json:"title,omitempty"`
+	Content           string   `json:"content"`
+	Category          string   `json:"category,omitempty"`
+	// Type says how a memory is used: "rule" (an instruction), "preference",
+	// "fact" (durable knowledge) or "record" (something that happened, or a
+	// state at a point in time). Empty for memories written before 2026-11.
+	// Records were relevant in 17% of judged recalls against about 45% for
+	// the others (muninn/docs/RECALL4.md), so recall can treat them apart.
+	Type     string    `json:"type,omitempty"`
+	Tags     []string  `json:"tags,omitempty"`
+	Scope    string    `json:"scope,omitempty"`
+	Active   bool      `json:"active"`
+	Strength int       `json:"strength"`
+	Created  time.Time `json:"created"`
+	Updated  time.Time `json:"updated"`
 	// Origin identifies an imported memory ("engram:<sync_id>",
 	// "jcode@<instance>:<project>/<id>"); OriginHash is the hash of the
 	// upstream text at the last import. Both are empty for native memories.
@@ -198,6 +204,12 @@ func Remember(path, content, category, scope string, tags []string) (NativeMemor
 // RememberSafe is Remember with the writer's reason for storing text that
 // looked secret. The reason is kept on the memory for later review.
 func RememberSafe(path, content, category, scope string, tags []string, safeReason string, newReasons ...string) (NativeMemory, bool, error) {
+	return RememberTyped(path, content, category, "", scope, tags, safeReason, newReasons...)
+}
+
+// RememberTyped is RememberSafe with the memory type (rule, preference, fact,
+// record; "" = unstated). Reinforcing a memory sets its type when it had none.
+func RememberTyped(path, content, category, typ, scope string, tags []string, safeReason string, newReasons ...string) (NativeMemory, bool, error) {
 	content = strings.TrimSpace(content)
 	if content == "" {
 		return NativeMemory{}, false, errors.New("empty memory")
@@ -221,12 +233,15 @@ func RememberSafe(path, content, category, scope string, tags []string, safeReas
 			if safeReason != "" {
 				m.SafeReason = safeReason
 			}
+			if m.Type == "" {
+				m.Type = typ
+			}
 			m.Strength++
 			m.Updated = now
 			return *m, true, SaveNative(path, mems)
 		}
 	}
-	m := NativeMemory{ID: newID(), Content: content, Category: category, Tags: tags, Scope: scope,
+	m := NativeMemory{ID: newID(), Content: content, Category: category, Type: typ, Tags: tags, Scope: scope,
 		Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason)}
 	if len(newReasons) > 0 {
 		m.NewReason = strings.TrimSpace(newReasons[0])

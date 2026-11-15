@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/extract"
@@ -23,7 +24,23 @@ func (e *DuplicateCheckError) Error() string {
 }
 
 // RememberDecision carries the writer's answer to the duplicate question.
-type RememberDecision struct{ Reinforce, NewReason string }
+// RememberDecision carries the writer's answers to remember's checks, and
+// the memory type (rule | preference | fact | record, "" = unstated).
+type RememberDecision struct{ Reinforce, NewReason, Type string }
+
+// MemoryTypes are the accepted memory types; see ingest.NativeMemory.Type.
+var MemoryTypes = []string{"rule", "preference", "fact", "record"}
+
+// NormalType returns t when it is a known memory type, else "".
+func NormalType(t string) string {
+	t = strings.ToLower(strings.TrimSpace(t))
+	for _, k := range MemoryTypes {
+		if t == k {
+			return k
+		}
+	}
+	return ""
+}
 
 func (b Binding) writableScopeFor(u store.Unit) (string, bool) {
 	scope, ok := b.ScopeFor(u)
