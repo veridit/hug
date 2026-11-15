@@ -24,6 +24,10 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   memories out for long messages; `memory_search` still finds them.
 - `hug task import github [OWNER/REPO] [--dry-run]`: issues become tasks
   through the gh CLI, with alias GH-<number>; re-running syncs, huginn edits win.
+- `hug upgrade`: tasks move from branch `huginn` at `.huginn/` to branch
+  `hug/tasks` at `.hug/tasks/` (branch rename and worktree move, history
+  unchanged, remote branch renamed). Task commands on an old repository stop
+  with `fix: hug upgrade`, and `hug setup` lists it first. Safe to run again.
 
 ## v0.7.2 - 2026-11-14
 
