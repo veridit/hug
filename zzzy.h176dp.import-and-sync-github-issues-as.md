@@ -20,6 +20,6 @@ A repository's GitHub issues appear as huginn tasks and stay in step, so agents 
 - [x] re-import uses the importer's three-way merge: local edits survive, GitHub-side changes come in; newest updated wins per field
 - [x] issue body becomes goal plus a Description section; task-list checkboxes become acceptance items
 - [ ] phase 2: status, checks and notes flow back (close/reopen, comment) behind an explicit --push, never automatically
-- [ ] auth via gh CLI token or GITHUB_TOKEN; no token stored by hug
+- [x] auth via gh CLI token or GITHUB_TOKEN; no token stored by hug
 
 ## Notes
