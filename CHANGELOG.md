@@ -4,6 +4,27 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.3 - 2026-11-15
+
+### Fixed
+
+- The jcode recall hook no longer delivers a memory after the turn it was
+  recalled for has ended. Before, jcode started a new turn with it, which
+  looked like an empty "[transcription]" message from the user.
+- `hug task import backlog .` explains that the repository root holds the task
+  folder and suggests `huginn import backlog .backlog --dry-run`.
+- `hug setup` lists the `task_*` MCP tool names that `hug mcp` serves.
+
+### Added
+
+- Memory type: rule, preference, fact or record. `memory_remember` and
+  `muninn remember --type` take it, capture's existing model call sets it, and
+  `muninn types` fills it in for older memories (resumable, `--dry-run`).
+- `skip_records_above` (off by default): automatic recall can leave "record"
+  memories out for long messages; `memory_search` still finds them.
+- `hug task import github [OWNER/REPO] [--dry-run]`: issues become tasks
+  through the gh CLI, with alias GH-<number>; re-running syncs, huginn edits win.
+
 ## v0.7.2 - 2026-11-14
 
 ### Changed
