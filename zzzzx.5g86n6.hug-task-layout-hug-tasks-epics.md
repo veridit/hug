@@ -1,10 +1,10 @@
 ---
 id: 5g86n6
 title: "hug task layout: .hug/tasks, epics, promote, task files"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["Jørgen H. Fjeld"]
 labels: ["hug", "layout"]
 created: 2026-11-15
 updated: 2026-11-15
