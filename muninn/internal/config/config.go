@@ -47,6 +47,10 @@ type Config struct {
 	// messages +0.39 relevant memories each [CI +0.25, +0.55] with no more
 	// irrelevant ones (-0.07 [-0.22, +0.10]); short messages unchanged.
 	BM25Scale float64 `json:"bm25_scale"`
+	// SkipRecordsAbove: automatic recall leaves out "record" memories (what
+	// happened, a state at a time) for messages longer than this many bytes;
+	// 0 = never. memory_search still finds them.
+	SkipRecordsAbove int `json:"skip_records_above"`
 	// RelativeFloor drops recall hits scoring below this fraction of the top
 	// hit, so one strong match does not drag weak neighbours along.
 	RelativeFloor float64 `json:"relative_floor"`

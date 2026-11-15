@@ -56,7 +56,7 @@ func Open(ctx context.Context) (*App, error) {
 		minSem, minFull = cfg.BuiltinMinSemantic, cfg.BuiltinMinSemanticFull
 	}
 	a.Recall = &recall.Engine{DB: db, Searcher: a.Searcher, Options: a.RecallOptions(),
-		RelativeFloor: cfg.RelativeFloor, MinSemantic: minSem, MinSemanticFull: minFull}
+		RelativeFloor: cfg.RelativeFloor, MinSemantic: minSem, MinSemanticFull: minFull, SkipRecordsAbove: cfg.SkipRecordsAbove}
 	return a, nil
 }
 

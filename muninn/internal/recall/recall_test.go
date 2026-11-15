@@ -110,3 +110,29 @@ func TestTruncateRuneSafe(t *testing.T) {
 		t.Fatalf("got %q", got)
 	}
 }
+
+// Records (what happened) are left out of automatic recall for long
+// messages when SkipRecordsAbove is set; short messages still get them.
+func TestRecallSkipsRecordsOnLongMessages(t *testing.T) {
+	dir := t.TempDir()
+	db, err := store.Open(filepath.Join(dir, "m.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { db.Close() })
+	native := filepath.Join(dir, "n.json")
+	ingest.RememberTyped(native, "Release banana 1.4 shipped on 3 November after the banana gate passed.", "fact", "record", "global", nil, "")
+	if _, err := (&index.Indexer{DB: db, Embedder: &testutil.FakeEmbedder{}}).Run(context.Background(), index.Options{NativePath: native}); err != nil {
+		t.Fatal(err)
+	}
+	e := engine(db, failing{})
+	e.SkipRecordsAbove = 60
+	short, _ := e.Recall(context.Background(), recall.Request{Message: "banana release gate"})
+	long, _ := e.Recall(context.Background(), recall.Request{Message: "banana release gate " + strings.Repeat("and some more context about the work ", 3)})
+	if !strings.Contains(short.Block, "banana 1.4") {
+		t.Errorf("short message lost the record: %q", short.Block)
+	}
+	if strings.Contains(long.Block, "banana 1.4") {
+		t.Errorf("long message still recalls the record: %q", long.Block)
+	}
+}

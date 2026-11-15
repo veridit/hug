@@ -81,6 +81,9 @@ func variant(name string, o *search.Options, e *recall.Engine) {
 		case part == "union": // top 20, no gates, no session dedupe: candidate pool for offline arms
 			o.Limit, o.MinScore = 20, 0
 			e.MinSemantic, e.MinSemanticFull, e.RelativeFloor = 0, 0, 0
+		case strings.HasPrefix(part, "norecords"): // norecords600: skip records above 600 bytes
+			e.SkipRecordsAbove = 1
+			fmt.Sscanf(part, "norecords%d", &e.SkipRecordsAbove)
 		case part == "nogates":
 			e.MinSemantic, e.MinSemanticFull, e.RelativeFloor = 0, 0, 0
 		case part == "norel":

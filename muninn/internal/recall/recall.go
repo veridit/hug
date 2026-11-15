@@ -75,6 +75,11 @@ type Engine struct {
 	// MinSemanticFull is the lower cosine accepted when every query word is
 	// present in the memory (short exact queries embed less precisely).
 	MinSemanticFull float64
+	// SkipRecordsAbove > 0 leaves memories of type "record" (something that
+	// happened) out of automatic recall for messages longer than this many
+	// bytes. Agents still find them with memory_search. On 147 fresh
+	// messages records were most of the noise on long ones (recall4).
+	SkipRecordsAbove int
 }
 
 // IsOwnOutput reports whether text is (or quotes) a muninn injection.
@@ -150,6 +155,15 @@ func (e *Engine) Recall(ctx context.Context, r Request) (Response, error) {
 		kept := results[:0]
 		for _, r := range results {
 			if r.Semantic >= e.MinSemantic || (e.MinSemanticFull > 0 && r.Coverage >= 1 && r.Semantic >= e.MinSemanticFull) {
+				kept = append(kept, r)
+			}
+		}
+		results = kept
+	}
+	if e.SkipRecordsAbove > 0 && len(msg) > e.SkipRecordsAbove {
+		kept := results[:0]
+		for _, r := range results {
+			if r.Unit.Type != "record" {
 				kept = append(kept, r)
 			}
 		}
