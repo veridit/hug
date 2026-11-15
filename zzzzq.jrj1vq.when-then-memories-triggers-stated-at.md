@@ -22,3 +22,5 @@ Memories carry an explicit trigger so recall injects them when the situation mat
 - [ ] measured on the frozen and fresh replay sets against shipped recall before becoming the default
 
 ## Notes
+
+Extraction test 2026-11-15: DeepSeek Flash wrote kind/case/when/when_not/then for 2,932 memories (366 calls, 1.09M prompt + 0.50M completion tokens), seeing only memory text, scope and date. On 277 frozen messages, blind judge: (1) matching the situation against WHEN is NOT better than against the memory text: within-message AUC sem_when 0.608 vs sem_text 0.644; BM25 on WHEN 0.675 (best single signal on long, 0.676 vs 0.613). (2) WHEN NOT as written is useless: AUC 0.503. (3) KIND is the useful structure: relevant share rule 0.44, preference 0.47, fact 0.45, record 0.17 (n=1372). Text rule minus records vs current recall, all: rel +0.16 [+0.06,+0.29], irr -0.32 [-0.50,-0.15]; at vector >= 0.60 with case: rel +0.27 [+0.13,+0.42], irr -0.20 [-0.41,-0.01]. Report: $JCODE_SCRATCH_DIR/recall4/real/report-whenthen.md; scripts muninn/scripts/{extract,eval}_whenthen.py
