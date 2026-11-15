@@ -156,30 +156,10 @@ func JcodeTurnOpen(sessionsDir, sessionID, msg string) bool {
 	if strings.ContainsAny(sessionID, `/\`) || sessionID == "" {
 		return false
 	}
-	f, err := os.Open(filepath.Join(sessionsDir, sessionID+".journal.jsonl"))
-	if err != nil {
-		return false
-	}
-	defer f.Close()
-	const tail = 2 << 20
-	if fi, err := f.Stat(); err == nil && fi.Size() > tail {
-		f.Seek(fi.Size()-tail, io.SeekStart)
-	}
-	sc := bufio.NewScanner(f)
-	sc.Buffer(make([]byte, 0, 1<<20), 16<<20)
+	base := filepath.Join(sessionsDir, sessionID)
 	lastUser, ended := "", false
-	for sc.Scan() {
-		line := sc.Bytes()
-		if !bytes.Contains(line, []byte(`"append_messages"`)) {
-			continue
-		}
-		var entry struct {
-			Append []jcodeMessage `json:"append_messages"`
-		}
-		if json.Unmarshal(line, &entry) != nil {
-			continue
-		}
-		for _, m := range entry.Append {
+	see := func(msgs []jcodeMessage) {
+		for _, m := range msgs {
 			switch m.Role {
 			case "user":
 				// An earlier recall block delivered mid-turn is a user message
@@ -201,5 +181,35 @@ func JcodeTurnOpen(sessionsDir, sessionID, msg string) bool {
 			}
 		}
 	}
-	return lastUser == strings.TrimSpace(msg) && !ended
+	// The snapshot holds the compacted past; the journal appends after it.
+	if b, err := os.ReadFile(base + ".json"); err == nil {
+		var snap struct {
+			Messages []jcodeMessage `json:"messages"`
+		}
+		if json.Unmarshal(b, &snap) == nil {
+			see(snap.Messages)
+		}
+	}
+	if f, err := os.Open(base + ".journal.jsonl"); err == nil {
+		defer f.Close()
+		const tail = 2 << 20
+		if fi, err := f.Stat(); err == nil && fi.Size() > tail {
+			f.Seek(fi.Size()-tail, io.SeekStart)
+		}
+		sc := bufio.NewScanner(f)
+		sc.Buffer(make([]byte, 0, 1<<20), 16<<20)
+		for sc.Scan() {
+			line := sc.Bytes()
+			if !bytes.Contains(line, []byte(`"append_messages"`)) {
+				continue
+			}
+			var entry struct {
+				Append []jcodeMessage `json:"append_messages"`
+			}
+			if json.Unmarshal(line, &entry) == nil {
+				see(entry.Append)
+			}
+		}
+	}
+	return lastUser != "" && lastUser == strings.TrimSpace(msg) && !ended
 }
