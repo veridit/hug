@@ -28,6 +28,7 @@ Usage:
   hug mem <command> ...     memory (recall, search, remember, forget, show, dream, tui, ...)
   hug tui                   task board (hug mem tui for memories)
   hug mcp                   one MCP server: memory_* and task_* tools
+  hug upgrade               move this repository to the current hug layout
   hug version
 
 Details: hug task help, hug mem --help.
@@ -55,7 +56,7 @@ func run(name string, args []string) int {
 		return muninn.Main(args[1:])
 	case "mcp":
 		return runMCP(args[1:])
-	case "setup", "tui":
+	case "setup", "tui", "upgrade":
 		return huginn.Main(args)
 	case "version", "--version":
 		fmt.Printf("hug %s (memory: muninn %s, tasks: huginn %s)\n", Version, muninn.Version, huginn.Version)

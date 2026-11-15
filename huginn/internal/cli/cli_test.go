@@ -105,8 +105,8 @@ func TestLifecycleJSONContract(t *testing.T) {
 	if string(b) != "[]" {
 		t.Fatal(string(b))
 	}
-	git(t, filepath.Join(a.Cwd, ".huginn"), "diff", "--exit-code")
-	if got := git(t, filepath.Join(a.Cwd, ".huginn"), "status", "--porcelain"); got != "" {
+	git(t, filepath.Join(a.Cwd, ".hug", "tasks"), "diff", "--exit-code")
+	if got := git(t, filepath.Join(a.Cwd, ".hug", "tasks"), "status", "--porcelain"); got != "" {
 		t.Fatal(got)
 	}
 	os.Remove(filepath.Join(a.Cwd, ".git", "huginn", "cache.db"))
@@ -203,7 +203,7 @@ func TestDependencyRecoveryAndCycle(t *testing.T) {
 	if len(deps) != 1 || deps[0] != first {
 		t.Fatal(r)
 	}
-	if dirty := git(t, filepath.Join(a.Cwd, ".huginn"), "status", "--porcelain"); dirty != "" {
+	if dirty := git(t, filepath.Join(a.Cwd, ".hug", "tasks"), "status", "--porcelain"); dirty != "" {
 		t.Fatal(dirty)
 	}
 	execute(t, a, "dep", second, "--remove", first)

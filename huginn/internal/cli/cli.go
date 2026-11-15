@@ -58,7 +58,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: huginn next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -93,6 +93,24 @@ type session struct {
 	s *task.Store
 }
 
+// Task branch layout (2026-11-15): hug keeps each kind of data on its own
+// branch under .hug/. The old huginn layout is moved by "hug upgrade".
+const (
+	TaskBranch    = "hug/tasks"
+	TaskDir       = ".hug/tasks"
+	OldTaskBranch = "huginn"
+	OldTaskDir    = ".huginn"
+)
+
+// oldLayout reports whether root still uses the pre-hug task layout.
+func oldLayout(ctx context.Context, root string) bool {
+	if _, e := os.Stat(filepath.Join(root, OldTaskDir, ".git")); e == nil {
+		return true
+	}
+	return exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/heads/"+OldTaskBranch).Run() == nil ||
+		exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/remotes/origin/"+OldTaskBranch).Run() == nil
+}
+
 func (a *App) open(ctx context.Context) (*session, error) {
 	cwd := a.Cwd
 	if cwd == "" {
@@ -101,7 +119,13 @@ func (a *App) open(ctx context.Context) (*session, error) {
 	if check := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel"); check.Run() != nil {
 		return nil, &OperationError{Problem: "Huginn needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && huginn init"}
 	}
-	r, e := gitbranch.Open(cwd, "huginn", ".huginn")
+	if top, e := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel").Output(); e == nil {
+		if root := strings.TrimSpace(string(top)); oldLayout(ctx, root) {
+			return nil, &OperationError{Problem: "tasks are still on the old layout (branch huginn at .huginn/); hug now keeps them on branch hug/tasks at .hug/tasks/",
+				Fix: "hug upgrade"}
+		}
+	}
+	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir)
 	if e != nil {
 		return nil, e
 	}
@@ -141,7 +165,7 @@ func (a *App) refreshExisting(ctx context.Context) error {
 	if e != nil {
 		return nil
 	}
-	if _, e = os.Lstat(filepath.Join(strings.TrimSpace(string(b)), ".huginn")); os.IsNotExist(e) {
+	if _, e = os.Lstat(filepath.Join(strings.TrimSpace(string(b)), TaskDir)); os.IsNotExist(e) {
 		return nil
 	} else if e != nil {
 		return e
@@ -339,6 +363,9 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 	}
 	if cmd == "setup" {
 		return a.runSetup(ctx, f)
+	}
+	if cmd == "upgrade" {
+		return a.runUpgrade(ctx, f)
 	}
 	if cmd == "install" || cmd == "uninstall" {
 		return a.runInstall(cmd, f)

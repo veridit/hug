@@ -35,12 +35,12 @@ func TestSetupChecklistGuidesSwitchFromBacklog(t *testing.T) {
 	}
 	b, _ := json.Marshal(reply)
 	got := string(b)
-	for _, want := range []string{`"step":"task branch","done":false`, `"do":"huginn init"`, `replace the BACKLOG.MD MCP GUIDELINES block`, `remove the \"backlog\" server`, `"step":"jcode MCP","done":false`} {
+	for _, want := range []string{`"step":"task branch","done":false`, `"do":"hug task init"`, `replace the BACKLOG.MD MCP GUIDELINES block`, `remove the \"backlog\" server`, `"step":"jcode MCP","done":false`} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("setup missing %s in %s", want, got)
 		}
 	}
-	if _, err := os.Stat(filepath.Join(dir, ".huginn")); err == nil {
+	if _, err := os.Stat(filepath.Join(dir, ".hug", "tasks")); err == nil {
 		t.Fatal("setup must not change the repository")
 	}
 }

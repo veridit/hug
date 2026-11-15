@@ -481,3 +481,104 @@ func (r *Repository) checkIdle() error {
 	}
 	return nil
 }
+
+// Moved reports how Upgrade changed a checkout.
+type Moved struct {
+	FromBranch, ToBranch, FromDir, ToDir string
+	LocalBranch, Worktree, RemoteBranch  bool // what was renamed or moved
+}
+
+// Upgrade moves a tool's branch and worktree to a new name and directory
+// without changing history: git branch -m, then git worktree move. When a
+// remote has the old branch and not the new one, the new name is pushed and
+// the old remote branch is deleted (other checkouts upgrade themselves; their
+// old local branch is found from the old remote-tracking ref). Running it
+// again does nothing. It refuses while either worktree has uncommitted edits.
+func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...Option) (Moved, error) {
+	m := Moved{FromBranch: fromBranch, ToBranch: toBranch, FromDir: fromDir, ToDir: toDir}
+	r := &Repository{Dir: repoRoot}
+	for _, o := range options {
+		o(r)
+	}
+	root, err := r.runAt(repoRoot, "rev-parse", "--show-toplevel")
+	if err != nil {
+		return m, err
+	}
+	r.Root, r.Dir = root, root
+	has := func(ref string) bool { _, e := r.runAt(root, "show-ref", "--verify", "--quiet", ref); return e == nil }
+	oldPath, newPath := filepath.Join(root, fromDir), filepath.Join(root, toDir)
+	if _, e := os.Stat(filepath.Join(oldPath, ".git")); e == nil {
+		if st, e := r.runAt(oldPath, "status", "--porcelain"); e != nil {
+			return m, e
+		} else if st != "" {
+			return m, &Error{Op: "upgrade", Detail: fromDir + " has uncommitted changes", Fix: "git -C " + quote(oldPath) + " add --all && git -C " + quote(oldPath) + " commit -m " + strconv.Quote("Save before upgrade")}
+		}
+	}
+	switch {
+	case has("refs/heads/"+toBranch) && has("refs/heads/"+fromBranch):
+		return m, &Error{Op: "upgrade", Detail: "both branches " + fromBranch + " and " + toBranch + " exist", Fix: "git -C " + quote(root) + " log --oneline -3 " + fromBranch + " " + toBranch}
+	case has("refs/heads/" + fromBranch):
+		if _, err = r.runAt(root, "branch", "-m", fromBranch, toBranch); err != nil {
+			return m, err
+		}
+		m.LocalBranch = true
+	}
+	if _, e := os.Stat(filepath.Join(oldPath, ".git")); e == nil {
+		if _, e := os.Stat(newPath); e == nil {
+			return m, &Error{Op: "upgrade", Detail: toDir + " already exists", Fix: "ls -la " + quote(newPath)}
+		}
+		if err = os.MkdirAll(filepath.Dir(newPath), 0o755); err != nil {
+			return m, r.ioerr(err)
+		}
+		if _, err = r.runAt(root, "worktree", "move", oldPath, newPath); err != nil {
+			return m, err
+		}
+		m.Worktree = true
+	}
+	remotes, err := r.runAt(root, "remote")
+	if err != nil {
+		return m, err
+	}
+	for _, rem := range strings.Fields(remotes) {
+		if rem != "origin" && len(strings.Fields(remotes)) > 1 {
+			continue
+		}
+		heads, e := r.runAt(root, "ls-remote", "--heads", rem, "refs/heads/"+fromBranch, "refs/heads/"+toBranch)
+		if e != nil {
+			return m, e
+		}
+		oldThere := strings.Contains(heads, "refs/heads/"+fromBranch)
+		newThere := strings.Contains(heads, "refs/heads/"+toBranch)
+		if oldThere && !newThere && has("refs/heads/"+toBranch) {
+			if _, e = r.runAt(root, "push", rem, "refs/heads/"+toBranch+":refs/heads/"+toBranch); e != nil {
+				return m, e
+			}
+			if _, e = r.runAt(root, "push", rem, "--delete", fromBranch); e != nil {
+				return m, e
+			}
+			m.RemoteBranch = true
+		}
+		if has("refs/heads/" + toBranch) {
+			r.runAt(root, "branch", "--set-upstream-to="+rem+"/"+toBranch, toBranch)
+		}
+		break
+	}
+	// The exclude entry for the old directory is harmless; add the new one.
+	common, err := r.runAt(root, "rev-parse", "--path-format=absolute", "--git-common-dir")
+	if err == nil {
+		exclude := filepath.Join(common, "info", "exclude")
+		b, _ := os.ReadFile(exclude)
+		entry := "/" + filepath.ToSlash(filepath.Clean(strings.SplitN(filepath.ToSlash(toDir), "/", 2)[0])) + "/"
+		if !strings.Contains("\n"+string(b), "\n"+entry+"\n") {
+			if f, e := os.OpenFile(exclude, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644); e == nil {
+				prefix := ""
+				if len(b) > 0 && b[len(b)-1] != '\n' {
+					prefix = "\n"
+				}
+				f.WriteString(prefix + entry + "\n")
+				f.Close()
+			}
+		}
+	}
+	return m, nil
+}

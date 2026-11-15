@@ -148,7 +148,7 @@ func TestTmuxGolden(t *testing.T) {
 	run("git", "init", "-b", "main")
 	run("git", "commit", "--allow-empty", "-m", "synthetic fixture")
 	run(binary, "init")
-	if err := testfixture.Seed(filepath.Join(repo, ".huginn")); err != nil {
+	if err := testfixture.Seed(filepath.Join(repo, ".hug", "tasks")); err != nil {
 		t.Fatal(err)
 	}
 	for _, size := range [][2]int{{80, 24}, {140, 40}} {

@@ -28,7 +28,7 @@ open step has the exact command or edit. Run "huginn setup" again after each
 step until every step is done. setup itself only reads; it changes nothing.
 
 How huginn works, in short:
-- Tasks are Markdown files on the git branch "huginn", checked out at .huginn/.
+- Tasks are Markdown files on the git branch "hug/tasks", checked out at .hug/tasks/.
   Code branches never see them. "huginn sync" shares them through the remote.
 - Every task has a goal and observable acceptance checks. Work it like this
   (CLI shown; MCP has list, show, new, next, take, done and update):
@@ -65,9 +65,12 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		steps = append(steps, SetupStep{step, done, detail, do})
 	}
 
-	_, statErr := os.Stat(filepath.Join(root, ".huginn"))
-	branch := exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/heads/huginn").Run() == nil
-	add("task branch", branch && statErr == nil, "branch huginn checked out at .huginn/", "huginn init")
+	if oldLayout(ctx, root) {
+		add("layout upgrade", false, "tasks are on the old layout (branch huginn at .huginn/); hug keeps them on branch hug/tasks at .hug/tasks/", "hug upgrade")
+	}
+	_, statErr := os.Stat(filepath.Join(root, TaskDir))
+	branch := exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/heads/"+TaskBranch).Run() == nil
+	add("task branch", branch && statErr == nil, "branch "+TaskBranch+" checked out at "+TaskDir+"/", "hug task init")
 
 	backlogDir := ""
 	for _, d := range []string{".backlog", "backlog"} {
@@ -150,14 +153,14 @@ func agentInstructionsEdit(backlog []string) string {
 
 // agentSection is the text projects paste into AGENTS.md.
 const agentSection = `## Tasks: huginn
-Track all work with huginn (tasks on the git branch "huginn", at .huginn/).
+Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
 Start: huginn next (or huginn take ID), then huginn show ID.
 While working: huginn check ID N with evidence, huginn note ID "evidence".
 Finish: huginn done ID when every acceptance check is ticked.
 New work: huginn new "title" --goal "outcome" --accept "observable check".
 MCP tools: task_list, task_show, task_new, task_next, task_take, task_done and task_update (action check, note, set, move, dep, drop) from hug mcp; the older huginn mcp server names them without the task_ prefix.
 Old backlog ids (TASK-123) work as aliases.
-Never edit .huginn/ files by hand while another agent may be writing; use the commands.`
+Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.`
 
 // mcpServers reports whether an MCP config file lists huginn and backlog.
 func mcpServers(path string) (huginn, backlog bool) {

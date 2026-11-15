@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/importer"
 	"github.com/veridit/hug/huginn/internal/task"
 	"github.com/veridit/hug/huginn/internal/tui"
@@ -106,4 +107,35 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 		return nil, e
 	}
 	return Reply{"import": report, "issues": len(issues), "next": "huginn ls"}, nil
+}
+
+// runUpgrade moves the old huginn layout to hug's: branch huginn becomes
+// hug/tasks, worktree .huginn/ moves to .hug/tasks/, and the remote branch is
+// renamed. History is unchanged. Safe to run again.
+func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
+	if e := f.count(0); e != nil {
+		return nil, e
+	}
+	cwd := a.Cwd
+	if cwd == "" {
+		cwd = "."
+	}
+	m, e := gitbranch.Upgrade(cwd, OldTaskBranch, OldTaskDir, TaskBranch, TaskDir)
+	if e != nil {
+		return nil, e
+	}
+	did := []string{}
+	if m.LocalBranch {
+		did = append(did, "branch "+OldTaskBranch+" renamed to "+TaskBranch)
+	}
+	if m.Worktree {
+		did = append(did, OldTaskDir+"/ moved to "+TaskDir+"/")
+	}
+	if m.RemoteBranch {
+		did = append(did, "remote branch renamed")
+	}
+	if len(did) == 0 {
+		did = append(did, "already on the hug layout")
+	}
+	return Reply{"upgrade": did, "next": "hug setup"}, nil
 }
