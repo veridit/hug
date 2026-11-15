@@ -184,7 +184,15 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 		dst.Root = resolved
 	}
 	if srcAbs == dstAbs || strings.HasPrefix(dstAbs, srcAbs+string(os.PathSeparator)) || strings.HasPrefix(srcAbs, dstAbs+string(os.PathSeparator)) {
-		return report, fmt.Errorf("source and destination must not overlap")
+		// Usually the repository root was given: it contains .huginn/ itself.
+		fix := "huginn import backlog DIRECTORY (the backlog folder, not the repository root)"
+		for _, d := range []string{".backlog", "backlog"} {
+			if fi, e := os.Stat(filepath.Join(srcAbs, d)); e == nil && fi.IsDir() {
+				fix = "huginn import backlog " + d + " --dry-run"
+				break
+			}
+		}
+		return report, &task.Error{Kind: "source and destination must not overlap", Value: srcAbs + " contains the task folder " + dstAbs, Fix: fix}
 	}
 	if err := checkDestination(dst.Root); err != nil {
 		return report, err

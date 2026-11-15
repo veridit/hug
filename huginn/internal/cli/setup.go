@@ -155,7 +155,7 @@ Start: huginn next (or huginn take ID), then huginn show ID.
 While working: huginn check ID N with evidence, huginn note ID "evidence".
 Finish: huginn done ID when every acceptance check is ticked.
 New work: huginn new "title" --goal "outcome" --accept "observable check".
-MCP tools: list, show, new, next, take, done, and update (action check, note, set, move, dep, drop).
+MCP tools: task_list, task_show, task_new, task_next, task_take, task_done and task_update (action check, note, set, move, dep, drop) from hug mcp; the older huginn mcp server names them without the task_ prefix.
 Old backlog ids (TASK-123) work as aliases.
 Never edit .huginn/ files by hand while another agent may be writing; use the commands.`
 

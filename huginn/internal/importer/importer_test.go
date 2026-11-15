@@ -245,6 +245,15 @@ func TestUnsafePaths(t *testing.T) {
 	if _, err := Run(context.Background(), src, &task.Store{Root: src}, Options{}); err == nil {
 		t.Fatal("accepted overlapping roots")
 	}
+	// The repository root holds both .backlog and .huginn: the error names the
+	// backlog folder as the fix (2026-11-15: seid agent ran "import backlog .").
+	repo := t.TempDir()
+	os.MkdirAll(filepath.Join(repo, ".backlog", "tasks"), 0o755)
+	_, err := Run(context.Background(), repo, &task.Store{Root: filepath.Join(repo, ".huginn")}, Options{})
+	var te *task.Error
+	if !errors.As(err, &te) || te.Fix != "huginn import backlog .backlog --dry-run" {
+		t.Fatalf("overlap fix = %+v, want huginn import backlog .backlog --dry-run", err)
+	}
 }
 
 func TestMetadataDoesNotClobberUnknownFields(t *testing.T) {
