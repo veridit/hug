@@ -21,7 +21,7 @@ Tasks live at .hug/tasks/ on branch hug/tasks with three fixed levels (epic, tas
 - [ ] import backlog maps parent_task_id through aliases: seid-lang's 190 links come back; re-run unchanged
 - [ ] hug task promote ID N: item N becomes a sibling task under the same epic (standalone if none); the item reads 'done when task:<id> is done' and ticks when that task is done
 - [ ] ls/next/TUI: --group and --epic views; next skips epics
-- [ ] task files in .hug/tasks/<group>/<id>/; attach/show --file/detach; text only, 256 KiB, secret check; references task:<id>/<path> checked by lint; backlog .backlog/evidence imported with citations rewritten
+- [x] task files in .hug/tasks/<group>/<id>/; attach/show --file/detach; text only, 256 KiB, secret check; references task:<id>/<path> checked by lint; backlog .backlog/evidence imported with citations rewritten
 
 ## Notes
 
