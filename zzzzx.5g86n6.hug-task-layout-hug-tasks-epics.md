@@ -24,3 +24,5 @@ Tasks live at .hug/tasks/ on branch hug/tasks with three fixed levels (epic, tas
 - [ ] task files in .hug/tasks/<group>/<id>/; attach/show --file/detach; text only, 256 KiB, secret check; references task:<id>/<path> checked by lint; backlog .backlog/evidence imported with citations rewritten
 
 ## Notes
+
+Item 1 done in v0.7.3 (d955c8f, released 2026-11-15): hug upgrade = git branch -m + worktree move + remote rename; old layout fails with fix: hug upgrade; setup lists it. Verified: copy of seid-lang (2,494 tasks); this repo (31 tasks, remote hug/tasks); the seid agent upgraded seid-lang itself from the CLI/MCP instruction.
