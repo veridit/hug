@@ -13,9 +13,9 @@ import (
 // loaded. Hooks are short-lived processes; loading the built-in model costs
 // ~0.4 s and ~560 MB each time, while serve answers in tens of milliseconds.
 type Remote struct {
-	Addr  string // host:port of muninn serve (loopback)
-	Name  string // model name serve reported
-	HTTP  *http.Client
+	Addr string // host:port of muninn serve (loopback)
+	Name string // model name serve reported
+	HTTP *http.Client
 }
 
 // EmbedRequest/EmbedResponse are the /api/embed wire format.
