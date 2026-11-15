@@ -566,6 +566,12 @@ func runHook(name string, budget time.Duration) error {
 			logHook("jcode[%s] %s: msg=%q hits=0 skipped=%q elapsed=%s", inst.Name, short(sid), recall.Truncate(msg, 60), resp.Skipped, resp.Elapsed)
 			return err
 		}
+		if !harness.JcodeTurnOpen(filepath.Join(jh, "sessions"), sid, msg) {
+			// The turn already ended: send would start a new turn that looks
+			// like the user speaking. Drop it; the agent can still search.
+			logHook("jcode[%s] %s: msg=%q hits=%d dropped=turn-ended elapsed=%s", inst.Name, short(sid), recall.Truncate(msg, 60), len(resp.Hits), resp.Elapsed)
+			return nil
+		}
 		bin := inst.Binary()
 		if bin == "" {
 			bin = "jcode"

@@ -145,3 +145,61 @@ func lastFromJournal(path string) (string, error) {
 	}
 	return last, sc.Err()
 }
+
+// JcodeTurnOpen reports whether the jcode turn that started with msg is still
+// running: the journal's last user text is msg and no assistant message has
+// ended the turn with text and no tool call. jcode transcript --mode send
+// submits a NEW user turn when the session is idle (2026-11-15: two late
+// recall blocks arrived as empty "[transcription]" user messages), so the
+// hook only delivers while this is true.
+func JcodeTurnOpen(sessionsDir, sessionID, msg string) bool {
+	if strings.ContainsAny(sessionID, `/\`) || sessionID == "" {
+		return false
+	}
+	f, err := os.Open(filepath.Join(sessionsDir, sessionID+".journal.jsonl"))
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+	const tail = 2 << 20
+	if fi, err := f.Stat(); err == nil && fi.Size() > tail {
+		f.Seek(fi.Size()-tail, io.SeekStart)
+	}
+	sc := bufio.NewScanner(f)
+	sc.Buffer(make([]byte, 0, 1<<20), 16<<20)
+	lastUser, ended := "", false
+	for sc.Scan() {
+		line := sc.Bytes()
+		if !bytes.Contains(line, []byte(`"append_messages"`)) {
+			continue
+		}
+		var entry struct {
+			Append []jcodeMessage `json:"append_messages"`
+		}
+		if json.Unmarshal(line, &entry) != nil {
+			continue
+		}
+		for _, m := range entry.Append {
+			switch m.Role {
+			case "user":
+				// An earlier recall block delivered mid-turn is a user message
+				// too; it is not the user speaking and does not start a turn.
+				if t := userText(m); t != "" && !strings.Contains(t, "-- AI memory (muninn):") {
+					lastUser, ended = t, false
+				}
+			case "assistant":
+				// A final answer: text and no tool call. Tool calls mean the
+				// turn goes on.
+				text, tool := false, false
+				for _, c := range m.Content {
+					text = text || (c.Type == "text" && strings.TrimSpace(c.Text) != "")
+					tool = tool || c.Type == "tool_use"
+				}
+				if text && !tool {
+					ended = true
+				}
+			}
+		}
+	}
+	return lastUser == strings.TrimSpace(msg) && !ended
+}
