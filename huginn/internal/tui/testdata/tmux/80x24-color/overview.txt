@@ -2,22 +2,22 @@ HUGINN · overview   60/60 tasks · ! 5 findings
 [overview]   list    board    !lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
-> IN PROGRESS · assigned to  [15]
+> IN PROGRESS · assigned to  [15] · 1–3 shown
 > [000002]   doing   bug     critical Bug task 02: make the t…  alice
   [000006]   doing   feature high     Feature task 06: make t…  bob
-  … 13 more
+↓ [000010]   doing   docs    high     Docs task 10: make the …  bob
 
-  NEXT UP · rank order  [8]
+  NEXT UP · rank order  [8] · 1–2 shown
   [000001]   todo    feature critical Feature task 01: make the terminal workfl…
-  … 7 more
+↓ [000009]   todo    spike   high     Spike task 09: make the terminal workflow…
 
-  BLOCKED · unmet dependencies  [8]
+  BLOCKED · unmet dependencies  [8] · 1–2 shown
   [000005]   blocked docs    critical Docs task 05: make the terminal workflow …
-  … 7 more
+↓ [000013] ! blocked chore   medium   Chore task 13: make the terminal workflow…
 
-  LINT · tasks needing attention  [5] · 5 findings
+  LINT · tasks needing attention  [5] · 5 findings · 1–2 shown
   [000003] ! done    feature medium   Render compiler-lang task detail without …
-  … 4 more
+↓ [000013] ! blocked chore   medium   Chore task 13: make the terminal workflow…
 
 All tasks · : filters and commands
 

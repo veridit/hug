@@ -33,7 +33,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
   [000028]   dropped chore   high     Chore task 28: make the terminal workflow observable
   [000029]   blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncat…
   [000030]   doing   docs    high     Docs task 30: make the terminal workflow observable
-  [000031]   done    feature medium   Feature task 31: make the terminal workflow observable
+↓ [000031]   done    feature medium   Feature task 31: make the terminal workflow observable
 Rows 1–31 of 60 · ! lint finding · status blocked = unmet dependency
 All tasks · : filters and commands
 

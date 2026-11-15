@@ -71,9 +71,27 @@ func styled(styles map[string]lipgloss.Style, value string, width int) string {
 	return styles[value].Render(fit(oneLine(value), width))
 }
 func (m model) taskRow(t task.Task, width int, selected, compact bool) string {
+	return m.taskRowMark(t, width, selected, compact, "")
+}
+
+// scrollMark puts ↑ on the first shown row when rows are hidden above and ↓
+// on the last when rows are hidden below; the header's "a–b shown" gives the
+// count. The arrows use the pointer gutter, so they cost no lines.
+func scrollMark(n, start, end, total int) string {
+	switch {
+	case n == start && start > 0:
+		return "↑"
+	case n == end-1 && end < total:
+		return "↓"
+	}
+	return ""
+}
+func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark string) string {
 	pointer := "  "
 	if selected {
 		pointer = "> "
+	} else if mark != "" {
+		pointer = m.styles.dim.Render(mark) + " "
 	}
 	row := pointer + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + " " + m.marker(t.Path) + " "
 	titleWidth := width - 38
@@ -118,33 +136,6 @@ func window(indices []int, cursor, rows int) (int, int) {
 	return start, min(len(indices), start+rows)
 }
 
-// windowMarked is window for lists that print "… N more" lines: when rows
-// are hidden above or below, each marker takes one of the rows.
-func windowMarked(indices []int, cursor, rows int) (int, int) {
-	if len(indices) <= rows {
-		return 0, len(indices)
-	}
-	pos := 0
-	for i, v := range indices {
-		if v == cursor {
-			pos = i
-		}
-	}
-	// Only the markers that appear cost a row: near the top just "below",
-	// near the bottom just "above", in the middle both.
-	if rows < 2 {
-		return pos, pos + 1
-	}
-	if pos < rows-1 {
-		return 0, rows - 1
-	}
-	if pos >= len(indices)-(rows-1) {
-		return len(indices) - (rows - 1), len(indices)
-	}
-	n := max(1, rows-2)
-	start := min(max(0, pos-n+1), len(indices)-n)
-	return start, start + n
-}
 func (m model) listText() string {
 	indices := m.indices()
 	lines := []string{m.columns(m.width, false)}
@@ -152,8 +143,8 @@ func (m model) listText() string {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; n creates a task."), "\n")
 	}
 	start, end := window(indices, m.cursor, max(1, m.bodyHeight()-2))
-	for _, i := range indices[start:end] {
-		lines = append(lines, m.taskRow(m.visible[i], m.width, i == m.cursor, false))
+	for n, i := range indices[start:end] {
+		lines = append(lines, m.taskRowMark(m.visible[i], m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
 	}
 	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · status blocked = unmet dependency", start+1, end, len(indices))))
 	return strings.Join(lines, "\n")
@@ -177,7 +168,10 @@ func (m model) overviewText() string {
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := windowMarked(indices, cursor, per)
+		start, end := window(indices, cursor, per)
+		if end-start < len(indices) {
+			label += fmt.Sprintf(" · %d–%d shown", start+1, end)
+		}
 		label = m.styles.accent.Render(fit(label, m.width))
 		if p == m.pane {
 			label = m.styles.selected.Render(label)
@@ -186,12 +180,8 @@ func (m model) overviewText() string {
 		if len(indices) == 0 {
 			lines = append(lines, m.styles.dim.Render("  None"))
 		}
-		// Hidden rows are announced where they are: "… 3 more" above the
-		// first shown row and below the last, so scrolling shows the way.
-		if start > 0 {
-			lines = append(lines, m.styles.dim.Render(fmt.Sprintf("  … %d more", start)))
-		}
-		for _, i := range indices[start:end] {
+		for n, i := range indices[start:end] {
+			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
 			if p == 0 {
@@ -208,13 +198,10 @@ func (m model) overviewText() string {
 				} else {
 					ownerCell = "  " + m.styles.accent.Render(ownerCell)
 				}
-				lines = append(lines, m.taskRow(t, max(1, m.width-18), sel, false)+ownerCell)
+				lines = append(lines, m.taskRowMark(t, max(1, m.width-18), sel, false, mark)+ownerCell)
 			} else {
-				lines = append(lines, m.taskRow(t, m.width, sel, false))
+				lines = append(lines, m.taskRowMark(t, m.width, sel, false, mark))
 			}
-		}
-		if end < len(indices) {
-			lines = append(lines, m.styles.dim.Render(fmt.Sprintf("  … %d more", len(indices)-end)))
 		}
 		lines = append(lines, "")
 	}
@@ -224,7 +211,7 @@ func (m model) overviewText() string {
 // overviewRows shares the overview's rows by need: each section asks for its
 // task count (at least one line for "None"), and when they do not all fit,
 // sections that need little keep it and the rest is shared among the larger
-// ones. Ellipsis lines come out of a section's own share.
+// ones.
 func (m model) overviewRows() [4]int {
 	var want, got [4]int
 	budget := m.bodyHeight() - 4*2 // a label and a blank line per section
@@ -283,8 +270,8 @@ func (m model) boardText() string {
 			cursor = m.cursor
 		}
 		start, end := window(indices, cursor, rows)
-		for _, i := range indices[start:end] {
-			cols[c] = append(cols[c], m.taskRow(m.visible[i], width, p == m.pane && i == m.cursor, true))
+		for n, i := range indices[start:end] {
+			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, p == m.pane && i == m.cursor, true, scrollMark(start+n, start, end, len(indices))))
 		}
 		for len(cols[c]) < rows+2 {
 			cols[c] = append(cols[c], fit("", width))
