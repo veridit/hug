@@ -152,6 +152,13 @@ CREATE TABLE IF NOT EXISTS unit_communities (
 CREATE INDEX IF NOT EXISTS unit_communities_u ON unit_communities(unit_id);
 -- Persisted DF-Louvain state (gob), so incremental updates resume exactly.
 CREATE TABLE IF NOT EXISTS graph_state (id INTEGER PRIMARY KEY CHECK (id = 1), state BLOB NOT NULL);
+-- Memory types inferred for memories whose source has no type field (jcode
+-- memory files, untyped native memories): keyed by content hash, so a type
+-- follows the text and survives re-indexing. A type stated on the memory
+-- itself always wins. Written by "muninn types".
+CREATE TABLE IF NOT EXISTS inferred_types (
+  content_hash TEXT PRIMARY KEY, mtype TEXT NOT NULL, model TEXT NOT NULL, at_ns INTEGER NOT NULL
+) WITHOUT ROWID;
 -- Recall injections, for per-session dedupe and the web/TUI log.
 CREATE TABLE IF NOT EXISTS injections (
   session TEXT NOT NULL, unit_id INTEGER NOT NULL, content_hash TEXT NOT NULL,
@@ -225,6 +232,10 @@ func Open(path string) (*DB, error) {
 		}
 	}
 	returnDB := &DB{DB: db, Path: path}
+	if err := returnDB.migrateMemoryType(); err != nil {
+		db.Close()
+		return nil, err
+	}
 	if err := returnDB.migrateShortIDs(); err != nil {
 		db.Close()
 		return nil, fmt.Errorf("short ids: %w", err)
@@ -317,7 +328,8 @@ func (d *DB) GetUnit(id int64) (Unit, error) {
 	var tags string
 	var active int
 	var upd int64
-	err := d.QueryRow(`SELECT id, sid, origin, source_id, key, content_hash, kind, title, body, category, mtype, tags, scope, active, updated_ns
+	err := d.QueryRow(`SELECT id, sid, origin, source_id, key, content_hash, kind, title, body, category,
+	  COALESCE(NULLIF(mtype,''), (SELECT t.mtype FROM inferred_types t WHERE t.content_hash=units.content_hash), ''), tags, scope, active, updated_ns
 	  FROM units WHERE id=?`, id).Scan(&u.ID, &u.SID, &u.Origin, &u.SourceID, &u.Key, &u.ContentHash, &u.Kind, &u.Title, &u.Body,
 		&u.Category, &u.Type, &tags, &u.Scope, &active, &upd)
 	u.Tags = strings.Fields(tags)
@@ -364,5 +376,75 @@ func (d *DB) GetMeta(k string) string {
 
 func (d *DB) SetMeta(k, v string) error {
 	_, err := d.Exec(`INSERT INTO meta(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, k, v)
+	return err
+}
+
+// SetInferredType records a model-inferred memory type for a text.
+func (d *DB) SetInferredType(contentHash, mtype, model string) error {
+	_, err := d.Exec(`INSERT INTO inferred_types(content_hash, mtype, model, at_ns) VALUES(?,?,?,?)
+	  ON CONFLICT(content_hash) DO UPDATE SET mtype=excluded.mtype, model=excluded.model, at_ns=excluded.at_ns`,
+		contentHash, mtype, model, time.Now().UnixNano())
+	return err
+}
+
+// UntypedUnits lists active units with neither a stated nor an inferred
+// type, oldest id first, at most limit (0 = all).
+func (d *DB) UntypedUnits(limit int) ([]Unit, error) {
+	q := `SELECT id FROM units WHERE active=1 AND mtype='' AND content_hash NOT IN (SELECT content_hash FROM inferred_types) ORDER BY id`
+	if limit > 0 {
+		q += fmt.Sprintf(" LIMIT %d", limit)
+	}
+	rows, err := d.Query(q)
+	if err != nil {
+		return nil, err
+	}
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	rows.Close()
+	out := make([]Unit, 0, len(ids))
+	for _, id := range ids {
+		u, err := d.GetUnit(id)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, u)
+	}
+	return out, nil
+}
+
+// migrateMemoryType adds units.mtype (memory type, 2026-11-15) to databases
+// created before it. Idempotent; runs on every open, independent of the
+// shortids schema version (which existing databases have already passed).
+func (d *DB) migrateMemoryType() error {
+	rows, err := d.Query(`PRAGMA table_info(units)`)
+	if err != nil {
+		return err
+	}
+	has := false
+	for rows.Next() {
+		var cid, nn, pk int
+		var name, typ string
+		var def any
+		if err := rows.Scan(&cid, &name, &typ, &nn, &def, &pk); err != nil {
+			rows.Close()
+			return err
+		}
+		has = has || name == "mtype"
+	}
+	rows.Close()
+	if has {
+		return nil
+	}
+	_, err = d.Exec(`ALTER TABLE units ADD COLUMN mtype TEXT NOT NULL DEFAULT ''`)
+	if err != nil && strings.Contains(err.Error(), "duplicate column") {
+		return nil // another process added it first
+	}
 	return err
 }
