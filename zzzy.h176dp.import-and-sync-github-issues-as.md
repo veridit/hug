@@ -23,3 +23,5 @@ A repository's GitHub issues appear as huginn tasks and stay in step, so agents 
 - [x] auth via gh CLI token or GITHUB_TOKEN; no token stored by hug
 
 ## Notes
+
+Built 2026-11-15 (commit above): huginn import github [OWNER/REPO] [--dry-run], via gh (no token stored). statisticsnorway/statbus: 42 issues -> 42 added; second run 42 unchanged, 0 updated. Closed issues with an open checklist show 'done with unchecked acceptance' in lint (7 tasks), mirroring GitHub. Item 4 (push status back) not built.
