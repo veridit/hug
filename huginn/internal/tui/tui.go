@@ -526,6 +526,37 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if t, ok := m.selected(); ok {
 					m.refresh(t.Path)
 				}
+			case "o", "i", "v", "b", "!":
+				// The tab bar stays visible in detail, so its keys work here
+				// too: leave the task and switch view (2026-11-15, user).
+				m.detail = false
+				m.setView(map[string]string{"o": "overview", "i": "list", "v": "list", "b": "board", "!": "lint"}[k])
+			case "j", "down", "k", "up":
+				// j/k step through the focused list (acceptance or
+				// dependencies) and scroll the page past either end.
+				step := 1
+				if k == "k" || k == "up" {
+					step = -1
+				}
+				t, ok := m.selected()
+				moved := false
+				if ok && m.detailPane == 0 && len(t.Acceptance) > 0 {
+					next := m.acceptance + step
+					if next >= 0 && next < len(t.Acceptance) {
+						m.acceptance, moved = next, true
+					}
+				} else if ok && m.detailPane == 1 && len(t.Dependencies) > 0 {
+					next := m.dependency + step
+					if next >= 0 && next < len(t.Dependencies) {
+						m.dependency, moved = next, true
+					}
+				}
+				if moved {
+					m.syncDetail()
+					m.revealAcceptance()
+				} else {
+					m.scroll(&m.viewport, k)
+				}
 			default:
 				m.scroll(&m.viewport, k)
 			}

@@ -40,6 +40,7 @@ func loadGuard(t *testing.T) {
 	}
 }
 func shellQuote(s string) string { return "'" + strings.ReplaceAll(s, "'", "'\\''") + "'" }
+
 // ansiColour matches any SGR sequence that sets a foreground or background colour.
 var ansiColour = regexp.MustCompile(`\x1b\[(?:[0-9;]*;)?(?:3[0-7]|4[0-7]|9[0-7]|10[0-7]|38;|48;)[0-9;]*m`)
 

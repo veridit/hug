@@ -156,7 +156,8 @@ func TestDetailAndHelpScrollKeys(t *testing.T) {
 			if overlay == "?" {
 				v = m.helpViewport
 			}
-			if v.YOffset == 0 {
+			// In detail, j/k first step through acceptance items.
+			if v.YOffset == 0 && !(overlay == "enter" && m.acceptance > 0) {
 				t.Fatal(overlay, pair)
 			}
 			m = press(m, pair[1])
@@ -254,7 +255,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	if m.completion != 0 {
 		t.Fatal(m.completion)
 	}
-	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"status bl", "status blocked"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"owner al", "owner alice"}, {"goto 000001", "goto 000001"}} {
+	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"status bl", "status blocked"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
 		m := press(manyModel(t), ":", tc.query, "tab")
 		if m.input.Value() != tc.want {
 			t.Fatalf("%s => %s", tc.query, m.input.Value())
@@ -290,7 +291,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	}
 }
 func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
-	for _, tc := range []struct{ letter, field, value string }{{"s", "status", "todo"}, {"t", "type", "bug"}, {"p", "priority", "high"}, {"g", "group", "compiler"}, {"l", "label", "terminal"}, {"o", "owner", "alice"}} {
+	for _, tc := range []struct{ letter, field, value string }{{"s", "status", "todo"}, {"t", "type", "bug"}, {"p", "priority", "high"}, {"g", "group", "compiler"}, {"l", "label", "terminal"}, {"a", "assignee", "alice"}} {
 		m := press(manyModel(t), "f", tc.letter, tc.value)
 		if len(m.filterChoices()) != 1 || m.valueCount(tc.field, tc.value) == 0 {
 			t.Fatal(tc, m.View())
@@ -500,7 +501,7 @@ func TestJumpRetainsFiltersAndDetailShortcuts(t *testing.T) {
 
 func TestEmptyMetadataFilters(t *testing.T) {
 	m := fixture(t)
-	for _, tc := range []struct{ field, value string }{{"group", "(root)"}, {"owner", "(unassigned)"}} {
+	for _, tc := range []struct{ field, value string }{{"group", "(root)"}, {"assignee", "(unassigned)"}} {
 		if !contains(m.values(tc.field), tc.value) {
 			t.Fatal(tc, m.values(tc.field))
 		}
@@ -525,7 +526,7 @@ func TestFullHelpFits140AndRepairStaysVisible(t *testing.T) {
 	m.width, m.height = 140, 40
 	m.resize()
 	m = press(m, "?")
-	for _, text := range []string{"ctrl-d", "Shift-Tab", "Backspace", "$EDITOR", "confirm / cancel", "priority <p>", "owner <o>"} {
+	for _, text := range []string{"ctrl-d", "Shift-Tab", "Backspace", "$EDITOR", "confirm / cancel", "priority <p>", "assignee <a>"} {
 		if !strings.Contains(m.View(), text) {
 			t.Fatal("help omitted "+text, m.View())
 		}

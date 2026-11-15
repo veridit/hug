@@ -117,6 +117,34 @@ func window(indices []int, cursor, rows int) (int, int) {
 	start := max(0, pos-rows+1)
 	return start, min(len(indices), start+rows)
 }
+
+// windowMarked is window for lists that print "… N more" lines: when rows
+// are hidden above or below, each marker takes one of the rows.
+func windowMarked(indices []int, cursor, rows int) (int, int) {
+	if len(indices) <= rows {
+		return 0, len(indices)
+	}
+	pos := 0
+	for i, v := range indices {
+		if v == cursor {
+			pos = i
+		}
+	}
+	// Only the markers that appear cost a row: near the top just "below",
+	// near the bottom just "above", in the middle both.
+	if rows < 2 {
+		return pos, pos + 1
+	}
+	if pos < rows-1 {
+		return 0, rows - 1
+	}
+	if pos >= len(indices)-(rows-1) {
+		return len(indices) - (rows - 1), len(indices)
+	}
+	n := max(1, rows-2)
+	start := min(max(0, pos-n+1), len(indices)-n)
+	return start, start + n
+}
 func (m model) listText() string {
 	indices := m.indices()
 	lines := []string{m.columns(m.width, false)}
@@ -131,8 +159,8 @@ func (m model) listText() string {
 	return strings.Join(lines, "\n")
 }
 func (m model) overviewText() string {
-	names := []string{"IN PROGRESS · who is working", "NEXT UP · rank order", "BLOCKED · unmet dependencies", "LINT · tasks needing attention"}
-	per := max(1, m.bodyHeight()/4-2)
+	names := []string{"IN PROGRESS · assigned to", "NEXT UP · rank order", "BLOCKED · unmet dependencies", "LINT · tasks needing attention"}
+	rows := m.overviewRows()
 	var lines []string
 	for p, name := range names {
 		indices := m.paneIndices(p)
@@ -144,10 +172,12 @@ func (m model) overviewText() string {
 		if p == 3 {
 			label += fmt.Sprintf(" · %d findings", len(m.findings))
 		}
-		start, end := window(indices, m.cursor, per)
-		if len(indices) > per {
-			label += fmt.Sprintf(" · %d–%d shown", start+1, end)
+		per := rows[p]
+		cursor := -1
+		if p == m.pane {
+			cursor = m.cursor
 		}
+		start, end := windowMarked(indices, cursor, per)
 		label = m.styles.accent.Render(fit(label, m.width))
 		if p == m.pane {
 			label = m.styles.selected.Render(label)
@@ -156,26 +186,78 @@ func (m model) overviewText() string {
 		if len(indices) == 0 {
 			lines = append(lines, m.styles.dim.Render("  None"))
 		}
+		// Hidden rows are announced where they are: "… 3 more" above the
+		// first shown row and below the last, so scrolling shows the way.
+		if start > 0 {
+			lines = append(lines, m.styles.dim.Render(fmt.Sprintf("  … %d more", start)))
+		}
 		for _, i := range indices[start:end] {
 			t := m.visible[i]
+			sel := p == m.pane && i == m.cursor
 			if p == 0 {
 				owner := strings.Join(t.Assignee, ", ")
 				if owner == "" {
 					owner = "unassigned"
 				}
-				// Owners get a reserved column, never lost behind a long title.
-				line := m.taskRow(t, max(1, m.width-18), p == m.pane && i == m.cursor, false) + "  " + m.styles.accent.Render(fit(oneLine(owner), 16))
-				lines = append(lines, line)
+				// Owners get a reserved column, never lost behind a long
+				// title. On the selected row the highlight runs through it,
+				// so the owner reads as part of that row.
+				ownerCell := fit(oneLine(owner), 16)
+				if sel {
+					ownerCell = m.styles.selected.Render("  " + ownerCell)
+				} else {
+					ownerCell = "  " + m.styles.accent.Render(ownerCell)
+				}
+				lines = append(lines, m.taskRow(t, max(1, m.width-18), sel, false)+ownerCell)
 			} else {
-				lines = append(lines, m.taskRow(t, m.width, p == m.pane && i == m.cursor, false))
+				lines = append(lines, m.taskRow(t, m.width, sel, false))
 			}
 		}
-		for n := max(1, end-start); n < per; n++ {
-			lines = append(lines, "")
+		if end < len(indices) {
+			lines = append(lines, m.styles.dim.Render(fmt.Sprintf("  … %d more", len(indices)-end)))
 		}
 		lines = append(lines, "")
 	}
 	return strings.Join(lines, "\n")
+}
+
+// overviewRows shares the overview's rows by need: each section asks for its
+// task count (at least one line for "None"), and when they do not all fit,
+// sections that need little keep it and the rest is shared among the larger
+// ones. Ellipsis lines come out of a section's own share.
+func (m model) overviewRows() [4]int {
+	var want, got [4]int
+	budget := m.bodyHeight() - 4*2 // a label and a blank line per section
+	for p := range want {
+		want[p] = max(1, len(m.paneIndices(p)))
+	}
+	left := []int{0, 1, 2, 3}
+	for len(left) > 0 {
+		share := max(1, budget/len(left))
+		var next []int
+		for _, p := range left {
+			if want[p] <= share {
+				got[p] = want[p]
+				budget -= want[p]
+			} else {
+				next = append(next, p)
+			}
+		}
+		if len(next) == len(left) {
+			// Everyone left needs more than an equal share: split evenly,
+			// minus two lines each for the "… N more" markers.
+			for i, p := range next {
+				n := budget / len(next)
+				if i < budget%len(next) {
+					n++
+				}
+				got[p] = max(1, n)
+			}
+			break
+		}
+		left = next
+	}
+	return got
 }
 func (m model) boardText() string {
 	count := min(len(boardStatuses), max(1, (m.width+2)/40))
@@ -367,6 +449,19 @@ func (m model) View() string {
 		inputLine = "Confirm " + actionNames[m.confirm] + " "
 		if m.confirm == "n" {
 			inputLine += m.pendingValue
+		} else if m.confirm == " " {
+			// Say exactly what Space will do: tick or untick which item.
+			for _, t := range m.all {
+				if t.Path == m.confirmPath && len(t.Acceptance) > 0 {
+					n := min(m.acceptance, len(t.Acceptance)-1)
+					verb := "Tick"
+					if t.Acceptance[n].Checked {
+						verb = "Untick"
+					}
+					inputLine = fmt.Sprintf("%s item %d of %s: %s?", verb, n+1, t.ID, oneLine(t.Acceptance[n].Text))
+					break
+				}
+			}
 		} else {
 			for _, t := range m.all {
 				if t.Path == m.confirmPath {

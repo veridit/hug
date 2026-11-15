@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"github.com/charmbracelet/lipgloss"
 	"regexp"
 	"strings"
 
@@ -58,11 +59,11 @@ func (m model) detailHeader(t task.Task) []string {
 	if group == "" {
 		group = "root"
 	}
-	owner := strings.Join(t.Assignee, ", ")
-	if owner == "" {
+	owner := "assigned:" + strings.Join(t.Assignee, ", ")
+	if len(t.Assignee) == 0 {
 		owner = "unassigned"
 	}
-	badges = append(badges, m.styles.dim.Render("group:"+oneLine(group)), m.styles.accent.Render("owner:"+oneLine(owner)))
+	badges = append(badges, m.styles.dim.Render("group:"+oneLine(group)), m.styles.accent.Render(oneLine(owner)))
 	lines := []string{title}
 	lines = append(lines, strings.Split(wrap(strings.Join(badges, "  "), m.width), "\n")...)
 	lines = append(lines, m.styles.dim.Render("created "+oneLine(t.Created)+" · updated "+oneLine(t.Updated)+" · "+oneLine(t.Slug)))
@@ -164,8 +165,25 @@ func (m model) detailText(t task.Task) string {
 		if m.detailPane == 0 && i == m.acceptance {
 			pointer = ">"
 		}
-		label := fmt.Sprintf("%s %s %d. %s", pointer, box, i+1, strings.TrimSpace(m.markdown(a.Text)))
-		checks = append(checks, m.styles.status[state].Render(label))
+		// Wrap to the room left after the prefix and hang continuation lines
+		// under the text, so each item reads as one block (2026-11-15).
+		prefix := fmt.Sprintf("%s %s %d. ", pointer, box, i+1)
+		indent := strings.Repeat(" ", lipgloss.Width(prefix))
+		body := wrap(oneLine(cleanMarkdown(a.Text)), max(10, m.width-len(indent)))
+		lines := strings.Split(body, "\n")
+		for j := range lines {
+			if j == 0 {
+				lines[j] = prefix + lines[j]
+			} else {
+				lines[j] = indent + lines[j]
+			}
+		}
+		label := strings.Join(lines, "\n")
+		if m.detailPane == 0 && i == m.acceptance {
+			checks = append(checks, m.styles.selected.Render(label))
+		} else {
+			checks = append(checks, m.styles.status[state].Render(label))
+		}
 	}
 	section("Acceptance · [ / ] select · Space toggle", strings.Join(checks, "\n"), "no acceptance items yet")
 	var dependencies []string

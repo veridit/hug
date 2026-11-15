@@ -14,7 +14,7 @@ var commands = []command{
 	{"todo", "", "Filter todo"}, {"doing", "", "Filter in progress"}, {"done", "", "Filter completed"},
 	{"blocked", "", "Filter unmet dependencies"}, {"dropped", "", "Filter dropped"},
 	{"status", "status", "Filter status"}, {"type", "type", "Filter task type"}, {"group", "group", "Filter group"},
-	{"label", "label", "Filter label"}, {"priority", "priority", "Filter priority"}, {"owner", "owner", "Filter owner"}, {"goto", "id", "Open a task by id"}, {"lint", "", "Tasks with findings"},
+	{"label", "label", "Filter label"}, {"priority", "priority", "Filter priority"}, {"assignee", "name", "Filter by who is assigned"}, {"goto", "id", "Open a task by id"}, {"lint", "", "Tasks with findings"},
 	{"clear", "", "Clear every filter"}, {"help", "", "All keys and commands"},
 }
 
@@ -48,7 +48,7 @@ func (m model) values(name string) []string {
 			if t.Priority == "" {
 				set["(none)"] = true
 			}
-		case "owner":
+		case "assignee":
 			if len(t.Assignee) == 0 {
 				set["(unassigned)"] = true
 			}
@@ -139,7 +139,7 @@ func (m *model) executeCommand() bool {
 	case "todo", "doing", "done", "dropped", "blocked":
 		m.setFilter("status", name)
 		m.setView("list")
-	case "status", "type", "priority", "group", "label", "owner":
+	case "status", "type", "priority", "group", "label", "assignee":
 		if !contains(m.values(name), arg) {
 			m.message = "unknown " + name + ": " + arg
 			return false

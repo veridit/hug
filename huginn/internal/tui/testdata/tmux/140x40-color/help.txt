@@ -27,10 +27,10 @@ s / y           status / type palette shortcut
 c               clear all filters
 r               refresh files and lint
 
-PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, owner <o>,
+PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>,
 goto <id>, lint, clear, help
-Filter fields: s status, t type, p priority, g group, l label, o owner. Blocked is derived from unmet dependencies and overlaps todo/doing.
-Filters combine.
+Filter fields: s status, t type, p priority, g group, l label, a assignee. Blocked is derived from unmet dependencies and overlaps
+todo/doing. Filters combine.
 
 
 
