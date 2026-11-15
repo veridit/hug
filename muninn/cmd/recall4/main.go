@@ -78,6 +78,9 @@ func variant(name string, o *search.Options, e *recall.Engine) {
 			var f float64
 			fmt.Sscanf(part, "bm25x%g", &f)
 			o.BM25Scale = f
+		case part == "union": // top 20, no gates, no session dedupe: candidate pool for offline arms
+			o.Limit, o.MinScore = 20, 0
+			e.MinSemantic, e.MinSemanticFull, e.RelativeFloor = 0, 0, 0
 		case part == "nogates":
 			e.MinSemantic, e.MinSemanticFull, e.RelativeFloor = 0, 0, 0
 		case part == "norel":
@@ -129,6 +132,9 @@ func main() {
 		b := a.Bound(m.Home, m.Cwd)
 		must(b.Err)
 		r := recall.Request{Session: "jcode:" + m.Session, Harness: "jcode", Message: m.Message, Scopes: b.Scopes, ScopeFor: b.ScopeFor}
+		if strings.Contains(*name, "union") {
+			r.Session = ""
+		}
 		t := time.Now()
 		c, cancel := context.WithTimeout(ctx, 30*time.Second)
 		resp, err := e.Recall(c, r)
