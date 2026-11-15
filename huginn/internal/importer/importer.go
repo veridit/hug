@@ -192,6 +192,10 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 	if resolved, e := filepath.EvalSymlinks(dstAbs); e == nil {
 		dstAbs = resolved
 		dst.Root = resolved
+	} else if parent, e := filepath.EvalSymlinks(filepath.Dir(dstAbs)); e == nil {
+		// Not created yet: resolve the parent so a symlinked temp or home
+		// directory (macOS /var -> /private/var) still compares equal.
+		dstAbs = filepath.Join(parent, filepath.Base(dstAbs))
 	}
 	if srcAbs == dstAbs || strings.HasPrefix(dstAbs, srcAbs+string(os.PathSeparator)) || strings.HasPrefix(srcAbs, dstAbs+string(os.PathSeparator)) {
 		// Usually the repository root was given: it contains .huginn/ itself.
