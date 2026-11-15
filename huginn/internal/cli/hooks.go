@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/importer"
@@ -17,11 +19,28 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	if len(f.args) >= 1 && f.args[0] == "github" {
 		return a.runImportGitHub(ctx, s, f)
 	}
+	if len(f.args) >= 1 && f.args[0] == "files" {
+		if e := f.count(2); e != nil {
+			return nil, usage("import files needs the folder of per-task folders", "huginn import files DIR [--cite PREFIX] [--dry-run]")
+		}
+		dry := f.has("dry-run")
+		r, e := importer.ImportFiles(f.args[1], f.get("cite"), s.s, dry)
+		if e != nil {
+			return nil, e
+		}
+		if dry {
+			return Reply{"import": r, "next": "huginn import files " + f.args[1]}, nil
+		}
+		if e = s.r.Commit(nil, "huginn import files "+f.args[1]); e != nil {
+			return nil, e
+		}
+		return Reply{"import": r, "next": "huginn lint"}, nil
+	}
 	if e := f.count(2); e != nil {
 		return nil, e
 	}
 	if f.args[0] != "backlog" {
-		return nil, usage("unknown import format "+f.args[0]+"; valid: backlog, github; closest: backlog", "huginn import backlog "+f.args[1])
+		return nil, usage("unknown import format "+f.args[0]+"; valid: backlog, github, files; closest: backlog", "huginn import backlog "+f.args[1])
 	}
 	dry := f.has("dry-run")
 	report, e := importer.Run(ctx, f.args[1], s.s, importer.Options{DryRun: dry})
@@ -133,6 +152,21 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	}
 	if m.RemoteBranch {
 		did = append(did, "remote branch renamed")
+	}
+	// Settings file: huginn.toml becomes hug.toml (committed on the task branch).
+	if top, e := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel").Output(); e == nil {
+		dir := filepath.Join(strings.TrimSpace(string(top)), TaskDir)
+		if _, e := os.Stat(filepath.Join(dir, "huginn.toml")); e == nil {
+			if _, e := os.Stat(filepath.Join(dir, task.ConfigName)); os.IsNotExist(e) {
+				if out, e := exec.CommandContext(ctx, "git", "-C", dir, "mv", "huginn.toml", task.ConfigName).CombinedOutput(); e != nil {
+					return nil, &OperationError{Problem: "rename huginn.toml: " + strings.TrimSpace(string(out)), Fix: "git -C " + dir + " mv huginn.toml " + task.ConfigName}
+				}
+				if out, e := exec.CommandContext(ctx, "git", "-C", dir, "commit", "-q", "-m", "hug upgrade: huginn.toml -> "+task.ConfigName).CombinedOutput(); e != nil {
+					return nil, &OperationError{Problem: "commit rename: " + strings.TrimSpace(string(out)), Fix: "git -C " + dir + " status"}
+				}
+				did = append(did, "huginn.toml renamed to "+task.ConfigName)
+			}
+		}
 	}
 	if len(did) == 0 {
 		did = append(did, "already on the hug layout")

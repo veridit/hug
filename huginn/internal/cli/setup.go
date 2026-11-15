@@ -94,6 +94,34 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 			"huginn import backlog "+backlogDir+" --dry-run && huginn import backlog "+backlogDir)
 	}
 
+	// Per-task file folders kept outside the task branch (any layout: a folder
+	// whose subfolders are named by task ids or aliases, such as
+	// .backlog/evidence/TASK-1966/). Tasks cite them by path; importing moves
+	// them into each task's own folder and rewrites the citations.
+	for _, cand := range []string{".backlog/evidence", "evidence", ".evidence"} {
+		dir := filepath.Join(root, cand)
+		if fi, e := os.Stat(dir); e != nil || !fi.IsDir() {
+			continue
+		}
+		done, detail := false, cand+"/ holds per-task files that tasks cite by path; import them into the tasks' own folders."
+		if branch && statErr == nil {
+			if s, e := a.open(ctx); e == nil {
+				r, e := importer.ImportFiles(dir, cand, s.s, true)
+				s.c.Close()
+				if e == nil {
+					if r.Copied+r.Unchanged == 0 {
+						continue // not task folders after all
+					}
+					done = r.Copied == 0 && r.Citations == 0
+					detail = fmt.Sprintf("%s/: %d files to copy, %d already in place, %d citations to rewrite, %d folders match no task.", cand, r.Copied, r.Unchanged, r.Citations, len(r.Unmatched))
+				}
+			}
+		}
+		add("import task files", done, detail,
+			"hug task import files "+cand+" --cite "+cand+" --dry-run && hug task import files "+cand+" --cite "+cand+
+				" && hug task lint; afterwards cite files as file:NAME (this task) or task:ID/NAME, and attach new ones with hug task attach ID FILE")
+	}
+
 	instr := []string{}
 	backlogMentions := []string{}
 	for _, name := range []string{"AGENTS.md", "CLAUDE.md"} {

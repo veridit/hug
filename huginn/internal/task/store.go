@@ -56,6 +56,10 @@ func (s *Store) Tasks() ([]Task, error) {
 			if strings.HasPrefix(d.Name(), ".") && path != s.Root {
 				return filepath.SkipDir
 			}
+			// A task's files folder holds files, never tasks.
+			if rel, _ := filepath.Rel(s.Root, path); path != s.Root && IsTaskFolder(s.Root, filepath.ToSlash(rel)) {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 		if !strings.HasSuffix(path, ".md") || d.Type()&os.ModeSymlink != 0 {
@@ -406,6 +410,18 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	}
 	if e := renameFile(source, dest); e != nil {
 		return Result{}, e
+	}
+	// The task's files folder moves with it (group moves only; rank and
+	// slug changes keep the same parent folder).
+	if oldDir, newDir := filepath.Join(filepath.Dir(source), d.Task.ID), filepath.Join(filepath.Dir(dest), d.Task.ID); oldDir != newDir {
+		if st, e := os.Lstat(oldDir); e == nil && st.IsDir() {
+			if _, e := os.Lstat(newDir); e == nil {
+				return Result{}, &Error{Kind: "path-exists", ID: d.Task.ID, Value: filepath.ToSlash(filepath.Join(group, d.Task.ID)), Fix: "huginn lint"}
+			}
+			if e := os.Rename(oldDir, newDir); e != nil {
+				return Result{}, e
+			}
+		}
 	}
 	d.Task.Path = path
 	d.Task.Group = filepath.ToSlash(filepath.Dir(path))

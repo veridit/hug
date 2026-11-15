@@ -165,6 +165,9 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 			if strings.HasPrefix(d.Name(), ".") && path != c.Root {
 				return filepath.SkipDir
 			}
+			if rel, _ := filepath.Rel(c.Root, path); path != c.Root && task.IsTaskFolder(c.Root, filepath.ToSlash(rel)) {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 		if !strings.HasSuffix(d.Name(), ".md") || d.Type()&os.ModeSymlink != 0 {

@@ -58,7 +58,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: huginn next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -213,7 +213,7 @@ func parse(args []string, allowed string) (flags, error) {
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "huginn help")
 		}
-		if slices.Contains([]string{"json", "help", "mine", "top", "dry-run", "all-instances", "all"}, key) {
+		if slices.Contains([]string{"json", "help", "mine", "top", "dry-run", "all-instances", "all", "replace"}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "huginn help")
 			}
@@ -327,7 +327,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "huginn "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee", "import": "dry-run"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee", "import": "dry-run cite", "show": "file", "attach": "name note replace safe-reason content"}
 	f, e := parse(args, allowed[cmd])
 	if e != nil {
 		return nil, e
@@ -454,12 +454,91 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(1); e != nil {
 			return nil, e
 		}
+		if name := f.get("file"); name != "" {
+			b, e := s.s.ReadFile(f.args[0], name)
+			if e != nil {
+				return nil, e
+			}
+			return Reply{"file": name, "content": string(b), "next": "huginn show " + f.args[0]}, nil
+		}
 		d, e := s.s.Get(f.args[0])
 		if e != nil {
 			return nil, e
 		}
 		ts, e := s.s.Tasks()
-		return Reply{"task": taskJSON(d.Task, s.r.Dir, ts), "next": task.NextHint(d.Task)}, e
+		if e != nil {
+			return nil, e
+		}
+		_, files, e := s.s.Files(d.Task.ID)
+		if e != nil {
+			return nil, e
+		}
+		if files == nil {
+			files = []task.File{}
+		}
+		return Reply{"task": taskJSON(d.Task, s.r.Dir, ts), "files": files, "next": task.NextHint(d.Task)}, nil
+	case "attach":
+		if len(f.args) < 2 && !(len(f.args) == 1 && f.has("content")) {
+			return nil, usage("attach needs a task and at least one file", `huginn attach ID FILE... [--name NAME] [--note "what this shows"] [--replace]`)
+		}
+		if f.has("name") && !f.has("content") && len(f.args) != 2 {
+			return nil, usage("--name renames one file; attach one file at a time with --name", "huginn attach "+f.args[0]+" FILE --name NAME")
+		}
+		// Read and check every file first, so a refusal writes nothing.
+		var ins []attachIn
+		if f.has("content") {
+			if f.get("name") == "" || len(f.args) != 1 {
+				return nil, usage("--content needs --name and no file arguments", "huginn attach ID --content TEXT --name NAME")
+			}
+			b := []byte(f.get("content"))
+			if e := task.CheckText(f.get("name"), b); e != nil {
+				return nil, e
+			}
+			if hint := secretHint(b); hint != "" && f.get("safe-reason") == "" {
+				return nil, &OperationError{Problem: f.get("name") + " looks like it may contain a secret (" + hint + ")", Fix: "remove it, or attach again with safe_reason"}
+			}
+			ins = append(ins, attachIn{f.get("name"), b})
+		}
+		for _, path := range f.args[1:] {
+			ins2, e := readAttach(path, f.get("name"))
+			if e != nil {
+				return nil, e
+			}
+			for _, x := range ins2 {
+				if e := task.CheckText(x.name, x.b); e != nil {
+					return nil, e
+				}
+				if hint := secretHint(x.b); hint != "" && f.get("safe-reason") == "" {
+					return nil, &OperationError{Problem: x.name + " looks like it may contain a secret (" + hint + ")",
+						Fix: "remove it, or attach again with --safe-reason \"why this is safe\""}
+				}
+				ins = append(ins, x)
+			}
+		}
+		var results []task.AttachResult
+		for _, x := range ins {
+			res, ar, e := s.s.Attach(f.args[0], x.name, x.b, f.get("note"), f.has("replace"))
+			if e != nil {
+				return nil, e
+			}
+			r = res
+			results = append(results, ar)
+		}
+		if e = s.r.Commit(nil, "huginn attach "+r.Task.ID); e != nil {
+			return nil, e
+		}
+		reply, e := resultJSON(r, s)
+		if e != nil {
+			return nil, e
+		}
+		reply["attached"] = results
+		reply["next"] = "huginn show " + r.Task.ID
+		return reply, nil
+	case "detach":
+		if e = f.count(2); e != nil {
+			return nil, e
+		}
+		r, e = s.s.Detach(f.args[0], f.args[1])
 	case "next":
 		if e = f.count(0); e != nil {
 			return nil, e
@@ -473,6 +552,15 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e != nil {
 			return nil, e
 		}
+		forbid, e := task.ForbidCite(s.r.Dir)
+		if e != nil {
+			return nil, e
+		}
+		more, e := s.s.LintFiles(forbid)
+		if e != nil {
+			return nil, e
+		}
+		fs = append(fs, more...)
 		if fs == nil {
 			fs = []task.Finding{}
 		}

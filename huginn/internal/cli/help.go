@@ -14,7 +14,7 @@ func commandHelp(command string) string {
 		"take": "take ID", "done": "done ID", "check": "check ID N", "note": `note ID "text"`,
 		"set":  `set ID [--title "title"] [--type TYPE] [--priority LABEL] [--label LABEL] [--status STATUS] [--assignee NAME]`,
 		"drop": "drop ID", "dep": "dep ID [--add REF ...] [--remove REF ...]", "next": "next [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]",
-		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY [--dry-run] | import github [OWNER/REPO] [--dry-run]", "board": "board [--all] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]", "tui": "tui", "mcp": "mcp", "upgrade": "upgrade", "help": "help [COMMAND]",
+		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY [--dry-run] | import github [OWNER/REPO] [--dry-run] | import files DIR [--cite PREFIX] [--dry-run]", "board": "board [--all] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]", "tui": "tui", "mcp": "mcp", "upgrade": "upgrade", "help": "help [COMMAND]",
 	}
 	details := map[string]string{
 		"setup":     "Prints what an agent needs to switch this repository to huginn, then a checklist of the steps still open, each with the exact command or edit. Reads only; changes nothing. Re-run after each step.\n",

@@ -116,14 +116,20 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	add("list", "List tasks in rank order, including done and dropped unless filtered.", p, nil, func(m map[string]any) ([]string, error) {
 		return flags([]string{"ls"}, m, "type", "priority", "label", "group", "mine", "status"), nil
 	})
-	add("show", "Show a task by id, unique prefix, slug or alias with dependencies and acceptance.", map[string]any{"id": str("Task reference")}, []string{"id"}, func(m map[string]any) ([]string, error) { return []string{"show", get(m, "id")}, nil })
+	add("show", "Show a task by id, unique prefix, slug or alias with dependencies, acceptance and its files (name, bytes, sha256). With file, returns that file's content.", map[string]any{"id": str("Task reference"), "file": str("A task file name, e.g. bench/README.md, to read its content")}, []string{"id"}, func(m map[string]any) ([]string, error) {
+		args := []string{"show", get(m, "id")}
+		if f := get(m, "file"); f != "" {
+			args = append(args, "--file", f)
+		}
+		return args, nil
+	})
 	array := func(desc string) map[string]any {
 		return map[string]any{"type": "array", "items": map[string]any{"type": "string"}, "description": desc}
 	}
 	add("new", "Create a task with a goal, acceptance checks and optional dependency references.", map[string]any{"title": str("Task title"), "goal": str("Desired outcome"), "accept": array("Observable acceptance checks"), "dep": array("Dependency ids, slugs or aliases"), "type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "label": array("Labels"), "group": str("Folder"), "top": map[string]any{"type": "boolean"}, "after": str("Task to follow")}, []string{"title", "goal", "accept"}, func(m map[string]any) ([]string, error) {
 		return flags([]string{"new", get(m, "title")}, m, "goal", "accept", "dep", "type", "priority", "label", "group", "top", "after"), nil
 	})
-	add("update", "Change fields (set), dependencies (dep), checks, notes, rank (move), folder (move_group), or drop, using only the selected action's fields.", map[string]any{"id": str("Task reference"), "action": enum("set", "check", "note", "move", "move_group", "mv", "dep", "drop", "rebalance"), "status": enum("todo", "doing", "done", "dropped"), "type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "title": str("New title"), "label": str("Label"), "assignee": str("Assignee"), "item": map[string]any{"type": "integer", "minimum": 1}, "text": str("Note text"), "add_deps": array("Dependency references to add, idempotently; use action dep"), "remove_deps": array("Dependency references to remove; use action dep"), "group": str("Destination folder, requires action move_group and preserves rank and contents"), "before": str("Insert before task"), "after": str("Insert after task"), "top": map[string]any{"type": "boolean"}}, []string{"id"}, func(m map[string]any) ([]string, error) {
+	add("update", "Change fields (set), dependencies (dep), checks, notes, rank (move), folder (move_group), or drop, using only the selected action's fields.", map[string]any{"id": str("Task reference"), "action": enum("set", "check", "note", "move", "move_group", "mv", "dep", "drop", "rebalance", "attach", "detach"), "name": str("Task file name for attach/detach, e.g. bench/README.md"), "content": str("Text to attach as the file (attach); use instead of paths when the server cannot read your files"), "paths": array("Files or folders to attach (attach), read by the server"), "replace": map[string]any{"type": "boolean"}, "safe_reason": str("Only after a secret warning: why the text is safe"), "status": enum("todo", "doing", "done", "dropped"), "type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "title": str("New title"), "label": str("Label"), "assignee": str("Assignee"), "item": map[string]any{"type": "integer", "minimum": 1}, "text": str("Note text"), "add_deps": array("Dependency references to add, idempotently; use action dep"), "remove_deps": array("Dependency references to remove; use action dep"), "group": str("Destination folder, requires action move_group and preserves rank and contents"), "before": str("Insert before task"), "after": str("Insert after task"), "top": map[string]any{"type": "boolean"}}, []string{"id"}, func(m map[string]any) ([]string, error) {
 		action, id := get(m, "action"), get(m, "id")
 		if action == "" {
 			action = "set"
@@ -134,7 +140,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 				action = "dep"
 			}
 		}
-		allowed := map[string]string{"set": "status type priority title label assignee", "check": "item", "note": "text", "move": "before after top", "move_group": "group", "mv": "group", "dep": "add_deps remove_deps", "drop": "", "rebalance": ""}
+		allowed := map[string]string{"set": "status type priority title label assignee", "check": "item", "note": "text", "move": "before after top", "move_group": "group", "mv": "group", "dep": "add_deps remove_deps", "drop": "", "rebalance": "", "attach": "name content paths replace safe_reason text", "detach": "name"}
 		permitted := strings.Fields(allowed[action] + " id action")
 		for key := range m {
 			if !slices.Contains(permitted, key) {
@@ -166,6 +172,36 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		}
 		args := []string{action, id}
 		switch action {
+		case "attach":
+			if get(m, "content") != "" {
+				if get(m, "name") == "" {
+					return nil, &cli.UsageError{Problem: "attach with content needs name", Fix: "set name, e.g. results.tsv"}
+				}
+				args = append(args, "--content", get(m, "content"), "--name", get(m, "name"))
+			} else {
+				ps, _ := m["paths"].([]any)
+				if len(ps) == 0 {
+					return nil, &cli.UsageError{Problem: "attach needs content (with name) or paths", Fix: "pass content and name"}
+				}
+				for _, p := range ps {
+					args = append(args, fmt.Sprint(p))
+				}
+				if n := get(m, "name"); n != "" {
+					args = append(args, "--name", n)
+				}
+			}
+			if t := get(m, "text"); t != "" {
+				args = append(args, "--note", t)
+			}
+			if r, _ := m["replace"].(bool); r {
+				args = append(args, "--replace")
+			}
+			if sr := get(m, "safe_reason"); sr != "" {
+				args = append(args, "--safe-reason", sr)
+			}
+			return args, nil
+		case "detach":
+			return []string{"detach", id, get(m, "name")}, nil
 		case "set":
 			args = flags(args, m, "status", "type", "priority", "title", "label", "assignee")
 		case "check":
