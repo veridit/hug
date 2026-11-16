@@ -1,6 +1,6 @@
 ---
 id: mkzcqr
-title: "a sort key orders the list by status, priority, updated or rank"
+title: "TUI sort builder: order by one field, then another, then Enter"
 status: todo
 type: feature
 priority: ""
@@ -11,13 +11,14 @@ updated: 2026-11-16
 ---
 
 ## Goal
-a sort key orders the list by status, priority, updated or rank
-
-Promoted from item 4 of task:0sw0dd.
+In hug tui you build a nested sort step by step: pick a field, pick its direction, then either add another field (then by ...) or press Enter to apply; Esc at any point leaves the order as it was. The header shows the active sort, e.g. 'sort: priority ↓ · type · updated ↓'.
 
 ## Depends on
 
 ## Acceptance
-- [ ] a sort key orders the list by status, priority, updated or rank
+- [ ] ': sort', p (priority), then t (type), Enter orders rows by priority then type, and the header shows 'sort: priority ↓ · type' (test and golden)
+- [ ] Esc in the middle of building leaves the previous order unchanged (test)
+- [ ] the same field letter twice flips its direction; Backspace removes the last field (test)
+- [ ] with a sort other than rank, J/K, m, y and P/p are not shown and say 'moving needs rank order: : sort rank' when pressed (test)
 
 ## Notes
