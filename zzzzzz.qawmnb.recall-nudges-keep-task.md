@@ -34,3 +34,5 @@ Signals the hook already has: the session's last task commits on hug/tasks, its 
 User direction 2026-11-16 09:39-09:41: the nudge replaces doctrine. Instead of instructions ('do an honest check', 'keep the board current'), the system says the right thing at the right moment, chosen by memory and semantics (the message and what the agent is about to do), not by a timer. Cases named: starting work -> take the task and put its acceptance items in your todos; checks met -> tick them and close the ticket; new ticket -> todos to follow it up and verify. Harnesses with built-in todos (jcode, Claude Code, Codex) get 'use your todos'; pi may later need a hug-provided session todo. Treat tool deficiencies, irrelevant memories and missed reminders as bugs to fix continuously.
 
 part 1 committed a23d4e6: task.Guide lines printed as 'now:' (CLI) and 'guide' (MCP) on take/check/done/drop/promote. Per Jørgen 2026-11-16: one todo per task, not per check; a detoured task stays doing. go test ./huginn/... all ok.
+
+Part 1 released in v0.7.15: now: lines on take/check/done/drop/promote, MCP guide field; take names the todo by task id.
