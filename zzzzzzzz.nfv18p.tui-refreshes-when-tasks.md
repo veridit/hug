@@ -3,7 +3,7 @@ id: nfv18p
 title: "TUI refreshes when tasks change on disk"
 status: todo
 type: feature
-priority: "medium"
+priority: "high"
 assignee: []
 labels: []
 created: 2026-11-16
