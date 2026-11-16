@@ -38,3 +38,5 @@ part 1 committed a23d4e6: task.Guide lines printed as 'now:' (CLI) and 'guide' (
 Part 1 released in v0.7.15: now: lines on take/check/done/drop/promote, MCP guide field; take names the todo by task id.
 
 2026-11-16 Jørgen: also nudge about lint findings, the way dream items are handed out, so a board with problems gets cleaned up over time (seid has thousands). Today nothing does: hug task next, take and the recall hook never mention findings; only 'hug task import' ends with 'next: hug task lint'. Counts on the seid copy: 1158 no-acceptance, 827 long-title, 432 done-unchecked, 24 missing-goal, 20 parent-too-deep, 10 duplicate-section, 4 missing-section, 2 dependency-cycle. Proposal for part 2: reuse the dream cue (muninn/internal/recall/dream.go: only at a break, at most once per 6 h per session), one line, one finding, with its fix command; prefer findings on open tasks and on tasks the session touched; never a count dump. Depends on rx74bp so each finding has a usable fix line.
+
+2026-11-16 crab: back to todo. Part 1 shipped (v0.7.15); nobody is building part 2 yet, so doing was false. Staff it next.
