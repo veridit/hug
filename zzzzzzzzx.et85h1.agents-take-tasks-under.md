@@ -1,7 +1,7 @@
 ---
 id: et85h1
 title: "Agents name themselves (and their model) when they take a task"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["dragon"]
