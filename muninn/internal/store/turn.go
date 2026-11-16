@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/veridit/hug/muninn/internal/flock"
+	"github.com/veridit/hug/internal/flock"
 )
 
 // The write turn: one hug process at a time runs a write flow (an index pass,

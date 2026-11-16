@@ -94,6 +94,8 @@ type session struct {
 	r *gitbranch.Repository
 	c *cache.Cache
 	s *task.Store
+	// nudged: this command started (or found) a background pass (0hkaa5).
+	nudged bool
 }
 
 // Task branch layout (2026-11-15): hug keeps each kind of data on its own
@@ -156,7 +158,7 @@ func (a *App) open(ctx context.Context) (*session, error) {
 		c.Close()
 		return nil, e
 	}
-	return &session{r, c, s}, nil
+	return &session{r: r, c: c, s: s}, nil
 }
 func (a *App) refreshExisting(ctx context.Context) error {
 	cwd := a.Cwd
@@ -263,7 +265,7 @@ func parse(args []string, allowed string, optionalValue ...string) (flags, error
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary"}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary", strings.TrimPrefix(SyncChildArg, "--")}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -397,7 +399,7 @@ func resultJSON(r task.Result, s *session) (Reply, error) {
 }
 
 // Execute performs exactly the same operation for shell and MCP callers.
-func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
+func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err error) {
 	cmd := "help"
 	if len(args) > 0 {
 		cmd = args[0]
@@ -411,7 +413,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -472,11 +474,27 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 	if cmd == "install" || cmd == "uninstall" {
 		return a.runInstall(cmd, f)
 	}
+	if cmd == "sync" && f.has(strings.TrimPrefix(SyncChildArg, "--")) {
+		return a.backgroundPass(ctx)
+	}
 	s, e := a.open(ctx)
 	if e != nil {
 		return nil, e
 	}
 	defer s.c.Close()
+	// Writes hold the board turn from reading to committing; take and sync
+	// order their locks themselves (run, then turn), as a background pass does.
+	if !readOnly[cmd] && cmd != "take" && cmd != "sync" && cmd != "tui" && cmd != "edit" {
+		defer s.turn()()
+	}
+	// Reads bring in other clones' changes: a background pass when the last
+	// is stale (a lock try and a stat; it never waits on git or the network).
+	defer s.nudgeIfStale()
+	defer func() {
+		if reply != nil && err == nil {
+			s.syncStatus(reply)
+		}
+	}()
 	empty := func() (Reply, error) {
 		ts, e := s.s.Tasks()
 		if e != nil {
@@ -537,7 +555,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(0); e != nil {
 			return nil, e
 		}
-		e = s.r.Commit(nil, "hug task init")
+		e = s.commit("hug task init")
 		if e == nil {
 			e = s.r.EnsureFirstCommit("hug task init")
 		}
@@ -650,7 +668,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			r = res
 			results = append(results, ar)
 		}
-		if e = s.r.Commit(nil, "hug task attach "+r.Task.ID); e != nil {
+		if e = s.commit("hug task attach " + r.Task.ID); e != nil {
 			return nil, e
 		}
 		reply, e := resultJSON(r, s)
@@ -718,7 +736,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(0); e != nil {
 			return nil, e
 		}
-		if e = s.r.Sync(); e != nil {
+		if e = s.syncNow(); e != nil {
 			return nil, e
 		}
 		return empty()
@@ -768,7 +786,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		}
 		r, e = s.s.Promote(f.args[0], n)
 		if e == nil {
-			if e = s.r.Commit(nil, "hug task promote "+f.args[0]+" "+f.args[1]); e != nil {
+			if e = s.commit("hug task promote " + f.args[0] + " " + f.args[1]); e != nil {
 				return nil, e
 			}
 			reply, e := resultJSON(r, s)
@@ -844,7 +862,12 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = c.Run(); e != nil {
 			return nil, e
 		}
-		if e = s.r.Commit(nil, "hug task edit "+d.Task.ID); e != nil {
+		// The turn covers the commit, not the editor: a background rebase
+		// meanwhile refuses to start over the edited file (uncommitted).
+		release := s.turn()
+		e = s.commit("hug task edit " + d.Task.ID)
+		release()
+		if e != nil {
 			return nil, e
 		}
 		fs, err := s.c.Lint(ctx)
@@ -896,17 +919,17 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		msg := fmt.Sprintf("rebalanced: %d filenames rekeyed, task order and contents unchanged", len(r.Renamed))
 		if len(r.Renamed) == 0 {
 			msg = "rebalance: nothing to rekey"
-		} else if e = s.r.Commit(nil, fmt.Sprintf("hug task rebalance (%d files)", len(r.Renamed))); e != nil {
+		} else if e = s.commit(fmt.Sprintf("hug task rebalance (%d files)", len(r.Renamed))); e != nil {
 			return nil, e
 		}
 		return Reply{"changed": r.Changed, "next": r.Next, "renamed": r.Renamed, "renames": r.Renames, "message": msg}, nil
 	}
 	if cmd != "next" && cmd != "take" {
-		if e = s.r.Commit(nil, "hug task "+cmd+" "+r.Task.ID); e != nil {
+		if e = s.commit("hug task " + cmd + " " + r.Task.ID); e != nil {
 			return nil, e
 		}
 	}
-	reply, e := resultJSON(r, s)
+	reply, e = resultJSON(r, s)
 	if e == nil && r.Changed {
 		withGuide(reply, cmd, r.Task, s)
 	}
@@ -1155,6 +1178,12 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		for _, v := range ws {
 			fmt.Fprintln(a.Out, "warning: "+v)
 		}
+	}
+	// The last background sync failed (0hkaa5): say so with its fix, after
+	// the command's own output and before next.
+	if sy, ok := reply["sync"].(Reply); ok {
+		fmt.Fprintln(a.Out, "sync: "+sy["message"].(string))
+		fmt.Fprintln(a.Out, "fix: "+sy["fix"].(string))
 	}
 	if msg, ok := reply["message"].(string); ok {
 		fmt.Fprintln(a.Out, msg)

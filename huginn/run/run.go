@@ -24,6 +24,7 @@ func Main(args []string) int {
 		fmt.Println("hug " + Version)
 		return 0
 	}
+	cli.SpawnSelf()
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 	cwd, e := os.Getwd()
@@ -54,6 +55,7 @@ func RegisterMCP(s *sdk.Server, prefix string) error {
 	if err != nil {
 		return err
 	}
+	cli.SpawnSelf()
 	mcp.Register(s, &cli.App{Cwd: cwd, In: os.Stdin, Out: os.Stderr, Err: os.Stderr}, prefix)
 	return nil
 }

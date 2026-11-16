@@ -31,7 +31,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 		if dry {
 			return Reply{"import": r, "next": "hug task import files " + f.args[1]}, nil
 		}
-		if e = s.r.Commit(nil, "hug task import files "+f.args[1]); e != nil {
+		if e = s.commit("hug task import files " + f.args[1]); e != nil {
 			return nil, e
 		}
 		return Reply{"import": r, "next": "hug task lint"}, nil
@@ -54,7 +54,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	if dry {
 		return Reply{"import": report, "dry_run": true, "next": "hug task import backlog " + f.args[1]}, nil
 	}
-	if e = s.r.Commit(nil, "hug task import backlog"); e != nil {
+	if e = s.commit("hug task import backlog"); e != nil {
 		return nil, e
 	}
 	if _, e = s.s.Tasks(); e != nil {
@@ -72,11 +72,11 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// Taking from the TUI uses the same rule as hug task take: the model is
 	// required (--model or HUG_MODEL), the name is optional (et85h1).
 	who := a.whoTakes(f)
-	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Version: a.Version, Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { return s.r.Commit(nil, msg) }})
+	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Version: a.Version, Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) }})
 	if e != nil {
 		return nil, e
 	}
-	if e = s.r.Commit(nil, "hug task tui"); e != nil {
+	if e = s.commit("hug task tui"); e != nil {
 		return nil, e
 	}
 	return Reply{"next": "hug task next"}, nil
@@ -121,7 +121,7 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 	if dry {
 		return Reply{"import": report, "issues": len(issues), "dry_run": true, "next": again}, nil
 	}
-	if e = s.r.Commit(nil, "hug task import github"); e != nil {
+	if e = s.commit("hug task import github"); e != nil {
 		return nil, e
 	}
 	if _, e = s.s.Tasks(); e != nil {

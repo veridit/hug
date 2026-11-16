@@ -6,6 +6,7 @@ package gitbranch
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Identity overrides Git's configured author and committer for this handle.
@@ -72,8 +74,23 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 	if dir == r.Dir && len(args) > 0 && (args[0] == "commit" || args[0] == "rebase" || args[0] == "merge") {
 		args = append([]string{"-c", "core.hooksPath=" + os.DevNull}, args...)
 	}
-	c := exec.Command("git", append([]string{"-C", dir}, args...)...)
+	net := isNet(args)
+	full := args
+	if net {
+		full = netArgs(args)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	if net {
+		ctx, cancel = context.WithTimeout(ctx, NetTimeout)
+	}
+	defer cancel()
+	c := exec.CommandContext(ctx, "git", append([]string{"-C", dir}, full...)...)
+	// ssh may outlive a killed git and hold its output pipes: stop waiting.
+	c.WaitDelay = 2 * time.Second
 	c.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_EDITOR=true", "GIT_MERGE_AUTOEDIT=no")
+	if net {
+		c.Env = netEnv(dir, c.Env)
+	}
 	if r.Identity.Name != "" {
 		c.Env = append(c.Env, "GIT_AUTHOR_NAME="+r.Identity.Name, "GIT_COMMITTER_NAME="+r.Identity.Name)
 	}
@@ -90,6 +107,19 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 		}
 		detail := strings.TrimSpace(string(b) + stderr.String() + " " + err.Error())
 		fix := "git -C " + quote(dir) + " " + strings.Join(quoted, " ")
+		if net && errors.Is(ctx.Err(), context.DeadlineExceeded) {
+			return string(b), &Error{Op: strings.Join(args, " "), Detail: netTimeout(args), Fix: fix, Cause: ErrNetTimeout}
+		}
+		// An unreachable remote (offline, DNS, a moved path) is not a key
+		// problem, though ssh ends both with "Could not read from remote
+		// repository": say which (0hkaa5).
+		unreachable := false
+		for _, s := range []string{"Could not resolve hostname", "Could not resolve host", "connect to host", "Connection refused", "Network is unreachable", "Operation timed out", "Connection timed out", "does not appear to be a git repository", "Failed to connect to"} {
+			unreachable = unreachable || strings.Contains(detail, s)
+		}
+		if net && unreachable {
+			return string(b), &Error{Op: strings.Join(args, " "), Detail: "the remote is unreachable: " + detail, Fix: fix, Cause: err}
+		}
 		// A remote that refuses the key is not fixed by re-running the same
 		// command. Apps (Claude, ChatGPT) start MCP servers without the
 		// user's SSH agent, so say so (2026-11-16, Claude app report).
@@ -476,6 +506,12 @@ func (r *Repository) pull() error {
 	if e != nil || !exists {
 		return e
 	}
+	return r.integrate()
+}
+
+// integrate rebases local commits onto the fetched remote branch, without
+// the network. A conflict aborts the rebase: local commits stay intact.
+func (r *Repository) integrate() error {
 	head, e := r.Head()
 	if e != nil {
 		return e
