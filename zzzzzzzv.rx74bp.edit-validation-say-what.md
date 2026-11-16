@@ -1,7 +1,7 @@
 ---
 id: rx74bp
 title: "Edit validation: say what is wrong and how to fix it"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["Jørgen H. Fjeld"]
