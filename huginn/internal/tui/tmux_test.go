@@ -297,6 +297,17 @@ func TestTmuxGolden(t *testing.T) {
 				snapshot("help", "NAVIGATION")
 				special("Escape")
 				wait("HUG TASKS · list")
+				// Sort builder (mkzcqr): priority then type, Enter applies.
+				send(":sort")
+				special("Enter")
+				wait("HUG TASKS · sort")
+				send("p")
+				send("t")
+				special("Enter")
+				snapshot("sort", "sort: priority ↓ · type")
+				send(":sort rank")
+				special("Enter")
+				wait("sort: rank order")
 				// Grab mode (3xcesq): the grabbed row moves on screen and the
 				// key bar shows only the keys that work; Esc writes nothing.
 				send("gg")
@@ -321,6 +332,6 @@ func TestTmuxGolden(t *testing.T) {
 		}
 	}
 	if !t.Failed() {
-		t.Log("tmux: PASS (44 real-binary goldens, 80x24/140x40, colour/NO_COLOR, all sessions cleaned up)")
+		t.Log("tmux: PASS (48 real-binary goldens, 80x24/140x40, colour/NO_COLOR, all sessions cleaned up)")
 	}
 }

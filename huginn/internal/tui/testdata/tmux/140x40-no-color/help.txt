@@ -26,12 +26,12 @@ o / i / b / !   views: overview / list (also v) / board / lint
 s / y           status / type palette (y: inside a task)
 c               clear all filters
 r               refresh now (changes on disk show by themselves)
+: sort          order by fields; : sort rank to go back
 
 PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>,
-epic <id>, goto <id>, lint, clear, help
+epic <id>, goto <id>, sort, lint, clear, help
 Filter fields: s status, t type, p priority, g group, l label, a assignee, e epic. Blocked is a todo task with unmet dependencies; a doing
 task stays doing, drawn blocked. Each task counts once. Filters combine.
-
 
 
 

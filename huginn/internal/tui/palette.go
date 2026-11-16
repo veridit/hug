@@ -21,6 +21,8 @@ var commands = []command{
 	{"lint", "", "Tasks with findings", false},
 	{"filter", "field", "Narrow the tasks by a field", false},
 	{"goto", "id", "Open a task by id", false},
+	{"sort", "", "Order rows by fields: p priority, t type, ... then Enter", false},
+	{"sort rank", "", "Back to rank order, the order moves change", true},
 	{"clear", "", "Clear every filter", false}, {"help", "", "All keys and commands", false},
 	{"todo", "", "Filter todo", true}, {"doing", "", "Filter in progress", true}, {"done", "", "Filter completed", true},
 	{"blocked", "", "Filter unmet dependencies", true}, {"dropped", "", "Filter dropped", true},

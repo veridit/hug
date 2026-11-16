@@ -48,6 +48,8 @@ func (m model) keyBar() string {
 		hints = []bkey.Binding{hint("Enter", "open"), hint("Tab", "complete"), hint("↑↓ ^n/^p", "pick"), hint("Esc", "back"), hint("?", "help")}
 	case m.prompt == "filter":
 		hints = []bkey.Binding{hint("j/k ↑↓", "pick"), hint("Enter", "add chip"), hint("type", "narrow"), hint("Esc", "back"), hint("?", "help")}
+	case m.prompt == "sort":
+		hints = []bkey.Binding{hint("letter", "add / flip"), hint("⌫", "remove last"), hint("Enter", "apply"), hint("Esc", "keep order"), hint("?", "help")}
 	case m.prompt == "/":
 		hints = []bkey.Binding{hint("Enter", "keep"), hint("Esc", "clear"), hint("?", "help")}
 	case m.prompt != "":
@@ -108,25 +110,34 @@ func (m model) helpText() string {
 		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
 		hint("o / i / b / !", "views: overview / list (also v) / board / lint"),
 		hint("s / y", "status / type palette (y: inside a task)"), hint("c", "clear all filters"), hint("r", "refresh now (changes on disk show by themselves)"),
+		hint(": sort", "order by fields; : sort rank to go back"),
 	}
 	actions := []bkey.Binding{
 		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),
 		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps"),
-		hint("t / d / x", "take / done / drop task"), hint("J / K", "move below / above the next row, no confirm"),
-		hint("m / y, P p", "grab: j/k, Enter places it / yank, paste above below"),
+		hint("t / d / x", "take / done / drop task"),
+	}
+	if len(m.sort) == 0 {
+		// Moves change rank, so they show only in rank order (mkzcqr).
+		actions = append(actions, hint("J / K", "move below / above the next row, no confirm"),
+			hint("m / y, P p", "grab: j/k, Enter places it / yank, paste above below"))
+	} else {
+		actions = append(actions, hint(": sort rank", "rank order again: then J/K, m, y, P/p move"))
+	}
+	actions = append(actions,
 		hint("N", "new title, goal and one verification item"), hint("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi"),
 		hint("e again", "after an edit left a finding: edit at once"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),
-	}
+	)
 	if m.helpQuery != "" || m.helpTyping {
 		return m.helpSearchText(append(navigation, actions...))
 	}
 	if m.width >= 130 {
-		return m.styles.accent.Render("NAVIGATION AND FIND                                     EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation, actions}) + "\n\n" + wrap("PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, lint, clear, help", m.width) + "\n" + wrap("Filter fields: s status, t type, p priority, g group, l label, a assignee, e epic. Blocked is a todo task with unmet dependencies; a doing task stays doing, drawn blocked. Each task counts once. Filters combine.", m.width)
+		return m.styles.accent.Render("NAVIGATION AND FIND                                     EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation, actions}) + "\n\n" + wrap("PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, lint, clear, help", m.width) + "\n" + wrap("Filter fields: s status, t type, p priority, g group, l label, a assignee, e epic. Blocked is a todo task with unmet dependencies; a doing task stays doing, drawn blocked. Each task counts once. Filters combine.", m.width)
 	}
 	return m.styles.accent.Render("NAVIGATION AND FIND") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation}) + "\n\n" +
 		m.styles.accent.Render("EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{actions}) + "\n\n" +
-		wrap("PALETTE: "+strings.Join([]string{"overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, group <g>, label <l>, priority <p>, assignee <a>, epic <id>, goto <id>, lint, clear, help"}, ""), m.width) + "\n" +
+		wrap("PALETTE: "+strings.Join([]string{"overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, group <g>, label <l>, priority <p>, assignee <a>, epic <id>, goto <id>, sort, lint, clear, help"}, ""), m.width) + "\n" +
 		wrap("Blocked is derived from unmet dependencies, not a persisted status. Counts overlap todo/doing. Board pages columns to fit. Slug is in detail only. Filters combine.", m.width)
 }
 

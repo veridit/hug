@@ -56,6 +56,7 @@ type model struct {
 	dependency, detailPane             int
 	link                               int                         // the task:ID marked > in Links (xxvm6t)
 	memo                               [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
+	sort, sortDraft                    []sortKey                   // the order rows are in, and the one being built (mkzcqr)
 	detailStack                        []string
 	width, height                      int
 	view                               string
@@ -337,6 +338,7 @@ func (m *model) applyFilter() {
 		}
 		m.visible = append(m.visible, t)
 	}
+	m.sortVisible() // the order built with : sort (mkzcqr); rank order without one
 	m.offset = 0
 	m.cursor = 0
 	m.clamp()
@@ -997,7 +999,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.yank()
 		case k == "P" || k == "p":
 			// In lists P and p only paste; k moves up (crab, 2026-11-16).
-			if m.yanked == "" {
+			if why := m.moveRefusal(); why != "" && len(m.sort) > 0 {
+				m.message = why
+			} else if m.yanked == "" {
 				m.message = "nothing yanked: y on a task first"
 			} else {
 				m.paste(k)
@@ -1042,6 +1046,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
+	if m.prompt == "sort" {
+		return m.updateSort(msg)
+	}
 	if m.prompt == "filter" {
 		return m.updateFilter(msg)
 	}
@@ -1065,6 +1072,17 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.complete()
 			return m, nil
 		case "enter":
+			if strings.TrimSpace(unfilter(m.input.Value())) == "sort rank" {
+				m.applySort(nil)
+				m.prompt = ""
+				m.input.Blur()
+				return m, nil
+			}
+			if strings.TrimSpace(m.input.Value()) == "sort" {
+				m.input.SetValue("")
+				m.openSort()
+				return m, nil
+			}
 			if m.commandReady() {
 				if m.executeCommand() {
 					m.prompt = ""

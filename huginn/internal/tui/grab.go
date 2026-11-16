@@ -29,6 +29,9 @@ type grabState struct {
 
 // moveRefusal says why the current section cannot be reordered, or "".
 func (m model) moveRefusal() string {
+	if len(m.sort) > 0 {
+		return sortRefusal // a move changes rank, which these rows are not in (mkzcqr)
+	}
 	if m.view == "overview" && m.pane == sectionRecent {
 		return "RECENTLY DONE is ordered by close time: move tasks in NEXT UP or the list"
 	}

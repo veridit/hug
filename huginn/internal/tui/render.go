@@ -445,10 +445,17 @@ func (m model) View() string {
 	if m.prompt == "filter" {
 		mode = "filter"
 	}
+	if m.prompt == "sort" {
+		mode = "sort"
+	}
 	if m.help {
 		mode = "help"
 	}
 	header := m.styles.accent.Render("HUG TASKS · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
+	if len(m.sort) > 0 {
+		// The active order, as the builder wrote it (mkzcqr).
+		header += m.styles.dim.Render(" · sort: " + sortLabel(m.sort))
+	}
 	tabs := []string{}
 	// The shortcut letter is bold and underlined inside the tab name, which
 	// costs no width (2026-11-11, user). lint has no letter of its own; its
@@ -506,6 +513,8 @@ func (m model) View() string {
 		content = m.jumpText()
 	case m.prompt == "filter":
 		content = m.filterText()
+	case m.prompt == "sort":
+		content = m.sortText()
 	case m.detail:
 		if t, ok := m.selected(); ok {
 			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.viewport.View()
@@ -569,7 +578,7 @@ func (m model) View() string {
 	}
 	if m.confirm != "" {
 		inputLine = m.confirmLine()
-	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" {
+	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" {
 		inputLine = m.input.View()
 	} else if m.pendingG {
 		inputLine = "g … press g for top"
