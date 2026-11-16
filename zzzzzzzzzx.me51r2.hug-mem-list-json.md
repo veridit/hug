@@ -4,7 +4,7 @@ title: "Concurrent writes wait their turn; hug mem list --json; batch forget"
 status: "doing"
 type: bug
 priority: "high"
-assignee: ["hare"]
+assignee: ["dragon"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
