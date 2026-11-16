@@ -27,7 +27,7 @@ Today: hug task finds .hug/tasks via the repository root; a linked worktree has 
 
 ## Acceptance
 - [x] done when task:065wwn is done (hug task ls in a linked worktree shows the main board and writes to it)
-- [ ] hug task take in a linked worktree on branch feat/x records branch feat/x and the worktree folder on the task, without flags (test)
+- [x] hug task take in a linked worktree on branch feat/x records branch feat/x and the worktree folder on the task, without flags (test)
 - [ ] MCP task_take always requires cwd: without it, it fails with a fix: line; with it, branch and worktree are detected and recorded (test)
 - [ ] show, ls --json and the TUI detail show the branch; in-progress rows show it when it is not the main branch (test and golden)
 - [ ] memories captured or remembered in a worktree record its branch (test)
