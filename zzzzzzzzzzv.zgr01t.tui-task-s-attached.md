@@ -30,3 +30,5 @@ Storage: huginn/internal/task/files.go (Attach, text only, 256 KiB). Example: 44
 - [ ] one key opens the task's folder in the editor; the key is not shown for a task without files (test)
 
 ## Notes
+
+2026-11-16 decided (Jørgen): edits made in the editor are saved and committed when the editor closes, same as e for the task. Open question closed.
