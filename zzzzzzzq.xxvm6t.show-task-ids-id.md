@@ -30,7 +30,7 @@ TUI: taskRowMark and the overview rows in huginn/internal/tui/render.go render "
 - [x] every command that takes a ref accepts task:ID as well as the bare id (today 'hug task show task:9taa9d' prints not-found) (test)
 - [x] every printed command still uses the bare id and runs when pasted into a shell (test)
 - [x] in the TUI a task:ID in notes or description can be followed to that task, and Esc comes back (test)
-- [ ] full tests pass; goldens reviewed
+- [x] full tests pass; goldens reviewed
 
 ## Notes
 
