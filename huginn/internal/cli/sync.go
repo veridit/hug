@@ -86,7 +86,9 @@ func (s *session) nudgeIfStale() {
 // turn holds the board turn for a write: a background rebase waits, so it
 // never moves task files between this command reading and committing them.
 func (s *session) turn() func() {
-	if b, ok := s.background(); ok {
+	// Every board, with a remote or without: parallel writers on one board
+	// also collide on git's index and HEAD (m8shdj).
+	if b, e := s.r.Background(); e == nil {
 		if release, e := b.Turn(); e == nil {
 			return release
 		}

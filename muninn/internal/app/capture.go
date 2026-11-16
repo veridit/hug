@@ -102,7 +102,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 		token := hex.EncodeToString(tokenBytes)
 		for {
 			now := time.Now()
-			res, err := a.DB.ExecContext(ctx, `INSERT INTO capture_lock(id,token,expires_ns) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,expires_ns=excluded.expires_ns WHERE capture_lock.expires_ns<?`, token, now.Add(budget+10*time.Second).UnixNano(), now.UnixNano())
+			res, err := a.captureExec(ctx, `INSERT INTO capture_lock(id,token,expires_ns) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,expires_ns=excluded.expires_ns WHERE capture_lock.expires_ns<?`, token, now.Add(budget+10*time.Second).UnixNano(), now.UnixNano())
 			if err != nil {
 				return report, err
 			}
@@ -122,11 +122,11 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			case <-time.After(100 * time.Millisecond):
 			}
 		}
-		defer a.DB.Exec(`DELETE FROM capture_lock WHERE id=1 AND token=?`, token)
+		defer a.captureExec(context.Background(), `DELETE FROM capture_lock WHERE id=1 AND token=?`, token)
 	}
 	identity := captureHash(o.Harness + "\x00" + o.Home + "\x00" + o.Session)
 	if !o.DryRun {
-		if _, err := a.DB.ExecContext(ctx, `INSERT OR IGNORE INTO capture_bindings(session,scope) VALUES(?,?)`, identity, scope); err != nil {
+		if _, err := a.captureExec(ctx, `INSERT OR IGNORE INTO capture_bindings(session,scope) VALUES(?,?)`, identity, scope); err != nil {
 			return report, err
 		}
 	}
@@ -208,8 +208,13 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 		older := pending[:cut]
 		report.BacklogSkipped = len(older)
 		if !o.DryRun {
-			tx, err := a.DB.BeginTx(ctx, nil)
+			turnCtx, release, err := a.WriteTurn(ctx)
 			if err != nil {
+				return report, err
+			}
+			tx, err := a.DB.BeginTx(turnCtx, nil)
+			if err != nil {
+				release()
 				return report, err
 			}
 			for _, m := range older {
@@ -225,9 +230,12 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			}
 			if err != nil {
 				tx.Rollback()
+				release()
 				return report, err
 			}
-			if err = tx.Commit(); err != nil {
+			err = tx.Commit()
+			release()
+			if err != nil {
 				return report, err
 			}
 		}
@@ -440,14 +448,22 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			report.Actions = append(report.Actions, action)
 		}
 		if !o.DryRun {
-			applyStart = time.Now()
-			err := writes.save(ctx, a)
-			report.ApplyMS += time.Since(applyStart).Milliseconds()
+			// The write turn covers the save and its checkpoint, never the
+			// model call before them (m8shdj).
+			turnCtx, release, err := a.WriteTurn(ctx)
 			if err != nil {
 				return report, err
 			}
-			tx, err := a.DB.BeginTx(ctx, nil)
+			applyStart = time.Now()
+			err = writes.save(turnCtx, a)
+			report.ApplyMS += time.Since(applyStart).Milliseconds()
 			if err != nil {
+				release()
+				return report, err
+			}
+			tx, err := a.DB.BeginTx(turnCtx, nil)
+			if err != nil {
+				release()
 				return report, err
 			}
 			for _, m := range pending[start:end] {
@@ -471,9 +487,12 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			}
 			if err != nil {
 				tx.Rollback()
+				release()
 				return report, err
 			}
-			if err = tx.Commit(); err != nil {
+			err = tx.Commit()
+			release()
+			if err != nil {
 				return report, err
 			}
 		}
@@ -549,4 +568,16 @@ func (b Binding) capturePlan(ctx context.Context, a *App, c extract.Candidate) (
 		}
 	}
 	return out, nil
+}
+
+// captureExec runs one capture statement in the write turn (m8shdj): the
+// turn is taken for the statement only, so capture never holds it across a
+// model call, and it never interleaves with a remember, forget or index.
+func (a *App) captureExec(ctx context.Context, query string, args ...any) (sql.Result, error) {
+	ctx, release, err := a.WriteTurn(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
+	return a.DB.ExecContext(ctx, query, args...)
 }

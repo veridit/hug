@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/extract"
@@ -58,7 +59,16 @@ CREATE INDEX IF NOT EXISTS capture_runs_time ON capture_runs(at_ns);
 CREATE TABLE IF NOT EXISTS capture_actions(run_id INTEGER NOT NULL, position INTEGER NOT NULL, record TEXT NOT NULL, PRIMARY KEY(run_id,position));`)
 	return err
 }
-func (a *App) SaveAudit(r AuditRun) error {
+func (a *App) SaveAudit(r AuditRun) error { return a.SaveAuditCtx(context.Background(), r) }
+
+// SaveAuditCtx is SaveAudit in the write turn (m8shdj), reusing the turn
+// when ctx already holds it (remember's reinforcement path does).
+func (a *App) SaveAuditCtx(ctx context.Context, r AuditRun) error {
+	ctx, release, err := a.WriteTurn(ctx)
+	if err != nil {
+		return err
+	}
+	defer release()
 	if err := a.auditSchema(); err != nil {
 		return err
 	}
@@ -70,7 +80,7 @@ func (a *App) SaveAudit(r AuditRun) error {
 	if err != nil {
 		return err
 	}
-	tx, err := a.DB.Begin()
+	tx, err := a.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
