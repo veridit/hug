@@ -8,6 +8,7 @@ assignee: []
 labels: ["recall", "memory-format"]
 created: 2026-11-15
 updated: 2026-11-15
+parent: "d634kr"
 ---
 
 ## Goal
