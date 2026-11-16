@@ -41,3 +41,5 @@ check 1 (hare): /tmp/et85smoke repo, git user.name 'Git Person', HUG_USER/HUG_MO
 check 2: 'hug task take 2knt1d --model gpt-6.1-sol' (no name) -> file 'assignee: ["gpt-6.1-sol"]' / 'model: "gpt-6.1-sol"'; ls row '2knt1d  doing    feature  smoke-two  Smoke two  [gpt-6.1-sol]'. Test TestTakeModelOnlyAssigneeIsModel.
 
 check 3: TestTakeAsAndModelRecordsBoth/flags and /HUG_USER_and_HUG_MODEL: file 'assignee: ["poodle"]' + 'model: "claude-opus-5-5"'; show 'taken by: poodle · claude-opus-5-5'; ls '... Take me  [poodle · claude-opus-5-5]'; board --wide same; next --mine --as poodle finds it; take --as crab -> taken.
+
+check 4: in this jcode session (JCODE_SESSION_ID=session_hare_...), 'hug task take s834q1' with no flags -> 'fix: hug task take s834q1 --as hare --model MODEL'; with '--model claude-opus-5-5' -> 'taken by: hare · claude-opus-5-5', file 'assignee: ["hare"]' 'model: "claude-opus-5-5"'. Test TestTakeUsesJcodeSessionName (session name; HUG_USER wins over it; no model still fails) and TestHarnessName.
