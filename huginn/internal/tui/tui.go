@@ -54,6 +54,7 @@ type model struct {
 	epics                              map[string]bool // lowercase ids of tasks with children
 	cursor, acceptance, offset         int
 	dependency, detailPane             int
+	link                               int // the task:ID marked > in Links (xxvm6t)
 	detailStack                        []string
 	width, height                      int
 	view                               string
@@ -798,6 +799,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if t, ok := m.selected(); ok {
 						m.dependency = max(0, min(m.dependency+step, len(t.Dependencies)-1))
 					}
+				case focusLinks:
+					if t, ok := m.selected(); ok {
+						m.link = max(0, min(m.link+step, len(m.links(t))-1))
+					}
 				default:
 					m.message = "[ and ] step through a list: Tab focuses the checks or dependencies"
 				}
@@ -815,8 +820,11 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.syncDetail()
 				m.revealAcceptance()
 			case "enter":
-				if m.detailPane == focusDeps {
+				switch m.detailPane {
+				case focusDeps:
 					m.followDependency()
+				case focusLinks:
+					m.followLink()
 				}
 			case " ":
 				// Space ticks the check marked >; with focus elsewhere no
@@ -876,6 +884,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					next := m.dependency + step
 					if next >= 0 && next < len(t.Dependencies) {
 						m.dependency, moved = next, true
+					}
+				} else if ok && m.detailPane == focusLinks {
+					if next := m.link + step; next >= 0 && next < len(m.links(t)) {
+						m.link, moved = next, true
 					}
 				}
 				if moved {

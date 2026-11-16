@@ -122,7 +122,7 @@ func (m model) detailHeader(t task.Task) []string {
 	if v := oneLine(t.Priority); v != "" {
 		badges = append(badges, m.styles.priority[t.Priority].Render("["+v+"]"))
 	}
-	badges = append(badges, m.styles.accent.Render("["+oneLine(t.ID)+"]"))
+	badges = append(badges, m.styles.accent.Render(oneLine(t.ID))) // bare, in its colour (xxvm6t)
 	group := t.Group
 	if group == "" {
 		group = "root"
@@ -231,11 +231,12 @@ const (
 	focusPage = iota
 	focusAcceptance
 	focusDeps
+	focusLinks // the task:ID references in the text (xxvm6t)
 )
 
 // focusStops lists the focus states the task offers, in Tab order. Empty
 // sections are skipped.
-func focusStops(t task.Task) []int {
+func (m model) focusStops(t task.Task) []int {
 	stops := []int{focusPage}
 	if len(t.Acceptance) > 0 {
 		stops = append(stops, focusAcceptance)
@@ -243,13 +244,16 @@ func focusStops(t task.Task) []int {
 	if len(t.Dependencies) > 0 {
 		stops = append(stops, focusDeps)
 	}
+	if len(m.links(t)) > 0 {
+		stops = append(stops, focusLinks)
+	}
 	return stops
 }
 
 // startFocus is the focus a freshly opened task gets: its checks when it has
 // any, otherwise the page.
 func (m *model) startFocus() {
-	m.acceptance, m.dependency = 0, 0
+	m.acceptance, m.dependency, m.link = 0, 0, 0
 	m.detailPane = focusPage
 	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
 		m.detailPane = focusAcceptance
@@ -262,9 +266,9 @@ func (m *model) cycleFocus(step int) {
 	if !ok {
 		return
 	}
-	stops := focusStops(t)
+	stops := m.focusStops(t)
 	if len(stops) == 1 {
-		m.message = "nothing to focus: this task has no checks or dependencies"
+		m.message = "nothing to focus: this task has no checks, dependencies or links"
 		return
 	}
 	pos := 0
@@ -363,6 +367,27 @@ func (m model) detailText(t task.Task) string {
 		dependencies = append(dependencies, line)
 	}
 	section(m.sectionHeading("Dependencies", "j/k or [ ] step · Enter follows", m.detailPane == focusDeps), strings.Join(dependencies, "\n"), "no dependencies")
+	// Links: every task:ID the text names, to follow with Enter (xxvm6t).
+	var links []string
+	for i, l := range m.links(t) {
+		pointer := " "
+		if m.detailPane == focusLinks && i == m.link {
+			pointer = ">"
+		}
+		state, title := l.Status, l.Title
+		if l.Missing {
+			state, title = "blocked", "no task has this id"
+		}
+		line := fmt.Sprintf("%s ↳ %s %s [%s]", pointer, m.styles.status[state].Render(oneLine(l.ID)), oneLine(title), oneLine(state))
+		if l.Missing {
+			line = fmt.Sprintf("%s ↳ %s %s", pointer, m.styles.status[state].Render(oneLine(l.ID)), title)
+		}
+		if pointer == ">" {
+			line = m.styles.selected.Render(ansi.Strip(line))
+		}
+		links = append(links, line)
+	}
+	section(m.sectionHeading("Links", "j/k or [ ] step · Enter follows", m.detailPane == focusLinks), strings.Join(links, "\n"), "")
 	section(plain("Notes"), m.markdown(text("notes")), "")
 	section(plain("History"), m.markdown(text("history")), "")
 	for _, s := range sections {

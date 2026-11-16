@@ -193,7 +193,7 @@ func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 		m.detailPane = pane
 		text := detailPlain(m)
 		heads := strings.Count(text, "▸ ")
-		trail := strings.Contains(ansi.Strip(strings.Split(m.View(), "\n")[1]), "[")
+		trail := strings.Contains(ansi.Strip(strings.Split(m.View(), "\n")[1]), "▸")
 		switch pane {
 		case focusAcceptance:
 			if heads != 1 || !strings.Contains(text, "▸ ACCEPTANCE") || trail {
@@ -311,8 +311,8 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 		t.Fatalf("tab bar lacks the trail: %q", bar(m))
 	}
 	page := press(m, "tab", "tab")
-	if !strings.Contains(bar(page), "list › ["+main.ID+"]") {
-		t.Fatalf("page focus should bracket the task id: %q", bar(page))
+	if !strings.Contains(bar(page), "list › ▸ "+main.ID) || strings.Contains(bar(page), "["+main.ID+"]") {
+		t.Fatalf("page focus marks the bare task id with ▸: %q", bar(page))
 	}
 	followed := press(m, "tab", "enter")
 	if tk, _ := followed.selected(); !strings.Contains(bar(followed), "list › "+main.ID+" › "+tk.ID) {

@@ -80,11 +80,13 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		hints = append(hints, hint("j/k", "check"), hint("Space", "tick"))
 	case focusDeps:
 		hints = append(hints, hint("j/k", "dependency"), hint("Enter", "follow"))
+	case focusLinks:
+		hints = append(hints, hint("j/k", "link"), hint("Enter", "follow"))
 	default:
 		hints = append(hints, hint("j/k", "scroll"))
 	}
 	hints = append(hints, hint("n/p", "task"))
-	if len(focusStops(t)) > 1 {
+	if len(m.focusStops(t)) > 1 {
 		hints = append(hints, hint("Tab", "section"))
 	}
 	hints = append(hints, hint("Esc", "back"))

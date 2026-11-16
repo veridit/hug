@@ -105,7 +105,7 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 	} else if mark != "" {
 		pointer = m.styles.dim.Render(mark)
 	}
-	head := pointer + m.marker(t.Path) + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + " "
+	head := pointer + m.marker(t.Path) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
 	row := head
 	if compact {
 		// Board columns are narrow: type and priority are one coloured
@@ -633,11 +633,11 @@ func (m model) detailTrail() string {
 			}
 		}
 	}
-	// Brackets mark focus as they do on the view tabs, so it shows without
-	// colour too.
+	// Page focus shows as a ▸ before the id, as a focused heading shows it,
+	// so it reads without colour too; the id itself stays bare (xxvm6t).
 	id := oneLine(t.ID)
 	if m.detailPane == focusPage {
-		id = m.styles.focus.Render("[" + id + "]")
+		id = m.styles.focus.Render("▸ " + id)
 	} else {
 		id = m.styles.accent.Render(id)
 	}

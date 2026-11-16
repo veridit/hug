@@ -91,11 +91,11 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 	// Drawn blocked where it stands.
 	view := ansi.Strip(m.overviewText())
 	inProgress := view[:strings.Index(view, "NEXT UP")]
-	if !strings.Contains(inProgress, "["+bravo+"] blocked") {
+	if !strings.Contains(inProgress, bravo+"   blocked") {
 		t.Fatalf("Bravo not drawn blocked in IN PROGRESS:\n%s", inProgress)
 	}
-	if strings.Count(view, "["+bravo+"]") != 1 {
-		t.Fatalf("Bravo shown %d times in the overview:\n%s", strings.Count(view, "["+bravo+"]"), view)
+	if strings.Count(view, bravo) != 1 {
+		t.Fatalf("Bravo shown %d times in the overview:\n%s", strings.Count(view, bravo), view)
 	}
 }
 
