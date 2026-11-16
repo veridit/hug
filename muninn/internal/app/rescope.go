@@ -14,6 +14,11 @@ import (
 // Rescope is owner-only (CLI or confirmed terminal action), never a hook, MCP or HTTP route.
 // Cross-client migration preserves the stable identity and upstream mapping.
 func (b Binding) Rescope(ctx context.Context, a *App, ref, target string, crossClient bool) (string, error) {
+	ctx, release, err := a.WriteTurn(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer release()
 	return b.rescope(ctx, a, ref, target, crossClient, true)
 }
 

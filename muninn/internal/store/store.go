@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -192,7 +193,7 @@ func Open(path string) (*DB, error) {
 	// busy_timeout comes first: pragmas run in order, and switching a new
 	// database to WAL needs a lock (2026-11-10: two first runs at once failed
 	// "schema: database is locked" when busy_timeout came second).
-	dsn := "file:" + path + "?_pragma=busy_timeout(30000)&_pragma=journal_mode(WAL)&_pragma=foreign_keys(1)&_pragma=synchronous(NORMAL)" +
+	dsn := "file:" + path + "?_pragma=busy_timeout(" + strconv.Itoa(BusyTimeout) + ")&_pragma=journal_mode(WAL)&_pragma=foreign_keys(1)&_pragma=synchronous(NORMAL)" +
 		"&_pragma=mmap_size(1073741824)&_pragma=cache_size(-32768)&_txlock=immediate"
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {

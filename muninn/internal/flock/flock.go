@@ -24,3 +24,21 @@ func Acquire(path string) (func(), error) {
 	}
 	return func() { f.Close() }, nil
 }
+
+// TryAcquire is Acquire without waiting: ok is false, with no error, when
+// another open file holds the lock.
+func TryAcquire(path string) (release func(), ok bool, err error) {
+	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
+		return nil, false, err
+	}
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0o600)
+	if err != nil {
+		return nil, false, err
+	}
+	held, err := tryLock(f)
+	if err != nil || !held {
+		f.Close()
+		return nil, false, err
+	}
+	return func() { f.Close() }, true, nil
+}

@@ -213,7 +213,7 @@ func (a *App) applyDuplicates(ctx context.Context, p tidy.Plan, dry bool) (resul
 			_, e := a.DB.Exec(`DELETE FROM suppressed WHERE sid=?`, sid)
 			err = errors.Join(err, e)
 		}
-		_, e := a.Reindex(context.Background())
+		_, e := a.Reindex(context.WithoutCancel(ctx))
 		err = errors.Join(err, e)
 		result.Retirements = nil
 	}()
@@ -306,6 +306,11 @@ func (a *App) applyDuplicates(ctx context.Context, p tidy.Plan, dry bool) (resul
 // UndoTidy restores a completed duplicate batch only when every affected file
 // still matches its post-apply hash. It never overwrites later remembered notes.
 func (a *App) UndoTidy(ctx context.Context, backup string) (err error) {
+	var releaseTurn func()
+	if ctx, releaseTurn, err = a.WriteTurn(ctx); err != nil {
+		return err
+	}
+	defer releaseTurn()
 	release, err := a.tidyLease(ctx)
 	if err != nil {
 		return err

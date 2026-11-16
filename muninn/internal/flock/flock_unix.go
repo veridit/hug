@@ -16,3 +16,18 @@ func lock(f *os.File) error {
 		}
 	}
 }
+
+func tryLock(f *os.File) (bool, error) {
+	for {
+		err := unix.Flock(int(f.Fd()), unix.LOCK_EX|unix.LOCK_NB)
+		switch err {
+		case nil:
+			return true, nil
+		case unix.EWOULDBLOCK:
+			return false, nil
+		case unix.EINTR:
+			continue
+		}
+		return false, err
+	}
+}

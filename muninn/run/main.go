@@ -22,6 +22,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/project"
 	"github.com/veridit/hug/muninn/internal/recall"
 	"github.com/veridit/hug/muninn/internal/search"
+	"github.com/veridit/hug/muninn/internal/store"
 	"github.com/veridit/hug/muninn/internal/throttle"
 )
 
@@ -86,8 +87,13 @@ func Main(args []string) int {
 		}
 	}
 	root.SetArgs(args)
+	// Writes queue for the write turn; a person waiting sees why.
+	store.TurnNotice = func(holder string, waited time.Duration) {
+		fmt.Fprintf(os.Stderr, "hug mem: waiting %s for the write turn, held by %s\n", waited.Round(time.Second), holder)
+	}
 	if err := root.Execute(); err != nil {
 		pprof.StopCPUProfile()
+		err = store.ExplainBusy(config.DBPath(), err)
 		fmt.Fprintln(os.Stderr, "hug mem:", err)
 		if strings.HasPrefix(err.Error(), "unknown command") {
 			fmt.Fprintln(os.Stderr, "fix: hug mem --help")
@@ -183,7 +189,14 @@ func searchCmd() *cobra.Command {
 					return err
 				}
 				if asJSON {
-					return json.NewEncoder(os.Stdout).Encode(res)
+					out := memoriesJSON{Memories: []memoryJSON{}}
+					for _, r := range res {
+						m := unitJSON(r.Unit)
+						score := r.Total
+						m.Score = &score
+						out.Memories = append(out.Memories, m)
+					}
+					return json.NewEncoder(os.Stdout).Encode(out)
 				}
 				printResults(res, explain)
 				return nil
@@ -191,7 +204,7 @@ func searchCmd() *cobra.Command {
 		}}
 	c.Flags().IntVarP(&limit, "limit", "n", 10, "max results")
 	c.Flags().BoolVar(&explain, "explain", false, "show per-signal scores")
-	c.Flags().BoolVar(&asJSON, "json", false, "JSON output")
+	c.Flags().BoolVar(&asJSON, "json", false, "JSON output: {\"memories\": [...]}, each with id, kind, scope, category, type, tags, text, updated, score")
 	c.Flags().Float64Var(&minScore, "min-score", 0, "drop results below this total")
 	view.flags(c)
 	return c
@@ -300,21 +313,77 @@ func rememberCmd() *cobra.Command {
 
 func forgetCmd() *cobra.Command {
 	var view viewFlags
-	c := &cobra.Command{Use: "forget <memory-id>", Short: "Retire a memory or suppress an upstream memory locally", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
-		return withApp(func(ctx context.Context, a *app.App) error {
-			if _, err := a.Reindex(ctx); err != nil {
-				return err
+	var stdin, asJSON bool
+	c := &cobra.Command{Use: "forget <memory-id>... | --stdin", Short: "Retire memories or suppress upstream memories locally (several ids: one transaction)",
+		Example: "  hug mem forget k7m2qx\n  hug mem forget k7m2qx 3nfhgr 9xybgp\n  hug mem list --json | jq -r '.memories[].id' | hug mem forget --stdin",
+		RunE: func(_ *cobra.Command, args []string) error {
+			ids := args
+			if stdin || (len(args) == 1 && args[0] == "-") {
+				if stdin && len(args) > 0 {
+					return fmt.Errorf("give ids as arguments or on stdin, not both\nfix: hug mem forget --stdin < ids.txt")
+				}
+				b, err := ioReadAll(os.Stdin)
+				if err != nil {
+					return err
+				}
+				ids = forgetIDs(string(b))
 			}
-			out, err := view.binding(a).Forget(ctx, a, args[0], app.HarnessSessions()...)
-			if err != nil {
-				return err
+			if len(ids) == 0 {
+				return fmt.Errorf("no memory id given\nfix: hug mem forget ID [ID...], or one id per line: hug mem forget --stdin")
 			}
-			fmt.Println(out.Message)
-			return nil
-		})
-	}}
+			return withApp(func(ctx context.Context, a *app.App) error {
+				// One write turn for the whole call: the freshness pass, the
+				// checks and the forget queue once, not once per step.
+				ctx, release, err := a.WriteTurn(ctx)
+				if err != nil {
+					return err
+				}
+				defer release()
+				if _, err := a.Reindex(ctx); err != nil {
+					return err
+				}
+				out, err := view.binding(a).ForgetMany(ctx, a, ids, app.HarnessSessions()...)
+				if err != nil {
+					return err
+				}
+				if asJSON {
+					return json.NewEncoder(os.Stdout).Encode(struct {
+						Forgotten []app.ForgetResult `json:"forgotten"`
+					}{out})
+				}
+				for _, r := range out {
+					fmt.Println(r.Message)
+				}
+				return nil
+			})
+		}}
+	c.Flags().BoolVar(&stdin, "stdin", false, "read memory ids from stdin, one per line (first field; # starts a comment)")
+	c.Flags().BoolVar(&asJSON, "json", false, "JSON output: {\"forgotten\": [...]}")
 	view.flags(c)
 	return c
+}
+
+// forgetIDs reads one id per line: the first field counts, # starts a
+// comment, so `hug mem list` lines ("[k7m2qx] (...)") or TSV with the id
+// first work as they are. Repeats are dropped.
+func forgetIDs(s string) []string {
+	var ids []string
+	seen := map[string]bool{}
+	for _, line := range strings.Split(s, "\n") {
+		if i := strings.IndexByte(line, '#'); i >= 0 {
+			line = line[:i]
+		}
+		f := strings.Fields(line)
+		if len(f) == 0 {
+			continue
+		}
+		id := strings.Trim(f[0], "[],\"")
+		if id != "" && !seen[id] {
+			seen[id] = true
+			ids = append(ids, id)
+		}
+	}
+	return ids
 }
 
 func rescopeCmd() *cobra.Command {
@@ -442,32 +511,68 @@ func showCmd() *cobra.Command {
 
 func listCmd() *cobra.Command {
 	var limit int
+	var asJSON bool
 	var view viewFlags
 	c := &cobra.Command{Use: "list", Short: "List indexed memories", RunE: func(*cobra.Command, []string) error {
 		return withApp(func(ctx context.Context, a *app.App) error {
 			b := view.binding(a)
 			where, params := b.SQL("u.scope", "u.source_id")
-			rows, err := a.DB.QueryContext(ctx, `SELECT sid, kind, `+b.ScopeExpr("u.scope", "u.source_id")+`, category, body FROM units u WHERE (`+where+`) AND active=1 AND sid NOT IN (SELECT sid FROM suppressed)
+			rows, err := a.DB.QueryContext(ctx, `SELECT sid, kind, `+b.ScopeExpr("u.scope", "u.source_id")+`, category, body, COALESCE(NULLIF(u.mtype,''), (SELECT t.mtype FROM inferred_types t WHERE t.content_hash=u.content_hash), ''), tags, updated_ns FROM units u WHERE (`+where+`) AND active=1 AND sid NOT IN (SELECT sid FROM suppressed)
     AND u.id=(SELECT c.id FROM units c JOIN sources cs ON cs.id=c.source_id WHERE c.sid=u.sid ORDER BY (cs.kind='native') DESC,c.updated_ns DESC,c.id LIMIT 1)
     ORDER BY updated_ns DESC LIMIT ?`, append(params, limit)...)
 			if err != nil {
 				return err
 			}
 			defer rows.Close()
+			out := memoriesJSON{Memories: []memoryJSON{}}
 			for rows.Next() {
-				var id string
-				var kind, scope, category, body string
-				if err := rows.Scan(&id, &kind, &scope, &category, &body); err != nil {
+				var u store.Unit
+				var tags string
+				var updated int64
+				if err := rows.Scan(&u.SID, &u.Kind, &u.Scope, &u.Category, &u.Body, &u.Type, &tags, &updated); err != nil {
 					return err
 				}
-				fmt.Printf("[%s] (%s, %s, %s) %s\n", id, kind, scope, category, recall.Truncate(strings.Join(strings.Fields(body), " "), 200))
+				u.Tags, u.Updated = strings.Fields(tags), time.Unix(0, updated).UTC()
+				if asJSON {
+					out.Memories = append(out.Memories, unitJSON(u))
+					continue
+				}
+				fmt.Printf("[%s] (%s, %s, %s) %s\n", u.SID, u.Kind, u.Scope, u.Category, recall.Truncate(strings.Join(strings.Fields(u.Body), " "), 200))
 			}
-			return rows.Err()
+			if err := rows.Err(); err != nil {
+				return err
+			}
+			if asJSON {
+				return json.NewEncoder(os.Stdout).Encode(out)
+			}
+			return nil
 		})
 	}}
 	c.Flags().IntVarP(&limit, "limit", "n", 50, "max rows")
+	c.Flags().BoolVar(&asJSON, "json", false, "JSON output: {\"memories\": [...]}, each with id, kind, scope, category, type, tags, text, updated")
 	view.flags(c)
 	return c
+}
+
+// memoriesJSON is the one shape of `hug mem list --json` and `search --json`.
+type memoriesJSON struct {
+	Memories []memoryJSON `json:"memories"`
+}
+
+type memoryJSON struct {
+	ID       string    `json:"id"`
+	Kind     string    `json:"kind"`
+	Scope    string    `json:"scope"`
+	Category string    `json:"category,omitempty"`
+	Type     string    `json:"type,omitempty"`
+	Tags     []string  `json:"tags,omitempty"`
+	Text     string    `json:"text"`
+	Updated  time.Time `json:"updated"`
+	Score    *float64  `json:"score,omitempty"`
+}
+
+func unitJSON(u store.Unit) memoryJSON {
+	return memoryJSON{ID: u.SID, Kind: u.Kind, Scope: u.Scope, Category: u.Category, Type: u.Type, Tags: u.Tags, Text: u.Body, Updated: u.Updated}
 }
 
 func relatedCmd() *cobra.Command {

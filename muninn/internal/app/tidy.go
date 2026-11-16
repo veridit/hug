@@ -43,6 +43,13 @@ func (a *App) tidyLease(ctx context.Context) (func(), error) {
 // registered with any agent or network surface. Dry runs never repair files or
 // acquire a write lock.
 func (a *App) ApplyTidy(ctx context.Context, p tidy.Plan, only string, dry bool) (result TidyResult, err error) {
+	if !dry {
+		var release func()
+		if ctx, release, err = a.WriteTurn(ctx); err != nil {
+			return result, err
+		}
+		defer release()
+	}
 	if p.Kind == "dupes" {
 		if only != "" {
 			return result, fmt.Errorf("--only is for placement plans; set duplicate cluster decision to keep instead")
@@ -216,7 +223,7 @@ func (a *App) ApplyTidy(ctx context.Context, p tidy.Plan, only string, dry bool)
 			_, e := a.DB.Exec(`DELETE FROM suppressed WHERE sid=?`, sid)
 			err = errors.Join(err, e)
 		}
-		_, e := a.Reindex(context.Background())
+		_, e := a.Reindex(context.WithoutCancel(ctx))
 		err = errors.Join(err, e)
 		result.Moves = nil
 	}()

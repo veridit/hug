@@ -254,21 +254,43 @@ func RememberTyped(path, content, category, typ, scope string, tags []string, sa
 
 // Forget deactivates a memory by id (kept on disk, excluded from recall).
 func Forget(path, id string) (bool, error) {
+	done, err := ForgetMany(path, []string{id})
+	return done[id], err
+}
+
+// ForgetMany deactivates every listed memory (by id or sid) with one load and
+// one save under the write lock. The result marks the ids that were active.
+func ForgetMany(path string, ids []string) (map[string]bool, error) {
+	done := map[string]bool{}
 	unlock, err := LockNative(path)
 	if err != nil {
-		return false, err
+		return done, err
 	}
 	defer unlock()
 	mems, err := LoadNative(path)
 	if err != nil {
-		return false, err
+		return done, err
 	}
+	want := map[string]bool{}
+	for _, id := range ids {
+		want[id] = true
+	}
+	now := time.Now().UTC()
 	for i := range mems {
-		if (mems[i].ID == id || mems[i].SID == id) && mems[i].Active {
-			mems[i].Active = false
-			mems[i].Updated = time.Now().UTC()
-			return true, SaveNative(path, mems)
+		m := &mems[i]
+		if !m.Active {
+			continue
+		}
+		for _, id := range []string{m.ID, m.SID} {
+			if id != "" && want[id] {
+				m.Active = false
+				m.Updated = now
+				done[id] = true
+			}
 		}
 	}
-	return false, nil
+	if len(done) == 0 {
+		return done, nil
+	}
+	return done, SaveNative(path, mems)
 }

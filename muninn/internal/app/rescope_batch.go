@@ -30,6 +30,14 @@ type RescopeBatchResult struct {
 // is rebuilt once. Capture is held off for the duration.
 func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, crossClient, dry bool) (RescopeBatchResult, error) {
 	var result RescopeBatchResult
+	if !dry {
+		var release func()
+		var err error
+		if ctx, release, err = a.WriteTurn(ctx); err != nil {
+			return result, err
+		}
+		defer release()
+	}
 	b = b.Refresh(a)
 	if b.Err != nil {
 		return result, b.Err

@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // unitConcepts returns a unit's concept ids.
@@ -168,10 +169,13 @@ var ErrBusy = errors.New("index busy: another muninn process is writing")
 
 func (ix *Indexer) Run(ctx context.Context, o Options) (Stats, error) {
 	if ix.NoWait {
-		// busy_timeout applies per statement; drop it for the lock attempt.
+		// busy_timeout applies per statement; drop it for the lock attempt,
+		// then restore store.Open's value. (It used to be put back as 5000,
+		// so every later write on a hook's or MCP server's connection gave up
+		// after 5 s instead of 30.)
 		ix.DB.Exec(`PRAGMA busy_timeout=0`)
 		_, err := ix.DB.Exec(`BEGIN IMMEDIATE`)
-		ix.DB.Exec(`PRAGMA busy_timeout=5000`)
+		ix.DB.Exec(`PRAGMA busy_timeout=` + strconv.Itoa(store.BusyTimeout))
 		if err != nil {
 			if strings.Contains(err.Error(), "SQLITE_BUSY") || strings.Contains(err.Error(), "locked") {
 				return Stats{}, ErrBusy

@@ -313,14 +313,46 @@ func (b Binding) Resolve(a *App, ref string) (store.Unit, error) {
 	return units[0], nil
 }
 func (b Binding) Forget(ctx context.Context, a *App, ref string, sessions ...string) (ForgetResult, error) {
+	out, err := b.ForgetMany(ctx, a, []string{ref}, sessions...)
+	if err != nil {
+		return ForgetResult{}, err
+	}
+	return out[0], nil
+}
+
+// ForgetMany checks every ref against this binding, then forgets them all in
+// one write turn (App.ForgetMany). One ref that is not visible here fails
+// the whole call before anything changes.
+func (b Binding) ForgetMany(ctx context.Context, a *App, refs []string, sessions ...string) ([]ForgetResult, error) {
+	ctx, release, err := a.WriteTurn(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	b = b.Refresh(a)
 	if b.Err != nil {
-		return ForgetResult{}, b.Err
+		return nil, b.Err
 	}
+	var hidden []string
+	for _, ref := range refs {
+		if err := b.mayForget(a, ref, sessions); err != nil {
+			if len(refs) == 1 {
+				return nil, err
+			}
+			hidden = append(hidden, ref)
+		}
+	}
+	if len(hidden) > 0 {
+		return nil, fmt.Errorf("nothing forgotten: no visible memory %s", strings.Join(hidden, ", "))
+	}
+	return a.ForgetMany(ctx, refs)
+}
+
+func (b Binding) mayForget(a *App, ref string, sessions []string) error {
 	// Check the underlying write policy even for an explicitly widened view.
 	units, err := a.DB.ResolveAll(ref)
 	if err != nil {
-		return ForgetResult{}, fmt.Errorf("no visible memory")
+		return fmt.Errorf("no visible memory")
 	}
 	// The recall block tells the agent "Fix: memory_forget <id>". A memory
 	// recalled into this session must be forgettable from it, even when the
@@ -329,15 +361,15 @@ func (b Binding) Forget(ctx context.Context, a *App, ref string, sessions ...str
 	// ~/Projects, refused from ~/Projects/muninn). Client sealing still holds:
 	// a memory is only ever recalled into a session that may see it.
 	if a.shownInSession(units[0].ID, sessions) {
-		return a.Forget(ctx, ref)
+		return nil
 	}
 	if _, ok := b.Present(units[0]); !ok {
-		return ForgetResult{}, fmt.Errorf("no visible memory")
+		return fmt.Errorf("no visible memory")
 	}
 	for _, u := range units {
 		var kind string
 		if err := a.DB.QueryRow(`SELECT kind FROM sources WHERE id=?`, u.SourceID).Scan(&kind); err != nil {
-			return ForgetResult{}, err
+			return err
 		}
 		// The canonical memory owns the identity. Suppressing an upstream
 		// mirror is safe after an explicit rescope, even in its old scope.
@@ -346,13 +378,13 @@ func (b Binding) Forget(ctx context.Context, a *App, ref string, sessions ...str
 		}
 		shown, ok := b.Present(u)
 		if !ok {
-			return ForgetResult{}, fmt.Errorf("no visible memory")
+			return fmt.Errorf("no visible memory")
 		}
 		if _, err := b.WriteScope(shown.Scope); err != nil {
-			return ForgetResult{}, fmt.Errorf("no visible memory")
+			return fmt.Errorf("no visible memory")
 		}
 	}
-	return a.Forget(ctx, ref)
+	return nil
 }
 
 type sourceBoundary struct {
@@ -538,6 +570,12 @@ func (b Binding) RememberSafe(ctx context.Context, a *App, content, category, sc
 // RememberPlaced accepts a session-relative place alongside an optional literal
 // scope. Both advisory checks ask the writer, never silently reclassify text.
 func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, scope string, tags []string, safeReason, place, placeReason string, decisions ...RememberDecision) (store.Unit, bool, error) {
+	// One write turn for the whole flow: duplicate check, save, index pass.
+	ctx, release, err := a.WriteTurn(ctx)
+	if err != nil {
+		return store.Unit{}, false, err
+	}
+	defer release()
 	b = b.Refresh(a)
 	safeReason = strings.TrimSpace(safeReason)
 	if hint := project.SecretHint(content); hint != "" && safeReason == "" {

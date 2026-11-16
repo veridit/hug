@@ -140,7 +140,29 @@ func (a *App) IndexOptions() index.Options {
 }
 
 // Reindex runs one incremental pass.
+// It waits for the write turn (see store.WriteTurn) unless ctx already
+// carries it; a NoWait (hook) pass skips instead of queueing. Lock order:
+// write turn, then reindexMu, then the native store lock.
 func (a *App) Reindex(ctx context.Context) (index.Stats, error) {
+	var release func()
+	if a.Indexer.NoWait {
+		var ok bool
+		var err error
+		ctx, release, ok, err = a.DB.TryWriteTurn(ctx)
+		if err != nil {
+			return index.Stats{}, fmt.Errorf("index: %w", err)
+		}
+		if !ok {
+			return index.Stats{}, index.ErrBusy
+		}
+	} else {
+		var err error
+		ctx, release, err = a.DB.WriteTurn(ctx)
+		if err != nil {
+			return index.Stats{}, fmt.Errorf("index: %w", err)
+		}
+	}
+	defer release()
 	a.reindexMu.Lock()
 	defer a.reindexMu.Unlock()
 	st, err := a.Indexer.Run(ctx, a.IndexOptions())
@@ -148,6 +170,11 @@ func (a *App) Reindex(ctx context.Context) (index.Stats, error) {
 		return st, fmt.Errorf("index: %w", err)
 	}
 	return st, nil
+}
+
+// WriteTurn waits for this database's write turn; see store.WriteTurn.
+func (a *App) WriteTurn(ctx context.Context) (context.Context, func(), error) {
+	return a.DB.WriteTurn(ctx)
 }
 
 // RecallOptions are the automatic-recall search settings.

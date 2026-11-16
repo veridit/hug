@@ -24,6 +24,11 @@ import (
 // dates. A private byte-exact backup precedes every write. Upstream files are
 // never edited. The capture lease prevents concurrent owner/capture mutations.
 func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out store.Unit, backup string, err error) {
+	var releaseTurn func()
+	if ctx, releaseTurn, err = a.WriteTurn(ctx); err != nil {
+		return out, "", err
+	}
+	defer releaseTurn()
 	text = strings.TrimSpace(text)
 	if text == "" {
 		return out, "", fmt.Errorf("empty correction")
@@ -155,7 +160,7 @@ func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out sto
 				_, e := a.DB.Exec(`DELETE FROM suppressed WHERE sid=?`, u.SID)
 				err = errors.Join(err, e)
 			}
-			_, e := a.Reindex(context.Background())
+			_, e := a.Reindex(context.WithoutCancel(ctx))
 			err = errors.Join(err, e)
 		}
 	}()
