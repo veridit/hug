@@ -33,3 +33,5 @@ Code: overview row split in huginn/internal/tui/render.go (overviewRows), change
 ## Notes
 
 commit 8368c53. CI run 43931868360 on ci/zgr01t (60d3f4b = 82273c1 version corner + 8368c53 z6kz20 + 60d3f4b zgr01t, ff onto bb665ea v0.7.31, now origin/main): test (ubuntu-latest) success, test (macos-latest) success, test (windows-latest) success. overviewRows (render.go) gives rows the focused section does not need to spareOrder = IN PROGRESS, NEXT UP, BLOCKED, RECENTLY DONE, LINT. Check 1 golden testdata/overview/spare-rows-140x40.txt (ids masked ######): '> IN PROGRESS · assigned to  [2]', 2 rows, then 'NEXT UP · rank order  [32] · 1–21 shown' with 21 rows; TestOverviewSpareRowsGolden asserts rows[IN PROGRESS]=2 and rows[NEXT UP]=budget-2=21.
+
+Check 2: TestOverviewSpareRowsInProgressFirst: BLOCKED (empty) focused, 12 doing + 40 todo: IN PROGRESS 12, NEXT UP budget-12; 40 doing + 40 todo: NEXT UP 3, IN PROGRESS budget-3 (drawn rows match via shownRows). PASS locally and in CI.
