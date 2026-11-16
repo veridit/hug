@@ -26,7 +26,7 @@ Board today: 35 files Goal|Purpose|Principle|Relevant details|Depends on|Accepta
 ## Depends on
 
 ## Acceptance
-- [ ] TUI detail of a task with notes shows Goal, Purpose, Principle and Relevant details above Acceptance, and Notes then History last (golden)
+- [x] TUI detail of a task with notes shows Goal, Purpose, Principle and Relevant details above Acceptance, and Notes then History last (golden)
 - [ ] hug task show prints Purpose, Principle and Relevant details after goal and before the checks (test)
 - [ ] hug upgrade on a board with mkzcqr's order rewrites it to canonical order with identical section text, and a second run changes nothing (test)
 - [ ] lint reports an out-of-order file with fix: hug upgrade (test)
