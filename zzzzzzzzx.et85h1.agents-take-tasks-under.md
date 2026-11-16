@@ -31,3 +31,5 @@ huginn/internal/cli/cli.go:180 identity() reads HUGINN_USER, else git config use
 - [ ] take help and ls help name the identity order
 
 ## Notes
+
+2026-11-16 Jørgen: env names become HUG_* (separate ticket). Identity order here: HUG_USER, then HUGINN_USER, then the harness session name, then git user.name.
