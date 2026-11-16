@@ -26,7 +26,7 @@ Signals the hook already has: the session's last task commits on hug/tasks, its 
 ## Depends on
 
 ## Acceptance
-- [ ] recall injects at most one board line per session hour, only on a detected mismatch, with the exact command (hug task take ID / done ID)
+- [x] recall injects at most one board line per session hour, only on a detected mismatch, with the exact command (hug task take ID / done ID)
 - [ ] setting nudge_board = false turns it off
 - [ ] a replay on real sessions shows the nudge fires on the overnight session and not on sessions with a current board
 
