@@ -2,8 +2,8 @@
 id: mkzcqr
 title: "TUI sort builder: order by one field, then another, then Enter"
 status: todo
-type: feature
-priority: ""
+type: "feature"
+priority: "high"
 assignee: []
 labels: []
 created: 2026-11-16
