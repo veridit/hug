@@ -1,13 +1,16 @@
 ---
 id: m1c28r
 title: "Environment variables are HUG_*; hug upgrade migrates, no old names"
-status: todo
+status: "doing"
 type: chore
 priority: "medium"
 assignee: ["dragon"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
