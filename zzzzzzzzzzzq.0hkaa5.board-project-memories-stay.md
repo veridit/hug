@@ -28,7 +28,7 @@ gitbranch: Sync/pull/push/UpdateMessage in huginn/gitbranch/gitbranch.go; memory
 ## Acceptance
 - [x] two clones on one remote: hug task note in clone A shows up in hug task show in clone B within 10 s, without any manual sync (test with a local bare remote)
 - [x] a burst of 20 notes in 2 s produces at most 2 pushes (test counts pushes)
-- [ ] with the remote unreachable, hug task note succeeds in under 400 ms and hug task ls reports '1 unpushed' with a fix: line; it is pushed after the remote returns and the next write happens (test)
+- [x] with the remote unreachable, hug task note succeeds in under 400 ms and hug task ls reports '1 unpushed' with a fix: line; it is pushed after the remote returns and the next write happens (test)
 - [x] hug mem remember of a project memory in clone A is recallable in clone B within 10 s (test)
 - [x] a rebase conflict keeps both clones' commits, and lint shows it with fix: hug task sync (test)
 - [ ] real trial on two Statbus clones, noted with times
