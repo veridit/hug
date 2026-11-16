@@ -40,7 +40,12 @@ func Seed(root string) error {
 		if status == "done" {
 			box = "x"
 		}
-		acceptance := "- [" + box + "] First acceptance check\n- [" + box + "] Second acceptance check\n"
+		// Work in progress is half done, so goldens show ◑ 1/2 (d8yx7y).
+		first := box
+		if status == "doing" {
+			first = "x"
+		}
+		acceptance := "- [" + first + "] First acceptance check\n- [" + box + "] Second acceptance check\n"
 		notes := "Evidence: integration tests are synthetic."
 		history := "2026-11-10: created by the terminal acceptance fixture."
 		if i == 2 {

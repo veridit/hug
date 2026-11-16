@@ -2,38 +2,38 @@ HUG TASKS · list   60/60 tasks · ! 7 findings · sort: priority ↓ · type
  overview   [list]   board    !lint
 todo 8  ·  doing 15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
-  ID       STATUS  TYPE    PRIORITY TITLE
->!000001   todo    feature critical ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that must trun…
-  000021   blocked feature critical Feature task 21: make the terminal workflow observable
-  000041   todo    feature critical Feature task 41: make the terminal workflow observable
-  000002   doing   bug     critical Bug task 02: make the terminal workflow observable
- !000022   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long title that must truncate cl…
-  000042   doing   bug     critical Bug task 42: make the terminal workflow observable
-  000023   done    chore   critical Chore task 23: make the terminal workflow observable
-  000043   done    chore   critical Chore task 43: make the terminal workflow observable with a deliberately long title that must truncate …
-  000004   dropped spike   critical Spike task 04: make the terminal workflow observable
-  000024   dropped spike   critical Spike task 24: make the terminal workflow observable
-  000044   dropped spike   critical Spike task 44: make the terminal workflow observable
-  000005   blocked docs    critical Docs task 05: make the terminal workflow observable
-  000025   todo    docs    critical Docs task 25: make the terminal workflow observable
-  000045   blocked docs    critical Docs task 45: make the terminal workflow observable
-  000006   doing   feature high     Feature task 06: make the terminal workflow observable
- !000026   blocked feature high     Feature task 26: make the terminal workflow observable
-  000046   doing   feature high     Feature task 46: make the terminal workflow observable
-  000007   done    bug     high     Bug task 07: make the terminal workflow observable
-  000027   done    bug     high     Bug task 27: make the terminal workflow observable
-  000047   done    bug     high     Bug task 47: make the terminal workflow observable
-  000008   dropped chore   high     Chore task 08: make the terminal workflow observable with a deliberately long title that must truncate …
-  000028   dropped chore   high     Chore task 28: make the terminal workflow observable
-  000048   dropped chore   high     Chore task 48: make the terminal workflow observable
-  000009   todo    spike   high     Spike task 09: make the terminal workflow observable
- !000029   blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncate …
-  000049   todo    spike   high     Spike task 49: make the terminal workflow observable
-  000010   doing   docs    high     Docs task 10: make the terminal workflow observable
-  000030   doing   docs    high     Docs task 30: make the terminal workflow observable
- !000050   doing   docs    high     Docs task 50: make the terminal workflow observable with a deliberately long title that must truncate c…
-  000003   done    feature medium   Render compiler-lang task detail without storage markers
-↓ 000011   done    feature medium   Feature task 11: make the terminal workflow observable
+  ✓     ID       STATUS  TYPE    PRIORITY TITLE
+>!○ 0/2 000001   todo    feature critical ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that mus…
+  ○ 0/2 000021   blocked feature critical Feature task 21: make the terminal workflow observable
+  ○ 0/2 000041   todo    feature critical Feature task 41: make the terminal workflow observable
+  ◑ 1/2 000002   doing   bug     critical Bug task 02: make the terminal workflow observable
+ !◑ 1/2 000022   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long title that must trunc…
+  ◑ 1/2 000042   doing   bug     critical Bug task 42: make the terminal workflow observable
+  ● 2/2 000023   done    chore   critical Chore task 23: make the terminal workflow observable
+  ● 2/2 000043   done    chore   critical Chore task 43: make the terminal workflow observable with a deliberately long title that must tru…
+  ○ 0/2 000004   dropped spike   critical Spike task 04: make the terminal workflow observable
+  ○ 0/2 000024   dropped spike   critical Spike task 24: make the terminal workflow observable
+  ○ 0/2 000044   dropped spike   critical Spike task 44: make the terminal workflow observable
+  ○ 0/2 000005   blocked docs    critical Docs task 05: make the terminal workflow observable
+  ○ 0/2 000025   todo    docs    critical Docs task 25: make the terminal workflow observable
+  ○ 0/2 000045   blocked docs    critical Docs task 45: make the terminal workflow observable
+  ◑ 1/2 000006   doing   feature high     Feature task 06: make the terminal workflow observable
+ !◑ 1/2 000026   blocked feature high     Feature task 26: make the terminal workflow observable
+  ◑ 1/2 000046   doing   feature high     Feature task 46: make the terminal workflow observable
+  ● 2/2 000007   done    bug     high     Bug task 07: make the terminal workflow observable
+  ● 2/2 000027   done    bug     high     Bug task 27: make the terminal workflow observable
+  ● 2/2 000047   done    bug     high     Bug task 47: make the terminal workflow observable
+  ○ 0/2 000008   dropped chore   high     Chore task 08: make the terminal workflow observable with a deliberately long title that must tru…
+  ○ 0/2 000028   dropped chore   high     Chore task 28: make the terminal workflow observable
+  ○ 0/2 000048   dropped chore   high     Chore task 48: make the terminal workflow observable
+  ○ 0/2 000009   todo    spike   high     Spike task 09: make the terminal workflow observable
+ !○ 0/2 000029   blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must tru…
+  ○ 0/2 000049   todo    spike   high     Spike task 49: make the terminal workflow observable
+  ◑ 1/2 000010   doing   docs    high     Docs task 10: make the terminal workflow observable
+  ◑ 1/2 000030   doing   docs    high     Docs task 30: make the terminal workflow observable
+ !◑ 1/2 000050   doing   docs    high     Docs task 50: make the terminal workflow observable with a deliberately long title that must trun…
+        000003   done    feature medium   Render compiler-lang task detail without storage markers
+↓ ● 2/2 000011   done    feature medium   Feature task 11: make the terminal workflow observable
 Rows 1–31 of 60 · ! lint finding · status blocked = unmet dependency
 sort: priority ↓ · type
 

@@ -1108,7 +1108,19 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			if who := takenBy(t, main); who != "" && t["status"] == "doing" {
 				by = "  [" + who + "]"
 			}
-			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-*s  %s%s\n", t["id"], t["status"], t["type"], w, t["slug"], t["title"], by)
+			// Acceptance progress, ticked/total (d8yx7y); "-" without checks.
+			// After type, so the id stays field 1.
+			checks := "-"
+			if items, ok := t["acceptance"].([]any); ok && len(items) > 0 {
+				done := 0
+				for _, v := range items {
+					if m, ok := v.(map[string]any); ok && m["checked"] == true {
+						done++
+					}
+				}
+				checks = fmt.Sprintf("%d/%d", done, len(items))
+			}
+			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-5s  %-*s  %s%s\n", t["id"], t["status"], t["type"], checks, w, t["slug"], t["title"], by)
 		}
 	}
 	if t, ok := reply["task"].(Reply); ok {

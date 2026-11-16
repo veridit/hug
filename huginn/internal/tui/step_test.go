@@ -60,7 +60,7 @@ func TestBoardRowsAreCompactWithLegend(t *testing.T) {
 	m.setView("board")
 	text := ansi.Strip(m.boardText())
 	ts, _ := s.Tasks()
-	if !strings.Contains(text, ts[0].ID+"   S H A reasonably long task") {
+	if !strings.Contains(text, ts[0].ID+"   S H A reasonably") {
 		t.Fatalf("row not compact:\n%s", text)
 	}
 	if !strings.Contains(text, "S spike") || !strings.Contains(text, "H high") {

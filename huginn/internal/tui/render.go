@@ -18,6 +18,7 @@ type theme struct {
 	// focus marks where focus is in a task: one heading or the task id.
 	// ask is every confirm line: a question the reader cannot miss.
 	focus, ask             lipgloss.Style
+	progress               lipgloss.Style // a task partly ticked (d8yx7y)
 	status, kind, priority map[string]lipgloss.Style
 }
 
@@ -35,6 +36,7 @@ func newTheme() theme {
 		focus:  base.Background(lipgloss.AdaptiveColor{Dark: "#00bfff", Light: "#006c9c"}).Foreground(lipgloss.AdaptiveColor{Dark: "#0b1620", Light: "#ffffff"}).Bold(true),
 		ask:    base.Background(lipgloss.AdaptiveColor{Dark: "#ffb454", Light: "#995200"}).Foreground(lipgloss.AdaptiveColor{Dark: "#1a1200", Light: "#ffffff"}).Bold(true),
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
+	t.progress = progressStyle(color)
 	for i, s := range []string{"todo", "doing", "done", "blocked", "dropped"} {
 		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", "#ff8585", "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", "#ae2525", "#586474"}[i])
 	}
@@ -105,7 +107,9 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 	} else if mark != "" {
 		pointer = m.styles.dim.Render(mark)
 	}
-	head := pointer + m.marker(t.Path) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
+	// Acceptance progress before the id: "◑ 2/4 8bsx4y" (d8yx7y).
+	head := pointer + m.marker(t.Path) + m.progress(t) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
+	pw := m.progressWidth()
 	row := head
 	// A task with files: ⎘ and the count before the title (zgr01t).
 	title := oneLine(t.Title)
@@ -115,13 +119,13 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 	if compact {
 		// Board columns are narrow: type and priority are one coloured
 		// letter each, spelled out in the legend under the board.
-		row += initial(m.styles.kind, t.Type) + " " + initial(m.styles.priority, t.Priority) + " " + fit(title, max(0, width-15))
+		row += initial(m.styles.kind, t.Type) + " " + initial(m.styles.priority, t.Priority) + " " + fit(title, max(0, width-15-pw))
 	} else {
-		row += styled(m.styles.status, m.boardStatus(t), 7) + " " + styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(title, max(0, width-36))
+		row += styled(m.styles.status, m.boardStatus(t), 7) + " " + styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(title, max(0, width-36-pw))
 	}
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {
-		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 11, width)))
+		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 11+pw, width)))
 	}
 	if selected {
 		// Inner cells end with a full reset, which would cut the tint after
@@ -171,11 +175,12 @@ func (m model) row(t task.Task) string {
 	return m.taskRow(t, m.width, ok && selected.Path == t.Path, false)
 }
 func (m model) columns(width int, compact bool) string {
-	s := "  " + fit("ID", 8) + " "
+	pw := m.progressWidth()
+	s := "  " + fit("✓", pw) + fit("ID", 8) + " "
 	if compact {
-		return m.styles.dim.Render(fit(s+"T P "+fit("TITLE", max(0, width-15)), width))
+		return m.styles.dim.Render(fit(s+"T P "+fit("TITLE", max(0, width-15-pw)), width))
 	}
-	return m.styles.dim.Render(fit(s+fit("STATUS", 7)+" "+fit("TYPE", 7)+" "+fit("PRIORITY", 8)+" "+fit("TITLE", max(0, width-36)), width))
+	return m.styles.dim.Render(fit(s+fit("STATUS", 7)+" "+fit("TYPE", 7)+" "+fit("PRIORITY", 8)+" "+fit("TITLE", max(0, width-36-pw)), width))
 }
 
 // window is the rows of indices shown in rows lines, starting at start as
