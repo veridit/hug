@@ -43,3 +43,5 @@ check 2: 'hug task take 2knt1d --model gpt-6.1-sol' (no name) -> file 'assignee:
 check 3: TestTakeAsAndModelRecordsBoth/flags and /HUG_USER_and_HUG_MODEL: file 'assignee: ["poodle"]' + 'model: "claude-opus-5-5"'; show 'taken by: poodle · claude-opus-5-5'; ls '... Take me  [poodle · claude-opus-5-5]'; board --wide same; next --mine --as poodle finds it; take --as crab -> taken.
 
 check 4: in this jcode session (JCODE_SESSION_ID=session_hare_...), 'hug task take s834q1' with no flags -> 'fix: hug task take s834q1 --as hare --model MODEL'; with '--model claude-opus-5-5' -> 'taken by: hare · claude-opus-5-5', file 'assignee: ["hare"]' 'model: "claude-opus-5-5"'. Test TestTakeUsesJcodeSessionName (session name; HUG_USER wins over it; no model still fails) and TestHarnessName.
+
+check 5 partial: MCP task_take has 'model' and 'agent' (TestTakeRecordsAgentAndModel: assignee [poodle], model claude-opus-5-5 in reply, show and file); show/ls/board text and JSON carry the model. TUI display not done: huginn/internal/tui is poodle's lane; crab DM'd 14:05 to sequence (tui/detail.go:70 'assigned:' line).
