@@ -29,7 +29,7 @@ Code: huginn/internal/tui/move.go (moveTarget, from ksv323), actions.go. A move 
 - [x] grab mode: m, then 5 presses of k and Enter moves a task 5 rows up with one confirm-free drop and exactly one commit (test)
 - [x] Esc in grab mode leaves the order and the board unchanged (test)
 - [x] y then P on another row puts the task above that row with one commit (test)
-- [ ] the footer in grab mode shows only the keys that work there, e.g. 'j/k move · g/G top/bottom · Enter drop · Esc cancel' (golden)
+- [x] the footer in grab mode shows only the keys that work there, e.g. 'j/k move · g/G top/bottom · Enter drop · Esc cancel' (golden)
 
 ## Notes
 
