@@ -16,7 +16,7 @@ Automatic recall stops injecting 'record' memories (what happened) for long mess
 ## Depends on
 
 ## Acceptance
-- [ ] fresh 147 replayed with stored types: default vs default+norecords600, blind judge, session-cluster CIs
+- [x] fresh 147 replayed with stored types: default vs default+norecords600, blind judge, session-cluster CIs
 - [ ] skip_records_above default set only if long irrelevant/msg CI < 0 and relevant/msg does not fall
 
 ## Notes
