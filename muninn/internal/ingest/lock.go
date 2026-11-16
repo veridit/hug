@@ -3,7 +3,7 @@ package ingest
 import (
 	"sync"
 
-	"github.com/veridit/hug/muninn/internal/flock"
+	"github.com/veridit/hug/internal/flock"
 )
 
 // Several processes write the native store: recall hooks, capture, MCP servers
