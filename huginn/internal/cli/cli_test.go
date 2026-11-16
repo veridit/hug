@@ -280,11 +280,7 @@ func TestLintNextFixesFirstFinding(t *testing.T) {
 	if clean["next"] != "hug task take "+id {
 		t.Fatalf("clean lint keeps the usual next: %v", clean)
 	}
-	script := filepath.Join(t.TempDir(), "ed.sh")
-	if e := os.WriteFile(script, []byte("#!/bin/sh\nperl -0pi -e 's/## Depends on\\n/## Depends on\\nIs there a task:asdfasdf or ticket:asdlfkjasldkfj?\\n/' \"$1\"\n"), 0700); e != nil {
-		t.Fatal(e)
-	}
-	t.Setenv("VISUAL", script)
+	useEditor(t, "## Depends on\n", "## Depends on\nIs there a task:asdfasdf or ticket:asdlfkjasldkfj?\n")
 	edited := execute(t, a, "edit", id)
 	if edited["next"] != "hug task edit "+id {
 		t.Fatalf("edit next: %v", edited)
@@ -435,11 +431,7 @@ func TestLintHidesClosedTasks(t *testing.T) {
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Closed one", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-	script := filepath.Join(t.TempDir(), "ed.sh")
-	if e := os.WriteFile(script, []byte("#!/bin/sh\nperl -0pi -e 's/## Depends on\\n/## Depends on\\nNothing\\n/' \"$1\"\n"), 0700); e != nil {
-		t.Fatal(e)
-	}
-	t.Setenv("VISUAL", script)
+	useEditor(t, "## Depends on\n", "## Depends on\nNothing\n")
 	execute(t, a, "edit", id)
 	execute(t, a, "check", id, "1")
 	execute(t, a, "done", id)

@@ -22,6 +22,26 @@ func branchGit(t *testing.T, dir string, args ...string) string {
 	}
 	return strings.TrimSpace(string(out))
 }
+
+// listsWorktree says whether git worktree list --porcelain names dir. git
+// prints C:/Users/runneradmin/... on Windows where Go has
+// C:\Users\RUNNER~1\... (4emme8): compare the folders, not the strings.
+func listsWorktree(list, dir string) bool {
+	want, err := os.Stat(dir)
+	if err != nil {
+		return false
+	}
+	for _, line := range strings.Split(list, "\n") {
+		path, ok := strings.CutPrefix(strings.TrimRight(line, "\r"), "worktree ")
+		if !ok {
+			continue
+		}
+		if got, err := os.Stat(filepath.FromSlash(path)); err == nil && os.SameFile(got, want) {
+			return true
+		}
+	}
+	return false
+}
 func TestBranchSyncTwoClonesKeepCodeClean(t *testing.T) {
 	base := t.TempDir()
 	remote := filepath.Join(base, "remote.git")
@@ -203,7 +223,7 @@ func TestBranchSyncFromLinkedWorktreeUsesMainCheckout(t *testing.T) {
 			if n := strings.Count(list, "worktree "); n != 3 {
 				t.Fatalf("want main, linked and one notes checkout, got %d:\n%s", n, list)
 			}
-			if !strings.Contains(list, "worktree "+filepath.Join(main, NotesDir)+"\n") {
+			if !listsWorktree(list, filepath.Join(main, NotesDir)) {
 				t.Fatalf("notes checkout not in the main worktree:\n%s", list)
 			}
 			for _, root := range []string{main, linked} {

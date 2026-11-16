@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [main, "ci/**"] # ci/<task-id>: check a fix on every OS before main
   pull_request:
 
 permissions:

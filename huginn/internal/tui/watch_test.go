@@ -89,36 +89,50 @@ func feed(t *testing.T, m model, msg tea.Msg) model {
 	t.Helper()
 	next, cmd := m.Update(msg)
 	m = next.(model)
-	for _, out := range drain(cmd) {
+	for _, out := range drain(cmd, m.loading) {
 		next, _ = m.Update(out)
 		m = next.(model)
 	}
 	return m
 }
 
-// drain runs the commands a reload returns; it skips waitChange, which
-// blocks on the watch, and the input cursor's blink, which sleeps.
-func drain(cmd tea.Cmd) []tea.Msg {
-	if cmd == nil {
+// drain runs the commands Update returned, as Bubble Tea would, each in
+// its own goroutine, and returns the load when loading says one was
+// started. waitChange, which blocks on the watch, and the input cursor's
+// blink, which sleeps, are left running: not part of this step. The load
+// is awaited, not given a fixed slice of time: it runs git, which is slow
+// to start on Windows under -race (4emme8).
+func drain(cmd tea.Cmd, loading bool) []tea.Msg {
+	if cmd == nil || !loading {
 		return nil
 	}
-	done := make(chan tea.Msg, 1)
-	go func() { done <- cmd() }()
-	select {
-	case msg := <-done:
-		if batch, ok := msg.(tea.BatchMsg); ok {
-			var out []tea.Msg
-			for _, c := range batch {
-				out = append(out, drain(c)...)
+	out := make(chan tea.Msg, 64)
+	var start func(tea.Cmd)
+	start = func(c tea.Cmd) {
+		go func() {
+			msg := c()
+			if batch, ok := msg.(tea.BatchMsg); ok {
+				for _, b := range batch {
+					if b != nil {
+						start(b)
+					}
+				}
+				return
 			}
-			return out
+			out <- msg
+		}()
+	}
+	start(cmd)
+	deadline := time.After(10 * time.Second)
+	for {
+		select {
+		case msg := <-out:
+			if _, ok := msg.(loadedMsg); ok {
+				return []tea.Msg{msg}
+			}
+		case <-deadline:
+			return nil // the test then fails on what is not on screen
 		}
-		if _, ok := msg.(loadedMsg); ok {
-			return []tea.Msg{msg}
-		}
-		return nil
-	case <-time.After(100 * time.Millisecond):
-		return nil // waitChange or the blink: not part of this step
 	}
 }
 
