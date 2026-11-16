@@ -1,7 +1,7 @@
 ---
 id: zgr01t
 title: "TUI: a task's attached files show with an icon and open in the editor"
-status: "doing"
+status: "done"
 type: feature
 priority: "medium"
 assignee: ["vole"]
