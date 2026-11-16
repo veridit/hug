@@ -4,7 +4,7 @@ title: "Bare task ids without brackets; task:ID accepted and followable"
 status: "doing"
 type: feature
 priority: "high"
-assignee: ["poodle"]
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
