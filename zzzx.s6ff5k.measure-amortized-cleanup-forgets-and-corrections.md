@@ -21,3 +21,5 @@ Know whether agents act on the recall header's Fix line, and add an off-topic si
 - [ ] header wording change only if the 5-agent eval does not regress
 
 ## Notes
+
+Item 1 measured 2026-11-16 (local data only): of 454 jcode sessions that received recall injections (injections table, keys jcode:<session>), 0 called memory_forget as a tool (counted from tool-use records '"name":"mcp__muninn__memory_forget"', not text mentions; the recall header itself contains 'memory_forget'), and 13 memory_remember calls occurred across them. Agents essentially never act on the header's Fix line. Implication for item 2: cleanup must not depend on agents volunteering it; an off-topic feedback signal needs to be cheap and prompted, or inferred.
