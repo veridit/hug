@@ -2,9 +2,9 @@ muninn · ~/project                                         6 memories · 4 plac
 [category:fact] · ⌫ remove · F clear
 ┌ Filtered memories ───────────────────────────────────────────────────────────┐
 │  id      date       place        category   text                             │
-│› fkyvwc  2026-11-09 scope:global fact       Use ripgrep for repository searc…│
-│  gwdjet  2026-11-09 scope:global fact       Use ripgrep for repository searc…│
-│  pka0js  2026-11-09 scope:global fact       Bake banana cake at 175 degrees.…│
+│› fkyvwc  2026-11-09 all agents   fact       Use ripgrep for repository searc…│
+│  gwdjet  2026-11-09 all agents   fact       Use ripgrep for repository searc…│
+│  pka0js  2026-11-09 all agents   fact       Bake banana cake at 175 degrees.…│
 │                                                                              │
 │                                                                              │
 │                                                                              │

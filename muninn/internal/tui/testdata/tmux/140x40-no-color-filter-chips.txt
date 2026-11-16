@@ -2,9 +2,9 @@ muninn · ~/project                                                             
 [category:fact] · ⌫ remove · F clear
 ┌ Filtered memories ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │  id       date       place              category   text                                                                                  │
-│› fkyvwc   2026-11-09 scope:global       fact       Use ripgrep for repository searches, not recursive grep.                              │
-│  gwdjet   2026-11-09 scope:global       fact       Use ripgrep for repository searches, not recursive grep.                              │
-│  pka0js   2026-11-09 scope:global       fact       Bake banana cake at 175 degrees. Use a skewer to check the centre.                    │
+│› fkyvwc   2026-11-09 all agents         fact       Use ripgrep for repository searches, not recursive grep.                              │
+│  gwdjet   2026-11-09 all agents         fact       Use ripgrep for repository searches, not recursive grep.                              │
+│  pka0js   2026-11-09 all agents         fact       Bake banana cake at 175 degrees. Use a skewer to check the centre.                    │
 │                                                                                                                                          │
 │                                                                                                                                          │
 │                                                                                                                                          │

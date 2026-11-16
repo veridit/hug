@@ -2,7 +2,7 @@ muninn · ~/project                                                             
 Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
 ┌ Memory · pka0js · text (Tab switches) ───────────────────────────────────────────────────────────────────────────────────────────────────┐
 │Memory pka0js                                                                                                                             │
-│[fact] [scope:global] [2026-11-09] [pka0js] [strength 1]                                                                                  │
+│[fact] [all agents] [2026-11-09] [pka0js] [strength 1]                                                                                    │
 │────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  │
 │Text                                                                                                                                      │
 │                                                                                                                                          │

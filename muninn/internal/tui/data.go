@@ -34,12 +34,14 @@ type snapshot struct {
 	dupes, moves       tidy.Plan
 	dupePath, movePath string
 	hereLabel          string
+	labels             map[string]string // project scope -> folder name
 	err                error
 }
 
 func loadSnapshot(a *app.App, b app.Binding) snapshot {
 	b = b.Refresh(a)
-	s := snapshot{binding: b, err: b.Err}
+	labels := projectLabels(a)
+	s := snapshot{binding: b, err: b.Err, labels: labels}
 	if b.Err != nil {
 		return s
 	}
@@ -87,7 +89,7 @@ func loadSnapshot(a *app.App, b app.Binding) snapshot {
 		s.places = append(s.places, placeCount{p, counts[p.Scope]})
 		seen[p.Scope] = true
 		if p.Name == "here" {
-			s.hereLabel = scopeLabel(p.Scope)
+			s.hereLabel = humanScope(p.Scope, labels)
 			cwd, _ := os.Getwd()
 			if pr, err := project.Find(cwd, false); err == nil && pr.Scope() == p.Scope {
 				s.hereLabel = pr.Label
@@ -102,7 +104,7 @@ func loadSnapshot(a *app.App, b app.Binding) snapshot {
 	}
 	sort.Strings(scopes)
 	for _, scope := range scopes {
-		name := scopeLabel(scope)
+		name := humanScope(scope, labels)
 		for _, p := range s.places {
 			if p.Name == name {
 				name = "scope:" + scope
@@ -195,6 +197,33 @@ func sessionName(a *app.App, id string) string {
 	}
 	return id
 }
+
+// humanScope names a scope for people: folder names for projects (from
+// labels), plain words for the shared scopes, the raw scope otherwise.
+func humanScope(scope string, labels map[string]string) string {
+	if l, ok := labels[scope]; ok && l != "" {
+		if strings.HasPrefix(scope, "client:") {
+			parts := strings.SplitN(scope, ":", 3)
+			return l + " (" + parts[1] + ")"
+		}
+		return l
+	}
+	switch {
+	case scope == "global":
+		return "all agents"
+	case scope == "personal":
+		return "personal"
+	case scope == "jcode@global":
+		return "jcode, all projects"
+	case strings.HasPrefix(scope, "jcode@") && strings.Contains(scope, ":"):
+		return "jcode " + strings.TrimPrefix(strings.SplitN(scope, ":", 2)[0], "jcode@") + " session"
+	case strings.HasPrefix(scope, "jcode@"):
+		return "jcode " + strings.TrimPrefix(scope, "jcode@")
+	case strings.HasPrefix(scope, "client:") && strings.Count(scope, ":") == 1:
+		return strings.TrimPrefix(scope, "client:") + " (client)"
+	}
+	return scopeLabel(scope)
+}
 func scopeLabel(scope string) string {
 	switch {
 	case strings.HasPrefix(scope, "folder:"):
@@ -218,7 +247,7 @@ func (m model) placeName(scope string) string {
 			return p.Name
 		}
 	}
-	return scopeLabel(scope)
+	return humanScope(scope, m.snapshot.labels)
 }
 func latestPlan(kind string, b app.Binding, a *app.App) (tidy.Plan, string) {
 	type candidate struct {
