@@ -21,3 +21,5 @@ Users meet one tool, hug (Old Norse hugr, mind), with the ravens Huginn (thought
 - [ ] GitHub page has mascot artwork and a social preview image
 
 ## Notes
+
+Mascot drafts generated in Grok Imagine 2026-11-16 (6 prompt rounds, see docs/art/drafts/PROMPTS.md). User direction: hug = hugr (mind, 'komme i hug') and embrace can coexist; Muninn collects memories (rune pebbles into a nest, beak), Huginn writes the to-do tablet (claw). Awaiting the user's pick.
