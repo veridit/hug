@@ -29,7 +29,7 @@ Builds on the when-then format (jrj1vq, same epic d634kr): this is one more fiel
 ## Depends on
 
 ## Acceptance
-- [ ] memory_remember and hug mem remember accept a condition (until DATE, while task:ID open, while REF unmerged) and store it (test)
+- [x] memory_remember and hug mem remember accept a condition (until DATE, while task:ID open, while REF unmerged) and store it (test)
 - [ ] a memory whose condition has ended is not recalled and appears once as a dream item; nothing is deleted automatically (test)
 - [ ] capture on a transcript that names a running agent writes the ticket or file instead and never stores agent status (replayed sample, counted)
 - [ ] on the seid store, memories naming stopped agents are offered as dream items with the ticket they referred to (count reported)
