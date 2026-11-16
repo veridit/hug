@@ -488,6 +488,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		return nil, e
 	}
 	defer s.c.Close()
+	// Every commit hug makes on the board names the model that made it, the
+	// same one take records (t709he).
+	if m := a.whoTakes(f).Model; m != "" {
+		s.r.Trailers = []string{"Model: " + m}
+	}
 	// Writes hold the board turn from reading to committing; take and sync
 	// order their locks themselves (run, then turn), as a background pass does.
 	if !readOnly[cmd] && cmd != "take" && cmd != "sync" && cmd != "tui" && cmd != "edit" {

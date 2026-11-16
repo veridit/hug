@@ -40,7 +40,25 @@ brew services start hug       # optional: memory watcher + web UI on http://127.
 | `hug tui` | | the tasks TUI (`hug mem tui` is the memory TUI) |
 | `hug mcp` | | one MCP server: `memory_*` and `task_*` tools |
 | `hug setup` | `huginn setup` | read-only setup checklist |
+| `hug task install commit-msg` | | refuse commits without one `Model:` trailer |
 | `hug version` | | versions of hug and both parts |
+
+## Who made a commit
+
+Every commit names what made it in one trailer line: `Model: claude-opus-5-5`
+(the model id), or `Model: human` when the git author wrote it themselves.
+`hug task install commit-msg` refuses a commit without exactly one, with a
+`fix:` line to finish it; `hug setup` lists it until it is in place. With
+`core.hooksPath` (a project's own `.githooks`) hug never edits the tracked hook
+and prints the two lines to add instead. hug's own commits on `hug/tasks` and
+`muninn-notes` add `Model:` from `--model` or `HUG_MODEL` (the TUI: `human`).
+Emergency exit: `git commit --no-verify`.
+
+```sh
+git log --format='%h %(trailers:key=Model,valueonly,separator=%x2C) %s'   # every commit and its model
+git log --grep='^Model: gpt-6.1-sol$' --oneline            # one model's commits
+git -C .hug/tasks log --format='%(trailers:key=Model,valueonly,separator=%x2C) %s'   # task changes
+```
 
 ## Layout
 

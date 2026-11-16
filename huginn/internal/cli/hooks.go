@@ -74,6 +74,11 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// Taking from the TUI uses the same rule as hug task take: the model is
 	// required (--model or HUG_MODEL), the name is optional (et85h1).
 	who := a.whoTakes(f)
+	// A person at the keyboard: with no model given, TUI commits are theirs
+	// (t709he; a CLI or MCP write never guesses human).
+	if who.Model == "" {
+		s.r.Trailers = []string{"Model: human"}
+	}
 	// The TUI lives while others write: it must read the files each time.
 	s.s.Snapshot = false
 	s.s.Invalidate()

@@ -5,9 +5,9 @@ import "strings"
 // Command help is self-contained so agents never need to hand-format Markdown.
 func commandHelp(command string) string {
 	usage := map[string]string{
-		"install":   "install jcode [--all-instances | --jcode-home PATH] [--dry-run]",
+		"install":   "install jcode [--all-instances | --jcode-home PATH] [--dry-run] | install commit-msg [--dry-run]",
 		"setup":     "setup",
-		"uninstall": "uninstall jcode [--all-instances | --jcode-home PATH] [--dry-run]",
+		"uninstall": "uninstall jcode [--all-instances | --jcode-home PATH] [--dry-run] | uninstall commit-msg [--dry-run]",
 		"init":      "init", "new": `new "title" --goal "outcome" --accept "observable check" [flags]`,
 		"ls":   "ls [--status todo|doing|done|dropped] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--epic EPIC] [--mine] [--jsonl]",
 		"show": "show ID", "edit": "edit ID", "move": "move ID (--before ID | --after ID | --top)", "mv": "mv ID GROUP",
@@ -18,8 +18,8 @@ func commandHelp(command string) string {
 	}
 	details := map[string]string{
 		"setup":     "Prints what an agent needs to switch this repository to huginn, then a checklist of the steps still open, each with the exact command or edit. Reads only; changes nothing. Re-run after each step.\n",
-		"install":   "Adds huginn -> hug task mcp to Jcode mcp.json. Keeps a timestamped backup and other servers. Default: JCODE_HOME or ~/.jcode. --all-instances discovers the static zsh registry. Restart Jcode afterward.\n",
-		"uninstall": "Removes only the huginn MCP entry, keeping backups and other servers. Same instance selection as install.\n",
+		"install":   "Adds huginn -> hug task mcp to Jcode mcp.json. Keeps a timestamped backup and other servers. Default: JCODE_HOME or ~/.jcode. --all-instances discovers the static zsh registry. Restart Jcode afterward.\ninstall commit-msg: refuse commits without exactly one Model: trailer, the model id that made the\ncommit or Model: human when the git author wrote it (t709he). It goes into this clone's\n<git-common-dir>/hooks; a hook already there keeps running first, as commit-msg.pre-hug. With\ncore.hooksPath (a project's own .githooks) hug never edits the tracked hook: it says which two\nlines to add to it, and hug task setup lists that step until they are there. Merges, rebases,\ncherry-picks, reverts, fixup!/squash! and the hug/tasks and muninn-notes branches are exempt;\nhug's own board commits add Model: from --model or HUG_MODEL. Emergency exit: git commit --no-verify.\nList commits by model: git log --format='%h %(trailers:key=Model,valueonly,separator=%x2C) %s', or one model:\ngit log --grep='^Model: gpt-6.1-sol$'.\n",
+		"uninstall": "Removes only the huginn MCP entry, keeping backups and other servers. Same instance selection as install.\nuninstall commit-msg removes hug's Model: gate and puts back a hook it had kept as commit-msg.pre-hug.\n",
 		"new":       "Required: --goal TEXT and at least one --accept TEXT. Repeat --accept for each check.\nDescribe with --goal (where we aim), --purpose (why), --principle (what we do and do not do)\nand --details (only facts a decision depends on); lint asks for them on new tasks.\nOptional: --type feature|bug|chore|spike|docs (default feature), --priority LABEL.\nRepeat --dep REF for dependencies and --label LABEL for labels.\nUse --group FOLDER, --top, or --after REF to choose placement.\nExample: hug task new \"Form\" --goal \"Submit works\" --accept \"Saved\" --dep k7m2qx --group auth\n",
 		"ls":        "Columns: id, status, type, slug, title. All statuses are included unless filtered. Filters combine.\n--jsonl prints one JSON task per line; --json one object with a tasks array.\n--mine is the name take records: --as, HUG_USER, the agent session, else --model/HUG_MODEL.\n",
 		"show":      "Shows goal, notes, numbered acceptance and dependency ids with current titles/statuses/paths.\n",

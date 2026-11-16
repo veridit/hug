@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,8 +14,14 @@ func (a *App) runInstall(cmd string, f flags) (Reply, error) {
 	if err := f.count(1); err != nil {
 		return nil, err
 	}
+	if f.args[0] == "commit-msg" {
+		if f.has("all-instances") || f.has("jcode-home") {
+			return nil, usage("--all-instances and --jcode-home are for jcode", "hug task "+cmd+" commit-msg")
+		}
+		return a.runCommitMsg(context.Background(), cmd, f.has("dry-run"))
+	}
 	if f.args[0] != "jcode" {
-		return nil, usage("supported harness: jcode", "hug task "+cmd+" jcode")
+		return nil, usage("supported: jcode, commit-msg", "hug task "+cmd+" jcode")
 	}
 	if f.has("all-instances") && f.has("jcode-home") {
 		return nil, usage("--all-instances and --jcode-home are mutually exclusive", "hug task "+cmd+" jcode --help")

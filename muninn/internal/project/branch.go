@@ -86,6 +86,11 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 		if e != nil {
 			return st, e
 		}
+		// Name the model on these commits when it is known (t709he); never
+		// a guess.
+		if m := strings.TrimSpace(os.Getenv("HUG_MODEL")); m != "" {
+			repository.Trailers = []string{"Model: " + m}
+		}
 		// Write where the branch is checked out: the main worktree's
 		// .muninn-notes, also from a linked worktree (065wwn).
 		p.Notes = repository.Dir

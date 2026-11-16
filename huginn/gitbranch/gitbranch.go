@@ -33,6 +33,9 @@ type Repository struct {
 	Root, Dir, Branch, Remote string
 	Common                    string // absolute common git dir, set by Open
 	Identity                  Identity
+	// Trailers end every commit message this handle makes, e.g.
+	// "Model: claude-opus-5-5" (t709he).
+	Trailers []string
 }
 
 // Error includes a copyable repair command and the original Git diagnostic.
@@ -563,8 +566,16 @@ func (r *Repository) Commit(paths []string, message string) error {
 	if changed == "" {
 		return nil
 	}
-	_, e = r.git("commit", "-m", message)
+	_, e = r.git("commit", "-m", r.withTrailers(message))
 	return e
+}
+
+// withTrailers ends message with r.Trailers as git trailers.
+func (r *Repository) withTrailers(message string) string {
+	if len(r.Trailers) == 0 {
+		return message
+	}
+	return strings.TrimRight(message, "\n") + "\n\n" + strings.Join(r.Trailers, "\n")
 }
 func (r *Repository) remoteRef() string { return "refs/remotes/" + r.Remote + "/" + r.Branch }
 func (r *Repository) fetch() (bool, error) {
@@ -830,6 +841,6 @@ func (r *Repository) EnsureFirstCommit(message string) error {
 	if e != nil || h != "" {
 		return e
 	}
-	_, e = r.git("-c", "core.hooksPath="+os.DevNull, "commit", "--allow-empty", "-m", message)
+	_, e = r.git("-c", "core.hooksPath="+os.DevNull, "commit", "--allow-empty", "-m", r.withTrailers(message))
 	return e
 }

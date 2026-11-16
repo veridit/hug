@@ -172,6 +172,9 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 			jcodeDone = true
 		}
 	}
+	gate, gateDetail, gateDo := gateStatus(ctx, cwd)
+	add("Model: trailer gate", gate, gateDetail, gateDo)
+
 	add("jcode MCP", jcodeDone, "jcode agents get the huginn tools", "hug task install jcode --all-instances")
 
 	// Desktop and CLI apps (per user, not per repo): report the first one
