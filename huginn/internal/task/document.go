@@ -48,6 +48,10 @@ type Task struct {
 	Assignee     []string     `json:"assignee"`
 	Labels       []string     `json:"labels"`
 	Aliases      []string     `json:"aliases"`
+	// Parent is the epic this task belongs to (an id), or empty. An epic is
+	// a task with children; it has no parent itself (three fixed levels:
+	// epic, task, acceptance item).
+	Parent       string       `json:"parent,omitempty"`
 	Goal         string       `json:"goal"`
 	Dependencies []Dependency `json:"dependencies"`
 	Acceptance   []Acceptance `json:"acceptance"`

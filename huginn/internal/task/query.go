@@ -261,6 +261,7 @@ func Lint(docs []*Document) []Finding {
 			out = append(out, Finding{t.Path, 1, "dependency cycle involving " + t.ID})
 		}
 	}
+	out = append(out, parentFindings(tasks)...)
 	sort.Slice(out, func(i, j int) bool {
 		if out[i].Path != out[j].Path {
 			return out[i].Path < out[j].Path

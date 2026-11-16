@@ -442,7 +442,7 @@ func TestDependencyFollowAndBack(t *testing.T) {
 func TestColorAndNoColorLayout(t *testing.T) {
 	m := fixture(t)
 	m.styles.renderer.SetColorProfile(termenv.TrueColor)
-	colored := m.row(m.visible[0])
+	colored := m.taskRow(m.visible[0], m.width, false, false) // unselected: cells keep their colours
 	if !strings.Contains(colored, "38;2;0;191;255") {
 		t.Fatal("missing accent", colored)
 	}

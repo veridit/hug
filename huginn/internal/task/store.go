@@ -234,7 +234,7 @@ func (s *Store) Set(ref, field, value string) (Result, error) {
 	if e != nil {
 		return Result{}, e
 	}
-	valid := []string{"title", "type", "priority", "label", "assignee"}
+	valid := []string{"title", "type", "priority", "label", "assignee", "parent"}
 	if !contains(valid, field) {
 		return Result{}, invalidFor(d.Task.ID, "field", field, valid)
 	}
@@ -243,6 +243,15 @@ func (s *Store) Set(ref, field, value string) (Result, error) {
 	}
 	before := string(d.Bytes())
 	var v any = value
+	if field == "parent" {
+		ts, e := s.Tasks()
+		if e != nil {
+			return Result{}, e
+		}
+		if v, e = parentFor(d.Task, ts, value); e != nil {
+			return Result{}, e
+		}
+	}
 	if field == "label" {
 		field = "labels"
 		v = []string{value}
@@ -330,6 +339,12 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 		}
 		if len(unchecked) > 0 && policy != "warn" {
 			return Result{}, &Error{Kind: "unchecked-acceptance", ID: d.Task.ID, Unchecked: unchecked, Fix: unchecked[0].Fix}
+		}
+		if open := OpenChildren(d.Task, ts); len(open) > 0 {
+			if policy != "warn" {
+				return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Field: "children", Value: fmt.Sprintf("%d open child tasks", len(open)), Dependencies: open, Fix: "hug task show " + open[0].ID}
+			}
+			warnings = append(warnings, "open child tasks")
 		}
 	}
 	if e = d.SetField("status", status); e != nil {

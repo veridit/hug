@@ -106,7 +106,10 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 		row = pointer + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + " " + m.marker(t.Path) + " " + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 13, width)))
 	}
 	if selected {
-		row = m.styles.selected.Render(row)
+		// Inner cells end with a full reset, which would cut the tint after
+		// the first coloured cell; render the row as plain text in one style
+		// so the highlight runs the whole width (2026-11-16, user).
+		row = m.styles.selected.Render(ansi.Strip(row))
 	}
 	return row
 }
