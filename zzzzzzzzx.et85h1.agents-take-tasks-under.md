@@ -27,7 +27,7 @@ huginn/internal/cli/cli.go:180 identity() reads HUGINN_USER, else git config use
 ## Acceptance
 - [x] hug task take ID with no model fails: says no model was given and ends with fix: hug task take ID --model MODEL (or set HUG_MODEL); git user.name is never used (test)
 - [x] hug task take ID --model gpt-6.1-sol with no name records the model as assignee (test)
-- [ ] hug task take ID --as poodle --model claude-opus-5-5 records assignee poodle and model claude-opus-5-5 on the task; HUG_USER/HUG_MODEL do the same (test)
+- [x] hug task take ID --as poodle --model claude-opus-5-5 records assignee poodle and model claude-opus-5-5 on the task; HUG_USER/HUG_MODEL do the same (test)
 - [ ] inside jcode with no flag, take uses the session name from JCODE_SESSION_ID (test)
 - [ ] MCP task_take takes agent and model and records them; show, ls and the TUI show the model next to the assignee
 - [ ] hug setup and the agent instructions tell agents to name themselves and their model on take
