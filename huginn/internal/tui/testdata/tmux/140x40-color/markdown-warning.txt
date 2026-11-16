@@ -9,7 +9,7 @@ created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task
   fix: hug task edit 000003
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
-Provide compiler-lang support with  huginn  and clear sections.
+Provide compiler-lang support with huginn and clear sections.
 
 • Render Markdown, not source
 • Keep the header fixed while scrolling
@@ -18,10 +18,10 @@ Read the guide https://example.invalid/guide.
 
 fmt.Println("rendered code")
 
-
 no acceptance items yet
 
 no dependencies
+
 
 
 

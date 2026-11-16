@@ -8,7 +8,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 ⚠ line 1: title is 134 characters (max 80): move detail into the Goal
   fix: hug task set 000001 --title "..."
 ────────────────────────────────────────────────────────────────────────────────
-Deliver compiler-lang support with  huginn  and readable evidence.
+Deliver compiler-lang support with huginn and readable evidence.
 
 • Preserve the public interface
 • See the guide https://example.invalid/guide for the synthetic contract.

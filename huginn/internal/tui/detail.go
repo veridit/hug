@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/glamour"
+	gansi "github.com/charmbracelet/glamour/ansi"
 	"github.com/charmbracelet/glamour/styles"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -82,9 +83,11 @@ func (m model) markdown(s string) string {
 	}
 	style := styles.DarkStyleConfig
 	accent := "#00bfff"
+	codeFg, codeBg := "#c9d6e3", "#1a2630"
 	if !m.styles.renderer.HasDarkBackground() {
 		style = styles.LightStyleConfig
 		accent = "#006c9c"
+		codeFg, codeBg = "#2b3a48", "#e8eef3"
 	}
 	zero := uint(0)
 	style.Document.Margin = &zero
@@ -101,6 +104,12 @@ func (m model) markdown(s string) string {
 	style.H1.Color = &accent
 	style.H2.Color = &accent
 	style.H3.Color = &accent
+	// Code reads as code without shouting (8bsx4y): a light blue-grey on a
+	// faint background, no padding, no red (red is for blocked and lint),
+	// and no syntax colours in blocks, which bring red back.
+	style.Code.StylePrimitive = gansi.StylePrimitive{Color: &codeFg, BackgroundColor: &codeBg}
+	style.CodeBlock.Chroma = nil
+	style.CodeBlock.StylePrimitive = gansi.StylePrimitive{Color: &codeFg, BackgroundColor: &codeBg}
 	style.CodeBlock.Margin = &zero
 	renderer, err := glamour.NewTermRenderer(glamour.WithStyles(style), glamour.WithWordWrap(max(1, m.width-2)), glamour.WithColorProfile(m.styles.renderer.ColorProfile()))
 	if err != nil {
@@ -110,6 +119,11 @@ func (m model) markdown(s string) string {
 	if err != nil {
 		return wrap(s, m.width)
 	}
+	// Without syntax colours glamour ends a code block with its reset on a
+	// line of its own, which shows as an extra blank line: keep it on the
+	// block's last line.
+	out = strings.ReplaceAll(out, "\n\x1b[0m\n", "\x1b[0m\n")
+	out = strings.TrimSuffix(out, "\n\x1b[0m")
 	return strings.Trim(out, "\n")
 }
 func (m model) detailHeader(t task.Task) []string {

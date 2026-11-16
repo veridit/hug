@@ -8,6 +8,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 ⚠ line 1: title is 134 characters (max 80): move detail into the Goal
   fix: hug task set 000001 --title "..."
 ────────────────────────────────────────────────────────────────────────────────
+Deliver compiler-lang support with huginn and readable evidence.
 
 • Preserve the public interface
 • See the guide https://example.invalid/guide for the synthetic contract.
@@ -16,9 +17,8 @@ Verification
 
 fmt.Println("synthetic acceptance")
 
-
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks
 > ☐ 1. First acceptance check
-Task 1 of 60 · 18% · n next · p previous · Esc back
+Task 1 of 60 · 10% · n next · p previous · Esc back
 
 j/k check · Space tick · n/p task · Tab section · Esc back · ? help · q quit

@@ -9,7 +9,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
   fix: hug task set 000001 --title "..."
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
-Deliver compiler-lang support with  huginn  and readable evidence.
+Deliver compiler-lang support with huginn and readable evidence.
 
 • Preserve the public interface
 • See the guide https://example.invalid/guide for the synthetic contract.
@@ -17,7 +17,6 @@ Deliver compiler-lang support with  huginn  and readable evidence.
 Verification
 
 fmt.Println("synthetic acceptance")
-
 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks
 > ☐ 1. First acceptance check
@@ -30,6 +29,7 @@ Evidence: integration tests are synthetic.
 
 HISTORY
 2026-11-10: created by the terminal acceptance fixture.
+
 
 
 
