@@ -174,39 +174,32 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	a, _, bare := clones(t)
 	id := execute(t, a, "new", "Offline", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
 	settled(t, a)
-	gone := bare + ".gone"
-	if e := os.Rename(bare, gone); e != nil {
-		t.Fatal(e)
-	}
-	// A note never waits on the network: offline it costs what it costs
-	// online. (Its absolute time is the board's own cost, the same with
-	// and without background sync: 443 ms vs 444-466 ms per note measured
-	// niced on the owner's machine, 2026-11-16.)
-	start := time.Now()
-	execute(t, a, "note", id, "while offline")
-	offline := time.Since(start)
-	settled(t, a)
+	// The remote hangs: any network call by the note would cost 5 s. (A
+	// missing remote fails at once, so it could not show a wait.)
+	git(t, a.Cwd, "remote", "set-url", "origin", "ssh://hang.invalid/remote.git")
+	git(t, a.Cwd, "config", "core.sshCommand", "sleep 5; false")
 	saved := Spawn
 	Spawn = nil
-	start = time.Now()
+	start := time.Now()
 	execute(t, a, "note", id, "baseline, no background sync")
 	baseline := time.Since(start)
 	Spawn = saved
-	t.Logf("note offline %v, without background sync %v", offline.Round(time.Millisecond), baseline.Round(time.Millisecond))
-	// The network would cost seconds (an unreachable remote); starting the
-	// syncer costs a process start, slow on Windows (2.14 s vs 1.875 s on
-	// the CI runner): 150 ms or a fifth of the note, whichever is more.
-	if offline > baseline+max(150*time.Millisecond, baseline/5) {
-		t.Fatalf("note took %v offline, %v without background sync: it waited on the network", offline, baseline)
+	start = time.Now()
+	execute(t, a, "note", id, "while offline")
+	offline := time.Since(start)
+	t.Logf("note with the remote hanging %v, without background sync %v", offline.Round(time.Millisecond), baseline.Round(time.Millisecond))
+	// Starting the syncer is a process start (slow under -race and on the
+	// Windows runner, ~1.9 s a note there); waiting on the remote is 5 s.
+	if offline > baseline+max(2*time.Second, baseline) {
+		t.Fatalf("note took %v with the remote hanging, %v without background sync: it waited on the network; log:\n%s", offline, baseline, syncLogOf(t, a))
 	}
 	settled(t, a)
 	code, out := runText(a, "ls")
 	if code != 0 || !strings.Contains(out, "sync: 2 unpushed: ") || !strings.Contains(out, "\nfix: hug task sync\n") {
 		t.Fatalf("ls offline: %d\n%s", code, out)
 	}
-	if e := os.Rename(gone, bare); e != nil {
-		t.Fatal(e)
-	}
+	git(t, a.Cwd, "remote", "set-url", "origin", bare)
+	git(t, a.Cwd, "config", "--unset", "core.sshCommand")
 	execute(t, a, "note", id, "back online")
 	settled(t, a)
 	if got := git(t, bare, "log", "-3", "--format=%s", TaskBranch); strings.Count(got, "note "+id) != 3 {
