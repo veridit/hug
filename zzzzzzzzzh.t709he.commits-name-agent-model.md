@@ -35,3 +35,5 @@ Depends on et85h1 for the identity source (HUG_USER, --as, JCODE_SESSION_ID; HUG
 2026-11-16 Jørgen on his own commits: 'maybe the model is me'. Proposed: a person writes their own name as the model (Model: jhf). Git author cannot tell, because agents commit under his git user too. Awaiting his yes.
 
 2026-11-16 decided (Jørgen): a person's own commit says Model: human. The hook accepts it like any model; the person may add Agent: <name>.
+
+2026-11-16 superseded (Jørgen): no Agent: trailer at all, not even optional. One Model: line always; the git author is the person, Model: human means they did it themselves.
