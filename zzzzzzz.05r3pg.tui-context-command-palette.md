@@ -33,3 +33,5 @@ Today (v0.7.15): huginn/internal/tui/palette.go holds a global tree (overview, l
 - [ ] tests cover context in detail, in a list, and at 80x24; goldens reviewed
 
 ## Notes
+
+2026-11-16: the palette tree and the header key tree are one definition (see the note on 0sw0dd): branch 'view' and branch 'status' join 'filter'. The palette path 'view overview' equals the keys v o.
