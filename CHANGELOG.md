@@ -4,6 +4,19 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Fixed
+
+- `hug task promote ID N` gives the new task the source's Purpose,
+  Principle and Relevant details, so it starts complete and `hug task lint`
+  reports it clean (it used to get `missing section Purpose, Principle`).
+  A source without them gives a child without them. (heype5)
+- `hug task tui` shows text in angle brackets as written in the task
+  detail: a note like `git worktree add --detach <dir> <rev>` no longer
+  loses `<dir>` and `<rev>`, which the markdown renderer read as HTML.
+  Code spans and fenced blocks are unchanged. (heype5)
+
 ## v0.7.24 - 2026-11-16
 
 ### Changed
