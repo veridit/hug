@@ -35,3 +35,5 @@ Today (v0.7.15): huginn/internal/tui/palette.go holds a global tree (overview, l
 ## Notes
 
 2026-11-16: the palette tree and the header key tree are one definition (see the note on 0sw0dd): branch 'view' and branch 'status' join 'filter'. The palette path 'view overview' equals the keys v o.
+
+2026-11-16: take every branch and value key from assignShortcuts in huginn/internal/tui/shortcuts.go (committed), and mark the letter in place. Do not hand-pick letters.
