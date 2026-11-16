@@ -4,6 +4,15 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.8 - 2026-11-16
+
+### Changed
+
+- Memory TUI: places read as folder names ("hug" instead of
+  "project:rc-0ca4bf6be5d989c3") and plain words for shared scopes
+  ("all agents", "jcode, all projects"). The names come from the folders
+  jcode sessions ran in, scanned in the background and cached for a day.
+
 ## v0.7.7 - 2026-11-16
 
 ### Added
