@@ -16,7 +16,7 @@ Agents write every task zoomed out first (where, why, how) and zoomed in only wh
 ## Depends on
 
 ## Acceptance
-- [ ] 6 vocabularies x 3 writer models x 5 real tasks rewritten; blind Opus judge scores zoom, grounding, relevance, fidelity, goal/purpose separation
+- [x] 6 vocabularies x 3 writer models x 5 real tasks rewritten; blind Opus judge scores zoom, grounding, relevance, fidelity, goal/purpose separation
 - [ ] winning names chosen from the report, with per-model results
 - [ ] hug task new/take/done/lint enforce the chosen sections; setup and MCP instructions teach them
 
