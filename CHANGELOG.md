@@ -4,6 +4,22 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.6 - 2026-11-16
+
+### Added
+
+- Lint findings carry a code, shown as `[code]` and as `code` in JSON
+  (long-title, no-acceptance, parent-too-deep, ...). `hug task lint --code
+  CODE` keeps one kind, so problems can be fixed one by one.
+- `hug task board --wide`: one section per column with full titles.
+- This repository has an AGENTS.md; setup's agent section now covers the
+  task description pattern, epics and promote.
+
+### Changed
+
+- `hug task init` makes the first commit and says what it set up: branch,
+  worktree, head and remote.
+
 ## v0.7.5 - 2026-11-16
 
 ### Added
