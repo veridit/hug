@@ -21,3 +21,5 @@ hug setup finds Claude Desktop, Claude Code (~/.claude.json), Codex/ChatGPT (~/.
 - [ ] a server whose binary predates the installed hug is reported with 'restart the app'
 
 ## Notes
+
+Built: 'hug apps [install] [--dry-run] [--json]' (cmd/hug/apps.go, TestAppsInstall): Claude Desktop, ~/.claude.json, ~/.codex/config.toml; reports ok/missing/stale; install adds hug mcp, drops old muninn/huginn entries, keeps other servers, timestamped backup. hug setup has an 'app MCP' step. hug mcp adds a note to tool results when the Homebrew hug was upgraded under a running server ('restart the app'). On this machine all three show ok.
