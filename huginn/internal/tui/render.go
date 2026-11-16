@@ -107,12 +107,17 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 	}
 	head := pointer + m.marker(t.Path) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
 	row := head
+	// A task with files: ⎘ and the count before the title (zgr01t).
+	title := oneLine(t.Title)
+	if mark := m.fileCount(t); mark != "" {
+		title = m.styles.dim.Render(mark) + title
+	}
 	if compact {
 		// Board columns are narrow: type and priority are one coloured
 		// letter each, spelled out in the legend under the board.
-		row += initial(m.styles.kind, t.Type) + " " + initial(m.styles.priority, t.Priority) + " " + fit(oneLine(t.Title), max(0, width-15))
+		row += initial(m.styles.kind, t.Type) + " " + initial(m.styles.priority, t.Priority) + " " + fit(title, max(0, width-15))
 	} else {
-		row += styled(m.styles.status, m.boardStatus(t), 7) + " " + styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(oneLine(t.Title), max(0, width-36))
+		row += styled(m.styles.status, m.boardStatus(t), 7) + " " + styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(title, max(0, width-36))
 	}
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {

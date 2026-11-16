@@ -101,8 +101,13 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		hints = append(hints, hint("j/k", "dependency"), hint("Enter", "follow"))
 	case focusLinks:
 		hints = append(hints, hint("j/k", "link"), hint("Enter", "follow"))
+	case focusFiles:
+		hints = append(hints, hint("j/k", "file"), hint("Enter", "edit"))
 	default:
 		hints = append(hints, hint("j/k", "scroll"))
+	}
+	if len(m.filesOf(t)) > 0 {
+		hints = append(hints, hint("E", "files"))
 	}
 	hints = append(hints, hint("n/p", "task"))
 	if len(m.focusStops(t)) > 1 {
@@ -131,7 +136,8 @@ func (m model) helpText() string {
 	}
 	actions := []bkey.Binding{
 		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),
-		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps"),
+		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps, links, files"),
+		hint("E", "in a task with files (⎘2): its folder in the editor"),
 		hint("t / d / x", "take / done / drop task"),
 	}
 	if len(m.sort) == 0 {

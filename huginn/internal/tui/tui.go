@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync/atomic"
@@ -46,6 +47,9 @@ func Run(ctx context.Context, store *task.Store, opts Options) error {
 type editorMsg struct {
 	path string // the task file the editor opened
 	err  error
+	// commit is the commit message; "" means "hug task edit" (zgr01t:
+	// task files say which file).
+	commit string
 }
 type model struct {
 	store                              *task.Store
@@ -58,6 +62,10 @@ type model struct {
 	cursor, acceptance, offset         int
 	dependency, detailPane             int
 	link                               int                         // the task:ID marked > in Links (xxvm6t)
+	file                               int                         // the file marked > in Files (zgr01t)
+	files                              map[string][]string         // task path -> its file names (zgr01t)
+	lastExec                           *exec.Cmd                   // the editor command last started, for tests (zgr01t)
+	lastEdit                           editorMsg                   // and the message it reports when it closes
 	memo                               [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
 	sort, sortDraft                    []sortKey                   // the order rows are in, and the one being built (mkzcqr)
 	detailStack                        []string
@@ -252,6 +260,7 @@ type snapshot struct {
 	docs             map[string]*task.Document
 	findings, closed []task.Finding
 	closedAt         map[string]int64 // close times from git (closeLog)
+	files            map[string][]string
 	err, readErr     error
 }
 
@@ -262,9 +271,12 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog) snapshot 
 		return snapshot{err: err}
 	}
 	task.Sort(ts)
-	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root)}
+	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root), files: map[string][]string{}}
 	var docs []*task.Document
 	for _, t := range ts {
+		if fs := taskFiles(s.Root, t); len(fs) > 0 {
+			sn.files[t.Path] = fs
+		}
 		b, e := os.ReadFile(filepath.Join(s.Root, t.Path))
 		if e != nil {
 			sn.readErr = e
@@ -296,6 +308,7 @@ func (m *model) apply(sn snapshot, path string) {
 	}
 	m.findings, m.closedFindings = sn.findings, sn.closed
 	m.closedAt = sn.closedAt
+	m.files = sn.files
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.epics = map[string]bool{}
@@ -706,7 +719,11 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.message = "editor closed; re-linted"
 			if m.opts.Commit != nil {
-				if err := m.opts.Commit("hug task edit"); err != nil {
+				subject := msg.commit
+				if subject == "" {
+					subject = "hug task edit"
+				}
+				if err := m.opts.Commit(subject); err != nil {
 					m.message = err.Error()
 				}
 			}
@@ -863,6 +880,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if t, ok := m.selected(); ok {
 						m.link = max(0, min(m.link+step, len(m.links(t))-1))
 					}
+				case focusFiles:
+					if t, ok := m.selected(); ok {
+						m.file = max(0, min(m.file+step, len(m.filesOf(t))-1))
+					}
 				default:
 					m.message = "[ and ] step through a list: Tab focuses the checks or dependencies"
 				}
@@ -885,7 +906,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.followDependency()
 				case focusLinks:
 					m.followLink()
+				case focusFiles:
+					return m, m.openFile()
 				}
+			case "E":
+				// The task's whole files folder, in the editor (zgr01t).
+				return m, m.openFolder()
 			case " ":
 				// Space ticks the check marked >; with focus elsewhere no
 				// check is marked, and ticking an unmarked one is a guess.
@@ -948,6 +974,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else if ok && m.detailPane == focusLinks {
 					if next := m.link + step; next >= 0 && next < len(m.links(t)) {
 						m.link, moved = next, true
+					}
+				} else if ok && m.detailPane == focusFiles {
+					if next := m.file + step; next >= 0 && next < len(m.filesOf(t)) {
+						m.file, moved = next, true
 					}
 				}
 				if moved {

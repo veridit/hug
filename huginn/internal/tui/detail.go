@@ -250,6 +250,7 @@ const (
 	focusAcceptance
 	focusDeps
 	focusLinks // the task:ID references in the text (xxvm6t)
+	focusFiles // the files in the task's folder (zgr01t)
 )
 
 // focusStops lists the focus states the task offers, in Tab order. Empty
@@ -265,13 +266,16 @@ func (m model) focusStops(t task.Task) []int {
 	if len(m.links(t)) > 0 {
 		stops = append(stops, focusLinks)
 	}
+	if len(m.filesOf(t)) > 0 {
+		stops = append(stops, focusFiles)
+	}
 	return stops
 }
 
 // startFocus is the focus a freshly opened task gets: its checks when it has
 // any, otherwise the page.
 func (m *model) startFocus() {
-	m.acceptance, m.dependency, m.link = 0, 0, 0
+	m.acceptance, m.dependency, m.link, m.file = 0, 0, 0, 0
 	m.detailPane = focusPage
 	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
 		m.detailPane = focusAcceptance
@@ -406,6 +410,8 @@ func (m model) detailText(t task.Task) string {
 		links = append(links, line)
 	}
 	section(m.sectionHeading("Links", "j/k or [ ] step · Enter follows", m.detailPane == focusLinks), strings.Join(links, "\n"), "")
+	// Files: the task's folder, each opening in the editor (zgr01t).
+	section(m.sectionHeading(fmt.Sprintf("Files (%d)", len(m.filesOf(t))), "j/k or [ ] step · Enter edits · E folder", m.detailPane == focusFiles), strings.Join(m.filesLines(t), "\n"), "")
 	section(plain("Notes"), m.markdown(text("notes")), "")
 	section(plain("History"), m.markdown(text("history")), "")
 	for _, s := range sections {

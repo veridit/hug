@@ -63,6 +63,19 @@ func Seed(root string) error {
 		if err := os.WriteFile(path, []byte(body), 0644); err != nil {
 			return err
 		}
+		// Task 000001 has two files in its folder; no other task has any
+		// (zgr01t: the ⎘2 mark shows on one row only).
+		if i == 0 {
+			dir := filepath.Join(filepath.Dir(path), id, "bench")
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				return err
+			}
+			for name, text := range map[string]string{"README.md": "# Bench\n\nSynthetic bench notes.\n", "results.tsv": "run\tms\n1\t42\n"} {
+				if err := os.WriteFile(filepath.Join(dir, name), []byte(text), 0644); err != nil {
+					return err
+				}
+			}
+		}
 	}
 	return nil
 }

@@ -6,15 +6,15 @@ NAVIGATION AND FIND                                     EDIT · every action req
 j/k ↑/↓         move / scroll                                           [ and ]         previous / next check or dependency
 < / gg / Home   top                                                     n and p         next / previous task, in a task
 > / G / End     bottom                                                  Space / Enter   tick check / follow dependency marked >
-ctrl-d / ctrl-u half page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps
-PgDn / PgUp     full page down / up                                     t / d / x       take / done / drop task
-h/← Shift-Tab   previous pane / column                                  J / K           move below / above the next row, no confirm
-l/→ Tab         next pane / column                                      m / y, P p      grab: j/k, Enter places it / yank, paste above below
-Enter           open full task detail                                   N               new title, goal and one verification item
-Esc             back one level, never quits                             e               edit in $VISUAL, else $EDITOR, git core.editor, vi
-q / ctrl-c      quit (q only outside inputs)                            e again         after an edit left a finding: edit at once
-/               live find; Enter keeps, Esc clears                      Enter / Esc     confirm / cancel every editing action
-:               palette with command + value completion
+ctrl-d / ctrl-u half page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps, links, files
+PgDn / PgUp     full page down / up                                     E               in a task with files (⎘2): its folder in the editor
+h/← Shift-Tab   previous pane / column                                  t / d / x       take / done / drop task
+l/→ Tab         next pane / column                                      J / K           move below / above the next row, no confirm
+Enter           open full task detail                                   m / y, P p      grab: j/k, Enter places it / yank, paste above below
+Esc             back one level, never quits                             N               new title, goal and one verification item
+q / ctrl-c      quit (q only outside inputs)                            e               edit in $VISUAL, else $EDITOR, git core.editor, vi
+/               live find; Enter keeps, Esc clears                      e again         after an edit left a finding: edit at once
+:               palette with command + value completion                 Enter / Esc     confirm / cancel every editing action
 Tab / Enter     complete palette choice; Enter runs complete command
 ctrl-n/p / ↑↓   select palette completion
 ?               help overlay, including from inputs

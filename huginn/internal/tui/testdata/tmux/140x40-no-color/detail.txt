@@ -24,6 +24,10 @@ fmt.Println("synthetic acceptance")
 
 no dependencies
 
+FILES (2)
+  ⎘ bench/README.md  32 B
+  ⎘ bench/results.tsv  12 B
+
 NOTES
 Evidence: integration tests are synthetic.
 
@@ -31,10 +35,6 @@ HISTORY
 2026-11-10: created by the terminal acceptance fixture.
 
 
-
-
-
-
 Task 1 of 60 · 100% · n next · p previous · Esc back
 
-j/k check · Space tick · n/p task · Tab section · Esc back · : cmd · ? help · q quit                                              hug v0.0.0
+j/k check · Space tick · E files · n/p task · Tab section · Esc back · : cmd · ? help · q quit                                    hug v0.0.0
