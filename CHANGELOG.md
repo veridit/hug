@@ -4,6 +4,38 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.4 - 2026-11-16
+
+### Added
+
+- Task files: `hug task attach ID FILE`, `hug task show ID --file NAME`,
+  `hug task detach ID NAME`. A task's files live in a folder named by its id
+  next to the task file. Text only, 256 KiB each, secrets refused. Notes cite
+  them as `file:NAME` (own task) or `task:REF/NAME`; lint flags missing ones.
+- `hug task import files DIR [--cite PREFIX]` moves an existing evidence
+  folder into task files and rewrites citations (seid-lang:
+  `hug task import files .backlog/evidence --cite .backlog/evidence`).
+- `hug task ls --jsonl`: one JSON task per line.
+
+### Changed
+
+- Settings file is `hug.toml` (`huginn.toml` still read; `hug upgrade`
+  renames it).
+- Every message, fix and help line names `hug task ...` / `hug mem ...`.
+  `hug version` prints one version.
+- `hug task ls` columns: id, status, type, slug, title.
+- New slugs: the first four meaningful words of the title, at most 32
+  characters. Existing file names are unchanged.
+- `hug task rebalance` prints one summary line, and its help explains it
+  only renames filenames (order and contents unchanged).
+- Recall: `skip_records_above` defaults to 600. On 147 fresh real messages,
+  judged blind, long messages got 2.56 fewer irrelevant memories each
+  [CI -3.00, -2.08] with relevant unchanged (-0.08 [-0.26, +0.08]).
+- TUI: acceptance items wrap with a hanging indent, the selected item is
+  highlighted, j/k step through items; Space asks "Tick item N of ID: ...?";
+  o/i/b/! work in detail; overview sizes sections by need with ↑/↓ marks
+  where rows are hidden; "owner" is now "assigned".
+
 ## v0.7.3 - 2026-11-15
 
 ### Fixed
