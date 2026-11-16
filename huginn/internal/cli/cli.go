@@ -604,6 +604,11 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		}
 		reply, e := empty()
 		reply["findings"] = fs
+		// With findings, next is the repair of the first one, never an
+		// unrelated task (rx74bp); a clean board keeps the usual next.
+		if len(fs) > 0 {
+			reply["next"] = fs[0].FixLine()
+		}
 		return reply, e
 	case "sync":
 		if e = f.count(0); e != nil {
@@ -748,6 +753,14 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		}
 		reply["findings"] = fs
 		reply["next"] = "hug task show " + d.Task.ID
+		// The edited task's own first finding comes first: that is what the
+		// edit broke (rx74bp).
+		for _, x := range fs {
+			if x.Path == d.Task.Path {
+				reply["next"] = x.FixLine()
+				break
+			}
+		}
 		return reply, err
 	case "import":
 		return a.runImport(ctx, s, f)
@@ -984,6 +997,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if fs, ok := reply["findings"].([]task.Finding); ok {
 		for _, v := range fs {
 			fmt.Fprintln(a.Out, v.String())
+			fmt.Fprintln(a.Out, "  fix: "+v.FixLine())
 		}
 	}
 	if ts, ok := reply["types"].([]task.TypeInfo); ok {

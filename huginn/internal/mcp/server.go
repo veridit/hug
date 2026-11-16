@@ -246,7 +246,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		return flags([]string{"next"}, m, "type", "priority", "label", "group", "epic", "mine"), nil
 	})
 	for _, cmd := range []string{"lint", "sync", "types"} {
-		add(cmd, map[string]string{"lint": "Report malformed files, dangling dependencies, cycles and unchecked done tasks.", "sync": "Commit local edits, rebase and push the task branch only.", "types": "List the five supported task types and their meanings."}[cmd], map[string]any{}, nil, func(map[string]any) ([]string, error) { return []string{cmd}, nil })
+		add(cmd, map[string]string{"lint": "Report malformed files, dependencies on no task, Depends on lines that are not dependencies, cycles and unchecked done tasks; each finding has a code and a fix command.", "sync": "Commit local edits, rebase and push the task branch only.", "types": "List the five supported task types and their meanings."}[cmd], map[string]any{}, nil, func(map[string]any) ([]string, error) { return []string{cmd}, nil })
 	}
 }
 func validate(input map[string]any, props map[string]any, required []string) error {

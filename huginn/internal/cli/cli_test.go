@@ -267,3 +267,60 @@ func TestBoardColumns(t *testing.T) {
 		}
 	}
 }
+
+// rx74bp: Jørgen's edit, the exact text, typed into Depends on through
+// hug task edit. lint names the line, says it is not a dependency, prints
+// a fix per finding, and next: repairs the first finding (text and JSON);
+// the task is not blocked.
+func TestLintNextFixesFirstFinding(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	r := execute(t, a, "new", "Recall nudges", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")
+	id := r["task"].(Reply)["id"].(string)
+	other := execute(t, a, "new", "Other", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	clean := execute(t, a, "lint")
+	if clean["next"] != "hug task take "+id {
+		t.Fatalf("clean lint keeps the usual next: %v", clean)
+	}
+	script := filepath.Join(t.TempDir(), "ed.sh")
+	if e := os.WriteFile(script, []byte("#!/bin/sh\nperl -0pi -e 's/## Depends on\\n/## Depends on\\nIs there a task:asdfasdf or ticket:asdlfkjasldkfj?\\n/' \"$1\"\n"), 0700); e != nil {
+		t.Fatal(e)
+	}
+	t.Setenv("VISUAL", script)
+	edited := execute(t, a, "edit", id)
+	if edited["next"] != "hug task edit "+id {
+		t.Fatalf("edit next: %v", edited)
+	}
+	for _, args := range [][]string{{"lint"}, {"lint", "--json"}} {
+		out := &bytes.Buffer{}
+		a.Out, a.Err = out, &bytes.Buffer{}
+		if code := a.Run(context.Background(), args); code != 0 {
+			t.Fatalf("%v: %d %s", args, code, a.Err)
+		}
+		text := out.String()
+		t.Logf("%v:\n%s", args, text)
+		if args[len(args)-1] == "--json" {
+			var m map[string]any
+			if e := json.Unmarshal(out.Bytes(), &m); e != nil {
+				t.Fatal(e)
+			}
+			f := m["findings"].([]any)[0].(map[string]any)
+			if m["next"] != "hug task edit "+id || f["code"] != "not-a-dependency" || f["fix"] != "hug task edit "+id {
+				t.Fatalf("json: %s", text)
+			}
+			continue
+		}
+		want := `[not-a-dependency] not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (a dependency line is "- <task id>", or run hug task dep ` + id + ` --add REF; prose belongs in Notes)` + "\n  fix: hug task edit " + id + "\nnext: hug task edit " + id + "\n"
+		if !strings.HasSuffix(text, want) || strings.Contains(text, other) || strings.Contains(text, "dangling") {
+			t.Fatalf("got:\n%s\nwant suffix:\n%s", text, want)
+		}
+	}
+	a.Out = &bytes.Buffer{}
+	shown := execute(t, a, "show", id)["task"].(Reply)
+	if deps := shown["dependencies"].([]string); len(deps) != 0 {
+		t.Fatalf("prose became a dependency: %v", deps)
+	}
+	if next := execute(t, a, "next")["task"].(Reply)["id"]; next != id {
+		t.Fatalf("prose blocked the task: next is %v", next)
+	}
+}
