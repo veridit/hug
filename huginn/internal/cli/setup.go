@@ -158,6 +158,27 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	}
 	add("jcode MCP", jcodeDone, "jcode agents get the huginn tools", "hug task install jcode --all-instances")
 
+	// Desktop and CLI apps (per user, not per repo): report the first one
+	// whose config exists but lacks a hug server.
+	if home, e := os.UserHomeDir(); e == nil {
+		apps := []struct{ name, path, marker string }{
+			{"Claude Desktop", filepath.Join(home, "Library/Application Support/Claude/claude_desktop_config.json"), `"hug"`},
+			{"Claude Code", filepath.Join(home, ".claude.json"), `"hug"`},
+			{"ChatGPT / Codex", filepath.Join(home, ".codex", "config.toml"), "[mcp_servers.hug]"},
+		}
+		var missing []string
+		for _, ap := range apps {
+			if b, err := os.ReadFile(ap.path); err == nil && !strings.Contains(string(b), ap.marker) {
+				missing = append(missing, ap.name)
+			}
+		}
+		detail := "Claude Desktop, Claude Code and ChatGPT/Codex start hug mcp (memory and tasks)"
+		if len(missing) > 0 {
+			detail += "; missing in " + strings.Join(missing, ", ")
+		}
+		add("app MCP", len(missing) == 0, detail, "hug apps install --dry-run && hug apps install, then restart those apps")
+	}
+
 	open := 0
 	next := "hug task next"
 	for _, s := range steps {

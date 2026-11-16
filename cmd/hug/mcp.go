@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"syscall"
+	"time"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
@@ -79,5 +82,44 @@ func newMCPServer(ctx context.Context, jcodeHome string) (*sdk.Server, func(), e
 		closeFn()
 		return nil, nil, err
 	}
+	s.AddReceivingMiddleware(staleBinaryNotice())
 	return s, closeFn, nil
+}
+
+// staleBinaryNotice adds a note to tool results when the hug on disk is newer
+// than this running server: an app keeps old servers alive across upgrades
+// (2026-11-16: Claude Desktop ran 0.7.2 after 0.7.4 was installed and
+// failed on the moved task branch). The note asks for an app restart.
+func staleBinaryNotice() sdk.Middleware {
+	exe, err := os.Executable()
+	if err != nil {
+		return func(next sdk.MethodHandler) sdk.MethodHandler { return next }
+	}
+	exe, _ = filepath.EvalSymlinks(exe)
+	// Only installed copies (Homebrew keeps versions side by side) can go
+	// stale this way; a dev build or go install is never flagged.
+	if !strings.Contains(exe, "/Cellar/hug/") {
+		return func(next sdk.MethodHandler) sdk.MethodHandler { return next }
+	}
+	started := time.Now()
+	link := hugBin()
+	return func(next sdk.MethodHandler) sdk.MethodHandler {
+		return func(ctx context.Context, method string, req sdk.Request) (sdk.Result, error) {
+			res, err := next(ctx, method, req)
+			if method != "tools/call" || err != nil {
+				return res, err
+			}
+			cur, e := filepath.EvalSymlinks(link)
+			if e != nil {
+				return res, err
+			}
+			info, e := os.Stat(cur)
+			if (cur != exe || (e == nil && info.ModTime().After(started))) && res != nil {
+				if r, ok := res.(*sdk.CallToolResult); ok {
+					r.Content = append(r.Content, &sdk.TextContent{Text: "note: hug was upgraded while this server was running (" + filepath.Base(filepath.Dir(filepath.Dir(cur))) + " installed); restart the app to load it"})
+				}
+			}
+			return res, err
+		}
+	}
 }

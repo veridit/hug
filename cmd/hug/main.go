@@ -28,6 +28,7 @@ Usage:
   hug mem <command> ...     memory (recall, search, remember, forget, show, dream, tui, ...)
   hug tui                   task board (hug mem tui for memories)
   hug mcp                   one MCP server: memory_* and task_* tools
+  hug apps [install]        Claude Desktop, Claude Code, ChatGPT/Codex: start hug mcp
   hug upgrade               move this repository to the current hug layout
   hug version
 
@@ -56,6 +57,8 @@ func run(name string, args []string) int {
 		return muninn.Main(args[1:])
 	case "mcp":
 		return runMCP(args[1:])
+	case "apps":
+		return runApps(args[1:])
 	case "setup", "tui", "upgrade":
 		return huginn.Main(args)
 	case "version", "--version":
