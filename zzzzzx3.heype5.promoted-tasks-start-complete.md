@@ -30,3 +30,5 @@ Promote: huginn/internal/task (promote). Rendering: huginn/internal/tui/detail.g
 - [ ] a note containing <dir> and <rev> shows both in the TUI detail view (test)
 
 ## Notes
+
+819ad49 (tui/detail.go literalAngles: escapes tag-like '<' before glamour; code spans/fences untouched) + ed9545a (task/promote.go: child gets source Purpose, Principle, Relevant details) + 36064c5 CHANGELOG. TestPromoteChildLintsClean: without fix fails 'q.jbspb0.second.md:1: [missing-section] missing section Purpose, Principle'; with fix PASS. TestDetailShowsAngleBracketsLiterally: without fix fails 'note not shown as written: want "(git worktree add --detach <dir> <rev>)"'; with fix PASS. Full suite ok (task 4.039s, tui 47.606s, cmd/hug 0.298s).
