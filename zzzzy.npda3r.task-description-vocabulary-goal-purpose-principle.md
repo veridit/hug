@@ -27,7 +27,7 @@ Result: V1 +0.49 [+0.28,+0.71] over no sections; Details equals Relevant details
 ## Acceptance
 - [x] 6 vocabularies x 3 writer models x 5 real tasks rewritten; blind Opus judge scores zoom, grounding, relevance, fidelity, goal/purpose separation
 - [x] winning names chosen from the report, with per-model results
-- [ ] hug task new/take/done/lint enforce the chosen sections; setup and MCP instructions teach them
+- [x] hug task new/take/done/lint enforce the chosen sections; setup and MCP instructions teach them
 
 ## Notes
 
