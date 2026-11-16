@@ -30,3 +30,5 @@ Agreed palette from crab's proposal, approved by Jørgen 'Yes'.
 - [ ] light terminal uses #2b3a48 on #e8eef3; NO_COLOR shows plain text (test)
 
 ## Notes
+
+3678b10 on origin/main (ff from 02066bd), CI run 43914364156 green: test (ubuntu-latest) success, test (macos-latest) success, test (windows-latest) success. Golden 140x40-color/detail.txt: '-Deliver compiler-lang support with  huginn  and readable evidence.' -> '+Deliver compiler-lang support with huginn and readable evidence.' (padding gone; tmux capture holds no SGR). TestCodeQuietTint (code_tint_test.go:27) renders through markdown() and asserts fg #c9d6e3 bg #1a2630 on dark and no red SGR (redSGR, line 23): '--- PASS: TestCodeQuietTint (0.04s)'
