@@ -43,3 +43,5 @@ Part 1 released in v0.7.15: now: lines on take/check/done/drop/promote, MCP guid
 2026-11-16 crab: back to todo. Part 1 shipped (v0.7.15); nobody is building part 2 yet, so doing was false. Staff it next.
 
 check 1: ci/qawmnb 6ff2e8c. BoardCue returns at most one line per turn; take+work share one per hour per session, done one per hour, lint one per 6 h (BoardEvery/LintEvery in muninn/internal/recall/boardcue.go). Lines only on a mismatch, each with the command, verbatim from the overnight replay: 'Task board: you are working on p277bp but it is todo. hug task take p277bp --model claude-opus-5-5'. Tests: 'ok  github.com/veridit/hug/muninn/internal/recall 0.183s' (boardcue_test.go).
+
+check 2: TestNudgeBoardOff (muninn/run/board_test.go) writes config.json {"nudge_board": false} under MUNINN_HOME, Load() -> BoardNudges() false -> boardSource nil -> BoardCue returns no line; {} and true stay on. 'ok  github.com/veridit/hug/muninn/run 15.959s'.
