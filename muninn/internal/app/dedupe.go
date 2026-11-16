@@ -146,7 +146,7 @@ func (b Binding) reinforceMemory(ctx context.Context, a *App, u store.Unit, scor
 	}
 	u, err = b.Resolve(a, u.SID)
 	if err == nil {
-		err = a.SaveAudit(AuditRun{Time: time.Now().UTC(), Harness: "remember", Trigger: "remember", Scope: u.Scope, Report: CaptureReport{Actions: []CaptureAction{{Action: "reinforce", Target: u.SID, Score: score, Scope: u.Scope, Reason: reason}}}})
+		err = a.SaveAuditCtx(ctx, AuditRun{Time: time.Now().UTC(), Harness: "remember", Trigger: "remember", Scope: u.Scope, Report: CaptureReport{Actions: []CaptureAction{{Action: "reinforce", Target: u.SID, Score: score, Scope: u.Scope, Reason: reason}}}})
 	}
 	return u, true, err
 }
