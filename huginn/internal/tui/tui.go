@@ -165,7 +165,9 @@ func (m model) paneIndices(p int) []int {
 			case 0:
 				match = t.Status == "doing"
 			case 1:
-				match = t.Status == "todo" && !m.blocked[t.Path]
+				// Same rule as hug task next: unblocked, unassigned todo,
+				// never an epic (it finishes through its children).
+				match = t.Status == "todo" && !m.blocked[t.Path] && !task.IsEpic(t, m.all) && len(t.Assignee) == 0
 			case 2:
 				match = m.blocked[t.Path]
 			case 3:

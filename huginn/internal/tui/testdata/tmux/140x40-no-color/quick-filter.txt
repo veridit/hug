@@ -1,4 +1,4 @@
-HUGINN · filter   15/60 tasks · ! 10 findings
+HUG TASKS · filter   15/60 tasks · ! 10 findings
  overview   [list]   board    !lint
 todo 15  ·  doing 0  ·  blocked 7  ·  done 0  ·  dropped 0
 [status:todo ×] · ⌫ last · F clear

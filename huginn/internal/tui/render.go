@@ -335,7 +335,7 @@ func (m model) View() string {
 	if m.help {
 		mode = "help"
 	}
-	header := m.styles.accent.Render("HUGINN · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
+	header := m.styles.accent.Render("HUG TASKS · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
 	tabs := []string{}
 	// The shortcut letter is bold and underlined inside the tab name, which
 	// costs no width (2026-11-11, user). lint has no letter of its own; its
@@ -448,7 +448,7 @@ func (m model) View() string {
 					if t.Acceptance[n].Checked {
 						verb = "Untick"
 					}
-					inputLine = fmt.Sprintf("%s item %d of %s: %s?", verb, n+1, t.ID, oneLine(t.Acceptance[n].Text))
+					inputLine = fmt.Sprintf("%s item %d of %s: %s", verb, n+1, t.ID, oneLine(t.Acceptance[n].Text))
 					break
 				}
 			}
