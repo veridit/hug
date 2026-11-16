@@ -30,3 +30,5 @@ Seid board for checking (read only): ~/Veridit/src/seid-lang, 1263 done. Overvie
 - [ ] moving between sections with Tab keeps each section's scroll position (test)
 
 ## Notes
+
+2026-11-16 Jørgen: an empty section takes one line: 'None' goes on the right of its title (e.g. 'BLOCKED · unmet dependencies  [0] · None'), not on a row of its own, since there is nothing to navigate to. Applies to every overview section and board column.
