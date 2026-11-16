@@ -1,7 +1,7 @@
 ---
 id: heype5
 title: "Promoted tasks start complete; note text in angle brackets is not lost"
-status: "doing"
+status: "done"
 type: bug
 priority: "medium"
 assignee: ["poodle"]
