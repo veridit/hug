@@ -26,7 +26,7 @@ Promote: huginn/internal/task (promote). Rendering: huginn/internal/tui/detail.g
 ## Depends on
 
 ## Acceptance
-- [ ] hug task promote ID N on a task with Purpose and Principle gives a child that hug task lint reports clean (test)
+- [x] hug task promote ID N on a task with Purpose and Principle gives a child that hug task lint reports clean (test)
 - [ ] a note containing <dir> and <rev> shows both in the TUI detail view (test)
 
 ## Notes
