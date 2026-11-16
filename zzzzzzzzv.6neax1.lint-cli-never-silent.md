@@ -26,7 +26,7 @@ Flags today: --code, --json (cli.go ~576 lint; text printed near cli.go:984). Pr
 
 ## Acceptance
 - [x] plain hug task lint on a clean board prints 'no findings' and a next: line; it is never silent (test)
-- [ ] hug task lint --summary prints one line per code with its count and the command to list it
+- [x] hug task lint --summary prints one line per code with its count and the command to list it
 - [ ] hug task lint --code with no value lists the codes and counts
 - [ ] hug task lint help and hug task lint help --code print the lint help
 - [ ] the cause of the silent run in seid-lang is found and recorded in the notes
