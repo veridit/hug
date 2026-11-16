@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.17 - 2026-11-16
 
 ### Fixed
 
@@ -21,6 +21,10 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ### Changed
 
+- TUI shortcut letters are picked by one rule shared by the header, palette
+  and help: each choice gets its first letter no earlier choice took (todo,
+  doing, blocked, done, dropped become t, d, b, o, r), and a label that
+  starts with a sigil, like `!lint`, gets that sigil.
 - Every lint finding carries a fix: text output prints `fix: COMMAND` under
   each finding, JSON findings have a `fix` field. A dependency on no task
   now reads "depends on ID, but no task has that id or alias; remove the
