@@ -36,3 +36,5 @@ gh run view 43896372629 (branch ci/4emme8, commit 2988e9d, same tree as main 9d5
 2026-11-16 crab: production check asked of vole: does hug code compare worktree path strings (would break on Windows like the test did)? Answer pending in vole's report.
 
 2026-11-16 vole on production path comparisons: none of the C:/ vs RUNNER~1 kind. gitbranch matches checkouts by branch name, never by path string; muninn project.Find/sourceRootAlias compare EvalSymlinks'd paths via filepath.Rel; the TUI watcher builds both sides from EvalSymlinks'd paths. In the failing run every production check before the test's string assert passed.
+
+gh run list --workflow ci.yml --branch main: 'completed success CI green on Windows: tests start a real editor... main push 43898586091' and 'completed success tui: show the model... (et85h1) main push 43899041660'; all jobs incl. test (windows-latest) success
