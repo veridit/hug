@@ -4,7 +4,12 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.16 - 2026-11-16
+
+### Fixed
+
+- TUI palette: after `f`, a field can be shortened, so `: f g ` lists the
+  groups and `: f t spike` filters by type. It said "No completions".
 
 ### Changed
 
