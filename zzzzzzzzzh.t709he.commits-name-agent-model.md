@@ -1,13 +1,16 @@
 ---
 id: t709he
 title: "Commits name the agent and model that made them (gate)"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["dragon"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
