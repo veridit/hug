@@ -51,6 +51,11 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 		Type:       src.Type,
 		Priority:   src.Priority,
 		After:      src.ID,
+		// The child serves the same purpose under the same principle, so
+		// it starts complete and lints clean (heype5).
+		Purpose:   d.sectionText("Purpose"),
+		Principle: d.sectionText("Principle"),
+		Details:   d.sectionText("Relevant details"),
 	})
 	if e != nil {
 		return Result{}, e
@@ -77,6 +82,15 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 		return Result{}, e
 	}
 	return Result{Task: out.Task, Changed: true, Next: "hug task show " + created.ID, Renamed: r.Renamed, Renames: r.Renames}, nil
+}
+
+// sectionText is the body of the "## name" section, trimmed, or "".
+func (d *Document) sectionText(name string) string {
+	span, ok := d.sections[name]
+	if !ok {
+		return ""
+	}
+	return strings.TrimSpace(strings.Join(d.lines[span[0]+1:span[1]], ""))
 }
 
 // tickWaiting ticks every open item elsewhere that reads "done when

@@ -63,3 +63,53 @@ func TestPromote(t *testing.T) {
 		t.Fatal("epic item did not become a child", q.Task)
 	}
 }
+
+// heype5 check 1: the child of a task with Purpose and Principle starts with
+// both (and Relevant details), so hug task lint reports it clean.
+func TestPromoteChildLintsClean(t *testing.T) {
+	s := &Store{Root: t.TempDir()}
+	r, e := s.New(NewOptions{Title: "Source", Goal: "g", Purpose: "Why we do it.", Principle: "What we do and do not do.\n\nSecond paragraph.", Details: "Where to look.", Acceptance: []string{"first", "second"}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	p, e := s.Promote(r.Task.ID, 2)
+	if e != nil {
+		t.Fatal(e)
+	}
+	d, e := s.Get(p.Task.ID)
+	if e != nil {
+		t.Fatal(e)
+	}
+	for sec, want := range map[string]string{"Purpose": "Why we do it.", "Principle": "What we do and do not do.\n\nSecond paragraph.", "Relevant details": "Where to look."} {
+		if got := d.sectionText(sec); got != want {
+			t.Errorf("%s: %q, want %q", sec, got, want)
+		}
+	}
+	all, e := s.Tasks()
+	if e != nil {
+		t.Fatal(e)
+	}
+	var docs []*Document
+	for _, x := range all {
+		doc, e := s.Get(x.ID)
+		if e != nil {
+			t.Fatal(e)
+		}
+		docs = append(docs, doc)
+	}
+	for _, f := range Lint(docs) {
+		t.Errorf("finding: %s", f)
+	}
+	// A source without them gives a child without them: nothing is invented.
+	bare, e := s.New(NewOptions{Title: "Bare", Goal: "g", Acceptance: []string{"one"}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	q, e := s.Promote(bare.Task.ID, 1)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if d, _ := s.Get(q.Task.ID); contains(d.Task.Sections, "Purpose") || contains(d.Task.Sections, "Principle") {
+		t.Fatalf("invented sections: %v", d.Task.Sections)
+	}
+}
