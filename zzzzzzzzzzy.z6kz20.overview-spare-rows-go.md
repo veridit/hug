@@ -27,7 +27,7 @@ Code: overview row split in huginn/internal/tui/render.go (overviewRows), change
 
 ## Acceptance
 - [x] with IN PROGRESS focused holding 2 tasks and NEXT UP 32, on a 140x40 terminal NEXT UP fills every spare row (golden)
-- [ ] with a small section focused, IN PROGRESS shows all its tasks before NEXT UP grows past 3 (test)
+- [x] with a small section focused, IN PROGRESS shows all its tasks before NEXT UP grows past 3 (test)
 - [ ] no blank rows remain below the last section while any section has hidden rows (test)
 
 ## Notes
