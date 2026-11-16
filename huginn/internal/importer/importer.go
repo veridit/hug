@@ -734,6 +734,21 @@ func convert(s source, id string, ids map[string]string, opts Options) ([]byte, 
 			}{pair[1], str(v)})
 		}
 	}
+	// Backlog's parent_task_id becomes hug's parent (an epic), resolved
+	// through the same alias table as dependencies. Unresolved parents are
+	// kept as written so lint reports "missing parent" with the old name.
+	if p := strings.TrimSpace(str(s.fields["parent_task_id"])); p != "" {
+		if _, alreadyPresent := s.fields["parent"]; !alreadyPresent {
+			ref := ids[canonical(p)]
+			if ref == "" {
+				ref = p
+			}
+			updates = append(updates, struct {
+				k string
+				v any
+			}{"parent", ref})
+		}
+	}
 	for _, u := range updates {
 		if err := d.SetField(u.k, u.v); err != nil {
 			return nil, err
