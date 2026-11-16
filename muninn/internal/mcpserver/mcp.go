@@ -106,6 +106,11 @@ func InstructionsFor(opt Options) string {
 	return Instructions + "\nActive binding: " + opt.Name + ". New memories default to place here. Available places: " + placesText(opt.Places()) + ". Other instances and client boundaries are not available."
 }
 
+// OnWrite is called after memory_remember (with the memory's scope) and
+// memory_forget (scope ""): hug mcp sends project memories to the other
+// clones in the background (0hkaa5). It must not wait.
+var OnWrite = func(scope string) {}
+
 // Register adds the memory_* tools to s (used alone by muninn mcp, and next
 // to the task tools by hug mcp). opt must already be bound (see Bind).
 func Register(s *mcp.Server, a *app.App, opt Options) {
@@ -142,6 +147,7 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 			if err != nil {
 				return nil, idOut{}, err
 			}
+			OnWrite(u.Scope)
 			out := idOut{ID: u.SID, Reinforced: re, Place: opt.PlaceForScope(u.Scope).Name, Places: opt.Places()}
 			return text(out), out, nil
 		})
@@ -156,6 +162,7 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 			if err != nil {
 				return nil, idOut{}, err
 			}
+			OnWrite("")
 			out := idOut{ID: result.ID, Suppressed: result.Suppressed, Message: result.Message}
 			return text(out), out, nil
 		})

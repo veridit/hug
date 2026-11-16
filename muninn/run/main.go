@@ -87,6 +87,7 @@ func Main(args []string) int {
 		}
 	}
 	root.SetArgs(args)
+	project.SpawnSelf()
 	// Writes queue for the write turn; a person waiting sees why.
 	store.TurnNotice = func(holder string, waited time.Duration) {
 		fmt.Fprintf(os.Stderr, "hug mem: waiting %s for the write turn, held by %s\n", waited.Round(time.Second), holder)
@@ -180,6 +181,9 @@ func searchCmd() *cobra.Command {
 	c := &cobra.Command{Use: "search <query>", Short: "Search memories (keyword + community + semantic)", Args: cobra.MinimumNArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			return withApp(func(ctx context.Context, a *app.App) error {
+				// Other clones' project memories arrive in the background (0hkaa5).
+				cwd, _ := os.Getwd()
+				project.NudgeIfStale(cwd)
 				o := a.RecallOptions()
 				o.Limit, o.MinScore = limit, minScore
 				b := view.binding(a)
@@ -222,6 +226,10 @@ func recallCmd() *cobra.Command {
 				msg = string(b)
 			}
 			return withApp(func(ctx context.Context, a *app.App) error {
+				// Bring in other clones' project memories when the last pass
+				// is stale; never waits (0hkaa5).
+				cwd, _ := os.Getwd()
+				project.NudgeIfStale(cwd)
 				if _, err := ensureFresh(ctx, a); err != nil {
 					return err
 				}
@@ -286,6 +294,10 @@ func rememberCmd() *cobra.Command {
 				if err != nil {
 					return err
 				}
+				// A project memory goes to the other clones in the background (0hkaa5).
+				if shared(u.Scope) {
+					project.Nudge(cwd)
+				}
 				if reinforced {
 					fmt.Printf("reinforced %s (place: %s)\n", u.SID, b.PlaceForScope(u.Scope).Name)
 				} else {
@@ -307,7 +319,7 @@ func rememberCmd() *cobra.Command {
 	c.Flags().StringVar(&home, "jcode-home", "", "bind to this JCODE_HOME")
 	c.Flags().StringSliceVar(&tags, "tag", nil, "tag (repeatable)")
 	c.Flags().StringVar(&safeReason, "safe-reason", "", "why text that looks secret is safe to store (asked for when the secret check fires)")
-	c.Flags().BoolVar(&inProject, "project", false, "store in this repository's project scope (shareable with `hug mem sync`)")
+	c.Flags().BoolVar(&inProject, "project", false, "store in this repository's project scope (shared with the project's other clones in the background, or now with `hug mem sync`)")
 	return c
 }
 
@@ -346,6 +358,9 @@ func forgetCmd() *cobra.Command {
 				if err != nil {
 					return err
 				}
+				// The forget reaches the other clones in the background (0hkaa5).
+				cwd, _ := os.Getwd()
+				project.Nudge(cwd)
 				if asJSON {
 					return json.NewEncoder(os.Stdout).Encode(struct {
 						Forgotten []app.ForgetResult `json:"forgotten"`
@@ -727,6 +742,9 @@ func hookRecall(ctx context.Context, harnessName, session, msg, cwd string) (rec
 	if b.Err != nil {
 		return recall.Response{}, b.Err
 	}
+	// Each prompt (and so each session start) brings in other clones'
+	// project memories when the last pass is stale; never waits (0hkaa5).
+	project.NudgeIfStale(cwd)
 	return hookRecallWith(ctx, a, harnessName, session, msg, b)
 }
 
@@ -820,4 +838,10 @@ func nextHint(c *cobra.Command) string {
 		return ""
 	}
 	return nextHints[top]
+}
+
+// shared reports a scope whose memories sync with the project's other
+// clones: a project's own, or a client project's.
+func shared(scope string) bool {
+	return strings.HasPrefix(scope, "project:") || strings.HasPrefix(scope, "client:")
 }

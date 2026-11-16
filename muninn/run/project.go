@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -28,7 +30,7 @@ func projectCmd() *cobra.Command {
 
 func syncCmd() *cobra.Command {
 	var dir string
-	var dry, migrate bool
+	var dry, migrate, background bool
 	c := &cobra.Command{Use: "sync", Short: "Commit, rebase and push project memories on the muninn-notes branch",
 		Long: `sync merges .muninn-notes/memories.jsonl into your local store, writes only
 this project's memories, and uses the independent muninn-notes branch mounted
@@ -42,22 +44,38 @@ files or contacting the remote. Existing client/project markers remain intact.
 Personal, global, client and other projects' memories never leave your machine.
 Credential-like project memories are withheld. Capture audits are never synced.`,
 		RunE: func(*cobra.Command, []string) error {
-			p, err := project.Find(dirOr(dir), !dry)
+			p, err := project.Find(dirOr(dir), !dry && !background)
 			if err != nil {
+				if background {
+					return nil // nothing to sync here
+				}
 				return err
 			}
-			return withApp(func(ctx context.Context, a *app.App) error {
-				if _, err := a.Bound("", dirOr(dir)).WriteScope(p.Scope()); err != nil {
-					return err
-				}
-				st, err := project.SyncBranch(p, app.NativePath(), project.BranchOptions{DryRun: dry, Migrate: migrate})
-				if err != nil {
-					return err
-				}
-				fmt.Printf("%s%s (%s): %s\n", dryTag(dry), p.Label, p.ID, st)
-				return reindexUnlessDry(ctx, a, dry)
-			})
+			syncOnce := func() error {
+				return withApp(func(ctx context.Context, a *app.App) error {
+					if _, err := a.Bound("", dirOr(dir)).WriteScope(p.Scope()); err != nil {
+						return err
+					}
+					st, err := project.SyncBranch(p, app.NativePath(), project.BranchOptions{DryRun: dry, Migrate: migrate})
+					if err != nil {
+						return err
+					}
+					fmt.Printf("%s%s (%s): %s\n", dryTag(dry), p.Label, p.ID, st)
+					return reindexUnlessDry(ctx, a, dry)
+				})
+			}
+			// The detached pass a remember, forget or stale recall started
+			// (0hkaa5): queue, let the burst settle, sync once.
+			if background {
+				fmt.Printf("%s pid %d: background pass\n", time.Now().UTC().Format(time.RFC3339), os.Getpid())
+				return project.BackgroundPass(p, app.NativePath(), syncOnce)
+			}
+			// A foreground sync waits for a running pass, not beside it.
+			defer project.Exclusive(p.Root)()
+			return syncOnce()
 		}}
+	c.Flags().BoolVar(&background, strings.TrimPrefix(project.SyncChildArg, "--"), false, "run one background pass (started by hug itself)")
+	_ = c.Flags().MarkHidden(strings.TrimPrefix(project.SyncChildArg, "--"))
 	c.Flags().StringVar(&dir, "dir", "", "directory (default: current)")
 	c.Flags().BoolVar(&migrate, "migrate", false, "move legacy .muninn/memories.jsonl off the code branch")
 	c.Flags().BoolVar(&dry, "dry-run", false, "show counts without writing")

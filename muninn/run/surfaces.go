@@ -21,6 +21,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/embed"
 	"github.com/veridit/hug/muninn/internal/harness"
 	"github.com/veridit/hug/muninn/internal/mcpserver"
+	"github.com/veridit/hug/muninn/internal/project"
 	"github.com/veridit/hug/muninn/internal/tui"
 	"github.com/veridit/hug/muninn/internal/web"
 )
@@ -280,5 +281,12 @@ func OpenMCP(ctx context.Context, jcodeHome string) (instructions string, regist
 		}
 	}()
 	b = mcpserver.Bind(a, b)
+	// Project memories reach the other clones in the background (0hkaa5).
+	project.SpawnSelf()
+	mcpserver.OnWrite = func(scope string) {
+		if scope == "" || shared(scope) {
+			project.Nudge(cwd)
+		}
+	}
 	return mcpserver.InstructionsFor(b), func(s *mcp.Server) { mcpserver.Register(s, a, b) }, func() { a.Close() }, nil
 }

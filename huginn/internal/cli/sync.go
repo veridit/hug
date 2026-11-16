@@ -143,6 +143,11 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 		return nil, e
 	}
 	probe := func() string { h, _ := r.Head(); return h }
+	settle := gitbranch.Settle{Quiet: Settle, Max: SettleMax, Probe: probe}
+	// Nothing to push (a read asked for the pass): no burst to wait for.
+	if r.Unpushed() == 0 {
+		settle.Quiet = 0
+	}
 	// Log inside the pass, while it holds the run lock: a test waiting for
 	// the pass to finish must not race this write.
 	pass := func(turn func() (func(), error)) gitbranch.State {
@@ -150,7 +155,7 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 		fmt.Fprintf(a.Err, "%s pid %d: fetched=%v pushed=%v unpushed=%d error=%q\n", time.Now().UTC().Format(time.RFC3339), os.Getpid(), st.Fetched, st.Pushed, st.Unpushed, st.Error)
 		return st
 	}
-	return Reply{"next": "hug task ls"}, b.Run(gitbranch.Settle{Quiet: Settle, Max: SettleMax, Probe: probe}, pass)
+	return Reply{"next": "hug task ls"}, b.Run(settle, pass)
 }
 
 // syncStatus reports a sync problem from the last pass: commits not pushed,

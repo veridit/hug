@@ -30,7 +30,8 @@ step until every step is done. setup itself only reads; it changes nothing.
 
 How huginn works, in short:
 - Tasks are Markdown files on the git branch "hug/tasks", checked out at .hug/tasks/.
-  Code branches never see them. "hug task sync" shares them through the remote.
+  Code branches never see them. Changes reach the other clones in the background,
+  within seconds; "hug task sync" syncs now and shows any error.
 - Every task has a goal and observable acceptance checks. Work it like this
   (CLI shown; MCP has list, show, new, next, take, done and update):
     hug task next            pick the top task, then hug task take ID --model MODEL
