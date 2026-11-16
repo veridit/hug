@@ -4,7 +4,7 @@ title: "Recall nudges: keep the task board current"
 status: "todo"
 type: feature
 priority: ""
-assignee: ["crab"]
+assignee: ["guppy"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
