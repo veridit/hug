@@ -28,7 +28,7 @@ Message source: huginn/internal/task/query.go:246 builds 'dangling dependency ' 
 - [x] a dependency line naming a missing task reports the id and says no task has it, with a fix line that removes it (hug task dep ID --remove REF) or names the form to write
 - [x] prose in the Depends on section is reported as 'not a dependency' with the expected form shown, and does not mark the task blocked
 - [x] hug task lint's next: line for a finding points at fixing that finding, not at an unrelated task
-- [ ] after an edit in the TUI that introduces a finding, the finding is shown with its fix and one key reopens the editor
+- [x] after an edit in the TUI that introduces a finding, the finding is shown with its fix and one key reopens the editor
 - [ ] tests cover the three cases above with the exact text from Jørgen's edit
 
 ## Notes
