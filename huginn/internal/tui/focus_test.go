@@ -425,7 +425,7 @@ func TestBoardLegendNamesColumns(t *testing.T) {
 	}
 }
 
-// n and p move the list selection like j and k; N creates a task.
+// n moves the list selection down like j; p only pastes (3xcesq); N creates a task.
 func TestNAndPMoveInListsAndNCreates(t *testing.T) {
 	m, _ := focusModel(t)
 	m = press(m, "esc")
@@ -433,8 +433,8 @@ func TestNAndPMoveInListsAndNCreates(t *testing.T) {
 	if m = press(m, "n"); m.cursor == start {
 		t.Fatal("n did not move down")
 	}
-	if m = press(m, "p"); m.cursor != start {
-		t.Fatal("p did not move up")
+	if m = press(m, "p"); m.cursor == start || m.message != "nothing yanked: y on a task first" {
+		t.Fatalf("p in a list must only paste: cursor %d message %q", m.cursor, m.message)
 	}
 	if m = press(m, "N"); m.prompt != "new title" {
 		t.Fatalf("N opened %q", m.prompt)

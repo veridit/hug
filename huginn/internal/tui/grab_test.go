@@ -180,11 +180,14 @@ func TestYankAndPaste(t *testing.T) {
 	if got := rankOrder(t, m); got != pick(o, 5, 1, 2, 3, 4, 0) || *commits != 2 {
 		t.Fatalf("p: %s, commits %d", got, *commits)
 	}
-	// Without a yank, p still moves the cursor up.
+	// Without a yank, p and P say so and do nothing else; k moves up.
 	cursor := m.cursor
 	m = press(m, "p")
-	if m.cursor == cursor || *commits != 2 {
-		t.Fatalf("p without a yank: cursor %d -> %d, commits %d", cursor, m.cursor, *commits)
+	if m.cursor != cursor || *commits != 2 || m.message != "nothing yanked: y on a task first" {
+		t.Fatalf("p without a yank: cursor %d -> %d, commits %d, message %q", cursor, m.cursor, *commits, m.message)
+	}
+	if bar := m.keyBar(); strings.Contains(bar, "paste") {
+		t.Fatalf("paste keys shown with nothing yanked:\n%s", bar)
 	}
 	m = press(m, "y", "esc")
 	if m.yanked != "" || !strings.Contains(m.message, "nothing changed") || *commits != 2 {

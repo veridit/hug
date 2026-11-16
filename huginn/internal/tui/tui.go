@@ -892,7 +892,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case bkey.Matches(msg, keys.down) || k == "n":
 			m.move(1, false)
-		case bkey.Matches(msg, keys.up) || k == "p" && m.yanked == "":
+		case bkey.Matches(msg, keys.up):
 			m.move(-1, false)
 		case bkey.Matches(msg, keys.top):
 			m.move(0, true)
@@ -928,8 +928,13 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// y yanks the selected task; P and p paste it (3xcesq). The
 			// type palette is :type, f t, or y inside a task.
 			m.yank()
-		case (k == "P" || k == "p") && m.yanked != "":
-			m.paste(k)
+		case k == "P" || k == "p":
+			// In lists P and p only paste; k moves up (crab, 2026-11-16).
+			if m.yanked == "" {
+				m.message = "nothing yanked: y on a task first"
+			} else {
+				m.paste(k)
+			}
 		case k == "m":
 			m.startGrab()
 		case k == "#":
