@@ -4,7 +4,7 @@ title: "u inside a task goes back up to the list"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
