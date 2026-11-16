@@ -4,6 +4,23 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Changed
+
+- `hug task take` needs the model doing the work: `--model claude-opus-5-5`
+  (or `HUG_MODEL`; a person gives `--model human`). Without it, take changes
+  nothing and ends with `fix: hug task take ID --model MODEL`. The agent or
+  session name is optional: `--as poodle`, otherwise `HUG_USER`, otherwise
+  the jcode session name (from `JCODE_SESSION_ID`); with no name the
+  assignee is the model. hug never uses `git config user.name` and no
+  longer reads `HUGINN_USER`. Both are recorded on the task (`assignee`,
+  and a new `model` field), and `hug task show` (`taken by: poodle ·
+  claude-opus-5-5`), `ls` (doing rows), `board --wide` and JSON show them.
+  The MCP tool `task_take` takes `model` and `agent`. `--mine` means the
+  same name take records. `hug setup` and the AGENTS.md section tell
+  agents to name their model on take. (et85h1)
+
 ## v0.7.22 - 2026-11-16
 
 ### Fixed

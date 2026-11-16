@@ -69,8 +69,10 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	if f.has("json") {
 		return nil, usage("tui is interactive; use ls --json for structured output", "hug task ls --json")
 	}
-	user, _ := a.identity(ctx)
-	e := tui.Run(ctx, s.s, tui.Options{User: user, Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref) }, Commit: func(msg string) error { return s.r.Commit(nil, msg) }})
+	// Taking from the TUI uses the same rule as hug task take: the model is
+	// required (--model or HUG_MODEL), the name is optional (et85h1).
+	who := a.whoTakes(f)
+	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { return s.r.Commit(nil, msg) }})
 	if e != nil {
 		return nil, e
 	}

@@ -108,8 +108,8 @@ requirement to insert that punctuation into a goal.
 
 Only `finish-by-slug` accepts either an empty assignee array or exactly the
 acting user's name, because taking before completing is legitimate. The runner
-captures that identity before invoking the model (`HUGINN_USER`, otherwise the
-throwaway clone's configured `Huginn Eval`) and stores it as `acting_user` in
+captures that identity before invoking the model (`HUG_USER`, otherwise
+`HUG_MODEL`: take never uses git user.name) and stores it as `acting_user` in
 state evidence. Other owners, multiple owners and absent identity evidence are
 rejected. Assignee preservation in every other scenario is unchanged. These
 corrections do not alter task inventories, dependencies, acceptance, status,

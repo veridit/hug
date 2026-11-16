@@ -23,15 +23,18 @@ huginn version
 
 ## 60-second quickstart
 
-Run inside an existing Git checkout. Set `git config user.name` or `HUGINN_USER`
-for task ownership. With an origin, `take` claims through a remote push lock.
+Run inside an existing Git checkout. `take` needs the model doing the work
+(`--model claude-opus-5-5`, or `HUG_MODEL`; a person gives `--model human`); a
+name (`--as poodle`, `HUG_USER` or the agent session) is optional, and without
+one the assignee is the model. `git config user.name` is never used. With an
+origin, `take` claims through a remote push lock.
 Without an origin, everything works locally.
 
 ```sh
 huginn init
 huginn new "Ship greeting" --goal "Visitors see a greeting" --accept "Greeting test passes"
 huginn next
-huginn take ship-greeting
+huginn take ship-greeting --model human
 # Implement and test the change, then record the observed check:
 huginn check ship-greeting 1
 huginn done ship-greeting

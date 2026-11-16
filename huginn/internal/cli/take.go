@@ -11,10 +11,18 @@ import (
 )
 
 // take is the one push-lock path, shared by CLI, MCP and the TUI callback.
-func (a *App) take(ctx context.Context, s *session, ref string) (task.Result, error) {
-	user, e := a.identity(ctx)
-	if e != nil {
-		return task.Result{}, e
+// who must name a model (et85h1); without one nothing is pulled or locked.
+func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task.Result, error) {
+	if who.Model == "" {
+		id := ref
+		if d, err := s.s.Get(ref); err == nil {
+			id = d.Task.ID
+		}
+		fix := "hug task take " + id + " --model MODEL"
+		if who.Name != "" {
+			fix = "hug task take " + id + " --as " + who.Name + " --model MODEL"
+		}
+		return task.Result{}, usage("no model given: say which model takes "+id+" (claude-opus-5-5, gpt-6.1-sol, ...; a person: --model human), with --model or HUG_MODEL", fix)
 	}
 	// Publish unrelated local history before gitbranch's lost-race rollback.
 	// Otherwise an unpublished new task could disappear along with a losing take.
@@ -28,13 +36,13 @@ func (a *App) take(ctx context.Context, s *session, ref string) (task.Result, er
 		}
 	}
 	var result task.Result
-	e = s.r.UpdateMessage("hug task take "+ref, func(_ *gitbranch.Repository) error {
+	e := s.r.UpdateMessage("hug task take "+ref, func(_ *gitbranch.Repository) error {
 		// Update has pulled already. Read authoritative files without invoking Git
 		// inside its callback, then refresh the disposable cache after the lock.
 		local := *s.s
 		local.Refresh = nil
 		var err error
-		result, err = local.Take(ref, user)
+		result, err = local.TakeAs(ref, who.Name, who.Model)
 		return err
 	})
 	var raced *gitbranch.ErrRaced

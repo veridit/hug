@@ -139,8 +139,11 @@ type Task struct {
 	Created  string   `json:"created"`
 	Updated  string   `json:"updated"`
 	Assignee []string `json:"assignee"`
-	Labels   []string `json:"labels"`
-	Aliases  []string `json:"aliases"`
+	// Model is the model that took the task (claude-opus-5-5, gpt-6.1-sol,
+	// or human), recorded by hug task take --model (et85h1).
+	Model   string   `json:"model,omitempty"`
+	Labels  []string `json:"labels"`
+	Aliases []string `json:"aliases"`
 	// Parent is the epic this task belongs to (an id), or empty. An epic is
 	// a task with children; it has no parent itself (three fixed levels:
 	// epic, task, acceptance item).

@@ -30,7 +30,9 @@ func app(t *testing.T) *App {
 	git(t, dir, "config", "user.name", "Test")
 	git(t, dir, "config", "user.email", "test@example.invalid")
 	git(t, dir, "commit", "--allow-empty", "-m", "init")
-	t.Setenv("HUGINN_USER", "tester")
+	t.Setenv("HUG_USER", "tester")
+	t.Setenv("HUG_MODEL", "test-model")
+	t.Setenv("JCODE_SESSION_ID", "")
 	return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
 }
 func execute(t *testing.T, a *App, args ...string) Reply {
@@ -140,19 +142,12 @@ func TestUsageAndText(t *testing.T) {
 }
 func TestIdentityAndCommandHelp(t *testing.T) {
 	a := app(t)
-	t.Setenv("HUGINN_USER", "")
-	t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
-	t.Setenv("GIT_CONFIG_GLOBAL", filepath.Join(t.TempDir(), "no-global"))
-	r := execute(t, a, "new", "Identity", "--goal", "G", "--accept", "C")
-	id := r["task"].(Reply)["id"].(string)
-	r = execute(t, a, "take", id)
-	if got := r["task"].(Reply)["assignee"].([]any); len(got) != 1 || got[0] != "Test" {
-		t.Fatal(got)
-	}
-	git(t, a.Cwd, "config", "--unset", "user.name")
+	// No name and no model: --mine has nobody to mean. git user.name
+	// ("Test", set by app) is never used (et85h1).
+	t.Setenv("HUG_USER", "")
+	t.Setenv("HUG_MODEL", "")
 	expectCode(t, a, 2, "next", "--mine")
-	expectCode(t, a, 2, "take", id)
-	r = execute(t, a, "help", "new")
+	r := execute(t, a, "help", "new")
 	if !strings.Contains(r["help"].(string), "--dep") || !strings.Contains(r["help"].(string), "--group") {
 		t.Fatal(r)
 	}

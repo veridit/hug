@@ -32,7 +32,7 @@ Use --json with any command. IDs, unique prefixes, slugs and aliases work.
   edit                      hug task edit k7m2qx
   move                      hug task move k7m2qx --before p3rt9a
   mv                        hug task mv k7m2qx auth
-  take                      hug task take k7m2qx
+  take                      hug task take k7m2qx --model claude-opus-5-5
   done                      hug task done k7m2qx
   check                     hug task check k7m2qx 1
   note                      hug task note k7m2qx "Test evidence"
@@ -53,7 +53,8 @@ Use --json with any command. IDs, unique prefixes, slugs and aliases work.
   help                      hug task help
 New flags: --dep ID (repeatable), --group FOLDER, --label LABEL, --top, --after ID.
 Details: hug task help COMMAND (for every flat flag and examples).
-Identity: HUGINN_USER, otherwise git config user.name.
+Who takes: --model MODEL (required; or HUG_MODEL; a person: --model human),
+--as NAME (optional; or HUG_USER, or the agent session). Never git user.name.
 Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
@@ -177,17 +178,52 @@ func (a *App) refreshExisting(ctx context.Context) error {
 	return s.c.Close()
 }
 
-func (a *App) identity(ctx context.Context) (string, error) {
-	if u := strings.TrimSpace(os.Getenv("HUGINN_USER")); u != "" {
-		return u, nil
+// Who takes a task (et85h1, decided by Jørgen 2026-11-16). The model is
+// required: --model, otherwise HUG_MODEL; a person gives --model human. The
+// name is optional: --as, otherwise HUG_USER, otherwise the harness session
+// (jcode: the name in JCODE_SESSION_ID, session_<name>_...). Without a name
+// the assignee is the model. git config user.name is never used: it names
+// the person at the keyboard, not the agent doing the work.
+type taker struct{ Name, Model string }
+
+// harnessName is the session name the agent harness gives this process.
+func harnessName() string {
+	if id := strings.TrimSpace(os.Getenv("JCODE_SESSION_ID")); strings.HasPrefix(id, "session_") {
+		if name, _, ok := strings.Cut(strings.TrimPrefix(id, "session_"), "_"); ok && name != "" {
+			return name
+		}
 	}
-	cmd := exec.CommandContext(ctx, "git", "config", "user.name")
-	cmd.Dir = a.Cwd
-	b, e := cmd.Output()
-	if e == nil && strings.TrimSpace(string(b)) != "" {
-		return strings.TrimSpace(string(b)), nil
+	return ""
+}
+
+func (a *App) whoTakes(f flags) taker {
+	t := taker{Name: strings.TrimSpace(f.get("as")), Model: strings.TrimSpace(f.get("model"))}
+	if t.Model == "" {
+		t.Model = strings.TrimSpace(os.Getenv("HUG_MODEL"))
 	}
-	return "", usage("identity missing: set HUGINN_USER or git config user.name", `export HUGINN_USER="your-name"`)
+	if t.Name == "" {
+		t.Name = strings.TrimSpace(os.Getenv("HUG_USER"))
+	}
+	if t.Name == "" {
+		t.Name = harnessName()
+	}
+	return t
+}
+
+// assignee is the name the board records for t: the name, else the model.
+func (t taker) assignee() string {
+	if t.Name != "" {
+		return t.Name
+	}
+	return t.Model
+}
+
+// identity is who --mine means: the same name take records.
+func (a *App) identity(f flags) (string, error) {
+	if who := a.whoTakes(f).assignee(); who != "" {
+		return who, nil
+	}
+	return "", usage("--mine needs to know who you are: no --as, HUG_USER, agent session or model given", "hug task next --mine --as NAME (or set HUG_USER or HUG_MODEL)")
 }
 
 type flags struct {
@@ -256,6 +292,7 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	b, _ := json.Marshal(t)
 	out := Reply{}
 	_ = json.Unmarshal(b, &out)
+	out["model"] = t.Model
 	out["goal"] = strings.TrimSpace(t.Goal)
 	acceptance := []any{}
 	for _, item := range t.Acceptance {
@@ -338,7 +375,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic", "board": "type priority label group mine all epic wide", "next": "type priority label group mine epic", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -427,7 +464,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		filter.Epic = t.ID
 	}
 	if f.has("mine") {
-		filter.Mine, e = a.identity(ctx)
+		filter.Mine, e = a.identity(f)
 		if e != nil {
 			return nil, e
 		}
@@ -653,7 +690,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(1); e != nil {
 			return nil, e
 		}
-		r, e = a.take(ctx, s, f.args[0])
+		r, e = a.take(ctx, s, f.args[0], a.whoTakes(f))
 	case "dep":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -915,6 +952,28 @@ func ErrorDetails(err error) (int, string, string) {
 	return code, strings.ReplaceAll(problem, "\n", "; "), fix
 }
 
+// Text replies print as follows; JSON replies are encoded unchanged.
+// takenBy is "poodle · claude-opus-5-5" for a task taken with --as and
+// --model, the model alone when the name is the model, the assignee alone
+// for tasks taken before models were recorded, and empty when untaken.
+func takenBy(t Reply) string {
+	names := []string{}
+	if as, ok := t["assignee"].([]any); ok {
+		for _, v := range as {
+			names = append(names, fmt.Sprint(v))
+		}
+	}
+	model, _ := t["model"].(string)
+	who := strings.Join(names, ", ")
+	switch {
+	case who == "":
+		return ""
+	case model == "" || who == model:
+		return who
+	}
+	return who + " · " + model
+}
+
 func (a *App) Run(ctx context.Context, args []string) int {
 	reply, e := a.Execute(ctx, args)
 	jsonMode := isJSON(args)
@@ -989,11 +1048,20 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			w = min(40, max(w, len(fmt.Sprint(t["slug"]))))
 		}
 		for _, t := range ts {
-			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-*s  %s\n", t["id"], t["status"], t["type"], w, t["slug"], t["title"])
+			// Who is working: only doing rows name the taker, so done history
+			// does not crowd the list (show always names it).
+			by := ""
+			if who := takenBy(t); who != "" && t["status"] == "doing" {
+				by = "  [" + who + "]"
+			}
+			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-*s  %s%s\n", t["id"], t["status"], t["type"], w, t["slug"], t["title"], by)
 		}
 	}
 	if t, ok := reply["task"].(Reply); ok {
 		fmt.Fprintf(a.Out, "%s  %s  %s  %s\n", t["slug"], t["title"], t["id"], t["status"])
+		if who := takenBy(t); who != "" {
+			fmt.Fprintf(a.Out, "taken by: %s\n", who)
+		}
 		fmt.Fprintf(a.Out, "goal: %s\n", t["goal"])
 		for i, v := range t["acceptance"].([]any) {
 			m := v.(map[string]any)

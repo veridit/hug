@@ -13,7 +13,7 @@ python3 - "$binary" <<'PY'
 import fcntl, json, os, pathlib, pty, select, signal, struct, subprocess, sys, tempfile, termios, time
 binary=str(pathlib.Path(sys.argv[1]).resolve())
 base=pathlib.Path(tempfile.mkdtemp(prefix='huginn-e2e-',dir=os.environ.get('JCODE_SCRATCH_DIR')))
-env=dict(os.environ, GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=str(base/'no-global'), GIT_AUTHOR_NAME='Test', GIT_COMMITTER_NAME='Test', GIT_AUTHOR_EMAIL='test@example.invalid', GIT_COMMITTER_EMAIL='test@example.invalid', HUGINN_USER='tester', TERM='xterm-256color')
+env=dict(os.environ, GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=str(base/'no-global'), GIT_AUTHOR_NAME='Test', GIT_COMMITTER_NAME='Test', GIT_AUTHOR_EMAIL='test@example.invalid', GIT_COMMITTER_EMAIL='test@example.invalid', HUG_USER='tester',HUG_MODEL='e2e-model', TERM='xterm-256color')
 def git(cwd,*args):
     return subprocess.run(['git','-C',str(cwd),*args],env=env,text=True,capture_output=True,check=True).stdout.strip()
 repo=base/'a';repo.mkdir();remote=base/'remote.git'
@@ -106,9 +106,9 @@ clone=base/'b';git(base,'clone',str(remote),str(clone));run('init',cwd=clone)
 barrier=base/'barrier';barrier.mkdir()
 for directory in (repo,clone):
     hook=directory/'.git/hooks/pre-push'
-    hook.write_text('#!/bin/sh\ntouch "$RACE_BARRIER/$HUGINN_USER"\ni=0\nwhile [ ! -e "$RACE_BARRIER/alice" ] || [ ! -e "$RACE_BARRIER/bob" ]; do\n i=$((i+1)); [ "$i" -lt 200 ] || exit 1\n sleep 0.05\ndone\n')
+    hook.write_text('#!/bin/sh\ntouch "$RACE_BARRIER/$HUG_USER"\ni=0\nwhile [ ! -e "$RACE_BARRIER/alice" ] || [ ! -e "$RACE_BARRIER/bob" ]; do\n i=$((i+1)); [ "$i" -lt 200 ] || exit 1\n sleep 0.05\ndone\n')
     hook.chmod(0o755)
-procs=[subprocess.Popen([binary,'take',race,'--json'],cwd=d,env=dict(env,HUGINN_USER=u,RACE_BARRIER=str(barrier)),text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE) for d,u in ((repo,'alice'),(clone,'bob'))]
+procs=[subprocess.Popen([binary,'take',race,'--json'],cwd=d,env=dict(env,HUG_USER=u,RACE_BARRIER=str(barrier)),text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE) for d,u in ((repo,'alice'),(clone,'bob'))]
 results=[]
 for p in procs:
     out,err=p.communicate(timeout=30);results.append((p.returncode,out,err))

@@ -18,6 +18,7 @@ type BoardCard struct {
 	ID       string   `json:"id"`
 	Title    string   `json:"title"`
 	Assignee []string `json:"assignee,omitempty"`
+	Model    string   `json:"model,omitempty"`
 	Blocked  bool     `json:"blocked,omitempty"`
 }
 
@@ -49,7 +50,7 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 		}
 		for i := range cols {
 			if cols[i].Status == t.Status {
-				cols[i].Cards = append(cols[i].Cards, BoardCard{ID: t.ID, Title: t.Title, Assignee: t.Assignee, Blocked: len(task.Blocked(t, ts)) > 0})
+				cols[i].Cards = append(cols[i].Cards, BoardCard{ID: t.ID, Title: t.Title, Assignee: t.Assignee, Model: t.Model, Blocked: len(task.Blocked(t, ts)) > 0})
 			}
 		}
 	}
@@ -139,7 +140,11 @@ func writeBoardWide(w io.Writer, cols []BoardColumn) {
 			}
 			who := ""
 			if len(card.Assignee) > 0 {
-				who = "  [" + strings.Join(card.Assignee, ", ") + "]"
+				who = "  [" + strings.Join(card.Assignee, ", ")
+				if card.Model != "" && !slices.Contains(card.Assignee, card.Model) {
+					who += " · " + card.Model
+				}
+				who += "]"
 			}
 			fmt.Fprintf(w, "  %s %s %s%s\n", card.ID, mark, card.Title, who)
 		}

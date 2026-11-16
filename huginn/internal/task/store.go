@@ -306,10 +306,33 @@ func (s *Store) Note(ref, text string) (Result, error) {
 	d.Note(text)
 	return s.finish(d, true)
 }
-func (s *Store) Take(ref, user string) (Result, error) { return s.Transition(ref, "doing", user) }
-func (s *Store) Done(ref string) (Result, error)       { return s.Transition(ref, "done", "") }
-func (s *Store) Drop(ref string) (Result, error)       { return s.Transition(ref, "dropped", "") }
+
+// Take sets ref doing for user. Agents and people take through TakeAs, which
+// also records the model; Take keeps the assignee only (the TUI's local
+// fallback and tests).
+func (s *Store) Take(ref, user string) (Result, error) { return s.transition(ref, "doing", user, "") }
+
+// TakeAs takes ref for an agent or person. model is required (et85h1,
+// Jørgen 2026-11-16: agents are ephemeral, models are not): a model name
+// such as claude-opus-5-5, or human for a person. name (the agent or
+// session, such as poodle) is optional; without it the assignee is the
+// model. Both are recorded on the task: assignee and model.
+func (s *Store) TakeAs(ref, name, model string) (Result, error) {
+	name, model = strings.TrimSpace(name), strings.TrimSpace(model)
+	if model == "" {
+		return Result{}, &Error{Kind: "no-model", ID: ref, Fix: "hug task take " + ref + " --model MODEL"}
+	}
+	if name == "" {
+		name = model
+	}
+	return s.transition(ref, "doing", name, model)
+}
+func (s *Store) Done(ref string) (Result, error) { return s.Transition(ref, "done", "") }
+func (s *Store) Drop(ref string) (Result, error) { return s.Transition(ref, "dropped", "") }
 func (s *Store) Transition(ref, status, user string) (Result, error) {
+	return s.transition(ref, status, user, "")
+}
+func (s *Store) transition(ref, status, user, model string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -317,7 +340,7 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 	if !contains(Statuses, status) {
 		return Result{}, invalidFor(d.Task.ID, "status", status, Statuses)
 	}
-	if d.Task.Status == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) {
+	if d.Task.Status == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.Model == model) {
 		return s.finish(d, false)
 	}
 	if status == "doing" && user != "" && len(d.Task.Assignee) > 0 && !contains(d.Task.Assignee, user) {
@@ -375,6 +398,11 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 	}
 	if status == "doing" && user != "" {
 		if e = d.SetField("assignee", []string{user}); e != nil {
+			return Result{}, e
+		}
+	}
+	if status == "doing" && model != "" {
+		if e = d.SetField("model", model); e != nil {
 			return Result{}, e
 		}
 	}

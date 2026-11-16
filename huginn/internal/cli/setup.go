@@ -33,7 +33,7 @@ How huginn works, in short:
   Code branches never see them. "hug task sync" shares them through the remote.
 - Every task has a goal and observable acceptance checks. Work it like this
   (CLI shown; MCP has list, show, new, next, take, done and update):
-    hug task next            pick the top task (or hug task take ID)
+    hug task next            pick the top task, then hug task take ID --model MODEL
     hug task show ID         read goal, checks, notes, dependencies
     hug task check ID N      tick check N when you have evidence
     hug task note ID "..."   record evidence, commands, findings
@@ -210,7 +210,9 @@ func agentInstructionsEdit(backlog []string) string {
 // agentSection is the text projects paste into AGENTS.md.
 const agentSection = `## Tasks: hug
 Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
-Start: hug task next (or hug task take ID), then hug task show ID.
+Start: hug task next, then hug task take ID --model MODEL (the model you are, e.g.
+claude-opus-5-5 or gpt-6.1-sol; a person: --model human; --as NAME adds your agent
+or session name, optional), then hug task show ID.
 While working: hug task check ID N with evidence, hug task note ID "evidence".
 Finish: hug task done ID when every acceptance check is ticked.
 New work: hug task new "short title" --goal "..." --purpose "..." --principle "..." --details "..." --accept "observable check".
@@ -219,7 +221,8 @@ and do not do), Relevant details, then Acceptance. Titles stay under 80
 characters; detail goes in the Goal.
 Epics: hug task set ID --parent EPIC; hug task promote ID N turns item N into
 its own task. hug task ls --epic EPIC shows an epic and its children.
-MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take,
+MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take (model
+required, agent optional),
 task_done, task_update (actions set, check, promote, note, move, dep, drop).
 Old backlog ids (TASK-123) work as aliases.
 Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.`

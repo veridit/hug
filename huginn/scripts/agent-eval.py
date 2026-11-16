@@ -330,7 +330,7 @@ def job(scenario, model, repeat, tier, args, root):
         git(repo, 'init', '-b', 'main')
         git(repo, 'config', 'user.name', 'Huginn Eval')
         # Capture identity before the model runs, never infer it from final state.
-        acting_user = env.get('HUGINN_USER', '').strip() or 'Huginn Eval'
+        acting_user = env.get('HUG_USER', '').strip() or env.get('HUG_MODEL', '').strip()
         git(repo, 'config', 'user.email', 'eval@example.invalid')
         git(repo, 'config', 'commit.gpgsign', 'false')
         git(repo, 'config', 'core.hooksPath', '/dev/null')

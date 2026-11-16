@@ -17,7 +17,7 @@ import (
 	"github.com/veridit/hug/huginn/internal/cli"
 )
 
-const Instructions = "Huginn keeps project tasks on a dedicated Git branch.\nUse list or next, then take, update acceptance, and done.\nEvery result includes a next step, and errors include exact fixes."
+const Instructions = "Huginn keeps project tasks on a dedicated Git branch.\nUse list or next, then take (with your model, and your agent name if you have one), update acceptance, and done.\nEvery result includes a next step, and errors include exact fixes."
 
 type Executor interface {
 	Execute(context.Context, []string) (cli.Reply, error)
@@ -33,7 +33,7 @@ func New(e Executor) *sdk.Server {
 // PrefixedInstructions describes the task tools when they carry prefix
 // (hug mcp registers them as task_list, task_show, ...).
 func PrefixedInstructions(prefix string) string {
-	return "Tasks (" + prefix + "* tools) live on a dedicated Git branch of the current repository.\nUse " + prefix + "list or " + prefix + "next, then " + prefix + "take, " + prefix + "update acceptance, and " + prefix + "done.\nEvery result includes a next step, and errors include exact fixes."
+	return "Tasks (" + prefix + "* tools) live on a dedicated Git branch of the current repository.\nUse " + prefix + "list or " + prefix + "next, then " + prefix + "take (with your model, and your agent name if you have one), " + prefix + "update acceptance, and " + prefix + "done.\nEvery result includes a next step, and errors include exact fixes."
 }
 
 // Register adds the task tools to s, each named prefix+name.
@@ -239,8 +239,18 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		}
 		return args, nil
 	})
-	for _, cmd := range []string{"take", "done"} {
-		add(cmd, ""+map[string]string{"take": "Claim a task using the remote push lock and set it doing.", "done": "Finish a task after dependencies and acceptance checks are complete."}[cmd], map[string]any{"id": str("Task reference")}, []string{"id"}, func(m map[string]any) ([]string, error) { return []string{cmd, get(m, "id")}, nil })
+	add("take", "Claim a task using the remote push lock and set it doing. Say which model you are (model, required: claude-opus-5-5, gpt-6.1-sol, ...; a person: human) and, if you have one, your agent or session name (agent). Both are recorded on the task; without agent the assignee is the model.", map[string]any{"id": str("Task reference"), "model": str("The model doing the work, e.g. claude-opus-5-5 or gpt-6.1-sol; a person: human. Required unless HUG_MODEL is set for the server"), "agent": str("Your agent or session name, e.g. poodle (optional; default HUG_USER or the harness session)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
+		args := []string{"take", get(m, "id")}
+		if v := get(m, "agent"); v != "" {
+			args = append(args, "--as", v)
+		}
+		if v := get(m, "model"); v != "" {
+			args = append(args, "--model", v)
+		}
+		return args, nil
+	})
+	for _, cmd := range []string{"done"} {
+		add(cmd, "Finish a task after dependencies and acceptance checks are complete.", map[string]any{"id": str("Task reference")}, []string{"id"}, func(m map[string]any) ([]string, error) { return []string{cmd, get(m, "id")}, nil })
 	}
 	add("next", "Find the highest-ranked available task or your doing task with combined filters.", filters(), nil, func(m map[string]any) ([]string, error) {
 		return flags([]string{"next"}, m, "type", "priority", "label", "group", "epic", "mine"), nil
