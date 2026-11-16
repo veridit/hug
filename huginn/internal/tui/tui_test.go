@@ -146,7 +146,7 @@ func TestMoveAndNew(t *testing.T) {
 	if m.visible[0].ID != id {
 		t.Fatal(m.visible)
 	}
-	m = press(m, "n", "Gamma", "backspace", "a", "enter", "enter")
+	m = press(m, "N", "Gamma", "backspace", "a", "enter", "enter")
 	if len(m.visible) != 3 {
 		t.Fatal(m.message)
 	}
@@ -154,7 +154,7 @@ func TestMoveAndNew(t *testing.T) {
 	if e != nil || strings.TrimSpace(d.Task.Goal) != "Gamma" || len(d.Task.Acceptance) != 1 {
 		t.Fatal(d, e)
 	}
-	m = press(m, "n", "esc")
+	m = press(m, "N", "esc")
 	if m.prompt != "" {
 		t.Fatal(m.prompt)
 	}

@@ -15,7 +15,10 @@ import (
 type theme struct {
 	renderer                               *lipgloss.Renderer
 	normal, dim, accent, selected, warning lipgloss.Style
-	status, kind, priority                 map[string]lipgloss.Style
+	// focus marks where focus is in a task: one heading or the task id.
+	// ask is every confirm line: a question the reader cannot miss.
+	focus, ask             lipgloss.Style
+	status, kind, priority map[string]lipgloss.Style
 }
 
 func newTheme() theme {
@@ -29,6 +32,8 @@ func newTheme() theme {
 	}
 	t := theme{renderer: r, normal: base, dim: color("#8795a8", "#586474"), accent: color("#00bfff", "#006c9c").Bold(true),
 		selected: base.Background(lipgloss.AdaptiveColor{Dark: "#16364a", Light: "#d8eef8"}).Bold(true), warning: color("#ffb454", "#995200"),
+		focus:  base.Background(lipgloss.AdaptiveColor{Dark: "#00bfff", Light: "#006c9c"}).Foreground(lipgloss.AdaptiveColor{Dark: "#0b1620", Light: "#ffffff"}).Bold(true),
+		ask:    base.Background(lipgloss.AdaptiveColor{Dark: "#ffb454", Light: "#995200"}).Foreground(lipgloss.AdaptiveColor{Dark: "#1a1200", Light: "#ffffff"}).Bold(true),
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
 	for i, s := range []string{"todo", "doing", "done", "blocked", "dropped"} {
 		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", "#ff8585", "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", "#ae2525", "#586474"}[i])
@@ -172,7 +177,7 @@ func (m model) listText() string {
 	indices := m.indices()
 	lines := []string{m.columns(m.width, false)}
 	if len(indices) == 0 {
-		return strings.Join(append(lines, "No tasks match. :clear resets filters; n creates a task."), "\n")
+		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
 	start, end := window(indices, m.cursor, max(1, m.bodyHeight()-2))
 	for n, i := range indices[start:end] {
@@ -379,7 +384,10 @@ func (m model) View() string {
 	// key "!" shows as a prefix. The full list is on the help screen.
 	for _, v := range []struct{ key, name string }{{"o", "overview"}, {"i", "list"}, {"b", "board"}, {"!", "lint"}} {
 		base := m.styles.dim
-		if v.name == m.view {
+		// In a task no view tab is marked: focus is in the task, and the
+		// trail after the tabs says where it came from (2026-11-16, user).
+		current := v.name == m.view && !m.detail
+		if current {
 			base = m.styles.selected
 		}
 		keyStyle := base.Bold(true).Underline(true)
@@ -389,12 +397,15 @@ func (m model) View() string {
 		} else {
 			label = keyStyle.Render(v.key) + base.Render(v.name)
 		}
-		if v.name == m.view {
+		if current {
 			label = base.Render("[") + label + base.Render("]")
 		} else {
 			label = base.Render(" ") + label + base.Render(" ")
 		}
 		tabs = append(tabs, label)
+	}
+	if m.detail {
+		tabs = append(tabs, m.detailTrail())
 	}
 	counts := map[string]int{}
 	blocked := 0
@@ -461,7 +472,7 @@ func (m model) View() string {
 		if m.detail {
 			footer = fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
 			if pos := m.detailPosition(); pos != "" {
-				footer = fmt.Sprintf("Task %s · %.0f%% · { previous · } next · Esc back", pos, m.viewport.ScrollPercent()*100)
+				footer = fmt.Sprintf("Task %s · %.0f%% · n next · p previous · Esc back", pos, m.viewport.ScrollPercent()*100)
 			}
 		}
 	}
@@ -475,44 +486,8 @@ func (m model) View() string {
 			}
 		}
 	}
-	ticketQuote := false
 	if m.confirm != "" {
-		inputLine = "Confirm " + actionNames[m.confirm] + " "
-		if m.confirm == "n" {
-			inputLine += m.pendingValue
-		} else if m.confirm == " " {
-			// Say exactly what Space will do: tick or untick which item.
-			for _, t := range m.all {
-				if t.Path == m.confirmPath && len(t.Acceptance) > 0 {
-					n := min(m.acceptance, len(t.Acceptance)-1)
-					verb := "Tick"
-					if t.Acceptance[n].Checked {
-						verb = "Untick"
-					}
-					// After the colon comes the check as the ticket shows
-					// it: same box, number and colour, so it reads as the
-					// ticket's words, not the tool's (2026-11-16, user).
-					box := "☐"
-					if t.Acceptance[n].Checked {
-						box = "☑"
-					}
-					quoted := fmt.Sprintf("%s %d. %s", box, n+1, oneLine(cleanMarkdown(t.Acceptance[n].Text)))
-					inputLine = verb + ": " + m.checkStyle(t.Acceptance[n].Checked).Render(fit(quoted, max(1, m.width-len(verb)-2)))
-					ticketQuote = true
-					break
-				}
-			}
-		} else {
-			for _, t := range m.all {
-				if t.Path == m.confirmPath {
-					inputLine += t.ID + " " + t.Title
-					break
-				}
-			}
-		}
-		if !ticketQuote {
-			inputLine += "?"
-		}
+		inputLine = m.confirmLine()
 	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" {
 		inputLine = m.input.View()
 	} else if m.pendingG {
@@ -528,4 +503,69 @@ func (m model) View() string {
 		lines[i] = fit(line, m.width)
 	}
 	return strings.Join(lines, "\n")
+}
+
+// confirmLine is the question every confirm asks, in one style that cannot be
+// missed: the whole line as a bold bar in the warning colour, ending in a
+// question mark that survives truncation (2026-11-16, user: a plain prompt
+// went unnoticed). It starts "▶ " so it stands out without colour too.
+func (m model) confirmLine() string {
+	question := "Confirm " + actionNames[m.confirm] + " "
+	switch m.confirm {
+	case "n":
+		question += oneLine(m.pendingValue)
+	case " ":
+		// Say exactly what Space will do: tick or untick which item, quoted
+		// as the ticket shows it, box and number after the colon.
+		for _, t := range m.all {
+			if t.Path == m.confirmPath && len(t.Acceptance) > 0 {
+				n := min(m.acceptance, len(t.Acceptance)-1)
+				verb, box := "Tick", "☐"
+				if t.Acceptance[n].Checked {
+					verb, box = "Untick", "☑"
+				}
+				question = fmt.Sprintf("%s: %s %d. %s", verb, box, n+1, oneLine(cleanMarkdown(t.Acceptance[n].Text)))
+				break
+			}
+		}
+	default:
+		for _, t := range m.all {
+			if t.Path == m.confirmPath {
+				question += oneLine(t.ID) + " " + oneLine(t.Title)
+				break
+			}
+		}
+	}
+	// The key bar below says Enter confirms and Esc cancels.
+	question = strings.TrimRight(question, " ")
+	line := "▶ " + ansi.Truncate(question, max(1, m.width-3), "…") + "?"
+	return m.styles.ask.Render(fit(line, m.width))
+}
+
+// detailTrail is the path to the open task, after the view tabs: the view it
+// was opened from, any tasks followed through dependencies, then the task.
+// With page focus the task id carries the focus highlight; with a section
+// focused, that heading does instead.
+func (m model) detailTrail() string {
+	t, ok := m.selected()
+	if !ok {
+		return ""
+	}
+	parts := []string{m.styles.dim.Render(m.view)}
+	for _, path := range m.detailStack {
+		for _, v := range m.all {
+			if v.Path == path {
+				parts = append(parts, m.styles.dim.Render(oneLine(v.ID)))
+			}
+		}
+	}
+	// Brackets mark focus as they do on the view tabs, so it shows without
+	// colour too.
+	id := oneLine(t.ID)
+	if m.detailPane == focusPage {
+		id = m.styles.focus.Render("[" + id + "]")
+	} else {
+		id = m.styles.accent.Render(id)
+	}
+	return strings.Join(append(parts, id), m.styles.dim.Render(" › "))
 }

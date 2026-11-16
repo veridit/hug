@@ -48,16 +48,12 @@ func (m model) keyBar() string {
 	case m.prompt != "":
 		hints = []bkey.Binding{hint("Enter", "submit"), hint("Esc", "cancel"), hint("?", "help")}
 	case m.detail:
-		hints = []bkey.Binding{hint("j/k", "scroll"), hint("[/]", "select"), hint("{/}", "task"), hint("Tab", "section"), hint("Enter", "follow"), hint("Esc", "back"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
+		hints = m.detailHints(m.width < 100)
 	default:
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
-	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" {
-		if m.detail {
-			hints = []bkey.Binding{hint("j/k", "scroll"), hint("[/]", "pick"), hint("Tab", "section"), hint("Esc", "back"), hint("?", "help"), hint("q", "quit")}
-		} else {
-			hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
-		}
+	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail {
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
 	h := m.helpModel
 	h.ShortSeparator = " · "
@@ -65,6 +61,32 @@ func (m model) keyBar() string {
 	// and shows "…" (2026-11-16: the footer ran to 75 columns at width 70).
 	h.Width = m.width
 	return h.ShortHelpView(hints)
+}
+
+// detailHints are the keys that work in the open task with its current
+// focus, and only those: j/k say what they move, Space shows only with the
+// checks focused, Enter only with dependencies, Tab only when there is
+// somewhere to go (2026-11-16, user).
+func (m model) detailHints(narrow bool) []bkey.Binding {
+	t, _ := m.selected()
+	var hints []bkey.Binding
+	switch m.detailPane {
+	case focusAcceptance:
+		hints = append(hints, hint("j/k", "check"), hint("Space", "tick"))
+	case focusDeps:
+		hints = append(hints, hint("j/k", "dependency"), hint("Enter", "follow"))
+	default:
+		hints = append(hints, hint("j/k", "scroll"))
+	}
+	hints = append(hints, hint("n/p", "task"))
+	if len(focusStops(t)) > 1 {
+		hints = append(hints, hint("Tab", "section"))
+	}
+	hints = append(hints, hint("Esc", "back"))
+	if !narrow {
+		hints = append(hints, hint(":", "cmd"))
+	}
+	return append(hints, hint("?", "help"), hint("q", "quit"))
 }
 func (m model) helpText() string {
 	navigation := []bkey.Binding{
@@ -81,10 +103,10 @@ func (m model) helpText() string {
 		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh files and lint"),
 	}
 	actions := []bkey.Binding{
-		hint("[ / ]", "previous / next acceptance or dependency in detail"), hint("{ / }", "previous / next task from detail"), hint("Space", "tick or untick the selected acceptance check, in detail"),
-		hint("Tab + Enter", "focus dependencies and follow selected task"),
+		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),
+		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps"),
 		hint("t / d / x", "take / done / drop task"), hint("J / K", "move down / up in global rank order"),
-		hint("n", "new title, goal and one verification item"), hint("e", "edit in $EDITOR, then refresh + lint"),
+		hint("N", "new title, goal and one verification item"), hint("e", "edit in $EDITOR, then refresh + lint"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),
 	}
 	if m.helpQuery != "" || m.helpTyping {

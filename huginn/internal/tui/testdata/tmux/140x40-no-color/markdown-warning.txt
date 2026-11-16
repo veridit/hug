@@ -1,5 +1,5 @@
 HUG TASKS · detail   60/60 tasks · ! 10 findings
- overview   [list]   board    !lint
+ overview    list    board    !lint   list › [000003]
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Render compiler-lang task detail without storage markers
@@ -35,6 +35,6 @@ no dependencies
 
 
 
-Task 3 of 60 · 100% · { previous · } next · Esc back
+Task 3 of 60 · 100% · n next · p previous · Esc back
 
-j/k scroll · [/] select · {/} task · Tab section · Enter follow · Esc back · : cmd · ? help · q quit
+j/k scroll · n/p task · Esc back · : cmd · ? help · q quit

@@ -9,8 +9,9 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
-// From a task's detail, } and { open the next and previous task of the list
-// it was opened from, and stop at either end (2026-11-16, user).
+// From a task's detail, n and p open the next and previous task of the list
+// it was opened from, and stop at either end (2026-11-16, user: { and } are
+// hard to reach on a Norwegian keyboard).
 func TestDetailStepsToNextAndPreviousTask(t *testing.T) {
 	s := &task.Store{Root: t.TempDir()}
 	for _, title := range []string{"Alpha", "Bravo", "Charlie"} {
@@ -27,19 +28,19 @@ func TestDetailStepsToNextAndPreviousTask(t *testing.T) {
 	if !strings.Contains(ansi.Strip(m.View()), "Task 1 of 3") {
 		t.Fatalf("footer lacks position:\n%s", ansi.Strip(m.View()))
 	}
-	m = press(m, "}")
+	m = press(m, "n")
 	second := title()
 	if second == first || !m.detail {
-		t.Fatalf("} did not step: %q -> %q detail=%v", first, second, m.detail)
+		t.Fatalf("n did not step: %q -> %q detail=%v", first, second, m.detail)
 	}
-	m = press(m, "}")
-	m = press(m, "}")
+	m = press(m, "n")
+	m = press(m, "ctrl+n")
 	if !strings.Contains(ansi.Strip(m.View()), "Task 3 of 3") {
 		t.Fatalf("did not stop at the end:\n%s", ansi.Strip(m.View()))
 	}
-	m = press(m, "{")
+	m = press(m, "p")
 	if title() != second {
-		t.Fatalf("{ went to %q, want %q", title(), second)
+		t.Fatalf("p went to %q, want %q", title(), second)
 	}
 	m = press(m, "esc")
 	if tk, _ := m.selected(); m.detail || tk.Title != second {

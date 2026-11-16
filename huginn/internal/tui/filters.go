@@ -225,6 +225,7 @@ func (m *model) openTask(t task.Task) {
 	}
 	m.detailPath = t.Path
 	m.detail = true
+	m.startFocus()
 	m.syncDetail()
 	m.viewport.GotoTop()
 }

@@ -251,7 +251,7 @@ func (m *model) stepTask(step int) {
 		m.detailPath = m.visible[m.cursor].Path
 	}
 	if m.cursor != before {
-		m.acceptance, m.dependency, m.detailPane = 0, 0, 0
+		m.startFocus()
 		m.syncDetail()
 		m.viewport.GotoTop()
 		return
@@ -377,7 +377,7 @@ func (m *model) back() {
 	case m.detail && len(m.detailStack) > 0:
 		m.detailPath = m.detailStack[len(m.detailStack)-1]
 		m.detailStack = m.detailStack[:len(m.detailStack)-1]
-		m.detailPane = 0
+		m.startFocus()
 		m.syncDetail()
 		m.viewport.GotoTop()
 	case m.detail:
@@ -528,35 +528,55 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.detail {
 			switch k {
 			case "[", "]":
+				// [ and ] step through the focused list; the page has none.
 				step := 1
 				if k == "[" {
 					step = -1
 				}
-				if m.detailPane == 0 {
+				switch m.detailPane {
+				case focusAcceptance:
 					m.acceptance += step
-				} else {
+				case focusDeps:
 					if t, ok := m.selected(); ok {
 						m.dependency = max(0, min(m.dependency+step, len(t.Dependencies)-1))
 					}
+				default:
+					m.message = "[ and ] step through a list: Tab focuses the checks or dependencies"
 				}
 				m.clamp()
 				m.syncDetail()
 				m.revealAcceptance()
 			case "h", "l", "left", "right", "tab", "shift+tab":
-				m.detailPane = 1 - m.detailPane
+				// Focus cycles page, acceptance, dependencies, skipping
+				// empty sections (2026-11-16, user).
+				step := 1
+				if k == "h" || k == "left" || k == "shift+tab" {
+					step = -1
+				}
+				m.cycleFocus(step)
 				m.syncDetail()
 				m.revealAcceptance()
 			case "enter":
-				if m.detailPane == 1 {
+				if m.detailPane == focusDeps {
 					m.followDependency()
 				}
-			case "t", "d", "x", "J", "K", " ", "e":
+			case " ":
+				// Space ticks the check marked >; with focus elsewhere no
+				// check is marked, and ticking an unmarked one is a guess.
+				if m.detailPane == focusAcceptance {
+					m.requestAction(k, "")
+				} else if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
+					m.message = "Space ticks the check marked >: Tab focuses the checks"
+				} else {
+					m.message = "no acceptance checks to tick"
+				}
+			case "t", "d", "x", "J", "K", "e":
 				m.requestAction(k, "")
 			case "/", ":", "#":
 				return m, m.openInput(k, "")
 			case "f":
 				return m, m.openFilter()
-			case "n":
+			case "N":
 				return m, m.openInput("new title", "")
 			case "s":
 				return m, m.openInput(":", "status ")
@@ -566,11 +586,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if t, ok := m.selected(); ok {
 					m.refresh(t.Path)
 				}
-			case "ctrl+n", "ctrl+p", "}", "{":
+			case "n", "p", "ctrl+n", "ctrl+p":
 				// Next or previous task of the list the detail was opened
-				// from, without going back first (2026-11-16, user).
+				// from, without going back first. n and p, not { and }, which
+				// are hard to reach on a Norwegian keyboard (2026-11-16, user).
 				step := 1
-				if k == "ctrl+p" || k == "{" {
+				if k == "p" || k == "ctrl+p" {
 					step = -1
 				}
 				m.stepTask(step)
@@ -580,20 +601,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.detail = false
 				m.setView(map[string]string{"o": "overview", "i": "list", "v": "list", "b": "board", "!": "lint"}[k])
 			case "j", "down", "k", "up":
-				// j/k step through the focused list (acceptance or
-				// dependencies) and scroll the page past either end.
+				// With a list focused, j/k step through it and scroll the
+				// page past either end; with the page focused they scroll.
 				step := 1
 				if k == "k" || k == "up" {
 					step = -1
 				}
 				t, ok := m.selected()
 				moved := false
-				if ok && m.detailPane == 0 && len(t.Acceptance) > 0 {
+				if ok && m.detailPane == focusAcceptance && len(t.Acceptance) > 0 {
 					next := m.acceptance + step
 					if next >= 0 && next < len(t.Acceptance) {
 						m.acceptance, moved = next, true
 					}
-				} else if ok && m.detailPane == 1 && len(t.Dependencies) > 0 {
+				} else if ok && m.detailPane == focusDeps && len(t.Dependencies) > 0 {
 					next := m.dependency + step
 					if next >= 0 && next < len(t.Dependencies) {
 						m.dependency, moved = next, true
@@ -611,9 +632,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		switch {
-		case bkey.Matches(msg, keys.down):
+		case bkey.Matches(msg, keys.down) || k == "n":
 			m.move(1, false)
-		case bkey.Matches(msg, keys.up):
+		case bkey.Matches(msg, keys.up) || k == "p":
 			m.move(-1, false)
 		case bkey.Matches(msg, keys.top):
 			m.move(0, true)
@@ -635,6 +656,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if t, ok := m.selected(); ok {
 				m.detailPath = t.Path
 				m.detail = true
+				m.startFocus()
 				m.syncDetail()
 				m.viewport.GotoTop()
 			}
@@ -660,7 +682,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.setView("list")
 		case k == "!":
 			m.setView("lint")
-		case k == "n":
+		case k == "N":
+			// N, not n: n and p step like j and k, and to the next task
+			// inside one (2026-11-16, user).
 			return m, m.openInput("new title", "")
 		case k == "r":
 			path := ""

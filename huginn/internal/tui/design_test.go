@@ -223,7 +223,7 @@ func TestEscAtEveryLevel(t *testing.T) {
 	}
 }
 func TestInputsNeverSwallowHelpOrQuit(t *testing.T) {
-	for _, prefix := range [][]string{{":"}, {"/"}, {"#"}, {"n"}, {"f", "g"}} {
+	for _, prefix := range [][]string{{":"}, {"/"}, {"#"}, {"N"}, {"f", "g"}} {
 		m := press(manyModel(t), prefix...)
 		m = press(m, "a?q")
 		if !m.help || strings.Contains(m.input.Value(), "?") {
@@ -394,7 +394,7 @@ func TestEveryEditRequiresConfirmation(t *testing.T) {
 			t.Fatal(k, "cancel failed")
 		}
 	}
-	m := press(fixture(t), "n", "Never created", "enter", "esc")
+	m := press(fixture(t), "N", "Never created", "enter", "esc")
 	if len(m.all) != 2 {
 		t.Fatal("new mutated before confirmation")
 	}

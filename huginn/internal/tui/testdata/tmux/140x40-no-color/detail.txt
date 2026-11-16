@@ -1,5 +1,5 @@
 HUG TASKS · detail   60/60 tasks · ! 10 findings
- overview   [list]   board    !lint
+ overview    list    board    !lint   list › 000001
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖
@@ -17,7 +17,7 @@ Verification
 
 fmt.Println("synthetic acceptance")
 
-ACCEPTANCE · [ / ] SELECT · SPACE TOGGLE
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks
 > ☐ 1. First acceptance check
   ☐ 2. Second acceptance check
 
@@ -35,6 +35,6 @@ HISTORY
 
 
 
-Task 1 of 60 · 100% · { previous · } next · Esc back
+Task 1 of 60 · 100% · n next · p previous · Esc back
 
-j/k scroll · [/] select · {/} task · Tab section · Enter follow · Esc back · : cmd · ? help · q quit
+j/k check · Space tick · n/p task · Tab section · Esc back · : cmd · ? help · q quit

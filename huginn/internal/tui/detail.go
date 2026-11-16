@@ -132,18 +132,86 @@ func (m model) sections(t task.Task) []detailSection {
 	}
 	return out
 }
+
+// Detail focus: the page scrolls, or one list (acceptance checks or
+// dependencies) has a selection that j/k step through. Exactly one place
+// shows focus: the task id in the tab bar for the page, else the focused
+// section's heading (2026-11-16, user).
+const (
+	focusPage = iota
+	focusAcceptance
+	focusDeps
+)
+
+// focusStops lists the focus states the task offers, in Tab order. Empty
+// sections are skipped.
+func focusStops(t task.Task) []int {
+	stops := []int{focusPage}
+	if len(t.Acceptance) > 0 {
+		stops = append(stops, focusAcceptance)
+	}
+	if len(t.Dependencies) > 0 {
+		stops = append(stops, focusDeps)
+	}
+	return stops
+}
+
+// startFocus is the focus a freshly opened task gets: its checks when it has
+// any, otherwise the page.
+func (m *model) startFocus() {
+	m.acceptance, m.dependency = 0, 0
+	m.detailPane = focusPage
+	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
+		m.detailPane = focusAcceptance
+	}
+}
+
+// cycleFocus moves focus to the next (step 1) or previous (step -1) stop.
+func (m *model) cycleFocus(step int) {
+	t, ok := m.selected()
+	if !ok {
+		return
+	}
+	stops := focusStops(t)
+	if len(stops) == 1 {
+		m.message = "nothing to focus: this task has no checks or dependencies"
+		return
+	}
+	pos := 0
+	for i, s := range stops {
+		if s == m.detailPane {
+			pos = i
+		}
+	}
+	m.detailPane = stops[(pos+step+len(stops))%len(stops)]
+}
+
+// sectionHeading is a section's name in capitals. The focused section gets
+// the highlight, a ▸ that shows without colour, and the keys that work in it;
+// keys are never upper-cased, since J and K are other keys.
+func (m model) sectionHeading(title, hint string, focused bool) string {
+	head := strings.ToUpper(title)
+	if !focused {
+		return m.styles.accent.Render(head)
+	}
+	if hint != "" {
+		head += " · " + hint
+	}
+	return m.styles.focus.Render(fit("▸ "+head, m.width))
+}
 func (m model) detailText(t task.Task) string {
 	sections := m.sections(t)
 	var b strings.Builder
-	section := func(title, body, empty string) {
+	section := func(heading, body, empty string) {
 		if strings.TrimSpace(body) == "" {
 			if empty != "" {
 				b.WriteString(m.styles.dim.Render(empty) + "\n\n")
 			}
 			return
 		}
-		b.WriteString(m.styles.accent.Render(strings.ToUpper(title)) + "\n" + body + "\n\n")
+		b.WriteString(heading + "\n" + body + "\n\n")
 	}
+	plain := func(title string) string { return m.sectionHeading(title, "", false) }
 	text := func(name string) string {
 		var out []string
 		for _, s := range sections {
@@ -153,14 +221,14 @@ func (m model) detailText(t task.Task) string {
 		}
 		return strings.Join(out, "\n")
 	}
-	section("Description", m.markdown(text("description")), "no description yet")
+	section(plain("Description"), m.markdown(text("description")), "no description yet")
 	var checks []string
 	for i, a := range t.Acceptance {
 		box, pointer := "☐", " "
 		if a.Checked {
 			box = "☑"
 		}
-		if m.detailPane == 0 && i == m.acceptance {
+		if m.detailPane == focusAcceptance && i == m.acceptance {
 			pointer = ">"
 		}
 		// Wrap to the room left after the prefix and hang continuation lines
@@ -177,13 +245,13 @@ func (m model) detailText(t task.Task) string {
 			}
 		}
 		label := strings.Join(lines, "\n")
-		if m.detailPane == 0 && i == m.acceptance {
+		if m.detailPane == focusAcceptance && i == m.acceptance {
 			checks = append(checks, m.styles.selected.Render(label))
 		} else {
 			checks = append(checks, m.checkStyle(a.Checked).Render(label))
 		}
 	}
-	section("Acceptance · [ / ] select · Space toggle", strings.Join(checks, "\n"), "no acceptance items yet")
+	section(m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks", m.detailPane == focusAcceptance), strings.Join(checks, "\n"), "no acceptance items yet")
 	var dependencies []string
 	for i, d := range task.DependencyDetails(t, m.all) {
 		state := d.Status
@@ -191,26 +259,33 @@ func (m model) detailText(t task.Task) string {
 			state = "blocked"
 		}
 		pointer := " "
-		if m.detailPane == 1 && i == m.dependency {
+		if m.detailPane == focusDeps && i == m.dependency {
 			pointer = ">"
 		}
 		flag := ""
 		if d.Status != "done" && d.Status != "dropped" {
 			flag = " BLOCKED"
 		}
-		dependencies = append(dependencies, fmt.Sprintf("%s ↳ %s %s [%s]%s %s", pointer, m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, oneLine(d.Note)))
+		line := fmt.Sprintf("%s ↳ %s %s [%s]%s %s", pointer, m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, oneLine(d.Note))
+		if pointer == ">" {
+			line = m.styles.selected.Render(ansi.Strip(line))
+		}
+		dependencies = append(dependencies, line)
 	}
-	section("Dependencies · Tab focuses · [ / ] select · Enter follows", strings.Join(dependencies, "\n"), "no dependencies")
-	section("Notes", m.markdown(text("notes")), "")
-	section("History", m.markdown(text("history")), "")
+	section(m.sectionHeading("Dependencies", "j/k or [ ] step · Enter follows", m.detailPane == focusDeps), strings.Join(dependencies, "\n"), "no dependencies")
+	section(plain("Notes"), m.markdown(text("notes")), "")
+	section(plain("History"), m.markdown(text("history")), "")
 	for _, s := range sections {
 		if !contains([]string{"description", "acceptance", "dependencies", "notes", "history"}, s.name) {
-			section(s.name, m.markdown(s.text), "")
+			section(plain(s.name), m.markdown(s.text), "")
 		}
 	}
 	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
 }
 func (m *model) revealAcceptance() {
+	if m.detailPane == focusPage {
+		return // nothing is marked; the page keeps its scroll
+	}
 	if t, ok := m.selected(); ok {
 		for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
 			if strings.HasPrefix(line, "> ") {
@@ -244,9 +319,7 @@ func (m *model) followDependency() {
 	}
 	m.detailStack = append(m.detailStack, t.Path)
 	m.detailPath = target.Path
-	m.acceptance = 0
-	m.dependency = 0
-	m.detailPane = 0
+	m.startFocus()
 	m.syncDetail()
 	m.viewport.GotoTop()
 }

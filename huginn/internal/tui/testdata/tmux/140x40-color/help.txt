@@ -3,15 +3,15 @@ HUG TASKS · help   60/60 tasks · ! 10 findings
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 NAVIGATION AND FIND                                     EDIT · every action requires confirmation
-j/k ↑/↓         move / scroll                                           [ / ]       previous / next acceptance or dependency in detail
-< / gg / Home   top                                                     { / }       previous / next task from detail
-> / G / End     bottom                                                  Space       tick or untick the selected acceptance check, in detail
-ctrl-d / ctrl-u half page down / up                                     Tab + Enter focus dependencies and follow selected task
-PgDn / PgUp     full page down / up                                     t / d / x   take / done / drop task
-h/← Shift-Tab   previous pane / column                                  J / K       move down / up in global rank order
-l/→ Tab         next pane / column                                      n           new title, goal and one verification item
-Enter           open full task detail                                   e           edit in $EDITOR, then refresh + lint
-Esc             back one level, never quits                             Enter / Esc confirm / cancel every editing action
+j/k ↑/↓         move / scroll                                           [ and ]         previous / next check or dependency
+< / gg / Home   top                                                     n and p         next / previous task, in a task
+> / G / End     bottom                                                  Space / Enter   tick check / follow dependency marked >
+ctrl-d / ctrl-u half page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps
+PgDn / PgUp     full page down / up                                     t / d / x       take / done / drop task
+h/← Shift-Tab   previous pane / column                                  J / K           move down / up in global rank order
+l/→ Tab         next pane / column                                      N               new title, goal and one verification item
+Enter           open full task detail                                   e               edit in $EDITOR, then refresh + lint
+Esc             back one level, never quits                             Enter / Esc     confirm / cancel every editing action
 q / ctrl-c      quit (q only outside inputs)
 /               live find; Enter keeps, Esc clears
 :               palette with command + value completion

@@ -4,6 +4,28 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Changed
+
+- TUI task detail has three focus states: page, acceptance and dependencies.
+  Tab and Shift-Tab cycle them and skip empty sections; a task opens on its
+  checks when it has any. Only the focused heading is highlighted (with a
+  `▸`); with page focus no check shows the `>` pointer, j/k scroll the page
+  and the task id in the tab bar carries the focus.
+- Inside a task the tab bar marks no view; it shows the trail instead, for
+  example `list › 000001`, on the same line.
+- Key hints follow focus and show only keys that work there. Keys are never
+  written as `[ / ]` (read as the `/` key): headings say `j/k or [ ] step`.
+  Space ticks only with the checks focused.
+- Every confirm prompt (take, done, drop, move, edit, new, tick) is one bold
+  warning-coloured bar starting `▶` and ending `?`; the `?` survives
+  truncation. The tick wording stays `Tick: ☐ 2. text`.
+- In a task, `n` and `p` open the next and previous task (Ctrl-N and Ctrl-P
+  still work); `{` and `}` are gone, being hard to reach on a Norwegian
+  keyboard. In lists `n` and `p` move like `j` and `k`. New task is `N` in
+  every view.
+
 ## v0.7.15 - 2026-11-16
 
 ### Added
