@@ -30,6 +30,8 @@ Flags today: --code, --json (cli.go ~576 lint; text printed near cli.go:984). Pr
 - [x] hug task lint --code with no value lists the codes and counts
 - [x] hug task lint help and hug task lint help --code print the lint help
 - [x] the cause of the silent run in seid-lang is found and recorded in the notes
+- [ ] by default hug task lint (CLI, MCP and TUI) hides findings on done and dropped tasks and prints one count line for them ending in hug task lint --all; --all shows them
+- [ ] the not-a-dependency message says that no dependencies means an empty section or no section
 
 ## Notes
 
