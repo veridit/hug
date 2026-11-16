@@ -1,0 +1,32 @@
+---
+id: zgr01t
+title: "TUI: a task's attached files show with an icon and open in the editor"
+status: todo
+type: feature
+priority: "medium"
+assignee: []
+labels: []
+created: 2026-11-16
+updated: 2026-11-16
+---
+
+## Goal
+A task with attached files shows a small file mark with the count on its row in every list (e.g. '⎘2'), and inside the task its files are listed where they belong, each opening in the editor with one key; one key opens the task's whole file folder in the editor
+
+## Purpose
+Jørgen 2026-11-16: there are no general files, every file belongs to a task, so files are not a view of their own; they are attached to the ticket and should be visible on it. Today the TUI shows nothing but the 'file:NAME (bytes, sha256)' note line; reading one needs 'hug task show ID --file NAME'.
+
+## Principle
+No FILES view or global files list. The mark on the row only when a task has files. Inside the task, files are part of the task (a short list under the description, or the existing file: note lines made followable), opened with the editor the same way e opens the task, and hug commits what changed when the editor closes so history stays whole. Key letters by assignShortcuts, shown only when the task has files. Folder: .hug/tasks/<id>/.
+
+## Relevant details
+Storage: huginn/internal/task/files.go (Attach, text only, 256 KiB). Example: 44w1ev has gen-scale-board.py. Open question for Jørgen: commit edits made in the editor on close, or open view-only.
+
+## Depends on
+
+## Acceptance
+- [ ] a task with 2 files shows a file mark with 2 on its row in overview, list and board; a task without files shows none (golden)
+- [ ] inside the task, the files are listed and Enter on one opens it in $EDITOR; after the editor closes a change is committed (test with a fake editor)
+- [ ] one key opens the task's folder in the editor; the key is not shown for a task without files (test)
+
+## Notes
