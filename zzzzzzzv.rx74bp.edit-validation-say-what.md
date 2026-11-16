@@ -1,10 +1,10 @@
 ---
 id: rx74bp
 title: "Edit validation: say what is wrong and how to fix it"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["Jørgen H. Fjeld"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
