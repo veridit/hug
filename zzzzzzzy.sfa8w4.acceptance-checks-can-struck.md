@@ -32,3 +32,5 @@ Today: huginn/internal/task/document.go Acceptance{Text, Checked, Line}; parse a
 - [ ] the stored form renders as a crossed-out checklist line in a standard Markdown viewer, and older files parse unchanged (test)
 
 ## Notes
+
+2026-11-16 Jørgen: striking out a check with a reason must be available to him in the TUI too, not only to agents over MCP and the CLI. Already in check 3 ('the TUI draws a struck-out check crossed through'); made explicit: with a check focused, a key strikes it out and asks for the reason in a prompt, and the same key undoes it. Build CLI, MCP and TUI in the same ticket.
