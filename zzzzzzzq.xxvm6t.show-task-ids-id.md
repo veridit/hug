@@ -33,3 +33,5 @@ TUI: taskRowMark and the overview rows in huginn/internal/tui/render.go render "
 - [ ] full tests pass; goldens reviewed
 
 ## Notes
+
+2026-11-16 ON HOLD, design under discussion with Jørgen: '#id' cannot be pasted into a shell command (bash treats an unquoted word starting with # as a comment, so the id vanishes). Do not start until the written form of an id is decided. Options discussed: bare coloured id, task:ID, another sigil.
