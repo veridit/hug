@@ -1,0 +1,33 @@
+---
+id: tzc9hb
+title: "Agents use todos for their own next steps, tickets for everything else"
+status: todo
+type: feature
+priority: "high"
+assignee: []
+labels: []
+created: 2026-11-16
+updated: 2026-11-16
+---
+
+## Goal
+The instructions hug installs (AGENTS.md section from hug setup, MCP tool descriptions) and the output of hug task take teach one loop: todos hold only your own next actions for the ticket you have taken; all details, dependencies and waits live in tickets; when your todos are exhausted you run hug task next (or next --mine), take a ticket, and take prints a short reminder to write todos for it, record evidence on the ticket, and finish with hug task done.
+
+## Purpose
+Jørgen 2026-11-16, after seeing two coordinators (hug's and seid's) fill their todo lists with 20+ 'Blocked: after X lands' items that copy the board: 'we're using the todos wrong, and that's maybe on us'. The harness pokes on open todos and suggests marking them blocked, so a todo list that mirrors the board becomes a wall of blocked items. With todos as own next actions only, an empty todo list means 'pick the next ticket', never 'blocked'.
+
+## Principle
+Todos are the agent's working memory for the current ticket; tickets are the record. Never put another agent's work, a wait, or a dependency in a todo: waits go in Depends on (task, group or condition, see 16dxsr). A coordinator's todos are its own actions only (review, release, ask). Keep the instruction text short and harness-neutral (no jcode-specific tool names). take's reminder is two lines at most and only shown on success.
+
+## Relevant details
+Today: agentSection in huginn/internal/cli/setup.go says Start/While working/Finish but nothing about todos. hug task take prints only 'next: hug task show ID'. Related: qawmnb board nudges (shipped v0.7.35) tell an agent when board and work disagree; 16dxsr adds group/condition dependencies. Reported the harness side to the jcode maintainer 2026-11-16.
+
+## Depends on
+
+## Acceptance
+- [ ] the AGENTS.md section from hug setup states the loop: todos for your own next steps on the taken ticket, details and waits in tickets, empty todos -> hug task next (test on the text)
+- [ ] hug task take prints a reminder to write todos for the ticket and to note evidence on it, and next: hug task show ID (test)
+- [ ] MCP task_take's result carries the same reminder (test)
+- [ ] after release, hug setup in this repo and in seid-lang updates their AGENTS.md section (shown with a diff)
+
+## Notes
