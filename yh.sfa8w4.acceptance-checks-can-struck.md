@@ -4,7 +4,7 @@ title: "Acceptance checks can be struck out as not relevant, with a reason"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["dragon"]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
