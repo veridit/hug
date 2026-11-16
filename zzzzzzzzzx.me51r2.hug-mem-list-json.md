@@ -26,7 +26,7 @@ Reproduce: run 20 hug mem forget in parallel against a store while hug mem remem
 
 ## Acceptance
 - [x] hug mem list --json and hug mem search --json print one JSON object with a memories array (test)
-- [ ] hug mem forget accepts several ids and ids on stdin, in one transaction (test)
+- [x] hug mem forget accepts several ids and ids on stdin, in one transaction (test)
 - [ ] 20 parallel forgets with a concurrent remember loop: 0 failures (test)
 
 ## Notes
