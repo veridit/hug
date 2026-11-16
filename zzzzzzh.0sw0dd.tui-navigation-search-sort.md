@@ -28,7 +28,7 @@ Requests: (1) status counts line shows its keys (letters or matching column init
 - [ ] status line keys visible and working; tab and status share one line
 - [ ] header shows HUG and the project name
 - [ ] status:done in / search returns done tasks
-- [ ] a sort key orders the list by status, priority, updated or rank
+- [ ] done when task:mkzcqr is done (a sort key orders the list by status, priority, updated or rank)
 - [ ] epic and group visible in list rows and detail
 
 ## Notes
