@@ -16,7 +16,7 @@ Places pane shows 'home folder', project names and client names instead of raw s
 ## Depends on
 
 ## Acceptance
-- [ ] tmux golden shows readable place names
+- [x] tmux golden shows readable place names
 
 ## Notes
 
