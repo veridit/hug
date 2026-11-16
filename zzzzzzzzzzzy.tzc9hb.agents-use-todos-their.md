@@ -4,7 +4,7 @@ title: "Agents use todos for their own next steps, tickets for everything else"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["guppy"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
