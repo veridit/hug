@@ -107,8 +107,8 @@ func screenOrder(m model, ids ...string) []string {
 }
 
 // Check 1 and 3: in NEXT UP, J swaps a row with the row shown below it, even
-// with an epic (not shown in NEXT UP) ranked between them; the confirm line
-// names both tasks and the result says where it went.
+// with an epic (not shown in NEXT UP) ranked between them; one press moves
+// it at once, with no confirm (3xcesq), and the result names both tasks.
 func TestMoveJPastHiddenEpicInNextUp(t *testing.T) {
 	m, ids, commits := moveBoard(t, "Alpha", "epic: Gem", "Xray", "Child")
 	a, x, c, gem := ids["Alpha"], ids["Xray"], ids["Child"], ids["epic: Gem"]
@@ -118,11 +118,9 @@ func TestMoveJPastHiddenEpicInNextUp(t *testing.T) {
 	}
 	m = selectRow(t, m, a)
 	m = press(m, "J")
-	confirm := m.confirmLine()
-	if !strings.Contains(confirm, "Move "+a+" below "+x+" in NEXT UP: Alpha? Enter yes") {
-		t.Fatal(confirm)
+	if m.confirm != "" {
+		t.Fatal("J asked:", m.confirmLine())
 	}
-	m = press(m, "enter")
 	if got := strings.Join(shown(m), " "); got != x+" "+a+" "+c {
 		t.Fatalf("NEXT UP after J: %s", got)
 	}
@@ -153,10 +151,9 @@ func TestMoveKAndEdges(t *testing.T) {
 	a, x, c := ids["Alpha"], ids["Xray"], ids["Child"]
 	m = selectRow(t, nextUp(m), c)
 	m = press(m, "K")
-	if confirm := m.confirmLine(); !strings.Contains(confirm, "Move "+c+" above "+x+" in NEXT UP: Child?") {
-		t.Fatal(confirm)
+	if m.confirm != "" {
+		t.Fatal("K asked:", m.confirmLine())
 	}
-	m = press(m, "enter")
 	if got := strings.Join(shown(m), " "); got != a+" "+c+" "+x || *commits != 1 {
 		t.Fatalf("after K: %s, commits %d", got, *commits)
 	}
@@ -189,10 +186,9 @@ func TestMoveRelativeToFilteredRows(t *testing.T) {
 	}
 	m = selectRow(t, m, a1)
 	m = press(m, "J")
-	if confirm := m.confirmLine(); !strings.Contains(confirm, "Move "+a1+" below "+a2+" in the list (filtered)") {
-		t.Fatal(confirm)
+	if want := "moved " + a1 + " below " + a2 + ", row 2 of 2 in the list (filtered)"; m.message != want {
+		t.Fatalf("message %q, want %q", m.message, want)
 	}
-	m = press(m, "enter")
 	if got := strings.Join(shown(m), " "); got != a2+" "+a1 || *commits != 1 {
 		t.Fatalf("filtered after J: %s, commits %d", got, *commits)
 	}
@@ -224,7 +220,7 @@ func TestMoveThreePressesEachVisible(t *testing.T) {
 		t.Fatalf("before: %s", before)
 	}
 	for press3 := 0; press3 < 3; press3++ {
-		m = act(m, "J")
+		m = press(m, "J")
 		after := strings.Join(shown(m), " ")
 		if after == before || after != strings.Join(want[press3], " ") || *commits != press3+1 {
 			t.Fatalf("press %d: %s -> %s, commits %d", press3+1, before, after, *commits)

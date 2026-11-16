@@ -297,6 +297,14 @@ func TestTmuxGolden(t *testing.T) {
 				snapshot("help", "NAVIGATION")
 				special("Escape")
 				wait("HUG TASKS · list")
+				// Grab mode (3xcesq): the grabbed row moves on screen and the
+				// key bar shows only the keys that work; Esc writes nothing.
+				send("gg")
+				send("m")
+				send("jj")
+				snapshot("grab", "(was 1)")
+				special("Escape")
+				wait("move cancelled; nothing changed")
 				send("q")
 				deadline := time.Now().Add(8 * time.Second)
 				for time.Now().Before(deadline) {
@@ -313,6 +321,6 @@ func TestTmuxGolden(t *testing.T) {
 		}
 	}
 	if !t.Failed() {
-		t.Log("tmux: PASS (40 real-binary goldens, 80x24/140x40, colour/NO_COLOR, all sessions cleaned up)")
+		t.Log("tmux: PASS (44 real-binary goldens, 80x24/140x40, colour/NO_COLOR, all sessions cleaned up)")
 	}
 }

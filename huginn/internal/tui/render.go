@@ -97,6 +97,11 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 	pointer := " "
 	if selected {
 		pointer = ">"
+		if m.grab.active && t.Path == m.grab.path {
+			pointer = "≡" // grabbed: it moves with j/k (3xcesq)
+		}
+	} else if m.yanked != "" && t.ID == m.yanked {
+		pointer = m.styles.warning.Render("y") // yanked: P/p paste it
 	} else if mark != "" {
 		pointer = m.styles.dim.Render(mark)
 	}
@@ -506,6 +511,10 @@ func (m model) View() string {
 				footer = fmt.Sprintf("Task %s · %.0f%% · n next · p previous · Esc back", pos, m.viewport.ScrollPercent()*100)
 			}
 		}
+		if m.grab.active {
+			rows := m.indices()
+			footer = fmt.Sprintf("Moving %s · row %d of %d in %s (was %d) · nothing written until Enter", m.grab.id, m.rowOf(rows, m.grab.path)+1, len(rows), m.sectionName(), m.grab.start+1)
+		}
 	}
 	lines = append(lines, m.styles.dim.Render(oneLine(footer)))
 	inputLine := ""
@@ -596,15 +605,6 @@ func (m model) confirmLine() string {
 				break
 			}
 		}
-	case "J", "K":
-		// Name both tasks: "Move a1dx7s below x1t1t1" (ksv323).
-		t, _ := m.taskAt(m.confirmPath)
-		target, _ := m.taskAt(m.confirmTarget)
-		where := "below"
-		if m.confirm == "K" {
-			where = "above"
-		}
-		question = fmt.Sprintf("Move %s %s %s in %s: %s", oneLine(t.ID), where, oneLine(target.ID), m.sectionName(), oneLine(t.Title))
 	default:
 		if t, ok := m.taskAt(m.confirmPath); ok {
 			question += oneLine(t.ID) + " " + oneLine(t.Title)

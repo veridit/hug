@@ -37,6 +37,11 @@ func (m model) keyBar() string {
 		}
 	case m.confirm != "":
 		hints = []bkey.Binding{hint("Enter", "confirm"), hint("Esc", "cancel"), hint("?", "help"), hint("q", "quit")}
+	case m.grab.active:
+		// Only the keys that work while a task is grabbed (3xcesq).
+		hints = []bkey.Binding{hint("j/k", "move"), hint("g/G", "top/bottom"), hint("Enter", "drop"), hint("Esc", "cancel")}
+	case m.yanked != "" && m.prompt == "" && !m.detail:
+		hints = []bkey.Binding{hint("j/k", "select"), hint("P", "paste above"), hint("p", "paste below"), hint("Esc", "forget "+m.yanked)}
 	case m.prompt == ":":
 		hints = []bkey.Binding{hint("Tab/Enter", "complete/run"), hint("↑↓ ^n/^p", "pick"), hint("Esc", "close"), hint("?", "help")}
 	case m.prompt == "#":
@@ -52,7 +57,7 @@ func (m model) keyBar() string {
 	default:
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
-	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail {
+	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
 	h := m.helpModel
@@ -100,12 +105,13 @@ func (m model) helpText() string {
 		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/a/e"),
 		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
 		hint("o / i / b / !", "views: overview / list (also v) / board / lint"),
-		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh now (changes on disk show by themselves)"),
+		hint("s / y", "status / type palette (y: inside a task)"), hint("c", "clear all filters"), hint("r", "refresh now (changes on disk show by themselves)"),
 	}
 	actions := []bkey.Binding{
 		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),
 		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps"),
-		hint("t / d / x", "take / done / drop task"), hint("J / K", "move below / above the row shown next to it"),
+		hint("t / d / x", "take / done / drop task"), hint("J / K", "move below / above the next row, no confirm"),
+		hint("m / y, P p", "grab: j/k, Enter places it / yank, paste above below"),
 		hint("N", "new title, goal and one verification item"), hint("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi"),
 		hint("e again", "after an edit left a finding: edit at once"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),

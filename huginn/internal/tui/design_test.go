@@ -372,7 +372,9 @@ func TestJumpPrefixesAndImportedAliases(t *testing.T) {
 	}
 }
 func TestEveryEditRequiresConfirmation(t *testing.T) {
-	for _, k := range []string{"t", "d", "x", "J", "K", " ", "e"} {
+	// J and K are the exception: one step, undone by the other key (3xcesq);
+	// TestMoveJPastHiddenEpicInNextUp and grab_test.go cover them.
+	for _, k := range []string{"t", "d", "x", " ", "e"} {
 		m := fixture(t)
 		before, _ := os.ReadFile(filepath.Join(m.store.Root, m.all[0].Path))
 		commits := 0
@@ -380,10 +382,6 @@ func TestEveryEditRequiresConfirmation(t *testing.T) {
 		if k == " " {
 			// Space ticks only inside the task, where the check is shown.
 			m = press(m, "enter")
-		}
-		if k == "K" {
-			// K on the first row says so and asks nothing (ksv323).
-			m = press(m, "j")
 		}
 		m = press(m, k)
 		if m.confirm != k {

@@ -4,6 +4,23 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Changed
+
+- `hug tui` moves a task far in one go, one commit per move (3xcesq).
+  `m` grabs the selected task: `j`/`k` (with a count such as `5k`), `gg`
+  and `G` move it on screen, nothing is written until `Enter` drops it
+  with one commit, and `Esc` puts it back. The footer says `Moving ID · row
+  N of M in SECTION (was K) · nothing written until Enter` and the key bar
+  shows only the keys that work. `y` yanks the selected task, then `P`
+  pastes it above the selected row and `p` below (without a yank, `p` still
+  moves up). `J` and `K` move one row with no confirm, since the other key
+  undoes it. Moves stay within the rows shown in one section; RECENTLY
+  DONE, ordered by close time, refuses them and says where to move. In
+  lists, the type palette moved from `y` to `:type` and `f t` (`y` inside
+  a task still opens it).
+
 ## v0.7.23 - 2026-11-16
 
 ### Changed

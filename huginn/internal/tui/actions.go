@@ -19,17 +19,27 @@ func (m *model) requestAction(k, value string) {
 	if k != "n" && !ok {
 		return
 	}
-	m.confirmTarget = ""
 	if k == "J" || k == "K" {
 		// J and K move past the row shown below or above, in this section
 		// and after filters; a task the reader cannot see is never the
 		// target (ksv323: moving past a hidden epic changed nothing visible).
+		// One step needs no confirm: the opposite key undoes it (3xcesq).
+		if why := m.moveRefusal(); why != "" {
+			m.message = why
+			return
+		}
 		target, why := m.moveTarget(t, k)
 		if why != "" {
 			m.message = why
 			return
 		}
-		m.confirmTarget = target.Path
+		o, where := task.MoveOptions{After: target.ID}, "below"
+		if k == "K" {
+			o, where = task.MoveOptions{Before: target.ID}, "above"
+		}
+		m.editNotice = ""
+		m.moveTo(t.ID, o, where, target.ID)
+		return
 	}
 	m.confirm = k
 	m.confirmPath = t.Path
@@ -77,24 +87,6 @@ func (m *model) executeAction() tea.Cmd {
 		r, err = m.store.Done(t.ID)
 	case "x":
 		r, err = m.store.Drop(t.ID)
-	case "J", "K":
-		target, found := m.taskAt(m.confirmTarget)
-		if !found {
-			m.message = "the row to move past disappeared; refresh and try again"
-			return nil
-		}
-		o, where := task.MoveOptions{After: target.ID}, "below"
-		if k == "K" {
-			o, where = task.MoveOptions{Before: target.ID}, "above"
-		}
-		r, err = m.store.Move(t.ID, o)
-		m.finish(r, err, "move")
-		if err == nil {
-			// Say where it went, in the words of the screen.
-			done := fmt.Sprintf("moved %s %s %s%s", t.ID, where, target.ID, m.rowPlace(r.Task.Path))
-			m.message = strings.Replace(m.message, "move "+r.Task.ID, done, 1)
-		}
-		return nil
 	case " ":
 		if len(t.Acceptance) == 0 {
 			m.message = "no acceptance items"

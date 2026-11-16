@@ -63,7 +63,8 @@ type model struct {
 	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
 	confirm, confirmPath, pendingValue string
-	confirmTarget                      string // J/K: the shown row to move past
+	yanked                             string // y: the task id P and p paste (3xcesq)
+	grab                               grabState
 	filter                             task.Filter
 	input                              textinput.Model
 	viewport, helpViewport             viewport.Model
@@ -128,7 +129,9 @@ func (m model) waitChange() tea.Cmd {
 
 // busy is true while a reload would interrupt the reader: a prompt or the
 // palette, a confirm question, or the editor.
-func (m model) busy() bool { return m.prompt != "" || m.confirm != "" || m.editing }
+func (m model) busy() bool {
+	return m.prompt != "" || m.confirm != "" || m.editing || m.grab.active
+}
 
 // reload starts a background load unless one is running or the reader is busy.
 func (m *model) reload() tea.Cmd {
@@ -673,8 +676,21 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if k == "esc" {
+			if m.grab.active && !m.help {
+				m.cancelGrab()
+				return m, nil
+			}
+			if m.yanked != "" && !m.help && m.prompt == "" && m.confirm == "" {
+				m.message = "forgot " + m.yanked + "; nothing changed"
+				m.yanked = ""
+				return m, nil
+			}
 			m.back()
 			return m, nil
+		}
+		// While a task is grabbed, keys move it; nothing else runs (3xcesq).
+		if m.grab.active && !m.help {
+			return m.updateGrab(k)
 		}
 		if m.help {
 			if m.helpTyping {
@@ -876,7 +892,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case bkey.Matches(msg, keys.down) || k == "n":
 			m.move(1, false)
-		case bkey.Matches(msg, keys.up) || k == "p":
+		case bkey.Matches(msg, keys.up) || k == "p" && m.yanked == "":
 			m.move(-1, false)
 		case bkey.Matches(msg, keys.top):
 			m.move(0, true)
@@ -909,7 +925,13 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case k == "s":
 			return m, m.openInput(":", "status ")
 		case k == "y":
-			return m, m.openInput(":", "type ")
+			// y yanks the selected task; P and p paste it (3xcesq). The
+			// type palette is :type, f t, or y inside a task.
+			m.yank()
+		case (k == "P" || k == "p") && m.yanked != "":
+			m.paste(k)
+		case k == "m":
+			m.startGrab()
 		case k == "#":
 			return m, m.openInput("#", "")
 		case k == "f":

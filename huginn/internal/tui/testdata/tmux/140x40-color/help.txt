@@ -8,12 +8,12 @@ j/k ↑/↓         move / scroll                                           [ an
 > / G / End     bottom                                                  Space / Enter   tick check / follow dependency marked >
 ctrl-d / ctrl-u half page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps
 PgDn / PgUp     full page down / up                                     t / d / x       take / done / drop task
-h/← Shift-Tab   previous pane / column                                  J / K           move below / above the row shown next to it
-l/→ Tab         next pane / column                                      N               new title, goal and one verification item
-Enter           open full task detail                                   e               edit in $VISUAL, else $EDITOR, git core.editor, vi
-Esc             back one level, never quits                             e again         after an edit left a finding: edit at once
-q / ctrl-c      quit (q only outside inputs)                            Enter / Esc     confirm / cancel every editing action
-/               live find; Enter keeps, Esc clears
+h/← Shift-Tab   previous pane / column                                  J / K           move below / above the next row, no confirm
+l/→ Tab         next pane / column                                      m / y, P p      grab: j/k, Enter places it / yank, paste above below
+Enter           open full task detail                                   N               new title, goal and one verification item
+Esc             back one level, never quits                             e               edit in $VISUAL, else $EDITOR, git core.editor, vi
+q / ctrl-c      quit (q only outside inputs)                            e again         after an edit left a finding: edit at once
+/               live find; Enter keeps, Esc clears                      Enter / Esc     confirm / cancel every editing action
 :               palette with command + value completion
 Tab / Enter     complete palette choice; Enter runs complete command
 ctrl-n/p / ↑↓   select palette completion
@@ -23,7 +23,7 @@ f               filter picker: s/t/p/g/l/a/e
 1 / 2 / 3 / 4   filter todo / doing / done / blocked
 Backspace / F   remove last chip / clear all filters
 o / i / b / !   views: overview / list (also v) / board / lint
-s / y           status / type palette shortcut
+s / y           status / type palette (y: inside a task)
 c               clear all filters
 r               refresh now (changes on disk show by themselves)
 
