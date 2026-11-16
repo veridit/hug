@@ -58,7 +58,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -616,6 +616,21 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, usage("acceptance index must be a positive integer", "hug task show "+f.args[0])
 		}
 		r, e = s.s.Check(f.args[0], n)
+	case "promote":
+		if e = f.count(2); e != nil {
+			return nil, e
+		}
+		n, err := strconv.Atoi(f.args[1])
+		if err != nil || n < 1 {
+			return nil, usage("acceptance index must be a positive integer", "hug task show "+f.args[0])
+		}
+		r, e = s.s.Promote(f.args[0], n)
+		if e == nil {
+			if e = s.r.Commit(nil, "hug task promote "+f.args[0]+" "+f.args[1]); e != nil {
+				return nil, e
+			}
+			return resultJSON(r, s)
+		}
 	case "note":
 		if e = f.count(2); e != nil {
 			return nil, e

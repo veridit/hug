@@ -364,6 +364,17 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 	}
 	r, e := s.finish(d, true)
 	r.Warnings = warnings
+	if e == nil && status == "done" {
+		// Items elsewhere that wait on this task ("done when task:<id> is
+		// done", from promote) are ticked now.
+		ticked, te := s.tickWaiting(d.Task.ID)
+		for _, t := range ticked {
+			r.Warnings = append(r.Warnings, "ticked "+t)
+		}
+		if te != nil {
+			return r, te
+		}
+	}
 	return r, e
 }
 func Next(tasks []Task, f Filter) (Result, error) {

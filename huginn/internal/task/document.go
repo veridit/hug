@@ -357,6 +357,29 @@ func (d *Document) SetField(k string, value any) error {
 	d.replace(lines)
 	return nil
 }
+
+// SetItemText rewrites acceptance item n's text, keeping its checkbox.
+func (d *Document) SetItemText(n int, text string) error {
+	if n < 1 || n > len(d.Task.Acceptance) {
+		return &Error{Kind: "acceptance-index", ID: d.Task.ID, Value: fmt.Sprint(n), Fix: fmt.Sprintf("hug task show %s", d.Task.ID)}
+	}
+	a := d.Task.Acceptance[n-1]
+	lines := append([]string(nil), d.lines...)
+	old := lines[a.Line-1]
+	i := strings.Index(old, "]")
+	if i < 0 {
+		return &Error{Kind: "broken-file", ID: d.Task.ID, Fix: "hug task lint"}
+	}
+	nl := ""
+	if strings.HasSuffix(old, "\r\n") {
+		nl = "\r\n"
+	} else if strings.HasSuffix(old, "\n") {
+		nl = "\n"
+	}
+	lines[a.Line-1] = old[:i+1] + " " + strings.ReplaceAll(text, "\n", " ") + nl
+	d.replace(lines)
+	return nil
+}
 func (d *Document) Check(n int) error {
 	if n < 1 || n > len(d.Task.Acceptance) {
 		return &Error{Kind: "acceptance-index", ID: d.Task.ID, Value: fmt.Sprint(n), Fix: fmt.Sprintf("hug task show %s", d.Task.ID)}
