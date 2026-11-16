@@ -33,3 +33,5 @@ Board today: 35 files Goal|Purpose|Principle|Relevant details|Depends on|Accepta
 - [ ] after release, hug upgrade on this repo's board leaves every file in canonical order (shown with a grep count)
 
 ## Notes
+
+check 1: df60883 on origin/main (CI run 43936493365: ubuntu, macos, windows success). TestDetailSectionOrderGolden (huginn/internal/tui/sections_order_test.go) with testdata/detail/sections-000001-100.txt: Description, Purpose, Principle, Relevant details, then ACCEPTANCE, then Notes and History; tmux detail goldens regenerated in 4 profiles.
