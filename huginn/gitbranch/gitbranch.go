@@ -24,10 +24,22 @@ func WithIdentity(name, email string) Option {
 	return func(r *Repository) { r.Identity = Identity{name, email} }
 }
 
+// WithSharedCheckout makes Open use the branch's one checkout in the main
+// worktree from any linked worktree (git worktree add), instead of a checkout
+// under the linked worktree's own root, which git refuses when the branch is
+// already checked out (065wwn). The caller must then do its file I/O under
+// Repository.Dir, not under its own checkout root.
+func WithSharedCheckout() Option {
+	return func(r *Repository) { r.shared = true }
+}
+
 // Repository is a branch worktree. Dir is absolute. Remote is empty in local-only mode.
+// Root is the checkout Open was called from. With WithSharedCheckout, Dir in
+// a linked worktree is the branch's one checkout, in the main worktree.
 type Repository struct {
 	Root, Dir, Branch, Remote string
 	Identity                  Identity
+	shared                    bool
 }
 
 // Error includes a copyable repair command and the original Git diagnostic.
@@ -108,8 +120,76 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 }
 func (r *Repository) git(args ...string) (string, error) { return r.runAt(r.Dir, args...) }
 
+// worktree is one entry of git worktree list --porcelain.
+type worktree struct {
+	Path, Branch   string // Branch is a full ref, empty when detached
+	Bare, Prunable bool
+}
+
+func (r *Repository) worktrees(at string) ([]worktree, error) {
+	out, err := r.runAt(at, "worktree", "list", "--porcelain", "-z")
+	if err != nil {
+		return nil, err
+	}
+	var list []worktree
+	for _, field := range strings.Split(out, "\x00") {
+		key, value, _ := strings.Cut(field, " ")
+		switch {
+		case key == "worktree":
+			list = append(list, worktree{Path: filepath.Clean(value)})
+		case len(list) == 0:
+		case key == "branch":
+			list[len(list)-1].Branch = value
+		case key == "bare":
+			list[len(list)-1].Bare = true
+		case key == "prunable":
+			list[len(list)-1].Prunable = true
+		}
+	}
+	return list, nil
+}
+
+// checkout returns the worktree that has branch checked out, if any.
+func checkout(list []worktree, branch string) (worktree, bool) {
+	for _, w := range list {
+		if w.Branch == "refs/heads/"+branch {
+			return w, true
+		}
+	}
+	return worktree{}, false
+}
+
+// mainRoot is the main worktree (git lists it first). A bare repository has
+// none, so the checkout itself is used.
+func mainRoot(list []worktree, root string) string {
+	if len(list) > 0 && !list[0].Bare && list[0].Path != "" {
+		return list[0].Path
+	}
+	return root
+}
+
+// MainRoot returns the root of the main worktree of the repository that
+// contains dir. From a linked worktree (git worktree add) that is the
+// original checkout, not the linked one: branch checkouts made by Open live
+// there, so every worktree shares them.
+func MainRoot(dir string) (string, error) {
+	r := &Repository{Dir: dir}
+	root, err := r.runAt(dir, "rev-parse", "--show-toplevel")
+	if err != nil {
+		return "", err
+	}
+	list, err := r.worktrees(root)
+	if err != nil {
+		return "", err
+	}
+	return mainRoot(list, filepath.Clean(root)), nil
+}
+
 // Open opens or initializes the worktree. repoRoot may be any directory inside
-// the host checkout, including a linked checkout. dir is relative to its root.
+// the host checkout, including a linked checkout. dir is relative to that
+// checkout's root; with WithSharedCheckout it is relative to the main
+// worktree's root, a branch has one checkout shared by every linked worktree,
+// and a branch already checked out somewhere is used where it is.
 func Open(repoRoot, branch, dir string, options ...Option) (*Repository, error) {
 	return Init(repoRoot, branch, dir, options...)
 }
@@ -139,6 +219,14 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 		return nil, err
 	}
 	r.Root = root
+	list, err := r.worktrees(root)
+	if err != nil {
+		return nil, err
+	}
+	host := filepath.Clean(root)
+	if r.shared {
+		host = mainRoot(list, host)
+	}
 	clean := filepath.Clean(dir)
 	if filepath.IsAbs(clean) || clean == "." || clean == ".." || strings.HasPrefix(clean, ".."+string(filepath.Separator)) {
 		return nil, &Error{Op: "init", Detail: "worktree directory must be inside checkout", Fix: "Choose a relative directory such as .notes"}
@@ -149,7 +237,7 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 		}
 	}
 	// Reject symlink components rather than creating a worktree outside the host.
-	ancestor := root
+	ancestor := host
 	for _, part := range strings.Split(filepath.ToSlash(clean), "/") {
 		ancestor = filepath.Join(ancestor, part)
 		info, e := os.Lstat(ancestor)
@@ -157,14 +245,14 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 			return nil, r.ioerr(e)
 		}
 		if e == nil && info.Mode()&os.ModeSymlink != 0 {
-			return nil, &Error{Op: "init", Detail: "worktree directory traverses symlink: " + ancestor, Fix: "git -C " + quote(root) + " worktree list"}
+			return nil, &Error{Op: "init", Detail: "worktree directory traverses symlink: " + ancestor, Fix: "git -C " + quote(host) + " worktree list"}
 		}
 	}
 	if _, err = r.runAt(root, "check-ref-format", "--branch", branch); err != nil {
 		return nil, err
 	}
 	r.Branch = branch
-	r.Dir = filepath.Join(root, clean)
+	r.Dir = filepath.Join(host, clean)
 	remotes, err := r.runAt(root, "remote")
 	if err != nil {
 		return nil, err
@@ -214,10 +302,21 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 			return nil, r.ioerr(ce)
 		}
 	}
+	// One checkout per branch: a linked worktree uses the one that exists,
+	// wherever it is (2026-11-16, 065wwn: a second worktree add failed with
+	// "already used by worktree" and its fix repeated the same command).
+	if w, ok := checkout(list, branch); ok && r.shared {
+		return r.reuse(w, host)
+	}
 	if _, e := os.Stat(filepath.Join(r.Dir, ".git")); e == nil {
 		actual, e := r.git("symbolic-ref", "--short", "HEAD")
 		if e != nil {
-			return nil, e
+			// Git does not list this folder as a worktree (it was pruned or
+			// copied): repeating the command cannot help. Keep the folder,
+			// with any edits, and check the branch out afresh.
+			stale := r.Dir + ".stale"
+			return nil, &Error{Op: "open", Detail: r.Dir + " is not a working checkout of " + branch + " (git no longer knows it as a worktree)",
+				Fix: "mv " + quote(r.Dir) + " " + quote(stale) + " && git -C " + quote(host) + " worktree prune && git -C " + quote(host) + " worktree add " + quote(r.Dir) + " " + quote(branch), Cause: e}
 		}
 		if actual != branch {
 			return nil, &Error{Op: "open", Detail: "existing worktree uses branch " + actual, Fix: r.fix("switch " + quote(branch))}
@@ -249,8 +348,24 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 		_, err = r.runAt(root, "worktree", "add", "--orphan", "-b", branch, r.Dir)
 	}
 	if err != nil {
+		// Another process may have checked the branch out meanwhile.
+		if again, e := r.worktrees(root); e == nil && r.shared {
+			if w, ok := checkout(again, branch); ok {
+				return r.reuse(w, host)
+			}
+		}
 		return nil, err
 	}
+	return r, nil
+}
+
+// reuse points r at the branch's existing checkout w.
+func (r *Repository) reuse(w worktree, host string) (*Repository, error) {
+	if w.Prunable {
+		return nil, &Error{Op: "open", Detail: "branch " + r.Branch + " is registered as checked out at " + w.Path + " but that folder is gone",
+			Fix: "git -C " + quote(host) + " worktree prune"}
+	}
+	r.Dir = w.Path
 	return r, nil
 }
 func (r *Repository) ioerr(e error) error {
@@ -524,6 +639,10 @@ func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...O
 	root, err := r.runAt(repoRoot, "rev-parse", "--show-toplevel")
 	if err != nil {
 		return m, err
+	}
+	// The checkouts belong to the main worktree, also when run from a linked one.
+	if list, e := r.worktrees(root); e == nil {
+		root = mainRoot(list, filepath.Clean(root))
 	}
 	r.Root, r.Dir = root, root
 	has := func(ref string) bool { _, e := r.runAt(root, "show-ref", "--verify", "--quiet", ref); return e == nil }

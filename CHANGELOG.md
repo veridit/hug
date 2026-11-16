@@ -4,6 +4,21 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Fixed
+
+- `hug task` works in a linked Git worktree (`git worktree add`). It used
+  to try a second checkout of `hug/tasks`, which git refuses ("already used
+  by worktree"), and its `fix:` line repeated the same failing command. Now
+  every linked worktree uses the one checkout at the main worktree's
+  `.hug/tasks/`, so `hug task ls`, `new`, `take`, the MCP tools and the TUI
+  read and write the same board from any worktree. `hug task init` in a
+  linked worktree of a fresh repository creates the board in the main
+  worktree. A checkout folder that was deleted or that git no longer knows
+  now gets a `fix:` that works (`git worktree prune`, or move it aside and
+  check the branch out again). (065wwn)
+
 ## v0.7.20 - 2026-11-16
 
 ### Fixed

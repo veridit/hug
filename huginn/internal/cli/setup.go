@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/importer"
 )
 
@@ -57,6 +58,12 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		return nil, &OperationError{Problem: "hug task setup needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && hug task setup"}
 	}
 	root := strings.TrimSpace(string(out))
+	// The task branch is checked out in the main worktree, also when setup
+	// runs in a linked one (065wwn).
+	board := root
+	if m, e := gitbranch.MainRoot(cwd); e == nil {
+		board = m
+	}
 	var steps []SetupStep
 	add := func(step string, done bool, detail, do string) {
 		if done {
@@ -65,10 +72,10 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		steps = append(steps, SetupStep{step, done, detail, do})
 	}
 
-	if oldLayout(ctx, root) {
+	if oldLayout(ctx, board) {
 		add("layout upgrade", false, "tasks are on the old layout (branch huginn at .huginn/); hug keeps them on branch hug/tasks at .hug/tasks/", "hug upgrade")
 	}
-	_, statErr := os.Stat(filepath.Join(root, TaskDir))
+	_, statErr := os.Stat(filepath.Join(board, TaskDir))
 	branch := exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/heads/"+TaskBranch).Run() == nil
 	add("task branch", branch && statErr == nil, "branch "+TaskBranch+" checked out at "+TaskDir+"/", "hug task init")
 

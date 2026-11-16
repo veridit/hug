@@ -119,13 +119,13 @@ func (a *App) open(ctx context.Context) (*session, error) {
 	if check := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel"); check.Run() != nil {
 		return nil, &OperationError{Problem: "hug task needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && hug task init"}
 	}
-	if top, e := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel").Output(); e == nil {
-		if root := strings.TrimSpace(string(top)); oldLayout(ctx, root) {
-			return nil, &OperationError{Problem: "tasks are still on the old layout (branch huginn at .huginn/); hug now keeps them on branch hug/tasks at .hug/tasks/",
-				Fix: "hug upgrade"}
-		}
+	if root, e := gitbranch.MainRoot(cwd); e == nil && oldLayout(ctx, root) {
+		return nil, &OperationError{Problem: "tasks are still on the old layout (branch huginn at .huginn/); hug now keeps them on branch hug/tasks at .hug/tasks/",
+			Fix: "hug upgrade"}
 	}
-	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir)
+	// One board per repository: a linked worktree (git worktree add) uses the
+	// main worktree's hug/tasks checkout, never a second one (065wwn).
+	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir, gitbranch.WithSharedCheckout())
 	if e != nil {
 		return nil, e
 	}
@@ -160,12 +160,12 @@ func (a *App) refreshExisting(ctx context.Context) error {
 	if cwd == "" {
 		cwd = "."
 	}
-	c := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel")
-	b, e := c.Output()
+	// The board lives in the main worktree, also seen from a linked one (065wwn).
+	root, e := gitbranch.MainRoot(cwd)
 	if e != nil {
 		return nil
 	}
-	if _, e = os.Lstat(filepath.Join(strings.TrimSpace(string(b)), TaskDir)); os.IsNotExist(e) {
+	if _, e = os.Lstat(filepath.Join(root, TaskDir)); os.IsNotExist(e) {
 		return nil
 	} else if e != nil {
 		return e

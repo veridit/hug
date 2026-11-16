@@ -154,8 +154,8 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		did = append(did, "remote branch renamed")
 	}
 	// Settings file: huginn.toml becomes hug.toml (committed on the task branch).
-	if top, e := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel").Output(); e == nil {
-		dir := filepath.Join(strings.TrimSpace(string(top)), TaskDir)
+	if top, e := gitbranch.MainRoot(cwd); e == nil {
+		dir := filepath.Join(top, TaskDir)
 		if _, e := os.Stat(filepath.Join(dir, "huginn.toml")); e == nil {
 			if _, e := os.Stat(filepath.Join(dir, task.ConfigName)); os.IsNotExist(e) {
 				if out, e := exec.CommandContext(ctx, "git", "-C", dir, "mv", "huginn.toml", task.ConfigName).CombinedOutput(); e != nil {

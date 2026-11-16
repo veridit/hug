@@ -32,9 +32,9 @@ func writeFile(t *testing.T, r *Repository, path, body string) {
 	must(t, os.MkdirAll(filepath.Dir(filepath.Join(r.Dir, path)), 0755))
 	must(t, os.WriteFile(filepath.Join(r.Dir, path), []byte(body), 0644))
 }
-func openRepo(t *testing.T, root, branch, dir string) *Repository {
+func openRepo(t *testing.T, root, branch, dir string, more ...Option) *Repository {
 	t.Helper()
-	r, e := Open(root, branch, dir, WithIdentity("Test", "test@example.invalid"))
+	r, e := Open(root, branch, dir, append([]Option{WithIdentity("Test", "test@example.invalid")}, more...)...)
 	must(t, e)
 	return r
 }
@@ -274,6 +274,101 @@ func TestHostHooksDoNotBlockDataBranch(t *testing.T) {
 	writeFile(t, r, "a.md", "data\n")
 	must(t, r.Commit(nil, "data"))
 	if _, e := r.Head(); e != nil {
+		t.Fatal(e)
+	}
+}
+
+// 065wwn: a linked worktree (git worktree add --detach) uses the branch's one
+// checkout in the main worktree, whichever side creates it first, and never
+// adds a second worktree for it.
+func TestLinkedWorktreeSharesMainCheckout(t *testing.T) {
+	for _, first := range []string{"main", "linked"} {
+		t.Run(first+" first", func(t *testing.T) {
+			root, _ := fixture(t, false)
+			linked := filepath.Join(filepath.Dir(root), "linked")
+			command(t, root, "worktree", "add", "--detach", linked, "HEAD")
+			want := filepath.Join(root, ".hug", "tasks")
+			if phys, e := filepath.EvalSymlinks(root); e == nil {
+				want = filepath.Join(phys, ".hug", "tasks")
+			}
+			order := []string{root, linked}
+			if first == "linked" {
+				order = []string{linked, root}
+			}
+			var dirs []string
+			for _, at := range append(order, filepath.Join(linked)) {
+				r := openRepo(t, at, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+				dirs = append(dirs, r.Dir)
+				writeFile(t, r, filepath.Base(at)+".md", "from "+at+"\n")
+				must(t, r.Commit(nil, "from "+at))
+			}
+			for _, d := range dirs {
+				if d != want {
+					t.Fatalf("Dir %s, want the main worktree's %s", d, want)
+				}
+			}
+			if _, e := os.Stat(filepath.Join(linked, ".hug")); !os.IsNotExist(e) {
+				t.Fatalf("linked worktree got its own .hug: %v", e)
+			}
+			list := command(t, root, "worktree", "list", "--porcelain")
+			if n := strings.Count(list, "worktree "); n != 3 {
+				t.Fatalf("want 3 worktrees (main, linked, one task checkout), got %d:\n%s", n, list)
+			}
+			if n := strings.Count(list, "branch refs/heads/hug/tasks"); n != 1 {
+				t.Fatalf("hug/tasks checked out %d times:\n%s", n, list)
+			}
+			for _, f := range []string{"one.md", "linked.md"} {
+				if _, e := os.Stat(filepath.Join(want, f)); e != nil {
+					t.Fatal(e)
+				}
+			}
+			main, e := MainRoot(filepath.Join(linked))
+			must(t, e)
+			if filepath.Join(main, ".hug", "tasks") != want {
+				t.Fatalf("MainRoot(linked) = %s", main)
+			}
+		})
+	}
+}
+
+// A checkout whose folder was deleted by hand is reported with a fix that
+// works: git worktree prune, after which Open checks it out again.
+func TestMissingCheckoutFixIsPrune(t *testing.T) {
+	root, _ := fixture(t, false)
+	r := openRepo(t, root, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	writeFile(t, r, "a.md", "a\n")
+	must(t, r.Commit(nil, "a"))
+	linked := filepath.Join(filepath.Dir(root), "linked")
+	command(t, root, "worktree", "add", "--detach", linked, "HEAD")
+	must(t, os.RemoveAll(r.Dir))
+	_, err := Open(linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	var typed *Error
+	if !errors.As(err, &typed) || !strings.HasSuffix(typed.Fix, " worktree prune") {
+		t.Fatalf("want prune fix, got %v", err)
+	}
+	c := exec.Command("sh", "-c", typed.Fix)
+	if out, e := c.CombinedOutput(); e != nil {
+		t.Fatalf("fix %q: %s %v", typed.Fix, out, e)
+	}
+	again := openRepo(t, linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	if _, e := os.Stat(filepath.Join(again.Dir, "a.md")); e != nil {
+		t.Fatal(e)
+	}
+	// A folder git no longer knows as a worktree (pruned while moved away):
+	// the fix moves it aside and checks the branch out again.
+	aside := filepath.Join(filepath.Dir(root), "aside")
+	must(t, os.Rename(again.Dir, aside))
+	command(t, root, "worktree", "prune")
+	must(t, os.Rename(aside, again.Dir))
+	_, err = Open(linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	if !errors.As(err, &typed) || !strings.Contains(typed.Fix, " worktree add ") {
+		t.Fatalf("want move-aside fix, got %v", err)
+	}
+	if out, e := exec.Command("sh", "-c", typed.Fix).CombinedOutput(); e != nil {
+		t.Fatalf("fix %q: %s %v", typed.Fix, out, e)
+	}
+	third := openRepo(t, linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	if _, e := os.Stat(filepath.Join(third.Dir, "a.md")); e != nil {
 		t.Fatal(e)
 	}
 }
