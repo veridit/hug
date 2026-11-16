@@ -95,6 +95,13 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 			detail = "the remote refused this process's SSH credentials (no SSH agent or key here; apps such as Claude Desktop start MCP servers without your agent): " + detail
 			fix = "run this command in a terminal where 'ssh -T git@github.com' works, or give the app SSH_AUTH_SOCK / GIT_SSH_COMMAND; reading tasks (ls, show, next) works without the remote"
 		}
+		// A fresh machine or container without a git identity: re-running
+		// the commit cannot help; setting the identity does (2026-11-16,
+		// found running the linux release in a clean container).
+		if strings.Contains(detail, "Author identity unknown") || strings.Contains(detail, "unable to auto-detect email address") {
+			detail = "git has no author identity here, so task changes cannot be committed"
+			fix = `git config --global user.name "Your Name" && git config --global user.email "you@example.com"`
+		}
 		return string(b), &Error{Op: strings.Join(args, " "), Detail: detail, Fix: fix, Cause: err}
 	}
 	return strings.TrimSuffix(string(b), "\n"), nil
