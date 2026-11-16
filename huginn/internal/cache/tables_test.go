@@ -15,8 +15,14 @@ import (
 func tableState(t testing.TB, c *Cache) map[string][]string {
 	t.Helper()
 	out := map[string][]string{}
-	for _, name := range []string{"tasks", "files", "deps", "aliases", "meta"} {
-		rows, e := c.db.Query(`SELECT * FROM ` + name)
+	for _, name := range []string{"tasks", "files", "deps", "aliases", "meta"} { // board_delta: like meta 'board', how a sync stored the board
+		q := `SELECT * FROM ` + name
+		if name == "meta" {
+			// board and synced_ns record when and in what order a sync ran,
+			// not what the files say (44w1ev).
+			q += ` WHERE key NOT IN ('board','synced_ns')`
+		}
+		rows, e := c.db.Query(q)
 		if e != nil {
 			t.Fatal(e)
 		}

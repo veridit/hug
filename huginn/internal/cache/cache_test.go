@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -70,6 +71,11 @@ func TestSyncRules(t *testing.T) {
 	g := &fakeGit{head: "one"}
 	p := "A.000001.task.md"
 	put(t, root, p, fixture(1))
+	// Older than the racy window: a marker match is trusted (44w1ev).
+	old := time.Now().Add(-time.Hour)
+	if e := os.Chtimes(filepath.Join(root, p), old, old); e != nil {
+		t.Fatal(e)
+	}
 	c := openTest(t, root, db, g)
 	defer c.Close()
 	st, e := c.Sync(ctx)
@@ -84,7 +90,7 @@ func TestSyncRules(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if e = os.Chtimes(filepath.Join(root, p), time.Now(), info.ModTime().Add(time.Second)); e != nil {
+	if e = os.Chtimes(filepath.Join(root, p), time.Now(), info.ModTime().Add(time.Minute)); e != nil {
 		t.Fatal(e)
 	}
 	st, e = c.Sync(ctx)
@@ -276,4 +282,96 @@ func BenchmarkList10K(b *testing.B) {
 			cc.Close()
 		}
 	})
+}
+
+// Racy clean (44w1ev, crab's ruling 2026-11-16): an edit that keeps the
+// size and lands in the same mtime tick as the last sync is still seen,
+// because a file modified within racyWindow of that sync is hashed. The
+// Windows run 43922289968 failed exactly here before (same-size OLD-1 to
+// NEW-1 within one tick, nil Git).
+func TestRacySameSizeEditSameTick(t *testing.T) {
+	ctx := context.Background()
+	root := t.TempDir()
+	p := "A.000001.task.md"
+	put(t, root, p, fixture(1))
+	tick := time.Now().Truncate(time.Second)
+	if e := os.Chtimes(filepath.Join(root, p), tick, tick); e != nil {
+		t.Fatal(e)
+	}
+	c := openTest(t, root, filepath.Join(t.TempDir(), "cache.db"), nil)
+	defer c.Close()
+	if _, e := c.Sync(ctx); e != nil {
+		t.Fatal(e)
+	}
+	put(t, root, p, []byte(strings.Replace(string(fixture(1)), "Task 1", "Task X", 1)))
+	if e := os.Chtimes(filepath.Join(root, p), tick, tick); e != nil {
+		t.Fatal(e)
+	}
+	ts, e := c.List(ctx)
+	if e != nil || len(ts) != 1 || ts[0].Title != "Task X" {
+		t.Fatal("same-size edit in the same tick was missed:", ts, e)
+	}
+	// Reopened (the next command), the same holds: synced_ns is stored.
+	c.Close()
+}
+
+// A write stores only its own record (board_delta), not the whole board;
+// a reopened cache equals the board on disk after any mix of blob and
+// delta, and the delta is folded into the blob past deltaLimit (44w1ev,
+// crab 2026-11-16: writes must not get slower than reads got faster).
+func TestBoardDeltaReopen(t *testing.T) {
+	ctx := context.Background()
+	root := t.TempDir()
+	db := filepath.Join(t.TempDir(), "cache.db")
+	for n := 1; n <= 20; n++ {
+		put(t, root, fmt.Sprintf("A.%s.task.md", testID(n)), fixture(n))
+	}
+	c := openTest(t, root, db, nil)
+	if _, e := c.Sync(ctx); e != nil {
+		t.Fatal(e)
+	}
+	var blob1 []byte
+	c.db.QueryRow(`SELECT value FROM meta WHERE key='board'`).Scan(&blob1)
+	put(t, root, fmt.Sprintf("A.%s.task.md", testID(3)), []byte(strings.Replace(string(fixture(3)), "Task 3", "Task three", 1)))
+	os.Remove(filepath.Join(root, fmt.Sprintf("A.%s.task.md", testID(4))))
+	if _, e := c.Sync(ctx); e != nil {
+		t.Fatal(e)
+	}
+	var blob2 []byte
+	var delta int
+	c.db.QueryRow(`SELECT value FROM meta WHERE key='board'`).Scan(&blob2)
+	c.db.QueryRow(`SELECT count(*) FROM board_delta`).Scan(&delta)
+	if !bytes.Equal(blob1, blob2) || delta != 2 {
+		t.Fatalf("a two-file change rewrote the blob (%v) or stored %d delta rows, want 2", !bytes.Equal(blob1, blob2), delta)
+	}
+	want, wl := normalized(t, c)
+	c.Close()
+	c = openTest(t, root, db, nil)
+	if len(c.files) != 19 || c.delta != 2 {
+		t.Fatalf("blob+delta not used on open: %d files, delta %d", len(c.files), c.delta)
+	}
+	got, gl := normalized(t, c)
+	if !reflect.DeepEqual(want, got) || !reflect.DeepEqual(wl, gl) {
+		t.Fatalf("reopened board differs\n%v\n%v", want, got)
+	}
+	c.delta = deltaLimit
+	put(t, root, fmt.Sprintf("A.%s.task.md", testID(5)), []byte(strings.Replace(string(fixture(5)), "Task 5", "Task five", 1)))
+	if _, e := c.Sync(ctx); e != nil {
+		t.Fatal(e)
+	}
+	c.db.QueryRow(`SELECT count(*) FROM board_delta`).Scan(&delta)
+	if delta != 0 || c.delta != 0 {
+		t.Fatalf("delta past the limit was not folded: %d rows", delta)
+	}
+	c.Close()
+	c = openTest(t, root, db, nil)
+	defer c.Close()
+	ts, _ := c.List(ctx)
+	five := false
+	for _, x := range ts {
+		five = five || x.ID == testID(5) && x.Title == "Task five"
+	}
+	if len(ts) != 19 || !five {
+		t.Fatal("after fold:", len(ts), five)
+	}
 }
