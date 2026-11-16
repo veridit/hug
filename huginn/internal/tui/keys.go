@@ -6,6 +6,7 @@ import (
 
 	bkey "github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/ansi"
 )
 
 func binding(keys []string, label, description string) bkey.Binding {
@@ -76,15 +77,24 @@ func (m model) keyBar() string {
 // when the hints leave room for it and two spaces. On a narrow line the
 // version is dropped first: it never pushes a hint off (Jørgen, 2026-11-16).
 func (m model) withVersion(bar string) string {
-	if m.opts.Version == "" {
+	corner := m.corner()
+	if corner == "" {
 		return bar
 	}
-	corner := "hug " + m.opts.Version
 	gap := m.width - lipgloss.Width(bar) - lipgloss.Width(corner)
+	if gap < 2 && m.newer != "" {
+		// A newer hug is news: it takes the room of the last hints.
+		bar = ansi.Truncate(bar, max(0, m.width-lipgloss.Width(corner)-3), "…")
+		gap = m.width - lipgloss.Width(bar) - lipgloss.Width(corner)
+	}
 	if gap < 2 {
 		return bar
 	}
-	return bar + strings.Repeat(" ", gap) + m.styles.dim.Render(corner)
+	style := m.styles.dim
+	if m.newer != "" {
+		style = m.styles.accent
+	}
+	return bar + strings.Repeat(" ", gap) + style.Render(corner)
 }
 
 // detailHints are the keys that work in the open task with its current
@@ -133,6 +143,10 @@ func (m model) helpText() string {
 		hint("o / i / b / !", "views: overview / list (also v) / board / lint"),
 		hint("s / y", "status / type palette (y: inside a task)"), hint("c", "clear all filters"), hint("r", "refresh now (changes on disk show by themselves)"),
 		hint(": sort", "order by fields; : sort rank to go back"),
+	}
+	if m.newer != "" {
+		// R exists only while a newer hug is installed (j2vwk0).
+		navigation = append(navigation, hint(reloadKey, "reload into hug "+m.newer+", keeping this place"))
 	}
 	actions := []bkey.Binding{
 		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),

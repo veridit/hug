@@ -138,13 +138,11 @@ type model struct {
 	editing        bool
 	gen            int
 	loads          *loadCounter
-	// Reload into a new hug (j2vwk0): bin watches the started path;
-	// binPending says a new binary came and waits until nothing is open;
-	// probing asks it for its version; reloadTo is that version once the
-	// TUI quits to exec it.
-	bin                 *binWatch
-	binPending, probing bool
-	reloadTo            string
+	// Reload into a new hug (j2vwk0): bin watches the started path; newer
+	// is the newer hug installed there, shown in the corner with R;
+	// reloadTo is its version once R quits the TUI to exec it.
+	bin             *binWatch
+	newer, reloadTo string
 	// closes reads close times from git for RECENTLY DONE (zaec08);
 	// closedAt is the last snapshot's copy.
 	closes   *closeLog
@@ -240,9 +238,6 @@ func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	if m.stale && !m.busy() && !m.loading {
 		cmd = tea.Batch(cmd, m.reload())
 	}
-	if probe := m.startProbe(); probe != nil {
-		cmd = tea.Batch(cmd, probe)
-	}
 	return m, cmd
 }
 
@@ -252,13 +247,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmd := m.reload()
 		return m, tea.Batch(cmd, m.waitChange())
 	case binaryMsg:
-		m.binPending = true
-		next, cmd := m.afterUpdate(nil)
-		return next, tea.Batch(cmd, next.(model).waitBinary())
+		return m, tea.Batch(m.probe(false), m.waitBinary())
 	case probedMsg:
 		cmd := m.probed(msg)
-		next, more := m.afterUpdate(nil)
-		return next, tea.Batch(cmd, more)
+		return m, cmd
 	case loadedMsg:
 		m.loading = false
 		switch {
@@ -880,6 +872,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		if k == "q" {
 			return m, tea.Quit
+		}
+		// R reloads into the newer hug in the corner (j2vwk0); without one
+		// R is not bound. Prompts, help and confirms took their keys above.
+		if k == reloadKey && m.newer != "" {
+			m.message = "reloading into hug " + m.newer + " …"
+			return m, m.probe(true)
 		}
 		if k == "g" {
 			if m.pendingG {

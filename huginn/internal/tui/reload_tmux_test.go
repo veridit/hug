@@ -14,12 +14,15 @@ import (
 	"github.com/veridit/hug/huginn/internal/tui/testfixture"
 )
 
-// TestTmuxReload is j2vwk0 end to end with the real binary: hug v0.0.1 runs
-// through a bin/hug symlink into a Cellar folder, as brew installs it. The
-// reader filters, sorts and opens a task; then the symlink moves to v0.0.2
-// (brew upgrade). The same TUI process (same pane, same pid) comes back as
-// v0.0.2 on the same task with the same filters, saying "reloaded hug
-// v0.0.2". A broken v0.0.3 leaves v0.0.2 running with a fix: line.
+// TestTmuxReload is j2vwk0 end to end with the real binary, Jørgen's test:
+// hug v0.0.1 runs through a bin/hug symlink into a Cellar folder, as brew
+// installs it. The reader filters, sorts and opens a task; then the symlink
+// moves to v0.0.2 (brew upgrade). The TUI keeps running v0.0.1 and only the
+// corner changes, to "hug v0.0.1 → v0.0.2 · R reloads". R inside the
+// palette is just a letter; R outside it brings the same process (same
+// pane, same pid) back as v0.0.2 on the same task with the same filters,
+// saying "reloaded hug v0.0.2". A broken v0.0.3 leaves v0.0.2 running
+// with a fix: line.
 func TestTmuxReload(t *testing.T) {
 	if testing.Short() {
 		t.Skip("real tmux acceptance disabled by -short")
@@ -139,19 +142,35 @@ func TestTmuxReload(t *testing.T) {
 	time.Sleep(300 * time.Millisecond)
 	before := screen()
 	header := strings.SplitN(before, "\n", 6)
-	// The palette open: the reload waits for it (check 2).
+	// The new hug installed (brew upgrade): the old one keeps running and
+	// only the corner changes (Jørgen's test).
+	swap(cellar("0.0.2"))
+	offered := wait("hug v0.0.1 → v0.0.2 · R reloads", 15*time.Second)
+	if lines, was := strings.Split(strings.TrimSuffix(offered, "\n"), "\n"), strings.Split(strings.TrimSuffix(before, "\n"), "\n"); len(lines) != len(was) {
+		t.Fatal("screen size changed")
+	} else {
+		for i := 0; i < len(lines)-1; i++ {
+			if lines[i] != was[i] {
+				t.Fatalf("line %d changed before R; only the corner may:\n%q\n%q", i+1, was[i], lines[i])
+			}
+		}
+	}
+	// R with the palette open is typed into the palette: no reload (check 2).
 	send("-l", ":")
 	wait("COMMAND PALETTE", 5*time.Second)
-	swap(cellar("0.0.2"))
-	time.Sleep(6 * time.Second) // three polls: v0.0.2 is due, and waits
-	if s := screen(); strings.Contains(s, "hug v0.0.2") {
+	send("-l", "R")
+	time.Sleep(1500 * time.Millisecond)
+	if s := screen(); strings.Contains(s, "reloaded hug") {
 		t.Fatalf("reloaded with the palette open:\n%s", s)
 	}
 	send("Escape")
+	wait("hug v0.0.1 → v0.0.2 · R reloads", 5*time.Second)
+	send("-l", "R")
 	after := wait("reloaded hug v0.0.2", 15*time.Second)
 	if dir := os.Getenv("HUGINN_TUI_ARTIFACTS"); dir != "" {
 		os.MkdirAll(filepath.Join(dir, "reload"), 0o755)
 		os.WriteFile(filepath.Join(dir, "reload", "before.txt"), []byte(before), 0o644)
+		os.WriteFile(filepath.Join(dir, "reload", "offered.txt"), []byte(offered), 0o644)
 		os.WriteFile(filepath.Join(dir, "reload", "after.txt"), []byte(after), 0o644)
 	}
 	if got := pid(); got != started {
@@ -176,11 +195,14 @@ func TestTmuxReload(t *testing.T) {
 	os.WriteFile(broken, []byte("#!/bin/sh\necho 'dyld: Library not loaded: libhug.dylib' >&2\nexit 1\n"), 0o755)
 	swap(broken)
 	failed := wait("fix: brew reinstall veridit/tap/hug", 15*time.Second)
+	if strings.Contains(failed, "R reloads") {
+		t.Fatalf("a broken binary must not offer R:\n%s", failed)
+	}
 	if !strings.Contains(failed, "still on hug v0.0.2: the new hug does not start") || !strings.Contains(failed, "hug v0.0.2") {
 		t.Fatalf("broken binary:\n%s", failed)
 	}
 	send("Escape")
 	wait("HUG TASKS · list", 5*time.Second) // still working
 	send("-l", "q")
-	t.Log("tmux reload: PASS (v0.0.1 -> v0.0.2 by symlink swap, same pane pid, same place; broken v0.0.3 refused)")
+	t.Log("tmux reload: PASS (v0.0.1 -> v0.0.2 by symlink swap: corner only until R, R reloads, same pane pid, same place; broken v0.0.3 refused)")
 }

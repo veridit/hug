@@ -20,13 +20,17 @@ import (
 // renames a new file over the old. Either way the path the TUI was started
 // from now leads to another file, so the watch follows that path, resolved,
 // with the file's mtime and size. When it changes and holds still, the TUI
-// asks the new binary for its version (a binary that does not start leaves
-// this one running with a fix: line), waits until no prompt, palette,
-// confirm, help or editor is open, writes its place to a small file and
-// execs the same path with the same arguments. The new hug reads the file,
-// deletes it and opens where the old one was, saying "reloaded hug vX.Y.Z".
-// State goes only to the same or a newer hug (Jørgen: no backwards
-// compatibility), so there is one format and no old-format reader.
+// asks the new binary for its version. Jørgen's ruling: never by itself.
+// A newer hug shows in the version corner, "hug v0.7.35 → v0.7.36 · R
+// reloads", and nothing else changes until R. R exists only then, and like
+// every key it does nothing while a prompt, the palette, a confirm, help or
+// the editor has the keys. R asks the binary again (it may have changed
+// since), writes the TUI's place to a small file and execs the same path
+// with the same arguments. The new hug reads the file, deletes it and opens
+// where the old one was, saying "reloaded hug vX.Y.Z". A binary that does
+// not start leaves this one running with a fix: line. State goes only to
+// the same or a newer hug (Jørgen: no backwards compatibility), so there
+// is one format and no old-format reader.
 var (
 	binPoll     = 2 * time.Second
 	probeBinary = probeVersion
@@ -127,6 +131,7 @@ type binaryMsg struct{}
 type probedMsg struct {
 	version string
 	err     error
+	reload  bool // R asked: reload when the answer is good
 }
 
 // waitBinary waits for the next new binary at the started path.
@@ -143,30 +148,27 @@ func (m model) waitBinary() tea.Cmd {
 	}
 }
 
-// reloadBlocked is true while a reload would take something from the reader:
-// a prompt or the palette, a confirm, the editor, a grab, or help.
-func (m model) reloadBlocked() bool {
-	return m.busy() || m.help
-}
+// reloadKey reloads into the newer hug; bound only while one is installed.
+const reloadKey = "R"
 
-// startProbe asks the new binary for its version, when one is due and
-// nothing is open; otherwise the reload waits (afterUpdate tries again).
-func (m *model) startProbe() tea.Cmd {
-	if !m.binPending || m.probing || m.bin == nil || m.reloadBlocked() {
+// probe asks the binary at the started path for its version, off the UI
+// thread; reload says R asked for it.
+func (m model) probe(reload bool) tea.Cmd {
+	if m.bin == nil {
 		return nil
 	}
-	m.binPending, m.probing = false, true
 	path := m.bin.path
 	return func() tea.Msg {
 		v, err := probeBinary(path)
-		return probedMsg{v, err}
+		return probedMsg{v, err, reload}
 	}
 }
 
-// probed decides on the new binary's answer: reload, or stay and say why.
+// probed takes the binary's answer: a newer hug goes in the corner (and is
+// reloaded into when R asked); a broken or older one is said with a fix:.
 func (m *model) probed(msg probedMsg) tea.Cmd {
-	m.probing = false
 	current := m.opts.Version
+	m.newer = ""
 	if msg.err != nil {
 		m.message = fmt.Sprintf("still on hug %s: the new hug does not start (%s) at %s\nfix: %s", current, oneLine(msg.err.Error()), m.bin.path, reinstallFix(m.bin.path))
 		return nil
@@ -175,12 +177,27 @@ func (m *model) probed(msg probedMsg) tea.Cmd {
 		m.message = fmt.Sprintf("still on hug %s: hug %s, which is older, is now at %s; not reloading\nfix: quit with q, then run hug tui", current, msg.version, m.bin.path)
 		return nil
 	}
-	if m.reloadBlocked() {
-		m.binPending = true // something opened during the probe: wait for it
+	if msg.version == current && !msg.reload {
+		return nil // rebuilt at the same version: nothing to offer
+	}
+	m.newer = msg.version
+	if !msg.reload {
 		return nil
 	}
 	m.reloadTo = msg.version
 	return tea.Quit
+}
+
+// corner is the version corner: "hug v0.7.35", and while a newer hug is
+// installed "hug v0.7.35 → v0.7.36 · R reloads".
+func (m model) corner() string {
+	if m.opts.Version == "" {
+		return ""
+	}
+	if m.newer != "" {
+		return "hug " + m.opts.Version + " → " + m.newer + " · " + reloadKey + " reloads"
+	}
+	return "hug " + m.opts.Version
 }
 
 // reinstallFix is the command that puts a working hug back at path.

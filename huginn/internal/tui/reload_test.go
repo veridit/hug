@@ -128,7 +128,8 @@ func TestReloadHandsOverPlace(t *testing.T) {
 	if want.View != "list" || want.Detail == "" || len(want.Chips) != 1 || want.Query != "task" || len(want.Sort) != 1 {
 		t.Fatalf("handoff misses state: %+v", want)
 	}
-	m, quit := step(t, m, binaryMsg{})
+	m, _ = step(t, m, binaryMsg{})
+	m, quit := step(t, m, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("R")})
 	if !quit || m.reloadTo != "v0.7.34" {
 		t.Fatalf("no reload: quit %v reloadTo %q message %q", quit, m.reloadTo, m.message)
 	}
@@ -193,36 +194,63 @@ func TestReloadKeepsSectionScroll(t *testing.T) {
 	}
 }
 
-// j2vwk0 check 2: with a prompt, the palette, a confirm, help or the
-// editor open, the reload waits, and goes once it closes.
-func TestReloadWaitsForPromptAndEditor(t *testing.T) {
+// Jørgen's ruling: never by itself. A newer hug only changes the version
+// corner, "hug v0.7.33 → v0.7.34 · R reloads"; R reloads; R is not bound
+// while no newer hug exists; and like every key R does nothing while a
+// prompt, the palette, help or a confirm has the keys (check 2: the
+// reload waits until it closes, then R).
+func TestReloadOnlyOnR(t *testing.T) {
+	m, execed := reloadModel(t)
+	m.setView("list")
+	before := ansi.Strip(m.View())
+	if m, quit := step(t, m, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("R")}); quit || m.message != "" || ansi.Strip(m.View()) != before {
+		t.Fatalf("R without a newer hug must do nothing: quit %v message %q", quit, m.message)
+	}
+	m, quit := step(t, m, binaryMsg{})
+	if quit || m.reloadTo != "" || len(*execed) != 0 {
+		t.Fatal("reloaded by itself")
+	}
+	after := ansi.Strip(m.View())
+	bar := func(s string) string { l := strings.Split(s, "\n"); return l[len(l)-1] }
+	if !strings.HasSuffix(bar(after), "hug v0.7.33 → v0.7.34 · R reloads") {
+		t.Fatalf("corner: %q", bar(after))
+	}
+	lines, was := strings.Split(after, "\n"), strings.Split(before, "\n")
+	for i := range lines[:len(lines)-1] {
+		if lines[i] != was[i] {
+			t.Fatalf("line %d changed, only the corner may:\n%q\n%q", i, was[i], lines[i])
+		}
+	}
+	if help := ansi.Strip(press(m, "?").View()); !strings.Contains(help, "reload into hug v0.7.34") {
+		t.Fatalf("help lacks R:\n%s", help)
+	}
 	for _, open := range []struct {
-		name  string
-		open  func(model) model
-		close tea.Msg
-	}{
-		{"prompt", func(m model) model { return press(m, "/") }, tea.KeyMsg{Type: tea.KeyEsc}},
-		{"palette", func(m model) model { return press(m, ":") }, tea.KeyMsg{Type: tea.KeyEsc}},
-		{"help", func(m model) model { return press(m, "?") }, tea.KeyMsg{Type: tea.KeyEsc}},
-		{"editor", func(m model) model { m.editing = true; return m }, nil},
-	} {
-		t.Run(open.name, func(t *testing.T) {
-			m, execed := reloadModel(t)
-			m.setView("list")
-			m = open.open(m)
-			m, quit := step(t, m, binaryMsg{})
-			if quit || m.reloadTo != "" || !m.binPending {
-				t.Fatalf("reloaded with the %s open: quit %v pending %v", open.name, quit, m.binPending)
-			}
-			closing := open.close
-			if closing == nil {
-				closing = editorMsg{path: m.visible[m.cursor].Path}
-			}
-			// Closing it starts the probe; its answer reloads.
-			if m, quit = step(t, m, closing); !quit || m.reloadTo != "v0.7.34" {
-				t.Fatalf("no reload after the %s closed: quit %v %q, message %q, execed %v", open.name, quit, m.reloadTo, m.message, *execed)
-			}
-		})
+		name string
+		keys []string
+	}{{"find prompt", []string{"/"}}, {"palette", []string{":"}}, {"help", []string{"?"}}} {
+		o := press(m, open.keys...)
+		if o, quit = step(t, o, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("R")}); quit || o.reloadTo != "" {
+			t.Fatalf("R reloaded with the %s open", open.name)
+		}
+	}
+	if m, quit = step(t, m, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("R")}); !quit || m.reloadTo != "v0.7.34" {
+		t.Fatalf("R did not reload: quit %v %q %q", quit, m.reloadTo, m.message)
+	}
+}
+
+// A newer hug installed while the editor is open shows when it closes;
+// R then reloads.
+func TestReloadAfterEditor(t *testing.T) {
+	m, _ := reloadModel(t)
+	m.setView("list")
+	m.editing = true
+	m, _ = step(t, m, binaryMsg{})
+	m, _ = step(t, m, editorMsg{path: m.visible[m.cursor].Path})
+	if !strings.Contains(ansi.Strip(m.View()), "R reloads") {
+		t.Fatal("corner lost while editing")
+	}
+	if m, quit := step(t, m, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("R")}); !quit || m.reloadTo != "v0.7.34" {
+		t.Fatal("R after the editor did not reload")
 	}
 }
 
@@ -247,10 +275,21 @@ func TestReloadBrokenBinaryKeepsRunning(t *testing.T) {
 	if got := reinstallFix("/opt/homebrew/Cellar/hug/0.7.34/bin/hug"); got != "brew reinstall veridit/tap/hug" {
 		t.Fatal(got)
 	}
+	if strings.Contains(screen, "R reloads") {
+		t.Fatal("a broken binary must not offer R")
+	}
 	m = press(m, "j") // the TUI still works
 	probeBinary = func(string) (string, error) { return "v0.7.35", nil }
-	if m, quit = step(t, m, binaryMsg{}); !quit || m.reloadTo != "v0.7.35" {
-		t.Fatal("a good binary after a broken one must reload")
+	m, _ = step(t, m, binaryMsg{})
+	if m, quit = step(t, m, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("R")}); !quit || m.reloadTo != "v0.7.35" {
+		t.Fatal("a good binary after a broken one must reload on R")
+	}
+	// Broken between the corner and R: R asks again and stays.
+	m, _ = reloadModel(t)
+	m, _ = step(t, m, binaryMsg{})
+	probeBinary = func(string) (string, error) { return "", errors.New("exit status 1: killed") }
+	if m, quit = step(t, m, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("R")}); quit || !strings.Contains(m.message, "does not start") || strings.Contains(ansi.Strip(m.View()), "R reloads") {
+		t.Fatalf("R into a binary broken since: quit %v %q", quit, m.message)
 	}
 }
 
