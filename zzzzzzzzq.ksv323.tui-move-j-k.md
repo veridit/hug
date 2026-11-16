@@ -4,7 +4,7 @@ title: "TUI move (J/K) must move past the row you see"
 status: "doing"
 type: bug
 priority: "high"
-assignee: ["Jørgen H. Fjeld"]
+assignee: ["poodle"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
