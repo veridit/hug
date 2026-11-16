@@ -3,7 +3,7 @@
 Usage: scripts/mcp-e2e.py bin/muninn [home]   (home defaults to /tmp/muninn-e2e)"""
 import json, os, subprocess, sys
 
-env = dict(os.environ, MUNINN_HOME=sys.argv[2] if len(sys.argv) > 2 else "/tmp/muninn-e2e")
+env = dict(os.environ, HUG_HOME=sys.argv[2] if len(sys.argv) > 2 else "/tmp/muninn-e2e")
 p = subprocess.Popen([sys.argv[1], "mcp"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, env=env)
 
 def rpc(i, method, params=None):

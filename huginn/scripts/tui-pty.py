@@ -27,7 +27,7 @@ with tempfile.TemporaryDirectory(prefix="huginn-tui-", dir=os.environ.get("JCODE
     store = root / "tasks"
     store.mkdir()
     subprocess.run(["go", "build", "-o", str(binary), "./internal/tui/cmd/pty-driver"], cwd=REPO, check=True)
-    env = dict(os.environ, HUGINN_TUI_TEST_ROOT=str(store), TERM="xterm-256color", COLUMNS="120", LINES="35")
+    env = dict(os.environ, HUG_TUI_TEST_ROOT=str(store), TERM="xterm-256color", COLUMNS="120", LINES="35")
     subprocess.run([str(binary), "seed"], env=env, check=True)
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 35, 120, 0, 0))

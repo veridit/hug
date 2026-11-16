@@ -100,10 +100,10 @@ cleaned up, and the real CLI must exit zero.
 ```sh
 nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 go test ./internal/tui
 # Deliberate golden update, followed by reviewing the text diffs:
-nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 HUGINN_UPDATE_GOLDEN=1 go test -run TestTmuxGolden ./internal/tui
+nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 HUG_UPDATE_GOLDEN=1 go test -run TestTmuxGolden ./internal/tui
 ```
 
-Set `HUGINN_TUI_ARTIFACTS` to also save plain and ANSI captures outside the tree.
+Set `HUG_TUI_ARTIFACTS` to also save plain and ANSI captures outside the tree.
 The reported done/lint/Markdown/empty-section shape has its own golden. Model
 coverage includes every shared key, modal Esc hierarchy, completion, filter counts,
 imported aliases, Markdown stripping, fixed headers, dependency follow/back,

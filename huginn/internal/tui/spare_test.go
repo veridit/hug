@@ -61,7 +61,7 @@ func TestOverviewSpareRowsGolden(t *testing.T) {
 	// Ids are random per run: the golden holds ###### in their place.
 	got := taskID.ReplaceAllString(ansi.Strip(m.overviewText()), "$1######")
 	path := filepath.Join("testdata", "overview", "spare-rows-140x40.txt")
-	if os.Getenv("HUGINN_UPDATE_GOLDEN") == "1" {
+	if os.Getenv("HUG_UPDATE_GOLDEN") == "1" {
 		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 			t.Fatal(err)
 		}
@@ -71,7 +71,7 @@ func TestOverviewSpareRowsGolden(t *testing.T) {
 	}
 	want, err := os.ReadFile(path)
 	if err != nil {
-		t.Fatalf("%v\nfix: HUGINN_UPDATE_GOLDEN=1 go test -run TestOverviewSpareRowsGolden ./huginn/internal/tui/", err)
+		t.Fatalf("%v\nfix: HUG_UPDATE_GOLDEN=1 go test -run TestOverviewSpareRowsGolden ./huginn/internal/tui/", err)
 	}
 	if got != strings.ReplaceAll(string(want), "\r\n", "\n") {
 		t.Fatalf("overview differs from %s:\n%s", path, got)

@@ -41,8 +41,8 @@ func runCLI(t *testing.T, stdin string, args ...string) (string, string, int) {
 func memHome(t *testing.T) string {
 	t.Helper()
 	home := t.TempDir()
-	t.Setenv("MUNINN_HOME", home)
-	t.Setenv("MUNINN_NO_EMBED", "1")
+	t.Setenv("HUG_HOME", home)
+	t.Setenv("HUG_NO_EMBED", "1")
 	t.Setenv("JCODE_HOME", filepath.Join(home, "no-jcode"))
 	t.Setenv("HOME", filepath.Join(home, "home"))
 	t.Chdir(home)
@@ -159,9 +159,9 @@ func TestForgetSeveralIDsAndStdinInOneTransaction(t *testing.T) {
 // "database is locked (5) (SQLITE_BUSY)" once the queue outlasted
 // busy_timeout (19 of 20 on a copy of the real store, 2026-11-16).
 func TestParallelForgetsAndRememberLoopAllSucceed(t *testing.T) {
-	if os.Getenv("MUNINN_CHILD_ARGS") != "" {
+	if os.Getenv("HUG_CHILD_ARGS") != "" {
 		var args []string
-		json.Unmarshal([]byte(os.Getenv("MUNINN_CHILD_ARGS")), &args)
+		json.Unmarshal([]byte(os.Getenv("HUG_CHILD_ARGS")), &args)
 		os.Exit(Main(args))
 	}
 	if testing.Short() {
@@ -173,7 +173,7 @@ func TestParallelForgetsAndRememberLoopAllSucceed(t *testing.T) {
 	child := func(args ...string) *exec.Cmd {
 		b, _ := json.Marshal(args)
 		c := exec.Command(os.Args[0], "-test.run=^TestParallelForgetsAndRememberLoopAllSucceed$")
-		c.Env = append(os.Environ(), "MUNINN_CHILD_ARGS="+string(b), "GOMAXPROCS=1")
+		c.Env = append(os.Environ(), "HUG_CHILD_ARGS="+string(b), "GOMAXPROCS=1")
 		return c
 	}
 	var wg sync.WaitGroup

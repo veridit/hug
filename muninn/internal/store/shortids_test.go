@@ -213,9 +213,9 @@ func TestSIDNumericPrefixPrecedesLegacyRowID(t *testing.T) {
 
 // Optional acceptance probe. The caller must supply a disposable DB snapshot.
 func TestSIDMigrationCopy(t *testing.T) {
-	path := os.Getenv("MUNINN_MIGRATION_COPY")
+	path := os.Getenv("HUG_MIGRATION_COPY")
 	if path == "" {
-		t.Skip("set MUNINN_MIGRATION_COPY to a disposable database snapshot")
+		t.Skip("set HUG_MIGRATION_COPY to a disposable database snapshot")
 	}
 	start := time.Now()
 	d, err := Open(path)

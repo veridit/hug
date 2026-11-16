@@ -3,9 +3,9 @@
 # Usage: scripts/e2e.sh [home-dir]   (default /tmp/muninn-e2e). Synthetic data only.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export MUNINN_HOME="${1:-/tmp/muninn-e2e}"
-mkdir -p "$MUNINN_HOME/config"
-[ -f "$MUNINN_HOME/config/config.json" ] || printf '{"jcode_memory_dir":"/nonexistent"}\n' > "$MUNINN_HOME/config/config.json"
+export HUG_HOME="${1:-/tmp/muninn-e2e}"
+mkdir -p "$HUG_HOME/config"
+[ -f "$HUG_HOME/config/config.json" ] || printf '{"jcode_memory_dir":"/nonexistent"}\n' > "$HUG_HOME/config/config.json"
 go build -o bin/muninn ./cmd/muninn
 m() { ./bin/muninn "$@"; }
 

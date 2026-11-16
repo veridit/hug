@@ -22,7 +22,7 @@ import (
 // own instance plus global, exactly like the recall hook.
 func testApp(t *testing.T) (*app.App, map[string]string) {
 	t.Helper()
-	t.Setenv("MUNINN_HOME", t.TempDir())
+	t.Setenv("HUG_HOME", t.TempDir())
 	db, err := store.Open(config.DBPath())
 	if err != nil {
 		t.Fatal(err)

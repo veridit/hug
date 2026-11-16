@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"path/filepath"
 	"strings"
@@ -35,7 +36,7 @@ const SyncChildArg = "--background-pass"
 // SpawnSelf makes background passes run this executable. HUG_SYNC=off
 // turns background sync off (sync then happens on hug task sync only).
 func SpawnSelf() {
-	if strings.EqualFold(os.Getenv("HUG_SYNC"), "off") {
+	if strings.EqualFold(env.Get(env.Sync), "off") {
 		return
 	}
 	// A test binary given these arguments would run its whole suite again,

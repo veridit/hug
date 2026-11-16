@@ -2,12 +2,13 @@
 //
 // Data and config live in the OS-standard per-user locations, never in the
 // repository: $XDG_DATA_HOME / ~/Library/Application Support / %AppData%.
-// MUNINN_HOME overrides everything (used by tests).
+// HUG_HOME overrides everything (used by tests).
 package config
 
 import (
 	"encoding/json"
 	"errors"
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -102,8 +103,8 @@ func Defaults() Config {
 	}
 }
 
-// Home returns the MUNINN_HOME override, if set.
-func Home() string { return os.Getenv("MUNINN_HOME") }
+// Home returns the HUG_HOME override, if set.
+func Home() string { return env.Get(env.Home) }
 
 // DataDir holds the database.
 func DataDir() string {

@@ -35,7 +35,7 @@ func TestDetailSectionOrderGolden(t *testing.T) {
 		t.Fatalf("sections %s, want %s\n%s", got, want, text)
 	}
 	path := filepath.Join("testdata", "detail", "sections-000001-100.txt")
-	if os.Getenv("HUGINN_UPDATE_GOLDEN") == "1" {
+	if os.Getenv("HUG_UPDATE_GOLDEN") == "1" {
 		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -45,7 +45,7 @@ func TestDetailSectionOrderGolden(t *testing.T) {
 	}
 	golden, err := os.ReadFile(path)
 	if err != nil {
-		t.Fatalf("%v\nfix: HUGINN_UPDATE_GOLDEN=1 go test -run TestDetailSectionOrderGolden ./huginn/internal/tui/", err)
+		t.Fatalf("%v\nfix: HUG_UPDATE_GOLDEN=1 go test -run TestDetailSectionOrderGolden ./huginn/internal/tui/", err)
 	}
 	if text != strings.ReplaceAll(string(golden), "\r\n", "\n") {
 		t.Fatalf("detail differs from %s:\n%s", path, text)

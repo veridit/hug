@@ -27,7 +27,7 @@ func testApp(t *testing.T) *app.App {
 	t.Setenv("HOME", home)
 	t.Setenv("USERPROFILE", home) // os.UserHomeDir on Windows
 	t.Setenv("JCODE_HOME", filepath.Join(home, ".jcode"))
-	t.Setenv("MUNINN_HOME", t.TempDir())
+	t.Setenv("HUG_HOME", t.TempDir())
 	db, err := store.Open(config.DBPath())
 	if err != nil {
 		t.Fatal(err)

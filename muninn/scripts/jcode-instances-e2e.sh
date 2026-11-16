@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 tmp="${TMPDIR:-/tmp}"
 root=$(mktemp -d "${tmp%/}/muninn-instances.XXXXXX") # macOS TMPDIR ends in '/'
 trap 'rm -rf "$root"' EXIT
-export MUNINN_HOME="$root/muninn"
+export HUG_HOME="$root/muninn"
 go build -o bin/muninn ./cmd/muninn
 m=$PWD/bin/muninn
 
@@ -33,8 +33,8 @@ EOF
 mkinst alpha "Alpha deploys the payment service with blue green rollout on Fridays"
 mkinst beta "Beta deploys the payment service with a canary rollout on Mondays"
 
-mkdir -p "$MUNINN_HOME/config"
-printf '{"jcode_homes":["%s","%s"]}\n' "$root/alpha/.jcode" "$root/beta/.jcode" > "$MUNINN_HOME/config/config.json"
+mkdir -p "$HUG_HOME/config"
+printf '{"jcode_homes":["%s","%s"]}\n' "$root/alpha/.jcode" "$root/beta/.jcode" > "$HUG_HOME/config/config.json"
 "$m" index >/dev/null
 
 echo "== instances"

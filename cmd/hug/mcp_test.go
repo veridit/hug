@@ -18,9 +18,9 @@ func TestMCPServesBothParts(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv("HOME", home)
 	t.Setenv("USERPROFILE", home)
-	t.Setenv("MUNINN_HOME", t.TempDir())
+	t.Setenv("HUG_HOME", t.TempDir())
 	t.Setenv("JCODE_HOME", "")
-	t.Setenv("MUNINN_NO_EMBED", "1")
+	t.Setenv("HUG_NO_EMBED", "1")
 	repo := t.TempDir()
 	for _, args := range [][]string{{"init", "-q"}, {"config", "user.email", "t@example.com"}, {"config", "user.name", "t"}} {
 		if out, err := exec.Command("git", append([]string{"-C", repo}, args...)...).CombinedOutput(); err != nil {

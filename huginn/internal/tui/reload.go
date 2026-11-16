@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -38,7 +39,7 @@ var (
 )
 
 // handoffEnv names the state file for the hug the TUI execs into.
-const handoffEnv = "HUG_TUI_STATE"
+const handoffEnv = env.TUIState
 
 // binStamp is what the started path leads to.
 type binStamp struct {

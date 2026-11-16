@@ -130,7 +130,7 @@ The default dry-run view is a category/trust/action/content table. JSON addition
 reports prompt/completion/total tokens, provider latency, processed-message count,
 and rejected-candidate count. All costs are reported as tokens, not guessed bills.
 A dry run may create/update muninn's index, but never memories or capture progress.
-Use a throwaway `MUNINN_HOME` for comparisons with no live DB changes.
+Use a throwaway `HUG_HOME` for comparisons with no live DB changes.
 
 A jcode session uses **its persisted working directory** and its JCODE_HOME to
 resolve `app.Binding`, not the shell's current directory. Client roots stay strict

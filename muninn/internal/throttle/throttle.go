@@ -4,6 +4,7 @@
 package throttle
 
 import (
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"runtime"
 )
@@ -18,10 +19,10 @@ func Procs() int {
 }
 
 // Background lowers this process's CPU priority and caps GOMAXPROCS.
-// MUNINN_FULL_SPEED=1 opts out. An explicit GOMAXPROCS is respected.
+// HUG_FULL_SPEED=1 opts out. An explicit GOMAXPROCS is respected.
 // Failures are ignored: being unable to lower priority is never fatal.
 func Background() {
-	if os.Getenv("MUNINN_FULL_SPEED") != "" {
+	if env.Get(env.FullSpeed) != "" {
 		return
 	}
 	if os.Getenv("GOMAXPROCS") == "" {

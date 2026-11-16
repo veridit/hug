@@ -5,7 +5,7 @@ m="$1"
 tmp="${TMPDIR:-/tmp}"
 root=$(mktemp -d "${tmp%/}/muninn-branch-e2e.XXXXXX")
 trap 'rm -rf "$root"' EXIT
-export MUNINN_NO_EMBED=1
+export HUG_NO_EMBED=1
 export GIT_AUTHOR_NAME=synthetic GIT_COMMITTER_NAME=synthetic
 export GIT_AUTHOR_EMAIL=synthetic@example.invalid GIT_COMMITTER_EMAIL=synthetic@example.invalid
 
@@ -16,9 +16,9 @@ git -C "$root/alice" remote add origin "$root/remote.git"
 git -C "$root/alice" push -q -u origin main
 git clone -q "$root/remote.git" "$root/bob"
 head=$(git -C "$root/alice" rev-parse HEAD)
-(cd "$root/alice" && MUNINN_HOME="$root/alice-store" "$m" remember --project --category decision 'Quartz releases require a synthetic checklist.' >/dev/null && MUNINN_HOME="$root/alice-store" "$m" sync)
-(cd "$root/bob" && MUNINN_HOME="$root/bob-store" "$m" sync && MUNINN_HOME="$root/bob-store" "$m" remember --project 'Quartz artifacts use a synthetic signature.' >/dev/null && MUNINN_HOME="$root/bob-store" "$m" sync)
-(cd "$root/alice" && MUNINN_HOME="$root/alice-store" "$m" sync)
+(cd "$root/alice" && HUG_HOME="$root/alice-store" "$m" remember --project --category decision 'Quartz releases require a synthetic checklist.' >/dev/null && HUG_HOME="$root/alice-store" "$m" sync)
+(cd "$root/bob" && HUG_HOME="$root/bob-store" "$m" sync && HUG_HOME="$root/bob-store" "$m" remember --project 'Quartz artifacts use a synthetic signature.' >/dev/null && HUG_HOME="$root/bob-store" "$m" sync)
+(cd "$root/alice" && HUG_HOME="$root/alice-store" "$m" sync)
 for clone in alice bob; do
   test -z "$(git -C "$root/$clone" status --porcelain)"
   test "$(git -C "$root/$clone" rev-parse HEAD)" = "$head"
@@ -35,17 +35,17 @@ printf '%s\n' '{"id":"legacy-note","content":"Legacy quartz records are syntheti
 git -C "$root/migrate" add .muninn
 git -C "$root/migrate" commit -q -m 'synthetic legacy'
 head=$(git -C "$root/migrate" rev-parse HEAD)
-(cd "$root/migrate" && MUNINN_HOME="$root/migrate-store" "$m" sync --migrate --dry-run)
+(cd "$root/migrate" && HUG_HOME="$root/migrate-store" "$m" sync --migrate --dry-run)
 test ! -e "$root/migrate/.muninn-notes"
 test -f "$root/migrate/.muninn/memories.jsonl"
 test "$(git -C "$root/migrate" rev-parse HEAD)" = "$head"
-(cd "$root/migrate" && MUNINN_HOME="$root/migrate-store" "$m" sync --migrate)
+(cd "$root/migrate" && HUG_HOME="$root/migrate-store" "$m" sync --migrate)
 test ! -e "$root/migrate/.muninn/memories.jsonl"
 grep -q 'Legacy quartz records' "$root/migrate/.muninn-notes/memories.jsonl"
 grep -q 'synthetic-pinned-project' "$root/migrate/.muninn/project"
 test "$(git -C "$root/migrate" rev-list --count "$head..HEAD")" = 1
 test -z "$(git -C "$root/migrate" status --porcelain)"
 head=$(git -C "$root/migrate" rev-parse HEAD)
-(cd "$root/migrate" && MUNINN_HOME="$root/migrate-store" "$m" sync --migrate)
+(cd "$root/migrate" && HUG_HOME="$root/migrate-store" "$m" sync --migrate)
 test "$(git -C "$root/migrate" rev-parse HEAD)" = "$head"
 echo 'PROJECT CLI migration: dry-run nonmutating, one main removal commit, marker preserved, repeat idempotent: ok'

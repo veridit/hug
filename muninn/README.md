@@ -724,7 +724,7 @@ muninn config init   # writes config.json with the defaults
 CPU priority (nice 10, below-normal on Windows) and use a quarter of the cores
 (1 to 4). They take a little longer and never spike the machine. The recall
 hook and interactive commands such as `search` keep full speed, because a
-person is waiting on them. Set `MUNINN_FULL_SPEED=1` to opt out, or set
+person is waiting on them. Set `HUG_FULL_SPEED=1` to opt out, or set
 `GOMAXPROCS` to choose the parallelism yourself.
 
 ## Privacy and security

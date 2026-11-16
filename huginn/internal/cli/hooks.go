@@ -201,6 +201,17 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 			did = append(did, fmt.Sprintf("sections put in order in %d tasks", len(changed)))
 		}
 	}
+	// Variables (m1c28r): old names hug wrote into hook commands and its MCP
+	// server entries become HUG_ names, each changed file backed up.
+	if home, e := os.UserHomeDir(); e == nil {
+		files, e := renameEnv(envFiles(home), false)
+		if e != nil {
+			return nil, &OperationError{Problem: "rename variables in " + strings.Join(files, ", ") + ": " + e.Error(), Fix: "hug upgrade"}
+		}
+		for _, f := range files {
+			did = append(did, "variables renamed to HUG_* in "+f+" (backup "+filepath.Base(f)+".bak-hug-upgrade)")
+		}
+	}
 	if len(did) == 0 {
 		did = append(did, "already on the hug layout")
 	}

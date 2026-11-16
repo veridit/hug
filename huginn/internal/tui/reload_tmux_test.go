@@ -67,7 +67,7 @@ func TestTmuxReload(t *testing.T) {
 	for _, p := range []string{home, repo} {
 		os.MkdirAll(p, 0o755)
 	}
-	env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUGINN_USER=terminal-fixture", "TERM=xterm-256color", "NO_COLOR=1", "GOMAXPROCS=2", "PATH=" + filepath.Dir(link) + ":/usr/bin:/bin"}
+	env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=terminal-fixture", "TERM=xterm-256color", "NO_COLOR=1", "GOMAXPROCS=2", "PATH=" + filepath.Dir(link) + ":/usr/bin:/bin"}
 	run := func(args ...string) {
 		t.Helper()
 		cmd := exec.Command(args[0], args[1:]...)
@@ -167,7 +167,7 @@ func TestTmuxReload(t *testing.T) {
 	wait("hug v0.0.1 → v0.0.2 · R reloads", 5*time.Second)
 	send("-l", "R")
 	after := wait("reloaded hug v0.0.2", 15*time.Second)
-	if dir := os.Getenv("HUGINN_TUI_ARTIFACTS"); dir != "" {
+	if dir := os.Getenv("HUG_TUI_ARTIFACTS"); dir != "" {
 		os.MkdirAll(filepath.Join(dir, "reload"), 0o755)
 		os.WriteFile(filepath.Join(dir, "reload", "before.txt"), []byte(before), 0o644)
 		os.WriteFile(filepath.Join(dir, "reload", "offered.txt"), []byte(offered), 0o644)

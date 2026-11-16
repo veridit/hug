@@ -6,7 +6,7 @@
 #  - web UI API on loopback
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export MUNINN_HOME="${MUNINN_HOME:-/tmp/muninn-e2e}"
+export HUG_HOME="${HUG_HOME:-/tmp/muninn-e2e}"
 go build -o bin/muninn ./cmd/muninn
 payload='{"session_id":"s-123","prompt":"banana mode please","cwd":"/tmp","hook_event_name":"UserPromptSubmit"}'
 echo "== claude hook, first prompt";  echo "$payload" | ./bin/muninn hook claude
@@ -14,7 +14,7 @@ echo "== claude hook, same session again (dedupe -> no output)"; echo "$payload"
 echo "== codex hook, own-output loop guard (no output)"
 echo '{"session_id":"s-9","prompt":"-- muninn recall: banana mode","hook_event_name":"UserPromptSubmit"}' | ./bin/muninn hook codex; echo "[end]"
 echo "== web API"
-./bin/muninn serve --addr 127.0.0.1:17431 --no-watch > "$MUNINN_HOME/serve-e2e.log" 2>&1 &
+./bin/muninn serve --addr 127.0.0.1:17431 --no-watch > "$HUG_HOME/serve-e2e.log" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null' EXIT
 for _ in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null http://127.0.0.1:17431/api/stats && break; sleep 0.3; done

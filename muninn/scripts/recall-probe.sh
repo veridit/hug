@@ -3,7 +3,7 @@
 # the wall time of one cold `muninn recall` process (what a hook pays).
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export MUNINN_HOME="${MUNINN_HOME:-/tmp/muninn-e2e}"
+export HUG_HOME="${HUG_HOME:-/tmp/muninn-e2e}"
 go build -o bin/muninn ./cmd/muninn
 for q in "banana mode please" "bake a banana pie" "what indentation does this repo use" "write a bash for loop"; do
   printf '%-40s -> ' "$q"

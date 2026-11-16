@@ -23,7 +23,7 @@ func TestNudgeBoardOff(t *testing.T) {
 		{`{"nudge_board": false}`, false},
 	} {
 		home := t.TempDir()
-		t.Setenv("MUNINN_HOME", home)
+		t.Setenv("HUG_HOME", home)
 		if err := os.MkdirAll(config.ConfigDir(), 0o700); err != nil {
 			t.Fatal(err)
 		}

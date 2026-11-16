@@ -39,6 +39,9 @@ The commands huginn (= hug task) and muninn (= hug mem) work too.
 func main() { os.Exit(run(filepath.Base(os.Args[0]), os.Args[1:])) }
 
 func run(name string, args []string) int {
+	// Old huginn and muninn variables are not read (m1c28r): say so, once
+	// per command, on stderr (stdout may be JSON or a hook's reply).
+	warnStale(os.Stderr, nil)
 	// Called through a link named after a part: behave exactly as that part.
 	switch strings.TrimSuffix(name, ".exe") {
 	case "huginn":

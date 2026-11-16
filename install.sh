@@ -7,7 +7,7 @@
 set -eu
 
 repo="veridit/hug"
-bin_dir="${HUG_BIN_DIR:-${MUNINN_BIN_DIR:-$HOME/.local/bin}}"
+bin_dir="${HUG_BIN_DIR:-$HOME/.local/bin}"
 
 say() { printf 'hug-install: %s\n' "$*" >&2; }
 die() { say "error: $*"; exit 1; }

@@ -40,7 +40,7 @@ func TestTmuxAutoRefresh(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUGINN_USER=other-terminal", "GOMAXPROCS=2", "GOFLAGS=-p=2"}
+	env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=other-terminal", "GOMAXPROCS=2", "GOFLAGS=-p=2"}
 	run := func(name string, args ...string) string {
 		t.Helper()
 		cmd := exec.Command(name, args...)
@@ -78,9 +78,9 @@ func TestTmuxAutoRefresh(t *testing.T) {
 		}
 		return string(out)
 	}
-	quoted := []string{"TERM=xterm-256color", "NO_COLOR=1", "HUGINN_USER=tui-reader"}
+	quoted := []string{"TERM=xterm-256color", "NO_COLOR=1", "HUG_USER=tui-reader"}
 	for _, e := range env {
-		if !strings.HasPrefix(e, "HUGINN_USER=") {
+		if !strings.HasPrefix(e, "HUG_USER=") {
 			quoted = append(quoted, e)
 		}
 	}

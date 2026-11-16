@@ -35,8 +35,8 @@ func New(t *testing.T) *Fixture {
 	if real, err := filepath.EvalSymlinks(root); err == nil {
 		root = real
 	}
-	t.Setenv("MUNINN_HOME", filepath.Join(root, "muninn"))
-	t.Setenv("MUNINN_NO_EMBED", "1")
+	t.Setenv("HUG_HOME", filepath.Join(root, "muninn"))
+	t.Setenv("HUG_NO_EMBED", "1")
 	t.Setenv("JCODE_HOME", "")
 	cfg := config.Defaults()
 	cfg.Embedder = "none"

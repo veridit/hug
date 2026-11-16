@@ -16,8 +16,8 @@ import (
 
 func TestHarnessForgetSuppressesRecall(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("MUNINN_HOME", home)
-	t.Setenv("MUNINN_NO_EMBED", "1")
+	t.Setenv("HUG_HOME", home)
+	t.Setenv("HUG_NO_EMBED", "1")
 	a, err := Open(context.Background())
 	if err != nil {
 		t.Fatal(err)
@@ -76,8 +76,8 @@ func TestHarnessForgetSuppressesRecall(t *testing.T) {
 
 func TestImportRerunRetainsSIDs(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("MUNINN_HOME", home)
-	t.Setenv("MUNINN_NO_EMBED", "1")
+	t.Setenv("HUG_HOME", home)
+	t.Setenv("HUG_NO_EMBED", "1")
 	a, err := Open(context.Background())
 	if err != nil {
 		t.Fatal(err)
@@ -128,8 +128,8 @@ func TestImportRerunRetainsSIDs(t *testing.T) {
 
 func TestHarnessAndImportShareSIDAndNativeIsCanonical(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("MUNINN_HOME", home)
-	t.Setenv("MUNINN_NO_EMBED", "1")
+	t.Setenv("HUG_HOME", home)
+	t.Setenv("HUG_NO_EMBED", "1")
 	a, err := Open(context.Background())
 	if err != nil {
 		t.Fatal(err)

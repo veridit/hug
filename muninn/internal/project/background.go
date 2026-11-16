@@ -1,6 +1,7 @@
 package project
 
 import (
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,7 +29,7 @@ const SyncChildArg = "--background-pass"
 
 // SpawnSelf makes passes run this executable, never from a test binary.
 func SpawnSelf() {
-	if strings.EqualFold(os.Getenv("HUG_SYNC"), "off") || testing.Testing() {
+	if strings.EqualFold(env.Get(env.Sync), "off") || testing.Testing() {
 		return
 	}
 	exe, e := os.Executable()

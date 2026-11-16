@@ -47,8 +47,8 @@ func TestBackgroundLowersPriorityAndProcs(t *testing.T) {
 	if got := run(); got != want {
 		t.Fatalf("Background: got %q, want %q", got, want)
 	}
-	if got := run("MUNINN_FULL_SPEED=1"); strings.HasPrefix(got, "nice="+strconv.Itoa(Nice)+" ") && currentNice(t) < Nice {
-		t.Fatalf("MUNINN_FULL_SPEED=1 still throttled: %q", got)
+	if got := run("HUG_FULL_SPEED=1"); strings.HasPrefix(got, "nice="+strconv.Itoa(Nice)+" ") && currentNice(t) < Nice {
+		t.Fatalf("HUG_FULL_SPEED=1 still throttled: %q", got)
 	}
 }
 

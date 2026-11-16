@@ -14,7 +14,7 @@ Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
 │Updated: 2026-11-09 10:30:00 UTC                                                                                                          │
 │Created: 2026-11-09 10:30:00 UTC                                                                                                          │
 │Strength: 1 · reinforcements: 0                                                                                                           │
-│Source: native · $MUNINN_HOME/data/memories.json                                                                                          │
+│Source: native · $HUG_HOME/data/memories.json                                                                                             │
 │                                                                                                                                          │
 │                                                                                                                                          │
 │                                                                                                                                          │

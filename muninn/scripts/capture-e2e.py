@@ -94,7 +94,7 @@ server.server_close()
 thread.join()
 for name, provider in (("no-key", "openai-compatible"), ("network-down", "ollama")):
     cfg["extract"]["provider"] = provider
-    cfg["extract"]["api_key_env"] = "MUNINN_SYNTHETIC_MISSING_CREDENTIAL"
+    cfg["extract"]["api_key_env"] = "HUG_SYNTHETIC_MISSING_CREDENTIAL"
     config.write_text(json.dumps(cfg))
     session(home, name, root / "alpha", "Alpha")
     log = root / "muninn/data/hook.log"

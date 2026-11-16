@@ -16,8 +16,8 @@ import (
 
 func TestShowListsCanonicalTextAndAllOrigins(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("MUNINN_HOME", home)
-	t.Setenv("MUNINN_NO_EMBED", "1")
+	t.Setenv("HUG_HOME", home)
+	t.Setenv("HUG_NO_EMBED", "1")
 	ctx := context.Background()
 	a, err := app.Open(ctx)
 	if err != nil {

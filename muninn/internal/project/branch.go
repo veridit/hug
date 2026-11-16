@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -88,7 +89,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 		}
 		// Name the model on these commits when it is known (t709he); never
 		// a guess.
-		if m := strings.TrimSpace(os.Getenv("HUG_MODEL")); m != "" {
+		if m := strings.TrimSpace(env.Get(env.Model)); m != "" {
 			repository.Trailers = []string{"Model: " + m}
 		}
 		// Write where the branch is checked out: the main worktree's

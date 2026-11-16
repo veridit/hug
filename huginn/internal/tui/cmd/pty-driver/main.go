@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"os"
 
 	"github.com/veridit/hug/huginn/internal/task"
@@ -11,9 +12,9 @@ import (
 )
 
 func main() {
-	root := os.Getenv("HUGINN_TUI_TEST_ROOT")
+	root := env.Get(env.TestRoot)
 	if root == "" {
-		fmt.Fprintln(os.Stderr, "HUGINN_TUI_TEST_ROOT is required")
+		fmt.Fprintln(os.Stderr, env.TestRoot+" is required")
 		os.Exit(2)
 	}
 	s := &task.Store{Root: root}

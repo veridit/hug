@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"io"
 	"os"
 	"os/exec"
@@ -80,7 +81,7 @@ func Main(args []string) int {
 	root.AddCommand(versionCmd(), dreamCmd(), typesCmd(), indexCmd(), searchCmd(), recallCmd(), rememberCmd(), forgetCmd(), showCmd(), rescopeCmd(),
 		listCmd(), relatedCmd(), statsCmd(), gcCmd(), hookCmd(), serveCmd(), mcpCmd(), tuiCmd(),
 		installCmd(), uninstallCmd(), configCmd(), jcodeCmd(), importCmd(), projectCmd(), syncCmd(), modelCmd(), captureCmd(), tidyCmd())
-	if p := os.Getenv("MUNINN_CPUPROFILE"); p != "" {
+	if p := env.Get(env.CPUProfile); p != "" {
 		if f, err := os.Create(p); err == nil {
 			pprof.StartCPUProfile(f)
 			defer pprof.StopCPUProfile()

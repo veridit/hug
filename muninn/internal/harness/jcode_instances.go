@@ -135,7 +135,7 @@ func InstanceForHome(insts []JcodeInstance, h string) JcodeInstance {
 		}
 	}
 	// Explicit global homes must keep the same identity when discovery is off
-	// (including throwaway MUNINN_HOME comparisons). Bound uses jcode@global,
+	// (including throwaway HUG_HOME comparisons). Bound uses jcode@global,
 	// so naming this instance after the login directory would hide its memories.
 	if home, err := os.UserHomeDir(); err == nil && h == filepath.Join(home, ".jcode") {
 		return JcodeInstance{Name: "global", Root: home, Home: h}

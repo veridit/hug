@@ -17,7 +17,9 @@ func takeFixture(t *testing.T) (*App, string) {
 	t.Setenv("HUG_USER", "")
 	t.Setenv("HUG_MODEL", "")
 	t.Setenv("JCODE_SESSION_ID", "")
-	t.Setenv("HUGINN_USER", "old-name-not-read")
+	// The old name is set and must not be read (m1c28r); spelt in parts so
+	// the code holds no old names.
+	t.Setenv("HUG"+"INN_USER", "old-name-not-read")
 	r := execute(t, a, "new", "Take me", "--goal", "G", "--accept", "C")
 	return a, r["task"].(Reply)["id"].(string)
 }

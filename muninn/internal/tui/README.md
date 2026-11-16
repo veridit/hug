@@ -97,7 +97,7 @@ nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 go build -o /path/in/scratch/muninn ./c
 nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 python3 scripts/tui-pty.py /path/in/scratch/muninn --update
 ```
 
-All fixtures have a throwaway HOME/MUNINN_HOME and a private tmux socket with no
+All fixtures have a throwaway HOME/HUG_HOME and a private tmux socket with no
 owner configuration. Every test-owned server is killed in a finally block,
 including on SIGTERM. Commands have bounded timeouts. No checked-in golden
 contains live memories.

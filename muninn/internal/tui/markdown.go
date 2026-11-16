@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"regexp"
 	"strings"
@@ -111,7 +112,7 @@ func (m model) loadDetailMetadata() detailMetadata {
 	if o, err := m.a.Origin(u); err == nil {
 		path := o.Path
 		if home := config.Home(); home != "" {
-			path = strings.Replace(path, home, "$MUNINN_HOME", 1)
+			path = strings.Replace(path, home, "$"+env.Home, 1)
 		}
 		if home, _ := os.UserHomeDir(); home != "" {
 			path = strings.Replace(path, home, "~", 1)

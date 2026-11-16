@@ -22,7 +22,7 @@ compatibility links only. Never tell a user to type them.
 
 - The owner's machine is shared: run builds and tests niced and bounded:
   `GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test ./...`.
-- TUI goldens: `HUGINN_UPDATE_GOLDEN=1 go test -run TestTmuxGolden ./huginn/internal/tui/`,
+- TUI goldens: `HUG_UPDATE_GOLDEN=1 go test -run TestTmuxGolden ./huginn/internal/tui/`,
   then review the diff before committing.
 - A test that fails when code gets slower is a benchmark, not a test: name it
   `Test...Bench...`, skip it unless `HUG_BENCH=1`, and compare the new path

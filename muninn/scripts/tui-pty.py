@@ -72,8 +72,8 @@ def fixture(root, binary):
     for path in (home / ".jcode", muninn / "data" / "tidy", muninn / "config", project / ".muninn"):
         path.mkdir(parents=True, exist_ok=True)
     (project / ".muninn" / "project").write_text("terminal-fixture\n")
-    env = dict(os.environ, HOME=str(home), MUNINN_HOME=str(muninn),
-               JCODE_HOME=str(home / ".jcode"), MUNINN_NO_EMBED="1",
+    env = dict(os.environ, HOME=str(home), HUG_HOME=str(muninn),
+               JCODE_HOME=str(home / ".jcode"), HUG_NO_EMBED="1",
                TERM="xterm-256color", COLORTERM="truecolor", COLORFGBG="15;0",
                GOMAXPROCS="2", GOFLAGS="-p=2", TZ="UTC", LANG="en_US.UTF-8")
     env.pop("NO_COLOR", None)
@@ -118,7 +118,7 @@ def exercise(binary, root, width, height, no_color):
         env["NO_COLOR"] = "1"
     name = "muninn-tui-" + uuid.uuid4().hex[:12]
     exports = [f"{k}={v}" for k, v in env.items() if k in {
-        "HOME", "MUNINN_HOME", "JCODE_HOME", "MUNINN_NO_EMBED", "TERM", "COLORTERM",
+        "HOME", "HUG_HOME", "JCODE_HOME", "HUG_NO_EMBED", "TERM", "COLORTERM",
         "COLORFGBG", "GOMAXPROCS", "GOFLAGS", "TZ", "LANG", "NO_COLOR"}]
     # env -u prevents an inherited NO_COLOR from contaminating the colour lane, and
     # CI too: termenv reports no colour when CI is set (GitHub Actions sets it).

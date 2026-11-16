@@ -19,7 +19,7 @@ import (
 )
 
 func TestCaptureLegacyCollisionPrivateCopy(t *testing.T) {
-	path := os.Getenv("MUNINN_REPAIR_COPY")
+	path := os.Getenv("HUG_REPAIR_COPY")
 	if path == "" {
 		t.Skip("explicit private backup copy only")
 	}
@@ -167,7 +167,7 @@ func TestCaptureKilledAfterSaveBeforeCheckpoint(t *testing.T) {
 	}
 	before, _ := ingest.LoadNative(app.NativePath())
 	cmd := exec.Command(os.Args[0], "-test.run=^TestCaptureKillChild$", "-test.count=1")
-	cmd.Env = append(os.Environ(), "MUNINN_CAPTURE_KILL_CHILD=1", "MUNINN_CAPTURE_KILL_CWD="+f.Cwd, "MUNINN_CAPTURE_KILL_HOME="+filepath.Join(f.Root, "alpha", ".jcode"))
+	cmd.Env = append(os.Environ(), "HUG_CAPTURE_KILL_CHILD=1", "HUG_CAPTURE_KILL_CWD="+f.Cwd, "HUG_CAPTURE_KILL_HOME="+filepath.Join(f.Root, "alpha", ".jcode"))
 	if err := cmd.Start(); err != nil {
 		t.Fatal(err)
 	}
@@ -230,7 +230,7 @@ func TestCaptureKilledAfterSaveBeforeCheckpoint(t *testing.T) {
 }
 
 func TestCaptureKillChild(t *testing.T) {
-	if os.Getenv("MUNINN_CAPTURE_KILL_CHILD") != "1" {
+	if os.Getenv("HUG_CAPTURE_KILL_CHILD") != "1" {
 		t.Skip("subprocess helper")
 	}
 	a, err := app.Open(context.Background())
@@ -238,7 +238,7 @@ func TestCaptureKillChild(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer a.Close()
-	b := a.Bound(os.Getenv("MUNINN_CAPTURE_KILL_HOME"), os.Getenv("MUNINN_CAPTURE_KILL_CWD"))
+	b := a.Bound(os.Getenv("HUG_CAPTURE_KILL_HOME"), os.Getenv("HUG_CAPTURE_KILL_CWD"))
 	if _, err := b.Capture(context.Background(), a, captureOpts("killed-process")); err != nil {
 		t.Fatal(err)
 	}

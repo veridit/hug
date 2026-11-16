@@ -4,6 +4,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"os"
 	"path/filepath"
 	"sync"
@@ -63,7 +64,7 @@ func Open(ctx context.Context) (*App, error) {
 // pickEmbedder resolves cfg.Embedder. For the built-in model it prefers a
 // running `hug mem serve` (model already loaded) over loading it in-process.
 func pickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, string) {
-	if os.Getenv("MUNINN_NO_EMBED") != "" || cfg.Embedder == "none" {
+	if env.Get(env.NoEmbed) != "" || cfg.Embedder == "none" {
 		return nil, "keyword-only (embedder disabled)"
 	}
 	ollama := func() embed.Embedder {
@@ -74,7 +75,7 @@ func pickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, strin
 		return nil
 	}
 	builtin := func() (embed.Embedder, string) {
-		if os.Getenv("MUNINN_SERVE") == "" {
+		if env.Get(env.Serve) == "" {
 			if r := embed.DialRemote(ctx, cfg.ListenAddr, embed.Builtin.Name); r != nil {
 				return r, "built-in model via hug mem serve"
 			}
@@ -117,7 +118,7 @@ func (a *App) JcodeInstances() []harness.JcodeInstance {
 		}
 	}
 	if (a.Cfg.JcodeDiscover != nil && !*a.Cfg.JcodeDiscover) || config.Home() != "" {
-		// Explicit opt-out, or an isolated MUNINN_HOME (tests, throwaway
+		// Explicit opt-out, or an isolated HUG_HOME (tests, throwaway
 		// homes): never pick up the user's real jcode installations.
 		var out []harness.JcodeInstance
 		for _, h := range extra {

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"io"
 	"os"
 	"os/exec"
@@ -222,10 +223,10 @@ func (a *App) whoTakes(f flags) taker {
 		t.At.Worktree = w
 	}
 	if t.Model == "" {
-		t.Model = strings.TrimSpace(os.Getenv("HUG_MODEL"))
+		t.Model = strings.TrimSpace(env.Get(env.Model))
 	}
 	if t.Name == "" {
-		t.Name = strings.TrimSpace(os.Getenv("HUG_USER"))
+		t.Name = strings.TrimSpace(env.Get(env.User))
 	}
 	if t.Name == "" {
 		t.Name = harnessName()

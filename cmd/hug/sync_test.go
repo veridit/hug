@@ -45,10 +45,10 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	env := append(os.Environ(), "HOME="+home, "USERPROFILE="+home, "XDG_CONFIG_HOME="+filepath.Join(home, ".config"), "XDG_DATA_HOME="+filepath.Join(home, ".data"),
 		"GIT_CONFIG_GLOBAL="+os.DevNull, "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid",
 		"GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=tester", "HUG_MODEL=test-model", "JCODE_SESSION_ID=",
-		"MUNINN_NO_EMBED=1", "JCODE_HOME="+filepath.Join(home, "no-jcode"), "HUG_SYNC=", "GOMAXPROCS=2")
+		"HUG_NO_EMBED=1", "JCODE_HOME="+filepath.Join(home, "no-jcode"), "HUG_SYNC=", "GOMAXPROCS=2")
 	try := func(dir, muninnHome string, args ...string) (string, error) {
 		c := exec.Command(args[0], args[1:]...)
-		c.Dir, c.Env = dir, append(env, "MUNINN_HOME="+muninnHome)
+		c.Dir, c.Env = dir, append(env, "HUG_HOME="+muninnHome)
 		out, err := c.CombinedOutput()
 		return string(out), err
 	}

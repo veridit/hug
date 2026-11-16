@@ -95,7 +95,7 @@ func startTmuxServer(t *testing.T, socket string) func() {
 }
 
 // TestTmuxGolden exercises the actual CLI binary, not a copied model renderer.
-// Update deliberately with HUGINN_UPDATE_GOLDEN=1, review the diff, then test normally.
+// Update deliberately with HUG_UPDATE_GOLDEN=1, review the diff, then test normally.
 func TestTmuxGolden(t *testing.T) {
 	if testing.Short() {
 		t.Skip("real tmux acceptance disabled by -short")
@@ -136,7 +136,7 @@ func TestTmuxGolden(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	baseEnv := append(os.Environ(), "HOME="+home, "XDG_CONFIG_HOME="+filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUGINN_USER=terminal-fixture", "GOMAXPROCS=2", "GOFLAGS=-p=2")
+	baseEnv := append(os.Environ(), "HOME="+home, "XDG_CONFIG_HOME="+filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=terminal-fixture", "GOMAXPROCS=2", "GOFLAGS=-p=2")
 	run := func(name string, args ...string) {
 		t.Helper()
 		cmd := exec.Command(name, args...)
@@ -163,7 +163,7 @@ func TestTmuxGolden(t *testing.T) {
 				loadGuard(t)
 				target := name + ":0.0"
 				exitFile := filepath.Join(root, name+".exit")
-				env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUGINN_USER=terminal-fixture", "TERM=xterm-256color", "COLORTERM=truecolor", "COLORFGBG=15;0", "CLICOLOR_FORCE=1", "NO_COLOR=", "GOMAXPROCS=2", "GOFLAGS=-p=2"}
+				env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=terminal-fixture", "TERM=xterm-256color", "COLORTERM=truecolor", "COLORFGBG=15;0", "CLICOLOR_FORCE=1", "NO_COLOR=", "GOMAXPROCS=2", "GOFLAGS=-p=2"}
 				if noColor {
 					env = append(env, "NO_COLOR=1")
 				}
@@ -224,7 +224,7 @@ func TestTmuxGolden(t *testing.T) {
 						t.Fatalf("colour contract noColor=%v hasColor=%v\n%q", noColor, hasColor, colored)
 					}
 					path := filepath.Join("testdata", "tmux", name, view+".txt")
-					if os.Getenv("HUGINN_UPDATE_GOLDEN") == "1" {
+					if os.Getenv("HUG_UPDATE_GOLDEN") == "1" {
 						if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 							t.Fatal(err)
 						}
@@ -239,7 +239,7 @@ func TestTmuxGolden(t *testing.T) {
 					if string(want) != plain {
 						t.Errorf("golden drift %s\nGOT:\n%s\nWANT:\n%s", path, plain, want)
 					}
-					if artifacts := os.Getenv("HUGINN_TUI_ARTIFACTS"); artifacts != "" {
+					if artifacts := os.Getenv("HUG_TUI_ARTIFACTS"); artifacts != "" {
 						dir := filepath.Join(artifacts, name)
 						if err := os.MkdirAll(dir, 0755); err != nil {
 							t.Fatal(err)

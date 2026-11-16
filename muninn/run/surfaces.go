@@ -3,6 +3,7 @@ package run
 import (
 	"context"
 	"fmt"
+	"github.com/veridit/hug/internal/env"
 	"io"
 	"os"
 	"os/exec"
@@ -38,7 +39,7 @@ func serveCmd() *cobra.Command {
 			defer stop()
 			// serve is the process that holds the built-in model for hooks;
 			// it must load it itself, never ask another serve.
-			os.Setenv("MUNINN_SERVE", "1")
+			os.Setenv(env.Serve, "1")
 			return withApp(func(_ context.Context, a *app.App) error {
 				if addr == "" {
 					addr = a.Cfg.ListenAddr

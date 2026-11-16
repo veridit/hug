@@ -88,8 +88,8 @@ func TestCaptureAuditFailureAndSkipped(t *testing.T) {
 	b := f.Bind(t, "alpha")
 	fakeCapture(t, f, "")
 	f.App.Cfg.Extract.Provider = "openai-compatible"
-	f.App.Cfg.Extract.APIKeyEnv = "MUNINN_TEST_MISSING_KEY"
-	t.Setenv("MUNINN_TEST_MISSING_KEY", "")
+	f.App.Cfg.Extract.APIKeyEnv = "HUG_TEST_MISSING_KEY"
+	t.Setenv("HUG_TEST_MISSING_KEY", "")
 	o := captureOpts("audit-failed")
 	_, err := b.Capture(context.Background(), f.App, o)
 	if err == nil {
