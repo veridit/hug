@@ -264,7 +264,7 @@ var errDirty = errors.New("uncommitted task edits")
 
 type dirtyError struct{ status string }
 
-func (d dirtyError) Error() string { return errDirty.Error() + ": " + d.status }
+func (d dirtyError) Error() string   { return errDirty.Error() + ": " + d.status }
 func (d dirtyError) Is(t error) bool { return t == errDirty }
 
 // SyncPass is one background pass for r: fetch, rebase local commits under
