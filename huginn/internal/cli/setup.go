@@ -130,7 +130,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 			continue
 		}
 		text := string(raw)
-		if strings.Contains(text, "huginn") {
+		if strings.Contains(text, "hug task") || strings.Contains(text, "huginn") {
 			instr = append(instr, name)
 		}
 		if strings.Contains(text, "BACKLOG.MD") || strings.Contains(strings.ToLower(text), "backlog.md mcp") {
@@ -138,7 +138,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		}
 	}
 	add("agent instructions", len(instr) > 0 && len(backlogMentions) == 0,
-		"AGENTS.md (and CLAUDE.md if present) tell agents to track work with huginn",
+		"AGENTS.md (and CLAUDE.md if present) tell agents to track work with hug tasks",
 		agentInstructionsEdit(backlogMentions))
 
 	mcpPath := filepath.Join(root, ".mcp.json")
@@ -201,13 +201,19 @@ func agentInstructionsEdit(backlog []string) string {
 }
 
 // agentSection is the text projects paste into AGENTS.md.
-const agentSection = `## Tasks: huginn
+const agentSection = `## Tasks: hug
 Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
 Start: hug task next (or hug task take ID), then hug task show ID.
 While working: hug task check ID N with evidence, hug task note ID "evidence".
 Finish: hug task done ID when every acceptance check is ticked.
-New work: hug task new "title" --goal "outcome" --accept "observable check".
-MCP tools: task_list, task_show, task_new, task_next, task_take, task_done and task_update (action check, note, set, move, dep, drop) from hug mcp; the older huginn mcp server names them without the task_ prefix.
+New work: hug task new "short title" --goal "..." --accept "observable check".
+Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
+and do not do), Relevant details, then Acceptance. Titles stay under 80
+characters; detail goes in the Goal.
+Epics: hug task set ID --parent EPIC; hug task promote ID N turns item N into
+its own task. hug task ls --epic EPIC shows an epic and its children.
+MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take,
+task_done, task_update (actions set, check, promote, note, move, dep, drop).
 Old backlog ids (TASK-123) work as aliases.
 Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.`
 

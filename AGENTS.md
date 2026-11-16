@@ -1,0 +1,51 @@
+# AGENTS.md
+
+hug is one Go binary for agent memory and tasks. The name is Old Norse
+*hugr* (mind); the mascots are Odin's ravens Huginn (thought: tasks) and
+Muninn (memory). Users type `hug`; `huginn` and `muninn` remain as
+compatibility links only. Never tell a user to type them.
+
+## Layout
+
+- `cmd/hug`: the binary: dispatch (`hug task`, `hug mem`, `hug mcp`,
+  `hug apps`, `hug setup`, `hug upgrade`, `hug version`).
+- `huginn/`: tasks. `internal/task` (model, store, lint, epics, promote),
+  `internal/cli` (commands, setup, help), `internal/mcp` (task_* tools),
+  `internal/tui`, `internal/importer` (backlog, github, files),
+  `gitbranch` (the `hug/tasks` branch worktree).
+- `muninn/`: memory. `internal/recall`, `internal/search`, `internal/store`,
+  `internal/extract`, `internal/harness` (hooks), `cmd/recall4` (replay).
+- Tasks for this repo live on branch `hug/tasks`, checked out at
+  `.hug/tasks/`. Never on code branches.
+
+## Building and testing
+
+- The owner's machine is shared: run builds and tests niced and bounded:
+  `GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test ./...`.
+- TUI goldens: `HUGINN_UPDATE_GOLDEN=1 go test -run TestTmuxGolden ./huginn/internal/tui/`,
+  then review the diff before committing.
+- Messages, fixes and help must name `hug task ...` / `hug mem ...`, and every
+  error ends with a `fix:` line an agent can run.
+- Releases: add a CHANGELOG.md entry, tag `vX.Y.Z`, push; CI publishes the
+  Homebrew formula (`brew upgrade veridit/tap/hug`).
+
+## Recall changes
+
+Ship a recall change only with a measured, CI-clear gain on real replayed
+messages, confirmed on fresh data and judged blind (`muninn/docs/RECALL4.md`).
+Recall itself stays local and free; paid model calls happen only at write time.
+
+## Tasks: hug
+Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
+Start: hug task next (or hug task take ID), then hug task show ID.
+While working: hug task check ID N with evidence, hug task note ID "evidence".
+Finish: hug task done ID when every acceptance check is ticked.
+New work: hug task new "short title" --goal "..." --accept "observable check".
+Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
+and do not do), Relevant details, then Acceptance. Titles stay under 80
+characters; detail goes in the Goal.
+Epics: hug task set ID --parent EPIC; hug task promote ID N turns item N into
+its own task. hug task ls --epic EPIC shows an epic and its children.
+MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take,
+task_done, task_update (actions set, check, promote, note, move, dep, drop).
+Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.
