@@ -15,7 +15,7 @@ import (
 func tableState(t testing.TB, c *Cache) map[string][]string {
 	t.Helper()
 	out := map[string][]string{}
-	for _, name := range []string{"tasks", "files", "deps", "aliases", "meta"} { // board_delta: like meta 'board', how a sync stored the board
+	for _, name := range []string{"tasks", "files", "deps", "aliases", "texts", "meta"} { // board_delta: like meta 'board', how a sync stored the board
 		q := `SELECT * FROM ` + name
 		if name == "meta" {
 			// board and synced_ns record when and in what order a sync ran,

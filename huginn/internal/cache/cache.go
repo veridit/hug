@@ -15,12 +15,13 @@ import (
 	_ "modernc.org/sqlite"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 )
 
-const SchemaVersion = "9" // 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev)
+const SchemaVersion = "10" // 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev); 10: notes and description texts in table texts, not in the board blob (44w1ev)
 
 type Change struct{ Status, OldPath, Path string }
 type Git interface {
@@ -91,11 +92,11 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 	}
 	if version != SchemaVersion {
 		c.rebuild, c.rebuilt = true, version != ""
-		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DELETE FROM meta;`); e != nil {
+		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DROP TABLE IF EXISTS texts; DELETE FROM meta;`); e != nil {
 			return fail(e)
 		}
 	}
-	_, e = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(id TEXT NOT NULL,path TEXT PRIMARY KEY,"group" TEXT,rank TEXT,slug TEXT,title TEXT,status TEXT,type TEXT,priority TEXT,assignee TEXT,updated TEXT,payload TEXT NOT NULL,findings TEXT NOT NULL); CREATE INDEX IF NOT EXISTS tasks_id ON tasks(id); CREATE TABLE IF NOT EXISTS files(path TEXT PRIMARY KEY,mtime_ns INTEGER NOT NULL,size INTEGER NOT NULL,sha256 TEXT NOT NULL); CREATE TABLE IF NOT EXISTS deps("from" TEXT NOT NULL,"to" TEXT NOT NULL,line INTEGER NOT NULL,path TEXT NOT NULL,ref TEXT NOT NULL,ref_key TEXT NOT NULL); CREATE INDEX IF NOT EXISTS deps_ref_key ON deps(ref_key); CREATE INDEX IF NOT EXISTS deps_from ON deps("from"); CREATE INDEX IF NOT EXISTS deps_to ON deps("to"); CREATE INDEX IF NOT EXISTS deps_path ON deps(path); CREATE TABLE IF NOT EXISTS aliases(alias TEXT NOT NULL,id TEXT NOT NULL,path TEXT NOT NULL); CREATE INDEX IF NOT EXISTS aliases_alias ON aliases(alias); CREATE INDEX IF NOT EXISTS aliases_path ON aliases(path); CREATE TABLE IF NOT EXISTS board_delta(path TEXT PRIMARY KEY,value BLOB NOT NULL);`)
+	_, e = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(id TEXT NOT NULL,path TEXT PRIMARY KEY,"group" TEXT,rank TEXT,slug TEXT,title TEXT,status TEXT,type TEXT,priority TEXT,assignee TEXT,updated TEXT,payload TEXT NOT NULL,findings TEXT NOT NULL); CREATE INDEX IF NOT EXISTS tasks_id ON tasks(id); CREATE TABLE IF NOT EXISTS files(path TEXT PRIMARY KEY,mtime_ns INTEGER NOT NULL,size INTEGER NOT NULL,sha256 TEXT NOT NULL); CREATE TABLE IF NOT EXISTS deps("from" TEXT NOT NULL,"to" TEXT NOT NULL,line INTEGER NOT NULL,path TEXT NOT NULL,ref TEXT NOT NULL,ref_key TEXT NOT NULL); CREATE INDEX IF NOT EXISTS deps_ref_key ON deps(ref_key); CREATE INDEX IF NOT EXISTS deps_from ON deps("from"); CREATE INDEX IF NOT EXISTS deps_to ON deps("to"); CREATE INDEX IF NOT EXISTS deps_path ON deps(path); CREATE TABLE IF NOT EXISTS aliases(alias TEXT NOT NULL,id TEXT NOT NULL,path TEXT NOT NULL); CREATE INDEX IF NOT EXISTS aliases_alias ON aliases(alias); CREATE INDEX IF NOT EXISTS aliases_path ON aliases(path); CREATE TABLE IF NOT EXISTS board_delta(path TEXT PRIMARY KEY,value BLOB NOT NULL); CREATE TABLE IF NOT EXISTS texts(path TEXT PRIMARY KEY,sha256 TEXT NOT NULL,value BLOB NOT NULL);`)
 	if e != nil {
 		return fail(e)
 	}
@@ -355,6 +356,7 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	}
 	next := make(map[string]record, len(disk))
 	changed := map[string]record{}
+	bodies := map[string]*task.Texts{} // notes and descriptions of parsed files, for table texts
 	rechecked := false
 	renames := map[string]string{}
 	usedOld := map[string]bool{}
@@ -419,6 +421,8 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 		d := task.Parse(path, b)
 		stats.Parsed++
 		rec := record{Marker: m, Task: d.Task, Findings: d.Findings}
+		bodies[path] = d.Task.Texts
+		rec.Task.Texts = lean(d.Task.Texts)
 		next[path] = rec
 		changed[path] = rec
 	}
@@ -461,7 +465,7 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 		if e = exec(`UPDATE tasks SET path=?,"group"=?,rank=?,slug=?,payload=?,findings=? WHERE path=?`, p, r.Task.Group, r.Task.Rank, r.Task.Slug, string(payload), string(findings), old); e != nil {
 			return stats, e
 		}
-		for _, table := range []string{"files", "deps", "aliases"} {
+		for _, table := range []string{"files", "deps", "aliases", "texts"} {
 			if e = exec(`UPDATE `+table+` SET path=? WHERE path=?`, p, old); e != nil {
 				return stats, e
 			}
@@ -471,7 +475,7 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 		if _, ok := renames[p]; ok {
 			continue
 		}
-		for _, table := range []string{"tasks", "files", "deps", "aliases"} {
+		for _, table := range []string{"tasks", "files", "deps", "aliases", "texts"} {
 			if e = exec(`DELETE FROM `+table+` WHERE path=?`, p); e != nil {
 				return stats, e
 			}
@@ -510,6 +514,14 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 		t := r.Task
 		assignee, _ := json.Marshal(t.Assignee)
 		if _, e = taskStmt.ExecContext(ctx, t.ID, p, t.Group, t.Rank, t.Slug, t.Title, t.Status, t.Type, t.Priority, string(assignee), t.Updated, string(payload), string(findings)); e != nil {
+			return stats, e
+		}
+		if texts := encodeBodies(bodies[p]); texts != nil {
+			e = exec(`INSERT OR REPLACE INTO texts(path,sha256,value) VALUES(?,?,?)`, p, r.SHA256, texts)
+		} else {
+			e = exec(`DELETE FROM texts WHERE path=?`, p)
+		}
+		if e != nil {
 			return stats, e
 		}
 		for _, table := range []string{"deps", "aliases"} {
@@ -557,6 +569,101 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	c.synced = started
 	c.delta = delta
 	return stats, nil
+}
+
+// lean is what a record keeps of a parse's texts: the references lint
+// checks. The notes and description bodies go to table texts (44w1ev:
+// at 10,000 tasks they were 14 of the board blob's 21.6 MB, decoded by every
+// command though only ls prints them).
+func lean(x *task.Texts) *task.Texts {
+	if x == nil {
+		return nil
+	}
+	return &task.Texts{Refs: x.Refs}
+}
+
+// encodeBodies stores a parse's notes and description texts (in
+// task.DescriptionSections order) as length-prefixed strings: "N:" then N
+// bytes, each. Decoding 10,000 of them is a slice walk; one gob value per
+// task cost ls 170 ms at 10,000 tasks in type headers alone (44w1ev).
+func encodeBodies(x *task.Texts) []byte {
+	if x == nil || !x.Bodies {
+		return nil
+	}
+	var b []byte
+	add := func(v string) { b = append(strconv.AppendInt(b, int64(len(v)), 10), ':'); b = append(b, v...) }
+	add(x.Notes)
+	for _, sec := range task.DescriptionSections {
+		add(x.Description[sec])
+	}
+	return b
+}
+func decodeBodies(b []byte) (*task.Texts, error) {
+	next := func() (string, error) {
+		i := bytes.IndexByte(b, ':')
+		n, e := strconv.Atoi(string(b[:max(i, 0)]))
+		if i < 0 || e != nil || n < 0 || n > len(b)-i-1 {
+			return "", fmt.Errorf("cache: bad texts value")
+		}
+		v := string(b[i+1 : i+1+n])
+		b = b[i+1+n:]
+		return v, nil
+	}
+	x := &task.Texts{Bodies: true, Description: make(map[string]string, len(task.DescriptionSections))}
+	var e error
+	if x.Notes, e = next(); e != nil {
+		return nil, e
+	}
+	for _, sec := range task.DescriptionSections {
+		if x.Description[sec], e = next(); e != nil {
+			return nil, e
+		}
+	}
+	return x, nil
+}
+
+// FillTexts gives each task in ts the notes and description texts of the
+// parse the cache holds for its path, in one query (44w1ev: ls prints them
+// for every task; other commands read one task file instead). Tasks whose
+// path is not cached, or whose file changed since, keep what they have.
+func (c *Cache) FillTexts(ctx context.Context, ts []task.Task) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	want := make(map[string]int, len(ts))
+	for i, t := range ts {
+		if t.Texts == nil || !t.Texts.Bodies {
+			want[t.Path] = i
+		}
+	}
+	if len(want) == 0 {
+		return nil
+	}
+	rows, e := c.db.QueryContext(ctx, `SELECT path,sha256,value FROM texts`)
+	if e != nil {
+		return e
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var path, sum string
+		var v []byte
+		if e = rows.Scan(&path, &sum, &v); e != nil {
+			return e
+		}
+		i, ok := want[path]
+		if !ok || c.files[path].SHA256 != sum {
+			continue
+		}
+		x, e := decodeBodies(v)
+		if e != nil {
+			// A value this binary cannot read: the task reads its file.
+			continue
+		}
+		if old := ts[i].Texts; old != nil {
+			x.Refs = old.Refs
+		}
+		ts[i].Texts = x
+	}
+	return rows.Err()
 }
 
 // List synchronizes first, then returns a detached ranked snapshot.

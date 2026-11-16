@@ -362,11 +362,12 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	out["children"] = children
 	out["notes"] = ""
 	// Notes and Purpose, Principle and Relevant details (jnaspy) come from
-	// the parse that made t, kept by the cache: ls at 10,000 tasks read and
-	// parsed every file again for them (44w1ev). A Task made without them
-	// (decoded from an old payload) reads its file as before.
+	// the parse that made t: ls fills them from the cache in one query
+	// (FillTexts), as ls at 10,000 tasks read and parsed every file again
+	// for them (44w1ev). A Task without them (one command about one task,
+	// or a file changed since the cache saw it) reads its file.
 	texts := t.Texts
-	if texts == nil {
+	if texts == nil || !texts.Bodies {
 		if b, e := os.ReadFile(filepath.Join(root, filepath.FromSlash(t.Path))); e == nil {
 			texts = task.Parse(t.Path, b).Task.Texts
 		}
@@ -587,6 +588,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		ts, e := s.s.Tasks()
 		if e != nil {
+			return nil, e
+		}
+		if e = s.c.FillTexts(ctx, ts); e != nil {
 			return nil, e
 		}
 		out := []Reply{}

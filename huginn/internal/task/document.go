@@ -170,7 +170,11 @@ type Task struct {
 
 // Texts of one task file, see Task.Texts.
 type Texts struct {
-	Notes string
+	// Bodies is true when Notes and Description are filled. The cache keeps
+	// only Refs in memory (the bodies are 14 MB at 10,000 tasks and only ls
+	// prints them) and fills the bodies on request (44w1ev).
+	Bodies bool
+	Notes  string
 	// Description maps each of DescriptionSections to its trimmed body.
 	Description map[string]string
 	// Refs are the file:NAME and task:REF/NAME references in the file
@@ -431,7 +435,7 @@ func Parse(path string, data []byte) *Document {
 		}
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
-	d.Task.Texts = &Texts{Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}
+	d.Task.Texts = &Texts{Bodies: true, Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}
 	for _, sec := range DescriptionSections {
 		d.Task.Texts.Description[sec] = d.sectionText(sec)
 	}
