@@ -1,7 +1,7 @@
 ---
 id: 5g86n6
 title: "hug task layout: .hug/tasks, epics, promote, task files"
-status: "doing"
+status: "done"
 type: feature
 priority: ""
 assignee: ["Jørgen H. Fjeld"]
