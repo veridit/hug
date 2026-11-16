@@ -17,7 +17,7 @@ Every git worktree already shares one board and one memory store (065wwn). On to
 Agents create worktrees for isolation, then lose sight of the board or create tasks that never reach the main checkout; a discarded experiment should take its tasks and memories with it
 
 ## Principle
-Decided with Jørgen 2026-11-16: detect when hug can, require it when hug cannot. The CLI detects branch and worktree from the current directory (git rev-parse); --branch/--worktree override. Where hug cannot know (MCP server shared between sessions, no cwd), task_take requires them (or a cwd to detect from) and fails with a fix: line, like the model. The branch is what matters; the worktree folder is only where to look now. Show prints 'taken by: NAME · MODEL · BRANCH'; the TUI shows the branch on in-progress rows when it is not the main branch. Ties into ez50rb: 'holds while BRANCH is unmerged'.
+Decided with Jørgen 2026-11-16: detect when hug can, require it when hug cannot. The CLI detects branch and worktree from the current directory (git rev-parse); --branch/--worktree override. MCP always requires cwd (decided with Jørgen 2026-11-16, one habit for agents): task_take without cwd fails with a fix: line, like the model; hug detects branch and worktree from that cwd. The CLI detects from its own directory. Then test in practice on Statbus with worktrees before calling it done. The branch is what matters; the worktree folder is only where to look now. Show prints 'taken by: NAME · MODEL · BRANCH'; the TUI shows the branch on in-progress rows when it is not the main branch. Ties into ez50rb: 'holds while BRANCH is unmerged'.
 
 ## Relevant details
 Today: hug task finds .hug/tasks via the repository root; a linked worktree has a different root and may create its own .hug/tasks worktree or fail. Memory binds by folder/project id (rc- root commit), so worktrees of one repo already share the project scope. Needed: (1) resolve .hug/tasks through git rev-parse --git-common-dir to the main checkout; (2) record origin worktree (path + branch) on tasks and memories created there; (3) hug worktree keep|discard NAME lists and applies
@@ -27,9 +27,10 @@ Today: hug task finds .hug/tasks via the repository root; a linked worktree has 
 ## Acceptance
 - [x] done when task:065wwn is done (hug task ls in a linked worktree shows the main board and writes to it)
 - [ ] hug task take in a linked worktree on branch feat/x records branch feat/x and the worktree folder on the task, without flags (test)
-- [ ] MCP task_take without a cwd and without branch fails with a fix: line; with them it records both (test)
+- [ ] MCP task_take always requires cwd: without it, it fails with a fix: line; with it, branch and worktree are detected and recorded (test)
 - [ ] show, ls --json and the TUI detail show the branch; in-progress rows show it when it is not the main branch (test and golden)
 - [ ] memories captured or remembered in a worktree record its branch (test)
 - [ ] lint flags a doing task whose branch is merged into main or deleted, with fix: hug task done ID (test)
+- [ ] tried in practice: agents in two Statbus worktrees (one CLI, one MCP) take tasks and the board shows the right branch for each (evidence in a note)
 
 ## Notes
