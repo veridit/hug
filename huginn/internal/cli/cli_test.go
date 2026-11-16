@@ -433,3 +433,52 @@ func TestLintBoundedOutput(t *testing.T) {
 		t.Fatalf("--code bounded:\n%s", one)
 	}
 }
+
+// 6neax1: findings on done or dropped tasks are hidden and counted by
+// default; --all shows them.
+func TestLintHidesClosedTasks(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Closed one", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	script := filepath.Join(t.TempDir(), "ed.sh")
+	if e := os.WriteFile(script, []byte("#!/bin/sh\nperl -0pi -e 's/## Depends on\\n/## Depends on\\nNothing\\n/' \"$1\"\n"), 0700); e != nil {
+		t.Fatal(e)
+	}
+	t.Setenv("VISUAL", script)
+	execute(t, a, "edit", id)
+	execute(t, a, "check", id, "1")
+	execute(t, a, "done", id)
+	run := func(args ...string) string {
+		out := &bytes.Buffer{}
+		a.Out, a.Err = out, &bytes.Buffer{}
+		if code := a.Run(context.Background(), args); code != 0 {
+			t.Fatalf("%v: %d", args, code)
+		}
+		return out.String()
+	}
+	want := "no findings on open tasks\n1 finding on closed tasks hidden (1 not-a-dependency): hug task lint --all\nnext: hug task lint --all\n"
+	if out := run("lint"); out != want {
+		t.Fatalf("default:\n%s", out)
+	}
+	if out := run("lint", "--summary"); !strings.Contains(out, "1 finding on closed tasks hidden (1 not-a-dependency): hug task lint --all\n") {
+		t.Fatalf("summary:\n%s", out)
+	}
+	if out := run("lint", "--code", "not-a-dependency"); !strings.Contains(out, "hug task lint --code not-a-dependency --all\n") {
+		t.Fatalf("code:\n%s", out)
+	}
+	r := execute(t, a, "lint")
+	if r["hidden"] != 1 || len(r["findings"].([]task.Finding)) != 0 {
+		t.Fatalf("json: %v", r)
+	}
+	b, _ := json.Marshal(r)
+	if !strings.Contains(string(b), `"hidden":1,"hidden_codes":[{"code":"not-a-dependency","count":1`) {
+		t.Fatalf("json: %s", b)
+	}
+	all := run("lint", "--all")
+	if !strings.Contains(all, "not-a-dependency") || strings.Contains(all, "hidden") {
+		t.Fatalf("--all:\n%s", all)
+	}
+	if r := execute(t, a, "lint", "--all"); r["hidden"] != nil && r["hidden"] != 0 {
+		t.Fatalf("--all json: %v", r)
+	}
+}

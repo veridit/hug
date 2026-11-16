@@ -1,6 +1,9 @@
 package task
 
-import "sort"
+import (
+	"sort"
+	"strings"
+)
 
 // CodeInfo is one kind of lint finding: its stable code and what it means
 // in plain words, for lint summaries and the code list (6neax1).
@@ -83,4 +86,41 @@ func Summarize(fs []Finding, all bool) []CodeCount {
 		return out[i].Code < out[j].Code
 	})
 	return out
+}
+
+// OpenFindings splits findings into those on open tasks (todo, doing,
+// blocked) and those on closed ones (done, dropped). A finding belongs to
+// the task whose file it is, or whose folder (group/ID/...) holds the file;
+// a finding that belongs to no known task (a broken file) is open, since
+// nothing says it is finished. Lint, MCP and the TUI hide closed findings
+// by default (6neax1, Jørgen: 986 of 2,477 seid findings were on closed
+// tasks).
+func OpenFindings(fs []Finding, tasks []Task) (open, closed []Finding) {
+	status := map[string]string{}
+	for _, t := range tasks {
+		status[t.Path] = t.Status
+		status[FolderOf(t)+"/"] = t.Status
+	}
+	for _, f := range fs {
+		s, ok := status[f.Path]
+		if !ok {
+			for dir := f.Path; ; {
+				i := strings.LastIndex(dir, "/")
+				if i < 0 {
+					break
+				}
+				dir = dir[:i]
+				if v, hit := status[dir+"/"]; hit {
+					s, ok = v, true
+					break
+				}
+			}
+		}
+		if ok && (s == "done" || s == "dropped") {
+			closed = append(closed, f)
+		} else {
+			open = append(open, f)
+		}
+	}
+	return open, closed
 }

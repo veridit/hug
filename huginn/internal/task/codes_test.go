@@ -37,3 +37,14 @@ func TestSummarizeCountsByCode(t *testing.T) {
 		t.Fatalf("all codes: %+v", all)
 	}
 }
+
+// A closed task's findings, including files in its folder, are closed;
+// findings on open tasks and on files no task owns are open (6neax1).
+func TestOpenFindingsSplitsByStatus(t *testing.T) {
+	tasks := []Task{{ID: "aaaaaa", Path: "a.aaaaaa.a.md", Status: "done"}, {ID: "bbbbbb", Path: "g/b.bbbbbb.b.md", Status: "todo"}, {ID: "cccccc", Path: "g/c.cccccc.c.md", Status: "dropped"}}
+	fs := []Finding{{Path: "a.aaaaaa.a.md"}, {Path: "g/b.bbbbbb.b.md"}, {Path: "g/cccccc/sub/log.bin"}, {Path: "broken.md"}, {Path: "aaaaaa/x.txt"}}
+	open, closed := OpenFindings(fs, tasks)
+	if len(open) != 2 || open[0].Path != "g/b.bbbbbb.b.md" || open[1].Path != "broken.md" || len(closed) != 3 {
+		t.Fatalf("open %v closed %v", open, closed)
+	}
+}

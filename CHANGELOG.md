@@ -17,6 +17,9 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   (they said "expected 0 positional arguments" and "missing value for
   --code"). The same goes for other commands without arguments (`ls help`,
   `next help`, ...). `new help` still makes a task titled "help".
+- The `not-a-dependency` finding starts with what to do when a task has
+  no dependencies: "(for no dependencies, leave the section empty or
+  remove it; ...". It used to suggest `none` was missing a form.
 
 ### Added
 
@@ -26,10 +29,16 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 - `hug task lint --code` with no value (or `--code help`) lists every code
   with its count and meaning. An unknown code says so, names the closest,
   lists the valid ones and ends in `fix: hug task lint --code`.
-- `hug task lint --all` prints every finding.
+- `hug task lint --all` prints every finding, including those on done
+  and dropped tasks.
 
 ### Changed
 
+- `hug task lint` (CLI, MCP `task_lint` and the TUI) leaves out findings
+  on done and dropped tasks and ends with how many it left out:
+  `986 findings on closed tasks hidden (432 done-unchecked, ...): hug task lint --all`.
+  JSON replies carry `hidden` and `summary.hidden_codes`. Opening a closed
+  task in the TUI still shows its own findings.
 - A mistyped flag's `fix:` is that command's help (`hug task lint --help`),
   not the general index.
 

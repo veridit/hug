@@ -617,20 +617,25 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		fs = append(fs, more...)
-		if code != "" {
-			kept := []task.Finding{}
-			for _, x := range fs {
-				if task.FindingCode(x.Problem) == code {
-					kept = append(kept, x)
-				}
+		// Closed tasks' findings are hidden unless --all (6neax1).
+		var hidden []task.Finding
+		if !f.has("all") {
+			ts, e := s.s.Tasks()
+			if e != nil {
+				return nil, e
 			}
-			fs = kept
+			fs, hidden = task.OpenFindings(fs, ts)
+		}
+		if code != "" {
+			fs, hidden = withCode(fs, code), withCode(hidden, code)
 		}
 		reply, e := empty()
 		if e != nil {
 			return nil, e
 		}
-		return lintReply(reply, fs, mode, code), nil
+		reply = lintReply(reply, fs, mode, code)
+		setHidden(reply, hidden, code)
+		return reply, nil
 	case "sync":
 		if e = f.count(0); e != nil {
 			return nil, e

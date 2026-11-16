@@ -23,6 +23,10 @@ const (
 type LintSummary struct {
 	Total int              `json:"total"`
 	Codes []task.CodeCount `json:"codes"`
+	// Hidden counts findings on closed tasks (done, dropped) left out
+	// without --all; HiddenCodes counts them by code.
+	Hidden      int              `json:"hidden"`
+	HiddenCodes []task.CodeCount `json:"hidden_codes"`
 	// mode is "summary" (--summary), "codes" (--code without a value),
 	// "all" (--all) or "" (plain: bounded).
 	mode string
@@ -37,7 +41,7 @@ func lintReply(reply Reply, fs []task.Finding, mode, code string) Reply {
 	if fs == nil {
 		fs = []task.Finding{}
 	}
-	sum := LintSummary{Total: len(fs), Codes: task.Summarize(fs, mode == "codes"), mode: mode, code: code}
+	sum := LintSummary{Total: len(fs), Codes: task.Summarize(fs, mode == "codes"), HiddenCodes: []task.CodeCount{}, mode: mode, code: code}
 	if sum.Codes == nil {
 		sum.Codes = []task.CodeCount{}
 	}
@@ -78,18 +82,69 @@ func lintFlags(f flags) (mode, code string, err error) {
 	return mode, code, nil
 }
 
+// withCode keeps the findings of one code.
+func withCode(fs []task.Finding, code string) []task.Finding {
+	kept := []task.Finding{}
+	for _, x := range fs {
+		if task.FindingCode(x.Problem) == code {
+			kept = append(kept, x)
+		}
+	}
+	return kept
+}
+
+// setHidden records the findings left out because their tasks are closed.
+// With nothing open to fix, next shows the hidden ones.
+func setHidden(reply Reply, hidden []task.Finding, code string) {
+	sum := reply["summary"].(LintSummary)
+	sum.Hidden = len(hidden)
+	if hc := task.Summarize(hidden, false); hc != nil {
+		sum.HiddenCodes = hc
+	}
+	reply["summary"] = sum
+	reply["hidden"] = sum.Hidden
+	if sum.Total == 0 && sum.Hidden > 0 && sum.mode != "codes" {
+		reply["next"] = hiddenCommand(code)
+	}
+}
+
+func hiddenCommand(code string) string {
+	if code != "" {
+		return "hug task lint --code " + code + " --all"
+	}
+	return "hug task lint --all"
+}
+
+// writeHidden ends the output with what was left out, if anything:
+// "986 findings on closed tasks hidden (432 done-unchecked, ...): hug task lint --all".
+func writeHidden(w io.Writer, sum LintSummary) {
+	if sum.Hidden == 0 {
+		return
+	}
+	var parts []string
+	for i, c := range sum.HiddenCodes {
+		if i == 3 {
+			parts = append(parts, "...")
+			break
+		}
+		parts = append(parts, fmt.Sprintf("%d %s", c.Count, c.Code))
+	}
+	fmt.Fprintf(w, "%s on closed tasks hidden (%s): %s\n", plural(sum.Hidden, "finding", "findings"), strings.Join(parts, ", "), hiddenCommand(sum.code))
+}
+
 // writeFindings prints a lint or edit reply's findings: never nothing.
 func writeFindings(w io.Writer, fs []task.Finding, sum LintSummary) {
+	defer writeHidden(w, sum)
 	switch {
 	case sum.mode == "codes":
 		fmt.Fprintf(w, "finding codes (%s on this board):\n", plural(sum.Total, "finding", "findings"))
 		writeCodes(w, sum.Codes)
 		return
 	case len(fs) == 0 && sum.code != "":
-		fmt.Fprintf(w, "no findings with code %s\n", sum.code)
+		fmt.Fprintf(w, "no findings with code %s%s\n", sum.code, onOpen(sum))
 		return
 	case len(fs) == 0:
-		fmt.Fprintln(w, "no findings")
+		fmt.Fprintf(w, "no findings%s\n", onOpen(sum))
 		return
 	case sum.mode == "summary":
 		fmt.Fprintf(w, "%s in %s:\n", plural(sum.Total, "finding", "findings"), plural(len(sum.Codes), "code", "codes"))
@@ -137,4 +192,12 @@ func plural(n int, one, many string) string {
 		return "1 " + one
 	}
 	return fmt.Sprintf("%d %s", n, many)
+}
+
+// onOpen qualifies "no findings" when closed tasks' findings were hidden.
+func onOpen(sum LintSummary) string {
+	if sum.Hidden > 0 {
+		return " on open tasks"
+	}
+	return ""
 }
