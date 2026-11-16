@@ -33,3 +33,5 @@ gitbranch: Sync/pull/push/UpdateMessage in huginn/gitbranch/gitbranch.go; memory
 - [ ] real trial on two Statbus clones, noted with times
 
 ## Notes
+
+Jørgen 2026-11-16: graceful detection of network failure, never hang (every git network call has a timeout and runs non-interactively: GIT_TERMINAL_PROMPT=0, ssh BatchMode=yes, connect timeout), and sensible architecture. Good old engineering.
