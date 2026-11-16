@@ -43,3 +43,5 @@ TUI: taskRowMark and the overview rows in huginn/internal/tui/render.go render "
 check 2: gh run view 43899146680 (ci/xxvm6t @ ea0bb25, same files as main 32fa085): secrets success / test (ubuntu-latest) success / test (windows-latest) success / test (macos-latest) success; TestEveryRefCommandAcceptsTaskColon (21 commands with task:ID) and TestToolsAcceptTaskColon (MCP) pass
 
 checks 1,4,5: gh run view 43902441497 (ci/xxvm6t @ 43299f3 = main HEAD): secrets success / test (macos-latest) success / test (ubuntu-latest) success / test (windows-latest) success. Local: go test -race ./huginn/internal/tui/ -> 'ok github.com/veridit/hug/huginn/internal/tui 57.591s'. TestIDsBare (overview, list, board, detail: no [ID], no #ID), TestFollowTaskRefAndBack (Tab to LINKS, j, Enter opens Beta, trail 'ID › ', Esc back to Main, missing task:zzzzzz says so). Goldens: 28 files, only [ID] -> ID and 'list › ▸ ID' in the trail, reviewed.
+
+check 3: TestEveryRefCommandAcceptsTaskColon fails if any next:/fix: line printed after 21 task:ID commands contains task: (run 43899146680 success on all OSes)
