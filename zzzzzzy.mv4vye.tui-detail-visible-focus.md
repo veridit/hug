@@ -51,3 +51,5 @@ check 1 (e6f84c0): go test -run TestFocusHintsAreHonest ./huginn/internal/tui/ -
 check 2 (e6f84c0): '--- PASS: TestFocusTabCyclesAndHighlightsOneHeading (0.08s)'. Tab: acceptance->deps->page->acceptance, Shift-Tab reverse; task without deps cycles page/acceptance; task without checks opens on page and Tab goes deps->page. Exactly one '▸ ' heading with list focus, zero with page focus (then the trail id is bracketed); colour: focus style only on the focused heading.
 
 check 3 (e6f84c0): '--- PASS: TestFocusPageScrollsAcceptanceSteps (0.03s)'. Acceptance focus: j j -> check 3, k -> check 2. Page focus: no line starts with '>', no selected-tint SGR in detail text, j j down -> YOffset+3 with the check unchanged, k up -> +1; Space on page focus gives no confirm, message 'Space ticks the check marked >: Tab focuses the checks'.
+
+check 4 (e6f84c0): '--- PASS: TestFocusTabBarShowsTrailInTask (0.03s)'. In a task no '[overview]'/'[list]'/'[board]'/'[!lint]'; tab bar reads ' overview    list    board    !lint   list › 000001' (golden 80x24-no-color/detail.txt line 2), 'list › A › B' after following a dependency, '[list]' back after Esc; View still has m.height lines.
