@@ -31,7 +31,7 @@ Today: hug task finds .hug/tasks via the repository root; a linked worktree has 
 - [x] MCP task_take always requires cwd: without it, it fails with a fix: line; with it, branch and worktree are detected and recorded (test)
 - [ ] show, ls --json and the TUI detail show the branch; in-progress rows show it when it is not the main branch (test and golden)
 - [x] memories captured or remembered in a worktree record its branch (test)
-- [ ] lint flags a doing task whose branch is merged into main or deleted, with fix: hug task done ID (test)
+- [x] lint flags a doing task whose branch is merged into main or deleted, with fix: hug task done ID (test)
 - [ ] tried in practice: agents in two Statbus worktrees (one CLI, one MCP) take tasks and the board shows the right branch for each (evidence in a note)
 
 ## Notes
