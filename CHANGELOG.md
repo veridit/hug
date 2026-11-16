@@ -4,6 +4,17 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.7 - 2026-11-16
+
+### Added
+
+- Task description pattern: `hug task new --purpose --principle --details`
+  (and the same `task_new` fields) write Purpose, Principle and Relevant
+  details after Goal. Lint (`missing-section`) asks for Purpose and
+  Principle on open tasks created from today; older tasks are not flagged.
+  The names come from a blind test: named sections scored +0.49 [+0.28,
+  +0.71] over none (docs/task-vocabulary-test.md).
+
 ## v0.7.6 - 2026-11-16
 
 ### Added
