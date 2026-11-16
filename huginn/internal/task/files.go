@@ -270,9 +270,40 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 		return nil, e
 	}
 	var out []Finding
+	// Which task folders exist: one ReadDir per group folder instead of an
+	// Lstat chain per task (44w1ev: diskPath was 56% of lint at 10,000
+	// tasks, and almost no task has files).
+	folders := map[string]bool{}
+	listed := map[string]bool{}
 	for _, t := range ts {
-		p, e := s.diskPath(t.Path)
-		if e != nil {
+		group := filepath.Dir(filepath.FromSlash(t.Path))
+		if listed[group] {
+			continue
+		}
+		listed[group] = true
+		entries, _ := os.ReadDir(filepath.Join(s.Root, group))
+		for _, en := range entries {
+			if en.IsDir() || en.Type()&os.ModeSymlink != 0 {
+				folders[filepath.ToSlash(filepath.Join(group, en.Name()))] = true
+			}
+		}
+	}
+	// Each group folder is checked for traversal and symlinks once; the
+	// task file itself is opened only when it is not a symlink.
+	safe := map[string]bool{}
+	for _, t := range ts {
+		group := filepath.Dir(filepath.FromSlash(t.Path))
+		ok, seen := safe[group]
+		if !seen {
+			_, e := s.diskPath(filepath.ToSlash(group))
+			ok = e == nil
+			safe[group] = ok
+		}
+		if !ok {
+			continue
+		}
+		p := filepath.Join(s.Root, filepath.FromSlash(t.Path))
+		if st, e := os.Lstat(p); e != nil || st.Mode()&os.ModeSymlink != 0 {
 			continue
 		}
 		doc, e := os.ReadFile(p)
@@ -301,6 +332,9 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			if strings.Contains(string(doc), prefix) {
 				out = append(out, Finding{Path: t.Path, Line: 0, Problem: "cites " + prefix + " (a folder that gets deleted); attach the file instead", Fix: "hug task attach " + t.ID + " FILE, then hug task edit " + t.ID})
 			}
+		}
+		if !folders[FolderOf(t)] {
+			continue
 		}
 		dir, e := s.diskPath(FolderOf(t))
 		if e != nil {

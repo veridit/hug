@@ -178,6 +178,15 @@ func Resolve(tasks []Task, ref string) (Task, error) {
 // ResolveDependency deliberately accepts only exact ids and aliases, never slugs or prefixes.
 func ResolveDependency(tasks []Task, ref string) (Task, error) {
 	ref = BareRef(ref)
+	if x := refIndexFor(tasks, false); x != nil {
+		t, e, state := x.resolve(tasks, ref)
+		if state == refStale {
+			t, e, state = refIndexFor(tasks, true).resolve(tasks, ref)
+		}
+		if state == refHit {
+			return t, e
+		}
+	}
 	var ids []Task
 	for _, t := range tasks {
 		if strings.EqualFold(t.ID, ref) {
