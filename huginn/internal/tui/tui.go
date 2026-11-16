@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 
 	"github.com/charmbracelet/bubbles/help"
 	bkey "github.com/charmbracelet/bubbles/key"
@@ -21,13 +22,21 @@ type Options struct {
 	Commit func(msg string) error
 	// Take owns the complete distributed take transaction, including commit.
 	Take func(ref string) (task.Result, error)
+	// NoWatch turns off the reload on changes on disk (nfv18p); tests that
+	// drive the model by hand leave it on through Run only.
+	NoWatch bool
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {
 	if store == nil {
 		return fmt.Errorf("task store is required")
 	}
-	_, err := tea.NewProgram(newModel(store, opts), tea.WithContext(ctx), tea.WithAltScreen()).Run()
+	m := newModel(store, opts)
+	if !opts.NoWatch {
+		m.watch = startWatch(store.Root)
+		defer m.watch.close()
+	}
+	_, err := tea.NewProgram(m, tea.WithContext(ctx), tea.WithAltScreen()).Run()
 	return err
 }
 
@@ -72,6 +81,130 @@ type model struct {
 	// closedFindings are findings on done or dropped tasks, hidden from the
 	// header count, the lint view and the ! marks (6neax1).
 	closedFindings []task.Finding
+	// Reload on changes on disk (nfv18p): watch signals a settled burst of
+	// changes; loading runs off the UI thread; stale says a change came while
+	// a prompt, confirm, palette or the editor was open, so the reload waits
+	// for it to close. gen counts applied snapshots, so an older background
+	// load never overwrites a newer one.
+	watch          *watch
+	loading, stale bool
+	editing        bool
+	gen            int
+	loads          *loadCounter
+}
+
+// loadCounter counts loads from disk, for the idle-load test.
+type loadCounter struct{ n atomic.Int64 }
+
+func (c *loadCounter) add() {
+	if c != nil {
+		c.n.Add(1)
+	}
+}
+
+type changedMsg struct{}
+type loadedMsg struct {
+	sn  snapshot
+	gen int
+}
+
+// waitChange waits for the next settled change on disk.
+func (m model) waitChange() tea.Cmd {
+	if m.watch == nil {
+		return nil
+	}
+	c := m.watch.C
+	return func() tea.Msg {
+		if _, ok := <-c; !ok {
+			return nil
+		}
+		return changedMsg{}
+	}
+}
+
+// busy is true while a reload would interrupt the reader: a prompt or the
+// palette, a confirm question, or the editor.
+func (m model) busy() bool { return m.prompt != "" || m.confirm != "" || m.editing }
+
+// reload starts a background load unless one is running or the reader is busy.
+func (m *model) reload() tea.Cmd {
+	if m.busy() || m.loading {
+		m.stale = true
+		return nil
+	}
+	m.stale, m.loading = false, true
+	s, loads, gen := m.store, m.loads, m.gen
+	return func() tea.Msg { return loadedMsg{loadSnapshot(s, loads), gen} }
+}
+
+// selectionID is the task to keep selected across a reload: by id, since a
+// move elsewhere renames the file.
+func (m model) selectionID() string {
+	if t, ok := m.selected(); ok {
+		return t.ID
+	}
+	return ""
+}
+
+// applyKeeping shows a reloaded snapshot as if nothing moved: the same task
+// selected, the list scrolled the same, the detail at the same line.
+func (m *model) applyKeeping(sn snapshot) {
+	id, offset, y := m.selectionID(), m.offset, m.viewport.YOffset
+	message := m.message
+	path, found := "", false
+	for _, t := range sn.tasks {
+		if id != "" && t.ID == id {
+			path, found = t.Path, true
+			break
+		}
+	}
+	if m.detail && m.detailPath != "" && sn.err == nil {
+		if found {
+			m.detailPath = path
+		} else {
+			message = id + " is gone: it was removed elsewhere"
+		}
+	}
+	m.apply(sn, path)
+	if sn.err == nil {
+		m.message = message
+	}
+	m.offset = offset
+	m.viewport.SetYOffset(y)
+}
+
+// afterUpdate runs a reload that waited for a prompt, confirm or editor to
+// close, once it has closed.
+func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
+	if m.stale && !m.busy() && !m.loading {
+		cmd = tea.Batch(cmd, m.reload())
+	}
+	return m, cmd
+}
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case changedMsg:
+		cmd := m.reload()
+		return m, tea.Batch(cmd, m.waitChange())
+	case loadedMsg:
+		m.loading = false
+		switch {
+		case msg.gen != m.gen:
+			// An action reloaded meanwhile, after this load began: the
+			// screen already shows newer data.
+		case m.busy():
+			m.stale = true // a prompt opened meanwhile: wait for it
+		default:
+			m.applyKeeping(msg.sn)
+		}
+		return m.afterUpdate(nil)
+	case editorMsg:
+		// The editor's own refresh reads everything that changed meanwhile.
+		m.editing, m.stale = false, false
+	}
+	next, cmd := m.update(msg)
+	return next.(model).afterUpdate(cmd)
 }
 
 func newModel(s *task.Store, o Options) model {
@@ -92,31 +225,61 @@ func newModel(s *task.Store, o Options) model {
 	m.resize()
 	return m
 }
-func (m model) Init() tea.Cmd { return nil }
+func (m model) Init() tea.Cmd { return m.waitChange() }
 func (m *model) refresh(path string) {
-	ts, err := m.store.Tasks()
+	m.apply(loadSnapshot(m.store, m.loads), path)
+}
+
+// snapshot is everything refresh reads from disk: the tasks, their parsed
+// files and the lint findings. loadSnapshot builds it without touching the
+// model, so a reload after a change on disk runs off the UI thread (nfv18p).
+type snapshot struct {
+	tasks            []task.Task
+	docs             map[string]*task.Document
+	findings, closed []task.Finding
+	err, readErr     error
+}
+
+func loadSnapshot(s *task.Store, loads *loadCounter) snapshot {
+	loads.add()
+	ts, err := s.Tasks()
 	if err != nil {
-		m.message = err.Error()
-		return
+		return snapshot{err: err}
 	}
 	task.Sort(ts)
-	m.all = ts
-	m.docs = map[string]*task.Document{}
+	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}}
 	var docs []*task.Document
 	for _, t := range ts {
-		b, e := os.ReadFile(filepath.Join(m.store.Root, t.Path))
+		b, e := os.ReadFile(filepath.Join(s.Root, t.Path))
 		if e != nil {
-			m.message = e.Error()
+			sn.readErr = e
 			continue
 		}
 		d := task.Parse(t.Path, b)
 		docs = append(docs, d)
-		m.docs[t.Path] = d
+		sn.docs[t.Path] = d
 	}
 	// Findings on closed tasks (done, dropped) are hidden by default, as in
 	// hug task lint; closedFindings keeps them for counts and for the detail
 	// of a closed task opened on purpose (6neax1).
-	m.findings, m.closedFindings = task.OpenFindings(task.Lint(docs), ts)
+	sn.findings, sn.closed = task.OpenFindings(task.Lint(docs), ts)
+	return sn
+}
+
+// apply shows a snapshot, keeping the task at path selected.
+func (m *model) apply(sn snapshot, path string) {
+	m.gen++
+	if sn.err != nil {
+		m.message = sn.err.Error()
+		return
+	}
+	ts := sn.tasks
+	m.all = ts
+	m.docs = sn.docs
+	if sn.readErr != nil {
+		m.message = sn.readErr.Error()
+	}
+	m.findings, m.closedFindings = sn.findings, sn.closed
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.epics = map[string]bool{}
@@ -408,7 +571,7 @@ func (m *model) back() {
 		m.setView("overview")
 	}
 }
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Bubble Tea coalesces fast typing, including gg, into rune batches.
 	if event, ok := msg.(tea.KeyMsg); ok && event.Type == tea.KeyRunes && len(event.Runes) > 1 {
 		var cmds []tea.Cmd

@@ -25,7 +25,7 @@ Backspace / F   remove last chip / clear all filters
 o / i / b / !   views: overview / list (also v) / board / lint
 s / y           status / type palette shortcut
 c               clear all filters
-r               refresh files and lint
+r               refresh now (changes on disk show by themselves)
 
 PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>,
 epic <id>, goto <id>, lint, clear, help

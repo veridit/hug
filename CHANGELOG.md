@@ -15,6 +15,18 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   when the main worktree has it, or else made a second, separate checkout
   there. `hug mem project` shows the main worktree's file. (065wwn)
 
+### Added
+
+- `hug task tui` refreshes by itself when tasks change on disk: a
+  `hug task note`, `set` or `take` in another terminal or by an agent shows
+  within a fraction of a second, with no key pressed. The selected task, the
+  list's scroll and the open task's scroll stay put. An open search, palette,
+  confirm question or editor is never interrupted; the change shows once it
+  closes. The TUI asks the OS to tell it when the task branch's ref, the
+  `packed-refs` file or the tasks folder changes, so it does nothing while
+  nothing changes; where the OS cannot do that, it checks the ref's
+  modification time every 2 seconds. `r` still refreshes at once. (nfv18p)
+
 ## v0.7.21 - 2026-11-16
 
 ### Fixed

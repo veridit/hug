@@ -142,6 +142,7 @@ func (m *model) runEditor(t task.Task) tea.Cmd {
 	for _, f := range m.editFindings(path) {
 		m.editBefore[f.Problem] = true
 	}
+	m.editing = true // a change on disk meanwhile waits for the editor to close
 	return tea.ExecProcess(cmd, func(e error) tea.Msg { return editorMsg{path: path, err: e} })
 }
 

@@ -100,7 +100,7 @@ func (m model) helpText() string {
 		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/a/e"),
 		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
 		hint("o / i / b / !", "views: overview / list (also v) / board / lint"),
-		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh files and lint"),
+		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh now (changes on disk show by themselves)"),
 	}
 	actions := []bkey.Binding{
 		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),
