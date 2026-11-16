@@ -33,7 +33,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 
 
 
-type F feature B bug C chore S spike D docs · priority C critical H high M medium L low
+Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low
 Columns 1–3 of 5 · h/l or Tab/Shift-Tab reveals other columns
 All tasks · : filters and commands
 

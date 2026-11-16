@@ -22,6 +22,11 @@ func (m *model) requestAction(k, value string) {
 	m.confirm = k
 	m.confirmPath = t.Path
 	m.pendingValue = value
+	if k == "e" {
+		// Name the editor in the prompt; resolved once here, not on every
+		// frame (2026-11-16, user: the prompt did not say which editor).
+		m.pendingValue = strings.Join(editor.Command(), " ")
+	}
 }
 func (m *model) executeAction() tea.Cmd {
 	k, value, path := m.confirm, m.pendingValue, m.confirmPath

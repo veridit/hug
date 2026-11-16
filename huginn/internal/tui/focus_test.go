@@ -327,8 +327,11 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 }
 
 // Check 5: every confirm prompt is one prominent question: it starts with ▶,
-// ends with ?, and in colour its style differs from plain text.
+// ends with the question mark and its answer keys, and in colour its style
+// differs from plain text.
 func TestFocusConfirmPromptsStandOut(t *testing.T) {
+	t.Setenv("VISUAL", "")
+	t.Setenv("EDITOR", "subl --wait")
 	for k := range actionNames {
 		m, main := focusModel(t)
 		m.styles.renderer.SetColorProfile(termenv.TrueColor)
@@ -344,8 +347,11 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 		lines := strings.Split(m.View(), "\n")
 		line := lines[len(lines)-2]
 		plain := strings.TrimRight(ansi.Strip(line), " ")
-		if !strings.HasPrefix(plain, "▶ ") || !strings.HasSuffix(plain, "?") {
+		if !strings.HasPrefix(plain, "▶ ") || !strings.HasSuffix(plain, "? Enter yes · Esc no") {
 			t.Fatalf("%q: not a marked question: %q", k, plain)
+		}
+		if ansi.StringWidth(ansi.Strip(line)) != m.width {
+			t.Fatalf("%q: confirm bar is not full width: %d", k, ansi.StringWidth(ansi.Strip(line)))
 		}
 		if line == m.styles.normal.Render(ansi.Strip(line)) || !strings.Contains(line, "48;2;") || !strings.Contains(line, "\x1b[1") {
 			t.Fatalf("%q: confirm line is not styled apart from plain text: %q", k, line)
@@ -359,20 +365,57 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 			if !strings.Contains(plain, "Confirm new Brand new?") {
 				t.Fatalf("new wording: %q", plain)
 			}
+		case "e":
+			if !strings.Contains(plain, "Edit "+main.ID+" in subl --wait?") {
+				t.Fatalf("edit wording: %q", plain)
+			}
 		default:
 			if !strings.Contains(plain, "Confirm "+actionNames[k]+" "+main.ID+" Main?") {
 				t.Fatalf("%q wording: %q", k, plain)
 			}
 		}
 	}
-	// A long title is cut, never the question mark.
+	// A long title is cut, never the question or its answer keys.
 	m, _ := focusModel(t)
-	m.width = 30
+	if help := ansi.Strip(m.helpText()); !strings.Contains(help, "$VISUAL, else $EDITOR, git core.editor, vi") {
+		t.Fatalf("help does not say how the editor is chosen:\n%s", help)
+	}
+	m.width = 40
 	m.resize()
 	m = press(m, "t")
 	lines := strings.Split(ansi.Strip(m.View()), "\n")
-	if got := strings.TrimRight(lines[len(lines)-2], " "); !strings.HasSuffix(got, "?") {
-		t.Fatalf("narrow confirm lost its ?: %q", got)
+	if got := strings.TrimRight(lines[len(lines)-2], " "); !strings.HasSuffix(got, "? Enter yes · Esc no") || !strings.Contains(got, "…") {
+		t.Fatalf("narrow confirm lost its question: %q", got)
+	}
+}
+
+// The detail header shows no empty badge for an unset priority.
+func TestDetailHeaderHasNoEmptyBadge(t *testing.T) {
+	m, main := focusModel(t)
+	main.Priority = ""
+	for _, line := range m.detailHeader(main) {
+		if strings.Contains(ansi.Strip(line), "[]") {
+			t.Fatalf("empty badge: %q", ansi.Strip(line))
+		}
+	}
+}
+
+// The board legend names its columns: "Type: … · Priority: …", with T and
+// P emphasised; narrow boards shorten to "T: … · P: …".
+func TestBoardLegendNamesColumns(t *testing.T) {
+	m, _ := focusModel(t)
+	m.width = 140
+	if got := ansi.Strip(m.legend()); !strings.HasPrefix(got, "Type: ") || !strings.Contains(got, " · Priority: C critical") {
+		t.Fatalf("wide legend: %q", got)
+	}
+	m.width = 60
+	if got := ansi.Strip(m.legend()); !strings.HasPrefix(got, "T: ") || !strings.Contains(got, " · P: C critical") {
+		t.Fatalf("narrow legend: %q", got)
+	}
+	m.styles.renderer.SetColorProfile(termenv.TrueColor)
+	m.width = 140
+	if got := m.legend(); !strings.Contains(got, m.styles.normal.Bold(true).Underline(true).Render("T")) {
+		t.Fatalf("T not emphasised: %q", got)
 	}
 }
 

@@ -54,7 +54,15 @@ func (m model) markdown(s string) string {
 }
 func (m model) detailHeader(t task.Task) []string {
 	title := m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width))
-	badges := []string{m.styles.status[m.boardStatus(t)].Bold(true).Render("[" + oneLine(m.boardStatus(t)) + "]"), m.styles.kind[t.Type].Render("[" + oneLine(t.Type) + "]"), m.styles.priority[t.Priority].Render("[" + oneLine(t.Priority) + "]"), m.styles.accent.Render("[" + oneLine(t.ID) + "]")}
+	badges := []string{m.styles.status[m.boardStatus(t)].Bold(true).Render("[" + oneLine(m.boardStatus(t)) + "]")}
+	// An unset type or priority shows no badge, not "[]" (2026-11-16, user).
+	if v := oneLine(t.Type); v != "" {
+		badges = append(badges, m.styles.kind[t.Type].Render("["+v+"]"))
+	}
+	if v := oneLine(t.Priority); v != "" {
+		badges = append(badges, m.styles.priority[t.Priority].Render("["+v+"]"))
+	}
+	badges = append(badges, m.styles.accent.Render("["+oneLine(t.ID)+"]"))
 	group := t.Group
 	if group == "" {
 		group = "root"

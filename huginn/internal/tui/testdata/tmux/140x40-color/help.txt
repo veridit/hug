@@ -10,7 +10,7 @@ ctrl-d / ctrl-u half page down / up                                     Tab / Sh
 PgDn / PgUp     full page down / up                                     t / d / x       take / done / drop task
 h/← Shift-Tab   previous pane / column                                  J / K           move down / up in global rank order
 l/→ Tab         next pane / column                                      N               new title, goal and one verification item
-Enter           open full task detail                                   e               edit in $EDITOR, then refresh + lint
+Enter           open full task detail                                   e               edit in $VISUAL, else $EDITOR, git core.editor, vi
 Esc             back one level, never quits                             Enter / Esc     confirm / cancel every editing action
 q / ctrl-c      quit (q only outside inputs)
 /               live find; Enter keeps, Esc clears

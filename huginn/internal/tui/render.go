@@ -131,7 +131,9 @@ func initial(styles map[string]lipgloss.Style, value string) string {
 	return styles[value].Render(strings.ToUpper(v[:1]))
 }
 
-// legend spells out the board's one-letter type and priority cells.
+// legend spells out the board's one-letter type and priority cells. Its two
+// words start with the column labels T and P, emphasised, so the reader sees
+// which column each half explains (2026-11-16, user).
 func (m model) legend() string {
 	var parts []string
 	for _, k := range task.Types {
@@ -143,10 +145,14 @@ func (m model) legend() string {
 		parts = append(parts, initial(m.styles.priority, p)+" "+m.styles.dim.Render(p))
 	}
 	priorities := strings.Join(parts, " ")
-	full := m.styles.dim.Render("type ") + kinds + m.styles.dim.Render(" · priority ") + priorities
+	label := func(word string) string {
+		return m.styles.normal.Bold(true).Underline(true).Render(word[:1]) + m.styles.dim.Render(word[1:]+": ")
+	}
+	full := label("Type") + kinds + m.styles.dim.Render(" · ") + label("Priority") + priorities
 	if ansi.StringWidth(full) > m.width {
-		// Narrow terminals drop the two words, never a letter's meaning.
-		full = kinds + m.styles.dim.Render(" · ") + priorities
+		// Narrow terminals shorten the words to their letters, never a
+		// value's meaning.
+		full = label("T") + kinds + m.styles.dim.Render(" · ") + label("P") + priorities
 	}
 	return fit(full, m.width)
 }
@@ -506,14 +512,22 @@ func (m model) View() string {
 }
 
 // confirmLine is the question every confirm asks, in one style that cannot be
-// missed: the whole line as a bold bar in the warning colour, ending in a
-// question mark that survives truncation (2026-11-16, user: a plain prompt
-// went unnoticed). It starts "▶ " so it stands out without colour too.
+// missed: a full-width bold bar in the warning colour, starting "▶ " so it
+// stands out without colour too, and ending in the question mark and the
+// answer keys, which survive truncation (2026-11-16, user: a plain prompt
+// went unnoticed).
 func (m model) confirmLine() string {
 	question := "Confirm " + actionNames[m.confirm] + " "
 	switch m.confirm {
 	case "n":
 		question += oneLine(m.pendingValue)
+	case "e":
+		for _, t := range m.all {
+			if t.Path == m.confirmPath {
+				question = "Edit " + oneLine(t.ID) + " in " + oneLine(m.pendingValue)
+				break
+			}
+		}
 	case " ":
 		// Say exactly what Space will do: tick or untick which item, quoted
 		// as the ticket shows it, box and number after the colon.
@@ -536,9 +550,9 @@ func (m model) confirmLine() string {
 			}
 		}
 	}
-	// The key bar below says Enter confirms and Esc cancels.
+	answer := "? Enter yes · Esc no"
 	question = strings.TrimRight(question, " ")
-	line := "▶ " + ansi.Truncate(question, max(1, m.width-3), "…") + "?"
+	line := "▶ " + ansi.Truncate(question, max(1, m.width-2-ansi.StringWidth(answer)), "…") + answer
 	return m.styles.ask.Render(fit(line, m.width))
 }
 

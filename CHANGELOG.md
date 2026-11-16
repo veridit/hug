@@ -18,9 +18,15 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 - Key hints follow focus and show only keys that work there. Keys are never
   written as `[ / ]` (read as the `/` key): headings say `j/k or [ ] step`.
   Space ticks only with the checks focused.
-- Every confirm prompt (take, done, drop, move, edit, new, tick) is one bold
-  warning-coloured bar starting `▶` and ending `?`; the `?` survives
-  truncation. The tick wording stays `Tick: ☐ 2. text`.
+- Every confirm prompt (take, done, drop, move, edit, new, tick) is one
+  full-width bold warning-coloured bar: `▶ …? Enter yes · Esc no`, the
+  question and its keys surviving truncation. The tick wording stays
+  `Tick: ☐ 2. text`; the edit prompt names the editor it will run
+  (`Edit qawmnb in subl --wait?`), and help says how it is chosen ($VISUAL,
+  else $EDITOR, git core.editor, vi).
+- Board legend names its columns: `Type: F feature … · Priority: C critical
+  …` with T and P emphasised; narrow boards show `T: … · P: …`.
+- The task header shows no empty `[]` badge for an unset type or priority.
 - In a task, `n` and `p` open the next and previous task (Ctrl-N and Ctrl-P
   still work); `{` and `}` are gone, being hard to reach on a Norwegian
   keyboard. In lists `n` and `p` move like `j` and `k`. New task is `N` in

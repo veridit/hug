@@ -106,7 +106,7 @@ func (m model) helpText() string {
 		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),
 		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps"),
 		hint("t / d / x", "take / done / drop task"), hint("J / K", "move down / up in global rank order"),
-		hint("N", "new title, goal and one verification item"), hint("e", "edit in $EDITOR, then refresh + lint"),
+		hint("N", "new title, goal and one verification item"), hint("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),
 	}
 	if m.helpQuery != "" || m.helpTyping {
