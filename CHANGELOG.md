@@ -4,6 +4,16 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.13 - 2026-11-16
+
+### Fixed
+
+- The secret check (memory writes and task attach) catches keys stored as
+  `name=value` under a secret-like name, such as `aws_secret_access_key=...`
+  or `DB_PASSWORD: ...`, when the value looks like a key (12+ characters
+  mixing letters and digits). On the 28,476 stored memories here it flags
+  nothing new; sudoers `NOPASSWD:` lines and variable names stay unflagged.
+
 ## v0.7.12 - 2026-11-16
 
 ### Fixed
