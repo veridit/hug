@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/flock"
 )
 
 // 0hkaa5, end to end with the real binary and its real detached syncers:
@@ -18,7 +20,19 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 		t.Skip("builds the hug binary")
 	}
 	root := t.TempDir()
-	bin := filepath.Join(root, "hug")
+	// The detached syncers run the binary and may still be running when the
+	// test ends; Windows cannot delete a running .exe, so the binary lives
+	// outside root, and the test waits for the syncers before cleanup.
+	binDir, err := os.MkdirTemp("", "hug-sync-bin-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		for i := 0; i < 50 && os.RemoveAll(binDir) != nil; i++ {
+			time.Sleep(200 * time.Millisecond)
+		}
+	})
+	bin := filepath.Join(binDir, "hug")
 	if runtime.GOOS == "windows" {
 		bin += ".exe"
 	}
@@ -100,10 +114,38 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 		b, _ := os.ReadFile(l)
 		logText += l + ":\n" + string(b)
 	}
+	// Let the syncers both clones started finish before the temp dirs go.
+	t.Cleanup(func() { quiet(t, one, two) })
 	if note < 0 || mem < 0 {
 		t.Fatalf("clone B: note after %v, memory after %v (-1: not within %v)\n%s", note, mem, limit, logText)
 	}
 	t.Logf("clone B saw the note after %v and the memory after %v", note.Round(10*time.Millisecond), mem.Round(10*time.Millisecond))
+}
+
+// quiet waits up to 60 s until no background pass holds or waits for a run
+// lock in the clones (their .git/hug/sync/*.run and *.queue files).
+func quiet(t *testing.T, clones ...string) {
+	deadline := time.Now().Add(60 * time.Second)
+	for _, c := range clones {
+		locks, _ := filepath.Glob(filepath.Join(c, ".git", "hug", "sync", "*.run"))
+		more, _ := filepath.Glob(filepath.Join(c, ".git", "hug", "sync", "*.queue"))
+		for _, l := range append(locks, more...) {
+			for time.Now().Before(deadline) {
+				release, ok, err := flock.TryAcquire(l)
+				if err != nil {
+					break
+				}
+				if ok {
+					release()
+					break
+				}
+				time.Sleep(100 * time.Millisecond)
+			}
+		}
+	}
+	if time.Now().After(deadline) {
+		t.Logf("background passes still running after 60 s")
+	}
 }
 
 func between(s, from, to string) string {
