@@ -32,3 +32,5 @@ Code: huginn/internal/tui/move.go (moveTarget, from ksv323), actions.go. A move 
 - [ ] the footer in grab mode shows only the keys that work there, e.g. 'j/k move · g/G top/bottom · Enter drop · Esc cancel' (golden)
 
 ## Notes
+
+fc2c3cc + 88b07b9: grab (m, j/k with count, gg/G, Enter one commit, Esc nothing), yank y + P/p paste one commit, J/K no confirm. Tests: TestGrabFiveUpOneCommit, TestGrabEscCancels, TestYankAndPaste, TestGrabMovesFarWithOneCommit, TestGrabCountsAndEnds, TestMoveFarRefusals, TestGrabDefersReload all PASS. Golden testdata/tmux/*/grab.txt key bar: 'j/k move · g/G top/bottom · Enter drop · Esc cancel'; tmux: PASS (44 real-binary goldens). Choice noted: the ticket goal says 'a single confirm'; check 1 says confirm-free drop: I followed check 1 (Enter in grab is the confirm). List y now yanks; type palette is :type, f t, or y inside a task.
