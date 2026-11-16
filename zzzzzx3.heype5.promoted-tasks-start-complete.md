@@ -1,13 +1,14 @@
 ---
 id: heype5
 title: "Promoted tasks start complete; note text in angle brackets is not lost"
-status: todo
+status: "doing"
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["poodle"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
