@@ -302,15 +302,27 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 		if !ok {
 			continue
 		}
-		p := filepath.Join(s.Root, filepath.FromSlash(t.Path))
-		if st, e := os.Lstat(p); e != nil || st.Mode()&os.ModeSymlink != 0 {
-			continue
+		// The references come from the parse the cache kept (44w1ev): the
+		// file is read only to check forbidden prefixes, or when the Task
+		// was made without its texts.
+		var doc []byte
+		refs := []Ref(nil)
+		if t.Texts != nil {
+			refs = t.Texts.Refs
 		}
-		doc, e := os.ReadFile(p)
-		if e != nil {
-			continue
+		if len(forbid) > 0 || t.Texts == nil {
+			p := filepath.Join(s.Root, filepath.FromSlash(t.Path))
+			if st, e := os.Lstat(p); e != nil || st.Mode()&os.ModeSymlink != 0 {
+				continue
+			}
+			if doc, e = os.ReadFile(p); e != nil {
+				continue
+			}
+			if t.Texts == nil {
+				refs = FileRefs(doc, t.ID)
+			}
 		}
-		for _, ref := range FileRefs(doc, t.ID) {
+		for _, ref := range refs {
 			owner := t
 			if ref.Task != t.ID {
 				o, e := Resolve(ts, ref.Task)
