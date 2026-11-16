@@ -2,9 +2,11 @@
 package cache
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"database/sql"
+	"encoding/gob"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -15,9 +17,10 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 )
 
-const SchemaVersion = "7" // 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1)
+const SchemaVersion = "9" // 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes and description texts kept from the parse (44w1ev)
 
 type Change struct{ Status, OldPath, Path string }
 type Git interface {
@@ -47,7 +50,18 @@ type Cache struct {
 	files   map[string]record
 	ordered []task.Task
 	rebuild bool
+	// synced is the wall clock when the last sync began (meta synced_ns).
+	// A file modified within racyWindow of it may have changed again in
+	// the same mtime tick, so it is hashed even when its marker matches.
+	synced int64
+	delta  int // rows in board_delta
+	// rebuilt: Open found another schema version (kept after the rebuild).
+	rebuilt bool
 }
+
+// racyWindow covers coarse mtime clocks (FAT 2 s, some network shares 1 s)
+// and writes that land in the same tick as a sync: git's racy-clean rule.
+const racyWindow = 2 * time.Second
 
 // Open takes the task worktree root and a database path, normally
 // filepath.Join(mainGitDir,"huginn","cache.db"). No state is written to task files.
@@ -76,14 +90,26 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 		return fail(e)
 	}
 	if version != SchemaVersion {
-		c.rebuild = true
-		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DELETE FROM meta;`); e != nil {
+		c.rebuild, c.rebuilt = true, version != ""
+		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DELETE FROM meta;`); e != nil {
 			return fail(e)
 		}
 	}
-	_, e = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(id TEXT NOT NULL,path TEXT PRIMARY KEY,"group" TEXT,rank TEXT,slug TEXT,title TEXT,status TEXT,type TEXT,priority TEXT,assignee TEXT,updated TEXT,payload TEXT NOT NULL,findings TEXT NOT NULL); CREATE INDEX IF NOT EXISTS tasks_id ON tasks(id); CREATE TABLE IF NOT EXISTS files(path TEXT PRIMARY KEY,mtime_ns INTEGER NOT NULL,size INTEGER NOT NULL,sha256 TEXT NOT NULL); CREATE TABLE IF NOT EXISTS deps("from" TEXT NOT NULL,"to" TEXT NOT NULL,line INTEGER NOT NULL,path TEXT NOT NULL,ref TEXT NOT NULL,ref_key TEXT NOT NULL); CREATE INDEX IF NOT EXISTS deps_ref_key ON deps(ref_key); CREATE INDEX IF NOT EXISTS deps_from ON deps("from"); CREATE INDEX IF NOT EXISTS deps_to ON deps("to"); CREATE INDEX IF NOT EXISTS deps_path ON deps(path); CREATE TABLE IF NOT EXISTS aliases(alias TEXT NOT NULL,id TEXT NOT NULL,path TEXT NOT NULL); CREATE INDEX IF NOT EXISTS aliases_alias ON aliases(alias); CREATE INDEX IF NOT EXISTS aliases_path ON aliases(path);`)
+	_, e = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(id TEXT NOT NULL,path TEXT PRIMARY KEY,"group" TEXT,rank TEXT,slug TEXT,title TEXT,status TEXT,type TEXT,priority TEXT,assignee TEXT,updated TEXT,payload TEXT NOT NULL,findings TEXT NOT NULL); CREATE INDEX IF NOT EXISTS tasks_id ON tasks(id); CREATE TABLE IF NOT EXISTS files(path TEXT PRIMARY KEY,mtime_ns INTEGER NOT NULL,size INTEGER NOT NULL,sha256 TEXT NOT NULL); CREATE TABLE IF NOT EXISTS deps("from" TEXT NOT NULL,"to" TEXT NOT NULL,line INTEGER NOT NULL,path TEXT NOT NULL,ref TEXT NOT NULL,ref_key TEXT NOT NULL); CREATE INDEX IF NOT EXISTS deps_ref_key ON deps(ref_key); CREATE INDEX IF NOT EXISTS deps_from ON deps("from"); CREATE INDEX IF NOT EXISTS deps_to ON deps("to"); CREATE INDEX IF NOT EXISTS deps_path ON deps(path); CREATE TABLE IF NOT EXISTS aliases(alias TEXT NOT NULL,id TEXT NOT NULL,path TEXT NOT NULL); CREATE INDEX IF NOT EXISTS aliases_alias ON aliases(alias); CREATE INDEX IF NOT EXISTS aliases_path ON aliases(path); CREATE TABLE IF NOT EXISTS board_delta(path TEXT PRIMARY KEY,value BLOB NOT NULL);`)
 	if e != nil {
 		return fail(e)
+	}
+	var synced string
+	if e = db.QueryRow(`SELECT value FROM meta WHERE key='synced_ns'`).Scan(&synced); e != nil && e != sql.ErrNoRows {
+		return fail(e)
+	}
+	fmt.Sscan(synced, &c.synced)
+	if !c.rebuild && c.loadBoard() {
+		e = db.QueryRow(`SELECT value FROM meta WHERE key='head'`).Scan(&c.head)
+		if e != nil && e != sql.ErrNoRows {
+			return fail(e)
+		}
+		return c, nil
 	}
 	rows, e := db.Query(`SELECT f.path,f.mtime_ns,f.size,f.sha256,t.payload,t.findings FROM files f JOIN tasks t ON t.path=f.path`)
 	if e != nil {
@@ -118,6 +144,124 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 	return c, nil
 }
 func (c *Cache) Close() error { c.mu.Lock(); defer c.mu.Unlock(); return c.db.Close() }
+
+// The board blob (44w1ev): every record in one gob value (meta 'board'),
+// plus a delta table of records changed since (board_delta: one row per
+// path, an empty value for a path that is gone). Open decodes the blob in
+// ~12 ms at 10,000 tasks (decoding the rows' JSON payloads took ~95 ms) and
+// applies the delta; a write stores only its own records in the delta, so
+// it never rewrites the 6 MB blob. Once the delta holds more than
+// deltaLimit rows the next sync folds it into a new blob. The rows stay the
+// source for SQL; blob and delta are a cache of the cache and are ignored
+// when they do not match the files table's count.
+type boardBlob struct {
+	Schema  string
+	Records []record
+}
+
+// deltaLimit: past this many delta rows a sync rewrites the blob. Decoding
+// 512 single-record gobs costs about as much as one 10,000-record blob.
+const deltaLimit = 512
+
+func (c *Cache) loadBoard() bool {
+	var b []byte
+	if c.db.QueryRow(`SELECT value FROM meta WHERE key='board'`).Scan(&b) != nil {
+		return false
+	}
+	var blob boardBlob
+	if gob.NewDecoder(bytes.NewReader(b)).Decode(&blob) != nil || blob.Schema != SchemaVersion {
+		return false
+	}
+	files := make(map[string]record, len(blob.Records))
+	for _, r := range blob.Records {
+		files[r.Path] = r
+	}
+	rows, e := c.db.Query(`SELECT path,value FROM board_delta`)
+	if e != nil {
+		return false
+	}
+	defer rows.Close()
+	n := 0
+	for rows.Next() {
+		var path string
+		var v []byte
+		if rows.Scan(&path, &v) != nil {
+			return false
+		}
+		n++
+		if len(v) == 0 {
+			delete(files, path)
+			continue
+		}
+		var r record
+		if gob.NewDecoder(bytes.NewReader(v)).Decode(&r) != nil {
+			return false
+		}
+		files[path] = r
+	}
+	if rows.Err() != nil {
+		return false
+	}
+	var count int
+	if c.db.QueryRow(`SELECT count(*) FROM files`).Scan(&count) != nil || count != len(files) {
+		return false
+	}
+	c.files, c.delta = files, n
+	return true
+}
+func encodeBoard(files map[string]record) ([]byte, error) {
+	blob := boardBlob{Schema: SchemaVersion, Records: make([]record, 0, len(files))}
+	for _, r := range files {
+		blob.Records = append(blob.Records, r)
+	}
+	var b bytes.Buffer
+	e := gob.NewEncoder(&b).Encode(blob)
+	return b.Bytes(), e
+}
+func encodeRecord(r record) ([]byte, error) {
+	var b bytes.Buffer
+	e := gob.NewEncoder(&b).Encode(r)
+	return b.Bytes(), e
+}
+
+// storeBoard writes the blob or the delta for a sync that went from the
+// records in old to those in next, inside tx.
+func (c *Cache) storeBoard(ctx context.Context, tx *sql.Tx, next map[string]record, changed map[string]record, removed []string) (int, error) {
+	exec := func(q string, args ...any) error { _, e := tx.ExecContext(ctx, q, args...); return e }
+	delta := c.delta + len(changed) + len(removed)
+	if c.rebuild || c.files == nil || len(c.files) == 0 || delta > deltaLimit {
+		board, e := encodeBoard(next)
+		if e != nil {
+			return 0, e
+		}
+		if e = exec(`INSERT OR REPLACE INTO meta(key,value) VALUES('board',?)`, board); e != nil {
+			return 0, e
+		}
+		return 0, exec(`DELETE FROM board_delta`)
+	}
+	stmt, e := tx.PrepareContext(ctx, `INSERT OR REPLACE INTO board_delta(path,value) VALUES(?,?)`)
+	if e != nil {
+		return 0, e
+	}
+	defer stmt.Close()
+	for p, r := range changed {
+		v, e := encodeRecord(r)
+		if e != nil {
+			return 0, e
+		}
+		if _, e = stmt.ExecContext(ctx, p, v); e != nil {
+			return 0, e
+		}
+	}
+	for _, p := range removed {
+		if _, e = stmt.ExecContext(ctx, p, []byte{}); e != nil {
+			return 0, e
+		}
+	}
+	var n int
+	e = tx.QueryRowContext(ctx, `SELECT count(*) FROM board_delta`).Scan(&n)
+	return n, e
+}
 func (c *Cache) Sync(ctx context.Context) (Stats, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -126,6 +270,8 @@ func (c *Cache) Sync(ctx context.Context) (Stats, error) {
 func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	var stats Stats
 	stats.Rebuilt = c.rebuild
+	started := time.Now().UnixNano()
+	racy := c.synced - int64(racyWindow)
 	head := c.head
 	forced := map[string]bool{}
 	renameHints := map[string]string{}
@@ -190,7 +336,7 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 		same := true
 		for p, m := range disk {
 			r, ok := c.files[p]
-			if !ok || r.MtimeNS != m.MtimeNS || r.Size != m.Size {
+			if !ok || r.MtimeNS != m.MtimeNS || r.Size != m.Size || m.MtimeNS >= racy {
 				same = false
 				break
 			}
@@ -209,11 +355,12 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	}
 	next := make(map[string]record, len(disk))
 	changed := map[string]record{}
+	rechecked := false
 	renames := map[string]string{}
 	usedOld := map[string]bool{}
 	for path, m := range disk {
 		old, exists := c.files[path]
-		if exists && !c.rebuild && !forced[path] && old.MtimeNS == m.MtimeNS && old.Size == m.Size {
+		if exists && !c.rebuild && !forced[path] && old.MtimeNS == m.MtimeNS && old.Size == m.Size && m.MtimeNS < racy {
 			next[path] = old
 			continue
 		}
@@ -225,6 +372,12 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 		m.SHA256 = hex.EncodeToString(sum[:])
 		stats.Hashed++
 		if exists && !c.rebuild && old.SHA256 == m.SHA256 {
+			if old.Marker == m {
+				// A racy recheck that found the same bytes: nothing to store.
+				rechecked = true
+				next[path] = old
+				continue
+			}
 			old.Marker = m
 			next[path] = old
 			changed[path] = old
@@ -279,6 +432,14 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 		}
 	}
 	if len(changed) == 0 && len(removed) == 0 && head == c.head && !c.rebuild {
+		// Files that were racy are settled now: remember when we looked, so
+		// the next sync trusts their markers.
+		if rechecked {
+			if _, e := c.db.ExecContext(ctx, `INSERT OR REPLACE INTO meta(key,value) VALUES('synced_ns',?)`, fmt.Sprint(started)); e != nil {
+				return stats, e
+			}
+			c.synced = started
+		}
 		return stats, nil
 	}
 	canonical := canonicalizer(next)
@@ -379,7 +540,11 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 			return stats, e
 		}
 	}
-	if e = exec(`INSERT OR REPLACE INTO meta(key,value) VALUES('schema_version',?),('head',?)`, SchemaVersion, head); e != nil {
+	delta, e := c.storeBoard(ctx, tx, next, changed, removed)
+	if e != nil {
+		return stats, e
+	}
+	if e = exec(`INSERT OR REPLACE INTO meta(key,value) VALUES('schema_version',?),('head',?),('synced_ns',?)`, SchemaVersion, head, fmt.Sprint(started)); e != nil {
 		return stats, e
 	}
 	if e = tx.Commit(); e != nil {
@@ -389,6 +554,8 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	c.ordered = nil
 	c.head = head
 	c.rebuild = false
+	c.synced = started
+	c.delta = delta
 	return stats, nil
 }
 
@@ -446,3 +613,16 @@ func (c *Cache) Markers(ctx context.Context) ([]Marker, error) {
 	return out, nil
 }
 func (c *Cache) String() string { return fmt.Sprintf("huginn cache (%s)", c.Root) }
+
+// SetSchemaForTest marks the cache as written by another schema version, as
+// an older or newer hug binary leaves it; the next Open rebuilds. For tests
+// in other packages.
+func (c *Cache) SetSchemaForTest(version string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	_, e := c.db.Exec(`UPDATE meta SET value=? WHERE key='schema_version'`, version)
+	return e
+}
+
+// Rebuilt reports whether Open found another schema version and rebuilt.
+func (c *Cache) Rebuilt() bool { c.mu.Lock(); defer c.mu.Unlock(); return c.rebuilt }

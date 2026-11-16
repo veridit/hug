@@ -349,28 +349,21 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	}
 	out["children"] = children
 	out["notes"] = ""
-	if b, e := os.ReadFile(filepath.Join(root, filepath.FromSlash(t.Path))); e == nil {
-		// Purpose, Principle and Relevant details follow the goal (jnaspy).
-		d := task.Parse(t.Path, b)
+	// Notes and Purpose, Principle and Relevant details (jnaspy) come from
+	// the parse that made t, kept by the cache: ls at 10,000 tasks read and
+	// parsed every file again for them (44w1ev). A Task made without them
+	// (decoded from an old payload) reads its file as before.
+	texts := t.Texts
+	if texts == nil {
+		if b, e := os.ReadFile(filepath.Join(root, filepath.FromSlash(t.Path))); e == nil {
+			texts = task.Parse(t.Path, b).Task.Texts
+		}
+	}
+	if texts != nil {
 		for _, sec := range task.DescriptionSections {
-			out[descriptionKey(sec)] = d.SectionText(sec)
+			out[descriptionKey(sec)] = texts.Description[sec]
 		}
-		lines := strings.Split(string(b), "\n")
-		active := false
-		notes := []string{}
-		for _, l := range lines {
-			if strings.HasPrefix(l, "## ") {
-				if active {
-					break
-				}
-				active = strings.EqualFold(strings.TrimSpace(strings.TrimPrefix(l, "## ")), "Notes")
-				continue
-			}
-			if active {
-				notes = append(notes, l)
-			}
-		}
-		out["notes"] = strings.TrimSpace(strings.Join(notes, "\n"))
+		out["notes"] = texts.Notes
 	}
 	for _, k := range []string{"assignee", "labels", "aliases", "acceptance", "dependency_details"} {
 		if out[k] == nil {
