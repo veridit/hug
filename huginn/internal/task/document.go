@@ -164,7 +164,7 @@ type Task struct {
 	// and the description sections (DescriptionSections), filled by the
 	// same Parse that fills the Task, so a cached Task answers ls without
 	// reading 10,000 files again (44w1ev). Kept out of the JSON payload:
-	// cli builds those keys itself.
+	// cli builds those keys itself. Read only: copies of a Task share it.
 	Texts *Texts `json:"-"`
 }
 
@@ -173,6 +173,9 @@ type Texts struct {
 	Notes string
 	// Description maps each of DescriptionSections to its trimmed body.
 	Description map[string]string
+	// Refs are the file:NAME and task:REF/NAME references in the file
+	// (FileRefs), so lint need not read every task file to check them.
+	Refs []Ref
 }
 type Document struct {
 	Task             Task
@@ -428,7 +431,7 @@ func Parse(path string, data []byte) *Document {
 		}
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
-	d.Task.Texts = &Texts{Notes: notesText(data), Description: map[string]string{}}
+	d.Task.Texts = &Texts{Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}
 	for _, sec := range DescriptionSections {
 		d.Task.Texts.Description[sec] = d.sectionText(sec)
 	}

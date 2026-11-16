@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -76,4 +77,29 @@ func TestHandEditedNotesSeenByLsAndShow(t *testing.T) {
 		t.Fatal("a schema 6 cache was not rebuilt")
 	}
 	notes("HAND EDITED NOTE")
+}
+
+// lint takes file references from the cached parse (44w1ev); a reference
+// added by hand is still reported, and forbid_cite still reads the text.
+func TestLintSeesHandAddedFileRef(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	r := execute(t, a, "new", "Refs", "--goal", "Lint reads refs", "--accept", "seen")
+	path := filepath.Join(a.Cwd, ".hug", "tasks", r["task"].(Reply)["path"].(string))
+	execute(t, a, "lint")
+	b, e := os.ReadFile(path)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = os.WriteFile(path, append(b, []byte("\nsee file:missing.tsv and .jcode/scratch/x\n")...), 0o644); e != nil {
+		t.Fatal(e)
+	}
+	if e = os.WriteFile(filepath.Join(a.Cwd, ".hug", "tasks", "hug.toml"), []byte("forbid_cite = [\".jcode/scratch/\"]\n"), 0o644); e != nil {
+		t.Fatal(e)
+	}
+	out := execute(t, a, "lint", "--json")
+	j := fmt.Sprint(out["findings"])
+	if !strings.Contains(j, "file:missing.tsv: file not found") || !strings.Contains(j, "cites .jcode/scratch/") {
+		t.Fatalf("lint after a hand edit: %s", j)
+	}
 }
