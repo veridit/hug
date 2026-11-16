@@ -74,7 +74,7 @@ func mcpCmd() *cobra.Command {
 				// background pass brings it up to date.
 				go func() {
 					if _, err := a.Reindex(ctx); err != nil && ctx.Err() == nil {
-						fmt.Fprintln(os.Stderr, "muninn: reindex:", err)
+						fmt.Fprintln(os.Stderr, "hug mem: reindex:", err)
 					}
 				}()
 				cwd, _ := os.Getwd()
@@ -276,7 +276,7 @@ func OpenMCP(ctx context.Context, jcodeHome string) (instructions string, regist
 	}
 	go func() {
 		if _, err := a.Reindex(ctx); err != nil && ctx.Err() == nil {
-			fmt.Fprintln(os.Stderr, "muninn: reindex:", err)
+			fmt.Fprintln(os.Stderr, "hug mem: reindex:", err)
 		}
 	}()
 	b = mcpserver.Bind(a, b)

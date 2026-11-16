@@ -49,6 +49,7 @@ var Version = "dev"
 func Main(args []string) int {
 	root := &cobra.Command{
 		Use:           "muninn",
+		Annotations:   map[string]string{cobra.CommandDisplayNameAnnotation: "hug mem"},
 		Short:         "Local-first memory recall for AI coding agents",
 		Example:       "  hug mem search \"banana mode\"\n  hug mem forget k7m2qx\n  hug mem remember \"The corrected fact\"",
 		SilenceUsage:  true,
@@ -87,7 +88,10 @@ func Main(args []string) int {
 	root.SetArgs(args)
 	if err := root.Execute(); err != nil {
 		pprof.StopCPUProfile()
-		fmt.Fprintln(os.Stderr, "muninn:", err)
+		fmt.Fprintln(os.Stderr, "hug mem:", err)
+		if strings.HasPrefix(err.Error(), "unknown command") {
+			fmt.Fprintln(os.Stderr, "fix: hug mem --help")
+		}
 		return 1
 	}
 	return 0
