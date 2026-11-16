@@ -1,13 +1,14 @@
 ---
 id: 8bsx4y
 title: "TUI: inline code in a quiet tint, not red"
-status: todo
+status: "doing"
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
