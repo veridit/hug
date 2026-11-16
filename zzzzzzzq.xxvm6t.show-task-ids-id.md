@@ -1,6 +1,6 @@
 ---
 id: xxvm6t
-title: "Show task ids as #id, and link #id everywhere"
+title: "Show task ids bare, without brackets; task:ID links in text"
 status: todo
 type: feature
 priority: "high"
