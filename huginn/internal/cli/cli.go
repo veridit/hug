@@ -213,7 +213,7 @@ func parse(args []string, allowed string) (flags, error) {
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "help", "mine", "top", "dry-run", "all-instances", "all", "replace"}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace"}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -332,7 +332,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine jsonl epic", "board": "type priority label group mine all epic", "next": "type priority label group mine epic", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine jsonl epic", "board": "type priority label group mine all epic wide", "next": "type priority label group mine epic", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code", "attach": "name note replace safe-reason content"}
 	f, e := parse(args, allowed[cmd])
 	if e != nil {
 		return nil, e
@@ -441,10 +441,23 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		e = s.r.Commit(nil, "hug task init")
+		if e == nil {
+			e = s.r.EnsureFirstCommit("hug task init")
+		}
 		if e != nil {
 			return nil, e
 		}
-		return empty()
+		// Say what exists now: branch, worktree and its first commit.
+		reply, e := empty()
+		head, _ := s.r.Head()
+		remote := s.r.Remote
+		if remote == "" {
+			remote = "(none: tasks stay local until a remote exists)"
+		}
+		reply["message"] = fmt.Sprintf("tasks on branch %s, worktree %s, head %s, remote %s", s.r.Branch, s.r.Dir, shortHash(head), remote)
+		reply["branch"], reply["worktree"], reply["head"] = s.r.Branch, s.r.Dir, head
+		reply["next"] = "hug task new \"title\" --goal \"...\" --accept \"observable check\""
+		return reply, e
 	case "ls":
 		if e = f.count(0); e != nil {
 			return nil, e
@@ -577,6 +590,15 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		fs = append(fs, more...)
+		if c := f.get("code"); c != "" {
+			kept := []task.Finding{}
+			for _, x := range fs {
+				if task.FindingCode(x.Problem) == c {
+					kept = append(kept, x)
+				}
+			}
+			fs = kept
+		}
 		if fs == nil {
 			fs = []task.Finding{}
 		}
@@ -879,7 +901,11 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 	}
 	if cols, ok := reply["board"].([]BoardColumn); ok {
-		writeBoard(a.Out, cols)
+		if slices.Contains(args, "--wide") {
+			writeBoardWide(a.Out, cols)
+		} else {
+			writeBoard(a.Out, cols)
+		}
 	}
 	if ts, ok := reply["tasks"].([]Reply); ok {
 		// Fixed-width columns first, the free-text title last, so the
@@ -946,4 +972,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	fmt.Fprintln(a.Out, "next: "+reply["next"].(string))
 	return 0
+}
+
+func shortHash(h string) string {
+	if len(h) > 8 {
+		return h[:8]
+	}
+	if h == "" {
+		return "(no commit yet)"
+	}
+	return h
 }

@@ -46,6 +46,7 @@ func InEpic(t Task, ts []Task, epic string) bool {
 	p, e := ResolveDependency(ts, t.Parent)
 	return e == nil && strings.EqualFold(p.ID, epic)
 }
+
 type MoveOptions struct {
 	Before, After string
 	Top           bool

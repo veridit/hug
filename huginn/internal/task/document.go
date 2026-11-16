@@ -19,9 +19,71 @@ type Finding struct {
 	Path    string `json:"path"`
 	Line    int    `json:"line"`
 	Problem string `json:"problem"`
+	// Code is a short stable name for the kind of problem (for filtering
+	// and counting); it is derived from Problem, see FindingCode.
+	Code string `json:"code"`
 }
 
-func (f Finding) String() string { return fmt.Sprintf("%s:%d: %s", f.Path, f.Line, f.Problem) }
+// findingCodes maps message prefixes to stable codes. Order matters: the
+// first prefix that matches wins.
+var findingCodes = []struct{ prefix, code string }{
+	{"missing or unterminated frontmatter", "frontmatter"},
+	{"malformed frontmatter", "frontmatter"},
+	{"frontmatter ", "frontmatter"},
+	{"duplicate section", "duplicate-section"},
+	{"duplicate field", "duplicate-field"},
+	{"missing field", "missing-field"},
+	{"invalid id", "invalid-id"},
+	{"filename id differs", "id-mismatch"},
+	{"unknown status", "unknown-status"},
+	{"unknown type", "unknown-type"},
+	{"invalid ", "invalid-field"},
+	{"missing Goal", "missing-goal"},
+	{"Acceptance requires", "no-acceptance"},
+	{"done with unchecked acceptance", "done-unchecked"},
+	{"case-insensitive filename collision", "filename-collision"},
+	{"duplicate id", "duplicate-id"},
+	{"dangling dependency", "dangling-dependency"},
+	{"dependency cycle", "dependency-cycle"},
+	{"missing parent", "missing-parent"},
+	{"task is its own parent", "self-parent"},
+	{"parent ", "parent-too-deep"},
+	{"title is ", "long-title"},
+	{"cites ", "forbidden-citation"},
+	{"task file is a symlink", "file-symlink"},
+	{"duplicate origin", "duplicate-origin"},
+}
+
+// FindingCode names the kind of problem in a finding message.
+func FindingCode(problem string) string {
+	for _, c := range findingCodes {
+		if strings.HasPrefix(problem, c.prefix) {
+			return c.code
+		}
+	}
+	switch {
+	case strings.Contains(problem, ": no task "):
+		return "missing-task-ref"
+	case strings.Contains(problem, ": file not found"):
+		return "missing-file"
+	case strings.Contains(problem, "binary"), strings.Contains(problem, "KiB"), strings.Contains(problem, "too large"):
+		return "file-content"
+	}
+	return "other"
+}
+
+// MarshalJSON fills Code from Problem so every finding carries one.
+func (f Finding) MarshalJSON() ([]byte, error) {
+	type plain Finding
+	if f.Code == "" {
+		f.Code = FindingCode(f.Problem)
+	}
+	return json.Marshal(plain(f))
+}
+
+func (f Finding) String() string {
+	return fmt.Sprintf("%s:%d: [%s] %s", f.Path, f.Line, FindingCode(f.Problem), f.Problem)
+}
 
 type Dependency struct {
 	Ref  string `json:"ref"`
@@ -313,7 +375,7 @@ func stripBacklogMarkers(s string) string {
 	return strings.TrimSpace(strings.Join(out, "\n"))
 }
 func (d *Document) add(line int, p string) {
-	d.Findings = append(d.Findings, Finding{d.Task.Path, line, p})
+	d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: line, Problem: p})
 }
 func (d *Document) fieldLine(k string) int {
 	if n, ok := d.fields[k]; ok {

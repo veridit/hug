@@ -229,10 +229,10 @@ func Lint(docs []*Document) []Finding {
 		t := d.Task
 		tasks = append(tasks, t)
 		if matches := paths[strings.ToLower(t.Path)]; len(matches) > 1 {
-			out = append(out, Finding{t.Path, 1, "case-insensitive filename collision: " + strings.Join(matches, ", ")})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "case-insensitive filename collision: " + strings.Join(matches, ", ")})
 		}
 		if t.ID != "" && counts[t.ID] > 1 {
-			out = append(out, Finding{t.Path, 1, "duplicate id " + t.ID})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "duplicate id " + t.ID})
 		}
 	}
 	adj := map[string][]string{}
@@ -240,7 +240,7 @@ func Lint(docs []*Document) []Finding {
 		for _, dep := range t.Dependencies {
 			v, e := ResolveDependency(tasks, dep.Ref)
 			if e != nil {
-				out = append(out, Finding{t.Path, dep.Line, "dangling dependency " + dep.Ref})
+				out = append(out, Finding{Path: t.Path, Line: dep.Line, Problem: "dangling dependency " + dep.Ref})
 			} else {
 				adj[t.ID] = append(adj[t.ID], v.ID)
 			}
@@ -262,7 +262,7 @@ func Lint(docs []*Document) []Finding {
 			return false
 		}
 		if walk(t.ID) {
-			out = append(out, Finding{t.Path, 1, "dependency cycle involving " + t.ID})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "dependency cycle involving " + t.ID})
 		}
 	}
 	out = append(out, parentFindings(tasks)...)
@@ -273,7 +273,7 @@ func Lint(docs []*Document) []Finding {
 		// Short titles keep lists, boards and file names readable; the
 		// detail belongs in the Goal (2026-11-16, user approved).
 		if n := len([]rune(t.Title)); n > MaxTitle {
-			out = append(out, Finding{t.Path, 1, fmt.Sprintf("title is %d characters (max %d): move detail into the Goal (fix: hug task set %s --title \"...\")", n, MaxTitle, t.ID)})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: fmt.Sprintf("title is %d characters (max %d): move detail into the Goal (fix: hug task set %s --title \"...\")", n, MaxTitle, t.ID)})
 		}
 	}
 	sort.Slice(out, func(i, j int) bool {

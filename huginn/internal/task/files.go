@@ -279,7 +279,7 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			if ref.Task != t.ID {
 				o, e := Resolve(ts, ref.Task)
 				if e != nil {
-					out = append(out, Finding{t.Path, 0, ref.Raw + ": no task " + ref.Task})
+					out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": no task " + ref.Task})
 					continue
 				}
 				owner = o
@@ -289,12 +289,12 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 				continue
 			}
 			if _, e := os.Stat(fp); e != nil {
-				out = append(out, Finding{t.Path, 0, ref.Raw + ": file not found"})
+				out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": file not found"})
 			}
 		}
 		for _, prefix := range forbid {
 			if strings.Contains(string(doc), prefix) {
-				out = append(out, Finding{t.Path, 0, "cites " + prefix + " (a folder that gets deleted); attach the file instead"})
+				out = append(out, Finding{Path: t.Path, Line: 0, Problem: "cites " + prefix + " (a folder that gets deleted); attach the file instead"})
 			}
 		}
 		dir, e := s.diskPath(FolderOf(t))
@@ -307,7 +307,7 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			}
 			rel, _ := filepath.Rel(s.Root, fp)
 			if de.Type()&os.ModeSymlink != 0 {
-				out = append(out, Finding{filepath.ToSlash(rel), 0, "task file is a symlink"})
+				out = append(out, Finding{Path: filepath.ToSlash(rel), Line: 0, Problem: "task file is a symlink"})
 				return nil
 			}
 			b, err := os.ReadFile(fp)
@@ -317,7 +317,7 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 					if i := strings.Index(msg, "\n"); i >= 0 {
 						msg = msg[:i]
 					}
-					out = append(out, Finding{filepath.ToSlash(rel), 0, msg})
+					out = append(out, Finding{Path: filepath.ToSlash(rel), Line: 0, Problem: msg})
 				}
 			}
 			return nil

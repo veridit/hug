@@ -591,3 +591,14 @@ func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...O
 	}
 	return m, nil
 }
+
+// EnsureFirstCommit makes an empty first commit on a branch with no commits
+// yet, so the branch exists (and can be pushed) right after init.
+func (r *Repository) EnsureFirstCommit(message string) error {
+	h, e := r.Head()
+	if e != nil || h != "" {
+		return e
+	}
+	_, e = r.git("-c", "core.hooksPath="+os.DevNull, "commit", "--allow-empty", "-m", message)
+	return e
+}

@@ -84,11 +84,11 @@ func parentFindings(tasks []Task) []Finding {
 		p, e := ResolveDependency(tasks, t.Parent)
 		switch {
 		case e != nil:
-			out = append(out, Finding{t.Path, 1, "missing parent " + t.Parent})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "missing parent " + t.Parent})
 		case p.ID == t.ID:
-			out = append(out, Finding{t.Path, 1, "task is its own parent"})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "task is its own parent"})
 		case p.Parent != "":
-			out = append(out, Finding{t.Path, 1, "parent " + p.ID + " has parent " + p.Parent + ": only epic > task (fix: hug task set " + t.ID + " --parent " + p.Parent + ")"})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "parent " + p.ID + " has parent " + p.Parent + ": only epic > task (fix: hug task set " + t.ID + " --parent " + p.Parent + ")"})
 		}
 	}
 	return out

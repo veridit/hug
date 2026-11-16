@@ -122,3 +122,29 @@ func writeBoard(w io.Writer, cols []BoardColumn) {
 	}
 	fmt.Fprintln(w, "! = blocked by an open dependency")
 }
+
+// writeBoardWide prints each column as a section with full, unclipped
+// titles (one card per line), for terminals too narrow for side-by-side
+// columns or when titles matter.
+func writeBoardWide(w io.Writer, cols []BoardColumn) {
+	for i, c := range cols {
+		if i > 0 {
+			fmt.Fprintln(w)
+		}
+		fmt.Fprintf(w, "%s (%d)\n", strings.ToUpper(c.Status), c.Total)
+		for _, card := range c.Cards {
+			mark := " "
+			if card.Blocked {
+				mark = "!"
+			}
+			who := ""
+			if len(card.Assignee) > 0 {
+				who = "  [" + strings.Join(card.Assignee, ", ") + "]"
+			}
+			fmt.Fprintf(w, "  %s %s %s%s\n", card.ID, mark, card.Title, who)
+		}
+		if c.Hidden > 0 {
+			fmt.Fprintf(w, "  ... %d more (--all)\n", c.Hidden)
+		}
+	}
+}
