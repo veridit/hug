@@ -132,6 +132,7 @@ func (s *session) syncNow() error {
 // backgroundPass is the detached child: one pass, then exit. Its output
 // goes to the log next to the state file.
 func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
+	born := time.Now()
 	cwd := a.Cwd
 	if cwd == "" {
 		cwd = "."
@@ -153,8 +154,9 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 	// Log inside the pass, while it holds the run lock: a test waiting for
 	// the pass to finish must not race this write.
 	pass := func(turn func() (func(), error)) gitbranch.State {
+		began := time.Now()
 		st := r.SyncPass(turn)
-		fmt.Fprintf(a.Err, "%s pid %d: fetched=%v pushed=%v unpushed=%d error=%q\n", time.Now().UTC().Format(time.RFC3339), os.Getpid(), st.Fetched, st.Pushed, st.Unpushed, st.Error)
+		fmt.Fprintf(a.Err, "%s pid %d: fetched=%v pushed=%v unpushed=%d error=%q skipped=%q (waited %v, pass %v)\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), st.Fetched, st.Pushed, st.Unpushed, st.Error, st.Skipped, began.Sub(born).Round(time.Millisecond), time.Since(began).Round(time.Millisecond))
 		return st
 	}
 	return Reply{"next": "hug task ls"}, b.Run(settle, pass)
