@@ -1,10 +1,10 @@
 ---
 id: 6tj2b8
 title: "huginn: lint codes, board --wide, init says what it did"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["Jørgen H. Fjeld"]
 labels: []
 created: 2026-11-11
 updated: 2026-11-11
