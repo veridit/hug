@@ -1,0 +1,110 @@
+package main
+
+import (
+	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"testing"
+	"time"
+)
+
+// 0hkaa5, end to end with the real binary and its real detached syncers:
+// two clones on one bare remote. A task note and a project memory made in
+// clone A reach clone B within 10 s, and nobody runs sync.
+func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
+	if testing.Short() {
+		t.Skip("builds the hug binary")
+	}
+	root := t.TempDir()
+	bin := filepath.Join(root, "hug")
+	if runtime.GOOS == "windows" {
+		bin += ".exe"
+	}
+	build := exec.Command("go", "build", "-o", bin, ".")
+	build.Env = append(os.Environ(), "GOMAXPROCS=2", "GOFLAGS=-p=2")
+	if out, err := build.CombinedOutput(); err != nil {
+		t.Fatalf("build: %v\n%s", err, out)
+	}
+	home := filepath.Join(root, "home")
+	env := append(os.Environ(), "HOME="+home, "USERPROFILE="+home, "XDG_CONFIG_HOME="+filepath.Join(home, ".config"), "XDG_DATA_HOME="+filepath.Join(home, ".data"),
+		"GIT_CONFIG_GLOBAL="+os.DevNull, "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid",
+		"GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=tester", "HUG_MODEL=test-model", "JCODE_SESSION_ID=",
+		"MUNINN_NO_EMBED=1", "JCODE_HOME="+filepath.Join(home, "no-jcode"), "HUG_SYNC=", "GOMAXPROCS=2")
+	try := func(dir, muninnHome string, args ...string) (string, error) {
+		c := exec.Command(args[0], args[1:]...)
+		c.Dir, c.Env = dir, append(env, "MUNINN_HOME="+muninnHome)
+		out, err := c.CombinedOutput()
+		return string(out), err
+	}
+	run := func(dir, muninnHome string, args ...string) string {
+		t.Helper()
+		out, err := try(dir, muninnHome, args...)
+		if err != nil {
+			t.Fatalf("%v in %s: %v\n%s", args, dir, err, out)
+		}
+		return out
+	}
+	has := func(want, dir, muninnHome string, args ...string) bool {
+		out, err := try(dir, muninnHome, args...)
+		return err == nil && strings.Contains(out, want)
+	}
+	bare, one, two := filepath.Join(root, "remote.git"), filepath.Join(root, "one"), filepath.Join(root, "two")
+	homeA, homeB := filepath.Join(root, "mem-a"), filepath.Join(root, "mem-b")
+	run(root, homeA, "git", "init", "-q", "--bare", "-b", "main", bare)
+	run(root, homeA, "git", "init", "-q", "-b", "main", one)
+	run(one, homeA, "git", "commit", "-q", "--allow-empty", "-m", "init")
+	run(one, homeA, "git", "remote", "add", "origin", bare)
+	run(one, homeA, "git", "push", "-q", "origin", "main")
+	run(root, homeB, "git", "clone", "-q", bare, two)
+	run(one, homeA, bin, "task", "init")
+	run(one, homeA, bin, "task", "sync")
+	run(two, homeB, bin, "task", "init")
+	out := run(one, homeA, bin, "task", "new", "Shared work", "--goal", "G", "--accept", "C", "--json")
+	id := between(out, `"id":"`, `"`)
+	if id == "" {
+		t.Fatalf("no id in %s", out)
+	}
+	// The project memory branch exists on the remote once (as a person's
+	// first hug mem sync does); from then on nobody syncs.
+	run(one, homeA, bin, "mem", "remember", "--project", "Synthetic setup fact for the branch.")
+	run(one, homeA, bin, "mem", "sync")
+	run(two, homeB, bin, "mem", "sync")
+
+	start := time.Now()
+	run(one, homeA, bin, "task", "note", id, "note from clone A")
+	run(one, homeA, bin, "mem", "remember", "--project", "Quartzite releases need a signed checklist.")
+	seen := func(f func() bool) time.Duration {
+		for time.Since(start) < 10*time.Second {
+			if f() {
+				return time.Since(start)
+			}
+			time.Sleep(200 * time.Millisecond)
+		}
+		return -1
+	}
+	note := seen(func() bool { return has("note from clone A", two, homeB, bin, "task", "show", id) })
+	mem := seen(func() bool {
+		return has("Quartzite releases need a signed checklist", two, homeB, bin, "mem", "search", "Quartzite checklist")
+	})
+	logs, _ := filepath.Glob(filepath.Join(one, ".git", "hug", "sync", "*.log"))
+	var logText string
+	for _, l := range logs {
+		b, _ := os.ReadFile(l)
+		logText += l + ":\n" + string(b)
+	}
+	if note < 0 || mem < 0 {
+		t.Fatalf("clone B: note after %v, memory after %v (-1: not within 10 s)\n%s", note, mem, logText)
+	}
+	t.Logf("clone B saw the note after %v and the memory after %v", note.Round(10*time.Millisecond), mem.Round(10*time.Millisecond))
+}
+
+func between(s, from, to string) string {
+	_, rest, ok := strings.Cut(s, from)
+	if !ok {
+		return ""
+	}
+	v, _, _ := strings.Cut(rest, to)
+	return v
+}
