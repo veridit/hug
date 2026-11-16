@@ -32,3 +32,5 @@ Item 6 built 2026-11-15 (9225b0a): attach/show --file/detach (CLI + MCP inline c
 v0.7.4 (2026-11-16) shipped item 6 (task files, import files, hug.toml) plus TUI fixes from user review: acceptance navigation (j/k, hanging indent, highlight), Space confirm names the item, o/i/b/! in detail, overview sizing with ↑/↓ and 'a-b shown', owner -> assigned; ls id-first columns + --jsonl; shorter slugs (4 meaningful words, <=32 chars); rebalance one-line output.
 
 Item 3: import maps parent_task_id through the alias table (TestImportParent: resolves, rerun unchanged). seid-lang copy: 294 source parents, 282 restored, 20 flagged by lint as too deep with an exact fix ('hug task set X --parent EPIC'); the 12 unresolved point at tasks absent from the source.
+
+Item 4: promote built (promote.go, TestPromote): new task ranked after the source in the same group, same epic (an epic's own item becomes its child), item rewritten to 'done when task:NEW is done (text)', auto-ticked on done of NEW; refuses ticked or already-promoted items. CLI 'hug task promote ID N' and MCP task_update action promote.
