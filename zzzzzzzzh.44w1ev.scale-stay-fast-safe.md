@@ -1,13 +1,14 @@
 ---
 id: 44w1ev
 title: "Scale: stay fast and safe at 10,000 tasks"
-status: todo
+status: "doing"
 type: chore
 priority: "medium"
-assignee: []
+assignee: ["humpback"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
