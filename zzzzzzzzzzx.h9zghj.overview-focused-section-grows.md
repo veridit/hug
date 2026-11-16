@@ -26,7 +26,7 @@ Seid board for checking (read only): ~/Veridit/src/seid-lang, 1263 done. Overvie
 ## Depends on
 
 ## Acceptance
-- [ ] on a 40-row terminal with 5 sections, the focused section shows all spare rows and each other non-empty section shows min(count, 3) rows (test and golden)
+- [x] on a 40-row terminal with 5 sections, the focused section shows all spare rows and each other non-empty section shows min(count, 3) rows (test and golden)
 - [ ] RECENTLY DONE focused scrolls through every closed task newest first; unfocused it shows 3 (test)
 - [ ] moving between sections with Tab keeps each section's scroll position (test)
 - [ ] an empty section is one line, None to the right of its title (e.g. "BLOCKED · unmet dependencies  [0] · None"), in every overview section and board column (test and golden)
