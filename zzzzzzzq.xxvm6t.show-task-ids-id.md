@@ -1,6 +1,6 @@
 ---
 id: xxvm6t
-title: "Show task ids bare, without brackets; task:ID links in text"
+title: "Bare task ids without brackets; task:ID accepted and followable"
 status: todo
 type: feature
 priority: "high"
@@ -11,7 +11,7 @@ updated: 2026-11-16
 ---
 
 ## Goal
-A task id is written #9taa9d wherever a person reads it (TUI rows, detail, prompts, CLI text), without brackets, and #id in any text (notes, goals, checks, memories) is a link to that task
+A task id shows bare in its colour wherever a person reads it (TUI rows, detail, prompts), with no brackets and no sigil. In running text the reference form is task:ID: every command that takes a ref accepts it, and in the TUI a task:ID in notes or description can be followed.
 
 ## Purpose
 Jørgen 2026-11-16: the TUI wraps ids in brackets, [9taa9d], which mean nothing and cost two columns. He wants a hash sign, and the hash to do linking everywhere
@@ -25,11 +25,10 @@ TUI: taskRowMark and the overview rows in huginn/internal/tui/render.go render "
 ## Depends on
 
 ## Acceptance
-- [ ] no TUI view shows an id in brackets; rows and detail show #id
-- [ ] #id in a note, goal or check resolves like task:ID in lint, show and promote; task:ID still works
-- [ ] a markdown heading, a colour code and '#1' are not treated as task references (test)
+- [ ] no TUI view shows an id in brackets or with a sigil; rows, detail and prompts show the bare id in its colour (goldens)
+- [ ] every command that takes a ref accepts task:ID as well as the bare id (today 'hug task show task:9taa9d' prints not-found) (test)
 - [ ] every printed command still uses the bare id and runs when pasted into a shell (test)
-- [ ] in the TUI a #id in notes or description can be followed to that task
+- [ ] in the TUI a task:ID in notes or description can be followed to that task, and Esc comes back (test)
 - [ ] full tests pass; goldens reviewed
 
 ## Notes
