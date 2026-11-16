@@ -1,7 +1,7 @@
 ---
 id: ez50rb
 title: "Memories hold while a stated condition holds, and name no agent"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["guppy"]
@@ -9,6 +9,9 @@ labels: []
 created: 2026-11-16
 updated: 2026-11-16
 parent: "d634kr"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
