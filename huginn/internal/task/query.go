@@ -108,8 +108,20 @@ func distance(a, b string) int {
 	}
 	return p[len(b)]
 }
+
+// BareRef is ref without a leading "task:": running text writes a
+// reference as task:ID, and a command given that form finds the same task
+// as the bare id (xxvm6t).
+func BareRef(ref string) string {
+	ref = strings.TrimSpace(ref)
+	if len(ref) > 5 && strings.EqualFold(ref[:5], "task:") {
+		return ref[5:]
+	}
+	return ref
+}
+
 func Resolve(tasks []Task, ref string) (Task, error) {
-	ref = strings.ToLower(ref)
+	ref = strings.ToLower(BareRef(ref))
 	var ids []Task
 	for _, t := range tasks {
 		if strings.EqualFold(t.ID, ref) {
@@ -165,6 +177,7 @@ func Resolve(tasks []Task, ref string) (Task, error) {
 
 // ResolveDependency deliberately accepts only exact ids and aliases, never slugs or prefixes.
 func ResolveDependency(tasks []Task, ref string) (Task, error) {
+	ref = BareRef(ref)
 	var ids []Task
 	for _, t := range tasks {
 		if strings.EqualFold(t.ID, ref) {

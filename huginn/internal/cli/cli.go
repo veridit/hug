@@ -281,6 +281,28 @@ func (f flags) get(k string) string {
 	return ""
 }
 func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
+
+// refCommands take a task ref as their first argument; refFlags take one
+// as their value. Both accept task:ID, the form running text uses, and are
+// turned into the bare id here so every reply and printed command shows
+// the bare id and runs when pasted into a shell (xxvm6t).
+var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "check", "promote", "note", "dep", "set", "attach", "detach"}
+var refFlags = []string{"before", "after", "dep", "add", "remove", "parent", "epic"}
+
+func bareRefs(cmd string, f *flags) {
+	if cmd == "rebalance" {
+		for i := range f.args {
+			f.args[i] = task.BareRef(f.args[i])
+		}
+	} else if slices.Contains(refCommands, cmd) && len(f.args) > 0 {
+		f.args[0] = task.BareRef(f.args[0])
+	}
+	for _, k := range refFlags {
+		for i, v := range f.values[k] {
+			f.values[k][i] = task.BareRef(v)
+		}
+	}
+}
 func (f flags) count(n int) error {
 	if len(f.args) != n {
 		return usage(fmt.Sprintf("expected %d positional arguments, got %d", n, len(f.args)), "hug task help")
@@ -397,6 +419,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		f.args = nil
 		f.values["help"] = []string{"true"}
 	}
+	bareRefs(cmd, &f)
 	if f.has("help") || cmd == "help" {
 		if e = a.refreshExisting(ctx); e != nil {
 			return nil, e
