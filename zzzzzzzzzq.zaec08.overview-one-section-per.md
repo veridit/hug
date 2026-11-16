@@ -1,10 +1,10 @@
 ---
 id: zaec08
 title: "Overview: one section per task, counts that add up, recently done"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["poodle"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
