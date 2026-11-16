@@ -1,7 +1,7 @@
 ---
 id: wdkq16
 title: "Skip record memories in automatic recall"
-status: "doing"
+status: "done"
 type: spike
 priority: ""
 assignee: ["Jørgen H. Fjeld"]
