@@ -1,7 +1,7 @@
 ---
 id: 3xcesq
 title: "TUI: move a task far in one go (grab and drop, top and bottom)"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["poodle"]
