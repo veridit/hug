@@ -25,7 +25,7 @@ Cause: huginn/internal/tui/actions.go lines 67-82 pick the neighbour from m.all 
 ## Depends on
 
 ## Acceptance
-- [ ] in the overview NEXT UP, J on a row swaps it with the row shown below it, and the screen shows the new order (test with a hidden epic ranked between them)
+- [x] in the overview NEXT UP, J on a row swaps it with the row shown below it, and the screen shows the new order (test with a hidden epic ranked between them)
 - [ ] K does the same upward; at the first or last visible row the message says so and no commit is made
 - [ ] the confirm line names both tasks, e.g. 'Move a1dx7s below x1t1t1?', and the result message says where it went
 - [ ] with a filter active, moves are relative to the filtered rows (test)
