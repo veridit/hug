@@ -24,7 +24,7 @@ func Guide(action string, t Task, ts []Task) []string {
 		g := []string{}
 		// One todo for the task, not one per check: the board holds the
 		// checks, and the task stays doing through any detour.
-		g = append(g, fmt.Sprintf("one todo for %s (not one per check); it stays doing through detours: hug task show %s brings you back", t.ID, t.ID))
+		g = append(g, fmt.Sprintf("one todo named \"%s %s\" (the id in the name, not one todo per check); it stays doing through detours: hug task show %s brings you back", t.ID, oneLineShort(t.Title, 40), t.ID))
 		g = append(g, fmt.Sprintf("as each check holds: hug task check %s N, with evidence in hug task note %s \"...\"", t.ID, t.ID))
 		return g
 	case "check":

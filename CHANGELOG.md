@@ -4,6 +4,37 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.15 - 2026-11-16
+
+### Added
+
+- State-change reminders: `hug task take`, `check`, `done`, `drop` and
+  `promote` print `now:` lines saying what to do at that moment (MCP: a
+  `guide` field). Take says to keep one todo named with the task id, not one
+  per check, and that the task stays doing through detours. Done on an epic's
+  last child says to close the epic.
+- TUI detail: `{` and `}` (also Ctrl-P and Ctrl-N) open the previous and next
+  task of the list the detail was opened from. The footer shows "Task 3 of 22".
+- TUI palette is a tree and uses the full height: `filter`, then the field,
+  then its values with task counts. `: f done` finds a value without naming
+  its field. The short forms (`status todo`, `done`) still run when typed.
+
+### Changed
+
+- TUI rows: the lint mark `!` sits in the gutter left of the id instead of
+  its own column. Board rows show type and priority as one coloured letter,
+  with a legend under the board, so titles get the width.
+- TUI: Space in a list no longer asks to tick a check you cannot see. It
+  points to Enter. Inside a task the prompt reads `Tick: ☐ 1. text`, the
+  check drawn as the ticket shows it.
+- TUI detail: open acceptance checks use the plain text colour, so they no
+  longer look like the blue headings. Ticked checks stay green.
+
+### Fixed
+
+- `hug mem --help` and `hug mem` errors say `hug mem` (was `muninn`), and an
+  unknown command ends with a `fix:` line.
+
 ## v0.7.14 - 2026-11-16
 
 v0.7.13 was tagged but not published: its own test fixtures tripped the

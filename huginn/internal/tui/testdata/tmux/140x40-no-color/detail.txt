@@ -35,6 +35,6 @@ HISTORY
 
 
 
-Detail · 100% · Esc back
+Task 1 of 60 · 100% · { previous · } next · Esc back
 
-j/k scroll · [/] select · Tab section · Enter follow · Esc back · : cmd · ? help · q quit
+j/k scroll · [/] select · {/} task · Tab section · Enter follow · Esc back · : cmd · ? help · q quit

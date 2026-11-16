@@ -60,7 +60,7 @@ func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 
 func TestAcceptanceSelectionClampedAcrossTasks(t *testing.T) {
 	m := fixture(t)
-	m = press(m, "enter", "]", "esc", "j", " ", "enter")
+	m = press(m, "enter", "]", "esc", "j", "enter", " ", "enter")
 	if !m.visible[1].Acceptance[0].Checked {
 		t.Fatal(m.View())
 	}
@@ -69,6 +69,10 @@ func TestAcceptanceSelectionClampedAcrossTasks(t *testing.T) {
 func TestErrorAndTerminalInputSafety(t *testing.T) {
 	m := fixture(t)
 	m.opts.Commit = func(string) error { return os.ErrPermission }
+	if got := press(m, " "); got.confirm != "" || !strings.Contains(got.message, "Enter opens") {
+		t.Fatalf("Space in a list must not tick: confirm=%q message=%q", got.confirm, got.message)
+	}
+	m = press(m, "enter")
 	m = act(m, " ")
 	if m.message != os.ErrPermission.Error() {
 		t.Fatal(m.message)

@@ -19,6 +19,6 @@ fmt.Println("rendered code")
 
 no acceptance items yet
 
-Detail · 0% · Esc back
+Task 3 of 60 · 0% · { previous · } next · Esc back
 
 j/k scroll · [/] pick · Tab section · Esc back · ? help · q quit

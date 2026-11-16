@@ -12,7 +12,7 @@ func TestGuideAtStateChanges(t *testing.T) {
 	if g := Guide("new", tk, nil); g != nil {
 		t.Fatal("new should not push into todos:", g)
 	}
-	if g := strings.Join(Guide("take", tk, nil), "|"); !strings.Contains(g, "one todo for tttttt") || strings.Contains(g, "1. a") {
+	if g := strings.Join(Guide("take", tk, nil), "|"); !strings.Contains(g, "one todo named \"tttttt") || strings.Contains(g, "1. a") {
 		t.Fatal(g)
 	}
 	if g := Guide("check", tk, nil); g != nil {

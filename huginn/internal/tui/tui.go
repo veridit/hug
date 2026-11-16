@@ -239,6 +239,36 @@ func (m *model) setView(view string) {
 	m.pendingG = false
 	m.clamp()
 }
+
+// stepTask moves the open detail to the next or previous task in the pane it
+// was opened from. It stops at either end.
+func (m *model) stepTask(step int) {
+	m.detailStack = nil
+	m.detailPath = ""
+	before := m.cursor
+	m.move(step, false)
+	if m.cursor >= 0 && m.cursor < len(m.visible) {
+		m.detailPath = m.visible[m.cursor].Path
+	}
+	if m.cursor != before {
+		m.acceptance, m.dependency, m.detailPane = 0, 0, 0
+		m.syncDetail()
+		m.viewport.GotoTop()
+		return
+	}
+	m.syncDetail()
+}
+
+// detailPosition is the open task's place in its pane: "3 of 22".
+func (m model) detailPosition() string {
+	indices := m.indices()
+	for p, i := range indices {
+		if i == m.cursor && i < len(m.visible) && m.visible[i].Path == m.detailPath {
+			return fmt.Sprintf("%d of %d", p+1, len(indices))
+		}
+	}
+	return ""
+}
 func (m *model) move(n int, absolute bool) {
 	indices := m.indices()
 	if len(indices) == 0 {
@@ -536,6 +566,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if t, ok := m.selected(); ok {
 					m.refresh(t.Path)
 				}
+			case "ctrl+n", "ctrl+p", "}", "{":
+				// Next or previous task of the list the detail was opened
+				// from, without going back first (2026-11-16, user).
+				step := 1
+				if k == "ctrl+p" || k == "{" {
+					step = -1
+				}
+				m.stepTask(step)
 			case "o", "i", "v", "b", "!":
 				// The tab bar stays visible in detail, so its keys work here
 				// too: leave the task and switch view (2026-11-15, user).
@@ -630,7 +668,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				path = t.Path
 			}
 			m.refresh(path)
-		case contains([]string{"t", "d", "x", "J", "K", " ", "e"}, k):
+		case k == " ":
+			// Ticking a check you cannot see is a guess: Space ticks only
+			// inside the task, where the checks are shown (2026-11-16, user).
+			if t, ok := m.selected(); ok {
+				m.message = fmt.Sprintf("Space ticks a check inside the task: Enter opens %s", t.ID)
+			}
+		case contains([]string{"t", "d", "x", "J", "K", "e"}, k):
 			m.requestAction(k, "")
 		}
 	}

@@ -157,10 +157,8 @@ func (m model) detailText(t task.Task) string {
 	var checks []string
 	for i, a := range t.Acceptance {
 		box, pointer := "☐", " "
-		state := "todo"
 		if a.Checked {
 			box = "☑"
-			state = "done"
 		}
 		if m.detailPane == 0 && i == m.acceptance {
 			pointer = ">"
@@ -182,7 +180,7 @@ func (m model) detailText(t task.Task) string {
 		if m.detailPane == 0 && i == m.acceptance {
 			checks = append(checks, m.styles.selected.Render(label))
 		} else {
-			checks = append(checks, m.styles.status[state].Render(label))
+			checks = append(checks, m.checkStyle(a.Checked).Render(label))
 		}
 	}
 	section("Acceptance · [ / ] select · Space toggle", strings.Join(checks, "\n"), "no acceptance items yet")
@@ -251,4 +249,14 @@ func (m *model) followDependency() {
 	m.detailPane = 0
 	m.syncDetail()
 	m.viewport.GotoTop()
+}
+
+// checkStyle colours an acceptance check: ticked ones green, open ones in the
+// plain text colour, so they do not read as headings, which are blue
+// (2026-11-16, user).
+func (m model) checkStyle(checked bool) lipgloss.Style {
+	if checked {
+		return m.styles.status["done"]
+	}
+	return m.styles.normal
 }

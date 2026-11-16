@@ -4,14 +4,14 @@ todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 NAVIGATION AND FIND                                     EDIT · every action requires confirmation
 j/k ↑/↓         move / scroll                                           [ / ]       previous / next acceptance or dependency in detail
-< / gg / Home   top                                                     Space       toggle acceptance (default first)
-> / G / End     bottom                                                  Tab + Enter focus dependencies and follow selected task
-ctrl-d / ctrl-u half page down / up                                     t / d / x   take / done / drop task
-PgDn / PgUp     full page down / up                                     J / K       move down / up in global rank order
-h/← Shift-Tab   previous pane / column                                  n           new title, goal and one verification item
-l/→ Tab         next pane / column                                      e           edit in $EDITOR, then refresh + lint
-Enter           open full task detail                                   Enter / Esc confirm / cancel every editing action
-Esc             back one level, never quits
+< / gg / Home   top                                                     { / }       previous / next task from detail
+> / G / End     bottom                                                  Space       tick or untick the selected acceptance check, in detail
+ctrl-d / ctrl-u half page down / up                                     Tab + Enter focus dependencies and follow selected task
+PgDn / PgUp     full page down / up                                     t / d / x   take / done / drop task
+h/← Shift-Tab   previous pane / column                                  J / K       move down / up in global rank order
+l/→ Tab         next pane / column                                      n           new title, goal and one verification item
+Enter           open full task detail                                   e           edit in $EDITOR, then refresh + lint
+Esc             back one level, never quits                             Enter / Esc confirm / cancel every editing action
 q / ctrl-c      quit (q only outside inputs)
 /               live find; Enter keeps, Esc clears
 :               palette with command + value completion

@@ -48,7 +48,7 @@ func (m model) keyBar() string {
 	case m.prompt != "":
 		hints = []bkey.Binding{hint("Enter", "submit"), hint("Esc", "cancel"), hint("?", "help")}
 	case m.detail:
-		hints = []bkey.Binding{hint("j/k", "scroll"), hint("[/]", "select"), hint("Tab", "section"), hint("Enter", "follow"), hint("Esc", "back"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
+		hints = []bkey.Binding{hint("j/k", "scroll"), hint("[/]", "select"), hint("{/}", "task"), hint("Tab", "section"), hint("Enter", "follow"), hint("Esc", "back"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	default:
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
@@ -81,7 +81,7 @@ func (m model) helpText() string {
 		hint("s / y", "status / type palette shortcut"), hint("c", "clear all filters"), hint("r", "refresh files and lint"),
 	}
 	actions := []bkey.Binding{
-		hint("[ / ]", "previous / next acceptance or dependency in detail"), hint("Space", "toggle acceptance (default first)"),
+		hint("[ / ]", "previous / next acceptance or dependency in detail"), hint("{ / }", "previous / next task from detail"), hint("Space", "tick or untick the selected acceptance check, in detail"),
 		hint("Tab + Enter", "focus dependencies and follow selected task"),
 		hint("t / d / x", "take / done / drop task"), hint("J / K", "move down / up in global rank order"),
 		hint("n", "new title, goal and one verification item"), hint("e", "edit in $EDITOR, then refresh + lint"),

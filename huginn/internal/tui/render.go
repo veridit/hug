@@ -87,23 +87,26 @@ func scrollMark(n, start, end, total int) string {
 	return ""
 }
 func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark string) string {
-	pointer := "  "
+	// Gutter: pointer or scroll arrow, then the lint mark, so "!" costs no
+	// column of its own (2026-11-16, user).
+	pointer := " "
 	if selected {
-		pointer = "> "
+		pointer = ">"
 	} else if mark != "" {
-		pointer = m.styles.dim.Render(mark) + " "
+		pointer = m.styles.dim.Render(mark)
 	}
-	row := pointer + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + " " + m.marker(t.Path) + " "
-	titleWidth := width - 38
-	if !compact {
-		row += styled(m.styles.status, m.boardStatus(t), 7) + " "
+	head := pointer + m.marker(t.Path) + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + " "
+	row := head
+	if compact {
+		// Board columns are narrow: type and priority are one coloured
+		// letter each, spelled out in the legend under the board.
+		row += initial(m.styles.kind, t.Type) + " " + initial(m.styles.priority, t.Priority) + " " + fit(oneLine(t.Title), max(0, width-15))
 	} else {
-		titleWidth += 8
+		row += styled(m.styles.status, m.boardStatus(t), 7) + " " + styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(oneLine(t.Title), max(0, width-36))
 	}
-	row += styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(oneLine(t.Title), max(0, titleWidth))
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {
-		row = pointer + m.styles.accent.Render(fit("["+oneLine(t.ID)+"]", 8)) + " " + m.marker(t.Path) + " " + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 13, width)))
+		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 11, width)))
 	}
 	if selected {
 		// Inner cells end with a full reset, which would cut the tint after
@@ -113,19 +116,45 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 	}
 	return row
 }
+
+// initial is the value's first letter, upper case, in the value's colour.
+func initial(styles map[string]lipgloss.Style, value string) string {
+	v := oneLine(value)
+	if v == "" {
+		return " "
+	}
+	return styles[value].Render(strings.ToUpper(v[:1]))
+}
+
+// legend spells out the board's one-letter type and priority cells.
+func (m model) legend() string {
+	var parts []string
+	for _, k := range task.Types {
+		parts = append(parts, initial(m.styles.kind, k)+" "+m.styles.dim.Render(k))
+	}
+	kinds := strings.Join(parts, " ")
+	parts = nil
+	for _, p := range []string{"critical", "high", "medium", "low"} {
+		parts = append(parts, initial(m.styles.priority, p)+" "+m.styles.dim.Render(p))
+	}
+	priorities := strings.Join(parts, " ")
+	full := m.styles.dim.Render("type ") + kinds + m.styles.dim.Render(" · priority ") + priorities
+	if ansi.StringWidth(full) > m.width {
+		// Narrow terminals drop the two words, never a letter's meaning.
+		full = kinds + m.styles.dim.Render(" · ") + priorities
+	}
+	return fit(full, m.width)
+}
 func (m model) row(t task.Task) string {
 	selected, ok := m.selected()
 	return m.taskRow(t, m.width, ok && selected.Path == t.Path, false)
 }
 func (m model) columns(width int, compact bool) string {
-	s := "  " + fit("ID", 8) + " ! "
-	rest := width - 38
-	if !compact {
-		s += fit("STATUS", 7) + " "
-	} else {
-		rest += 8
+	s := "  " + fit("ID", 8) + " "
+	if compact {
+		return m.styles.dim.Render(fit(s+"T P "+fit("TITLE", max(0, width-15)), width))
 	}
-	return m.styles.dim.Render(fit(s+fit("TYPE", 7)+" "+fit("PRIORITY", 8)+" "+fit("TITLE", max(0, rest)), width))
+	return m.styles.dim.Render(fit(s+fit("STATUS", 7)+" "+fit("TYPE", 7)+" "+fit("PRIORITY", 8)+" "+fit("TITLE", max(0, width-36)), width))
 }
 func window(indices []int, cursor, rows int) (int, int) {
 	pos := 0
@@ -279,7 +308,6 @@ func (m model) boardText() string {
 		for len(cols[c]) < rows+2 {
 			cols[c] = append(cols[c], fit("", width))
 		}
-		cols[c] = append(cols[c], m.styles.dim.Render(fit(fmt.Sprintf("%d tasks", len(indices)), width)))
 	}
 	var lines []string
 	for n := range cols[0] {
@@ -292,6 +320,7 @@ func (m model) boardText() string {
 		}
 		lines = append(lines, line)
 	}
+	lines = append(lines, m.legend())
 	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Columns %d–%d of %d · h/l or Tab/Shift-Tab reveals other columns", first+1, first+count, len(boardStatuses))))
 	return strings.Join(lines, "\n")
 }
@@ -301,21 +330,29 @@ func (m model) paletteText() string {
 	if len(cs) == 0 {
 		return strings.Join(append(lines, "No completions. Esc closes; ? shows help."), "\n")
 	}
-	rows := min(8, max(1, m.bodyHeight()-5))
+	// Use the screen: as many rows as fit (2026-11-16, user).
+	rows := max(1, m.bodyHeight()-5)
 	start := max(0, m.completion-rows+1)
+	nameWidth := min(40, max(8, m.width/3))
 	for i := start; i < min(len(cs), start+rows); i++ {
 		pointer := "  "
 		if i == m.completion {
 			pointer = "> "
 		}
-		line := pointer + fit(oneLine(cs[i].value), min(28, max(8, m.width/3))) + "  " + oneLine(cs[i].description)
-		line = fit(line, m.width)
+		name, desc := oneLine(cs[i].value), oneLine(cs[i].description)
+		if cs[i].branch {
+			name = strings.TrimRight(name, " ") + " ›"
+		}
+		if cs[i].field != "" {
+			desc = fmt.Sprintf("%d tasks", m.valueCount(cs[i].field, cs[i].fieldValue))
+		}
+		line := fit(pointer+fit(name, nameWidth)+"  "+desc, m.width)
 		if i == m.completion {
 			line = m.styles.selected.Render(line)
 		}
 		lines = append(lines, line)
 	}
-	lines = append(lines, "", m.styles.dim.Render(fmt.Sprintf("%d completions · Tab or Enter completes · Enter runs a complete command", len(cs))))
+	lines = append(lines, "", m.styles.dim.Render(fmt.Sprintf("%d choices · › opens a level · Tab or Enter completes · Enter runs a complete command", len(cs))))
 	return strings.Join(lines, "\n")
 }
 func (m model) View() string {
@@ -423,6 +460,9 @@ func (m model) View() string {
 		}
 		if m.detail {
 			footer = fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
+			if pos := m.detailPosition(); pos != "" {
+				footer = fmt.Sprintf("Task %s · %.0f%% · { previous · } next · Esc back", pos, m.viewport.ScrollPercent()*100)
+			}
 		}
 	}
 	lines = append(lines, m.styles.dim.Render(oneLine(footer)))
@@ -435,6 +475,7 @@ func (m model) View() string {
 			}
 		}
 	}
+	ticketQuote := false
 	if m.confirm != "" {
 		inputLine = "Confirm " + actionNames[m.confirm] + " "
 		if m.confirm == "n" {
@@ -448,7 +489,16 @@ func (m model) View() string {
 					if t.Acceptance[n].Checked {
 						verb = "Untick"
 					}
-					inputLine = fmt.Sprintf("%s item %d of %s: %s", verb, n+1, t.ID, oneLine(t.Acceptance[n].Text))
+					// After the colon comes the check as the ticket shows
+					// it: same box, number and colour, so it reads as the
+					// ticket's words, not the tool's (2026-11-16, user).
+					box := "☐"
+					if t.Acceptance[n].Checked {
+						box = "☑"
+					}
+					quoted := fmt.Sprintf("%s %d. %s", box, n+1, oneLine(cleanMarkdown(t.Acceptance[n].Text)))
+					inputLine = verb + ": " + m.checkStyle(t.Acceptance[n].Checked).Render(fit(quoted, max(1, m.width-len(verb)-2)))
+					ticketQuote = true
 					break
 				}
 			}
@@ -460,7 +510,9 @@ func (m model) View() string {
 				}
 			}
 		}
-		inputLine += "?"
+		if !ticketQuote {
+			inputLine += "?"
+		}
 	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" {
 		inputLine = m.input.View()
 	} else if m.pendingG {

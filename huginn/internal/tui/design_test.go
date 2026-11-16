@@ -261,7 +261,11 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	}
 	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"status bl", "status blocked"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
 		m := press(manyModel(t), ":", tc.query, "tab")
-		if m.input.Value() != tc.want {
+		want := tc.want
+		if !strings.HasPrefix(want, "goto") {
+			want = "filter " + want
+		}
+		if m.input.Value() != want {
 			t.Fatalf("%s => %s", tc.query, m.input.Value())
 		}
 		m = press(m, "enter")
@@ -373,6 +377,10 @@ func TestEveryEditRequiresConfirmation(t *testing.T) {
 		before, _ := os.ReadFile(filepath.Join(m.store.Root, m.all[0].Path))
 		commits := 0
 		m.opts.Commit = func(string) error { commits++; return nil }
+		if k == " " {
+			// Space ticks only inside the task, where the check is shown.
+			m = press(m, "enter")
+		}
 		m = press(m, k)
 		if m.confirm != k {
 			t.Fatal(k, "no confirmation")

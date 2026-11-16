@@ -19,6 +19,6 @@ fmt.Println("synthetic acceptance")
 
 
 ACCEPTANCE · [ / ] SELECT · SPACE TOGGLE
-Detail · 0% · Esc back
+Task 1 of 60 · 0% · { previous · } next · Esc back
 
 j/k scroll · [/] pick · Tab section · Esc back · ? help · q quit

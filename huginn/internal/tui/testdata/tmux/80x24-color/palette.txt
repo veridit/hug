@@ -5,13 +5,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 COMMAND PALETTE
 : type
 
-> type bug
-  type chore
-  type docs
-  type feature
-  type spike
+> filter type bug             12 tasks
+  filter type chore           11 tasks
+  filter type docs            12 tasks
+  filter type feature         13 tasks
+  filter type spike           12 tasks
 
-5 completions · Tab or Enter completes · Enter runs a complete command
+5 choices · › opens a level · Tab or Enter completes · Enter runs a complete co…
 
 
 
