@@ -35,3 +35,5 @@ Today: hug task finds .hug/tasks via the repository root; a linked worktree has 
 - [ ] tried in practice: agents in two Statbus worktrees (one CLI, one MCP) take tasks and the board shows the right branch for each (evidence in a note)
 
 ## Notes
+
+check 2 (dragon, 3b2c0e3): TestTakeRecordsBranchAndWorktree: in a linked worktree on feat/x, 'hug task take ID' (no flags) -> task branch feat/x, worktree <linked dir>; file 'branch: "feat/x"' and 'worktree: "<dir>"'; show 'taken by: tester · test-model · feat/x'; ls row 'Worktree work  [tester · test-model · feat/x]'; ls --json has "branch":"feat/x"; take on main records branch main but the ls row stays '[tester · test-model]'; --branch/--worktree override. task: TestTakeAtRecordsBranchAndWorktree (move on retake, kept when no place). 'go test ./huginn/internal/cli/ ./cmd/hug/' -> 'ok  	github.com/veridit/hug/huginn/internal/cli	52.667s'
