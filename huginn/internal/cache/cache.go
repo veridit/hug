@@ -701,11 +701,23 @@ func (c *Cache) Lint(ctx context.Context) ([]task.Finding, error) {
 	if _, e := c.sync(ctx); e != nil {
 		return nil, e
 	}
+	return c.lint(), nil
+}
+
+// LintListed is Lint of the board the last List or Sync saw, without
+// walking the files again: for a caller that has just listed (the TUI's
+// reload, 44w1ev: a second walk of 10,000 files right after the first).
+func (c *Cache) LintListed() []task.Finding {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.lint()
+}
+func (c *Cache) lint() []task.Finding {
 	docs := make([]*task.Document, 0, len(c.files))
 	for _, r := range c.files {
 		docs = append(docs, &task.Document{Task: r.Task, Findings: r.Findings})
 	}
-	return task.Lint(docs), nil
+	return task.Lint(docs)
 }
 func (c *Cache) Markers(ctx context.Context) ([]Marker, error) {
 	c.mu.Lock()

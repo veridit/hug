@@ -36,6 +36,12 @@ type Options struct {
 	// MainBranch is the repository's main line ("main"): IN PROGRESS rows
 	// name a task's branch only when it is another one (x1t1t1).
 	MainBranch string
+	// Lint, when set, returns the findings of the board the store's last
+	// Tasks returned, from the task cache (cache.LintListed). Then a reload
+	// parses no task file: a task's file is read when its detail opens
+	// (44w1ev: parsing 10,000 files on every reload was most of a 3-5 s
+	// first screen).
+	Lint func() ([]task.Finding, error)
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {
@@ -194,8 +200,8 @@ func (m *model) reload() tea.Cmd {
 		return nil
 	}
 	m.stale, m.loading = false, true
-	s, loads, gen, closes := m.store, m.loads, m.gen, m.closes
-	return func() tea.Msg { return loadedMsg{loadSnapshot(s, loads, closes), gen} }
+	s, loads, gen, closes, lint := m.store, m.loads, m.gen, m.closes, m.opts.Lint
+	return func() tea.Msg { return loadedMsg{loadSnapshot(s, loads, closes, lint), gen} }
 }
 
 // selectionID is the task to keep selected across a reload: by id, since a
@@ -294,7 +300,7 @@ func newModel(s *task.Store, o Options) model {
 }
 func (m model) Init() tea.Cmd { return tea.Batch(m.waitChange(), m.waitBinary()) }
 func (m *model) refresh(path string) {
-	m.apply(loadSnapshot(m.store, m.loads, m.closes), path)
+	m.apply(loadSnapshot(m.store, m.loads, m.closes, m.opts.Lint), path)
 }
 
 // snapshot is everything refresh reads from disk: the tasks, their parsed
@@ -309,7 +315,7 @@ type snapshot struct {
 	err, readErr     error
 }
 
-func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog) snapshot {
+func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func() ([]task.Finding, error)) snapshot {
 	loads.add()
 	ts, err := s.Tasks()
 	if err != nil {
@@ -317,24 +323,55 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog) snapshot 
 	}
 	task.Sort(ts)
 	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root), files: map[string][]string{}}
-	var docs []*task.Document
+	// Task folders, from one ReadDir per group instead of a WalkDir per
+	// task (44w1ev: 10,000 walks of folders that mostly do not exist were
+	// half the first screen). Keys are lowercase: taskFiles decides.
+	folders := map[string]bool{}
+	listed := map[string]bool{}
 	for _, t := range ts {
+		g := filepath.Dir(filepath.FromSlash(t.Path))
+		if listed[g] {
+			continue
+		}
+		listed[g] = true
+		entries, _ := os.ReadDir(filepath.Join(s.Root, g))
+		for _, e := range entries {
+			if e.IsDir() {
+				folders[strings.ToLower(filepath.ToSlash(filepath.Join(g, e.Name())))] = true
+			}
+		}
+	}
+	for _, t := range ts {
+		if !folders[strings.ToLower(task.FolderOf(t))] {
+			continue
+		}
 		if fs := taskFiles(s.Root, t); len(fs) > 0 {
 			sn.files[t.Path] = fs
 		}
-		b, e := os.ReadFile(filepath.Join(s.Root, t.Path))
-		if e != nil {
-			sn.readErr = e
-			continue
+	}
+	var findings []task.Finding
+	if lint != nil {
+		if findings, err = lint(); err != nil {
+			return snapshot{err: err}
 		}
-		d := task.Parse(t.Path, b)
-		docs = append(docs, d)
-		sn.docs[t.Path] = d
+	} else {
+		var docs []*task.Document
+		for _, t := range ts {
+			b, e := os.ReadFile(filepath.Join(s.Root, t.Path))
+			if e != nil {
+				sn.readErr = e
+				continue
+			}
+			d := task.Parse(t.Path, b)
+			docs = append(docs, d)
+			sn.docs[t.Path] = d
+		}
+		findings = task.Lint(docs)
 	}
 	// Findings on closed tasks (done, dropped) are hidden by default, as in
 	// hug task lint; closedFindings keeps them for counts and for the detail
 	// of a closed task opened on purpose (6neax1).
-	sn.findings, sn.closed = task.OpenFindings(task.Lint(docs), ts)
+	sn.findings, sn.closed = task.OpenFindings(findings, ts)
 	return sn
 }
 

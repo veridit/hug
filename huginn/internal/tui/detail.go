@@ -3,6 +3,8 @@ package tui
 import (
 	"fmt"
 	"github.com/charmbracelet/lipgloss"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -193,8 +195,23 @@ func (m model) detailHeader(t task.Task) []string {
 
 type detailSection struct{ name, text string }
 
+// doc is t's parsed file: from the last reload, or read now and kept until
+// the next one (with Options.Lint a reload parses no file, 44w1ev).
+func (m model) doc(t task.Task) *task.Document {
+	if d := m.docs[t.Path]; d != nil || m.docs == nil {
+		return d
+	}
+	b, e := os.ReadFile(filepath.Join(m.store.Root, filepath.FromSlash(t.Path)))
+	if e != nil {
+		return nil
+	}
+	d := task.Parse(t.Path, b)
+	m.docs[t.Path] = d
+	return d
+}
+
 func (m model) sections(t task.Task) []detailSection {
-	d := m.docs[t.Path]
+	d := m.doc(t)
 	if d == nil {
 		return []detailSection{{"description", cleanMarkdown(t.Goal)}}
 	}
