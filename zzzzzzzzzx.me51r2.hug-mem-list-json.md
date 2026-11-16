@@ -1,10 +1,10 @@
 ---
 id: me51r2
 title: "Concurrent writes wait their turn; hug mem list --json; batch forget"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["hare"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
