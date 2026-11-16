@@ -1,0 +1,34 @@
+---
+id: pbh9xq
+title: "Lint: separate broken from not up to par"
+status: todo
+type: feature
+priority: "medium"
+assignee: []
+labels: []
+created: 2026-11-16
+updated: 2026-11-16
+---
+
+## Goal
+Every lint finding has a severity: broken (the tool cannot read or trust the task) or advice (the task works but is below the house style), and each place that shows findings decides by severity what to show
+
+## Purpose
+Jørgen 2026-11-16: should we lint all tasks? Reported all the time, findings are noise forever; but being broken differs from being not up to par. Measured on the seid copy (2,498 tasks, 2,477 findings): 2,424 are style (no-acceptance 1,158, long-title 827, done-unchecked 432, and so on) and only about 50 are structural (missing-goal 24, parent-too-deep 20, duplicate-section 10, dependency-cycle 2); 986 findings sit on closed tasks
+
+## Principle
+Broken is always shown and can block; advice is offered at the moment it can be acted on and is otherwise quiet. Closed tasks get no advice: nobody will fix a done task's title. Nudge one finding at a time with its fix, never a count. Imported history is not held to today's style (as task.PatternSince already does for missing-section)
+
+## Relevant details
+Codes today (huginn/internal/task/document.go): candidates for broken: dangling-dependency, dependency-cycle, parent-missing, parent-too-deep, duplicate-section, missing-goal, unreadable file. Candidates for advice: long-title, no-acceptance, done-unchecked, missing-section. Surfaces: hug task lint (default shows broken plus advice on open tasks, --all shows everything, --code as now, JSON gets a severity field); TUI header count and the lint view (count broken; advice shown dim or behind a toggle); take/new/edit guide lines (advice for the task in hand only); the recall nudge (qawmnb part 2: one finding at a break). Decide with Jørgen: the exact split per code, and whether done-unchecked on a closed task is broken (the board says done but checks are open) or history
+
+## Depends on
+
+## Acceptance
+- [ ] each finding carries severity broken or advice in text and JSON, and the split per code is documented in help
+- [ ] hug task lint by default shows broken findings and advice on open tasks only; --all shows every finding
+- [ ] the TUI header counts broken findings; advice does not raise the warning count
+- [ ] on the seid copy the default lint output drops from 2,477 lines to the measured broken-plus-open-advice number, stated in the task notes
+- [ ] tests cover one code of each severity on an open and on a closed task
+
+## Notes
