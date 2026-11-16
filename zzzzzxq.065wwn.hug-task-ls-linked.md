@@ -21,7 +21,7 @@ Promoted from item 1 of task:x1t1t1.
 - [x] hug task ls in a linked worktree shows the main board and writes to it
 - [x] A board created from a linked worktree of a fresh repo lands at the main worktree .hug/tasks
 - [x] No second checkout: git worktree list shows hug/tasks once
-- [ ] MCP from a linked worktree reads and writes the main board
+- [x] MCP from a linked worktree reads and writes the main board
 - [ ] Remaining errors (missing or stale checkout) print a fix: that works when run
 - [ ] Full niced suite green: GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test ./...
 
