@@ -4,6 +4,16 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.10 - 2026-11-16
+
+### Fixed
+
+- Speed with epics: parents are resolved once per command. On 2,498
+  seid-lang tasks `hug task ls` went from 19.1 s to 0.8 s and the TUI starts
+  in 1.4 s instead of 18.2 s.
+- TUI: NEXT UP shows what `hug task next` would pick (unassigned, not an
+  epic); the header says HUG TASKS; the Space prompt no longer ends in "??".
+
 ## v0.7.9 - 2026-11-16
 
 ### Changed
