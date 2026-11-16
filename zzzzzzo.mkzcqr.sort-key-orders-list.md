@@ -1,7 +1,7 @@
 ---
 id: mkzcqr
 title: "TUI sort builder: order by one field, then another, then Enter"
-status: "doing"
+status: "done"
 type: "feature"
 priority: "high"
 assignee: ["vole"]
