@@ -34,3 +34,5 @@ v0.7.4 (2026-11-16) shipped item 6 (task files, import files, hug.toml) plus TUI
 Item 3: import maps parent_task_id through the alias table (TestImportParent: resolves, rerun unchanged). seid-lang copy: 294 source parents, 282 restored, 20 flagged by lint as too deep with an exact fix ('hug task set X --parent EPIC'); the 12 unresolved point at tasks absent from the source.
 
 Item 4: promote built (promote.go, TestPromote): new task ranked after the source in the same group, same epic (an epic's own item becomes its child), item rewritten to 'done when task:NEW is done (text)', auto-ticked on done of NEW; refuses ticked or already-promoted items. CLI 'hug task promote ID N' and MCP task_update action promote.
+
+Item 5: --epic EPIC on ls/next/board (CLI + MCP list/next), TUI filter field e and palette ':epic ID' (bare id or prefix), next skips epics (TestNextSkipsEpicsAndEpicFilter). seid copy: epic zpn74p lists its 20 children; next --epic zpn74p returns the first open child. --group already existed.
