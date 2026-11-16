@@ -26,7 +26,7 @@ TUI: taskRowMark and the overview rows in huginn/internal/tui/render.go render "
 ## Depends on
 
 ## Acceptance
-- [ ] no TUI view shows an id in brackets or with a sigil; rows, detail and prompts show the bare id in its colour (goldens)
+- [x] no TUI view shows an id in brackets or with a sigil; rows, detail and prompts show the bare id in its colour (goldens)
 - [x] every command that takes a ref accepts task:ID as well as the bare id (today 'hug task show task:9taa9d' prints not-found) (test)
 - [ ] every printed command still uses the bare id and runs when pasted into a shell (test)
 - [ ] in the TUI a task:ID in notes or description can be followed to that task, and Esc comes back (test)
