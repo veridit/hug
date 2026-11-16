@@ -5,7 +5,7 @@ status: todo
 type: spike
 priority: ""
 assignee: []
-labels: []
+labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
 ---
