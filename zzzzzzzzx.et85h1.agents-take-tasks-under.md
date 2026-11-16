@@ -35,3 +35,5 @@ huginn/internal/cli/cli.go:180 identity() reads HUGINN_USER, else git config use
 
 ## Notes
 2026-11-16 decided (Jørgen): a person taking a task gives --model human.
+
+check 1 (hare): /tmp/et85smoke repo, git user.name 'Git Person', HUG_USER/HUG_MODEL/JCODE_SESSION_ID unset: 'hug task take s834q1' printed 'no model given: say which model takes s834q1 (claude-opus-5-5, gpt-6.1-sol, ...; a person: --model human), with --model or HUG_MODEL' / 'fix: hug task take s834q1 --model MODEL', exit 2; file unchanged. Tests: TestTakeWithoutModelFailsWithFix (cli; also asserts 'Test' git user.name never appears and HUGINN_USER is not read), TestTakeAsModelRequiredAndRecorded (task), TestTakeRecordsAgentAndModel (mcp: fix 'hug task take ID --model MODEL').
