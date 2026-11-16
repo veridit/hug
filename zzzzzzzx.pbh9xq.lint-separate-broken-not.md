@@ -34,3 +34,5 @@ Codes today (huginn/internal/task/document.go): candidates for broken: dangling-
 ## Notes
 
 2026-11-16 Jørgen decides: a done task with an unticked check is BROKEN, not advice: 'otherwise how can you have accountability'. The way out for a check that stopped applying is to strike it out with a reason (new ticket, see 'Acceptance checks can be struck out').
+
+2026-11-16 Jørgen approves the plan: lint every task, give each finding a severity. Broken is always shown, counted in the TUI header and may block. Advice is shown only for open tasks and only when it can be acted on (take, new, edit, or one nudge at a break); closed tasks get none by default; --all shows everything.
