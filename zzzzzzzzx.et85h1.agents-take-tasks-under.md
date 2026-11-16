@@ -1,10 +1,10 @@
 ---
 id: et85h1
 title: "Agents name themselves (and their model) when they take a task"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["hare"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
