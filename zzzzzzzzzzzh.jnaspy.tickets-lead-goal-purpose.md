@@ -35,3 +35,5 @@ Board today: 35 files Goal|Purpose|Principle|Relevant details|Depends on|Accepta
 ## Notes
 
 check 1: df60883 on origin/main (CI run 43936493365: ubuntu, macos, windows success). TestDetailSectionOrderGolden (huginn/internal/tui/sections_order_test.go) with testdata/detail/sections-000001-100.txt: Description, Purpose, Principle, Relevant details, then ACCEPTANCE, then Notes and History; tmux detail goldens regenerated in 4 profiles.
+
+check 2: df60883 on origin/main (CI run 43936493365: ubuntu, macos, windows success). TestShowPrintsDescriptionBeforeChecks (huginn/internal/cli/sections_test.go): goal, purpose, principle, relevant details, then '1. [ ] Observable check', then notes; --json has purpose/principle/details.
