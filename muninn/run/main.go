@@ -61,6 +61,19 @@ func Main(args []string) int {
 				throttle.Background()
 			}
 		},
+		// Every interactive command ends with the likely next step, like
+		// hug task does. Hooks, servers and JSON output stay machine-clean.
+		PersistentPostRun: func(c *cobra.Command, _ []string) {
+			if hint := nextHint(c); hint != "" {
+				// stdout stays parseable for commands that print JSON
+				// (stats, config): the hint goes to stderr there.
+				w := c.OutOrStdout()
+				if jsonOutput[topLevel(c)] {
+					w = c.ErrOrStderr()
+				}
+				fmt.Fprintln(w, "next: "+hint)
+			}
+		},
 	}
 	root.AddCommand(versionCmd(), dreamCmd(), typesCmd(), indexCmd(), searchCmd(), recallCmd(), rememberCmd(), forgetCmd(), showCmd(), rescopeCmd(),
 		listCmd(), relatedCmd(), statsCmd(), gcCmd(), hookCmd(), serveCmd(), mcpCmd(), tuiCmd(),
@@ -659,4 +672,43 @@ func configCmd() *cobra.Command {
 		return config.Save(cfg)
 	}})
 	return c
+}
+
+// jsonOutput are commands whose stdout is a JSON document.
+var jsonOutput = map[string]bool{"stats": true, "config": true}
+
+// nextHints names the usual next command after each top-level command.
+var nextHints = map[string]string{
+	"search":    "hug mem show ID (read one), hug mem forget ID (wrong or outdated)",
+	"list":      "hug mem show ID, or hug mem search \"words\"",
+	"show":      "hug mem related ID, or hug mem forget ID if it is wrong",
+	"related":   "hug mem show ID",
+	"remember":  "hug mem search \"words\" to check it is found",
+	"forget":    "hug mem remember \"the corrected fact\" if it was wrong rather than obsolete",
+	"rescope":   "hug mem list",
+	"stats":     "hug mem tidy scan (placement and duplicates), or hug mem tui",
+	"recall":    "hug mem show ID for any line above",
+	"types":     "hug mem stats",
+	"dream":     "hug mem tui",
+	"index":     "hug mem stats",
+	"gc":        "hug mem stats",
+	"project":   "hug mem list",
+	"config":    "hug mem stats",
+	"sync":      "hug mem stats",
+	"import":    "hug mem stats",
+	"install":   "hug setup",
+	"uninstall": "hug setup",
+	"version":   "hug mem stats",
+}
+
+func nextHint(c *cobra.Command) string {
+	top := topLevel(c)
+	switch top {
+	case "hook", "mcp", "serve", "tui", "capture", "jcode", "completion", "help":
+		return ""
+	}
+	if f := c.Flags().Lookup("json"); f != nil && f.Value.String() == "true" {
+		return ""
+	}
+	return nextHints[top]
 }
