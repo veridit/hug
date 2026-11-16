@@ -34,3 +34,5 @@ Seid board for checking (read only): ~/Veridit/src/seid-lang, 1263 done. Overvie
 ## Notes
 
 2026-11-16 Jørgen: an empty section takes one line: 'None' goes on the right of its title (e.g. 'BLOCKED · unmet dependencies  [0] · None'), not on a row of its own, since there is nothing to navigate to. Applies to every overview section and board column.
+
+2026-11-16 Jørgen (screenshot on v0.7.27): show the hug version in the lower right corner of the TUI, on the key-hint line (e.g. right-aligned 'hug v0.7.27'). Small; can ride with this ticket or the next TUI one.
