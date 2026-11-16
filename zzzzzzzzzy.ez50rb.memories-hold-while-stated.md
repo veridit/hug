@@ -35,3 +35,5 @@ Builds on the when-then format (jrj1vq, same epic d634kr): this is one more fiel
 - [ ] on the seid store, memories naming stopped agents are offered as dream items with the ticket they referred to (count reported)
 
 ## Notes
+
+guppy 2026-11-16 20:22, prework (read-only, no store writes), script $JCODE_SCRATCH_DIR/ez50rb/agents2.py: 124 agent names from jcode session files; of 29,117 active memories in the local store, 2,391 mention a name somewhere, 197 name it in agent context (v2 matcher), 58 of those in seid scopes. v1 matcher hand-checked on a seed-7 sample: 24/50 agent refs (misses: 'Dragon 1' design packets, 'bug' the noun). v2 written after that, checked on a NEW seed-11 sample: 48/50 agent refs (2 false: 'independent bug scouting', 'compiler lane bug'). Design waiting for crab: tmp/lanes/ez50rb-design.md. jrj1vq is not built (todo), so holds is its own field.
