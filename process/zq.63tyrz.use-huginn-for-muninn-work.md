@@ -19,3 +19,5 @@ Agents working on muninn track tasks in huginn on the huginn branch of veridit/m
 - [ ] huginn branch pushed to origin after user OK
 
 ## Notes
+
+Superseded 2026-11-16: muninn and huginn live in the hug monorepo (veridit/hug) whose tasks are on branch hug/tasks; agents track muninn work there (AGENTS.md).
