@@ -28,7 +28,7 @@ No watcher or timer exists in huginn/internal/tui today (no fsnotify, no tea.Tic
 - [x] a task changed by another process appears in an open TUI within 3 seconds, selection and scroll kept
 - [x] an open prompt, palette or editor is never interrupted by a refresh
 - [x] no measurable idle load: no reload while nothing changed (test counts loads)
-- [ ] tests cover a change arriving in overview, list and detail
+- [x] tests cover a change arriving in overview, list and detail
 
 ## Notes
 
