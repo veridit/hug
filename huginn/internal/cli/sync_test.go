@@ -1,0 +1,277 @@
+package cli
+
+import (
+	"bytes"
+	"context"
+	"os"
+	osexec "os/exec"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"sync"
+	"testing"
+	"time"
+
+	"github.com/veridit/hug/huginn/gitbranch"
+)
+
+// Background sync tests (0hkaa5) run the real detached child: this test
+// binary, re-run with the child argument (see TestMain). Spawning is set
+// only here, never by default, so other tests cannot fork.
+
+// runSyncChild is TestMain's child mode: run the background pass and exit.
+func runSyncChild() {
+	cwd, _ := os.Getwd()
+	a := &App{Cwd: cwd, In: strings.NewReader(""), Out: os.Stdout, Err: os.Stderr}
+	os.Exit(a.Run(context.Background(), []string{"sync", SyncChildArg}))
+}
+
+// clones makes a bare remote and two clones with boards, background sync on.
+func clones(t *testing.T) (a, b *App, bare string) {
+	t.Helper()
+	t.Setenv("GIT_CONFIG_GLOBAL", os.DevNull)
+	t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
+	t.Setenv("HUG_USER", "tester")
+	t.Setenv("HUG_MODEL", "test-model")
+	t.Setenv("JCODE_SESSION_ID", "")
+	t.Setenv("GIT_AUTHOR_NAME", "Test")
+	t.Setenv("GIT_AUTHOR_EMAIL", "test@example.invalid")
+	t.Setenv("GIT_COMMITTER_NAME", "Test")
+	t.Setenv("GIT_COMMITTER_EMAIL", "test@example.invalid")
+	base := t.TempDir()
+	bare = filepath.Join(base, "remote.git")
+	git(t, base, "init", "--bare", "-b", "main", bare)
+	// Count pushes: every push appends its refs to bare/pushes.
+	hook := "#!/bin/sh\ncat >> \"$GIT_DIR/pushes\"\n"
+	if e := os.WriteFile(filepath.Join(bare, "hooks", "post-receive"), []byte(hook), 0o755); e != nil {
+		t.Fatal(e)
+	}
+	one := filepath.Join(base, "one")
+	git(t, base, "init", "-b", "main", one)
+	git(t, one, "commit", "--allow-empty", "-m", "init")
+	git(t, one, "remote", "add", "origin", bare)
+	git(t, one, "push", "-q", "origin", "main")
+	two := filepath.Join(base, "two")
+	git(t, base, "clone", "-q", bare, two)
+	exe, e := os.Executable()
+	if e != nil {
+		t.Fatal(e)
+	}
+	oldSpawn, oldAfter, oldSettle := Spawn, FetchAfter, Settle
+	Spawn, FetchAfter, Settle = []string{exe, "task", "sync", SyncChildArg}, 500*time.Millisecond, 300*time.Millisecond
+	t.Cleanup(func() { Spawn, FetchAfter, Settle = oldSpawn, oldAfter, oldSettle })
+	mk := func(dir string) *App {
+		return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+	}
+	a, b = mk(one), mk(two)
+	execute(t, a, "init")
+	execute(t, a, "sync")
+	execute(t, b, "init")
+	// Let any passes the setup started finish before a test counts.
+	t.Cleanup(func() { settled(t, a); settled(t, b) })
+	return a, b, bare
+}
+
+// settled waits until no background pass runs or is queued for a's board.
+func settled(t *testing.T, a *App) {
+	t.Helper()
+	r, e := gitbranch.Open(a.Cwd, TaskBranch, TaskDir)
+	if e != nil || r.Remote == "" {
+		return
+	}
+	bg, e := r.Background()
+	if e != nil {
+		return
+	}
+	deadline := time.Now().Add(30 * time.Second)
+	for time.Now().Before(deadline) {
+		if !bg.Busy() {
+			return
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	t.Fatalf("background pass still running after 30 s (log %s)", bg.Log())
+}
+
+// until polls f every 100 ms for up to d.
+func until(d time.Duration, f func() bool) bool {
+	for deadline := time.Now().Add(d); time.Now().Before(deadline); time.Sleep(100 * time.Millisecond) {
+		if f() {
+			return true
+		}
+	}
+	return f()
+}
+
+// Check 1: a note in clone A shows up in clone B within 10 s, nobody syncs.
+func TestBackgroundSyncNoteReachesOtherClone(t *testing.T) {
+	a, b, _ := clones(t)
+	id := execute(t, a, "new", "Shared work", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	start := time.Now()
+	execute(t, a, "note", id, "from clone A")
+	seen := until(10*time.Second, func() bool {
+		r, e := b.Execute(context.Background(), []string{"show", id})
+		if e != nil {
+			return false
+		}
+		return strings.Contains(jsonString(t, r), "from clone A")
+	})
+	if !seen {
+		t.Fatalf("clone B did not see the note within 10 s; A's log:\n%s", syncLogOf(t, a))
+	}
+	t.Logf("note reached clone B in %v", time.Since(start).Round(10*time.Millisecond))
+}
+
+// Check 2: a burst of 20 notes in 2 s produces at most 2 pushes.
+func TestBackgroundSyncBurstIsBatched(t *testing.T) {
+	a, _, bare := clones(t)
+	id := execute(t, a, "new", "Burst", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	settled(t, a)
+	before := pushes(t, bare)
+	start := time.Now()
+	for i := 0; i < 20; i++ {
+		execute(t, a, "note", id, "note "+strconv.Itoa(i))
+	}
+	if d := time.Since(start); d > 2*time.Second {
+		t.Logf("20 notes took %v (more than 2 s on this machine)", d)
+	}
+	settled(t, a)
+	n := pushes(t, bare) - before
+	if n < 1 || n > 2 {
+		t.Fatalf("20 notes made %d pushes, want 1 or 2; log:\n%s", n, syncLogOf(t, a))
+	}
+	if got := git(t, bare, "log", "-1", "--format=%s", TaskBranch); !strings.Contains(got, "note "+id) {
+		t.Fatalf("remote head %q is not the last note", got)
+	}
+}
+
+// Check 3: with the remote unreachable a note is fast, ls reports the
+// unpushed commits with a fix line, and they go out once it is back.
+func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
+	a, _, bare := clones(t)
+	id := execute(t, a, "new", "Offline", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	settled(t, a)
+	gone := bare + ".gone"
+	if e := os.Rename(bare, gone); e != nil {
+		t.Fatal(e)
+	}
+	// A note never waits on the network: offline it costs what it costs
+	// online. (Its absolute time is the board's own cost, the same with
+	// and without background sync: 443 ms vs 444-466 ms per note measured
+	// niced on the owner's machine, 2026-11-16.)
+	start := time.Now()
+	execute(t, a, "note", id, "while offline")
+	offline := time.Since(start)
+	settled(t, a)
+	saved := Spawn
+	Spawn = nil
+	start = time.Now()
+	execute(t, a, "note", id, "baseline, no background sync")
+	baseline := time.Since(start)
+	Spawn = saved
+	t.Logf("note offline %v, without background sync %v", offline.Round(time.Millisecond), baseline.Round(time.Millisecond))
+	if offline > baseline+150*time.Millisecond {
+		t.Fatalf("note took %v offline, %v without background sync: it waited on the network", offline, baseline)
+	}
+	settled(t, a)
+	code, out := runText(a, "ls")
+	if code != 0 || !strings.Contains(out, "sync: 2 unpushed: ") || !strings.Contains(out, "\nfix: hug task sync\n") {
+		t.Fatalf("ls offline: %d\n%s", code, out)
+	}
+	if e := os.Rename(gone, bare); e != nil {
+		t.Fatal(e)
+	}
+	execute(t, a, "note", id, "back online")
+	settled(t, a)
+	if got := git(t, bare, "log", "-3", "--format=%s", TaskBranch); strings.Count(got, "note "+id) != 3 {
+		t.Fatalf("remote after reconnect:\n%s", got)
+	}
+	if code, out := runText(a, "ls"); code != 0 || strings.Contains(out, "unpushed") {
+		t.Fatalf("ls still reports unpushed after catching up: %d\n%s", code, out)
+	}
+}
+
+// Check 5: a rebase conflict keeps both clones' commits and says so.
+func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
+	a, b, bare := clones(t)
+	oldSpawn := Spawn
+	Spawn = nil // both clones edit offline from each other first
+	id := execute(t, a, "new", "Contested", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	execute(t, a, "sync")
+	execute(t, b, "sync")
+	execute(t, a, "set", id, "--title", "Title from A")
+	execute(t, b, "set", id, "--title", "Title from B")
+	execute(t, a, "sync")
+	Spawn = oldSpawn
+	mine := git(t, filepath.Join(b.Cwd, TaskDir), "rev-parse", "HEAD")
+	execute(t, b, "note", id, "after the conflict")
+	settled(t, b)
+	board := filepath.Join(b.Cwd, TaskDir)
+	if !isAncestor(board, mine) {
+		t.Fatalf("clone B lost its own commit %s", mine)
+	}
+	code, out := runText(b, "ls")
+	if code != 0 || !strings.Contains(out, "sync conflict in ") || !strings.Contains(out, "\nfix: hug task sync\n") {
+		t.Fatalf("ls after a conflict: %d\n%s", code, out)
+	}
+	if got := git(t, bare, "log", "-1", "--format=%s", TaskBranch); !strings.Contains(got, "set "+id) {
+		t.Fatalf("remote lost clone A's commit: %s", got)
+	}
+}
+
+// The board turn: 20 parallel notes on one clone all land, none lost to a
+// background rebase moving files underneath (m8shdj check 1 shape).
+func TestBackgroundSyncParallelNotesAllLand(t *testing.T) {
+	a, b, _ := clones(t)
+	id := execute(t, a, "new", "Parallel", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	var wg sync.WaitGroup
+	errs := make(chan error, 20)
+	for i := 0; i < 20; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			c := &App{Cwd: a.Cwd, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+			if _, e := c.Execute(context.Background(), []string{"note", id, "parallel " + strconv.Itoa(i)}); e != nil {
+				errs <- e
+			}
+		}(i)
+	}
+	wg.Wait()
+	close(errs)
+	for e := range errs {
+		t.Errorf("parallel note: %v", e)
+	}
+	settled(t, a)
+	seen := until(10*time.Second, func() bool {
+		r, e := b.Execute(context.Background(), []string{"show", id})
+		return e == nil && strings.Count(jsonString(t, r), "parallel ") == 20
+	})
+	if !seen {
+		r, _ := b.Execute(context.Background(), []string{"show", id})
+		t.Fatalf("clone B does not have all 20 notes: %d\n%s", strings.Count(jsonString(t, r), "parallel "), syncLogOf(t, a))
+	}
+}
+
+func isAncestor(dir, commit string) bool {
+	return osexec.Command("git", "-C", dir, "merge-base", "--is-ancestor", commit, "HEAD").Run() == nil
+}
+
+// pushes counts pushes to the task branch, from the hook clones installs.
+func pushes(t *testing.T, bare string) int {
+	t.Helper()
+	b, _ := os.ReadFile(filepath.Join(bare, "pushes"))
+	return strings.Count(string(b), "refs/heads/"+TaskBranch)
+}
+
+func syncLogOf(t *testing.T, a *App) string {
+	r, e := gitbranch.Open(a.Cwd, TaskBranch, TaskDir)
+	if e != nil {
+		return e.Error()
+	}
+	bg, e := r.Background()
+	if e != nil {
+		return e.Error()
+	}
+	b, _ := os.ReadFile(bg.Log())
+	return string(b)
+}

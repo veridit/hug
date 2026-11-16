@@ -26,6 +26,9 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 	}
 	// Publish unrelated local history before gitbranch's lost-race rollback.
 	// Otherwise an unpublished new task could disappear along with a losing take.
+	// No background pass fetches or pushes meanwhile, and no write commits
+	// between the pull and the push (0hkaa5).
+	defer s.exclusive()()
 	if s.r.Remote != "" {
 		ahead := exec.CommandContext(ctx, "git", "-C", s.r.Dir, "rev-list", "--count", "refs/remotes/"+s.r.Remote+"/"+s.r.Branch+"..HEAD")
 		count, err := ahead.Output()

@@ -16,6 +16,9 @@ const (
 )
 
 func TestMain(m *testing.M) {
+	if len(os.Args) == 4 && os.Args[3] == SyncChildArg {
+		runSyncChild() // a background pass spawned by sync_test.go
+	}
 	if from, ok := os.LookupEnv(editFrom); ok && len(os.Args) > 1 {
 		os.Exit(fakeEdit(os.Args[len(os.Args)-1], from, os.Getenv(editTo)))
 	}
