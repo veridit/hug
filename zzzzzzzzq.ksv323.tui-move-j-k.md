@@ -29,7 +29,7 @@ Cause: huginn/internal/tui/actions.go lines 67-82 pick the neighbour from m.all 
 - [x] K does the same upward; at the first or last visible row the message says so and no commit is made
 - [x] the confirm line names both tasks, e.g. 'Move a1dx7s below x1t1t1?', and the result message says where it went
 - [x] with a filter active, moves are relative to the filtered rows (test)
-- [ ] tests reproduce Jørgen's case: three presses no longer produce commits with no visible change
+- [x] tests reproduce Jørgen's case: three presses no longer produce commits with no visible change
 
 ## Notes
 
