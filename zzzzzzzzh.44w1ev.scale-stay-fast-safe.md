@@ -34,3 +34,5 @@ Where the time goes, from the code: every command runs cache.Sync, which walks a
 ## Notes
 
 file:gen-scale-board.py (2949 bytes, sha256:654365fa)
+
+2026-11-16 Jørgen sets the target: every interaction under 400 ms, and no command does all the work every time. Baseline on v0.7.16 (niced, busy machine), time / peak memory. 53 tasks: process start (hug version) 0.02 s; ls 0.18 s; next 0.17 s; show 0.23 s; board 0.14 s; lint 0.18 s. 2,499 tasks (seid copy): ls 0.48 s / 70 MB; next 0.30 s; show 0.35 s; board 0.30 s; lint 1.84 s. 10,002 tasks: ls 1.4-1.6 s / 151 MB; next 0.56 s; show 0.74 s; board 0.65 s; lint 3.0 s; note and new 1.0 s; TUI first screen 2.4 s / 213 MB. Reading: there is a fixed cost of about 0.15 s even on 53 tasks (process start is only 0.02 s, so it is the git calls and the cache open: measure and trim), plus a cost that grows with the board. Over 400 ms today: ls and lint from about 2,500 tasks, and everything at 10,000. The scratch board is deleted; the generator is attached to this task (gen-scale-board.py, deterministic, 'python3 gen-scale-board.py 10000' inside a .hug/tasks worktree, then commit).
