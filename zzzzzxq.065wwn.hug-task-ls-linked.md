@@ -19,7 +19,7 @@ Promoted from item 1 of task:x1t1t1.
 
 ## Acceptance
 - [x] hug task ls in a linked worktree shows the main board and writes to it
-- [ ] A board created from a linked worktree of a fresh repo lands at the main worktree .hug/tasks
+- [x] A board created from a linked worktree of a fresh repo lands at the main worktree .hug/tasks
 - [ ] No second checkout: git worktree list shows hug/tasks once
 - [ ] MCP from a linked worktree reads and writes the main board
 - [ ] Remaining errors (missing or stale checkout) print a fix: that works when run
