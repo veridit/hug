@@ -21,3 +21,5 @@ Agents write every task zoomed out first (where, why, how) and zoomed in only wh
 - [ ] hug task new/take/done/lint enforce the chosen sections; setup and MCP instructions teach them
 
 ## Notes
+
+Complete (all 90 cells, 6 broken Flash cells rerun with a markup guard). Paired vs no sections: V1 +0.49 [+0.28,+0.71], V2 +0.52 [+0.36,+0.68], V3 +0.41, V5 +0.33 [+0.07,+0.59], V4 +0.21 [-0.01,+0.45]. V2 vs V1 +0.03 [-0.15,+0.23]; V4 vs V1 -0.28 [-0.43,-0.12]. Decision: keep V1 (Goal/Purpose/Principle/Relevant details/Acceptance). Separation score carries most of the gain (1.93 -> 3.73). Report: docs/task-vocabulary-test.md.
