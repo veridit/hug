@@ -1,7 +1,7 @@
 ---
 id: 4emme8
 title: "CI green on Windows again (lint, auto-refresh and memory worktree tests)"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["vole"]
