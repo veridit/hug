@@ -313,7 +313,7 @@ func TestLintNextFixesFirstFinding(t *testing.T) {
 			}
 			continue
 		}
-		want := `[not-a-dependency] not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (a dependency line is "- <task id>", or run hug task dep ` + id + ` --add REF; prose belongs in Notes)` + "\n  fix: hug task edit " + id + "\nnext: hug task edit " + id + "\n"
+		want := `[not-a-dependency] not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (for no dependencies, leave the section empty or remove it; a dependency line is "- <task id>", or run hug task dep ` + id + ` --add REF; prose belongs in Notes)` + "\n  fix: hug task edit " + id + "\nnext: hug task edit " + id + "\n"
 		if !strings.HasSuffix(text, want) || strings.Contains(text, other) || strings.Contains(text, "dangling") {
 			t.Fatalf("got:\n%s\nwant suffix:\n%s", text, want)
 		}

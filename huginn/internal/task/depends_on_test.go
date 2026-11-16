@@ -54,7 +54,7 @@ func TestProseInDependsOnIsNotADependency(t *testing.T) {
 		t.Fatalf("want one finding, got %v", fs)
 	}
 	f := fs[0]
-	want := `not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (a dependency line is "- <task id>", or run hug task dep k7m2qx --add REF; prose belongs in Notes)`
+	want := `not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (for no dependencies, leave the section empty or remove it; a dependency line is "- <task id>", or run hug task dep k7m2qx --add REF; prose belongs in Notes)`
 	if f.Problem != want || f.Line != 15 || FindingCode(f.Problem) != "not-a-dependency" || f.FixLine() != "hug task edit k7m2qx" {
 		t.Fatalf("finding:\n%s\nfix: %s", f, f.FixLine())
 	}
@@ -118,5 +118,16 @@ func TestEveryFindingHasFix(t *testing.T) {
 		if json.Unmarshal(b, &m) != nil || m["fix"] != f.FixLine() || m["code"] == "" {
 			t.Errorf("json: %s", b)
 		}
+	}
+}
+
+// "Nothing" under Depends on (Jørgen, 2026-11-16): the message leads with
+// how to say "no dependencies" (6neax1).
+func TestNothingInDependsOnSaysLeaveItEmpty(t *testing.T) {
+	d := Parse("zzzzzz.qawmnb.recall-nudges-keep-task.md", []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: qawmnb", 1), "## Depends on\n", "## Depends on\nNothing\n", 1)))
+	fs := Lint([]*Document{d})
+	want := `not a dependency: "Nothing" (for no dependencies, leave the section empty or remove it; a dependency line is "- <task id>", or run hug task dep qawmnb --add REF; prose belongs in Notes)`
+	if len(fs) != 1 || fs[0].Problem != want || len(d.Task.Dependencies) != 0 {
+		t.Fatalf("%v", fs)
 	}
 }

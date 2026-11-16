@@ -355,7 +355,7 @@ func Parse(path string, data []byte) *Document {
 				who = "ID"
 			}
 			d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: n + 1,
-				Problem: "not a dependency: " + quoteLine(t, 60) + " (a dependency line is \"- <task id>\", or run hug task dep " + who + " --add REF; prose belongs in Notes)",
+				Problem: "not a dependency: " + quoteLine(t, 60) + " (for no dependencies, leave the section empty or remove it; a dependency line is \"- <task id>\", or run hug task dep " + who + " --add REF; prose belongs in Notes)",
 				Fix:     "hug task edit " + who})
 		case "Acceptance":
 			t := strings.TrimSpace(line)
