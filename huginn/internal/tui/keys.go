@@ -61,6 +61,9 @@ func (m model) keyBar() string {
 	}
 	h := m.helpModel
 	h.ShortSeparator = " · "
+	// Never wider than the terminal: the help model drops trailing hints
+	// and shows "…" (2026-11-16: the footer ran to 75 columns at width 70).
+	h.Width = m.width
 	return h.ShortHelpView(hints)
 }
 func (m model) helpText() string {
