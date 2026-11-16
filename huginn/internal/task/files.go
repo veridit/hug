@@ -284,7 +284,7 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			if ref.Task != t.ID {
 				o, e := Resolve(ts, ref.Task)
 				if e != nil {
-					out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": no task " + ref.Task})
+					out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": no task " + ref.Task, Fix: "hug task edit " + t.ID})
 					continue
 				}
 				owner = o
@@ -294,12 +294,12 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 				continue
 			}
 			if _, e := os.Stat(fp); e != nil {
-				out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": file not found"})
+				out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": file not found", Fix: "hug task attach " + owner.ID + " FILE --name " + ref.Name})
 			}
 		}
 		for _, prefix := range forbid {
 			if strings.Contains(string(doc), prefix) {
-				out = append(out, Finding{Path: t.Path, Line: 0, Problem: "cites " + prefix + " (a folder that gets deleted); attach the file instead"})
+				out = append(out, Finding{Path: t.Path, Line: 0, Problem: "cites " + prefix + " (a folder that gets deleted); attach the file instead", Fix: "hug task attach " + t.ID + " FILE, then hug task edit " + t.ID})
 			}
 		}
 		dir, e := s.diskPath(FolderOf(t))
@@ -311,8 +311,9 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 				return nil
 			}
 			rel, _ := filepath.Rel(s.Root, fp)
+			name, _ := filepath.Rel(dir, fp)
 			if de.Type()&os.ModeSymlink != 0 {
-				out = append(out, Finding{Path: filepath.ToSlash(rel), Line: 0, Problem: "task file is a symlink"})
+				out = append(out, Finding{Path: filepath.ToSlash(rel), Line: 0, Problem: "task file is a symlink", Fix: "hug task detach " + t.ID + " " + filepath.ToSlash(name)})
 				return nil
 			}
 			b, err := os.ReadFile(fp)
@@ -322,7 +323,7 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 					if i := strings.Index(msg, "\n"); i >= 0 {
 						msg = msg[:i]
 					}
-					out = append(out, Finding{Path: filepath.ToSlash(rel), Line: 0, Problem: msg})
+					out = append(out, Finding{Path: filepath.ToSlash(rel), Line: 0, Problem: msg, Fix: "hug task detach " + t.ID + " " + filepath.ToSlash(name)})
 				}
 			}
 			return nil

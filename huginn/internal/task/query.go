@@ -190,7 +190,19 @@ func ResolveDependency(tasks []Task, ref string) (Task, error) {
 	if len(found) == 1 {
 		return found[0], nil
 	}
-	return Task{}, &Error{Kind: "dangling-dependency", Value: ref, Fix: "hug task lint"}
+	return Task{}, &Error{Kind: "dangling-dependency", Value: "no task has the id " + ref, Fix: "hug task ls"}
+}
+
+// missingDependency is the finding for a dependency line whose reference
+// matches no task: it names the reference and how to remove it.
+func missingDependency(t Task, ref string, line int) Finding {
+	who := t.ID
+	if who == "" {
+		who = "ID"
+	}
+	return Finding{Path: t.Path, Line: line,
+		Problem: "depends on " + ref + ", but no task has that id or alias; remove the line, or write an existing task's id",
+		Fix:     "hug task dep " + who + " --remove " + ref}
 }
 func Blocked(t Task, tasks []Task) []Task {
 	var out []Task
@@ -243,7 +255,7 @@ func Lint(docs []*Document) []Finding {
 		for _, dep := range t.Dependencies {
 			v, e := ResolveDependency(tasks, dep.Ref)
 			if e != nil {
-				out = append(out, Finding{Path: t.Path, Line: dep.Line, Problem: "dangling dependency " + dep.Ref})
+				out = append(out, missingDependency(t, dep.Ref, dep.Line))
 			} else {
 				adj[t.ID] = append(adj[t.ID], v.ID)
 			}
@@ -283,7 +295,7 @@ func Lint(docs []*Document) []Finding {
 			}
 		}
 		if len(missing) > 0 {
-			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "missing section " + strings.Join(missing, ", ") + ": describe with Goal, Purpose, Principle, Relevant details, Acceptance (hug task edit " + t.ID + ")"})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "missing section " + strings.Join(missing, ", ") + ": describe with Goal, Purpose, Principle, Relevant details, Acceptance", Fix: "hug task edit " + t.ID})
 		}
 	}
 	for _, t := range tasks {
@@ -293,7 +305,7 @@ func Lint(docs []*Document) []Finding {
 		// Short titles keep lists, boards and file names readable; the
 		// detail belongs in the Goal (2026-11-16, user approved).
 		if n := len([]rune(t.Title)); n > MaxTitle {
-			out = append(out, Finding{Path: t.Path, Line: 1, Problem: fmt.Sprintf("title is %d characters (max %d): move detail into the Goal (fix: hug task set %s --title \"...\")", n, MaxTitle, t.ID)})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: fmt.Sprintf("title is %d characters (max %d): move detail into the Goal", n, MaxTitle), Fix: "hug task set " + t.ID + " --title \"...\""})
 		}
 	}
 	sort.Slice(out, func(i, j int) bool {

@@ -108,7 +108,7 @@ func TestDependenciesCreateSectionAndDanglingRepair(t *testing.T) {
 		}
 		r, err = s.RemoveDependencies("000001", []string{"000002"})
 		if err != nil || !r.Changed || len(r.Task.Dependencies) != 0 {
-			t.Fatal("cannot repair dangling dependency", r, err)
+			t.Fatal("cannot remove a dependency on a deleted task", r, err)
 		}
 		r, err = s.RemoveDependencies("000001", []string{"000002"})
 		if err != nil || r.Changed {

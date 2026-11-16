@@ -224,8 +224,15 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
   show` prints each dependency with its current title, status and path,
   resolved through the cache. Links elsewhere in the body are references,
   not dependencies.
-- `huginn lint` reports `file:line: problem` (missing field, unknown status,
-  dangling dep, dep cycle, duplicate id, done with unchecked acceptance).
+- A Depends on line is `- <id>` (optional `- `/`* ` bullet, optional
+  `task:` before the id, an id or an alias such as `TASK-123`, then the
+  note). Any other line is prose: lint reports it as `not-a-dependency`
+  and it creates no dependency, so it never blocks the task (rx74bp,
+  2026-11-16: a question typed there showed the task as blocked on "Is").
+- `hug task lint` reports `file:line: [code] problem` and a `fix:` command
+  per finding (missing field, unknown status, a dependency on no task,
+  a line that is not a dependency, dep cycle, duplicate id, done with
+  unchecked acceptance).
 - Unknown frontmatter keys and sections round-trip untouched.
 
 ## Commands
@@ -329,7 +336,8 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
   `huginn check <id> <n>`. `acceptance = "block" | "warn"` in huginn.toml.
   No `--force`. `drop` is always allowed.
 - **D18 (foreman 22:53)** the cache stores dep edges by canonical id;
-  unresolvable refs stay as dangling rows for lint.
+  unresolvable refs stay as rows for lint, which reports that no task has
+  that id (code `dangling-dependency`).
 - **D19 (foreman 23:32) names must be safe on case-insensitive file systems.**
   A tie repair produced ranks `A` and `a`, and macOS refused the case-only
   rename. huginn generates lowercase-only rank keys (base36, 0-9a-z, like the

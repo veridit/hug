@@ -123,7 +123,7 @@ func parentFindings(tasks []Task) []Finding {
 		case p.ID == t.ID:
 			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "task is its own parent"})
 		case p.Parent != "":
-			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "parent " + p.ID + " has parent " + p.Parent + ": only epic > task (fix: hug task set " + t.ID + " --parent " + p.Parent + ")"})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "parent " + p.ID + " has parent " + p.Parent + ": only epic > task", Fix: "hug task set " + t.ID + " --parent " + p.Parent})
 		}
 	}
 	return out

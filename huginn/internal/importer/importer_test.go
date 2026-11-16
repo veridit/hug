@@ -540,7 +540,7 @@ func TestRealStatbus(t *testing.T) {
 	}
 	// Only intrinsic source defects are allowed, never importer name/YAML/id defects.
 	for problem, n := range problems {
-		if !strings.Contains(problem, "Goal") && !strings.Contains(problem, "Acceptance") && !strings.Contains(problem, "unchecked") && !strings.Contains(problem, "dangling") && !strings.Contains(problem, "cycle") {
+		if !strings.Contains(problem, "Goal") && !strings.Contains(problem, "Acceptance") && !strings.Contains(problem, "unchecked") && task.FindingCode(problem) != "dangling-dependency" && task.FindingCode(problem) != "not-a-dependency" && !strings.Contains(problem, "cycle") {
 			t.Errorf("unexpected lint: %s (%d)", problem, n)
 		}
 	}

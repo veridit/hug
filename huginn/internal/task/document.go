@@ -22,6 +22,9 @@ type Finding struct {
 	// Code is a short stable name for the kind of problem (for filtering
 	// and counting); it is derived from Problem, see FindingCode.
 	Code string `json:"code"`
+	// Fix is one command that repairs the problem (or opens the task to
+	// repair it). Empty means the default for the code, see FixLine.
+	Fix string `json:"fix"`
 }
 
 // findingCodes maps message prefixes to stable codes. Order matters: the
@@ -44,7 +47,8 @@ var findingCodes = []struct{ prefix, code string }{
 	{"done with unchecked acceptance", "done-unchecked"},
 	{"case-insensitive filename collision", "filename-collision"},
 	{"duplicate id", "duplicate-id"},
-	{"dangling dependency", "dangling-dependency"},
+	{"depends on ", "dangling-dependency"},
+	{"not a dependency", "not-a-dependency"},
 	{"dependency cycle", "dependency-cycle"},
 	{"missing parent", "missing-parent"},
 	{"task is its own parent", "self-parent"},
@@ -73,13 +77,39 @@ func FindingCode(problem string) string {
 	return "other"
 }
 
-// MarshalJSON fills Code from Problem so every finding carries one.
+// MarshalJSON fills Code from Problem and Fix from the code, so every
+// finding carries both.
 func (f Finding) MarshalJSON() ([]byte, error) {
 	type plain Finding
 	if f.Code == "" {
 		f.Code = FindingCode(f.Problem)
 	}
+	f.Fix = f.FixLine()
 	return json.Marshal(plain(f))
+}
+
+// FixLine is the command that repairs the finding: its own Fix, else the
+// usual repair for its code, naming the task the file belongs to. Every
+// finding has one, so a reader always has something to run.
+func (f Finding) FixLine() string {
+	if f.Fix != "" {
+		return f.Fix
+	}
+	_, i, _, err := ParseName(f.Path)
+	if err != nil || i == "" {
+		return "hug task lint"
+	}
+	switch FindingCode(f.Problem) {
+	case "unknown-status":
+		return "hug task set " + i + " --status todo"
+	case "unknown-type":
+		return "hug task set " + i + " --type feature"
+	case "missing-parent", "self-parent":
+		return "hug task set " + i + " --parent none"
+	case "filename-collision", "duplicate-id", "duplicate-origin":
+		return "hug task show " + i
+	}
+	return "hug task edit " + i
 }
 
 func (f Finding) String() string {
@@ -311,11 +341,22 @@ func Parse(path string, data []byte) *Document {
 			d.Task.Goal += d.lines[n]
 		case "Depends on":
 			t := strings.TrimSpace(line)
-			t = strings.TrimSpace(strings.TrimPrefix(t, "- "))
-			p := strings.Fields(t)
-			if len(p) > 0 {
-				d.Task.Dependencies = append(d.Task.Dependencies, Dependency{p[0], n + 1, strings.TrimSpace(strings.TrimPrefix(t, p[0]))})
+			if t == "" || strings.HasPrefix(t, "<!--") {
+				continue
 			}
+			if ref, note, ok := parseDependencyLine(t); ok {
+				d.Task.Dependencies = append(d.Task.Dependencies, Dependency{ref, n + 1, note})
+				continue
+			}
+			// Prose is reported, never guessed into a dependency: an
+			// unreadable line must not make the task blocked (rx74bp).
+			who := d.Task.ID
+			if who == "" {
+				who = "ID"
+			}
+			d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: n + 1,
+				Problem: "not a dependency: " + quoteLine(t, 60) + " (a dependency line is \"- <task id>\", or run hug task dep " + who + " --add REF; prose belongs in Notes)",
+				Fix:     "hug task edit " + who})
 		case "Acceptance":
 			t := strings.TrimSpace(line)
 			if strings.HasPrefix(t, "- [ ] ") || strings.HasPrefix(t, "- [x] ") || strings.HasPrefix(t, "- [X] ") {
@@ -351,9 +392,9 @@ func Parse(path string, data []byte) *Document {
 		d.add(1, "Acceptance requires at least one item")
 	}
 	if d.Task.Status == "done" {
-		for _, a := range d.Task.Acceptance {
+		for n, a := range d.Task.Acceptance {
 			if !a.Checked {
-				d.add(a.Line, "done with unchecked acceptance")
+				d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: a.Line, Problem: "done with unchecked acceptance", Fix: fmt.Sprintf("hug task check %s %d", d.Task.ID, n+1)})
 			}
 		}
 	}

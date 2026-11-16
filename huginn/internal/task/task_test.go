@@ -234,7 +234,7 @@ func TestNextFilters(t *testing.T) {
 	}
 }
 func TestLintAll(t *testing.T) {
-	a := Parse("a.k7m2qx.a.md", []byte(strings.Replace(sample, "## Depends on\n", "## Depends on\n- p3rt9a\n- missing\n", 1)))
+	a := Parse("a.k7m2qx.a.md", []byte(strings.Replace(sample, "## Depends on\n", "## Depends on\n- p3rt9a\n- zz9zz9\n", 1)))
 	b := Parse("b.p3rt9a.b.md", []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: p3rt9a", 1), "## Depends on\n", "## Depends on\n- k7m2qx\n", 1)))
 	dup := Parse("x.k7m2qx.dup.md", []byte(sample))
 	findings := Lint([]*Document{a, b})
@@ -246,7 +246,7 @@ func TestLintAll(t *testing.T) {
 			t.Fatal(f)
 		}
 	}
-	for _, want := range []string{"dangling dependency missing", "dependency cycle involving k7m2qx", "duplicate id k7m2qx"} {
+	for _, want := range []string{"depends on zz9zz9, but no task has that id or alias; remove the line, or write an existing task's id", "dependency cycle involving k7m2qx", "duplicate id k7m2qx"} {
 		if !contains(probs, want) {
 			t.Fatal(want, probs)
 		}

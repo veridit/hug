@@ -38,7 +38,8 @@ is checked between files. A partially completed import can safely be retried.
 * Frontmatter dependencies remain available verbatim. A new Depends on section
   contains canonical target ids, resolved through the whole input set and
   destination aliases. Missing targets keep their source reference and produce
-  a per-file finding as well as ordinary dangling-dependency lint.
+  a per-file finding as well as the ordinary lint finding that no task has
+  that id (code `dangling-dependency`).
 * Numeric ordinal sorts ascending, with source-id ties. Ranked tasks receive
   fixed-width twelve-digit position prefixes, so tied ordinals also preserve
   source-id order even though Huginn's general rank ties use canonical ids.
