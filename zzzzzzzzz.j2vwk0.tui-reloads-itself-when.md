@@ -37,3 +37,4 @@ Same fsnotify watcher style as nfv18p (auto-refresh), so build after it, same fi
 
 2026-11-16 Jørgen: no backwards compatibility anywhere; the reload hands state only to the same or newer hug and needs no old-format reader.
 2026-11-16 Jørgen: Showing the version somewhere would also be nice, what version I'm currently running.
+Jørgen 2026-11-16 ruling: no automatic reload. When a newer hug is installed, the version corner (lower right) shows it, e.g. 'hug v0.7.35 → v0.7.36 · R reloads', and R re-execs keeping view, selection, filters, focus and scroll. Nothing else changes until he presses R. R is shown only while a newer version exists (keys never change meaning on hidden state: if R is already bound, pick a free key and show that one).
