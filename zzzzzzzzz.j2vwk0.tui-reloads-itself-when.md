@@ -31,3 +31,5 @@ Same fsnotify watcher style as nfv18p (auto-refresh), so build after it, same fi
 - [ ] the footer says which version it reloaded into, e.g. 'reloaded hug v0.7.21'
 
 ## Notes
+
+2026-11-16 Jørgen: no backwards compatibility anywhere; the reload hands state only to the same or newer hug and needs no old-format reader.
