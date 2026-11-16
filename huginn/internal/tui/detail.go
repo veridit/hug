@@ -151,6 +151,10 @@ func (m model) detailHeader(t task.Task) []string {
 	case t.Model != "":
 		owner += " · " + t.Model
 	}
+	// Where the work happens (x1t1t1): the branch it was taken on.
+	if b := oneLine(t.Branch); b != "" && owner != "unassigned" {
+		owner += " · " + b
+	}
 	badges = append(badges, m.styles.dim.Render("group:"+oneLine(group)), m.styles.accent.Render(oneLine(owner)))
 	lines := []string{title}
 	lines = append(lines, strings.Split(wrap(strings.Join(badges, "  "), m.width), "\n")...)

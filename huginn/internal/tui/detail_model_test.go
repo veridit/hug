@@ -35,3 +35,19 @@ func TestDetailHeaderShowsModel(t *testing.T) {
 		}
 	}
 }
+
+// x1t1t1: the detail header names the branch the task was taken on.
+func TestDetailHeaderShowsBranch(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	m := fixture(t)
+	m.width = 160
+	tk := m.visible[0]
+	tk.Assignee, tk.Model, tk.Branch = []string{"dragon"}, "claude-opus-5-5", "feat/x"
+	if got := ansi.Strip(strings.Join(m.detailHeader(tk), "\n")); !strings.Contains(got, "assigned:dragon · claude-opus-5-5 · feat/x") {
+		t.Fatalf("branch missing:\n%s", got)
+	}
+	tk.Assignee, tk.Model = nil, ""
+	if got := ansi.Strip(strings.Join(m.detailHeader(tk), "\n")); strings.Contains(got, "feat/x") {
+		t.Fatalf("untaken task shows a branch:\n%s", got)
+	}
+}
