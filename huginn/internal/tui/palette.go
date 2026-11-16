@@ -116,6 +116,11 @@ func (m model) completions() []completion {
 		prefix, value = "filter ", strings.TrimLeft(rest, " ")
 	}
 	name, arg, hasArg := strings.Cut(value, " ")
+	if prefix != "" && hasArg {
+		// "f g " opens group: after filter, a field may be shortened to
+		// any prefix that names one field only (2026-11-16, user).
+		name = expandField(name)
+	}
 	var out []completion
 	// values lists a field's values that start with arg, as filter rows.
 	values := func(field, arg string) {
@@ -198,12 +203,40 @@ func cutFilter(value string) (string, bool) {
 	return value, false
 }
 
+// expandField turns a shortened field name into the full one when exactly
+// one field starts with it; anything else comes back unchanged.
+func expandField(name string) string {
+	if name == "" {
+		return name
+	}
+	found := ""
+	for _, f := range paletteFields {
+		if f == name {
+			return f
+		}
+		if strings.HasPrefix(f, name) {
+			if found != "" {
+				return name
+			}
+			found = f
+		}
+	}
+	if found != "" {
+		return found
+	}
+	return name
+}
+
 // unfilter drops the leading "filter", so "filter status todo" runs as
-// "status todo".
+// "status todo", and "f s todo" does too.
 func unfilter(value string) string {
 	value = strings.TrimSpace(value)
 	if rest, ok := cutFilter(value); ok {
-		return strings.TrimSpace(rest)
+		rest = strings.TrimSpace(rest)
+		if name, arg, hasArg := strings.Cut(rest, " "); hasArg {
+			return expandField(name) + " " + strings.TrimSpace(arg)
+		}
+		return rest
 	}
 	return value
 }
