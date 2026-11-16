@@ -67,7 +67,13 @@ type Config struct {
 	BuiltinMinSemantic     float64 `json:"builtin_min_semantic"`
 	BuiltinMinSemanticFull float64 `json:"builtin_min_semantic_full"`
 	ListenAddr             string  `json:"listen_addr"`
+	// NudgeBoard: the recall hook adds one line when the task board and the
+	// session's work disagree (qawmnb). Unset means on; false turns it off.
+	NudgeBoard *bool `json:"nudge_board,omitempty"`
 }
+
+// BoardNudges reports whether board nudges are on (nudge_board, default true).
+func (c Config) BoardNudges() bool { return c.NudgeBoard == nil || *c.NudgeBoard }
 
 // Defaults returns the built-in configuration.
 func Defaults() Config {

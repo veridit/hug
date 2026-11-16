@@ -35,6 +35,9 @@ type Request struct {
 	// DreamOpen counts dream items this session's binding could be handed.
 	// When > 0 and the turn is a break, the block carries a one-line cue.
 	DreamOpen func() int `json:"-"`
+	// Board, when set, reads the task board and the session's recent tool
+	// calls; a mismatch adds one line (qawmnb, boardcue.go).
+	Board BoardSource `json:"-"`
 }
 
 // Hit is one recalled memory.
@@ -60,6 +63,8 @@ type Response struct {
 	Elapsed string `json:"elapsed"`
 	Skipped string `json:"skipped,omitempty"`
 	Break   string `json:"break,omitempty"` // start | return | wrap-up
+	// BoardKind names the board line added, if any (take, work, done, lint).
+	BoardKind string `json:"board,omitempty"`
 }
 
 // Engine runs recall.
@@ -137,7 +142,17 @@ func (e *Engine) Recall(ctx context.Context, r Request) (Response, error) {
 		return Response{Skipped: "own injection"}, nil
 	}
 	if IsHarnessNotice(msg) {
-		return Response{Skipped: "harness notice"}, nil
+		// An autonomous stretch ("[auto] ...", "You have N incomplete
+		// todos") has no user turns at all, yet that is where the board drifts
+		// (qawmnb, the 2026-11-16 night). Recall stays off; the board check
+		// runs, without lint (a notice is not a break).
+		resp := Response{Skipped: "harness notice"}
+		if r.Session != "" && r.Board != nil {
+			if line, kind := e.BoardCue(r.Session, "", "", time.Now(), r.Board); line != "" {
+				resp.Block, resp.BoardKind = Marker+" "+line, kind
+			}
+		}
+		return resp, nil
 	}
 	o := e.Options
 	if len(r.Scopes) > 0 {
@@ -205,6 +220,16 @@ func (e *Engine) Recall(ctx context.Context, r Request) (Response, error) {
 					resp.Block = Marker + " " + cue
 				} else {
 					resp.Block += "\n" + cue
+				}
+			}
+		}
+		if r.Board != nil {
+			if line, kind := e.BoardCue(r.Session, msg, resp.Break, now, r.Board); line != "" {
+				resp.BoardKind = kind
+				if resp.Block == "" {
+					resp.Block = Marker + " " + line
+				} else {
+					resp.Block += "\n" + line
 				}
 			}
 		}

@@ -27,6 +27,9 @@ type PromptHookInput struct {
 	Prompt    string `json:"prompt"`
 	Cwd       string `json:"cwd"`
 	Event     string `json:"hook_event_name"`
+	// TranscriptPath is the session's JSON-lines transcript (Claude Code);
+	// the board nudge reads the session's tool calls from it (qawmnb).
+	TranscriptPath string `json:"transcript_path"`
 }
 
 // ReadPromptHook parses the hook payload from r.

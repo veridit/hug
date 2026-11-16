@@ -1,0 +1,229 @@
+package recall_test
+
+import (
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/veridit/hug/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/store"
+)
+
+func boardEngine(t *testing.T) *recall.Engine {
+	t.Helper()
+	db, err := store.Open(filepath.Join(t.TempDir(), "m.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { db.Close() })
+	return &recall.Engine{DB: db}
+}
+
+func src(in recall.BoardInput) recall.BoardSource {
+	return func(time.Time, bool) *recall.BoardInput { c := in; return &c }
+}
+
+var edit = recall.BoardAction{Edits: true}
+
+func TestBoardTakeNamedTask(t *testing.T) {
+	e := boardEngine(t)
+	now := time.Date(2026, 11, 16, 1, 0, 0, 0, time.UTC)
+	in := recall.BoardInput{
+		Tasks:   []recall.BoardTask{{ID: "7js5hw", Title: "TUI: human names for places", Status: "todo", Checks: 2, Open: 2}},
+		Self:    recall.BoardSelf{Name: "crab", Model: "claude-opus-5-5"},
+		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "7js5hw"}}}, edit},
+	}
+	line, kind := e.BoardCue("jcode:s1", "continue", "", now, src(in))
+	if kind != "take" || !strings.Contains(line, "hug task take 7js5hw --model claude-opus-5-5") {
+		t.Fatalf("kind=%q line=%q", kind, line)
+	}
+	// Once per hour per kind, and the same line about the same task once a day.
+	if line, _ := e.BoardCue("jcode:s1", "continue", "", now.Add(30*time.Minute), src(in)); line != "" {
+		t.Fatalf("second within the hour: %q", line)
+	}
+	if line, _ := e.BoardCue("jcode:s1", "continue", "", now.Add(61*time.Minute), src(in)); line != "" {
+		t.Fatalf("same line within the day: %q", line)
+	}
+	other := in
+	other.Tasks = append([]recall.BoardTask{{ID: "48hx44", Title: "hug setup wires desktop apps", Status: "todo"}}, in.Tasks...)
+	other.Actions = []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "48hx44"}}}, edit}
+	if line, _ := e.BoardCue("jcode:s1", "continue", "", now.Add(62*time.Minute), src(other)); !strings.Contains(line, "48hx44") {
+		t.Fatalf("another task after the hour: %q", line)
+	}
+	if line, _ := e.BoardCue("jcode:s1", "continue", "", now.Add(25*time.Hour), src(in)); line == "" {
+		t.Fatal("no line after a day")
+	}
+}
+
+func TestBoardSilentWhenTaskIsMine(t *testing.T) {
+	e := boardEngine(t)
+	now := time.Now()
+	for _, self := range []recall.BoardSelf{
+		{Name: "guppy"}, // assignee
+		{Linked: true, Worktree: "/r/wt-a", Branch: "feat/a"}, // worktree (x1t1t1)
+		{Worktree: "/r", Branch: "feat/a"},                    // non-main branch
+	} {
+		in := recall.BoardInput{
+			Tasks:   []recall.BoardTask{{ID: "qawmnb", Title: "Recall nudges", Status: "doing", Assignee: []string{"guppy"}, Branch: "feat/a", Worktree: "/r/wt-a", Checks: 3, Open: 2}},
+			Self:    self,
+			Actions: []recall.BoardAction{edit, edit},
+		}
+		for i := 0; i < 3; i++ {
+			if line, _ := e.BoardCue("s-"+self.Name+self.Branch+self.Worktree, "go on", "", now.Add(time.Duration(i)*2*time.Hour), src(in)); line != "" {
+				t.Fatalf("%+v: %q", self, line)
+			}
+		}
+	}
+}
+
+func TestBoardMainWorktreeIsNotOwnership(t *testing.T) {
+	// Every worker shares the main checkout on main: a doing task taken there
+	// is not this session's (crab: never hide a real mismatch).
+	e := boardEngine(t)
+	in := recall.BoardInput{
+		Tasks:   []recall.BoardTask{{ID: "x1t1t1", Title: "Worktrees", Status: "doing", Assignee: []string{"dragon"}, Branch: "main", Worktree: "/r"}},
+		Self:    recall.BoardSelf{Name: "guppy", Branch: "main", Worktree: "/r"},
+		Actions: []recall.BoardAction{edit},
+	}
+	now := time.Now()
+	if line, _ := e.BoardCue("s", "go", "", now, src(in)); line != "" {
+		t.Fatalf("first edit turn without an id must stay silent: %q", line)
+	}
+	line, kind := e.BoardCue("s", "go", "", now.Add(time.Minute), src(in))
+	if kind != "take" || !strings.Contains(line, "hug task next") {
+		t.Fatalf("second edit turn: kind=%q %q", kind, line)
+	}
+}
+
+func TestBoardOwnTakeCounts(t *testing.T) {
+	// A session that ran hug task take ID owns ID even when the board names
+	// someone else (pre-et85h1 assignees were the git user).
+	e := boardEngine(t)
+	now := time.Now()
+	in := recall.BoardInput{
+		Tasks:   []recall.BoardTask{{ID: "5g86n6", Title: "Layout", Status: "doing", Assignee: []string{"Jørgen H. Fjeld"}, Checks: 6, Open: 3}},
+		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "take", ID: "5g86n6"}}}, edit},
+	}
+	if line, _ := e.BoardCue("s", "go", "", now, src(in)); line != "" {
+		t.Fatalf("own take: %q", line)
+	}
+	in.Actions = []recall.BoardAction{edit}
+	if line, _ := e.BoardCue("s", "go", "", now.Add(time.Minute), src(in)); line != "" {
+		t.Fatalf("own take, later turn: %q", line)
+	}
+}
+
+func TestBoardDoneWhenEveryCheckHolds(t *testing.T) {
+	e := boardEngine(t)
+	in := recall.BoardInput{
+		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
+		Self:  recall.BoardSelf{Name: "crab"},
+	}
+	line, kind := e.BoardCue("s", "next", "", time.Now(), src(in))
+	if kind != "done" || !strings.HasSuffix(line, "hug task done 6tj2b8") {
+		t.Fatalf("kind=%q %q", kind, line)
+	}
+}
+
+func TestBoardWorkOnTodo(t *testing.T) {
+	e := boardEngine(t)
+	in := recall.BoardInput{
+		Tasks:   []recall.BoardTask{{ID: "npda3r", Title: "pattern", Status: "todo", Checks: 3, Open: 3}},
+		Self:    recall.BoardSelf{Name: "crab", Model: "gpt-6.1-sol"},
+		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "check", ID: "npda3r", N: 1}}}},
+	}
+	line, kind := e.BoardCue("s", "go", "", time.Now(), src(in))
+	if kind != "work" || !strings.Contains(line, "hug task take npda3r --model gpt-6.1-sol") {
+		t.Fatalf("kind=%q %q", kind, line)
+	}
+}
+
+func TestBoardChatOnlySilent(t *testing.T) {
+	e := boardEngine(t)
+	in := recall.BoardInput{Tasks: []recall.BoardTask{{ID: "aaaaaa", Title: "x", Status: "todo"}}, Self: recall.BoardSelf{Name: "crab"}}
+	for i := 0; i < 5; i++ {
+		if line, _ := e.BoardCue("s", "what do you think?", "", time.Now().Add(time.Duration(i)*time.Hour), src(in)); line != "" {
+			t.Fatalf("chat turn: %q", line)
+		}
+	}
+}
+
+func TestBoardLintOnlyAtBreak(t *testing.T) {
+	e := boardEngine(t)
+	now := time.Now()
+	in := recall.BoardInput{
+		Tasks: []recall.BoardTask{{ID: "aaaaaa", Status: "done"}, {ID: "bbbbbb", Status: "todo"}, {ID: "cccccc", Status: "doing"}},
+		Findings: func() []recall.BoardFinding {
+			return []recall.BoardFinding{
+				{TaskID: "bbbbbb", TaskStatus: "todo", Problem: "no acceptance items", Fix: "hug task edit bbbbbb"},
+				{TaskID: "cccccc", TaskStatus: "doing", Problem: "missing Goal", Fix: "hug task edit cccccc"},
+			}
+		},
+		Self: recall.BoardSelf{Name: "crab"},
+	}
+	if line, _ := e.BoardCue("s", "go", "", now, src(in)); line != "" {
+		t.Fatalf("no break: %q", line)
+	}
+	line, kind := e.BoardCue("s", "thanks", "wrap-up", now, src(in))
+	if kind != "lint" || !strings.Contains(line, "cccccc") || !strings.HasSuffix(line, "fix: hug task edit cccccc") {
+		t.Fatalf("doing first: kind=%q %q", kind, line)
+	}
+	if line, _ := e.BoardCue("s", "thanks", "return", now.Add(5*time.Hour), src(in)); line != "" {
+		t.Fatalf("within 6 h: %q", line)
+	}
+	// A touched task comes first.
+	in.Actions = []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "bbbbbb"}}}}
+	line, _ = e.BoardCue("s", "thanks", "return", now.Add(7*time.Hour), src(in))
+	if !strings.Contains(line, "bbbbbb") {
+		t.Fatalf("touched first: %q", line)
+	}
+}
+
+func TestBoardLintRotatesAcrossSessions(t *testing.T) {
+	// One finding goes to one session; the next session gets the next one.
+	e := boardEngine(t)
+	now := time.Now()
+	in := recall.BoardInput{
+		Tasks: []recall.BoardTask{{ID: "q70jjy", Status: "todo"}, {ID: "jy00xt", Status: "todo"}},
+		Findings: func() []recall.BoardFinding {
+			return []recall.BoardFinding{
+				{TaskID: "q70jjy", TaskStatus: "todo", Problem: "sections out of order", Fix: "hug upgrade"},
+				{TaskID: "q70jjy", TaskStatus: "todo", Problem: "title is 138 characters (max 80)", Fix: "hug task set q70jjy --title \"...\""},
+				{TaskID: "jy00xt", TaskStatus: "todo", Problem: "sections out of order", Fix: "hug task edit jy00xt"},
+			}
+		},
+	}
+	a, _ := e.BoardCue("a", "back", "return", now, src(in))
+	b, _ := e.BoardCue("b", "back", "return", now.Add(time.Minute), src(in))
+	c, _ := e.BoardCue("c", "back", "return", now.Add(2*time.Minute), src(in))
+	if !strings.Contains(a, "q70jjy") || !strings.Contains(b, "jy00xt") || c != "" {
+		t.Fatalf("a=%q\nb=%q\nc=%q", a, b, c)
+	}
+	if d, _ := e.BoardCue("d", "back", "return", now.Add(8*24*time.Hour), src(in)); d == "" {
+		t.Fatal("finding never handed out again")
+	}
+}
+
+func TestBoardOffWhenNoSource(t *testing.T) {
+	e := boardEngine(t)
+	if line, _ := e.BoardCue("s", "go", "start", time.Now(), nil); line != "" {
+		t.Fatal(line)
+	}
+}
+
+func TestBoardOnHarnessNotice(t *testing.T) {
+	// An autonomous night has only "[auto]" turns; the board still speaks.
+	e := boardEngine(t)
+	in := recall.BoardInput{
+		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
+		Self:  recall.BoardSelf{Name: "crab"},
+	}
+	r, err := e.Recall(t.Context(), recall.Request{Session: "jcode:s", Message: "[auto] Do more validation", Board: src(in)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Skipped != "harness notice" || r.BoardKind != "done" || !strings.HasPrefix(r.Block, recall.Marker+" Task board:") {
+		t.Fatalf("%+v", r)
+	}
+}

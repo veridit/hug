@@ -651,7 +651,7 @@ func runHook(name string, budget time.Duration) error {
 		if err != nil {
 			return err
 		}
-		resp, err := hookRecall(ctx, name, in.SessionID, in.Prompt, in.Cwd)
+		resp, err := hookRecallBoard(ctx, name, in)
 		if err != nil {
 			return err
 		}
@@ -683,7 +683,16 @@ func runHook(name string, budget time.Duration) error {
 		if binding.Err != nil {
 			return binding.Err
 		}
-		resp, err := hookRecallWith(ctx, a, name, sid, msg, binding)
+		cwd := os.Getenv("JCODE_HOOK_CWD")
+		sessions := filepath.Join(jh, "sessions")
+		bs := boardSource(ctx, a.Cfg.BoardNudges(), cwd, sessionName(sid), func(since time.Time) harness.Activity {
+			act, _ := harness.JcodeActivity(sessions, sid, since)
+			return act
+		})
+		resp, err := hookRecallWith(ctx, a, name, sid, msg, binding, bs)
+		if resp.BoardKind != "" {
+			logHook("jcode[%s] %s: board=%s", inst.Name, short(sid), resp.BoardKind)
+		}
 		if err != nil || resp.Block == "" {
 			logHook("jcode[%s] %s: msg=%q hits=0 skipped=%q elapsed=%s", inst.Name, short(sid), recall.Truncate(msg, 60), resp.Skipped, resp.Elapsed)
 			return err
@@ -727,15 +736,41 @@ func hookRecall(ctx context.Context, harnessName, session, msg, cwd string) (rec
 	if b.Err != nil {
 		return recall.Response{}, b.Err
 	}
-	return hookRecallWith(ctx, a, harnessName, session, msg, b)
+	return hookRecallWith(ctx, a, harnessName, session, msg, b, nil)
 }
 
-func hookRecallWith(ctx context.Context, a *app.App, harnessName, session, msg string, b app.Binding) (recall.Response, error) {
+// hookRecallBoard is hookRecall for a Claude Code / Codex payload, with the
+// board nudge reading tool calls from the payload's transcript (qawmnb).
+func hookRecallBoard(ctx context.Context, harnessName string, in harness.PromptHookInput) (recall.Response, error) {
+	a, err := app.Open(ctx)
+	if err != nil {
+		return recall.Response{}, err
+	}
+	defer a.Close()
+	b := a.Bound("", in.Cwd)
+	if b.Err != nil {
+		return recall.Response{}, b.Err
+	}
+	var bs recall.BoardSource
+	if in.TranscriptPath != "" {
+		bs = boardSource(ctx, a.Cfg.BoardNudges(), in.Cwd, "", func(since time.Time) harness.Activity {
+			act, _ := harness.ClaudeActivity(in.TranscriptPath, since)
+			return act
+		})
+	}
+	resp, err := hookRecallWith(ctx, a, harnessName, in.SessionID, in.Prompt, b, bs)
+	if resp.BoardKind != "" {
+		logHook("%s %s: board=%s", harnessName, short(in.SessionID), resp.BoardKind)
+	}
+	return resp, err
+}
+
+func hookRecallWith(ctx context.Context, a *app.App, harnessName, session, msg string, b app.Binding, board recall.BoardSource) (recall.Response, error) {
 	if _, err := ensureFresh(ctx, a); err != nil {
 		logHook("reindex: %v", err)
 	}
 	b = b.Refresh(a)
-	return a.Recall.Recall(ctx, recall.Request{Session: harnessName + ":" + session, Harness: harnessName, Message: msg, Scopes: b.Scopes, ScopeFor: b.ScopeFor, DreamOpen: func() int { return b.OpenDreamCount(a) }})
+	return a.Recall.Recall(ctx, recall.Request{Session: harnessName + ":" + session, Harness: harnessName, Message: msg, Scopes: b.Scopes, ScopeFor: b.ScopeFor, DreamOpen: func() int { return b.OpenDreamCount(a) }, Board: board})
 }
 
 func dirExists(p string) bool {
