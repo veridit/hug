@@ -14,6 +14,8 @@ type shortcut struct {
 // letter that no earlier name (and no reserved key) has taken. So todo,
 // doing, blocked, done, dropped become t, d, b, o, r: done and dropped move
 // to their second letter because d is gone by then (2026-11-16, user).
+// A name that starts with a sigil, such as "!lint", gets that sigil: the
+// label already shows its key. Punctuation later in a name is never picked.
 // The header, the palette and the help all take their keys from here, so a
 // new choice never needs its letter chosen by hand.
 func assignShortcuts(names []string, reserved string) []shortcut {
@@ -27,7 +29,8 @@ func assignShortcuts(names []string, reserved string) []shortcut {
 		pos := 0
 		for _, r := range name {
 			key := unicode.ToLower(r)
-			if (unicode.IsLetter(key) || unicode.IsDigit(key)) && !taken[key] {
+			sigil := pos == 0 && (unicode.IsPunct(key) || unicode.IsSymbol(key))
+			if (unicode.IsLetter(key) || unicode.IsDigit(key) || sigil) && !taken[key] {
 				taken[key] = true
 				out[i] = shortcut{Key: key, Pos: pos}
 				break

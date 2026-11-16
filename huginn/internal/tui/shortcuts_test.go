@@ -24,6 +24,10 @@ func TestAssignShortcuts(t *testing.T) {
 	}{
 		{"statuses", []string{"todo", "doing", "blocked", "done", "dropped"}, "", "tdbor"},
 		{"views", []string{"overview", "list", "board", "lint"}, "", "olbi"},
+		// A leading sigil is the label's own key (2026-11-16, user).
+		{"views with a sigil", []string{"overview", "list", "board", "!lint"}, "", "olb!"},
+		{"a taken sigil falls back to a letter", []string{"!lint", "!later"}, "", "!l"},
+		{"punctuation inside a name is skipped", []string{"a", "a-b"}, "", "ab"},
 		{"types", []string{"feature", "bug", "chore", "spike", "docs"}, "", "fbcsd"},
 		{"priorities", []string{"critical", "high", "medium", "low"}, "", "chml"},
 		// The same letters the f filter picker already uses.
