@@ -38,3 +38,5 @@ cause of the silent run (check 5): hug never exits 0 silently. Tested with v0.7.
 2026-11-16 Jørgen: by default lint hides findings on done and dropped tasks, in the CLI and the TUI. Built in this ticket: open tasks only by default, one count line for what is hidden ('986 findings on closed tasks hidden: hug task lint --all'), --all shows everything. Sent to the worker.
 
 2026-11-16 Jørgen: the not-a-dependency message must say that no dependencies means an empty section or no section ('for no dependencies, leave the section empty or remove it; ...'). He wrote 'Nothing' and was only told how to add one. Sent to the worker.
+
+check 1 (7d600ff): TestLintNeverSilentSummaryCodesHelp: empty board -> "no findings\nnext: hug task new ..."; clean board -> exactly "no findings\nnext: hug task take <id>\n". Before: empty/clean boards printed only the next: line.
