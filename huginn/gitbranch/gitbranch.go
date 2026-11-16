@@ -31,6 +31,7 @@ func WithIdentity(name, email string) Option {
 // worktree add) Dir is the branch's one checkout, in the main worktree.
 type Repository struct {
 	Root, Dir, Branch, Remote string
+	Common                    string // absolute common git dir, set by Open
 	Identity                  Identity
 }
 
@@ -193,16 +194,11 @@ func mainRoot(list []worktree, root string) string {
 // original checkout, not the linked one: branch checkouts made by Open live
 // there, so every worktree shares them.
 func MainRoot(dir string) (string, error) {
-	r := &Repository{Dir: dir}
-	root, err := r.runAt(dir, "rev-parse", "--show-toplevel")
+	l, err := Locate(dir)
 	if err != nil {
 		return "", err
 	}
-	list, err := r.worktrees(root)
-	if err != nil {
-		return "", err
-	}
-	return mainRoot(list, filepath.Clean(root)), nil
+	return l.Main, nil
 }
 
 // Open opens or initializes the worktree. repoRoot may be any directory inside
@@ -214,36 +210,59 @@ func Open(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 	return Init(repoRoot, branch, dir, options...)
 }
 func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) {
-	r := &Repository{Dir: repoRoot}
+	loc, err := Locate(repoRoot)
+	if err != nil {
+		return nil, err
+	}
+	return loc.Open(branch, dir, options...)
+}
+
+// Location is what Open needs to know about the repository around a
+// directory, found with two git processes (44w1ev: Open spawned eight, at
+// ~15 ms each, before a command read a task). A caller that opens a branch
+// and also asks about the repository (the main worktree, the common git
+// dir) locates once and reuses it.
+type Location struct {
+	Root   string // top level of the worktree the directory is in
+	Common string // absolute common git dir, shared by every worktree
+	Main   string // top level of the main worktree (Root in a bare repo)
+	list   []worktree
+}
+
+// Locate finds the Location of dir. Outside a git repository it fails.
+func Locate(dir string) (*Location, error) {
+	r := &Repository{Dir: dir}
+	paths, err := r.runAt(dir, "rev-parse", "--path-format=absolute", "--show-toplevel", "--git-common-dir")
+	if err != nil {
+		// --path-format needs Git 2.31; say what to upgrade rather than
+		// echoing an unknown-option error.
+		if e := r.checkVersion(dir); e != nil {
+			return nil, e
+		}
+		return nil, err
+	}
+	root, common, ok := strings.Cut(paths, "\n")
+	if !ok {
+		return nil, &Error{Op: "rev-parse", Detail: "unexpected output " + strconv.Quote(paths), Fix: "git -C " + quote(dir) + " rev-parse --path-format=absolute --show-toplevel --git-common-dir"}
+	}
+	l := &Location{Root: root, Common: strings.TrimSpace(common)}
+	if l.list, err = r.worktrees(root); err != nil {
+		return nil, err
+	}
+	l.Main = mainRoot(l.list, filepath.Clean(root))
+	return l, nil
+}
+
+// Open opens or initializes branch's worktree at dir (relative to the main
+// worktree) in the located repository; see the package-level Open.
+func (l *Location) Open(branch, dir string, options ...Option) (*Repository, error) {
+	r := &Repository{Dir: l.Root}
 	for _, o := range options {
 		o(r)
 	}
-	version, err := r.runAt(repoRoot, "--version")
-	if err != nil {
-		return nil, err
-	}
-	var major, minor int
-	fmt.Sscanf(version, "git version %d.%d", &major, &minor)
-	if major < 2 || major == 2 && minor < 42 {
-		fix := "sudo apt-get update && sudo apt-get install git && git --version"
-		if runtime.GOOS == "darwin" {
-			fix = "brew install git && git --version"
-		}
-		if runtime.GOOS == "windows" {
-			fix = "winget upgrade --id Git.Git --exact"
-		}
-		return nil, &Error{Op: "init", Detail: "Git >= 2.42 required for worktree add --orphan; found " + version, Fix: fix}
-	}
-	root, err := r.runAt(repoRoot, "rev-parse", "--show-toplevel")
-	if err != nil {
-		return nil, err
-	}
-	r.Root = root
-	list, err := r.worktrees(root)
-	if err != nil {
-		return nil, err
-	}
-	host := mainRoot(list, filepath.Clean(root))
+	root, common, list, host := l.Root, l.Common, l.list, l.Main
+	r.Root, r.Common = root, common
+	var err error
 	clean := filepath.Clean(dir)
 	if filepath.IsAbs(clean) || clean == "." || clean == ".." || strings.HasPrefix(clean, ".."+string(filepath.Separator)) {
 		return nil, &Error{Op: "init", Detail: "worktree directory must be inside checkout", Fix: "Choose a relative directory such as .notes"}
@@ -265,26 +284,20 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 			return nil, &Error{Op: "init", Detail: "worktree directory traverses symlink: " + ancestor, Fix: "git -C " + quote(host) + " worktree list"}
 		}
 	}
-	if _, err = r.runAt(root, "check-ref-format", "--branch", branch); err != nil {
-		return nil, err
+	if _, ok := checkout(list, branch); !ok {
+		// The branch is checked out somewhere only if git accepted its name.
+		if _, err = r.runAt(root, "check-ref-format", "--branch", branch); err != nil {
+			return nil, err
+		}
 	}
 	r.Branch = branch
 	r.Dir = filepath.Join(host, clean)
-	remotes, err := r.runAt(root, "remote")
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range strings.Fields(remotes) {
-		if r.Remote == "" || v == "origin" {
-			r.Remote = v
+	if r.Remote, err = remoteOf(common); err != nil {
+		if remotes, e := r.runAt(root, "remote"); e == nil {
+			r.Remote = pickRemote(strings.Fields(remotes))
+		} else {
+			return nil, e
 		}
-		if v == "origin" {
-			break
-		}
-	}
-	common, err := r.runAt(root, "rev-parse", "--path-format=absolute", "--git-common-dir")
-	if err != nil {
-		return nil, err
 	}
 	exclude := filepath.Join(common, "info", "exclude")
 	if err = os.MkdirAll(filepath.Dir(exclude), 0755); err != nil {
@@ -340,6 +353,9 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 		}
 		return r, nil
 	}
+	if e := r.checkVersion(root); e != nil {
+		return nil, e
+	}
 	exists := false
 	if _, e := r.runAt(root, "show-ref", "--verify", "--quiet", "refs/heads/"+branch); e == nil {
 		exists = true
@@ -374,6 +390,67 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 		return nil, err
 	}
 	return r, nil
+}
+
+// checkVersion fails unless git is at least 2.42 (worktree add --orphan).
+func (r *Repository) checkVersion(dir string) error {
+	version, err := r.runAt(dir, "--version")
+	if err != nil {
+		return err
+	}
+	var major, minor int
+	fmt.Sscanf(version, "git version %d.%d", &major, &minor)
+	if major < 2 || major == 2 && minor < 42 {
+		fix := "sudo apt-get update && sudo apt-get install git && git --version"
+		if runtime.GOOS == "darwin" {
+			fix = "brew install git && git --version"
+		}
+		if runtime.GOOS == "windows" {
+			fix = "winget upgrade --id Git.Git --exact"
+		}
+		return &Error{Op: "init", Detail: "Git >= 2.42 required for worktree add --orphan; found " + version, Fix: fix}
+	}
+	return nil
+}
+
+// pickRemote is origin when there is one, else the first remote, as
+// git remote lists them.
+func pickRemote(names []string) string {
+	out := ""
+	for _, v := range names {
+		if out == "" || v == "origin" {
+			out = v
+		}
+		if v == "origin" {
+			break
+		}
+	}
+	return out
+}
+
+// remoteOf answers git remote's choice from the repository's config file
+// without spawning git: origin, when the file defines it, wins whatever else
+// the global or system config adds. Anything else (no origin, an include,
+// per-worktree config, no file) fails, and the caller asks git.
+func remoteOf(common string) (string, error) {
+	b, err := os.ReadFile(filepath.Join(common, "config"))
+	if err != nil {
+		return "", err
+	}
+	origin := false
+	for _, line := range strings.Split(string(b), "\n") {
+		low := strings.ToLower(strings.TrimSpace(line))
+		if strings.HasPrefix(low, "[include") || strings.HasPrefix(low, "worktreeconfig") {
+			return "", fmt.Errorf("config reads other files")
+		}
+		if strings.TrimSpace(line) == `[remote "origin"]` {
+			origin = true
+		}
+	}
+	if !origin {
+		return "", fmt.Errorf("no origin in %s", filepath.Join(common, "config"))
+	}
+	return "origin", nil
 }
 
 // reuse points r at the branch's existing checkout w.

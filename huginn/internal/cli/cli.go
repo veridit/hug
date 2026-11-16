@@ -112,8 +112,19 @@ func oldLayout(ctx context.Context, root string) bool {
 	if _, e := os.Stat(filepath.Join(root, OldTaskDir, ".git")); e == nil {
 		return true
 	}
-	return exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/heads/"+OldTaskBranch).Run() == nil ||
-		exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/remotes/origin/"+OldTaskBranch).Run() == nil
+	// One git process for both refs (44w1ev). A for-each-ref pattern also
+	// matches refs below it (refs/heads/huginn/x), so compare exactly.
+	out, e := exec.CommandContext(ctx, "git", "-C", root, "for-each-ref", "--format=%(refname)",
+		"refs/heads/"+OldTaskBranch, "refs/remotes/origin/"+OldTaskBranch).Output()
+	if e != nil {
+		return false
+	}
+	for _, ref := range strings.Split(string(out), "\n") {
+		if ref == "refs/heads/"+OldTaskBranch || ref == "refs/remotes/origin/"+OldTaskBranch {
+			return true
+		}
+	}
+	return false
 }
 
 func (a *App) open(ctx context.Context) (*session, error) {
@@ -121,28 +132,27 @@ func (a *App) open(ctx context.Context) (*session, error) {
 	if cwd == "" {
 		cwd = "."
 	}
-	if check := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel"); check.Run() != nil {
+	// One look at the repository serves the checks below and the board's
+	// checkout (44w1ev: open spawned 13 git processes, ~15 ms each).
+	loc, e := gitbranch.Locate(cwd)
+	if e != nil {
+		var ge *gitbranch.Error
+		if errors.As(e, &ge) && strings.Contains(ge.Detail, "Git >= 2.42") {
+			return nil, e
+		}
 		return nil, &OperationError{Problem: "hug task needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && hug task init"}
 	}
-	if root, e := gitbranch.MainRoot(cwd); e == nil && oldLayout(ctx, root) {
+	if oldLayout(ctx, loc.Main) {
 		return nil, &OperationError{Problem: "tasks are still on the old layout (branch huginn at .huginn/); hug now keeps them on branch hug/tasks at .hug/tasks/",
 			Fix: "hug upgrade"}
 	}
 	// One board per repository: a linked worktree (git worktree add) uses the
 	// main worktree's hug/tasks checkout, never a second one (065wwn).
-	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir)
+	r, e := loc.Open(TaskBranch, TaskDir)
 	if e != nil {
 		return nil, e
 	}
-	cmd := exec.CommandContext(ctx, "git", "-C", r.Dir, "rev-parse", "--git-common-dir")
-	b, e := cmd.Output()
-	if e != nil {
-		return nil, e
-	}
-	gd := strings.TrimSpace(string(b))
-	if !filepath.IsAbs(gd) {
-		gd = filepath.Join(r.Dir, gd)
-	}
+	gd := r.Common
 	c, e := cache.Open(r.Dir, filepath.Join(gd, "huginn", "cache.db"), gitCache{r})
 	if e != nil {
 		return nil, e

@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -101,5 +103,30 @@ func TestLintSeesHandAddedFileRef(t *testing.T) {
 	j := fmt.Sprint(out["findings"])
 	if !strings.Contains(j, "file:missing.tsv: file not found") || !strings.Contains(j, "cites .jcode/scratch/") {
 		t.Fatalf("lint after a hand edit: %s", j)
+	}
+}
+
+// open asks git about the repository once (44w1ev), and the old-layout check
+// reads both old refs in one for-each-ref. A ref below the old name
+// (refs/heads/huginn/x) is not the old layout; the old branch itself, local
+// or remote-tracking, still is. Outside git the error stays the same.
+func TestOpenOldLayoutAndOutsideGit(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	git(t, a.Cwd, "branch", "huginn/x")
+	execute(t, a, "ls")
+	for _, ref := range []string{"refs/heads/huginn", "refs/remotes/origin/huginn"} {
+		b := app(t)
+		execute(t, b, "init")
+		git(t, b.Cwd, "update-ref", ref, "HEAD")
+		_, e := b.Execute(context.Background(), []string{"ls"})
+		if _, p, fix := ErrorDetails(e); e == nil || !strings.Contains(p, "old layout") || fix != "hug upgrade" {
+			t.Fatalf("%s: got %v", ref, e)
+		}
+	}
+	outside := &App{Cwd: t.TempDir(), In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+	_, e := outside.Execute(context.Background(), []string{"ls"})
+	if _, p, _ := ErrorDetails(e); e == nil || !strings.Contains(p, "needs a Git checkout") {
+		t.Fatalf("outside git: %v", e)
 	}
 }
