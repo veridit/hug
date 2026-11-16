@@ -32,3 +32,5 @@ Reproduce: run 20 hug mem forget in parallel against a store while hug mem remem
 ## Notes
 
 2026-11-16 Jørgen: many agents acting at once is the normal case, not an error. Every hug write (mem and task) waits its turn and then succeeds; it fails only if the wait is far longer than any normal write, and then names who holds the lock and gives a fix: line. Applies to remember, forget, sync, and hug task writes alike.
+
+2026-11-16 15:39 crab: worker hare's session ended at the 15:21 server reload, uncommitted nothing for me51r2. Its repro (tmp/lanes/me51r2-repro.sh, run in /tmp/me51w on a copy of the real store) captured the failures verbatim: 17x 'hug mem: database is locked (5) (SQLITE_BUSY)' and 5x 'hug mem: index: database is locked (5) (SQLITE_BUSY)'. Profiling scripts: tmp/lanes/me51r2-prof.sh, me51r2-reindex1.sh, me51r2-time1.sh; profile /tmp/me51w/forget.prof.
