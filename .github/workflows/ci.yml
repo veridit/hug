@@ -31,7 +31,9 @@ jobs:
       - name: Vet
         run: go vet ./...
       - name: Test
-        run: go test -race ./...
+        # The race detector runs once, on ubuntu (fastest); macOS and Windows
+        # run plain tests for platform behaviour. -race made windows ~14 min.
+        run: go test ${{ matrix.os == 'ubuntu-latest' && '-race' || '' }} ./...
         env:
           CGO_ENABLED: "1"
       - name: Build hug (pure Go)
