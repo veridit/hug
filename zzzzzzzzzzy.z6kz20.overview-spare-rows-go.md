@@ -1,13 +1,14 @@
 ---
 id: z6kz20
 title: "Overview: spare rows go to IN PROGRESS first, then NEXT UP"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
