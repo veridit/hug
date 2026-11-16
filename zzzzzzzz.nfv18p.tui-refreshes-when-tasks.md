@@ -33,3 +33,5 @@ No watcher or timer exists in huginn/internal/tui today (no fsnotify, no tea.Tic
 ## Notes
 
 2026-11-16 Jørgen approves: 'auto-refresh, of course, yes'. Raised to high. Queued after rx74bp (the worker is editing the same TUI files).
+
+probe: does a note move the ref file
