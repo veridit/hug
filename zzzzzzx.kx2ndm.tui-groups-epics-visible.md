@@ -32,3 +32,5 @@ CLI already shows epic:/child: lines and has --epic. TUI has filter fields g (gr
 - [ ] tests cover grouping, folding and the 80-column width; goldens reviewed
 
 ## Notes
+
+2026-11-16 Jørgen on the overview: qawmnb (doing, with an unmet dependency) shows in IN PROGRESS, again in BLOCKED and again in LINT. A task must appear in one section only. Under discussion, coordinator's proposal: a task someone is working on stays in IN PROGRESS with its status drawn as blocked (red) and what it waits on; BLOCKED holds only tasks nobody has started that cannot start; LINT lists the findings (problem and fix), not the task rows again. Not decided yet.
