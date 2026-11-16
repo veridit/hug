@@ -4,7 +4,7 @@ title: "Recall nudges: keep the task board current"
 status: "doing"
 type: feature
 priority: ""
-assignee: ["Jørgen H. Fjeld"]
+assignee: ["crab"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
