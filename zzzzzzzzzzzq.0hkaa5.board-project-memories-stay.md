@@ -1,13 +1,14 @@
 ---
 id: 0hkaa5
 title: "Board and project memories stay in sync across clones, in the background"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["dragon"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
