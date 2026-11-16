@@ -42,7 +42,7 @@ func LooksSecret(text string) bool { return SecretHint(text) != "" }
 // an agent, confirms the text is safe to store (browser keys that ship in
 // public bundles, references like secrets.NAME, and placeholders are safe).
 func SecretHint(text string) string {
-	if secretRe.MatchString(text) {
+	if secretRe.MatchString(text) || namedSecret(text) {
 		return "a credential-shaped token (API key, access token, password or private key)"
 	}
 	if capabilityURLs(text) != text {
@@ -52,7 +52,7 @@ func SecretHint(text string) string {
 }
 
 // HasCredential reports a credential-shaped token.
-func HasCredential(text string) bool { return secretRe.MatchString(text) }
+func HasCredential(text string) bool { return secretRe.MatchString(text) || namedSecret(text) }
 
 // MaskCredentials replaces credential-shaped tokens with a marker. Capture uses
 // it only for text sent to the extraction provider, never for stored memories.
@@ -249,4 +249,20 @@ func ReadFile(path string) ([]Line, error) {
 		out = append(out, l)
 	}
 	return out, sc.Err()
+}
+
+// namedSecretRe finds NAME=VALUE where the name says secret; namedSecret
+// accepts it only when the value looks like a key: at least 12 characters
+// mixing letters and digits (2026-11-16: "aws_secret_access_key=..." was
+// missed; names alone flagged sudoers NOPASSWD lines and env-var names).
+var namedSecretRe = regexp.MustCompile(`(?i)[a-z0-9_]*(?:secret|password|api[_ -]?key|access[_ -]?token|auth[_ -]?token|private[_ -]?key)[a-z0-9_]*\s*[:=]\s*["']?([A-Za-z0-9+/_=.-]{12,})`)
+
+func namedSecret(text string) bool {
+	for _, m := range namedSecretRe.FindAllStringSubmatch(text, -1) {
+		v := m[1]
+		if strings.ContainsAny(v, "0123456789") && strings.IndexFunc(v, func(r rune) bool { return r >= 'A' && r <= 'Z' || r >= 'a' && r <= 'z' }) >= 0 {
+			return true
+		}
+	}
+	return false
 }
