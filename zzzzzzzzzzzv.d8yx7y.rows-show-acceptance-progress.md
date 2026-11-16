@@ -36,3 +36,5 @@ Reference screenshot: In Progress (10) panel with rows like '◑ 2/4 STATBUS-553
 ## Notes
 
 check 1: c828cfc on origin/main (CI run 43937278863: ubuntu, macos, windows success). Goldens: tmux overview/list/board/chips/grab/sort regenerated in 4 profiles (24 files) plus testdata/overview/spare-rows-140x40.txt; 140x40-no-color/overview.txt row: '> ◑ 1/2 000002   doing   bug     critical Bug task 02: ...'; 80x24 board: '>!○ 0/2 000001   F C ⎘2 Feature task 0…    ◑ 1/2 000002   B C Bug task 02: make…'. Fixture doing tasks are now 1/2. Model test TestRowsShowProgress checks overview, list and board.
+
+check 2: c828cfc on origin/main (CI run 43937278863: ubuntu, macos, windows success). TestPieSteps (huginn/internal/tui/progress_test.go): 0/4 ○, 1/4 ◔, 2/4 ◑, 3/4 ◕, 4/4 ●, 1/6 ◔, 1/2 ◑, 5/6 ◕, 0/1 ○, 1/1 ●.
