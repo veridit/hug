@@ -32,9 +32,9 @@ func writeFile(t *testing.T, r *Repository, path, body string) {
 	must(t, os.MkdirAll(filepath.Dir(filepath.Join(r.Dir, path)), 0755))
 	must(t, os.WriteFile(filepath.Join(r.Dir, path), []byte(body), 0644))
 }
-func openRepo(t *testing.T, root, branch, dir string, more ...Option) *Repository {
+func openRepo(t *testing.T, root, branch, dir string) *Repository {
 	t.Helper()
-	r, e := Open(root, branch, dir, append([]Option{WithIdentity("Test", "test@example.invalid")}, more...)...)
+	r, e := Open(root, branch, dir, WithIdentity("Test", "test@example.invalid"))
 	must(t, e)
 	return r
 }
@@ -297,7 +297,7 @@ func TestLinkedWorktreeSharesMainCheckout(t *testing.T) {
 			}
 			var dirs []string
 			for _, at := range append(order, filepath.Join(linked)) {
-				r := openRepo(t, at, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+				r := openRepo(t, at, "hug/tasks", ".hug/tasks")
 				dirs = append(dirs, r.Dir)
 				writeFile(t, r, filepath.Base(at)+".md", "from "+at+"\n")
 				must(t, r.Commit(nil, "from "+at))
@@ -335,13 +335,13 @@ func TestLinkedWorktreeSharesMainCheckout(t *testing.T) {
 // works: git worktree prune, after which Open checks it out again.
 func TestMissingCheckoutFixIsPrune(t *testing.T) {
 	root, _ := fixture(t, false)
-	r := openRepo(t, root, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	r := openRepo(t, root, "hug/tasks", ".hug/tasks")
 	writeFile(t, r, "a.md", "a\n")
 	must(t, r.Commit(nil, "a"))
 	linked := filepath.Join(filepath.Dir(root), "linked")
 	command(t, root, "worktree", "add", "--detach", linked, "HEAD")
 	must(t, os.RemoveAll(r.Dir))
-	_, err := Open(linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	_, err := Open(linked, "hug/tasks", ".hug/tasks")
 	var typed *Error
 	if !errors.As(err, &typed) || !strings.HasSuffix(typed.Fix, " worktree prune") {
 		t.Fatalf("want prune fix, got %v", err)
@@ -350,7 +350,7 @@ func TestMissingCheckoutFixIsPrune(t *testing.T) {
 	if out, e := c.CombinedOutput(); e != nil {
 		t.Fatalf("fix %q: %s %v", typed.Fix, out, e)
 	}
-	again := openRepo(t, linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	again := openRepo(t, linked, "hug/tasks", ".hug/tasks")
 	if _, e := os.Stat(filepath.Join(again.Dir, "a.md")); e != nil {
 		t.Fatal(e)
 	}
@@ -360,14 +360,14 @@ func TestMissingCheckoutFixIsPrune(t *testing.T) {
 	must(t, os.Rename(again.Dir, aside))
 	command(t, root, "worktree", "prune")
 	must(t, os.Rename(aside, again.Dir))
-	_, err = Open(linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	_, err = Open(linked, "hug/tasks", ".hug/tasks")
 	if !errors.As(err, &typed) || !strings.Contains(typed.Fix, " worktree add ") {
 		t.Fatalf("want move-aside fix, got %v", err)
 	}
 	if out, e := exec.Command("sh", "-c", typed.Fix).CombinedOutput(); e != nil {
 		t.Fatalf("fix %q: %s %v", typed.Fix, out, e)
 	}
-	third := openRepo(t, linked, "hug/tasks", ".hug/tasks", WithSharedCheckout())
+	third := openRepo(t, linked, "hug/tasks", ".hug/tasks")
 	if _, e := os.Stat(filepath.Join(third.Dir, "a.md")); e != nil {
 		t.Fatal(e)
 	}

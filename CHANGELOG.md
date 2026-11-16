@@ -4,6 +4,17 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Fixed
+
+- `hug mem sync` in a linked Git worktree (`git worktree add`) writes and
+  commits project memories in the main worktree's one `.muninn-notes/`
+  checkout, the same rule as tasks. It used to check `muninn-notes` out
+  under the linked worktree, which git refuses ("already used by worktree")
+  when the main worktree has it, or else made a second, separate checkout
+  there. `hug mem project` shows the main worktree's file. (065wwn)
+
 ## v0.7.21 - 2026-11-16
 
 ### Fixed

@@ -86,6 +86,9 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 		if e != nil {
 			return st, e
 		}
+		// Write where the branch is checked out: the main worktree's
+		// .muninn-notes, also from a linked worktree (065wwn).
+		p.Notes = repository.Dir
 		err = repository.Update(func(_ *gitbranch.Repository) error {
 			if err := mergeLegacy(); err != nil {
 				return err

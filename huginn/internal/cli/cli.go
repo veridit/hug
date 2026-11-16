@@ -125,7 +125,7 @@ func (a *App) open(ctx context.Context) (*session, error) {
 	}
 	// One board per repository: a linked worktree (git worktree add) uses the
 	// main worktree's hug/tasks checkout, never a second one (065wwn).
-	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir, gitbranch.WithSharedCheckout())
+	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir)
 	if e != nil {
 		return nil, e
 	}

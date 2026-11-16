@@ -11,6 +11,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/veridit/hug/huginn/gitbranch"
 )
 
 // Project is a repository (or plain folder) muninn keeps memories for.
@@ -19,6 +21,10 @@ type Project struct {
 	ID     string // stable: git root commit, or the id in .muninn/project
 	Label  string // human name (the folder name)
 	Root   string // top-level directory
+	// Notes is the folder of the muninn-notes checkout. In git it is the main
+	// worktree's .muninn-notes, also from a linked worktree (git worktree
+	// add): memories follow the same one-checkout rule as tasks (065wwn).
+	Notes string
 }
 
 // Scope is the recall scope of the project's own memories.
@@ -33,7 +39,13 @@ func (p Project) Scope() string {
 const NotesBranch = "muninn-notes"
 const NotesDir = ".muninn-notes"
 
-func (p Project) File() string       { return filepath.Join(p.Root, NotesDir, "memories.jsonl") }
+// File is the shared memory file: memories.jsonl in the notes checkout.
+func (p Project) File() string {
+	if p.Notes != "" {
+		return filepath.Join(p.Notes, "memories.jsonl")
+	}
+	return filepath.Join(p.Root, NotesDir, "memories.jsonl")
+}
 func (p Project) LegacyFile() string { return filepath.Join(p.Root, ".muninn", "memories.jsonl") }
 
 // Find resolves the project containing dir. In a git repository the id is
@@ -76,22 +88,16 @@ func find(dir string, create bool) (Project, error) {
 	}
 	if top, err := git(abs, "rev-parse", "--show-toplevel"); err == nil && top != "" {
 		top = filepath.Clean(top)
-		if id, err := readID(top); err == nil {
-			return Project{ID: id, Label: filepath.Base(top), Root: top}, nil
+		p, err := gitProject(top)
+		if errors.Is(err, errNoHistory) {
+			p, err = withFileID(top, create)
 		}
-		if roots, err := git(top, "rev-list", "--max-parents=0", "HEAD"); err == nil && roots != "" {
-			// Several roots (merged histories): the lexically smallest is
-			// deterministic for every clone.
-			ids := strings.Fields(roots)
-			best := ids[0]
-			for _, r := range ids[1:] {
-				if r < best {
-					best = r
-				}
+		if err == nil {
+			if main, e := gitbranch.MainRoot(top); e == nil {
+				p.Notes = filepath.Join(main, NotesDir)
 			}
-			return Project{ID: "rc-" + best[:16], Label: filepath.Base(top), Root: top}, nil
 		}
-		return withFileID(top, create)
+		return p, err
 	}
 	// Not git: walk up to a folder that already has .muninn/project.
 	for d := abs; ; d = filepath.Dir(d) {
@@ -107,6 +113,28 @@ func find(dir string, create bool) (Project, error) {
 
 // ErrNoProject means dir has no identity yet and create was false.
 var ErrNoProject = errors.New("not a muninn project (no git history and no .muninn/project)")
+
+// gitProject is the identity of the git checkout whose top level is top.
+func gitProject(top string) (Project, error) {
+	if id, err := readID(top); err == nil {
+		return Project{ID: id, Label: filepath.Base(top), Root: top}, nil
+	}
+	if roots, err := git(top, "rev-list", "--max-parents=0", "HEAD"); err == nil && roots != "" {
+		// Several roots (merged histories): the lexically smallest is
+		// deterministic for every clone.
+		ids := strings.Fields(roots)
+		best := ids[0]
+		for _, r := range ids[1:] {
+			if r < best {
+				best = r
+			}
+		}
+		return Project{ID: "rc-" + best[:16], Label: filepath.Base(top), Root: top}, nil
+	}
+	return Project{}, errNoHistory
+}
+
+var errNoHistory = errors.New("git checkout without commits")
 
 func withFileID(root string, create bool) (Project, error) {
 	if !create {

@@ -13,13 +13,12 @@ r, err := gitbranch.Open(repoPath, "huginn", ".huginn",
 
 `Open` and `Init` are aliases. `repoPath` may point at the host checkout root,
 a subdirectory, or a linked checkout (`git worktree add`). The worktree directory
-is relative to that checkout root, not the process cwd. With
-`WithSharedCheckout()` (hug's task board uses it) it is relative to the **main**
-worktree's root instead: a branch has one checkout, and every linked worktree
-shares it (`Repository.Dir` points there, `Repository.Root` is the checkout
-`Open` was called from). If the branch is already checked out anywhere
-(`git worktree list`), that checkout is used. Callers using the option must do
-their file I/O under `Dir`. `MainRoot(dir)` returns the main worktree's root.
+is relative to the **main** worktree's root, not the process cwd: a branch has
+one checkout, and every linked worktree shares it (`Repository.Dir` points there,
+`Repository.Root` is the checkout `Open` was called from). If the branch is
+already checked out anywhere (`git worktree list`), that checkout is used.
+Callers do their file I/O under `Dir`. `MainRoot(dir)` returns the main
+worktree's root.
 The Git common directory's
 `info/exclude` receives an idempotent anchored exclude. A remote branch is fetched
 before its first checkout. An existing local branch is preserved rather than

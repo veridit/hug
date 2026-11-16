@@ -24,22 +24,12 @@ func WithIdentity(name, email string) Option {
 	return func(r *Repository) { r.Identity = Identity{name, email} }
 }
 
-// WithSharedCheckout makes Open use the branch's one checkout in the main
-// worktree from any linked worktree (git worktree add), instead of a checkout
-// under the linked worktree's own root, which git refuses when the branch is
-// already checked out (065wwn). The caller must then do its file I/O under
-// Repository.Dir, not under its own checkout root.
-func WithSharedCheckout() Option {
-	return func(r *Repository) { r.shared = true }
-}
-
 // Repository is a branch worktree. Dir is absolute. Remote is empty in local-only mode.
-// Root is the checkout Open was called from. With WithSharedCheckout, Dir in
-// a linked worktree is the branch's one checkout, in the main worktree.
+// Root is the checkout Open was called from. In a linked worktree (git
+// worktree add) Dir is the branch's one checkout, in the main worktree.
 type Repository struct {
 	Root, Dir, Branch, Remote string
 	Identity                  Identity
-	shared                    bool
 }
 
 // Error includes a copyable repair command and the original Git diagnostic.
@@ -186,10 +176,10 @@ func MainRoot(dir string) (string, error) {
 }
 
 // Open opens or initializes the worktree. repoRoot may be any directory inside
-// the host checkout, including a linked checkout. dir is relative to that
-// checkout's root; with WithSharedCheckout it is relative to the main
-// worktree's root, a branch has one checkout shared by every linked worktree,
-// and a branch already checked out somewhere is used where it is.
+// the host checkout, including a linked checkout. dir is relative to the main
+// worktree's root: a branch has one checkout, shared by every linked worktree
+// (065wwn), and a branch already checked out somewhere is used where it is.
+// Callers do their file I/O under Repository.Dir.
 func Open(repoRoot, branch, dir string, options ...Option) (*Repository, error) {
 	return Init(repoRoot, branch, dir, options...)
 }
@@ -223,10 +213,7 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 	if err != nil {
 		return nil, err
 	}
-	host := filepath.Clean(root)
-	if r.shared {
-		host = mainRoot(list, host)
-	}
+	host := mainRoot(list, filepath.Clean(root))
 	clean := filepath.Clean(dir)
 	if filepath.IsAbs(clean) || clean == "." || clean == ".." || strings.HasPrefix(clean, ".."+string(filepath.Separator)) {
 		return nil, &Error{Op: "init", Detail: "worktree directory must be inside checkout", Fix: "Choose a relative directory such as .notes"}
@@ -305,7 +292,7 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 	// One checkout per branch: a linked worktree uses the one that exists,
 	// wherever it is (2026-11-16, 065wwn: a second worktree add failed with
 	// "already used by worktree" and its fix repeated the same command).
-	if w, ok := checkout(list, branch); ok && r.shared {
+	if w, ok := checkout(list, branch); ok {
 		return r.reuse(w, host)
 	}
 	if _, e := os.Stat(filepath.Join(r.Dir, ".git")); e == nil {
@@ -349,7 +336,7 @@ func Init(repoRoot, branch, dir string, options ...Option) (*Repository, error) 
 	}
 	if err != nil {
 		// Another process may have checked the branch out meanwhile.
-		if again, e := r.worktrees(root); e == nil && r.shared {
+		if again, e := r.worktrees(root); e == nil {
 			if w, ok := checkout(again, branch); ok {
 				return r.reuse(w, host)
 			}

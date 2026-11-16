@@ -154,3 +154,79 @@ func TestBranchMigrationDryRunIdempotenceAndMarkers(t *testing.T) {
 	}
 	t.Log("PROJECT migration: dry-run writes nothing, one code removal commit, branch copy retained, markers preserved, retry idempotent")
 }
+
+// 065wwn: memories follow the same rule as tasks. hug mem sync from a linked
+// worktree (git worktree add --detach) writes and commits into the main
+// worktree's .muninn-notes checkout, never a second checkout or a plain
+// folder in the linked worktree; the main worktree then reads that memory.
+func TestBranchSyncFromLinkedWorktreeUsesMainCheckout(t *testing.T) {
+	for _, first := range []string{"main", "linked"} {
+		t.Run(first+" first", func(t *testing.T) {
+			base := t.TempDir()
+			main := filepath.Join(base, "main")
+			os.MkdirAll(main, 0700)
+			gitInit(t, main)
+			main, _ = filepath.EvalSymlinks(main)
+			linked := filepath.Join(base, "linked")
+			branchGit(t, main, "worktree", "add", "--detach", linked, "HEAD")
+			pm, err := Find(main, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			pl, err := Find(linked, false)
+			if err != nil || pl.ID != pm.ID {
+				t.Fatalf("identity mismatch %+v %+v %v", pm, pl, err)
+			}
+			want := filepath.Join(main, NotesDir, "memories.jsonl")
+			if pl.File() != want || pm.File() != want {
+				t.Fatalf("File(): linked %s main %s, want %s", pl.File(), pm.File(), want)
+			}
+			native := filepath.Join(base, "native.json")
+			if first == "main" {
+				ingest.Remember(native, "Synthetic main memory.", "fact", pm.Scope(), nil)
+				if _, err := SyncBranch(pm, native, BranchOptions{}); err != nil {
+					t.Fatal(err)
+				}
+			}
+			ingest.Remember(native, "Synthetic linked memory.", "fact", pl.Scope(), nil)
+			if _, err := SyncBranch(pl, native, BranchOptions{}); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := os.Stat(filepath.Join(linked, NotesDir)); !os.IsNotExist(err) {
+				t.Fatalf("linked worktree got its own %s: %v", NotesDir, err)
+			}
+			show := branchGit(t, main, "show", NotesBranch+":memories.jsonl")
+			if !strings.Contains(show, "Synthetic linked memory.") {
+				t.Fatalf("linked memory not committed on %s:\n%s", NotesBranch, show)
+			}
+			list := branchGit(t, main, "worktree", "list", "--porcelain")
+			if n := strings.Count(list, "worktree "); n != 3 {
+				t.Fatalf("want main, linked and one notes checkout, got %d:\n%s", n, list)
+			}
+			if !strings.Contains(list, "worktree "+filepath.Join(main, NotesDir)+"\n") {
+				t.Fatalf("notes checkout not in the main worktree:\n%s", list)
+			}
+			for _, root := range []string{main, linked} {
+				if got := branchGit(t, root, "status", "--porcelain"); got != "" {
+					t.Fatalf("code worktree %s dirty: %s", root, got)
+				}
+			}
+			// A second store syncing from main sees the memory written from linked.
+			other := filepath.Join(base, "other.json")
+			if _, err := SyncBranch(pm, other, BranchOptions{}); err != nil {
+				t.Fatal(err)
+			}
+			mems, err := ingest.LoadNative(other)
+			if err != nil {
+				t.Fatal(err)
+			}
+			found := false
+			for _, m := range mems {
+				found = found || m.Content == "Synthetic linked memory."
+			}
+			if !found {
+				t.Fatalf("main did not import the linked memory: %+v", mems)
+			}
+		})
+	}
+}
