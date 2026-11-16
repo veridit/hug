@@ -26,7 +26,7 @@ Built on the palette tree: ': sort' opens the builder; each step lists the field
 - [x] ': sort', p (priority), then t (type), Enter orders rows by priority then type, and the header shows 'sort: priority ↓ · type' (test and golden)
 - [x] Esc in the middle of building leaves the previous order unchanged (test)
 - [x] the same field letter twice flips its direction; Backspace removes the last field (test)
-- [ ] with a sort other than rank, J/K, m, y and P/p are not shown and say 'moving needs rank order: : sort rank' when pressed (test)
+- [x] with a sort other than rank, J/K, m, y and P/p are not shown and say 'moving needs rank order: : sort rank' when pressed (test)
 
 ## Notes
 
