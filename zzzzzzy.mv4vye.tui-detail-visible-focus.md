@@ -25,7 +25,7 @@ Code: huginn/internal/tui/detail.go (section headings, detailPane 0 = acceptance
 ## Depends on
 
 ## Acceptance
-- [ ] no heading or hint writes keys as '[ / ]'; pressing every key shown in a hint does what the hint says (test)
+- [x] no heading or hint writes keys as '[ / ]'; pressing every key shown in a hint does what the hint says (test)
 - [ ] Tab cycles page, acceptance, dependencies and skips empty sections; the focused heading is highlighted and only it
 - [ ] with page focus j/k scroll the page and no check shows the pointer; with acceptance focus j/k step through checks
 - [ ] while a task is open the tab bar does not mark overview/list/board as focused
