@@ -12,7 +12,7 @@ func commandHelp(command string) string {
 		"ls":   "ls [--status todo|doing|done|dropped] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine] [--jsonl]",
 		"show": "show ID", "edit": "edit ID", "move": "move ID (--before ID | --after ID | --top)", "mv": "mv ID GROUP",
 		"take": "take ID", "done": "done ID", "check": "check ID N", "note": `note ID "text"`,
-		"set":  `set ID [--title "title"] [--type TYPE] [--priority LABEL] [--label LABEL] [--status STATUS] [--assignee NAME]`,
+		"set":  `set ID [--title "title"] [--type TYPE] [--priority LABEL] [--label LABEL] [--status STATUS] [--assignee NAME] [--parent EPIC|none]`,
 		"drop": "drop ID", "dep": "dep ID [--add REF ...] [--remove REF ...]", "next": "next [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]",
 		"rebalance": "rebalance [ID ...]", "types": "types", "lint": "lint", "sync": "sync", "import": "import backlog DIRECTORY [--dry-run] | import github [OWNER/REPO] [--dry-run] | import files DIR [--cite PREFIX] [--dry-run]", "board": "board [--all] [--type TYPE] [--priority LABEL] [--label LABEL] [--group FOLDER] [--mine]", "tui": "tui", "mcp": "mcp", "upgrade": "upgrade", "help": "help [COMMAND]",
 	}
@@ -30,7 +30,7 @@ func commandHelp(command string) string {
 		"done":      "Blocks on open dependencies and unchecked acceptance (exit 3 with exact fixes).\nCheck every acceptance item first. There is no --force. Repeating done succeeds.\n",
 		"check":     "Ticks acceptance item N, numbered from 1 in show output. Repeating it succeeds.\nExample: hug task check k7m2qx 1\n",
 		"note":      "Appends text to Notes, preserving existing content.\nExample: hug task note k7m2qx \"Blocked on p3rt9a; waiting for API\"\n",
-		"set":       "Types: feature|bug|chore|spike|docs. Statuses: todo|doing|done|dropped.\nPriority is a free label. --label and --assignee replace the field with one value.\nStatus done still enforces dependencies and acceptance. Use take to claim work.\n",
+		"set":       "Types: feature|bug|chore|spike|docs. Statuses: todo|doing|done|dropped.\nPriority is a free label. --label and --assignee replace the field with one value.\nStatus done still enforces dependencies and acceptance. Use take to claim work.\n--parent EPIC puts the task under an epic (epic > task > acceptance item; an epic has no parent);\n--parent none clears it. An epic is done only when its children are done or dropped.\n",
 		"dep":       "Add or remove dependency references, stored as immutable ids. Repeat --add/--remove.\nRepeats are no-ops. A dependency cycle blocks with exit 3 and an exact fix.\nExample: hug task dep k7m2qx --add p3rt9a\n",
 		"drop":      "Marks a task dropped even when blocked. Does not delete the file. Repeating it succeeds.\n",
 		"next":      "Plain next: highest-ranked unblocked, unassigned todo. Exit 4 when none match.\n--mine: my unblocked doing first, then todo, in rank order. Filters combine.\nTypes: feature|bug|chore|spike|docs. Priority is a free label.\n",

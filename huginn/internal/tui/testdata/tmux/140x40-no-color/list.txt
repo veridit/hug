@@ -1,9 +1,9 @@
-HUGINN · list   60/60 tasks · ! 5 findings
+HUGINN · list   60/60 tasks · ! 10 findings
  overview   [list]   board    !lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
   ID       ! STATUS  TYPE    PRIORITY TITLE
-  [000001]   todo    feature critical Feature task 01: make the terminal workflow observable with a deliberately long title that must trunc…
+  [000001] ! todo    feature critical Feature task 01: make the terminal workflow observable with a deliberately long title that must trunc…
 > [000002]   doing   bug     critical Bug task 02: make the terminal workflow observable
   [000003] ! done    feature medium   Render compiler-lang task detail without storage markers
   [000004]   dropped spike   critical Spike task 04: make the terminal workflow observable
@@ -24,14 +24,14 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
   [000019]   done    spike   low      Spike task 19: make the terminal workflow observable
   [000020]   dropped docs    low      Docs task 20: make the terminal workflow observable
   [000021]   blocked feature critical Feature task 21: make the terminal workflow observable
-  [000022]   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long title that must truncate …
+  [000022] ! doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long title that must truncate …
   [000023]   done    chore   critical Chore task 23: make the terminal workflow observable
   [000024]   dropped spike   critical Spike task 24: make the terminal workflow observable
   [000025]   todo    docs    critical Docs task 25: make the terminal workflow observable
   [000026] ! blocked feature high     Feature task 26: make the terminal workflow observable
   [000027]   done    bug     high     Bug task 27: make the terminal workflow observable
   [000028]   dropped chore   high     Chore task 28: make the terminal workflow observable
-  [000029]   blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncat…
+  [000029] ! blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncat…
   [000030]   doing   docs    high     Docs task 30: make the terminal workflow observable
 ↓ [000031]   done    feature medium   Feature task 31: make the terminal workflow observable
 Rows 1–31 of 60 · ! lint finding · status blocked = unmet dependency

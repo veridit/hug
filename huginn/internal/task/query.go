@@ -207,6 +207,10 @@ func Blocked(t Task, tasks []Task) []Task {
 func Sort(tasks []Task) {
 	sort.Slice(tasks, func(i, j int) bool { return rank.Less(tasks[i].Rank, tasks[i].ID, tasks[j].Rank, tasks[j].ID) })
 }
+
+// MaxTitle is the longest open-task title lint accepts.
+const MaxTitle = 80
+
 func Lint(docs []*Document) []Finding {
 	var out []Finding
 	var tasks []Task
@@ -262,6 +266,16 @@ func Lint(docs []*Document) []Finding {
 		}
 	}
 	out = append(out, parentFindings(tasks)...)
+	for _, t := range tasks {
+		if t.Status == "done" || t.Status == "dropped" {
+			continue
+		}
+		// Short titles keep lists, boards and file names readable; the
+		// detail belongs in the Goal (2026-11-16, user approved).
+		if n := len([]rune(t.Title)); n > MaxTitle {
+			out = append(out, Finding{t.Path, 1, fmt.Sprintf("title is %d characters (max %d): move detail into the Goal (fix: hug task set %s --title \"...\")", n, MaxTitle, t.ID)})
+		}
+	}
 	sort.Slice(out, func(i, j int) bool {
 		if out[i].Path != out[j].Path {
 			return out[i].Path < out[j].Path

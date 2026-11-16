@@ -267,6 +267,11 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	}
 	out["dependencies"] = deps
 	out["dependency_details"] = task.DependencyDetails(t, ts)
+	children := []Reply{}
+	for _, c := range task.Children(t, ts) {
+		children = append(children, Reply{"id": c.ID, "title": c.Title, "status": c.Status})
+	}
+	out["children"] = children
 	out["notes"] = ""
 	if b, e := os.ReadFile(filepath.Join(root, filepath.FromSlash(t.Path))); e == nil {
 		lines := strings.Split(string(b), "\n")
@@ -327,7 +332,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine jsonl", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee", "import": "dry-run cite", "show": "file", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine jsonl", "board": "type priority label group mine all", "next": "type priority label group mine", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "attach": "name note replace safe-reason content"}
 	f, e := parse(args, allowed[cmd])
 	if e != nil {
 		return nil, e
@@ -620,7 +625,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(1); e != nil {
 			return nil, e
 		}
-		fields := []string{"status", "type", "priority", "label", "title", "assignee"}
+		fields := []string{"status", "type", "priority", "label", "title", "assignee", "parent"}
 		count := 0
 		for _, field := range fields {
 			if f.has(field) {
@@ -628,7 +633,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			}
 		}
 		if count == 0 {
-			return nil, usage("set needs a field: --priority, --type, --label, --status, --title, --assignee", "hug task show "+f.args[0])
+			return nil, usage("set needs a field: --priority, --type, --label, --status, --title, --assignee, --parent", "hug task show "+f.args[0])
 		}
 		if f.has("title") && strings.TrimSpace(f.get("title")) == "" {
 			return nil, usage("title must not be empty", "hug task show "+f.args[0])
@@ -878,6 +883,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		if ds, ok := t["dependency_details"].([]task.DependencyDetail); ok {
 			for _, d := range ds {
 				fmt.Fprintf(a.Out, "dependency: %s  %s  [%s]  %s\n", d.ID, d.Title, d.Status, d.Path)
+			}
+		}
+		if p, ok := t["parent"].(string); ok && p != "" {
+			fmt.Fprintf(a.Out, "epic: %s\n", p)
+		}
+		if cs, ok := t["children"].([]Reply); ok {
+			for _, c := range cs {
+				fmt.Fprintf(a.Out, "child: %s  %s  [%s]\n", c["id"], c["title"], c["status"])
 			}
 		}
 	}

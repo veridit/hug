@@ -1,10 +1,11 @@
-HUGINN · detail   60/60 tasks · ! 5 findings
+HUGINN · detail   60/60 tasks · ! 10 findings
  overview   [list]   board    !lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Feature task 01: make the terminal workflow observable with a deliberately long…
 [todo]  [feature]  [critical]  [000001]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
+⚠ title is 134 characters (max 80): move detail into the Goal (fix: hug task se…
 ────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
 Deliver compiler-lang support with  huginn  and readable evidence.
@@ -18,7 +19,6 @@ fmt.Println("synthetic acceptance")
 
 
 ACCEPTANCE · [ / ] SELECT · SPACE TOGGLE
-> ☐ 1. First acceptance check
 Detail · 0% · Esc back
 
 j/k scroll · [/] pick · Tab section · Esc back · ? help · q quit

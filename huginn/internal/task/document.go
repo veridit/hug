@@ -34,20 +34,20 @@ type Acceptance struct {
 	Line    int    `json:"line"`
 }
 type Task struct {
-	ID           string       `json:"id"`
-	Path         string       `json:"path"`
-	Group        string       `json:"group"`
-	Rank         string       `json:"rank"`
-	Slug         string       `json:"slug"`
-	Title        string       `json:"title"`
-	Status       string       `json:"status"`
-	Type         string       `json:"type"`
-	Priority     string       `json:"priority"`
-	Created      string       `json:"created"`
-	Updated      string       `json:"updated"`
-	Assignee     []string     `json:"assignee"`
-	Labels       []string     `json:"labels"`
-	Aliases      []string     `json:"aliases"`
+	ID       string   `json:"id"`
+	Path     string   `json:"path"`
+	Group    string   `json:"group"`
+	Rank     string   `json:"rank"`
+	Slug     string   `json:"slug"`
+	Title    string   `json:"title"`
+	Status   string   `json:"status"`
+	Type     string   `json:"type"`
+	Priority string   `json:"priority"`
+	Created  string   `json:"created"`
+	Updated  string   `json:"updated"`
+	Assignee []string `json:"assignee"`
+	Labels   []string `json:"labels"`
+	Aliases  []string `json:"aliases"`
 	// Parent is the epic this task belongs to (an id), or empty. An epic is
 	// a task with children; it has no parent itself (three fixed levels:
 	// epic, task, acceptance item).
