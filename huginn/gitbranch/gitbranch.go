@@ -86,7 +86,16 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 		for i, a := range args {
 			quoted[i] = quote(a)
 		}
-		return string(b), &Error{Op: strings.Join(args, " "), Detail: strings.TrimSpace(string(b) + stderr.String() + " " + err.Error()), Fix: "git -C " + quote(dir) + " " + strings.Join(quoted, " "), Cause: err}
+		detail := strings.TrimSpace(string(b) + stderr.String() + " " + err.Error())
+		fix := "git -C " + quote(dir) + " " + strings.Join(quoted, " ")
+		// A remote that refuses the key is not fixed by re-running the same
+		// command. Apps (Claude, ChatGPT) start MCP servers without the
+		// user's SSH agent, so say so (2026-11-16, Claude app report).
+		if strings.Contains(detail, "Permission denied (publickey)") || strings.Contains(detail, "Could not read from remote repository") || strings.Contains(detail, "Host key verification failed") {
+			detail = "the remote refused this process's SSH credentials (no SSH agent or key here; apps such as Claude Desktop start MCP servers without your agent): " + detail
+			fix = "run this command in a terminal where 'ssh -T git@github.com' works, or give the app SSH_AUTH_SOCK / GIT_SSH_COMMAND; reading tasks (ls, show, next) works without the remote"
+		}
+		return string(b), &Error{Op: strings.Join(args, " "), Detail: detail, Fix: fix, Cause: err}
 	}
 	return strings.TrimSuffix(string(b), "\n"), nil
 }
