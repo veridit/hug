@@ -31,3 +31,5 @@ Built on the palette tree: ': sort' opens the builder; each step lists the field
 ## Notes
 
 CI run 43919869737 on ci/mkzcqr (32f4fa9, now origin/main, ff from 9283f8f): test (ubuntu-latest) success, test (macos-latest) success, test (windows-latest) success. TestSortBuilderPriorityThenType (sort_test.go:26): ': sort', p, t, Enter; asserts every adjacent pair ordered by priority then type and header contains 'sort: priority ↓ · type'; '--- PASS: TestSortBuilderPriorityThenType (0.04s)'. Golden testdata/tmux/*/sort.txt (4 profiles), line 1: 'HUG TASKS · list   60/60 tasks · ! 7 findings · sort: priority ↓ · type', rows start 000001 feature critical, 000021 feature critical, 000041 feature critical, 000002 bug critical.
+
+TestSortBuilderEscKeepsOrder (sort_test.go:60): sort by type, then ': sort' p n Esc leaves sort 'type' and the same row order; from rank order ': sort' p Esc leaves no sort; '--- PASS: TestSortBuilderEscKeepsOrder (0.07s)'
