@@ -28,7 +28,7 @@ Code: huginn/internal/tui/tui.go paneIndices (case 2 match = m.blocked[t.Path] t
 - [x] on a board with a doing task that has an unmet dependency, it appears only in IN PROGRESS (drawn blocked), not in BLOCKED (test)
 - [x] header counts sum to the task total, and doing names how many of them are blocked (test)
 - [x] RECENTLY DONE shows the 3 most recently closed tasks, newest first (test and golden)
-- [ ] board view and status filter follow the same one-place rule (test)
+- [x] board view and status filter follow the same one-place rule (test)
 
 ## Notes
 
