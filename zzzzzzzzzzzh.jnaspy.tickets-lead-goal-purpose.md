@@ -30,7 +30,7 @@ Board today: 35 files Goal|Purpose|Principle|Relevant details|Depends on|Accepta
 - [x] hug task show prints Purpose, Principle and Relevant details after goal and before the checks (test)
 - [x] hug upgrade on a board with mkzcqr's order rewrites it to canonical order with identical section text, and a second run changes nothing (test)
 - [x] lint reports an out-of-order file with fix: hug upgrade (test)
-- [ ] after release, hug upgrade on this repo's board leaves every file in canonical order (shown with a grep count)
+- [x] after release, hug upgrade on this repo's board leaves every file in canonical order (shown with a grep count)
 
 ## Notes
 
