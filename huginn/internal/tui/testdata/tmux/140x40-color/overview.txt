@@ -1,4 +1,4 @@
-HUG TASKS · overview   60/60 tasks · ! 10 findings
+HUG TASKS · overview   60/60 tasks · ! 7 findings
 [overview]   list    board    !lint
 todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
@@ -27,13 +27,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
  ![000029] blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncate …
 ↓ [000037] blocked bug     low      Bug task 37: make the terminal workflow observable
 
-  LINT · tasks needing attention  [10] · 10 findings · 1–6 shown
+  LINT · tasks needing attention  [7] · 7 findings (3 on closed tasks hidden) · 1–6 shown
  ![000001] todo    feature critical Feature task 01: make the terminal workflow observable with a deliberately long title that must truncat…
- ![000003] done    feature medium   Render compiler-lang task detail without storage markers
  ![000013] blocked chore   medium   Chore task 13: make the terminal workflow observable
  ![000022] doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long title that must truncate cl…
  ![000026] blocked feature high     Feature task 26: make the terminal workflow observable
-↓![000029] blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncate …
+ ![000029] blocked spike   high     Spike task 29: make the terminal workflow observable with a deliberately long title that must truncate …
+↓![000050] doing   docs    high     Docs task 50: make the terminal workflow observable with a deliberately long title that must truncate c…
 
 All tasks · : filters and commands
 

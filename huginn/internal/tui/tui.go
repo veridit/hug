@@ -68,6 +68,9 @@ type model struct {
 	editNotice string
 	// editBefore holds the problems the task had when the editor opened.
 	editBefore map[string]bool
+	// closedFindings are findings on done or dropped tasks, hidden from the
+	// header count, the lint view and the ! marks (6neax1).
+	closedFindings []task.Finding
 }
 
 func newModel(s *task.Store, o Options) model {
@@ -109,7 +112,10 @@ func (m *model) refresh(path string) {
 		docs = append(docs, d)
 		m.docs[t.Path] = d
 	}
-	m.findings = task.Lint(docs)
+	// Findings on closed tasks (done, dropped) are hidden by default, as in
+	// hug task lint; closedFindings keeps them for counts and for the detail
+	// of a closed task opened on purpose (6neax1).
+	m.findings, m.closedFindings = task.OpenFindings(task.Lint(docs), ts)
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.epics = map[string]bool{}

@@ -205,6 +205,9 @@ func (m model) overviewText() string {
 		label := fmt.Sprintf("%s%s  [%d]", pointer, name, len(indices))
 		if p == 3 {
 			label += fmt.Sprintf(" · %d findings", len(m.findings))
+			if n := len(m.closedFindings); n > 0 {
+				label += fmt.Sprintf(" (%d on closed tasks hidden)", n)
+			}
 		}
 		per := rows[p]
 		cursor := -1

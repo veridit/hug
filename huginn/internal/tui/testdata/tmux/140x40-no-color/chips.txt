@@ -1,4 +1,4 @@
-HUG TASKS · list   3/60 tasks · ! 10 findings
+HUG TASKS · list   3/60 tasks · ! 7 findings
  overview   [list]   board    !lint
 todo 3  ·  doing 0  ·  blocked 1  ·  done 0  ·  dropped 0
 [status:todo ×] [type:feature ×] [/ task] · ⌫ last · F clear

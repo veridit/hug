@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -145,5 +146,60 @@ func TestEditNoticeNarrowKeepsKey(t *testing.T) {
 	m = editWith(t, m, addDep(jorgenEdit))
 	if !strings.Contains(ansi.Strip(m.View()), "· e edit again · Esc dismiss") {
 		t.Fatal(ansi.Strip(m.View()))
+	}
+}
+
+// Findings on closed tasks are hidden from the header count, the lint view
+// and the ! marks, and the overview names how many; the task's own detail
+// still shows them (6neax1).
+func TestClosedTaskFindingsHidden(t *testing.T) {
+	m := fixture(t)
+	m.width, m.height = 160, 30
+	m.resize()
+	target, _ := m.selected()
+	// A finding that stays on a closed task: a Depends on line that is not
+	// one (missing-section and long-title skip closed tasks already).
+	file := filepath.Join(m.store.Root, target.Path)
+	b, _ := os.ReadFile(file)
+	if err := os.WriteFile(file, []byte(addDep("Nothing")(string(b))), 0600); err != nil {
+		t.Fatal(err)
+	}
+	m.refresh(target.Path)
+	before := len(m.findings)
+	if !m.linted[target.Path] {
+		t.Fatal("fixture task has no finding")
+	}
+	if _, err := m.store.Done(target.ID); err != nil {
+		// Done refuses unchecked items; tick them first.
+		for i := range target.Acceptance {
+			if _, e := m.store.Check(target.ID, i+1); e != nil {
+				t.Fatal(e)
+			}
+		}
+		if _, err = m.store.Done(target.ID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	m.refresh(target.Path)
+	if m.linted[target.Path] || len(m.findings) >= before || len(m.closedFindings) == 0 {
+		t.Fatalf("closed task still counted: %d of %d, closed %d", len(m.findings), before, len(m.closedFindings))
+	}
+	view := ansi.Strip(m.View())
+	if !strings.Contains(view, fmt.Sprintf("! %d findings", len(m.findings))) {
+		t.Fatal(view)
+	}
+	m.setView("overview")
+	if v := ansi.Strip(m.View()); !strings.Contains(v, fmt.Sprintf("(%d on closed tasks hidden)", len(m.closedFindings))) {
+		t.Fatal(v)
+	}
+	m.setView("lint")
+	for _, i := range m.indices() {
+		if m.visible[i].Path == target.Path {
+			t.Fatal("closed task in the lint view")
+		}
+	}
+	m.detailPath, m.detail = target.Path, true
+	if h := strings.Join(m.detailHeader(target), "\n"); !strings.Contains(h, "⚠") {
+		t.Fatal("closed task's own detail lost its finding: " + h)
 	}
 }
