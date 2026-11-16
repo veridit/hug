@@ -43,3 +43,5 @@ Code: huginn/internal/tui/detail.go (section headings, detailPane 0 = acceptance
 2026-11-16 Jørgen on the v0.7.15 board: compact rows are 'a lot better'. Addition: the legend must connect to the column labels, e.g. 'T type: F feature ... · P priority: C critical ...', with T and P styled like the header; narrow fallback 'T: ... · P: ...'. Sent to the worker.
 
 2026-11-16 Jørgen, supersedes the 'T type:' legend note: the legend reads 'Type: F feature ... · Priority: C critical ...' with the initial T and P emphasised (bold or the column-header style), no separate letter before the word; narrow fallback 'T: ... · P: ...'. Sent to the worker.
+
+2026-11-16 Jørgen on v0.7.15: 'Tick: ☐ 1. y' is better but needs more pop. Made concrete for check 5: the confirm line is a full-width bar in a strong background, carries the answer keys (Enter yes, Esc no), and stands out without colour too. Also: an empty priority renders as '[]' in the detail header; do not render empty badges. Both sent to the worker.
