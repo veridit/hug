@@ -4,7 +4,7 @@ title: "Lint CLI: never silent, summary, codes, help"
 status: "done"
 type: feature
 priority: "high"
-assignee: ["Jørgen H. Fjeld"]
+assignee: ["poodle"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
