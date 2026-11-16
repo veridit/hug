@@ -18,7 +18,7 @@ Promoted from item 1 of task:x1t1t1.
 ## Depends on
 
 ## Acceptance
-- [ ] hug task ls in a linked worktree shows the main board and writes to it
+- [x] hug task ls in a linked worktree shows the main board and writes to it
 - [ ] A board created from a linked worktree of a fresh repo lands at the main worktree .hug/tasks
 - [ ] No second checkout: git worktree list shows hug/tasks once
 - [ ] MCP from a linked worktree reads and writes the main board
