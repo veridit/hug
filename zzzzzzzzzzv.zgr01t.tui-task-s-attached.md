@@ -1,13 +1,14 @@
 ---
 id: zgr01t
 title: "TUI: a task's attached files show with an icon and open in the editor"
-status: todo
+status: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
