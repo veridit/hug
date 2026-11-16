@@ -4,7 +4,7 @@ title: "Measure amortized cleanup: forgets and corrections after recall"
 status: todo
 type: feature
 priority: ""
-assignee: []
+assignee: ["guppy"]
 labels: []
 created: 2026-11-12
 updated: 2026-11-12
