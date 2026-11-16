@@ -57,6 +57,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"cites ", "forbidden-citation"},
 	{"task file is a symlink", "file-symlink"},
 	{"duplicate origin", "duplicate-origin"},
+	{"branch ", "branch-gone"},
 }
 
 // FindingCode names the kind of problem in a finding message.

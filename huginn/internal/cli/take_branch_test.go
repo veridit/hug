@@ -55,3 +55,44 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 		t.Fatalf("flags: %v", tk)
 	}
 }
+
+// x1t1t1 check 6: lint flags a doing task whose branch is merged into main
+// or deleted, with fix: hug task done ID; an unmerged branch is not flagged.
+func TestLintFlagsDoingTaskOnMergedOrDeletedBranch(t *testing.T) {
+	main := app(t)
+	mainDir, _ := filepath.EvalSymlinks(main.Cwd)
+	execute(t, main, "init")
+	take := func(title, branch string) string {
+		t.Helper()
+		id := execute(t, main, "new", title, "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+		execute(t, main, "take", id, "--branch", branch)
+		return id
+	}
+	git(t, mainDir, "branch", "feat/merged")
+	git(t, mainDir, "branch", "feat/open")
+	git(t, mainDir, "checkout", "-q", "feat/open")
+	git(t, mainDir, "commit", "-q", "--allow-empty", "-m", "unmerged work")
+	git(t, mainDir, "checkout", "-q", "main")
+	merged, open, gone := take("Merged work", "feat/merged"), take("Open work", "feat/open"), take("Gone work", "feat/gone")
+
+	code, out := runText(main, "lint")
+	for _, want := range []string{
+		"branch feat/merged is merged into main, but " + merged + " is still doing",
+		"fix: hug task done " + merged,
+		"branch feat/gone is deleted, but " + gone + " is still doing",
+		"fix: hug task done " + gone,
+	} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("lint (exit %d) misses %q:\n%s", code, want, out)
+		}
+	}
+	if strings.Contains(out, "feat/open") || strings.Count(out, "[branch-gone]") != 2 {
+		t.Fatalf("unmerged branch %s flagged:\n%s", open, out)
+	}
+	// Closing the task clears its finding.
+	execute(t, main, "check", merged, "1")
+	execute(t, main, "done", merged)
+	if _, out := runText(main, "lint"); strings.Contains(out, "feat/merged") {
+		t.Fatalf("done task still flagged:\n%s", out)
+	}
+}

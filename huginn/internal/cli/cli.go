@@ -689,6 +689,10 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		fs = append(fs, more...)
+		// Git branch state, not file content: recomputed on every lint (x1t1t1).
+		if ts, e := s.s.Tasks(); e == nil {
+			fs = append(fs, task.BranchFindings(a.Cwd, gitbranch.DefaultBranch(a.Cwd), ts)...)
+		}
 		// Closed tasks' findings are hidden unless --all (6neax1).
 		var hidden []task.Finding
 		if !f.has("all") {

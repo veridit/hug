@@ -39,6 +39,7 @@ var Codes = []CodeInfo{
 	{"forbidden-citation", "cites a folder that gets deleted"},
 	{"file-symlink", "a task file is a symlink"},
 	{"duplicate-origin", "two tasks were imported from one source"},
+	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped"},
 	{"missing-task-ref", "a task: link names no task"},
 	{"missing-file", "a file: link names no file"},
 	{"file-content", "an attached file is binary or too large"},
