@@ -28,6 +28,23 @@ type NewOptions struct {
 type Filter struct {
 	Type, Priority, Label, Group, Mine string
 	Status                             string
+	// Epic, when set, is an epic id: keep that epic and its children.
+	Epic string
+}
+
+// InEpic reports whether t is the epic with id epic or one of its children.
+func InEpic(t Task, ts []Task, epic string) bool {
+	if epic == "" {
+		return true
+	}
+	if strings.EqualFold(t.ID, epic) {
+		return true
+	}
+	if t.Parent == "" {
+		return false
+	}
+	p, e := ResolveDependency(ts, t.Parent)
+	return e == nil && strings.EqualFold(p.ID, epic)
 }
 type MoveOptions struct {
 	Before, After string
@@ -388,6 +405,10 @@ func Next(tasks []Task, f Filter) (Result, error) {
 	}
 	for _, t := range ts {
 		if (t.Status != "todo" && !(f.Mine != "" && t.Status == "doing")) || len(Blocked(t, tasks)) > 0 {
+			continue
+		}
+		// An epic is finished through its children, never picked itself.
+		if IsEpic(t, tasks) || !InEpic(t, tasks, f.Epic) {
 			continue
 		}
 		if f.Mine != "" {

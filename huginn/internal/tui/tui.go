@@ -128,6 +128,9 @@ func (m *model) applyFilter() {
 		if m.filter.Label != "" && !contains(t.Labels, m.filter.Label) {
 			continue
 		}
+		if !task.InEpic(t, m.all, m.filter.Epic) {
+			continue
+		}
 		if m.filter.Priority != "" && !optionalMatches(t.Priority, m.filter.Priority) || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
 			continue
 		}

@@ -14,7 +14,7 @@ var commands = []command{
 	{"todo", "", "Filter todo"}, {"doing", "", "Filter in progress"}, {"done", "", "Filter completed"},
 	{"blocked", "", "Filter unmet dependencies"}, {"dropped", "", "Filter dropped"},
 	{"status", "status", "Filter status"}, {"type", "type", "Filter task type"}, {"group", "group", "Filter group"},
-	{"label", "label", "Filter label"}, {"priority", "priority", "Filter priority"}, {"assignee", "name", "Filter by who is assigned"}, {"goto", "id", "Open a task by id"}, {"lint", "", "Tasks with findings"},
+	{"label", "label", "Filter label"}, {"epic", "epic", "An epic and its children"}, {"priority", "priority", "Filter priority"}, {"assignee", "name", "Filter by who is assigned"}, {"goto", "id", "Open a task by id"}, {"lint", "", "Tasks with findings"},
 	{"clear", "", "Clear every filter"}, {"help", "", "All keys and commands"},
 }
 
@@ -63,6 +63,10 @@ func (m model) values(name string) []string {
 		case "label":
 			for _, s := range t.Labels {
 				set[s] = true
+			}
+		case "epic":
+			if task.IsEpic(t, m.all) {
+				set[t.ID+" "+t.Title] = true
 			}
 		}
 	}
@@ -139,7 +143,17 @@ func (m *model) executeCommand() bool {
 	case "todo", "doing", "done", "dropped", "blocked":
 		m.setFilter("status", name)
 		m.setView("list")
-	case "status", "type", "priority", "group", "label", "assignee":
+	case "status", "type", "priority", "group", "label", "assignee", "epic":
+		if name == "epic" {
+			// Accept the bare id (or prefix) as well as "ID title".
+			for _, v := range m.values("epic") {
+				id, _, _ := strings.Cut(v, " ")
+				if strings.HasPrefix(id, strings.ToLower(arg)) && arg != "" {
+					arg = v
+					break
+				}
+			}
+		}
 		if !contains(m.values(name), arg) {
 			m.message = "unknown " + name + ": " + arg
 			return false

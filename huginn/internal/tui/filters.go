@@ -10,7 +10,7 @@ import (
 
 type filterChip struct{ field, value string }
 
-var filterFields = []struct{ letter, name string }{{"s", "status"}, {"t", "type"}, {"p", "priority"}, {"g", "group"}, {"l", "label"}, {"a", "assignee"}}
+var filterFields = []struct{ letter, name string }{{"s", "status"}, {"t", "type"}, {"p", "priority"}, {"g", "group"}, {"l", "label"}, {"a", "assignee"}, {"e", "epic"}}
 
 func ownerMatches(t task.Task, value string) bool {
 	return value == "(unassigned)" && len(t.Assignee) == 0 || contains(t.Assignee, value)
@@ -35,6 +35,9 @@ func (m *model) writeFilter(name, value string) {
 		m.filter.Label = value
 	case "assignee":
 		m.filter.Mine = value
+	case "epic":
+		// Values are "ID title"; the filter keeps the id.
+		m.filter.Epic, _, _ = strings.Cut(value, " ")
 	}
 }
 func (m *model) setFilter(name, value string) {

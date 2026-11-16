@@ -42,7 +42,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	str := func(desc string) map[string]any { return map[string]any{"type": "string", "description": desc} }
 	enum := func(values ...string) map[string]any { return map[string]any{"type": "string", "enum": values} }
 	filters := func() map[string]any {
-		return map[string]any{"type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "label": str("Label filter"), "group": str("Exact folder"), "mine": map[string]any{"type": "boolean"}}
+		return map[string]any{"type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "label": str("Label filter"), "group": str("Exact folder"), "epic": str("Epic id: that epic and its children"), "mine": map[string]any{"type": "boolean"}}
 	}
 	add := func(name, desc string, props map[string]any, required []string, build func(map[string]any) ([]string, error)) {
 		schema := map[string]any{"type": "object", "properties": props, "additionalProperties": false}
@@ -114,7 +114,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	p := filters()
 	p["status"] = enum("todo", "doing", "done", "dropped")
 	add("list", "List tasks in rank order, including done and dropped unless filtered.", p, nil, func(m map[string]any) ([]string, error) {
-		return flags([]string{"ls"}, m, "type", "priority", "label", "group", "mine", "status"), nil
+		return flags([]string{"ls"}, m, "type", "priority", "label", "group", "epic", "mine", "status"), nil
 	})
 	add("show", "Show a task by id, unique prefix, slug or alias with dependencies, acceptance and its files (name, bytes, sha256). With file, returns that file's content.", map[string]any{"id": str("Task reference"), "file": str("A task file name, e.g. bench/README.md, to read its content")}, []string{"id"}, func(m map[string]any) ([]string, error) {
 		args := []string{"show", get(m, "id")}
@@ -243,7 +243,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		add(cmd, ""+map[string]string{"take": "Claim a task using the remote push lock and set it doing.", "done": "Finish a task after dependencies and acceptance checks are complete."}[cmd], map[string]any{"id": str("Task reference")}, []string{"id"}, func(m map[string]any) ([]string, error) { return []string{cmd, get(m, "id")}, nil })
 	}
 	add("next", "Find the highest-ranked available task or your doing task with combined filters.", filters(), nil, func(m map[string]any) ([]string, error) {
-		return flags([]string{"next"}, m, "type", "priority", "label", "group", "mine"), nil
+		return flags([]string{"next"}, m, "type", "priority", "label", "group", "epic", "mine"), nil
 	})
 	for _, cmd := range []string{"lint", "sync", "types"} {
 		add(cmd, map[string]string{"lint": "Report malformed files, dangling dependencies, cycles and unchecked done tasks.", "sync": "Commit local edits, rebase and push the task branch only.", "types": "List the five supported task types and their meanings."}[cmd], map[string]any{}, nil, func(map[string]any) ([]string, error) { return []string{cmd}, nil })

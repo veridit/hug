@@ -44,7 +44,7 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 	}
 	cols := []BoardColumn{{Status: "todo"}, {Status: "doing"}, {Status: "done"}}
 	for _, t := range ts {
-		if filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) {
+		if filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) || !task.InEpic(t, ts, filter.Epic) {
 			continue
 		}
 		for i := range cols {
