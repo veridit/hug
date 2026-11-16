@@ -4,6 +4,16 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.11 - 2026-11-16
+
+### Fixed
+
+- On a machine without a git identity, task commands say so and give the
+  `git config --global user.name/user.email` fix (found in a clean Linux
+  container), instead of suggesting to re-run the failed commit.
+- TUI commits read `hug task check ID` (not `huginn: check ID`), and every
+  version line says `hug vX.Y.Z`.
+
 ## v0.7.10 - 2026-11-16
 
 ### Fixed
