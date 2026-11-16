@@ -27,7 +27,7 @@ Agreed palette from crab's proposal, approved by Jørgen 'Yes'.
 
 ## Acceptance
 - [x] the detail of a task with inline code shows no red; inline code uses #c9d6e3 on #1a2630 on a dark terminal (golden)
-- [ ] light terminal uses #2b3a48 on #e8eef3; NO_COLOR shows plain text (test)
+- [x] light terminal uses #2b3a48 on #e8eef3; NO_COLOR shows plain text (test)
 
 ## Notes
 
