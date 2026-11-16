@@ -1,6 +1,6 @@
 ---
 id: et85h1
-title: "Agents take tasks under their own session name, not the git user"
+title: "Agents name themselves (and their model) when they take a task"
 status: todo
 type: bug
 priority: "high"
@@ -11,13 +11,13 @@ updated: 2026-11-16
 ---
 
 ## Goal
-When an agent takes a task, the assignee is the agent's session name (crab, poodle), so the board shows who is really working on it; people still take under their own name
+hug never assigns a task to a person by guessing. Whoever takes a task says who they are: the agent or session name (poodle, crab), and the model when the agent knows it (claude-opus-5-5, gpt-6.1-sol). Both are recorded on the task, so the board shows who is working and later tells us which model did which work.
 
 ## Purpose
-Jørgen saw every doing task assigned to him (git user.name) while agents were doing the work; the board lied about who is busy
+Jørgen 2026-11-16: every doing task showed him as assignee because take fell back to git user.name while agents did the work. 'Let's not put my name automatically as the assigned user. Let's require the agent to tell us what agent or session is running this, and record what model if we know, because that tells us something about intelligence for later.'
 
 ## Principle
-Identity order: HUGINN_USER, then the harness session name (jcode: JCODE_SESSION_ID session_<name>_..., other harnesses where they expose one), then git config user.name. No new config needed for agents. Never guess a name from anything else.
+No git user.name fallback and no backwards compatibility. Identity comes from HUG_USER or an explicit flag; take without it fails with a fix: line showing how to name yourself. The harness may fill it in where it knows (jcode: JCODE_SESSION_ID session_<name>_...), but never from the OS or git user. The model is optional: recorded when given (flag or HUG_MODEL), never guessed. MCP task_take gets the same fields. The setup/hook text tells agents to name themselves.
 
 ## Relevant details
 huginn/internal/cli/cli.go:180 identity() reads HUGINN_USER, else git config user.name. take.go calls it; MCP take and the TUI callback share it. --mine uses the same identity. 2026-11-16 qawmnb and ksv323 were reassigned by hand to crab and poodle.
@@ -25,13 +25,8 @@ huginn/internal/cli/cli.go:180 identity() reads HUGINN_USER, else git config use
 ## Depends on
 
 ## Acceptance
-- [ ] hug task take inside a jcode session named poodle assigns poodle (test with JCODE_SESSION_ID set)
-- [ ] with HUGINN_USER set it wins; with neither, git user.name as before
-- [ ] hug task ls --mine and MCP task_take use the same identity
-- [ ] take help and ls help name the identity order
-
-## Notes
-
-2026-11-16 Jørgen: env names become HUG_* (separate ticket). Identity order here: HUG_USER, then HUGINN_USER, then the harness session name, then git user.name.
-
-2026-11-16 Jørgen: no backwards compatibility; hug upgrade migrates everything. Identity order: HUG_USER, then the harness session name, then git user.name. No HUGINN_USER fallback.
+- [ ] hug task take ID with no identity fails: says no name was given and ends with fix: hug task take ID --as NAME (or set HUG_USER); git user.name is never used (test)
+- [ ] hug task take ID --as poodle --model claude-opus-5-5 records assignee poodle and model claude-opus-5-5 on the task; HUG_USER/HUG_MODEL do the same (test)
+- [ ] inside jcode with no flag, take uses the session name from JCODE_SESSION_ID (test)
+- [ ] MCP task_take takes agent and model and records them; show, ls and the TUI show the model next to the assignee
+- [ ] hug setup and the agent instructions tell agents to name themselves and their model on take
