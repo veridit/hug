@@ -32,3 +32,5 @@ Message source: huginn/internal/task/query.go:246 builds 'dangling dependency ' 
 - [ ] tests cover the three cases above with the exact text from Jørgen's edit
 
 ## Notes
+
+check 1 (297bb4b): go test -run TestMissingDependencyNamesIDAndFix ./huginn/internal/task/ passes: finding "depends on zz9zz9, but no task has that id or alias; remove the line, or write an existing task's id", code dangling-dependency, fix: hug task dep k7m2qx --remove zz9zz9
