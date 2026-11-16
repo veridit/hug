@@ -1,10 +1,10 @@
 ---
 id: ksv323
 title: "TUI move (J/K) must move past the row you see"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["Jørgen H. Fjeld"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
