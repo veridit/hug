@@ -72,6 +72,8 @@ func TestEditorFollowsVisualEditorThenGit(t *testing.T) {
 	t.Setenv("HOME", home)
 	t.Setenv("XDG_CONFIG_HOME", home)
 	t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
+	// GIT_CONFIG_GLOBAL overrides $HOME/.gitconfig (set on CI hosts).
+	t.Setenv("GIT_CONFIG_GLOBAL", filepath.Join(home, ".gitconfig"))
 	if err := os.WriteFile(filepath.Join(home, ".gitconfig"), []byte("[core]\n\teditor = nano -w\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
