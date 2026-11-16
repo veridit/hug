@@ -36,3 +36,5 @@ Message source: huginn/internal/task/query.go:246 builds 'dangling dependency ' 
 check 1 (297bb4b): go test -run TestMissingDependencyNamesIDAndFix ./huginn/internal/task/ passes: finding "depends on zz9zz9, but no task has that id or alias; remove the line, or write an existing task's id", code dangling-dependency, fix: hug task dep k7m2qx --remove zz9zz9
 
 check 2 (297bb4b): /tmp/hugtest task lint on this board prints: zzzzzz.qawmnb.recall-nudges-keep-task.md:26: [not-a-dependency] not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (a dependency line is "- <task id>", or run hug task dep qawmnb --add REF; prose belongs in Notes) / fix: hug task edit qawmnb. TestProseInDependsOnIsNotADependency: 0 dependencies, Blocked empty, DependencyDetails empty.
+
+check 3 (b28480d): /tmp/hugtest task lint -> next: hug task edit qawmnb (was next: hug task take vk9td0); --json -> "next":"hug task edit qawmnb". TestLintNextFixesFirstFinding: clean board keeps next: hug task take ID.
