@@ -28,7 +28,7 @@ Same fsnotify watcher style as nfv18p (auto-refresh), so build after it, same fi
 ## Depends on
 
 ## Acceptance
-- [ ] a test replaces the binary at the started path and the TUI re-execs into it with the same view, selection and filters
+- [x] a test replaces the binary at the started path and the TUI re-execs into it with the same view, selection and filters
 - [ ] with a prompt or the editor open, the reload waits until it closes
 - [ ] a broken new binary leaves the old TUI running with a message and a fix: line
 - [ ] the footer says which version it reloaded into, e.g. 'reloaded hug v0.7.21'
