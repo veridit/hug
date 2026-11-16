@@ -145,13 +145,10 @@ func (a *App) open(ctx context.Context) (*session, error) {
 	if e != nil {
 		return nil, e
 	}
-	s := &task.Store{Root: r.Dir}
-	s.Refresh = func() ([]task.Task, error) {
-		if _, e := c.Sync(ctx); e != nil {
-			return nil, e
-		}
-		return c.List(ctx)
-	}
+	// One command reads the board once (44w1ev): List syncs, and the Store
+	// keeps the result until it writes a task file itself.
+	s := &task.Store{Root: r.Dir, Snapshot: true}
+	s.Refresh = func() ([]task.Task, error) { return c.List(ctx) }
 	if _, e = s.Tasks(); e != nil {
 		c.Close()
 		return nil, e
@@ -726,6 +723,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = s.r.Sync(); e != nil {
 			return nil, e
 		}
+		s.s.Invalidate() // the pull may have changed task files
 		return empty()
 	case "new":
 		if e = f.count(1); e != nil {
@@ -849,6 +847,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = c.Run(); e != nil {
 			return nil, e
 		}
+		s.s.Invalidate() // the editor changed the file
 		if e = s.r.Commit(nil, "hug task edit "+d.Task.ID); e != nil {
 			return nil, e
 		}

@@ -58,6 +58,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	if e = s.r.Commit(nil, "hug task import backlog"); e != nil {
 		return nil, e
 	}
+	s.s.Invalidate() // the import wrote task files
 	if _, e = s.s.Tasks(); e != nil {
 		return nil, e
 	}
@@ -73,6 +74,9 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// Taking from the TUI uses the same rule as hug task take: the model is
 	// required (--model or HUG_MODEL), the name is optional (et85h1).
 	who := a.whoTakes(f)
+	// The TUI lives while others write: it must read the files each time.
+	s.s.Snapshot = false
+	s.s.Invalidate()
 	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Version: a.Version, Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { return s.r.Commit(nil, msg) }})
 	if e != nil {
 		return nil, e
@@ -125,6 +129,7 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 	if e = s.r.Commit(nil, "hug task import github"); e != nil {
 		return nil, e
 	}
+	s.s.Invalidate() // the import wrote task files
 	if _, e = s.s.Tasks(); e != nil {
 		return nil, e
 	}

@@ -173,6 +173,7 @@ func (s *Store) Reorder() ([]string, error) {
 		if !did {
 			continue
 		}
+		s.Invalidate()
 		if e := AtomicWrite(path, out); e != nil {
 			return changed, e
 		}

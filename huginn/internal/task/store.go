@@ -64,11 +64,32 @@ type Store struct {
 	DepsMode       string
 	AcceptanceMode string
 	Refresh        func() ([]Task, error)
+	// Snapshot keeps the board Refresh returned until this Store writes a
+	// task file or Invalidate is called, so one command reads the board
+	// once, not once per helper (44w1ev: ls at 10,000 tasks walked the
+	// files six times). Set it only for one short-lived command; the TUI,
+	// which waits while others write, leaves it off.
+	Snapshot bool
+	board    []Task
+	held     bool
 }
+
+// Invalidate drops the kept board: the next Tasks reads the files again.
+// Call it after anything other than this Store changed task files (an
+// editor, a pull, an import).
+func (s *Store) Invalidate() { s.board, s.held = nil, false }
 
 func (s *Store) Tasks() ([]Task, error) {
 	if s.Refresh != nil {
-		return s.Refresh()
+		if s.Snapshot && s.held {
+			return cloneTasks(s.board), nil
+		}
+		ts, e := s.Refresh()
+		if e != nil || !s.Snapshot {
+			return ts, e
+		}
+		s.board, s.held = cloneTasks(ts), true
+		return ts, nil
 	}
 	var out []Task
 	e := filepath.WalkDir(s.Root, func(path string, d os.DirEntry, e error) error {
@@ -101,6 +122,22 @@ func (s *Store) Tasks() ([]Task, error) {
 	})
 	Sort(out)
 	return out, e
+}
+
+// cloneTasks copies tasks and their slices, so a caller that edits what
+// Tasks returned cannot change the board the Store keeps.
+func cloneTasks(ts []Task) []Task {
+	out := make([]Task, len(ts))
+	for i, t := range ts {
+		t.Assignee = append([]string(nil), t.Assignee...)
+		t.Labels = append([]string(nil), t.Labels...)
+		t.Aliases = append([]string(nil), t.Aliases...)
+		t.Sections = append([]string(nil), t.Sections...)
+		t.Dependencies = append([]Dependency(nil), t.Dependencies...)
+		t.Acceptance = append([]Acceptance(nil), t.Acceptance...)
+		out[i] = t
+	}
+	return out
 }
 func (s *Store) load(ref string) (*Document, []Task, error) {
 	ts, e := s.Tasks()
@@ -142,11 +179,12 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		if e != nil {
 			return Result{}, e
 		}
+		s.Invalidate()
 		if e := AtomicWrite(path, d.Bytes()); e != nil {
 			return Result{}, e
 		}
 		if s.Refresh != nil {
-			if _, e := s.Refresh(); e != nil {
+			if _, e := s.Tasks(); e != nil {
 				return Result{}, e
 			}
 		}
@@ -520,6 +558,7 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	if e := os.MkdirAll(filepath.Dir(dest), 0755); e != nil {
 		return Result{}, e
 	}
+	s.Invalidate()
 	if e := renameFile(source, dest); e != nil {
 		return Result{}, e
 	}
@@ -542,8 +581,9 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	}
 	d.Task.Rank = r
 	d.Task.Slug = slug
+	s.Invalidate()
 	if s.Refresh != nil {
-		if _, e := s.Refresh(); e != nil {
+		if _, e := s.Tasks(); e != nil {
 			return Result{}, e
 		}
 	}

@@ -143,8 +143,11 @@ func (s *Store) applyRanks(plan []rankChange, focus Task) (Result, error) {
 			result.Next = hint(r.Task)
 		}
 	}
+	if result.Changed {
+		s.Invalidate()
+	}
 	if result.Changed && s.Refresh != nil {
-		if _, e := s.Refresh(); e != nil {
+		if _, e := s.Tasks(); e != nil {
 			return result, e
 		}
 	}

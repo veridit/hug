@@ -47,12 +47,15 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 	})
 	var raced *gitbranch.ErrRaced
 	if errors.As(e, &raced) {
+		s.s.Invalidate()
 		d, err := s.s.Get(ref)
 		if err != nil {
 			return task.Result{}, err
 		}
 		return task.Result{}, &OperationError{Problem: "taken by " + strings.Join(d.Task.Assignee, ", ") + " (" + d.Task.ID + ")", Fix: "hug task next"}
 	}
+	// The pull and the take changed files behind the Store's back.
+	s.s.Invalidate()
 	if e == nil {
 		_, e = s.s.Tasks()
 	}
