@@ -488,6 +488,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	// order their locks themselves (run, then turn), as a background pass does.
 	if !readOnly[cmd] && cmd != "take" && cmd != "sync" && cmd != "tui" && cmd != "edit" {
 		defer s.turn()()
+		// open read the board before the turn: a background rebase may have
+		// moved task files since, so read them again under it.
+		s.s.Invalidate()
 	}
 	// Reads bring in other clones' changes: a background pass when the last
 	// is stale (a lock try and a stat; it never waits on git or the network).
