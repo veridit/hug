@@ -219,6 +219,37 @@ func (m model) listText() string {
 	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · status blocked = unmet dependency", start+1, end, len(indices))))
 	return strings.Join(lines, "\n")
 }
+// ownerWidth is the IN PROGRESS owner column: 16 cells for a name, and on
+// a wide terminal as many as the longest owner with its branch needs, up
+// to 30 (x1t1t1). A board without branches looks as it did.
+func (m model) ownerWidth() int {
+	w := 16
+	if m.width < 120 {
+		return w
+	}
+	for _, i := range m.paneIndices(sectionDoing) {
+		w = max(w, min(30, lipgloss.Width(m.rowOwner(m.visible[i]))))
+	}
+	return w
+}
+
+// rowOwner is who works on t and, when it is not the main branch, where:
+// "alice · feat/x" (x1t1t1). The name comes first, so a narrow column
+// cuts the branch, never the owner.
+func (m model) rowOwner(t task.Task) string {
+	owner := strings.Join(t.Assignee, ", ")
+	if owner == "" {
+		owner = t.Model
+	}
+	if owner == "" {
+		return "unassigned"
+	}
+	if b := oneLine(t.Branch); b != "" && b != m.opts.MainBranch {
+		owner += " · " + b
+	}
+	return oneLine(owner)
+}
+
 func (m model) overviewText() string {
 	names := overviewSections
 	rows := m.overviewRows()
@@ -253,25 +284,25 @@ func (m model) overviewText() string {
 			label = m.styles.selected.Render(label)
 		}
 		lines = append(lines, label)
+		ownerWidth := 16
+		if p == sectionDoing {
+			ownerWidth = m.ownerWidth()
+		}
 		for n, i := range indices[start:end] {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
 			if p == sectionDoing {
-				owner := strings.Join(t.Assignee, ", ")
-				if owner == "" {
-					owner = "unassigned"
-				}
 				// Owners get a reserved column, never lost behind a long
 				// title. On the selected row the highlight runs through it,
 				// so the owner reads as part of that row.
-				ownerCell := fit(oneLine(owner), 16)
+				ownerCell := fit(m.rowOwner(t), ownerWidth)
 				if sel {
 					ownerCell = m.styles.selected.Render("  " + ownerCell)
 				} else {
 					ownerCell = "  " + m.styles.accent.Render(ownerCell)
 				}
-				lines = append(lines, m.taskRowMark(t, max(1, m.width-18), sel, false, mark)+ownerCell)
+				lines = append(lines, m.taskRowMark(t, max(1, m.width-ownerWidth-2), sel, false, mark)+ownerCell)
 			} else {
 				lines = append(lines, m.taskRowMark(t, m.width, sel, false, mark))
 			}

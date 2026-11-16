@@ -77,7 +77,7 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// The TUI lives while others write: it must read the files each time.
 	s.s.Snapshot = false
 	s.s.Invalidate()
-	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Version: a.Version, Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) }})
+	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Version: a.Version, MainBranch: gitbranch.DefaultBranch(a.Cwd), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) }})
 	if e != nil {
 		return nil, e
 	}
