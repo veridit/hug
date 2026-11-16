@@ -1,10 +1,10 @@
 ---
 id: mv4vye
 title: "TUI detail: visible focus, clear prompts, honest key hints"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["Jørgen H. Fjeld"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
