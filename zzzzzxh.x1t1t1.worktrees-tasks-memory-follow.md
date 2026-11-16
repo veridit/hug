@@ -25,7 +25,7 @@ Today: hug task finds .hug/tasks via the repository root; a linked worktree has 
 ## Depends on
 
 ## Acceptance
-- [ ] done when task:065wwn is done (hug task ls in a linked worktree shows the main board and writes to it)
+- [x] done when task:065wwn is done (hug task ls in a linked worktree shows the main board and writes to it)
 - [ ] tasks and memories created in a worktree carry its name
 - [ ] a discard command lists, then drops or retires, exactly the worktree's tasks and memories
 

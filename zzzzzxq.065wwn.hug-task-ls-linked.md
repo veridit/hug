@@ -1,7 +1,7 @@
 ---
 id: 065wwn
 title: "hug task ls in a linked worktree shows the main board and writes to it"
-status: "doing"
+status: "done"
 type: "bug"
 priority: "high"
 assignee: ["hare"]
