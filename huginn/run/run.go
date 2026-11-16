@@ -20,7 +20,7 @@ var Version = "v0.1.6"
 // Main runs huginn with args (without the program name) and returns the exit code.
 func Main(args []string) int {
 	if len(args) == 1 && args[0] == "version" {
-		fmt.Println("huginn " + Version)
+		fmt.Println("hug " + Version)
 		return 0
 	}
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)

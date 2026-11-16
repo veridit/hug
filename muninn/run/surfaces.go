@@ -51,7 +51,7 @@ func serveCmd() *cobra.Command {
 						}
 					}()
 				}
-				fmt.Printf("muninn web UI on http://%s\n", addr)
+				fmt.Printf("hug memory web UI on http://%s\n", addr)
 				return web.ListenAndServe(ctx, addr, (&web.Server{App: a, Mu: mu, Binding: view.binding(a)}).Handler())
 			})
 		}}

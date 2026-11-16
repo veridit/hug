@@ -122,7 +122,7 @@ func withApp(fn func(ctx context.Context, a *app.App) error) error {
 
 func versionCmd() *cobra.Command {
 	return &cobra.Command{Use: "version", Short: "Print version", Run: func(*cobra.Command, []string) {
-		fmt.Println("muninn", Version)
+		fmt.Println("hug", Version)
 	}}
 }
 

@@ -126,7 +126,7 @@ func (m *model) finish(r task.Result, err error, action string) {
 		m.message += "\n" + strings.Join(r.Warnings, "\n")
 	}
 	if r.Changed && m.opts.Commit != nil && !(action == "take" && m.opts.Take != nil) {
-		if e := m.opts.Commit("huginn: " + action + " " + r.Task.ID); e != nil {
+		if e := m.opts.Commit("hug task " + action + " " + r.Task.ID); e != nil {
 			m.message = e.Error()
 		}
 	}

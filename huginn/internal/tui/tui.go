@@ -389,7 +389,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.message = "editor closed; re-linted"
 			if m.opts.Commit != nil {
-				if err := m.opts.Commit("huginn: edit task"); err != nil {
+				if err := m.opts.Commit("hug task edit"); err != nil {
 					m.message = err.Error()
 				}
 			}
