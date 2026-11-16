@@ -49,3 +49,5 @@ check 4 partial (dragon): show 'taken by: NAME · MODEL · BRANCH', ls rows add 
 landed on main 2250330..9d1f382 (ff), CI run 43924391679: ubuntu/macos/windows success. Open: check 4 TUI rows (after vole z6kz20), check 7 Statbus trial.
 
 Released in v0.7.31 (checks 2,3,5,6). Open: 4 (TUI in-progress rows show branch, after vole's z6kz20) and 7 (Statbus trial).
+
+check 4 evidence (dragon, fd25eb0 on ci/x1t1t1-tui, on v0.7.34): show/ls --json/TUI detail already carried branch (cli.go takenBy, tui/detail.go owner line). New: TUI IN PROGRESS rows, m.rowOwner = owner then ' · branch' unless Options.MainBranch (gitbranch.DefaultBranch). Test huginn/internal/tui/owner_branch_test.go TestInProgressRowShowsBranch: 'poodle · feat/x', main hidden, 80 cols 'alice · feat/te'. Goldens: GOMAXPROCS=2 HUGINN_UPDATE_GOLDEN=1 go test -run TestTmuxGolden -> 4 overview.txt files changed; 140x40 row: '> ◑ 1/2 000002   doing   bug     critical Bug task 02: make the terminal workflow observable                    alice · feat/terminal-000002'; 80x24: 'alice · feat/te…'. Local: ok github.com/veridit/hug/huginn/internal/tui 45.524s. CI 43943254468 pending; tick after green and on main.
