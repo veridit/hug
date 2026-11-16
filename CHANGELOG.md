@@ -21,6 +21,26 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   same name take records. `hug setup` and the AGENTS.md section tell
   agents to name their model on take. (et85h1)
 
+### Fixed
+
+- `hug task tui` puts every task in one place. A task in progress that waits
+  on a dependency stays in IN PROGRESS, drawn blocked, and no longer shows a
+  second time in BLOCKED; BLOCKED holds only tasks nobody started that
+  cannot start. The header counts no longer overlap and add up to the tasks
+  shown, and doing says how many of its tasks are blocked: `todo 8  ·  doing
+  15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15` (it used to read
+  `todo 15 · doing 15 · blocked 8` on the same 60 tasks). The board columns
+  and the status filter (`blocked`, `todo`, keys 1 to 4) follow the same
+  rule. (zaec08)
+
+### Added
+
+- The overview has a RECENTLY DONE section, between BLOCKED and LINT: the 3
+  tasks closed last, newest first, by the commit that closed them (`hug
+  task done` or `drop`, or a `set` or edit that made the status done or
+  dropped), with how many are closed in all. On a short terminal it gives
+  way first and keeps one row. (zaec08)
+
 ## v0.7.22 - 2026-11-16
 
 ### Fixed

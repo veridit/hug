@@ -193,7 +193,7 @@ func (m model) listText() string {
 	return strings.Join(lines, "\n")
 }
 func (m model) overviewText() string {
-	names := []string{"IN PROGRESS · assigned to", "NEXT UP · rank order", "BLOCKED · unmet dependencies", "LINT · tasks needing attention"}
+	names := overviewSections
 	rows := m.overviewRows()
 	var lines []string
 	for p, name := range names {
@@ -203,7 +203,17 @@ func (m model) overviewText() string {
 			pointer = "> "
 		}
 		label := fmt.Sprintf("%s%s  [%d]", pointer, name, len(indices))
-		if p == 3 {
+		if p == sectionRecent {
+			// [3] would read as all there are: say how many are closed.
+			closed := 0
+			for _, t := range m.visible {
+				if t.Status == "done" || t.Status == "dropped" {
+					closed++
+				}
+			}
+			label = fmt.Sprintf("%s%s  [%d of %d closed]", pointer, name, len(indices), closed)
+		}
+		if p == sectionLint {
 			label += fmt.Sprintf(" · %d findings", len(m.findings))
 			if n := len(m.closedFindings); n > 0 {
 				label += fmt.Sprintf(" (%d on closed tasks hidden)", n)
@@ -230,7 +240,7 @@ func (m model) overviewText() string {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
-			if p == 0 {
+			if p == sectionDoing {
 				owner := strings.Join(t.Assignee, ", ")
 				if owner == "" {
 					owner = "unassigned"
@@ -257,14 +267,22 @@ func (m model) overviewText() string {
 // overviewRows shares the overview's rows by need: each section asks for its
 // task count (at least one line for "None"), and when they do not all fit,
 // sections that need little keep it and the rest is shared among the larger
-// ones.
-func (m model) overviewRows() [4]int {
-	var want, got [4]int
-	budget := m.bodyHeight() - 4*2 // a label and a blank line per section
+// ones. RECENTLY DONE gives way first: it keeps one row and takes more only
+// from what the others leave (zaec08).
+func (m model) overviewRows() []int {
+	n := len(overviewSections)
+	want, got := make([]int, n), make([]int, n)
+	budget := m.bodyHeight() - n*2 // a label and a blank line per section
 	for p := range want {
 		want[p] = max(1, len(m.paneIndices(p)))
 	}
-	left := []int{0, 1, 2, 3}
+	budget-- // RECENTLY DONE's first row
+	var left []int
+	for p := range want {
+		if p != sectionRecent {
+			left = append(left, p)
+		}
+	}
 	for len(left) > 0 {
 		share := max(1, budget/len(left))
 		var next []int
@@ -286,10 +304,12 @@ func (m model) overviewRows() [4]int {
 				}
 				got[p] = max(1, n)
 			}
+			budget = 0
 			break
 		}
 		left = next
 	}
+	got[sectionRecent] = min(want[sectionRecent], 1+max(0, budget))
 	return got
 }
 func (m model) boardText() string {
@@ -416,21 +436,23 @@ func (m model) View() string {
 	if m.detail {
 		tabs = append(tabs, m.detailTrail())
 	}
+	// Disjoint counts that add up to the tasks shown (zaec08): every task
+	// has one place; doing names how many of its tasks wait on a dependency.
 	counts := map[string]int{}
-	blocked := 0
+	doingBlocked := 0
 	for _, t := range m.visible {
-		counts[t.Status]++
-		if m.blocked[t.Path] {
-			blocked++
+		counts[m.place(t)]++
+		if t.Status == "doing" && m.blocked[t.Path] {
+			doingBlocked++
 		}
 	}
 	summary := []string{}
 	for _, s := range boardStatuses {
-		n := counts[s]
-		if s == "blocked" {
-			n = blocked
+		text := fmt.Sprintf("%s %d", s, counts[s])
+		if s == "doing" && doingBlocked > 0 {
+			text += fmt.Sprintf(" (%d blocked)", doingBlocked)
 		}
-		summary = append(summary, m.styles.status[s].Render(fmt.Sprintf("%s %d", s, n)))
+		summary = append(summary, m.styles.status[s].Render(text))
 	}
 	content := ""
 	switch {

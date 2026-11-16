@@ -1,6 +1,6 @@
 HUG TASKS · help   60/60 tasks · ! 7 findings
  overview   [list]   board    !lint
-todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+todo 8  ·  doing 15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 NAVIGATION AND FIND                                     EDIT · every action requires confirmation
 j/k ↑/↓         move / scroll                                           [ and ]         previous / next check or dependency
@@ -29,8 +29,8 @@ r               refresh now (changes on disk show by themselves)
 
 PALETTE: overview, list, board, todo, doing, done, blocked, dropped, status <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>,
 epic <id>, goto <id>, lint, clear, help
-Filter fields: s status, t type, p priority, g group, l label, a assignee, e epic. Blocked is derived from unmet dependencies and overlaps
-todo/doing. Filters combine.
+Filter fields: s status, t type, p priority, g group, l label, a assignee, e epic. Blocked is a todo task with unmet dependencies; a doing
+task stays doing, drawn blocked. Each task counts once. Filters combine.
 
 
 

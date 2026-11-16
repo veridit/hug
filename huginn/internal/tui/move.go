@@ -42,7 +42,8 @@ func (m model) sectionName() string {
 	name := "the list"
 	switch m.view {
 	case "overview":
-		name = []string{"IN PROGRESS", "NEXT UP", "BLOCKED", "LINT"}[min(max(m.pane, 0), 3)]
+		title, _, _ := strings.Cut(overviewSections[min(max(m.pane, 0), len(overviewSections)-1)], " · ")
+		name = title
 	case "board":
 		name = "the " + strings.ToUpper(boardStatuses[min(max(m.pane, 0), len(boardStatuses)-1)]) + " column"
 	case "lint":

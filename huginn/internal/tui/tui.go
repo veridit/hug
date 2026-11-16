@@ -91,6 +91,10 @@ type model struct {
 	editing        bool
 	gen            int
 	loads          *loadCounter
+	// closes reads close times from git for RECENTLY DONE (zaec08);
+	// closedAt is the last snapshot's copy.
+	closes   *closeLog
+	closedAt map[string]int64
 }
 
 // loadCounter counts loads from disk, for the idle-load test.
@@ -133,8 +137,8 @@ func (m *model) reload() tea.Cmd {
 		return nil
 	}
 	m.stale, m.loading = false, true
-	s, loads, gen := m.store, m.loads, m.gen
-	return func() tea.Msg { return loadedMsg{loadSnapshot(s, loads), gen} }
+	s, loads, gen, closes := m.store, m.loads, m.gen, m.closes
+	return func() tea.Msg { return loadedMsg{loadSnapshot(s, loads, closes), gen} }
 }
 
 // selectionID is the task to keep selected across a reload: by id, since a
@@ -211,11 +215,11 @@ func newModel(s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
 	input.Cursor.Blink = false
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", input: input,
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", input: input, closes: &closeLog{},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	m.refresh("")
 	// Prefer an occupied overview pane, while retaining the same pane order.
-	for p := 0; p < 4; p++ {
+	for p := 0; p < len(overviewSections); p++ {
 		m.pane = p
 		if len(m.indices()) > 0 {
 			break
@@ -227,7 +231,7 @@ func newModel(s *task.Store, o Options) model {
 }
 func (m model) Init() tea.Cmd { return m.waitChange() }
 func (m *model) refresh(path string) {
-	m.apply(loadSnapshot(m.store, m.loads), path)
+	m.apply(loadSnapshot(m.store, m.loads, m.closes), path)
 }
 
 // snapshot is everything refresh reads from disk: the tasks, their parsed
@@ -237,17 +241,18 @@ type snapshot struct {
 	tasks            []task.Task
 	docs             map[string]*task.Document
 	findings, closed []task.Finding
+	closedAt         map[string]int64 // close times from git (closeLog)
 	err, readErr     error
 }
 
-func loadSnapshot(s *task.Store, loads *loadCounter) snapshot {
+func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog) snapshot {
 	loads.add()
 	ts, err := s.Tasks()
 	if err != nil {
 		return snapshot{err: err}
 	}
 	task.Sort(ts)
-	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}}
+	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root)}
 	var docs []*task.Document
 	for _, t := range ts {
 		b, e := os.ReadFile(filepath.Join(s.Root, t.Path))
@@ -280,6 +285,7 @@ func (m *model) apply(sn snapshot, path string) {
 		m.message = sn.readErr.Error()
 	}
 	m.findings, m.closedFindings = sn.findings, sn.closed
+	m.closedAt = sn.closedAt
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.epics = map[string]bool{}
@@ -306,7 +312,9 @@ func (m *model) applyFilter() {
 	m.visible = nil
 	for _, t := range m.all {
 		status := m.filter.Status
-		if status == "blocked" && !m.blocked[t.Path] || status != "" && status != "blocked" && t.Status != status || m.filter.Type != "" && !optionalMatches(t.Type, m.filter.Type) || m.filter.Group != "" && !groupMatches(t.Group, m.filter.Group) {
+		// One place per task (zaec08): "blocked" is todo with an unmet
+		// dependency, "todo" excludes it, "doing" keeps blocked doing tasks.
+		if status != "" && m.place(t) != status || m.filter.Type != "" && !optionalMatches(t.Type, m.filter.Type) || m.filter.Group != "" && !groupMatches(t.Group, m.filter.Group) {
 			continue
 		}
 		if m.filter.Label != "" && !contains(t.Labels, m.filter.Label) {
@@ -330,35 +338,68 @@ func (m *model) applyFilter() {
 
 var boardStatuses = []string{"todo", "doing", "blocked", "done", "dropped"}
 
-func (m model) boardStatus(t task.Task) string {
+// Overview sections, top to bottom. Every task is in one place (zaec08): a
+// doing task stays in IN PROGRESS even when a dependency is unmet, drawn
+// blocked; BLOCKED holds only todo tasks that cannot start.
+var overviewSections = []string{"IN PROGRESS · assigned to", "NEXT UP · rank order", "BLOCKED · unmet dependencies", "RECENTLY DONE · last closed", "LINT · tasks needing attention"}
+
+const (
+	sectionDoing = iota
+	sectionNext
+	sectionBlocked
+	sectionRecent
+	sectionLint
+)
+
+// recentDone is how many closed tasks RECENTLY DONE shows.
+const recentDone = 3
+
+// place is the one status a task counts under, in the header, the board
+// columns and the status filter (zaec08): done, dropped and doing as they
+// are; a todo task with an unmet dependency is blocked; anything else
+// (a malformed status) is todo, still visible and repairable, marked with !.
+func (m model) place(t task.Task) string {
+	switch t.Status {
+	case "done", "dropped", "doing":
+		return t.Status
+	}
 	if m.blocked[t.Path] {
 		return "blocked"
 	}
-	if contains(boardStatuses, t.Status) {
-		return t.Status
+	return "todo"
+}
+
+// boardStatus is the status a row shows: its place, except that a doing
+// task waiting on a dependency is drawn blocked where it stands.
+func (m model) boardStatus(t task.Task) string {
+	if t.Status == "doing" && m.blocked[t.Path] {
+		return "blocked"
 	}
-	return "todo" // Malformed tasks remain visible and repairable, marked with !.
+	return m.place(t)
 }
 func (m model) paneIndices(p int) []int {
+	if m.view == "overview" && p == sectionRecent {
+		return m.recentIndices()
+	}
 	var out []int
 	for i, t := range m.visible {
 		match := true
 		switch m.view {
 		case "overview":
 			switch p {
-			case 0:
+			case sectionDoing:
 				match = t.Status == "doing"
-			case 1:
+			case sectionNext:
 				// Same rule as hug task next: unblocked, unassigned todo,
 				// never an epic (it finishes through its children).
-				match = t.Status == "todo" && !m.blocked[t.Path] && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
-			case 2:
-				match = m.blocked[t.Path]
-			case 3:
+				match = m.place(t) == "todo" && t.Status == "todo" && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
+			case sectionBlocked:
+				match = m.place(t) == "blocked"
+			case sectionLint:
 				match = m.linted[t.Path]
 			}
 		case "board":
-			match = m.boardStatus(t) == boardStatuses[p]
+			match = m.place(t) == boardStatuses[p]
 		case "lint":
 			match = m.linted[t.Path]
 		}
@@ -472,7 +513,7 @@ func (m *model) move(n int, absolute bool) {
 func (m *model) changePane(delta int) {
 	switch m.view {
 	case "overview":
-		m.pane = (m.pane + delta + 4) % 4
+		m.pane = (m.pane + delta + len(overviewSections)) % len(overviewSections)
 	case "board":
 		m.pane = (m.pane + delta + len(boardStatuses)) % len(boardStatuses)
 	default:

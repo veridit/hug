@@ -1,6 +1,6 @@
 HUG TASKS · detail   60/60 tasks · ! 7 findings
  overview    list    board    !lint   list › 000001
-todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
+todo 8  ·  doing 15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Feature task 01: make the terminal workflow observable with a deliberately long…
 [todo]  [feature]  [critical]  [000001]  group:compiler  unassigned
