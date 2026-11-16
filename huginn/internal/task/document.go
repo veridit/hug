@@ -87,16 +87,40 @@ func BuildName(r, i, s string) string {
 	}
 	return i + "." + s + ".md"
 }
+
+// Slug keeps file names and list rows short: the first four words of the
+// title that carry meaning (filler like "the", "of", "to" is skipped), at
+// most 32 characters (2026-11-15, user: "three, four words").
 func Slug(title string) string {
 	words := strings.FieldsFunc(strings.ToLower(title), func(r rune) bool { return !unicode.IsLetter(r) && !unicode.IsDigit(r) })
-	if len(words) > 6 {
-		words = words[:6]
+	var kept []string
+	for _, w := range words {
+		if len(kept) == 4 {
+			break
+		}
+		if slugFiller[w] {
+			continue
+		}
+		if n := len(strings.Join(append(kept, w), "-")); n > 32 && len(kept) > 0 {
+			break
+		}
+		kept = append(kept, w)
 	}
-	if len(words) == 0 {
+	if len(kept) == 0 && len(words) > 0 {
+		kept = words[:1] // all filler ("A", "The"): keep the first word
+	}
+	if len(kept) == 0 {
 		return "task"
 	}
-	return strings.Join(words, "-")
+	slug := strings.Join(kept, "-")
+	if len(slug) > 32 {
+		slug = strings.TrimRight(slug[:32], "-")
+	}
+	return slug
 }
+
+var slugFiller = map[string]bool{"a": true, "an": true, "the": true, "of": true, "to": true, "in": true, "on": true, "for": true, "and": true, "or": true, "by": true, "with": true, "is": true, "are": true, "be": true, "at": true, "as": true, "from": true, "into": true, "it": true, "its": true}
+
 func scalar(s string) string {
 	s = strings.TrimSpace(s)
 	if strings.HasPrefix(s, "\"") {

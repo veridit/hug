@@ -49,7 +49,7 @@ type Config struct {
 	BM25Scale float64 `json:"bm25_scale"`
 	// SkipRecordsAbove: automatic recall leaves out "record" memories (what
 	// happened, a state at a time) for messages longer than this many bytes;
-	// 0 = never. memory_search still finds them.
+	// 0 = never. Default 600. memory_search still finds them.
 	SkipRecordsAbove int `json:"skip_records_above"`
 	// RelativeFloor drops recall hits scoring below this fraction of the top
 	// hit, so one strong match does not drag weak neighbours along.
@@ -72,17 +72,21 @@ type Config struct {
 // Defaults returns the built-in configuration.
 func Defaults() Config {
 	return Config{
-		Extract:                extract.Defaults(),
-		Embedder:               "auto",
-		OllamaURL:              "http://127.0.0.1:11434",
-		EmbedModel:             "nomic-embed-text",
-		JcodeMemoryDir:         "",
-		MinScore:               6.0,
-		MaxResults:             5,
-		SemanticWeight:         10.0, // seid search: semantic_weight
-		SemanticFloor:          0.5,
-		SemanticSlots:          3, // seid search: reserved semantic slots
-		BM25Scale:              2.0,
+		Extract:        extract.Defaults(),
+		Embedder:       "auto",
+		OllamaURL:      "http://127.0.0.1:11434",
+		EmbedModel:     "nomic-embed-text",
+		JcodeMemoryDir: "",
+		MinScore:       6.0,
+		MaxResults:     5,
+		SemanticWeight: 10.0, // seid search: semantic_weight
+		SemanticFloor:  0.5,
+		SemanticSlots:  3, // seid search: reserved semantic slots
+		BM25Scale:      2.0,
+		// 600 measured 2026-11-15 on 147 fresh messages judged blind (recall4,
+		// wdkq16): long messages -2.56 irrelevant each [CI -3.00, -2.08],
+		// relevant -0.08 [-0.26, +0.08]; short messages unchanged.
+		SkipRecordsAbove:       600,
 		RelativeFloor:          0.62, // e2e: weak neighbours land at 0.51-0.60 of the top hit
 		RecallMinSemantic:      0.64,
 		RecallMinSemanticFull:  0.58,

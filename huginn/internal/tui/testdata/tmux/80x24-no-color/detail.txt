@@ -4,7 +4,7 @@ todo 15  ·  doing 15  ·  blocked 8  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Feature task 01: make the terminal workflow observable with a deliberately long…
 [todo]  [feature]  [critical]  [000001]  group:compiler  unassigned
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make-the-terminal
+created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 ────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
 Deliver compiler-lang support with  huginn  and readable evidence.

@@ -74,7 +74,7 @@ func TestNames(t *testing.T) {
 	if BuildName(r, i, s) != "a0.k7m2qx.recall-gate.md" {
 		t.Fatal("name")
 	}
-	if Slug("One TWO, three four five six seven") != "one-two-three-four-five-six" {
+	if Slug("One TWO, three four five six seven") != "one-two-three-four" {
 		t.Fatal("slug")
 	}
 	d := Parse("a0.p3rt9a.wrong.md", []byte(sample))

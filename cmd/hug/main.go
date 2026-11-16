@@ -59,7 +59,7 @@ func run(name string, args []string) int {
 	case "setup", "tui", "upgrade":
 		return huginn.Main(args)
 	case "version", "--version":
-		fmt.Printf("hug %s (memory: muninn %s, tasks: huginn %s)\n", Version, muninn.Version, huginn.Version)
+		fmt.Printf("hug %s\n", Version)
 		return 0
 	case "help", "-h", "--help":
 		fmt.Print(help)
