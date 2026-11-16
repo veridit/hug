@@ -2,8 +2,8 @@
 id: 065wwn
 title: "hug task ls in a linked worktree shows the main board and writes to it"
 status: todo
-type: spike
-priority: ""
+type: "bug"
+priority: "high"
 assignee: []
 labels: []
 created: 2026-11-16
