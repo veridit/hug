@@ -26,7 +26,7 @@ Storage: huginn/internal/task/files.go (Attach, text only, 256 KiB). Example: 44
 ## Depends on
 
 ## Acceptance
-- [ ] a task with 2 files shows a file mark with 2 on its row in overview, list and board; a task without files shows none (golden)
+- [x] a task with 2 files shows a file mark with 2 on its row in overview, list and board; a task without files shows none (golden)
 - [ ] inside the task, the files are listed and Enter on one opens it in $EDITOR; after the editor closes a change is committed (test with a fake editor)
 - [ ] one key opens the task's folder in the editor; the key is not shown for a task without files (test)
 
