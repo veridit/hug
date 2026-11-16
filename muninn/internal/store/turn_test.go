@@ -123,8 +123,17 @@ func TestWriteTurnStuckHolderIsNamed(t *testing.T) {
 		t.Fatalf("waiting notice repeated %d times, want at least 2", n)
 	}
 	release()
-	// The abandoned wait must not keep the lock: the turn is free now.
-	_, again, ok, err := waiter.TryWriteTurn(context.Background())
+	// The abandoned wait must not keep the lock. Its goroutine wakes on the
+	// release, takes the lock and drops it again, so the turn can be held
+	// for a moment (Windows CI, run 43921466087): free within 2 s, not at once.
+	var again func()
+	var ok bool
+	for deadline := time.Now().Add(2 * time.Second); ; time.Sleep(10 * time.Millisecond) {
+		_, again, ok, err = waiter.TryWriteTurn(context.Background())
+		if err != nil || ok || time.Now().After(deadline) {
+			break
+		}
+	}
 	if err != nil || !ok {
 		t.Fatalf("turn not free after the holder released: ok=%v err=%v", ok, err)
 	}

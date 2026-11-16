@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bytes"
+	"encoding/json"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -27,7 +28,9 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 		t.Fatalf("branch %v worktree %v, want feat/x %s", tk["branch"], tk["worktree"], linkedDir)
 	}
 	f := taskFile(t, main, id)
-	if !strings.Contains(f, `branch: "feat/x"`) || !strings.Contains(f, `worktree: "`+linkedDir+`"`) {
+	// Frontmatter values are JSON strings: a Windows path's backslashes are escaped.
+	quoted, _ := json.Marshal(linkedDir)
+	if !strings.Contains(f, `branch: "feat/x"`) || !strings.Contains(f, `worktree: `+string(quoted)) {
 		t.Fatalf("task file:\n%s", f)
 	}
 	if code, out := runText(main, "show", id); code != 0 || !strings.Contains(out, "taken by: tester · test-model · feat/x\n") {
