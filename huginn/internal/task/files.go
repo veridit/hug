@@ -250,6 +250,11 @@ func FileRefs(doc []byte, self string) []Ref {
 		out = append(out, Ref{Task: self, Name: name, Raw: "file:" + name})
 	}
 	for _, m := range taskRef.FindAllSubmatch(doc, -1) {
+		// Syntax in prose ("task:REF/NAME", "task:ID/PATH") is not a
+		// reference: a real ref is a lowercase id, alias or slug.
+		if ref := string(m[1]); ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789") {
+			continue
+		}
 		out = append(out, Ref{Task: string(m[1]), Name: string(m[2]), Raw: "task:" + string(m[1]) + "/" + string(m[2])})
 	}
 	return out
