@@ -39,6 +39,9 @@ type State struct {
 	Unpushed int       `json:"unpushed"`
 	Error    string    `json:"error,omitempty"`
 	Conflict []string  `json:"conflict,omitempty"`
+	// Skipped says why a pass pushed nothing without an error, e.g.
+	// uncommitted task edits (the commit that ends them nudges again).
+	Skipped string `json:"skipped,omitempty"`
 }
 
 // Background locates r's background-sync files. It reads the worktree's
@@ -259,6 +262,11 @@ func (b Background) Exclusive() (func(), error) {
 
 var errDirty = errors.New("uncommitted task edits")
 
+type dirtyError struct{ status string }
+
+func (d dirtyError) Error() string { return errDirty.Error() + ": " + d.status }
+func (d dirtyError) Is(t error) bool { return t == errDirty }
+
 // SyncPass is one background pass for r: fetch, rebase local commits under
 // the turn, push the rebased commit. It never resets or drops a commit: a
 // conflict aborts the rebase and is recorded, as is a failed fetch or push;
@@ -280,6 +288,7 @@ func (r *Repository) SyncPass(turn func() (func(), error)) (s State) {
 		head, e := r.passIntegrate(exists)
 		release()
 		if errors.Is(e, errDirty) {
+			s.Skipped = e.Error()
 			return s
 		}
 		var conflict *ConflictError
@@ -294,6 +303,9 @@ func (r *Repository) SyncPass(turn func() (func(), error)) (s State) {
 		remote, _ := r.git("rev-parse", "--verify", "--quiet", r.remoteRef())
 		if head == "" || head == remote {
 			s.Error = ""
+			if s.Skipped = "nothing to push"; head == "" {
+				s.Skipped = "no commits"
+			}
 			return s
 		}
 		// Push the commit rebased under the turn, not HEAD: a foreground
@@ -320,7 +332,8 @@ func (r *Repository) passIntegrate(exists bool) (string, error) {
 	if status, e := r.git("status", "--porcelain"); e != nil {
 		return "", e
 	} else if status != "" {
-		return "", errDirty
+		line, _, _ := strings.Cut(strings.TrimSpace(status), "\n")
+		return "", dirtyError{line}
 	}
 	if exists {
 		if e := r.integrate(); e != nil {
