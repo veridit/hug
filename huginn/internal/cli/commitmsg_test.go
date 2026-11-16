@@ -101,10 +101,10 @@ func TestCommitMsgGate(t *testing.T) {
 	}
 	git(t, dir, "checkout", "-q", "main")
 
-	// Cheap: under 50 ms a commit on a quiet machine (median of 5, gate
-	// minus no-verify); a loaded one gets slack.
-	gate, plain := median(t, dir, false), median(t, dir, true)
-	t.Logf("commit with gate %v, --no-verify %v", gate, plain)
+	// Cheap: under 50 ms a commit on a quiet machine (fastest of 7 each,
+	// gate minus no-verify); CI and Windows only log it.
+	gate, plain := fastest(t, dir)
+	t.Logf("commit with gate %v, --no-verify %v (fastest of 7, interleaved)", gate, plain)
 	if limit := 50 * time.Millisecond; gate-plain > limit && os.Getenv("CI") == "" && runtime.GOOS != "windows" {
 		t.Errorf("the gate costs %v per commit, over %v", gate-plain, limit)
 	}
@@ -118,9 +118,13 @@ func TestCommitMsgGate(t *testing.T) {
 	}
 }
 
-func median(t *testing.T, dir string, noVerify bool) time.Duration {
-	var ds []time.Duration
-	for i := 0; i < 5; i++ {
+// fastest times commits with and without the gate, interleaved so both see
+// the same machine load, and returns the fastest of each: load only ever
+// adds time, so the minimum is the closest to the gate's own cost (a median
+// of two separate blocks read 79 ms with 14 test packages running, 39 ms
+// quiet).
+func fastest(t *testing.T, dir string) (gate, plain time.Duration) {
+	one := func(noVerify bool) time.Duration {
 		args := []string{"-q", "-m", "timing", "-m", "Model: human"}
 		if noVerify {
 			args = append(args, "--no-verify")
@@ -129,16 +133,17 @@ func median(t *testing.T, dir string, noVerify bool) time.Duration {
 		if out, ok := tryCommit(t, dir, args...); !ok {
 			t.Fatalf("timing commit: %s", out)
 		}
-		ds = append(ds, time.Since(start))
+		return time.Since(start)
 	}
-	for i := range ds {
-		for j := i + 1; j < len(ds); j++ {
-			if ds[j] < ds[i] {
-				ds[i], ds[j] = ds[j], ds[i]
-			}
+	for i := 0; i < 7; i++ {
+		if d := one(false); gate == 0 || d < gate {
+			gate = d
+		}
+		if d := one(true); plain == 0 || d < plain {
+			plain = d
 		}
 	}
-	return ds[2]
+	return gate, plain
 }
 
 // A commit-msg hook already in .git/hooks keeps running, first; uninstall

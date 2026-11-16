@@ -26,7 +26,7 @@ import (
 const hookMarker = "# hug: commit-msg gate (t709he)"
 
 // hookScript is POSIX sh, so it runs with git's own sh on Windows too. It
-// costs two git calls, well under 50 ms. Its fix line keeps an <...> slot
+// costs two git calls and one awk (no other process), under 50 ms. Its fix line keeps an <...> slot
 // that the gate itself refuses, so a pasted fix cannot claim a model.
 const hookScript = `#!/bin/sh
 ` + hookMarker + `
@@ -35,7 +35,7 @@ const hookScript = `#!/bin/sh
 # model id, or Model: human when the git author wrote it themselves.
 # Emergency exit: git commit --no-verify.
 msg=$1
-pre="$(dirname "$0")/commit-msg.pre-hug"
+pre="${0%/*}/commit-msg.pre-hug"
 if [ -x "$pre" ]; then
 	"$pre" "$@" || exit $?
 fi
@@ -50,7 +50,8 @@ done
 case $branch in
 hug/tasks | muninn-notes) exit 0 ;;
 esac
-case $(sed -n 1p "$msg") in
+IFS= read -r subject <"$msg"
+case $subject in
 "Merge "* | "Revert "* | "fixup!"* | "squash!"* | "amend!"*) exit 0 ;;
 esac
 problem=$(git interpret-trailers --parse "$msg" | awk '
