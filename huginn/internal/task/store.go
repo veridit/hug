@@ -16,8 +16,10 @@ type Result struct {
 	Changed  bool     `json:"changed"`
 	Next     string   `json:"next"`
 	Warnings []string `json:"warnings,omitempty"`
-	Renamed  []string `json:"renamed,omitempty"`
-	Renames  []Rename `json:"renames,omitempty"`
+	// Guide: what to do now, at this state change (see Guide).
+	Guide   []string `json:"guide,omitempty"`
+	Renamed []string `json:"renamed,omitempty"`
+	Renames []Rename `json:"renames,omitempty"`
 }
 type NewOptions struct {
 	Title, Goal, Group, Type, Priority string

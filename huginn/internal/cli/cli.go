@@ -662,7 +662,11 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			if e = s.r.Commit(nil, "hug task promote "+f.args[0]+" "+f.args[1]); e != nil {
 				return nil, e
 			}
-			return resultJSON(r, s)
+			reply, e := resultJSON(r, s)
+			if e == nil {
+				withGuide(reply, "promote", r.Task, s)
+			}
+			return reply, e
 		}
 	case "note":
 		if e = f.count(2); e != nil {
@@ -785,7 +789,30 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 	}
-	return resultJSON(r, s)
+	reply, e := resultJSON(r, s)
+	if e == nil && r.Changed {
+		withGuide(reply, cmd, r.Task, s)
+	}
+	return reply, e
+}
+
+// withGuide adds what to do now for this state change (task.Guide).
+func withGuide(reply Reply, cmd string, t task.Task, s *session) {
+	action := cmd
+	if cmd == "set" {
+		switch t.Status {
+		case "done":
+			action = "done"
+		case "dropped":
+			action = "drop"
+		case "doing":
+			action = "take"
+		}
+	}
+	ts, _ := s.s.Tasks()
+	if g := task.Guide(action, t, ts); len(g) > 0 {
+		reply["guide"] = g
+	}
 }
 
 func ErrorDetails(err error) (int, string, string) {
@@ -962,6 +989,11 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if ts, ok := reply["types"].([]task.TypeInfo); ok {
 		for _, v := range ts {
 			fmt.Fprintf(a.Out, "%s  %s\n", v.Value, v.Description)
+		}
+	}
+	if gs, ok := reply["guide"].([]string); ok {
+		for _, g := range gs {
+			fmt.Fprintln(a.Out, "now: "+g)
 		}
 	}
 	if ws, ok := reply["warnings"].([]string); ok {
