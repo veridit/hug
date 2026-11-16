@@ -13,6 +13,15 @@ updated: 2026-11-16
 ## Goal
 Agents write every task zoomed out first (where, why, how) and zoomed in only where a decision depends on it, using section names measured to make cheap and strong models do this
 
+## Purpose
+Agents write focused tasks that a doer can act on without reading history; the names must make goal and reason separate.
+
+## Principle
+Choose names by a blind, paired test on real tasks, not by taste; enforce them gently (lint on new tasks), never retroactively.
+
+## Relevant details
+Result: V1 +0.49 [+0.28,+0.71] over no sections; Details equals Relevant details; Constraints worse (-0.28). Report: docs/task-vocabulary-test.md. Lint applies from 2026-11-16 (task.PatternSince).
+
 ## Depends on
 
 ## Acceptance
