@@ -28,7 +28,7 @@ Reference screenshot: In Progress (10) panel with rows like '◑ 2/4 STATBUS-553
 ## Depends on
 
 ## Acceptance
-- [ ] overview, list and board rows show the glyph and N/M for each task with checks (golden)
+- [x] overview, list and board rows show the glyph and N/M for each task with checks (golden)
 - [ ] glyph steps: 0/4 ○, 1/4 ◔, 2/4 ◑, 3/4 ◕, 4/4 ● ; 1/6 ◔, 1/2 ◑ (test)
 - [ ] all ticked is green, partly is yellow, none is dim; NO_COLOR keeps glyph and text (test)
 - [ ] hug task ls shows N/M (test)
