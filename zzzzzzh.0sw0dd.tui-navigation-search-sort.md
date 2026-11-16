@@ -1,10 +1,10 @@
 ---
 id: 0sw0dd
 title: "TUI navigation, search and sort"
-status: "doing"
+status: "todo"
 type: feature
 priority: ""
-assignee: ["Jørgen H. Fjeld"]
+assignee: [""]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
