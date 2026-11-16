@@ -16,7 +16,7 @@ Commands end with a next-step hint and fix-it errors, like huginn
 ## Depends on
 
 ## Acceptance
-- [ ] every command prints next: hint
+- [x] every command prints next: hint
 
 ## Notes
 
