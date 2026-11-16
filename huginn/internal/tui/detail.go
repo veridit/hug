@@ -15,6 +15,66 @@ import (
 var htmlComments = regexp.MustCompile(`(?s)<!--.*?(?:-->|$)`)
 
 func cleanMarkdown(s string) string { return htmlComments.ReplaceAllString(safe(s), "") }
+
+// literalAngles escapes every "<" that markdown would read as an HTML tag
+// or autolink, so a note like "git worktree add --detach <dir> <rev>" shows
+// as written instead of losing <dir> and <rev> as raw HTML (heype5). Code
+// spans and fenced blocks are left alone: there "<" is already literal and
+// a backslash would show.
+func literalAngles(s string) string {
+	var b strings.Builder
+	fence := ""
+	for i, line := range strings.Split(s, "\n") {
+		if i > 0 {
+			b.WriteByte('\n')
+		}
+		trimmed := strings.TrimLeft(line, " ")
+		if fence != "" {
+			if strings.HasPrefix(trimmed, fence) {
+				fence = ""
+			}
+			b.WriteString(line)
+			continue
+		}
+		if len(line)-len(trimmed) < 4 && (strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "~~~")) {
+			fence = trimmed[:3]
+			b.WriteString(line)
+			continue
+		}
+		for j := 0; j < len(line); j++ {
+			c := line[j]
+			switch {
+			case c == '\\' && j+1 < len(line):
+				b.WriteString(line[j : j+2]) // already escaped
+				j++
+			case c == '`':
+				// A code span runs to the next run of as many backticks.
+				run := j
+				for run < len(line) && line[run] == '`' {
+					run++
+				}
+				ticks := line[j:run]
+				if end := strings.Index(line[run:], ticks); end >= 0 {
+					stop := run + end + len(ticks)
+					b.WriteString(line[j:stop])
+					j = stop - 1
+				} else {
+					b.WriteString(ticks)
+					j = run - 1
+				}
+			case c == '<' && j+1 < len(line) && tagStart(line[j+1]):
+				b.WriteString(`\<`)
+			default:
+				b.WriteByte(c)
+			}
+		}
+	}
+	return b.String()
+}
+
+func tagStart(c byte) bool {
+	return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '/' || c == '!' || c == '?'
+}
 func (m model) markdown(s string) string {
 	s = cleanMarkdown(s)
 	if strings.TrimSpace(s) == "" {
@@ -46,7 +106,7 @@ func (m model) markdown(s string) string {
 	if err != nil {
 		return wrap(s, m.width)
 	}
-	out, err := renderer.Render(s)
+	out, err := renderer.Render(literalAngles(s))
 	if err != nil {
 		return wrap(s, m.width)
 	}
