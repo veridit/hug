@@ -1,7 +1,7 @@
 ---
 id: d8yx7y
 title: "Rows show acceptance progress as a pie glyph and N/M"
-status: "doing"
+status: "done"
 type: feature
 priority: "medium"
 assignee: ["vole"]
