@@ -19,7 +19,7 @@ func (a *App) take(ctx context.Context, s *session, ref string) (task.Result, er
 	// Publish unrelated local history before gitbranch's lost-race rollback.
 	// Otherwise an unpublished new task could disappear along with a losing take.
 	if s.r.Remote != "" {
-		ahead := exec.CommandContext(ctx, "git", "-C", s.r.Dir, "rev-list", "--count", "refs/remotes/"+s.r.Remote+"/huginn..HEAD")
+		ahead := exec.CommandContext(ctx, "git", "-C", s.r.Dir, "rev-list", "--count", "refs/remotes/"+s.r.Remote+"/"+s.r.Branch+"..HEAD")
 		count, err := ahead.Output()
 		if err != nil || strings.TrimSpace(string(count)) != "0" {
 			if err = s.r.Sync(); err != nil {
@@ -28,7 +28,7 @@ func (a *App) take(ctx context.Context, s *session, ref string) (task.Result, er
 		}
 	}
 	var result task.Result
-	e = s.r.Update(func(_ *gitbranch.Repository) error {
+	e = s.r.UpdateMessage("hug task take "+ref, func(_ *gitbranch.Repository) error {
 		// Update has pulled already. Read authoritative files without invoking Git
 		// inside its callback, then refresh the disposable cache after the lock.
 		local := *s.s

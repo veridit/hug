@@ -422,6 +422,11 @@ func (r *Repository) Sync() error {
 // never discards unrelated edits. fn may read/write Dir but must not run Git.
 // On callback failure its edits are preserved, without committing or pushing.
 func (r *Repository) Update(fn func(*Repository) error) error {
+	return r.UpdateMessage("Update "+r.Branch, fn)
+}
+
+// UpdateMessage is Update with the commit message to use.
+func (r *Repository) UpdateMessage(message string, fn func(*Repository) error) error {
 	if e := r.checkIdle(); e != nil {
 		return e
 	}
@@ -440,7 +445,7 @@ func (r *Repository) Update(fn func(*Repository) error) error {
 	if e = fn(r); e != nil {
 		return e
 	}
-	if e = r.Commit(nil, "Update "+r.Branch); e != nil {
+	if e = r.Commit(nil, message); e != nil {
 		return e
 	}
 	if r.Remote == "" {

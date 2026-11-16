@@ -882,6 +882,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			fmt.Fprintf(a.Out, "%s changed=%t backup=%s dry-run=%v\n", r.File, r.Changed, r.Backup, reply["dry_run"])
 		}
 	}
+	if c, ok := reply["content"].(string); ok {
+		// show --file: the file itself, then the next hint (2026-11-16:
+		// text mode printed only the hint, so agents could not read files).
+		fmt.Fprint(a.Out, c)
+		if c != "" && !strings.HasSuffix(c, "\n") {
+			fmt.Fprintln(a.Out)
+		}
+	}
 	if h, ok := reply["help"].(string); ok {
 		fmt.Fprint(a.Out, h)
 		return 0
