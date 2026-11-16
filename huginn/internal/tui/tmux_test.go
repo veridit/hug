@@ -110,7 +110,7 @@ func TestTmuxGolden(t *testing.T) {
 	}
 	defer os.RemoveAll(root)
 	binary := filepath.Join(root, "huginn")
-	build := exec.Command("nice", "-n", "19", "env", "GOMAXPROCS=2", "GOFLAGS=-p=2", "go", "build", "-o", binary, "./cmd/huginn")
+	build := exec.Command("nice", "-n", "19", "env", "GOMAXPROCS=2", "GOFLAGS=-p=2", "go", "build", "-ldflags", "-X github.com/veridit/hug/huginn/run.Version=v0.0.0", "-o", binary, "./cmd/huginn")
 	build.Dir = "../.."
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build: %v\n%s", err, out)

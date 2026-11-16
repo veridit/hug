@@ -37,4 +37,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 
 All tasks · : filters and commands
 
-j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                               hug v0.0.0

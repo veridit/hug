@@ -37,4 +37,4 @@ Rows 1–2 of 2 · ! lint finding · status blocked = unmet dependency
 
 status=todo · type=feature · find=task · Esc clears
 
-j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                               hug v0.0.0

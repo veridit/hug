@@ -73,6 +73,8 @@ type App struct {
 	Cwd      string
 	In       io.Reader
 	Out, Err io.Writer
+	// Version is what hug version prints; hug tui shows it in the key bar.
+	Version string
 }
 type Reply map[string]any
 

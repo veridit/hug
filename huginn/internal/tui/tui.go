@@ -25,6 +25,9 @@ type Options struct {
 	// NoWatch turns off the reload on changes on disk (nfv18p); tests that
 	// drive the model by hand leave it on through Run only.
 	NoWatch bool
+	// Version is what hug version prints ("v0.7.29"); the key bar ends with
+	// "hug v0.7.29" when there is room (Jørgen, 2026-11-16).
+	Version string
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {

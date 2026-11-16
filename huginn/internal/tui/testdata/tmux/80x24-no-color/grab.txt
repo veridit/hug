@@ -21,4 +21,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Rows 1–15 of 60 · ! lint finding · status blocked = unmet dependency
 Moving 000001 · row 3 of 60 in the list (was 1) · nothing written until Enter
 
-j/k move · g/G top/bottom · Enter drop · Esc cancel
+j/k move · g/G top/bottom · Enter drop · Esc cancel                   hug v0.0.0

@@ -37,4 +37,4 @@ type
 
 status=todo · Esc clears
 
-j/k ↑↓ pick · Enter add chip · type narrow · Esc back · ? help
+j/k ↑↓ pick · Enter add chip · type narrow · Esc back · ? help                                                                    hug v0.0.0

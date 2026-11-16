@@ -14,8 +14,9 @@ import (
 	"github.com/veridit/hug/huginn/internal/mcp"
 )
 
-// Version is set by the release build (-X).
-var Version = "v0.1.6"
+// Version is set by the release build (-X), the same string as hug's
+// main.Version; "dev" like hug version in a plain go build.
+var Version = "dev"
 
 // Main runs huginn with args (without the program name) and returns the exit code.
 func Main(args []string) int {
@@ -30,7 +31,7 @@ func Main(args []string) int {
 		fmt.Fprintln(os.Stderr, e)
 		return 1
 	}
-	a := &cli.App{Cwd: cwd, In: os.Stdin, Out: os.Stdout, Err: os.Stderr}
+	a := &cli.App{Cwd: cwd, In: os.Stdin, Out: os.Stdout, Err: os.Stderr, Version: Version}
 	if len(args) > 0 && args[0] == "mcp" && !slices.Contains(args, "--help") {
 		if len(args) > 2 || (len(args) == 2 && args[1] != "--json") {
 			return a.Run(ctx, []string{"mcp", "--invalid"})

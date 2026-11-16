@@ -37,4 +37,4 @@ Type: F feature B bug C chore S spike D docs · Priority: C critical H high M me
 Columns 1–3 of 5 · h/l or Tab/Shift-Tab reveals other columns
 All tasks · : filters and commands
 
-j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                               hug v0.0.0

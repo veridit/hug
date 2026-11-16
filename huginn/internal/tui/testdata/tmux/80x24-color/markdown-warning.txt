@@ -21,4 +21,4 @@ fmt.Println("rendered code")
 no acceptance items yet
 Task 3 of 60 · 0% · n next · p previous · Esc back
 
-j/k scroll · n/p task · Esc back · ? help · q quit
+j/k scroll · n/p task · Esc back · ? help · q quit                    hug v0.0.0

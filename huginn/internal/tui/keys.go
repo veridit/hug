@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	bkey "github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/lipgloss"
 )
 
 func binding(keys []string, label, description string) bkey.Binding {
@@ -67,7 +68,23 @@ func (m model) keyBar() string {
 	// Never wider than the terminal: the help model drops trailing hints
 	// and shows "…" (2026-11-16: the footer ran to 75 columns at width 70).
 	h.Width = m.width
-	return h.ShortHelpView(hints)
+	bar := h.ShortHelpView(hints)
+	return m.withVersion(bar)
+}
+
+// withVersion ends the key bar with "hug vX.Y.Z", right-aligned and dim,
+// when the hints leave room for it and two spaces. On a narrow line the
+// version is dropped first: it never pushes a hint off (Jørgen, 2026-11-16).
+func (m model) withVersion(bar string) string {
+	if m.opts.Version == "" {
+		return bar
+	}
+	corner := "hug " + m.opts.Version
+	gap := m.width - lipgloss.Width(bar) - lipgloss.Width(corner)
+	if gap < 2 {
+		return bar
+	}
+	return bar + strings.Repeat(" ", gap) + m.styles.dim.Render(corner)
 }
 
 // detailHints are the keys that work in the open task with its current
