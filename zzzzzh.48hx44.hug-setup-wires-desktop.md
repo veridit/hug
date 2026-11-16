@@ -18,7 +18,7 @@ hug setup finds Claude Desktop, Claude Code (~/.claude.json), Codex/ChatGPT (~/.
 ## Acceptance
 - [x] setup lists each app config found with done/open and the exact install command
 - [x] hug install apps adds hug mcp to each, keeps a timestamped backup, idempotent, --dry-run
-- [ ] a server whose binary predates the installed hug is reported with 'restart the app'
+- [x] a server whose binary predates the installed hug is reported with 'restart the app'
 
 ## Notes
 
