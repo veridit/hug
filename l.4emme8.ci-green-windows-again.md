@@ -1,13 +1,14 @@
 ---
 id: 4emme8
 title: "CI green on Windows again (lint, auto-refresh and memory worktree tests)"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
