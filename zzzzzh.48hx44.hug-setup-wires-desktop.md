@@ -1,7 +1,7 @@
 ---
 id: 48hx44
 title: "hug setup wires desktop apps"
-status: todo
+status: "done"
 type: feature
 priority: ""
 assignee: []
