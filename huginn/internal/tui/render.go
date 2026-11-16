@@ -272,9 +272,10 @@ func (m model) overviewText() string {
 }
 
 // overviewRows shares the overview's rows (h9zghj): every section the
-// cursor is not in shows min(count, recentDone) rows, an empty one none
-// (None sits on its title line), and the focused section takes all the
-// rows left. When even that does not fit, RECENTLY DONE gives way first,
+// cursor is not in shows at least min(count, recentDone) rows, an empty one
+// none (None sits on its title line), and the focused section takes all the
+// rows it needs. Rows still left go to IN PROGRESS, then NEXT UP (z6kz20).
+// When even the minimum does not fit, RECENTLY DONE gives way first,
 // then the largest of the others, down to one row each (zaec08).
 func (m model) overviewRows() []int {
 	n := len(overviewSections)
@@ -310,8 +311,29 @@ func (m model) overviewRows() []int {
 	if m.pane >= 0 && m.pane < n {
 		got[m.pane] = min(want[m.pane], max(need, budget-others))
 	}
+	// Rows the focused section does not need are not left blank (z6kz20):
+	// they go to IN PROGRESS up to all its tasks, then NEXT UP, then the
+	// rest in screen order.
+	spare := budget - others
+	if m.pane >= 0 && m.pane < n {
+		spare -= got[m.pane]
+	}
+	for _, p := range spareOrder {
+		if spare <= 0 {
+			break
+		}
+		if p == m.pane || p >= n {
+			continue
+		}
+		more := min(spare, want[p]-got[p])
+		got[p] += more
+		spare -= more
+	}
 	return got
 }
+
+// spareOrder is who gets the overview's spare rows first (z6kz20).
+var spareOrder = []int{sectionDoing, sectionNext, sectionBlocked, sectionRecent, sectionLint}
 
 // scrollOf is the first row section p of the current view showed last.
 func (m model) scrollOf(p int) int {

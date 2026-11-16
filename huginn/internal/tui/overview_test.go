@@ -298,8 +298,8 @@ func TestRecentlyDoneShrinksFirst(t *testing.T) {
 	}
 	m.height = 60
 	m.resize()
-	if rows = m.overviewRows(); rows[sectionRecent] != recentDone {
-		t.Fatalf("RECENTLY DONE got %d rows at 80x60, want %d: %v", rows[sectionRecent], recentDone, rows)
+	if rows = m.overviewRows(); rows[sectionRecent] < recentDone {
+		t.Fatalf("RECENTLY DONE got %d rows at 80x60, want at least %d: %v", rows[sectionRecent], recentDone, rows)
 	}
 }
 

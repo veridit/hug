@@ -39,7 +39,8 @@ func shownRows(m model) map[int]int {
 }
 
 // h9zghj check 1: on a 40-row terminal the focused section takes every
-// spare row; each other non-empty section shows min(count, 3).
+// spare row; each other non-empty section shows at least min(count, 3), and
+// rows the focused one does not need go out in spareOrder (z6kz20).
 func TestOverviewFocusedSectionGrows(t *testing.T) {
 	m := overviewAt(t, 140, 40)
 	counts := map[int]int{}
@@ -53,17 +54,27 @@ func TestOverviewFocusedSectionGrows(t *testing.T) {
 		m.pane = focus
 		m.clamp()
 		rows, shown := m.overviewRows(), shownRows(m)
-		spare := m.bodyHeight() - 2*len(overviewSections)
+		budget := m.bodyHeight() - 2*len(overviewSections)
+		spare := budget
 		for p := range overviewSections {
 			if p != focus {
-				if want := min(counts[p], 3); rows[p] != want || shown[p] != want {
-					t.Fatalf("focus %d: section %d shows %d (drawn %d), want min(%d, 3)", focus, p, rows[p], shown[p], counts[p])
-				}
-				spare -= rows[p]
+				spare -= min(counts[p], 3)
 			}
 		}
 		if want := min(counts[focus], spare); rows[focus] != want || shown[focus] != want {
 			t.Fatalf("focus %d: shows %d (drawn %d), want every spare row: %d", focus, rows[focus], shown[focus], want)
+		}
+		spare -= rows[focus]
+		for _, p := range spareOrder {
+			if p == focus {
+				continue
+			}
+			want := min(counts[p], 3)
+			want += min(spare, counts[p]-want)
+			spare -= want - min(counts[p], 3)
+			if rows[p] != want || shown[p] != want {
+				t.Fatalf("focus %d: section %d shows %d (drawn %d), want %d of %d", focus, p, rows[p], shown[p], want, counts[p])
+			}
 		}
 		if lines := strings.Split(m.overviewText(), "\n"); len(lines) > m.bodyHeight() {
 			t.Fatalf("focus %d: %d lines in a body of %d", focus, len(lines), m.bodyHeight())
