@@ -47,3 +47,5 @@ check 1: ci/qawmnb 6ff2e8c. BoardCue returns at most one line per turn; take+wor
 check 2: TestNudgeBoardOff (muninn/run/board_test.go) writes config.json {"nudge_board": false} under MUNINN_HOME, Load() -> BoardNudges() false -> boardSource nil -> BoardCue returns no line; {} and true stay on. 'ok  github.com/veridit/hug/muninn/run 15.959s'.
 
 check 3: muninn/cmd/board4 replay, counts in muninn/docs/BOARD4.md. Overnight (crab 2026-11-15T21:00Z..2026-11-16T08:00Z): 77 board turns, 3 lines (work jrj1vq 22:08, work p277bp 00:31, take/hug task next 01:46). Sessions with a current board: dragon, hare, humpback, poodle took their tasks and got 0 take/work lines (only done/lint); held-out hug 4 sessions 0 take/work. Precision (ran cmd within 30 min, closed, or blind Flash judge): dev 0.95, held-out hug 1.00, held-out seid 0.88, fresh seid 1.00; false per 10 session-hours held-out 0.00 hug, 0.30 seid.
+
+shipped: main ecfd778 (CI run 43945964190 green ubuntu/macos/windows). Report tmp/lanes/qawmnb.md, counts muninn/docs/BOARD4.md. Not closed per crab; every check is ticked.
