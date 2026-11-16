@@ -4,6 +4,37 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.5 - 2026-11-16
+
+### Added
+
+- Epics. `hug task set ID --parent EPIC` puts a task under an epic (epic >
+  task > acceptance item; an epic has no parent, `--parent none` clears).
+  `show` lists the epic and its children; `done` on an epic refuses while a
+  child is open (exit 3); lint reports a missing parent or one that is too
+  deep, with the exact fix.
+- `hug task import backlog` maps `parent_task_id` to the parent epic. On a
+  copy of seid-lang 282 of 294 links came back; rerun to restore them.
+- `hug task promote ID N`: acceptance item N becomes its own task, ranked
+  right after ID under the same epic. The item then reads "done when
+  task:NEW is done" and is ticked when NEW is done. MCP: `task_update`
+  action `promote`.
+- `--epic EPIC` on `ls`, `next` and `board` (and MCP list/next); `next`
+  never picks an epic itself. TUI: filter field `e` and `:epic ID`.
+- `hug apps [install] [--dry-run]`: Claude Desktop, Claude Code and
+  ChatGPT/Codex get the hug MCP server (backup kept, other servers kept).
+  `hug setup` lists it.
+- Lint: open tasks with titles over 80 characters, with the fix.
+
+### Changed
+
+- When the remote refuses SSH (apps start MCP servers without your SSH
+  agent), the error says so and gives a fix that works; reading tasks never
+  needs the remote.
+- `hug mcp` notes in its replies when Homebrew upgraded hug underneath it,
+  so the app gets restarted.
+- TUI: the selected row is tinted across its full width.
+
 ## v0.7.4 - 2026-11-16
 
 ### Added
