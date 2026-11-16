@@ -1,10 +1,10 @@
 ---
 id: 7js5hw
 title: "TUI: human names for places"
-status: todo
+status: "doing"
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["Jørgen H. Fjeld"]
 labels: ["tui"]
 created: 2026-11-10
 updated: 2026-11-10
