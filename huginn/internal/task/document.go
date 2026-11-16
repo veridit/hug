@@ -160,6 +160,19 @@ type Task struct {
 	Goal         string       `json:"goal"`
 	Dependencies []Dependency `json:"dependencies"`
 	Acceptance   []Acceptance `json:"acceptance"`
+	// Texts are what show and ls print beside the fields: the Notes body
+	// and the description sections (DescriptionSections), filled by the
+	// same Parse that fills the Task, so a cached Task answers ls without
+	// reading 10,000 files again (44w1ev). Kept out of the JSON payload:
+	// cli builds those keys itself.
+	Texts *Texts `json:"-"`
+}
+
+// Texts of one task file, see Task.Texts.
+type Texts struct {
+	Notes string
+	// Description maps each of DescriptionSections to its trimmed body.
+	Description map[string]string
 }
 type Document struct {
 	Task             Task
@@ -415,7 +428,31 @@ func Parse(path string, data []byte) *Document {
 		}
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
+	d.Task.Texts = &Texts{Notes: notesText(data), Description: map[string]string{}}
+	for _, sec := range DescriptionSections {
+		d.Task.Texts.Description[sec] = d.sectionText(sec)
+	}
 	return d
+}
+
+// notesText is the body of the first "## Notes" section (any case), trimmed:
+// what hug task show prints as notes.
+func notesText(b []byte) string {
+	active := false
+	var notes []string
+	for _, l := range strings.Split(string(b), "\n") {
+		if strings.HasPrefix(l, "## ") {
+			if active {
+				break
+			}
+			active = strings.EqualFold(strings.TrimSpace(strings.TrimPrefix(l, "## ")), "Notes")
+			continue
+		}
+		if active {
+			notes = append(notes, l)
+		}
+	}
+	return strings.TrimSpace(strings.Join(notes, "\n"))
 }
 
 // stripBacklogMarkers drops Backlog.md's <!-- SECTION:...:BEGIN/END -->
