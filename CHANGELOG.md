@@ -4,6 +4,17 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.12 - 2026-11-16
+
+### Fixed
+
+- `hug task show ID --file NAME` prints the file. Since v0.7.4 it printed
+  only the next hint unless `--json` was given.
+- `hug task take` commits as `hug task take ID` (was "Update hug/tasks"),
+  and its check for unpushed tasks looks at the current task branch
+  (it still named the old `huginn` branch).
+- TUI help lists the filter keys s/t/p/g/l/a/e and the `epic` command.
+
 ## v0.7.11 - 2026-11-16
 
 ### Fixed
