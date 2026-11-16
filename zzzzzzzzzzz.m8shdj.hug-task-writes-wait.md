@@ -30,7 +30,7 @@ me51r2 report: tmp/lanes/me51r2.md. Turn implementation: muninn/internal/store/t
 ## Acceptance
 - [x] 20 parallel hug task note commands on one board all succeed (test)
 - [x] a single hug mem forget on the real-store copy finishes in under 2 s warm (measured)
-- [ ] capture's database writes take the write turn (test)
+- [x] capture's database writes take the write turn (test)
 
 ## Notes
 
