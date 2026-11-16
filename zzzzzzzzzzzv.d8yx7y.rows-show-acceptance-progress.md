@@ -40,3 +40,5 @@ check 1: c828cfc on origin/main (CI run 43937278863: ubuntu, macos, windows succ
 check 2: c828cfc on origin/main (CI run 43937278863: ubuntu, macos, windows success). TestPieSteps (huginn/internal/tui/progress_test.go): 0/4 ○, 1/4 ◔, 2/4 ◑, 3/4 ◕, 4/4 ●, 1/6 ◔, 1/2 ◑, 5/6 ◕, 0/1 ○, 1/1 ●.
 
 check 3: c828cfc on origin/main (CI run 43937278863: ubuntu, macos, windows success). TestProgressColours: in truecolor 4/4 renders with status[done] (green #8ac987), 2/4 with the new theme.progress (yellow #e5c07b / light #8a6d00), 0/4 with dim; the three SGR prefixes differ; with NO_COLOR=1 the cell is plain '◑ 2/4' with no colour codes. A task without checks gets a blank cell.
+
+check 4: c828cfc on origin/main (CI run 43937278863: ubuntu, macos, windows success). TestLsShowsCheckProgress (huginn/internal/cli/progress_test.go): hug task ls prints ticked/total as field 4, after type ('1/2' for a task with 1 of 2 ticked, '0/1'); id stays field 1.
