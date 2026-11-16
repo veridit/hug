@@ -80,6 +80,23 @@ func TestGrabMovesFarWithOneCommit(t *testing.T) {
 	}
 }
 
+// Check 1, literally: m, five presses of k, Enter moves the last task five
+// rows up with one commit and no confirm.
+func TestGrabFiveUpOneCommit(t *testing.T) {
+	m, o, commits := grabBoard(t)
+	m = selectRow(t, m, o[5])
+	m = press(m, "m", "k", "k", "k", "k", "k", "enter")
+	if m.confirm != "" || m.grab.active || *commits != 1 {
+		t.Fatalf("confirm %q grabbed %v commits %d", m.confirm, m.grab.active, *commits)
+	}
+	if got := rankOrder(t, m); got != pick(o, 5, 0, 1, 2, 3, 4) {
+		t.Fatalf("order on disk: %s", got)
+	}
+	if want := "moved " + o[5] + " above " + o[0] + ", row 1 of 6 in the list"; m.message != want {
+		t.Fatalf("message %q, want %q", m.message, want)
+	}
+}
+
 // Check: Esc puts the task back with no commit and says so.
 func TestGrabEscCancels(t *testing.T) {
 	m, o, commits := grabBoard(t)
