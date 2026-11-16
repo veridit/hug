@@ -353,6 +353,11 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	out["children"] = children
 	out["notes"] = ""
 	if b, e := os.ReadFile(filepath.Join(root, filepath.FromSlash(t.Path))); e == nil {
+		// Purpose, Principle and Relevant details follow the goal (jnaspy).
+		d := task.Parse(t.Path, b)
+		for _, sec := range task.DescriptionSections {
+			out[descriptionKey(sec)] = d.SectionText(sec)
+		}
 		lines := strings.Split(string(b), "\n")
 		active := false
 		notes := []string{}
@@ -1112,6 +1117,11 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			fmt.Fprintf(a.Out, "taken by: %s\n", who)
 		}
 		fmt.Fprintf(a.Out, "goal: %s\n", t["goal"])
+		for _, sec := range task.DescriptionSections {
+			if v, _ := t[descriptionKey(sec)].(string); v != "" {
+				fmt.Fprintf(a.Out, "%s: %s\n", strings.ToLower(sec), v)
+			}
+		}
 		for i, v := range t["acceptance"].([]any) {
 			m := v.(map[string]any)
 			mark := " "
@@ -1195,4 +1205,13 @@ func childIndexFor(ts []task.Task) map[string][]task.Task {
 		childMemo.first, childMemo.n, childMemo.idx = &ts[0], len(ts), task.ChildIndex(ts)
 	}
 	return childMemo.idx
+}
+
+// descriptionKey is the JSON key of a description section: purpose,
+// principle, details (jnaspy; "details" as in hug task new --details).
+func descriptionKey(section string) string {
+	if section == "Relevant details" {
+		return "details"
+	}
+	return strings.ToLower(section)
 }

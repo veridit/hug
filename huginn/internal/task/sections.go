@@ -1,0 +1,182 @@
+package task
+
+import (
+	"os"
+	"strings"
+)
+
+// Canonical section order (jnaspy, Jørgen 2026-11-16): opening a task shows
+// what it is about first. Goal, Purpose, Principle, Relevant details, then
+// Depends on and Acceptance, then any other section in the order the file
+// has them, then Notes (appended, oldest first) and History last. The file
+// writer, hug task show, the TUI and MCP all use this order; hug upgrade
+// puts existing files in it without changing any section's text.
+var SectionOrder = []string{"Goal", "Purpose", "Principle", "Relevant details", "Depends on", "Acceptance"}
+
+// TailSections close a task, in this order, after every other section.
+var TailSections = []string{"Notes", "History"}
+
+// sectionRank places a "## " heading: its index in SectionOrder, then other
+// sections, then TailSections.
+func sectionRank(name string) int {
+	for i, s := range SectionOrder {
+		if strings.EqualFold(s, name) {
+			return i
+		}
+	}
+	for i, s := range TailSections {
+		if strings.EqualFold(s, name) {
+			return len(SectionOrder) + 1 + i
+		}
+	}
+	return len(SectionOrder) // another section: before Notes
+}
+
+// InOrder reports whether headings (in file order) follow SectionOrder.
+func InOrder(headings []string) bool {
+	for i := 1; i < len(headings); i++ {
+		if sectionRank(headings[i-1]) > sectionRank(headings[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+// insertAt is the line where a new "## name" section goes so the file stays
+// in canonical order: the start of the first section that ranks after name,
+// or the end of the file when none does. Every writer that adds a section
+// uses it (Depends on, Notes), so writing never puts a file out of order.
+func (d *Document) insertAt(name string) (at int, beforeHeading bool) {
+	at, rank := len(d.lines), sectionRank(name)
+	for s, span := range d.sections {
+		if sectionRank(s) > rank && span[0] < at {
+			at, beforeHeading = span[0], true
+		}
+	}
+	return at, beforeHeading
+}
+
+// OrderedSections are the canonical order of headings: a stable sort by
+// sectionRank, so other sections keep their order among themselves.
+func OrderedSections(headings []string) []string {
+	out := append([]string(nil), headings...)
+	for i := 1; i < len(out); i++ {
+		for j := i; j > 0 && sectionRank(out[j-1]) > sectionRank(out[j]); j-- {
+			out[j-1], out[j] = out[j], out[j-1]
+		}
+	}
+	return out
+}
+
+// Canonical is the file with its sections in canonical order. Each section
+// moves as a block, its heading and every line up to the next heading, with
+// its text unchanged; frontmatter and anything before the first heading stay
+// first. A block that did not end in a blank line before the next heading
+// gets one when it moves, so headings never run into text. changed is false
+// when the file was already in order (the bytes are then the same).
+func (d *Document) Canonical() (data []byte, changed bool) {
+	if InOrder(d.Task.Sections) {
+		return d.Bytes(), false
+	}
+	type block struct {
+		name  string
+		lines []string
+	}
+	start := d.frontEnd + 1
+	if start < 0 {
+		start = 0
+	}
+	// Headings outside fences, as Parse found them: d.sections holds each
+	// name's last span, so walk the lines again with the same fence rule.
+	var head []string
+	var blocks []block
+	fence := ""
+	for n := 0; n < len(d.lines); n++ {
+		line := strings.TrimSuffix(strings.TrimSuffix(d.lines[n], "\n"), "\r")
+		if n >= start {
+			trimmed := strings.TrimLeft(line, " ")
+			if len(line)-len(trimmed) <= 3 && (strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "~~~")) {
+				if fence == "" {
+					count := 0
+					for count < len(trimmed) && trimmed[count] == trimmed[0] {
+						count++
+					}
+					fence = trimmed[:count]
+				} else if strings.HasPrefix(trimmed, fence) && strings.TrimSpace(strings.TrimPrefix(trimmed, fence)) == "" {
+					fence = ""
+				}
+			} else if fence == "" && strings.HasPrefix(line, "## ") {
+				blocks = append(blocks, block{name: strings.TrimSpace(line[3:])})
+			}
+		}
+		if len(blocks) == 0 {
+			head = append(head, d.lines[n])
+		} else {
+			b := &blocks[len(blocks)-1]
+			b.lines = append(b.lines, d.lines[n])
+		}
+	}
+	// Stable insertion sort by rank.
+	for i := 1; i < len(blocks); i++ {
+		for j := i; j > 0 && sectionRank(blocks[j-1].name) > sectionRank(blocks[j].name); j-- {
+			blocks[j-1], blocks[j] = blocks[j], blocks[j-1]
+		}
+	}
+	blank := func(s string) bool { return strings.TrimSpace(s) == "" }
+	out := append([]string(nil), head...)
+	for i, b := range blocks {
+		lines := append([]string(nil), b.lines...)
+		last := len(lines) - 1
+		if !strings.HasSuffix(lines[last], "\n") {
+			lines[last] += d.newline
+		}
+		if i < len(blocks)-1 && !blank(lines[last]) {
+			lines = append(lines, d.newline)
+		}
+		out = append(out, lines...)
+	}
+	// The last block keeps the file's own ending: trim a separator blank
+	// line it gained, and the newline when the file had none.
+	text := strings.Join(out, "")
+	orig := string(d.raw)
+	if !strings.HasSuffix(orig, "\n") {
+		text = strings.TrimRight(text, "\r\n")
+	} else {
+		for strings.HasSuffix(text, d.newline+d.newline) && !strings.HasSuffix(orig, d.newline+d.newline) {
+			text = strings.TrimSuffix(text, d.newline)
+		}
+	}
+	return []byte(text), text != orig
+}
+
+// SectionText is the body of the "## name" section, trimmed, or "".
+func (d *Document) SectionText(name string) string { return d.sectionText(name) }
+
+// Reorder puts every task file in canonical section order (hug upgrade) and
+// returns the paths it rewrote; a second run rewrites nothing.
+func (s *Store) Reorder() ([]string, error) {
+	ts, e := s.Tasks()
+	if e != nil {
+		return nil, e
+	}
+	var changed []string
+	for _, t := range ts {
+		path, e := s.diskPath(t.Path)
+		if e != nil {
+			return changed, e
+		}
+		b, e := os.ReadFile(path)
+		if e != nil {
+			return changed, e
+		}
+		out, did := Parse(t.Path, b).Canonical()
+		if !did {
+			continue
+		}
+		if e := AtomicWrite(path, out); e != nil {
+			return changed, e
+		}
+		changed = append(changed, t.Path)
+	}
+	return changed, nil
+}

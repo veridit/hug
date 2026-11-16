@@ -54,6 +54,11 @@ func Seed(root string) error {
 		}
 		quoted, _ := json.Marshal(title)
 		body := fmt.Sprintf("---\nid: %s\ntitle: %s\nstatus: %s\ntype: %s\npriority: %s\nassignee: %s\nlabels: [\"terminal\", \"%s\"]\naliases: [\"TASK-%d\"]\ncreated: 2026-11-01\nupdated: 2026-11-10\n---\n\n## Goal\n%s\n## Depends on\n%s\n## Acceptance\n%s\n## Notes\n%s\n\n## History\n%s\n", id, quoted, status, kind, priority, assignee, group, 1783+i, goal, deps, acceptance, notes, history)
+		if i == 0 {
+			// Task 000001 has the whole description pattern, written after
+			// Goal as hug task new does (jnaspy: it shows above the checks).
+			body = strings.Replace(body, "\n## Depends on\n", "\n## Purpose\nOperators can see why the workflow exists.\n\n## Principle\nShow what the task is about before its checks.\n\n## Relevant details\nSynthetic fixture: 60 tasks, two files on 000001.\n\n## Depends on\n", 1)
+		}
 		// Keep synthetic filename slugs clear of credential-shaped token patterns.
 		slug := strings.ReplaceAll(task.Slug(title), "-task-", "-item-")
 		path := filepath.Join(root, group, task.BuildName(fmt.Sprintf("%04d", i+1), id, slug))

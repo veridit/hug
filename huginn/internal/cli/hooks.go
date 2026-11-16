@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -168,6 +169,23 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 				}
 				did = append(did, "huginn.toml renamed to "+task.ConfigName)
 			}
+		}
+	}
+	// Section order (jnaspy): every task file in Goal, Purpose, Principle,
+	// Relevant details, Depends on, Acceptance, others, Notes, History, with
+	// each section's text unchanged. Only when the board opens: a repository
+	// without hug/tasks has nothing to reorder.
+	if s, e := a.open(ctx); e == nil {
+		changed, e := s.s.Reorder()
+		if e == nil && len(changed) > 0 {
+			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: section order in %d tasks", len(changed)))
+		}
+		s.c.Close()
+		if e != nil {
+			return nil, e
+		}
+		if len(changed) > 0 {
+			did = append(did, fmt.Sprintf("sections put in order in %d tasks", len(changed)))
 		}
 	}
 	if len(did) == 0 {

@@ -130,7 +130,10 @@ func TestFileMarkOnRows(t *testing.T) {
 func TestFilesOpenInEditorAndCommit(t *testing.T) {
 	m, commits := filesModel(t)
 	m = openTask(t, m, "000001")
-	text := ansi.Strip(m.View())
+	sel0, _ := m.selected()
+	// The whole page: FILES sits below the first screen once Purpose,
+	// Principle and Relevant details come first (jnaspy).
+	text := ansi.Strip(m.detailText(sel0)) + "\n" + ansi.Strip(m.keyBar())
 	for _, want := range []string{"FILES (2)", "⎘ bench/README.md", "⎘ bench/results.tsv", "E files"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("missing %q in:\n%s", want, text)
@@ -140,8 +143,8 @@ func TestFilesOpenInEditorAndCommit(t *testing.T) {
 		m = press(m, "tab")
 	}
 	m = press(m, "j") // bench/results.tsv
-	if !strings.Contains(ansi.Strip(m.View()), "> ⎘ bench/results.tsv") {
-		t.Fatalf("j did not mark the second file:\n%s", ansi.Strip(m.View()))
+	if !strings.Contains(ansi.Strip(m.detailText(sel0)), "> ⎘ bench/results.tsv") {
+		t.Fatalf("j did not mark the second file:\n%s", ansi.Strip(m.detailText(sel0)))
 	}
 	useFakeEditor(t, "2\t40\n")
 	m, _ = key(m, "enter")

@@ -122,17 +122,27 @@ func (d *Document) appendDependencies(ids []string) {
 	var text strings.Builder
 	section, exists := d.sections["Depends on"]
 	at := len(lines)
+	before := false
 	if exists {
 		at = section[1]
+	} else {
+		// A new section goes in its canonical place (jnaspy): before
+		// Acceptance and Notes, not at the end of the file.
+		at, before = d.insertAt("Depends on")
 	}
-	if at > 0 && lines[at-1] != "" && !strings.HasSuffix(lines[at-1], "\n") {
+	if !before && at > 0 && lines[at-1] != "" && !strings.HasSuffix(lines[at-1], "\n") {
 		text.WriteString(d.newline)
 	}
-	if !exists {
+	if !exists && !before {
 		text.WriteString(d.newline + "## Depends on" + d.newline)
+	} else if !exists {
+		text.WriteString("## Depends on" + d.newline)
 	}
 	for _, id := range ids {
 		text.WriteString("- " + id + d.newline)
+	}
+	if before {
+		text.WriteString(d.newline)
 	}
 	lines = append(lines[:at], append([]string{text.String()}, lines[at:]...)...)
 	d.replace(lines)

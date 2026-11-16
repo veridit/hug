@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-const sample = "---\nid: k7m2qx\ntitle: Recall gate\nstatus: todo\ntype: bug\nlabels: [recall, bug]\naliases: [STATBUS-093]\nx-opaque: {wow: 'yes'} # keep\n---\n\n## Goal\nWorks.\n\n## Depends on\n\n## Acceptance\n- [ ] observable one\n- [x] observable two\n\n## Notes\nExisting.\n\n## Weird\n\x00\xff preserved\n"
+const sample = "---\nid: k7m2qx\ntitle: Recall gate\nstatus: todo\ntype: bug\nlabels: [recall, bug]\naliases: [STATBUS-093]\nx-opaque: {wow: 'yes'} # keep\n---\n\n## Goal\nWorks.\n\n## Depends on\n\n## Acceptance\n- [ ] observable one\n- [x] observable two\n\n## Weird\n\x00\xff preserved\n\n## Notes\nExisting.\n"
 
 func TestRoundTripCorpus(t *testing.T) {
 	corpus := [][]byte{nil, {}, []byte("garbage"), []byte(sample), bytes.ReplaceAll([]byte(sample), []byte("\n"), []byte("\r\n")), []byte("---\nid:"), []byte("---\nstatus: []\n---"), {0, 255, 128, 10}, []byte("---\nunknown: |\n  nested: yes\n---\n## Free\nanything"), []byte(strings.TrimSuffix(sample, "\n"))}
@@ -55,7 +55,8 @@ func TestDocumentEditsPreserveOpaque(t *testing.T) {
 		t.Fatal(err)
 	}
 	d.Note("evidence")
-	if !d.Task.Acceptance[0].Checked || !bytes.Contains(d.Bytes(), []byte("evidence\n## Weird")) {
+	// Unknown sections sit before Notes (jnaspy), so the note is last.
+	if !d.Task.Acceptance[0].Checked || !bytes.HasSuffix(bytes.TrimRight(d.Bytes(), "\n"), []byte("evidence")) || d.Task.Sections[len(d.Task.Sections)-1] != "Notes" {
 		t.Fatal(string(d.Bytes()))
 	}
 	before := d.Bytes()

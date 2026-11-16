@@ -25,6 +25,7 @@ var Codes = []CodeInfo{
 	{"invalid-field", "a header field has an invalid value"},
 	{"missing-goal", "no Goal section, or it is empty"},
 	{"missing-section", "a new task lacks Purpose or Principle"},
+	{"section-order", "sections are not in Goal, Purpose, Principle, ... order"},
 	{"no-acceptance", "no acceptance item (- [ ] ...)"},
 	{"done-unchecked", "done, but an acceptance item is not ticked"},
 	{"filename-collision", "two file names differ only by case"},

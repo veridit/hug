@@ -99,8 +99,16 @@ func TestDependenciesCreateSectionAndDanglingRepair(t *testing.T) {
 			t.Fatal(r, err)
 		}
 		after, _ := os.ReadFile(path)
-		if !bytes.HasPrefix(after, []byte(raw)) {
-			t.Fatal("creating section changed existing bytes")
+		// The new section goes in its canonical place, before Acceptance
+		// (jnaspy); every existing byte stays, only that block is added,
+		// in the document's newline.
+		block := "## Depends on\n- 000002\n\n"
+		if ending == "\r\n" {
+			block = strings.ReplaceAll(block, "\n", "\r\n")
+		}
+		i := bytes.Index(after, []byte(block))
+		if i < 0 || string(after[:i])+string(after[i+len(block):]) != raw || !bytes.HasPrefix(after[i+len(block):], []byte("## Acceptance")) {
+			t.Fatalf("creating section changed existing bytes:\n%q\nfrom\n%q", after, raw)
 		}
 		target, _ := s.Get("000002")
 		if err := os.Remove(filepath.Join(s.Root, target.Task.Path)); err != nil {

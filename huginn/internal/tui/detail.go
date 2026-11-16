@@ -338,6 +338,13 @@ func (m model) detailText(t task.Task) string {
 		return strings.Join(out, "\n")
 	}
 	section(plain("Description"), m.markdown(text("description")), "no description yet")
+	// What the task is about comes first (jnaspy): Purpose, Principle and
+	// Relevant details right under the goal, above the checks.
+	described := map[string]bool{}
+	for _, name := range task.DescriptionSections {
+		described[strings.ToLower(name)] = true
+		section(plain(name), m.markdown(text(strings.ToLower(name))), "")
+	}
 	var checks []string
 	for i, a := range t.Acceptance {
 		box, pointer := "☐", " "
@@ -412,13 +419,14 @@ func (m model) detailText(t task.Task) string {
 	section(m.sectionHeading("Links", "j/k or [ ] step · Enter follows", m.detailPane == focusLinks), strings.Join(links, "\n"), "")
 	// Files: the task's folder, each opening in the editor (zgr01t).
 	section(m.sectionHeading(fmt.Sprintf("Files (%d)", len(m.filesOf(t))), "j/k or [ ] step · Enter edits · E folder", m.detailPane == focusFiles), strings.Join(m.filesLines(t), "\n"), "")
-	section(plain("Notes"), m.markdown(text("notes")), "")
-	section(plain("History"), m.markdown(text("history")), "")
+	// Any other section, in file order, then Notes and History last.
 	for _, s := range sections {
-		if !contains([]string{"description", "acceptance", "dependencies", "notes", "history"}, s.name) {
+		if !described[s.name] && !contains([]string{"description", "acceptance", "dependencies", "notes", "history"}, s.name) {
 			section(plain(s.name), m.markdown(s.text), "")
 		}
 	}
+	section(plain("Notes"), m.markdown(text("notes")), "")
+	section(plain("History"), m.markdown(text("history")), "")
 	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
 }
 

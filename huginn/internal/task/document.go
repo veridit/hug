@@ -43,6 +43,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"invalid ", "invalid-field"},
 	{"missing Goal", "missing-goal"},
 	{"missing section", "missing-section"},
+	{"sections out of order", "section-order"},
 	{"Acceptance requires", "no-acceptance"},
 	{"done with unchecked acceptance", "done-unchecked"},
 	{"case-insensitive filename collision", "filename-collision"},
@@ -400,6 +401,12 @@ func Parse(path string, data []byte) *Document {
 	if len(d.Task.Acceptance) == 0 {
 		d.add(1, "Acceptance requires at least one item")
 	}
+	// One section order everywhere (jnaspy); hug upgrade restores it.
+	if !InOrder(d.Task.Sections) {
+		d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: 1,
+			Problem: "sections out of order: " + strings.Join(d.Task.Sections, ", ") + "; the order is " + strings.Join(OrderedSections(d.Task.Sections), ", "),
+			Fix:     "hug upgrade"})
+	}
 	if d.Task.Status == "done" {
 		for n, a := range d.Task.Acceptance {
 			if !a.Checked {
@@ -512,7 +519,11 @@ func (d *Document) Check(n int) error {
 func (d *Document) Note(text string) {
 	lines := append([]string(nil), d.lines...)
 	s, ok := d.sections["Notes"]
-	if !ok {
+	if n, before := d.insertAt("Notes"); !ok && before {
+		// A new section goes in its canonical place (jnaspy): Notes
+		// right above History, never after.
+		lines = append(lines[:n], append([]string{"## Notes" + d.newline + text + d.newline + d.newline}, lines[n:]...)...)
+	} else if !ok {
 		if len(lines) > 0 && !strings.HasSuffix(lines[len(lines)-1], "\n") {
 			lines = append(lines, d.newline)
 		}
