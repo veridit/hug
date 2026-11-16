@@ -1,7 +1,7 @@
 ---
 id: mv4vye
 title: "TUI detail: visible focus, clear prompts, honest key hints"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["Jørgen H. Fjeld"]
