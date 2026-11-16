@@ -4,8 +4,10 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.26 - 2026-11-16
 
+- `hug tui` shows the model next to the assignee in a task's detail:
+  `assigned:poodle · claude-opus-5-5` (et85h1).
 - Every command and MCP tool that takes a task ref accepts `task:ID`, the form notes and goals use, as well as the bare id; printed commands keep the bare id (xxvm6t).
 - CI is green on Windows again: the lint, auto-refresh and memory worktree tests no longer assume a shell, a fast `git` or forward-slash paths (4emme8).
 
