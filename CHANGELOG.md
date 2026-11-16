@@ -4,6 +4,35 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Fixed
+
+- `hug task lint` is never silent: a clean board prints `no findings` and a
+  `next:` line. On a board with more than 30 findings, plain lint prints a
+  summary by code, the first 10 findings and how to see the rest
+  (`--all`), instead of every one. On a 2,478-finding board the old
+  318 KB output came back as nothing in an agent's tool panel.
+- `hug task lint help` and `hug task lint help --code` print the lint help
+  (they said "expected 0 positional arguments" and "missing value for
+  --code"). The same goes for other commands without arguments (`ls help`,
+  `next help`, ...). `new help` still makes a task titled "help".
+
+### Added
+
+- `hug task lint --summary`: one line per code with its count, its meaning
+  and the command that lists it, aligned with spaces. JSON lint replies
+  carry `summary` (`total`, `codes`) and still list every finding.
+- `hug task lint --code` with no value (or `--code help`) lists every code
+  with its count and meaning. An unknown code says so, names the closest,
+  lists the valid ones and ends in `fix: hug task lint --code`.
+- `hug task lint --all` prints every finding.
+
+### Changed
+
+- A mistyped flag's `fix:` is that command's help (`hug task lint --help`),
+  not the general index.
+
 ## v0.7.17 - 2026-11-16
 
 ### Fixed

@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 func git(t *testing.T, dir string, args ...string) string {
@@ -322,5 +325,111 @@ func TestLintNextFixesFirstFinding(t *testing.T) {
 	}
 	if next := execute(t, a, "next")["task"].(Reply)["id"]; next != id {
 		t.Fatalf("prose blocked the task: next is %v", next)
+	}
+}
+
+// 6neax1: lint is never silent, has a summary by code, lists the codes for
+// --code alone, rejects an unknown code with the list, and reads "help" as
+// asking for help, before or after flags. Errors end in a runnable fix.
+func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	run := func(args ...string) (int, string, string) {
+		out, errb := &bytes.Buffer{}, &bytes.Buffer{}
+		a.Out, a.Err = out, errb
+		code := a.Run(context.Background(), args)
+		return code, out.String(), errb.String()
+	}
+	// An empty board, then a clean one: "no findings" and a next: line.
+	if code, out, _ := run("lint"); code != 0 || !strings.HasPrefix(out, "no findings\nnext: hug task ") {
+		t.Fatalf("empty board: %d %q", code, out)
+	}
+	id := execute(t, a, "new", "Clean", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	if code, out, _ := run("lint"); code != 0 || out != "no findings\nnext: hug task take "+id+"\n" {
+		t.Fatalf("clean board: %d %q", code, out)
+	}
+	// Two findings of two codes.
+	execute(t, a, "new", strings.Repeat("Long title ", 9), "--goal", "G", "--accept", "C")
+	code, out, _ := run("lint", "--summary")
+	t.Log("--summary:\n" + out)
+	if code != 0 || !strings.HasPrefix(out, "2 findings in 2 codes:\n") || strings.Contains(out, "\t") ||
+		!strings.Contains(out, "  1  long-title       the title is longer than 80 characters  hug task lint --code long-title\n") ||
+		!strings.Contains(out, "  1  missing-section  a new task lacks Purpose or Principle   hug task lint --code missing-section\n") ||
+		!strings.HasSuffix(out, "next: hug task lint --code long-title\n") {
+		t.Fatalf("summary: %q", out)
+	}
+	r := execute(t, a, "lint", "--summary")
+	if s := r["summary"].(LintSummary); s.Total != 2 || len(s.Codes) != 2 || len(r["findings"].([]task.Finding)) != 2 {
+		t.Fatalf("json summary: %+v", r)
+	}
+	b, _ := json.Marshal(r)
+	if !strings.Contains(string(b), `"summary":{"total":2,"codes":[{"code":"long-title","count":1,"meaning":"the title is longer than 80 characters","list":"hug task lint --code long-title"}`) {
+		t.Fatalf("json: %s", b)
+	}
+	// --code alone and --code help list every code with its count.
+	for _, args := range [][]string{{"lint", "--code"}, {"lint", "--code", "help"}, {"lint", "--code", "--json"}} {
+		code, out, errs := run(args...)
+		if code != 0 || errs != "" {
+			t.Fatalf("%v: %d %s", args, code, errs)
+		}
+		if args[len(args)-1] == "--json" {
+			if !strings.Contains(out, `"code":"not-a-dependency","count":0`) {
+				t.Fatalf("%v: %s", args, out)
+			}
+			continue
+		}
+		if !strings.HasPrefix(out, "finding codes (2 findings on this board):\n  1  long-title ") || !strings.Contains(out, "  0  not-a-dependency ") || strings.Count(out, "\n") != len(task.Codes)+2 {
+			t.Fatalf("%v: %q", args, out)
+		}
+	}
+	// An unknown code says so, lists the valid ones, and its fix runs.
+	code, _, errs := run("lint", "--code", "nope")
+	if code != 2 || !strings.HasPrefix(errs, "unknown code nope; closest: ") || !strings.Contains(errs, "valid: frontmatter, ") || !strings.HasSuffix(errs, "\nfix: hug task lint --code\n") {
+		t.Fatalf("unknown code: %d %q", code, errs)
+	}
+	// help as a positional, before or after flags, is lint's help.
+	for _, args := range [][]string{{"lint", "help"}, {"lint", "help", "--code"}, {"lint", "--code", "x", "help"}, {"lint", "--summary", "help"}, {"lint", "--help"}} {
+		code, out, errs := run(args...)
+		if code != 0 || !strings.HasPrefix(out, "hug task lint [--summary] [--all] [--code [CODE]]\n") || errs != "" {
+			t.Fatalf("%v: %d %q %q", args, code, out, errs)
+		}
+	}
+	// "new help" is still a title, not a request for help.
+	if r := execute(t, a, "new", "help", "--goal", "G", "--accept", "C"); r["task"].(Reply)["title"] != "help" {
+		t.Fatalf("new help: %v", r)
+	}
+	// Flag mistakes end in a fix that runs: the command's help.
+	code, _, errs = run("lint", "--sumary")
+	if code != 2 || !strings.HasSuffix(errs, "\nfix: hug task lint --help\n") || !strings.Contains(errs, "closest: --summary") {
+		t.Fatalf("typo: %d %q", code, errs)
+	}
+}
+
+// More than lintBound findings: summary, the first lintShown, how to see all.
+// --all prints every one.
+func TestLintBoundedOutput(t *testing.T) {
+	var fs []task.Finding
+	for i := 0; i < 35; i++ {
+		fs = append(fs, task.Finding{Path: fmt.Sprintf("%03d.k7m2q%c.t.md", i, "0123456789abcdefghjkmnpqrstvwxyz"[i%32]), Line: 1, Problem: "Acceptance requires at least one item"})
+	}
+	fs = append(fs, task.Finding{Path: "x.zzzzzz.t.md", Line: 1, Problem: "missing Goal"})
+	write := func(mode, code string) string {
+		var b bytes.Buffer
+		r := lintReply(Reply{}, fs, mode, code)
+		writeFindings(&b, r["findings"].([]task.Finding), r["summary"].(LintSummary))
+		return b.String()
+	}
+	out := write("", "")
+	t.Log("\n" + out)
+	lines := strings.Split(strings.TrimSuffix(out, "\n"), "\n")
+	if lines[0] != "36 findings in 2 codes:" || lines[1] != "  35  no-acceptance  no acceptance item (- [ ] ...)   hug task lint --code no-acceptance" || lines[3] != "first 10:" ||
+		len(lines) != 4+2*lintShown+1 || lines[len(lines)-1] != "10 of 36 shown; every one: hug task lint --all; one kind: hug task lint --code CODE" {
+		t.Fatalf("bounded:\n%s", out)
+	}
+	if all := write("all", ""); strings.Count(all, "\n  fix: ") != 36 || strings.Contains(all, "shown") {
+		t.Fatalf("--all:\n%s", all)
+	}
+	if one := write("", "no-acceptance"); !strings.HasSuffix(one, "10 of 36 shown; every one: hug task lint --code no-acceptance --all\n") || strings.Contains(one, "findings in") {
+		t.Fatalf("--code bounded:\n%s", one)
 	}
 }

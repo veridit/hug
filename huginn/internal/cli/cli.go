@@ -195,7 +195,7 @@ type flags struct {
 	args   []string
 }
 
-func parse(args []string, allowed string) (flags, error) {
+func parse(args []string, allowed string, optionalValue ...string) (flags, error) {
 	f := flags{values: map[string][]string{}}
 	valid := strings.Fields(allowed + " json help")
 	for i := 0; i < len(args); i++ {
@@ -213,7 +213,7 @@ func parse(args []string, allowed string) (flags, error) {
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace"}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary"}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -223,6 +223,12 @@ func parse(args []string, allowed string) (flags, error) {
 		if !eq {
 			i++
 			if i >= len(args) || strings.HasPrefix(args[i], "--") {
+				if slices.Contains(optionalValue, key) {
+					// --code alone asks which codes there are (6neax1).
+					i--
+					f.values[key] = append(f.values[key], "")
+					continue
+				}
 				return f, usage("missing value for --"+key, "hug task help")
 			}
 			val = args[i]
@@ -332,10 +338,27 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic", "board": "type priority label group mine all epic wide", "next": "type priority label group mine epic", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code", "attach": "name note replace safe-reason content"}
-	f, e := parse(args, allowed[cmd])
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic", "board": "type priority label group mine all epic wide", "next": "type priority label group mine epic", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "attach": "name note replace safe-reason content"}
+	var optional []string
+	if cmd == "lint" {
+		optional = []string{"code"}
+	}
+	f, e := parse(args, allowed[cmd], optional...)
 	if e != nil {
+		// A flag mistake is fixed by that command's help, not the index.
+		var u *UsageError
+		if errors.As(e, &u) && u.Fix == "hug task help" && cmd != "help" {
+			u.Fix = "hug task " + cmd + " --help"
+		}
 		return nil, e
+	}
+	// "hug task lint help", before or after flags, asks for lint's help,
+	// like --help (6neax1: it said "expected 0 positional arguments").
+	// Only for commands without positional arguments: "new help" is a title.
+	noArgs := []string{"lint", "ls", "next", "sync", "types", "init", "board", "setup", "tui", "upgrade"}
+	if slices.Contains(noArgs, cmd) && len(f.args) == 1 && f.args[0] == "help" {
+		f.args = nil
+		f.values["help"] = []string{"true"}
 	}
 	if f.has("help") || cmd == "help" {
 		if e = a.refreshExisting(ctx); e != nil {
@@ -577,6 +600,10 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(0); e != nil {
 			return nil, e
 		}
+		mode, code, e := lintFlags(f)
+		if e != nil {
+			return nil, e
+		}
 		fs, e := s.c.Lint(ctx)
 		if e != nil {
 			return nil, e
@@ -590,26 +617,20 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, e
 		}
 		fs = append(fs, more...)
-		if c := f.get("code"); c != "" {
+		if code != "" {
 			kept := []task.Finding{}
 			for _, x := range fs {
-				if task.FindingCode(x.Problem) == c {
+				if task.FindingCode(x.Problem) == code {
 					kept = append(kept, x)
 				}
 			}
 			fs = kept
 		}
-		if fs == nil {
-			fs = []task.Finding{}
-		}
 		reply, e := empty()
-		reply["findings"] = fs
-		// With findings, next is the repair of the first one, never an
-		// unrelated task (rx74bp); a clean board keeps the usual next.
-		if len(fs) > 0 {
-			reply["next"] = fs[0].FixLine()
+		if e != nil {
+			return nil, e
 		}
-		return reply, e
+		return lintReply(reply, fs, mode, code), nil
 	case "sync":
 		if e = f.count(0); e != nil {
 			return nil, e
@@ -748,10 +769,10 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 			return nil, err
 		}
 		reply, err := empty()
-		if fs == nil {
-			fs = []task.Finding{}
+		if err != nil {
+			return nil, err
 		}
-		reply["findings"] = fs
+		reply = lintReply(reply, fs, "", "")
 		reply["next"] = "hug task show " + d.Task.ID
 		// The edited task's own first finding comes first: that is what the
 		// edit broke (rx74bp).
@@ -995,10 +1016,8 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 	}
 	if fs, ok := reply["findings"].([]task.Finding); ok {
-		for _, v := range fs {
-			fmt.Fprintln(a.Out, v.String())
-			fmt.Fprintln(a.Out, "  fix: "+v.FixLine())
-		}
+		sum, _ := reply["summary"].(LintSummary)
+		writeFindings(a.Out, fs, sum)
 	}
 	if ts, ok := reply["types"].([]task.TypeInfo); ok {
 		for _, v := range ts {
