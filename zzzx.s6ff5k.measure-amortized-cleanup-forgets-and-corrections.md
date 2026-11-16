@@ -16,7 +16,7 @@ Know whether agents act on the recall header's Fix line, and add an off-topic si
 ## Depends on
 
 ## Acceptance
-- [ ] stats: share of recall blocks followed by memory_forget/remember of a shown id within the session
+- [x] stats: share of recall blocks followed by memory_forget/remember of a shown id within the session
 - [ ] memory_feedback <id> off-topic lowers recall of that memory for similar messages, no deletion
 - [ ] header wording change only if the 5-agent eval does not regress
 
