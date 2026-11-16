@@ -1,6 +1,6 @@
 ---
 id: me51r2
-title: "hug mem list --json, and forget that survives concurrent writers"
+title: "Concurrent writes wait their turn; hug mem list --json; batch forget"
 status: todo
 type: bug
 priority: "high"
