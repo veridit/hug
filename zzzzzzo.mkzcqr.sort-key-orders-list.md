@@ -35,3 +35,5 @@ CI run 43919869737 on ci/mkzcqr (32f4fa9, now origin/main, ff from 9283f8f): tes
 TestSortBuilderEscKeepsOrder (sort_test.go:60): sort by type, then ': sort' p n Esc leaves sort 'type' and the same row order; from rank order ': sort' p Esc leaves no sort; '--- PASS: TestSortBuilderEscKeepsOrder (0.07s)'
 
 TestSortBuilderFlipAndBackspace (sort_test.go:79): p t p -> 'priority ↑ · type', t -> 'priority ↑ · type ↓', Backspace -> 'priority ↑', Backspace on empty keeps the builder open; p p Enter puts low first; '--- PASS: TestSortBuilderFlipAndBackspace (0.03s)'
+
+TestSortRefusesMoves (sort_test.go:105): rank order help has 'J / K'; sorted help lacks 'J / K' and 'm / y, P p' and shows ': sort rank'; J K m y P p each leave rows, grab, yank and confirm untouched with message 'moving needs rank order: : sort rank'; '--- PASS: TestSortRefusesMoves (0.04s)'. The list key bar never listed these keys.
