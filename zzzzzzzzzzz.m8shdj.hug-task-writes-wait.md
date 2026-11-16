@@ -1,13 +1,16 @@
 ---
 id: m8shdj
 title: "hug task writes wait their turn too, and forget updates only what changed"
-status: todo
+status: "doing"
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["dragon"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
