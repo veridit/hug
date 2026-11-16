@@ -42,7 +42,8 @@ func TestFastPathAgreesWithGit(t *testing.T) {
 		if fp.Branch != gp.Branch || fp.Worktree != gp.Worktree || fp.Main != gp.Main || fp.Linked != gp.Linked {
 			t.Fatalf("%s: fast %+v, git %+v", dir, fp, gp)
 		}
-		if want := run(t, dir, "rev-parse", "--path-format=absolute", "--git-common-dir"); common != want {
+		// git prints C:/... on Windows; the fast path returns native paths.
+		if want := filepath.Clean(filepath.FromSlash(run(t, dir, "rev-parse", "--path-format=absolute", "--git-common-dir"))); filepath.Clean(common) != want {
 			t.Fatalf("%s: common %q, git %q", dir, common, want)
 		}
 	}

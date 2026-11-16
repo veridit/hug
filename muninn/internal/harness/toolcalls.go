@@ -194,12 +194,12 @@ func firstLine(s string) string {
 // commit counts when it ran inside root (or nobody said where) and is not
 // release bookkeeping.
 func (a Action) EditsIn(root string) bool {
-	if a.Commit && !bookkeeping.MatchString(a.Subject) && (a.CommitDir == "" || !filepath.IsAbs(a.CommitDir) || inside(root, a.CommitDir)) {
+	if a.Commit && !bookkeeping.MatchString(a.Subject) && (a.CommitDir == "" || !rooted(a.CommitDir) || inside(root, a.CommitDir)) {
 		return true
 	}
 	for _, p := range a.Paths {
 		rel := p
-		if filepath.IsAbs(p) {
+		if rooted(p) {
 			if root == "" || !inside(root, p) {
 				continue
 			}
@@ -212,6 +212,12 @@ func (a Action) EditsIn(root string) bool {
 		return true
 	}
 	return false
+}
+
+// rooted: absolute, or rooted without a drive ("/r/x" on Windows, as some
+// harnesses write paths).
+func rooted(p string) bool {
+	return filepath.IsAbs(p) || strings.HasPrefix(p, "/") || strings.HasPrefix(p, `\`)
 }
 
 func inside(root, p string) bool {
