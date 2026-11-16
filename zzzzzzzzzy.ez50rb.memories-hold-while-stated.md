@@ -4,7 +4,7 @@ title: "Memories hold while a stated condition holds, and name no agent"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["guppy"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
