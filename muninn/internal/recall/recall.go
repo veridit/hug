@@ -185,6 +185,17 @@ func (e *Engine) Recall(ctx context.Context, r Request) (Response, error) {
 		results = kept
 	}
 	var hits []Hit
+	// A memory whose stated condition has ended is left out of automatic
+	// recall (ez50rb); memory_search still finds it, and a dream item asks an
+	// agent to retire or keep it. Only an explicit holds filters: a recorded
+	// branch alone never does. No condition, no change.
+	kept := results[:0]
+	for _, r := range results {
+		if !e.holdsEnded(r.Unit, time.Now()) {
+			kept = append(kept, r)
+		}
+	}
+	results = kept
 	// Retain the first-block argument for compatibility with Render callers.
 	first := r.Session == "" || !e.sessionSeen(r.Session)
 	for i, res := range results {

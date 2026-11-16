@@ -55,6 +55,18 @@ type NativeMemory struct {
 	// when that is a linked worktree or a branch other than the main one
 	// (x1t1t1). A merged or deleted branch makes the memory a dream item.
 	Branch string `json:"branch,omitempty"`
+	// Holds is the condition the memory holds under, stated at write time
+	// (ez50rb): "until 2026-12-01", "while task:ID open", "while branch
+	// NAME unmerged" (muninn/internal/holds). When it ends, recall stops
+	// showing the memory and a dream item asks an agent to retire or keep
+	// it; nothing is deleted automatically. Empty: holds until judged
+	// otherwise.
+	Holds string `json:"holds,omitempty"`
+	// Repo is the main checkout of the git repository the memory was written
+	// in, recorded only with Holds or Branch: where the dream pass looks up
+	// the task board and the branch. Without it a task or branch condition
+	// is unknown, and unknown never ends a memory.
+	Repo string `json:"repo,omitempty"`
 }
 
 type nativeFile struct {
@@ -227,6 +239,8 @@ type Remembering struct {
 	Tags                           []string
 	SafeReason, NewReason          string
 	Branch                         string // see NativeMemory.Branch
+	Holds                          string // see NativeMemory.Holds (canonical form)
+	Repo                           string // see NativeMemory.Repo
 }
 
 // RememberWith stores r, or reinforces an active memory with the same text,
@@ -261,7 +275,12 @@ func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
 			}
 			if m.Branch == "" {
 				m.Branch = r.Branch
+				if m.Repo == "" && m.Branch != "" {
+					m.Repo = r.Repo
+				}
 			}
+			// Reinforcing never changes a memory's condition: one that held
+			// without one keeps holding, one with a condition keeps it.
 			m.Strength++
 			m.Updated = now
 			return *m, true, SaveNative(path, mems)
@@ -269,7 +288,10 @@ func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
 	}
 	m := NativeMemory{ID: newID(), Content: content, Category: category, Type: typ, Tags: tags, Scope: scope,
 		Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason),
-		NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch)}
+		NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch), Holds: strings.TrimSpace(r.Holds)}
+	if m.Branch != "" || m.Holds != "" {
+		m.Repo = strings.TrimSpace(r.Repo)
+	}
 	mems = append(mems, m)
 	assignNativeSIDs(mems)
 	m = mems[len(mems)-1]

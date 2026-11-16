@@ -95,6 +95,14 @@ func (a *App) Dream(ctx context.Context, dry bool) (DreamResult, error) {
 		return res, err
 	}
 	res.Queued += n
+	if n, err = a.queueEnded(ctx, dry, time.Now()); err != nil {
+		return res, err
+	}
+	res.Queued += n
+	if n, err = a.queueAgentNames(dry, time.Now()); err != nil {
+		return res, err
+	}
+	res.Queued += n
 	err = a.DB.QueryRow(`SELECT count(*) FROM dream_items WHERE resolved_ns=0`).Scan(&res.Open)
 	return res, err
 }
@@ -231,8 +239,8 @@ func (b Binding) DreamItems(a *App, session string, max int) ([]DreamItem, error
 			continue
 		}
 		need := 2 // dupes: done once one copy is left
-		if r.kind == "vet" {
-			need = 1 // vet: done once the memory is gone
+		if r.kind == "vet" || r.kind == "ended" || r.kind == "branch" || r.kind == "agent" {
+			need = 1 // one memory: done once it is gone
 		}
 		if active < need {
 			// Someone already resolved it (forgot all but one).

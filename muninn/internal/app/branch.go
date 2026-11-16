@@ -33,3 +33,17 @@ func (b Binding) workBranch() string {
 	}
 	return WorkBranch(b.context.cwd)
 }
+
+// workRepo is the main checkout of the repository the binding's folder is
+// in, "" outside git: where a memory's task or branch condition is checked
+// (ez50rb).
+func (b Binding) workRepo() string {
+	if b.context == nil || b.context.cwd == "" {
+		return ""
+	}
+	here, err := gitbranch.Where(b.context.cwd)
+	if err != nil {
+		return ""
+	}
+	return here.Main
+}

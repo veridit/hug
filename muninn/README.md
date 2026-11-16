@@ -440,6 +440,29 @@ muninn forget k7m2                    # any unique prefix of at least 4 characte
 muninn remember "The corrected fact"
 ```
 
+A memory that is only true for a while says so when it is written, with
+`--holds` (MCP `holds`):
+
+```sh
+hug mem remember --holds "until 2026-12-01" "Staging runs the old schema"
+hug mem remember --holds "while task:ez50rb open" "Recall tests use the frozen 277"
+hug mem remember --holds "while branch ci/ez50rb unmerged" "store.go has a holds column on ci/ez50rb only"
+```
+
+hug checks the condition without a model call: the date, the task's status
+on the board, the branch against the default branch. Once it ends, recall stops
+showing the memory and dream offers it once (kind `ended`) to retire or keep;
+nothing is deleted. A condition hug cannot check (no board, no repo) counts as
+still holding. A memory with only a recorded branch is never hidden: when that
+branch is merged or deleted, dream asks once (kind `branch`) whether it is still
+true.
+
+Memories should not name swarm agents ("report to coordinator orangutan"):
+agents stop within hours and the name then means nothing. Dream offers each
+memory that names a stopped agent once (kind `agent`, 10 per pass), with the
+tickets that agent's session worked on, to rewrite to the ticket or retire. A
+memory naming an agent that is still running waits until it stops.
+
 `forget`, `show`, `related`, MCP and the web UI also accept the old native/import
 ids and full `jcode:<upstream-id>` references. Ambiguous prefixes fail explicitly.
 For memories muninn owns, forget retires the memory. For harness memories and

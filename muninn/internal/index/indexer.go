@@ -64,6 +64,7 @@ type Indexer struct {
 type Candidate struct {
 	Key, Kind, Title, Body, Category, Scope string
 	Type                                    string // memory type, see store.Unit.Type
+	Holds                                   string // condition, see store.Unit.Holds
 	SID, Origin                             string
 	Tags                                    []string
 	Active                                  bool
@@ -89,6 +90,10 @@ func (ix *Indexer) SyncSource(sourceID int64, cands []Candidate, st *Stats) (dir
 			// them every untyped unit) stay unchanged by this field.
 			ident = ContentHash(ident + "\x00type:" + c.Type)
 		}
+		if c.Holds != "" {
+			// Same rule for the condition (ez50rb): no condition, no change.
+			ident = ContentHash(ident + "\x00holds:" + c.Holds)
+		}
 		if old, ok := existing[c.Key]; ok && old[1] == ident {
 			st.Unchanged++
 			continue
@@ -102,7 +107,7 @@ func (ix *Indexer) SyncSource(sourceID int64, cands []Candidate, st *Stats) (dir
 		}
 		id, err := ix.DB.UpsertUnit(store.Unit{
 			SourceID: sourceID, SID: c.SID, Origin: c.Origin, Key: c.Key, ContentHash: ContentHash(text), Ident: ident, Kind: c.Kind,
-			Title: c.Title, Body: c.Body, Category: c.Category, Type: c.Type, Tags: c.Tags, Scope: c.Scope,
+			Title: c.Title, Body: c.Body, Category: c.Category, Type: c.Type, Holds: c.Holds, Tags: c.Tags, Scope: c.Scope,
 			Active: c.Active, Updated: c.Updated,
 		})
 		if err != nil {
@@ -197,7 +202,7 @@ func (ix *Indexer) IndexNative(ctx context.Context, path string, st *Stats) ([]i
 				origin = shortid.Identity(m.ID, m.Origin)
 			}
 			out = append(out, Candidate{Key: m.ID, SID: m.SID, Origin: origin, Kind: "memory", Title: m.Title, Body: m.Content, Category: m.Category,
-				Type: m.Type, Tags: m.Tags, Scope: m.Scope, Active: m.Active, Updated: m.Updated})
+				Type: m.Type, Holds: m.Holds, Tags: m.Tags, Scope: m.Scope, Active: m.Active, Updated: m.Updated})
 		}
 		return out, nil
 	})

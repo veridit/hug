@@ -26,7 +26,8 @@ func (e *DuplicateCheckError) Error() string {
 // RememberDecision carries the writer's answer to the duplicate question.
 // RememberDecision carries the writer's answers to remember's checks, and
 // the memory type (rule | preference | fact | record, "" = unstated).
-type RememberDecision struct{ Reinforce, NewReason, Type string }
+// Holds is the condition the memory holds under (ez50rb, holds.Parse).
+type RememberDecision struct{ Reinforce, NewReason, Type, Holds string }
 
 // MemoryTypes are the accepted memory types; see ingest.NativeMemory.Type.
 var MemoryTypes = []string{"rule", "preference", "fact", "record"}

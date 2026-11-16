@@ -11,6 +11,7 @@ import (
 
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/holds"
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/project"
 	"github.com/veridit/hug/muninn/internal/search"
@@ -598,6 +599,12 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 	if len(decisions) > 0 {
 		decision = decisions[0]
 	}
+	// The condition is checked before anything is written; a malformed one
+	// fails with its fix: line (ez50rb).
+	cond, err := holds.Parse(decision.Holds)
+	if err != nil {
+		return store.Unit{}, false, err
+	}
 	hits, err := b.rememberMatches(ctx, a, strings.TrimSpace(content))
 	if err != nil {
 		return store.Unit{}, false, err
@@ -628,8 +635,12 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 			return store.Unit{}, false, &DuplicateCheckError{SID: h.Unit.SID, Text: h.Unit.Body, Score: h.Semantic}
 		}
 	}
+	branch, repo := b.workBranch(), ""
+	if branch != "" || cond.Text != "" {
+		repo = b.workRepo() // only then: a git lookup per remember is not free
+	}
 	m, reinforced, err := ingest.RememberWith(NativePath(), ingest.Remembering{Content: content, Category: category, Type: NormalType(decision.Type), Scope: scope, Tags: tags,
-		SafeReason: safeReason, NewReason: decision.NewReason, Branch: b.workBranch()})
+		SafeReason: safeReason, NewReason: decision.NewReason, Branch: branch, Holds: cond.Text, Repo: repo})
 	if err != nil {
 		return store.Unit{}, false, err
 	}

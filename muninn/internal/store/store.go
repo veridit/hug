@@ -29,6 +29,7 @@ type Unit struct {
 	Body        string
 	Category    string
 	Type        string // memory type: rule | preference | fact | record | "" (ingest.NativeMemory.Type)
+	Holds       string // condition the memory holds under, "" for none (ingest.NativeMemory.Holds)
 	Tags        []string
 	Scope       string // "global" or a project identifier
 	Active      bool
@@ -43,6 +44,9 @@ type DB struct {
 
 const schema = `
 CREATE TABLE IF NOT EXISTS capture_backlog (session TEXT NOT NULL, message TEXT NOT NULL, PRIMARY KEY(session,message));
+-- Memories whose stated condition (units.holds) has ended: recall skips
+-- them, a dream item asks an agent to retire or keep them (ez50rb).
+CREATE TABLE IF NOT EXISTS holds_ended (sid TEXT PRIMARY KEY, holds TEXT NOT NULL, reason TEXT NOT NULL, at_ns INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS capture_bindings (session TEXT PRIMARY KEY, scope TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS capture_seen (
  session TEXT NOT NULL, message TEXT NOT NULL, PRIMARY KEY(session,message)
@@ -237,6 +241,10 @@ func Open(path string) (*DB, error) {
 		db.Close()
 		return nil, err
 	}
+	if err := returnDB.addUnitColumn("holds"); err != nil {
+		db.Close()
+		return nil, err
+	}
 	if err := returnDB.migrateShortIDs(); err != nil {
 		db.Close()
 		return nil, fmt.Errorf("short ids: %w", err)
@@ -292,12 +300,12 @@ func (d *DB) UpsertUnit(u Unit) (int64, error) {
 	if u.Active {
 		active = 1
 	}
-	_, err := d.Exec(`INSERT INTO units(sid, origin, source_id, key, content_hash, ident, kind, title, body, category, mtype, tags, scope, active, updated_ns)
-	  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+	_, err := d.Exec(`INSERT INTO units(sid, origin, source_id, key, content_hash, ident, kind, title, body, category, mtype, holds, tags, scope, active, updated_ns)
+	  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 	  ON CONFLICT(source_id, key) DO UPDATE SET sid=excluded.sid, origin=excluded.origin, content_hash=excluded.content_hash, ident=excluded.ident, kind=excluded.kind,
-	    title=excluded.title, body=excluded.body, category=excluded.category, mtype=excluded.mtype, tags=excluded.tags,
+	    title=excluded.title, body=excluded.body, category=excluded.category, mtype=excluded.mtype, holds=excluded.holds, tags=excluded.tags,
 	    scope=excluded.scope, active=excluded.active, updated_ns=excluded.updated_ns`,
-		u.SID, u.Origin, u.SourceID, u.Key, u.ContentHash, u.Ident, u.Kind, u.Title, u.Body, u.Category, u.Type,
+		u.SID, u.Origin, u.SourceID, u.Key, u.ContentHash, u.Ident, u.Kind, u.Title, u.Body, u.Category, u.Type, u.Holds,
 		strings.Join(u.Tags, " "), u.Scope, active, u.Updated.UnixNano())
 	if err != nil {
 		return 0, err
@@ -330,9 +338,9 @@ func (d *DB) GetUnit(id int64) (Unit, error) {
 	var active int
 	var upd int64
 	err := d.QueryRow(`SELECT id, sid, origin, source_id, key, content_hash, kind, title, body, category,
-	  COALESCE(NULLIF(mtype,''), (SELECT t.mtype FROM inferred_types t WHERE t.content_hash=units.content_hash), ''), tags, scope, active, updated_ns
+	  COALESCE(NULLIF(mtype,''), (SELECT t.mtype FROM inferred_types t WHERE t.content_hash=units.content_hash), ''), holds, tags, scope, active, updated_ns
 	  FROM units WHERE id=?`, id).Scan(&u.ID, &u.SID, &u.Origin, &u.SourceID, &u.Key, &u.ContentHash, &u.Kind, &u.Title, &u.Body,
-		&u.Category, &u.Type, &tags, &u.Scope, &active, &upd)
+		&u.Category, &u.Type, &u.Holds, &tags, &u.Scope, &active, &upd)
 	u.Tags = strings.Fields(tags)
 	u.Active = active == 1 && !d.IsSuppressed(u.SID)
 	u.Updated = time.Unix(0, upd)
@@ -423,7 +431,12 @@ func (d *DB) UntypedUnits(limit int) ([]Unit, error) {
 // migrateMemoryType adds units.mtype (memory type, 2026-11-15) to databases
 // created before it. Idempotent; runs on every open, independent of the
 // shortids schema version (which existing databases have already passed).
-func (d *DB) migrateMemoryType() error {
+func (d *DB) migrateMemoryType() error { return d.addUnitColumn("mtype") }
+
+// addUnitColumn adds a text column (NOT NULL, default empty) to units when a
+// database created before it lacks it (mtype 2026-11-15, holds 2026-11-16).
+// Idempotent and safe against a concurrent opener.
+func (d *DB) addUnitColumn(col string) error {
 	rows, err := d.Query(`PRAGMA table_info(units)`)
 	if err != nil {
 		return err
@@ -437,13 +450,13 @@ func (d *DB) migrateMemoryType() error {
 			rows.Close()
 			return err
 		}
-		has = has || name == "mtype"
+		has = has || name == col
 	}
 	rows.Close()
 	if has {
 		return nil
 	}
-	_, err = d.Exec(`ALTER TABLE units ADD COLUMN mtype TEXT NOT NULL DEFAULT ''`)
+	_, err = d.Exec(`ALTER TABLE units ADD COLUMN ` + col + ` TEXT NOT NULL DEFAULT ''`)
 	if err != nil && strings.Contains(err.Error(), "duplicate column") {
 		return nil // another process added it first
 	}

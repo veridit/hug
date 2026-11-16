@@ -38,6 +38,7 @@ type rememberIn struct {
 	Reinforce   string   `json:"reinforce,omitempty" jsonschema:"answer to the duplicate question: SID to reinforce instead of storing a new note"`
 	Content     string   `json:"content" jsonschema:"the fact, preference or correction to store"`
 	Type        string   `json:"type,omitempty" jsonschema:"rule (an instruction: do, never, how to) | preference | fact (durable knowledge) | record (something that happened, a state at a time)"`
+	Holds       string   `json:"holds,omitempty" jsonschema:"how long it is true, when you know it now: 'until 2026-12-01', 'while task:ID open', 'while branch NAME unmerged'. When it ends, recall stops showing it and a dream item asks to retire or keep it"`
 	Category    string   `json:"category,omitempty" jsonschema:"fact | preference | correction | entity"`
 	Scope       string   `json:"scope,omitempty" jsonschema:"literal binding scope, overrides place (owners only within the binding's write policy)"`
 	Place       string   `json:"place,omitempty" jsonschema:"here (default), client, or global; when unsure use here"`
@@ -138,7 +139,7 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_remember", Description: "Store a durable memory: a rule, preference, decision or correction the user stated that will matter in future sessions. One fact per call. Ask: Would this still be true and useful in a different project? Use here (default, also when unsure) for this project, client across this client's projects, global for user-wide facts (only this client inside a client). Answer project-mention questions with place_reason or use here. Never store real secrets. If the reply says the text looks like it may hold a secret, judge it: remove the secret, or call again with safe_reason when it is safe."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in rememberIn) (*mcp.CallToolResult, idOut, error) {
-			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce, Type: in.Type})
+			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce, Type: in.Type, Holds: in.Holds})
 			if err != nil {
 				return nil, idOut{}, err
 			}
