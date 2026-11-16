@@ -33,3 +33,5 @@ Storage: huginn/internal/task/files.go (Attach, text only, 256 KiB). Example: 44
 ## Notes
 
 2026-11-16 decided (Jørgen): edits made in the editor are saved and committed when the editor closes, same as e for the task. Open question closed.
+
+commit 60d3f4b. CI run 43931868360 on 60d3f4b (now origin/main): ubuntu, macos, windows success. Goldens testdata/tmux/140x40-no-color: list.txt ' !000001   todo    feature critical ⎘2 Feature task 01: ...'; board.txt '>!000001   F C ⎘2 Feature task 01: make the …'; overview.txt the same row under NEXT UP and LINT; ⎘ appears on no other row (grep -c: overview 2, list 1, board 1, all 000001). Fixture testfixture/seed.go gives 000001 bench/README.md and bench/results.tsv. TestFileMarkOnRows checks overview, list, board: every ⎘ line is 000001 with ⎘2.
