@@ -5,7 +5,7 @@ status: "doing"
 type: feature
 priority: ""
 assignee: ["Jørgen H. Fjeld"]
-labels: []
+labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
 ---
