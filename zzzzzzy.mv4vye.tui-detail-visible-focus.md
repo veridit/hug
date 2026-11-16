@@ -33,3 +33,5 @@ Code: huginn/internal/tui/detail.go (section headings, detailPane 0 = acceptance
 - [ ] full tests pass niced; goldens regenerated and reviewed
 
 ## Notes
+
+2026-11-16 Jørgen, second screenshot: the bland-prompt problem is general. The tick prompt ('Tick item 2 of s6ff5k: ...?') is as easy to miss as the edit one. Every confirm line needs the prominent style, not just edit. Since v0.7.15 the tick prompt reads 'Tick: ☐ 2. text' (render.go, the m.confirm block); keep that wording and make the whole line stand out.
