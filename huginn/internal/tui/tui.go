@@ -54,7 +54,8 @@ type model struct {
 	epics                              map[string]bool // lowercase ids of tasks with children
 	cursor, acceptance, offset         int
 	dependency, detailPane             int
-	link                               int // the task:ID marked > in Links (xxvm6t)
+	link                               int                         // the task:ID marked > in Links (xxvm6t)
+	memo                               [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
 	detailStack                        []string
 	width, height                      int
 	view                               string
@@ -184,6 +185,7 @@ func (m *model) applyKeeping(sn snapshot) {
 // afterUpdate runs a reload that waited for a prompt, confirm or editor to
 // close, once it has closed.
 func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
+	m.remember()
 	if m.stale && !m.busy() && !m.loading {
 		cmd = tea.Batch(cmd, m.reload())
 	}
@@ -355,8 +357,57 @@ const (
 	sectionLint
 )
 
-// recentDone is how many closed tasks RECENTLY DONE shows.
+// recentDone is how many closed tasks RECENTLY DONE shows while the cursor
+// is in another section; focused, it scrolls through all of them (h9zghj).
+// Every other unfocused section shows as many rows.
 const recentDone = 3
+
+// maxSections is the most sections a view has: 5 overview sections, 5
+// board columns.
+const maxSections = 5
+
+// sectionMemo is where a section was when the cursor left it: its first
+// row shown and the task selected in it (h9zghj).
+type sectionMemo struct {
+	start int
+	path  string
+}
+
+// memoView is the memo slot of a view with sections, or -1.
+func memoView(view string) int {
+	switch view {
+	case "overview":
+		return 0
+	case "board":
+		return 1
+	}
+	return -1
+}
+
+// remember records the focused section's scroll and selected task, so it
+// is where it was when the cursor comes back.
+func (m *model) remember() {
+	v := memoView(m.view)
+	if v < 0 || m.pane < 0 || m.pane >= maxSections {
+		return
+	}
+	indices := m.indices()
+	memo := &m.memo[v][m.pane]
+	memo.start, _ = window(indices, m.cursor, memo.start, m.sectionRows(m.pane))
+	memo.path = ""
+	for _, i := range indices {
+		if i == m.cursor {
+			memo.path = m.visible[i].Path
+		}
+	}
+}
+
+// restore selects the task the focused section had when the cursor left.
+func (m *model) restore() {
+	if c := m.memoCursor(m.pane); c >= 0 {
+		m.cursor = c
+	}
+}
 
 // place is the one status a task counts under, in the header, the board
 // columns and the status filter (zaec08): done, dropped and doing as they
@@ -517,9 +568,13 @@ func (m *model) move(n int, absolute bool) {
 func (m *model) changePane(delta int) {
 	switch m.view {
 	case "overview":
+		m.remember()
 		m.pane = (m.pane + delta + len(overviewSections)) % len(overviewSections)
+		m.restore()
 	case "board":
+		m.remember()
 		m.pane = (m.pane + delta + len(boardStatuses)) % len(boardStatuses)
+		m.restore()
 	default:
 		views := []string{"overview", "list", "board", "lint"}
 		for i, v := range views {

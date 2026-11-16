@@ -253,18 +253,18 @@ func closeBoard(t *testing.T) (model, map[string]string, func(at time.Time, msg 
 	return m, ids, commit
 }
 
-// Check 3: RECENTLY DONE shows the 3 most recently closed tasks, newest
-// first, by the commit that closed them.
+// Check 3: RECENTLY DONE lists every closed task, newest first, by the
+// commit that closed them (h9zghj: all of them, not the last 3).
 func TestRecentlyDoneNewestFirst(t *testing.T) {
 	m, ids, commit := closeBoard(t)
 	m.setView("overview")
 	got := strings.Join(sectionIDs(m, sectionRecent), " ")
-	want := strings.Join([]string{ids["Mike"], ids["Lima"], ids["Kilo"]}, " ")
+	want := strings.Join([]string{ids["Mike"], ids["Lima"], ids["Kilo"], ids["Old"]}, " ")
 	if got != want {
-		t.Fatalf("RECENTLY DONE %s, want Mike Lima Kilo %s (Old's late note is not a close)", got, want)
+		t.Fatalf("RECENTLY DONE %s, want Mike Lima Kilo Old %s (Old's late note is not a close)", got, want)
 	}
 	view := ansi.Strip(m.overviewText())
-	at := strings.Index(view, "RECENTLY DONE · last closed  [3 of 4 closed]")
+	at := strings.Index(view, "RECENTLY DONE · last closed  [4]")
 	if at < 0 || at < strings.Index(view, "BLOCKED") || at > strings.Index(view, "LINT") {
 		t.Fatalf("RECENTLY DONE not between BLOCKED and LINT:\n%s", view)
 	}
@@ -279,7 +279,7 @@ func TestRecentlyDoneNewestFirst(t *testing.T) {
 	}
 	commit(time.Date(2026, 11, 2, 0, 0, 0, 0, time.UTC), "hug task done "+ids["November"])
 	m.refresh("")
-	got = strings.Join(sectionIDs(m, sectionRecent), " ")
+	got = strings.Join(sectionIDs(m, sectionRecent)[:3], " ")
 	want = strings.Join([]string{ids["November"], ids["Mike"], ids["Lima"]}, " ")
 	if got != want {
 		t.Fatalf("after a new close: %s, want November Mike Lima %s", got, want)

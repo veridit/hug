@@ -118,8 +118,9 @@ func mergeCloses(into map[string]int64, log string) {
 	}
 }
 
-// recentIndices are the visible done and dropped tasks closed most
-// recently, newest first, at most recentDone (zaec08). Ties keep rank order.
+// recentIndices are the visible done and dropped tasks, closed most
+// recently first (zaec08); all of them, the focused section scrolls
+// (h9zghj). Ties keep rank order.
 func (m model) recentIndices() []int {
 	var out []int
 	for i, t := range m.visible {
@@ -132,7 +133,7 @@ func (m model) recentIndices() []int {
 		keys[i] = m.closedKey(m.visible[i])
 	}
 	sort.SliceStable(out, func(a, b int) bool { return keys[out[a]] > keys[out[b]] })
-	return out[:min(len(out), recentDone)]
+	return out
 }
 
 // closedKey orders closed tasks for RECENTLY DONE: the close time from git,

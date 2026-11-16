@@ -172,16 +172,28 @@ func (m model) columns(width int, compact bool) string {
 	}
 	return m.styles.dim.Render(fit(s+fit("STATUS", 7)+" "+fit("TYPE", 7)+" "+fit("PRIORITY", 8)+" "+fit("TITLE", max(0, width-36)), width))
 }
-func window(indices []int, cursor, rows int) (int, int) {
-	pos := 0
+
+// window is the rows of indices shown in rows lines, starting at start as
+// far as it can: a section keeps its scroll (h9zghj) and moves it only as
+// far as needed to keep the cursor in view. A cursor of -1 is no cursor.
+func window(indices []int, cursor, start, rows int) (int, int) {
+	n := len(indices)
+	rows = max(0, rows)
+	if rows >= n {
+		return 0, n
+	}
+	start = max(0, min(start, n-rows))
 	for p, i := range indices {
 		if i == cursor {
-			pos = p
+			if p < start {
+				start = p
+			} else if p >= start+rows {
+				start = p - rows + 1
+			}
 			break
 		}
 	}
-	start := max(0, pos-rows+1)
-	return start, min(len(indices), start+rows)
+	return start, start + rows
 }
 
 func (m model) listText() string {
@@ -190,7 +202,7 @@ func (m model) listText() string {
 	if len(indices) == 0 {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
-	start, end := window(indices, m.cursor, max(1, m.bodyHeight()-2))
+	start, end := window(indices, m.cursor, 0, max(1, m.bodyHeight()-2))
 	for n, i := range indices[start:end] {
 		lines = append(lines, m.taskRowMark(m.visible[i], m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
 	}
@@ -208,16 +220,6 @@ func (m model) overviewText() string {
 			pointer = "> "
 		}
 		label := fmt.Sprintf("%s%s  [%d]", pointer, name, len(indices))
-		if p == sectionRecent {
-			// [3] would read as all there are: say how many are closed.
-			closed := 0
-			for _, t := range m.visible {
-				if t.Status == "done" || t.Status == "dropped" {
-					closed++
-				}
-			}
-			label = fmt.Sprintf("%s%s  [%d of %d closed]", pointer, name, len(indices), closed)
-		}
 		if p == sectionLint {
 			label += fmt.Sprintf(" · %d findings", len(m.findings))
 			if n := len(m.closedFindings); n > 0 {
@@ -225,12 +227,15 @@ func (m model) overviewText() string {
 			}
 		}
 		per := rows[p]
-		cursor := -1
+		cursor := m.memoCursor(p)
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := window(indices, cursor, per)
-		if end-start < len(indices) {
+		start, end := window(indices, cursor, m.scrollOf(p), per)
+		if len(indices) == 0 {
+			// Nothing to navigate to: None goes on the title line (h9zghj).
+			label += " · None"
+		} else if end-start < len(indices) {
 			label += fmt.Sprintf(" · %d–%d shown", start+1, end)
 		}
 		label = m.styles.accent.Render(fit(label, m.width))
@@ -238,9 +243,6 @@ func (m model) overviewText() string {
 			label = m.styles.selected.Render(label)
 		}
 		lines = append(lines, label)
-		if len(indices) == 0 {
-			lines = append(lines, m.styles.dim.Render("  None"))
-		}
 		for n, i := range indices[start:end] {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
@@ -269,53 +271,81 @@ func (m model) overviewText() string {
 	return strings.Join(lines, "\n")
 }
 
-// overviewRows shares the overview's rows by need: each section asks for its
-// task count (at least one line for "None"), and when they do not all fit,
-// sections that need little keep it and the rest is shared among the larger
-// ones. RECENTLY DONE gives way first: it keeps one row and takes more only
-// from what the others leave (zaec08).
+// overviewRows shares the overview's rows (h9zghj): every section the
+// cursor is not in shows min(count, recentDone) rows, an empty one none
+// (None sits on its title line), and the focused section takes all the
+// rows left. When even that does not fit, RECENTLY DONE gives way first,
+// then the largest of the others, down to one row each (zaec08).
 func (m model) overviewRows() []int {
 	n := len(overviewSections)
 	want, got := make([]int, n), make([]int, n)
 	budget := m.bodyHeight() - n*2 // a label and a blank line per section
+	others := 0
 	for p := range want {
-		want[p] = max(1, len(m.paneIndices(p)))
-	}
-	budget-- // RECENTLY DONE's first row
-	var left []int
-	for p := range want {
-		if p != sectionRecent {
-			left = append(left, p)
+		want[p] = len(m.paneIndices(p))
+		if p != m.pane {
+			got[p] = min(want[p], recentDone)
+			others += got[p]
 		}
 	}
-	for len(left) > 0 {
-		share := max(1, budget/len(left))
-		var next []int
-		for _, p := range left {
-			if want[p] <= share {
-				got[p] = want[p]
-				budget -= want[p]
-			} else {
-				next = append(next, p)
-			}
-		}
-		if len(next) == len(left) {
-			// Everyone left needs more than an equal share: split evenly,
-			// minus two lines each for the "… N more" markers.
-			for i, p := range next {
-				n := budget / len(next)
-				if i < budget%len(next) {
-					n++
+	// The focused section never gets less than an unfocused one would.
+	need := min(want[m.pane], recentDone)
+	for others+need > budget {
+		shrink := -1
+		if got[sectionRecent] > 1 && sectionRecent != m.pane {
+			shrink = sectionRecent
+		} else {
+			for p := range got {
+				if p != m.pane && got[p] > 1 && (shrink < 0 || got[p] > got[shrink]) {
+					shrink = p
 				}
-				got[p] = max(1, n)
 			}
-			budget = 0
+		}
+		if shrink < 0 {
 			break
 		}
-		left = next
+		got[shrink]--
+		others--
 	}
-	got[sectionRecent] = min(want[sectionRecent], 1+max(0, budget))
+	if m.pane >= 0 && m.pane < n {
+		got[m.pane] = min(want[m.pane], max(need, budget-others))
+	}
 	return got
+}
+
+// scrollOf is the first row section p of the current view showed last.
+func (m model) scrollOf(p int) int {
+	if v := memoView(m.view); v >= 0 && p >= 0 && p < len(m.memo[v]) {
+		return m.memo[v][p].start
+	}
+	return 0
+}
+
+// memoCursor is the row section p had selected when the cursor left it,
+// as an index into visible, or -1.
+func (m model) memoCursor(p int) int {
+	v := memoView(m.view)
+	if v < 0 || p < 0 || p >= maxSections {
+		return -1
+	}
+	path := m.memo[v][p].path
+	if path == "" {
+		return -1
+	}
+	for i := range m.visible {
+		if m.visible[i].Path == path {
+			return i
+		}
+	}
+	return -1
+}
+
+// sectionRows is how many rows section p of the current view shows now.
+func (m model) sectionRows(p int) int {
+	if m.view == "overview" {
+		return m.overviewRows()[p]
+	}
+	return max(1, m.bodyHeight()-4) // a board column
 }
 func (m model) boardText() string {
 	count := min(len(boardStatuses), max(1, (m.width+2)/40))
@@ -330,17 +360,24 @@ func (m model) boardText() string {
 		if p == m.pane {
 			pointer = "> "
 		}
-		label := fit(fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStatuses[p]), len(indices)), width)
-		label = m.styles.status[boardStatuses[p]].Bold(true).Render(label)
+		label := fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStatuses[p]), len(indices))
+		if len(indices) == 0 {
+			label += " · None" // one line, as in the overview (h9zghj)
+		}
+		label = m.styles.status[boardStatuses[p]].Bold(true).Render(fit(label, width))
 		if p == m.pane {
 			label = m.styles.selected.Render(label)
 		}
-		cols[c] = append(cols[c], label, m.columns(width, true))
-		cursor := -1
+		heading := m.columns(width, true)
+		if len(indices) == 0 {
+			heading = fit("", width)
+		}
+		cols[c] = append(cols[c], label, heading)
+		cursor := m.memoCursor(p)
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := window(indices, cursor, rows)
+		start, end := window(indices, cursor, m.scrollOf(p), rows)
 		for n, i := range indices[start:end] {
 			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, p == m.pane && i == m.cursor, true, scrollMark(start+n, start, end, len(indices))))
 		}
