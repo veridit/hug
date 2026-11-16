@@ -1,13 +1,14 @@
 ---
 id: h9zghj
 title: "Overview: the focused section grows, others keep at least 3 rows"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
