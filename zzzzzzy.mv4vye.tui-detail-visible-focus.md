@@ -37,3 +37,5 @@ Code: huginn/internal/tui/detail.go (section headings, detailPane 0 = acceptance
 2026-11-16 Jørgen, second screenshot: the bland-prompt problem is general. The tick prompt ('Tick item 2 of s6ff5k: ...?') is as easy to miss as the edit one. Every confirm line needs the prominent style, not just edit. Since v0.7.15 the tick prompt reads 'Tick: ☐ 2. text' (render.go, the m.confirm block); keep that wording and make the whole line stand out.
 
 2026-11-16 Jørgen: { and } are hard on a Norwegian layout. Task stepping in detail moves to ',' (previous) and '.' (next), both unbound before; { and } are removed, Ctrl-P/Ctrl-N stay. Sent to the worker as an addition to this task.
+
+2026-11-16 Jørgen, supersedes the ',' and '.' note: in detail n = next task, p = previous task; new task moves to N in every view; { and } removed; Ctrl-N/Ctrl-P stay; in lists n/p move the selection like j/k. Sent to the worker.
