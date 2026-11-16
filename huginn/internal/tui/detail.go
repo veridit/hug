@@ -128,8 +128,14 @@ func (m model) detailHeader(t task.Task) []string {
 		group = "root"
 	}
 	owner := "assigned:" + strings.Join(t.Assignee, ", ")
-	if len(t.Assignee) == 0 {
+	switch {
+	case len(t.Assignee) == 0 && t.Model == "":
 		owner = "unassigned"
+	case len(t.Assignee) == 0 || len(t.Assignee) == 1 && t.Assignee[0] == t.Model:
+		// Taken without a name: the model is the assignee, shown once.
+		owner = "assigned:" + t.Model
+	case t.Model != "":
+		owner += " · " + t.Model
 	}
 	badges = append(badges, m.styles.dim.Render("group:"+oneLine(group)), m.styles.accent.Render(oneLine(owner)))
 	lines := []string{title}
