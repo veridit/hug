@@ -1,7 +1,7 @@
 ---
 id: zaec08
 title: "Overview: one section per task, counts that add up, recently done"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["poodle"]
