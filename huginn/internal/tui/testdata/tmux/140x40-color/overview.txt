@@ -3,17 +3,17 @@ HUG TASKS · overview   60/60 tasks · ! 7 findings
 todo 8  ·  doing 15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 > IN PROGRESS · assigned to  [15] · 1–11 shown
-> ◑ 1/2 000002   doing   bug     critical Bug task 02: make the terminal workflow observable                                alice
-  ◑ 1/2 000006   doing   feature high     Feature task 06: make the terminal workflow observable                            bob
-  ◑ 1/2 000010   doing   docs    high     Docs task 10: make the terminal workflow observable                               bob
-  ◑ 1/2 000014   doing   spike   medium   Spike task 14: make the terminal workflow observable                              carol
-  ◑ 1/2 000018   doing   chore   low      Chore task 18: make the terminal workflow observable                              alice
- !◑ 1/2 000022   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long tit…  bob
- !◑ 1/2 000026   blocked feature high     Feature task 26: make the terminal workflow observable                            carol
-  ◑ 1/2 000030   doing   docs    high     Docs task 30: make the terminal workflow observable                               carol
-  ◑ 1/2 000034   doing   spike   medium   Spike task 34: make the terminal workflow observable                              alice
-  ◑ 1/2 000038   doing   chore   low      Chore task 38: make the terminal workflow observable                              bob
-↓ ◑ 1/2 000042   doing   bug     critical Bug task 42: make the terminal workflow observable                                carol
+> ◑ 1/2 000002   doing   bug     critical Bug task 02: make the terminal workflow observable                    alice · feat/terminal-000002
+  ◑ 1/2 000006   doing   feature high     Feature task 06: make the terminal workflow observable                bob
+  ◑ 1/2 000010   doing   docs    high     Docs task 10: make the terminal workflow observable                   bob
+  ◑ 1/2 000014   doing   spike   medium   Spike task 14: make the terminal workflow observable                  carol · feat/terminal-000014
+  ◑ 1/2 000018   doing   chore   low      Chore task 18: make the terminal workflow observable                  alice
+ !◑ 1/2 000022   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberat…  bob
+ !◑ 1/2 000026   blocked feature high     Feature task 26: make the terminal workflow observable                carol · feat/terminal-000026
+  ◑ 1/2 000030   doing   docs    high     Docs task 30: make the terminal workflow observable                   carol
+  ◑ 1/2 000034   doing   spike   medium   Spike task 34: make the terminal workflow observable                  alice
+  ◑ 1/2 000038   doing   chore   low      Chore task 38: make the terminal workflow observable                  bob · feat/terminal-000038
+↓ ◑ 1/2 000042   doing   bug     critical Bug task 42: make the terminal workflow observable                    carol
 
   NEXT UP · rank order  [8] · 1–3 shown
  !○ 0/2 000001   todo    feature critical ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that mus…

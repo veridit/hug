@@ -33,6 +33,9 @@ type Options struct {
 	// (j2vwk0); Binary is that path, the one the shell found ("" finds it).
 	NoReload bool
 	Binary   string
+	// MainBranch is the repository's main line ("main"): IN PROGRESS rows
+	// name a task's branch only when it is another one (x1t1t1).
+	MainBranch string
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {
