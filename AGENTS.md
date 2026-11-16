@@ -40,7 +40,7 @@ Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
 Start: hug task next (or hug task take ID), then hug task show ID.
 While working: hug task check ID N with evidence, hug task note ID "evidence".
 Finish: hug task done ID when every acceptance check is ticked.
-New work: hug task new "short title" --goal "..." --accept "observable check".
+New work: hug task new "short title" --goal "..." --purpose "..." --principle "..." --details "..." --accept "observable check".
 Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
 and do not do), Relevant details, then Acceptance. Titles stay under 80
 characters; detail goes in the Goal.

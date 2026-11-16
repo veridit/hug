@@ -17,7 +17,7 @@ import (
 	"sync"
 )
 
-const SchemaVersion = "2"
+const SchemaVersion = "3" // 3: Task.Parent and Task.Sections (2026-11-16)
 
 type Change struct{ Status, OldPath, Path string }
 type Git interface {

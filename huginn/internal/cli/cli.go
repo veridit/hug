@@ -332,7 +332,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal accept dep group label top after", "ls": "status type priority label group mine jsonl epic", "board": "type priority label group mine all epic wide", "next": "type priority label group mine epic", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic", "board": "type priority label group mine all epic wide", "next": "type priority label group mine epic", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code", "attach": "name note replace safe-reason content"}
 	f, e := parse(args, allowed[cmd])
 	if e != nil {
 		return nil, e
@@ -617,7 +617,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		if e = f.count(1); e != nil {
 			return nil, e
 		}
-		r, e = s.s.New(task.NewOptions{Title: f.args[0], Goal: f.get("goal"), Type: f.get("type"), Priority: f.get("priority"), Group: f.get("group"), Acceptance: f.values["accept"], Deps: f.values["dep"], Labels: f.values["label"], Top: f.has("top"), After: f.get("after")})
+		r, e = s.s.New(task.NewOptions{Title: f.args[0], Goal: f.get("goal"), Purpose: f.get("purpose"), Principle: f.get("principle"), Details: f.get("details"), Type: f.get("type"), Priority: f.get("priority"), Group: f.get("group"), Acceptance: f.values["accept"], Deps: f.values["dep"], Labels: f.values["label"], Top: f.has("top"), After: f.get("after")})
 	case "take":
 		if e = f.count(1); e != nil {
 			return nil, e

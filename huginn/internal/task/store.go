@@ -21,9 +21,12 @@ type Result struct {
 }
 type NewOptions struct {
 	Title, Goal, Group, Type, Priority string
-	Acceptance, Deps, Labels           []string
-	Top                                bool
-	After                              string
+	// Purpose, Principle and Details become their own sections after Goal
+	// (the task description pattern; docs/task-vocabulary-test.md).
+	Purpose, Principle, Details string
+	Acceptance, Deps, Labels    []string
+	Top                         bool
+	After                       string
 }
 type Filter struct {
 	Type, Priority, Label, Group, Mine string
@@ -216,7 +219,7 @@ func (s *Store) New(o NewOptions) (Result, error) {
 	for _, l := range o.Labels {
 		labels = append(labels, q(l))
 	}
-	body += "[" + strings.Join(labels, ", ") + "]\ncreated: " + today + "\nupdated: " + today + "\n---\n\n## Goal\n" + o.Goal + "\n\n## Depends on\n"
+	body += "[" + strings.Join(labels, ", ") + "]\ncreated: " + today + "\nupdated: " + today + "\n---\n\n## Goal\n" + o.Goal + "\n" + patternSections(o) + "\n## Depends on\n"
 	for _, dep := range deps {
 		body += "- " + dep + "\n"
 	}
@@ -509,4 +512,19 @@ func (s *Store) Reslug(ref, slug string) (Result, error) {
 		return Result{}, e
 	}
 	return s.rename(d, d.Task.Group, d.Task.Rank, slug)
+}
+
+// DescriptionSections are the sections after Goal in the task description
+// pattern, in order (2026-11-16 vocabulary test: named sections +0.49 over
+// none; "Relevant details" equals "Details", "Constraints" scores worse).
+var DescriptionSections = []string{"Purpose", "Principle", "Relevant details"}
+
+func patternSections(o NewOptions) string {
+	out := ""
+	for i, v := range []string{o.Purpose, o.Principle, o.Details} {
+		if strings.TrimSpace(v) != "" {
+			out += "\n## " + DescriptionSections[i] + "\n" + strings.TrimSpace(v) + "\n"
+		}
+	}
+	return out
 }

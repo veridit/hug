@@ -39,6 +39,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"unknown type", "unknown-type"},
 	{"invalid ", "invalid-field"},
 	{"missing Goal", "missing-goal"},
+	{"missing section", "missing-section"},
 	{"Acceptance requires", "no-acceptance"},
 	{"done with unchecked acceptance", "done-unchecked"},
 	{"case-insensitive filename collision", "filename-collision"},
@@ -113,7 +114,9 @@ type Task struct {
 	// Parent is the epic this task belongs to (an id), or empty. An epic is
 	// a task with children; it has no parent itself (three fixed levels:
 	// epic, task, acceptance item).
-	Parent       string       `json:"parent,omitempty"`
+	Parent string `json:"parent,omitempty"`
+	// Sections lists the "## " headings in file order.
+	Sections     []string     `json:"sections,omitempty"`
 	Goal         string       `json:"goal"`
 	Dependencies []Dependency `json:"dependencies"`
 	Acceptance   []Acceptance `json:"acceptance"`
@@ -295,6 +298,7 @@ func Parse(path string, data []byte) *Document {
 				d.sections[section] = [2]int{sectionStart, n}
 			}
 			section = strings.TrimSpace(line[3:])
+			d.Task.Sections = append(d.Task.Sections, section)
 			if seenSections[section] && contains([]string{"Goal", "Depends on", "Acceptance", "Notes"}, section) {
 				d.add(n+1, "duplicate section "+section)
 			}

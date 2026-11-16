@@ -208,6 +208,9 @@ func Sort(tasks []Task) {
 	sort.Slice(tasks, func(i, j int) bool { return rank.Less(tasks[i].Rank, tasks[i].ID, tasks[j].Rank, tasks[j].ID) })
 }
 
+// PatternSince is the first creation date the description pattern applies to.
+const PatternSince = "2026-11-16"
+
 // MaxTitle is the longest open-task title lint accepts.
 const MaxTitle = 80
 
@@ -266,6 +269,23 @@ func Lint(docs []*Document) []Finding {
 		}
 	}
 	out = append(out, parentFindings(tasks)...)
+	// The description pattern applies to tasks created from the day it was
+	// settled; older tasks are not flagged (2,500 seid tasks predate it).
+	for _, d := range docs {
+		t := d.Task
+		if t.Created < PatternSince || t.Status == "done" || t.Status == "dropped" {
+			continue
+		}
+		var missing []string
+		for _, sec := range []string{"Purpose", "Principle"} {
+			if !contains(t.Sections, sec) {
+				missing = append(missing, sec)
+			}
+		}
+		if len(missing) > 0 {
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "missing section " + strings.Join(missing, ", ") + ": describe with Goal, Purpose, Principle, Relevant details, Acceptance (hug task edit " + t.ID + ")"})
+		}
+	}
 	for _, t := range tasks {
 		if t.Status == "done" || t.Status == "dropped" {
 			continue
