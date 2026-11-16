@@ -34,3 +34,5 @@ Requests: (1) status counts line shows its keys (letters or matching column init
 ## Notes
 
 2026-11-16 review, built (uncommitted until goldens pass): (a) board rows compact: lint mark in the gutter left of the id, type and priority as one coloured letter, legend line under the board; (b) detail: { and } (also Ctrl-N/Ctrl-P) open the next/previous task of the list it was opened from, footer 'Task 3 of 22'; (c) palette uses the full height and is a tree: filter > field > value with task counts; ': f done' and ': filter done' find the value without the field; short forms (status todo, done) still run; (d) Space in a list no longer asks to tick a check you cannot see: it says 'Enter opens ID'; the prompt in detail reads 'Tick acceptance check N of ID? "text"'. Still open from the review: choosing board columns (wide vs letters), items 1-5.
+
+v0.7.15 released and installed 2026-11-16 (commit 6d36b9e, release run 'completed success', 'hug version' prints 'hug v0.7.15'): the review batch from the earlier note is shipped. Follow-ups are their own tasks: mv4vye (detail focus, prompts, hints), 05r3pg (context palette), kx2ndm (groups and epics).
