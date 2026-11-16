@@ -1,13 +1,14 @@
 ---
 id: 3xcesq
 title: "TUI: move a task far in one go (grab and drop, top and bottom)"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["poodle"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
 ---
 
 ## Goal
