@@ -5,7 +5,7 @@ status: todo
 type: docs
 priority: ""
 assignee: []
-labels: []
+labels: ["waiting-on-user"]
 created: 2026-11-16
 updated: 2026-11-16
 ---
