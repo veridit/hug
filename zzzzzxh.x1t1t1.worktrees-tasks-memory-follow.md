@@ -47,3 +47,5 @@ check 6 (dragon, 817c7b0 on ci/x1t1t1): task.BranchFindings, outside task.Lint (
 check 4 partial (dragon): show 'taken by: NAME · MODEL · BRANCH', ls rows add the branch when not main, ls --json carries branch/worktree (TestTakeRecordsBranchAndWorktree); TUI detail header 'assigned:dragon · claude-opus-5-5 · feat/x' (TestDetailHeaderShowsBranch, ea4a33c, tui ok 43.900s, no golden change). Open: in-progress rows in the TUI overview (render.go sectionDoing), after vole's z6kz20 lands (vole 17:45), then regenerate goldens. Check 7 (Statbus trial) after that.
 
 landed on main 2250330..9d1f382 (ff), CI run 43924391679: ubuntu/macos/windows success. Open: check 4 TUI rows (after vole z6kz20), check 7 Statbus trial.
+
+Released in v0.7.31 (checks 2,3,5,6). Open: 4 (TUI in-progress rows show branch, after vole's z6kz20) and 7 (Statbus trial).
