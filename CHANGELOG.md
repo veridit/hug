@@ -4,7 +4,14 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## v0.7.13 - 2026-11-16
+## v0.7.14 - 2026-11-16
+
+v0.7.13 was tagged but not published: its own test fixtures tripped the
+release's no-secrets gate. v0.7.14 carries the same changes plus:
+
+- TUI: the help bar is limited to the terminal width.
+
+## v0.7.13 - 2026-11-16 (not published)
 
 ### Fixed
 
