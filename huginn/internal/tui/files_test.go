@@ -16,6 +16,7 @@ import (
 const tuiEdit = "HUG_TEST_TUI_EDIT"
 
 func TestMain(m *testing.M) {
+	fakeHug() // j2vwk0: the test binary as a hug that answers "version"
 	if text, ok := os.LookupEnv(tuiEdit); ok && len(os.Args) > 1 {
 		os.Exit(fakeAppend(os.Args[len(os.Args)-1], text))
 	}

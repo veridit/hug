@@ -29,6 +29,10 @@ type Options struct {
 	// Version is what hug version prints ("v0.7.29"); the key bar ends with
 	// "hug v0.7.29" when there is room (Jørgen, 2026-11-16).
 	Version string
+	// NoReload turns off the reload into a new hug at the started path
+	// (j2vwk0); Binary is that path, the one the shell found ("" finds it).
+	NoReload bool
+	Binary   string
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {
@@ -40,8 +44,36 @@ func Run(ctx context.Context, store *task.Store, opts Options) error {
 		m.watch = startWatch(store.Root)
 		defer m.watch.close()
 	}
-	_, err := tea.NewProgram(m, tea.WithContext(ctx), tea.WithAltScreen()).Run()
-	return err
+	// A hug that reloaded into this one left its place (j2vwk0).
+	if h := takeHandoff(); h != nil {
+		m.resume(*h)
+		m.message = "reloaded hug " + opts.Version
+	}
+	if !opts.NoReload && canReexec {
+		path := opts.Binary
+		if path == "" {
+			path = startedPath()
+		}
+		m.bin = startBinWatch(path)
+		defer func() { m.bin.close() }()
+	}
+	for {
+		final, err := tea.NewProgram(m, tea.WithContext(ctx), tea.WithAltScreen()).Run()
+		if err != nil {
+			return err
+		}
+		done, ok := final.(model)
+		if !ok || done.reloadTo == "" {
+			return nil
+		}
+		// The terminal is restored: hand over and become the new hug (the
+		// watches' goroutines and close-on-exec files go with this process).
+		// Exec returns only on failure; then this hug carries on where it was.
+		err = reloadInto(done.bin.path, done.handoff())
+		done.reloadTo = ""
+		done.message = fmt.Sprintf("reload into the hug at %s failed (%v); still on hug %s\nfix: quit with q, then run hug tui", done.bin.path, err, opts.Version)
+		m = done
+	}
 }
 
 type editorMsg struct {
@@ -106,6 +138,13 @@ type model struct {
 	editing        bool
 	gen            int
 	loads          *loadCounter
+	// Reload into a new hug (j2vwk0): bin watches the started path;
+	// binPending says a new binary came and waits until nothing is open;
+	// probing asks it for its version; reloadTo is that version once the
+	// TUI quits to exec it.
+	bin                 *binWatch
+	binPending, probing bool
+	reloadTo            string
 	// closes reads close times from git for RECENTLY DONE (zaec08);
 	// closedAt is the last snapshot's copy.
 	closes   *closeLog
@@ -201,6 +240,9 @@ func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	if m.stale && !m.busy() && !m.loading {
 		cmd = tea.Batch(cmd, m.reload())
 	}
+	if probe := m.startProbe(); probe != nil {
+		cmd = tea.Batch(cmd, probe)
+	}
 	return m, cmd
 }
 
@@ -209,6 +251,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case changedMsg:
 		cmd := m.reload()
 		return m, tea.Batch(cmd, m.waitChange())
+	case binaryMsg:
+		m.binPending = true
+		next, cmd := m.afterUpdate(nil)
+		return next, tea.Batch(cmd, next.(model).waitBinary())
+	case probedMsg:
+		cmd := m.probed(msg)
+		next, more := m.afterUpdate(nil)
+		return next, tea.Batch(cmd, more)
 	case loadedMsg:
 		m.loading = false
 		switch {
@@ -247,7 +297,7 @@ func newModel(s *task.Store, o Options) model {
 	m.resize()
 	return m
 }
-func (m model) Init() tea.Cmd { return m.waitChange() }
+func (m model) Init() tea.Cmd { return tea.Batch(m.waitChange(), m.waitBinary()) }
 func (m *model) refresh(path string) {
 	m.apply(loadSnapshot(m.store, m.loads, m.closes), path)
 }
