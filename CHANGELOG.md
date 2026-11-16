@@ -4,6 +4,20 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Fixed
+
+- In `hug task tui`, J and K move a task past the row shown below or
+  above it, in the section on screen (NEXT UP, a board column, the list)
+  and after filters. They used to move it past the next task in the full
+  order, often an epic, a closed task or a filtered-out one, so a press
+  made a commit and nothing on screen changed. The confirm line names both
+  tasks (`Move a1dx7s below x1t1t1 in NEXT UP: ...?`), the result says
+  where it went (`moved a1dx7s below x1t1t1, row 2 of 3 in NEXT UP`), and
+  at the first or last row shown the message says so and nothing is
+  committed.
+
 ## v0.7.19 - 2026-11-16
 
 v0.7.18 (tagged at 1fe040f) carried everything below except the hiding of

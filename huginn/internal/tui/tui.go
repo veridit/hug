@@ -54,6 +54,7 @@ type model struct {
 	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
 	confirm, confirmPath, pendingValue string
+	confirmTarget                      string // J/K: the shown row to move past
 	filter                             task.Filter
 	input                              textinput.Model
 	viewport, helpViewport             viewport.Model

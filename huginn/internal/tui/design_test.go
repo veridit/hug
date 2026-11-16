@@ -381,6 +381,10 @@ func TestEveryEditRequiresConfirmation(t *testing.T) {
 			// Space ticks only inside the task, where the check is shown.
 			m = press(m, "enter")
 		}
+		if k == "K" {
+			// K on the first row says so and asks nothing (ksv323).
+			m = press(m, "j")
+		}
 		m = press(m, k)
 		if m.confirm != k {
 			t.Fatal(k, "no confirmation")

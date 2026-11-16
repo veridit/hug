@@ -574,12 +574,18 @@ func (m model) confirmLine() string {
 				break
 			}
 		}
+	case "J", "K":
+		// Name both tasks: "Move a1dx7s below x1t1t1" (ksv323).
+		t, _ := m.taskAt(m.confirmPath)
+		target, _ := m.taskAt(m.confirmTarget)
+		where := "below"
+		if m.confirm == "K" {
+			where = "above"
+		}
+		question = fmt.Sprintf("Move %s %s %s in %s: %s", oneLine(t.ID), where, oneLine(target.ID), m.sectionName(), oneLine(t.Title))
 	default:
-		for _, t := range m.all {
-			if t.Path == m.confirmPath {
-				question += oneLine(t.ID) + " " + oneLine(t.Title)
-				break
-			}
+		if t, ok := m.taskAt(m.confirmPath); ok {
+			question += oneLine(t.ID) + " " + oneLine(t.Title)
 		}
 	}
 	answer := "? Enter yes · Esc no"

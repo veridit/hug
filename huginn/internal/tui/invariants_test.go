@@ -28,9 +28,16 @@ func TestMoveRepairsTiesAndUsesGlobalOrder(t *testing.T) {
 	if m.visible[0].ID != first {
 		t.Fatal(m.View())
 	}
-	m = press(m, "/", m.visible[0].Slug, "enter", "J", "enter", "c")
-	if m.visible[1].ID != first {
-		t.Fatal("filtered move did not use global order", m.View())
+	// With a filter showing one row, there is no shown row to move past: the
+	// move is refused with a message, never made past a hidden task (ksv323;
+	// this used to move past the next task in the global order).
+	m = press(m, "/", m.visible[0].Slug, "enter", "J")
+	if m.confirm != "" || !strings.Contains(m.message, "already the last row in the list (filtered); nothing moved") {
+		t.Fatal("filtered move past a hidden row", m.message)
+	}
+	m = press(m, "c")
+	if m.visible[0].ID != first {
+		t.Fatal("refused move changed the order", m.View())
 	}
 }
 

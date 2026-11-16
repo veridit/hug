@@ -338,6 +338,12 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 		switch k {
 		case "n":
 			m = press(m, "N", "Brand new", "enter")
+		case "K":
+			// Main is the first row: K says so, asks nothing (ksv323).
+			if m = press(m, k); m.confirm != "" || m.message != main.ID+" is already the first row in the list; nothing moved" {
+				t.Fatalf("K on the first row: confirm %q message %q", m.confirm, m.message)
+			}
+			continue
 		default:
 			m = press(m, k)
 		}
@@ -368,6 +374,10 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 		case "e":
 			if !strings.Contains(plain, "Edit "+main.ID+" in subl --wait?") {
 				t.Fatalf("edit wording: %q", plain)
+			}
+		case "J":
+			if !strings.Contains(plain, "Move "+main.ID+" below ") || !strings.Contains(plain, " in the list: Main?") {
+				t.Fatalf("move wording: %q", plain)
 			}
 		default:
 			if !strings.Contains(plain, "Confirm "+actionNames[k]+" "+main.ID+" Main?") {

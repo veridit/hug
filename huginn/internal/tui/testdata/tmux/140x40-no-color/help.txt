@@ -8,7 +8,7 @@ j/k ↑/↓         move / scroll                                           [ an
 > / G / End     bottom                                                  Space / Enter   tick check / follow dependency marked >
 ctrl-d / ctrl-u half page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps
 PgDn / PgUp     full page down / up                                     t / d / x       take / done / drop task
-h/← Shift-Tab   previous pane / column                                  J / K           move down / up in global rank order
+h/← Shift-Tab   previous pane / column                                  J / K           move below / above the row shown next to it
 l/→ Tab         next pane / column                                      N               new title, goal and one verification item
 Enter           open full task detail                                   e               edit in $VISUAL, else $EDITOR, git core.editor, vi
 Esc             back one level, never quits                             e again         after an edit left a finding: edit at once
