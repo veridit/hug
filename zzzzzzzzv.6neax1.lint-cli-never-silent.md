@@ -1,10 +1,10 @@
 ---
 id: 6neax1
 title: "Lint CLI: never silent, summary, codes, help"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["Jørgen H. Fjeld"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
