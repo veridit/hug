@@ -30,3 +30,5 @@ Candidate design. Step 1: hug feedback "..." plus an MCP feedback tool opens a G
 - [ ] CONTRIBUTING.md wording for 'PRs are proposals, we rebuild and credit' is drafted for Jørgen's review
 
 ## Notes
+
+Stable links (Jørgen 2026-11-16): ticket ids never change, so the close comment on GitHub links by id. File paths on hug/tasks do change (order prefix and slug, e.g. 0i.tzc9hb.agents-use-todos-their.md), so a blob URL to the file is not stable. The design must give a link keyed only on the id, e.g. a GitHub code-search URL for the id on branch hug/tasks, or an id-only index file on that branch that maps id to the current path.
