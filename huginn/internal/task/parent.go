@@ -4,16 +4,35 @@ import "strings"
 
 // Children lists the tasks whose parent resolves to t, in store order.
 func Children(t Task, ts []Task) []Task {
-	var out []Task
+	return ChildIndex(ts)[strings.ToLower(t.ID)]
+}
+
+// ChildIndex maps each epic id (lowercase) to its children, resolving every
+// parent once. Callers with many tasks should build it once and reuse it
+// (2026-11-16: per-task Children made hug task ls take 19 s on 2,500 tasks).
+func ChildIndex(ts []Task) map[string][]Task {
+	idx := map[string][]Task{}
+	var ids map[string]string
 	for _, c := range ts {
 		if c.Parent == "" {
 			continue
 		}
-		if p, e := ResolveDependency(ts, c.Parent); e == nil && p.ID == t.ID {
-			out = append(out, c)
+		if ids == nil {
+			ids = map[string]string{}
+			for _, x := range ts {
+				ids[strings.ToLower(x.ID)] = x.ID
+				for _, a := range x.Aliases {
+					if _, taken := ids[strings.ToLower(a)]; !taken {
+						ids[strings.ToLower(a)] = x.ID
+					}
+				}
+			}
+		}
+		if p, ok := ids[strings.ToLower(c.Parent)]; ok {
+			idx[strings.ToLower(p)] = append(idx[strings.ToLower(p)], c)
 		}
 	}
-	return out
+	return idx
 }
 
 // OpenChildren are children that are neither done nor dropped.
@@ -28,7 +47,23 @@ func OpenChildren(t Task, ts []Task) []Task {
 }
 
 // IsEpic: a task with at least one child.
-func IsEpic(t Task, ts []Task) bool { return len(Children(t, ts)) > 0 }
+func IsEpic(t Task, ts []Task) bool {
+	for _, c := range ts {
+		if c.Parent != "" && (strings.EqualFold(c.Parent, t.ID) || containsFold(t.Aliases, c.Parent)) {
+			return true
+		}
+	}
+	return false
+}
+
+func containsFold(list []string, v string) bool {
+	for _, x := range list {
+		if strings.EqualFold(x, v) {
+			return true
+		}
+	}
+	return false
+}
 
 // parentFor validates a new parent for t and returns the value to store: the
 // parent's id, or "" to clear ("", "none", "-"). Three fixed levels: the

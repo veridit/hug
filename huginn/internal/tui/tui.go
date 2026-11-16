@@ -39,6 +39,7 @@ type model struct {
 	findings                           []task.Finding
 	docs                               map[string]*task.Document
 	blocked, linted                    map[string]bool
+	epics                              map[string]bool // lowercase ids of tasks with children
 	cursor, acceptance, offset         int
 	dependency, detailPane             int
 	detailStack                        []string
@@ -102,6 +103,10 @@ func (m *model) refresh(path string) {
 	m.findings = task.Lint(docs)
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
+	m.epics = map[string]bool{}
+	for id := range task.ChildIndex(ts) {
+		m.epics[id] = true
+	}
 	for _, t := range ts {
 		m.blocked[t.Path] = t.Status != "done" && t.Status != "dropped" && len(task.Blocked(t, ts)) > 0
 	}
@@ -167,7 +172,7 @@ func (m model) paneIndices(p int) []int {
 			case 1:
 				// Same rule as hug task next: unblocked, unassigned todo,
 				// never an epic (it finishes through its children).
-				match = t.Status == "todo" && !m.blocked[t.Path] && !task.IsEpic(t, m.all) && len(t.Assignee) == 0
+				match = t.Status == "todo" && !m.blocked[t.Path] && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
 			case 2:
 				match = m.blocked[t.Path]
 			case 3:

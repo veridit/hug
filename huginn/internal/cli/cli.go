@@ -268,7 +268,7 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	out["dependencies"] = deps
 	out["dependency_details"] = task.DependencyDetails(t, ts)
 	children := []Reply{}
-	for _, c := range task.Children(t, ts) {
+	for _, c := range childIndexFor(ts)[strings.ToLower(t.ID)] {
 		children = append(children, Reply{"id": c.ID, "title": c.Title, "status": c.Status})
 	}
 	out["children"] = children
@@ -982,4 +982,22 @@ func shortHash(h string) string {
 		return "(no commit yet)"
 	}
 	return h
+}
+
+// childIndexFor memoises task.ChildIndex for the slice being rendered, so
+// listing N tasks resolves parents once, not N times.
+var childMemo struct {
+	first *task.Task
+	n     int
+	idx   map[string][]task.Task
+}
+
+func childIndexFor(ts []task.Task) map[string][]task.Task {
+	if len(ts) == 0 {
+		return nil
+	}
+	if childMemo.first != &ts[0] || childMemo.n != len(ts) {
+		childMemo.first, childMemo.n, childMemo.idx = &ts[0], len(ts), task.ChildIndex(ts)
+	}
+	return childMemo.idx
 }

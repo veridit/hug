@@ -65,7 +65,7 @@ func (m model) values(name string) []string {
 				set[s] = true
 			}
 		case "epic":
-			if task.IsEpic(t, m.all) {
+			if m.epics[strings.ToLower(t.ID)] {
 				set[t.ID+" "+t.Title] = true
 			}
 		}

@@ -404,6 +404,7 @@ func Next(tasks []Task, f Filter) (Result, error) {
 	}
 	ts := append([]Task(nil), tasks...)
 	Sort(ts)
+	epics := ChildIndex(tasks)
 	if f.Mine != "" {
 		sort.SliceStable(ts, func(i, j int) bool { return ts[i].Status == "doing" && ts[j].Status != "doing" })
 	}
@@ -412,7 +413,7 @@ func Next(tasks []Task, f Filter) (Result, error) {
 			continue
 		}
 		// An epic is finished through its children, never picked itself.
-		if IsEpic(t, tasks) || !InEpic(t, tasks, f.Epic) {
+		if len(epics[strings.ToLower(t.ID)]) > 0 || !InEpic(t, tasks, f.Epic) {
 			continue
 		}
 		if f.Mine != "" {
