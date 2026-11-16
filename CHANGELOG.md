@@ -4,6 +4,14 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.9 - 2026-11-16
+
+### Changed
+
+- `hug mem` commands end with a `next:` hint, like `hug task` (on stderr
+  for commands that print JSON, so stdout stays parseable; hooks, mcp,
+  serve and tui stay silent).
+
 ## v0.7.8 - 2026-11-16
 
 ### Changed
