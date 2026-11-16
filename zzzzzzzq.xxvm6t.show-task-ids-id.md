@@ -1,7 +1,7 @@
 ---
 id: xxvm6t
 title: "Bare task ids without brackets; task:ID accepted and followable"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["vole"]
