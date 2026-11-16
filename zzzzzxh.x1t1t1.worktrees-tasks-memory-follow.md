@@ -2,8 +2,8 @@
 id: x1t1t1
 title: "Worktrees: record branch and worktree on take; branch as a condition"
 status: todo
-type: spike
-priority: ""
+type: "feature"
+priority: "high"
 assignee: []
 labels: ["needs-discussion"]
 created: 2026-11-16
