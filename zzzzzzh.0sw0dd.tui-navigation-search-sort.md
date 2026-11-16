@@ -32,3 +32,5 @@ Requests: (1) status counts line shows its keys (letters or matching column init
 - [ ] epic and group visible in list rows and detail
 
 ## Notes
+
+2026-11-16 review, built (uncommitted until goldens pass): (a) board rows compact: lint mark in the gutter left of the id, type and priority as one coloured letter, legend line under the board; (b) detail: { and } (also Ctrl-N/Ctrl-P) open the next/previous task of the list it was opened from, footer 'Task 3 of 22'; (c) palette uses the full height and is a tree: filter > field > value with task counts; ': f done' and ': filter done' find the value without the field; short forms (status todo, done) still run; (d) Space in a list no longer asks to tick a check you cannot see: it says 'Enter opens ID'; the prompt in detail reads 'Tick acceptance check N of ID? "text"'. Still open from the review: choosing board columns (wide vs letters), items 1-5.
