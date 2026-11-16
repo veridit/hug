@@ -11,8 +11,8 @@ PgDn / PgUp     full page down / up                                     t / d / 
 h/← Shift-Tab   previous pane / column                                  J / K           move down / up in global rank order
 l/→ Tab         next pane / column                                      N               new title, goal and one verification item
 Enter           open full task detail                                   e               edit in $VISUAL, else $EDITOR, git core.editor, vi
-Esc             back one level, never quits                             Enter / Esc     confirm / cancel every editing action
-q / ctrl-c      quit (q only outside inputs)
+Esc             back one level, never quits                             e again         after an edit left a finding: edit at once
+q / ctrl-c      quit (q only outside inputs)                            Enter / Esc     confirm / cancel every editing action
 /               live find; Enter keeps, Esc clears
 :               palette with command + value completion
 Tab / Enter     complete palette choice; Enter runs complete command

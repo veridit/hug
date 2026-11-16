@@ -4,6 +4,37 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+### Fixed
+
+- A line in `## Depends on` that is not a dependency (prose, a question) no
+  longer becomes one. It used to take the first word as a task id: a
+  question showed the task as blocked on "Is". A dependency line is
+  `- <task id>` (or an alias like `TASK-123`, optionally `task:ID`, then a
+  note); anything else is reported by `hug task lint` with the new code
+  `not-a-dependency`, quoting the line and showing the form to write. It
+  creates no dependency and never blocks the task.
+- `hug task lint`'s `next:` repairs the first finding (its fix command)
+  instead of naming an unrelated task to take. Same in `--json`. A clean
+  board keeps the usual next.
+
+### Changed
+
+- Every lint finding carries a fix: text output prints `fix: COMMAND` under
+  each finding, JSON findings have a `fix` field. A dependency on no task
+  now reads "depends on ID, but no task has that id or alias; remove the
+  line, or write an existing task's id" with `fix: hug task dep TASK
+  --remove ID` (code `dangling-dependency` unchanged).
+- TUI: after an edit that leaves the task with a new finding, the footer
+  shows it (task, line, problem) and a bar with its fix and `e edit again ·
+  Esc dismiss`; `e` reopens the editor on that task at once. The key shows
+  only while the finding is there. The task detail header shows the
+  finding's line and, on its own line, the fix.
+- `hug task edit`'s `next:` is the fix for the edited task's first finding.
+- The task cache schema is 4, so lint stops serving findings cached under
+  the old dependency reading.
+
 ## v0.7.16 - 2026-11-16
 
 ### Fixed

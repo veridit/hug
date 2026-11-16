@@ -406,7 +406,7 @@ func TestMarkdownDetailFixedHeaderAndEmptySections(t *testing.T) {
 	m.height = 40
 	m.resize()
 	v := ansi.Strip(m.View())
-	for _, want := range []string{"[done]", "[000003]", "⚠ Acceptance requires at least one item", "compiler-lang", "rendered code", "no acceptance items yet", "no dependencies"} {
+	for _, want := range []string{"[done]", "[000003]", "⚠ line 1: Acceptance requires at least one item", "  fix: hug task edit 000003", "compiler-lang", "rendered code", "no acceptance items yet", "no dependencies"} {
 		if !strings.Contains(v, want) {
 			t.Fatalf("missing %s\n%s", want, v)
 		}

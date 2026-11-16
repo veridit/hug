@@ -227,7 +227,7 @@ func (m *model) openTask(t task.Task) {
 	m.detail = true
 	m.startFocus()
 	m.syncDetail()
-	m.viewport.GotoTop()
+	m.openTop()
 }
 func (m model) updateJump(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	choices := m.jumpChoices()

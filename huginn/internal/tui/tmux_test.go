@@ -268,7 +268,7 @@ func TestTmuxGolden(t *testing.T) {
 				send("#1785")
 				wait("JUMP TO ID")
 				special("Enter")
-				snapshot("markdown-warning", "⚠ Acceptance requires at least one item")
+				snapshot("markdown-warning", "⚠ line 1: Acceptance requires at least one item")
 				special("Escape")
 				wait("HUG TASKS · list")
 				send(":type ")

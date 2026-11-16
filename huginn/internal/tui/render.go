@@ -492,6 +492,10 @@ func (m model) View() string {
 			}
 		}
 	}
+	if notice, bar, ok := m.editNoticeLines(); ok && m.confirm == "" && m.prompt == "" && !m.help && m.message == "" {
+		lines[len(lines)-1] = notice
+		inputLine = bar
+	}
 	if m.confirm != "" {
 		inputLine = m.confirmLine()
 	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" {
@@ -509,6 +513,31 @@ func (m model) View() string {
 		lines[i] = fit(line, m.width)
 	}
 	return strings.Join(lines, "\n")
+}
+
+// editNoticeLines are the two lines shown after an edit that left the task
+// with a finding: what is wrong (task, line, problem) in the warning colour,
+// then a bar in the confirm style with the fix and the key that reopens the
+// editor, which survives truncation (rx74bp, 2026-11-16: the only sign of a
+// broken edit was "editor closed; re-linted").
+func (m model) editNoticeLines() (string, string, bool) {
+	t, fs, ok := m.noticeTask()
+	if !ok {
+		return "", "", false
+	}
+	f := fs[0]
+	what := "⚠ " + oneLine(t.ID)
+	if f.Line > 0 {
+		what += fmt.Sprintf(" line %d", f.Line)
+	}
+	what += ": " + oneLine(f.Problem)
+	if len(fs) > 1 {
+		what += fmt.Sprintf(" (+%d more)", len(fs)-1)
+	}
+	keys := " · e edit again · Esc dismiss"
+	fix := "▶ fix: " + oneLine(f.FixLine())
+	line := ansi.Truncate(fix, max(1, m.width-ansi.StringWidth(keys)), "…") + keys
+	return m.styles.warning.Render(fit(what, m.width)), m.styles.ask.Render(fit(line, m.width)), true
 }
 
 // confirmLine is the question every confirm asks, in one style that cannot be

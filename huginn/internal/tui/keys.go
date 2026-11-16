@@ -107,6 +107,7 @@ func (m model) helpText() string {
 		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps"),
 		hint("t / d / x", "take / done / drop task"), hint("J / K", "move down / up in global rank order"),
 		hint("N", "new title, goal and one verification item"), hint("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi"),
+		hint("e again", "after an edit left a finding: edit at once"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),
 	}
 	if m.helpQuery != "" || m.helpTyping {

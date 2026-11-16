@@ -75,18 +75,33 @@ func (m model) detailHeader(t task.Task) []string {
 	lines := []string{title}
 	lines = append(lines, strings.Split(wrap(strings.Join(badges, "  "), m.width), "\n")...)
 	lines = append(lines, m.styles.dim.Render("created "+oneLine(t.Created)+" · updated "+oneLine(t.Updated)+" · "+oneLine(t.Slug)))
-	problems := []string{}
-	for _, f := range m.findings {
-		if f.Path == t.Path && !contains(problems, f.Problem) {
-			problems = append(problems, f.Problem)
+	var problems []task.Finding
+	seen := map[string]bool{}
+	// What the last edit broke comes first, then the rest in line order.
+	var fresh []task.Finding
+	if nt, fs, ok := m.noticeTask(); ok && nt.Path == t.Path {
+		fresh = fs
+	}
+	for _, f := range append(fresh, m.findings...) {
+		if f.Path == t.Path && !seen[f.Problem] {
+			seen[f.Problem] = true
+			problems = append(problems, f)
 		}
 	}
 	if len(problems) > 0 {
-		warning := "⚠ " + oneLine(problems[0])
+		// What is wrong, on which line, then the fix on its own line so a
+		// long problem never cuts it off (rx74bp).
+		f := problems[0]
+		warning := "⚠ "
+		if f.Line > 0 {
+			warning += fmt.Sprintf("line %d: ", f.Line)
+		}
+		warning += oneLine(f.Problem)
 		if len(problems) > 1 {
 			warning += fmt.Sprintf(" (+%d more findings)", len(problems)-1)
 		}
 		lines = append(lines, m.styles.warning.Render(fit(warning, m.width)))
+		lines = append(lines, m.styles.warning.Render(fit("  fix: "+oneLine(f.FixLine()), m.width)))
 	}
 	return lines
 }
@@ -290,6 +305,26 @@ func (m model) detailText(t task.Task) string {
 	}
 	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
 }
+
+// openTop shows a just-opened task from the top, scrolled only as far as
+// needed to keep the focused check in view: the header can grow (a finding
+// and its fix take two lines, rx74bp) and must not hide the focus.
+func (m *model) openTop() {
+	m.viewport.GotoTop()
+	if m.detailPane == focusPage {
+		return
+	}
+	if t, ok := m.selected(); ok {
+		for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
+			if strings.HasPrefix(line, "> ") {
+				if i >= m.viewport.Height {
+					m.viewport.SetYOffset(i - m.viewport.Height + 1)
+				}
+				return
+			}
+		}
+	}
+}
 func (m *model) revealAcceptance() {
 	if m.detailPane == focusPage {
 		return // nothing is marked; the page keeps its scroll
@@ -329,7 +364,7 @@ func (m *model) followDependency() {
 	m.detailPath = target.Path
 	m.startFocus()
 	m.syncDetail()
-	m.viewport.GotoTop()
+	m.openTop()
 }
 
 // checkStyle colours an acceptance check: ticked ones green, open ones in the

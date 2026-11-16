@@ -31,7 +31,10 @@ func Run(ctx context.Context, store *task.Store, opts Options) error {
 	return err
 }
 
-type editorMsg struct{ err error }
+type editorMsg struct {
+	path string // the task file the editor opened
+	err  error
+}
 type model struct {
 	store                              *task.Store
 	opts                               Options
@@ -59,6 +62,12 @@ type model struct {
 	chips                              []filterChip
 	pickerField                        string
 	styles                             theme
+	// editNotice is the task file whose edit introduced lint findings: the
+	// notice shows the first one with its fix, and e reopens the editor,
+	// until Esc, another action, or the file is clean (rx74bp).
+	editNotice string
+	// editBefore holds the problems the task had when the editor opened.
+	editBefore map[string]bool
 }
 
 func newModel(s *task.Store, o Options) model {
@@ -253,7 +262,7 @@ func (m *model) stepTask(step int) {
 	if m.cursor != before {
 		m.startFocus()
 		m.syncDetail()
-		m.viewport.GotoTop()
+		m.openTop()
 		return
 	}
 	m.syncDetail()
@@ -363,6 +372,8 @@ func (m *model) back() {
 	case m.confirm != "":
 		m.confirm = ""
 		m.pendingValue = ""
+	case m.editNotice != "" && m.prompt == "":
+		m.editNotice = ""
 	case m.prompt == "filter" && m.pickerField != "":
 		m.pickerField = ""
 		m.input.SetValue("")
@@ -379,7 +390,7 @@ func (m *model) back() {
 		m.detailStack = m.detailStack[:len(m.detailStack)-1]
 		m.startFocus()
 		m.syncDetail()
-		m.viewport.GotoTop()
+		m.openTop()
 	case m.detail:
 		m.detail = false
 		m.detailPath = ""
@@ -413,7 +424,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.resize()
 		}
 	case editorMsg:
-		m.refresh("")
+		m.refresh(msg.path)
+		m.editNotice = ""
 		if msg.err != nil {
 			m.message = msg.err.Error()
 		} else {
@@ -422,6 +434,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if err := m.opts.Commit("hug task edit"); err != nil {
 					m.message = err.Error()
 				}
+			}
+			m.editNotice = msg.path
+			if _, _, ok := m.noticeTask(); ok {
+				// Say what the edit broke and how to repair it, in the
+				// footer and the bar under it, instead of a quiet message.
+				// A failed commit keeps its message: that matters more.
+				if m.message == "editor closed; re-linted" {
+					m.message = ""
+				}
+			} else {
+				m.editNotice = ""
 			}
 		}
 	case tea.KeyMsg:
@@ -491,6 +514,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		if m.prompt != "" {
 			return m.updateInput(msg)
+		}
+		// After an edit that broke the file, e goes straight back into the
+		// editor on that task: the notice is the question (rx74bp).
+		if k == "e" {
+			if t, _, ok := m.noticeTask(); ok {
+				cmd := m.runEditor(t)
+				return m, cmd
+			}
 		}
 		if k == "q" {
 			return m, tea.Quit
@@ -658,7 +689,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.detail = true
 				m.startFocus()
 				m.syncDetail()
-				m.viewport.GotoTop()
+				m.openTop()
 			}
 		case k == "/":
 			return m, m.openInput("/", m.query)

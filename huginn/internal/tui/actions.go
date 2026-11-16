@@ -32,6 +32,7 @@ func (m *model) executeAction() tea.Cmd {
 	k, value, path := m.confirm, m.pendingValue, m.confirmPath
 	m.confirm = ""
 	m.pendingValue = ""
+	m.editNotice = ""
 	// Resolve again by path so confirmation never applies to another selected task.
 	var t task.Task
 	if k != "n" {
@@ -104,17 +105,65 @@ func (m *model) executeAction() tea.Cmd {
 			action = "uncheck"
 		}
 	case "e":
-		filename, e := m.editorPath(t)
-		if e != nil {
-			m.message = e.Error()
-			return nil
-		}
-		args := editor.Command()
-		cmd := exec.Command(args[0], append(args[1:], filename)...)
-		return tea.ExecProcess(cmd, func(e error) tea.Msg { return editorMsg{e} })
+		return m.runEditor(t)
 	}
 	m.finish(r, err, action)
 	return nil
+}
+
+// runEditor opens the task file in the user's editor; editorMsg comes back
+// with the path, so the result is checked for that task (rx74bp).
+func (m *model) runEditor(t task.Task) tea.Cmd {
+	filename, e := m.editorPath(t)
+	if e != nil {
+		m.message = e.Error()
+		return nil
+	}
+	args := editor.Command()
+	cmd := exec.Command(args[0], append(args[1:], filename)...)
+	path := t.Path
+	// Remember what was wrong before, so the notice names what this edit
+	// introduced, not an old finding.
+	m.editBefore = map[string]bool{}
+	for _, f := range m.editFindings(path) {
+		m.editBefore[f.Problem] = true
+	}
+	return tea.ExecProcess(cmd, func(e error) tea.Msg { return editorMsg{path: path, err: e} })
+}
+
+// editFindings are the lint findings of the task file at path.
+func (m model) editFindings(path string) []task.Finding {
+	var out []task.Finding
+	for _, f := range m.findings {
+		if f.Path == path {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
+// noticeTask is the task the edit notice is about, with the findings the
+// edit introduced, while it still exists and still has one: only then does
+// e reopen the editor on it.
+func (m model) noticeTask() (task.Task, []task.Finding, bool) {
+	if m.editNotice == "" {
+		return task.Task{}, nil, false
+	}
+	var fs []task.Finding
+	for _, f := range m.editFindings(m.editNotice) {
+		if !m.editBefore[f.Problem] {
+			fs = append(fs, f)
+		}
+	}
+	if len(fs) == 0 {
+		return task.Task{}, nil, false
+	}
+	for _, t := range m.all {
+		if t.Path == m.editNotice {
+			return t, fs, true
+		}
+	}
+	return task.Task{}, nil, false
 }
 func (m *model) finish(r task.Result, err error, action string) {
 	if err != nil {

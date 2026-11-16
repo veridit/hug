@@ -5,7 +5,8 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖
 [todo]  [feature]  [critical]  [000001]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
-⚠ title is 134 characters (max 80): move detail into the Goal (fix: hug task set 000001 --title "...")
+⚠ line 1: title is 134 characters (max 80): move detail into the Goal
+  fix: hug task set 000001 --title "..."
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
 Deliver compiler-lang support with  huginn  and readable evidence.
@@ -28,7 +29,6 @@ Evidence: integration tests are synthetic.
 
 HISTORY
 2026-11-10: created by the terminal acceptance fixture.
-
 
 
 

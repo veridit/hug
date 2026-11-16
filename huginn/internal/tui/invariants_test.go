@@ -86,7 +86,7 @@ func TestErrorAndTerminalInputSafety(t *testing.T) {
 	if cmd == nil {
 		t.Fatal("blank EDITOR must fall back to an editor", m.message)
 	}
-	next, _ := m.Update(editorMsg{os.ErrPermission})
+	next, _ := m.Update(editorMsg{err: os.ErrPermission})
 	if next.(model).message != os.ErrPermission.Error() {
 		t.Fatal("editor error lost")
 	}
