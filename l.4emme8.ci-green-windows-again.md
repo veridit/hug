@@ -32,3 +32,5 @@ Latest failing run: gh run list --workflow ci.yml. Local machine is macOS; repro
 ## Notes
 
 gh run view 43896372629 (branch ci/4emme8, commit 2988e9d, same tree as main 9d56b3e minus CHANGELOG): secrets success / test (ubuntu-latest) success / test (windows-latest) success / test (macos-latest) success. Causes: lint tests exec'd #!/bin/sh ed.sh ('%1 is not a valid Win32 application') -> test binary as VISUAL; watch tests drain() gave the git-backed reload 100ms -> await loadedMsg; worktree list prints C:/Users/runneradmin vs Go C:\Users\RUNNER~1 -> os.SameFile.
+
+2026-11-16 crab: production check asked of vole: does hug code compare worktree path strings (would break on Windows like the test did)? Answer pending in vole's report.
