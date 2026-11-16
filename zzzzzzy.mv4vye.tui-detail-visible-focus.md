@@ -45,3 +45,5 @@ Code: huginn/internal/tui/detail.go (section headings, detailPane 0 = acceptance
 2026-11-16 Jørgen, supersedes the 'T type:' legend note: the legend reads 'Type: F feature ... · Priority: C critical ...' with the initial T and P emphasised (bold or the column-header style), no separate letter before the word; narrow fallback 'T: ... · P: ...'. Sent to the worker.
 
 2026-11-16 Jørgen on v0.7.15: 'Tick: ☐ 1. y' is better but needs more pop. Made concrete for check 5: the confirm line is a full-width bar in a strong background, carries the answer keys (Enter yes, Esc no), and stands out without colour too. Also: an empty priority renders as '[]' in the detail header; do not render empty badges. Both sent to the worker.
+
+check 1 (e6f84c0): go test -run TestFocusHintsAreHonest ./huginn/internal/tui/ -> '--- PASS: TestFocusHintsAreHonest (0.51s)'. Asserts no '[ / ]' or '{ / }' in View at 80 and 140 in all three focus states nor in help, then presses every key detailHints shows in each focus and checks its effect. Headings now read '▸ ACCEPTANCE · j/k or [ ] step · Space ticks' (golden 80x24-no-color/detail.txt).
