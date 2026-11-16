@@ -33,3 +33,4 @@ Same fsnotify watcher style as nfv18p (auto-refresh), so build after it, same fi
 ## Notes
 
 2026-11-16 Jørgen: no backwards compatibility anywhere; the reload hands state only to the same or newer hug and needs no old-format reader.
+2026-11-16 Jørgen: Showing the version somewhere would also be nice, what version I'm currently running.
