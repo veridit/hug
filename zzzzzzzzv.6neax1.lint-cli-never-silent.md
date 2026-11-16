@@ -42,3 +42,5 @@ cause of the silent run (check 5): hug never exits 0 silently. Tested with v0.7.
 check 1 (7d600ff): TestLintNeverSilentSummaryCodesHelp: empty board -> "no findings\nnext: hug task new ..."; clean board -> exactly "no findings\nnext: hug task take <id>\n". Before: empty/clean boards printed only the next: line.
 
 check 2 (7d600ff): /tmp/hugtest task lint --summary on ~/.jcode/scratch/seidcopy/repo prints "2477 findings in 8 codes:" then e.g. "  1158  no-acceptance      no acceptance item (- [ ] ...)              hug task lint --code no-acceptance", spaces only, then "next: hug task lint --code no-acceptance". JSON has "summary":{"total":..,"codes":[{"code","count","meaning","list"}]}. Plain lint there: 32 lines / 2452 bytes (summary, first 10, "10 of 2477 shown; every one: hug task lint --all; one kind: hug task lint --code CODE"); --all: 4955 lines.
+
+check 3 (7d600ff): /tmp/hugtest task lint --code -> "finding codes (2477 findings on this board):" + one line per code (29, zeros included) with count; --code help the same; --code nope -> "unknown code nope; closest: other; valid: frontmatter, ..." + "fix: hug task lint --code", exit 2.
