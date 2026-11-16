@@ -26,7 +26,7 @@ Latest failing run: gh run list --workflow ci.yml. Local machine is macOS; repro
 ## Depends on
 
 ## Acceptance
-- [ ] gh run list --workflow ci.yml shows success on windows-latest for main
+- [x] gh run list --workflow ci.yml shows success on windows-latest for main
 - [x] each of the 7 failing tests passes on windows with the cause named in the commit message
 
 ## Notes
