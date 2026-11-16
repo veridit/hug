@@ -41,3 +41,5 @@ Code: huginn/internal/tui/detail.go (section headings, detailPane 0 = acceptance
 2026-11-16 Jørgen, supersedes the ',' and '.' note: in detail n = next task, p = previous task; new task moves to N in every view; { and } removed; Ctrl-N/Ctrl-P stay; in lists n/p move the selection like j/k. Sent to the worker.
 
 2026-11-16 Jørgen on the v0.7.15 board: compact rows are 'a lot better'. Addition: the legend must connect to the column labels, e.g. 'T type: F feature ... · P priority: C critical ...', with T and P styled like the header; narrow fallback 'T: ... · P: ...'. Sent to the worker.
+
+2026-11-16 Jørgen, supersedes the 'T type:' legend note: the legend reads 'Type: F feature ... · Priority: C critical ...' with the initial T and P emphasised (bold or the column-header style), no separate letter before the word; narrow fallback 'T: ... · P: ...'. Sent to the worker.
