@@ -18,7 +18,7 @@ the three remaining seid-lang trial findings are fixed
 ## Acceptance
 - [x] huginn lint --json findings carry a short code
 - [x] huginn board --wide shows full titles
-- [ ] huginn init prints branch, worktree path and first commit
+- [x] huginn init prints branch, worktree path and first commit
 
 ## Notes
 
