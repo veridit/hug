@@ -628,7 +628,8 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 			return store.Unit{}, false, &DuplicateCheckError{SID: h.Unit.SID, Text: h.Unit.Body, Score: h.Semantic}
 		}
 	}
-	m, reinforced, err := ingest.RememberTyped(NativePath(), content, category, NormalType(decision.Type), scope, tags, safeReason, decision.NewReason)
+	m, reinforced, err := ingest.RememberWith(NativePath(), ingest.Remembering{Content: content, Category: category, Type: NormalType(decision.Type), Scope: scope, Tags: tags,
+		SafeReason: safeReason, NewReason: decision.NewReason, Branch: b.workBranch()})
 	if err != nil {
 		return store.Unit{}, false, err
 	}

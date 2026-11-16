@@ -141,9 +141,14 @@ type Task struct {
 	Assignee []string `json:"assignee"`
 	// Model is the model that took the task (claude-opus-5-5, gpt-6.1-sol,
 	// or human), recorded by hug task take --model (et85h1).
-	Model   string   `json:"model,omitempty"`
-	Labels  []string `json:"labels"`
-	Aliases []string `json:"aliases"`
+	Model string `json:"model,omitempty"`
+	// Branch and Worktree are where the task was taken (x1t1t1): the git
+	// branch checked out there and that worktree's folder. The branch is
+	// what matters; the folder only says where to look now.
+	Branch   string   `json:"branch,omitempty"`
+	Worktree string   `json:"worktree,omitempty"`
+	Labels   []string `json:"labels"`
+	Aliases  []string `json:"aliases"`
 	// Parent is the epic this task belongs to (an id), or empty. An epic is
 	// a task with children; it has no parent itself (three fixed levels:
 	// epic, task, acceptance item).

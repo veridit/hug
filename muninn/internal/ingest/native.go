@@ -51,6 +51,10 @@ type NativeMemory struct {
 	// SafeReason records why the writer judged text that looked secret to be
 	// safe to store (2026-11-06: judge on write, never hide on display).
 	SafeReason string `json:"safe_reason,omitempty"`
+	// Branch is the git branch the memory was remembered or captured on, set
+	// when that is a linked worktree or a branch other than the main one
+	// (x1t1t1). A merged or deleted branch makes the memory a dream item.
+	Branch string `json:"branch,omitempty"`
 }
 
 type nativeFile struct {
@@ -210,6 +214,25 @@ func RememberSafe(path, content, category, scope string, tags []string, safeReas
 // RememberTyped is RememberSafe with the memory type (rule, preference, fact,
 // record; "" = unstated). Reinforcing a memory sets its type when it had none.
 func RememberTyped(path, content, category, typ, scope string, tags []string, safeReason string, newReasons ...string) (NativeMemory, bool, error) {
+	var reason string
+	if len(newReasons) > 0 {
+		reason = newReasons[0]
+	}
+	return RememberWith(path, Remembering{Content: content, Category: category, Type: typ, Scope: scope, Tags: tags, SafeReason: safeReason, NewReason: reason})
+}
+
+// Remembering is one memory to store with RememberWith.
+type Remembering struct {
+	Content, Category, Type, Scope string
+	Tags                           []string
+	SafeReason, NewReason          string
+	Branch                         string // see NativeMemory.Branch
+}
+
+// RememberWith stores r, or reinforces an active memory with the same text,
+// category and scope. Reinforcing keeps the first branch it was seen on.
+func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
+	content, category, typ, scope, tags, safeReason := r.Content, r.Category, r.Type, r.Scope, r.Tags, r.SafeReason
 	content = strings.TrimSpace(content)
 	if content == "" {
 		return NativeMemory{}, false, errors.New("empty memory")
@@ -236,16 +259,17 @@ func RememberTyped(path, content, category, typ, scope string, tags []string, sa
 			if m.Type == "" {
 				m.Type = typ
 			}
+			if m.Branch == "" {
+				m.Branch = r.Branch
+			}
 			m.Strength++
 			m.Updated = now
 			return *m, true, SaveNative(path, mems)
 		}
 	}
 	m := NativeMemory{ID: newID(), Content: content, Category: category, Type: typ, Tags: tags, Scope: scope,
-		Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason)}
-	if len(newReasons) > 0 {
-		m.NewReason = strings.TrimSpace(newReasons[0])
-	}
+		Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason),
+		NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch)}
 	mems = append(mems, m)
 	assignNativeSIDs(mems)
 	m = mems[len(mems)-1]

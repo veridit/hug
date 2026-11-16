@@ -325,7 +325,24 @@ func (s *Store) TakeAs(ref, name, model string) (Result, error) {
 	if name == "" {
 		name = model
 	}
-	return s.transition(ref, "doing", name, model)
+	return s.TakeAt(ref, name, model, Place{})
+}
+
+// Place is where a task is taken: the git branch and worktree folder
+// (x1t1t1). Empty fields are not recorded.
+type Place struct{ Branch, Worktree string }
+
+// TakeAt is TakeAs that also records where the work happens. A take from a
+// new place updates branch and worktree; one with no place leaves them.
+func (s *Store) TakeAt(ref, name, model string, at Place) (Result, error) {
+	name, model = strings.TrimSpace(name), strings.TrimSpace(model)
+	if model == "" {
+		return Result{}, &Error{Kind: "no-model", ID: ref, Fix: "hug task take " + ref + " --model MODEL"}
+	}
+	if name == "" {
+		name = model
+	}
+	return s.transitionAt(ref, "doing", name, model, at)
 }
 func (s *Store) Done(ref string) (Result, error) { return s.Transition(ref, "done", "") }
 func (s *Store) Drop(ref string) (Result, error) { return s.Transition(ref, "dropped", "") }
@@ -333,6 +350,10 @@ func (s *Store) Transition(ref, status, user string) (Result, error) {
 	return s.transition(ref, status, user, "")
 }
 func (s *Store) transition(ref, status, user, model string) (Result, error) {
+	return s.transitionAt(ref, status, user, model, Place{})
+}
+
+func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -340,7 +361,7 @@ func (s *Store) transition(ref, status, user, model string) (Result, error) {
 	if !contains(Statuses, status) {
 		return Result{}, invalidFor(d.Task.ID, "status", status, Statuses)
 	}
-	if d.Task.Status == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.Model == model) {
+	if d.Task.Status == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.Model == model) && (at.Branch == "" || d.Task.Branch == at.Branch) && (at.Worktree == "" || d.Task.Worktree == at.Worktree) {
 		return s.finish(d, false)
 	}
 	if status == "doing" && user != "" && len(d.Task.Assignee) > 0 && !contains(d.Task.Assignee, user) {
@@ -404,6 +425,15 @@ func (s *Store) transition(ref, status, user, model string) (Result, error) {
 	if status == "doing" && model != "" {
 		if e = d.SetField("model", model); e != nil {
 			return Result{}, e
+		}
+	}
+	if status == "doing" {
+		for _, f := range [][2]string{{"branch", at.Branch}, {"worktree", at.Worktree}} {
+			if f[1] != "" {
+				if e = d.SetField(f[0], f[1]); e != nil {
+					return Result{}, e
+				}
+			}
 		}
 	}
 	if status == "done" {

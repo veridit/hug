@@ -63,6 +63,10 @@ func (d *Document) parseFrontmatter() {
 			target = &d.Task.Assignee
 		case "model":
 			target = &d.Task.Model
+		case "branch":
+			target = &d.Task.Branch
+		case "worktree":
+			target = &d.Task.Worktree
 		case "labels":
 			target = &d.Task.Labels
 		case "parent":

@@ -41,3 +41,30 @@ func TestTakeAsModelRequiredAndRecorded(t *testing.T) {
 		t.Fatalf("stolen: %v", e)
 	}
 }
+
+// x1t1t1: TakeAt records the branch and worktree next to the model; taking
+// again from another worktree moves them; an empty place leaves them.
+func TestTakeAtRecordsBranchAndWorktree(t *testing.T) {
+	s := &Store{Root: t.TempDir()}
+	a := newTest(t, s, "A")
+	r, e := s.TakeAt(a.ID, "dragon", "claude-opus-5-5", Place{Branch: "feat/x", Worktree: "/w/feat-x"})
+	if e != nil || r.Task.Branch != "feat/x" || r.Task.Worktree != "/w/feat-x" || r.Task.Model != "claude-opus-5-5" {
+		t.Fatal(r.Task, e)
+	}
+	raw, _ := os.ReadFile(filepath.Join(s.Root, r.Task.Path))
+	if !strings.Contains(string(raw), "branch: \"feat/x\"\n") || !strings.Contains(string(raw), "worktree: \"/w/feat-x\"\n") {
+		t.Fatal(string(raw))
+	}
+	if d := Parse(r.Task.Path, raw); d.Task.Branch != "feat/x" || len(d.Findings) != 0 {
+		t.Fatal(d.Task.Branch, d.Findings)
+	}
+	if r, e = s.TakeAt(a.ID, "dragon", "claude-opus-5-5", Place{Branch: "feat/x", Worktree: "/w/feat-x"}); e != nil || r.Changed {
+		t.Fatal("repeat", r, e)
+	}
+	if r, e = s.TakeAt(a.ID, "dragon", "claude-opus-5-5", Place{Branch: "feat/y", Worktree: "/w/feat-y"}); e != nil || !r.Changed || r.Task.Branch != "feat/y" {
+		t.Fatal("move", r.Task, e)
+	}
+	if r, e = s.TakeAs(a.ID, "dragon", "claude-opus-5-5"); e != nil || r.Task.Branch != "feat/y" {
+		t.Fatal("no place keeps it", r.Task, e)
+	}
+}

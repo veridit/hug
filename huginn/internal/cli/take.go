@@ -42,7 +42,7 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 		local := *s.s
 		local.Refresh = nil
 		var err error
-		result, err = local.TakeAs(ref, who.Name, who.Model)
+		result, err = local.TakeAt(ref, who.Name, who.Model, who.At)
 		return err
 	})
 	var raced *gitbranch.ErrRaced
@@ -57,4 +57,17 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 		_, e = s.s.Tasks()
 	}
 	return result, e
+}
+
+// placeOf is the branch and worktree folder of dir (x1t1t1). Outside git, or
+// with a detached HEAD, it is empty and nothing is recorded.
+func placeOf(dir string) task.Place {
+	if dir == "" {
+		return task.Place{}
+	}
+	p, err := gitbranch.Where(dir)
+	if err != nil || p.Branch == "" {
+		return task.Place{}
+	}
+	return task.Place{Branch: p.Branch, Worktree: p.Worktree}
 }

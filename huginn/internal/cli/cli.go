@@ -184,7 +184,12 @@ func (a *App) refreshExisting(ctx context.Context) error {
 // (jcode: the name in JCODE_SESSION_ID, session_<name>_...). Without a name
 // the assignee is the model. git config user.name is never used: it names
 // the person at the keyboard, not the agent doing the work.
-type taker struct{ Name, Model string }
+type taker struct {
+	Name, Model string
+	// At is where the take happens (x1t1t1): detected from the working
+	// directory, or --branch/--worktree.
+	At task.Place
+}
 
 // harnessName is the session name the agent harness gives this process.
 func harnessName() string {
@@ -198,6 +203,13 @@ func harnessName() string {
 
 func (a *App) whoTakes(f flags) taker {
 	t := taker{Name: strings.TrimSpace(f.get("as")), Model: strings.TrimSpace(f.get("model"))}
+	t.At = placeOf(a.Cwd)
+	if b := strings.TrimSpace(f.get("branch")); b != "" {
+		t.At.Branch = b
+	}
+	if w := strings.TrimSpace(f.get("worktree")); w != "" {
+		t.At.Worktree = w
+	}
 	if t.Model == "" {
 		t.Model = strings.TrimSpace(os.Getenv("HUG_MODEL"))
 	}
@@ -397,7 +409,7 @@ func (a *App) Execute(ctx context.Context, args []string) (Reply, error) {
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -976,10 +988,12 @@ func ErrorDetails(err error) (int, string, string) {
 }
 
 // Text replies print as follows; JSON replies are encoded unchanged.
-// takenBy is "poodle · claude-opus-5-5" for a task taken with --as and
-// --model, the model alone when the name is the model, the assignee alone
-// for tasks taken before models were recorded, and empty when untaken.
-func takenBy(t Reply) string {
+// takenBy is "poodle · claude-opus-5-5 · feat/x" for a task taken with --as
+// and --model on branch feat/x, the model alone when the name is the model,
+// the assignee alone for tasks taken before models were recorded, and empty
+// when untaken. The branch is added when one was recorded (x1t1t1), except
+// when it is hide (ls rows hide the main branch; show always names it).
+func takenBy(t Reply, hide string) string {
 	names := []string{}
 	if as, ok := t["assignee"].([]any); ok {
 		for _, v := range as {
@@ -987,14 +1001,18 @@ func takenBy(t Reply) string {
 		}
 	}
 	model, _ := t["model"].(string)
+	branch, _ := t["branch"].(string)
 	who := strings.Join(names, ", ")
 	switch {
 	case who == "":
 		return ""
-	case model == "" || who == model:
-		return who
+	case model != "" && who != model:
+		who += " · " + model
 	}
-	return who + " · " + model
+	if branch != "" && branch != hide {
+		who += " · " + branch
+	}
+	return who
 }
 
 func (a *App) Run(ctx context.Context, args []string) int {
@@ -1070,11 +1088,13 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		for _, t := range ts {
 			w = min(40, max(w, len(fmt.Sprint(t["slug"]))))
 		}
+		main := gitbranch.DefaultBranch(a.Cwd)
 		for _, t := range ts {
 			// Who is working: only doing rows name the taker, so done history
-			// does not crowd the list (show always names it).
+			// does not crowd the list (show always names it), and the branch
+			// only when it is not the main one.
 			by := ""
-			if who := takenBy(t); who != "" && t["status"] == "doing" {
+			if who := takenBy(t, main); who != "" && t["status"] == "doing" {
 				by = "  [" + who + "]"
 			}
 			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-*s  %s%s\n", t["id"], t["status"], t["type"], w, t["slug"], t["title"], by)
@@ -1082,7 +1102,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	if t, ok := reply["task"].(Reply); ok {
 		fmt.Fprintf(a.Out, "%s  %s  %s  %s\n", t["slug"], t["title"], t["id"], t["status"])
-		if who := takenBy(t); who != "" {
+		if who := takenBy(t, ""); who != "" {
 			fmt.Fprintf(a.Out, "taken by: %s\n", who)
 		}
 		fmt.Fprintf(a.Out, "goal: %s\n", t["goal"])

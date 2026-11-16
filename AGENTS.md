@@ -49,6 +49,6 @@ characters; detail goes in the Goal.
 Epics: hug task set ID --parent EPIC; hug task promote ID N turns item N into
 its own task. hug task ls --epic EPIC shows an epic and its children.
 MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take (model
-required, agent optional),
+and cwd required: your working folder, its branch is recorded; agent optional),
 task_done, task_update (actions set, check, promote, note, move, dep, drop).
 Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.

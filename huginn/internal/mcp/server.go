@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/veridit/hug/huginn/internal/task"
 	"math"
+	"path/filepath"
 	"slices"
 	"sort"
 	"strconv"
@@ -14,6 +15,7 @@ import (
 	"sync"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/cli"
 )
 
@@ -239,8 +241,27 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		}
 		return args, nil
 	})
-	add("take", "Claim a task using the remote push lock and set it doing. Say which model you are (model, required: claude-opus-5-5, gpt-6.1-sol, ...; a person: human) and, if you have one, your agent or session name (agent). Both are recorded on the task; without agent the assignee is the model.", map[string]any{"id": str("Task reference"), "model": str("The model doing the work, e.g. claude-opus-5-5 or gpt-6.1-sol; a person: human. Required unless HUG_MODEL is set for the server"), "agent": str("Your agent or session name, e.g. poodle (optional; default HUG_USER or the harness session)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
-		args := []string{"take", get(m, "id")}
+	add("take", "Claim a task using the remote push lock and set it doing. Say which model you are (model, required: claude-opus-5-5, gpt-6.1-sol, ...; a person: human), the folder you work in (cwd, required: the branch and worktree are read from it and recorded) and, if you have one, your agent or session name (agent). Without agent the assignee is the model.", map[string]any{"id": str("Task reference"), "model": str("The model doing the work, e.g. claude-opus-5-5 or gpt-6.1-sol; a person: human. Required unless HUG_MODEL is set for the server"), "cwd": str("Your working directory (absolute path), e.g. the git worktree you edit in. Required: hug records its branch and worktree on the task"), "agent": str("Your agent or session name, e.g. poodle (optional; default HUG_USER or the harness session)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
+		id := get(m, "id")
+		// One habit for agents (x1t1t1, Jørgen 2026-11-16): the server's
+		// own folder is not where the agent works, so cwd is always given.
+		// Checked here, not in the schema, so the error carries the fix.
+		cwd := strings.TrimSpace(get(m, "cwd"))
+		if cwd == "" {
+			return nil, &cli.UsageError{Problem: "no cwd given: say which folder you work in, so the branch and worktree of " + id + " are recorded", Fix: "task_take with cwd set to your working directory (absolute path), e.g. {\"id\": \"" + id + "\", \"model\": \"MODEL\", \"cwd\": \"/path/to/worktree\"}"}
+		}
+		if !filepath.IsAbs(cwd) {
+			return nil, &cli.UsageError{Problem: "cwd must be an absolute path, got " + strconv.Quote(cwd), Fix: "task_take with cwd set to the absolute path of your working directory (pwd)"}
+		}
+		at, err := gitbranch.Where(cwd)
+		if err != nil {
+			return nil, &cli.UsageError{Problem: "cwd " + strconv.Quote(cwd) + " is not inside a git checkout", Fix: "task_take with cwd set to the git worktree you work in (git -C DIR rev-parse --show-toplevel)"}
+		}
+		args := []string{"take", id}
+		if at.Branch != "" {
+			args = append(args, "--branch", at.Branch)
+		}
+		args = append(args, "--worktree", at.Worktree)
 		if v := get(m, "agent"); v != "" {
 			args = append(args, "--as", v)
 		}

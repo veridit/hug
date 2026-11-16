@@ -71,7 +71,7 @@ func TestTakeModelOnlyAssigneeIsModel(t *testing.T) {
 		t.Fatalf("assignee %v model %v", tk["assignee"], tk["model"])
 	}
 	f := taskFile(t, a, id)
-	if !strings.Contains(f, `assignee: ["gpt-6.1-sol"]`) || !strings.Contains(f, `model: "gpt-6.1-sol"`) || strings.Contains(f, "Test") || strings.Contains(f, "old-name-not-read") {
+	if !strings.Contains(f, `assignee: ["gpt-6.1-sol"]`) || !strings.Contains(f, `model: "gpt-6.1-sol"`) || strings.Contains(f, `"Test"`) || strings.Contains(f, "old-name-not-read") {
 		t.Fatalf("task file:\n%s", f)
 	}
 }
@@ -101,7 +101,7 @@ func TestTakeAsAndModelRecordsBoth(t *testing.T) {
 				t.Fatalf("task file:\n%s", f)
 			}
 			// show and ls name both.
-			if code, out := runText(a, "show", id); code != 0 || !strings.Contains(out, "taken by: poodle · claude-opus-5-5\n") {
+			if code, out := runText(a, "show", id); code != 0 || !strings.Contains(out, "taken by: poodle · claude-opus-5-5 · main\n") {
 				t.Fatalf("show: %d\n%s", code, out)
 			}
 			if code, out := runText(a, "ls"); code != 0 || !strings.Contains(out, "Take me  [poodle · claude-opus-5-5]\n") {
