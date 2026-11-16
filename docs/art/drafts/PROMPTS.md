@@ -1,14 +1,20 @@
 # Mascot drafts (Grok Imagine, 2026-11-16)
 
-Screenshots of Grok Imagine result grids; full-resolution originals are in
-the user's Grok library (Imagine > Library). Concept: hug = Old Norse hugr
-(mind, "komme i hug") and an embrace; Huginn (thought, tasks) and Muninn
-(memory) are the mascots.
+The generated images are in the user's Grok library (grok.com > Imagine >
+Library); nothing is copied here yet. Concept: hug = Old Norse hugr (mind,
+"komme i hug") and an embrace; Huginn (thought, tasks) and Muninn (memory)
+are the mascots.
 
-- grok-logo-batch1.png: two ravens leaning together (flat vector, navy/teal/amber).
-- grok-icon-batch1.png: ravens forming a circle with knotwork (app icon).
-- grok-runes-batch1.png: memory rune stone (teal) and checklist rune stone (amber) on their chests.
-- grok-working-batch1.png: one carves tick marks on a stone, one stores rune pebbles.
-- grok-embrace-batch1.png: both wings around a rune stone "mind" (hug as embrace).
-- grok-collector-scribe-batch1.png: Muninn collects glowing rune pebbles into a nest;
-  Huginn writes a to-do tablet with his claw. (Current favourite direction.)
+Prompts tried, in order:
+
+1. Two ravens leaning together in a gentle hug (flat vector, navy/teal/amber).
+2. App icon: two ravens forming a circle with Norse knotwork.
+3. Memory rune stone (teal) and checklist rune stone (amber) on their chests.
+4. One raven carves tick marks on a stone, the other stores rune pebbles.
+5. Both ravens wrap their wings around a rune-stone "mind" (hug as embrace).
+6. Collector and scribe: Muninn gathers glowing teal rune pebbles into a nest
+   with his beak; Huginn writes a to-do tablet with amber tick boxes with his
+   claw; they lean toward each other as friends. Current favourite direction.
+
+Next: pick a favourite, download the full-resolution PNG from the Grok
+library into docs/art/, then derive an icon and a 2:1 social banner.
