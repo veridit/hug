@@ -31,3 +31,5 @@ Code: huginn/internal/tui/tui.go paneIndices (case 2 match = m.blocked[t.Path] t
 - [ ] board view and status filter follow the same one-place rule (test)
 
 ## Notes
+
+check 1 (4ee3eb8): TestOverviewOneSectionPerTask: Bravo is doing with an unmet dependency; it is in IN PROGRESS only (not NEXT UP, not BLOCKED), drawn "[id] blocked" there, shown once in the overview; BLOCKED holds only Charlie (todo, unmet dependency); Alpha, Bravo, Charlie, Delta, Golf each in exactly 1 of IN PROGRESS/NEXT UP/BLOCKED. Before, the same board (scratch run on the old code): "Bravo shown 2 times in the overview". Rule: place(t) in tui.go (done, dropped, doing as they are; todo with an unmet dependency is blocked; else todo); boardStatus draws a blocked doing task blocked. Seid read-only (~/Veridit/src/seid-lang, 2507 tasks): tasks in more than one of IN PROGRESS/NEXT UP/BLOCKED: 0; n8zmjw (doing, unmet dependency) is in IN PROGRESS drawn blocked and not in BLOCKED.
