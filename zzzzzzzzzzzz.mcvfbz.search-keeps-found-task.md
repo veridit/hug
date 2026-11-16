@@ -1,0 +1,32 @@
+---
+id: mcvfbz
+title: "Search keeps the found task selected when you leave it"
+status: todo
+type: bug
+priority: "high"
+assignee: []
+labels: []
+created: 2026-11-16
+updated: 2026-11-16
+---
+
+## Goal
+After / search finds a task, leaving the search (Esc, or Enter on the match) returns to the full list with that same task still selected and scrolled into view, so m (grab) and J/K move it at once.
+
+## Purpose
+Jørgen 2026-11-16: search shows a limited view; he finds the task he wants, presses Esc to go back, and the selection jumps away, so he has lost the task and cannot pick it up to move it to its new place. Find-then-move is the main reason to search.
+
+## Principle
+The selection follows the task, not the row number: leaving search keeps the selected task's id and re-finds it in the full view. Esc still always backs out (it clears the search), it just does not lose your place. Works the same in overview, list and board. If the found task is hidden by an active filter, say so in the footer instead of jumping elsewhere.
+
+## Relevant details
+Related: moves refuse while sorted (mkzcqr), so the footer should also say ': sort rank' if the view is sorted. Ask Jørgen for a screen recording if the repro is unclear.
+
+## Depends on
+
+## Acceptance
+- [ ] search for a task, Esc: the same task is selected in the full list and visible (test, all three views)
+- [ ] search, Enter on a match, then m and J: the found task moves (test)
+- [ ] a found task hidden by the active filter: footer says so, selection does not jump to another task (test)
+
+## Notes
