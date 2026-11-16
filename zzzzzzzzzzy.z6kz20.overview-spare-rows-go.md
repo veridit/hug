@@ -1,7 +1,7 @@
 ---
 id: z6kz20
 title: "Overview: spare rows go to IN PROGRESS first, then NEXT UP"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["vole"]
