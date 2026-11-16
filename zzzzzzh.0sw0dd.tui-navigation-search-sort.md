@@ -4,7 +4,7 @@ title: "TUI navigation, search and sort"
 status: "todo"
 type: feature
 priority: ""
-assignee: [""]
+assignee: []
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
