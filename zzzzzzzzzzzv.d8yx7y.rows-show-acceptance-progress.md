@@ -1,13 +1,16 @@
 ---
 id: d8yx7y
 title: "Rows show acceptance progress as a pie glyph and N/M"
-status: todo
+status: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
