@@ -30,3 +30,5 @@ Reproduce: run 20 hug mem forget in parallel against a store while hug mem remem
 - [ ] 20 parallel forgets with a concurrent remember loop: 0 failures (test)
 
 ## Notes
+
+2026-11-16 Jørgen: many agents acting at once is the normal case, not an error. Every hug write (mem and task) waits its turn and then succeeds; it fails only if the wait is far longer than any normal write, and then names who holds the lock and gives a fix: line. Applies to remember, forget, sync, and hug task writes alike.
