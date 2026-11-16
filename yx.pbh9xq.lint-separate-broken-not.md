@@ -4,7 +4,7 @@ title: "Lint: separate broken from not up to par"
 status: todo
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["humpback"]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
