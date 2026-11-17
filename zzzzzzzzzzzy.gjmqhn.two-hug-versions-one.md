@@ -24,7 +24,6 @@ cache.Open is called from huginn/internal/cli/cli.go:244 with filepath.Join(gd, 
 
 ## Depends on
 
-- np2kk2
 ## Acceptance
 - [ ] two binaries with different SchemaVersion alternate opens on one board 4 times and neither rebuilds (Stats.Rebuilt false after the first open of each; test)
 - [ ] a cache-N.db not opened for 7 days is removed on the next open, a fresher one is kept (test with Chtimes)
