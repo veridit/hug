@@ -44,6 +44,7 @@ hatchling 14:05: fix on ci/zd3x24 (stacked on kestrel's ci/land-kbc99j-4vcwxk 42
 hatchling 14:11: stack probe 44099219234 (probe/zd3x24-stack = zd3x24 on kestrel's ci/land-kbc99j-4vcwxk + probe workflow), windows: 'native_race_test.go:63: 3359 reads, 566 writes', '--- PASS: TestNativeSaveRacesLoads', TestCaptureKilledAfterSaveBeforeCheckpoint -count=20: all PASS, 0 FAIL. ci/zd3x24 now b8198b5 on kestrel's 4ecfa25, CI 44099485911.
 hatchling 14:11 (count): in 44099219234 the uniq'd line '20 capture_batch_test.go:229: CAPTURE kill: child killed after native save...' = 20 of 20 runs completed, 0 'FAIL: TestCapture'. Before the fix the race test failed in 44095837741.
 hatchling 14:46: ci/zd3x24 b8198b5 (parent 4ecfa25 = origin/main now) CI 44099485911 completed success.
+hatchling 15:08: landed on main by fast-forward 4ecfa25..b8f9000 (zd3x24 95bcb99, 1rca5g a8d2f90, tpnd3n b8f9000). Pre-push CI 44107906191 green on ubuntu, macos, windows; main CI 44110812902 started.
 ## History
 - 2026-11-17T14:45 todo -> doing/active (take)
 - 2026-11-17T15:05 doing/active -> doing/waiting (wait)
