@@ -43,6 +43,7 @@ hatchling 13:47, cause with evidence. Windows probe run 44095837741 (probe/zd3x2
 hatchling 14:05: fix on ci/zd3x24 (stacked on kestrel's ci/land-kbc99j-4vcwxk 42453ee; ingest LoadNative/SaveNative and app/tidy.go read via internal/sharefile). Windows probe after the fix, run 44096575485 (on a45bec0): 'native_race_test.go:63: 2584 reads, 393 writes', '--- PASS: TestNativeSaveRacesLoads', capture test -count=20 all PASS. Before: 92 of 2745 loads and 145 of 429 saves failed (44095837741). Stack probe 44099219234 running. Lands after kbc99j per crab.
 hatchling 14:11: stack probe 44099219234 (probe/zd3x24-stack = zd3x24 on kestrel's ci/land-kbc99j-4vcwxk + probe workflow), windows: 'native_race_test.go:63: 3359 reads, 566 writes', '--- PASS: TestNativeSaveRacesLoads', TestCaptureKilledAfterSaveBeforeCheckpoint -count=20: all PASS, 0 FAIL. ci/zd3x24 now b8198b5 on kestrel's 4ecfa25, CI 44099485911.
 hatchling 14:11 (count): in 44099219234 the uniq'd line '20 capture_batch_test.go:229: CAPTURE kill: child killed after native save...' = 20 of 20 runs completed, 0 'FAIL: TestCapture'. Before the fix the race test failed in 44095837741.
+hatchling 14:46: ci/zd3x24 b8198b5 (parent 4ecfa25 = origin/main now) CI 44099485911 completed success.
 ## History
 - 2026-11-17T14:45 todo -> doing/active (take)
 - 2026-11-17T15:05 doing/active -> doing/waiting (wait)
