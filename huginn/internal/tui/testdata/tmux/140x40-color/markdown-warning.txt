@@ -37,4 +37,4 @@ no dependencies
 
 Task 3 of 60 · 100% · n next · p previous · Esc back
 
-j/k scroll · n/p task · Esc back · : cmd · ? help · q quit                                                                        hug v0.0.0
+j/k scroll · n/p task · u up · Esc back · : cmd · ? help · q quit                                                                 hug v0.0.0

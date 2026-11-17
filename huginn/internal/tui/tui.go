@@ -1042,6 +1042,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if t, ok := m.selected(); ok {
 					m.refresh(t.Path)
 				}
+			case "u":
+				// u goes up one level, as Esc does in a task: back from a
+				// followed link, else to the list it was opened from
+				// (9xfnwr, Jørgen 2026-11-16). In : sort u is the
+				// updated field; that prompt takes its keys before this.
+				m.back()
 			case "n", "p", "ctrl+n", "ctrl+p":
 				// Next or previous task of the list the detail was opened
 				// from, without going back first. n and p, not { and }, which

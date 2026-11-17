@@ -123,7 +123,7 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	if len(m.focusStops(t)) > 1 {
 		hints = append(hints, hint("Tab", "section"))
 	}
-	hints = append(hints, hint("Esc", "back"))
+	hints = append(hints, hint("u", "up"), hint("Esc", "back"))
 	if !narrow {
 		hints = append(hints, hint(":", "cmd"))
 	}
@@ -149,7 +149,7 @@ func (m model) helpText() string {
 		navigation = append(navigation, hint(reloadKey, "reload into hug "+m.newer+", keeping this place"))
 	}
 	actions := []bkey.Binding{
-		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("Space / Enter", "tick check / follow dependency marked >"),
+		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("u", "in a task: up to the list (as Esc)"), hint("Space / Enter", "tick check / follow dependency marked >"),
 		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps, links, files"),
 		hint("E", "in a task with files (⎘2): its folder in the editor"),
 		hint("t / d / x", "take / done / drop task"),
