@@ -4,10 +4,11 @@ title: "hug tui opens Seid in 8-9 s: watch setup globs per folder, sync rereads"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+parent: "44w1ev"
 ---
 
 ## Goal
