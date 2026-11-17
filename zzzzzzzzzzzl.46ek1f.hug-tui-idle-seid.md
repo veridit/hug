@@ -35,7 +35,7 @@ Re-scoped 2026-11-17 18:44 with crab: the idle premise did not reproduce (idle 0
 - [ ] ~~on Seid, an idle hug tui uses under 1 s CPU per minute (ps time over 60 s), numbers in the notes~~ (not relevant: re-scoped with crab 18:44: already holds (main 0.31 s/60 s idle on Seid copy, note above); replaced by check 5, wyvern, 2026-11-17)
 - [x] a test commits once on a watched board and counts loads: exactly 1 per commit (a hug task note writes the file and moves the ref); fails on main
 - [x] a test renders the overview of a 2,000-task board and counts per-task stage computations per View: none once the snapshot is loaded; fails on main
-- [ ] on the Seid copy, the CPU of one hug task note in an open TUI (ps time) before and after, in the notes
+- [x] on the Seid copy, the CPU of one hug task note in an open TUI (ps time) before and after, in the notes
 
 ## Notes
 
