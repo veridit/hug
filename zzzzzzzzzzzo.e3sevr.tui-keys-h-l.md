@@ -39,7 +39,7 @@ Mock, cursor on 3mavpt with the TYPE column marked:
 - [ ] in a task's detail a dim full-width rule stands between the filter line and the task's title (goldens at 80 and 140)
 - [ ] Tab = l and Shift-Tab = h in every view; in a task's detail both step one focus ring in reading order (stage line, each section, the task ids inside a section as their own stops); Enter opens the focused id (tests; help and TestHelpKeysAreBound follow)
 - [ ] Column 1 holds only the pointer, grab mark and ↑/↓; '?' and '!' sit right before the id in a fixed 2-cell slot, so a scroll arrow and a '?' never share a cell (golden with a waiting-on-you task as the last shown row)
-- [ ] The detail's title line starts with the task id in the id colour, then the bold title; the id is no longer in the header trail or the badge row; page focus ▸ sits before the id on the title line (golden at 80 and 140)
+- [ ] ~~The detail's title line starts with the task id in the id colour, then the bold title; the id is no longer in the header trail or the badge row; page focus ▸ sits before the id on the title line (golden at 80 and 140)~~ (not relevant: superseded by Jørgen 00:02: the id goes in the breadcrumb, not the title line (header-spec.md), crab, 2026-11-18)
 - [ ] Focus on the task id (the page stop) lists the task-wide keys in the footer (j/k scroll, e edit, t take, d done, x drop, w wait, y yank) and each of them works from there; no focus stop shows an empty footer (key test per listed key)
 - [ ] In a detail the header is one line, 'HUG TASKS · <view> › <stacked parents> ›' with '? N for you' on the right; no view line, counts or filter line; the title line with the id follows (golden at 80 and 140, one task open and two stacked)
 
