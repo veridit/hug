@@ -1,16 +1,15 @@
 ---
 id: 4vxqp4
 title: "Board lint: a task the message only mentions is not the session's task"
-status: "doing"
+status: "todo"
 type: feature
 priority: ""
-assignee: ["hatchling"]
+assignee: []
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "tpnd3n"
-doing_since: "2026-11-17T15:53"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -44,3 +43,4 @@ hatchling 15:01, pass bar for owner-only (crab ruling 15:00), written before any
 hatchling 15:03, owner-only measured once (crab ruling): FAILS the pre-stated bar, parked. Six sets: false 12 -> 9, right 101 -> 95, lint 55 -> 47 (right lint 45 -> 39). Fresh seid+fresh2+fresh hug lint: tpnd3n 15 right / 1 false / 1 unclear; owner-only 10 right / 2 false / 1 unclear (fresh2 lint 9 -> 7, right 15 -> 12; fresh hug lint 3 right -> 1 right). Bar (1) right >= 101: fail; bar (2) right lint >= 15 and false <= 1: fail. Both variants tried (lead-only 3f7a071, owner-only) remove the 5 start lines but cost right lines: the judge counts many section lines on a task the session named (seedling n8zmjw, maple p39w4a, guppy s6ff5k) as right. Idea for later, untested: decide by what the brief says about the task (assigned vs forbidden/dependency), not by position or ownership. Arms in scratch/board4/x325pp (lead, mine, tpnd3b), judgments3.json.
 ## History
 - 2026-11-17T15:53 todo -> doing/active (take)
+- 2026-11-17T16:03 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T15:53
