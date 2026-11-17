@@ -1,13 +1,18 @@
 ---
 id: 557s7n
 title: "Setup's remembered checks drop a failed write silently"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T22:48"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Two writers shared the fixed name path.tmp, so one's rename found the other's te
 - [ ] a test makes the cache folder unwritable: setup still answers, and stderr names the failed write once, with a fix: line
 
 ## Notes
+
+
+## History
+- 2026-11-17T22:48 todo -> doing/active (take)
