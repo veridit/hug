@@ -40,6 +40,7 @@ kestrel: landed 24b8a3b..a201b2e. Check 1: TestBackgroundPassRunsNiced spawns re
 Reflection (open, 2026-11-17, calf): nothing misled; my own tail -4 hid one failing test's name, which I could not then cite.
 landed a201b2e on main 2026-11-17: hug task sync: the detached background pass runs niced with bounded parallelism…
 shipped in v0.7.50 (a201b2e)
+landed f557613 on main 2026-11-18: style: gofmt muninn/run/main.go (internal/throttle import sorted; b6jgpn)
 ## History
 - 2026-11-17T23:01 todo -> doing/active (take)
 - 2026-11-17T23:42 doing/active -> done (done); was doing_since: 2026-11-17T23:01

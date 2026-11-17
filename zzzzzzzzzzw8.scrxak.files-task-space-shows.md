@@ -43,6 +43,7 @@ nautilus 14:08: built on nautilus/scrxak, commit 0ea1611 from main 5b80e87, CI o
 nautilus 16:18: landed on main af51fc3 (9b27bf7..af51fc3, rebased from 0ea1611; CHANGELOG under Unreleased), local go test tui ok 81.4s, no golden changed. 1: TestGlanceShowsFile at 80 and 140 + golden detail/glance.txt (header path · size · i of N; Esc/u back to FILES with it marked). 2: TestGlanceStepsAndScrolls (n/p stop at the ends with a footer note; j/k and pages scroll). 3: TestGlanceNeverPrintsRawBytes (\x1b[2J escaped, binary and >1 MiB one line 'Enter opens it'). 4: TestGlanceShowsFile counts readFile calls: list and detail read none, showing reads only that file. ci/scrxak and wip/scrxak deleted. Check 5 is Jørgen's.
 landed af51fc3 on main 2026-11-17: hug tui: Space on a task file shows it in place, read only (path · size · i of…
 shipped in v0.7.43 (af51fc3)
+landed 0cd10ba on main 2026-11-18: hug tui: the file viewer's footer spells out n next file · p previous file…
 ## History
 - 2026-11-17T15:02 todo -> doing/active (take)
 - 2026-11-17T15:08 doing/active -> doing/waiting (wait)
