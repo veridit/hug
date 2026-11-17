@@ -1,17 +1,18 @@
 ---
 id: bejd89
 title: "Column cursor: Tab picks a column, o orders by it"
-status: "todo"
+status: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-17T19:38"
 ---
 
 ## Goal
@@ -45,3 +46,4 @@ nautilus 15:31: given back, not started in code. Surveyed: tui/sort.go (sortKey,
 ## History
 - 2026-11-17T15:09 todo -> doing/active (take)
 - 2026-11-17T16:30 doing/active -> todo/ready (give back; was assignee: nautilus); was doing_since: 2026-11-17T15:09
+- 2026-11-17T19:38 todo/ready -> doing/active (take)
