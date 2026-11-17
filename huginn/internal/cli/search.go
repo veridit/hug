@@ -39,21 +39,16 @@ func (a *App) search(ctx context.Context, s *session, f flags, filter task.Filte
 	for _, t := range ts {
 		byPath[t.Path] = t
 	}
-	hits, e := s.c.Search(ctx, query, 0)
+	keep := func(path string) bool { t, ok := byPath[path]; return ok && matchesFilter(t, filter, ts) }
+	hits, e := s.c.Search(ctx, query, limit, keep)
 	if e != nil {
 		return nil, e
 	}
 	out := []Reply{}
 	for _, h := range hits {
-		t, ok := byPath[h.Path]
-		if !ok || !matchesFilter(t, filter, ts) {
-			continue
-		}
+		t := byPath[h.Path]
 		out = append(out, Reply{"id": t.ID, "status": t.Status, "type": t.Type, "title": t.Title, "aliases": t.Aliases,
 			"field": h.Field, "snippet": h.Snippet, "score": h.Score})
-		if len(out) == limit {
-			break
-		}
 	}
 	reply := Reply{}
 	reply["query"] = query

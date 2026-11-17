@@ -87,14 +87,7 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 		// the listing the reload just made (44w1ev).
 		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },
 		// / search ranks by the cache's index, as hug task search (49n9kw).
-		Search: func(query string) ([]string, error) {
-			hits, e := s.c.Search(ctx, query, 0)
-			paths := make([]string, len(hits))
-			for i, h := range hits {
-				paths[i] = h.Path
-			}
-			return paths, e
-		}})
+		Search: func(query string) ([]string, error) { return s.c.Rank(ctx, query) }})
 	if e != nil {
 		return nil, e
 	}

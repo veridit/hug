@@ -85,7 +85,35 @@ func TestScaleBench10K(t *testing.T) {
 			t.Errorf("%s at %d tasks: warm %v is %.2f of the uncached %v, over %.2f: a command again does work that grows with the board", c[0], n, cur.Round(time.Millisecond), ratio, old.Round(time.Millisecond), maxRatio)
 		}
 	}
+	// The search query itself (49n9kw check 5: under 100 ms at 10,000 tasks),
+	// without process start or opening the board: in-process, on the warm
+	// cache, against warm show, which opens the board just the same. A word
+	// in about every task is the worst case for ranking.
+	s, e := a.openBoard(context.Background(), false)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer s.c.Close()
+	var qs, shows []time.Duration
+	for i := 0; i < runs; i++ {
+		t0 := time.Now()
+		if _, e := s.c.Search(context.Background(), "retry", searchLimit, nil); e != nil {
+			t.Fatal(e)
+		}
+		qs = append(qs, time.Since(t0))
+		shows = append(shows, run("show", id))
+	}
+	q, show := median(qs), median(shows)
+	t.Logf("search query warm %v (show %v, ratio %.2f, limit %.2f; target 100ms)", q.Round(time.Millisecond), show.Round(time.Millisecond), float64(q)/float64(show), maxSearchRatio)
+	if float64(q) > maxSearchRatio*float64(show) {
+		t.Errorf("search query at %d tasks: %v is %.2f of warm show %v, over %.2f: ranking reads more than it ranks", n, q.Round(time.Millisecond), float64(q)/float64(show), show.Round(time.Millisecond), maxSearchRatio)
+	}
 }
+
+// maxSearchRatio bounds the in-process search query against warm show.
+// Measured on board10k: query 31-39 ms, show 0.2 s, so about 0.2; reading
+// every hit's texts (the first version) made it 150-205 ms, about 0.8.
+const maxSearchRatio = 0.5
 
 // writeScaleBoard writes n synthetic task files like gen-scale-board.py:
 // deterministic, 150 epics, 30% with a parent, 8% with a dependency, a

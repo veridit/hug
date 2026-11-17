@@ -34,14 +34,7 @@ func TestSearchRanksByIndex(t *testing.T) {
 	}
 	defer c.Close()
 	s.Refresh = func() ([]task.Task, error) { return c.List(context.Background()) }
-	search := func(q string) ([]string, error) {
-		hits, e := c.Search(context.Background(), q, 0)
-		var out []string
-		for _, h := range hits {
-			out = append(out, h.Path)
-		}
-		return out, e
-	}
+	search := func(q string) ([]string, error) { return c.Rank(context.Background(), q) }
 	m := newModel(s, Options{User: "tester", NoWatch: true, NoReload: true, Search: search})
 	m.setView("list")
 	m = press(m, "/", "memory 137")
