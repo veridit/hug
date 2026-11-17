@@ -13,10 +13,9 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 4: approve the Seid cleanup diff (attached: ggydj2-seid-dry-run.md). Seid's pre-commit and tools/evidence.py read .backlog, so they must move to hug first"
-waiting_since: "2026-11-17T17:47"
-waiting_asked_by: "calf"
-waiting_for: "jhf"
+waiting_on: "check 4: orangutan moves Seid's pre-commit hook and tools/evidence.py off .backlog (cvbpdy); then the Seid cleanup diff (ggydj2-seid-dry-run.md) goes to Jørgen"
+waiting_since: "2026-11-18T00:45"
+waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -53,3 +52,4 @@ shipped in v0.7.44 (55fd4f9)
 ## History
 - 2026-11-17T15:58 todo -> doing/active (take)
 - 2026-11-17T17:46 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:45 doing/waiting -> doing/waiting (wait); was waiting_for: jhf
