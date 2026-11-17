@@ -35,6 +35,7 @@ Code: huginn/internal/task/questions.go noteQuestion (shipped-not-done fix is 'h
 - [ ] shipped-not-done never offers a fix that hug refuses: with open checks its fix names the first open check ('hug task check ID N', or strike it), not 'hug task done ID' (test: 8/9 settled, active, gives 'fix: hug task check ID 9')
 - [ ] Every hug task write command (take, set, check, note, wait, review, design; ask after 41hhgn) and MCP task_update end with the task's own findings and fix: lines when it has any, and print nothing extra when clean (test per command family, fails on main)
 - [ ] Asking a person (wait --on today, ask after 41hhgn) refuses while the task has a broken finding, naming it with a fix: line; after the fix the ask goes through (test)
+- [ ] shipped-not-done raises nothing when every open check is the one the person is asked about (test with 6ephqk's shape: 8/9, shipped, asked about check 9)
 
 ## Notes
 
