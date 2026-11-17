@@ -142,6 +142,64 @@ work and done lines are the same in every arm; overnight has no lint lines.
   out 8 and 6 right: the judge is not stable on this question.
 - No lint line was acted on in any set, in any arm.
 
+## Missing sections go to the task's own session (tpnd3n, 2026-11-17)
+
+Shipped: a missing Purpose or Principle is handed only to a session that
+touched the task (its own, named in the message, or worked this turn); a
+passer-by gets other findings (long title, no acceptance). And an unrelated
+finding waits while the session's own doing task has a finding of its own.
+
+Why: fkpyg3 holds every open task to the description pattern, so the board
+now has missing-section findings on most old tasks, and the hook handed them
+to whoever was at a break. Same six sets as above, today's boards, same
+blind judge; arms: before fkpyg3 (206038a), main (38ff464), own task first
+alone, and both rules. Lint lines, right / false (unclear):
+
+| set | before fkpyg3 | main | own task first | both (shipped) |
+|---|---|---|---|---|
+| dev | 2: 2 / 0 | 16: 3 / 8 (5) | 16: 3 / 8 (5) | 6: 5 / 1 |
+| overnight | 0 | 1: 0 / 1 | 1: 0 / 1 | 0 |
+| held-out hug | 1: 1 / 0 | 4: 1 / 3 | 4: 1 / 3 | 3: 0 / 3 |
+| held-out seid | 33: 27 / 4 (2) | 33: 28 / 5 | 32: 27 / 5 | 32: 28 / 4 |
+| fresh seid | 6: 6 / 0 | 5: 5 / 0 | 5: 5 / 0 | 5: 5 / 0 |
+| fresh2 seid | 7: 7 / 0 | 9: 6 / 3 | 9: 6 / 3 | 9: 7 / 1 (1) |
+| all lines, six sets | 109: 99 / 7 | 128: 99 / 23 | 127: 98 / 23 | 115: 101 / 12 |
+
+All lines precision: before fkpyg3 0.934, main 0.811 (0.56 false per 10 h),
+both 0.894 (0.29). All 20 false lint lines on main are missing-section
+findings, 18 on tasks the session had not touched (s6ff5k to hog and
+dromedary, told "do not start any other task"; vk9td0 to kitten and poodle).
+
+- The 42 lines only main gives and the 29 only the shipped rule gives were
+  judged twice more from an empty cache: main's 25 and 26 right, 17 and 15
+  false; the rule's 26 and 26 right, 0 and 0 false.
+- Own task first alone moves 4 held-out seid lines to another finding and
+  drops 1, all judged right in both arms: on these sets it reorders, it does
+  not remove a false line.
+- The 3 false held-out hug lines left name s6ff5k and vk9td0 because the
+  user's message quotes them ("Confirm edit s6ff5k Title?"; vk9td0 as an
+  example of an unrelated `next:`), which makes them touched.
+- Fresh hug, chosen after the rule was written and run once: hug sessions
+  written after 2026-11-16 20:00, turns to 2026-11-17 14:00 (38.8
+  session-hours): main 4 lint lines, 3 right, 1 unclear (crab, 9taa9d's
+  Principle); the rule 3 lint lines, 3 right.
+- A finding withheld on a stop turn is not spent: the next break of that
+  session or another session gets it (test). In the replay skunk's turn
+  ("Please stop now", 2026-11-11 18:13) was its last board turn, and w96jpg's
+  title line went to another session later in every arm (main: hibiscus
+  2026-11-16; the rule: zebra 2026-11-13).
+- 12 false lines against 7 before fkpyg3: 9 are new and 4 of the old 7 are
+  gone (2 acceptance and 1 title finding moved by the rotation, piglet's
+  n0fzz1). The 9 new are all missing-section lint. 5 come at a session's
+  start on a task its message only mentions: s6ff5k (hog, dromedary: a
+  quoted prompt "Confirm edit s6ff5k Title?" in a brief that says "Do not
+  start ... any other task"), vk9td0 (kitten, poodle: quoted as an unrelated
+  `next:`), n8zmjw (evergreen: named as the dependency of the task it works);
+  that is 4vxqp4. 4 name the session's own or noted task when the judge
+  calls the moment wrong (zwgp5s, jy00xt, mtzydx with every check ticked,
+  c9h01e). So the 5 extra are not real findings a session missed: they
+  are the same section findings reaching a session by a mention.
+
 ## Latency
 
 The board read on every turn (activity + board, 40 runs, warm cache):

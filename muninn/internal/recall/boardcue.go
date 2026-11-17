@@ -152,11 +152,17 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 	if wantLint && in.Findings != nil {
 		// At the start of a session only findings on tasks it named: a
 		// fresh assignment is not the moment for unrelated housekeeping.
+		// An unrelated finding also waits while the session's own doing
+		// task has one: that one is the session's to fix first, and a
+		// missing section only ever goes to the task's session (ownerOnly,
+		// tpnd3n).
 		// (x325pp tried holding unrelated findings until the session had no
 		// task of its own or had just closed one: held-out false lines 5 -> 0
 		// but fresh lint lines 14 -> 8 and fresh2's 3 judged false;
 		// muninn/docs/BOARD4.md. Not kept.)
-		if f, ok := e.pickFinding(in.Findings(), d.touched, brk != "start", now); ok {
+		fs := in.Findings()
+		unrelated := brk != "start" && !ownHasFinding(fs, d.own)
+		if f, ok := e.pickFinding(fs, d.touched, unrelated, now); ok {
 			e.boardMark(session, "lint", now)
 			e.DB.Exec(`INSERT INTO board_lint(key, at_ns) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET at_ns=excluded.at_ns`, f.key(), now.UnixNano())
 			return fmt.Sprintf("Task board (%s): %s: %s. fix: %s", brk, f.TaskID, Truncate(oneLine(f.Problem), 160), f.Fix), "lint"
@@ -185,6 +191,7 @@ type detection struct {
 	named   []BoardTask // todo tasks named by the message, commands or commits
 	matched *BoardTask  // todo task whose title matches the work
 	touched map[string]bool
+	own     map[string]bool // the session's own doing tasks (tpnd3n)
 }
 
 type candidate struct{ kind, id, line string }
@@ -232,7 +239,7 @@ var taskRef = regexp.MustCompile(`\b[a-z0-9]{6}\b`)
 var stopOrder = regexp.MustCompile(`(?i)\bstop (?:now|immediately|all work|everything)\b|\bdo not (?:run any|run anything|edit any|edit anything|touch any)\b|\bdon'?t (?:run any|edit any|touch any)\b|\bend (?:your|the) session\b|\bstand down\b`)
 
 func (e *Engine) detect(session, msg string, in *BoardInput) detection {
-	d := detection{touched: map[string]bool{}}
+	d := detection{touched: map[string]bool{}, own: map[string]bool{}}
 	byID := map[string]BoardTask{}
 	for _, t := range in.Tasks {
 		byID[t.ID] = t
@@ -276,6 +283,9 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 		if mine(t) {
 			d.hasMine = true
 			d.touched[t.ID] = true
+			if t.Status == "doing" {
+				d.own[t.ID] = true
+			}
 			if t.Checks > 0 && t.Open == 0 {
 				d.mineAll = append(d.mineAll, t)
 			}
@@ -462,6 +472,34 @@ var LintRepeat = 7 * 24 * time.Hour
 
 func (f BoardFinding) key() string { return f.TaskID + "\x00" + f.Problem }
 
+// runnable reports whether f's fix is one this agent can run on this one
+// task: "hug upgrade" (section order) rewrites the whole board and
+// upgrades the binary.
+func runnable(f BoardFinding) bool {
+	return f.TaskID != "" && strings.HasPrefix(f.Fix, "hug task ") && strings.Contains(f.Fix, f.TaskID)
+}
+
+// ownerOnly reports whether f is one only the task's own session should
+// fill: a missing Purpose or Principle says why the work is done and what
+// it does not do, which a passer-by cannot know (tpnd3n; replay after
+// fkpyg3: all 20 false lint lines were missing-section findings, 18 on
+// tasks the session had not touched, e.g. s6ff5k named to hog and
+// dromedary while the user forbade every other task; BOARD4.md).
+func ownerOnly(f BoardFinding) bool {
+	return strings.HasPrefix(f.Problem, "missing section")
+}
+
+// ownHasFinding reports whether one of the session's own doing tasks has
+// a finding with a fix it can run (tpnd3n).
+func ownHasFinding(fs []BoardFinding, own map[string]bool) bool {
+	for _, f := range fs {
+		if own[f.TaskID] && runnable(f) {
+			return true
+		}
+	}
+	return false
+}
+
 func (e *Engine) pickFinding(fs []BoardFinding, touched map[string]bool, any bool, now time.Time) (BoardFinding, bool) {
 	rank := func(f BoardFinding) int {
 		switch {
@@ -476,13 +514,11 @@ func (e *Engine) pickFinding(fs []BoardFinding, touched map[string]bool, any boo
 	}
 	best, bi := 4, -1
 	for i, f := range fs {
-		// Only a fix this agent can run on this one task: "hug upgrade"
-		// (section order) rewrites the whole board and upgrades the binary.
-		if f.TaskID == "" || !strings.HasPrefix(f.Fix, "hug task ") || !strings.Contains(f.Fix, f.TaskID) {
+		if !runnable(f) {
 			continue
 		}
 		r := rank(f)
-		if r >= best || !(any || r == 0) {
+		if r >= best || !(r == 0 || any && !ownerOnly(f)) {
 			continue
 		}
 		var at int64
