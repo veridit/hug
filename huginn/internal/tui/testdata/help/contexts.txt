@@ -12,8 +12,8 @@ e                edit in $VISUAL, else $EDITOR, git core.editor, vi
 J / K            move below / above the next row, no confirm                    
 m                grab: j/k move it, Enter places it                             
 y, P p           yank, then paste above / below                                 
-s                state palette                                                  
-c                clear all filters                                              
+s / c            state palette / clear all filters                              
+: grouping       flat, by group, by epic: cycles                                
 
 EVERYWHERE
 v o/i/b/!      views: overview / list / board / lint; i b ! alone too           
@@ -21,7 +21,7 @@ v o/i/b/!      views: overview / list / board / lint; i b ! alone too
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
                <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, 
-               epic <id>, goto <id>, sort, lint, clear, help                    
+               epic <id>, goto <id>, sort, grouping, lint, clear, help          
 #              jump by id prefix or TASK-number alias                           
 f              filter picker: s/t/p/g/l/a/e                                     
 1 / 2 / 3 / 4  filter todo / doing / done / depends                             
@@ -56,7 +56,7 @@ v o/i/b/!      views: overview / list / board / lint; i b ! alone too
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
                <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, 
-               epic <id>, goto <id>, sort, lint, clear, help                    
+               epic <id>, goto <id>, sort, grouping, lint, clear, help          
 #              jump by id prefix or TASK-number alias                           
 f              filter picker: s/t/p/g/l/a/e                                     
 1 / 2 / 3 / 4  filter todo / doing / done / depends                             
@@ -89,7 +89,7 @@ v o/i/b/!      views: overview / list / board / lint; i b ! alone too
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
                <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, 
-               epic <id>, goto <id>, sort, lint, clear, help                    
+               epic <id>, goto <id>, sort, grouping, lint, clear, help          
 #              jump by id prefix or TASK-number alias                           
 f              filter picker: s/t/p/g/l/a/e                                     
 1 / 2 / 3 / 4  filter todo / doing / done / depends                             
@@ -111,7 +111,7 @@ Enter        complete, or run a complete command
 Esc          close                                                              
 commands     overview, list, board, todo, doing, done, depends, dropped, state  
              <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>,   
-             epic <id>, goto <id>, sort, lint, clear, help                      
+             epic <id>, goto <id>, sort, grouping, lint, clear, help            
 
 EVERYWHERE
 ?       this help, from anywhere; / finds in it                                 
@@ -124,14 +124,14 @@ ctrl-d/u         half page down / up                                   :        
 PgDn / PgUp      page down / up                                        : commands     overview, list, board, todo, doing, done, depends,    
 Enter            open the task                                                        dropped, state <s>, type <t>, priority <p>, group <g>,
 Tab / Shift-Tab  mark the next / previous column                                      label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-o                order by the marked column: ▲ ▼ off                                  lint, clear, help                                     
+o                order by the marked column: ▲ ▼ off                                  grouping, lint, clear, help                           
 t / d / x        take / done / drop the task                           #              jump by id prefix or TASK-number alias                
 e                edit in $VISUAL, else $EDITOR, git core.editor, vi    f              filter picker: s/t/p/g/l/a/e                          
 J / K            move below / above the next row, no confirm           1 / 2 / 3 / 4  filter todo / doing / done / depends                  
 m                grab: j/k move it, Enter places it                    Backspace / F  remove the last chip / clear all filters              
 y, P p           yank, then paste above / below                        : sort         order by fields; : sort rank goes back                
-s                state palette                                         N              new task                                              
-c                clear all filters                                     S              copy the screen, Enter attaches it to the task        
+s / c            state palette / clear all filters                     N              new task                                              
+: grouping       flat, by group, by epic: cycles                       S              copy the screen, Enter attaches it to the task        
                                                                        r              refresh now (changes on disk show by themselves)      
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
@@ -146,7 +146,7 @@ Space      tick the check marked >                                     :        
 -          strike it out as not relevant, with a reason                : commands     overview, list, board, todo, doing, done, depends,    
 h / l      previous / next section: page, checks, deps, links, files                  dropped, state <s>, type <t>, priority <p>, group <g>,
 J / K      half a page down / up                                                      label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-n / p      next / previous task of the list                                           lint, clear, help                                     
+n / p      next / previous task of the list                                           grouping, lint, clear, help                           
 u / Esc    up: back from a followed id, else to the list               #              jump by id prefix or TASK-number alias                
 t / d / x  take / done / drop it                                       f              filter picker: s/t/p/g/l/a/e                          
 e          edit in $VISUAL, else $EDITOR, git core.editor, vi          1 / 2 / 3 / 4  filter todo / doing / done / depends                  
@@ -168,7 +168,7 @@ Tab / Shift-Tab  next / previous task id shown; Enter opens it         :        
 h / l            previous / next section: page, checks, deps, links,   : commands     overview, list, board, todo, doing, done, depends,    
                  files                                                                dropped, state <s>, type <t>, priority <p>, group <g>,
 J / K            half a page down / up                                                label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-n / p            next / previous task of the list                                     lint, clear, help                                     
+n / p            next / previous task of the list                                     grouping, lint, clear, help                           
 u / Esc          up: back from a followed id, else to the list         #              jump by id prefix or TASK-number alias                
 t / d / x        take / done / drop it                                 f              filter picker: s/t/p/g/l/a/e                          
 e                edit in $VISUAL, else $EDITOR, git core.editor, vi    1 / 2 / 3 / 4  filter todo / doing / done / depends                  
@@ -191,4 +191,4 @@ Esc          close
 commands     overview, list, board, todo, doing, done, depends,        
              dropped, state <s>, type <t>, priority <p>, group <g>,    
              label <l>, assignee <a>, epic <id>, goto <id>, sort,      
-             lint, clear, help                                         
+             grouping, lint, clear, help                               

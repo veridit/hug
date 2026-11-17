@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug tui` rows say where a task belongs, with no extra line (kx2ndm). A dim cell before the text names its group and epic: `later·↳gem59b Launch posts`. The overview footer explains `↳`. `: grouping` cycles the rows flat, by group, then by epic, and the header says `grouped by epic`. Each value gets a heading with its count (`▾ later  [3]`). Space or Enter on a heading folds it to `▸ later  [3]`, and the count stays. No group is special and nothing starts folded. A task you jump or find to opens its heading. Actions on a heading are refused, not guessed.
+
 - `hug tui` file viewer: the footer spells out `n next file · p previous file` instead of `n/p file` (scrxak, Jørgen: nobody guesses n/p).
 
 - When git crashes while hug checks whether the task branch has its first commit yet, the error names the git call that crashed and how it died (`show-ref --verify --quiet refs/heads/hug/tasks: signal: segmentation fault`), with a `fix:` line that re-runs it (xv39b9). Before, it showed `rev-parse --verify HEAD: fatal: Needed a single revision`, which reads as a broken repository.

@@ -8,6 +8,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -290,7 +292,9 @@ type handoff struct {
 	Chips      [][2]string `json:"chips,omitempty"`  // filters, in the order set
 	Query      string      `json:"query,omitempty"`
 	Sort       []sortSpec  `json:"sort,omitempty"`
-	Column     string      `json:"column,omitempty"` // the column the cursor marks (bejd89)
+	Column     string      `json:"column,omitempty"`   // the column the cursor marks (bejd89)
+	Grouping   string      `json:"grouping,omitempty"` // "group" or "epic" (kx2ndm)
+	Folded     []string    `json:"folded,omitempty"`   // the folded headings, by foldKey
 }
 
 type sortSpec struct {
@@ -326,6 +330,11 @@ func (m model) handoff() handoff {
 	for _, c := range m.chips {
 		h.Chips = append(h.Chips, [2]string{c.field, c.value})
 	}
+	h.Grouping = m.grouping
+	for k := range m.folded {
+		h.Folded = append(h.Folded, k)
+	}
+	sort.Strings(h.Folded)
 	for _, k := range m.sort {
 		h.Sort = append(h.Sort, sortSpec{k.field, k.desc})
 	}
@@ -345,6 +354,13 @@ func (m *model) resume(h handoff) {
 		m.setFilter(c[0], c[1])
 	}
 	m.query = h.Query
+	if slices.Contains(groupings, h.Grouping) {
+		m.grouping = h.Grouping
+	}
+	m.folded = map[string]bool{}
+	for _, k := range h.Folded {
+		m.folded[k] = true
+	}
 	m.column = -1
 	for i, c := range gridColumns {
 		if h.Column != "" && c.field == h.Column {

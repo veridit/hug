@@ -15,8 +15,8 @@ e                edit in $VISUAL, else $EDITOR, git core.editor, vi
 J / K            move below / above the next row, no confirm
 m                grab: j/k move it, Enter places it
 y, P p           yank, then paste above / below
-s                state palette
-c                clear all filters
+s / c            state palette / clear all filters
+: grouping       flat, by group, by epic: cycles
 
 EVERYWHERE
 All tasks · : filters and commands

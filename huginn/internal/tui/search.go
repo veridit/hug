@@ -128,11 +128,15 @@ func (m *model) follow(id string) bool {
 		}
 	}
 	for _, p := range panes {
+		if m.grouping != "" && !slices.Contains(m.paneIndices(p), at) && slices.Contains(m.rawPane(p), at) {
+			m.unfold(m.visible[at]) // a task found is shown, never left folded (kx2ndm)
+		}
 		if slices.Contains(m.paneIndices(p), at) {
 			if p != m.pane {
 				m.remember()
 				m.pane = p
 			}
+			m.head = ""
 			m.cursor = at
 			m.hidden = ""
 			m.clamp()

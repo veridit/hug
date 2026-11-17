@@ -4,7 +4,7 @@ todo 1  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0
 [/ statbus-402] · ⌫ last · F clear                                                                                      
   ✓     ID       TYPE    PRIORITY STAGE     TITLE                                                                       
 > ○ 1   ######   feature          ready     Statbus import · STATBUS-402                                                
-Rows 1–1 of 1 · ! lint finding · depends = a dependency is not done                                                     
+Rows 1–1 of 1 · ! lint finding · ↳ epic · depends = a dependency is not done                                            
                                                                                                                         
                                                                                                                         
                                                                                                                         

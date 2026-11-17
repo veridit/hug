@@ -65,7 +65,7 @@ func (m model) contextHelp() helpSection {
 		return helpSection{"IN THE : PALETTE", []helpRow{
 			row("Tab", "complete the choice", "tab"), row("Enter", "complete, or run a complete command", "enter"),
 			row("↑↓ ctrl-n/p", "pick a completion"), row("Esc", "close", "esc"),
-			row("commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, lint, clear, help"),
+			row("commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
 		}}
 	case "filter":
 		return helpSection{"IN THE FILTER PICKER", []helpRow{
@@ -171,7 +171,14 @@ func (m model) rowsHelp() helpSection {
 	} else {
 		rows = append(rows, row(": sort rank", "rank order again: then J/K, m, y, P/p move"))
 	}
-	rows = append(rows, row("s", "state palette", "s"), row("c", "clear all filters", "c"))
+	// s and c share a row, so : grouping costs no line and EVERYWHERE
+	// stays on the first screen at 80x24.
+	rows = append(rows, row("s / c", "state palette / clear all filters", "s", "c"),
+		row(": grouping", "flat, by group, by epic: cycles", ":"))
+	if m.grouping != "" {
+		// Only grouped rows have headings to fold (kx2ndm).
+		rows = append(rows, row("Space / Enter", "on a heading: fold or unfold it", " "))
+	}
 	return helpSection{title, rows}
 }
 
@@ -181,7 +188,7 @@ func (m model) globalHelp() helpSection {
 		row("v o/i/b/!", "views: overview / list / board / lint; i b ! alone too", "v", "i", "b", "!"),
 		row("/", "live find; Enter goes to it, Tab keeps it as a filter", "/"),
 		row(":", "palette: commands with completion", ":"),
-		row(": commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, lint, clear, help"),
+		row(": commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
 		row("#", "jump by id prefix or TASK-number alias", "#"),
 		row("f", "filter picker: s/t/p/g/l/a/e", "f"),
 		row("1 / 2 / 3 / 4", "filter todo / doing / done / depends", "1"),

@@ -23,6 +23,9 @@ var commands = []command{
 	{"goto", "id", "Open a task by id", false},
 	{"sort", "", "Order rows by fields: p priority, t type, ... then Enter", false},
 	{"sort rank", "", "Back to rank order, the order moves change", true},
+	{"grouping", "", "Rows flat, by group, by epic: cycles; Space folds a heading", false},
+	{"grouping flat", "", "Rows without headings", true}, {"grouping group", "", "A heading per group", true},
+	{"grouping epic", "", "A heading per epic", true},
 	{"clear", "", "Clear every filter", false}, {"help", "", "All keys and commands", false},
 	{"todo", "", "Filter todo", true}, {"doing", "", "Filter in progress", true}, {"done", "", "Filter completed", true},
 	{"depends", "", "Filter tasks whose dependency is not done", true}, {"dropped", "", "Filter dropped", true},
@@ -289,6 +292,12 @@ func (m *model) executeCommand() bool {
 			return false
 		}
 		m.openTask(t)
+	case "grouping":
+		// kx2ndm: cycles flat -> group -> epic; an argument picks one.
+		if arg == "" {
+			arg = "next"
+		}
+		return m.setGrouping(arg)
 	case "clear":
 		m.clearFilters()
 	case "help":

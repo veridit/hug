@@ -138,18 +138,25 @@ type editorMsg struct {
 	commit string
 }
 type model struct {
-	store                      *task.Store
-	opts                       Options
-	all, visible               []task.Task
-	findings                   []task.Finding
-	docs                       map[string]*task.Document
-	blocked, linted            map[string]bool
-	broken                     map[string]bool   // paths with a broken finding (pbh9xq)
-	stages                     map[string]string // task.Stage by path, per load (46ek1f)
-	visibleGen                 int               // bumped on every write of visible (46ek1f)
-	panes                      *paneMemo         // paneIndices by visibleGen and view (46ek1f)
-	progressCols               int               // progressWidth, per load (46ek1f)
-	epics                      map[string]bool   // lowercase ids of tasks with children
+	store           *task.Store
+	opts            Options
+	all, visible    []task.Task
+	findings        []task.Finding
+	docs            map[string]*task.Document
+	blocked, linted map[string]bool
+	broken          map[string]bool   // paths with a broken finding (pbh9xq)
+	stages          map[string]string // task.Stage by path, per load (46ek1f)
+	visibleGen      int               // bumped on every write of visible (46ek1f)
+	panes           *paneMemo         // paneIndices by visibleGen and view (46ek1f)
+	progressCols    int               // progressWidth, per load (46ek1f)
+	epics           map[string]bool   // lowercase ids of tasks with children
+	epicOf          map[string]string // task path -> its epic's id, per load (kx2ndm)
+	epicTitle       map[string]string // lowercase epic id -> its title (kx2ndm)
+	// grouping is what rows are grouped by: "", "group" or "epic"
+	// (kx2ndm); folded the headings folded, by foldKey; head the heading
+	// under the cursor ("" for a task row; cursor is -1 then).
+	grouping, head             string
+	folded                     map[string]bool
 	cursor, acceptance, offset int
 	dependency, detailPane     int
 	link                       int // the task:ID marked > in Links (xxvm6t)
@@ -574,8 +581,20 @@ func (m *model) apply(sn snapshot, path string) {
 	m.linted = map[string]bool{}
 	m.broken = map[string]bool{}
 	m.epics = map[string]bool{}
-	for id := range task.ChildIndex(ts) {
+	m.epicOf = map[string]string{}
+	m.epicTitle = map[string]string{}
+	byID := make(map[string]task.Task, len(ts))
+	for _, t := range ts {
+		byID[strings.ToLower(t.ID)] = t
+	}
+	// One pass resolves every parent (kx2ndm): rows read epicOf and never
+	// resolve their parent themselves (ls on 2,498 tasks: 19 s to 0.8 s).
+	for id, children := range task.ChildIndex(ts) {
 		m.epics[id] = true
+		m.epicTitle[id] = oneLine(byID[id].Title)
+		for _, c := range children {
+			m.epicOf[c.Path] = byID[id].ID
+		}
 	}
 	for _, t := range ts {
 		m.blocked[t.Path] = t.State != "done" && t.State != "dropped" && task.Waiting(t, ts)
@@ -705,7 +724,7 @@ func (m *model) remember() {
 	}
 	indices := m.indices()
 	memo := &m.memo[v][m.pane]
-	memo.start, _ = m.window(indices, m.cursor, memo.start, m.sectionRows(m.pane), m.cursor)
+	memo.start, _ = m.window(m.paneRows(m.pane), m.rowCursor(m.pane), memo.start, m.sectionRows(m.pane), m.cursor)
 	memo.path = ""
 	for _, i := range indices {
 		if i == m.cursor {
@@ -753,6 +772,14 @@ func (m model) boardState(t task.Task) string {
 // times, each a scan of every task: 52 ms a key on Seid). The memo is
 // keyed by visibleGen, which every write of visible bumps.
 func (m model) paneIndices(p int) []int {
+	if m.grouping != "" {
+		return m.grouped(p).tasks // folded tasks have no row (kx2ndm)
+	}
+	return m.rawPane(p)
+}
+
+// rawPane is section p's tasks in their order, before grouping.
+func (m model) rawPane(p int) []int {
 	if m.panes == nil {
 		return m.scanPane(p)
 	}
@@ -817,6 +844,14 @@ func (m model) waits(t task.Task) bool {
 	return false
 }
 func (m *model) clamp() {
+	if m.head != "" {
+		// A task set as the cursor wins over the heading it replaced.
+		if m.cursor < 0 && m.headUnder(m.pane) != -1 {
+			m.cursor = -1 // on a heading (kx2ndm)
+			return
+		}
+		m.head = ""
+	}
 	indices := m.indices()
 	found := false
 	for _, i := range indices {
@@ -864,6 +899,7 @@ func (m *model) setView(view string) {
 	m.detailStack = nil
 	m.detailPane = 0
 	m.pendingG = false
+	m.head = ""
 	m.clamp()
 }
 
@@ -897,6 +933,10 @@ func (m model) detailPosition() string {
 	return ""
 }
 func (m *model) move(n int, absolute bool) {
+	if m.grouping != "" && !m.detail {
+		m.moveRows(n, absolute) // headings are rows too (kx2ndm)
+		return
+	}
 	indices := m.indices()
 	if len(indices) == 0 {
 		return
@@ -926,10 +966,12 @@ func (m *model) changePane(delta int) {
 	switch m.view {
 	case "overview":
 		m.remember()
+		m.head = ""
 		m.pane = (m.pane + delta + len(overviewSections)) % len(overviewSections)
 		m.restore()
 	case "board":
 		m.remember()
+		m.head = ""
 		m.pane = (m.pane + delta + len(boardStates)) % len(boardStates)
 		m.restore()
 	default:
@@ -1460,6 +1502,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		switch {
+		case m.head != "" && (k == " " || k == "enter"):
+			// Space or Enter on a heading folds or unfolds it (kx2ndm).
+			m.toggleFold()
+		case m.head != "" && contains([]string{"t", "d", "x", "J", "K", "e", "m", "y", "P", "p", "s"}, k):
+			// A heading is not a task: nothing to act on, and no guess.
+			m.message = "a heading is not a task: Space folds it, j/k select a task"
 		case bkey.Matches(msg, keys.down) || k == "n":
 			m.move(1, false)
 		case bkey.Matches(msg, keys.up):
@@ -1717,6 +1765,10 @@ type paneMemo struct {
 	rows map[int][]int
 	// forYou is forYouCount for forYouGen (any view), -1 for none yet.
 	forYouGen, forYou int
+	// groups is grouped by section, for groupGen and groupView (kx2ndm).
+	groupGen  int
+	groupView string
+	groups    map[int]groupedRows
 }
 
 // count is forYouCount for gen, counted once.
@@ -1743,4 +1795,25 @@ func (c *paneMemo) get(gen int, view string, p int, scan func(int) []int) []int 
 	}
 	// Clipped: a caller that appends gets its own copy, never the memo's.
 	return slices.Clip(rows)
+}
+
+// groupsOf is section p's grouped rows for gen and view, built once
+// (kx2ndm). A fold or a new grouping bumps visibleGen.
+func (c *paneMemo) groupsOf(gen int, view string, p int, build func(int) groupedRows) groupedRows {
+	c.mu.Lock()
+	if c.groups == nil || c.groupGen != gen || c.groupView != view {
+		c.groupGen, c.groupView, c.groups = gen, view, map[int]groupedRows{}
+	}
+	g, ok := c.groups[p]
+	c.mu.Unlock()
+	if ok {
+		return g
+	}
+	g = build(p) // outside the lock: build reads rows through get
+	c.mu.Lock()
+	if c.groupGen == gen && c.groupView == view {
+		c.groups[p] = g
+	}
+	c.mu.Unlock()
+	return g
 }

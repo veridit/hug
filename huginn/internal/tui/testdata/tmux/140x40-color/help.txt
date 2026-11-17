@@ -9,14 +9,14 @@ ctrl-d/u         half page down / up                                   :        
 PgDn / PgUp      page down / up                                        : commands     overview, list, board, todo, doing, done, depends,
 Enter            open the task                                                        dropped, state <s>, type <t>, priority <p>, group <g>,
 Tab / Shift-Tab  mark the next / previous column                                      label <l>, assignee <a>, epic <id>, goto <id>, sort,
-o                order by the marked column: ▲ ▼ off                                  lint, clear, help
+o                order by the marked column: ▲ ▼ off                                  grouping, lint, clear, help
 t / d / x        take / done / drop the task                           #              jump by id prefix or TASK-number alias
 e                edit in $VISUAL, else $EDITOR, git core.editor, vi    f              filter picker: s/t/p/g/l/a/e
 J / K            move below / above the next row, no confirm           1 / 2 / 3 / 4  filter todo / doing / done / depends
 m                grab: j/k move it, Enter places it                    Backspace / F  remove the last chip / clear all filters
 y, P p           yank, then paste above / below                        : sort         order by fields; : sort rank goes back
-s                state palette                                         N              new task
-c                clear all filters                                     S              copy the screen, Enter attaches it to the task
+s / c            state palette / clear all filters                     N              new task
+: grouping       flat, by group, by epic: cycles                       S              copy the screen, Enter attaches it to the task
                                                                        r              refresh now (changes on disk show by themselves)
                                                                        Enter / Esc    confirm / cancel every editing action
                                                                        e again        after an edit left a finding: edit at once

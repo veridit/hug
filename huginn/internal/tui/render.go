@@ -136,6 +136,15 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	if mark := m.fileCount(t); mark != "" {
 		title = m.styles.dim.Render(mark) + title
 	}
+	// Group and epic before the text, dim, no line of their own (kx2ndm):
+	// "later·↳gem59b Launch posts". Before, so a long title cannot push
+	// them out; at most 24 cells, and the text keeps titleMinCompact (a
+	// board column is narrow).
+	if where := m.placeCell(t); where != "" {
+		if room := min(24, c.title-titleMinCompact-1); room >= 4 {
+			title = m.styles.dim.Render(ansi.Truncate(where, room, "…")) + " " + title
+		}
+	}
 	// A search that found the task by an imported id says which (vzghj8).
 	// Only when nothing else matched: the title already shows why.
 	if q := strings.ToLower(m.query); !textMatches(t, q) {
@@ -257,13 +266,18 @@ func (m model) columnsOwner(width int, compact bool, c rowCols) string {
 }
 
 func (m model) listText() string {
-	indices := m.indices()
+	indices := m.paneRows(m.pane)
 	lines := []string{m.columns(m.width, false)}
 	if len(indices) == 0 {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
-	start, end := m.window(indices, m.cursor, 0, max(1, m.bodyHeight()-2), m.cursor)
+	cur := m.rowCursor(m.pane)
+	start, end := m.window(indices, cur, 0, max(1, m.bodyHeight()-2), m.cursor)
 	for n, i := range indices[start:end] {
+		if isHead(i) {
+			lines = append(lines, m.headText(i, m.pane, m.width, i == cur))
+			continue
+		}
 		t := m.visible[i]
 		lines = append(lines, m.taskRowMark(t, m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
 		if i == m.cursor {
@@ -272,7 +286,8 @@ func (m model) listText() string {
 			}
 		}
 	}
-	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · depends = a dependency is not done", start+1, end, len(indices))))
+	a, b, _ := shownTasks(indices, start, end)
+	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · ↳ epic · depends = a dependency is not done", a, b, m.paneTotal(m.pane))))
 	return strings.Join(lines, "\n")
 }
 
@@ -313,12 +328,12 @@ func (m model) overviewText() string {
 	rows := m.overviewRows()
 	var lines []string
 	for p, name := range names {
-		indices := m.paneIndices(p)
+		indices := m.paneRows(p)
 		pointer := "  "
 		if p == m.pane {
 			pointer = "> "
 		}
-		label := fmt.Sprintf("%s%s  [%d]", pointer, name, len(indices))
+		label := fmt.Sprintf("%s%s  [%d]", pointer, name, m.paneTotal(p))
 		if p == sectionLint {
 			broken := m.brokenCount()
 			label += fmt.Sprintf(" · %d broken · %d advice", broken, len(m.findings)-broken)
@@ -327,16 +342,13 @@ func (m model) overviewText() string {
 			}
 		}
 		per := rows[p]
-		cursor := m.memoCursor(p)
-		if p == m.pane {
-			cursor = m.cursor
-		}
+		cursor := m.rowCursor(p)
 		start, end := m.window(indices, cursor, m.scrollOf(p), per, m.selIn(p))
 		if len(indices) == 0 {
 			// Nothing to navigate to: None goes on the title line (h9zghj).
 			label += " · None"
-		} else if end-start < len(indices) {
-			label += fmt.Sprintf(" · %d–%d shown", start+1, end)
+		} else {
+			label += shownLabel(indices, start, end)
 		}
 		label = m.sectionStyle(p).Render(fit(label, m.width))
 		if p == m.pane {
@@ -345,7 +357,7 @@ func (m model) overviewText() string {
 		lines = append(lines, label)
 		// IN PROGRESS and WAITING rows share one layout with the owner cell
 		// (102bc0, tje4sx).
-		doing := m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(indices))
+		doing := m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(m.paneIndices(p)))
 		if p == m.pane && m.overviewHeading() && p != sectionLint {
 			c := m.rowLayout(m.width, false, 0, 0)
 			if p == sectionDoing || p == sectionWaiting {
@@ -354,6 +366,10 @@ func (m model) overviewText() string {
 			lines = append(lines, m.columnsOwner(m.width, false, c))
 		}
 		for n, i := range indices[start:end] {
+			if isHead(i) {
+				lines = append(lines, m.headText(i, p, m.width, p == m.pane && i == cursor))
+				continue
+			}
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
@@ -418,7 +434,7 @@ func (m model) overviewRows() []int {
 	// lines of a section's first recentDone rows; floor its first row.
 	least, floor := make([]int, n), make([]int, n)
 	for p := range want {
-		idx := m.paneIndices(p)
+		idx := m.paneRows(p)
 		least[p] = m.linesOf(idx[:min(len(idx), recentDone)], m.selIn(p))
 		// want is only compared with what fits (the budget, or least):
 		// summed that far, not over a 2,000-row section (46ek1f).
@@ -505,12 +521,8 @@ func (m model) overviewRows() []int {
 // drawnLines is how many of lines section p fills with whole rows, where
 // it is scrolled to now.
 func (m model) drawnLines(p, lines int) int {
-	idx := m.paneIndices(p)
-	cursor := m.memoCursor(p)
-	if p == m.pane {
-		cursor = m.cursor
-	}
-	start, end := m.window(idx, cursor, m.scrollOf(p), lines, m.selIn(p))
+	idx := m.paneRows(p)
+	start, end := m.window(idx, m.rowCursor(p), m.scrollOf(p), lines, m.selIn(p))
 	return m.linesOf(idx[start:end], m.selIn(p))
 }
 
@@ -559,12 +571,12 @@ func (m model) boardText() string {
 	rows := max(1, m.bodyHeight()-4)
 	for c := 0; c < count; c++ {
 		p := first + c
-		indices := m.paneIndices(p)
+		indices := m.paneRows(p)
 		pointer := "  "
 		if p == m.pane {
 			pointer = "> "
 		}
-		label := fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStates[p]), len(indices))
+		label := fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStates[p]), m.paneTotal(p))
 		if len(indices) == 0 {
 			label += " · None" // one line, as in the overview (h9zghj)
 		}
@@ -577,12 +589,13 @@ func (m model) boardText() string {
 			heading = fit("", width)
 		}
 		cols[c] = append(cols[c], label, heading)
-		cursor := m.memoCursor(p)
-		if p == m.pane {
-			cursor = m.cursor
-		}
+		cursor := m.rowCursor(p)
 		start, end := m.window(indices, cursor, m.scrollOf(p), rows, m.selIn(p))
 		for n, i := range indices[start:end] {
+			if isHead(i) {
+				cols[c] = append(cols[c], m.headText(i, p, width, p == m.pane && i == cursor))
+				continue
+			}
 			sel := p == m.pane && i == m.cursor
 			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, sel, true, scrollMark(start+n, start, end, len(indices))))
 			if sel {
@@ -676,6 +689,9 @@ func (m model) View() string {
 	if len(m.sort) > 0 {
 		// The active order, as the builder wrote it (mkzcqr).
 		header += m.styles.dim.Render(" · sort: " + sortLabel(m.sort))
+	}
+	if g := m.groupingLabel(); g != "" {
+		header += m.styles.dim.Render(" · " + g) // kx2ndm check 2
 	}
 	tabs := []string{}
 	// The shortcut letter is bold and underlined inside the tab name, which
@@ -775,6 +791,12 @@ func (m model) View() string {
 		footer = "All tasks · : filters and commands"
 		if len(filters) > 0 {
 			footer = strings.Join(filters, " · ") + " · Esc clears"
+		}
+		if m.view == "overview" {
+			// The list explains ! and ↳ in its last row; the overview has
+			// no such row, so its footer does (kx2ndm, Jørgen 2026-11-16:
+			// compact, no extra line).
+			footer += " · ! lint finding · ↳ epic"
 		}
 		if m.detail {
 			footer = fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
