@@ -13,10 +13,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T16:08"
-stage: "waiting"
-waiting_on: "replay: ~370/400, judged blind after"
-waiting_since: "2026-11-17T17:33"
-waiting_asked_by: "hatchling"
+stage: "active"
 ---
 
 ## Goal
@@ -58,3 +55,4 @@ hatchling 16:05, scoring fixed before any judge verdict was seen (replay at 232/
 ## History
 - 2026-11-17T16:08 todo -> doing/active (take)
 - 2026-11-17T17:33 doing/active -> doing/waiting (wait)
+- 2026-11-17T17:34 doing/waiting -> doing/active (resume); was waiting_asked_by: hatchling; waiting_on: replay: ~370/400, judged blind after; waiting_since: 2026-11-17T17:33
