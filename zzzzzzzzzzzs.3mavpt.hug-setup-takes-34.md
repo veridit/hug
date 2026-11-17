@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T20:17"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_since: "2026-11-17T21:46"
+waiting_asked_by: "calf"
+waiting_for: "crab"
+waiting_on: "check 2: a hug build with e971d24 (release or go install) so that hug setup can be timed read-only in /Users/jhf/Veridit/src/seid-lang, warm median of 3"
 ---
 
 ## Goal
@@ -65,3 +69,4 @@ A -race run caught one bug of mine: tasks the import had added were not in the m
 Landed on main 9c9d4c4..e971d24. -race clean on cli, task and importer (cli 163.572s). Check 1: TestSetupReadsNoBacklogFileAfterImport (500 files, chmod 000 after import; setup reports '0 to add, 0 to update, 500 in sync' Remembered, with no comparing line). Check 3: TestSetupInterruptedSaysSo; setup returns 'hug task setup was interrupted (context canceled); it changed nothing' with fix 'hug task setup', both before start and in the middle of the dry run. Check 2 so far: warm 0.54/0.53/0.51 s on a copy of Seid (board tree c528765d0 plus Seid's .backlog). Ticking it needs the real seid-lang checkout with a hug that has e971d24: the first setup there is cold (about 9.5 s), then a warm median of 3.
 ## History
 - 2026-11-17T20:17 todo -> doing/active (take)
+- 2026-11-17T21:46 doing/active -> doing/waiting (wait)
