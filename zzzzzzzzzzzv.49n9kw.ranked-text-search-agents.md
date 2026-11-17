@@ -4,7 +4,7 @@ title: "Ranked text search for agents and people: hug task search, MCP task_sear
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
