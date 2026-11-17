@@ -67,6 +67,7 @@ Failing first on main (3 of 3):
 - TestSetupComparesAgainWhenBacklogOrBoardChanges: 'edited source: ... 0 to add, 1 to update, 499 in sync ... stderr: ' (no comparing line)
 A -race run caught one bug of mine: tasks the import had added were not in the matched list, so deleting one left setup answering from memory. Fixed: importedReport marks them matched.
 Landed on main 9c9d4c4..e971d24. -race clean on cli, task and importer (cli 163.572s). Check 1: TestSetupReadsNoBacklogFileAfterImport (500 files, chmod 000 after import; setup reports '0 to add, 0 to update, 500 in sync' Remembered, with no comparing line). Check 3: TestSetupInterruptedSaysSo; setup returns 'hug task setup was interrupted (context canceled); it changed nothing' with fix 'hug task setup', both before start and in the middle of the dry run. Check 2 so far: warm 0.54/0.53/0.51 s on a copy of Seid (board tree c528765d0 plus Seid's .backlog). Ticking it needs the real seid-lang checkout with a hug that has e971d24: the first setup there is cold (about 9.5 s), then a warm median of 3.
+landed e971d24 on main 2026-11-17: hug setup: 0.5 s on Seid, not 34 s: the backlog and task-files dry runs are…
 ## History
 - 2026-11-17T20:17 todo -> doing/active (take)
 - 2026-11-17T21:46 doing/active -> doing/waiting (wait)
