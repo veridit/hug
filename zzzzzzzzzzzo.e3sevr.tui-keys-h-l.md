@@ -60,5 +60,6 @@ file:header-spec.md (2485 bytes, sha256:d853c110)
 Jørgen 00:01 local, screenshot of the detail header: 'most of this seems not relevant inside a task; the only relevant thing is if I press up, where do I come back? More like a breadcrumb, at the start of HUG TASKS · detail.' header-spec.md updated: in a detail, line 1 is 'HUG TASKS · overview › <parents> ›' (where u goes), with '? N for you' on the right. The counts, view line, state counts and filter line leave the detail. 3 lines freed.
 file:header-spec.md (2605 bytes, sha256:6c7fafa8) replaces sha256:d853c110
 file:header-spec.md (3566 bytes, sha256:3e513627) replaces sha256:6c7fafa8
+Jørgen 00:02 local: the badge/dates block is the ticket header; after the breadcrumb comes the id and title, then that header, then the details. header-spec.md updated: three bands (breadcrumb; id+title, badges, dates; dim rule; details). The doubled wait lines (orange '└ waiting on you…' plus blue '? waiting… a answer') go to 0gztsy's one-place rendering.
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
