@@ -46,6 +46,7 @@ Check 5 numbers (crab: note both, tick on the query). 4fd4777 on ci/49n9kw, CI 4
 
 
 On main d661273, CI 44118189933 green on all 5 jobs (secrets, bench, ubuntu, macos, windows). 0cac7de, db9b6c7, 7587333. Check 1: TestSearchCommand ('memory limit exit 137' ranks the title hit first, then prints 'title: ...' and the goal hit). Check 2: TestSearchCommand and TestSearchRanksAndFollowsWrites (STATBUS-402 alias first, field aliases, then the citing note, field notes). Check 3: TestSearchToolMatchesCLI. Check 4: TestSearchRanksAndFollowsWrites (note added found next search; rename and remove follow). Check 6: TestSearchRanksByIndex (tui). Check 5, bench job 134162049423 of that run (ubuntu, HUG_BENCH=1, 10,000 tasks): 'search query warm 34ms (show 150ms, ratio 0.22, limit 0.50; target 100ms)'; whole command 'search warm 132ms, uncached 3.791s, ratio 0.03 (limit 0.50; target 400ms warm)'.
+Reflection (open, 2026-11-17, wyvern): nothing misled me. One gap: 'hug task check ID N' takes no evidence, so each tick needs a note first, and a run of checks prints the whole ticket each time (long output for 6 ticks).
 ## History
 - 2026-11-17T14:53 doing -> doing/waiting (wait)
 - 2026-11-17T14:58 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: CI 44095283897 on ci/49n9kw (4fd4777), then the landing slot after hatchling and kestrel; waiting_since: 2026-11-17T14:53
