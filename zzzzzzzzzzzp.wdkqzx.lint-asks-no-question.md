@@ -44,5 +44,6 @@ crab 23:48 local, from Jørgen's 'is this lint truly clear?': besides the waitin
 file:wdkqzx-proposal.txt (5261 bytes, sha256:fb2a73dc)
 file:wdkqzx-fail-before.txt (358 bytes, sha256:f7e842b0)
 file:wdkqzx-fail-before-tui.txt (171 bytes, sha256:a582df56)
+Proposal for crab before building: file:wdkqzx-proposal.txt (exact block, refusal and question texts; order: fix lines + block on every write first; the ask refusal with asked_check after 41hhgn, else 6ephqk deadlocks). The suppress build (WaitsOnPerson, schema 19) was never pushed: local branch ci/wdkqzx only, set aside. Its fail-before outputs are kept for the record: file:wdkqzx-fail-before.txt, file:wdkqzx-fail-before-tui.txt.
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
