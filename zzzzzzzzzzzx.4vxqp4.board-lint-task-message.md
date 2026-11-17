@@ -30,3 +30,5 @@ In tpnd3n's arm 6 lines on message-only tasks were judged right (2 return, 4 sta
 - [ ] Fresh sessions after the change keep their right lint lines
 
 ## Notes
+
+crab 14:53: test the start-of-session rule (a task only mentioned in the brief gets no lint line) on its own first: it is 5 of the 9; the other 4 (own/noted task at a wrong moment) after.
