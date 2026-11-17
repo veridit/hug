@@ -1,13 +1,18 @@
 ---
 id: r5r8c1
 title: "take refused by a dependency says 'taken by  (id)': name the blocker"
-status: todo
+status: "doing"
 type: bug
 priority: "medium"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T19:09"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -28,3 +33,7 @@ cli.go:950 builds 'taken by '+t.Value+' ('+t.ID+')' for Kind 'taken'; the depend
 - [ ] a test takes a task whose dependency is open: exit 3, the output names the dependency id and title, and a fix: line
 
 ## Notes
+
+
+## History
+- 2026-11-17T19:09 todo -> doing/active (take)
