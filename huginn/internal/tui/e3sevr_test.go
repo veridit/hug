@@ -7,8 +7,10 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/charmbracelet/x/ansi"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // e3sevr check 7: column 1 holds only the pointer, the grab or yank mark
@@ -132,6 +134,12 @@ func TestPageFocusListsTaskKeys(t *testing.T) {
 // no global band. One task open and two stacked, at 80 and 140.
 func TestDetailBandsInOrder(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
+	// The store's clock is pinned: History wraps a stamp across lines,
+	// where the date mask cannot reach.
+	oldTask, oldNow := task.Now, now
+	task.Now = func() time.Time { return time.Date(2026, 11, 17, 17, 50, 0, 0, time.Local) }
+	now = func() time.Time { return time.Date(2026, 11, 17, 17, 53, 0, 0, time.Local) }
+	t.Cleanup(func() { task.Now, now = oldTask, oldNow })
 	m, ids := idBoard(t)
 	m.styles = newTheme()
 	rule := regexp.MustCompile(`^─+$`)
