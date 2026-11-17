@@ -16,7 +16,7 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-A doing task goes to review with one command: hug task review ID --by NAME [--show FILE] (MCP task_update action review) moves doing to todo/review and writes review_by, review_since and, with --show, review_show. The TUI detail shows the file under the review question, as it does for wait and design. hug task answer clears review_show along with review_by and review_since.
+A doing task asks for review with one command: hug task review ID --by NAME [--show FILE] (MCP task_update action review, by, show) moves doing/active to doing/review; the owner keeps the task. It writes review_by, review_since and, with --show, review_show. The TUI detail shows the file under the review question, as for wait and design. hug task answer clears review_by, review_since and review_show, and the owner is active again.
 
 ## Purpose
 Today only the TUI t on a todo/review task writes review_by (moves.go:359). No CLI or MCP move puts a task into review, so asking for one takes a hand edit, and fixes must never need one. A review is often 'look at this', so it carries a picture like wait and design (5z4zt4).
