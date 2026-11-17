@@ -1,13 +1,18 @@
 ---
 id: b6jgpn
 title: "Background task sync runs at full priority; it should be niced"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T23:01"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ muninn/internal/throttle is internal to muninn/, so huginn cannot import it: mov
 - [ ] HUG_FULL_SPEED=1 leaves the pass at the parent's priority
 
 ## Notes
+
+
+## History
+- 2026-11-17T23:01 todo -> doing/active (take)
