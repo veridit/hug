@@ -65,6 +65,7 @@ hatchling 19:20, H3-correct measured once (crab ruling; bar stated before the ru
 file:real-report-h3.txt (636 bytes, sha256:d69c699a)
 file:spot-h3.txt (34818 bytes, sha256:72c39ce5)
 file:h3-wrong.txt (5287 bytes, sha256:0a6a19ca)
+file:real-spot.py.txt (1943 bytes, sha256:dbfe9f2d)
 ## History
 - 2026-11-17T16:08 todo -> doing/active (take)
 - 2026-11-17T17:33 doing/active -> doing/waiting (wait)

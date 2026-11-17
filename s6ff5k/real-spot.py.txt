@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""s6ff5k spot check: 20 (turn, model) pairs where at least one arm made a
+memory call, drawn with random.Random(1117) before reading any. Prints each
+pair's message head, the stale sids from real-set.json, the shown rows
+(sid, first 160 chars), and each arm's memory calls with the judge verdict.
+
+  real_spot.py JUDGE.json RES.json > spot.txt
+"""
+import hashlib, json, os, random, re, sys
+
+S = os.environ["JCODE_SCRATCH_DIR"]
+SET = json.load(open(os.path.join(S, "header4", "real-set.json")))
+J = json.load(open(sys.argv[1]))
+R = json.load(open(sys.argv[2]))
+
+
+def memcalls(r):
+    a = r.get("answer") or {}
+    cs = a.get("calls") if isinstance(a.get("calls"), list) else []
+    return [c for c in cs if isinstance(c, dict) and re.search(r"memory_|forget|remember", str(c.get("tool", "")), re.I)]
+
+
+def key(r, i, c):
+    return hashlib.sha256((r["turn"] + r["model"] + r["hdr"] + str(i) + json.dumps(c, sort_keys=True)).encode()).hexdigest()[:16]
+
+
+by = {(r["hdr"], r["turn"], r["model"]): r for r in R}
+pairs = sorted({(t, m) for (h, t, m), r in by.items() if memcalls(r)})
+pick = random.Random(1117).sample(pairs, min(20, len(pairs)))
+print("pairs with a memory call:", len(pairs), "sampled:", len(pick))
+for n, (t, m) in enumerate(pick, 1):
+    x = SET[t]
+    print(f"\n=== {n}. turn {t} ({x['split']}) model {m}; stale per selection: {x['stale']}")
+    print("MSG:", re.sub(r"\s+", " ", x["message"])[:700])
+    for row in x["rows"]:
+        print(f"  row {row['sid']} {row['date']}: {re.sub(chr(10), ' ', row['text'])[:160]}")
+    for h in ("H0-main", os.environ.get("ARM", "H2-server")):
+        r = by.get((h, t, m))
+        cs = memcalls(r) if r else []
+        print(f"  [{h}] {len(cs)} memory calls")
+        for i, c in enumerate(cs):
+            j = J.get(key(r, i, c), {})
+            print(f"    {j.get('verdict')}: {json.dumps(c)[:300]}")
+            print(f"      judge: {j.get('reason', '')[:200]}")
