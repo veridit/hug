@@ -21,12 +21,14 @@ func Guide(action string, t Task, ts []Task) []string {
 		// Not into todos: hug task next picks up work when it is time.
 		return nil
 	case "take":
-		g := []string{}
-		// One todo for the task, not one per check: the board holds the
-		// checks, and the task stays doing through any detour.
-		g = append(g, fmt.Sprintf("one todo named \"%s %s\" (the id in the name, not one todo per check); it stays doing through detours: hug task show %s brings you back", t.ID, oneLineShort(t.Title, 40), t.ID))
-		g = append(g, fmt.Sprintf("as each check holds: hug task check %s N, with evidence in hug task note %s \"...\"", t.ID, t.ID))
-		return g
+		// Todos are the agent's own next steps on this ticket; the ticket
+		// holds checks, details, waits and dependencies (tzc9hb, Jørgen
+		// 2026-11-16: todo lists that copied the board became walls of
+		// "blocked" items). Two lines at most.
+		return []string{
+			fmt.Sprintf("todos: your own next steps on %s, each named with the id (\"%s: ...\"); a wait, a dependency or another agent's work is not a todo: hug task note %s \"...\", hug task dep %s --add OTHER", t.ID, t.ID, t.ID, t.ID),
+			fmt.Sprintf("as each check holds: hug task check %s N, evidence in hug task note %s \"...\"; todos done: hug task done %s, then hug task next", t.ID, t.ID, t.ID),
+		}
 	case "check":
 		// next: already names the following check or done; add only the
 		// todo bookkeeping that next: cannot say.

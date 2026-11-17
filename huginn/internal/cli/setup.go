@@ -131,6 +131,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 
 	instr := []string{}
 	backlogMentions := []string{}
+	stale := []string{}
 	for _, name := range []string{"AGENTS.md", "CLAUDE.md"} {
 		raw, e := os.ReadFile(filepath.Join(root, name))
 		if e != nil {
@@ -143,10 +144,17 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		if strings.Contains(text, "BACKLOG.MD") || strings.Contains(strings.ToLower(text), "backlog.md mcp") {
 			backlogMentions = append(backlogMentions, name)
 		}
+		if sec, ok := taskSection(text); ok && sec != strings.TrimSpace(agentSection) {
+			stale = append(stale, name)
+		}
 	}
-	add("agent instructions", len(instr) > 0 && len(backlogMentions) == 0,
-		"AGENTS.md (and CLAUDE.md if present) tell agents to track work with hug tasks",
-		agentInstructionsEdit(backlogMentions))
+	instrDo := agentInstructionsEdit(backlogMentions)
+	if len(backlogMentions) == 0 && len(stale) > 0 {
+		instrDo = "in " + strings.Join(stale, " and ") + ", replace the \"## Tasks: hug\" section (up to the next ## heading) with this one, then show the diff:\n" + agentSection
+	}
+	add("agent instructions", len(instr) > 0 && len(backlogMentions) == 0 && len(stale) == 0,
+		"AGENTS.md (and CLAUDE.md if present) tell agents to track work with hug tasks, in this hug's words",
+		instrDo)
 
 	mcpPath := filepath.Join(root, ".mcp.json")
 	hasHuginn, hasBacklog := mcpServers(mcpPath)
@@ -207,6 +215,21 @@ func agentInstructionsEdit(backlog []string) string {
 	return do
 }
 
+// taskSection is the "## Tasks: hug" section of text, heading included, up
+// to the next "## " heading, trimmed. ok is false when there is none.
+func taskSection(text string) (string, bool) {
+	text = strings.ReplaceAll(text, "\r\n", "\n")
+	i := strings.Index(text, "## Tasks: hug")
+	if i < 0 || (i > 0 && text[i-1] != '\n') {
+		return "", false
+	}
+	rest := text[i:]
+	if j := strings.Index(rest, "\n## "); j >= 0 {
+		rest = rest[:j]
+	}
+	return strings.TrimSpace(rest), true
+}
+
 // agentSection is the text projects paste into AGENTS.md.
 const agentSection = `## Tasks: hug
 Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
@@ -215,6 +238,11 @@ claude-opus-5-5 or gpt-6.1-sol; a person: --model human; --as NAME adds your age
 or session name, optional), then hug task show ID.
 While working: hug task check ID N with evidence, hug task note ID "evidence".
 Finish: hug task done ID when every acceptance check is ticked.
+Todos are your own next steps on the task you took, nothing else: details,
+evidence, waits and dependencies go in tasks (hug task note, hug task dep), never
+in todos, and another agent's work is never your todo. When your todos run out,
+finish the task and run hug task next: an empty todo list means take the next
+task, not blocked.
 New work: hug task new "short title" --goal "..." --purpose "..." --principle "..." --details "..." --accept "observable check".
 Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
 and do not do), Relevant details, then Acceptance. Titles stay under 80

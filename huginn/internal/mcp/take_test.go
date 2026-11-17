@@ -68,6 +68,10 @@ func TestTakeRecordsAgentAndModel(t *testing.T) {
 		t.Fatal(m)
 	}
 	tk := m["task"].(map[string]any)
+	// tzc9hb check 3: the MCP result carries the same reminder as the CLI.
+	if g, _ := m["guide"].([]any); len(g) != 2 || !strings.Contains(g[0].(string), "todos: your own next steps on "+id) || m["next"] != "hug task show "+id {
+		t.Fatalf("guide %v next %v", m["guide"], m["next"])
+	}
 	if as := tk["assignee"].([]any); len(as) != 1 || as[0] != "poodle" || tk["model"] != "claude-opus-5-5" {
 		t.Fatalf("assignee %v model %v", tk["assignee"], tk["model"])
 	}
