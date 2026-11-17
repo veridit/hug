@@ -26,5 +26,6 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 
 ## Acceptance
 - [ ] x
+- [ ] hug task states lists doing/question with its fields; 'hug task ask ID --to jhf --check 9 "look at ..."' sets stage question with them, and a bad N is refused with 'task has 9 checks' and a fix: line (test)
 
 ## Notes
