@@ -26,10 +26,22 @@ matters is where u takes him back, as a breadcrumb, at the start of line 1.
 
 ```
 HUG TASKS · overview › 6ephqk ›                                   ? 16 for you · hug v0.7.50
-▸ kx2ndm  TUI: groups and epics visible and collapsible            ← id leads the title (e3sevr)
+▸ kx2ndm  TUI: groups and epics visible and collapsible                       ← the ticket: id, title
 [doing] [feature] [high]  group:root  assigned:nautilus · claude-opus-5-5/high · main
-└─ asked: you · check 9 · look at the rows on your board        ← 41hhgn: no '?' glyph
+created 2026-11-16 · updated 2026-11-16 · tui-groups-epics-visible
+───────────────────────────────────────────────────────────────────── dim rule
+GOAL … ACCEPTANCE … (the details)
 ```
+
+Jørgen 00:02 local, on the badge, dates and wait lines: "this seems to be the ticket header; and
+after that you would have the ID and the ticket, and then the details." So the detail reads in three
+bands: the breadcrumb (where u goes), the ticket header (id and title, badges, dates), then the
+details under a dim rule. The id leaves the badge row: it is on the title line.
+
+The wait or asked line does not sit in the header. Today it shows twice: once orange under the
+dates (`└ waiting on you …`) and once blue (`? waiting: … asked by … a answer`). 0gztsy makes
+that once, on the check it is about, with focus there. A question that names no check shows as one
+block at the top of the details, styled like a check.
 
 - Line 1 is the breadcrumb: `HUG TASKS ·`, then the view u returns to, then any parent tasks
   on the detail stack, each ending in `›`. The rightmost crumb is where u goes. The word
