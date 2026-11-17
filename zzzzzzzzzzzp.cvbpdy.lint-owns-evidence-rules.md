@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T17:33"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "orangutan: check 4: Seid switches its pre-commit hook from tools/evidence.py check to hug task lint after setting forbid_cite; 530 findings on 464 lines to clear first (note 16:34)"
+waiting_since: "2026-11-17T17:34"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -46,3 +49,4 @@ hatchling 16:34, landed 95079e0 on main (e582ab4..95079e0, fast-forward). Local:
 Before Seid turns on forbid_cite (crab 16:33): adding forbid_cite = [".jcode/scratch/"] to Seid's hug.toml adds 530 forbidden-citation findings on 464 lines (measured on a copy of hug/tasks, 3478 files). evidence.py never read hug's task files (it reads .backlog/tasks only), so these lines exist today and only become visible now. The fix an agent there runs per line: if the file still exists, hug task attach ID FILE and cite it as file:NAME; if it is gone, append ' (lost)' right after the path (' (not kept: too large)' / ' (not kept: run output)' are also accepted). The finding names the path and line; hug task lint --code forbidden-citation lists them.
 ## History
 - 2026-11-17T17:33 todo -> doing/active (take)
+- 2026-11-17T17:34 doing/active -> doing/waiting (wait)
