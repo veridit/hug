@@ -4,7 +4,7 @@ title: "set --title leaves the old multi-line title's continuation lines"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
