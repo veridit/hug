@@ -185,7 +185,10 @@ func TestSetupFilesStepRemembered(t *testing.T) {
 	// proof here (ImportFiles reads the board), so check the cache file.
 	m, _ := filepath.Glob(filepath.Join(a.Cwd, ".git", "huginn", "setup-files-*.json"))
 	if len(m) != 1 {
-		t.Fatalf("remembered files check: %v", m)
+		board := filepath.Join(a.Cwd, TaskDir)
+		key, ok := a.filesKey(context.Background(), filepath.Join(a.Cwd, "evidence"), "evidence", board)
+		status, e := gitIn(context.Background(), board, "status", "--porcelain=v2", "--branch", "--untracked-files=all")
+		t.Fatalf("remembered files check: %v (key %q ok %v; board status %v:\n%s)", m, key, ok, e, status)
 	}
 	if e := os.WriteFile(filepath.Join(ev, "second.log"), []byte("ok\n"), 0o644); e != nil {
 		t.Fatal(e)
