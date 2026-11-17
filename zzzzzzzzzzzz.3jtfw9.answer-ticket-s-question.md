@@ -4,7 +4,7 @@ title: "Answer a ticket's question in place; the asking agent is told"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
