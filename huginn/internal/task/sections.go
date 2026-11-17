@@ -1,7 +1,7 @@
 package task
 
 import (
-	"os"
+	"github.com/veridit/hug/internal/sharefile"
 	"strings"
 )
 
@@ -174,7 +174,7 @@ func (s *Store) Tidy(dryRun bool) (changed []string, diff string, err error) {
 		if e != nil {
 			return changed, b.String(), e
 		}
-		raw, e := os.ReadFile(path)
+		raw, e := sharefile.ReadFile(path)
 		if e != nil {
 			return changed, b.String(), e
 		}

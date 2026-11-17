@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/veridit/hug/huginn/internal/id"
+	"github.com/veridit/hug/internal/sharefile"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -759,5 +760,5 @@ func AtomicWrite(path string, data []byte) error {
 	if e != nil {
 		return e
 	}
-	return os.Rename(tmp, path)
+	return sharefile.Rename(tmp, path)
 }

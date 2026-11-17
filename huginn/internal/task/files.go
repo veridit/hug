@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"github.com/veridit/hug/internal/sharefile"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -93,7 +94,7 @@ func (s *Store) Files(ref string) (Task, []File, error) {
 		if err != nil || de.IsDir() || de.Type()&os.ModeSymlink != 0 {
 			return nil
 		}
-		b, err := os.ReadFile(p)
+		b, err := sharefile.ReadFile(p)
 		if err != nil {
 			return nil
 		}
@@ -119,7 +120,7 @@ func (s *Store) ReadFile(ref, name string) ([]byte, error) {
 	if e != nil {
 		return nil, e
 	}
-	b, e := os.ReadFile(p)
+	b, e := sharefile.ReadFile(p)
 	if os.IsNotExist(e) {
 		return nil, &Error{Kind: "file-not-found", ID: d.Task.ID, Value: name, Fix: "hug task show " + d.Task.ID}
 	}
@@ -158,7 +159,7 @@ func (s *Store) Attach(ref, name string, content []byte, why string, replace boo
 	}
 	sum := digest(content)
 	ar.File = File{Name: name, Bytes: len(content), SHA256: sum}
-	if old, e := os.ReadFile(p); e == nil {
+	if old, e := sharefile.ReadFile(p); e == nil {
 		if digest(old) == sum {
 			r, e := s.finish(d, false)
 			return r, ar, e
@@ -202,7 +203,7 @@ func (s *Store) Detach(ref, name string) (Result, error) {
 	if e != nil {
 		return Result{}, e
 	}
-	b, e := os.ReadFile(p)
+	b, e := sharefile.ReadFile(p)
 	if os.IsNotExist(e) {
 		return Result{}, &Error{Kind: "file-not-found", ID: d.Task.ID, Value: name, Fix: "hug task show " + d.Task.ID}
 	}
@@ -315,7 +316,7 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			if st, e := os.Lstat(p); e != nil || st.Mode()&os.ModeSymlink != 0 {
 				continue
 			}
-			if doc, e = os.ReadFile(p); e != nil {
+			if doc, e = sharefile.ReadFile(p); e != nil {
 				continue
 			}
 			if t.Texts == nil {
@@ -362,7 +363,7 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 				out = append(out, Finding{Path: filepath.ToSlash(rel), Line: 0, Problem: "task file is a symlink", Fix: "hug task detach " + t.ID + " " + filepath.ToSlash(name)})
 				return nil
 			}
-			b, err := os.ReadFile(fp)
+			b, err := sharefile.ReadFile(fp)
 			if err == nil {
 				if e := CheckText(filepath.ToSlash(rel), b); e != nil {
 					msg := e.Error()

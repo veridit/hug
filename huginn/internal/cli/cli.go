@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/veridit/hug/internal/env"
+	"github.com/veridit/hug/internal/sharefile"
 	"io"
 	"os"
 	"os/exec"
@@ -461,7 +462,7 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	// or a file changed since the cache saw it) reads its file.
 	texts := t.Texts
 	if texts == nil || !texts.Bodies {
-		if b, e := os.ReadFile(filepath.Join(root, filepath.FromSlash(t.Path))); e == nil {
+		if b, e := sharefile.ReadFile(filepath.Join(root, filepath.FromSlash(t.Path))); e == nil {
 			texts = task.Parse(t.Path, b).Task.Texts
 		}
 	}

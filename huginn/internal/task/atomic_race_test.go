@@ -2,19 +2,21 @@ package task
 
 import (
 	"bytes"
-	"os"
 	"path/filepath"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/sharefile"
 )
 
-// kbc99j: a task file read while another process renames a new version
-// over it must neither fail nor fail the rename. On Windows (CI run
-// 44065882953) a parallel note failed with "open ...: The process cannot
-// access the file because it is being used by another process": a read
-// outside the board turn met a writer's rename. Both sides are counted so
-// the failure says which one lost.
+// TestAtomicWriteRacesReads: kbc99j: a task file read while another writer
+// renames a new version over it must neither fail nor fail the rename. On
+// Windows (CI run 44086864807, before the fix) 6 of 11646 os.ReadFile calls
+// failed with "The process cannot access the file because it is being used
+// by another process" and 165 of 169 renames with "Access is denied": the
+// failure of parallel_test.go:34 (run 44065882953). Both sides are counted
+// so the failure says which one lost.
 func TestAtomicWriteRacesReads(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "h.race.md")
@@ -32,7 +34,7 @@ func TestAtomicWriteRacesReads(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for time.Now().Before(deadline) {
-				got, err := ReadTaskFile(path)
+				got, err := sharefile.ReadFile(path)
 				mu.Lock()
 				reads++
 				if err != nil {
@@ -74,6 +76,3 @@ func TestAtomicWriteRacesReads(t *testing.T) {
 			len(readErrs), reads, first(readErrs), len(writeErrs), writes, first(writeErrs), torn)
 	}
 }
-
-// ReadTaskFile is the read under test; until the fix it is os.ReadFile.
-var ReadTaskFile = os.ReadFile
