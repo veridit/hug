@@ -38,7 +38,7 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [ ] MCP task_update action ask behaves like the CLI (test)
 - [ ] Jørgen confirms on his board after release
 - [ ] A multi-line answer survives every path: TUI (Alt-Enter adds a line, a paste keeps its lines, Enter sends), 'hug task answer ID -' from stdin, and MCP; History holds it as an indented block, and show, the detail and the asker's notice print every line verbatim (test with a 3-line answer holding a quote and a colon)
-- [ ] The overview has an ASKED section at the top ('ASKED · for you [N]', oldest first) holding the tasks asked of the viewer; WAITING holds only waits with no person and questions asked of others; the header's '? N for you' equals the ASKED count (golden on hug's board shape: 16 asked, 2 waiting)
+- [ ] ~~The overview has an ASKED section at the top ('ASKED · for you [N]', oldest first) holding the tasks asked of the viewer; WAITING holds only waits with no person and questions asked of others; the header's '? N for you' equals the ASKED count (golden on hug's board shape: 16 asked, 2 waiting)~~ (not relevant: Jørgen 00:13: rows show the title, the focused row adds the question (next check), crab, 2026-11-18)
 
 ## Notes
 
