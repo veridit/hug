@@ -13,9 +13,9 @@ created 2026-11-01 · updated 2026-11-10 · bug-item-02-make
   a answer                                                                      
 ────────────────────────────────────────────────────────────────────────────────
   ▸ rows.ans · 102 B                                                            
-  HUG TASKS · overview                                                          
-  IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                         
-  plain line                                                                    
+HUG TASKS · overview                                                            
+IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                           
+plain line                                                                      
                                                                                 
 DESCRIPTION                                                                     
 Deliver compiler-lang support with huginn and readable evidence.                
@@ -43,9 +43,9 @@ created 2026-11-01 · updated 2026-11-10 · bug-item-02-make
   a answer                                                                                                                                  
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
   ▸ rows.ans · 102 B                                                                                                                        
-  HUG TASKS · overview                                                                                                                      
-  IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                                                                                     
-  plain line                                                                                                                                
+HUG TASKS · overview                                                                                                                        
+IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                                                                                       
+plain line                                                                                                                                  
                                                                                                                                             
 DESCRIPTION                                                                                                                                 
 Deliver compiler-lang support with huginn and readable evidence.                                                                            

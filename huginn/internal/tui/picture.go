@@ -60,13 +60,28 @@ func colourOnly(b []byte, width int, colour bool) string {
 			keep.WriteString(escapeControls(line[i : i+n]))
 			i += n
 		}
-		l := ansi.Truncate(strings.ReplaceAll(keep.String(), "\t", "    "), max(1, width), "…")
+		// A frame's rows are padded to its width; the padding is not
+		// picture, and would cut every row of a full-width capture.
+		l := ansi.Truncate(trimPadding(strings.ReplaceAll(keep.String(), "\t", "    ")), max(1, width), "…")
 		if colour {
 			l += "\x1b[0m"
 		}
 		out = append(out, l)
 	}
 	return strings.Join(out, "\n")
+}
+
+// trimPadding drops the spaces that end a line, also behind colour codes
+// that end it ("text\x1b[0m    " and "text    \x1b[0m").
+func trimPadding(s string) string {
+	for {
+		t := strings.TrimRight(s, " ")
+		i := strings.LastIndex(t, "\x1b[")
+		if i < 0 || !strings.HasSuffix(t, "m") || strings.ContainsAny(t[i+2:len(t)-1], "\x1b ") || strings.TrimRight(t[:i], " ") == t[:i] {
+			return t
+		}
+		s = strings.TrimRight(t[:i], " ") + t[i:]
+	}
 }
 
 // imageTerminal is the inline image protocol this terminal speaks:
@@ -279,11 +294,11 @@ func (m model) pictureLines(t task.Task, name string) []string {
 			m.pictures[memoKey] = pictureMemo{size: info.Size(), mtime: info.ModTime(), lines: out}
 		}
 	}()
-	var body string
+	// A capture is drawn at full width, as it was taken (a frame as wide
+	// as the screen loses nothing); other text is indented under the ▸.
+	body, indent := glanceText(b, info.Size(), m.width-2), "  "
 	if ansName(name) {
-		body = colourOnly(b, m.width-2, os.Getenv("NO_COLOR") == "")
-	} else {
-		body = glanceText(b, info.Size(), m.width-2)
+		body, indent = colourOnly(b, m.width, os.Getenv("NO_COLOR") == ""), ""
 	}
 	lines := strings.Split(body, "\n")
 	for i, l := range lines {
@@ -291,7 +306,7 @@ func (m model) pictureLines(t task.Task, name string) []string {
 			out = append(out, m.styles.dim.Render(fit(fmt.Sprintf("  … %d more lines: Space in FILES shows all", len(lines)-pictureLimit), m.width)))
 			break
 		}
-		out = append(out, "  "+l)
+		out = append(out, indent+l)
 	}
 	return out
 }
@@ -349,7 +364,11 @@ func (m *model) capture() {
 	for i := 2; m.hasFile(t, name); i++ {
 		name = fmt.Sprintf("screen-%s-%d.ans", captureNow().Format("1504"), i)
 	}
-	m.captured = strings.TrimRight(frame, "\n") + "\n"
+	var rows []string
+	for _, l := range strings.Split(strings.TrimRight(frame, "\n"), "\n") {
+		rows = append(rows, trimPadding(l))
+	}
+	m.captured = strings.Join(rows, "\n") + "\n"
 	m.capturedNote = fmt.Sprintf("%s (%d lines)", copied, n)
 	m.confirm = captureKey
 	m.confirmPath = t.Path

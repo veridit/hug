@@ -148,6 +148,10 @@ func TestCaptureKeepsOnlyColours(t *testing.T) {
 	if !strings.Contains(got, `\x1b[2J`) || !strings.Contains(got, `\x1b]0;pwned\a`) {
 		t.Fatalf("other escapes not shown escaped: %q", got)
 	}
+	// A full-width frame row: its padding goes, so it is not cut.
+	if got := ansi.Strip(colourOnly([]byte("\x1b[32mdone\x1b[0m"+strings.Repeat(" ", 100)+"\n\x1b[1mbold   "+strings.Repeat(" ", 90)+"\x1b[0m\n"), 20, true)); got != "done\nbold" {
+		t.Fatalf("padding kept or cut: %q", got)
+	}
 	for _, line := range strings.Split(colourOnly([]byte(strings.Repeat("\x1b[31mwide ", 40)), 20, true), "\n") {
 		if n := ansi.StringWidth(line); n > 20 || !strings.HasSuffix(line, "\x1b[0m") {
 			t.Fatalf("line %d wide or colour left open: %q", n, line)
