@@ -40,6 +40,7 @@ Messages: muninn/internal/app/dedupe.go:23, binding.go:559, places.go:163, all s
 
 
 hatchling 15:19: fix 0c72206 on ci/p29rbz (from main b8f9000), CI 44112858767. Tests fail before the fix (stash of app/*.go, refusal branch disabled): TestRememberRefusalSaysNotStoredAndFails 'notstored_test.go:70: exit 1, want 3:' for duplicate/secret/place with output 'hug mem: not stored yet: this looks like memory bkpk4q: ... Same fact?'; TestMCPRememberDuplicateQuestionAndAnswers 'dedupe_test.go:29: refusal must start NOT STORED: "not stored yet: this looks like memory bkpk4q...'. After: all PASS. Exit code 3 = refused, documented in hug mem remember --help and CHANGELOG; other errors stay 1. MCP: the SDK already sets IsError for the returned error; its text now starts NOT STORED:. The test uses a new openApp hook in run/main.go to give Main the fixture's synthetic embedder.
+hatchling 15:30: CI 44112858767 on 0c72206 completed success (ubuntu, macos, windows). Landing order (crab 15:29): kestrel n2hq8p, then p29rbz, then wyvern.
 ## History
 - 2026-11-17T16:14 todo -> doing/active (take)
 - 2026-11-17T16:19 doing/active -> doing/waiting (wait)
