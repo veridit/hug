@@ -25,7 +25,7 @@ muninn/internal/recall/boardcue.go pickFinding/BoardCue; replay muninn/cmd/board
 ## Depends on
 
 ## Acceptance
-- [ ] an unrelated lint finding is handed out only when the session has no doing task of its own or just closed one
+- [ ] an unrelated lint finding is handed out only once the session's own doing task has no open finding (test)
 - [ ] replay (board4, blind judge): false lint lines on held-out fall from the stop-order arm's 1 and fresh lint lines stay at 13 of 13, counts in muninn/docs/BOARD4.md
 
 ## Notes
