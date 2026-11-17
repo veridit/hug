@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.39 - 2026-11-17
+
 - The task cache opens in one read instead of decoding 10,000 rows, a write stores only the tasks it changed, and `ls` takes notes and description texts from the cache instead of reading every file: at 10,000 tasks `ls` drops from 1.08 s to 0.45 s, `next`, `show` and `board` from 0.33 s to 0.24-0.26 s, `note` from 0.60 s to 0.51 s. An edit that keeps a file's size and lands in the same clock tick as the last read is now always seen: files modified within 2 s of the last sync are hashed even when size and time match (44w1ev, step 3).
 - `hug task lint` takes file references from the cached parse instead of reading every task file (it reads them only when `forbid_cite` is set): at 10,000 tasks lint drops from 2.0 s to 0.36 s, on seid's 2,508 tasks from 1.50 s to 0.22 s (44w1ev, step 4).
 - Every `hug task` command starts git 5 fewer times (8 instead of 13 for `next`): the repository is looked up once for the checkout check, the old-layout check and the board's checkout, the old refs are read in one call, the Git version is checked only before creating a checkout, and the remote comes from the repository's config when it defines `origin`. On a one-task board `next` and `show` drop from 0.14 s to 0.07 s, `ls` from 0.18 s to 0.10 s; at 10,000 tasks `next` and `show` drop from 0.25 s to 0.19-0.20 s (44w1ev, step 5).
