@@ -13,8 +13,8 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "jhf: check 4: approve the Seid cleanup diff (attached: ggydj2-seid-dry-run.md). Seid's pre-commit and tools/evidence.py read .backlog, so they must move to hug first"
-waiting_since: "2026-11-17T17:46"
+waiting_on: "jhf: test"
+waiting_since: "2026-11-17T17:47"
 waiting_asked_by: "calf"
 ---
 
