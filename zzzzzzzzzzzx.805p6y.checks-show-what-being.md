@@ -54,3 +54,5 @@ Jørgen 2026-11-17 10:09 (ruling): two fields written in the task file, state (t
 Jørgen 2026-11-17 10:09-10:10 (ruling): write state, and stage within the state; the tree is hard-coded because every node has semantic meaning that hug acts on. Extra fields belong to a node and are named after it: <state>_<name> or <stage>_<name> (doing_since, waiting_on, waiting_since, design_question, dropped_reason, done_at). A node's fields exist only while the task is in that node. Full draft: tmp/lanes/805p6y-states.md. Open: blocked under todo or own state; review as a stage.
 
 Jørgen 2026-11-17 10:10 (why it is hard-coded): every node carries semantics hug acts on (which section, what next picks, what lint checks, what ends a wait). A configurable tree would still need this hard-coded tree underneath, with user nodes mapped onto it; that is two trees for one meaning. So the tree is fixed in code and changed only by design, with hug upgrade migrating the files.
+
+Jørgen 2026-11-17 10:12 (ruling): blocked is a stage of both todo (nobody has it) and doing (someone has it). Same meaning in both; the state decides the section. Draft updated: tmp/lanes/805p6y-states.md.
