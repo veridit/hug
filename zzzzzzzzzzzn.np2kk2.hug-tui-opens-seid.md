@@ -1,7 +1,7 @@
 ---
 id: np2kk2
 title: "hug tui opens Seid in 8-9 s: watch setup globs per folder, sync rereads"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
@@ -9,6 +9,11 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "44w1ev"
+doing_since: "2026-11-17T17:22"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -36,3 +41,7 @@ CPU profile of a4aa5a5 + a local pprof hook, hug tui on Seid, ~5 s sampled: (1) 
 crab 15:05: the Seid board has 271 top-level folders and 1,132 folders in all under .hug/tasks (find -mindepth 2 -type d). Profile files: $JCODE_SCRATCH_DIR/tui3.prof with binary hug-prof (a4aa5a5 + CRAB_CPUPROFILE hook in cmd/hug/main.go, scratch only).
 
 Dependency on vnyz8z dropped (wyvern 16:22): its code is on main 43cb24c (af51fc3..43cb24c); vnyz8z stays open only for Jørgen's check 4. Item 2 is mostly vnyz8z's work: the watch starts after the first frame (tui/start.go startWatching, TestQuitDoesNotWaitForWatchSetup). Still owed here: a test that a change made right after start is seen.
+
+
+## History
+- 2026-11-17T17:22 todo -> doing/active (take)
