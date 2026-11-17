@@ -33,6 +33,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/harness"
 	"github.com/veridit/hug/muninn/internal/recall"
 	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/run"
 )
 
 type commit struct {
@@ -372,7 +373,7 @@ func main() {
 		src := func(since time.Time, wantLint bool) *recall.BoardInput {
 			in := &recall.BoardInput{Self: recall.BoardSelf{Name: name, Model: model, Branch: "main", Worktree: wd}}
 			for _, y := range snap.Tasks {
-				in.Tasks = append(in.Tasks, recall.BoardTask{ID: y.ID, Title: y.Title, Status: y.Status, Assignee: y.Assignee, Branch: y.Branch, Worktree: y.Worktree, Checks: y.Checks, Open: y.Open})
+				in.Tasks = append(in.Tasks, run.BoardTask(y))
 			}
 			for _, a := range actions {
 				b := recall.BoardAction{Edits: a.EditsIn(wd), Subject: a.Subject}

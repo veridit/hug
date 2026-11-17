@@ -390,3 +390,39 @@ func TestBoardUnrelatedLintWaitsForOwnTask(t *testing.T) {
 		t.Fatalf("no own task: %q", line)
 	}
 }
+
+// An unread answer to the session's own question is the first board line,
+// once; an answer for another session is not shown (3jtfw9 check 3).
+func TestBoardAnswerForAsker(t *testing.T) {
+	now := time.Date(2026, 11, 17, 13, 31, 0, 0, time.UTC)
+	ans := &recall.BoardAnswer{Stage: "design", Question: "one key or two?", Text: "one key: a", By: "jhf", For: "nautilus", At: "2026-11-17T13:30"}
+	in := recall.BoardInput{
+		Tasks: []recall.BoardTask{
+			{ID: "3jtfw9", Title: "answer in place", Status: "todo", Answer: ans},
+			{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"nautilus"}, Checks: 2, Open: 0},
+		},
+		Self: recall.BoardSelf{Name: "Nautilus"},
+	}
+	e := boardEngine(t)
+	line, kind := e.BoardCue("s", "go on", "", now, src(in))
+	want := "jhf answered your question on 3jtfw9: one key: a (design: one key or two?). hug task show 3jtfw9"
+	if kind != "answer" || line != want {
+		t.Fatalf("got %q %q, want %q", kind, line, want)
+	}
+	// Said once: the next turn gets the done line it held back.
+	if line, kind := e.BoardCue("s", "go on", "", now.Add(time.Minute), src(in)); kind != "done" {
+		t.Fatalf("second turn: %q %q", kind, line)
+	}
+	// A later answer on the same task is new, and not held by the hour.
+	in.Tasks[0].Answer = &recall.BoardAnswer{Stage: "design", Question: "and the key name?", Text: "a", By: "jhf", For: "nautilus", At: "2026-11-17T13:40"}
+	if line, kind := e.BoardCue("s", "go on", "", now.Add(10*time.Minute), src(in)); kind != "answer" {
+		t.Fatalf("later answer: %q %q", kind, line)
+	}
+	// Another session does not see it.
+	other := in
+	other.Self = recall.BoardSelf{Name: "crab"}
+	other.Tasks = in.Tasks[:1]
+	if line, _ := boardEngine(t).BoardCue("s2", "go on", "", now, src(other)); line != "" {
+		t.Fatalf("answer for nautilus shown to crab: %q", line)
+	}
+}

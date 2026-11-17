@@ -47,9 +47,19 @@ func boardSource(ctx context.Context, on bool, cwd, name string, activity func(s
 func boardTasks(ts []board.Task) []recall.BoardTask {
 	out := make([]recall.BoardTask, 0, len(ts))
 	for _, t := range ts {
-		out = append(out, recall.BoardTask{ID: t.ID, Title: t.Title, Status: t.Status, Assignee: t.Assignee, Branch: t.Branch, Worktree: t.Worktree, Checks: t.Checks, Open: t.Open})
+		out = append(out, BoardTask(t))
 	}
 	return out
+}
+
+// BoardTask is the recall view of one board task, its unread answer
+// included (3jtfw9).
+func BoardTask(t board.Task) recall.BoardTask {
+	bt := recall.BoardTask{ID: t.ID, Title: t.Title, Status: t.Status, Assignee: t.Assignee, Branch: t.Branch, Worktree: t.Worktree, Checks: t.Checks, Open: t.Open}
+	if a := t.Answer; a != nil {
+		bt.Answer = &recall.BoardAnswer{Stage: a.Stage, Question: a.Question, Text: a.Text, By: a.By, For: a.For, At: a.At}
+	}
+	return bt
 }
 
 func boardFindings(fs []board.Finding) []recall.BoardFinding {

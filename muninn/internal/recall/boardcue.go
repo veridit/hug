@@ -42,6 +42,15 @@ type BoardTask struct {
 	Assignee          []string
 	Branch, Worktree  string
 	Checks, Open      int
+	// Answer is a person's answer to a question on the task that its
+	// asker has not read yet (3jtfw9); nil when there is none.
+	Answer *BoardAnswer
+}
+
+// BoardAnswer is the newest unread answer on a task: Stage is design,
+// waiting or review; For is the asker's name; At the History stamp.
+type BoardAnswer struct {
+	Stage, Question, Text, By, For, At string
 }
 
 // BoardFinding is one open lint finding with its repair command.
@@ -143,7 +152,13 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 		if rate == "work" {
 			rate = "take"
 		}
-		if e.boardDue(session, rate, BoardEvery, now) && e.boardDue(session, c.key(), RepeatEvery, now) {
+		// An answer is said once (its key names the answer), never held
+		// back by the hourly rate: a person is waiting on the agent.
+		if c.kind == "answer" && e.boardDue(session, c.key(), RepeatEvery, now) {
+			e.boardMark(session, c.key(), now)
+			return c.line, c.kind
+		}
+		if c.kind != "answer" && e.boardDue(session, rate, BoardEvery, now) && e.boardDue(session, c.key(), RepeatEvery, now) {
 			e.boardMark(session, rate, now)
 			e.boardMark(session, c.key(), now)
 			return c.line, c.kind
@@ -192,6 +207,7 @@ type detection struct {
 	matched *BoardTask  // todo task whose title matches the work
 	touched map[string]bool
 	own     map[string]bool // the session's own doing tasks (tpnd3n)
+	answers []BoardTask     // tasks with an unread answer for this session (3jtfw9)
 }
 
 type candidate struct{ kind, id, line string }
@@ -209,6 +225,13 @@ func (d detection) candidates(editTurns int64, model string) []candidate {
 		model = "MODEL"
 	}
 	var out []candidate
+	// A person's answer to this session's question comes first: it is the
+	// newest thing anyone said to it (3jtfw9). The id carries the answer's
+	// time, so a later answer on the same task is not held back.
+	for _, t := range d.answers {
+		a := t.Answer
+		out = append(out, candidate{"answer", t.ID + "@" + a.At, fmt.Sprintf("%s answered your question on %s: %s (%s: %s). hug task show %s", a.By, t.ID, Truncate(oneLine(a.Text), 300), a.Stage, short(a.Question), t.ID)})
+	}
 	for _, t := range d.owned {
 		out = append(out, candidate{"owner", t.ID, fmt.Sprintf("Task board: you are working on %s but the board says %s. If it is yours now: hug task set %s --assignee %s", t.ID, strings.Join(t.Assignee, ", "), t.ID, d.self)})
 	}
@@ -292,6 +315,11 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 		}
 	}
 	d.self = self.Name
+	for _, t := range in.Tasks {
+		if t.Answer != nil && self.Name != "" && strings.EqualFold(strings.TrimSpace(strings.TrimPrefix(t.Answer.For, "@")), self.Name) {
+			d.answers = append(d.answers, t)
+		}
+	}
 	// owner (v3k6cp): the session works a doing task (took it, works in its
 	// recorded worktree or branch, ticks its checks, or notes it while
 	// editing code) but the assignee is another name. Only with the
