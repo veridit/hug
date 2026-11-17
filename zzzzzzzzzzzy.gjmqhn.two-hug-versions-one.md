@@ -9,13 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T17:30"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "main CI for e96d6f8 green on all jobs, then tick 1-3"
-waiting_since: "2026-11-17T17:43"
-waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -45,3 +42,4 @@ landed e96d6f8 on main 2026-11-17: hug task cache: one database per cache schema
 ## History
 - 2026-11-17T17:30 todo -> doing/active (take)
 - 2026-11-17T17:43 doing/active -> doing/waiting (wait)
+- 2026-11-17T18:00 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: main CI for e96d6f8 green on all jobs, then tick 1-3; waiting_since: 2026-11-17T17:43
