@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/charmbracelet/x/ansi"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // et85h1: the detail header names who holds a task and on which model.
@@ -23,9 +24,13 @@ func TestDetailHeaderShowsModel(t *testing.T) {
 		{nil, "gpt-6.1-sol", "assigned:gpt-6.1-sol"},
 		{[]string{"gpt-6.1-sol"}, "gpt-6.1-sol", "assigned:gpt-6.1-sol"},
 		{[]string{"jhf"}, "", "assigned:jhf"},
+		// jr55s8: the effort it was taken at shows with the model.
+		{[]string{"poodle"}, "claude-opus-5-5/high", "assigned:poodle · claude-opus-5-5/high"},
+		{[]string{"gpt-6.1-sol"}, "gpt-6.1-sol/xhigh", "assigned:gpt-6.1-sol/xhigh"},
 	} {
 		tk := base
-		tk.Assignee, tk.Model = tc.assignee, tc.model
+		tk.Assignee = tc.assignee
+		tk.Model, tk.Effort = task.SplitModel(tc.model)
 		got := ansi.Strip(strings.Join(m.detailHeader(tk), "\n"))
 		if !strings.Contains(got, tc.want) {
 			t.Fatalf("%v/%q: want %q in\n%s", tc.assignee, tc.model, tc.want, got)

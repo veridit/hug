@@ -313,3 +313,12 @@ func TestCommitMsgGateChecksModelRoster(t *testing.T) {
 		t.Errorf("after the roster changed: ok=%v\n%s", ok, out)
 	}
 }
+
+// jr55s8 check 3: a tracked hook calls the gate in two lines, and the help
+// shows them as they are to be pasted.
+func TestInstallHelpShowsTrackedHookLines(t *testing.T) {
+	got := commandHelp("install")
+	if !strings.Contains(got, "\n"+tailLines+"\n") || strings.Count(tailLines, "\n") != 1 {
+		t.Fatalf("help install does not show the two lines:\n%s", got)
+	}
+}

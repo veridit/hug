@@ -148,10 +148,11 @@ func (m model) detailHeader(t task.Task) []string {
 	case len(t.Assignee) == 0 && t.Model == "":
 		owner = "unassigned"
 	case len(t.Assignee) == 0 || len(t.Assignee) == 1 && t.Assignee[0] == t.Model:
-		// Taken without a name: the model is the assignee, shown once.
-		owner = "assigned:" + t.Model
+		// Taken without a name: the model is the assignee, shown once,
+		// with the effort it runs at (jr55s8).
+		owner = "assigned:" + t.ModelLabel()
 	case t.Model != "":
-		owner += " · " + t.Model
+		owner += " · " + t.ModelLabel()
 	}
 	// Where the work happens (x1t1t1): the branch it was taken on.
 	if b := oneLine(t.Branch); b != "" && owner != "unassigned" {

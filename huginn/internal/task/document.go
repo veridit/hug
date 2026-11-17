@@ -227,6 +227,9 @@ type Task struct {
 	// Model is the model that took the task (claude-opus-5-5, gpt-6.1-sol,
 	// or human), recorded by hug task take --model (et85h1).
 	Model string `json:"model,omitempty"`
+	// Effort is the effort the model runs at (high, xhigh, ...), from
+	// hug task take --model ID/EFFORT (jr55s8); "" when not given.
+	Effort string `json:"effort,omitempty"`
 	// Branch and Worktree are where the task was taken (x1t1t1): the git
 	// branch checked out there and that worktree's folder. The branch is
 	// what matters; the folder only says where to look now.

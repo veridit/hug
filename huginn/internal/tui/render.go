@@ -296,8 +296,8 @@ func (m model) ownerWidth() int {
 // cuts the branch, never the owner.
 func (m model) rowOwner(t task.Task) string {
 	owner := strings.Join(t.Assignee, ", ")
-	if owner == "" {
-		owner = t.Model
+	if owner == "" || owner == t.Model {
+		owner = t.ModelLabel() // the model holds it: with its effort (jr55s8)
 	}
 	if owner == "" {
 		return "unassigned"

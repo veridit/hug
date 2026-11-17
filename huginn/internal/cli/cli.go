@@ -463,6 +463,9 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	out := Reply{}
 	_ = json.Unmarshal(b, &out)
 	out["model"] = t.Model
+	if t.Effort != "" {
+		out["effort"] = t.Effort
+	}
 	out["goal"] = strings.TrimSpace(t.Goal)
 	acceptance := []any{}
 	for _, item := range t.Acceptance {
@@ -1371,13 +1374,20 @@ func takenBy(t Reply, hide string) string {
 		}
 	}
 	model, _ := t["model"].(string)
+	effort, _ := t["effort"].(string)
 	branch, _ := t["branch"].(string)
 	who := strings.Join(names, ", ")
+	label := model
+	if model != "" && effort != "" {
+		label = model + "/" + effort // jr55s8
+	}
 	switch {
 	case who == "":
 		return ""
-	case model != "" && who != model:
-		who += " · " + model
+	case model != "" && who == model:
+		who = label
+	case model != "":
+		who += " · " + label
 	}
 	if branch != "" && branch != hide {
 		who += " · " + branch

@@ -436,7 +436,7 @@ func (s *Store) TakeAt(ref, name, model string, at Place) (Result, error) {
 		return Result{}, &Error{Kind: "no-model", ID: ref, Fix: "hug task take " + ref + " --model MODEL"}
 	}
 	if name == "" {
-		name = model
+		name, _ = SplitModel(model) // the model is the assignee; the effort is not part of a name
 	}
 	return s.transitionAt(ref, "doing", name, model, at)
 }
@@ -478,7 +478,7 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	if status == "dropped" && d.Task.State != "dropped" && strings.TrimSpace(reason) == "" {
 		return Result{}, usageErr(d.Task.ID, "drop needs a reason", "hug task drop "+d.Task.ID+` "duplicate of OTHER"`)
 	}
-	if d.Task.State == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.Model == model) && (at.Branch == "" || d.Task.Branch == at.Branch) && (at.Worktree == "" || d.Task.Worktree == at.Worktree) {
+	if d.Task.State == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.ModelLabel() == model) && (at.Branch == "" || d.Task.Branch == at.Branch) && (at.Worktree == "" || d.Task.Worktree == at.Worktree) {
 		return s.finish(d, false)
 	}
 	if status == "doing" && user != "" && len(d.Task.Assignee) > 0 && !contains(d.Task.Assignee, user) {
@@ -561,8 +561,14 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 		}
 	}
 	if status == "doing" && model != "" {
-		if e = d.SetField("model", model); e != nil {
+		id, effort := SplitModel(model)
+		if e = d.SetField("model", id); e != nil {
 			return Result{}, e
+		}
+		if effort != "" || d.Task.Effort != "" {
+			if e = d.SetField("effort", effort); e != nil {
+				return Result{}, e
+			}
 		}
 	}
 	if status == "doing" {

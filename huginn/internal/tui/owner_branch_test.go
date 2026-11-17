@@ -19,6 +19,11 @@ func TestInProgressRowShowsBranch(t *testing.T) {
 		{task.Task{Assignee: []string{"poodle"}, Branch: "main"}, "poodle"},
 		{task.Task{Assignee: []string{"poodle"}}, "poodle"},
 		{task.Task{Model: "gpt-6.1-sol", Branch: "feat/y"}, "gpt-6.1-sol · feat/y"},
+		// jr55s8: a model that holds the task shows the effort it runs at;
+		// a named agent's row keeps the name alone.
+		{task.Task{Model: "gpt-6.1-sol", Effort: "xhigh"}, "gpt-6.1-sol/xhigh"},
+		{task.Task{Assignee: []string{"gpt-6.1-sol"}, Model: "gpt-6.1-sol", Effort: "xhigh"}, "gpt-6.1-sol/xhigh"},
+		{task.Task{Assignee: []string{"poodle"}, Model: "claude-opus-5-5", Effort: "high"}, "poodle"},
 		{task.Task{}, "unassigned"},
 	} {
 		if got := m.rowOwner(c.t); got != c.want {

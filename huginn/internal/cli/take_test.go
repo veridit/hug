@@ -183,3 +183,48 @@ func TestHarnessName(t *testing.T) {
 		}
 	}
 }
+
+// jr55s8 check 2: take --model ID/EFFORT records the model and the effort
+// apart (model stays the id, so every match on it holds) and show, ls and
+// board name both.
+func TestTakeModelWithEffort(t *testing.T) {
+	t.Parallel()
+	a, id := takeFixture(t)
+	r := execute(t, a, "take", id, "--as", "poodle", "--model", "claude-opus-5-5/high")
+	tk := r["task"].(Reply)
+	if tk["model"] != "claude-opus-5-5" || tk["effort"] != "high" {
+		t.Fatalf("model %v effort %v", tk["model"], tk["effort"])
+	}
+	f := taskFile(t, a, id)
+	if !strings.Contains(f, `model: "claude-opus-5-5"`) || !strings.Contains(f, `effort: "high"`) {
+		t.Fatalf("task file:\n%s", f)
+	}
+	if code, out := runText(a, "show", id); code != 0 || !strings.Contains(out, "taken by: poodle · claude-opus-5-5/high · main\n") {
+		t.Fatalf("show: %d\n%s", code, out)
+	}
+	if code, out := runText(a, "ls"); code != 0 || !strings.Contains(out, "[poodle · claude-opus-5-5/high]") {
+		t.Fatalf("ls: %d\n%s", code, out)
+	}
+	if code, out := runText(a, "board", "--wide"); code != 0 || !strings.Contains(out, "[poodle · claude-opus-5-5/high]") {
+		t.Fatalf("board: %d\n%s", code, out)
+	}
+	// Taken again at another effort: the effort follows.
+	execute(t, a, "take", id, "--as", "poodle", "--model", "claude-opus-5-5/max")
+	if f := taskFile(t, a, id); !strings.Contains(f, `effort: "max"`) || strings.Count(f, "effort:") != 1 {
+		t.Fatalf("retake:\n%s", f)
+	}
+}
+
+// Without a name, the model is the assignee: the id, never id/effort.
+func TestTakeModelOnlyWithEffortAssigneeIsID(t *testing.T) {
+	t.Parallel()
+	a, id := takeFixture(t)
+	r := execute(t, a, "take", id, "--model", "gpt-6.1-sol/xhigh")
+	tk := r["task"].(Reply)
+	if as := tk["assignee"].([]any); len(as) != 1 || as[0] != "gpt-6.1-sol" || tk["effort"] != "xhigh" {
+		t.Fatalf("assignee %v effort %v", tk["assignee"], tk["effort"])
+	}
+	if code, out := runText(a, "show", id); code != 0 || !strings.Contains(out, "taken by: gpt-6.1-sol/xhigh · main\n") {
+		t.Fatalf("show: %d\n%s", code, out)
+	}
+}
