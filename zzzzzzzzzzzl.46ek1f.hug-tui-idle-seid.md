@@ -61,5 +61,10 @@ landed 856a8ca on main 2026-11-17: hug tui: a frame's work does not grow with th
 Check 3 on green main: f24080c contains a64fcc3, CI 44159339484 success on all 5 jobs (secrets, bench, ubuntu -race, windows, macos).
 Check 4 on green main: 856a8ca, CI 44160390781 success (secrets, bench, ubuntu -race, macos, windows). TestFrameComputesNoStages (434,742 stages in 3 frames on main, 0 after) and TestFrameRowWorkDoesNotGrowWithBoard. Then aad670d (pushed 19:55, f003cfc..aad670d) also takes the section scans off each key: TestKeyScansDoNotGrowWithBoard fails on main (overview 120,000 tasks scanned per key and frame on 3,000 tasks vs 12,000 on 300) and with the memo mutated out (3/3 views); -race tui ok 183.5 s after the rebase over bejd89. Seid copy, 100 presses of j, before the bejd89 rebase: 8.63 s CPU on main f24080c, 0.66 s with the memo (6.6 ms a key).
 landed aad670d on main 2026-11-17: hug tui: a key scans no tasks: sections and the for-you count are kept per set…
+Check 5, Seid copy (2,520 tasks), ps time of an open TUI, 3 hug task notes 12 s apart, measured 19:57-19:59:
+- Before, v0.7.44 (19:17): 1.0-1.1 s per note.
+- Main f003cfc, which has a64fcc3 and 856a8ca: 0.49-0.51 s per note (1.42 -> 1.93 -> 2.43 -> 2.92).
+- aad670d: 0.26-0.31 s per note (0.97 -> 1.23 -> 1.52 -> 1.83).
+Keys, 100 presses of j, re-measured after the bejd89 rebase: f003cfc 5.18 s (1.37 -> 6.55), aad670d 0.68 s (0.88 -> 1.56), about 6.8 ms a key.
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
