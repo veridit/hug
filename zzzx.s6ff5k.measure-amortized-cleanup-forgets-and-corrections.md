@@ -13,9 +13,11 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T16:08"
-waiting_on: "replay: H3 arm: 200 runs, then blind judge"
-waiting_since: "2026-11-17T17:40"
+waiting_on: "H3 failed Part 2 (10 wrong vs bar 6); parked per crab ruling, no fourth arm"
+waiting_since: "2026-11-17T20:20"
 waiting_asked_by: "hatchling"
+waiting_for: "crab"
+stage: "waiting"
 ---
 
 ## Goal
@@ -73,3 +75,4 @@ file:real-spot.py.txt (1943 bytes, sha256:dbfe9f2d)
 - 2026-11-17T17:38 doing/active -> doing/waiting (wait)
 - 2026-11-17T17:40 doing/waiting -> doing/active (resume); was waiting_asked_by: hatchling; waiting_on: crab: real replay failed bar part 2 (wrong calls 3 -> 37); park or one named arm?; waiting_since: 2026-11-17T17:38
 - 2026-11-17T17:40 doing/active -> doing/waiting (wait)
+- 2026-11-17T20:20 doing -> doing/waiting (wait)
