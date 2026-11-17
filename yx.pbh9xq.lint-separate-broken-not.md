@@ -49,6 +49,7 @@ Built on ci/pbh9xq (82ddba1 + CHANGELOG), parked behind g9dg32 per crab. Split p
 Back to todo (crab 13:31; wyvern resumes it after g9dg32). Code: ci/pbh9xq is pushed (82ddba1 plus a CHANGELOG commit), CI 44079521924 green. When rebased onto main, regenerate the narrow-60 golden: HUG_UPDATE_GOLDEN=1 go test -run TestNarrowRowsGolden ./huginn/internal/tui/
 
 
+Rebase onto 4ecfa25 is in progress in worktree hug-lint (paused for wyvern's landing slot). Resolved: codes.go (Severity on every row of main's table; backlog-leftover advice, stale-owner and the stage codes broken), lint.go (main's overview replaces the old summary block; the overview header now says '(N broken)'), help.go, render.go, cli_test.go, edit_notice_test.go. Goldens are taken from main and must be regenerated. Still failing: TestLintOverviewDetailAndSameBlock and TestLintHidesClosedTasks.
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:23 todo/ready -> doing/active (take)
