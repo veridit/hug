@@ -95,6 +95,52 @@ qaxx25 judged false, herb bbhkwq right) do not fire; sunflower's done line
 on 23vyy1 fires 54 minutes later (closed by the agent, so counted right,
 though the judge called the later moment wrong); orangutan gets a new
 work line on xwjb13 (judged right).
+## Stop orders, and lint between tasks (x325pp, 2026-11-17)
+
+Shipped: a turn that tells the agent to stop (`stop now`, `stop immediately`,
+`do not run any`, `do not edit any`, `end your session`, `stand down`, ...)
+gets no board line. A scope rule ("do not start any other task") is not a
+stop order.
+
+Tried and not kept: an unrelated finding (a task the session did not touch)
+only for a session with no doing task of its own, or one that ran
+`hug task done` since its last turn ("between tasks"), alone and with
+editing or noting a todo also counted as busy.
+
+Same sets and judge as above (DeepSeek Flash, blind to arm), plus fresh2:
+seid-lang sessions written after 2026-11-16 20:00, turns from then on
+(20 sessions, 21.5 session-hours), run after the rules were fixed. Lint
+lines, right / false (unclear):
+
+| set | main | stop order | stop order + between tasks | + busy when editing |
+|---|---|---|---|---|
+| dev | 2: 2 / 0 | 2: 2 / 0 | 2: 2 / 0 | 2: 2 / 0 |
+| held-out hug | 1: 1 / 0 | 1: 1 / 0 | 1: 1 / 0 | 1: 1 / 0 |
+| held-out seid | 34: 27 / 5 (2) | 33: 30 / 1 (2) | 24: 22 / 0 (2) | 20: 17 / 1 (2) |
+| fresh seid | 6: 6 / 0 | 5: 5 / 0 | 5: 5 / 0 | 2: 2 / 0 |
+| fresh2 seid | 8: 8 / 0 | 8: 8 / 0 | 3: 0 / 3 | 2: 0 / 2 |
+| all lines, six sets | 97: 87 / 7 | 95: 89 / 3 | 81: 73 / 5 | 73: 65 / 5 |
+
+All lines precision: main 0.926 (0.17 false per 10 h), stop order 0.967
+(0.07), between tasks 0.936 (0.12), busy when editing 0.929 (0.12). Take,
+work and done lines are the same in every arm; overnight has no lint lines.
+
+- Stop order removes 2 lines: hog p39w4a ("STOP NOW ... do not run any
+  command", judged false) and skunk w96jpg on fresh ("Please stop now",
+  judged right: the finding was real, the moment was not). Only hog's line
+  is the rule's own effect. Freeing hog's finding reshuffles the lint
+  rotation across sessions (one finding per 7 days), so 14 other held-out
+  seid breaks get a different finding: all 14 judged right, replacing 11
+  right and 3 false (orangutan zjedy0, pawprint 2n92r7, sunflower qaxx25).
+  That gain is rotation luck, not a rule; do not count on it.
+- The one false lint line left (piglet n0fzz1) names another agent's
+  doing task.
+- Between tasks clears all 5 held-out false lines but costs fresh lint lines
+  (14 -> 8), and the 3 left on fresh2 went to sessions editing code with no
+  doing task (evergreen, herb, palmtree): between tasks by the rule, busy by
+  the judge. Re-judged twice, those 3 came out 3 and 0 right; main's 8 came
+  out 8 and 6 right: the judge is not stable on this question.
+- No lint line was acted on in any set, in any arm.
 
 ## Latency
 

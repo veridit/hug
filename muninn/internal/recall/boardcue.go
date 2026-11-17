@@ -104,6 +104,12 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 	if session == "" || src == nil {
 		return "", ""
 	}
+	// A turn that tells the agent to stop, or not to touch anything, gets
+	// no board line at all (x325pp; held-out replay: hog was handed a lint
+	// fix in the turn that said "STOP NOW ... do not run any command").
+	if stopOrder.MatchString(msg) {
+		return "", ""
+	}
 	e.boardTables()
 	var seen, editTurns int64
 	if e.DB.QueryRow(`SELECT seen_ns, edit_turns FROM board_seen WHERE session=?`, session).Scan(&seen, &editTurns) != nil {
@@ -146,6 +152,10 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 	if wantLint && in.Findings != nil {
 		// At the start of a session only findings on tasks it named: a
 		// fresh assignment is not the moment for unrelated housekeeping.
+		// (x325pp tried holding unrelated findings until the session had no
+		// task of its own or had just closed one: held-out false lines 5 -> 0
+		// but fresh lint lines 14 -> 8 and fresh2's 3 judged false;
+		// muninn/docs/BOARD4.md. Not kept.)
 		if f, ok := e.pickFinding(in.Findings(), d.touched, brk != "start", now); ok {
 			e.boardMark(session, "lint", now)
 			e.DB.Exec(`INSERT INTO board_lint(key, at_ns) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET at_ns=excluded.at_ns`, f.key(), now.UnixNano())
@@ -217,6 +227,9 @@ func (d detection) candidates(editTurns int64, model string) []candidate {
 }
 
 var taskRef = regexp.MustCompile(`\b[a-z0-9]{6}\b`)
+
+// stopOrder: a message that tells the agent to stop or to do nothing.
+var stopOrder = regexp.MustCompile(`(?i)\bstop (?:now|immediately|all work|everything)\b|\bdo not (?:run any|run anything|edit any|edit anything|touch any)\b|\bdon'?t (?:run any|edit any|touch any)\b|\bend (?:your|the) session\b|\bstand down\b`)
 
 func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 	d := detection{touched: map[string]bool{}}

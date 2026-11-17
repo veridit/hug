@@ -205,6 +205,32 @@ func TestBoardLintRotatesAcrossSessions(t *testing.T) {
 	}
 }
 
+// x325pp check 2: a turn that tells the agent to stop gets no board line.
+func TestBoardSilentOnStopOrder(t *testing.T) {
+	in := recall.BoardInput{
+		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
+		Findings: func() []recall.BoardFinding {
+			return []recall.BoardFinding{{TaskID: "p39w4a", TaskStatus: "todo", Problem: "title too long", Fix: "hug task set p39w4a --title \"...\""}}
+		},
+		Self: recall.BoardSelf{Name: "crab"},
+	}
+	for _, msg := range []string{
+		"orangutan (foreman): STOP NOW. Do not edit any file, do not run any command, do not commit. Then end your session.",
+		"Received and verified. Please stop now. The King will rule on the questions.",
+		"Stand down; another engineer owns this lane.",
+	} {
+		e := boardEngine(t)
+		if line, _ := e.BoardCue("s", msg, "return", time.Now(), src(in)); line != "" {
+			t.Fatalf("%q got %q", msg, line)
+		}
+	}
+	// A scope rule is not a stop order: the done line still comes.
+	e := boardEngine(t)
+	if line, kind := e.BoardCue("s", "Do not start any other task. When 6tj2b8 is finished, report and stop.", "", time.Now(), src(in)); kind != "done" {
+		t.Fatalf("scope rule silenced the board: %q", line)
+	}
+}
+
 func TestBoardOffWhenNoSource(t *testing.T) {
 	e := boardEngine(t)
 	if line, _ := e.BoardCue("s", "go", "start", time.Now(), nil); line != "" {
