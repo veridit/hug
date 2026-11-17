@@ -38,3 +38,5 @@ Today: the tab line underlines o, l, b and ! as single keys. After: line 2 is 'v
 Jørgen 23:36 local: the state counts line 'todo 31 · doing 26 · depends 0 · done 79 · dropped 3' moves onto the view line, right of it, after a separator, probably right aligned. One line instead of two:
   view: overview  list  board  !lint            │ todo 31 · doing 26 · depends 0 · done 79 · dropped 3
 When tight, counts drop from the right (dropped, done) before the view names shorten.
+
+Jørgen 23:38 local: drop gg and G ('I never used it', 'vi specific'). Top and bottom stay on < > Home End. With gg gone, g is no prefix: the g item of this ticket is void; v is the only prefix so far.
