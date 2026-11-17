@@ -35,7 +35,7 @@ Where the time goes, from the code: every command runs cache.Sync, which walks a
 ## Acceptance
 - [x] a benchmark or test builds a 10,000-task board and fails if ls, next or show exceed a stated budget
 - [x] show, next and note on one task do not load every task (measured time and memory drop, numbers in the notes)
-- [ ] an unchanged board skips the per-file walk (measured)
+- [x] an unchanged board skips the per-file walk (measured)
 - [x] the TUI opens a 10,000-task board and filters without a visible stall; numbers in the notes
 - [x] 50,000 tasks measured once and the result recorded, even if not optimised
 
