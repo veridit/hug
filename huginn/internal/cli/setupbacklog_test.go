@@ -178,6 +178,8 @@ func TestSetupFilesStepRemembered(t *testing.T) {
 		t.Fatal(e)
 	}
 	step := func() string { s, _ := setupStep(t, a, "import task files"); return s.Detail }
+	board := filepath.Join(a.Cwd, TaskDir)
+	before, okBefore := a.filesKey(context.Background(), filepath.Join(a.Cwd, "evidence"), "evidence", board)
 	if d := step(); !strings.Contains(d, "1 files to copy, 0 already in place, 0 citations") {
 		t.Fatal(d)
 	}
@@ -185,10 +187,22 @@ func TestSetupFilesStepRemembered(t *testing.T) {
 	// proof here (ImportFiles reads the board), so check the cache file.
 	m, _ := filepath.Glob(filepath.Join(a.Cwd, ".git", "huginn", "setup-files-*.json"))
 	if len(m) != 1 {
-		board := filepath.Join(a.Cwd, TaskDir)
 		key, ok := a.filesKey(context.Background(), filepath.Join(a.Cwd, "evidence"), "evidence", board)
 		status, e := gitIn(context.Background(), board, "status", "--porcelain=v2", "--branch", "--untracked-files=all")
-		t.Fatalf("remembered files check: %v (key %q ok %v; board status %v:\n%s)", m, key, ok, e, status)
+		log, _ := gitIn(context.Background(), board, "log", "--format=%h %s", "-5")
+		cache, _ := os.ReadDir(filepath.Join(a.Cwd, ".git", "huginn"))
+		var names []string
+		for _, c := range cache {
+			names = append(names, c.Name())
+		}
+		var walk []string
+		filepath.WalkDir(filepath.Join(a.Cwd, "evidence"), func(p string, d os.DirEntry, _ error) error {
+			if fi, e := d.Info(); e == nil {
+				walk = append(walk, fmt.Sprintf("%s %d %d", p, fi.Size(), fi.ModTime().UnixNano()))
+			}
+			return nil
+		})
+		t.Fatalf("remembered files check: %v (key before the step %q ok %v, after %q ok %v; cache dir %v; walk %v; board log:\n%s\nboard status %v:\n%s)", m, before, okBefore, key, ok, names, walk, log, e, status)
 	}
 	if e := os.WriteFile(filepath.Join(ev, "second.log"), []byte("ok\n"), 0o644); e != nil {
 		t.Fatal(e)
