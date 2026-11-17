@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T15:10"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ci/tpnd3n"
 worktree: "/Users/jhf/.jcode/scratch/guppy-lint"
+waiting_on: "every check settled; CI 44106642855 on d708fb4, lands in my push turn"
+waiting_since: "2026-11-17T15:46"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -45,3 +48,4 @@ hatchling 14:29: replay (scratch/board4/x325pp, tpnd.sh, judge_board.py blind, j
 hatchling 14:46: check 1: TestBoardUnrelatedLintWaitsForOwnTask (fails without the rule: 'unrelated finding while own task has one'). Added TestBoardMissingSectionOnlyToItsSession: without ownerOnly it fails 'boardcue_test.go:277: section finding to a passer-by: "Task board (return): s6ff5k: missing section Purpose (why)..."'. Check 3: TestBoardStopTurnKeepsFinding passes (stop turn writes nothing to board_lint, so the next break / next session gets w96jpg). Replay: see BOARD4.md 'Missing sections go to the task's own session': six sets lint main 68: 43 right / 20 false (5) -> 55: 45 / 9 (1); all lines false 23 -> 12. Rejudged the 42 main-only and 29 rule-only lines twice from empty caches: main 17 and 15 false, rule 0 and 0 false. Fresh hug (367 sessions after 2026-11-16 20:00, 38.8 h) main 4 lint (3 right, 1 unclear) -> 3 (3 right). Commit d708fb4 on ci/tpnd3n, CI 44106642855.
 ## History
 - 2026-11-17T15:10 todo -> doing/active (take)
+- 2026-11-17T15:46 doing/active -> doing/waiting (wait)
