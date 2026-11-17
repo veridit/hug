@@ -43,6 +43,33 @@ func TestFind(t *testing.T) {
 	}
 }
 
+// typq1e: a memory may name an agent with no context word of its own
+// ("spider pushes", "via fox") when the transcript it came from uses that
+// name as an agent. Cases from the CAPTURE4 outputs; the thing-words stay.
+func TestFindIn(t *testing.T) {
+	m := New([]string{"spider", "fox", "squid", "dragon", "crab", "bug"})
+	transcript := "DM from coordinator spider: fox reviews. Cross-swarm DM from fox. operator squid failed. reviewer crab approved; lane bug fixed."
+	for text, want := range map[string][]string{
+		"In Brovs DevOps, spider pushes commits; agents commit locally.":      {"spider"},
+		"Brovs owner rule (via fox): QA switches need no approval.":           {"fox"},
+		"hug task take refused with 'taken by crab (qawmnb)'.":                {"crab"},
+		"The fix waits for squid's P0 capture fix to land.":                   {"squid"},
+		"A spider web on the server rack is not a defect.":                    nil,
+		"The rack photo shows a house spider, not a defect.":                  nil,
+		"Spider-2 is the design name of the second crawler.":                  nil,
+		"The dragon chain dry-run is green.":                                  nil, // not in the transcript as an agent
+		"The emitted-C diff was a gate artifact, not a compiler bug.":         nil, // "a compiler bug": the thing
+		"Quartz deployment results are reported to coordinator spider daily.": {"spider"},
+	} {
+		if got := m.FindIn(text, transcript); !reflect.DeepEqual(got, want) {
+			t.Errorf("%q: got %v, want %v", text, got, want)
+		}
+	}
+	if got := m.FindIn("In Brovs DevOps, spider pushes commits.", ""); got != nil {
+		t.Errorf("no transcript: %v, want the plain Find result (nil)", got)
+	}
+}
+
 func TestMeant(t *testing.T) {
 	day := func(d int) time.Time { return time.Date(2026, 11, d, 12, 0, 0, 0, time.UTC) }
 	// orangutan in September (1-3) and again today (10-11): a memory from

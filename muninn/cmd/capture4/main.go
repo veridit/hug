@@ -54,6 +54,7 @@ func main() {
 	arm := flag.String("arm", "", "label for this tree's prompt")
 	par := flag.Int("p", 2, "parallel calls")
 	scan := flag.Bool("scan", false, "no calls: print the agent names each transcript uses")
+	rematch := flag.String("rematch", "", "no calls: re-run the agent matcher on this earlier output (ARM.jsonl) with the items' transcripts")
 	flag.Parse()
 	cfg, err := config.Load()
 	if err != nil {
@@ -94,6 +95,35 @@ func main() {
 		}
 		return
 	}
+	if *rematch != "" {
+		// Same candidates the judge saw, today's matcher: a matcher change
+		// is measured on judged outputs without a new model call (typq1e).
+		byID := map[string]item{}
+		for _, it := range its {
+			byID[it.ID] = it
+		}
+		prev, err := os.Open(*rematch)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		defer prev.Close()
+		ps := bufio.NewScanner(prev)
+		ps.Buffer(make([]byte, 1<<20), 8<<20)
+		enc := json.NewEncoder(os.Stdout)
+		for ps.Scan() {
+			var r row
+			if err := json.Unmarshal(ps.Bytes(), &r); err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
+			for i := range r.Candidates {
+				r.Candidates[i].Agents = m.FindIn(r.Candidates[i].Content, byID[r.ID].Transcript)
+			}
+			enc.Encode(r)
+		}
+		return
+	}
 	out := make([]row, len(its))
 	var wg sync.WaitGroup
 	sem := make(chan bool, *par)
@@ -114,7 +144,7 @@ func main() {
 				}
 				r.Error, r.Rejected, r.Tokens = "", res.Rejected, res.Usage.TotalTokens
 				for _, c := range res.Candidates {
-					r.Candidates = append(r.Candidates, cand{Candidate: c, Agents: m.Find(c.Content)})
+					r.Candidates = append(r.Candidates, cand{Candidate: c, Agents: m.FindIn(c.Content, it.Transcript)})
 				}
 				break
 			}

@@ -358,7 +358,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			// the name stops meaning anything within hours. Deterministic, no
 			// model call; measured on replayed transcripts (CHANGELOG).
 			if err == nil {
-				result = a.rejectAgentNames(result)
+				result = a.rejectAgentNames(result, text)
 			}
 			audit.Calls = append(audit.Calls, result)
 			if err != nil {

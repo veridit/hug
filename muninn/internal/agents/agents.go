@@ -177,6 +177,43 @@ func (m *Matcher) Find(text string) []string {
 	return out
 }
 
+// determiner before a common noun, or one word before it, makes it the
+// thing: "the spider", "a bug", "a house spider", "a compiler bug".
+var determiner = regexp.MustCompile(`(?i)\b(?:a|an|the|this|that|these|those|each|every|any|no|some|one|its|their|our|my|your)\s+(?:[a-z]+\s+)?$`)
+
+// FindIn returns the names text uses as agents, where context is the text
+// it came from (a capture's transcript chunk). A name the context uses as
+// an agent counts in text without agent context of its own: from a
+// transcript where "coordinator spider" spoke, "spider pushes" and "via
+// fox" name the agent (typq1e; CAPTURE4 left 16 such memories after the
+// agent-context check). It is still not followed by a tag ("Spider-2"),
+// and a common noun after a determiner ("the spider") is the thing.
+func (m *Matcher) FindIn(text, context string) []string {
+	out := m.Find(text)
+	if m == nil || m.anyName == nil || context == "" {
+		return out
+	}
+	have := map[string]bool{}
+	for _, n := range out {
+		have[n] = true
+	}
+	for _, n := range m.Find(context) {
+		if have[n] {
+			continue
+		}
+		re := regexp.MustCompile(`(?i)\b` + regexp.QuoteMeta(n) + `\b`)
+		for _, loc := range re.FindAllStringIndex(text, -1) {
+			if tag.MatchString(text[loc[1]:]) || common[n] && determiner.MatchString(text[:loc[0]]) {
+				continue
+			}
+			out, have[n] = append(out, n), true
+			break
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+
 // used: some match whose captured name is not followed by a tag (or, for a
 // common noun, by another word).
 func used(text string, re *regexp.Regexp, noun bool) bool {

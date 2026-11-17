@@ -207,14 +207,16 @@ func (a *App) captureMatcher() *agents.Matcher {
 // context (ez50rb check 3), with the reason "names an agent". Replayed on
 // 40 transcripts naming agents plus 40 fresh ones, blind-judged: it cut
 // agent-naming memories without losing judged-durable ones (CHANGELOG).
-func (a *App) rejectAgentNames(r extract.Result) extract.Result {
+// transcript is the chunk the candidates came from: a name it uses as an
+// agent counts in a candidate without context words of its own (typq1e).
+func (a *App) rejectAgentNames(r extract.Result, transcript string) extract.Result {
 	if len(r.Candidates) == 0 {
 		return r
 	}
 	m := a.captureMatcher()
 	keep := r.Candidates[:0]
 	for _, c := range r.Candidates {
-		if names := m.Find(c.Content); len(names) > 0 {
+		if names := m.FindIn(c.Content, transcript); len(names) > 0 {
 			r.Rejections = append(r.Rejections, extract.Rejection{Reason: "names an agent: " + strings.Join(names, ", ")})
 			continue
 		}

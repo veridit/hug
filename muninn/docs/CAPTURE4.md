@@ -70,3 +70,37 @@ notes: seed-23 sample); those memories go to dream instead.
 
 Tokens: 233,521 to 241,298 per arm per sample (60 calls). 2 calls of 480
 were truncated and are left out of the paired items.
+
+## Names the transcript uses as agents (typq1e, 2026-11-17)
+
+**Shipped:** the post-check also rejects a candidate that uses, as a word,
+a name its own transcript chunk uses as an agent
+(`agents.Matcher.FindIn(candidate, chunk)`): from a chunk where
+"coordinator spider" spoke, "spider pushes commits" and "(via fox)" name
+the agent. It skips a name followed by a tag ("Spider-2"), and a common
+noun right after a determiner, or one word after it ("the spider", "a
+house spider", "a compiler bug"). It needs no model call.
+
+**Method:** the same judged outputs as above (main prompt, both runs),
+re-matched with `capture4 -rematch`. A third sample, **fresh2**, was fixed
+before tuning: seed 1794, 0 sessions shared with sample 1 or fresh, 40
+agent items and 13 controls (only 13 control sessions were left), capture
+runs from 2026-11-06 to 2026-11-17. Its bar was written on the ticket
+before its first model call. Fresh2 ran once (2 runs of the main prompt, 468
+memories judged blind).
+
+| sample | judge: names an agent, left after | Find (before) | FindIn | durable agent-free dropped |
+|---|---|---|---|---|
+| 1 (tuning) | per agent transcript | 0.087 | 0.025 | 0 |
+| fresh (tuning) | per agent transcript | 0.163 | 0.050 | 0 |
+| fresh2 (held out) | per agent transcript | 0.175 | 0.050 | 0 |
+
+Fresh2, FindIn vs Find: agent name or status left −0.125 [−0.250, −0.025],
+CI-clear; durable agent-free +0.000 [+0.000, +0.000]. 10 memories newly
+rejected, all 10 judged as naming an agent; 0 drops in the 13 controls.
+
+**Left:** 10 memories over the 6 runs, which is not 0. 4 use a role word
+with no name ("the foreman verifies every land"). 6 name an agent the chunk
+mentions only without agent context ("via fox", "operator squid", "jaguar
+(comment 101-7978)"). Both need agent words beyond `ctx` ("operator", "via",
+"owner"), which a looser matcher hit as nouns on the store (ez50rb).
