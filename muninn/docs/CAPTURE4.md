@@ -104,3 +104,21 @@ with no name ("the foreman verifies every land"). 6 name an agent the chunk
 mentions only without agent context ("via fox", "operator squid", "jaguar
 (comment 101-7978)"). Both need agent words beyond `ctx` ("operator", "via",
 "owner"), which a looser matcher hit as nouns on the store (ez50rb).
+
+**Durable memories:** 0 lost on 3 sets (sample 1, fresh, fresh2). On
+fresh3 (seed 2058, 40 agent items, 430 memories judged, no controls left
+to sample), 1 of 80 run-items was lost (0.013 per transcript): item 1011.0
+run 2, a work order citing "14 EMITDIFF files from tiger's norename probe"
+from a chunk saying "You take over from tiger (session_tiger_…, gone)". The
+judge split on it across runs: agent_name=True in run 1, agent-free in
+run 2. Kept as shipped (crab, 2026-11-17). On fresh3, judge agent names
+left: Find 0.237, FindIn 0.100.
+
+**Not shipped:** counting a recent session's name as an agent anywhere,
+with no context words (the harness session list as the signal; common
+nouns, ordinary words such as "RAM" and identifiers such as
+"claude-oauth@claude-otter" excluded). On fresh3, its bar set before the
+run, it rejected exactly what FindIn rejects (the names left there are
+goat, fox, daisy, which are excluded words, and "the foreman"). On the
+other three sets it added 2 rejections. It is not shipped, and no variant
+was tried.
