@@ -38,6 +38,7 @@ Mock, cursor on 3mavpt with the TYPE column marked:
 - [ ] Jørgen moves the marker with H/L, orders with o, and pages with J/K, and says it reads clearly
 - [ ] in a task's detail a dim full-width rule stands between the filter line and the task's title (goldens at 80 and 140)
 - [ ] Tab = l and Shift-Tab = h in every view; in a task's detail both step one focus ring in reading order (stage line, each section, the task ids inside a section as their own stops); Enter opens the focused id (tests; help and TestHelpKeysAreBound follow)
+- [ ] Column 1 holds only the pointer, grab mark and ↑/↓; '?' and '!' sit right before the id in a fixed 2-cell slot, so a scroll arrow and a '?' never share a cell (golden with a waiting-on-you task as the last shown row)
 
 ## Notes
 
