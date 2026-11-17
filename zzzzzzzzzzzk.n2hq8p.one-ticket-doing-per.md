@@ -14,8 +14,8 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing turn: after wyvern (crab 14:33); 812d1f0 ready, rebase and fresh CI at the turn"
-waiting_since: "2026-11-17T15:36"
+waiting_on: "landing turn: right after hatchling (crab 15:09); rebase onto hatchling's push, one fresh CI"
+waiting_since: "2026-11-17T16:10"
 waiting_asked_by: "calf"
 ---
 
