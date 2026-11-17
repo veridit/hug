@@ -1,13 +1,18 @@
 ---
 id: p29rbz
 title: "hug mem remember: a refusal says NOT STORED first and exits non-zero"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T16:14"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Messages: muninn/internal/app/dedupe.go:23, binding.go:559, places.go:163, all s
 - [ ] the MCP remember reply for a refusal is marked as an error or stored:false first (test)
 
 ## Notes
+
+
+## History
+- 2026-11-17T16:14 todo -> doing/active (take)
