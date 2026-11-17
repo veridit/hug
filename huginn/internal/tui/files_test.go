@@ -143,7 +143,7 @@ func TestFilesOpenInEditorAndCommit(t *testing.T) {
 		}
 	}
 	for m.detailPane != focusFiles {
-		m = press(m, "tab")
+		m = press(m, "l") // sections are h/l; Tab steps task ids (4bwcgp)
 	}
 	m = press(m, "j") // bench/results.tsv
 	if !strings.Contains(ansi.Strip(m.detailText(sel0)), "> ⎘ bench/results.tsv") {

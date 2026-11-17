@@ -64,7 +64,7 @@ func toFiles(t *testing.T, m model) model {
 		if i > 6 {
 			t.Fatal("Files never focused")
 		}
-		m = press(m, "tab")
+		m = press(m, "l")
 	}
 	return m
 }

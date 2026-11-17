@@ -153,6 +153,7 @@ type model struct {
 	cursor, acceptance, offset int
 	dependency, detailPane     int
 	link                       int // the task:ID marked > in Links (xxvm6t)
+	idAt                       int // with focusIDs: the task id marked, by place in idStops (4bwcgp)
 	file                       int // the file marked > in Files (zgr01t)
 	// glance: a file shown in the detail pane (scrxak); glanceHead is its
 	// "path · size · i of N" line, glanceBody its escaped text.
@@ -1305,19 +1306,30 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.file = max(0, min(m.file+step, len(m.filesOf(t))-1))
 					}
 				default:
-					m.message = "[ and ] step through a list: Tab focuses the checks or dependencies"
+					m.message = "[ and ] step through a list: l focuses the checks or dependencies"
 				}
 				m.clamp()
 				m.syncDetail()
 				m.revealAcceptance()
-			case "h", "l", "left", "right", "tab", "shift+tab":
+			case "h", "l", "left", "right":
 				// Focus cycles page, acceptance, dependencies, skipping
-				// empty sections (2026-11-16, user).
+				// empty sections (2026-11-16, user); h/l, as in the rows
+				// (bejd89).
 				step := 1
-				if k == "h" || k == "left" || k == "shift+tab" {
+				if k == "h" || k == "left" {
 					step = -1
 				}
 				m.cycleFocus(step)
+				m.syncDetail()
+				m.revealAcceptance()
+			case "tab", "shift+tab":
+				// Tab steps through every task id the detail shows, in
+				// reading order (4bwcgp).
+				step := 1
+				if k == "shift+tab" {
+					step = -1
+				}
+				m.stepID(step)
 				m.syncDetail()
 				m.revealAcceptance()
 			case "enter":
@@ -1326,6 +1338,8 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.followDependency()
 				case focusLinks:
 					m.followLink()
+				case focusIDs:
+					m.followID()
 				case focusFiles:
 					return m, m.openFile()
 				}
@@ -1348,7 +1362,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else if m.detailPane == focusAcceptance {
 					m.requestAction(k, "")
 				} else if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
-					m.message = "Space ticks the check marked >: Tab focuses the checks"
+					m.message = "Space ticks the check marked >: l focuses the checks"
 				} else {
 					m.message = "no acceptance checks to tick"
 				}

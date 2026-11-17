@@ -125,9 +125,14 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if tk, _ := press(after, "p").selected(); tk.Title != "Main" {
 					t.Fatalf("p went to %q", tk.Title)
 				}
+			case "h/l":
+				if after = press(fresh, "l"); after.detailPane == pane {
+					t.Fatal("h/l shown but focus did not move")
+				}
 			case "Tab":
-				if after = press(fresh, "tab"); after.detailPane == pane {
-					t.Fatal("Tab shown but focus did not move")
+				after = press(fresh, "tab")
+				if tk, _ := after.selected(); after.idAtFocus(after.idStops(tk)) < 0 {
+					t.Fatal("Tab shown but no task id was marked")
 				}
 			case "Esc":
 				if after = press(fresh, "esc"); after.detail {
@@ -195,14 +200,15 @@ func TestFocusHintsAreHonest(t *testing.T) {
 	if got := press(m, "]", "["); got.acceptance != 0 {
 		t.Fatalf("[ did not step back: %d", got.acceptance)
 	}
-	deps := press(m, "tab")
+	deps := press(m, "l")
 	if !strings.Contains(detailPlain(deps), "DEPENDENCIES · j/k or [ ] step · Enter follows") {
 		t.Fatalf("dependency heading:\n%s", detailPlain(deps))
 	}
 }
 
-// Check 2: Tab and Shift-Tab cycle page, acceptance and dependencies, skip a
-// section that is empty, and only the focused heading is highlighted.
+// Check 2: l and h cycle page, acceptance and dependencies, skip a
+// section that is empty, and only the focused heading is highlighted
+// (Tab steps task ids since 4bwcgp).
 func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 	m, _ := focusModel(t)
 	if m.detailPane != focusAcceptance {
@@ -210,15 +216,15 @@ func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 	}
 	want := []int{focusDeps, focusPage, focusAcceptance}
 	for _, w := range want {
-		m = press(m, "tab")
+		m = press(m, "l")
 		if m.detailPane != w {
-			t.Fatalf("Tab: focus %d, want %d", m.detailPane, w)
+			t.Fatalf("l: focus %d, want %d", m.detailPane, w)
 		}
 	}
 	for _, w := range []int{focusPage, focusDeps, focusAcceptance} {
-		m = press(m, "shift+tab")
+		m = press(m, "h")
 		if m.detailPane != w {
-			t.Fatalf("Shift-Tab: focus %d, want %d", m.detailPane, w)
+			t.Fatalf("h: focus %d, want %d", m.detailPane, w)
 		}
 	}
 	// Exactly one place shows focus: one heading, or the task id.
@@ -260,9 +266,9 @@ func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 		t.Fatalf("n opened %q", tk.Title)
 	}
 	for _, w := range []int{focusPage, focusAcceptance, focusPage} {
-		plain = press(plain, "tab")
+		plain = press(plain, "l")
 		if plain.detailPane != w {
-			t.Fatalf("no dependencies: Tab focus %d, want %d", plain.detailPane, w)
+			t.Fatalf("no dependencies: l focus %d, want %d", plain.detailPane, w)
 		}
 	}
 	// A task without checks opens on the page, and Tab goes to its
@@ -277,11 +283,11 @@ func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 	if got, _ := m.selected(); len(got.Acceptance) != 0 || m.detailPane != focusPage {
 		t.Fatalf("no checks: %d checks, focus %d", len(got.Acceptance), m.detailPane)
 	}
-	if m = press(m, "tab"); m.detailPane != focusDeps {
-		t.Fatalf("no checks: Tab focus %d", m.detailPane)
+	if m = press(m, "l"); m.detailPane != focusDeps {
+		t.Fatalf("no checks: l focus %d", m.detailPane)
 	}
-	if m = press(m, "tab"); m.detailPane != focusPage {
-		t.Fatalf("no checks: second Tab focus %d", m.detailPane)
+	if m = press(m, "l"); m.detailPane != focusPage {
+		t.Fatalf("no checks: second l focus %d", m.detailPane)
 	}
 }
 
@@ -297,7 +303,7 @@ func TestFocusPageScrollsAcceptanceSteps(t *testing.T) {
 	if m.acceptance != 1 {
 		t.Fatalf("acceptance focus: k -> check %d", m.acceptance)
 	}
-	m = press(m, "tab", "tab") // dependencies, then page
+	m = press(m, "l", "l") // dependencies, then page
 	if m.detailPane != focusPage {
 		t.Fatalf("focus %d, want page", m.detailPane)
 	}
@@ -323,7 +329,7 @@ func TestFocusPageScrollsAcceptanceSteps(t *testing.T) {
 		t.Fatalf("page focus: k up -> offset %d from %d", m.viewport.YOffset, top)
 	}
 	// Space ticks only the check marked >: with page focus it explains.
-	if got := press(m, " "); got.confirm != "" || !strings.Contains(got.message, "Tab focuses the checks") {
+	if got := press(m, " "); got.confirm != "" || !strings.Contains(got.message, "l focuses the checks") {
 		t.Fatalf("Space on the page: confirm %q message %q", got.confirm, got.message)
 	}
 }
@@ -343,7 +349,7 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 	if !strings.Contains(bar(m), "list › "+main.ID) {
 		t.Fatalf("tab bar lacks the trail: %q", bar(m))
 	}
-	page := press(m, "tab", "tab")
+	page := press(m, "l", "l")
 	if !strings.Contains(bar(page), "list › ▸ "+main.ID) || strings.Contains(bar(page), "["+main.ID+"]") {
 		t.Fatalf("page focus marks the bare task id with ▸: %q", bar(page))
 	}

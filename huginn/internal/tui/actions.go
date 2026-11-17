@@ -296,7 +296,7 @@ func (m *model) strikeKey() tea.Cmd {
 		m.message = "no acceptance checks to strike out"
 		return nil
 	case m.detailPane != focusAcceptance:
-		m.message = "- strikes out the check marked >: Tab focuses the checks"
+		m.message = "- strikes out the check marked >: l focuses the checks"
 		return nil
 	}
 	n := min(m.acceptance, len(t.Acceptance)-1)

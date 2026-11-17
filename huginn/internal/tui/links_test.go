@@ -51,7 +51,7 @@ func TestFollowTaskRefAndBack(t *testing.T) {
 	if len(links) != 3 || links[0].ID != alpha.ID || links[1].ID != beta.ID || !links[2].Missing {
 		t.Fatalf("links: %+v", links)
 	}
-	// Tab order: checks, links (no dependencies here), page.
+	// Tab steps the task ids: from the checks, the first link (4bwcgp).
 	m = press(m, "tab")
 	if m.detailPane != focusLinks {
 		t.Fatalf("Tab from checks: focus %d, want links", m.detailPane)
@@ -77,7 +77,8 @@ func TestFollowTaskRefAndBack(t *testing.T) {
 		t.Fatalf("Esc after following: open %s detail %v, want %s", tk.ID, m.detail, main.ID)
 	}
 	// A reference to no task says so and stays.
-	m = press(m, "tab", "j", "j", "enter")
+	m.detailPane, m.link = focusLinks, 2 // zzzzzz: no Tab stop (4bwcgp), j/k still reach it
+	m = press(m, "enter")
 	if tk, _ := m.selected(); tk.ID != main.ID || !strings.Contains(m.message, "zzzzzz") {
 		t.Fatalf("missing link: open %s message %q", tk.ID, m.message)
 	}

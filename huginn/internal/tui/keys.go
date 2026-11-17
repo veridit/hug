@@ -119,10 +119,17 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		hints = append(hints, hint("j/k", "dependency"), hint("Enter", "follow"))
 	case focusLinks:
 		hints = append(hints, hint("j/k", "link"), hint("Enter", "follow"))
+	case focusIDs:
+		hints = append(hints, hint("j/k", "scroll"), hint("Enter", "open"))
 	case focusFiles:
 		hints = append(hints, hint("j/k", "file"), hint("Space", "show"), hint("Enter", "edit"))
 	default:
 		hints = append(hints, hint("j/k", "scroll"))
+	}
+	// The task ids the detail shows, one Tab each (4bwcgp): right after
+	// the focus's keys, so a narrow bar keeps it.
+	if len(m.idStops(t)) > 0 {
+		hints = append(hints, hint("Tab", "next id"))
 	}
 	// Every key that writes is named here, right after the focus's own
 	// keys so a narrow bar cuts navigation first (x1ra0t); each asks
@@ -135,8 +142,10 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		hints = append(hints, hint("N", "new"))
 	}
 	hints = append(hints, hint("u", "up"), hint("n/p", "task"))
-	if len(m.focusStops(t)) > 1 {
-		hints = append(hints, hint("Tab", "section"))
+	if len(m.focusStops(t)) > 1 && (m.width >= 160 || len(m.idStops(t)) == 0) {
+		// With Tab next id on the bar, h/l is named in ? help below 160,
+		// so S screen still fits at 140 (5z4zt4).
+		hints = append(hints, hint("h/l", "section"))
 	}
 	hints = append(hints, hint("J/K", "½ page"))
 	if len(m.filesOf(t)) > 0 {
@@ -175,7 +184,8 @@ func (m model) helpText() string {
 	}
 	actions := []bkey.Binding{
 		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("u", "in a task: up to the list (as Esc)"), hint("Space/-/Enter/a", "tick / strike out check / follow dep > / answer ?"),
-		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps, links, files"),
+		hint("Tab / Shift-Tab", "in a task: next / previous task id, Enter opens"),
+		hint("h / l", "in a task: focus page, checks, deps, links, files"),
 		hint("E", "in a task with files (⎘2): its folder in the editor"),
 		hint("t / d / x", "take / done / drop task"),
 	}

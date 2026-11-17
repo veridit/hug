@@ -7,16 +7,16 @@ j/k ↑/↓       move / scroll                                           [ and 
 < / gg / Home top                                                     n and p         next / previous task, in a task
 > / G / End   bottom                                                  u               in a task: up to the list (as Esc)
 ctrl-d/u, J/K half page down / up (J/K: in a task)                    Space/-/Enter/a tick / strike out check / follow dep > / answer ?
-PgDn / PgUp   full page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps, links, files
-h/←           previous section / pane                                 E               in a task with files (⎘2): its folder in the editor
-l/→           next section / pane                                     t / d / x       take / done / drop task
-Enter         open full task detail                                   J / K           on a row: move below / above the next row, no confirm
-Esc           back one level, never quits                             m / y, P p      grab: j/k, Enter places it / yank, paste above below
-q / ctrl-c    quit (q only outside inputs)                            N / S           new task / copy the screen, Enter attaches it
-/             live find; Enter goes to it, Tab keeps                  e               edit in $VISUAL, else $EDITOR, git core.editor, vi
-:             palette with command + value completion                 e again         after an edit left a finding: edit at once
-Tab / Enter   complete palette choice; Enter runs complete command    Enter / Esc     confirm / cancel every editing action
-ctrl-n/p / ↑↓ select palette completion
+PgDn / PgUp   full page down / up                                     Tab / Shift-Tab in a task: next / previous task id, Enter opens
+h/←           previous section / pane                                 h / l           in a task: focus page, checks, deps, links, files
+l/→           next section / pane                                     E               in a task with files (⎘2): its folder in the editor
+Enter         open full task detail                                   t / d / x       take / done / drop task
+Esc           back one level, never quits                             J / K           on a row: move below / above the next row, no confirm
+q / ctrl-c    quit (q only outside inputs)                            m / y, P p      grab: j/k, Enter places it / yank, paste above below
+/             live find; Enter goes to it, Tab keeps                  N / S           new task / copy the screen, Enter attaches it
+:             palette with command + value completion                 e               edit in $VISUAL, else $EDITOR, git core.editor, vi
+Tab / Enter   complete palette choice; Enter runs complete command    e again         after an edit left a finding: edit at once
+ctrl-n/p / ↑↓ select palette completion                               Enter / Esc     confirm / cancel every editing action
 ?             help overlay, including from inputs
 #             jump by id prefix / TASK-number alias
 f             filter picker: s/t/p/g/l/a/e

@@ -121,7 +121,7 @@ func TestReloadHandsOverPlace(t *testing.T) {
 	m.query = "task"
 	m.applySort([]sortKey{{"priority", true}})
 	m.move(2, true)
-	m = press(m, "enter", "tab")
+	m = press(m, "enter", "l")
 	m.viewport.SetYOffset(1)
 	before := ansi.Strip(m.View())
 	want := m.handoff()

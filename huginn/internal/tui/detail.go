@@ -159,6 +159,15 @@ func (m model) detailHeader(t task.Task) []string {
 		owner += " · " + b
 	}
 	badges = append(badges, m.styles.dim.Render("group:"+oneLine(group)), m.styles.accent.Render(oneLine(owner)))
+	// The epic it belongs to, one Tab away (4bwcgp).
+	marked, isMarked := m.markedStop(t)
+	if p := oneLine(t.Parent); p != "" {
+		badge := m.styles.dim.Render("epic:") + m.styles.accent.Render(p)
+		if isMarked && marked.where == stopParent {
+			badge = m.styles.dim.Render("epic:") + m.styles.selected.Render("▸"+p)
+		}
+		badges = append(badges, badge)
+	}
 	lines := []string{title}
 	lines = append(lines, strings.Split(wrap(strings.Join(badges, "  "), m.width), "\n")...)
 	lines = append(lines, m.styles.dim.Render("created "+oneLine(t.Created)+" · updated "+oneLine(t.Updated)+" · "+oneLine(t.Slug)))
@@ -173,7 +182,14 @@ func (m model) detailHeader(t task.Task) []string {
 		if s := sinceText(stamp); s != "" {
 			line += " · " + s
 		}
-		lines = append(lines, m.styles.warning.Render(fit(line, m.width)))
+		if isMarked && marked.where == stopStage {
+			// The id it waits on, marked where it stands (4bwcgp); fit
+			// after the mark, so the line keeps its width.
+			line = fit(m.markWord(line, marked.shown, func(s string) string { return m.styles.warning.Render(s) }), m.width)
+		} else {
+			line = m.styles.warning.Render(fit(line, m.width))
+		}
+		lines = append(lines, line)
 	}
 	var problems []task.Finding
 	seen := map[string]bool{}
@@ -325,6 +341,7 @@ const (
 	focusDeps
 	focusLinks // the task:ID references in the text (xxvm6t)
 	focusFiles // the files in the task's folder (zgr01t)
+	focusIDs   // a task id marked in the header, Children or Notes (4bwcgp)
 )
 
 // focusStops lists the focus states the task offers, in Tab order. Empty
@@ -350,7 +367,7 @@ func (m model) focusStops(t task.Task) []int {
 // any, otherwise the page. A question to you with a picture opens on the
 // page, so the picture under the question is what you see (5z4zt4).
 func (m *model) startFocus() {
-	m.acceptance, m.dependency, m.link, m.file = 0, 0, 0, 0
+	m.acceptance, m.dependency, m.link, m.file, m.idAt = 0, 0, 0, 0, 0
 	m.glance, m.glanceHead, m.glanceBody = false, "", ""
 	m.detailPane = focusPage
 	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 && m.askedPicture(t) == "" {
@@ -514,6 +531,21 @@ func (m model) detailText(t task.Task) string {
 		dependencies = append(dependencies, line)
 	}
 	section(m.sectionHeading("Dependencies", "j/k or [ ] step · Enter follows", m.detailPane == focusDeps), strings.Join(dependencies, "\n"), "no dependencies")
+	// Children: an epic's tasks, each one Tab away (4bwcgp).
+	var children []string
+	for i, c := range m.children(t) {
+		pointer := " "
+		marked, ok := m.markedStop(t)
+		if ok && marked.where == stopChildren && marked.index == i {
+			pointer = ">"
+		}
+		line := fmt.Sprintf("%s ↳ %s %s [%s]", pointer, m.styles.status[m.place(c)].Render(oneLine(c.ID)), oneLine(c.Title), oneLine(m.place(c)))
+		if pointer == ">" {
+			line = m.styles.selected.Render(ansi.Strip(line))
+		}
+		children = append(children, line)
+	}
+	section(plain(fmt.Sprintf("Children (%d)", len(children))), strings.Join(children, "\n"), "")
 	// Links: every task:ID the text names, to follow with Enter (xxvm6t).
 	var links []string
 	for i, l := range m.links(t) {
@@ -543,7 +575,12 @@ func (m model) detailText(t task.Task) string {
 			section(plain(s.name), m.markdown(s.text), "")
 		}
 	}
-	section(plain("Notes"), m.markdown(text("notes")), "")
+	notes := m.markdown(text("notes"))
+	if marked, ok := m.markedStop(t); ok && marked.where == stopNotes {
+		// The id named in a note, marked where it stands (4bwcgp).
+		notes = m.markWord(notes, marked.shown, func(s string) string { return s })
+	}
+	section(plain("Notes"), notes, "")
 	section(plain("History"), m.markdown(text("history")), "")
 	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
 }
