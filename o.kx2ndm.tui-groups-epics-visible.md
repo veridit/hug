@@ -1,13 +1,16 @@
 ---
 id: kx2ndm
 title: "TUI: groups and epics visible and collapsible"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["vole"]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
