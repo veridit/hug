@@ -252,19 +252,22 @@ func (m model) listText() string {
 	if len(indices) == 0 {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
-	start, end := m.window(indices, m.cursor, 0, max(1, m.bodyHeight()-2))
+	start, end := m.window(indices, m.cursor, 0, max(1, m.bodyHeight()-2), m.cursor)
 	for n, i := range indices[start:end] {
 		t := m.visible[i]
 		lines = append(lines, m.taskRowMark(t, m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
-		if note := m.noteRow(t, m.width, i == m.cursor); note != "" {
-			lines = append(lines, note) // what it waits on, under it (89y0b7)
+		if i == m.cursor {
+			if note := m.noteRow(t, m.width, true); note != "" {
+				lines = append(lines, note) // what it waits on, under the selected row (89y0b7, tje4sx)
+			}
 		}
 	}
 	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · depends = a dependency is not done", start+1, end, len(indices))))
 	return strings.Join(lines, "\n")
 }
 
-// ownerWidth is the IN PROGRESS owner column: 16 cells for a name, and on
+// ownerWidth is the IN PROGRESS and WAITING owner column (one width, so
+// the two sections line up): 16 cells for a name, and on
 // a wide terminal as many as the longest owner with its branch needs, up
 // to 30 (x1t1t1). A board without branches looks as it did.
 func (m model) ownerWidth() int {
@@ -272,7 +275,7 @@ func (m model) ownerWidth() int {
 	if m.width < 120 {
 		return w
 	}
-	for _, i := range m.paneIndices(sectionDoing) {
+	for _, i := range append(m.paneIndices(sectionDoing), m.paneIndices(sectionWaiting)...) {
 		w = max(w, min(30, lipgloss.Width(m.rowOwner(m.visible[i]))))
 	}
 	return w
@@ -318,7 +321,7 @@ func (m model) overviewText() string {
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := m.window(indices, cursor, m.scrollOf(p), per)
+		start, end := m.window(indices, cursor, m.scrollOf(p), per, m.selIn(p))
 		if len(indices) == 0 {
 			// Nothing to navigate to: None goes on the title line (h9zghj).
 			label += " · None"
@@ -336,7 +339,7 @@ func (m model) overviewText() string {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
-			if p == sectionDoing {
+			if p == sectionDoing || p == sectionWaiting {
 				// Owners get a reserved column, never lost behind a long
 				// title. On the selected row the highlight runs through it,
 				// so the owner reads as part of that row.
@@ -351,8 +354,10 @@ func (m model) overviewText() string {
 			} else {
 				lines = append(lines, m.taskRowMark(t, m.width, sel, false, mark))
 			}
-			if note := m.noteRow(t, m.width, sel); note != "" {
-				lines = append(lines, note) // what it waits on, under it (89y0b7)
+			if sel {
+				if note := m.noteRow(t, m.width, true); note != "" {
+					lines = append(lines, note) // what it waits on, under the selected row (89y0b7, tje4sx)
+				}
 			}
 		}
 		lines = append(lines, "")
@@ -364,6 +369,9 @@ func (m model) overviewText() string {
 // takes (zhvkmj): one scheme for the count line, the status word, the
 // board columns and these titles. LINT takes the colour of the ! mark.
 var sectionState = map[int]string{sectionDoing: "doing", sectionNext: "todo", sectionRecent: "done"}
+
+// sectionWaiting's title takes the warning colour of its stage words
+// (waiting, design, review) and of the ? mark: someone waits.
 
 // sectionStyle is the title style of overview section p.
 func (m model) sectionStyle(p int) lipgloss.Style {
@@ -384,15 +392,16 @@ func (m model) overviewRows() []int {
 	want, got := make([]int, n), make([]int, n)
 	budget := m.bodyHeight() - n*2 // a label and a blank line per section
 	others := 0
-	// Counted in lines: a row that waits takes two (89y0b7). least is the
+	// Counted in lines: the selected row takes two when it waits (89y0b7,
+	// tje4sx), every other row one. least is the
 	// lines of a section's first recentDone rows; floor its first row.
 	least, floor := make([]int, n), make([]int, n)
 	for p := range want {
 		idx := m.paneIndices(p)
-		want[p] = m.linesOf(idx)
-		least[p] = m.linesOf(idx[:min(len(idx), recentDone)])
+		want[p] = m.linesOf(idx, m.selIn(p))
+		least[p] = m.linesOf(idx[:min(len(idx), recentDone)], m.selIn(p))
 		if len(idx) > 0 {
-			floor[p] = m.heightOf(idx[0])
+			floor[p] = m.heightOf(idx[0], m.selIn(p))
 		}
 		if p != m.pane {
 			got[p] = least[p]
@@ -478,12 +487,12 @@ func (m model) drawnLines(p, lines int) int {
 	if p == m.pane {
 		cursor = m.cursor
 	}
-	start, end := m.window(idx, cursor, m.scrollOf(p), lines)
-	return m.linesOf(idx[start:end])
+	start, end := m.window(idx, cursor, m.scrollOf(p), lines, m.selIn(p))
+	return m.linesOf(idx[start:end], m.selIn(p))
 }
 
 // spareOrder is who gets the overview's spare rows first (z6kz20).
-var spareOrder = []int{sectionDoing, sectionNext, sectionRecent, sectionLint}
+var spareOrder = []int{sectionDoing, sectionWaiting, sectionNext, sectionRecent, sectionLint}
 
 // scrollOf is the first row section p of the current view showed last.
 func (m model) scrollOf(p int) int {
@@ -549,12 +558,14 @@ func (m model) boardText() string {
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := m.window(indices, cursor, m.scrollOf(p), rows)
+		start, end := m.window(indices, cursor, m.scrollOf(p), rows, m.selIn(p))
 		for n, i := range indices[start:end] {
 			sel := p == m.pane && i == m.cursor
 			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, sel, true, scrollMark(start+n, start, end, len(indices))))
-			if note := m.noteRow(m.visible[i], width, sel); note != "" {
-				cols[c] = append(cols[c], note)
+			if sel {
+				if note := m.noteRow(m.visible[i], width, true); note != "" {
+					cols[c] = append(cols[c], note)
+				}
 			}
 		}
 		for len(cols[c]) < rows+2 {

@@ -10,16 +10,19 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-// Rows that wait on something take two lines (89y0b7, Jørgen 14:55-14:58,
-// mock waiting-rows.md on the ticket): line 1 is the task as always, with
-// its title; line 2 hangs under the id and says what it waits on, the
-// reason right after the colon, and since when:
+// The row under the cursor opens a second line when it waits on
+// something (89y0b7, Jørgen 14:55-14:58, mock waiting-rows.md on the
+// ticket; tje4sx, Jørgen 20:00: only the focused row, every other row is
+// one line): line 1 is the task as always, with its title; line 2 hangs
+// under the id and says what it waits on, the reason right after the
+// colon, and since when:
 //
-//	? ○ 3    bxqtkt  spike    waiting  Contributions: agent feedback…  kestrel
+//	> ○ 3    bxqtkt  spike    waiting  Contributions: agent feedback…  kestrel
 //	         └─ waiting on you: approve the design ▸ bxqtkt.md    since 14:42
 //
 // A person is named by their short name, "you" for the TUI user, never by
-// initials typed into the text. Active, ready and closed rows stay one line.
+// initials typed into the text. A row that waits on you carries ? when the
+// cursor is elsewhere, so it stands out on its one line.
 
 // noteStages are the stages whose rows take a second line.
 var noteStages = map[string]bool{"waiting": true, "review": true, "design": true, "depends": true, "deferred": true}
@@ -34,30 +37,41 @@ func (m model) stageOf(t task.Task) string {
 	return g
 }
 
-// rowHeight is how many lines t's row takes: 2 when it waits on
-// something, else 1.
-func (m model) rowHeight(t task.Task) int {
-	if noteStages[m.stageOf(t)] {
+// rowHeight is how many lines t's row takes: 2 when it is the selected
+// row and waits on something, else 1 (tje4sx).
+func (m model) rowHeight(t task.Task, selected bool) int {
+	if selected && noteStages[m.stageOf(t)] {
 		return 2
 	}
 	return 1
 }
 
-// heightOf is rowHeight by index into visible.
-func (m model) heightOf(i int) int {
+// heightOf is rowHeight by index into visible; sel is the index drawn
+// selected in the section, or -1 for none.
+func (m model) heightOf(i, sel int) int {
 	if i < 0 || i >= len(m.visible) {
 		return 1
 	}
-	return m.rowHeight(m.visible[i])
+	return m.rowHeight(m.visible[i], i == sel)
 }
 
-// linesOf is how many lines rows indices take.
-func (m model) linesOf(indices []int) int {
+// linesOf is how many lines rows indices take, sel drawn selected.
+func (m model) linesOf(indices []int, sel int) int {
 	n := 0
 	for _, i := range indices {
-		n += m.heightOf(i)
+		n += m.heightOf(i, sel)
 	}
 	return n
+}
+
+// selIn is the row section p draws selected: the cursor in the focused
+// section, none elsewhere (a task in LINT is also in its own section, and
+// only one of them is under the cursor).
+func (m model) selIn(p int) int {
+	if p == m.pane {
+		return m.cursor
+	}
+	return -1
 }
 
 // name is how a row names who: "you" for the TUI user, a listed person by
@@ -255,23 +269,24 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 
 // window is the rows of indices shown in lines lines, starting at start
 // as far as it can: a section keeps its scroll (h9zghj) and moves it only
-// as far as needed to keep the cursor in view. Rows take one or two
-// lines (89y0b7); a row never shows cut in half, and the cursor's row is
-// shown even when it alone is taller than lines. A cursor of -1 is none.
-func (m model) window(indices []int, cursor, start, lines int) (int, int) {
+// as far as needed to keep the cursor in view. The selected row sel takes
+// two lines when it waits (tje4sx), every other row one; a row never
+// shows cut in half, and the cursor's row is shown even when it alone is
+// taller than lines. A cursor or sel of -1 is none.
+func (m model) window(indices []int, cursor, start, lines, sel int) (int, int) {
 	n := len(indices)
 	lines = max(0, lines)
 	if n == 0 {
 		return 0, 0
 	}
-	if m.linesOf(indices) <= lines {
+	if m.linesOf(indices, sel) <= lines {
 		return 0, n
 	}
 	start = max(0, min(start, n-1))
 	end := func(from int) int {
 		used, e := 0, from
-		for e < n && used+m.heightOf(indices[e]) <= lines {
-			used += m.heightOf(indices[e])
+		for e < n && used+m.heightOf(indices[e], sel) <= lines {
+			used += m.heightOf(indices[e], sel)
 			e++
 		}
 		return max(e, min(from+1, n))
@@ -289,8 +304,8 @@ func (m model) window(indices []int, cursor, start, lines int) (int, int) {
 	if p >= 0 && p >= end(start) {
 		// Scroll down just far enough for the cursor's row.
 		used, s := 0, p
-		for s >= 0 && used+m.heightOf(indices[s]) <= lines {
-			used += m.heightOf(indices[s])
+		for s >= 0 && used+m.heightOf(indices[s], sel) <= lines {
+			used += m.heightOf(indices[s], sel)
 			s--
 		}
 		start = min(s+1, p)
@@ -299,9 +314,9 @@ func (m model) window(indices []int, cursor, start, lines int) (int, int) {
 	for e := end(start); e == n && start > 0; e = end(start) {
 		used := 0
 		for _, i := range indices[start:e] {
-			used += m.heightOf(i)
+			used += m.heightOf(i, sel)
 		}
-		if used+m.heightOf(indices[start-1]) > lines {
+		if used+m.heightOf(indices[start-1], sel) > lines {
 			break
 		}
 		start--

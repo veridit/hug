@@ -144,12 +144,12 @@ func nextHidden(m model, rows []int) int {
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := m.window(idx, cursor, m.scrollOf(p), rows[p])
+		start, end := m.window(idx, cursor, m.scrollOf(p), rows[p], m.selIn(p))
 		if end < len(idx) {
-			least = min(least, m.heightOf(idx[end]))
+			least = min(least, m.heightOf(idx[end], m.selIn(p)))
 		}
 		if start > 0 {
-			least = min(least, m.heightOf(idx[start-1]))
+			least = min(least, m.heightOf(idx[start-1], m.selIn(p)))
 		}
 	}
 	return least

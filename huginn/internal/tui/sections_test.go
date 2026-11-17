@@ -44,19 +44,20 @@ func shownRows(m model) map[int]int {
 // rows the focused one does not need go out in spareOrder (z6kz20).
 func TestOverviewFocusedSectionGrows(t *testing.T) {
 	m := overviewAt(t, 140, 40)
-	// Counted in lines: a row that waits takes two (89y0b7).
-	counts, least := map[int]int{}, map[int]int{}
-	for p := range overviewSections {
-		idx := m.paneIndices(p)
-		counts[p] = m.linesOf(idx)
-		least[p] = m.linesOf(idx[:min(len(idx), 3)])
-	}
-	if counts[sectionDoing] <= 3 || counts[sectionRecent] <= 3 {
-		t.Fatalf("the fixture must overflow the focused sections: %v", counts)
-	}
 	for _, focus := range []int{sectionDoing, sectionNext, sectionRecent} {
 		m.pane = focus
 		m.clamp()
+		// Counted in lines: the selected row takes two when it waits
+		// (89y0b7, tje4sx), every other row one.
+		counts, least := map[int]int{}, map[int]int{}
+		for p := range overviewSections {
+			idx := m.paneIndices(p)
+			counts[p] = m.linesOf(idx, m.selIn(p))
+			least[p] = m.linesOf(idx[:min(len(idx), 3)], m.selIn(p))
+		}
+		if counts[sectionDoing] <= 3 || counts[sectionRecent] <= 3 {
+			t.Fatalf("the fixture must overflow the focused sections: %v", counts)
+		}
 		rows, shown := m.overviewRows(), shownRows(m)
 		budget := m.bodyHeight() - 2*len(overviewSections)
 		spare := budget
@@ -116,7 +117,7 @@ func TestRecentlyDoneScrollsThroughAll(t *testing.T) {
 	if shownRows(m)[sectionRecent] != 3 {
 		t.Fatalf("unfocused RECENTLY DONE shows %d rows, want 3", shownRows(m)[sectionRecent])
 	}
-	m = press(m, "tab", "tab")
+	m = press(m, "l", "l", "l")
 	if m.pane != sectionRecent {
 		t.Fatalf("pane %d", m.pane)
 	}

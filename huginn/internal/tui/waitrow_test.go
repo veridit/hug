@@ -69,7 +69,12 @@ func TestTwoLineRowsScrollByTask(t *testing.T) {
 			if at < 0 {
 				t.Fatalf("%s step %d: selected %s is not on screen:\n%s", view, step, sel.ID, screen)
 			}
-			if m.rowHeight(sel) == 2 && (at+1 >= len(lines) || !strings.Contains(lines[at+1], "└─ waiting on CI run")) {
+			// tje4sx check 4: only the row under the cursor opens its
+			// second line; every other row is one line.
+			if n := strings.Count(screen, "└─"); n > 1 || (n == 1 && (at+1 >= len(lines) || !strings.Contains(lines[at+1], "└─"))) {
+				t.Fatalf("%s step %d: %d second lines, want at most the selected row's:\n%s", view, step, n, screen)
+			}
+			if m.rowHeight(sel, true) == 2 && (at+1 >= len(lines) || !strings.Contains(lines[at+1], "└─ waiting on CI run")) {
 				t.Fatalf("%s step %d: %s shows without its second line:\n%s", view, step, sel.ID, screen)
 			}
 			m = press(m, "j")

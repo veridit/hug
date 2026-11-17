@@ -3,25 +3,56 @@ HUG TASKS · overview   7/7 tasks · ! 0 broken
 [overview]   list    board    !lint                                             
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
-> IN PROGRESS · assigned to  [4]                                                
+> IN PROGRESS · assigned to  [1]                                                
 > ◑ 1/2 aaaaaa   feature high     active    Status colors: rows…  nautilus      
-  ◑ 1/2 bbbbbb   feature high     review    Release, then hug s…  nautilus      
-        └─ in review by Jørgen                                       since 09:48
-  ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50…  nautilus      
-        └─ waiting on CI run 44063552584                             since 09:41
-  ◑ 1/2 dddddd   feature high     depends   One set of variable…  nautilus      
-        └─ depends on cccccc, eeeeee  ▱▱ 0/2                                    
                                                                                 
-  NEXT UP · rank order  [3]                                                     
-  ◑ 1/2 eeeeee   feature high     design    Tags listed per board               
-        └─ question for jhf: should type leave the rows, or stay as a column?   
+  WAITING · on you first  [4]                                                   
+  ◑ 1/2 bbbbbb   feature high     review    Release, then hug s…  nautilus      
+  ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50…  nautilus      
+  ◑ 1/2 dddddd   feature high     depends   One set of variable…  nautilus      
+  ◑ 1/2 eeeeee   feature high     design    Tags listed per boa…  unassigned    
+                                                                                
+  NEXT UP · rank order  [2]                                                     
   ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic           
   ◑ 1/2 gggggg   feature high     deferred  Answer a question in place          
-        └─ deferred: after the release                                          
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
                                                                                 
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+All tasks · : filters and commands                                              
+                                                                                
+j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
+== WAITING focused at 80
+HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
+[overview]   list    board    !lint                                             
+todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+  IN PROGRESS · assigned to  [1]                                                
+  ◑ 1/2 aaaaaa   feature high     active    Status colors: rows…  nautilus      
+                                                                                
+> WAITING · on you first  [4]                                                   
+  ◑ 1/2 bbbbbb   feature high     review    Release, then hug s…  nautilus      
+> ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50…  nautilus      
+        └─ waiting on CI run 44063552584                             since 09:41
+  ◑ 1/2 dddddd   feature high     depends   One set of variable…  nautilus      
+  ◑ 1/2 eeeeee   feature high     design    Tags listed per boa…  unassigned    
+                                                                                
+  NEXT UP · rank order  [2]                                                     
+  ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic           
+  ◑ 1/2 gggggg   feature high     deferred  Answer a question in place          
+                                                                                
+  RECENTLY DONE · last closed  [0] · None                                       
+                                                                                
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
+                                                                                
+                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -37,17 +68,17 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ✓     ID       TYPE    PRIORITY STAGE     TITLE                               
 > ◑ 1/2 aaaaaa   feature high     active    Status colors: rows and sections sh…
   ◑ 1/2 bbbbbb   feature high     review    Release, then hug setup in seid-lang
-        └─ in review by Jørgen                                       since 09:48
   ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50 ms              
-        └─ waiting on CI run 44063552584                             since 09:41
   ◑ 1/2 dddddd   feature high     depends   One set of variable names           
-        └─ depends on cccccc, eeeeee  ▱▱ 0/2                                    
   ◑ 1/2 eeeeee   feature high     design    Tags listed per board               
-        └─ question for jhf: should type leave the rows, or stay as a column?   
   ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic           
   ◑ 1/2 gggggg   feature high     deferred  Answer a question in place          
-        └─ deferred: after the release                                          
 Rows 1–7 of 7 · ! lint finding · depends = a dependency is not done             
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -65,25 +96,56 @@ HUG TASKS · overview   7/7 tasks · ! 0 broken
 [overview]   list    board    !lint                                                                                                         
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
-> IN PROGRESS · assigned to  [4]                                                                                                            
+> IN PROGRESS · assigned to  [1]                                                                                                            
 > ◑ 1/2 aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                        nautilus        
-  ◑ 1/2 bbbbbb   feature high     review    Release, then hug setup in seid-lang                                            nautilus        
-        └─ in review by Jørgen                                                                                                   since 09:48
-  ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50 ms                                                          nautilus        
-        └─ waiting on CI run 44063552584                                                                                         since 09:41
-  ◑ 1/2 dddddd   feature high     depends   One set of variable names                                                       nautilus        
-        └─ depends on cccccc, eeeeee  ▱▱ 0/2                                                                                                
                                                                                                                                             
-  NEXT UP · rank order  [3]                                                                                                                 
-  ◑ 1/2 eeeeee   feature high     design    Tags listed per board                                                                           
-        └─ question for jhf: should type leave the rows, or stay as a column?                                                               
+  WAITING · on you first  [4]                                                                                                               
+  ◑ 1/2 bbbbbb   feature high     review    Release, then hug setup in seid-lang                                            nautilus        
+  ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50 ms                                                          nautilus        
+  ◑ 1/2 dddddd   feature high     depends   One set of variable names                                                       nautilus        
+  ◑ 1/2 eeeeee   feature high     design    Tags listed per board                                                           unassigned      
+                                                                                                                                            
+  NEXT UP · rank order  [2]                                                                                                                 
   ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic                                                                       
   ◑ 1/2 gggggg   feature high     deferred  Answer a question in place                                                                      
-        └─ deferred: after the release                                                                                                      
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
                                                                                                                                             
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+All tasks · : filters and commands                                                                                                          
+                                                                                                                                            
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                                         
+== WAITING focused at 140
+HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
+[overview]   list    board    !lint                                                                                                         
+todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+  IN PROGRESS · assigned to  [1]                                                                                                            
+  ◑ 1/2 aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                        nautilus        
+                                                                                                                                            
+> WAITING · on you first  [4]                                                                                                               
+  ◑ 1/2 bbbbbb   feature high     review    Release, then hug setup in seid-lang                                            nautilus        
+> ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50 ms                                                          nautilus        
+        └─ waiting on CI run 44063552584                                                                                         since 09:41
+  ◑ 1/2 dddddd   feature high     depends   One set of variable names                                                       nautilus        
+  ◑ 1/2 eeeeee   feature high     design    Tags listed per board                                                           unassigned      
+                                                                                                                                            
+  NEXT UP · rank order  [2]                                                                                                                 
+  ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic                                                                       
+  ◑ 1/2 gggggg   feature high     deferred  Answer a question in place                                                                      
+                                                                                                                                            
+  RECENTLY DONE · last closed  [0] · None                                                                                                   
+                                                                                                                                            
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
+                                                                                                                                            
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
@@ -99,17 +161,17 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ✓     ID       TYPE    PRIORITY STAGE     TITLE                                                                                           
 > ◑ 1/2 aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                                        
   ◑ 1/2 bbbbbb   feature high     review    Release, then hug setup in seid-lang                                                            
-        └─ in review by Jørgen                                                                                                   since 09:48
   ◑ 1/2 cccccc   feature high     waiting   Warm cache under 50 ms                                                                          
-        └─ waiting on CI run 44063552584                                                                                         since 09:41
   ◑ 1/2 dddddd   feature high     depends   One set of variable names                                                                       
-        └─ depends on cccccc, eeeeee  ▱▱ 0/2                                                                                                
   ◑ 1/2 eeeeee   feature high     design    Tags listed per board                                                                           
-        └─ question for jhf: should type leave the rows, or stay as a column?                                                               
   ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic                                                                       
   ◑ 1/2 gggggg   feature high     deferred  Answer a question in place                                                                      
-        └─ deferred: after the release                                                                                                      
 Rows 1–7 of 7 · ! lint finding · depends = a dependency is not done                                                                         
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

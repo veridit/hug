@@ -64,19 +64,21 @@ func sectionIDs(m model, p int) []string {
 	return out
 }
 
-// Check 1: every open task is in exactly one of IN PROGRESS and NEXT UP.
-// A task with an open dependency stays in its own section with the stage
-// depends (6ephqk check 7, Jørgen 11:43: no BLOCKED section).
+// Check 1: every open task is in exactly one of IN PROGRESS, WAITING and
+// NEXT UP. A doing task with an open dependency is stuck, so it waits in
+// WAITING; a todo one stays in NEXT UP, not ready yet (tje4sx, crab
+// 20:10); both with the stage depends (6ephqk check 7, Jørgen 11:43: no
+// BLOCKED section).
 func TestOverviewOneSectionPerTask(t *testing.T) {
 	m, ids := placeBoard(t)
 	m.setView("overview")
 	bravo, charlie := ids["Bravo"], ids["Charlie"]
-	doing, next := sectionIDs(m, sectionDoing), sectionIDs(m, sectionNext)
-	if !contains(doing, bravo) || contains(next, bravo) {
-		t.Fatalf("Bravo (doing, open dependency): IN PROGRESS %v, NEXT UP %v", doing, next)
+	doing, waiting, next := sectionIDs(m, sectionDoing), sectionIDs(m, sectionWaiting), sectionIDs(m, sectionNext)
+	if !contains(waiting, bravo) || contains(doing, bravo) || contains(next, bravo) {
+		t.Fatalf("Bravo (doing, open dependency): IN PROGRESS %v, WAITING %v, NEXT UP %v", doing, waiting, next)
 	}
-	if !contains(next, charlie) || contains(doing, charlie) {
-		t.Fatalf("Charlie (todo, open dependency): IN PROGRESS %v, NEXT UP %v", doing, next)
+	if !contains(next, charlie) || contains(doing, charlie) || contains(waiting, charlie) {
+		t.Fatalf("Charlie (todo, open dependency): IN PROGRESS %v, WAITING %v, NEXT UP %v", doing, waiting, next)
 	}
 	for _, name := range overviewSections {
 		if strings.Contains(name, "BLOCKED") {
@@ -84,7 +86,7 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 		}
 	}
 	seen := map[string]int{}
-	for _, p := range []int{sectionDoing, sectionNext} {
+	for _, p := range []int{sectionDoing, sectionWaiting, sectionNext} {
 		for _, id := range sectionIDs(m, p) {
 			seen[id]++
 		}
@@ -94,15 +96,21 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 			t.Fatalf("%s is in %d sections", title, seen[ids[title]])
 		}
 	}
-	// Drawn with the depends stage where it stands: the bar, then the title.
+	// Drawn with the depends stage where it stands, then the title; the
+	// row under the cursor says on what (tje4sx).
 	view := ansi.Strip(m.overviewText())
-	inProgress := view[:strings.Index(view, "NEXT UP")]
-	if !regexp.MustCompile(bravo + `\s.*depends\s+Bravo.*\n\s+└─ depends on \w+  ▱ 0/1`).MatchString(inProgress) {
-		t.Fatalf("Bravo not drawn depends in IN PROGRESS:\n%s", inProgress)
+	waits := view[strings.Index(view, "WAITING"):strings.Index(view, "NEXT UP")]
+	if !regexp.MustCompile(bravo + `\s.*depends\s+Bravo`).MatchString(waits) {
+		t.Fatalf("Bravo not drawn depends in WAITING:\n%s", waits)
 	}
 	nextUp := view[strings.Index(view, "NEXT UP"):strings.Index(view, "RECENTLY DONE")]
-	if !regexp.MustCompile(charlie + `\s.*depends\s+Charlie.*\n\s+└─ depends on \w+  ▱ 0/1`).MatchString(nextUp) {
+	if !regexp.MustCompile(charlie + `\s.*depends\s+Charlie`).MatchString(nextUp) {
 		t.Fatalf("Charlie not drawn depends in NEXT UP:\n%s", nextUp)
+	}
+	m.pane = sectionNext
+	m = selectRow(t, m, charlie)
+	if focused := ansi.Strip(m.overviewText()); !regexp.MustCompile(charlie + `\s.*depends\s+Charlie.*\n\s+└─ depends on \w+  ▱ 0/1`).MatchString(focused) {
+		t.Fatalf("Charlie, focused, does not say what it depends on:\n%s", focused)
 	}
 	if strings.Count(view, bravo) != 1 {
 		t.Fatalf("Bravo shown %d times in the overview:\n%s", strings.Count(view, bravo), view)

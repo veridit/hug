@@ -637,12 +637,17 @@ func (m *model) applyFilter() {
 var boardStates = []string{"todo", "doing", "depends", "done", "dropped"}
 
 // Overview sections, top to bottom. Every task is in one place (zaec08).
-// A task with an open dependency stays in its own section with the stage
-// depends (Jørgen 11:43: BLOCKED is no longer a section, fewer sections).
-var overviewSections = []string{"IN PROGRESS · assigned to", "NEXT UP · rank order", "RECENTLY DONE · last closed", "LINT · tasks needing attention"}
+// IN PROGRESS is what someone works on now (doing/active); WAITING is what
+// is stuck on someone or something, open tasks waiting, in design or in
+// review, todo or doing alike, and doing tasks with an open dependency
+// (tje4sx, Jørgen 19:54, crab 20:10: reverses "waiting is a stage, not a
+// section"). A todo task with an open dependency stays in NEXT UP with
+// the stage depends: it is not ready yet, and nobody is asked anything.
+var overviewSections = []string{"IN PROGRESS · assigned to", "WAITING · on you first", "NEXT UP · rank order", "RECENTLY DONE · last closed", "LINT · tasks needing attention"}
 
 const (
 	sectionDoing = iota
+	sectionWaiting
 	sectionNext
 	sectionRecent
 	sectionLint
@@ -653,7 +658,7 @@ const (
 // Every other unfocused section shows as many rows.
 const recentDone = 3
 
-// maxSections is the most sections a view has: 4 overview sections, 5
+// maxSections is the most sections a view has: 5 overview sections, 5
 // board columns.
 const maxSections = 5
 
@@ -684,7 +689,7 @@ func (m *model) remember() {
 	}
 	indices := m.indices()
 	memo := &m.memo[v][m.pane]
-	memo.start, _ = m.window(indices, m.cursor, memo.start, m.sectionRows(m.pane))
+	memo.start, _ = m.window(indices, m.cursor, memo.start, m.sectionRows(m.pane), m.cursor)
 	memo.path = ""
 	for _, i := range indices {
 		if i == m.cursor {
@@ -735,11 +740,13 @@ func (m model) paneIndices(p int) []int {
 		case "overview":
 			switch p {
 			case sectionDoing:
-				match = t.State == "doing"
+				match = t.State == "doing" && !m.waits(t)
+			case sectionWaiting:
+				match = m.waits(t)
 			case sectionNext:
 				// Unassigned todo, never an epic (it finishes through its
 				// children); one that depends shows its stage (Jørgen 11:43).
-				match = t.State == "todo" && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
+				match = t.State == "todo" && !m.waits(t) && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
 			case sectionLint:
 				match = m.linted[t.Path]
 			}
@@ -752,7 +759,7 @@ func (m model) paneIndices(p int) []int {
 			out = append(out, i)
 		}
 	}
-	if m.view == "overview" && (p == sectionDoing || p == sectionNext) {
+	if m.view == "overview" && p == sectionWaiting {
 		// A task waiting on you sorts to the top of its section (6ephqk
 		// check 8, Jørgen 11:42), the rest keep their order.
 		sort.SliceStable(out, func(a, b int) bool { return m.forYou(m.visible[out[a]]) && !m.forYou(m.visible[out[b]]) })
@@ -760,6 +767,23 @@ func (m model) paneIndices(p int) []int {
 	return out
 }
 func (m model) indices() []int { return m.paneIndices(m.pane) }
+
+// waits says whether t goes to WAITING (tje4sx): an open task whose stage
+// waits on a person or a thing (waiting, design, review), or a doing task
+// held by an open dependency. A todo task that depends is not ready yet
+// and stays in NEXT UP.
+func (m model) waits(t task.Task) bool {
+	if t.State != "todo" && t.State != "doing" {
+		return false
+	}
+	switch m.stageOf(t) {
+	case "waiting", "design", "review":
+		return true
+	case "depends":
+		return t.State == "doing"
+	}
+	return false
+}
 func (m *model) clamp() {
 	indices := m.indices()
 	found := false

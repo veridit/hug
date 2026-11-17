@@ -77,7 +77,7 @@ func selectRow(t *testing.T, m model, id string) model {
 
 func nextUp(m model) model {
 	m.setView("overview")
-	m.pane = 1
+	m.pane = sectionNext
 	m.clamp()
 	return m
 }
