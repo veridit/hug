@@ -105,17 +105,21 @@ type editorMsg struct {
 	commit string
 }
 type model struct {
-	store                              *task.Store
-	opts                               Options
-	all, visible                       []task.Task
-	findings                           []task.Finding
-	docs                               map[string]*task.Document
-	blocked, linted                    map[string]bool
-	epics                              map[string]bool // lowercase ids of tasks with children
-	cursor, acceptance, offset         int
-	dependency, detailPane             int
-	link                               int                         // the task:ID marked > in Links (xxvm6t)
-	file                               int                         // the file marked > in Files (zgr01t)
+	store                      *task.Store
+	opts                       Options
+	all, visible               []task.Task
+	findings                   []task.Finding
+	docs                       map[string]*task.Document
+	blocked, linted            map[string]bool
+	epics                      map[string]bool // lowercase ids of tasks with children
+	cursor, acceptance, offset int
+	dependency, detailPane     int
+	link                       int // the task:ID marked > in Links (xxvm6t)
+	file                       int // the file marked > in Files (zgr01t)
+	// glance: a file shown in the detail pane (scrxak); glanceHead is its
+	// "path · size · i of N" line, glanceBody its escaped text.
+	glance                             bool
+	glanceHead, glanceBody             string
 	files                              map[string][]string         // task path -> its file names (zgr01t)
 	people                             []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
 	lastExec                           *exec.Cmd                   // the editor command last started, for tests (zgr01t)
@@ -653,6 +657,7 @@ func (m *model) setView(view string) {
 	m.pane = 0
 	m.offset = 0
 	m.detail = false
+	m.glance = false
 	m.detailPath = ""
 	m.detailStack = nil
 	m.detailPane = 0
@@ -756,6 +761,13 @@ func (m *model) resize() {
 	m.syncDetail()
 }
 func (m *model) syncDetail() {
+	if m.glance {
+		// The file stays as it was read: a refresh does not read it again.
+		if t, ok := m.selected(); ok {
+			m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-2)
+		}
+		return
+	}
 	if t, ok := m.selected(); ok {
 		m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-1)
 		m.viewport.SetContent(m.detailText(t))
@@ -806,6 +818,9 @@ func (m *model) back() {
 	case m.prompt != "":
 		m.prompt = ""
 		m.input.Blur()
+	case m.detail && m.glance:
+		// Up from a file is Files, with that file marked (scrxak).
+		m.closeGlance()
 	case m.detail && len(m.detailStack) > 0:
 		m.detailPath = m.detailStack[len(m.detailStack)-1]
 		m.detailStack = m.detailStack[:len(m.detailStack)-1]
@@ -1005,6 +1020,27 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.setView("list")
 			return m, nil
 		}
+		if m.detail && m.glance {
+			// In a file: n/p step files, j/k and pages scroll, Enter edits
+			// it, E opens the folder, Esc and u go back (scrxak).
+			switch k {
+			case "n", "ctrl+n":
+				m.stepGlance(1)
+			case "p", "ctrl+p":
+				m.stepGlance(-1)
+			case "u":
+				m.back()
+			case "enter":
+				return m, m.openFile()
+			case "E":
+				return m, m.openFolder()
+			case " ":
+				m.message = "a file is read only here: Enter opens it in the editor"
+			default:
+				m.scroll(&m.viewport, k)
+			}
+			return m, nil
+		}
 		if m.detail {
 			switch k {
 			case "[", "]":
@@ -1059,7 +1095,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case " ":
 				// Space ticks the check marked >; with focus elsewhere no
 				// check is marked, and ticking an unmarked one is a guess.
-				if m.detailPane == focusAcceptance {
+				// In Files it shows the marked file (scrxak).
+				if m.detailPane == focusFiles {
+					m.openGlance()
+				} else if m.detailPane == focusAcceptance {
 					m.requestAction(k, "")
 				} else if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
 					m.message = "Space ticks the check marked >: Tab focuses the checks"

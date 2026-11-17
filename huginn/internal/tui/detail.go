@@ -348,6 +348,7 @@ func (m model) focusStops(t task.Task) []int {
 // any, otherwise the page.
 func (m *model) startFocus() {
 	m.acceptance, m.dependency, m.link, m.file = 0, 0, 0, 0
+	m.glance, m.glanceHead, m.glanceBody = false, "", ""
 	m.detailPane = focusPage
 	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
 		m.detailPane = focusAcceptance
@@ -525,7 +526,7 @@ func (m model) detailText(t task.Task) string {
 	}
 	section(m.sectionHeading("Links", "j/k or [ ] step · Enter follows", m.detailPane == focusLinks), strings.Join(links, "\n"), "")
 	// Files: the task's folder, each opening in the editor (zgr01t).
-	section(m.sectionHeading(fmt.Sprintf("Files (%d)", len(m.filesOf(t))), "j/k or [ ] step · Enter edits · E folder", m.detailPane == focusFiles), strings.Join(m.filesLines(t), "\n"), "")
+	section(m.sectionHeading(fmt.Sprintf("Files (%d)", len(m.filesOf(t))), "j/k or [ ] step · Space shows · Enter edits · E folder", m.detailPane == focusFiles), strings.Join(m.filesLines(t), "\n"), "")
 	// Any other section, in file order, then Notes and History last.
 	for _, s := range sections {
 		if !described[s.name] && !contains([]string{"description", "acceptance", "dependencies", "notes", "history"}, s.name) {

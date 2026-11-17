@@ -1,0 +1,100 @@
+== README at 80
+HUG TASKS · detail   60/60 tasks · ! 7 findings                                 
+ overview    list    board    !lint   list › 000001                             
+todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15        
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+Feature task 01: make the terminal workflow observable with a deliberately long…
+[todo]  [feature]  [critical]  000001  group:compiler  unassigned               
+created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                  
+⚠ line 1: title is 134 characters (max 80): move detail into the Goal           
+  fix: hug task set 000001 --title "..."                                        
+────────────────────────────────────────────────────────────────────────────────
+compiler/000001/bench/README.md · 32 B · 1 of 5                                 
+# Bench                                                                         
+                                                                                
+Synthetic bench notes.                                                          
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+File · 100% · n next file · p previous · Esc back to files                      
+                                                                                
+j/k scroll · n/p file · Enter edit · u/Esc files · ? help · q quit              
+== escapes.log at 80
+HUG TASKS · detail   60/60 tasks · ! 7 findings                                 
+ overview    list    board    !lint   list › 000001                             
+todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15        
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+Feature task 01: make the terminal workflow observable with a deliberately long…
+[todo]  [feature]  [critical]  000001  group:compiler  unassigned               
+created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                  
+⚠ line 1: title is 134 characters (max 80): move detail into the Goal           
+  fix: hug task set 000001 --title "..."                                        
+────────────────────────────────────────────────────────────────────────────────
+compiler/000001/evidence/escapes.log · 241 B · 4 of 5                           
+ok line                                                                         
+\x1b[2Jcleared?\a bell    tab                                                   
+next long long long long long long long long long long long long long long long 
+long long long long long long long long long long long long long long long long 
+long long long long long long long long long end                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+File · 100% · n next file · p previous · Esc back to files                      
+                                                                                
+j/k scroll · n/p file · Enter edit · u/Esc files · ? help · q quit              
+== README at 140
+HUG TASKS · detail   60/60 tasks · ! 7 findings                                                                                             
+ overview    list    board    !lint   list › 000001                                                                                         
+todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15                                                                    
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
+[todo]  [feature]  [critical]  000001  group:compiler  unassigned                                                                           
+created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                                                                              
+⚠ line 1: title is 134 characters (max 80): move detail into the Goal                                                                       
+  fix: hug task set 000001 --title "..."                                                                                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+compiler/000001/bench/README.md · 32 B · 1 of 5                                                                                             
+# Bench                                                                                                                                     
+                                                                                                                                            
+Synthetic bench notes.                                                                                                                      
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+File · 100% · n next file · p previous · Esc back to files                                                                                  
+                                                                                                                                            
+j/k scroll · n/p file · Enter edit · u/Esc files · ? help · q quit                                                                          
+== escapes.log at 140
+HUG TASKS · detail   60/60 tasks · ! 7 findings                                                                                             
+ overview    list    board    !lint   list › 000001                                                                                         
+todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15                                                                    
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
+[todo]  [feature]  [critical]  000001  group:compiler  unassigned                                                                           
+created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                                                                              
+⚠ line 1: title is 134 characters (max 80): move detail into the Goal                                                                       
+  fix: hug task set 000001 --title "..."                                                                                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+compiler/000001/evidence/escapes.log · 241 B · 4 of 5                                                                                       
+ok line                                                                                                                                     
+\x1b[2Jcleared?\a bell    tab                                                                                                               
+next long long long long long long long long long long long long long long long long long long long long long long long long long long long 
+long long long long long long long long long long long long long end                                                                        
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+File · 100% · n next file · p previous · Esc back to files                                                                                  
+                                                                                                                                            
+j/k scroll · n/p file · Enter edit · u/Esc files · ? help · q quit                                                                          

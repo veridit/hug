@@ -690,6 +690,10 @@ func (m model) View() string {
 		content = m.filterText()
 	case m.prompt == "sort":
 		content = m.sortText()
+	case m.detail && m.glance:
+		if t, ok := m.selected(); ok {
+			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.styles.accent.Render(fit(m.glanceHead, m.width)) + "\n" + m.viewport.View()
+		}
 	case m.detail:
 		if t, ok := m.selected(); ok {
 			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.viewport.View()
@@ -730,6 +734,9 @@ func (m model) View() string {
 			footer = fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
 			if pos := m.detailPosition(); pos != "" {
 				footer = fmt.Sprintf("Task %s · %.0f%% · n next · p previous · Esc back", pos, m.viewport.ScrollPercent()*100)
+			}
+			if m.glance {
+				footer = fmt.Sprintf("File · %.0f%% · n next file · p previous · Esc back to files", m.viewport.ScrollPercent()*100)
 			}
 		}
 		if m.grab.active {

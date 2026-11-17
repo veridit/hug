@@ -104,6 +104,9 @@ func (m model) withVersion(bar string) string {
 func (m model) detailHints(narrow bool) []bkey.Binding {
 	t, _ := m.selected()
 	var hints []bkey.Binding
+	if m.glance {
+		return []bkey.Binding{hint("j/k", "scroll"), hint("n/p", "file"), hint("Enter", "edit"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
+	}
 	switch m.detailPane {
 	case focusAcceptance:
 		hints = append(hints, hint("j/k", "check"), hint("Space", "tick"))
@@ -117,7 +120,7 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	case focusLinks:
 		hints = append(hints, hint("j/k", "link"), hint("Enter", "follow"))
 	case focusFiles:
-		hints = append(hints, hint("j/k", "file"), hint("Enter", "edit"))
+		hints = append(hints, hint("j/k", "file"), hint("Space", "show"), hint("Enter", "edit"))
 	default:
 		hints = append(hints, hint("j/k", "scroll"))
 	}
