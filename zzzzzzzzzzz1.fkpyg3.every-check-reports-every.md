@@ -11,6 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing turn"
+waiting_since: "2026-11-17T14:36"
+waiting_asked_by: "hatchling"
+stage: "waiting"
 ---
 
 ## Goal
@@ -57,3 +61,7 @@ hatchling 12:32, evidence per check (ci/fkpyg3, local suite green incl. cli 205s
 hatchling 13:04: rebased on f583cac (sfa8w4 strike) as a0dfe06: kept main's strike in cli/mcp allowed maps, help usage and MCP update schema, re-added set's goal/purpose/principle/details/accept; strike tests got Purpose/Principle and read lint ID. CI 44088940602; x325pp stacked on it as 75dc78b, CI 44088956385.
 
 hatchling 13:21: rebased on d74af5d (wyvern, 0sbvnq parallel tests, m1c28r env): boardFindings now takes the app's JCODE_HOME (a.getenv) for stale-owner, tests use useEditor(t, a, ...). ci/fkpyg3 3415936, CI 44091815701; x325pp stacked 18474c9, CI 44091816614. Local full suite green on 18474c9.
+
+
+## History
+- 2026-11-17T14:36 doing -> doing/waiting (wait)
