@@ -31,7 +31,7 @@ me51r2 (9af390c) fixed this for hug mem. huginn has no file lock today (no flock
 
 ## Acceptance
 - [x] a test runs 8 writers (note, check, set) at once on one board, 20 rounds: every write succeeds and is on the branch; it fails on main before the fix
-- [ ] readers (ls, show) do not wait on a held writer lock (test)
+- [x] readers (ls, show) do not wait on a held writer lock (test)
 
 ## Notes
 
