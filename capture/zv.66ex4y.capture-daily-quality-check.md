@@ -27,7 +27,7 @@ Judge the real store, fix only what is clearly wrong with hug mem commands (forg
 ## Depends on
 
 ## Acceptance
-- [ ] a short daily note of what was wrong and what was fixed
+- [x] a short daily note of what was wrong and what was fixed
 
 ## Notes
 
