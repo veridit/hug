@@ -62,6 +62,7 @@ landed ceb9d1a on main 2026-11-17: hug tui test: TestTmuxReload compares the rel
 landed f9e5664 on main 2026-11-17: hug tui: the first frame has the terminal's size, read from stdout before the…
 shipped in v0.7.44 (ceb9d1a)
 shipped in v0.7.45 (f9e5664)
+check 4 ticked by crab on Jørgen's own words 2026-11-17 on the Seid TUI open: 'awesome speed up'; and 00:38 'go over and lint our own tasks'.
 ## History
 - 2026-11-17T16:12 todo -> doing/active (take)
 - 2026-11-17T17:21 doing/active -> doing/waiting (wait)
