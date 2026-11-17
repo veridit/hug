@@ -12,6 +12,10 @@ doing_since: "2026-11-17T19:42"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "windows timing run on ci/ce3dmq-timing (seed in one transaction), then land"
+waiting_since: "2026-11-17T20:21"
+waiting_asked_by: "hatchling"
+stage: "waiting"
 ---
 
 ## Goal
@@ -41,3 +45,4 @@ landed debb45a on main 2026-11-17: hug mem: a project lookup starts 2 git proces
 hatchling 19:12: main CI 44152740444 on debb45a: ubuntu, windows, secrets, bench success; macOS cancelled for runner capacity ('not acquired by Runner of type hosted'), one rerun started. Windows muninn/internal/app 309.225 s (8 runs before: 290-501 s, median ~380 s), cli 334 s. So the git cut gives at most ~20% on Windows: git processes are not the main cost there. Diagnostic branch ci/ce3dmq-timing (9249f1e, never main) runs go test -v ./muninn/internal/app alone on 3 OSes for per-test times.
 ## History
 - 2026-11-17T19:42 todo -> doing/active (take)
+- 2026-11-17T20:21 doing -> doing/waiting (wait)
