@@ -47,3 +47,5 @@ vole 2026-11-17 question for Jørgen (also on tmp/lanes/morning.md). Proposal, b
 vole: check 1 built on branch wip/kx2ndm (3c2f123, on top of zhvkmj): row cell 'later·↳<epic>' before the title, dim, max 24 cells; m.epicOf built once per load from task.ChildIndex, rows never resolve parents. TestRowsShowGroupAndEpic: '--- PASS' (overview, list at 80 and 140, 30 lines, no ↳ on a task without epic). Not landed: it changes every tmux golden, and checks 2-4 (toggle key, folding, later apart from NEXT UP) wait on the three questions above. Not ticked.
 
 Jørgen 2026-11-17: no magic group names. 'later' is not special; 'not now' is the todo stage deferred in 6ephqk. Groups are folders with no meaning.
+
+Jørgen 2026-11-17 10:25 (ruling): the grouping toggle key is g (grouped); it cycles flat -> by group -> by epic. gg stays 'top'.
