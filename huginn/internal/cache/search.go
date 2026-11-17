@@ -97,9 +97,27 @@ func SearchWords(query string) []string {
 	return out
 }
 
-// Search returns the task files matching every word of query, best first,
-// at most limit (0: all). The board must have been listed (List syncs).
-func (c *Cache) Search(ctx context.Context, query string, limit int) ([]Hit, error) {
+// Rank returns the task files matching every word of query, best first:
+// what the TUI's / orders its rows by. Ties keep path order, so the same
+// board answers the same way. It reads no texts: at 10,000 tasks a word in
+// every task ranks in 20-30 ms, while reading every hit's columns cost
+// 150-205 ms (49n9kw check 5).
+func (c *Cache) Rank(ctx context.Context, query string) ([]string, error) {
+	ranked, e := c.rank(ctx, query)
+	paths := make([]string, len(ranked))
+	for i, r := range ranked {
+		paths[i] = r.Path
+	}
+	return paths, e
+}
+
+// ranked is one match before its texts are read.
+type ranked struct {
+	rowid int64
+	Hit
+}
+
+func (c *Cache) rank(ctx context.Context, query string) ([]ranked, error) {
 	words := SearchWords(query)
 	if len(words) == 0 {
 		return nil, nil
@@ -108,41 +126,65 @@ func (c *Cache) Search(ctx context.Context, query string, limit int) ([]Hit, err
 	for i, w := range words {
 		quoted[i] = `"` + strings.ReplaceAll(w, `"`, `""`) + `"`
 	}
-	match := strings.Join(quoted, " AND ")
-	weights := make([]string, 0, len(searchColumns)+1)
+	weights := make([]string, 0, len(searchColumns))
 	for _, col := range searchColumns {
 		weights = append(weights, strconv.FormatFloat(col.weight, 'f', -1, 64))
 	}
 	bm := `bm25(search,` + strings.Join(weights, ",") + `)`
-	q := `SELECT p.path,-` + bm + `,search.id,search.aliases,search.title,search.goal,search.description,search.acceptance,search.notes FROM search JOIN search_paths p ON p.rowid=search.rowid WHERE search MATCH ? ORDER BY ` + bm
+	q := `SELECT p.rowid,p.path,-` + bm + ` FROM search JOIN search_paths p ON p.rowid=search.rowid WHERE search MATCH ? ORDER BY ` + bm
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	rows, e := c.db.QueryContext(ctx, q, match)
+	rows, e := c.db.QueryContext(ctx, q, strings.Join(quoted, " AND "))
 	if e != nil {
 		return nil, e
 	}
 	defer rows.Close()
-	var out []Hit
+	var out []ranked
 	for rows.Next() {
-		var h Hit
-		cols := make([]string, len(searchColumns))
-		dest := []any{&h.Path, &h.Score}
-		for i := range cols {
-			dest = append(dest, &cols[i])
-		}
-		if e = rows.Scan(dest...); e != nil {
+		var r ranked
+		if e = rows.Scan(&r.rowid, &r.Path, &r.Score); e != nil {
 			return nil, e
 		}
-		h.Field, h.Snippet = bestField(cols, words)
-		out = append(out, h)
+		out = append(out, r)
 	}
 	if e = rows.Err(); e != nil {
 		return nil, e
 	}
-	// Ties keep path order, so the same board answers the same way.
 	sort.SliceStable(out, func(i, j int) bool { return out[i].Score > out[j].Score })
-	if limit > 0 && len(out) > limit {
-		out = out[:limit]
+	return out, nil
+}
+
+// Search returns the task files matching every word of query, best first,
+// that keep accepts (nil: all), at most limit (0: all), each with the field
+// that matched and a snippet. Only the hits returned read their texts. The
+// board must have been listed (List syncs).
+func (c *Cache) Search(ctx context.Context, query string, limit int, keep func(path string) bool) ([]Hit, error) {
+	all, e := c.rank(ctx, query)
+	if e != nil {
+		return nil, e
+	}
+	words := SearchWords(query)
+	var out []Hit
+	for _, r := range all {
+		if keep != nil && !keep(r.Path) {
+			continue
+		}
+		if limit > 0 && len(out) == limit {
+			break
+		}
+		cols := make([]string, len(searchColumns))
+		dest := make([]any, len(cols))
+		for j := range cols {
+			dest[j] = &cols[j]
+		}
+		c.mu.Lock()
+		e = c.db.QueryRowContext(ctx, `SELECT id,aliases,title,goal,description,acceptance,notes FROM search WHERE rowid=?`, r.rowid).Scan(dest...)
+		c.mu.Unlock()
+		if e != nil {
+			return nil, e
+		}
+		r.Field, r.Snippet = bestField(cols, words)
+		out = append(out, r.Hit)
 	}
 	return out, nil
 }

@@ -28,14 +28,14 @@ func TestSearchRanksAndFollowsWrites(t *testing.T) {
 	if _, e := c.List(ctx); e != nil {
 		t.Fatal(e)
 	}
-	hits, e := c.Search(ctx, "memory limit exit 137", 0)
+	hits, e := c.Search(ctx, "memory limit exit 137", 0, nil)
 	if e != nil {
 		t.Fatal(e)
 	}
 	if len(hits) != 2 || hits[0].Path != "a.aaaaaa.oom.md" || hits[0].Field != "title" || !strings.Contains(hits[0].Snippet, "Memory limit exit 137") || hits[1].Field != "goal" {
 		t.Fatalf("title first: %+v", hits)
 	}
-	hits, _ = c.Search(ctx, "statbus-402", 0)
+	hits, _ = c.Search(ctx, "statbus-402", 0, nil)
 	if len(hits) != 2 || hits[0].Path != "c.cccccc.statbus.md" || hits[0].Field != "aliases" || hits[1].Path != "d.dddddd.cites.md" || hits[1].Field != "notes" {
 		t.Fatalf("alias before a note citing it: %+v", hits)
 	}
@@ -46,17 +46,17 @@ func TestSearchRanksAndFollowsWrites(t *testing.T) {
 	if _, e := c.List(ctx); e != nil {
 		t.Fatal(e)
 	}
-	if hits, _ = c.Search(ctx, "zebra", 0); len(hits) != 1 || hits[0].Path != "b.bbbbbb.other.md" || hits[0].Field != "notes" {
+	if hits, _ = c.Search(ctx, "zebra", 0, nil); len(hits) != 1 || hits[0].Path != "b.bbbbbb.other.md" || hits[0].Field != "notes" {
 		t.Fatalf("note added: %+v", hits)
 	}
-	if hits, _ = c.Search(ctx, "STATBUS-402", 0); len(hits) != 1 || hits[0].Path != "c.cccccc.moved.md" {
+	if hits, _ = c.Search(ctx, "STATBUS-402", 0, nil); len(hits) != 1 || hits[0].Path != "c.cccccc.moved.md" {
 		t.Fatalf("after rename and removal: %+v", hits)
 	}
-	if hits, _ = c.Search(ctx, "137", 0); len(hits) != 1 || hits[0].Path != "a.aaaaaa.oom.md" {
+	if hits, _ = c.Search(ctx, "137", 0, nil); len(hits) != 1 || hits[0].Path != "a.aaaaaa.oom.md" {
 		t.Fatalf("old goal still indexed: %+v", hits)
 	}
 	// Operator characters are words, never syntax.
-	if _, e := c.Search(ctx, `"NEAR( OR * -x`, 5); e != nil {
+	if _, e := c.Search(ctx, `"NEAR( OR * -x`, 5, nil); e != nil {
 		t.Fatalf("query syntax leaked: %v", e)
 	}
 }
