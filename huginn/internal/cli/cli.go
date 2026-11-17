@@ -1483,6 +1483,11 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	if t, ok := reply["task"].(Reply); ok {
 		fmt.Fprintf(a.Out, "%s  %s  %s  %s\n", t["slug"], t["title"], t["id"], t["status"])
+		// The stage, worded as the TUI row's second line, so a wait or a
+		// review is seen in show too (456vyt: a wait printed nothing).
+		if line := stageLine(t); line != "" {
+			fmt.Fprintf(a.Out, "stage: %s\n", line)
+		}
 		if who := takenBy(t, ""); who != "" {
 			fmt.Fprintf(a.Out, "taken by: %s\n", who)
 		}
@@ -1691,4 +1696,63 @@ func descriptionKey(section string) string {
 // stays?)". Until the asker writes on the task.
 func answerLine(id any, ans map[string]any) string {
 	return fmt.Sprintf("answer for %s: %s answered on %v: %v (%v: %v)", ans["for"], ans["by"], id, ans["text"], ans["stage"], ans["question"])
+}
+
+// stageLine is show's stage line (456vyt), worded as the TUI row's second
+// line (tui/waitrow.go note): "waiting on jhf: approve the diff since
+// 2026-11-17 17:47", "in review by crab since ...", "question for jhf: ...",
+// "deferred: reason · until DATE"; a stage that waits on nothing is the
+// word alone ("active"). It reads the stage and fields the file holds.
+func stageLine(t Reply) string {
+	stage, _ := t["stage"].(string)
+	if stage == "" {
+		return ""
+	}
+	fields := map[string]string{}
+	if m, ok := t["fields"].(map[string]any); ok {
+		for k, v := range m {
+			fields[k] = strings.Join(strings.Fields(fmt.Sprint(v)), " ")
+		}
+	}
+	since := func(k string) string {
+		if v := fields[k]; v != "" {
+			return " since " + strings.Replace(v, "T", " ", 1)
+		}
+		return ""
+	}
+	by := func(k string) string {
+		if v := strings.TrimPrefix(fields[k], "@"); v != "" {
+			return " by " + v
+		}
+		return ""
+	}
+	switch stage {
+	case "waiting":
+		// waiting_for is the person; before 89y0b7 waiting_on held
+		// "NAME: what", which reads the same way.
+		head := "waiting on"
+		if who := fields["waiting_for"]; who != "" {
+			head += " " + who + ":"
+		}
+		return strings.TrimSpace(head+" "+fields["waiting_on"]) + since("waiting_since")
+	case "review":
+		head := "waiting for review"
+		if t["status"] == "doing" {
+			head = "in review"
+		}
+		return head + by("review_by") + since("review_since")
+	case "design":
+		head := "question"
+		if who := fields["design_for"]; who != "" {
+			head += " for " + who
+		}
+		return head + ": " + fields["design_question"] + since("design_since")
+	case "deferred":
+		line := "deferred: " + fields["deferred_reason"]
+		if u := fields["deferred_until"]; u != "" {
+			line += " · until " + u
+		}
+		return line
+	}
+	return stage
 }
