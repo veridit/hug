@@ -38,7 +38,7 @@ CPU profile of a4aa5a5 + a local pprof hook, hug tui on Seid, ~5 s sampled: (1) 
 - [x] taskDirs (or its successor) reads each folder at most once: a test on a fixture with task folders counts directory reads and fails on the current code
 - [x] the first frame does not wait for the watcher: a test shows the board drawn before the watch is set up, and a change made right after start is still seen
 - [x] the cause of cache.sync rereading files on a warm Seid start is found and either fixed with a test or explained in a note with evidence
-- [ ] hug tui on Seid: first frame warm under 400 ms, median of 5, numbers in the notes; Jørgen opens it and agrees
+- [x] hug tui on Seid: first frame warm under 400 ms, median of 5, numbers in the notes; Jørgen opens it and agrees
 
 ## Notes
 
