@@ -24,6 +24,7 @@ Builds on 6ephqk (stages, node fields, ? marker, '? N for you' header) and needs
 
 ## Depends on
 
+- 6ephqk
 ## Acceptance
 - [ ] in the detail of a task whose stage waits on you, a opens an input under the question; Enter stores the answer next to the question with your name and time, and the stage re-derives (golden + test)
 - [ ] hug task answer ID "text" does the same from the CLI, and MCP task_update action answer (test)
