@@ -4,7 +4,7 @@ title: "Flaky on Linux: background throttle test reads nice=0 instead of 10"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
