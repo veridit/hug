@@ -50,6 +50,7 @@ Pushed 5ab3031 (main 3c20bcf..5ab3031), check 1. crab's ruling 20:01, option (b)
 landed 5ab3031 on main 2026-11-17: hug task install commit-msg: Model: <id>/<effort>, checked per model in hug.toml…
 landed 3bc5d72 on main 2026-11-17: hug task take --model ID/EFFORT records the effort; show, ls, board, TUI row and…
 Check 1 on green main: 5ab3031, CI 44166537566 success on all 5 jobs. Checks 2 and 3 pushed in 3bc5d72 (b20d191..3bc5d72): take --model ID/EFFORT stores model: as the id and effort: separately, and show, ls, board, the TUI row (model-held) and the detail show id/effort. TestTakeModelWithEffort, TestTakeModelOnlyWithEffortAssigneeIsID and the new detail cases fail with the implementation reversed ('model claude-opus-5-5/high effort <nil>'). help install prints the two tracked-hook lines (TestInstallHelpShowsTrackedHookLines). -race task 57.1 s, cli 128.6 s, tui 184.4 s, mcp 9.4 s, all ok. Check 4 (Seid's hook) needs Jørgen.
+file:seid-commit-msg-proposal.md (2593 bytes, sha256:5e569dd4)
 ## History
 - 2026-11-17T18:16 todo -> doing/active (take)
 - 2026-11-17T18:53 doing/active -> doing/waiting (wait)
