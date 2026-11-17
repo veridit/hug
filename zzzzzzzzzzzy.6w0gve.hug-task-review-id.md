@@ -1,13 +1,18 @@
 ---
 id: 6w0gve
 title: "hug task review ID --by NAME --show FILE: a move into review, no hand edit"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T19:25"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Plumbing to copy: task.WaitShowing/DesignShowing (moves.go), states.go node fiel
 - [ ] MCP task_update action review with by and show does the same; help and hug task states list the move and the field
 
 ## Notes
+
+
+## History
+- 2026-11-17T19:25 todo -> doing/active (take)
