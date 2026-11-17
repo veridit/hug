@@ -11,8 +11,11 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+stage: "waiting"
 doing_since: "2026-11-17T15:23"
+waiting_on: "CI 44109039664, then a landing slot after wyvern's stack"
+waiting_since: "2026-11-17T15:59"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -59,3 +62,4 @@ Local go test ./... is all ok.
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:23 todo/ready -> doing/active (take)
+- 2026-11-17T15:59 doing/active -> doing/waiting (wait)
