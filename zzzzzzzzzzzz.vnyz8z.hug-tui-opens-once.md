@@ -32,3 +32,5 @@ TUI start today: openBoard -> cache.sync -> loadSnapshot -> startWatch, all befo
 - [ ] on Seid, first frame under 1 s and quit under 1 s, median of 5 with tmp/lanes/tuitime.sh, numbers in the notes; Jørgen opens and quits it and agrees
 
 ## Notes
+
+crab 15:09: wyvern does vnyz8z first, then np2kk2 (same start path in tui.go and watch.go, one lane so they don't collide with nautilus). Shutdown measured on Seid: v0.7.41 2.89 s, a4aa5a5 0.29 s.
