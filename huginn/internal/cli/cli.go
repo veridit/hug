@@ -63,7 +63,8 @@ New flags: --dep ID (repeatable), --group FOLDER, --label LABEL, --top, --after 
 Details: hug task help COMMAND (for every flat flag and examples).
 Who takes: --model MODEL (required; or HUG_MODEL; a person: --model human),
 --as NAME (optional; or HUG_USER, or the agent session). Never git user.name.
-Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
+Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task, 5 upgrade has changes pending
+(hug upgrade previews; hug upgrade --apply does them).
 next: hug task next
 `
 
@@ -396,7 +397,7 @@ func parse(args []string, allowed string, optionalValue ...string) (flags, error
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "apply", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -560,7 +561,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "upgrade": "dry-run"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "upgrade": "apply"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1397,6 +1398,9 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	if jsonMode {
 		_ = json.NewEncoder(a.Out).Encode(reply)
+		if code, ok := reply["exit_code"].(int); ok {
+			return code
+		}
 		return 0
 	}
 	if isJSONL(args) {
@@ -1647,6 +1651,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 	}
 	fmt.Fprintln(a.Out, "next: "+reply["next"].(string))
+	// A preview with changes pending (hug upgrade, asr4t2) ends with the
+	// command that applies them and its own exit code.
+	if code, ok := reply["exit_code"].(int); ok {
+		if fix, ok := reply["fix"].(string); ok {
+			fmt.Fprintln(a.Out, "fix: "+fix)
+		}
+		return code
+	}
 	return 0
 }
 

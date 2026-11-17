@@ -214,20 +214,28 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 // tidied and says state: (6ephqk step 4), old waits on a person get
 // waiting_for, hook variables get HUG_ names, and a legacy memory file is
 // named with its command. It says per part what it changed, or "nothing to
-// do", then points at hug setup for choices. --dry-run changes nothing and
-// shows the same diff. Safe to run again.
+// do", then points at hug setup for choices. It previews by default
+// (Jørgen 2026-11-17): nothing changes, each change reads "would: ...", the
+// diff comes along, and with changes pending it ends fix: hug upgrade
+// --apply and exits UpgradePending. --apply does the work. Safe to run
+// again.
 func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	if e := f.count(0); e != nil {
 		return nil, e
 	}
-	dry := f.has("dry-run")
+	dry := !f.has("apply")
 	cwd := a.Cwd
 	if cwd == "" {
 		cwd = "."
 	}
 	var parts []string
 	upgradeDiff := ""
+	pending := false
 	part := func(name string, did []string) {
+		// memory only names a command; it is never pending here.
+		if len(did) > 0 && name != "memory" {
+			pending = true
+		}
 		if len(did) == 0 {
 			parts = append(parts, name+": nothing to do")
 			return
@@ -359,11 +367,13 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		}
 	}
 	part("memory", mem)
-	next := "hug setup"
-	if dry {
-		next = "hug upgrade"
+	reply := Reply{"upgrade": parts, "next": "hug setup"}
+	if dry && pending {
+		reply["pending"] = true
+		reply["fix"] = "hug upgrade --apply"
+		reply["next"] = "hug upgrade --apply"
+		reply["exit_code"] = UpgradePending
 	}
-	reply := Reply{"upgrade": parts, "next": next}
 	if upgradeDiff != "" {
 		reply["diff"] = upgradeDiff
 	}

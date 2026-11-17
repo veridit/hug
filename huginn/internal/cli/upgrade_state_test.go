@@ -8,7 +8,7 @@ import (
 )
 
 // asr4t2 + 6ephqk step 4: hug upgrade runs every migration, part by part.
-// --dry-run says what it would do ("would: ") and the diff, and changes
+// A plain run previews: it says what it would do ("would: ") and the diff, and changes
 // nothing; the real run renames status: to state: and commits; a second run
 // says nothing to do for every part.
 func TestUpgradeMigratesStateKey(t *testing.T) {
@@ -33,7 +33,7 @@ func TestUpgradeMigratesStateKey(t *testing.T) {
 		t.Fatalf("lint:\n%s", out)
 	}
 
-	r := execute(t, a, "upgrade", "--dry-run")
+	r := execute(t, a, "upgrade")
 	did := strings.Join(r["upgrade"].([]string), "; ")
 	if !strings.Contains(did, "tasks: would: 1 tasks moved to state: (was status:)") || !strings.Contains(did, "layout: nothing to do") {
 		t.Fatalf("dry run: %s", did)
@@ -41,14 +41,14 @@ func TestUpgradeMigratesStateKey(t *testing.T) {
 	if d, _ := r["diff"].(string); !strings.Contains(d, id+": status: todo -> state: todo") {
 		t.Fatalf("dry run diff: %q", d)
 	}
-	if r["next"] != "hug upgrade" {
-		t.Fatalf("dry run next %v", r["next"])
+	if r["next"] != "hug upgrade --apply" || r["exit_code"] != UpgradePending {
+		t.Fatalf("preview next %v exit %v", r["next"], r["exit_code"])
 	}
 	if after, _ := os.ReadFile(m[0]); string(after) != old || git(t, board, "rev-parse", "HEAD") != head {
 		t.Fatal("dry run changed the board")
 	}
 
-	r = execute(t, a, "upgrade")
+	r = execute(t, a, "upgrade", "--apply")
 	if did = strings.Join(r["upgrade"].([]string), "; "); !strings.Contains(did, "tasks: 1 tasks moved to state: (was status:)") || strings.Contains(did, "would:") {
 		t.Fatalf("upgrade: %s", did)
 	}
@@ -65,7 +65,7 @@ func TestUpgradeMigratesStateKey(t *testing.T) {
 		t.Fatalf("not committed: %s", st)
 	}
 
-	r = execute(t, a, "upgrade")
+	r = execute(t, a, "upgrade", "--apply")
 	if did = strings.Join(r["upgrade"].([]string), "; "); did != "layout: nothing to do; tasks: nothing to do; variables: nothing to do; memory: nothing to do" {
 		t.Fatalf("second upgrade: %s", did)
 	}

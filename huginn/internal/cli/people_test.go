@@ -129,7 +129,7 @@ func TestUpgradeMovesWaitingFor(t *testing.T) {
 	execute(t, a, "wait", ids["Build"], "CI run: 9", "--as", "wyvern")
 	execute(t, a, "wait", ids["Read"], "jhf: read the note", "--as", "kestrel")
 	execute(t, a, "people", "add", "jhf", "jorgen@veridit.no")
-	r := execute(t, a, "upgrade")
+	r := execute(t, a, "upgrade", "--apply")
 	if did := strings.Join(r["upgrade"].([]string), "; "); !strings.Contains(did, "2 waits on a person moved to waiting_for") {
 		t.Fatalf("upgrade did: %s", did)
 	}
@@ -143,7 +143,7 @@ func TestUpgradeMovesWaitingFor(t *testing.T) {
 	if strings.Contains(build, "waiting_for") || !strings.Contains(build, `waiting_on: "CI run: 9"`) {
 		t.Fatalf("Build changed:\n%s", build)
 	}
-	r = execute(t, a, "upgrade")
+	r = execute(t, a, "upgrade", "--apply")
 	if did := strings.Join(r["upgrade"].([]string), "; "); strings.Contains(did, "waiting_for") {
 		t.Fatalf("second upgrade moved again: %s", did)
 	}

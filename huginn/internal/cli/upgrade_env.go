@@ -13,6 +13,11 @@ import (
 	"github.com/veridit/hug/internal/env"
 )
 
+// UpgradePending is hug upgrade's exit code when its preview found changes
+// to make (asr4t2): 0 means nothing to do, and hug upgrade --apply makes
+// them. Distinct from 1-4 so a script can tell "behind" from "failed".
+const UpgradePending = 5
+
 // hug upgrade renames old variable names where hug wrote them (m1c28r):
 // the env of hug's own MCP server entries and hug's hook commands, in the
 // harness and app configs hug installs into. Nothing else in those files

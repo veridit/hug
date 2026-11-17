@@ -55,7 +55,7 @@ func TestUpgradeReordersSections(t *testing.T) {
 	if !strings.Contains(out, "[section-order] sections out of order: Goal, Depends on, Purpose") || !strings.Contains(out, "next: hug upgrade") {
 		t.Fatalf("lint:\n%s", out)
 	}
-	did := func() string { return strings.Join(execute(t, a, "upgrade")["upgrade"].([]string), "; ") }
+	did := func() string { return strings.Join(execute(t, a, "upgrade", "--apply")["upgrade"].([]string), "; ") }
 	if got := did(); !strings.Contains(got, "1 tasks tidied") {
 		t.Fatalf("upgrade: %s", got)
 	}
