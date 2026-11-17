@@ -6,6 +6,9 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.42 - 2026-11-17
+
+- Faster commands on big boards (44w1ev): the board walk reads each folder once and checks files on 4 threads, and `show`, `take` and `lint` read only what they need. On the Seid board (2,519 tasks): `hug task lint` 7.1 s -> 0.55 s, `show` 3.4 s -> 0.15 s, and quitting `hug tui` 2.9 s -> 0.3 s.
 - On Windows, parallel `hug task` commands on one board no longer fail with "The process cannot access the file because it is being used by another process": task files are read with delete sharing and replaced with a POSIX rename, so a read and a write of the same task never fail each other (before: 6 of 11646 reads and 165 of 169 replaces failed in a 2 s race on Windows CI) (kbc99j).
 - The README states how fast changes reach another clone: at its next command, at most about 7 s later (1.5 s quiet before the push, a fetch once the last is 5 s old). The two-clone sync test now asserts that bound, computed from the same constants, and polls the note and the project memory together; it used to wait for the memory only after the note, which left the memory 1.2 s on a slow macOS runner (4vcwxk).
 - `hug mem` capture no longer loses its batch on Windows while another process (a recall hook, the MCP server) reads the memory store: `memories.json` is read so a save may replace it, and replaced with POSIX semantics, through the same `internal/sharefile` as task files (zd3x24). Before, a Windows run of 2 s with 4 readers and 1 writer failed 92 of 2745 loads and 145 of 429 saves.
