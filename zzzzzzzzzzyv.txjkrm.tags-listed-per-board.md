@@ -36,3 +36,5 @@ Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate
 Jørgen 2026-11-17 10:28 (row layout): the state is the section header, so rows drop the status column. Row order: pie, id, type, priority, tags, stage, text. A stage with extra data shows 'stage: reason' (waiting: CI run N · 12 min; depends: 44w1ev (doing)) instead of the title; a stage without it shows the title. Mock in tmp/lanes/txjkrm-preview.md (Revision). Open: reason replaces the title fully, or reason then dim title.
 
 Jørgen 2026-11-17 10:56, settles the open question: the reason replaces the title fully. The colon is the marker: 'waiting: CI run N' means the text is the stage's reason, a bare 'active' means the text is the title. No dim title after the reason.
+
+file:txjkrm-preview.md (4770 bytes, sha256:ab7fc3a2) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
