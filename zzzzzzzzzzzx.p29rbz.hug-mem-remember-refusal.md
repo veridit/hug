@@ -31,7 +31,7 @@ Messages: muninn/internal/app/dedupe.go:23, binding.go:559, places.go:163, all s
 
 ## Acceptance
 - [x] each of the three refusals: output starts 'NOT STORED:', exit code non-zero (test)
-- [ ] the MCP remember reply for a refusal is marked as an error or stored:false first (test)
+- [x] the MCP remember reply for a refusal is marked as an error or stored:false first (test)
 
 ## Notes
 
