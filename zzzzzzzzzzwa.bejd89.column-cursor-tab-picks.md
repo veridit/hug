@@ -43,6 +43,7 @@ nautilus 14:09 (crab 14:08): dependency on 6ephqk removed. bejd89 needs only 6ep
 
 file:column-sort.md (1143 bytes, sha256:504c83be) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
 nautilus 15:31: given back, not started in code. Surveyed: tui/sort.go (sortKey, sortLabel, sortFields), render.go columns() and listText/overviewText/boardText, the list's Tab (keys.prev/next -> changePane), o = overview at tui.go and in the detail switch, shortcuts.go assignShortcuts gives views o l b !. Plan: new columns.go with the header cells and a column cursor (Tab/Shift-Tab, h/l stay sections), o cycles ▲ ▼ off on the marked column via m.sort, header marks it; views move to the v prefix (v o, v l, v b, v !). Mock: tmp/lanes/column-sort.md. Order after crab 15:00: x1ra0t, 89y0b7, 3jtfw9 landing, scrxak, 5z4zt4, then this.
+Parked for tje4sx (Jørgen's ruling goes first). WIP at 63beb14 on origin/nautilus/bejd89-cols: Tab/Shift-Tab column cursor, o cycles ▲/▼/off, v view prefix, columns_test.go + testdata/columns/cursor.txt. Remaining: full tui suite + tmux goldens, board narrow T/P arrow (fixed after 63beb14, uncommitted in /Users/jhf/.jcode/scratch/6ephqk), CHANGELOG, -race, land.
 ## History
 - 2026-11-17T15:09 todo -> doing/active (take)
 - 2026-11-17T16:30 doing/active -> todo/ready (give back; was assignee: nautilus); was doing_since: 2026-11-17T15:09
