@@ -1,22 +1,17 @@
 ---
 id: 89y0b7
 title: "Waiting rows: two lines, the title on top, what it waits on below"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T16:11"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 4: open hug tui on this board and say whether the two-line rows read clearly (capture attached: ▸ rows-on-main.txt; landed 2447266 + 9b27bf7)"
-waiting_since: "2026-11-17T17:15"
-waiting_asked_by: "nautilus"
-waiting_for: "jhf"
+done_at: "2026-11-18T00:39"
 ---
 
 ## Goal
@@ -56,3 +51,4 @@ shipped in v0.7.43 (2447266)
 ## History
 - 2026-11-17T16:11 todo -> doing/active (take)
 - 2026-11-17T17:15 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:39 doing/waiting -> done (done); was doing_since: 2026-11-17T16:11; waiting_asked_by: nautilus; waiting_for: jhf; waiting_on: check 4: open hug tui on this board and say whether the two-line rows read clearly (capture attached: ▸ rows-on-main.txt; landed 2447266 + 9b27bf7); waiting_since: 2026-11-17T17:15
