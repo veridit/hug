@@ -33,7 +33,7 @@ Builds on 6ephqk (stages, node fields, ? marker, '? N for you' header) and needs
 - [x] hug task answer ID "text" does the same from the CLI, and MCP task_update action answer (test)
 - [x] the agent that asked sees 'NAME answered your question on ID: ...' in its recall board cue on its next prompt, and first in hug task next/show (test)
 - [x] after the stage moves on, History holds the question, the answer, who and when (test)
-- [ ] Jørgen answers a real question from a worker in the TUI and the worker picks it up without a DM
+- [x] Jørgen answers a real question from a worker in the TUI and the worker picks it up without a DM
 
 ## Notes
 
