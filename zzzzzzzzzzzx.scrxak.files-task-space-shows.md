@@ -4,7 +4,7 @@ title: "Files in a task: Space shows a file inline, n/p step, Esc or u back"
 status: todo
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
