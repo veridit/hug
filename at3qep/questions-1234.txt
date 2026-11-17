@@ -1,0 +1,5 @@
+shipped-not-done shipped, but doing: release v0.7.31 contains commit 30b193b naming x1t1t1 (its note says so); kestrel: is it done? | fix: hug task done x1t1t1
+shipped-not-done shipped, but doing: release v0.7.34 contains commit d4ae7e7 naming 44w1ev (its note says so); wyvern: is it done? | fix: hug task done 44w1ev
+landed-unchecked landed, but no check is ticked: commit 38ecd7d naming m1c28r reached main (its note says so) and 0 of 4 checks are ticked or struck; wyvern: which checks hold? | fix: hug task check m1c28r 1
+landed-unchecked landed, but no check is ticked: commit 4921209 naming t709he reached main (its note says so) and 0 of 3 checks are ticked or struck; wyvern: which checks hold? | fix: hug task check t709he 1
+shipped-not-done shipped, but doing: release v0.7.38 contains commit 8cce883 naming 0hkaa5 (its note says so); kestrel: is it done? | fix: hug task done 0hkaa5
