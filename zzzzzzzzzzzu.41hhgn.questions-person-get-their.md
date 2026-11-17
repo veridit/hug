@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T23:53"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "parked a minute while kestrel closes d2n0h7 (crab 00:44); resumed next"
+waiting_since: "2026-11-18T00:45"
+waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -70,3 +73,4 @@ Jørgen 00:26 local: he answered 4 tickets from the TUI (6ephqk, scrxak, bejd89,
 Statbus agent via Jørgen 00:43 local: 'hug task show --json doesn't return waiting_for, though the file has it' (yq5tr6, j2g6wd). Verified by crab: it is there, but nested in task.fields.waiting_for, next to top-level 'stage': 'waiting'. Agents read the top level and miss it. With asked: show --json and MCP task_show give the stage's own fields as one object named after the stage, beside 'stage': e.g. "stage": "asked", "asked": {"what": ..., "for": "jhf", "check": 9, "since": ..., "by": ...}; likewise "waiting": {"on", "since", "by"}, "design", "review", "deferred". The flat fields map stops carrying stage fields (no duplicates).
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
+- 2026-11-18T00:45 doing/active -> doing/waiting (wait)
