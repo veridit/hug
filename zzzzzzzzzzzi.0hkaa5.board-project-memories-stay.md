@@ -1,7 +1,7 @@
 ---
 id: 0hkaa5
 title: "Board and project memories stay in sync across clones, in the background"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["kestrel"]
