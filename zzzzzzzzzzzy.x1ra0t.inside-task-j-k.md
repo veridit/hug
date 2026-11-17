@@ -4,7 +4,7 @@ title: "Inside a task, J and K never move it: moving is a list action"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
