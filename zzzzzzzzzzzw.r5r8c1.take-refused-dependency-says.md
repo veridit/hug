@@ -4,7 +4,7 @@ title: "take refused by a dependency says 'taken by  (id)': name the blocker"
 status: todo
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
