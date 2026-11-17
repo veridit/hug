@@ -59,7 +59,9 @@ nautilus (was vole) 11:03, on hold until 6ephqk (crab, Jørgen's earlier ruling)
 
 Jørgen 23:35 local chose the trie for prefixes (qh9ep1: 'view: ...', vo/vl/vb/v!). Read by crab as the g/gg answer: (c), a pending g shows its choices 'g: g top · r grouping'. Built with qh9ep1's prefix mechanism.
 Jørgen 23:38 local: gg and G are dropped (qh9ep1), so the g/gg question is gone: g toggles grouping at once, flat -> by group -> by epic, no pending state.
+Landed on main 1fda4f82..8d409e2d (a648520 rows show group and epic, fbb38da reload keeps the heading, c5e058e g toggles grouping and gg/G go, 8d409e2 tmux goldens). Evidence: 1: TestRowsShowGroupAndEpic (dim cell 'later·↳id' before the title, no extra line). 2: TestGroupingCyclesAndHeaderSays (g and ': grouping' cycle flat/group/epic; header '· grouped by X'). 3: TestSpaceFoldsAHeading (Space/Enter fold, '▸ later  [3]' keeps the count). 5: TestGroupedViewsFitAndGolden (testdata/group/views.txt at 80 and 140, reviewed), tmux goldens reviewed (group cell, '< > Home End', g in help). Gates: CI 44198908062 at 30a2b12 success on ubuntu (-race, tmux), macos, windows, bench, secrets; local -race tui ok 91.8s and go test ./... all-exit 0 (skip tmux, load ~660); after rebase onto f557613+scrxak local tui ok 53.6s. (nautilus)
 ## History
 - 2026-11-17T21:59 todo -> doing/active (take)
 - 2026-11-17T23:26 doing/active -> doing/waiting (wait)
 - 2026-11-18T00:02 answered waiting: "the g key: Jørgen's g/gg ruling (a, b or c, crab asked 21:05); parked for e3sevr. Built and committed on nautilus/kx2ndm (2238d78, 079bc70): checks 1, 2 (as : grouping), 3, 5, not landed yet" -> "Jørgen 23:38 local: drop gg and G (never used, vi specific). So g is no prefix: g toggles grouping at once, flat -> by group -> by epic. Recorded by crab from his spoken answer.", by crab, for nautilus (doing/waiting -> doing/active)
+- 2026-11-18T00:40 nautilus read the answer
