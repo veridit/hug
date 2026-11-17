@@ -28,7 +28,7 @@ Today: huginn/internal/task/document.go Acceptance{Text, Checked, Line}; parse a
 ## Depends on
 
 ## Acceptance
-- [ ] hug task strike ID N --reason R marks item N struck out, keeps its text, and records reason, name and date in the file
+- [x] hug task strike ID N --reason R marks item N struck out, keeps its text, and records reason, name and date in the file
 - [ ] hug task done succeeds when every check is ticked or struck out, and still refuses with a fix line when one is open
 - [ ] show, ls --jsonl and MCP report the three states; the TUI draws a struck-out check crossed through
 - [ ] a done task with an open check is reported by lint as broken
