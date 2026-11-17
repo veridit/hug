@@ -13,6 +13,7 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 	"io/fs"
 	_ "modernc.org/sqlite"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -75,14 +76,14 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 	if e := os.MkdirAll(filepath.Dir(dbPath), 0755); e != nil {
 		return nil, e
 	}
-	db, e := sql.Open("sqlite", dbPath)
+	db, e := sql.Open("sqlite", dsn(dbPath))
 	if e != nil {
 		return nil, e
 	}
 	db.SetMaxOpenConns(1)
 	c := &Cache{db: db, Root: root, git: git, files: map[string]record{}}
 	fail := func(e error) (*Cache, error) { db.Close(); return nil, e }
-	if _, e = db.Exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);`); e != nil {
+	if _, e = db.Exec(`CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);`); e != nil {
 		return fail(e)
 	}
 	var version string
@@ -143,6 +144,52 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 		return fail(e)
 	}
 	return c, nil
+}
+
+// Concurrent writes wait, they never fail (44w1ev on m8shdj). Every hug
+// command opens its own connection and syncs before it holds the board turn,
+// so cache writes from parallel commands meet in SQLite. A deferred
+// transaction that reads before it writes (sync's storeBoard counts
+// board_delta) cannot upgrade once another connection has committed: SQLite
+// returns "database is locked (5) (SQLITE_BUSY)" or (517)
+// SQLITE_BUSY_SNAPSHOT at once, without waiting on busy_timeout (CI run
+// 44049348743: 2 of 20 parallel notes failed). So every transaction begins
+// IMMEDIATE, taking the write lock up front and waiting for it, and
+// busy_timeout comes before journal_mode: pragmas run in order, and the
+// first switch to WAL needs a lock too ((261) SQLITE_BUSY_RECOVERY at open).
+const busyTimeout = 30 * time.Second
+
+func dsn(path string) string {
+	return fileURI(path) + "?_pragma=busy_timeout(" + strconv.Itoa(int(busyTimeout/time.Millisecond)) + ")&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)&_txlock=immediate"
+}
+
+// fileURI is a SQLite file: URI on every OS: forward slashes, a slash before
+// a drive letter, and only '%', '?' and '#' escaped.
+func fileURI(path string) string {
+	p := filepath.ToSlash(path)
+	if len(p) >= 2 && p[1] == ':' {
+		p = "/" + p
+	}
+	p = strings.NewReplacer("%", "%25", "?", "%3f", "#", "%23").Replace(p)
+	return (&url.URL{Scheme: "file", Opaque: p}).String()
+}
+
+// begin starts an IMMEDIATE transaction. busy_timeout is one budget per
+// statement: a BEGIN that still finds the lock taken (a long cold rebuild
+// elsewhere) tries again until ctx ends or busyTimeout passes once more.
+func begin(ctx context.Context, db *sql.DB) (*sql.Tx, error) {
+	deadline := time.Now().Add(busyTimeout)
+	for {
+		tx, e := db.BeginTx(ctx, nil)
+		if e == nil || !busy(e) || time.Now().After(deadline) || ctx.Err() != nil {
+			return tx, e
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+}
+func busy(e error) bool {
+	s := e.Error()
+	return strings.Contains(s, "SQLITE_BUSY") || strings.Contains(s, "database is locked")
 }
 func (c *Cache) Close() error { c.mu.Lock(); defer c.mu.Unlock(); return c.db.Close() }
 
@@ -451,7 +498,7 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	if len(c.files) > 0 && !c.rebuild {
 		affected = affectedReferences(c.files, next, renames)
 	}
-	tx, e := c.db.BeginTx(ctx, nil)
+	tx, e := begin(ctx, c.db)
 	if e != nil {
 		return stats, e
 	}
