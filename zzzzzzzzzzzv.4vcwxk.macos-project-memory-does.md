@@ -11,9 +11,9 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-17T14:33"
+waiting_since: "2026-11-17T15:22"
 waiting_asked_by: "calf"
-waiting_on: "landing turn: fix ready on kestrel/land-kbc99j-4vcwxk; after landing, check 2 needs three green macOS main runs"
+waiting_on: "check 2: three consecutive green macOS CI runs on main after 4ecfa25"
 stage: "waiting"
 ---
 
