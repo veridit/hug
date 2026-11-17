@@ -15,18 +15,18 @@ func TestHelpSearchFindsOneActionAndEscBacksOut(t *testing.T) {
 	m.resize()
 	m = press(m, "?")
 	m = press(m, "/")
-	for _, r := range "drop" {
+	for _, r := range "drop the" {
 		m = press(m, string(r))
 	}
 	v := m.View()
-	if !strings.Contains(v, "take / done / drop task") || strings.Contains(v, "half page down") {
+	if !strings.Contains(v, "take / done / drop the task") || strings.Contains(v, "half page down") {
 		t.Fatal("help search did not narrow to the drop row\n", v)
 	}
 	if !strings.Contains(v, "1 of ") {
 		t.Fatal("help search must count matches\n", v)
 	}
 	m = press(m, "enter")
-	if !strings.Contains(m.View(), "take / done / drop task") || !m.help {
+	if !strings.Contains(m.View(), "take / done / drop the task") || !m.help {
 		t.Fatal("Enter must keep the search and stay in help")
 	}
 	m = press(m, "esc")

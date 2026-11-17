@@ -191,7 +191,7 @@ func TestViewKeysMoveToV(t *testing.T) {
 		t.Fatalf("v o from a task: detail %v view %s", m.detail, m.view)
 	}
 	help := ansi.Strip(m.helpText())
-	for _, want := range []string{"v o/i/b/!", "views: overview / list / board / lint", "Tab, o", "o orders: ▲ ▼ off"} {
+	for _, want := range []string{"v o/i/b/!", "views: overview / list / board / lint", "Tab / Shift-Tab", "order by the marked column: ▲ ▼ off"} {
 		if !strings.Contains(strings.Join(strings.Fields(help), " "), want) {
 			t.Fatalf("help lacks %q:\n%s", want, help)
 		}

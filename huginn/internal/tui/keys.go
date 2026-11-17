@@ -1,7 +1,6 @@
 package tui
 
 import (
-	"fmt"
 	"strings"
 
 	bkey "github.com/charmbracelet/bubbles/key"
@@ -161,84 +160,4 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		hints = append(hints, hint(":", "cmd"))
 	}
 	return append(hints, hint("?", "help"), hint("q", "quit"))
-}
-func (m model) helpText() string {
-	navigation := []bkey.Binding{
-		keys.down, keys.top, keys.bottom,
-		hint("ctrl-d/u, J/K", "half page down / up (J/K: in a task)"), hint("PgDn / PgUp", "full page down / up"),
-		keys.prev, keys.next, hint("Enter", "open full task detail"),
-		hint("Esc", "back one level, never quits"), hint("q / ctrl-c", "quit (q only outside inputs)"),
-		hint("/", "live find; Enter goes to it, Tab keeps"), hint(":", "palette with command + value completion"),
-		hint("Tab / Enter", "complete palette choice; Enter runs complete command"),
-		hint("ctrl-n/p / ↑↓", "select palette completion"), hint("?", "help overlay, including from inputs"),
-		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/a/e"),
-		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
-		hint("v o/i/b/!", "views: overview / list / board / lint; i b ! alone"),
-		hint("Tab, o", "mark a column, Shift-Tab back; o orders: ▲ ▼ off"),
-		hint("s / y", "state / type palette (y: inside a task)"), hint("c", "clear all filters"), hint("r", "refresh now (changes on disk show by themselves)"),
-		hint(": sort", "order by fields; : sort rank to go back"),
-	}
-	if m.newer != "" {
-		// R exists only while a newer hug is installed (j2vwk0).
-		navigation = append(navigation, hint(reloadKey, "reload into hug "+m.newer+", keeping this place"))
-	}
-	actions := []bkey.Binding{
-		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("u", "in a task: up to the list (as Esc)"), hint("Space/-/Enter/a", "tick / strike out check / follow dep > / answer ?"),
-		hint("Tab / Shift-Tab", "in a task: next / previous task id, Enter opens"),
-		hint("h / l", "in a task: focus page, checks, deps, links, files"),
-		hint("E", "in a task with files (⎘2): its folder in the editor"),
-		hint("t / d / x", "take / done / drop task"),
-	}
-	if len(m.sort) == 0 {
-		// Moves change rank, so they show only in rank order (mkzcqr).
-		actions = append(actions, hint("J / K", "on a row: move below / above the next row, no confirm"),
-			hint("m / y, P p", "grab: j/k, Enter places it / yank, paste above below"))
-	} else {
-		actions = append(actions, hint(": sort rank", "rank order again: then J/K, m, y, P/p move"))
-	}
-	actions = append(actions,
-		hint("N / S", "new task / copy the screen, Enter attaches it"), hint("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi"),
-		hint("e again", "after an edit left a finding: edit at once"),
-		hint("Enter / Esc", "confirm / cancel every editing action"),
-	)
-	if m.helpQuery != "" || m.helpTyping {
-		return m.helpSearchText(append(navigation, actions...))
-	}
-	if m.width >= 130 {
-		return m.styles.accent.Render("NAVIGATION AND FIND                                     EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation, actions}) + "\n\n" + wrap("PALETTE: overview, list, board, todo, doing, done, blocked, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, lint, clear, help", m.width) + "\n" + wrap("Filter fields: s state, t type, p priority, g group, l label, a assignee, e epic. Blocked is a todo task with unmet dependencies; a doing task stays doing, drawn blocked. Each task counts once. Filters combine.", m.width)
-	}
-	return m.styles.accent.Render("NAVIGATION AND FIND") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{navigation}) + "\n\n" +
-		m.styles.accent.Render("EDIT · every action requires confirmation") + "\n" + m.helpModel.FullHelpView([][]bkey.Binding{actions}) + "\n\n" +
-		wrap("PALETTE: "+strings.Join([]string{"overview, list, board, todo, doing, done, blocked, dropped, state <s>, type <t>, group <g>, label <l>, priority <p>, assignee <a>, epic <id>, goto <id>, sort, lint, clear, help"}, ""), m.width) + "\n" +
-		wrap("Blocked is derived from unmet dependencies, not a persisted state. Counts overlap todo/doing. Board pages columns to fit. Slug is in detail only. Filters combine.", m.width)
-}
-
-// helpSearchText lists the help rows whose key or description contains every
-// word of the query, case-insensitively (2026-11-11: find one action fast).
-func (m model) helpSearchText(all []bkey.Binding) string {
-	words := strings.Fields(strings.ToLower(m.helpQuery))
-	var hits []bkey.Binding
-	for _, b := range all {
-		h := b.Help()
-		text := strings.ToLower(h.Key + " " + h.Desc)
-		ok := true
-		for _, w := range words {
-			if !strings.Contains(text, w) {
-				ok = false
-				break
-			}
-		}
-		if ok {
-			hits = append(hits, b)
-		}
-	}
-	cursor := ""
-	if m.helpTyping {
-		cursor = "█"
-	}
-	head := m.styles.accent.Render("FIND IN HELP / ") + m.helpQuery + cursor + m.styles.dim.Render(fmt.Sprintf("   %d of %d", len(hits), len(all)))
-	if len(hits) == 0 {
-		return head + "\n\n" + m.styles.dim.Render("No key matches. Backspace edits, Esc clears.")
-	}
-	return head + "\n\n" + m.helpModel.FullHelpView([][]bkey.Binding{hits})
 }

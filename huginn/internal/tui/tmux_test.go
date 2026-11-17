@@ -296,7 +296,7 @@ func TestTmuxGolden(t *testing.T) {
 				send("F")
 				wait("No filters")
 				send("?")
-				snapshot("help", "NAVIGATION")
+				snapshot("help", "EVERYWHERE")
 				special("Escape")
 				wait("HUG TASKS · list")
 				// Sort builder (mkzcqr): priority then type, Enter applies.
