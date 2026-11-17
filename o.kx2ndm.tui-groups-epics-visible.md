@@ -62,6 +62,7 @@ nautilus (was vole) 11:03, on hold until 6ephqk (crab, Jørgen's earlier ruling)
 
 
 Jørgen 23:35 local chose the trie for prefixes (qh9ep1: 'view: ...', vo/vl/vb/v!). Read by crab as the g/gg answer: (c), a pending g shows its choices 'g: g top · r grouping'. Built with qh9ep1's prefix mechanism.
+Jørgen 23:38 local: gg and G are dropped (qh9ep1), so the g/gg question is gone: g toggles grouping at once, flat -> by group -> by epic, no pending state.
 ## History
 - 2026-11-17T21:59 todo -> doing/active (take)
 - 2026-11-17T23:26 doing/active -> doing/waiting (wait)
