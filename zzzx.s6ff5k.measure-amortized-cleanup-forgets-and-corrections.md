@@ -39,3 +39,5 @@ guppy 2026-11-17 11:39, check 3 round 1 ($JCODE_SCRATCH_DIR/header4/: header4.py
 guppy (hatchling) 12:41, back to todo (not being worked on now): no code branch yet. Check 2 measured offline (header4/offtopic_sim.py), not built: fresh only 3 irrelevant dropped, not CI-clear. Check 3 header eval in $JCODE_SCRATCH_DIR/header4 (H0 59/70, H2 63/70); confirmation run H0 vs H2 on fresh scenarios is bg task 948146oo3l writing header4/confirm.json; decide when it finishes.
 
 hatchling 12:20: confirm run (bg 948146oo3l, header4/confirm.json) paused by its load guard at 32 of 140 since 10:42; machine load average 66-84 (uptime 12:19). It resumes on its own when load falls below 16; no result yet, so no header change.
+
+hatchling 13:23: confirm run restarted in resume mode (header4.py RESUME=1 keeps the 32 done jobs in confirm.json, backup confirm.part32.json). Load guard now LOADMAX=40 on the 5-min average (was 16, which held the one serial niced call for 2.5 h at load 26-113 on this 10-core machine). Progress 34/140 at 13:22; bg 7471093wrm.
