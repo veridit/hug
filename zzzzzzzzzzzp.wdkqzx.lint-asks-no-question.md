@@ -31,7 +31,7 @@ Code: huginn/internal/task/questions.go noteQuestion (shipped-not-done fix is 'h
 
 ## Acceptance
 - [ ] ~~a doing task with a 'shipped in' note and waiting_for: jhf gives no shipped-not-done; the same task active does (test, fails on main)~~ (not relevant: Jørgen 23:51: lint is not suppressed on a task waiting on a person; it goes to the writing agent (checks 4-6), crab, 2026-11-17)
-- [ ] the overview shows 6ephqk in WAITING and not in LINT (golden or test)
+- [ ] ~~the overview shows 6ephqk in WAITING and not in LINT (golden or test)~~ (not relevant: Jørgen 23:51: superseded; a person is never handed a broken task (check 5), crab, 2026-11-17)
 - [ ] shipped-not-done never offers a fix that hug refuses: with open checks its fix names the first open check ('hug task check ID N', or strike it), not 'hug task done ID' (test: 8/9 settled, active, gives 'fix: hug task check ID 9')
 
 ## Notes
