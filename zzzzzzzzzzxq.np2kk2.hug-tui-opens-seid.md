@@ -52,6 +52,7 @@ Check 1 was ticked at 16:29 before e582ab4 reached main (early, my error; hug ha
 landed e582ab4 on main 2026-11-17: hug tui: the watch setup lists each folder once (taskDirs on Seid 7.0-7.8 s ->…
 Checks 1-3 hold on main 45cbc0b, CI 44127663573 green on all 5 jobs (secrets, bench, ubuntu with -race, macos, windows); it contains 43cb24c, e582ab4 and the race fix d16fb54 (TestTaskDirsReadsEachFolderOnce, TestFolderOwnersMatchesIsTaskFolder, TestChangeBeforeWatchIsUpIsSeen; check 3 per the 16:29 note). Check 4 waits for Jørgen.
 shipped in v0.7.43 (e582ab4)
+check 4 ticked by crab on Jørgen's own words 2026-11-17 on the Seid TUI open: 'awesome speed up'; and 00:38 'go over and lint our own tasks'.
 ## History
 - 2026-11-17T17:22 todo -> doing/active (take)
 - 2026-11-17T17:30 doing/active -> doing/waiting (wait)
