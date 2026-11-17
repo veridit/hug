@@ -312,7 +312,7 @@ func TestTmuxGolden(t *testing.T) {
 				wait("sort: rank order")
 				// Grab mode (3xcesq): the grabbed row moves on screen and the
 				// key bar shows only the keys that work; Esc writes nothing.
-				send("gg")
+				send("<")
 				send("m")
 				send("jj")
 				snapshot("grab", "(was 1)")

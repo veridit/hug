@@ -147,7 +147,7 @@ func (m model) taskHelp() helpSection {
 func (m model) rowsHelp() helpSection {
 	title := map[string]string{"overview": "IN THE OVERVIEW", "list": "IN THE LIST", "board": "ON THE BOARD", "lint": "IN LINT"}[m.view]
 	rows := []helpRow{
-		row("j/k ↑/↓", "move", "j", "k"), row("gg G < >", "top / bottom", "G", "<", ">"),
+		row("j/k ↑/↓", "move", "j", "k"), row("< > Home End", "top / bottom", "<", ">", "home", "end"),
 		row("ctrl-d/u", "half page down / up", "ctrl+d", "ctrl+u"), row("PgDn / PgUp", "page down / up", "pgdown", "pgup"),
 		row("Enter", "open the task", "enter"),
 	}
@@ -171,10 +171,10 @@ func (m model) rowsHelp() helpSection {
 	} else {
 		rows = append(rows, row(": sort rank", "rank order again: then J/K, m, y, P/p move"))
 	}
-	// s and c share a row, so : grouping costs no line and EVERYWHERE
-	// stays on the first screen at 80x24.
+	// s and c share a row, so g costs no line and EVERYWHERE stays on the
+	// first screen at 80x24.
 	rows = append(rows, row("s / c", "state palette / clear all filters", "s", "c"),
-		row(": grouping", "flat, by group, by epic: cycles", ":"))
+		row("g", "group rows: flat, group, epic", "g"))
 	if m.grouping != "" {
 		// Only grouped rows have headings to fold (kx2ndm).
 		rows = append(rows, row("Space / Enter", "on a heading: fold or unfold it", " "))

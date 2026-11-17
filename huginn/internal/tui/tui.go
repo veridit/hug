@@ -171,18 +171,18 @@ type model struct {
 	captured, capturedNote string
 	// pictures keeps each question picture as last read, by file, width
 	// and mtime, so a redraw does not read it again (5z4zt4).
-	pictures               map[string]pictureMemo
-	files                  map[string][]string         // task path -> its file names (zgr01t)
-	people                 []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
-	lastExec               *exec.Cmd                   // the editor command last started, for tests (zgr01t)
-	lastEdit               editorMsg                   // and the message it reports when it closes
-	memo                   [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
-	sort, sortDraft        []sortKey                   // the order rows are in, and the one being built (mkzcqr)
-	detailStack            []string
-	width, height          int
-	view                   string
-	pane                   int
-	detail, help, pendingG bool
+	pictures        map[string]pictureMemo
+	files           map[string][]string         // task path -> its file names (zgr01t)
+	people          []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
+	lastExec        *exec.Cmd                   // the editor command last started, for tests (zgr01t)
+	lastEdit        editorMsg                   // and the message it reports when it closes
+	memo            [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
+	sort, sortDraft []sortKey                   // the order rows are in, and the one being built (mkzcqr)
+	detailStack     []string
+	width, height   int
+	view            string
+	pane            int
+	detail, help    bool
 	// column is the column the cursor marks (bejd89), an index into
 	// gridColumns; -1 until Tab marks one. pendingV: v was pressed, a
 	// view letter follows (v o, v i, v b, v !).
@@ -903,7 +903,6 @@ func (m *model) setView(view string) {
 	m.detailPath = ""
 	m.detailStack = nil
 	m.detailPane = 0
-	m.pendingG = false
 	m.head = ""
 	m.clamp()
 }
@@ -1024,7 +1023,6 @@ func (m *model) syncDetail() {
 }
 func (m *model) openInput(prompt, value string) tea.Cmd {
 	m.prompt = prompt
-	m.pendingG = false
 	m.jumpPending = false
 	m.completion = 0
 	m.input.Prompt = prompt + " "
@@ -1044,7 +1042,6 @@ func (m *model) dropFilters() {
 	m.chips = nil
 }
 func (m *model) back() {
-	m.pendingG = false
 	switch {
 	case m.help && (m.helpTyping || m.helpQuery != ""):
 		// Esc clears a help search first; the next Esc closes help.
@@ -1206,19 +1203,8 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			if k == "/" {
 				m.helpTyping = true
-				m.pendingG = false
 				return m, nil
 			}
-			if k == "g" {
-				if m.pendingG {
-					m.helpViewport.GotoTop()
-					m.pendingG = false
-				} else {
-					m.pendingG = true
-				}
-				return m, nil
-			}
-			m.pendingG = false
 			if k == "q" && m.prompt == "" {
 				return m, tea.Quit
 			}
@@ -1261,20 +1247,13 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.message = "reloading into hug " + m.newer + " …"
 			return m, m.probe(true)
 		}
-		if k == "g" {
-			if m.pendingG {
-				m.pendingG = false
-				if m.detail {
-					m.viewport.GotoTop()
-				} else {
-					m.move(0, true)
-				}
-			} else {
-				m.pendingG = true
-			}
+		// g groups the rows: flat, by group, by epic (kx2ndm, Jørgen
+		// 2026-11-17 23:37: gg and G go, "never used it, vi specific";
+		// top and bottom are < > Home End).
+		if k == "g" && !m.detail {
+			m.setGrouping("next")
 			return m, nil
 		}
-		m.pendingG = false
 		// v is the view branch of the header tree (0sw0dd, bejd89): v o
 		// overview, v i (or v v, v l) list, v b board, v ! lint. o alone
 		// orders by the marked column; i, b and ! stay one key.
@@ -1705,7 +1684,7 @@ func (m *model) scroll(v *viewport.Model, k string) {
 		v.ScrollDown(1)
 	case "k", "up":
 		v.ScrollUp(1)
-	case "G", ">", "end":
+	case ">", "end":
 		v.GotoBottom()
 	case "<", "home":
 		v.GotoTop()

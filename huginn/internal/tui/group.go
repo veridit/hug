@@ -27,7 +27,7 @@ import (
 // out), paneRows adds the headings, encoded as headRow(h) = -(h+2) so
 // that -1 stays "no row".
 
-// groupings are the orders : grouping cycles through.
+// groupings are the orders g (or : grouping) cycles through.
 var groupings = []string{"", "group", "epic"}
 
 // groupedRows is one section's rows under its headings.
@@ -209,9 +209,9 @@ func (m *model) setGrouping(g string) bool {
 	if !ok || !m.follow(t.ID) {
 		m.clamp()
 	}
-	m.message = "rows flat"
+	m.message = "rows flat · g groups them"
 	if g != "" {
-		m.message = "rows grouped by " + g + ": Space on a heading folds it · : grouping cycles"
+		m.message = "rows grouped by " + g + ": Space on a heading folds it · g next grouping"
 	}
 	return true
 }

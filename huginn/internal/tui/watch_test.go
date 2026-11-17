@@ -217,7 +217,7 @@ func TestChangeOnDiskKeepsListScroll(t *testing.T) {
 	}
 	m, commit := gitBoard(t, titles...)
 	m.setView("list")
-	m = press(m, "G", "k", "k")
+	m = press(m, ">", "k", "k")
 	selected, _ := m.selected()
 	before := strings.Split(screen(m), "\n")
 	s := &task.Store{Root: m.store.Root}

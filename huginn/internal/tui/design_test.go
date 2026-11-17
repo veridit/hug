@@ -59,8 +59,8 @@ func TestKeyTableListNavigation(t *testing.T) {
 			}
 		})
 	}
-	for _, bottom := range []string{"G", ">", "end"} {
-		for _, top := range [][]string{{"g", "g"}, {"gg"}, {"<"}, {"home"}} {
+	for _, bottom := range []string{">", "end"} {
+		for _, top := range [][]string{{"<"}, {"home"}} {
 			m := press(manyModel(t), bottom)
 			if m.cursor != len(m.visible)-1 {
 				t.Fatal(bottom, m.cursor)
@@ -71,9 +71,14 @@ func TestKeyTableListNavigation(t *testing.T) {
 			}
 		}
 	}
-	m := press(manyModel(t), "G", "g", "j", "g")
-	if !m.pendingG || m.cursor != 59 {
-		t.Fatal("g prefix was not reset")
+	// gg and G are gone (Jørgen 2026-11-17 23:37): G does nothing, and g
+	// groups the rows at once (kx2ndm), so gg is two toggles, not top.
+	m := press(manyModel(t), ">", "G")
+	if m.cursor != 59 || m.message != "" {
+		t.Fatal("G moved or spoke", m.cursor, m.message)
+	}
+	if m = press(m, "g"); m.grouping != "group" {
+		t.Fatal("g did not group", m.grouping)
 	}
 	for _, tc := range []struct {
 		down, up string
@@ -103,7 +108,7 @@ func TestPaneKeysAndBoardSelection(t *testing.T) {
 				t.Fatal(left, m.pane)
 			}
 			m.setView("board")
-			m = press(m, right, "G")
+			m = press(m, right, ">")
 			indices := m.indices()
 			if len(indices) == 0 || m.cursor != indices[len(indices)-1] {
 				t.Fatal(m.View())
@@ -112,7 +117,7 @@ func TestPaneKeysAndBoardSelection(t *testing.T) {
 			if m.boardState(selected) != "doing" {
 				t.Fatal("invisible board selection", m.View())
 			}
-			m = press(m, "gg", left)
+			m = press(m, "<", left)
 			if m.pane != 0 {
 				t.Fatal(left, m.pane)
 			}
@@ -134,8 +139,8 @@ func TestPaneKeysAndBoardSelection(t *testing.T) {
 }
 func TestDetailAndHelpScrollKeys(t *testing.T) {
 	for _, overlay := range []string{"enter", "?"} {
-		for _, bottom := range []string{"G", ">", "end"} {
-			for _, top := range [][]string{{"g", "g"}, {"gg"}, {"<"}, {"home"}} {
+		for _, bottom := range []string{">", "end"} {
+			for _, top := range [][]string{{"<"}, {"home"}} {
 				m := press(manyModel(t), overlay, bottom)
 				viewport := m.viewport
 				if overlay == "?" {
@@ -436,7 +441,7 @@ func TestMarkdownDetailFixedHeaderAndEmptySections(t *testing.T) {
 		t.Fatal(v)
 	}
 	header := m.detailHeader(m.visible[m.cursor])
-	m = press(m, "G")
+	m = press(m, ">")
 	for i, line := range header {
 		if strings.TrimSpace(strings.Split(m.View(), "\n")[4+i]) != strings.TrimSpace(line) {
 			t.Fatal("detail header scrolled away")

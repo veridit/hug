@@ -1,7 +1,7 @@
 == list at 80
 IN THE LIST
 j/k ↑/↓          move                                                           
-gg G < >         top / bottom                                                   
+< > Home End     top / bottom                                                   
 ctrl-d/u         half page down / up                                            
 PgDn / PgUp      page down / up                                                 
 Enter            open the task                                                  
@@ -13,7 +13,7 @@ J / K            move below / above the next row, no confirm
 m                grab: j/k move it, Enter places it                             
 y, P p           yank, then paste above / below                                 
 s / c            state palette / clear all filters                              
-: grouping       flat, by group, by epic: cycles                                
+g                group rows: flat, group, epic                                  
 
 EVERYWHERE
 v o/i/b/!      views: overview / list / board / lint; i b ! alone too           
@@ -119,7 +119,7 @@ ctrl-c  quit
 == list at 140
 IN THE LIST                                                            EVERYWHERE
 j/k ↑/↓          move                                                  v o/i/b/!      views: overview / list / board / lint; i b ! alone too
-gg G < >         top / bottom                                          /              live find; Enter goes to it, Tab keeps it as a filter 
+< > Home End     top / bottom                                          /              live find; Enter goes to it, Tab keeps it as a filter 
 ctrl-d/u         half page down / up                                   :              palette: commands with completion                     
 PgDn / PgUp      page down / up                                        : commands     overview, list, board, todo, doing, done, depends,    
 Enter            open the task                                                        dropped, state <s>, type <t>, priority <p>, group <g>,
@@ -131,7 +131,7 @@ J / K            move below / above the next row, no confirm           1 / 2 / 3
 m                grab: j/k move it, Enter places it                    Backspace / F  remove the last chip / clear all filters              
 y, P p           yank, then paste above / below                        : sort         order by fields; : sort rank goes back                
 s / c            state palette / clear all filters                     N              new task                                              
-: grouping       flat, by group, by epic: cycles                       S              copy the screen, Enter attaches it to the task        
+g                group rows: flat, group, epic                         S              copy the screen, Enter attaches it to the task        
                                                                        r              refresh now (changes on disk show by themselves)      
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            

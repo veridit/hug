@@ -263,13 +263,13 @@ func TestDependenciesAndAllSections(t *testing.T) {
 			t.Fatal(text)
 		}
 	}
-	m = press(m, "G")
+	m = press(m, ">")
 	if !m.viewport.AtBottom() || !strings.Contains(m.View(), "History line") {
 		t.Fatal(m.View())
 	}
-	m = press(m, "g", "g")
+	m = press(m, "<")
 	if !m.viewport.AtTop() {
-		t.Fatal("gg did not scroll detail")
+		t.Fatal("< did not scroll detail")
 	}
 }
 func TestEmptyAndErrors(t *testing.T) {

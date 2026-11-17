@@ -15,8 +15,8 @@ func binding(keys []string, label, description string) bkey.Binding {
 var keys = struct{ down, up, top, bottom, prev, next bkey.Binding }{
 	binding([]string{"j", "down"}, "j/k ↑/↓", "move / scroll"),
 	binding([]string{"k", "up"}, "k/↑", "up"),
-	binding([]string{"<", "home"}, "< / gg / Home", "top"),
-	binding([]string{"G", ">", "end"}, "> / G / End", "bottom"),
+	binding([]string{"<", "home"}, "< / Home", "top"),
+	binding([]string{">", "end"}, "> / End", "bottom"),
 	binding([]string{"h", "left"}, "h/←", "previous section / pane"),
 	binding([]string{"l", "right"}, "l/→", "next section / pane"),
 }
@@ -40,7 +40,7 @@ func (m model) keyBar() string {
 		hints = []bkey.Binding{hint("Enter", "confirm"), hint("Esc", "cancel"), hint("?", "help"), hint("q", "quit")}
 	case m.grab.active:
 		// Only the keys that work while a task is grabbed (3xcesq).
-		hints = []bkey.Binding{hint("j/k", "move"), hint("g/G", "top/bottom"), hint("Enter", "drop"), hint("Esc", "cancel")}
+		hints = []bkey.Binding{hint("j/k", "move"), hint("< >", "top/bottom"), hint("Enter", "drop"), hint("Esc", "cancel")}
 	case m.yanked != "" && m.prompt == "" && !m.detail:
 		hints = []bkey.Binding{hint("j/k", "select"), hint("P", "paste above"), hint("p", "paste below"), hint("Esc", "forget "+m.yanked)}
 	case m.prompt == ":":

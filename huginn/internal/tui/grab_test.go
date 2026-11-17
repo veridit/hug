@@ -118,7 +118,7 @@ func TestGrabEscCancels(t *testing.T) {
 	}
 }
 
-// Check: a count, gg and G move far; moving up lands above the row below.
+// Check: a count, < and > move far; moving up lands above the row below.
 func TestGrabCountsAndEnds(t *testing.T) {
 	m, o, commits := grabBoard(t)
 	m = selectRow(t, m, o[5])
@@ -126,16 +126,16 @@ func TestGrabCountsAndEnds(t *testing.T) {
 	if got := strings.Join(shown(m), " "); got != pick(o, 0, 1, 5, 2, 3, 4) {
 		t.Fatalf("3k: %s", got)
 	}
-	m = press(m, "g", "g", "enter")
+	m = press(m, "<", "enter")
 	if got := rankOrder(t, m); got != pick(o, 5, 0, 1, 2, 3, 4) || *commits != 1 {
-		t.Fatalf("gg Enter: %s, commits %d", got, *commits)
+		t.Fatalf("< Enter: %s, commits %d", got, *commits)
 	}
 	if want := "moved " + o[5] + " above " + o[0] + ", row 1 of 6 in the list"; m.message != want {
 		t.Fatalf("message %q, want %q", m.message, want)
 	}
-	m = press(m, "m", "G", "enter")
+	m = press(m, "m", ">", "enter")
 	if got := rankOrder(t, m); got != pick(o, 0, 1, 2, 3, 4, 5) || *commits != 2 {
-		t.Fatalf("G Enter: %s, commits %d", got, *commits)
+		t.Fatalf("> Enter: %s, commits %d", got, *commits)
 	}
 	// Past the end clamps to the last row.
 	m = selectRow(t, m, o[0])

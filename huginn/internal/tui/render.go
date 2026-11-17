@@ -830,8 +830,6 @@ func (m model) View() string {
 		inputLine = m.confirmLine()
 	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" && m.prompt != answerPrompt {
 		inputLine = m.input.View()
-	} else if m.pendingG {
-		inputLine = "g … press g for top"
 	}
 	lines = append(lines, inputLine, m.keyBar())
 	// Final cell-aware boundary also protects malformed fields, Unicode, and tiny resizes.

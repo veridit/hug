@@ -166,13 +166,9 @@ func (m model) updateGrab(k string) (tea.Model, tea.Cmd) {
 		m.grabMove(at + count)
 	case "k", "up":
 		m.grabMove(at - count)
-	case "g", "<", "home":
-		if k == "g" && !m.pendingG {
-			m.pendingG = true
-			return m, nil
-		}
+	case "<", "home":
 		m.grabMove(0)
-	case "G", ">", "end":
+	case ">", "end":
 		m.grabMove(len(rows) - 1)
 	case "enter":
 		m.dropGrab()
@@ -181,9 +177,8 @@ func (m model) updateGrab(k string) (tea.Model, tea.Cmd) {
 	case "h", "l", "left", "right", "tab", "shift+tab":
 		m.message = fmt.Sprintf("%s moves within %s: Enter drops it, Esc cancels", m.grab.id, m.sectionName())
 	default:
-		m.message = "moving " + m.grab.id + ": j/k move · g/G top/bottom · Enter drop · Esc cancel"
+		m.message = "moving " + m.grab.id + ": j/k move · < > top/bottom · Enter drop · Esc cancel"
 	}
-	m.pendingG = false
 	m.grab.count = ""
 	return m, nil
 }
