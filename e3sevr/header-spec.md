@@ -68,6 +68,23 @@ ACCEPTANCE …
 
 Order (Jørgen 00:04, "yes"): context, then subject, as he first said it.
 
+## Overview sections (41hhgn, 1bbe96)
+
+Jørgen 00:12: asked is "a separate section that I really need to address"; waiting is "just a
+place to live for things that aren't active right now".
+
+```
+ASKED · for you [16]                         ← top: what needs his answer, oldest first
+IN PROGRESS · assigned to [13] · all active
+WAITING [2] · all waiting                    ← CI, releases, questions asked of others
+NEXT UP · rank order [28]
+RECENTLY DONE · last closed [82]
+LINT · tasks needing attention [30]
+```
+
+A column that is the same on every task of a section is not drawn there; the heading says it
+once (1bbe96).
+
 ## Footer while a prefix is pending (qh9ep1)
 
 ```
