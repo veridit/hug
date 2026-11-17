@@ -36,7 +36,7 @@ FILES section: huginn/internal/tui/detail.go:421 (hint 'j/k or [ ] step · Enter
 - [x] Space on a file shows its text in the detail pane with the header 'path · size · i of N'; Esc and u return to FILES with that file selected (golden at 80 and 140 columns)
 - [x] n/p step to the next and previous file, stopping at the ends with a footer note; j/k and PgUp/PgDn scroll (test)
 - [x] a binary file and a file over 1 MiB show one line with the size and 'Enter opens it', not their bytes; ESC sequences and control characters in a text file are shown escaped (test with a file holding \x1b[2J)
-- [ ] opening the detail and the list reads no file contents; showing a file reads only that file (test counts reads)
+- [x] opening the detail and the list reads no file contents; showing a file reads only that file (test counts reads)
 - [ ] Jørgen looks through the TASK-2034.02 evidence on Seid with Space and n/p, and says it works
 
 ## Notes
