@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T22:48"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "Windows CI on ci/3mavpt-win f8237b5 before main"
+waiting_since: "2026-11-17T23:01"
+waiting_asked_by: "calf"
+waiting_for: "ci"
 ---
 
 ## Goal
@@ -39,3 +43,4 @@ Two writers shared the fixed name path.tmp, so one's rename found the other's te
 kestrel: fix f8237b5 on branch kestrel/3mavpt-2 (ci/3mavpt-win). Tests fail first with the old writeAtomic restored: TestCacheWriteRacesReads '0 of 66977 reads failed (first: <nil>), 0 of 3958 writes failed (first: <nil>), 3705 torn reads' (2 writers sharing path.tmp); TestSetupSaysWhenItCannotRemember 'round 1: want one 'could not remember' line on stderr, got 0'. Without withMemoWarning in runSetup: 'round 1: want one ... got 2'. The test also runs the printed fix line (rm -rf the one file) and both checks are remembered after it. -race: cli ok 240.612s, importer ok 2.052s, task ok 24.375s, sharefile ok 1.017s. wyvern's lead (checkFiles writes only when again == key, so a second key that differs writes nothing silently) is not yet measured: if Windows still fails, the dump now includes setup stderr.
 ## History
 - 2026-11-17T22:48 todo -> doing/active (take)
+- 2026-11-17T23:01 doing/active -> doing/waiting (wait)
