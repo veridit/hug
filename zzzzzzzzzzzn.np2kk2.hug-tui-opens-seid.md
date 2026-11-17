@@ -10,10 +10,13 @@ created: 2026-11-17
 updated: 2026-11-17
 parent: "44w1ev"
 doing_since: "2026-11-17T17:22"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "jhf: check 4: open hug tui on Seid and say if it feels instant (copy median first frame 0.174 s, quit 0.211 s); checks 1-3 tick on green main CI 44126454244 (e582ab4)"
+waiting_since: "2026-11-17T17:30"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ e582ab4 (wyvern 16:29). Check 1: TestTaskDirsReadsEachFolderOnce counts folder r
 Check 1 was ticked at 16:29 before e582ab4 reached main (early, my error; hug has no uncheck). It holds when e582ab4 lands; the main run id follows.
 ## History
 - 2026-11-17T17:22 todo -> doing/active (take)
+- 2026-11-17T17:30 doing/active -> doing/waiting (wait)
