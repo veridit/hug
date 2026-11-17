@@ -30,7 +30,7 @@ Code: huginn/internal/tui/keys.go (help lines, keyBar hints), help_search_test.g
 ## Depends on
 
 ## Acceptance
-- [ ] ? opened inside a task lists that task's keys first under a heading naming the context, then global keys
+- [x] ? opened inside a task lists that task's keys first under a heading naming the context, then global keys
 - [ ] ? opened in a list leads with list keys, and no row shows a key that does nothing there
 - [ ] typing in help filters rows by key or word, and Esc clears the filter, then closes
 - [ ] a test walks every context and presses each listed key to prove it is bound
