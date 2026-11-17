@@ -56,3 +56,5 @@ Jørgen 2026-11-17 10:09-10:10 (ruling): write state, and stage within the state
 Jørgen 2026-11-17 10:10 (why it is hard-coded): every node carries semantics hug acts on (which section, what next picks, what lint checks, what ends a wait). A configurable tree would still need this hard-coded tree underneath, with user nodes mapped onto it; that is two trees for one meaning. So the tree is fixed in code and changed only by design, with hug upgrade migrating the files.
 
 Jørgen 2026-11-17 10:12 (ruling): blocked is a stage of both todo (nobody has it) and doing (someone has it). Same meaning in both; the state decides the section. Draft updated: tmp/lanes/805p6y-states.md.
+
+Jørgen 2026-11-17 10:13 (ruling): review is a stage of both todo (work done, waits for a reviewer; nobody reviewing) and doing (someone is reviewing it now). Same pattern as blocked: the stage says what, the state says whether someone has it. review_by names the reviewer. Draft updated.
