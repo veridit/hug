@@ -204,7 +204,7 @@ func (m model) getenv(k string) string {
 }
 
 // questionPicture is the task file a question asks you to look at: the one
-// --show named (waiting_show, design_show), else the first task file the
+// --show named (waiting_show, design_show, review_show), else the first task file the
 // question names. "" when it names none.
 func (m model) questionPicture(t task.Task, stage, question string) string {
 	files := m.filesOf(t)
@@ -216,7 +216,7 @@ func (m model) questionPicture(t task.Task, stage, question string) string {
 		}
 		return false
 	}
-	if v := strings.TrimSpace(t.Fields[map[string]string{"waiting": "waiting_show", "design": "design_show"}[stage]]); v != "" && has(v) {
+	if v := strings.TrimSpace(t.Fields[map[string]string{"waiting": "waiting_show", "design": "design_show", "review": "review_show"}[stage]]); v != "" && has(v) {
 		return v
 	}
 	for _, w := range strings.Fields(question) {
@@ -242,6 +242,8 @@ func (m model) askedPicture(t task.Task) string {
 	case "waiting":
 		_, what := m.waitingFor(t)
 		return m.questionPicture(t, g, what)
+	case "review":
+		return m.questionPicture(t, g, "")
 	}
 	return ""
 }

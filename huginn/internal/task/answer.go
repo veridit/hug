@@ -116,7 +116,7 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 	case "waiting":
 		clear = []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by", "waiting_show"}
 	case "review":
-		clear = []string{"review_by", "review_since"}
+		clear = []string{"review_by", "review_since", "review_show"}
 	}
 	line := "answered " + stage + ": " + strconv.Quote(q) + " -> " + strconv.Quote(text) + ", by " + by
 	if asker = strings.TrimSpace(asker); asker != "" {

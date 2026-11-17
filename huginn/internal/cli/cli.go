@@ -68,7 +68,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task, 5 upgrade has chan
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "answer", "next", "rebalance", "types", "states", "people", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "review", "design", "answer", "next", "rebalance", "types", "states", "people", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -434,7 +434,7 @@ func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
 // as their value. Both accept task:ID, the form running text uses, and are
 // turned into the bare id here so every reply and printed command shows
 // the bare id and runs when pasted into a shell (xxvm6t).
-var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "resume", "design", "answer", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
+var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "resume", "review", "design", "answer", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
 var refFlags = []string{"before", "after", "dep", "add", "remove", "parent", "epic"}
 
 func bareRefs(cmd string, f *flags) {
@@ -561,7 +561,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "upgrade": "apply"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "review": "as model by show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "upgrade": "apply"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1018,6 +1018,16 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, e
 		}
 		r, e = s.s.Resume(f.args[0])
+	case "review":
+		// Asking for a review (6w0gve): the owner keeps the task,
+		// doing/review with review_by, and answer brings it back.
+		if e = f.count(1); e != nil {
+			return nil, e
+		}
+		if strings.TrimSpace(f.get("by")) == "" {
+			return nil, usage("review needs who reviews: --by NAME", "hug task review "+f.args[0]+" --by NAME")
+		}
+		r, e = s.s.Review(f.args[0], f.get("by"), f.get("show"))
 	case "answer":
 		if len(f.args) == 1 {
 			return nil, usage("answer needs the answer", "hug task answer "+f.args[0]+` "the answer"`)

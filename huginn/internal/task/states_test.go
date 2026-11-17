@@ -63,7 +63,7 @@ func TestStatesTree(t *testing.T) {
 			}
 		}
 	}
-	for _, want := range []string{"waiting_on       what it waits on (by agent, required)", "todo/review    -> doing/review   hug task take ID", "the first wins: deferred, depends, design, draft, review, ready"} {
+	for _, want := range []string{"waiting_on       what it waits on (by agent, required)", "todo/review    -> doing/review   hug task take ID", "doing/active   -> doing/review   hug task review ID --by NAME", "review_show", "the first wins: deferred, depends, design, draft, review, ready"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("states text lacks %q:\n%s", want, text)
 		}

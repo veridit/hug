@@ -69,6 +69,7 @@ var States = []Node{
 		{Name: "review", SetBy: ByAgent, Means: "the work is done and waits for someone to check it", Fields: []NodeField{
 			{Name: "review_by", SetBy: ByAgent, Means: "who should review it"},
 			{Name: "review_since", SetBy: ByHug, Means: "since when it waits for review"},
+			{Name: "review_show", SetBy: ByAgent, Means: "the task file to look at (--show NAME); the detail shows it under the review question"},
 		}},
 		{Name: "ready", SetBy: ByHug, Means: "nothing stands in the way; anyone may take it"},
 	}},
@@ -84,9 +85,10 @@ var States = []Node{
 			{Name: "waiting_show", SetBy: ByAgent, Means: "the task file to look at (--show NAME); the detail shows it under the question"},
 		}},
 		{Name: "depends", SetBy: ByHug, Means: "the owner can't go on until another task is done"},
-		{Name: "review", SetBy: ByReviewer, Means: "someone is reviewing it", Fields: []NodeField{
-			{Name: "review_by", Required: true, SetBy: ByReviewer, Means: "who is reviewing it"},
+		{Name: "review", SetBy: ByReviewer, Means: "someone is reviewing it: a reviewer took it, or the owner asked with hug task review (and keeps it)", Fields: []NodeField{
+			{Name: "review_by", Required: true, SetBy: ByReviewer, Means: "who is reviewing it (hug task review --by NAME, or who took it for review)"},
 			{Name: "review_since", SetBy: ByHug, Means: "since when"},
+			{Name: "review_show", SetBy: ByAgent, Means: "the task file to look at (--show NAME); the detail shows it under the review question"},
 		}},
 	}},
 	{Name: "done", Means: "finished: every check ticked", Fields: []NodeField{
@@ -113,6 +115,7 @@ var Transitions = []Transition{
 	{"todo/*", "doing/active", "hug task take ID"},
 	{"doing/active", "doing/waiting", `hug task wait ID "on what"`},
 	{"doing/waiting", "doing/active", "hug task resume ID"},
+	{"doing/active", "doing/review", "hug task review ID --by NAME"},
 	{"todo/*", "todo/design", `hug task design ID "question"`},
 	{"todo/design", "todo/*", "hug task design ID --clear"},
 	{"doing/*", "todo/*", "hug task set ID --state todo (gives it back, keeping its stage)"},

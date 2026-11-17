@@ -132,6 +132,21 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 	if _, err := m.store.WaitShowing("000002", "look", "alice", "nope.ans", "jhf"); err == nil || !strings.Contains(err.Error(), "hug task attach 000002 FILE --name nope.ans") {
 		t.Fatalf("--show of a missing file: %v", err)
 	}
+	// A review asked with --show (6w0gve) draws its file under the review
+	// question for the reviewer. 000006 is doing and not waiting.
+	if _, _, err := m.store.Attach("000006", "rows.ans", []byte(captureAns), "", false); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := m.store.Review("000006", "jhf", "rows.ans"); err != nil {
+		t.Fatal(err)
+	}
+	m.refresh("")
+	m = openTask(t, m, "000006")
+	screen = ansi.Strip(m.View())
+	q, p := strings.Index(screen, "? review: review it"), strings.Index(screen, "▸ rows.ans")
+	if q < 0 || p < q {
+		t.Fatalf("the review picture is not under the review question:\n%s", screen)
+	}
 }
 
 // colourOnly keeps colours and escapes the rest, with colours on.

@@ -274,6 +274,44 @@ func (s *Store) Resume(ref string) (Result, error) {
 	return s.finish(d, true)
 }
 
+// Review asks who (a person's or agent's name, review_by, required) to
+// review ref, a doing task (6w0gve, crab 18:30): doing/active becomes
+// doing/review and the owner keeps it, so hug task answer brings it back
+// to doing/active. show names the task file to look at (review_show), ""
+// none. A review does not count against one doing ticket per agent.
+func (s *Store) Review(ref, who, show string) (Result, error) {
+	d, ts, e := s.load(ref)
+	if e != nil {
+		return Result{}, e
+	}
+	if d.Task.State != "doing" {
+		return Result{}, refuse(d.Task, "doing/review", "hug task take "+d.Task.ID+" --model MODEL")
+	}
+	if ownHolds(d.Task, "waiting") {
+		return Result{}, refuse(d.Task, "doing/review", "hug task resume "+d.Task.ID)
+	}
+	if who = strings.TrimSpace(who); who == "" {
+		return Result{}, usageErr(d.Task.ID, "review needs who reviews: --by NAME", "hug task review "+d.Task.ID+" --by NAME")
+	}
+	if show, e = s.showable(d.Task, show); e != nil {
+		return Result{}, e
+	}
+	if d.Task.Fields["review_by"] == who && d.Task.Fields["review_show"] == show {
+		return s.finish(d, false)
+	}
+	set := map[string]string{"review_by": who, "review_since": stamp()}
+	var clear []string
+	if show != "" {
+		set["review_show"] = show
+	} else {
+		clear = []string{"review_show"}
+	}
+	if e = applyMove(d, ts, move{state: "doing", set: set, clear: clear, why: "review"}); e != nil {
+		return Result{}, e
+	}
+	return s.finish(d, true)
+}
+
 // Design asks question on ref, a todo task (todo/design), of who (a
 // person's name, design_for, required: crab 12:38), recording who asked;
 // clear (question "") answers it: the design fields go to History.
