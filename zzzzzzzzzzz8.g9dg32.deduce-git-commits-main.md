@@ -36,7 +36,7 @@ Scan only commits new since the last scan (store the last seen main and tag in t
 ## Acceptance
 - [x] a commit (abc123) naming two tickets reaching main adds 'landed abc123' to both tickets once, even after several syncs and from two clones (test)
 - [x] tagging vX.Y.Z adds 'shipped in vX.Y.Z' or sets done_release on each ticket named by commits new in that tag (test)
-- [ ] each deduction is reported to the owner as 'observed: ... ; marked: ... ; if wrong: <fix>' (test on text)
+- [x] each deduction is reported to the owner as 'observed: ... ; marked: ... ; if wrong: <fix>' (test on text)
 - [ ] replayed over hug's main since v0.7.30: every ticket named in a commit gets its landed lines, compared by hand on 5
 
 ## Notes
