@@ -16,6 +16,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/veridit/hug/internal/throttle"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/harness"
@@ -24,7 +25,6 @@ import (
 	"github.com/veridit/hug/muninn/internal/recall"
 	"github.com/veridit/hug/muninn/internal/search"
 	"github.com/veridit/hug/muninn/internal/store"
-	"github.com/veridit/hug/internal/throttle"
 )
 
 type viewFlags struct {
