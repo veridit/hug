@@ -179,6 +179,10 @@ func (a *App) deducePass(ctx context.Context, cwd string) bool {
 		return false
 	}
 	defer s.c.Close()
+	if board, known, newer := a.newerBoard(s.r.Dir); newer {
+		fmt.Fprintf(a.Err, "%s pid %d: deduce skipped: %s\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), boardNewer(board, known).Problem)
+		return false
+	}
 	s.nudged = true // this pass pushes what it writes
 	release := s.turn()
 	ds, e := s.deduce(ctx, s.r.Root, "")

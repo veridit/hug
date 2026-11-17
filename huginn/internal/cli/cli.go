@@ -93,6 +93,37 @@ type App struct {
 	// FetchAfter. Tests set it instead of the package variables, so the
 	// background-sync tests run in parallel (0sbvnq).
 	Sync *SyncSettings
+	// Layout is the newest board layout this hug reads and writes; 0 means
+	// task.Layout. Tests set it lower to play an older hug (dx9vw2).
+	Layout int
+}
+
+// boardNewer is the error a hug older than its board gives on a write
+// (dx9vw2): it would write the task files it can read, and lose or
+// misread the rest, so it writes nothing.
+func boardNewer(board, known int) *OperationError {
+	return &OperationError{Problem: boardNewerText(board, known) + "; it writes nothing to it", Fix: upgradeHug}
+}
+
+// upgradeHug is the fix for a hug older than its board.
+const upgradeHug = "brew upgrade veridit/tap/hug"
+
+func boardNewerText(board, known int) string {
+	return fmt.Sprintf("this board is newer than this hug: the board has layout %d (hug.toml on branch %s), this hug knows layout %d (a build from source: git pull && go install ./cmd/hug)", board, TaskBranch, known)
+}
+
+// newerBoard reports the board's layout when it is newer than this hug's.
+func (a *App) newerBoard(dir string) (board, known int, newer bool) {
+	known = a.Layout
+	if known == 0 {
+		known = task.Layout
+	}
+	board, e := task.BoardLayout(dir)
+	if e != nil {
+		// An unreadable layout is no older than any hug: treat it as newer.
+		return known + 1, known, true
+	}
+	return board, known, board > known
 }
 
 // SyncSettings is how an App starts background passes: Spawn is the
@@ -646,6 +677,26 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		return nil, e
 	}
 	defer s.c.Close()
+	// A hug older than its board (dx9vw2) writes nothing to it: every
+	// command but a read stops here, before the board turn and any write
+	// (take, tui, edit and sync write too). A read says it once and goes on.
+	if board, known, newer := a.newerBoard(s.r.Dir); newer {
+		if !readOnly[cmd] {
+			return nil, boardNewer(board, known)
+		}
+		msg := boardNewerText(board, known) + "; what it shows may be incomplete"
+		if isJSON(args) || a.Out == a.Err {
+			// --json and MCP (whose Out is stderr) carry it in the reply.
+			defer func() {
+				if reply != nil {
+					reply["board_newer"] = Reply{"message": msg, "board": board, "hug": known, "fix": upgradeHug}
+				}
+			}()
+		} else {
+			fmt.Fprintln(a.Err, "warning: "+msg)
+			fmt.Fprintln(a.Err, "fix: "+upgradeHug)
+		}
+	}
 	// Every commit hug makes on the board names the model that made it, the
 	// same one take records (t709he).
 	// Only the model: whoTakes also asks git where the take happens (three

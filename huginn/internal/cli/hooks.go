@@ -296,6 +296,10 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	var tasks []string
 	if s, e := a.open(ctx); e == nil {
 		defer s.c.Close()
+		// An older hug's upgrade would move the board back (dx9vw2).
+		if board, known, newer := a.newerBoard(s.r.Dir); newer {
+			return nil, boardNewer(board, known)
+		}
 		// state: (6ephqk step 4): every status: key becomes state:, first,
 		// so every later step reads the new key.
 		changed, lines, e := s.s.MigrateState(dry)
@@ -336,6 +340,24 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		if len(moved) > 0 {
 			tasks = append(tasks, would(fmt.Sprintf("%d waits on a person moved to waiting_for", len(moved))))
 			upgradeDiff += strings.Join(wlines, "\n") + "\n"
+		}
+		// Last, once the task files are moved: the board says its layout,
+		// so an older hug stops before writing it (dx9vw2).
+		if board, known, _ := a.newerBoard(s.r.Dir); board < known {
+			if !dry {
+				path := filepath.Join(s.r.Dir, task.ConfigName)
+				b, e := os.ReadFile(path)
+				if e != nil && !os.IsNotExist(e) {
+					return nil, e
+				}
+				if e = os.WriteFile(path, []byte(task.WithLayout(string(b), known)), 0o644); e != nil {
+					return nil, e
+				}
+				if e = s.r.Commit([]string{task.ConfigName}, fmt.Sprintf("hug upgrade: board layout %d -> %d", board, known)); e != nil {
+					return nil, e
+				}
+			}
+			tasks = append(tasks, would(fmt.Sprintf("board layout %d -> %d in %s (an older hug then refuses to write it)", board, known, task.ConfigName)))
 		}
 		part("tasks", tasks)
 	} else {

@@ -6,6 +6,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- A hug older than its board says so and writes nothing to it (dx9vw2). The board names its layout in hug.toml on the hug/tasks branch (`layout = N`; no key is layout 2, the `state:` board), and each hug knows the newest layout it reads. On a newer board every write (note, take, wait, set, new, sync, tui, upgrade, the background deduce pass) stops before touching it with `this board is newer than this hug: the board has layout 3 (hug.toml on branch hug/tasks), this hug knows layout 2` and `fix: brew upgrade veridit/tap/hug`. A read still prints and says it once on stderr; `--json` and MCP replies carry it as `board_newer`. `hug upgrade` writes the layout when a later hug raises it. This guards the next change of layout, not the last: on 2026-11-17 a hug from before `state:` read a task as having no state and sent its agent to `hug task take`, and a hug that old has no such check.
 - In a `hug tui` task's detail, Tab and Shift-Tab step through every task id the detail shows, in reading order, and Enter opens the one marked (4bwcgp). The stops are:
   - the parent epic: a new `epic:ID` badge in the header;
   - an id or alias named in the stage line: `└─ waiting on after ▸46ek1f`, or a design question or a deferral;

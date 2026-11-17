@@ -2,8 +2,10 @@ package task
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -100,4 +102,71 @@ func ForbidCite(root string) ([]string, error) {
 		return out, nil
 	}
 	return nil, nil
+}
+
+// Board layout (dx9vw2). A board says which layout its task files use with a
+// top-level layout = N in hug.toml; a board without the key is BaseLayout,
+// the state: board (6ephqk step 4). Layout is the newest this hug reads and
+// writes. A hug that meets a newer board refuses to write it (it would write
+// what it can read, and lose the rest) and says so once on a read. Raise
+// Layout when task files change in a way an older hug misreads, and have
+// hug upgrade move the board to it.
+const (
+	BaseLayout = 2
+	Layout     = 2
+)
+
+// BoardLayout reads the board's layout from hug.toml at root.
+func BoardLayout(root string) (int, error) {
+	b, e := os.ReadFile(configPath(root))
+	if os.IsNotExist(e) {
+		return BaseLayout, nil
+	}
+	if e != nil {
+		return 0, e
+	}
+	section := ""
+	for _, line := range strings.Split(string(b), "\n") {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, "[") {
+			section = line
+			continue
+		}
+		key, value, ok := strings.Cut(line, "=")
+		if section != "" || !ok || strings.TrimSpace(key) != "layout" {
+			continue
+		}
+		n, e := strconv.Atoi(scalar(value))
+		if e != nil || n < 1 {
+			return 0, &Error{Kind: "invalid", Field: "layout", Value: strings.TrimSpace(value),
+				Fix: fmt.Sprintf("set layout = %d in %s on the task branch, or brew upgrade veridit/tap/hug if a newer hug wrote it", Layout, ConfigName)}
+		}
+		return n, nil
+	}
+	return BaseLayout, nil
+}
+
+// WithLayout returns hug.toml text with the top-level layout set to n,
+// everything else unchanged. A new key goes first: top-level keys must come
+// before any [table].
+func WithLayout(text string, n int) string {
+	entry := fmt.Sprintf("layout = %d", n)
+	lines := strings.Split(strings.TrimRight(text, "\n"), "\n")
+	if text == "" {
+		return entry + "\n"
+	}
+	for i, l := range lines {
+		t := strings.TrimSpace(l)
+		if strings.HasPrefix(t, "[") {
+			break
+		}
+		if key, _, ok := strings.Cut(t, "="); ok && strings.TrimSpace(key) == "layout" {
+			lines[i] = entry
+			return strings.Join(lines, "\n") + "\n"
+		}
+	}
+	if strings.HasPrefix(strings.TrimSpace(lines[0]), "[") {
+		entry += "\n"
+	}
+	return entry + "\n" + strings.Join(lines, "\n") + "\n"
 }
