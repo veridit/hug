@@ -1,13 +1,13 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
-	"time"
 )
 
 // commit runs git commit in dir with message, returning its output and
@@ -21,8 +21,8 @@ func tryCommit(t *testing.T, dir string, args ...string) (string, bool) {
 
 // t709he check 1: hug task install commit-msg refuses a commit without one
 // Model: trailer, with a fix: line whose slot is refused as pasted.
-// Serial: it times commits, which parallel tests would slow.
 func TestCommitMsgGate(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	dir := realDir(t, a.Cwd)
 	r := execute(t, a, "install", "commit-msg")
@@ -102,12 +102,13 @@ func TestCommitMsgGate(t *testing.T) {
 	}
 	git(t, dir, "checkout", "-q", "main")
 
-	// Cheap: under 50 ms a commit on a quiet machine (fastest of 7 each,
-	// gate minus no-verify); CI and Windows only log it.
-	gate, plain := fastest(t, dir)
-	t.Logf("commit with gate %v, --no-verify %v (fastest of 7, interleaved)", gate, plain)
-	if limit := 50 * time.Millisecond; gate-plain > limit && os.Getenv("CI") == "" && runtime.GOOS != "windows" {
-		t.Errorf("the gate costs %v per commit, over %v", gate-plain, limit)
+	// Cheap: the gate starts two git processes and one awk per commit, no
+	// more. Counted, not timed (Jørgen 2026-11-17 10:00: no wall-clock
+	// budgets in tests; the 50 ms limit failed under load at 50.7 ms).
+	if runtime.GOOS != "windows" {
+		if got := gateProcesses(t, dir); got != "awk=1 git=2" {
+			t.Errorf("the gate starts %s per commit, want awk=1 git=2", got)
+		}
 	}
 
 	r = execute(t, a, "uninstall", "commit-msg")
@@ -119,32 +120,39 @@ func TestCommitMsgGate(t *testing.T) {
 	}
 }
 
-// fastest times commits with and without the gate, interleaved so both see
-// the same machine load, and returns the fastest of each: load only ever
-// adds time, so the minimum is the closest to the gate's own cost (a median
-// of two separate blocks read 79 ms with 14 test packages running, 39 ms
-// quiet).
-func fastest(t *testing.T, dir string) (gate, plain time.Duration) {
-	one := func(noVerify bool) time.Duration {
-		args := []string{"-q", "-m", "timing", "-m", "Model: human"}
-		if noVerify {
-			args = append(args, "--no-verify")
+// gateProcesses runs the hook once on a message with a Model: trailer, with
+// git and awk on PATH replaced by wrappers that log their name and run the
+// real one, and returns how many of each it started ("awk=1 git=2"). POSIX
+// sh wrappers: not on Windows, where the hook runs under git's own sh.
+func gateProcesses(t *testing.T, dir string) string {
+	t.Helper()
+	bin, logFile := t.TempDir(), filepath.Join(t.TempDir(), "calls")
+	for _, name := range []string{"git", "awk"} {
+		real, e := exec.LookPath(name)
+		if e != nil {
+			t.Fatal(e)
 		}
-		start := time.Now()
-		if out, ok := tryCommit(t, dir, args...); !ok {
-			t.Fatalf("timing commit: %s", out)
-		}
-		return time.Since(start)
-	}
-	for i := 0; i < 7; i++ {
-		if d := one(false); gate == 0 || d < gate {
-			gate = d
-		}
-		if d := one(true); plain == 0 || d < plain {
-			plain = d
+		script := "#!/bin/sh\necho " + name + " >> '" + logFile + "'\nexec '" + real + "' \"$@\"\n"
+		if e := os.WriteFile(filepath.Join(bin, name), []byte(script), 0o755); e != nil {
+			t.Fatal(e)
 		}
 	}
-	return gate, plain
+	msg := filepath.Join(t.TempDir(), "MSG")
+	if e := os.WriteFile(msg, []byte("subject\n\nModel: human\n"), 0o644); e != nil {
+		t.Fatal(e)
+	}
+	c := exec.Command(filepath.Join(dir, ".git", "hooks", "commit-msg"), msg)
+	c.Dir = dir
+	c.Env = append(os.Environ(), "PATH="+bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+	if out, e := c.CombinedOutput(); e != nil {
+		t.Fatalf("hook refused a good message: %v\n%s", e, out)
+	}
+	b, _ := os.ReadFile(logFile)
+	n := map[string]int{}
+	for _, l := range strings.Fields(string(b)) {
+		n[l]++
+	}
+	return fmt.Sprintf("awk=%d git=%d", n["awk"], n["git"])
 }
 
 // A commit-msg hook already in .git/hooks keeps running, first; uninstall

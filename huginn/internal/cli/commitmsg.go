@@ -26,7 +26,8 @@ import (
 const hookMarker = "# hug: commit-msg gate (t709he)"
 
 // hookScript is POSIX sh, so it runs with git's own sh on Windows too. It
-// costs two git calls and one awk (no other process), under 50 ms. Its fix line keeps an <...> slot
+// costs two git calls and one awk (no other process; TestCommitMsgGate counts
+// them). Its fix line keeps an <...> slot
 // that the gate itself refuses, so a pasted fix cannot claim a model.
 const hookScript = `#!/bin/sh
 ` + hookMarker + `
