@@ -4,7 +4,7 @@ title: "Attach screenshots and screen captures to a task; the detail shows them 
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
