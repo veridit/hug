@@ -1,7 +1,7 @@
 ---
 id: x325pp
 title: "Board lint nudges go to agents at a break in their own work"
-status: "doing"
+status: "done"
 type: feature
 priority: ""
 assignee: ["hatchling"]
@@ -11,10 +11,7 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing turn"
-waiting_since: "2026-11-17T14:36"
-waiting_asked_by: "hatchling"
-stage: "waiting"
+done_at: "2026-11-17T15:03"
 ---
 
 ## Goal
@@ -54,3 +51,4 @@ hatchling 12:58, check 3 per crab's rule (held or lost?): LOST in the replay. Ma
 hatchling 14:04: on main 38ff464 (with fkpyg3 b023624, ff from 5b80e87). CI 44096348851: macos, windows green; ubuntu failed only on the known 1rca5g flake: 'throttle_test.go:48: Background: got "nice=0 procs=1", want "nice=10 procs=1"' (fix on ci/1rca5g). Same code tree green on all three in 44095242756.
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
+- 2026-11-17T15:03 doing/waiting -> done (done); was waiting_asked_by: hatchling; waiting_on: landing turn; waiting_since: 2026-11-17T14:36
