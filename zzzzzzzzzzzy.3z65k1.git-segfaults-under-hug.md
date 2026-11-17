@@ -1,0 +1,31 @@
+---
+id: 3z65k1
+title: "git segfaults under hug's test load on the owner's Mac (3 today)"
+state: todo
+type: bug
+priority: ""
+assignee: []
+labels: []
+created: 2026-11-17
+updated: 2026-11-17
+---
+
+## Goal
+Know why git crashes with SIGSEGV during hug's cli tests on the owner's machine, and whether real hug users can hit it; hug names the crash as git's, with a retry or fix line.
+
+## Purpose
+Three local -race runs of huginn/internal/cli failed on 2026-11-17 with git dying of SIGSEGV, never on CI: TestLintHidesClosedTasks 'git add: signal: segmentation fault'; TestEightWritersMixedCommandsAllLand 'diff --cached --name-only: signal: segmentation fault' and 'diff --name-status -z --find-renames ... : signal: segmentation fault' (then '159 commits for 160 writes'). A write that fails because git crashed looks like hug's bug.
+
+## Principle
+Observe first: no retry loop until the cause is known. Do not touch the owner's git install.
+
+## Relevant details
+git: /usr/bin/git 2.54.0 (Apple Git-157); /opt/homebrew/bin/git also on PATH. No git crash report in ~/Library/Logs/DiagnosticReports. All three ran under nice -n 19, GOMAXPROCS=2, with other agents' test loads at the same time (machine load 286-323 per crab 22:06). Logs: /Users/jhf/.jcode/scratch/kestrel-syncstall-out/run-9.txt, run-12.txt, /Users/jhf/.jcode/scratch/kestrel-b6jgpn-race3.txt.
+
+## Depends on
+
+## Acceptance
+- [ ] the crash is reproduced outside hug's tests or tied to a cause (memory pressure, a git bug, a hook), with evidence in a note
+- [ ] hug reports a git that died of a signal as git's crash, with a fix: line to retry
+
+## Notes
