@@ -39,3 +39,5 @@ Mock, 6ephqk opened:
 - [ ] Jørgen opens 6ephqk and says it reads clearly
 
 ## Notes
+
+crab 2026-11-17 23:28 ruling on how a wait names its check: field waiting_check: N set by hug task wait --check N (refuses a bad N with a fix line; MCP task_update gets check). No read-time fallback (no backward compatibility): hug upgrade's task part moves an exact leading 'check N:' with a real N into waiting_check (preview, then --apply, like waiting_for). The TUI reads only the field. hug task wait prints a hint when the reason starts with 'check N' and no --check. After release: run hug upgrade on hug's own board, preview first (14 of 23 waits start 'check N').
