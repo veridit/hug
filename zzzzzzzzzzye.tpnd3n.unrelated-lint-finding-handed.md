@@ -30,3 +30,5 @@ muninn/internal/recall/boardcue.go pickFinding/BoardCue; replay muninn/cmd/board
 - [ ] an unrelated lint finding is handed out only when the session has no doing task of its own or just closed one
 
 ## Notes
+
+hatchling 12:42, from x325pp: measured arms in muninn/docs/BOARD4.md 'Stop orders, and lint between tasks'. Lint lines right/false: main 97: 87/7; stop order 95: 89/3; + between tasks 81: 73/5; + busy when editing 73: 65/5. fresh2 seid: 8: 8/0 -> between tasks 3: 0/3. Raw: $JCODE_SCRATCH_DIR/board4/x325pp/ (main/ stop/ new/ newb/, judgments.json, score2.py).
