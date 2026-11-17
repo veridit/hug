@@ -9,13 +9,10 @@ labels: ["github", "import"]
 created: 2026-11-13
 updated: 2026-11-13
 doing_since: "2026-11-17T15:40"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "jhf: check 4 conflicts with bxqtkt 'no two-way GitHub sync': choose A (close+link only), B (as written) or C (strike), see note 14:42"
-waiting_since: "2026-11-17T15:41"
-waiting_asked_by: "calf"
 ---
 
 ## Goal
@@ -39,3 +36,4 @@ kestrel 14:42, QUESTION FOR JØRGEN before check 4 is built: it conflicts with b
 ## History
 - 2026-11-17T15:40 todo -> doing/active (take)
 - 2026-11-17T15:41 doing/active -> doing/waiting (wait)
+- 2026-11-17T15:41 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: jhf: check 4 conflicts with bxqtkt 'no two-way GitHub sync': choose A (close+link only), B (as written) or C (strike), see note 14:42; waiting_since: 2026-11-17T15:41
