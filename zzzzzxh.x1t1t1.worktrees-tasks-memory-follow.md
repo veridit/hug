@@ -4,7 +4,7 @@ title: "Worktrees: record branch and worktree on take; branch as a condition"
 status: "doing"
 type: "feature"
 priority: "high"
-assignee: ["dragon"]
+assignee: ["kestrel"]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
