@@ -1,64 +1,70 @@
-# TUI header: all of Jørgen's 2026-11-17 evening rulings in one picture
+# TUI screen bands: named once, used everywhere
 
-crab, 00:00 local. Tickets: e3sevr (keys, trail, title line), qh9ep1 (view prefix and counts),
-ahejza (filter and sort line), 41hhgn (asked stage). Each later ticket builds on this picture.
-Nothing here may contradict another line.
+crab, 2026-11-18 00:04 local, from Jørgen's rulings 2026-11-17 23:35 to 00:03. Tickets: e3sevr
+(keys, detail bands), qh9ep1 (view prefix and counts), ahejza (filter and sort), 41hhgn (asked
+stage), 0gztsy (the question on its check). Each builds on this file. Where a ticket and this file
+differ, ask crab.
+
+Jørgen 00:03: "we have to have some clear ideas: a global header, and it goes away, and then you
+have the breadcrumb, then the context of the ticket, then the subject, and then the details."
+
+## The bands, top to bottom
+
+Every screen is built from these named bands. Code and goldens use these names.
+
+| Band | What it is | List views | Task detail |
+|---|---|---|---|
+| **global** | the whole board: view tabs, counts, filter and sort | shown | **gone** |
+| **breadcrumb** | where you are, and where u takes you back | `HUG TASKS · overview` | `HUG TASKS · overview › 6ephqk › kx2ndm` |
+| **context** | facts about the ticket: state, type, priority, group, owner, model, branch, dates | (in rows) | shown |
+| **subject** | what the ticket is: its title | (in rows) | shown, bold |
+| **details** | the body: goal, acceptance, files, notes; scrolls | the rows | shown, under a dim rule |
+| **footer** | the keys that work at the focus, or the message | shown | shown |
 
 ## List views (overview, list, board, lint)
 
 ```
-HUG TASKS · overview   1/138 tasks · ! 14 broken · 29 advice                       hug v0.7.50
+HUG TASKS · overview                      1/138 tasks · ! 14 broken · 29 advice · ? 15 for you
 view: overview  list  board  !lint        │ todo 31 · doing 26 · depends 0 · done 79 · dropped 3
 filter: none · sort: rank
+──────────────────────────────────────────────────────────────────────────────────────────────
+  IN PROGRESS …                                                                  ← details (rows)
 ```
 
-- Line 1: the product, the current view, the task count and the lint counts. Unchanged.
-- Line 2 (qh9ep1): `view:` with v and each view letter marked; vo, vl, vb and v! switch views.
-  The state counts sit right-aligned after a dim `│`, replacing the old counts line.
-  At 80 columns the counts drop from the right first (dropped, then done).
-- Line 3 (ahejza): `filter: … · sort: …`, with f and s marked. The `1-4` hint is gone.
-- That is one line fewer than today.
+- breadcrumb (line 1): `HUG TASKS ·` and the view, with the board's counts right-aligned.
+- global (lines 2-3):
+  - Line 2 (qh9ep1): `view:` with v and each view letter marked; vo, vl, vb and v! switch
+    views. The state counts sit right-aligned after a dim `│`. At 80 columns they drop from the
+    right first.
+  - Line 3 (ahejza): `filter: … · sort: …` with f and s marked. No `1-4` hint.
 
-## Detail of a task
-
-Jørgen 00:01 local: most of the list header is not relevant inside a task. The only thing that
-matters is where u takes him back, as a breadcrumb, at the start of line 1.
+## Task detail
 
 ```
-HUG TASKS · overview › 6ephqk › kx2ndm                            ? 16 for you · hug v0.7.50
-▸ TUI: groups and epics visible and collapsible                       ← the title, bold, full width
-[doing] [feature] [high]  group:root  assigned:nautilus · claude-opus-5-5/high · main
-created 2026-11-16 · updated 2026-11-16 · tui-groups-epics-visible
-───────────────────────────────────────────────────────────────────── dim rule
-GOAL … ACCEPTANCE … (the details)
+HUG TASKS · overview › 6ephqk › kx2ndm                                    ? 15 for you    ← breadcrumb
+[doing] [feature] [high]  group:root  assigned:nautilus · claude-opus-5-5/high · main     ← context
+created 2026-11-16 · updated 2026-11-16 · tui-groups-epics-visible                        ← context
+▸ TUI: groups and epics visible and collapsible                                           ← subject
+──────────────────────────────────────────────────────────────────────────────────────────────
+GOAL …                                                                                    ← details
+ACCEPTANCE …
 ```
 
-Jørgen 00:02 local, final: "or you could put the ticket ID in the breadcrumb, meaning that the
-header gets a prominent space." This replaces the 23:58 "id first on the title line". The id is the
-last crumb (you are here), in the accent colour, and the crumbs before it are dim. The title gets its
-own full-width line in bold. With page focus, `▸` sits before the title.
+- **global** goes away inside a task. vo, vl, vb and v! still work there, listed in help, not
+  drawn.
+- **breadcrumb**: the view u returns to, the parent tasks on the detail stack, then this task's
+  id in the accent colour as the last crumb. The crumbs before it are dim. `? N for you` sits on
+  the right, because it is about him, not the list.
+- **context**: the badge row (state, type, priority, group, assignee, model, branch; no id
+  badge) and the dates line, dim except the badges' own colours.
+- **subject**: the title, bold, full width, right above the details, so it reads as the heading
+  of what follows. `▸` before it marks page focus, and the footer then lists the task-wide keys.
+- A dim full-width rule closes the header. Everything under it is details and scrolls.
+- The asked or waiting question is not in the header. It shows once, on the check it is about
+  (0gztsy), or as one block at the top of the details when it names no check.
 
-Jørgen 00:02 local, on the badge, dates and wait lines: "this seems to be the ticket header; and
-after that you would have the ID and the ticket, and then the details." So the detail reads in three
-bands: the breadcrumb (where you are and where u goes), the ticket header (title, badges, dates), then
-the details under a dim rule. The id leaves the badge row: it is in the breadcrumb.
-
-The wait or asked line does not sit in the header. Today it shows twice: once orange under the
-dates (`└ waiting on you …`) and once blue (`? waiting: … asked by … a answer`). 0gztsy makes
-that once, on the check it is about, with focus there. A question that names no check shows as one
-block at the top of the details, styled like a check.
-
-- Line 1 is the breadcrumb: `HUG TASKS ·`, then the view u returns to, then any parent tasks
-  on the detail stack, then this task's id. The crumb before the id is where u goes. The word
-  `detail` is gone.
-- The task count, the lint counts, the view line, the state counts and the filter/sort line
-  all leave the detail. They describe lists. Only `? N for you` stays, right-aligned, since it
-  is about him, not the list.
-- vo, vl, vb and v! still work from a detail. They are listed in help, not drawn.
-- The title line follows the breadcrumb: the bold title alone, full width.
-  With page focus, `▸` sits before it. The id badge leaves the badge row.
-- That frees three lines for the task itself.
-- Page focus on the id lists the task-wide keys in the footer (e3sevr check).
+Order question for Jørgen: context before subject (as he said it), or subject before context
+(a title first, then its facts)? This file follows his words: context, then subject.
 
 ## Footer while a prefix is pending (qh9ep1)
 

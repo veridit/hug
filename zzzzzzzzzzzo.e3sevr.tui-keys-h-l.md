@@ -64,5 +64,6 @@ file:header-spec.md (3566 bytes, sha256:3e513627) replaces sha256:6c7fafa8
 Jørgen 00:02 local: the badge/dates block is the ticket header; after the breadcrumb comes the id and title, then that header, then the details. header-spec.md updated: three bands (breadcrumb; id+title, badges, dates; dim rule; details). The doubled wait lines (orange '└ waiting on you…' plus blue '? waiting… a answer') go to 0gztsy's one-place rendering.
 file:header-spec.md (3932 bytes, sha256:da65f983) replaces sha256:3e513627
 Jørgen 00:02 local, replacing 23:58: 'put the ticket ID in the breadcrumb, meaning the header gets a prominent space.' The id is the last crumb ('HUG TASKS · overview › kx2ndm', id in accent, crumbs before it dim); the title line is the bold title alone, ▸ before it on page focus; no id badge. header-spec.md updated.
+file:header-spec.md (4548 bytes, sha256:c0b38735) replaces sha256:da65f983
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
