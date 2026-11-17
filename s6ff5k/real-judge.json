@@ -1,0 +1,527 @@
+{
+ "122b8c7f8fce492c": {
+  "id": "122b8c7f8fce492c",
+  "verdict": "right",
+  "reason": "Accurately records dragon's correction (lane tree correct, tc 392, no NEWLY GREEN, 4 CHANGED RED from order-dependent key fixed by sorting), consistent with existing notes zgf3kp/x27rm4; nothing false, though largely redundant."
+ },
+ "619c18ccbb70c803": {
+  "id": "619c18ccbb70c803",
+  "verdict": "right",
+  "reason": "Stores the corrected fact exactly as the DM states (3 rows already removed, tc=392, no NEWLY GREEN, only 4 order-dependent CHANGED RED); consistent with notes; duplicates zgf3kp but is not wrong."
+ },
+ "522f797cb59fd14c": {
+  "id": "522f797cb59fd14c",
+  "verdict": "right",
+  "reason": "Correctly records the newly received rc.10 push hold from 0f4b4413a until rabbit says released, matching the DM and the hold-protocol note d29gnp."
+ },
+ "7675a025de7de7ce": {
+  "id": "7675a025de7de7ce",
+  "verdict": "right",
+  "reason": "Accurately captures the rc.10 hold (no pushes until \"released\", local commits OK); the claim that it supersedes older rc.05/rc.06 hold notes is true."
+ },
+ "4ea1db53daf8bc58": {
+  "id": "4ea1db53daf8bc58",
+  "verdict": "wrong",
+  "reason": "Stores a transient background-task completion status plus unverified/plan content (\"output retrieved\", \"inspected next\") that has no durable value and is not established by the message."
+ },
+ "e814a6f3d96a2660": {
+  "id": "e814a6f3d96a2660",
+  "verdict": "wrong",
+  "reason": "Core rc.12 facts are accurate, but it adds an unsupported claim that rabbit has no rc.12 items in flight; the message only says hibiscus has nothing queued."
+ },
+ "ab132192fb4b21e0": {
+  "id": "ab132192fb4b21e0",
+  "verdict": "right",
+  "reason": "bq5ske records an rc.06 holding status from 2026-10-31, superseded by the newer rc.12 holding message."
+ },
+ "b8780a16fdf3795a": {
+  "id": "b8780a16fdf3795a",
+  "verdict": "right",
+  "reason": "76w944 records an rc.03 holding status, clearly stale and superseded by the rc.12 holding update."
+ },
+ "4391baed80aad601": {
+  "id": "4391baed80aad601",
+  "verdict": "right",
+  "reason": "Stores the new rc.12 holding fact, explicitly marks rc.03/rc.06 statuses superseded, and avoids inferring push permission or ticket reallocation."
+ },
+ "b2b414091f894c69": {
+  "id": "b2b414091f894c69",
+  "verdict": "unclear",
+  "reason": "A read-only memory_search neither removes, corrects, nor stores a note, so the right/wrong criteria do not apply."
+ },
+ "c941ef9d2e6f9ef6": {
+  "id": "c941ef9d2e6f9ef6",
+  "verdict": "wrong",
+  "reason": "Stores an ephemeral 20-min check-in status (suite green, no action needed) that merely restates the finished task output; no durable fact and it does nothing about the still-unresolved xf3rbk failure."
+ },
+ "2a6459bcb4feb938": {
+  "id": "2a6459bcb4feb938",
+  "verdict": "right",
+  "reason": "Accurately captures the newer orangutan ruling: 1966 timeout row cleared, TASK-1993 to dragon, lane/1980 first, lane/1966 held at f0cfa88e0, read-only TASK-1988 work; this correctly supersedes the older gate-order plan in mg86pr."
+ },
+ "dc4e6098134d4fe2": {
+  "id": "dc4e6098134d4fe2",
+  "verdict": "right",
+  "reason": "Stores the same corrected dispatch facts (1966 row cleared, 1993 to dragon, lane/1980 first, hold lane/1966, read-only TASK-1988), consistent with the message and explicitly superseding mg86pr's stale order."
+ },
+ "3adc2a275fc0f240": {
+  "id": "3adc2a275fc0f240",
+  "verdict": "right",
+  "reason": "Faithfully records the stalled watcher 449969huj9, its last output, the decision to cancel instead of blocking, and the redirect to checking Jenkins/build state directly; the older bapi notes are not contradicted."
+ },
+ "964471a838404fbe": {
+  "id": "964471a838404fbe",
+  "verdict": "wrong",
+  "reason": "Hare's report confirms draft lottery 69 was created and left unpublished with a partial report at .jcode/scratch/4321-evidence/report.md, so note 4ec548 is still accurate and should not be forgotten."
+ },
+ "9842bb5314c0494e": {
+  "id": "9842bb5314c0494e",
+  "verdict": "right",
+  "reason": "Stores the current lottery 69 status accurately: synthetic draft, unpublished, stopped on duplicate selector error, no purchases/draw/deletion."
+ },
+ "c2ef8d5831f5855b": {
+  "id": "c2ef8d5831f5855b",
+  "verdict": "wrong",
+  "reason": "The old note describes a prior test's crop-dialog cause; the new report's duplicate-selector error does not show that earlier note false or superseded."
+ },
+ "3d832e55fc8be112": {
+  "id": "3d832e55fc8be112",
+  "verdict": "right",
+  "reason": "Stores the current lottery 69 completion facts, consistent with the swarm report and existing evidence note."
+ },
+ "ef7b7dc37bd4a194": {
+  "id": "ef7b7dc37bd4a194",
+  "verdict": "wrong",
+  "reason": "The DM only says the gate is free for builds; it does not show Dragon D is unverified, and the restated load rule conflicts with the gate being free."
+ },
+ "8a40b7368d854533": {
+  "id": "8a40b7368d854533",
+  "verdict": "wrong",
+  "reason": "The DM about P3 gate availability does not show the Dragon B/C/D accomplishment record is wrong or stale."
+ },
+ "063512d2322cc520": {
+  "id": "063512d2322cc520",
+  "verdict": "right",
+  "reason": "Stores the corrected state: lane 392, no NEWLY GREEN, 4 CHANGED RED were order-dependence artifacts fixed by sorting; consistent with message and x27rm4, and adds the new order-independent-key fact."
+ },
+ "cac6dcfd5310d22b": {
+  "id": "cac6dcfd5310d22b",
+  "verdict": "wrong",
+  "reason": "Deletes zgf3kp, which still accurately records that lane 1998 removed the 3 rows, tc=392, and the NEWLY GREEN report was a wrong-lane artifact."
+ },
+ "c9e5aa62103f4229": {
+  "id": "c9e5aa62103f4229",
+  "verdict": "wrong",
+  "reason": "Pure duplicate of zgf3kp and x27rm4 with a misleading 2026-11-17 date prefix; adds no new fact worth keeping."
+ },
+ "796af3d58f852019": {
+  "id": "796af3d58f852019",
+  "verdict": "wrong",
+  "reason": "Redundant restatement of zgf3kp, plus an unsupported claim that the agent personally verified tc.tsv in a specific 'header4/w' lane."
+ },
+ "f34afb2b79196740": {
+  "id": "f34afb2b79196740",
+  "verdict": "wrong",
+  "reason": "Deletes x27rm4, which still holds: the false NEWLY GREEN came from a stale other-lane tc.tsv and the real issue was 4 order-dependent CHANGED RED rows."
+ },
+ "7252c7e4b168d5f8": {
+  "id": "7252c7e4b168d5f8",
+  "verdict": "wrong",
+  "reason": "The DM confirms the note exactly: the NEWLY GREEN report was false because it was judged against the wrong lane's tc.tsv, and the lane is correct at tc 392. The note still holds, so forgetting it removes a true fact."
+ },
+ "60d3d5061c6e82ef": {
+  "id": "60d3d5061c6e82ef",
+  "verdict": "wrong",
+  "reason": "Same as above: x27rm4 accurately records that the NEWLY GREEN report was false due to another lane's stale tc.tsv and that the real issue was four order-dependent CHANGED RED rows. The message corroborates this, so the note should be kept."
+ },
+ "1a0eb69ed84191bf": {
+  "id": "1a0eb69ed84191bf",
+  "verdict": "right",
+  "reason": "Stores an accurate summary of the DM: peer acknowledged the mis-comparison, dragon's lane is correct at tc 392 with no NEWLY GREEN, and the note correctly avoids claiming the order-dependent key issue is fixed."
+ },
+ "82cc51f784534022": {
+  "id": "82cc51f784534022",
+  "verdict": "right",
+  "reason": "Accurately records the peer report that the chain dry-run is green and the gate is free, with a sensible caveat that it is unverified and that standing concurrency limits still apply."
+ },
+ "fb08144d7962c20a": {
+  "id": "fb08144d7962c20a",
+  "verdict": "right",
+  "reason": "Correctly captures the current release hold for rc.10 cut from 0f4b4413a and the no-push/commit-locally rule, matching rabbit's message; this supersedes the stale rc.06 hold notes."
+ },
+ "0a88fa7570e01bc6": {
+  "id": "0a88fa7570e01bc6",
+  "verdict": "right",
+  "reason": "6jffgk claims pushes on hold pending rc.06, but the newer 7cs8kb note records rc.06 already released with no hold active, so the note is stale and its removal is justified."
+ },
+ "49a1cd8ee32eca8c": {
+  "id": "49a1cd8ee32eca8c",
+  "verdict": "right",
+  "reason": "Stores an accurate, dated record of the new rc.10 push hold from 0f4b4413a (STATBUS-572) with the 'released' condition, matching the message."
+ },
+ "a1d8b5c4204112bd": {
+  "id": "a1d8b5c4204112bd",
+  "verdict": "right",
+  "reason": "Accurately captures the rc.10 hold, commit, swarm id and the commit-locally/re-check-before-push guidance; content matches the message despite a minor 'v rc.10' typo."
+ },
+ "8ace20dd05110cb1": {
+  "id": "8ace20dd05110cb1",
+  "verdict": "right",
+  "reason": "Same stale rc.06 hold note (6jffgk) already contradicted by 7cs8kb's rc.06 release, so removing it is correct."
+ },
+ "550dba05715039f1": {
+  "id": "550dba05715039f1",
+  "verdict": "unclear",
+  "reason": "7cs8kb's 'No hold active' is superseded by the rc.10 hold, but the note also carries the still-relevant rule to notify rabbit before migration or cli/ pushes, so deleting the whole note is not clearly right or wrong."
+ },
+ "8a1201b6428c2f73": {
+  "id": "8a1201b6428c2f73",
+  "verdict": "right",
+  "reason": "rc.05 hold note is superseded by later release and the new rc.10 hold; stale status."
+ },
+ "ec3f2939cd9fc885": {
+  "id": "ec3f2939cd9fc885",
+  "verdict": "wrong",
+  "reason": "Besides the stale 'no hold active' status, it carries the still-valid rule to tell rabbit before migration/cli changes; deleting it drops a live instruction."
+ },
+ "473955808ac458a7": {
+  "id": "473955808ac458a7",
+  "verdict": "right",
+  "reason": "rc.06 hold status is superseded by the rc.06 release and the new rc.10 hold; no lasting content lost."
+ },
+ "13535efdb20fc8e3": {
+  "id": "13535efdb20fc8e3",
+  "verdict": "right",
+  "reason": "rc.06 preparation/CI detail is stale history, no standing instruction."
+ },
+ "0d9326126036750e": {
+  "id": "0d9326126036750e",
+  "verdict": "wrong",
+  "reason": "Contains still-valid standing constraints (owner's STATBUS-558/563 hold, mosquito note) beyond the expired rc.05 status."
+ },
+ "48fe33c0af1fc9ba": {
+  "id": "48fe33c0af1fc9ba",
+  "verdict": "right",
+  "reason": "Records the new rc.10 push hold from rabbit's message and marks older rc.05/rc.06 hold status superseded, which is accurate."
+ },
+ "0989f82b35de9f78": {
+  "id": "0989f82b35de9f78",
+  "verdict": "right",
+  "reason": "Preserves the still-valid standing constraints from 7cs8kb (notify rabbit for migration/cli pushes) and ycabag (owner's 558/563 work), neither lifted by the message."
+ },
+ "c33109732aad674a": {
+  "id": "c33109732aad674a",
+  "verdict": "right",
+  "reason": "Faithfully restates the mosquito jsonb_stats note and correctly labels it as historical/unverified rather than asserting current state."
+ },
+ "432c45fa94662510": {
+  "id": "432c45fa94662510",
+  "verdict": "right",
+  "reason": "Accurately captures rc.10 tagging at 0f4b4413a, green CI, no migration changes since rc.09, and successful release workflow per the task output."
+ },
+ "10f5b58c58c18a28": {
+  "id": "10f5b58c58c18a28",
+  "verdict": "wrong",
+  "reason": "Release facts are correct, but it stores a false stale claim that the 2026-11-03 rc.04 hold (cn6r6f) still governs commits; that hold was superseded by later releases and the rc.10/rc.11 pushes shown."
+ },
+ "08d9642469085812": {
+  "id": "08d9642469085812",
+  "verdict": "right",
+  "reason": "The rc.04 rabbit hold is superseded by the rc.11 tag/push and successful release in this task, so removing the stale hold note is correct."
+ },
+ "36331fd549cb602f": {
+  "id": "36331fd549cb602f",
+  "verdict": "right",
+  "reason": "Stores the current rc.11 release facts and explicitly notes it supersedes the outdated rc.04 hold."
+ },
+ "87ed718a4233a6c1": {
+  "id": "87ed718a4233a6c1",
+  "verdict": "right",
+  "reason": "Same stale rc.04 hold; rc.11 release and master push show it no longer applies."
+ },
+ "93ec327ce620962e": {
+  "id": "93ec327ce620962e",
+  "verdict": "right",
+  "reason": "Duplicate of the stale-hold removal; removal is justified by the completed rc.11 release."
+ },
+ "462b8b9338b74725": {
+  "id": "462b8b9338b74725",
+  "verdict": "wrong",
+  "reason": "The log shows 'Push on master' succeeded and rc.11 was tagged/pushed, so this note's claim that the hold cannot be treated as lifted and that success does not establish push permission contradicts the evidence and keeps a stale caution alive."
+ },
+ "ab37114f0a064410": {
+  "id": "ab37114f0a064410",
+  "verdict": "right",
+  "reason": "Stores the confirmed outcome of the rc.11 gate watch: completed, 3548.6s, exit 0, matching the task message."
+ },
+ "83cb77cc05216bf1": {
+  "id": "83cb77cc05216bf1",
+  "verdict": "wrong",
+  "reason": "The rc.08 watcher timeout note concerns rc.08 and is not contradicted by an rc.11 gate completion, so it still holds."
+ },
+ "53c2245ef6032985": {
+  "id": "53c2245ef6032985",
+  "verdict": "wrong",
+  "reason": "sfz240 is itself a correction about a completed fast-suite task and is not made wrong by the rc.11 gate message."
+ },
+ "8006627a4a0e018b": {
+  "id": "8006627a4a0e018b",
+  "verdict": "right",
+  "reason": "Accurately records the new DM: hibiscus holding for rc.12, nothing queued, ticket 558 staying local."
+ },
+ "9ce53e7fb38c50aa": {
+  "id": "9ce53e7fb38c50aa",
+  "verdict": "right",
+  "reason": "bq5ske's rc.06 master hold is stale, superseded by hibiscus's rc.12 hold reported in the message."
+ },
+ "dee73f9af741d688": {
+  "id": "dee73f9af741d688",
+  "verdict": "right",
+  "reason": "76w944 is an old rc.03 hold note superseded by the rc.12 hold; removing stale state is correct"
+ },
+ "d0eb36dbb1e2f7c9": {
+  "id": "d0eb36dbb1e2f7c9",
+  "verdict": "right",
+  "reason": "Accurately restates the current DM (rc.12 hold, nothing queued, 558 local) and is worth keeping"
+ },
+ "8061631310e736b5": {
+  "id": "8061631310e736b5",
+  "verdict": "right",
+  "reason": "Accurate, timestamped note that also flags the older rc.03/rc.06 hold notes as superseded"
+ },
+ "8d3d41f920f52d5a": {
+  "id": "8d3d41f920f52d5a",
+  "verdict": "right",
+  "reason": "bq5ske's rc.06 hold is stale given the rc.12 hold, so removing it is defensible"
+ },
+ "f8af5ee8ea0f71b3": {
+  "id": "f8af5ee8ea0f71b3",
+  "verdict": "right",
+  "reason": "76w944's rc.03 hold is superseded by the newer rc.12 hold; removal is correct"
+ },
+ "e3226339e0105f5a": {
+  "id": "e3226339e0105f5a",
+  "verdict": "right",
+  "reason": "Stores the newer holding state (rc.12, nothing queued, 558 local), which correctly supersedes the older rc.03/rc.06 holding facts."
+ },
+ "adce51f196d31e0f": {
+  "id": "adce51f196d31e0f",
+  "verdict": "wrong",
+  "reason": "fhgceg is a historical root-cause note (docker_gwbridge classification fixed an earlier pre-push failure) that the report does not contradict; it concerns a different, already-fixed error, so it still holds."
+ },
+ "484e8c545b5d6d44": {
+  "id": "484e8c545b5d6d44",
+  "verdict": "right",
+  "reason": "Accurately records the current manifest validation state (exit 2 solely from the pre-existing yellow_push_test.go classification) and notes the earlier docker_gwbridge cause, a worthwhile corrected fact."
+ },
+ "8ba4b2a700907e00": {
+  "id": "8ba4b2a700907e00",
+  "verdict": "wrong",
+  "reason": "Same forget as above; fhgceg's historical docker_gwbridge cause-and-fix is not shown false by a report about a separate, pre-existing yellow_push_test.go error."
+ },
+ "637813e3c791fa3e": {
+  "id": "637813e3c791fa3e",
+  "verdict": "right",
+  "reason": "Comprehensive and accurate summary of the D10 approval, validation results, and the earlier docker_gwbridge fix, all consistent with the report."
+ },
+ "1bcb1db1d7d1f201": {
+  "id": "1bcb1db1d7d1f201",
+  "verdict": "wrong",
+  "reason": "The note says the docker_gwbridge.py manifest classification was fixed; the report's remaining open error is the unrelated yellow_push_test.go classification, so this note is not contradicted and should not be forgotten."
+ },
+ "b9928e1260973e4c": {
+  "id": "b9928e1260973e4c",
+  "verdict": "right",
+  "reason": "Stores an accurate summary of the D10 re-review approval and correctly distinguishes the pre-existing yellow_push_test.go manifest error from the earlier docker_gwbridge issue."
+ },
+ "d6951b266e0856ef": {
+  "id": "d6951b266e0856ef",
+  "verdict": "right",
+  "reason": "The user is proposing a receiving-side timestamp-precision hypothesis; storing it explicitly as unverified is a fair record of the open question, not a false claim."
+ },
+ "4329b34f2b3b6451": {
+  "id": "4329b34f2b3b6451",
+  "verdict": "wrong",
+  "reason": "x6hxhx is a durable methodological lesson about laundering a bad number with a plausible mechanism, unrelated to timestamp precision and still valid."
+ },
+ "80dc521801fcb565": {
+  "id": "80dc521801fcb565",
+  "verdict": "wrong",
+  "reason": "5jyymj is a proven, still-relevant timezone-caching gotcha that the timestamp-precision question does not refute; forgetting it loses verified evidence."
+ },
+ "963f503f4e979ff5": {
+  "id": "963f503f4e979ff5",
+  "verdict": "unclear",
+  "reason": "A recall call neither removes nor stores anything; the user message about aggregates doesn't bear on the workspace-clean note, so there's no edit to judge."
+ },
+ "30cb4e502be26cde": {
+  "id": "30cb4e502be26cde",
+  "verdict": "wrong",
+  "reason": "The message about removing something from an aggregate says nothing that invalidates the workspace-cleanliness note, which still holds."
+ },
+ "1594e9996c82fef5": {
+  "id": "1594e9996c82fef5",
+  "verdict": "wrong",
+  "reason": "Stores a rule contradicting the existing note (no automatic stale-branch deletion) with no evidence from the unrelated user message."
+ },
+ "519bca4f47f2802e": {
+  "id": "519bca4f47f2802e",
+  "verdict": "right",
+  "reason": " Accurately records the completed test run and exit 0 shown in the task output, matching the kind of test-status notes already kept."
+ },
+ "ca7bff54eba6e0e7": {
+  "id": "ca7bff54eba6e0e7",
+  "verdict": "wrong",
+  "reason": "The new completion is a different task (slow history tests), so it does not make the earlier fast-suite completion note stale or wrong."
+ },
+ "b724c268f2ba6fa8": {
+  "id": "b724c268f2ba6fa8",
+  "verdict": "wrong",
+  "reason": "Deletes y6mjp3, a completed TASK-371/372/373 session record; the TASK-1988 DM says nothing that makes that note stale or wrong, and the call neither corrects nor stores the invariant the DM asks for."
+ },
+ "565341dead50dfc2": {
+  "id": "565341dead50dfc2",
+  "verdict": "right",
+  "reason": "Stores the corrected/confirmed TASK-1988 facts the DM asks to write down: the over-count invariant (over-count => Shared, never unsound), the shadowed-name pin, and the MO#4a split-cost note."
+ },
+ "145a1aa20d8f12aa": {
+  "id": "145a1aa20d8f12aa",
+  "verdict": "unclear",
+  "reason": "This is a memory_search for the old TASK-669/670 succession packet, not a removal or storage, so the rubric's right/wrong conditions are not settled by the message."
+ },
+ "5f63ae57eb10d947": {
+  "id": "5f63ae57eb10d947",
+  "verdict": "unclear",
+  "reason": "A memory_search for the TASK-426 Stage B kickoff; it neither removes nor stores anything, so the evidence does not settle a right/wrong judgment."
+ },
+ "82d5a4e735900456": {
+  "id": "82d5a4e735900456",
+  "verdict": "wrong",
+  "reason": "Forgets b1bxc1 (the TASK-669/670 compiler-lang succession packet) while the message is only about polling the TASK-1988 preview; nothing shows that packet is stale or superseded."
+ },
+ "7792c8b8ac7f4fae": {
+  "id": "7792c8b8ac7f4fae",
+  "verdict": "right",
+  "reason": "Old 2026-07-05 session summary is stale relative to the current TASK-1988 state and is explicitly declared superseded by the newer 2026-08-13 handover note."
+ },
+ "bdcd212a1db741b9": {
+  "id": "bdcd212a1db741b9",
+  "verdict": "wrong",
+  "reason": "Reuses the existing 06ppp9 id to overwrite a detailed still-relevant handover (routing law, sequencing) with a vague pointer note, destroying information nothing shows to be wrong."
+ },
+ "21e45a732610cb2e": {
+  "id": "21e45a732610cb2e",
+  "verdict": "right",
+  "reason": "Stores the concrete fresh TASK-1960 watch results and correctly flags the older 5048 pass count as superseded by 5051."
+ },
+ "3a3dd8e86317771c": {
+  "id": "3a3dd8e86317771c",
+  "verdict": "right",
+  "reason": "Note 0n7exf's pass count (5048) is stale versus the 5051 result in the user message, so removing it in favor of the new record is reasonable."
+ },
+ "40fcb9d19665d0be": {
+  "id": "40fcb9d19665d0be",
+  "verdict": "right",
+  "reason": "Same stale pass-count note 0n7exf; removal is justified by the newer run data shown in the message."
+ },
+ "70a76b954df1d8dd": {
+  "id": "70a76b954df1d8dd",
+  "verdict": "right",
+  "reason": "Accurately records the completed run's phase results (5051/38/38/73, rc=0 with 392 TC failures) and flags that full output is needed; factual, non-false, potentially useful for TASK-1960 tracking."
+ },
+ "d8747820b67f2736": {
+  "id": "d8747820b67f2736",
+  "verdict": "wrong",
+  "reason": "Stores a meta 'verify before trusting' caveat rather than any corrected fact; low-value process noise that duplicates what the two existing notes already convey."
+ },
+ "55fdd984fd817efe": {
+  "id": "55fdd984fd817efe",
+  "verdict": "right",
+  "reason": "The older 2026-09-25 'unresolved validation failure' note is superseded by the 2026-11-03 note stating suites matched baseline after the TASK-1960 fix, so removing it is justified."
+ },
+ "7a793303a1b4c0bf": {
+  "id": "7a793303a1b4c0bf",
+  "verdict": "wrong",
+  "reason": "Stores no factual content, only a vague 'treat as possibly stale' caveat about the TASK-044 census; it neither corrects nor replaces the fact, so it is not worth keeping."
+ },
+ "1aa5ba40c90c8736": {
+  "id": "1aa5ba40c90c8736",
+  "verdict": "unclear",
+  "reason": "This is a memory_recall read, not a forget/remember edit; it neither removes nor stores anything, so the remove/correct/store rubric does not apply."
+ },
+ "64cf49fceb861c27": {
+  "id": "64cf49fceb861c27",
+  "verdict": "right",
+  "reason": "Stores the corrected fast-tier filter from the DM and explicitly marks it superseding the stale single-exclusion description."
+ },
+ "cd447e35504cbc40": {
+  "id": "cd447e35504cbc40",
+  "verdict": "wrong",
+  "reason": "Forgetting 4dsvsc discards still-valid content (container tests need IntegrationTestBase/Category, Brovs4577 failure lesson, check CI selection); only the filter string was superseded, so removal is over-broad."
+ },
+ "8579a8150bb2b9b9": {
+  "id": "8579a8150bb2b9b9",
+  "verdict": "right",
+  "reason": "Stores the new filter accurately and keeps the still-relevant CI-selection guidance, consistent with the message."
+ },
+ "17186ef18e8651b1": {
+  "id": "17186ef18e8651b1",
+  "verdict": "wrong",
+  "reason": "Same over-removal: 4dsvsc retains valid container/test-selection lessons that the DM did not invalidate."
+ },
+ "05091fa56b9d01dd": {
+  "id": "05091fa56b9d01dd",
+  "verdict": "right",
+  "reason": "Consolidates the updated filter with the still-valid container lesson and notes #597 as pending, matching the DM."
+ },
+ "16c5aa23f316faa5": {
+  "id": "16c5aa23f316faa5",
+  "verdict": "right",
+  "reason": "Stores the factual outcome of #597 (SUCCESS, exit 0) matching the shown output; a correct, useful new note."
+ },
+ "3ff2ee3b101eecaa": {
+  "id": "3ff2ee3b101eecaa",
+  "verdict": "wrong",
+  "reason": "#29's hang is a separate earlier run and is not contradicted by #597 succeeding; the note still holds and should not be deleted."
+ },
+ "a46acfaac22f0370": {
+  "id": "a46acfaac22f0370",
+  "verdict": "wrong",
+  "reason": "#344/#345 timeout failures are a distinct historical incident, unaffected by #597 passing; removing it loses valid information."
+ },
+ "cb576683613feb86": {
+  "id": "cb576683613feb86",
+  "verdict": "wrong",
+  "reason": "The #107 bad-image-tag abort is unrelated to #597 and remains a valid lesson; nothing shows it is stale or false."
+ },
+ "d4fb96721aab300f": {
+  "id": "d4fb96721aab300f",
+  "verdict": "unclear",
+  "reason": "The #597 success part is accurate, but labeling the other unrelated incidents as 'superseded' is an unsupported inference rather than a shown fact."
+ },
+ "ba791f6d5519ba71": {
+  "id": "ba791f6d5519ba71",
+  "verdict": "right",
+  "reason": "Accurately records the newly observed outcome (#597 SUCCESS, exit 0) and correctly notes commit/test counts were not shown; consistent with existing CI-result notes."
+ },
+ "6fdce984c49c05ad": {
+  "id": "6fdce984c49c05ad",
+  "verdict": "wrong",
+  "reason": "The 2026-09-25 note about an unresolved failing validation command is not contradicted by this separate 2026-11-06 check-in run that exited 0; the note still holds."
+ },
+ "a2310023bafafa5b": {
+  "id": "a2310023bafafa5b",
+  "verdict": "right",
+  "reason": "Faithful, accurate summary of the check-in task output (duration, exit 0, phases, 26 tests failing=0), useful as run record."
+ },
+ "729a1f2cd9650de6": {
+  "id": "729a1f2cd9650de6",
+  "verdict": "wrong",
+  "reason": "Note 7j3hk8 is a detailed factual verification record with nothing in the message or newer notes showing it to be wrong or stale; deleting it discards valid evidence."
+ },
+ "9098cf74cdda22b3": {
+  "id": "9098cf74cdda22b3",
+  "verdict": "wrong",
+  "reason": "Stores a false inference: the 2026-09-25 unresolved-validation note is a different run and does not make the earlier independent verification unconfirmed."
+ }
+}

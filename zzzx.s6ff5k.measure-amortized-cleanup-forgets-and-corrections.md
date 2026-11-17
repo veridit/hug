@@ -55,6 +55,7 @@ hatchling 16:05, scoring fixed before any judge verdict was seen (replay at 232/
 file:real-report.txt (634 bytes, sha256:1ccef44f) real replay real-report.txt
 file:spot.txt (36333 bytes, sha256:dc7c17b7) real replay spot.txt
 file:real-report.py.txt (2651 bytes, sha256:599141ac) real replay real-report.py.txt
+file:real-judge.json (25261 bytes, sha256:91e024ea) blind judge verdicts, keyed by run+call hash
 ## History
 - 2026-11-17T16:08 todo -> doing/active (take)
 - 2026-11-17T17:33 doing/active -> doing/waiting (wait)
