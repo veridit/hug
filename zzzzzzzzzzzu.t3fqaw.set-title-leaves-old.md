@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T18:56"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "go to push after nautilus's rename is on main (main held from 18:05Z)"
+waiting_since: "2026-11-17T19:03"
+waiting_asked_by: "calf"
+waiting_for: "crab"
 ---
 
 ## Goal
@@ -39,3 +43,4 @@ Imported backlog titles can be multi-line. Check every field writer (set, take, 
 Ready on branch kestrel/t3fqaw, commit 9d42d03, not pushed: main is held from 18:05Z for nautilus's rename (crab 17:56); it will be rebased onto that. Cause: frontmatter.go trimmed '#' lines back from the next key as YAML comments, so an indented block-scalar line starting with '#' stayed. Real case: Seid t6j13s, dc0e38964 (2026-11-16 21:22, v0.7.35) left '  #return/#break clauses (test_handler_return.sd)' under the new title; reproduced on main with that exact file. Tests fail first on main: TestSetTitleReplacesFoldedTitle 'continuation line left: "  #return/#break clauses (test_handler_return.sd)"'; TestEveryFieldWriteReplacesMultiLineValue 6 of 7 writers (type, priority, assignee, labels, waiting_on, design_question) leave '"  #second line"' '"  #third line"'. -race: task ok 60.738s, cli ok 138.441s, importer ok 2.849s.
 ## History
 - 2026-11-17T18:56 todo -> doing/active (take)
+- 2026-11-17T19:03 doing/active -> doing/waiting (wait)
