@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.41 - 2026-11-17
 
 - An acceptance check that no longer applies can be struck out with a reason instead of being ticked or left open: `hug task strike ID N --reason "why"` (MCP `task_update` action `strike` with `reason`; in `hug tui` press `-` on the focused check, type the reason, Enter). The file keeps the text, crossed through, with the decision: `- [ ] ~~text~~ (not relevant: why, NAME, 2026-11-17)`, which any GitHub-flavoured Markdown viewer draws crossed out. `done` counts a struck check as settled and still refuses an open one; `show` prints it as `2. [-] ~~text~~ (not relevant: ...)`, `--json`/`--jsonl` and MCP give each check a `state` (open, ticked, struck) with `reason`, `struck_by`, `struck_on`, and the TUI draws it ☒, dim and crossed through. A reason is required; `--undo` (or `-` again in the TUI) restores it; a ticked check cannot be struck, and a struck one must be restored before it is ticked. A done task with an open check is now reported as broken by lint, naming both ways out (sfa8w4).
 - `hug tui`: `/` search finds a task by an imported id (an alias such as `STATBUS-402`, as `hug task show` accepts), case-insensitively; a row found only that way names the alias, dim, after the title. `#` jump already did (vzghj8).
