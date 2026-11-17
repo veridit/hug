@@ -4,7 +4,7 @@ title: "TUI: groups and epics visible and collapsible"
 status: "doing"
 type: feature
 priority: "high"
-assignee: ["vole"]
+assignee: ["nautilus"]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
