@@ -9,13 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T18:16"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "after 46ek1f (crab 17:52)"
-waiting_since: "2026-11-17T18:53"
-waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -55,3 +52,4 @@ landed 3bc5d72 on main 2026-11-17: hug task take --model ID/EFFORT records the e
 ## History
 - 2026-11-17T18:16 todo -> doing/active (take)
 - 2026-11-17T18:53 doing/active -> doing/waiting (wait)
+- 2026-11-17T21:23 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: after 46ek1f (crab 17:52); waiting_since: 2026-11-17T18:53
