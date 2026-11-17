@@ -1,13 +1,16 @@
 ---
 id: 4vcwxk
 title: "macOS: a project memory does not reach the other clone within 10 s"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
