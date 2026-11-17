@@ -78,6 +78,9 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// (t709he; a CLI or MCP write never guesses human).
 	if who.Model == "" {
 		s.r.Trailers = []string{"Model: human"}
+		// The TUI's t takes as the person at the keyboard (6ephqk check 6:
+		// review_by = the TUI user, Model: human).
+		who.Model = "human"
 	}
 	// The TUI lives while others write: it must read the files each time.
 	s.s.Snapshot = false

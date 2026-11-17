@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync/atomic"
 
@@ -564,6 +565,11 @@ func (m model) paneIndices(p int) []int {
 		if match {
 			out = append(out, i)
 		}
+	}
+	if m.view == "overview" && (p == sectionDoing || p == sectionNext) {
+		// A task waiting on you sorts to the top of its section (6ephqk
+		// check 8, Jørgen 11:42), the rest keep their order.
+		sort.SliceStable(out, func(a, b int) bool { return m.forYou(m.visible[out[a]]) && !m.forYou(m.visible[out[b]]) })
 	}
 	return out
 }

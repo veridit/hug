@@ -59,12 +59,14 @@ func TestMoveCommands(t *testing.T) {
 		{[]string{"drop", id}, 2, "hug task drop " + id + ` "duplicate of OTHER"`},
 		{[]string{"wait", id}, 2, "hug task wait " + id + ` "CI run 123"`},
 		{[]string{"wait", id, "CI"}, 2, "hug task take " + id + " --model MODEL"},
-		{[]string{"design", id}, 2, "hug task design " + id + ` "the question"`},
-		{[]string{"design", id, "type on rows?", "--as", "crab"}, 0, ""},
+		{[]string{"design", id}, 2, "hug task design " + id + ` "the question" --for NAME`},
+		{[]string{"design", id, "type on rows?", "--as", "crab"}, 2, "hug task design " + id + ` "type on rows?" --for NAME`},
+		{[]string{"design", id, "type on rows?", "--as", "crab", "--for", "jhf"}, 0, ""},
 		{[]string{"design", id, "--clear"}, 0, ""},
 		{[]string{"take", id}, 0, ""},
 		{[]string{"resume", id}, 2, "hug task show " + id},
 		{[]string{"wait", id, "CI run 7", "--as", "nautilus"}, 0, ""},
+		{[]string{"wait", id, "--on", "jhf", "approve the look", "--as", "nautilus"}, 0, ""},
 		{[]string{"resume", id}, 0, ""},
 		{[]string{"drop", id, "superseded"}, 0, ""},
 		{[]string{"set", id, "--status", "done"}, 2, "hug task show " + id},
@@ -76,7 +78,7 @@ func TestMoveCommands(t *testing.T) {
 		}
 	}
 	file := taskFile(t, a, id)
-	for _, want := range []string{"(design); ", "design_asked_by: crab", "(take)", "(wait)", "waiting_asked_by: nautilus; waiting_on: CI run 7", "(drop)", "(reopen); was dropped_at: ", "dropped_reason: superseded"} {
+	for _, want := range []string{"(design); ", "design_asked_by: crab; design_for: jhf", "(take)", "(wait)", "waiting_asked_by: nautilus; waiting_on: jhf: approve the look", "(drop)", "(reopen); was dropped_at: ", "dropped_reason: superseded"} {
 		if !strings.Contains(file, want) && !strings.Contains(file, strings.TrimSuffix(want, "; ")) {
 			t.Errorf("History lacks %q:\n%s", want, file)
 		}

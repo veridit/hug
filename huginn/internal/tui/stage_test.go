@@ -42,7 +42,7 @@ func stageBoard(t *testing.T) model {
 	write("bbbbbb", "Release, then hug setup in seid-lang", "status: \"doing\"\nstage: \"review\"\ndoing_since: \"2026-11-17T08:00\"\nreview_by: \"Jørgen\"\nreview_since: \"2026-11-17T09:48\"")
 	write("cccccc", "Warm cache under 50 ms", "status: \"doing\"\nstage: \"waiting\"\ndoing_since: \"2026-11-17T08:00\"\nwaiting_on: \"CI run 44063552584\"\nwaiting_since: \"2026-11-17T09:41\"")
 	write("dddddd", "One set of variable names", "status: \"doing\"\nstage: \"depends\"\ndoing_since: \"2026-11-17T08:00\"", "cccccc", "eeeeee")
-	write("eeeeee", "Tags listed per board", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"should type leave the rows, or stay as a column?\"")
+	write("eeeeee", "Tags listed per board", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"should type leave the rows, or stay as a column?\"\ndesign_for: \"jhf\"")
 	write("ffffff", "Depend on a group or epic", "status: \"todo\"\nstage: \"ready\"")
 	write("gggggg", "Answer a question in place", "status: \"todo\"\nstage: \"deferred\"\ndeferred_reason: \"after the release\"")
 	m := newModel(s, Options{User: "tester"})
@@ -114,5 +114,53 @@ func TestDependsBar(t *testing.T) {
 		if got := dependsBar(c.done, c.total); got != c.want {
 			t.Errorf("dependsBar(%d, %d) = %q, want %q", c.done, c.total, got, c.want)
 		}
+	}
+}
+
+// 6ephqk check 8: a task waiting on the TUI user names them ("review:
+// you"), is marked ? and sorts to the top of its section, and the header
+// says "? N for you" (Jørgen 11:42, crab 12:38: review_by, design_for, or
+// waiting_on "NAME: what").
+func TestWaitingOnYou(t *testing.T) {
+	m := stageBoard(t)
+	// jhf: the design question (design_for) is theirs; nothing else.
+	m.opts.User = "jhf"
+	view := ansi.Strip(viewAt(m, "overview", 140))
+	if !strings.Contains(view, "? 1 for you") {
+		t.Fatalf("header lacks ? 1 for you:\n%s", view)
+	}
+	next := view[strings.Index(view, "NEXT UP"):strings.Index(view, "RECENTLY DONE")]
+	rows := strings.Split(next, "\n")[1:]
+	if !strings.HasPrefix(rows[0], "? ") || !strings.Contains(rows[0], "eeeeee   feature high     design:   you · should type leave the rows") {
+		t.Fatalf("the design question for jhf is not first in NEXT UP, marked ?:\n%s", next)
+	}
+	// Jørgen: the review he is doing.
+	m.opts.User = "Jørgen"
+	m.refresh("")
+	view = ansi.Strip(viewAt(m, "overview", 140))
+	doing := view[strings.Index(view, "IN PROGRESS"):strings.Index(view, "NEXT UP")]
+	rows = strings.Split(doing, "\n")[1:]
+	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[0], "? ") || !strings.Contains(rows[0], "bbbbbb   feature high     review:   you · 5 min · Release, then hug setup") {
+		t.Fatalf("Jørgen's review is not first in IN PROGRESS, marked ?:\n%s", view)
+	}
+	// Someone with nothing waiting: no count, no mark.
+	m.opts.User = "carol"
+	m.refresh("")
+	view = ansi.Strip(viewAt(m, "overview", 140))
+	if strings.Contains(view, "for you") || regexp.MustCompile(`(?m)^\? `).MatchString(view) {
+		t.Fatalf("carol sees something for her:\n%s", view)
+	}
+	// Waiting on a person: waiting_on "NAME: what".
+	s := m.store
+	if _, e := s.Resume("cccccc"); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := s.Wait("cccccc", "carol: approve the look", "nautilus"); e != nil {
+		t.Fatal(e)
+	}
+	m.refresh("")
+	view = ansi.Strip(viewAt(m, "overview", 140))
+	if !strings.Contains(view, "? 1 for you") || !regexp.MustCompile(`(?m)^\? .*cccccc   feature high     waiting:  you · approve the look`).MatchString(view) {
+		t.Fatalf("carol's wait:\n%s", view)
 	}
 }

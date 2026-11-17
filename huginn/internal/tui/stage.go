@@ -41,6 +41,18 @@ func (m model) rowStage(t task.Task) (word, text string) {
 		g = "depends"
 	}
 	f := func(k string) string { return oneLine(t.Fields[k]) }
+	if m.forYou(t) {
+		// The stage names you (Jørgen 11:42): "review: you", then what.
+		switch g {
+		case "review":
+			return g + ":", "you" + since(t.Fields["review_since"]) + " · " + oneLine(t.Title)
+		case "design":
+			return g + ":", "you · " + f("design_question")
+		case "waiting":
+			_, what, _ := strings.Cut(t.Fields["waiting_on"], ":")
+			return g + ":", "you · " + oneLine(what) + since(t.Fields["waiting_since"])
+		}
+	}
 	reason := ""
 	switch g {
 	case "waiting":
@@ -135,4 +147,37 @@ func (m model) stageWord(word string, width int) string {
 		style = m.styles.status["todo"]
 	}
 	return style.Render(fit(word, width))
+}
+
+// forYou says whether t waits on the TUI user (6ephqk check 8, Jørgen
+// 11:42, crab 12:38): its stage names them in review_by, design_for, or
+// waiting_on as "NAME: what". Only the stage that holds counts, so an
+// outranked design question waits until its dependency is done.
+func (m model) forYou(t task.Task) bool {
+	me := strings.TrimSpace(m.opts.User)
+	if me == "" {
+		return false
+	}
+	is := func(name string) bool { return strings.EqualFold(strings.TrimSpace(name), me) }
+	switch task.Stage(t, m.all) {
+	case "review":
+		return is(t.Fields["review_by"])
+	case "design":
+		return is(t.Fields["design_for"])
+	case "waiting":
+		who, _, named := strings.Cut(t.Fields["waiting_on"], ":")
+		return named && is(who)
+	}
+	return false
+}
+
+// forYouCount is how many shown tasks wait on the TUI user.
+func (m model) forYouCount() int {
+	n := 0
+	for _, t := range m.visible {
+		if m.forYou(t) {
+			n++
+		}
+	}
+	return n
 }

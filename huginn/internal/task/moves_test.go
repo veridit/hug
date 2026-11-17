@@ -74,22 +74,24 @@ func TestMovesWriteNodeFields(t *testing.T) {
 	wantRefused(t, e, "hug task take aaaaaa --model MODEL")
 
 	// design: todo/design with the question, when and who.
-	if _, e = s.Design(a, "keep type on rows?", "crab"); e != nil {
+	_, e = s.Design(a, "keep type on rows?", "crab", "")
+	wantRefused(t, e, `hug task design aaaaaa "keep type on rows?" --for NAME`)
+	if _, e = s.Design(a, "keep type on rows?", "crab", "jhf"); e != nil {
 		t.Fatal(e)
 	}
 	tk, raw := load(t, s, a)
-	if node(tk) != "todo/design" || tk.Fields["design_question"] != "keep type on rows?" || tk.Fields["design_asked_by"] != "crab" || tk.Fields["design_since"] != "2026-11-17T09:41" {
+	if node(tk) != "todo/design" || tk.Fields["design_question"] != "keep type on rows?" || tk.Fields["design_asked_by"] != "crab" || tk.Fields["design_for"] != "jhf" || tk.Fields["design_since"] != "2026-11-17T09:41" {
 		t.Fatalf("design: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
 	if !strings.Contains(raw, "## History\n- 2026-11-17T09:41 todo/ready -> todo/design (design)\n") {
 		t.Fatalf("design history:\n%s", raw)
 	}
 	// design --clear: back to ready, the question to History.
-	if _, e = s.Design(a, "", ""); e != nil {
+	if _, e = s.Design(a, "", "", ""); e != nil {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
-	if node(tk) != "todo/ready" || len(tk.Fields) != 0 || !strings.Contains(raw, "todo/design -> todo/ready (design answered); was design_asked_by: crab; design_question: keep type on rows?; design_since: 2026-11-17T09:41") {
+	if node(tk) != "todo/ready" || len(tk.Fields) != 0 || !strings.Contains(raw, "todo/design -> todo/ready (design answered); was design_asked_by: crab; design_for: jhf; design_question: keep type on rows?; design_since: 2026-11-17T09:41") {
 		t.Fatalf("design --clear: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
 
@@ -105,7 +107,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 	if node(tk) != "doing/active" || tk.Fields["doing_since"] != "2026-11-17T09:41" {
 		t.Fatalf("take: %s %v", node(tk), tk.Fields)
 	}
-	_, e = s.Design(a, "q", "x")
+	_, e = s.Design(a, "q", "x", "jhf")
 	wantRefused(t, e, "hug task set aaaaaa --status todo")
 	_, e = s.Resume(a)
 	wantRefused(t, e, "hug task show aaaaaa")
@@ -195,7 +197,7 @@ func TestTakeForReviewAndGiveBack(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
-	if node(tk) != "todo/review" || tk.Fields["doing_since"] != "" || tk.Fields["review_by"] != "Jørgen" {
+	if node(tk) != "todo/review" || tk.Fields["doing_since"] != "" || tk.Fields["review_by"] != "Jørgen" || len(tk.Assignee) != 0 || !strings.Contains(raw, "(give back; was assignee: Jørgen)") {
 		t.Fatalf("give back: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
 	if d := Parse(tk.Path, []byte(raw)); len(d.Findings) != 0 {

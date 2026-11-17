@@ -209,9 +209,10 @@ func (s *Store) Resume(ref string) (Result, error) {
 	return s.finish(d, true)
 }
 
-// Design asks question on ref, a todo task (todo/design), recording who
-// asked; clear (question "") answers it: the design fields go to History.
-func (s *Store) Design(ref, question, by string) (Result, error) {
+// Design asks question on ref, a todo task (todo/design), of who (a
+// person's name, design_for, required: crab 12:38), recording who asked;
+// clear (question "") answers it: the design fields go to History.
+func (s *Store) Design(ref, question, by, who string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -225,15 +226,18 @@ func (s *Store) Design(ref, question, by string) (Result, error) {
 		if !ownHolds(d.Task, "design") {
 			return s.finish(d, false)
 		}
-		if e = applyMove(d, ts, move{state: "todo", clear: []string{"design_question", "design_since", "design_asked_by"}, why: "design answered"}); e != nil {
+		if e = applyMove(d, ts, move{state: "todo", clear: []string{"design_question", "design_since", "design_asked_by", "design_for"}, why: "design answered"}); e != nil {
 			return Result{}, e
 		}
 		return s.finish(d, true)
 	}
-	if d.Task.Fields["design_question"] == question {
+	if who = strings.TrimSpace(who); who == "" {
+		return Result{}, usageErr(d.Task.ID, "design needs who must answer: --for NAME", "hug task design "+d.Task.ID+` "`+question+`" --for NAME`)
+	}
+	if d.Task.Fields["design_question"] == question && d.Task.Fields["design_for"] == who {
 		return s.finish(d, false)
 	}
-	set := map[string]string{"design_question": question, "design_since": stamp()}
+	set := map[string]string{"design_question": question, "design_since": stamp(), "design_for": who}
 	if by = strings.TrimSpace(by); by != "" {
 		set["design_asked_by"] = by
 	}
@@ -294,8 +298,15 @@ func stagedMove(d *Document, ts []Task, state, user, reason string) error {
 	if state == "todo" && d.Task.Status == "doing" {
 		// Giving back keeps the todo stage it came from (doing/review
 		// becomes todo/review): review_by stays, the reviewer's stamp does
-		// not.
+		// not. todo means nobody is working on it: the assignee goes too,
+		// named in History, so it is back in NEXT UP.
 		clear = []string{"doing_since"}
+		if len(d.Task.Assignee) > 0 {
+			why += "; was assignee: " + strings.Join(d.Task.Assignee, ", ")
+			if e := d.SetField("assignee", []string{}); e != nil {
+				return e
+			}
+		}
 	}
 	return applyMove(d, ts, move{state: state, set: set, clear: clear, why: why})
 }

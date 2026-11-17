@@ -60,6 +60,7 @@ var States = []Node{
 		{Name: "depends", SetBy: ByHug, Means: "another task must be done first"},
 		{Name: "design", SetBy: ByAgent, Means: "a question must be answered first", Fields: []NodeField{
 			{Name: "design_question", Required: true, SetBy: ByAgent, Means: "the question"},
+			{Name: "design_for", Required: true, SetBy: ByAgent, Means: "who must answer it (a person's name; crab 12:38: no implied person)"},
 			{Name: "design_since", SetBy: ByHug, Means: "when the question was asked"},
 			{Name: "design_asked_by", SetBy: ByHug, Means: "who asked it (the agent or person that ran hug task design)"},
 		}},
@@ -287,8 +288,8 @@ func requiredFix(t Task, field string) string {
 	switch field {
 	case "waiting_on":
 		return "hug task wait " + t.ID + ` "on what"`
-	case "design_question":
-		return "hug task design " + t.ID + ` "question"`
+	case "design_question", "design_for":
+		return "hug task design " + t.ID + ` "question" --for NAME`
 	case "dropped_reason":
 		return "hug task drop " + t.ID + ` "reason"`
 	case "review_by":
