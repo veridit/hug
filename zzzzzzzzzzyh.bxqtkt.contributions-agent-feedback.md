@@ -1,13 +1,18 @@
 ---
 id: bxqtkt
 title: "Contributions: agent feedback and GitHub intake with minimal bureaucracy"
-status: todo
+status: "doing"
 type: spike
 priority: ""
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+doing_since: "2026-11-17T15:42"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Candidate design. Step 1: hug feedback "..." plus an MCP feedback tool opens a G
 ## Notes
 
 Stable links (Jørgen 2026-11-16): ticket ids never change, so the close comment on GitHub links by id. File paths on hug/tasks do change (order prefix and slug, e.g. 0i.tzc9hb.agents-use-todos-their.md), so a blob URL to the file is not stable. The design must give a link keyed only on the id, e.g. a GitHub code-search URL for the id on branch hug/tasks, or an id-only index file on that branch that maps id to the current path.
+
+
+## History
+- 2026-11-17T15:42 todo -> doing/active (take)
