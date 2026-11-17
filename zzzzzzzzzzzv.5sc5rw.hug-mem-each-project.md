@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T22:24"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "hatchling"
+waiting_for: "crab"
+waiting_on: "v0.7.49 installed (release of 833eee1), then check 3 via hug upgrade"
+waiting_since: "2026-11-17T23:20"
 ---
 
 ## Goal
@@ -48,3 +52,4 @@ Recall A/B vs the bar (file:5sc5rw-bar.txt, written before the run), judged blin
 crab 22:20Z: check 3 runs through hug upgrade with the released v0.7.49 (crab says when it is installed, ~23:00Z if CI 44188866860 is green): preview lists 2651, then --apply, then verify 0 pairs and the active count.
 ## History
 - 2026-11-17T22:24 todo -> doing/active (take)
+- 2026-11-17T23:20 doing/active -> doing/waiting (wait)
