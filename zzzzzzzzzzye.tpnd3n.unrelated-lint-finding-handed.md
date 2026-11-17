@@ -1,6 +1,6 @@
 ---
 id: tpnd3n
-title: "an unrelated lint finding is handed out only when the session has no doing task…"
+title: "An unrelated lint finding waits until the session's own task has none"
 status: "doing"
 type: feature
 priority: ""
