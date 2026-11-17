@@ -33,3 +33,5 @@ Builds on scrxak (Space shows a file inline, files read only when shown) and the
 ## Notes
 
 Jørgen 2026-11-17 14:51: prefer text pictures. An ASCII/ANSI capture is a text file, cheap to take, readable in any terminal, diffable in git, and an agent can read it too, while a PNG needs a vision model to check. Proposal: in hug tui a key dumps the current screen as a capture (frame text with colours, as the goldens already render), attached to the task in view or saved under tmp/ with the path shown in the footer. Format: a .ans file (ANSI escapes kept) shown inline in the detail with its colours, and in Markdown as a fenced block (```ansi) so it reads plainly in a viewer. PNG stays for things outside the TUI.
+
+Jørgen 2026-11-17 14:51: the dump key also copies to the clipboard, so he can paste it straight into a chat with an agent. The screen text goes out through OSC 52, which works in iTerm2, kitty and over ssh, with pbcopy as a fallback on macOS. Plain text by default, so it pastes cleanly; the attached .ans file keeps the colours. The footer says 'screen copied (24 lines) · attached as screen-1452.ans to zhvkmj'.
