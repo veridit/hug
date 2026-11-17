@@ -177,8 +177,10 @@ func refuse(t Task, to, fix string) error {
 }
 
 // Wait moves ref, a doing task, to doing/waiting on what; by is who waits
-// (waiting_asked_by), told when it is answered (3jtfw9).
-func (s *Store) Wait(ref, on, by string) (Result, error) {
+// (waiting_asked_by), told when it is answered (3jtfw9). person, when set,
+// is who it waits on (waiting_for, 89y0b7, crab 15:28): a name lint can
+// check and the TUI shows as "waiting on you".
+func (s *Store) Wait(ref, on, by string, person ...string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -190,14 +192,24 @@ func (s *Store) Wait(ref, on, by string) (Result, error) {
 	if d.Task.Status != "doing" {
 		return Result{}, refuse(d.Task, "doing/waiting", "hug task take "+d.Task.ID+" --model MODEL")
 	}
-	if d.Task.Fields["waiting_on"] == on {
+	forName := ""
+	if len(person) > 0 {
+		forName = strings.TrimSpace(person[0])
+	}
+	if d.Task.Fields["waiting_on"] == on && d.Task.Fields["waiting_for"] == forName {
 		return s.finish(d, false)
 	}
 	set := map[string]string{"waiting_on": on, "waiting_since": stamp()}
 	if by = strings.TrimSpace(by); by != "" {
 		set["waiting_asked_by"] = by
 	}
-	if e = applyMove(d, ts, move{state: "doing", set: set, why: "wait"}); e != nil {
+	var clear []string
+	if forName != "" {
+		set["waiting_for"] = forName
+	} else {
+		clear = append(clear, "waiting_for") // a new wait on a thing, not a person
+	}
+	if e = applyMove(d, ts, move{state: "doing", set: set, clear: clear, why: "wait"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
@@ -218,7 +230,7 @@ func (s *Store) Resume(ref string) (Result, error) {
 			return Result{}, busy(d.Task, who, a)
 		}
 	}
-	if e = applyMove(d, ts, move{state: "doing", clear: []string{"waiting_on", "waiting_since", "waiting_asked_by"}, why: "resume"}); e != nil {
+	if e = applyMove(d, ts, move{state: "doing", clear: []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by"}, why: "resume"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)

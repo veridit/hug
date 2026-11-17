@@ -19,7 +19,8 @@ func overviewAt(t *testing.T, width, height int) model {
 	return m
 }
 
-// shownRows counts the task rows drawn under each section heading.
+// shownRows counts the lines drawn under each section heading: a row
+// and, for one that waits, its second line (89y0b7).
 func shownRows(m model) map[int]int {
 	out := map[int]int{}
 	p := -1
@@ -43,9 +44,12 @@ func shownRows(m model) map[int]int {
 // rows the focused one does not need go out in spareOrder (z6kz20).
 func TestOverviewFocusedSectionGrows(t *testing.T) {
 	m := overviewAt(t, 140, 40)
-	counts := map[int]int{}
+	// Counted in lines: a row that waits takes two (89y0b7).
+	counts, least := map[int]int{}, map[int]int{}
 	for p := range overviewSections {
-		counts[p] = len(m.paneIndices(p))
+		idx := m.paneIndices(p)
+		counts[p] = m.linesOf(idx)
+		least[p] = m.linesOf(idx[:min(len(idx), 3)])
 	}
 	if counts[sectionDoing] <= 3 || counts[sectionRecent] <= 3 {
 		t.Fatalf("the fixture must overflow the focused sections: %v", counts)
@@ -58,10 +62,10 @@ func TestOverviewFocusedSectionGrows(t *testing.T) {
 		spare := budget
 		for p := range overviewSections {
 			if p != focus {
-				spare -= min(counts[p], 3)
+				spare -= least[p]
 			}
 		}
-		if want := min(counts[focus], spare); rows[focus] != want || shown[focus] != want {
+		if want := min(counts[focus], max(least[focus], spare)); rows[focus] != want || shown[focus] != want {
 			t.Fatalf("focus %d: shows %d (drawn %d), want every spare row: %d", focus, rows[focus], shown[focus], want)
 		}
 		spare -= rows[focus]
@@ -69,9 +73,9 @@ func TestOverviewFocusedSectionGrows(t *testing.T) {
 			if p == focus {
 				continue
 			}
-			want := min(counts[p], 3)
+			want := least[p]
 			want += min(spare, counts[p]-want)
-			spare -= want - min(counts[p], 3)
+			spare -= want - least[p]
 			if rows[p] != want || shown[p] != want {
 				t.Fatalf("focus %d: section %d shows %d (drawn %d), want %d of %d", focus, p, rows[p], shown[p], want, counts[p])
 			}

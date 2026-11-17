@@ -161,6 +161,19 @@ func (m model) detailHeader(t task.Task) []string {
 	lines := []string{title}
 	lines = append(lines, strings.Split(wrap(strings.Join(badges, "  "), m.width), "\n")...)
 	lines = append(lines, m.styles.dim.Render("created "+oneLine(t.Created)+" · updated "+oneLine(t.Updated)+" · "+oneLine(t.Slug)))
+	// What it waits on, as its row's second line says it, with the
+	// person's long name here (89y0b7, Jørgen 15:33: rows the short name,
+	// the detail the long one).
+	if head, text, stamp := m.note(t); head != "" {
+		line := "└─ " + m.withLongName(t, head)
+		if text != "" {
+			line += " " + text
+		}
+		if s := sinceText(stamp); s != "" {
+			line += " · " + s
+		}
+		lines = append(lines, m.styles.warning.Render(fit(line, m.width)))
+	}
 	var problems []task.Finding
 	seen := map[string]bool{}
 	// What the last edit broke comes first, then the rest in line order.
@@ -205,8 +218,8 @@ func (m model) questionLines(t task.Task) []string {
 		case "design":
 			q, asker, at = t.Fields["design_question"], t.Fields["design_asked_by"], t.Fields["design_since"]
 		case "waiting":
-			_, what, _ := strings.Cut(t.Fields["waiting_on"], ":")
-			q, asker, at = strings.TrimSpace(what), t.Fields["waiting_asked_by"], t.Fields["waiting_since"]
+			_, what := m.waitingFor(t)
+			q, asker, at = what, t.Fields["waiting_asked_by"], t.Fields["waiting_since"]
 		case "review":
 			q, asker, at = "review it: approve, or say what to change", strings.Join(t.Assignee, ", "), t.Fields["review_since"]
 		}

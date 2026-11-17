@@ -77,6 +77,7 @@ var States = []Node{
 		{Name: "active", SetBy: ByAgent, Means: "the owner is working on it"},
 		{Name: "waiting", SetBy: ByAgent, Means: "the owner waits on something outside the board (CI, a reply, a release)", Fields: []NodeField{
 			{Name: "waiting_on", Required: true, SetBy: ByAgent, Means: "what it waits on"},
+			{Name: "waiting_for", SetBy: ByAgent, Means: "the person it waits on, by their short name in hug.toml [people] or an agent's name (--on NAME); they see it in hug tui as waiting on you"},
 			{Name: "waiting_since", SetBy: ByHug, Means: "since when"},
 			{Name: "waiting_asked_by", SetBy: ByHug, Means: "who waits (the agent or person that ran hug task wait), told when it is answered"},
 		}},

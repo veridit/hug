@@ -80,13 +80,15 @@ func TestRowStageCountsConditions(t *testing.T) {
 		m := newModel(s, Options{User: "tester"})
 		for _, x := range m.all {
 			if x.ID == r.Task.ID {
-				return m.rowStage(x)
+				word, _ := m.rowStage(x)
+				_, note, _ := m.note(x)
+				return word, note
 			}
 		}
 		t.Fatal("no task")
 		return "", ""
 	}
-	if w, text := row(); w != "depends" || text != "▱ 0/1  Heavy run" {
+	if w, text := row(); w != "depends" || text != "when load below 120  ▱ 0/1" {
 		t.Fatalf("load 140: %q %q", w, text)
 	}
 	load = 80

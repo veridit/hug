@@ -114,7 +114,7 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 	case "design":
 		clear = []string{"design_question", "design_since", "design_asked_by", "design_for"}
 	case "waiting":
-		clear = []string{"waiting_on", "waiting_since", "waiting_asked_by"}
+		clear = []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by"}
 	case "review":
 		clear = []string{"review_by", "review_since"}
 	}

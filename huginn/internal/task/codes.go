@@ -46,6 +46,7 @@ var Codes = []CodeInfo{
 	{"duplicate-origin", "two tasks were imported from one source"},
 	{"unknown-condition", "a Depends on condition hug cannot check (unreadable, or not checkable here): the task waits"},
 	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped"},
+	{"unknown-person", "waiting_for, design_for or review_by names nobody in hug.toml [people] and no agent on the board"},
 	{"stale-owner", "a doing task's assignee has had no live harness session for over a day"},
 	{"backlog-leftover", "Backlog.md markers or unused imported fields; hug upgrade removes them"},
 	{"missing-task-ref", "a task: link names no task"},

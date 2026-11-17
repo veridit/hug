@@ -67,7 +67,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "answer", "next", "rebalance", "types", "states", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "answer", "next", "rebalance", "types", "states", "people", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -560,7 +560,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -665,6 +665,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			s.syncStatus(reply)
 		}
 	}()
+	if cmd == "people" {
+		return a.runPeople(ctx, s, f)
+	}
 	empty := func() (Reply, error) {
 		ts, e := s.s.Tasks()
 		if e != nil {
@@ -1002,13 +1005,10 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(2); e != nil {
 			return nil, e
 		}
-		on := f.args[1]
-		if who := strings.TrimSpace(f.get("on")); who != "" {
-			// Waiting on a person: "NAME: what", so the TUI shows it to
-			// them as waiting: you (crab 12:38).
-			on = who + ": " + on
-		}
-		r, e = s.s.Wait(f.args[0], on, a.whoTakes(f).assignee())
+		// Waiting on a person: --on NAME writes waiting_for, a field lint
+		// checks against hug.toml [people] (89y0b7, crab 15:28; it was
+		// "NAME: what" in waiting_on).
+		r, e = s.s.Wait(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("on"))
 	case "resume":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -1568,6 +1568,20 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	if text, ok := reply["states_text"].(string); ok {
 		fmt.Fprint(a.Out, text)
+	}
+	if ps, ok := reply["people"].([]task.Person); ok {
+		if len(ps) == 0 {
+			fmt.Fprintln(a.Out, "no people in hug.toml [people]")
+		}
+		for _, p := range ps {
+			fmt.Fprintf(a.Out, "%s  %s  %s\n", p.Short, p.Name, strings.Join(p.Email, ", "))
+		}
+		if fixes, _ := reply["fixes"].([]string); len(fixes) > 0 {
+			fmt.Fprintln(a.Out, "commit authors without an entry (check each short name):")
+			for _, f := range fixes {
+				fmt.Fprintln(a.Out, "  "+f)
+			}
+		}
 	}
 	if l, ok := reply["lint"].(*TaskLint); ok {
 		writeTaskLint(a.Out, l)

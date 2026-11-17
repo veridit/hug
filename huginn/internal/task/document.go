@@ -68,6 +68,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"branch ", "branch-gone"},
 	{"unknown condition", "unknown-condition"},
 	{"owner ", "stale-owner"},
+	{"nobody known: ", "unknown-person"},
 	{"backlog leftover", "backlog-leftover"},
 }
 

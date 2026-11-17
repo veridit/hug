@@ -83,12 +83,29 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 		// review_by = the TUI user, Model: human).
 		who.Model = "human"
 	}
-	// The TUI user's writes mark their unread answers read (3jtfw9).
-	s.s.Actor = who.assignee()
 	// The TUI lives while others write: it must read the files each time.
 	s.s.Snapshot = false
 	s.s.Invalidate()
-	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Version: a.Version, MainBranch: gitbranch.DefaultBranch(a.Cwd), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) },
+	// Who "you" is (89y0b7, Jørgen 15:31): an agent is its own name (--as,
+	// HUG_USER, the harness session), whatever git email it commits with;
+	// a person is found by git email in hug.toml [people] and named by the
+	// short name, else the email before the @. A model never stands in.
+	agent := who.Name
+	email := ""
+	if agent == "" {
+		if out, e := exec.CommandContext(ctx, "git", "-C", a.Cwd, "config", "user.email").Output(); e == nil {
+			email = strings.TrimSpace(string(out))
+		}
+		people, _ := task.People(s.r.Dir)
+		if p, ok := task.PersonByEmail(people, email); ok {
+			who.Name = p.Short
+		} else if email != "" {
+			who.Name = task.EmailShort(email)
+		}
+	}
+	// The TUI user's writes mark their unread answers read (3jtfw9).
+	s.s.Actor = who.assignee()
+	e := tui.Run(ctx, s.s, tui.Options{User: agent, Email: email, Version: a.Version, MainBranch: gitbranch.DefaultBranch(a.Cwd), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) },
 		// Findings come from the cache, which parsed each file once, as of
 		// the listing the reload just made (44w1ev).
 		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },
@@ -209,6 +226,22 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		if len(changed) > 0 {
 			did = append(did, fmt.Sprintf("%d tasks tidied: backlog leftovers removed, sections put in order (no section text changed)", len(changed)))
 			upgradeDiff = diff
+		}
+		// Waits on a person (89y0b7): an old waiting_on "NAME: what"
+		// with NAME in hug.toml [people] gets waiting_for NAME.
+		if e == nil {
+			people, _ := task.People(s.r.Dir)
+			moved, lines, e2 := s.s.MoveWaitingFor(people, false)
+			if e2 == nil && len(moved) > 0 {
+				e2 = s.r.Commit(moved, fmt.Sprintf("hug upgrade: waiting_for in %d tasks", len(moved)))
+			}
+			if e2 != nil {
+				return nil, e2
+			}
+			if len(moved) > 0 {
+				did = append(did, fmt.Sprintf("%d waits on a person moved to waiting_for", len(moved)))
+				upgradeDiff += strings.Join(lines, "\n") + "\n"
+			}
 		}
 	}
 	// Variables (m1c28r): old names hug wrote into hook commands and its MCP

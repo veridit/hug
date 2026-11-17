@@ -57,17 +57,33 @@ func stageBoard(t *testing.T) model {
 func TestRowsShowStage(t *testing.T) {
 	m := stageBoard(t)
 	view := ansi.Strip(viewAt(m, "overview", 140))
+	// 89y0b7: line 1 is the task with its title; what it waits on goes on
+	// line 2, under the id, the reason right after the colon.
 	for _, want := range []string{
 		`aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme`,
-		`bbbbbb   feature high     review:   Jørgen reviewing · 5 min`,
-		`cccccc   feature high     waiting:  CI run 44063552584 · 12 min`,
-		`dddddd   feature high     depends   ▱▱ 0/2  One set of variable names`,
-		`eeeeee   feature high     design:   should type leave the rows, or stay as a column?`,
+		`bbbbbb   feature high     review    Release, then hug setup in seid-lang`,
+		"└─ in review by Jørgen",
+		`cccccc   feature high     waiting   Warm cache under 50 ms`,
+		"└─ waiting on CI run 44063552584",
+		`dddddd   feature high     depends   One set of variable names`,
+		"└─ depends on cccccc, eeeeee  ▱▱ 0/2",
+		`eeeeee   feature high     design    Tags listed per board`,
+		"└─ question for jhf: should type leave the rows, or stay as a column?",
 		`ffffff   feature high     ready     Depend on a group or epic`,
-		`gggggg   feature high     deferred: after the release`,
+		`gggggg   feature high     deferred  Answer a question in place`,
+		"└─ deferred: after the release",
 	} {
 		if !strings.Contains(view, want) {
 			t.Errorf("overview lacks %q", want)
+		}
+	}
+	// Active and ready rows stay one line.
+	for _, id := range []string{"aaaaaa", "ffffff"} {
+		lines := strings.Split(view, "\n")
+		for i, l := range lines {
+			if strings.Contains(l, id) && i+1 < len(lines) && strings.Contains(lines[i+1], "└─") {
+				t.Errorf("%s has a second line: %q", id, lines[i+1])
+			}
 		}
 	}
 	if regexp.MustCompile(`(?m)^\S*\s*[○◔◑◕●].*\b(doing|todo)\b\s{2,}`).MatchString(view) {
@@ -117,10 +133,10 @@ func TestDependsBar(t *testing.T) {
 	}
 }
 
-// 6ephqk check 8: a task waiting on the TUI user names them ("review:
-// you"), is marked ? and sorts to the top of its section, and the header
-// says "? N for you" (Jørgen 11:42, crab 12:38: review_by, design_for, or
-// waiting_on "NAME: what").
+// 6ephqk check 8, 89y0b7: a task waiting on the TUI user says "you" on
+// its second line, is marked ? and sorts to the top of its section, and
+// the header says "? N for you" (Jørgen 11:42, crab 12:38 and 15:28:
+// review_by, design_for, or waiting_for).
 func TestWaitingOnYou(t *testing.T) {
 	m := stageBoard(t)
 	// jhf: the design question (design_for) is theirs; nothing else.
@@ -131,7 +147,8 @@ func TestWaitingOnYou(t *testing.T) {
 	}
 	next := view[strings.Index(view, "NEXT UP"):strings.Index(view, "RECENTLY DONE")]
 	rows := strings.Split(next, "\n")[1:]
-	if !strings.HasPrefix(rows[0], "? ") || !strings.Contains(rows[0], "eeeeee   feature high     design:   you · should type leave the rows") {
+	if !strings.HasPrefix(rows[0], "? ") || !strings.Contains(rows[0], "eeeeee   feature high     design    Tags listed per board") ||
+		!strings.Contains(rows[1], "└─ question for you: should type leave the rows") {
 		t.Fatalf("the design question for jhf is not first in NEXT UP, marked ?:\n%s", next)
 	}
 	// Jørgen: the review he is doing.
@@ -140,7 +157,8 @@ func TestWaitingOnYou(t *testing.T) {
 	view = ansi.Strip(viewAt(m, "overview", 140))
 	doing := view[strings.Index(view, "IN PROGRESS"):strings.Index(view, "NEXT UP")]
 	rows = strings.Split(doing, "\n")[1:]
-	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[0], "? ") || !strings.Contains(rows[0], "bbbbbb   feature high     review:   you · 5 min · Release, then hug setup") {
+	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[0], "? ") || !strings.Contains(rows[0], "bbbbbb   feature high     review    Release, then hug setup") ||
+		!strings.Contains(rows[1], "└─ in review by you") || !strings.HasSuffix(strings.TrimRight(rows[1], " "), "since 09:48") {
 		t.Fatalf("Jørgen's review is not first in IN PROGRESS, marked ?:\n%s", view)
 	}
 	// Someone with nothing waiting: no count, no mark.
@@ -150,19 +168,58 @@ func TestWaitingOnYou(t *testing.T) {
 	if strings.Contains(view, "for you") || regexp.MustCompile(`(?m)^\? `).MatchString(view) {
 		t.Fatalf("carol sees something for her:\n%s", view)
 	}
-	// Waiting on a person: waiting_on "NAME: what". cccccc waits already;
+	// Waiting on a person: --on carol writes waiting_for. cccccc waits already;
 	// a new wait replaces what it waits on. (Resuming it first would make
 	// nautilus's second active ticket next to aaaaaa: n2hq8p refuses that.)
 	s := m.store
 	if _, e := s.Resume("cccccc"); e == nil {
 		t.Fatal("resume gave nautilus two active tickets")
 	}
-	if _, e := s.Wait("cccccc", "carol: approve the look", "nautilus"); e != nil {
+	if _, e := s.Wait("cccccc", "approve the look", "nautilus", "carol"); e != nil {
 		t.Fatal(e)
 	}
 	m.refresh("")
 	view = ansi.Strip(viewAt(m, "overview", 140))
-	if !strings.Contains(view, "? 1 for you") || !regexp.MustCompile(`(?m)^\? .*cccccc   feature high     waiting:  you · approve the look`).MatchString(view) {
+	if !strings.Contains(view, "? 1 for you") || !regexp.MustCompile(`(?m)^\? .*cccccc   feature high     waiting   Warm cache under 50 ms.*\n\s+└─ waiting on you: approve the look\s+since \d\d:\d\d`).MatchString(view) {
 		t.Fatalf("carol's wait:\n%s", view)
+	}
+	// Anyone else sees her name, never initials typed in the text.
+	m.opts.User = "dave"
+	m.refresh("")
+	if view = ansi.Strip(viewAt(m, "overview", 140)); !strings.Contains(view, "└─ waiting on carol: approve the look") {
+		t.Fatalf("dave's view of carol's wait:\n%s", view)
+	}
+}
+
+// 89y0b7 (Jørgen 15:31): a person is found by git email in hug.toml
+// [people] and named by the short name; with no entry, by the email
+// before the @. An agent (Options.User set) is always its session name,
+// whatever git email it commits with.
+func TestYouByGitEmail(t *testing.T) {
+	m := stageBoard(t)
+	if e := os.WriteFile(filepath.Join(m.store.Root, "hug.toml"), []byte("[people.jhf]\nname = \"Jørgen H. Fjeld\"\nemail = [\"jorgen@veridit.no\", \"12345+jhf@users.noreply.github.com\"]\n"), 0o644); e != nil {
+		t.Fatal(e)
+	}
+	for _, email := range []string{"jorgen@veridit.no", "12345+JHF@users.noreply.github.com"} {
+		m.opts.User, m.opts.Email = "", email
+		m.refresh("")
+		if m.me() != "jhf" {
+			t.Fatalf("%s: me() = %q, want jhf", email, m.me())
+		}
+		view := ansi.Strip(viewAt(m, "overview", 140))
+		if !strings.Contains(view, "? 1 for you") || !strings.Contains(view, "└─ question for you: should type") {
+			t.Fatalf("%s: jhf's design question is not his:\n%s", email, view)
+		}
+	}
+	// No entry: the email before the @.
+	m.opts.Email = "carol@example.org"
+	if m.refresh(""); m.me() != "carol" {
+		t.Fatalf("unlisted email: me() = %q", m.me())
+	}
+	// An agent committing with Jørgen's email is the agent.
+	m.opts.User, m.opts.Email = "nautilus", "jorgen@veridit.no"
+	m.refresh("")
+	if view := ansi.Strip(viewAt(m, "overview", 140)); m.me() != "nautilus" || strings.Contains(view, "for you") || !strings.Contains(view, "└─ question for jhf:") {
+		t.Fatalf("an agent with jhf's email took his question (me %q):\n%s", m.me(), view)
 	}
 }

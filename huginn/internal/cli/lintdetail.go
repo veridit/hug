@@ -38,6 +38,10 @@ func (s *session) boardFindings(ctx context.Context, cwd, jcodeHome string) ([]t
 		fs = append(fs, task.BranchFindings(cwd, gitbranch.DefaultBranch(cwd), ts)...)
 		// Waits hug cannot check here (16dxsr): git and the machine, not files.
 		fs = append(fs, task.WaitFindings(ts)...)
+		// Who a question is for must be someone hug can find (89y0b7).
+		if people, e := task.People(s.r.Dir); e == nil {
+			fs = append(fs, task.PeopleFindings(people, ts)...)
+		}
 		// Harness session state, not file content (v3k6cp).
 		fs = append(fs, task.OwnerFindings(task.JcodeLivenessAt(jcodeHome), ts, time.Now())...)
 	}

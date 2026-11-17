@@ -121,7 +121,9 @@ func TestOverviewNoBlankWhileHidden(t *testing.T) {
 					}
 				}
 				// The last section's trailing blank line is the one kept.
-				if blank := overviewBlank(m); hidden && blank > 0 {
+				// Rows are whole, one or two lines (89y0b7): a blank line
+				// is kept only when no hidden row fits in it.
+				if blank := overviewBlank(m); hidden && blank > 0 && blank >= nextHidden(m, rows) {
 					t.Fatalf("%s %dx%d focus %d: %d blank rows with rows hidden: %v", name, m.width, m.height, focus, blank, rows)
 				}
 				if blank := overviewBlank(m); blank < 0 {
@@ -130,4 +132,25 @@ func TestOverviewNoBlankWhileHidden(t *testing.T) {
 			}
 		}
 	}
+}
+
+// nextHidden is the fewest lines the next hidden row of any section takes
+// (1 or 2), or 3 when no row is hidden.
+func nextHidden(m model, rows []int) int {
+	least := 3
+	for p := range overviewSections {
+		idx := m.paneIndices(p)
+		cursor := m.memoCursor(p)
+		if p == m.pane {
+			cursor = m.cursor
+		}
+		start, end := m.window(idx, cursor, m.scrollOf(p), rows[p])
+		if end < len(idx) {
+			least = min(least, m.heightOf(idx[end]))
+		}
+		if start > 0 {
+			least = min(least, m.heightOf(idx[start-1]))
+		}
+	}
+	return least
 }

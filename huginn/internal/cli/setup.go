@@ -11,6 +11,7 @@ import (
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/importer"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // SetupStep is one item of the setup checklist.
@@ -79,6 +80,25 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	_, statErr := os.Stat(filepath.Join(board, TaskDir))
 	branch := exec.CommandContext(ctx, "git", "-C", root, "rev-parse", "--verify", "--quiet", "refs/heads/"+TaskBranch).Run() == nil
 	add("task branch", branch && statErr == nil, "branch "+TaskBranch+" checked out at "+TaskDir+"/", "hug task init")
+
+	// People (89y0b7, Jørgen 15:31): hug finds a person by git email and
+	// names them by the short name in hug.toml [people]; every commit
+	// author gets an entry, emails grouped by author name.
+	if branch && statErr == nil {
+		people, _ := task.People(filepath.Join(board, TaskDir))
+		offers := peopleOffers(ctx, root, people)
+		detail := fmt.Sprintf("hug.toml [people] names %d people; a person is found by git email and shown by the short name, an agent by its own name", len(people))
+		do := ""
+		if len(offers) > 0 {
+			var names []string
+			for _, p := range offers {
+				names = append(names, p.Name+" <"+strings.Join(p.Email, ", ")+">")
+			}
+			detail += "; commit authors without an entry (check the short name each command gives): " + strings.Join(names, "; ")
+			do = addCommand(offers[0])
+		}
+		add("people", len(offers) == 0, detail, do)
+	}
 
 	backlogDir := ""
 	for _, d := range []string{".backlog", "backlog"} {

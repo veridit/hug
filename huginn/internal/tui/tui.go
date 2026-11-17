@@ -21,7 +21,13 @@ import (
 )
 
 type Options struct {
-	User   string
+	// User is who the TUI user is, as a name tasks write: an agent's
+	// session name, else the person found by git email (Email) in
+	// hug.toml [people], else Email before the @ (89y0b7, Jørgen 15:31).
+	User string
+	// Email is git config user.email, when the user is a person. Used
+	// only when User is empty, and read again when hug.toml changes.
+	Email  string
 	Commit func(msg string) error
 	// Take owns the complete distributed take transaction, including commit.
 	Take func(ref string) (task.Result, error)
@@ -111,6 +117,7 @@ type model struct {
 	link                               int                         // the task:ID marked > in Links (xxvm6t)
 	file                               int                         // the file marked > in Files (zgr01t)
 	files                              map[string][]string         // task path -> its file names (zgr01t)
+	people                             []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
 	lastExec                           *exec.Cmd                   // the editor command last started, for tests (zgr01t)
 	lastEdit                           editorMsg                   // and the message it reports when it closes
 	memo                               [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
@@ -323,6 +330,7 @@ type snapshot struct {
 	findings, closed []task.Finding
 	closedAt         map[string]int64 // close times from git (closeLog)
 	files            map[string][]string
+	people           []task.Person // hug.toml [people] (89y0b7)
 	err, readErr     error
 }
 
@@ -334,6 +342,7 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 	}
 	task.Sort(ts)
 	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root), files: map[string][]string{}}
+	sn.people, _ = task.People(s.Root) // a broken hug.toml is lint's to report
 	// Task folders, from one ReadDir per group instead of a WalkDir per
 	// task (44w1ev: 10,000 walks of folders that mostly do not exist were
 	// half the first screen). Keys are lowercase: taskFiles decides.
@@ -402,6 +411,7 @@ func (m *model) apply(sn snapshot, path string) {
 	m.findings, m.closedFindings = sn.findings, sn.closed
 	m.closedAt = sn.closedAt
 	m.files = sn.files
+	m.people = sn.people
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.epics = map[string]bool{}
@@ -524,7 +534,7 @@ func (m *model) remember() {
 	}
 	indices := m.indices()
 	memo := &m.memo[v][m.pane]
-	memo.start, _ = window(indices, m.cursor, memo.start, m.sectionRows(m.pane))
+	memo.start, _ = m.window(indices, m.cursor, memo.start, m.sectionRows(m.pane))
 	memo.path = ""
 	for _, i := range indices {
 		if i == m.cursor {

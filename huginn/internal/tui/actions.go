@@ -28,7 +28,7 @@ func (m *model) startAction(k string) tea.Cmd {
 		return nil
 	case ok && k == "x" && t.Status != "dropped":
 		return m.openInput(dropPrompt, "")
-	case ok && k == "t" && t.Status == "doing" && m.opts.User != "" && contains(t.Assignee, m.opts.User):
+	case ok && k == "t" && t.Status == "doing" && m.me() != "" && contains(t.Assignee, m.me()):
 		// t on your own task gives it back to todo, keeping its stage
 		// (6ephqk check 6): confirmed as "Give back".
 		m.requestAction("t", "give back")
@@ -116,7 +116,7 @@ func (m *model) executeAction() tea.Cmd {
 		if m.opts.Take != nil {
 			r, err = m.opts.Take(t.ID)
 		} else {
-			r, err = m.store.Take(t.ID, m.opts.User)
+			r, err = m.store.Take(t.ID, m.me())
 		}
 	case "d":
 		r, err = m.store.Done(t.ID)
@@ -149,7 +149,7 @@ func (m *model) executeAction() tea.Cmd {
 		return m.runEditor(t)
 	case "-":
 		n := min(m.acceptance, len(t.Acceptance)-1) + 1
-		r, err = m.store.Strike(t.ID, n, "", m.opts.User, true)
+		r, err = m.store.Strike(t.ID, n, "", m.me(), true)
 		action = "restore"
 	}
 	m.finish(r, err, action)
@@ -319,7 +319,7 @@ func (m *model) strike(reason string) {
 		return
 	}
 	n := min(m.acceptance, len(t.Acceptance)-1) + 1
-	who := m.opts.User
+	who := m.me()
 	if who == "" {
 		who = "human"
 	}
@@ -361,6 +361,6 @@ func (m *model) answer(text string) {
 		m.message = "task disappeared; refresh and try again"
 		return
 	}
-	r, err := m.store.Answer(t.ID, text, m.opts.User)
+	r, err := m.store.Answer(t.ID, text, m.me())
 	m.finish(r, err, "answer")
 }

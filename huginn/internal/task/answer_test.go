@@ -91,14 +91,14 @@ func TestAnswerWaitingAndReview(t *testing.T) {
 	if _, e := s.TakeAs(id, "nautilus", "claude-opus-5-5"); e != nil {
 		t.Fatal(e)
 	}
-	if _, e := s.Wait(id, "jhf: which colour?", "nautilus"); e != nil {
+	if _, e := s.Wait(id, "which colour?", "nautilus", "jhf"); e != nil {
 		t.Fatal(e)
 	}
 	if _, e := s.Answer(id, "green", "jhf"); e != nil {
 		t.Fatal(e)
 	}
 	tk, raw := readTask(t, s, id)
-	if tk.Stage != "active" || tk.Fields["waiting_on"] != "" || !strings.Contains(raw, `answered waiting: "jhf: which colour?" -> "green", by jhf, for nautilus (doing/waiting -> doing/active)`) {
+	if tk.Stage != "active" || tk.Fields["waiting_on"] != "" || tk.Fields["waiting_for"] != "" || !strings.Contains(raw, `answered waiting: "which colour?" -> "green", by jhf, for nautilus (doing/waiting -> doing/active)`) {
 		t.Fatalf("waiting:\n%s", raw)
 	}
 	// Nothing asked: refused, with a fix.

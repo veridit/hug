@@ -80,7 +80,7 @@ func TestMoveCommands(t *testing.T) {
 		}
 	}
 	file := taskFile(t, a, id)
-	for _, want := range []string{"(design); ", "design_asked_by: crab; design_for: jhf", "(take)", "(wait)", "waiting_asked_by: nautilus; waiting_on: jhf: approve the look", "(drop)", "(reopen); was dropped_at: ", "dropped_reason: superseded"} {
+	for _, want := range []string{"(design); ", "design_asked_by: crab; design_for: jhf", "(take)", "(wait)", "waiting_asked_by: nautilus; waiting_for: jhf; waiting_on: approve the look", "(drop)", "(reopen); was dropped_at: ", "dropped_reason: superseded"} {
 		if !strings.Contains(file, want) && !strings.Contains(file, strings.TrimSuffix(want, "; ")) {
 			t.Errorf("History lacks %q:\n%s", want, file)
 		}

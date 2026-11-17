@@ -97,11 +97,11 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 	// Drawn with the depends stage where it stands: the bar, then the title.
 	view := ansi.Strip(m.overviewText())
 	inProgress := view[:strings.Index(view, "NEXT UP")]
-	if !regexp.MustCompile(bravo + `\s.*depends\s+▱ 0/1  Bravo`).MatchString(inProgress) {
+	if !regexp.MustCompile(bravo + `\s.*depends\s+Bravo.*\n\s+└─ depends on \w+  ▱ 0/1`).MatchString(inProgress) {
 		t.Fatalf("Bravo not drawn depends in IN PROGRESS:\n%s", inProgress)
 	}
 	nextUp := view[strings.Index(view, "NEXT UP"):strings.Index(view, "RECENTLY DONE")]
-	if !regexp.MustCompile(charlie + `\s.*depends\s+▱ 0/1  Charlie`).MatchString(nextUp) {
+	if !regexp.MustCompile(charlie + `\s.*depends\s+Charlie.*\n\s+└─ depends on \w+  ▱ 0/1`).MatchString(nextUp) {
 		t.Fatalf("Charlie not drawn depends in NEXT UP:\n%s", nextUp)
 	}
 	if strings.Count(view, bravo) != 1 {

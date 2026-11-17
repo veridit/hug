@@ -243,38 +243,19 @@ func (m model) columns(width int, compact bool) string {
 	return m.styles.dim.Render(fit(s+fit("TITLE", max(0, c.title)), width))
 }
 
-// window is the rows of indices shown in rows lines, starting at start as
-// far as it can: a section keeps its scroll (h9zghj) and moves it only as
-// far as needed to keep the cursor in view. A cursor of -1 is no cursor.
-func window(indices []int, cursor, start, rows int) (int, int) {
-	n := len(indices)
-	rows = max(0, rows)
-	if rows >= n {
-		return 0, n
-	}
-	start = max(0, min(start, n-rows))
-	for p, i := range indices {
-		if i == cursor {
-			if p < start {
-				start = p
-			} else if p >= start+rows {
-				start = p - rows + 1
-			}
-			break
-		}
-	}
-	return start, start + rows
-}
-
 func (m model) listText() string {
 	indices := m.indices()
 	lines := []string{m.columns(m.width, false)}
 	if len(indices) == 0 {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
-	start, end := window(indices, m.cursor, 0, max(1, m.bodyHeight()-2))
+	start, end := m.window(indices, m.cursor, 0, max(1, m.bodyHeight()-2))
 	for n, i := range indices[start:end] {
-		lines = append(lines, m.taskRowMark(m.visible[i], m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
+		t := m.visible[i]
+		lines = append(lines, m.taskRowMark(t, m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
+		if note := m.noteRow(t, m.width, i == m.cursor); note != "" {
+			lines = append(lines, note) // what it waits on, under it (89y0b7)
+		}
 	}
 	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · depends = a dependency is not done", start+1, end, len(indices))))
 	return strings.Join(lines, "\n")
@@ -333,7 +314,7 @@ func (m model) overviewText() string {
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := window(indices, cursor, m.scrollOf(p), per)
+		start, end := m.window(indices, cursor, m.scrollOf(p), per)
 		if len(indices) == 0 {
 			// Nothing to navigate to: None goes on the title line (h9zghj).
 			label += " · None"
@@ -366,6 +347,9 @@ func (m model) overviewText() string {
 			} else {
 				lines = append(lines, m.taskRowMark(t, m.width, sel, false, mark))
 			}
+			if note := m.noteRow(t, m.width, sel); note != "" {
+				lines = append(lines, note) // what it waits on, under it (89y0b7)
+			}
 		}
 		lines = append(lines, "")
 	}
@@ -396,22 +380,33 @@ func (m model) overviewRows() []int {
 	want, got := make([]int, n), make([]int, n)
 	budget := m.bodyHeight() - n*2 // a label and a blank line per section
 	others := 0
+	// Counted in lines: a row that waits takes two (89y0b7). least is the
+	// lines of a section's first recentDone rows; floor its first row.
+	least, floor := make([]int, n), make([]int, n)
 	for p := range want {
-		want[p] = len(m.paneIndices(p))
+		idx := m.paneIndices(p)
+		want[p] = m.linesOf(idx)
+		least[p] = m.linesOf(idx[:min(len(idx), recentDone)])
+		if len(idx) > 0 {
+			floor[p] = m.heightOf(idx[0])
+		}
 		if p != m.pane {
-			got[p] = min(want[p], recentDone)
+			got[p] = least[p]
 			others += got[p]
 		}
 	}
 	// The focused section never gets less than an unfocused one would.
-	need := min(want[m.pane], recentDone)
+	need := 0
+	if m.pane >= 0 && m.pane < n {
+		need = least[m.pane]
+	}
 	for others+need > budget {
 		shrink := -1
-		if got[sectionRecent] > 1 && sectionRecent != m.pane {
+		if got[sectionRecent] > floor[sectionRecent] && sectionRecent != m.pane {
 			shrink = sectionRecent
 		} else {
 			for p := range got {
-				if p != m.pane && got[p] > 1 && (shrink < 0 || got[p] > got[shrink]) {
+				if p != m.pane && got[p] > floor[p] && (shrink < 0 || got[p] > got[shrink]) {
 					shrink = p
 				}
 			}
@@ -443,7 +438,44 @@ func (m model) overviewRows() []int {
 		got[p] += more
 		spare -= more
 	}
+	// A section draws whole rows (89y0b7: one or two lines each), so a line
+	// it cannot fill would stay blank while rows elsewhere are hidden. Pass
+	// such lines on in spareOrder, focus first, until none moves.
+	order := append([]int{m.pane}, spareOrder...)
+	for moved := true; moved; {
+		moved = false
+		for p := range got {
+			used := m.drawnLines(p, got[p])
+			if used >= got[p] {
+				continue
+			}
+			for _, q := range order {
+				if q < 0 || q >= n || q == p || got[q] >= want[q] {
+					continue
+				}
+				// Only when the extra line lets q draw one more row.
+				if m.drawnLines(q, got[q]+got[p]-used) > m.drawnLines(q, got[q]) {
+					got[q] += got[p] - used
+					got[p] = used
+					moved = true
+					break
+				}
+			}
+		}
+	}
 	return got
+}
+
+// drawnLines is how many of lines section p fills with whole rows, where
+// it is scrolled to now.
+func (m model) drawnLines(p, lines int) int {
+	idx := m.paneIndices(p)
+	cursor := m.memoCursor(p)
+	if p == m.pane {
+		cursor = m.cursor
+	}
+	start, end := m.window(idx, cursor, m.scrollOf(p), lines)
+	return m.linesOf(idx[start:end])
 }
 
 // spareOrder is who gets the overview's spare rows first (z6kz20).
@@ -513,9 +545,13 @@ func (m model) boardText() string {
 		if p == m.pane {
 			cursor = m.cursor
 		}
-		start, end := window(indices, cursor, m.scrollOf(p), rows)
+		start, end := m.window(indices, cursor, m.scrollOf(p), rows)
 		for n, i := range indices[start:end] {
-			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, p == m.pane && i == m.cursor, true, scrollMark(start+n, start, end, len(indices))))
+			sel := p == m.pane && i == m.cursor
+			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, sel, true, scrollMark(start+n, start, end, len(indices))))
+			if note := m.noteRow(m.visible[i], width, sel); note != "" {
+				cols[c] = append(cols[c], note)
+			}
 		}
 		for len(cols[c]) < rows+2 {
 			cols[c] = append(cols[c], fit("", width))
@@ -776,7 +812,7 @@ func (m model) confirmLine() string {
 				stage := task.Stage(task.Task{Status: "todo", Fields: t.Fields, Goal: t.Goal, Acceptance: t.Acceptance, Dependencies: t.Dependencies}, m.all)
 				question = "Give back " + oneLine(t.ID) + " to todo (" + stage + ")"
 			} else if task.Stage(t, m.all) == "review" {
-				question = "Take " + oneLine(t.ID) + " for review as " + oneLine(m.opts.User)
+				question = "Take " + oneLine(t.ID) + " for review as " + oneLine(m.me())
 			}
 		}
 	case "x":

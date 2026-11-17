@@ -2,6 +2,7 @@
 Tags listed per board                                                                               
 [todo]  [feature]  [high]  eeeeee  group:root  unassigned
 created 2026-11-01 · updated 2026-11-01 · t
+└─ question for you: drop type from the rows, keep it, or show it only when not feature? · since 09…
 ? design: drop type from the rows, keep it, or show it only when not feature?                       
   asked by crab · 8 min ago                                                                         
   a answer                                                                                          
@@ -9,6 +10,7 @@ created 2026-11-01 · updated 2026-11-01 · t
 Tags listed per board                                                                               
 [todo]  [feature]  [high]  eeeeee  group:root  unassigned
 created 2026-11-01 · updated 2026-11-01 · t
+└─ question for you: drop type from the rows, keep it, or show it only when not feature? · since 09…
 ? design: drop type from the rows, keep it, or show it only when not feature?                       
   asked by crab · 8 min ago                                                                         
   answer: drop it                                                                                        

@@ -23,83 +23,14 @@ const stageCell = 10
 // now is the clock "· 12 min" counts from; tests set it.
 var now = time.Now
 
-// rowStage is t's stage as its row shows it: the word for the stage
-// column ("waiting:" when the text is the reason, "active" when it is the
-// title) and the text, or "" for the title. Derived from the fields and
-// the board (task.Stage), so a board hug upgrade has not migrated yet
-// shows the same stages.
+// rowStage is t's stage as line 1 of its row shows it: the stage word,
+// and the title beside it. What a stage waits on goes on line 2 (89y0b7,
+// waitrow.go), so the title always shows; text is always "" now and
+// stays for the callers that pass a reason in place of the title.
+// Derived from the fields and the board (task.Stage), so a board hug
+// upgrade has not migrated yet shows the same stages.
 func (m model) rowStage(t task.Task) (word, text string) {
-	g := task.Stage(t, m.all)
-	if g == "" {
-		return "", ""
-	}
-	if (g == "ready" || g == "active" || g == "draft") && m.blocked[t.Path] {
-		// A condition that does not hold yet ("when load below 120",
-		// 16dxsr) holds the task back as a dependency does: next skips it,
-		// so the row says depends, not ready. The written stage follows
-		// dependencies only, so a load or a date does not churn files.
-		g = "depends"
-	}
-	f := func(k string) string { return oneLine(t.Fields[k]) }
-	if m.forYou(t) {
-		// The stage names you (Jørgen 11:42): "review: you", then what.
-		switch g {
-		case "review":
-			return g + ":", "you" + since(t.Fields["review_since"]) + " · " + oneLine(t.Title)
-		case "design":
-			return g + ":", "you · " + f("design_question")
-		case "waiting":
-			_, what, _ := strings.Cut(t.Fields["waiting_on"], ":")
-			return g + ":", "you · " + oneLine(what) + since(t.Fields["waiting_since"])
-		}
-	}
-	reason := ""
-	switch g {
-	case "waiting":
-		reason = f("waiting_on") + since(t.Fields["waiting_since"])
-	case "design":
-		reason = f("design_question")
-	case "deferred":
-		reason = f("deferred_reason")
-		if u := f("deferred_until"); u != "" {
-			reason += " · until " + u
-		}
-	case "review":
-		if who := f("review_by"); who != "" {
-			if t.Status == "doing" {
-				reason = who + " reviewing" + since(t.Fields["review_since"])
-			} else {
-				reason = "review by " + who
-			}
-		}
-	case "depends":
-		return g, m.dependsCell(t)
-	}
-	if reason == "" {
-		return g, ""
-	}
-	return g + ":", reason
-}
-
-// dependsCell is a depends row's text: a bar of how many dependencies are
-// done, then the title ("▰▰▱ 2/3  A third-party operator installs…").
-// Jørgen 11:44: the exact look is still under discussion; this is the one
-// place to change it.
-func (m model) dependsCell(t task.Task) string {
-	done, total := 0, len(t.Dependencies)
-	for _, d := range task.DependencyDetails(t, m.all) {
-		if !d.Blocking {
-			done++
-		}
-	}
-	// Conditions count as dependencies: one cell each, filled when it holds.
-	for _, w := range task.Waits(t, m.all) {
-		total++
-		if w.Met {
-			done++
-		}
-	}
-	return dependsBar(done, total) + "  " + oneLine(t.Title)
+	return m.stageOf(t), ""
 }
 
 // dependsBar draws done of total as filled and empty cells, at most 5
@@ -149,24 +80,74 @@ func (m model) stageWord(word string, width int) string {
 	return style.Render(fit(word, width))
 }
 
-// forYou says whether t waits on the TUI user (6ephqk check 8, Jørgen
-// 11:42, crab 12:38): its stage names them in review_by, design_for, or
-// waiting_on as "NAME: what". Only the stage that holds counts, so an
-// outranked design question waits until its dependency is done.
-func (m model) forYou(t task.Task) bool {
-	me := strings.TrimSpace(m.opts.User)
-	if me == "" {
+// me is the TUI user as tasks name them: Options.User (an agent's
+// session name, or HUG_USER while it is still read), else the person whose
+// git email hug.toml [people] lists, by short name, else the email before
+// the @ (89y0b7, Jørgen 15:31).
+func (m model) me() string {
+	if u := strings.TrimSpace(m.opts.User); u != "" {
+		return u
+	}
+	if p, ok := task.PersonByEmail(m.people, m.opts.Email); ok {
+		return p.Short
+	}
+	return task.EmailShort(m.opts.Email)
+}
+
+// isMe says whether name (a short name, an agent's name, or an email)
+// is the TUI user. A leading @ and case do not count.
+func (m model) isMe(name string) bool {
+	me := m.me()
+	name = strings.TrimPrefix(strings.TrimSpace(name), "@")
+	if me == "" || name == "" {
 		return false
 	}
-	is := func(name string) bool { return strings.EqualFold(strings.TrimSpace(name), me) }
+	if strings.EqualFold(name, me) {
+		return true
+	}
+	// A wait written with the person's email or long name still finds them.
+	if p, ok := task.PersonByName(m.people, me); ok {
+		if strings.EqualFold(name, p.Name) {
+			return true
+		}
+		for _, e := range p.Email {
+			if strings.EqualFold(name, e) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// waitingFor is who t waits on: waiting_for, or the "NAME: what" that
+// waiting_on held before 89y0b7 when NAME is a listed person (hug upgrade
+// moves it into waiting_for).
+func (m model) waitingFor(t task.Task) (who, what string) {
+	what = strings.TrimSpace(t.Fields["waiting_on"])
+	if w := strings.TrimSpace(t.Fields["waiting_for"]); w != "" {
+		return w, what
+	}
+	if name, rest, ok := strings.Cut(what, ":"); ok {
+		if _, listed := task.PersonByName(m.people, name); listed || m.isMe(name) {
+			return strings.TrimSpace(name), strings.TrimSpace(rest)
+		}
+	}
+	return "", what
+}
+
+// forYou says whether t waits on the TUI user (6ephqk check 8, Jørgen
+// 11:42, crab 12:38): its stage names them in review_by, design_for, or
+// waiting_for. Only the stage that holds counts, so an outranked design
+// question waits until its dependency is done.
+func (m model) forYou(t task.Task) bool {
 	switch task.Stage(t, m.all) {
 	case "review":
-		return is(t.Fields["review_by"])
+		return m.isMe(t.Fields["review_by"])
 	case "design":
-		return is(t.Fields["design_for"])
+		return m.isMe(t.Fields["design_for"])
 	case "waiting":
-		who, _, named := strings.Cut(t.Fields["waiting_on"], ":")
-		return named && is(who)
+		who, _ := m.waitingFor(t)
+		return m.isMe(who)
 	}
 	return false
 }
