@@ -102,6 +102,11 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		}
 		add("people", len(offers) == 0, detail, do)
 	}
+	// Models (jr55s8): each model's effort levels, for the Model: gate.
+	if branch && statErr == nil {
+		done, detail, do := modelsStatus(filepath.Join(board, TaskDir))
+		add("models", done, detail, do)
+	}
 
 	backlogDir := ""
 	for _, d := range []string{".backlog", "backlog"} {

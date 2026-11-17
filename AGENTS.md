@@ -32,6 +32,10 @@ compatibility links only. Never tell a user to type them.
   a non-wait (a hanging remote gives up) stays a normal test.
 - Messages, fixes and help must name `hug task ...` / `hug mem ...`, and every
   error ends with a `fix:` line an agent can run.
+- Every commit ends with one trailer naming the model that made it and the
+  effort it ran at, `Model: claude-opus-5-5/<effort>` (e.g. `/high`), or
+  `Model: human`. The levels per model are `hug task models`; the gate is
+  `hug task install commit-msg` (jr55s8).
 - Landing: rebase onto origin/main, run the touched packages' tests locally
   with `-race` (as CI's ubuntu job does), then push straight to main. No
   pre-push CI run. If main CI goes red from your commit, fixing it forward

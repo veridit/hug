@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // commit runs git commit in dir with message, returning its output and
@@ -37,7 +39,7 @@ func TestCommitMsgGate(t *testing.T) {
 	}
 	git(t, dir, "add", "work.txt")
 	out, ok := tryCommit(t, dir, "-m", "no trailer")
-	if ok || !strings.Contains(out, "commit refused: no Model: trailer") || !strings.Contains(out, "\nfix: git -c trailer.ifexists=replace commit --cleanup=strip -F '") || !strings.Contains(out, "--trailer 'Model: <model-id-or-human>'") {
+	if ok || !strings.Contains(out, "commit refused: no Model: trailer") || !strings.Contains(out, "\nfix: git -c trailer.ifexists=replace commit --cleanup=strip -F '") || !strings.Contains(out, "--trailer 'Model: <model-id>/<effort>'") {
 		t.Fatalf("no trailer:\n%s", out)
 	}
 	if strings.Contains(out, "Agent:") {
@@ -53,12 +55,12 @@ func TestCommitMsgGate(t *testing.T) {
 		t.Fatalf("pasted fix %q: %v\n%s", fix, e, pasted)
 	}
 	// The same fix with the slot filled in goes through.
-	sh = exec.Command("sh", "-c", strings.Replace(fix, "<model-id-or-human>", "gpt-6.1-sol", 1))
+	sh = exec.Command("sh", "-c", strings.Replace(fix, "<model-id>/<effort>", "gpt-6.1-sol/high", 1))
 	sh.Dir = dir
 	if b, e := sh.CombinedOutput(); e != nil {
 		t.Fatalf("filled fix: %v\n%s", e, b)
 	}
-	if got := git(t, dir, "log", "-1", "--format=%s|%(trailers:key=Model,valueonly)"); got != "no trailer|gpt-6.1-sol" {
+	if got := git(t, dir, "log", "-1", "--format=%s|%(trailers:key=Model,valueonly)"); got != "no trailer|gpt-6.1-sol/high" {
 		t.Fatalf("after the fix: %q", got)
 	}
 
@@ -68,9 +70,15 @@ func TestCommitMsgGate(t *testing.T) {
 		ok   bool
 		says string
 	}{
-		{"model", []string{"-m", "work", "-m", "Model: claude-opus-5-5"}, true, ""},
+		{"model", []string{"-m", "work", "-m", "Model: claude-opus-5-5/high"}, true, ""},
+		// jr55s8: without a [models] roster, any effort word goes, and a typo
+		// or a missing effort is refused with a fix line.
+		{"no effort", []string{"-m", "work", "-m", "Model: claude-opus-5-5"}, false, "names no effort: Model: claude-opus-5-5/<effort>"},
+		{"no effort fix", []string{"-m", "work", "-m", "Model: claude-opus-5-5"}, false, "--trailer 'Model: claude-opus-5-5/<effort>'"},
+		{"typo", []string{"-m", "work", "-m", "Model: claude-opus-5-5/hihg"}, false, "effort hihg is not an effort word (none, minimal, low, medium, high, xhigh, max)"},
+		{"xhigh", []string{"-m", "work", "-m", "Model: gpt-6.1-sol/xhigh"}, true, ""},
 		{"human", []string{"-m", "my own", "-m", "Model: human"}, true, ""},
-		{"two", []string{"-m", "two", "-m", "Model: a\nModel: b"}, false, "2 Model: trailers, want exactly one"},
+		{"two", []string{"-m", "two", "-m", "Model: a/low\nModel: b/low"}, false, "2 Model: trailers, want exactly one"},
 		{"empty", []string{"-m", "empty", "-m", "Model:"}, false, "names no model"},
 		{"in body only", []string{"-m", "subject", "-m", "Model: x is mentioned here in prose\n\nbody ends"}, false, "no Model: trailer"},
 		{"fixup", []string{"-m", "fixup! work"}, true, ""},
@@ -102,12 +110,12 @@ func TestCommitMsgGate(t *testing.T) {
 	}
 	git(t, dir, "checkout", "-q", "main")
 
-	// Cheap: the gate starts two git processes and one awk per commit, no
+	// Cheap: the gate starts three git processes and one awk per commit, no
 	// more. Counted, not timed (Jørgen 2026-11-17 10:00: no wall-clock
 	// budgets in tests; the 50 ms limit failed under load at 50.7 ms).
 	if runtime.GOOS != "windows" {
-		if got := gateProcesses(t, dir); got != "awk=1 git=2" {
-			t.Errorf("the gate starts %s per commit, want awk=1 git=2", got)
+		if got := gateProcesses(t, dir); got != "awk=1 git=3" {
+			t.Errorf("the gate starts %s per commit, want awk=1 git=3", got)
 		}
 	}
 
@@ -122,7 +130,7 @@ func TestCommitMsgGate(t *testing.T) {
 
 // gateProcesses runs the hook once on a message with a Model: trailer, with
 // git and awk on PATH replaced by wrappers that log their name and run the
-// real one, and returns how many of each it started ("awk=1 git=2"). POSIX
+// real one, and returns how many of each it started ("awk=1 git=3"). POSIX
 // sh wrappers: not on Windows, where the hook runs under git's own sh.
 func gateProcesses(t *testing.T, dir string) string {
 	t.Helper()
@@ -259,4 +267,49 @@ func realDir(t *testing.T, dir string) string {
 		t.Fatal(e)
 	}
 	return d
+}
+
+// jr55s8 check 1: with a [models] roster on the board branch, the effort is
+// checked per model: hug task models add writes the line and commits it on
+// hug/tasks, and the gate reads it from there.
+func TestCommitMsgGateChecksModelRoster(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	dir := realDir(t, a.Cwd)
+	execute(t, a, "install", "commit-msg")
+	r := execute(t, a, "models", "add", "claude-opus-5-5", "low", "medium", "high", "max")
+	if r["changed"] != true {
+		t.Fatalf("models add: %v", r)
+	}
+	if got := git(t, dir, "cat-file", "-p", "hug/tasks:hug.toml"); !strings.Contains(got, "[models]\n\"claude-opus-5-5\" = [\"low\", \"medium\", \"high\", \"max\"]") {
+		t.Fatalf("hug.toml on hug/tasks:\n%s", got)
+	}
+	for _, c := range []struct {
+		name, trailer string
+		ok            bool
+		says          string
+	}{
+		{"listed", "Model: claude-opus-5-5/high", true, ""},
+		{"human", "Model: human", true, ""},
+		{"not its level", "Model: claude-opus-5-5/xhigh", false, "effort xhigh is not one of claude-opus-5-5's levels in hug.toml [models] (low, medium, high, max)"},
+		{"no effort", "Model: claude-opus-5-5", false, "names no effort"},
+		{"unknown model", "Model: gpt-6.1-sol/high", false, "model gpt-6.1-sol is not in hug.toml [models]"},
+		{"unknown model fix", "Model: gpt-6.1-sol/high", false, "fix: hug task models add gpt-6.1-sol high && git -c trailer.ifexists=replace commit"},
+		{"two", "Model: claude-opus-5-5/high\nModel: human", false, "2 Model: trailers, want exactly one"},
+	} {
+		out, ok := tryCommit(t, dir, "-m", c.name, "-m", c.trailer)
+		if ok != c.ok || !strings.Contains(out, c.says) {
+			t.Errorf("%s: ok=%v\n%s", c.name, ok, out)
+		}
+	}
+	// models lists the roster; a second add replaces the model's line.
+	execute(t, a, "models", "add", "claude-opus-5-5", "low", "high")
+	r = execute(t, a, "models")
+	ms, _ := r["models"].([]task.Model)
+	if len(ms) != 1 || strings.Join(ms[0].Levels, ",") != "low,high" {
+		t.Fatalf("models: %v", r)
+	}
+	if out, ok := tryCommit(t, dir, "-m", "dropped level", "-m", "Model: claude-opus-5-5/medium"); ok || !strings.Contains(out, "(low, high)") {
+		t.Errorf("after the roster changed: ok=%v\n%s", ok, out)
+	}
 }

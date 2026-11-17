@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // The commit-msg gate (t709he): every commit in a hug repository names
@@ -26,14 +28,20 @@ import (
 const hookMarker = "# hug: commit-msg gate (t709he)"
 
 // hookScript is POSIX sh, so it runs with git's own sh on Windows too. It
-// costs two git calls and one awk (no other process; TestCommitMsgGate counts
-// them). Its fix line keeps an <...> slot
-// that the gate itself refuses, so a pasted fix cannot claim a model.
-const hookScript = `#!/bin/sh
+// costs three git calls and one awk (no other process; TestCommitMsgGate
+// counts them). The trailer is Model: <model id>/<effort>, or Model: human
+// (jr55s8): the effort is checked against the model's levels in hug.toml
+// [models] on the board branch, read with git cat-file (no worktree, no hug
+// binary), or against task.EffortWords when there is no [models] table. Its
+// fix lines keep an <...> slot that the gate itself refuses, so a pasted fix
+// cannot claim a model.
+var hookScript = `#!/bin/sh
 ` + hookMarker + `
 # Installed by hug task install commit-msg; hug task uninstall commit-msg
 # removes it. Every commit names what made it in one trailer: Model: and the
-# model id, or Model: human when the git author wrote it themselves.
+# model id with the effort it ran at (Model: claude-opus-5-5/high), or
+# Model: human when the git author wrote it themselves. A model's levels are
+# its line in hug.toml [models] on the hug/tasks branch.
 # Emergency exit: git commit --no-verify.
 msg=$1
 pre="${0%/*}/commit-msg.pre-hug"
@@ -55,21 +63,63 @@ IFS= read -r subject <"$msg"
 case $subject in
 "Merge "* | "Revert "* | "fixup!"* | "squash!"* | "amend!"*) exit 0 ;;
 esac
-problem=$(git interpret-trailers --parse "$msg" | awk '
+# The roster, then the trailers. Out: nothing, or the reason, the trailer
+# value to offer, and the roster line to add first (may be empty).
+problem=$({
+	git cat-file -p hug/tasks:hug.toml 2>/dev/null
+	echo "@@hug-trailers@@"
+	git interpret-trailers --parse "$msg"
+} | awk -v words="` + strings.Join(task.EffortWords, " ") + `" '
+	$0 == "@@hug-trailers@@" { t = 1; next }
+	!t {
+		line = $0; sub(/#.*/, "", line); sub(/^[ \t]+/, "", line); sub(/[ \t]+$/, "", line)
+		if (line ~ /^\[/) { inm = (line ~ /^\[[ \t]*models[ \t]*\]$/); next }
+		if (inm && line ~ /=/) {
+			k = line; sub(/[ \t]*=.*/, "", k); gsub(/"/, "", k)
+			l = line; sub(/^[^=]*=[ \t]*/, "", l); gsub(/\[|\]|"|[ \t]/, "", l)
+			roster = 1; levels[k] = l
+		}
+		next
+	}
 	tolower($0) ~ /^model:/ { n++; v = $0; sub(/^[^:]*:[ \t]*/, "", v); if (n == 1) first = v }
 	END {
-		if (n == 0) print "no Model: trailer"
-		else if (n > 1) print n " Model: trailers, want exactly one"
-		else if (first == "" || first ~ /<.*>/) print "Model: " first " names no model (replace the <...> slot)"
+		if (n == 0) { print "no Model: trailer"; print "<model-id>/<effort>"; exit }
+		if (n > 1) { print n " Model: trailers, want exactly one"; print "<model-id>/<effort>"; exit }
+		if (first == "" || first ~ /</) { print "Model: " first " names no model (replace the <...> slot)"; print "<model-id>/<effort>"; exit }
+		if (first == "human") exit
+		id = first; eff = ""
+		if (match(first, /\/[^\/]*$/)) { id = substr(first, 1, RSTART - 1); eff = substr(first, RSTART + 1) }
+		known = !roster || (id in levels)
+		allowed = words; gsub(/ /, ",", allowed)
+		if (roster && known) allowed = levels[id]
+		shown = allowed; gsub(/,/, ", ", shown)
+		if (id == "") { print "Model: " first " names no model"; print "<model-id>/<effort>"; exit }
+		if (eff == "") { print "Model: " first " names no effort: Model: " id "/<effort>, the effort it runs at (" shown ")"; print id "/<effort>"; exit }
+		if (!known) { print "model " id " is not in hug.toml [models]: each model lists the efforts it runs at"; print id "/" eff; print "hug task models add " id " " eff; exit }
+		if (index("," allowed ",", "," eff ",") == 0) {
+			if (roster) print "effort " eff " is not one of " id "\047s levels in hug.toml [models] (" shown ")"
+			else print "effort " eff " is not an effort word (" shown ")"
+			print id "/<effort>"; exit
+		}
 	}')
 [ -z "$problem" ] && exit 0
-file=$(cd "$(dirname "$msg")" && pwd)/$(basename "$msg")
 {
-	echo "commit refused: $problem"
+	IFS= read -r reason
+	IFS= read -r slot
+	IFS= read -r add
+} <<EOF
+$problem
+EOF
+file=$(cd "$(dirname "$msg")" && pwd)/$(basename "$msg")
+fix="git -c trailer.ifexists=replace commit --cleanup=strip -F '$file' --trailer 'Model: $slot'"
+[ -n "$add" ] && fix="$add && $fix"
+{
+	echo "commit refused: $reason"
 	echo "Every commit names what made it, in one trailer line: Model: and the model id you"
-	echo "are, or Model: human when you, the git author, wrote it yourself. Replace the slot"
-	echo "below with that; it is refused as it stands. Emergency exit: git commit --no-verify"
-	echo "fix: git -c trailer.ifexists=replace commit --cleanup=strip -F '$file' --trailer 'Model: <model-id-or-human>'"
+	echo "are with the effort you run at (Model: claude-opus-5-5/high), or Model: human when"
+	echo "you, the git author, wrote it yourself. A <...> slot below is refused as it stands."
+	echo "Emergency exit: git commit --no-verify"
+	echo "fix: $fix"
 } >&2
 exit 1
 `
