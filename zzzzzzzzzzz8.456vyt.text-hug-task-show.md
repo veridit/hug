@@ -1,7 +1,7 @@
 ---
 id: 456vyt
 title: "Text hug task show prints the stage and wait as its second line"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["kestrel"]

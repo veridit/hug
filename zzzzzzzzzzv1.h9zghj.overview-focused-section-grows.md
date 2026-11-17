@@ -1,7 +1,7 @@
 ---
 id: h9zghj
 title: "Overview: the focused section grows, others keep at least 3 rows"
-status: "done"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["vole"]

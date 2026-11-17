@@ -1,7 +1,7 @@
 ---
 id: nfv18p
 title: "TUI refreshes when tasks change on disk"
-status: "done"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["poodle"]

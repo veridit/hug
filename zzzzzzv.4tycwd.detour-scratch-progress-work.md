@@ -1,7 +1,7 @@
 ---
 id: 4tycwd
 title: "Detour scratch for in-progress work"
-status: todo
+state: todo
 type: spike
 priority: ""
 assignee: []

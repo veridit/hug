@@ -1,7 +1,7 @@
 ---
 id: vnyz8z
 title: "hug tui opens at once from the last snapshot, refreshes behind a spinner"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["wyvern"]

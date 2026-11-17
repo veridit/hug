@@ -1,7 +1,7 @@
 ---
 id: 89y0b7
 title: "Waiting rows: two lines, the title on top, what it waits on below"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]

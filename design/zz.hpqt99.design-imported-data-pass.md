@@ -1,7 +1,7 @@
 ---
 id: hpqt99
 title: "Design: imported data pass"
-status: todo
+state: todo
 type: spike
 priority: "low"
 assignee: []

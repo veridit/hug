@@ -1,7 +1,7 @@
 ---
 id: 2easb0
 title: "Self-guiding CLI hints"
-status: "done"
+state: "done"
 type: feature
 priority: "low"
 assignee: []

@@ -1,7 +1,7 @@
 ---
 id: 1rca5g
 title: "Flaky on Linux: background throttle test reads nice=0 instead of 10"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["hatchling"]

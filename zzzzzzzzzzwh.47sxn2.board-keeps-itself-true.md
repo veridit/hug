@@ -1,7 +1,7 @@
 ---
 id: 47sxn2
 title: "The board keeps itself true: deduce what happened, ask when it can't"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["crab"]

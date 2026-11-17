@@ -1,7 +1,7 @@
 ---
 id: p277bp
 title: "Brand: hug as the tool, Huginn and Muninn as mascots"
-status: todo
+state: todo
 type: docs
 priority: ""
 assignee: []

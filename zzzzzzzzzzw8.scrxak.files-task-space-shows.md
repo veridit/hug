@@ -1,7 +1,7 @@
 ---
 id: scrxak
 title: "Files in a task: Space shows a file inline, n/p step, Esc or u back"
-status: "doing"
+state: "doing"
 type: feature
 priority: "medium"
 assignee: ["nautilus"]

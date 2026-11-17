@@ -1,7 +1,7 @@
 ---
 id: e4w9ya
 title: "Launch posts (X, LinkedIn)"
-status: todo
+state: todo
 type: docs
 priority: "low"
 assignee: []

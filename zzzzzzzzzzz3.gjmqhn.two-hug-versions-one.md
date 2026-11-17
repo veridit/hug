@@ -1,7 +1,7 @@
 ---
 id: gjmqhn
 title: "Two hug versions on one machine keep their own cache, never wipe each other's"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["wyvern"]

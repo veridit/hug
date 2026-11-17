@@ -1,7 +1,7 @@
 ---
 id: qawmnb
 title: "Recall nudges: keep the task board current"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["guppy"]

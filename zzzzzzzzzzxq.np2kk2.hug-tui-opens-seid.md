@@ -1,7 +1,7 @@
 ---
 id: np2kk2
 title: "hug tui opens Seid in 8-9 s: watch setup globs per folder, sync rereads"
-status: "doing"
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]

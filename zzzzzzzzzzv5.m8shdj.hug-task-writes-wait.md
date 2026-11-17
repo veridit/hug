@@ -1,7 +1,7 @@
 ---
 id: m8shdj
 title: "hug task writes wait their turn too, and forget updates only what changed"
-status: "done"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["dragon"]

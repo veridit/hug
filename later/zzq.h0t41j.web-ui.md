@@ -1,7 +1,7 @@
 ---
 id: h0t41j
 title: "Web UI"
-status: todo
+state: todo
 type: feature
 priority: "low"
 assignee: []

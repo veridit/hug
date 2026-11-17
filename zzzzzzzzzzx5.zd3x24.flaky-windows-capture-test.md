@@ -1,7 +1,7 @@
 ---
 id: zd3x24
 title: "Flaky on Windows: capture test never sees the child persist its batch"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["hatchling"]

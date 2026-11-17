@@ -1,7 +1,7 @@
 ---
 id: 4bwcgp
 title: "Detail: Tab reaches a task's links (deps, waited-on ticket, parent); Enter opens"
-status: todo
+state: todo
 type: feature
 priority: "high"
 assignee: ["nautilus"]

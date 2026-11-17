@@ -1,7 +1,7 @@
 ---
 id: jrj1vq
 title: "When-then memories: triggers stated at write time"
-status: todo
+state: todo
 type: feature
 priority: ""
 assignee: []

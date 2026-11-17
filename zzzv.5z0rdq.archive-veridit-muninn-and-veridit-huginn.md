@@ -1,7 +1,7 @@
 ---
 id: 5z0rdq
 title: "Archive veridit/muninn and veridit/huginn, point to hug"
-status: "done"
+state: "done"
 type: chore
 priority: ""
 assignee: []

@@ -1,7 +1,7 @@
 ---
 id: r5r8c1
 title: "take refused by a dependency says 'taken by  (id)': name the blocker"
-status: "doing"
+state: "doing"
 type: bug
 priority: "medium"
 assignee: ["kestrel"]

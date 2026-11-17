@@ -1,7 +1,7 @@
 ---
 id: 95ahtk
 title: "Task writers wait their turn: no index or temp-file races"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["kestrel"]

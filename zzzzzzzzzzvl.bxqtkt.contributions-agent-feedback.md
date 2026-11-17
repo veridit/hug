@@ -1,7 +1,7 @@
 ---
 id: bxqtkt
 title: "Contributions: agent feedback and GitHub intake with minimal bureaucracy"
-status: "doing"
+state: "doing"
 type: spike
 priority: ""
 assignee: ["kestrel"]

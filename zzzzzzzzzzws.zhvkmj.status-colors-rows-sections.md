@@ -1,7 +1,7 @@
 ---
 id: zhvkmj
 title: "Status colors: rows and sections share one subtle scheme; done shows a count"
-status: "doing"
+state: "doing"
 type: feature
 priority: ""
 assignee: ["nautilus"]

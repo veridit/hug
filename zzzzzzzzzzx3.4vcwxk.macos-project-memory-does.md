@@ -1,7 +1,7 @@
 ---
 id: 4vcwxk
 title: "macOS: a project memory does not reach the other clone within 10 s"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["kestrel"]

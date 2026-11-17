@@ -1,7 +1,7 @@
 ---
 id: s6ff5k
 title: "Measure amortized cleanup: forgets and corrections after recall"
-status: "doing"
+state: "doing"
 type: feature
 priority: ""
 assignee: ["hatchling"]

@@ -1,7 +1,7 @@
 ---
 id: fcf4fg
 title: "Sync recovers from an interrupted rebase on the tasks worktree"
-status: todo
+state: todo
 type: bug
 priority: "high"
 assignee: ["kestrel"]

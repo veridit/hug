@@ -1,7 +1,7 @@
 ---
 id: me51r2
 title: "Concurrent writes wait their turn; hug mem list --json; batch forget"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["dragon"]

@@ -1,7 +1,7 @@
 ---
 id: ggydj2
 title: "Import is a one-time move: --cleanup retires the source, re-import is refused"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["kestrel"]

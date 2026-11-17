@@ -1,7 +1,7 @@
 ---
 id: 8bsx4y
 title: "TUI: inline code in a quiet tint, not red"
-status: "done"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["vole"]

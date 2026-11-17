@@ -1,7 +1,7 @@
 ---
 id: c3hszg
 title: "Recall: user-weighted BM25F and best-passage scoring in muninn search"
-status: todo
+state: todo
 type: spike
 priority: ""
 assignee: []

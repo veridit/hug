@@ -1,7 +1,7 @@
 ---
 id: 49n9kw
 title: "Ranked text search for agents and people: hug task search, MCP task_search"
-status: "done"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["wyvern"]

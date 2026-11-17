@@ -1,7 +1,7 @@
 ---
 id: vzghj8
 title: "TUI search finds a task by its imported id (STATBUS-402)"
-status: "doing"
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]

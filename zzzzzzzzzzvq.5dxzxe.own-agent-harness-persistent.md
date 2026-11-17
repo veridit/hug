@@ -1,7 +1,7 @@
 ---
 id: 5dxzxe
 title: "Own agent harness: persistent workers, messages and wakes on the board"
-status: todo
+state: todo
 type: spike
 priority: ""
 assignee: []

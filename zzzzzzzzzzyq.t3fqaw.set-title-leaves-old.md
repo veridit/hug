@@ -1,7 +1,7 @@
 ---
 id: t3fqaw
 title: "set --title leaves the old multi-line title's continuation lines"
-status: "doing"
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]

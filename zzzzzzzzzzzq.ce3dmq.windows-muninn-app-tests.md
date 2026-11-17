@@ -1,7 +1,7 @@
 ---
 id: ce3dmq
 title: "Windows: muninn app tests hit the 10m timeout; placement starts 4 git per lookup"
-status: "doing"
+state: "doing"
 type: feature
 priority: ""
 assignee: ["hatchling"]

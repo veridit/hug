@@ -1,7 +1,7 @@
 ---
 id: pbh9xq
 title: "Lint: separate broken from not up to par"
-status: "done"
+state: "done"
 type: feature
 priority: "medium"
 assignee: ["wyvern"]

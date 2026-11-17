@@ -1,7 +1,7 @@
 ---
 id: vk9td0
 title: "Decide when dream items are handed out"
-status: todo
+state: todo
 type: spike
 priority: "high"
 assignee: []

@@ -1,7 +1,7 @@
 ---
 id: bejd89
 title: "Column cursor: Tab picks a column, o orders by it"
-status: "doing"
+state: "doing"
 type: feature
 priority: "medium"
 assignee: ["nautilus"]

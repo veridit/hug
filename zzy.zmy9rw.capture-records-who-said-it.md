@@ -1,7 +1,7 @@
 ---
 id: zmy9rw
 title: "Capture records who said it"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: []

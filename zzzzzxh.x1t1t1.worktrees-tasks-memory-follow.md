@@ -1,7 +1,7 @@
 ---
 id: x1t1t1
 title: "Worktrees: record branch and worktree on take; branch as a condition"
-status: "done"
+state: "done"
 type: "feature"
 priority: "high"
 assignee: ["kestrel"]

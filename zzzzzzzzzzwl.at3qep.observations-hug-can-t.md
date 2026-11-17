@@ -1,7 +1,7 @@
 ---
 id: at3qep
 title: "Observations hug can't settle become questions to the owner"
-status: "done"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["hatchling"]

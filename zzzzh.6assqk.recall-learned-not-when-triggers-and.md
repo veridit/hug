@@ -1,7 +1,7 @@
 ---
 id: 6assqk
 title: "Recall: learned 'not when' triggers and a local candidate rule"
-status: todo
+state: todo
 type: spike
 priority: ""
 assignee: []

@@ -1,7 +1,7 @@
 ---
 id: 3mavpt
 title: "hug setup takes 34 s on Seid: it dry-runs the whole backlog import"
-status: todo
+state: todo
 type: bug
 priority: "high"
 assignee: ["kestrel"]

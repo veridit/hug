@@ -1,7 +1,7 @@
 ---
 id: gav9nw
 title: "Design: personal vs shared memories"
-status: todo
+state: todo
 type: spike
 priority: "low"
 assignee: []

@@ -1,7 +1,7 @@
 ---
 id: 3z7zrs
 title: "forget works on any memory shown to you"
-status: "done"
+state: "done"
 type: bug
 priority: ""
 assignee: []

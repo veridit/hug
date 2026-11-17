@@ -1,7 +1,7 @@
 ---
 id: ta306h
 title: "Short-message topic check experiment"
-status: todo
+state: todo
 type: spike
 priority: "low"
 assignee: []

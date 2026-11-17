@@ -1,7 +1,7 @@
 ---
 id: x1ra0t
 title: "Inside a task, J and K never move it: moving is a list action"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["nautilus"]

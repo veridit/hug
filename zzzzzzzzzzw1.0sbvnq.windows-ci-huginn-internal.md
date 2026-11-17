@@ -1,7 +1,7 @@
 ---
 id: 0sbvnq
 title: "Windows CI: huginn/internal/cli tests under 5 minutes"
-status: "doing"
+state: "doing"
 type: feature
 priority: ""
 assignee: ["wyvern"]

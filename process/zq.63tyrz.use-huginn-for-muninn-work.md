@@ -1,7 +1,7 @@
 ---
 id: 63tyrz
 title: "Use huginn for muninn work"
-status: "dropped"
+state: "dropped"
 type: chore
 priority: "medium"
 assignee: []

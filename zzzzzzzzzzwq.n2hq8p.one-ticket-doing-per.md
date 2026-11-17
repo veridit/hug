@@ -1,7 +1,7 @@
 ---
 id: n2hq8p
 title: "One ticket in doing per agent; a second take says why or refuses"
-status: "done"
+state: "done"
 type: feature
 priority: "medium"
 assignee: ["kestrel"]

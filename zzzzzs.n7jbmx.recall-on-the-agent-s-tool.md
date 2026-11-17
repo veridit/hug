@@ -1,7 +1,7 @@
 ---
 id: n7jbmx
 title: "Recall on the agent's tool calls (post_tool_feedback)"
-status: todo
+state: todo
 type: spike
 priority: ""
 assignee: []

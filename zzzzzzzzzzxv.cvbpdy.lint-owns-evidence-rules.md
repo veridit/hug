@@ -1,7 +1,7 @@
 ---
 id: cvbpdy
 title: "Lint owns evidence rules: (lost) marker, path citations checked, setup offers them"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["hatchling"]

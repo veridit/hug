@@ -1,7 +1,7 @@
 ---
 id: 46ek1f
 title: "hug tui on Seid: one load per commit; frame work not growing with the board"
-status: "doing"
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]

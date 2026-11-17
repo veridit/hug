@@ -1,7 +1,7 @@
 ---
 id: tpnd3n
 title: "An unrelated lint finding waits until the session's own task has none"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["hatchling"]

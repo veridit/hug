@@ -1,7 +1,7 @@
 ---
 id: txjkrm
 title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned up"
-status: todo
+state: todo
 type: feature
 priority: ""
 assignee: ["nautilus"]

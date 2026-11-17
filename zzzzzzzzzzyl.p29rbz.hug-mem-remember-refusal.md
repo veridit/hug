@@ -1,7 +1,7 @@
 ---
 id: p29rbz
 title: "hug mem remember: a refusal says NOT STORED first and exits non-zero"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["hatchling"]

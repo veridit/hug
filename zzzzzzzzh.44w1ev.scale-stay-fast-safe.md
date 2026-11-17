@@ -1,7 +1,7 @@
 ---
 id: 44w1ev
 title: "Scale: stay fast and safe at 10,000 tasks"
-status: "doing"
+state: "doing"
 type: chore
 priority: "medium"
 assignee: ["wyvern"]

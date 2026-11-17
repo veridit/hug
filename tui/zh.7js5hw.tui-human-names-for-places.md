@@ -1,7 +1,7 @@
 ---
 id: 7js5hw
 title: "TUI: human names for places"
-status: "done"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["Jørgen H. Fjeld"]

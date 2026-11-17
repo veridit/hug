@@ -1,7 +1,7 @@
 ---
 id: 805p6y
 title: "Checks show what is being worked on now, with a subtle line in the TUI"
-status: "dropped"
+state: "dropped"
 type: feature
 priority: ""
 assignee: ["nautilus"]

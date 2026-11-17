@@ -1,7 +1,7 @@
 ---
 id: 6tj2b8
 title: "huginn: lint codes, board --wide, init says what it did"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["Jørgen H. Fjeld"]

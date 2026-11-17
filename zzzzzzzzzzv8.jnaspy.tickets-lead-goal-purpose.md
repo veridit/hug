@@ -1,7 +1,7 @@
 ---
 id: jnaspy
 title: "Tickets lead with Goal, Purpose, Principle; notes come last"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["vole"]

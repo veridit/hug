@@ -1,7 +1,7 @@
 ---
 id: 5z4zt4
 title: "Attach screenshots and screen captures to a task; the detail shows them inline"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]

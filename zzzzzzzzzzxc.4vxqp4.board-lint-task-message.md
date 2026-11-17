@@ -1,7 +1,7 @@
 ---
 id: 4vxqp4
 title: "Board lint: a task the message only mentions is not the session's task"
-status: "todo"
+state: "todo"
 type: feature
 priority: ""
 assignee: []

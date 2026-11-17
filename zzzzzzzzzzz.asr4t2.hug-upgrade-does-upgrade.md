@@ -1,7 +1,7 @@
 ---
 id: asr4t2
 title: "hug upgrade does the upgrade and says what changed, per part"
-status: "done"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["nautilus"]

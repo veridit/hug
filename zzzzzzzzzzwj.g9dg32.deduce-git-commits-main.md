@@ -1,7 +1,7 @@
 ---
 id: g9dg32
 title: "Deduce from git: commits on main and release tags mark the ticket"
-status: "done"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["wyvern"]

@@ -1,7 +1,7 @@
 ---
 id: typq1e
 title: "Capture stores no agent status at all (follow-up to ez50rb)"
-status: todo
+state: todo
 type: bug
 priority: ""
 assignee: ["hatchling"]

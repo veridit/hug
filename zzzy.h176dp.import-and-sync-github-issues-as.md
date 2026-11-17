@@ -1,7 +1,7 @@
 ---
 id: h176dp
 title: "Import and sync GitHub issues as tasks"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["kestrel"]

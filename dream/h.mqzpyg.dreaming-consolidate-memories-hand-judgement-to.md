@@ -1,7 +1,7 @@
 ---
 id: mqzpyg
 title: "Dreaming: consolidate memories, hand judgement to the driving agent"
-status: "done"
+state: "done"
 type: feature
 priority: "high"
 assignee: []

@@ -1,7 +1,7 @@
 ---
 id: d634kr
 title: "Recall quality"
-status: todo
+state: todo
 type: feature
 priority: ""
 assignee: []

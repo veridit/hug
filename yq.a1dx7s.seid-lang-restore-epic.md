@@ -1,7 +1,7 @@
 ---
 id: a1dx7s
 title: "seid-lang: restore epic links and work the lint list"
-status: todo
+state: todo
 type: chore
 priority: ""
 assignee: []

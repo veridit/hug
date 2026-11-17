@@ -1,7 +1,7 @@
 ---
 id: 6w0gve
 title: "hug task review ID --by NAME --show FILE: a move into review, no hand edit"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["nautilus"]

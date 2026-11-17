@@ -1,7 +1,7 @@
 ---
 id: x325pp
 title: "Board lint nudges go to agents at a break in their own work"
-status: "done"
+state: "done"
 type: feature
 priority: ""
 assignee: ["hatchling"]

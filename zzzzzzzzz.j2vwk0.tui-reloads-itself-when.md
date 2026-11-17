@@ -1,7 +1,7 @@
 ---
 id: j2vwk0
 title: "TUI reloads itself when a new hug version is installed"
-status: "done"
+state: "done"
 type: feature
 priority: "medium"
 assignee: ["vole"]

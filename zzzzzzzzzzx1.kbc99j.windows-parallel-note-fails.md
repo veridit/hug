@@ -1,7 +1,7 @@
 ---
 id: kbc99j
 title: "Windows: a parallel note fails with 'file is being used by another process'"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["kestrel"]

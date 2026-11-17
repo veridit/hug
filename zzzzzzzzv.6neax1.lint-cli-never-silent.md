@@ -1,7 +1,7 @@
 ---
 id: 6neax1
 title: "Lint CLI: never silent, summary, codes, help"
-status: "done"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["poodle"]

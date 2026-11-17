@@ -1,7 +1,7 @@
 ---
 id: 0sw0dd
 title: "TUI navigation, search and sort"
-status: "todo"
+state: "todo"
 type: feature
 priority: ""
 assignee: []

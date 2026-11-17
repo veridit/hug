@@ -1,7 +1,7 @@
 ---
 id: 66ex4y
 title: "Capture: daily quality check"
-status: todo
+state: todo
 type: chore
 priority: "medium"
 assignee: []

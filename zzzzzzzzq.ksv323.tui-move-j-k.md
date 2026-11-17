@@ -1,7 +1,7 @@
 ---
 id: ksv323
 title: "TUI move (J/K) must move past the row you see"
-status: "done"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["poodle"]

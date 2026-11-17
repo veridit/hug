@@ -1,7 +1,7 @@
 ---
 id: 05r3pg
 title: "TUI: context command palette, inline at the bottom"
-status: todo
+state: todo
 type: feature
 priority: "high"
 assignee: []

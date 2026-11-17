@@ -1,7 +1,7 @@
 ---
 id: j0xa38
 title: "Hosted sync service (maybe)"
-status: todo
+state: todo
 type: spike
 priority: "low"
 assignee: []

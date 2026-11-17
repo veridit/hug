@@ -1,7 +1,7 @@
 ---
 id: 34r1ft
 title: "Per-repo setting: store project memories in the repo or not"
-status: todo
+state: todo
 type: feature
 priority: "medium"
 assignee: []

@@ -1,7 +1,7 @@
 ---
 id: jmx10s
 title: "TUI help: context keys first, easy to scan and search"
-status: todo
+state: todo
 type: feature
 priority: "medium"
 assignee: []

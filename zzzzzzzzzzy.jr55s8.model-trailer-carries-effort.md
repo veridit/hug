@@ -1,7 +1,7 @@
 ---
 id: jr55s8
 title: "Model trailer carries the effort: Model: id/effort, checked per model"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["wyvern"]

@@ -1,7 +1,7 @@
 ---
 id: 3jtfw9
 title: "Answer a ticket's question in place; the asking agent is told"
-status: "doing"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]

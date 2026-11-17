@@ -1,7 +1,7 @@
 ---
 id: n3ybbc
 title: "probe"
-status: "dropped"
+state: "dropped"
 type: feature
 priority: ""
 assignee: []

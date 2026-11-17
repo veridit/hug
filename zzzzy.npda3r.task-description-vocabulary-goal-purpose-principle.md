@@ -1,7 +1,7 @@
 ---
 id: npda3r
 title: "Task description vocabulary: goal, purpose, principle, zoom-in"
-status: "done"
+state: "done"
 type: spike
 priority: ""
 assignee: []
