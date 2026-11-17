@@ -167,6 +167,12 @@ func TestTmuxReload(t *testing.T) {
 	wait("hug v0.0.1 → v0.0.2 · R reloads", 5*time.Second)
 	send("-l", "R")
 	after := wait("reloaded hug v0.0.2", 15*time.Second)
+	// The message is in the new hug's first frame, which can be drawn at
+	// the default width before the terminal's size arrives: wait for the
+	// 140-column divider (CI 44132567751 caught a 100-column frame).
+	if !strings.Contains(after, strings.Repeat("─", 140)) {
+		after = wait(strings.Repeat("─", 140), 5*time.Second)
+	}
 	if dir := os.Getenv("HUG_TUI_ARTIFACTS"); dir != "" {
 		os.MkdirAll(filepath.Join(dir, "reload"), 0o755)
 		os.WriteFile(filepath.Join(dir, "reload", "before.txt"), []byte(before), 0o644)
