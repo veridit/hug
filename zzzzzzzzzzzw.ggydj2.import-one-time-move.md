@@ -4,7 +4,7 @@ title: "Import is a one-time move: --cleanup retires the source, re-import is re
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
