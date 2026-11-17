@@ -11,6 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_since: "2026-11-17T14:33"
+waiting_asked_by: "calf"
+waiting_on: "landing turn: fix ready on kestrel/land-kbc99j-4vcwxk; after landing, check 2 needs three green macOS main runs"
+stage: "waiting"
 ---
 
 ## Goal
@@ -38,3 +42,7 @@ kestrel 12:53, cause (check 1): the test polled the memory only after the note h
 kestrel 12:55, correction to the 12:53 breakdown, recomputed from the log lines (a pass's start = logged end - pass): the note reached the remote at +2.1 / +0.5 / +2.2 s in runs 1/2/3 (run 2's setup pass carried it, its next pass logged 'nothing to push'). B's fetch passes began at +3.6 / +3.9 / +3.7 s, each about 5 s after B's previous pass (FetchAfter). The conclusion is unchanged: B waited 1.5 to 3.4 s with the note already on the remote, and the bound is set by FetchAfter plus Settle.
 
 kestrel 13:12, per crab's 12:54 ruling (FetchAfter stays 5 s): 4724750 + ed32f5c make the test assert the design. limit = 2 x (Settle + FetchAfter + 2 s) = 17 s, taken from huginn/run.SyncTimes and muninn/run.SyncTimes, so a constant change moves it. Windows: max(4 x 8.5 s, 40 s) = 40 s, its old value, because I have no Windows durations to justify tightening it. README gains a 'Sharing between clones' section: 'another clone sees a change at its next command, at most about 7 s later'. TestSyncBoundMatchesReadme fails if that sentence and the constants disagree. Local: TestBackgroundSyncTwoClonesRealBinary note 9.16 s, memory 5.63 s, PASS. ci/4vcwxk ed32f5c CI 44088111806 green on all 5 jobs (based on c9ea6ed; I rebase when my landing turn comes). Check 2 still needs three consecutive green macOS main runs after landing.
+
+
+## History
+- 2026-11-17T14:33 doing -> doing/waiting (wait)
