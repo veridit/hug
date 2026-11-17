@@ -29,3 +29,5 @@ Windows refuses to rename over a file another process holds open without FILE_SH
 - [ ] TestParallelNotesWithoutRemoteAllLand passes in a Windows -count=20 run (run id)
 
 ## Notes
+
+hatchling 12:57, two more: main CI 44084323148 (206038a) windows TestParallelNotesWithoutRemoteAllLand 'being used by another process', 19 of 20; ci/fkpyg3 CI 44083418033 (c555895) same. The same 206038a passed on ci/v3k6cp (44082371484) and 5817fd7 passed (44085256434): a flake, about 2 in the last 6 Windows runs I watched.
