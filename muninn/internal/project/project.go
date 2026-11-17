@@ -86,14 +86,20 @@ func find(dir string, create bool) (Project, error) {
 	if err != nil {
 		return Project{}, err
 	}
-	if top, err := git(abs, "rev-parse", "--show-toplevel"); err == nil && top != "" {
+	if top, err := gitTop(abs); err == nil && top != "" {
 		top = filepath.Clean(top)
 		p, err := gitProject(top)
 		if errors.Is(err, errNoHistory) {
 			p, err = withFileID(top, create)
 		}
 		if err == nil {
-			if main, e := gitbranch.MainRoot(top); e == nil {
+			// A main worktree has a .git folder and is its own main root: no
+			// more git processes (ce3dmq: two each, ~45 ms on Windows, for
+			// every placement lookup). A linked worktree (.git is a file)
+			// asks git where its main checkout is.
+			if st, e := os.Stat(filepath.Join(top, ".git")); e == nil && st.IsDir() {
+				p.Notes = filepath.Join(top, NotesDir)
+			} else if main, e := gitbranch.MainRoot(top); e == nil {
 				p.Notes = filepath.Join(main, NotesDir)
 			}
 		}
@@ -113,6 +119,30 @@ func find(dir string, create bool) (Project, error) {
 
 // ErrNoProject means dir has no identity yet and create was false.
 var ErrNoProject = errors.New("not a muninn project (no git history and no .muninn/project)")
+
+// gitTop is the checkout's top level. Outside any repository (no .git in dir
+// or a parent, no GIT_DIR) it starts no git process: plain folders paid a
+// failing rev-parse per lookup, ~45 ms on Windows (ce3dmq).
+func gitTop(dir string) (string, error) {
+	if !inGit(dir) {
+		return "", ErrNoProject
+	}
+	return git(dir, "rev-parse", "--show-toplevel")
+}
+
+func inGit(dir string) bool {
+	if os.Getenv("GIT_DIR") != "" {
+		return true
+	}
+	for d := dir; ; d = filepath.Dir(d) {
+		if _, err := os.Lstat(filepath.Join(d, ".git")); err == nil {
+			return true
+		}
+		if filepath.Dir(d) == d {
+			return false
+		}
+	}
+}
 
 // gitProject is the identity of the git checkout whose top level is top.
 func gitProject(top string) (Project, error) {

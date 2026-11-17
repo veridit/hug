@@ -92,7 +92,12 @@ func (b Binding) Places() []Place {
 	if b.Err != nil {
 		return nil
 	}
-	here, client, global := b.placementScopes()
+	return b.places(b.placementScopes())
+}
+
+// places is Places for aliases already derived: a caller that needs both
+// the aliases and the inventory looks the project up once (ce3dmq).
+func (b Binding) places(here, client, global string) []Place {
 	candidates := []Place{{"here", here, "this project or folder; code, repo, paths, tickets and deployment"}}
 	if client != "" {
 		candidates = append(candidates, Place{"client", client, "facts shared across this client's projects, servers, people and processes"})
@@ -139,6 +144,11 @@ func (b Binding) Placement(scope, name string) (Place, error) {
 		case "global":
 			scope = global
 		}
+		scope, err := b.WriteScope(scope)
+		if err != nil {
+			return Place{}, err
+		}
+		return placeIn(b.places(here, client, global), scope), nil
 	}
 	scope, err := b.WriteScope(scope)
 	if err != nil {
@@ -148,7 +158,11 @@ func (b Binding) Placement(scope, name string) (Place, error) {
 }
 
 func (b Binding) PlaceForScope(scope string) Place {
-	for _, p := range b.Places() {
+	return placeIn(b.Places(), scope)
+}
+
+func placeIn(places []Place, scope string) Place {
+	for _, p := range places {
 		if p.Scope == scope {
 			return p
 		}
