@@ -1,13 +1,18 @@
 ---
 id: jmx10s
 title: "TUI help: context keys first, easy to scan and search"
-state: todo
+state: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+doing_since: "2026-11-17T21:37"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Code: huginn/internal/tui/keys.go (help lines, keyBar hints), help_search_test.g
 - [ ] fits 80x24 without a line wider than the terminal; goldens reviewed
 
 ## Notes
+
+
+## History
+- 2026-11-17T21:37 todo -> doing/active (take)
