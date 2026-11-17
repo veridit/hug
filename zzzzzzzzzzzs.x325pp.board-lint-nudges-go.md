@@ -29,7 +29,7 @@ muninn/internal/recall/boardcue.go pickFinding/BoardCue; replay muninn/cmd/board
 
 ## Acceptance
 - [ ] an unrelated lint finding is handed out only when the session has no doing task of its own or just closed one
-- [ ] a turn whose message tells the agent to stop or not run commands gets no board line
+- [x] a turn whose message tells the agent to stop or not run commands gets no board line
 - [ ] replay: lint precision >= 0.9 on held-out with no drop in lint lines on fresh data, counts in muninn/docs/BOARD4.md
 
 ## Notes
