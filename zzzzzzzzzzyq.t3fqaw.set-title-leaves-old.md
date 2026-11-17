@@ -9,14 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T18:56"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "go to push after nautilus's rename is on main (main held from 18:05Z)"
-waiting_since: "2026-11-17T19:03"
-waiting_asked_by: "calf"
-waiting_for: "crab"
 ---
 
 ## Goal
@@ -44,3 +40,4 @@ Ready on branch kestrel/t3fqaw, commit 9d42d03, not pushed: main is held from 18
 ## History
 - 2026-11-17T18:56 todo -> doing/active (take)
 - 2026-11-17T19:03 doing/active -> doing/waiting (wait)
+- 2026-11-17T22:36 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_for: crab; waiting_on: go to push after nautilus's rename is on main (main held from 18:05Z); waiting_since: 2026-11-17T19:03
