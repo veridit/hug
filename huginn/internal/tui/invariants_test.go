@@ -20,11 +20,11 @@ func TestMoveRepairsTiesAndUsesGlobalOrder(t *testing.T) {
 	}
 	m.refresh("")
 	first := m.visible[0].ID
-	m = act(m, "J")
+	m = press(m, "J")
 	if m.visible[1].ID != first || strings.Contains(m.message, "error") {
 		t.Fatal(m.View())
 	}
-	m = act(m, "K")
+	m = press(m, "K")
 	if m.visible[0].ID != first {
 		t.Fatal(m.View())
 	}

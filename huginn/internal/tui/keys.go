@@ -121,17 +121,25 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	default:
 		hints = append(hints, hint("j/k", "scroll"))
 	}
-	if len(m.filesOf(t)) > 0 {
-		hints = append(hints, hint("E", "files"))
-	}
+	// Every key that writes is named here, right after the focus's own
+	// keys so a narrow bar cuts navigation first (x1ra0t); each asks
+	// first, in a confirm line or a prompt, so nothing changes unseen.
 	if m.forYou(t) {
-		hints = append(hints, hint("a", "answer"))
+		hints = append(hints, hint("a", "answer")) // the question asks you (3jtfw9)
 	}
-	hints = append(hints, hint("n/p", "task"))
+	hints = append(hints, hint("t/d/x/e", "take/done/drop/edit"))
+	if !narrow {
+		hints = append(hints, hint("N", "new"))
+	}
+	hints = append(hints, hint("u", "up"), hint("n/p", "task"))
 	if len(m.focusStops(t)) > 1 {
 		hints = append(hints, hint("Tab", "section"))
 	}
-	hints = append(hints, hint("u", "up"), hint("Esc", "back"))
+	hints = append(hints, hint("J/K", "½ page"))
+	if len(m.filesOf(t)) > 0 {
+		hints = append(hints, hint("E", "files"))
+	}
+	hints = append(hints, hint("Esc", "back"))
 	if !narrow {
 		hints = append(hints, hint(":", "cmd"))
 	}
@@ -140,7 +148,7 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 func (m model) helpText() string {
 	navigation := []bkey.Binding{
 		keys.down, keys.top, keys.bottom,
-		hint("ctrl-d / ctrl-u", "half page down / up"), hint("PgDn / PgUp", "full page down / up"),
+		hint("ctrl-d/u, J/K", "half page down / up (J/K: in a task)"), hint("PgDn / PgUp", "full page down / up"),
 		keys.prev, keys.next, hint("Enter", "open full task detail"),
 		hint("Esc", "back one level, never quits"), hint("q / ctrl-c", "quit (q only outside inputs)"),
 		hint("/", "live find; Enter goes to it, Tab keeps"), hint(":", "palette with command + value completion"),
@@ -164,7 +172,7 @@ func (m model) helpText() string {
 	}
 	if len(m.sort) == 0 {
 		// Moves change rank, so they show only in rank order (mkzcqr).
-		actions = append(actions, hint("J / K", "move below / above the next row, no confirm"),
+		actions = append(actions, hint("J / K", "on a row: move below / above the next row, no confirm"),
 			hint("m / y, P p", "grab: j/k, Enter places it / yank, paste above below"))
 	} else {
 		actions = append(actions, hint(": sort rank", "rank order again: then J/K, m, y, P/p move"))

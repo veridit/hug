@@ -149,6 +149,22 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if _, cmd = key(fresh, "q"); cmd == nil {
 					t.Fatal("q did not quit")
 				}
+			case "J/K":
+				if after = press(fresh, "J"); after.viewport.YOffset <= before.viewport.YOffset || !after.detail {
+					t.Fatalf("J shown as half page but did not scroll: %d", after.viewport.YOffset)
+				}
+			case "t/d/x/e":
+				// Each writes only after a confirm or a prompt (x1ra0t).
+				for _, w := range []string{"t", "d", "x", "e"} {
+					after = press(fresh, w)
+					if after.confirm == "" && after.prompt == "" && after.message == "" {
+						t.Fatalf("%s changed something without asking or saying why not", w)
+					}
+				}
+			case "N":
+				if after = press(fresh, "N"); after.prompt != "new title" {
+					t.Fatalf("N did not open the new title prompt: %q", after.prompt)
+				}
 			case "-":
 				if after = press(fresh, "-"); after.prompt != strikePrompt && after.confirm != "-" && !strings.Contains(after.message, "ticked") {
 					t.Fatalf("- did not ask to strike out: prompt %q message %q", after.prompt, after.message)

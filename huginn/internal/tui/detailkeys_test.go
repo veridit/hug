@@ -1,0 +1,128 @@
+package tui
+
+import (
+	"slices"
+	"strings"
+	"testing"
+
+	"github.com/charmbracelet/x/ansi"
+)
+
+// x1ra0t check 1: in a task, J and K scroll half a page and never change
+// the rank (Jørgen 14:49 pressed them in zhvkmj's detail to scroll and
+// moved it above vzghj8).
+func TestDetailJKScrollAndNeverMove(t *testing.T) {
+	m, main := focusModel(t)
+	before := rankOrder(t, m)
+	m.detailPane = focusPage
+	m.viewport.GotoTop()
+	half := m.viewport.Height / 2
+	m = press(m, "J")
+	if !m.detail {
+		t.Fatal("J left the task")
+	}
+	if m.viewport.YOffset != half {
+		t.Fatalf("J scrolled to %d, want half a page (%d)", m.viewport.YOffset, half)
+	}
+	m = press(m, "J", "K")
+	if m.viewport.YOffset != half {
+		t.Fatalf("J K came back to %d, want %d", m.viewport.YOffset, half)
+	}
+	if strings.Contains(m.message, "moved") {
+		t.Fatalf("message says a move: %q", m.message)
+	}
+	// Every focus: none of them moves the task.
+	for _, pane := range m.focusStops(main) {
+		mm := m
+		mm.detailPane = pane
+		mm.syncDetail()
+		mm = press(mm, "K", "K", "J")
+		if mm.confirm != "" || strings.Contains(mm.message, "moved") {
+			t.Fatalf("pane %d: J/K acted: confirm %q message %q", pane, mm.confirm, mm.message)
+		}
+	}
+	if after := rankOrder(t, m); before != after {
+		t.Fatalf("rank changed from inside the task:\nbefore %v\nafter  %v", before, after)
+	}
+	// The key bar names it, so the reader need not guess.
+	m.width = 140
+	m.resize()
+	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "J/K ½ page") {
+		t.Fatalf("key bar lacks J/K: %q", bar)
+	}
+	// A move asked for from inside a task by any path is refused, never
+	// done (requestAction is the one place moves start).
+	m.requestAction("J", "")
+	if !strings.Contains(m.message, "Esc back to the list") {
+		t.Fatalf("a move from the detail was not refused: %q", m.message)
+	}
+	if after := rankOrder(t, m); before != after {
+		t.Fatalf("requestAction moved from the detail: %v", after)
+	}
+}
+
+// x1ra0t check 2: J and K on a list row still move the task.
+func TestRowJKStillMove(t *testing.T) {
+	m, _ := focusModel(t)
+	m = press(m, "esc")
+	if m.detail {
+		t.Fatal("still in the task")
+	}
+	before := shown(m)
+	sel, _ := m.selected()
+	m = press(m, "J")
+	after := shown(m)
+	if slices.Equal(before, after) || !strings.Contains(m.message, "moved "+sel.ID) {
+		t.Fatalf("J on a row did not move: %v -> %v (%q)", before, after, m.message)
+	}
+	m = press(m, "K")
+	if !slices.Equal(before, shown(m)) {
+		t.Fatalf("K did not undo J: %v -> %v", before, shown(m))
+	}
+}
+
+// x1ra0t check 3: every key that writes in the detail is named in its key
+// bar, at every width the bar is drawn for, and asks before it writes.
+// The writers are enumerated here; a new one must join the bar and this
+// list (TestFocusHintsAreHonest presses each hint the bar shows).
+func TestDetailWritingKeysAreNamed(t *testing.T) {
+	writers := map[string]string{"t": "t/d/x/e", "d": "t/d/x/e", "x": "t/d/x/e", "e": "t/d/x/e", " ": "Space", "-": "-", "N": "N"}
+	for _, w := range []int{80, 100, 140} {
+		m, main := focusModel(t)
+		m.width = w
+		m.resize()
+		for _, pane := range m.focusStops(main) {
+			m.detailPane = pane
+			m.syncDetail()
+			// The bar as drawn, after the help model cut what does not fit.
+			bar := ansi.Strip(m.keyBar())
+			for k, label := range writers {
+				// Space and - write only with the checks focused, and
+				// there they are named; elsewhere they only explain.
+				if (k == " " || k == "-") && pane != focusAcceptance {
+					after := press(m, k)
+					if after.confirm != "" || after.prompt != "" {
+						t.Fatalf("pane %d: %q asks to write with no check marked", pane, k)
+					}
+					continue
+				}
+				if k == "-" && w < 120 || k == "N" && w < 100 {
+					// - is named in the ACCEPTANCE heading below 120
+					// (sfa8w4); N opens a prompt that says what it makes.
+					continue
+				}
+				if !strings.Contains(bar, label+" ") {
+					t.Fatalf("width %d pane %d: %q writes but the bar shows %q", w, pane, k, bar)
+				}
+				before := rankOrder(t, m)
+				after := press(m, k)
+				if after.confirm == "" && after.prompt == "" && after.message == "" {
+					t.Fatalf("width %d pane %d: %q acted without a confirm, prompt or message", w, pane, k)
+				}
+				if before != rankOrder(t, m) {
+					t.Fatalf("%q changed the rank before any confirm", k)
+				}
+			}
+		}
+	}
+}

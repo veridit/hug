@@ -43,6 +43,12 @@ func (m *model) requestAction(k, value string) {
 	if k != "n" && !ok {
 		return
 	}
+	if (k == "J" || k == "K") && m.detail {
+		// Never from inside a task (x1ra0t): the rows it would move
+		// past are not on screen.
+		m.message = "J and K move a task from its row: Esc back to the list"
+		return
+	}
 	if k == "J" || k == "K" {
 		// J and K move past the row shown below or above, in this section
 		// and after filters; a task the reader cannot see is never the

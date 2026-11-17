@@ -1064,7 +1064,16 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// a answers the question the task asks you, typed right under
 				// it (3jtfw9).
 				return m, m.answerKey()
-			case "t", "d", "x", "J", "K", "e":
+			case "J", "K":
+				// In a task J and K scroll half a page (x1ra0t, Jørgen
+				// 14:49): Shift reads as more than j/k. Moving by rank is a
+				// row action, where the rows are seen to move.
+				if k == "J" {
+					m.viewport.HalfViewDown()
+				} else {
+					m.viewport.HalfViewUp()
+				}
+			case "t", "d", "x", "e":
 				return m, m.startAction(k)
 			case "/", ":", "#":
 				return m, m.openInput(k, "")
