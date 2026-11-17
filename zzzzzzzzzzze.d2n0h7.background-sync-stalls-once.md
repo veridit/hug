@@ -25,7 +25,7 @@ Seen: CI 44156864971, sync_test.go:87. Not reproduced locally. settled() dumps q
 ## Depends on
 
 ## Acceptance
-- [ ] the stall is reproduced or explained from a failing run's dump, and a test fails before the fix and passes after
+- [ ] ~~the stall is reproduced or explained from a failing run's dump, and a test fails before the fix and passes after~~ (not relevant: not reproduced in 26 local runs and 7 main CI runs (21 OS jobs) since 839e593; the settled() dump prints on a stall, so a recurrence files a new bug with its evidence, kestrel, 2026-11-18)
 
 ## Notes
 
