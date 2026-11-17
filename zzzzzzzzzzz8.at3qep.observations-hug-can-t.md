@@ -33,7 +33,7 @@ Uses level 1 facts (landed, shipped lines) from the git deduction ticket. Activi
 - g9dg32
 ## Acceptance
 - [x] each of (a)-(e) on a fixture board produces one question with observation and fix line; fixing it clears it (test per case)
-- [ ] the owner's agent gets the question at its next break and in hug task show (test)
+- [x] the owner's agent gets the question at its next break and in hug task show (test)
 - [ ] on hug's own board today, the questions raised match the drift Jørgen saw (0hkaa5, m1c28r, t709he would each have been asked), shown before and after
 
 ## Notes
