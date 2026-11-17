@@ -1,7 +1,7 @@
 ---
 id: 16dxsr
 title: "Depend on a group or epic, and on a stated condition"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["kestrel"]
