@@ -1,0 +1,57 @@
+## agent: 42
+/s1 2399.0   names=fox go=- | Brovs owner rule (via fox): QA switches need no approval; production follows once QA is verified and tests pass.
+/s1 4175.0   names=orangutan go=orangutan | TASK-2052 lane worktree is left untouched for foreman orangutan's land and later retirement.
+/s1 2937.0   names=fox go=- | Brovs testers are evidence-only and must not issue verdicts; coordinator for Brovs-4540 is fox.
+/s1 5244.0   names=spider go=- | In Brovs DevOps, spider pushes commits; agents commit locally (signed, message prefixed with the ticket) but do not push.
+/s1 4126.0   names=orangutan go=orangutan | DM foreman orangutan per stage with verbatim rc values, and stop and DM on any surprise or any change that would alter Mac output.
+/s1 1731.0   names=spider go=- | The Brovs-4866 clip_text fix was proven in scratch (9360 fuzz cases, 0 mismatches; 2M newlines under 0.2s) but held uncommitted pending spider's go-ahead.
+/s1 69.0     names=hibiscus go=hibiscus | In the statbus shared checkout, agent hibiscus owns repo files, commits, pushes and branch switching; reviewers must stay read-only and use explicit-ref git commands.
+/s1 2512.0   names=spider go=spider | Brovs-4540 lane C2: coordinator is spider; report PASS or FAIL with the build and comment id.
+/s1 788.0    names=scorpion,shark,snake go=scorpion | Seid gate order: snake's TASK-2026, then shark's TASK-1960 re-run, then the scorpion lane.
+/s1 788.0    names=orangutan,scorpion,sloth,spider go=orangutan,scorpion | Seid compiler worker roles: scorpion reports to foreman orangutan; prior holders were scorpion, sloth, and spider.
+/s1 4175.0   names=orangutan go=orangutan | TASK-2052 lane work lives in /Users/jhf/Veridit/src/seid-lang on branch lane/2052-storage; the foreman is 'orangutan', contacted by swarm DM.
+/s1 627.0    names=spider go=spider | Brovs-4626 restore drill attempt 6 (operator, coordinator spider) failed at verify: Postgres refused to start due to 'end-of-line before authentication method' on pg_hba.conf lines 154-155 in the drill data directory.
+/s1 627.0    names=squid go=- | Brovs-4626 drill attempt 5 (operator squid) restored latest and PITR fine and failed at verify on the pg_hba path; its invocation is reusable.
+/s1 5244.0   names=spider go=- | For Brovs-4569 work: never touch /Users/jhf/Projects/Brovs/DevOps; work in a fresh clone under .jcode/scratch, and do not push (spider pushes).
+/s1 788.0    names=scorpion,shark,snake go=scorpion | Gate order for the full dry-run: snake's TASK-2026, then shark's TASK-1960 re-run, then the scorpion lane.
+/s1 788.0    names=sloth go=- | The whole-corpus emit preview for TASK-1988 was launched detached by sloth's waiter; output in .jcode/scratch/TASK-1988/pv/ (pv.log, out).
+/s1 5244.0   names=spider go=- | Brovs-4569 forbids changes to brovs1/2/3, the monitor, Jenkins or production, and forbids pushing (spider pushes).
+/s1 788.0    names=shark,snake go=- | Gate order for the dry-run: TASK-2026 (snake), then TASK-1960 re-run (shark), then TASK-1988.
+/s1 5244.0   names=spider go=- | Brovs-4569 fixes to ops/setup-ubuntu-lts-24.sh were committed locally but not pushed; spider pushes.
+/s1 788.0    names=shark,snake go=- | Gate order for the whole-corpus dry-run: TASK-2026 (snake) first, then TASK-1960 re-run (shark), then TASK-1988.
+/fresh 5304.0   names=orangutan go=orangutan | Seid hug lint cleanup foreman is orangutan, contacted by DM.
+/fresh 121.0    names=squid go=- | muninn capture2 work must wait for squid's P0 capture fix to land on origin/main before branching a worktree.
+/fresh 5616.0   names=orangutan go=orangutan | Seid tracker clerk reports to foreman orangutan by DM on any decision or surprise, and at finish DMs counts attached/unattached, drafts noted/created, docs proposed.
+/fresh 839.0    names=fox go=- | Brovs-4540: BackofficeWeb on unstable ships one index.html per route; qa and production still run the old BackofficeWeb needing the SPA fallback until fox promotes it.
+/fresh 839.0    names=spider go=- | Brovs-4540: escalate to spider instead of choosing if the per-environment switch would force a shared Caddy redeploy or touch the parked files.
+/fresh 835.0    names=fox go=- | Brovs-4502 recording: six successful recordings captured, but Storo address drift caused 1/4 integration failures; expectation correction escalated to fox, replay and fixture commit await ruling.
+/fresh 3266.0   names=orangutan go=orangutan | Never edit the master .backlog; send ticket notes to the foreman (orangutan) by DM instead, and never commit to master — work on the named lanes.
+/fresh 3266.0   names=orangutan go=orangutan | If anything is ambiguous or a result differs from what the runbook expects, stop and DM orangutan rather than guessing.
+/fresh 3266.0   names=orangutan go=orangutan | The foreman (orangutan) talks to the King; workers report to orangutan by DM after each step with numbers.
+/fresh 2311.0   names=fox go=- | For Brovs-4540 reset-link-removal work: master only, signed commits, no push, no YouTrack writes; escalate to fox rather than guessing.
+/fresh 2311.0   names=fox go=- | Brovs-4540 work is coordinated by fox, who receives the final 5-line summary DM.
+/fresh 1834.0   names=fox go=fox | For Brovs tester lanes, the coordinator is fox and a 5-line DM to fox is sent when done.
+/fresh 4085.0   names=fox go=fox | On Brovs work, when blocked, DM fox (session_fox_1786973670427_f6af743b8ac2fe1c) with a line starting `BLOCKED:` and a concrete recommendation.
+/fresh 5592.1   names=crab,guppy go=- | hug task take refused with 'taken by crab (qawmnb)'; running hug task set qawmnb --assignee guppy changes the assignee but leaves the task todo, not doing.
+/fresh 97.0     names=bat go=bat | Brovs-4858 report is continued from /Users/jhf/Projects/Brovs/.jcode/scratch/4858/report.md, started by previous engineer bat's preflight.
+/fresh 5304.0   names=orangutan go=orangutan | Seid repo hug ticket clerk reports to foreman orangutan via DM.
+/fresh 121.0    names=squid go=squid | squid's lane is fixing a live capture timeout and adding an audit log in internal/app/capture.go on muninn main.
+/fresh 5616.0   names=orangutan go=orangutan | Seid backlog retirement: at finish, DM orangutan the counts of attached/unattached evidence, drafts noted/created, and docs proposed.
+/fresh 2311.0   names=fox go=- | For Brovs-4540 reset-link removal work: master only, signed commits, no push, no YouTrack writes; escalate to fox rather than guess.
+/fresh 2311.0   names=fox go=- | Brovs-4540 offline suite result: 516 passed with one preexisting self-symlink scan failure, escalated to fox.
+/fresh 4085.0   names=fox go=fox | When blocked on Brovs work, DM fox with a line starting `BLOCKED:` plus a concrete recommendation.
+/fresh 835.0    names=fox go=fox | Brovs-4502 rerecord: deliver signed commits on bapi master without push, update the report, and DM fox in 5 lines; escalate ambiguity to fox.
+## clean: 12
+/s1 1733.0   names=bug go=- | In cluster-maintenance.sh clip_text, BSD tr under LANG=en_US.UTF-8 fails on a split UTF-8 byte ("Illegal byte sequence") and silently truncates output; GNU tr on ubuntu:24.04 does not, so the bug only reproduces on macOS.
+/s1 788.0    names=bug go=- | Fix a bug class with a type that makes it impossible (the King's type principle).
+/s1 1733.0   names=bug go=- | The clip_text LC_ALL bug reproduces on macOS bash 3.2 (old 40/40 mismatches, new 0/40) but not on ubuntu:24.04 with LANG=C.UTF-8, since GNU tr does not fail on those inputs.
+/s1 1731.0   names=cat go=- | Brovs-4866 finding B: cluster-maintenance.sh:1507 `err="$(clip_text 200 "$(cat "$err_file")")"` hides a cat failure; fix by reading the file in a separate step so set -e still trips.
+/s1 1733.0   names=bug go=- | The clip_text LC_ALL bug reproduces on macOS bash 3.2 (40/40 mismatches) but not on ubuntu:24.04 with LANG=C.UTF-8, where GNU tr handles the inputs (0/40).
+/s1 4125.0   names=bug go=- | In seid-lang, comptime-staged local FunDefs are built via `code_to_ast` in comptime.ml, which assigns param_origin; a bug there made `_named0` params `Declared(Positional)` instead of `Declared(Named_group)`.
+/s1 1733.0   names=bug go=- | The clip_text LC_ALL bug reproduces only on macOS BSD tr; GNU tr on ubuntu:24.04 with LANG=C.UTF-8 showed 0/40 mismatches for both old and new code.
+/s1 788.0    names=bug go=- | Type principle (the King): fix a bug class with a type that makes it impossible.
+/fresh 784.0    names=bug go=- | The King's type principle: fix a bug class with a type that makes it impossible (OCaml variants and abstract types, not string templates).
+/fresh 777.0    names=bug go=- | The T13 docker build mount check itself reads attached stdout, so an empty-stdout bug makes it skip rather than fail; that Docker build check never actually runs in CI.
+/fresh 784.0    names=bug go=- | Type principle (the King): fix a bug class with a type that makes it impossible — OCaml variants and abstract types, not string templates.
+/fresh 784.0    names=bug go=- | Seid type principle (the King): fix a bug class with a type that makes it impossible — OCaml variants and abstract types, not string templates.
+## other: 0
