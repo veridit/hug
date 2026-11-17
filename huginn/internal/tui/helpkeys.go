@@ -120,11 +120,8 @@ func (m model) taskHelp() helpSection {
 	default:
 		rows = append(rows, row("j/k", "scroll the page", "j", "k"))
 	}
-	if len(m.idStops(t)) > 0 {
-		rows = append(rows, row("Tab / Shift-Tab", "next / previous task id shown; Enter opens it", "tab", "shift+tab"))
-	}
-	if len(m.focusStops(t)) > 1 {
-		rows = append(rows, row("h / l", "previous / next section: page, checks, deps, links, files", "h", "l"))
+	if len(m.focusRing(t)) > 1 {
+		rows = append(rows, row("h / l  Tab", "previous / next stop: each task id, the page, checks, links, files", "h", "l", "tab", "shift+tab"))
 	}
 	if m.forYou(t) {
 		rows = append(rows, row("a", "answer the question it asks you", "a"))
@@ -135,7 +132,9 @@ func (m model) taskHelp() helpSection {
 		row("u / Esc", "up: back from a followed id, else to the list", "u"),
 		row("t / d / x", "take / done / drop it", "t", "d", "x"),
 		row("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi", "e"),
-		row("s / y", "state / type palette", "s", "y"),
+		row("w", "wait: park the doing task on what it waits on", "w"),
+		row("y", "yank: P/p in the list paste it", "y"),
+		row("s / T", "state / type palette", "s", "T"),
 	)
 	if len(m.filesOf(t)) > 0 {
 		rows = append(rows, row("E", "its files folder in the editor", "E"))
@@ -151,25 +150,25 @@ func (m model) rowsHelp() helpSection {
 		row("ctrl-d/u", "half page down / up", "ctrl+d", "ctrl+u"), row("PgDn / PgUp", "page down / up", "pgdown", "pgup"),
 		row("Enter", "open the task", "enter"),
 	}
+	rows = append(rows, row("J / K", "page down / up", "J", "K"))
 	if m.paneCount() > 1 {
 		what := "section"
 		if m.view == "board" {
 			what = "column"
 		}
-		rows = append(rows, row("h / l", "previous / next "+what, "h", "l"))
+		rows = append(rows, row("h / l  Tab", "previous / next "+what, "h", "l", "tab", "shift+tab"))
 	}
 	rows = append(rows,
-		row("Tab / Shift-Tab", "mark the next / previous column", "tab", "shift+tab"),
+		row("H / L", "mark the previous / next column", "H", "L"),
 		row("o", "order by the marked column: ▲ ▼ off", "o"),
 		row("t / d / x", "take / done / drop the task", "t", "d", "x"),
 		row("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi", "e"),
 	)
 	if len(m.sort) == 0 {
 		// Moves change rank, so they show only in rank order (mkzcqr).
-		rows = append(rows, row("J / K", "move below / above the next row, no confirm", "J", "K"),
-			row("m", "grab: j/k move it, Enter places it", "m"), row("y, P p", "yank, then paste above / below", "y"))
+		rows = append(rows, row("m", "grab to move: j/k move it, Enter places it", "m"), row("y, P p", "yank, then paste above / below", "y"))
 	} else {
-		rows = append(rows, row(": sort rank", "rank order again: then J/K, m, y, P/p move"))
+		rows = append(rows, row(": sort rank", "rank order again: then m, y, P/p move"))
 	}
 	// s and c share a row, so g costs no line and EVERYWHERE stays on the
 	// first screen at 80x24.

@@ -1,16 +1,14 @@
 == 000002 at 80
-HUG TASKS · detail   60/60 tasks · ! 4 broken · 5 advice · ? 1 for you          
- overview    list    board    !lint   list › ▸ 000002                           
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15        
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
-Bug task 02: make the terminal workflow observable                              
-[doing]  [bug]  [critical]  000002  group:compiler  assigned:alice ·            
-feat/terminal-000002                                                            
+HUG TASKS · list › 000002                                            ? 1 for you
+[doing]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-     
+000002                                                                          
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                      
 └─ waiting on you: look at the IN PROGRESS rows · since 14:42                   
 ? asked: look at the IN PROGRESS rows                                           
   asked by alice · 10 min ago                                                   
   a answer                                                                      
+────────────────────────────────────────────────────────────────────────────────
+▸ Bug task 02: make the terminal workflow observable                            
 ────────────────────────────────────────────────────────────────────────────────
   ▸ rows.ans · 102 B                                                            
 HUG TASKS · overview                                                            
@@ -26,21 +24,21 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                    
                                                                                 
 fmt.Println("synthetic acceptance")                                             
+                                                                                
+PURPOSE                                                                         
 Task 2 of 60 · 0% · n next · p previous · Esc back                              
                                                                                 
-j/k scroll · a answer · t/d/x/e take/done/drop/edit · u up · n/p task …         
+j/k scroll · e edit · d done · w wait · x drop · y yank · h/l Tab next …        
 == 000002 at 140
-HUG TASKS · detail   60/60 tasks · ! 4 broken · 5 advice · ? 1 for you                                                                      
- overview    list    board    !lint   list › ▸ 000002                                                                                       
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15                                                                    
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
-Bug task 02: make the terminal workflow observable                                                                                          
-[doing]  [bug]  [critical]  000002  group:compiler  assigned:alice · feat/terminal-000002                                                   
+HUG TASKS · list › 000002                                                                                                        ? 1 for you
+[doing]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-000002                                                           
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                                                                                  
 └─ waiting on you: look at the IN PROGRESS rows · since 14:42                                                                               
 ? asked: look at the IN PROGRESS rows                                                                                                       
   asked by alice · 10 min ago                                                                                                               
   a answer                                                                                                                                  
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+▸ Bug task 02: make the terminal workflow observable                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
   ▸ rows.ans · 102 B                                                                                                                        
 HUG TASKS · overview                                                                                                                        
@@ -57,6 +55,8 @@ Verification
                                                                                                                                             
 fmt.Println("synthetic acceptance")                                                                                                         
                                                                                                                                             
+PURPOSE                                                                                                                                     
+Synthetic.                                                                                                                                  
 Task 2 of 60 · 0% · n next · p previous · Esc back                                                                                          
                                                                                                                                             
-j/k scroll · a answer · t/d/x/e take/done/drop/edit · N new · u up · n/p task · h/l section · J/K ½ page · E files · S screen · Esc back …  
+j/k scroll · e edit · d done · w wait · x drop · y yank · h/l Tab next · a answer · N new · u up · n/p task · J/K ½ page · E files …        

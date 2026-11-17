@@ -7,11 +7,11 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-// In a task's detail, Tab and Shift-Tab step through every task id the
-// detail shows, in reading order, and Enter opens the one marked; Esc or u
-// comes back (4bwcgp, Jørgen 19:43: "there is no way to tab to the
-// dependency" in jr55s8's "waiting on after 46ek1f"). h/l move between
-// sections, as in the rows (bejd89). The ids are marked where they stand:
+// In a task's detail, Tab and l (Shift-Tab and h) step one focus ring in
+// reading order, every task id the detail shows a stop of its own (4bwcgp,
+// e3sevr: focusRing), and Enter opens the one marked; Esc or u comes back
+// (Jørgen 19:43: "there is no way to tab to the dependency" in jr55s8's
+// "waiting on after 46ek1f"). The ids are marked where they stand:
 // the parent badge and the stage line in the header, the Dependencies,
 // Children and Links rows, and an id named in the Notes (crab 19:50). An
 // id or alias that resolves to no task is not a stop.
@@ -157,38 +157,6 @@ func (m model) markedStop(t task.Task) (idStop, bool) {
 	return stops[m.idAt], true
 }
 
-// stepID moves the mark to the next (1) or previous (-1) task id, around
-// the end; from no id, Tab goes to the first and Shift-Tab to the last.
-func (m *model) stepID(step int) {
-	t, ok := m.selected()
-	if !ok {
-		return
-	}
-	stops := m.idStops(t)
-	if len(stops) == 0 {
-		m.message = "no task id here: h/l moves between sections"
-		return
-	}
-	k := m.idAtFocus(stops)
-	switch {
-	case k < 0 && step > 0:
-		k = 0
-	case k < 0:
-		k = len(stops) - 1
-	default:
-		k = (k + step + len(stops)) % len(stops)
-	}
-	s := stops[k]
-	switch s.where {
-	case stopDeps:
-		m.detailPane, m.dependency = focusDeps, s.index
-	case stopLinks:
-		m.detailPane, m.link = focusLinks, s.index
-	default:
-		m.detailPane, m.idAt = focusIDs, k
-	}
-}
-
 // followID opens the task id marked in the header or the text; Esc comes
 // back, as after following a dependency.
 func (m *model) followID() {
@@ -198,7 +166,7 @@ func (m *model) followID() {
 	}
 	s, ok := m.markedStop(t)
 	if !ok {
-		m.message = "no task id marked: Tab marks the next one"
+		m.message = "no task id marked: Tab or l steps to the next one"
 		return
 	}
 	m.detailStack = append(m.detailStack, t.Path)

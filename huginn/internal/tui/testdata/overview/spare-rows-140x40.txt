@@ -1,31 +1,31 @@
 > IN PROGRESS · assigned to  [2]                                                                                                            
-> ○ 1   ######   feature          active    Task 01                                                                         ann             
-  ○ 1   ######   feature          active    Task 02                                                                         ann             
+> ○ 1    ######   feature          active    Task 01                                                                        ann             
+  ○ 1    ######   feature          active    Task 02                                                                        ann             
 
   WAITING · on you first  [0] · None                                                                                                        
 
   NEXT UP · rank order  [32] · 1–21 shown                                                                                                   
-  ○ 1   ######   feature          ready     Task 03                                                                                         
-  ○ 1   ######   feature          ready     Task 04                                                                                         
-  ○ 1   ######   feature          ready     Task 05                                                                                         
-  ○ 1   ######   feature          ready     Task 06                                                                                         
-  ○ 1   ######   feature          ready     Task 07                                                                                         
-  ○ 1   ######   feature          ready     Task 08                                                                                         
-  ○ 1   ######   feature          ready     Task 09                                                                                         
-  ○ 1   ######   feature          ready     Task 10                                                                                         
-  ○ 1   ######   feature          ready     Task 11                                                                                         
-  ○ 1   ######   feature          ready     Task 12                                                                                         
-  ○ 1   ######   feature          ready     Task 13                                                                                         
-  ○ 1   ######   feature          ready     Task 14                                                                                         
-  ○ 1   ######   feature          ready     Task 15                                                                                         
-  ○ 1   ######   feature          ready     Task 16                                                                                         
-  ○ 1   ######   feature          ready     Task 17                                                                                         
-  ○ 1   ######   feature          ready     Task 18                                                                                         
-  ○ 1   ######   feature          ready     Task 19                                                                                         
-  ○ 1   ######   feature          ready     Task 20                                                                                         
-  ○ 1   ######   feature          ready     Task 21                                                                                         
-  ○ 1   ######   feature          ready     Task 22                                                                                         
-↓ ○ 1   ######   feature          ready     Task 23                                                                                         
+  ○ 1    ######   feature          ready     Task 03                                                                                        
+  ○ 1    ######   feature          ready     Task 04                                                                                        
+  ○ 1    ######   feature          ready     Task 05                                                                                        
+  ○ 1    ######   feature          ready     Task 06                                                                                        
+  ○ 1    ######   feature          ready     Task 07                                                                                        
+  ○ 1    ######   feature          ready     Task 08                                                                                        
+  ○ 1    ######   feature          ready     Task 09                                                                                        
+  ○ 1    ######   feature          ready     Task 10                                                                                        
+  ○ 1    ######   feature          ready     Task 11                                                                                        
+  ○ 1    ######   feature          ready     Task 12                                                                                        
+  ○ 1    ######   feature          ready     Task 13                                                                                        
+  ○ 1    ######   feature          ready     Task 14                                                                                        
+  ○ 1    ######   feature          ready     Task 15                                                                                        
+  ○ 1    ######   feature          ready     Task 16                                                                                        
+  ○ 1    ######   feature          ready     Task 17                                                                                        
+  ○ 1    ######   feature          ready     Task 18                                                                                        
+  ○ 1    ######   feature          ready     Task 19                                                                                        
+  ○ 1    ######   feature          ready     Task 20                                                                                        
+  ○ 1    ######   feature          ready     Task 21                                                                                        
+  ○ 1    ######   feature          ready     Task 22                                                                                        
+↓ ○ 1    ######   feature          ready     Task 23                                                                                        
 
   RECENTLY DONE · last closed  [0] · None                                                                                                   
 

@@ -17,7 +17,10 @@ type theme struct {
 	normal, dim, accent, selected, warning lipgloss.Style
 	// focus marks where focus is in a task: one heading or the task id.
 	// ask is every confirm line: a question the reader cannot miss.
-	focus, ask             lipgloss.Style
+	focus, ask lipgloss.Style
+	// column tints the column the cursor marks (e3sevr); columnCursor is
+	// that column's cell on the cursor row.
+	column, columnCursor   lipgloss.Style
 	progress               lipgloss.Style // a task partly ticked (d8yx7y)
 	status, kind, priority map[string]lipgloss.Style
 }
@@ -37,6 +40,10 @@ func newTheme() theme {
 		ask:    base.Background(lipgloss.AdaptiveColor{Dark: "#ffb454", Light: "#995200"}).Foreground(lipgloss.AdaptiveColor{Dark: "#1a1200", Light: "#ffffff"}).Bold(true),
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
 	t.progress = progressStyle(color)
+	// A quiet tint down the marked column, and underlined, so it shows
+	// without colour too (NO_COLOR); on the cursor row the row's tint, bold.
+	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)
+	t.columnCursor = t.selected.Underline(true)
 	for i, s := range []string{"todo", "doing", "done", "depends", "dropped"} {
 		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", "#ff8585", "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", "#ae2525", "#586474"}[i])
 	}
@@ -67,7 +74,53 @@ func fit(s string, width int) string {
 func wrap(s string, width int) string {
 	return ansi.Hardwrap(ansi.Wrap(strings.ReplaceAll(s, "\t", "    "), max(1, width), ""), max(1, width), false)
 }
-func (m model) bodyHeight() int { return max(1, m.height-7) }
+func (m model) bodyHeight() int { return max(1, m.height-3-m.headLines()) }
+
+// headLines is how many lines the breadcrumb and global bands take: four
+// over a list (breadcrumb, views, counts, filters), one in a task, where
+// only the breadcrumb draws (e3sevr, header-spec.md). A palette or picker
+// opened from a task lists, so it keeps four.
+func (m model) headLines() int {
+	if m.taskScreen() {
+		return 1
+	}
+	return 4
+}
+
+// taskScreen says whether the screen shows the open task (or one of its
+// files, or a prompt that writes to it), not a list, help or a picker.
+func (m model) taskScreen() bool {
+	if !m.detail || m.help {
+		return false
+	}
+	switch m.prompt {
+	case ":", "#", "filter", "sort":
+		return false
+	}
+	return true
+}
+
+// breadcrumb is a task's one header band: HUG TASKS, the view u goes
+// back to, each task followed to get here, then this task's id; "? N for
+// you" on the right (header-spec.md).
+func (m model) breadcrumb() string {
+	left := m.styles.accent.Render("HUG TASKS ·") + " " + m.detailTrail()
+	right := ""
+	if n := m.forYouCount(); n > 0 {
+		right = m.styles.warning.Bold(true).Render(fmt.Sprintf("? %d for you", n))
+	}
+	if s := m.spinner(); s != "" {
+		right = strings.TrimSpace(right + m.styles.dim.Render(" · "+s))
+	}
+	gap := m.width - lipgloss.Width(left) - lipgloss.Width(right)
+	if right == "" || gap < 2 {
+		return fit(left, m.width)
+	}
+	return left + strings.Repeat(" ", gap) + right
+}
+// lintMark is marker's text without colour: "!", "·" or " ".
+func (m model) lintMark(path string) string { return ansi.Strip(m.marker(path)) }
+
 func (m model) marker(path string) string {
 	if m.broken[path] {
 		return m.styles.warning.Render("!")
@@ -103,8 +156,10 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 // taskRowCols draws t in the cells c, width wide: one line, never more
 // (102bc0).
 func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark string, c rowCols) string {
-	// Gutter: pointer or scroll arrow, then the lint mark, so "!" costs no
-	// column of its own (2026-11-16, user).
+	// Gutter: the pointer, the grab or yank mark, or a scroll arrow, and
+	// nothing else (e3sevr, Jørgen 23:43: ? collided with ↓). The lint
+	// mark ! has a cell of its own right before the id, so ids line up
+	// whether a row has it or not: "↓ ◐ 3/4 !89y0b7".
 	pointer := " "
 	if selected {
 		pointer = ">"
@@ -113,13 +168,11 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 		}
 	} else if m.yanked != "" && t.ID == m.yanked {
 		pointer = m.styles.warning.Render("y") // yanked: P/p paste it
-	} else if m.forYou(t) {
-		pointer = m.styles.warning.Bold(true).Render("?") // waits on you (6ephqk check 8)
 	} else if mark != "" {
 		pointer = m.styles.dim.Render(mark)
 	}
 	// Acceptance progress before the id: "◑ 2/4 8bsx4y" (d8yx7y).
-	head := pointer + m.marker(t.Path) + m.progress(t) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
+	head := pointer + " " + m.progress(t) + m.marker(t.Path) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
 	pw := m.progressWidth()
 	row := head
 	// The text: the stage's reason in place of the title, or the title
@@ -177,7 +230,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	if t.State == "done" || t.State == "dropped" {
 		// A closed task is dim after its id: its state word keeps its
 		// colour, the one scheme of the count line (zhvkmj).
-		from := 2 + pw + idCell
+		from := 3 + pw + idCell
 		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, from, width)))
 		if c.status && !compact {
 			at := from + on(c.kind, kindCell) + on(c.priority, priorityCell)
@@ -190,7 +243,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 		// so the highlight runs the whole width (2026-11-16, user).
 		row = m.styles.selected.Render(ansi.Strip(row))
 	}
-	return row
+	return m.markColumn(row, width, compact, c, selected)
 }
 
 // initial is the value's first letter, upper case, in the value's colour.
@@ -239,7 +292,7 @@ func (m model) columns(width int, compact bool) string {
 // headerCell draws it, so the column the cursor marks is underlined and the
 // column the rows are ordered by carries ▲ or ▼ (bejd89).
 func (m model) columnsOwner(width int, compact bool, c rowCols) string {
-	s := "  " + m.headerCell(0, "✓", m.progressWidth()) + m.headerCell(1, "ID", idCell-1) + " "
+	s := "  " + m.headerCell(0, "✓", m.progressWidth()) + " " + m.headerCell(1, "ID", idCell-1) + " "
 	if compact {
 		if c.kind {
 			s += m.headerCell(2, "T", 1) + " "
@@ -358,7 +411,7 @@ func (m model) overviewText() string {
 		// IN PROGRESS and WAITING rows share one layout with the owner cell
 		// (102bc0, tje4sx).
 		doing := m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(m.paneIndices(p)))
-		if p == m.pane && m.overviewHeading() && p != sectionLint {
+		if p == m.pane && m.overviewHeading() && p != sectionLint && len(indices) > 0 {
 			c := m.rowLayout(m.width, false, 0, 0)
 			if p == sectionDoing || p == sectionWaiting {
 				c = doing
@@ -719,9 +772,6 @@ func (m model) View() string {
 		}
 		tabs = append(tabs, label)
 	}
-	if m.detail {
-		tabs = append(tabs, m.detailTrail())
-	}
 	// Disjoint counts that add up to the tasks shown (zaec08): every task
 	// has one place; doing names how many of its tasks depend on another.
 	counts := map[string]int{}
@@ -768,6 +818,9 @@ func (m model) View() string {
 		content = m.listText()
 	}
 	lines := []string{header, strings.Join(tabs, "  "), strings.Join(summary, "  ·  "), m.filterBar()}
+	if m.taskScreen() {
+		lines = []string{m.breadcrumb()} // the global band goes in a task
+	}
 	body := strings.Split(content, "\n")
 	for n := 0; n < m.bodyHeight(); n++ {
 		line := ""
@@ -949,6 +1002,8 @@ func (m model) detailTrail() string {
 	if !ok {
 		return ""
 	}
+	// The view and the tasks followed to get here, dim, then this task's
+	// id in its colour as the last crumb (header-spec.md, Jørgen 00:02).
 	parts := []string{m.styles.dim.Render(m.view)}
 	for _, path := range m.detailStack {
 		for _, v := range m.all {
@@ -957,15 +1012,8 @@ func (m model) detailTrail() string {
 			}
 		}
 	}
-	// Page focus shows as a ▸ before the id, as a focused heading shows it,
-	// so it reads without colour too; the id itself stays bare (xxvm6t).
-	id := oneLine(t.ID)
-	if m.detailPane == focusPage {
-		id = m.styles.focus.Render("▸ " + id)
-	} else {
-		id = m.styles.accent.Render(id)
-	}
-	return strings.Join(append(parts, id), m.styles.dim.Render(" › "))
+	parts = append(parts, m.styles.accent.Render(oneLine(t.ID)))
+	return strings.Join(parts, m.styles.dim.Render(" › "))
 }
 
 // brokenCount is the number of shown findings of severity broken.

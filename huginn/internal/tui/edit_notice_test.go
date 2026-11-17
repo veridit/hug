@@ -212,6 +212,7 @@ func TestClosedTaskFindingsHidden(t *testing.T) {
 	}
 	brokenBefore := m.brokenCount()
 	m.refresh(target.Path)
+	m.detail, m.detailPath = false, "" // the count is the list's breadcrumb band (e3sevr)
 	if !m.broken[target.Path] || m.brokenCount() != brokenBefore+1 || !strings.Contains(ansi.Strip(m.View()), fmt.Sprintf("! %d broken", brokenBefore+1)) {
 		t.Fatalf("broken finding on a closed task hidden: broken %d, was %d", m.brokenCount(), brokenBefore)
 	}

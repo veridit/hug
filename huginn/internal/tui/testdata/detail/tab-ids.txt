@@ -1,14 +1,12 @@
 == waiting-on id marked at 80
-HUG TASKS · detail   7/7 tasks · ! 0 broken · 12 advice                         
- overview    list    board    !lint   list › MAIN__                             
-todo 5  ·  doing 1  ·  depends 0  ·  done 1  ·  dropped 0                       
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
-Main                                                                            
-[doing]  [feature]  MAIN__  group:root  assigned:wyvern · m  epic:EPIC__        
+HUG TASKS · list › MAIN__                                                       
+[doing]  [feature]  group:root  assigned:wyvern · m  epic:EPIC__                
 created ########## · updated ########## · main                                  
 └─ waiting on after ▸BLOCKE (crab 17:52) · since ##:##                          
 ⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
   fix: hug task set MAIN__ --principle "..."                                    
+────────────────────────────────────────────────────────────────────────────────
+Main                                                                            
 ────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION                                                                     
 Builds on task:LINKED and task:zzzzzz.                                          
@@ -36,20 +34,20 @@ HISTORY
                                                                                 
                                                                                 
                                                                                 
+                                                                                
+                                                                                
 Task 1 of 7 · 100% · n next · p previous · Esc back                             
                                                                                 
-j/k scroll · Enter open · Tab next id · t/d/x/e take/done/drop/edit · u up …    
+j/k scroll · Enter open · h/l Tab next · t/d/x/e take/done/drop/edit · u up …   
 == waiting-on id marked at 140
-HUG TASKS · detail   7/7 tasks · ! 0 broken · 12 advice                                                                                     
- overview    list    board    !lint   list › MAIN__                                                                                         
-todo 5  ·  doing 1  ·  depends 0  ·  done 1  ·  dropped 0                                                                                   
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
-Main                                                                                                                                        
-[doing]  [feature]  MAIN__  group:root  assigned:wyvern · m  epic:EPIC__                                                                    
+HUG TASKS · list › MAIN__                                                                                                                   
+[doing]  [feature]  group:root  assigned:wyvern · m  epic:EPIC__                                                                            
 created ########## · updated ########## · main                                                                                              
 └─ waiting on after ▸BLOCKE (crab 17:52) · since ##:##                                                                                      
 ⚠ line 1: missing section Principle (what we do and do not do) (+1 more findings)                                                           
   fix: hug task set MAIN__ --principle "..."                                                                                                
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Main                                                                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION                                                                                                                                 
 Builds on task:LINKED and task:zzzzzz.                                                                                                      
@@ -77,6 +75,8 @@ HISTORY
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
+                                                                                                                                            
 Task 1 of 7 · 100% · n next · p previous · Esc back                                                                                         
                                                                                                                                             
-j/k scroll · Enter open · Tab next id · t/d/x/e take/done/drop/edit · N new · u up · n/p task · J/K ½ page · S screen · Esc back · : cmd …  
+j/k scroll · Enter open · h/l Tab next · t/d/x/e take/done/drop/edit · N new · u up · n/p task · J/K ½ page · S screen · Esc back · : cmd … 

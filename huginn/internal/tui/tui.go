@@ -1337,25 +1337,16 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.clamp()
 				m.syncDetail()
 				m.revealAcceptance()
-			case "h", "l", "left", "right":
-				// Focus cycles page, acceptance, dependencies, skipping
-				// empty sections (2026-11-16, user); h/l, as in the rows
-				// (bejd89).
+			case "h", "l", "left", "right", "tab", "shift+tab":
+				// One focus ring, in reading order: the header's ids, the
+				// page, the checks, each dependency, child and link, the
+				// files, the ids in the Notes; Tab is l and Shift-Tab is h,
+				// as in the rows (e3sevr, Jørgen 23:28).
 				step := 1
-				if k == "h" || k == "left" {
+				if k == "h" || k == "left" || k == "shift+tab" {
 					step = -1
 				}
 				m.cycleFocus(step)
-				m.syncDetail()
-				m.revealAcceptance()
-			case "tab", "shift+tab":
-				// Tab steps through every task id the detail shows, in
-				// reading order (4bwcgp).
-				step := 1
-				if k == "shift+tab" {
-					step = -1
-				}
-				m.stepID(step)
 				m.syncDetail()
 				m.revealAcceptance()
 			case "enter":
@@ -1420,7 +1411,13 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "s":
 				return m, m.openInput(":", "state ")
 			case "y":
+				// y yanks the task, as on its row (e3sevr: the task's
+				// actions are its row's); the type palette is T.
+				m.yank()
+			case "T":
 				return m, m.openInput(":", "type ")
+			case "w":
+				return m, m.waitKey()
 			case "r":
 				if t, ok := m.selected(); ok {
 					m.refresh(t.Path)
@@ -1489,7 +1486,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case m.head != "" && (k == " " || k == "enter"):
 			// Space or Enter on a heading folds or unfolds it (kx2ndm).
 			m.toggleFold()
-		case m.head != "" && contains([]string{"t", "d", "x", "J", "K", "e", "m", "y", "P", "p", "s"}, k):
+		case m.head != "" && contains([]string{"t", "d", "x", "e", "m", "y", "P", "p", "s"}, k):
 			// A heading is not a task: nothing to act on, and no guess.
 			m.message = "a heading is not a task: Space folds it, j/k select a task"
 		case bkey.Matches(msg, keys.down) || k == "n":
@@ -1504,17 +1501,19 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.move(max(1, m.bodyHeight()/2), false)
 		case k == "ctrl+u":
 			m.move(-max(1, m.bodyHeight()/2), false)
-		case k == "pgdown":
+		case k == "pgdown" || k == "J":
+			// J/K page (e3sevr, Jørgen 23:20): Shift moves further. Moving
+			// a task in rank is a grab (m), never a cursor key.
 			m.move(m.bodyHeight(), false)
-		case k == "pgup":
+		case k == "pgup" || k == "K":
 			m.move(-m.bodyHeight(), false)
-		case k == "tab":
-			m.moveColumn(1) // the column cursor (bejd89); h/l change section
-		case k == "shift+tab":
+		case k == "L":
+			m.moveColumn(1) // the column cursor (bejd89, e3sevr)
+		case k == "H":
 			m.moveColumn(-1)
-		case bkey.Matches(msg, keys.prev):
-			m.changePane(-1)
-		case bkey.Matches(msg, keys.next):
+		case bkey.Matches(msg, keys.prev) || k == "shift+tab":
+			m.changePane(-1) // Tab is l, Shift-Tab is h, in every view (e3sevr)
+		case bkey.Matches(msg, keys.next) || k == "tab":
 			m.changePane(1)
 		case k == "enter":
 			if t, ok := m.selected(); ok {
@@ -1575,7 +1574,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if t, ok := m.selected(); ok {
 				m.message = fmt.Sprintf("Space ticks a check inside the task: Enter opens %s", t.ID)
 			}
-		case contains([]string{"t", "d", "x", "J", "K", "e"}, k):
+		case contains([]string{"t", "d", "x", "e"}, k):
 			return m, m.startAction(k)
 		}
 	}
@@ -1657,6 +1656,17 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			m.answer(text)
+			return m, nil
+		}
+		if m.prompt == waitPrompt {
+			on := strings.TrimSpace(m.input.Value())
+			m.prompt = ""
+			m.input.Blur()
+			if on == "" {
+				m.message = "not parked: a wait needs what it waits on (w again, then type it)"
+				return m, nil
+			}
+			m.wait(on)
 			return m, nil
 		}
 		if m.prompt == dropPrompt {

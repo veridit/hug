@@ -120,14 +120,14 @@ func helpContexts(t *testing.T) map[string]model {
 	task := openTask(t, m, "000001") // checks and files
 	out["task:checks"] = task
 	tk, _ := task.selected()
-	for _, pane := range task.focusStops(tk) {
+	for _, pane := range panesOf(task, tk) {
 		mm := task
 		mm.detailPane = pane
 		mm.syncDetail()
 		out[fmt.Sprintf("task:%d", pane)] = mm
 	}
 	ids, idMap := idBoard(t)
-	out["task:ids"] = press(openID(t, ids, idMap["Main"]), "tab")
+	out["task:ids"] = press(openID(t, ids, idMap["Main"]), "shift+tab", "shift+tab") // the stage's id
 	g, _ := glanceModel(t, 140, 40)
 	out["file"] = press(toFiles(t, openTask(t, g, "000001")), " ")
 	out["palette"] = press(m, ":")
@@ -196,10 +196,7 @@ func TestHelpShowsOnlyKeysThatWorkHere(t *testing.T) {
 			t.Fatalf("task help lists a row key %q:\n%s", absent, taskOnly)
 		}
 	}
-	if strings.Contains(taskOnly, "Tab / Shift-Tab") {
-		t.Fatalf("000001 shows no task id, yet help lists Tab:\n%s", taskOnly)
-	}
-	if ids := ansi.Strip(press(ctx["task:ids"], "?").helpText()); !strings.Contains(ids, "next / previous task id shown") || !strings.Contains(ids, "open the task id marked ▸") {
+	if ids := ansi.Strip(press(ctx["task:ids"], "?").helpText()); !strings.Contains(ids, "h / l  Tab") || !strings.Contains(ids, "open the task id marked ▸") {
 		t.Fatalf("a task with ids: help lacks Tab and Enter:\n%s", ids)
 	}
 	// A prompt's help lists its keys; the global letters are typed text there.

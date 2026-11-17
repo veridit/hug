@@ -129,7 +129,13 @@ func (m model) markdown(s string) string {
 	return strings.Trim(out, "\n")
 }
 func (m model) detailHeader(t task.Task) []string {
+	// subject: the title alone, bold; page focus shows as a ▸ before it,
+	// as a focused heading shows it, so it reads without colour too. The
+	// id is the breadcrumb's last crumb (header-spec.md, Jørgen 00:02).
 	title := m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width))
+	if m.detailPane == focusPage {
+		title = m.styles.focus.Render("▸ ") + m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width-2))
+	}
 	badges := []string{m.styles.status[m.boardState(t)].Bold(true).Render("[" + oneLine(m.boardState(t)) + "]")}
 	// An unset type or priority shows no badge, not "[]" (2026-11-16, user).
 	if v := oneLine(t.Type); v != "" {
@@ -138,7 +144,6 @@ func (m model) detailHeader(t task.Task) []string {
 	if v := oneLine(t.Priority); v != "" {
 		badges = append(badges, m.styles.priority[t.Priority].Render("["+v+"]"))
 	}
-	badges = append(badges, m.styles.accent.Render(oneLine(t.ID))) // bare, in its colour (xxvm6t)
 	group := t.Group
 	if group == "" {
 		group = "root"
@@ -168,7 +173,10 @@ func (m model) detailHeader(t task.Task) []string {
 		}
 		badges = append(badges, badge)
 	}
-	lines := []string{title}
+	// context: the badges, the dates, the stage and any finding; then the
+	// subject, right above the rule that opens the details
+	// (header-spec.md bands, Jørgen 00:03).
+	var lines []string
 	lines = append(lines, strings.Split(wrap(strings.Join(badges, "  "), m.width), "\n")...)
 	lines = append(lines, m.styles.dim.Render("created "+oneLine(t.Created)+" · updated "+oneLine(t.Updated)+" · "+oneLine(t.Slug)))
 	// What it waits on, as its row's second line says it, with the
@@ -220,7 +228,9 @@ func (m model) detailHeader(t task.Task) []string {
 		lines = append(lines, m.styles.warning.Render(fit(warning, m.width)))
 		lines = append(lines, m.styles.warning.Render(fit("  fix: "+oneLine(f.FixLine()), m.width)))
 	}
-	return append(lines, m.questionLines(t)...)
+	// A dim rule above the subject too, so it stands out (Jørgen 00:04):
+	// breadcrumb, context, rule, subject, rule, details.
+	return append(append(lines, m.questionLines(t)...), m.styles.dim.Render(strings.Repeat("─", m.width)), title)
 }
 
 // questionLines put the question a task asks you at the top of its detail
@@ -346,25 +356,6 @@ const (
 	focusIDs   // a task id marked in the header, Children or Notes (4bwcgp)
 )
 
-// focusStops lists the focus states the task offers, in Tab order. Empty
-// sections are skipped.
-func (m model) focusStops(t task.Task) []int {
-	stops := []int{focusPage}
-	if len(t.Acceptance) > 0 {
-		stops = append(stops, focusAcceptance)
-	}
-	if len(t.Dependencies) > 0 {
-		stops = append(stops, focusDeps)
-	}
-	if len(m.links(t)) > 0 {
-		stops = append(stops, focusLinks)
-	}
-	if len(m.filesOf(t)) > 0 {
-		stops = append(stops, focusFiles)
-	}
-	return stops
-}
-
 // startFocus is the focus a freshly opened task gets: its checks when it has
 // any, otherwise the page. A question to you with a picture opens on the
 // page, so the picture under the question is what you see (5z4zt4).
@@ -377,24 +368,105 @@ func (m *model) startFocus() {
 	}
 }
 
-// cycleFocus moves focus to the next (step 1) or previous (step -1) stop.
+// focusStop is one place the detail's focus ring stops: a pane, and for
+// a list of ids (dependencies, links, ids in the header, Children or
+// Notes) which one.
+type focusStop struct{ pane, index int }
+
+// focusRing is every place h/l and Tab/Shift-Tab stop in t's detail, in
+// reading order (e3sevr, Jørgen 23:28: Tab = l, Shift-Tab = h, one ring):
+// the ids in the header (the epic badge, an id the stage line names),
+// the page, the checks, each dependency, each child, each link, the
+// files, and each id named in the Notes. Enter opens a stop that is an id.
+func (m model) focusRing(t task.Task) []focusStop {
+	stops := m.idStops(t)
+	var ring []focusStop
+	ids := func(where string) {
+		for k, s := range stops {
+			if s.where == where {
+				ring = append(ring, focusStop{focusIDs, k})
+			}
+		}
+	}
+	ids(stopParent)
+	ids(stopStage)
+	ring = append(ring, focusStop{focusPage, 0})
+	if len(t.Acceptance) > 0 {
+		ring = append(ring, focusStop{focusAcceptance, 0})
+	}
+	for i := range t.Dependencies {
+		ring = append(ring, focusStop{focusDeps, i})
+	}
+	ids(stopChildren)
+	for i, l := range m.links(t) {
+		if !l.Missing { // an id that is no task is not a stop
+			ring = append(ring, focusStop{focusLinks, i})
+		}
+	}
+	if len(m.filesOf(t)) > 0 {
+		ring = append(ring, focusStop{focusFiles, 0})
+	}
+	ids(stopNotes)
+	return ring
+}
+
+// ringAt is where the focus is in ring, or -1.
+func (m model) ringAt(ring []focusStop) int {
+	for k, s := range ring {
+		if s.pane != m.detailPane {
+			continue
+		}
+		switch s.pane {
+		case focusDeps:
+			if s.index == m.dependency {
+				return k
+			}
+		case focusLinks:
+			if s.index == m.link {
+				return k
+			}
+		case focusIDs:
+			if s.index == m.idAt {
+				return k
+			}
+		default:
+			return k
+		}
+	}
+	return -1
+}
+
+// cycleFocus moves focus one stop along the ring: l and Tab forward (step
+// 1), h and Shift-Tab back (-1), around the end.
 func (m *model) cycleFocus(step int) {
 	t, ok := m.selected()
 	if !ok {
 		return
 	}
-	stops := m.focusStops(t)
-	if len(stops) == 1 {
-		m.message = "nothing to focus: this task has no checks, dependencies or links"
+	ring := m.focusRing(t)
+	if len(ring) == 1 {
+		m.message = "nothing to focus: this task has no checks, task ids, links or files"
 		return
 	}
-	pos := 0
-	for i, s := range stops {
-		if s == m.detailPane {
-			pos = i
-		}
+	at := m.ringAt(ring)
+	switch {
+	case at < 0 && step > 0:
+		at = 0
+	case at < 0:
+		at = len(ring) - 1
+	default:
+		at = (at + step + len(ring)) % len(ring)
 	}
-	m.detailPane = stops[(pos+step+len(stops))%len(stops)]
+	s := ring[at]
+	m.detailPane = s.pane
+	switch s.pane {
+	case focusDeps:
+		m.dependency = s.index
+	case focusLinks:
+		m.link = s.index
+	case focusIDs:
+		m.idAt = s.index
+	}
 }
 
 // sectionHeading is a section's name in capitals. The focused section gets

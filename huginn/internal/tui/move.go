@@ -7,36 +7,7 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-// moveTarget is the row J (below) or K (above) moves t past: the next or
-// previous row shown in the current section, after filters. A task that is
-// not shown there (a filtered-out task, an epic missing from NEXT UP, a task
-// of another status column) is never the target, so every move changes what
-// the reader sees (ksv323). why says what stopped the move, if anything.
-func (m model) moveTarget(t task.Task, k string) (task.Task, string) {
-	rows := m.indices() // in a detail, the list it was opened from
-	at := -1
-	for p, i := range rows {
-		if m.visible[i].Path == t.Path {
-			at = p
-			break
-		}
-	}
-	section := m.sectionName()
-	switch {
-	case at < 0:
-		return task.Task{}, fmt.Sprintf("%s is not shown in %s, so there is no row to move it past", t.ID, section)
-	case k == "J" && at+1 >= len(rows):
-		return task.Task{}, fmt.Sprintf("%s is already the last row in %s; nothing moved", t.ID, section)
-	case k == "K" && at == 0:
-		return task.Task{}, fmt.Sprintf("%s is already the first row in %s; nothing moved", t.ID, section)
-	case k == "J":
-		return m.visible[rows[at+1]], ""
-	default:
-		return m.visible[rows[at-1]], ""
-	}
-}
-
-// sectionName names the rows J and K move within, as the screen titles them:
+// sectionName names the rows a grab moves within, as the screen titles them:
 // "NEXT UP", "the TODO column", "the list".
 func (m model) sectionName() string {
 	name := "the list"

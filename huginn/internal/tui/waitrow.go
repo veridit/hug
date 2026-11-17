@@ -252,7 +252,7 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 	if head == "" {
 		return ""
 	}
-	indent := 2 + m.progressWidth()
+	indent := 3 + m.progressWidth() // pointer, space, pie, lint mark (e3sevr)
 	if width < 40 {
 		indent = 2
 	}

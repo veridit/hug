@@ -8,10 +8,12 @@ import (
 )
 
 // The column cursor (bejd89, Jørgen 2026-11-17 11:43: "the board as a
-// spreadsheet"). Tab and Shift-Tab mark one column header; o on it cycles
+// spreadsheet"; e3sevr, 23:20). H and L mark one column; o on it cycles
 // ascending ▲, descending ▼, off (rank order). One column at a time: o on
 // another column replaces the order. The sort builder (: sort) stays for
-// orders of more than one field. h/l keep moving between sections.
+// orders of more than one field. h/l, and Tab/Shift-Tab, move between
+// sections. The mark is drawn in the rows: > before the column's cell on
+// the cursor row, and the column tinted down the section.
 
 // column is one header cell the cursor can mark: its label, the sort
 // field it orders by, and whether a row layout shows it.
@@ -82,7 +84,7 @@ func (m *model) moveColumn(delta int) {
 // columnHint is what o will do on the marked column, for the footer.
 func (m model) columnHint() string {
 	if m.column < 0 {
-		return "Tab picks a column, then o orders by it"
+		return "H/L pick a column, then o orders by it"
 	}
 	col := gridColumns[m.column]
 	next := "▲"
@@ -92,7 +94,7 @@ func (m model) columnHint() string {
 			next = "off"
 		}
 	}
-	return "Tab next column · o order by " + col.label + " (" + next + ") · h/l section"
+	return "H/L column · o order by " + col.label + " (" + next + ") · h/l section"
 }
 
 // columnOrder is the one-column order the cursor set, if that is the
@@ -137,41 +139,24 @@ func (m model) arrow(field string) string {
 	return " ▲"
 }
 
-// headerCell is one column's header, width cells wide: its label and
-// order arrow; the column the cursor marks starts with ▸ and is
-// underlined, so it shows without colour too (NO_COLOR). A label that
-// does not fit with its mark and arrow gives way to them: the arrow says
-// more than the label's last letters. In a cell too narrow for even one
-// letter beside them (the board's one-letter T and P), the ▸ goes first
-// (the underline and the hint line still name the column), then the
-// label, so the arrow always shows.
+// headerCell is one column's header, width cells wide: its label and the
+// order arrow, ▲ or ▼, when the rows are ordered by it. The header names
+// the columns only (e3sevr, Jørgen 23:20): the column cursor is drawn in
+// the rows (markColumn). A label that does not fit beside the arrow gives
+// way to it: the arrow says more than the label's last letters.
 func (m model) headerCell(i int, label string, width int) string {
-	mark := ""
-	if i == m.column {
-		mark = "▸"
-	}
 	arrow := strings.TrimSpace(m.arrow(gridColumns[i].field))
 	if arrow != "" {
 		arrow = " " + arrow
 	}
-	room := width - lipgloss.Width(mark) - lipgloss.Width(arrow)
-	if room < 1 {
-		mark = ""
-		room = width - lipgloss.Width(arrow)
-	}
+	room := width - lipgloss.Width(arrow)
 	text := label
 	if room < 1 {
 		text, arrow = "", strings.TrimSpace(arrow)
 	} else if lipgloss.Width(text) > room {
 		text = ansi.Truncate(text, room, "")
 	}
-	text = mark + text + arrow
-	s := fit(text, width)
-	if i == m.column {
-		t := strings.TrimRight(s, " ")
-		return m.styles.accent.Bold(true).Underline(true).Render(t) + strings.Repeat(" ", max(0, width-lipgloss.Width(t)))
-	}
-	return m.styles.dim.Render(s)
+	return m.styles.dim.Render(fit(text+arrow, width))
 }
 
 // overviewHeading says whether the overview shows a column header under
@@ -183,4 +168,62 @@ func (m model) overviewHeading() bool {
 	}
 	_, ordered := m.columnOrder()
 	return m.column >= 0 || ordered
+}
+
+// colSpan is where column i's cell stands in a row laid out as c: its
+// first cell and its width (the space after it not counted); ok is false
+// when the layout does not show it. Every row and the header put their
+// cells here (rowLayout), so the marker lands on the cell it names.
+func (m model) colSpan(i int, compact bool, c rowCols) (from, width int, ok bool) {
+	at := rowHead
+	type cell struct {
+		w     int
+		shown bool
+	}
+	cells := []cell{{m.progressWidth(), true}, {idCell, true}}
+	if compact {
+		cells = append(cells, cell{letterCell, c.kind}, cell{letterCell, c.priority}, cell{0, false})
+	} else {
+		cells = append(cells, cell{kindCell, c.kind}, cell{priorityCell, c.priority}, cell{stageCell, c.status})
+	}
+	cells = append(cells, cell{c.title, true}, cell{c.owner + ownerGap, c.owner > 0})
+	for k, x := range cells {
+		if k == i {
+			if !x.shown || x.w <= 0 {
+				return 0, 0, false
+			}
+			if k == len(cells)-1 {
+				return at + ownerGap, c.owner, true // the owner cell, after its gap
+			}
+			return at, max(1, x.w-1), true
+		}
+		if x.shown {
+			at += x.w
+		}
+	}
+	return 0, 0, false
+}
+
+// markColumn draws the column cursor into a row (e3sevr, Jørgen 23:20): on
+// the cursor row a > stands in the space just before the marked column's
+// cell, and the cell is highlighted on every row of the section, so the
+// row's > sigil, the in-row > and the column tint together show where the
+// cursor is. Without a marked column the row is as it was.
+func (m model) markColumn(row string, width int, compact bool, c rowCols, selected bool) string {
+	if m.column < 0 || m.column >= len(gridColumns) {
+		return row
+	}
+	from, w, ok := m.colSpan(m.column, compact, c)
+	if !ok || from+w > width {
+		return row
+	}
+	cell := ansi.Strip(ansi.Cut(row, from, from+w))
+	before, after := ansi.Cut(row, 0, from-1), ansi.Cut(row, from+w, width)
+	gap := ansi.Cut(row, from-1, from)
+	style := m.styles.column
+	if selected {
+		gap = m.styles.selected.Render(">")
+		style = m.styles.columnCursor
+	}
+	return before + gap + style.Render(cell) + after
 }

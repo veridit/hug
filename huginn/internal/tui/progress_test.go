@@ -80,7 +80,8 @@ func TestRowsShowProgress(t *testing.T) {
 			if progressText(tk) == "" || !strings.Contains(text, tk.ID) {
 				continue
 			}
-			cell := fit(progressText(tk), m.progressWidth()-1) + " " + tk.ID
+			// The lint mark's cell stands between the pie and the id (e3sevr).
+			cell := fit(progressText(tk), m.progressWidth()-1) + " " + m.lintMark(tk.Path) + tk.ID
 			if !strings.Contains(text, cell) {
 				t.Fatalf("%s: %q not on screen:\n%s", view, cell, text)
 			}

@@ -149,11 +149,11 @@ func TestActions(t *testing.T) {
 func TestMoveAndNew(t *testing.T) {
 	m := fixture(t)
 	id := m.visible[0].ID
-	m = press(m, "J")
+	m = press(m, "m", "j", "enter")
 	if m.visible[1].ID != id {
 		t.Fatal(m.visible)
 	}
-	m = press(m, "K")
+	m = press(m, "m", "k", "enter")
 	if m.visible[0].ID != id {
 		t.Fatal(m.visible)
 	}

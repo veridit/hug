@@ -12,10 +12,41 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-var actionNames = map[string]string{"S": "attach screen", "t": "take", "d": "done", "x": "drop", "J": "move down", "K": "move up", " ": "toggle acceptance", "e": "edit", "n": "new"}
+var actionNames = map[string]string{"S": "attach screen", "t": "take", "d": "done", "x": "drop", " ": "toggle acceptance", "e": "edit", "n": "new"}
 
 // dropPrompt asks why a task is dropped: the reason is required (6ephqk).
 const dropPrompt = "drop: why never?"
+
+// waitPrompt asks what a doing task waits on (e3sevr: w on the task).
+const waitPrompt = "wait on what?"
+
+// waitKey opens the wait prompt on a doing task; another state says why
+// not, with the key that gets it there.
+func (m *model) waitKey() tea.Cmd {
+	t, ok := m.selected()
+	if !ok {
+		return nil
+	}
+	if t.State != "doing" {
+		m.message = t.ID + " is " + t.State + ": only a doing task waits; t takes it first"
+		return nil
+	}
+	m.confirmPath = t.Path
+	return m.openInput(waitPrompt, "")
+}
+
+// wait parks the task at confirmPath on what the reader typed.
+func (m *model) wait(on string) {
+	t, ok := m.taskAt(m.confirmPath)
+	m.confirmPath = ""
+	if !ok {
+		m.message = "task disappeared; refresh and try again"
+		return
+	}
+	defer m.hold()()
+	r, err := m.store.Wait(t.ID, on, m.me())
+	m.finish(r, err, "wait")
+}
 
 // startAction begins the action for key k on the selected task: x first
 // asks the reason, d on a todo task is refused (take before done, Jørgen
@@ -41,34 +72,6 @@ func (m *model) startAction(k string) tea.Cmd {
 func (m *model) requestAction(k, value string) {
 	t, ok := m.selected()
 	if k != "n" && !ok {
-		return
-	}
-	if (k == "J" || k == "K") && m.detail {
-		// Never from inside a task (x1ra0t): the rows it would move
-		// past are not on screen.
-		m.message = "J and K move a task from its row: Esc back to the list"
-		return
-	}
-	if k == "J" || k == "K" {
-		// J and K move past the row shown below or above, in this section
-		// and after filters; a task the reader cannot see is never the
-		// target (ksv323: moving past a hidden epic changed nothing visible).
-		// One step needs no confirm: the opposite key undoes it (3xcesq).
-		if why := m.moveRefusal(); why != "" {
-			m.message = why
-			return
-		}
-		target, why := m.moveTarget(t, k)
-		if why != "" {
-			m.message = why
-			return
-		}
-		o, where := task.MoveOptions{After: target.ID}, "below"
-		if k == "K" {
-			o, where = task.MoveOptions{Before: target.ID}, "above"
-		}
-		m.editNotice = ""
-		m.moveTo(t.ID, o, where, target.ID)
 		return
 	}
 	m.confirm = k

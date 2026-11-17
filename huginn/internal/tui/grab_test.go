@@ -219,7 +219,7 @@ func TestMoveFarRefusals(t *testing.T) {
 	if len(m.indices()) == 0 {
 		t.Fatal("RECENTLY DONE is empty")
 	}
-	for _, k := range []string{"m", "y", "J", "K"} {
+	for _, k := range []string{"m", "y"} {
 		m = press(m, k)
 		if m.grab.active || m.yanked != "" || m.confirm != "" || *commits != 0 || !strings.HasPrefix(m.message, "RECENTLY DONE is ordered by close time") {
 			t.Fatalf("%s in RECENTLY DONE: %q", k, m.message)

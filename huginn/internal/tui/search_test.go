@@ -78,9 +78,9 @@ func TestSearchPickKeepsPick(t *testing.T) {
 func TestFoundTaskMovesAtOnce(t *testing.T) {
 	m, ids, commits := searchBoard(t)
 	m.setView("list")
-	m = press(m, "/", "Zebra", "enter", "J")
+	m = press(m, "/", "Zebra", "enter", "m", "j", "enter")
 	if want := "moved " + ids["Zebra"] + " below " + ids["Task 51"] + ", row 51 of 60 in the list"; m.message != want || *commits != 1 {
-		t.Fatalf("J: %q (commits %d), want %q", m.message, *commits, want)
+		t.Fatalf("m j Enter: %q (commits %d), want %q", m.message, *commits, want)
 	}
 	m = press(m, "/", "Zebra", "enter", "m", "k", "k", "enter")
 	if *commits != 2 || !strings.Contains(m.message, ids["Zebra"]) {
@@ -90,7 +90,7 @@ func TestFoundTaskMovesAtOnce(t *testing.T) {
 		t.Fatalf("row 49 is %s, want Zebra %s: %v", got, ids["Zebra"], shown(m))
 	}
 	// In NEXT UP too, where the move is relative to that section's rows.
-	m = press(nextUp(m), "/", "Zebra", "esc", "K")
+	m = press(nextUp(m), "/", "Zebra", "esc", "m", "k", "enter")
 	if *commits != 3 || !strings.HasPrefix(m.message, "moved "+ids["Zebra"]+" above ") {
 		t.Fatalf("NEXT UP K: %q (commits %d)", m.message, *commits)
 	}

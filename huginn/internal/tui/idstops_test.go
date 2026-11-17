@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -81,19 +82,19 @@ func openID(t *testing.T, m model, id string) model {
 // screenOf is the whole screen, plain.
 func screenOf(m model) string { return ansi.Strip(m.View()) }
 
-// 4bwcgp check 1: in a detail whose waiting_on names a task id, Tab moves
-// to that id, Enter opens it, Esc returns to the first detail (golden).
+// 4bwcgp check 1 (e3sevr: one ring): in a detail whose waiting_on names a
+// task id, Shift-Tab (h) from the page reaches that id, Enter opens it, Esc
+// returns to the first detail (golden).
 func TestTabReachesWaitedOnID(t *testing.T) {
 	m, ids := idBoard(t)
 	m = openID(t, m, ids["Main"])
-	m = press(m, "tab") // the epic first
-	m = press(m, "tab")
+	m = press(m, "shift+tab", "shift+tab") // checks -> page -> the stage's id
 	screen := screenOf(m)
 	if !strings.Contains(screen, "└─ waiting on after ▸"+ids["Blocker"]+" (crab 17:52)") {
-		t.Fatalf("second Tab does not mark the id it waits on:\n%s", screen)
+		t.Fatalf("Shift-Tab from the page does not mark the id it waits on:\n%s", screen)
 	}
-	if !strings.Contains(screen, "Tab next id") || !strings.Contains(screen, "Enter open") {
-		t.Fatalf("key bar lacks Tab next id, Enter open:\n%s", screen)
+	if !strings.Contains(screen, "h/l Tab next") || !strings.Contains(screen, "Enter open") {
+		t.Fatalf("key bar lacks h/l Tab next, Enter open:\n%s", screen)
 	}
 	var golden []string
 	for _, w := range []int{80, 140} {
@@ -142,10 +143,10 @@ func idsReplacer(ids map[string]string) []string {
 	return out
 }
 
-// 4bwcgp check 2: parent, the stage's id, dependencies, links and notes
-// are on one Tab cycle, in reading order, around the end; Shift-Tab goes
-// back; an id that resolves to no task is not a stop. An epic's children
-// are stops too.
+// 4bwcgp check 2, e3sevr check 6: parent, the stage's id, the page, the
+// checks, dependencies, links and notes are one ring, in reading order,
+// around the end; Tab and l go forward, Shift-Tab and h back; an id that
+// resolves to no task is not a stop. An epic's children are stops too.
 func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 	m, ids := idBoard(t)
 	m = openID(t, m, ids["Main"])
@@ -158,8 +159,18 @@ func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 	if strings.Join(got, " ") != strings.Join(want, " ") {
 		t.Fatalf("stops %v, want %v (zzzzzz is no task, so no stop)", got, want)
 	}
-	// Tab visits each, marked where it stands, then wraps.
-	marks := []string{"epic:▸" + ids["Epic"], "waiting on after ▸" + ids["Blocker"], "> ↳ " + ids["Dep"], "> ↳ " + ids["Linked"], "waits on ▸" + ids["Noted"] + " and zzzzzz", "epic:▸" + ids["Epic"]}
+	// The ring as h/l and Tab see it: the header's ids, the page, the
+	// checks, then the ids in the body.
+	var ring []string
+	for _, s := range m.focusRing(tk) {
+		ring = append(ring, fmt.Sprint(s.pane))
+	}
+	if want := fmt.Sprint(focusIDs, focusIDs, focusPage, focusAcceptance, focusDeps, focusLinks, focusIDs); strings.Join(ring, " ") != want {
+		t.Fatalf("ring %v, want %s", ring, want)
+	}
+	// From the checks (where Main opens) Tab visits the dependency, the
+	// link, the note's id, then wraps to the epic and the stage's id.
+	marks := []string{"> ↳ " + ids["Dep"], "> ↳ " + ids["Linked"], "waits on ▸" + ids["Noted"] + " and zzzzzz", "epic:▸" + ids["Epic"], "waiting on after ▸" + ids["Blocker"]}
 	for i, mark := range marks {
 		m = press(m, "tab")
 		m.height = 60 // the whole detail on screen
@@ -170,17 +181,17 @@ func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 			t.Fatalf("Tab %d: no single mark %q:\n%s", i+1, mark, screen)
 		}
 	}
-	for i, mark := range []string{marks[4], marks[3], marks[2]} {
-		m = press(m, "shift+tab")
+	for i, mark := range []string{marks[3], marks[2], marks[1]} {
+		m = press(m, []string{"shift+tab", "h"}[i%2])
 		if screen := screenOf(m) + "\n" + detailPlain(m); !strings.Contains(screen, mark) {
 			t.Fatalf("Shift-Tab %d: no mark %q:\n%s", i+1, mark, screen)
 		}
 	}
 	// Enter on each kind opens it; Esc comes back.
-	for i, wantID := range []string{ids["Epic"], ids["Blocker"], ids["Dep"], ids["Linked"], ids["Noted"]} {
+	for i, wantID := range []string{ids["Dep"], ids["Linked"], ids["Noted"], ids["Epic"], ids["Blocker"]} {
 		m = openID(t, press(m, "esc", "esc"), ids["Main"])
 		for range i + 1 {
-			m = press(m, "tab")
+			m = press(m, "l")
 		}
 		m = press(m, "enter")
 		if tk, _ := m.selected(); tk.ID != wantID {
@@ -195,7 +206,7 @@ func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 	if text := detailPlain(m); !strings.Contains(text, "CHILDREN (2)") || !strings.Contains(text, ids["Main"]+" Main") || !strings.Contains(text, ids["Other"]+" Other") {
 		t.Fatalf("epic detail lacks its children:\n%s", text)
 	}
-	m = press(m, "tab")
+	m = press(m, "tab") // from the checks: the first child
 	first := detailPlain(m)
 	m = press(m, "tab")
 	second := detailPlain(m)
@@ -206,20 +217,14 @@ func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 	if tk, _ := m.selected(); tk.ID != ids["Other"] {
 		t.Fatalf("Enter on a child opened %s", tk.ID)
 	}
-	// h/l still move between sections.
-	m = openID(t, press(m, "esc", "esc"), ids["Main"])
-	before := m.detailPane
-	if m = press(m, "l"); m.detailPane == before {
-		t.Fatal("l did not change section")
-	}
-	// No id at all: Tab says so.
-	m = openID(t, press(m, "esc"), ids["Other"])
+	m = openID(t, press(m, "esc", "esc"), ids["Other"])
 	tk, _ = m.selected()
 	if len(m.idStops(tk)) != 1 { // its epic
 		t.Fatalf("Other: stops %v", m.idStops(tk))
 	}
+	// A task with no ids still has its page and checks on the ring.
 	m = openID(t, press(m, "esc"), ids["Linked"])
-	if m = press(m, "tab"); !strings.Contains(m.message, "no task id here") {
-		t.Fatalf("Tab with no ids: %q", m.message)
+	if before := m.detailPane; press(m, "tab").detailPane == before {
+		t.Fatalf("Tab with no ids did not move: %q", m.message)
 	}
 }

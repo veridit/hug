@@ -125,15 +125,17 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if tk, _ := press(after, "p").selected(); tk.Title != "Main" {
 					t.Fatalf("p went to %q", tk.Title)
 				}
-			case "h/l":
-				if after = press(fresh, "l"); after.detailPane == pane {
-					t.Fatal("h/l shown but focus did not move")
+			case "h/l Tab":
+				// One ring (e3sevr): l and Tab land on the same stop, h
+				// and Shift-Tab too.
+				l, tab := press(fresh, "l"), press(fresh, "tab")
+				if l.detailPane == pane && l.dependency == fresh.dependency || l.detailPane != tab.detailPane || l.dependency != tab.dependency || l.idAt != tab.idAt {
+					t.Fatalf("l and Tab differ or do not move: l %d/%d tab %d/%d", l.detailPane, l.dependency, tab.detailPane, tab.dependency)
 				}
-			case "Tab":
-				after = press(fresh, "tab")
-				if tk, _ := after.selected(); after.idAtFocus(after.idStops(tk)) < 0 {
-					t.Fatal("Tab shown but no task id was marked")
+				if h, st := press(fresh, "h"), press(fresh, "shift+tab"); h.detailPane != st.detailPane || h.dependency != st.dependency {
+					t.Fatalf("h and Shift-Tab differ: %d %d", h.detailPane, st.detailPane)
 				}
+				after = l
 			case "Esc":
 				if after = press(fresh, "esc"); after.detail {
 					t.Fatal("Esc did not leave the task")
@@ -157,6 +159,20 @@ func TestFocusHintsAreHonest(t *testing.T) {
 			case "J/K":
 				if after = press(fresh, "J"); after.viewport.YOffset <= before.viewport.YOffset || !after.detail {
 					t.Fatalf("J shown as half page but did not scroll: %d", after.viewport.YOffset)
+				}
+			case "e", "t", "x", "d":
+				// On the task itself each writer has its own hint (e3sevr
+				// check 9) and asks, prompts or says why not.
+				if after = press(fresh, name); after.confirm == "" && after.prompt == "" && after.message == "" {
+					t.Fatalf("%s shown on the task but did nothing", name)
+				}
+			case "w":
+				if after = press(fresh, "w"); after.prompt != waitPrompt && after.message == "" {
+					t.Fatalf("w shown but no wait prompt: %q", after.message)
+				}
+			case "y":
+				if after = press(fresh, "y"); after.yanked == "" {
+					t.Fatalf("y shown but nothing yanked: %q", after.message)
 				}
 			case "t/d/x/e":
 				// Each writes only after a confirm or a prompt (x1ra0t).
@@ -206,9 +222,9 @@ func TestFocusHintsAreHonest(t *testing.T) {
 	}
 }
 
-// Check 2: l and h cycle page, acceptance and dependencies, skip a
-// section that is empty, and only the focused heading is highlighted
-// (Tab steps task ids since 4bwcgp).
+// Check 2: l and h (and Tab, Shift-Tab: e3sevr) cycle the ring, page,
+// acceptance and each dependency, skip a section that is empty, and only
+// the focused heading is highlighted.
 func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 	m, _ := focusModel(t)
 	if m.detailPane != focusAcceptance {
@@ -232,7 +248,7 @@ func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 		m.detailPane = pane
 		text := detailPlain(m)
 		heads := strings.Count(text, "▸ ")
-		trail := strings.Contains(ansi.Strip(strings.Split(m.View(), "\n")[1]), "▸")
+		trail := strings.Contains(ansi.Strip(strings.Join(m.detailHeader(m.visible[m.cursor]), "\n")), "▸ Main")
 		switch pane {
 		case focusAcceptance:
 			if heads != 1 || !strings.Contains(text, "▸ ACCEPTANCE") || trail {
@@ -334,31 +350,34 @@ func TestFocusPageScrollsAcceptanceSteps(t *testing.T) {
 	}
 }
 
-// Check 4: in a task the tab bar marks no view; it shows the trail instead.
+// Check 4 (e3sevr check 12, header-spec.md): in a task the global band
+// is gone; line 1 is the breadcrumb, the view u goes back to, then each
+// task followed, then this task's id; the subject (title) carries ▸ on
+// page focus.
 func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
 	m, main := focusModel(t)
 	m.styles = newTheme()
 	m.resize()
-	bar := func(m model) string { return strings.Split(ansi.Strip(m.View()), "\n")[1] }
-	for _, v := range []string{"[overview]", "[list]", "[board]", "[!lint]"} {
-		if strings.Contains(bar(m), v) {
-			t.Fatalf("tab bar marks %s inside a task: %q", v, bar(m))
+	crumb := func(m model) string { return strings.TrimRight(strings.Split(ansi.Strip(m.View()), "\n")[0], " ") }
+	for _, v := range []string{"[list]", "!lint", "/3 tasks", "todo 3", "f picker"} {
+		if strings.Contains(ansi.Strip(m.View()), v) {
+			t.Fatalf("the global band shows %q inside a task:\n%s", v, ansi.Strip(m.View()))
 		}
 	}
-	if !strings.Contains(bar(m), "list › "+main.ID) {
-		t.Fatalf("tab bar lacks the trail: %q", bar(m))
+	if got := crumb(m); got != "HUG TASKS · list › "+main.ID {
+		t.Fatalf("breadcrumb %q", got)
 	}
 	page := press(m, "l", "l")
-	if !strings.Contains(bar(page), "list › ▸ "+main.ID) || strings.Contains(bar(page), "["+main.ID+"]") {
-		t.Fatalf("page focus marks the bare task id with ▸: %q", bar(page))
+	if !strings.Contains(ansi.Strip(page.View()), "▸ Main") || strings.Contains(crumb(page), "▸") {
+		t.Fatalf("page focus: ▸ before the subject, not in the breadcrumb:\n%s", ansi.Strip(page.View()))
 	}
-	followed := press(m, "tab", "enter")
-	if tk, _ := followed.selected(); !strings.Contains(bar(followed), "list › "+main.ID+" › "+tk.ID) {
-		t.Fatalf("trail after following a dependency: %q", bar(followed))
+	followed := press(m, "l", "enter")
+	if tk, _ := followed.selected(); crumb(followed) != "HUG TASKS · list › "+main.ID+" › "+tk.ID {
+		t.Fatalf("breadcrumb after following a dependency: %q", crumb(followed))
 	}
-	if back := press(m, "esc"); !strings.Contains(bar(back), "[list]") {
-		t.Fatalf("leaving the task marks its view again: %q", bar(back))
+	if back := press(m, "esc"); !strings.Contains(ansi.Strip(back.View()), "[list]") {
+		t.Fatalf("leaving the task draws the global band again:\n%s", ansi.Strip(back.View()))
 	}
 	if n := len(strings.Split(m.View(), "\n")); n != m.height {
 		t.Fatalf("detail view has %d lines, want %d", n, m.height)

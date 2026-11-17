@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/charmbracelet/x/ansi"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // x1ra0t check 1: in a task, J and K scroll half a page and never change
@@ -32,7 +33,7 @@ func TestDetailJKScrollAndNeverMove(t *testing.T) {
 		t.Fatalf("message says a move: %q", m.message)
 	}
 	// Every focus: none of them moves the task.
-	for _, pane := range m.focusStops(main) {
+	for _, pane := range panesOf(m, main) {
 		mm := m
 		mm.detailPane = pane
 		mm.syncDetail()
@@ -50,34 +51,23 @@ func TestDetailJKScrollAndNeverMove(t *testing.T) {
 	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "J/K ½ page") {
 		t.Fatalf("key bar lacks J/K: %q", bar)
 	}
-	// A move asked for from inside a task by any path is refused, never
-	// done (requestAction is the one place moves start).
-	m.requestAction("J", "")
-	if !strings.Contains(m.message, "Esc back to the list") {
-		t.Fatalf("a move from the detail was not refused: %q", m.message)
-	}
-	if after := rankOrder(t, m); before != after {
-		t.Fatalf("requestAction moved from the detail: %v", after)
-	}
 }
 
-// x1ra0t check 2: J and K on a list row still move the task.
-func TestRowJKStillMove(t *testing.T) {
-	m, _ := focusModel(t)
-	m = press(m, "esc")
-	if m.detail {
-		t.Fatal("still in the task")
-	}
+// e3sevr check 1 (reverses x1ra0t check 2): J and K on a list row page,
+// they never move the task; m grabs to move.
+func TestRowJKPageNeverMove(t *testing.T) {
+	m := manyModel(t)
 	before := shown(m)
-	sel, _ := m.selected()
 	m = press(m, "J")
-	after := shown(m)
-	if slices.Equal(before, after) || !strings.Contains(m.message, "moved "+sel.ID) {
-		t.Fatalf("J on a row did not move: %v -> %v (%q)", before, after, m.message)
+	if m.cursor != m.bodyHeight() || !slices.Equal(before, shown(m)) || m.confirm != "" {
+		t.Fatalf("J: cursor %d (want a page, %d), rows changed %v", m.cursor, m.bodyHeight(), !slices.Equal(before, shown(m)))
 	}
 	m = press(m, "K")
-	if !slices.Equal(before, shown(m)) {
-		t.Fatalf("K did not undo J: %v -> %v", before, shown(m))
+	if m.cursor != 0 || !slices.Equal(before, shown(m)) {
+		t.Fatalf("K: cursor %d, rows changed %v", m.cursor, !slices.Equal(before, shown(m)))
+	}
+	if m = press(m, "m"); !m.grab.active {
+		t.Fatal("m does not grab")
 	}
 }
 
@@ -91,7 +81,7 @@ func TestDetailWritingKeysAreNamed(t *testing.T) {
 		m, main := focusModel(t)
 		m.width = w
 		m.resize()
-		for _, pane := range m.focusStops(main) {
+		for _, pane := range panesOf(m, main) {
 			m.detailPane = pane
 			m.syncDetail()
 			// The bar as drawn, after the help model cut what does not fit.
@@ -111,6 +101,15 @@ func TestDetailWritingKeysAreNamed(t *testing.T) {
 					// (sfa8w4); N opens a prompt that says what it makes.
 					continue
 				}
+				if pane == focusPage && label == "t/d/x/e" {
+					// On the task itself each writer has its own hint,
+					// those that apply to its state (e3sevr check 9).
+					label = k
+					tk, _ := m.selected()
+					if k == "d" && tk.State != "doing" || k == "t" && tk.State != "todo" {
+						continue
+					}
+				}
 				if !strings.Contains(bar, label+" ") {
 					t.Fatalf("width %d pane %d: %q writes but the bar shows %q", w, pane, k, bar)
 				}
@@ -125,4 +124,17 @@ func TestDetailWritingKeysAreNamed(t *testing.T) {
 			}
 		}
 	}
+}
+
+// panesOf is the panes t's focus ring stops in, each once, in ring order.
+func panesOf(m model, t task.Task) []int {
+	var out []int
+	seen := map[int]bool{}
+	for _, s := range m.focusRing(t) {
+		if !seen[s.pane] {
+			seen[s.pane] = true
+			out = append(out, s.pane)
+		}
+	}
+	return out
 }

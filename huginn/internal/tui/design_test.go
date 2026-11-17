@@ -133,8 +133,12 @@ func TestPaneKeysAndBoardSelection(t *testing.T) {
 	if m.view != "board" || m.pane != 4 {
 		t.Fatal(m.view, m.pane)
 	}
-	if m = press(manyModel(t), "tab"); m.view != "list" || m.column != 0 {
-		t.Fatal("Tab in the list marks a column", m.view, m.column)
+	// Tab is l, Shift-Tab is h (e3sevr); L marks a column.
+	if m = press(manyModel(t), "tab"); m.view != "board" || m.column != -1 {
+		t.Fatal("Tab in the list is l", m.view, m.column)
+	}
+	if m = press(manyModel(t), "L"); m.view != "list" || m.column != 0 {
+		t.Fatal("L in the list marks a column", m.view, m.column)
 	}
 }
 func TestDetailAndHelpScrollKeys(t *testing.T) {
@@ -443,7 +447,7 @@ func TestMarkdownDetailFixedHeaderAndEmptySections(t *testing.T) {
 	header := m.detailHeader(m.visible[m.cursor])
 	m = press(m, ">")
 	for i, line := range header {
-		if strings.TrimSpace(strings.Split(m.View(), "\n")[4+i]) != strings.TrimSpace(line) {
+		if strings.TrimSpace(strings.Split(m.View(), "\n")[1+i]) != strings.TrimSpace(line) { // under the breadcrumb (e3sevr)
 			t.Fatal("detail header scrolled away")
 		}
 	}
@@ -571,7 +575,7 @@ func TestFullHelpFits140AndRepairStaysVisible(t *testing.T) {
 	m.width, m.height = 140, 40
 	m.resize()
 	m = press(m, "?")
-	for _, text := range []string{"ctrl-d", "Shift-Tab", "Backspace", "$EDITOR", "confirm / cancel", "priority <p>", "assignee <a>"} {
+	for _, text := range []string{"ctrl-d", "H / L", "Backspace", "$EDITOR", "confirm / cancel", "priority <p>", "assignee <a>"} {
 		if !strings.Contains(m.View(), text) {
 			t.Fatal("help omitted "+text, m.View())
 		}

@@ -32,6 +32,7 @@ const ownerMin = 8
 
 // Cell widths, each with the space after it.
 const (
+	rowHead      = 3 // the gutter, a space, and the lint mark's cell before the id (e3sevr)
 	idCell       = 9 // fit(id, 8) and a space
 	kindCell     = 8
 	priorityCell = 9
@@ -52,7 +53,7 @@ type rowCols struct {
 // branch, which the owner cell is cut to first.
 func (m model) rowLayout(width int, compact bool, owner, names int) rowCols {
 	c := rowCols{status: !compact, kind: true, priority: true, owner: max(0, owner)}
-	head := 2 + m.progressWidth() + idCell
+	head := rowHead + m.progressWidth() + idCell
 	title := func() int {
 		w := width - head
 		if c.owner > 0 {

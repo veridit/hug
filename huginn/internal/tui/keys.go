@@ -58,7 +58,8 @@ func (m model) keyBar() string {
 	case m.detail:
 		hints = m.detailHints(m.width < 100)
 	default:
-		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("Tab/o", "column/order")}
+		// h/l and Tab are one key (e3sevr): the bar names them together.
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L o", "column/order")}
 	}
 	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
@@ -124,12 +125,27 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	case focusFiles:
 		hints = append(hints, hint("j/k", "file"), hint("Space", "show"), hint("Enter", "edit"))
 	default:
-		hints = append(hints, hint("j/k", "scroll"))
+		// Focus on the task itself (its id on the title line): the bar
+		// names what acts on the whole task (e3sevr, Jørgen 23:59: no
+		// stop may offer nothing).
+		hints = append(hints, hint("j/k", "scroll"), hint("e", "edit"))
+		switch t.State {
+		case "todo":
+			hints = append(hints, hint("t", "take"))
+		case "doing":
+			hints = append(hints, hint("d", "done"), hint("w", "wait"))
+		}
+		if t.State != "dropped" {
+			hints = append(hints, hint("x", "drop"))
+		}
+		if m.moveRefusal() == "" {
+			hints = append(hints, hint("y", "yank"))
+		}
 	}
-	// The task ids the detail shows, one Tab each (4bwcgp): right after
+	// One ring of stops, each task id one (4bwcgp, e3sevr): right after
 	// the focus's keys, so a narrow bar keeps it.
-	if len(m.idStops(t)) > 0 {
-		hints = append(hints, hint("Tab", "next id"))
+	if len(m.focusRing(t)) > 1 {
+		hints = append(hints, hint("h/l Tab", "next"))
 	}
 	// Every key that writes is named here, right after the focus's own
 	// keys so a narrow bar cuts navigation first (x1ra0t); each asks
@@ -137,16 +153,13 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	if m.forYou(t) {
 		hints = append(hints, hint("a", "answer")) // the question asks you (3jtfw9)
 	}
-	hints = append(hints, hint("t/d/x/e", "take/done/drop/edit"))
+	if m.detailPane != focusPage {
+		hints = append(hints, hint("t/d/x/e", "take/done/drop/edit"))
+	}
 	if !narrow {
 		hints = append(hints, hint("N", "new"))
 	}
 	hints = append(hints, hint("u", "up"), hint("n/p", "task"))
-	if len(m.focusStops(t)) > 1 && (m.width >= 160 || len(m.idStops(t)) == 0) {
-		// With Tab next id on the bar, h/l is named in ? help below 160,
-		// so S screen still fits at 140 (5z4zt4).
-		hints = append(hints, hint("h/l", "section"))
-	}
 	hints = append(hints, hint("J/K", "½ page"))
 	if len(m.filesOf(t)) > 0 {
 		hints = append(hints, hint("E", "files"))

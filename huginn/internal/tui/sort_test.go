@@ -112,7 +112,7 @@ func TestSortRefusesMoves(t *testing.T) {
 	m = press(sorted(m, "p"), "enter")
 	help := press(m, "?")
 	text := ansi.Strip(help.helpText())
-	for _, k := range []string{"J / K", "m / y, P p"} {
+	for _, k := range []string{"grab to move", "m / y, P p"} {
 		if strings.Contains(text, k) {
 			t.Fatalf("sorted: help still shows %q", k)
 		}
@@ -120,7 +120,7 @@ func TestSortRefusesMoves(t *testing.T) {
 	if !strings.Contains(text, ": sort rank") {
 		t.Fatal("sorted: help lacks the way back to rank order")
 	}
-	for _, k := range []string{"J", "K", "m", "y", "P", "p"} {
+	for _, k := range []string{"m", "y", "P", "p"} {
 		got := press(m, k)
 		if got.message != sortRefusal || got.grab.active || got.yanked != "" || got.confirm != "" {
 			t.Fatalf("%s while sorted: message %q grab %v yanked %q confirm %q", k, got.message, got.grab.active, got.yanked, got.confirm)

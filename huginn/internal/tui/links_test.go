@@ -68,8 +68,8 @@ func TestFollowTaskRefAndBack(t *testing.T) {
 	if tk, _ := m.selected(); tk.ID != beta.ID {
 		t.Fatalf("Enter on the second link opened %s, want %s", tk.ID, beta.ID)
 	}
-	bar := ansi.Strip(strings.Split(m.View(), "\n")[1])
-	if !strings.Contains(bar, main.ID+" › ") {
+	bar := ansi.Strip(strings.Split(m.View(), "\n")[0]) // the breadcrumb (e3sevr)
+	if !strings.Contains(bar, main.ID+" › "+beta.ID) {
 		t.Fatalf("trail after following a link: %q", bar)
 	}
 	m = press(m, "esc")
