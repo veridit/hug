@@ -43,5 +43,6 @@ file:fail-before-2.txt (135 bytes, sha256:6acc7f79)
 file:5sc5rw-ab.txt (2351 bytes, sha256:19f294f8)
 file:e2e.txt (1673 bytes, sha256:0acf909c)
 landed 833eee1 on main 2026-11-17: hug mem: a project memory exists once; forget retires its copy; hug mem upgrade…
+Landed 833eee1 on main. Cause: sync's MergeImport keyed note rows by origin repo:SCOPE/ID, and a capture keeps its capture origin, so each sync re-imported this machine's own capture as imp_ (origin repo:SCOPE/cap_ID). Fix: Imported carries the note row's ID and MergeImport maps it to the memory with that id in the same scope; ForgetMany also retires a twin; hug mem upgrade (hug upgrade's memory: part) folds existing pairs after a backup. Check 1: TestSyncReadsOwnCaptureBackAsTheSameMemory (muninn/internal/project/twins_test.go) fails on origin/main 58fcd3c, file:fail-before-1.txt, passes at 833eee1. Check 2: TestForgetLeavesNoTwinSearchable (muninn/run/twins_test.go) fails before: 'after forget hzwm7m, search still finds [d2mn4c]', file:fail-before-2.txt. Also TestFoldTwinsKeepsTheLocalMemory, TestMemUpgradeFoldsTwins, TestUpgradeMemoryPartRunsMemUpgrade. -race niced on cli, task, ingest, project, muninn/run, cmd/hug: all ok after rebase.
 ## History
 - 2026-11-17T22:24 todo -> doing/active (take)
