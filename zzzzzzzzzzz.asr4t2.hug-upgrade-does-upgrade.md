@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T19:25"
+done_release: "v0.7.45"
 ---
 
 ## Goal
@@ -44,6 +45,7 @@ landed f4ee48b on main (dcb20c2..f4ee48b). check 1: TestUpgradeMigratesStateKey 
 check 3 landed 317f5c2 on main (f4ee48b..317f5c2). TestUpgradePreviewsThenApplies failed on main first: 'plain upgrade: exit 0, want 5 ending fix: hug upgrade --apply'; now ok. Binary run on a scratch board: plain 'hug upgrade' prints 'tasks: would: 1 tasks moved to state: (was status:)' + diff, ends 'fix: hug upgrade --apply', exit 5; 'hug task upgrade' exit 5; '--dry-run' exit 2 (unknown flag); '--apply' exit 0, 'tasks: 1 tasks moved...'; again: nothing to do x4, exit 0. -race -count=1 cli ok 131.9s; cmd/hug, mcp, task ok.
 landed 317f5c2 on main 2026-11-17: hug upgrade previews by default: it changes nothing, ends with fix: hug upgrade…
 Reflection (open, 2026-11-17, nautilus): hug task set --accept 'VALUE' added the check but the reply ended with a lint fix about a long title, which read as if the set had failed, so I added the check twice and struck the duplicate. A set that wrote should say what it wrote first, before lint advice.
+shipped in v0.7.45 (f4ee48b)
 ## History
 - 2026-11-17T19:12 todo -> doing/active (take)
 - 2026-11-17T19:25 doing/active -> done (done); was doing_since: 2026-11-17T19:12

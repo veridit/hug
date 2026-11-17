@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T18:53"
+done_release: "v0.7.45"
 ---
 
 ## Goal
@@ -39,6 +40,7 @@ Landed in main edec38c (65fe3db..edec38c). Cause: CLI writers already serialise 
 Reflection (open, 2026-11-17, calf): The ticket's 'huginn has no file lock today (no flock/LockFile in huginn)' was out of date: m8shdj (896ca11) had already added the board turn for CLI writers, and an 8-writer CLI test passed on main. Grepping for the turn's callers found the real gap (the TUI). Also 'hug task show' printed no stage, so I could not see my own wait on ggydj2 and reran it (filed 456vyt).
 landed edec38c on main 2026-11-17: hug tui: every write holds the board turn, as CLI writes do (95ahtk)
 landed dcb20c2 on main 2026-11-17: Merge v0.7.44 into main (456vyt, 95ahtk stay under Unreleased)
+shipped in v0.7.45 (edec38c)
 ## History
 - 2026-11-17T17:47 todo -> doing/active (take)
 - 2026-11-17T18:53 doing/active -> done (done); was doing_since: 2026-11-17T17:47

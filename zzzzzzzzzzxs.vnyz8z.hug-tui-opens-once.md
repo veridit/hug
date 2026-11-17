@@ -60,6 +60,7 @@ shipped in v0.7.43 (7705bce)
 landed ceb9d1a on main 2026-11-17: hug tui test: TestTmuxReload compares the reloaded hug's frame once it has the…
 landed f9e5664 on main 2026-11-17: hug tui: the first frame has the terminal's size, read from stdout before the…
 shipped in v0.7.44 (ceb9d1a)
+shipped in v0.7.45 (f9e5664)
 ## History
 - 2026-11-17T16:12 todo -> doing/active (take)
 - 2026-11-17T17:21 doing/active -> doing/waiting (wait)

@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T18:56"
+done_release: "v0.7.45"
 ---
 
 ## Goal
@@ -39,6 +40,7 @@ Landed in main 9f3e38f (f9e5664..9f3e38f). Text show line 2 is now 'stage: ...' 
 Reflection (open, 2026-11-17, calf): nothing misled me; the bug itself was the gap: a wait I had set was invisible in show, so I reran it and overwrote its text.
 landed 9f3e38f on main 2026-11-17: hug task show: the stage is line 2, in the TUI row's words (456vyt)
 landed dcb20c2 on main 2026-11-17: Merge v0.7.44 into main (456vyt, 95ahtk stay under Unreleased)
+shipped in v0.7.45 (9f3e38f)
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
 - 2026-11-17T18:56 doing/active -> done (done); was doing_since: 2026-11-17T18:53
