@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T21:59"
+done_release: "v0.7.48"
 ---
 
 ## Goal
@@ -42,6 +43,7 @@ Landed ac4409f (e971d24..ac4409f on main). New huginn/internal/tui/helpkeys.go: 
 Reflection (open, 2026-11-17, nautilus): AGENTS.md 'Tests must fail first' plus jmx10s check 4 ('press each listed key to prove it is bound') made me write the walk test before trusting my own key table: it found 9 rows I had listed that did nothing in that context, so the help now lists only bound keys instead of my belief about them
 landed ac4409f on main 2026-11-17: hug tui: ? leads with the keys for where you are, then EVERYWHERE (jmx10s)
 landed 58fcd3c on main 2026-11-17: Merge v0.7.47 into main (jmx10s, 3mavpt stay under Unreleased)
+shipped in v0.7.48 (ac4409f)
 ## History
 - 2026-11-17T21:37 todo -> doing/active (take)
 - 2026-11-17T21:59 doing/active -> done (done); was doing_since: 2026-11-17T21:37

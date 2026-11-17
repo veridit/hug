@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T22:36"
+done_release: "v0.7.48"
 ---
 
 ## Goal
@@ -39,6 +40,7 @@ Ready on branch kestrel/t3fqaw, commit 9d42d03, not pushed: main is held from 18
 kestrel: landed e28f7f6 (58fcd3c..e28f7f6), rebased onto the state rename: the fixture's status: became state:, d.Task.Status became d.Task.State. Mutation after rebase: main's frontmatter.go fails 'labels: old value line left: "  #second line"' and TestSetKeepsCommentAfterValue 'the comment moved or went'. -race on the rebased commit: task ok 24.399s, cli ok 175.218s.
 Reflection (open, 2026-11-17, calf): The state rename broke this branch's test at vet time ('d.Task.Status undefined'), which a rebase reports only when the tests are built; nothing in the instructions misled.
 landed e28f7f6 on main 2026-11-17: hug task: a field write replaces a multi-line value whose lines start with #…
+shipped in v0.7.48 (e28f7f6)
 ## History
 - 2026-11-17T18:56 todo -> doing/active (take)
 - 2026-11-17T19:03 doing/active -> doing/waiting (wait)
