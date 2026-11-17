@@ -13,8 +13,8 @@ branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 stage: "waiting"
 doing_since: "2026-11-17T15:23"
-waiting_on: "CI 44109039664, then a landing slot after wyvern's stack"
-waiting_since: "2026-11-17T15:59"
+waiting_on: "main CI green on all jobs for ceb9d1a (contains ea2d369), then tick 1-5"
+waiting_since: "2026-11-17T18:16"
 waiting_asked_by: "wyvern"
 ---
 
