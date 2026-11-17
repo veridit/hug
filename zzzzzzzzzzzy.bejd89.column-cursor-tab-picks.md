@@ -4,7 +4,7 @@ title: "Column cursor: Tab picks a column, o orders by it"
 status: todo
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
