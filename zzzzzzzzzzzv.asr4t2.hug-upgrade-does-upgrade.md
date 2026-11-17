@@ -28,7 +28,7 @@ cmd/hug/main.go:62 dispatches setup, tui, upgrade. 6ephqk step 4 (status -> stat
 - [x] on a board in the old layout, hug upgrade migrates it and prints what changed (test)
 - [x] on a current board it prints 'nothing to do' per part (test)
 - [ ] hug upgrade previews by default (changes nothing, ends fix: hug upgrade --apply, exits 5 with changes pending, 0 with none); --apply does it; --dry-run is gone; hug task upgrade the same (Jørgen 18:58, test fails on main first)
-- [ ] plain hug upgrade previews (nothing changes, ends fix: hug upgrade --apply, exit 5 pending, 0 none); --apply does it; --dry-run gone; hug task upgrade the same (test fails on main first)
+- [ ] ~~plain hug upgrade previews (nothing changes, ends fix: hug upgrade --apply, exit 5 pending, 0 none); --apply does it; --dry-run gone; hug task upgrade the same (test fails on main first)~~ (not relevant: duplicate of check 3 (added twice), nautilus, 2026-11-17)
 
 ## Notes
 
