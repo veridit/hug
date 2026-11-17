@@ -1,0 +1,93 @@
+== overview at 60
+HUG TASKS · overview   5/5 tasks · ! 8 findings             
+[overview]   list    board    !lint                         
+todo 2  ·  doing 2  ·  blocked 0  ·  done 1  ·  dropped 0   
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked  
+> IN PROGRESS · assigned to  [2]                            
+>!○ 0/12  ######   doing   A very long title that…  an-agen…
+ !○ 0/12  ######   doing   数据库迁移：把所有的表…  an-agen…
+                                                            
+  NEXT UP · rank order  [2]                                 
+ !○ 0/12  ######   todo    critical 🚀🔥 emoji rocket fire …
+ !○ 0/12  ######   todo    critical files A very long title…
+                                                            
+  BLOCKED · unmet dependencies  [0] · None                  
+                                                            
+  RECENTLY DONE · last closed  [1]                          
+  ● 12/12 ######   done    critical done A very long title …
+                                                            
+  LINT · tasks needing attention  [4] · 8 findings          
+ !○ 0/12  ######   doing   critical A very long title that …
+ !○ 0/12  ######   doing   critical 数据库迁移：把所有的表… 
+ !○ 0/12  ######   todo    critical 🚀🔥 emoji rocket fire …
+ !○ 0/12  ######   todo    critical files A very long title…
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+All tasks · : filters and commands                          
+                                                            
+j/k move · Enter open · f/# find · / search · : cmd · ? hel…
+== list at 60
+HUG TASKS · list   5/5 tasks · ! 8 findings                 
+ overview   [list]   board    !lint                         
+todo 2  ·  doing 2  ·  blocked 0  ·  done 1  ·  dropped 0   
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked  
+  ✓       ID       STATUS  PRIORITY TITLE                   
+>!○ 0/12  ######   doing   critical A very long title that …
+ !○ 0/12  ######   doing   critical 数据库迁移：把所有的表… 
+ !○ 0/12  ######   todo    critical 🚀🔥 emoji rocket fire …
+  ● 12/12 ######   done    critical done A very long title …
+ !○ 0/12  ######   todo    critical files A very long title…
+Rows 1–5 of 5 · ! lint finding · status blocked = unmet dep…
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+All tasks · : filters and commands                          
+                                                            
+j/k move · Enter open · f/# find · / search · : cmd · ? hel…
+== board at 60
+HUG TASKS · board   5/5 tasks · ! 8 findings                
+ overview    list   [board]   !lint                         
+todo 2  ·  doing 2  ·  blocked 0  ·  done 1  ·  dropped 0   
+No filters · f picker · 1 todo  2 doing  3 done  4 blocked  
+> TODO [2]                                                  
+  ✓       ID       T P TITLE                                
+>!○ 0/12  ######   F C 🚀🔥 emoji rocket fire 🎉 A very lon…
+ !○ 0/12  ######   F C files A very long title that goes on…
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+T: F feature B bug C chore S spike D docs · P: C critical H…
+Columns 1–1 of 5 · h/l or Tab/Shift-Tab reveals other colum…
+All tasks · : filters and commands                          
+                                                            
+j/k move · Enter open · f/# find · / search · : cmd · ? hel…

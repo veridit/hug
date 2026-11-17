@@ -94,6 +94,12 @@ func scrollMark(n, start, end, total int) string {
 	return ""
 }
 func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark string) string {
+	return m.taskRowCols(t, width, selected, compact, mark, m.rowLayout(width, compact, 0, 0))
+}
+
+// taskRowCols draws t in the cells c, width wide: one line, never more
+// (102bc0).
+func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark string, c rowCols) string {
 	// Gutter: pointer or scroll arrow, then the lint mark, so "!" costs no
 	// column of its own (2026-11-16, user).
 	pointer := " "
@@ -119,13 +125,27 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 	if compact {
 		// Board columns are narrow: type and priority are one coloured
 		// letter each, spelled out in the legend under the board.
-		row += initial(m.styles.kind, t.Type) + " " + initial(m.styles.priority, t.Priority) + " " + fit(title, max(0, width-15-pw))
+		if c.kind {
+			row += initial(m.styles.kind, t.Type) + " "
+		}
+		if c.priority {
+			row += initial(m.styles.priority, t.Priority) + " "
+		}
 	} else {
-		row += styled(m.styles.status, m.boardStatus(t), 7) + " " + styled(m.styles.kind, t.Type, 7) + " " + styled(m.styles.priority, t.Priority, 8) + " " + fit(title, max(0, width-36-pw))
+		if c.status {
+			row += styled(m.styles.status, m.boardStatus(t), statusCell-1) + " "
+		}
+		if c.kind {
+			row += styled(m.styles.kind, t.Type, kindCell-1) + " "
+		}
+		if c.priority {
+			row += styled(m.styles.priority, t.Priority, priorityCell-1) + " "
+		}
 	}
+	row += fit(title, max(0, c.title))
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {
-		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 11+pw, width)))
+		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 2+pw+idCell, width)))
 	}
 	if selected {
 		// Inner cells end with a full reset, which would cut the tint after
@@ -175,12 +195,27 @@ func (m model) row(t task.Task) string {
 	return m.taskRow(t, m.width, ok && selected.Path == t.Path, false)
 }
 func (m model) columns(width int, compact bool) string {
-	pw := m.progressWidth()
-	s := "  " + fit("✓", pw) + fit("ID", 8) + " "
+	c := m.rowLayout(width, compact, 0, 0)
+	s := "  " + fit("✓", m.progressWidth()) + fit("ID", idCell-1) + " "
 	if compact {
-		return m.styles.dim.Render(fit(s+"T P "+fit("TITLE", max(0, width-15-pw)), width))
+		if c.kind {
+			s += "T "
+		}
+		if c.priority {
+			s += "P "
+		}
+	} else {
+		if c.status {
+			s += fit("STATUS", statusCell-1) + " "
+		}
+		if c.kind {
+			s += fit("TYPE", kindCell-1) + " "
+		}
+		if c.priority {
+			s += fit("PRIORITY", priorityCell-1) + " "
+		}
 	}
-	return m.styles.dim.Render(fit(s+fit("STATUS", 7)+" "+fit("TYPE", 7)+" "+fit("PRIORITY", 8)+" "+fit("TITLE", max(0, width-36-pw)), width))
+	return m.styles.dim.Render(fit(s+fit("TITLE", max(0, c.title)), width))
 }
 
 // window is the rows of indices shown in rows lines, starting at start as
@@ -219,6 +254,7 @@ func (m model) listText() string {
 	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · status blocked = unmet dependency", start+1, end, len(indices))))
 	return strings.Join(lines, "\n")
 }
+
 // ownerWidth is the IN PROGRESS owner column: 16 cells for a name, and on
 // a wide terminal as many as the longest owner with its branch needs, up
 // to 30 (x1t1t1). A board without branches looks as it did.
@@ -284,10 +320,8 @@ func (m model) overviewText() string {
 			label = m.styles.selected.Render(label)
 		}
 		lines = append(lines, label)
-		ownerWidth := 16
-		if p == sectionDoing {
-			ownerWidth = m.ownerWidth()
-		}
+		// IN PROGRESS rows share one layout with the owner cell (102bc0).
+		doing := m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(indices))
 		for n, i := range indices[start:end] {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
@@ -296,13 +330,14 @@ func (m model) overviewText() string {
 				// Owners get a reserved column, never lost behind a long
 				// title. On the selected row the highlight runs through it,
 				// so the owner reads as part of that row.
-				ownerCell := fit(m.rowOwner(t), ownerWidth)
+				ownerCell := fit(m.rowOwner(t), doing.owner)
 				if sel {
 					ownerCell = m.styles.selected.Render("  " + ownerCell)
 				} else {
 					ownerCell = "  " + m.styles.accent.Render(ownerCell)
 				}
-				lines = append(lines, m.taskRowMark(t, max(1, m.width-ownerWidth-2), sel, false, mark)+ownerCell)
+				rest := max(0, m.width-doing.owner-ownerGap)
+				lines = append(lines, fit(m.taskRowCols(t, rest, sel, false, mark, doing)+ownerCell, m.width))
 			} else {
 				lines = append(lines, m.taskRowMark(t, m.width, sel, false, mark))
 			}
