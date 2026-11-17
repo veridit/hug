@@ -31,6 +31,7 @@ Today: filters.go filterBar() prints 'No filters · f picker · 1 todo  2 doing 
 - [ ] Keys 1-4 do nothing and no hint names them; s no longer opens ':status ' (key test)
 - [ ] Context help (?) lists f filter and s sort with their picker keys (help test)
 - [ ] Jørgen confirms on his board after release
+- [ ] sc sorts by the marked column and repeated sc flips its direction; o no longer sorts; created moves to d; the picker lists 'c current column (NAME)' (key test)
 
 ## Notes
 
