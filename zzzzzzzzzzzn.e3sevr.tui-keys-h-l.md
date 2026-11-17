@@ -71,5 +71,6 @@ Jørgen 00:03 local: 'clear ideas: a global header, and it goes away, then the b
 file:header-spec.md (4894 bytes, sha256:cda72b68) replaces sha256:c0b38735
 Jørgen 00:04 local: keeps context before subject, and wants 'a line right above the subject so it stands out'. Spec: breadcrumb, context, dim rule, subject, dim rule, details.
 file:header-spec.md (5528 bytes, sha256:daa22937) replaces sha256:cda72b68
+file:header-spec.md (5952 bytes, sha256:32713c2e) replaces sha256:daa22937
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)

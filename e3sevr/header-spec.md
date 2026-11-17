@@ -85,6 +85,15 @@ LINT · tasks needing attention [30]
 A column that is the same on every task of a section is not drawn there; the heading says it
 once (1bbe96).
 
+ASKED rows show the title, like every row. Only the focused row adds the question on a second
+line (Jørgen 00:13: the question needs the title as its context):
+
+```
+> ◐ 8/9  6ephqk  feature        Task state and stage: a hard-coded tree replaces status
+         └ asked: check 9 · look at the state/stage rows on your board · nautilus · 3 h
+  ◔ 4/5  3jtfw9  feature  high  Answer a ticket's question in place
+```
+
 ## Footer while a prefix is pending (qh9ep1)
 
 ```
