@@ -95,20 +95,26 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		limit = 40 * time.Second
 	}
-	seen := func(f func() bool) time.Duration {
-		for time.Since(start) < limit {
-			if f() {
-				return time.Since(start)
-			}
+	// Both are polled in every round, each from the start: clone B fetches
+	// project memories when a hug mem read finds them stale, so polling the
+	// memory only after the note had arrived left it 10 s minus the note's
+	// time (4vcwxk: note 8.76 s, memory -1 on macOS CI 44077251884; locally
+	// clone B's first memory pass began 1 s after the note showed).
+	note, mem := time.Duration(-1), time.Duration(-1)
+	for time.Since(start) < limit && (note < 0 || mem < 0) {
+		if note < 0 && has("note from clone A", two, homeB, bin, "task", "show", id) {
+			note = time.Since(start)
+		}
+		if mem < 0 && has("Quartzite releases need a signed checklist", two, homeB, bin, "mem", "search", "Quartzite checklist") {
+			mem = time.Since(start)
+		}
+		if note < 0 || mem < 0 {
 			time.Sleep(200 * time.Millisecond)
 		}
-		return -1
 	}
-	note := seen(func() bool { return has("note from clone A", two, homeB, bin, "task", "show", id) })
-	mem := seen(func() bool {
-		return has("Quartzite releases need a signed checklist", two, homeB, bin, "mem", "search", "Quartzite checklist")
-	})
 	logs, _ := filepath.Glob(filepath.Join(one, ".git", "hug", "sync", "*.log"))
+	logsB, _ := filepath.Glob(filepath.Join(two, ".git", "hug", "sync", "*.log"))
+	logs = append(logs, logsB...)
 	var logText string
 	for _, l := range logs {
 		b, _ := os.ReadFile(l)
