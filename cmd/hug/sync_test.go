@@ -132,7 +132,7 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	design := syncBound()
 	limit := 2 * design
 	if runtime.GOOS == "windows" {
-		limit = 4 * design
+		limit = max(4*design, 40*time.Second) // never below the 40 s Windows had before 4vcwxk
 	}
 	// Both are polled in every round, each from the start: clone B fetches
 	// project memories when a hug mem read finds them stale, so polling the
