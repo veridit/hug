@@ -68,7 +68,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task, 5 upgrade has chan
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "review", "design", "answer", "next", "rebalance", "types", "states", "people", "models", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "ask", "resume", "review", "design", "answer", "next", "rebalance", "types", "states", "people", "models", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -381,6 +381,23 @@ func (a *App) envName() string {
 	return harnessName(a.getenv("JCODE_SESSION_ID"))
 }
 
+// textArg is a text argument as given, or, when it is "-", the text read
+// from stdin (41hhgn: an answer or a question spanning lines, pasted or
+// piped, kept verbatim).
+func (a *App) textArg(arg string) (string, error) {
+	if arg != "-" {
+		return arg, nil
+	}
+	if a.In == nil {
+		return "", usage("- reads the text from stdin, and there is none", `echo "the text" | hug task answer ID -`)
+	}
+	b, e := io.ReadAll(a.In)
+	if e != nil {
+		return "", e
+	}
+	return string(b), nil
+}
+
 // actor is the name a command writes as, as take records it, without
 // asking git where (whoTakes does): --as, HUG_USER, the session, else the
 // model.
@@ -478,7 +495,7 @@ func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
 // as their value. Both accept task:ID, the form running text uses, and are
 // turned into the bare id here so every reply and printed command shows
 // the bare id and runs when pasted into a shell (xxvm6t).
-var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "resume", "review", "design", "answer", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
+var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "ask", "resume", "review", "design", "answer", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
 var refFlags = []string{"before", "after", "dep", "add", "remove", "parent", "epic"}
 
 func bareRefs(cmd string, f *flags) {
@@ -507,6 +524,7 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	out := Reply{}
 	_ = json.Unmarshal(b, &out)
 	out["model"] = t.Model
+	stageObjects(out, t)
 	if t.Effort != "" {
 		out["effort"] = t.Effort
 	}
@@ -574,6 +592,43 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	}
 	return out
 }
+
+// stageObjects puts each stage's own fields in an object named after the
+// stage, beside "stage" (41hhgn, crab 00:44, from Statbus's agent: "show
+// --json doesn't return waiting_for"; agents read the top level):
+// "asked": {"what", "for", "check", "since", "by", "show"}, and the same
+// for waiting, design, review and deferred, keyed without the stage
+// prefix. The flat fields map keeps only the rest (doing_since, done_at
+// ...). A stage's object is there when the file has its fields, also for
+// a stage another outranks (a design question behind a dependency).
+func stageObjects(out Reply, t task.Task) {
+	fields, _ := out["fields"].(map[string]any)
+	if len(fields) == 0 {
+		return
+	}
+	for _, stage := range []string{"asked", "waiting", "design", "review", "deferred"} {
+		obj := Reply{}
+		for k, v := range fields {
+			key, ok := strings.CutPrefix(k, stage+"_")
+			if !ok {
+				continue
+			}
+			if n, e := strconv.Atoi(fmt.Sprint(v)); e == nil && k == "asked_check" {
+				obj[key] = n
+			} else {
+				obj[key] = v
+			}
+			delete(fields, k)
+		}
+		if len(obj) > 0 {
+			out[stage] = obj
+		}
+	}
+	if len(fields) == 0 {
+		delete(out, "fields")
+	}
+}
+
 func resultJSON(r task.Result, s *session) (Reply, error) {
 	if r.Task.ID == "" {
 		return Reply{"changed": r.Changed, "next": r.Next, "renamed": r.Renamed}, nil
@@ -608,7 +663,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "review": "as model by show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "ask": "as model to check show", "review": "as model by show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1091,16 +1146,50 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			r, e = s.s.Drop(f.args[0], f.args[1])
 		}
 	case "wait":
+		// A question to a person is its own stage (41hhgn, Jørgen 23:48):
+		// --on NAME is refused, with the command that asks.
+		if who := strings.TrimSpace(f.get("on")); who != "" || f.has("show") {
+			if who == "" {
+				who = "NAME"
+			}
+			q := "the question"
+			if len(f.args) > 1 {
+				q = f.args[1]
+			}
+			ref := "ID"
+			if len(f.args) > 0 {
+				ref = f.args[0]
+			}
+			return nil, usage("wait is for things with no person to answer (CI, a release); a question to a person is hug task ask", "hug task ask "+ref+" --to "+who+" "+strconv.Quote(q))
+		}
 		if len(f.args) == 1 {
 			return nil, usage("wait needs what it waits on", "hug task wait "+f.args[0]+` "CI run 123"`)
 		}
 		if e = f.count(2); e != nil {
 			return nil, e
 		}
-		// Waiting on a person: --on NAME writes waiting_for, a field lint
-		// checks against hug.toml [people] (89y0b7, crab 15:28; it was
-		// "NAME: what" in waiting_on).
-		r, e = s.s.WaitShowing(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("show"), f.get("on"))
+		r, e = s.s.Wait(f.args[0], f.args[1], a.whoTakes(f).assignee())
+	case "ask":
+		if len(f.args) == 1 {
+			return nil, usage("ask needs the question", "hug task ask "+f.args[0]+` --to NAME "the question"`)
+		}
+		if e = f.count(2); e != nil {
+			return nil, e
+		}
+		q := task.Question{What: f.args[1], For: f.get("to"), Show: f.get("show")}
+		if v := strings.TrimSpace(f.get("check")); v != "" {
+			n, err := strconv.Atoi(v)
+			if err != nil || n < 1 {
+				return nil, usage("--check takes a check number (1, 2, ...), not "+strconv.Quote(v), "hug task show "+f.args[0])
+			}
+			q.Check = n
+		}
+		text, err := a.textArg(q.What)
+		if err != nil {
+			return nil, err
+		}
+		q.What = text
+		r, e = s.s.Ask(f.args[0], q, a.whoTakes(f).assignee())
 	case "resume":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -1123,7 +1212,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(2); e != nil {
 			return nil, e
 		}
-		r, e = s.s.Answer(f.args[0], f.args[1], a.actor(f))
+		text, err := a.textArg(f.args[1])
+		if err != nil {
+			return nil, err
+		}
+		r, e = s.s.Answer(f.args[0], text, a.actor(f))
 	case "design":
 		if f.has("clear") {
 			if e = f.count(1); e != nil {
@@ -1830,7 +1923,26 @@ func descriptionKey(section string) string {
 // "answer for nautilus: jhf answered on txjkrm: drop it (design: type
 // stays?)". Until the asker writes on the task.
 func answerLine(id any, ans map[string]any) string {
-	return fmt.Sprintf("answer for %s: %s answered on %v: %v (%v: %v)", ans["for"], ans["by"], id, ans["text"], ans["stage"], ans["question"])
+	text, q := fmt.Sprint(ans["text"]), fmt.Sprint(ans["question"])
+	stage := fmt.Sprint(ans["stage"])
+	if n, ok := ans["check"].(float64); ok && n > 0 {
+		stage += fmt.Sprintf(", check %d", int(n))
+	} else if n, ok := ans["check"].(int); ok && n > 0 {
+		stage += fmt.Sprintf(", check %d", n)
+	}
+	if !strings.Contains(text, "\n") && !strings.Contains(q, "\n") {
+		return fmt.Sprintf("answer for %s: %s answered on %v: %s (%s: %s)", ans["for"], ans["by"], id, text, stage, q)
+	}
+	// Several lines (41hhgn check 8): every line, verbatim, under the head.
+	var b strings.Builder
+	fmt.Fprintf(&b, "answer for %s: %s answered on %v (%s):", ans["for"], ans["by"], id, stage)
+	for _, l := range strings.Split(q, "\n") {
+		b.WriteString("\n  > " + l)
+	}
+	for _, l := range strings.Split(text, "\n") {
+		b.WriteString("\n  " + l)
+	}
+	return b.String()
 }
 
 // stageLine is show's stage line (456vyt), worded as the TUI row's second
@@ -1849,6 +1961,14 @@ func stageLine(t Reply) string {
 			fields[k] = strings.Join(strings.Fields(fmt.Sprint(v)), " ")
 		}
 	}
+	// The stage's own fields are in its object (stageObjects).
+	for _, g := range []string{"asked", "waiting", "design", "review", "deferred"} {
+		if m, ok := t[g].(Reply); ok {
+			for k, v := range m {
+				fields[g+"_"+k] = strings.Join(strings.Fields(fmt.Sprint(v)), " ")
+			}
+		}
+	}
 	since := func(k string) string {
 		if v := fields[k]; v != "" {
 			return " since " + strings.Replace(v, "T", " ", 1)
@@ -1863,13 +1983,13 @@ func stageLine(t Reply) string {
 	}
 	switch stage {
 	case "waiting":
-		// waiting_for is the person; before 89y0b7 waiting_on held
-		// "NAME: what", which reads the same way.
-		head := "waiting on"
-		if who := fields["waiting_for"]; who != "" {
-			head += " " + who + ":"
+		return strings.TrimSpace("waiting on "+fields["waiting_on"]) + since("waiting_since")
+	case "asked":
+		head := "asked " + fields["asked_for"]
+		if n := fields["asked_check"]; n != "" {
+			head += " · check " + n
 		}
-		return strings.TrimSpace(head+" "+fields["waiting_on"]) + since("waiting_since")
+		return head + ": " + fields["asked_what"] + since("asked_since")
 	case "review":
 		head := "waiting for review"
 		if t["state"] == "doing" {

@@ -128,7 +128,7 @@ func TestToolsSchemasAndRoundTrip(t *testing.T) {
 		{"wait", map[string]any{"text": "CI run 1"}, []string{"wait", "abc123", "CI run 1"}},
 		{"resume", nil, []string{"resume", "abc123"}},
 		{"design", map[string]any{"text": "which way?", "for": "jhf"}, []string{"design", "abc123", "which way?", "--for", "jhf"}},
-		{"wait", map[string]any{"text": "the look", "on": "jhf"}, []string{"wait", "abc123", "the look", "--on", "jhf"}},
+		{"ask", map[string]any{"text": "the look\nand the rows", "to": "jhf", "check": float64(2), "show": "rows.ans"}, []string{"ask", "abc123", "the look\nand the rows", "--to", "jhf", "--check", "2", "--show", "rows.ans"}},
 		{"review", map[string]any{"by": "jhf", "show": "rows.ans"}, []string{"review", "abc123", "--by", "jhf", "--show", "rows.ans"}},
 		{"design", nil, []string{"design", "abc123", "--clear"}},
 		{"answer", map[string]any{"text": "drop it", "agent": "crab"}, []string{"answer", "abc123", "drop it", "--as", "crab"}},

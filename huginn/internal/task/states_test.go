@@ -15,7 +15,7 @@ func TestStatesTree(t *testing.T) {
 	if got := strings.Join(StageNames("todo"), " "); got != "deferred depends design draft review ready" {
 		t.Fatalf("todo stages (precedence order) %q", got)
 	}
-	if got := strings.Join(StageNames("doing"), " "); got != "active waiting depends review" {
+	if got := strings.Join(StageNames("doing"), " "); got != "active asked waiting depends review" {
 		t.Fatalf("doing stages %q", got)
 	}
 	for _, s := range States {

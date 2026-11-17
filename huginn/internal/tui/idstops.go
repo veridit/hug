@@ -73,7 +73,7 @@ func (m model) children(t task.Task) []task.Task {
 // which have their own stops.
 func (m model) stageWords(t task.Task) string {
 	switch m.stageOf(t) {
-	case "waiting", "design", "review", "deferred":
+	case "waiting", "asked", "design", "review", "deferred":
 		_, text, _ := m.note(t)
 		return text
 	}

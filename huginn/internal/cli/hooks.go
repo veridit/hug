@@ -222,7 +222,7 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 // runUpgrade does every mechanical migration (asr4t2): the old huginn
 // layout becomes hug's (branch, worktree, settings file), every task file is
 // tidied and says state: (6ephqk step 4), old waits on a person get
-// waiting_for, hook variables get HUG_ names, and a legacy memory file is
+// asked, hook variables get HUG_ names, and a legacy memory file is
 // named with its command. It says per part what it changed, or "nothing to
 // do", then points at hug setup for choices. It previews by default
 // (Jørgen 2026-11-17): nothing changes, each change reads "would: ...", the
@@ -337,18 +337,24 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 			tasks = append(tasks, would(fmt.Sprintf("%d tasks tidied: backlog leftovers removed, sections put in order (no section text changed)", len(changed))))
 			upgradeDiff += diff
 		}
-		// Waits on a person (89y0b7): an old waiting_on "NAME: what"
-		// with NAME in hug.toml [people] gets waiting_for NAME.
+		// Questions to a person (41hhgn): a doing/waiting with waiting_for
+		// (or, before 89y0b7, a waiting_on "NAME: what" with NAME in
+		// hug.toml [people]) becomes doing/asked.
 		people, _ := task.People(s.r.Dir)
-		moved, wlines, e := s.s.MoveWaitingFor(people, dry)
+		moved, wlines, e := s.s.MoveToAsked(people, dry)
 		if e == nil && len(moved) > 0 && !dry {
-			e = s.r.Commit(moved, fmt.Sprintf("hug upgrade: waiting_for in %d tasks", len(moved)))
+			e = s.r.Commit(moved, fmt.Sprintf("hug upgrade: %d questions to a person moved from waiting to asked", len(moved)))
 		}
 		if e != nil {
 			return nil, e
 		}
 		if len(moved) > 0 {
-			tasks = append(tasks, would(fmt.Sprintf("%d waits on a person moved to waiting_for", len(moved))))
+			ids := make([]string, 0, len(wlines))
+			for _, l := range wlines {
+				id, _, _ := strings.Cut(l, ":")
+				ids = append(ids, id)
+			}
+			tasks = append(tasks, would(fmt.Sprintf("%d questions to a person moved from waiting to asked (%s)", len(moved), strings.Join(ids, ", "))))
 			upgradeDiff += strings.Join(wlines, "\n") + "\n"
 		}
 		// Last, once the task files are moved: the board says its layout,

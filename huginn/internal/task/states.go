@@ -77,12 +77,18 @@ var States = []Node{
 		{Name: "doing_since", SetBy: ByHug, Means: "when it was taken"},
 	}, Stages: []Node{
 		{Name: "active", SetBy: ByAgent, Means: "the owner is working on it"},
-		{Name: "waiting", SetBy: ByAgent, Means: "the owner waits on something outside the board (CI, a reply, a release)", Fields: []NodeField{
+		{Name: "asked", SetBy: ByAgent, Means: "the owner asked a named person something and can't go on until they answer (41hhgn: a question to a person is its own stage, not a kind of waiting)", Fields: []NodeField{
+			{Name: "asked_what", Required: true, SetBy: ByAgent, Means: "the question, verbatim (may span lines)"},
+			{Name: "asked_for", Required: true, SetBy: ByAgent, Means: "who must answer, by their short name in hug.toml [people] or an agent's name (--to NAME); they see it in hug tui as asked: you"},
+			{Name: "asked_check", SetBy: ByAgent, Means: "the acceptance check the question is about (--check N)"},
+			{Name: "asked_since", SetBy: ByHug, Means: "when it was asked"},
+			{Name: "asked_by", SetBy: ByHug, Means: "who asked (the agent or person that ran hug task ask), told when it is answered"},
+			{Name: "asked_show", SetBy: ByAgent, Means: "the task file to look at (--show NAME); the detail shows it under the question"},
+		}},
+		{Name: "waiting", SetBy: ByAgent, Means: "the owner waits on something outside the board with no person to answer (CI, a release)", Fields: []NodeField{
 			{Name: "waiting_on", Required: true, SetBy: ByAgent, Means: "what it waits on"},
-			{Name: "waiting_for", SetBy: ByAgent, Means: "the person it waits on, by their short name in hug.toml [people] or an agent's name (--on NAME); they see it in hug tui as waiting on you"},
 			{Name: "waiting_since", SetBy: ByHug, Means: "since when"},
-			{Name: "waiting_asked_by", SetBy: ByHug, Means: "who waits (the agent or person that ran hug task wait), told when it is answered"},
-			{Name: "waiting_show", SetBy: ByAgent, Means: "the task file to look at (--show NAME); the detail shows it under the question"},
+			{Name: "waiting_asked_by", SetBy: ByHug, Means: "who waits (the agent or person that ran hug task wait)"},
 		}},
 		{Name: "depends", SetBy: ByHug, Means: "the owner can't go on until another task is done"},
 		{Name: "review", SetBy: ByReviewer, Means: "someone is reviewing it: a reviewer took it, or the owner asked with hug task review (and keeps it)", Fields: []NodeField{
@@ -115,6 +121,8 @@ var Transitions = []Transition{
 	{"todo/*", "doing/active", "hug task take ID"},
 	{"doing/active", "doing/waiting", `hug task wait ID "on what"`},
 	{"doing/waiting", "doing/active", "hug task resume ID"},
+	{"doing/active", "doing/asked", `hug task ask ID --to NAME [--check N] "question"`},
+	{"doing/asked", "doing/active", `hug task answer ID "answer"` + " (or hug task resume ID: the owner withdraws it)"},
 	{"doing/active", "doing/review", "hug task review ID --by NAME"},
 	{"todo/*", "todo/design", `hug task design ID "question"`},
 	{"todo/design", "todo/*", "hug task design ID --clear"},
@@ -147,6 +155,16 @@ func StageNode(state, stage string) (Node, bool) {
 		}
 	}
 	return Node{}, false
+}
+
+// stageFields are the names of a stage's own fields, from the tree.
+func stageFields(state, stage string) []string {
+	n, _ := StageNode(state, stage)
+	var out []string
+	for _, f := range n.Fields {
+		out = append(out, f.Name)
+	}
+	return out
 }
 
 // StateNames are the states in tree order.
@@ -240,9 +258,10 @@ func StatesText() string {
 // and no node field is not held to rules 3 and 4: hug upgrade writes them
 // (step 4 of 6ephqk), and until then no file has them.
 
-// DoingOrder is the precedence of doing stages: what the owner waits on
-// outside the board first, then another task, then a reviewer.
-var DoingOrder = []string{"waiting", "depends", "review", "active"}
+// DoingOrder is the precedence of doing stages: a person's answer first,
+// then what the owner waits on outside the board, then another task, then
+// a reviewer.
+var DoingOrder = []string{"asked", "waiting", "depends", "review", "active"}
 
 // Staged is whether the file has stages yet: a stage line or a node field.
 func Staged(t Task) bool { return t.Stage != "" || len(t.Fields) > 0 }
@@ -334,6 +353,8 @@ func ownHolds(t Task, stage string) bool {
 		return set("review_by") || (t.State == "todo" && set("review_since"))
 	case "waiting":
 		return set("waiting_on")
+	case "asked":
+		return set("asked_what")
 	}
 	return false
 }

@@ -841,7 +841,7 @@ func (m model) waits(t task.Task) bool {
 		return false
 	}
 	switch m.stageOf(t) {
-	case "waiting", "design", "review":
+	case "waiting", "asked", "design", "review":
 		return true
 	case "depends":
 		return t.State == "doing"

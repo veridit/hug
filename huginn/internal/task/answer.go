@@ -7,13 +7,22 @@ import (
 )
 
 // Answering a question in place (3jtfw9, crab 13:26). A question to a person
-// is a stage's field: design_question (todo/design), waiting_on (doing/waiting)
-// or review_by (review). Answering writes no new field: the stage's fields go
-// to History in one line that holds the question, the answer, who answered
-// and for whom, and the stage re-derives (design -> ready, waiting -> active,
-// review -> ready or active; done stays its own step):
+// is a stage's field: design_question (todo/design), asked_what
+// (doing/asked, 41hhgn) or review_by (review). Answering writes no new
+// field: the stage's fields go to History in one block that holds the
+// question, the answer, who answered and for whom, and the stage
+// re-derives (design -> ready, asked -> active, review -> ready or active;
+// done stays its own step). Both texts are kept verbatim, line for line
+// (41hhgn check 8, Jørgen 23:50: answers can be several lines): the
+// question's lines follow "> ", the answer's are indented two spaces.
 //
-//	- 2026-11-17T14:30 answered design: "type stays?" -> "drop it", by jhf, for nautilus (todo/design -> todo/ready)
+//	- 2026-11-17T14:30 answered asked (check 9), by jhf, for nautilus (doing/asked -> doing/active):
+//	  > type stays, or "drop"?
+//	  drop it: the column says it already
+//	  and the filter keeps it
+//
+// Before 41hhgn the block was one line with both texts quoted
+// ('answered design: "q" -> "a", by ...'); it still reads.
 //
 // The asker sees the newest answer first (show, next --mine, the recall
 // board cue) until it writes anything on the task after it; that write
@@ -23,6 +32,7 @@ import (
 // from History when the file is parsed. Derived, never written as a field.
 type Answer struct {
 	Stage    string `json:"stage"`
+	Check    int    `json:"check,omitempty"`
 	Question string `json:"question"`
 	Text     string `json:"text"`
 	By       string `json:"by"`
@@ -32,6 +42,9 @@ type Answer struct {
 
 var (
 	answeredLine = regexp.MustCompile(`^- (\S+) answered (\w+): ("(?:[^"\\]|\\.)*") -> ("(?:[^"\\]|\\.)*"), by (.+?)(?:, for (.+?))? \(`)
+	// answeredHead starts a block answer (41hhgn): the texts follow on
+	// "  > " (question) and "  " (answer) lines.
+	answeredHead = regexp.MustCompile(`^- (\S+) answered (\w+)(?: \(check (\d+)\))?, by (.+?)(?:, for (.+?))? \([^()]*\):$`)
 	readLine     = regexp.MustCompile(`^- \S+ (.+) read the answer$`)
 )
 
@@ -40,8 +53,33 @@ var (
 // seen.
 func unseenAnswer(history []string) *Answer {
 	var cur *Answer
-	for _, line := range history {
-		line = strings.TrimRight(line, "\r\n")
+	seen := func() {
+		if cur != nil && (cur.For == "" || strings.EqualFold(cur.For, cur.By)) {
+			cur = nil
+		}
+	}
+	for i := 0; i < len(history); i++ {
+		line := strings.TrimRight(history[i], "\r\n")
+		if m := answeredHead.FindStringSubmatch(line); m != nil {
+			n, _ := strconv.Atoi(m[3])
+			a := &Answer{At: m[1], Stage: m[2], Check: n, By: m[4], For: m[5]}
+			var q, t []string
+			for i+1 < len(history) && strings.HasPrefix(history[i+1], "  ") {
+				i++
+				l := strings.TrimRight(history[i], "\r\n")[2:]
+				if rest, ok := strings.CutPrefix(l, "> "); ok && len(t) == 0 {
+					q = append(q, rest)
+				} else if l == ">" && len(t) == 0 {
+					q = append(q, "")
+				} else {
+					t = append(t, l)
+				}
+			}
+			a.Question, a.Text = strings.Join(q, "\n"), strings.Join(t, "\n")
+			cur = a
+			seen()
+			continue
+		}
 		if m := answeredLine.FindStringSubmatch(line); m != nil {
 			q, e1 := strconv.Unquote(m[3])
 			a, e2 := strconv.Unquote(m[4])
@@ -49,9 +87,7 @@ func unseenAnswer(history []string) *Answer {
 				continue
 			}
 			cur = &Answer{At: m[1], Stage: m[2], Question: q, Text: a, By: m[5], For: m[6]}
-			if cur.For == "" || strings.EqualFold(cur.For, cur.By) {
-				cur = nil
-			}
+			seen()
 			continue
 		}
 		if m := readLine.FindStringSubmatch(line); m != nil && cur != nil && strings.EqualFold(m[1], cur.For) {
@@ -59,6 +95,25 @@ func unseenAnswer(history []string) *Answer {
 		}
 	}
 	return cur
+}
+
+// answerBlock is the History block of an answer: the head (without the
+// "- " and time), then the question's lines after "> " and the answer's
+// indented, each line verbatim.
+func answerBlock(head, question, text, nl string) string {
+	var b strings.Builder
+	b.WriteString(head)
+	b.WriteString(":")
+	for _, l := range strings.Split(question, "\n") {
+		b.WriteString(nl + "  >")
+		if l = strings.TrimRight(l, "\r"); l != "" {
+			b.WriteString(" " + l)
+		}
+	}
+	for _, l := range strings.Split(text, "\n") {
+		b.WriteString(nl + "  " + strings.TrimRight(l, "\r"))
+	}
+	return b.String()
 }
 
 // historyLines are the lines of the ## History section.
@@ -76,13 +131,14 @@ func AnswerFor(t Task, who string) bool {
 }
 
 // question is what the stage t is in asks, the stage, and who asked: the
-// design question, what a wait is on, or the review.
+// design question, the asked question, or the review. A wait asks nobody
+// (41hhgn): it ends with hug task resume.
 func question(t Task) (stage, q, asker string) {
 	switch {
 	case t.State == "todo" && ownHolds(t, "design"):
 		return "design", t.Fields["design_question"], t.Fields["design_asked_by"]
-	case t.State == "doing" && ownHolds(t, "waiting"):
-		return "waiting", t.Fields["waiting_on"], t.Fields["waiting_asked_by"]
+	case t.State == "doing" && ownHolds(t, "asked"):
+		return "asked", t.Fields["asked_what"], t.Fields["asked_by"]
 	case ownHolds(t, "review"):
 		owner := strings.Join(t.Assignee, ", ")
 		return "review", "review by " + t.Fields["review_by"], owner
@@ -90,39 +146,43 @@ func question(t Task) (stage, q, asker string) {
 	return "", "", ""
 }
 
-// Answer answers the question ref's stage asks (design, waiting or
-// review) with text, as by. The stage's fields go to History in one
-// answered line; the stage re-derives.
+// Answer answers the question ref's stage asks (design, asked or review)
+// with text, as by: the stage's fields go to History in one answer block,
+// both texts verbatim (text may span lines); the stage re-derives.
 func (s *Store) Answer(ref, text, by string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
 	}
-	text, by = strings.TrimSpace(text), strings.TrimSpace(by)
+	text, by = strings.Trim(strings.ReplaceAll(text, "\r\n", "\n"), " \t\n"), strings.TrimSpace(by)
 	stage, q, asker := question(d.Task)
 	if stage == "" {
-		return Result{}, usageErr(d.Task.ID, d.Task.ID+" asks nothing: its stage is not design, waiting or review", "hug task show "+d.Task.ID)
+		fix := "hug task show " + d.Task.ID
+		if d.Task.State == "doing" && ownHolds(d.Task, "waiting") {
+			fix = "hug task resume " + d.Task.ID
+		}
+		return Result{}, usageErr(d.Task.ID, d.Task.ID+" asks nobody: its stage is not design, asked or review", fix)
 	}
 	if text == "" {
 		return Result{}, usageErr(d.Task.ID, "answer needs the answer", "hug task answer "+d.Task.ID+` "the answer"`)
 	}
 	if by == "" {
-		return Result{}, usageErr(d.Task.ID, "answer needs who answers: --as NAME, or HUG_USER", "hug task answer "+d.Task.ID+` "`+text+`" --as NAME`)
+		return Result{}, usageErr(d.Task.ID, "answer needs who answers: --as NAME, or HUG_USER", "hug task answer "+d.Task.ID+" "+strconv.Quote(oneLineFix(text))+" --as NAME")
 	}
-	var clear []string
-	switch stage {
-	case "design":
-		clear = []string{"design_question", "design_since", "design_asked_by", "design_for", "design_show"}
-	case "waiting":
-		clear = []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by", "waiting_show"}
-	case "review":
+	clear := stageFields(d.Task.State, stage)
+	if stage == "review" {
 		clear = []string{"review_by", "review_since", "review_show"}
 	}
-	line := "answered " + stage + ": " + strconv.Quote(q) + " -> " + strconv.Quote(text) + ", by " + by
-	if asker = strings.TrimSpace(asker); asker != "" {
-		line += ", for " + asker
+	head := "answered " + stage
+	if n := strings.TrimSpace(d.Task.Fields["asked_check"]); stage == "asked" && n != "" {
+		head += " (check " + n + ")"
 	}
-	if e = applyMove(d, ts, move{state: d.Task.State, clear: clear, line: line}); e != nil {
+	head += ", by " + by
+	if asker = strings.TrimSpace(asker); asker != "" {
+		head += ", for " + asker
+	}
+	q = strings.ReplaceAll(q, "\r\n", "\n")
+	if e = applyMove(d, ts, move{state: d.Task.State, clear: clear, block: func(moved string) string { return answerBlock(head+" ("+moved+")", q, text, d.newline) }}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)

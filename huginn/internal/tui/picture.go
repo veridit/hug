@@ -216,7 +216,7 @@ func (m model) questionPicture(t task.Task, stage, question string) string {
 		}
 		return false
 	}
-	if v := strings.TrimSpace(t.Fields[map[string]string{"waiting": "waiting_show", "design": "design_show", "review": "review_show"}[stage]]); v != "" && has(v) {
+	if v := strings.TrimSpace(t.Fields[map[string]string{"waiting": "waiting_show", "asked": "asked_show", "design": "design_show", "review": "review_show"}[stage]]); v != "" && has(v) {
 		return v
 	}
 	for _, w := range strings.Fields(question) {
@@ -239,7 +239,7 @@ func (m model) askedPicture(t task.Task) string {
 	switch g := m.taskStage(t); g {
 	case "design":
 		return m.questionPicture(t, g, t.Fields["design_question"])
-	case "waiting":
+	case "waiting", "asked":
 		_, what := m.waitingFor(t)
 		return m.questionPicture(t, g, what)
 	case "review":

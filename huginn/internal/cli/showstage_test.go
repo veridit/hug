@@ -11,16 +11,17 @@ func TestShowPrintsWaitAsSecondLine(t *testing.T) {
 	t.Parallel()
 	a, id := takeFixture(t)
 	execute(t, a, "take", id, "--model", "test-model")
-	execute(t, a, "wait", id, "--on", "jhf", "approve the diff")
+	execute(t, a, "ask", id, "--to", "jhf", "approve the diff")
 	code, out := runText(a, "show", id)
 	lines := strings.Split(out, "\n")
 	if code != 0 || len(lines) < 2 {
 		t.Fatalf("exit %d:\n%s", code, out)
 	}
-	if !strings.HasPrefix(lines[1], "stage: waiting on jhf: approve the diff since 20") {
+	if !strings.HasPrefix(lines[1], "stage: asked jhf: approve the diff since 20") {
 		t.Fatalf("line 2 is %q, want the wait:\n%s", lines[1], out)
 	}
 	// A wait on a thing, not a person.
+	execute(t, a, "resume", id)
 	execute(t, a, "wait", id, "CI run 123")
 	if _, out = runText(a, "show", id); !strings.HasPrefix(strings.Split(out, "\n")[1], "stage: waiting on CI run 123 since 20") {
 		t.Fatalf("wait on a thing:\n%s", out)
@@ -33,7 +34,7 @@ func TestShowStageWithoutWait(t *testing.T) {
 	t.Parallel()
 	a, id := takeFixture(t)
 	execute(t, a, "take", id, "--model", "test-model")
-	execute(t, a, "wait", id, "--on", "jhf", "approve")
+	execute(t, a, "ask", id, "--to", "jhf", "approve")
 	execute(t, a, "resume", id)
 	_, out := runText(a, "show", id)
 	if l := strings.Split(out, "\n")[1]; l != "stage: active" {

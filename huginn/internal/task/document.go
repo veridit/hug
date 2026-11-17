@@ -13,6 +13,8 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"gopkg.in/yaml.v3"
 )
 
 var StateList = []string{"todo", "doing", "done", "dropped"}
@@ -505,6 +507,13 @@ func Parse(path string, data []byte) *Document {
 	if _, old := d.fields["status"]; old && !hasState {
 		d.add(d.fieldLine("status"), "old layout: status: is now state:")
 	}
+	// Before 41hhgn a question to a person was a wait with waiting_for
+	// (and waiting_show); hug upgrade moves it to stage asked.
+	for _, k := range []string{"waiting_for", "waiting_show"} {
+		if _, old := d.fields[k]; old {
+			d.add(d.fieldLine(k), "old layout: "+k+": is now a question, stage asked")
+		}
+	}
 	for _, field := range []struct{ k, v string }{{"id", d.Task.ID}, {"title", d.Task.Title}, {"state", d.Task.State}} {
 		_, ok := d.fields[field.k]
 		if field.k == "state" && !ok {
@@ -614,6 +623,21 @@ func (d *Document) fieldLine(k string) int {
 		return n + 1
 	}
 	return 1
+}
+
+// legacyField is the one-line value of front-matter key k that is no
+// longer a node field (so Parse keeps it out of Task.Fields), for hug
+// upgrade's moves; "" when absent or not one line of text.
+func (d *Document) legacyField(k string) string {
+	n, ok := d.fields[k]
+	if !ok || n >= len(d.lines) {
+		return ""
+	}
+	var m map[string]string
+	if yaml.Unmarshal([]byte(d.lines[n]), &m) != nil {
+		return ""
+	}
+	return strings.TrimSpace(m[k])
 }
 func contains(v []string, s string) bool {
 	for _, x := range v {

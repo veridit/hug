@@ -8,7 +8,7 @@ Bug task 02: make the terminal workflow observable
 feat/terminal-000002                                                            
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                      
 └─ waiting on you: look at the IN PROGRESS rows · since 14:42                   
-? waiting: look at the IN PROGRESS rows                                         
+? asked: look at the IN PROGRESS rows                                           
   asked by alice · 10 min ago                                                   
   a answer                                                                      
 ────────────────────────────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ Bug task 02: make the terminal workflow observable
 [doing]  [bug]  [critical]  000002  group:compiler  assigned:alice · feat/terminal-000002                                                   
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                                                                                  
 └─ waiting on you: look at the IN PROGRESS rows · since 14:42                                                                               
-? waiting: look at the IN PROGRESS rows                                                                                                     
+? asked: look at the IN PROGRESS rows                                                                                                       
   asked by alice · 10 min ago                                                                                                               
   a answer                                                                                                                                  
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

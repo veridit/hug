@@ -26,7 +26,7 @@ import (
 // cursor is elsewhere, so it stands out on its one line.
 
 // noteStages are the stages whose rows take a second line.
-var noteStages = map[string]bool{"waiting": true, "review": true, "design": true, "depends": true, "deferred": true}
+var noteStages = map[string]bool{"waiting": true, "asked": true, "review": true, "design": true, "depends": true, "deferred": true}
 
 // stageOf is t's stage as rows show it: task.Stage, with depends when a
 // condition holds the task back (16dxsr), "" for done and dropped.
@@ -117,12 +117,18 @@ func (m model) name(who string) string {
 func (m model) note(t task.Task) (head, text, stamp string) {
 	f := func(k string) string { return oneLine(t.Fields[k]) }
 	switch m.stageOf(t) {
-	case "waiting":
+	case "waiting", "asked":
+		// Stage asked keeps the look a wait on a person had until 0gztsy
+		// (nautilus) draws it as "asked: you · check N".
 		who, what := m.waitingFor(t)
-		if who == "" {
-			return "waiting on", m.attachments(t, oneLine(what)), t.Fields["waiting_since"]
+		at := t.Fields["waiting_since"]
+		if v := t.Fields["asked_since"]; v != "" {
+			at = v
 		}
-		return "waiting on " + m.name(who) + ":", m.attachments(t, oneLine(what)), t.Fields["waiting_since"]
+		if who == "" {
+			return "waiting on", m.attachments(t, oneLine(what)), at
+		}
+		return "waiting on " + m.name(who) + ":", m.attachments(t, oneLine(what)), at
 	case "review":
 		who := m.name(t.Fields["review_by"])
 		if t.State == "doing" {
@@ -348,7 +354,7 @@ func shownText(start, end int) string { return fmt.Sprintf(" · %d–%d shown", 
 // or review_by; "" when it waits on a thing.
 func (m model) waitsOn(t task.Task) string {
 	switch m.stageOf(t) {
-	case "waiting":
+	case "waiting", "asked":
 		who, _ := m.waitingFor(t)
 		return who
 	case "design":

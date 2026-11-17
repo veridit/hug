@@ -250,13 +250,13 @@ func TestWaitingOnYou(t *testing.T) {
 	if _, e := s.Resume("cccccc"); e == nil {
 		t.Fatal("resume gave nautilus two active tickets")
 	}
-	if _, e := s.Wait("cccccc", "approve the look", "nautilus", "carol"); e != nil {
+	if _, e := s.Ask("cccccc", task.Question{What: "approve the look", For: "carol"}, "nautilus"); e != nil {
 		t.Fatal(e)
 	}
 	m.refresh("")
 	view = ansi.Strip(viewAt(m, "overview", 140))
 	rows = strings.Split(section(view, "WAITING"), "\n")
-	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[1], "? ") || !strings.Contains(rows[1], "cccccc   feature high     waiting   Warm cache under 50 ms") {
+	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[1], "? ") || !strings.Contains(rows[1], "cccccc   feature high     asked     Warm cache under 50 ms") {
 		t.Fatalf("carol's wait is not first in WAITING, marked ?:\n%s", view)
 	}
 	if focused := focusAt(t, m, 140, "cccccc"); !regexp.MustCompile(`(?m)^> .*cccccc.*\n\s+└─ waiting on you: approve the look\s+since \d\d:\d\d`).MatchString(focused) {

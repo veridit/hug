@@ -3,6 +3,7 @@ package task
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -75,6 +76,10 @@ type move struct {
 	// (3jtfw9: 'answered design: "q" -> "a", by NAME, for ASKER'); the
 	// move follows in parentheses.
 	line string
+	// block, when set, makes the History entry: given the move
+	// ("doing/asked -> doing/active"), it returns the entry, which may span
+	// lines (41hhgn: an answer block).
+	block func(moved string) string
 }
 
 // applyMove writes m on d: fields of nodes that no longer hold move to
@@ -114,6 +119,10 @@ func applyMove(d *Document, ts []Task, m move) error {
 	to := d.Task.State
 	if d.Task.Stage != "" {
 		to += "/" + d.Task.Stage
+	}
+	if m.block != nil {
+		d.History(stamp() + " " + m.block(from+" -> "+to))
+		return nil
 	}
 	if m.line != "" {
 		// The line already holds the moved fields' content (the question).
@@ -179,18 +188,10 @@ func refuse(t Task, to, fix string) error {
 	return &Error{Kind: "not-allowed", ID: t.ID, Value: from + " -> " + to + " is not a move a command makes (hug task states)", Fix: fix}
 }
 
-// Wait moves ref, a doing task, to doing/waiting on what; by is who waits
-// (waiting_asked_by), told when it is answered (3jtfw9). person, when set,
-// is who it waits on (waiting_for, 89y0b7, crab 15:28): a name lint can
-// check and the TUI shows as "waiting on you".
-func (s *Store) Wait(ref, on, by string, person ...string) (Result, error) {
-	return s.WaitShowing(ref, on, by, "", person...)
-}
-
-// WaitShowing is Wait naming the task file the person should look at
-// (waiting_show, 5z4zt4): the detail shows it right under the question.
-// show must be one of the task's files; "" names none.
-func (s *Store) WaitShowing(ref, on, by, show string, person ...string) (Result, error) {
+// Wait moves ref, a doing task, to doing/waiting on what: a thing outside
+// the board with no person to answer (CI, a release). by is who waits
+// (waiting_asked_by). A question to a person is Ask (41hhgn).
+func (s *Store) Wait(ref, on, by string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -202,35 +203,84 @@ func (s *Store) WaitShowing(ref, on, by, show string, person ...string) (Result,
 	if d.Task.State != "doing" {
 		return Result{}, refuse(d.Task, "doing/waiting", "hug task take "+d.Task.ID+" --model MODEL")
 	}
-	forName := ""
-	if len(person) > 0 {
-		forName = strings.TrimSpace(person[0])
-	}
-	if show, e = s.showable(d.Task, show); e != nil {
-		return Result{}, e
-	}
-	if d.Task.Fields["waiting_on"] == on && d.Task.Fields["waiting_for"] == forName && d.Task.Fields["waiting_show"] == show {
+	if d.Task.Fields["waiting_on"] == on {
 		return s.finish(d, false)
 	}
 	set := map[string]string{"waiting_on": on, "waiting_since": stamp()}
 	if by = strings.TrimSpace(by); by != "" {
 		set["waiting_asked_by"] = by
 	}
-	var clear []string
-	if forName != "" {
-		set["waiting_for"] = forName
-	} else {
-		clear = append(clear, "waiting_for") // a new wait on a thing, not a person
-	}
-	if show != "" {
-		set["waiting_show"] = show
-	} else {
-		clear = append(clear, "waiting_show")
-	}
-	if e = applyMove(d, ts, move{state: "doing", set: set, clear: clear, why: "wait"}); e != nil {
+	if e = applyMove(d, ts, move{state: "doing", set: set, why: "wait"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
+}
+
+// Question is what Ask asks: the text (verbatim, may span lines), who must
+// answer, the check it is about (0: none) and a task file to show.
+type Question struct {
+	What, For, Show string
+	Check           int
+}
+
+// Ask moves ref, a doing task, to doing/asked (41hhgn, Jørgen 23:48): its
+// owner asked q.For something and can't go on until they answer. by is the
+// asker (asked_by), told when it is answered. A check outside 1..N and a
+// show that is not a task file are refused.
+func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
+	d, ts, e := s.load(ref)
+	if e != nil {
+		return Result{}, e
+	}
+	id := d.Task.ID
+	what := strings.TrimSpace(q.What)
+	if what == "" {
+		return Result{}, usageErr(id, "ask needs the question", "hug task ask "+id+` --to NAME "the question"`)
+	}
+	who := strings.TrimSpace(q.For)
+	if who == "" {
+		return Result{}, usageErr(id, "ask needs who must answer: --to NAME", "hug task ask "+id+` --to NAME "`+oneLineFix(what)+`"`)
+	}
+	if d.Task.State != "doing" {
+		return Result{}, refuse(d.Task, "doing/asked", "hug task take "+id+" --model MODEL")
+	}
+	if n := len(d.Task.Acceptance); q.Check != 0 && (q.Check < 1 || q.Check > n) {
+		return Result{}, &Error{Kind: "bad-check", ID: id, Value: fmt.Sprintf("--check %d: %s has %d checks", q.Check, id, n), Fix: fmt.Sprintf("hug task ask %s --to %s --check %d %q", id, who, max(1, n), oneLineFix(what))}
+	}
+	show, e := s.showable(d.Task, q.Show)
+	if e != nil {
+		return Result{}, e
+	}
+	check := ""
+	if q.Check > 0 {
+		check = strconv.Itoa(q.Check)
+	}
+	f := d.Task.Fields
+	if f["asked_what"] == what && f["asked_for"] == who && f["asked_check"] == check && f["asked_show"] == show {
+		return s.finish(d, false)
+	}
+	set := map[string]string{"asked_what": what, "asked_for": who, "asked_since": stamp()}
+	var clear []string
+	if by = strings.TrimSpace(by); by != "" {
+		set["asked_by"] = by
+	}
+	for k, v := range map[string]string{"asked_check": check, "asked_show": show} {
+		if v != "" {
+			set[k] = v
+		} else {
+			clear = append(clear, k)
+		}
+	}
+	if e = applyMove(d, ts, move{state: "doing", set: set, clear: clear, why: "ask"}); e != nil {
+		return Result{}, e
+	}
+	return s.finish(d, true)
+}
+
+// oneLineFix is text for a fix: line: its first line.
+func oneLineFix(text string) string {
+	first, _, _ := strings.Cut(text, "\n")
+	return strings.TrimSpace(first)
 }
 
 // showable checks that name is one of t's files, as a question's picture
@@ -253,13 +303,14 @@ func (s *Store) showable(t Task, name string) (string, error) {
 	return clean, nil
 }
 
-// Resume ends a wait: the waiting fields go to History.
+// Resume ends a wait, or withdraws a question: the stage's fields go to
+// History.
 func (s *Store) Resume(ref string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
 	}
-	if d.Task.State != "doing" || !ownHolds(d.Task, "waiting") {
+	if d.Task.State != "doing" || !(ownHolds(d.Task, "waiting") || ownHolds(d.Task, "asked")) {
 		return Result{}, refuse(d.Task, "doing/active", "hug task show "+d.Task.ID)
 	}
 	// Resuming makes it active again: one active ticket per agent (n2hq8p).
@@ -268,7 +319,7 @@ func (s *Store) Resume(ref string) (Result, error) {
 			return Result{}, busy(d.Task, who, a)
 		}
 	}
-	if e = applyMove(d, ts, move{state: "doing", clear: []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by", "waiting_show"}, why: "resume"}); e != nil {
+	if e = applyMove(d, ts, move{state: "doing", clear: append(stageFields("doing", "waiting"), stageFields("doing", "asked")...), why: "resume"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
@@ -287,7 +338,7 @@ func (s *Store) Review(ref, who, show string) (Result, error) {
 	if d.Task.State != "doing" {
 		return Result{}, refuse(d.Task, "doing/review", "hug task take "+d.Task.ID+" --model MODEL")
 	}
-	if ownHolds(d.Task, "waiting") {
+	if ownHolds(d.Task, "waiting") || ownHolds(d.Task, "asked") {
 		return Result{}, refuse(d.Task, "doing/review", "hug task resume "+d.Task.ID)
 	}
 	if who = strings.TrimSpace(who); who == "" {

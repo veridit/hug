@@ -50,7 +50,7 @@ func TestAnswerDesign(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw := readTask(t, s, id)
-	want := `answered design: "type stays, or \"drop\"?" -> "drop it", by jhf, for nautilus (todo/design -> todo/ready)`
+	want := "answered design, by jhf, for nautilus (todo/design -> todo/ready):\n  > type stays, or \"drop\"?\n  drop it\n"
 	if !strings.Contains(raw, want) {
 		t.Fatalf("history lacks %q:\n%s", want, raw)
 	}
@@ -86,24 +86,31 @@ func TestAnswerDesign(t *testing.T) {
 	}
 }
 
-func TestAnswerWaitingAndReview(t *testing.T) {
+func TestAnswerAskedAndReview(t *testing.T) {
 	s, id := answerStore(t)
 	if _, e := s.TakeAs(id, "nautilus", "claude-opus-5-5"); e != nil {
 		t.Fatal(e)
 	}
-	if _, e := s.Wait(id, "which colour?", "nautilus", "jhf"); e != nil {
+	if _, e := s.Ask(id, Question{What: "which colour?", For: "jhf"}, "nautilus"); e != nil {
 		t.Fatal(e)
 	}
 	if _, e := s.Answer(id, "green", "jhf"); e != nil {
 		t.Fatal(e)
 	}
 	tk, raw := readTask(t, s, id)
-	if tk.Stage != "active" || tk.Fields["waiting_on"] != "" || tk.Fields["waiting_for"] != "" || !strings.Contains(raw, `answered waiting: "which colour?" -> "green", by jhf, for nautilus (doing/waiting -> doing/active)`) {
-		t.Fatalf("waiting:\n%s", raw)
+	if tk.Stage != "active" || len(tk.Fields) != 1 || !strings.Contains(raw, "answered asked, by jhf, for nautilus (doing/asked -> doing/active):\n  > which colour?\n  green\n") {
+		t.Fatalf("asked: %v\n%s", tk.Fields, raw)
 	}
 	// Nothing asked: refused, with a fix.
-	if _, e := s.Answer(id, "again", "jhf"); e == nil || !strings.Contains(e.Error(), "asks nothing") || !strings.Contains(e.Error(), "fix: hug task show "+id) {
+	if _, e := s.Answer(id, "again", "jhf"); e == nil || !strings.Contains(e.Error(), "asks nobody") || !strings.Contains(e.Error(), "fix: hug task show "+id) {
 		t.Fatalf("active: %v", e)
+	}
+	// A wait asks nobody: resume ends it.
+	if _, e := s.Wait(id, "CI run 1", "nautilus"); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := s.Answer(id, "green", "jhf"); e == nil || !strings.Contains(e.Error(), "fix: hug task resume "+id) {
+		t.Fatalf("answer on a wait: %v", e)
 	}
 	// A review: the reviewer's verdict ends the review, done stays its own step.
 	// nautilus owns it, jhf reviews it (doing/review).
@@ -115,6 +122,9 @@ func TestAnswerWaitingAndReview(t *testing.T) {
 	if e := d.SetField("review_by", "jhf"); e != nil {
 		t.Fatal(e)
 	}
+	if e := d.SetField("stage", "review"); e != nil {
+		t.Fatal(e)
+	}
 	if e := AtomicWrite(filepath.Join(s2.Root, d.Task.Path), d.Bytes()); e != nil {
 		t.Fatal(e)
 	}
@@ -123,7 +133,7 @@ func TestAnswerWaitingAndReview(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = readTask(t, s2, id2)
-	if tk.State != "doing" || tk.Stage != "active" || tk.Fields["review_by"] != "" || !strings.Contains(raw, `answered review: "review by jhf" -> "looks right", by jhf, for nautilus`) {
+	if tk.State != "doing" || tk.Stage != "active" || tk.Fields["review_by"] != "" || !strings.Contains(raw, "answered review, by jhf, for nautilus (doing/review -> doing/active):\n  > review by jhf\n  looks right\n") {
 		t.Fatalf("review: %s/%s\n%s", tk.State, tk.Stage, raw)
 	}
 }

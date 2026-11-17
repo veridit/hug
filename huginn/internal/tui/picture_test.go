@@ -40,7 +40,7 @@ func pictureModel(t *testing.T, w, h int, env map[string]string, show string) (m
 			t.Fatal(err)
 		}
 	}
-	if _, err := s.WaitShowing("000002", "look at the IN PROGRESS rows", "alice", show, "jhf"); err != nil {
+	if _, err := s.Ask("000002", task.Question{What: "look at the IN PROGRESS rows", For: "jhf", Show: show}, "alice"); err != nil {
 		t.Fatal(err)
 	}
 	var reads []string
@@ -89,7 +89,7 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 			t.Fatalf("the detail read %v, want only rows.ans", *reads)
 		}
 		screen := ansi.Strip(m.View())
-		q := strings.Index(screen, "? waiting: look at the IN PROGRESS rows")
+		q := strings.Index(screen, "? asked: look at the IN PROGRESS rows")
 		p := strings.Index(screen, "▸ rows.ans")
 		if q < 0 || p < q || !strings.Contains(screen, "HUG TASKS · overview") || !strings.Contains(screen, `\x1b[2J`) {
 			t.Fatalf("at %d the picture is not under the question:\n%s", w, screen)
@@ -119,7 +119,7 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 	// Without --show, a task file the question names is its picture; an
 	// image is one line, never read.
 	m, reads := pictureModel(t, 100, 30, nil, "")
-	if _, err := m.store.Wait("000002", "compare shot.png with the rows", "alice", "jhf"); err != nil {
+	if _, err := m.store.Ask("000002", task.Question{What: "compare shot.png with the rows", For: "jhf"}, "alice"); err != nil {
 		t.Fatal(err)
 	}
 	m.refresh("")
@@ -129,7 +129,7 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 		t.Fatalf("image under the question, reads %v:\n%s", *reads, screen)
 	}
 	// --show must name a task file.
-	if _, err := m.store.WaitShowing("000002", "look", "alice", "nope.ans", "jhf"); err == nil || !strings.Contains(err.Error(), "hug task attach 000002 FILE --name nope.ans") {
+	if _, err := m.store.Ask("000002", task.Question{What: "look", For: "jhf", Show: "nope.ans"}, "alice"); err == nil || !strings.Contains(err.Error(), "hug task attach 000002 FILE --name nope.ans") {
 		t.Fatalf("--show of a missing file: %v", err)
 	}
 	// A review asked with --show (6w0gve) draws its file under the review
@@ -240,7 +240,7 @@ func TestScreenCaptureCopiesThenAsks(t *testing.T) {
 	before := ansi.Strip(m.View())
 
 	asked := press(m, "S")
-	if len(copied) != 1 || strings.Contains(copied[0], "\x1b") || !strings.Contains(copied[0], "? waiting: look at the IN PROGRESS rows") {
+	if len(copied) != 1 || strings.Contains(copied[0], "\x1b") || !strings.Contains(copied[0], "? asked: look at the IN PROGRESS rows") {
 		t.Fatalf("clipboard got %q", copied)
 	}
 	if first := strings.SplitN(copied[0], "\n", 2)[0]; !strings.HasPrefix(before, first) {
@@ -262,7 +262,7 @@ func TestScreenCaptureCopiesThenAsks(t *testing.T) {
 		t.Fatalf("footer: %q", done.message)
 	}
 	b, err := os.ReadFile(filepath.Join(done.store.Root, task.FolderOf(sel), "screen-1452.ans"))
-	if err != nil || !strings.Contains(string(b), "? waiting: look at the IN PROGRESS rows") {
+	if err != nil || !strings.Contains(string(b), "? asked: look at the IN PROGRESS rows") {
 		t.Fatalf("attached capture: %v\n%s", err, b)
 	}
 	// A second capture in the same minute gets its own name.

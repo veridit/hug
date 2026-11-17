@@ -42,7 +42,7 @@ func TestLintStageOutsideItsState(t *testing.T) {
 		t.Fatalf("todo/ready is clean: %q", got)
 	}
 	wantOnly(t, codes(stageDoc("aaaaaa", "state: \"todo\"\nstage: \"waiting\"")), "unknown-stage", "a todo task's stage is one of deferred, depends, design, draft, review, ready")
-	wantOnly(t, codes(stageDoc("aaaaaa", "state: \"doing\"\nstage: \"ready\"")), "unknown-stage", "a doing task's stage is one of active, waiting, depends, review")
+	wantOnly(t, codes(stageDoc("aaaaaa", "state: \"doing\"\nstage: \"ready\"")), "unknown-stage", "a doing task's stage is one of active, asked, waiting, depends, review")
 	wantOnly(t, codes(stageDoc("aaaaaa", "state: \"dropped\"\nstage: \"active\"\ndropped_reason: \"dup\"")), "unknown-stage", "a dropped task has no stage")
 	// review is a stage of both todo and doing: no finding under either.
 	if got := codes(stageDoc("aaaaaa", "state: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T10:00\"")); len(got) != 0 {

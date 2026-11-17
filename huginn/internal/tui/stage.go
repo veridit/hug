@@ -71,7 +71,7 @@ func (m model) stageWord(word string, width int) string {
 	switch strings.TrimSuffix(word, ":") {
 	case "depends":
 		style = m.styles.status["depends"]
-	case "waiting", "design", "review":
+	case "waiting", "asked", "design", "review":
 		style = m.styles.warning
 	case "active":
 		style = m.styles.status["doing"]
@@ -120,10 +120,14 @@ func (m model) isMe(name string) bool {
 	return false
 }
 
-// waitingFor is who t waits on: waiting_for, or the "NAME: what" that
-// waiting_on held before 89y0b7 when NAME is a listed person (hug upgrade
-// moves it into waiting_for).
+// waitingFor is who t's question is for and what it asks (stage asked,
+// 41hhgn), or, for a wait, "" and what it waits on. A wait written before
+// 41hhgn as waiting_for, or before 89y0b7 as waiting_on "NAME: what" with
+// NAME a listed person, reads as a question until hug upgrade moves it.
 func (m model) waitingFor(t task.Task) (who, what string) {
+	if q := strings.TrimSpace(t.Fields["asked_what"]); q != "" {
+		return strings.TrimSpace(t.Fields["asked_for"]), q
+	}
 	what = strings.TrimSpace(t.Fields["waiting_on"])
 	if w := strings.TrimSpace(t.Fields["waiting_for"]); w != "" {
 		return w, what
@@ -146,7 +150,7 @@ func (m model) forYou(t task.Task) bool {
 		return m.isMe(t.Fields["review_by"])
 	case "design":
 		return m.isMe(t.Fields["design_for"])
-	case "waiting":
+	case "waiting", "asked":
 		who, _ := m.waitingFor(t)
 		return m.isMe(who)
 	}

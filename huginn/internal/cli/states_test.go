@@ -68,7 +68,9 @@ func TestMoveCommands(t *testing.T) {
 		{[]string{"take", id}, 0, ""},
 		{[]string{"resume", id}, 2, "hug task show " + id},
 		{[]string{"wait", id, "CI run 7", "--as", "nautilus"}, 0, ""},
-		{[]string{"wait", id, "--on", "jhf", "approve the look", "--as", "nautilus"}, 0, ""},
+		{[]string{"wait", id, "--on", "jhf", "approve the look", "--as", "nautilus"}, 2, "hug task ask " + id + ` --to jhf "approve the look"`},
+		{[]string{"resume", id}, 0, ""},
+		{[]string{"ask", id, "--to", "jhf", "approve the look", "--as", "nautilus"}, 0, ""},
 		{[]string{"resume", id}, 0, ""},
 		{[]string{"drop", id, "superseded"}, 0, ""},
 		{[]string{"set", id, "--state", "done"}, 2, "hug task show " + id},
@@ -80,7 +82,7 @@ func TestMoveCommands(t *testing.T) {
 		}
 	}
 	file := taskFile(t, a, id)
-	for _, want := range []string{"(design); ", "design_asked_by: crab; design_for: jhf", "(take)", "(wait)", "waiting_asked_by: nautilus; waiting_for: jhf; waiting_on: approve the look", "(drop)", "(reopen); was dropped_at: ", "dropped_reason: superseded"} {
+	for _, want := range []string{"(design); ", "design_asked_by: crab; design_for: jhf", "(take)", "(wait)", "(wait)", "(ask)", "asked_by: nautilus; asked_for: jhf; asked_since: ", "asked_what: approve the look", "(drop)", "(reopen); was dropped_at: ", "dropped_reason: superseded"} {
 		if !strings.Contains(file, want) && !strings.Contains(file, strings.TrimSuffix(want, "; ")) {
 			t.Errorf("History lacks %q:\n%s", want, file)
 		}
@@ -97,7 +99,7 @@ func TestAnswerCommand(t *testing.T) {
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Tags", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
-	if code, out := runText(a, "answer", id, "drop it"); code != 2 || !strings.Contains(out, "asks nothing") || !strings.Contains(out, "fix: hug task show "+id+"\n") {
+	if code, out := runText(a, "answer", id, "drop it"); code != 2 || !strings.Contains(out, "asks nobody") || !strings.Contains(out, "fix: hug task show "+id+"\n") {
 		t.Fatalf("nothing asked: %d\n%s", code, out)
 	}
 	execute(t, a, "design", id, "should type leave the rows?", "--as", "nautilus", "--for", "jhf")
@@ -106,7 +108,7 @@ func TestAnswerCommand(t *testing.T) {
 	}
 	execute(t, a, "answer", id, "drop it", "--as", "jhf")
 	file := taskFile(t, a, id)
-	if !strings.Contains(file, `answered design: "should type leave the rows?" -> "drop it", by jhf, for nautilus (todo/design -> todo/ready)`) || strings.Contains(file, "design_question") {
+	if !strings.Contains(file, "answered design, by jhf, for nautilus (todo/design -> todo/ready):\n  > should type leave the rows?\n  drop it\n") || strings.Contains(file, "design_question") {
 		t.Fatalf("file:\n%s", file)
 	}
 	// The asker: show leads with it, next --mine offers it first.

@@ -237,6 +237,8 @@ func (m model) questionLines(t task.Task) []string {
 		case "waiting":
 			_, what := m.waitingFor(t)
 			q, asker, at = what, t.Fields["waiting_asked_by"], t.Fields["waiting_since"]
+		case "asked":
+			q, asker, at = t.Fields["asked_what"], t.Fields["asked_by"], t.Fields["asked_since"]
 		case "review":
 			q, asker, at = "review it: approve, or say what to change", strings.Join(t.Assignee, ", "), t.Fields["review_since"]
 		}

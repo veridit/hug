@@ -80,7 +80,7 @@ func TestAnswerInDetail(t *testing.T) {
 		}
 	}
 	b, _ := os.ReadFile(filepath.Join(m.store.Root, tk.Path))
-	if tk.Stage != "ready" || !strings.Contains(string(b), `answered design: "drop type from the rows, keep it, or show it only when not feature?" -> "drop it", by jhf, for crab (todo/design -> todo/ready)`) {
+	if tk.Stage != "ready" || !strings.Contains(string(b), "answered design, by jhf, for crab (todo/design -> todo/ready):\n  > drop type from the rows, keep it, or show it only when not feature?\n  drop it\n") {
 		t.Fatalf("stage %q:\n%s", tk.Stage, b)
 	}
 	answered := head(m)

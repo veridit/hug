@@ -1,19 +1,20 @@
 package task
 
 import (
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 )
 
 // Who a question is for must be someone hug can find (89y0b7, crab 15:28):
-// waiting_for, design_for and review_by name a person by their short name
+// asked_for, design_for and review_by name a person by their short name
 // in hug.toml [people], or an agent by the name it works under on this
 // board. Free text there would never reach anyone: nobody's TUI shows it
 // as "you".
 
 // personFields are the fields that name who must act.
-var personFields = []string{"waiting_for", "design_for", "review_by"}
+var personFields = []string{"asked_for", "design_for", "review_by"}
 
 // KnownNames are the names a question may be for on this board: every
 // listed person's short name and every agent or person the board shows
@@ -32,14 +33,14 @@ func KnownNames(people []Person, ts []Task) map[string]bool {
 		for _, a := range t.Assignee {
 			add(a)
 		}
-		for _, k := range []string{"waiting_asked_by", "design_asked_by"} {
+		for _, k := range []string{"waiting_asked_by", "asked_by", "design_asked_by"} {
 			add(t.Fields[k])
 		}
 	}
 	return known
 }
 
-// PeopleFindings flags an open task whose waiting_for, design_for or
+// PeopleFindings flags an open task whose asked_for, design_for or
 // review_by names nobody known: not a [people] short name and no agent on
 // the board. The fix adds the person; an email names its entry.
 func PeopleFindings(people []Person, ts []Task) []Finding {
@@ -67,41 +68,85 @@ func PeopleFindings(people []Person, ts []Task) []Finding {
 	return out
 }
 
-// MoveWaitingFor is hug upgrade's move for waits written before
-// waiting_for (89y0b7, crab 15:28): a waiting_on "NAME: what" whose NAME
-// is a listed person becomes waiting_for NAME and waiting_on what. Only
-// listed people: "CI run: 123" or "landing turn: x" stay as they are.
-// It returns the changed paths and a line per change.
-func (s *Store) MoveWaitingFor(people []Person, dryRun bool) (changed, lines []string, err error) {
-	if len(people) == 0 {
-		return nil, nil, nil
-	}
+// checkPrefix is a leading "check N:" in a question (0gztsy wrote them so
+// before asked_check, 41hhgn).
+var checkPrefix = regexp.MustCompile(`^(?i)check\s+(\d+)\s*[:,-]\s*`)
+
+// MoveToAsked is hug upgrade's move for questions written as waits
+// (41hhgn, Jørgen 23:48): a doing/waiting with waiting_for, or (before
+// 89y0b7) a waiting_on "NAME: what" whose NAME is a listed person, becomes
+// doing/asked. asked_what is the question, with a leading "check N:" (N a
+// check of the task) moved to asked_check; asked_for, asked_since,
+// asked_by and asked_show come from waiting_for, waiting_since,
+// waiting_asked_by and waiting_show. Waits on things stay. It returns the
+// changed paths and a line per change.
+func (s *Store) MoveToAsked(people []Person, dryRun bool) (changed, lines []string, err error) {
 	ts, e := s.Tasks()
 	if e != nil {
 		return nil, nil, e
 	}
 	for _, t := range ts {
 		on := strings.TrimSpace(t.Fields["waiting_on"])
-		if on == "" || strings.TrimSpace(t.Fields["waiting_for"]) != "" {
+		if on == "" {
 			continue
 		}
-		name, what, ok := strings.Cut(on, ":")
-		p, listed := PersonByName(people, name)
-		if !ok || !listed || strings.TrimSpace(what) == "" {
-			continue
-		}
-		d, _, e := s.load(t.ID)
+		d, ts2, e := s.load(t.ID)
 		if e != nil {
 			return changed, lines, e
 		}
-		if e = d.SetField("waiting_for", p.Short); e != nil {
+		// waiting_for and waiting_show are no longer node fields (41hhgn),
+		// so Parse leaves them out of Task.Fields: read them off the file.
+		who, show := d.legacyField("waiting_for"), d.legacyField("waiting_show")
+		what := on
+		if who == "" {
+			name, rest, ok := strings.Cut(on, ":")
+			p, listed := PersonByName(people, name)
+			if !ok || !listed || strings.TrimSpace(rest) == "" {
+				continue
+			}
+			who, what = p.Short, strings.TrimSpace(rest)
+		}
+		check := ""
+		if m := checkPrefix.FindStringSubmatch(what); m != nil {
+			if n, _ := strconv.Atoi(m[1]); n >= 1 && n <= len(t.Acceptance) {
+				check, what = m[1], strings.TrimSpace(what[len(m[0]):])
+			}
+		}
+		set := map[string]string{"asked_what": what, "asked_for": who}
+		for from, to := range map[string]string{"waiting_since": "asked_since", "waiting_asked_by": "asked_by"} {
+			if v := strings.TrimSpace(t.Fields[from]); v != "" {
+				set[to] = v
+			}
+		}
+		if show != "" {
+			set["asked_show"] = show
+		}
+		if check != "" {
+			set["asked_check"] = check
+		}
+		for _, k := range sortedKeys(set) {
+			if e = d.SetField(k, set[k]); e != nil {
+				return changed, lines, e
+			}
+		}
+		for _, k := range []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by", "waiting_show"} {
+			if _, ok := d.fields[k]; ok {
+				if e = d.RemoveField(k); e != nil {
+					return changed, lines, e
+				}
+			}
+		}
+		if e = settle(d, ts2); e != nil {
 			return changed, lines, e
 		}
-		if e = d.SetField("waiting_on", strings.TrimSpace(what)); e != nil {
-			return changed, lines, e
+		line := t.ID + ": doing/waiting -> doing/asked, asked_for " + who
+		if check != "" {
+			line += ", asked_check " + check
 		}
+		line += ", asked_what " + strconv.Quote(what)
+		d.History(stamp() + " doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)")
 		changed = append(changed, t.Path)
-		lines = append(lines, t.ID+": waiting_on "+strconv.Quote(on)+" -> waiting_for "+strconv.Quote(p.Short)+", waiting_on "+strconv.Quote(strings.TrimSpace(what)))
+		lines = append(lines, line)
 		if dryRun {
 			continue
 		}
