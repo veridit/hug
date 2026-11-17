@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T18:10"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "a week of use: has he had to remind an agent to update a ticket? look again 2026-11-24"
+waiting_since: "2026-11-17T18:10"
+waiting_asked_by: "crab"
+waiting_for: "jhf"
 ---
 
 ## Goal
@@ -44,3 +48,4 @@ crab 17:10: all three children done (g9dg32, at3qep 09466ed, n2hq8p 300abb8); sh
 
 ## History
 - 2026-11-17T18:10 todo -> doing/active (take)
+- 2026-11-17T18:10 doing/active -> doing/waiting (wait)
