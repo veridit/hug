@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-const SchemaVersion = "15" // 15: Task.Answer (3jtfw9); 14: table search, FTS5 (49n9kw); 13: backlog-leftover findings from the parse, set-based fixes for missing Goal and Acceptance (fkpyg3); 12: Task.Waits (16dxsr); 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev); 10: notes and description texts in table texts, not in the board blob (44w1ev); 11: Task.Stage and Task.Fields (6ephqk)
+const SchemaVersion = "16" // 16: file refs skip ' (lost)' and include .hug/tasks/ID/NAME paths (cvbpdy); 15: Task.Answer (3jtfw9); 14: table search, FTS5 (49n9kw); 13: backlog-leftover findings from the parse, set-based fixes for missing Goal and Acceptance (fkpyg3); 12: Task.Waits (16dxsr); 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev); 10: notes and description texts in table texts, not in the board blob (44w1ev); 11: Task.Stage and Task.Fields (6ephqk)
 
 type Change struct{ Status, OldPath, Path string }
 type Git interface {

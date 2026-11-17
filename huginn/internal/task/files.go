@@ -228,10 +228,36 @@ func (s *Store) Detach(ref, name string) (Result, error) {
 //
 //	file:NAME            a file of this task
 //	task:REF/NAME        a file of another task (REF = id, prefix or alias)
+//	.hug/tasks/ID/NAME   a file of task ID, cited by its path (cvbpdy)
+//
+// A reference followed by " (lost)" names a file known to be gone and is
+// not checked (cvbpdy).
 var (
 	fileRef = regexp.MustCompile(`(?:^|[\s(\[])file:([A-Za-z0-9_.+,=@/-]*[A-Za-z0-9_+=@-])`)
 	taskRef = regexp.MustCompile(`(?:^|[\s(\[])task:([A-Za-z0-9.@_-]+)/([A-Za-z0-9_.+,=@/-]*[A-Za-z0-9_+=@-])`)
+	pathRef = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `"'])\.hug/tasks/(?:[A-Za-z0-9._-]+/)*?([a-z0-9]{6})/([A-Za-z0-9_.+,=@/-]*[A-Za-z0-9_+=@-])`)
 )
+
+// Lost is what follows a citation of a file known to be gone.
+const Lost = " (lost)"
+
+// gapMarks follow a citation of a file known not to be kept: gone, or not
+// kept because too large or run output (" (not kept: too large)").
+var gapMarks = [][]byte{[]byte(Lost), []byte(" (not kept")}
+
+// lostAfter reports whether doc[end:] starts with a gap mark, allowing
+// a closing quote or backtick between the citation and the mark.
+func lostAfter(doc []byte, end int) bool {
+	for end < len(doc) && strings.IndexByte("`'\"", doc[end]) >= 0 {
+		end++
+	}
+	for _, m := range gapMarks {
+		if bytes.HasPrefix(doc[end:], m) {
+			return true
+		}
+	}
+	return false
+}
 
 // Ref is one file reference found in a task's text.
 type Ref struct {
@@ -241,22 +267,62 @@ type Ref struct {
 // FileRefs returns the file references in a task document's text.
 func FileRefs(doc []byte, self string) []Ref {
 	var out []Ref
-	for _, m := range fileRef.FindAllSubmatch(doc, -1) {
-		name := string(m[1])
+	for _, m := range fileRef.FindAllSubmatchIndex(doc, -1) {
+		name := string(doc[m[2]:m[3]])
 		// Prose such as "file:line" and URLs (file:///...) are not
 		// references: a reference names a file (has an extension) or a path.
-		if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) {
+		if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) || lostAfter(doc, m[1]) {
 			continue
 		}
 		out = append(out, Ref{Task: self, Name: name, Raw: "file:" + name})
 	}
-	for _, m := range taskRef.FindAllSubmatch(doc, -1) {
+	for _, m := range taskRef.FindAllSubmatchIndex(doc, -1) {
 		// Syntax in prose ("task:REF/NAME", "task:ID/PATH") is not a
 		// reference: a real ref is a lowercase id, alias or slug.
-		if ref := string(m[1]); ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789") {
+		ref, name := string(doc[m[2]:m[3]]), string(doc[m[4]:m[5]])
+		if (ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789")) || lostAfter(doc, m[1]) {
 			continue
 		}
-		out = append(out, Ref{Task: string(m[1]), Name: string(m[2]), Raw: "task:" + string(m[1]) + "/" + string(m[2])})
+		out = append(out, Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name})
+	}
+	for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
+		if lostAfter(doc, m[1]) {
+			continue
+		}
+		start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
+		out = append(out, Ref{Task: string(doc[m[2]:m[3]]), Name: string(doc[m[4]:m[5]]), Raw: string(doc[start:m[1]])})
+	}
+	return out
+}
+
+// forbiddenCite is one citation of a path under a forbidden prefix.
+type forbiddenCite struct {
+	path, prefix string
+	line         int
+}
+
+// forbiddenCites finds each citation of a path under one of the prefixes,
+// with its 1-based line. A prefix is a path relative to the repository: it
+// counts where a path starts (not after a letter, digit or "/", so
+// /home/x/.jcode/scratch/ is another folder), and the cited path runs over
+// path characters, braces and commas included ({a,b}.log), ending in a
+// letter, digit or one of _+}-, as tools/evidence.py in Seid reads them. One
+// followed by a gap mark (" (lost)", " (not kept: ...)") is not reported.
+func forbiddenCites(doc []byte, forbid []string) []forbiddenCite {
+	var out []forbiddenCite
+	var res []*regexp.Regexp
+	for _, prefix := range forbid {
+		res = append(res, regexp.MustCompile(`(?:^|[^\w/])(`+regexp.QuoteMeta(prefix)+`[A-Za-z0-9_.+,{}/-]*[A-Za-z0-9_+}-]/?)`))
+	}
+	for n, line := range bytes.Split(doc, []byte("\n")) {
+		for i, re := range res {
+			for _, m := range re.FindAllSubmatchIndex(line, -1) {
+				if lostAfter(line, m[3]) {
+					continue
+				}
+				out = append(out, forbiddenCite{path: string(line[m[2]:m[3]]), prefix: forbid[i], line: n + 1})
+			}
+		}
 	}
 	return out
 }
@@ -338,13 +404,11 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 				continue
 			}
 			if _, e := os.Stat(fp); e != nil {
-				out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": file not found", Fix: "hug task attach " + owner.ID + " FILE --name " + ref.Name})
+				out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": file not found (attach it, or mark the citation" + Lost + ")", Fix: "hug task attach " + owner.ID + " FILE --name " + ref.Name})
 			}
 		}
-		for _, prefix := range forbid {
-			if strings.Contains(string(doc), prefix) {
-				out = append(out, Finding{Path: t.Path, Line: 0, Problem: "cites " + prefix + " (a folder that gets deleted); attach the file instead", Fix: "hug task attach " + t.ID + " FILE, then hug task edit " + t.ID})
-			}
+		for _, f := range forbiddenCites(doc, forbid) {
+			out = append(out, Finding{Path: t.Path, Line: f.line, Problem: "cites " + f.path + " (" + f.prefix + " is a folder that gets deleted); attach the file instead, or mark it" + Lost, Fix: "hug task attach " + t.ID + " FILE, then hug task edit " + t.ID})
 		}
 		if !folders[FolderOf(t)] {
 			continue

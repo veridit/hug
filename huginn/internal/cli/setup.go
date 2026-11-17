@@ -46,6 +46,9 @@ How huginn works, in short:
 
 `
 
+// scratchPrefix is the jcode scratch folder setup offers for forbid_cite.
+const scratchPrefix = ".jcode/scratch/"
+
 // runSetup inspects the repository and returns the checklist.
 func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	if e := f.count(0); e != nil {
@@ -148,6 +151,24 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		add("import task files", done, detail,
 			"hug task import files "+cand+" --cite "+cand+" --dry-run && hug task import files "+cand+" --cite "+cand+
 				" && hug task lint; afterwards cite files as file:NAME (this task) or task:ID/NAME, and attach new ones with hug task attach ID FILE")
+	}
+
+	// Scratch folders get deleted (cvbpdy): a repo whose agents work in
+	// .jcode/scratch/ should have lint refuse citations into it, so evidence
+	// is attached to the task instead of cited where it will vanish.
+	if fi, e := os.Stat(filepath.Join(root, ".jcode")); e == nil && fi.IsDir() && branch && statErr == nil {
+		forbid, _ := task.ForbidCite(filepath.Join(board, TaskDir))
+		has := false
+		for _, p := range forbid {
+			has = has || strings.HasPrefix(scratchPrefix, p)
+		}
+		// Appending is safe only while hug.toml has no forbid_cite line;
+		// with one, the prefix goes into that list by hand.
+		do := "printf '\\nforbid_cite = [\"" + scratchPrefix + "\"]\\n' >> " + TaskDir + "/" + task.ConfigName + " && git -C " + TaskDir + " add " + task.ConfigName + " && git -C " + TaskDir + " commit -m 'hug.toml: forbid_cite " + scratchPrefix + "' " + task.ConfigName + " && hug task lint --code forbidden-citation"
+		if forbid != nil {
+			do = "add \"" + scratchPrefix + "\" to the forbid_cite list in " + TaskDir + "/" + task.ConfigName + ", commit it on branch " + TaskBranch + ", then hug task lint --code forbidden-citation"
+		}
+		add("scratch citations", has, "hug.toml forbid_cite makes hug task lint report task text that cites "+scratchPrefix+" (a folder that gets deleted); attach the file, or mark the citation (lost)", do)
 	}
 
 	instr := []string{}

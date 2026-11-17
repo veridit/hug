@@ -92,3 +92,59 @@ func TestTaskFiles(t *testing.T) {
 		t.Error("detached file still readable")
 	}
 }
+
+// TestForbidCiteNamesPathAndLine (cvbpdy check 1): each citation of a
+// forbidden path is its own finding with the cited path and its line; a
+// citation followed by " (lost)" or " (not kept: ...)" (also after a
+// closing backtick) is none, and an absolute path that only contains the
+// prefix names another folder (as Seid's tools/evidence.py reads them).
+func TestForbidCiteNamesPathAndLine(t *testing.T) {
+	s, id := newStore(t)
+	s.Note(id, "evidence in .jcode/scratch/T1/run-{a,b}.log and `.jcode/scratch/T2/old.log` (lost); .jcode/scratch/T3/gone.txt (not kept: run output), home /Users/x/.jcode/scratch/T4/y.md")
+	fs, err := s.LintFiles([]string{".jcode/scratch/"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var cites []Finding
+	for _, f := range fs {
+		if FindingCode(f.Problem) == "forbidden-citation" {
+			cites = append(cites, f)
+		}
+	}
+	if len(cites) != 1 {
+		t.Fatalf("want 1 forbidden-citation (T1), got %d: %+v", len(cites), cites)
+	}
+	f := cites[0]
+	doc, _ := os.ReadFile(filepath.Join(s.Root, filepath.FromSlash(f.Path)))
+	lines := strings.Split(string(doc), "\n")
+	if !strings.Contains(f.Problem, "cites .jcode/scratch/T1/run-{a,b}.log (") || f.Line < 1 || f.Line > len(lines) || !strings.Contains(lines[f.Line-1], "T1/run-") {
+		t.Errorf("finding %q at line %d; want the path and the line that holds it", f.Problem, f.Line)
+	}
+	if !strings.Contains(f.Problem, " (lost)") {
+		t.Errorf("finding %q does not say how to mark it lost", f.Problem)
+	}
+}
+
+// TestTaskPathCitationMustExist (cvbpdy check 2): a cited
+// .hug/tasks/<id>/NAME path that does not exist is missing-file; an existing
+// one and one marked " (lost)" are not.
+func TestTaskPathCitationMustExist(t *testing.T) {
+	s, id := newStore(t)
+	if _, _, err := s.Attach(id, "report.md", []byte("ok\n"), "", false); err != nil {
+		t.Fatal(err)
+	}
+	s.Note(id, "see .hug/tasks/"+id+"/report.md and `.hug/tasks/"+id+"/missing.tsv`, also .hug/tasks/"+id+"/old.tsv (lost)")
+	fs, err := s.LintFiles(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var missing []string
+	for _, f := range fs {
+		if FindingCode(f.Problem) == "missing-file" {
+			missing = append(missing, f.Problem+" | fix: "+f.FixLine())
+		}
+	}
+	if len(missing) != 1 || !strings.Contains(missing[0], ".hug/tasks/"+id+"/missing.tsv: file not found") || !strings.Contains(missing[0], "hug task attach "+id+" FILE --name missing.tsv") {
+		t.Errorf("missing-file findings: %q; want exactly missing.tsv with an attach fix", missing)
+	}
+}
