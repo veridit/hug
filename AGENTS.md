@@ -32,8 +32,14 @@ compatibility links only. Never tell a user to type them.
   a non-wait (a hanging remote gives up) stays a normal test.
 - Messages, fixes and help must name `hug task ...` / `hug mem ...`, and every
   error ends with a `fix:` line an agent can run.
-- Releases: add a CHANGELOG.md entry, tag `vX.Y.Z`, push; CI publishes the
-  Homebrew formula (`brew upgrade veridit/tap/hug`).
+- Landing: rebase onto origin/main, run the touched packages' tests locally
+  with `-race` (as CI's ubuntu job does), then push straight to main. No
+  pre-push CI run. If main CI goes red from your commit, fixing it forward
+  comes first; revert if it is not fixed within 30 minutes.
+- Releases: hourly, from the newest main commit green on every job. Add your
+  CHANGELOG.md line under `## Unreleased`; the release turns it into
+  `vX.Y.Z`, tags, pushes, and CI publishes the Homebrew formula
+  (`brew upgrade veridit/tap/hug`).
 
 ## Recall changes
 
