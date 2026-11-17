@@ -30,7 +30,7 @@ cli.go:950 builds 'taken by '+t.Value+' ('+t.ID+')' for Kind 'taken'; the depend
 ## Depends on
 
 ## Acceptance
-- [ ] a test takes a task whose dependency is open: exit 3, the output names the dependency id and title, and a fix: line
+- [x] a test takes a task whose dependency is open: exit 3, the output names the dependency id and title, and a fix: line
 
 ## Notes
 
