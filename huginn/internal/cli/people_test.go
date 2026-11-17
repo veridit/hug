@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -145,5 +146,48 @@ func TestUpgradeMovesWaitingFor(t *testing.T) {
 	r = execute(t, a, "upgrade")
 	if did := strings.Join(r["upgrade"].([]string), "; "); strings.Contains(did, "waiting_for") {
 		t.Fatalf("second upgrade moved again: %s", did)
+	}
+}
+
+// 5z4zt4: hug task wait --show and design --show name the task file the
+// person should look at; attach takes a PNG; --show of a file the task does
+// not carry is refused with a fix.
+func TestWaitShowsAPicture(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Look", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
+	execute(t, a, "take", id, "--as", "nautilus", "--model", "m")
+	dir := t.TempDir()
+	png := filepath.Join(dir, "shot.png")
+	if e := os.WriteFile(png, []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR"), 0o644); e != nil {
+		t.Fatal(e)
+	}
+	ans := filepath.Join(dir, "rows.ans")
+	if e := os.WriteFile(ans, []byte("\x1b[31mIN PROGRESS\x1b[0m\n"), 0o644); e != nil {
+		t.Fatal(e)
+	}
+	execute(t, a, "attach", id, png, ans)
+	_, e := a.Execute(context.Background(), []string{"wait", id, "look", "--on", "jhf", "--show", "nope.ans"})
+	if e == nil || !strings.Contains(e.Error(), "hug task attach "+id+" FILE --name nope.ans") {
+		t.Fatalf("--show of a missing file: %v", e)
+	}
+	execute(t, a, "wait", id, "look at the rows", "--on", "jhf", "--show", "rows.ans")
+	if f := taskFile(t, a, id); !strings.Contains(f, `waiting_show: "rows.ans"`) || !strings.Contains(f, `waiting_for: "jhf"`) {
+		t.Fatalf("wait --show:\n%s", f)
+	}
+	// A new wait without --show names no picture; resume clears it.
+	execute(t, a, "wait", id, "CI run 7")
+	if f := taskFile(t, a, id); strings.Contains(f, "\nwaiting_show:") {
+		t.Fatalf("plain wait kept waiting_show:\n%s", f)
+	}
+	todo := execute(t, a, "new", "Ask", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
+	execute(t, a, "attach", todo, ans)
+	execute(t, a, "design", todo, "this colour or that?", "--for", "jhf", "--show", "rows.ans")
+	if f := taskFile(t, a, todo); !strings.Contains(f, `design_show: "rows.ans"`) {
+		t.Fatalf("design --show:\n%s", f)
+	}
+	execute(t, a, "answer", todo, "this one", "--as", "jhf")
+	if f := taskFile(t, a, todo); strings.Contains(f, "\ndesign_show:") {
+		t.Fatalf("answer kept design_show:\n%s", f)
 	}
 }

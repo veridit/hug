@@ -2,6 +2,7 @@ package task
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 )
@@ -181,6 +182,13 @@ func refuse(t Task, to, fix string) error {
 // is who it waits on (waiting_for, 89y0b7, crab 15:28): a name lint can
 // check and the TUI shows as "waiting on you".
 func (s *Store) Wait(ref, on, by string, person ...string) (Result, error) {
+	return s.WaitShowing(ref, on, by, "", person...)
+}
+
+// WaitShowing is Wait naming the task file the person should look at
+// (waiting_show, 5z4zt4): the detail shows it right under the question.
+// show must be one of the task's files; "" names none.
+func (s *Store) WaitShowing(ref, on, by, show string, person ...string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -196,7 +204,10 @@ func (s *Store) Wait(ref, on, by string, person ...string) (Result, error) {
 	if len(person) > 0 {
 		forName = strings.TrimSpace(person[0])
 	}
-	if d.Task.Fields["waiting_on"] == on && d.Task.Fields["waiting_for"] == forName {
+	if show, e = s.showable(d.Task, show); e != nil {
+		return Result{}, e
+	}
+	if d.Task.Fields["waiting_on"] == on && d.Task.Fields["waiting_for"] == forName && d.Task.Fields["waiting_show"] == show {
 		return s.finish(d, false)
 	}
 	set := map[string]string{"waiting_on": on, "waiting_since": stamp()}
@@ -209,10 +220,35 @@ func (s *Store) Wait(ref, on, by string, person ...string) (Result, error) {
 	} else {
 		clear = append(clear, "waiting_for") // a new wait on a thing, not a person
 	}
+	if show != "" {
+		set["waiting_show"] = show
+	} else {
+		clear = append(clear, "waiting_show")
+	}
 	if e = applyMove(d, ts, move{state: "doing", set: set, clear: clear, why: "wait"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
+}
+
+// showable checks that name is one of t's files, as a question's picture
+// (5z4zt4); "" is fine and means none.
+func (s *Store) showable(t Task, name string) (string, error) {
+	if name = strings.TrimSpace(name); name == "" {
+		return "", nil
+	}
+	clean, e := cleanName(name)
+	if e != nil {
+		return "", e
+	}
+	p, e := s.diskPath(FolderOf(t) + "/" + clean)
+	if e != nil {
+		return "", e
+	}
+	if st, e := os.Stat(p); e != nil || !st.Mode().IsRegular() {
+		return "", &Error{Kind: "file-not-found", ID: t.ID, Value: clean + " is not a file of " + t.ID + ", so the question cannot show it", Fix: "hug task attach " + t.ID + " FILE --name " + clean}
+	}
+	return clean, nil
 }
 
 // Resume ends a wait: the waiting fields go to History.
@@ -230,7 +266,7 @@ func (s *Store) Resume(ref string) (Result, error) {
 			return Result{}, busy(d.Task, who, a)
 		}
 	}
-	if e = applyMove(d, ts, move{state: "doing", clear: []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by"}, why: "resume"}); e != nil {
+	if e = applyMove(d, ts, move{state: "doing", clear: []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by", "waiting_show"}, why: "resume"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
@@ -240,6 +276,12 @@ func (s *Store) Resume(ref string) (Result, error) {
 // person's name, design_for, required: crab 12:38), recording who asked;
 // clear (question "") answers it: the design fields go to History.
 func (s *Store) Design(ref, question, by, who string) (Result, error) {
+	return s.DesignShowing(ref, question, by, who, "")
+}
+
+// DesignShowing is Design naming the task file to look at (design_show,
+// 5z4zt4); show must be one of the task's files, "" names none.
+func (s *Store) DesignShowing(ref, question, by, who, show string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -253,7 +295,7 @@ func (s *Store) Design(ref, question, by, who string) (Result, error) {
 		if !ownHolds(d.Task, "design") {
 			return s.finish(d, false)
 		}
-		if e = applyMove(d, ts, move{state: "todo", clear: []string{"design_question", "design_since", "design_asked_by", "design_for"}, why: "design answered"}); e != nil {
+		if e = applyMove(d, ts, move{state: "todo", clear: []string{"design_question", "design_since", "design_asked_by", "design_for", "design_show"}, why: "design answered"}); e != nil {
 			return Result{}, e
 		}
 		return s.finish(d, true)
@@ -261,14 +303,23 @@ func (s *Store) Design(ref, question, by, who string) (Result, error) {
 	if who = strings.TrimSpace(who); who == "" {
 		return Result{}, usageErr(d.Task.ID, "design needs who must answer: --for NAME", "hug task design "+d.Task.ID+` "`+question+`" --for NAME`)
 	}
-	if d.Task.Fields["design_question"] == question && d.Task.Fields["design_for"] == who {
+	if show, e = s.showable(d.Task, show); e != nil {
+		return Result{}, e
+	}
+	if d.Task.Fields["design_question"] == question && d.Task.Fields["design_for"] == who && d.Task.Fields["design_show"] == show {
 		return s.finish(d, false)
 	}
 	set := map[string]string{"design_question": question, "design_since": stamp(), "design_for": who}
 	if by = strings.TrimSpace(by); by != "" {
 		set["design_asked_by"] = by
 	}
-	if e = applyMove(d, ts, move{state: "todo", set: set, why: "design"}); e != nil {
+	var clear []string
+	if show != "" {
+		set["design_show"] = show
+	} else {
+		clear = []string{"design_show"}
+	}
+	if e = applyMove(d, ts, move{state: "todo", set: set, clear: clear, why: "design"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)

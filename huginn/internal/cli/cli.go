@@ -560,7 +560,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1011,7 +1011,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		// Waiting on a person: --on NAME writes waiting_for, a field lint
 		// checks against hug.toml [people] (89y0b7, crab 15:28; it was
 		// "NAME: what" in waiting_on).
-		r, e = s.s.Wait(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("on"))
+		r, e = s.s.WaitShowing(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("show"), f.get("on"))
 	case "resume":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -1038,7 +1038,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			if e = f.count(2); e != nil {
 				return nil, e
 			}
-			r, e = s.s.Design(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("for"))
+			r, e = s.s.DesignShowing(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("for"), f.get("show"))
 		}
 	case "reflections":
 		return a.runReflections(s, f)

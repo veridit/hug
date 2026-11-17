@@ -12,7 +12,7 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-var actionNames = map[string]string{"t": "take", "d": "done", "x": "drop", "J": "move down", "K": "move up", " ": "toggle acceptance", "e": "edit", "n": "new"}
+var actionNames = map[string]string{"S": "attach screen", "t": "take", "d": "done", "x": "drop", "J": "move down", "K": "move up", " ": "toggle acceptance", "e": "edit", "n": "new"}
 
 // dropPrompt asks why a task is dropped: the reason is required (6ephqk).
 const dropPrompt = "drop: why never?"
@@ -100,6 +100,10 @@ func (m *model) executeAction() tea.Cmd {
 			m.message = "task disappeared; refresh and try again"
 			return nil
 		}
+	}
+	if k == captureKey {
+		m.attachCapture(t, value)
+		return nil
 	}
 	var r task.Result
 	var err error

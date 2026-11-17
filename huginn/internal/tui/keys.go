@@ -142,6 +142,11 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	if len(m.filesOf(t)) > 0 {
 		hints = append(hints, hint("E", "files"))
 	}
+	if m.width >= 140 {
+		// S copies the screen and asks to attach it (5z4zt4); on a
+		// narrower bar ? help names it, as - (sfa8w4).
+		hints = append(hints, hint("S", "screen"))
+	}
 	hints = append(hints, hint("Esc", "back"))
 	if !narrow {
 		hints = append(hints, hint(":", "cmd"))
@@ -181,7 +186,7 @@ func (m model) helpText() string {
 		actions = append(actions, hint(": sort rank", "rank order again: then J/K, m, y, P/p move"))
 	}
 	actions = append(actions,
-		hint("N", "new title, goal and one verification item"), hint("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi"),
+		hint("N / S", "new task / copy the screen, Enter attaches it"), hint("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi"),
 		hint("e again", "after an edit left a finding: edit at once"),
 		hint("Enter / Esc", "confirm / cancel every editing action"),
 	)

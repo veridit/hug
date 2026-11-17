@@ -822,6 +822,11 @@ func (m model) editNoticeLines() (string, string, bool) {
 func (m model) confirmLine() string {
 	question := "Confirm " + actionNames[m.confirm] + " "
 	switch m.confirm {
+	case captureKey:
+		// S (5z4zt4): the copy is made; this asks only about attaching.
+		if t, ok := m.taskAt(m.confirmPath); ok {
+			question = m.capturedNote + " · Attach this screen to " + oneLine(t.ID) + " as " + oneLine(m.pendingValue)
+		}
 	case "n":
 		question += oneLine(m.pendingValue)
 	case "t":

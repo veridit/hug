@@ -117,6 +117,11 @@ func (m model) glanceRead(t task.Task, name string) (head, body string) {
 	if err != nil {
 		return head, err.Error()
 	}
+	if ansName(name) && utf8.Valid(b) {
+		// A screen capture shows with its colours, nothing else of its
+		// escapes (5z4zt4).
+		return head, colourOnly(b, m.width, os.Getenv("NO_COLOR") == "")
+	}
 	return head, glanceText(b, info.Size(), m.width)
 }
 

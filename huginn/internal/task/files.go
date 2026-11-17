@@ -21,8 +21,44 @@ import (
 // logs, tables, probes); the tool does not care what they prove. The folder
 // moves with the task and is deleted only with the task.
 
-// MaxFileBytes is the largest task file; files must be UTF-8 text.
+// MaxFileBytes is the largest text task file; files are UTF-8 text, or an
+// image (5z4zt4) up to MaxImageBytes.
 const MaxFileBytes = 256 << 10
+
+// MaxImageBytes is the largest image a task carries: a screenshot, not a
+// photo album (5z4zt4).
+const MaxImageBytes = 2 << 20
+
+// ImageKind names the image b is, by its first bytes, never its name:
+// "png", "jpeg" or "gif", else "". A task may carry these as pictures of
+// what it is about (5z4zt4, Jørgen 14:51); any other binary stays out.
+func ImageKind(b []byte) string {
+	switch {
+	case bytes.HasPrefix(b, []byte("\x89PNG\r\n\x1a\n")):
+		return "png"
+	case bytes.HasPrefix(b, []byte{0xff, 0xd8, 0xff}):
+		return "jpeg"
+	case bytes.HasPrefix(b, []byte("GIF87a")), bytes.HasPrefix(b, []byte("GIF89a")):
+		return "gif"
+	}
+	return ""
+}
+
+// imageExt is the names an image may carry, by kind.
+var imageExt = map[string][]string{"png": {".png"}, "jpeg": {".jpg", ".jpeg"}, "gif": {".gif"}}
+
+// IsImageName says whether name ends like an image file.
+func IsImageName(name string) bool {
+	ext := strings.ToLower(filepath.Ext(name))
+	for _, exts := range imageExt {
+		for _, x := range exts {
+			if ext == x {
+				return true
+			}
+		}
+	}
+	return false
+}
 
 // File is one file in a task's folder.
 type File struct {
@@ -66,13 +102,29 @@ func cleanName(name string) (string, error) {
 	return name, nil
 }
 
-// CheckText refuses content that is not small UTF-8 text.
+// CheckText refuses content that is not small UTF-8 text or an image whose
+// name says what it is (5z4zt4: shot.png holds a PNG, never a renamed
+// binary).
 func CheckText(name string, b []byte) error {
+	if kind := ImageKind(b); kind != "" {
+		ext := strings.ToLower(filepath.Ext(name))
+		ok := false
+		for _, x := range imageExt[kind] {
+			ok = ok || ext == x
+		}
+		if !ok {
+			return &Error{Kind: "file-not-text", Value: name + " holds a " + strings.ToUpper(kind) + " image but is not named ." + imageExt[kind][0][1:], Fix: "hug task attach ID FILE --name " + strings.TrimSuffix(name, filepath.Ext(name)) + imageExt[kind][0]}
+		}
+		if len(b) > MaxImageBytes {
+			return &Error{Kind: "file-too-large", Value: fmt.Sprintf("%s is %d bytes; the limit for an image is %d (2 MiB)", name, len(b), MaxImageBytes), Fix: "attach a smaller screenshot (crop it), or an ANSI capture: S in hug tui"}
+		}
+		return nil
+	}
 	if len(b) > MaxFileBytes {
 		return &Error{Kind: "file-too-large", Value: fmt.Sprintf("%s is %d bytes; the limit is %d (256 KiB)", name, len(b), MaxFileBytes), Fix: "attach a smaller excerpt, or the script that regenerates it"}
 	}
 	if bytes.IndexByte(b, 0) >= 0 || !utf8.Valid(b) {
-		return &Error{Kind: "file-not-text", Value: name + " contains NUL bytes or is not valid UTF-8", Fix: "attach text only: logs, tables, scripts, notes"}
+		return &Error{Kind: "file-not-text", Value: name + " contains NUL bytes or is not valid UTF-8", Fix: "hug task attach ID FILE (text such as a log, table or .ans screen capture, or a PNG, JPEG or GIF image)"}
 	}
 	return nil
 }

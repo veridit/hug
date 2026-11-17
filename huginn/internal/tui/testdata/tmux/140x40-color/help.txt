@@ -12,7 +12,7 @@ h/← Shift-Tab previous pane / column                                  E       
 l/→ Tab       next pane / column                                      t / d / x       take / done / drop task
 Enter         open full task detail                                   J / K           on a row: move below / above the next row, no confirm
 Esc           back one level, never quits                             m / y, P p      grab: j/k, Enter places it / yank, paste above below
-q / ctrl-c    quit (q only outside inputs)                            N               new title, goal and one verification item
+q / ctrl-c    quit (q only outside inputs)                            N / S           new task / copy the screen, Enter attaches it
 /             live find; Enter goes to it, Tab keeps                  e               edit in $VISUAL, else $EDITOR, git core.editor, vi
 :             palette with command + value completion                 e again         after an edit left a finding: edit at once
 Tab / Enter   complete palette choice; Enter runs complete command    Enter / Esc     confirm / cancel every editing action

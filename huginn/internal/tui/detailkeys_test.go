@@ -86,7 +86,7 @@ func TestRowJKStillMove(t *testing.T) {
 // The writers are enumerated here; a new one must join the bar and this
 // list (TestFocusHintsAreHonest presses each hint the bar shows).
 func TestDetailWritingKeysAreNamed(t *testing.T) {
-	writers := map[string]string{"t": "t/d/x/e", "d": "t/d/x/e", "x": "t/d/x/e", "e": "t/d/x/e", " ": "Space", "-": "-", "N": "N"}
+	writers := map[string]string{"t": "t/d/x/e", "d": "t/d/x/e", "x": "t/d/x/e", "e": "t/d/x/e", " ": "Space", "-": "-", "N": "N", "S": "S"}
 	for _, w := range []int{80, 100, 140} {
 		m, main := focusModel(t)
 		m.width = w
@@ -106,7 +106,7 @@ func TestDetailWritingKeysAreNamed(t *testing.T) {
 					}
 					continue
 				}
-				if k == "-" && w < 120 || k == "N" && w < 100 {
+				if k == "-" && w < 120 || k == "N" && w < 100 || k == "S" && w < 140 {
 					// - is named in the ACCEPTANCE heading below 120
 					// (sfa8w4); N opens a prompt that says what it makes.
 					continue

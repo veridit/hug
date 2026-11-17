@@ -42,6 +42,9 @@ type Options struct {
 	// (j2vwk0); Binary is that path, the one the shell found ("" finds it).
 	NoReload bool
 	Binary   string
+	// Getenv reads the environment (nil: os.Getenv): which terminal draws
+	// images, tmux (5z4zt4). Tests choose a terminal with it.
+	Getenv func(string) string
 	// MainBranch is the repository's main line ("main"): IN PROGRESS rows
 	// name a task's branch only when it is another one (x1t1t1).
 	MainBranch string
@@ -127,8 +130,14 @@ type model struct {
 	file                       int // the file marked > in Files (zgr01t)
 	// glance: a file shown in the detail pane (scrxak); glanceHead is its
 	// "path · size · i of N" line, glanceBody its escaped text.
-	glance                             bool
-	glanceHead, glanceBody             string
+	glance                 bool
+	glanceHead, glanceBody string
+	// captured is the frame S took (5z4zt4), waiting for Enter to attach
+	// it; capturedNote says what went to the clipboard.
+	captured, capturedNote string
+	// pictures keeps each question picture as last read, by file, width
+	// and mtime, so a redraw does not read it again (5z4zt4).
+	pictures                           map[string]pictureMemo
 	files                              map[string][]string         // task path -> its file names (zgr01t)
 	people                             []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
 	lastExec                           *exec.Cmd                   // the editor command last started, for tests (zgr01t)
@@ -387,7 +396,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
 	input.Cursor.Blink = false
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", input: input, closes: &closeLog{},
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", input: input, closes: &closeLog{}, pictures: map[string]pictureMemo{},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	if o.Initial != nil {
@@ -923,6 +932,11 @@ func (m *model) back() {
 	case m.help:
 		m.help = false
 	case m.confirm != "":
+		if m.confirm == captureKey {
+			// Esc keeps only the copy (5z4zt4): nothing is attached.
+			m.message = m.capturedNote + " · not attached"
+			m.captured, m.capturedNote = "", ""
+		}
 		m.confirm = ""
 		m.pendingValue = ""
 	case m.editNotice != "" && m.prompt == "":
@@ -982,6 +996,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.height = msg.Height
 			m.resize()
 		}
+	case imageShown:
+		// Back from an image (5z4zt4): Files, the image still marked.
+		if msg.err != nil {
+			m.message = msg.err.Error()
+		}
+		return m, tea.ClearScreen
 	case editorMsg:
 		m.refresh(msg.path)
 		m.editNotice = ""
@@ -1102,6 +1122,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k == "q" {
 			return m, tea.Quit
 		}
+		// S takes the screen as you see it (5z4zt4): copied to the
+		// clipboard at once, then the bar asks to attach it to the task.
+		if k == captureKey {
+			m.capture()
+			return m, nil
+		}
 		// R reloads into the newer hug in the corner (j2vwk0); without one
 		// R is not bound. Prompts, help and confirms took their keys above.
 		if k == reloadKey && m.newer != "" {
@@ -1215,6 +1241,13 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// check is marked, and ticking an unmarked one is a guess.
 				// In Files it shows the marked file (scrxak).
 				if m.detailPane == focusFiles {
+					if t, ok := m.selected(); ok {
+						if name, _, _ := m.glanceFile(t); task.IsImageName(name) {
+							// An image is drawn outside the frame where the
+							// terminal can (5z4zt4), else one line.
+							return m, m.showImage(t, name)
+						}
+					}
 					m.openGlance()
 				} else if m.detailPane == focusAcceptance {
 					m.requestAction(k, "")

@@ -63,6 +63,7 @@ var States = []Node{
 			{Name: "design_for", Required: true, SetBy: ByAgent, Means: "who must answer it (a person's name; crab 12:38: no implied person)"},
 			{Name: "design_since", SetBy: ByHug, Means: "when the question was asked"},
 			{Name: "design_asked_by", SetBy: ByHug, Means: "who asked it (the agent or person that ran hug task design)"},
+			{Name: "design_show", SetBy: ByAgent, Means: "the task file to look at (--show NAME); the detail shows it under the question"},
 		}},
 		{Name: "draft", SetBy: ByHug, Means: "not described well enough to start (Goal or Acceptance missing)"},
 		{Name: "review", SetBy: ByAgent, Means: "the work is done and waits for someone to check it", Fields: []NodeField{
@@ -80,6 +81,7 @@ var States = []Node{
 			{Name: "waiting_for", SetBy: ByAgent, Means: "the person it waits on, by their short name in hug.toml [people] or an agent's name (--on NAME); they see it in hug tui as waiting on you"},
 			{Name: "waiting_since", SetBy: ByHug, Means: "since when"},
 			{Name: "waiting_asked_by", SetBy: ByHug, Means: "who waits (the agent or person that ran hug task wait), told when it is answered"},
+			{Name: "waiting_show", SetBy: ByAgent, Means: "the task file to look at (--show NAME); the detail shows it under the question"},
 		}},
 		{Name: "depends", SetBy: ByHug, Means: "the owner can't go on until another task is done"},
 		{Name: "review", SetBy: ByReviewer, Means: "someone is reviewing it", Fields: []NodeField{

@@ -235,6 +235,7 @@ func (m model) questionLines(t task.Task) []string {
 		if len(by) > 0 {
 			out = append(out, m.styles.dim.Render(fit("  "+strings.Join(by, " · "), m.width)))
 		}
+
 		if m.prompt == answerPrompt {
 			// Typed right under the question (Jørgen 11:45), not in the footer.
 			out = append(out, "  "+m.input.View())
@@ -345,12 +346,13 @@ func (m model) focusStops(t task.Task) []int {
 }
 
 // startFocus is the focus a freshly opened task gets: its checks when it has
-// any, otherwise the page.
+// any, otherwise the page. A question to you with a picture opens on the
+// page, so the picture under the question is what you see (5z4zt4).
 func (m *model) startFocus() {
 	m.acceptance, m.dependency, m.link, m.file = 0, 0, 0, 0
 	m.glance, m.glanceHead, m.glanceBody = false, "", ""
 	m.detailPane = focusPage
-	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
+	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 && m.askedPicture(t) == "" {
 		m.detailPane = focusAcceptance
 	}
 }
@@ -391,6 +393,13 @@ func (m model) sectionHeading(title, hint string, focused bool) string {
 func (m model) detailText(t task.Task) string {
 	sections := m.sections(t)
 	var b strings.Builder
+	// The picture the question asks you to look at opens the page, right
+	// under the question in the header (5z4zt4): what --show named, else a
+	// task file the question names. Read here, when the page is built, not
+	// on every frame.
+	if name := m.askedPicture(t); name != "" && m.detail {
+		b.WriteString(strings.Join(m.pictureLines(t, name), "\n") + "\n\n")
+	}
 	section := func(heading, body, empty string) {
 		if strings.TrimSpace(body) == "" {
 			if empty != "" {

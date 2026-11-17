@@ -112,9 +112,9 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 	var clear []string
 	switch stage {
 	case "design":
-		clear = []string{"design_question", "design_since", "design_asked_by", "design_for"}
+		clear = []string{"design_question", "design_since", "design_asked_by", "design_for", "design_show"}
 	case "waiting":
-		clear = []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by"}
+		clear = []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by", "waiting_show"}
 	case "review":
 		clear = []string{"review_by", "review_since"}
 	}
