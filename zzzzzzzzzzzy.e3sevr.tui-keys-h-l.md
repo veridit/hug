@@ -4,7 +4,7 @@ title: "TUI keys: H/L move the column marker; J/K page; marker sits on the curso
 state: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
