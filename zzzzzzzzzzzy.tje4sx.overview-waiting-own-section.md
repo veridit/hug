@@ -4,7 +4,7 @@ title: "Overview: WAITING is its own section; IN PROGRESS holds only active work
 state: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
