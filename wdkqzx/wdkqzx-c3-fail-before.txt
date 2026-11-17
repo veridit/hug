@@ -1,0 +1,6 @@
+    questions_test.go:201: 8 of 9 settled:
+         got h.39qmyk.shipped-check-9-open.md:1: broken [shipped-not-done] shipped, but doing: release v0.7.45 contains commit f4ee48b naming 39qmyk (its note says so); nautilus: is it done?
+        want "shipped, but doing: release v0.7.45 contains commit f4ee48b naming 39qmyk (its note says so) and check 9 is open; nautilus: does it hold, or strike it?", fix hug task check 39qmyk 9
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/task	0.121s
+FAIL
