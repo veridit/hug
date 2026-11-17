@@ -32,6 +32,9 @@ type Error struct {
 	Waits []WaitDetail `json:"waits,omitempty"`
 	// Problems: every problem a write found, all at once (fkpyg3).
 	Problems []Problem `json:"problems,omitempty"`
+	// Fixes are alternative ways out, each one fix: line (n2hq8p); Fix
+	// is the first.
+	Fixes []string `json:"fixes,omitempty"`
 }
 
 func (e *Error) Error() string {
@@ -57,14 +60,18 @@ func (e *Error) Error() string {
 	for _, a := range e.Unchecked {
 		msg += fmt.Sprintf("\n%d. %s\nfix: %s", a.Index, a.Text, a.Fix)
 	}
-	if e.Fix != "" {
+	if len(e.Fixes) > 0 {
+		for _, f := range e.Fixes {
+			msg += "\nfix: " + f
+		}
+	} else if e.Fix != "" {
 		msg += "\nfix: " + e.Fix
 	}
 	return msg
 }
 func (e *Error) ExitCode() int {
 	switch e.Kind {
-	case "blocked", "unchecked-acceptance":
+	case "blocked", "unchecked-acceptance", "busy":
 		return 3
 	case "nothing-matches":
 		return 4

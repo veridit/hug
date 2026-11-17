@@ -479,6 +479,15 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	if status == "doing" && user != "" && len(d.Task.Assignee) > 0 && !contains(d.Task.Assignee, user) {
 		return Result{}, &Error{Kind: "taken", ID: d.Task.ID, Value: strings.Join(d.Task.Assignee, ", "), Fix: "hug task next"}
 	}
+	// One ticket in doing per agent (n2hq8p): a take that would give user a
+	// second active ticket is refused. Taking a todo/review task makes it
+	// doing/review, not active, so it is allowed (the reviewer's own work
+	// goes on).
+	if status == "doing" && user != "" && d.Task.Status != "doing" && d.Task.Stage != "review" {
+		if a, ok := Active(user, d.Task.ID, ts); ok {
+			return Result{}, busy(d.Task, user, a)
+		}
+	}
 	var warnings []string
 	if status == "doing" || status == "done" {
 		policy := s.DepsMode

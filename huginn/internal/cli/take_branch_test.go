@@ -45,6 +45,9 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 	}
 
 	// On the main checkout: recorded, but ls rows do not repeat "main".
+	// The linked worktree's task waits first: one active ticket per
+	// agent (n2hq8p).
+	execute(t, main, "wait", id, "CI")
 	other := execute(t, main, "new", "Main work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	if tk := execute(t, main, "take", other)["task"].(Reply); tk["branch"] != "main" {
 		t.Fatalf("main take: %v", tk)
@@ -54,6 +57,7 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 	}
 
 	// Flags win over detection.
+	execute(t, main, "wait", other, "CI")
 	third := execute(t, main, "new", "Flagged", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	if tk := execute(t, main, "take", third, "--branch", "feat/y", "--worktree", "/elsewhere")["task"].(Reply); tk["branch"] != "feat/y" || tk["worktree"] != "/elsewhere" {
 		t.Fatalf("flags: %v", tk)
@@ -70,7 +74,7 @@ func TestLintFlagsDoingTaskOnMergedOrDeletedBranch(t *testing.T) {
 	take := func(title, branch string) string {
 		t.Helper()
 		id := execute(t, main, "new", title, "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-		execute(t, main, "take", id, "--branch", branch)
+		execute(t, main, "take", id, "--branch", branch, "--as", "agent-"+strings.ReplaceAll(branch, "/", "-"))
 		return id
 	}
 	git(t, mainDir, "branch", "feat/merged")

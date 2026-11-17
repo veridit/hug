@@ -33,7 +33,9 @@ func longBoard(t *testing.T) model {
 		id := r.Task.ID
 		switch i {
 		case 0, 1:
-			if _, err := s.TakeAt(id, "an-agent-with-a-very-long-name-indeed", "claude-opus-5-5", task.Place{Branch: "feature/a-very-long-branch-name-for-testing"}); err != nil {
+			// Two agents, one active ticket each (n2hq8p), names of one length.
+			name := [2]string{"an-agent-with-a-very-long-name-indeed", "an-agent-with-a-very-long-name-agreed"}[i]
+			if _, err := s.TakeAt(id, name, "claude-opus-5-5", task.Place{Branch: "feature/a-very-long-branch-name-for-testing"}); err != nil {
 				t.Fatal(err)
 			}
 		case 3:

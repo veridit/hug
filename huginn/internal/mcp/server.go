@@ -91,6 +91,9 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 				if errors.As(err, &te) && len(te.Problems) > 0 {
 					reply["findings"] = te.Problems
 				}
+				if fixes := cli.ErrorFixes(err); fixes != nil {
+					reply["fixes"] = fixes
+				}
 			}
 			b, err := json.Marshal(reply)
 			if err != nil {
@@ -275,7 +278,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		}
 		return args, nil
 	})
-	add("take", "Claim a task using the remote push lock and set it doing. Say which model you are (model, required: claude-opus-5-5, gpt-6.1-sol, ...; a person: human), the folder you work in (cwd, required: the branch and worktree are read from it and recorded) and, if you have one, your agent or session name (agent). Without agent the assignee is the model.", map[string]any{"id": str("Task reference"), "model": str("The model doing the work, e.g. claude-opus-5-5 or gpt-6.1-sol; a person: human. Required unless HUG_MODEL is set for the server"), "cwd": str("Your working directory (absolute path), e.g. the git worktree you edit in. Required: hug records its branch and worktree on the task"), "agent": str("Your agent or session name, e.g. poodle (optional; default HUG_USER or the harness session)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
+	add("take", "Claim a task using the remote push lock and set it doing. Say which model you are (model, required: claude-opus-5-5, gpt-6.1-sol, ...; a person: human), the folder you work in (cwd, required: the branch and worktree are read from it and recorded) and, if you have one, your agent or session name (agent). Without agent the assignee is the model. One ticket in doing per agent: while you have an active doing task, take is refused naming it, with fixes (done, wait, or back to todo); a waiting, review or depends task does not count.", map[string]any{"id": str("Task reference"), "model": str("The model doing the work, e.g. claude-opus-5-5 or gpt-6.1-sol; a person: human. Required unless HUG_MODEL is set for the server"), "cwd": str("Your working directory (absolute path), e.g. the git worktree you edit in. Required: hug records its branch and worktree on the task"), "agent": str("Your agent or session name, e.g. poodle (optional; default HUG_USER or the harness session)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
 		id := get(m, "id")
 		// One habit for agents (x1t1t1, Jørgen 2026-11-16): the server's
 		// own folder is not where the agent works, so cwd is always given.

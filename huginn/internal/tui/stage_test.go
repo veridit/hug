@@ -150,10 +150,12 @@ func TestWaitingOnYou(t *testing.T) {
 	if strings.Contains(view, "for you") || regexp.MustCompile(`(?m)^\? `).MatchString(view) {
 		t.Fatalf("carol sees something for her:\n%s", view)
 	}
-	// Waiting on a person: waiting_on "NAME: what".
+	// Waiting on a person: waiting_on "NAME: what". cccccc waits already;
+	// a new wait replaces what it waits on. (Resuming it first would make
+	// nautilus's second active ticket next to aaaaaa: n2hq8p refuses that.)
 	s := m.store
-	if _, e := s.Resume("cccccc"); e != nil {
-		t.Fatal(e)
+	if _, e := s.Resume("cccccc"); e == nil {
+		t.Fatal("resume gave nautilus two active tickets")
 	}
 	if _, e := s.Wait("cccccc", "carol: approve the look", "nautilus"); e != nil {
 		t.Fatal(e)

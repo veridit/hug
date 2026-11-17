@@ -203,6 +203,12 @@ func (s *Store) Resume(ref string) (Result, error) {
 	if d.Task.Status != "doing" || !ownHolds(d.Task, "waiting") {
 		return Result{}, refuse(d.Task, "doing/active", "hug task show "+d.Task.ID)
 	}
+	// Resuming makes it active again: one active ticket per agent (n2hq8p).
+	for _, who := range d.Task.Assignee {
+		if a, ok := Active(who, d.Task.ID, ts); ok {
+			return Result{}, busy(d.Task, who, a)
+		}
+	}
 	if e = applyMove(d, ts, move{state: "doing", clear: []string{"waiting_on", "waiting_since", "waiting_asked_by"}, why: "resume"}); e != nil {
 		return Result{}, e
 	}

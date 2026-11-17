@@ -1180,6 +1180,17 @@ func withGuide(reply Reply, cmd string, t task.Task, s *session) {
 	}
 }
 
+// ErrorFixes are the alternative fix: lines of err beyond ErrorDetails'
+// one (n2hq8p: a refused take offers done, wait or back to todo); nil when
+// there is only one way out.
+func ErrorFixes(err error) []string {
+	var t *task.Error
+	if errors.As(err, &t) && len(t.Fixes) > 1 {
+		return t.Fixes
+	}
+	return nil
+}
+
 func ErrorDetails(err error) (int, string, string) {
 	code, problem, fix := 1, strings.ReplaceAll(err.Error(), "\n", "; "), "hug task help"
 	var op *OperationError
@@ -1195,6 +1206,9 @@ func ErrorDetails(err error) (int, string, string) {
 		code = t.ExitCode()
 		if t.Kind == "taken" {
 			return 1, "taken by " + t.Value + " (" + t.ID + ")", "hug task next"
+		}
+		if t.Kind == "busy" {
+			return code, "not taking " + t.ID + ": " + t.Value, t.Fix
 		}
 		fix = t.Fix
 		problem = t.Kind
@@ -1275,11 +1289,21 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if e != nil {
 		code, p, fix := ErrorDetails(e)
 		p = strings.NewReplacer("\r", " ", "\n", "; ").Replace(p)
+		fixes := ErrorFixes(e)
 		if jsonMode {
-			_ = json.NewEncoder(a.Out).Encode(Reply{"error": p, "fix": fix, "next": fix, "exit_code": code})
+			r := Reply{"error": p, "fix": fix, "next": fix, "exit_code": code}
+			if fixes != nil {
+				r["fixes"] = fixes
+			}
+			_ = json.NewEncoder(a.Out).Encode(r)
 		} else {
 			fmt.Fprintln(a.Err, p)
-			fmt.Fprintln(a.Err, "fix: "+fix)
+			if fixes == nil {
+				fixes = []string{fix}
+			}
+			for _, f := range fixes {
+				fmt.Fprintln(a.Err, "fix: "+f)
+			}
 		}
 		return code
 	}
