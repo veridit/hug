@@ -4,7 +4,7 @@ title: "Lint owns evidence rules: (lost) marker, path citations checked, setup o
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
