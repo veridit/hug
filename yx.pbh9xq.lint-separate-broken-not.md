@@ -37,7 +37,7 @@ Codes today (huginn/internal/task/document.go): candidates for broken: dangling-
 - [x] hug task lint by default shows broken findings and advice on open tasks only; --all shows every finding
 - [x] the TUI header counts broken findings; advice does not raise the warning count
 - [x] on the seid copy the default lint output drops from 2,477 lines to the measured broken-plus-open-advice number, stated in the task notes
-- [ ] tests cover one code of each severity on an open and on a closed task
+- [x] tests cover one code of each severity on an open and on a closed task
 
 ## Notes
 
