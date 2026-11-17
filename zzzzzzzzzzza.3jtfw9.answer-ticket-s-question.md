@@ -32,3 +32,5 @@ Builds on 6ephqk (stages, node fields, ? marker, '? N for you' header) and needs
 - [ ] Jørgen answers a real question from a worker in the TUI and the worker picks it up without a DM
 
 ## Notes
+
+nautilus 13:27 (crab 13:26): dependency on 6ephqk removed. 3jtfw9 needs only 6ephqk checks 3 (moves, design_asked_by/waiting_asked_by) and 8 (for you, design_for, waiting_on NAME), both on main at d74af5d..d198e01. Design ruling (crab 13:26): the answer is a History line 'answered design: <q> -> <a>, by NAME, DATE TIME, for ASKER'; show and next --mine put the newest answer first until the asker writes anything on the task after it (that write counts as seen); the board cue reads the same. No new front-matter fields, nothing new for lint. answer re-derives the stage; d stays separate.
