@@ -41,3 +41,5 @@ Jørgen 23:39 local: sc sorts by the current column, the one the column marker i
 Jørgen 23:39:34 local reverses the 23:39 note: o was good. o keeps sorting by the marked column (e3sevr). No sc, created stays on c in the s picker. The sc check is void.
 
 Jørgen 23:39:44 local, final: o is the same as sc. Both stay: o is the one-key shortcut, sc is the picker's way to the same thing.
+
+Header picture for all of tonight's rulings is attached to e3sevr as header-spec.md (crab 00:00 local). Build to it. Where it and this ticket differ, tell crab.
