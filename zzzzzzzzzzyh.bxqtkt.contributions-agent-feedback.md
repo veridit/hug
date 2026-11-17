@@ -4,7 +4,7 @@ title: "Contributions: agent feedback and GitHub intake with minimal bureaucracy
 status: todo
 type: spike
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
