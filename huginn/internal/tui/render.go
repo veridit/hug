@@ -37,7 +37,7 @@ func newTheme() theme {
 		ask:    base.Background(lipgloss.AdaptiveColor{Dark: "#ffb454", Light: "#995200"}).Foreground(lipgloss.AdaptiveColor{Dark: "#1a1200", Light: "#ffffff"}).Bold(true),
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
 	t.progress = progressStyle(color)
-	for i, s := range []string{"todo", "doing", "done", "blocked", "dropped"} {
+	for i, s := range []string{"todo", "doing", "done", "depends", "dropped"} {
 		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", "#ff8585", "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", "#ae2525", "#586474"}[i])
 	}
 	for i, s := range task.Types {
@@ -117,8 +117,17 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	head := pointer + m.marker(t.Path) + m.progress(t) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
 	pw := m.progressWidth()
 	row := head
-	// A task with files: ⎘ and the count before the title (zgr01t).
+	// The text: the stage's reason in place of the title, or the title
+	// (6ephqk check 5). A task with files: ⎘ and the count before it
+	// (zgr01t).
+	word, text := m.rowStage(t)
+	if word == "" {
+		word = t.Status // done and dropped have no stage: the list shows the state
+	}
 	title := oneLine(t.Title)
+	if text != "" {
+		title = text
+	}
 	if mark := m.fileCount(t); mark != "" {
 		title = m.styles.dim.Render(mark) + title
 	}
@@ -139,27 +148,27 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 			row += initial(m.styles.priority, t.Priority) + " "
 		}
 	} else {
-		if c.status {
-			row += styled(m.styles.status, m.boardStatus(t), statusCell-1) + " "
-		}
 		if c.kind {
 			row += styled(m.styles.kind, t.Type, kindCell-1) + " "
 		}
 		if c.priority {
 			row += styled(m.styles.priority, t.Priority, priorityCell-1) + " "
 		}
+		if c.status {
+			row += m.stageWord(word, stageCell-1) + " "
+		}
 	}
 	row += fit(title, max(0, c.title))
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {
-		// A closed task is dim after its status word, which keeps its
-		// colour: the one scheme of the count line (zhvkmj).
+		// A closed task is dim after its id: its state word keeps its
+		// colour, the one scheme of the count line (zhvkmj).
 		from := 2 + pw + idCell
-		if c.status && !compact {
-			head += styled(m.styles.status, m.boardStatus(t), statusCell-1) + " "
-			from += statusCell
-		}
 		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, from, width)))
+		if c.status && !compact {
+			at := from + on(c.kind, kindCell) + on(c.priority, priorityCell)
+			row = ansi.Cut(row, 0, at) + styled(m.styles.status, t.Status, stageCell-1) + " " + ansi.Cut(row, at+stageCell, width)
+		}
 	}
 	if selected {
 		// Inner cells end with a full reset, which would cut the tint after
@@ -219,14 +228,14 @@ func (m model) columns(width int, compact bool) string {
 			s += "P "
 		}
 	} else {
-		if c.status {
-			s += fit("STATUS", statusCell-1) + " "
-		}
 		if c.kind {
 			s += fit("TYPE", kindCell-1) + " "
 		}
 		if c.priority {
 			s += fit("PRIORITY", priorityCell-1) + " "
+		}
+		if c.status {
+			s += fit("STAGE", stageCell-1) + " "
 		}
 	}
 	return m.styles.dim.Render(fit(s+fit("TITLE", max(0, c.title)), width))
@@ -265,7 +274,7 @@ func (m model) listText() string {
 	for n, i := range indices[start:end] {
 		lines = append(lines, m.taskRowMark(m.visible[i], m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
 	}
-	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · status blocked = unmet dependency", start+1, end, len(indices))))
+	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · depends = a dependency is not done", start+1, end, len(indices))))
 	return strings.Join(lines, "\n")
 }
 
@@ -364,7 +373,7 @@ func (m model) overviewText() string {
 // sectionStatus is the status whose colour an overview section's title
 // takes (zhvkmj): one scheme for the count line, the status word, the
 // board columns and these titles. LINT takes the colour of the ! mark.
-var sectionStatus = map[int]string{sectionDoing: "doing", sectionNext: "todo", sectionBlocked: "blocked", sectionRecent: "done"}
+var sectionStatus = map[int]string{sectionDoing: "doing", sectionNext: "todo", sectionRecent: "done"}
 
 // sectionStyle is the title style of overview section p.
 func (m model) sectionStyle(p int) lipgloss.Style {
@@ -436,7 +445,7 @@ func (m model) overviewRows() []int {
 }
 
 // spareOrder is who gets the overview's spare rows first (z6kz20).
-var spareOrder = []int{sectionDoing, sectionNext, sectionBlocked, sectionRecent, sectionLint}
+var spareOrder = []int{sectionDoing, sectionNext, sectionRecent, sectionLint}
 
 // scrollOf is the first row section p of the current view showed last.
 func (m model) scrollOf(p int) int {
@@ -611,7 +620,7 @@ func (m model) View() string {
 		tabs = append(tabs, m.detailTrail())
 	}
 	// Disjoint counts that add up to the tasks shown (zaec08): every task
-	// has one place; doing names how many of its tasks wait on a dependency.
+	// has one place; doing names how many of its tasks depend on another.
 	counts := map[string]int{}
 	doingBlocked := 0
 	for _, t := range m.visible {
@@ -624,7 +633,7 @@ func (m model) View() string {
 	for _, s := range boardStatuses {
 		text := fmt.Sprintf("%s %d", s, counts[s])
 		if s == "doing" && doingBlocked > 0 {
-			text += fmt.Sprintf(" (%d blocked)", doingBlocked)
+			text += fmt.Sprintf(" (%d depends)", doingBlocked)
 		}
 		summary = append(summary, m.styles.status[s].Render(text))
 	}

@@ -65,7 +65,7 @@ func TestSectionTitlesShareStatusColours(t *testing.T) {
 		r := m.styles.status[style].Bold(true).Render("X")
 		return r[:strings.Index(r, "X")]
 	}
-	for title, status := range map[string]string{"IN PROGRESS": "doing", "NEXT UP": "todo", "BLOCKED ·": "blocked", "RECENTLY DONE": "done"} {
+	for title, status := range map[string]string{"IN PROGRESS": "doing", "NEXT UP": "todo", "RECENTLY DONE": "done"} {
 		line := ""
 		for _, l := range strings.Split(screen, "\n") {
 			if strings.Contains(ansi.Strip(l), title) {
@@ -83,7 +83,7 @@ func TestSectionTitlesShareStatusColours(t *testing.T) {
 	// The status word on a done row keeps the done colour.
 	m.setView("list")
 	for _, l := range strings.Split(m.View(), "\n") {
-		if strings.Contains(ansi.Strip(l), "done A very long") && !strings.Contains(l, m.styles.status["done"].Render(fit("done", statusCell-1))) {
+		if strings.Contains(ansi.Strip(l), "done A very long") && !strings.Contains(l, m.styles.status["done"].Render(fit("done", stageCell-1))) {
 			t.Errorf("done row status word not in the done colour: %q", l)
 		}
 	}

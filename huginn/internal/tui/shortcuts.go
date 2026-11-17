@@ -12,7 +12,7 @@ type shortcut struct {
 
 // assignShortcuts picks one key per name, in order: each name gets its first
 // letter that no earlier name (and no reserved key) has taken. So todo,
-// doing, blocked, done, dropped become t, d, b, o, r: done and dropped move
+// doing, depends, done, dropped become t, d, e, o, r: done and dropped move
 // to their second letter because d is gone by then (2026-11-16, user).
 // A name that starts with a sigil, such as "!lint", gets that sigil: the
 // label already shows its key. Punctuation later in a name is never picked.

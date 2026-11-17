@@ -259,7 +259,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	if m.completion != 0 {
 		t.Fatal(m.completion)
 	}
-	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"status bl", "status blocked"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
+	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"status dep", "status depends"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
 		m := press(manyModel(t), ":", tc.query, "tab")
 		want := tc.want
 		if !strings.HasPrefix(want, "goto") {
@@ -279,7 +279,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 			t.Fatal(view, m.view)
 		}
 	}
-	for _, status := range []string{"todo", "doing", "done", "dropped", "blocked"} {
+	for _, status := range []string{"todo", "doing", "done", "dropped", "depends"} {
 		m := commandLine(manyModel(t), status)
 		if m.filter.Status != status || len(m.chips) != 1 {
 			t.Fatal(status, m.View())
@@ -320,7 +320,7 @@ func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
 	if len(m.chips) != 1 {
 		t.Fatal(m.View())
 	}
-	for i, status := range []string{"todo", "doing", "done", "blocked"} {
+	for i, status := range []string{"todo", "doing", "done", "depends"} {
 		m := press(manyModel(t), string(rune('1'+i)))
 		if m.filter.Status != status || len(m.chips) != 1 {
 			t.Fatal(i, m.View())

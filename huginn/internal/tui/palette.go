@@ -25,8 +25,8 @@ var commands = []command{
 	{"sort rank", "", "Back to rank order, the order moves change", true},
 	{"clear", "", "Clear every filter", false}, {"help", "", "All keys and commands", false},
 	{"todo", "", "Filter todo", true}, {"doing", "", "Filter in progress", true}, {"done", "", "Filter completed", true},
-	{"blocked", "", "Filter unmet dependencies", true}, {"dropped", "", "Filter dropped", true},
-	{"status", "status", "todo, doing, done, blocked, dropped", true}, {"type", "type", "feature, bug, chore, spike, docs", true},
+	{"depends", "", "Filter tasks whose dependency is not done", true}, {"dropped", "", "Filter dropped", true},
+	{"status", "status", "todo, doing, done, depends, dropped", true}, {"type", "type", "feature, bug, chore, spike, docs", true},
 	{"priority", "priority", "critical, high, medium, low", true}, {"group", "group", "Folder the task lives in", true},
 	{"label", "label", "Free labels", true}, {"epic", "epic", "An epic and its children", true},
 	{"assignee", "name", "Who is assigned", true},
@@ -56,7 +56,7 @@ func (m model) values(name string) []string {
 	set := map[string]bool{}
 	switch name {
 	case "status":
-		for _, s := range append(append([]string{}, task.Statuses...), "blocked") {
+		for _, s := range append(append([]string{}, task.Statuses...), "depends") {
 			set[s] = true
 		}
 	case "type":
@@ -262,7 +262,7 @@ func (m *model) executeCommand() bool {
 	switch name {
 	case "overview", "list", "board", "lint":
 		m.setView(name)
-	case "todo", "doing", "done", "dropped", "blocked":
+	case "todo", "doing", "done", "dropped", "depends":
 		m.setFilter("status", name)
 		m.setView("list")
 	case "status", "type", "priority", "group", "label", "assignee", "epic":

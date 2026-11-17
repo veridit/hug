@@ -39,7 +39,9 @@ func TestInProgressRowShowsBranch(t *testing.T) {
 		t.Fatalf("the main branch is shown:\n%s", out)
 	}
 	m.width = 80
-	if out = m.overviewText(); !strings.Contains(out, "alice · feat/te") {
+	// The stage column (6ephqk) is 2 cells wider than status was: the
+	// branch is cut further, the owner still comes first.
+	if out = m.overviewText(); !strings.Contains(out, "alice · feat/…") {
 		t.Fatalf("80 columns: owner first, branch cut:\n%s", out)
 	}
 }

@@ -1,0 +1,124 @@
+== overview at 80
+HUG TASKS · overview   7/7 tasks · ! 0 findings                                 
+[overview]   list    board    !lint                                             
+todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+> IN PROGRESS · assigned to  [4]                                                
+> ◑ 1/2 aaaaaa   feature high     active    Status colors: rows…  nautilus      
+  ◑ 1/2 bbbbbb   feature high     review:   Jørgen reviewing · …  nautilus      
+  ◑ 1/2 cccccc   feature high     waiting:  CI run 44063552584 …  nautilus      
+  ◑ 1/2 dddddd   feature high     depends   ▱▱ 0/2  One set of …  nautilus      
+                                                                                
+  NEXT UP · rank order  [3]                                                     
+  ◑ 1/2 eeeeee   feature high     design:   should type leave the rows, or stay…
+  ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic           
+  ◑ 1/2 gggggg   feature high     deferred: after the release                   
+                                                                                
+  RECENTLY DONE · last closed  [0] · None                                       
+                                                                                
+  LINT · tasks needing attention  [0] · 0 findings · None                       
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+All tasks · : filters and commands                                              
+                                                                                
+j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
+== list at 80
+HUG TASKS · list   7/7 tasks · ! 0 findings                                     
+ overview   [list]   board    !lint                                             
+todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+  ✓     ID       TYPE    PRIORITY STAGE     TITLE                               
+> ◑ 1/2 aaaaaa   feature high     active    Status colors: rows and sections sh…
+  ◑ 1/2 bbbbbb   feature high     review:   Jørgen reviewing · 5 min            
+  ◑ 1/2 cccccc   feature high     waiting:  CI run 44063552584 · 12 min         
+  ◑ 1/2 dddddd   feature high     depends   ▱▱ 0/2  One set of variable names   
+  ◑ 1/2 eeeeee   feature high     design:   should type leave the rows, or stay…
+  ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic           
+  ◑ 1/2 gggggg   feature high     deferred: after the release                   
+Rows 1–7 of 7 · ! lint finding · depends = a dependency is not done             
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+All tasks · : filters and commands                                              
+                                                                                
+j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
+== overview at 140
+HUG TASKS · overview   7/7 tasks · ! 0 findings                                                                                             
+[overview]   list    board    !lint                                                                                                         
+todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+> IN PROGRESS · assigned to  [4]                                                                                                            
+> ◑ 1/2 aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                        nautilus        
+  ◑ 1/2 bbbbbb   feature high     review:   Jørgen reviewing · 5 min                                                        nautilus        
+  ◑ 1/2 cccccc   feature high     waiting:  CI run 44063552584 · 12 min                                                     nautilus        
+  ◑ 1/2 dddddd   feature high     depends   ▱▱ 0/2  One set of variable names                                               nautilus        
+                                                                                                                                            
+  NEXT UP · rank order  [3]                                                                                                                 
+  ◑ 1/2 eeeeee   feature high     design:   should type leave the rows, or stay as a column?                                                
+  ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic                                                                       
+  ◑ 1/2 gggggg   feature high     deferred: after the release                                                                               
+                                                                                                                                            
+  RECENTLY DONE · last closed  [0] · None                                                                                                   
+                                                                                                                                            
+  LINT · tasks needing attention  [0] · 0 findings · None                                                                                   
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+All tasks · : filters and commands                                                                                                          
+                                                                                                                                            
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                                         
+== list at 140
+HUG TASKS · list   7/7 tasks · ! 0 findings                                                                                                 
+ overview   [list]   board    !lint                                                                                                         
+todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
+No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+  ✓     ID       TYPE    PRIORITY STAGE     TITLE                                                                                           
+> ◑ 1/2 aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                                        
+  ◑ 1/2 bbbbbb   feature high     review:   Jørgen reviewing · 5 min                                                                        
+  ◑ 1/2 cccccc   feature high     waiting:  CI run 44063552584 · 12 min                                                                     
+  ◑ 1/2 dddddd   feature high     depends   ▱▱ 0/2  One set of variable names                                                               
+  ◑ 1/2 eeeeee   feature high     design:   should type leave the rows, or stay as a column?                                                
+  ◑ 1/2 ffffff   feature high     ready     Depend on a group or epic                                                                       
+  ◑ 1/2 gggggg   feature high     deferred: after the release                                                                               
+Rows 1–7 of 7 · ! lint finding · depends = a dependency is not done                                                                         
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+All tasks · : filters and commands                                                                                                          
+                                                                                                                                            
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                                         

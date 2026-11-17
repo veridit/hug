@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -63,22 +64,27 @@ func sectionIDs(m model, p int) []string {
 	return out
 }
 
-// Check 1: a doing task with an unmet dependency is in IN PROGRESS only,
-// drawn blocked; BLOCKED holds only todo tasks that cannot start; every
-// open task is in exactly one of IN PROGRESS, NEXT UP and BLOCKED.
+// Check 1: every open task is in exactly one of IN PROGRESS and NEXT UP.
+// A task with an open dependency stays in its own section with the stage
+// depends (6ephqk check 7, Jørgen 11:43: no BLOCKED section).
 func TestOverviewOneSectionPerTask(t *testing.T) {
 	m, ids := placeBoard(t)
 	m.setView("overview")
-	bravo := ids["Bravo"]
-	doing, next, blocked := sectionIDs(m, sectionDoing), sectionIDs(m, sectionNext), sectionIDs(m, sectionBlocked)
-	if !contains(doing, bravo) || contains(blocked, bravo) || contains(next, bravo) {
-		t.Fatalf("Bravo (doing, unmet dependency): IN PROGRESS %v, NEXT UP %v, BLOCKED %v", doing, next, blocked)
+	bravo, charlie := ids["Bravo"], ids["Charlie"]
+	doing, next := sectionIDs(m, sectionDoing), sectionIDs(m, sectionNext)
+	if !contains(doing, bravo) || contains(next, bravo) {
+		t.Fatalf("Bravo (doing, open dependency): IN PROGRESS %v, NEXT UP %v", doing, next)
 	}
-	if strings.Join(blocked, " ") != ids["Charlie"] {
-		t.Fatalf("BLOCKED holds %v, want only Charlie %s", blocked, ids["Charlie"])
+	if !contains(next, charlie) || contains(doing, charlie) {
+		t.Fatalf("Charlie (todo, open dependency): IN PROGRESS %v, NEXT UP %v", doing, next)
+	}
+	for _, name := range overviewSections {
+		if strings.Contains(name, "BLOCKED") {
+			t.Fatalf("a BLOCKED section: %v", overviewSections)
+		}
 	}
 	seen := map[string]int{}
-	for _, p := range []int{sectionDoing, sectionNext, sectionBlocked} {
+	for _, p := range []int{sectionDoing, sectionNext} {
 		for _, id := range sectionIDs(m, p) {
 			seen[id]++
 		}
@@ -88,11 +94,15 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 			t.Fatalf("%s is in %d sections", title, seen[ids[title]])
 		}
 	}
-	// Drawn blocked where it stands.
+	// Drawn with the depends stage where it stands: the bar, then the title.
 	view := ansi.Strip(m.overviewText())
 	inProgress := view[:strings.Index(view, "NEXT UP")]
-	if !strings.Contains(inProgress, bravo+"   blocked") {
-		t.Fatalf("Bravo not drawn blocked in IN PROGRESS:\n%s", inProgress)
+	if !regexp.MustCompile(bravo + `\s.*depends\s+▱ 0/1  Bravo`).MatchString(inProgress) {
+		t.Fatalf("Bravo not drawn depends in IN PROGRESS:\n%s", inProgress)
+	}
+	nextUp := view[strings.Index(view, "NEXT UP"):strings.Index(view, "RECENTLY DONE")]
+	if !regexp.MustCompile(charlie + `\s.*depends\s+▱ 0/1  Charlie`).MatchString(nextUp) {
+		t.Fatalf("Charlie not drawn depends in NEXT UP:\n%s", nextUp)
 	}
 	if strings.Count(view, bravo) != 1 {
 		t.Fatalf("Bravo shown %d times in the overview:\n%s", strings.Count(view, bravo), view)
@@ -100,11 +110,11 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 }
 
 // Check 2: the header counts are disjoint and add up to the tasks shown;
-// doing names how many of its tasks are blocked.
+// doing names how many of its tasks depend on another.
 func TestHeaderCountsAddUp(t *testing.T) {
 	m, _ := placeBoard(t)
 	header := strings.Split(ansi.Strip(m.View()), "\n")[2]
-	want := "todo 2  ·  doing 2 (1 blocked)  ·  blocked 1  ·  done 1  ·  dropped 1"
+	want := "todo 2  ·  doing 2 (1 depends)  ·  depends 1  ·  done 1  ·  dropped 1"
 	if strings.TrimSpace(header) != want {
 		t.Fatalf("header %q, want %q", strings.TrimSpace(header), want)
 	}
@@ -148,13 +158,13 @@ func TestBoardAndStatusFilterOnePlace(t *testing.T) {
 			if !contains(col, ids["Bravo"]) || !contains(col, ids["Golf"]) {
 				t.Fatalf("DOING column %v lacks Bravo or Golf", col)
 			}
-		case "blocked":
+		case "depends":
 			if strings.Join(col, " ") != ids["Charlie"] {
-				t.Fatalf("BLOCKED column %v, want only Charlie", col)
+				t.Fatalf("DEPENDS column %v, want only Charlie", col)
 			}
 		case "todo":
 			if contains(col, ids["Charlie"]) {
-				t.Fatal("blocked todo also in TODO")
+				t.Fatal("a todo task that depends is also in TODO")
 			}
 		}
 	}
@@ -170,7 +180,7 @@ func TestBoardAndStatusFilterOnePlace(t *testing.T) {
 		for _, v := range m2.visible {
 			got = append(got, v.Title)
 		}
-		want := map[string]string{"todo": "Delta Alpha", "doing": "Bravo Golf", "blocked": "Charlie", "done": "Echo", "dropped": "Foxtrot"}[s]
+		want := map[string]string{"todo": "Delta Alpha", "doing": "Bravo Golf", "depends": "Charlie", "done": "Echo", "dropped": "Foxtrot"}[s]
 		if strings.Join(got, " ") != want {
 			t.Fatalf("status %s shows %v, want %s", s, got, want)
 		}
@@ -268,8 +278,8 @@ func TestRecentlyDoneNewestFirst(t *testing.T) {
 	}
 	view := ansi.Strip(m.overviewText())
 	at := strings.Index(view, "RECENTLY DONE · last closed  [4]")
-	if at < 0 || at < strings.Index(view, "BLOCKED") || at > strings.Index(view, "LINT") {
-		t.Fatalf("RECENTLY DONE not between BLOCKED and LINT:\n%s", view)
+	if at < 0 || at < strings.Index(view, "NEXT UP") || at > strings.Index(view, "LINT") {
+		t.Fatalf("RECENTLY DONE not between NEXT UP and LINT:\n%s", view)
 	}
 	// A task closed since the last read comes first: only the new commits
 	// are read.
