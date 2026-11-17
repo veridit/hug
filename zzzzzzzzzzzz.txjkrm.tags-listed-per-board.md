@@ -32,3 +32,5 @@ Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate
 - [ ] hug upgrade --tags on Seid proposes the merges, field moves and drops as a diff with counts, writes nothing until approved; after approval lint is clean of tag findings
 
 ## Notes
+
+Jørgen 2026-11-17 10:28 (row layout): the state is the section header, so rows drop the status column. Row order: pie, id, type, priority, tags, stage, text. A stage with extra data shows 'stage: reason' (waiting: CI run N · 12 min; depends: 44w1ev (doing)) instead of the title; a stage without it shows the title. Mock in tmp/lanes/txjkrm-preview.md (Revision). Open: reason replaces the title fully, or reason then dim title.
