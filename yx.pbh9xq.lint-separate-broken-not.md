@@ -50,6 +50,12 @@ Back to todo (crab 13:31; wyvern resumes it after g9dg32). Code: ci/pbh9xq is pu
 
 
 Rebase onto 4ecfa25 is in progress in worktree hug-lint (paused for wyvern's landing slot). Resolved: codes.go (Severity on every row of main's table; backlog-leftover advice, stale-owner and the stage codes broken), lint.go (main's overview replaces the old summary block; the overview header now says '(N broken)'), help.go, render.go, cli_test.go, edit_notice_test.go. Goldens are taken from main and must be regenerated. Still failing: TestLintOverviewDetailAndSameBlock and TestLintHidesClosedTasks.
+Rebased onto 4ecfa25: ae0ec48 + 0acb158 on ci/pbh9xq, CI 44109039664. Conflicts resolved:
+- codes.go: main's table with a Severity on each code. backlog-leftover is advice; stale-owner and the 4 stage codes are broken.
+- The lint overview header now reads 'N findings (M broken) on T tasks'.
+- Tests follow main: the overview is one line per task, done needs take first, and new refuses a long title so the test uses set.
+- Goldens regenerated and reviewed: advice-only rows lose '!', and the header reads '! N broken · M advice'.
+Local go test ./... is all ok.
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:23 todo/ready -> doing/active (take)
