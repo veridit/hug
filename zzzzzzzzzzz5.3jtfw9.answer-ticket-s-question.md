@@ -48,5 +48,6 @@ nautilus 13:47: built on nautilus/3jtfw9, commit fd95919, CI 44096102067 (queued
 file:needs-you.md (3264 bytes, sha256:d2e9eb8a) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
 file:waiting-rows.md (1583 bytes, sha256:5108b054) two-line waiting rows mock (Jørgen 14:55)
 file:detail-stage.md (1564 bytes, sha256:a6a935a7) detail: stage first mock (Jørgen 14:47)
+nautilus 15:14: rebased on main b8f9000 as 99edb5f (conflicts in CHANGELOG, cache.go, cli.go, help.go, mcp/server.go resolved; cache SchemaVersion 14, fkpyg3 took 13). Local: go test ./huginn/... all 11 packages ok. Pushed ci/3jtfw9. hatchling's cue commit (check 3) is rebased on 99edb5f in ci/3jtfw9-cue; I cherry-pick it when it's green, so both land together.
 ## History
 - 2026-11-17T14:56 doing -> doing/waiting (wait)
