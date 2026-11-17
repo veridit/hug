@@ -66,7 +66,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -512,7 +512,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -706,7 +706,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		out := []Reply{}
 		for _, t := range ts {
-			if filter.Status != "" && t.Status != filter.Status || filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) || !task.InEpic(t, ts, filter.Epic) {
+			if !matchesFilter(t, filter, ts) {
 				continue
 			}
 			out = append(out, taskJSON(t, s.r.Dir, ts))
@@ -717,6 +717,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		reply["tasks"] = out
 		return reply, e
+	case "search":
+		return a.search(ctx, s, f, filter)
 	case "show":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -1268,6 +1270,9 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		} else {
 			writeBoard(a.Out, cols, boardWidth(a.getenv("COLUMNS")))
 		}
+	}
+	if rs, ok := reply["results"].([]Reply); ok {
+		writeSearch(a.Out, fmt.Sprint(reply["query"]), rs)
 	}
 	if ts, ok := reply["tasks"].([]Reply); ok {
 		// Fixed-width columns first, the free-text title last, so the

@@ -70,7 +70,8 @@ func TestScaleBench10K(t *testing.T) {
 		sort.Slice(ts, func(i, j int) bool { return ts[i] < ts[j] })
 		return ts[len(ts)/2]
 	}
-	for _, c := range [][]string{{"ls"}, {"next"}, {"show", id}, {"board"}, {"lint"}, {"note", id, "scale note"}} {
+	// search (49n9kw): a word in about a tenth of the notes and a title word.
+	for _, c := range [][]string{{"ls"}, {"next"}, {"show", id}, {"board"}, {"lint"}, {"search", "retry", "parser"}, {"note", id, "scale note"}} {
 		var olds, news []time.Duration
 		for i := 0; i < runs; i++ {
 			olds = append(olds, uncached(c...))
