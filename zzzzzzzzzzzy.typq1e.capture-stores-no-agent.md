@@ -4,7 +4,7 @@ title: "Capture stores no agent status at all (follow-up to ez50rb)"
 status: todo
 type: bug
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
