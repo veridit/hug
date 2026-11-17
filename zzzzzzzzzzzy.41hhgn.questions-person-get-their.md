@@ -25,7 +25,7 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 ## Depends on
 
 ## Acceptance
-- [ ] x
+- [ ] ~~x~~ (not relevant: placeholder from creation, crab, 2026-11-17)
 - [ ] hug task states lists doing/question with its fields; 'hug task ask ID --to jhf --check 9 "look at ..."' sets stage question with them, and a bad N is refused with 'task has 9 checks' and a fix: line (test)
 - [ ] hug task wait ID --on NAME refuses with 'fix: hug task ask ID --to NAME "..."'; plain wait still works (test)
 - [ ] hug upgrade previews, and --apply moves each doing/waiting with waiting_for into doing/question, a leading 'check N:' (real N) into question_check; on hug's own board the preview lists the tasks and the apply leaves 0 waiting_for fields (test, plus the board numbers in a note)
