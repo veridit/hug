@@ -11,10 +11,11 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing turn after kestrel n2hq8p and hatchling p29rbz; 99edb5f green in CI 44111992156; cue commit from hatchling joins it"
-waiting_since: "2026-11-17T16:31"
+waiting_on: "check 5: answer a real worker question in hug tui (a under the question); 1, 2, 4 on main 6ef55df; check 3 is hatchling's cue 842b403"
+waiting_since: "2026-11-17T17:15"
 waiting_asked_by: "nautilus"
 stage: "waiting"
+waiting_for: "jhf"
 ---
 
 ## Goal
