@@ -12,10 +12,7 @@ doing_since: "2026-11-17T19:42"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "windows timing run on ci/ce3dmq-timing (seed in one transaction), then land"
-waiting_since: "2026-11-17T20:21"
-waiting_asked_by: "hatchling"
-stage: "waiting"
+stage: "active"
 ---
 
 ## Goal
@@ -47,3 +44,4 @@ hatchling 19:31: the real cost was found with per-test times on windows (diagnos
 ## History
 - 2026-11-17T19:42 todo -> doing/active (take)
 - 2026-11-17T20:21 doing -> doing/waiting (wait)
+- 2026-11-17T20:31 doing/waiting -> doing/active (resume); was waiting_asked_by: hatchling; waiting_on: windows timing run on ci/ce3dmq-timing (seed in one transaction), then land; waiting_since: 2026-11-17T20:21
