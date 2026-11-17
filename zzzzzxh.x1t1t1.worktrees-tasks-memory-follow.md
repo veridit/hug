@@ -67,5 +67,6 @@ kestrel 2026-11-17 12:35, Statbus worktree observation (read-only). Board: one d
 kestrel 12:40, check 7 waits on: real use of a LINKED worktree in Statbus (git worktree add) where an agent takes a task, once via CLI and once via MCP task_take with cwd. So far (12:35) Statbus has used only a separate clone (statbus_test, branch statbus-628-all-forms, 00rnq5 recorded with that branch and worktree, correct). No linked statbus worktree has taken a task; statbus_rel_2026113 does not exist. Nothing for hug to do until that happens; recheck the boards read-only then.
 
 
+kestrel 14:40, Statbus observed read-only (nothing written there). ~/ssb/statbus has one linked worktree, statbus-db-seed (branch db-seed); no task records it. ~/ssb/statbus_test is a separate clone (git rev-parse --git-common-dir prints .git), not a linked worktree. In it, rabbit (claude-opus-5-5) took 6 tasks today and each records branch 'statbus-628-all-forms' and worktree '/Users/jhf/ssb/statbus_test' correctly (ezp3h0, hzyejk, qtx2xm, mtw92d, s83by9, 00rnq5). Check 7 needs an agent to take a task from a linked Statbus worktree via CLI and via MCP. That only happens when Jørgen's work uses one, so we can't produce it (crab 14:39). Waiting on jhf: use a linked worktree for a Statbus task, or strike check 7 with a reason.
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
