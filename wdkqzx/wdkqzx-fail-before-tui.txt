@@ -1,0 +1,4 @@
+    lintwait_test.go:43: waiting on jhf: WAITING [m1ddgc x582y8], LINT [m1ddgc x582y8]; want WAITING only
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/tui	0.127s
+FAIL

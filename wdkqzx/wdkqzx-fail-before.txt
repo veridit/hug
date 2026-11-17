@@ -1,0 +1,9 @@
+--- FAIL: TestNoQuestionWhileWaitingOnAPerson (0.04s)
+    questions_test.go:211: waiting on jhf: want no question, got "shipped-not-done"
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/task	0.054s
+FAIL
+        fix: hug task set ev5ds9 --state todo && hug task note ev5ds9 "why it goes back"
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/tui	0.070s
+FAIL

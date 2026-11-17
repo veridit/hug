@@ -1,0 +1,64 @@
+wdkqzx proposal (hatchling, 2026-11-18 00:05 local), for crab before building
+
+Today (v0.7.49, hug's board), verbatim:
+  $ hug task show 6ephqk
+  ...
+  lint: 1 finding
+    line 1: [shipped-not-done] shipped, but doing: release v0.7.45 contains commit f4ee48b naming 6ephqk (its note says so); nautilus: is it done?
+  fix: hug task done 6ephqk          <- hug refuses this (check 9 open)
+  next: hug task check 6ephqk 9
+new, set and take already end with this block (cli.go withLint, the TaskLint block from fkpyg3).
+check, strike, note, wait, resume, review, design, answer, dep, attach and the MCP task_update reply do not.
+
+A. The block on every write (check 4)
+Same block, same place, same text as show/take/set today, so an agent sees one format everywhere:
+  lint: N finding(s)
+    line L: [CODE] PROBLEM
+  fix: COMBINED FIX
+Commands: take, set, new, check, strike, note, wait, resume, review, design, answer, dep, attach, detach, promote
+(and ask once 41hhgn lands). Not done/drop: they close the task, and closed tasks show no advice
+(ShownFindings). A broken finding on a done task still prints, as it does in lint.
+Clean task: nothing extra, not even "lint: 0 findings" (check 4: print nothing extra when clean).
+--json and MCP: the reply carries "lint": {"findings":[...], "fix":"..."} as show does now. MCP task_update returns it because it
+returns the CLI reply. Cost: one cache lint of the board already read (LintListed, no second walk), as take pays today.
+The question findings (landed-unchecked, shipped-not-done, todo-has-commit) come from the parse, so they show here too.
+doing-idle does not, because a write has just touched the task. branch-gone does not either: it reads git, and stays on lint and show.
+
+B. Asking a person refuses while the task is broken (check 5)
+Applies to: hug task wait ID --on NAME (today), hug task ask (41hhgn), hug task review ID --by NAME, hug task design ID --for NAME.
+Not a plain wait on a thing (no --on), since nobody is handed anything.
+"Broken" means severity Broken on the task's own file, i.e. what lint already marks broken. Advice does not block.
+Refusal, exit 2, nothing written:
+  hug task wait: 6ephqk is not ready to hand to jhf: it has 1 broken finding
+    line 1: [shipped-not-done] shipped, but doing: release v0.7.45 contains commit f4ee48b naming 6ephqk (its note says so) and check 9 is open; nautilus: does it hold, or strike it?
+  fix: hug task check 6ephqk 9
+With several, every broken one is listed and the fix is the CombinedFix (as show). MCP: the same UsageError (Problem, Fix).
+After the fix, the same command goes through unchanged.
+Escape: none. A person is never handed a broken task (crab 00:00). If a finding is wrong, that is a lint bug.
+
+C. shipped-not-done's fix is one hug accepts (check 3), and it does not deadlock the ask (check 6)
+  - all checks settled, not done:   ... nautilus: is it done?                     fix: hug task done ID   (unchanged)
+  - open checks:                     ... nautilus: does check 9 hold?               fix: hug task check ID 9
+    (several open: "do checks 7 and 9 hold?" and the first open one in the fix; struck counts as settled.
+     fix names check, not strike: strike needs a reason only the owner has, and the problem text says "or strike it".)
+    Full text: "shipped, but doing: release v0.7.45 contains commit f4ee48b naming 6ephqk (its note says so) and check 9 is open; nautilus: does it hold, or strike it?"
+  - every open check is the one the person is asked about (asked_check after 41hhgn; today waiting_on/asked text naming
+    "check N" is not parsed, so until 41hhgn this case needs asked_check): no finding. The ask already holds the question.
+    Order dependency: check 6 needs 41hhgn's asked_check field. If 41hhgn is not on main when I build, I build A, B and C1-2,
+    and check 6 waits on 41hhgn (hug task dep wdkqzx --add 41hhgn) rather than parsing free text.
+landed-unchecked's fix (hug task check ID 1) is already one hug accepts. todo-has-commit's (hug task take) is too.
+
+Deadlock check for 6ephqk as it stands (8/9, shipped, waiting on jhf, check 9 open):
+  B refuses the wait with shipped-not-done -> fix: hug task check 6ephqk 9. But check 9 is the thing jhf must answer.
+  With C3 (asked_check 9) the finding goes, so the ask goes through. Without 41hhgn, a task like 6ephqk cannot be
+  handed to a person while shipped. So B should land with or after C3 (asked_check), not before. Proposed order:
+  1. C1-2 (fix lines) + A (block on every write): no dependency, ship first.
+  2. B + C3 after 41hhgn lands asked_check.
+Existing waits are untouched: B checks only at the moment of asking.
+
+Tests (each fails on main):
+  check 3: 8/9 settled, active, shipped -> fix "hug task check ID 9"; 9/9 -> "hug task done ID".
+  check 4: one test per family (take/set/new, check/strike/promote, note/attach/detach/dep, wait/resume/review/design/answer,
+           MCP task_update) on a task with a broken finding: output ends with the block; same command on a clean task: no "lint:" line.
+  check 5: wait --on jhf on a task with a missing Goal -> exit 2, the refusal above, file unchanged; after set --goal, it goes through.
+  check 6: 6ephqk's shape, asked about check 9 -> no shipped-not-done, ask goes through.

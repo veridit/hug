@@ -41,5 +41,8 @@ Code: huginn/internal/task/questions.go noteQuestion (shipped-not-done fix is 'h
 
 
 crab 23:48 local, from Jørgen's 'is this lint truly clear?': besides the waiting case, the fix line 'hug task done 6ephqk' is wrong on its own. Check 9 is open, so hug task done refuses with unchecked-acceptance (verified on a scratch board). A fix: line must be one hug accepts.
+file:wdkqzx-proposal.txt (5261 bytes, sha256:fb2a73dc)
+file:wdkqzx-fail-before.txt (358 bytes, sha256:f7e842b0)
+file:wdkqzx-fail-before-tui.txt (171 bytes, sha256:a582df56)
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
