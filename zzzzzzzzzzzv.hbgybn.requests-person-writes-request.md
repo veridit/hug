@@ -42,5 +42,18 @@ Not the asked stage: that blocks the task on a person; a request is an open item
 Jørgen 23:53 local: 'it's like a managerial ask, and the consequence for the ticket will be figured out as you process it.' So a request names no field or check and has no form: it is intent. The agent decides what it means for the ticket (which fields, checks, state, maybe a new task or a split) and the resolve account says what it decided. The agent applies hug's task rules (goal, purpose, principle, details, acceptance; titles under 80; fix lines) when it turns the ask into edits; the person never has to.
 
 
+kestrel 00:58, storage proposal (please confirm before I build; check 11 of 41hhgn is built with it, same file boardcue.go, one writer):
+1. File: a '## Requests' section placed before ## Notes (task.Tidy's order gets Requests after Acceptance and others). Each request is one block:
+   - 2026-11-18T00:58 request 1 by jhf:
+     <text verbatim, every line indented 2 spaces, blank lines kept as '  '>
+   closed by a line under it:
+     resolved 2026-11-18T01:10 by nautilus: <account, verbatim, may span lines, indented 4>
+   N is the request's number on the task (1, 2, ...), never reused, so 'resolve ID N' stays stable after others close.
+2. Parse: Task.Requests []Request{N, By, At, Text, Resolved *{By, At, Text}}; Task.OpenRequests int (cached; cache schema 20).
+3. CLI: hug task request ID "text" | - (stdin) [--as NAME]; hug task requests [--all] lists open ones across the board (id, N, by, age, first line), fix line per row; hug task resolve ID N "what changed" | - [--as NAME]. A resolve of an unknown N gives 'ID has requests 1, 2 (open: 2)' with fix 'hug task requests'. Resolving an already resolved N is refused, with show as the fix. Commits: 'hug task request ID' / 'hug task resolve ID N'.
+4. MCP: task_update action request (text, agent) and resolve (item = N, text, agent); task_list filter requests: true.
+5. Cue (boardcue.go): kind 'request', said once per request (key request:ID#N, like answer: not rate-held), to the assignee's session. Line: 'Task board: jhf asks on 6ephqk: "..." (request 1). Act on it, then: hug task resolve 6ephqk 1 "what changed"'.
+6. Unassigned routing and 41hhgn check 11 both need 'the coordinator', which hug does not know today. Proposal: hug.toml [board] coordinator = "crab" (hug task people-style command 'hug task coordinator NAME'); with none set, an unassigned request goes to every session on the board once (first session whose turn comes, key per request, so said once in total, not once per session). crab to rule.
+7. 41hhgn check 11: after an answer, the asker's next write on that task is recorded under the answer (History '  outcome by X: <the write's history line>'), and kind 'answered' tells the coordinator once: 'Task board: nautilus acted on jhf's answer on 41hhgn: <outcome line>'. Same routing as 6.
 ## History
 - 2026-11-18T00:57 todo -> doing/active (take)
