@@ -1,21 +1,17 @@
 ---
 id: p29rbz
 title: "hug mem remember: a refusal says NOT STORED first and exits non-zero"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T16:14"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "fixed on ci/p29rbz 0c72206, CI 44112858767; lands in crab's turn"
-waiting_since: "2026-11-17T16:19"
-waiting_asked_by: "hatchling"
+done_at: "2026-11-17T17:03"
 ---
 
 ## Goal
@@ -44,3 +40,4 @@ hatchling 15:30: CI 44112858767 on 0c72206 completed success (ubuntu, macos, win
 ## History
 - 2026-11-17T16:14 todo -> doing/active (take)
 - 2026-11-17T16:19 doing/active -> doing/waiting (wait)
+- 2026-11-17T17:03 doing/waiting -> done (done); was doing_since: 2026-11-17T16:14; waiting_asked_by: hatchling; waiting_on: fixed on ci/p29rbz 0c72206, CI 44112858767; lands in crab's turn; waiting_since: 2026-11-17T16:19
