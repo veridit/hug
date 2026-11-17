@@ -4,7 +4,7 @@ title: "One ticket in doing per agent; a second take says why or refuses"
 status: todo
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
