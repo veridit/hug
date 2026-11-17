@@ -1027,7 +1027,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.message = "no acceptance checks to tick"
 				}
 			case "t", "d", "x", "J", "K", "e":
-				m.requestAction(k, "")
+				return m, m.startAction(k)
 			case "/", ":", "#":
 				return m, m.openInput(k, "")
 			case "f":
@@ -1182,7 +1182,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.message = fmt.Sprintf("Space ticks a check inside the task: Enter opens %s", t.ID)
 			}
 		case contains([]string{"t", "d", "x", "J", "K", "e"}, k):
-			m.requestAction(k, "")
+			return m, m.startAction(k)
 		}
 	}
 	return m, nil
@@ -1242,6 +1242,13 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	} else if k == "enter" {
 		if m.prompt == "new title" && strings.TrimSpace(m.input.Value()) != "" {
 			m.requestAction("n", strings.TrimSpace(m.input.Value()))
+		}
+		if m.prompt == dropPrompt {
+			if why := strings.TrimSpace(m.input.Value()); why != "" {
+				m.requestAction("x", why)
+			} else {
+				m.message = "not dropped: a drop needs a reason"
+			}
 		}
 		m.prompt = ""
 		m.input.Blur()

@@ -131,7 +131,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	add("new", "Create a task. Describe it with goal (where we aim), purpose (why), principle (what we do and do not do), details (only facts a decision depends on) and acceptance checks. Keep the title under 80 characters.", map[string]any{"title": str("Short task title, under 80 characters"), "goal": str("Where we aim: the end state, one or two sentences"), "purpose": str("Why we aim there: what improves for whom"), "principle": str("The approach: what we do and deliberately do not do"), "details": str("Only facts a decision depends on: numbers, traps, names"), "accept": array("Observable acceptance checks"), "dep": array("Dependency ids, slugs or aliases"), "type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "label": array("Labels"), "group": str("Folder"), "top": map[string]any{"type": "boolean"}, "after": str("Task to follow")}, []string{"title", "goal", "accept"}, func(m map[string]any) ([]string, error) {
 		return flags([]string{"new", get(m, "title")}, m, "goal", "purpose", "principle", "details", "accept", "dep", "type", "priority", "label", "group", "top", "after"), nil
 	})
-	add("update", "Change fields (set, parent), dependencies (dep), checks, promote an item to its own task (promote, item), notes, rank (move), folder (move_group), or drop, using only the selected action's fields.", map[string]any{"id": str("Task reference"), "action": enum("set", "check", "promote", "note", "move", "move_group", "mv", "dep", "drop", "rebalance", "attach", "detach"), "name": str("Task file name for attach/detach, e.g. bench/README.md"), "content": str("Text to attach as the file (attach); use instead of paths when the server cannot read your files"), "paths": array("Files or folders to attach (attach), read by the server"), "replace": map[string]any{"type": "boolean"}, "safe_reason": str("Only after a secret warning: why the text is safe"), "status": enum("todo", "doing", "done", "dropped"), "type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "title": str("New title"), "label": str("Label"), "assignee": str("Assignee"), "parent": str("Epic this task belongs to (id); none clears. Epic > task > acceptance item"), "item": map[string]any{"type": "integer", "minimum": 1}, "text": str("Note text"), "add_deps": array("Dependency references to add, idempotently; use action dep"), "remove_deps": array("Dependency references to remove; use action dep"), "group": str("Destination folder, requires action move_group and preserves rank and contents"), "before": str("Insert before task"), "after": str("Insert after task"), "top": map[string]any{"type": "boolean"}}, []string{"id"}, func(m map[string]any) ([]string, error) {
+	add("update", "Change fields (set, parent), dependencies (dep), checks, promote an item to its own task (promote, item), notes, rank (move), folder (move_group), drop with the reason in text, wait (text: what on) and resume a doing task, or ask a design question on a todo task (design, text; empty text clears it), using only the selected action's fields.", map[string]any{"id": str("Task reference"), "action": enum("set", "check", "promote", "note", "move", "move_group", "mv", "dep", "drop", "wait", "resume", "design", "rebalance", "attach", "detach"), "name": str("Task file name for attach/detach, e.g. bench/README.md"), "content": str("Text to attach as the file (attach); use instead of paths when the server cannot read your files"), "paths": array("Files or folders to attach (attach), read by the server"), "replace": map[string]any{"type": "boolean"}, "safe_reason": str("Only after a secret warning: why the text is safe"), "status": enum("todo", "doing", "done", "dropped"), "type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "title": str("New title"), "label": str("Label"), "assignee": str("Assignee"), "parent": str("Epic this task belongs to (id); none clears. Epic > task > acceptance item"), "item": map[string]any{"type": "integer", "minimum": 1}, "text": str("Note text; the reason for drop; what it waits on for wait; the question for design (empty clears it)"), "add_deps": array("Dependency references to add, idempotently; use action dep"), "remove_deps": array("Dependency references to remove; use action dep"), "group": str("Destination folder, requires action move_group and preserves rank and contents"), "before": str("Insert before task"), "after": str("Insert after task"), "top": map[string]any{"type": "boolean"}}, []string{"id"}, func(m map[string]any) ([]string, error) {
 		action, id := get(m, "action"), get(m, "id")
 		if action == "" {
 			action = "set"
@@ -142,7 +142,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 				action = "dep"
 			}
 		}
-		allowed := map[string]string{"set": "status type priority title label assignee parent", "check": "item", "promote": "item", "note": "text", "move": "before after top", "move_group": "group", "mv": "group", "dep": "add_deps remove_deps", "drop": "", "rebalance": "", "attach": "name content paths replace safe_reason text", "detach": "name"}
+		allowed := map[string]string{"set": "status type priority title label assignee parent", "check": "item", "promote": "item", "note": "text", "move": "before after top", "move_group": "group", "mv": "group", "dep": "add_deps remove_deps", "drop": "text", "wait": "text", "resume": "", "design": "text", "rebalance": "", "attach": "name content paths replace safe_reason text", "detach": "name"}
 		permitted := strings.Fields(allowed[action] + " id action")
 		for key := range m {
 			if !slices.Contains(permitted, key) {
@@ -212,8 +212,14 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 				return nil, &cli.UsageError{Problem: action + " needs item", Fix: "hug task show " + id}
 			}
 			args = append(args, strconv.Itoa(int(n)))
-		case "note":
+		case "note", "drop", "wait":
 			args = append(args, get(m, "text"))
+		case "design":
+			if q := get(m, "text"); q != "" {
+				args = append(args, q)
+			} else {
+				args = append(args, "--clear")
+			}
 		case "mv", "move_group":
 			if _, ok := m["group"]; !ok {
 				return nil, &cli.UsageError{Problem: "move_group needs group", Fix: "hug task show " + id}

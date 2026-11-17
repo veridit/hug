@@ -14,6 +14,25 @@ import (
 
 var actionNames = map[string]string{"t": "take", "d": "done", "x": "drop", "J": "move down", "K": "move up", " ": "toggle acceptance", "e": "edit", "n": "new"}
 
+// dropPrompt asks why a task is dropped: the reason is required (6ephqk).
+const dropPrompt = "drop: why never?"
+
+// startAction begins the action for key k on the selected task: x first
+// asks the reason, d on a todo task is refused (take before done, Jørgen
+// 11:37), the rest go to requestAction's confirm.
+func (m *model) startAction(k string) tea.Cmd {
+	t, ok := m.selected()
+	switch {
+	case ok && k == "d" && t.Status == "todo":
+		m.message = t.ID + " is todo: t takes it, then d marks it done"
+		return nil
+	case ok && k == "x" && t.Status != "dropped":
+		return m.openInput(dropPrompt, "")
+	}
+	m.requestAction(k, "")
+	return nil
+}
+
 func (m *model) requestAction(k, value string) {
 	t, ok := m.selected()
 	if k != "n" && !ok {
@@ -86,7 +105,7 @@ func (m *model) executeAction() tea.Cmd {
 	case "d":
 		r, err = m.store.Done(t.ID)
 	case "x":
-		r, err = m.store.Drop(t.ID)
+		r, err = m.store.Drop(t.ID, value)
 	case " ":
 		if len(t.Acceptance) == 0 {
 			m.message = "no acceptance items"

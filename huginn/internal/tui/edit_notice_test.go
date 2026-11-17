@@ -169,12 +169,18 @@ func TestClosedTaskFindingsHidden(t *testing.T) {
 	if !m.linted[target.Path] {
 		t.Fatal("fixture task has no finding")
 	}
+	if _, err := m.store.Take(target.ID, "tester"); err != nil { // take before done (6ephqk)
+		t.Fatal(err)
+	}
 	if _, err := m.store.Done(target.ID); err != nil {
 		// Done refuses unchecked items; tick them first.
 		for i := range target.Acceptance {
 			if _, e := m.store.Check(target.ID, i+1); e != nil {
 				t.Fatal(e)
 			}
+		}
+		if _, err := m.store.Take(target.ID, "tester"); err != nil { // take before done (6ephqk)
+			t.Fatal(err)
 		}
 		if _, err = m.store.Done(target.ID); err != nil {
 			t.Fatal(err)

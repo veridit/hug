@@ -43,3 +43,45 @@ func TestStatesCommandPrintsTree(t *testing.T) {
 		t.Fatalf("help states: %d %s", code, out)
 	}
 }
+
+// 6ephqk check 3, CLI: wait, resume, design and drop take their text;
+// each refusal ends with a fix: line that runs without an editor.
+func TestMoveCommands(t *testing.T) {
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Moves", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
+	for _, c := range []struct {
+		args []string
+		code int
+		fix  string
+	}{
+		{[]string{"done", id}, 2, "hug task take " + id + " --model MODEL"},
+		{[]string{"drop", id}, 2, "hug task drop " + id + ` "duplicate of OTHER"`},
+		{[]string{"wait", id}, 2, "hug task wait " + id + ` "CI run 123"`},
+		{[]string{"wait", id, "CI"}, 2, "hug task take " + id + " --model MODEL"},
+		{[]string{"design", id}, 2, "hug task design " + id + ` "the question"`},
+		{[]string{"design", id, "type on rows?", "--as", "crab"}, 0, ""},
+		{[]string{"design", id, "--clear"}, 0, ""},
+		{[]string{"take", id}, 0, ""},
+		{[]string{"resume", id}, 2, "hug task show " + id},
+		{[]string{"wait", id, "CI run 7", "--as", "nautilus"}, 0, ""},
+		{[]string{"resume", id}, 0, ""},
+		{[]string{"drop", id, "superseded"}, 0, ""},
+		{[]string{"set", id, "--status", "done"}, 2, "hug task show " + id},
+		{[]string{"set", id, "--status", "todo"}, 0, ""},
+	} {
+		code, out := runText(a, c.args...)
+		if code != c.code || (c.fix != "" && !strings.Contains(out, "fix: "+c.fix+"\n")) || strings.Contains(out, "fix: hug task edit") {
+			t.Fatalf("%v: exit %d, want %d with fix %q:\n%s", c.args, code, c.code, c.fix, out)
+		}
+	}
+	file := taskFile(t, a, id)
+	for _, want := range []string{"(design); ", "design_asked_by: crab", "(take)", "(wait)", "waiting_asked_by: nautilus; waiting_on: CI run 7", "(drop)", "(reopen); was dropped_at: ", "dropped_reason: superseded"} {
+		if !strings.Contains(file, want) && !strings.Contains(file, strings.TrimSuffix(want, "; ")) {
+			t.Errorf("History lacks %q:\n%s", want, file)
+		}
+	}
+	if code, out := runText(a, "lint"); code != 0 || !strings.Contains(out, "no findings") {
+		t.Fatalf("lint after the moves: %d\n%s", code, out)
+	}
+}

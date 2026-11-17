@@ -75,9 +75,13 @@ func TestLifecycleJSONContract(t *testing.T) {
 	dep := execute(t, a, "new", "Form", "--goal", "Form works", "--accept", "UI", "--dep", id)
 	form := dep["task"].(Reply)["id"].(string)
 	expectCode(t, a, 3, "take", form)
+	// done only from doing: an untaken task's fix is the take (6ephqk).
+	if code, out := runText(a, "done", id); code != 2 || !strings.Contains(out, "fix: hug task take "+id+" --model MODEL") {
+		t.Fatalf("done on todo: %d %s", code, out)
+	}
+	execute(t, a, "take", id)
+	execute(t, a, "take", id)
 	expectCode(t, a, 3, "done", id)
-	execute(t, a, "take", id)
-	execute(t, a, "take", id)
 	execute(t, a, "next", "--mine")
 	execute(t, a, "check", id, "1")
 	execute(t, a, "check", id, "1")
@@ -99,8 +103,9 @@ func TestLifecycleJSONContract(t *testing.T) {
 	execute(t, a, "mv", form, "auth")
 	execute(t, a, "move", form, "--top")
 	execute(t, a, "rebalance")
-	execute(t, a, "drop", form)
-	execute(t, a, "drop", form)
+	expectCode(t, a, 2, "drop", form) // a drop needs its reason (6ephqk)
+	execute(t, a, "drop", form, "superseded by the new form")
+	execute(t, a, "drop", form, "superseded by the new form")
 	r = execute(t, a, "ls")
 	if len(r["tasks"].([]Reply)) != 2 {
 		t.Fatal(r)
@@ -233,6 +238,7 @@ func TestBoardColumns(t *testing.T) {
 	for i := 0; i < 7; i++ {
 		id := execute(t, a, "new", "Old quartz", "--goal", "g", "--accept", "a")["task"].(Reply)["id"].(string)
 		execute(t, a, "check", id, "1")
+		execute(t, a, "take", id)
 		execute(t, a, "done", id)
 	}
 	execute(t, a, "take", first)
@@ -434,6 +440,7 @@ func TestLintHidesClosedTasks(t *testing.T) {
 	useEditor(t, "## Depends on\n", "## Depends on\nNothing\n")
 	execute(t, a, "edit", id)
 	execute(t, a, "check", id, "1")
+	execute(t, a, "take", id)
 	execute(t, a, "done", id)
 	run := func(args ...string) string {
 		out := &bytes.Buffer{}
