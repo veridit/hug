@@ -113,6 +113,7 @@ type model struct {
 	prompt, query, message, detailPath string
 	confirm, confirmPath, pendingValue string
 	yanked                             string // y: the task id P and p paste (3xcesq)
+	hidden                             string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
 	grab                               grabState
 	filter                             task.Filter
 	input                              textinput.Model
@@ -212,6 +213,7 @@ func (m model) selectionID() string {
 func (m *model) applyKeeping(sn snapshot) {
 	id, offset, y := m.selectionID(), m.offset, m.viewport.YOffset
 	message := m.message
+	none := !m.detail && m.cursor == -1 // no row selected stays so (mcvfbz)
 	path, found := "", false
 	for _, t := range sn.tasks {
 		if id != "" && t.ID == id {
@@ -229,6 +231,9 @@ func (m *model) applyKeeping(sn snapshot) {
 	m.apply(sn, path)
 	if sn.err == nil {
 		m.message = message
+	}
+	if none {
+		m.cursor = -1
 	}
 	m.offset = offset
 	m.viewport.SetYOffset(y)
@@ -612,12 +617,17 @@ func (m *model) move(n int, absolute bool) {
 	if len(indices) == 0 {
 		return
 	}
-	pos := 0
+	pos := -1
 	for p, i := range indices {
 		if i == m.cursor {
 			pos = p
 			break
 		}
+	}
+	if pos < 0 && !absolute {
+		// Nothing selected (the task kept after a search is hidden,
+		// mcvfbz): a step selects the first row.
+		pos, n = 0, 0
 	}
 	if absolute {
 		pos = n
@@ -685,11 +695,14 @@ func (m *model) openInput(prompt, value string) tea.Cmd {
 	m.input.TextStyle = m.styles.normal
 	return m.input.Focus()
 }
-func (m *model) clearFilters() {
+
+// clearFilters removes the search and every filter; the selected task
+// stays selected (mcvfbz).
+func (m *model) clearFilters() { m.clearKeeping(false, m.dropFilters) }
+func (m *model) dropFilters() {
 	m.query = ""
 	m.filter = task.Filter{}
 	m.chips = nil
-	m.applyFilter()
 }
 func (m *model) back() {
 	m.pendingG = false
@@ -711,11 +724,9 @@ func (m *model) back() {
 		m.pickerField = ""
 		m.input.SetValue("")
 		m.completion = 0
+	case m.prompt == "/":
+		m.leaveSearch(false) // Esc clears the search, keeping the task (mcvfbz)
 	case m.prompt != "":
-		if m.prompt == "/" {
-			m.query = ""
-			m.applyFilter()
-		}
 		m.prompt = ""
 		m.input.Blur()
 	case m.detail && len(m.detailStack) > 0:
@@ -725,11 +736,16 @@ func (m *model) back() {
 		m.syncDetail()
 		m.openTop()
 	case m.detail:
+		t, ok := m.taskAt(m.detailPath)
 		m.detail = false
 		m.detailPath = ""
-		m.clamp()
+		if ok && !m.follow(t.ID) {
+			// Opened with # while a filter or the view hides it: no
+			// other task is selected in its place (mcvfbz).
+			m.hide(t)
+		}
 	case m.query != "" || m.filter != (task.Filter{}):
-		m.clearFilters()
+		m.clearKeeping(true, m.dropFilters)
 	case m.view != "overview":
 		m.setView("overview")
 	}
@@ -1139,6 +1155,9 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if m.prompt == "#" {
 		return m.updateJump(msg)
 	}
+	if m.prompt == "/" && m.updateSearch(k) {
+		return m, nil
+	}
 	if m.prompt == ":" {
 		cs := m.completions()
 		switch k {
@@ -1189,8 +1208,7 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	m.input, cmd = m.input.Update(msg)
 	m.completion = 0
 	if m.prompt == "/" {
-		m.query = m.input.Value()
-		m.applyFilter()
+		m.searchTyped()
 	}
 	return m, cmd
 }

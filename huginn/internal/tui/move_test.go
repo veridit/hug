@@ -180,7 +180,7 @@ func TestMoveRelativeToFilteredRows(t *testing.T) {
 	m, ids, commits := moveBoard(t, "Alpha one", "Beta", "Gamma", "Alpha two", "Delta")
 	a1, a2 := ids["Alpha one"], ids["Alpha two"]
 	m.setView("list")
-	m = press(m, "/", "Alpha", "enter")
+	m = press(m, "/", "Alpha", "tab")
 	if got := strings.Join(shown(m), " "); got != a1+" "+a2 {
 		t.Fatalf("filtered: %s", got)
 	}

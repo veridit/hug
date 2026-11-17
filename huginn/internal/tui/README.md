@@ -15,7 +15,7 @@ and `!`, or `:overview`, `:list`, `:board`, `:lint`, to change views.
 | Enter | Open task; in the dependency section follow the selected dependency |
 | Esc | Close one layer: help, confirmation, picker value, picker fields/input, followed dependency, detail, filters, then return to overview. Never quits |
 | `q`, `ctrl-c` | Quit. `q` is text when an input has focus |
-| `/` | Live case-insensitive title/slug/id/owner search. Enter retains it, Esc clears it |
+| `/` | Live case-insensitive title/slug/id/owner search; ↑↓ pick a match. Enter goes to the match: the search ends and the full view shows with that task selected, ready for `m`, `J` and `K`. Tab keeps the search as a filter. Esc clears it, keeping the selected task |
 | `#` | Complete an id prefix or imported alias, including `#TASK-1785` and `#1785`; Enter opens the choice |
 | `f` | Quick-filter field picker: `s` status, `t` type, `p` priority, `g` group, `l` label, `o` owner |
 | `1/2/3/4` | Filter todo / doing / done / blocked |

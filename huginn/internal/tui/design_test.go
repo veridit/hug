@@ -201,7 +201,7 @@ func TestEscAtEveryLevel(t *testing.T) {
 	if m.prompt != "" {
 		t.Fatal("picker fields did not close")
 	}
-	m = press(m, "/", "feature", "enter", "esc")
+	m = press(m, "/", "feature", "tab", "esc")
 	if m.query != "" || m.view != "list" {
 		t.Fatal("search was not cleared")
 	}
@@ -328,7 +328,7 @@ func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
 	}
 	m = commandLine(manyModel(t), "status doing")
 	m = commandLine(m, "type bug")
-	m = press(m, "/", "task", "enter")
+	m = press(m, "/", "task", "tab")
 	if len(m.chips) != 2 || m.query != "task" || len(m.visible) == 0 {
 		t.Fatal(m.View())
 	}

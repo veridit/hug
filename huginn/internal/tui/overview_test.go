@@ -121,7 +121,7 @@ func TestHeaderCountsAddUp(t *testing.T) {
 		t.Fatalf("counts sum to %d, there are %d tasks", sum, len(m.all))
 	}
 	// The same holds under a filter: counts cover the tasks shown.
-	m = press(m, "/", "a", "enter")
+	m = press(m, "/", "a", "tab")
 	sum = 0
 	for _, s := range boardStatuses {
 		for _, v := range m.visible {

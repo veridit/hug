@@ -206,7 +206,7 @@ func TestMoveFarRefusals(t *testing.T) {
 	m, ids, commits := moveBoard(t, "Alpha one", "Beta", "Alpha two", "done: Old")
 	m.setView("list")
 	m = selectRow(t, m, ids["Beta"])
-	m = press(m, "y", "/", "Alpha", "enter")
+	m = press(m, "y", "/", "Alpha", "tab")
 	m = selectRow(t, m, ids["Alpha two"])
 	m = press(m, "p")
 	if *commits != 0 || m.message != ids["Beta"]+" is not shown in the list (filtered): paste it where it is shown, or Esc forgets it" {

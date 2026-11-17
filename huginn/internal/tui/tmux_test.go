@@ -289,7 +289,7 @@ func TestTmuxGolden(t *testing.T) {
 				special("Enter")
 				wait("type:feature")
 				send("/task")
-				special("Enter")
+				special("Tab") // keep the search as a filter (mcvfbz)
 				snapshot("chips", "[/ task]")
 				send("F")
 				wait("No filters")
