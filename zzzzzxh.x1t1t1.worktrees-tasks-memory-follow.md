@@ -55,3 +55,5 @@ check 4 evidence (dragon, fd25eb0 on ci/x1t1t1-tui, on v0.7.34): show/ls --json/
 Jørgen 2026-11-16: check 7 = observe real use in Statbus (live production), read-only, together with 0hkaa5 check 6.
 
 2026-11-17 09:00 crab: check 4 landed as 8e9df0b (CI 44049093502 green), released in v0.7.38. Open: check 7, Statbus observation.
+
+kestrel 2026-11-17 11:02, Statbus observation (read-only, nothing written there): no hug writes since v0.7.38. Installed: /opt/homebrew/Cellar/hug/0.7.39 (hug v0.7.39, v0.7.38 tagged 2026-11-17 09:59). ~/ssb/statbus: hug/tasks last commit 2eb713fd8 2026-11-16 18:26:30 'hug task note hmgadt', origin/hug/tasks same; no .git/hug/sync/ directory (no syncer has ever run). ~/ssb/statbus_test: last commit 2375234a8 2026-11-16 22:41:26 'hug task note 00rnq5', origin/hug/tasks 031c91eb2 (1 local commit unpushed from before background sync); no .git/hug/sync/. statbus_rel_2026113 does not exist (git worktree list: statbus, statbus-db-seed, .hug/tasks; statbus_test has 3 scratch worktrees + .hug/tasks). Nothing to measure yet; check again later.
