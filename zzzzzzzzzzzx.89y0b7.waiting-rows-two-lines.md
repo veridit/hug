@@ -1,13 +1,18 @@
 ---
 id: 89y0b7
 title: "Waiting rows: two lines, the title on top, what it waits on below"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T16:11"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Replaces the 10:56 'stage: reason replaces the title' rule for waiting rows. 'yo
 ## Notes
 
 file:waiting-rows.md (1583 bytes, sha256:5108b054) approved mock (Jørgen 14:58)
+
+
+## History
+- 2026-11-17T16:11 todo -> doing/active (take)
