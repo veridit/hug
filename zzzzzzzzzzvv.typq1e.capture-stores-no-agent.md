@@ -36,5 +36,6 @@ Eval sets and method: muninn/docs/CAPTURE4.md. Post-check: commit 4cf6414. Agent
 ## Notes
 
 
+hatchling 19:44, fresh set fixed before any tuning (check 2): muninn/scripts/capture4_sample.py SEED=1794 EXCLUDE=(CAPTURE4 sample 1 + fresh, 120 sessions) CONTROLS=20 -> 53 items: 40 agent, 13 control (only 13 control sessions left), capture runs 2026-11-06T11:21 .. 2026-11-17T17:18, 0 sessions shared with CAPTURE4. sha256 ccb8f3f5699bcec14c583970cdf802d44b8dc13e6f0dc705fecca0ffbfd4e13a. No output of it read yet.
 ## History
 - 2026-11-17T20:41 todo -> doing/active (take)
