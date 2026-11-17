@@ -1,18 +1,17 @@
 ---
 id: t3fqaw
 title: "set --title leaves the old multi-line title's continuation lines"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T18:56"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T22:36"
 ---
 
 ## Goal
@@ -42,3 +41,4 @@ kestrel: landed e28f7f6 (58fcd3c..e28f7f6), rebased onto the state rename: the f
 - 2026-11-17T18:56 todo -> doing/active (take)
 - 2026-11-17T19:03 doing/active -> doing/waiting (wait)
 - 2026-11-17T22:36 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_for: crab; waiting_on: go to push after nautilus's rename is on main (main held from 18:05Z); waiting_since: 2026-11-17T19:03
+- 2026-11-17T22:36 doing/active -> done (done); was doing_since: 2026-11-17T18:56
