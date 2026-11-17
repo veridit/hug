@@ -42,5 +42,6 @@ file:fail-before-1.txt (1116 bytes, sha256:b3004737)
 file:fail-before-2.txt (135 bytes, sha256:6acc7f79)
 file:5sc5rw-ab.txt (2351 bytes, sha256:19f294f8)
 file:e2e.txt (1673 bytes, sha256:0acf909c)
+landed 833eee1 on main 2026-11-17: hug mem: a project memory exists once; forget retires its copy; hug mem upgrade…
 ## History
 - 2026-11-17T22:24 todo -> doing/active (take)
