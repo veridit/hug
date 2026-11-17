@@ -9,10 +9,15 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T18:16"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "approve Seid's commit-msg switch to hug's Model: \u003cid\u003e/\u003ceffort\u003e gate (3 decisions in the file: drop Co-Authored-By, refuse when the gate is not installed, --no-verify as the bypass)"
+waiting_since: "2026-11-17T21:24"
+waiting_asked_by: "wyvern"
+waiting_for: "jhf"
+waiting_show: "seid-commit-msg-proposal.md"
 ---
 
 ## Goal
@@ -55,3 +60,4 @@ file:seid-commit-msg-proposal.md (2593 bytes, sha256:5e569dd4)
 - 2026-11-17T18:16 todo -> doing/active (take)
 - 2026-11-17T18:53 doing/active -> doing/waiting (wait)
 - 2026-11-17T21:23 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: after 46ek1f (crab 17:52); waiting_since: 2026-11-17T18:53
+- 2026-11-17T21:24 doing/active -> doing/waiting (wait)
