@@ -12,11 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T21:59"
-stage: "waiting"
-waiting_for: "jhf"
-waiting_on: "the g key: Jørgen's g/gg ruling (a, b or c, crab asked 21:05); parked for e3sevr. Built and committed on nautilus/kx2ndm (2238d78, 079bc70): checks 1, 2 (as : grouping), 3, 5, not landed yet"
-waiting_since: "2026-11-17T23:26"
-waiting_asked_by: "nautilus"
+stage: "active"
 ---
 
 ## Goal
@@ -66,3 +62,4 @@ Jørgen 23:38 local: gg and G are dropped (qh9ep1), so the g/gg question is gone
 ## History
 - 2026-11-17T21:59 todo -> doing/active (take)
 - 2026-11-17T23:26 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:02 answered waiting: "the g key: Jørgen's g/gg ruling (a, b or c, crab asked 21:05); parked for e3sevr. Built and committed on nautilus/kx2ndm (2238d78, 079bc70): checks 1, 2 (as : grouping), 3, 5, not landed yet" -> "Jørgen 23:38 local: drop gg and G (never used, vi specific). So g is no prefix: g toggles grouping at once, flat -> by group -> by epic. Recorded by crab from his spoken answer.", by crab, for nautilus (doing/waiting -> doing/active)
