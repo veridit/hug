@@ -149,6 +149,10 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if _, cmd = key(fresh, "q"); cmd == nil {
 					t.Fatal("q did not quit")
 				}
+			case "-":
+				if after = press(fresh, "-"); after.prompt != strikePrompt && after.confirm != "-" && !strings.Contains(after.message, "ticked") {
+					t.Fatalf("- did not ask to strike out: prompt %q message %q", after.prompt, after.message)
+				}
 			default:
 				t.Fatalf("key bar shows %q with no test", name)
 			}
@@ -218,7 +222,7 @@ func TestFocusTabCyclesAndHighlightsOneHeading(t *testing.T) {
 	m.detailPane = focusAcceptance
 	tk, _ := m.selected()
 	coloured := m.detailText(tk)
-	if !strings.Contains(coloured, m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks", true)) || strings.Contains(coloured, m.sectionHeading("Dependencies", "j/k or [ ] step · Enter follows", true)) {
+	if !strings.Contains(coloured, m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks · - strikes out", true)) || strings.Contains(coloured, m.sectionHeading("Dependencies", "j/k or [ ] step · Enter follows", true)) {
 		t.Fatal("focus style is not on the acceptance heading alone")
 	}
 	if m.sectionHeading("Acceptance", "", true) == m.sectionHeading("Acceptance", "", false) {

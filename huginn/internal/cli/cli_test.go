@@ -71,7 +71,7 @@ func TestLifecycleJSONContract(t *testing.T) {
 		t.Fatalf("goal contract: %q", projection["goal"])
 	}
 	acceptanceJSON, _ := json.Marshal(projection["acceptance"])
-	if string(acceptanceJSON) != `[{"checked":false,"text":"First"},{"checked":false,"text":"Second"}]` {
+	if string(acceptanceJSON) != `[{"checked":false,"state":"open","text":"First"},{"checked":false,"state":"open","text":"Second"}]` {
 		t.Fatalf("acceptance contract: %s", acceptanceJSON)
 	}
 	dep := execute(t, a, "new", "Form", "--goal", "Form works", "--accept", "UI", "--dep", id)

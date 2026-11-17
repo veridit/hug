@@ -12,7 +12,7 @@ import (
 func Guide(action string, t Task, ts []Task) []string {
 	open := 0
 	for _, a := range t.Acceptance {
-		if !a.Checked {
+		if !a.Settled() {
 			open++
 		}
 	}

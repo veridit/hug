@@ -39,6 +39,7 @@ Use --json with any command. IDs, unique prefixes, slugs and aliases work.
   done                      hug task done k7m2qx --reflect "the line 'X' in AGENTS.md made me Y"
   reflections               hug task reflections
   check                     hug task check k7m2qx 1
+  strike                    hug task strike k7m2qx 2 --reason "replaced by the API test"
   note                      hug task note k7m2qx "Test evidence"
   dep                       hug task dep k7m2qx --add p3rt9a
   set                       hug task set k7m2qx --priority high --label api
@@ -63,7 +64,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -288,7 +289,7 @@ func parse(args []string, allowed string, optionalValue ...string) (flags, error
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary", strings.TrimPrefix(SyncChildArg, "--")}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary", "undo", strings.TrimPrefix(SyncChildArg, "--")}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -325,7 +326,7 @@ func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
 // as their value. Both accept task:ID, the form running text uses, and are
 // turned into the bare id here so every reply and printed command shows
 // the bare id and runs when pasted into a shell (xxvm6t).
-var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "check", "promote", "note", "dep", "set", "attach", "detach"}
+var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
 var refFlags = []string{"before", "after", "dep", "add", "remove", "parent", "epic"}
 
 func bareRefs(cmd string, f *flags) {
@@ -357,7 +358,18 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	out["goal"] = strings.TrimSpace(t.Goal)
 	acceptance := []any{}
 	for _, item := range t.Acceptance {
-		acceptance = append(acceptance, map[string]any{"text": item.Text, "checked": item.Checked})
+		// Three states (sfa8w4): open, ticked, struck (with the reason).
+		a := map[string]any{"text": item.Text, "checked": item.Checked, "state": item.State()}
+		if item.Struck {
+			a["struck"], a["reason"] = true, item.Reason
+			if item.StruckBy != "" {
+				a["struck_by"] = item.StruckBy
+			}
+			if item.StruckOn != "" {
+				a["struck_on"] = item.StruckOn
+			}
+		}
+		acceptance = append(acceptance, a)
 	}
 	out["acceptance"] = acceptance
 	deps := []string{}
@@ -441,7 +453,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -842,6 +854,18 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, usage("acceptance index must be a positive integer", "hug task show "+f.args[0])
 		}
 		r, e = s.s.Check(f.args[0], n)
+	case "strike":
+		if e = f.count(2); e != nil {
+			return nil, e
+		}
+		n, err := strconv.Atoi(f.args[1])
+		if err != nil || n < 1 {
+			return nil, usage("acceptance index must be a positive integer", "hug task show "+f.args[0])
+		}
+		if !f.has("undo") && strings.TrimSpace(f.get("reason")) == "" {
+			return nil, usage("striking a check out needs a reason: why it no longer applies", "hug task strike "+f.args[0]+" "+f.args[1]+" --reason \"why it no longer applies\"")
+		}
+		r, e = s.s.Strike(f.args[0], n, f.get("reason"), a.whoTakes(f).assignee(), f.has("undo"))
 	case "promote":
 		if e = f.count(2); e != nil {
 			return nil, e
@@ -1227,11 +1251,22 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 		for i, v := range t["acceptance"].([]any) {
 			m := v.(map[string]any)
-			mark := " "
+			mark, text := " ", fmt.Sprint(m["text"])
 			if m["checked"] == true {
 				mark = "x"
 			}
-			fmt.Fprintf(a.Out, "%d. [%s] %s\n", i+1, mark, m["text"])
+			if m["struck"] == true {
+				// Plain text has no strikethrough: [-] and the decision.
+				mark = "-"
+				text = "~~" + text + "~~ (not relevant: " + fmt.Sprint(m["reason"])
+				for _, k := range []string{"struck_by", "struck_on"} {
+					if v, ok := m[k].(string); ok && v != "" {
+						text += ", " + v
+					}
+				}
+				text += ")"
+			}
+			fmt.Fprintf(a.Out, "%d. [%s] %s\n", i+1, mark, text)
 		}
 		if t["notes"] != "" {
 			fmt.Fprintf(a.Out, "notes: %s\n", t["notes"])

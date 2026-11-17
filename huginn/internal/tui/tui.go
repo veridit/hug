@@ -1026,6 +1026,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else {
 					m.message = "no acceptance checks to tick"
 				}
+			case "-":
+				// - strikes the check marked > out as not relevant, asking for
+				// the reason; on a struck check it asks to restore it (sfa8w4).
+				return m, m.strikeKey()
 			case "t", "d", "x", "J", "K", "e":
 				m.requestAction(k, "")
 			case "/", ":", "#":
@@ -1242,6 +1246,17 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	} else if k == "enter" {
 		if m.prompt == "new title" && strings.TrimSpace(m.input.Value()) != "" {
 			m.requestAction("n", strings.TrimSpace(m.input.Value()))
+		}
+		if m.prompt == strikePrompt {
+			reason := strings.TrimSpace(m.input.Value())
+			m.prompt = ""
+			m.input.Blur()
+			if reason == "" {
+				m.message = "not struck out: a strike needs a reason (- again, then type why it no longer applies)"
+				return m, nil
+			}
+			m.strike(reason)
+			return m, nil
 		}
 		m.prompt = ""
 		m.input.Blur()

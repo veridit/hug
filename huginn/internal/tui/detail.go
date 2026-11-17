@@ -368,6 +368,9 @@ func (m model) detailText(t task.Task) string {
 		if a.Checked {
 			box = "☑"
 		}
+		if a.Struck {
+			box = "☒"
+		}
 		if m.detailPane == focusAcceptance && i == m.acceptance {
 			pointer = ">"
 		}
@@ -375,7 +378,20 @@ func (m model) detailText(t task.Task) string {
 		// under the text, so each item reads as one block (2026-11-15).
 		prefix := fmt.Sprintf("%s %s %d. ", pointer, box, i+1)
 		indent := strings.Repeat(" ", lipgloss.Width(prefix))
-		body := wrap(oneLine(cleanMarkdown(a.Text)), max(10, m.width-len(indent)))
+		text := oneLine(cleanMarkdown(a.Text))
+		if a.Struck {
+			// Struck out with a reason (sfa8w4): the text crossed through
+			// and dim, the decision after it.
+			why := "not relevant: " + oneLine(a.Reason)
+			if a.StruckBy != "" {
+				why += ", " + oneLine(a.StruckBy)
+			}
+			if a.StruckOn != "" {
+				why += ", " + oneLine(a.StruckOn)
+			}
+			text += " (" + why + ")"
+		}
+		body := wrap(text, max(10, m.width-len(indent)))
 		lines := strings.Split(body, "\n")
 		for j := range lines {
 			if j == 0 {
@@ -387,11 +403,13 @@ func (m model) detailText(t task.Task) string {
 		label := strings.Join(lines, "\n")
 		if m.detailPane == focusAcceptance && i == m.acceptance {
 			checks = append(checks, m.styles.selected.Render(label))
+		} else if a.Struck {
+			checks = append(checks, m.styles.dim.Strikethrough(true).Render(label))
 		} else {
 			checks = append(checks, m.checkStyle(a.Checked).Render(label))
 		}
 	}
-	section(m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks", m.detailPane == focusAcceptance), strings.Join(checks, "\n"), "no acceptance items yet")
+	section(m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks · - strikes out", m.detailPane == focusAcceptance), strings.Join(checks, "\n"), "no acceptance items yet")
 	var dependencies []string
 	for i, d := range task.DependencyDetails(t, m.all) {
 		state := d.Status

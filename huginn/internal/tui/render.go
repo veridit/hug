@@ -755,6 +755,14 @@ func (m model) confirmLine() string {
 				break
 			}
 		}
+	case "-":
+		for _, t := range m.all {
+			if t.Path == m.confirmPath && len(t.Acceptance) > 0 {
+				n := min(m.acceptance, len(t.Acceptance)-1)
+				question = fmt.Sprintf("Restore struck check: ☒ %d. %s", n+1, oneLine(cleanMarkdown(t.Acceptance[n].Text)))
+				break
+			}
+		}
 	case " ":
 		// Say exactly what Space will do: tick or untick which item, quoted
 		// as the ticket shows it, box and number after the colon.

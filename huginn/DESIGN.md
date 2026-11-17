@@ -217,6 +217,13 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
 ```
 
 - Required: id, title, status, Goal, Acceptance with >= 1 item.
+- A check has three states (sfa8w4): open `- [ ] text`, ticked `- [x] text`,
+  struck out `- [ ] ~~text~~ (not relevant: REASON, NAME, YYYY-MM-DD)`. The
+  struck form is plain GitHub Markdown (task list plus strikethrough), so
+  any viewer draws it crossed out. `hug task strike ID N --reason R` writes
+  it, `--undo` restores it; a reason is required, so striking out is a
+  recorded decision. `done` needs every check ticked or struck; a done task
+  with an open check is a broken lint finding.
 - **Dependencies are the id only** (D9). Each `## Depends on` item starts
   with an id (or alias); the rest of the line is a free note for humans. No
   path is stored, so moving, renaming, re-slugging or reprioritising a task

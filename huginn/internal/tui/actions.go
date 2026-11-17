@@ -112,6 +112,10 @@ func (m *model) executeAction() tea.Cmd {
 		}
 	case "e":
 		return m.runEditor(t)
+	case "-":
+		n := min(m.acceptance, len(t.Acceptance)-1) + 1
+		r, err = m.store.Strike(t.ID, n, "", m.opts.User, true)
+		action = "restore"
 	}
 	m.finish(r, err, action)
 	return nil
@@ -231,4 +235,59 @@ func (m model) editorPath(t task.Task) (string, error) {
 		return "", fmt.Errorf("task is not a regular file")
 	}
 	return path, nil
+}
+
+// strikePrompt is the input asking why a check no longer applies.
+const strikePrompt = "strike out, reason:"
+
+// strikeKey is - on the open task: with a check marked >, an open one asks
+// for the reason (Enter strikes, Esc keeps it), a struck one asks to be
+// restored; a ticked one was done and stays (sfa8w4, Jørgen 2026-11-16:
+// striking out must be his in the TUI too).
+func (m *model) strikeKey() tea.Cmd {
+	t, ok := m.selected()
+	switch {
+	case !ok || len(t.Acceptance) == 0:
+		m.message = "no acceptance checks to strike out"
+		return nil
+	case m.detailPane != focusAcceptance:
+		m.message = "- strikes out the check marked >: Tab focuses the checks"
+		return nil
+	}
+	n := min(m.acceptance, len(t.Acceptance)-1)
+	a := t.Acceptance[n]
+	switch {
+	case a.Struck:
+		m.requestAction("-", "")
+		return nil
+	case a.Checked:
+		m.message = fmt.Sprintf("check %d is ticked: it was done, so it is not struck out (Space unticks it)", n+1)
+		return nil
+	}
+	m.confirmPath = t.Path
+	return m.openInput(strikePrompt, "")
+}
+
+// strike strikes the check marked > out with reason, as the TUI user.
+func (m *model) strike(reason string) {
+	var t task.Task
+	found := false
+	for _, v := range m.all {
+		if v.Path == m.confirmPath {
+			t, found = v, true
+			break
+		}
+	}
+	m.confirmPath = ""
+	if !found || len(t.Acceptance) == 0 {
+		m.message = "task disappeared; refresh and try again"
+		return
+	}
+	n := min(m.acceptance, len(t.Acceptance)-1) + 1
+	who := m.opts.User
+	if who == "" {
+		who = "human"
+	}
+	r, err := m.store.Strike(t.ID, n, reason, who, false)
+	m.finish(r, err, "strike")
 }

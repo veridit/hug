@@ -26,6 +26,9 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 	if item.Checked {
 		return Result{}, &Error{Kind: "already-done", ID: src.ID, Value: fmt.Sprintf("item %d is ticked; nothing to promote", n), Fix: "hug task show " + src.ID}
 	}
+	if item.Struck {
+		return Result{}, &Error{Kind: "struck-out", ID: src.ID, Value: fmt.Sprintf("item %d is struck out as not relevant (%s); nothing to promote", n, item.Reason), Fix: fmt.Sprintf("hug task strike %s %d --undo", src.ID, n)}
+	}
 	if m := promoteRef.FindStringSubmatch(item.Text); m != nil {
 		return Result{}, &Error{Kind: "already-promoted", ID: src.ID, Value: fmt.Sprintf("item %d already waits on task:%s", n, m[1]), Fix: "hug task show " + m[1]}
 	}
@@ -103,7 +106,7 @@ func (s *Store) tickWaiting(id string) ([]string, error) {
 	var ticked []string
 	for _, t := range ts {
 		for n, a := range t.Acceptance {
-			if a.Checked {
+			if a.Settled() {
 				continue
 			}
 			if m := promoteRef.FindStringSubmatch(a.Text); m != nil && strings.EqualFold(m[1], id) {

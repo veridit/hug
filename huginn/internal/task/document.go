@@ -8,7 +8,9 @@ import (
 	"github.com/veridit/hug/huginn/internal/id"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -133,7 +135,56 @@ type Acceptance struct {
 	Text    string `json:"text"`
 	Checked bool   `json:"checked"`
 	Line    int    `json:"line"`
+	// Struck: the check was struck out as not relevant (sfa8w4), with the
+	// reason, who and the day. The file keeps the box open and the text
+	// crossed through: "- [ ] ~~TEXT~~ (not relevant: REASON, NAME, DATE)".
+	Struck   bool   `json:"struck,omitempty"`
+	Reason   string `json:"reason,omitempty"`
+	StruckBy string `json:"struck_by,omitempty"`
+	StruckOn string `json:"struck_on,omitempty"`
 }
+
+// Settled: ticked or struck out with a reason. A task is done only when
+// every check is settled.
+func (a Acceptance) Settled() bool { return a.Checked || a.Struck }
+
+// State is open, ticked or struck.
+func (a Acceptance) State() string {
+	switch {
+	case a.Struck:
+		return "struck"
+	case a.Checked:
+		return "ticked"
+	}
+	return "open"
+}
+
+// struckForm is a struck-out check's text: standard Markdown strikethrough,
+// then the recorded decision. The reason may hold commas: who and the day
+// are the last two fields.
+var struckForm = regexp.MustCompile(`^~~(.+)~~ \(not relevant: (.+)\)\s*$`)
+
+func parseAcceptance(text string, checked bool, line int) Acceptance {
+	a := Acceptance{Text: text, Checked: checked, Line: line}
+	m := struckForm.FindStringSubmatch(text)
+	if m == nil || checked {
+		return a
+	}
+	a.Text, a.Struck, a.Reason = m[1], true, strings.TrimSpace(m[2])
+	if i := strings.LastIndex(a.Reason, ", "); i >= 0 && isDay(a.Reason[i+2:]) {
+		a.StruckOn, a.Reason = a.Reason[i+2:], a.Reason[:i]
+		if j := strings.LastIndex(a.Reason, ", "); j >= 0 {
+			a.StruckBy, a.Reason = a.Reason[j+2:], a.Reason[:j]
+		}
+	}
+	return a
+}
+
+func isDay(s string) bool {
+	_, err := time.Parse("2006-01-02", strings.TrimSpace(s))
+	return err == nil
+}
+
 type Task struct {
 	ID     string `json:"id"`
 	Path   string `json:"path"`
@@ -415,7 +466,7 @@ func Parse(path string, data []byte) *Document {
 		case "Acceptance":
 			t := strings.TrimSpace(line)
 			if strings.HasPrefix(t, "- [ ] ") || strings.HasPrefix(t, "- [x] ") || strings.HasPrefix(t, "- [X] ") {
-				d.Task.Acceptance = append(d.Task.Acceptance, Acceptance{t[6:], t[3] != ' ', n + 1})
+				d.Task.Acceptance = append(d.Task.Acceptance, parseAcceptance(t[6:], t[3] != ' ', n+1))
 			}
 		}
 	}
@@ -455,8 +506,10 @@ func Parse(path string, data []byte) *Document {
 	}
 	if d.Task.Status == "done" {
 		for n, a := range d.Task.Acceptance {
-			if !a.Checked {
-				d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: a.Line, Problem: "done with unchecked acceptance", Fix: fmt.Sprintf("hug task check %s %d", d.Task.ID, n+1)})
+			if !a.Settled() {
+				// Broken, not advice (Jørgen 2026-11-16, pbh9xq): the board says
+				// done but this check is neither ticked nor struck out.
+				d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: a.Line, Problem: fmt.Sprintf("done with unchecked acceptance: broken, %s is done but check %d is open; tick it if it holds, or strike it out with hug task strike %s %d --reason \"why it no longer applies\"", d.Task.ID, n+1, d.Task.ID, n+1), Fix: fmt.Sprintf("hug task check %s %d", d.Task.ID, n+1)})
 			}
 		}
 	}
@@ -581,11 +634,73 @@ func (d *Document) Check(n int) error {
 	if a.Checked {
 		return nil
 	}
+	if a.Struck {
+		return &Error{Kind: "struck-out", ID: d.Task.ID, Value: fmt.Sprintf("item %d is struck out as not relevant (%s); restore it before ticking", n, a.Reason), Fix: fmt.Sprintf("hug task strike %s %d --undo", d.Task.ID, n)}
+	}
 	lines := append([]string(nil), d.lines...)
 	lines[a.Line-1] = strings.Replace(lines[a.Line-1], "[ ]", "[x]", 1)
 	d.replace(lines)
 	return nil
 }
+
+// Strike strikes item n out as not relevant, keeping its text and box and
+// recording reason, who and day (sfa8w4). Striking a struck item again with
+// the same reason is a no-op; a ticked item is refused (it was done).
+func (d *Document) Strike(n int, reason, who, day string) error {
+	if n < 1 || n > len(d.Task.Acceptance) {
+		return &Error{Kind: "acceptance-index", ID: d.Task.ID, Value: fmt.Sprint(n), Fix: fmt.Sprintf("hug task show %s", d.Task.ID)}
+	}
+	clean := func(s string) string {
+		return strings.TrimSpace(strings.ReplaceAll(strings.Join(strings.Fields(s), " "), "~~", ""))
+	}
+	reason, who = clean(reason), clean(who)
+	if reason == "" {
+		return &Error{Kind: "no-reason", ID: d.Task.ID, Value: fmt.Sprintf("striking item %d out needs a reason: why it no longer applies", n), Fix: fmt.Sprintf("hug task strike %s %d --reason \"why it no longer applies\"", d.Task.ID, n)}
+	}
+	if who == "" {
+		return &Error{Kind: "no-name", ID: d.Task.ID, Value: "striking out records who decided: no --as, HUG_USER, agent session or model given", Fix: fmt.Sprintf("hug task strike %s %d --reason \"...\" --as NAME", d.Task.ID, n)}
+	}
+	a := d.Task.Acceptance[n-1]
+	if a.Checked {
+		return &Error{Kind: "ticked", ID: d.Task.ID, Value: fmt.Sprintf("item %d is ticked: it was done, so it is not struck out", n), Fix: fmt.Sprintf("hug task show %s", d.Task.ID)}
+	}
+	if a.Struck && a.Reason == reason {
+		return nil
+	}
+	return d.setItemLine(a, "- [ ] ~~"+a.Text+"~~ (not relevant: "+reason+", "+who+", "+day+")")
+}
+
+// Unstrike restores a struck item to an open check with its text.
+func (d *Document) Unstrike(n int) error {
+	if n < 1 || n > len(d.Task.Acceptance) {
+		return &Error{Kind: "acceptance-index", ID: d.Task.ID, Value: fmt.Sprint(n), Fix: fmt.Sprintf("hug task show %s", d.Task.ID)}
+	}
+	a := d.Task.Acceptance[n-1]
+	if !a.Struck {
+		return nil
+	}
+	return d.setItemLine(a, "- [ ] "+a.Text)
+}
+
+// setItemLine replaces an item's line, keeping its indent and line ending.
+func (d *Document) setItemLine(a Acceptance, body string) error {
+	lines := append([]string(nil), d.lines...)
+	old := lines[a.Line-1]
+	i := strings.Index(old, "- [")
+	if i < 0 {
+		return &Error{Kind: "broken-file", ID: d.Task.ID, Fix: "hug task lint"}
+	}
+	nl := ""
+	if strings.HasSuffix(old, "\r\n") {
+		nl = "\r\n"
+	} else if strings.HasSuffix(old, "\n") {
+		nl = "\n"
+	}
+	lines[a.Line-1] = old[:i] + body + nl
+	d.replace(lines)
+	return nil
+}
+
 func (d *Document) Note(text string) {
 	lines := append([]string(nil), d.lines...)
 	s, ok := d.sections["Notes"]

@@ -27,7 +27,7 @@ Show what the task is about before its checks.
 RELEVANT DETAILS
 Synthetic fixture: 60 tasks, two files on 000001.
 
-▸ ACCEPTANCE · j/k or [ ] step · Space ticks
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out
 > ☐ 1. First acceptance check
   ☐ 2. Second acceptance check
 
@@ -37,4 +37,4 @@ FILES (2)
   ⎘ bench/README.md  32 B
 Task 1 of 60 · 0% · n next · p previous · Esc back
 
-j/k check · Space tick · E files · n/p task · Tab section · u up · Esc back · : cmd · ? help · q quit                             hug v0.0.0
+j/k check · Space tick · - strike out · E files · n/p task · Tab section · u up · Esc back · : cmd · ? help · q quit              hug v0.0.0

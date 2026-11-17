@@ -165,7 +165,7 @@ func hint(t Task) string {
 		return "hug task take " + t.ID
 	case "doing":
 		for n, a := range t.Acceptance {
-			if !a.Checked {
+			if !a.Settled() {
 				return fmt.Sprintf("hug task check %s %d", t.ID, n+1)
 			}
 		}
@@ -337,6 +337,25 @@ func (s *Store) Check(ref string, n int) (Result, error) {
 	}
 	return s.finish(d, before != string(d.Bytes()))
 }
+
+// Strike strikes acceptance item n of ref out as not relevant, with the
+// reason and who decided, dated today (sfa8w4); undo restores it.
+func (s *Store) Strike(ref string, n int, reason, who string, undo bool) (Result, error) {
+	d, _, e := s.load(ref)
+	if e != nil {
+		return Result{}, e
+	}
+	before := string(d.Bytes())
+	if undo {
+		e = d.Unstrike(n)
+	} else {
+		e = d.Strike(n, reason, who, time.Now().Format("2006-01-02"))
+	}
+	if e != nil {
+		return Result{}, e
+	}
+	return s.finish(d, before != string(d.Bytes()))
+}
 func (s *Store) Note(ref, text string) (Result, error) {
 	d, _, e := s.load(ref)
 	if e != nil {
@@ -449,12 +468,12 @@ func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result,
 		}
 		unchecked := []Unchecked{}
 		for n, a := range d.Task.Acceptance {
-			if !a.Checked {
+			if !a.Settled() {
 				unchecked = append(unchecked, Unchecked{Index: n + 1, Text: a.Text, Fix: fmt.Sprintf("hug task check %s %d", d.Task.ID, n+1)})
 			}
 		}
 		if len(unchecked) > 0 && policy != "warn" {
-			return Result{}, &Error{Kind: "unchecked-acceptance", ID: d.Task.ID, Unchecked: unchecked, Fix: unchecked[0].Fix}
+			return Result{}, &Error{Kind: "unchecked-acceptance", ID: d.Task.ID, Value: fmt.Sprintf("tick each open check that holds, or strike one that no longer applies: hug task strike %s %d --reason \"why\"", d.Task.ID, unchecked[0].Index), Unchecked: unchecked, Fix: unchecked[0].Fix}
 		}
 		if open := OpenChildren(d.Task, ts); len(open) > 0 {
 			if policy != "warn" {
@@ -487,7 +506,7 @@ func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result,
 	}
 	if status == "done" {
 		for _, a := range d.Task.Acceptance {
-			if !a.Checked {
+			if !a.Settled() {
 				warnings = append(warnings, "unchecked acceptance: "+a.Text)
 			}
 		}

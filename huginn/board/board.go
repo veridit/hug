@@ -179,7 +179,7 @@ func convert(ts []task.Task) []Task {
 		x := Task{ID: t.ID, Title: t.Title, Status: t.Status, Path: t.Path, Assignee: t.Assignee, Model: t.Model,
 			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance)}
 		for _, a := range t.Acceptance {
-			if !a.Checked {
+			if !a.Settled() {
 				x.Open++
 			}
 		}

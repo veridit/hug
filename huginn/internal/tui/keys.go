@@ -107,6 +107,11 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	switch m.detailPane {
 	case focusAcceptance:
 		hints = append(hints, hint("j/k", "check"), hint("Space", "tick"))
+		// - strikes the check out (sfa8w4); on a narrower bar the
+		// Acceptance heading and ? help say so, so no other hint is lost.
+		if m.width >= 120 {
+			hints = append(hints, hint("-", "strike out"))
+		}
 	case focusDeps:
 		hints = append(hints, hint("j/k", "dependency"), hint("Enter", "follow"))
 	case focusLinks:
@@ -149,7 +154,7 @@ func (m model) helpText() string {
 		navigation = append(navigation, hint(reloadKey, "reload into hug "+m.newer+", keeping this place"))
 	}
 	actions := []bkey.Binding{
-		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("u", "in a task: up to the list (as Esc)"), hint("Space / Enter", "tick check / follow dependency marked >"),
+		hint("[ and ]", "previous / next check or dependency"), hint("n and p", "next / previous task, in a task"), hint("u", "in a task: up to the list (as Esc)"), hint("Space/-/Enter", "tick / strike out check / follow dep >"),
 		hint("Tab / Shift-Tab", "in a task: focus page, checks, deps, links, files"),
 		hint("E", "in a task with files (⎘2): its folder in the editor"),
 		hint("t / d / x", "take / done / drop task"),
