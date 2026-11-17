@@ -11,7 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+stage: "waiting"
+waiting_asked_by: "wyvern"
+waiting_on: "landing slot (after hatchling, kestrel); CI 44095283897 green on 5 jobs at 4fd4777"
+waiting_since: "2026-11-17T14:58"
 ---
 
 ## Goal
@@ -48,3 +51,4 @@ Check 5 numbers (crab: note both, tick on the query). 4fd4777 on ci/49n9kw, CI 4
 ## History
 - 2026-11-17T14:53 doing -> doing/waiting (wait)
 - 2026-11-17T14:58 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: CI 44095283897 on ci/49n9kw (4fd4777), then the landing slot after hatchling and kestrel; waiting_since: 2026-11-17T14:53
+- 2026-11-17T14:58 doing/active -> doing/waiting (wait)
