@@ -44,6 +44,7 @@ kestrel 13:12, per crab's 12:54 ruling (FetchAfter stays 5 s): 4724750 + ed32f5c
 Landed: 38ff464..4ecfa25 on main (b30ec54, 2b59fd3, 42453ee-equivalent, 4ecfa25), CI 44099384892 green on all 5 jobs. Check 2 waits on three consecutive green macOS main runs; 4ecfa25's own main run is the first.
 kestrel 14:40, check 2 progress: macOS main run 1/3 is green. 44102298826 on 4ecfa25: 'test (macos-latest) completed success'. Two more main runs needed; none newer yet.
 kestrel 15:58, check 2: four consecutive green macOS runs on main after 4ecfa25: 44102298826 4ecfa25, 44110812902 b8f9000, 44116988262 21ee039, 44118189933 d661273, each 'test (macos-latest) success'. TestBackgroundSyncTwoClonesRealBinary ran in each (huginn/internal/cli).
+kestrel 15:59, correction to the 15:58 note: TestBackgroundSyncTwoClonesRealBinary is in cmd/hug (sync_test.go:51), not huginn/internal/cli. It skips only under -short, and CI runs 'go test ./...' without -short (ci.yml:36). macOS cmd/hug per run: 44102298826 'ok github.com/veridit/hug/cmd/hug 11.999s', 44110812902 '12.261s', 44116988262 '10.615s', 44118189933 '14.919s'.
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
 - 2026-11-17T16:57 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: check 2: three consecutive green macOS CI runs on main after 4ecfa25; waiting_since: 2026-11-17T15:22
