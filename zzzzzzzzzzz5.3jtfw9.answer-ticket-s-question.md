@@ -49,5 +49,6 @@ file:needs-you.md (3264 bytes, sha256:d2e9eb8a) design, moved here from tmp/lane
 file:waiting-rows.md (1583 bytes, sha256:5108b054) two-line waiting rows mock (Jørgen 14:55)
 file:detail-stage.md (1564 bytes, sha256:a6a935a7) detail: stage first mock (Jørgen 14:47)
 nautilus 15:14: rebased on main b8f9000 as 99edb5f (conflicts in CHANGELOG, cache.go, cli.go, help.go, mcp/server.go resolved; cache SchemaVersion 14, fkpyg3 took 13). Local: go test ./huginn/... all 11 packages ok. Pushed ci/3jtfw9. hatchling's cue commit (check 3) is rebased on 99edb5f in ci/3jtfw9-cue; I cherry-pick it when it's green, so both land together.
+nautilus 16:06: checks 1, 2, 4 ticked. 1: tui TestAnswerInDetail. 2: cli TestAnswerCommand, task TestAnswerWaitingAndReview, mcp server_test answer case. 4: task TestAnswerDesign (History line holds question, answer, who, for whom, when). landed on main c48b30c (stack d107f9a..c48b30c: 6ef55df 3jtfw9, 842b403 cue, 998438f+c48b30c x1ra0t); local go test tui/task/cli/mcp/cache/harness ok after the rebase; earlier CI 44111992156 green on 99edb5f; cue abb9b76 CI green per hatchling. Check 3 is hatchling's cue (842b403 on main); check 5 needs Jørgen to answer a real question in the TUI.
 ## History
 - 2026-11-17T14:56 doing -> doing/waiting (wait)
