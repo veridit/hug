@@ -1,15 +1,14 @@
 ---
 id: 66ex4y
 title: "Capture: daily quality check"
-state: "doing"
+state: "todo"
 type: chore
 priority: "medium"
-assignee: ["hatchling"]
+assignee: []
 labels: ["capture"]
 created: 2026-11-10
 updated: 2026-11-10
-doing_since: "2026-11-17T21:58"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -36,3 +35,4 @@ file:daily-2026-11-17.txt (6095 bytes, sha256:a6383b38) daily check 2026-11-17: 
 Daily 2026-11-17 (hatchling): 356 captures read. Wrong 6, stale 2, agent status 1, duplicates 4, wrong place 7 noted (not moved, owner's call), trivial or short-lived 14 kept. Fixed with 25 forgets (13 captures and 12 imp_ twins, since forget leaves the repo copy active) and 1 correction (p14jea: attach accepts spaces, detach exists). All verified active=false. Code finding filed as 5sc5rw for crab. No capture code changed. Detail in attached daily-2026-11-17.txt.
 ## History
 - 2026-11-17T21:58 todo -> doing/active (take)
+- 2026-11-17T22:24 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T21:58
