@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T15:52"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_since: "2026-11-17T16:30"
+waiting_asked_by: "nautilus"
+waiting_on: "CI: 9b3085b in CI run 44111299428, then the landing turn with 3jtfw9"
 ---
 
 ## Goal
@@ -39,3 +42,4 @@ huginn/internal/tui/tui.go:925 and :1074 run actions t, d, x, J, K, e in the det
 
 ## History
 - 2026-11-17T15:52 todo -> doing/active (take)
+- 2026-11-17T16:30 doing/active -> doing/waiting (wait)
