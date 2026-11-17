@@ -6,6 +6,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- An open `hug tui` reloads the board once per write, not twice (46ek1f). A `hug task note` changes the task file and then, a commit later, the branch. On Seid's 2,520-task board those land about 300 ms apart, longer than the 200 ms debounce, so each write cost two full loads (about 200 ms CPU each). The watch now waits while a writer holds the board turn and signals once it is free; a turn held longer than 5 s does not hold the reload back.
 - `hug task review ID --by NAME [--show FILE]` asks for a review without a hand edit (6w0gve). Your doing task becomes doing/review and you keep it: `review_by` is the reviewer (required; a person in hug.toml [people] or an agent), `review_since` the time, and `--show` names one of the task's files to look at (`review_show`), which the TUI detail draws under the review question, as for wait and design. The reviewer answers with `hug task answer ID "looks right"`; the review fields go to History and the task is active again. A waiting task is refused with `fix: hug task resume ID`, a todo task with the take. MCP `task_update` action `review` with `by` and `show`. `hug task states` lists the move.
 
 ## v0.7.45 - 2026-11-17

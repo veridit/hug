@@ -11,6 +11,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/fsnotify/fsnotify"
+	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -330,6 +331,47 @@ func TestNoReloadWhileIdleOneForABurst(t *testing.T) {
 	}
 	if !strings.Contains(screen(m), "p4") {
 		t.Fatal("last commit of the burst not shown", screen(m))
+	}
+}
+
+// 46ek1f check 3: a write is one load. hug task note changes the task file
+// and then, a git commit later (about 300 ms on Seid), the ref: two bursts
+// further apart than the debounce, which were two loads of the whole board.
+// The write holds the board turn from the file to the commit; the watch
+// signals once the turn is free.
+func TestOneSignalPerWrite(t *testing.T) {
+	m, commit := gitBoard(t, "Alpha", "Beta")
+	common := filepath.Join(m.store.Root, ".git")
+	release, err := gitbranch.BackgroundAt(common, "hug/tasks").Turn()
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := &task.Store{Root: m.store.Root}
+	if _, err := s.Set(m.all[0].ID, "priority", "p1"); err != nil {
+		t.Fatal(err)
+	}
+	// Longer than the debounce and the poll of the turn, as git's commit
+	// on a big board: the file's burst has settled before the ref moves.
+	time.Sleep(3 * debounce)
+	commit("hug task set")
+	release()
+	signals := 0
+	quiet := time.After(4 * debounce)
+	deadline := time.After(10 * time.Second)
+	for done := false; !done; {
+		select {
+		case <-m.watch.C:
+			signals++
+			quiet = time.After(4 * debounce)
+		case <-quiet:
+			done = signals > 0
+			quiet = time.After(4 * debounce)
+		case <-deadline:
+			done = true
+		}
+	}
+	if signals != 1 {
+		t.Fatalf("one write (task file, then the commit) gave %d change signals, want 1", signals)
 	}
 }
 

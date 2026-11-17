@@ -55,8 +55,15 @@ func (r *Repository) Background() (Background, error) {
 		}
 		common = out
 	}
-	name := strings.NewReplacer("/", "-", "\\", "-", ":", "-").Replace(r.Branch)
-	return Background{base: filepath.Join(common, "hug", "sync", name)}, nil
+	return BackgroundAt(common, r.Branch), nil
+}
+
+// BackgroundAt is the background-sync files of branch ("hug/tasks") in
+// the shared git directory common, for a reader that has no Repository:
+// the TUI's watch asks whether the board turn is held (46ek1f).
+func BackgroundAt(common, branch string) Background {
+	name := strings.NewReplacer("/", "-", "\\", "-", ":", "-").Replace(branch)
+	return Background{base: filepath.Join(common, "hug", "sync", name)}
 }
 
 // gitDir is the git directory of the worktree at dir, from its .git folder
@@ -111,6 +118,20 @@ func (b Background) Turn() (func(), error) {
 		return nil, e
 	}
 	return flock.Acquire(b.base + ".turn")
+}
+
+// TurnHeld reports a writer holding the board turn: a try, never a wait.
+// An open TUI asks before it reloads (46ek1f): a write that holds it has
+// changed a task file and not yet moved the branch.
+func (b Background) TurnHeld() bool {
+	release, ok, e := flock.TryAcquire(b.base + ".turn")
+	if e != nil {
+		return false
+	}
+	if ok {
+		release()
+	}
+	return !ok
 }
 
 // Queued reports a syncer waiting to run, or one just started that has not

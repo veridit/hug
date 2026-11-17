@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -20,9 +21,14 @@ import (
 // nothing changes. If the OS watch cannot be set up, the ref's modification
 // time is checked every pollEvery instead.
 var (
-	debounce   = 200 * time.Millisecond
-	maxDelay   = time.Second // a steady stream of events still reloads
-	pollEvery  = 2 * time.Second
+	debounce  = 200 * time.Millisecond
+	maxDelay  = time.Second // a steady stream of events still reloads
+	pollEvery = 2 * time.Second
+	// turnPoll is how often a settled change asks again whether the write
+	// that made it still holds the board turn; turnWait bounds the wait
+	// (a write stuck under the turn still shows).
+	turnPoll   = 50 * time.Millisecond
+	turnWait   = 5 * time.Second
 	newWatcher = fsnotify.NewWatcher
 )
 
@@ -36,6 +42,9 @@ type watch struct {
 // paths the watch follows for a task worktree at root.
 type watchPaths struct {
 	root, common, ref string // ref is the loose ref file; empty without git
+	// turnHeld reports a write between its task file and its commit
+	// (46ek1f); nil without git.
+	turnHeld func() bool
 }
 
 func gitPaths(root string) watchPaths {
@@ -61,7 +70,10 @@ func gitPaths(root string) watchPaths {
 	if r, err := filepath.EvalSymlinks(p.common); err == nil {
 		p.common = r
 	}
-	p.ref = filepath.Join(p.common, filepath.FromSlash(strings.TrimSpace(string(head))))
+	ref := strings.TrimSpace(string(head))
+	p.ref = filepath.Join(p.common, filepath.FromSlash(ref))
+	bg := gitbranch.BackgroundAt(p.common, strings.TrimPrefix(ref, "refs/heads/"))
+	p.turnHeld = bg.TurnHeld
 	return p
 }
 
@@ -204,6 +216,11 @@ func (w *watch) run(fw *fsnotify.Watcher, p watchPaths, poll bool) {
 	}
 	var fire <-chan time.Time
 	var first time.Time
+	// A write holds the board turn from its task file to its commit: the
+	// file's events settle long before the ref moves on a big board (300 ms
+	// on Seid). Signal once the turn is free, so one write is one load
+	// (46ek1f), but never wait on it longer than turnWait.
+	held := time.Time{}
 	changed := func() {
 		now := time.Now()
 		if fire == nil {
@@ -245,8 +262,18 @@ func (w *watch) run(fw *fsnotify.Watcher, p watchPaths, poll bool) {
 					changed()
 				}
 			}
-		case <-fire:
+		case now := <-fire:
 			fire = nil
+			if p.turnHeld != nil && p.turnHeld() {
+				if held.IsZero() {
+					held = now
+				}
+				if now.Sub(held) < turnWait {
+					fire = time.After(turnPoll)
+					continue
+				}
+			}
+			held = time.Time{}
 			select {
 			case w.C <- struct{}{}:
 			default: // a reload is already due
