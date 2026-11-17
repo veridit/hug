@@ -4,7 +4,7 @@ title: "Sync recovers from an interrupted rebase on the tasks worktree"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
