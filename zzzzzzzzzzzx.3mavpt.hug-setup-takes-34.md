@@ -37,5 +37,17 @@ Cheap signals: hug.toml's recorded import (ggydj2), and the board's origin: fiel
 ## Notes
 
 
+Measured (kestrel, 2026-11-17 20:20 CET, v0.7.45, load ~12-30), read-only on /Users/jhf/Veridit/src/seid-lang.
+- hug setup: real 35,57 user 33,31. Profile of runSetup (main a64fcc3): 27.38 s cum, of which importer.Run 26.57 s: task.Parse 18.96 s, FileRefs 17.29 s (regexp backtrack + NFA), convert 16.33 s, Document.SetField->replace 15.42 s (each SetField reparses the whole file, so FileRefs runs once per field), os.ReadFile 7.18 s. ImportFiles (evidence step) 0.77 s.
+- Dry run: added 0, updated 282, unchanged 2212, skipped 183. Of those 282, 0 have a source file newer than the last import commit on hug/tasks touching .backlog-import (e8e16413b, ct 1794783932). They are converter drift, not backlog edits: baseline 812nm2.json has status: and import_type_inference:, while the local file has state: (the 6ephqk rename).
+- File names: 2,677 backlog .md files. Name prefix before ' - ' == frontmatter id in 2,677 of 2,677 (1 file has no id). 2,490 distinct name ids, 2,483 board origins, 13 name ids without an origin (TASK-1095, TASK-1946.05, TASK-1958 ...). The dry run adds 0, so these are linked by alias, baseline or a qualified id@folder.
+- Check 3 reproduced: hug setup, then SIGINT after 4 s. It printed the whole checklist with '[ ] import backlog-md: .backlog/ exists. Import it...' and '[ ] Model: trailer gate: the commit-msg gate needs a Git checkout as its working directory', exit 0. Cause: the cancelled ctx kills exec.CommandContext in findHooks, and the error reads as 'not a checkout'.
+
+Design:
+1. Setup's backlog step reads the directory listing and lstat only, never file contents. 'Imported' means: every listed id (file-name prefix) has an origin, alias or baseline on the board (the cached task list gives aliases), and no listed file is newer than the last import commit (one git log -1). If a name gives no id, an id is not on the board, or a file is newer, setup says so with counts and the first ids, plus 'hug task import backlog DIR --dry-run' to see the exact diff. Never a guessed number. retire is offered only when the cheap answer is complete, and --cleanup keeps its full dry-run gate (cleanup.go:154), so retiring stays exactly as safe as before.
+2. Converter drift (re-rendering already imported tasks) is not 'the import is incomplete'. setup does not report it. The dry run and import still do.
+3. Interrupt: runSetup returns the ctx error when ctx is cancelled (no checklist from half-run steps). findHooks reports ctx.Err() as an interruption, not as 'needs a Git checkout'.
+4. FileRefs: a literal prefilter (bytes.Contains 'file:', 'task:', '.hug/tasks/') before each regexp, and SetField chains in convert stop reparsing per field if cheap. Measured before and after on Seid's 2,677 sources.
+Test (check 1): a 500-file backlog, imported, then every source file chmod 000 (skipped on Windows and as root). setup must report the import complete. On main the dry run hits EACCES and the step stays open.
 ## History
 - 2026-11-17T20:17 todo -> doing/active (take)
