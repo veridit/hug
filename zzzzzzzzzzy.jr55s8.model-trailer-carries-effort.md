@@ -41,6 +41,14 @@ Current gate: hug task install commit-msg (t709he) puts a hook in <git-common-di
 ## Notes
 
 
+Design (wyvern 20:01), for check 1:
+- Roster: hug.toml [models], one line per model: "claude-opus-5-5" = ["low", "medium", "high", "max"]. hug.toml lives on the board branch (git show hug/tasks:hug.toml works in the hug repo). The hook reads it with git cat-file -p <branch>:hug.toml, so it needs no worktree and no hug binary. The count goes from awk=1 git=2 to awk=1 git=3; TestCommitMsgGate counts processes.
+- Board branch: hug/tasks, or the old huginn. The hook tries hug/tasks first.
+- awk checks the trailer: one Model: line; either human, or id/effort with id a key in [models] and effort in its list. Fixes:
+  - no effort: fix: --trailer 'Model: ID/<effort>', with the model's levels listed.
+  - unknown model: fix: hug task models add ID low medium high (a new command writing the [models] line and committing it on the board).
+  - unknown effort: the same, naming the levels.
+- No [models] table yet (most repos today): the gate requires id/effort but cannot check the levels. I'll refuse with the fix to add the model, since the principle is a declarative roster. The cost is that every repo with the gate breaks until its roster exists. Alternative: accept any effort word until a roster exists. I'm asking crab.
 ## History
 - 2026-11-17T18:16 todo -> doing/active (take)
 - 2026-11-17T18:53 doing/active -> doing/waiting (wait)
