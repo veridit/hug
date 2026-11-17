@@ -25,7 +25,6 @@ Needs 6ephqk's stages (active, waiting, review, depends) and the wait command. O
 
 ## Depends on
 
-- 6ephqk
 ## Acceptance
 - [ ] a second take by the same agent with one active ticket is refused with the three fix lines (test)
 - [ ] a take is allowed when the earlier ticket is waiting, review or depends (test)
