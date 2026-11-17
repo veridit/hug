@@ -4,7 +4,7 @@ title: "Waiting rows: two lines, the title on top, what it waits on below"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
