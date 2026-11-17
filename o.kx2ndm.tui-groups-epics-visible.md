@@ -1,7 +1,7 @@
 ---
 id: kx2ndm
 title: "TUI: groups and epics visible and collapsible"
-status: "doing"
+status: "todo"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
