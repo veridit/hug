@@ -53,3 +53,5 @@ Released in v0.7.31 (checks 2,3,5,6). Open: 4 (TUI in-progress rows show branch,
 check 4 evidence (dragon, fd25eb0 on ci/x1t1t1-tui, on v0.7.34): show/ls --json/TUI detail already carried branch (cli.go takenBy, tui/detail.go owner line). New: TUI IN PROGRESS rows, m.rowOwner = owner then ' · branch' unless Options.MainBranch (gitbranch.DefaultBranch). Test huginn/internal/tui/owner_branch_test.go TestInProgressRowShowsBranch: 'poodle · feat/x', main hidden, 80 cols 'alice · feat/te'. Goldens: GOMAXPROCS=2 HUGINN_UPDATE_GOLDEN=1 go test -run TestTmuxGolden -> 4 overview.txt files changed; 140x40 row: '> ◑ 1/2 000002   doing   bug     critical Bug task 02: make the terminal workflow observable                    alice · feat/terminal-000002'; 80x24: 'alice · feat/te…'. Local: ok github.com/veridit/hug/huginn/internal/tui 45.524s. CI 43943254468 pending; tick after green and on main.
 
 Jørgen 2026-11-16: check 7 = observe real use in Statbus (live production), read-only, together with 0hkaa5 check 6.
+
+2026-11-17 09:00 crab: check 4 landed as 8e9df0b (CI 44049093502 green), released in v0.7.38. Open: check 7, Statbus observation.
