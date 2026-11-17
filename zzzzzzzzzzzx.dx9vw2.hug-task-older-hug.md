@@ -31,7 +31,7 @@ Reflection on ce3dmq (2026-11-17). Possible signal: a board-level layout version
 
 ## Acceptance
 - [x] test: an old-layout binary (simulated layout version) on a newer board: a write command fails with 'this board is newer than this hug' and fix: brew upgrade veridit/tap/hug, before any write (test fails before)
-- [ ] read commands warn once on stderr and still print
+- [x] read commands warn once on stderr and still print
 
 ## Notes
 
