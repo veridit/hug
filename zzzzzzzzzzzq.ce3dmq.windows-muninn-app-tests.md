@@ -1,18 +1,17 @@
 ---
 id: ce3dmq
 title: "Windows: muninn app tests hit the 10m timeout; placement starts 4 git per lookup"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T19:42"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+done_at: "2026-11-17T20:40"
 ---
 
 ## Goal
@@ -49,3 +48,4 @@ hatchling 19:41: main CI 44159339484 on f24080c: secrets, bench, ubuntu, windows
 - 2026-11-17T20:31 doing/waiting -> doing/active (resume); was waiting_asked_by: hatchling; waiting_on: windows timing run on ci/ce3dmq-timing (seed in one transaction), then land; waiting_since: 2026-11-17T20:21
 - 2026-11-17T20:31 doing/active -> doing/waiting (wait)
 - 2026-11-17T20:40 doing/waiting -> doing/active (resume); was waiting_asked_by: hatchling; waiting_on: main CI 44159339484: windows muninn/internal/app time in the full suite; waiting_since: 2026-11-17T20:31
+- 2026-11-17T20:40 doing/active -> done (done); was doing_since: 2026-11-17T19:42
