@@ -36,5 +36,6 @@ muninn/internal/app/capture_batch_test.go:200. The test kills a child after save
 ## Notes
 
 
+hatchling 13:47, cause with evidence. Windows probe run 44095837741 (probe/zd3x24 = d198e01 + new TestNativeSaveRacesLoads, no fix): 'native_race_test.go:65: 92 of 2745 loads failed (first: open ...\memories.json: The process cannot access the file because it is being used by another process.), 145 of 429 saves failed (first: rename ...\memories.json.tmp ...\memories.json: Access is denied.)'. Same mechanism as kbc99j: ingest.LoadNative uses os.ReadFile (no FILE_SHARE_DELETE) and SaveNative os.Rename (MoveFileEx). In TestCaptureKilledAfterSaveBeforeCheckpoint the parent polls LoadNative every 5 ms (capture_batch_test.go:195) while the child's MergeSave renames over the file: the child's save fails, so it 'never persisted native batch'. In isolation the capture test passed 20 of 20 in the same probe (timing-dependent, the main CI full suite hit it). Fix: LoadNative/SaveNative through kestrel's internal/sharefile (kbc99j a45bec0, not on main yet), so zd3x24 lands after kbc99j.
 ## History
 - 2026-11-17T14:45 todo -> doing/active (take)
