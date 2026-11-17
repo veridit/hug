@@ -62,7 +62,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -447,7 +447,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	// "hug task lint help", before or after flags, asks for lint's help,
 	// like --help (6neax1: it said "expected 0 positional arguments").
 	// Only for commands without positional arguments: "new help" is a title.
-	noArgs := []string{"lint", "ls", "next", "sync", "types", "init", "board", "setup", "tui", "upgrade"}
+	noArgs := []string{"lint", "ls", "next", "sync", "types", "states", "init", "board", "setup", "tui", "upgrade"}
 	if slices.Contains(noArgs, cmd) && len(f.args) == 1 && f.args[0] == "help" {
 		f.args = nil
 		f.values["help"] = []string{"true"}
@@ -472,6 +472,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, usage("unknown command "+target+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task help "+e.Closest)
 		}
 		return Reply{"help": commandHelp(target), "next": "hug task next"}, nil
+	}
+	if cmd == "states" {
+		// The state and stage tree (6ephqk), from the one table in
+		// task/states.go; reads no board.
+		if e = f.count(0); e != nil {
+			return nil, e
+		}
+		return Reply{"states": task.States, "transitions": task.Transitions, "states_text": task.StatesText(), "next": "hug task next"}, nil
 	}
 	if cmd == "types" {
 		if e = a.refreshExisting(ctx); e != nil {
@@ -1246,6 +1254,9 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if fs, ok := reply["findings"].([]task.Finding); ok {
 		sum, _ := reply["summary"].(LintSummary)
 		writeFindings(a.Out, fs, sum)
+	}
+	if text, ok := reply["states_text"].(string); ok {
+		fmt.Fprint(a.Out, text)
 	}
 	if ts, ok := reply["types"].([]task.TypeInfo); ok {
 		for _, v := range ts {
