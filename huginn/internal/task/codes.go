@@ -10,60 +10,94 @@ import (
 type CodeInfo struct {
 	Code    string `json:"code"`
 	Meaning string `json:"meaning"`
+	// Severity is Broken or Advice (pbh9xq), see Severity.
+	Severity string `json:"severity"`
 }
 
-// Codes lists every finding code FindingCode can return, in a stable order.
+// Severities of a finding (pbh9xq, Jørgen 2026-11-16). Broken: hug cannot
+// read or trust the task (a link to nothing, a cycle, a done task with an
+// open check): always shown, closed task or not. Advice: the task works but
+// is below the house style (title length, sections, acceptance): shown on
+// open tasks only, where someone can still act on it.
+const (
+	Broken = "broken"
+	Advice = "advice"
+)
+
+// advice are the codes Codes marks Advice.
+var advice = map[string]bool{}
+
+// Severity is the severity of a finding code, as Codes says; a code not
+// there is Broken, so it is shown until someone decides it is only style.
+func Severity(code string) string {
+	if advice[code] {
+		return Advice
+	}
+	return Broken
+}
+
+// Codes lists every finding code FindingCode can return, in a stable order,
+// with its severity: this table is the split (pbh9xq).
 var Codes = []CodeInfo{
-	{"frontmatter", "the --- header is missing or malformed"},
-	{"duplicate-section", "a section heading appears twice"},
-	{"duplicate-field", "a header field appears twice"},
-	{"missing-field", "id, title or status is missing"},
-	{"invalid-id", "the id is not 6 characters of 0-9 a-z"},
-	{"id-mismatch", "the file name id differs from the header id"},
-	{"unknown-status", "status is not todo, doing, done or dropped"},
-	{"unknown-stage", "the stage is not a stage of the task's state (hug task states)"},
-	{"stray-node-field", "a node field (doing_since, waiting_on ...) outside its node"},
-	{"missing-node-field", "the state or stage needs a field the task lacks (waiting_on ...)"},
-	{"stage-disagrees", "a stage hug sets (draft, depends, ready) does not match the task"},
-	{"unknown-type", "type is not feature, bug, chore, spike or docs"},
-	{"invalid-field", "a header field has an invalid value"},
-	{"missing-goal", "no Goal section, or it is empty"},
-	{"missing-section", "an open task lacks Purpose or Principle"},
-	{"section-order", "sections are not in Goal, Purpose, Principle, ... order"},
-	{"no-acceptance", "no acceptance item (- [ ] ...)"},
-	{"done-unchecked", "done, but an acceptance item is not ticked"},
-	{"filename-collision", "two file names differ only by case"},
-	{"duplicate-id", "two tasks have the same id"},
-	{"dangling-dependency", "depends on an id no task has"},
-	{"not-a-dependency", "a Depends on line that is not a dependency"},
-	{"dependency-cycle", "tasks depend on each other in a loop"},
-	{"missing-parent", "the epic (parent) does not exist"},
-	{"self-parent", "a task is its own parent"},
-	{"parent-too-deep", "the parent has a parent itself"},
-	{"long-title", "the title is longer than 80 characters"},
-	{"forbidden-citation", "cites a folder that gets deleted"},
-	{"file-symlink", "a task file is a symlink"},
-	{"duplicate-origin", "two tasks were imported from one source"},
-	{"unknown-condition", "a Depends on condition hug cannot check (unreadable, or not checkable here): the task waits"},
-	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped"},
-	{"stale-owner", "a doing task's assignee has had no live harness session for over a day"},
-	{"backlog-leftover", "Backlog.md markers or unused imported fields; hug upgrade removes them"},
-	{"missing-task-ref", "a task: link names no task"},
-	{"missing-file", "a file: link names no file"},
-	{"file-content", "an attached file is binary or too large"},
-	{"other", "anything else"},
+	{"frontmatter", "the --- header is missing or malformed", Broken},
+	{"duplicate-section", "a section heading appears twice", Broken},
+	{"duplicate-field", "a header field appears twice", Broken},
+	{"missing-field", "id, title or status is missing", Broken},
+	{"invalid-id", "the id is not 6 characters of 0-9 a-z", Broken},
+	{"id-mismatch", "the file name id differs from the header id", Broken},
+	{"unknown-status", "status is not todo, doing, done or dropped", Broken},
+	{"unknown-stage", "the stage is not a stage of the task's state (hug task states)", Broken},
+	{"stray-node-field", "a node field (doing_since, waiting_on ...) outside its node", Broken},
+	{"missing-node-field", "the state or stage needs a field the task lacks (waiting_on ...)", Broken},
+	{"stage-disagrees", "a stage hug sets (draft, depends, ready) does not match the task", Broken},
+	{"unknown-type", "type is not feature, bug, chore, spike or docs", Broken},
+	{"invalid-field", "a header field has an invalid value", Broken},
+	{"missing-goal", "no Goal section, or it is empty", Broken},
+	{"missing-section", "an open task lacks Purpose or Principle", Advice},
+	{"section-order", "sections are not in Goal, Purpose, Principle, ... order", Advice},
+	{"no-acceptance", "no acceptance item (- [ ] ...)", Advice},
+	{"done-unchecked", "done, but an acceptance item is not ticked", Broken},
+	{"filename-collision", "two file names differ only by case", Broken},
+	{"duplicate-id", "two tasks have the same id", Broken},
+	{"dangling-dependency", "depends on an id no task has", Broken},
+	{"not-a-dependency", "a Depends on line that is not a dependency", Broken},
+	{"dependency-cycle", "tasks depend on each other in a loop", Broken},
+	{"missing-parent", "the epic (parent) does not exist", Broken},
+	{"self-parent", "a task is its own parent", Broken},
+	{"parent-too-deep", "the parent has a parent itself", Broken},
+	{"long-title", "the title is longer than 80 characters", Advice},
+	{"forbidden-citation", "cites a folder that gets deleted", Broken},
+	{"file-symlink", "a task file is a symlink", Broken},
+	{"duplicate-origin", "two tasks were imported from one source", Broken},
+	{"unknown-condition", "a Depends on condition hug cannot check (unreadable, or not checkable here): the task waits", Broken},
+	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped", Broken},
+	{"stale-owner", "a doing task's assignee has had no live harness session for over a day", Broken},
+	{"backlog-leftover", "Backlog.md markers or unused imported fields; hug upgrade removes them", Advice},
+	{"missing-task-ref", "a task: link names no task", Broken},
+	{"missing-file", "a file: link names no file", Broken},
+	{"file-content", "an attached file is binary or too large", Broken},
+	{"other", "anything else", Broken},
 }
 
 // CodeCount is a code with its plain meaning and how many findings have it.
 type CodeCount struct {
-	Code    string `json:"code"`
-	Count   int    `json:"count"`
-	Meaning string `json:"meaning"`
+	Code     string `json:"code"`
+	Count    int    `json:"count"`
+	Meaning  string `json:"meaning"`
+	Severity string `json:"severity"`
 	// List is the command that lists the findings of this code.
 	List string `json:"list"`
 }
 
 // CodeNames are the codes in Codes order.
+func init() {
+	for _, c := range Codes {
+		if c.Severity == Advice {
+			advice[c.Code] = true
+		}
+	}
+}
+
 func CodeNames() []string {
 	out := make([]string, len(Codes))
 	for i, c := range Codes {
@@ -72,8 +106,9 @@ func CodeNames() []string {
 	return out
 }
 
-// Summarize counts findings by code, most frequent first (then by code).
-// With all set, codes without findings are listed too, after the others.
+// Summarize counts findings by code: broken codes first (pbh9xq), each
+// severity most frequent first (then by code). With all set, codes without
+// findings are listed too, after the others.
 func Summarize(fs []Finding, all bool) []CodeCount {
 	n := map[string]int{}
 	for _, f := range fs {
@@ -82,10 +117,16 @@ func Summarize(fs []Finding, all bool) []CodeCount {
 	var out []CodeCount
 	for _, c := range Codes {
 		if n[c.Code] > 0 || all {
-			out = append(out, CodeCount{Code: c.Code, Count: n[c.Code], Meaning: c.Meaning, List: "hug task lint --code " + c.Code})
+			out = append(out, CodeCount{Code: c.Code, Count: n[c.Code], Meaning: c.Meaning, Severity: c.Severity, List: "hug task lint --code " + c.Code})
 		}
 	}
 	sort.SliceStable(out, func(i, j int) bool {
+		if zi, zj := out[i].Count == 0, out[j].Count == 0; zi != zj {
+			return zj
+		}
+		if bi, bj := out[i].Severity == Broken, out[j].Severity == Broken; bi != bj && out[i].Count > 0 {
+			return bi
+		}
 		if out[i].Count != out[j].Count {
 			return out[i].Count > out[j].Count
 		}
@@ -105,15 +146,49 @@ func Summarize(fs []Finding, all bool) []CodeCount {
 // by default (6neax1, Jørgen: 986 of 2,477 seid findings were on closed
 // tasks).
 func OpenFindings(fs []Finding, tasks []Task) (open, closed []Finding) {
+	closedAt := closedPaths(tasks)
+	for _, f := range fs {
+		if closedAt(f.Path) {
+			closed = append(closed, f)
+		} else {
+			open = append(open, f)
+		}
+	}
+	return open, closed
+}
+
+// ShownFindings splits findings into what lint and the TUI show by default
+// and what they hide (pbh9xq): broken findings are always shown, first;
+// advice is shown on open tasks and hidden on closed ones.
+func ShownFindings(fs []Finding, tasks []Task) (shown, hidden []Finding) {
+	closedAt := closedPaths(tasks)
+	var advice []Finding
+	for _, f := range fs {
+		switch {
+		case f.Severity() == Broken:
+			shown = append(shown, f)
+		case closedAt(f.Path):
+			hidden = append(hidden, f)
+		default:
+			advice = append(advice, f)
+		}
+	}
+	return append(shown, advice...), hidden
+}
+
+// closedPaths reports whether a finding's path belongs to a done or dropped
+// task: its file, or a file in its folder (group/ID/...). A path no task
+// owns (a broken file) is open, since nothing says it is finished.
+func closedPaths(tasks []Task) func(path string) bool {
 	status := map[string]string{}
 	for _, t := range tasks {
 		status[t.Path] = t.Status
 		status[FolderOf(t)+"/"] = t.Status
 	}
-	for _, f := range fs {
-		s, ok := status[f.Path]
+	return func(path string) bool {
+		s, ok := status[path]
 		if !ok {
-			for dir := f.Path; ; {
+			for dir := path; ; {
 				i := strings.LastIndex(dir, "/")
 				if i < 0 {
 					break
@@ -125,11 +200,6 @@ func OpenFindings(fs []Finding, tasks []Task) (open, closed []Finding) {
 				}
 			}
 		}
-		if ok && (s == "done" || s == "dropped") {
-			closed = append(closed, f)
-		} else {
-			open = append(open, f)
-		}
+		return ok && (s == "done" || s == "dropped")
 	}
-	return open, closed
 }

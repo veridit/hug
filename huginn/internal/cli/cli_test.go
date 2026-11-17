@@ -369,9 +369,9 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 	execute(t, a, "edit", long)
 	code, out, _ := run("lint", "--summary")
 	t.Log("--summary:\n" + out)
-	if code != 0 || !strings.HasPrefix(out, "2 findings in 2 codes:\n") || strings.Contains(out, "\t") ||
-		!strings.Contains(out, "  1  long-title       the title is longer than 80 characters   hug task lint --code long-title\n") ||
-		!strings.Contains(out, "  1  missing-section  an open task lacks Purpose or Principle  hug task lint --code missing-section\n") ||
+	if code != 0 || !strings.HasPrefix(out, "2 findings (0 broken) in 2 codes:\n") || strings.Contains(out, "\t") ||
+		!strings.Contains(out, "  1  advice  long-title       the title is longer than 80 characters   hug task lint --code long-title\n") ||
+		!strings.Contains(out, "  1  advice  missing-section  an open task lacks Purpose or Principle  hug task lint --code missing-section\n") ||
 		!strings.HasSuffix(out, "next: hug task lint --code long-title\n") {
 		t.Fatalf("summary: %q", out)
 	}
@@ -380,7 +380,7 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 		t.Fatalf("json summary: %+v", r)
 	}
 	b, _ := json.Marshal(r)
-	if !strings.Contains(string(b), `"summary":{"total":2,"codes":[{"code":"long-title","count":1,"meaning":"the title is longer than 80 characters","list":"hug task lint --code long-title"}`) {
+	if !strings.Contains(string(b), `"summary":{"total":2,"broken":0,"codes":[{"code":"long-title","count":1,"meaning":"the title is longer than 80 characters","severity":"advice","list":"hug task lint --code long-title"}`) {
 		t.Fatalf("json: %s", b)
 	}
 	// --code alone and --code help list every code with its count.
@@ -395,7 +395,7 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 			}
 			continue
 		}
-		if !strings.HasPrefix(out, "finding codes (2 findings on this board):\n  1  long-title ") || !strings.Contains(out, "  0  not-a-dependency ") || strings.Count(out, "\n") != len(task.Codes)+2 {
+		if !strings.HasPrefix(out, "finding codes (2 findings on this board):\n  1  advice  long-title ") || !strings.Contains(out, "  0  broken  not-a-dependency ") || strings.Count(out, "\n") != len(task.Codes)+2 {
 			t.Fatalf("%v: %q", args, out)
 		}
 	}
@@ -440,9 +440,11 @@ func TestLintBoundedOutput(t *testing.T) {
 	out := write("", "")
 	t.Log("\n" + out)
 	lines := strings.Split(strings.TrimSuffix(out, "\n"), "\n")
-	// The overview (fkpyg3): totals per code, then one line per task, the
-	// first lintShown tasks when there are more than lintBound.
-	if lines[0] != "36 findings on 36 tasks, in 2 codes:" || lines[1] != "  35  no-acceptance  no acceptance item (- [ ] ...)   hug task lint --code no-acceptance" || lines[3] != "first 10 tasks:" ||
+	// The overview (fkpyg3): totals per code, broken codes first however
+	// few (pbh9xq), then one line per task, the first lintShown tasks when
+	// there are more than lintBound.
+	if lines[0] != "36 findings (1 broken) on 36 tasks, in 2 codes:" || lines[1] != "   1  broken  missing-goal   no Goal section, or it is empty  hug task lint --code missing-goal" ||
+		lines[2] != "  35  advice  no-acceptance  no acceptance item (- [ ] ...)   hug task lint --code no-acceptance" || lines[3] != "first 10 tasks:" ||
 		lines[4] != "  k7m2q0  no-acceptance  -> hug task lint k7m2q0" ||
 		len(lines) != 4+lintShown+1 || lines[len(lines)-1] != "10 of 36 tasks shown; every one: hug task lint --all; one kind: hug task lint --code CODE" {
 		t.Fatalf("bounded:\n%s", out)
@@ -450,17 +452,19 @@ func TestLintBoundedOutput(t *testing.T) {
 	if all := write("all", ""); strings.Count(all, "  -> hug task lint ") != 36 || strings.Contains(all, "shown") {
 		t.Fatalf("--all:\n%s", all)
 	}
-	if one := write("", "no-acceptance"); !strings.HasSuffix(one, "10 of 36 shown; every one: hug task lint --code no-acceptance --all\n") || strings.Contains(one, "findings in") {
+	if one := write("", "no-acceptance"); !strings.HasSuffix(one, "10 of 36 shown; every one: hug task lint --code no-acceptance --all\n") || strings.Contains(one, " in 2 codes") {
 		t.Fatalf("--code bounded:\n%s", one)
 	}
 }
 
-// 6neax1: findings on done or dropped tasks are hidden and counted by
-// default; --all shows them.
+// 6neax1, pbh9xq check 5: a broken finding shows on an open task and on a
+// closed one; advice shows on an open task and is hidden, and counted, on a
+// closed one; --all shows everything.
 func TestLintHidesClosedTasks(t *testing.T) {
 	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
+	// Broken (not-a-dependency) on a task, then the task is done.
 	id := execute(t, a, "new", "Closed one", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	useEditor(t, a, "## Depends on\n", "## Depends on\nNothing\n")
 	execute(t, a, "edit", id)
@@ -475,26 +479,58 @@ func TestLintHidesClosedTasks(t *testing.T) {
 		}
 		return out.String()
 	}
-	want := "no findings on open tasks\n1 finding on closed tasks hidden (1 not-a-dependency): hug task lint --all\nnext: hug task lint --all\n"
-	if out := run("lint"); out != want {
-		t.Fatalf("default:\n%s", out)
+	// Broken on a closed task: shown, never hidden; lint ID names its
+	// severity.
+	if out := run("lint"); !strings.HasPrefix(out, "1 finding (1 broken) on 1 task, in 1 code:\n") || !strings.Contains(out, "  "+id+"  not-a-dependency  -> hug task lint "+id+"\n") || strings.Contains(out, "hidden") {
+		t.Fatalf("broken on a closed task:\n%s", out)
 	}
-	if out := run("lint", "--summary"); !strings.Contains(out, "1 finding on closed tasks hidden (1 not-a-dependency): hug task lint --all\n") {
-		t.Fatalf("summary:\n%s", out)
+	if out := run("lint", id); !strings.HasPrefix(out, "h."+id+".closed-one.md:") || !strings.Contains(strings.SplitN(out, "\n", 2)[0], ": broken [not-a-dependency] ") {
+		t.Fatalf("broken on a closed task, detail:\n%s", out)
 	}
-	if out := run("lint", "--code", "not-a-dependency"); !strings.Contains(out, "hug task lint --code not-a-dependency --all\n") {
+	// Advice (section-order: Depends on moved above Purpose) on a closed
+	// task: hidden and counted.
+	closedLong := execute(t, a, "new", "Closed advice", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+closedLong+"*.md"))
+	b, _ := os.ReadFile(m[0])
+	text := strings.Replace(string(b), "\n## Depends on\n", "\n", 1)
+	if err := os.WriteFile(m[0], []byte(strings.Replace(text, "\n## Purpose\n", "\n## Depends on\n\n## Purpose\n", 1)), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	git(t, filepath.Join(a.Cwd, TaskDir), "commit", "-qam", "out of order")
+	execute(t, a, "check", closedLong, "1")
+	execute(t, a, "take", closedLong) // done needs a doing task (6ephqk)
+	execute(t, a, "done", closedLong)
+	out := run("lint")
+	if strings.Contains(out, closedLong) || !strings.Contains(out, "\n1 advice finding on closed tasks hidden (1 section-order): hug task lint --all\n") {
+		t.Fatalf("advice on a closed task:\n%s", out)
+	}
+	if out := run("lint", "--code", "section-order"); !strings.HasPrefix(out, "no findings with code section-order (none broken, no advice on open tasks)\n") ||
+		!strings.Contains(out, "hug task lint --code section-order --all\n") {
 		t.Fatalf("code:\n%s", out)
 	}
 	r := execute(t, a, "lint")
-	if r["hidden"] != 1 || len(r["findings"].([]task.Finding)) != 0 {
+	if r["hidden"] != 1 || len(r["findings"].([]task.Finding)) != 1 {
 		t.Fatalf("json: %v", r)
 	}
-	b, _ := json.Marshal(r)
-	if !strings.Contains(string(b), `"hidden":1,"hidden_codes":[{"code":"not-a-dependency","count":1`) {
+	b, _ = json.Marshal(r)
+	if !strings.Contains(string(b), `"severity":"broken"`) || !strings.Contains(string(b), `"hidden":1,"hidden_codes":[{"code":"section-order","count":1`) {
 		t.Fatalf("json: %s", b)
 	}
+	// Advice and broken on open tasks: both shown, broken first.
+	openLong := execute(t, a, "new", "Open advice", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	execute(t, a, "set", openLong, "--title", strings.Repeat("Long title ", 9)) // new refuses it (fkpyg3); set keeps it as advice
+	openBroken := execute(t, a, "new", "Open broken", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	execute(t, a, "edit", openBroken)
+	out = run("lint")
+	iBroken, iAdvice := strings.Index(out, "  "+openBroken+"  not-a-dependency  -> "), strings.Index(out, "  "+openLong+"  long-title  -> ")
+	if iBroken < 0 || iAdvice < 0 || iAdvice < iBroken || strings.Contains(out, closedLong) {
+		t.Fatalf("open tasks:\n%s", out)
+	}
+	if d := run("lint", openLong); !strings.Contains(d, ": advice [long-title] ") {
+		t.Fatalf("open advice, detail:\n%s", d)
+	}
 	all := run("lint", "--all")
-	if !strings.Contains(all, "not-a-dependency") || strings.Contains(all, "hidden") {
+	if !strings.Contains(all, closedLong) || strings.Contains(all, "hidden") {
 		t.Fatalf("--all:\n%s", all)
 	}
 	if r := execute(t, a, "lint", "--all"); r["hidden"] != nil && r["hidden"] != 0 {

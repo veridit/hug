@@ -29,4 +29,4 @@
 
   RECENTLY DONE · last closed  [0] · None                                                                                                   
 
-  LINT · tasks needing attention  [0] · 0 findings · None                                                                                   
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
