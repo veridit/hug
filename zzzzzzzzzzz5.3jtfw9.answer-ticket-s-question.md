@@ -11,8 +11,8 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing turn: after hatchling, kestrel, wyvern; CI 44096102067 on fd95919"
-waiting_since: "2026-11-17T14:56"
+waiting_on: "landing turn after kestrel n2hq8p and hatchling p29rbz; 99edb5f green in CI 44111992156; cue commit from hatchling joins it"
+waiting_since: "2026-11-17T16:31"
 waiting_asked_by: "nautilus"
 stage: "waiting"
 ---
