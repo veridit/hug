@@ -11,6 +11,10 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing turn"
+waiting_since: "2026-11-17T14:36"
+waiting_asked_by: "hatchling"
+stage: "waiting"
 ---
 
 ## Goal
@@ -45,3 +49,7 @@ hatchling 12:43, crab ruling A: check 1 promoted to tpnd3n (goal = rewrite B, me
 hatchling 12:47: ci/x325pp a9d61b0 = 13d9e8a rebased on ci/fkpyg3 5817fd7 (CHANGELOG and BOARD4 conflicts additive, kept both; the stop-order early return also covers v3k6cp's owner lines). Local suite green. CI 44086404888. Lands with fkpyg3 in one push, in my turn.
 
 hatchling 12:58, check 3 per crab's rule (held or lost?): LOST in the replay. Main arm: skunk turn 2 2026-11-11T18:13:45Z 'w96jpg: title is 151 characters' (judged correct). Stop arm: skunk fires 0 lines in its 3 board turns (stop/fresh-sum.jsonl fired 0), and no fresh session gets the w96jpg title line later (stop/fresh.jsonl has 6 lines, none after 18:13:45; main has none after it either, so the set ends there). Check 3 stays open and goes to tpnd3n: the rewrite must also re-offer a finding withheld on a stop turn. x325pp lands with check 2, then waits on tpnd3n for checks 1 and 3.
+
+
+## History
+- 2026-11-17T14:36 doing -> doing/waiting (wait)
