@@ -1,13 +1,18 @@
 ---
 id: 95ahtk
 title: "Task writers wait their turn: no index or temp-file races"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T17:47"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ me51r2 (9af390c) fixed this for hug mem. huginn has no file lock today (no flock
 - [ ] readers (ls, show) do not wait on a held writer lock (test)
 
 ## Notes
+
+
+## History
+- 2026-11-17T17:47 todo -> doing/active (take)
