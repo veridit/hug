@@ -1,18 +1,17 @@
 ---
 id: asr4t2
 title: "hug upgrade does the upgrade and says what changed, per part"
-status: "doing"
+status: "done"
 type: bug
 priority: "medium"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T19:12"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T19:25"
 ---
 
 ## Goal
@@ -45,3 +44,4 @@ landed f4ee48b on main (dcb20c2..f4ee48b). check 1: TestUpgradeMigratesStateKey 
 check 3 landed 317f5c2 on main (f4ee48b..317f5c2). TestUpgradePreviewsThenApplies failed on main first: 'plain upgrade: exit 0, want 5 ending fix: hug upgrade --apply'; now ok. Binary run on a scratch board: plain 'hug upgrade' prints 'tasks: would: 1 tasks moved to state: (was status:)' + diff, ends 'fix: hug upgrade --apply', exit 5; 'hug task upgrade' exit 5; '--dry-run' exit 2 (unknown flag); '--apply' exit 0, 'tasks: 1 tasks moved...'; again: nothing to do x4, exit 0. -race -count=1 cli ok 131.9s; cmd/hug, mcp, task ok.
 ## History
 - 2026-11-17T19:12 todo -> doing/active (take)
+- 2026-11-17T19:25 doing/active -> done (done); was doing_since: 2026-11-17T19:12
