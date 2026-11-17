@@ -1,21 +1,17 @@
 ---
 id: cvbpdy
 title: "Lint owns evidence rules: (lost) marker, path citations checked, setup offers them"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T17:33"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "orangutan: check 4: Seid switches its pre-commit hook from tools/evidence.py check to hug task lint after setting forbid_cite; 530 findings on 464 lines to clear first (note 16:34)"
-waiting_since: "2026-11-17T17:34"
-waiting_asked_by: "hatchling"
+done_at: "2026-11-18T00:50"
 ---
 
 ## Goal
@@ -50,6 +46,8 @@ Before Seid turns on forbid_cite (crab 16:33): adding forbid_cite = [".jcode/scr
 landed 95079e0 on main 2026-11-17: hug task lint: a citation followed by ' (lost)' is a known gap; forbidden…
 hatchling 16:50, main CI 44127183886 on 95079e0: macos, windows, secrets, bench success; ubuntu failure from a data race in huginn/internal/tui TestQuitDoesNotWaitForWatchSetup (start_test.go:170 write vs start.go:98 read of watchStarter), present already on e582ab4 (main CI 44126454244 ubuntu failure) and fixed by d16fb54 on main. The cvbpdy diff touches no tui file.
 shipped in v0.7.43 (95079e0)
+Reflection (open, 2026-11-18, hatchling): The ticket held work for two repos: hug's lint and Seid's switch. An acceptance item that only another repo's owner can tick kept a shipped task open for a day. Splitting at filing time would have avoided it.
 ## History
 - 2026-11-17T17:33 todo -> doing/active (take)
 - 2026-11-17T17:34 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:50 doing/waiting -> done (done); was doing_since: 2026-11-17T17:33; waiting_asked_by: hatchling; waiting_on: orangutan: check 4: Seid switches its pre-commit hook from tools/evidence.py check to hug task lint after setting forbid_cite; 530 findings on 464 lines to clear first (note 16:34); waiting_since: 2026-11-17T17:34
