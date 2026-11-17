@@ -90,8 +90,8 @@ func TestKeyTableListNavigation(t *testing.T) {
 	}
 }
 func TestPaneKeysAndBoardSelection(t *testing.T) {
-	for _, right := range []string{"l", "right", "tab"} {
-		for _, left := range []string{"h", "left", "shift+tab"} {
+	for _, right := range []string{"l", "right"} {
+		for _, left := range []string{"h", "left"} {
 			m := manyModel(t)
 			m.setView("overview")
 			m = press(m, right)
@@ -118,14 +118,18 @@ func TestPaneKeysAndBoardSelection(t *testing.T) {
 			}
 		}
 	}
+	// l/h step views from the list; Tab is the column cursor (bejd89).
 	m := manyModel(t)
-	m = press(m, "tab")
+	m = press(m, "l")
 	if m.view != "board" {
 		t.Fatal(m.view)
 	}
-	m = press(m, "shift+tab")
+	m = press(m, "h")
 	if m.view != "board" || m.pane != 4 {
 		t.Fatal(m.view, m.pane)
+	}
+	if m = press(manyModel(t), "tab"); m.view != "list" || m.column != 0 {
+		t.Fatal("Tab in the list marks a column", m.view, m.column)
 	}
 }
 func TestDetailAndHelpScrollKeys(t *testing.T) {

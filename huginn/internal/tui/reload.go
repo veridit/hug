@@ -290,6 +290,7 @@ type handoff struct {
 	Chips      [][2]string `json:"chips,omitempty"`  // filters, in the order set
 	Query      string      `json:"query,omitempty"`
 	Sort       []sortSpec  `json:"sort,omitempty"`
+	Column     string      `json:"column,omitempty"` // the column the cursor marks (bejd89)
 }
 
 type sortSpec struct {
@@ -328,6 +329,9 @@ func (m model) handoff() handoff {
 	for _, k := range m.sort {
 		h.Sort = append(h.Sort, sortSpec{k.field, k.desc})
 	}
+	if m.column >= 0 {
+		h.Column = gridColumns[m.column].field
+	}
 	return h
 }
 
@@ -341,6 +345,12 @@ func (m *model) resume(h handoff) {
 		m.setFilter(c[0], c[1])
 	}
 	m.query = h.Query
+	m.column = -1
+	for i, c := range gridColumns {
+		if h.Column != "" && c.field == h.Column {
+			m.column = i
+		}
+	}
 	m.sort = nil
 	for _, s := range h.Sort {
 		if fieldByName(s.Field).name != "" {

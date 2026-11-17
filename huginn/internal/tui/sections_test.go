@@ -149,7 +149,7 @@ func TestSectionsKeepScroll(t *testing.T) {
 	if first == 0 {
 		t.Fatal("IN PROGRESS did not scroll; the check would prove nothing")
 	}
-	m = press(m, "tab", "j", "tab", "shift+tab", "shift+tab")
+	m = press(m, "l", "j", "l", "h", "h")
 	if m.pane != sectionDoing {
 		t.Fatalf("pane %d", m.pane)
 	}
@@ -158,7 +158,7 @@ func TestSectionsKeepScroll(t *testing.T) {
 	}
 	// The unfocused section draws its kept window: the selected row is
 	// still among IN PROGRESS's rows while NEXT UP is focused.
-	m = press(m, "tab")
+	m = press(m, "l")
 	view := ansi.Strip(m.overviewText())
 	inProgress := view[:strings.Index(view, "NEXT UP")]
 	if !strings.Contains(inProgress, before.ID) {
@@ -177,7 +177,7 @@ func TestSectionsKeepScroll(t *testing.T) {
 	if first == 0 {
 		t.Fatal("TODO column did not scroll")
 	}
-	m = press(m, "tab", "j", "shift+tab")
+	m = press(m, "l", "j", "h")
 	if after, _ := m.selected(); after.ID != before.ID || m.scrollOf(0) != first {
 		t.Fatalf("board: back in TODO: %s scroll %d, want %s scroll %d", after.ID, m.scrollOf(0), before.ID, first)
 	}

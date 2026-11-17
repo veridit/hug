@@ -8,8 +8,8 @@ j/k ↑/↓       move / scroll
 > / G / End   bottom
 ctrl-d/u, J/K half page down / up (J/K: in a task)
 PgDn / PgUp   full page down / up
-h/← Shift-Tab previous pane / column
-l/→ Tab       next pane / column
+h/←           previous section / pane
+l/→           next section / pane
 Enter         open full task detail
 Esc           back one level, never quits
 q / ctrl-c    quit (q only outside inputs)

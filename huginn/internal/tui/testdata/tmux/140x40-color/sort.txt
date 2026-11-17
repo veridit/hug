@@ -37,4 +37,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
 Rows 1–31 of 60 · ! lint finding · depends = a dependency is not done
 sort: priority ↓ · type
 
-j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                               hug v0.0.0
+j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit · Tab/o column/order                          hug v0.0.0

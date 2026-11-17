@@ -159,18 +159,23 @@ type model struct {
 	captured, capturedNote string
 	// pictures keeps each question picture as last read, by file, width
 	// and mtime, so a redraw does not read it again (5z4zt4).
-	pictures                           map[string]pictureMemo
-	files                              map[string][]string         // task path -> its file names (zgr01t)
-	people                             []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
-	lastExec                           *exec.Cmd                   // the editor command last started, for tests (zgr01t)
-	lastEdit                           editorMsg                   // and the message it reports when it closes
-	memo                               [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
-	sort, sortDraft                    []sortKey                   // the order rows are in, and the one being built (mkzcqr)
-	detailStack                        []string
-	width, height                      int
-	view                               string
-	pane                               int
-	detail, help, pendingG             bool
+	pictures               map[string]pictureMemo
+	files                  map[string][]string         // task path -> its file names (zgr01t)
+	people                 []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
+	lastExec               *exec.Cmd                   // the editor command last started, for tests (zgr01t)
+	lastEdit               editorMsg                   // and the message it reports when it closes
+	memo                   [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
+	sort, sortDraft        []sortKey                   // the order rows are in, and the one being built (mkzcqr)
+	detailStack            []string
+	width, height          int
+	view                   string
+	pane                   int
+	detail, help, pendingG bool
+	// column is the column the cursor marks (bejd89), an index into
+	// gridColumns; -1 until Tab marks one. pendingV: v was pressed, a
+	// view letter follows (v o, v i, v b, v !).
+	column                             int
+	pendingV                           bool
 	helpTyping                         bool   // typing a help search after "/"
 	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
@@ -418,7 +423,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
 	input.Cursor.Blink = false
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", input: input, closes: &closeLog{}, pictures: map[string]pictureMemo{},
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, closes: &closeLog{}, pictures: map[string]pictureMemo{},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	if o.Initial != nil {
@@ -1200,6 +1205,23 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		m.pendingG = false
+		// v is the view branch of the header tree (0sw0dd, bejd89): v o
+		// overview, v i (or v v, v l) list, v b board, v ! lint. o alone
+		// orders by the marked column; i, b and ! stay one key.
+		if m.pendingV {
+			m.pendingV = false
+			if view, ok := map[string]string{"o": "overview", "i": "list", "v": "list", "l": "list", "b": "board", "!": "lint"}[k]; ok {
+				m.detail = false
+				m.setView(view)
+				m.message = ""
+				return m, nil
+			}
+			m.message = ""
+		} else if k == "v" {
+			m.pendingV = true
+			m.message = "view: o overview · i list · b board · ! lint"
+			return m, nil
+		}
 		// Filtering remains available from detail, without interfering with focused inputs.
 		if k == "F" {
 			m.clearFilters()
@@ -1356,11 +1378,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					step = -1
 				}
 				m.stepTask(step)
-			case "o", "i", "v", "b", "!":
+			case "i", "b", "!":
 				// The tab bar stays visible in detail, so its keys work here
 				// too: leave the task and switch view (2026-11-15, user).
+				// The overview is v o (bejd89).
 				m.detail = false
-				m.setView(map[string]string{"o": "overview", "i": "list", "v": "list", "b": "board", "!": "lint"}[k])
+				m.setView(map[string]string{"i": "list", "b": "board", "!": "lint"}[k])
 			case "j", "down", "k", "up":
 				// With a list focused, j/k step through it and scroll the
 				// page past either end; with the page focused they scroll.
@@ -1417,6 +1440,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.move(m.bodyHeight(), false)
 		case k == "pgup":
 			m.move(-m.bodyHeight(), false)
+		case k == "tab":
+			m.moveColumn(1) // the column cursor (bejd89); h/l change section
+		case k == "shift+tab":
+			m.moveColumn(-1)
 		case bkey.Matches(msg, keys.prev):
 			m.changePane(-1)
 		case bkey.Matches(msg, keys.next):
@@ -1459,8 +1486,8 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case k == "b":
 			m.setView("board")
 		case k == "o":
-			m.setView("overview")
-		case k == "v" || k == "i":
+			m.orderByColumn() // bejd89: the overview is v o
+		case k == "i":
 			m.setView("list")
 		case k == "!":
 			m.setView("lint")

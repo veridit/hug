@@ -18,7 +18,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                            ◑ 1/2 000046   F H Feature task 46: …
                                          ↓·◑ 1/2 000050   D H Docs task 50: mak…
 T: F feature B bug C chore S spike D docs · P: C critical H high M medium L low
-Columns 1–2 of 5 · h/l or Tab/Shift-Tab reveals other columns
+Columns 1–2 of 5 · h/l reveals other columns
 All tasks · : filters and commands
 
 j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit

@@ -223,27 +223,37 @@ func (m model) row(t task.Task) string {
 	return m.taskRow(t, m.width, ok && selected.Path == t.Path, false)
 }
 func (m model) columns(width int, compact bool) string {
-	c := m.rowLayout(width, compact, 0, 0)
-	s := "  " + fit("✓", m.progressWidth()) + fit("ID", idCell-1) + " "
+	return m.columnsOwner(width, compact, m.rowLayout(width, compact, 0, 0))
+}
+
+// columnsOwner is the column header for rows laid out as c: each cell as
+// headerCell draws it, so the column the cursor marks is underlined and the
+// column the rows are ordered by carries ▲ or ▼ (bejd89).
+func (m model) columnsOwner(width int, compact bool, c rowCols) string {
+	s := "  " + m.headerCell(0, "✓", m.progressWidth()) + m.headerCell(1, "ID", idCell-1) + " "
 	if compact {
 		if c.kind {
-			s += "T "
+			s += m.headerCell(2, "T", 1) + " "
 		}
 		if c.priority {
-			s += "P "
+			s += m.headerCell(3, "P", 1) + " "
 		}
 	} else {
 		if c.kind {
-			s += fit("TYPE", kindCell-1) + " "
+			s += m.headerCell(2, "TYPE", kindCell-1) + " "
 		}
 		if c.priority {
-			s += fit("PRIORITY", priorityCell-1) + " "
+			s += m.headerCell(3, "PRIORITY", priorityCell-1) + " "
 		}
 		if c.status {
-			s += fit("STAGE", stageCell-1) + " "
+			s += m.headerCell(4, "STAGE", stageCell-1) + " "
 		}
 	}
-	return m.styles.dim.Render(fit(s+fit("TITLE", max(0, c.title)), width))
+	s += m.headerCell(5, "TITLE", max(0, c.title))
+	if c.owner > 0 {
+		s += strings.Repeat(" ", ownerGap) + m.headerCell(6, "OWNER", c.owner)
+	}
+	return fit(s, width)
 }
 
 func (m model) listText() string {
@@ -333,8 +343,16 @@ func (m model) overviewText() string {
 			label = m.styles.selected.Render(label)
 		}
 		lines = append(lines, label)
-		// IN PROGRESS rows share one layout with the owner cell (102bc0).
+		// IN PROGRESS and WAITING rows share one layout with the owner cell
+		// (102bc0, tje4sx).
 		doing := m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(indices))
+		if p == m.pane && m.overviewHeading() && p != sectionLint {
+			c := m.rowLayout(m.width, false, 0, 0)
+			if p == sectionDoing || p == sectionWaiting {
+				c = doing
+			}
+			lines = append(lines, m.columnsOwner(m.width, false, c))
+		}
 		for n, i := range indices[start:end] {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
@@ -391,6 +409,9 @@ func (m model) overviewRows() []int {
 	n := len(overviewSections)
 	want, got := make([]int, n), make([]int, n)
 	budget := m.bodyHeight() - n*2 // a label and a blank line per section
+	if m.overviewHeading() {
+		budget-- // the focused section's column header (bejd89)
+	}
 	others := 0
 	// Counted in lines: the selected row takes two when it waits (89y0b7,
 	// tje4sx), every other row one. least is the
@@ -586,7 +607,7 @@ func (m model) boardText() string {
 		lines = append(lines, line)
 	}
 	lines = append(lines, m.legend())
-	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Columns %d–%d of %d · h/l or Tab/Shift-Tab reveals other columns", first+1, first+count, len(boardStates))))
+	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Columns %d–%d of %d · h/l reveals other columns", first+1, first+count, len(boardStates))))
 	return strings.Join(lines, "\n")
 }
 func (m model) paletteText() string {

@@ -46,12 +46,21 @@ func fieldByLetter(letter string) (sortField, bool) {
 	return sortField{}, false
 }
 func fieldByName(name string) sortField {
-	for _, f := range sortFields {
+	for _, f := range append(sortFields, columnFields...) {
 		if f.name == name {
 			return f
 		}
 	}
 	return sortField{}
+}
+
+// columnFields are orders only the column cursor sets (bejd89): they have
+// no builder letter. checks orders by the share ticked, stage by the
+// stage's place in the tree.
+var columnFields = []sortField{
+	{"", "checks", "least done first", false},
+	{"", "id", "a to z", false},
+	{"", "stage", "in the tree's order", false},
 }
 
 // sortLabel is an order as the header writes it: "priority ↓ · type". A
@@ -179,6 +188,15 @@ func sortValue(field string, t task.Task) string {
 		return strings.Join(t.Assignee, ", ")
 	case "title":
 		return t.Title
+	case "id":
+		return t.ID
+	case "checks":
+		if len(t.Acceptance) == 0 {
+			return ""
+		}
+		return "set"
+	case "stage":
+		return "set"
 	}
 	return ""
 }
@@ -211,6 +229,24 @@ func (m model) compareBy(field string, a, b task.Task) int {
 		return order(task.Types, a.Type) - order(task.Types, b.Type)
 	case "state":
 		return order(boardStates, m.place(a)) - order(boardStates, m.place(b))
+	case "checks":
+		// Share ticked, as the pie shows it: 1/4 before 3/4.
+		da, ta := checkCount(a)
+		db, tb := checkCount(b)
+		return da*tb - db*ta
+	case "stage":
+		wa, wb := m.stageOf(a), m.stageOf(b)
+		if wa == "" {
+			wa = a.State
+		}
+		if wb == "" {
+			wb = b.State
+		}
+		stages := append(append(append([]string{}, task.StageNames("todo")...), task.StageNames("doing")...), "done", "dropped")
+		if c := order(stages, wa) - order(stages, wb); c != 0 {
+			return c
+		}
+		return strings.Compare(wa, wb)
 	}
 	// Dates in ISO form, and names, compare as text.
 	return strings.Compare(strings.ToLower(sortValue(field, a)), strings.ToLower(sortValue(field, b)))

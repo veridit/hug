@@ -18,8 +18,8 @@ var keys = struct{ down, up, top, bottom, prev, next bkey.Binding }{
 	binding([]string{"k", "up"}, "k/↑", "up"),
 	binding([]string{"<", "home"}, "< / gg / Home", "top"),
 	binding([]string{"G", ">", "end"}, "> / G / End", "bottom"),
-	binding([]string{"h", "left", "shift+tab"}, "h/← Shift-Tab", "previous pane / column"),
-	binding([]string{"l", "right", "tab"}, "l/→ Tab", "next pane / column"),
+	binding([]string{"h", "left"}, "h/←", "previous section / pane"),
+	binding([]string{"l", "right"}, "l/→", "next section / pane"),
 }
 
 func hint(label, description string) bkey.Binding {
@@ -59,7 +59,7 @@ func (m model) keyBar() string {
 	case m.detail:
 		hints = m.detailHints(m.width < 100)
 	default:
-		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("Tab/o", "column/order")}
 	}
 	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
@@ -164,7 +164,8 @@ func (m model) helpText() string {
 		hint("ctrl-n/p / ↑↓", "select palette completion"), hint("?", "help overlay, including from inputs"),
 		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/a/e"),
 		hint("1 / 2 / 3 / 4", "filter todo / doing / done / blocked"), hint("Backspace / F", "remove last chip / clear all filters"),
-		hint("o / i / b / !", "views: overview / list (also v) / board / lint"),
+		hint("v o/i/b/!", "views: overview / list / board / lint; i b ! alone"),
+		hint("Tab, o", "mark a column, Shift-Tab back; o orders: ▲ ▼ off"),
 		hint("s / y", "state / type palette (y: inside a task)"), hint("c", "clear all filters"), hint("r", "refresh now (changes on disk show by themselves)"),
 		hint(": sort", "order by fields; : sort rank to go back"),
 	}

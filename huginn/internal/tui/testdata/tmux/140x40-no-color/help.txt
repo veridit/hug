@@ -8,8 +8,8 @@ j/k ↑/↓       move / scroll                                           [ and 
 > / G / End   bottom                                                  u               in a task: up to the list (as Esc)
 ctrl-d/u, J/K half page down / up (J/K: in a task)                    Space/-/Enter/a tick / strike out check / follow dep > / answer ?
 PgDn / PgUp   full page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps, links, files
-h/← Shift-Tab previous pane / column                                  E               in a task with files (⎘2): its folder in the editor
-l/→ Tab       next pane / column                                      t / d / x       take / done / drop task
+h/←           previous section / pane                                 E               in a task with files (⎘2): its folder in the editor
+l/→           next section / pane                                     t / d / x       take / done / drop task
 Enter         open full task detail                                   J / K           on a row: move below / above the next row, no confirm
 Esc           back one level, never quits                             m / y, P p      grab: j/k, Enter places it / yank, paste above below
 q / ctrl-c    quit (q only outside inputs)                            N / S           new task / copy the screen, Enter attaches it
@@ -22,7 +22,8 @@ ctrl-n/p / ↑↓ select palette completion
 f             filter picker: s/t/p/g/l/a/e
 1 / 2 / 3 / 4 filter todo / doing / done / blocked
 Backspace / F remove last chip / clear all filters
-o / i / b / ! views: overview / list (also v) / board / lint
+v o/i/b/!     views: overview / list / board / lint; i b ! alone
+Tab, o        mark a column, Shift-Tab back; o orders: ▲ ▼ off
 s / y         state / type palette (y: inside a task)
 c             clear all filters
 r             refresh now (changes on disk show by themselves)
@@ -32,7 +33,6 @@ PALETTE: overview, list, board, todo, doing, done, blocked, dropped, state <s>, 
 epic <id>, goto <id>, sort, lint, clear, help
 Filter fields: s state, t type, p priority, g group, l label, a assignee, e epic. Blocked is a todo task with unmet dependencies; a doing
 task stays doing, drawn blocked. Each task counts once. Filters combine.
-
 
 
 All tasks · : filters and commands
