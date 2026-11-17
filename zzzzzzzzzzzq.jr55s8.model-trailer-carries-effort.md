@@ -1,13 +1,18 @@
 ---
 id: jr55s8
 title: "Model trailer carries the effort: Model: id/effort, checked per model"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T18:16"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Current gate: hug task install commit-msg (t709he) puts a hook in <git-common-di
 - [ ] Seid's tracked hook switched, in a commit Jørgen approves
 
 ## Notes
+
+
+## History
+- 2026-11-17T18:16 todo -> doing/active (take)
