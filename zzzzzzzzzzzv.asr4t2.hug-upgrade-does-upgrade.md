@@ -42,5 +42,6 @@ Jørgen 17:54Z: hug upgrade previews by default; acting needs an explicit flag. 
 landed f4ee48b on main (dcb20c2..f4ee48b). check 1: TestUpgradeMigratesStateKey (old status: board: upgrade prints 'tasks: 1 tasks moved to state: (was status:)', commits 'hug upgrade: status: -> state: in 1 tasks') and TestUpgradeMovesWaitingFor, TestUpgradeReordersSections. check 2: same test, second run equals 'layout: nothing to do; tasks: nothing to do; variables: nothing to do; memory: nothing to do'. -race -count=1 huginn/internal/cli ok 135.9s. Seid copy: 2520 tasks, see 6ephqk file:seid-upgrade-dry-run.md.
 
 
+check 3 landed 317f5c2 on main (f4ee48b..317f5c2). TestUpgradePreviewsThenApplies failed on main first: 'plain upgrade: exit 0, want 5 ending fix: hug upgrade --apply'; now ok. Binary run on a scratch board: plain 'hug upgrade' prints 'tasks: would: 1 tasks moved to state: (was status:)' + diff, ends 'fix: hug upgrade --apply', exit 5; 'hug task upgrade' exit 5; '--dry-run' exit 2 (unknown flag); '--apply' exit 0, 'tasks: 1 tasks moved...'; again: nothing to do x4, exit 0. -race -count=1 cli ok 131.9s; cmd/hug, mcp, task ok.
 ## History
 - 2026-11-17T19:12 todo -> doing/active (take)
