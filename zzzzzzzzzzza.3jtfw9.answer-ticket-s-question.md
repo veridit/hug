@@ -45,5 +45,6 @@ nautilus 13:27 (crab 13:26): dependency on 6ephqk removed. 3jtfw9 needs only 6ep
 nautilus 13:47: built on nautilus/3jtfw9, commit fd95919, CI 44096102067 (queued). Not on main. Check 1: TUI a under the question, golden huginn/internal/tui/testdata/detail/answer-100.txt, TestAnswerInDetail. Check 2: CLI TestAnswerCommand, MCP bridge case in server_test.go, task TestAnswerDesign, TestAnswerWaitingAndReview, TestNextMineAnswerFirst. Check 4: History line 'answered STAGE: "q" -> "a", by NAME, for ASKER (from -> to)', asserted in the same tests. Check 3: huginn/board.Task.Answer is exposed (board_test). The cue line is for hatchling: tmp/lanes/3jtfw9-cue-for-hatchling.md.
 
 
+file:needs-you.md (3264 bytes, sha256:d2e9eb8a) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
 ## History
 - 2026-11-17T14:56 doing -> doing/waiting (wait)
