@@ -303,6 +303,7 @@ func Lint(docs []*Document) []Finding {
 		}
 	}
 	out = append(out, parentFindings(tasks)...)
+	out = append(out, derivedFindings(tasks)...)
 	// The description pattern applies to tasks created from the day it was
 	// settled; older tasks are not flagged (2,500 seid tasks predate it).
 	for _, d := range docs {

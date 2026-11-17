@@ -2,6 +2,7 @@ package task
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -203,4 +204,139 @@ func StatesText() string {
 		b.WriteString("\nwhen several todo stages hold, the first wins: " + strings.Join(StageNames("todo"), ", ") + "\n")
 	}
 	return b.String()
+}
+
+// Stage findings (6ephqk check 2). Four rules hold a file to the tree:
+//
+//  1. the stage is a stage of the task's state;
+//  2. a node field (doing_since, waiting_on ...) is present only while the
+//     task is in that node;
+//  3. the required fields of the task's state and stage are present and
+//     not empty;
+//  4. a stage hug sets (draft, depends, ready) agrees with its condition.
+//
+// Rules 1-3 need only the file and run in Parse; rule 4 needs the other
+// tasks (a dependency's state) and runs in Lint. A file with no stage line
+// and no node field is not held to rule 3: hug upgrade writes the stages
+// and fields (step 4 of 6ephqk), and until then no file has them.
+
+// stageFindings checks rules 1-3 on the parsed frontmatter.
+func (d *Document) stageFindings() {
+	t := d.Task
+	state, ok := StateNode(t.Status)
+	if !ok {
+		return // unknown status is its own finding
+	}
+	node := t.Status
+	var stage Node
+	if t.Stage != "" {
+		if stage, ok = StageNode(t.Status, t.Stage); !ok {
+			valid := StageNames(t.Status)
+			p := fmt.Sprintf("unknown stage %s for %s: a %s task's stage is one of %s", t.Stage, t.Status, t.Status, strings.Join(valid, ", "))
+			if len(valid) == 0 {
+				p = fmt.Sprintf("unknown stage %s for %s: a %s task has no stage; remove the stage line", t.Stage, t.Status, t.Status)
+			}
+			d.add(d.fieldLine("stage"), p)
+		} else {
+			node += "/" + t.Stage
+		}
+	}
+	owners := NodeFields()
+	for _, k := range sortedKeys(t.Fields) {
+		in := false
+		for _, o := range owners[k] {
+			if o == t.Status || o == node {
+				in = true
+			}
+		}
+		if !in {
+			d.add(d.fieldLine(k), fmt.Sprintf("node field %s belongs to %s, and this task is %s: remove it or move it to ## History", k, strings.Join(owners[k], " and "), node))
+		}
+	}
+	// Required fields are checked once the file has stages: a stage line
+	// or any node field. A file hug upgrade has not migrated has neither.
+	_, staged := d.fields["stage"]
+	if !staged && len(t.Fields) == 0 {
+		return
+	}
+	for _, f := range append(append([]NodeField(nil), state.Fields...), stage.Fields...) {
+		if f.Required && strings.TrimSpace(t.Fields[f.Name]) == "" {
+			d.add(d.fieldLine("stage"), fmt.Sprintf("missing node field %s: a %s task needs it (%s)", f.Name, node, f.Means))
+		}
+	}
+}
+
+// Incomplete says whether t is not described well enough to start: the
+// draft stage's condition (no Goal, or no acceptance item).
+func Incomplete(t Task) bool {
+	return strings.TrimSpace(t.Goal) == "" || len(t.Acceptance) == 0
+}
+
+// DerivedStage is the stage hug gives a todo task with no stage a person
+// or agent set: depends while a dependency is not done, else draft while
+// it is incomplete, else ready (precedence order). For a doing task it is
+// depends while a dependency is not done, else empty: the owner's stage.
+func DerivedStage(t Task, tasks []Task) string {
+	open := len(Blocked(t, tasks)) > 0
+	switch t.Status {
+	case "todo":
+		if open {
+			return "depends"
+		}
+		if Incomplete(t) {
+			return "draft"
+		}
+		return "ready"
+	case "doing":
+		if open {
+			return "depends"
+		}
+	}
+	return ""
+}
+
+// derivedFindings checks rule 4: a stage hug sets agrees with its
+// condition. Stages a person or agent sets (deferred, design, review,
+// active, waiting) are theirs and not checked here.
+func derivedFindings(tasks []Task) []Finding {
+	var out []Finding
+	for _, t := range tasks {
+		g, ok := StageNode(t.Status, t.Stage)
+		if !ok || g.SetBy != ByHug {
+			continue
+		}
+		want := DerivedStage(t, tasks)
+		if want == t.Stage {
+			continue
+		}
+		why := map[string]string{
+			"depends": "every dependency is done",
+			"draft":   "it has a Goal and an acceptance item",
+			"ready":   "",
+		}[t.Stage]
+		switch want {
+		case "depends":
+			b := Blocked(t, tasks)[0]
+			why = "it depends on " + b.ID + " (" + b.Status + ")"
+		case "draft":
+			why = "it is not complete (no Goal or no acceptance item)"
+		case "":
+			why = "every dependency is done; the stage is the owner's (active, waiting or review)"
+		}
+		p := fmt.Sprintf("stage %s disagrees with the task: %s, so hug's stage is %s", t.Stage, why, want)
+		if want == "" {
+			p = fmt.Sprintf("stage %s disagrees with the task: %s", t.Stage, why)
+		}
+		out = append(out, Finding{Path: t.Path, Line: 1, Problem: p, Fix: "hug task edit " + t.ID})
+	}
+	return out
+}
+
+func sortedKeys(m map[string]string) []string {
+	out := make([]string, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
 }

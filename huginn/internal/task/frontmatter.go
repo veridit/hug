@@ -55,6 +55,8 @@ func (d *Document) parseFrontmatter() {
 			target = &d.Task.Title
 		case "status":
 			target = &d.Task.Status
+		case "stage":
+			target = &d.Task.Stage
 		case "type":
 			target = &d.Task.Type
 		case "priority":
@@ -78,6 +80,18 @@ func (d *Document) parseFrontmatter() {
 		case "updated":
 			target = &d.Task.Updated
 		default:
+			if _, node := NodeFields()[k]; !node {
+				continue
+			}
+			var v string
+			if e := value.Decode(&v); e != nil || value.Kind != yaml.ScalarNode {
+				d.add(key.Line+1, fmt.Sprintf("invalid %s: a node field is one line of text", k))
+				continue
+			}
+			if d.Task.Fields == nil {
+				d.Task.Fields = map[string]string{}
+			}
+			d.Task.Fields[k] = v
 			continue
 		}
 		if e := value.Decode(target); e != nil {

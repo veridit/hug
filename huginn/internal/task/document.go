@@ -39,6 +39,10 @@ var findingCodes = []struct{ prefix, code string }{
 	{"invalid id", "invalid-id"},
 	{"filename id differs", "id-mismatch"},
 	{"unknown status", "unknown-status"},
+	{"unknown stage", "unknown-stage"},
+	{"node field ", "stray-node-field"},
+	{"missing node field", "missing-node-field"},
+	{"stage ", "stage-disagrees"},
 	{"unknown type", "unknown-type"},
 	{"invalid ", "invalid-field"},
 	{"missing Goal", "missing-goal"},
@@ -129,18 +133,24 @@ type Acceptance struct {
 	Line    int    `json:"line"`
 }
 type Task struct {
-	ID       string   `json:"id"`
-	Path     string   `json:"path"`
-	Group    string   `json:"group"`
-	Rank     string   `json:"rank"`
-	Slug     string   `json:"slug"`
-	Title    string   `json:"title"`
-	Status   string   `json:"status"`
-	Type     string   `json:"type"`
-	Priority string   `json:"priority"`
-	Created  string   `json:"created"`
-	Updated  string   `json:"updated"`
-	Assignee []string `json:"assignee"`
+	ID     string `json:"id"`
+	Path   string `json:"path"`
+	Group  string `json:"group"`
+	Rank   string `json:"rank"`
+	Slug   string `json:"slug"`
+	Title  string `json:"title"`
+	Status string `json:"status"`
+	// Stage is the task's stage within its state (6ephqk): todo ready,
+	// doing waiting ... Empty on a board hug upgrade has not migrated yet.
+	Stage string `json:"stage,omitempty"`
+	// Fields are the node fields in the file (doing_since, waiting_on ...)
+	// by name, as written; NodeFields says which node owns each.
+	Fields   map[string]string `json:"fields,omitempty"`
+	Type     string            `json:"type"`
+	Priority string            `json:"priority"`
+	Created  string            `json:"created"`
+	Updated  string            `json:"updated"`
+	Assignee []string          `json:"assignee"`
 	// Model is the model that took the task (claude-opus-5-5, gpt-6.1-sol,
 	// or human), recorded by hug task take --model (et85h1).
 	Model string `json:"model,omitempty"`
@@ -412,6 +422,7 @@ func Parse(path string, data []byte) *Document {
 	if !contains(Statuses, d.Task.Status) {
 		d.add(d.fieldLine("status"), "unknown status "+d.Task.Status)
 	}
+	d.stageFindings()
 	if d.Task.Type != "" && !contains(Types, d.Task.Type) {
 		d.add(d.fieldLine("type"), "unknown type "+d.Task.Type)
 	}
