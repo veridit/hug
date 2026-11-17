@@ -1,6 +1,6 @@
 ---
 id: wdkqzx
-title: "Lint asks no question about a task that already waits on a person"
+title: "Lint goes to the agent writing the task, not to the person it asks"
 state: "doing"
 type: bug
 priority: "high"
@@ -16,16 +16,16 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-The at3qep questions (landed-unchecked, shipped-not-done, todo-has-commit, doing-idle, branch-gone) are not raised on a task whose stage already waits on a named person (waiting with waiting_for, design, review), since its owner has said what is left. So a task waiting on Jørgen shows in WAITING only, never also in LINT. Other findings (broken files, missing sections) still show.
+A task that waits on a person may still have lint findings, but the agent sees them while it writes the task, not the person afterwards. Every hug task write command (CLI and MCP: take, set, check, note, wait, ask, review, design) ends with that task's own findings and their fix: lines. Asking a person refuses while the task has a broken finding the agent can fix, so a person is never handed a broken task. Every fix: line is one hug accepts.
 
 ## Purpose
-Jørgen 2026-11-17 23:20 local, on the v0.7.48 overview: 6ephqk (8/9, waiting on him for check 9) is in WAITING and in LINT at once: 'waiting for me is not a lint issue.' Its lint line: 'broken [shipped-not-done] shipped, but doing: release v0.7.45 contains commit f4ee48b naming 6ephqk (its note says so); nautilus: is it done?' The owner had already answered that by waiting on jhf.
+Jørgen 2026-11-17 23:20 local: 6ephqk was in WAITING and LINT at once; 'waiting for me is not a lint issue'. 23:48: 'is this lint truly clear?' (its fix 'hug task done 6ephqk' is refused, check 9 open). 23:51, superseding the suppress plan: 'you can lint on a task that waits for me, but the lint should have been returned to the agent that tried to modify the task to fix it up in the interaction with the task.'
 
 ## Principle
-One place per fact: a question already asked of a person is not asked again by lint. Recomputed from state, nothing stored. A test fails first.
+Guide the agent at the moment of the slip, not the person later. Recomputed from state, nothing stored. A refusal names the finding and ends with a fix: line hug accepts. Tests fail first.
 
 ## Relevant details
-huginn/internal/task/questions.go noteQuestion and IdleFindings: skip when the stage waits on a person (waiting_for set, or design/review). A plain wait with no person (waiting on CI) still gets the questions, since nobody answers it.
+Code: huginn/internal/task/questions.go noteQuestion (shipped-not-done fix is 'hug task done ID' even with open checks); lint per task exists for hug task lint ID. Write paths: internal/cli and internal/mcp task_update. Ask path: 'hug task wait --on' today, 'hug task ask' after 41hhgn. shipped-not-done must not deadlock the ask: when every open check is the one being asked about (asked_check), the release question is the ask itself, so no finding. hatchling proposes the exact output and refusal text on the ticket before building.
 
 ## Depends on
 
