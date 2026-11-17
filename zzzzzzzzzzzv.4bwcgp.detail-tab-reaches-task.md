@@ -4,7 +4,7 @@ title: "Detail: Tab reaches a task's links (deps, waited-on ticket, parent); Ent
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
