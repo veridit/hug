@@ -1,6 +1,6 @@
 ---
 id: asr4t2
-title: "hug upgrade does the upgrade: runs hug task upgrade and hug mem's, then says what changed"
+title: "hug upgrade does the upgrade and says what changed, per part"
 status: todo
 type: bug
 priority: "medium"
