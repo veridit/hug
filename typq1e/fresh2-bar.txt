@@ -1,0 +1,23 @@
+## agent n=40
+Find (shipped)   mem 4.812  judge_name 0.275  judge_any 0.388  clean 3.950  dropped 0.100  dropped_clean 0.000  name_left 0.175  any_left 0.287  clean_kept 3.950
+FindIn (typq1e)  mem 4.812  judge_name 0.275  judge_any 0.388  clean 3.950  dropped 0.225  dropped_clean 0.000  name_left 0.050  any_left 0.163  clean_kept 3.950
+## control n=13
+Find (shipped)   mem 5.231  judge_name 0.077  judge_any 0.077  clean 4.577  dropped 0.000  dropped_clean 0.000  name_left 0.077  any_left 0.077  clean_kept 4.577
+FindIn (typq1e)  mem 5.231  judge_name 0.077  judge_any 0.077  clean 4.577  dropped 0.000  dropped_clean 0.000  name_left 0.077  any_left 0.077  clean_kept 4.577
+FindIn vs Find name_left  -0.125 [-0.250, -0.025]
+FindIn vs Find any_left   -0.125 [-0.250, -0.025]
+FindIn vs Find clean_kept +0.000 [+0.000, +0.000]
+newly dropped by FindIn: 10; durable agent-free among them: 0; in controls: 0
+  agent 3397.0   name=1 status=0 durable=1 ['lobster'] | For Brovs-4851 roles work: preserve lobster's uncommitted bapi and BackofficeWeb changes, never bypass hooks, no push, no YouTrack writes.
+  agent 3445.0   name=1 status=0 durable=1 ['spider'] | For Brovs DevOps changes, the engineer makes no commits, pushes, branches, Jenkins builds or cluster changes; spider builds the signed commit, runs CI and deplo
+  agent 5298.0   name=1 status=0 durable=0 ['cactus'] | The earlier hug-lint evidence scout was named cactus; its outputs are in .jcode/scratch/TASK-2057/hug-lint/done-evidence/ with SUMMARY.md and IMPL-SUMMARY.md to
+  agent 533.0    name=1 status=1 durable=0 ['spider'] | Brovs-4626 drill report goes as one Brovs-4626 comment (State unchanged) plus a swarm report to spider with a tldr.
+  agent 6953.0   name=1 status=1 durable=0 ['orangutan'] | Hug clerk on a71qfj: files with no TASK id in name or body (handover/kickoff/state notes) are not attached; propose an owner and list them for orangutan.
+  agent 6953.0   name=1 status=1 durable=0 ['orangutan'] | Hug clerk on a71qfj: do not edit the tracked files linking to .backlog/docs; only list the hug attachment path each link should point to for orangutan.
+  agent 3445.0   name=1 status=0 durable=1 ['spider'] | For Brovs DevOps changes, the engineer makes no commits, pushes, branches, Jenkins builds or cluster changes; spider builds the signed commit, runs CI and deplo
+  agent 3445.0   name=1 status=1 durable=0 ['spider'] | When a Brovs decision is unclear, ask spider rather than guessing.
+  agent 5298.0   name=1 status=0 durable=0 ['microbe'] | If an evidence-scout request is ambiguous, ask microbe rather than guessing.
+  agent 6953.0   name=1 status=0 durable=0 ['orangutan'] | Docs mapping order for .backlog/docs: TASK-NNN in filename, else the clearly-subject TASK id in the body, else propose an owner for orangutan and do not attach.
+BAR (1) name_left <= 0.05 and below Find: True (0.050 vs 0.175)
+BAR (2) durable agent-free newly dropped = 0: True (0)
+BAR (3) control drops = 0: True (0.000)
