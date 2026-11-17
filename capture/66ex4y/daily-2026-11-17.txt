@@ -1,0 +1,100 @@
+66ex4y daily check 2026-11-17 (hatchling, read 21:00-21:23 UTC)
+
+Read: every capture created 2026-11-17 in the store (cap_ rows): 356.
+Store: ~/Library/Application Support/muninn/memories.json.
+Not judged: 185 imp_ rows (repo-notes copies of captures, see 5sc5rw) and 49 mem_ rows (agents' remember).
+The live capture binary is brew hug v0.7.47 (/Users/jhf/.local/bin/muninn -> /opt/homebrew/bin/muninn), which includes typq1e 7ebea22.
+
+By scope:
+- Seid project:rc-3557a74eab224a4c: 247
+- client:brovs:rc-413063c7e561e95e: 73
+- client:brovs: 25
+- folder:/Users/jhf: 7
+- jcode@seid: 4
+
+By session: orangutan 133, fox 64, herb 45, bat 27, palmtree 14, then 23 sessions with 1-8 each.
+4 had been retired by others before this check.
+
+Findings (each memory counted once):
+
+1. Wrong: 6
+   - 6xc2k9 "hug rejects attachment filenames containing spaces and dash characters". Probe on a scratch board: "a b-c.txt" attaches; only the em dash is refused (safeName in huginn/internal/task/files.go, unchanged since 9225b0a, 11-16 00:40).
+   - yf21ha "When hug refuses a file name (spaces, em dashes, leading dots)...". The same error about spaces.
+   - bxeezq "hug has no command to remove an attachment". hug task detach ID NAME exists since 9225b0a, and the probe removed a file.
+   - jaa2ct "effort values are checked against a fixed set: none, low, medium, high, xhigh, max". Wrong since jr55s8 5ab3031: per model with a [models] roster, and minimal is in the set.
+   - p48p3d "Seid compiler commits use ... Co-Authored-By: Kimi K3.1 Pro". Seid master's last 2 commits carry Claude Opus 5 / 5.5, and z7g6hc (15:06 today) retires Co-Authored-By. It was also a near-duplicate of w6kb8h (11-13).
+   - 970zgj "Proposed by the agent, not yet accepted: use dynamic re-checking". Overruled at 10:58 by fw19vq "Memory checks should be static ... not dynamic".
+
+2. Stale within the day: 2
+   - xgxqs6 "a71qfj plan to move 237 ... to design/notes/backlog-docs/ ... approved". Dropped at 14:59 by x9qg0t "that move plan is dropped".
+   - dz27fm "The user does not understand the A/B/C recursion-rewrite choice". Settled by ruling A at 14:59 (r2thxq) and cr5wkr at 18:17.
+
+3. Agent status (names a worker and says what it is doing): 1
+   - wwv5ed "herb has uncommitted changes in 10 files ... nothing committed yet".
+
+   Kept on purpose:
+   - Role facts naming the foreman: 8g0djx, kyvjyc and others (7 name orangutan).
+   - Findings credited to a worker: palmtree 4 (hbxvzt, pb1bhn, 542a4w, atc50w), bird mrkpy8, tulip pt4r2n.
+   These are durable, per typq1e ruling (a).
+
+4. Duplicates within today: 4
+   - 3vafes (18:17) repeats 8g0djx (00:00): orangutan is the foreman, DM on surprise.
+   - x7sx53 (16:47) and 8bx4gt (18:17) repeat zkwfsg (15:06) on TMPDIR=/tmp. I kept zkwfsg and 8bx4gt (8bx4gt names the cause).
+   - mnjyvj (05:23) repeats 4vhaq7 (04:11) on test_n0fzz1 under /bin/bash.
+   - 6w0sn4 (18:17) repeats rbbynz (13:29) on the master binary path.
+
+   Near-duplicates kept, since they are different tickets:
+   - g4nr69/r45fkv (wt-p4 vs wt-4532)
+   - wp158b/2npge9 (4887 vs 4532 reports)
+   The Brovs-4861/4871/4882 rows restate one meeting at several levels. That is redundant but not wrong, so I kept them.
+
+5. Wrong place: 0 changed, 7 noted.
+   - The 7 captures from turtle (08:44-08:45) went to folder:/Users/jhf. Examples: entfj4 "Kiet Ho (tuankiet65) reviews WebKit PRs on US West Coast time"; j10rjv "WebKit PR #80306 ... build 910".
+   - The session worked in ~/webkit-ledger (bug2-anchor/review-kiet/GO4-followup-80306.txt lives there). That folder is not a git repo ("hug mem: not a muninn project").
+   - The project copy is ~/Projects/webkit-ledger (project:rc-ffd9c167556e2035, 77 memories).
+   - Which one is canonical is the owner's call, so I did not rescope.
+   - Seid notes captured in a Seid session sit in Seid's scope, and Brovs notes in Brovs's. No cross-client leaks found.
+
+6. Trivial or short-lived (kept, counted): 14
+   - Scratch report pointers for one lane: Brovs m427k4, vyaez4, 5kfqss, g4nr69, rs0dh7, wp158b, a5a7js, 0gc5a4, 2npge9, r45fkv, wr1eh2; Seid 6pdm9s, hebx7c, t82r9t.
+   - All 14 paths exist today. They age out when scratch is cleaned.
+   - 1 pointer is already dead: chevzb names .jcode/scratch/land-tree, which does not exist now. It is kept, because the gate rebuilds it.
+
+Rest: 356 - 6 - 2 - 1 - 4 - 14 = 329 judged durable and right, or not mine to judge as wrong without the owner (Brovs hours tq4nv2 kept).
+
+Changes made: 25 forgets, 1 remember.
+
+forget in /Users/jhf/Veridit/src/seid-lang:
+- xgxqs6 and its twin 49ckwr
+- 6xc2k9 and twin wmwevq
+- bxeezq
+- jaa2ct and twin 3afkj3
+- p48p3d
+- 970zgj and twin wabbbr
+- dz27fm and twin 024dw6
+- wwv5ed and twin jbdwhx
+- 3vafes
+- x7sx53
+- mnjyvj and twin 3qa81j
+- 6w0sn4
+- yf21ha and twin p4nv85
+- 45m9zx (twin of p48p3d) and kda2dx (twin of 6w0sn4), left active after their sources went
+
+forget in /Users/jhf/Projects/hug:
+- z8mwnw and 80hygq, twins left active after others retired ny39q0 (19:50) and ce6say (15:16)
+
+remember --project --category correction, in seid-lang:
+- p14jea "hug task attach accepts spaces and hyphens in file names; it refuses em dashes, leading dots and other characters outside letters, digits and . _ - + , = @ space. hug task detach ID NAME removes an attachment (both since 9225b0a, 2026-11-16)."
+- Search puts it first (score 192.27).
+
+Verified in the store after the changes:
+- All 25 forgotten ids are active=false (13 are today's captures, 12 are their twins).
+- p14jea is in seid-lang/.muninn-notes/memories.jsonl (mem_d2f4ddddfe30b15d).
+- Every memory cited as the one kept (w6kb8h, fw19vq, x9qg0t, r2thxq, cr5wkr, zkwfsg, 8bx4gt, 4vhaq7, rbbynz, 8g0djx) is active.
+
+Ticket for crab (code): 5sc5rw "hug mem: each project memory has a twin, and forget retires only one".
+- Every repo-project capture also exists as an imp_ row (2651 pairs, 2571 both active).
+- Forgetting one leaves the other in recall: after forget xgxqs6, search returned 49ckwr at 225.99.
+- Until it lands, a daily fix needs both ids, found with origin repo:SCOPE/cap_ID.
+
+No capture code changed.

@@ -32,5 +32,6 @@ Judge the real store, fix only what is clearly wrong with hug mem commands (forg
 ## Notes
 
 
+file:daily-2026-11-17.txt (6095 bytes, sha256:a6383b38) daily check 2026-11-17: counts, examples, every change
 ## History
 - 2026-11-17T21:58 todo -> doing/active (take)
