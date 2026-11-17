@@ -157,10 +157,39 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 	pass := func(turn func() (func(), error)) gitbranch.State {
 		began := time.Now()
 		st := r.SyncPass(turn)
+		// Deduce from the code repository's main line and tags (g9dg32),
+		// after integrating, so a note another clone pushed is seen first;
+		// a pass that wrote notes pushes them.
+		if st.Error == "" && len(st.Conflict) == 0 && st.Skipped == "" {
+			if wrote := a.deducePass(ctx, cwd); wrote {
+				st = r.SyncPass(turn)
+			}
+		}
 		fmt.Fprintf(a.Err, "%s pid %d: fetched=%v pushed=%v unpushed=%d error=%q skipped=%q (waited %v, pass %v)\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), st.Fetched, st.Pushed, st.Unpushed, st.Error, st.Skipped, began.Sub(born).Round(time.Millisecond), time.Since(began).Round(time.Millisecond))
 		return st
 	}
 	return Reply{"next": "hug task ls"}, b.Run(settle, pass)
+}
+
+// deducePass is the background pass's deduction step: it reports each
+// note in the pass log and says whether any was written.
+func (a *App) deducePass(ctx context.Context, cwd string) bool {
+	s, e := a.openBoard(ctx, true)
+	if e != nil {
+		return false
+	}
+	defer s.c.Close()
+	s.nudged = true // this pass pushes what it writes
+	release := s.turn()
+	ds, e := s.deduce(ctx, s.r.Root, "")
+	release()
+	for _, d := range ds {
+		fmt.Fprintf(a.Err, "%s pid %d: deduce %s: %s\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), d.ID, d.Report())
+	}
+	if e != nil {
+		fmt.Fprintf(a.Err, "%s pid %d: deduce error=%q\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), e.Error())
+	}
+	return len(ds) > 0
 }
 
 // syncStatus reports a sync problem from the last pass: commits not pushed,

@@ -67,7 +67,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "next", "rebalance", "types", "states", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -513,7 +513,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -865,6 +865,15 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		reply = lintReply(reply, fs, mode, code)
 		setHidden(reply, hidden, code)
 		return reply, nil
+	case "deduce":
+		if e = f.count(0); e != nil {
+			return nil, e
+		}
+		ds, e := s.deduce(ctx, s.r.Root, f.get("since"))
+		if e != nil {
+			return nil, e
+		}
+		return deduceReply(ds), nil
 	case "sync":
 		if e = f.count(0); e != nil {
 			return nil, e
@@ -873,7 +882,20 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, e
 		}
 		s.s.Invalidate() // the pull may have changed task files
-		return empty()
+		// What the main line and tags say, on the pulled board (g9dg32).
+		release := s.turn()
+		ds, e := s.deduce(ctx, s.r.Root, "")
+		release()
+		if e != nil {
+			return nil, e
+		}
+		if len(ds) == 0 {
+			return empty()
+		}
+		if e = s.syncNow(); e != nil {
+			return nil, e
+		}
+		return deduceReply(ds), nil
 	case "new":
 		if e = f.count(1); e != nil {
 			return nil, e
