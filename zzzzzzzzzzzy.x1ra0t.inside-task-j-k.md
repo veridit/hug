@@ -1,13 +1,18 @@
 ---
 id: x1ra0t
 title: "Inside a task, J and K never move it: moving is a list action"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T15:52"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ huginn/internal/tui/tui.go:925 and :1074 run actions t, d, x, J, K, e in the det
 - [ ] every key that writes in the detail is named in its key bar; no key writes without showing it (test enumerates the detail keys)
 
 ## Notes
+
+
+## History
+- 2026-11-17T15:52 todo -> doing/active (take)
