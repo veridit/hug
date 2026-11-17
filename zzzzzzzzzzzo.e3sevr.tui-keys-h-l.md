@@ -46,5 +46,9 @@ Jørgen 23:23 local, detail view: a thin horizontal rule between the filter line
 
 Jørgen 23:27 local: Tab/Shift-Tab and h/l must agree. Today they differ in the detail (Tab steps task ids since 4bwcgp, h/l step sections) and must not. Ruling (crab, from his 23:20 key map 'h/l left right, overlapping Tab/Shift-Tab'): everywhere, Tab = l and Shift-Tab = h. In the detail both step through one focus ring in reading order: the header's stage line, each section (checks, deps, files, links, notes), and the task ids inside them as their own stops. No key has a meaning that its partner lacks.
 Jørgen's 23:30 screenshot, overview footer: 'h/l pane · … · Tab/o column/order' gives Tab and h/l different jobs, which is the split he asked to remove. Also the empty focused WAITING section draws a column header row under 'None'; show the header only above rows.
+Jørgen 23:43 local, screenshot: the '?' (waiting on you) sits in the first gutter column, which ↑/↓ scroll arrows also use, so on the first/last shown row one hides the other. Ruling: column 1 holds only the pointer, grab mark and scroll arrows; the '?' and '!' marks move right before the ticket id:
+  before: ?!◐ 3/4  89y0b7  feature high ...
+  after:  ↓ ◐ 3/4  ?!89y0b7  feature high ...
+The id column widens by 2 so ids stay aligned whether or not a row has marks.
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
