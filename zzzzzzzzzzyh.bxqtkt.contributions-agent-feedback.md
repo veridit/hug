@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-16
 updated: 2026-11-16
 doing_since: "2026-11-17T15:42"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_since: "2026-11-17T15:48"
+waiting_asked_by: "calf"
+waiting_on: "jhf: approve design tmp/lanes/bxqtkt.md (check 1) and answer Q1-Q6 (note 14:50)"
 ---
 
 ## Goal
@@ -43,3 +46,4 @@ kestrel 14:50: design note in tmp/lanes/bxqtkt.md. It applies Jørgen's one-way 
 QUESTIONS FOR JØRGEN (tmp/lanes/bxqtkt.md, end). Q1: replace the mirror (closed-issue import, re-merge) with intake, given nobody uses it? Q2: preview then --yes also for our own intake comment? Q3: close a taken-in issue as completed (proposed) or not_planned? Q4: is a stub at .id/ID.md on hug/tasks the stable link you want? Q5: does a fork ticket keep its id when free, or do we always mint our own? Q6: approve or edit the CONTRIBUTING wording in section 7 (that is check 3's draft).
 ## History
 - 2026-11-17T15:42 todo -> doing/active (take)
+- 2026-11-17T15:48 doing/active -> doing/waiting (wait)
