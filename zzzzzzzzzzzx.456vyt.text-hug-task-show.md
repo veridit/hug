@@ -30,7 +30,7 @@ Seen: hug v0.7.42, hug task show ggydj2 | head -2 gives the title line and 'take
 ## Depends on
 
 ## Acceptance
-- [ ] text show of a waiting task prints 'stage: waiting on NAME: what since DATE' as line 2 (test)
+- [x] text show of a waiting task prints 'stage: waiting on NAME: what since DATE' as line 2 (test)
 - [ ] a task with no wait and stage active prints no wait line, or the stage alone, matching the row (test)
 
 ## Notes
