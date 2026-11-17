@@ -33,7 +33,7 @@ Today: huginn/internal/cli/setup.go:82-101 offers 'hug task import backlog .back
 ## Depends on
 
 ## Acceptance
-- [ ] hug task import backlog DIR --cleanup removes DIR with git rm in one commit and records source, commit and date in hug.toml (test)
+- [x] hug task import backlog DIR --cleanup removes DIR with git rm in one commit and records source, commit and date in hug.toml (test)
 - [ ] a later hug task import backlog DIR is refused, naming the commit that holds the old copy, with a fix: line (test)
 - [ ] hug setup no longer offers the import once it is recorded, and flags a leftover DIR with the --cleanup fix line (test)
 - [ ] on seid-lang, hug setup shows the --cleanup step, and after Jørgen approves the diff it runs and setup is clean (shown before and after)
