@@ -3,6 +3,8 @@ package cli
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
 	"os"
 	osexec "os/exec"
 	"path/filepath"
@@ -272,7 +274,7 @@ func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
 	}
 	code, out := runText(b, "ls")
 	if code != 0 || !strings.Contains(out, "sync conflict in ") || !strings.Contains(out, "\nfix: hug task sync\n") {
-		t.Fatalf("ls after a conflict: %d\n%s", code, out)
+		t.Fatalf("ls after a conflict: %d\n%s\nB's state: %s\nB's sync log:\n%s", code, out, syncStateOf(t, b), syncLogOf(t, b))
 	}
 	if got := git(t, bare, "log", "-1", "--format=%s", TaskBranch); !strings.Contains(got, "set "+id) {
 		t.Fatalf("remote lost clone A's commit: %s", got)
@@ -322,6 +324,20 @@ func pushes(t *testing.T, bare string) int {
 	t.Helper()
 	b, _ := os.ReadFile(filepath.Join(bare, "pushes"))
 	return strings.Count(string(b), "refs/heads/"+TaskBranch)
+}
+
+// syncStateOf is a's last recorded pass, as ls reads it.
+func syncStateOf(t *testing.T, a *App) string {
+	r, e := gitbranch.Open(a.Cwd, TaskBranch, TaskDir)
+	if e != nil {
+		return e.Error()
+	}
+	bg, e := r.Background()
+	if e != nil {
+		return e.Error()
+	}
+	raw, _ := json.Marshal(bg.State())
+	return fmt.Sprintf("%s (busy %v, pending %v)", raw, bg.Busy(), bg.Pending())
 }
 
 func syncLogOf(t *testing.T, a *App) string {
