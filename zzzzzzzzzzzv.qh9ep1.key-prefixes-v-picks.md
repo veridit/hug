@@ -32,6 +32,7 @@ Today: the tab line underlines o, l, b and ! as single keys. After: line 2 is 'v
 - [ ] Context help (?) lists prefix keys as two-key rows and its search finds them by either key or name (help test)
 - [ ] Jørgen confirms on his board after release
 - [ ] The state counts sit on the view line, right aligned after a dim separator, and the old counts line is gone (golden at 80 and 140; at 80 counts drop from the right first)
+- [ ] gg and G are gone (keys, hints, help); < Home go to top and > End to bottom as before (key test)
 
 ## Notes
 
