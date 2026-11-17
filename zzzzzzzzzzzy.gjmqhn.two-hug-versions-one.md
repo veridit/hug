@@ -1,13 +1,18 @@
 ---
 id: gjmqhn
 title: "Two hug versions on one machine keep their own cache, never wipe each other's"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T17:30"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ cache.Open is called from huginn/internal/cli/cli.go:244 with filepath.Join(gd, 
 - [ ] on Seid, with a v0.7.41 hug tui open beside the new binary, the new binary's warm first frame shows the whole board, numbers in the notes
 
 ## Notes
+
+
+## History
+- 2026-11-17T17:30 todo -> doing/active (take)
