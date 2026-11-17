@@ -4,7 +4,7 @@ title: "Observations hug can't settle become questions to the owner"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
