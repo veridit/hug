@@ -1,13 +1,16 @@
 ---
 id: x325pp
 title: "Board lint nudges go to agents at a break in their own work"
-status: todo
+status: "doing"
 type: feature
 priority: ""
 assignee: ["guppy"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
