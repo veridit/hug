@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 // Notes come from the cache, not a re-read of every file (44w1ev). A hand
@@ -34,12 +35,9 @@ func TestHandEditedNotesSeenByLsAndShow(t *testing.T) {
 		}
 	}
 	notes("first note AAAA")
-	edit := func(from, to string, keepTime bool) {
+	// edit writes the file with modification time at (zero: the write's own).
+	edit := func(from, to string, at time.Time) {
 		t.Helper()
-		st, e := os.Stat(path)
-		if e != nil {
-			t.Fatal(e)
-		}
 		b, e := os.ReadFile(path)
 		if e != nil {
 			t.Fatal(e)
@@ -47,18 +45,27 @@ func TestHandEditedNotesSeenByLsAndShow(t *testing.T) {
 		if e = os.WriteFile(path, []byte(strings.Replace(string(b), from, to, 1)), 0o644); e != nil {
 			t.Fatal(e)
 		}
-		if keepTime {
-			if e = os.Chtimes(path, st.ModTime(), st.ModTime()); e != nil {
+		if !at.IsZero() {
+			if e = os.Chtimes(path, at, at); e != nil {
 				t.Fatal(e)
 			}
 		}
 	}
 	// In place, a different size, as an editor or an agent's edit tool does.
-	edit("first note AAAA", "hand edited note", false)
+	// Its modification time lies ahead of every sync in this test, so the
+	// file stays inside the racy window (2 s before the last sync) however
+	// slow the machine is.
+	inWindow := time.Now().Add(time.Hour)
+	edit("first note AAAA", "hand edited note", inWindow)
 	notes("hand edited note")
-	// Same size and the same modification time, right after a sync: only
-	// the racy-clean rule can see it.
-	edit("hand edited note", "HAND EDITED NOTE", true)
+	// A slow runner: Windows CI took 34 s for this test (44112302694). With
+	// the old test (edit 2 kept edit 1's own modification time) this pause
+	// alone failed it: edit 1 fell out of the racy window, and a same-size
+	// edit outside the window is not promised to be seen.
+	time.Sleep(2500 * time.Millisecond)
+	// Same size and the same modification time, inside the racy window:
+	// only the racy-clean rule can see it, and it must, every time.
+	edit("hand edited note", "HAND EDITED NOTE", inWindow)
 	notes("HAND EDITED NOTE")
 	// An older cache: another schema version rebuilds on first open, and
 	// the unchanged file's notes come back from that rebuild.
