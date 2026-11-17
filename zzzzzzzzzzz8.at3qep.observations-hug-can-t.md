@@ -1,7 +1,7 @@
 ---
 id: at3qep
 title: "Observations hug can't settle become questions to the owner"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["hatchling"]
@@ -9,6 +9,11 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "47sxn2"
+doing_since: "2026-11-17T17:39"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ Uses level 1 facts (landed, shipped lines) from the git deduction ticket. Activi
 ## Notes
 
 hatchling 12:41, design before code (not taken: depends on g9dg32, wyvern doing). Existing pieces: (e) is today's branch-gone finding (task/branch.go BranchFindings); (b) sits next to stale-owner (task/owner.go, v3k6cp: no live session 24 h), but is per ticket and from the taker's own activity: last note/check by assignee (ticket history) or commit naming the id, older than 2 h. (a) and (c) need g9dg32's 'landed <sha>' / done_release lines; (d) needs the same commit scan on a todo ticket. Plan: task/questions.go Questions(ts, facts, now) []Question{ID, Owner, Code, Observed, From, Fix, Rank}; rank a>c>e>d>b, keep only the top one per ticket (principle: one at a time). Each is also a Finding (codes landed-unticked, shipped-not-done, branch-gone, todo-has-commit, doing-idle) so lint and show carry it via fkpyg3's per-task block, rows keep only the ! marker. Delivery through the recall hook's board line at a break (x325pp's stop/between rules) and the 3jtfw9 board cue for answers. Fix commands: (a) hug task check ID N / hug task done ID; (b) hug task note ID "..." or hug task set ID --status todo; (c) hug task done ID; (d) hug task take ID or hug task note ID; (e) hug task done ID or hug task set ID --status todo. Clears on fix because each is recomputed from state, nothing stored.
+
+
+## History
+- 2026-11-17T17:39 todo -> doing/active (take)
