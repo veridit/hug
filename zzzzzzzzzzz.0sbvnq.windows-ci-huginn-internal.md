@@ -40,3 +40,5 @@ Step 1 on ci/0sbvnq (8c0fa9c, CI run 44075465280): App.Env per-App environment o
 Run 44075465280 (ci/0sbvnq 8c0fa9c, all jobs green): Windows huginn/internal/cli 275.7 s, under 300 (step-8 run 44074927418 on the same base: 410.7 s). Windows slowest now muninn/internal/app 302.7 s. Second run follows after the rebase on main.
 
 Second run under 300 s: CI 44080439322 (ci/wyvern-stack a7cc707, on 16dxsr c9ea6ed; all jobs green): Windows huginn/internal/cli 265.3 s. First: 44075465280, 275.7 s. Before (same day): 453-514 s. Waits for the landing queue (crab 12:20: wyvern 3rd).
+
+Check 1: Windows huginn/internal/cli under 300 s in two consecutive CI runs: 44075465280 (ci/0sbvnq, 275.7 s) and 44080439322 (ci/wyvern-stack, 265.3 s). Check 2: no test skipped on Windows; the change adds t.Parallel to 35 of 46 tests and no Skip (grep -c 'Skip' unchanged in huginn/internal/cli tests between 893cd50 and a7cc707).
