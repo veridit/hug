@@ -88,6 +88,27 @@ type App struct {
 	// "" included. Nil reads the process environment. Tests set it instead of
 	// os.Setenv, so they can run in parallel (0sbvnq).
 	Env map[string]string
+	// Sync overrides background sync for this App: nil uses Spawn and
+	// FetchAfter. Tests set it instead of the package variables, so the
+	// background-sync tests run in parallel (0sbvnq).
+	Sync *SyncSettings
+}
+
+// SyncSettings is how an App starts background passes: Spawn is the
+// command (nil: none), FetchAfter how old the last pass may be before a
+// read starts one, Env added to the pass's environment.
+type SyncSettings struct {
+	Spawn      []string
+	FetchAfter time.Duration
+	Env        []string
+}
+
+// syncSettings is a.Sync, else the package defaults.
+func (a *App) syncSettings() SyncSettings {
+	if a.Sync != nil {
+		return *a.Sync
+	}
+	return SyncSettings{Spawn: Spawn, FetchAfter: FetchAfter}
 }
 
 // environ is the process environment with a.Env applied, for a child
@@ -152,6 +173,8 @@ type session struct {
 	s *task.Store
 	// nudged: this command started (or found) a background pass (0hkaa5).
 	nudged bool
+	// sync is how this command starts background passes.
+	sync SyncSettings
 }
 
 // Task branch layout (2026-11-15): hug keeps each kind of data on its own
@@ -234,7 +257,7 @@ func (a *App) openBoard(ctx context.Context, lazy bool) (*session, error) {
 			return nil, e
 		}
 	}
-	return &session{r: r, c: c, s: s}, nil
+	return &session{r: r, c: c, s: s, sync: a.syncSettings()}, nil
 }
 func (a *App) refreshExisting(ctx context.Context) error {
 	cwd := a.Cwd

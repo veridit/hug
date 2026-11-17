@@ -10,6 +10,7 @@ import (
 // prints [-] with it, --jsonl carries the state, done accepts ticked or
 // struck, --undo restores.
 func TestStrikeThroughCLI(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Strike CLI", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "holds", "--accept", "no longer applies")["task"].(Reply)["id"].(string)

@@ -66,21 +66,21 @@ func (s *session) background() (gitbranch.Background, bool) {
 // try and, when one starts, a fork: never a git call or a network wait.
 // One per command: a second would find the first not yet queued.
 func (s *session) nudge() {
-	if len(Spawn) == 0 || s.nudged {
+	if len(s.sync.Spawn) == 0 || s.nudged {
 		return
 	}
 	if b, ok := s.background(); ok {
-		s.nudged = b.Nudge(s.r.Root, Spawn) == nil
+		s.nudged = b.Nudge(s.r.Root, s.sync.Spawn, s.sync.Env...) == nil
 	}
 }
 
 // nudgeIfStale is the read side: a pass when the last one is stale.
 func (s *session) nudgeIfStale() {
-	if len(Spawn) == 0 || s.nudged {
+	if len(s.sync.Spawn) == 0 || s.nudged {
 		return
 	}
-	if b, ok := s.background(); ok && b.Stale(FetchAfter) {
-		s.nudged = b.Nudge(s.r.Root, Spawn) == nil
+	if b, ok := s.background(); ok && b.Stale(s.sync.FetchAfter) {
+		s.nudged = b.Nudge(s.r.Root, s.sync.Spawn, s.sync.Env...) == nil
 	}
 }
 

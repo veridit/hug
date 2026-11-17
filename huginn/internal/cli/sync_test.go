@@ -28,17 +28,10 @@ func runSyncChild() {
 }
 
 // clones makes a bare remote and two clones with boards, background sync on.
+// Everything it sets is the clones' own (repository config, App.Env,
+// App.Sync), never the process's, so these tests run in parallel (0sbvnq).
 func clones(t *testing.T) (a, b *App, bare string) {
 	t.Helper()
-	t.Setenv("GIT_CONFIG_GLOBAL", os.DevNull)
-	t.Setenv("GIT_CONFIG_NOSYSTEM", "1")
-	t.Setenv("HUG_USER", "tester")
-	t.Setenv("HUG_MODEL", "test-model")
-	t.Setenv("JCODE_SESSION_ID", "")
-	t.Setenv("GIT_AUTHOR_NAME", "Test")
-	t.Setenv("GIT_AUTHOR_EMAIL", "test@example.invalid")
-	t.Setenv("GIT_COMMITTER_NAME", "Test")
-	t.Setenv("GIT_COMMITTER_EMAIL", "test@example.invalid")
 	base := t.TempDir()
 	bare = filepath.Join(base, "remote.git")
 	git(t, base, "init", "--bare", "-b", "main", bare)
@@ -47,24 +40,30 @@ func clones(t *testing.T) (a, b *App, bare string) {
 	if e := os.WriteFile(filepath.Join(bare, "hooks", "post-receive"), []byte(hook), 0o755); e != nil {
 		t.Fatal(e)
 	}
+	identity := func(dir string) {
+		git(t, dir, "config", "user.name", "Test")
+		git(t, dir, "config", "user.email", "test@example.invalid")
+	}
 	one := filepath.Join(base, "one")
 	git(t, base, "init", "-b", "main", one)
+	identity(one)
 	git(t, one, "commit", "--allow-empty", "-m", "init")
 	git(t, one, "remote", "add", "origin", bare)
 	git(t, one, "push", "-q", "origin", "main")
 	two := filepath.Join(base, "two")
 	git(t, base, "clone", "-q", bare, two)
+	identity(two)
 	exe, e := os.Executable()
 	if e != nil {
 		t.Fatal(e)
 	}
-	// The passes run in a fresh process, with the real settle time (1.5 s);
-	// FetchAfter is the parent's, for reads.
-	oldSpawn, oldAfter := Spawn, FetchAfter
-	Spawn, FetchAfter = []string{exe, "task", "sync", SyncChildArg}, 500*time.Millisecond
-	t.Cleanup(func() { Spawn, FetchAfter = oldSpawn, oldAfter })
+	// The passes run in a fresh process, with the real settle time (1.5 s),
+	// and without the machine's git config; FetchAfter is the parent's, for reads.
 	mk := func(dir string) *App {
-		return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+		return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{},
+			Env: map[string]string{"HUG_USER": "tester", "HUG_MODEL": "test-model", "JCODE_SESSION_ID": "", "JCODE_HOME": filepath.Join(base, ".no-jcode")},
+			Sync: &SyncSettings{Spawn: []string{exe, "task", "sync", SyncChildArg}, FetchAfter: 500 * time.Millisecond,
+				Env: []string{"GIT_CONFIG_GLOBAL=" + os.DevNull, "GIT_CONFIG_NOSYSTEM=1"}}}
 	}
 	a, b = mk(one), mk(two)
 	execute(t, a, "init")
@@ -73,6 +72,14 @@ func clones(t *testing.T) (a, b *App, bare string) {
 	// Let any passes the setup started finish before a test counts.
 	t.Cleanup(func() { settled(t, a); settled(t, b) })
 	return a, b, bare
+}
+
+// offline runs f with a's background sync off, then turns it back on.
+func offline(a *App, f func()) {
+	saved := a.Sync.Spawn
+	a.Sync.Spawn = nil
+	defer func() { a.Sync.Spawn = saved }()
+	f()
 }
 
 // settled waits until no background pass runs or is queued for a's board.
@@ -120,6 +127,7 @@ func until(d time.Duration, f func() bool) bool {
 
 // Check 1: a note in clone A shows up in clone B within 10 s, nobody syncs.
 func TestBackgroundSyncNoteReachesOtherClone(t *testing.T) {
+	t.Parallel()
 	a, b, _ := clones(t)
 	id := execute(t, a, "new", "Shared work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	start := time.Now()
@@ -139,6 +147,7 @@ func TestBackgroundSyncNoteReachesOtherClone(t *testing.T) {
 
 // Check 2: a burst of 20 notes in 2 s produces at most 2 pushes.
 func TestBackgroundSyncBurstIsBatched(t *testing.T) {
+	t.Parallel()
 	a, _, bare := clones(t)
 	settle := Settle // the child's: it never sees a test's change to it
 	id := execute(t, a, "new", "Burst", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
@@ -171,6 +180,7 @@ func TestBackgroundSyncBurstIsBatched(t *testing.T) {
 // Check 3: with the remote unreachable a note is fast, ls reports the
 // unpushed commits with a fix line, and they go out once it is back.
 func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
+	t.Parallel()
 	a, _, bare := clones(t)
 	id := execute(t, a, "new", "Offline", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	settled(t, a)
@@ -178,13 +188,13 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	// missing remote fails at once, so it could not show a wait.)
 	git(t, a.Cwd, "remote", "set-url", "origin", "ssh://hang.invalid/remote.git")
 	git(t, a.Cwd, "config", "core.sshCommand", "sleep 5; false")
-	saved := Spawn
-	Spawn = nil
+	var baseline time.Duration
+	offline(a, func() {
+		start := time.Now()
+		execute(t, a, "note", id, "baseline, no background sync")
+		baseline = time.Since(start)
+	})
 	start := time.Now()
-	execute(t, a, "note", id, "baseline, no background sync")
-	baseline := time.Since(start)
-	Spawn = saved
-	start = time.Now()
 	execute(t, a, "note", id, "while offline")
 	offline := time.Since(start)
 	t.Logf("note with the remote hanging %v, without background sync %v", offline.Round(time.Millisecond), baseline.Round(time.Millisecond))
@@ -212,16 +222,20 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 
 // Check 5: a rebase conflict keeps both clones' commits and says so.
 func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
+	t.Parallel()
 	a, b, bare := clones(t)
-	oldSpawn := Spawn
-	Spawn = nil // both clones edit offline from each other first
-	id := execute(t, a, "new", "Contested", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-	execute(t, a, "sync")
-	execute(t, b, "sync")
-	execute(t, a, "set", id, "--title", "Title from A")
-	execute(t, b, "set", id, "--title", "Title from B")
-	execute(t, a, "sync")
-	Spawn = oldSpawn
+	// Both clones edit offline from each other first.
+	var id string
+	offline(a, func() {
+		offline(b, func() {
+			id = execute(t, a, "new", "Contested", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+			execute(t, a, "sync")
+			execute(t, b, "sync")
+			execute(t, a, "set", id, "--title", "Title from A")
+			execute(t, b, "set", id, "--title", "Title from B")
+			execute(t, a, "sync")
+		})
+	})
 	mine := git(t, filepath.Join(b.Cwd, TaskDir), "rev-parse", "HEAD")
 	execute(t, b, "note", id, "after the conflict")
 	settled(t, b)
@@ -241,6 +255,7 @@ func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
 // The board turn: 20 parallel notes on one clone all land, none lost to a
 // background rebase moving files underneath (m8shdj check 1 shape).
 func TestBackgroundSyncParallelNotesAllLand(t *testing.T) {
+	t.Parallel()
 	a, b, _ := clones(t)
 	id := execute(t, a, "new", "Parallel", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	var wg sync.WaitGroup
@@ -249,7 +264,7 @@ func TestBackgroundSyncParallelNotesAllLand(t *testing.T) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			c := &App{Cwd: a.Cwd, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+			c := &App{Cwd: a.Cwd, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}, Env: a.Env, Sync: a.Sync}
 			if _, e := c.Execute(context.Background(), []string{"note", id, "parallel " + strconv.Itoa(i)}); e != nil {
 				errs <- e
 			}

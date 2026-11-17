@@ -11,6 +11,7 @@ import (
 // tb0dra: done asks one question; --reflect stores the answer as a
 // Reflection note; reflections lists open ones; resolve closes one.
 func TestDoneReflectAndReflections(t *testing.T) {
+	t.Parallel()
 	a, id := takeFixture(t)
 	execute(t, a, "take", id, "--as", "poodle", "--model", "claude-opus-5-5")
 	// A blocked done stores nothing.
@@ -75,6 +76,7 @@ func TestDoneReflectAndReflections(t *testing.T) {
 
 // tb0dra check 4: the installed section asks for an honest answer.
 func TestAgentSectionAsksReflection(t *testing.T) {
+	t.Parallel()
 	for _, want := range []string{"Done asks whether\nthe instructions guided you well; answer honestly with --reflect", `or "nothing".`} {
 		if !strings.Contains(agentSection, want) {
 			t.Errorf("agentSection lacks %q", want)
@@ -83,6 +85,7 @@ func TestAgentSectionAsksReflection(t *testing.T) {
 }
 
 func TestReflectionParse(t *testing.T) {
+	t.Parallel()
 	tk := task.Task{ID: "abcdef", Title: "T"}
 	rs := task.ParseReflections(tk, "## Notes\nplain note\nReflection (open, 2026-11-17): the hint 'hug task take ID' said nothing about cwd\nReflection (dismissed, 2026-11-16, crab): no quote here\n")
 	if len(rs) != 2 || rs[0].Who != "" || rs[0].Instruction != "hug task take ID" || rs[1].State != "dismissed" || rs[1].Who != "crab" || rs[1].N != 2 {

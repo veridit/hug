@@ -12,6 +12,7 @@ import (
 // node with its meaning and setter and its fields; --json carries the
 // table itself.
 func TestStatesCommandPrintsTree(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	code, out := runText(a, "states")
 	if code != 0 {
@@ -47,6 +48,7 @@ func TestStatesCommandPrintsTree(t *testing.T) {
 // 6ephqk check 3, CLI: wait, resume, design and drop take their text;
 // each refusal ends with a fix: line that runs without an editor.
 func TestMoveCommands(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Moves", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
