@@ -9,10 +9,13 @@ labels: ["github", "import"]
 created: 2026-11-13
 updated: 2026-11-13
 doing_since: "2026-11-17T15:40"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "jhf: check 4 conflicts with bxqtkt 'no two-way GitHub sync': choose A (close+link only), B (as written) or C (strike), see note 14:42"
+waiting_since: "2026-11-17T15:41"
+waiting_asked_by: "calf"
 ---
 
 ## Goal
@@ -35,3 +38,4 @@ Built 2026-11-15 (commit above): huginn import github [OWNER/REPO] [--dry-run], 
 kestrel 14:42, QUESTION FOR JØRGEN before check 4 is built: it conflicts with bxqtkt. bxqtkt principle (2026-11-16): 'No two-way GitHub sync: triage takes an issue in, creates our ticket, and closes the issue with a link to it. The board stays the single truth.' Its details: 'Two-way sync was considered and rejected: GitHub lacks our states, and untriaged items would pollute the board.' Check 4 here pushes status, checks and notes back (close/reopen, comment) behind --push. That is two-way sync, even if manual. Also, checks 1-2 already pull GitHub-side changes in on re-import ('GitHub-side changes come in'), which is inbound sync and not bxqtkt's one-time intake. The overlap: closing an issue with a comment linking our ticket id fits both. Options: (A) build only what bxqtkt allows: 'hug task import github --push' closes, for each imported GH-n task that is done or dropped, its open issue as completed or not_planned, with one comment linking the ticket id. No reopen, no checks, no notes. Check 4 is reworded to that, and the rest is struck with reason 'bxqtkt: no two-way sync'. (B) build check 4 as written; bxqtkt's principle is then amended to allow manual --push. (C) strike check 4; bxqtkt's triage ('take' closes with a link) replaces it, and h176dp is done at 4 of 5 with a reason. Recommendation: A, or C if bxqtkt's inbox is built soon. A is small and fits the board-is-truth rule. Nothing built yet.
 ## History
 - 2026-11-17T15:40 todo -> doing/active (take)
+- 2026-11-17T15:41 doing/active -> doing/waiting (wait)
