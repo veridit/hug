@@ -4,7 +4,7 @@ title: "Task writers wait their turn: no index or temp-file races"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
