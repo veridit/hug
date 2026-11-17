@@ -145,7 +145,14 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	row += fit(title, max(0, c.title))
 	row = fit(row, width)
 	if t.Status == "done" || t.Status == "dropped" {
-		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, 2+pw+idCell, width)))
+		// A closed task is dim after its status word, which keeps its
+		// colour: the one scheme of the count line (zhvkmj).
+		from := 2 + pw + idCell
+		if c.status && !compact {
+			head += styled(m.styles.status, m.boardStatus(t), statusCell-1) + " "
+			from += statusCell
+		}
+		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, from, width)))
 	}
 	if selected {
 		// Inner cells end with a full reset, which would cut the tint after
@@ -315,7 +322,7 @@ func (m model) overviewText() string {
 		} else if end-start < len(indices) {
 			label += fmt.Sprintf(" · %d–%d shown", start+1, end)
 		}
-		label = m.styles.accent.Render(fit(label, m.width))
+		label = m.sectionStyle(p).Render(fit(label, m.width))
 		if p == m.pane {
 			label = m.styles.selected.Render(label)
 		}
@@ -345,6 +352,19 @@ func (m model) overviewText() string {
 		lines = append(lines, "")
 	}
 	return strings.Join(lines, "\n")
+}
+
+// sectionStatus is the status whose colour an overview section's title
+// takes (zhvkmj): one scheme for the count line, the status word, the
+// board columns and these titles. LINT takes the colour of the ! mark.
+var sectionStatus = map[int]string{sectionDoing: "doing", sectionNext: "todo", sectionBlocked: "blocked", sectionRecent: "done"}
+
+// sectionStyle is the title style of overview section p.
+func (m model) sectionStyle(p int) lipgloss.Style {
+	if s, ok := sectionStatus[p]; ok {
+		return m.styles.status[s].Bold(true)
+	}
+	return m.styles.warning.Bold(true)
 }
 
 // overviewRows shares the overview's rows (h9zghj): every section the

@@ -8,8 +8,9 @@ import (
 )
 
 // Acceptance progress on rows (d8yx7y): a pie that fills by quarters and
-// N/M before the id, e.g. "◑ 2/4". All ticked is green, some yellow, none
-// dim; the glyph and text stay without colour (NO_COLOR).
+// N/M before the id, e.g. "◑ 2/4". Some ticked is yellow, done green,
+// none dim; the glyph and text stay without colour (NO_COLOR). The
+// fraction is for partial work only (zhvkmj): see progress.
 
 // pies are the glyphs for 0, 1, 2, 3 and 4 quarters.
 var pies = []string{"○", "◔", "◑", "◕", "●"}
@@ -55,22 +56,40 @@ func checkCount(t task.Task) (done, total int) {
 }
 
 // progress is t's progress cell, progressWidth wide: blank for a task
-// without checks.
+// without checks. The fraction shows only while it says something
+// (zhvkmj, Jørgen 2026-11-17): a done task has every check ticked, so it
+// shows the count, "● 5", in the done colour; a task with nothing ticked
+// shows its count dim, "○ 3"; one with some ticked keeps "◑ 2/4", which
+// marks resumable work. A dropped task shows none.
 func (m model) progress(t task.Task) string {
 	width := m.progressWidth()
 	done, total := checkCount(t)
-	if total == 0 {
+	if total == 0 || t.Status == "dropped" {
 		return fit("", width)
 	}
 	style := m.styles.dim
 	switch {
-	case done >= total:
+	case t.Status == "done" || done >= total:
 		style = m.styles.status["done"]
 	case done > 0:
 		style = m.styles.progress
 	}
-	cell := fmt.Sprintf("%s %d/%d", pie(done, total), done, total)
-	return style.Render(fit(cell, width-1)) + " "
+	return style.Render(fit(progressText(t), width-1)) + " "
+}
+
+// progressText is the text of t's progress cell: "● 5" done, "○ 3" none
+// ticked, "◑ 2/4" partly ticked (zhvkmj).
+func progressText(t task.Task) string {
+	done, total := checkCount(t)
+	switch {
+	case total == 0 || t.Status == "dropped":
+		return ""
+	case t.Status == "done":
+		return fmt.Sprintf("%s %d", pies[4], total)
+	case done == 0:
+		return fmt.Sprintf("%s %d", pies[0], total)
+	}
+	return fmt.Sprintf("%s %d/%d", pie(done, total), done, total)
 }
 
 // progressStyle is the yellow for a task partly ticked.

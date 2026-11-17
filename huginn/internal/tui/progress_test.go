@@ -1,7 +1,6 @@
 package tui
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -42,7 +41,7 @@ func TestProgressColours(t *testing.T) {
 		done, total int
 		style       lipgloss.Style
 		text        string
-	}{{4, 4, m.styles.status["done"], "● 4/4"}, {2, 4, m.styles.progress, "◑ 2/4"}, {0, 4, m.styles.dim, "○ 0/4"}}
+	}{{4, 4, m.styles.status["done"], "● 4/4"}, {2, 4, m.styles.progress, "◑ 2/4"}, {0, 4, m.styles.dim, "○ 4"}}
 	seen := map[string]bool{}
 	for _, c := range cases {
 		got := m.progress(withChecks(c.done, c.total))
@@ -78,11 +77,10 @@ func TestRowsShowProgress(t *testing.T) {
 		text := ansi.Strip(m.View())
 		seen := 0
 		for _, tk := range m.all {
-			done, total := checkCount(tk)
-			if total == 0 || !strings.Contains(text, tk.ID) {
+			if progressText(tk) == "" || !strings.Contains(text, tk.ID) {
 				continue
 			}
-			cell := fit(fmt.Sprintf("%s %d/%d", pie(done, total), done, total), m.progressWidth()-1) + " " + tk.ID
+			cell := fit(progressText(tk), m.progressWidth()-1) + " " + tk.ID
 			if !strings.Contains(text, cell) {
 				t.Fatalf("%s: %q not on screen:\n%s", view, cell, text)
 			}

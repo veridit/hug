@@ -1,29 +1,29 @@
 > IN PROGRESS · assigned to  [2]                                                                                                            
-> ○ 0/1 ######   doing   feature          Task 01                                                                           ann             
-  ○ 0/1 ######   doing   feature          Task 02                                                                           ann             
+> ○ 1   ######   doing   feature          Task 01                                                                           ann             
+  ○ 1   ######   doing   feature          Task 02                                                                           ann             
 
   NEXT UP · rank order  [32] · 1–21 shown                                                                                                   
-  ○ 0/1 ######   todo    feature          Task 03                                                                                           
-  ○ 0/1 ######   todo    feature          Task 04                                                                                           
-  ○ 0/1 ######   todo    feature          Task 05                                                                                           
-  ○ 0/1 ######   todo    feature          Task 06                                                                                           
-  ○ 0/1 ######   todo    feature          Task 07                                                                                           
-  ○ 0/1 ######   todo    feature          Task 08                                                                                           
-  ○ 0/1 ######   todo    feature          Task 09                                                                                           
-  ○ 0/1 ######   todo    feature          Task 10                                                                                           
-  ○ 0/1 ######   todo    feature          Task 11                                                                                           
-  ○ 0/1 ######   todo    feature          Task 12                                                                                           
-  ○ 0/1 ######   todo    feature          Task 13                                                                                           
-  ○ 0/1 ######   todo    feature          Task 14                                                                                           
-  ○ 0/1 ######   todo    feature          Task 15                                                                                           
-  ○ 0/1 ######   todo    feature          Task 16                                                                                           
-  ○ 0/1 ######   todo    feature          Task 17                                                                                           
-  ○ 0/1 ######   todo    feature          Task 18                                                                                           
-  ○ 0/1 ######   todo    feature          Task 19                                                                                           
-  ○ 0/1 ######   todo    feature          Task 20                                                                                           
-  ○ 0/1 ######   todo    feature          Task 21                                                                                           
-  ○ 0/1 ######   todo    feature          Task 22                                                                                           
-↓ ○ 0/1 ######   todo    feature          Task 23                                                                                           
+  ○ 1   ######   todo    feature          Task 03                                                                                           
+  ○ 1   ######   todo    feature          Task 04                                                                                           
+  ○ 1   ######   todo    feature          Task 05                                                                                           
+  ○ 1   ######   todo    feature          Task 06                                                                                           
+  ○ 1   ######   todo    feature          Task 07                                                                                           
+  ○ 1   ######   todo    feature          Task 08                                                                                           
+  ○ 1   ######   todo    feature          Task 09                                                                                           
+  ○ 1   ######   todo    feature          Task 10                                                                                           
+  ○ 1   ######   todo    feature          Task 11                                                                                           
+  ○ 1   ######   todo    feature          Task 12                                                                                           
+  ○ 1   ######   todo    feature          Task 13                                                                                           
+  ○ 1   ######   todo    feature          Task 14                                                                                           
+  ○ 1   ######   todo    feature          Task 15                                                                                           
+  ○ 1   ######   todo    feature          Task 16                                                                                           
+  ○ 1   ######   todo    feature          Task 17                                                                                           
+  ○ 1   ######   todo    feature          Task 18                                                                                           
+  ○ 1   ######   todo    feature          Task 19                                                                                           
+  ○ 1   ######   todo    feature          Task 20                                                                                           
+  ○ 1   ######   todo    feature          Task 21                                                                                           
+  ○ 1   ######   todo    feature          Task 22                                                                                           
+↓ ○ 1   ######   todo    feature          Task 23                                                                                           
 
   BLOCKED · unmet dependencies  [0] · None                                                                                                  
 

@@ -39,7 +39,7 @@ func spareBoard(t *testing.T, doing, todo int) model {
 	return m
 }
 
-var taskID = regexp.MustCompile(`(?m)^([>↑↓ ] (?:[○◔◑◕●] \d+/\d+ +)?)[0-9a-z]{6}\b`)
+var taskID = regexp.MustCompile(`(?m)^([>↑↓ ] (?:[○◔◑◕●] \d+(?:/\d+)? +)?)[0-9a-z]{6}\b`)
 
 // overviewBlank counts blank rows after the last drawn line of the body.
 func overviewBlank(m model) int {
