@@ -11,7 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+stage: "waiting"
+waiting_on: "CI 44098427171 on ci/0sbvnq-2 (ce87089), then landing slot, then 3 main Windows runs well under 240 s"
+waiting_since: "2026-11-17T15:01"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -52,3 +55,4 @@ After 752344d (background-sync tests and 6 others parallel, App.Sync per App), W
 ## History
 - 2026-11-17T14:32 doing -> doing/waiting (wait)
 - 2026-11-17T14:46 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: 3 main Windows runs with huginn/internal/cli under 300 s (landing run 44087396396: 299.686 s); waiting_since: 2026-11-17T14:32
+- 2026-11-17T15:01 doing/active -> doing/waiting (wait)
