@@ -1,13 +1,18 @@
 ---
 id: 456vyt
 title: "Text hug task show prints the stage and wait as its second line"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T18:53"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Seen: hug v0.7.42, hug task show ggydj2 | head -2 gives the title line and 'take
 - [ ] a task with no wait and stage active prints no wait line, or the stage alone, matching the row (test)
 
 ## Notes
+
+
+## History
+- 2026-11-17T18:53 todo -> doing/active (take)
