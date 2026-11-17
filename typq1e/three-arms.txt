@@ -1,0 +1,3 @@
+Find (before step 1)       per agent transcript (40 items, mean of 2 runs): rejected 0.163  durable_agentfree_rejected 0.000  judge_name_left 0.237  judge_name_or_status_left 0.287
+FindIn (step 1, on main)   per agent transcript (40 items, mean of 2 runs): rejected 0.312  durable_agentfree_rejected 0.013  judge_name_left 0.100  judge_name_or_status_left 0.150
+Live (step 2)              per agent transcript (40 items, mean of 2 runs): rejected 0.312  durable_agentfree_rejected 0.013  judge_name_left 0.100  judge_name_or_status_left 0.150
