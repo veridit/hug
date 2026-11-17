@@ -47,5 +47,6 @@ Measured 2026-11-17 18:00-18:33 (Seid copy at ~/.jcode/scratch/seidcopy, 2,520 t
 - crab's 19.2 s in 60 s (17:44) matches a first start, not idle: cache-16.db on live Seid was created at 17:42:10, so that TUI rebuilt the cache for the new schema. Fresh copy with no cache on v0.7.44: 0:01.85 -> 0:04.76 in the first 10 s, then 0.03 s per 10 s.
 - Live: Jørgen's pid 99030 (v0.7.43) used 12.5 s over 20.4 min (1:06 -> 1:18.55) while about 10 board commits landed; 0.21 s in the next 60 s.
 Next: the per-change cost (2 loads per commit; taskFiles walks every attachment folder on every load; a frame walks all 2,520 tasks), with a test that counts loads per commit.
+Correction to my DM to crab at 18:34: 'holding j at 30 keys/s costs about 1.2 s CPU per second' was not measured. I derived it from 40 ms per View times 30 frames/s. Per-View cost is measured: 1.33 s of View samples over 32 counted Views.
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
