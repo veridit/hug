@@ -9,6 +9,10 @@ labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
+waiting_on: "check 7: real use of a linked Statbus worktree taking a task via CLI and MCP (observed read-only, none as of 13:16)"
+waiting_since: "2026-11-17T14:33"
+waiting_asked_by: "calf"
+stage: "waiting"
 ---
 
 ## Goal
@@ -61,3 +65,7 @@ kestrel 2026-11-17 11:02, Statbus observation (read-only, nothing written there)
 kestrel 2026-11-17 12:35, Statbus worktree observation (read-only). Board: one doing task records a branch: 00rnq5 'field-s-timeline-shows' assignee rabbit, model claude-opus-5-5, branch "statbus-628-all-forms", worktree "/Users/jhf/ssb/statbus_test" (file ~/ssb/statbus/.hug/tasks/0000000005p.00rnq5.field-s-timeline-shows.md). statbus_test is a separate clone (not a linked worktree) on branch statbus-628-all-forms, so this is the separate-clone case; its own linked worktrees (.jcode/scratch/wt-edit-fix on statbus-edit-empty, two detached livedb-upgrade checkouts) have taken no task. statbus_rel_2026113 does not exist. Not yet seen: an MCP take with cwd in a linked worktree, and a CLI take in a second worktree. Sync between the two clones: see 0hkaa5 note 12:35 (0 errors, 3-6 s commit to push). Check again later.
 
 kestrel 12:40, check 7 waits on: real use of a LINKED worktree in Statbus (git worktree add) where an agent takes a task, once via CLI and once via MCP task_take with cwd. So far (12:35) Statbus has used only a separate clone (statbus_test, branch statbus-628-all-forms, 00rnq5 recorded with that branch and worktree, correct). No linked statbus worktree has taken a task; statbus_rel_2026113 does not exist. Nothing for hug to do until that happens; recheck the boards read-only then.
+
+
+## History
+- 2026-11-17T14:33 doing -> doing/waiting (wait)
