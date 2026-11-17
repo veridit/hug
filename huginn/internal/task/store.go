@@ -134,6 +134,7 @@ func cloneTasks(ts []Task) []Task {
 		t.Aliases = append([]string(nil), t.Aliases...)
 		t.Sections = append([]string(nil), t.Sections...)
 		t.Dependencies = append([]Dependency(nil), t.Dependencies...)
+		t.Waits = append([]Wait(nil), t.Waits...)
 		t.Acceptance = append([]Acceptance(nil), t.Acceptance...)
 		out[i] = t
 	}
@@ -424,6 +425,16 @@ func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result,
 			}
 			warnings = append(warnings, "open dependencies")
 		}
+		// A stated condition (16dxsr) holds back starting; one about the
+		// board (a task or group closed) also holds back done, as a
+		// dependency does. A date, load, branch or tag only says when to
+		// begin.
+		if unmet := Unmet(d.Task, ts, status == "done"); len(unmet) > 0 {
+			if policy != "warn" {
+				return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Field: "waits", Value: WaitSummary(unmet), Waits: unmet, Fix: "hug task show " + d.Task.ID}
+			}
+			warnings = append(warnings, "unmet conditions")
+		}
 	}
 	if status == "done" {
 		policy := s.AcceptanceMode
@@ -507,7 +518,7 @@ func Next(tasks []Task, f Filter) (Result, error) {
 		sort.SliceStable(ts, func(i, j int) bool { return ts[i].Status == "doing" && ts[j].Status != "doing" })
 	}
 	for _, t := range ts {
-		if (t.Status != "todo" && !(f.Mine != "" && t.Status == "doing")) || len(Blocked(t, tasks)) > 0 {
+		if (t.Status != "todo" && !(f.Mine != "" && t.Status == "doing")) || Waiting(t, tasks) {
 			continue
 		}
 		// An epic is finished through its children, never picked itself.

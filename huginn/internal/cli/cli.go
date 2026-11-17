@@ -21,6 +21,7 @@ import (
 	"github.com/veridit/hug/huginn/internal/editor"
 	"github.com/veridit/hug/huginn/internal/harness"
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/cond"
 )
 
 const Help = `hug task: tasks on a Git branch, for humans and agents.
@@ -155,6 +156,10 @@ func (a *App) open(ctx context.Context) (*session, error) {
 	if e != nil {
 		return nil, e
 	}
+	// Waits (16dxsr) are checked against this checkout: its branches and
+	// tags, and this machine's load. Git is asked only when a wait asks.
+	world := cond.Local(cwd, func() string { return gitbranch.DefaultBranch(cwd) })
+	task.SetWorld(func() cond.State { return world })
 	gd := r.Common
 	c, e := cache.Open(r.Dir, filepath.Join(gd, "huginn", "cache.db"), gitCache{r})
 	if e != nil {
@@ -366,6 +371,12 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	}
 	out["dependencies"] = deps
 	out["dependency_details"] = task.DependencyDetails(t, ts)
+	// Conditions (16dxsr), checked now: met or not, and what hug saw.
+	if ws := task.Waits(t, ts); len(ws) > 0 {
+		out["waits"] = ws
+	} else {
+		delete(out, "waits")
+	}
 	children := []Reply{}
 	for _, c := range childIndexFor(ts)[strings.ToLower(t.ID)] {
 		children = append(children, Reply{"id": c.ID, "title": c.Title, "status": c.Status})
@@ -751,6 +762,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		// Git branch state, not file content: recomputed on every lint (x1t1t1).
 		if ts, e := s.s.Tasks(); e == nil {
 			fs = append(fs, task.BranchFindings(a.Cwd, gitbranch.DefaultBranch(a.Cwd), ts)...)
+			// Waits hug cannot check here (16dxsr): git and the machine, not files.
+			fs = append(fs, task.WaitFindings(ts)...)
 		}
 		// Closed tasks' findings are hidden unless --all (6neax1).
 		var hidden []task.Finding
@@ -1223,7 +1236,24 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 		if ds, ok := t["dependency_details"].([]task.DependencyDetail); ok {
 			for _, d := range ds {
-				fmt.Fprintf(a.Out, "dependency: %s  %s  [%s]  %s\n", d.ID, d.Title, d.Status, d.Path)
+				status := d.Status
+				if d.OpenChildren > 0 {
+					status += fmt.Sprintf(", epic: %d open", d.OpenChildren)
+				}
+				fmt.Fprintf(a.Out, "dependency: %s  %s  [%s]  %s\n", d.ID, d.Title, status, d.Path)
+			}
+		}
+		if ws, ok := t["waits"].([]task.WaitDetail); ok {
+			for _, w := range ws {
+				state := "waiting"
+				if w.Met {
+					state = "met"
+				}
+				line := fmt.Sprintf("waits: when %s  [%s: %s]", w.Text, state, w.Seen)
+				if w.Wakes != "" {
+					line += "  wakes " + w.Wakes
+				}
+				fmt.Fprintln(a.Out, line)
 			}
 		}
 		if p, ok := t["parent"].(string); ok && p != "" {

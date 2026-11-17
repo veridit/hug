@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/veridit/hug/internal/cond"
 )
 
 // Kind of condition.
@@ -70,26 +72,50 @@ type State struct {
 	BranchLive func(name string) (live, known bool)
 }
 
-// Ended reports whether the condition no longer holds, and why. An
-// unknown answer (no board, not in git) is never an end.
-func (c Cond) Ended(st State) (bool, string) {
+// Event is what ends the condition, in the vocabulary tasks wait on
+// (internal/cond, 16dxsr): "until D" ends when date D comes, "while task:ID
+// open" when the task is closed, "while branch X unmerged" when X is merged.
+// One evaluator serves both: a memory holds until its event, a task waits
+// for it.
+func (c Cond) Event() cond.Cond {
 	switch c.Kind {
 	case Until:
-		if !st.Now.Before(c.Date) {
-			return true, "the date " + c.Date.Format("2006-01-02") + " has passed"
-		}
+		return cond.Cond{Kind: cond.Date, Date: c.Date, Text: "date " + c.Date.Format("2006-01-02")}
 	case Task:
-		if st.TaskOpen != nil {
-			if open, known := st.TaskOpen(c.Ref); known && !open {
-				return true, "task " + c.Ref + " is closed"
-			}
-		}
+		return cond.Cond{Kind: cond.Task, Ref: c.Ref, Text: "task:" + c.Ref + " closed"}
 	case Branch:
-		if st.BranchLive != nil {
-			if live, known := st.BranchLive(c.Ref); known && !live {
-				return true, "branch " + c.Ref + " is merged or deleted"
-			}
+		return cond.Cond{Kind: cond.Branch, Ref: c.Ref, Text: "branch " + c.Ref + " merged"}
+	}
+	return cond.Cond{}
+}
+
+// Ended reports whether the condition no longer holds, and why. An
+// unknown answer (no board, not in git) is never an end. For a memory a
+// deleted branch ends it too (BranchLive says gone for merged or deleted).
+func (c Cond) Ended(st State) (bool, string) {
+	cs := cond.State{Now: st.Now}
+	if st.Now.IsZero() {
+		cs.Now = time.Now()
+	}
+	if st.TaskOpen != nil {
+		cs.TaskOpen = st.TaskOpen
+	}
+	if st.BranchLive != nil {
+		cs.Branch = func(name, _ string) (bool, string, bool) {
+			live, known := st.BranchLive(name)
+			return !live, "", known
 		}
+	}
+	if met, _ := c.Event().Met(cs); !met {
+		return false, ""
+	}
+	switch c.Kind {
+	case Until:
+		return true, "the date " + c.Date.Format("2006-01-02") + " has passed"
+	case Task:
+		return true, "task " + c.Ref + " is closed"
+	case Branch:
+		return true, "branch " + c.Ref + " is merged or deleted"
 	}
 	return false, ""
 }

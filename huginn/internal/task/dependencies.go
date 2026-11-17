@@ -17,6 +17,11 @@ type DependencyDetail struct {
 	Line    int    `json:"line"`
 	Note    string `json:"note,omitempty"`
 	Missing bool   `json:"missing,omitempty"`
+	// Blocking: the dependency still holds the task back. For an epic that
+	// is while any child is open (16dxsr), whatever the epic's own status;
+	// OpenChildren counts them.
+	Blocking     bool `json:"blocking,omitempty"`
+	OpenChildren int  `json:"open_children,omitempty"`
 }
 
 func DependencyDetails(t Task, tasks []Task) []DependencyDetail {
@@ -27,6 +32,14 @@ func DependencyDetails(t Task, tasks []Task) []DependencyDetail {
 		if e != nil {
 			detail.ID = d.Ref
 			detail.Missing = true
+			detail.Blocking = true
+		} else {
+			detail.Blocking = !Closed(target, tasks)
+			for _, i := range childPositions(tasks, target) {
+				if s := tasks[i].Status; s != "done" && s != "dropped" {
+					detail.OpenChildren++
+				}
+			}
 		}
 		out = append(out, detail)
 	}

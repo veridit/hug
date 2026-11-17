@@ -403,7 +403,7 @@ func (m *model) apply(sn snapshot, path string) {
 		m.epics[id] = true
 	}
 	for _, t := range ts {
-		m.blocked[t.Path] = t.Status != "done" && t.Status != "dropped" && len(task.Blocked(t, ts)) > 0
+		m.blocked[t.Path] = t.Status != "done" && t.Status != "dropped" && task.Waiting(t, ts)
 	}
 	for _, f := range m.findings {
 		m.linted[f.Path] = true

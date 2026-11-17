@@ -63,6 +63,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"task file is a symlink", "file-symlink"},
 	{"duplicate origin", "duplicate-origin"},
 	{"branch ", "branch-gone"},
+	{"unknown condition", "unknown-condition"},
 }
 
 // FindingCode names the kind of problem in a finding message.
@@ -169,7 +170,10 @@ type Task struct {
 	Sections     []string     `json:"sections,omitempty"`
 	Goal         string       `json:"goal"`
 	Dependencies []Dependency `json:"dependencies"`
-	Acceptance   []Acceptance `json:"acceptance"`
+	// Waits are the conditions in Depends on (16dxsr): "- when PREDICATE"
+	// and "- group:NAME", checked when the board is read.
+	Waits      []Wait       `json:"waits,omitempty"`
+	Acceptance []Acceptance `json:"acceptance"`
 	// Texts are what show and ls print beside the fields: the Notes body
 	// and the description sections (DescriptionSections), filled by the
 	// same Parse that fills the Task, so a cached Task answers ls without
@@ -386,6 +390,16 @@ func Parse(path string, data []byte) *Document {
 			}
 			if ref, note, ok := parseDependencyLine(t); ok {
 				d.Task.Dependencies = append(d.Task.Dependencies, Dependency{ref, n + 1, note})
+				continue
+			}
+			// A stated condition (16dxsr): "- when load below 120",
+			// "- group:NAME". One hug cannot read still waits, and says so.
+			if w, err, ok := parseWaitLine(t); ok {
+				w.Line = n + 1
+				d.Task.Waits = append(d.Task.Waits, w)
+				if err != nil {
+					d.Findings = append(d.Findings, unknownCondition(d.Task.ID, w.Text, n+1, d.Task.Path, err))
+				}
 				continue
 			}
 			// Prose is reported, never guessed into a dependency: an

@@ -229,6 +229,24 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
   note). Any other line is prose: lint reports it as `not-a-dependency`
   and it creates no dependency, so it never blocks the task (rx74bp,
   2026-11-16: a question typed there showed the task as blocked on "Is").
+- A dependency on an epic is settled when the epic is done or dropped, or
+  when every child of it is (16dxsr): it waits for the epic's content, not
+  its own status.
+- A Depends on line may state a condition instead (16dxsr): `- when
+  PREDICATE [wakes NAME]`, or `- group:NAME` for `when group NAME closed`.
+  Predicates (internal/cond, shared with memory conditions): `date
+  YYYY-MM-DD`, `load below N` (5-minute average), `branch NAME merged [at
+  TIP]` (dep --add records the tip, so a merged and deleted branch still
+  reads as merged), `release NAME exists` / `tag NAME exists`, `task:ID
+  closed`, `group NAME closed` (every task in the group and its subgroups
+  done or dropped). hug checks them when it reads the board, from the
+  board, local git and the machine, never the network. Next skips a task
+  whose condition does not hold and take refuses it; a task or group
+  condition also holds back done. A condition hug cannot read, or cannot
+  check here (a branch this clone lacks, no load average on Windows),
+  never holds and lint reports it as `unknown-condition`. `wakes` names
+  who is told when it holds (default: whoever took the task); hug records
+  it, a supervisor (5dxzxe) acts on it.
 - `hug task lint` reports `file:line: [code] problem` and a `fix:` command
   per finding (missing field, unknown status, a dependency on no task,
   a line that is not a dependency, dep cycle, duplicate id, done with

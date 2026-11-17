@@ -403,12 +403,29 @@ func (m model) detailText(t task.Task) string {
 			pointer = ">"
 		}
 		flag := ""
-		if d.Status != "done" && d.Status != "dropped" {
+		if d.Blocking {
 			flag = " BLOCKED"
+		}
+		if d.OpenChildren > 0 {
+			flag += fmt.Sprintf(" (epic: %d open)", d.OpenChildren)
 		}
 		line := fmt.Sprintf("%s ↳ %s %s [%s]%s %s", pointer, m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, oneLine(d.Note))
 		if pointer == ">" {
 			line = m.styles.selected.Render(ansi.Strip(line))
+		}
+		dependencies = append(dependencies, line)
+	}
+	// Conditions (16dxsr), after the task dependencies: what it waits for
+	// and what hug saw when it checked. Not focusable: there is nothing to
+	// follow.
+	for _, w := range task.Waits(t, m.all) {
+		flag, style := " WAITING", m.styles.status["blocked"]
+		if w.Met {
+			flag, style = " met", m.styles.status["done"]
+		}
+		line := fmt.Sprintf("  ⧗ when %s%s · %s", oneLine(w.Text), style.Render(flag), m.styles.dim.Render(oneLine(w.Seen)))
+		if w.Wakes != "" {
+			line += m.styles.dim.Render(" · wakes " + oneLine(w.Wakes))
 		}
 		dependencies = append(dependencies, line)
 	}

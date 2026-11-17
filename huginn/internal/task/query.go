@@ -28,6 +28,8 @@ type Error struct {
 	Dependencies []Task      `json:"dependencies,omitempty"`
 	Unchecked    []Unchecked `json:"unchecked,omitempty"`
 	Cycle        []string    `json:"cycle,omitempty"`
+	// Waits are the conditions that do not hold (16dxsr).
+	Waits []WaitDetail `json:"waits,omitempty"`
 }
 
 func (e *Error) Error() string {
@@ -232,7 +234,7 @@ func Blocked(t Task, tasks []Task) []Task {
 		x, e := ResolveDependency(tasks, d.Ref)
 		if e != nil {
 			out = append(out, Task{ID: d.Ref, Title: "unresolved dependency"})
-		} else if x.Status != "done" && x.Status != "dropped" {
+		} else if !Closed(x, tasks) {
 			out = append(out, x)
 		}
 	}

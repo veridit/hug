@@ -50,7 +50,7 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 		}
 		for i := range cols {
 			if cols[i].Status == t.Status {
-				cols[i].Cards = append(cols[i].Cards, BoardCard{ID: t.ID, Title: t.Title, Assignee: t.Assignee, Model: t.Model, Blocked: len(task.Blocked(t, ts)) > 0})
+				cols[i].Cards = append(cols[i].Cards, BoardCard{ID: t.ID, Title: t.Title, Assignee: t.Assignee, Model: t.Model, Blocked: task.Waiting(t, ts)})
 			}
 		}
 	}
@@ -121,7 +121,7 @@ func writeBoard(w io.Writer, cols []BoardColumn) {
 		}
 		fmt.Fprintln(w, strings.TrimRight(b.String(), " "))
 	}
-	fmt.Fprintln(w, "! = blocked by an open dependency")
+	fmt.Fprintln(w, "! = blocked by an open dependency or a condition that does not hold")
 }
 
 // writeBoardWide prints each column as a section with full, unclipped
