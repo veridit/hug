@@ -32,3 +32,5 @@ Applies to every row column (stage, type, priority, owner), not only stage (crab
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+Jørgen 00:12 local: 'same for' the WAITING section (all 18 rows 'waiting'). With 41hhgn's ASKED split, both ASKED and WAITING are uniform in stage, so neither draws STAGE.
