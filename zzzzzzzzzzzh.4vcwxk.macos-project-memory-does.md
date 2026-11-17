@@ -30,7 +30,7 @@ Test: sync_test.go:120. The note at 8.7-9.3 s is also near the 10 s limit; ubunt
 
 ## Acceptance
 - [x] the cause is named with evidence (sync log lines or a trace) in a note
-- [ ] a test that fails before the fix passes after; macOS CI green on three consecutive main runs (run ids)
+- [x] a test that fails before the fix passes after; macOS CI green on three consecutive main runs (run ids)
 
 ## Notes
 
