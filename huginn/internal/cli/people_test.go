@@ -153,6 +153,7 @@ func TestUpgradeMovesWaitingFor(t *testing.T) {
 // person should look at; attach takes a PNG; --show of a file the task does
 // not carry is refused with a fix.
 func TestWaitShowsAPicture(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Look", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)

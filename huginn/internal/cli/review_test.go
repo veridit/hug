@@ -13,6 +13,7 @@ import (
 // review_show; --show of a file the task does not carry is refused with a
 // fix; answer clears all three and the owner is active again.
 func TestReviewMove(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Look", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)

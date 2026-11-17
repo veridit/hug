@@ -469,8 +469,12 @@ func (r *Repository) ioerr(e error) error {
 	return &Error{Op: "filesystem", Detail: e.Error(), Fix: r.fix("status"), Cause: e}
 }
 
-// Head returns an empty string for an unborn branch.
+// Head returns an empty string for an unborn branch. It reads the files
+// when it can (refs.go): one git process less per command (0sbvnq).
 func (r *Repository) Head() (string, error) {
+	if h, ok := fastHead(r.Dir); ok {
+		return h, nil
+	}
 	h, e := r.git("rev-parse", "--verify", "HEAD")
 	if e != nil {
 		if _, x := r.git("symbolic-ref", "HEAD"); x == nil {
@@ -552,15 +556,15 @@ func (r *Repository) Commit(paths []string, message string) error {
 	if len(paths) == 0 {
 		paths = []string{"."}
 	}
-	args := append([]string{"--literal-pathspecs", "add", "--all", "--"}, paths...)
-	if _, e = r.git(args...); e != nil {
-		return e
-	}
-	changed, e := r.git("diff", "--cached", "--name-only")
+	// --verbose names each path the add staged. The index matched HEAD
+	// before it (refused above), so no output is nothing to commit: no
+	// second diff --cached (0sbvnq, one git process less per write).
+	args := append([]string{"--literal-pathspecs", "add", "--verbose", "--all", "--"}, paths...)
+	added, e := r.git(args...)
 	if e != nil {
 		return e
 	}
-	if changed == "" {
+	if strings.TrimSpace(added) == "" {
 		return nil
 	}
 	_, e = r.git("commit", "-m", r.withTrailers(message))

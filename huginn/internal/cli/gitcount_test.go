@@ -32,16 +32,16 @@ func TestGitProcessesPerCommand(t *testing.T) {
 		args []string
 		n    int
 	}{
-		{[]string{"show", id}, 5},
-		{[]string{"ls"}, 5},
-		{[]string{"board"}, 5},
-		{[]string{"note", id, "counted"}, 9},
-		{[]string{"check", id, "1"}, 9},
-		{[]string{"take", id, "--model", "test-model"}, 15},
+		{[]string{"show", id}, 3},
+		{[]string{"ls"}, 3},
+		{[]string{"board"}, 3},
+		{[]string{"note", id, "counted"}, 6},
+		{[]string{"check", id, "1"}, 6},
+		{[]string{"take", id, "--model", "test-model"}, 11},
 		// wait asks who (waiting_asked_by), never where: no place lookup.
-		{[]string{"wait", id, "CI"}, 9},
-		{[]string{"resume", id}, 9},
-		{[]string{"done", id}, 9},
+		{[]string{"wait", id, "CI"}, 6},
+		{[]string{"resume", id}, 6},
+		{[]string{"done", id}, 6},
 	}
 	var got []string
 	fail := false

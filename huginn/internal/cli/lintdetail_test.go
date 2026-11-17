@@ -10,6 +10,7 @@ import (
 // the one combined fix as next; show and take print the same block; ls rows
 // carry no finding text.
 func TestLintOverviewDetailAndSameBlock(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Two problems", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)

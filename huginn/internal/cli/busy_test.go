@@ -11,6 +11,7 @@ import (
 // refused with exit 3, a line naming the active ticket and three fix:
 // lines; --json gives fix (the first) and fixes (all three).
 func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	first := execute(t, a, "new", "First", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)

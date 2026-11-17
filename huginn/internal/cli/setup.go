@@ -79,7 +79,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		steps = append(steps, SetupStep{step, done, detail, do})
 	}
 
-	if oldLayout(ctx, board) {
+	if oldLayout(ctx, board, "") {
 		add("layout upgrade", false, "tasks are on the old layout (branch huginn at .huginn/); hug keeps them on branch hug/tasks at .hug/tasks/", "hug upgrade")
 	}
 	_, statErr := os.Stat(filepath.Join(board, TaskDir))

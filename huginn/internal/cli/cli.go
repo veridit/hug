@@ -219,9 +219,18 @@ const (
 )
 
 // oldLayout reports whether root still uses the pre-hug task layout.
-func oldLayout(ctx context.Context, root string) bool {
+// common is root's shared git dir, or "" when the caller has not located it.
+func oldLayout(ctx context.Context, root, common string) bool {
 	if _, e := os.Stat(filepath.Join(root, OldTaskDir, ".git")); e == nil {
 		return true
+	}
+	// The ref files first: no git process on every command (0sbvnq).
+	if common != "" {
+		_, foundLocal, okLocal := gitbranch.RefAt(common, "refs/heads/"+OldTaskBranch)
+		_, foundRemote, okRemote := gitbranch.RefAt(common, "refs/remotes/origin/"+OldTaskBranch)
+		if okLocal && okRemote {
+			return foundLocal || foundRemote
+		}
 	}
 	// One git process for both refs (44w1ev). A for-each-ref pattern also
 	// matches refs below it (refs/heads/huginn/x), so compare exactly.
@@ -258,7 +267,7 @@ func (a *App) openBoard(ctx context.Context, lazy bool) (*session, error) {
 		}
 		return nil, &OperationError{Problem: "hug task needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && hug task init"}
 	}
-	if oldLayout(ctx, loc.Main) {
+	if oldLayout(ctx, loc.Main, loc.Common) {
 		return nil, &OperationError{Problem: "tasks are still on the old layout (branch huginn at .huginn/); hug now keeps them on branch hug/tasks at .hug/tasks/",
 			Fix: "hug upgrade"}
 	}

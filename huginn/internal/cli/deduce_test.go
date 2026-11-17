@@ -136,6 +136,7 @@ func TestDeduceReplayFirstLeavesOldReleases(t *testing.T) {
 // Check 1 across clones: a commit reaching main is noted once on the
 // board, though both clones run deduce through hug task sync.
 func TestDeduceTwoClonesOneLine(t *testing.T) {
+	t.Parallel() // clones() sets nothing process-wide (0sbvnq)
 	a, b, _ := clones(t)
 	x := newTicket(t, a, "Shared")
 	execute(t, a, "sync")
