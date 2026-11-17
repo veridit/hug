@@ -44,7 +44,9 @@ nautilus 16:18: landed on main af51fc3 (9b27bf7..af51fc3, rebased from 0ea1611; 
 landed af51fc3 on main 2026-11-17: hug tui: Space on a task file shows it in place, read only (path · size · i of…
 shipped in v0.7.43 (af51fc3)
 landed 0cd10ba on main 2026-11-18: hug tui: the file viewer's footer spells out n next file · p previous file…
+Check 5: Jørgen answered in the TUI 00:08: approved, asking that the footer spell out n/p. Done: landed f5576132..1fda4f82 (0cd10ba footer 'j/k scroll · n next file · p previous file · …' and status line 'n next file · p previous file · Esc back to files', asserted in TestGlanceStepsAndScrolls; golden testdata/detail/glance.txt reviewed; 28c656d stageBoard clock pin). Local tui ok 45.0s, -race tui ok 103.7s. (nautilus)
 ## History
 - 2026-11-17T15:02 todo -> doing/active (take)
 - 2026-11-17T15:08 doing/active -> doing/waiting (wait)
 - 2026-11-18T00:08 answered waiting: "check 5: look through the TASK-2034.02 evidence on Seid with Space and n/p in a task's FILES (on main af51fc3)" -> "This worked well. I tried it inside of Seid I do think that the markdown formatting will make sense at a later point. The space view the file N and P switch between files and yeah I don't think people who doesn't know this would know that NNP are next and previous, so you might need to write it out to make the footer a little bit longer. This is good approved and I will file more changes later when I find the need", by jhf, for nautilus (doing/waiting -> doing/active)
+- 2026-11-18T00:40 nautilus read the answer
