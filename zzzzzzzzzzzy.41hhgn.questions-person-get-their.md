@@ -11,7 +11,7 @@ updated: 2026-11-17
 ---
 
 ## Goal
-doing gets a stage 'question': the owner asked a named person something and can't go on until they answer. Interaction with a person is its own thing, not a kind of waiting. It carries question (the text), question_for (who), question_check (the check it is about, optional), question_since, question_asked_by and question_show. 'waiting' keeps only waits on things with no person (CI, a release). The TUI drops the '?' glyph: the stage cell says 'question', and questions for the viewer come first. hug upgrade moves every waiting with waiting_for into question, and a leading 'check N:' into question_check.
+doing gets a stage 'asked': the owner asked a named person something and can't go on until they answer. Interaction with a person is its own thing, not a kind of waiting. Fields: asked_what (the question), asked_for (who), asked_check (the check it is about, optional), asked_since, asked_by, asked_show. 'waiting' keeps only waits on things with no person (CI, a release). The TUI drops the '?' glyph: the row reads 'asked: you · check 9 · <question>', and questions for the viewer come first. hug upgrade moves every waiting with waiting_for into asked, and a leading 'check N:' into asked_check.
 
 ## Purpose
 Jørgen 23:48-23:49 local: 'drop the ? in favor of question instead of waiting'; 'interaction with the user is a thing in itself, a specific thing, not just general waiting'. Today a question to him is a waiting with waiting_for plus a '?' glyph: two ways of saying one thing, and the '?' collided with the scroll arrows.
