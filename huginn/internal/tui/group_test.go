@@ -189,6 +189,13 @@ func TestSpaceFoldsAHeading(t *testing.T) {
 	if tk, _ := m.selected(); tk.ID != ids["Launch mail"] || m.folded[foldKey("group", "later")] {
 		t.Fatalf("follow: selected %q, later folded %v", tk.ID, m.folded[foldKey("group", "later")])
 	}
+	// A reload (a change on disk) keeps the heading under the cursor.
+	m.move(0, true)
+	m = press(m, "j", "j", "j")
+	m.applyKeeping(loadSnapshot(m.store, &loadCounter{}, &closeLog{}, nil))
+	if m.head != foldKey("group", "later") || m.cursor != -1 {
+		t.Fatalf("reload lost the heading: head %q cursor %d", m.head, m.cursor)
+	}
 }
 
 // kx2ndm check 5: at 80 and 140 columns every grouped view keeps its

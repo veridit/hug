@@ -322,7 +322,8 @@ func (m model) selectionID() string {
 func (m *model) applyKeeping(sn snapshot) {
 	id, offset, y := m.selectionID(), m.offset, m.viewport.YOffset
 	message := m.message
-	none := !m.detail && m.cursor == -1 // no row selected stays so (mcvfbz)
+	head := m.head                                    // a heading under the cursor stays so (kx2ndm)
+	none := !m.detail && m.cursor == -1 && head == "" // no row selected stays so (mcvfbz)
 	path, found := "", false
 	for _, t := range sn.tasks {
 		if id != "" && t.ID == id {
@@ -343,6 +344,10 @@ func (m *model) applyKeeping(sn snapshot) {
 	}
 	if none {
 		m.cursor = -1
+	}
+	if head != "" && !m.detail {
+		m.head, m.cursor = head, -1
+		m.clamp() // the heading, if the new rows still have it
 	}
 	m.offset = offset
 	m.viewport.SetYOffset(y)
