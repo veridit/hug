@@ -33,3 +33,5 @@ huginn/internal/tui/tui.go:352 builds the search text from t.Slug, t.Title, t.ID
 - [ ] on the Statbus board, Jørgen finds a task by an old id he remembers
 
 ## Notes
+
+568c3e3 on ci/vzghj8 (on the wyvern stack): / search matches aliases, the row names the alias it matched; # jump already matched them. TestSearchAndJumpFindImportedAlias fails before the fix ('/ statbus-402 found []'); huginn/internal/tui passes with it, goldens unchanged.
