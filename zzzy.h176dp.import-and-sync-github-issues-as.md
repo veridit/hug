@@ -4,7 +4,7 @@ title: "Import and sync GitHub issues as tasks"
 status: todo
 type: feature
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: ["github", "import"]
 created: 2026-11-13
 updated: 2026-11-13
