@@ -37,7 +37,7 @@ Task cache: huginn/internal/task cache (schema now 12 after 16dxsr; 44w1ev keeps
 - [x] MCP task_search returns the same results as the CLI, as JSON (test)
 - [x] the index follows writes: a note added is found by the next search without a rebuild (test)
 - [x] HUG_BENCH: search at 10,000 tasks warm costs at most 0.5 of an uncached search, and under 100 ms on ubuntu CI (bench job)
-- [ ] the TUI / search ranks by the same index (test)
+- [x] the TUI / search ranks by the same index (test)
 
 ## Notes
 
