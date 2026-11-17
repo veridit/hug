@@ -52,6 +52,7 @@ Recall A/B vs the bar (file:5sc5rw-bar.txt, written before the run), judged blin
 crab 22:20Z: check 3 runs through hug upgrade with the released v0.7.49 (crab says when it is installed, ~23:00Z if CI 44188866860 is green): preview lists 2651, then --apply, then verify 0 pairs and the active count.
 CI 44188866860 on 833eee1: success, all 5 jobs (secrets, bench, test ubuntu/macos/windows).
 shipped in v0.7.49 (833eee1)
+file:check3.txt (1568 bytes, sha256:f9f39901)
 ## History
 - 2026-11-17T22:24 todo -> doing/active (take)
 - 2026-11-17T23:20 doing/active -> doing/waiting (wait)

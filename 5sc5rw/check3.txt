@@ -1,0 +1,36 @@
+$ hug upgrade
+layout: nothing to do
+tasks: nothing to do
+variables: nothing to do
+memory: would fold 449 copies of this machine's own memories in client:ssb:rc-898d04734041ab10
+memory: would fold 555 copies of this machine's own memories in project:rc-0ca4bf6be5d989c3
+memory: would fold 1647 copies of this machine's own memories in project:rc-3557a74eab224a4c
+next: hug upgrade --apply
+fix: hug upgrade --apply
+exit 5
+sha1 6e5c14462fe3  memories 16310  active 15821  active (scope,text) 13250  twin pairs 2651  both active 2571
+
+$ hug upgrade --apply
+layout: nothing to do
+tasks: nothing to do
+variables: nothing to do
+memory: folded 449 copies of this machine's own memories in client:ssb:rc-898d04734041ab10
+memory: folded 555 copies of this machine's own memories in project:rc-0ca4bf6be5d989c3
+memory: folded 1647 copies of this machine's own memories in project:rc-3557a74eab224a4c
+memory: backup memories.json.bak-upgrade-20261117T230203Z (restore: cp "/Users/jhf/Library/Application Support/muninn/memories.json.bak-upgrade-20261117T230203Z" "/Users/jhf/Library/Application Support/muninn/memories.json", then hug mem index)
+next: hug setup
+exit 0
+
+after --apply:
+sha1 eb2dcb2c5ac5  memories 13659  active 13250  active (scope,text) 13250  twin pairs 0  both active 0
+
+$ hug upgrade
+layout: nothing to do
+tasks: nothing to do
+variables: nothing to do
+memory: nothing to do
+next: hug setup
+exit 0
+active (scope,text) before 13250 after 13250 lost 0
+ids removed 2651 all imp_: True ids added 0
+index: active native units 13250 ; of them not in memories.json: 0
