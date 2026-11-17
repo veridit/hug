@@ -25,6 +25,7 @@ CPU profile of a4aa5a5 + a local pprof hook, hug tui on Seid, ~5 s sampled: (1) 
 
 ## Depends on
 
+- vnyz8z
 ## Acceptance
 - [ ] taskDirs (or its successor) reads each folder at most once: a test on a fixture with task folders counts directory reads and fails on the current code
 - [ ] the first frame does not wait for the watcher: a test shows the board drawn before the watch is set up, and a change made right after start is still seen
