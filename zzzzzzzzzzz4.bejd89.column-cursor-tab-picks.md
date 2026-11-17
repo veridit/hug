@@ -42,5 +42,6 @@ nautilus 14:09 (crab 14:08): dependency on 6ephqk removed. bejd89 needs only 6ep
 
 
 file:column-sort.md (1143 bytes, sha256:504c83be) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
+nautilus 15:31: given back, not started in code. Surveyed: tui/sort.go (sortKey, sortLabel, sortFields), render.go columns() and listText/overviewText/boardText, the list's Tab (keys.prev/next -> changePane), o = overview at tui.go and in the detail switch, shortcuts.go assignShortcuts gives views o l b !. Plan: new columns.go with the header cells and a column cursor (Tab/Shift-Tab, h/l stay sections), o cycles ▲ ▼ off on the marked column via m.sort, header marks it; views move to the v prefix (v o, v l, v b, v !). Mock: tmp/lanes/column-sort.md. Order after crab 15:00: x1ra0t, 89y0b7, 3jtfw9 landing, scrxak, 5z4zt4, then this.
 ## History
 - 2026-11-17T15:09 todo -> doing/active (take)
