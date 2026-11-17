@@ -1,7 +1,7 @@
 ---
 id: at3qep
 title: "Observations hug can't settle become questions to the owner"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["hatchling"]
@@ -9,11 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "47sxn2"
-doing_since: "2026-11-17T17:39"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T18:10"
 ---
 
 ## Goal
@@ -46,5 +45,7 @@ file:questions-1234.txt (895 bytes, sha256:ab1dbbf3) check 3 replay: questions-1
 file:questions-now.txt (208 bytes, sha256:0837dd44) check 3 replay: questions-now.txt
 hatchling 16:57, check 3 replay (before/after). Before: hug's board as it was at 12:34 today (task branch 20adb51, main 0be2c34, tags up to v0.7.40), in a throwaway clone; hug task deduce --since v0.7.30 wrote the landed/shipped notes g9dg32 would have (70 deductions), then hug task lint --all with this branch: 5 questions (file:questions-1234.txt): shipped-not-done 0hkaa5 ('release v0.7.38 contains commit 8cce883 naming 0hkaa5 (its note says so); kestrel: is it done?'), landed-unchecked m1c28r ('commit 38ecd7d ... 0 of 4 checks are ticked or struck; wyvern'), landed-unchecked t709he ('commit 4921209 ... 0 of 3 checks'), shipped-not-done x1t1t1 (v0.7.31, 6 of 7 ticked), shipped-not-done 44w1ev (v0.7.34, 3 of 5). So the three Jørgen found by hand (0hkaa5, m1c28r, t709he) each would have been asked, of their owner. 'Tickets shipped with 0 checks ticked' = m1c28r and t709he (landed with 0 ticked; v0.7.40 shipped them at 11:33). After (now, real board): 1 question (file:questions-now.txt): landed-unchecked gjmqhn (wyvern, commit e96d6f8, 0 of 3). doing-idle raised none in either (the replay clone's task-branch history is today's own). Not covered by at3qep: '5 tickets in doing for one agent' is n2hq8p's one-active rule.
 hatchling 17:10, landed 09466ed on main (ea2d369..09466ed, fast-forward; rebased over pbh9xq: the four new codes are Broken, like branch-gone). Local: go test -race ./huginn/... ./muninn/internal/recall ./muninn/run green on this tree; full -race ./... green on the pre-rebase 9cf84f8. Main CI 44133943837. Checks: 1 TestQuestionsFromNotes (a, c, d: each asked, fix clears, (a) outranks (c)), TestIdleQuestion (b), TestLintFlagsDoingTaskOnMergedOrDeletedBranch (e, existing), TestTopQuestionsOnePerTicket; 2 TestQuestionsInLintAndShow (lint and show, fix clears; idle in show) and recall TestBoardQuestionReachesOwnerOnly (owner kestrel gets 'Task board (return): 0hkaa5: landed, but no check is ticked ... fix: hug task check 0hkaa5 1'; wyvern gets nothing; without the ownerOnly change it fails: 'question to a passer-by: "Task board (return): 0hkaa5: landed, but no check is ticked...'); 3 the 16:57 replay note. TestGitProcessesPerCommand caught one extra git on take; the idle check now runs on show only (a write never leaves its ticket idle).
+Reflection (open, 2026-11-17, hatchling): One gap: hug task check takes no evidence text ('hug task check ID N'), but AGENTS.md says 'hug task check ID N with evidence'; I wrote the evidence as a separate note each time. Either check could take a text, or AGENTS.md could say 'then hug task note ID evidence'.
 ## History
 - 2026-11-17T17:39 todo -> doing/active (take)
+- 2026-11-17T18:10 doing/active -> done (done); was doing_since: 2026-11-17T17:39
