@@ -1,13 +1,18 @@
 ---
 id: zd3x24
 title: "Flaky on Windows: capture test never sees the child persist its batch"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T14:45"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ muninn/internal/app/capture_batch_test.go:200. The test kills a child after save
 - [ ] a test that fails before the fix passes after; Windows -count=20 of that test green (run id)
 
 ## Notes
+
+
+## History
+- 2026-11-17T14:45 todo -> doing/active (take)
