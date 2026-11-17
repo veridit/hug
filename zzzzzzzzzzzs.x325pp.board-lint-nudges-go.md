@@ -4,7 +4,7 @@ title: "Board lint nudges go to agents at a break in their own work"
 status: "doing"
 type: feature
 priority: ""
-assignee: ["guppy"]
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
