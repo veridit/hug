@@ -32,6 +32,7 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [ ] The TUI shows no '?' glyph; a question row's stage cell reads 'question' and questions for the viewer sort first (golden)
 - [ ] MCP task_update action ask behaves like the CLI (test)
 - [ ] Jørgen confirms on his board after release
+- [ ] A multi-line answer survives every path: TUI (Alt-Enter adds a line, a paste keeps its lines, Enter sends), 'hug task answer ID -' from stdin, and MCP; History holds it as an indented block, and show, the detail and the asker's notice print every line verbatim (test with a 3-line answer holding a quote and a colon)
 
 ## Notes
 
