@@ -9,10 +9,11 @@ labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
-waiting_on: "jhf: check 7: take a Statbus task from a linked worktree (git worktree add) via CLI and MCP, or strike it; only separate clones are in use"
+waiting_on: "check 7: take a Statbus task from a linked worktree (git worktree add) via CLI and MCP, or strike it; only separate clones are in use"
 waiting_since: "2026-11-17T15:58"
 waiting_asked_by: "calf"
 stage: "waiting"
+waiting_for: "jhf"
 ---
 
 ## Goal

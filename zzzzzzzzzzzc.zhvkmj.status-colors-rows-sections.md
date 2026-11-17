@@ -13,8 +13,9 @@ branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 waiting_since: "2026-11-17T14:30"
 waiting_asked_by: "nautilus"
-waiting_on: "jhf: look at the colours after v0.7.41"
+waiting_on: "look at the colours after v0.7.41"
 stage: "waiting"
+waiting_for: "jhf"
 ---
 
 ## Goal

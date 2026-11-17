@@ -11,10 +11,11 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "jhf: check 3: find a Statbus task by an old id you remember (/ STATBUS-402 in hug tui on ~/ssb/statbus); 1 and 2 on main d661273, CI 44118189933"
+waiting_on: "check 3: find a Statbus task by an old id you remember (/ STATBUS-402 in hug tui on ~/ssb/statbus); 1 and 2 on main d661273, CI 44118189933"
 waiting_since: "2026-11-17T16:58"
 waiting_asked_by: "wyvern"
 stage: "waiting"
+waiting_for: "jhf"
 ---
 
 ## Goal
