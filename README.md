@@ -37,6 +37,7 @@ brew services start hug       # optional: memory watcher + web UI on http://127.
 |---|---|---|
 | `hug mem ...` | `muninn ...` | memory: recall hooks, MCP server, capture, tidy, dream |
 | `hug task ...` | `huginn ...` | tasks: Markdown files on a git branch, claims, goals, checks |
+| `hug task search "words"` | | tasks that best match, ranked (BM25 over id, aliases, title, goal, notes, ...), with the field and a snippet; MCP `task_search` |
 | `hug tui` | | the tasks TUI (`hug mem tui` is the memory TUI) |
 | `hug mcp` | | one MCP server: `memory_*` and `task_*` tools |
 | `hug setup` | `huginn setup` | read-only setup checklist |

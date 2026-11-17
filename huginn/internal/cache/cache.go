@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-const SchemaVersion = "13" // 13: backlog-leftover findings from the parse, set-based fixes for missing Goal and Acceptance (fkpyg3); 12: Task.Waits (16dxsr); 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev); 10: notes and description texts in table texts, not in the board blob (44w1ev); 11: Task.Stage and Task.Fields (6ephqk)
+const SchemaVersion = "14" // 14: table search, FTS5 (49n9kw); 13: backlog-leftover findings from the parse, set-based fixes for missing Goal and Acceptance (fkpyg3); 12: Task.Waits (16dxsr); 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev); 10: notes and description texts in table texts, not in the board blob (44w1ev); 11: Task.Stage and Task.Fields (6ephqk)
 
 type Change struct{ Status, OldPath, Path string }
 type Git interface {
@@ -94,11 +94,11 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 	}
 	if version != SchemaVersion {
 		c.rebuild, c.rebuilt = true, version != ""
-		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DROP TABLE IF EXISTS texts; DELETE FROM meta;`); e != nil {
+		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DROP TABLE IF EXISTS texts; DROP TABLE IF EXISTS search; DELETE FROM meta;`); e != nil {
 			return fail(e)
 		}
 	}
-	_, e = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(id TEXT NOT NULL,path TEXT PRIMARY KEY,"group" TEXT,rank TEXT,slug TEXT,title TEXT,status TEXT,type TEXT,priority TEXT,assignee TEXT,updated TEXT,payload TEXT NOT NULL,findings TEXT NOT NULL); CREATE INDEX IF NOT EXISTS tasks_id ON tasks(id); CREATE TABLE IF NOT EXISTS files(path TEXT PRIMARY KEY,mtime_ns INTEGER NOT NULL,size INTEGER NOT NULL,sha256 TEXT NOT NULL); CREATE TABLE IF NOT EXISTS deps("from" TEXT NOT NULL,"to" TEXT NOT NULL,line INTEGER NOT NULL,path TEXT NOT NULL,ref TEXT NOT NULL,ref_key TEXT NOT NULL); CREATE INDEX IF NOT EXISTS deps_ref_key ON deps(ref_key); CREATE INDEX IF NOT EXISTS deps_from ON deps("from"); CREATE INDEX IF NOT EXISTS deps_to ON deps("to"); CREATE INDEX IF NOT EXISTS deps_path ON deps(path); CREATE TABLE IF NOT EXISTS aliases(alias TEXT NOT NULL,id TEXT NOT NULL,path TEXT NOT NULL); CREATE INDEX IF NOT EXISTS aliases_alias ON aliases(alias); CREATE INDEX IF NOT EXISTS aliases_path ON aliases(path); CREATE TABLE IF NOT EXISTS board_delta(path TEXT PRIMARY KEY,value BLOB NOT NULL); CREATE TABLE IF NOT EXISTS texts(path TEXT PRIMARY KEY,sha256 TEXT NOT NULL,value BLOB NOT NULL);`)
+	_, e = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(id TEXT NOT NULL,path TEXT PRIMARY KEY,"group" TEXT,rank TEXT,slug TEXT,title TEXT,status TEXT,type TEXT,priority TEXT,assignee TEXT,updated TEXT,payload TEXT NOT NULL,findings TEXT NOT NULL); CREATE INDEX IF NOT EXISTS tasks_id ON tasks(id); CREATE TABLE IF NOT EXISTS files(path TEXT PRIMARY KEY,mtime_ns INTEGER NOT NULL,size INTEGER NOT NULL,sha256 TEXT NOT NULL); CREATE TABLE IF NOT EXISTS deps("from" TEXT NOT NULL,"to" TEXT NOT NULL,line INTEGER NOT NULL,path TEXT NOT NULL,ref TEXT NOT NULL,ref_key TEXT NOT NULL); CREATE INDEX IF NOT EXISTS deps_ref_key ON deps(ref_key); CREATE INDEX IF NOT EXISTS deps_from ON deps("from"); CREATE INDEX IF NOT EXISTS deps_to ON deps("to"); CREATE INDEX IF NOT EXISTS deps_path ON deps(path); CREATE TABLE IF NOT EXISTS aliases(alias TEXT NOT NULL,id TEXT NOT NULL,path TEXT NOT NULL); CREATE INDEX IF NOT EXISTS aliases_alias ON aliases(alias); CREATE INDEX IF NOT EXISTS aliases_path ON aliases(path); CREATE TABLE IF NOT EXISTS board_delta(path TEXT PRIMARY KEY,value BLOB NOT NULL); CREATE TABLE IF NOT EXISTS texts(path TEXT PRIMARY KEY,sha256 TEXT NOT NULL,value BLOB NOT NULL); ` + searchSchema)
 	if e != nil {
 		return fail(e)
 	}
@@ -579,7 +579,7 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 		if e = exec(`UPDATE tasks SET path=?,"group"=?,rank=?,slug=?,payload=?,findings=? WHERE path=?`, p, r.Task.Group, r.Task.Rank, r.Task.Slug, string(payload), string(findings), old); e != nil {
 			return stats, e
 		}
-		for _, table := range []string{"files", "deps", "aliases", "texts"} {
+		for _, table := range []string{"files", "deps", "aliases", "texts", "search"} {
 			if e = exec(`UPDATE `+table+` SET path=? WHERE path=?`, p, old); e != nil {
 				return stats, e
 			}
@@ -589,7 +589,7 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 		if _, ok := renames[p]; ok {
 			continue
 		}
-		for _, table := range []string{"tasks", "files", "deps", "aliases", "texts"} {
+		for _, table := range []string{"tasks", "files", "deps", "aliases", "texts", "search"} {
 			if e = exec(`DELETE FROM `+table+` WHERE path=?`, p); e != nil {
 				return stats, e
 			}
@@ -636,6 +636,10 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 			e = exec(`DELETE FROM texts WHERE path=?`, p)
 		}
 		if e != nil {
+			return stats, e
+		}
+		// The search index follows the same rows (49n9kw): one per task file.
+		if e = indexSearch(exec, p, t, bodies[p]); e != nil {
 			return stats, e
 		}
 		for _, table := range []string{"deps", "aliases"} {

@@ -44,6 +44,10 @@ type Options struct {
 	// (44w1ev: parsing 10,000 files on every reload was most of a 3-5 s
 	// first screen).
 	Lint func() ([]task.Finding, error)
+	// Search, when set, ranks / search: the task paths matching the query,
+	// best first, from the task cache's index (49n9kw, as hug task search).
+	// Without it, / search filters by substring in rank order.
+	Search func(query string) ([]string, error)
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {
@@ -422,6 +426,17 @@ func (m *model) apply(sn snapshot, path string) {
 }
 func (m *model) applyFilter() {
 	m.visible = nil
+	// The index's ranking of the query (49n9kw): its hits are kept even when
+	// the substring rule misses them (a word in the notes), and come first.
+	var rank map[string]int
+	if m.query != "" && m.opts.Search != nil {
+		if paths, e := m.opts.Search(m.query); e == nil {
+			rank = make(map[string]int, len(paths))
+			for i, p := range paths {
+				rank[p] = i + 1
+			}
+		}
+	}
 	for _, t := range m.all {
 		status := m.filter.Status
 		// One place per task (zaec08): "depends" is todo with an open
@@ -438,12 +453,22 @@ func (m *model) applyFilter() {
 		if m.filter.Priority != "" && !optionalMatches(t.Priority, m.filter.Priority) || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
 			continue
 		}
-		if m.query != "" && !searchMatches(t, m.query) {
+		if m.query != "" && rank[t.Path] == 0 && !searchMatches(t, m.query) {
 			continue
 		}
 		m.visible = append(m.visible, t)
 	}
-	m.sortVisible() // the order built with : sort (mkzcqr); rank order without one
+	if rank != nil {
+		// Best match first; substring-only matches keep board order after.
+		sort.SliceStable(m.visible, func(i, j int) bool {
+			ri, rj := rank[m.visible[i].Path], rank[m.visible[j].Path]
+			if (ri == 0) != (rj == 0) {
+				return rj == 0
+			}
+			return ri < rj
+		})
+	}
+	m.sortVisible() // the order built with : sort (mkzcqr) wins; rank or relevance order without one
 	m.offset = 0
 	m.cursor = 0
 	m.clamp()

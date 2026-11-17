@@ -88,7 +88,16 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	e := tui.Run(ctx, s.s, tui.Options{User: who.assignee(), Version: a.Version, MainBranch: gitbranch.DefaultBranch(a.Cwd), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) },
 		// Findings come from the cache, which parsed each file once, as of
 		// the listing the reload just made (44w1ev).
-		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil }})
+		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },
+		// / search ranks by the cache's index, as hug task search (49n9kw).
+		Search: func(query string) ([]string, error) {
+			hits, e := s.c.Search(ctx, query, 0)
+			paths := make([]string, len(hits))
+			for i, h := range hits {
+				paths[i] = h.Path
+			}
+			return paths, e
+		}})
 	if e != nil {
 		return nil, e
 	}

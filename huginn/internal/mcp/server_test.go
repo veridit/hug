@@ -68,7 +68,7 @@ func TestToolsSchemasAndRoundTrip(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if len(tools.Tools) != 10 {
+	if len(tools.Tools) != 11 { // search: 49n9kw
 		t.Fatalf("tools=%d", len(tools.Tools))
 	}
 	for _, tool := range tools.Tools {

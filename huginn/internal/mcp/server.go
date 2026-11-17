@@ -127,6 +127,17 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	add("list", "List tasks in rank order, including done and dropped unless filtered.", p, nil, func(m map[string]any) ([]string, error) {
 		return flags([]string{"ls"}, m, "type", "priority", "label", "group", "epic", "mine", "status"), nil
 	})
+	sp := filters()
+	sp["status"] = enum("todo", "doing", "done", "dropped")
+	sp["query"] = str("Words to find, e.g. memory limit 137 or STATBUS-402; every word must match")
+	sp["limit"] = map[string]any{"type": "integer", "minimum": 1}
+	add("search", "Find tasks by words, best first (BM25 over id, aliases, title, goal, description, acceptance, notes; id, aliases and title count most). Each result has id, status, title, the field that matched and a snippet. Filters as in list.", sp, []string{"query"}, func(m map[string]any) ([]string, error) {
+		args := flags([]string{"search"}, m, "type", "priority", "label", "group", "epic", "mine", "status")
+		if n, ok := m["limit"].(float64); ok {
+			args = append(args, "--limit", fmt.Sprint(int(n)))
+		}
+		return append(args, "--", get(m, "query")), nil
+	})
 	add("show", "Show a task by id, unique prefix, slug or alias with dependencies, acceptance and its files (name, bytes, sha256). With file, returns that file's content.", map[string]any{"id": str("Task reference"), "file": str("A task file name, e.g. bench/README.md, to read its content")}, []string{"id"}, func(m map[string]any) ([]string, error) {
 		args := []string{"show", get(m, "id")}
 		if f := get(m, "file"); f != "" {
