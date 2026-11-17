@@ -41,5 +41,12 @@ TUI start today: openBoard -> cache.sync -> loadSnapshot -> startWatch, all befo
 crab 15:09: wyvern does vnyz8z first, then np2kk2 (same start path in tui.go and watch.go, one lane so they don't collide with nautilus). Shutdown measured on Seid: v0.7.41 2.89 s, a4aa5a5 0.29 s.
 
 
+Design (wyvern 15:31):
+(1) runTUI opens the board lazily and passes Options.Initial, the tasks and findings exactly as cache.Open loaded them (board blob only: no walk, no git), plus Options.Refresh, the full sync.
+(2) tui.Run builds the model from Initial and sets refreshing. Init returns the refresh as a command; the fresh snapshot arrives as a loadedMsg and goes through applyKeeping (selection kept), as watch reloads already do. With no cache, Initial is empty and the screen says 'reading the board' with the spinner, never blank.
+(3) startWatch runs as a command after the first frame, so taskDirs (np2kk2) never delays drawing.
+(4) q returns at once: watch and bin closes do not block the exit, and the sync is cancelled through the program context.
+(5) Spinner: a dim frame in the header, ticking every 120 ms only while a load has run longer than 200 ms. It is the render.go header line, agreed with nautilus 15:23.
+Tests use a Refresh stub that blocks on a channel.
 ## History
 - 2026-11-17T16:12 todo -> doing/active (take)
