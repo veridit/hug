@@ -36,6 +36,7 @@ Mock, cursor on 3mavpt with the TYPE column marked:
 - [ ] the header row has no marker; the cursor row shows > before the marked column's cell and the marked column is highlighted (goldens at 80 and 140)
 - [ ] help lists the new keys and TestHelpKeysAreBound passes
 - [ ] Jørgen moves the marker with H/L, orders with o, and pages with J/K, and says it reads clearly
+- [ ] in a task's detail a dim full-width rule stands between the filter line and the task's title (goldens at 80 and 140)
 
 ## Notes
 
