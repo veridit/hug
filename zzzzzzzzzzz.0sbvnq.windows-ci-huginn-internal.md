@@ -28,7 +28,7 @@ Windows costs about 1.9 s per hug command (run 43943367365). Background-sync tes
 ## Depends on
 
 ## Acceptance
-- [ ] huginn/internal/cli on windows-latest under 300 s in two consecutive CI runs, run ids in the notes
+- [x] huginn/internal/cli on windows-latest under 300 s in two consecutive CI runs, run ids in the notes
 - [ ] no test in the package is skipped on Windows that ran there before
 
 ## Notes
