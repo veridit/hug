@@ -40,5 +40,6 @@ Replaces the 10:56 'stage: reason replaces the title' rule for waiting rows. 'yo
 file:waiting-rows.md (1583 bytes, sha256:5108b054) approved mock (Jørgen 14:58)
 
 
+crab 15:28 ruling (nautilus asked): (a) --on writes a node field waiting_for: NAME (like design_for, review_by); waiting_on holds only the what. This reverses crab's 12:38 'no new field': a person must be checkable. Lint flags waiting_for/design_for/review_by naming no hug.toml person and no agent seen on the board. hug upgrade moves an old 'NAME: x' into waiting_for only when NAME is a listed person. (b) 'you' = HUG_USER, else the only person in people, else the header says '? who are you: set HUG_USER'. The setup step's fix is a command (hug setup you NAME adds to people and prints the export line); hug never edits the shell profile.
 ## History
 - 2026-11-17T16:11 todo -> doing/active (take)
