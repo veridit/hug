@@ -31,7 +31,7 @@ muninn/internal/throttle is internal to muninn/, so huginn cannot import it: mov
 
 ## Acceptance
 - [x] a test starts a background pass and reads its niceness as throttle.Nice (and GOMAXPROCS capped), failing before the change
-- [ ] HUG_FULL_SPEED=1 leaves the pass at the parent's priority
+- [x] HUG_FULL_SPEED=1 leaves the pass at the parent's priority
 
 ## Notes
 
