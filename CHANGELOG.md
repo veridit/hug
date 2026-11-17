@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The background task sync (`hug task sync --background-pass`, started by every write) now runs niced, with bounded parallelism, as `hug mem`'s background commands do; its git calls inherit the lower priority (b6jgpn). Before, it ran at full priority. Each pass's line in the sync log ends with the priority it ran at (`nice 10`, or `class below-normal` on Windows). `HUG_FULL_SPEED=1` keeps full priority.
+
 ## v0.7.49 - 2026-11-17
 
 - A memory captured in a repository project exists once on this machine, so `hug mem forget ID` retires it fully (5sc5rw). The project's notes keep each memory with its id, and before, every sync read this machine's own captures back from the notes as new `imp_` memories: same scope, same text, origin `repo:SCOPE/cap_ID`. On Jørgen's machine 2651 memories had such a copy. Search showed one of the two, so after a forget the other took its place: `hug mem forget xgxqs6` left `49ckwr` active, and search still returned it first. Now sync knows a note row as the memory it came from and updates that one. `hug mem forget` also retires any copy from before. `hug mem upgrade` folds the copies already in the store: it keeps this machine's memory and takes the copy's state and text when the copy is newer, along with the higher strength. It previews first (`memory: would fold 2651 copies of this machine's own memories in project:...`, exit 5), and `--apply` writes a backup (`memories.json.bak-upgrade-<time>`) before it folds and reindexes. `hug upgrade` runs it as its `memory:` part.

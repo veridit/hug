@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
+	"github.com/veridit/hug/internal/throttle"
 )
 
 // Background sync of the board (0hkaa5). Every write commits locally and
@@ -134,6 +135,12 @@ func (s *session) syncNow() error {
 // goes to the log next to the state file.
 func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 	born := time.Now()
+	// Detached work nobody waits on runs niced with bounded parallelism,
+	// as hug mem's background commands do (b6jgpn); its git children
+	// inherit the priority. HUG_FULL_SPEED=1 opts out.
+	if a.getenv(env.FullSpeed) == "" {
+		throttle.Background()
+	}
 	cwd := a.Cwd
 	if cwd == "" {
 		cwd = "."
@@ -165,7 +172,7 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 				st = r.SyncPass(turn)
 			}
 		}
-		fmt.Fprintf(a.Err, "%s pid %d: fetched=%v pushed=%v unpushed=%d error=%q skipped=%q (waited %v, pass %v)\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), st.Fetched, st.Pushed, st.Unpushed, st.Error, st.Skipped, began.Sub(born).Round(time.Millisecond), time.Since(began).Round(time.Millisecond))
+		fmt.Fprintf(a.Err, "%s pid %d: fetched=%v pushed=%v unpushed=%d error=%q skipped=%q (waited %v, pass %v, %s)\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), st.Fetched, st.Pushed, st.Unpushed, st.Error, st.Skipped, began.Sub(born).Round(time.Millisecond), time.Since(began).Round(time.Millisecond), throttle.Priority())
 		return st
 	}
 	return Reply{"next": "hug task ls"}, b.Run(settle, pass)

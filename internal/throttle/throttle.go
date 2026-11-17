@@ -1,6 +1,7 @@
-// Package throttle keeps muninn's background work polite: hooks, capture,
-// indexing and the watcher run at lowered CPU priority and with bounded
-// parallelism, so they take a little longer instead of spiking the machine.
+// Package throttle keeps hug's background work polite: muninn's hooks,
+// capture, indexing and the watcher, and huginn's detached sync pass
+// (b6jgpn), run at lowered CPU priority and with bounded parallelism, so
+// they take a little longer instead of spiking the machine.
 package throttle
 
 import (
