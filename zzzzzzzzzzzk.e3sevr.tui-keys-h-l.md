@@ -72,5 +72,6 @@ file:header-spec.md (4894 bytes, sha256:cda72b68) replaces sha256:c0b38735
 Jørgen 00:04 local: keeps context before subject, and wants 'a line right above the subject so it stands out'. Spec: breadcrumb, context, dim rule, subject, dim rule, details.
 file:header-spec.md (5528 bytes, sha256:daa22937) replaces sha256:cda72b68
 file:header-spec.md (5952 bytes, sha256:32713c2e) replaces sha256:daa22937
+Jørgen 00:44 local, on the file viewer footer 'n next file · p previous file': 'it should be *n*ext etc., not a repeat but a highlight.' Rule for every footer and hint line: a key that is a letter of its action word is shown as that letter highlighted inside the word ('next file · previous file', with n and p in the key colour, underlined), the same way the view line marks 'view: overview list board'. A key that is not in the word keeps its own label: Enter, Esc, Space, Tab, j/k, arrows, '?', '/'. If the letter isn't in the word, the label stays too ('y yank' stays only if y isn't marked, it is: 'yank').
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
