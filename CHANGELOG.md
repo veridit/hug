@@ -8,6 +8,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - `hug tui` gives each status one subtle colour, used in the count line, the status word on rows (closed rows too) and the overview section titles: IN PROGRESS in the doing colour, NEXT UP todo, BLOCKED red, RECENTLY DONE green, LINT the warning colour of `!`. The progress cell shows a fraction only for partial work: a done task shows its check count, `● 5`, in green instead of `● 5/5`, a task with nothing ticked shows `○ 3` dim, a task with some ticked keeps `◑ 2/4` (resumable work), and a dropped task shows none. Without colour everything still reads by its text (zhvkmj).
 - `hug tui`: `u` inside a task goes up one level, as Esc does: back from a followed link, else to the list, board or overview it came from, with the task selected. The key bar in a task shows `u up`. In `: sort`, `u` is still the updated field (9xfnwr).
+- `hug task done ID` asks one question: did the instructions (AGENTS.md section, tool descriptions, hug messages) guide you well, or did one mislead you or leave a gap? `--reflect "..."` (MCP `task_done` `reflection`) stores the answer on the task as `Reflection (open, DATE, NAME): ...` once done succeeds; "nothing" is a fine answer and stores no note. `hug task reflections` lists open ones across the board with the task, date, who and the quoted instruction; `hug task reflections resolve ID N applied|dismissed` closes one; `--all` shows closed ones too. The `hug setup` section asks agents to answer honestly (tb0dra).
 
 ## v0.7.40 - 2026-11-17
 
