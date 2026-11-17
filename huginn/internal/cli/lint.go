@@ -47,12 +47,18 @@ func lintReply(reply Reply, fs []task.Finding, mode, code string) Reply {
 	}
 	reply["findings"] = fs
 	reply["summary"] = sum
+	// Per task, with the one combined fix (fkpyg3).
+	reply["tasks_findings"] = task.ByTask(fs)
 	if len(fs) == 0 {
 		return reply
 	}
 	switch {
 	case mode == "summary" || mode == "codes":
 		reply["next"] = sum.Codes[0].List
+	case code == "" && mode != "detail":
+		// The overview's next is the first task's one combined fix: a
+		// repair, never an unrelated task (rx74bp).
+		reply["next"] = task.ByTask(fs)[0].Fix
 	default:
 		// With findings, next is the repair of the first one, never an
 		// unrelated task (rx74bp).
@@ -150,14 +156,20 @@ func writeFindings(w io.Writer, fs []task.Finding, sum LintSummary) {
 		fmt.Fprintf(w, "%s in %s:\n", plural(sum.Total, "finding", "findings"), plural(len(sum.Codes), "code", "codes"))
 		writeCodes(w, sum.Codes)
 		return
+	case sum.mode == "detail":
+		// hug task lint ID: every finding of the task; the one combined
+		// fix is the next: line.
+		for _, v := range fs {
+			fmt.Fprintln(w, v.String())
+		}
+		return
+	case sum.code == "":
+		// The board overview (fkpyg3): totals per code, one line per task.
+		writeOverview(w, fs, sum)
+		return
 	}
 	shown := fs
 	if sum.mode != "all" && len(fs) > lintBound {
-		if sum.code == "" {
-			fmt.Fprintf(w, "%s in %s:\n", plural(sum.Total, "finding", "findings"), plural(len(sum.Codes), "code", "codes"))
-			writeCodes(w, sum.Codes)
-			fmt.Fprintf(w, "first %d:\n", lintShown)
-		}
 		shown = fs[:lintShown]
 	}
 	for _, v := range shown {
@@ -165,11 +177,7 @@ func writeFindings(w io.Writer, fs []task.Finding, sum LintSummary) {
 		fmt.Fprintln(w, "  fix: "+v.FixLine())
 	}
 	if len(shown) < len(fs) {
-		if sum.code != "" {
-			fmt.Fprintf(w, "%d of %d shown; every one: hug task lint --code %s --all\n", len(shown), len(fs), sum.code)
-		} else {
-			fmt.Fprintf(w, "%d of %d shown; every one: hug task lint --all; one kind: hug task lint --code CODE\n", len(shown), len(fs))
-		}
+		fmt.Fprintf(w, "%d of %d shown; every one: hug task lint --code %s --all\n", len(shown), len(fs), sum.code)
 	}
 }
 

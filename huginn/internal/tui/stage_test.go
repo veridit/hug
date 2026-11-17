@@ -26,7 +26,7 @@ func stageBoard(t *testing.T) model {
 		if strings.Contains(front, "\"doing\"") {
 			who = "[\"nautilus\"]"
 		}
-		body := "---\nid: \"" + id + "\"\ntitle: \"" + title + "\"\n" + front + "\ntype: \"feature\"\npriority: \"high\"\nlabels: []\nassignee: " + who + "\ncreated: \"2026-11-01\"\nupdated: \"2026-11-01\"\n---\n\n## Goal\ng\n"
+		body := "---\nid: \"" + id + "\"\ntitle: \"" + title + "\"\n" + front + "\ntype: \"feature\"\npriority: \"high\"\nlabels: []\nassignee: " + who + "\ncreated: \"2026-11-01\"\nupdated: \"2026-11-01\"\n---\n\n## Goal\ng\n\n## Purpose\np\n\n## Principle\nq\n"
 		if len(deps) > 0 {
 			body += "\n## Depends on\n"
 			for _, d := range deps {

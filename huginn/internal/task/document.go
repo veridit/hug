@@ -67,6 +67,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"branch ", "branch-gone"},
 	{"unknown condition", "unknown-condition"},
 	{"owner ", "stale-owner"},
+	{"backlog leftover", "backlog-leftover"},
 }
 
 // FindingCode names the kind of problem in a finding message.
@@ -118,6 +119,10 @@ func (f Finding) FixLine() string {
 		return "hug task set " + i + " --parent none"
 	case "filename-collision", "duplicate-id", "duplicate-origin":
 		return "hug task show " + i
+	case "missing-goal":
+		return "hug task set " + i + " --goal \"...\""
+	case "no-acceptance":
+		return "hug task set " + i + " --accept \"observable check\""
 	}
 	return "hug task edit " + i
 }
@@ -512,6 +517,10 @@ func Parse(path string, data []byte) *Document {
 				d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: a.Line, Problem: fmt.Sprintf("done with unchecked acceptance: broken, %s is done but check %d is open; tick it if it holds, or strike it out with hug task strike %s %d --reason \"why it no longer applies\"", d.Task.ID, n+1, d.Task.ID, n+1), Fix: fmt.Sprintf("hug task check %s %d", d.Task.ID, n+1)})
 			}
 		}
+	}
+	// Backlog import leftovers on open tasks (fkpyg3); hug upgrade removes them.
+	if Pattern(d.Task) {
+		d.Findings = append(d.Findings, BacklogFindings(d)...)
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
 	d.Task.Texts = &Texts{Bodies: true, Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}

@@ -12,7 +12,7 @@ import (
 func TestStrikeThroughCLI(t *testing.T) {
 	a := app(t)
 	execute(t, a, "init")
-	id := execute(t, a, "new", "Strike CLI", "--goal", "G", "--accept", "holds", "--accept", "no longer applies")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Strike CLI", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "holds", "--accept", "no longer applies")["task"].(Reply)["id"].(string)
 	if code, out := runText(a, "strike", id, "2"); code != 2 || !strings.Contains(out, "needs a reason") || !strings.HasSuffix(out, "fix: hug task strike "+id+" 2 --reason \"why it no longer applies\"\n") {
 		t.Fatalf("no reason: %d\n%s", code, out)
 	}
@@ -38,7 +38,7 @@ func TestStrikeThroughCLI(t *testing.T) {
 		t.Fatalf("undo:\n%s", f)
 	}
 	// Now done with an open check: lint calls it broken.
-	if _, out := runText(a, "lint", "--all"); !strings.Contains(out, "[done-unchecked] done with unchecked acceptance: broken, "+id+" is done but check 2 is open") {
+	if _, out := runText(a, "lint", id, "--all"); !strings.Contains(out, "[done-unchecked] done with unchecked acceptance: broken, "+id+" is done but check 2 is open") {
 		t.Fatalf("lint:\n%s", out)
 	}
 }

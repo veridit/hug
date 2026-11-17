@@ -16,7 +16,7 @@ import (
 )
 
 func fixture(i int) []byte {
-	return []byte(fmt.Sprintf("---\nid: %s\ntitle: Task %d\nstatus: todo\ntype: bug\nlabels: [core]\naliases: [OLD-%d]\n---\n\n## Goal\nA visible result.\n\n## Acceptance\n- [ ] passes\n\n## Notes\nEvidence.\n", testID(i), i, i))
+	return []byte(fmt.Sprintf("---\nid: %s\ntitle: Task %d\nstatus: todo\ntype: bug\nlabels: [core]\naliases: [OLD-%d]\n---\n\n## Goal\nA visible result.\n\n## Purpose\nWhy.\n\n## Principle\nHow.\n\n## Acceptance\n- [ ] passes\n\n## Notes\nEvidence.\n", testID(i), i, i))
 }
 func propertyFixture(i int) []byte {
 	b := fixture(i)

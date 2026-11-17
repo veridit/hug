@@ -240,7 +240,7 @@ func TestUnknownConditionLintAndRefusal(t *testing.T) {
 	if len(d.Task.Waits) != 1 || len(d.Task.Dependencies) != 0 {
 		t.Fatalf("waits %+v deps %+v", d.Task.Waits, d.Task.Dependencies)
 	}
-	fs := Lint([]*Document{d})
+	fs := depLint([]*Document{d})
 	if len(fs) != 1 {
 		t.Fatalf("findings: %v", fs)
 	}

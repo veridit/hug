@@ -17,8 +17,8 @@ func TestWaitsThroughCLI(t *testing.T) {
 	t.Cleanup(func() { cond.LoadAverage = old })
 	a := app(t)
 	execute(t, a, "init")
-	heavy := execute(t, a, "new", "Heavy run", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
-	light := execute(t, a, "new", "Light run", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	heavy := execute(t, a, "new", "Heavy run", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	light := execute(t, a, "new", "Light run", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "dep", heavy, "--add", "when load below 120 wakes kestrel")
 	if code, out := runText(a, "show", heavy); code != 0 || !strings.Contains(out, "waits: when load below 120  [waiting: load is 140.0]  wakes kestrel\n") {
 		t.Fatalf("show: %d\n%s", code, out)
@@ -45,11 +45,11 @@ func TestWaitsThroughCLI(t *testing.T) {
 	if code, out := runText(a, "dep", light, "--add", "when the build is green"); code == 0 || !strings.Contains(out, "is not a condition hug can check") || !strings.Contains(out, "fix: hug task dep "+light+" --add 'when load below 120'") {
 		t.Fatalf("dep unknown: %d\n%s", code, out)
 	}
-	// A branch this clone has never seen: lint says it cannot be checked.
+	// A branch this clone has never seen: lint ID says it cannot be checked.
 	execute(t, a, "dep", light, "--add", "when branch feat/nowhere merged")
-	_, out := runText(a, "lint")
+	_, out := runText(a, "lint", light)
 	if !strings.Contains(out, `[unknown-condition] unknown condition: "when branch feat/nowhere merged" cannot be checked here (no branch feat/nowhere in this clone), so `+light+" waits") ||
-		!strings.Contains(out, "fix: hug task dep "+light+" --remove 'when branch feat/nowhere merged'") {
+		!strings.Contains(out, "next: hug task dep "+light+" --remove 'when branch feat/nowhere merged'") {
 		t.Fatalf("lint:\n%s", out)
 	}
 	execute(t, a, "dep", light, "--remove", "when branch feat/nowhere merged")
@@ -66,7 +66,7 @@ func TestBranchWaitRecordsTip(t *testing.T) {
 	git(t, a.Cwd, "checkout", "-q", "-b", "feat/w")
 	git(t, a.Cwd, "commit", "-q", "--allow-empty", "-m", "w")
 	git(t, a.Cwd, "checkout", "-q", "main")
-	id := execute(t, a, "new", "After feat/w", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "After feat/w", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "dep", id, "--add", "when branch feat/w merged")
 	f := taskFile(t, a, id)
 	tip := strings.TrimSpace(git(t, a.Cwd, "rev-parse", "--short=12", "feat/w"))

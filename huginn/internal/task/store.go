@@ -29,6 +29,9 @@ type NewOptions struct {
 	Acceptance, Deps, Labels    []string
 	Top                         bool
 	After                       string
+	// Pattern holds the task to the whole description pattern: Purpose and
+	// Principle are required too (hug task new, MCP task_new; fkpyg3).
+	Pattern bool
 }
 type Filter struct {
 	Type, Priority, Label, Group, Mine string
@@ -236,13 +239,10 @@ func safeGroup(g string) error {
 	return nil
 }
 func (s *Store) New(o NewOptions) (Result, error) {
-	if strings.TrimSpace(o.Title) == "" || strings.TrimSpace(o.Goal) == "" || len(o.Acceptance) == 0 {
-		return Result{}, &Error{Kind: "missing-required", Fix: "hug task new \"title\" --goal \"outcome\" --accept \"observable check\""}
-	}
-	for _, a := range o.Acceptance {
-		if strings.TrimSpace(a) == "" {
-			return Result{}, &Error{Kind: "empty-acceptance", Fix: "hug task new \"title\" --goal \"outcome\" --accept \"observable check\""}
-		}
+	// Every check, every problem, one fix (fkpyg3): the same list lint
+	// uses, so a task new accepts is lint-clean.
+	if e := newProblems(o); e != nil {
+		return Result{}, e
 	}
 	if e := safeGroup(o.Group); e != nil {
 		return Result{}, e

@@ -8,7 +8,7 @@ import (
 // stageDoc is a complete task file with the given extra frontmatter lines
 // (status, stage, node fields) and dependencies.
 func stageDoc(id, front string, deps ...string) *Document {
-	body := "---\nid: \"" + id + "\"\ntitle: \"T\"\n" + front + "\ntype: \"feature\"\npriority: \"medium\"\nlabels: []\nassignee: []\ncreated: \"2026-11-01\"\nupdated: \"2026-11-01\"\n---\n\n## Goal\ng\n"
+	body := "---\nid: \"" + id + "\"\ntitle: \"T\"\n" + front + "\ntype: \"feature\"\npriority: \"medium\"\nlabels: []\nassignee: []\ncreated: \"2026-11-01\"\nupdated: \"2026-11-01\"\n---\n\n## Goal\ng\n\n## Purpose\np\n\n## Principle\nq\n"
 	if len(deps) > 0 {
 		body += "\n## Depends on\n"
 		for _, d := range deps {
@@ -134,7 +134,7 @@ func TestLintDerivedStageDisagrees(t *testing.T) {
 	// Setting a stage's field without its stage: the stage disagrees.
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"active\"\nwaiting_on: \"CI\"")), "stage-disagrees", "its waiting fields are set, so its stage is waiting")
 	// draft: no acceptance item.
-	draft := Parse("aaaaaa.t.md", []byte("---\nid: \"aaaaaa\"\ntitle: \"T\"\nstatus: \"todo\"\nstage: \"ready\"\n---\n\n## Goal\ng\n"))
+	draft := Parse("aaaaaa.t.md", []byte("---\nid: \"aaaaaa\"\ntitle: \"T\"\nstatus: \"todo\"\nstage: \"ready\"\n---\n\n## Goal\ng\n\n## Purpose\np\n\n## Principle\nq\n"))
 	got := codes(draft)
 	if len(got) != 2 || !strings.Contains(strings.Join(got, "\n"), "stage-disagrees: stage ready disagrees with the task: it is not complete (no Goal or no acceptance item), so its stage is draft") {
 		t.Fatalf("draft: %q", got)

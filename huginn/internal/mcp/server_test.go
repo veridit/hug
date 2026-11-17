@@ -91,11 +91,11 @@ func TestToolsSchemasAndRoundTrip(t *testing.T) {
 		}
 		return out
 	}
-	out := call("new", map[string]any{"title": "A", "goal": "G", "accept": []string{"C", "D"}, "type": "bug"})
+	out := call("new", map[string]any{"title": "A", "goal": "G", "purpose": "P", "principle": "Q", "accept": []string{"C", "D"}, "type": "bug"})
 	if out.IsError {
 		t.Fatal(out)
 	}
-	if !reflect.DeepEqual(r.args, []string{"new", "A", "--goal", "G", "--accept", "C", "--accept", "D", "--type", "bug"}) {
+	if !reflect.DeepEqual(r.args, []string{"new", "A", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--accept", "D", "--type", "bug"}) {
 		t.Fatal(r.args)
 	}
 	call("update", map[string]any{"id": "abc123", "action": "check", "item": 2})
@@ -161,7 +161,7 @@ func TestToolsSchemasAndRoundTrip(t *testing.T) {
 	if !strings.Contains(string(b), "hug task check abc123 1") {
 		t.Fatal(string(b))
 	}
-	out = call("new", map[string]any{"title": "A", "goal": "G", "accept": []string{"C"}, "type": "typo"})
+	out = call("new", map[string]any{"title": "A", "goal": "G", "purpose": "P", "principle": "Q", "accept": []string{"C"}, "type": "typo"})
 	if !out.IsError {
 		t.Fatal("enum accepted")
 	}

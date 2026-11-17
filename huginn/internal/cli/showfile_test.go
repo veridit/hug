@@ -15,7 +15,7 @@ func TestShowFileText(t *testing.T) {
 	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
-	r := execute(t, a, "new", "Files", "--goal", "g", "--accept", "a")
+	r := execute(t, a, "new", "Files", "--goal", "g", "--purpose", "P", "--principle", "Q", "--accept", "a")
 	id := r["task"].(Reply)["id"].(string)
 	src := filepath.Join(t.TempDir(), "notes.md")
 	os.WriteFile(src, []byte("bench results\nline 2\n"), 0o644)

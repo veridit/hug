@@ -51,12 +51,12 @@ func TestUpgradeReordersSections(t *testing.T) {
 		t.Fatal(err)
 	}
 	git(t, filepath.Join(a.Cwd, TaskDir), "commit", "-qam", "mkzcqr order")
-	_, out := runText(a, "lint")
-	if !strings.Contains(out, "[section-order] sections out of order: Goal, Depends on, Purpose") || !strings.Contains(out, "fix: hug upgrade") {
+	_, out := runText(a, "lint", id)
+	if !strings.Contains(out, "[section-order] sections out of order: Goal, Depends on, Purpose") || !strings.Contains(out, "next: hug upgrade") {
 		t.Fatalf("lint:\n%s", out)
 	}
 	did := func() string { return strings.Join(execute(t, a, "upgrade")["upgrade"].([]string), "; ") }
-	if got := did(); !strings.Contains(got, "sections put in order in 1 tasks") {
+	if got := did(); !strings.Contains(got, "1 tasks tidied") {
 		t.Fatalf("upgrade: %s", got)
 	}
 	after, _ := os.ReadFile(m[0])
@@ -77,10 +77,10 @@ func TestUpgradeReordersSections(t *testing.T) {
 	if st := git(t, filepath.Join(a.Cwd, TaskDir), "status", "--porcelain"); st != "" {
 		t.Fatalf("not committed: %s", st)
 	}
-	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-1", "--format=%s"); log != "hug upgrade: section order in 1 tasks" {
+	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-1", "--format=%s"); log != "hug upgrade: backlog leftovers and section order in 1 tasks" {
 		t.Fatalf("commit %q", log)
 	}
-	if got := did(); strings.Contains(got, "sections put in order") {
+	if got := did(); strings.Contains(got, "tidied") {
 		t.Fatalf("second upgrade: %s", got)
 	}
 	if again, _ := os.ReadFile(m[0]); string(again) != string(after) {

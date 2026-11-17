@@ -15,7 +15,7 @@ func takeFixture(t *testing.T) (*App, string) {
 	t.Helper()
 	a := app(t) // git user.name is "Test": it must never become the assignee
 	a.Env["HUG_USER"], a.Env["HUG_MODEL"] = "", ""
-	r := execute(t, a, "new", "Take me", "--goal", "G", "--accept", "C")
+	r := execute(t, a, "new", "Take me", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")
 	return a, r["task"].(Reply)["id"].(string)
 }
 

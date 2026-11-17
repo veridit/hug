@@ -30,6 +30,8 @@ type Error struct {
 	Cycle        []string    `json:"cycle,omitempty"`
 	// Waits are the conditions that do not hold (16dxsr).
 	Waits []WaitDetail `json:"waits,omitempty"`
+	// Problems: every problem a write found, all at once (fkpyg3).
+	Problems []Problem `json:"problems,omitempty"`
 }
 
 func (e *Error) Error() string {
@@ -244,10 +246,9 @@ func Sort(tasks []Task) {
 	sort.Slice(tasks, func(i, j int) bool { return rank.Less(tasks[i].Rank, tasks[i].ID, tasks[j].Rank, tasks[j].ID) })
 }
 
-// PatternSince is the first creation date the description pattern applies to.
-const PatternSince = "2026-11-16"
-
-// MaxTitle is the longest open-task title lint accepts.
+// MaxTitle is the longest open-task title lint accepts. Short titles keep
+// lists, boards and file names readable; the detail belongs in the Goal
+// (2026-11-16, user approved).
 const MaxTitle = 80
 
 func Lint(docs []*Document) []Finding {
@@ -306,31 +307,20 @@ func Lint(docs []*Document) []Finding {
 	}
 	out = append(out, parentFindings(tasks)...)
 	out = append(out, derivedFindings(tasks)...)
-	// The description pattern applies to tasks created from the day it was
-	// settled; older tasks are not flagged (2,500 seid tasks predate it).
+	// The description pattern holds for every open task (fkpyg3, Jørgen
+	// 2026-11-17: the old 2026-11-16 cutoff hid it on most of a board).
+	// Done and dropped tasks are history. Same check list as hug task new;
+	// missing Goal, title and Acceptance come from Parse already.
 	for _, d := range docs {
 		t := d.Task
-		if t.Created < PatternSince || t.Status == "done" || t.Status == "dropped" {
+		if !Pattern(t) {
 			continue
 		}
-		var missing []string
-		for _, sec := range []string{"Purpose", "Principle"} {
-			if !contains(t.Sections, sec) {
-				missing = append(missing, sec)
+		for _, p := range DescriptionProblems(t.Title, "x", contains(t.Sections, "Purpose"), contains(t.Sections, "Principle"), 1) {
+			if p.Flag == "" {
+				continue // missing title: Parse reports it as missing field title
 			}
-		}
-		if len(missing) > 0 {
-			out = append(out, Finding{Path: t.Path, Line: 1, Problem: "missing section " + strings.Join(missing, ", ") + ": describe with Goal, Purpose, Principle, Relevant details, Acceptance", Fix: "hug task edit " + t.ID})
-		}
-	}
-	for _, t := range tasks {
-		if t.Status == "done" || t.Status == "dropped" {
-			continue
-		}
-		// Short titles keep lists, boards and file names readable; the
-		// detail belongs in the Goal (2026-11-16, user approved).
-		if n := len([]rune(t.Title)); n > MaxTitle {
-			out = append(out, Finding{Path: t.Path, Line: 1, Problem: fmt.Sprintf("title is %d characters (max %d): move detail into the Goal", n, MaxTitle), Fix: "hug task set " + t.ID + " --title \"...\""})
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: p.Text, Fix: "hug task set " + t.ID + " " + p.Flag})
 		}
 	}
 	sort.Slice(out, func(i, j int) bool {

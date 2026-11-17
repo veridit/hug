@@ -54,7 +54,7 @@ func TestTakeRecordsAgentAndModel(t *testing.T) {
 		}
 		return out.IsError, m
 	}
-	failed, created := call("new", map[string]any{"title": "Over MCP", "goal": "G", "accept": []string{"C"}})
+	failed, created := call("new", map[string]any{"title": "Over MCP", "goal": "G", "purpose": "P", "principle": "Q", "accept": []string{"C"}})
 	if failed {
 		t.Fatal(created)
 	}
@@ -158,7 +158,7 @@ func TestTakeRequiresCwdAndRecordsBranch(t *testing.T) {
 		json.Unmarshal([]byte(out.Content[0].(*sdk.TextContent).Text), &m)
 		return out.IsError, m
 	}
-	_, created := call("new", map[string]any{"title": "Over MCP", "goal": "G", "accept": []string{"C"}})
+	_, created := call("new", map[string]any{"title": "Over MCP", "goal": "G", "purpose": "P", "principle": "Q", "accept": []string{"C"}})
 	id := created["task"].(map[string]any)["id"].(string)
 	for _, bad := range []map[string]any{
 		{"id": id, "model": "claude-opus-5-5"},

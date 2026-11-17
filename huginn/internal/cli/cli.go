@@ -512,7 +512,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -743,7 +743,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if files == nil {
 			files = []task.File{}
 		}
-		return Reply{"task": taskJSON(d.Task, s.r.Dir, ts), "files": files, "next": task.NextHint(d.Task)}, nil
+		return Reply{"task": taskJSON(d.Task, s.r.Dir, ts), "files": files, "next": task.NextHint(d.Task)}.withLint(s, d.Task), nil
 	case "attach":
 		if len(f.args) < 2 && !(len(f.args) == 1 && f.has("content")) {
 			return nil, usage("attach needs a task and at least one file", `hug task attach ID FILE... [--name NAME] [--note "what this shows"] [--replace]`)
@@ -812,33 +812,38 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		r, e = s.s.Next(filter)
 	case "lint":
-		if e = f.count(0); e != nil {
-			return nil, e
+		if len(f.args) > 1 {
+			return nil, usage("lint takes at most one task", "hug task lint ID")
 		}
 		mode, code, e := lintFlags(f)
 		if e != nil {
 			return nil, e
 		}
-		fs, e := s.c.Lint(ctx)
+		fs, e := s.boardFindings(ctx, a.Cwd, a.getenv("JCODE_HOME"))
 		if e != nil {
 			return nil, e
 		}
-		forbid, e := task.ForbidCite(s.r.Dir)
-		if e != nil {
-			return nil, e
-		}
-		more, e := s.s.LintFiles(forbid)
-		if e != nil {
-			return nil, e
-		}
-		fs = append(fs, more...)
-		// Git branch state, not file content: recomputed on every lint (x1t1t1).
-		if ts, e := s.s.Tasks(); e == nil {
-			fs = append(fs, task.BranchFindings(a.Cwd, gitbranch.DefaultBranch(a.Cwd), ts)...)
-			// Waits hug cannot check here (16dxsr): git and the machine, not files.
-			fs = append(fs, task.WaitFindings(ts)...)
-			// Harness session state, not file content (v3k6cp).
-			fs = append(fs, task.OwnerFindings(task.JcodeLivenessAt(a.getenv("JCODE_HOME")), ts, time.Now())...)
+		// hug task lint ID: every finding of that task in detail, with the
+		// one combined fix (fkpyg3), closed or not.
+		if len(f.args) == 1 {
+			d, e := s.s.Get(f.args[0])
+			if e != nil {
+				return nil, e
+			}
+			mine := forTask(fs, d.Task)
+			if code != "" {
+				mine = withCode(mine, code)
+			}
+			reply, e := empty()
+			if e != nil {
+				return nil, e
+			}
+			reply = lintReply(reply, mine, "detail", code)
+			reply["next"] = task.NextHint(d.Task)
+			if len(mine) > 0 {
+				reply["next"] = task.CombinedFix(d.Task.ID, mine)
+			}
+			return reply, nil
 		}
 		// Closed tasks' findings are hidden unless --all (6neax1).
 		var hidden []task.Finding
@@ -872,7 +877,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(1); e != nil {
 			return nil, e
 		}
-		r, e = s.s.New(task.NewOptions{Title: f.args[0], Goal: f.get("goal"), Purpose: f.get("purpose"), Principle: f.get("principle"), Details: f.get("details"), Type: f.get("type"), Priority: f.get("priority"), Group: f.get("group"), Acceptance: f.values["accept"], Deps: f.values["dep"], Labels: f.values["label"], Top: f.has("top"), After: f.get("after")})
+		r, e = s.s.New(task.NewOptions{Title: f.args[0], Goal: f.get("goal"), Purpose: f.get("purpose"), Principle: f.get("principle"), Details: f.get("details"), Type: f.get("type"), Priority: f.get("priority"), Group: f.get("group"), Acceptance: f.values["accept"], Deps: f.values["dep"], Labels: f.values["label"], Top: f.has("top"), After: f.get("after"), Pattern: true})
 	case "take":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -999,13 +1004,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		fields := []string{"status", "type", "priority", "label", "title", "assignee", "parent"}
 		count := 0
-		for _, field := range fields {
+		for _, field := range append(append([]string{}, fields...), "goal", "purpose", "principle", "details", "accept") {
 			if f.has(field) {
 				count++
 			}
 		}
 		if count == 0 {
-			return nil, usage("set needs a field: --priority, --type, --label, --status, --title, --assignee, --parent", "hug task show "+f.args[0])
+			return nil, usage("set needs a field: --priority, --type, --label, --status, --title, --assignee, --parent, --goal, --purpose, --principle, --details, --accept", "hug task show "+f.args[0])
 		}
 		if f.has("title") && strings.TrimSpace(f.get("title")) == "" {
 			return nil, usage("title must not be empty", "hug task show "+f.args[0])
@@ -1019,6 +1024,19 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 				if e != nil {
 					break
 				}
+			}
+		}
+		// Description sections and acceptance in one write (fkpyg3): every
+		// combined fix: line runs without an editor.
+		if e == nil {
+			sections := map[string]string{}
+			for flag, name := range task.SectionFlags {
+				if f.has(flag) {
+					sections[name] = f.get(flag)
+				}
+			}
+			if len(sections) > 0 || len(f.values["accept"]) > 0 {
+				r, e = s.s.SetText(f.args[0], sections, f.values["accept"])
 			}
 		}
 	case "move":
@@ -1127,6 +1145,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	reply, e = resultJSON(r, s)
 	if e == nil && r.Changed {
 		withGuide(reply, cmd, r.Task, s)
+	}
+	// The task's own findings, every one, with one fix (fkpyg3): what was
+	// just written or taken is checked by the same list lint uses.
+	if e == nil && r.Task.ID != "" && (cmd == "new" || cmd == "set" || cmd == "take") {
+		reply.withLint(s, r.Task)
 	}
 	// One question at done, never a form (tb0dra): asked when no answer
 	// came with it, also on a repeated done.
@@ -1429,6 +1452,9 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if text, ok := reply["states_text"].(string); ok {
 		fmt.Fprint(a.Out, text)
 	}
+	if l, ok := reply["lint"].(*TaskLint); ok {
+		writeTaskLint(a.Out, l)
+	}
 	if ts, ok := reply["types"].([]task.TypeInfo); ok {
 		for _, v := range ts {
 			fmt.Fprintf(a.Out, "%s  %s\n", v.Value, v.Description)
@@ -1437,6 +1463,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if gs, ok := reply["guide"].([]string); ok {
 		for _, g := range gs {
 			fmt.Fprintln(a.Out, "now: "+g)
+		}
+	}
+	if us, ok := reply["upgrade"].([]string); ok {
+		for _, u := range us {
+			fmt.Fprintln(a.Out, u)
+		}
+		if d, ok := reply["diff"].(string); ok {
+			fmt.Fprint(a.Out, d)
 		}
 	}
 	if ws, ok := reply["warnings"].([]string); ok {

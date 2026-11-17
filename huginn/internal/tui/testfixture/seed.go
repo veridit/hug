@@ -66,6 +66,11 @@ func Seed(root string) error {
 			// Task 000001 has the whole description pattern, written after
 			// Goal as hug task new does (jnaspy: it shows above the checks).
 			body = strings.Replace(body, "\n## Depends on\n", "\n## Purpose\nOperators can see why the workflow exists.\n\n## Principle\nShow what the task is about before its checks.\n\n## Relevant details\nSynthetic fixture: 60 tasks, two files on 000001.\n\n## Depends on\n", 1)
+		} else if i != 2 {
+			// Every open task is held to the description pattern (fkpyg3);
+			// the fixture's tasks have it, so lint shows only what each
+			// case is about. 000003 keeps its imported, bare shape.
+			body = strings.Replace(body, "\n## Depends on\n", "\n## Purpose\nSynthetic.\n\n## Principle\nSynthetic.\n\n## Depends on\n", 1)
 		}
 		// Keep synthetic filename slugs clear of credential-shaped token patterns.
 		slug := strings.ReplaceAll(task.Slug(title), "-task-", "-item-")

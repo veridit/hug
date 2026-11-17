@@ -64,7 +64,7 @@ func TestLifecycleJSONContract(t *testing.T) {
 	execute(t, a, "init")
 	expectCode(t, a, 4, "next")
 	execute(t, a, "rebalance")
-	r := execute(t, a, "new", "API", "--goal", "API works", "--accept", "First", "--accept", "Second", "--type", "bug")
+	r := execute(t, a, "new", "API", "--goal", "API works", "--purpose", "P", "--principle", "Q", "--accept", "First", "--accept", "Second", "--type", "bug")
 	id := r["task"].(Reply)["id"].(string)
 	projection := r["task"].(Reply)
 	if projection["goal"] != "API works" {
@@ -74,7 +74,7 @@ func TestLifecycleJSONContract(t *testing.T) {
 	if string(acceptanceJSON) != `[{"checked":false,"state":"open","text":"First"},{"checked":false,"state":"open","text":"Second"}]` {
 		t.Fatalf("acceptance contract: %s", acceptanceJSON)
 	}
-	dep := execute(t, a, "new", "Form", "--goal", "Form works", "--accept", "UI", "--dep", id)
+	dep := execute(t, a, "new", "Form", "--goal", "Form works", "--purpose", "P", "--principle", "Q", "--accept", "UI", "--dep", id)
 	form := dep["task"].(Reply)["id"].(string)
 	expectCode(t, a, 3, "take", form)
 	// done only from doing: an untaken task's fix is the take (6ephqk).
@@ -136,7 +136,7 @@ func TestUsageAndText(t *testing.T) {
 	if len(strings.Split(strings.TrimSpace(Help), "\n")) >= 40 {
 		t.Fatal("help too long")
 	}
-	for _, args := range [][]string{nil, {"help"}, {"types"}, {"init"}, {"new", "A", "--goal", "G", "--accept", "C"}, {"ls"}, {"show", "a"}} {
+	for _, args := range [][]string{nil, {"help"}, {"types"}, {"init"}, {"new", "A", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C"}, {"ls"}, {"show", "a"}} {
 		a.Out = &bytes.Buffer{}
 		a.Err = &bytes.Buffer{}
 		if code := a.Run(context.Background(), args); code != 0 {
@@ -166,7 +166,7 @@ func TestIdentityAndCommandHelp(t *testing.T) {
 func TestRejectedSetIsUnchanged(t *testing.T) {
 	t.Parallel()
 	a := app(t)
-	r := execute(t, a, "new", "Keep title", "--goal", "G", "--accept", "C")
+	r := execute(t, a, "new", "Keep title", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")
 	id := r["task"].(Reply)["id"].(string)
 	expectCode(t, a, 2, "set", id, "--status", "doing", "--title", "")
 	expectCode(t, a, 2, "set", id, "--type", "bugs")
@@ -192,8 +192,8 @@ func TestRejectedSetIsUnchanged(t *testing.T) {
 func TestDependencyRecoveryAndCycle(t *testing.T) {
 	t.Parallel()
 	a := app(t)
-	first := execute(t, a, "new", "API", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
-	second := execute(t, a, "new", "Form", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	first := execute(t, a, "new", "API", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	second := execute(t, a, "new", "Form", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "dep", second, "--add", "api")
 	repeated := execute(t, a, "dep", second, "--add", first)
 	if repeated["changed"] != false {
@@ -240,10 +240,10 @@ func TestBoardColumns(t *testing.T) {
 	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
-	first := execute(t, a, "new", "First quartz", "--goal", "g", "--accept", "a")["task"].(Reply)["id"].(string)
-	execute(t, a, "new", "Second quartz", "--goal", "g", "--accept", "a", "--dep", first)
+	first := execute(t, a, "new", "First quartz", "--goal", "g", "--purpose", "P", "--principle", "Q", "--accept", "a")["task"].(Reply)["id"].(string)
+	execute(t, a, "new", "Second quartz", "--goal", "g", "--purpose", "P", "--principle", "Q", "--accept", "a", "--dep", first)
 	for i := 0; i < 7; i++ {
-		id := execute(t, a, "new", "Old quartz", "--goal", "g", "--accept", "a")["task"].(Reply)["id"].(string)
+		id := execute(t, a, "new", "Old quartz", "--goal", "g", "--purpose", "P", "--principle", "Q", "--accept", "a")["task"].(Reply)["id"].(string)
 		execute(t, a, "check", id, "1")
 		execute(t, a, "take", id)
 		execute(t, a, "done", id)
@@ -299,7 +299,7 @@ func TestLintNextFixesFirstFinding(t *testing.T) {
 	if edited["next"] != "hug task edit "+id {
 		t.Fatalf("edit next: %v", edited)
 	}
-	for _, args := range [][]string{{"lint"}, {"lint", "--json"}} {
+	for _, args := range [][]string{{"lint"}, {"lint", "--json"}, {"lint", id}} {
 		out := &bytes.Buffer{}
 		a.Out, a.Err = out, &bytes.Buffer{}
 		if code := a.Run(context.Background(), args); code != 0 {
@@ -318,7 +318,11 @@ func TestLintNextFixesFirstFinding(t *testing.T) {
 			}
 			continue
 		}
-		want := `[not-a-dependency] not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (for no dependencies, leave the section empty or remove it; a dependency line is "- <task id>", or run hug task dep ` + id + ` --add REF; prose belongs in Notes)` + "\n  fix: hug task edit " + id + "\nnext: hug task edit " + id + "\n"
+		want := `[not-a-dependency] not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?" (for no dependencies, leave the section empty or remove it; a dependency line is "- <task id>", or run hug task dep ` + id + ` --add REF; prose belongs in Notes)` + "\nnext: hug task edit " + id + "\n"
+		if len(args) == 1 {
+			// The overview (fkpyg3): one line per task, next is its fix.
+			want = "  " + id + "  not-a-dependency  -> hug task lint " + id + "\nnext: hug task edit " + id + "\n"
+		}
 		if !strings.HasSuffix(text, want) || strings.Contains(text, other) || strings.Contains(text, "dangling") {
 			t.Fatalf("got:\n%s\nwant suffix:\n%s", text, want)
 		}
@@ -354,13 +358,20 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 	if code, out, _ := run("lint"); code != 0 || out != "no findings\nnext: hug task take "+id+"\n" {
 		t.Fatalf("clean board: %d %q", code, out)
 	}
-	// Two findings of two codes.
-	execute(t, a, "new", strings.Repeat("Long title ", 9), "--goal", "G", "--accept", "C")
+	// Two findings of two codes: a long title (set accepts it; lint and
+	// the set reply name it) and a Principle removed by hand.
+	long := execute(t, a, "new", "Long", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	set := execute(t, a, "set", long, "--title", strings.Repeat("Long title ", 9))
+	if l, ok := set["lint"].(*TaskLint); !ok || l.Fix != "hug task set "+long+` --title "..."` {
+		t.Fatalf("set reply lint: %+v", set["lint"])
+	}
+	useEditor(t, a, "## Principle\nQ\n", "")
+	execute(t, a, "edit", long)
 	code, out, _ := run("lint", "--summary")
 	t.Log("--summary:\n" + out)
 	if code != 0 || !strings.HasPrefix(out, "2 findings in 2 codes:\n") || strings.Contains(out, "\t") ||
-		!strings.Contains(out, "  1  long-title       the title is longer than 80 characters  hug task lint --code long-title\n") ||
-		!strings.Contains(out, "  1  missing-section  a new task lacks Purpose or Principle   hug task lint --code missing-section\n") ||
+		!strings.Contains(out, "  1  long-title       the title is longer than 80 characters   hug task lint --code long-title\n") ||
+		!strings.Contains(out, "  1  missing-section  an open task lacks Purpose or Principle  hug task lint --code missing-section\n") ||
 		!strings.HasSuffix(out, "next: hug task lint --code long-title\n") {
 		t.Fatalf("summary: %q", out)
 	}
@@ -396,12 +407,12 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 	// help as a positional, before or after flags, is lint's help.
 	for _, args := range [][]string{{"lint", "help"}, {"lint", "help", "--code"}, {"lint", "--code", "x", "help"}, {"lint", "--summary", "help"}, {"lint", "--help"}} {
 		code, out, errs := run(args...)
-		if code != 0 || !strings.HasPrefix(out, "hug task lint [--summary] [--all] [--code [CODE]]\n") || errs != "" {
+		if code != 0 || !strings.HasPrefix(out, "hug task lint [ID] [--summary] [--all] [--code [CODE]]\n") || errs != "" {
 			t.Fatalf("%v: %d %q %q", args, code, out, errs)
 		}
 	}
 	// "new help" is still a title, not a request for help.
-	if r := execute(t, a, "new", "help", "--goal", "G", "--accept", "C"); r["task"].(Reply)["title"] != "help" {
+	if r := execute(t, a, "new", "help", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C"); r["task"].(Reply)["title"] != "help" {
 		t.Fatalf("new help: %v", r)
 	}
 	// Flag mistakes end in a fix that runs: the command's help.
@@ -429,11 +440,14 @@ func TestLintBoundedOutput(t *testing.T) {
 	out := write("", "")
 	t.Log("\n" + out)
 	lines := strings.Split(strings.TrimSuffix(out, "\n"), "\n")
-	if lines[0] != "36 findings in 2 codes:" || lines[1] != "  35  no-acceptance  no acceptance item (- [ ] ...)   hug task lint --code no-acceptance" || lines[3] != "first 10:" ||
-		len(lines) != 4+2*lintShown+1 || lines[len(lines)-1] != "10 of 36 shown; every one: hug task lint --all; one kind: hug task lint --code CODE" {
+	// The overview (fkpyg3): totals per code, then one line per task, the
+	// first lintShown tasks when there are more than lintBound.
+	if lines[0] != "36 findings on 36 tasks, in 2 codes:" || lines[1] != "  35  no-acceptance  no acceptance item (- [ ] ...)   hug task lint --code no-acceptance" || lines[3] != "first 10 tasks:" ||
+		lines[4] != "  k7m2q0  no-acceptance  -> hug task lint k7m2q0" ||
+		len(lines) != 4+lintShown+1 || lines[len(lines)-1] != "10 of 36 tasks shown; every one: hug task lint --all; one kind: hug task lint --code CODE" {
 		t.Fatalf("bounded:\n%s", out)
 	}
-	if all := write("all", ""); strings.Count(all, "\n  fix: ") != 36 || strings.Contains(all, "shown") {
+	if all := write("all", ""); strings.Count(all, "  -> hug task lint ") != 36 || strings.Contains(all, "shown") {
 		t.Fatalf("--all:\n%s", all)
 	}
 	if one := write("", "no-acceptance"); !strings.HasSuffix(one, "10 of 36 shown; every one: hug task lint --code no-acceptance --all\n") || strings.Contains(one, "findings in") {

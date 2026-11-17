@@ -60,7 +60,7 @@ func TestTmuxAutoRefresh(t *testing.T) {
 		var r struct {
 			Task struct{ ID string } `json:"task"`
 		}
-		if err := json.Unmarshal([]byte(run(binary, "task", "new", title, "--goal", "G", "--accept", "C", "--json")), &r); err != nil {
+		if err := json.Unmarshal([]byte(run(binary, "task", "new", title, "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--json")), &r); err != nil {
 			t.Fatal(err)
 		}
 		ids[title] = r.Task.ID

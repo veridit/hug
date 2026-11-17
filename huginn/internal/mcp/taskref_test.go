@@ -60,8 +60,8 @@ func TestToolsAcceptTaskColon(t *testing.T) {
 		return m
 	}
 	idOf := func(m map[string]any) string { return m["task"].(map[string]any)["id"].(string) }
-	epic := idOf(call("new", map[string]any{"title": "Epic", "goal": "G", "accept": []string{"E"}}))
-	beta := idOf(call("new", map[string]any{"title": "Beta", "goal": "G", "accept": []string{"B"}, "dep": []string{"task:" + epic}, "after": "task:" + epic}))
+	epic := idOf(call("new", map[string]any{"title": "Epic", "goal": "G", "purpose": "P", "principle": "Q", "accept": []string{"E"}}))
+	beta := idOf(call("new", map[string]any{"title": "Beta", "goal": "G", "purpose": "P", "principle": "Q", "accept": []string{"B"}, "dep": []string{"task:" + epic}, "after": "task:" + epic}))
 	if got := idOf(call("show", map[string]any{"id": "task:" + beta})); got != beta {
 		t.Fatalf("show task:%s gave %s", beta, got)
 	}

@@ -152,32 +152,70 @@ func (d *Document) Canonical() (data []byte, changed bool) {
 // SectionText is the body of the "## name" section, trimmed, or "".
 func (d *Document) SectionText(name string) string { return d.sectionText(name) }
 
-// Reorder puts every task file in canonical section order (hug upgrade) and
-// returns the paths it rewrote; a second run rewrites nothing.
+// Reorder tidies every task file for hug upgrade, the mechanical part only
+// (fkpyg3): backlog leftovers removed (StripBacklog), then sections put in
+// canonical order, no section's text changed. It returns the paths it
+// rewrote; a second run rewrites nothing.
 func (s *Store) Reorder() ([]string, error) {
+	changed, _, e := s.Tidy(false)
+	return changed, e
+}
+
+// Tidy is Reorder that also returns the diff of each rewritten file; with
+// dryRun nothing is written.
+func (s *Store) Tidy(dryRun bool) (changed []string, diff string, err error) {
 	ts, e := s.Tasks()
 	if e != nil {
-		return nil, e
+		return nil, "", e
 	}
-	var changed []string
+	var b strings.Builder
 	for _, t := range ts {
 		path, e := s.diskPath(t.Path)
 		if e != nil {
-			return changed, e
+			return changed, b.String(), e
 		}
-		b, e := os.ReadFile(path)
+		raw, e := os.ReadFile(path)
 		if e != nil {
-			return changed, e
+			return changed, b.String(), e
 		}
-		out, did := Parse(t.Path, b).Canonical()
-		if !did {
+		stripped, didStrip := Parse(t.Path, raw).StripBacklog()
+		out, didOrder := Parse(t.Path, stripped).Canonical()
+		if !didStrip && !didOrder {
+			continue
+		}
+		b.WriteString(TidyDiff(t.Path, raw, out))
+		changed = append(changed, t.Path)
+		if dryRun {
 			continue
 		}
 		s.Invalidate()
 		if e := AtomicWrite(path, out); e != nil {
-			return changed, e
+			return changed, b.String(), e
 		}
-		changed = append(changed, t.Path)
 	}
-	return changed, nil
+	return changed, b.String(), nil
+}
+
+// TidyDiff shows what upgrade changed in one file: each removed line as
+// "- line", and the old and new section order when it moved sections.
+func TidyDiff(path string, before, after []byte) string {
+	var b strings.Builder
+	b.WriteString("--- " + path + "\n")
+	kept := map[string]int{}
+	for _, l := range strings.Split(string(after), "\n") {
+		kept[strings.TrimRight(l, "\r")]++
+	}
+	for _, l := range strings.Split(string(before), "\n") {
+		l = strings.TrimRight(l, "\r")
+		if kept[l] > 0 {
+			kept[l]--
+			continue
+		}
+		b.WriteString("- " + l + "\n")
+	}
+	old, now := Parse(path, before).Task.Sections, Parse(path, after).Task.Sections
+	if strings.Join(old, "\x00") != strings.Join(now, "\x00") {
+		b.WriteString("  sections: " + strings.Join(old, ", ") + "\n  now:      " + strings.Join(now, ", ") + "\n")
+	}
+	return b.String()
 }

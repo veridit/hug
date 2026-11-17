@@ -121,7 +121,7 @@ func until(d time.Duration, f func() bool) bool {
 // Check 1: a note in clone A shows up in clone B within 10 s, nobody syncs.
 func TestBackgroundSyncNoteReachesOtherClone(t *testing.T) {
 	a, b, _ := clones(t)
-	id := execute(t, a, "new", "Shared work", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Shared work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	start := time.Now()
 	execute(t, a, "note", id, "from clone A")
 	seen := until(arrival(), func() bool {
@@ -141,7 +141,7 @@ func TestBackgroundSyncNoteReachesOtherClone(t *testing.T) {
 func TestBackgroundSyncBurstIsBatched(t *testing.T) {
 	a, _, bare := clones(t)
 	settle := Settle // the child's: it never sees a test's change to it
-	id := execute(t, a, "new", "Burst", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Burst", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	settled(t, a)
 	before := pushes(t, bare)
 	start := time.Now()
@@ -172,7 +172,7 @@ func TestBackgroundSyncBurstIsBatched(t *testing.T) {
 // unpushed commits with a fix line, and they go out once it is back.
 func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	a, _, bare := clones(t)
-	id := execute(t, a, "new", "Offline", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Offline", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	settled(t, a)
 	// The remote hangs: any network call by the note would cost 5 s. (A
 	// missing remote fails at once, so it could not show a wait.)
@@ -215,7 +215,7 @@ func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
 	a, b, bare := clones(t)
 	oldSpawn := Spawn
 	Spawn = nil // both clones edit offline from each other first
-	id := execute(t, a, "new", "Contested", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Contested", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "sync")
 	execute(t, b, "sync")
 	execute(t, a, "set", id, "--title", "Title from A")
@@ -242,7 +242,7 @@ func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
 // background rebase moving files underneath (m8shdj check 1 shape).
 func TestBackgroundSyncParallelNotesAllLand(t *testing.T) {
 	a, b, _ := clones(t)
-	id := execute(t, a, "new", "Parallel", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Parallel", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	var wg sync.WaitGroup
 	errs := make(chan error, 20)
 	for i := 0; i < 20; i++ {

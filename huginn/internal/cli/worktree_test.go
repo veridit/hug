@@ -28,9 +28,9 @@ func TestLinkedWorktreeUsesMainBoard(t *testing.T) {
 			} else {
 				execute(t, linked, "init")
 			}
-			created := execute(t, linked, "new", "From the linked worktree", "--goal", "shared board", "--accept", "seen from main")
+			created := execute(t, linked, "new", "From the linked worktree", "--goal", "shared board", "--purpose", "P", "--principle", "Q", "--accept", "seen from main")
 			id := created["task"].(Reply)["id"].(string)
-			execute(t, main, "new", "From the main worktree", "--goal", "shared board", "--accept", "seen from linked")
+			execute(t, main, "new", "From the main worktree", "--goal", "shared board", "--purpose", "P", "--principle", "Q", "--accept", "seen from linked")
 			ls := execute(t, linked, "ls")
 			if !strings.Contains(jsonString(t, ls), "From the main worktree") {
 				t.Fatalf("linked ls misses the main task: %v", ls)

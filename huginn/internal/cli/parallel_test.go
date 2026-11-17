@@ -16,7 +16,7 @@ func TestParallelNotesWithoutRemoteAllLand(t *testing.T) {
 	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
-	id := execute(t, a, "new", "Parallel", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Parallel", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	var wg sync.WaitGroup
 	errs := make(chan error, 20)
 	for i := 0; i < 20; i++ {

@@ -11,9 +11,9 @@ import (
 func TestLsShowsCheckProgress(t *testing.T) {
 	t.Parallel()
 	a := app(t)
-	two := execute(t, a, "new", "Two checks", "--goal", "g", "--accept", "first", "--accept", "second")["task"].(Reply)["id"].(string)
+	two := execute(t, a, "new", "Two checks", "--goal", "g", "--purpose", "P", "--principle", "Q", "--accept", "first", "--accept", "second")["task"].(Reply)["id"].(string)
 	execute(t, a, "check", two, "1")
-	one := execute(t, a, "new", "One check", "--goal", "g", "--accept", "only")["task"].(Reply)["id"].(string)
+	one := execute(t, a, "new", "One check", "--goal", "g", "--purpose", "P", "--principle", "Q", "--accept", "only")["task"].(Reply)["id"].(string)
 	code, out := runText(a, "ls")
 	if code != 0 {
 		t.Fatalf("exit %d:\n%s", code, out)

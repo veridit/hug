@@ -14,6 +14,18 @@ func withDeps(lines string) []byte {
 	return []byte(strings.Replace(sample, "## Depends on\n", "## Depends on\n"+lines, 1))
 }
 
+// depLint is Lint without the description-pattern findings: sample has no
+// Purpose or Principle, and these tests are about Depends on.
+func depLint(docs []*Document) []Finding {
+	var out []Finding
+	for _, f := range Lint(docs) {
+		if FindingCode(f.Problem) != "missing-section" {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
 func TestDependencyLineForms(t *testing.T) {
 	for _, c := range []struct{ line, ref, note string }{
 		{"- p3rt9a", "p3rt9a", ""},
@@ -49,7 +61,7 @@ func TestProseInDependsOnIsNotADependency(t *testing.T) {
 	if got := DependencyDetails(d.Task, []Task{d.Task}); len(got) != 0 {
 		t.Fatalf("prose shows as dependency rows: %+v", got)
 	}
-	fs := Lint([]*Document{d})
+	fs := depLint([]*Document{d})
 	if len(fs) != 1 {
 		t.Fatalf("want one finding, got %v", fs)
 	}
@@ -68,7 +80,7 @@ func TestProseInDependsOnIsNotADependency(t *testing.T) {
 // fix removes it, code stays dangling-dependency.
 func TestMissingDependencyNamesIDAndFix(t *testing.T) {
 	d := Parse("zzzzzz.k7m2qx.recall-gate.md", withDeps("- zz9zz9\n"))
-	fs := Lint([]*Document{d})
+	fs := depLint([]*Document{d})
 	if len(fs) != 1 {
 		t.Fatalf("want one finding, got %v", fs)
 	}
@@ -125,7 +137,7 @@ func TestEveryFindingHasFix(t *testing.T) {
 // how to say "no dependencies" (6neax1).
 func TestNothingInDependsOnSaysLeaveItEmpty(t *testing.T) {
 	d := Parse("zzzzzz.qawmnb.recall-nudges-keep-task.md", []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: qawmnb", 1), "## Depends on\n", "## Depends on\nNothing\n", 1)))
-	fs := Lint([]*Document{d})
+	fs := depLint([]*Document{d})
 	want := `not a dependency: "Nothing" (for no dependencies, leave the section empty or remove it; a dependency line is "- <task id>", or run hug task dep qawmnb --add REF; prose belongs in Notes)`
 	if len(fs) != 1 || fs[0].Problem != want || len(d.Task.Dependencies) != 0 {
 		t.Fatalf("%v", fs)

@@ -48,7 +48,7 @@ func TestStrikeOverMCP(t *testing.T) {
 		}
 		return out.Content[0].(*sdk.TextContent).Text, out.IsError
 	}
-	text, bad := call("new", map[string]any{"title": "Three states", "goal": "G", "accept": []any{"ticked", "struck", "open"}})
+	text, bad := call("new", map[string]any{"title": "Three states", "goal": "G", "purpose": "P", "principle": "Q", "accept": []any{"ticked", "struck", "open"}})
 	if bad {
 		t.Fatal(text)
 	}

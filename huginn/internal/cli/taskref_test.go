@@ -17,7 +17,7 @@ func TestEveryRefCommandAcceptsTaskColon(t *testing.T) {
 	a := app(t)
 	execute(t, a, "init")
 	newID := func(args ...string) string {
-		r := execute(t, a, append([]string{"new"}, args...)...)
+		r := execute(t, a, append([]string{"new"}, append(args, "--purpose", "P", "--principle", "Q")...)...)
 		return r["task"].(Reply)["id"].(string)
 	}
 	epic := newID("Epic", "--goal", "g", "--accept", "e")

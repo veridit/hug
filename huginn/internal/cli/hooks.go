@@ -163,6 +163,7 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		return nil, e
 	}
 	did := []string{}
+	upgradeDiff := ""
 	if m.LocalBranch {
 		did = append(did, "branch "+OldTaskBranch+" renamed to "+TaskBranch)
 	}
@@ -192,16 +193,17 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	// each section's text unchanged. Only when the board opens: a repository
 	// without hug/tasks has nothing to reorder.
 	if s, e := a.open(ctx); e == nil {
-		changed, e := s.s.Reorder()
+		changed, diff, e := s.s.Tidy(false)
 		if e == nil && len(changed) > 0 {
-			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: section order in %d tasks", len(changed)))
+			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: backlog leftovers and section order in %d tasks", len(changed)))
 		}
 		s.c.Close()
 		if e != nil {
 			return nil, e
 		}
 		if len(changed) > 0 {
-			did = append(did, fmt.Sprintf("sections put in order in %d tasks", len(changed)))
+			did = append(did, fmt.Sprintf("%d tasks tidied: backlog leftovers removed, sections put in order (no section text changed)", len(changed)))
+			upgradeDiff = diff
 		}
 	}
 	// Variables (m1c28r): old names hug wrote into hook commands and its MCP
@@ -218,5 +220,9 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	if len(did) == 0 {
 		did = append(did, "already on the hug layout")
 	}
-	return Reply{"upgrade": did, "next": "hug setup"}, nil
+	reply := Reply{"upgrade": did, "next": "hug setup"}
+	if upgradeDiff != "" {
+		reply["diff"] = upgradeDiff
+	}
+	return reply, nil
 }

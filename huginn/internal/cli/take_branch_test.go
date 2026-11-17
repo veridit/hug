@@ -23,7 +23,7 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 	linkedDir, _ = filepath.EvalSymlinks(linkedDir)
 	linked := &App{Cwd: filepath.Join(linkedDir), In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}, Env: main.Env}
 
-	id := execute(t, linked, "new", "Worktree work", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, linked, "new", "Worktree work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	tk := execute(t, linked, "take", id)["task"].(Reply)
 	if tk["branch"] != "feat/x" || tk["worktree"] != linkedDir {
 		t.Fatalf("branch %v worktree %v, want feat/x %s", tk["branch"], tk["worktree"], linkedDir)
@@ -45,7 +45,7 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 	}
 
 	// On the main checkout: recorded, but ls rows do not repeat "main".
-	other := execute(t, main, "new", "Main work", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	other := execute(t, main, "new", "Main work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	if tk := execute(t, main, "take", other)["task"].(Reply); tk["branch"] != "main" {
 		t.Fatalf("main take: %v", tk)
 	}
@@ -54,7 +54,7 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 	}
 
 	// Flags win over detection.
-	third := execute(t, main, "new", "Flagged", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	third := execute(t, main, "new", "Flagged", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	if tk := execute(t, main, "take", third, "--branch", "feat/y", "--worktree", "/elsewhere")["task"].(Reply); tk["branch"] != "feat/y" || tk["worktree"] != "/elsewhere" {
 		t.Fatalf("flags: %v", tk)
 	}
@@ -69,7 +69,7 @@ func TestLintFlagsDoingTaskOnMergedOrDeletedBranch(t *testing.T) {
 	execute(t, main, "init")
 	take := func(title, branch string) string {
 		t.Helper()
-		id := execute(t, main, "new", title, "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+		id := execute(t, main, "new", title, "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 		execute(t, main, "take", id, "--branch", branch)
 		return id
 	}
@@ -80,7 +80,7 @@ func TestLintFlagsDoingTaskOnMergedOrDeletedBranch(t *testing.T) {
 	git(t, mainDir, "checkout", "-q", "main")
 	merged, open, gone := take("Merged work", "feat/merged"), take("Open work", "feat/open"), take("Gone work", "feat/gone")
 
-	code, out := runText(main, "lint")
+	code, out := runText(main, "lint", "--code", "branch-gone")
 	for _, want := range []string{
 		"branch feat/merged is merged into main, but " + merged + " is still doing",
 		"fix: hug task done " + merged,

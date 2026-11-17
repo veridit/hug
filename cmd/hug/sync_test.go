@@ -75,7 +75,7 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	run(one, homeA, bin, "task", "init")
 	run(one, homeA, bin, "task", "sync")
 	run(two, homeB, bin, "task", "init")
-	out := run(one, homeA, bin, "task", "new", "Shared work", "--goal", "G", "--accept", "C", "--json")
+	out := run(one, homeA, bin, "task", "new", "Shared work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--json")
 	id := between(out, `"id":"`, `"`)
 	if id == "" {
 		t.Fatalf("no id in %s", out)

@@ -6,7 +6,7 @@ Render compiler-lang task detail without storage markers
 [done]  [feature]  [medium]  000003  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task
 ⚠ line 1: Acceptance requires at least one item
-  fix: hug task edit 000003
+  fix: hug task set 000003 --accept "observable check"
 ────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
 Provide compiler-lang support with huginn and clear sections.
