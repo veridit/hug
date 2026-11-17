@@ -4,7 +4,7 @@ title: "Scale: stay fast and safe at 10,000 tasks"
 status: "doing"
 type: chore
 priority: "medium"
-assignee: ["humpback"]
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
