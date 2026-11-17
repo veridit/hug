@@ -1,18 +1,17 @@
 ---
 id: h176dp
 title: "Import and sync GitHub issues as tasks"
-status: "doing"
+status: "done"
 type: feature
 priority: ""
 assignee: ["kestrel"]
 labels: ["github", "import"]
 created: 2026-11-13
 updated: 2026-11-13
-doing_since: "2026-11-17T15:40"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T15:41"
 ---
 
 ## Goal
@@ -38,3 +37,4 @@ kestrel 14:42: crab applied Jørgen's bxqtkt ruling and chose option C. Check 4 
 - 2026-11-17T15:40 todo -> doing/active (take)
 - 2026-11-17T15:41 doing/active -> doing/waiting (wait)
 - 2026-11-17T15:41 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: jhf: check 4 conflicts with bxqtkt 'no two-way GitHub sync': choose A (close+link only), B (as written) or C (strike), see note 14:42; waiting_since: 2026-11-17T15:41
+- 2026-11-17T15:41 doing/active -> done (done); was doing_since: 2026-11-17T15:40
