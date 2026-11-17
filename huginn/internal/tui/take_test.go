@@ -42,7 +42,7 @@ func TestTransactionalTakeOwnsCommit(t *testing.T) {
 	if err != nil || d.Task.Status != "doing" || !contains(d.Task.Assignee, "remote-user") {
 		t.Fatal(d, err)
 	}
-	m = act(m, "x")
+	m = press(m, "x", "superseded", "enter", "enter")
 	if commits != 1 {
 		t.Fatal("ordinary mutation must still commit")
 	}

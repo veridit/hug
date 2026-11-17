@@ -61,10 +61,12 @@ var States = []Node{
 		{Name: "design", SetBy: ByAgent, Means: "a question must be answered first", Fields: []NodeField{
 			{Name: "design_question", Required: true, SetBy: ByAgent, Means: "the question"},
 			{Name: "design_since", SetBy: ByHug, Means: "when the question was asked"},
+			{Name: "design_asked_by", SetBy: ByHug, Means: "who asked it (the agent or person that ran hug task design)"},
 		}},
 		{Name: "draft", SetBy: ByHug, Means: "not described well enough to start (Goal or Acceptance missing)"},
 		{Name: "review", SetBy: ByAgent, Means: "the work is done and waits for someone to check it", Fields: []NodeField{
 			{Name: "review_by", SetBy: ByAgent, Means: "who should review it"},
+			{Name: "review_since", SetBy: ByHug, Means: "since when it waits for review"},
 		}},
 		{Name: "ready", SetBy: ByHug, Means: "nothing stands in the way; anyone may take it"},
 	}},
@@ -75,10 +77,12 @@ var States = []Node{
 		{Name: "waiting", SetBy: ByAgent, Means: "the owner waits on something outside the board (CI, a reply, a release)", Fields: []NodeField{
 			{Name: "waiting_on", Required: true, SetBy: ByAgent, Means: "what it waits on"},
 			{Name: "waiting_since", SetBy: ByHug, Means: "since when"},
+			{Name: "waiting_asked_by", SetBy: ByHug, Means: "who waits (the agent or person that ran hug task wait), told when it is answered"},
 		}},
 		{Name: "depends", SetBy: ByHug, Means: "the owner can't go on until another task is done"},
 		{Name: "review", SetBy: ByReviewer, Means: "someone is reviewing it", Fields: []NodeField{
 			{Name: "review_by", Required: true, SetBy: ByReviewer, Means: "who is reviewing it"},
+			{Name: "review_since", SetBy: ByHug, Means: "since when"},
 		}},
 	}},
 	{Name: "done", Means: "finished: every check ticked", Fields: []NodeField{
@@ -106,9 +110,12 @@ var Transitions = []Transition{
 	{"doing/active", "doing/waiting", `hug task wait ID "on what"`},
 	{"doing/waiting", "doing/active", "hug task resume ID"},
 	{"todo/*", "todo/design", `hug task design ID "question"`},
+	{"todo/design", "todo/*", "hug task design ID --clear"},
 	{"doing/*", "todo/*", "hug task set ID --status todo (gives it back, keeping its stage)"},
 	{"doing/*", "done", "hug task done ID"},
 	{"any", "dropped", `hug task drop ID "reason"`},
+	{"done", "todo/*", "hug task set ID --status todo (reopens it)"},
+	{"dropped", "todo/*", "hug task set ID --status todo (reopens it)"},
 }
 
 // StateNode is the state named name, if it is one.
@@ -202,6 +209,8 @@ func StatesText() string {
 	}
 	if s, _ := StateNode("todo"); len(s.Stages) > 0 {
 		b.WriteString("\nwhen several todo stages hold, the first wins: " + strings.Join(StageNames("todo"), ", ") + "\n")
+		b.WriteString("when several doing stages hold, the first wins: " + strings.Join(DoingOrder, ", ") + "\n")
+		b.WriteString("a stage holds while its fields are set (deferred_reason, design_question, review_by or review_since,\nwaiting_on), or, for hug's stages, while its condition holds; leaving a node moves its fields to ## History\n")
 	}
 	return b.String()
 }
@@ -209,16 +218,27 @@ func StatesText() string {
 // Stage findings (6ephqk check 2). Four rules hold a file to the tree:
 //
 //  1. the stage is a stage of the task's state;
-//  2. a node field (doing_since, waiting_on ...) is present only while the
-//     task is in that node;
+//  2. a node's fields exist only while the node's condition holds (crab
+//     11:37, Proposal A, restating "only while the task is in that node"
+//     so Jørgen's precedence can hold): the fields of another state are
+//     never allowed, a stage's fields are allowed while that stage still
+//     holds, even when an earlier one wins (design_question on a todo
+//     task that now depends);
 //  3. the required fields of the task's state and stage are present and
 //     not empty;
-//  4. a stage hug sets (draft, depends, ready) agrees with its condition.
+//  4. the stage is the first in order whose condition holds (Stage).
 //
 // Rules 1-3 need only the file and run in Parse; rule 4 needs the other
 // tasks (a dependency's state) and runs in Lint. A file with no stage line
-// and no node field is not held to rule 3: hug upgrade writes the stages
-// and fields (step 4 of 6ephqk), and until then no file has them.
+// and no node field is not held to rules 3 and 4: hug upgrade writes them
+// (step 4 of 6ephqk), and until then no file has them.
+
+// DoingOrder is the precedence of doing stages: what the owner waits on
+// outside the board first, then another task, then a reviewer.
+var DoingOrder = []string{"waiting", "depends", "review", "active"}
+
+// Staged is whether the file has stages yet: a stage line or a node field.
+func Staged(t Task) bool { return t.Stage != "" || len(t.Fields) > 0 }
 
 // stageFindings checks rules 1-3 on the parsed frontmatter.
 func (d *Document) stageFindings() {
@@ -236,34 +256,79 @@ func (d *Document) stageFindings() {
 			if len(valid) == 0 {
 				p = fmt.Sprintf("unknown stage %s for %s: a %s task has no stage; remove the stage line", t.Stage, t.Status, t.Status)
 			}
-			d.add(d.fieldLine("stage"), p)
+			d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine("stage"), Problem: p, Fix: "hug task set " + t.ID + " --status " + t.Status})
 		} else {
 			node += "/" + t.Stage
 		}
 	}
 	owners := NodeFields()
 	for _, k := range sortedKeys(t.Fields) {
-		in := false
-		for _, o := range owners[k] {
-			if o == t.Status || o == node {
-				in = true
-			}
-		}
-		if !in {
-			d.add(d.fieldLine(k), fmt.Sprintf("node field %s belongs to %s, and this task is %s: remove it or move it to ## History", k, strings.Join(owners[k], " and "), node))
+		if !fieldHolds(t, k, owners[k]) {
+			d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine(k),
+				Problem: fmt.Sprintf("node field %s belongs to %s, and this task is %s: hug moves it to ## History", k, strings.Join(owners[k], " and "), node),
+				Fix:     "hug task set " + t.ID + " --status " + t.Status})
 		}
 	}
-	// Required fields are checked once the file has stages: a stage line
-	// or any node field. A file hug upgrade has not migrated has neither.
-	_, staged := d.fields["stage"]
-	if !staged && len(t.Fields) == 0 {
+	if !Staged(t) {
 		return
 	}
 	for _, f := range append(append([]NodeField(nil), state.Fields...), stage.Fields...) {
 		if f.Required && strings.TrimSpace(t.Fields[f.Name]) == "" {
-			d.add(d.fieldLine("stage"), fmt.Sprintf("missing node field %s: a %s task needs it (%s)", f.Name, node, f.Means))
+			d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine("stage"),
+				Problem: fmt.Sprintf("missing node field %s: a %s task needs it (%s)", f.Name, node, f.Means),
+				Fix:     requiredFix(t, f.Name)})
 		}
 	}
+}
+
+// requiredFix is the command that writes a missing required field, or
+// leaves the node that needs it, without an editor (crab 11:32).
+func requiredFix(t Task, field string) string {
+	switch field {
+	case "waiting_on":
+		return "hug task wait " + t.ID + ` "on what"`
+	case "design_question":
+		return "hug task design " + t.ID + ` "question"`
+	case "dropped_reason":
+		return "hug task drop " + t.ID + ` "reason"`
+	case "review_by":
+		return "hug task take " + t.ID + " --model MODEL"
+	}
+	return "hug task set " + t.ID + " --status todo"
+}
+
+// fieldHolds says whether node field k may stand on t: one of its owners
+// is t's state, or a stage of t's state whose condition holds.
+func fieldHolds(t Task, k string, owners []string) bool {
+	for _, o := range owners {
+		state, stage, staged := strings.Cut(o, "/")
+		if state != t.Status {
+			continue
+		}
+		if !staged || stage == t.Stage || ownHolds(t, stage) {
+			return true
+		}
+	}
+	return false
+}
+
+// ownHolds says whether a stage someone sets still holds on t, by its
+// fields: deferred while deferred_reason is set, design while
+// design_question is, todo/review while review_by or review_since is,
+// waiting while waiting_on is, doing/review while review_by is.
+func ownHolds(t Task, stage string) bool {
+	set := func(k string) bool { return strings.TrimSpace(t.Fields[k]) != "" }
+	switch stage {
+	case "deferred":
+		return set("deferred_reason")
+	case "design":
+		return set("design_question")
+	case "review":
+		return set("review_by") || (t.Status == "todo" && set("review_since"))
+	case "waiting":
+		return set("waiting_on")
+	}
+	return false
 }
 
 // Incomplete says whether t is not described well enough to start: the
@@ -272,62 +337,79 @@ func Incomplete(t Task) bool {
 	return strings.TrimSpace(t.Goal) == "" || len(t.Acceptance) == 0
 }
 
-// DerivedStage is the stage hug gives a todo task with no stage a person
-// or agent set: depends while a dependency is not done, else draft while
-// it is incomplete, else ready (precedence order). For a doing task it is
-// depends while a dependency is not done, else empty: the owner's stage.
-func DerivedStage(t Task, tasks []Task) string {
+// Stage is the stage t is in: the first, in precedence order, whose
+// condition holds (Jørgen 10:18, Proposal A). todo: deferred, depends,
+// design, draft, review, else ready. doing: waiting, depends, review, else
+// active. done and dropped have none. tasks is the board, for the
+// dependencies' states.
+func Stage(t Task, tasks []Task) string {
 	open := len(Blocked(t, tasks)) > 0
 	switch t.Status {
 	case "todo":
-		if open {
-			return "depends"
-		}
-		if Incomplete(t) {
-			return "draft"
+		for _, g := range StageNames("todo") {
+			switch {
+			case g == "depends" && open, g == "draft" && Incomplete(t), g != "depends" && g != "draft" && ownHolds(t, g):
+				return g
+			}
 		}
 		return "ready"
 	case "doing":
-		if open {
-			return "depends"
+		for _, g := range DoingOrder {
+			switch {
+			case g == "depends" && open, g != "depends" && ownHolds(t, g):
+				return g
+			}
 		}
+		return "active"
 	}
 	return ""
 }
 
-// derivedFindings checks rule 4: a stage hug sets agrees with its
-// condition. Stages a person or agent sets (deferred, design, review,
-// active, waiting) are theirs and not checked here.
+// DerivedStage is Stage; kept for the lint tests' name.
+func DerivedStage(t Task, tasks []Task) string { return Stage(t, tasks) }
+
+// derivedFindings checks rule 4: the stage is the first whose condition
+// holds.
 func derivedFindings(tasks []Task) []Finding {
 	var out []Finding
 	for _, t := range tasks {
-		g, ok := StageNode(t.Status, t.Stage)
-		if !ok || g.SetBy != ByHug {
+		if !Staged(t) {
 			continue
 		}
-		want := DerivedStage(t, tasks)
+		g, ok := StageNode(t.Status, t.Stage)
+		if t.Stage != "" && !ok {
+			continue // rule 1 reports it
+		}
+		missing := false
+		for _, f := range g.Fields {
+			missing = missing || (f.Required && strings.TrimSpace(t.Fields[f.Name]) == "")
+		}
+		if missing {
+			continue // rule 3 reports it: the fix writes the field
+		}
+		want := Stage(t, tasks)
 		if want == t.Stage {
 			continue
 		}
-		why := map[string]string{
-			"depends": "every dependency is done",
-			"draft":   "it has a Goal and an acceptance item",
-			"ready":   "",
-		}[t.Stage]
+		why := ""
 		switch want {
 		case "depends":
 			b := Blocked(t, tasks)[0]
 			why = "it depends on " + b.ID + " (" + b.Status + ")"
 		case "draft":
 			why = "it is not complete (no Goal or no acceptance item)"
+		case "ready", "active":
+			why = "nothing holds it: no open dependency, and none of its stage's fields is set"
 		case "":
-			why = "every dependency is done; the stage is the owner's (active, waiting or review)"
+			why = "a " + t.Status + " task has no stage"
+		default:
+			why = "its " + want + " fields are set"
 		}
-		p := fmt.Sprintf("stage %s disagrees with the task: %s, so hug's stage is %s", t.Stage, why, want)
+		p := fmt.Sprintf("stage %s disagrees with the task: %s, so its stage is %s", t.Stage, why, want)
 		if want == "" {
 			p = fmt.Sprintf("stage %s disagrees with the task: %s", t.Stage, why)
 		}
-		out = append(out, Finding{Path: t.Path, Line: 1, Problem: p, Fix: "hug task edit " + t.ID})
+		out = append(out, Finding{Path: t.Path, Line: 1, Problem: p, Fix: "hug task set " + t.ID + " --status " + t.Status})
 	}
 	return out
 }

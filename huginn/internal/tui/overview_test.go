@@ -216,6 +216,9 @@ func closeBoard(t *testing.T) (model, map[string]string, func(at time.Time, msg 
 		if _, err := s.Check(ids[title], 1); err != nil {
 			t.Fatal(err)
 		}
+		if _, err := s.Take(ids[title], "tester"); err != nil { // take before done (6ephqk)
+			t.Fatal(err)
+		}
 		if _, err := s.Done(ids[title]); err != nil {
 			t.Fatal(err)
 		}
@@ -235,7 +238,7 @@ func closeBoard(t *testing.T) (model, map[string]string, func(at time.Time, msg 
 	}
 	commit(base.Add(3*time.Hour), "hug task edit "+ids["Lima"])
 	// Mike: dropped.
-	if _, err := s.Drop(ids["Mike"]); err != nil {
+	if _, err := s.Drop(ids["Mike"], "test reason"); err != nil {
 		t.Fatal(err)
 	}
 	commit(base.Add(4*time.Hour), "hug task drop "+ids["Mike"])
@@ -272,6 +275,9 @@ func TestRecentlyDoneNewestFirst(t *testing.T) {
 	// are read.
 	s := &task.Store{Root: m.store.Root}
 	if _, err := s.Check(ids["November"], 1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Take(ids["November"], "tester"); err != nil { // take before done (6ephqk)
 		t.Fatal(err)
 	}
 	if _, err := s.Done(ids["November"]); err != nil {

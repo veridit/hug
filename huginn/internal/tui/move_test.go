@@ -35,11 +35,14 @@ func moveBoard(t *testing.T, titles ...string) (model, map[string]string, *int) 
 			if _, err := s.Check(id, 1); err != nil {
 				t.Fatal(err)
 			}
+			if _, err := s.Take(id, "tester"); err != nil { // take before done (6ephqk)
+				t.Fatal(err)
+			}
 			if _, err := s.Done(id); err != nil {
 				t.Fatal(err)
 			}
 		case strings.HasPrefix(title, "dropped:"):
-			if _, err := s.Drop(id); err != nil {
+			if _, err := s.Drop(id, "test reason"); err != nil {
 				t.Fatal(err)
 			}
 		}

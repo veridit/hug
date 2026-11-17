@@ -307,7 +307,7 @@ func TestAcceptanceBlockFixesAndMineDoing(t *testing.T) {
 	if e != nil || len(r.Warnings) != 1 {
 		t.Fatal(r, e)
 	}
-	if _, e = s.Drop(a.ID); e != nil {
+	if _, e = s.Drop(a.ID, "test reason"); e != nil {
 		t.Fatal(e)
 	}
 }

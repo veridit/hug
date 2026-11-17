@@ -755,6 +755,13 @@ func (m model) confirmLine() string {
 	switch m.confirm {
 	case "n":
 		question += oneLine(m.pendingValue)
+	case "x":
+		for _, t := range m.all {
+			if t.Path == m.confirmPath {
+				question = "Drop " + oneLine(t.ID) + ": " + oneLine(m.pendingValue)
+				break
+			}
+		}
 	case "e":
 		for _, t := range m.all {
 			if t.Path == m.confirmPath {

@@ -346,6 +346,24 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 		switch k {
 		case "n":
 			m = press(m, "N", "Brand new", "enter")
+		case "d":
+			// done only from doing (6ephqk); Main depends on an open
+			// task, so the doing task here is its dependency.
+			dep := m.all[len(m.all)-1]
+			for _, tk := range m.all {
+				if tk.Title == "Dependency" {
+					dep = tk
+				}
+			}
+			if _, err := m.store.Take(dep.ID, "tester"); err != nil {
+				t.Fatal(err)
+			}
+			m.refresh(dep.Path)
+			m = press(m, "esc")
+			m = selectRow(t, m, dep.ID)
+			m = press(m, k)
+		case "x":
+			m = press(m, k, "superseded", "enter") // the reason first
 		case "J", "K":
 			// One step moves at once; the opposite key undoes it (3xcesq).
 			if m = press(m, k); m.confirm != "" {
@@ -382,6 +400,14 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 		case "e":
 			if !strings.Contains(plain, "Edit "+main.ID+" in subl --wait?") {
 				t.Fatalf("edit wording: %q", plain)
+			}
+		case "d":
+			if !strings.Contains(plain, "Confirm done ") || !strings.Contains(plain, " Dependency?") {
+				t.Fatalf("done wording: %q", plain)
+			}
+		case "x":
+			if !strings.Contains(plain, "Drop "+main.ID+": superseded?") {
+				t.Fatalf("drop wording: %q", plain)
 			}
 		default:
 			if !strings.Contains(plain, "Confirm "+actionNames[k]+" "+main.ID+" Main?") {

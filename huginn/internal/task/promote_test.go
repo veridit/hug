@@ -46,6 +46,9 @@ func TestPromote(t *testing.T) {
 	if _, e = s.Check(nt.ID, 1); e != nil {
 		t.Fatal(e)
 	}
+	if _, e = s.Take(nt.ID, "x"); e != nil { // take before done (6ephqk)
+		t.Fatal(e)
+	}
 	res, e := s.Done(nt.ID)
 	if e != nil {
 		t.Fatal(e)

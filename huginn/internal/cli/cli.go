@@ -66,7 +66,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "next", "rebalance", "types", "states", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -348,7 +348,7 @@ func parse(args []string, allowed string, optionalValue ...string) (flags, error
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary", "undo", strings.TrimPrefix(SyncChildArg, "--")}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -385,7 +385,7 @@ func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
 // as their value. Both accept task:ID, the form running text uses, and are
 // turned into the bare id here so every reply and printed command shows
 // the bare id and runs when pasted into a shell (xxvm6t).
-var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
+var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "resume", "design", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
 var refFlags = []string{"before", "after", "dep", "add", "remove", "parent", "epic"}
 
 func bareRefs(cmd string, f *flags) {
@@ -512,7 +512,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model", "wait": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -887,7 +887,15 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		r, e = changeDependencies(s.s, f.args[0], f.values["add"], f.values["remove"])
 	case "done", "drop":
-		if e = f.count(1); e != nil {
+		if cmd == "drop" {
+			// A reason is required (6ephqk): it becomes dropped_reason.
+			if len(f.args) == 1 {
+				return nil, usage("drop needs a reason: why this task will never be done", "hug task drop "+f.args[0]+` "duplicate of OTHER"`)
+			}
+			if e = f.count(2); e != nil {
+				return nil, e
+			}
+		} else if e = f.count(1); e != nil {
 			return nil, e
 		}
 		if cmd == "done" {
@@ -902,7 +910,35 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 				r, e = s.s.Note(r.Task.ID, task.ReflectionNote(f.get("reflect"), who, time.Now()))
 			}
 		} else {
-			r, e = s.s.Drop(f.args[0])
+			r, e = s.s.Drop(f.args[0], f.args[1])
+		}
+	case "wait":
+		if len(f.args) == 1 {
+			return nil, usage("wait needs what it waits on", "hug task wait "+f.args[0]+` "CI run 123"`)
+		}
+		if e = f.count(2); e != nil {
+			return nil, e
+		}
+		r, e = s.s.Wait(f.args[0], f.args[1], a.whoTakes(f).assignee())
+	case "resume":
+		if e = f.count(1); e != nil {
+			return nil, e
+		}
+		r, e = s.s.Resume(f.args[0])
+	case "design":
+		if f.has("clear") {
+			if e = f.count(1); e != nil {
+				return nil, e
+			}
+			r, e = s.s.Design(f.args[0], "", "")
+		} else {
+			if len(f.args) == 1 {
+				return nil, usage("design needs the question, or --clear when it is answered", "hug task design "+f.args[0]+` "the question"`)
+			}
+			if e = f.count(2); e != nil {
+				return nil, e
+			}
+			r, e = s.s.Design(f.args[0], f.args[1], a.whoTakes(f).assignee())
 		}
 	case "reflections":
 		return a.runReflections(s, f)

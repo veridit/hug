@@ -245,7 +245,7 @@ func TestChangeOnDiskWaitsForPrompt(t *testing.T) {
 	}{
 		{"search prompt", []string{"/", "Al"}},
 		{"palette", []string{":", "status "}},
-		{"confirm", []string{"d"}},
+		{"confirm", []string{"t"}},
 	} {
 		t.Run(open.name, func(t *testing.T) {
 			m, commit := gitBoard(t, "Alpha", "Beta")
