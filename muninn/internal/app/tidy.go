@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/veridit/hug/internal/sharefile"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/store"
@@ -83,7 +84,7 @@ func (a *App) ApplyTidy(ctx context.Context, p tidy.Plan, only string, dry bool)
 	paths := map[string]bool{NativePath(): true}
 	// Check the destination file even for upstream-only batches. MergeImport's
 	// normal loader can repair duplicate IDs, and must not do that during tidy.
-	destination, readErr := os.ReadFile(NativePath())
+	destination, readErr := sharefile.ReadFile(NativePath()) // a save may replace it meanwhile (zd3x24)
 	if readErr != nil && !errors.Is(readErr, os.ErrNotExist) {
 		return result, readErr
 	}

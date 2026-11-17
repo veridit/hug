@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/veridit/hug/internal/sharefile"
 	"github.com/veridit/hug/muninn/internal/shortid"
 )
 
@@ -74,9 +75,10 @@ type nativeFile struct {
 	Memories []NativeMemory `json:"memories"`
 }
 
-// LoadNative reads the native store; a missing file is empty.
+// LoadNative reads the native store; a missing file is empty. It opens the
+// file so a save may rename over it meanwhile (Windows, zd3x24).
 func LoadNative(path string) ([]NativeMemory, error) {
-	b, err := os.ReadFile(path)
+	b, err := sharefile.ReadFile(path)
 	if errors.Is(err, os.ErrNotExist) {
 		return nil, nil
 	}
@@ -172,7 +174,8 @@ func SaveNative(path string, mems []NativeMemory) error {
 	if err := os.WriteFile(tmp, append(b, '\n'), 0o600); err != nil {
 		return err
 	}
-	return os.Rename(tmp, path)
+	// A POSIX replace: it succeeds while readers have the store open (zd3x24).
+	return sharefile.Rename(tmp, path)
 }
 
 func assignNativeSIDs(mems []NativeMemory) {
