@@ -13,7 +13,10 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T16:08"
-stage: "active"
+stage: "waiting"
+waiting_since: "2026-11-17T17:38"
+waiting_asked_by: "hatchling"
+waiting_on: "crab: real replay failed bar part 2 (wrong calls 3 -\u003e 37); park or one named arm?"
 ---
 
 ## Goal
@@ -62,3 +65,4 @@ hatchling 16:40, CORRECTION to the 16:38 spot-check line (I miscounted): I agree
 - 2026-11-17T16:08 todo -> doing/active (take)
 - 2026-11-17T17:33 doing/active -> doing/waiting (wait)
 - 2026-11-17T17:34 doing/waiting -> doing/active (resume); was waiting_asked_by: hatchling; waiting_on: replay: ~370/400, judged blind after; waiting_since: 2026-11-17T17:33
+- 2026-11-17T17:38 doing/active -> doing/waiting (wait)
