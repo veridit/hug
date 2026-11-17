@@ -8,15 +8,11 @@ assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T19:38"
-waiting_on: "check 5: order the Statbus overview by priority, then by owner, with Tab and o (f003cfc), and say it works"
-waiting_since: "2026-11-17T20:44"
-waiting_asked_by: "nautilus"
-waiting_for: "jhf"
 ---
 
 ## Goal
@@ -60,3 +56,4 @@ shipped in v0.7.47 (f003cfc)
 - 2026-11-17T20:03 doing/active -> doing/waiting (wait)
 - 2026-11-17T20:28 doing/waiting -> doing/active (resume); was waiting_asked_by: nautilus; waiting_on: tje4sx first (Jørgen's ruling); resumes after it lands; waiting_since: 2026-11-17T20:03
 - 2026-11-17T20:44 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:10 answered waiting: "check 5: order the Statbus overview by priority, then by owner, with Tab and o (f003cfc), and say it works" -> "I tried the sorting in StatBus and it works", by jhf, for nautilus (doing/waiting -> doing/active)
