@@ -1,13 +1,18 @@
 ---
 id: asr4t2
 title: "hug upgrade does the upgrade and says what changed, per part"
-status: todo
+status: "doing"
 type: bug
 priority: "medium"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T19:12"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ cmd/hug/main.go:62 dispatches setup, tui, upgrade. 6ephqk step 4 (status -> stat
 Jørgen 17:54Z: hug upgrade previews by default; acting needs an explicit flag. crab ruling: 'hug upgrade' prints what it would change per part and ends with 'fix: hug upgrade --apply'; exits 0 when nothing to do, and a distinct non-zero code when changes are pending so scripts notice; 'hug upgrade --apply' does the work. --dry-run is removed (no backward compatibility). The same for 'hug task upgrade'. Messages that say 'next: hug upgrade' stay correct (it is now the preview).
 
 landed f4ee48b on main (dcb20c2..f4ee48b). check 1: TestUpgradeMigratesStateKey (old status: board: upgrade prints 'tasks: 1 tasks moved to state: (was status:)', commits 'hug upgrade: status: -> state: in 1 tasks') and TestUpgradeMovesWaitingFor, TestUpgradeReordersSections. check 2: same test, second run equals 'layout: nothing to do; tasks: nothing to do; variables: nothing to do; memory: nothing to do'. -race -count=1 huginn/internal/cli ok 135.9s. Seid copy: 2520 tasks, see 6ephqk file:seid-upgrade-dry-run.md.
+
+
+## History
+- 2026-11-17T19:12 todo -> doing/active (take)
