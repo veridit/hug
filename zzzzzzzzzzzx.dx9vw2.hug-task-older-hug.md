@@ -1,13 +1,18 @@
 ---
 id: dx9vw2
 title: "hug task: an older hug says the board is newer, with an upgrade fix"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T21:13"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Reflection on ce3dmq (2026-11-17). Possible signal: a board-level layout version
 - [ ] read commands warn once on stderr and still print
 
 ## Notes
+
+
+## History
+- 2026-11-17T21:13 todo -> doing/active (take)
