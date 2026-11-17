@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T23:11"
+done_release: "v0.7.49"
 ---
 
 ## Goal
@@ -39,6 +40,7 @@ kestrel: fix f8237b5 on branch kestrel/3mavpt-2 (ci/3mavpt-win). Tests fail firs
 kestrel: landed 09b85e3..c4da284 (fix commit on main after rebase). Windows CI on ci/3mavpt-win f8237b5, run 44184979182: all 5 jobs success. Earlier throwaway stress 44181620928 on Windows (pre-fix tree, diagnostics only): 40x TestSetupFilesStepRemembered ok 173.334s and 8x -parallel 8 TestSetup* ok 520.654s, no repro, so the original Windows loss stays unexplained beyond the swallowed write; the dump now includes setup stderr, which names a failed write. -race on the rebased tree: cli ok 204.610s, importer ok 2.077s, sharefile ok 1.018s.
 Reflection (open, 2026-11-17, calf): crab's ruling (fix the swallowed error regardless of the stress run) was right: the stress run never reproduced it; nothing misled.
 landed c4da284 on main 2026-11-17: hug setup: remembered checks are written with a temp file of their own and…
+shipped in v0.7.49 (c4da284)
 ## History
 - 2026-11-17T22:48 todo -> doing/active (take)
 - 2026-11-17T23:01 doing/active -> doing/waiting (wait)

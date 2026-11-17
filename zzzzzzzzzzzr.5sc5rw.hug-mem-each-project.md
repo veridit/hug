@@ -51,6 +51,7 @@ Landed 833eee1 on main. Cause: sync's MergeImport keyed note rows by origin repo
 Recall A/B vs the bar (file:5sc5rw-bar.txt, written before the run), judged blind, 0 unjudged: rel/msg all 277 A 0.751 B 0.751, delta +0.000 [+0.000, +0.000] (bar 1 pass); messages injecting a memory and its twin A 0 B 0, folded imp_ twins injected A 5 B 0 (bar 2 pass); relevant-in-A texts missing from B: 0 (bar 3 pass). Side check: frozen recall3 snapshots have 0 twins, injected hits identical in 277 of 277 (only .elapsed differs). file:5sc5rw-ab.txt. End to end on a scratch copy of today's live store (HUG_HOME, live sha a10ccb71 unchanged): preview exit 5 lists 449 + 555 + 1647; --apply folded 2651, backup written; after: 16310 -> 13659 memories, 0 pairs, active (scope,text) 13251 before and after, 0 lost; ids removed 2651, all imp_. file:e2e.txt
 crab 22:20Z: check 3 runs through hug upgrade with the released v0.7.49 (crab says when it is installed, ~23:00Z if CI 44188866860 is green): preview lists 2651, then --apply, then verify 0 pairs and the active count.
 CI 44188866860 on 833eee1: success, all 5 jobs (secrets, bench, test ubuntu/macos/windows).
+shipped in v0.7.49 (833eee1)
 ## History
 - 2026-11-17T22:24 todo -> doing/active (take)
 - 2026-11-17T23:20 doing/active -> doing/waiting (wait)
