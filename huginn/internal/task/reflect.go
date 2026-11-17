@@ -2,7 +2,7 @@ package task
 
 import (
 	"fmt"
-	"os"
+	"github.com/veridit/hug/internal/sharefile"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -75,7 +75,7 @@ func (s *Store) Reflections(all bool) ([]Reflection, error) {
 	}
 	var out []Reflection
 	for _, t := range ts {
-		b, e := os.ReadFile(filepath.Join(s.Root, filepath.FromSlash(t.Path)))
+		b, e := sharefile.ReadFile(filepath.Join(s.Root, filepath.FromSlash(t.Path)))
 		if e != nil || !strings.Contains(string(b), "Reflection (") {
 			continue
 		}

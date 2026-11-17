@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/sharefile"
 	"io/fs"
 	_ "modernc.org/sqlite"
 	"net/url"
@@ -413,7 +414,7 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 			next[path] = old
 			continue
 		}
-		b, e := os.ReadFile(filepath.Join(c.Root, path))
+		b, e := sharefile.ReadFile(filepath.Join(c.Root, path))
 		if e != nil {
 			return stats, e
 		}

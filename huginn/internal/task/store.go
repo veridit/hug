@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/veridit/hug/huginn/internal/id"
+	"github.com/veridit/hug/internal/sharefile"
 	"os"
 	"path/filepath"
 	"sort"
@@ -109,7 +110,7 @@ func (s *Store) Tasks() ([]Task, error) {
 		if !strings.HasSuffix(path, ".md") || d.Type()&os.ModeSymlink != 0 {
 			return nil
 		}
-		b, e := os.ReadFile(path)
+		b, e := sharefile.ReadFile(path)
 		if e != nil {
 			return e
 		}
@@ -153,7 +154,7 @@ func (s *Store) load(ref string) (*Document, []Task, error) {
 	if e != nil {
 		return nil, nil, e
 	}
-	b, e := os.ReadFile(path)
+	b, e := sharefile.ReadFile(path)
 	if e != nil {
 		return nil, nil, e
 	}

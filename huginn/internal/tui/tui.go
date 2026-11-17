@@ -4,6 +4,7 @@ package tui
 import (
 	"context"
 	"fmt"
+	"github.com/veridit/hug/internal/sharefile"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -362,7 +363,7 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 	} else {
 		var docs []*task.Document
 		for _, t := range ts {
-			b, e := os.ReadFile(filepath.Join(s.Root, t.Path))
+			b, e := sharefile.ReadFile(filepath.Join(s.Root, t.Path))
 			if e != nil {
 				sn.readErr = e
 				continue

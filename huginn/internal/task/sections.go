@@ -1,7 +1,7 @@
 package task
 
 import (
-	"os"
+	"github.com/veridit/hug/internal/sharefile"
 	"strings"
 )
 
@@ -165,7 +165,7 @@ func (s *Store) Reorder() ([]string, error) {
 		if e != nil {
 			return changed, e
 		}
-		b, e := os.ReadFile(path)
+		b, e := sharefile.ReadFile(path)
 		if e != nil {
 			return changed, e
 		}

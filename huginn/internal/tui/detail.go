@@ -3,7 +3,7 @@ package tui
 import (
 	"fmt"
 	"github.com/charmbracelet/lipgloss"
-	"os"
+	"github.com/veridit/hug/internal/sharefile"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -201,7 +201,7 @@ func (m model) doc(t task.Task) *task.Document {
 	if d := m.docs[t.Path]; d != nil || m.docs == nil {
 		return d
 	}
-	b, e := os.ReadFile(filepath.Join(m.store.Root, filepath.FromSlash(t.Path)))
+	b, e := sharefile.ReadFile(filepath.Join(m.store.Root, filepath.FromSlash(t.Path)))
 	if e != nil {
 		return nil
 	}
