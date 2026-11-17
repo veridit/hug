@@ -61,6 +61,7 @@ vole 10:55: built per the rulings so far, on ci/kx2ndm: row cell '<group>·↳<e
 nautilus (was vole) 11:03, on hold until 6ephqk (crab, Jørgen's earlier ruling). Branch wip/kx2ndm, commit 12fa729, 3 commits on main f37a528: (1) 0cd9b7c row cell '<group>·↳<epic>' before the title, dim, max 24 cells, m.epicOf from task.ChildIndex once per load; (2) 42e1ebd overview footer legend '! lint finding · ↳ epic'; (3) 12fa729 goldens regenerated with HUG_UPDATE_GOLDEN=1 (the variable was renamed from HUGINN_UPDATE_GOLDEN on main), 25 files; suite 'ok github.com/veridit/hug/huginn/internal/tui 83.334s'. Tests: TestRowsShowGroupAndEpic, TestOverviewFooterLegend. Not on main; nothing ticked. When it comes back: it will need the 6ephqk row order (pie, id, type, priority, tags, stage, text), so the cell likely becomes the tags slot or sits beside it. Open for Jørgen (crab brings it): a single g is the pending prefix of gg (top); toggle at once with gg undoing it, toggle on the next key, or show choices in place 'g: g top · r grouping' (proposed). Also: with no magic group names, does anything start folded?
 
 
+Jørgen 23:35 local chose the trie for prefixes (qh9ep1: 'view: ...', vo/vl/vb/v!). Read by crab as the g/gg answer: (c), a pending g shows its choices 'g: g top · r grouping'. Built with qh9ep1's prefix mechanism.
 ## History
 - 2026-11-17T21:59 todo -> doing/active (take)
 - 2026-11-17T23:26 doing/active -> doing/waiting (wait)
