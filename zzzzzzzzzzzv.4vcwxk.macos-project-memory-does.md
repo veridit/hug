@@ -44,5 +44,6 @@ kestrel 12:55, correction to the 12:53 breakdown, recomputed from the log lines 
 kestrel 13:12, per crab's 12:54 ruling (FetchAfter stays 5 s): 4724750 + ed32f5c make the test assert the design. limit = 2 x (Settle + FetchAfter + 2 s) = 17 s, taken from huginn/run.SyncTimes and muninn/run.SyncTimes, so a constant change moves it. Windows: max(4 x 8.5 s, 40 s) = 40 s, its old value, because I have no Windows durations to justify tightening it. README gains a 'Sharing between clones' section: 'another clone sees a change at its next command, at most about 7 s later'. TestSyncBoundMatchesReadme fails if that sentence and the constants disagree. Local: TestBackgroundSyncTwoClonesRealBinary note 9.16 s, memory 5.63 s, PASS. ci/4vcwxk ed32f5c CI 44088111806 green on all 5 jobs (based on c9ea6ed; I rebase when my landing turn comes). Check 2 still needs three consecutive green macOS main runs after landing.
 
 
+Landed: 38ff464..4ecfa25 on main (b30ec54, 2b59fd3, 42453ee-equivalent, 4ecfa25), CI 44099384892 green on all 5 jobs. Check 2 waits on three consecutive green macOS main runs; 4ecfa25's own main run is the first.
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
