@@ -4,7 +4,7 @@ title: "Every check reports every problem at once, with one fix line"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
