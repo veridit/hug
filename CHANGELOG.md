@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Todos are your own next steps on the task you took; details, evidence, waits and dependencies live in the task. `hug task take` now says so in two lines (`now: todos: your own next steps on ID ... a wait, a dependency or another agent's work is not a todo: hug task note ID "...", hug task dep ID --add OTHER`, then check, note, `hug task done ID, then hug task next`) and ends with `next: hug task show ID`; MCP `task_take` returns the same `guide` and `next`. The AGENTS.md section from `hug setup` states the loop, and `hug setup` now flags a `## Tasks: hug` section from an older hug with the replacement text (tzc9hb).
+
 ## v0.7.39 - 2026-11-17
 
 - The task cache opens in one read instead of decoding 10,000 rows, a write stores only the tasks it changed, and `ls` takes notes and description texts from the cache instead of reading every file: at 10,000 tasks `ls` drops from 1.08 s to 0.45 s, `next`, `show` and `board` from 0.33 s to 0.24-0.26 s, `note` from 0.60 s to 0.51 s. An edit that keeps a file's size and lands in the same clock tick as the last read is now always seen: files modified within 2 s of the last sync are hashed even when size and time match (44w1ev, step 3).

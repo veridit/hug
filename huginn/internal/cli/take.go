@@ -62,6 +62,11 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 	if e == nil {
 		_, e = s.s.Tasks()
 	}
+	// Read the ticket first: its Goal, details and checks are what the
+	// todos are written from (tzc9hb).
+	if e == nil && result.Changed {
+		result.Next = "hug task show " + result.Task.ID
+	}
 	return result, e
 }
 
