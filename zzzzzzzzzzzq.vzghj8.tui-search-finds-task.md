@@ -29,7 +29,7 @@ huginn/internal/tui/tui.go:352 builds the search text from t.Slug, t.Title, t.ID
 
 ## Acceptance
 - [ ] / statbus-402 on a fixture with aliases ["STATBUS-402"] selects that task, and the row shows the matched alias (test + golden)
-- [ ] # STATBUS-402 jumps to the task (test)
+- [x] # STATBUS-402 jumps to the task (test)
 - [ ] on the Statbus board, Jørgen finds a task by an old id he remembers
 
 ## Notes
