@@ -1,7 +1,7 @@
 ---
 id: n2hq8p
 title: "One ticket in doing per agent; a second take says why or refuses"
-status: "doing"
+status: "done"
 type: feature
 priority: "medium"
 assignee: ["kestrel"]
@@ -9,11 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "47sxn2"
-doing_since: "2026-11-17T14:34"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T16:40"
 ---
 
 ## Goal
@@ -47,7 +46,9 @@ kestrel 14:03: CI 44096303450 on 8dc2ea8 green on all 5 jobs (secrets, bench, ub
 kestrel 14:36: push-2 CI 44102357077 on 07ffc27 was red on ubuntu: 'busy_test.go:16: [new First --goal G --accept C]: incomplete-task: missing section Purpose (why); missing section Principle ...' (cli) and the same in mcp busy_test.go:60. fkpyg3 (landed meanwhile) requires purpose and principle on new, and I had not rerun the tests after the rebase. Test-only fix in 812d1f0; touched packages (cli, mcp, task, tui) pass locally. The turn went to wyvern (crab 14:33); push after wyvern with a fresh CI.
 kestrel 15:38: CI 44112302694 on 300abb8 was red on Windows only: '--- FAIL: TestHandEditedNotesSeenByLsAndShow (34.17s)' / 'scale_test.go:62: ls --json notes: "hand edited note", want "HAND EDITED NOTE"'. Same failure on ci/pbh9xq 44109039664; never on main in the last 40 runs. Cause: a timing assumption in the test, not n2hq8p and not the cache. Edit 1's mtime fell more than 2 s (racyWindow) behind the last sync, and cache.go:479 trusts a matching marker outside the window. Fix 21ee039 (crab 15:33, test only): both edits get an mtime inside the window. A 2.5 s pause stays, which failed the old test locally (failing-first evidence). Passes -count=3. Fails when the racy check is removed (mutation probe, reverted).
 kestrel 15:41: landed on main as b8f9000..21ee039 (300abb8 rule plus 21ee039 test fix), fast-forward. Touched packages passed first: 'ok huginn/internal/cli 146.945s', 'ok huginn/internal/mcp 12.140s', 'ok huginn/internal/task 10.492s', 'ok huginn/internal/tui 97.987s'. Main CI 44116988262 running; a red from these commits gets fixed forward (crab 15:37).
+Reflection (open, 2026-11-17, calf): A gap: since fkpyg3, hug task new requires --purpose and --principle, but my tests written before it still passed locally on the old base, and only CI on main showed it. Nothing told me to recheck test fixtures for 'new' after a rule change landed. Also, TestHandEditedNotesSeenByLsAndShow's comment said 'right after a sync' while the test kept an old mtime, so it hid an elapsed-time assumption.
 ## History
 - 2026-11-17T14:34 todo -> doing/active (take)
 - 2026-11-17T15:02 doing/active -> doing/waiting (wait)
 - 2026-11-17T16:40 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: landing turn: right after hatchling (crab 15:09); rebase onto hatchling's push, one fresh CI; waiting_since: 2026-11-17T16:10
+- 2026-11-17T16:40 doing/active -> done (done); was doing_since: 2026-11-17T14:34
