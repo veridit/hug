@@ -42,5 +42,6 @@ Repro case (kestrel, 2026-11-17 13:10): with 4vcwxk in doing (taken 12:51 as kes
 kestrel 13:35, dependency on 6ephqk removed with crab's go (13:34): n2hq8p needs only the doing stages (active, waiting, review, depends) and hug task wait, both on main d198e01; 6ephqk's open steps (upgrade, look) do not touch take.
 
 
+kestrel 13:48, built on main d198e01 as 8dc2ea8 (branch kestrel/n2hq8p, CI 44096303450 running). Rule in the store (task/busy.go: Active, BusyFixes): take into doing is refused when the taker has another doing task whose Stage is active; resume too. Taking a todo/review (it becomes doing/review) is allowed. Refusal: exit 3, 'not taking B: kestrel is on A (title): one ticket in doing at a time' + 3 fix: lines; --json and MCP: fix (first) and fixes (3). Tests: task TestSecondTakeWhileActiveIsRefused (repro, person, review take) and TestTakeAllowedWhenEarlierIsNotActive (waiting, review, depends; after done, wait, back to todo; resume refused), both fail before the fix ('want busy refusal naming aaaaaa, got <nil>'); cli TestSecondTakeRefusedWithThreeFixLines (exact text); mcp TestSecondTakeOverMCPIsRefused; tui TestTakeSecondTaskRefusedInTUI. 11 existing fixtures took several tasks as one name; they now use one name per agent or wait first. Niced full suite exit 0.
 ## History
 - 2026-11-17T14:34 todo -> doing/active (take)
