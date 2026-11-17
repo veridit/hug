@@ -37,7 +37,7 @@ Replaces the 10:56 'stage: reason replaces the title' rule for waiting rows. 'yo
 - [x] a waiting, review or design row renders as two lines with └─ and the reason after the colon; active and ready rows stay one line (goldens at 80 and 140)
 - [x] 'on you' when the wait names the TUI user, else the name; hug setup sets HUG_USER from hug.toml people, and lint flags a --on naming no listed person or agent (test)
 - [x] j/k move by task over two-line rows, and section heights and scrolling count lines correctly (test)
-- [ ] Jørgen sees the hug board with the new rows and says it reads clearly
+- [ ] ~~Jørgen sees the hug board with the new rows and says it reads clearly~~ (not relevant: superseded: Jørgen's later rulings replaced two-line rows (tje4sx: one line, only the focused row expands; 41hhgn: ASKED section, question under the focused row); he confirms those on 41hhgn and 1bbe96, crab, 2026-11-18)
 
 ## Notes
 
