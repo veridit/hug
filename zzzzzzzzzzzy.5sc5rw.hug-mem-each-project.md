@@ -20,7 +20,7 @@ A project memory exists once on this machine, so recall shows it once and hug me
 No capture-code change from the daily check; this is muninn's project-notes import. Fix the identity, not the symptom: a repo-notes row that came from this machine's own capture is that capture, not a new memory. Don't rewrite the store by hand.
 
 ## Relevant details
-Store: ~/Library/Application Support/muninn/memories.json; imp_ ids from muninn/internal/ingest/importer.go importID(origin). Seid scope project:rc-3557a74eab224a4c has 1647 pairs, hug 555, ssb 449. hug mem search also ranks a memory with its twin, crowding out a distinct third result.
+Store: ~/Library/Application Support/muninn/memories.json; imp_ ids from muninn/internal/ingest/importer.go importID(origin). Seid scope project:rc-3557a74eab224a4c has 1647 pairs, hug 555, ssb 449. While both are active, search showed one of the pair (fxa8yb shown, twin pq5c8b not, for 'Seid backlog retirement tracker clerk steps 1-3'), so the harm is after a forget: the twin takes its place. Found and filed by hatchling for crab.
 
 ## Depends on
 
