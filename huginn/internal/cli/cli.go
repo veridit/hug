@@ -223,7 +223,7 @@ func (a *App) whoTakes(f flags) taker {
 		t.At.Worktree = w
 	}
 	if t.Model == "" {
-		t.Model = strings.TrimSpace(env.Get(env.Model))
+		t.Model = takerModel(f)
 	}
 	if t.Name == "" {
 		t.Name = strings.TrimSpace(env.Get(env.User))
@@ -232,6 +232,14 @@ func (a *App) whoTakes(f flags) taker {
 		t.Name = harnessName()
 	}
 	return t
+}
+
+// takerModel is the model a command runs as: --model, else HUG_MODEL.
+func takerModel(f flags) string {
+	if m := strings.TrimSpace(f.get("model")); m != "" {
+		return m
+	}
+	return strings.TrimSpace(env.Get(env.Model))
 }
 
 // assignee is the name the board records for t: the name, else the model.
@@ -491,7 +499,10 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	defer s.c.Close()
 	// Every commit hug makes on the board names the model that made it, the
 	// same one take records (t709he).
-	if m := a.whoTakes(f).Model; m != "" {
+	// Only the model: whoTakes also asks git where the take happens (three
+	// git processes), which no other command needs (44w1ev budget, CI run
+	// 44059170996: ls 4.84 s over 4.8 s under -race).
+	if m := takerModel(f); m != "" {
 		s.r.Trailers = []string{"Model: " + m}
 	}
 	// Writes hold the board turn from reading to committing; take and sync
