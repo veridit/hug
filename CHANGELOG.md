@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.50 - 2026-11-17
+
 - The background task sync (`hug task sync --background-pass`, started by every write) now runs niced, with bounded parallelism, as `hug mem`'s background commands do; its git calls inherit the lower priority (b6jgpn). Before, it ran at full priority. Each pass's line in the sync log ends with the priority it ran at (`nice 10`, or `class below-normal` on Windows). `HUG_FULL_SPEED=1` keeps full priority.
 
 ## v0.7.49 - 2026-11-17
