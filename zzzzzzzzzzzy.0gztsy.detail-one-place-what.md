@@ -4,7 +4,7 @@ title: "Detail: one place for what a task asks of you; open with focus on it"
 state: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
