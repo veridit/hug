@@ -1,13 +1,18 @@
 ---
 id: ce3dmq
 title: "Windows: muninn app tests hit the 10m timeout; placement starts 4 git per lookup"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T19:42"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ app/places.go: Placement calls placementScopes, then PlaceForScope -> Places -> 
 - [ ] windows CI: muninn/internal/app time on main falls from the 290-501 s range, run id in a note
 
 ## Notes
+
+
+## History
+- 2026-11-17T19:42 todo -> doing/active (take)
