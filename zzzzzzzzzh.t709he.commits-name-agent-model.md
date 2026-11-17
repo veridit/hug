@@ -30,7 +30,7 @@ Depends on et85h1 for the identity source (HUG_USER, --as, JCODE_SESSION_ID; HUG
 
 ## Acceptance
 - [x] hug setup installs a commit-msg hook; git commit without a Model: trailer is refused with a fix: line showing it (Model: human for a person); there is no Agent: trailer (test in a temp repo)
-- [ ] commits hug makes on hug/tasks carry Model: from the taker's identity (test)
+- [x] commits hug makes on hug/tasks carry Model: from the taker's identity (test)
 - [ ] hug task log or a documented git log line lists commits by model
 
 ## Notes
