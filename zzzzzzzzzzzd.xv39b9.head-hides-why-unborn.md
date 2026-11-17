@@ -31,7 +31,7 @@ huginn/gitbranch/gitbranch.go Head() (~line 473): rev-parse fails; then symbolic
 
 ## Acceptance
 - [x] a test with a git wrapper that crashes show-ref (exit 139) on an unborn branch gets an error naming show-ref, not 'Needed a single revision'
-- [ ] healthy unborn branch: Head() still returns empty and no error (existing tests pass)
+- [x] healthy unborn branch: Head() still returns empty and no error (existing tests pass)
 
 ## Notes
 
