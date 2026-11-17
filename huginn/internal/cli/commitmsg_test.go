@@ -23,7 +23,7 @@ func tryCommit(t *testing.T, dir string, args ...string) (string, bool) {
 // Model: trailer, with a fix: line whose slot is refused as pasted.
 func TestCommitMsgGate(t *testing.T) {
 	a := app(t)
-	dir := a.Cwd
+	dir := realDir(t, a.Cwd)
 	r := execute(t, a, "install", "commit-msg")
 	hook := filepath.Join(dir, ".git", "hooks", "commit-msg")
 	if r["hook"] != hook || !isOurs(hook) {
@@ -150,7 +150,7 @@ func fastest(t *testing.T, dir string) (gate, plain time.Duration) {
 // puts it back.
 func TestCommitMsgGateChainsExistingHook(t *testing.T) {
 	a := app(t)
-	dir := a.Cwd
+	dir := realDir(t, a.Cwd)
 	hook := filepath.Join(dir, ".git", "hooks", "commit-msg")
 	own := "#!/bin/sh\ngrep -q 'refs: ' \"$1\" || { echo 'own hook: no refs line' >&2; exit 1; }\n"
 	if e := os.WriteFile(hook, []byte(own), 0o755); e != nil {
@@ -183,7 +183,7 @@ func TestCommitMsgGateChainsExistingHook(t *testing.T) {
 // shows the two lines to add and lists the step open until they are there.
 func TestCommitMsgGateWithHooksPath(t *testing.T) {
 	a := app(t)
-	dir := a.Cwd
+	dir := realDir(t, a.Cwd)
 	tracked := filepath.Join(dir, ".githooks", "commit-msg")
 	if e := os.MkdirAll(filepath.Dir(tracked), 0o755); e != nil {
 		t.Fatal(e)
@@ -235,4 +235,17 @@ func TestCommitMsgGateWithHooksPath(t *testing.T) {
 	if out, ok := tryCommit(t, dir, "-m", "no hug here"); !ok {
 		t.Fatalf("lines without hug refused:\n%s", out)
 	}
+}
+
+// realDir is dir as git reports it: t.TempDir is /var/... on macOS, a
+// symlink to /private/var/..., and on Windows may use a short name
+// (RUNNER~1); git rev-parse --path-format=absolute gives the resolved path
+// (CI run 44049449185: the hook path compare failed on both).
+func realDir(t *testing.T, dir string) string {
+	t.Helper()
+	d, e := filepath.EvalSymlinks(dir)
+	if e != nil {
+		t.Fatal(e)
+	}
+	return d
 }
