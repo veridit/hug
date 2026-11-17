@@ -60,5 +60,6 @@ History, multi-line (check 8): the answered line becomes
 Upgrade: each doing/waiting with waiting_for -> doing/asked: asked_what = waiting_on minus a leading 'check N:' (N real -> asked_check), asked_for = waiting_for, asked_since/asked_by/asked_show from the waiting_ fields. Preview lists ID: from -> to; --apply commits once.
 MCP: task_update action ask (to, check, show, text); wait loses on.
 Header picture for all of tonight's rulings is attached to e3sevr as header-spec.md (crab 00:00 local). Build to it. Where it and this ticket differ, tell crab.
+Jørgen 00:12 local, on the WAITING section (18 rows, most '?'): split asked from waiting. 'asked should be a separate section that I really need to address, and waiting is just a place to live for things that aren't active right now.' Ruling (crab): the overview gets an ASKED section at the top, above IN PROGRESS: 'ASKED · for you [N]', the tasks whose stage is asked and asked_for is the viewer, oldest question first. WAITING keeps doing/waiting (CI, a release) and questions asked of someone else. Each ASKED row shows the question in place of the title ('asked: check 9 · look at …'), per the 6ephqk row rule. The header's '? N for you' counts the ASKED section. 1bbe96's rule applies: in ASKED the stage column is uniform, so it is not drawn.
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
