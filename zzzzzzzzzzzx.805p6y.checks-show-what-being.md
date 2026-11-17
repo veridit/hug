@@ -32,3 +32,5 @@ Proposed command: hug task now ID N "text" (MCP task_update action now); hug tas
 - [ ] Jørgen confirms the look on his board after release
 
 ## Notes
+
+Jørgen 2026-11-17 09:00, on the IN PROGRESS section: the board should know what each in-progress task is focused on right now (e.g. 'waiting for CI'), shown on the row, and Enter opens the detail for more. Today the coordinator wrote it as Notes on 44w1ev, m1c28r, t709he, 0hkaa5 and x1t1t1 by hand; this ticket makes it a first-class now-line. Priority: right after zhvkmj.
