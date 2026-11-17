@@ -40,5 +40,6 @@ Today: huginn/internal/cli/setup.go:82-101 offers 'hug task import backlog .back
 Jørgen 2026-11-17 14:47: --cleanup also removes backlog's other traces, in the same commit after the diff is shown: backlog's MCP server in .mcp.json (and other MCP configs hug knows), and backlog's sections in AGENTS.md / CLAUDE.md. Where hug cannot edit something itself (a file it does not own, a tracked hook), the command prints what to remove, addressed to the agent: 'agent: remove ... from FILE', with the exact lines.
 
 
+file:ggydj2-seid-dry-run.md (9631 bytes, sha256:bdff9e31) Seid cleanup dry run (scratch clone)
 ## History
 - 2026-11-17T15:58 todo -> doing/active (take)
