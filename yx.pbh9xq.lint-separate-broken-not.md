@@ -1,16 +1,17 @@
 ---
 id: pbh9xq
 title: "Lint: separate broken from not up to par"
-status: "doing"
+status: "todo"
 type: feature
 priority: "medium"
-assignee: ["wyvern"]
+assignee: []
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+stage: "ready"
 ---
 
 ## Goal
@@ -45,3 +46,7 @@ Codes today (huginn/internal/task/document.go): candidates for broken: dangling-
 Built on ci/pbh9xq (82ddba1 + CHANGELOG), parked behind g9dg32 per crab. Split per code: advice = long-title, no-acceptance, missing-section, section-order; broken = every other code (done-unchecked per Jørgen 2026-11-16), and so is a code missing from the table. Seid copy (2,508 tasks), default lint: before 696 shown (open only) / 1,192 hidden; after 1,141 shown = 445 broken (422 done-unchecked, 17 missing-goal, 6 duplicate-section) + 696 advice on open tasks; 747 advice hidden on closed tasks (422 no-acceptance, 325 section-order). Plain-text output stays bounded: summary plus the first 10. Not changed: recall's board nudge (a recall change needs a measured gain).
 
 Back to todo (crab 13:31; wyvern resumes it after g9dg32). Code: ci/pbh9xq is pushed (82ddba1 plus a CHANGELOG commit), CI 44079521924 green. When rebased onto main, regenerate the narrow-60 golden: HUG_UPDATE_GOLDEN=1 go test -run TestNarrowRowsGolden ./huginn/internal/tui/
+
+
+## History
+- 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
