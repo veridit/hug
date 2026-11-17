@@ -1,7 +1,7 @@
 ---
 id: 4vcwxk
 title: "macOS: a project memory does not reach the other clone within 10 s"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
@@ -11,7 +11,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+done_at: "2026-11-17T16:57"
 ---
 
 ## Goal
@@ -47,3 +47,4 @@ kestrel 15:58, check 2: four consecutive green macOS runs on main after 4ecfa25:
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
 - 2026-11-17T16:57 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: check 2: three consecutive green macOS CI runs on main after 4ecfa25; waiting_since: 2026-11-17T15:22
+- 2026-11-17T16:57 doing/active -> done (done)
