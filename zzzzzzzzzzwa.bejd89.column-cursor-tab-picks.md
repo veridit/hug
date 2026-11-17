@@ -31,7 +31,7 @@ Keys today (huginn/internal/tui/keys.go:20-21): h/←/Shift-Tab = previous pane 
 
 ## Acceptance
 - [x] Tab and Shift-Tab move the column cursor and the header marks the active column; h/l still change section (golden at 80 and 140 columns)
-- [ ] o cycles ▲, ▼ and off on the marked column; in a section the rows reorder within that section; off restores rank order (test)
+- [x] o cycles ▲, ▼ and off on the marked column; in a section the rows reorder within that section; off restores rank order (test)
 - [ ] the active order is shown in the column header and the footer, and survives R reload and a filter change (test)
 - [ ] o no longer switches to the overview; the overview is reached by the header tree key, and help lists both (test)
 - [ ] Jørgen orders the Statbus overview by priority and then by owner with Tab and o, and says it works
