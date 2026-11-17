@@ -1,18 +1,17 @@
 ---
 id: r5r8c1
 title: "take refused by a dependency says 'taken by  (id)': name the blocker"
-state: "doing"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T19:09"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T22:39"
 ---
 
 ## Goal
@@ -36,7 +35,9 @@ cli.go:950 builds 'taken by '+t.Value+' ('+t.ID+')' for Kind 'taken'; the depend
 
 
 kestrel: landed daae7cd (e28f7f6..daae7cd), rebased onto the state rename: first.Status/d.Status became first.State/d.State (store.go:515, cli.go:1411; the rebase built clean only after that). -race on the rebased tree before t3fqaw: task ok 24.113s, cli ok 171.607s; after rebasing onto e28f7f6: task -race ok 23.579s, cli Blocked|Take|Assignee ok 9.360s.
+Reflection (open, 2026-11-17, calf): nothing misled; the rename surfaced as a build error at rebase time, as it should.
 ## History
 - 2026-11-17T19:09 todo -> doing/active (take)
 - 2026-11-17T20:17 doing/active -> doing/waiting (wait)
 - 2026-11-17T22:39 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_for: crab; waiting_on: crab's order: 3mavpt first; branch kestrel/r5r8c1 (ae8e5dd) then rebases onto the state rename; waiting_since: 2026-11-17T20:17
+- 2026-11-17T22:39 doing/active -> done (done); was doing_since: 2026-11-17T19:09
