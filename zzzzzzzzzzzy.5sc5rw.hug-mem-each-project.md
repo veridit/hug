@@ -1,13 +1,18 @@
 ---
 id: 5sc5rw
 title: "hug mem: each project memory has a twin, and forget retires only one"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T22:24"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Store: ~/Library/Application Support/muninn/memories.json; imp_ ids from muninn/
 - [ ] on this machine, after hug upgrade or the next sync, 0 active pairs of a cap_ row and an imp_ row whose origin names it
 
 ## Notes
+
+
+## History
+- 2026-11-17T22:24 todo -> doing/active (take)
