@@ -58,6 +58,7 @@ landed d16fb54 on main 2026-11-17: hug tui: startWatching reads the watch starte
 Checks 1-3 on main 45cbc0b, CI 44127663573 green on all 5 jobs (secrets, bench, ubuntu with -race, macos, windows); it contains 43cb24c, e582ab4 and the race fix d16fb54. 1: TestStartDrawsSnapshotThenRefreshes; 2: TestQuitDoesNotWaitForRefresh and TestQuitDoesNotWaitForWatchSetup (the latter raced on 43cb24c's ubuntu run 44124879024, fixed by d16fb54); 3: TestFirstStartWithoutCacheSaysSo golden with 'reading the board: ...: 1234 of 3630 files', TestProgressCountsReads. Check 4 waits for Jørgen.
 shipped in v0.7.43 (7705bce)
 landed ceb9d1a on main 2026-11-17: hug tui test: TestTmuxReload compares the reloaded hug's frame once it has the…
+landed f9e5664 on main 2026-11-17: hug tui: the first frame has the terminal's size, read from stdout before the…
 ## History
 - 2026-11-17T16:12 todo -> doing/active (take)
 - 2026-11-17T17:21 doing/active -> doing/waiting (wait)
