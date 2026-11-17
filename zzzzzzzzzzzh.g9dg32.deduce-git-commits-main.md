@@ -14,8 +14,8 @@ branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 stage: "waiting"
 doing_since: "2026-11-17T15:09"
-waiting_on: "CI 44102521209, then crab's landing queue"
-waiting_since: "2026-11-17T15:23"
+waiting_on: "CI 44103643647, then crab's landing slot"
+waiting_since: "2026-11-17T15:29"
 waiting_asked_by: "wyvern"
 ---
 
