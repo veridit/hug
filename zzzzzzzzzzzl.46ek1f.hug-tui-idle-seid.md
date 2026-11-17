@@ -50,5 +50,12 @@ Next: the per-change cost (2 loads per commit; taskFiles walks every attachment 
 Correction to my DM to crab at 18:34: 'holding j at 30 keys/s costs about 1.2 s CPU per second' was not measured. I derived it from 40 ms per View times 30 frames/s. Per-View cost is measured: 1.33 s of View samples over 32 counted Views.
 Pushed a64fcc3 (main debb45a..a64fcc3): the watch waits while a writer holds the board turn (gitbranch.TurnHeld, a try of the flock), polling every 50 ms for at most 5 s. TestOneSignalPerWrite fails on main ('gave 2 change signals, want 1', 3 of 3 runs) and fails again with the turn check mutated to false; TestTurnHeld covers the try. -race before the rebase: gitbranch ok 52.5 s, tui ok 896.8 s, cli ok 260.2 s; after the rebase onto debb45a (main touched only tui/picture.go): gitbranch and tui ok. Seid copy, CPU of one hug task note in an open TUI: before 1.0-1.1 s (1.68 -> 2.82 -> 3.74), after 0.50-0.58 s (5.43 -> 6.01 -> 6.51 -> 7.09). Check 3 is ticked once main CI is green.
 landed a64fcc3 on main 2026-11-17: hug tui: one load per write, not two: the watch waits while a writer holds the…
+Pushed 856a8ca (main f24080c..856a8ca), rebased over tje4sx (fb66000, which added a sel argument to heightOf/linesOf; conflicts in render.go and waitrow.go resolved by carrying sel). The board's stages are computed once per load (m.stages, taskStage) along with the progress width, and linesUpTo stops summing past the screen (window, overviewRows want).
+Tests:
+- TestFrameComputesNoStages: fails on main with '434742 task stages' in 3 frames on 2,000 tasks, and again with the cache mutated out.
+- TestFrameRowWorkDoesNotGrowWithBoard: fails on main (overview 12,410 height lookups on 3,000 tasks vs 1,610 on 300; list 3,165 vs 465; board 4,508 vs 908); the early-stop mutation fails 3 of 3 views and the want-cap mutation fails the overview.
+- -race tui: ok 180.3 s on the rebased tree.
+Seid copy (2,520 tasks), ps time, rebased: 30 presses of j cost 2.70 s on main f24080c and 1.57 s on 856a8ca; one note in an open TUI cost 0.63 s on main and 0.49 s on 856a8ca. Before the rebase (over a64fcc3, without tje4sx) the same 30 keys cost 2.53 s -> 0.81 s.
+Not yet done: the remaining per-key cost (1.57 s per 30 keys = 52 ms per key, unprofiled after the rebase). Checks 4 and 5 are ticked on green main CI.
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
