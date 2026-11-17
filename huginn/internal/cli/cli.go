@@ -34,25 +34,45 @@ Use --json with any command. IDs, unique prefixes, slugs and aliases work.
   init                      hug task init
   new                       hug task new "Fix retry" --type bug --goal "Retries work" --accept "Test passes"
   ls                        hug task ls --state todo --label api --mine
+  search                    hug task search retry --state todo
   show                      hug task show k7m2qx
-  edit                      hug task edit k7m2qx
-  move                      hug task move k7m2qx --before p3rt9a
-  mv                        hug task mv k7m2qx auth
+  board                     hug task board --mine
+  next                      hug task next --type bug --priority high --group auth
   take                      hug task take k7m2qx --model claude-opus-5-5
-  done                      hug task done k7m2qx --reflect "the line 'X' in AGENTS.md made me Y"
-  reflections               hug task reflections
   check                     hug task check k7m2qx 1
   strike                    hug task strike k7m2qx 2 --reason "replaced by the API test"
   note                      hug task note k7m2qx "Test evidence"
-  dep                       hug task dep k7m2qx --add p3rt9a
+  attach                    hug task attach k7m2qx screen.png --note "what this shows"
+  detach                    hug task detach k7m2qx screen.png
+  done                      hug task done k7m2qx --reflect "the line 'X' in AGENTS.md made me Y"
+  reflections               hug task reflections
+  wait                      hug task wait k7m2qx "CI run 123"
+  ask                       hug task ask k7m2qx --to jhf --check 9 "does it read clearly?"
+  resume                    hug task resume k7m2qx
+  review                    hug task review k7m2qx --by jhf
+  design                    hug task design k7m2qx "which layout?" --for jhf
+  answer                    hug task answer k7m2qx "the second one"
+  request                   hug task request k7m2qx "split check 3 in two"
+  requests                  hug task requests
+  resolve                   hug task resolve k7m2qx 1 "split into checks 3 and 4"
+  coordinator               hug task coordinator crab
+  edit                      hug task edit k7m2qx
   set                       hug task set k7m2qx --priority high --label api
-  drop                      hug task drop k7m2qx
-  next                      hug task next --type bug --priority high --group auth
+  dep                       hug task dep k7m2qx --add p3rt9a
+  promote                   hug task promote k7m2qx 2
+  move                      hug task move k7m2qx --before p3rt9a
+  mv                        hug task mv k7m2qx auth
+  drop                      hug task drop k7m2qx "why never"
   rebalance                 hug task rebalance
   types                     hug task types
+  states                    hug task states
+  people                    hug task people
+  models                    hug task models
   lint                      hug task lint
+  deduce                    hug task deduce --since v0.7.40
   sync                      hug task sync
   import                    hug task import backlog ./backlog
+  upgrade                   hug task upgrade
   tui                       hug task tui
   mcp                       hug task mcp
   install                   hug task install jcode --all-instances
