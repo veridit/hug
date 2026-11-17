@@ -161,6 +161,10 @@ func TestFocusHintsAreHonest(t *testing.T) {
 						t.Fatalf("%s changed something without asking or saying why not", w)
 					}
 				}
+			case "a":
+				if after = press(fresh, "a"); after.prompt == "" && after.message == "" {
+					t.Fatal("a shown but opened no answer input")
+				}
 			case "N":
 				if after = press(fresh, "N"); after.prompt != "new title" {
 					t.Fatalf("N did not open the new title prompt: %q", after.prompt)
