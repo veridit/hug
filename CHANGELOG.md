@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug mem remember` never reads as success when it stored nothing (p29rbz). Its three refusals (a near-duplicate, a possible secret, a project-specific note sent global) start `NOT STORED:` and exit 3 (other errors exit 1; `hug mem remember --help` says so); the MCP `memory_remember` reply is an error result that starts `NOT STORED:`. Before, the CLI said `hug mem: not stored yet: ...`, and a Seid agent took a near-duplicate refusal for a stored memory, forgot the original and lost both.
+
 ## v0.7.42 - 2026-11-17
 
 - Faster commands on big boards (44w1ev): the board walk reads each folder once and checks files on 4 threads, and `show`, `take` and `lint` read only what they need. On the Seid board (2,519 tasks): `hug task lint` 7.1 s -> 0.55 s, `show` 3.4 s -> 0.15 s, and quitting `hug tui` 2.9 s -> 0.3 s.

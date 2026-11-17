@@ -557,7 +557,7 @@ func (b Binding) Remember(ctx context.Context, a *App, content, category, scope 
 type SecretCheckError struct{ Hint string }
 
 func (e *SecretCheckError) Error() string {
-	return "not stored yet: this looks like it may contain " + e.Hint + ". Are you sure there are no secrets here? " +
+	return NotStored + " this looks like it may contain " + e.Hint + ". Are you sure there are no secrets here? " +
 		"If it is safe (for example a browser key that ships in public pages, a secrets.NAME reference, a placeholder, or a URL meant to be shared), " +
 		"store it again with a reason saying why (CLI --safe-reason, MCP safe_reason). Otherwise remove the secret and store the rest."
 }

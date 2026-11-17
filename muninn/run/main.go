@@ -47,6 +47,12 @@ func (v viewFlags) binding(a *app.App) app.Binding {
 // Version is set by the release build (-X).
 var Version = "dev"
 
+// ExitNotStored is the exit code of hug mem remember when it refused to
+// store (a near-duplicate, a possible secret, a project-specific note sent
+// global): the output starts "NOT STORED:" and asks its question (p29rbz).
+// Other errors exit 1.
+const ExitNotStored = 3
+
 // Main runs muninn with args (without the program name) and returns the exit code.
 func Main(args []string) int {
 	root := &cobra.Command{
@@ -95,6 +101,12 @@ func Main(args []string) int {
 	}
 	if err := root.Execute(); err != nil {
 		pprof.StopCPUProfile()
+		// A refusal of remember is printed as is, first, with its own
+		// exit code: it must never read as success (p29rbz).
+		if app.Refusal(err) {
+			fmt.Fprintln(os.Stderr, err)
+			return ExitNotStored
+		}
 		err = store.ExplainBusy(config.DBPath(), err)
 		fmt.Fprintln(os.Stderr, "hug mem:", err)
 		if strings.HasPrefix(err.Error(), "unknown command") {
@@ -118,9 +130,13 @@ func topLevel(c *cobra.Command) string {
 	return c.Name()
 }
 
+// openApp opens the app for a command; tests swap it to give commands a
+// fixture's app (with its synthetic embedder).
+var openApp = app.Open
+
 func withApp(fn func(ctx context.Context, a *app.App) error) error {
 	ctx := context.Background()
-	a, err := app.Open(ctx)
+	a, err := openApp(ctx)
 	if err != nil {
 		return err
 	}
@@ -274,6 +290,7 @@ func rememberCmd() *cobra.Command {
 	var tags []string
 	var inProject bool
 	c := &cobra.Command{Use: "remember <text>", Short: "Store a memory", Args: cobra.MinimumNArgs(1),
+		Long: "Store a memory.\n\nWhen remember refuses (a near-duplicate, a possible secret, or a project-specific note sent global) it stores nothing: the output starts \"NOT STORED:\", asks its question with the flag that answers it, and the exit code is 3. Other errors exit 1.",
 		RunE: func(_ *cobra.Command, args []string) error {
 			return withApp(func(ctx context.Context, a *app.App) error {
 				cwd, _ := os.Getwd()

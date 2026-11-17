@@ -24,6 +24,10 @@ func TestMCPRememberDuplicateQuestionAndAnswers(t *testing.T) {
 	if !bad || !strings.Contains(out, "Same fact?") {
 		t.Fatal("missing duplicate question", out)
 	}
+	// p29rbz: the refusal is an error result and says so first.
+	if !strings.HasPrefix(out, "NOT STORED:") {
+		t.Fatalf("refusal must start NOT STORED: %q", out)
+	}
 	args["new_reason"] = "Synthetic distinction from the existing policy."
 	out, bad = call(t, cs, "memory_remember", args)
 	if bad {

@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -20,7 +21,21 @@ type DuplicateCheckError struct {
 }
 
 func (e *DuplicateCheckError) Error() string {
-	return fmt.Sprintf("not stored yet: this looks like memory %s: %q (cosine %.3f). Same fact? Reinforce it (CLI --reinforce %s, MCP reinforce), or store anyway with a reason (CLI --new-reason, MCP new_reason).", e.SID, e.Text, e.Score, e.SID)
+	return fmt.Sprintf(NotStored+" this looks like memory %s: %q (cosine %.3f). Same fact? Reinforce it (CLI --reinforce %s, MCP reinforce), or store anyway with a reason (CLI --new-reason, MCP new_reason).", e.SID, e.Text, e.Score, e.SID)
+}
+
+// NotStored begins every refusal of remember (p29rbz): a refusal must never
+// read as success. A Seid agent took "not stored yet: ... Same fact?" for a
+// stored memory, forgot the original, and lost both.
+const NotStored = "NOT STORED:"
+
+// Refusal reports whether err is one of remember's questions (duplicate,
+// secret, place): nothing was written, and the writer must answer it.
+func Refusal(err error) bool {
+	var d *DuplicateCheckError
+	var s *SecretCheckError
+	var p *PlaceCheckError
+	return errors.As(err, &d) || errors.As(err, &s) || errors.As(err, &p)
 }
 
 // RememberDecision carries the writer's answer to the duplicate question.

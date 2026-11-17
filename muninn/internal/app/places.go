@@ -160,7 +160,7 @@ func (b Binding) PlaceForScope(scope string) Place {
 type PlaceCheckError struct{ Hint string }
 
 func (e *PlaceCheckError) Error() string {
-	return fmt.Sprintf("not stored yet: This mentions %s from this project. Are you sure it applies beyond it? Store again with a reason (CLI --place-reason, MCP/web place_reason), or use place here.", e.Hint)
+	return fmt.Sprintf(NotStored+" this mentions %s from this project. Are you sure it applies beyond it? Store again with a reason (CLI --place-reason, MCP/web place_reason), or use place here.", e.Hint)
 }
 
 var placementPath = regexp.MustCompile(`[[:alnum:]_.-]+(/[[:alnum:]_.-]+)+`)
