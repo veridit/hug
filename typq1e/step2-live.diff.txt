@@ -1,0 +1,166 @@
+diff --git a/muninn/cmd/capture4/main.go b/muninn/cmd/capture4/main.go
+index 3f52e22..ff2a74e 100644
+--- a/muninn/cmd/capture4/main.go
++++ b/muninn/cmd/capture4/main.go
+@@ -71,7 +71,7 @@ func main() {
+ 		names = append(names, n)
+ 	}
+ 	sort.Strings(names)
+-	m := agents.New(names)
++	m := agents.New(names).Live(ss, time.Now())
+ 
+ 	f, err := os.Open(*items)
+ 	if err != nil {
+diff --git a/muninn/internal/agents/agents.go b/muninn/internal/agents/agents.go
+index dfe0862..ed60e5b 100644
+--- a/muninn/internal/agents/agents.go
++++ b/muninn/internal/agents/agents.go
+@@ -122,6 +122,43 @@ type Matcher struct {
+ 	// anyName prefilters: one pass over the text for every name, so a store
+ 	// of 30,000 memories costs one regex each, not one per agent name.
+ 	anyName *regexp.Regexp
++	// live: names of recent sessions that are not also ordinary words; such
++	// a name is an agent wherever it stands (typq1e step 2). Set by Live.
++	live map[string]bool
++}
++
++// word: session names that are also ordinary words on the store ("64GB
++// RAM", "btrfs COW", "mouse input", "Irving v. Penguin", hand-read
++// 2026-11-17). They keep the context rules, as the common nouns do.
++var word = map[string]bool{"ram": true, "cow": true, "mouse": true, "fish": true, "penguin": true, "turkey": true, "herb": true,
++	"maple": true, "clover": true, "daisy": true, "seedling": true, "mushroom": true, "sunflower": true, "evergreen": true,
++	"palmtree": true, "blossom": true, "horse": true, "dog": true, "owl": true, "eagle": true, "dove": true, "ox": true, "rat": true,
++	"chick": true, "calf": true, "hog": true, "boar": true, "lizard": true}
++
++// LiveWithin: a session written to within this long makes its name live.
++var LiveWithin = 30 * 24 * time.Hour
++
++// Live marks the names of sessions written to within LiveWithin of now
++// as agents wherever they stand, except common nouns and ordinary words.
++// The harness session list is the certain signal: no person or product
++// here is called "jaguar" or "orangutan" (typq1e).
++func (m *Matcher) Live(sessions map[string][]Session, now time.Time) *Matcher {
++	if m == nil {
++		return m
++	}
++	m.live = map[string]bool{}
++	for n, ss := range sessions {
++		if _, known := m.p[n]; !known || common[n] || word[n] {
++			continue
++		}
++		for _, s := range ss {
++			if now.Sub(s.Last) < LiveWithin {
++				m.live[n] = true
++				break
++			}
++		}
++	}
++	return m
+ }
+ 
+ // New builds a matcher for names.
+@@ -177,6 +214,11 @@ func (m *Matcher) Find(text string) []string {
+ 	return out
+ }
+ 
++// joined: a name glued to what comes before it is part of an identifier or
++// a compound, not an agent: "claude-oauth@claude-otter" (a model route),
++// "cry-wolf", "`.zebra`" (hand-read on the store, typq1e).
++var joined = regexp.MustCompile(`(?:\w-|[@.])$`)
++
+ // determiner before a common noun, or one word before it, makes it the
+ // thing: "the spider", "a bug", "a house spider", "a compiler bug".
+ var determiner = regexp.MustCompile(`(?i)\b(?:a|an|the|this|that|these|those|each|every|any|no|some|one|its|their|our|my|your)\s+(?:[a-z]+\s+)?$`)
+@@ -190,20 +232,30 @@ var determiner = regexp.MustCompile(`(?i)\b(?:a|an|the|this|that|these|those|eac
+ // and a common noun after a determiner ("the spider") is the thing.
+ func (m *Matcher) FindIn(text, context string) []string {
+ 	out := m.Find(text)
+-	if m == nil || m.anyName == nil || context == "" {
++	if m == nil || m.anyName == nil {
+ 		return out
+ 	}
+ 	have := map[string]bool{}
+ 	for _, n := range out {
+ 		have[n] = true
+ 	}
+-	for _, n := range m.Find(context) {
++	// Candidates: names the context uses as agents, and live names (Live).
++	var cands []string
++	if context != "" {
++		cands = m.Find(context)
++	}
++	for _, w := range m.anyName.FindAllString(text, -1) {
++		if n := strings.ToLower(w); m.live[n] {
++			cands = append(cands, n)
++		}
++	}
++	for _, n := range cands {
+ 		if have[n] {
+ 			continue
+ 		}
+ 		re := regexp.MustCompile(`(?i)\b` + regexp.QuoteMeta(n) + `\b`)
+ 		for _, loc := range re.FindAllStringIndex(text, -1) {
+-			if tag.MatchString(text[loc[1]:]) || common[n] && determiner.MatchString(text[:loc[0]]) {
++			if tag.MatchString(text[loc[1]:]) || joined.MatchString(text[:loc[0]]) || common[n] && determiner.MatchString(text[:loc[0]]) {
+ 				continue
+ 			}
+ 			out, have[n] = append(out, n), true
+diff --git a/muninn/internal/agents/agents_test.go b/muninn/internal/agents/agents_test.go
+index e55d43b..16c93af 100644
+--- a/muninn/internal/agents/agents_test.go
++++ b/muninn/internal/agents/agents_test.go
+@@ -70,6 +70,34 @@ func TestFindIn(t *testing.T) {
+ 	}
+ }
+ 
++// typq1e step 2: a recent session's name is an agent wherever it stands
++// ("jaguar added a test hook", "via squid"), with no context words in the
++// memory or its transcript; common nouns, ordinary words ("64GB RAM"),
++// identifiers ("claude-oauth@claude-otter") and stale sessions are not.
++func TestLive(t *testing.T) {
++	now := time.Date(2026, 11, 17, 20, 0, 0, 0, time.UTC)
++	recent := []Session{{Path: "a", Start: now.Add(-48 * time.Hour), Last: now.Add(-time.Hour)}}
++	stale := []Session{{Path: "b", Start: now.Add(-90 * 24 * time.Hour), Last: now.Add(-60 * 24 * time.Hour)}}
++	ss := map[string][]Session{"jaguar": recent, "squid": recent, "otter": recent, "ram": recent, "spider": recent, "macaque": stale}
++	m := New([]string{"jaguar", "macaque", "otter", "ram", "spider", "squid"}).Live(ss, now)
++	for text, want := range map[string][]string{
++		"Brovs-4678: jaguar added an unexported atomic test hook to the regression test.": {"jaguar"},
++		"Drill attempt 5 (via squid) restored latest and PITR fine.":                      {"squid"},
++		"Rune has 62 GB RAM and 8 CPUs.":                                                  nil,
++		"Spider webs on the rack are not a defect.":                                       nil,
++		"Model route claude-oauth@claude-otter:claude-opus-5-5 at high effort.":           nil,
++		"Macaque implemented the F2 fix twice in September.":                              nil,
++	} {
++		if got := m.FindIn(text, ""); !reflect.DeepEqual(got, want) {
++			t.Errorf("%q: got %v, want %v", text, got, want)
++		}
++	}
++	// Without Live, the same text keeps the context rules.
++	if got := New([]string{"jaguar"}).FindIn("Brovs-4678: jaguar added a test hook.", ""); got != nil {
++		t.Errorf("no Live: %v", got)
++	}
++}
++
+ func TestMeant(t *testing.T) {
+ 	day := func(d int) time.Time { return time.Date(2026, 11, d, 12, 0, 0, 0, time.UTC) }
+ 	// orangutan in September (1-3) and again today (10-11): a memory from
+diff --git a/muninn/internal/app/agents.go b/muninn/internal/app/agents.go
+index 4e3f1be..08d524d 100644
+--- a/muninn/internal/app/agents.go
++++ b/muninn/internal/app/agents.go
+@@ -199,7 +199,14 @@ func (a *App) captureMatcher() *agents.Matcher {
+ 	if agentNamesFor.m != nil && agentNamesFor.key == key {
+ 		return agentNamesFor.m
+ 	}
+-	agentNamesFor.key, agentNamesFor.m = key, agents.New(agents.Names(homes))
++	// Live names count wherever they stand in a candidate (typq1e step 2).
++	ss := agents.Sessions(homes)
++	names := make([]string, 0, len(ss))
++	for n := range ss {
++		names = append(names, n)
++	}
++	sort.Strings(names)
++	agentNamesFor.key, agentNamesFor.m = key, agents.New(names).Live(ss, time.Now())
+ 	return agentNamesFor.m
+ }
+ 
