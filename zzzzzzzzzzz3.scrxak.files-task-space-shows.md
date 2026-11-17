@@ -13,9 +13,10 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "CI on ci/scrxak (0ea1611), then landing turn after 3jtfw9"
-waiting_since: "2026-11-17T15:08"
+waiting_on: "check 5: look through the TASK-2034.02 evidence on Seid with Space and n/p in a task's FILES (on main af51fc3)"
+waiting_since: "2026-11-17T17:17"
 waiting_asked_by: "nautilus"
+waiting_for: "jhf"
 ---
 
 ## Goal
