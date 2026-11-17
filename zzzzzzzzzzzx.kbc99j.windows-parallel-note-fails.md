@@ -11,6 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing turn: checks 1-2 ticked; combined with 4vcwxk on kestrel/land-kbc99j-4vcwxk, queued after hatchling (crab 13:29)"
+waiting_since: "2026-11-17T14:33"
+waiting_asked_by: "calf"
+stage: "waiting"
 ---
 
 ## Goal
@@ -38,3 +42,7 @@ hatchling 12:57, two more: main CI 44084323148 (206038a) windows TestParallelNot
 kestrel 13:11, cause and fix. Probe 4a2c487 (TestAtomicWriteRacesReads: 4 readers with os.ReadFile, 1 writer with AtomicWrite, 2 s) on ci/kbc99j, windows CI 44086864807, before the fix: 'atomic_race_test.go:65: 11646 reads, 169 writes' and 'atomic_race_test.go:73: 6 of 11646 reads failed (first: open ...\h.race.md: The process cannot access the file because it is being used by another process.), 165 of 169 writes failed (first: rename ...\.huginn-2869333018 ...\h.race.md: Access is denied.), 0 torn reads'. macOS and ubuntu passed the same probe. Cause: Go's os.Open on Windows shares read and write but not delete (syscall_windows.go: sharemode FILE_SHARE_READ|FILE_SHARE_WRITE), and os.Rename is MoveFileEx(REPLACE_EXISTING), so a read and a rename over the same task file fail each other; the board turn covers writers, but readers are outside it. The ticket's suspect 'read outside the turn' is that, and AtomicWrite's rename is the other half. Fix: internal/sharefile, where Open shares delete (CreateFile with FILE_SHARE_DELETE) and Rename uses os.Root.Rename, which is FILE_RENAME_POSIX_SEMANTICS on Windows. The task-file readers (cache, store, sections, files, reflect, tui detail and tui, cli) and AtomicWrite use it. Fix commit on ci/kbc99j, CI 44090177314 with a temporary -count=20 Windows step.
 
 kestrel 13:29, CI 44090177314 on dd3e1ff (fix a45bec0 + TEMP step) green on all 5 jobs. The Windows step 'go test -count=20 -run TestParallelNotesWithoutRemoteAllLand|TestAtomicWriteRacesReads|TestRenameOverOpenFile' printed: 'ok  github.com/veridit/hug/huginn/internal/cli 282.515s', 'ok  github.com/veridit/hug/huginn/internal/task 40.599s', 'ok  github.com/veridit/hug/internal/sharefile 0.121s'. Before the fix, the same probe failed on windows CI 44086864807 (note 13:11). The TEMP step is dropped before landing.
+
+
+## History
+- 2026-11-17T14:33 doing -> doing/waiting (wait)
