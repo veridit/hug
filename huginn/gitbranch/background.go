@@ -128,6 +128,16 @@ func (b Background) Queued() bool {
 	return false
 }
 
+// Pending reports a syncer Nudge started that has not taken its place in
+// the queue yet, however long its start takes: the child removes the
+// marker once it holds the queue (or finds another syncer there). Queued
+// stops counting it after pendingFor, so a start that died does not hold
+// nudges back; a caller waiting for the pass itself (a test) waits on this.
+func (b Background) Pending() bool {
+	_, e := os.Stat(b.base + ".pending")
+	return e == nil
+}
+
 // Busy reports a pass queued, starting or running.
 func (b Background) Busy() bool {
 	if b.Queued() {

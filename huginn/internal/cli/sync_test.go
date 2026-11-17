@@ -22,6 +22,10 @@ import (
 
 // runSyncChild is TestMain's child mode: run the background pass and exit.
 func runSyncChild() {
+	// A slow start, as a loaded Windows runner gives (TestSettledWaitsForSlowChild).
+	if d, e := time.ParseDuration(os.Getenv(childDelay)); e == nil {
+		time.Sleep(d)
+	}
 	cwd, _ := os.Getwd()
 	a := &App{Cwd: cwd, In: strings.NewReader(""), Out: os.Stdout, Err: os.Stderr}
 	os.Exit(a.Run(context.Background(), []string{"sync", SyncChildArg}))
@@ -82,7 +86,10 @@ func offline(a *App, f func()) {
 	f()
 }
 
-// settled waits until no background pass runs or is queued for a's board.
+// settled waits until no background pass runs, is queued, or has been
+// started and not yet queued for a's board. It waits on the child, never on
+// a clock: a child slower to start than pendingFor (Windows CI under
+// parallel tests, run 44107306302) is still waited for.
 func settled(t *testing.T, a *App) {
 	t.Helper()
 	r, e := gitbranch.Open(a.Cwd, TaskBranch, TaskDir)
@@ -95,7 +102,7 @@ func settled(t *testing.T, a *App) {
 	}
 	deadline := time.Now().Add(30 * time.Second)
 	for time.Now().Before(deadline) {
-		if !bg.Busy() {
+		if !bg.Busy() && !bg.Pending() {
 			return
 		}
 		time.Sleep(50 * time.Millisecond)
@@ -123,6 +130,26 @@ func until(d time.Duration, f func() bool) bool {
 		}
 	}
 	return f()
+}
+
+// childDelay holds a spawned pass back before it starts (tests only).
+const childDelay = "HUG_TEST_CHILD_DELAY"
+
+// settled waits for the pass a write started, however slowly the child
+// starts: one slower than pendingFor (5 s) made settled return before the
+// pass ran, and TestBackgroundSyncConflictKeepsCommits failed on Windows CI
+// ("ls after a conflict: 0", runs 44096836969, 44098427171, 44107306302).
+func TestSettledWaitsForSlowChild(t *testing.T) {
+	t.Parallel()
+	a, _, bare := clones(t)
+	id := execute(t, a, "new", "Slow start", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	settled(t, a)
+	a.Sync.Env = append(a.Sync.Env, childDelay+"=6s")
+	execute(t, a, "note", id, "after a slow start")
+	settled(t, a)
+	if got := git(t, bare, "log", "-1", "--format=%s", TaskBranch); !strings.Contains(got, "note "+id) {
+		t.Fatalf("settled returned before the pass pushed; remote head: %q", got)
+	}
 }
 
 // Check 1: a note in clone A shows up in clone B within 10 s, nobody syncs.
