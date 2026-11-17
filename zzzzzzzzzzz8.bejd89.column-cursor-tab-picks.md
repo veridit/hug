@@ -24,7 +24,6 @@ Keys today (huginn/internal/tui/keys.go:20-21): h/←/Shift-Tab = previous pane 
 
 ## Depends on
 
-- 6ephqk
 ## Acceptance
 - [ ] Tab and Shift-Tab move the column cursor and the header marks the active column; h/l still change section (golden at 80 and 140 columns)
 - [ ] o cycles ▲, ▼ and off on the marked column; in a section the rows reorder within that section; off restores rank order (test)
