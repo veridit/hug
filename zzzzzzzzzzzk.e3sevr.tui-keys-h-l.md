@@ -76,5 +76,6 @@ file:header-spec.md (5528 bytes, sha256:daa22937) replaces sha256:cda72b68
 file:header-spec.md (5952 bytes, sha256:32713c2e) replaces sha256:daa22937
 Jørgen 00:44 local, on the file viewer footer 'n next file · p previous file': 'it should be *n*ext etc., not a repeat but a highlight.' Rule for every footer and hint line: a key that is a letter of its action word is shown as that letter highlighted inside the word ('next file · previous file', with n and p in the key colour, underlined), the same way the view line marks 'view: overview list board'. A key that is not in the word keeps its own label: Enter, Esc, Space, Tab, j/k, arrows, '?', '/'. If the letter isn't in the word, the label stays too ('y yank' stays only if y isn't marked, it is: 'yank').
 Jørgen 00:45 local: 'next- · previous file' (n and p highlighted). Adjacent hints that share their last word write it once, on the last of them; the earlier ones end in '-' (suspended hyphen, like 'pre- and post-war'). E.g. 'next- · previous file', 'previous- · next task'. Only for neighbours in the same footer with the same last word.
+Jørgen 00:45:54 local: hints that share a word are joined with ', ' not ' · ': 'next-, previous file'. The ' · ' stays between unrelated hints, so a group reads as one item: 'next-, previous file · edit · Esc back'.
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
