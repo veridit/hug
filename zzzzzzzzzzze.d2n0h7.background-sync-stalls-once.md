@@ -1,13 +1,18 @@
 ---
 id: d2n0h7
 title: "Background sync stalls once in ~30 CI runs (ParallelNotesAllLand)"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T00:45"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ kestrel: not reproduced in 10+12+4 runs (cli package -race loop, 10 runs of whic
 landed 839e593 on main 2026-11-17: test(cli): a stalled background pass says which wait it is in and what the pass…
 
 shipped in v0.7.49 (839e593)
+
+
+## History
+- 2026-11-18T00:45 todo -> doing/active (take)
