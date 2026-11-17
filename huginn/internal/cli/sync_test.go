@@ -46,9 +46,17 @@ func clones(t *testing.T) (a, b *App, bare string) {
 	if e := os.WriteFile(filepath.Join(bare, "hooks", "post-receive"), []byte(hook), 0o755); e != nil {
 		t.Fatal(e)
 	}
+	// The repository's own config, which this process's git and the
+	// spawned passes both read: the passes run without the machine's git
+	// config (Sync.Env below), so a setting from it must not decide what
+	// either sees. Windows runners set core.autocrlf=true system-wide: this
+	// process checked task files out with CRLF, the pass (without it) saw
+	// them modified and skipped as "uncommitted task edits" (CI run
+	// 44114739181, 7 of 8 runs of TestBackgroundSyncConflictKeepsCommits).
 	identity := func(dir string) {
 		git(t, dir, "config", "user.name", "Test")
 		git(t, dir, "config", "user.email", "test@example.invalid")
+		git(t, dir, "config", "core.autocrlf", "false")
 	}
 	one := filepath.Join(base, "one")
 	git(t, base, "init", "-b", "main", one)
@@ -80,8 +88,14 @@ func clones(t *testing.T) (a, b *App, bare string) {
 	return a, b, bare
 }
 
-// offline runs f with a's background sync off, then turns it back on.
-func offline(a *App, f func()) {
+// offline runs f with a's background sync off, then turns it back on. A
+// pass already started (by init or an earlier write) is waited for first:
+// turning spawning off does not stop it, and one that ran inside f pushed
+// the other clone's edit early (TestBackgroundSyncConflictKeepsCommits with
+// the child held back 1 s: "[sync]: sync conflicts: ... (rebase aborted)").
+func offline(t *testing.T, a *App, f func()) {
+	t.Helper()
+	settled(t, a)
 	saved := a.Sync.Spawn
 	a.Sync.Spawn = nil
 	defer func() { a.Sync.Spawn = saved }()
@@ -218,7 +232,7 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	git(t, a.Cwd, "remote", "set-url", "origin", "ssh://hang.invalid/remote.git")
 	git(t, a.Cwd, "config", "core.sshCommand", "sleep 5; false")
 	var baseline time.Duration
-	offline(a, func() {
+	offline(t, a, func() {
 		start := time.Now()
 		execute(t, a, "note", id, "baseline, no background sync")
 		baseline = time.Since(start)
@@ -255,8 +269,8 @@ func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
 	a, b, bare := clones(t)
 	// Both clones edit offline from each other first.
 	var id string
-	offline(a, func() {
-		offline(b, func() {
+	offline(t, a, func() {
+		offline(t, b, func() {
 			id = execute(t, a, "new", "Contested", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 			execute(t, a, "sync")
 			execute(t, b, "sync")
