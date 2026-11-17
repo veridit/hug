@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.40 - 2026-11-17
 
 - One set of variable names: every setting hug reads is `HUG_*` (`HUG_HOME`, `HUG_USER`, `HUG_MODEL`, `HUG_SYNC`, ...). A variable still set under its old `HUGINN_*` or `MUNINN_*` name is ignored, and every `hug` command says which one, with a `fix:` line naming the new name. `hug upgrade` renames the old names where hug wrote them (its own hook commands and MCP server entries in the Claude Code, Claude Desktop, Codex and Jcode configs), keeping a `.bak-hug-upgrade` copy, and never touches anyone else's entries (m1c28r).
 - The 10,000-task benchmark is out of the normal tests: it runs only with `HUG_BENCH=1`, in its own CI job (ubuntu, no race detector), and fails when a warm command costs more than half of the same command without the cache, measured side by side in one process, instead of against a fixed time that slow runners crossed (ubuntu 4.93 s over 4.8 s; on Windows it took ~290 s of the package's 10 minutes). The tree before the cache work fails it (ls 0.70, lint 0.79, note 0.56 of uncached); today's commands sit at 0.07-0.21 (44w1ev).
@@ -23,7 +23,6 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 - A test builds a 10,000-task board and fails CI when `ls`, `next`, `show`, `board`, `lint` or `note` take more than 1.2 s once the cache is warm (4.8 s under the race detector); the tree before this work (e5cb389, v0.7.33) fails it with ls 2.0 s, lint 3.6 s, note 1.24 s (44w1ev).
 - Parallel `hug task` commands no longer fail with `database is locked (5) (SQLITE_BUSY)` on the task cache: every cache transaction takes SQLite's write lock up front and waits for it (up to 30 s per try, retried), instead of failing at once when another command committed first. 20 parallel notes all land again (44w1ev on m8shdj).
 - `hug tui` opens a 10,000-task board in about 0.5 s instead of 3 to 5 s, its heap 75-81 MB instead of 170-190 MB: it takes lint findings from the task cache instead of parsing every task file on each reload, reads a task's file when its detail opens, and finds task folders with one listing per group instead of one walk per task. Filtering and moving at 10,000 tasks take at most 53-127 ms per key (44w1ev).
-||||||| parent of 8de3119 (CHANGELOG: mcvfbz under Unreleased)
 
 ## v0.7.38 - 2026-11-17
 
