@@ -31,3 +31,5 @@ Replaces the 10:56 'stage: reason replaces the title' rule for waiting rows. 'yo
 - [ ] Jørgen sees the hug board with the new rows and says it reads clearly
 
 ## Notes
+
+file:waiting-rows.md (1583 bytes, sha256:5108b054) approved mock (Jørgen 14:58)
