@@ -4,7 +4,7 @@ title: "Model trailer carries the effort: Model: id/effort, checked per model"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
