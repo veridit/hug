@@ -122,6 +122,13 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	if mark := m.fileCount(t); mark != "" {
 		title = m.styles.dim.Render(mark) + title
 	}
+	// A search that found the task by an imported id says which (vzghj8).
+	// Only when nothing else matched: the title already shows why.
+	if q := strings.ToLower(m.query); !textMatches(t, q) {
+		if alias := matchedAlias(t, q); alias != "" {
+			title += m.styles.dim.Render(" · " + alias)
+		}
+	}
 	if compact {
 		// Board columns are narrow: type and priority are one coloured
 		// letter each, spelled out in the legend under the board.

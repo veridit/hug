@@ -436,7 +436,7 @@ func (m *model) applyFilter() {
 		if m.filter.Priority != "" && !optionalMatches(t.Priority, m.filter.Priority) || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
 			continue
 		}
-		if m.query != "" && !strings.Contains(strings.ToLower(t.Slug+" "+t.Title+" "+t.ID+" "+strings.Join(t.Assignee, " ")), strings.ToLower(m.query)) {
+		if m.query != "" && !searchMatches(t, m.query) {
 			continue
 		}
 		m.visible = append(m.visible, t)
@@ -1282,4 +1282,29 @@ func contains(values []string, s string) bool {
 		}
 	}
 	return false
+}
+
+// searchMatches is / search: the query, case-insensitively, in the slug,
+// title, id, assignee or an alias (vzghj8: imported ids such as
+// STATBUS-402, which hug task show accepts too).
+func searchMatches(t task.Task, query string) bool {
+	q := strings.ToLower(query)
+	return textMatches(t, q) || matchedAlias(t, q) != ""
+}
+
+func textMatches(t task.Task, q string) bool {
+	return strings.Contains(strings.ToLower(t.Slug+" "+t.Title+" "+t.ID+" "+strings.Join(t.Assignee, " ")), q)
+}
+
+// matchedAlias is the first alias that contains query (lowercase), or "".
+func matchedAlias(t task.Task, query string) string {
+	if query == "" {
+		return ""
+	}
+	for _, a := range t.Aliases {
+		if strings.Contains(strings.ToLower(a), query) {
+			return a
+		}
+	}
+	return ""
 }
