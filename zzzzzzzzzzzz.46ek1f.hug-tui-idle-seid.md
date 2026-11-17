@@ -4,10 +4,11 @@ title: "hug tui idle on Seid burns a third of a core"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+parent: "44w1ev"
 ---
 
 ## Goal
