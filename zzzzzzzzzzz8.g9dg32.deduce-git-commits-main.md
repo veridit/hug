@@ -47,6 +47,7 @@ Replay over v0.7.41 (crab 14:23) on a fresh mirror clone: --since v0.7.40 wrote 
 file:g9dg32-replay.md (3224 bytes, sha256:319cc79c) design and replay evidence: check 4 replay since v0.7.30, v0.7.41 tag replay, the note as it lands
 Design and replay evidence are attached as file:g9dg32-replay.md; earlier notes that cite tmp/lanes/g9dg32-replay.md mean that attachment.
 On main d661273, CI 44118189933 green on all 5 jobs (secrets, bench, ubuntu, macos, windows): 64bf2d0. Check 1: TestDeduceLandedAndShipped and TestDeduceTwoClonesOneLine (one 'landed' line per ticket after repeated syncs from two clones). Check 2: TestDeduceLandedAndShipped (tag v0.1.1 gives 'shipped in v0.1.1' and done_release v0.1.1). Check 3: the same test pins the exact report text 'observed: ...; marked: ...; if wrong: ...'. Check 4: replay since v0.7.30 (64 landed lines, then 0 on a rerun) compared by hand on t709he, 44w1ev, m1c28r, 0sbvnq and 6ephqk, all equal to git log: file:g9dg32-replay.md. TestDeduceReplayFirstLeavesOldReleases guards the replay bug.
+Reflection (open, 2026-11-17, wyvern): nothing misled me. The rule to tick only with run ids from main kept the replay bug (--since leaving old releases unread) from being ticked early: the replay found it before landing.
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:09 todo/ready -> doing/active (take)
