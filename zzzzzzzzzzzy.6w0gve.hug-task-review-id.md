@@ -38,5 +38,6 @@ Plumbing to copy: task.WaitShowing/DesignShowing (moves.go), states.go node fiel
 ## Notes
 
 
+crab 18:30: doing -> doing/review (owner keeps it), not todo/review: answer on doing/review returns the owner to doing/active, a todo/review answer would leave it unassigned in todo/ready; a review does not count against one-doing-per-agent. Check 1's 'moves a doing task to todo/review' reads doing/review.
 ## History
 - 2026-11-17T19:25 todo -> doing/active (take)
