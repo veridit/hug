@@ -10,10 +10,13 @@ created: 2026-11-17
 updated: 2026-11-17
 parent: "44w1ev"
 doing_since: "2026-11-17T16:12"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "jhf: check 4: open and quit hug tui on Seid (median first frame 0.26 s, quit 0.29 s measured on a copy) and say if you agree; checks 1-3 tick on green main CI 44124879024"
+waiting_since: "2026-11-17T17:21"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -51,3 +54,4 @@ Tests use a Refresh stub that blocks on a channel.
 Measured (wyvern 16:12), Seid board copy: git fetch of seid-lang hug/tasks into a scratch repo (3,630 task files, 2520 tasks), so no other hug touches its cache; HUG_SYNC=off; warm cache; tmux 160x45; tuiquit.sh = tmp/lanes/tuitime.sh plus quit timing (q to process gone). 5 interleaved rounds after one warm-up each. main d661273 first frame: 9.01, 8.96, 9.08, 9.17, 9.36 s (median 9.08); quit 0.29, 0.32, 0.30, 0.33, 0.32 s. vnyz8z first frame: 0.24, 0.30, 0.24, 0.27, 0.26 s (median 0.26); quit 0.28, 0.29, 0.31, 0.31, 0.29 s (median 0.29). The vnyz8z first frame shows the whole board: 'HUG TASKS · overview   2520/2520 tasks · ! 5030 findings', IN PROGRESS selected. On the live seid-lang board the first frame was '0/0 tasks': a v0.7.41 hug tui (schema 12) and v0.7.42 (schema 14) rebuild each other's cache.db on every open (read 14,14,12,14 over 10 s), filed as gjmqhn. Cold first start (cache folder moved away): 'reading the board: the first start builds the task cache: 242 of 2520 files', then '2464 of 2520 files', then the board. tmux review test failure fixed: '#aaaaaa Enter' typed before the first board is now answered when it lands (TestJumpTypedBeforeBoardOpensWhenItArrives, fails first; 2 mutations caught).
 ## History
 - 2026-11-17T16:12 todo -> doing/active (take)
+- 2026-11-17T17:21 doing/active -> doing/waiting (wait)
