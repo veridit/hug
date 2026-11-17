@@ -1,13 +1,18 @@
 ---
 id: hbgybn
 title: "Requests: a person writes a request in a task, an agent turns it into edits"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T00:57"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ Not the asked stage: that blocks the task on a person; a request is an open item
 ## Notes
 
 Jørgen 23:53 local: 'it's like a managerial ask, and the consequence for the ticket will be figured out as you process it.' So a request names no field or check and has no form: it is intent. The agent decides what it means for the ticket (which fields, checks, state, maybe a new task or a split) and the resolve account says what it decided. The agent applies hug's task rules (goal, purpose, principle, details, acceptance; titles under 80; fix lines) when it turns the ask into edits; the person never has to.
+
+
+## History
+- 2026-11-18T00:57 todo -> doing/active (take)
