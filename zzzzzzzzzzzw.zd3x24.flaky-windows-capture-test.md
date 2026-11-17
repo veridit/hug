@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T14:45"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "kestrel's kbc99j landing (internal/sharefile), then my turn after wyvern"
+waiting_since: "2026-11-17T15:05"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -40,3 +43,4 @@ hatchling 13:47, cause with evidence. Windows probe run 44095837741 (probe/zd3x2
 hatchling 14:05: fix on ci/zd3x24 (stacked on kestrel's ci/land-kbc99j-4vcwxk 42453ee; ingest LoadNative/SaveNative and app/tidy.go read via internal/sharefile). Windows probe after the fix, run 44096575485 (on a45bec0): 'native_race_test.go:63: 2584 reads, 393 writes', '--- PASS: TestNativeSaveRacesLoads', capture test -count=20 all PASS. Before: 92 of 2745 loads and 145 of 429 saves failed (44095837741). Stack probe 44099219234 running. Lands after kbc99j per crab.
 ## History
 - 2026-11-17T14:45 todo -> doing/active (take)
+- 2026-11-17T15:05 doing/active -> doing/waiting (wait)
