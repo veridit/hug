@@ -29,7 +29,7 @@ app/places.go: Placement calls placementScopes, then PlaceForScope -> Places -> 
 ## Depends on
 
 ## Acceptance
-- [ ] a project lookup in a main worktree starts 2 git processes (test fails before: 4); a linked worktree still gets the main worktree's Notes
+- [x] a project lookup in a main worktree starts 2 git processes (test fails before: 4); a linked worktree still gets the main worktree's Notes
 - [ ] Placement looks up the project once (test fails before: twice)
 - [ ] windows CI: muninn/internal/app time on main falls from the 290-501 s range, run id in a note
 
