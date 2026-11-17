@@ -1,7 +1,7 @@
 ---
 id: 46ek1f
 title: "hug tui idle on Seid burns a third of a core"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
@@ -9,6 +9,11 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "44w1ev"
+doing_since: "2026-11-17T18:53"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Likely candidates: the vnyz8z refresh spinner tick keeps running after the refre
 - [ ] on Seid, an idle hug tui uses under 1 s CPU per minute (ps time over 60 s), numbers in the notes
 
 ## Notes
+
+
+## History
+- 2026-11-17T18:53 todo -> doing/active (take)
