@@ -1,13 +1,18 @@
 ---
 id: cvbpdy
 title: "Lint owns evidence rules: (lost) marker, path citations checked, setup offers them"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T17:33"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ Seid reference: tools/evidence.py lines 91-112: SCRATCH_REF, EVID_REF, LOST=' (l
 hatchling 15:20, design read (not started; after s6ff5k per crab): files.go LintFiles forbid check (strings.Contains on whole doc, Line 0) becomes a line scan: for each line, each forbid prefix occurrence, take the cited path token (up to whitespace/backtick/paren/quote), skip if the text right after it is ' (lost)'; finding names path and line ('cites .jcode/scratch/X/y.md (a folder that gets deleted)', Line N), fix 'hug task attach ID FILE, or mark it (lost)'. Check 2: a regex for '.hug/tasks/<path>' citations resolves against s.Root; missing -> missing-file unless ' (lost)' follows. Check 3: setup.go offers forbid_cite = [".jcode/scratch/"] when .jcode/ exists and hug.toml has none. Check 4 needs Seid's tools/evidence.py run for counts.
 
 hatchling 16:30, built while the s6ff5k replay ran (not taken: s6ff5k is my doing ticket). Branch ci/cvbpdy 95079e0 on e582ab4 (worktree guppy-p29), not pushed. Checks 1-3 have tests that fail before the code (TestForbidCiteNamesPathAndLine: 'finding "cites .jcode/scratch/ (a folder that gets deleted); attach the file instead" at line 0'; TestTaskPathCitationMustExist: 'missing-file findings: []'); TestSetupOffersForbidScratch runs the offered fix in sh and lints after it (it caught a missing git add for a new hug.toml). Check 4 on a disposable clone of Seid's hug/tasks (3478 files) with forbid_cite added: evidence.py's SCRATCH_REF rule applied to the same files gives 530 unmarked citations on 464 lines; hug lint gives 530 forbidden-citation findings on 464 lines, both on all 464, 0 on one side only (first cut: 817 on 707, because it read /Users/x/.jcode/scratch/ paths and ' (not kept: ...)' marks differently; the rule now matches evidence.py's regex and marks). EVID_REF rule: 2712 .backlog/evidence citations, 0 missing in the Seid repo. evidence.py check on seid-lang itself: 0 errors. Schema 16 (cached refs change). Rule not ported: evidence.py's keepable() (extension list) since hug's file-content check (NUL/utf8, 256 KiB) is stricter, per the ticket's details.
+
+
+## History
+- 2026-11-17T17:33 todo -> doing/active (take)
