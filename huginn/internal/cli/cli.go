@@ -396,7 +396,7 @@ func parse(args []string, allowed string, optionalValue ...string) (flags, error
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -560,7 +560,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1596,6 +1596,20 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	if gs, ok := reply["guide"].([]string); ok {
 		for _, g := range gs {
 			fmt.Fprintln(a.Out, "now: "+g)
+		}
+	}
+	if cs, ok := reply["cleanup"].([]string); ok {
+		for _, c := range cs {
+			fmt.Fprintln(a.Out, c)
+		}
+		if d, ok := reply["diff"].(string); ok {
+			fmt.Fprint(a.Out, d)
+		}
+		// What hug does not edit itself, addressed to the agent (ggydj2).
+		if as, ok := reply["agent"].([]string); ok {
+			for _, l := range as {
+				fmt.Fprintln(a.Out, "agent: "+l)
+			}
 		}
 	}
 	if us, ok := reply["upgrade"].([]string); ok {

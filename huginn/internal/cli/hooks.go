@@ -43,8 +43,20 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	if f.args[0] != "backlog" {
 		return nil, usage("unknown import format "+f.args[0]+"; valid: backlog, github, files; closest: backlog", "hug task import backlog "+f.args[1])
 	}
+	if f.has("cleanup") {
+		return a.runImportCleanup(ctx, s, f, f.args[1])
+	}
+	// A source retired by --cleanup is never imported again (ggydj2).
+	src := f.args[1]
+	if rel, top, e := a.importSource(ctx, src); e == nil {
+		if e := refuseRecordedImport(s.r.Dir, rel); e != nil {
+			return nil, e
+		}
+		// DIR is relative to the command's folder, not the process's.
+		src = filepath.Join(top, filepath.FromSlash(rel))
+	}
 	dry := f.has("dry-run")
-	report, e := importer.Run(ctx, f.args[1], s.s, importer.Options{DryRun: dry})
+	report, e := importer.Run(ctx, src, s.s, importer.Options{DryRun: dry})
 	var none *importer.NoTasksError
 	if errors.As(e, &none) {
 		return nil, usage(none.Error()+"; point at the backlog folder (holding tasks/) or the tasks folder itself", "hug task import backlog "+filepath.Join(f.args[1], "tasks"))
@@ -62,7 +74,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	if _, e = s.s.Tasks(); e != nil {
 		return nil, e
 	}
-	return Reply{"import": report, "next": "hug task ls"}, nil
+	return Reply{"import": report, "next": "once the import is complete, retire the source: hug task import backlog " + f.args[1] + " --cleanup --dry-run"}, nil
 }
 func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	if e := f.count(0); e != nil {

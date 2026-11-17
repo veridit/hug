@@ -110,19 +110,40 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		}
 	}
 	if backlogDir != "" {
-		done, detail := false, backlogDir+"/ exists. Import it; safe to repeat, edits in huginn win, the newest copy of each task wins."
+		var recorded task.Import
+		retired := false
 		if branch && statErr == nil {
-			if s, e := a.open(ctx); e == nil {
-				r, e := importer.Run(ctx, filepath.Join(root, backlogDir), s.s, importer.Options{DryRun: true})
-				s.c.Close()
-				if e == nil {
-					done = r.Added == 0 && r.Updated == 0
-					detail = fmt.Sprintf("%s/ vs huginn: %d to add, %d to update, %d in sync, %d skipped (older copies, broken files).", backlogDir, r.Added, r.Updated, r.Unchanged, r.Skipped)
+			recorded, retired, _ = task.FindImport(filepath.Join(board, TaskDir), backlogDir)
+		}
+		done, detail := false, backlogDir+"/ exists. Import it; safe to repeat, edits in huginn win, the newest copy of each task wins."
+		do := "hug task import backlog " + backlogDir + " --dry-run && hug task import backlog " + backlogDir
+		if retired {
+			// ggydj2: an import recorded in hug.toml is never offered again;
+			// the folder is a leftover copy (restored, or checked out from an
+			// older commit).
+			detail = fmt.Sprintf("%s/ is a leftover: it was imported and retired in commit %s on %s; its tasks live in hug.", backlogDir, shortHash(recorded.Commit), recorded.Date)
+			do = "hug task import backlog " + backlogDir + " --cleanup --dry-run, then show the diff and run it without --dry-run"
+			add("retire backlog-md", false, detail, do)
+		} else {
+			complete := false
+			if branch && statErr == nil {
+				if s, e := a.open(ctx); e == nil {
+					r, e := importer.Run(ctx, filepath.Join(root, backlogDir), s.s, importer.Options{DryRun: true})
+					s.c.Close()
+					if e == nil {
+						complete = r.Added == 0 && r.Updated == 0
+						detail = fmt.Sprintf("%s/ vs huginn: %d to add, %d to update, %d in sync, %d skipped (older copies, broken files).", backlogDir, r.Added, r.Updated, r.Unchanged, r.Skipped)
+					}
 				}
 			}
+			add("import backlog-md", complete, detail, do)
+			// Once every task is in, the move ends: the old copy goes, so
+			// nobody imports it again over work done in hug since.
+			if complete {
+				add("retire backlog-md", done, backlogDir+"/ is imported; retire it so it is not imported again: git rm in one commit with backlog's MCP server and instructions, recorded in "+task.ConfigName,
+					"hug task import backlog "+backlogDir+" --cleanup --dry-run, then show the diff and run it without --dry-run")
+			}
 		}
-		add("import backlog-md", done, detail,
-			"hug task import backlog "+backlogDir+" --dry-run && hug task import backlog "+backlogDir)
 	}
 
 	// Per-task file folders kept outside the task branch (any layout: a folder
