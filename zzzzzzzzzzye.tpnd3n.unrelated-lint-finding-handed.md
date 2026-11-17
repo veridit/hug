@@ -41,5 +41,6 @@ hatchling 12:42, from x325pp: measured arms in muninn/docs/BOARD4.md 'Stop order
 hatchling 12:58: carries x325pp check 3 too (crab ruling): the stop-order rule loses skunk's w96jpg finding in fresh, details in the x325pp note 12:58.
 
 
+hatchling 14:29: replay (scratch/board4/x325pp, tpnd.sh, judge_board.py blind, judgments3.json) on today's boards, 6 sets: main 38ff464 (stop2) 128 lines, false 23 (lint 20), precision 0.811; tpnd3n rule as specified (tpnd) 127 lines, false 23 (lint 20): no change, the rule only reorders. Pre-fkpyg3 binary 206038a on the same boards (old): 109 lines, false 7 (lint 4), precision 0.934. So fkpyg3 (section lint) put +19 lint lines and +16 false on the replay: 'missing section Principle/Purpose' on unrelated todo tasks (dev: 8 false of 16 lint; ho-hug 3 of 4: s6ff5k/vk9td0 named while the user forbade other tasks). Testing variant: unrelated findings exclude 'missing section' (only on touched tasks).
 ## History
 - 2026-11-17T15:10 todo -> doing/active (take)
