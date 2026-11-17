@@ -50,6 +50,7 @@ Design (wyvern 20:01), for check 1:
   - unknown effort: the same, naming the levels.
 - No [models] table yet (most repos today): the gate requires id/effort but cannot check the levels. I'll refuse with the fix to add the model, since the principle is a declarative roster. The cost is that every repo with the gate breaks until its roster exists. Alternative: accept any effort word until a roster exists. I'm asking crab.
 Pushed 5ab3031 (main 3c20bcf..5ab3031), check 1. crab's ruling 20:01, option (b): without a [models] table any effort word goes (none, minimal, low, medium, high, xhigh, max) and a typo is refused. The hook reads hug.toml [models] from hug/tasks with git cat-file (awk=1 git=3 per commit, counted in TestCommitMsgGate). New command: hug task models [add ID LEVEL...]. hug setup has a models step. AGENTS.md has the trailer line. Tests: TestCommitMsgGateChecksModelRoster and new TestCommitMsgGate cases fail on the old hook ('not its level: ok=true', 'no effort: ok=true', 'unknown model: ok=true', 'after the roster changed: ok=true'). -race task ok 57.6 s, cli ok 128.2 s. Check 1 gets ticked on green main CI. Still to do: check 2 (take --model id/effort, row/detail show both), check 3 (help shows the two tracked-hook lines; tailLines exist already), check 4 (Seid hook, needs Jørgen).
+landed 5ab3031 on main 2026-11-17: hug task install commit-msg: Model: <id>/<effort>, checked per model in hug.toml…
 ## History
 - 2026-11-17T18:16 todo -> doing/active (take)
 - 2026-11-17T18:53 doing/active -> doing/waiting (wait)
