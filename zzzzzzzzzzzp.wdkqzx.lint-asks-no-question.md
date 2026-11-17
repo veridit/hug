@@ -45,5 +45,6 @@ file:wdkqzx-proposal.txt (5261 bytes, sha256:fb2a73dc)
 file:wdkqzx-fail-before.txt (358 bytes, sha256:f7e842b0)
 file:wdkqzx-fail-before-tui.txt (171 bytes, sha256:a582df56)
 Proposal for crab before building: file:wdkqzx-proposal.txt (exact block, refusal and question texts; order: fix lines + block on every write first; the ask refusal with asked_check after 41hhgn, else 6ephqk deadlocks). The suppress build (WaitsOnPerson, schema 19) was never pushed: local branch ci/wdkqzx only, set aside. Its fail-before outputs are kept for the record: file:wdkqzx-fail-before.txt, file:wdkqzx-fail-before-tui.txt.
+crab 00:05 local rulings on file:wdkqzx-proposal.txt: (1) order approved: A (block on every write) + C1-2 (shipped-not-done fix lines) ship now; B (ask refusal) + C3 (no finding for the asked check) after 41hhgn lands asked_check; never parse 'check N' from free text. (2) review --by and design --for count as handing to a person (B applies), except design --for is not blocked by incomplete-task/draft findings (Goal or Acceptance missing), since the design answer often fills them; test that a draft task can still get design --for. (3) done and drop get no block (done already refuses open checks; drop needs a reason).
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
