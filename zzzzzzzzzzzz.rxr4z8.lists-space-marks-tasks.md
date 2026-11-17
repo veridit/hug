@@ -33,3 +33,16 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+nautilus 23:44, footer mock for Jørgen (not built yet; queued after e3sevr, 0gztsy, qh9ep1, ahejza). 80 columns, 3 marked in NEXT UP, one of them an epic (d not offered: an epic finishes through its children):
+
+    NEXT UP · rank order  [12]
+  ◆ ○ 2   000041   feature critical ready     runtime Feature task 41
+  ◆ ○ 2   000017   bug     low      ready     docs Bug task 17
+  > ○ 1   000009   spike   high     ready     docs Spike task 09
+  ◆ ◑ 1/2 a1b2c3   feature high     ready     Launch (epic)
+  ...
+  3 marked · m move · t take · x drop · w wait · e edit · Esc unmark
+  j/k move · Space mark · Enter open · ? help · q quit
+
+ ◆ (dim accent, never red) in gutter column 1 marks a row, with a quiet tint; the cursor row keeps >. t asks once: 'Take 3 tasks? Enter confirm · Esc cancel'. A refused task (e.g. taken by someone else) is named with its fix: line; the others go ahead. Narrow screens drop the action words to keys: '3 marked · m t x w e · Esc'.
