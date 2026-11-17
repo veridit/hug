@@ -16,8 +16,10 @@ func lowerPriority() {
 	if runtimeLinux {
 		nice = 20 - cur
 	}
-	if nice >= Nice {
-		return
+	if nice < Nice {
+		_ = unix.Setpriority(unix.PRIO_PROCESS, 0, Nice)
 	}
-	_ = unix.Setpriority(unix.PRIO_PROCESS, 0, Nice)
+	// Linux: the call above lowered only this thread, and this thread's
+	// value says nothing of the others (1rca5g). Off Linux a no-op.
+	lowerThreads()
 }
