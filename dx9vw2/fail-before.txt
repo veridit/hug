@@ -1,0 +1,15 @@
+--- FAIL: TestOlderHugWarnsOnceOnRead (0.55s)
+    layout_test.go:78: [ls]: stderr says it 0 times, want once with the fix:
+--- FAIL: TestOlderHugRefusesToWriteNewerBoard (0.62s)
+    layout_test.go:48: [note p1djx5 evidence]: exit 0, want 1 with "this board is newer than this hug: the board has layout 3 (hug.toml on branch hug/tasks), this hug knows layout 2" and the brew fix:
+        look  Look  p1djx5  todo
+        goal: g
+        purpose: p
+        principle: q
+        1. [ ] a
+        notes: evidence
+        next: hug task take p1djx5
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/cli	0.643s
+FAIL
+4fb0c92 hug tui: in a task, Tab steps through every task id shown; Enter opens it (4bwcgp)

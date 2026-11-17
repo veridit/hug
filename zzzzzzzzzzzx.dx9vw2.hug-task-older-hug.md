@@ -36,5 +36,6 @@ Reflection on ce3dmq (2026-11-17). Possible signal: a board-level layout version
 ## Notes
 
 
+file:fail-before.txt (700 bytes, sha256:87239cef) TestOlderHug* (checks 1, 2 only) on origin/main 4fb0c92: note exits 0 and writes, ls warns 0 times
 ## History
 - 2026-11-17T21:13 todo -> doing/active (take)
