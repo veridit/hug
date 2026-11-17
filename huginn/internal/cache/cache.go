@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/veridit/hug/huginn/internal/task"
 	"github.com/veridit/hug/internal/sharefile"
-	"io/fs"
 	_ "modernc.org/sqlite"
 	"net/url"
 	"os"
@@ -43,7 +42,19 @@ type record struct {
 type Stats struct {
 	Statted, Hashed, Parsed, Renamed, Deleted int
 	Rebuilt                                   bool
+	// Path is how the sync learned what changed on disk: PathWalk (every
+	// task file listed and statted), PathOwnWrite (a write's own files
+	// only) or PathFsmonitor (git's file system monitor named them).
+	Path string
 }
+
+// The ways a sync learns what changed (44w1ev check 3).
+const (
+	PathWalk      = "walk"
+	PathOwnWrite  = "own-write"
+	PathFsmonitor = "fsmonitor"
+)
+
 type Cache struct {
 	mu      sync.Mutex
 	db      *sql.DB
@@ -377,6 +388,7 @@ func (c *Cache) sync(ctx context.Context, only map[string]bool) (Stats, error) {
 			forced[p] = true
 			disk[p] = Marker{Path: p, MtimeNS: st.ModTime().UnixNano(), Size: st.Size()}
 		}
+		stats.Path = PathOwnWrite
 		return c.apply(ctx, stats, disk, forced, renameHints, head, started, racy, only)
 	}
 	if c.git != nil {
@@ -403,39 +415,12 @@ func (c *Cache) sync(ctx context.Context, only map[string]bool) (Stats, error) {
 			}
 		}
 	}
-	disk := make(map[string]Marker, len(c.files))
-	err := filepath.WalkDir(c.Root, func(path string, d fs.DirEntry, e error) error {
-		if e != nil {
-			return e
-		}
-		if e = ctx.Err(); e != nil {
-			return e
-		}
-		if d.IsDir() {
-			if strings.HasPrefix(d.Name(), ".") && path != c.Root {
-				return filepath.SkipDir
-			}
-			if rel, _ := filepath.Rel(c.Root, path); path != c.Root && task.IsTaskFolder(c.Root, filepath.ToSlash(rel)) {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		if !strings.HasSuffix(d.Name(), ".md") || d.Type()&os.ModeSymlink != 0 {
-			return nil
-		}
-		st, e := d.Info()
-		if e != nil {
-			return e
-		}
-		rel := strings.TrimPrefix(path, c.Root+string(filepath.Separator))
-		rel = filepath.ToSlash(rel)
-		stats.Statted++
-		disk[rel] = Marker{Path: rel, MtimeNS: st.ModTime().UnixNano(), Size: st.Size()}
-		return nil
-	})
+	disk, err := walkMarkers(ctx, c.Root, len(c.files))
 	if err != nil {
 		return stats, err
 	}
+	stats.Statted += len(disk)
+	stats.Path = PathWalk
 	return c.apply(ctx, stats, disk, forced, renameHints, head, started, racy, nil)
 }
 
