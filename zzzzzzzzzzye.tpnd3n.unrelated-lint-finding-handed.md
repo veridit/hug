@@ -1,21 +1,17 @@
 ---
 id: tpnd3n
 title: "An unrelated lint finding waits until the session's own task has none"
-status: "doing"
+status: "done"
 type: feature
 priority: ""
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T15:10"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ci/tpnd3n"
 worktree: "/Users/jhf/.jcode/scratch/guppy-lint"
-waiting_on: "every check settled; CI 44106642855 on d708fb4, lands in my push turn"
-waiting_since: "2026-11-17T15:46"
-waiting_asked_by: "hatchling"
+done_at: "2026-11-17T16:08"
 ---
 
 ## Goal
@@ -51,3 +47,4 @@ hatchling 15:08: landed on main by fast-forward 4ecfa25..b8f9000 (zd3x24 95bcb99
 ## History
 - 2026-11-17T15:10 todo -> doing/active (take)
 - 2026-11-17T15:46 doing/active -> doing/waiting (wait)
+- 2026-11-17T16:08 doing/waiting -> done (done); was doing_since: 2026-11-17T15:10; waiting_asked_by: hatchling; waiting_on: every check settled; CI 44106642855 on d708fb4, lands in my push turn; waiting_since: 2026-11-17T15:46
