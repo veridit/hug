@@ -198,3 +198,22 @@ func TestSetupFilesStepRemembered(t *testing.T) {
 		t.Fatalf("board commit: %s", d)
 	}
 }
+
+// crab 20:48: the remembered answer survives a hug release that leaves the
+// converter alone (hourly releases made every first setup cold), and is
+// dropped when the converter version or the board layout this hug reads
+// differs.
+func TestSetupRememberedAcrossReleases(t *testing.T) {
+	t.Parallel()
+	a := setupBacklog500(t)
+	a.Version = "v0.7.99"
+	if s, stderr := setupStep(t, a, "import backlog-md"); !s.Done || strings.Contains(stderr, "comparing") {
+		t.Fatalf("another release, same converter: %+v %s", s, stderr)
+	}
+	key, ok := a.backlogListing(filepath.Join(a.Cwd, ".backlog"))
+	a.Layout = 1 // a hug that reads an older layout keys differently
+	other, ok2 := a.backlogListing(filepath.Join(a.Cwd, ".backlog"))
+	if !ok || !ok2 || key == other {
+		t.Fatalf("layout not in the key: %v %v %q %q", ok, ok2, key, other)
+	}
+}

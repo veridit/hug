@@ -157,7 +157,11 @@ func (a *App) runImportCleanup(ctx context.Context, s *session, f flags, dir str
 			return nil, e
 		}
 		if r.Added+r.Updated > 0 {
-			missing = append(missing, fmt.Sprintf("%d tasks to add and %d to update", r.Added, r.Updated))
+			m := fmt.Sprintf("%d tasks to add and %d to update", r.Added, r.Updated)
+			if safe := backlogUpdates(r); safe != "" {
+				m += " (" + safe + ")"
+			}
+			missing = append(missing, m)
 			fixes = append(fixes, "hug task import backlog "+rel)
 		}
 		cand := rel + "/evidence"

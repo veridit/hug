@@ -25,14 +25,66 @@ type Options struct {
 	// Origin prefixes each task's origin (default "backlog"). The GitHub
 	// importer uses "github" so issue tasks never collide with backlog ones.
 	Origin string `json:"origin,omitempty"`
+	// Progress, when set, is told how far the run is (3mavpt: a cold
+	// setup on Seid is 9 s; it must not be silent). Called once per file;
+	// the caller decides how often to print.
+	Progress func(phase string, done, total int) `json:"-"`
 }
+
+func (o Options) tell(phase string, done, total int) {
+	if o.Progress != nil {
+		o.Progress(phase, done, total)
+	}
+}
+
 type Report struct {
-	Added     int          `json:"added"`
-	Updated   int          `json:"updated"`
-	Unchanged int          `json:"unchanged"`
-	Skipped   int          `json:"skipped"`
-	Files     []FileReport `json:"files"`
+	Added     int `json:"added"`
+	Updated   int `json:"updated"`
+	Unchanged int `json:"unchanged"`
+	Skipped   int `json:"skipped"`
+	// FieldsOnly counts the updates that only add frontmatter fields the
+	// board copy lacks (a field this importer now maps, such as parent:
+	// from parent_task_id): nothing on the board changes or goes. Fields
+	// names those fields with how many tasks get each (3mavpt).
+	FieldsOnly int            `json:"fields_only"`
+	Fields     map[string]int `json:"fields_added,omitempty"`
+	Files      []FileReport   `json:"files"`
 }
+
+// ConverterVersion names what this importer generates from a backlog file.
+// Bump it with every change to the converter's output (fields, sections,
+// mapping): hug setup keys its remembered dry run on it, so a hug release
+// that leaves the converter alone keeps that answer (3mavpt).
+const ConverterVersion = 1
+
+// onlyAddsFields reports whether result is local with frontmatter fields
+// added and nothing else changed, and which fields.
+func onlyAddsFields(local, result []byte) ([]string, bool) {
+	l, e1 := units(local)
+	r, e2 := units(result)
+	if e1 != nil || e2 != nil {
+		return nil, false
+	}
+	var added []string
+	i := 0
+	for _, u := range r {
+		if i < len(l) && l[i] == u {
+			i++
+			continue
+		}
+		if !strings.HasPrefix(u.key, "field:") {
+			return nil, false
+		}
+		for _, x := range l {
+			if x.key == u.key {
+				return nil, false // changed, not added
+			}
+		}
+		added = append(added, strings.TrimPrefix(u.key, "field:"))
+	}
+	return added, i == len(l) && len(added) > 0
+}
+
 type FileReport struct {
 	Source   string         `json:"source"`
 	ID       string         `json:"id,omitempty"`
@@ -249,11 +301,12 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 		secondPath       string // the copy that got plain@folder
 	}
 	var collisions []collision
-	for _, in := range all {
+	for n, in := range all {
 		entry := in.entry
 		if err := ctx.Err(); err != nil {
 			return report, err
 		}
+		opts.tell("reading", n, len(all))
 		if !strings.HasSuffix(strings.ToLower(entry.Name()), ".md") {
 			continue
 		}
@@ -509,6 +562,7 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 		if err := ctx.Err(); err != nil {
 			return report, err
 		}
+		opts.tell("comparing", i, len(sources))
 		id := ids[s.alias]
 		fr := &report.Files[s.report]
 		fr.ID = id
@@ -577,6 +631,15 @@ func Run(ctx context.Context, src string, dst *task.Store, opts Options) (Report
 			} else {
 				report.Updated++
 				fr.Action = "updated"
+				if fields, ok := onlyAddsFields(local, result); ok {
+					report.FieldsOnly++
+					if report.Fields == nil {
+						report.Fields = map[string]int{}
+					}
+					for _, f := range fields {
+						report.Fields[f]++
+					}
+				}
 			}
 		} else {
 			report.Added++

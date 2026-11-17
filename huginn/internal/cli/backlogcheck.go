@@ -20,24 +20,27 @@ import (
 // 3mavpt: hug setup ran the whole backlog dry run on every call (34 s on
 // Seid: 2,677 files converted to report "282 to update"). Now the import
 // and setup's dry run remember their answer on this machine (in the git
-// common dir, never on a branch), keyed on the hug binary and on the
-// backlog's listing (folder, name, type, size and mtime of every task file:
+// common dir, never on a branch), keyed on importer.ConverterVersion,
+// the board layout this hug reads, and the backlog's listing (folder, name, type, size and mtime of every task file:
 // lstat, no contents). While that key holds, setup reads no backlog file:
 // it checks that every board task that run matched is still on the board,
 // and reports the remembered numbers with their date. Anything else
-// (another binary, a backlog file added, edited or removed, a matched task
-// gone from the board) runs the dry run again, saying so first. Retiring keeps its own full dry run
-// (cleanup.go), so the remembered answer never decides what is deleted.
+// (another converter, a backlog file added, edited or removed, a matched
+// task gone from the board) runs the dry run again, with progress on
+// stderr. Retiring keeps its own full dry run (cleanup.go), so the
+// remembered answer never decides what is deleted. A hug release that
+// leaves the converter alone keeps the answer: TestConverterVersionPinned
+// fails when the converter's output changes without a new version.
 //
-// Board edits are not in the key. After an import by this binary each
-// baseline is what this binary generates, so a dry run merges
+// Board edits are not in the key. After an import by this converter each
+// baseline is what it generates, so a dry run merges
 // base == incoming: local edits are kept and nothing is to update, which
 // is what is remembered; a matched task deleted from the board fails the
 // board check. Editing a task's origin: or aliases: by hand (re-linking
-// it) is not seen until the backlog changes. With baselines from an older binary
-// (Seid: written before the state rename), a local edit to a unit the dry
-// run would re-render moves that count by one until the backlog or the
-// binary changes; the detail says the numbers are remembered, and
+// it) is not seen until the backlog changes. With baselines from an older
+// converter (Seid: written before the state rename), a local edit to a
+// unit the dry run would re-render moves that count by one until the
+// backlog or the converter changes; the detail says the numbers are remembered, and
 // --cleanup runs its own dry run before anything is deleted.
 
 // backlogCheck is one remembered import or dry run of a backlog folder.
@@ -49,6 +52,9 @@ type backlogCheck struct {
 	Updated   int    `json:"updated"`
 	Unchanged int    `json:"unchanged"`
 	Skipped   int    `json:"skipped"`
+	// FieldsOnly and Fields: the updates that only add fields (Report).
+	FieldsOnly int            `json:"fields_only,omitempty"`
+	Fields     map[string]int `json:"fields_added,omitempty"`
 	// Board are the board task ids the run matched backlog files to: each
 	// must still be on the board for the answer to hold.
 	Board []string `json:"board,omitempty"`
@@ -62,12 +68,7 @@ func backlogCheckFile(common string) string {
 // them. ok is false when a folder or file cannot be listed.
 func (a *App) backlogListing(src string) (key string, ok bool) {
 	h := sha256.New()
-	fmt.Fprintf(h, "hug %s\n", a.Version)
-	if exe, e := os.Executable(); e == nil {
-		if fi, e := os.Stat(exe); e == nil {
-			fmt.Fprintf(h, "exe %s %d %d\n", exe, fi.Size(), fi.ModTime().UnixNano())
-		}
-	}
+	fmt.Fprintf(h, "converter %d layout %d\n", importer.ConverterVersion, a.layout())
 	for _, dir := range importer.BacklogTaskDirs(src) {
 		entries, e := os.ReadDir(dir)
 		if e != nil {
@@ -152,7 +153,7 @@ func (a *App) rememberBacklog(common, src, key string, at time.Time, r importer.
 	if again, ok := a.backlogListing(src); !ok || again != key {
 		return
 	}
-	c := backlogCheck{Source: sourceKey(src), Key: key, At: at.UTC().Format(time.RFC3339), Added: r.Added, Updated: r.Updated, Unchanged: r.Unchanged, Skipped: r.Skipped}
+	c := backlogCheck{Source: sourceKey(src), Key: key, At: at.UTC().Format(time.RFC3339), Added: r.Added, Updated: r.Updated, Unchanged: r.Unchanged, Skipped: r.Skipped, FieldsOnly: r.FieldsOnly, Fields: r.Fields}
 	for _, f := range r.Files {
 		if f.ID != "" && f.Action != "added" && f.Action != "skipped" {
 			c.Board = append(c.Board, f.ID)
@@ -167,7 +168,7 @@ func (a *App) checkBacklog(ctx context.Context, s *session, src string) (r impor
 	key, ok := a.backlogListing(src)
 	if ok {
 		if c, hit := readBacklogCheck(backlogCheckFile(s.r.Common), src, key); hit && onBoard(s.s, c.Board) {
-			return importer.Report{Added: c.Added, Updated: c.Updated, Unchanged: c.Unchanged, Skipped: c.Skipped}, c.At, nil
+			return importer.Report{Added: c.Added, Updated: c.Updated, Unchanged: c.Unchanged, Skipped: c.Skipped, FieldsOnly: c.FieldsOnly, Fields: c.Fields}, c.At, nil
 		}
 	} else {
 		key = ""
@@ -178,7 +179,7 @@ func (a *App) checkBacklog(ctx context.Context, s *session, src string) (r impor
 	}
 	fmt.Fprintf(w, "hug setup: comparing %s/ with the board (a dry run of the import, remembered until the backlog changes)...\n", filepath.Base(src))
 	start := time.Now()
-	r, err = importer.Run(ctx, src, s.s, importer.Options{DryRun: true})
+	r, err = importer.Run(ctx, src, s.s, importer.Options{DryRun: true, Progress: progressLines(w, "hug setup: ")})
 	if err != nil {
 		return r, "", err
 	}
@@ -226,12 +227,7 @@ func filesCheckFile(common, cite string) string {
 // the board in boardDir (its commit; ok is false with uncommitted changes).
 func (a *App) filesKey(ctx context.Context, dir, cite, boardDir string) (string, bool) {
 	h := sha256.New()
-	fmt.Fprintf(h, "hug %s\ncite %s\n", a.Version, cite)
-	if exe, e := os.Executable(); e == nil {
-		if fi, e := os.Stat(exe); e == nil {
-			fmt.Fprintf(h, "exe %s %d %d\n", exe, fi.Size(), fi.ModTime().UnixNano())
-		}
-	}
+	fmt.Fprintf(h, "converter %d layout %d\ncite %s\n", importer.ConverterVersion, a.layout(), cite)
 	e := filepath.WalkDir(dir, func(p string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -303,4 +299,44 @@ func writeAtomic(path string, b []byte) {
 	if os.Rename(tmp, path) != nil {
 		os.Remove(tmp)
 	}
+}
+
+// layout is the board layout this hug reads (App.Layout, else task.Layout).
+func (a *App) layout() int {
+	if a.Layout != 0 {
+		return a.Layout
+	}
+	return task.Layout
+}
+
+// progressLines prints an importer's progress as a line at most once a
+// second, so a slow run is never silent and a fast one prints nothing.
+func progressLines(w io.Writer, prefix string) func(phase string, done, total int) {
+	last := time.Now()
+	return func(phase string, done, total int) {
+		if time.Since(last) < time.Second {
+			return
+		}
+		last = time.Now()
+		fmt.Fprintf(w, "%s%s %d of %d backlog files\n", prefix, phase, done, total)
+	}
+}
+
+// backlogUpdates describes n updates for setup and --cleanup: when every
+// one only adds fields, which fields, and that re-importing changes
+// nothing already on the board.
+func backlogUpdates(r importer.Report) string {
+	if r.Updated == 0 || r.FieldsOnly != r.Updated || len(r.Fields) == 0 {
+		return ""
+	}
+	names := make([]string, 0, len(r.Fields))
+	for f := range r.Fields {
+		names = append(names, f)
+	}
+	sort.Strings(names)
+	parts := make([]string, len(names))
+	for i, f := range names {
+		parts[i] = fmt.Sprintf("%s: on %d", f, r.Fields[f])
+	}
+	return fmt.Sprintf("every one of the %d updates only adds fields the board copies lack (%s); nothing already on the board changes or goes", r.Updated, strings.Join(parts, ", "))
 }

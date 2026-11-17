@@ -143,6 +143,15 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 					if e == nil {
 						complete = r.Added == 0 && r.Updated == 0
 						detail = fmt.Sprintf("%s/ vs huginn: %d to add, %d to update, %d in sync, %d skipped (older copies, broken files).", backlogDir, r.Added, r.Updated, r.Unchanged, r.Skipped)
+						// 3mavpt: an update that only adds a field this hug now
+						// maps (Seid: parent: from parent_task_id on 282) is not
+						// in sync, the board lacks it, but importing is safe: say so.
+						if safe := backlogUpdates(r); safe != "" {
+							detail += " Of these, " + safe + "."
+							if r.Added == 0 {
+								do = "hug task import backlog " + backlogDir + " (only adds those fields), then hug task setup"
+							}
+						}
 						if at != "" {
 							detail += " Remembered from " + at + ": no backlog file changed since, and every task it matched is still on the board."
 						}
