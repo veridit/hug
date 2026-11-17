@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T20:03"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "check 3: open hug tui overview and say whether IN PROGRESS and WAITING read clearly (fb66000; brew upgrade after the next release, or go run ./cmd/hug tui from main)"
+waiting_since: "2026-11-17T20:28"
+waiting_asked_by: "nautilus"
+waiting_for: "jhf"
 ---
 
 ## Goal
@@ -44,3 +48,4 @@ crab 20:10 rulings (asked by nautilus): (1) doing/depends goes to WAITING (stuck
 Landed fb66000 (0338d9c..fb66000 on main). Checks 1/2/4: TestRowsShowStage (IN PROGRESS=aaaaaa only; WAITING=bbbbbb review, cccccc waiting, dddddd doing/depends, eeeeee todo/design; NEXT UP=ffffff ready, gggggg deferred; header 'WAITING · on you first  [4]'; unfocused overview has no └─; each focused row opens exactly one └─ line), golden testdata/rows/stages.txt (overview, WAITING focused, list at 80 and 140). TestOverviewOneSectionPerTask: doing+open dep in WAITING, todo+open dep in NEXT UP. TestWaitingOnYou: on-you row first in WAITING and the only ? row, for design_for jhf, review_by Jørgen, waiting_for carol; '? 1 for you' in top header (crab 20:10). TestTwoLineRowsScrollByTask: list/overview/board, 40 j steps, at most one └─ on screen and it is under the cursor row, screen keeps its height. All 3 failed on origin/main 0338d9c first. tmux goldens 80x24/140x40 colour+no-colour regenerated and reviewed. Gates: go test -race ./huginn/internal/tui/ ok 173.4s; go test ./... 32 ok, exit 0.
 ## History
 - 2026-11-17T20:03 todo -> doing/active (take)
+- 2026-11-17T20:28 doing/active -> doing/waiting (wait)
