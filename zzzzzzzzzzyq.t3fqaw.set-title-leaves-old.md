@@ -30,7 +30,7 @@ Imported backlog titles can be multi-line. Check every field writer (set, take, 
 ## Depends on
 
 ## Acceptance
-- [ ] a test sets --title on a task whose title spans 3 lines: the file has one title line and lints clean; it fails on main
+- [x] a test sets --title on a task whose title spans 3 lines: the file has one title line and lints clean; it fails on main
 - [ ] the same for every other front-matter field a command writes (test)
 
 ## Notes
