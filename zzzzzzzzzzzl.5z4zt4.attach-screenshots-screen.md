@@ -31,7 +31,7 @@ Builds on scrxak (Space shows a file inline, files read only when shown) and the
 
 ## Acceptance
 - [ ] hug task attach ID shot.png and an ANSI capture; the detail shows both inline in iTerm2 and kitty, ANSI with colours anywhere, and one line elsewhere (golden for the fallback, manual check for images)
-- [ ] a wait or review that names an attachment shows it right under the question in the detail (test + golden)
+- [x] a wait or review that names an attachment shows it right under the question in the detail (test + golden)
 - [ ] no image bytes are read until the attachment is shown (test counts reads)
 - [ ] Jørgen answers zhvkmj's colour question from the picture in the ticket
 
