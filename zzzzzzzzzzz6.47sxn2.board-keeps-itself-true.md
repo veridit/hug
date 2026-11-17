@@ -33,3 +33,5 @@ Children: deduce from git (wyvern), observations become questions (hatchling), o
 Jørgen 2026-11-17 11:58 (refines the two levels): every observation is told to the owner, not only the unclear ones. Level 1, deduced: hug acts and tells: 'observed: commit a08bb34 naming m1c28r reached main; marked landed. If wrong: hug task note m1c28r "..." / <fix command>'. Level 2, unclear: hug does not act and asks: 'observed: ci/m1c28r merged but 2 of 4 checks unticked: tick them, or say what is left'. Both name the observation, what hug did or did not do, and the fix command.
 
 file:landing-queue.md (7151 bytes, sha256:ad7bb364) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
+
+crab 17:10: all three children done (g9dg32, at3qep 09466ed, n2hq8p 300abb8); shipped in v0.7.42 (g9dg32, n2hq8p) and the next release (at3qep). Check 2 is a week of use: look again 2026-11-24.
