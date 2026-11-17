@@ -1,7 +1,7 @@
 ---
 id: m1c28r
 title: "Environment variables are HUG_*; hug upgrade migrates, no old names"
-status: "doing"
+status: "done"
 type: chore
 priority: "medium"
 assignee: ["wyvern"]
