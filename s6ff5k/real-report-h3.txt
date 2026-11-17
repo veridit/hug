@@ -1,0 +1,7 @@
+runs 400 unjudged memory calls 0
+actual models Counter({'deepseek-flash': 80, 'gpt-6-luna': 80, 'claude-haiku-5-5': 80, 'claude-sonnet-5-5': 80, 'gpt-6.1-sol': 80})
+H0-main: runs 200, runs with a memory call 9, runs with a right call 5, calls right 7 wrong 3 unclear 1
+H3-correct: runs 200, runs with a memory call 59, runs with a right call 46, calls right 50 wrong 10 unclear 12
+H3-correct vs H0-main on all: right-fix turns +41 of 200 [+30, +52]; wrong calls +7
+H3-correct vs H0-main on dev: right-fix turns +27 of 125 [+18, +37]; wrong calls +5
+H3-correct vs H0-main on held-out: right-fix turns +14 of 75 [+8, +21]; wrong calls +2
