@@ -31,7 +31,7 @@ muninn/internal/throttle/throttle_test.go:48. Linux nice is per thread (tid); Go
 
 ## Acceptance
 - [x] the cause is named with evidence (which thread was niced, e.g. /proc/self/task/*/stat before and after)
-- [ ] background work is niced on every thread hug uses for it (test reads every /proc/self/task entry), and the test passes -count=50 on ubuntu CI (run id)
+- [x] background work is niced on every thread hug uses for it (test reads every /proc/self/task entry), and the test passes -count=50 on ubuntu CI (run id)
 
 ## Notes
 
