@@ -270,9 +270,16 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		}
 		return args, nil
 	})
-	for _, cmd := range []string{"done"} {
-		add(cmd, "Finish a task after dependencies and acceptance checks are complete.", map[string]any{"id": str("Task reference")}, []string{"id"}, func(m map[string]any) ([]string, error) { return []string{cmd, get(m, "id")}, nil })
-	}
+	add("done", "Finish a task after dependencies and acceptance checks are complete. Then answer one question in reflection: "+task.ReflectQuestion+". The answer is stored as a Reflection note on the task.", map[string]any{"id": str("Task reference"), "reflection": str("Optional: did an instruction (AGENTS.md section, tool description, hug message) mislead you or leave a gap? Quote it and say what happened, with evidence. 'nothing' is a fine answer"), "agent": str("Your agent or session name, recorded with the reflection (optional)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
+		args := []string{"done", get(m, "id")}
+		if v := get(m, "reflection"); v != "" {
+			args = append(args, "--reflect", v)
+		}
+		if v := get(m, "agent"); v != "" {
+			args = append(args, "--as", v)
+		}
+		return args, nil
+	})
 	add("next", "Find the highest-ranked available task or your doing task with combined filters.", filters(), nil, func(m map[string]any) ([]string, error) {
 		return flags([]string{"next"}, m, "type", "priority", "label", "group", "epic", "mine"), nil
 	})

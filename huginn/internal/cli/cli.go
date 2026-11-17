@@ -14,6 +14,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/cache"
@@ -34,7 +35,8 @@ Use --json with any command. IDs, unique prefixes, slugs and aliases work.
   move                      hug task move k7m2qx --before p3rt9a
   mv                        hug task mv k7m2qx auth
   take                      hug task take k7m2qx --model claude-opus-5-5
-  done                      hug task done k7m2qx
+  done                      hug task done k7m2qx --reflect "the line 'X' in AGENTS.md made me Y"
+  reflections               hug task reflections
   check                     hug task check k7m2qx 1
   note                      hug task note k7m2qx "Test evidence"
   dep                       hug task dep k7m2qx --add p3rt9a
@@ -60,7 +62,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "show", "edit", "move", "mv", "take", "done", "check", "promote", "note", "dep", "set", "drop", "next", "rebalance", "types", "lint", "sync", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -428,7 +430,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -794,9 +796,20 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		if cmd == "done" {
 			r, e = s.s.Done(f.args[0])
+			// The reflection is stored only once done succeeded (tb0dra):
+			// a blocked done keeps the answer for the next try.
+			if e == nil && strings.TrimSpace(f.get("reflect")) != "" && !task.NothingToReflect(f.get("reflect")) {
+				who := a.whoTakes(f).assignee()
+				if who == "" {
+					who = strings.Join(r.Task.Assignee, ", ")
+				}
+				r, e = s.s.Note(r.Task.ID, task.ReflectionNote(f.get("reflect"), who, time.Now()))
+			}
 		} else {
 			r, e = s.s.Drop(f.args[0])
 		}
+	case "reflections":
+		return a.runReflections(s, f)
 	case "check":
 		if e = f.count(2); e != nil {
 			return nil, e
@@ -963,6 +976,12 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	reply, e = resultJSON(r, s)
 	if e == nil && r.Changed {
 		withGuide(reply, cmd, r.Task, s)
+	}
+	// One question at done, never a form (tb0dra): asked when no answer
+	// came with it, also on a repeated done.
+	if e == nil && cmd == "done" && strings.TrimSpace(f.get("reflect")) == "" {
+		g, _ := reply["guide"].([]string)
+		reply["guide"] = append(g, "reflect: "+task.ReflectQuestion+". Answer: hug task done "+r.Task.ID+" --reflect \"...\"")
 	}
 	return reply, e
 }
@@ -1206,6 +1225,22 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			for _, c := range cs {
 				fmt.Fprintf(a.Out, "child: %s  %s  [%s]\n", c["id"], c["title"], c["status"])
 			}
+		}
+	}
+	if rs, ok := reply["reflections"].([]task.Reflection); ok {
+		if len(rs) == 0 {
+			fmt.Fprintln(a.Out, "no open reflections")
+		}
+		for _, r := range rs {
+			who := ""
+			if r.Who != "" {
+				who = " " + r.Who
+			}
+			fmt.Fprintf(a.Out, "%s %d  %s  %s%s  %s\n", r.ID, r.N, r.State, r.Date, who, clip(r.Title, 60))
+			if r.Instruction != "" {
+				fmt.Fprintf(a.Out, "  instruction: %q\n", r.Instruction)
+			}
+			fmt.Fprintf(a.Out, "  %s\n", r.Text)
 		}
 	}
 	if fs, ok := reply["findings"].([]task.Finding); ok {

@@ -3,6 +3,7 @@ package mcp
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -83,6 +84,26 @@ func TestTakeRecordsAgentAndModel(t *testing.T) {
 	b, _ := os.ReadFile(files[0])
 	if !strings.Contains(string(b), `assignee: ["poodle"]`) || !strings.Contains(string(b), `model: "claude-opus-5-5"`) || strings.Contains(string(b), "Git Person") {
 		t.Fatalf("task file:\n%s", b)
+	}
+	// tb0dra check 2: task_done asks the question and stores the answer.
+	tools, e := cs.ListTools(ctx, nil)
+	if e != nil {
+		t.Fatal(e)
+	}
+	for _, tl := range tools.Tools {
+		if tl.Name == "done" && (!strings.Contains(tl.Description, "did the instructions") || !strings.Contains(fmt.Sprint(tl.InputSchema), "reflection")) {
+			t.Fatalf("done tool: %s %v", tl.Description, tl.InputSchema)
+		}
+	}
+	if failed, m := call("update", map[string]any{"id": id, "action": "check", "item": 1}); failed {
+		t.Fatal(m)
+	}
+	if failed, m := call("done", map[string]any{"id": id, "reflection": "the take hint 'next: hug task show ID' was clear", "agent": "poodle"}); failed {
+		t.Fatal(m)
+	}
+	b, _ = os.ReadFile(files[0])
+	if !strings.Contains(string(b), ", poodle): the take hint 'next: hug task show ID' was clear") {
+		t.Fatalf("reflection not stored:\n%s", b)
 	}
 }
 

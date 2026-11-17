@@ -241,7 +241,9 @@ Start: hug task next, then hug task take ID --model MODEL (the model you are, e.
 claude-opus-5-5 or gpt-6.1-sol; a person: --model human; --as NAME adds your agent
 or session name, optional), then hug task show ID.
 While working: hug task check ID N with evidence, hug task note ID "evidence".
-Finish: hug task done ID when every acceptance check is ticked.
+Finish: hug task done ID when every acceptance check is ticked. Done asks whether
+the instructions guided you well; answer honestly with --reflect "...": quote the
+instruction that misled you or left a gap and say what happened, or "nothing".
 Todos are your own next steps on the task you took, nothing else: details,
 evidence, waits and dependencies go in tasks (hug task note, hug task dep), never
 in todos, and another agent's work is never your todo. When your todos run out,
