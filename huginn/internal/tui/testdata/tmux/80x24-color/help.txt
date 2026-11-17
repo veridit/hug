@@ -4,7 +4,7 @@ todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
 IN THE LIST
 j/k ↑/↓          move
-gg G < >         top / bottom
+< > Home End     top / bottom
 ctrl-d/u         half page down / up
 PgDn / PgUp      page down / up
 Enter            open the task
@@ -16,7 +16,7 @@ J / K            move below / above the next row, no confirm
 m                grab: j/k move it, Enter places it
 y, P p           yank, then paste above / below
 s / c            state palette / clear all filters
-: grouping       flat, by group, by epic: cycles
+g                group rows: flat, group, epic
 
 EVERYWHERE
 All tasks · : filters and commands

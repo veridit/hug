@@ -4,7 +4,7 @@ todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
 IN THE LIST                                                            EVERYWHERE
 j/k ↑/↓          move                                                  v o/i/b/!      views: overview / list / board / lint; i b ! alone too
-gg G < >         top / bottom                                          /              live find; Enter goes to it, Tab keeps it as a filter
+< > Home End     top / bottom                                          /              live find; Enter goes to it, Tab keeps it as a filter
 ctrl-d/u         half page down / up                                   :              palette: commands with completion
 PgDn / PgUp      page down / up                                        : commands     overview, list, board, todo, doing, done, depends,
 Enter            open the task                                                        dropped, state <s>, type <t>, priority <p>, group <g>,
@@ -16,7 +16,7 @@ J / K            move below / above the next row, no confirm           1 / 2 / 3
 m                grab: j/k move it, Enter places it                    Backspace / F  remove the last chip / clear all filters
 y, P p           yank, then paste above / below                        : sort         order by fields; : sort rank goes back
 s / c            state palette / clear all filters                     N              new task
-: grouping       flat, by group, by epic: cycles                       S              copy the screen, Enter attaches it to the task
+g                group rows: flat, group, epic                         S              copy the screen, Enter attaches it to the task
                                                                        r              refresh now (changes on disk show by themselves)
                                                                        Enter / Esc    confirm / cancel every editing action
                                                                        e again        after an edit left a finding: edit at once
