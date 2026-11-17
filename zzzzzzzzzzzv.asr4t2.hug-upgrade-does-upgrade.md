@@ -29,3 +29,5 @@ cmd/hug/main.go:62 dispatches setup, tui, upgrade. 6ephqk step 4 (status -> stat
 - [ ] on a current board it prints 'nothing to do' per part (test)
 
 ## Notes
+
+Jørgen 17:54Z: hug upgrade previews by default; acting needs an explicit flag. crab ruling: 'hug upgrade' prints what it would change per part and ends with 'fix: hug upgrade --apply'; exits 0 when nothing to do, and a distinct non-zero code when changes are pending so scripts notice; 'hug upgrade --apply' does the work. --dry-run is removed (no backward compatibility). The same for 'hug task upgrade'. Messages that say 'next: hug upgrade' stay correct (it is now the preview).
