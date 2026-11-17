@@ -31,5 +31,6 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [ ] hug upgrade previews, and --apply moves each doing/waiting with waiting_for into doing/question, a leading 'check N:' (real N) into question_check; on hug's own board the preview lists the tasks and the apply leaves 0 waiting_for fields (test, plus the board numbers in a note)
 - [ ] The TUI shows no '?' glyph; a question row's stage cell reads 'question' and questions for the viewer sort first (golden)
 - [ ] MCP task_update action ask behaves like the CLI (test)
+- [ ] Jørgen confirms on his board after release
 
 ## Notes
