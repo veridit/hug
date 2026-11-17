@@ -231,6 +231,62 @@ func TestBoardSilentOnStopOrder(t *testing.T) {
 	}
 }
 
+// A finding withheld on a stop turn is not spent: the next break of the
+// same session, or the next session, still gets it (tpnd3n; held-out
+// replay: skunk was told to stop at the turn w96jpg's title line came due).
+func TestBoardStopTurnKeepsFinding(t *testing.T) {
+	now := time.Date(2026, 11, 11, 18, 13, 45, 0, time.UTC)
+	in := recall.BoardInput{
+		Tasks: []recall.BoardTask{{ID: "w96jpg", Status: "todo"}},
+		Findings: func() []recall.BoardFinding {
+			return []recall.BoardFinding{{TaskID: "w96jpg", TaskStatus: "todo", Problem: "title is 151 characters (max 80)", Fix: "hug task set w96jpg --title \"...\""}}
+		},
+		Self: recall.BoardSelf{Name: "skunk"},
+	}
+	e := boardEngine(t)
+	if line, _ := e.BoardCue("skunk", "Received. Please stop now.", "return", now, src(in)); line != "" {
+		t.Fatalf("stop turn: %q", line)
+	}
+	if line, _ := e.BoardCue("skunk", "back: next item", "return", now.Add(time.Minute), src(in)); !strings.Contains(line, "w96jpg") {
+		t.Fatalf("next break, same session: %q", line)
+	}
+	e = boardEngine(t)
+	if line, _ := e.BoardCue("skunk", "Stand down.", "return", now, src(in)); line != "" {
+		t.Fatalf("stop turn: %q", line)
+	}
+	in.Self.Name = "octopus"
+	if line, _ := e.BoardCue("octopus", "back", "return", now.Add(time.Minute), src(in)); !strings.Contains(line, "w96jpg") {
+		t.Fatalf("next session: %q", line)
+	}
+}
+
+// A missing Purpose or Principle goes only to a session that touched the
+// task; a passer-by gets the title finding instead (tpnd3n).
+func TestBoardMissingSectionOnlyToItsSession(t *testing.T) {
+	now := time.Date(2026, 11, 16, 10, 9, 34, 0, time.UTC)
+	section := recall.BoardFinding{TaskID: "s6ff5k", TaskStatus: "todo", Problem: "missing section Purpose (why)", Fix: "hug task set s6ff5k --purpose \"...\""}
+	title := recall.BoardFinding{TaskID: "q70jjy", TaskStatus: "todo", Problem: "title is 138 characters (max 80): move detail into the Goal", Fix: "hug task set q70jjy --title \"...\""}
+	fs := []recall.BoardFinding{section}
+	in := recall.BoardInput{
+		Tasks:    []recall.BoardTask{{ID: "s6ff5k", Status: "todo"}, {ID: "q70jjy", Status: "todo"}},
+		Findings: func() []recall.BoardFinding { return fs },
+		Self:     recall.BoardSelf{Name: "hog"},
+	}
+	e := boardEngine(t)
+	if line, _ := e.BoardCue("hog", "back", "return", now, src(in)); line != "" {
+		t.Fatalf("section finding to a passer-by: %q", line)
+	}
+	fs = []recall.BoardFinding{section, title}
+	if line, _ := e.BoardCue("hog", "back", "return", now.Add(7*time.Hour), src(in)); !strings.Contains(line, "q70jjy") {
+		t.Fatalf("title finding to a passer-by: %q", line)
+	}
+	// The session named the task: its section is its to fill.
+	fs = []recall.BoardFinding{section}
+	if line, _ := e.BoardCue("hog", "now s6ff5k", "return", now.Add(14*time.Hour), src(in)); !strings.Contains(line, "s6ff5k") {
+		t.Fatalf("section finding to the task's session: %q", line)
+	}
+}
+
 func TestBoardOffWhenNoSource(t *testing.T) {
 	e := boardEngine(t)
 	if line, _ := e.BoardCue("s", "go", "start", time.Now(), nil); line != "" {
@@ -295,5 +351,42 @@ func TestBoardOwnerLine(t *testing.T) {
 	}
 	if l, _ := e.BoardCue("s", "go", "", now.Add(2*time.Hour), src(in)); l != "" {
 		t.Fatalf("repeated: %q", l)
+	}
+}
+
+// tpnd3n check 1: while the session's own doing task has a finding, that
+// one comes first and nothing unrelated is handed out; once it is fixed,
+// an unrelated finding may follow at the next break.
+func TestBoardUnrelatedLintWaitsForOwnTask(t *testing.T) {
+	e := boardEngine(t)
+	now := time.Date(2026, 11, 17, 10, 0, 0, 0, time.UTC)
+	own := recall.BoardFinding{TaskID: "own111", TaskStatus: "doing", Problem: "missing section Purpose", Fix: "hug task set own111 --purpose \"...\""}
+	other := recall.BoardFinding{TaskID: "oth222", TaskStatus: "doing", Problem: "title is 120 characters (max 80)", Fix: "hug task set oth222 --title \"...\""}
+	fs := []recall.BoardFinding{other, own}
+	in := recall.BoardInput{
+		Tasks:    []recall.BoardTask{{ID: "own111", Status: "doing", Assignee: []string{"crab"}, Checks: 2, Open: 1}, {ID: "oth222", Status: "doing", Assignee: []string{"vole"}}},
+		Findings: func() []recall.BoardFinding { return fs },
+		Self:     recall.BoardSelf{Name: "crab"},
+	}
+	line, kind := e.BoardCue("s", "back", "return", now, src(in))
+	if kind != "lint" || !strings.Contains(line, "own111") {
+		t.Fatalf("own task's finding first: %q %q", kind, line)
+	}
+	// Own finding still open (handed out, not yet fixed): nothing unrelated.
+	if line, _ := e.BoardCue("s", "back", "return", now.Add(7*time.Hour), src(in)); line != "" {
+		t.Fatalf("unrelated finding while own task has one: %q", line)
+	}
+	// Fixed: the unrelated one follows at the next break.
+	fs = []recall.BoardFinding{other}
+	if line, _ := e.BoardCue("s", "back", "return", now.Add(14*time.Hour), src(in)); !strings.Contains(line, "oth222") {
+		t.Fatalf("unrelated after own fixed: %q", line)
+	}
+	// A session with no own task gets the unrelated finding as before.
+	e2 := boardEngine(t)
+	free := in
+	free.Tasks = []recall.BoardTask{{ID: "oth222", Status: "doing", Assignee: []string{"vole"}}}
+	free.Findings = func() []recall.BoardFinding { return []recall.BoardFinding{other} }
+	if line, _ := e2.BoardCue("s", "back", "return", now, src(free)); !strings.Contains(line, "oth222") {
+		t.Fatalf("no own task: %q", line)
 	}
 }
