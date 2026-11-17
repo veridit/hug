@@ -44,6 +44,7 @@ filter: none · sort: rank
 HUG TASKS · overview › 6ephqk › kx2ndm                                    ? 15 for you    ← breadcrumb
 [doing] [feature] [high]  group:root  assigned:nautilus · claude-opus-5-5/high · main     ← context
 created 2026-11-16 · updated 2026-11-16 · tui-groups-epics-visible                        ← context
+──────────────────────────────────────────────────────────────────────────────────────────
 ▸ TUI: groups and epics visible and collapsible                                           ← subject
 ──────────────────────────────────────────────────────────────────────────────────────────────
 GOAL …                                                                                    ← details
@@ -59,12 +60,13 @@ ACCEPTANCE …
   badge) and the dates line, dim except the badges' own colours.
 - **subject**: the title, bold, full width, right above the details, so it reads as the heading
   of what follows. `▸` before it marks page focus, and the footer then lists the task-wide keys.
-- A dim full-width rule closes the header. Everything under it is details and scrolls.
+- Two dim full-width rules frame the subject (Jørgen 00:04: "a line right above the subject so
+  the subject stands out a little bit more"): one between context and subject, one between
+  subject and details. Everything under the second rule is details and scrolls.
 - The asked or waiting question is not in the header. It shows once, on the check it is about
   (0gztsy), or as one block at the top of the details when it names no check.
 
-Order question for Jørgen: context before subject (as he said it), or subject before context
-(a title first, then its facts)? This file follows his words: context, then subject.
+Order (Jørgen 00:04, "yes"): context, then subject, as he first said it.
 
 ## Footer while a prefix is pending (qh9ep1)
 
