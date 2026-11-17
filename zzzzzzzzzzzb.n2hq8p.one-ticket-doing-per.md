@@ -10,13 +10,10 @@ created: 2026-11-17
 updated: 2026-11-17
 parent: "47sxn2"
 doing_since: "2026-11-17T14:34"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing turn: right after hatchling (crab 15:09); rebase onto hatchling's push, one fresh CI"
-waiting_since: "2026-11-17T16:10"
-waiting_asked_by: "calf"
 ---
 
 ## Goal
@@ -52,3 +49,4 @@ kestrel 15:38: CI 44112302694 on 300abb8 was red on Windows only: '--- FAIL: Tes
 ## History
 - 2026-11-17T14:34 todo -> doing/active (take)
 - 2026-11-17T15:02 doing/active -> doing/waiting (wait)
+- 2026-11-17T16:40 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: landing turn: right after hatchling (crab 15:09); rebase onto hatchling's push, one fresh CI; waiting_since: 2026-11-17T16:10
