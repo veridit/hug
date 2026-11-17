@@ -117,21 +117,27 @@ func TestUpgradeMovesWaitingFor(t *testing.T) {
 	execute(t, a, "init")
 	ids := map[string]string{}
 	// One doing task per agent (n2hq8p): each its own owner.
-	for _, c := range [][2]string{{"Look", "nautilus"}, {"Build", "wyvern"}} {
+	// Two waits on a person: the second move reads the board again after
+	// the first wrote, which once hit a closed cache.
+	for _, c := range [][2]string{{"Look", "nautilus"}, {"Build", "wyvern"}, {"Read", "kestrel"}} {
 		ids[c[0]] = execute(t, a, "new", c[0], "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
 		execute(t, a, "take", ids[c[0]], "--as", c[1], "--model", "m")
 	}
 	// As hug wrote them before waiting_for.
 	execute(t, a, "wait", ids["Look"], "jhf: look at the colours", "--as", "nautilus")
 	execute(t, a, "wait", ids["Build"], "CI run: 9", "--as", "wyvern")
+	execute(t, a, "wait", ids["Read"], "jhf: read the note", "--as", "kestrel")
 	execute(t, a, "people", "add", "jhf", "jorgen@veridit.no")
 	r := execute(t, a, "upgrade")
-	if did := strings.Join(r["upgrade"].([]string), "; "); !strings.Contains(did, "1 waits on a person moved to waiting_for") {
+	if did := strings.Join(r["upgrade"].([]string), "; "); !strings.Contains(did, "2 waits on a person moved to waiting_for") {
 		t.Fatalf("upgrade did: %s", did)
 	}
 	look, build := taskFile(t, a, ids["Look"]), taskFile(t, a, ids["Build"])
 	if !strings.Contains(look, `waiting_for: "jhf"`) || !strings.Contains(look, `waiting_on: "look at the colours"`) {
 		t.Fatalf("Look not moved:\n%s", look)
+	}
+	if read := taskFile(t, a, ids["Read"]); !strings.Contains(read, `waiting_for: "jhf"`) {
+		t.Fatalf("Read not moved:\n%s", read)
 	}
 	if strings.Contains(build, "waiting_for") || !strings.Contains(build, `waiting_on: "CI run: 9"`) {
 		t.Fatalf("Build changed:\n%s", build)

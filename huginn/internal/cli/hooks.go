@@ -219,7 +219,9 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		if e == nil && len(changed) > 0 {
 			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: backlog leftovers and section order in %d tasks", len(changed)))
 		}
-		s.c.Close()
+		// The cache stays open for the waits below (89y0b7: closing it here
+		// made the move fail with "sql: database is closed").
+		defer s.c.Close()
 		if e != nil {
 			return nil, e
 		}
