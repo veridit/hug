@@ -45,6 +45,7 @@ Jørgen 2026-11-17 14:47: --cleanup also removes backlog's other traces, in the 
 
 file:ggydj2-seid-dry-run.md (9631 bytes, sha256:bdff9e31) Seid cleanup dry run (scratch clone)
 Check 4, part 1 (scratch clone of seid-lang, Seid itself untouched): the attached ggydj2-seid-dry-run.md has the full --dry-run. It shows git rm of 7658 files under .backlog, 61 documents cite .backlog, and about 64 agent: lines. Before the cleanup can run, Seid has to import .backlog/evidence (4738 files, 2766 citations) and move its own tooling off .backlog (.githooks/pre-commit:40 runs tools/backlog_integrity.py; tools/evidence.py reads .backlog/tasks). A real run on the clone was refused by Seid's pre-commit (FileNotFoundError .backlog/tasks) and the clone was left unchanged.
+Checks 1-3 landed in main 55fd4f9 (e96d6f8..55fd4f9). Each test fails on base dde0b41 and passes on 55fd4f9. 1: TestImportCleanupRetiresSourceInOneCommit: git rm of DIR in one commit with a Model: trailer, plus [[import]] source/commit/date in hug.toml. TestImportCleanupRefusedByHookChangesNothing: a refusing hook leaves the tree unchanged. 2: TestImportRefusedAfterCleanup: re-import refused naming the commit, with a fix: line. 3: TestSetupStopsOfferingRecordedImport: no offer once recorded, and a leftover DIR is flagged with the --cleanup fix. -race on cli/task/importer/mcp: 'ok' for all 4 after rebasing onto e96d6f8.
 ## History
 - 2026-11-17T15:58 todo -> doing/active (take)
 - 2026-11-17T17:46 doing/active -> doing/waiting (wait)
