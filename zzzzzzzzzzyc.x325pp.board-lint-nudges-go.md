@@ -32,7 +32,7 @@ muninn/internal/recall/boardcue.go pickFinding/BoardCue; replay muninn/cmd/board
 ## Depends on
 
 ## Acceptance
-- [ ] done when task:tpnd3n is done (an unrelated lint finding is handed out only when the session has no doing task of its own or just closed one)
+- [ ] ~~done when task:tpnd3n is done (an unrelated lint finding is handed out only when the session has no doing task of its own or just closed one)~~ (not relevant: moved to tpnd3n (measured: rule 1 cut lines 14 -> 8; stop turn lost skunk/w96jpg), hatchling, 2026-11-17)
 - [x] a turn whose message tells the agent to stop or not run commands gets no board line
 - [ ] replay: lint precision >= 0.9 on held-out with no drop in lint lines on fresh data, counts in muninn/docs/BOARD4.md
 
