@@ -4,7 +4,7 @@ title: "macOS: a project memory does not reach the other clone within 10 s"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
