@@ -11,10 +11,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-17T15:22"
-waiting_asked_by: "calf"
-waiting_on: "check 2: three consecutive green macOS CI runs on main after 4ecfa25"
-stage: "waiting"
+stage: "active"
 ---
 
 ## Goal
@@ -48,3 +45,4 @@ Landed: 38ff464..4ecfa25 on main (b30ec54, 2b59fd3, 42453ee-equivalent, 4ecfa25)
 kestrel 14:40, check 2 progress: macOS main run 1/3 is green. 44102298826 on 4ecfa25: 'test (macos-latest) completed success'. Two more main runs needed; none newer yet.
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
+- 2026-11-17T16:57 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: check 2: three consecutive green macOS CI runs on main after 4ecfa25; waiting_since: 2026-11-17T15:22
