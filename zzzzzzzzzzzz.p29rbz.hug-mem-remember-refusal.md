@@ -1,0 +1,31 @@
+---
+id: p29rbz
+title: "hug mem remember: a refusal says NOT STORED first and exits non-zero"
+status: todo
+type: bug
+priority: "high"
+assignee: []
+labels: []
+created: 2026-11-17
+updated: 2026-11-17
+---
+
+## Goal
+When hug mem remember refuses (near-duplicate, possible secret, project-specific), the output starts with 'NOT STORED:' and the exit code is non-zero (a distinct code, documented), on CLI and in the MCP reply (isError or a clear stored:false first).
+
+## Purpose
+Seid foreman (orangutan) requests 2026-11-17, file: seid-lang .jcode/scratch/TASK-2057/hug-agent-requests.md, read by crab 15:07, item 4. A Seid agent read the near-duplicate refusal as success, ran hug mem forget X right after, and lost both memories.
+
+## Principle
+A refusal never looks like success, in a script or to a reader. The fix: line still offers --reinforce / --new-reason.
+
+## Relevant details
+Messages: muninn/internal/app/dedupe.go:23, binding.go:559, places.go:163, all start 'not stored yet:'.
+
+## Depends on
+
+## Acceptance
+- [ ] each of the three refusals: output starts 'NOT STORED:', exit code non-zero (test)
+- [ ] the MCP remember reply for a refusal is marked as an error or stored:false first (test)
+
+## Notes
