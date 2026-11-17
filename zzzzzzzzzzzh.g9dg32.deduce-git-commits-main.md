@@ -12,8 +12,11 @@ parent: "47sxn2"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+stage: "waiting"
 doing_since: "2026-11-17T15:09"
+waiting_on: "CI 44102521209, then crab's landing queue"
+waiting_since: "2026-11-17T15:23"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ Wired (wyvern 14:23): d44454a on ci/g9dg32, CI 44102521209. hug task deduce [--s
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:09 todo/ready -> doing/active (take)
+- 2026-11-17T15:23 doing/active -> doing/waiting (wait)
