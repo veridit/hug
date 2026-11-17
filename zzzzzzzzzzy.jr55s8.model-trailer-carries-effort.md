@@ -30,7 +30,7 @@ Current gate: hug task install commit-msg (t709he) puts a hook in <git-common-di
 ## Depends on
 
 ## Acceptance
-- [ ] the hook accepts Model: claude-opus-5-5/high and Model: human, refuses a missing effort, an effort not listed for that model, and two Model lines, each with a fix: line (test)
+- [x] the hook accepts Model: claude-opus-5-5/high and Model: human, refuses a missing effort, an effort not listed for that model, and two Model lines, each with a fix: line (test)
 - [ ] hug task take --model id/effort records model and effort, and the row/detail show both (test)
 - [ ] a tracked hook can call the gate in two lines; the help shows them
 - [ ] Seid's tracked hook switched, in a commit Jørgen approves
