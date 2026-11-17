@@ -34,7 +34,7 @@ CLI already shows epic:/child: lines and has --epic. TUI has filter fields g (gr
 - [x] a key toggles grouping by group, by epic, or flat; the header says which
 - [x] Space on a group or epic heading folds and unfolds it, and the count stays visible when folded
 - [ ] ~~tasks in group later are visibly set apart from NEXT UP~~ (not relevant: no magic group names; deferred is a stage (6ephqk), nautilus, 2026-11-17)
-- [ ] tests cover grouping, folding and the 80-column width; goldens reviewed
+- [x] tests cover grouping, folding and the 80-column width; goldens reviewed
 
 ## Notes
 
