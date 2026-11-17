@@ -33,3 +33,5 @@ Today's footer while typing: '↑↓ pick · Enter go to it · Tab keep as filte
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+Jørgen 23:29: covers the inline file viewer too (glance): / finds text in the shown file, n/N step. Add as part of check 1-2's tests.
