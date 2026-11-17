@@ -32,3 +32,5 @@ CPU profile of a4aa5a5 + a local pprof hook, hug tui on Seid, ~5 s sampled: (1) 
 - [ ] hug tui on Seid: first frame warm under 400 ms, median of 5, numbers in the notes; Jørgen opens it and agrees
 
 ## Notes
+
+crab 15:05: the Seid board has 271 top-level folders and 1,132 folders in all under .hug/tasks (find -mindepth 2 -type d). Profile files: $JCODE_SCRATCH_DIR/tui3.prof with binary hug-prof (a4aa5a5 + CRAB_CPUPROFILE hook in cmd/hug/main.go, scratch only).
