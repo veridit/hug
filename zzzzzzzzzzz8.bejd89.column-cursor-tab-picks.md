@@ -32,3 +32,5 @@ Keys today (huginn/internal/tui/keys.go:20-21): h/←/Shift-Tab = previous pane 
 - [ ] Jørgen orders the Statbus overview by priority and then by owner with Tab and o, and says it works
 
 ## Notes
+
+nautilus 14:09 (crab 14:08): dependency on 6ephqk removed. bejd89 needs only 6ephqk's columns (rows show stage, no status column: 25f5f5f, check 5), on main since d198e01. Tags (txjkrm) are not a column yet; the cursor covers the columns on screen, and tags join when txjkrm adds them.
