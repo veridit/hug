@@ -1,15 +1,18 @@
 ---
 id: 44w1ev
 title: "Scale: stay fast and safe at 10,000 tasks"
-status: "todo"
+status: "doing"
 type: chore
 priority: "medium"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-17T15:01"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -84,3 +87,4 @@ Check 3 ruled by Jørgen (see above). Plan (crab 13:31): (a) and (b) are the def
 
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
+- 2026-11-17T15:01 todo/ready -> doing/active (take)
