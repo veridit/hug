@@ -1,13 +1,18 @@
 ---
 id: t3fqaw
 title: "set --title leaves the old multi-line title's continuation lines"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T18:56"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Imported backlog titles can be multi-line. Check every field writer (set, take, 
 - [ ] the same for every other front-matter field a command writes (test)
 
 ## Notes
+
+
+## History
+- 2026-11-17T18:56 todo -> doing/active (take)
