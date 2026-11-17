@@ -24,6 +24,12 @@ compatibility links only. Never tell a user to type them.
   `GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test ./...`.
 - TUI goldens: `HUGINN_UPDATE_GOLDEN=1 go test -run TestTmuxGolden ./huginn/internal/tui/`,
   then review the diff before committing.
+- A test that fails when code gets slower is a benchmark, not a test: name it
+  `Test...Bench...`, skip it unless `HUG_BENCH=1`, and compare the new path
+  with the old one in the same process (a ratio, never an absolute time). CI
+  runs them in the `bench` job (ubuntu, no -race):
+  `HUG_BENCH=1 go test -run Bench ./...`. A bound that proves a timeout or
+  a non-wait (a hanging remote gives up) stays a normal test.
 - Messages, fixes and help must name `hug task ...` / `hug mem ...`, and every
   error ends with a `fix:` line an agent can run.
 - Releases: add a CHANGELOG.md entry, tag `vX.Y.Z`, push; CI publishes the

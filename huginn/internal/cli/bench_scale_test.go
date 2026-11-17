@@ -7,44 +7,37 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	"testing"
 	"time"
 )
 
-// TestScaleBudget10K builds a board of 10,000 tasks (the shape of
+// TestScaleBench10K builds a board of 10,000 tasks (the shape of
 // gen-scale-board.py, attached to 44w1ev: groups, epics, dependencies,
-// notes) and fails when ls, next, show, board, lint or note exceed the
-// budget once the cache is warm. The target is 400 ms on a developer
-// machine (Jørgen, 2026-11-16); the budget here is 3x that, for shared CI
-// runners and the race detector, so it catches a return to the old cost
-// (1.4-3.4 s at 10,000 tasks) without flaking. Skipped with -short.
+// notes) and fails when a warm command costs more than half of the same
+// command on the uncached path: cache.db removed first, so it reads and
+// parses every task file, the cost that grows with the board.
 //
-// Times are measured in-process: what the command itself costs, without
-// process start (~25 ms).
-func TestScaleBudget10K(t *testing.T) {
-	if testing.Short() {
-		t.Skip("scale test: 10,000 task files")
+// A ratio, not an absolute budget (Jørgen, 2026-11-17 10:00): the same
+// code measured 2-10x apart on two ubuntu runners (CI runs 44054586997 and
+// 44057678727: ls 4.93 s over a 4.8 s race budget), so any fixed number
+// flakes. Old and new run interleaved in one process, so a slow runner
+// slows both. A benchmark, not a test: it runs only with HUG_BENCH=1 (the
+// ci.yml bench job: ubuntu, no -race). The developer target stays 400 ms
+// per command (Jørgen, 2026-11-16); the log prints both numbers.
+func TestScaleBench10K(t *testing.T) {
+	if os.Getenv("HUG_BENCH") != "1" {
+		t.Skip("benchmark: HUG_BENCH=1 go test -run TestScaleBench10K ./huginn/internal/cli/")
 	}
-	const n = 10000
-	budget := 1200 * time.Millisecond
-	if raceEnabled {
-		budget *= 4 // the race detector slows everything 4-10x
-	}
-	if runtime.GOOS == "windows" {
-		// Windows CI files cost about 2.5x macOS (run 43954317409: note
-		// 1.296 s, ls 1.186 s against 0.50 s and 0.46 s on macOS); the old
-		// cost there is 3-8 s, so 2x still catches a return to it.
-		budget *= 2
-	}
+	const n, runs, maxRatio = 10000, 5, 0.5
 	a := app(t)
 	execute(t, a, "init")
 	root := filepath.Join(a.Cwd, ".hug", "tasks")
 	writeScaleBoard(t, root, n)
 	git(t, root, "add", "-A")
 	git(t, root, "commit", "-q", "-m", "scale board")
+	db := filepath.Join(a.Cwd, ".git", "huginn", "cache.db")
 
 	run := func(args ...string) time.Duration {
 		t.Helper()
@@ -55,24 +48,40 @@ func TestScaleBudget10K(t *testing.T) {
 		}
 		return time.Since(t0)
 	}
-	t0 := time.Now()
-	run("ls") // cold: parses every file into the cache
-	t.Logf("cold ls (parse %d files): %v", n, time.Since(t0).Round(time.Millisecond))
+	uncached := func(args ...string) time.Duration {
+		t.Helper()
+		for _, suffix := range []string{"", "-wal", "-shm"} {
+			if e := os.Remove(db + suffix); e != nil && !os.IsNotExist(e) {
+				t.Fatal(e)
+			}
+		}
+		return run(args...)
+	}
+	uncached("ls")
+	if _, e := os.Stat(db); e != nil {
+		t.Fatalf("no cache at %s after ls: the uncached path measures nothing: %v", db, e)
+	}
 	ls := execute(t, a, "ls")["tasks"].([]Reply)
 	if len(ls) != n {
 		t.Fatalf("ls lists %d tasks, want %d", len(ls), n)
 	}
 	id := ls[n/2]["id"].(string)
-	for _, c := range [][]string{{"ls"}, {"next"}, {"show", id}, {"board"}, {"lint"}, {"note", id, "scale note"}} {
-		var ts []time.Duration
-		for i := 0; i < 3; i++ {
-			ts = append(ts, run(c...))
-		}
+	median := func(ts []time.Duration) time.Duration {
 		sort.Slice(ts, func(i, j int) bool { return ts[i] < ts[j] })
-		med := ts[1]
-		t.Logf("%-5s median %v (target 400ms, budget %v)", c[0], med.Round(time.Millisecond), budget)
-		if med > budget {
-			t.Errorf("%s at %d tasks: median %v over the %v budget", c[0], n, med.Round(time.Millisecond), budget)
+		return ts[len(ts)/2]
+	}
+	for _, c := range [][]string{{"ls"}, {"next"}, {"show", id}, {"board"}, {"lint"}, {"note", id, "scale note"}} {
+		var olds, news []time.Duration
+		for i := 0; i < runs; i++ {
+			olds = append(olds, uncached(c...))
+			run(c...) // the uncached run left a fresh cache; settle it
+			news = append(news, run(c...))
+		}
+		old, cur := median(olds), median(news)
+		ratio := float64(cur) / float64(old)
+		t.Logf("%-5s warm %v, uncached %v, ratio %.2f (limit %.2f; target 400ms warm)", c[0], cur.Round(time.Millisecond), old.Round(time.Millisecond), ratio, maxRatio)
+		if ratio > maxRatio {
+			t.Errorf("%s at %d tasks: warm %v is %.2f of the uncached %v, over %.2f: a command again does work that grows with the board", c[0], n, cur.Round(time.Millisecond), ratio, old.Round(time.Millisecond), maxRatio)
 		}
 	}
 }

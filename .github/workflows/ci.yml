@@ -40,3 +40,21 @@ jobs:
         run: go build ./cmd/hug
         env:
           CGO_ENABLED: "0"
+
+  bench:
+    # Benchmarks out of the normal suite (Jørgen, 2026-11-17 10:00): one
+    # ubuntu runner, no -race, beside the test jobs and required like them.
+    # Each benchmark compares the new path with the old one in the same
+    # process (a ratio, never an absolute time: runners differ 2-10x, CI
+    # runs 44054586997 and 44057678727). Tests skip them without HUG_BENCH=1.
+    needs: secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Benchmarks (HUG_BENCH=1)
+        run: go test -count=1 -v -timeout 30m -run 'Bench' ./...
+        env:
+          HUG_BENCH: "1"
