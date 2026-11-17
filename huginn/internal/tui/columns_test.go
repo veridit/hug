@@ -79,7 +79,9 @@ func TestColumnCursorMarksHeader(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v\nfix: HUG_UPDATE_GOLDEN=1 go test -run TestColumnCursorMarksHeader ./huginn/internal/tui/", err)
 	}
-	if text != string(want) {
+	// A Windows checkout has the golden with CRLF line ends (run
+	// 44161863844), as every other golden here allows for.
+	if text != strings.ReplaceAll(string(want), "\r\n", "\n") {
 		t.Fatalf("differs from %s:\n%s", path, text)
 	}
 }
