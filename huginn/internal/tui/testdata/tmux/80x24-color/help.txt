@@ -3,20 +3,20 @@ HUG TASKS · help   60/60 tasks · ! 4 broken · 5 advice
 todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
 IN THE LIST
-j/k ↑/↓          move
-< > Home End     top / bottom
-ctrl-d/u         half page down / up
-PgDn / PgUp      page down / up
-Enter            open the task
-Tab / Shift-Tab  mark the next / previous column
-o                order by the marked column: ▲ ▼ off
-t / d / x        take / done / drop the task
-e                edit in $VISUAL, else $EDITOR, git core.editor, vi
-J / K            move below / above the next row, no confirm
-m                grab: j/k move it, Enter places it
-y, P p           yank, then paste above / below
-s / c            state palette / clear all filters
-g                group rows: flat, group, epic
+j/k ↑/↓       move
+< > Home End  top / bottom
+ctrl-d/u      half page down / up
+PgDn / PgUp   page down / up
+Enter         open the task
+J / K         page down / up
+H / L         mark the previous / next column
+o             order by the marked column: ▲ ▼ off
+t / d / x     take / done / drop the task
+e             edit in $VISUAL, else $EDITOR, git core.editor, vi
+m             grab to move: j/k move it, Enter places it
+y, P p        yank, then paste above / below
+s / c         state palette / clear all filters
+g             group rows: flat, group, epic
 
 EVERYWHERE
 All tasks · : filters and commands

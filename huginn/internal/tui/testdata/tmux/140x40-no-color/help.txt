@@ -3,20 +3,20 @@ HUG TASKS · help   60/60 tasks · ! 4 broken · 5 advice
 todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
 IN THE LIST                                                            EVERYWHERE
-j/k ↑/↓          move                                                  v o/i/b/!      views: overview / list / board / lint; i b ! alone too
-< > Home End     top / bottom                                          /              live find; Enter goes to it, Tab keeps it as a filter
-ctrl-d/u         half page down / up                                   :              palette: commands with completion
-PgDn / PgUp      page down / up                                        : commands     overview, list, board, todo, doing, done, depends,
-Enter            open the task                                                        dropped, state <s>, type <t>, priority <p>, group <g>,
-Tab / Shift-Tab  mark the next / previous column                                      label <l>, assignee <a>, epic <id>, goto <id>, sort,
-o                order by the marked column: ▲ ▼ off                                  grouping, lint, clear, help
-t / d / x        take / done / drop the task                           #              jump by id prefix or TASK-number alias
-e                edit in $VISUAL, else $EDITOR, git core.editor, vi    f              filter picker: s/t/p/g/l/a/e
-J / K            move below / above the next row, no confirm           1 / 2 / 3 / 4  filter todo / doing / done / depends
-m                grab: j/k move it, Enter places it                    Backspace / F  remove the last chip / clear all filters
-y, P p           yank, then paste above / below                        : sort         order by fields; : sort rank goes back
-s / c            state palette / clear all filters                     N              new task
-g                group rows: flat, group, epic                         S              copy the screen, Enter attaches it to the task
+j/k ↑/↓       move                                                     v o/i/b/!      views: overview / list / board / lint; i b ! alone too
+< > Home End  top / bottom                                             /              live find; Enter goes to it, Tab keeps it as a filter
+ctrl-d/u      half page down / up                                      :              palette: commands with completion
+PgDn / PgUp   page down / up                                           : commands     overview, list, board, todo, doing, done, depends,
+Enter         open the task                                                           dropped, state <s>, type <t>, priority <p>, group <g>,
+J / K         page down / up                                                          label <l>, assignee <a>, epic <id>, goto <id>, sort,
+H / L         mark the previous / next column                                         grouping, lint, clear, help
+o             order by the marked column: ▲ ▼ off                      #              jump by id prefix or TASK-number alias
+t / d / x     take / done / drop the task                              f              filter picker: s/t/p/g/l/a/e
+e             edit in $VISUAL, else $EDITOR, git core.editor, vi       1 / 2 / 3 / 4  filter todo / doing / done / depends
+m             grab to move: j/k move it, Enter places it               Backspace / F  remove the last chip / clear all filters
+y, P p        yank, then paste above / below                           : sort         order by fields; : sort rank goes back
+s / c         state palette / clear all filters                        N              new task
+g             group rows: flat, group, epic                            S              copy the screen, Enter attaches it to the task
                                                                        r              refresh now (changes on disk show by themselves)
                                                                        Enter / Esc    confirm / cancel every editing action
                                                                        e again        after an edit left a finding: edit at once

@@ -1,12 +1,10 @@
-HUG TASKS · detail   60/60 tasks · ! 4 broken · 5 advice
- overview    list    board    !lint   list › 000001
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
-No filters · f picker · 1 todo  2 doing  3 done  4 depends
-Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖
-[todo]  [feature]  [critical]  000001  group:compiler  unassigned
+HUG TASKS · list › 000001
+[todo]  [feature]  [critical]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 ⚠ line 1: title is 134 characters (max 80): move detail into the Goal
   fix: hug task set 000001 --title "..."
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
 Deliver compiler-lang support with huginn and readable evidence.
@@ -35,6 +33,8 @@ no dependencies
 
 FILES (2)
   ⎘ bench/README.md  32 B
+  ⎘ bench/results.tsv  12 B
+
 Task 1 of 60 · 0% · n next · p previous · Esc back
 
-j/k check · Space tick · - strike out · t/d/x/e take/done/drop/edit · N new · u up · n/p task · h/l section · J/K ½ page · E files …
+j/k check · Space tick · - strike out · h/l Tab next · t/d/x/e take/done/drop/edit · N new · u up · n/p task · J/K ½ page · E files …

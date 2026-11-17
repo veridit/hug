@@ -1,12 +1,10 @@
-HUG TASKS · detail   60/60 tasks · ! 4 broken · 5 advice
- overview    list    board    !lint   list › ▸ 000003
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
-No filters · f picker · 1 todo  2 doing  3 done  4 depends
-Render compiler-lang task detail without storage markers
-[done]  [feature]  [medium]  000003  group:compiler  unassigned
+HUG TASKS · list › 000003
+[done]  [feature]  [medium]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task
 ⚠ line 1: Acceptance requires at least one item
   fix: hug task set 000003 --accept "observable check"
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+▸ Render compiler-lang task detail without storage markers
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 DESCRIPTION
 Provide compiler-lang support with huginn and clear sections.
@@ -35,6 +33,8 @@ no dependencies
 
 
 
+
+
 Task 3 of 60 · 100% · n next · p previous · Esc back
 
-j/k scroll · t/d/x/e take/done/drop/edit · N new · u up · n/p task · J/K ½ page · S screen · Esc back · : cmd · ? help · q quit   hug v0.0.0
+j/k scroll · e edit · x drop · y yank · N new · u up · n/p task · J/K ½ page · S screen · Esc back · : cmd · ? help · q quit      hug v0.0.0
