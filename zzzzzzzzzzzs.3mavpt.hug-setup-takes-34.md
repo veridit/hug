@@ -71,6 +71,9 @@ landed e971d24 on main 2026-11-17: hug setup: 0.5 s on Seid, not 34 s: the backl
 landed 58fcd3c on main 2026-11-17: Merge v0.7.47 into main (jmx10s, 3mavpt stay under Unreleased)
 shipped in v0.7.48 (e971d24)
 crab 22:06Z, check 2 on the real seid-lang checkout with v0.7.48 (brew), machine load 286-323: first run 15.5 s (cold: the remembered result is new to this machine), then 0.89 s and 0.87 s. Under 1 s warm holds even at that load. The first run after each converter change stays cold; kestrel's follow-up keys on importer.ConverterVersion so plain releases stay warm.
+landed a798378 on main 2026-11-17: hug setup: the remembered backlog answer survives hug releases (keyed on…
+landed 55f5c67 on main 2026-11-17: test(cli): TestSetupFilesStepRemembered says why nothing was remembered (key…
+landed b62a0a4 on main 2026-11-17: test(cli): TestSetupFilesStepRemembered also prints the key before the step, the…
 ## History
 - 2026-11-17T20:17 todo -> doing/active (take)
 - 2026-11-17T21:46 doing/active -> doing/waiting (wait)
