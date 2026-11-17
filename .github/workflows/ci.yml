@@ -30,6 +30,9 @@ jobs:
           go-version-file: go.mod
       - name: Vet
         run: go vet ./...
+      - name: kbc99j repeat (temporary, ci/kbc99j only)
+        if: matrix.os == 'windows-latest'
+        run: go test -count=20 -run 'TestParallelNotesWithoutRemoteAllLand|TestAtomicWriteRacesReads|TestRenameOverOpenFile' ./huginn/internal/cli/ ./huginn/internal/task/ ./internal/sharefile/
       - name: Test
         # The race detector runs once, on ubuntu (fastest); macOS and Windows
         # run plain tests for platform behaviour. -race made windows ~14 min.
