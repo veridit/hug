@@ -36,7 +36,7 @@ Sources: dependencies, waiting_on text (any 6-char id or alias that resolves), p
 ## Acceptance
 - [x] in a detail whose waiting_on names a task id, Tab moves to that id, Enter opens it, Esc returns to the first detail (test + golden)
 - [x] dependencies, parent, children and task:ID refs are all on the same Tab cycle, in reading order; an id that resolves to no task is not a stop (test)
-- [ ] Jørgen tabs from a waiting row's detail to the ticket it waits on and back, and says it is quick
+- [ ] ~~Jørgen tabs from a waiting row's detail to the ticket it waits on and back, and says it is quick~~ (not relevant: Tab stepping ids is replaced by Jørgen's 23:27 ruling (Tab = l, one focus ring, e3sevr); he confirms the new keys on e3sevr check 4, crab, 2026-11-18)
 
 ## Notes
 
