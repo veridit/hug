@@ -1,0 +1,35 @@
+---
+id: t01kqm
+title: "Lint judges open tasks only; closed tasks are history, no hidden count"
+state: todo
+type: feature
+priority: ""
+assignee: []
+labels: []
+created: 2026-11-18
+updated: 2026-11-18
+---
+
+## Goal
+hug task lint, the TUI LINT section and the header counts consider only open tasks (todo, doing). Done and dropped tasks get no findings and no 'N on closed tasks hidden' line. A closed task is checked once, when it closes (done already refuses open checks). Exception: a file hug cannot read as a task at all still shows, since it is not known to be closed.
+
+## Purpose
+Jørgen 00:25 local, on Statbus's LINT section (179 tasks, 298 broken, rows almost all 'done'): 'I don't think linting should show the done tasks'; 'a lint telling me we're ignoring 500 done tasks is not truly sensible.' Measured on Statbus by crab with hug v0.7.50: 308 broken findings, 290 on closed tasks (236 done-unchecked, 51 missing-goal, 3 duplicate-section); 18 on open tasks (10 branch-gone, 8 missing-goal); plus '170 advice findings on closed tasks hidden'.
+
+## Principle
+Lint is for work that can still change. History is neither nagged nor counted. Check at the moment of the write (wdkqzx), not after. No flag keeps the old behaviour (no backward compatibility). hug task lint ID on a closed task says it is closed and has nothing to judge.
+
+## Relevant details
+Code: huginn/internal/task lint severity rules; huginn/internal/cli/lint.go:134-147 (the hidden line, hiddenCommand, summary.Hidden and hidden_codes in JSON); huginn/internal/tui/render.go:326 (' (N on closed tasks hidden)'); header '! N broken · N advice'. The done-unchecked code goes: a done task with an open check only comes from import or a hand edit, and import (ggydj2) should say so at import time. The lint --all flag and the JSON hidden fields go. Owner: hatchling, after wdkqzx A+C.
+
+## Depends on
+
+## Acceptance
+- [ ] On Statbus's board hug task lint --summary counts only open tasks (about 18 broken), has no done-unchecked and no 'closed tasks hidden' line (numbers in a note)
+- [ ] A done or dropped task gives no finding; hug task lint ID on one prints 'ID is done: lint judges open tasks only' and exits 0 (test, fails on main)
+- [ ] The TUI LINT section and header counts match the CLI and show no hidden-on-closed text (golden)
+- [ ] A file hug cannot parse as a task still shows as broken (test)
+- [ ] The lint all-tasks flag and the JSON hidden fields are gone, and help says lint judges open tasks (help test)
+- [ ] Jørgen confirms the Statbus LINT section after release
+
+## Notes
