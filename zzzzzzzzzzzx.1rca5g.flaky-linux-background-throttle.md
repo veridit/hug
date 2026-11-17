@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T14:38"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ci/1rca5g"
 worktree: "/Users/jhf/.jcode/scratch/guppy-own"
+waiting_on: "its landing turn (ci/1rca5g e420c3a, CI 44094805524)"
+waiting_since: "2026-11-17T14:45"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -40,3 +43,4 @@ hatchling 13:39: cause, with evidence: Linux niceness is per thread; Background(
 hatchling 13:42: ubuntu CI probe run 44094839981 (probe/1rca5g = e420c3a + probe workflow, not for main): '50 --- PASS: TestBackgroundLowersPriorityAndProcs', '50 --- PASS: TestBackgroundNicesEveryThread', then -race -count=50 'ok ... 153.149s'. ci/1rca5g e420c3a CI 44094805524 running.
 ## History
 - 2026-11-17T14:38 todo -> doing/active (take)
+- 2026-11-17T14:45 doing/active -> doing/waiting (wait)
