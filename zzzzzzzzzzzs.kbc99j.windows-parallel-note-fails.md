@@ -1,7 +1,7 @@
 ---
 id: kbc99j
 title: "Windows: a parallel note fails with 'file is being used by another process'"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
@@ -11,7 +11,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+done_at: "2026-11-17T15:22"
 ---
 
 ## Goal
@@ -45,3 +45,4 @@ Landed: 38ff464..4ecfa25 on main (fix 2d10706, probe 6a1c641, changelog), CI 440
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
 - 2026-11-17T15:22 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: landing turn: checks 1-2 ticked; combined with 4vcwxk on kestrel/land-kbc99j-4vcwxk, queued after hatchling (crab 13:29); waiting_since: 2026-11-17T14:33
+- 2026-11-17T15:22 doing/active -> done (done)
