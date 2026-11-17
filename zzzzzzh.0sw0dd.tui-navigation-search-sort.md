@@ -48,3 +48,5 @@ v0.7.15 released and installed 2026-11-16 (commit 6d36b9e, release run 'complete
 2026-11-16 Jørgen: a label written '!lint' should get '!' from the shortcut picker. Done in a local commit: assignShortcuts gives a leading sigil as the key (views overview, list, board, !lint -> o l b !); punctuation inside a name is never picked. Test TestAssignShortcuts: 'ok github.com/veridit/hug/huginn/internal/tui'. Not released.
 
 2026-11-16 crab: back to todo, unassigned. It showed doing under Jørgen's name from a take before take required a model; nobody is building it. Waits on Jørgen's answers (key scheme, sort, field search).
+
+crab 2026-11-17: item 4 (search by field with BM25) moves to 49n9kw (ranked search for CLI, MCP and TUI); the alias part of TUI search is vzghj8.
