@@ -105,7 +105,19 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	}
 	// The TUI user's writes mark their unread answers read (3jtfw9).
 	s.s.Actor = who.assignee()
+	// The first frame is the board the cache last saw, read from the
+	// database by Open, without a walk or git (vnyz8z); the sync runs after
+	// it, behind the spinner. A first start (no cache) shows the spinner
+	// and says it is reading the board.
+	initial := &tui.Initial{Tasks: s.c.Listed()}
+	if len(initial.Tasks) > 0 {
+		initial.Findings = s.c.LintListed()
+	}
 	e := tui.Run(ctx, s.s, tui.Options{User: agent, Email: email, Version: a.Version, MainBranch: gitbranch.DefaultBranch(a.Cwd), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) },
+		Initial: initial,
+		// The refresh syncs the cache with the files; the reload after it
+		// lists what the sync found.
+		Refresh: func(ctx context.Context) error { _, e := s.c.Sync(ctx); return e },
 		// Findings come from the cache, which parsed each file once, as of
 		// the listing the reload just made (44w1ev).
 		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },

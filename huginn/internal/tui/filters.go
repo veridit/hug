@@ -231,6 +231,7 @@ func (m *model) openTask(t task.Task) {
 }
 func (m model) updateJump(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	choices := m.jumpChoices()
+	m.jumpPending = false
 	switch msg.String() {
 	case "down", "ctrl+n":
 		if len(choices) > 0 {
@@ -245,6 +246,9 @@ func (m model) updateJump(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "tab", "enter":
 		if len(choices) == 0 {
 			m.message = "no matching id or alias"
+			// Before the start's board lands, the id may be on its way:
+			// Enter is answered when it arrives (vnyz8z).
+			m.jumpPending = msg.String() == "enter" && m.firstLoad()
 			return m, nil
 		}
 		t, err := task.Resolve(m.all, choices[min(m.completion, len(choices)-1)].ID)

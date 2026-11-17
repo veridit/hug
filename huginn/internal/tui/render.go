@@ -624,6 +624,9 @@ func (m model) View() string {
 		mode = "help"
 	}
 	header := m.styles.accent.Render("HUG TASKS · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
+	if s := m.spinner(); s != "" {
+		header += m.styles.dim.Render(" · " + s) // a load past 200 ms (vnyz8z)
+	}
 	if n := m.forYouCount(); n > 0 {
 		header += m.styles.dim.Render(" · ") + m.styles.warning.Bold(true).Render(fmt.Sprintf("? %d for you", n))
 	}

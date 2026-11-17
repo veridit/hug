@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strings"
 	"sync/atomic"
+	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	bkey "github.com/charmbracelet/bubbles/key"
@@ -54,17 +55,22 @@ type Options struct {
 	// best first, from the task cache's index (49n9kw, as hug task search).
 	// Without it, / search filters by substring in rank order.
 	Search func(query string) ([]string, error)
+	// Initial, when set, is drawn before anything is read: the board the
+	// task cache last saw (vnyz8z). Then Refresh, when set, brings the
+	// board up to date (the cache's sync) before the first reload, off the
+	// UI thread, behind the spinner. Without Initial the TUI reads the
+	// board before its first frame, as before.
+	Initial *Initial
+	Refresh func(ctx context.Context) error
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {
 	if store == nil {
 		return fmt.Errorf("task store is required")
 	}
-	m := newModel(store, opts)
-	if !opts.NoWatch {
-		m.watch = startWatch(store.Root)
-		defer m.watch.close()
-	}
+	m := newModelCtx(ctx, store, opts)
+	// Quitting never waits for a refresh or the watches (vnyz8z).
+	defer func() { m.release() }()
 	// A hug that reloaded into this one left its place (j2vwk0).
 	if h := takeHandoff(); h != nil {
 		m.resume(*h)
@@ -76,15 +82,14 @@ func Run(ctx context.Context, store *task.Store, opts Options) error {
 			path = startedPath()
 		}
 		m.bin = startBinWatch(path)
-		defer func() { m.bin.close() }()
 	}
 	for {
-		final, err := tea.NewProgram(m, tea.WithContext(ctx), tea.WithAltScreen()).Run()
+		done, err := runOnce(ctx, m, tea.WithAltScreen())
+		m = done
 		if err != nil {
 			return err
 		}
-		done, ok := final.(model)
-		if !ok || done.reloadTo == "" {
+		if done.reloadTo == "" {
 			return nil
 		}
 		// The terminal is restored: hand over and become the new hug (the
@@ -174,6 +179,35 @@ type model struct {
 	// closedAt is the last snapshot's copy.
 	closes   *closeLog
 	closedAt map[string]int64
+	// Opening at once (vnyz8z): ctx ends with the TUI and cancels a running
+	// refresh; refreshSince is when the running load began (the spinner
+	// shows after spinAfter); spinning says a spinner tick is due.
+	ctx          context.Context
+	cancel       context.CancelFunc
+	refreshSince time.Time
+	spinning     bool
+	pickPane     bool
+	refreshed    bool // the start's refresh has landed
+	// jumpPending: Enter on a # jump found nothing on the start's board;
+	// the jump is tried again when the refresh lands.
+	jumpPending bool
+}
+
+// firstLoad says the board shown is still the start's snapshot: the first
+// refresh replaces it even under an open prompt (a # jump typed before it
+// landed must find the tasks; vnyz8z), but not under the editor or a grab.
+func (m model) firstLoad() bool {
+	return m.opts.Initial != nil && !m.refreshed && !m.editing && !m.grab.active
+}
+
+// firstPane prefers an occupied overview pane, keeping the pane order.
+func (m *model) firstPane() {
+	for p := 0; p < len(overviewSections); p++ {
+		m.pane = p
+		if len(m.indices()) > 0 {
+			break
+		}
+	}
 }
 
 // loadCounter counts loads from disk, for the idle-load test.
@@ -217,7 +251,7 @@ func (m *model) reload() tea.Cmd {
 		m.stale = true
 		return nil
 	}
-	m.stale, m.loading = false, true
+	m.stale, m.loading, m.refreshSince = false, true, time.Now()
 	s, loads, gen, closes, lint := m.store, m.loads, m.gen, m.closes, m.opts.Lint
 	return func() tea.Msg { return loadedMsg{loadSnapshot(s, loads, closes, lint), gen} }
 }
@@ -269,6 +303,10 @@ func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	if m.stale && !m.busy() && !m.loading {
 		cmd = tea.Batch(cmd, m.reload())
 	}
+	// A load running: the spinner ticks until it ends (vnyz8z).
+	if spin := m.spin(); spin != nil {
+		cmd = tea.Batch(cmd, spin)
+	}
 	return m, cmd
 }
 
@@ -276,22 +314,47 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case changedMsg:
 		cmd := m.reload()
-		return m, tea.Batch(cmd, m.waitChange())
+		return m, tea.Batch(cmd, m.waitChange(), m.spin())
 	case binaryMsg:
 		return m, tea.Batch(m.probe(false), m.waitBinary())
 	case probedMsg:
 		cmd := m.probed(msg)
 		return m, cmd
+	case spinMsg:
+		m.spinning = false
+		return m, m.spin()
+	case watchStartedMsg:
+		if msg.w != nil {
+			m.watch = msg.w
+			return m, m.waitChange()
+		}
+		return m, nil
 	case loadedMsg:
-		m.loading = false
+		m.loading, m.refreshSince = false, time.Time{}
+		if m.message == readingBoard {
+			m.message = ""
+		}
 		switch {
 		case msg.gen != m.gen:
 			// An action reloaded meanwhile, after this load began: the
 			// screen already shows newer data.
-		case m.busy():
+		case m.busy() && !m.pickPane && !m.firstLoad():
 			m.stale = true // a prompt opened meanwhile: wait for it
 		default:
 			m.applyKeeping(msg.sn)
+			m.refreshed = true
+			if m.pickPane && msg.sn.err == nil {
+				m.pickPane = false
+				m.firstPane()
+				m.clamp()
+			}
+			if m.jumpPending && m.prompt == "#" {
+				if m.message == "no matching id or alias" {
+					m.message = ""
+				}
+				next, cmd := m.updateJump(tea.KeyMsg{Type: tea.KeyEnter})
+				return next.(model).afterUpdate(cmd)
+			}
 		}
 		return m.afterUpdate(nil)
 	case editorMsg:
@@ -303,24 +366,59 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func newModel(s *task.Store, o Options) model {
+	return newModelCtx(context.Background(), s, o)
+}
+
+func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
 	input.Cursor.Blink = false
 	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", input: input, closes: &closeLog{},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
-	m.refresh("")
-	// Prefer an occupied overview pane, while retaining the same pane order.
-	for p := 0; p < len(overviewSections); p++ {
-		m.pane = p
-		if len(m.indices()) > 0 {
-			break
+	m.ctx, m.cancel = context.WithCancel(ctx)
+	if o.Initial != nil {
+		// The board the cache last saw, drawn now; the refresh brings the
+		// rest (vnyz8z).
+		m.apply(initialSnapshot(o.Initial), "")
+		m.loading, m.refreshSince = true, time.Now()
+		if len(o.Initial.Tasks) == 0 {
+			m.message = readingBoard
 		}
+	} else {
+		m.refresh("")
 	}
+	m.firstPane()
+	// A first start drew an empty board: the first real one picks the
+	// pane again, as a start with the board in hand would have.
+	m.pickPane = o.Initial != nil && len(o.Initial.Tasks) == 0
 	m.clamp()
 	m.resize()
 	return m
 }
-func (m model) Init() tea.Cmd { return tea.Batch(m.waitChange(), m.waitBinary()) }
+func (m model) Init() tea.Cmd {
+	cmds := []tea.Cmd{m.waitChange(), m.waitBinary()}
+	if m.opts.Initial != nil {
+		// After the first frame: the refresh, the spinner, then the watch.
+		s, loads, gen, closes, lint, refresh, ctx := m.store, m.loads, m.gen, m.closes, m.opts.Lint, m.opts.Refresh, m.ctx
+		cmds = append(cmds, func() tea.Msg {
+			if refresh != nil {
+				if e := refresh(ctx); e != nil {
+					if ctx.Err() != nil {
+						return nil // the TUI ended
+					}
+					return loadedMsg{snapshot{err: e}, gen}
+				}
+			}
+			return loadedMsg{loadSnapshot(s, loads, closes, lint), gen}
+		}, tea.Tick(spinEvery, func(time.Time) tea.Msg { return spinMsg{} }))
+		// (Init cannot mark the model spinning: spinMsg's first tick
+		// re-arms through spin, which then sees loading.)
+		if m.watch == nil {
+			cmds = append(cmds, m.startWatching())
+		}
+	}
+	return tea.Batch(cmds...)
+}
 func (m *model) refresh(path string) {
 	m.apply(loadSnapshot(m.store, m.loads, m.closes, m.opts.Lint), path)
 }
@@ -776,6 +874,7 @@ func (m *model) syncDetail() {
 func (m *model) openInput(prompt, value string) tea.Cmd {
 	m.prompt = prompt
 	m.pendingG = false
+	m.jumpPending = false
 	m.completion = 0
 	m.input.Prompt = prompt + " "
 	m.input.SetValue(value)

@@ -635,7 +635,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	// Writes hold the board turn from reading to committing; take and sync
 	// order their locks themselves (run, then turn), as a background pass does.
 	writer := !readOnly[cmd] && cmd != "take" && cmd != "sync" && cmd != "tui" && cmd != "edit"
-	s, e := a.openBoard(ctx, writer)
+	// The TUI draws the cache's last board at once and syncs behind it
+	// (vnyz8z): it opens lazily, as a write does.
+	s, e := a.openBoard(ctx, writer || cmd == "tui")
 	if e != nil {
 		return nil, e
 	}

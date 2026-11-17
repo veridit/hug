@@ -469,6 +469,11 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 		if e != nil {
 			return stats, e
 		}
+		// A sync the caller gave up on (hug tui quit mid-refresh, vnyz8z)
+		// stops between files: nothing is stored, the next sync redoes it.
+		if e := ctx.Err(); e != nil {
+			return stats, e
+		}
 		sum := sha256.Sum256(b)
 		m.SHA256 = hex.EncodeToString(sum[:])
 		stats.Hashed++
@@ -781,6 +786,16 @@ func (c *Cache) List(ctx context.Context) ([]task.Task, error) {
 	}
 	return c.snapshot(), nil
 }
+// Listed is the board as this cache last knew it: as Open loaded it from
+// the database, or as the last sync left it. No walk, no git: what a screen
+// can draw at once while a sync runs (vnyz8z). Empty when the cache has
+// never synced this board.
+func (c *Cache) Listed() []task.Task {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.snapshot()
+}
+
 func (c *Cache) snapshot() []task.Task {
 	if c.ordered == nil {
 		c.ordered = make([]task.Task, 0, len(c.files))
