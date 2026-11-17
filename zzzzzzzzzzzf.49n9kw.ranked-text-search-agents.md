@@ -32,7 +32,7 @@ Task cache: huginn/internal/task cache (schema now 12 after 16dxsr; 44w1ev keeps
 ## Depends on
 
 ## Acceptance
-- [ ] hug task search "memory limit exit 137" on a fixture ranks the task with those words in its title first and prints the matched field and snippet (test)
+- [x] hug task search "memory limit exit 137" on a fixture ranks the task with those words in its title first and prints the matched field and snippet (test)
 - [ ] a search for STATBUS-402 finds the task with that alias first and tasks whose notes cite it after (test)
 - [ ] MCP task_search returns the same results as the CLI, as JSON (test)
 - [ ] the index follows writes: a note added is found by the next search without a rebuild (test)
