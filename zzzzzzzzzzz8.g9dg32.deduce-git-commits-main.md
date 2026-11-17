@@ -1,7 +1,7 @@
 ---
 id: g9dg32
 title: "Deduce from git: commits on main and release tags mark the ticket"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["wyvern"]
@@ -12,11 +12,7 @@ parent: "47sxn2"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "waiting"
-doing_since: "2026-11-17T15:09"
-waiting_on: "CI 44103643647, then crab's landing slot"
-waiting_since: "2026-11-17T15:29"
-waiting_asked_by: "wyvern"
+done_at: "2026-11-17T16:58"
 ---
 
 ## Goal
@@ -55,3 +51,4 @@ On main d661273, CI 44118189933 green on all 5 jobs (secrets, bench, ubuntu, mac
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:09 todo/ready -> doing/active (take)
 - 2026-11-17T15:23 doing/active -> doing/waiting (wait)
+- 2026-11-17T16:58 doing/waiting -> done (done); was doing_since: 2026-11-17T15:09; waiting_asked_by: wyvern; waiting_on: CI 44103643647, then crab's landing slot; waiting_since: 2026-11-17T15:29
