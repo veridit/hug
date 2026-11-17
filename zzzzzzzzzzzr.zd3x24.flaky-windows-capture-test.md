@@ -1,21 +1,17 @@
 ---
 id: zd3x24
 title: "Flaky on Windows: capture test never sees the child persist its batch"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T14:45"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "kestrel's kbc99j landing (internal/sharefile), then my turn after wyvern"
-waiting_since: "2026-11-17T15:05"
-waiting_asked_by: "hatchling"
+done_at: "2026-11-17T16:08"
 ---
 
 ## Goal
@@ -48,3 +44,4 @@ hatchling 15:08: landed on main by fast-forward 4ecfa25..b8f9000 (zd3x24 95bcb99
 ## History
 - 2026-11-17T14:45 todo -> doing/active (take)
 - 2026-11-17T15:05 doing/active -> doing/waiting (wait)
+- 2026-11-17T16:08 doing/waiting -> done (done); was doing_since: 2026-11-17T14:45; waiting_asked_by: hatchling; waiting_on: kestrel's kbc99j landing (internal/sharefile), then my turn after wyvern; waiting_since: 2026-11-17T15:05
