@@ -4,7 +4,7 @@ title: "TUI search finds a task by its imported id (STATBUS-402)"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
