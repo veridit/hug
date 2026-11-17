@@ -1,18 +1,17 @@
 ---
 id: 6w0gve
 title: "hug task review ID --by NAME --show FILE: a move into review, no hand edit"
-status: "doing"
+status: "done"
 type: feature
 priority: ""
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T19:25"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T19:38"
 ---
 
 ## Goal
@@ -40,5 +39,7 @@ Plumbing to copy: task.WaitShowing/DesignShowing (moves.go), states.go node fiel
 
 crab 18:30: doing -> doing/review (owner keeps it), not todo/review: answer on doing/review returns the owner to doing/active, a todo/review answer would leave it unassigned in todo/ready; a review does not count against one-doing-per-agent. Check 1's 'moves a doing task to todo/review' reads doing/review.
 landed 77806c9 on main (317f5c2..77806c9). Red first: TestReviewMove failed 'unknown command review'; TestQuestionShowsItsPicture with the old picture.go failed 'the review picture is not under the review question'. check 1: TestReviewMove: doing -> doing/review, review_by jhf, review_since, one commit, show prints 'stage: in review by jhf'. check 2: review_show written; --show nope.ans refused with 'hug task attach ID FILE --name nope.ans'; TUI draws it under '? review: review it'. check 3: answer clears review_by, review_since, review_show; stage active. check 4: MCP bridge row review {by, show} -> review ID --by jhf --show rows.ans (TestToolsSchemasAndRoundTrip); help 'review'; states text 'doing/active   -> doing/review   hug task review ID --by NAME' and review_show (TestStatesTree). -race -count=1: cli 156.7s, task 60.8s, mcp, cmd/hug, tui(-short) 134.3s ok. Binary demo: review -> 'stage: in review by jhf' -> answer -> 'stage: active', 0 review_ fields left.
+Reflection (open, 2026-11-17, nautilus): nothing: the wait/design --show code was a clear template; crab's ruling on doing/review came before code.
 ## History
 - 2026-11-17T19:25 todo -> doing/active (take)
+- 2026-11-17T19:38 doing/active -> done (done); was doing_since: 2026-11-17T19:25
