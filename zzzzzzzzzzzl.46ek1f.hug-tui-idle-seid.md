@@ -49,5 +49,6 @@ Measured 2026-11-17 18:00-18:33 (Seid copy at ~/.jcode/scratch/seidcopy, 2,520 t
 Next: the per-change cost (2 loads per commit; taskFiles walks every attachment folder on every load; a frame walks all 2,520 tasks), with a test that counts loads per commit.
 Correction to my DM to crab at 18:34: 'holding j at 30 keys/s costs about 1.2 s CPU per second' was not measured. I derived it from 40 ms per View times 30 frames/s. Per-View cost is measured: 1.33 s of View samples over 32 counted Views.
 Pushed a64fcc3 (main debb45a..a64fcc3): the watch waits while a writer holds the board turn (gitbranch.TurnHeld, a try of the flock), polling every 50 ms for at most 5 s. TestOneSignalPerWrite fails on main ('gave 2 change signals, want 1', 3 of 3 runs) and fails again with the turn check mutated to false; TestTurnHeld covers the try. -race before the rebase: gitbranch ok 52.5 s, tui ok 896.8 s, cli ok 260.2 s; after the rebase onto debb45a (main touched only tui/picture.go): gitbranch and tui ok. Seid copy, CPU of one hug task note in an open TUI: before 1.0-1.1 s (1.68 -> 2.82 -> 3.74), after 0.50-0.58 s (5.43 -> 6.01 -> 6.51 -> 7.09). Check 3 is ticked once main CI is green.
+landed a64fcc3 on main 2026-11-17: hug tui: one load per write, not two: the watch waits while a writer holds the…
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
