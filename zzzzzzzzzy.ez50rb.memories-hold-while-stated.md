@@ -1,7 +1,7 @@
 ---
 id: ez50rb
 title: "Memories hold while a stated condition holds, and name no agent"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["guppy"]
