@@ -18,8 +18,10 @@ type Liveness map[string]time.Time
 // JcodeLiveness reads jcode's session list (JCODE_HOME or ~/.jcode,
 // sessions/session_<name>_<start>_<hex>.json): a name is live as of its
 // newest session file's modification time. Nil when there is none.
-func JcodeLiveness() Liveness {
-	home := os.Getenv("JCODE_HOME")
+func JcodeLiveness() Liveness { return JcodeLivenessAt(os.Getenv("JCODE_HOME")) }
+
+// JcodeLivenessAt is JcodeLiveness for a given JCODE_HOME ("" is ~/.jcode).
+func JcodeLivenessAt(home string) Liveness {
 	if home == "" {
 		h, err := os.UserHomeDir()
 		if err != nil {

@@ -12,6 +12,7 @@ import (
 // show --file prints the file in text mode (2026-11-16: it printed only the
 // next hint; the content was reachable only with --json).
 func TestShowFileText(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	r := execute(t, a, "new", "Files", "--goal", "g", "--accept", "a")

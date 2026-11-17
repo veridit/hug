@@ -48,6 +48,7 @@ func TestInstallThrowawayHomes(t *testing.T) {
 }
 
 func TestOutsideGitFix(t *testing.T) {
+	t.Parallel()
 	a := &App{Cwd: t.TempDir()}
 	_, err := a.Execute(context.Background(), []string{"ls"})
 	if err == nil {

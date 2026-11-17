@@ -14,13 +14,14 @@ import (
 // own branch is recorded but not repeated on ls rows. --branch/--worktree
 // override detection.
 func TestTakeRecordsBranchAndWorktree(t *testing.T) {
+	t.Parallel()
 	main := app(t)
 	mainDir, _ := filepath.EvalSymlinks(main.Cwd)
 	execute(t, main, "init")
 	linkedDir := filepath.Join(t.TempDir(), "feat-x")
 	git(t, mainDir, "worktree", "add", "-b", "feat/x", linkedDir)
 	linkedDir, _ = filepath.EvalSymlinks(linkedDir)
-	linked := &App{Cwd: filepath.Join(linkedDir), In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+	linked := &App{Cwd: filepath.Join(linkedDir), In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}, Env: main.Env}
 
 	id := execute(t, linked, "new", "Worktree work", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
 	tk := execute(t, linked, "take", id)["task"].(Reply)
@@ -62,6 +63,7 @@ func TestTakeRecordsBranchAndWorktree(t *testing.T) {
 // x1t1t1 check 6: lint flags a doing task whose branch is merged into main
 // or deleted, with fix: hug task done ID; an unmerged branch is not flagged.
 func TestLintFlagsDoingTaskOnMergedOrDeletedBranch(t *testing.T) {
+	t.Parallel()
 	main := app(t)
 	mainDir, _ := filepath.EvalSymlinks(main.Cwd)
 	execute(t, main, "init")

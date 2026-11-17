@@ -45,7 +45,7 @@ func fakeEdit(path, from, to string) int {
 
 // useEditor makes hug task edit replace the first from with to in the task
 // file; from "" leaves the file as it is.
-func useEditor(t *testing.T, from, to string) {
+func useEditor(t *testing.T, a *App, from, to string) {
 	t.Helper()
 	exe, err := os.Executable()
 	if err != nil {
@@ -54,7 +54,7 @@ func useEditor(t *testing.T, from, to string) {
 	if strings.ContainsAny(exe, " \t") {
 		t.Fatalf("test binary path %q has a space; editor.Command splits $VISUAL on spaces", exe)
 	}
-	t.Setenv("VISUAL", exe)
-	t.Setenv(editFrom, from)
-	t.Setenv(editTo, to)
+	// a's environment, passed to the editor it starts: the process's stays
+	// as it is, so this test can run in parallel with others (0sbvnq).
+	a.Env["VISUAL"], a.Env[editFrom], a.Env[editTo] = exe, from, to
 }

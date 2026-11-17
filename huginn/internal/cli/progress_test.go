@@ -9,6 +9,7 @@ import (
 // d8yx7y check 4: hug task ls shows ticked/total acceptance checks per task,
 // after the type, so the id stays the first field.
 func TestLsShowsCheckProgress(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	two := execute(t, a, "new", "Two checks", "--goal", "g", "--accept", "first", "--accept", "second")["task"].(Reply)["id"].(string)
 	execute(t, a, "check", two, "1")

@@ -15,6 +15,7 @@ import (
 // and show: also a same-size edit inside the racy window, and also after
 // the cache file comes from an older schema (crab's conditions, 2026-11-16).
 func TestHandEditedNotesSeenByLsAndShow(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	r := execute(t, a, "new", "Hand edit", "--goal", "Notes are read", "--accept", "seen")
@@ -84,6 +85,7 @@ func TestHandEditedNotesSeenByLsAndShow(t *testing.T) {
 // lint takes file references from the cached parse (44w1ev); a reference
 // added by hand is still reported, and forbid_cite still reads the text.
 func TestLintSeesHandAddedFileRef(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	r := execute(t, a, "new", "Refs", "--goal", "Lint reads refs", "--accept", "seen")
@@ -111,6 +113,7 @@ func TestLintSeesHandAddedFileRef(t *testing.T) {
 // (refs/heads/huginn/x) is not the old layout; the old branch itself, local
 // or remote-tracking, still is. Outside git the error stays the same.
 func TestOpenOldLayoutAndOutsideGit(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	git(t, a.Cwd, "branch", "huginn/x")
@@ -124,7 +127,7 @@ func TestOpenOldLayoutAndOutsideGit(t *testing.T) {
 			t.Fatalf("%s: got %v", ref, e)
 		}
 	}
-	outside := &App{Cwd: t.TempDir(), In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+	outside := &App{Cwd: t.TempDir(), In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}, Env: a.Env}
 	_, e := outside.Execute(context.Background(), []string{"ls"})
 	if _, p, _ := ErrorDetails(e); e == nil || !strings.Contains(p, "needs a Git checkout") {
 		t.Fatalf("outside git: %v", e)

@@ -10,9 +10,12 @@ import (
 // Command returns the editor command line: $VISUAL, then $EDITOR, then git's
 // own choice (GIT_EDITOR, core.editor), and vi only when nothing is set.
 // The result is split on spaces, so "zed --wait" works.
-func Command() []string {
+func Command() []string { return CommandFrom(os.Getenv) }
+
+// CommandFrom is Command with the variables read through getenv.
+func CommandFrom(getenv func(string) string) []string {
 	for _, name := range []string{"VISUAL", "EDITOR"} {
-		if f := strings.Fields(os.Getenv(name)); len(f) > 0 {
+		if f := strings.Fields(getenv(name)); len(f) > 0 {
 			return f
 		}
 	}

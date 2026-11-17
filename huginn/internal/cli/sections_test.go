@@ -10,6 +10,7 @@ import (
 // jnaspy check 2: hug task show prints Purpose, Principle and Relevant
 // details after the goal and before the checks.
 func TestShowPrintsDescriptionBeforeChecks(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	r := execute(t, a, "new", "Ordered", "--goal", "Where we aim", "--purpose", "Why we aim", "--principle", "How we go", "--details", "Facts that matter", "--accept", "Observable check")
 	id := r["task"].(Reply)["id"].(string)
@@ -37,6 +38,7 @@ func TestShowPrintsDescriptionBeforeChecks(t *testing.T) {
 // rewrites it to canonical order with identical text and commits; a second
 // run changes nothing. Check 4: lint reports it first, with fix: hug upgrade.
 func TestUpgradeReordersSections(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	r := execute(t, a, "new", "Sort builder", "--goal", "Build a nested sort", "--purpose", "Jørgen sorts", "--principle", "Esc keeps the order", "--accept", "p t Enter")
 	id := r["task"].(Reply)["id"].(string)
