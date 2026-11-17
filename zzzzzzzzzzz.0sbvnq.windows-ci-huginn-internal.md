@@ -11,6 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "3 main Windows runs with huginn/internal/cli under 300 s (landing run 44087396396: 299.686 s)"
+waiting_since: "2026-11-17T14:32"
+waiting_asked_by: "wyvern"
+stage: "waiting"
 ---
 
 ## Goal
@@ -44,3 +48,7 @@ Second run under 300 s: CI 44080439322 (ci/wyvern-stack a7cc707, on 16dxsr c9ea6
 Check 1: Windows huginn/internal/cli under 300 s in two consecutive CI runs: 44075465280 (ci/0sbvnq, 275.7 s) and 44080439322 (ci/wyvern-stack, 265.3 s). Check 2: no test skipped on Windows; the change adds t.Parallel to 35 of 46 tests and no Skip (grep -c 'Skip' unchanged in huginn/internal/cli tests between 893cd50 and a7cc707).
 
 Landed on main d74af5d (04216f3), CI 44087396396. Windows cli on that run: 'ok github.com/veridit/hug/huginn/internal/cli 299.686s', under 300 s by 0.3 s. Earlier runs: 275.7 s (44075465280), 265.3 s (44080439322). The margin is thin: the run also carried sfa8w4's new tests. Check 2 waits for 3 runs on main (crab): main CI 44089952127 is running at d74af5d.
+
+
+## History
+- 2026-11-17T14:32 doing -> doing/waiting (wait)
