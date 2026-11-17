@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T15:58"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "jhf: check 4: approve the Seid cleanup diff (attached: ggydj2-seid-dry-run.md). Seid's pre-commit and tools/evidence.py read .backlog, so they must move to hug first"
+waiting_since: "2026-11-17T17:46"
+waiting_asked_by: "calf"
 ---
 
 ## Goal
@@ -44,3 +47,4 @@ file:ggydj2-seid-dry-run.md (9631 bytes, sha256:bdff9e31) Seid cleanup dry run (
 Check 4, part 1 (scratch clone of seid-lang, Seid itself untouched): the attached ggydj2-seid-dry-run.md has the full --dry-run. It shows git rm of 7658 files under .backlog, 61 documents cite .backlog, and about 64 agent: lines. Before the cleanup can run, Seid has to import .backlog/evidence (4738 files, 2766 citations) and move its own tooling off .backlog (.githooks/pre-commit:40 runs tools/backlog_integrity.py; tools/evidence.py reads .backlog/tasks). A real run on the clone was refused by Seid's pre-commit (FileNotFoundError .backlog/tasks) and the clone was left unchanged.
 ## History
 - 2026-11-17T15:58 todo -> doing/active (take)
+- 2026-11-17T17:46 doing/active -> doing/waiting (wait)
