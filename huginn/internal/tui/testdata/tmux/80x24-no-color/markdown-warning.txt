@@ -1,7 +1,7 @@
 HUG TASKS · detail   60/60 tasks · ! 7 findings
  overview    list    board    !lint   list › ▸ 000003
-todo 8  ·  doing 15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15
-No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 depends
 Render compiler-lang task detail without storage markers
 [done]  [feature]  [medium]  000003  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task

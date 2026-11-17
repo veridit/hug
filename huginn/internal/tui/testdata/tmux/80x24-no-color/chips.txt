@@ -1,11 +1,11 @@
 HUG TASKS · list   2/60 tasks · ! 7 findings
  overview   [list]   board    !lint
-todo 2  ·  doing 0  ·  blocked 0  ·  done 0  ·  dropped 0
+todo 2  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0
 [status:todo ×] [type:feature ×] [/ task] · ⌫ last · F clear
-  ✓     ID       STATUS  TYPE    PRIORITY TITLE
->!○ 2   000001   todo    feature critical ⎘2 Feature task 01: make the terminal…
-  ○ 2   000041   todo    feature critical Feature task 41: make the terminal wo…
-Rows 1–2 of 2 · ! lint finding · status blocked = unmet dependency
+  ✓     ID       TYPE    PRIORITY STAGE     TITLE
+>!○ 2   000001   feature critical ready     ⎘2 Feature task 01: make the termin…
+  ○ 2   000041   feature critical ready     Feature task 41: make the terminal …
+Rows 1–2 of 2 · ! lint finding · depends = a dependency is not done
 
 
 

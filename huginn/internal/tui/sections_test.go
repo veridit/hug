@@ -112,7 +112,7 @@ func TestRecentlyDoneScrollsThroughAll(t *testing.T) {
 	if shownRows(m)[sectionRecent] != 3 {
 		t.Fatalf("unfocused RECENTLY DONE shows %d rows, want 3", shownRows(m)[sectionRecent])
 	}
-	m = press(m, "tab", "tab", "tab")
+	m = press(m, "tab", "tab")
 	if m.pane != sectionRecent {
 		t.Fatalf("pane %d", m.pane)
 	}
@@ -135,8 +135,8 @@ func TestRecentlyDoneScrollsThroughAll(t *testing.T) {
 // h9zghj check 3: Tab away from a scrolled section and back keeps its
 // scroll and its selected row, in the overview and on the board.
 func TestSectionsKeepScroll(t *testing.T) {
-	m := overviewAt(t, 140, 40)
-	for range 12 {
+	m := overviewAt(t, 140, 30) // 4 sections since 6ephqk: 30 lines keep IN PROGRESS short of its 15
+	for range 14 {
 		m = press(m, "j")
 	}
 	before, _ := m.selected()
@@ -190,7 +190,7 @@ func TestEmptySectionIsOneLine(t *testing.T) {
 	m.resize()
 	m.setView("overview")
 	view := ansi.Strip(m.overviewText())
-	for _, name := range []string{"IN PROGRESS · assigned to", "BLOCKED · unmet dependencies", "RECENTLY DONE · last closed"} {
+	for _, name := range []string{"IN PROGRESS · assigned to", "RECENTLY DONE · last closed"} {
 		want := name + "  [0] · None"
 		if !strings.Contains(view, want) {
 			t.Fatalf("missing %q:\n%s", want, view)
@@ -203,7 +203,7 @@ func TestEmptySectionIsOneLine(t *testing.T) {
 	}
 	m.setView("board")
 	board := ansi.Strip(m.boardText())
-	for _, s := range []string{"DOING", "BLOCKED", "DONE", "DROPPED"} {
+	for _, s := range []string{"DOING", "DEPENDS", "DONE", "DROPPED"} {
 		if !strings.Contains(board, fmt.Sprintf("%s [0] · None", s)) {
 			t.Fatalf("board column %s lacks None on its title:\n%s", s, board)
 		}

@@ -47,7 +47,7 @@ func TestDetailShowsUnmetCondition(t *testing.T) {
 	}
 	got := ansi.Strip(m.detailText(tk))
 	for _, want := range []string{
-		"↳ " + epic.ID + " Epic [todo] BLOCKED (epic: 1 open)",
+		"↳ " + epic.ID + " Epic [todo] open (epic: 1 open)",
 		"⧗ when load below 120 WAITING · load is 140.0 · wakes kestrel",
 	} {
 		if !strings.Contains(got, want) {
@@ -57,5 +57,40 @@ func TestDetailShowsUnmetCondition(t *testing.T) {
 	load = 10
 	if got := ansi.Strip(m.detailText(tk)); !strings.Contains(got, "⧗ when load below 120 met · load is 10.0 · wakes kestrel") {
 		t.Fatalf("met:\n%s", got)
+	}
+}
+
+// A condition that does not hold yet shows the stage depends, its cell
+// counted in the bar, and when it holds the row is ready again (6ephqk
+// check 5 with 16dxsr's conditions).
+func TestRowStageCountsConditions(t *testing.T) {
+	load := 140.0
+	old := cond.LoadAverage
+	cond.LoadAverage = func() (float64, bool) { return load, true }
+	t.Cleanup(func() { cond.LoadAverage = old })
+	s := &task.Store{Root: t.TempDir()}
+	r, err := s.New(task.NewOptions{Title: "Heavy run", Goal: "G", Acceptance: []string{"C"}, Type: "chore"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.AddDependencies(r.Task.ID, []string{"when load below 120"}); err != nil {
+		t.Fatal(err)
+	}
+	row := func() (string, string) {
+		m := newModel(s, Options{User: "tester"})
+		for _, x := range m.all {
+			if x.ID == r.Task.ID {
+				return m.rowStage(x)
+			}
+		}
+		t.Fatal("no task")
+		return "", ""
+	}
+	if w, text := row(); w != "depends" || text != "▱ 0/1  Heavy run" {
+		t.Fatalf("load 140: %q %q", w, text)
+	}
+	load = 80
+	if w, text := row(); w != "ready" || text != "" {
+		t.Fatalf("load 80: %q %q", w, text)
 	}
 }

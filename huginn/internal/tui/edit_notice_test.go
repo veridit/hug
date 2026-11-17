@@ -88,7 +88,7 @@ func TestEditNoticeShowsFindingFixAndReopens(t *testing.T) {
 		t.Fatal("e must reopen the editor at once while the notice shows")
 	}
 	// The detail header carries the finding, its line and its fix; there
-	// is no dependency row and nothing BLOCKED.
+	// is no dependency row and nothing open.
 	d := press(m, "enter")
 	detail := ansi.Strip(d.View())
 	t.Log("\n" + detail)
@@ -97,7 +97,7 @@ func TestEditNoticeShowsFindingFixAndReopens(t *testing.T) {
 			t.Fatalf("detail missing %q:\n%s", want, detail)
 		}
 	}
-	if strings.Contains(detail, "↳") || strings.Contains(detail, "BLOCKED") {
+	if strings.Contains(detail, "↳") || strings.Contains(detail, "] open") {
 		t.Fatalf("prose shown as a dependency:\n%s", detail)
 	}
 	m = press(m, "esc")

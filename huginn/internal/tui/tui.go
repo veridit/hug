@@ -422,8 +422,8 @@ func (m *model) applyFilter() {
 	m.visible = nil
 	for _, t := range m.all {
 		status := m.filter.Status
-		// One place per task (zaec08): "blocked" is todo with an unmet
-		// dependency, "todo" excludes it, "doing" keeps blocked doing tasks.
+		// One place per task (zaec08): "depends" is todo with an open
+		// dependency, "todo" excludes it, "doing" keeps doing tasks that depend.
 		if status != "" && m.place(t) != status || m.filter.Type != "" && !optionalMatches(t.Type, m.filter.Type) || m.filter.Group != "" && !groupMatches(t.Group, m.filter.Group) {
 			continue
 		}
@@ -447,17 +447,16 @@ func (m *model) applyFilter() {
 	m.clamp()
 }
 
-var boardStatuses = []string{"todo", "doing", "blocked", "done", "dropped"}
+var boardStatuses = []string{"todo", "doing", "depends", "done", "dropped"}
 
-// Overview sections, top to bottom. Every task is in one place (zaec08): a
-// doing task stays in IN PROGRESS even when a dependency is unmet, drawn
-// blocked; BLOCKED holds only todo tasks that cannot start.
-var overviewSections = []string{"IN PROGRESS · assigned to", "NEXT UP · rank order", "BLOCKED · unmet dependencies", "RECENTLY DONE · last closed", "LINT · tasks needing attention"}
+// Overview sections, top to bottom. Every task is in one place (zaec08).
+// A task with an open dependency stays in its own section with the stage
+// depends (Jørgen 11:43: BLOCKED is no longer a section, fewer sections).
+var overviewSections = []string{"IN PROGRESS · assigned to", "NEXT UP · rank order", "RECENTLY DONE · last closed", "LINT · tasks needing attention"}
 
 const (
 	sectionDoing = iota
 	sectionNext
-	sectionBlocked
 	sectionRecent
 	sectionLint
 )
@@ -467,7 +466,7 @@ const (
 // Every other unfocused section shows as many rows.
 const recentDone = 3
 
-// maxSections is the most sections a view has: 5 overview sections, 5
+// maxSections is the most sections a view has: 4 overview sections, 5
 // board columns.
 const maxSections = 5
 
@@ -516,24 +515,25 @@ func (m *model) restore() {
 
 // place is the one status a task counts under, in the header, the board
 // columns and the status filter (zaec08): done, dropped and doing as they
-// are; a todo task with an unmet dependency is blocked; anything else
-// (a malformed status) is todo, still visible and repairable, marked with !.
+// are; a todo task with an open dependency is depends (6ephqk, was
+// blocked); anything else (a malformed status) is todo, still visible and
+// repairable, marked with !.
 func (m model) place(t task.Task) string {
 	switch t.Status {
 	case "done", "dropped", "doing":
 		return t.Status
 	}
 	if m.blocked[t.Path] {
-		return "blocked"
+		return "depends"
 	}
 	return "todo"
 }
 
-// boardStatus is the status a row shows: its place, except that a doing
-// task waiting on a dependency is drawn blocked where it stands.
+// boardStatus is the status a detail shows: its place, except that a doing
+// task waiting on a dependency is drawn depends where it stands.
 func (m model) boardStatus(t task.Task) string {
 	if t.Status == "doing" && m.blocked[t.Path] {
-		return "blocked"
+		return "depends"
 	}
 	return m.place(t)
 }
@@ -550,11 +550,9 @@ func (m model) paneIndices(p int) []int {
 			case sectionDoing:
 				match = t.Status == "doing"
 			case sectionNext:
-				// Same rule as hug task next: unblocked, unassigned todo,
-				// never an epic (it finishes through its children).
-				match = m.place(t) == "todo" && t.Status == "todo" && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
-			case sectionBlocked:
-				match = m.place(t) == "blocked"
+				// Unassigned todo, never an epic (it finishes through its
+				// children); one that depends shows its stage (Jørgen 11:43).
+				match = t.Status == "todo" && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
 			case sectionLint:
 				match = m.linted[t.Path]
 			}
@@ -961,7 +959,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if k == "1" || k == "2" || k == "3" || k == "4" {
-			m.setFilter("status", []string{"todo", "doing", "done", "blocked"}[int(k[0]-'1')])
+			m.setFilter("status", []string{"todo", "doing", "done", "depends"}[int(k[0]-'1')])
 			m.setView("list")
 			return m, nil
 		}

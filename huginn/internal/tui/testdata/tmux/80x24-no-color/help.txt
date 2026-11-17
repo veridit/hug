@@ -1,7 +1,7 @@
 HUG TASKS · help   60/60 tasks · ! 7 findings
  overview   [list]   board    !lint
-todo 8  ·  doing 15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15
-No filters · f picker · 1 todo  2 doing  3 done  4 blocked
+todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
+No filters · f picker · 1 todo  2 doing  3 done  4 depends
 NAVIGATION AND FIND
 j/k ↑/↓         move / scroll
 < / gg / Home   top

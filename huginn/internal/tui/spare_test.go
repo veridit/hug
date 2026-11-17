@@ -82,7 +82,7 @@ func TestOverviewSpareRowsGolden(t *testing.T) {
 // tasks before NEXT UP grows past 3.
 func TestOverviewSpareRowsInProgressFirst(t *testing.T) {
 	m := spareBoard(t, 12, 40)
-	m.pane = sectionBlocked // empty: the smallest there is
+	m.pane = sectionRecent // empty: the smallest there is
 	m.clamp()
 	budget := m.bodyHeight() - 2*len(overviewSections)
 	rows := m.overviewRows()
@@ -91,7 +91,7 @@ func TestOverviewSpareRowsInProgressFirst(t *testing.T) {
 	}
 	// Not enough for IN PROGRESS: NEXT UP keeps its 3, no more.
 	m = spareBoard(t, 40, 40)
-	m.pane = sectionBlocked
+	m.pane = sectionRecent
 	m.clamp()
 	rows = m.overviewRows()
 	if rows[sectionNext] != 3 || rows[sectionDoing] != budget-3 {

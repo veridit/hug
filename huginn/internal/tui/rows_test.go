@@ -171,15 +171,15 @@ func TestNarrowRowsDropColumnsInOrder(t *testing.T) {
 			header = line
 		}
 	}
-	if !strings.Contains(header, "STATUS") || strings.Contains(header, "TYPE") || !strings.Contains(header, "PRIORITY") {
-		t.Fatalf("at 60 the list keeps status and priority, drops type: %q", header)
+	if !strings.Contains(header, "STAGE") || strings.Contains(header, "TYPE") || !strings.Contains(header, "PRIORITY") {
+		t.Fatalf("at 60 the list keeps stage and priority, drops type: %q", header)
 	}
 	for _, v := range m.all {
 		if !strings.Contains(screen, v.ID) {
 			t.Fatalf("at 60 the id %s is gone:\n%s", v.ID, screen)
 		}
 	}
-	if !strings.Contains(screen, "○ 12 ") || !strings.Contains(screen, "A very long title that …") {
+	if !strings.Contains(screen, "○ 12 ") || !strings.Contains(screen, "A very long title tha…") {
 		t.Fatalf("at 60 the pie or the cut title is gone:\n%s", screen)
 	}
 }
@@ -234,7 +234,7 @@ func TestNarrowRowsGolden(t *testing.T) {
 		text = strings.ReplaceAll(text, v.ID, "######")
 	}
 	path := filepath.Join("testdata", "rows", "narrow-60.txt")
-	if os.Getenv("HUGINN_UPDATE_GOLDEN") == "1" {
+	if os.Getenv("HUG_UPDATE_GOLDEN") == "1" {
 		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -244,7 +244,7 @@ func TestNarrowRowsGolden(t *testing.T) {
 	}
 	want, err := os.ReadFile(path)
 	if err != nil {
-		t.Fatalf("%v\nfix: HUGINN_UPDATE_GOLDEN=1 go test -run TestNarrowRowsGolden ./huginn/internal/tui/", err)
+		t.Fatalf("%v\nfix: HUG_UPDATE_GOLDEN=1 go test -run TestNarrowRowsGolden ./huginn/internal/tui/", err)
 	}
 	if text != strings.ReplaceAll(string(want), "\r\n", "\n") {
 		t.Fatalf("rows at 60 differ from %s:\n%s", path, text)

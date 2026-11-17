@@ -84,7 +84,7 @@ func (m model) filterBar() string {
 		chips = append(chips, m.styles.accent.Render("[/ "+oneLine(m.query)+"]"))
 	}
 	if len(chips) == 0 {
-		return m.styles.dim.Render("No filters · f picker · 1 todo  2 doing  3 done  4 blocked")
+		return m.styles.dim.Render("No filters · f picker · 1 todo  2 doing  3 done  4 depends")
 	}
 	return strings.Join(chips, " ") + m.styles.dim.Render(" · ⌫ last · F clear")
 }

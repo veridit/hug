@@ -414,7 +414,7 @@ func (m model) detailText(t task.Task) string {
 	for i, d := range task.DependencyDetails(t, m.all) {
 		state := d.Status
 		if d.Missing {
-			state = "blocked"
+			state = "depends"
 		}
 		pointer := " "
 		if m.detailPane == focusDeps && i == m.dependency {
@@ -422,7 +422,7 @@ func (m model) detailText(t task.Task) string {
 		}
 		flag := ""
 		if d.Blocking {
-			flag = " BLOCKED"
+			flag = " open"
 		}
 		if d.OpenChildren > 0 {
 			flag += fmt.Sprintf(" (epic: %d open)", d.OpenChildren)
@@ -457,7 +457,7 @@ func (m model) detailText(t task.Task) string {
 		}
 		state, title := l.Status, l.Title
 		if l.Missing {
-			state, title = "blocked", "no task has this id"
+			state, title = "depends", "no task has this id"
 		}
 		line := fmt.Sprintf("%s ↳ %s %s [%s]", pointer, m.styles.status[state].Render(oneLine(l.ID)), oneLine(title), oneLine(state))
 		if l.Missing {

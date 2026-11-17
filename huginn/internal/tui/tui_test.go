@@ -48,7 +48,7 @@ func commandLine(m model, value string) model { return press(m, ":", value, "ent
 func TestOverviewFirst(t *testing.T) {
 	m := fixture(t)
 	m = newModel(m.store, m.opts)
-	for _, s := range []string{"HUG TASKS · overview", "todo 2", "doing 0", "done 0", "blocked 0", "IN PROGRESS", "NEXT UP", "BLOCKED", "LINT", "Alpha task"} {
+	for _, s := range []string{"HUG TASKS · overview", "todo 2", "doing 0", "done 0", "depends 0", "IN PROGRESS", "NEXT UP", "LINT", "Alpha task"} {
 		if !strings.Contains(m.View(), s) {
 			t.Fatalf("missing %q\n%s", s, m.View())
 		}
@@ -258,7 +258,7 @@ func TestDependenciesAndAllSections(t *testing.T) {
 	m.refresh(a.Path)
 	m = press(m, "enter")
 	text := m.detailText(m.visible[m.cursor])
-	for _, v := range []string{"BLOCKED", "Full prose survives", "2026-11-10: created", "History line"} {
+	for _, v := range []string{"[todo] open", "Full prose survives", "2026-11-10: created", "History line"} {
 		if !strings.Contains(text, v) {
 			t.Fatal(text)
 		}

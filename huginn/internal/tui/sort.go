@@ -23,7 +23,7 @@ type sortField struct {
 var sortFields = []sortField{
 	{"p", "priority", "critical first", true},
 	{"t", "type", "feature, bug, chore, spike, docs", false},
-	{"s", "status", "todo, doing, blocked, done, dropped", false},
+	{"s", "status", "todo, doing, depends, done, dropped", false},
 	{"u", "updated", "newest first", true},
 	{"c", "created", "newest first", true},
 	{"g", "group", "a to z", false},

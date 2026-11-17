@@ -15,7 +15,7 @@ import (
 //  1. the title is cut, down to titleMin;
 //  2. the owner cell (IN PROGRESS) is cut: the branch first, then the
 //     owner down to ownerMin;
-//  3. whole columns drop: type, then priority, then status.
+//  3. whole columns drop: type, then priority, then stage.
 //
 // The gutter, the progress pie and the id always stay. Widths are display
 // cells (wide runes and emoji count 2), never bytes.
@@ -33,7 +33,6 @@ const ownerMin = 8
 // Cell widths, each with the space after it.
 const (
 	idCell       = 9 // fit(id, 8) and a space
-	statusCell   = 8
 	kindCell     = 8
 	priorityCell = 9
 	letterCell   = 2 // a board's one-letter type or priority and a space
@@ -54,12 +53,6 @@ type rowCols struct {
 func (m model) rowLayout(width int, compact bool, owner, names int) rowCols {
 	c := rowCols{status: !compact, kind: true, priority: true, owner: max(0, owner)}
 	head := 2 + m.progressWidth() + idCell
-	on := func(b bool, w int) int {
-		if b {
-			return w
-		}
-		return 0
-	}
 	title := func() int {
 		w := width - head
 		if c.owner > 0 {
@@ -68,7 +61,7 @@ func (m model) rowLayout(width int, compact bool, owner, names int) rowCols {
 		if compact {
 			return w - on(c.kind, letterCell) - on(c.priority, letterCell)
 		}
-		return w - on(c.status, statusCell) - on(c.kind, kindCell) - on(c.priority, priorityCell)
+		return w - on(c.status, stageCell) - on(c.kind, kindCell) - on(c.priority, priorityCell)
 	}
 	least := titleMin
 	if compact {
@@ -93,6 +86,14 @@ func (m model) rowLayout(width int, compact bool, owner, names int) rowCols {
 	}
 	c.title = title()
 	return c
+}
+
+// on is w when b, else 0: a cell's width when it is shown.
+func on(b bool, w int) int {
+	if b {
+		return w
+	}
+	return 0
 }
 
 // ownerName is who works on t, without the branch.

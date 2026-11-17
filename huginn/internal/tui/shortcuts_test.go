@@ -22,7 +22,7 @@ func TestAssignShortcuts(t *testing.T) {
 		reserved string
 		want     string
 	}{
-		{"statuses", []string{"todo", "doing", "blocked", "done", "dropped"}, "", "tdbor"},
+		{"statuses", []string{"todo", "doing", "depends", "done", "dropped"}, "", "tdeor"},
 		{"views", []string{"overview", "list", "board", "lint"}, "", "olbi"},
 		// A leading sigil is the label's own key (2026-11-16, user).
 		{"views with a sigil", []string{"overview", "list", "board", "!lint"}, "", "olb!"},
