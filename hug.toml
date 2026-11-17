@@ -1,3 +1,5 @@
+layout = 2
+
 [people.jhf]
 name = "Jørgen H. Fjeld"
 email = ["jorgen@veridit.no"]
