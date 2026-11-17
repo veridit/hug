@@ -18,7 +18,7 @@ import (
 func stageBoard(t *testing.T) model {
 	t.Helper()
 	old := now
-	now = func() time.Time { return time.Date(2026, 11, 17, 9, 53, 0, 0, time.Local) }
+	now = func() time.Time { return time.Date(2026, 11, 17, 9, 53, 0, 0, time.UTC) }
 	t.Cleanup(func() { now = old })
 	s := &task.Store{Root: t.TempDir()}
 	write := func(id, title, front string, deps ...string) {
@@ -38,10 +38,10 @@ func stageBoard(t *testing.T) model {
 			t.Fatal(e)
 		}
 	}
-	write("aaaaaa", "Status colors: rows and sections share one subtle scheme", "status: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00\"")
-	write("bbbbbb", "Release, then hug setup in seid-lang", "status: \"doing\"\nstage: \"review\"\ndoing_since: \"2026-11-17T08:00\"\nreview_by: \"Jørgen\"\nreview_since: \"2026-11-17T09:48\"")
-	write("cccccc", "Warm cache under 50 ms", "status: \"doing\"\nstage: \"waiting\"\ndoing_since: \"2026-11-17T08:00\"\nwaiting_on: \"CI run 44063552584\"\nwaiting_since: \"2026-11-17T09:41\"")
-	write("dddddd", "One set of variable names", "status: \"doing\"\nstage: \"depends\"\ndoing_since: \"2026-11-17T08:00\"", "cccccc", "eeeeee")
+	write("aaaaaa", "Status colors: rows and sections share one subtle scheme", "status: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00:00Z\"")
+	write("bbbbbb", "Release, then hug setup in seid-lang", "status: \"doing\"\nstage: \"review\"\ndoing_since: \"2026-11-17T08:00:00Z\"\nreview_by: \"Jørgen\"\nreview_since: \"2026-11-17T09:48:00Z\"")
+	write("cccccc", "Warm cache under 50 ms", "status: \"doing\"\nstage: \"waiting\"\ndoing_since: \"2026-11-17T08:00:00Z\"\nwaiting_on: \"CI run 44063552584\"\nwaiting_since: \"2026-11-17T09:41:00Z\"")
+	write("dddddd", "One set of variable names", "status: \"doing\"\nstage: \"depends\"\ndoing_since: \"2026-11-17T08:00:00Z\"", "cccccc", "eeeeee")
 	write("eeeeee", "Tags listed per board", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"should type leave the rows, or stay as a column?\"\ndesign_for: \"jhf\"")
 	write("ffffff", "Depend on a group or epic", "status: \"todo\"\nstage: \"ready\"")
 	write("gggggg", "Answer a question in place", "status: \"todo\"\nstage: \"deferred\"\ndeferred_reason: \"after the release\"")

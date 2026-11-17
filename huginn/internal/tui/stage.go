@@ -116,8 +116,8 @@ func dependsBar(done, total int) string {
 // since is " · 12 min" from a stamp ("2006-01-02T15:04"), or "" when it
 // does not read.
 func since(stamp string) string {
-	at, e := time.ParseInLocation("2006-01-02T15:04", strings.TrimSpace(stamp), time.Local)
-	if e != nil {
+	at, ok := task.ParseStamp(stamp)
+	if !ok {
 		return ""
 	}
 	d := now().Sub(at)

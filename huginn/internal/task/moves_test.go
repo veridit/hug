@@ -80,10 +80,10 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw := load(t, s, a)
-	if node(tk) != "todo/design" || tk.Fields["design_question"] != "keep type on rows?" || tk.Fields["design_asked_by"] != "crab" || tk.Fields["design_for"] != "jhf" || tk.Fields["design_since"] != "2026-11-17T09:41" {
+	if node(tk) != "todo/design" || tk.Fields["design_question"] != "keep type on rows?" || tk.Fields["design_asked_by"] != "crab" || tk.Fields["design_for"] != "jhf" || tk.Fields["design_since"] != "2026-11-17T09:41:00Z" {
 		t.Fatalf("design: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
-	if !strings.Contains(raw, "## History\n- 2026-11-17T09:41 todo/ready -> todo/design (design)\n") {
+	if !strings.Contains(raw, "## History\n- 2026-11-17T09:41:00Z todo/ready -> todo/design (design)\n") {
 		t.Fatalf("design history:\n%s", raw)
 	}
 	// design --clear: back to ready, the question to History.
@@ -91,7 +91,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
-	if node(tk) != "todo/ready" || len(tk.Fields) != 0 || !strings.Contains(raw, "todo/design -> todo/ready (design answered); was design_asked_by: crab; design_for: jhf; design_question: keep type on rows?; design_since: 2026-11-17T09:41") {
+	if node(tk) != "todo/ready" || len(tk.Fields) != 0 || !strings.Contains(raw, "todo/design -> todo/ready (design answered); was design_asked_by: crab; design_for: jhf; design_question: keep type on rows?; design_since: 2026-11-17T09:41:00Z") {
 		t.Fatalf("design --clear: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
 
@@ -104,7 +104,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, _ = load(t, s, a)
-	if node(tk) != "doing/active" || tk.Fields["doing_since"] != "2026-11-17T09:41" {
+	if node(tk) != "doing/active" || tk.Fields["doing_since"] != "2026-11-17T09:41:00Z" {
 		t.Fatalf("take: %s %v", node(tk), tk.Fields)
 	}
 	_, e = s.Design(a, "q", "x", "jhf")
@@ -124,7 +124,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
-	if node(tk) != "doing/active" || tk.Fields["waiting_on"] != "" || !strings.Contains(raw, "doing/waiting -> doing/active (resume); was waiting_asked_by: nautilus; waiting_on: CI run 44057678727; waiting_since: 2026-11-17T09:41") {
+	if node(tk) != "doing/active" || tk.Fields["waiting_on"] != "" || !strings.Contains(raw, "doing/waiting -> doing/active (resume); was waiting_asked_by: nautilus; waiting_on: CI run 44057678727; waiting_since: 2026-11-17T09:41:00Z") {
 		t.Fatalf("resume: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
 
@@ -136,7 +136,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
-	if node(tk) != "done" || tk.Fields["done_at"] != "2026-11-17T09:41" || tk.Fields["doing_since"] != "" || strings.Contains(raw, "\nstage:") {
+	if node(tk) != "done" || tk.Fields["done_at"] != "2026-11-17T09:41:00Z" || tk.Fields["doing_since"] != "" || strings.Contains(raw, "\nstage:") {
 		t.Fatalf("done: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
 	if d := Parse(tk.Path, []byte(raw)); len(d.Findings) != 0 {
@@ -149,7 +149,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
-	if node(tk) != "todo/ready" || tk.Fields["done_at"] != "" || !strings.Contains(raw, "done -> todo/ready (reopen); was done_at: 2026-11-17T09:41") {
+	if node(tk) != "todo/ready" || tk.Fields["done_at"] != "" || !strings.Contains(raw, "done -> todo/ready (reopen); was done_at: 2026-11-17T09:41:00Z") {
 		t.Fatalf("reopen: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
 
@@ -172,7 +172,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
-	if node(tk) != "todo/ready" || !strings.Contains(raw, "was dropped_at: 2026-11-17T09:41; dropped_reason: duplicate of 805p6y") {
+	if node(tk) != "todo/ready" || !strings.Contains(raw, "was dropped_at: 2026-11-17T09:41:00Z; dropped_reason: duplicate of 805p6y") {
 		t.Fatalf("reopen dropped: %s\n%s", node(tk), raw)
 	}
 	if d := Parse(tk.Path, []byte(raw)); len(d.Findings) != 0 {

@@ -42,6 +42,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"filename id differs", "id-mismatch"},
 	{"unknown status", "unknown-status"},
 	{"unknown stage", "unknown-stage"},
+	{"time without zone", "zoneless-time"},
 	{"node field ", "stray-node-field"},
 	{"missing node field", "missing-node-field"},
 	{"stage ", "stage-disagrees"},

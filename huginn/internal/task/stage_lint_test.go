@@ -45,7 +45,7 @@ func TestLintStageOutsideItsState(t *testing.T) {
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"ready\"")), "unknown-stage", "a doing task's stage is one of active, waiting, depends, review")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"dropped\"\nstage: \"active\"\ndropped_reason: \"dup\"")), "unknown-stage", "a dropped task has no stage")
 	// review is a stage of both todo and doing: no finding under either.
-	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T10:00\"")); len(got) != 0 {
+	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T10:00:00Z\"")); len(got) != 0 {
 		t.Fatalf("todo/review: %q", got)
 	}
 	// No stage yet (a board before hug upgrade) is not flagged.
@@ -56,22 +56,22 @@ func TestLintStageOutsideItsState(t *testing.T) {
 
 // Rule 2: a node field is present only while the task is in its node.
 func TestLintNodeFieldOutsideItsNode(t *testing.T) {
-	ok := stageDoc("aaaaaa", "status: \"doing\"\nstage: \"waiting\"\ndoing_since: \"2026-11-17T08:46\"\nwaiting_on: \"CI run 44057678727\"\nwaiting_since: \"2026-11-17T09:41\"")
+	ok := stageDoc("aaaaaa", "status: \"doing\"\nstage: \"waiting\"\ndoing_since: \"2026-11-17T08:46:00Z\"\nwaiting_on: \"CI run 44057678727\"\nwaiting_since: \"2026-11-17T09:41:00Z\"")
 	if got := codes(ok); len(got) != 0 {
 		t.Fatalf("doing/waiting with its fields is clean: %q", got)
 	}
-	if ok.Task.Fields["waiting_on"] != "CI run 44057678727" || ok.Task.Fields["doing_since"] != "2026-11-17T08:46" || ok.Task.Stage != "waiting" {
+	if ok.Task.Fields["waiting_on"] != "CI run 44057678727" || ok.Task.Fields["doing_since"] != "2026-11-17T08:46:00Z" || ok.Task.Stage != "waiting" {
 		t.Fatalf("parsed %q %q", ok.Task.Stage, ok.Task.Fields)
 	}
 	// A field of another state is never allowed.
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"\nwaiting_on: \"CI\"")), "stray-node-field", "node field waiting_on belongs to doing/waiting, and this task is todo/ready")
-	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"active\"\ndone_at: \"2026-11-17T10:00\"")), "stray-node-field", "node field done_at belongs to done, and this task is doing/active")
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"active\"\ndone_at: \"2026-11-17T10:00:00Z\"")), "stray-node-field", "node field done_at belongs to done, and this task is doing/active")
 	// Proposal A (crab 11:37): an outranked stage keeps its fields while
 	// its condition holds: design_question on a todo task that depends.
 	if got := codes(stageDoc("bbbbbb", "status: \"doing\"\nstage: \"active\""), stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"\ndesign_question: \"q\"\ndesign_for: \"jhf\"", "bbbbbb")); len(got) != 0 {
 		t.Fatalf("design_question under depends: %q", got)
 	}
-	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"\ndoing_since: \"2026-11-17T08:46\"")), "stray-node-field", "node field doing_since belongs to doing, and this task is todo/ready")
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"\ndoing_since: \"2026-11-17T08:46:00Z\"")), "stray-node-field", "node field doing_since belongs to doing, and this task is todo/ready")
 	// review_by belongs to todo/review and doing/review alike.
 	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_by: \"Jørgen\"")); len(got) != 0 {
 		t.Fatalf("todo/review review_by: %q", got)
@@ -96,12 +96,12 @@ func TestLintRequiredNodeFieldMissing(t *testing.T) {
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"review\"")), "missing-node-field", "review_by")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"deferred\"")), "missing-node-field", "deferred_reason")
 	// todo/review's review_by is optional (review_since marks it).
-	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T10:00\"")); len(got) != 0 {
+	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T10:00:00Z\"")); len(got) != 0 {
 		t.Fatalf("todo/review: %q", got)
 	}
 	// A state's required field: dropped needs dropped_reason, once the
 	// file has stages (a stage line or a node field marks a migrated file).
-	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"dropped\"\ndropped_at: \"2026-11-17T10:00\"")), "missing-node-field", "missing node field dropped_reason: a dropped task needs it (why never)")
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"dropped\"\ndropped_at: \"2026-11-17T10:00:00Z\"")), "missing-node-field", "missing node field dropped_reason: a dropped task needs it (why never)")
 	// A file hug upgrade has not migrated (neither) is not flagged.
 	if got := codes(stageDoc("aaaaaa", "status: \"dropped\"")); len(got) != 0 {
 		t.Fatalf("unmigrated dropped: %q", got)

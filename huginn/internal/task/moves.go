@@ -16,7 +16,32 @@ import (
 // it.
 var Now = time.Now
 
-func stamp() string { return Now().Format("2006-01-02T15:04") }
+func stamp() string { return Now().UTC().Format(StampLayout) }
+
+// StampLayout is how hug writes a time: UTC, RFC 3339 to the second, with
+// Z (crab 13:33, kestrel: a local time without a zone reads an hour off on
+// a clone in another zone).
+const StampLayout = "2006-01-02T15:04:05Z"
+
+// zonelessLayout is the old form, local time without a zone: hug upgrade
+// converts it, lint names it.
+const zonelessLayout = "2006-01-02T15:04"
+
+// ParseStamp reads a time hug wrote: RFC 3339 with a zone, or the old
+// zoneless form as local time (until hug upgrade converts it).
+func ParseStamp(s string) (time.Time, bool) {
+	s = strings.TrimSpace(s)
+	if t, e := time.Parse(time.RFC3339, s); e == nil {
+		return t, true
+	}
+	if t, e := time.ParseInLocation(zonelessLayout, s, time.Local); e == nil {
+		return t, true
+	}
+	return time.Time{}, false
+}
+
+// TimeField is whether a node field holds a time: *_since and *_at.
+func TimeField(k string) bool { return strings.HasSuffix(k, "_since") || strings.HasSuffix(k, "_at") }
 
 // RemoveField deletes frontmatter field k (and its continuation lines), if
 // present.

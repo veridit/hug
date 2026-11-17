@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/importer"
@@ -192,6 +193,20 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	// each section's text unchanged. Only when the board opens: a repository
 	// without hug/tasks has nothing to reorder.
 	if s, e := a.open(ctx); e == nil {
+		// The state key and times (6ephqk step 4, crab 11:10 and 13:33):
+		// status: becomes state:, zoneless *_since/*_at become UTC with Z,
+		// read as this machine's local time, as they were written.
+		keyed, e := s.s.UpgradeFiles(time.Local)
+		if e == nil && len(keyed) > 0 {
+			e = s.r.Commit(keyed, fmt.Sprintf("hug upgrade: state: and UTC times in %d tasks", len(keyed)))
+		}
+		if e != nil {
+			s.c.Close()
+			return nil, e
+		}
+		if len(keyed) > 0 {
+			did = append(did, fmt.Sprintf("status: renamed to state: and times written in UTC in %d tasks", len(keyed)))
+		}
 		changed, e := s.s.Reorder()
 		if e == nil && len(changed) > 0 {
 			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: section order in %d tasks", len(changed)))

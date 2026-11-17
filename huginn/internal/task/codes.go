@@ -22,6 +22,7 @@ var Codes = []CodeInfo{
 	{"id-mismatch", "the file name id differs from the header id"},
 	{"unknown-status", "status is not todo, doing, done or dropped"},
 	{"unknown-stage", "the stage is not a stage of the task's state (hug task states)"},
+	{"zoneless-time", "a *_since or *_at field has no zone; hug writes UTC with Z (fix: hug upgrade)"},
 	{"stray-node-field", "a node field (doing_since, waiting_on ...) outside its node"},
 	{"missing-node-field", "the state or stage needs a field the task lacks (waiting_on ...)"},
 	{"stage-disagrees", "a stage hug sets (draft, depends, ready) does not match the task"},

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 )
 
 // State and stage (6ephqk, Jørgen 2026-11-17 10:03-10:56): every task is in
@@ -264,6 +265,13 @@ func (d *Document) stageFindings() {
 	}
 	owners := NodeFields()
 	for _, k := range sortedKeys(t.Fields) {
+		if v := strings.TrimSpace(t.Fields[k]); TimeField(k) && v != "" {
+			if _, e := time.Parse(time.RFC3339, v); e != nil {
+				d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine(k),
+					Problem: fmt.Sprintf("time without zone: %s is %q; hug writes UTC with Z (%s)", k, v, Now().UTC().Format(StampLayout)),
+					Fix:     "hug upgrade"})
+			}
+		}
 		if !fieldHolds(t, k, owners[k]) {
 			d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine(k),
 				Problem: fmt.Sprintf("node field %s belongs to %s, and this task is %s: hug moves it to ## History", k, strings.Join(owners[k], " and "), node),
