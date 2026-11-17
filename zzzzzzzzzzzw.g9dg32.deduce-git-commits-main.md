@@ -4,7 +4,7 @@ title: "Deduce from git: commits on main and release tags mark the ticket"
 status: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
