@@ -37,7 +37,7 @@ Write-time check: huginn/internal/task/store.go New() (line ~168, returns on fir
 - [x] new findings for backlog import leftovers: <!-- SECTION:... --> markers, and the unused fields created_date, ordinal, backlog_status, import_type_inference; their fix is hug upgrade (test; seid-lang counts before and after)
 - [x] hug task set ID --accept "..." --purpose "..." --principle "..." fixes those findings without an editor, so every combined fix: line is runnable (test)
 - [x] hug task lint is the board overview: totals per code and one compact line per task; hug task lint ID gives every finding of that task in detail with the one combined fix: line; hug task show (detail view) and hug task take show the same block as lint ID (test)
-- [ ] rows in ls, board and the TUI list stay as they are: at most the existing ! marker, no finding text or counts (test)
+- [x] rows in ls, board and the TUI list stay as they are: at most the existing ! marker, no finding text or counts (test)
 - [ ] hug upgrade does only the mechanical part, shown as a diff: strips backlog SECTION markers, drops unused backlog fields, puts sections in order; it never splits Purpose or Principle out of Goal (test)
 
 ## Notes
