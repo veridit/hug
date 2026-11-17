@@ -1,13 +1,16 @@
 ---
 id: kbc99j
 title: "Windows: a parallel note fails with 'file is being used by another process'"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
