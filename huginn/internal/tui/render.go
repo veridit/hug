@@ -122,6 +122,12 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	if mark := m.fileCount(t); mark != "" {
 		title = m.styles.dim.Render(mark) + title
 	}
+	// Group and epic before the title, dim, no line of their own
+	// (kx2ndm): "later·↳gem59b Launch posts". Before, so a long title
+	// cannot push them out; at most 24 cells, so the title keeps the row.
+	if where := m.placeCell(t); where != "" {
+		title = m.styles.dim.Render(ansi.Truncate(where, 24, "…")) + " " + title
+	}
 	if compact {
 		// Board columns are narrow: type and priority are one coloured
 		// letter each, spelled out in the legend under the board.

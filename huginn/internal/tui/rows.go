@@ -115,3 +115,16 @@ func (m model) ownerNames(rows []int) int {
 	}
 	return w
 }
+
+// placeCell is where t belongs, before its title: its group and its
+// epic, "later·↳gem59b", or "" when it has neither (kx2ndm).
+func (m model) placeCell(t task.Task) string {
+	var parts []string
+	if g := oneLine(t.Group); g != "" {
+		parts = append(parts, g)
+	}
+	if e := m.epicOf[t.Path]; e != "" {
+		parts = append(parts, "↳"+e)
+	}
+	return strings.Join(parts, "·")
+}

@@ -99,7 +99,8 @@ type model struct {
 	findings                           []task.Finding
 	docs                               map[string]*task.Document
 	blocked, linted                    map[string]bool
-	epics                              map[string]bool // lowercase ids of tasks with children
+	epics                              map[string]bool   // lowercase ids of tasks with children
+	epicOf                             map[string]string // task path -> its epic's id (kx2ndm)
 	cursor, acceptance, offset         int
 	dependency, detailPane             int
 	link                               int                         // the task:ID marked > in Links (xxvm6t)
@@ -399,8 +400,18 @@ func (m *model) apply(sn snapshot, path string) {
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.epics = map[string]bool{}
-	for id := range task.ChildIndex(ts) {
+	m.epicOf = map[string]string{}
+	byID := map[string]string{}
+	for _, t := range ts {
+		byID[strings.ToLower(t.ID)] = t.ID
+	}
+	// One pass resolves every parent (kx2ndm): rows read epicOf, never
+	// resolve their parent themselves.
+	for id, children := range task.ChildIndex(ts) {
 		m.epics[id] = true
+		for _, c := range children {
+			m.epicOf[c.Path] = byID[id]
+		}
 	}
 	for _, t := range ts {
 		m.blocked[t.Path] = t.Status != "done" && t.Status != "dropped" && len(task.Blocked(t, ts)) > 0
