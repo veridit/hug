@@ -48,6 +48,7 @@ Check 4, part 1 (scratch clone of seid-lang, Seid itself untouched): the attache
 Checks 1-3 landed in main 55fd4f9 (e96d6f8..55fd4f9). Each test fails on base dde0b41 and passes on 55fd4f9. 1: TestImportCleanupRetiresSourceInOneCommit: git rm of DIR in one commit with a Model: trailer, plus [[import]] source/commit/date in hug.toml. TestImportCleanupRefusedByHookChangesNothing: a refusing hook leaves the tree unchanged. 2: TestImportRefusedAfterCleanup: re-import refused naming the commit, with a fix: line. 3: TestSetupStopsOfferingRecordedImport: no offer once recorded, and a leftover DIR is flagged with the --cleanup fix. -race on cli/task/importer/mcp: 'ok' for all 4 after rebasing onto e96d6f8.
 landed 55fd4f9 on main 2026-11-17: import is a one-time move: hug task import backlog DIR --cleanup retires the…
 landed 06297ea on main 2026-11-17: Merge v0.7.43 into main (ggydj2 stays under Unreleased)
+shipped in v0.7.44 (55fd4f9)
 ## History
 - 2026-11-17T15:58 todo -> doing/active (take)
 - 2026-11-17T17:46 doing/active -> doing/waiting (wait)

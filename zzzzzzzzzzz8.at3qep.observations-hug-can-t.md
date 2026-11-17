@@ -13,6 +13,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T18:10"
+done_release: "v0.7.44"
 ---
 
 ## Goal
@@ -47,6 +48,7 @@ hatchling 16:57, check 3 replay (before/after). Before: hug's board as it was at
 hatchling 17:10, landed 09466ed on main (ea2d369..09466ed, fast-forward; rebased over pbh9xq: the four new codes are Broken, like branch-gone). Local: go test -race ./huginn/... ./muninn/internal/recall ./muninn/run green on this tree; full -race ./... green on the pre-rebase 9cf84f8. Main CI 44133943837. Checks: 1 TestQuestionsFromNotes (a, c, d: each asked, fix clears, (a) outranks (c)), TestIdleQuestion (b), TestLintFlagsDoingTaskOnMergedOrDeletedBranch (e, existing), TestTopQuestionsOnePerTicket; 2 TestQuestionsInLintAndShow (lint and show, fix clears; idle in show) and recall TestBoardQuestionReachesOwnerOnly (owner kestrel gets 'Task board (return): 0hkaa5: landed, but no check is ticked ... fix: hug task check 0hkaa5 1'; wyvern gets nothing; without the ownerOnly change it fails: 'question to a passer-by: "Task board (return): 0hkaa5: landed, but no check is ticked...'); 3 the 16:57 replay note. TestGitProcessesPerCommand caught one extra git on take; the idle check now runs on show only (a write never leaves its ticket idle).
 Reflection (open, 2026-11-17, hatchling): One gap: hug task check takes no evidence text ('hug task check ID N'), but AGENTS.md says 'hug task check ID N with evidence'; I wrote the evidence as a separate note each time. Either check could take a text, or AGENTS.md could say 'then hug task note ID evidence'.
 landed 09466ed on main 2026-11-17: hug task lint: states only the owner can settle are one question on the ticket…
+shipped in v0.7.44 (09466ed)
 ## History
 - 2026-11-17T17:39 todo -> doing/active (take)
 - 2026-11-17T18:10 doing/active -> done (done); was doing_since: 2026-11-17T17:39

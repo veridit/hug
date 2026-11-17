@@ -62,6 +62,7 @@ Local go test ./... is all ok.
 Rebased onto main 06297ea (v0.7.43 merge) and pushed: 963df49, e3c65e2, 372ff7a, ea2d369 (main 06297ea..ea2d369). Conflicts: codes.go (main added unknown-person: Broken), help.go (kept main's search and deduce help), render.go (header 'N broken · M advice', then vnyz8z's spinner), tui.go (broken map beside main's people). initialSnapshot now uses ShownFindings like every load, so the counts do not change when the refresh lands; TestTmuxGolden waits for '⎘2' (the refreshed board): it drifted in 2 of 3 runs before, passed 3 of 3 after. Goldens: tmux 51 files and 3 row/detail files, header and '!'/'·' row marks only. -race: task, tui, cli, board, mcp ok. Check 4, measured on a fresh copy of Seid's hug/tasks (2,520 tasks; the board changed since the 2,498-task measure): --all 5,746 findings (269 broken: all done-unchecked; 5,477 advice); default 5,299 shown (269 broken + 5,030 advice on open tasks), 447 advice on closed tasks hidden. The text overview is 19 lines; its header: '5299 findings (269 broken) on 1299 tasks, in 4 codes'. Ticks follow green main CI.
 landed 963df49 on main 2026-11-17: hug task lint: every finding is broken or advice; broken always shows, advice…
 landed 372ff7a on main 2026-11-17: hug tui goldens: header reads 'N broken · M advice' in the glance, alias search…
+shipped in v0.7.44 (963df49)
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:23 todo/ready -> doing/active (take)
