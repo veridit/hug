@@ -41,5 +41,6 @@ Jørgen 2026-11-17 14:47: --cleanup also removes backlog's other traces, in the 
 
 
 file:ggydj2-seid-dry-run.md (9631 bytes, sha256:bdff9e31) Seid cleanup dry run (scratch clone)
+Check 4, part 1 (scratch clone of seid-lang, Seid itself untouched): the attached ggydj2-seid-dry-run.md has the full --dry-run. It shows git rm of 7658 files under .backlog, 61 documents cite .backlog, and about 64 agent: lines. Before the cleanup can run, Seid has to import .backlog/evidence (4738 files, 2766 citations) and move its own tooling off .backlog (.githooks/pre-commit:40 runs tools/backlog_integrity.py; tools/evidence.py reads .backlog/tasks). A real run on the clone was refused by Seid's pre-commit (FileNotFoundError .backlog/tasks) and the clone was left unchanged.
 ## History
 - 2026-11-17T15:58 todo -> doing/active (take)
