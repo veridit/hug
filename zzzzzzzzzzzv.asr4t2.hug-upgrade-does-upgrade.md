@@ -26,7 +26,7 @@ cmd/hug/main.go:62 dispatches setup, tui, upgrade. 6ephqk step 4 (status -> stat
 
 ## Acceptance
 - [x] on a board in the old layout, hug upgrade migrates it and prints what changed (test)
-- [ ] on a current board it prints 'nothing to do' per part (test)
+- [x] on a current board it prints 'nothing to do' per part (test)
 
 ## Notes
 
