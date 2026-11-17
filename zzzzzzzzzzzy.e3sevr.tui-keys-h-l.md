@@ -1,13 +1,18 @@
 ---
 id: e3sevr
 title: "TUI keys: H/L move the column marker; J/K page; marker sits on the cursor row"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T23:27"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ Mock, cursor on 3mavpt with the TYPE column marked:
 ## Notes
 
 Jørgen 23:23 local, detail view: a thin horizontal rule between the filter line ('No filters · f picker · 1 todo ...') and the task's title, so the title stands out and the task starts clearly below the headings. Same rule style as the one under the detail header (dim, full width).
+
+
+## History
+- 2026-11-17T23:27 todo -> doing/active (take)
