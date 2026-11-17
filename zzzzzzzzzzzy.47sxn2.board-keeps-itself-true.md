@@ -29,3 +29,5 @@ Children: deduce from git (wyvern), observations become questions (hatchling), o
 - [ ] a week after they ship, Jørgen has not had to remind an agent to update a ticket (noted with the date)
 
 ## Notes
+
+Jørgen 2026-11-17 11:58 (refines the two levels): every observation is told to the owner, not only the unclear ones. Level 1, deduced: hug acts and tells: 'observed: commit a08bb34 naming m1c28r reached main; marked landed. If wrong: hug task note m1c28r "..." / <fix command>'. Level 2, unclear: hug does not act and asks: 'observed: ci/m1c28r merged but 2 of 4 checks unticked: tick them, or say what is left'. Both name the observation, what hug did or did not do, and the fix command.
