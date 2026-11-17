@@ -306,13 +306,6 @@ func harnessName(sessionID string) string {
 
 func (a *App) whoTakes(f flags) taker {
 	t := taker{Name: strings.TrimSpace(f.get("as")), Model: strings.TrimSpace(f.get("model"))}
-	t.At = placeOf(a.Cwd)
-	if b := strings.TrimSpace(f.get("branch")); b != "" {
-		t.At.Branch = b
-	}
-	if w := strings.TrimSpace(f.get("worktree")); w != "" {
-		t.At.Worktree = w
-	}
 	if t.Model == "" {
 		t.Model = a.takerModel(f)
 	}
@@ -323,6 +316,19 @@ func (a *App) whoTakes(f flags) taker {
 		t.Name = harnessName(a.getenv("JCODE_SESSION_ID"))
 	}
 	return t
+}
+
+// takePlace is where a take happens: the working directory's branch and
+// worktree, or --branch/--worktree.
+func (a *App) takePlace(f flags) task.Place {
+	at := placeOf(a.Cwd)
+	if b := strings.TrimSpace(f.get("branch")); b != "" {
+		at.Branch = b
+	}
+	if w := strings.TrimSpace(f.get("worktree")); w != "" {
+		at.Worktree = w
+	}
+	return at
 }
 
 // takerModel is the model a command runs as: --model, else HUG_MODEL.
@@ -908,7 +914,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(1); e != nil {
 			return nil, e
 		}
-		r, e = a.take(ctx, s, f.args[0], a.whoTakes(f))
+		who := a.whoTakes(f)
+		// Where the take happens (x1t1t1): asked of git for take only, not
+		// for every command that needs a name (three git processes: 0sbvnq).
+		who.At = a.takePlace(f)
+		r, e = a.take(ctx, s, f.args[0], who)
 	case "dep":
 		if e = f.count(1); e != nil {
 			return nil, e

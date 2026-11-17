@@ -74,6 +74,7 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// Taking from the TUI uses the same rule as hug task take: the model is
 	// required (--model or HUG_MODEL), the name is optional (et85h1).
 	who := a.whoTakes(f)
+	who.At = a.takePlace(f) // the TUI takes too
 	// A person at the keyboard: with no model given, TUI commits are theirs
 	// (t709he; a CLI or MCP write never guesses human).
 	if who.Model == "" {

@@ -489,12 +489,13 @@ func (r *Repository) DiffNameStatus(old, new string) ([]Change, error) {
 	if old == "" && new == "" {
 		return nil, nil
 	}
-	newTree, e := r.git("rev-parse", "--verify", "--end-of-options", new+"^{tree}")
-	if e != nil {
-		return nil, e
-	}
+	// A commit stands for its tree in ls-tree and diff: no rev-parse first
+	// (two git processes per command after a commit, ~45 ms each on
+	// Windows: 0sbvnq). "--end-of-options" keeps an id from reading as an
+	// option, as rev-parse --verify did.
+	newTree := new + "^{tree}"
 	if old == "" {
-		out, e := r.git("ls-tree", "-r", "--name-only", "-z", newTree)
+		out, e := r.git("ls-tree", "-r", "--name-only", "-z", "--end-of-options", newTree)
 		if e != nil {
 			return nil, e
 		}
@@ -506,11 +507,7 @@ func (r *Repository) DiffNameStatus(old, new string) ([]Change, error) {
 		}
 		return changes, nil
 	}
-	oldTree, e := r.git("rev-parse", "--verify", "--end-of-options", old+"^{tree}")
-	if e != nil {
-		return nil, e
-	}
-	args := []string{"diff", "--name-status", "-z", "--find-renames", oldTree, newTree, "--"}
+	args := []string{"diff", "--name-status", "-z", "--find-renames", "--end-of-options", old + "^{tree}", newTree, "--"}
 	out, e := r.git(args...)
 	if e != nil {
 		return nil, e
@@ -715,9 +712,13 @@ func exitCode(err error) int {
 
 // Never adopt or abort an operation started by a human or another process.
 func (r *Repository) checkIdle() error {
-	dir, e := r.git("rev-parse", "--absolute-git-dir")
+	// The git directory from the .git file, as Background reads it: one git
+	// process less per write (0sbvnq). git answers when the file is unusual.
+	dir, _, e := gitDir(r.Dir)
 	if e != nil {
-		return e
+		if dir, e = r.git("rev-parse", "--absolute-git-dir"); e != nil {
+			return e
+		}
 	}
 	for _, item := range []struct{ path, abort string }{{"rebase-merge", "rebase --abort"}, {"rebase-apply", "rebase --abort"}, {"MERGE_HEAD", "merge --abort"}, {"CHERRY_PICK_HEAD", "cherry-pick --abort"}, {"REVERT_HEAD", "revert --abort"}} {
 		if _, e := os.Stat(filepath.Join(dir, item.path)); e == nil {

@@ -59,26 +59,37 @@ func (r *Repository) Background() (Background, error) {
 	return Background{base: filepath.Join(common, "hug", "sync", name)}, nil
 }
 
-// commonDir is dir's shared git directory, from its .git file or folder.
-func commonDir(dir string) (string, error) {
+// gitDir is the git directory of the worktree at dir, from its .git folder
+// or file, without running git; linked is true for a .git file (a linked
+// worktree, whose shared directory is named in commondir).
+func gitDir(dir string) (gitdir string, linked bool, err error) {
 	dot := filepath.Join(dir, ".git")
 	st, e := os.Stat(dot)
 	if e != nil {
-		return "", e
+		return "", false, e
 	}
 	if st.IsDir() {
-		return dot, nil
+		return dot, false, nil
 	}
 	b, e := os.ReadFile(dot)
 	if e != nil {
-		return "", e
+		return "", false, e
 	}
 	gitdir, ok := strings.CutPrefix(strings.TrimSpace(string(b)), "gitdir: ")
 	if !ok {
-		return "", errors.New("not a gitdir file: " + dot)
+		return "", false, errors.New("not a gitdir file: " + dot)
 	}
 	if !filepath.IsAbs(gitdir) {
 		gitdir = filepath.Join(dir, gitdir)
+	}
+	return filepath.Clean(gitdir), true, nil
+}
+
+// commonDir is dir's shared git directory, from its .git file or folder.
+func commonDir(dir string) (string, error) {
+	gitdir, linked, e := gitDir(dir)
+	if e != nil || !linked {
+		return gitdir, e
 	}
 	c, e := os.ReadFile(filepath.Join(gitdir, "commondir"))
 	if e != nil {
