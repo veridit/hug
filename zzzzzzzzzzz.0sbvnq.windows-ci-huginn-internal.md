@@ -11,10 +11,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "3 main Windows runs with huginn/internal/cli under 300 s (landing run 44087396396: 299.686 s)"
-waiting_since: "2026-11-17T14:32"
-waiting_asked_by: "wyvern"
-stage: "waiting"
+stage: "active"
 ---
 
 ## Goal
@@ -53,3 +50,4 @@ Landed on main d74af5d (04216f3), CI 44087396396. Windows cli on that run: 'ok g
 Per-test times on Windows, main d198e01, run 44093916101 (throwaway branch ci/0sbvnq-times2, go test -json ./... as CI does): huginn/internal/cli 289.4 s in the full run; muninn/internal/app 303.7 s; tui 130.8 s. The 19 serial (non-t.Parallel) cli tests sum 159.3 s. The 5 BackgroundSync tests are 107.6 s of that: BurstIsBatched 28.42, OfflineCatchesUp 28.25, ParallelNotesAllLand 23.07, ConflictKeepsCommits 15.87, NoteReachesOtherClone 12.02. They are serial because clones() uses t.Setenv and the package globals Spawn/FetchAfter. Also serial with only app(t): TestMoveCommands 13.41, TestDoneReflectAndReflections 9.41, TestStrikeThroughCLI 8.69, TestBranchWaitRecordsTip 4.83. TestWaitsThroughCLI 9.05 sets cond.LoadAverage, a global. Slowest 5 overall: TestBoardColumns 44.05 (parallel), TestEveryRefCommandAcceptsTaskColon 28.70 (parallel), BurstIsBatched 28.42, OfflineCatchesUp 28.25, TestLifecycleJSONContract 24.18 (parallel). Target from crab: under 240 s with margin; 299.686 s on 44087396396 is not a pass to tick on.
 ## History
 - 2026-11-17T14:32 doing -> doing/waiting (wait)
+- 2026-11-17T14:46 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: 3 main Windows runs with huginn/internal/cli under 300 s (landing run 44087396396: 299.686 s); waiting_since: 2026-11-17T14:32
