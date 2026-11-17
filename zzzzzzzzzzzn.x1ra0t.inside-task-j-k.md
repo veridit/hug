@@ -35,7 +35,7 @@ huginn/internal/tui/tui.go:925 and :1074 run actions t, d, x, J, K, e in the det
 ## Acceptance
 - [x] J and K in the detail scroll half a page and never change the rank (test + golden)
 - [x] J and K on a list, overview or board row still move the task (test)
-- [ ] every key that writes in the detail is named in its key bar; no key writes without showing it (test enumerates the detail keys)
+- [x] every key that writes in the detail is named in its key bar; no key writes without showing it (test enumerates the detail keys)
 
 ## Notes
 
