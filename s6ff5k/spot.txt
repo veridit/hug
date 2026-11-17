@@ -1,0 +1,239 @@
+pairs with a memory call: 51 sampled: 20
+
+=== 1. turn 266 (heldout) model deepseek-flash; stale per selection: ['h52ztj']
+MSG: Cross-swarm DM from fox (swarm 'session:session_fox_1786973670427_f6af743b8ac2fe1c'): fox -> spider: pushed bapi `19925e116`. The Fast filter is now `TestCategory!=ContainerBacked&TestCategory!=LiveGoogle&TestCategory!=LiveSms`, the same exclusion as the full tier's 'mock' set (Jenkinsfile.test-full:81). Live tests run only in their own liveGoogle/liveSms sets, where the settings are mounted. I updated the pinned filter assertion in test_ci_verdict_pipeline, and all 121 bin/tests pass. Please watch #597.
+  row 4dsvsc 2026-10-14: Lesson (Brovs bapi, Oct 14, 2026): the CI fast tier runs `TestCategory!=ContainerBacked` (Jenkinsfile.test:65) with no DB/Redis/ES. Any test class needing conta
+  row h52ztj 2026-10-28: Brovs-4842 implementation is complete at SHA e2ec96d8a; Jenkins full CI #125 passed with 1024 mock, 1 liveSms, and 2 liveGoogle tests.
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    unclear: {"tool": "memory_recall", "args": {"query": "CI fast tier filter TestCategory ContainerBacked Jenkinsfile", "limit": 5}}
+      judge: This is a memory_recall read, not a forget/remember edit; it neither removes nor stores anything, so the remove/correct/store rubric does not apply.
+    right: {"tool": "memory_remember", "args": {"note": "Brovs bapi CI filters as of Nov 17, 2026 (commit 19925e116): the Fast tier excludes ContainerBacked, LiveGoogle and LiveSms (TestCategory!=ContainerBacked&TestCategory!=LiveGoogle&TestCategory!=LiveSms), matching the full tier's mock set (Jenkinsfile.tes
+      judge: Stores the corrected fast-tier filter from the DM and explicitly marks it superseding the stale single-exclusion description.
+
+=== 2. turn 268 (heldout) model gpt-6.1-sol; stale per selection: ['bavaq4']
+MSG: **Background task** `1621766d7l` · `Watch bapi-test #597` (`bash`) · ✓ completed · 301.8s · exit 0 ```text 06:56 #597 06:57 #597 06:58 #597 06:59 #597 07:00 #597 None True 07:01 #597 SUCCESS False --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="1621766d7l"`
+  row nm508k 2026-09-26: Full CI job bapi-test-full/master #29 ran against commit b206aec34 and remained RUNNING for over 10 minutes, with tests repeatedly pausing/resuming SearchFeeder
+  row bavaq4 2026-09-22: bapi-test/master #344 failed 2/515 tests and #345 failed 3/515; all failures were System.Net.WebException request timeouts, while the prior isolated full run #3
+  row kdkhms 2026-10-22: bapi-test-full #107 initially retried indefinitely because it was given a nonexistent full-SHA image tag; the job was aborted.
+  [H0-main] 0 memory calls
+  [H2-server] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"text": "On 2026-11-17, the watcher for bapi-test #597 reported SUCCESS with building=False at 07:01 and exited with code 0. The triggering commit and test counts were not shown in the notification."}}
+      judge: Accurately records the newly observed outcome (#597 SUCCESS, exit 0) and correctly notes commit/test counts were not shown; consistent with existing CI-result notes.
+
+=== 3. turn 100 (development) model claude-sonnet-5-5; stale per selection: ['cn6r6f', 'fpq3h1']
+MSG: **Background task** `69190001c5` · `Wait for CI, cut rc.11, conf` (`bash`) · ✓ completed · 1330.2s · exit 0 ```text HEAD 558c407ce0edd7f8dee5ceb85ec44280464b287c success app build & lint success Fast Tests @ exercised-sha=558c407ce0edd7f8dee5ceb85ec44280464b287c success Go Test success Harness Selftest success Images success Notify cloud services success Push on master success Reap idle LXD fleet ✓ No migrations modified since v2026.11.1-rc.10 (previous RC) Tagged v2026.11.1-rc.11 and pushed to origin Release: 42027829581 completed success StatBus installer v2026.11.1-rc.11 --- Command finished with exit... ``` _Full output:_ `bg action="output" task_id="69190001c5"`
+  row fpq3h1 2026-09-24: Installer recovery recognizes stale restart intent and reports that the previous restart finished before continuing.
+  row cn6r6f 2026-11-03: 2026-11-03 18:03Z: rabbit hold for v2026.11.1-rc.04. No commits or pushes on master until rabbit says "released". Keep work uncommitted.
+  [H0-main] 0 memory calls
+  [H2-server] 1 memory calls
+    right: {"tool": "memory_forget", "args": {"id": "cn6r6f"}}
+      judge: Same stale rc.04 hold; rc.11 release and master push show it no longer applies.
+
+=== 4. turn 51 (development) model gpt-6-luna; stale per selection: ['x27rm4']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_dragon_1793623868105_3f9eceec2ff6cc2b'): dragon: you're right; that was my mistake. I judged your run's phases against MY lane's tc.tsv, which still has those 3 rows, not against your lane's tree, where you've already removed them. Your lane is correct: tc 392, no NEWLY GREEN. Sorry for the noise. The only real issue was the 4 CHANGED RED from my order-dependent key.
+  row zgf3kp 2026-11-05: Scorpion’s lane/1998 already removed the 3 tc rows and set tc to 392; the reported NEWLY GREEN results came from judging against the wrong lane’s tc.tsv.
+  row bkv0tb 2026-06-12: TASK-373 Dragon D GREEN-FOR-CHERRY-PICK: d2aefc13 (post-392 synced lane). CORPUS STRICTLY BETTER vs fresh post-392 baseline: master 56 / lane 55 / master-only =
+  row x27rm4 2026-11-05: The earlier NEWLY GREEN report was false: it resulted from comparing against another lane’s stale tc.tsv. The genuine issue was four order-dependent CHANGED RED
+  [H0-main] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "Dragon corrected the comparison: the three tc rows had already been removed in this lane, so tc=392 and there were no NEWLY GREEN results. The only real issue was four order-dependent CHANGED RED corpus rows, caused by an order-dependent key."}}
+      judge: Stores the corrected fact exactly as the DM states (3 rows already removed, tc=392, no NEWLY GREEN, only 4 order-dependent CHANGED RED); consistent with notes; duplicates zgf3kp but is not wrong.
+  [H2-server] 2 memory calls
+    wrong: {"tool": "memory_forget", "args": {"id": "zgf3kp"}}
+      judge: Deletes zgf3kp, which still accurately records that lane 1998 removed the 3 rows, tc=392, and the NEWLY GREEN report was a wrong-lane artifact.
+    wrong: {"tool": "memory_remember", "args": {"note": "2026-11-17: Dragon corrected the comparison: Scorpion\u2019s lane is correct at tc 392, with no NEWLY GREEN results. Those results came from comparing against another lane\u2019s stale tc.tsv. The genuine issue was four order-dependent CHANGED RED corpus
+      judge: Pure duplicate of zgf3kp and x27rm4 with a misleading 2026-11-17 date prefix; adds no new fact worth keeping.
+
+=== 5. turn 180 (development) model claude-haiku-5-5; stale per selection: ['sfz240']
+MSG: **Background task** `20947970iz` · `Slow history-touching tests` (`bash`) · ✓ completed · 156.7s · exit 0 ```text ok 1 - 303_import_jobs_for_norway_small_history 9581 ms # All 1 tests passed. ok 1 - 401_import_jobs_for_brreg_selection 111552 ms # All 1 tests passed. ok 1 - 402_import_jobs_for_norway_history 30452 ms # All 1 tests passed. --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="20947970iz"`
+  row jqy7en 2026-10-06: Focused inherited-marker, restart-routing, handoff, and shell gapless tests pass independently at the frozen candidate; full `go test ./... -count=1` also exits
+  row 7xwmxv 2026-09-30: The combined hermetic finalize test passes exit 0, including signal cleanup, ownership/admission ordering, and preservation of rc 125; it is Mac Bash with stubb
+  row sfz240 2026-10-15: The earlier statement that the run was still active was stale; the background fast-suite task had already completed.
+  [H0-main] 0 memory calls
+  [H2-server] 1 memory calls
+    wrong: {"tool": "memory_forget", "args": {"id": "sfz240"}}
+      judge: The new completion is a different task (slow history tests), so it does not make the earlier fast-suite completion note stale or wrong.
+
+=== 6. turn 51 (development) model gpt-6.1-sol; stale per selection: ['x27rm4']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_dragon_1793623868105_3f9eceec2ff6cc2b'): dragon: you're right; that was my mistake. I judged your run's phases against MY lane's tc.tsv, which still has those 3 rows, not against your lane's tree, where you've already removed them. Your lane is correct: tc 392, no NEWLY GREEN. Sorry for the noise. The only real issue was the 4 CHANGED RED from my order-dependent key.
+  row zgf3kp 2026-11-05: Scorpion’s lane/1998 already removed the 3 tc rows and set tc to 392; the reported NEWLY GREEN results came from judging against the wrong lane’s tc.tsv.
+  row bkv0tb 2026-06-12: TASK-373 Dragon D GREEN-FOR-CHERRY-PICK: d2aefc13 (post-392 synced lane). CORPUS STRICTLY BETTER vs fresh post-392 baseline: master 56 / lane 55 / master-only =
+  row x27rm4 2026-11-05: The earlier NEWLY GREEN report was false: it resulted from comparing against another lane’s stale tc.tsv. The genuine issue was four order-dependent CHANGED RED
+  [H0-main] 0 memory calls
+  [H2-server] 3 memory calls
+    wrong: {"tool": "memory_forget", "args": {"id": "zgf3kp"}}
+      judge: The DM confirms the note exactly: the NEWLY GREEN report was false because it was judged against the wrong lane's tc.tsv, and the lane is correct at tc 392. The note still holds, so forgetting it remo
+    wrong: {"tool": "memory_forget", "args": {"id": "x27rm4"}}
+      judge: Same as above: x27rm4 accurately records that the NEWLY GREEN report was false due to another lane's stale tc.tsv and that the real issue was four order-dependent CHANGED RED rows. The message corrobo
+    right: {"tool": "memory_remember", "args": {"text": "2026-11-17: In a cross-swarm DM, session_ acknowledged mistakenly evaluating dragon's run against session_'s own stale tc.tsv, which still contained three rows already removed from dragon's lane. Dragon's lane is correct: tc 392, no NEWLY GREEN. The only
+      judge: Stores an accurate summary of the DM: peer acknowledged the mis-comparison, dragon's lane is correct at tc 392 with no NEWLY GREEN, and the note correctly avoids claiming the order-dependent key issue
+
+=== 7. turn 202 (heldout) model claude-haiku-5-5; stale per selection: ['y6mjp3']
+MSG: Cross-swarm DM from orangutan (swarm 'seid-foreman'): TASK-1988: good work. The three-way split is better than my two-way: Movable correctly captures "a single use that runs once", and over-counting is the safe direction (Shared, never a duplicate). The dead-val check is confirmed. tc 392 to 391 with the row removed in the same lane is right. One point on the type principle: "the count does not track shadowing" is safe today, but it's a value-level argument. Write it down at the counter as an invariant comment ("over-count => Shared, never unsound"), and add a pin with a shadowed name so a future change that under-counts goes red. MO#4a read-only: fine. Preview after vole's run. If MO#4a isn
+  row 6td9x9 2026-07-27: INQUISITOR — TASK-704 FINAL DELTA REVIEW: CLEAR FOR THE PICK (2026-07-27). The one-parser series ships.  COMMIT b18030678 (.Compiler.Typecheck.typename_memo) — 
+  row 14n43z 2026-11-05: For constant-use counting, document the invariant that over-counting is safe because it yields Shared, never an unsound under-count.
+  row y6mjp3 2026-06-12: ## Goal Magi sitting (fresh context post-clear): the dragon queue — TASK-371 Dragon B (re-export alias crash), then self-directed continuation through TASK-372 
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    wrong: {"tool": "memory_forget", "args": {"id": "y6mjp3"}}
+      judge: Deletes y6mjp3, a completed TASK-371/372/373 session record; the TASK-1988 DM says nothing that makes that note stale or wrong, and the call neither corrects nor stores the invariant the DM asks for.
+    right: {"tool": "memory_remember", "args": {"day": "2026-11-17", "id": "task1988-invariant", "note": "TASK-1988: constant-use counter documents invariant that over-counting is safe (yields Shared, never unsound under-count). Shadowed-name pin added. MO#4a read-only; split cost fix first if not a small type
+      judge: Stores the corrected/confirmed TASK-1988 facts the DM asks to write down: the over-count invariant (over-count => Shared, never unsound), the shadowed-name pin, and the MO#4a split-cost note.
+
+=== 8. turn 258 (heldout) model claude-haiku-5-5; stale per selection: ['tkr4g2', 'xf3rbk']
+MSG: **Background task** `506524lxsz` · `Watch 1960 run` (`bash`) · ✓ completed · 1100.2s · exit 0 ```text checkpoint: [04:52:56] phase unit [04:30:08] tools: tools: 26 tests failing=0 rc=0 [04:42:52] corpus: Tests: 5051 passed, 38 failed, 38 errored, 73 skipped bad=58 [04:44:26] release: Tests: 5051 passed, 38 failed, 38 errored, 73 skipped bad=58 [04:48:30] std: notes rc=0 pair rc=0 manifest rc=0 expect-fail bad=1 [04:52:49] tc: build rc=0 failing=392 --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="506524lxsz"`
+  row 0n7exf 2026-11-03: After the TASK-1960 fix, full lang C and JS suites both matched baseline at 5048 passed, 38 failed, 38 errored, 73 skipped; check gate matched at 696 passed, 1 
+  row xf3rbk 2026-09-25: The final validation command failed despite the regression suite reaching 236/236 parsed tests; the exact failing phase/output remains unresolved.
+  row tkr4g2 2026-06-27: **What**: Refreshed the 7-week-stale TASK-076 principal-axis corpus baseline via full `.sd` walk on master b59ed2a5 (compiler-infra lane, measure-only). NEW: PA
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    wrong: {"tool": "memory_remember", "args": {"note": "Verify before trusting: the 2026-11-03 entry (0n7exf) supersedes the 2026-09-25 entry (xf3rbk) on the TASK-1960 validation failure."}}
+      judge: Stores a meta 'verify before trusting' caveat rather than any corrected fact; low-value process noise that duplicates what the two existing notes already convey.
+    right: {"tool": "memory_forget", "args": {"id": "xf3rbk"}}
+      judge: The older 2026-09-25 'unresolved validation failure' note is superseded by the 2026-11-03 note stating suites matched baseline after the TASK-1960 fix, so removing it is justified.
+
+=== 9. turn 22 (development) model deepseek-flash; stale per selection: ['dn60wj']
+MSG: **Background task stalled** `449969huj9` · `Watch bapi build and full te` (`bash`) · no output or progress for 1800s (running 1925s total) Last output: ```text build #461 d6f0beb87 False SUCCESS ``` The task is still running. Inspect it (`bg action="status" task_id="449969huj9"`, `bg action="output" task_id="449969huj9"`) and decide whether to keep waiting or cancel it (`bg action="cancel" task_id="449969huj9"`). The watchdog re-arms if output resumes.
+  row m1562n 2026-11-05: Never stall the conversation by waiting in the foreground. Delegate long work to spawned agents or run it with run_in_background plus notify/wake, register swar
+  row rbbt08 2026-09-03: Goal: overnight-brovs-ssh-and-bapi-production-rollout Status: blocked Scope: project Progress: 58% Description: Sequential fail-closed Brovs-4659 M1 SSH reconci
+  row krcspj 2026-09-19: The Jenkins BAPI WebP monitoring tasks timed out after 600 seconds (exit 124), so timeout does not establish build success or failure without further verificati
+  row tn1rw1 2026-09-15: Automatic bapi-build #227 remained in progress for at least 21 minutes, with no downstream bapi-test/master build visible during checkpoints.
+  row dn60wj 2026-10-15: The bapi full-tier Jenkins job on master runs against commit 6e8482c13; build #83 was still running at the latest check.
+  [H0-main] 0 memory calls
+  [H2-server] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "Background watcher 449969huj9 (bapi build + full test watch, scratch/header4/w) stalled with no output for 1800s after emitting 'build #461 d6f0beb87 False SUCCESS'; cancelled rather than blocking the conversation. Re-check Jenkins directly for downstrea
+      judge: Faithfully records the stalled watcher 449969huj9, its last output, the decision to cancel instead of blocking, and the redirect to checking Jenkins/build state directly; the older bapi notes are not 
+
+=== 10. turn 270 (heldout) model deepseek-flash; stale per selection: ['xf3rbk']
+MSG: **Background task** `054277opf6` · `20-min check-in` (`bash`) · ✓ completed · 1140.1s · exit 0 ```text { 17,45 16,55 18,09 } .jcode/scratch/land-runs/1988-20261106-083552/ [08:39:46] tools: tools: 26 tests failing=0 rc=0 [08:39:58] phase emit [08:40:33] phase dirs --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="054277opf6"`
+  row 7j3hk8 2026-08-16: **What**: Independently verified correction commit 27995e5b9 (TASK-666, on top of candidate abc15fd00) in clean worktrees at f9a2e0968/abc15fd00/27995e5b9. Both
+  row xf3rbk 2026-09-25: The final validation command failed despite the regression suite reaching 236/236 parsed tests; the exact failing phase/output remains unresolved.
+  [H0-main] 1 memory calls
+    wrong: {"tool": "memory_remember", "args": {"note": "20-min check-in 054277opf6 for land-run 1988-20261106-083552: tools 26 tests failing=0 rc=0, phases emit+dirs done; inspected run state and git status, suite still green, no action needed."}}
+      judge: Stores an ephemeral 20-min check-in status (suite green, no action needed) that merely restates the finished task output; no durable fact and it does nothing about the still-unresolved xf3rbk failure.
+  [H2-server] 0 memory calls
+
+=== 11. turn 40 (development) model claude-haiku-5-5; stale per selection: ['y6mjp3']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_dragon_1793623868105_3f9eceec2ff6cc2b'): dragon: the P3 dry-run has finished (GREEN), and the gate is free until I announce the reuse land. That one is short and runs no builds. Go ahead with your builds.
+  row y6mjp3 2026-06-12: ## Goal Magi sitting (fresh context post-clear): the dragon queue — TASK-371 Dragon B (re-export alias crash), then self-directed continuation through TASK-372 
+  row v5m0nw 2026-10-31: Seid swarm: when a land dry-run is waiting for load, worker emit A/B sweeps (~50 seid procs) push load to 200+. Cap worker sweeps at -P4 and hold memcheck count
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    wrong: {"tool": "memory_remember", "args": {"note": "Dragon D (TASK-373, d2aefc13) status unverified in-session; re-check against master before relying on it. Newer swarm load rule: cap worker A/B sweeps at -P4 and hold memcheck/perf runs until the gate's memcheck phase has finished."}}
+      judge: The DM only says the gate is free for builds; it does not show Dragon D is unverified, and the restated load rule conflicts with the gate being free.
+    wrong: {"tool": "memory_forget", "args": {"id": "y6mjp3"}}
+      judge: The DM about P3 gate availability does not show the Dragon B/C/D accomplishment record is wrong or stale.
+
+=== 12. turn 95 (development) model deepseek-flash; stale per selection: ['2wp5gf', 'pq98n3', 'y1fp9k']
+MSG: **Background task** `599401lhn3` · `Wait for CI, cut rc.10, conf` (`bash`) · ✓ completed · 1453.8s · exit 0 ```text HEAD 0f4b4413a3fcea6d15085820ecfae8b0f977095e success app build & lint success Fast Tests @ exercised-sha=0f4b4413a3fcea6d15085820ecfae8b0f977095e success Go Test success Harness Selftest success Images success Notify cloud services success Push on master ✓ No migrations modified since v2026.11.1-rc.09 (previous RC) Tagged v2026.11.1-rc.10 and pushed to origin Release: 42023248285 completed success StatBus installer v2026.11.1-rc.10 --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="599401lhn3"`
+  row v041aq 2026-06-10: GOAL (foreman, statbus install-recovery overnight 2026-06-10→11): drive to release-candidate-ready by morning. Reseeded the team after the King cleared architec
+  row rdtjk6 2026-06-10: OVERNIGHT 2026-06-10→11 COMMITS LANDED (statbus install-recovery, RC-readiness push). All on master, HEAD=origin/master=cd2f5d51f (clean tree): - 751bae42c: STA
+  row fd2s5b 2026-06-11: **What**: The 2026-06-11 handoff claimed "RC fully cut-prepped at cd2f5d51f, all 12 `./sb release prerelease` gates pass." That went stale immediately: writing 
+  row w2f3h5 2026-06-15: **What**: 2026-06-15, King "get things going... ready by tonight" → dispatched the full gate-maker batch (036 AC#1) toward a validation-capable rc.03. Before th
+  row 2wp5gf 2026-11-04: CI at HEAD 10404842fa passed Fast Tests, app build/lint, Harness Selftest, Images, cloud notification, and push checks; an older Go Test run failed and an older
+  row y1fp9k 2026-11-02: v2026.11.1-rc.03 was tagged at 068d5c93a and published with 9 assets; release, fast tests, hardening, smoke, dev deploy, and LXD fleet gates passed.
+  row pq98n3 2026-08-31: GOAL: Foreman of team statbus, post-v2026.08.1-promotion session — verify the promotion, keep the team busy on the backlog, and drive the King's config-identity
+  [H0-main] 0 memory calls
+  [H2-server] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "v2026.11.1-rc.10 tagged at 0f4b4413a (pushed to origin/master); CI at that SHA fully green (app build & lint, Fast Tests, Go Test, Harness Selftest, Images, Notify cloud services, Push on master); no migrations modified since rc.09; release workflow 4202
+      judge: Accurately captures rc.10 tagging at 0f4b4413a, green CI, no migration changes since rc.09, and successful release workflow per the task output.
+
+=== 13. turn 152 (development) model claude-haiku-5-5; stale per selection: ['3g4f0j']
+MSG: So, the crux is that we can remove something from an aggregate
+  row 3g4f0j 2026-10-22: Keep the workspace clean: delete unused old artifacts and stale branches rather than leaving them around; re-triage leftovers later.
+  [H0-main] 1 memory calls
+    unclear: {"tool": "memory_search", "args": {"query": "remove entity from aggregate"}}
+      judge: A read-only memory_search neither removes, corrects, nor stores a note, so the right/wrong criteria do not apply.
+  [H2-server] 3 memory calls
+    unclear: {"tool": "memory_recall", "args": {"query": "Keep the workspace clean: delete unused old artifacts and stale branches"}}
+      judge: A recall call neither removes nor stores anything; the user message about aggregates doesn't bear on the workspace-clean note, so there's no edit to judge.
+    wrong: {"tool": "memory_forget", "args": {"id": "3g4f0j"}}
+      judge: The message about removing something from an aggregate says nothing that invalidates the workspace-cleanliness note, which still holds.
+    wrong: {"tool": "memory_remember", "args": {"note": "Verify before deleting: list and confirm artifacts or branches are unused before removing them; do not delete stale branches automatically."}}
+      judge: Stores a rule contradicting the existing note (no automatic stale-branch deletion) with no evidence from the unrelated user message.
+
+=== 14. turn 38 (development) model claude-haiku-5-5; stale per selection: ['5yzt3r']
+MSG: 🐝 **Swarm await finished** All members done. All 1 members are done: hare Member statuses: ✓ hare (ready) Completion reports: --- hare (ready) --- Preflight clear and initial balances verified. Created one synthetic draft, lottery 69, retained unpublished. Stopped and notified fox after a duplicate responsive-link selector error. No purchases, draw, archive, contact or data deletion performed. Partial evidence report: `.jcode/scratch/4321-evidence/report.md`. 
+  row 4ec548 2026-11-05: Draft lottery 69 (“Demo-lotteri (test)”) remained unpublished after the initial attempt; its evidence report is in .jcode/scratch/4321-evidence/report.md.
+  row 5yzt3r 2026-11-05: The previous lottery test stalled because the file input was set but the crop dialog’s “Save Photo” action was not clicked; no publication, purchases, or draw o
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    wrong: {"tool": "memory_forget", "args": {"id": "5yzt3r"}}
+      judge: The old note describes a prior test's crop-dialog cause; the new report's duplicate-selector error does not show that earlier note false or superseded.
+    right: {"tool": "memory_remember", "args": {"note": "Lottery 69 (\"Demo-lotteri (test)\") is a synthetic draft, retained unpublished. Fox was notified of a duplicate responsive-link selector error. No purchases, draw, archive, contact, or data deletion were performed. Evidence: .jcode/scratch/4321-evidence
+      judge: Stores the current lottery 69 completion facts, consistent with the swarm report and existing evidence note.
+
+=== 15. turn 144 (development) model deepseek-flash; stale per selection: ['fhgceg']
+MSG: 🐝 **Swarm await finished** All members done. All 1 members are done: bird Member statuses: ✓ bird (completed) Completion reports: --- bird (completed) --- Brovs-4746 D10 re-review: APPROVE. Posted as comment 101-7871. All 7865 findings are fixed: no volatile counts and no draft-history text remain in doc/route-materialisation-design.md (:37, :48-49, :85-88, :186). The delta adds no false claims. Finder route matches ConsumerWeb/src/Main.tsx:307. The commit has a good ED25519 signature and touches only that one file. Validation: git log --show-signature. git show --stat. Grep of the post-fix file. Cherry-picked 1910f868 and bdccbaa2 onto origin/master in a scratch worktree: clean, worktree re
+  row fhgceg 2026-09-24: The initial pre-push failure was caused by docker_gwbridge.py being absent from the impact manifest; adding its operational classification fixed manifest valida
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    wrong: {"tool": "memory_forget", "args": {"id": "fhgceg"}}
+      judge: fhgceg is a historical root-cause note (docker_gwbridge classification fixed an earlier pre-push failure) that the report does not contradict; it concerns a different, already-fixed error, so it still
+    right: {"tool": "memory_remember", "args": {"note": "Manifest validation (bin/cluster-config-impact.py --validate-manifest) currently exits 2 solely because yellow_push_test.go is unclassified in the impact manifest; this predates the D10 doc change and remains open. A prior note blaming docker_gwbridge.py
+      judge: Accurately records the current manifest validation state (exit 2 solely from the pre-existing yellow_push_test.go classification) and notes the earlier docker_gwbridge cause, a worthwhile corrected fa
+
+=== 16. turn 51 (development) model deepseek-flash; stale per selection: ['x27rm4']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_dragon_1793623868105_3f9eceec2ff6cc2b'): dragon: you're right; that was my mistake. I judged your run's phases against MY lane's tc.tsv, which still has those 3 rows, not against your lane's tree, where you've already removed them. Your lane is correct: tc 392, no NEWLY GREEN. Sorry for the noise. The only real issue was the 4 CHANGED RED from my order-dependent key.
+  row zgf3kp 2026-11-05: Scorpion’s lane/1998 already removed the 3 tc rows and set tc to 392; the reported NEWLY GREEN results came from judging against the wrong lane’s tc.tsv.
+  row bkv0tb 2026-06-12: TASK-373 Dragon D GREEN-FOR-CHERRY-PICK: d2aefc13 (post-392 synced lane). CORPUS STRICTLY BETTER vs fresh post-392 baseline: master 56 / lane 55 / master-only =
+  row x27rm4 2026-11-05: The earlier NEWLY GREEN report was false: it resulted from comparing against another lane’s stale tc.tsv. The genuine issue was four order-dependent CHANGED RED
+  [H0-main] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "Cross-swarm DM from dragon confirmed my lane's tree is correct (tc 392, 3 stale rows already removed) and retracted the NEWLY GREEN noise; the only genuine defect was 4 CHANGED RED rows caused by an order-dependent comparison key, now fixed by sorting th
+      judge: Accurately records dragon's correction (lane tree correct, tc 392, no NEWLY GREEN, 4 CHANGED RED from order-dependent key fixed by sorting), consistent with existing notes zgf3kp/x27rm4; nothing false
+  [H2-server] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "Corpus compare keys are now order-independent (sorted failing set). Confirmed lane tc=392, no NEWLY GREEN; the 4 CHANGED RED were pure set-iteration-order artifacts, fixed and verified to zero.", "tags": ["corpus", "tc392", "order-dependence"]}}
+      judge: Stores the corrected state: lane 392, no NEWLY GREEN, 4 CHANGED RED were order-dependence artifacts fixed by sorting; consistent with message and x27rm4, and adds the new order-independent-key fact.
+
+=== 17. turn 258 (heldout) model gpt-6-luna; stale per selection: ['tkr4g2', 'xf3rbk']
+MSG: **Background task** `506524lxsz` · `Watch 1960 run` (`bash`) · ✓ completed · 1100.2s · exit 0 ```text checkpoint: [04:52:56] phase unit [04:30:08] tools: tools: 26 tests failing=0 rc=0 [04:42:52] corpus: Tests: 5051 passed, 38 failed, 38 errored, 73 skipped bad=58 [04:44:26] release: Tests: 5051 passed, 38 failed, 38 errored, 73 skipped bad=58 [04:48:30] std: notes rc=0 pair rc=0 manifest rc=0 expect-fail bad=1 [04:52:49] tc: build rc=0 failing=392 --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="506524lxsz"`
+  row 0n7exf 2026-11-03: After the TASK-1960 fix, full lang C and JS suites both matched baseline at 5048 passed, 38 failed, 38 errored, 73 skipped; check gate matched at 696 passed, 1 
+  row xf3rbk 2026-09-25: The final validation command failed despite the regression suite reaching 236/236 parsed tests; the exact failing phase/output remains unresolved.
+  row tkr4g2 2026-06-27: **What**: Refreshed the 7-week-stale TASK-076 principal-axis corpus baseline via full `.sd` walk on master b59ed2a5 (compiler-infra lane, measure-only). NEW: PA
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    right: {"tool": "muninn.memory_forget", "args": {"id": "0n7exf"}}
+      judge: Same stale pass-count note 0n7exf; removal is justified by the newer run data shown in the message.
+    right: {"tool": "muninn.memory_remember", "args": {"date": "2026-11-17", "note": "TASK-1960 background run 506524lxsz completed with exit 0. Checkpoint: tools had 26 tests passing; corpus and release each reported 5051 passed, 38 failed, 38 errored, 73 skipped (bad=58); notes, pair, and manifest returned r
+      judge: Accurately records the completed run's phase results (5051/38/38/73, rc=0 with 392 TC failures) and flags that full output is needed; factual, non-false, potentially useful for TASK-1960 tracking.
+
+=== 18. turn 144 (development) model gpt-6.1-sol; stale per selection: ['fhgceg']
+MSG: 🐝 **Swarm await finished** All members done. All 1 members are done: bird Member statuses: ✓ bird (completed) Completion reports: --- bird (completed) --- Brovs-4746 D10 re-review: APPROVE. Posted as comment 101-7871. All 7865 findings are fixed: no volatile counts and no draft-history text remain in doc/route-materialisation-design.md (:37, :48-49, :85-88, :186). The delta adds no false claims. Finder route matches ConsumerWeb/src/Main.tsx:307. The commit has a good ED25519 signature and touches only that one file. Validation: git log --show-signature. git show --stat. Grep of the post-fix file. Cherry-picked 1910f868 and bdccbaa2 onto origin/master in a scratch worktree: clean, worktree re
+  row fhgceg 2026-09-24: The initial pre-push failure was caused by docker_gwbridge.py being absent from the impact manifest; adding its operational classification fixed manifest valida
+  [H0-main] 0 memory calls
+  [H2-server] 2 memory calls
+    wrong: {"tool": "memory_forget", "args": {"id": "fhgceg"}}
+      judge: The note says the docker_gwbridge.py manifest classification was fixed; the report's remaining open error is the unrelated yellow_push_test.go classification, so this note is not contradicted and shou
+    right: {"tool": "memory_remember", "args": {"text": "2026-11-17: Bird reports Brovs-4746 D10 re-review APPROVE, posted as comment 101-7871. All comment 7865 findings are fixed. Manifest validation exits 2 with identical output on base and base+D10. The remaining reported error is the pre-existing yellow_pu
+      judge: Stores an accurate summary of the D10 re-review approval and correctly distinguishes the pre-existing yellow_push_test.go manifest error from the earlier docker_gwbridge issue.
+
+=== 19. turn 122 (development) model gpt-6.1-sol; stale per selection: ['76w944']
+MSG: Cross-swarm DM from hibiscus (swarm 'session:session_hibiscus_1793348926173_ffff8733f4ad20e1'): hibiscus → rabbit: holding for rc.12. Nothing of mine is queued; 558 stays local.
+  row bq5ske 2026-10-31: Hibiscus is coordinating a separate swarm and is holding master for rc.06; they reported no in-flight changes for that release.
+  row t35031 2026-11-04: Ticket number split with rabbit (2026-11-04): hibiscus's unpushed tickets end at STATBUS-566; hibiscus may use 567-569; rabbit uses 570+. Tell rabbit before goi
+  row mm8zm0 2026-11-04: Ticket IDs 562–566 belong to hibiscus locally; hibiscus reserves 567–569, while rabbit uses 570 and above.
+  row 76w944 2026-10-31: Hibiscus is holding master to allow rc.03 to be cut at the validated commit without additional pushes.
+  [H0-main] 3 memory calls
+    right: {"tool": "memory_forget", "args": {"id": "bq5ske"}}
+      judge: bq5ske records an rc.06 holding status from 2026-10-31, superseded by the newer rc.12 holding message.
+    right: {"tool": "memory_forget", "args": {"id": "76w944"}}
+      judge: 76w944 records an rc.03 holding status, clearly stale and superseded by the rc.12 holding update.
+    right: {"tool": "memory_remember", "args": {"text": "On 2026-11-17, hibiscus told rabbit they are holding for rc.12, have no changes queued, and ticket 558 stays local. This supersedes prior holding-status memories for rc.03 and rc.06. Do not infer permission to push ticket 558 or changes to the existing t
+      judge: Stores the new rc.12 holding fact, explicitly marks rc.03/rc.06 statuses superseded, and avoids inferring push permission or ticket reallocation.
+  [H2-server] 3 memory calls
+    right: {"tool": "memory_forget", "args": {"id": "bq5ske"}}
+      judge: bq5ske's rc.06 hold is stale given the rc.12 hold, so removing it is defensible
+    right: {"tool": "memory_forget", "args": {"id": "76w944"}}
+      judge: 76w944's rc.03 hold is superseded by the newer rc.12 hold; removal is correct
+    right: {"tool": "memory_remember", "args": {"text": "2026-11-17: Hibiscus reported to rabbit via cross-swarm DM that they are holding for rc.12, have nothing queued, and 558 stays local. This supersedes the older rc.03 and rc.06 holding reports."}}
+      judge: Stores the newer holding state (rc.12, nothing queued, 558 local), which correctly supersedes the older rc.03/rc.06 holding facts.
+
+=== 20. turn 115 (development) model deepseek-flash; stale per selection: ['sfz240']
+MSG: **Background task** `0278440ony` · `Watch the rc.11 gate silentl` (`bash`) · ✓ completed · 3548.6s · exit 0 ```text --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="0278440ony"`
+  row 7xwmxv 2026-09-30: The combined hermetic finalize test passes exit 0, including signal cleanup, ownership/admission ordering, and preservation of rc 125; it is Mac Bash with stubb
+  row tpth2w 2026-10-02: The rc.08 watcher script is /Users/jhf/ssb/statbus/tmp/watch-rc01-gates.sh and runs with tag v2026.10.0-rc.08, but its 590-second background invocations repeate
+  row sfz240 2026-10-15: The earlier statement that the run was still active was stale; the background fast-suite task had already completed.
+  [H0-main] 1 memory calls
+    wrong: {"tool": "memory_remember", "args": {"note": "rc.11 gate watcher task 0278440ony completed exit 0 after ~3548s; full output retrieved and gate artifacts inspected next."}}
+      judge: Stores a transient background-task completion status plus unverified/plan content ("output retrieved", "inspected next") that has no durable value and is not established by the message.
+  [H2-server] 0 memory calls
