@@ -1,7 +1,7 @@
 ---
 id: kx2ndm
 title: "TUI: groups and epics visible and collapsible"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
@@ -11,8 +11,7 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-17T21:59"
-stage: "active"
+done_at: "2026-11-18T00:40"
 ---
 
 ## Goal
@@ -64,8 +63,10 @@ landed a648520 on main 2026-11-18: hug tui: rows show group and epic; : grouping
 landed fbb38da on main 2026-11-18: hug tui: a reload keeps the heading under the cursor (kx2ndm)
 landed c5e058e on main 2026-11-18: hug tui: g groups rows at once; gg and G go, top and bottom are < > Home End…
 landed 8d409e2 on main 2026-11-18: hug tui: tmux goldens for grouping and g (kx2ndm)
+Reflection (open, 2026-11-18, nautilus): 'No magic group names' (Jørgen) guided well: it struck check 4 instead of special-casing 'later'. Gap: the ticket never named the key; the g/gg/G ruling took a park-and-wait round trip. The tmux load guard could not finish locally at load ~660, so the goldens came from CI GOT screens. (nautilus)
 ## History
 - 2026-11-17T21:59 todo -> doing/active (take)
 - 2026-11-17T23:26 doing/active -> doing/waiting (wait)
 - 2026-11-18T00:02 answered waiting: "the g key: Jørgen's g/gg ruling (a, b or c, crab asked 21:05); parked for e3sevr. Built and committed on nautilus/kx2ndm (2238d78, 079bc70): checks 1, 2 (as : grouping), 3, 5, not landed yet" -> "Jørgen 23:38 local: drop gg and G (never used, vi specific). So g is no prefix: g toggles grouping at once, flat -> by group -> by epic. Recorded by crab from his spoken answer.", by crab, for nautilus (doing/waiting -> doing/active)
 - 2026-11-18T00:40 nautilus read the answer
+- 2026-11-18T00:40 doing/active -> done (done); was doing_since: 2026-11-17T21:59
