@@ -241,7 +241,7 @@ func (a *App) openBoard(ctx context.Context, lazy bool) (*session, error) {
 	world := cond.Local(cwd, func() string { return gitbranch.DefaultBranch(cwd) })
 	task.SetWorld(func() cond.State { return world })
 	gd := r.Common
-	c, e := cache.Open(r.Dir, filepath.Join(gd, "huginn", "cache.db"), gitCache{r})
+	c, e := cache.Open(r.Dir, cache.File(gd), gitCache{r})
 	if e != nil {
 		return nil, e
 	}

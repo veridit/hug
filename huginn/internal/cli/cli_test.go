@@ -11,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/veridit/hug/huginn/internal/cache"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -121,7 +122,9 @@ func TestLifecycleJSONContract(t *testing.T) {
 	if got := git(t, filepath.Join(a.Cwd, ".hug", "tasks"), "status", "--porcelain"); got != "" {
 		t.Fatal(got)
 	}
-	os.Remove(filepath.Join(a.Cwd, ".git", "huginn", "cache.db"))
+	if e := os.Remove(cache.File(filepath.Join(a.Cwd, ".git"))); e != nil {
+		t.Fatal(e) // the cache must exist here, or this checks nothing
+	}
 	r = execute(t, a, "ls")
 	if len(r["tasks"].([]Reply)) != 2 {
 		t.Fatal(r)

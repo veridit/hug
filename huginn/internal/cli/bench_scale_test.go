@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/huginn/internal/cache"
 )
 
 // TestScaleBench10K builds a board of 10,000 tasks (the shape of
@@ -37,7 +39,7 @@ func TestScaleBench10K(t *testing.T) {
 	writeScaleBoard(t, root, n)
 	git(t, root, "add", "-A")
 	git(t, root, "commit", "-q", "-m", "scale board")
-	db := filepath.Join(a.Cwd, ".git", "huginn", "cache.db")
+	db := cache.File(filepath.Join(a.Cwd, ".git"))
 
 	run := func(args ...string) time.Duration {
 		t.Helper()

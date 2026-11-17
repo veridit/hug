@@ -88,7 +88,7 @@ func (c *Cache) Progress() (read, total int) {
 const racyWindow = 2 * time.Second
 
 // Open takes the task worktree root and a database path, normally
-// filepath.Join(mainGitDir,"huginn","cache.db"). No state is written to task files.
+// File(mainGitDir). No state is written to task files.
 func Open(root, dbPath string, git Git) (*Cache, error) {
 	absRoot, e := filepath.Abs(root)
 	if e != nil {
@@ -98,6 +98,11 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 	if e := os.MkdirAll(filepath.Dir(dbPath), 0755); e != nil {
 		return nil, e
 	}
+	// Used now: the file's time says so, as a warm open may write nothing.
+	// Then caches no hug has used for a week go (gjmqhn).
+	now := time.Now()
+	os.Chtimes(dbPath, now, now)
+	removeStale(filepath.Dir(dbPath), dbPath)
 	db, e := sql.Open("sqlite", dsn(dbPath))
 	if e != nil {
 		return nil, e
@@ -113,7 +118,7 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 	if e != nil && e != sql.ErrNoRows {
 		return fail(e)
 	}
-	if version != SchemaVersion {
+	if version != schema {
 		c.rebuild, c.rebuilt = true, version != ""
 		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DROP TABLE IF EXISTS texts; DROP TABLE IF EXISTS search; DROP TABLE IF EXISTS search_paths; DELETE FROM meta;`); e != nil {
 			return fail(e)
@@ -239,7 +244,7 @@ func (c *Cache) loadBoard() bool {
 		return false
 	}
 	var blob boardBlob
-	if gob.NewDecoder(bytes.NewReader(b)).Decode(&blob) != nil || blob.Schema != SchemaVersion {
+	if gob.NewDecoder(bytes.NewReader(b)).Decode(&blob) != nil || blob.Schema != schema {
 		return false
 	}
 	files := make(map[string]record, len(blob.Records))
@@ -280,7 +285,7 @@ func (c *Cache) loadBoard() bool {
 	return true
 }
 func encodeBoard(files map[string]record) ([]byte, error) {
-	blob := boardBlob{Schema: SchemaVersion, Records: make([]record, 0, len(files))}
+	blob := boardBlob{Schema: schema, Records: make([]record, 0, len(files))}
 	for _, r := range files {
 		blob.Records = append(blob.Records, r)
 	}
@@ -681,7 +686,7 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 	if e != nil {
 		return stats, e
 	}
-	if e = exec(`INSERT OR REPLACE INTO meta(key,value) VALUES('schema_version',?),('head',?),('synced_ns',?)`, SchemaVersion, head, fmt.Sprint(started)); e != nil {
+	if e = exec(`INSERT OR REPLACE INTO meta(key,value) VALUES('schema_version',?),('head',?),('synced_ns',?)`, schema, head, fmt.Sprint(started)); e != nil {
 		return stats, e
 	}
 	if e = tx.Commit(); e != nil {

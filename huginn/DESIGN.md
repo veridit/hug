@@ -108,8 +108,11 @@ Commands that change things (`move`, `mv`, `take`, `done`, retitle) work out
 the right file edit or rename from the cache, apply it to disk, and update
 the cache in the same step.
 
-- Location: `.git/huginn/cache.db` (per clone, never committed, outside the
-  worktree so the branch never sees it).
+- Location: `.git/huginn/cache-<schema>.db` (per clone, never committed,
+  outside the worktree so the branch never sees it). One file per
+  `SchemaVersion`, so binaries of two hug versions on one machine each keep
+  their own cache (gjmqhn); a file no hug has opened for 7 days is removed
+  by the next open.
 - Tables: `tasks` (id, path, group, rank, slug, title, status, type,
   priority, assignee, updated), `deps` (from, to, line), `aliases`, `files`
   (the change markers below), `meta` (schema version, worktree HEAD).

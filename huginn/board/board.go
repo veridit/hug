@@ -120,7 +120,7 @@ func Open(ctx context.Context, cwd string) (*Snapshot, error) {
 		}
 		common = strings.TrimSpace(string(out))
 	}
-	c, err := cache.Open(root, filepath.Join(common, "huginn", "cache.db"), repoGit{r: &gitbranch.Repository{Dir: root, Branch: branch}, common: common})
+	c, err := cache.Open(root, cache.File(common), repoGit{r: &gitbranch.Repository{Dir: root, Branch: branch}, common: common})
 	if err != nil {
 		return nil, err
 	}
