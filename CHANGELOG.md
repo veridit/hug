@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug tui` file viewer: the footer spells out `n next file · p previous file` instead of `n/p file` (scrxak, Jørgen: nobody guesses n/p).
+
 - When git crashes while hug checks whether the task branch has its first commit yet, the error names the git call that crashed and how it died (`show-ref --verify --quiet refs/heads/hug/tasks: signal: segmentation fault`), with a `fix:` line that re-runs it (xv39b9). Before, it showed `rev-parse --verify HEAD: fatal: Needed a single revision`, which reads as a broken repository.
 
 ## v0.7.50 - 2026-11-17
