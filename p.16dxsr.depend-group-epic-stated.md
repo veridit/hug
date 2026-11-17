@@ -1,13 +1,16 @@
 ---
 id: 16dxsr
 title: "Depend on a group or epic, and on a stated condition"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
