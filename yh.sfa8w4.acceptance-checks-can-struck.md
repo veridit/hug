@@ -1,7 +1,7 @@
 ---
 id: sfa8w4
 title: "Acceptance checks can be struck out as not relevant, with a reason"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["kestrel"]
