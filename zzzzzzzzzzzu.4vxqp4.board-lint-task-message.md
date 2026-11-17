@@ -8,7 +8,7 @@ assignee: []
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-parent: "tpnd3n"
+parent: ""
 stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
