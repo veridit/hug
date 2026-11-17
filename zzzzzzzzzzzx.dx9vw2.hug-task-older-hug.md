@@ -1,18 +1,17 @@
 ---
 id: dx9vw2
 title: "hug task: an older hug says the board is newer, with an upgrade fix"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T21:13"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T21:57"
 ---
 
 ## Goal
@@ -43,5 +42,7 @@ file:fail-before-2.txt (324 bytes, sha256:e982f19c) TestUpgradeMarksStateBoardLa
 hatchling 20:43, crab 20:35 question: on 8856b2b, hug upgrade --apply on a state: board wrote nothing (no key = 2 = known); attached fail-before-2.txt. Fixed in 9c9d4c4 (8856b2b..9c9d4c4, main CI 44172097835): BaseLayout 1 (no key, from before it), Layout 2 = the state: rename. upgrade --apply moves tasks to state: then commits 'hug upgrade: board layout 1 -> 2'; init writes layout = 2 on an empty board. Test TestUpgradeMarksStateBoardLayoutTwo (preview exit 5 'tasks: would: board layout 1 -> 2 in hug.toml', apply writes 'layout = 2\n', a layout-1 hug's note exits 1, init board needs no upgrade). Three tests updated for init's hug.toml (people, cleanup, sections). -race cli 140.2 s, task 57.6 s, mcp, cmd/hug ok. To arm the check, hug upgrade --apply once on hug's and Seid's boards with a hug at 9c9d4c4 or later; I have not run it on either (shared board, crab's call).
 landed 9c9d4c4 on main 2026-11-17: hug board layout: the state: rename is layout 2; a board without the key is 1…
 hatchling 20:57: main CI 44170743115 (8856b2b) and 44172097835 (9c9d4c4) success on all 5 jobs (secrets, bench, ubuntu, macOS, windows).
+Reflection (open, 2026-11-17, hatchling): My first cut set 'no key' = the current layout, which made the check inert on every existing board: the case that bit me today would not have been caught on its first recurrence. Crab caught it by asking what upgrade writes on today's boards. Lesson for version markers: absent must mean oldest, and the test must start from a real board as it is today, not from one the test wrote.
 ## History
 - 2026-11-17T21:13 todo -> doing/active (take)
+- 2026-11-17T21:57 doing/active -> done (done); was doing_since: 2026-11-17T21:13
