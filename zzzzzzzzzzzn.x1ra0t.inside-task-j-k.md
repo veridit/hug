@@ -40,6 +40,7 @@ huginn/internal/tui/tui.go:925 and :1074 run actions t, d, x, J, K, e in the det
 ## Notes
 
 
+nautilus 16:06: checks 1-3 ticked. 1: TestDetailJKScrollAndNeverMove + tmux detail goldens. 2: TestRowJKStillMove. 3: TestDetailWritingKeysAreNamed at 80/100/140. landed on main c48b30c (stack d107f9a..c48b30c: 6ef55df 3jtfw9, 842b403 cue, 998438f+c48b30c x1ra0t); local go test tui/task/cli/mcp/cache/harness ok after the rebase; earlier CI 44111992156 green on 99edb5f; cue abb9b76 CI green per hatchling
 ## History
 - 2026-11-17T15:52 todo -> doing/active (take)
 - 2026-11-17T16:30 doing/active -> doing/waiting (wait)
