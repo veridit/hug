@@ -1,7 +1,7 @@
 ---
 id: s6ff5k
 title: "Measure amortized cleanup: forgets and corrections after recall"
-status: todo
+status: "doing"
 type: feature
 priority: ""
 assignee: ["guppy"]
@@ -9,6 +9,9 @@ labels: []
 created: 2026-11-12
 updated: 2026-11-12
 parent: "d634kr"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
