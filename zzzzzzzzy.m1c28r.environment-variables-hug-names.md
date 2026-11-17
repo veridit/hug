@@ -4,7 +4,7 @@ title: "Environment variables are HUG_*; hug upgrade migrates, no old names"
 status: "doing"
 type: chore
 priority: "medium"
-assignee: ["dragon"]
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
