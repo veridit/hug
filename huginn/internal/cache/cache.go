@@ -93,7 +93,7 @@ func Open(root, dbPath string, git Git) (*Cache, error) {
 	}
 	if version != SchemaVersion {
 		c.rebuild, c.rebuilt = true, version != ""
-		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DROP TABLE IF EXISTS texts; DROP TABLE IF EXISTS search; DELETE FROM meta;`); e != nil {
+		if _, e = db.Exec(`DROP TABLE IF EXISTS tasks; DROP TABLE IF EXISTS files; DROP TABLE IF EXISTS deps; DROP TABLE IF EXISTS aliases; DROP TABLE IF EXISTS board_delta; DROP TABLE IF EXISTS texts; DROP TABLE IF EXISTS search; DROP TABLE IF EXISTS search_paths; DELETE FROM meta;`); e != nil {
 			return fail(e)
 		}
 	}
@@ -578,7 +578,7 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 		if e = exec(`UPDATE tasks SET path=?,"group"=?,rank=?,slug=?,payload=?,findings=? WHERE path=?`, p, r.Task.Group, r.Task.Rank, r.Task.Slug, string(payload), string(findings), old); e != nil {
 			return stats, e
 		}
-		for _, table := range []string{"files", "deps", "aliases", "texts", "search"} {
+		for _, table := range []string{"files", "deps", "aliases", "texts", "search_paths"} {
 			if e = exec(`UPDATE `+table+` SET path=? WHERE path=?`, p, old); e != nil {
 				return stats, e
 			}
@@ -588,10 +588,13 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 		if _, ok := renames[p]; ok {
 			continue
 		}
-		for _, table := range []string{"tasks", "files", "deps", "aliases", "texts", "search"} {
+		for _, table := range []string{"tasks", "files", "deps", "aliases", "texts"} {
 			if e = exec(`DELETE FROM `+table+` WHERE path=?`, p); e != nil {
 				return stats, e
 			}
+		}
+		if e = unindexSearch(exec, p); e != nil {
+			return stats, e
 		}
 	}
 	taskStmt, e := tx.PrepareContext(ctx, `INSERT OR REPLACE INTO tasks(id,path,"group",rank,slug,title,status,type,priority,assignee,updated,payload,findings) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`)

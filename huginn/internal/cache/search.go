@@ -15,18 +15,44 @@ import (
 // task's other rows, so it follows every sync and write without a rebuild.
 // BM25 ranks; id, aliases and title weigh most. The tokenizer keeps "-" in
 // tokens, so STATBUS-402 and 44w1ev are single words.
-const searchSchema = `CREATE VIRTUAL TABLE IF NOT EXISTS search USING fts5(path UNINDEXED, id, aliases, title, goal, description, acceptance, notes, tokenize="unicode61 tokenchars '-_'");`
+// The FTS5 row of a task file has the rowid of its search_paths row:
+// path is looked up there by index, never scanned for in the FTS table,
+// where a WHERE on an unindexed column reads every row (TestSearchWritesNeverScan).
+const searchSchema = `CREATE TABLE IF NOT EXISTS search_paths(rowid INTEGER PRIMARY KEY, path TEXT NOT NULL UNIQUE); CREATE VIRTUAL TABLE IF NOT EXISTS search USING fts5(id, aliases, title, goal, description, acceptance, notes, tokenize="unicode61 tokenchars '-_'");`
 
-// searchColumns are the indexed columns, in table order after path, with
+// searchColumns are the indexed columns, in table order, with
 // their BM25 weights and the name a result gives for a match there.
 var searchColumns = []struct {
 	name   string
 	weight float64
 }{{"id", 10}, {"aliases", 10}, {"title", 8}, {"goal", 3}, {"description", 2}, {"acceptance", 2}, {"notes", 1}}
 
+// searchWrites are the statements that change the search index per task
+// file, as the code runs them (TestSearchWritesNeverScan reads their plans).
+var searchWrites = []string{searchDelete, searchPath, searchInsert, searchForget, searchRename}
+
+const (
+	searchDelete = `DELETE FROM search WHERE rowid=(SELECT rowid FROM search_paths WHERE path=?)`
+	searchPath   = `INSERT OR IGNORE INTO search_paths(path) VALUES(?)`
+	searchInsert = `INSERT INTO search(rowid,id,aliases,title,goal,description,acceptance,notes) VALUES((SELECT rowid FROM search_paths WHERE path=?),?,?,?,?,?,?,?)`
+	searchForget = `DELETE FROM search_paths WHERE path=?`
+	searchRename = `UPDATE search_paths SET path=? WHERE path=?`
+)
+
+// unindexSearch removes path's search row.
+func unindexSearch(exec func(string, ...any) error, path string) error {
+	if e := exec(searchDelete, path); e != nil {
+		return e
+	}
+	return exec(searchForget, path)
+}
+
 // indexSearch writes path's search row from the parsed task and its texts.
 func indexSearch(exec func(string, ...any) error, path string, t task.Task, x *task.Texts) error {
-	if e := exec(`DELETE FROM search WHERE path=?`, path); e != nil {
+	if e := exec(searchDelete, path); e != nil {
+		return e
+	}
+	if e := exec(searchPath, path); e != nil {
 		return e
 	}
 	var desc, notes string
@@ -44,7 +70,7 @@ func indexSearch(exec func(string, ...any) error, path string, t task.Task, x *t
 	for _, a := range t.Acceptance {
 		acc = append(acc, a.Text)
 	}
-	return exec(`INSERT INTO search(path,id,aliases,title,goal,description,acceptance,notes) VALUES(?,?,?,?,?,?,?,?)`,
+	return exec(searchInsert,
 		path, t.ID, strings.Join(t.Aliases, " "), t.Title, t.Goal, desc, strings.Join(acc, "\n"), notes)
 }
 
@@ -84,12 +110,11 @@ func (c *Cache) Search(ctx context.Context, query string, limit int) ([]Hit, err
 	}
 	match := strings.Join(quoted, " AND ")
 	weights := make([]string, 0, len(searchColumns)+1)
-	weights = append(weights, "0") // path
 	for _, col := range searchColumns {
 		weights = append(weights, strconv.FormatFloat(col.weight, 'f', -1, 64))
 	}
 	bm := `bm25(search,` + strings.Join(weights, ",") + `)`
-	q := `SELECT path,-` + bm + `,id,aliases,title,goal,description,acceptance,notes FROM search WHERE search MATCH ? ORDER BY ` + bm
+	q := `SELECT p.path,-` + bm + `,search.id,search.aliases,search.title,search.goal,search.description,search.acceptance,search.notes FROM search JOIN search_paths p ON p.rowid=search.rowid WHERE search MATCH ? ORDER BY ` + bm
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	rows, e := c.db.QueryContext(ctx, q, match)
