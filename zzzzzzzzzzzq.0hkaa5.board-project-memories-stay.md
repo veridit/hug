@@ -4,7 +4,7 @@ title: "Board and project memories stay in sync across clones, in the background
 status: "doing"
 type: feature
 priority: "high"
-assignee: ["dragon"]
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
