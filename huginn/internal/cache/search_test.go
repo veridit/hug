@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -57,5 +58,42 @@ func TestSearchRanksAndFollowsWrites(t *testing.T) {
 	// Operator characters are words, never syntax.
 	if _, e := c.Search(ctx, `"NEAR( OR * -x`, 5); e != nil {
 		t.Fatalf("query syntax leaked: %v", e)
+	}
+}
+
+// 49n9kw: a write to the search index looks its row up by an index, never
+// by scanning. "DELETE FROM search WHERE path=?" with path an UNINDEXED FTS5
+// column read every row, which made a cold ls at 10,000 tasks take 91-94 s
+// instead of 3.7-5.1 s. Every statement the index runs per task file must
+// use an index: a table SEARCH, or an FTS5 plan with a constraint (the
+// "INDEX 0:=" of a rowid lookup; "INDEX 0:" alone is a full scan).
+func TestSearchWritesNeverScan(t *testing.T) {
+	c := openTest(t, t.TempDir(), filepath.Join(t.TempDir(), "cache.db"), &fakeGit{head: "h1"})
+	defer c.Close()
+	fullScan := regexp.MustCompile(`^SCAN \S+ VIRTUAL TABLE INDEX \d+:$|^SCAN \S+$`)
+	for _, q := range searchWrites {
+		args := make([]any, strings.Count(q, "?"))
+		for i := range args {
+			args[i] = "x"
+		}
+		rows, e := c.db.Query("EXPLAIN QUERY PLAN "+q, args...)
+		if e != nil {
+			t.Fatalf("%s: %v", q, e)
+		}
+		var plan []string
+		for rows.Next() {
+			var id, parent, unused int
+			var detail string
+			if e := rows.Scan(&id, &parent, &unused, &detail); e != nil {
+				t.Fatal(e)
+			}
+			plan = append(plan, detail)
+		}
+		rows.Close()
+		for _, d := range plan {
+			if fullScan.MatchString(d) {
+				t.Errorf("%s scans: %v", q, plan)
+			}
+		}
 	}
 }
