@@ -5,17 +5,17 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 NAVIGATION AND FIND                                     EDIT · every action requires confirmation
 j/k ↑/↓         move / scroll                                           [ and ]         previous / next check or dependency
 < / gg / Home   top                                                     n and p         next / previous task, in a task
-> / G / End     bottom                                                  Space / Enter   tick check / follow dependency marked >
-ctrl-d / ctrl-u half page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps, links, files
-PgDn / PgUp     full page down / up                                     E               in a task with files (⎘2): its folder in the editor
-h/← Shift-Tab   previous pane / column                                  t / d / x       take / done / drop task
-l/→ Tab         next pane / column                                      J / K           move below / above the next row, no confirm
-Enter           open full task detail                                   m / y, P p      grab: j/k, Enter places it / yank, paste above below
-Esc             back one level, never quits                             N               new title, goal and one verification item
-q / ctrl-c      quit (q only outside inputs)                            e               edit in $VISUAL, else $EDITOR, git core.editor, vi
-/               live find; Enter goes to it, Tab keeps                  e again         after an edit left a finding: edit at once
-:               palette with command + value completion                 Enter / Esc     confirm / cancel every editing action
-Tab / Enter     complete palette choice; Enter runs complete command
+> / G / End     bottom                                                  u               in a task: up to the list (as Esc)
+ctrl-d / ctrl-u half page down / up                                     Space / Enter   tick check / follow dependency marked >
+PgDn / PgUp     full page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps, links, files
+h/← Shift-Tab   previous pane / column                                  E               in a task with files (⎘2): its folder in the editor
+l/→ Tab         next pane / column                                      t / d / x       take / done / drop task
+Enter           open full task detail                                   J / K           move below / above the next row, no confirm
+Esc             back one level, never quits                             m / y, P p      grab: j/k, Enter places it / yank, paste above below
+q / ctrl-c      quit (q only outside inputs)                            N               new title, goal and one verification item
+/               live find; Enter goes to it, Tab keeps                  e               edit in $VISUAL, else $EDITOR, git core.editor, vi
+:               palette with command + value completion                 e again         after an edit left a finding: edit at once
+Tab / Enter     complete palette choice; Enter runs complete command    Enter / Esc     confirm / cancel every editing action
 ctrl-n/p / ↑↓   select palette completion
 ?               help overlay, including from inputs
 #               jump by id prefix / TASK-number alias

@@ -133,6 +133,10 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if after = press(fresh, "esc"); after.detail {
 					t.Fatal("Esc did not leave the task")
 				}
+			case "u":
+				if after = press(fresh, "u"); after.detail {
+					t.Fatal("u did not go up out of the task")
+				}
 			case ":":
 				if after = press(fresh, ":"); after.prompt != ":" {
 					t.Fatal(": did not open the palette")
