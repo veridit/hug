@@ -4,7 +4,7 @@ title: "Commits name the agent and model that made them (gate)"
 status: "doing"
 type: feature
 priority: "high"
-assignee: ["dragon"]
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
