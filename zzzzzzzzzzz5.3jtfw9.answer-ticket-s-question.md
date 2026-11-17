@@ -33,7 +33,7 @@ Builds on 6ephqk (stages, node fields, ? marker, '? N for you' header) and needs
 
 ## Acceptance
 - [x] in the detail of a task whose stage waits on you, a opens an input under the question; Enter stores the answer next to the question with your name and time, and the stage re-derives (golden + test)
-- [ ] hug task answer ID "text" does the same from the CLI, and MCP task_update action answer (test)
+- [x] hug task answer ID "text" does the same from the CLI, and MCP task_update action answer (test)
 - [ ] the agent that asked sees 'NAME answered your question on ID: ...' in its recall board cue on its next prompt, and first in hug task next/show (test)
 - [ ] after the stage moves on, History holds the question, the answer, who and when (test)
 - [ ] Jørgen answers a real question from a worker in the TUI and the worker picks it up without a DM
