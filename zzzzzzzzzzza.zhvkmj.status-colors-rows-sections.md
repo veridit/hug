@@ -11,11 +11,12 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-17T14:30"
+waiting_since: "2026-11-17T18:21"
 waiting_asked_by: "nautilus"
-waiting_on: "look at the colours after v0.7.41"
+waiting_on: "check 4: do the status colours read as one subtle scheme? The capture shows the overview on this board (IN PROGRESS, NEXT UP, RECENTLY DONE, done rows with a green count)"
 stage: "waiting"
 waiting_for: "jhf"
+waiting_show: "screen-1821.ans"
 ---
 
 ## Goal
