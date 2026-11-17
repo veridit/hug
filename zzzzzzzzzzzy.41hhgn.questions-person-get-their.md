@@ -1,6 +1,6 @@
 ---
 id: 41hhgn
-title: "Questions to a person get their own doing stage, 'question'"
+title: "Questions to a person get their own doing stage, 'asked'"
 state: todo
 type: feature
 priority: ""
