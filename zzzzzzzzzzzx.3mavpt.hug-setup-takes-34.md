@@ -4,7 +4,7 @@ title: "hug setup takes 34 s on Seid: it dry-runs the whole backlog import"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
