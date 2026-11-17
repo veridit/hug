@@ -58,5 +58,6 @@ Tests:
 Seid copy (2,520 tasks), ps time, rebased: 30 presses of j cost 2.70 s on main f24080c and 1.57 s on 856a8ca; one note in an open TUI cost 0.63 s on main and 0.49 s on 856a8ca. Before the rebase (over a64fcc3, without tje4sx) the same 30 keys cost 2.53 s -> 0.81 s.
 Not yet done: the remaining per-key cost (1.57 s per 30 keys = 52 ms per key, unprofiled after the rebase). Checks 4 and 5 are ticked on green main CI.
 landed 856a8ca on main 2026-11-17: hug tui: a frame's work does not grow with the board: stages and progress width…
+Check 3 on green main: f24080c contains a64fcc3, CI 44159339484 success on all 5 jobs (secrets, bench, ubuntu -race, windows, macos).
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
