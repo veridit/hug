@@ -354,6 +354,12 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			report.ExtractMS += time.Since(extractStart).Milliseconds()
 			callCancel()
 			providerCancel()
+			// A candidate naming a swarm agent is rejected (ez50rb check 3):
+			// the name stops meaning anything within hours. Deterministic, no
+			// model call; measured on replayed transcripts (CHANGELOG).
+			if err == nil {
+				result = a.rejectAgentNames(result)
+			}
 			audit.Calls = append(audit.Calls, result)
 			if err != nil {
 				report.Usage.PromptTokens += result.Usage.PromptTokens

@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Capture no longer stores a memory that names a swarm agent ("report to coordinator fox"): after the model call, a candidate naming an agent of this machine in agent context is rejected with `names an agent: NAME` in `hug mem capture log`. No extra call. Replayed on 40 + 40 real capture calls that name agents (two disjoint samples, two runs per arm) and blind-judged: agent-naming memories per transcript 0.31 -> 0.19 and 0.42 -> 0.25 (CI-clear), durable agent-free memories unchanged (+0.000), controls unchanged; all 24 rejections were judged agent memories. A prompt rule saying the same cut more but lost durable memories (-0.54 per transcript, CI-clear) and is not shipped (muninn/docs/CAPTURE4.md, ez50rb).
+
 ## v0.7.38 - 2026-11-17
 
 - `hug tui` IN PROGRESS rows name the branch a task was taken on after the owner, e.g. `alice · feat/x`, unless it is the main branch; on a wide terminal the owner column grows to fit it, up to 30 cells, and on a narrow one the branch is cut, never the owner (x1t1t1).
