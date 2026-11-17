@@ -69,7 +69,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	}
 	if dry {
 		if listed {
-			a.rememberBacklog(s.r.Common, src, listing, start, report)
+			a.rememberBacklog(ctx, s.r.Common, src, listing, start, report)
 		}
 		return Reply{"import": report, "dry_run": true, "next": "hug task import backlog " + f.args[1]}, nil
 	}
@@ -78,7 +78,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	}
 	// hug setup reads this instead of a dry run (3mavpt).
 	if listed {
-		a.rememberBacklog(s.r.Common, src, listing, start, importedReport(report))
+		a.rememberBacklog(ctx, s.r.Common, src, listing, start, importedReport(report))
 	}
 	s.s.Invalidate() // the import wrote task files
 	if _, e = s.s.Tasks(); e != nil {

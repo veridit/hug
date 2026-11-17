@@ -177,7 +177,8 @@ func TestSetupFilesStepRemembered(t *testing.T) {
 	if e := os.WriteFile(filepath.Join(ev, "run.log"), []byte("ok\n"), 0o644); e != nil {
 		t.Fatal(e)
 	}
-	step := func() string { s, _ := setupStep(t, a, "import task files"); return s.Detail }
+	stderr := ""
+	step := func() string { s, errs := setupStep(t, a, "import task files"); stderr = errs; return s.Detail }
 	board := filepath.Join(a.Cwd, TaskDir)
 	before, okBefore := a.filesKey(context.Background(), filepath.Join(a.Cwd, "evidence"), "evidence", board)
 	if d := step(); !strings.Contains(d, "1 files to copy, 0 already in place, 0 citations") {
@@ -202,7 +203,7 @@ func TestSetupFilesStepRemembered(t *testing.T) {
 			}
 			return nil
 		})
-		t.Fatalf("remembered files check: %v (key before the step %q ok %v, after %q ok %v; cache dir %v; walk %v; board log:\n%s\nboard status %v:\n%s)", m, before, okBefore, key, ok, names, walk, log, e, status)
+		t.Fatalf("remembered files check: %v (key before the step %q ok %v, after %q ok %v; cache dir %v; walk %v; board log:\n%s\nboard status %v:\n%s\nsetup stderr:\n%s)", m, before, okBefore, key, ok, names, walk, log, e, status, stderr)
 	}
 	if e := os.WriteFile(filepath.Join(ev, "second.log"), []byte("ok\n"), 0o644); e != nil {
 		t.Fatal(e)

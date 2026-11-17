@@ -9,12 +9,15 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/veridit/hug/huginn/internal/importer"
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/sharefile"
 )
 
 // 3mavpt: hug setup ran the whole backlog dry run on every call (34 s on
@@ -96,7 +99,7 @@ func (a *App) backlogListing(src string) (key string, ok bool) {
 }
 
 func readBacklogCheck(path, src, key string) (backlogCheck, bool) {
-	b, e := os.ReadFile(path)
+	b, e := readCache(path)
 	if e != nil {
 		return backlogCheck{}, false
 	}
@@ -119,9 +122,9 @@ func sourceKey(src string) string {
 	return filepath.Clean(src)
 }
 
-func writeBacklogCheck(path string, c backlogCheck) {
+func (a *App) writeBacklogCheck(ctx context.Context, path string, c backlogCheck) {
 	if b, e := json.Marshal(c); e == nil {
-		writeAtomic(path, b)
+		a.remember(ctx, path, b)
 	}
 }
 
@@ -146,7 +149,7 @@ func importedReport(r importer.Report) importer.Report {
 // rememberBacklog records report as the answer for src, if the backlog's
 // listing is the one taken before the run (key): a file written during the
 // run must not be remembered under the old listing.
-func (a *App) rememberBacklog(common, src, key string, at time.Time, r importer.Report) {
+func (a *App) rememberBacklog(ctx context.Context, common, src, key string, at time.Time, r importer.Report) {
 	if key == "" {
 		return
 	}
@@ -159,7 +162,7 @@ func (a *App) rememberBacklog(common, src, key string, at time.Time, r importer.
 			c.Board = append(c.Board, f.ID)
 		}
 	}
-	writeBacklogCheck(backlogCheckFile(common), c)
+	a.writeBacklogCheck(ctx, backlogCheckFile(common), c)
 }
 
 // checkBacklog answers setup's "is the backlog imported". remembered is
@@ -183,7 +186,7 @@ func (a *App) checkBacklog(ctx context.Context, s *session, src string) (r impor
 	if err != nil {
 		return r, "", err
 	}
-	a.rememberBacklog(s.r.Common, src, key, start, r)
+	a.rememberBacklog(ctx, s.r.Common, src, key, start, r)
 	return r, "", nil
 }
 
@@ -267,7 +270,7 @@ func (a *App) checkFiles(ctx context.Context, s *session, dir, cite string) (imp
 	key, ok := a.filesKey(ctx, dir, cite, s.r.Dir)
 	path := filesCheckFile(s.r.Common, cite)
 	if ok {
-		if b, e := os.ReadFile(path); e == nil {
+		if b, e := readCache(path); e == nil {
 			var c filesCheck
 			if json.Unmarshal(b, &c) == nil && c.Key == key {
 				return importer.FilesReport{Copied: c.Copied, Unchanged: c.Unchanged, Citations: c.Citations, DryRun: true}, c.Unmatched, nil
@@ -281,24 +284,94 @@ func (a *App) checkFiles(ctx context.Context, s *session, dir, cite string) (imp
 	if ok {
 		if again, ok2 := a.filesKey(ctx, dir, cite, s.r.Dir); ok2 && again == key {
 			if b, e := json.Marshal(filesCheck{Key: key, Copied: r.Copied, Unchanged: r.Unchanged, Citations: r.Citations, Unmatched: len(r.Unmatched)}); e == nil {
-				writeAtomic(path, b)
+				a.remember(ctx, path, b)
 			}
 		}
 	}
 	return r, len(r.Unmatched), nil
 }
 
-func writeAtomic(path string, b []byte) {
-	if os.MkdirAll(filepath.Dir(path), 0o755) != nil {
-		return
+// writeAtomic replaces a remembered check as task files are replaced
+// (557s7n): a temp file of its own (two commands may remember at once),
+// then sharefile's rename, which on Windows succeeds while a reader has
+// the old file open. Before, a fixed path.tmp and os.Rename lost writes
+// silently (Windows CI 44172854884: "remembered files check: []").
+func writeAtomic(path string, b []byte) error {
+	dir := filepath.Dir(path)
+	if e := os.MkdirAll(dir, 0o755); e != nil {
+		return e
 	}
-	tmp := path + ".tmp"
-	if os.WriteFile(tmp, b, 0o644) != nil {
-		return
+	f, e := os.CreateTemp(dir, "."+filepath.Base(path)+".*.tmp")
+	if e != nil {
+		return e
 	}
-	if os.Rename(tmp, path) != nil {
+	tmp := f.Name()
+	_, e = f.Write(b)
+	if ce := f.Close(); e == nil {
+		e = ce
+	}
+	if e == nil {
+		e = sharefile.Rename(tmp, path)
+	}
+	if e != nil {
 		os.Remove(tmp)
 	}
+	return e
+}
+
+// readCache reads a remembered check without keeping a writer from
+// replacing it (sharefile: delete sharing on Windows).
+func readCache(path string) ([]byte, error) { return sharefile.ReadFile(path) }
+
+// memoWarning says once per command that a check could not be remembered:
+// setup still answers, it is only slower next time, but never silently.
+type memoWarning struct {
+	w    io.Writer
+	once sync.Once
+}
+
+type memoWarningKey struct{}
+
+// withMemoWarning gives the command one warning for all its remembered
+// checks.
+func (a *App) withMemoWarning(ctx context.Context) context.Context {
+	var w io.Writer = a.Err
+	if w == nil {
+		w = io.Discard
+	}
+	return context.WithValue(ctx, memoWarningKey{}, &memoWarning{w: w})
+}
+
+// remember writes a remembered check, and says so once if it cannot.
+func (a *App) remember(ctx context.Context, path string, b []byte) {
+	e := writeAtomic(path, b)
+	if e == nil {
+		return
+	}
+	m, _ := ctx.Value(memoWarningKey{}).(*memoWarning)
+	if m == nil {
+		m = &memoWarning{w: a.Err}
+		if m.w == nil {
+			m.w = io.Discard
+		}
+	}
+	m.once.Do(func() {
+		// Only this remembered check: removing it is always safe (the next
+		// setup computes it again), and it clears a path left in the way.
+		fix := "rm -rf " + shellQuote(path) + " && hug task setup"
+		if runtime.GOOS == "windows" {
+			fix = "del /q " + shellQuote(path) + " && hug task setup"
+		}
+		fmt.Fprintf(m.w, "hug setup: could not remember this check (%v); the next hug task setup runs it again\nfix: %s\n", e, fix)
+	})
+}
+
+// shellQuote quotes s for the shell a fix: line is pasted into.
+func shellQuote(s string) string {
+	if runtime.GOOS == "windows" {
+		return "\"" + strings.ReplaceAll(s, "\"", "\"\"") + "\""
+	}
+	return "'" + strings.ReplaceAll(s, "'", "'\"'\"'") + "'"
 }
 
 // layout is the board layout this hug reads (App.Layout, else task.Layout).

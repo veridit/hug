@@ -53,6 +53,8 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	if e := f.count(0); e != nil {
 		return nil, e
 	}
+	// One "could not remember" line for all of setup's checks (557s7n).
+	ctx = a.withMemoWarning(ctx)
 	cwd := a.Cwd
 	if cwd == "" {
 		cwd = "."
