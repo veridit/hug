@@ -1,13 +1,18 @@
 ---
 id: 3mavpt
 title: "hug setup takes 34 s on Seid: it dry-runs the whole backlog import"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T20:17"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Cheap signals: hug.toml's recorded import (ggydj2), and the board's origin: fiel
 - [ ] the commit-msg step in seid-lang's checkout reports the real state, not 'needs a Git checkout' (test or note with evidence)
 
 ## Notes
+
+
+## History
+- 2026-11-17T20:17 todo -> doing/active (take)
