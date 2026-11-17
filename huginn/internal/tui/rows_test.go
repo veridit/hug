@@ -231,7 +231,7 @@ func TestNarrowRowsGolden(t *testing.T) {
 		text = strings.ReplaceAll(text, v.ID, "######")
 	}
 	path := filepath.Join("testdata", "rows", "narrow-60.txt")
-	if os.Getenv("HUGINN_UPDATE_GOLDEN") == "1" {
+	if os.Getenv("HUG_UPDATE_GOLDEN") == "1" {
 		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -241,7 +241,7 @@ func TestNarrowRowsGolden(t *testing.T) {
 	}
 	want, err := os.ReadFile(path)
 	if err != nil {
-		t.Fatalf("%v\nfix: HUGINN_UPDATE_GOLDEN=1 go test -run TestNarrowRowsGolden ./huginn/internal/tui/", err)
+		t.Fatalf("%v\nfix: HUG_UPDATE_GOLDEN=1 go test -run TestNarrowRowsGolden ./huginn/internal/tui/", err)
 	}
 	if text != strings.ReplaceAll(string(want), "\r\n", "\n") {
 		t.Fatalf("rows at 60 differ from %s:\n%s", path, text)
