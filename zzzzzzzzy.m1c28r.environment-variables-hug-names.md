@@ -29,7 +29,7 @@ Counted 2026-11-16 in the repo: MUNINN_HOME 40 uses, HUGINN_USER 18, MUNINN_NO_E
 
 ## Acceptance
 - [ ] hug task take with HUG_USER=x assigns x (test); grep finds no HUGINN_/MUNINN_ in Go code
-- [ ] hug upgrade rewrites old names in hooks and configs hug installed (test on a fixture home)
+- [x] hug upgrade rewrites old names in hooks and configs hug installed (test on a fixture home)
 - [ ] with MUNINN_HOME or HUGINN_USER set, hug prints the new name to use and a fix: line (test)
 - [ ] help, README, AGENTS.md and errors name only HUG_* (grep shows no HUGINN_/MUNINN_ in user-facing text)
 
