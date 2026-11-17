@@ -42,3 +42,5 @@ Run 44075465280 (ci/0sbvnq 8c0fa9c, all jobs green): Windows huginn/internal/cli
 Second run under 300 s: CI 44080439322 (ci/wyvern-stack a7cc707, on 16dxsr c9ea6ed; all jobs green): Windows huginn/internal/cli 265.3 s. First: 44075465280, 275.7 s. Before (same day): 453-514 s. Waits for the landing queue (crab 12:20: wyvern 3rd).
 
 Check 1: Windows huginn/internal/cli under 300 s in two consecutive CI runs: 44075465280 (ci/0sbvnq, 275.7 s) and 44080439322 (ci/wyvern-stack, 265.3 s). Check 2: no test skipped on Windows; the change adds t.Parallel to 35 of 46 tests and no Skip (grep -c 'Skip' unchanged in huginn/internal/cli tests between 893cd50 and a7cc707).
+
+Landed on main d74af5d (04216f3), CI 44087396396. Windows cli on that run: 'ok github.com/veridit/hug/huginn/internal/cli 299.686s', under 300 s by 0.3 s. Earlier runs: 275.7 s (44075465280), 265.3 s (44080439322). The margin is thin: the run also carried sfa8w4's new tests. Check 2 waits for 3 runs on main (crab): main CI 44089952127 is running at d74af5d.
