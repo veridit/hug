@@ -34,3 +34,5 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+Jørgen 23:49 local: the stage is named 'asked' (crab offered asked / ask / question). Read 'question' as 'asked' throughout this ticket: stage doing/asked, fields asked_what (the text), asked_for, asked_check, asked_since, asked_by, asked_show; command 'hug task ask ID --to NAME [--check N] [--show FILE] "..."'; row shows 'asked: you · check 9 · <text>'.
