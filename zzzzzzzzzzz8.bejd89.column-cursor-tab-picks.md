@@ -1,13 +1,18 @@
 ---
 id: bejd89
 title: "Column cursor: Tab picks a column, o orders by it"
-status: todo
+status: "doing"
 type: feature
 priority: "medium"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T15:09"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ Keys today (huginn/internal/tui/keys.go:20-21): h/←/Shift-Tab = previous pane 
 ## Notes
 
 nautilus 14:09 (crab 14:08): dependency on 6ephqk removed. bejd89 needs only 6ephqk's columns (rows show stage, no status column: 25f5f5f, check 5), on main since d198e01. Tags (txjkrm) are not a column yet; the cursor covers the columns on screen, and tags join when txjkrm adds them.
+
+
+## History
+- 2026-11-17T15:09 todo -> doing/active (take)
