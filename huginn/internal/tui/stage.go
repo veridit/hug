@@ -153,9 +153,18 @@ func (m model) forYou(t task.Task) bool {
 	return false
 }
 
-// forYouCount is how many shown tasks wait on the TUI user.
+// forYouCount is how many shown tasks wait on the TUI user: counted once
+// per set of shown rows, as the sections are (46ek1f).
 func (m model) forYouCount() int {
+	if m.panes == nil {
+		return m.countForYou()
+	}
+	return m.panes.count(m.visibleGen, m.countForYou)
+}
+
+func (m model) countForYou() int {
 	n := 0
+	taskScans.Add(int64(len(m.visible)))
 	for _, t := range m.visible {
 		if m.forYou(t) {
 			n++
@@ -167,6 +176,10 @@ func (m model) forYouCount() int {
 // stageComputes counts task.Stage computations (46ek1f: a test checks that
 // a frame computes none once the snapshot is loaded).
 var stageComputes atomic.Int64
+
+// taskScans counts tasks looked at to find a section's rows (46ek1f: a
+// key and its frame must not look at more on a bigger board).
+var taskScans atomic.Int64
 
 // taskStage is task.Stage(t, m.all): the snapshot's, computed once per
 // load in apply (46ek1f), for a task of the board as loaded. A task built

@@ -148,6 +148,7 @@ func (m *model) sortVisible() {
 	if len(m.sort) == 0 {
 		return
 	}
+	m.visibleGen = nextVisibleGen() // the rows move: sections are found again (46ek1f)
 	sort.SliceStable(m.visible, func(i, j int) bool {
 		a, b := m.visible[i], m.visible[j]
 		for _, k := range m.sort {

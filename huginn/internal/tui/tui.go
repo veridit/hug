@@ -9,8 +9,10 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -144,6 +146,8 @@ type model struct {
 	blocked, linted            map[string]bool
 	broken                     map[string]bool   // paths with a broken finding (pbh9xq)
 	stages                     map[string]string // task.Stage by path, per load (46ek1f)
+	visibleGen                 int               // bumped on every write of visible (46ek1f)
+	panes                      *paneMemo         // paneIndices by visibleGen and view (46ek1f)
 	progressCols               int               // progressWidth, per load (46ek1f)
 	epics                      map[string]bool   // lowercase ids of tasks with children
 	cursor, acceptance, offset int
@@ -423,7 +427,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
 	input.Cursor.Blink = false
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, closes: &closeLog{}, pictures: map[string]pictureMemo{},
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, closes: &closeLog{}, pictures: map[string]pictureMemo{}, panes: &paneMemo{forYou: -1},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	if o.Initial != nil {
@@ -594,6 +598,7 @@ func (m *model) apply(sn snapshot, path string) {
 	m.syncDetail()
 }
 func (m *model) applyFilter() {
+	m.visibleGen = nextVisibleGen()
 	m.visible = nil
 	// The index's ranking of the query (49n9kw): its hits are kept even when
 	// the substring rule misses them (a word in the notes), and come first.
@@ -637,7 +642,8 @@ func (m *model) applyFilter() {
 			return ri < rj
 		})
 	}
-	m.sortVisible() // the order built with : sort (mkzcqr) wins; rank or relevance order without one
+	m.visibleGen = nextVisibleGen() // sorted after the scan above
+	m.sortVisible()                 // the order built with : sort (mkzcqr) wins; rank or relevance order without one
 	m.offset = 0
 	m.cursor = 0
 	m.clamp()
@@ -738,11 +744,27 @@ func (m model) boardState(t task.Task) string {
 	}
 	return m.place(t)
 }
+
+// paneIndices are the rows of section p of the current view, as indices
+// into visible. They depend only on the rows shown (visible, which a load,
+// a filter, a sort or a grab replaces) and the view, so they are found
+// once and kept (46ek1f: a key and its frame asked for them dozens of
+// times, each a scan of every task: 52 ms a key on Seid). The memo is
+// keyed by visibleGen, which every write of visible bumps.
 func (m model) paneIndices(p int) []int {
+	if m.panes == nil {
+		return m.scanPane(p)
+	}
+	return m.panes.get(m.visibleGen, m.view, p, m.scanPane)
+}
+
+// scanPane finds section p's rows by looking at every shown task.
+func (m model) scanPane(p int) []int {
 	if m.view == "overview" && p == sectionRecent {
 		return m.recentIndices()
 	}
 	var out []int
+	taskScans.Add(int64(len(m.visible)))
 	for i, t := range m.visible {
 		match := true
 		switch m.view {
@@ -1662,4 +1684,49 @@ func matchedAlias(t task.Task, query string) string {
 		}
 	}
 	return ""
+}
+
+// visibleGens numbers every write of visible in the process: unique,
+// so a model copy that refilters (valueCount) never shares a number with
+// the model it came from.
+var visibleGens atomic.Int64
+
+func nextVisibleGen() int { return int(visibleGens.Add(1)) }
+
+// paneMemo keeps paneIndices for one visibleGen (46ek1f). Model copies
+// share it; Bubble Tea calls Update and View on one goroutine, and the
+// mutex keeps a stray reader safe all the same.
+type paneMemo struct {
+	mu   sync.Mutex
+	gen  int
+	view string
+	rows map[int][]int
+	// forYou is forYouCount for forYouGen (any view), -1 for none yet.
+	forYouGen, forYou int
+}
+
+// count is forYouCount for gen, counted once.
+func (c *paneMemo) count(gen int, scan func() int) int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.forYouGen != gen || c.forYou < 0 {
+		c.forYouGen, c.forYou = gen, scan()
+	}
+	return c.forYou
+}
+
+// get is section p's rows for gen and view, scanned once.
+func (c *paneMemo) get(gen int, view string, p int, scan func(int) []int) []int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.rows == nil || c.gen != gen || c.view != view {
+		c.gen, c.view, c.rows = gen, view, map[int][]int{}
+	}
+	rows, ok := c.rows[p]
+	if !ok {
+		rows = scan(p)
+		c.rows[p] = rows
+	}
+	// Clipped: a caller that appends gets its own copy, never the memo's.
+	return slices.Clip(rows)
 }

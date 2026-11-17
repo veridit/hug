@@ -91,6 +91,7 @@ func (m *model) grabMove(to int) {
 		}
 	}
 	m.visible = out
+	m.visibleGen = nextVisibleGen()
 	for i, v := range m.visible {
 		if v.Path == t.Path {
 			m.cursor = i
@@ -101,6 +102,7 @@ func (m *model) grabMove(to int) {
 // cancelGrab puts the grabbed task back where it was.
 func (m *model) cancelGrab() {
 	m.visible, m.cursor = m.grab.visible, m.grab.cursor
+	m.visibleGen = nextVisibleGen()
 	m.grab = grabState{}
 	m.message = "move cancelled; nothing changed"
 }
@@ -113,6 +115,7 @@ func (m *model) dropGrab() {
 	g := m.grab
 	if at < 0 || at == g.start {
 		m.visible, m.cursor = g.visible, g.cursor
+		m.visibleGen = nextVisibleGen()
 		m.grab = grabState{}
 		m.message = "dropped where it was; nothing changed"
 		return

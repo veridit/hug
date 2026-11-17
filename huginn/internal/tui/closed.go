@@ -132,6 +132,7 @@ func mergeCloses(into map[string]int64, log string) {
 // (h9zghj). Ties keep rank order.
 func (m model) recentIndices() []int {
 	var out []int
+	taskScans.Add(int64(len(m.visible)))
 	for i, t := range m.visible {
 		if t.State == "done" || t.State == "dropped" {
 			out = append(out, i)

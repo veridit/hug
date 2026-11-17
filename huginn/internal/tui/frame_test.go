@@ -66,6 +66,35 @@ func TestFrameComputesNoStages(t *testing.T) {
 	}
 }
 
+// 46ek1f, crab 19:40: a key (j) and its frame look at a fixed number of
+// tasks, whatever the board's size. Sections were found by scanning every
+// task, once per question (rows, heights, owner width, the cursor's
+// memory): on Seid that was 52 ms a key. Sections are now the snapshot's.
+func TestKeyScansDoNotGrowWithBoard(t *testing.T) {
+	per := func(n int) map[string]int64 {
+		m := bigOverview(t, n)
+		m.View()
+		out := map[string]int64{}
+		for _, view := range []string{"overview", "list", "board"} {
+			m.setView(view)
+			m.clamp()
+			m = press(m, "j")
+			m.View()
+			before := taskScans.Load()
+			m = press(m, "j")
+			m.View()
+			out[view] = taskScans.Load() - before
+		}
+		return out
+	}
+	small, big := per(300), per(3000)
+	for view, n := range big {
+		if n > small[view] {
+			t.Errorf("%s: a key and its frame scanned %d tasks on 3,000 tasks, %d on 300: the work grows with the board", view, n, small[view])
+		}
+	}
+}
+
 // 46ek1f check 4: what a frame measures does not grow with the board. Row
 // heights are summed only as far as the screen reaches: the same frame on
 // a board ten times larger looks up the same number of row heights.
