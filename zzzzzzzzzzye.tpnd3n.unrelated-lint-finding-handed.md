@@ -11,9 +11,7 @@ updated: 2026-11-17
 ---
 
 ## Goal
-an unrelated lint finding is handed out only when the session has no doing task of its own or just closed one
-
-Promoted from item 1 of task:x325pp.
+An unrelated lint finding waits until the session's own task has no open finding (instead of until the session is between tasks), and fresh lint lines do not drop. Rewrite of x325pp check 1 (crab ruling B, 2026-11-17). Promoted from item 1 of task:x325pp.
 
 ## Purpose
 In the qawmnb replay 5 of the 7 false board lines were lint findings handed to agents busy with other work (muninn/docs/BOARD4.md), one of them just told to stop
@@ -28,6 +26,7 @@ muninn/internal/recall/boardcue.go pickFinding/BoardCue; replay muninn/cmd/board
 
 ## Acceptance
 - [ ] an unrelated lint finding is handed out only when the session has no doing task of its own or just closed one
+- [ ] replay (board4, blind judge): false lint lines on held-out fall from the stop-order arm's 1 and fresh lint lines stay at 13 of 13, counts in muninn/docs/BOARD4.md
 
 ## Notes
 
