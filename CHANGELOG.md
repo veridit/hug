@@ -8,6 +8,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - `hug tui` gives each status one subtle colour, used in the count line, the status word on rows (closed rows too) and the overview section titles: IN PROGRESS in the doing colour, NEXT UP todo, BLOCKED red, RECENTLY DONE green, LINT the warning colour of `!`. The progress cell shows a fraction only for partial work: a done task shows its check count, `● 5`, in green instead of `● 5/5`, a task with nothing ticked shows `○ 3` dim, a task with some ticked keeps `◑ 2/4` (resumable work), and a dropped task shows none. Without colour everything still reads by its text (zhvkmj).
 - `hug tui`: `u` inside a task goes up one level, as Esc does: back from a followed link, else to the list, board or overview it came from, with the task selected. The key bar in a task shows `u up`. In `: sort`, `u` is still the updated field (9xfnwr).
+- `hug task note`, `check`, `set` and the other writes walk the board once instead of three times: the read before the board turn is gone (the write reads under the turn), and after writing a task file the cache rereads that file only, not all 10,000. At 10,000 tasks `note` drops from 0.52-0.56 s to 0.39-0.42 s; `show` and `next` are unchanged (44w1ev, step 8).
 
 ## v0.7.40 - 2026-11-17
 

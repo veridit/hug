@@ -64,6 +64,10 @@ type Store struct {
 	DepsMode       string
 	AcceptanceMode string
 	Refresh        func() ([]Task, error)
+	// RefreshWritten, when set, is Refresh after this Store wrote the task
+	// files at paths itself: it rereads those paths only (44w1ev step 8).
+	// Changes made by anything else still go through Invalidate and Refresh.
+	RefreshWritten func(paths []string) ([]Task, error)
 	// Snapshot keeps the board Refresh returned until this Store writes a
 	// task file or Invalidate is called, so one command reads the board
 	// once, not once per helper (44w1ev: ls at 10,000 tasks walked the
@@ -79,6 +83,25 @@ type Store struct {
 // editor, a pull, an import).
 func (s *Store) Invalidate() { s.board, s.held = nil, false }
 
+// refreshWritten rereads the board after this Store wrote paths.
+func (s *Store) refreshWritten(paths ...string) error {
+	if s.Refresh == nil {
+		return nil
+	}
+	if s.RefreshWritten == nil {
+		s.Invalidate()
+		_, e := s.Tasks()
+		return e
+	}
+	ts, e := s.RefreshWritten(paths)
+	if e != nil {
+		return e
+	}
+	if s.Snapshot {
+		s.board, s.held = cloneTasks(ts), true
+	}
+	return nil
+}
 func (s *Store) Tasks() ([]Task, error) {
 	if s.Refresh != nil {
 		if s.Snapshot && s.held {
@@ -183,10 +206,8 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		if e := AtomicWrite(path, d.Bytes()); e != nil {
 			return Result{}, e
 		}
-		if s.Refresh != nil {
-			if _, e := s.Tasks(); e != nil {
-				return Result{}, e
-			}
+		if e := s.refreshWritten(d.Task.Path); e != nil {
+			return Result{}, e
 		}
 	}
 	return Result{Task: d.Task, Changed: changed, Next: hint(d.Task)}, nil
@@ -582,10 +603,8 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	d.Task.Rank = r
 	d.Task.Slug = slug
 	s.Invalidate()
-	if s.Refresh != nil {
-		if _, e := s.Tasks(); e != nil {
-			return Result{}, e
-		}
+	if e := s.refreshWritten(oldPath, path); e != nil {
+		return Result{}, e
 	}
 	return Result{Task: d.Task, Changed: true, Next: hint(d.Task), Renamed: []string{d.Task.ID}, Renames: []Rename{{ID: d.Task.ID, From: oldPath, To: path}}}, nil
 }
