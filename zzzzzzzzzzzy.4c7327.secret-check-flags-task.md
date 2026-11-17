@@ -1,0 +1,31 @@
+---
+id: 4c7327
+title: "Secret check flags 'task-900' in a file path as a credential (sk-900)"
+state: todo
+type: bug
+priority: ""
+assignee: []
+labels: []
+created: 2026-11-18
+updated: 2026-11-18
+---
+
+## Goal
+hug's secret check does not flag ordinary words that contain 'sk-' followed by digits, such as 'task-900-...' in a path, while still catching real keys (sk-..., sk-ant-..., sk-proj-...).
+
+## Purpose
+crab 00:39 local, attaching seid-upgrade-dry-run.md to asr4t2: refused with 'credential-shaped text near sk-900...'. The match was 'task-900-task979-ownership-reconciliation-2026-08-17.md', a file name. A false refusal teaches agents to pass --safe-reason by habit, which defeats the check.
+
+## Principle
+Catch real keys, never ordinary text. A key starts at a word boundary. A test with both kinds fails first.
+
+## Relevant details
+secretHint in huginn/internal/cli (attach). The same pattern may exist in muninn's remember secret check: hatchling checks both.
+
+## Depends on
+
+## Acceptance
+- [ ] attach of a file holding 'task-900-task979-x.md' succeeds with no secret warning; a file holding 'sk-' plus 40 base62 characters is still refused (test, fails on main)
+- [ ] The memory secret check gets the same test, or the note says it uses a different rule
+
+## Notes
