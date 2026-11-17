@@ -313,9 +313,37 @@ func (c *Cache) storeBoard(ctx context.Context, tx *sql.Tx, next map[string]reco
 func (c *Cache) Sync(ctx context.Context) (Stats, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.sync(ctx)
+	return c.sync(ctx, nil)
 }
-func (c *Cache) sync(ctx context.Context) (Stats, error) {
+
+// ListAfterWrite is List after this process wrote the task files at paths
+// (relative to Root; a path that is gone was removed or renamed away): it
+// stats and hashes those paths only, never walks the board (44w1ev step 8:
+// note and check walked 10,000 files three times, the last only to learn
+// what they had just written). Every other record is kept as the last sync
+// saw it, and the sync time and HEAD are not advanced, so the next full
+// sync still checks every other file against the same markers and racy
+// window. Call it only for files this process wrote, after a full sync in
+// the same command; anything else uses List.
+func (c *Cache) ListAfterWrite(ctx context.Context, paths []string) ([]task.Task, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.rebuild || len(c.files) == 0 {
+		if _, e := c.sync(ctx, nil); e != nil {
+			return nil, e
+		}
+		return c.snapshot(), nil
+	}
+	only := make(map[string]bool, len(paths))
+	for _, p := range paths {
+		only[filepath.ToSlash(filepath.Clean(p))] = true
+	}
+	if _, e := c.sync(ctx, only); e != nil {
+		return nil, e
+	}
+	return c.snapshot(), nil
+}
+func (c *Cache) sync(ctx context.Context, only map[string]bool) (Stats, error) {
 	var stats Stats
 	stats.Rebuilt = c.rebuild
 	started := time.Now().UnixNano()
@@ -323,6 +351,33 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	head := c.head
 	forced := map[string]bool{}
 	renameHints := map[string]string{}
+	if only != nil {
+		// A write's own paths: no git, no walk. The sync time stays, so the
+		// racy window of the last full sync still applies to the rest.
+		started = c.synced
+		disk := make(map[string]Marker, len(c.files)+len(only))
+		for p, r := range c.files {
+			if !only[p] {
+				disk[p] = r.Marker
+			}
+		}
+		for p := range only {
+			st, e := os.Lstat(filepath.Join(c.Root, filepath.FromSlash(p)))
+			if os.IsNotExist(e) {
+				continue
+			}
+			if e != nil {
+				return stats, e
+			}
+			if !st.Mode().IsRegular() {
+				continue
+			}
+			stats.Statted++
+			forced[p] = true
+			disk[p] = Marker{Path: p, MtimeNS: st.ModTime().UnixNano(), Size: st.Size()}
+		}
+		return c.apply(ctx, stats, disk, forced, renameHints, head, started, racy, only)
+	}
 	if c.git != nil {
 		var e error
 		head, e = c.git.Head(ctx)
@@ -380,6 +435,13 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	if err != nil {
 		return stats, err
 	}
+	return c.apply(ctx, stats, disk, forced, renameHints, head, started, racy, nil)
+}
+
+// apply brings the records in line with disk (the markers of every task
+// file) and stores what changed. only, when set, names the paths a write
+// touched: every other path is kept as recorded, never reread.
+func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, forced map[string]bool, renameHints map[string]string, head string, started, racy int64, only map[string]bool) (Stats, error) {
 	if !c.rebuild && len(disk) == len(c.files) && len(forced) == 0 {
 		same := true
 		for p, m := range disk {
@@ -409,6 +471,10 @@ func (c *Cache) sync(ctx context.Context) (Stats, error) {
 	usedOld := map[string]bool{}
 	for path, m := range disk {
 		old, exists := c.files[path]
+		if exists && only != nil && !only[path] {
+			next[path] = old
+			continue
+		}
 		if exists && !c.rebuild && !forced[path] && old.MtimeNS == m.MtimeNS && old.Size == m.Size && m.MtimeNS < racy {
 			next[path] = old
 			continue
@@ -717,7 +783,7 @@ func (c *Cache) FillTexts(ctx context.Context, ts []task.Task) error {
 func (c *Cache) List(ctx context.Context) ([]task.Task, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if _, e := c.sync(ctx); e != nil {
+	if _, e := c.sync(ctx, nil); e != nil {
 		return nil, e
 	}
 	return c.snapshot(), nil
@@ -746,7 +812,7 @@ func (c *Cache) snapshot() []task.Task {
 func (c *Cache) Lint(ctx context.Context) ([]task.Finding, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if _, e := c.sync(ctx); e != nil {
+	if _, e := c.sync(ctx, nil); e != nil {
 		return nil, e
 	}
 	return c.lint(), nil
@@ -770,7 +836,7 @@ func (c *Cache) lint() []task.Finding {
 func (c *Cache) Markers(ctx context.Context) ([]Marker, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if _, e := c.sync(ctx); e != nil {
+	if _, e := c.sync(ctx, nil); e != nil {
 		return nil, e
 	}
 	var out []Marker

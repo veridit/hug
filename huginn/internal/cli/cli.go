@@ -131,7 +131,12 @@ func oldLayout(ctx context.Context, root string) bool {
 	return false
 }
 
-func (a *App) open(ctx context.Context) (*session, error) {
+func (a *App) open(ctx context.Context) (*session, error) { return a.openBoard(ctx, false) }
+
+// openBoard opens the board; lazy leaves the first read to the command
+// (a write reads under the board turn, so a read before it is wasted: 44w1ev
+// step 8, one walk of every task file).
+func (a *App) openBoard(ctx context.Context, lazy bool) (*session, error) {
 	cwd := a.Cwd
 	if cwd == "" {
 		cwd = "."
@@ -169,9 +174,13 @@ func (a *App) open(ctx context.Context) (*session, error) {
 	// keeps the result until it writes a task file itself.
 	s := &task.Store{Root: r.Dir, Snapshot: true}
 	s.Refresh = func() ([]task.Task, error) { return c.List(ctx) }
-	if _, e = s.Tasks(); e != nil {
-		c.Close()
-		return nil, e
+	// A write rereads only the files it wrote (44w1ev step 8).
+	s.RefreshWritten = func(paths []string) ([]task.Task, error) { return c.ListAfterWrite(ctx, paths) }
+	if !lazy {
+		if _, e = s.Tasks(); e != nil {
+			c.Close()
+			return nil, e
+		}
 	}
 	return &session{r: r, c: c, s: s}, nil
 }
@@ -513,7 +522,10 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	if cmd == "sync" && f.has(strings.TrimPrefix(SyncChildArg, "--")) {
 		return a.backgroundPass(ctx)
 	}
-	s, e := a.open(ctx)
+	// Writes hold the board turn from reading to committing; take and sync
+	// order their locks themselves (run, then turn), as a background pass does.
+	writer := !readOnly[cmd] && cmd != "take" && cmd != "sync" && cmd != "tui" && cmd != "edit"
+	s, e := a.openBoard(ctx, writer)
 	if e != nil {
 		return nil, e
 	}
@@ -526,12 +538,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	if m := takerModel(f); m != "" {
 		s.r.Trailers = []string{"Model: " + m}
 	}
-	// Writes hold the board turn from reading to committing; take and sync
-	// order their locks themselves (run, then turn), as a background pass does.
-	if !readOnly[cmd] && cmd != "take" && cmd != "sync" && cmd != "tui" && cmd != "edit" {
+	if writer {
 		defer s.turn()()
-		// open read the board before the turn: a background rebase may have
-		// moved task files since, so read them again under it.
+		// The first read happens under the turn: a background rebase
+		// cannot move task files between this command reading and
+		// committing them.
 		s.s.Invalidate()
 	}
 	// Reads bring in other clones' changes: a background pass when the last
