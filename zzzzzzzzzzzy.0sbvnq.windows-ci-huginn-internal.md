@@ -1,13 +1,16 @@
 ---
 id: 0sbvnq
 title: "Windows CI: huginn/internal/cli tests under 5 minutes"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
