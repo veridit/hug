@@ -118,6 +118,7 @@ func (m model) breadcrumb() string {
 	}
 	return left + strings.Repeat(" ", gap) + right
 }
+
 // lintMark is marker's text without colour: "!", "·" or " ".
 func (m model) lintMark(path string) string { return ansi.Strip(m.marker(path)) }
 
