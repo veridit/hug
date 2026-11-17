@@ -5,16 +5,49 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
 
+	huginn "github.com/veridit/hug/huginn/run"
 	"github.com/veridit/hug/internal/flock"
+	muninn "github.com/veridit/hug/muninn/run"
 )
+
+func pair(a, b time.Duration) [2]time.Duration { return [2]time.Duration{a, b} }
+
+// syncBound is the design's worst case for a change to reach another clone:
+// Settle quiet before the push, FetchAfter until the other clone's next read
+// fetches, and 2 s for the push, the fetch and one poll; the larger of the
+// task and memory syncs.
+func syncBound() time.Duration {
+	bound := time.Duration(0)
+	for _, times := range [][2]time.Duration{pair(huginn.SyncTimes()), pair(muninn.SyncTimes())} {
+		bound = max(bound, times[0]+times[1]+2*time.Second)
+	}
+	return bound
+}
+
+// The README promises "at most about 7 s later" (4vcwxk): the constants
+// and that sentence move together.
+func TestSyncBoundMatchesReadme(t *testing.T) {
+	b, err := os.ReadFile(filepath.Join("..", "..", "README.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	bound := syncBound()
+	secs := int((bound - 2*time.Second + time.Second/2) / time.Second)
+	want := "at most about " + strconv.Itoa(secs) + " s later"
+	if !strings.Contains(string(b), want) {
+		t.Fatalf("README.md does not say %q: Settle + FetchAfter is %v now (bound with push, fetch and poll %v)", want, bound-2*time.Second, bound)
+	}
+}
 
 // 0hkaa5, end to end with the real binary and its real detached syncers:
 // two clones on one bare remote. A task note and a project memory made in
-// clone A reach clone B within 10 s, and nobody runs sync.
+// clone A reach clone B within the design's bound (Settle + FetchAfter +
+// 2 s, twice that for slow runners), and nobody runs sync.
 func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	if testing.Short() {
 		t.Skip("builds the hug binary")
@@ -89,15 +122,21 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	start := time.Now()
 	run(one, homeA, bin, "task", "note", id, "note from clone A")
 	run(one, homeA, bin, "mem", "remember", "--project", "Quartzite releases need a signed checklist.")
-	// 10 s, the acceptance bound; the Windows CI runner spends ~1.9 s on one
-	// hug command (run 43943367365), so the pipeline gets four times that.
-	limit := 10 * time.Second
+	// The design's bound, from sync's own constants (crab 12:54, 4vcwxk): a
+	// burst is pushed once quiet for Settle, and clone B fetches at its next
+	// read once its last pass is older than FetchAfter; 2 s covers the push,
+	// the fetch and one poll. Measured on macOS: note seen at 3.7-4.3 s,
+	// worst case 1.5 + 0.3 + 5 + 0.2 + 0.4 = 7.4 s. Slow runners get twice
+	// that; Windows four times, as one hug command there costs ~1.9 s (run
+	// 43943367365). Changing a constant moves the limit with it.
+	design := syncBound()
+	limit := 2 * design
 	if runtime.GOOS == "windows" {
-		limit = 40 * time.Second
+		limit = 4 * design
 	}
 	// Both are polled in every round, each from the start: clone B fetches
 	// project memories when a hug mem read finds them stale, so polling the
-	// memory only after the note had arrived left it 10 s minus the note's
+	// memory only after the note had arrived left it the limit minus the note's
 	// time (4vcwxk: note 8.76 s, memory -1 on macOS CI 44077251884; locally
 	// clone B's first memory pass began 1 s after the note showed).
 	note, mem := time.Duration(-1), time.Duration(-1)

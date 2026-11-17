@@ -43,6 +43,16 @@ brew services start hug       # optional: memory watcher + web UI on http://127.
 | `hug task install commit-msg` | | refuse commits without one `Model:` trailer |
 | `hug version` | | versions of hug and both parts |
 
+## Sharing between clones
+
+Tasks (`hug/tasks`) and project memories (`muninn-notes`) reach the other
+clones of a repository by themselves; nobody runs sync. A write commits
+locally and starts one detached syncer, which waits until the burst is quiet
+for 1.5 s and then fetches, rebases and pushes. Another clone fetches when a
+hug command finds its last fetch older than 5 s: another clone sees a change
+at its next command, at most about 7 s later. `hug task sync` and
+`hug mem sync` do it at once. Logs are under `.git/hug/sync/`.
+
 ## Who made a commit
 
 Every commit names what made it in one trailer line: `Model: claude-opus-5-5`
