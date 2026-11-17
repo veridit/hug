@@ -1,18 +1,17 @@
 ---
 id: 95ahtk
 title: "Task writers wait their turn: no index or temp-file races"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T17:47"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-17T18:53"
 ---
 
 ## Goal
@@ -39,3 +38,4 @@ me51r2 (9af390c) fixed this for hug mem. huginn has no file lock today (no flock
 Landed in main edec38c (65fe3db..edec38c). Cause: CLI writers already serialise on the board turn since m8shdj. The TUI did not: its store writes (check, uncheck, strike, answer, give back, done, drop, new, move, the S screen attach) and its exit commit 'hug task tui' ran outside the turn. Seid evidence: .jcode/scratch/TASK-2057/a71qfj/docs-attach/commands.jsonl, 2026-11-17T16:49:23 attach rpjd4z failed with "Unable to create '.../.git/worktrees/-huginn/index.lock': File exists", the same second as a 'hug task tui' commit on Seid's board. Fix: tui.Options.Turn = session turn, held from file change through commit; the editor commit and the exit commit hold it too. Test TestTUIWriteAndCLINoteAtOnce (TUI toggles a check 30x while hug task note adds 30 notes on the same task): on main's locking 3 of 3 runs fail, e.g. 'hug task note beside the TUI: --literal-pathspecs add --all -- .: fatal: unable to stat '.huginn-52152001': No such file or directory', '29 of 30 note commits', '25 of 30 TUI writes have their own commit'. With the fix 3 of 3 pass. Check 1: TestEightWritersMixedCommandsAllLand (8 writers x 20 rounds note/check/set = 160 commits). It passes on main because m8shdj already covers CLI writers. With the turn removed it fails: '33 commits for 160 writes' plus index.lock and .huginn-* errors. The failing-first case for this ticket is the TUI test above (crab 17:04). Check 2: TestReadersDoNotWaitOnHeldTurn (ls, show, next, search answer while the turn is held). -race before push: cli ok 150.954s, tui ok 838.752s (load ~105).
 ## History
 - 2026-11-17T17:47 todo -> doing/active (take)
+- 2026-11-17T18:53 doing/active -> done (done); was doing_since: 2026-11-17T17:47
