@@ -41,6 +41,7 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [ ] ~~The overview has an ASKED section at the top ('ASKED · for you [N]', oldest first) holding the tasks asked of the viewer; WAITING holds only waits with no person and questions asked of others; the header's '? N for you' equals the ASKED count (golden on hug's board shape: 16 asked, 2 waiting)~~ (not relevant: Jørgen 00:13: rows show the title, the focused row adds the question (next check), crab, 2026-11-18)
 - [ ] The overview has an ASKED section at the top ('ASKED · for you [N]', oldest first) holding the tasks asked of the viewer; each row shows its title, and only the focused row adds a second line '└ asked: check N · <question>'; WAITING holds only waits with no person and questions asked of others; the header's '? N for you' equals the ASKED count (golden on hug's board shape)
 - [ ] After a person answers, the asker's next write on that task shows under the answer as its outcome, and the coordinator gets one cue line naming the task and what was done (harness test)
+- [ ] show --json and MCP task_show give the current stage's fields as an object named after the stage next to 'stage' (asked: what, for, check, since, by), and the fields map no longer repeats them (test on a waiting and an asked task)
 
 ## Notes
 
