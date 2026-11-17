@@ -1,13 +1,18 @@
 ---
 id: typq1e
 title: "Capture stores no agent status at all (follow-up to ez50rb)"
-state: todo
+state: "doing"
 type: bug
 priority: ""
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T20:41"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Eval sets and method: muninn/docs/CAPTURE4.md. Post-check: commit 4cf6414. Agent
 - [ ] the same holds on a fresh set fixed before tuning
 
 ## Notes
+
+
+## History
+- 2026-11-17T20:41 todo -> doing/active (take)
