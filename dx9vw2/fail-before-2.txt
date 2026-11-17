@@ -1,0 +1,11 @@
+--- FAIL: TestUpgradeMarksStateBoardLayoutTwo (0.58s)
+    layout_test.go:106: upgrade preview: exit 0
+        layout: nothing to do
+        tasks: nothing to do
+        variables: nothing to do
+        memory: nothing to do
+        next: hug setup
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/cli	0.603s
+FAIL
+on 8856b2b
