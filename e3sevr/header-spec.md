@@ -21,23 +21,26 @@ filter: none · sort: rank
 
 ## Detail of a task
 
+Jørgen 00:01 local: most of the list header is not relevant inside a task. The only thing that
+matters is where u takes him back, as a breadcrumb, at the start of line 1.
+
 ```
-HUG TASKS · detail   1/138 tasks · ! 14 broken · 29 advice                         hug v0.7.50
-view: overview  list  board  !lint        │ todo 31 · doing 26 · depends 0 · done 79 · dropped 3
-overview › 6ephqk ›                                    ← trail only when you came through a parent
+HUG TASKS · overview › 6ephqk ›                                   ? 16 for you · hug v0.7.50
 ▸ kx2ndm  TUI: groups and epics visible and collapsible            ← id leads the title (e3sevr)
 [doing] [feature] [high]  group:root  assigned:nautilus · claude-opus-5-5/high · main
 └─ asked: you · check 9 · look at the rows on your board        ← 41hhgn: no '?' glyph
 ```
 
-- The view line stays, so `v…` works from a detail and shows where you came from. No view
-  tab is marked while you're in a task.
-- The filter and sort line is dropped in a detail. They shape lists, not a task. It comes
-  back when you leave the task.
-- The trail line shows only when the detail stack is deeper than one. With one task open it
-  is gone, and the title line follows straight after the view line.
-- The title line holds the id in the accent colour, then the bold title. With page focus,
-  `▸` sits before the id. The id badge leaves the badge row.
+- Line 1 is the breadcrumb: `HUG TASKS ·`, then the view u returns to, then any parent tasks
+  on the detail stack, each ending in `›`. The rightmost crumb is where u goes. The word
+  `detail` is gone.
+- The task count, the lint counts, the view line, the state counts and the filter/sort line
+  all leave the detail. They describe lists. Only `? N for you` stays, right-aligned, since it
+  is about him, not the list.
+- vo, vl, vb and v! still work from a detail. They are listed in help, not drawn.
+- The title line follows the breadcrumb: the id in the accent colour, then the bold title.
+  With page focus, `▸` sits before the id. The id badge leaves the badge row.
+- That frees three lines for the task itself.
 - Page focus on the id lists the task-wide keys in the footer (e3sevr check).
 
 ## Footer while a prefix is pending (qh9ep1)

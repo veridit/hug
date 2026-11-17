@@ -58,5 +58,6 @@ Jørgen 23:58 local: the task id sits in the header's trail ('overview › kx2nd
 Jørgen 23:59 local, screenshot of 'overview › ▸ kx2ndm' focused: 'this receives focus but I can't do anything with it?' Today that stop is focusPage: j/k scroll the whole page and nothing else, and the footer doesn't say so. Ruling (crab): with the id on the title line (23:58), focusing it means 'the task as a whole'. The footer lists what works there: 'j/k scroll · e edit · t take · d done · x drop · w wait · y yank · R request (hbgybn) · Enter edit'. Every key it lists works, and a key that doesn't apply (t on a doing task) is left off. No focus stop exists that offers nothing.
 file:header-spec.md (2485 bytes, sha256:d853c110)
 Jørgen 00:01 local, screenshot of the detail header: 'most of this seems not relevant inside a task; the only relevant thing is if I press up, where do I come back? More like a breadcrumb, at the start of HUG TASKS · detail.' header-spec.md updated: in a detail, line 1 is 'HUG TASKS · overview › <parents> ›' (where u goes), with '? N for you' on the right. The counts, view line, state counts and filter line leave the detail. 3 lines freed.
+file:header-spec.md (2605 bytes, sha256:6c7fafa8) replaces sha256:d853c110
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
