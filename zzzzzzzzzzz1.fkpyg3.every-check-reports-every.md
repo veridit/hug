@@ -28,7 +28,7 @@ Write-time check: huginn/internal/task/store.go New() (line ~168, returns on fir
 ## Depends on
 
 ## Acceptance
-- [ ] hug task new "x" names every missing field (--goal, --accept, --purpose, --principle) in one reply with one fix: line containing all of them (test)
+- [x] hug task new "x" names every missing field (--goal, --accept, --purpose, --principle) in one reply with one fix: line containing all of them (test)
 - [ ] a task with missing Purpose, missing Principle and an 87-character title gets one lint entry listing all three and one fix: hug task set ID --purpose ... --principle ... --title ... (test)
 - [ ] write-time checks and lint run the same check list: a task new/set accepts is lint-clean except for findings that need time (e.g. done-unchecked) (test enumerates the codes)
 - [ ] MCP task_new/task_update return findings as a list plus the combined fix (test)
