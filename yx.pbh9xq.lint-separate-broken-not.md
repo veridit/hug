@@ -1,13 +1,16 @@
 ---
 id: pbh9xq
 title: "Lint: separate broken from not up to par"
-status: todo
+status: "doing"
 type: feature
 priority: "medium"
 assignee: ["wyvern"]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
