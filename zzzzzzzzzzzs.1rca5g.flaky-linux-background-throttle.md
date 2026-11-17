@@ -1,21 +1,17 @@
 ---
 id: 1rca5g
 title: "Flaky on Linux: background throttle test reads nice=0 instead of 10"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T14:38"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ci/1rca5g"
 worktree: "/Users/jhf/.jcode/scratch/guppy-own"
-waiting_on: "its landing turn (ci/1rca5g e420c3a, CI 44094805524)"
-waiting_since: "2026-11-17T14:45"
-waiting_asked_by: "hatchling"
+done_at: "2026-11-17T16:08"
 ---
 
 ## Goal
@@ -45,3 +41,4 @@ hatchling 15:08: landed on main by fast-forward 4ecfa25..b8f9000 (zd3x24 95bcb99
 ## History
 - 2026-11-17T14:38 todo -> doing/active (take)
 - 2026-11-17T14:45 doing/active -> doing/waiting (wait)
+- 2026-11-17T16:08 doing/waiting -> done (done); was doing_since: 2026-11-17T14:38; waiting_asked_by: hatchling; waiting_on: its landing turn (ci/1rca5g e420c3a, CI 44094805524); waiting_since: 2026-11-17T14:45
