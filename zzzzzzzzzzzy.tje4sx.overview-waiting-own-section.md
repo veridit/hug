@@ -40,5 +40,6 @@ Code: overview sections in huginn/internal/tui (render.go, stage.go forYou()). T
 Jørgen 20:00 local: only the focused row shows two lines; every other row is one line. Reverses the 89y0b7 rule that every waiting row takes two lines. So: unfocused waiting row = one line with the title (as before 89y0b7, plus the ? on rows on you); the row under the cursor opens its second line '└─ waiting on you: ... since ...'. Section heights and scrolling count the one extra line of the focused row.
 
 
+crab 20:10 rulings (asked by nautilus): (1) doing/depends goes to WAITING (stuck on a task); Bravo's test changes. (2) WAITING = every open task whose stage waits on a person or thing: waiting, design, review, todo or doing alike (a question for Jørgen sits where he looks, not in NEXT UP); todo/depends stays in NEXT UP (not ready yet, nobody asked). (3) '? N for you' stays in the top header (the one count seen in every view); the WAITING header is 'WAITING · N', no second count: on-you rows come first and carry the ?. WAITING rows keep the owner column. One focused row with two lines applies in list and board too.
 ## History
 - 2026-11-17T20:03 todo -> doing/active (take)
