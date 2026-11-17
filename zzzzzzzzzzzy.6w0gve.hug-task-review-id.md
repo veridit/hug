@@ -31,7 +31,7 @@ Plumbing to copy: task.WaitShowing/DesignShowing (moves.go), states.go node fiel
 
 ## Acceptance
 - [x] hug task review ID --by jhf moves a doing task to todo/review with review_by jhf and review_since, one commit, shown by hug task show
-- [ ] With a show file, review writes review_show; a file the task does not carry is refused with a fix: line; the TUI detail draws it under the review question
+- [x] With a show file, review writes review_show; a file the task does not carry is refused with a fix: line; the TUI detail draws it under the review question
 - [ ] hug task answer on a review clears review_by, review_since and review_show
 - [ ] MCP task_update action review with by and show does the same; help and hug task states list the move and the field
 
