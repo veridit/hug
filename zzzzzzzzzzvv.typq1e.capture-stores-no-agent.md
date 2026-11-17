@@ -30,7 +30,7 @@ Eval sets and method: muninn/docs/CAPTURE4.md. Post-check: commit 4cf6414. Agent
 ## Depends on
 
 ## Acceptance
-- [ ] on the CAPTURE4 sets, memories naming an agent are 0 per transcript, durable memories unchanged (blind-judged)
+- [ ] ~~on the CAPTURE4 sets, memories naming an agent are 0 per transcript, durable memories unchanged (blind-judged)~~ (not relevant: 0 per transcript not reached and not pursued (crab 20:12): measured 0.025 / 0.050 on the CAPTURE4 sets with FindIn, 0 durable lost; replaced by check 3, hatchling, 2026-11-17)
 - [ ] the same holds on a fresh set fixed before tuning
 
 ## Notes
