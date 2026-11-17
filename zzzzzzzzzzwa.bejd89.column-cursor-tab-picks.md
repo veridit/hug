@@ -51,6 +51,7 @@ Parked for tje4sx (Jørgen's ruling goes first). WIP at 63beb14 on origin/nautil
 Correction: the T/P arrow fix is in 63beb14 too; nothing uncommitted.
 Landed f003cfc (856a8ca..f003cfc on main). Check 1: TestColumnCursorMarksHeader + golden testdata/columns/cursor.txt (list at 80 and 140: '▸TYPE ▲' marked, one ▸ only; h/l still change section, TestSections*). Check 2: TestColumnOrderCycles (o: [{priority false}] -> desc -> off = rank order; within overview sections). Check 3: TestColumnOrderSurvives (header 'PRIOR ▲' and hint 'o order by priority (▼)'; survives R reload handoff Column and a filter). Check 4: TestViewKeysMoveToV (o no longer switches view; v o/i/b/! in help; i/b/! alone). Board's one-letter T/P cells keep the arrow; WAITING gets the OWNER header like IN PROGRESS. Tests fail on main (columns_test.go does not compile there: m.column undefined). Gates: go test -race ./huginn/internal/tui/ ok 178.2s; go test ./... 32 ok, exit 0. tmux goldens 80x24/140x40 colour+no-colour regenerated and reviewed.
 landed f003cfc on main 2026-11-17: hug tui: Tab picks a column, o orders by it; views move to the v prefix (bejd89)
+landed 2f5f206 on main 2026-11-17: Merge v0.7.46 into main (bejd89 and aad670d's 46ek1f wording stay under…
 ## History
 - 2026-11-17T15:09 todo -> doing/active (take)
 - 2026-11-17T16:30 doing/active -> todo/ready (give back; was assignee: nautilus); was doing_since: 2026-11-17T15:09

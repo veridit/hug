@@ -66,5 +66,6 @@ Check 5, Seid copy (2,520 tasks), ps time of an open TUI, 3 hug task notes 12 s 
 - Main f003cfc, which has a64fcc3 and 856a8ca: 0.49-0.51 s per note (1.42 -> 1.93 -> 2.43 -> 2.92).
 - aad670d: 0.26-0.31 s per note (0.97 -> 1.23 -> 1.52 -> 1.83).
 Keys, 100 presses of j, re-measured after the bejd89 rebase: f003cfc 5.18 s (1.37 -> 6.55), aad670d 0.68 s (0.88 -> 1.56), about 6.8 ms a key.
+shipped in v0.7.46 (a64fcc3)
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
