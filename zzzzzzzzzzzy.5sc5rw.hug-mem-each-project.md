@@ -3,8 +3,8 @@ id: 5sc5rw
 title: "hug mem: each project memory has a twin, and forget retires only one"
 state: todo
 type: feature
-priority: ""
-assignee: []
+priority: "high"
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
