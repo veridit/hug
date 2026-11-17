@@ -37,5 +37,6 @@ muninn/internal/daemon/dream.go:14 QuietFor 30m, :17 DreamEvery 20h, :21 dreamWh
 ## Notes
 
 
+Started design 22:21Z, paused for wdkqzx (crab). Facts so far: dream is called only at muninn/internal/daemon/dream.go:35 from watch.go:79 (serve's 5-min ticker). One dry-run pass on a copy of the live index: 11.9 s wall, 9.5 s user, 302 MB max RSS (niced, GOMAXPROCS=2). Its 'Would retire 2574' is mostly the 2571 active 5sc5rw twins (that copy still held the live source, 2571 active imp_ repo: units); rerun the dry run on the live store after the v0.7.49 fold for the real residue. Existing detached-pass pattern to reuse: project.Nudge / gitbranch.Background (muninn/internal/project/background.go). Design proposal to crab before building.
 ## History
 - 2026-11-17T23:20 todo -> doing/active (take)
