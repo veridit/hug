@@ -16,7 +16,7 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-Capture never stores a memory that names a swarm agent or its status: from 0.19 and 0.25 such memories per agent transcript (after ez50rb's post-check) to 0, with durable memories unchanged.
+Capture stores fewer memories that name a swarm agent, with durable memories kept. Measured (blind judge, main prompt, per agent transcript, judge agent-name memories left): shipped Find 0.087 / 0.163 / 0.175 / 0.237 on sample 1 / fresh / fresh2 (held out) / fresh3 -> FindIn 0.025 / 0.050 / 0.050 / 0.100. Durable lost: 0 on 3 sets; on fresh3 1 of 80 run-items (0.013/transcript), item 1011.0 run 2, a work order naming a gone agent, which the judge split on across runs. Not 0: role words ('the foreman') and names the chunk shows only outside agent context ('via fox', goat, daisy) remain (muninn/docs/CAPTURE4.md).
 
 ## Purpose
 ez50rb check 3 says 'never stores agent status'; the shipped post-check (4cf6414) cut it from 0.31/0.42 to 0.19/0.25 per transcript in the blind eval (muninn/docs/CAPTURE4.md), not to 0. The prompt rule that went further lost durable memories and was not shipped. ez50rb was closed with this remainder; this ticket owns it.
