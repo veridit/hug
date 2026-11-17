@@ -249,3 +249,25 @@ func TestJumpTypedBeforeBoardOpensWhenItArrives(t *testing.T) {
 		t.Fatalf("edited jump opened: detail %v prompt %q", after.detail, after.prompt)
 	}
 }
+
+// The first frame has the terminal's size, before any WindowSizeMsg: a
+// 140x40 terminal never sees a 100-column frame first (vnyz8z).
+func TestFirstFrameHasTerminalSize(t *testing.T) {
+	m := fixture(t)
+	old := terminalSize
+	terminalSize = func() (int, int, bool) { return 140, 40, true }
+	defer func() { terminalSize = old }()
+	start := startModel(context.Background(), m.store, Options{User: "tester", NoWatch: true, Initial: &Initial{Tasks: m.all}})
+	lines := strings.Split(ansi.Strip(start.View()), "\n")
+	if len(lines) != 40 {
+		t.Fatalf("first frame has %d lines, want 40", len(lines))
+	}
+	for i, l := range lines {
+		if w := ansi.StringWidth(l); w > 140 {
+			t.Fatalf("line %d is %d wide", i+1, w)
+		}
+	}
+	if w := ansi.StringWidth(lines[0]); w != 140 {
+		t.Fatalf("first frame header is %d columns wide, want 140:\n%s", w, lines[0])
+	}
+}

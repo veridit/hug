@@ -86,7 +86,7 @@ func Run(ctx context.Context, store *task.Store, opts Options) error {
 	if store == nil {
 		return fmt.Errorf("task store is required")
 	}
-	m := newModelCtx(ctx, store, opts)
+	m := startModel(ctx, store, opts)
 	// Quitting never waits for a refresh or the watches (vnyz8z).
 	defer func() { m.release() }()
 	// A hug that reloaded into this one left its place (j2vwk0).

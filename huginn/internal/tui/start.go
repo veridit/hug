@@ -3,9 +3,11 @@ package tui
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/x/term"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -112,7 +114,7 @@ func (m model) startWatching() tea.Cmd {
 // for a refresh or the watches: the refresh's context is cancelled and the
 // watches are closed in the background.
 func runProgram(ctx context.Context, store *task.Store, opts Options, popts ...tea.ProgramOption) error {
-	_, err := runOnce(ctx, newModelCtx(ctx, store, opts), popts...)
+	_, err := runOnce(ctx, startModel(ctx, store, opts), popts...)
 	return err
 }
 
@@ -137,4 +139,27 @@ func (m model) release() {
 	if b := m.bin; b != nil {
 		go b.close()
 	}
+}
+
+// terminalSize is stdout's size when it is a terminal (a test replaces it).
+var terminalSize = func() (width, height int, ok bool) {
+	if !term.IsTerminal(os.Stdout.Fd()) {
+		return 0, 0, false
+	}
+	w, h, err := term.GetSize(os.Stdout.Fd())
+	return w, h, err == nil && w > 0 && h > 0
+}
+
+// startModel is the model a TUI starts with. Its first frame is drawn
+// before Bubble Tea's WindowSizeMsg arrives, so it takes the terminal's
+// size here, read as Bubble Tea reads it (stdout): never the default
+// 100x30 redrawn at the real size a moment later (vnyz8z; crab 17:16: a
+// 140-column terminal showed a 100-column first frame, CI 44132567751).
+func startModel(ctx context.Context, store *task.Store, opts Options) model {
+	m := newModelCtx(ctx, store, opts)
+	if w, h, ok := terminalSize(); ok {
+		m.width, m.height = w, h
+		m.resize()
+	}
+	return m
 }
