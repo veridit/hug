@@ -1,7 +1,7 @@
 ---
 id: g9dg32
 title: "Deduce from git: commits on main and release tags mark the ticket"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["wyvern"]
@@ -9,6 +9,9 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "47sxn2"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
