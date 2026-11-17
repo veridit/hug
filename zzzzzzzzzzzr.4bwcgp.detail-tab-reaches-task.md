@@ -43,6 +43,7 @@ Sources: dependencies, waiting_on text (any 6-char id or alias that resolves), p
 
 Landed 4fb0c92 (3bc5d72..4fb0c92 on main). Design agreed with crab 19:50: in the detail Tab/Shift-Tab step task ids in reading order, h/l step sections (as in bejd89); Notes ids added per crab. Check 1: TestTabReachesWaitedOnID (Main waits 'on after <Blocker> (crab 17:52)'; 2nd Tab marks '└─ waiting on after ▸<Blocker>' (1st is the epic badge), Enter opens Blocker, Esc returns to Main; golden testdata/detail/tab-ids.txt at 80 and 140, ids named by title, stamps masked). Check 2: TestTabCyclesEveryIDInReadingOrder (stops parent, stage, deps, links, notes; zzzzzz in text and in task:zzzzzz is no stop; Tab wraps, Shift-Tab back; Enter on each kind opens it, Esc back; epic shows CHILDREN (2) and Tab steps them, Enter opens; l still changes section; no ids -> 'no task id here'). Both fail on main (idStops undefined). Gates on rebased tree: go test -race ./huginn/internal/tui/ ok 201.1s; earlier tree go test ./... 32 ok exit 0. Section-Tab tests moved to l/h; messages 'Tab focuses the checks' now 'l focuses the checks'; key bar 'Tab next id', h/l section to ? help below 160 so S screen keeps fitting at 140.
 landed 4fb0c92 on main 2026-11-17: hug tui: in a task, Tab steps through every task id shown; Enter opens it…
+shipped in v0.7.47 (4fb0c92)
 ## History
 - 2026-11-17T20:45 todo -> doing/active (take)
 - 2026-11-17T21:27 doing/active -> doing/waiting (wait)

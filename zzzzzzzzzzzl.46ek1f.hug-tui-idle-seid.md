@@ -13,6 +13,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T21:23"
+done_release: "v0.7.47"
 ---
 
 ## Goal
@@ -68,6 +69,7 @@ Keys, 100 presses of j, re-measured after the bejd89 rebase: f003cfc 5.18 s (1.3
 shipped in v0.7.46 (a64fcc3)
 Green main containing every 46ek1f commit (a64fcc3, 856a8ca, aad670d): 5ab3031, CI 44166537566 success on all 5 jobs. aad670d's own run (44163752203) failed on Windows TestColumnCursorMarksHeader (CRLF golden from bejd89), which 3c20bcf fixed.
 Reflection (open, 2026-11-17, wyvern): AGENTS.md's 'Prove root causes' guided this well. The ticket's premise (idle burn) did not reproduce: crab's 19.2 s was a first start rebuilding the cache. Measuring before accepting it turned the work toward the real cost, per change and per key. One gap: the instructions say 'no wall-clock budgets: use counts' but give no pattern for 'does not grow with the board'. Comparing the same count on a 300 and a 3,000 task board worked and is worth naming.
+shipped in v0.7.47 (aad670d)
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
 - 2026-11-17T21:23 doing/active -> done (done); was doing_since: 2026-11-17T18:53
