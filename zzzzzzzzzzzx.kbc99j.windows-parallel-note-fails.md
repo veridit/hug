@@ -4,7 +4,7 @@ title: "Windows: a parallel note fails with 'file is being used by another proce
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
