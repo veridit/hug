@@ -11,10 +11,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing turn: checks 1-2 ticked; combined with 4vcwxk on kestrel/land-kbc99j-4vcwxk, queued after hatchling (crab 13:29)"
-waiting_since: "2026-11-17T14:33"
-waiting_asked_by: "calf"
-stage: "waiting"
+stage: "active"
 ---
 
 ## Goal
@@ -46,3 +43,4 @@ kestrel 13:29, CI 44090177314 on dd3e1ff (fix a45bec0 + TEMP step) green on all 
 
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
+- 2026-11-17T15:22 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: landing turn: checks 1-2 ticked; combined with 4vcwxk on kestrel/land-kbc99j-4vcwxk, queued after hatchling (crab 13:29); waiting_since: 2026-11-17T14:33
