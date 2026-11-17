@@ -46,5 +46,18 @@ Jørgen 23:49 local: the stage is named 'asked' (crab offered asked / ask / ques
 Jørgen 23:50 local: 'my answers can be multiple lines.' Today the TUI answer box is a one-line textinput (tui.go:428), pasted line breaks are lost, and task/answer.go:121 stores the answer strconv.Quote'd on one History line, so a multi-line answer shows as \n. Spec (crab): the answer box is a textarea that grows up to half the screen; Enter sends; Alt-Enter (or Shift-Enter where the terminal reports it) starts a new line; pasted and dictated text keeps its lines. History stores the answer as a block: 'answered asked (check 9), by jhf, for nautilus:' then the answer lines indented two spaces, read back verbatim. CLI: hug task answer ID - reads the answer from stdin; MCP text keeps its newlines. The asker's notice and the detail show every line.
 
 
+kestrel design 23:56 (building it now; say if any of this is wrong).
+Model (task/states.go): doing gains stage 'asked', set by agent, means 'the owner asked a named person something and cannot go on until they answer'. Fields: asked_what (required, the question), asked_for (required, who), asked_check (optional, 1..N), asked_since (hug), asked_by (hug, the asker), asked_show (optional task file). DoingOrder: asked, waiting, depends, review, active. waiting keeps waiting_on, waiting_since, waiting_asked_by (who waits; resume clears it); waiting_for and waiting_show go: a wait on a thing names no person and no file.
+Transitions: doing/active -> doing/asked 'hug task ask ID --to NAME [--check N] [--show FILE] "question"'; doing/asked -> doing/active 'hug task answer ID "..."' (and resume, for an owner who stops asking).
+CLI: ask as above; a bad --check N says 'ID has 9 checks' with fix 'hug task ask ID --to NAME --check 9 "..."'. wait --on NAME refuses: 'wait is for things; a question to a person is hug task ask' + fix 'hug task ask ID --to NAME "..."'. answer ID - reads stdin.
+History, multi-line (check 8): the answered line becomes
+  - TIME answered asked (check 9), by jhf, for nautilus (doing/asked -> doing/active):
+    > question line 1
+    > question line 2
+      answer line 1
+      answer line 2
+  The question's lines quoted with '> ', the answer's indented 2 spaces, both verbatim; a one-line answer uses the same block (one shape, no quoting). Old answered lines (strconv.Quote) still read.
+Upgrade: each doing/waiting with waiting_for -> doing/asked: asked_what = waiting_on minus a leading 'check N:' (N real -> asked_check), asked_for = waiting_for, asked_since/asked_by/asked_show from the waiting_ fields. Preview lists ID: from -> to; --apply commits once.
+MCP: task_update action ask (to, check, show, text); wait loses on.
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
