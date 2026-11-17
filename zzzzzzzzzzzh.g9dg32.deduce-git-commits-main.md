@@ -1,10 +1,10 @@
 ---
 id: g9dg32
 title: "Deduce from git: commits on main and release tags mark the ticket"
-status: "todo"
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
@@ -12,7 +12,8 @@ parent: "47sxn2"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-17T15:09"
 ---
 
 ## Goal
@@ -44,3 +45,4 @@ Back to todo (crab 13:31; wyvern resumes it after 49n9kw and 44w1ev check 3). Co
 
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
+- 2026-11-17T15:09 todo/ready -> doing/active (take)
