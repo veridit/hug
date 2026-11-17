@@ -33,3 +33,5 @@ Mock, cursor on 3mavpt with the TYPE column marked:
 - [ ] Jørgen moves the marker with H/L, orders with o, and pages with J/K, and says it reads clearly
 
 ## Notes
+
+Jørgen 23:23 local, detail view: a thin horizontal rule between the filter line ('No filters · f picker · 1 todo ...') and the task's title, so the title stands out and the task starts clearly below the headings. Same rule style as the one under the detail header (dim, full width).
