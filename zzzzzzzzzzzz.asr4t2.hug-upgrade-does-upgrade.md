@@ -4,7 +4,7 @@ title: "hug upgrade does the upgrade: runs hug task upgrade and hug mem's, then 
 status: todo
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
