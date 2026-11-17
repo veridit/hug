@@ -37,5 +37,6 @@ huginn/internal/task/questions.go noteQuestion and IdleFindings: skip when the s
 ## Notes
 
 
+crab 23:48 local, from Jørgen's 'is this lint truly clear?': besides the waiting case, the fix line 'hug task done 6ephqk' is wrong on its own. Check 9 is open, so hug task done refuses with unchecked-acceptance (verified on a scratch board). A fix: line must be one hug accepts.
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
