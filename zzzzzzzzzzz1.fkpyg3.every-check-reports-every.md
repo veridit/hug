@@ -32,7 +32,7 @@ Write-time check: huginn/internal/task/store.go New() (line ~168, returns on fir
 - [x] a task with missing Purpose, missing Principle and an 87-character title gets one lint entry listing all three and one fix: hug task set ID --purpose ... --principle ... --title ... (test)
 - [x] write-time checks and lint run the same check list: a task new/set accepts is lint-clean except for findings that need time (e.g. done-unchecked) (test enumerates the codes)
 - [x] MCP task_new/task_update return findings as a list plus the combined fix (test)
-- [ ] on seid-lang, hug task lint output has one entry per task, and the count line still shows totals per code (shown before and after)
+- [x] on seid-lang, hug task lint output has one entry per task, and the count line still shows totals per code (shown before and after)
 - [ ] every open task is held to the description pattern: PatternSince no longer exempts open tasks created before 2026-11-16 (done and dropped stay exempt); on seid-lang zjedy0's detail lists no acceptance, missing Purpose and missing Principle together (shown)
 - [ ] new findings for backlog import leftovers: <!-- SECTION:... --> markers, and the unused fields created_date, ordinal, backlog_status, import_type_inference; their fix is hug upgrade (test; seid-lang counts before and after)
 - [ ] hug task set ID --accept "..." --purpose "..." --principle "..." fixes those findings without an editor, so every combined fix: line is runnable (test)
