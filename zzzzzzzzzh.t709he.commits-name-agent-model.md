@@ -1,7 +1,7 @@
 ---
 id: t709he
 title: "Commits name the agent and model that made them (gate)"
-status: "doing"
+status: "done"
 type: feature
 priority: "high"
 assignee: ["wyvern"]
