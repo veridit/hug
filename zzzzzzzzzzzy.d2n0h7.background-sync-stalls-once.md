@@ -28,3 +28,5 @@ Seen: CI 44156864971, sync_test.go:87. Not reproduced locally. settled() dumps q
 - [ ] the stall is reproduced or explained from a failing run's dump, and a test fails before the fix and passes after
 
 ## Notes
+
+kestrel: not reproduced in 10+12+4 runs (cli package -race loop, 10 runs of which 2 failed on unrelated git segfaults: run 9 'TestLintHidesClosedTasks: git add: signal: segmentation fault', run 12 'TestEightWritersMixedCommandsAllLand ... diff --cached --name-only: signal: segmentation fault'; 12 targeted -race runs of TestBackgroundSync*; 4 more targeted). Diagnostics on failure in place: settled() now prints 'queued %v, busy %v, pending %v, turn held %v (log ...)' plus the pass log. Left open for the next CI failure's dump.
