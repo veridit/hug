@@ -59,5 +59,6 @@ History, multi-line (check 8): the answered line becomes
   The question's lines quoted with '> ', the answer's indented 2 spaces, both verbatim; a one-line answer uses the same block (one shape, no quoting). Old answered lines (strconv.Quote) still read.
 Upgrade: each doing/waiting with waiting_for -> doing/asked: asked_what = waiting_on minus a leading 'check N:' (N real -> asked_check), asked_for = waiting_for, asked_since/asked_by/asked_show from the waiting_ fields. Preview lists ID: from -> to; --apply commits once.
 MCP: task_update action ask (to, check, show, text); wait loses on.
+Header picture for all of tonight's rulings is attached to e3sevr as header-spec.md (crab 00:00 local). Build to it. Where it and this ticket differ, tell crab.
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
