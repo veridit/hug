@@ -1,22 +1,17 @@
 ---
 id: 5sc5rw
 title: "hug mem: each project memory has a twin, and forget retires only one"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T22:24"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_asked_by: "hatchling"
-waiting_for: "crab"
-waiting_on: "v0.7.49 installed (release of 833eee1), then check 3 via hug upgrade"
-waiting_since: "2026-11-17T23:20"
+done_at: "2026-11-18T00:03"
 ---
 
 ## Goal
@@ -54,6 +49,8 @@ CI 44188866860 on 833eee1: success, all 5 jobs (secrets, bench, test ubuntu/maco
 shipped in v0.7.49 (833eee1)
 file:check3.txt (1568 bytes, sha256:f9f39901)
 Check 3 on the live store with brew hug v0.7.49 (23:02Z, no hug mem serve running). Before: memories 16310, active 15821, twin pairs 2651, both active 2571. 'hug upgrade' preview: 'memory: would fold 449 ... client:ssb:rc-898d04734041ab10', '555 ... project:rc-0ca4bf6be5d989c3', '1647 ... project:rc-3557a74eab224a4c', exit 5, store unchanged. 'hug upgrade --apply': folded 449/555/1647, backup memories.json.bak-upgrade-20261117T230203Z, exit 0. After: memories 13659, active 13250, twin pairs 0, both active 0; active (scope,text) 13250 before and after, 0 lost; ids removed 2651, all imp_, 0 added. Index: 13250 active native units, 0 not in memories.json. Second 'hug upgrade': 'memory: nothing to do', exit 0. file:check3.txt
+Reflection (open, 2026-11-18, hatchling): Writing the bar before any run (AGENTS.md, Recall changes) kept me honest: the A/B came out exactly +0.000, and with the bar written down that counts as a pass rather than an ambiguity. Gaps: nothing says the recall4 harness needs its db under the scratch recall4 folder, or that a HUG_HOME copy of the store keeps the live source row in the copied index (my scratch dream dry run still counted the live twins). The bash gate refuses an inline env assignment before a command; passing the env through a small script worked.
 ## History
 - 2026-11-17T22:24 todo -> doing/active (take)
 - 2026-11-17T23:20 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:03 doing/waiting -> done (done); was doing_since: 2026-11-17T22:24; waiting_asked_by: hatchling; waiting_for: crab; waiting_on: v0.7.49 installed (release of 833eee1), then check 3 via hug upgrade; waiting_since: 2026-11-17T23:20
