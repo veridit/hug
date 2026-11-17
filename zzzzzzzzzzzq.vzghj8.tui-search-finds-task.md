@@ -35,3 +35,5 @@ huginn/internal/tui/tui.go:352 builds the search text from t.Slug, t.Title, t.ID
 ## Notes
 
 568c3e3 on ci/vzghj8 (on the wyvern stack): / search matches aliases, the row names the alias it matched; # jump already matched them. TestSearchAndJumpFindImportedAlias fails before the fix ('/ statbus-402 found []'); huginn/internal/tui passes with it, goldens unchanged.
+
+Checks 1 and 2 on main d74af5d (25459c1, CI 44087396396 green on all 5 jobs). TestSearchAndJumpFindImportedAlias (huginn/internal/tui/alias_search_test.go): '/ statbus-402' leaves the one task visible and selected, and the row reads 'Statbus import · STATBUS-402'; '/ statbus imp' (a title match) shows no alias; '# STATBUS-402 enter' opens that task. It failed before the fix. Golden for check 1: ci/vzghj8-golden adds testdata/rows/alias-search-120.txt (the whole list screen, ids as ######; fixture gets Purpose/Principle so the screen has 0 findings), CI 44091154613. A mutation dropping the ' · ' separator in render.go fails the test. Check 3 is Jørgen's, on the Statbus board.
