@@ -114,6 +114,17 @@ func (d *Document) parseFrontmatter() {
 		if e := value.Decode(target); e != nil {
 			d.add(key.Line+1, fmt.Sprintf("invalid %s: %v", k, e))
 		}
+		// A blank name is nobody (r5r8c1): 13 imported Seid tasks carry
+		// assignee: [""], which take read as taken, "taken by  (ID)".
+		if k == "assignee" {
+			names := d.Task.Assignee[:0]
+			for _, a := range d.Task.Assignee {
+				if strings.TrimSpace(a) != "" {
+					names = append(names, a)
+				}
+			}
+			d.Task.Assignee = names
+		}
 	}
 }
 

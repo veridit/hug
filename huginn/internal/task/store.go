@@ -508,7 +508,15 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 		blocked := Blocked(d.Task, ts)
 		if len(blocked) > 0 {
 			if policy != "warn" {
-				return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Dependencies: blocked, Fix: "hug task show " + blocked[0].ID}
+				// The ways out (r5r8c1): work on the first blocker (take it
+				// when it is todo), or drop the dependency.
+				first := blocked[0]
+				way := "hug task show " + first.ID
+				if first.State == "todo" {
+					way = "hug task take " + first.ID + " --model MODEL"
+				}
+				fixes := []string{way, "hug task dep " + d.Task.ID + " --remove " + first.ID}
+				return Result{}, &Error{Kind: "blocked", ID: d.Task.ID, Dependencies: blocked, Fix: fixes[0], Fixes: fixes}
 			}
 			warnings = append(warnings, "open dependencies")
 		}

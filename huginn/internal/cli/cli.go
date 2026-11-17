@@ -1402,6 +1402,16 @@ func ErrorDetails(err error) (int, string, string) {
 			problem += "; " + m.Slug + " " + m.ID
 		}
 		fixes := []string{}
+		// A take or done held back by open dependencies (r5r8c1) says
+		// "ID is blocked by DEP title (state)" for each; the fixes (set
+		// where the error is made) are the ways out, one fix: line each.
+		if t.Kind == "blocked" && t.Field == "" && len(t.Dependencies) > 0 {
+			by := []string{}
+			for _, d := range t.Dependencies {
+				by = append(by, d.ID+" "+d.Title+" ("+d.State+")")
+			}
+			return code, t.ID + " is blocked by " + strings.Join(by, "; "), t.Fix
+		}
 		for _, d := range t.Dependencies {
 			problem += "; " + d.ID + " " + d.Title
 			fixes = append(fixes, "hug task show "+d.ID)
