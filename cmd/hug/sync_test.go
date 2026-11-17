@@ -124,28 +124,56 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 
 // quiet waits up to 60 s until no background pass holds or waits for a run
 // lock in the clones (their .git/hug/sync/*.run and *.queue files).
+//
+// One look was not enough (44w1ev, macOS CI run 44049348743 and 1 in 5 local
+// runs on 8e9df0b: "TempDir RemoveAll cleanup: ... directory not empty"): a
+// read in the test's last poll spawns a syncer that has not taken its queue
+// yet (only its .pending marker exists), and a pass moves from the queue to
+// the run lock after the run lock was looked at. So every look globs again,
+// counts a fresh .pending marker as busy, and the clones count as quiet only
+// after two idle looks 500 ms apart.
 func quiet(t *testing.T, clones ...string) {
 	deadline := time.Now().Add(60 * time.Second)
-	for _, c := range clones {
-		locks, _ := filepath.Glob(filepath.Join(c, ".git", "hug", "sync", "*.run"))
-		more, _ := filepath.Glob(filepath.Join(c, ".git", "hug", "sync", "*.queue"))
-		for _, l := range append(locks, more...) {
-			for time.Now().Before(deadline) {
-				release, ok, err := flock.TryAcquire(l)
-				if err != nil {
-					break
-				}
-				if ok {
-					release()
-					break
-				}
-				time.Sleep(100 * time.Millisecond)
-			}
+	idle := 0
+	for idle < 2 && time.Now().Before(deadline) {
+		if busySyncers(clones) {
+			idle = 0
+			time.Sleep(100 * time.Millisecond)
+			continue
+		}
+		if idle++; idle < 2 {
+			time.Sleep(500 * time.Millisecond)
 		}
 	}
-	if time.Now().After(deadline) {
+	if idle < 2 {
 		t.Logf("background passes still running after 60 s")
 	}
+}
+
+// busySyncers reports a syncer pending, queued or running in any clone.
+func busySyncers(clones []string) bool {
+	for _, c := range clones {
+		dir := filepath.Join(c, ".git", "hug", "sync")
+		pending, _ := filepath.Glob(filepath.Join(dir, "*.pending"))
+		for _, p := range pending {
+			if st, err := os.Stat(p); err == nil && time.Since(st.ModTime()) < 5*time.Second {
+				return true
+			}
+		}
+		queues, _ := filepath.Glob(filepath.Join(dir, "*.queue"))
+		runs, _ := filepath.Glob(filepath.Join(dir, "*.run"))
+		for _, l := range append(queues, runs...) {
+			release, ok, err := flock.TryAcquire(l)
+			if err != nil {
+				continue
+			}
+			if !ok {
+				return true
+			}
+			release()
+		}
+	}
+	return false
 }
 
 func between(s, from, to string) string {
