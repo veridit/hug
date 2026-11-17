@@ -33,8 +33,16 @@ func pie(done, total int) string {
 // all tasks, space; 0 when no task has checks. Typical boards ("2/4") spend
 // 6 columns, so narrow board columns keep their titles.
 func (m model) progressWidth() int {
+	if m.stages != nil {
+		return m.progressCols // the snapshot's (46ek1f)
+	}
+	return progressWidthOf(m.all)
+}
+
+// progressWidthOf is progressWidth for tasks.
+func progressWidthOf(tasks []task.Task) int {
 	w := 0
-	for _, t := range m.all {
+	for _, t := range tasks {
 		if done, total := checkCount(t); total > 0 {
 			w = max(w, len(fmt.Sprintf("%d/%d", done, total)))
 		}

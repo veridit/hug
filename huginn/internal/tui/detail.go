@@ -212,7 +212,7 @@ func (m model) detailHeader(t task.Task) []string {
 func (m model) questionLines(t task.Task) []string {
 	var out []string
 	if m.forYou(t) {
-		g := task.Stage(t, m.all)
+		g := m.taskStage(t)
 		q, asker, at := "", "", ""
 		switch g {
 		case "design":

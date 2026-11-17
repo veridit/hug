@@ -349,7 +349,7 @@ func (m *model) answerKey() tea.Cmd {
 		return nil
 	}
 	if !m.forYou(t) {
-		g := task.Stage(t, m.all)
+		g := m.taskStage(t)
 		m.message = t.ID + " asks you nothing (stage " + g + "): a answers a design question, a wait or a review that names you"
 		return nil
 	}

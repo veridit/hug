@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
@@ -30,7 +31,7 @@ var noteStages = map[string]bool{"waiting": true, "review": true, "design": true
 // stageOf is t's stage as rows show it: task.Stage, with depends when a
 // condition holds the task back (16dxsr), "" for done and dropped.
 func (m model) stageOf(t task.Task) string {
-	g := task.Stage(t, m.all)
+	g := m.taskStage(t)
 	if (g == "ready" || g == "active" || g == "draft") && m.blocked[t.Path] {
 		g = "depends"
 	}
@@ -49,17 +50,33 @@ func (m model) rowHeight(t task.Task, selected bool) int {
 // heightOf is rowHeight by index into visible; sel is the index drawn
 // selected in the section, or -1 for none.
 func (m model) heightOf(i, sel int) int {
+	heightLookups.Add(1)
 	if i < 0 || i >= len(m.visible) {
 		return 1
 	}
 	return m.rowHeight(m.visible[i], i == sel)
 }
 
+// heightLookups counts heightOf calls (46ek1f: a frame's count must not
+// grow with the board).
+var heightLookups atomic.Int64
+
 // linesOf is how many lines rows indices take, sel drawn selected.
 func (m model) linesOf(indices []int, sel int) int {
+	return m.linesUpTo(indices, sel, -1)
+}
+
+// linesUpTo is linesOf, but stops once the sum passes limit (a negative
+// limit: never): a frame asks whether rows fit the screen, and a section
+// of 2,000 rows need not be summed to learn it does not (46ek1f). Past
+// limit the result is more than limit and at most limit+2.
+func (m model) linesUpTo(indices []int, sel, limit int) int {
 	n := 0
 	for _, i := range indices {
 		n += m.heightOf(i, sel)
+		if limit >= 0 && n > limit {
+			return n
+		}
 	}
 	return n
 }
@@ -279,7 +296,7 @@ func (m model) window(indices []int, cursor, start, lines, sel int) (int, int) {
 	if n == 0 {
 		return 0, 0
 	}
-	if m.linesOf(indices, sel) <= lines {
+	if m.linesUpTo(indices, sel, lines) <= lines {
 		return 0, n
 	}
 	start = max(0, min(start, n-1))

@@ -236,7 +236,7 @@ func (m model) askedPicture(t task.Task) string {
 	if !m.forYou(t) {
 		return ""
 	}
-	switch g := task.Stage(t, m.all); g {
+	switch g := m.taskStage(t); g {
 	case "design":
 		return m.questionPicture(t, g, t.Fields["design_question"])
 	case "waiting":

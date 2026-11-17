@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/veridit/hug/huginn/internal/task"
@@ -140,7 +141,7 @@ func (m model) waitingFor(t task.Task) (who, what string) {
 // waiting_for. Only the stage that holds counts, so an outranked design
 // question waits until its dependency is done.
 func (m model) forYou(t task.Task) bool {
-	switch task.Stage(t, m.all) {
+	switch m.taskStage(t) {
 	case "review":
 		return m.isMe(t.Fields["review_by"])
 	case "design":
@@ -161,4 +162,28 @@ func (m model) forYouCount() int {
 		}
 	}
 	return n
+}
+
+// stageComputes counts task.Stage computations (46ek1f: a test checks that
+// a frame computes none once the snapshot is loaded).
+var stageComputes atomic.Int64
+
+// taskStage is task.Stage(t, m.all): the snapshot's, computed once per
+// load in apply (46ek1f), for a task of the board as loaded. A task built
+// on the spot (a give-back preview) is computed, and counted.
+func (m model) taskStage(t task.Task) string {
+	if g, ok := m.stages[t.Path]; ok && t.Path != "" {
+		return g
+	}
+	stageComputes.Add(1)
+	return task.Stage(t, m.all)
+}
+
+// computeStages fills m.stages for the board just loaded.
+func (m *model) computeStages() {
+	m.stages = make(map[string]string, len(m.all))
+	for _, t := range m.all {
+		stageComputes.Add(1)
+		m.stages[t.Path] = task.Stage(t, m.all)
+	}
 }

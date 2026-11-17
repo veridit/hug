@@ -398,8 +398,10 @@ func (m model) overviewRows() []int {
 	least, floor := make([]int, n), make([]int, n)
 	for p := range want {
 		idx := m.paneIndices(p)
-		want[p] = m.linesOf(idx, m.selIn(p))
 		least[p] = m.linesOf(idx[:min(len(idx), recentDone)], m.selIn(p))
+		// want is only compared with what fits (the budget, or least):
+		// summed that far, not over a 2,000-row section (46ek1f).
+		want[p] = m.linesUpTo(idx, m.selIn(p), max(budget, least[p]))
 		if len(idx) > 0 {
 			floor[p] = m.heightOf(idx[0], m.selIn(p))
 		}
@@ -846,7 +848,7 @@ func (m model) confirmLine() string {
 			if m.pendingValue == "give back" {
 				stage := task.Stage(task.Task{State: "todo", Fields: t.Fields, Goal: t.Goal, Acceptance: t.Acceptance, Dependencies: t.Dependencies}, m.all)
 				question = "Give back " + oneLine(t.ID) + " to todo (" + stage + ")"
-			} else if task.Stage(t, m.all) == "review" {
+			} else if m.taskStage(t) == "review" {
 				question = "Take " + oneLine(t.ID) + " for review as " + oneLine(m.me())
 			}
 		}

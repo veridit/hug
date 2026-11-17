@@ -142,8 +142,10 @@ type model struct {
 	findings                   []task.Finding
 	docs                       map[string]*task.Document
 	blocked, linted            map[string]bool
-	broken                     map[string]bool // paths with a broken finding (pbh9xq)
-	epics                      map[string]bool // lowercase ids of tasks with children
+	broken                     map[string]bool   // paths with a broken finding (pbh9xq)
+	stages                     map[string]string // task.Stage by path, per load (46ek1f)
+	progressCols               int               // progressWidth, per load (46ek1f)
+	epics                      map[string]bool   // lowercase ids of tasks with children
 	cursor, acceptance, offset int
 	dependency, detailPane     int
 	link                       int // the task:ID marked > in Links (xxvm6t)
@@ -568,6 +570,8 @@ func (m *model) apply(sn snapshot, path string) {
 	for _, t := range ts {
 		m.blocked[t.Path] = t.State != "done" && t.State != "dropped" && task.Waiting(t, ts)
 	}
+	m.computeStages()
+	m.progressCols = progressWidthOf(ts)
 	for _, f := range m.findings {
 		m.linted[f.Path] = true
 		if f.Severity() == task.Broken {
