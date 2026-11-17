@@ -1,7 +1,7 @@
 ---
 id: pbh9xq
 title: "Lint: separate broken from not up to par"
-status: "doing"
+status: "done"
 type: feature
 priority: "medium"
 assignee: ["wyvern"]
@@ -11,11 +11,7 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "waiting"
-doing_since: "2026-11-17T15:23"
-waiting_on: "main CI green on all jobs for ceb9d1a (contains ea2d369), then tick 1-5"
-waiting_since: "2026-11-17T18:16"
-waiting_asked_by: "wyvern"
+done_at: "2026-11-17T19:15"
 ---
 
 ## Goal
@@ -68,3 +64,4 @@ Ticks on green main: dcb20c2 contains 963df49..ea2d369 (and ceb9d1a, f9e5664), C
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:23 todo/ready -> doing/active (take)
 - 2026-11-17T15:59 doing/active -> doing/waiting (wait)
+- 2026-11-17T19:15 doing/waiting -> done (done); was doing_since: 2026-11-17T15:23; waiting_asked_by: wyvern; waiting_on: main CI green on all jobs for ceb9d1a (contains ea2d369), then tick 1-5; waiting_since: 2026-11-17T18:16
