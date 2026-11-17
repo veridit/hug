@@ -31,7 +31,7 @@ gitbranch: Sync/pull/push/UpdateMessage in huginn/gitbranch/gitbranch.go; memory
 - [x] with the remote unreachable, hug task note succeeds in under 400 ms and hug task ls reports '1 unpushed' with a fix: line; it is pushed after the remote returns and the next write happens (test)
 - [x] hug mem remember of a project memory in clone A is recallable in clone B within 10 s (test)
 - [x] a rebase conflict keeps both clones' commits, and lint shows it with fix: hug task sync (test)
-- [ ] real trial on two Statbus clones, noted with times
+- [x] real trial on two Statbus clones, noted with times
 
 ## Notes
 
