@@ -13,7 +13,10 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T16:08"
-stage: "active"
+stage: "waiting"
+waiting_on: "replay: ~370/400, judged blind after"
+waiting_since: "2026-11-17T17:33"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -54,3 +57,4 @@ hatchling 15:07, real-replay set (crab ruling B), size reported before running: 
 hatchling 16:05, scoring fixed before any judge verdict was seen (replay at 232/400): paired (turn, model) cells; a cell scores 1 when the run made at least one memory call the blind judge rated right; d = H2 - H0 per cell; bootstrap of sum(d) as header4 report.py (Random(813), 2000 resamples, 2.5/97.5 pct); wrong = count of judge-'wrong' memory calls per arm. Reported for all 40 turns (the bar) and split development 25 / heldout 15. Script: header4/real_report.py.
 ## History
 - 2026-11-17T16:08 todo -> doing/active (take)
+- 2026-11-17T17:33 doing/active -> doing/waiting (wait)
