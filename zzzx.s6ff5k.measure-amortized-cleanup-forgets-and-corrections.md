@@ -1,7 +1,7 @@
 ---
 id: s6ff5k
 title: "Measure amortized cleanup: forgets and corrections after recall"
-status: "todo"
+status: "doing"
 type: feature
 priority: ""
 assignee: ["hatchling"]
@@ -12,6 +12,8 @@ parent: "d634kr"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-17T16:08"
+stage: "active"
 ---
 
 ## Goal
@@ -47,3 +49,7 @@ hatchling 13:43, check 3 confirmation (header4/confirm.json, confirm-report.txt;
 hatchling 14:06, crab ruling B: the header is part of what recall shows, so the recall rule applies (real replayed messages, blind judge, fresh confirm). The synthetic result stays as supporting evidence: H2 vs H0 +9 of 70 [+2, +16]; stale-quiet2 0/10 -> 8/10; offtopic2 10/10 both; originals -1 of 40 [-5, +2]. Plan (after tpnd3n): filter recall2's 200-message dev set and the held-out 100 (sessions after 2026-11-05 23:00) for turns where recall showed a memory that was stale or later contradicted; run H0 and H2 on those turns; judge blind as RECALL4 (DeepSeek-Flash, 20-pair spot check); confirm on a fresh slice from sessions after 2026-11-13.
 
 hatchling 15:07, real-replay set (crab ruling B), size reported before running: 40 turns from recall3's 277 frozen messages (25 dev, 15 held-out) where a shown memory was stale. Selection, made before any arm ran: (a) the blind recall3 judge's reason calls the memory stale/superseded/older/contradicted (34 turns, regex in scratch/header4/stale-candidates.json), or (b) the memory is inactive in today's store (forgotten since: 5 turns, sids y6mjp3, c13rat, 06ppp9). File: scratch/header4/real-set.json. Arms H0-main vs H2-server, same 5 models as header4, 1 rep each = 400 runs. Prompt as header4 stale-quiet (the real message, then the block as jcode delivers it, tools: read_file, edit_file, run, your configured MCP tools; list calls as JSON). Scoring: DeepSeek Flash judge, blind to arm, rates each memory_* call 'right' (fixes a stale/wrong note) or 'wrong' (forgets/rewrites a note that still holds), plus a 20-pair spot check by me. PASS BAR (stated before running): H2 minus H0 in turns with a right memory fix > 0 with the 95% paired bootstrap interval above 0, and wrong memory calls H2 <= H0. Then confirm on sessions after 2026-11-13.
+
+
+## History
+- 2026-11-17T16:08 todo -> doing/active (take)
