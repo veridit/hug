@@ -1,6 +1,6 @@
 ---
 id: 46ek1f
-title: "hug tui on Seid: one reload per commit; a frame's work does not grow with the board"
+title: "hug tui on Seid: one load per commit; frame work not growing with the board"
 status: "doing"
 type: bug
 priority: "high"
