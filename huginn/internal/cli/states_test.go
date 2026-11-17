@@ -87,3 +87,49 @@ func TestMoveCommands(t *testing.T) {
 		t.Fatalf("lint after the moves: %d\n%s", code, out)
 	}
 }
+
+// 3jtfw9 check 2 (CLI): hug task answer answers the stage's question; the
+// asker sees it first in show and next --mine until it writes on the task.
+func TestAnswerCommand(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Tags", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
+	if code, out := runText(a, "answer", id, "drop it"); code != 2 || !strings.Contains(out, "asks nothing") || !strings.Contains(out, "fix: hug task show "+id+"\n") {
+		t.Fatalf("nothing asked: %d\n%s", code, out)
+	}
+	execute(t, a, "design", id, "should type leave the rows?", "--as", "nautilus", "--for", "jhf")
+	if code, out := runText(a, "answer", id); code != 2 || !strings.Contains(out, "fix: hug task answer "+id+` "the answer"`) {
+		t.Fatalf("no text: %d\n%s", code, out)
+	}
+	execute(t, a, "answer", id, "drop it", "--as", "jhf")
+	file := taskFile(t, a, id)
+	if !strings.Contains(file, `answered design: "should type leave the rows?" -> "drop it", by jhf, for nautilus (todo/design -> todo/ready)`) || strings.Contains(file, "design_question") {
+		t.Fatalf("file:\n%s", file)
+	}
+	// The asker: show leads with it, next --mine offers it first.
+	_, out := runText(a, "show", id)
+	if !strings.Contains(out, "answer for nautilus: jhf answered on "+id+": drop it (design: should type leave the rows?)\n") {
+		t.Fatalf("show:\n%s", out)
+	}
+	if r := execute(t, a, "next", "--mine", "--as", "nautilus"); r["task"].(Reply)["id"] != id || r["task"].(Reply)["answer"].(map[string]any)["text"] != "drop it" {
+		t.Fatalf("next --mine: %v", r)
+	}
+	// The asker writes: read. Show no longer leads with it.
+	a.Env["HUG_USER"] = "crab" // someone else's write: still unseen
+	execute(t, a, "note", id, "crab looked")
+	if file = taskFile(t, a, id); strings.Contains(file, "read the answer") {
+		t.Fatalf("crab marked it read:\n%s", file)
+	}
+	a.Env["HUG_USER"] = "nautilus"
+	execute(t, a, "note", id, "dropping type")
+	if file = taskFile(t, a, id); !strings.Contains(file, "nautilus read the answer") {
+		t.Fatalf("not read:\n%s", file)
+	}
+	if _, out = runText(a, "show", id); strings.Contains(out, "answer for") {
+		t.Fatalf("still shown:\n%s", out)
+	}
+	if code, out := runText(a, "lint"); code != 0 || !strings.Contains(out, "no findings") {
+		t.Fatalf("lint: %d\n%s", code, out)
+	}
+}

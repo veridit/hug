@@ -68,6 +68,10 @@ type move struct {
 	set   map[string]string
 	clear []string
 	why   string // History line suffix: "take", "wait", "reopen" ...
+	// line, when set, is the History line's text in place of the move
+	// (3jtfw9: 'answered design: "q" -> "a", by NAME, for ASKER'); the
+	// move follows in parentheses.
+	line string
 }
 
 // applyMove writes m on d: fields of nodes that no longer hold move to
@@ -107,6 +111,11 @@ func applyMove(d *Document, ts []Task, m move) error {
 	to := d.Task.Status
 	if d.Task.Stage != "" {
 		to += "/" + d.Task.Stage
+	}
+	if m.line != "" {
+		// The line already holds the moved fields' content (the question).
+		d.History(stamp() + " " + m.line + " (" + from + " -> " + to + ")")
+		return nil
 	}
 	if from != to || len(moved) > 0 {
 		line := stamp() + " " + from + " -> " + to

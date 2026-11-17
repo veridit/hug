@@ -82,6 +82,8 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 		// review_by = the TUI user, Model: human).
 		who.Model = "human"
 	}
+	// The TUI user's writes mark their unread answers read (3jtfw9).
+	s.s.Actor = who.assignee()
 	// The TUI lives while others write: it must read the files each time.
 	s.s.Snapshot = false
 	s.s.Invalidate()

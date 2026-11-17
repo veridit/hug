@@ -232,6 +232,9 @@ type Task struct {
 	// reading 10,000 files again (44w1ev). Kept out of the JSON payload:
 	// cli builds those keys itself. Read only: copies of a Task share it.
 	Texts *Texts `json:"-"`
+	// Answer is the newest answer in History its asker has not seen
+	// (3jtfw9): read from the file, never written as a field.
+	Answer *Answer `json:"answer,omitempty"`
 }
 
 // Texts of one task file, see Task.Texts.
@@ -514,6 +517,7 @@ func Parse(path string, data []byte) *Document {
 		}
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
+	d.Task.Answer = unseenAnswer(d.historyLines())
 	d.Task.Texts = &Texts{Bodies: true, Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}
 	for _, sec := range DescriptionSections {
 		d.Task.Texts.Description[sec] = d.sectionText(sec)

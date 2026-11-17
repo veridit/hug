@@ -1,0 +1,19 @@
+== asked
+Tags listed per board                                                                               
+[todo]  [feature]  [high]  eeeeee  group:root  unassigned
+created 2026-11-01 · updated 2026-11-01 · t
+? design: drop type from the rows, keep it, or show it only when not feature?                       
+  asked by crab · 8 min ago                                                                         
+  a answer                                                                                          
+== typing
+Tags listed per board                                                                               
+[todo]  [feature]  [high]  eeeeee  group:root  unassigned
+created 2026-11-01 · updated 2026-11-01 · t
+? design: drop type from the rows, keep it, or show it only when not feature?                       
+  asked by crab · 8 min ago                                                                         
+  answer: drop it                                                                                        
+== answered
+Tags listed per board                                                                               
+[todo]  [feature]  [high]  eeeeee  group:root  unassigned
+created 2026-11-01 · updated 2026-11-01 · t
+✓ jhf answered design: drop it · unread by crab                                                     

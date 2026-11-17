@@ -1034,6 +1034,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// - strikes the check marked > out as not relevant, asking for
 				// the reason; on a struck check it asks to restore it (sfa8w4).
 				return m, m.strikeKey()
+			case "a":
+				// a answers the question the task asks you, typed right under
+				// it (3jtfw9).
+				return m, m.answerKey()
 			case "t", "d", "x", "J", "K", "e":
 				return m, m.startAction(k)
 			case "/", ":", "#":
@@ -1260,6 +1264,17 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			m.strike(reason)
+			return m, nil
+		}
+		if m.prompt == answerPrompt {
+			text := strings.TrimSpace(m.input.Value())
+			m.prompt = ""
+			m.input.Blur()
+			if text == "" {
+				m.message = "not answered: the answer is empty (a again, then type it)"
+				return m, nil
+			}
+			m.answer(text)
 			return m, nil
 		}
 		if m.prompt == dropPrompt {

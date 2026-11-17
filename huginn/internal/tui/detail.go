@@ -190,7 +190,49 @@ func (m model) detailHeader(t task.Task) []string {
 		lines = append(lines, m.styles.warning.Render(fit(warning, m.width)))
 		lines = append(lines, m.styles.warning.Render(fit("  fix: "+oneLine(f.FixLine()), m.width)))
 	}
-	return lines
+	return append(lines, m.questionLines(t)...)
+}
+
+// questionLines put the question a task asks you at the top of its detail
+// (3jtfw9): the stage, the question, who asked and since when, and the key
+// that answers it. An answer its asker has not read yet shows there too.
+func (m model) questionLines(t task.Task) []string {
+	var out []string
+	if m.forYou(t) {
+		g := task.Stage(t, m.all)
+		q, asker, at := "", "", ""
+		switch g {
+		case "design":
+			q, asker, at = t.Fields["design_question"], t.Fields["design_asked_by"], t.Fields["design_since"]
+		case "waiting":
+			_, what, _ := strings.Cut(t.Fields["waiting_on"], ":")
+			q, asker, at = strings.TrimSpace(what), t.Fields["waiting_asked_by"], t.Fields["waiting_since"]
+		case "review":
+			q, asker, at = "review it: approve, or say what to change", strings.Join(t.Assignee, ", "), t.Fields["review_since"]
+		}
+		head := "? " + g + ": " + oneLine(q)
+		var by []string
+		if asker != "" {
+			by = append(by, "asked by "+oneLine(asker))
+		}
+		if s := strings.TrimPrefix(since(at), " · "); s != "" {
+			by = append(by, s+" ago")
+		}
+		out = append(out, m.styles.accent.Bold(true).Render(fit(head, m.width)))
+		if len(by) > 0 {
+			out = append(out, m.styles.dim.Render(fit("  "+strings.Join(by, " · "), m.width)))
+		}
+		if m.prompt == answerPrompt {
+			// Typed right under the question (Jørgen 11:45), not in the footer.
+			out = append(out, "  "+m.input.View())
+		} else {
+			out = append(out, m.styles.dim.Render(fit("  a answer", m.width)))
+		}
+	}
+	if a := t.Answer; a != nil {
+		out = append(out, m.styles.accent.Render(fit(fmt.Sprintf("✓ %s answered %s: %s · unread by %s", oneLine(a.By), a.Stage, oneLine(a.Text), oneLine(a.For)), m.width)))
+	}
+	return out
 }
 
 type detailSection struct{ name, text string }
