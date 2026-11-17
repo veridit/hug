@@ -26,7 +26,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 blocked
                                                             
                                                             
                                                             
-All tasks · : filters and commands                          
+All tasks · : filters and commands · ! lint finding · ↳ epic
                                                             
 j/k move · Enter open · f/# find · / search · : cmd · ? hel…
 == list at 60

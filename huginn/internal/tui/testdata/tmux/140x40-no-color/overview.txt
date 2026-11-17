@@ -3,38 +3,38 @@ HUG TASKS · overview   60/60 tasks · ! 7 findings
 todo 8  ·  doing 15 (1 blocked)  ·  blocked 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 blocked
 > IN PROGRESS · assigned to  [15] · 1–11 shown
-> ◑ 1/2 000002   doing   bug     critical Bug task 02: make the terminal workflow observable                    alice · feat/terminal-000002
-  ◑ 1/2 000006   doing   feature high     Feature task 06: make the terminal workflow observable                bob
-  ◑ 1/2 000010   doing   docs    high     Docs task 10: make the terminal workflow observable                   bob
-  ◑ 1/2 000014   doing   spike   medium   Spike task 14: make the terminal workflow observable                  carol · feat/terminal-000014
-  ◑ 1/2 000018   doing   chore   low      Chore task 18: make the terminal workflow observable                  alice
- !◑ 1/2 000022   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberat…  bob
- !◑ 1/2 000026   blocked feature high     Feature task 26: make the terminal workflow observable                carol · feat/terminal-000026
-  ◑ 1/2 000030   doing   docs    high     Docs task 30: make the terminal workflow observable                   carol
-  ◑ 1/2 000034   doing   spike   medium   Spike task 34: make the terminal workflow observable                  alice
-  ◑ 1/2 000038   doing   chore   low      Chore task 38: make the terminal workflow observable                  bob · feat/terminal-000038
-↓ ◑ 1/2 000042   doing   bug     critical Bug task 42: make the terminal workflow observable                    carol
+> ◑ 1/2 000002   doing   bug     critical compiler Bug task 02: make the terminal workflow observable           alice · feat/terminal-000002
+  ◑ 1/2 000006   doing   feature high     runtime Feature task 06: make the terminal workflow observable        bob
+  ◑ 1/2 000010   doing   docs    high     compiler Docs task 10: make the terminal workflow observable          bob
+  ◑ 1/2 000014   doing   spike   medium   runtime Spike task 14: make the terminal workflow observable          carol · feat/terminal-000014
+  ◑ 1/2 000018   doing   chore   low      docs Chore task 18: make the terminal workflow observable             alice
+ !◑ 1/2 000022   doing   bug     critical runtime Bug task 22: make the terminal workflow observable with a d…  bob
+ !◑ 1/2 000026   blocked feature high     docs Feature task 26: make the terminal workflow observable           carol · feat/terminal-000026
+  ◑ 1/2 000030   doing   docs    high     compiler Docs task 30: make the terminal workflow observable          carol
+  ◑ 1/2 000034   doing   spike   medium   docs Spike task 34: make the terminal workflow observable             alice
+  ◑ 1/2 000038   doing   chore   low      compiler Chore task 38: make the terminal workflow observable         bob · feat/terminal-000038
+↓ ◑ 1/2 000042   doing   bug     critical runtime Bug task 42: make the terminal workflow observable            carol
 
   NEXT UP · rank order  [8] · 1–3 shown
- !○ 2   000001   todo    feature critical ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that mus…
-  ○ 2   000009   todo    spike   high     Spike task 09: make the terminal workflow observable
-↓ ○ 2   000017   todo    bug     low      Bug task 17: make the terminal workflow observable
+ !○ 2   000001   todo    feature critical compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title…
+  ○ 2   000009   todo    spike   high     docs Spike task 09: make the terminal workflow observable
+↓ ○ 2   000017   todo    bug     low      docs Bug task 17: make the terminal workflow observable
 
   BLOCKED · unmet dependencies  [7] · 1–3 shown
-  ○ 2   000005   blocked docs    critical Docs task 05: make the terminal workflow observable
- !○ 2   000013   blocked chore   medium   Chore task 13: make the terminal workflow observable
-↓ ○ 2   000021   blocked feature critical Feature task 21: make the terminal workflow observable
+  ○ 2   000005   blocked docs    critical runtime Docs task 05: make the terminal workflow observable
+ !○ 2   000013   blocked chore   medium   runtime Chore task 13: make the terminal workflow observable
+↓ ○ 2   000021   blocked feature critical compiler Feature task 21: make the terminal workflow observable
 
   RECENTLY DONE · last closed  [30] · 1–3 shown
-        000003   done    feature medium   Render compiler-lang task detail without storage markers
-        000004   dropped spike   critical Spike task 04: make the terminal workflow observable
-↓ ● 2   000007   done    bug     high     Bug task 07: make the terminal workflow observable
+        000003   done    feature medium   compiler Render compiler-lang task detail without storage markers
+        000004   dropped spike   critical runtime Spike task 04: make the terminal workflow observable
+↓ ● 2   000007   done    bug     high     docs Bug task 07: make the terminal workflow observable
 
   LINT · tasks needing attention  [7] · 7 findings (3 on closed tasks hidden) · 1–3 shown
- !○ 2   000001   todo    feature critical ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that mus…
- !○ 2   000013   blocked chore   medium   Chore task 13: make the terminal workflow observable
-↓!◑ 1/2 000022   doing   bug     critical Bug task 22: make the terminal workflow observable with a deliberately long title that must trunc…
+ !○ 2   000001   todo    feature critical compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title…
+ !○ 2   000013   blocked chore   medium   runtime Chore task 13: make the terminal workflow observable
+↓!◑ 1/2 000022   doing   bug     critical runtime Bug task 22: make the terminal workflow observable with a deliberately long title that mu…
 
-All tasks · : filters and commands
+All tasks · : filters and commands · ! lint finding · ↳ epic
 
 j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                               hug v0.0.0
