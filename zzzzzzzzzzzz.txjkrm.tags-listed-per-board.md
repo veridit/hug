@@ -4,7 +4,7 @@ title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned
 status: todo
 type: feature
 priority: ""
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
