@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T17:30"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "main CI for e96d6f8 green on all jobs, then tick 1-3"
+waiting_since: "2026-11-17T17:43"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -41,3 +44,4 @@ Landed on main e96d6f8 (45cbc0b..e96d6f8; SchemaVersion is 16 on main now). Test
 landed e96d6f8 on main 2026-11-17: hug task cache: one database per cache schema (.git/huginn/cache-<N>.db), so two…
 ## History
 - 2026-11-17T17:30 todo -> doing/active (take)
+- 2026-11-17T17:43 doing/active -> doing/waiting (wait)
