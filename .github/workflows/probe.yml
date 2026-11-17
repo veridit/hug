@@ -1,0 +1,20 @@
+name: probe
+on:
+  push:
+    branches: ['probe/**']
+jobs:
+  probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Background throttle -count=50 (1rca5g)
+        run: go test -count=50 -v -run 'TestBackground' ./muninn/internal/throttle/ | grep -E '^(--- |ok|FAIL|PASS)' | sort | uniq -c
+      - name: Background throttle -count=50 with -race (1rca5g)
+        run: go test -race -count=50 -run 'TestBackground' ./muninn/internal/throttle/
