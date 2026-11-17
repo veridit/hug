@@ -31,3 +31,5 @@ Seid reference: tools/evidence.py lines 91-112: SCRATCH_REF, EVID_REF, LOST=' (l
 - [ ] on Seid, hug task lint reports what tools/evidence.py check reports (counts in the notes), so its hook can switch
 
 ## Notes
+
+hatchling 15:20, design read (not started; after s6ff5k per crab): files.go LintFiles forbid check (strings.Contains on whole doc, Line 0) becomes a line scan: for each line, each forbid prefix occurrence, take the cited path token (up to whitespace/backtick/paren/quote), skip if the text right after it is ' (lost)'; finding names path and line ('cites .jcode/scratch/X/y.md (a folder that gets deleted)', Line N), fix 'hug task attach ID FILE, or mark it (lost)'. Check 2: a regex for '.hug/tasks/<path>' citations resolves against s.Root; missing -> missing-file unless ' (lost)' follows. Check 3: setup.go offers forbid_cite = [".jcode/scratch/"] when .jcode/ exists and hug.toml has none. Check 4 needs Seid's tools/evidence.py run for counts.
