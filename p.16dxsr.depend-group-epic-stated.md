@@ -28,7 +28,7 @@ Condition kinds to start: load below N (5-min average), branch merged into main,
 ## Depends on
 
 ## Acceptance
-- [ ] a task depending on a group is blocked until every task in the group is done or dropped (test)
+- [x] a task depending on a group is blocked until every task in the group is done or dropped (test)
 - [ ] a task depending on an epic is blocked until all its children are closed (test)
 - [ ] a condition 'load below 120' blocks next while the 5-min load is above 120 and frees it when below (test with an injected load)
 - [ ] hug task show and the TUI print the unmet condition; lint flags an unknown condition with a fix: line (test)
