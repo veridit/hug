@@ -39,5 +39,6 @@ FILES section: huginn/internal/tui/detail.go:421 (hint 'j/k or [ ] step · Enter
 ## Notes
 
 
+nautilus 14:08: built on nautilus/scrxak, commit 0ea1611 from main 5b80e87, CI on ci/scrxak. Not on main. Check 1: TestGlanceShowsFile, golden huginn/internal/tui/testdata/detail/glance.txt at 80 and 140 (header 'compiler/000001/bench/README.md · 32 B · 1 of 5'; Esc and u back to Files with '> ⎘ evidence/escapes.log' marked). Check 2: TestGlanceStepsAndScrolls ('first file: 1 of 5', 'last file: 5 of 5', j/k/PgDn/PgUp offsets). Check 3: TestGlanceNeverPrintsRawBytes (no \x1b[2J, BEL or CR on screen; shown as \x1b[2J and \a; 'binary, 8 B: Enter opens it'; 1 MiB+1 file not read: 'too large to show here, 1.0 MiB: Enter opens it'). Check 4: readFile counted, 0 reads on list and detail, 1 per file shown.
 ## History
 - 2026-11-17T15:02 todo -> doing/active (take)
