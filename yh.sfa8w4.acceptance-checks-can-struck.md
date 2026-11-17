@@ -1,13 +1,16 @@
 ---
 id: sfa8w4
 title: "Acceptance checks can be struck out as not relevant, with a reason"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["kestrel"]
 labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
