@@ -11,6 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "CI 44095283897 on ci/49n9kw (4fd4777), then the landing slot after hatchling and kestrel"
+waiting_since: "2026-11-17T14:53"
+waiting_asked_by: "wyvern"
+stage: "waiting"
 ---
 
 ## Goal
@@ -42,3 +46,7 @@ Design (wyvern): an FTS5 table in the task cache, written in the same transactio
 Fix before landing (wyvern): the first version made a cold cache build 18-25x slower. Measured on board10k (10,000 tasks), niced, interleaved, cache.db removed: cold ls 91.2 s and 94.3 s on 87307f4, against 3.7 s and 5.1 s on main. Cause: DELETE FROM search WHERE path=? with path an UNINDEXED FTS5 column, whose plan is 'SCAN search VIRTUAL TABLE INDEX 0:', run once per file (10,000 full scans). Fix e629a24 on ci/49n9kw: search_paths(rowid, path UNIQUE), and the FTS row shares that rowid. After: cold ls 4.1 s and 4.2 s (main 3.3 s, 4.7 s). Warm 'hug task search memory limit' at 10k: 0.197, 0.197 and 0.205 s, process included. TestSearchWritesNeverScan fails on a full-scan plan; it failed on the old statement.
 
 Check 5 numbers (crab: note both, tick on the query). 4fd4777 on ci/49n9kw, CI 44095283897 bench job (ubuntu, HUG_BENCH=1, 10,000 tasks, median of 5). Query: 'search query warm 27ms (show 106ms, ratio 0.25, limit 0.50; target 100ms)'. Whole command: 'search warm 121ms, uncached 3.318s, ratio 0.04 (limit 0.50; target 400ms warm)'. The query was slow before 4fd4777 (it read all 7 text columns of every hit): 150-205 ms in-process locally. The bench fails if that comes back: '230ms is 1.27 of warm show 181ms, over 0.50'. Locally: query 32 ms, show 161 ms (ratio 0.20). Ticked when it lands.
+
+
+## History
+- 2026-11-17T14:53 doing -> doing/waiting (wait)
