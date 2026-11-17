@@ -9,10 +9,11 @@ import (
 // trailer, from HUG_MODEL (or --model where the command has it), the
 // identity take records.
 func TestBoardCommitsCarryModelTrailer(t *testing.T) {
+	t.Parallel()
 	a := app(t) // HUG_MODEL=test-model
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Trailer", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
-	t.Setenv("HUG_MODEL", "gpt-6.1-sol")
+	a.Env["HUG_MODEL"] = "gpt-6.1-sol"
 	execute(t, a, "note", id, "a note")
 	execute(t, a, "take", id, "--model", "claude-opus-5-5")
 	board := a.Cwd + "/" + TaskDir

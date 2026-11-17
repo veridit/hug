@@ -6,6 +6,7 @@ import (
 )
 
 func TestSecretHintNames(t *testing.T) {
+	t.Parallel()
 	for _, s := range []string{
 		// Built at run time: literal fixtures trip the repo's no-secrets gate.
 		"aws_" + "secret_access_key=" + "wJalr" + strings.Repeat("Xy7", 10),

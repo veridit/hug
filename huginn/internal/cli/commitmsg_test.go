@@ -21,6 +21,7 @@ func tryCommit(t *testing.T, dir string, args ...string) (string, bool) {
 
 // t709he check 1: hug task install commit-msg refuses a commit without one
 // Model: trailer, with a fix: line whose slot is refused as pasted.
+// Serial: it times commits, which parallel tests would slow.
 func TestCommitMsgGate(t *testing.T) {
 	a := app(t)
 	dir := realDir(t, a.Cwd)
@@ -149,6 +150,7 @@ func fastest(t *testing.T, dir string) (gate, plain time.Duration) {
 // A commit-msg hook already in .git/hooks keeps running, first; uninstall
 // puts it back.
 func TestCommitMsgGateChainsExistingHook(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	dir := realDir(t, a.Cwd)
 	hook := filepath.Join(dir, ".git", "hooks", "commit-msg")
@@ -182,6 +184,7 @@ func TestCommitMsgGateChainsExistingHook(t *testing.T) {
 // core.hooksPath (statbus, seid): the tracked hook is never edited; setup
 // shows the two lines to add and lists the step open until they are there.
 func TestCommitMsgGateWithHooksPath(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	dir := realDir(t, a.Cwd)
 	tracked := filepath.Join(dir, ".githooks", "commit-msg")

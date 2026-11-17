@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -72,8 +71,8 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 	return Reply{"board": cols, "next": next}, nil
 }
 
-func boardWidth() int {
-	if n, err := strconv.Atoi(os.Getenv("COLUMNS")); err == nil && n >= 60 {
+func boardWidth(columns string) int {
+	if n, err := strconv.Atoi(columns); err == nil && n >= 60 {
 		return n
 	}
 	return 120
@@ -88,8 +87,8 @@ func clip(s string, n int) string {
 }
 
 // writeBoard prints the columns side by side, one card per line.
-func writeBoard(w io.Writer, cols []BoardColumn) {
-	width := max(18, (boardWidth()-2*(len(cols)-1))/len(cols))
+func writeBoard(w io.Writer, cols []BoardColumn, total int) {
+	width := max(18, (total-2*(len(cols)-1))/len(cols))
 	cells := make([][]string, len(cols))
 	rows := 0
 	for i, c := range cols {

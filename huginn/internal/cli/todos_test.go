@@ -13,6 +13,7 @@ import (
 // tzc9hb: take teaches the loop. Todos are your own next steps on the task;
 // waits and dependencies go in the task; next: reads the task first.
 func TestTakeRemindsTodosAndShowsTask(t *testing.T) {
+	t.Parallel()
 	a, id := takeFixture(t)
 	code, out := runText(a, "take", id, "--model", "claude-opus-5-5")
 	if code != 0 {
@@ -41,6 +42,7 @@ func TestTakeRemindsTodosAndShowsTask(t *testing.T) {
 
 // tzc9hb check 1: the installed section states the loop.
 func TestAgentSectionStatesTodoLoop(t *testing.T) {
+	t.Parallel()
 	for _, want := range []string{
 		"Todos are your own next steps on the task you took",
 		"waits and dependencies go in tasks (hug task note, hug task dep), never\nin todos",

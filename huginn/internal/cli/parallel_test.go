@@ -13,6 +13,7 @@ import (
 // succeed and all land, also on a board without a remote: writes take the
 // board turn instead of colliding on git's index.lock.
 func TestParallelNotesWithoutRemoteAllLand(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Parallel", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
@@ -22,7 +23,7 @@ func TestParallelNotesWithoutRemoteAllLand(t *testing.T) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			c := &App{Cwd: a.Cwd, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+			c := &App{Cwd: a.Cwd, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}, Env: a.Env}
 			if _, e := c.Execute(context.Background(), []string{"note", id, "parallel " + strconv.Itoa(i)}); e != nil {
 				errs <- e
 			}

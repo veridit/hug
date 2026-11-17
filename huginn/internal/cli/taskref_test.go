@@ -13,6 +13,7 @@ import (
 // running text uses, as well as the bare id. Check 3: what it prints keeps
 // the bare id, so the next command runs when pasted into a shell.
 func TestEveryRefCommandAcceptsTaskColon(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	newID := func(args ...string) string {
@@ -27,7 +28,7 @@ func TestEveryRefCommandAcceptsTaskColon(t *testing.T) {
 	if e := os.WriteFile(src, []byte("x\n"), 0o644); e != nil {
 		t.Fatal(e)
 	}
-	useEditor(t, "", "") // edit leaves the file as it is
+	useEditor(t, a, "", "") // edit leaves the file as it is
 	T := func(id string) string { return "task:" + id }
 	for _, args := range [][]string{
 		{"show", T(beta)},

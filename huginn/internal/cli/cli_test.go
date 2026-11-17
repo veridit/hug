@@ -30,10 +30,10 @@ func app(t *testing.T) *App {
 	git(t, dir, "config", "user.name", "Test")
 	git(t, dir, "config", "user.email", "test@example.invalid")
 	git(t, dir, "commit", "--allow-empty", "-m", "init")
-	t.Setenv("HUG_USER", "tester")
-	t.Setenv("HUG_MODEL", "test-model")
-	t.Setenv("JCODE_SESSION_ID", "")
-	return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+	// The App's own environment, never the process's: tests that use app run
+	// in parallel (0sbvnq), which a process-wide setenv rules out.
+	return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{},
+		Env: map[string]string{"HUG_USER": "tester", "HUG_MODEL": "test-model", "JCODE_SESSION_ID": ""}}
 }
 func execute(t *testing.T, a *App, args ...string) Reply {
 	t.Helper()
@@ -58,6 +58,7 @@ func expectCode(t *testing.T, a *App, want int, args ...string) {
 	}
 }
 func TestLifecycleJSONContract(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	expectCode(t, a, 4, "next")
@@ -121,6 +122,7 @@ func TestLifecycleJSONContract(t *testing.T) {
 	}
 }
 func TestUsageAndText(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	for _, args := range [][]string{{"nex"}, {"next", "--typo", "bug"}, {"ls", "--status", "don"}, {"next", "--type", "bugs"}, {"new", "x"}, {"check", "abc", "zero"}} {
 		expectCode(t, a, 2, args...)
@@ -141,11 +143,11 @@ func TestUsageAndText(t *testing.T) {
 	}
 }
 func TestIdentityAndCommandHelp(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	// No name and no model: --mine has nobody to mean. git user.name
 	// ("Test", set by app) is never used (et85h1).
-	t.Setenv("HUG_USER", "")
-	t.Setenv("HUG_MODEL", "")
+	a.Env["HUG_USER"], a.Env["HUG_MODEL"] = "", ""
 	expectCode(t, a, 2, "next", "--mine")
 	r := execute(t, a, "help", "new")
 	if !strings.Contains(r["help"].(string), "--dep") || !strings.Contains(r["help"].(string), "--group") {
@@ -156,6 +158,7 @@ func TestIdentityAndCommandHelp(t *testing.T) {
 }
 
 func TestRejectedSetIsUnchanged(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	r := execute(t, a, "new", "Keep title", "--goal", "G", "--accept", "C")
 	id := r["task"].(Reply)["id"].(string)
@@ -181,6 +184,7 @@ func TestRejectedSetIsUnchanged(t *testing.T) {
 }
 
 func TestDependencyRecoveryAndCycle(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	first := execute(t, a, "new", "API", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
 	second := execute(t, a, "new", "Form", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
@@ -210,6 +214,7 @@ func TestDependencyRecoveryAndCycle(t *testing.T) {
 }
 
 func TestJSONErrors(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	if code := a.Run(context.Background(), []string{"ls", "--status", "don", "--json"}); code != 2 {
 		t.Fatal(code)
@@ -226,6 +231,7 @@ func TestJSONErrors(t *testing.T) {
 // board prints todo/doing/done side by side, marks blocked tasks and keeps
 // done short unless --all; the JSON carries the same columns.
 func TestBoardColumns(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	first := execute(t, a, "new", "First quartz", "--goal", "g", "--accept", "a")["task"].(Reply)["id"].(string)
@@ -249,7 +255,7 @@ func TestBoardColumns(t *testing.T) {
 	}
 	var out bytes.Buffer
 	a.Out = &out
-	t.Setenv("COLUMNS", "90")
+	a.Env["COLUMNS"] = "90"
 	if code := a.Run(context.Background(), []string{"board"}); code != 0 {
 		t.Fatalf("exit %d", code)
 	}
@@ -271,6 +277,7 @@ func TestBoardColumns(t *testing.T) {
 // a fix per finding, and next: repairs the first finding (text and JSON);
 // the task is not blocked.
 func TestLintNextFixesFirstFinding(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	r := execute(t, a, "new", "Recall nudges", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")
@@ -280,7 +287,7 @@ func TestLintNextFixesFirstFinding(t *testing.T) {
 	if clean["next"] != "hug task take "+id {
 		t.Fatalf("clean lint keeps the usual next: %v", clean)
 	}
-	useEditor(t, "## Depends on\n", "## Depends on\nIs there a task:asdfasdf or ticket:asdlfkjasldkfj?\n")
+	useEditor(t, a, "## Depends on\n", "## Depends on\nIs there a task:asdfasdf or ticket:asdlfkjasldkfj?\n")
 	edited := execute(t, a, "edit", id)
 	if edited["next"] != "hug task edit "+id {
 		t.Fatalf("edit next: %v", edited)
@@ -323,6 +330,7 @@ func TestLintNextFixesFirstFinding(t *testing.T) {
 // --code alone, rejects an unknown code with the list, and reads "help" as
 // asking for help, before or after flags. Errors end in a runnable fix.
 func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	run := func(args ...string) (int, string, string) {
@@ -399,6 +407,7 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 // More than lintBound findings: summary, the first lintShown, how to see all.
 // --all prints every one.
 func TestLintBoundedOutput(t *testing.T) {
+	t.Parallel()
 	var fs []task.Finding
 	for i := 0; i < 35; i++ {
 		fs = append(fs, task.Finding{Path: fmt.Sprintf("%03d.k7m2q%c.t.md", i, "0123456789abcdefghjkmnpqrstvwxyz"[i%32]), Line: 1, Problem: "Acceptance requires at least one item"})
@@ -428,10 +437,11 @@ func TestLintBoundedOutput(t *testing.T) {
 // 6neax1: findings on done or dropped tasks are hidden and counted by
 // default; --all shows them.
 func TestLintHidesClosedTasks(t *testing.T) {
+	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Closed one", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-	useEditor(t, "## Depends on\n", "## Depends on\nNothing\n")
+	useEditor(t, a, "## Depends on\n", "## Depends on\nNothing\n")
 	execute(t, a, "edit", id)
 	execute(t, a, "check", id, "1")
 	execute(t, a, "done", id)

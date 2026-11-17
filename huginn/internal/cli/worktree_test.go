@@ -15,13 +15,14 @@ import (
 // checkout of hug/tasks appears in git worktree list. Covers both a board
 // that exists before the linked worktree and one created from it.
 func TestLinkedWorktreeUsesMainBoard(t *testing.T) {
+	t.Parallel()
 	for _, initFrom := range []string{"main", "linked"} {
 		t.Run("init from "+initFrom, func(t *testing.T) {
 			main := app(t)
 			mainDir, _ := filepath.EvalSymlinks(main.Cwd)
 			linkedDir := filepath.Join(t.TempDir(), "linked")
 			git(t, mainDir, "worktree", "add", "--detach", linkedDir, "HEAD")
-			linked := &App{Cwd: linkedDir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
+			linked := &App{Cwd: linkedDir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}, Env: main.Env}
 			if initFrom == "main" {
 				execute(t, main, "init")
 			} else {

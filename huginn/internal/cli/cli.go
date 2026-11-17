@@ -11,9 +11,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
@@ -79,7 +81,55 @@ type App struct {
 	Out, Err io.Writer
 	// Version is what hug version prints; hug tui shows it in the key bar.
 	Version string
+	// Env overrides the process environment for this App's commands (who
+	// takes, the model trailer, the editor, COLUMNS): a key present here wins,
+	// "" included. Nil reads the process environment. Tests set it instead of
+	// os.Setenv, so they can run in parallel (0sbvnq).
+	Env map[string]string
 }
+
+// environ is the process environment with a.Env applied, for a child
+// process that stands in for the user (the editor); nil when a.Env is
+// empty, which exec reads as the process environment.
+func (a *App) environ() []string {
+	if len(a.Env) == 0 {
+		return nil
+	}
+	out := make([]string, 0, len(os.Environ())+len(a.Env))
+	for _, kv := range os.Environ() {
+		if k, _, _ := strings.Cut(kv, "="); !hasKey(a.Env, k) {
+			out = append(out, kv)
+		}
+	}
+	for k, v := range a.Env {
+		out = append(out, k+"="+v)
+	}
+	return out
+}
+
+// hasKey reports whether m holds k; on Windows variable names ignore case.
+func hasKey(m map[string]string, k string) bool {
+	if _, ok := m[k]; ok {
+		return true
+	}
+	if runtime.GOOS == "windows" {
+		for mk := range m {
+			if strings.EqualFold(mk, k) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// getenv is name from a.Env, else from the process environment.
+func (a *App) getenv(name string) string {
+	if v, ok := a.Env[name]; ok {
+		return v
+	}
+	return env.Get(name)
+}
+
 type Reply map[string]any
 
 type gitCache struct{ r *gitbranch.Repository }
@@ -220,8 +270,8 @@ type taker struct {
 }
 
 // harnessName is the session name the agent harness gives this process.
-func harnessName() string {
-	if id := strings.TrimSpace(os.Getenv("JCODE_SESSION_ID")); strings.HasPrefix(id, "session_") {
+func harnessName(sessionID string) string {
+	if id := strings.TrimSpace(sessionID); strings.HasPrefix(id, "session_") {
 		if name, _, ok := strings.Cut(strings.TrimPrefix(id, "session_"), "_"); ok && name != "" {
 			return name
 		}
@@ -239,23 +289,23 @@ func (a *App) whoTakes(f flags) taker {
 		t.At.Worktree = w
 	}
 	if t.Model == "" {
-		t.Model = takerModel(f)
+		t.Model = a.takerModel(f)
 	}
 	if t.Name == "" {
-		t.Name = strings.TrimSpace(env.Get(env.User))
+		t.Name = strings.TrimSpace(a.getenv(env.User))
 	}
 	if t.Name == "" {
-		t.Name = harnessName()
+		t.Name = harnessName(a.getenv("JCODE_SESSION_ID"))
 	}
 	return t
 }
 
 // takerModel is the model a command runs as: --model, else HUG_MODEL.
-func takerModel(f flags) string {
+func (a *App) takerModel(f flags) string {
 	if m := strings.TrimSpace(f.get("model")); m != "" {
 		return m
 	}
-	return strings.TrimSpace(env.Get(env.Model))
+	return strings.TrimSpace(a.getenv(env.Model))
 }
 
 // assignee is the name the board records for t: the name, else the model.
@@ -535,7 +585,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	// Only the model: whoTakes also asks git where the take happens (three
 	// git processes), which no other command needs (44w1ev budget, CI run
 	// 44059170996: ls 4.84 s over 4.8 s under -race).
-	if m := takerModel(f); m != "" {
+	if m := a.takerModel(f); m != "" {
 		s.r.Trailers = []string{"Model: " + m}
 	}
 	if writer {
@@ -926,8 +976,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if err != nil {
 			return nil, err
 		}
-		ed := editor.Command()
+		ed := editor.CommandFrom(a.getenv)
 		c := exec.CommandContext(ctx, ed[0], append(ed[1:], filepath.Join(s.r.Dir, d.Task.Path))...)
+		c.Env = a.environ()
 		c.Stdin = a.In
 		c.Stdout = a.Out
 		if f.has("json") {
@@ -1189,7 +1240,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		if slices.Contains(args, "--wide") {
 			writeBoardWide(a.Out, cols)
 		} else {
-			writeBoard(a.Out, cols)
+			writeBoard(a.Out, cols, boardWidth(a.getenv("COLUMNS")))
 		}
 	}
 	if ts, ok := reply["tasks"].([]Reply); ok {
@@ -1344,8 +1395,10 @@ func shortHash(h string) string {
 }
 
 // childIndexFor memoises task.ChildIndex for the slice being rendered, so
-// listing N tasks resolves parents once, not N times.
+// listing N tasks resolves parents once, not N times. Locked: an MCP server
+// or parallel tests run commands from several goroutines.
 var childMemo struct {
+	sync.Mutex
 	first *task.Task
 	n     int
 	idx   map[string][]task.Task
@@ -1355,6 +1408,8 @@ func childIndexFor(ts []task.Task) map[string][]task.Task {
 	if len(ts) == 0 {
 		return nil
 	}
+	childMemo.Lock()
+	defer childMemo.Unlock()
 	if childMemo.first != &ts[0] || childMemo.n != len(ts) {
 		childMemo.first, childMemo.n, childMemo.idx = &ts[0], len(ts), task.ChildIndex(ts)
 	}

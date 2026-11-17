@@ -14,12 +14,7 @@ import (
 func takeFixture(t *testing.T) (*App, string) {
 	t.Helper()
 	a := app(t) // git user.name is "Test": it must never become the assignee
-	t.Setenv("HUG_USER", "")
-	t.Setenv("HUG_MODEL", "")
-	t.Setenv("JCODE_SESSION_ID", "")
-	// The old name is set and must not be read (m1c28r); spelt in parts so
-	// the code holds no old names.
-	t.Setenv("HUG"+"INN_USER", "old-name-not-read")
+	a.Env["HUG_USER"], a.Env["HUG_MODEL"] = "", ""
 	r := execute(t, a, "new", "Take me", "--goal", "G", "--accept", "C")
 	return a, r["task"].(Reply)["id"].(string)
 }
@@ -44,6 +39,7 @@ func runText(a *App, args ...string) (int, string) {
 }
 
 func TestTakeWithoutModelFailsWithFix(t *testing.T) {
+	t.Parallel()
 	a, id := takeFixture(t)
 	code, out := runText(a, "take", id)
 	want := "fix: hug task take " + id + " --model MODEL\n"
@@ -65,8 +61,18 @@ func TestTakeWithoutModelFailsWithFix(t *testing.T) {
 	}
 }
 
+// Serial: the old name must be unread in the process environment, where a
+// fallback would look (m1c28r), so this test sets it there.
 func TestTakeModelOnlyAssigneeIsModel(t *testing.T) {
 	a, id := takeFixture(t)
+	t.Setenv("HUG_USER", "")
+	t.Setenv("HUG_MODEL", "")
+	t.Setenv("JCODE_SESSION_ID", "")
+	delete(a.Env, "HUG_USER")
+	delete(a.Env, "HUG_MODEL")
+	delete(a.Env, "JCODE_SESSION_ID")
+	// Spelt in parts so the code holds no old names.
+	t.Setenv("HUG"+"INN_USER", "old-name-not-read")
 	r := execute(t, a, "take", id, "--model", "gpt-6.1-sol")
 	tk := r["task"].(Reply)
 	if as := tk["assignee"].([]any); len(as) != 1 || as[0] != "gpt-6.1-sol" || tk["model"] != "gpt-6.1-sol" {
@@ -79,6 +85,7 @@ func TestTakeModelOnlyAssigneeIsModel(t *testing.T) {
 }
 
 func TestTakeAsAndModelRecordsBoth(t *testing.T) {
+	t.Parallel()
 	for _, viaEnv := range []bool{false, true} {
 		name := "flags"
 		if viaEnv {
@@ -88,8 +95,7 @@ func TestTakeAsAndModelRecordsBoth(t *testing.T) {
 			a, id := takeFixture(t)
 			args := []string{"take", id}
 			if viaEnv {
-				t.Setenv("HUG_USER", "poodle")
-				t.Setenv("HUG_MODEL", "claude-opus-5-5")
+				a.Env["HUG_USER"], a.Env["HUG_MODEL"] = "poodle", "claude-opus-5-5"
 			} else {
 				args = append(args, "--as", "poodle", "--model", "claude-opus-5-5")
 			}
@@ -126,8 +132,9 @@ func TestTakeAsAndModelRecordsBoth(t *testing.T) {
 }
 
 func TestTakeUsesJcodeSessionName(t *testing.T) {
+	t.Parallel()
 	a, id := takeFixture(t)
-	t.Setenv("JCODE_SESSION_ID", "session_poodle_1794834977956_75c591eb08e87724")
+	a.Env["JCODE_SESSION_ID"] = "session_poodle_1794834977956_75c591eb08e87724"
 	r := execute(t, a, "take", id, "--model", "claude-opus-5-5")
 	tk := r["task"].(Reply)
 	if as := tk["assignee"].([]any); len(as) != 1 || as[0] != "poodle" || tk["model"] != "claude-opus-5-5" {
@@ -135,28 +142,27 @@ func TestTakeUsesJcodeSessionName(t *testing.T) {
 	}
 	// --as and HUG_USER win over the session name.
 	a2, id2 := takeFixture(t)
-	t.Setenv("JCODE_SESSION_ID", "session_poodle_1_2")
-	t.Setenv("HUG_USER", "crab")
+	a2.Env["JCODE_SESSION_ID"], a2.Env["HUG_USER"] = "session_poodle_1_2", "crab"
 	r = execute(t, a2, "take", id2, "--model", "claude-opus-5-5")
 	if as := r["task"].(Reply)["assignee"].([]any); as[0] != "crab" {
 		t.Fatal(as)
 	}
 	// Still no model: the session name alone is not enough.
 	a3, id3 := takeFixture(t)
-	t.Setenv("JCODE_SESSION_ID", "session_poodle_1_2")
+	a3.Env["JCODE_SESSION_ID"] = "session_poodle_1_2"
 	if code, out := runText(a3, "take", id3); code != 2 || !strings.HasSuffix(out, "fix: hug task take "+id3+" --as poodle --model MODEL\n") {
 		t.Fatalf("exit %d:\n%s", code, out)
 	}
 }
 
 func TestHarnessName(t *testing.T) {
+	t.Parallel()
 	for in, want := range map[string]string{
 		"session_hare_1794834977956_75c591eb08e87724": "hare",
 		"session_poodle_1_2":                          "poodle",
 		"":                                            "", "abc": "", "session_": "", "session_x": "",
 	} {
-		t.Setenv("JCODE_SESSION_ID", in)
-		if got := harnessName(); got != want {
+		if got := harnessName(in); got != want {
 			t.Errorf("harnessName(%q) = %q, want %q", in, got, want)
 		}
 	}
