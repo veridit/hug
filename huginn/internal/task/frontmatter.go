@@ -39,8 +39,15 @@ func (d *Document) parseFrontmatter() {
 			end = mapping.Content[n+2].Line
 		}
 		for end > key.Line+1 {
-			line := strings.TrimSpace(d.lines[end-1])
-			if line == "" || strings.HasPrefix(line, "#") {
+			// Blank lines and comments between this value and the next key
+			// are not the value's. A comment is at the key's column: an
+			// indented line, "#" or not, is a block scalar's own text
+			// (t3fqaw: Seid's t6j13s title went on "  #return/#break
+			// clauses ...", which set --title then left behind).
+			raw := d.lines[end-1]
+			line := strings.TrimSpace(raw)
+			indented := strings.HasPrefix(raw, " ") || strings.HasPrefix(raw, "\t")
+			if line == "" || (strings.HasPrefix(line, "#") && !indented) {
 				end--
 			} else {
 				break
