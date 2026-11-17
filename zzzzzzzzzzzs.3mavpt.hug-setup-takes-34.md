@@ -49,5 +49,18 @@ Design:
 3. Interrupt: runSetup returns the ctx error when ctx is cancelled (no checklist from half-run steps). findHooks reports ctx.Err() as an interruption, not as 'needs a Git checkout'.
 4. FileRefs: a literal prefilter (bytes.Contains 'file:', 'task:', '.hug/tasks/') before each regexp, and SetField chains in convert stop reparsing per field if cheap. Measured before and after on Seid's 2,677 sources.
 Test (check 1): a 500-file backlog, imported, then every source file chmod 000 (skipped on Windows and as root). setup must report the import complete. On main the dry run hits EACCES and the step stays open.
+Implementation (branch kestrel/3mavpt, not landed yet). The design changed from the 19:35 note after measuring:
+- 'imported' is not decidable from names and origins alone. Of Seid's 282 'to update', all 282 diffs add 'parent:' (a converter change since the import), and 2 of the 13 ids without an origin are files the dry run skips (broken YAML: TASK-1095 'mapping key labels already defined', TASK-1958 'did not find expected key').
+- So setup remembers the dry run's own answer instead, keyed on the hug binary and the backlog listing (name, type, size, mtime: lstat only), plus the board tasks it matched still being on the board. Both import and dry run write it, to <git-common-dir>/huginn/setup-backlog.json.
+- The evidence step is remembered per folder, keyed on its listing and the board commit (porcelain v2, clean board only).
+- FileRefs runs a regexp only when its literal is present: 2519923 -> 26059 ns/op on a 22 KB note with no citations (BenchmarkFileRefsNoRefs). TestFileRefsPrefilterSameAnswer compares it against the old function.
+Seid copy (scratch, Seid board tree c528765d0, Seid .backlog), hug setup 'real':
+- main: 34.92 / 33.26 / 33.22 / 33.31
+- branch: cold 9.55; warm 0.54 / 0.53 / 0.51 (median 0.53).
+Failing first on main (3 of 3):
+- TestSetupInterruptedSaysSo: 'cancelled before start: hug task setup needs a Git checkout as its working directory'
+- TestSetupReadsNoBacklogFileAfterImport: 'setup read the backlog: {Step:import backlog-md Done:false Detail:.backlog/ exists. Import it; ...}'
+- TestSetupComparesAgainWhenBacklogOrBoardChanges: 'edited source: ... 0 to add, 1 to update, 499 in sync ... stderr: ' (no comparing line)
+A -race run caught one bug of mine: tasks the import had added were not in the matched list, so deleting one left setup answering from memory. Fixed: importedReport marks them matched.
 ## History
 - 2026-11-17T20:17 todo -> doing/active (take)
