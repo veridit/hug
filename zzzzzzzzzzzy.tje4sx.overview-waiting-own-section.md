@@ -1,13 +1,18 @@
 ---
 id: tje4sx
 title: "Overview: WAITING is its own section; IN PROGRESS holds only active work"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T20:03"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Code: overview sections in huginn/internal/tui (render.go, stage.go forYou()). T
 ## Notes
 
 Jørgen 20:00 local: only the focused row shows two lines; every other row is one line. Reverses the 89y0b7 rule that every waiting row takes two lines. So: unfocused waiting row = one line with the title (as before 89y0b7, plus the ? on rows on you); the row under the cursor opens its second line '└─ waiting on you: ... since ...'. Section heights and scrolling count the one extra line of the focused row.
+
+
+## History
+- 2026-11-17T20:03 todo -> doing/active (take)
