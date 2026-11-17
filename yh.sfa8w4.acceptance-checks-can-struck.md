@@ -32,7 +32,7 @@ Today: huginn/internal/task/document.go Acceptance{Text, Checked, Line}; parse a
 - [x] hug task done succeeds when every check is ticked or struck out, and still refuses with a fix line when one is open
 - [x] show, ls --jsonl and MCP report the three states; the TUI draws a struck-out check crossed through
 - [x] a done task with an open check is reported by lint as broken
-- [ ] the stored form renders as a crossed-out checklist line in a standard Markdown viewer, and older files parse unchanged (test)
+- [x] the stored form renders as a crossed-out checklist line in a standard Markdown viewer, and older files parse unchanged (test)
 
 ## Notes
 
