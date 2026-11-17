@@ -49,6 +49,7 @@ Landed f003cfc (856a8ca..f003cfc on main). Check 1: TestColumnCursorMarksHeader 
 landed f003cfc on main 2026-11-17: hug tui: Tab picks a column, o orders by it; views move to the v prefix (bejd89)
 landed 2f5f206 on main 2026-11-17: Merge v0.7.46 into main (bejd89 and aad670d's 46ek1f wording stay under…
 shipped in v0.7.47 (f003cfc)
+Check 5: Jørgen answered in the TUI 00:10: 'sorting works in Statbus'; relayed by crab 00:27 (nautilus)
 ## History
 - 2026-11-17T15:09 todo -> doing/active (take)
 - 2026-11-17T16:30 doing/active -> todo/ready (give back; was assignee: nautilus); was doing_since: 2026-11-17T15:09
@@ -57,3 +58,4 @@ shipped in v0.7.47 (f003cfc)
 - 2026-11-17T20:28 doing/waiting -> doing/active (resume); was waiting_asked_by: nautilus; waiting_on: tje4sx first (Jørgen's ruling); resumes after it lands; waiting_since: 2026-11-17T20:03
 - 2026-11-17T20:44 doing/active -> doing/waiting (wait)
 - 2026-11-18T00:10 answered waiting: "check 5: order the Statbus overview by priority, then by owner, with Tab and o (f003cfc), and say it works" -> "I tried the sorting in StatBus and it works", by jhf, for nautilus (doing/waiting -> doing/active)
+- 2026-11-18T00:27 nautilus read the answer
