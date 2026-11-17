@@ -36,5 +36,6 @@ muninn/internal/throttle/throttle_test.go:48. Linux nice is per thread (tid); Go
 ## Notes
 
 
+hatchling 13:39: cause, with evidence: Linux niceness is per thread; Background() called setpriority(PRIO_PROCESS, 0), which lowers only the calling thread. New test TestBackgroundNicesEveryThread (threads_linux_test.go) holds 4 locked threads before and 4 after Background and reads every /proc/self/task/*/stat field 19. Before the fix, in golang:1.26-alpine (docker, 2 CPUs): '11 of 12 threads not niced to 10 after Background: [tid=1153 nice=0 ...]'. The old test read nice of whichever thread its goroutine landed on, so it passed or failed by scheduling (the CI flake). Fix: os_linux.go lowerThreads() renices each /proc/self/task tid (repeat passes until stable); new threads inherit from their creator. After: -count=50 of TestBackground* green in the same container. ci/1rca5g 650bfb5+.
 ## History
 - 2026-11-17T14:38 todo -> doing/active (take)
