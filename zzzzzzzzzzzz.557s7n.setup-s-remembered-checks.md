@@ -34,7 +34,7 @@ Two writers shared the fixed name path.tmp, so one's rename found the other's te
 ## Depends on
 
 ## Acceptance
-- [ ] a test races 2 writers and 4 readers on one cache file (the kbc99j probe pattern): no write or read fails; it fails before the fix
+- [x] a test races 2 writers and 4 readers on one cache file (the kbc99j probe pattern): no write or read fails; it fails before the fix
 - [ ] a test makes the cache folder unwritable: setup still answers, and stderr names the failed write once, with a fix: line
 
 ## Notes
