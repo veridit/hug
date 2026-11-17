@@ -41,6 +41,7 @@ kestrel 13:11, cause and fix. Probe 4a2c487 (TestAtomicWriteRacesReads: 4 reader
 kestrel 13:29, CI 44090177314 on dd3e1ff (fix a45bec0 + TEMP step) green on all 5 jobs. The Windows step 'go test -count=20 -run TestParallelNotesWithoutRemoteAllLand|TestAtomicWriteRacesReads|TestRenameOverOpenFile' printed: 'ok  github.com/veridit/hug/huginn/internal/cli 282.515s', 'ok  github.com/veridit/hug/huginn/internal/task 40.599s', 'ok  github.com/veridit/hug/internal/sharefile 0.121s'. Before the fix, the same probe failed on windows CI 44086864807 (note 13:11). The TEMP step is dropped before landing.
 
 
+Landed: 38ff464..4ecfa25 on main (fix 2d10706, probe 6a1c641, changelog), CI 44099384892 on 4ecfa25 green on all 5 jobs.
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
 - 2026-11-17T15:22 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_on: landing turn: checks 1-2 ticked; combined with 4vcwxk on kestrel/land-kbc99j-4vcwxk, queued after hatchling (crab 13:29); waiting_since: 2026-11-17T14:33
