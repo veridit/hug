@@ -33,3 +33,5 @@ Not the asked stage: that blocks the task on a person; a request is an open item
 - [ ] Jørgen writes a real request on hug's board after release and an agent resolves it into ticket changes he agrees with
 
 ## Notes
+
+Jørgen 23:53 local: 'it's like a managerial ask, and the consequence for the ticket will be figured out as you process it.' So a request names no field or check and has no form: it is intent. The agent decides what it means for the ticket (which fields, checks, state, maybe a new task or a split) and the resolve account says what it decided. The agent applies hug's task rules (goal, purpose, principle, details, acceptance; titles under 80; fix lines) when it turns the ask into edits; the person never has to.
