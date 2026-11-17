@@ -138,6 +138,10 @@ func TestGlanceStepsAndScrolls(t *testing.T) {
 	if m.file != 0 || !strings.Contains(m.message, "first file: 1 of 5") {
 		t.Fatalf("p at the first: file %d message %q", m.file, m.message)
 	}
+	// The footer spells the keys out (Jørgen 00:08: nobody guesses n/p).
+	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "n next file · p previous file") {
+		t.Fatalf("file footer: %q", bar)
+	}
 	m = press(m, "n", "n", "n", "n", "n")
 	if m.file != 4 || !strings.Contains(m.message, "last file: 5 of 5") {
 		t.Fatalf("n past the last: file %d message %q", m.file, m.message)

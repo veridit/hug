@@ -782,7 +782,7 @@ func (m model) View() string {
 				footer = fmt.Sprintf("Task %s · %.0f%% · n next · p previous · Esc back", pos, m.viewport.ScrollPercent()*100)
 			}
 			if m.glance {
-				footer = fmt.Sprintf("File · %.0f%% · n next file · p previous · Esc back to files", m.viewport.ScrollPercent()*100)
+				footer = fmt.Sprintf("File · %.0f%% · n next file · p previous file · Esc back to files", m.viewport.ScrollPercent()*100)
 			}
 		}
 		if m.grab.active {

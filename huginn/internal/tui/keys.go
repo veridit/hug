@@ -104,7 +104,8 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	t, _ := m.selected()
 	var hints []bkey.Binding
 	if m.glance {
-		return []bkey.Binding{hint("j/k", "scroll"), hint("n/p", "file"), hint("Enter", "edit"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
+		// n and p spelled out (scrxak, Jørgen 00:08: nobody guesses n/p).
+		return []bkey.Binding{hint("j/k", "scroll"), hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
 	}
 	switch m.detailPane {
 	case focusAcceptance:
