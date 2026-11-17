@@ -46,6 +46,7 @@ var Codes = []CodeInfo{
 	{"duplicate-origin", "two tasks were imported from one source"},
 	{"unknown-condition", "a Depends on condition hug cannot check (unreadable, or not checkable here): the task waits"},
 	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped"},
+	{"stale-owner", "a doing task's assignee has had no live harness session for over a day"},
 	{"missing-task-ref", "a task: link names no task"},
 	{"missing-file", "a file: link names no file"},
 	{"file-content", "an attached file is binary or too large"},

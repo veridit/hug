@@ -64,6 +64,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"duplicate origin", "duplicate-origin"},
 	{"branch ", "branch-gone"},
 	{"unknown condition", "unknown-condition"},
+	{"owner ", "stale-owner"},
 }
 
 // FindingCode names the kind of problem in a finding message.

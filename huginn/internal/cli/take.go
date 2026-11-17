@@ -67,6 +67,14 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 	if e == nil && result.Changed {
 		result.Next = "hug task show " + result.Task.ID
 	}
+	// The board says who is working (v3k6cp): a name other than the
+	// harness session's is taken as given, and said, so a coordinator's
+	// "you are humpback" does not quietly put the wrong owner on the board.
+	if e == nil && who.Name != "" {
+		if h := harnessName(); h != "" && !strings.EqualFold(h, who.Name) {
+			result.Warnings = append(result.Warnings, "assignee "+who.Name+" is not this session ("+h+"); if you are "+h+": hug task set "+result.Task.ID+" --assignee "+h)
+		}
+	}
 	return result, e
 }
 

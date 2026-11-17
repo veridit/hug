@@ -764,6 +764,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			fs = append(fs, task.BranchFindings(a.Cwd, gitbranch.DefaultBranch(a.Cwd), ts)...)
 			// Waits hug cannot check here (16dxsr): git and the machine, not files.
 			fs = append(fs, task.WaitFindings(ts)...)
+			// Harness session state, not file content (v3k6cp).
+			fs = append(fs, task.OwnerFindings(task.JcodeLiveness(), ts, time.Now())...)
 		}
 		// Closed tasks' findings are hidden unless --all (6neax1).
 		var hidden []task.Finding

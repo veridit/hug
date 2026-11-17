@@ -141,6 +141,22 @@ func TestTakeUsesJcodeSessionName(t *testing.T) {
 	if as := r["task"].(Reply)["assignee"].([]any); as[0] != "crab" {
 		t.Fatal(as)
 	}
+	// v3k6cp: a name other than the session's is accepted and said.
+	if w, _ := r["warnings"].([]string); len(w) != 1 || w[0] != "assignee crab is not this session (poodle); if you are poodle: hug task set "+id2+" --assignee poodle" {
+		t.Fatalf("warnings %#v", r["warnings"])
+	}
+	// Without --as the session's own name is taken, with no warning.
+	a5, id5 := takeFixture(t)
+	t.Setenv("JCODE_SESSION_ID", "session_poodle_1_2")
+	if w, ok := execute(t, a5, "take", id5, "--model", "claude-opus-5-5")["warnings"]; ok {
+		t.Fatalf("warning on the session's own name: %v", w)
+	}
+	// And on the terminal the note is printed as a warning line.
+	a4, id4 := takeFixture(t)
+	t.Setenv("JCODE_SESSION_ID", "session_wyvern_1_2")
+	if code, out := runText(a4, "take", id4, "--as", "humpback", "--model", "claude-opus-5-5"); code != 0 || !strings.Contains(out, "warning: assignee humpback is not this session (wyvern); if you are wyvern: hug task set "+id4+" --assignee wyvern\n") {
+		t.Fatalf("exit %d:\n%s", code, out)
+	}
 	// Still no model: the session name alone is not enough.
 	a3, id3 := takeFixture(t)
 	t.Setenv("JCODE_SESSION_ID", "session_poodle_1_2")

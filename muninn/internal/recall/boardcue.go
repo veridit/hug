@@ -169,6 +169,8 @@ type detection struct {
 	edits   bool
 	hasMine bool
 	mineAll []BoardTask // doing for the session with every check ticked
+	owned   []BoardTask // doing, worked by the session, assigned to another name (v3k6cp)
+	self    string      // the session's name, from the harness
 	working []BoardTask // todo tasks the session checked or noted
 	named   []BoardTask // todo tasks named by the message, commands or commits
 	matched *BoardTask  // todo task whose title matches the work
@@ -190,6 +192,9 @@ func (d detection) candidates(editTurns int64, model string) []candidate {
 		model = "MODEL"
 	}
 	var out []candidate
+	for _, t := range d.owned {
+		out = append(out, candidate{"owner", t.ID, fmt.Sprintf("Task board: you are working on %s but the board says %s. If it is yours now: hug task set %s --assignee %s", t.ID, strings.Join(t.Assignee, ", "), t.ID, d.self)})
+	}
 	for _, t := range d.mineAll {
 		out = append(out, candidate{"done", t.ID, fmt.Sprintf("Task board: every check of %s holds (%s). Close it: hug task done %s", t.ID, short(t.Title), t.ID)})
 	}
@@ -260,6 +265,42 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 			d.touched[t.ID] = true
 			if t.Checks > 0 && t.Open == 0 {
 				d.mineAll = append(d.mineAll, t)
+			}
+		}
+	}
+	d.self = self.Name
+	// owner (v3k6cp): the session works a doing task (took it, works in its
+	// recorded worktree or branch, ticks its checks, or notes it while
+	// editing code) but the assignee is another name. Only with the
+	// session's own name from the harness: never guessed.
+	worked := map[string]bool{}
+	notedDoing := map[string]bool{}
+	anyEdits := false
+	for _, a := range in.Actions {
+		anyEdits = anyEdits || a.Edits
+		for _, h := range a.Hug {
+			switch h.Verb {
+			case "check":
+				worked[h.ID] = true
+			case "note":
+				notedDoing[h.ID] = true
+			}
+		}
+	}
+	if self.Name != "" {
+		for _, t := range in.Tasks {
+			if t.Status != "doing" || len(t.Assignee) == 0 {
+				continue
+			}
+			assigned := false
+			for _, a := range t.Assignee {
+				assigned = assigned || strings.EqualFold(strings.TrimSpace(a), self.Name)
+			}
+			if assigned {
+				continue
+			}
+			if mine(t) || worked[t.ID] || notedDoing[t.ID] && anyEdits {
+				d.owned = append(d.owned, t)
 			}
 		}
 	}

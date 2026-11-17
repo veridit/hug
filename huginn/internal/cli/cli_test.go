@@ -33,6 +33,8 @@ func app(t *testing.T) *App {
 	t.Setenv("HUG_USER", "tester")
 	t.Setenv("HUG_MODEL", "test-model")
 	t.Setenv("JCODE_SESSION_ID", "")
+	// No machine's real session list in tests (v3k6cp stale-owner).
+	t.Setenv("JCODE_HOME", filepath.Join(dir, ".no-jcode"))
 	return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{}}
 }
 func execute(t *testing.T, a *App, args ...string) Reply {

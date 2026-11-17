@@ -65,6 +65,37 @@ held-out lines were one `hug task done mtzydx` to one session), the 7-day
 lint rotation (17 of 34 lint lines were one finding), and per-task fixes only
 (18 lint lines said `hug upgrade`). The fresh set came after all three.
 
+## Owner: the assignee is the agent doing the work (v3k6cp, 2026-11-17)
+
+A fifth kind, `owner`: the session works a doing task (took it, works in
+its recorded worktree or branch, ticks its checks, or notes it while
+editing code) but the assignee is another name. One line, once per task
+per day, under the take rate:
+
+`Task board: you are working on 44w1ev but the board says humpback. If it is yours now: hug task set 44w1ev --assignee wyvern`
+
+The session name comes from the harness (`session_<name>_...`), never the
+model. `hug task take --as NAME` with a name other than the session's
+still takes, and says so with the same fix. `hug task lint` reports
+`stale-owner`: a doing task whose every assignee is a jcode session name
+with no live session for over 24 h (read from `JCODE_HOME/sessions`;
+names it does not know, a person or a model, are never judged).
+
+Replay, same six sets and judge, baseline main: wyvern's session of
+2026-11-17 fires once, `owner` on 44w1ev at 09:46:55Z (the morning the
+board still said humpback). Across the sets 14 owner lines, 13 judged
+right; the false one was poodle told rx74bp was crab's now. 9 of the 14
+are tasks still assigned to `Jørgen H. Fjeld` (git user.name, before
+et85h1), 5 to another agent (hibiscus 2, vole, daisy, piglet); the
+overnight set repeats one dev line (crab, 5g86n6). All kinds: main 97
+lines, 87 right, 7 false (0.926); with owner 109 lines, 99 right, 7 false
+(0.934). An owner line takes the turn's one slot, so 5 other lines move:
+a work line (daisy 88s3yc, judged right) and 2 lint lines (sunflower
+qaxx25 judged false, herb bbhkwq right) do not fire; sunflower's done line
+on 23vyy1 fires 54 minutes later (closed by the agent, so counted right,
+though the judge called the later moment wrong); orangutan gets a new
+work line on xwjb13 (judged right).
+
 ## Latency
 
 The board read on every turn (activity + board, 40 runs, warm cache):

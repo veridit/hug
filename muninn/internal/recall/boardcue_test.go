@@ -227,3 +227,47 @@ func TestBoardOnHarnessNotice(t *testing.T) {
 		t.Fatalf("%+v", r)
 	}
 }
+
+// v3k6cp: a session working a doing task that the board assigns to another
+// name gets one owner line with the exact fix; its own assignment, or a
+// task it only looks at, gets none.
+func TestBoardOwnerLine(t *testing.T) {
+	now := time.Date(2026, 11, 17, 9, 44, 0, 0, time.UTC)
+	task := recall.BoardTask{ID: "44w1ev", Title: "Scale", Status: "doing", Assignee: []string{"humpback"}, Checks: 5, Open: 3}
+	for name, c := range map[string]struct {
+		in   recall.BoardInput
+		want string
+	}{
+		"checks another's task": {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "wyvern"},
+			Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "check", ID: "44w1ev", N: 1}}}}},
+			"Task board: you are working on 44w1ev but the board says humpback. If it is yours now: hug task set 44w1ev --assignee wyvern"},
+		"notes it while editing": {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "wyvern"},
+			Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "note", ID: "44w1ev"}}}, edit}}, "owner"},
+		"works in its worktree": {recall.BoardInput{Tasks: []recall.BoardTask{{ID: "44w1ev", Status: "doing", Assignee: []string{"humpback"}, Worktree: "/s/hug-44w1ev", Checks: 5, Open: 3}},
+			Self: recall.BoardSelf{Name: "wyvern", Worktree: "/s/hug-44w1ev", Linked: true}, Actions: []recall.BoardAction{edit}}, "owner"},
+		"only shows it":   {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "wyvern"}, Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "44w1ev"}}}}}, ""},
+		"notes, no edits": {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "crab"}, Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "note", ID: "44w1ev"}}}}}, ""},
+		"its own":         {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "humpback"}, Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "check", ID: "44w1ev", N: 1}}}}}, ""},
+		"no session name": {recall.BoardInput{Tasks: []recall.BoardTask{task}, Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "check", ID: "44w1ev", N: 1}}}}}, ""},
+	} {
+		e := boardEngine(t)
+		line, kind := e.BoardCue("s", "go on", "", now, src(c.in))
+		switch {
+		case c.want == "" && line != "":
+			t.Errorf("%s: got %q", name, line)
+		case c.want == "owner" && kind != "owner":
+			t.Errorf("%s: kind %q line %q", name, kind, line)
+		case c.want != "" && c.want != "owner" && line != c.want:
+			t.Errorf("%s:\n got %q\nwant %q", name, line, c.want)
+		}
+	}
+	// Once per task per day, as the other kinds.
+	e := boardEngine(t)
+	in := recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "wyvern"}, Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "check", ID: "44w1ev", N: 1}}}}}
+	if _, k := e.BoardCue("s", "go", "", now, src(in)); k != "owner" {
+		t.Fatal(k)
+	}
+	if l, _ := e.BoardCue("s", "go", "", now.Add(2*time.Hour), src(in)); l != "" {
+		t.Fatalf("repeated: %q", l)
+	}
+}
