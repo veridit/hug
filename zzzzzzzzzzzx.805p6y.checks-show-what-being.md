@@ -34,3 +34,5 @@ Proposed command: hug task now ID N "text" (MCP task_update action now); hug tas
 ## Notes
 
 Jørgen 2026-11-17 09:00, on the IN PROGRESS section: the board should know what each in-progress task is focused on right now (e.g. 'waiting for CI'), shown on the row, and Enter opens the detail for more. Today the coordinator wrote it as Notes on 44w1ev, m1c28r, t709he, 0hkaa5 and x1t1t1 by hand; this ticket makes it a first-class now-line. Priority: right after zhvkmj.
+
+Jørgen 2026-11-17 09:01 correction: the current-work line is NOT an acceptance check. Acceptance says what must be true for the task to be done; this line is the agent managing itself: what it is doing or waiting on right now. So it is its own field on the task, not tied to check N. Name pending Jørgen's choice (crab proposed: focus). Rework Goal and Acceptance before building.
