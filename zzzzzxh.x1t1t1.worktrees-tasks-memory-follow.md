@@ -9,8 +9,8 @@ labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
-waiting_on: "check 7: real use of a linked Statbus worktree taking a task via CLI and MCP (observed read-only, none as of 13:16)"
-waiting_since: "2026-11-17T14:33"
+waiting_on: "jhf: check 7: a Statbus task taken from a linked worktree (git worktree add) via CLI and MCP, or strike it; only separate clones are in use (14:40)"
+waiting_since: "2026-11-17T15:39"
 waiting_asked_by: "calf"
 stage: "waiting"
 ---
