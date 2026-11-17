@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/veridit/hug/huginn/gitbranch"
-	"github.com/veridit/hug/huginn/internal/importer"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -60,6 +59,9 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	}
 	out, err := exec.CommandContext(ctx, "git", "-C", cwd, "rev-parse", "--show-toplevel").Output()
 	if err != nil {
+		if ctx.Err() != nil {
+			return nil, interrupted(ctx)
+		}
 		return nil, &OperationError{Problem: "hug task setup needs a Git checkout as its working directory", Fix: "cd /path/to/your/git/repo && hug task setup"}
 	}
 	root := strings.TrimSpace(string(out))
@@ -133,11 +135,17 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 			complete := false
 			if branch && statErr == nil {
 				if s, e := a.open(ctx); e == nil {
-					r, e := importer.Run(ctx, filepath.Join(root, backlogDir), s.s, importer.Options{DryRun: true})
+					r, at, e := a.checkBacklog(ctx, s, filepath.Join(root, backlogDir))
 					s.c.Close()
+					if e != nil && ctx.Err() != nil {
+						return nil, interrupted(ctx)
+					}
 					if e == nil {
 						complete = r.Added == 0 && r.Updated == 0
 						detail = fmt.Sprintf("%s/ vs huginn: %d to add, %d to update, %d in sync, %d skipped (older copies, broken files).", backlogDir, r.Added, r.Updated, r.Unchanged, r.Skipped)
+						if at != "" {
+							detail += " Remembered from " + at + ": no backlog file changed since, and every task it matched is still on the board."
+						}
 					}
 				}
 			}
@@ -163,14 +171,14 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		done, detail := false, cand+"/ holds per-task files that tasks cite by path; import them into the tasks' own folders."
 		if branch && statErr == nil {
 			if s, e := a.open(ctx); e == nil {
-				r, e := importer.ImportFiles(dir, cand, s.s, true)
+				r, unmatched, e := a.checkFiles(ctx, s, dir, cand)
 				s.c.Close()
 				if e == nil {
 					if r.Copied+r.Unchanged == 0 {
 						continue // not task folders after all
 					}
 					done = r.Copied == 0 && r.Citations == 0
-					detail = fmt.Sprintf("%s/: %d files to copy, %d already in place, %d citations to rewrite, %d folders match no task.", cand, r.Copied, r.Unchanged, r.Citations, len(r.Unmatched))
+					detail = fmt.Sprintf("%s/: %d files to copy, %d already in place, %d citations to rewrite, %d folders match no task.", cand, r.Copied, r.Unchanged, r.Citations, unmatched)
 				}
 			}
 		}
@@ -266,6 +274,12 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	}
 
 	open := 0
+	// 3mavpt: an interrupted setup (^C) reports that, never a checklist
+	// whose steps failed only because their git calls were killed (Seid:
+	// "the commit-msg gate needs a Git checkout" in its own checkout).
+	if ctx.Err() != nil {
+		return nil, interrupted(ctx)
+	}
 	next := "hug task next"
 	for _, s := range steps {
 		if !s.Done {
@@ -276,6 +290,10 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		next = "do the first open step above, then run hug task setup again"
 	}
 	return Reply{"setup": steps, "open": open, "intro": setupIntro, "next": next}, nil
+}
+
+func interrupted(ctx context.Context) error {
+	return &OperationError{Problem: "hug task setup was interrupted (" + ctx.Err().Error() + "); it changed nothing", Fix: "hug task setup"}
 }
 
 func agentInstructionsEdit(backlog []string) string {

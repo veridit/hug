@@ -319,23 +319,32 @@ type Ref struct {
 // FileRefs returns the file references in a task document's text.
 func FileRefs(doc []byte, self string) []Ref {
 	var out []Ref
-	for _, m := range fileRef.FindAllSubmatchIndex(doc, -1) {
-		name := string(doc[m[2]:m[3]])
-		// Prose such as "file:line" and URLs (file:///...) are not
-		// references: a reference names a file (has an extension) or a path.
-		if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) || lostAfter(doc, m[1]) {
-			continue
+	// The literals first (3mavpt): most task files cite nothing, and the
+	// regexps cost 17 s over Seid's 2,677 imported files when run on each.
+	if bytes.Contains(doc, []byte("file:")) {
+		for _, m := range fileRef.FindAllSubmatchIndex(doc, -1) {
+			name := string(doc[m[2]:m[3]])
+			// Prose such as "file:line" and URLs (file:///...) are not
+			// references: a reference names a file (has an extension) or a path.
+			if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) || lostAfter(doc, m[1]) {
+				continue
+			}
+			out = append(out, Ref{Task: self, Name: name, Raw: "file:" + name})
 		}
-		out = append(out, Ref{Task: self, Name: name, Raw: "file:" + name})
 	}
-	for _, m := range taskRef.FindAllSubmatchIndex(doc, -1) {
-		// Syntax in prose ("task:REF/NAME", "task:ID/PATH") is not a
-		// reference: a real ref is a lowercase id, alias or slug.
-		ref, name := string(doc[m[2]:m[3]]), string(doc[m[4]:m[5]])
-		if (ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789")) || lostAfter(doc, m[1]) {
-			continue
+	if bytes.Contains(doc, []byte("task:")) {
+		for _, m := range taskRef.FindAllSubmatchIndex(doc, -1) {
+			// Syntax in prose ("task:REF/NAME", "task:ID/PATH") is not a
+			// reference: a real ref is a lowercase id, alias or slug.
+			ref, name := string(doc[m[2]:m[3]]), string(doc[m[4]:m[5]])
+			if (ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789")) || lostAfter(doc, m[1]) {
+				continue
+			}
+			out = append(out, Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name})
 		}
-		out = append(out, Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name})
+	}
+	if !bytes.Contains(doc, []byte(".hug/tasks/")) {
+		return out
 	}
 	for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
 		if lostAfter(doc, m[1]) {

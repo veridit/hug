@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/importer"
@@ -56,6 +57,8 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 		src = filepath.Join(top, filepath.FromSlash(rel))
 	}
 	dry := f.has("dry-run")
+	listing, listed := a.backlogListing(src)
+	start := time.Now()
 	report, e := importer.Run(ctx, src, s.s, importer.Options{DryRun: dry})
 	var none *importer.NoTasksError
 	if errors.As(e, &none) {
@@ -65,10 +68,17 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 		return nil, e
 	}
 	if dry {
+		if listed {
+			a.rememberBacklog(s.r.Common, src, listing, start, report)
+		}
 		return Reply{"import": report, "dry_run": true, "next": "hug task import backlog " + f.args[1]}, nil
 	}
 	if e = s.commit("hug task import backlog"); e != nil {
 		return nil, e
+	}
+	// hug setup reads this instead of a dry run (3mavpt).
+	if listed {
+		a.rememberBacklog(s.r.Common, src, listing, start, importedReport(report))
 	}
 	s.s.Invalidate() // the import wrote task files
 	if _, e = s.s.Tasks(); e != nil {
