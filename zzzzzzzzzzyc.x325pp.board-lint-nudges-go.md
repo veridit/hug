@@ -51,5 +51,6 @@ hatchling 12:47: ci/x325pp a9d61b0 = 13d9e8a rebased on ci/fkpyg3 5817fd7 (CHANG
 hatchling 12:58, check 3 per crab's rule (held or lost?): LOST in the replay. Main arm: skunk turn 2 2026-11-11T18:13:45Z 'w96jpg: title is 151 characters' (judged correct). Stop arm: skunk fires 0 lines in its 3 board turns (stop/fresh-sum.jsonl fired 0), and no fresh session gets the w96jpg title line later (stop/fresh.jsonl has 6 lines, none after 18:13:45; main has none after it either, so the set ends there). Check 3 stays open and goes to tpnd3n: the rewrite must also re-offer a finding withheld on a stop turn. x325pp lands with check 2, then waits on tpnd3n for checks 1 and 3.
 
 
+hatchling 14:04: on main 38ff464 (with fkpyg3 b023624, ff from 5b80e87). CI 44096348851: macos, windows green; ubuntu failed only on the known 1rca5g flake: 'throttle_test.go:48: Background: got "nice=0 procs=1", want "nice=10 procs=1"' (fix on ci/1rca5g). Same code tree green on all three in 44095242756.
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
