@@ -9,13 +9,10 @@ labels: []
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
-stage: "waiting"
+stage: "active"
 doing_since: "2026-11-17T15:01"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "jhf: check 3: tick on (a)+(b) measured and fsmonitor measured as no faster through the git CLI, or build the daemon IPC client? See the note of 14:10 and tmp/lanes/44w1ev-walk.md"
-waiting_since: "2026-11-17T15:09"
-waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -94,3 +91,4 @@ crab 14:09 (Jørgen's rule): tick check 3 on the measured evidence, no IPC clien
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:01 todo/ready -> doing/active (take)
 - 2026-11-17T15:09 doing/active -> doing/waiting (wait)
+- 2026-11-17T15:10 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: jhf: check 3: tick on (a)+(b) measured and fsmonitor measured as no faster through the git CLI, or build the daemon IPC client? See the note of 14:10 and tmp/lanes/44w1ev-walk.md; waiting_since: 2026-11-17T15:09
