@@ -1,13 +1,18 @@
 ---
 id: ggydj2
 title: "Import is a one-time move: --cleanup retires the source, re-import is refused"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T15:58"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Today: huginn/internal/cli/setup.go:82-101 offers 'hug task import backlog .back
 ## Notes
 
 Jørgen 2026-11-17 14:47: --cleanup also removes backlog's other traces, in the same commit after the diff is shown: backlog's MCP server in .mcp.json (and other MCP configs hug knows), and backlog's sections in AGENTS.md / CLAUDE.md. Where hug cannot edit something itself (a file it does not own, a tracked hook), the command prints what to remove, addressed to the agent: 'agent: remove ... from FILE', with the exact lines.
+
+
+## History
+- 2026-11-17T15:58 todo -> doing/active (take)
