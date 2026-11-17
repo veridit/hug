@@ -93,9 +93,11 @@ func (m model) startWatching() tea.Cmd {
 	if m.opts.NoWatch {
 		return nil
 	}
-	ctx, root := m.ctx, m.store.Root
+	// The starter is read here, on the UI thread: the command may still
+	// run after the TUI (and a test that replaced it) has ended.
+	ctx, root, start := m.ctx, m.store.Root, watchStarter
 	return func() tea.Msg {
-		w := watchStarter(root)
+		w := start(root)
 		if w != nil && ctx != nil && ctx.Err() != nil {
 			go w.close()
 			return nil
