@@ -1,13 +1,16 @@
 ---
 id: fkpyg3
 title: "Every check reports every problem at once, with one fix line"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
