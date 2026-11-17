@@ -18,6 +18,12 @@ worktree: "/Users/jhf/Projects/hug"
 ## Goal
 Captured memories are reviewed daily for wrong place, triviality and duplicates while capture runs live
 
+## Purpose
+Capture runs live on every agent session; a bad memory is recalled into later prompts until someone retires it, so a daily look catches what the eval sets miss.
+
+## Principle
+Judge the real store, fix only what is clearly wrong with hug mem commands (forget, reinforce, rescope) and list every change; no capture code changes from this check: a finding that needs code becomes a ticket for crab.
+
 ## Depends on
 
 ## Acceptance
