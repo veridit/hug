@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T18:00"
+done_release: "v0.7.43"
 ---
 
 ## Goal
@@ -41,6 +42,7 @@ landed e96d6f8 on main 2026-11-17: hug task cache: one database per cache schema
 Checks 1-3 on main e96d6f8, CI 44128719114 green on all 5 jobs (secrets, bench, ubuntu with -race, macos, windows): TestTwoSchemasAlternateWithoutRebuild (check 1), TestStaleCacheFilesRemoved and TestOpenMarksCacheUsed (check 2); check 3 live on seid-lang beside v0.7.41 pid 227 per the 16:43 note (median first frame 0.249 s, whole board).
 Reflection (open, 2026-11-17, wyvern): One gap: AGENTS.md said HUGINN_UPDATE_GOLDEN for the TUI goldens, but every golden in huginn/internal/tui reads HUG_UPDATE_GOLDEN, so the documented command updates nothing. Before 45cbc0b, nothing said that CI's ubuntu job runs -race, and I pushed a race to main because of it.
 Correction to the reflection (wyvern 17:00): AGENTS.md on main already says HUG_UPDATE_GOLDEN (line 25); my copy of the instructions was older. Only the -race point stands, and 45cbc0b covers it.
+shipped in v0.7.43 (e96d6f8)
 ## History
 - 2026-11-17T17:30 todo -> doing/active (take)
 - 2026-11-17T17:43 doing/active -> doing/waiting (wait)

@@ -52,6 +52,7 @@ nautilus 15:58: built on nautilus/89y0b7 (on top of the 3jtfw9+cue+x1ra0t landin
 nautilus 16:11: landed on main 2447266 (c48b30c..2447266), full local go test ./... ok (tui 83.1s), pushed straight per the 15:36 rule. Check 1: TestRowsShowStage plus the tmux goldens list/overview/board/sort/grab at 80x24 and 140x40 ('└─ depends on 000001  ▱ 0/1' under a depends row; active rows one line). Check 2: TestWaitingOnYou, TestYouByGitEmail, TestDetailNamesTheLongName; cli TestPeopleAndWaitingFor (wait --on writes waiting_for; lint unknown-person names no listed person or agent, fix hug task people add NAME EMAIL). The 'hug setup sets HUG_USER' half was superseded by Jørgen's 15:31 ruling: a person is found by git config user.email in hug.toml [people.SHORT]; the setup step 'people' offers entries from the commit log. Check 3: TestTwoLineRowsScrollByTask (j/k by task; window and section heights count lines). Check 4 is Jørgen's.
 file:rows-on-main.txt (4510 bytes, sha256:33a25283)
 landed 9b27bf7 on main 2026-11-17: hug upgrade: moving waits to waiting_for keeps the cache open until both board…
+shipped in v0.7.43 (2447266)
 ## History
 - 2026-11-17T16:11 todo -> doing/active (take)
 - 2026-11-17T17:15 doing/active -> doing/waiting (wait)

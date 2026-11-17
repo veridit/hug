@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-17T17:03"
+done_release: "v0.7.43"
 ---
 
 ## Goal
@@ -39,6 +40,7 @@ hatchling 15:19: fix 0c72206 on ci/p29rbz (from main b8f9000), CI 44112858767. T
 hatchling 15:30: CI 44112858767 on 0c72206 completed success (ubuntu, macos, windows). Landing order (crab 15:29): kestrel n2hq8p, then p29rbz, then wyvern.
 Landed on main as d107f9a (dde0b41..d107f9a, fast-forward; rebased from 0c72206 over v0.7.42, CHANGELOG line under the new ## Unreleased). Local: go test muninn/run, mcpserver, app ok. Main CI 44121274410 (pushed under crab's 15:36 rule: no pre-push CI; fix forward if red). Pre-rebase branch CI 44112858767 green on 3 OSes. (hatchling)
 Reflection (open, 2026-11-17, hatchling): One gap: hug task wait and take accept --as NAME but hug task note rejects it ('unknown flag --as; valid: --json, --help'), so an agent signing its work by habit loses the note. Accepting --as on note/check, or saying in the help that note never takes it, would close that.
+shipped in v0.7.43 (d107f9a)
 ## History
 - 2026-11-17T16:14 todo -> doing/active (take)
 - 2026-11-17T16:19 doing/active -> doing/waiting (wait)
