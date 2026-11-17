@@ -35,6 +35,7 @@ cli.go:950 builds 'taken by '+t.Value+' ('+t.ID+')' for Kind 'taken'; the depend
 ## Notes
 
 
+kestrel: landed daae7cd (e28f7f6..daae7cd), rebased onto the state rename: first.Status/d.Status became first.State/d.State (store.go:515, cli.go:1411; the rebase built clean only after that). -race on the rebased tree before t3fqaw: task ok 24.113s, cli ok 171.607s; after rebasing onto e28f7f6: task -race ok 23.579s, cli Blocked|Take|Assignee ok 9.360s.
 ## History
 - 2026-11-17T19:09 todo -> doing/active (take)
 - 2026-11-17T20:17 doing/active -> doing/waiting (wait)
