@@ -4,7 +4,7 @@ title: "Flaky on Windows: capture test never sees the child persist its batch"
 status: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
