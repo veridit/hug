@@ -34,7 +34,7 @@ muninn/internal/app/capture_batch_test.go:200. The test kills a child after save
 
 ## Acceptance
 - [x] the cause is named with evidence (log lines or a probe run on Windows CI, run id)
-- [ ] a test that fails before the fix passes after; Windows -count=20 of that test green (run id)
+- [x] a test that fails before the fix passes after; Windows -count=20 of that test green (run id)
 
 ## Notes
 
