@@ -1,0 +1,207 @@
+pairs with a memory call: 62 sampled: 20
+
+=== 1. turn 258 (heldout) model gpt-6-luna; stale per selection: ['tkr4g2', 'xf3rbk']
+MSG: **Background task** `506524lxsz` · `Watch 1960 run` (`bash`) · ✓ completed · 1100.2s · exit 0 ```text checkpoint: [04:52:56] phase unit [04:30:08] tools: tools: 26 tests failing=0 rc=0 [04:42:52] corpus: Tests: 5051 passed, 38 failed, 38 errored, 73 skipped bad=58 [04:44:26] release: Tests: 5051 passed, 38 failed, 38 errored, 73 skipped bad=58 [04:48:30] std: notes rc=0 pair rc=0 manifest rc=0 expect-fail bad=1 [04:52:49] tc: build rc=0 failing=392 --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="506524lxsz"`
+  row 0n7exf 2026-11-03: After the TASK-1960 fix, full lang C and JS suites both matched baseline at 5048 passed, 38 failed, 38 errored, 73 skipped; check gate matched at 696 passed, 1 
+  row xf3rbk 2026-09-25: The final validation command failed despite the regression suite reaching 236/236 parsed tests; the exact failing phase/output remains unresolved.
+  row tkr4g2 2026-06-27: **What**: Refreshed the 7-week-stale TASK-076 principal-axis corpus baseline via full `.sd` walk on master b59ed2a5 (compiler-infra lane, measure-only). NEW: PA
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "TASK-1960 run on 2026-11-17: corpus/release tests reported 5051 passed, 38 failed, 38 errored, 73 skipped; check reported 392 failing. This updates the earlier TASK-1960 result recorded in memory 0n7exf (5048 passed, 38 failed, 38 errored, 73 skipped; ch
+      judge: Corrects note 0n7exf with the current run's figures, matching the pasted output exactly; the older baseline is genuinely superseded.
+
+=== 2. turn 266 (heldout) model deepseek-flash; stale per selection: ['h52ztj']
+MSG: Cross-swarm DM from fox (swarm 'session:session_fox_1786973670427_f6af743b8ac2fe1c'): fox -> spider: pushed bapi `19925e116`. The Fast filter is now `TestCategory!=ContainerBacked&TestCategory!=LiveGoogle&TestCategory!=LiveSms`, the same exclusion as the full tier's 'mock' set (Jenkinsfile.test-full:81). Live tests run only in their own liveGoogle/liveSms sets, where the settings are mounted. I updated the pinned filter assertion in test_ci_verdict_pipeline, and all 121 bin/tests pass. Please watch #597.
+  row 4dsvsc 2026-10-14: Lesson (Brovs bapi, Oct 14, 2026): the CI fast tier runs `TestCategory!=ContainerBacked` (Jenkinsfile.test:65) with no DB/Redis/ES. Any test class needing conta
+  row h52ztj 2026-10-28: Brovs-4842 implementation is complete at SHA e2ec96d8a; Jenkins full CI #125 passed with 1024 mock, 1 liveSms, and 2 liveGoogle tests.
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"content": "Brovs bapi CI fast tier (Nov 17, 2026, commit 19925e116, pushed by Fox): Fast filter is now TestCategory!=ContainerBacked&TestCategory!=LiveGoogle&TestCategory!=LiveSms, matching the full tier's 'mock' set (Jenkinsfile.test-full:81); live tests only r
+      judge: Fox reports the fast filter changed to also exclude LiveGoogle/LiveSms in commit 19925e116; the new note stores that corrected fact and explicitly supersedes the stale ContainerBacked-only note 4dsvsc
+
+=== 3. turn 100 (development) model claude-sonnet-5-5; stale per selection: ['cn6r6f', 'fpq3h1']
+MSG: **Background task** `69190001c5` · `Wait for CI, cut rc.11, conf` (`bash`) · ✓ completed · 1330.2s · exit 0 ```text HEAD 558c407ce0edd7f8dee5ceb85ec44280464b287c success app build & lint success Fast Tests @ exercised-sha=558c407ce0edd7f8dee5ceb85ec44280464b287c success Go Test success Harness Selftest success Images success Notify cloud services success Push on master success Reap idle LXD fleet ✓ No migrations modified since v2026.11.1-rc.10 (previous RC) Tagged v2026.11.1-rc.11 and pushed to origin Release: 42027829581 completed success StatBus installer v2026.11.1-rc.11 --- Command finished with exit... ``` _Full output:_ `bg action="output" task_id="69190001c5"`
+  row fpq3h1 2026-09-24: Installer recovery recognizes stale restart intent and reports that the previous restart finished before continuing.
+  row cn6r6f 2026-11-03: 2026-11-03 18:03Z: rabbit hold for v2026.11.1-rc.04. No commits or pushes on master until rabbit says "released". Keep work uncommitted.
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"content": "Supersedes cn6r6f: the rabbit hold for v2026.11.1-rc.04 is stale. As of 2026-11-17, v2026.11.1-rc.11 was tagged and pushed from master, CI passed, and the release completed successfully. Commits and pushes on master are no longer blocked by that hold.
+      judge: Accurately captures rc.11 release and that the rc.04 hold no longer blocks master commits/pushes.
+
+=== 4. turn 31 (development) model deepseek-flash; stale per selection: ['4e5g5v']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_scorpion_1793422123100_94074c63bf6cc269'): TASK-1998: your acceptance crossed with my CORRECTION (sent 22:32:25). The const_spec on/off comparison does NOT explain these 3 rows. test_compiler.ml's harness (compile_to_typed → Monomorphize → Treeshake → Lower → Perceus/Rc_elim) never runs Const_specialize, so your direction (4), "one root note: const_specialize folds the shapes", rests on a wrong premise. Please don't write that into 1988 or 1998 yet. What still stands: the runtime repros are sound. I re-ran them with SEID_CONST_SPEC=0, so they keep the switch, join and consume shapes the tests look for: B.5 r=1100/700 and B.13 r=1200/800, A
+  row g08hjp 2026-07-24: SUCCESSION PACKET — compiler-lang craftsman, port-parity parse-gap sweep (rows 4-11). Handoff at heavy-context checkpoint per King ruling (b)/626-b2 precedent. 
+  row 4e5g5v 2026-07-05: SESSION CLOSE / SUCCESSION HANDOFF — compiler-lang lane, 2026-07-03→07-05. Long multi-task tour; standing down for fresh reincarnation per lead's pre-approved s
+  [H0-main] 0 memory calls
+  [H3-correct] 2 memory calls
+    unclear: {"tool": "memory_search", "args": {"query": "const_specialize const_spec folds shapes TASK-1998 tc reds"}}
+      judge: It is a read-only memory_search to locate the prior const_spec note, not a forget or store, so there is no memory edit to judge; the search itself is reasonable but the verdict categories do not settl
+    right: {"tool": "memory_remember", "args": {"content": "CORRECTION to prior fact <id from memory_search>: SEID_CONST_SPEC / Const_specialize on-off does NOT explain the 3 tc reds in TASK-1998. test_compiler.ml harness is compile_to_typed -> Monomorphize -> Treeshake -> Lower -> Perceus/Rc_elim and never ru
+      judge: Content correctly retracts the wrong 'const_specialize folds the shapes' premise, preserving the standing repro results and restated AC#4 item (4); only the '<id>' placeholder is sloppy, not the fact.
+
+=== 5. turn 172 (development) model deepseek-flash; stale per selection: ['60tj59']
+MSG: Cross-swarm DM from fox (swarm 'session:session_fox_1786973670427_f6af743b8ac2fe1c'): fox -> spider: yes, my mechanic chicken is actively on it. Please stop chick so you don't duplicate the work. - **Done:** signed local commit `1c9683cd8`. The checker now credits any test file that declares `extern alias BackofficeServer`, with a red/green self-test, and Backoffice is 143/143. - **Uncommitted:** a typed FakeVippsLoginRequest test and a new FakeVippsPageRequest GET test in TestLoginTests. I just unblocked the last point: Consumer DTOs are referenced fully qualified, with no checker change for Consumer. - **Left:** run those tests through test.sh and commit. - **ETA:** about 30–45 minutes. Th
+  row x44nyw 2026-10-28: Owner 2026-10-28: for per-batch verification, run only the selected tests locally with devops/test.sh --filter against the local stack. Fox may stop the owner's
+  row zzvyk3 2026-10-15: Fox coordination lesson (Oct 15, 2026): never block in a long bg wait (10-15 min) while engineers may send decision requests. Octopus waited 15+ min idle in a h
+  row 60tj59 2026-09-24: Owner (2026-09-24): `jcode-brovs` is OBSOLETE. Plain `jcode` is now a general alias that picks the correct Jcode instance (custom JCODE_HOME, runtime and server
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "mcp__muninn__memory_remember", "args": {"note": "2026-11-17: Fox confirmed mechanic chicken owns the remaining TestLoginTests work (typed FakeVippsLoginRequest + FakeVippsPageRequest GET). Spider stood down chick to avoid duplicate work; do not run test.sh or touch that branch.", "tags": [
+      judge: DM explicitly says chicken owns the remaining TestLoginTests work and asks spider to stop chick, so standing down and not touching that work is a correct, grounded coordination update.
+
+=== 6. turn 51 (development) model claude-sonnet-5-5; stale per selection: ['x27rm4']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_dragon_1793623868105_3f9eceec2ff6cc2b'): dragon: you're right; that was my mistake. I judged your run's phases against MY lane's tc.tsv, which still has those 3 rows, not against your lane's tree, where you've already removed them. Your lane is correct: tc 392, no NEWLY GREEN. Sorry for the noise. The only real issue was the 4 CHANGED RED from my order-dependent key.
+  row zgf3kp 2026-11-05: Scorpion’s lane/1998 already removed the 3 tc rows and set tc to 392; the reported NEWLY GREEN results came from judging against the wrong lane’s tc.tsv.
+  row bkv0tb 2026-06-12: TASK-373 Dragon D GREEN-FOR-CHERRY-PICK: d2aefc13 (post-392 synced lane). CORPUS STRICTLY BETTER vs fresh post-392 baseline: master 56 / lane 55 / master-only =
+  row x27rm4 2026-11-05: The earlier NEWLY GREEN report was false: it resulted from comparing against another lane’s stale tc.tsv. The genuine issue was four order-dependent CHANGED RED
+  [H0-main] 0 memory calls
+  [H3-correct] 2 memory calls
+    right: {"tool": "memory_remember", "args": {"reinforce": "zgf3kp"}}
+      judge: Duplicate reinforcement of the accurate zgf3kp note; the correction message confirms its content, so keeping it is justified.
+    right: {"tool": "memory_remember", "args": {"reinforce": "x27rm4"}}
+      judge: Duplicate reinforcement of accurate x27rm4; note still holds per the message, so reinforcing it is correct.
+
+=== 7. turn 31 (development) model gpt-6-luna; stale per selection: ['4e5g5v']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_scorpion_1793422123100_94074c63bf6cc269'): TASK-1998: your acceptance crossed with my CORRECTION (sent 22:32:25). The const_spec on/off comparison does NOT explain these 3 rows. test_compiler.ml's harness (compile_to_typed → Monomorphize → Treeshake → Lower → Perceus/Rc_elim) never runs Const_specialize, so your direction (4), "one root note: const_specialize folds the shapes", rests on a wrong premise. Please don't write that into 1988 or 1998 yet. What still stands: the runtime repros are sound. I re-ran them with SEID_CONST_SPEC=0, so they keep the switch, join and consume shapes the tests look for: B.5 r=1100/700 and B.13 r=1200/800, A
+  row g08hjp 2026-07-24: SUCCESSION PACKET — compiler-lang craftsman, port-parity parse-gap sweep (rows 4-11). Handoff at heavy-context checkpoint per King ruling (b)/626-b2 precedent. 
+  row 4e5g5v 2026-07-05: SESSION CLOSE / SUCCESSION HANDOFF — compiler-lang lane, 2026-07-03→07-05. Long multi-task tour; standing down for fresh reincarnation per lead's pre-approved s
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "TASK-1998 correction: test_compiler.ml runs compile_to_typed \u2192 Monomorphize \u2192 Treeshake \u2192 Lower \u2192 Perceus/Rc_elim and does not run Const_specialize. Therefore const_specialize folding shapes is not a valid explanation for the three ro
+      judge: Stores the accurate correction (harness never runs Const_specialize, repros valid with SEID_CONST_SPEC=0, b26 redo, bisect-driven item 4); the old_id 'unknown' leaves the supersession unresolved but t
+
+=== 8. turn 180 (development) model deepseek-flash; stale per selection: ['sfz240']
+MSG: **Background task** `20947970iz` · `Slow history-touching tests` (`bash`) · ✓ completed · 156.7s · exit 0 ```text ok 1 - 303_import_jobs_for_norway_small_history 9581 ms # All 1 tests passed. ok 1 - 401_import_jobs_for_brreg_selection 111552 ms # All 1 tests passed. ok 1 - 402_import_jobs_for_norway_history 30452 ms # All 1 tests passed. --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="20947970iz"`
+  row jqy7en 2026-10-06: Focused inherited-marker, restart-routing, handoff, and shell gapless tests pass independently at the frozen candidate; full `go test ./... -count=1` also exits
+  row 7xwmxv 2026-09-30: The combined hermetic finalize test passes exit 0, including signal cleanup, ownership/admission ordering, and preservation of rc 125; it is Mac Bash with stubb
+  row sfz240 2026-10-15: The earlier statement that the run was still active was stale; the background fast-suite task had already completed.
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "Slow history-touching tests pass at exit 0 on 2026-11-17: 303_import_jobs_for_norway_small_history (~9.6s), 401_import_jobs_for_brreg_selection (~111.6s), 402_import_jobs_for_norway_history (~30.5s)."}}
+      judge: Accurately records the verified outcome of the background run with exit 0 and per-test timings, matching the task output.
+
+=== 9. turn 56 (development) model gpt-6-luna; stale per selection: ['y6mjp3']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_dragon_1793623868105_3f9eceec2ff6cc2b'): dragon: the chain dry-run is GREEN (finished 09:48). The gate is free; the reuse land is short and builds nothing.
+  row y6mjp3 2026-06-12: ## Goal Magi sitting (fresh context post-clear): the dragon queue — TASK-371 Dragon B (re-export alias crash), then self-directed continuation through TASK-372 
+  row 4jd3bn 2026-06-12: POST-COMPACTION SUMMARY — Inquisitor session (dragon gate verification campaign). Goal: author RED-on-master BBs for TASK-364 dragon set + TASK-370 fingerprint 
+  row v5m0nw 2026-10-31: Seid swarm: when a land dry-run is waiting for load, worker emit A/B sweeps (~50 seid procs) push load to 200+. Cap worker sweeps at -P4 and hold memcheck count
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"content": "## Current gate update (2026-11-17): A cross-swarm report says the chain dry-run finished GREEN at 09:48; the gate is free, and the reuse land is short and builds nothing. This is a current status update, not a change to the dragon-task results record
+      judge: Accurately records the newer gate-free status without altering the dragon-task results or the still-valid load precautions in v5m0nw.
+
+=== 10. turn 202 (heldout) model gpt-6-luna; stale per selection: ['y6mjp3']
+MSG: Cross-swarm DM from orangutan (swarm 'seid-foreman'): TASK-1988: good work. The three-way split is better than my two-way: Movable correctly captures "a single use that runs once", and over-counting is the safe direction (Shared, never a duplicate). The dead-val check is confirmed. tc 392 to 391 with the row removed in the same lane is right. One point on the type principle: "the count does not track shadowing" is safe today, but it's a value-level argument. Write it down at the counter as an invariant comment ("over-count => Shared, never unsound"), and add a pin with a shadowed name so a future change that under-counts goes red. MO#4a read-only: fine. Preview after vole's run. If MO#4a isn
+  row 6td9x9 2026-07-27: INQUISITOR — TASK-704 FINAL DELTA REVIEW: CLEAR FOR THE PICK (2026-07-27). The one-parser series ships.  COMMIT b18030678 (.Compiler.Typecheck.typename_memo) — 
+  row 14n43z 2026-11-05: For constant-use counting, document the invariant that over-counting is safe because it yields Shared, never an unsound under-count.
+  row y6mjp3 2026-06-12: ## Goal Magi sitting (fresh context post-clear): the dragon queue — TASK-371 Dragon B (re-export alias crash), then self-directed continuation through TASK-372 
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"reinforce": "14n43z"}}
+      judge: The DM explicitly endorses the over-count => Shared safety invariant and asks for it as a counter comment; reinforcing 14n43z matches.
+
+=== 11. turn 202 (heldout) model claude-haiku-5-5; stale per selection: ['y6mjp3']
+MSG: Cross-swarm DM from orangutan (swarm 'seid-foreman'): TASK-1988: good work. The three-way split is better than my two-way: Movable correctly captures "a single use that runs once", and over-counting is the safe direction (Shared, never a duplicate). The dead-val check is confirmed. tc 392 to 391 with the row removed in the same lane is right. One point on the type principle: "the count does not track shadowing" is safe today, but it's a value-level argument. Write it down at the counter as an invariant comment ("over-count => Shared, never unsound"), and add a pin with a shadowed name so a future change that under-counts goes red. MO#4a read-only: fine. Preview after vole's run. If MO#4a isn
+  row 6td9x9 2026-07-27: INQUISITOR — TASK-704 FINAL DELTA REVIEW: CLEAR FOR THE PICK (2026-07-27). The one-parser series ships.  COMMIT b18030678 (.Compiler.Typecheck.typename_memo) — 
+  row 14n43z 2026-11-05: For constant-use counting, document the invariant that over-counting is safe because it yields Shared, never an unsound under-count.
+  row y6mjp3 2026-06-12: ## Goal Magi sitting (fresh context post-clear): the dragon queue — TASK-371 Dragon B (re-export alias crash), then self-directed continuation through TASK-372 
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"reinforce": "14n43z", "note": "For constant-use counting, document the invariant that over-counting is safe because it yields Shared, never an unsound under-count. (Still holds per seid-foreman TASK-1988 review: put this as an invariant comment at the counter an
+      judge: Reinforced note restates 14n43z and adds the DM's concrete asks (invariant comment, shadowed-name pin) without introducing anything false.
+
+=== 12. turn 266 (heldout) model gpt-6.1-sol; stale per selection: ['h52ztj']
+MSG: Cross-swarm DM from fox (swarm 'session:session_fox_1786973670427_f6af743b8ac2fe1c'): fox -> spider: pushed bapi `19925e116`. The Fast filter is now `TestCategory!=ContainerBacked&TestCategory!=LiveGoogle&TestCategory!=LiveSms`, the same exclusion as the full tier's 'mock' set (Jenkinsfile.test-full:81). Live tests run only in their own liveGoogle/liveSms sets, where the settings are mounted. I updated the pinned filter assertion in test_ci_verdict_pipeline, and all 121 bin/tests pass. Please watch #597.
+  row 4dsvsc 2026-10-14: Lesson (Brovs bapi, Oct 14, 2026): the CI fast tier runs `TestCategory!=ContainerBacked` (Jenkinsfile.test:65) with no DB/Redis/ES. Any test class needing conta
+  row h52ztj 2026-10-28: Brovs-4842 implementation is complete at SHA e2ec96d8a; Jenkins full CI #125 passed with 1024 mock, 1 liveSms, and 2 liveGoogle tests.
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"text": "Correction to memory 4dsvsc: Fox reports bapi commit 19925e116 changes the Fast CI filter to TestCategory!=ContainerBacked&TestCategory!=LiveGoogle&TestCategory!=LiveSms, matching the full tier mock exclusions. LiveGoogle and LiveSms tests belong in thei
+      judge: Stores Fox's correction that the Fast filter now also excludes LiveGoogle/LiveSms, accurately flagging 4dsvsc's filter detail as historical while preserving its still-valid categorization lesson.
+
+=== 13. turn 270 (heldout) model deepseek-flash; stale per selection: ['xf3rbk']
+MSG: **Background task** `054277opf6` · `20-min check-in` (`bash`) · ✓ completed · 1140.1s · exit 0 ```text { 17,45 16,55 18,09 } .jcode/scratch/land-runs/1988-20261106-083552/ [08:39:46] tools: tools: 26 tests failing=0 rc=0 [08:39:58] phase emit [08:40:33] phase dirs --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="054277opf6"`
+  row 7j3hk8 2026-08-16: **What**: Independently verified correction commit 27995e5b9 (TASK-666, on top of candidate abc15fd00) in clean worktrees at f9a2e0968/abc15fd00/27995e5b9. Both
+  row xf3rbk 2026-09-25: The final validation command failed despite the regression suite reaching 236/236 parsed tests; the exact failing phase/output remains unresolved.
+  [H0-main] 1 memory calls
+    wrong: {"tool": "memory_remember", "args": {"note": "20-min check-in 054277opf6 for land-run 1988-20261106-083552: tools 26 tests failing=0 rc=0, phases emit+dirs done; inspected run state and git status, suite still green, no action needed."}}
+      judge: Stores an ephemeral 20-min check-in status (suite green, no action needed) that merely restates the finished task output; no durable fact and it does nothing about the still-unresolved xf3rbk failure.
+  [H3-correct] 0 memory calls
+
+=== 14. turn 95 (development) model gpt-6-luna; stale per selection: ['2wp5gf', 'pq98n3', 'y1fp9k']
+MSG: **Background task** `599401lhn3` · `Wait for CI, cut rc.10, conf` (`bash`) · ✓ completed · 1453.8s · exit 0 ```text HEAD 0f4b4413a3fcea6d15085820ecfae8b0f977095e success app build & lint success Fast Tests @ exercised-sha=0f4b4413a3fcea6d15085820ecfae8b0f977095e success Go Test success Harness Selftest success Images success Notify cloud services success Push on master ✓ No migrations modified since v2026.11.1-rc.09 (previous RC) Tagged v2026.11.1-rc.10 and pushed to origin Release: 42023248285 completed success StatBus installer v2026.11.1-rc.10 --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="599401lhn3"`
+  row v041aq 2026-06-10: GOAL (foreman, statbus install-recovery overnight 2026-06-10→11): drive to release-candidate-ready by morning. Reseeded the team after the King cleared architec
+  row rdtjk6 2026-06-10: OVERNIGHT 2026-06-10→11 COMMITS LANDED (statbus install-recovery, RC-readiness push). All on master, HEAD=origin/master=cd2f5d51f (clean tree): - 751bae42c: STA
+  row fd2s5b 2026-06-11: **What**: The 2026-06-11 handoff claimed "RC fully cut-prepped at cd2f5d51f, all 12 `./sb release prerelease` gates pass." That went stale immediately: writing 
+  row w2f3h5 2026-06-15: **What**: 2026-06-15, King "get things going... ready by tonight" → dispatched the full gate-maker batch (036 AC#1) toward a validation-capable rc.03. Before th
+  row 2wp5gf 2026-11-04: CI at HEAD 10404842fa passed Fast Tests, app build/lint, Harness Selftest, Images, cloud notification, and push checks; an older Go Test run failed and an older
+  row y1fp9k 2026-11-02: v2026.11.1-rc.03 was tagged at 068d5c93a and published with 9 assets; release, fast tests, hardening, smoke, dev deploy, and LXD fleet gates passed.
+  row pq98n3 2026-08-31: GOAL: Foreman of team statbus, post-v2026.08.1-promotion session — verify the promotion, keep the team busy on the backlog, and drive the King's config-identity
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"date": "2026-11-17", "note": "CI completed successfully at HEAD 0f4b4413a3fcea6d15085820ecfae8b0f977095e: app build & lint, Fast Tests, Go Test, Harness Selftest, Images, Notify cloud services, and Push on master all passed. No migrations changed since v2026.11.
+      judge: Stores the accurate rc.10 CI/tag/release facts from the output and marks the older release-status note (2wp5gf) as superseded.
+
+=== 15. turn 172 (development) model claude-haiku-5-5; stale per selection: ['60tj59']
+MSG: Cross-swarm DM from fox (swarm 'session:session_fox_1786973670427_f6af743b8ac2fe1c'): fox -> spider: yes, my mechanic chicken is actively on it. Please stop chick so you don't duplicate the work. - **Done:** signed local commit `1c9683cd8`. The checker now credits any test file that declares `extern alias BackofficeServer`, with a red/green self-test, and Backoffice is 143/143. - **Uncommitted:** a typed FakeVippsLoginRequest test and a new FakeVippsPageRequest GET test in TestLoginTests. I just unblocked the last point: Consumer DTOs are referenced fully qualified, with no checker change for Consumer. - **Left:** run those tests through test.sh and commit. - **ETA:** about 30–45 minutes. Th
+  row x44nyw 2026-10-28: Owner 2026-10-28: for per-batch verification, run only the selected tests locally with devops/test.sh --filter against the local stack. Fox may stop the owner's
+  row zzvyk3 2026-10-15: Fox coordination lesson (Oct 15, 2026): never block in a long bg wait (10-15 min) while engineers may send decision requests. Octopus waited 15+ min idle in a h
+  row 60tj59 2026-09-24: Owner (2026-09-24): `jcode-brovs` is OBSOLETE. Plain `jcode` is now a general alias that picks the correct Jcode instance (custom JCODE_HOME, runtime and server
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    wrong: {"tool": "memory_remember", "args": {"note": "Per-batch verification: run only selected tests with devops/test.sh --filter against local stack. Avoid full suites and new workspaces. Use bg waits of 5 minutes or less while agents are active, and answer decision DMs first. Full bapi suite (~49 min) mu
+      judge: Nothing is being corrected; it just re-states already-valid notes (x44nyw, zzvyk3, 60tj59), and forcing a condensed merged text via reinforce of zzvyk3 would drop its Oct 15 details for no benefit.
+
+=== 16. turn 38 (development) model gpt-6-luna; stale per selection: ['5yzt3r']
+MSG: 🐝 **Swarm await finished** All members done. All 1 members are done: hare Member statuses: ✓ hare (ready) Completion reports: --- hare (ready) --- Preflight clear and initial balances verified. Created one synthetic draft, lottery 69, retained unpublished. Stopped and notified fox after a duplicate responsive-link selector error. No purchases, draw, archive, contact or data deletion performed. Partial evidence report: `.jcode/scratch/4321-evidence/report.md`. 
+  row 4ec548 2026-11-05: Draft lottery 69 (“Demo-lotteri (test)”) remained unpublished after the initial attempt; its evidence report is in .jcode/scratch/4321-evidence/report.md.
+  row 5yzt3r 2026-11-05: The previous lottery test stalled because the file input was set but the crop dialog’s “Save Photo” action was not clicked; no publication, purchases, or draw o
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"reinforce": "4ec548", "note": "2026-11-17: Verified the latest lottery 69 attempt. One synthetic draft was created and retained unpublished. Work stopped after a duplicate responsive-link selector error; no purchases, draw, archive, contact, or data deletion occ
+      judge: Reinforces note 4ec548 with a dated note matching the completion report (draft retained unpublished, stopped after duplicate responsive-link selector error, no purchases/draw/archive/contact/deletion)
+
+=== 17. turn 268 (heldout) model gpt-6-luna; stale per selection: ['bavaq4']
+MSG: **Background task** `1621766d7l` · `Watch bapi-test #597` (`bash`) · ✓ completed · 301.8s · exit 0 ```text 06:56 #597 06:57 #597 06:58 #597 06:59 #597 07:00 #597 None True 07:01 #597 SUCCESS False --- Command finished with exit code: 0 --- ``` _Full output:_ `bg action="output" task_id="1621766d7l"`
+  row nm508k 2026-09-26: Full CI job bapi-test-full/master #29 ran against commit b206aec34 and remained RUNNING for over 10 minutes, with tests repeatedly pausing/resuming SearchFeeder
+  row bavaq4 2026-09-22: bapi-test/master #344 failed 2/515 tests and #345 failed 3/515; all failures were System.Net.WebException request timeouts, while the prior isolated full run #3
+  row kdkhms 2026-10-22: bapi-test-full #107 initially retried indefinitely because it was given a nonexistent full-SHA image tag; the job was aborted.
+  [H0-main] 0 memory calls
+  [H3-correct] 2 memory calls
+    unclear: {"tool": "muninn.memory_search", "args": {"query": "bapi-test #597"}}
+      judge: This is a read-only memory_search, not a forget or remember; it removes and stores nothing, so it cannot be judged as a correct or incorrect memory edit from the evidence.
+    right: {"tool": "muninn.memory_remember", "args": {"note": "bapi-test #597 completed successfully. At 07:00 the status was None with the running flag True; at 07:01 it was SUCCESS with the running flag False."}}
+      judge: Accurately records #597 completing as SUCCESS at 07:01, matching the background task log; a true, worthwhile fact.
+
+=== 18. turn 38 (development) model claude-haiku-5-5; stale per selection: ['5yzt3r']
+MSG: 🐝 **Swarm await finished** All members done. All 1 members are done: hare Member statuses: ✓ hare (ready) Completion reports: --- hare (ready) --- Preflight clear and initial balances verified. Created one synthetic draft, lottery 69, retained unpublished. Stopped and notified fox after a duplicate responsive-link selector error. No purchases, draw, archive, contact or data deletion performed. Partial evidence report: `.jcode/scratch/4321-evidence/report.md`. 
+  row 4ec548 2026-11-05: Draft lottery 69 (“Demo-lotteri (test)”) remained unpublished after the initial attempt; its evidence report is in .jcode/scratch/4321-evidence/report.md.
+  row 5yzt3r 2026-11-05: The previous lottery test stalled because the file input was set but the crop dialog’s “Save Photo” action was not clicked; no publication, purchases, or draw o
+  [H0-main] 0 memory calls
+  [H3-correct] 2 memory calls
+    wrong: {"tool": "memory_remember", "args": {"note": "Supersedes 5yzt3r: the lottery test stall was not caused by an unclicked 'Save Photo' action. Swarm member hare stopped after a duplicate responsive-link selector error. Draft lottery 69 (\"Demo-lotteri (test)\") was created and retained unpublished. No 
+      judge: The message describes a new run stopping on a duplicate responsive-link selector error, but does not show the older note 5yzt3r (previous test stalled on unclicked Save Photo) is false; the stored 'su
+    right: {"tool": "memory_remember", "args": {"reinforce": "4ec548"}}
+      judge: 4ec548 is confirmed by the report: lottery 69 created and left unpublished, with the evidence report in .jcode/scratch/4321-evidence/report.md.
+
+=== 19. turn 144 (development) model gpt-6-luna; stale per selection: ['fhgceg']
+MSG: 🐝 **Swarm await finished** All members done. All 1 members are done: bird Member statuses: ✓ bird (completed) Completion reports: --- bird (completed) --- Brovs-4746 D10 re-review: APPROVE. Posted as comment 101-7871. All 7865 findings are fixed: no volatile counts and no draft-history text remain in doc/route-materialisation-design.md (:37, :48-49, :85-88, :186). The delta adds no false claims. Finder route matches ConsumerWeb/src/Main.tsx:307. The commit has a good ED25519 signature and touches only that one file. Validation: git log --show-signature. git show --stat. Grep of the post-fix file. Cherry-picked 1910f868 and bdccbaa2 onto origin/master in a scratch worktree: clean, worktree re
+  row fhgceg 2026-09-24: The initial pre-push failure was caused by docker_gwbridge.py being absent from the impact manifest; adding its operational classification fixed manifest valida
+  [H0-main] 0 memory calls
+  [H3-correct] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"date": "2026-11-17", "note": "Brovs-4746 D10 re-review approved. The D10 change introduced no new manifest-validation errors: `bin/cluster-config-impact.py --validate-manifest` produced identical output on base and base+D10. The remaining `yellow_push_test.go` m
+      judge: Stores an accurate, concrete record from the report: D10 approved, manifest validation output identical on base and base+D10, yellow_push_test.go error pre-existing.
+
+=== 20. turn 51 (development) model deepseek-flash; stale per selection: ['x27rm4']
+MSG: Cross-swarm DM from session_ (swarm 'session:session_dragon_1793623868105_3f9eceec2ff6cc2b'): dragon: you're right; that was my mistake. I judged your run's phases against MY lane's tc.tsv, which still has those 3 rows, not against your lane's tree, where you've already removed them. Your lane is correct: tc 392, no NEWLY GREEN. Sorry for the noise. The only real issue was the 4 CHANGED RED from my order-dependent key.
+  row zgf3kp 2026-11-05: Scorpion’s lane/1998 already removed the 3 tc rows and set tc to 392; the reported NEWLY GREEN results came from judging against the wrong lane’s tc.tsv.
+  row bkv0tb 2026-06-12: TASK-373 Dragon D GREEN-FOR-CHERRY-PICK: d2aefc13 (post-392 synced lane). CORPUS STRICTLY BETTER vs fresh post-392 baseline: master 56 / lane 55 / master-only =
+  row x27rm4 2026-11-05: The earlier NEWLY GREEN report was false: it resulted from comparing against another lane’s stale tc.tsv. The genuine issue was four order-dependent CHANGED RED
+  [H0-main] 1 memory calls
+    right: {"tool": "memory_remember", "args": {"note": "Cross-swarm DM from dragon confirmed my lane's tree is correct (tc 392, 3 stale rows already removed) and retracted the NEWLY GREEN noise; the only genuine defect was 4 CHANGED RED rows caused by an order-dependent comparison key, now fixed by sorting th
+      judge: Accurately records dragon's correction (lane tree correct, tc 392, no NEWLY GREEN, 4 CHANGED RED from order-dependent key fixed by sorting), consistent with existing notes zgf3kp/x27rm4; nothing false
+  [H3-correct] 2 memory calls
+    right: {"tool": "memory_remember", "args": {"reinforce": "zgf3kp", "note": "Re-confirmed 2026-11-17 (dragon retracted its claim): my lane tree already has the 3 tc rows removed (tc=392) and zero NEWLY GREEN; the false NEWLY GREEN report came from judging against the dragon's own lane tc.tsv, not mine. Veri
+      judge: The dragon's DM retracts the NEWLY GREEN claim and confirms tc=392 with no newly green, matching zgf3kp, so reinforcing it is justified.
+    right: {"tool": "memory_remember", "args": {"reinforce": "x27rm4", "note": "Still holds: the only genuine defect in that run was 4 order-dependent CHANGED RED corpus rows, fixed by sorting the failing-test set so the comparison key is deterministic. NEWLY GREEN count was never real (wrong-lane tc.tsv compa
+      judge: x27rm4 is confirmed: the only genuine defect was four order-dependent CHANGED RED rows fixed by sorting, and the NEWLY GREEN report was a wrong-lane comparison.
