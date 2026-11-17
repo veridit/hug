@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+"""s6ff5k real replay report. Same method as report.py (written before any
+judged result was seen): paired (turn, model) cells, ok = the run made at
+least one memory call the blind judge rated "right"; d = ok(H2) - ok(H0);
+bootstrap of sum(d), random.Random(813), 2000 resamples, [50] and [1949].
+Second bar: wrong memory calls, H2 total <= H0 total. Split dev / held-out.
+
+  real_report.py JUDGE.json RES.json
+"""
+import collections, hashlib, json, os, random, re, sys
+
+S = os.environ["JCODE_SCRATCH_DIR"]
+SET = json.load(open(os.path.join(S, "header4", "real-set.json")))
+J = json.load(open(sys.argv[1]))
+R = json.load(open(sys.argv[2]))
+
+
+def memcalls(r):
+    a = r.get("answer") or {}
+    cs = a.get("calls") if isinstance(a.get("calls"), list) else []
+    return [c for c in cs if isinstance(c, dict) and re.search(r"memory_|forget|remember", str(c.get("tool", "")), re.I)]
+
+
+def key(r, i, c):
+    return hashlib.sha256((r["turn"] + r["model"] + r["hdr"] + str(i) + json.dumps(c, sort_keys=True)).encode()).hexdigest()[:16]
+
+
+cell = {}
+verd = collections.Counter()
+unjudged = 0
+for r in R:
+    vs = []
+    for i, c in enumerate(memcalls(r)):
+        j = J.get(key(r, i, c))
+        if j is None:
+            unjudged += 1
+            continue
+        vs.append(j["verdict"])
+        verd[(r["hdr"], j["verdict"])] += 1
+    cell[(r["hdr"], r["turn"], r["model"])] = vs
+print("runs", len(R), "unjudged memory calls", unjudged)
+print("actual models", collections.Counter(r.get("actual_model") for r in R))
+H = sorted({h for h, _, _ in cell})
+for h in H:
+    runs = [v for (hh, _, _), v in cell.items() if hh == h]
+    print(f"{h}: runs {len(runs)}, runs with a memory call {sum(1 for v in runs if v)}, "
+          f"runs with a right call {sum(1 for v in runs if 'right' in v)}, calls right {verd[(h, 'right')]} wrong {verd[(h, 'wrong')]} unclear {verd[(h, 'unclear')]}")
+base, arm = "H0-main", "H2-server"
+dev = {t for t, x in SET.items() if x["split"] == "development"}
+for name, turns in [("all", set(SET)), ("dev", dev), ("held-out", set(SET) - dev)]:
+    keys = sorted({(t, m) for (h, t, m) in cell if t in turns and (base, t, m) in cell and (arm, t, m) in cell})
+    d = [int("right" in cell[(arm, t, m)]) - int("right" in cell[(base, t, m)]) for t, m in keys]
+    w = [cell[(arm, t, m)].count("wrong") - cell[(base, t, m)].count("wrong") for t, m in keys]
+    if not d:
+        continue
+    rnd = random.Random(813)
+    bs = sorted(sum(rnd.choice(d) for _ in d) for _ in range(2000))
+    print(f"{arm} vs {base} on {name}: right-fix turns {sum(d):+d} of {len(d)} [{bs[50]:+d}, {bs[1949]:+d}]; wrong calls {sum(w):+d}")

@@ -54,6 +54,7 @@ hatchling 15:07, real-replay set (crab ruling B), size reported before running: 
 hatchling 16:05, scoring fixed before any judge verdict was seen (replay at 232/400): paired (turn, model) cells; a cell scores 1 when the run made at least one memory call the blind judge rated right; d = H2 - H0 per cell; bootstrap of sum(d) as header4 report.py (Random(813), 2000 resamples, 2.5/97.5 pct); wrong = count of judge-'wrong' memory calls per arm. Reported for all 40 turns (the bar) and split development 25 / heldout 15. Script: header4/real_report.py.
 file:real-report.txt (634 bytes, sha256:1ccef44f) real replay real-report.txt
 file:spot.txt (36333 bytes, sha256:dc7c17b7) real replay spot.txt
+file:real-report.py.txt (2651 bytes, sha256:599141ac) real replay real-report.py.txt
 ## History
 - 2026-11-17T16:08 todo -> doing/active (take)
 - 2026-11-17T17:33 doing/active -> doing/waiting (wait)
