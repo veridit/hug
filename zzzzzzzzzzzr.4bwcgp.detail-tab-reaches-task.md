@@ -1,13 +1,18 @@
 ---
 id: 4bwcgp
 title: "Detail: Tab reaches a task's links (deps, waited-on ticket, parent); Enter opens"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T20:45"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Sources: dependencies, waiting_on text (any 6-char id or alias that resolves), p
 - [ ] Jørgen tabs from a waiting row's detail to the ticket it waits on and back, and says it is quick
 
 ## Notes
+
+
+## History
+- 2026-11-17T20:45 todo -> doing/active (take)
