@@ -24,11 +24,21 @@ func TestCaptureEightCandidatesOnTwentyThousandUnits(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// One transaction for the seed (ce3dmq): 20000 autocommits took 116 s
+	// of the windows runner's 162 s for this package (run 44155839304),
+	// the timed capture 0.47 s. The pool has one connection, so BEGIN and
+	// the upserts share it, as in store.migrateShortIDs.
+	if _, err := f.App.DB.Exec(`BEGIN IMMEDIATE`); err != nil {
+		t.Fatal(err)
+	}
 	for n := 0; n < 20000; n++ {
 		_, err := f.App.DB.UpsertUnit(store.Unit{SourceID: source, Key: fmt.Sprintf("bulk-%d", n), ContentHash: fmt.Sprintf("bulk-hash-%d", n), Kind: "memory", Body: fmt.Sprintf("Synthetic quartz deployment catalog record %d.", n), Scope: "jcode@alpha", Active: true})
 		if err != nil {
 			t.Fatal(err)
 		}
+	}
+	if _, err := f.App.DB.Exec(`COMMIT`); err != nil {
+		t.Fatal(err)
 	}
 	var proposals []string
 	for n := 0; n < 8; n++ {
