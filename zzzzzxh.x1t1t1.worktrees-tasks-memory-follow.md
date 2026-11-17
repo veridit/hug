@@ -1,7 +1,7 @@
 ---
 id: x1t1t1
 title: "Worktrees: record branch and worktree on take; branch as a condition"
-status: "doing"
+status: "done"
 type: "feature"
 priority: "high"
 assignee: ["kestrel"]
@@ -9,11 +9,7 @@ labels: ["needs-discussion"]
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
-waiting_on: "check 7: take a Statbus task from a linked worktree (git worktree add) via CLI and MCP, or strike it; only separate clones are in use"
-waiting_since: "2026-11-17T15:58"
-waiting_asked_by: "calf"
-stage: "waiting"
-waiting_for: "jhf"
+done_at: "2026-11-17T19:45"
 ---
 
 ## Goal
@@ -72,3 +68,4 @@ kestrel 14:40, Statbus observed read-only (nothing written there). ~/ssb/statbus
 crab 18:45Z, check 7 done by crab himself (Jørgen 18:43: 'trivially do it yourself'). Local clone of ~/ssb/statbus with hug/tasks, origin removed, HUG_SYNC=off, hug v0.7.44; two linked worktrees: wt-cli on feat/cli, wt-mcp on feat/mcp. CLI in wt-cli: 'hug task take d7emh9 --model claude-opus-5-5 --as cli-agent' -> 'taken by: cli-agent · claude-opus-5-5 · feat/cli'. MCP in wt-mcp ('hug mcp' over stdio): task_take without cwd -> error 'no cwd given: say which folder you work in, so the branch and worktree of d96y7q are recorded', exit_code 2, with a fix; with cwd=wt-mcp -> changed:true, show 'taken by: mcp-agent · claude-opus-5-5 · feat/mcp'. TUI rows on the main clone: 'd7emh9 ... cli-agent · feat/cli' and 'd96y7q ... mcp-agent · feat/mcp'. Seen on the way: MCP task_take's name argument is 'agent', while CLI says --as (first try with 'as' got 'unknown argument as; valid: agent, cwd, id, model').
 ## History
 - 2026-11-17T14:33 doing -> doing/waiting (wait)
+- 2026-11-17T19:45 doing/waiting -> done (done); was waiting_asked_by: calf; waiting_for: jhf; waiting_on: check 7: take a Statbus task from a linked worktree (git worktree add) via CLI and MCP, or strike it; only separate clones are in use; waiting_since: 2026-11-17T15:58
