@@ -36,5 +36,6 @@ muninn/internal/throttle is internal to muninn/, so huginn cannot import it: mov
 ## Notes
 
 
+kestrel: landed 24b8a3b..a201b2e. Check 1: TestBackgroundPassRunsNiced spawns real passes and reads the priority each logged; without the throttle.Background() call: 'syncnice_test.go:43: pass 1 ran at "nice 0", want "nice 10" (this test process: "nice 0")'. Check 2: the same test sets HUG_FULL_SPEED=1 in the pass env and requires the parent's priority. -race: cli ok 163.354s (one earlier run failed on 'TestEightWritersMixedCommandsAllLand ... diff --name-status ... signal: segmentation fault', git crashing, filed 3z65k1; another FAIL lost its detail to a tail), throttle ok 3.069s, muninn/run ok 35.363s; 15x TestBackgroundPassRunsNiced+TestBackgroundSync* under -race ok 427.817s.
 ## History
 - 2026-11-17T23:01 todo -> doing/active (take)
