@@ -1,0 +1,23 @@
+name: probe
+on:
+  push:
+    branches: ['probe/**']
+jobs:
+  probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Native store save racing loads (zd3x24)
+        continue-on-error: true
+        run: go test -count=1 -v -run TestNativeSaveRacesLoads ./muninn/internal/ingest/
+      - name: Capture killed after save, -count=20 (zd3x24)
+        continue-on-error: true
+        shell: bash
+        run: go test -count=20 -v -run 'TestCaptureKilledAfterSaveBeforeCheckpoint$' ./muninn/internal/app/ 2>&1 | grep -E '^(--- |ok|FAIL|PASS)|capture_batch_test' | sort | uniq -c
