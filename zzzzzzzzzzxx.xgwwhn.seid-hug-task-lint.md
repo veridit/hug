@@ -1,6 +1,6 @@
 ---
 id: xgwwhn
-title: "on Seid, hug task lint reports what tools/evidence.py check reports (counts in…"
+title: "Seid switches its pre-commit to hug task lint"
 state: todo
 type: feature
 priority: "high"
@@ -22,7 +22,7 @@ Seid foreman (orangutan) requests 2026-11-17, file: seid-lang .jcode/scratch/TAS
 Declarative in hug.toml, no Seid-specific names in code. Every finding has a fix: line an agent can run (hug task attach ID FILE, or mark it (lost)). Lint never deletes anything.
 
 ## Relevant details
-Seid reference: tools/evidence.py lines 91-112: SCRATCH_REF, EVID_REF, LOST=' (lost)', KEEP_EXT, MAX=256 KiB. hug code: task/files.go LintFiles (line 267; forbid check line 300 uses strings.Contains on the whole doc, so no line number and no (lost) escape), task/config.go ForbidCite. Text-extension list: hug checks content (NUL, utf8), which is stricter than an extension list; keep that.
+From cvbpdy check 4 (promoted 2026-11-18, crab/Jørgen 00:38). hug's side is shipped in v0.7.43 (95079e0): forbid_cite, ' (lost)', .hug/tasks/ID/NAME citations. On a copy of Seid's board hug finds 530 forbidden-citation findings on 464 lines, the same lines as tools/evidence.py (0 on one side only). Left, Seid's own work: set forbid_cite in hug.toml, clear the 530 lines (attach or ' (lost)'), switch the pre-commit hook. Owner orangutan.
 
 ## Depends on
 
