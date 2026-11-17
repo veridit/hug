@@ -34,3 +34,5 @@ Windows costs about 1.9 s per hug command (run 43943367365). Background-sync tes
 ## Notes
 
 Measured (no change yet): Windows cli package in the full CI run is 453-514 s (runs 44063552584 469, 44063674567 460, 44065886978 514, 44068680977 453); alone 225 s (run 44068788222, per-test -json): the full run's 4 CPUs are shared with 29 other packages. Every cli test is serial. git spawns: 5622 in the package (wrapper count, macOS), ~45 ms each on Windows. Defender real-time scanning, run 44073995383 (same commit, full go test ./...): cli 359 s on, 269 s off; huginn/internal/tui 197 s on, 91 s off; muninn/internal/app 351 s on, 242 s off.
+
+Step 1 on ci/0sbvnq (8c0fa9c, CI run 44075465280): App.Env per-App environment overlay, so app() needs no t.Setenv; 35 of 46 tests t.Parallel. childMemo locked. Local macOS -race: package 99 s, green.
