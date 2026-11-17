@@ -59,5 +59,6 @@ Seid copy (2,520 tasks), ps time, rebased: 30 presses of j cost 2.70 s on main f
 Not yet done: the remaining per-key cost (1.57 s per 30 keys = 52 ms per key, unprofiled after the rebase). Checks 4 and 5 are ticked on green main CI.
 landed 856a8ca on main 2026-11-17: hug tui: a frame's work does not grow with the board: stages and progress width…
 Check 3 on green main: f24080c contains a64fcc3, CI 44159339484 success on all 5 jobs (secrets, bench, ubuntu -race, windows, macos).
+Check 4 on green main: 856a8ca, CI 44160390781 success (secrets, bench, ubuntu -race, macos, windows). TestFrameComputesNoStages (434,742 stages in 3 frames on main, 0 after) and TestFrameRowWorkDoesNotGrowWithBoard. Then aad670d (pushed 19:55, f003cfc..aad670d) also takes the section scans off each key: TestKeyScansDoNotGrowWithBoard fails on main (overview 120,000 tasks scanned per key and frame on 3,000 tasks vs 12,000 on 300) and with the memo mutated out (3/3 views); -race tui ok 183.5 s after the rebase over bejd89. Seid copy, 100 presses of j, before the bejd89 rebase: 8.63 s CPU on main f24080c, 0.66 s with the memo (6.6 ms a key).
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
