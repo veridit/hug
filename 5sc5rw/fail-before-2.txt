@@ -1,0 +1,5 @@
+    twins_test.go:58: after forget hzwm7m, search still finds [d2mn4c]
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	0.196s
+FAIL
+daae7cd

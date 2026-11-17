@@ -1,0 +1,6 @@
+--- FAIL: TestSyncReadsOwnCaptureBackAsTheSameMemory (0.00s)
+    twins_test.go:58: after 3 syncs, 2 active memories, want the capture alone: [{Updates: NewReason: RetiredInto: RetiredOrigin: CaptureSupersedes: Trust:high CaptureEvents:[] ID:cap_0123456789abcdef SID:6e8sf0 Title: Content:Run make check before pushing Category:fact Type: Tags:[] Scope:project:rc-demo Active:true Strength:1 Created:2026-11-17 21:38:15.592652 +0000 UTC Updated:2026-11-17 21:38:15.592652 +0000 UTC Origin:capture:jcode:session_x_1_y:abc:0 OriginHash:29c49a909ac92b8ff72f61dc SafeReason: Branch: Holds: Repo:} {Updates: NewReason: RetiredInto: RetiredOrigin: CaptureSupersedes: Trust: CaptureEvents:[] ID:imp_ba013073726f788e SID:q80k0w Title: Content:Run make check before pushing Category:fact Type: Tags:[] Scope:project:rc-demo Active:true Strength:1 Created:2026-11-17 21:38:15.592652 +0000 UTC Updated:2026-11-17 21:38:15.592652 +0000 UTC Origin:repo:rc-demo/cap_0123456789abcdef OriginHash:29c49a909ac92b8ff72f61dc SafeReason: Branch: Holds: Repo:}]
+FAIL
+FAIL	github.com/veridit/hug/muninn/internal/project	0.015s
+FAIL
+58fcd3c

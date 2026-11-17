@@ -1,0 +1,33 @@
+5sc5rw recall A/B, run 2026-11-17 21:45-22:07 UTC against the bar 5sc5rw-bar.txt (board 6e9717b, 21:36:40 UTC).
+Arms: A = live index snapshot 21:3x UTC (33384 units, 32291 active); B = A minus the 2651 twin imp_ units (30733, 29720 active). Engine: muninn/cmd/recall4 built from ci/5sc5rw, variant baseline. Messages: recall3 replay.json, 277 (200 dev, 77 held-out). Judge: judge_real.py unchanged (DeepSeek Flash, blind, shuffled), 0 unjudged.
+
+Bar 1 (rel/msg delta lower bound > -0.05):
+all 277: n=277 rel/msg A 0.751 B 0.751 delta +0.000 [+0.000, +0.000]  unjudged A 0 B 0
+all 277: irr/msg A 0.726 B 0.726 delta +0.000 [+0.000, +0.000]
+
+Bar 2 (messages injecting a memory and its twin): A 0, B 0. Injections of a folded imp_ twin: A 5, B 0. (A self-origin row mem_4e5fb7b9 whose origin names itself is not a twin and was excluded.)
+
+Bar 3:
+criterion 3: memories rated relevant in A whose text is missing from B: 0 []
+
+Report, no bar:
+messages with identical injected texts (order too): 275 of 277
+latency A: p50 417 ms p95 3834 ms
+latency B: p50 413 ms p95 3776 ms
+messages whose injected keys differ (a twin swapped for its keeper): 7
+Held-out alone: human n=27 rel 0.81/0.81, long n=50 rel 0.92/0.92, deltas +0.00 [+0.00, +0.00].
+The 2 messages whose injected texts differ (46, 226): one irrelevant memory swapped for another; relevant hits identical:
+message 46 same set: False
+  A False TASK-372 Dragon C FIXED on lane/magi: commit 612cf3b4 (= master bb8365
+  A False TASK-626-b seat-i RESIDUAL — LAND-READY (compiler-bugs 4th gen, 2026-0
+  B False **What**: Two critical findings; holding regression-debug for team-lea
+  B False TASK-372 Dragon C FIXED on lane/magi: commit 612cf3b4 (= master bb8365
+message 226 same set: False
+  A True ## Goal Tie down the loose ends from the TASK-837 epic session: 837.01
+  A False 2026-11-04 P3 rulings (orangutan): (1) rename the 3 duplicate test_com
+  B False GOAL: Engineer seat (compiler-lang) — deliver the TASK-665 FLIP PLAN, 
+  B True ## Goal Tie down the loose ends from the TASK-837 epic session: 837.01
+
+Side check (frozen recall3 snapshots, fold applied): fold removed 0 twin units in both splits; injected hits (key, text, order) differ in 0 of 277 messages; the only differing field is .elapsed (wall time), 206 rows. Errors 0.
+
+Verdict: all 3 bar criteria pass and the side check passes.
