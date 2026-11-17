@@ -25,7 +25,7 @@ Children: deduce from git (wyvern), observations become questions (hatchling), o
 ## Depends on
 
 ## Acceptance
-- [ ] all three children are done
+- [x] all three children are done
 - [ ] a week after they ship, Jørgen has not had to remind an agent to update a ticket (noted with the date)
 
 ## Notes
