@@ -1,0 +1,20 @@
+5sc5rw recall bar, written 2026-11-17 21:37 UTC before any run (hatchling; crab 21:32 agreed the design).
+
+Change: fold the cap_/imp_ twin pairs (same scope, same text, imp_ origin repo:SCOPE/cap_ID). Keep the cap_ row and delete the imp_ row.
+
+Arms, the same engine (recall4 harness, production config, bm25_scale 2.0):
+  A = snapshot of today's live index (~/.local/share or HUG_HOME index.db copy, taken once, read-only), as is
+  B = the same snapshot with the fold applied (twin imp_ units removed)
+Messages: the same 277 frozen messages (recall3 replay.json: 200 development, 77 held-out). They are not tuned on; nothing is tuned.
+Judge: recall4's unchanged rubric (muninn/scripts/judge_real.py, DeepSeek Flash, no tools, credentials redacted), blind to arm (shuffled ids).
+Stats: per-message deltas B-A, 95% paired session-cluster bootstrap, 2000 replicates, as in RECALL4.md.
+
+Pass (all three):
+  1. Relevant per message, all 277: delta lower bound > -0.05.
+  2. Twin injections: messages whose injected set holds a memory and its twin (same text, origin repo:.../its key) go to 0 in B. A's count is reported.
+  3. Durable memories: no memory the judge rates relevant in A is missing from B unless its twin is in B (a fold must never drop a fact).
+Report as well (no bar): irrelevant per message, distinct memories injected per message, held-out split alone, latency p50/p95.
+
+Side check (crab): the frozen recall3 snapshots hold 0 twin pairs, so running the fold on them must give byte-identical recall output for all 277 messages, both splits. Any difference fails.
+
+Fail: any of 1-3, or a side-check difference. Then: not shipped, and no variant is chained.

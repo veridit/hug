@@ -37,5 +37,6 @@ Store: ~/Library/Application Support/muninn/memories.json; imp_ ids from muninn/
 ## Notes
 
 
+file:5sc5rw-bar.txt (1668 bytes, sha256:01535731) recall bar, written before any run
 ## History
 - 2026-11-17T22:24 todo -> doing/active (take)
