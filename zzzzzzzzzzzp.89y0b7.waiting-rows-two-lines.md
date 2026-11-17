@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T16:11"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "check 4: open hug tui on this board and say whether the two-line rows read clearly (capture attached: ▸ rows-on-main.txt; landed 2447266 + 9b27bf7)"
+waiting_since: "2026-11-17T17:15"
+waiting_asked_by: "nautilus"
+waiting_for: "jhf"
 ---
 
 ## Goal
@@ -49,3 +53,4 @@ nautilus 16:11: landed on main 2447266 (c48b30c..2447266), full local go test ./
 file:rows-on-main.txt (4510 bytes, sha256:33a25283)
 ## History
 - 2026-11-17T16:11 todo -> doing/active (take)
+- 2026-11-17T17:15 doing/active -> doing/waiting (wait)
