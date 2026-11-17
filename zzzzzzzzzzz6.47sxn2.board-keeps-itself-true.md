@@ -1,13 +1,18 @@
 ---
 id: 47sxn2
 title: "The board keeps itself true: deduce what happened, ask when it can't"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T18:10"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ Jørgen 2026-11-17 11:58 (refines the two levels): every observation is told to 
 file:landing-queue.md (7151 bytes, sha256:ad7bb364) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
 
 crab 17:10: all three children done (g9dg32, at3qep 09466ed, n2hq8p 300abb8); shipped in v0.7.42 (g9dg32, n2hq8p) and the next release (at3qep). Check 2 is a week of use: look again 2026-11-24.
+
+
+## History
+- 2026-11-17T18:10 todo -> doing/active (take)
