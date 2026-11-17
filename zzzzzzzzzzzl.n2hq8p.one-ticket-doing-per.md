@@ -10,10 +10,13 @@ created: 2026-11-17
 updated: 2026-11-17
 parent: "47sxn2"
 doing_since: "2026-11-17T14:34"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing turn: second push of my turn, after kbc99j+4vcwxk; CI 44096303450 green"
+waiting_since: "2026-11-17T15:02"
+waiting_asked_by: "calf"
 ---
 
 ## Goal
@@ -46,3 +49,4 @@ kestrel 13:48, built on main d198e01 as 8dc2ea8 (branch kestrel/n2hq8p, CI 44096
 kestrel 14:03: CI 44096303450 on 8dc2ea8 green on all 5 jobs (secrets, bench, ubuntu, macos, windows). Check 1: task TestSecondTakeWhileActiveIsRefused + cli TestSecondTakeRefusedWithThreeFixLines (exact text, exit 3, three fix: lines). Check 2: task TestTakeAllowedWhenEarlierIsNotActive (waiting, review, depends). Check 3: mcp TestSecondTakeOverMCPIsRefused (fix, fixes, same problem text as the CLI). Lands as the second push of my turn, after kbc99j+4vcwxk (crab 14:02).
 ## History
 - 2026-11-17T14:34 todo -> doing/active (take)
+- 2026-11-17T15:02 doing/active -> doing/waiting (wait)
