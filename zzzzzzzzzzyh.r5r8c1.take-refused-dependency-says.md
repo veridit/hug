@@ -9,14 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T19:09"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab's order: 3mavpt first; branch kestrel/r5r8c1 (ae8e5dd) then rebases onto the state rename"
-waiting_since: "2026-11-17T20:17"
-waiting_asked_by: "calf"
-waiting_for: "crab"
 ---
 
 ## Goal
@@ -42,3 +38,4 @@ cli.go:950 builds 'taken by '+t.Value+' ('+t.ID+')' for Kind 'taken'; the depend
 ## History
 - 2026-11-17T19:09 todo -> doing/active (take)
 - 2026-11-17T20:17 doing/active -> doing/waiting (wait)
+- 2026-11-17T22:39 doing/waiting -> doing/active (resume); was waiting_asked_by: calf; waiting_for: crab; waiting_on: crab's order: 3mavpt first; branch kestrel/r5r8c1 (ae8e5dd) then rebases onto the state rename; waiting_since: 2026-11-17T20:17
