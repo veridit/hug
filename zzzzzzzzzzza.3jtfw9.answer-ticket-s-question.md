@@ -1,13 +1,16 @@
 ---
 id: 3jtfw9
 title: "Answer a ticket's question in place; the asking agent is told"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
