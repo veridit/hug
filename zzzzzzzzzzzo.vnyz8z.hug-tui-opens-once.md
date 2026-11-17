@@ -34,7 +34,7 @@ TUI start today: openBoard -> cache.sync -> loadSnapshot -> startWatch, all befo
 ## Depends on
 
 ## Acceptance
-- [ ] the first frame comes from the last snapshot before any sync: a test with a slow sync stub draws the board and the spinner, then the fresh board, selection kept
+- [x] the first frame comes from the last snapshot before any sync: a test with a slow sync stub draws the board and the spinner, then the fresh board, selection kept
 - [ ] q returns while a sync or the watch setup is still running: a test with a blocked sync stub sees the program exit
 - [ ] a first start with no cache shows the spinner and a count, never a blank screen (golden)
 - [ ] on Seid, first frame under 1 s and quit under 1 s, median of 5 with tmp/lanes/tuitime.sh, numbers in the notes; Jørgen opens and quits it and agrees
