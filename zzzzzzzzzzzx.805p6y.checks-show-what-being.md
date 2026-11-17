@@ -58,3 +58,5 @@ Jørgen 2026-11-17 10:10 (why it is hard-coded): every node carries semantics hu
 Jørgen 2026-11-17 10:12 (ruling): blocked is a stage of both todo (nobody has it) and doing (someone has it). Same meaning in both; the state decides the section. Draft updated: tmp/lanes/805p6y-states.md.
 
 Jørgen 2026-11-17 10:13 (ruling): review is a stage of both todo (work done, waits for a reviewer; nobody reviewing) and doing (someone is reviewing it now). Same pattern as blocked: the stage says what, the state says whether someone has it. review_by names the reviewer. Draft updated.
+
+Superseded by 6ephqk (Task state and stage: a hard-coded tree replaces status), which carries Jørgen's rulings of 2026-11-17 10:03-10:14.
