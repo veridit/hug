@@ -7,6 +7,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 ## Unreleased
 
 - Todos are your own next steps on the task you took; details, evidence, waits and dependencies live in the task. `hug task take` now says so in two lines (`now: todos: your own next steps on ID ... a wait, a dependency or another agent's work is not a todo: hug task note ID "...", hug task dep ID --add OTHER`, then check, note, `hug task done ID, then hug task next`) and ends with `next: hug task show ID`; MCP `task_take` returns the same `guide` and `next`. The AGENTS.md section from `hug setup` states the loop, and `hug setup` now flags a `## Tasks: hug` section from an older hug with the replacement text (tzc9hb).
+- `hug tui` search keeps your place: after `/` finds a task, Enter goes to it and Esc clears the search, and either way the full view shows with that same task selected and in view, ready for `m`, `J` and `K`. The footer says where it is (`found ID, row 50 of 60 in the list`) and, when sorted, that moving needs `: sort rank`. `↑↓` pick another match while typing. Tab keeps the search on as a filter, which Enter used to do. Clearing a kept search, a chip or all filters keeps the task too. A task the filter hides (opened with `#`) is never swapped for another: no row is selected and the footer says `ID is hidden by the filter type:bug: F clears it` (mcvfbz).
 
 ## v0.7.39 - 2026-11-17
 
@@ -17,6 +18,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 - A test builds a 10,000-task board and fails CI when `ls`, `next`, `show`, `board`, `lint` or `note` take more than 1.2 s once the cache is warm (4.8 s under the race detector); the tree before this work (e5cb389, v0.7.33) fails it with ls 2.0 s, lint 3.6 s, note 1.24 s (44w1ev).
 - Parallel `hug task` commands no longer fail with `database is locked (5) (SQLITE_BUSY)` on the task cache: every cache transaction takes SQLite's write lock up front and waits for it (up to 30 s per try, retried), instead of failing at once when another command committed first. 20 parallel notes all land again (44w1ev on m8shdj).
 - `hug tui` opens a 10,000-task board in about 0.5 s instead of 3 to 5 s, its heap 75-81 MB instead of 170-190 MB: it takes lint findings from the task cache instead of parsing every task file on each reload, reads a task's file when its detail opens, and finds task folders with one listing per group instead of one walk per task. Filtering and moving at 10,000 tasks take at most 53-127 ms per key (44w1ev).
+||||||| parent of 8de3119 (CHANGELOG: mcvfbz under Unreleased)
 
 ## v0.7.38 - 2026-11-17
 
