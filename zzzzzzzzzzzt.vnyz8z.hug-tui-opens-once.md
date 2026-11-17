@@ -1,7 +1,7 @@
 ---
 id: vnyz8z
 title: "hug tui opens at once from the last snapshot, refreshes behind a spinner"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["wyvern"]
@@ -9,6 +9,11 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "44w1ev"
+doing_since: "2026-11-17T16:12"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ TUI start today: openBoard -> cache.sync -> loadSnapshot -> startWatch, all befo
 ## Notes
 
 crab 15:09: wyvern does vnyz8z first, then np2kk2 (same start path in tui.go and watch.go, one lane so they don't collide with nautilus). Shutdown measured on Seid: v0.7.41 2.89 s, a4aa5a5 0.29 s.
+
+
+## History
+- 2026-11-17T16:12 todo -> doing/active (take)
