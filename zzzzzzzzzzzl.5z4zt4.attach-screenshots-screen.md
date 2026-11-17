@@ -47,5 +47,6 @@ nautilus 16:18: dependency on scrxak removed: the code it builds on (Space shows
 
 
 file:design.md (2762 bytes, sha256:7c13bc5d)
+landed f2deaf0 on main 2026-11-17: hug tui: S copies the screen and attaches it as a coloured .ans; .ans files show…
 ## History
 - 2026-11-17T17:18 todo -> doing/active (take)
