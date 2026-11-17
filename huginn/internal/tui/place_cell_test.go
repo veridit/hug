@@ -43,3 +43,17 @@ func TestRowsShowGroupAndEpic(t *testing.T) {
 		t.Fatalf("placeCell with no group: %q", got)
 	}
 }
+
+// The overview footer explains ! and ↳ in the line it already has
+// (Jørgen 2026-11-16 on kx2ndm: no legend for '!' on the overview).
+func TestOverviewFooterLegend(t *testing.T) {
+	m := manyModel(t)
+	m.setView("overview")
+	lines := strings.Split(ansi.Strip(m.View()), "\n")
+	if n := len(lines); n != m.height {
+		t.Fatalf("%d lines, want %d", n, m.height)
+	}
+	if !strings.Contains(ansi.Strip(m.View()), "! lint finding · ↳ epic") {
+		t.Fatalf("no legend in the overview footer:\n%s", ansi.Strip(m.View()))
+	}
+}

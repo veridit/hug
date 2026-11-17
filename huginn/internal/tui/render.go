@@ -675,6 +675,12 @@ func (m model) View() string {
 		if len(filters) > 0 {
 			footer = strings.Join(filters, " · ") + " · Esc clears"
 		}
+		if m.view == "overview" {
+			// The list says what ! and blocked mean in its last row; the
+			// overview has no such row, so its footer does (kx2ndm,
+			// Jørgen 2026-11-16: compact, no extra line).
+			footer += " · ! lint finding · ↳ epic"
+		}
 		if m.detail {
 			footer = fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
 			if pos := m.detailPosition(); pos != "" {
