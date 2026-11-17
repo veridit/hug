@@ -6,7 +6,7 @@ NAVIGATION AND FIND                                     EDIT · every action req
 j/k ↑/↓         move / scroll                                           [ and ]         previous / next check or dependency
 < / gg / Home   top                                                     n and p         next / previous task, in a task
 > / G / End     bottom                                                  u               in a task: up to the list (as Esc)
-ctrl-d / ctrl-u half page down / up                                     Space/-/Enter   tick / strike out check / follow dep >
+ctrl-d / ctrl-u half page down / up                                     Space/-/Enter/a tick / strike out check / follow dep > / answer ?
 PgDn / PgUp     full page down / up                                     Tab / Shift-Tab in a task: focus page, checks, deps, links, files
 h/← Shift-Tab   previous pane / column                                  E               in a task with files (⎘2): its folder in the editor
 l/→ Tab         next pane / column                                      t / d / x       take / done / drop task

@@ -33,6 +33,10 @@ type Task struct {
 	Parent           string
 	// Checks counts acceptance items; Open counts the unticked ones.
 	Checks, Open int
+	// Answer is the newest answer to a question asked on the task that its
+	// asker (Answer.For) has not read yet (3jtfw9), for the recall board
+	// cue: "jhf answered your question on ID: ...".
+	Answer *task.Answer
 }
 
 // Finding is one open lint finding (findings on done or dropped tasks are
@@ -177,7 +181,7 @@ func convert(ts []task.Task) []Task {
 	out := make([]Task, 0, len(ts))
 	for _, t := range ts {
 		x := Task{ID: t.ID, Title: t.Title, Status: t.Status, Path: t.Path, Assignee: t.Assignee, Model: t.Model,
-			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance)}
+			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer}
 		for _, a := range t.Acceptance {
 			if !a.Settled() {
 				x.Open++

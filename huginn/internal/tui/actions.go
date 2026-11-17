@@ -320,3 +320,41 @@ func (m *model) strike(reason string) {
 	r, err := m.store.Strike(t.ID, n, reason, who, false)
 	m.finish(r, err, "strike")
 }
+
+// answerPrompt is the input under a question the task asks you (3jtfw9).
+const answerPrompt = "answer:"
+
+// answerKey opens the answer input when the task's stage waits on the TUI
+// user; otherwise it says why not.
+func (m *model) answerKey() tea.Cmd {
+	t, ok := m.selected()
+	if !ok {
+		return nil
+	}
+	if !m.forYou(t) {
+		g := task.Stage(t, m.all)
+		m.message = t.ID + " asks you nothing (stage " + g + "): a answers a design question, a wait or a review that names you"
+		return nil
+	}
+	m.confirmPath = t.Path
+	return m.openInput(answerPrompt, "")
+}
+
+// answer writes text as the TUI user's answer to the task opened with a.
+func (m *model) answer(text string) {
+	var t task.Task
+	found := false
+	for _, v := range m.all {
+		if v.Path == m.confirmPath {
+			t, found = v, true
+			break
+		}
+	}
+	m.confirmPath = ""
+	if !found {
+		m.message = "task disappeared; refresh and try again"
+		return
+	}
+	r, err := m.store.Answer(t.ID, text, m.opts.User)
+	m.finish(r, err, "answer")
+}

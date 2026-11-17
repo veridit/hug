@@ -78,8 +78,12 @@ type Store struct {
 	// files six times). Set it only for one short-lived command; the TUI,
 	// which waits while others write, leaves it off.
 	Snapshot bool
-	board    []Task
-	held     bool
+	// Actor is who this Store writes as (the CLI's --as, HUG_USER or the
+	// agent session; the TUI's user). A write by the asker of an unseen
+	// answer marks it read (3jtfw9).
+	Actor string
+	board []Task
+	held  bool
 }
 
 // Invalidate drops the kept board: the next Tasks reads the files again.
@@ -214,6 +218,7 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		}
 	}
 	if changed {
+		markRead(d, s.Actor)
 		path, e := s.diskPath(d.Task.Path)
 		if e != nil {
 			return Result{}, e
@@ -613,6 +618,17 @@ func Next(tasks []Task, f Filter) (Result, error) {
 	Sort(ts)
 	epics := ChildIndex(tasks)
 	if f.Mine != "" {
+		// An answer to my question comes first, whatever its state
+		// (3jtfw9): reading it is the next thing to do. Newest first.
+		var newest *Task
+		for i := range ts {
+			if AnswerFor(ts[i], f.Mine) && (newest == nil || ts[i].Answer.At > newest.Answer.At) {
+				newest = &ts[i]
+			}
+		}
+		if newest != nil {
+			return Result{Task: *newest, Next: "hug task show " + newest.ID}, nil
+		}
 		sort.SliceStable(ts, func(i, j int) bool { return ts[i].Status == "doing" && ts[j].Status != "doing" })
 	}
 	for _, t := range ts {

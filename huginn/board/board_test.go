@@ -33,6 +33,9 @@ G
 ## Acceptance
 - [x] one
 - [ ] two
+
+## History
+- 2026-11-17T13:30 answered waiting: "jhf: which colour?" -> "green", by jhf, for guppy (doing/waiting -> doing/active)
 `
 
 func TestOpenReadsBoardWithoutWriting(t *testing.T) {
@@ -61,6 +64,10 @@ func TestOpenReadsBoardWithoutWriting(t *testing.T) {
 	defer s.Close()
 	if len(s.Tasks) != 1 || s.Tasks[0].ID != "abc123" || s.Tasks[0].Status != "doing" || s.Tasks[0].Checks != 2 || s.Tasks[0].Open != 1 || s.Tasks[0].Branch != "main" {
 		t.Fatalf("%+v", s.Tasks)
+	}
+	// 3jtfw9 check 3 (board half): the cue gets the unread answer.
+	if a := s.Tasks[0].Answer; a == nil || a.For != "guppy" || a.By != "jhf" || a.Text != "green" || a.Question != "jhf: which colour?" {
+		t.Fatalf("answer: %+v", a)
 	}
 	if s.Place.Branch != "main" || s.Place.Linked {
 		t.Fatalf("%+v", s.Place)

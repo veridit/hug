@@ -717,7 +717,7 @@ func (m model) View() string {
 	}
 	if m.confirm != "" {
 		inputLine = m.confirmLine()
-	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" {
+	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" && m.prompt != answerPrompt {
 		inputLine = m.input.View()
 	} else if m.pendingG {
 		inputLine = "g … press g for top"

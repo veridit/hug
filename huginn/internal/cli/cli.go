@@ -67,7 +67,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task.
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "next", "rebalance", "types", "states", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "resume", "design", "answer", "next", "rebalance", "types", "states", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -310,10 +310,7 @@ func (a *App) whoTakes(f flags) taker {
 		t.Model = a.takerModel(f)
 	}
 	if t.Name == "" {
-		t.Name = strings.TrimSpace(a.getenv(env.User))
-	}
-	if t.Name == "" {
-		t.Name = harnessName(a.getenv("JCODE_SESSION_ID"))
+		t.Name = a.envName()
 	}
 	return t
 }
@@ -329,6 +326,27 @@ func (a *App) takePlace(f flags) task.Place {
 		at.Worktree = w
 	}
 	return at
+}
+
+// envName is the name without --as: HUG_USER, else the harness session.
+func (a *App) envName() string {
+	if n := strings.TrimSpace(a.getenv(env.User)); n != "" {
+		return n
+	}
+	return harnessName(a.getenv("JCODE_SESSION_ID"))
+}
+
+// actor is the name a command writes as, as take records it, without
+// asking git where (whoTakes does): --as, HUG_USER, the session, else the
+// model.
+func (a *App) actor(f flags) string {
+	if n := strings.TrimSpace(f.get("as")); n != "" {
+		return n
+	}
+	if n := a.envName(); n != "" {
+		return n
+	}
+	return a.takerModel(f)
 }
 
 // takerModel is the model a command runs as: --model, else HUG_MODEL.
@@ -415,7 +433,7 @@ func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
 // as their value. Both accept task:ID, the form running text uses, and are
 // turned into the bare id here so every reply and printed command shows
 // the bare id and runs when pasted into a shell (xxvm6t).
-var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "resume", "design", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
+var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "resume", "design", "answer", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
 var refFlags = []string{"before", "after", "dep", "add", "remove", "parent", "epic"}
 
 func bareRefs(cmd string, f *flags) {
@@ -542,7 +560,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -630,6 +648,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	if m := a.takerModel(f); m != "" {
 		s.r.Trailers = []string{"Model: " + m}
 	}
+	// Who writes: the asker's own write marks an answer read (3jtfw9).
+	s.s.Actor = a.actor(f)
 	if writer {
 		defer s.turn()()
 		// The first read happens under the turn: a background rebase
@@ -994,6 +1014,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, e
 		}
 		r, e = s.s.Resume(f.args[0])
+	case "answer":
+		if len(f.args) == 1 {
+			return nil, usage("answer needs the answer", "hug task answer "+f.args[0]+` "the answer"`)
+		}
+		if e = f.count(2); e != nil {
+			return nil, e
+		}
+		r, e = s.s.Answer(f.args[0], f.args[1], a.actor(f))
 	case "design":
 		if f.has("clear") {
 			if e = f.count(1); e != nil {
@@ -1455,6 +1483,10 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		if who := takenBy(t, ""); who != "" {
 			fmt.Fprintf(a.Out, "taken by: %s\n", who)
 		}
+		// An answer the asker has not seen comes first (3jtfw9).
+		if ans, ok := t["answer"].(map[string]any); ok {
+			fmt.Fprintf(a.Out, "%s\n", answerLine(t["id"], ans))
+		}
 		fmt.Fprintf(a.Out, "goal: %s\n", t["goal"])
 		for _, sec := range task.DescriptionSections {
 			if v, _ := t[descriptionKey(sec)].(string); v != "" {
@@ -1621,4 +1653,11 @@ func descriptionKey(section string) string {
 		return "details"
 	}
 	return strings.ToLower(section)
+}
+
+// answerLine is how show prints an answer its asker has not seen (3jtfw9):
+// "answer for nautilus: jhf answered on txjkrm: drop it (design: type
+// stays?)". Until the asker writes on the task.
+func answerLine(id any, ans map[string]any) string {
+	return fmt.Sprintf("answer for %s: %s answered on %v: %v (%v: %v)", ans["for"], ans["by"], id, ans["text"], ans["stage"], ans["question"])
 }
