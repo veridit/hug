@@ -1,10 +1,10 @@
 ---
 id: g9dg32
 title: "Deduce from git: commits on main and release tags mark the ticket"
-status: "doing"
+status: "todo"
 type: feature
 priority: "high"
-assignee: ["wyvern"]
+assignee: []
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
@@ -12,6 +12,7 @@ parent: "47sxn2"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+stage: "ready"
 ---
 
 ## Goal
@@ -39,3 +40,7 @@ Scan only commits new since the last scan (store the last seen main and tag in t
 Design (wyvern, before code). Where: a new step at the end of a background pass and of hug task sync, after fetch, outside the network. Inputs: the code repo's refs/remotes/origin/<default branch> (else refs/heads/<default>) and refs/tags/v*. State: refs/hug/seen/main and refs/hug/seen/tags in the common git dir (a ref per clone, no cache file), first run starts at the current tip so old history is not rewritten unless asked: 'hug task deduce --since v0.7.30' replays (check 4). Scan: git log --format=%H%x00%s <seen>..<tip> --first-parent? no: all commits reachable, since rebased stacks land as several commits. Ids: trailing (a, b, ...) group in the subject; each comma or semicolon part whose first word is a 6-char id of an existing task (x1t1t1 check 4 -> x1t1t1; 'CI run 4393...' is skipped). Write: under the board turn, one note per ticket per commit 'landed <short sha> on main <date>: <subject>'; idempotent by searching the ticket's Notes for 'landed <short sha>' first, so two clones or repeated passes write it once (and the git rebase of two clones adding the same line conflicts at worst into a kept local commit, as today). Tags: for each new v* tag, tickets named by commits in <previous tag>..<tag> get 'shipped in vX.Y.Z' (done tickets: done_release when that field lands with 6ephqk, a note until then). Report: one line per deduction in the pass log and on the next command's output for the ticket owner: 'observed: commit a08bb34 naming m1c28r reached main; marked: landed a08bb34; if wrong: hug task note m1c28r "not landed: ..."'. Never ticks, never done.
 
 Back to todo (crab 13:31; wyvern resumes it after 49n9kw and 44w1ev check 3). Code so far: commit a003732 on local branch ci/g9dg32 (worktree $JCODE_SCRATCH_DIR/hug-deduce, on main d198e01): task/deduce.go with SubjectIDs, PlanLanded, PlanShipped and Deduction.Report, plus deduce_test.go. Pure code, not wired in, not pushed. Next: wire it into the background pass and sync per the design note above.
+
+
+## History
+- 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
