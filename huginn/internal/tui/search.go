@@ -69,6 +69,11 @@ func (m *model) leaveSearch(keep bool) {
 	if keep {
 		return
 	}
+	if m.query == "" {
+		// Nothing typed, nothing searched: say nothing and stay put
+		// (Jørgen 2026-11-17 23:56: "/" Enter said "found kx2ndm").
+		return
+	}
 	m.clearKeeping(true, func() { m.query = "" })
 }
 

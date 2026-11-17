@@ -162,3 +162,29 @@ func TestKeptSearchClearedKeepsTask(t *testing.T) {
 		t.Fatalf("Esc: query %q, selected %s", m.query, sel.ID)
 	}
 }
+
+// "/" then Enter with nothing typed searched nothing, so it says nothing
+// and leaves the cursor where it was (Jørgen 2026-11-17 23:56: it said
+// "found kx2ndm, row 1 of 22 in WAITING").
+func TestEmptySearchSaysNothing(t *testing.T) {
+	for _, leave := range []string{"enter", "esc", "tab"} {
+		t.Run(leave, func(t *testing.T) {
+			m, _, _ := searchBoard(t)
+			m.setView("list")
+			m = press(m, "j", "j")
+			before, _ := m.selected()
+			m.message = ""
+			m = press(m, "/", leave)
+			after, _ := m.selected()
+			if m.prompt != "" || m.query != "" {
+				t.Fatalf("search not left: prompt %q query %q", m.prompt, m.query)
+			}
+			if after.ID != before.ID {
+				t.Fatalf("selected %s, want %s", after.ID, before.ID)
+			}
+			if strings.Contains(m.message, "found") {
+				t.Fatalf("empty search says %q", m.message)
+			}
+		})
+	}
+}
