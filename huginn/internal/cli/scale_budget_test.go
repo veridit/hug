@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"testing"
@@ -31,6 +32,12 @@ func TestScaleBudget10K(t *testing.T) {
 	budget := 1200 * time.Millisecond
 	if raceEnabled {
 		budget *= 4 // the race detector slows everything 4-10x
+	}
+	if runtime.GOOS == "windows" {
+		// Windows CI files cost about 2.5x macOS (run 43954317409: note
+		// 1.296 s, ls 1.186 s against 0.50 s and 0.46 s on macOS); the old
+		// cost there is 3-8 s, so 2x still catches a return to it.
+		budget *= 2
 	}
 	a := app(t)
 	execute(t, a, "init")
