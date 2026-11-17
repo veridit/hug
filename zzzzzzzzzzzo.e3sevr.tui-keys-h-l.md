@@ -51,5 +51,6 @@ Jørgen 23:43 local, screenshot: the '?' (waiting on you) sits in the first gutt
   before: ?!◐ 3/4  89y0b7  feature high ...
   after:  ↓ ◐ 3/4  ?!89y0b7  feature high ...
 The id column widens by 2 so ids stay aligned whether or not a row has marks.
+Jørgen 23:58 local: the task id sits in the header's trail ('overview › kx2ndm') and should instead lead the detail's title line, in the id colour (accent), e.g. 'kx2ndm  TUI: groups and epics visible and collapsible'. Ruling (crab): the title line becomes '<id in accent> <title in bold>'; the id leaves the header trail (the trail keeps the view and any parent ids you came through, 'overview › 6ephqk ›' only when stacked); the ▸ page-focus mark moves with the id to the title line; the id badge in the badge row goes too (one fact in one place).
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
