@@ -1,7 +1,7 @@
 ---
 id: np2kk2
 title: "hug tui opens Seid in 8-9 s: watch setup globs per folder, sync rereads"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
@@ -9,15 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "44w1ev"
-doing_since: "2026-11-17T17:22"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 4: open hug tui on Seid and say if it feels instant (copy median first frame 0.174 s, quit 0.211 s); checks 1-3 tick on green main CI 44126454244 (e582ab4)"
-waiting_since: "2026-11-17T17:30"
-waiting_asked_by: "wyvern"
-waiting_for: "jhf"
+done_at: "2026-11-18T00:39"
 ---
 
 ## Goal
@@ -56,3 +51,4 @@ check 4 ticked by crab on Jørgen's own words 2026-11-17 on the Seid TUI open: '
 ## History
 - 2026-11-17T17:22 todo -> doing/active (take)
 - 2026-11-17T17:30 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:39 doing/waiting -> done (done); was doing_since: 2026-11-17T17:22; waiting_asked_by: wyvern; waiting_for: jhf; waiting_on: check 4: open hug tui on Seid and say if it feels instant (copy median first frame 0.174 s, quit 0.211 s); checks 1-3 tick on green main CI 44126454244 (e582ab4); waiting_since: 2026-11-17T17:30
