@@ -1,7 +1,7 @@
 ---
 id: kx2ndm
 title: "TUI: groups and epics visible and collapsible"
-state: "todo"
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
@@ -11,6 +11,8 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-17T21:59"
+stage: "active"
 ---
 
 ## Goal
@@ -53,3 +55,7 @@ Jørgen 2026-11-17 10:25 (ruling): the grouping toggle key is g (grouped); it cy
 vole 10:55: built per the rulings so far, on ci/kx2ndm: row cell '<group>·↳<epic>' before the title (no special group names; any group shows the same way) and the overview footer legend '! lint finding · ↳ epic'. Open question for Jørgen on the g ruling: a single g is already the pending prefix of gg (top). Either (a) g toggles at once and a second g undoes it and goes to the top (the grouping flickers on every gg), or (b) g waits for the next key: g again = top, any other key = cycle grouping, then that key runs (the toggle shows one key late), or (c) the pending g shows its choices in place, like the header-tree idea in 0sw0dd: 'g: g top · r grouping'. Proposal: (c). Question 3 (what starts folded) is still open; with no magic names, the default would be nothing folded.
 
 nautilus (was vole) 11:03, on hold until 6ephqk (crab, Jørgen's earlier ruling). Branch wip/kx2ndm, commit 12fa729, 3 commits on main f37a528: (1) 0cd9b7c row cell '<group>·↳<epic>' before the title, dim, max 24 cells, m.epicOf from task.ChildIndex once per load; (2) 42e1ebd overview footer legend '! lint finding · ↳ epic'; (3) 12fa729 goldens regenerated with HUG_UPDATE_GOLDEN=1 (the variable was renamed from HUGINN_UPDATE_GOLDEN on main), 25 files; suite 'ok github.com/veridit/hug/huginn/internal/tui 83.334s'. Tests: TestRowsShowGroupAndEpic, TestOverviewFooterLegend. Not on main; nothing ticked. When it comes back: it will need the 6ephqk row order (pie, id, type, priority, tags, stage, text), so the cell likely becomes the tags slot or sits beside it. Open for Jørgen (crab brings it): a single g is the pending prefix of gg (top); toggle at once with gg undoing it, toggle on the next key, or show choices in place 'g: g top · r grouping' (proposed). Also: with no magic group names, does anything start folded?
+
+
+## History
+- 2026-11-17T21:59 todo -> doing/active (take)
