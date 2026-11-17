@@ -25,6 +25,7 @@ Uses level 1 facts (landed, shipped lines) from the git deduction ticket. Activi
 
 ## Depends on
 
+- g9dg32
 ## Acceptance
 - [ ] each of (a)-(e) on a fixture board produces one question with observation and fix line; fixing it clears it (test per case)
 - [ ] the owner's agent gets the question at its next break and in hug task show (test)
