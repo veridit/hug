@@ -46,6 +46,7 @@ check 3 landed 317f5c2 on main (f4ee48b..317f5c2). TestUpgradePreviewsThenApplie
 landed 317f5c2 on main 2026-11-17: hug upgrade previews by default: it changes nothing, ends with fix: hug upgrade…
 Reflection (open, 2026-11-17, nautilus): hug task set --accept 'VALUE' added the check but the reply ended with a lint fix about a long title, which read as if the set had failed, so I added the check twice and struck the duplicate. A set that wrote should say what it wrote first, before lint advice.
 shipped in v0.7.45 (f4ee48b)
+file:seid-upgrade-dry-run.md (93062 bytes, sha256:2e7b25b6) copied from 6ephqk (crab, missing-file)
 ## History
 - 2026-11-17T19:12 todo -> doing/active (take)
 - 2026-11-17T19:25 doing/active -> done (done); was doing_since: 2026-11-17T19:12
