@@ -69,8 +69,11 @@ func wrap(s string, width int) string {
 }
 func (m model) bodyHeight() int { return max(1, m.height-7) }
 func (m model) marker(path string) string {
-	if m.linted[path] {
+	if m.broken[path] {
 		return m.styles.warning.Render("!")
+	}
+	if m.linted[path] {
+		return m.styles.dim.Render("·") // advice only (pbh9xq)
 	}
 	return " "
 }
@@ -304,7 +307,8 @@ func (m model) overviewText() string {
 		}
 		label := fmt.Sprintf("%s%s  [%d]", pointer, name, len(indices))
 		if p == sectionLint {
-			label += fmt.Sprintf(" · %d findings", len(m.findings))
+			broken := m.brokenCount()
+			label += fmt.Sprintf(" · %d broken · %d advice", broken, len(m.findings)-broken)
 			if n := len(m.closedFindings); n > 0 {
 				label += fmt.Sprintf(" (%d on closed tasks hidden)", n)
 			}
@@ -623,7 +627,12 @@ func (m model) View() string {
 	if m.help {
 		mode = "help"
 	}
-	header := m.styles.accent.Render("HUG TASKS · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
+	// The warning count is broken findings only; advice never raises it
+	// (pbh9xq).
+	header := m.styles.accent.Render("HUG TASKS · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d broken", len(m.visible), len(m.all), m.brokenCount()))
+	if n := len(m.findings) - m.brokenCount(); n > 0 {
+		header += m.styles.dim.Render(fmt.Sprintf(" · %d advice", n))
+	}
 	if s := m.spinner(); s != "" {
 		header += m.styles.dim.Render(" · " + s) // a load past 200 ms (vnyz8z)
 	}
@@ -898,4 +907,15 @@ func (m model) detailTrail() string {
 		id = m.styles.accent.Render(id)
 	}
 	return strings.Join(append(parts, id), m.styles.dim.Render(" › "))
+}
+
+// brokenCount is the number of shown findings of severity broken.
+func (m model) brokenCount() int {
+	n := 0
+	for _, f := range m.findings {
+		if f.Severity() == task.Broken {
+			n++
+		}
+	}
+	return n
 }

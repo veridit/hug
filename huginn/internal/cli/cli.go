@@ -902,14 +902,15 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			}
 			return reply, nil
 		}
-		// Closed tasks' findings are hidden unless --all (6neax1).
+		// Broken findings always show; advice on closed tasks is hidden
+		// unless --all (6neax1, pbh9xq).
 		var hidden []task.Finding
 		if !f.has("all") {
 			ts, e := s.s.Tasks()
 			if e != nil {
 				return nil, e
 			}
-			fs, hidden = task.OpenFindings(fs, ts)
+			fs, hidden = task.ShownFindings(fs, ts)
 		}
 		if code != "" {
 			fs, hidden = withCode(fs, code), withCode(hidden, code)

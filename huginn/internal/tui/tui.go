@@ -119,6 +119,7 @@ type model struct {
 	findings                   []task.Finding
 	docs                       map[string]*task.Document
 	blocked, linted            map[string]bool
+	broken                     map[string]bool // paths with a broken finding (pbh9xq)
 	epics                      map[string]bool // lowercase ids of tasks with children
 	cursor, acceptance, offset int
 	dependency, detailPane     int
@@ -160,8 +161,8 @@ type model struct {
 	editNotice string
 	// editBefore holds the problems the task had when the editor opened.
 	editBefore map[string]bool
-	// closedFindings are findings on done or dropped tasks, hidden from the
-	// header count, the lint view and the ! marks (6neax1).
+	// closedFindings are advice findings on done or dropped tasks, hidden
+	// from the header count, the lint view and the marks (6neax1, pbh9xq).
 	closedFindings []task.Finding
 	// Reload on changes on disk (nfv18p): watch signals a settled burst of
 	// changes; loading runs off the UI thread; stale says a change came while
@@ -503,10 +504,11 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 		}
 		findings = task.Lint(docs)
 	}
-	// Findings on closed tasks (done, dropped) are hidden by default, as in
-	// hug task lint; closedFindings keeps them for counts and for the detail
-	// of a closed task opened on purpose (6neax1).
-	sn.findings, sn.closed = task.OpenFindings(findings, ts)
+	// As in hug task lint: broken findings show on every task; advice on
+	// closed tasks (done, dropped) is hidden; closedFindings keeps it for
+	// counts and for the detail of a closed task opened on purpose (6neax1,
+	// pbh9xq).
+	sn.findings, sn.closed = task.ShownFindings(findings, ts)
 	return sn
 }
 
@@ -529,6 +531,7 @@ func (m *model) apply(sn snapshot, path string) {
 	m.people = sn.people
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
+	m.broken = map[string]bool{}
 	m.epics = map[string]bool{}
 	for id := range task.ChildIndex(ts) {
 		m.epics[id] = true
@@ -538,6 +541,9 @@ func (m *model) apply(sn snapshot, path string) {
 	}
 	for _, f := range m.findings {
 		m.linted[f.Path] = true
+		if f.Severity() == task.Broken {
+			m.broken[f.Path] = true
+		}
 	}
 	m.applyFilter()
 	for i, t := range m.visible {

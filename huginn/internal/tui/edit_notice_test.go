@@ -149,49 +149,45 @@ func TestEditNoticeNarrowKeepsKey(t *testing.T) {
 	}
 }
 
-// Findings on closed tasks are hidden from the header count, the lint view
-// and the ! marks, and the overview names how many; the task's own detail
-// still shows them (6neax1).
+// Advice on closed tasks is hidden from the header count, the lint view and
+// the marks, and the overview names how many; the task's own detail still
+// shows it (6neax1). A broken finding on a closed task stays shown and
+// counted (pbh9xq).
 func TestClosedTaskFindingsHidden(t *testing.T) {
 	m := fixture(t)
 	m.width, m.height = 160, 30
 	m.resize()
 	target, _ := m.selected()
-	// A finding that stays on a closed task: a Depends on line that is not
-	// one (missing-section and long-title skip closed tasks already).
+	// Advice that stays on a closed task: Depends on moved above Goal
+	// (section-order).
 	file := filepath.Join(m.store.Root, target.Path)
 	b, _ := os.ReadFile(file)
-	if err := os.WriteFile(file, []byte(addDep("Nothing")(string(b))), 0600); err != nil {
+	text := strings.Replace(string(b), "\n## Depends on\n", "\n", 1)
+	if err := os.WriteFile(file, []byte(strings.Replace(text, "\n## Goal\n", "\n## Depends on\n\n## Goal\n", 1)), 0600); err != nil {
 		t.Fatal(err)
 	}
 	m.refresh(target.Path)
 	before := len(m.findings)
-	if !m.linted[target.Path] {
-		t.Fatal("fixture task has no finding")
+	if !m.linted[target.Path] || m.broken[target.Path] {
+		t.Fatal("fixture task has no advice-only finding")
+	}
+	for i := range target.Acceptance {
+		if _, e := m.store.Check(target.ID, i+1); e != nil {
+			t.Fatal(e)
+		}
 	}
 	if _, err := m.store.Take(target.ID, "tester"); err != nil { // take before done (6ephqk)
 		t.Fatal(err)
 	}
 	if _, err := m.store.Done(target.ID); err != nil {
-		// Done refuses unchecked items; tick them first.
-		for i := range target.Acceptance {
-			if _, e := m.store.Check(target.ID, i+1); e != nil {
-				t.Fatal(e)
-			}
-		}
-		if _, err := m.store.Take(target.ID, "tester"); err != nil { // take before done (6ephqk)
-			t.Fatal(err)
-		}
-		if _, err = m.store.Done(target.ID); err != nil {
-			t.Fatal(err)
-		}
+		t.Fatal(err)
 	}
 	m.refresh(target.Path)
 	if m.linted[target.Path] || len(m.findings) >= before || len(m.closedFindings) == 0 {
-		t.Fatalf("closed task still counted: %d of %d, closed %d", len(m.findings), before, len(m.closedFindings))
+		t.Fatalf("closed task's advice still counted: %d of %d, closed %d", len(m.findings), before, len(m.closedFindings))
 	}
 	view := ansi.Strip(m.View())
-	if !strings.Contains(view, fmt.Sprintf("! %d findings", len(m.findings))) {
+	if !strings.Contains(view, fmt.Sprintf("! %d broken", m.brokenCount())) {
 		t.Fatal(view)
 	}
 	m.setView("overview")
@@ -207,5 +203,16 @@ func TestClosedTaskFindingsHidden(t *testing.T) {
 	m.detailPath, m.detail = target.Path, true
 	if h := strings.Join(m.detailHeader(target), "\n"); !strings.Contains(h, "⚠") {
 		t.Fatal("closed task's own detail lost its finding: " + h)
+	}
+	// Broken on the closed task (a Depends on line that is not one): shown,
+	// counted in the header, marked "!".
+	b, _ = os.ReadFile(file)
+	if err := os.WriteFile(file, []byte(strings.Replace(string(b), "## Depends on\n", "## Depends on\nNothing\n", 1)), 0600); err != nil {
+		t.Fatal(err)
+	}
+	brokenBefore := m.brokenCount()
+	m.refresh(target.Path)
+	if !m.broken[target.Path] || m.brokenCount() != brokenBefore+1 || !strings.Contains(ansi.Strip(m.View()), fmt.Sprintf("! %d broken", brokenBefore+1)) {
+		t.Fatalf("broken finding on a closed task hidden: broken %d, was %d", m.brokenCount(), brokenBefore)
 	}
 }

@@ -1,5 +1,5 @@
 == overview at 80
-HUG TASKS · overview   7/7 tasks · ! 0 findings                                 
+HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
 [overview]   list    board    !lint                                             
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
@@ -21,7 +21,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
                                                                                 
-  LINT · tasks needing attention  [0] · 0 findings · None                       
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
                                                                                 
                                                                                 
                                                                                 
@@ -30,7 +30,7 @@ All tasks · : filters and commands
                                                                                 
 j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
 == list at 80
-HUG TASKS · list   7/7 tasks · ! 0 findings                                     
+HUG TASKS · list   7/7 tasks · ! 0 broken                                       
  overview   [list]   board    !lint                                             
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
@@ -61,7 +61,7 @@ All tasks · : filters and commands
                                                                                 
 j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
 == overview at 140
-HUG TASKS · overview   7/7 tasks · ! 0 findings                                                                                             
+HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
 [overview]   list    board    !lint                                                                                                         
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
@@ -83,7 +83,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
                                                                                                                                             
-  LINT · tasks needing attention  [0] · 0 findings · None                                                                                   
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
@@ -92,7 +92,7 @@ All tasks · : filters and commands
                                                                                                                                             
 j/k move · Enter open · h/l pane · f/# filter/id · / find · : cmd · ? help · q quit                                                         
 == list at 140
-HUG TASKS · list   7/7 tasks · ! 0 findings                                                                                                 
+HUG TASKS · list   7/7 tasks · ! 0 broken                                                                                                   
  overview   [list]   board    !lint                                                                                                         
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  

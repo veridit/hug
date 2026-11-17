@@ -480,15 +480,17 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 	m := manyModel(t)
 	m.styles.renderer.SetColorProfile(termenv.TrueColor)
 	m.styles.renderer.SetHasDarkBackground(true)
-	// The row of a task with a shown finding keeps the "!" colour when it is
-	// drawn as done or dropped. Findings on closed tasks are hidden (6neax1),
-	// so the row is an open linted task with its status changed here only.
+	// The row of a task with a broken finding keeps the "!" colour when it
+	// is drawn as done or dropped (advice-only rows show a dim dot, pbh9xq).
 	var linted task.Task
 	for _, t := range m.all {
-		if m.linted[t.Path] {
+		if m.broken[t.Path] {
 			linted = t
 			break
 		}
+	}
+	if linted.Path == "" {
+		t.Fatal("fixture has no task with a broken finding")
 	}
 	for _, status := range []string{"done", "dropped"} {
 		task := linted

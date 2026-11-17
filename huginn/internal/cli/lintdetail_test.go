@@ -18,7 +18,7 @@ func TestLintOverviewDetailAndSameBlock(t *testing.T) {
 	execute(t, a, "set", id, "--title", strings.Repeat("Long title ", 9))
 
 	_, over := runText(a, "lint")
-	wantOver := "2 findings on 1 task, in 2 codes:\n"
+	wantOver := "2 findings (0 broken) on 1 task, in 2 codes:\n"
 	line := "  " + id + "  missing-section, long-title  -> hug task lint " + id + "\n"
 	fix := "hug task set " + id + ` --title "..." --principle "..."`
 	if !strings.HasPrefix(over, wantOver) || !strings.Contains(over, line) || !strings.HasSuffix(over, "next: "+fix+"\n") || strings.Contains(over, "fix: ") {

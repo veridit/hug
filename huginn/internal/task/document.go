@@ -30,6 +30,9 @@ type Finding struct {
 	Fix string `json:"fix"`
 }
 
+// Severity is Broken or Advice, from the finding's code (pbh9xq).
+func (f Finding) Severity() string { return Severity(FindingCode(f.Problem)) }
+
 // findingCodes maps message prefixes to stable codes. Order matters: the
 // first prefix that matches wins.
 var findingCodes = []struct{ prefix, code string }{
@@ -98,7 +101,10 @@ func (f Finding) MarshalJSON() ([]byte, error) {
 		f.Code = FindingCode(f.Problem)
 	}
 	f.Fix = f.FixLine()
-	return json.Marshal(plain(f))
+	return json.Marshal(struct {
+		plain
+		Severity string `json:"severity"`
+	}{plain(f), Severity(f.Code)})
 }
 
 // FixLine is the command that repairs the finding: its own Fix, else the
@@ -130,7 +136,7 @@ func (f Finding) FixLine() string {
 }
 
 func (f Finding) String() string {
-	return fmt.Sprintf("%s:%d: [%s] %s", f.Path, f.Line, FindingCode(f.Problem), f.Problem)
+	return fmt.Sprintf("%s:%d: %s [%s] %s", f.Path, f.Line, f.Severity(), FindingCode(f.Problem), f.Problem)
 }
 
 type Dependency struct {

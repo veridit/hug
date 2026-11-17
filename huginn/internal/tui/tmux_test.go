@@ -252,7 +252,9 @@ func TestTmuxGolden(t *testing.T) {
 						}
 					}
 				}
-				snapshot("overview", "HUG TASKS · overview")
+				// The first frame is the cache's snapshot without file counts
+				// (vnyz8z); ⎘2 appears once the refresh has landed.
+				snapshot("overview", "⎘2")
 				send("v")
 				snapshot("list", "HUG TASKS · list")
 				send("b")

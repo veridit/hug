@@ -106,7 +106,7 @@ func writeTaskLint(w io.Writer, l *TaskLint) {
 // per task with its codes and the command that shows the detail.
 func writeOverview(w io.Writer, fs []task.Finding, sum LintSummary) {
 	groups := task.ByTask(fs)
-	fmt.Fprintf(w, "%s on %s, in %s:\n", plural(sum.Total, "finding", "findings"), plural(len(groups), "task", "tasks"), plural(len(sum.Codes), "code", "codes"))
+	fmt.Fprintf(w, "%s (%d broken) on %s, in %s:\n", plural(sum.Total, "finding", "findings"), sum.Broken, plural(len(groups), "task", "tasks"), plural(len(sum.Codes), "code", "codes"))
 	writeCodes(w, sum.Codes)
 	shown := groups
 	if sum.mode != "all" && len(groups) > lintBound {

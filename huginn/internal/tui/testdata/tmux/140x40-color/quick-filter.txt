@@ -1,4 +1,4 @@
-HUG TASKS · filter   8/60 tasks · ! 7 findings
+HUG TASKS · filter   8/60 tasks · ! 4 broken · 5 advice
  overview   [list]   board    !lint
 todo 8  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0
 [status:todo ×] · ⌫ last · F clear
