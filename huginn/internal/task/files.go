@@ -378,3 +378,25 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 	}
 	return out, nil
 }
+
+// FolderOwners are the names in a folder listing that are a task's files
+// folder: a valid id that names a Markdown file in the same listing, as
+// IsTaskFolder decides it ("*.<id>.*.md" or "<id>.*.md"), from the one
+// listing instead of two globs per folder (np2kk2).
+func FolderOwners(entries []os.DirEntry) map[string]bool {
+	ids := map[string]bool{}
+	for _, d := range entries {
+		n := d.Name()
+		if d.IsDir() || !strings.HasSuffix(n, ".md") {
+			continue
+		}
+		p := strings.Split(n, ".")
+		// "<id>.*.md" and "*.<id>.*.md": any part but the last two.
+		for i := 0; i+2 < len(p); i++ {
+			if id.Valid(p[i]) {
+				ids[p[i]] = true
+			}
+		}
+	}
+	return ids
+}

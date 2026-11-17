@@ -109,22 +109,29 @@ func (w *watch) close() {
 }
 
 // taskDirs is the tasks folder and its group folders, as Store.Tasks walks
-// them: no dot folders, no task files folders.
+// them: no dot folders, no task files folders. One listing per folder
+// watched decides both (np2kk2: task.IsTaskFolder globbed the parent twice
+// per child folder, 2.0 s on Seid's 1,132 folders); a files folder is one
+// named by the id of a task file beside it, as the cache walk reads it.
 func taskDirs(root string) []string {
 	var out []string
-	filepath.WalkDir(root, func(path string, d os.DirEntry, e error) error {
-		if e != nil || !d.IsDir() {
-			return nil
+	var list func(dir string)
+	list = func(dir string) {
+		out = append(out, dir)
+		entries, err := readDir(dir)
+		if err != nil {
+			return
 		}
-		if path != root {
-			rel, _ := filepath.Rel(root, path)
-			if strings.HasPrefix(d.Name(), ".") || task.IsTaskFolder(root, filepath.ToSlash(rel)) {
-				return filepath.SkipDir
+		owners := task.FolderOwners(entries)
+		for _, d := range entries {
+			name := d.Name()
+			if !d.IsDir() || strings.HasPrefix(name, ".") || owners[name] {
+				continue
 			}
+			list(filepath.Join(dir, name))
 		}
-		out = append(out, path)
-		return nil
-	})
+	}
+	list(root)
 	return out
 }
 
@@ -247,3 +254,6 @@ func (w *watch) run(fw *fsnotify.Watcher, p watchPaths, poll bool) {
 		}
 	}
 }
+
+// readDir lists a folder for taskDirs (a test counts the reads).
+var readDir = os.ReadDir

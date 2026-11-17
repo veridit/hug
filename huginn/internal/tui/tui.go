@@ -332,6 +332,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case watchStartedMsg:
 		if msg.w != nil {
 			m.watch = msg.w
+			// A change made before the watch was up has no event: read
+			// the board once more (np2kk2). A load still running is
+			// followed by another, as for any change during a load.
+			if m.opts.Initial != nil {
+				cmd := m.reload()
+				return m, tea.Batch(cmd, m.waitChange(), m.spin())
+			}
 			return m, m.waitChange()
 		}
 		return m, nil
