@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T17:18"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_for: "jhf"
+waiting_on: "check 1: open an image in iTerm2 (Space on a .png in FILES), and check 4: answer zhvkmj's colour question from the capture under it (on main 65fe3db)"
+waiting_since: "2026-11-17T18:26"
+waiting_asked_by: "nautilus"
 ---
 
 ## Goal
@@ -51,3 +55,4 @@ landed f2deaf0 on main 2026-11-17: hug tui: S copies the screen and attaches it 
 nautilus 17:26: landed on main f2deaf0 + 65fe3db (ceb9d1a..65fe3db), local go test -race tui/task/cli/mcp ok (tui 165-171 s), full go test ./... ok before the rebase; main CI 44135891625 queued. Check 2 ticked: TestQuestionShowsItsPicture + golden detail/picture.txt at 80 and 140 (wait --show rows.ans: the .ans right under '? waiting: ...', only colours kept, \x1b[2J shown escaped; without --show a file named in the question; --show of a missing file refused with fix hug task attach ID FILE --name NAME), cli TestWaitShowsAPicture (wait/design --show write waiting_show/design_show; answer and a plain wait clear them). Check 3 ticked: the same test counts readFile: list 0 reads, detail 1 (rows.ans only), image under the question 0; TestImageShownWhereTheTerminalCan: Space on shot.png in a plain terminal reads 0 and says one line. Check 1 is half automatic: TestImageShownWhereTheTerminalCan checks the OSC 1337 (iTerm2), kitty and tmux-wrapped sequences and TestCaptureKeepsOnlyColours checks ANSI colours; the real draw in iTerm2 is manual, so left for Jørgen. Dogfood: S on the real board in tmux -> 'screen copied (40 lines) · attached as screen-1821.ans to zhvkmj' (hug/tasks ffea430); zhvkmj now waits --on jhf --show screen-1821.ans (8d4b6cf) and its detail shows the coloured overview under the question. Design: ▸ design.md.
 ## History
 - 2026-11-17T17:18 todo -> doing/active (take)
+- 2026-11-17T18:26 doing/active -> doing/waiting (wait)
