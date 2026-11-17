@@ -7,9 +7,11 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/agents"
+	"github.com/veridit/hug/muninn/internal/extract"
 )
 
 // Memories that name an ephemeral agent (ez50rb). Agents come and go within
@@ -175,4 +177,50 @@ func (a *App) queueAgentNames(dry bool, now time.Time) (int, error) {
 		}
 	}
 	return n, nil
+}
+
+// agentNamesFor caches the capture matcher per process: the session
+// folders change slowly, and a hook run captures one chunk or a few.
+var agentNamesFor struct {
+	sync.Mutex
+	key string
+	m   *agents.Matcher
+}
+
+// captureMatcher matches the agent names of this machine's jcode homes.
+func (a *App) captureMatcher() *agents.Matcher {
+	var homes []string
+	for _, i := range a.JcodeInstances() {
+		homes = append(homes, i.Home)
+	}
+	key := strings.Join(homes, "\x00")
+	agentNamesFor.Lock()
+	defer agentNamesFor.Unlock()
+	if agentNamesFor.m != nil && agentNamesFor.key == key {
+		return agentNamesFor.m
+	}
+	agentNamesFor.key, agentNamesFor.m = key, agents.New(agents.Names(homes))
+	return agentNamesFor.m
+}
+
+// rejectAgentNames drops candidates that name a swarm agent in agent
+// context (ez50rb check 3), with the reason "names an agent". Replayed on
+// 40 transcripts naming agents plus 40 fresh ones, blind-judged: it cut
+// agent-naming memories without losing judged-durable ones (CHANGELOG).
+func (a *App) rejectAgentNames(r extract.Result) extract.Result {
+	if len(r.Candidates) == 0 {
+		return r
+	}
+	m := a.captureMatcher()
+	keep := r.Candidates[:0]
+	for _, c := range r.Candidates {
+		if names := m.Find(c.Content); len(names) > 0 {
+			r.Rejections = append(r.Rejections, extract.Rejection{Reason: "names an agent: " + strings.Join(names, ", ")})
+			continue
+		}
+		keep = append(keep, c)
+	}
+	r.Candidates = keep
+	r.Rejected = len(r.Rejections)
+	return r
 }
