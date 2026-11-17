@@ -1,21 +1,17 @@
 ---
 id: x1ra0t
 title: "Inside a task, J and K never move it: moving is a list action"
-status: "doing"
+status: "done"
 type: bug
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T15:52"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-17T16:30"
-waiting_asked_by: "nautilus"
-waiting_on: "CI: 9b3085b in CI run 44111299428, then the landing turn with 3jtfw9"
+done_at: "2026-11-17T17:06"
 ---
 
 ## Goal
@@ -44,3 +40,4 @@ nautilus 16:06: checks 1-3 ticked. 1: TestDetailJKScrollAndNeverMove + tmux deta
 ## History
 - 2026-11-17T15:52 todo -> doing/active (take)
 - 2026-11-17T16:30 doing/active -> doing/waiting (wait)
+- 2026-11-17T17:06 doing/waiting -> done (done); was doing_since: 2026-11-17T15:52; waiting_asked_by: nautilus; waiting_on: CI: 9b3085b in CI run 44111299428, then the landing turn with 3jtfw9; waiting_since: 2026-11-17T16:30
