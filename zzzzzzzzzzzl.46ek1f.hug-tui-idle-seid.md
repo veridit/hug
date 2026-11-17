@@ -1,6 +1,6 @@
 ---
 id: 46ek1f
-title: "hug tui idle on Seid burns a third of a core"
+title: "hug tui on Seid: one reload per commit; a frame's work does not grow with the board"
 status: "doing"
 type: bug
 priority: "high"
@@ -17,22 +17,25 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-An idle hug tui (no keys, board unchanged) uses under 1% CPU on Seid's board, as on a small board.
+An open hug tui on Seid's board (2,520 tasks) spends little CPU per board change and per keypress: one load per commit, and a frame whose work does not grow with the number of tasks.
 
 ## Purpose
 crab 17:44, measured right after Jørgen praised the v0.7.43 open speed: a v0.7.43 hug tui opened on seid-lang and left alone took 19.2 s CPU over 60 s (ps time 0:01.70 -> 0:20.90), with 1 commit on the board in 10 minutes. Jørgen's v0.7.41 TUI on Seid (pid 227) had used 58:49 CPU in 2 h 37 min. Machine load was 135-185; an idle TUI should not add to it.
 
 ## Principle
-Find what wakes it (a spinner tick that never stops, a reload loop from its own cache writes, a poll) with a CPU profile; a test counts reloads or ticks over an idle period and fails first. No timing budget.
+Count, never time: a test counts loads per commit, and another counts per-task work per frame on a large board; each fails first. Per-snapshot facts (stages, pane membership, progress width, attachment lists) are computed once per load, not once per frame.
 
 ## Relevant details
-Likely candidates: the vnyz8z refresh spinner tick keeps running after the refresh lands; the watcher sees the cache's own writes (.git/huginn/cache-N.db) or the board turn's files and reloads in a loop; the old poll mode. Profile: CRAB_CPUPROFILE-style hook as in np2kk2's note, or go tool pprof against a test.
+Re-scoped 2026-11-17 18:44 with crab: the idle premise did not reproduce (idle 0.18-0.31 s/60 s on every release; crab's 19.2 s was a first start rebuilding cache-16.db at 17:42). Measured per change: one hug task note costs 16.0 s on v0.7.41, 0.6-0.8 s on v0.7.42, 1.0-1.1 s on v0.7.44; each commit gives 2 loads (task file event, then ref event about 300 ms later); View is about 40 ms per frame (overviewText 1.21 s of 1.33 s over 32 frames; task.Stage via StageNames allocates per row).
 
 ## Depends on
 
 ## Acceptance
 - [ ] a test runs the TUI model idle for N watch periods on an unchanged board and counts reloads and ticks: zero reloads, spinner ticks stop once the refresh lands; fails on main
 - [ ] on Seid, an idle hug tui uses under 1 s CPU per minute (ps time over 60 s), numbers in the notes
+- [ ] a test commits once on a watched board and counts loads: exactly 1 per commit (a hug task note writes the file and moves the ref); fails on main
+- [ ] a test renders the overview of a 2,000-task board and counts per-task stage computations per View: none once the snapshot is loaded; fails on main
+- [ ] on the Seid copy, the CPU of one hug task note in an open TUI (ps time) before and after, in the notes
 
 ## Notes
 
