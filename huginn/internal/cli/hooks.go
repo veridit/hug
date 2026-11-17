@@ -125,7 +125,11 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	if len(initial.Tasks) > 0 {
 		initial.Findings = s.c.LintListed()
 	}
-	e := tui.Run(ctx, s.s, tui.Options{User: agent, Email: email, Version: a.Version, MainBranch: gitbranch.DefaultBranch(a.Cwd), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) }, Commit: func(msg string) error { defer s.turn()(); return s.commit(msg) },
+	opts := tui.Options{User: agent, Email: email, Version: a.Version, MainBranch: gitbranch.DefaultBranch(a.Cwd), Take: func(ref string) (task.Result, error) { return a.take(ctx, s, ref, who) },
+		// Every TUI write holds the board turn from changing a file to its
+		// commit (95ahtk), so Commit runs inside it and does not take it
+		// again (a second flock in one process would wait on itself).
+		Turn: s.turn, Commit: s.commit,
 		Initial: initial,
 		// The refresh syncs the cache with the files; the reload after it
 		// lists what the sync found.
@@ -135,11 +139,22 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 		// the listing the reload just made (44w1ev).
 		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },
 		// / search ranks by the cache's index, as hug task search (49n9kw).
-		Search: func(query string) ([]string, error) { return s.c.Rank(ctx, query) }})
+		Search: func(query string) ([]string, error) { return s.c.Rank(ctx, query) }}
+	// Not a terminal (a test's input): keys from In, no screen.
+	if _, tty := a.In.(*os.File); !tty && a.In != nil {
+		opts.Input, opts.Output, opts.NoReload = a.In, a.Out, true
+	}
+	e := tui.Run(ctx, s.s, opts)
 	if e != nil {
 		return nil, e
 	}
-	if e = s.commit("hug task tui"); e != nil {
+	// Whatever the TUI left uncommitted, under the turn like any write: at
+	// Seid this commit met an agent's hug task attach on index.lock
+	// (2026-11-17 16:49:23, 95ahtk).
+	release := s.turn()
+	e = s.commit("hug task tui")
+	release()
+	if e != nil {
 		return nil, e
 	}
 	return Reply{"next": "hug task next"}, nil

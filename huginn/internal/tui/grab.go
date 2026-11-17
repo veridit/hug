@@ -135,8 +135,10 @@ func (m *model) dropGrab() {
 
 // moveTo runs one move with one commit and says where the task went.
 func (m *model) moveTo(id string, o task.MoveOptions, where, target string) {
+	release := m.hold()
 	r, err := m.store.Move(id, o)
 	m.finish(r, err, "move")
+	release()
 	if err == nil {
 		// Say where it went, in the words of the screen; keep warnings and a
 		// failed commit, which finish put after or instead of "move ID".

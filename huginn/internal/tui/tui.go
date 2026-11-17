@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/veridit/hug/internal/sharefile"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -30,6 +31,17 @@ type Options struct {
 	// only when User is empty, and read again when hug.toml changes.
 	Email  string
 	Commit func(msg string) error
+	// Turn, when set, takes the board's write turn and returns its release
+	// (95ahtk). Every write holds it from changing a task file to the
+	// commit, as a CLI write does: a hug task note from another agent at
+	// the same moment would otherwise stage this write's temp file or
+	// collide on git's index.lock (Seid, 2026-11-17 16:49:23). Commit does
+	// not take it again. Take is not wrapped: it orders its locks itself.
+	Turn func() func()
+	// Input, when set, drives the TUI instead of the terminal, with Output
+	// and no renderer (tests): q at its end quits.
+	Input  io.Reader
+	Output io.Writer
 	// Take owns the complete distributed take transaction, including commit.
 	Take func(ref string) (task.Result, error)
 	// NoWatch turns off the reload on changes on disk (nfv18p); tests that
@@ -89,8 +101,16 @@ func Run(ctx context.Context, store *task.Store, opts Options) error {
 		}
 		m.bin = startBinWatch(path)
 	}
+	popts := []tea.ProgramOption{tea.WithAltScreen()}
+	if opts.Input != nil {
+		out := opts.Output
+		if out == nil {
+			out = io.Discard
+		}
+		popts = []tea.ProgramOption{tea.WithInput(opts.Input), tea.WithOutput(out), tea.WithoutRenderer()}
+	}
 	for {
-		done, err := runOnce(ctx, m, tea.WithAltScreen())
+		done, err := runOnce(ctx, m, popts...)
 		m = done
 		if err != nil {
 			return err
@@ -1014,7 +1034,11 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if subject == "" {
 					subject = "hug task edit"
 				}
-				if err := m.opts.Commit(subject); err != nil {
+				// The turn covers the commit, not the editor, as hug task edit.
+				release := m.hold()
+				err := m.opts.Commit(subject)
+				release()
+				if err != nil {
 					m.message = err.Error()
 				}
 			}

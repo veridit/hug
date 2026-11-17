@@ -390,6 +390,8 @@ func (m *model) attachCapture(t task.Task, name string) {
 	body := []byte(m.captured)
 	note := m.capturedNote
 	m.captured, m.capturedNote = "", ""
+	// The attach and its commit hold the board turn (95ahtk).
+	defer m.hold()()
 	r, _, err := m.store.Attach(t.ID, name, body, "screen capture from hug tui", false)
 	if err != nil {
 		m.message = note + " · not attached: " + err.Error()

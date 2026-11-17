@@ -108,6 +108,12 @@ func (m *model) executeAction() tea.Cmd {
 	var r task.Result
 	var err error
 	action := actionNames[k]
+	// The write and its commit (finish) hold the board turn (95ahtk). Not the
+	// editor, which can stay open for minutes (its commit holds it), and not
+	// a take through opts.Take, which takes the turn itself.
+	if k != "e" && !(k == "t" && value != "give back" && m.opts.Take != nil) {
+		defer m.hold()()
+	}
 	switch k {
 	case "n":
 		r, err = m.store.New(task.NewOptions{Title: value, Goal: value, Acceptance: []string{"Verify " + value}})
@@ -327,6 +333,7 @@ func (m *model) strike(reason string) {
 	if who == "" {
 		who = "human"
 	}
+	defer m.hold()()
 	r, err := m.store.Strike(t.ID, n, reason, who, false)
 	m.finish(r, err, "strike")
 }
@@ -365,6 +372,16 @@ func (m *model) answer(text string) {
 		m.message = "task disappeared; refresh and try again"
 		return
 	}
+	defer m.hold()()
 	r, err := m.store.Answer(t.ID, text, m.me())
 	m.finish(r, err, "answer")
+}
+
+// hold takes the board's write turn when the TUI was given one (95ahtk):
+// a write and its commit run inside it, as every CLI write does.
+func (m *model) hold() func() {
+	if m.opts.Turn == nil {
+		return func() {}
+	}
+	return m.opts.Turn()
 }
