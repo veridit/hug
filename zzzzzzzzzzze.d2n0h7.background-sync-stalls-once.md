@@ -1,18 +1,17 @@
 ---
 id: d2n0h7
 title: "Background sync stalls once in ~30 CI runs (ParallelNotesAllLand)"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T00:45"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T00:45"
 ---
 
 ## Goal
@@ -41,5 +40,7 @@ landed 839e593 on main 2026-11-17: test(cli): a stalled background pass says whi
 shipped in v0.7.49 (839e593)
 
 
+Reflection (open, 2026-11-18, kestrel): The principle 'Wait on the pass's own marker, never a longer clock' kept me from widening the timeout. What was missing was a stopping rule for a flake that never reproduces. Shipping the dump on failure and closing with a strike was the honest end.
 ## History
 - 2026-11-18T00:45 todo -> doing/active (take)
+- 2026-11-18T00:45 doing/active -> done (done); was doing_since: 2026-11-18T00:45
