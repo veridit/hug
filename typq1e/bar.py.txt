@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""typq1e bar on fresh2: shipped Find (B-*.jsonl) vs FindIn (M-*.jsonl) on
+the same judged outputs. Bar (note 19:51): (1) judge agent_name left with
+FindIn <= 0.05 per agent transcript and below Find; (2) durable agent-free
+memories dropped by FindIn but not Find = 0; (3) controls: 0 FindIn drops.
+
+  bar.py f2
+"""
+import collections, hashlib, json, random, sys
+
+d = sys.argv[1]
+J = json.load(open(f"{d}/judged.json"))
+def mkey(i, t):
+    return hashlib.sha256((i + "\x00" + t).encode()).hexdigest()[:12]
+def load(p):
+    return {json.loads(l)["id"]: json.loads(l) for l in open(p)}
+B = [load(f"{d}/b-old.jsonl"), load(f"{d}/b-old2.jsonl")]
+M = [load(f"{d}/m-old.jsonl"), load(f"{d}/m-old2.jsonl")]
+def count(run, iid):
+    c = collections.Counter()
+    for x in run[iid]["candidates"]:
+        j = J[mkey(iid, x["content"])]
+        agent = j["agent_name"] or j["agent_status"]
+        clean = j["durable"] and not agent
+        c["mem"] += 1
+        c["judge_name"] += bool(j["agent_name"])
+        c["judge_any"] += bool(agent)
+        c["clean"] += bool(clean)
+        if x.get("agents"):
+            c["dropped"] += 1
+            c["dropped_clean"] += bool(clean)
+        else:
+            c["name_left"] += bool(j["agent_name"])
+            c["any_left"] += bool(agent)
+            c["clean_kept"] += bool(clean)
+    return c
+ids = {k: sorted(i for i, r in B[0].items() if r["kind"] == k and not any(x[i].get("error") for x in B)) for k in ("agent", "control")}
+def mean(runs, k, kind):
+    return sum(count(r, i)[k] for r in runs for i in ids[kind]) / len(runs) / len(ids[kind])
+for kind in ("agent", "control"):
+    print(f"## {kind} n={len(ids[kind])}")
+    for lab, runs in (("Find (shipped)", B), ("FindIn (typq1e)", M)):
+        print(f"{lab:16} " + "  ".join(f"{k} {mean(runs, k, kind):.3f}" for k in ("mem", "judge_name", "judge_any", "clean", "dropped", "dropped_clean", "name_left", "any_left", "clean_kept")))
+def boot(k, kind="agent", reps=2000, seed=1117):
+    rng = random.Random(seed)
+    pre = {i: sum(count(m, i)[k] - count(b, i)[k] for m, b in zip(M, B)) / 2 for i in ids[kind]}
+    s = sorted(sum(pre[i] for i in rng.choices(ids[kind], k=len(ids[kind]))) / len(ids[kind]) for _ in range(reps))
+    return sum(pre.values()) / len(ids[kind]), s[int(.025 * reps)], s[int(.975 * reps)]
+for k in ("name_left", "any_left", "clean_kept"):
+    e, lo, hi = boot(k)
+    print(f"FindIn vs Find {k:10} {e:+.3f} [{lo:+.3f}, {hi:+.3f}]")
+newly = []
+for m, b in zip(M, B):
+    for kind in ("agent", "control"):
+        for i in ids[kind]:
+            for xm, xb in zip(m[i]["candidates"], b[i]["candidates"]):
+                if xm.get("agents") and not xb.get("agents"):
+                    j = J[mkey(i, xm["content"])]
+                    newly.append((kind, i, j, xm["agents"], xm["content"]))
+nc = sum(1 for k, i, j, a, t in newly if j["durable"] and not (j["agent_name"] or j["agent_status"]))
+print(f"newly dropped by FindIn: {len(newly)}; durable agent-free among them: {nc}; in controls: {sum(1 for x in newly if x[0] == 'control')}")
+for k, i, j, a, t in newly:
+    print(f"  {k[:5]} {i:8} name={int(j['agent_name'])} status={int(j['agent_status'])} durable={int(j['durable'])} {a} | {t[:160]}")
+name_left = mean(M, "name_left", "agent")
+print("BAR (1) name_left <= 0.05 and below Find:", name_left <= 0.05 and name_left < mean(B, "name_left", "agent"), f"({name_left:.3f} vs {mean(B, 'name_left', 'agent'):.3f})")
+print("BAR (2) durable agent-free newly dropped = 0:", nc == 0, f"({nc})")
+print("BAR (3) control drops = 0:", mean(M, "dropped", "control") == 0, f"({mean(M, 'dropped', 'control'):.3f})")
