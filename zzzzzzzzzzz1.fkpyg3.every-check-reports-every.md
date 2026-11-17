@@ -63,5 +63,6 @@ hatchling 13:04: rebased on f583cac (sfa8w4 strike) as a0dfe06: kept main's stri
 hatchling 13:21: rebased on d74af5d (wyvern, 0sbvnq parallel tests, m1c28r env): boardFindings now takes the app's JCODE_HOME (a.getenv) for stale-owner, tests use useEditor(t, a, ...). ci/fkpyg3 3415936, CI 44091815701; x325pp stacked 18474c9, CI 44091816614. Local full suite green on 18474c9.
 
 
+hatchling 14:04: on main b023624 (with x325pp 38ff464). Landing CI 44096348851 (see x325pp note); full matrix green on the same code in 44095242756.
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
