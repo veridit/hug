@@ -36,7 +36,7 @@ Seid reference: tools/evidence.py lines 91-112: SCRATCH_REF, EVID_REF, LOST=' (l
 - [x] a citation of a forbid_cite path followed by ' (lost)' gives no finding; without it, the finding names the path and line (test)
 - [x] a cited .hug/tasks/<id>/NAME path that does not exist is missing-file, and ' (lost)' after it is accepted (test)
 - [x] hug setup on a repo with .jcode/ and no forbid_cite offers the line, with a fix: that writes it (test)
-- [ ] done when task:xgwwhn is done (on Seid, hug task lint reports what tools/evidence.py check reports (counts in the notes), so its hook can switch)
+- [ ] ~~done when task:xgwwhn is done (on Seid, hug task lint reports what tools/evidence.py check reports (counts in the notes), so its hook can switch)~~ (not relevant: hug's side shipped in v0.7.43; Seid's switch moved to its own task xgwwhn, waiting on orangutan (crab, Jørgen 00:38), hatchling, 2026-11-18)
 
 ## Notes
 
