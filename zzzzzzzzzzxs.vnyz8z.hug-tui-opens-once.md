@@ -1,7 +1,7 @@
 ---
 id: vnyz8z
 title: "hug tui opens at once from the last snapshot, refreshes behind a spinner"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["wyvern"]
@@ -9,15 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "44w1ev"
-doing_since: "2026-11-17T16:12"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 4: open and quit hug tui on Seid (median first frame 0.26 s, quit 0.29 s measured on a copy) and say if you agree; checks 1-3 tick on green main CI 44124879024"
-waiting_since: "2026-11-17T17:21"
-waiting_asked_by: "wyvern"
-waiting_for: "jhf"
+done_at: "2026-11-18T00:39"
 ---
 
 ## Goal
@@ -66,3 +61,4 @@ check 4 ticked by crab on Jørgen's own words 2026-11-17 on the Seid TUI open: '
 ## History
 - 2026-11-17T16:12 todo -> doing/active (take)
 - 2026-11-17T17:21 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:39 doing/waiting -> done (done); was doing_since: 2026-11-17T16:12; waiting_asked_by: wyvern; waiting_for: jhf; waiting_on: check 4: open and quit hug tui on Seid (median first frame 0.26 s, quit 0.29 s measured on a copy) and say if you agree; checks 1-3 tick on green main CI 44124879024; waiting_since: 2026-11-17T17:21
