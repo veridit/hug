@@ -23,7 +23,7 @@ func TestGitProcessesPerCommand(t *testing.T) {
 	}
 	a := app(t)
 	execute(t, a, "init")
-	id := execute(t, a, "new", "Counted", "--goal", "G", "--accept", "C")["task"].(Reply)["id"].(string)
+	id := execute(t, a, "new", "Counted", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	count := gitCounter(t)
 	// Each command is counted on a cache that has caught up with the last
 	// write (an ls first): the first command after a write also diffs the

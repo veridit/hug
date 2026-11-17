@@ -64,12 +64,15 @@ type TaskLint struct {
 }
 
 // taskLint lints the board and keeps t's findings. A failing lint is no
-// reason to fail the command that wrote: it then reports nothing.
+// reason to fail the command that wrote: it then reports nothing. It lints
+// the board this command has read (or just wrote), never a second walk and
+// HEAD read (44w1ev: one walk per command; fkpyg3's lint block cost show and
+// take one more git process and one more walk of every task file).
 func (s *session) taskLint(t task.Task) *TaskLint {
-	fs, e := s.c.Lint(context.Background())
-	if e != nil {
+	if _, e := s.s.Tasks(); e != nil {
 		return nil
 	}
+	fs := s.c.LintListed()
 	mine := forTask(fs, t)
 	if len(mine) == 0 {
 		return nil

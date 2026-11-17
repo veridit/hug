@@ -3,9 +3,9 @@ HUG TASKS · list   60/60 tasks · ! 7 findings · sort: priority ↓ · type
 todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ✓     ID       TYPE    PRIORITY STAGE     TITLE
->!○ 2   000001   feature critical ready     ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that m…
+ !○ 2   000001   feature critical ready     ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that m…
   ○ 2   000021   feature critical depends   ▱ 0/1  Feature task 21: make the terminal workflow observable
-  ○ 2   000041   feature critical ready     Feature task 41: make the terminal workflow observable
+> ○ 2   000041   feature critical ready     Feature task 41: make the terminal workflow observable
   ◑ 1/2 000002   bug     critical active    Bug task 02: make the terminal workflow observable
  !◑ 1/2 000022   bug     critical active    Bug task 22: make the terminal workflow observable with a deliberately long title that must tru…
   ◑ 1/2 000042   bug     critical active    Bug task 42: make the terminal workflow observable

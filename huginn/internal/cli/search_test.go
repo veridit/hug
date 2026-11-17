@@ -12,8 +12,8 @@ func TestSearchCommand(t *testing.T) {
 	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
-	oom := execute(t, a, "new", "Memory limit exit 137 in the worker", "--goal", "Stop the OOM kill", "--accept", "C")["task"].(Reply)["id"].(string)
-	logs := execute(t, a, "new", "Logging", "--goal", "exit code 137 means the memory limit was hit", "--accept", "C", "--type", "bug")["task"].(Reply)["id"].(string)
+	oom := execute(t, a, "new", "Memory limit exit 137 in the worker", "--goal", "Stop the OOM kill", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	logs := execute(t, a, "new", "Logging", "--goal", "exit code 137 means the memory limit was hit", "--purpose", "P", "--principle", "Q", "--accept", "C", "--type", "bug")["task"].(Reply)["id"].(string)
 	code, out := runText(a, "search", "memory limit exit 137")
 	lines := strings.Split(out, "\n")
 	if code != 0 || !strings.HasPrefix(lines[0], oom+"  todo     Memory limit exit 137 in the worker") || lines[1] != "        title: Memory limit exit 137 in the worker" ||
@@ -24,7 +24,7 @@ func TestSearchCommand(t *testing.T) {
 		t.Fatalf("--type bug:\n%s", out)
 	}
 	// An alias ranks above a note that cites it.
-	cited := execute(t, a, "new", "Follow-up", "--goal", "Later", "--accept", "C")["task"].(Reply)["id"].(string)
+	cited := execute(t, a, "new", "Follow-up", "--goal", "Later", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "note", cited, "continues STATBUS-402 after the import")
 	r := execute(t, a, "search", "STATBUS-402")
 	if rs := r["results"].([]Reply); len(rs) != 1 || rs[0]["id"] != cited || rs[0]["field"] != "notes" {

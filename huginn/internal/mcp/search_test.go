@@ -21,7 +21,7 @@ func TestSearchToolMatchesCLI(t *testing.T) {
 	}
 	ctx := context.Background()
 	a := &cli.App{Cwd: dir, Out: os.Stderr, Err: os.Stderr, Env: map[string]string{"HUG_USER": "tester", "HUG_MODEL": "test-model", "JCODE_SESSION_ID": ""}}
-	for _, args := range [][]string{{"init"}, {"new", "Memory limit exit 137", "--goal", "G", "--accept", "C"}, {"new", "Logging", "--goal", "exit 137 means memory", "--accept", "C"}, {"new", "Other", "--goal", "nothing", "--accept", "C"}} {
+	for _, args := range [][]string{{"init"}, {"new", "Memory limit exit 137", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C"}, {"new", "Logging", "--goal", "exit 137 means memory", "--purpose", "P", "--principle", "Q", "--accept", "C"}, {"new", "Other", "--goal", "nothing", "--purpose", "P", "--principle", "Q", "--accept", "C"}} {
 		if _, e := a.Execute(ctx, args); e != nil {
 			t.Fatal(args, e)
 		}
