@@ -39,5 +39,6 @@ In tpnd3n's arm 6 lines on message-only tasks were judged right (2 return, 4 sta
 crab 14:53: test the start-of-session rule (a task only mentioned in the brief gets no lint line) on its own first: it is 5 of the 9; the other 4 (own/noted task at a wrong moment) after.
 
 
+hatchling 15:00, start rule alone (crab): at session start only the message's first board task (lead) counts among tasks the message only mentions. Test TestBoardStartLintOnlyOnLeadTask fails without it ('start line on a task the brief only mentions: s6ff5k...'). Replay vs tpnd3n on the same live boards (fresh2 pinned to 14:00Z): six sets false 12 -> 10, right 101 -> 100, lint 55 -> 52. All 5 targeted start lines are gone (poodle, dromedary, hog, kitten vk9td0/s6ff5k, evergreen n8zmjw; evergreen now gets p39w4a, judged right). But the rotation hands the freed findings to other sessions: 3 new false return lines (crab vk9td0, poodle vk9td0, palmtree n8zmjw) and palmtree loses a right zjedy0 line. Fresh hug (38.8 h): lint 3 right -> 2 right + 1 false. guppy's start brief listed a queue ('ez50rb, then s6ff5k'): lead-only dropped s6ff5k (judged right) and gave guppy jrj1vq (judged wrong). Fresh sets together: no gain (fresh2 +1/-1, fresh hug -1 right +1 false). Not shipped; kept as wip commit on ci/4vxqp4 (worktree guppy-lint).
 ## History
 - 2026-11-17T15:53 todo -> doing/active (take)
