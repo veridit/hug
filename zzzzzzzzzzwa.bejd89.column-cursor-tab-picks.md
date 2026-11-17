@@ -8,14 +8,11 @@ assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T19:38"
-waiting_on: "tje4sx first (Jørgen's ruling); resumes after it lands"
-waiting_since: "2026-11-17T20:03"
-waiting_asked_by: "nautilus"
 ---
 
 ## Goal
@@ -53,3 +50,4 @@ Correction: the T/P arrow fix is in 63beb14 too; nothing uncommitted.
 - 2026-11-17T16:30 doing/active -> todo/ready (give back; was assignee: nautilus); was doing_since: 2026-11-17T15:09
 - 2026-11-17T19:38 todo/ready -> doing/active (take)
 - 2026-11-17T20:03 doing/active -> doing/waiting (wait)
+- 2026-11-17T20:28 doing/waiting -> doing/active (resume); was waiting_asked_by: nautilus; waiting_on: tje4sx first (Jørgen's ruling); resumes after it lands; waiting_since: 2026-11-17T20:03
