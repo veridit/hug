@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T23:53"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "checks 5, 8 (TUI textarea) and 10: nautilus's 0gztsy on top of 7defaf1; 7: Jørgen after the release; 11: harness cue, owner per crab"
+waiting_since: "2026-11-18T00:56"
+waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -76,3 +79,4 @@ landed 7defaf1 on main. Race clean before push: task/mcp/cache, cli (157.6 s), t
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
 - 2026-11-18T00:45 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: parked a minute while kestrel closes d2n0h7 (crab 00:44); resumed next; waiting_since: 2026-11-18T00:45
+- 2026-11-18T00:56 doing/active -> doing/waiting (wait)
