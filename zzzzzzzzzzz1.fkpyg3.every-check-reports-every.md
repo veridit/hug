@@ -34,7 +34,7 @@ Write-time check: huginn/internal/task/store.go New() (line ~168, returns on fir
 - [x] MCP task_new/task_update return findings as a list plus the combined fix (test)
 - [x] on seid-lang, hug task lint output has one entry per task, and the count line still shows totals per code (shown before and after)
 - [x] every open task is held to the description pattern: PatternSince no longer exempts open tasks created before 2026-11-16 (done and dropped stay exempt); on seid-lang zjedy0's detail lists no acceptance, missing Purpose and missing Principle together (shown)
-- [ ] new findings for backlog import leftovers: <!-- SECTION:... --> markers, and the unused fields created_date, ordinal, backlog_status, import_type_inference; their fix is hug upgrade (test; seid-lang counts before and after)
+- [x] new findings for backlog import leftovers: <!-- SECTION:... --> markers, and the unused fields created_date, ordinal, backlog_status, import_type_inference; their fix is hug upgrade (test; seid-lang counts before and after)
 - [ ] hug task set ID --accept "..." --purpose "..." --principle "..." fixes those findings without an editor, so every combined fix: line is runnable (test)
 - [ ] hug task lint is the board overview: totals per code and one compact line per task; hug task lint ID gives every finding of that task in detail with the one combined fix: line; hug task show (detail view) and hug task take show the same block as lint ID (test)
 - [ ] rows in ls, board and the TUI list stay as they are: at most the existing ! marker, no finding text or counts (test)
