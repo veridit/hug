@@ -36,5 +36,6 @@ Seen: hug v0.7.42, hug task show ggydj2 | head -2 gives the title line and 'take
 ## Notes
 
 
+Landed in main 9f3e38f (f9e5664..9f3e38f). Text show line 2 is now 'stage: ...' in the TUI row's words. Check 1: TestShowPrintsWaitAsSecondLine (showstage_test.go) checks 'stage: waiting on jhf: approve the diff since 20..' and, for a wait on a thing, 'stage: waiting on CI run 123 since 20..'. Check 2: TestShowStageWithoutWait checks that after resume line 2 is exactly 'stage: active' with no 'waiting on'. Both fail before the change with line 2 "taken by: test-model · main". The full huginn and cmd suite gave no non-ok lines. -race cli: ok 141.473s.
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
