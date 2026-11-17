@@ -4,7 +4,7 @@ title: "Checks show what is being worked on now, with a subtle line in the TUI"
 status: todo
 type: feature
 priority: ""
-assignee: []
+assignee: ["vole"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
