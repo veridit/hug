@@ -6,6 +6,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- When git crashes while hug checks whether the task branch has its first commit yet, the error names the git call that crashed and how it died (`show-ref --verify --quiet refs/heads/hug/tasks: signal: segmentation fault`), with a `fix:` line that re-runs it (xv39b9). Before, it showed `rev-parse --verify HEAD: fatal: Needed a single revision`, which reads as a broken repository.
 - The background task sync (`hug task sync --background-pass`, started by every write) now runs niced, with bounded parallelism, as `hug mem`'s background commands do; its git calls inherit the lower priority (b6jgpn). Before, it ran at full priority. Each pass's line in the sync log ends with the priority it ran at (`nice 10`, or `class below-normal` on Windows). `HUG_FULL_SPEED=1` keeps full priority.
 
 ## v0.7.49 - 2026-11-17

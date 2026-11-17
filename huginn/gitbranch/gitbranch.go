@@ -477,10 +477,18 @@ func (r *Repository) Head() (string, error) {
 	}
 	h, e := r.git("rev-parse", "--verify", "HEAD")
 	if e != nil {
-		if _, x := r.git("symbolic-ref", "HEAD"); x == nil {
-			if _, x = r.git("show-ref", "--verify", "--quiet", "refs/heads/"+r.Branch); exitCode(x) == 1 {
+		// Unborn (HEAD names a branch that has no commit yet) is an empty
+		// head. A check that crashed is reported as itself (xv39b9): its
+		// rev-parse error, "Needed a single revision", would hide it.
+		_, x := r.git("symbolic-ref", "HEAD")
+		if x == nil {
+			_, x = r.git("show-ref", "--verify", "--quiet", "refs/heads/"+r.Branch)
+			if exitCode(x) == 1 {
 				return "", nil
 			}
+		}
+		if Crashed(x) {
+			return "", x
 		}
 	}
 	return h, e
