@@ -68,5 +68,6 @@ Jørgen 00:02 local, replacing 23:58: 'put the ticket ID in the breadcrumb, mean
 file:header-spec.md (4548 bytes, sha256:c0b38735) replaces sha256:da65f983
 Jørgen 00:03 local: 'clear ideas: a global header, and it goes away, then the breadcrumb, then the context of the ticket, then the subject, then the details.' header-spec.md rewritten around six named bands (global, breadcrumb, context, subject, details, footer), with a table of which show in lists vs a task. In a detail: breadcrumb with the id last, context (badges, dates), subject (bold title), dim rule, details. Code and goldens use the band names.
 file:header-spec.md (4894 bytes, sha256:cda72b68) replaces sha256:c0b38735
+Jørgen 00:04 local: keeps context before subject, and wants 'a line right above the subject so it stands out'. Spec: breadcrumb, context, dim rule, subject, dim rule, details.
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
