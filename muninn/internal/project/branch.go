@@ -133,7 +133,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 func legacyItems(p Project, lines []Line) []ingest.Imported {
 	out := make([]ingest.Imported, 0, len(lines))
 	for _, l := range lines {
-		out = append(out, ingest.Imported{Origin: originFor(p, l.ID), Title: l.Title, Content: l.Content, Category: l.Category, Tags: l.Tags, Scope: p.Scope(), Active: l.Active, Created: l.Created, Updated: l.Updated})
+		out = append(out, ingest.Imported{Origin: originFor(p, l.ID), ID: l.ID, Title: l.Title, Content: l.Content, Category: l.Category, Tags: l.Tags, Scope: p.Scope(), Active: l.Active, Created: l.Created, Updated: l.Updated})
 	}
 	return out
 }

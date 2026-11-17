@@ -165,3 +165,44 @@ func TestUpgradeRecordsBoardLayout(t *testing.T) {
 		t.Fatalf("the older hug's upgrade: exit %d\n%s", code, out)
 	}
 }
+
+// 5sc5rw: hug upgrade's memory part runs hug mem upgrade: a preview asks for
+// --apply and exits pending, --apply passes it on, and a failure stops.
+func TestUpgradeMemoryPartRunsMemUpgrade(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	a.Env["HOME"] = t.TempDir()
+	execute(t, a, "init")
+	var calls [][]string
+	folded := false
+	a.MemUpgrade = func(args []string) (int, string) {
+		calls = append(calls, args)
+		if folded {
+			return 0, "memory: nothing to do\n"
+		}
+		if len(args) == 1 && args[0] == "--apply" {
+			folded = true
+			return 0, "memory: folded 3 copies of this machine's own memories in project:rc-x\nmemory: backup memories.json.bak-upgrade-1\n"
+		}
+		return 5, "memory: would fold 3 copies of this machine's own memories in project:rc-x\nfix: hug mem upgrade --apply\n"
+	}
+	r := execute(t, a, "upgrade")
+	did := strings.Join(r["upgrade"].([]string), "; ")
+	if !strings.Contains(did, "memory: would fold 3 copies of this machine's own memories in project:rc-x") || strings.Contains(did, "fix:") || r["exit_code"] != UpgradePending {
+		t.Fatalf("preview: %s (exit %v)", did, r["exit_code"])
+	}
+	r = execute(t, a, "upgrade", "--apply")
+	if did = strings.Join(r["upgrade"].([]string), "; "); !strings.Contains(did, "memory: folded 3 copies") || !strings.Contains(did, "memory: backup memories.json.bak-upgrade-1") {
+		t.Fatalf("apply: %s", did)
+	}
+	if r = execute(t, a, "upgrade"); r["exit_code"] != nil || !strings.Contains(strings.Join(r["upgrade"].([]string), "; "), "memory: nothing to do") {
+		t.Fatalf("after: %v", r)
+	}
+	if len(calls) != 3 || len(calls[0]) != 0 || calls[1][0] != "--apply" {
+		t.Fatalf("calls %v", calls)
+	}
+	a.MemUpgrade = func([]string) (int, string) { return 1, "hug mem: store locked\n" }
+	if code, out := runText(a, "upgrade"); code != 1 || !strings.Contains(out, "hug mem upgrade failed: hug mem: store locked") || !strings.HasSuffix(out, "fix: hug mem upgrade\n") {
+		t.Fatalf("failure: exit %d\n%s", code, out)
+	}
+}

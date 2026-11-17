@@ -325,6 +325,7 @@ func ForgetMany(path string, ids []string) (map[string]bool, error) {
 		want[id] = true
 	}
 	now := time.Now().UTC()
+	retired := map[int]bool{}
 	for i := range mems {
 		m := &mems[i]
 		if !m.Active {
@@ -335,11 +336,15 @@ func ForgetMany(path string, ids []string) (map[string]bool, error) {
 				m.Active = false
 				m.Updated = now
 				done[id] = true
+				retired[i] = true
 			}
 		}
 	}
 	if len(done) == 0 {
 		return done, nil
 	}
+	// A twin a sync made (5sc5rw) is the same memory: it goes too, or
+	// recall shows it in the forgotten one's place.
+	retireTwins(mems, retired, now)
 	return done, SaveNative(path, mems)
 }

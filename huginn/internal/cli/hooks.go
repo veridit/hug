@@ -398,7 +398,31 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 			mem = append(mem, "a legacy .muninn/memories.jsonl is on the code branch: hug mem sync --migrate moves it (hug mem sync --migrate --dry-run shows how)")
 		}
 	}
+	// Twins older syncs made of this machine's own memories (5sc5rw):
+	// hug mem upgrade folds them, previewing like every other part.
+	foldPending := false
+	if a.MemUpgrade != nil {
+		args := []string{}
+		if !dry {
+			args = append(args, "--apply")
+		}
+		code, out := a.MemUpgrade(args)
+		switch code {
+		case 0, UpgradePending:
+			for _, l := range strings.Split(strings.TrimSpace(out), "\n") {
+				l = strings.TrimPrefix(l, "memory: ")
+				if l == "" || l == "nothing to do" || strings.HasPrefix(l, "fix: ") {
+					continue
+				}
+				mem = append(mem, l)
+			}
+			foldPending = code == UpgradePending
+		default:
+			return nil, &OperationError{Problem: "hug mem upgrade failed: " + strings.TrimSpace(out), Fix: "hug mem upgrade"}
+		}
+	}
 	part("memory", mem)
+	pending = pending || foldPending
 	reply := Reply{"upgrade": parts, "next": "hug setup"}
 	if dry && pending {
 		reply["pending"] = true

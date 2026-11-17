@@ -96,6 +96,10 @@ type App struct {
 	// Layout is the newest board layout this hug reads and writes; 0 means
 	// task.Layout. Tests set it lower to play an older hug (dx9vw2).
 	Layout int
+	// MemUpgrade runs hug mem upgrade (args: "--apply" or none) for hug
+	// upgrade's memory part and returns its exit code and output (5sc5rw).
+	// Nil: the part names the command instead.
+	MemUpgrade func(args []string) (int, string)
 }
 
 // boardNewer is the error a hug older than its board gives on a write

@@ -145,7 +145,7 @@ func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
 	}
 	items := make([]ingest.Imported, 0, len(lines))
 	for _, l := range lines {
-		items = append(items, ingest.Imported{Origin: originFor(p, l.ID), Title: l.Title, Content: l.Content,
+		items = append(items, ingest.Imported{Origin: originFor(p, l.ID), ID: l.ID, Title: l.Title, Content: l.Content,
 			Category: l.Category, Tags: l.Tags, Scope: p.Scope(), Active: l.Active, Created: l.Created, Updated: l.Updated})
 	}
 	if st.Imported, err = ingest.MergeImport(nativePath, items, dry); err != nil {

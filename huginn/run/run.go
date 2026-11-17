@@ -18,6 +18,10 @@ import (
 // main.Version; "dev" like hug version in a plain go build.
 var Version = "dev"
 
+// MemUpgrade runs hug mem upgrade for hug upgrade's memory part (5sc5rw);
+// cmd/hug sets it, so huginn does not import muninn.
+var MemUpgrade func(args []string) (int, string)
+
 // Main runs huginn with args (without the program name) and returns the exit code.
 func Main(args []string) int {
 	if len(args) == 1 && args[0] == "version" {
@@ -32,7 +36,7 @@ func Main(args []string) int {
 		fmt.Fprintln(os.Stderr, e)
 		return 1
 	}
-	a := &cli.App{Cwd: cwd, In: os.Stdin, Out: os.Stdout, Err: os.Stderr, Version: Version}
+	a := &cli.App{Cwd: cwd, In: os.Stdin, Out: os.Stdout, Err: os.Stderr, Version: Version, MemUpgrade: MemUpgrade}
 	if len(args) > 0 && args[0] == "mcp" && !slices.Contains(args, "--help") {
 		if len(args) > 2 || (len(args) == 2 && args[1] != "--json") {
 			return a.Run(ctx, []string{"mcp", "--invalid"})

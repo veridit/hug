@@ -8,8 +8,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -38,6 +40,26 @@ The commands huginn (= hug task) and muninn (= hug mem) work too.
 `
 
 func main() { os.Exit(run(filepath.Base(os.Args[0]), os.Args[1:])) }
+
+// memUpgrade runs this binary's hug mem upgrade for hug upgrade's memory
+// part (5sc5rw): its own process, its output captured.
+func memUpgrade(args []string) (int, string) {
+	exe, err := os.Executable()
+	if err != nil {
+		return 1, err.Error()
+	}
+	out, err := exec.Command(exe, append([]string{"mem", "upgrade"}, args...)...).CombinedOutput()
+	var ee *exec.ExitError
+	if errors.As(err, &ee) {
+		return ee.ExitCode(), string(out)
+	}
+	if err != nil {
+		return 1, err.Error()
+	}
+	return 0, string(out)
+}
+
+func init() { huginn.MemUpgrade = memUpgrade }
 
 func run(name string, args []string) int {
 	// Old huginn and muninn variables are not read (m1c28r): say so, once

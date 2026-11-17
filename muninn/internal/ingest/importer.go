@@ -20,6 +20,12 @@ type Imported struct {
 	// and trailing whitespace. Ordinary imports retain their trimming behavior.
 	ExactText bool
 	Origin    string // stable upstream identity; the idempotency key
+	// ID is the item's id where it came from (a project notes line's id).
+	// A memory in this store with that id and the same scope is this item:
+	// it was written here and read back (5sc5rw: a capture keeps its
+	// capture origin, so its repo origin never matched, and every sync
+	// added a twin).
+	ID        string
 	Title     string
 	Content   string
 	Category  string
@@ -75,10 +81,12 @@ func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 		return st, err
 	}
 	byOrigin := map[string]int{}
+	byID := map[string]int{}
 	for i, m := range mems {
 		if m.Origin != "" {
 			byOrigin[m.Origin] = i
 		}
+		byID[m.ID] = i
 	}
 	now := time.Now().UTC()
 	for _, it := range items {
@@ -93,6 +101,13 @@ func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 			it.Scope = "global"
 		}
 		i, ok := byOrigin[it.Origin]
+		if !ok && it.ID != "" {
+			// Its own memory read back: the same memory, never a twin.
+			if j, mine := byID[it.ID]; mine && mems[j].Scope == it.Scope {
+				i, ok = j, true
+				byOrigin[it.Origin] = j
+			}
+		}
 		if ok && (it.keepScope || it.Placed && strings.HasPrefix(mems[i].Scope, "jcode@")) {
 			it.Scope = mems[i].Scope
 		}

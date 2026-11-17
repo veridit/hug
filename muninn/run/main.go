@@ -86,7 +86,7 @@ func Main(args []string) int {
 	}
 	root.AddCommand(versionCmd(), dreamCmd(), typesCmd(), indexCmd(), searchCmd(), recallCmd(), rememberCmd(), forgetCmd(), showCmd(), rescopeCmd(),
 		listCmd(), relatedCmd(), statsCmd(), gcCmd(), hookCmd(), serveCmd(), mcpCmd(), tuiCmd(),
-		installCmd(), uninstallCmd(), configCmd(), jcodeCmd(), importCmd(), projectCmd(), syncCmd(), modelCmd(), captureCmd(), tidyCmd())
+		installCmd(), uninstallCmd(), configCmd(), jcodeCmd(), importCmd(), projectCmd(), syncCmd(), modelCmd(), captureCmd(), tidyCmd(), upgradeCmd())
 	if p := env.Get(env.CPUProfile); p != "" {
 		if f, err := os.Create(p); err == nil {
 			pprof.StartCPUProfile(f)
@@ -101,6 +101,9 @@ func Main(args []string) int {
 	}
 	if err := root.Execute(); err != nil {
 		pprof.StopCPUProfile()
+		if _, ok := err.(pendingErr); ok {
+			return ExitUpgradePending
+		}
 		// A refusal of remember is printed as is, first, with its own
 		// exit code: it must never read as success (p29rbz).
 		if app.Refusal(err) {
