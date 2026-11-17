@@ -13,9 +13,9 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-17T15:48"
+waiting_since: "2026-11-17T15:58"
 waiting_asked_by: "calf"
-waiting_on: "jhf: approve design tmp/lanes/bxqtkt.md (check 1) and answer Q1-Q6 (note 14:50)"
+waiting_on: "jhf: approve the design (attached: bxqtkt.md), check 1, and answer Q1-Q6 at its end"
 ---
 
 ## Goal
