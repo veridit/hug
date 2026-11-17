@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
@@ -44,8 +46,68 @@ func (s *session) boardFindings(ctx context.Context, cwd, jcodeHome string) ([]t
 		}
 		// Harness session state, not file content (v3k6cp).
 		fs = append(fs, task.OwnerFindings(task.JcodeLivenessAt(jcodeHome), ts, time.Now())...)
+		// A doing ticket nothing has touched for 2 hours is a question to its
+		// owner (at3qep), unless it already has one; then one question per
+		// ticket, the most important.
+		asked := map[string]bool{}
+		for _, f := range fs {
+			if task.QuestionCode(task.FindingCode(f.Problem)) {
+				if _, id, _, err := task.ParseName(f.Path); err == nil {
+					asked[id] = true
+				}
+			}
+		}
+		fs = append(fs, task.IdleFindings(ts, touched(ctx, s.r.Dir, cwd, ts), asked, time.Now())...)
+		fs = task.TopQuestions(fs)
 	}
 	return fs, nil
+}
+
+// touched maps each ticket to its newest commit: on the task branch (files
+// changed) and on main (subjects naming it), over the last day. Nil when
+// no doing ticket is active or git cannot say: then nothing is asked.
+func touched(ctx context.Context, board, cwd string, ts []task.Task) map[string]time.Time {
+	active := false
+	for _, t := range ts {
+		active = active || t.Status == "doing" && t.Stage == "active"
+	}
+	if !active {
+		return nil
+	}
+	since := "--since=" + time.Now().Add(-24*time.Hour).Format(time.RFC3339)
+	log := func(dir string, args ...string) ([]string, bool) {
+		c := exec.CommandContext(ctx, "git", append([]string{"-C", dir, "log", since, "--format=%x00%ct%x09%s"}, args...)...)
+		c.Env = append(c.Environ(), "GIT_OPTIONAL_LOCKS=0")
+		b, err := c.Output()
+		if err != nil {
+			return nil, false
+		}
+		var out []string
+		for _, rec := range strings.Split(string(b), "\x00") {
+			parts := strings.Split(strings.TrimSpace(rec), "\n")
+			if parts[0] == "" {
+				continue
+			}
+			line := parts[0]
+			for _, f := range parts[1:] {
+				if f = strings.TrimSpace(f); f != "" {
+					line += "\t" + f
+				}
+			}
+			out = append(out, line)
+		}
+		return out, true
+	}
+	mine, ok := log(board, "--name-only", "HEAD")
+	if !ok {
+		return nil
+	}
+	if main := gitbranch.DefaultBranch(cwd); main != "" {
+		if more, ok := log(cwd, main); ok {
+			mine = append(mine, more...)
+		}
+	}
+	return task.TouchedSince(mine)
 }
 
 // forTask keeps the findings on t's file or its attached files.
@@ -82,6 +144,60 @@ func (s *session) taskLint(t task.Task) *TaskLint {
 		return nil
 	}
 	return &TaskLint{Findings: mine, Fix: task.CombinedFix(t.ID, mine)}
+}
+
+// withIdle adds the idle question (at3qep b) to show's lint block: git, not
+// file content, so one bounded log of the ticket's file, and only on show
+// (a write has just touched the ticket, so it is never idle there), for a
+// doing, active ticket without another question.
+func (reply Reply) withIdle(s *session, t task.Task) Reply {
+	if t.Status != "doing" || t.Stage != "active" {
+		return reply
+	}
+	l, _ := reply["lint"].(*TaskLint)
+	if l != nil && hasQuestion(l.Findings) {
+		return reply
+	}
+	last, ok := lastTouched(s.r.Dir, t)
+	if !ok {
+		return reply
+	}
+	idle := task.IdleFindings([]task.Task{t}, map[string]time.Time{t.ID: last}, nil, time.Now())
+	if len(idle) == 0 {
+		return reply
+	}
+	var fs []task.Finding
+	if l != nil {
+		fs = l.Findings
+	}
+	fs = append(fs, idle...)
+	reply["lint"] = &TaskLint{Findings: fs, Fix: task.CombinedFix(t.ID, fs)}
+	return reply
+}
+
+func hasQuestion(fs []task.Finding) bool {
+	for _, f := range fs {
+		if task.QuestionCode(task.FindingCode(f.Problem)) {
+			return true
+		}
+	}
+	return false
+}
+
+// lastTouched is the time of the newest commit on the task branch that
+// changed t's file.
+func lastTouched(board string, t task.Task) (time.Time, bool) {
+	c := exec.Command("git", "-C", board, "log", "-1", "--format=%ct", "--", t.Path)
+	c.Env = append(c.Environ(), "GIT_OPTIONAL_LOCKS=0")
+	b, err := c.Output()
+	if err != nil {
+		return time.Time{}, false
+	}
+	sec, err := strconv.ParseInt(strings.TrimSpace(string(b)), 10, 64)
+	if err != nil {
+		return time.Time{}, false
+	}
+	return time.Unix(sec, 0), true
 }
 
 // withLint puts t's lint block on a reply (show, take, new, set) and

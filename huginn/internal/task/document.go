@@ -56,6 +56,10 @@ var findingCodes = []struct{ prefix, code string }{
 	{"sections out of order", "section-order"},
 	{"Acceptance requires", "no-acceptance"},
 	{"done with unchecked acceptance", "done-unchecked"},
+	{"landed, but no check", "landed-unchecked"},
+	{"shipped, but ", "shipped-not-done"},
+	{"todo, but commit ", "todo-has-commit"},
+	{"doing, but nothing on it", "doing-idle"},
 	{"case-insensitive filename collision", "filename-collision"},
 	{"duplicate id", "duplicate-id"},
 	{"depends on ", "dangling-dependency"},
@@ -532,6 +536,12 @@ func Parse(path string, data []byte) *Document {
 	// Backlog import leftovers on open tasks (fkpyg3); hug upgrade removes them.
 	if Pattern(d.Task) {
 		d.Findings = append(d.Findings, BacklogFindings(d)...)
+	}
+	// A question only the owner can settle, from the ticket's own notes
+	// (at3qep): landed with no check ticked, shipped but open, todo with a
+	// commit on main.
+	if q := noteQuestion(d.Task, notesText(data)); q != nil {
+		d.Findings = append(d.Findings, *q)
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
 	d.Task.Answer = unseenAnswer(d.historyLines())

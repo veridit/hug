@@ -287,6 +287,31 @@ func TestBoardMissingSectionOnlyToItsSession(t *testing.T) {
 	}
 }
 
+// at3qep check 2: a question hug cannot settle reaches the ticket's owner
+// at its next break, and nobody else: kestrel took 0hkaa5, it landed, no
+// check is ticked.
+func TestBoardQuestionReachesOwnerOnly(t *testing.T) {
+	now := time.Date(2026, 11, 17, 10, 0, 0, 0, time.UTC)
+	q := recall.BoardFinding{TaskID: "0hkaa5", TaskStatus: "doing",
+		Problem: "landed, but no check is ticked: commit 61bfb21 naming 0hkaa5 reached main (its note says so) and 0 of 6 checks are ticked or struck; kestrel: which checks hold?",
+		Fix:     "hug task check 0hkaa5 1"}
+	in := func(self string) recall.BoardInput {
+		return recall.BoardInput{
+			Tasks:    []recall.BoardTask{{ID: "0hkaa5", Status: "doing", Assignee: []string{"kestrel"}, Checks: 6, Open: 6}},
+			Findings: func() []recall.BoardFinding { return []recall.BoardFinding{q} },
+			Self:     recall.BoardSelf{Name: self},
+		}
+	}
+	e := boardEngine(t)
+	if line, _ := e.BoardCue("wyvern", "back", "return", now, src(in("wyvern"))); line != "" {
+		t.Fatalf("question to a passer-by: %q", line)
+	}
+	line, kind := e.BoardCue("kestrel", "back", "return", now, src(in("kestrel")))
+	if kind != "lint" || !strings.Contains(line, "0hkaa5: landed, but no check is ticked") || !strings.HasSuffix(line, "fix: hug task check 0hkaa5 1") {
+		t.Fatalf("question to its owner: %q (%s)", line, kind)
+	}
+}
+
 func TestBoardOffWhenNoSource(t *testing.T) {
 	e := boardEngine(t)
 	if line, _ := e.BoardCue("s", "go", "start", time.Now(), nil); line != "" {

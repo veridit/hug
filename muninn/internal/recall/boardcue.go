@@ -512,10 +512,21 @@ func runnable(f BoardFinding) bool {
 // it does not do, which a passer-by cannot know (tpnd3n; replay after
 // fkpyg3: all 20 false lint lines were missing-section findings, 18 on
 // tasks the session had not touched, e.g. s6ff5k named to hog and
-// dromedary while the user forbade every other task; BOARD4.md).
+// dromedary while the user forbade every other task; BOARD4.md). A
+// question hug cannot settle (at3qep: landed but unchecked, shipped but
+// open, todo with a commit, idle) is asked of the ticket's owner only.
 func ownerOnly(f BoardFinding) bool {
-	return strings.HasPrefix(f.Problem, "missing section")
+	for _, p := range ownerOnlyPrefixes {
+		if strings.HasPrefix(f.Problem, p) {
+			return true
+		}
+	}
+	return false
 }
+
+// ownerOnlyPrefixes start the problems of ownerOnly findings (hug task
+// lint's missing-section and the at3qep question codes).
+var ownerOnlyPrefixes = []string{"missing section", "landed, but no check", "shipped, but ", "todo, but commit ", "doing, but nothing on it"}
 
 // ownHasFinding reports whether one of the session's own doing tasks has
 // a finding with a fix it can run (tpnd3n).
