@@ -1,22 +1,17 @@
 ---
 id: tje4sx
 title: "Overview: WAITING is its own section; IN PROGRESS holds only active work"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T20:03"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 3: open hug tui overview and say whether IN PROGRESS and WAITING read clearly (fb66000; brew upgrade after the next release, or go run ./cmd/hug tui from main)"
-waiting_since: "2026-11-17T20:28"
-waiting_asked_by: "nautilus"
-waiting_for: "jhf"
+done_at: "2026-11-18T00:39"
 ---
 
 ## Goal
@@ -51,3 +46,4 @@ shipped in v0.7.46 (fb66000)
 ## History
 - 2026-11-17T20:03 todo -> doing/active (take)
 - 2026-11-17T20:28 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:39 doing/waiting -> done (done); was doing_since: 2026-11-17T20:03; waiting_asked_by: nautilus; waiting_for: jhf; waiting_on: check 3: open hug tui overview and say whether IN PROGRESS and WAITING read clearly (fb66000; brew upgrade after the next release, or go run ./cmd/hug tui from main); waiting_since: 2026-11-17T20:28
