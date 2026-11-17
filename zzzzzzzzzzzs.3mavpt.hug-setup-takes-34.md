@@ -35,7 +35,7 @@ Cheap signals: hug.toml's recorded import (ggydj2), and the board's origin: fiel
 
 ## Acceptance
 - [x] a test runs setup on a fixture with a 500-file backlog already imported and counts backlog files read: at most the directory listing, no file contents; fails on main
-- [ ] on Seid, hug setup takes under 1 s warm (median of 3), numbers in the notes
+- [x] on Seid, hug setup takes under 1 s warm (median of 3), numbers in the notes
 - [x] the commit-msg step in seid-lang's checkout reports the real state, not 'needs a Git checkout' (test or note with evidence)
 
 ## Notes
