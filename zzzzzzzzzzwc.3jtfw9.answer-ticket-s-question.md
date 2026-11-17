@@ -1,7 +1,7 @@
 ---
 id: 3jtfw9
 title: "Answer a ticket's question in place; the asking agent is told"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
@@ -11,7 +11,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+done_at: "2026-11-18T00:27"
 ---
 
 ## Goal
@@ -50,7 +50,9 @@ nautilus 16:06: checks 1, 2, 4 ticked. 1: tui TestAnswerInDetail. 2: cli TestAns
 hatchling 16:32, check 3 ticked: 842b403 on main (abb9b76 rebased by nautilus onto d107f9a). Tests: recall TestBoardAnswerForAsker; run TestBoardAnswerReachesAsker (end to end through a real git board: the answer reaches the asker's next prompt as 'jhf answered your question on ID: TEXT (stage: QUESTION). hug task show ID'). Main CI 44121775854 (c48b30c, contains 842b403): success on test ubuntu/macos/windows, secrets, bench. 44121274410 (d107f9a) attempt 2 success after a macOS runner-capacity cancel.
 shipped in v0.7.43 (6ef55df)
 Check 5: Jørgen answered in the TUI 00:15: 'if you can read this, the ticket is done'; I read it in the answer field of hug task show, no DM needed for the content; crab 00:27 relayed the outcome request (nautilus)
+Reflection (open, 2026-11-18, nautilus): 'The question and the answer sit together in the task' held: Jørgen's answer reached me in hug task show with no DM. Gap: the outcome still went back to him through crab by DM. (nautilus)
 ## History
 - 2026-11-17T14:56 doing -> doing/waiting (wait)
 - 2026-11-18T00:15 answered waiting: "check 5: answer a real worker question in hug tui (a under the question); 1, 2, 4 on main 6ef55df; check 3 is hatchling's cue 842b403" -> "Well, here we go. I'm gonna answer this ticket. If you can read this answer, the ticket is done, and you can mark you can fly that acceptance criteria and the ticket becomes done, right Or when you mark the last one, you're reminded that you need to mark it as done. How is the interaction today", by jhf, for nautilus (doing/waiting -> doing/active)
 - 2026-11-18T00:27 nautilus read the answer
+- 2026-11-18T00:27 doing/active -> done (done)
