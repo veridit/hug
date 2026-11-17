@@ -123,7 +123,10 @@ func settled(t *testing.T, a *App) {
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
-	t.Fatalf("background pass still running after 30 s (log %s)", bg.Log())
+	// Which wait: queued (a syncer holds the queue: settling), running (the
+	// run lock), or pending (started, never queued); and what the pass said.
+	log, _ := os.ReadFile(bg.Log())
+	t.Fatalf("background pass still running after 30 s: queued %v, busy %v, pending %v, turn held %v (log %s):\n%s", bg.Queued(), bg.Busy(), bg.Pending(), bg.TurnHeld(), bg.Log(), log)
 }
 
 // arrival is how long a change may take to reach the other clone: 10 s,
