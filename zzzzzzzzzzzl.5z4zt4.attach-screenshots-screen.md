@@ -37,3 +37,5 @@ Jørgen 2026-11-17 14:51: prefer text pictures. An ASCII/ANSI capture is a text 
 Jørgen 2026-11-17 14:51: the dump key also copies to the clipboard, so he can paste it straight into a chat with an agent. The screen text goes out through OSC 52, which works in iTerm2, kitty and over ssh, with pbcopy as a fallback on macOS. Plain text by default, so it pastes cleanly; the attached .ans file keeps the colours. The footer says 'screen copied (24 lines) · attached as screen-1452.ans to zhvkmj'.
 
 file:detail-stage.md (1564 bytes, sha256:a6a935a7) detail mock
+
+nautilus 16:18: dependency on scrxak removed: the code it builds on (Space shows a file, read only when shown) is on main af51fc3; scrxak stays open only for Jørgen's check 5.
