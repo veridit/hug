@@ -16,7 +16,7 @@ import (
 func TestSearchAndJumpFindImportedAlias(t *testing.T) {
 	s := &task.Store{Root: t.TempDir()}
 	for _, title := range []string{"Statbus import", "Unrelated"} {
-		if _, err := s.New(task.NewOptions{Title: title, Goal: "G", Acceptance: []string{"C"}}); err != nil {
+		if _, err := s.New(task.NewOptions{Title: title, Goal: "G", Purpose: "P", Principle: "Q", Acceptance: []string{"C"}}); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -48,6 +48,10 @@ func TestSearchAndJumpFindImportedAlias(t *testing.T) {
 	if !strings.Contains(view, "Statbus import · STATBUS-402") {
 		t.Fatalf("row does not name the alias:\n%s", view)
 	}
+	// The whole screen, ids as ######: the alias after the title, nothing
+	// else moved (vzghj8 check 1, golden).
+	golden(t, filepath.Join("testdata", "rows", "alias-search-120.txt"), "TestSearchAndJumpFindImportedAlias",
+		strings.ReplaceAll(taskID.ReplaceAllString(view, "$1######"), target.ID, "######"))
 	// Found by the title: no alias shown.
 	m = press(newModel(s, Options{User: "tester"}), "/", "statbus imp")
 	m.width, m.height = 120, 24
@@ -59,5 +63,25 @@ func TestSearchAndJumpFindImportedAlias(t *testing.T) {
 	m = press(newModel(s, Options{User: "tester"}), "#", "STATBUS-402", "enter")
 	if sel, _ := m.selected(); !m.detail || sel.ID != target.ID {
 		t.Fatalf("# STATBUS-402: detail %v selected %s", m.detail, sel.ID)
+	}
+}
+
+// golden compares text with the file at path; HUG_UPDATE_GOLDEN=1 writes it.
+func golden(t *testing.T, path, test, text string) {
+	t.Helper()
+	if os.Getenv("HUG_UPDATE_GOLDEN") == "1" {
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(text), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	want, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("%v\nfix: HUG_UPDATE_GOLDEN=1 go test -run %s ./huginn/internal/tui/", err, test)
+	}
+	if text != strings.ReplaceAll(string(want), "\r\n", "\n") {
+		t.Fatalf("screen differs from %s:\n%s\nfix: HUG_UPDATE_GOLDEN=1 go test -run %s ./huginn/internal/tui/ (then review the diff)", path, text, test)
 	}
 }

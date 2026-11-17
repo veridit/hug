@@ -1,0 +1,24 @@
+HUG TASKS · list   1/2 tasks · ! 0 findings                                                                             
+ overview   [list]   board    !lint                                                                                     
+todo 1  ·  doing 0  ·  blocked 0  ·  done 0  ·  dropped 0                                                               
+[/ statbus-402] · ⌫ last · F clear                                                                                      
+  ✓     ID       STATUS  TYPE    PRIORITY TITLE                                                                         
+> ○ 1   ######   todo    feature          Statbus import · STATBUS-402                                                  
+Rows 1–1 of 1 · ! lint finding · status blocked = unmet dependency                                                      
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+find=statbus-402 · Esc clears                                                                                           
+/ statbus-402                                                                                                           
+↑↓ pick · Enter go to it · Tab keep as filter · Esc clear · ? help                                                      
