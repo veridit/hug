@@ -1,14 +1,15 @@
 ---
 id: 44w1ev
 title: "Scale: stay fast and safe at 10,000 tasks"
-status: "doing"
+status: "todo"
 type: chore
 priority: "medium"
-assignee: ["wyvern"]
+assignee: []
 labels: []
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
+stage: "ready"
 ---
 
 ## Goal
@@ -79,3 +80,7 @@ Correction to my step-8 note above (wyvern): written_test.go does not count walk
 Jørgen 2026-11-17 13:30, check 3 ruling: 'if we can determine deterministically, using any and all shortcuts, that something doesn't need to be recomputed, we record that and do that.' So: (a)+(b) cheaper walk by default (one ReadDir per group, Lstat only task files, 2-4 bounded goroutines); hug's own writes record exactly what they changed (step 8, landed); (c) fsmonitor where git already has it on, using the stored token, with a fall back to the walk whenever the answer is not certain (no token, invalid, older than the last sync). Record which path each sync took (walk, fsmonitor, own-write) so a test and the bench can see it. Never skip on a guess.
 
 Check 3 ruled by Jørgen (see above). Plan (crab 13:31): (a) and (b) are the default, (c) fsmonitor only where git already has it on, using the stored token and falling back to the walk whenever not certain. Each sync records its path (walk, fsmonitor, own-write) so tests and the bench can see it. Measure each step with bench44.py. Order: wyvern, after 49n9kw. Back to todo until then.
+
+
+## History
+- 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
