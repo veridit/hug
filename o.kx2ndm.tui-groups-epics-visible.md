@@ -30,7 +30,7 @@ CLI already shows epic:/child: lines and has --epic. TUI has filter fields g (gr
 ## Depends on
 
 ## Acceptance
-- [ ] list and overview show each task's group and epic without adding a line per task
+- [x] list and overview show each task's group and epic without adding a line per task
 - [ ] a key toggles grouping by group, by epic, or flat; the header says which
 - [ ] Space on a group or epic heading folds and unfolds it, and the count stays visible when folded
 - [ ] ~~tasks in group later are visibly set apart from NEXT UP~~ (not relevant: no magic group names; deferred is a stage (6ephqk), nautilus, 2026-11-17)
