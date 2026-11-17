@@ -32,7 +32,7 @@ def slug(title):
 
 def seed_task(seed):
     return dict(id=seed['id'], title=seed['title'], slug=slug(seed['title']),
-                status='todo', type=seed.get('type', 'chore'),
+                state='todo', type=seed.get('type', 'chore'),
                 priority=seed.get('priority', 'medium'), assignee=[],
                 group='', rank=seed.get('rank', ''), goal=seed['title'], notes='',
                 dependencies=seed.get('dependencies', []),
@@ -144,7 +144,7 @@ def git(repo, *args, check=True):
 def write_seed(worktree, task):
     p = worktree / f"{task['rank']}.{task['id']}.{task['slug']}.md"
     front = '\n'.join(f'{k}: {json.dumps(task[k])}' for k in
-                      ('id', 'title', 'status', 'type', 'priority', 'assignee'))
+                      ('id', 'title', 'state', 'type', 'priority', 'assignee'))
     deps = ''.join(f'- {d}\n' for d in task['dependencies'])
     checks = ''.join(f"- [{'x' if x['checked'] else ' '}] {x['text']}\n" for x in task['acceptance'])
     p.write_text(f'---\n{front}\ncreated: 2026-11-05\nupdated: 2026-11-05\n---\n\n## Goal\n{task["goal"]}\n\n## Depends on\n{deps}\n## Acceptance\n{checks}\n## Notes\n')

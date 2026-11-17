@@ -38,7 +38,7 @@ func placeBoard(t *testing.T) (model, map[string]string) {
 		}
 		path := filepath.Join(s.Root, d.Task.Path)
 		b, _ := os.ReadFile(path)
-		text := strings.Replace(string(b), "status: todo", "status: "+status, 1)
+		text := strings.Replace(string(b), "state: todo", "state: "+status, 1)
 		if owner != "" {
 			text = strings.Replace(text, "assignee: []", `assignee: ["`+owner+`"]`, 1)
 		}
@@ -133,7 +133,7 @@ func TestHeaderCountsAddUp(t *testing.T) {
 	// The same holds under a filter: counts cover the tasks shown.
 	m = press(m, "/", "a", "tab")
 	sum = 0
-	for _, s := range boardStatuses {
+	for _, s := range boardStates {
 		for _, v := range m.visible {
 			if m.place(v) == s {
 				sum++
@@ -150,7 +150,7 @@ func TestBoardAndStatusFilterOnePlace(t *testing.T) {
 	m, ids := placeBoard(t)
 	m.setView("board")
 	total := 0
-	for p, s := range boardStatuses {
+	for p, s := range boardStates {
 		col := sectionIDs(m, p)
 		total += len(col)
 		switch s {
@@ -172,8 +172,8 @@ func TestBoardAndStatusFilterOnePlace(t *testing.T) {
 		t.Fatalf("board columns hold %d, there are %d tasks", total, len(m.all))
 	}
 	filtered := 0
-	for _, s := range boardStatuses {
-		n := m.valueCount("status", s)
+	for _, s := range boardStates {
+		n := m.valueCount("state", s)
 		filtered += n
 		m2 := commandLine(m, s)
 		var got []string
@@ -243,7 +243,7 @@ func closeBoard(t *testing.T) (model, map[string]string, func(at time.Time, msg 
 	d, _ := s.Get(ids["Lima"])
 	path := filepath.Join(root, d.Task.Path)
 	b, _ := os.ReadFile(path)
-	if err := os.WriteFile(path, []byte(strings.Replace(string(b), "status: todo", "status: done", 1)), 0644); err != nil {
+	if err := os.WriteFile(path, []byte(strings.Replace(string(b), "state: todo", "state: done", 1)), 0644); err != nil {
 		t.Fatal(err)
 	}
 	commit(base.Add(3*time.Hour), "hug task edit "+ids["Lima"])

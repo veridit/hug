@@ -39,7 +39,7 @@ func ChildIndex(ts []Task) map[string][]Task {
 func OpenChildren(t Task, ts []Task) []Task {
 	var out []Task
 	for _, c := range Children(t, ts) {
-		if c.Status != "done" && c.Status != "dropped" {
+		if c.State != "done" && c.State != "dropped" {
 			out = append(out, c)
 		}
 	}

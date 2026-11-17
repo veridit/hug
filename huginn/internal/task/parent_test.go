@@ -59,7 +59,7 @@ func TestEpicParentRules(t *testing.T) {
 
 func TestLintParentsAndTitles(t *testing.T) {
 	mk := func(path, id, extra string) *Document {
-		return Parse(path, []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: "+id, 1), "status:", extra+"status:", 1)))
+		return Parse(path, []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: "+id, 1), "state:", extra+"state:", 1)))
 	}
 	long := strings.Repeat("x", 81)
 	docs := []*Document{

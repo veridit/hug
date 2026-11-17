@@ -27,7 +27,7 @@ func backlogRepo(t *testing.T) (*App, string) {
 		}
 	}
 	write(".backlog/config.yml", "project_name: demo\n")
-	write(".backlog/tasks/task-1 - Demo.md", "---\nid: TASK-1\ntitle: Demo task\nstatus: To Do\n---\n\n## Description\n<!-- SECTION:DESCRIPTION:BEGIN -->\nDemo goal.\n<!-- SECTION:DESCRIPTION:END -->\n\n## Acceptance Criteria\n<!-- AC:BEGIN -->\n- [ ] #1 It works\n<!-- AC:END -->\n")
+	write(".backlog/tasks/task-1 - Demo.md", "---\nid: TASK-1\ntitle: Demo task\nstate: To Do\n---\n\n## Description\n<!-- SECTION:DESCRIPTION:BEGIN -->\nDemo goal.\n<!-- SECTION:DESCRIPTION:END -->\n\n## Acceptance Criteria\n<!-- AC:BEGIN -->\n- [ ] #1 It works\n<!-- AC:END -->\n")
 	write(".mcp.json", "{\n  \"mcpServers\": {\n    \"backlog\": {\n      \"command\": \"backlog\",\n      \"args\": [\"mcp\", \"start\"]\n    },\n    \"hug\": {\n      \"type\": \"stdio\",\n      \"command\": \"hug\",\n      \"args\": [\"mcp\"]\n    }\n  }\n}\n")
 	write("CLAUDE.md", "# Demo\n\nKeep it short.\n\n"+backlogBlockStart+"\nUse backlog task create for new work.\n"+backlogBlockEnd+"\n\n## Build\n\nmake\n")
 	write(".githooks/post-commit", "#!/bin/sh\nbacklog board export\n")

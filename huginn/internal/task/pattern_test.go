@@ -74,7 +74,7 @@ func TestNewNamesEveryMissingPart(t *testing.T) {
 // Check 2: one task, three problems, one combined fix.
 func TestCombinedFixForOneTask(t *testing.T) {
 	title := strings.Repeat("x", 87)
-	d := Parse("q.abc123.long.md", []byte("---\nid: abc123\ntitle: "+title+"\nstatus: todo\n---\n\n## Goal\ng\n\n## Acceptance\n- [ ] a\n"))
+	d := Parse("q.abc123.long.md", []byte("---\nid: abc123\ntitle: "+title+"\nstate: todo\n---\n\n## Goal\ng\n\n## Acceptance\n- [ ] a\n"))
 	fs := Lint([]*Document{d})
 	groups := ByTask(fs)
 	if len(groups) != 1 || len(groups[0].Findings) != 3 {
@@ -147,7 +147,7 @@ func TestSetTextFixesWithoutEditor(t *testing.T) {
 // fix; the strip removes only them, never touching Goal text, and never
 // splits Purpose or Principle out of the Goal.
 func TestBacklogLeftovers(t *testing.T) {
-	src := "---\nid: abc123\ntitle: T\nstatus: todo\ncreated_date: '2026-06-07 12:25'\nordinal: 5\nbacklog_status: \"To Do\"\nimport_type_inference: \"default\"\nmilestone: m\n---\n\n## Goal\n<!-- SECTION:DESCRIPTION:BEGIN -->\nDo it.\n\nPurpose: because.\n<!-- SECTION:DESCRIPTION:END -->\n\n## Acceptance\n<!-- AC:BEGIN -->\n- [ ] a\n<!-- AC:END -->\n"
+	src := "---\nid: abc123\ntitle: T\nstate: todo\ncreated_date: '2026-06-07 12:25'\nordinal: 5\nbacklog_status: \"To Do\"\nimport_type_inference: \"default\"\nmilestone: m\n---\n\n## Goal\n<!-- SECTION:DESCRIPTION:BEGIN -->\nDo it.\n\nPurpose: because.\n<!-- SECTION:DESCRIPTION:END -->\n\n## Acceptance\n<!-- AC:BEGIN -->\n- [ ] a\n<!-- AC:END -->\n"
 	d := Parse("q.abc123.t.md", []byte(src))
 	var got []string
 	for _, f := range d.Findings {
@@ -163,7 +163,7 @@ func TestBacklogLeftovers(t *testing.T) {
 		t.Fatalf("%q", got)
 	}
 	out, changed := d.StripBacklog()
-	wantOut := "---\nid: abc123\ntitle: T\nstatus: todo\nmilestone: m\n---\n\n## Goal\nDo it.\n\nPurpose: because.\n\n## Acceptance\n- [ ] a\n"
+	wantOut := "---\nid: abc123\ntitle: T\nstate: todo\nmilestone: m\n---\n\n## Goal\nDo it.\n\nPurpose: because.\n\n## Acceptance\n- [ ] a\n"
 	if !changed || string(out) != wantOut {
 		t.Fatalf("%q", out)
 	}
@@ -175,7 +175,7 @@ func TestBacklogLeftovers(t *testing.T) {
 		t.Fatal("second strip changed bytes")
 	}
 	// Done and dropped tasks are history: no leftover findings.
-	done := Parse("q.abc123.t.md", []byte(strings.Replace(src, "status: todo", "status: done", 1)))
+	done := Parse("q.abc123.t.md", []byte(strings.Replace(src, "state: todo", "state: done", 1)))
 	for _, f := range done.Findings {
 		if FindingCode(f.Problem) == "backlog-leftover" {
 			t.Fatal(f)
@@ -186,7 +186,7 @@ func TestBacklogLeftovers(t *testing.T) {
 // Check 6: an open task created before 2026-11-16 is held to the pattern;
 // a done one is not.
 func TestPatternHoldsForOldOpenTasks(t *testing.T) {
-	old := "---\nid: zjedy0\ntitle: Old\nstatus: todo\ncreated: \"2026-06-07 12:25\"\n---\n\n## Goal\ng\n"
+	old := "---\nid: zjedy0\ntitle: Old\nstate: todo\ncreated: \"2026-06-07 12:25\"\n---\n\n## Goal\ng\n"
 	d := Parse("q.zjedy0.old.md", []byte(old))
 	var codes []string
 	for _, g := range ByTask(Lint([]*Document{d})) {
@@ -198,7 +198,7 @@ func TestPatternHoldsForOldOpenTasks(t *testing.T) {
 	if strings.Join(codes, ",") != "no-acceptance,missing-section" {
 		t.Fatal(codes)
 	}
-	done := Parse("q.zjedy0.old.md", []byte(strings.Replace(old, "status: todo", "status: done", 1)))
+	done := Parse("q.zjedy0.old.md", []byte(strings.Replace(old, "state: todo", "state: done", 1)))
 	for _, f := range Lint([]*Document{done}) {
 		if FindingCode(f.Problem) == "missing-section" {
 			t.Fatal(f)

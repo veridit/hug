@@ -25,7 +25,7 @@ func spareBoard(t *testing.T, doing, todo int) model {
 		if i < doing {
 			path := filepath.Join(s.Root, r.Task.Path)
 			b, _ := os.ReadFile(path)
-			text := strings.Replace(string(b), "status: todo", "status: doing", 1)
+			text := strings.Replace(string(b), "state: todo", "state: doing", 1)
 			text = strings.Replace(text, "assignee: []", `assignee: ["ann"]`, 1)
 			if err := os.WriteFile(path, []byte(text), 0644); err != nil {
 				t.Fatal(err)

@@ -69,7 +69,7 @@ func (s *session) boardFindings(ctx context.Context, cwd, jcodeHome string) ([]t
 func touched(ctx context.Context, board, cwd string, ts []task.Task) map[string]time.Time {
 	active := false
 	for _, t := range ts {
-		active = active || t.Status == "doing" && t.Stage == "active"
+		active = active || t.State == "doing" && t.Stage == "active"
 	}
 	if !active {
 		return nil
@@ -151,7 +151,7 @@ func (s *session) taskLint(t task.Task) *TaskLint {
 // (a write has just touched the ticket, so it is never idle there), for a
 // doing, active ticket without another question.
 func (reply Reply) withIdle(s *session, t task.Task) Reply {
-	if t.Status != "doing" || t.Stage != "active" {
+	if t.State != "doing" || t.Stage != "active" {
 		return reply
 	}
 	l, _ := reply["lint"].(*TaskLint)

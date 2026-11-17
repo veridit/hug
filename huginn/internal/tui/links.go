@@ -13,8 +13,8 @@ var taskRef = regexp.MustCompile(`(?i)\btask:([0-9a-z]{6})\b`)
 
 // linkDetail is one task a task's text refers to.
 type linkDetail struct {
-	ID, Title, Status, Path string
-	Missing                 bool
+	ID, Title, State, Path string
+	Missing                bool
 }
 
 // links are the tasks t's text refers to as task:ID, in the order they
@@ -37,7 +37,7 @@ func (m model) links(t task.Task) []linkDetail {
 		seen[id] = true
 		l := linkDetail{ID: id, Missing: true}
 		if target, err := task.ResolveDependency(m.all, id); err == nil {
-			l = linkDetail{ID: target.ID, Title: target.Title, Status: target.Status, Path: target.Path}
+			l = linkDetail{ID: target.ID, Title: target.Title, State: target.State, Path: target.Path}
 		}
 		out = append(out, l)
 	}

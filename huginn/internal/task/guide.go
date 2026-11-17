@@ -41,7 +41,7 @@ func Guide(action string, t Task, ts []Task) []string {
 		if t.Parent != "" {
 			sib := 0
 			for _, c := range ts {
-				if c.Parent == t.Parent && c.ID != t.ID && c.Status != "done" && c.Status != "dropped" {
+				if c.Parent == t.Parent && c.ID != t.ID && c.State != "done" && c.State != "dropped" {
 					sib++
 				}
 			}

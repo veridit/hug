@@ -45,7 +45,7 @@ func (m model) sectionName() string {
 		title, _, _ := strings.Cut(overviewSections[min(max(m.pane, 0), len(overviewSections)-1)], " · ")
 		name = title
 	case "board":
-		name = "the " + strings.ToUpper(boardStatuses[min(max(m.pane, 0), len(boardStatuses)-1)]) + " column"
+		name = "the " + strings.ToUpper(boardStates[min(max(m.pane, 0), len(boardStates)-1)]) + " column"
 	case "lint":
 		name = "the lint list"
 	}

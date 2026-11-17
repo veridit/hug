@@ -123,8 +123,8 @@ func TestAnswerWaitingAndReview(t *testing.T) {
 		t.Fatal(e)
 	}
 	tk, raw = readTask(t, s2, id2)
-	if tk.Status != "doing" || tk.Stage != "active" || tk.Fields["review_by"] != "" || !strings.Contains(raw, `answered review: "review by jhf" -> "looks right", by jhf, for nautilus`) {
-		t.Fatalf("review: %s/%s\n%s", tk.Status, tk.Stage, raw)
+	if tk.State != "doing" || tk.Stage != "active" || tk.Fields["review_by"] != "" || !strings.Contains(raw, `answered review: "review by jhf" -> "looks right", by jhf, for nautilus`) {
+		t.Fatalf("review: %s/%s\n%s", tk.State, tk.Stage, raw)
 	}
 }
 

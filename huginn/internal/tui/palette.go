@@ -17,7 +17,7 @@ type command struct {
 // The palette is a tree: views and actions at the top, every filter under
 // "filter", then the field, then its values (2026-11-16, user).
 var commands = []command{
-	{"overview", "", "At a glance", false}, {"list", "", "Ranked task list", false}, {"board", "", "Status columns", false},
+	{"overview", "", "At a glance", false}, {"list", "", "Ranked task list", false}, {"board", "", "State columns", false},
 	{"lint", "", "Tasks with findings", false},
 	{"filter", "field", "Narrow the tasks by a field", false},
 	{"goto", "id", "Open a task by id", false},
@@ -26,14 +26,14 @@ var commands = []command{
 	{"clear", "", "Clear every filter", false}, {"help", "", "All keys and commands", false},
 	{"todo", "", "Filter todo", true}, {"doing", "", "Filter in progress", true}, {"done", "", "Filter completed", true},
 	{"depends", "", "Filter tasks whose dependency is not done", true}, {"dropped", "", "Filter dropped", true},
-	{"status", "status", "todo, doing, done, depends, dropped", true}, {"type", "type", "feature, bug, chore, spike, docs", true},
+	{"state", "state", "todo, doing, done, depends, dropped", true}, {"type", "type", "feature, bug, chore, spike, docs", true},
 	{"priority", "priority", "critical, high, medium, low", true}, {"group", "group", "Folder the task lives in", true},
 	{"label", "label", "Free labels", true}, {"epic", "epic", "An epic and its children", true},
 	{"assignee", "name", "Who is assigned", true},
 }
 
 // paletteFields are the branches under "filter", in display order.
-var paletteFields = []string{"status", "type", "priority", "group", "label", "epic", "assignee"}
+var paletteFields = []string{"state", "type", "priority", "group", "label", "epic", "assignee"}
 
 // completion is one palette row. branch rows open a further level; field is
 // set on filter values so the row can show how many tasks it would leave.
@@ -55,8 +55,8 @@ func describe(name string) string {
 func (m model) values(name string) []string {
 	set := map[string]bool{}
 	switch name {
-	case "status":
-		for _, s := range append(append([]string{}, task.Statuses...), "depends") {
+	case "state":
+		for _, s := range append(append([]string{}, task.StateList...), "depends") {
 			set[s] = true
 		}
 	case "type":
@@ -73,8 +73,8 @@ func (m model) values(name string) []string {
 			if t.Type == "" {
 				set["(none)"] = true
 			}
-		case "status":
-			set[t.Status] = true
+		case "state":
+			set[t.State] = true
 		case "priority":
 			set[t.Priority] = true
 			if t.Priority == "" {
@@ -229,8 +229,8 @@ func expandField(name string) string {
 	return name
 }
 
-// unfilter drops the leading "filter", so "filter status todo" runs as
-// "status todo", and "f s todo" does too.
+// unfilter drops the leading "filter", so "filter state todo" runs as
+// "state todo", and "f s todo" does too.
 func unfilter(value string) string {
 	value = strings.TrimSpace(value)
 	if rest, ok := cutFilter(value); ok {
@@ -263,9 +263,9 @@ func (m *model) executeCommand() bool {
 	case "overview", "list", "board", "lint":
 		m.setView(name)
 	case "todo", "doing", "done", "dropped", "depends":
-		m.setFilter("status", name)
+		m.setFilter("state", name)
 		m.setView("list")
-	case "status", "type", "priority", "group", "label", "assignee", "epic":
+	case "state", "type", "priority", "group", "label", "assignee", "epic":
 		if name == "epic" {
 			// Accept the bare id (or prefix) as well as "ID title".
 			for _, v := range m.values("epic") {

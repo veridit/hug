@@ -77,7 +77,7 @@ with tempfile.TemporaryDirectory(prefix="huginn-tui-", dir=os.environ.get("JCODE
         check("toggle acceptance persisted", "- [x] first acceptance" in alpha.read_text())
         send("d\r")
         check("D17 done-blocked inline", "huginn check" in text() and "second acceptance" in text())
-        check("blocked status unchanged", "status: todo" in alpha.read_text())
+        check("blocked state unchanged", "state: todo" in alpha.read_text())
         dump("detail-blocked")
         send("\x1b")
         send("J\r")

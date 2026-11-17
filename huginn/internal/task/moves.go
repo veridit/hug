@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/veridit/hug/internal/sharefile"
 )
 
 // Moves (6ephqk check 3): the commands that change a task's state or stage
@@ -79,12 +81,12 @@ type move struct {
 // History with the time, m's fields are written, then the stage is set to
 // the first that holds. ts is the board (dependencies' states).
 func applyMove(d *Document, ts []Task, m move) error {
-	from := d.Task.Status
+	from := d.Task.State
 	if d.Task.Stage != "" {
 		from += "/" + d.Task.Stage
 	}
-	if m.state != d.Task.Status {
-		if e := d.SetField("status", m.state); e != nil {
+	if m.state != d.Task.State {
+		if e := d.SetField("state", m.state); e != nil {
 			return e
 		}
 	}
@@ -109,7 +111,7 @@ func applyMove(d *Document, ts []Task, m move) error {
 	if e := settle(d, ts); e != nil {
 		return e
 	}
-	to := d.Task.Status
+	to := d.Task.State
 	if d.Task.Stage != "" {
 		to += "/" + d.Task.Stage
 	}
@@ -156,7 +158,7 @@ func settle(d *Document, ts []Task) error {
 // Transitions. A move within the same state (a stage change) is checked by
 // the command that makes it.
 func allowed(t Task, state string) bool {
-	from := t.Status
+	from := t.State
 	for _, tr := range Transitions {
 		f, _, _ := strings.Cut(tr.From, "/")
 		to, _, _ := strings.Cut(tr.To, "/")
@@ -170,7 +172,7 @@ func allowed(t Task, state string) bool {
 // refuse is the error for a move the tree does not allow, with the command
 // that is allowed instead.
 func refuse(t Task, to, fix string) error {
-	from := t.Status
+	from := t.State
 	if t.Stage != "" {
 		from += "/" + t.Stage
 	}
@@ -197,7 +199,7 @@ func (s *Store) WaitShowing(ref, on, by, show string, person ...string) (Result,
 	if on == "" {
 		return Result{}, usageErr(d.Task.ID, "wait needs what it waits on", "hug task wait "+d.Task.ID+` "CI run 123"`)
 	}
-	if d.Task.Status != "doing" {
+	if d.Task.State != "doing" {
 		return Result{}, refuse(d.Task, "doing/waiting", "hug task take "+d.Task.ID+" --model MODEL")
 	}
 	forName := ""
@@ -257,7 +259,7 @@ func (s *Store) Resume(ref string) (Result, error) {
 	if e != nil {
 		return Result{}, e
 	}
-	if d.Task.Status != "doing" || !ownHolds(d.Task, "waiting") {
+	if d.Task.State != "doing" || !ownHolds(d.Task, "waiting") {
 		return Result{}, refuse(d.Task, "doing/active", "hug task show "+d.Task.ID)
 	}
 	// Resuming makes it active again: one active ticket per agent (n2hq8p).
@@ -286,8 +288,8 @@ func (s *Store) DesignShowing(ref, question, by, who, show string) (Result, erro
 	if e != nil {
 		return Result{}, e
 	}
-	if d.Task.Status != "todo" {
-		fix := "hug task set " + d.Task.ID + " --status todo"
+	if d.Task.State != "todo" {
+		fix := "hug task set " + d.Task.ID + " --state todo"
 		return Result{}, refuse(d.Task, "todo/design", fix)
 	}
 	question = strings.TrimSpace(question)
@@ -350,10 +352,10 @@ func stagedMove(d *Document, ts []Task, state, user, reason string) error {
 	why := ""
 	switch state {
 	case "doing":
-		if d.Task.Status != "doing" {
+		if d.Task.State != "doing" {
 			set["doing_since"] = stamp()
 			why = "take"
-			if d.Task.Status == "todo" && ownHolds(d.Task, "review") && user != "" {
+			if d.Task.State == "todo" && ownHolds(d.Task, "review") && user != "" {
 				set["review_by"] = user
 				set["review_since"] = stamp()
 				why = "take for review"
@@ -361,7 +363,7 @@ func stagedMove(d *Document, ts []Task, state, user, reason string) error {
 		}
 	case "todo":
 		why = "give back"
-		if d.Task.Status == "done" || d.Task.Status == "dropped" {
+		if d.Task.State == "done" || d.Task.State == "dropped" {
 			why = "reopen"
 		}
 	case "done":
@@ -373,7 +375,7 @@ func stagedMove(d *Document, ts []Task, state, user, reason string) error {
 		why = "drop"
 	}
 	var clear []string
-	if state == "todo" && d.Task.Status == "doing" {
+	if state == "todo" && d.Task.State == "doing" {
 		// Giving back keeps the todo stage it came from (doing/review
 		// becomes todo/review): review_by stays, the reviewer's stamp does
 		// not. todo means nobody is working on it: the assignee goes too,
@@ -402,7 +404,7 @@ func (s *Store) cascade(id string) ([]string, error) {
 	var touched []string
 	seen := map[string]bool{id: true}
 	for _, t := range ts {
-		if seen[t.ID] || !Staged(t) || t.Status == "done" || t.Status == "dropped" {
+		if seen[t.ID] || !Staged(t) || t.State == "done" || t.State == "dropped" {
 			continue
 		}
 		dependent := false
@@ -419,7 +421,7 @@ func (s *Store) cascade(id string) ([]string, error) {
 		if e != nil {
 			return touched, e
 		}
-		if e = applyMove(d, ts, move{state: t.Status, why: "dependency " + id}); e != nil {
+		if e = applyMove(d, ts, move{state: t.State, why: "dependency " + id}); e != nil {
 			return touched, e
 		}
 		if _, e = s.finish(d, true); e != nil {
@@ -428,4 +430,63 @@ func (s *Store) cascade(id string) ([]string, error) {
 		touched = append(touched, fmt.Sprintf("%s %s", t.ID, d.Task.Stage))
 	}
 	return touched, nil
+}
+
+// RenameStatusKey turns the old "status: x" front-matter line into
+// "state: x" in place (6ephqk step 4), keeping its value, quoting and
+// position. It reports whether the file changed; a file that already says
+// state: is left alone, and a stray status: next to it is dropped.
+func (d *Document) RenameStatusKey() (bool, error) {
+	n, ok := d.fields["status"]
+	if !ok {
+		return false, nil
+	}
+	if d.frontEnd < 0 || !d.frontmatterValid {
+		return false, &Error{Kind: "broken-file", ID: d.Task.ID, Fix: "hug task lint"}
+	}
+	if _, both := d.fields["state"]; both {
+		return true, d.RemoveField("status")
+	}
+	lines := append([]string(nil), d.lines...)
+	lines[n] = "state" + strings.TrimPrefix(lines[n], "status")
+	d.replace(lines)
+	return true, nil
+}
+
+// MigrateState is hug upgrade's step for 6ephqk: every task file's
+// status: becomes state:. It returns the changed paths and one line per
+// change ("ID: status: doing -> state: doing").
+func (s *Store) MigrateState(dryRun bool) (changed, lines []string, err error) {
+	ts, e := s.Tasks()
+	if e != nil {
+		return nil, nil, e
+	}
+	for _, t := range ts {
+		path, e := s.diskPath(t.Path)
+		if e != nil {
+			return changed, lines, e
+		}
+		raw, e := sharefile.ReadFile(path)
+		if e != nil {
+			return changed, lines, e
+		}
+		d := Parse(t.Path, raw)
+		did, e := d.RenameStatusKey()
+		if e != nil {
+			return changed, lines, e
+		}
+		if !did {
+			continue
+		}
+		changed = append(changed, t.Path)
+		lines = append(lines, t.ID+": status: "+t.State+" -> state: "+d.Task.State)
+		if dryRun {
+			continue
+		}
+		s.Invalidate()
+		if e = AtomicWrite(path, d.Bytes()); e != nil {
+			return changed, lines, e
+		}
+	}
+	return changed, lines, nil
 }

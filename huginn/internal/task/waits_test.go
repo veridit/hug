@@ -38,7 +38,7 @@ func setStatus(t *testing.T, s *Store, id, status string) {
 		}
 		return
 	}
-	if _, e := s.Set(id, "status", status); e != nil {
+	if _, e := s.Set(id, "state", status); e != nil {
 		t.Fatal(e)
 	}
 }

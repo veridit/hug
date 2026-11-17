@@ -46,7 +46,7 @@ func loadRepoState(ctx context.Context, repo string) *repoState {
 	if snap, err := board.Open(ctx, repo); err == nil && snap != nil {
 		st.tasks = map[string]string{}
 		for _, t := range snap.Tasks {
-			st.tasks[strings.ToLower(t.ID)] = t.Status
+			st.tasks[strings.ToLower(t.ID)] = t.State
 		}
 		snap.Close()
 	}

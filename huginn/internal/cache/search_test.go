@@ -10,7 +10,7 @@ import (
 )
 
 func taskFile(id, title, aliases, goal, notes string) []byte {
-	return []byte("---\nid: " + id + "\ntitle: \"" + title + "\"\nstatus: todo\naliases: [" + aliases + "]\n---\n\n## Goal\n" + goal + "\n\n## Acceptance\n- [ ] works\n\n## Notes\n" + notes + "\n")
+	return []byte("---\nid: " + id + "\ntitle: \"" + title + "\"\nstate: todo\naliases: [" + aliases + "]\n---\n\n## Goal\n" + goal + "\n\n## Acceptance\n- [ ] works\n\n## Notes\n" + notes + "\n")
 }
 
 // 49n9kw checks 1, 2, 4: a title match ranks first and names its field and

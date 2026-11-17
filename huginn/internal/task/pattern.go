@@ -117,4 +117,4 @@ func hasCode(ps []Problem, code string) bool {
 // Pattern reports whether a task is held to the description pattern: every
 // open task (fkpyg3, Jørgen 2026-11-17: the old cutoff hid it on 1,215 of
 // seid-lang's 1,236 open tasks). Done and dropped tasks are history.
-func Pattern(t Task) bool { return t.Status != "done" && t.Status != "dropped" }
+func Pattern(t Task) bool { return t.State != "done" && t.State != "dropped" }

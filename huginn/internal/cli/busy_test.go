@@ -20,7 +20,7 @@ func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	want := "not taking " + second + ": kestrel is on " + first + " (First): one ticket in doing at a time\n" +
 		"fix: hug task done " + first + "\n" +
 		"fix: hug task wait " + first + " \"on what\"\n" +
-		"fix: hug task set " + first + " --status todo && hug task note " + first + " \"why it goes back\"\n"
+		"fix: hug task set " + first + " --state todo && hug task note " + first + " \"why it goes back\"\n"
 	if code != 3 || out != want {
 		t.Fatalf("exit %d, want 3 and\n%s\ngot\n%s", code, want, out)
 	}
@@ -32,7 +32,7 @@ func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	if fixes, _ := r["fixes"].([]any); len(fixes) != 3 || r["fix"] != "hug task done "+first || r["next"] != r["fix"] {
 		t.Fatalf("json: %s", out)
 	}
-	if f := taskFile(t, a, second); !strings.Contains(f, "status: todo") && !strings.Contains(f, `status: "todo"`) || strings.Contains(f, "kestrel") {
+	if f := taskFile(t, a, second); !strings.Contains(f, "state: todo") && !strings.Contains(f, `state: "todo"`) || strings.Contains(f, "kestrel") {
 		t.Fatalf("refused take changed the task:\n%s", f)
 	}
 	// Parking the first (the second fix line) lets the take through.

@@ -130,7 +130,7 @@ func (m model) markdown(s string) string {
 }
 func (m model) detailHeader(t task.Task) []string {
 	title := m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width))
-	badges := []string{m.styles.status[m.boardStatus(t)].Bold(true).Render("[" + oneLine(m.boardStatus(t)) + "]")}
+	badges := []string{m.styles.status[m.boardState(t)].Bold(true).Render("[" + oneLine(m.boardState(t)) + "]")}
 	// An unset type or priority shows no badge, not "[]" (2026-11-16, user).
 	if v := oneLine(t.Type); v != "" {
 		badges = append(badges, m.styles.kind[t.Type].Render("["+v+"]"))
@@ -477,7 +477,7 @@ func (m model) detailText(t task.Task) string {
 	section(m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks · - strikes out", m.detailPane == focusAcceptance), strings.Join(checks, "\n"), "no acceptance items yet")
 	var dependencies []string
 	for i, d := range task.DependencyDetails(t, m.all) {
-		state := d.Status
+		state := d.State
 		if d.Missing {
 			state = "depends"
 		}
@@ -520,7 +520,7 @@ func (m model) detailText(t task.Task) string {
 		if m.detailPane == focusLinks && i == m.link {
 			pointer = ">"
 		}
-		state, title := l.Status, l.Title
+		state, title := l.State, l.Title
 		if l.Missing {
 			state, title = "depends", "no task has this id"
 		}

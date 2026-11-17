@@ -33,7 +33,7 @@ func TestProgressCellByStatus(t *testing.T) {
 		{"dropped", 1, 4, "", ""},
 	} {
 		tk := withChecks(c.done, c.total)
-		tk.Status = c.status
+		tk.State = c.status
 		got := m.progress(tk)
 		if c.text == "" {
 			if strings.TrimSpace(got) != "" {

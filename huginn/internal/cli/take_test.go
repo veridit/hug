@@ -46,7 +46,7 @@ func TestTakeWithoutModelFailsWithFix(t *testing.T) {
 	if code != 2 || !strings.Contains(out, "no model given") || !strings.HasSuffix(out, want) {
 		t.Fatalf("exit %d, want 2 ending %q:\n%s", code, want, out)
 	}
-	if f := taskFile(t, a, id); !strings.Contains(f, "status: \"todo\"") && !strings.Contains(f, "status: todo") || strings.Contains(f, "Test") {
+	if f := taskFile(t, a, id); !strings.Contains(f, "state: \"todo\"") && !strings.Contains(f, "state: todo") || strings.Contains(f, "Test") {
 		t.Fatalf("take without model changed the task:\n%s", f)
 	}
 	// With a name but no model, the fix keeps the name.

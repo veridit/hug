@@ -94,7 +94,7 @@ func (m model) note(t task.Task) (head, text, stamp string) {
 		return "waiting on " + m.name(who) + ":", m.attachments(t, oneLine(what)), t.Fields["waiting_since"]
 	case "review":
 		who := m.name(t.Fields["review_by"])
-		if t.Status == "doing" {
+		if t.State == "doing" {
 			if who == "" {
 				return "in review", "", t.Fields["review_since"]
 			}

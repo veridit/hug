@@ -244,7 +244,7 @@ func TestChangeOnDiskWaitsForPrompt(t *testing.T) {
 		keys []string
 	}{
 		{"search prompt", []string{"/", "Al"}},
-		{"palette", []string{":", "status "}},
+		{"palette", []string{":", "state "}},
 		{"confirm", []string{"t"}},
 	} {
 		t.Run(open.name, func(t *testing.T) {

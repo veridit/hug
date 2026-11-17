@@ -71,8 +71,8 @@ func TestMoveCommands(t *testing.T) {
 		{[]string{"wait", id, "--on", "jhf", "approve the look", "--as", "nautilus"}, 0, ""},
 		{[]string{"resume", id}, 0, ""},
 		{[]string{"drop", id, "superseded"}, 0, ""},
-		{[]string{"set", id, "--status", "done"}, 2, "hug task show " + id},
-		{[]string{"set", id, "--status", "todo"}, 0, ""},
+		{[]string{"set", id, "--state", "done"}, 2, "hug task show " + id},
+		{[]string{"set", id, "--state", "todo"}, 0, ""},
 	} {
 		code, out := runText(a, c.args...)
 		if code != c.code || (c.fix != "" && !strings.Contains(out, "fix: "+c.fix+"\n")) || strings.Contains(out, "fix: hug task edit") {

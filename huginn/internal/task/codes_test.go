@@ -42,7 +42,7 @@ func TestSummarizeCountsByCode(t *testing.T) {
 // A closed task's findings, including files in its folder, are closed;
 // findings on open tasks and on files no task owns are open (6neax1).
 func TestOpenFindingsSplitsByStatus(t *testing.T) {
-	tasks := []Task{{ID: "aaaaaa", Path: "a.aaaaaa.a.md", Status: "done"}, {ID: "bbbbbb", Path: "g/b.bbbbbb.b.md", Status: "todo"}, {ID: "cccccc", Path: "g/c.cccccc.c.md", Status: "dropped"}}
+	tasks := []Task{{ID: "aaaaaa", Path: "a.aaaaaa.a.md", State: "done"}, {ID: "bbbbbb", Path: "g/b.bbbbbb.b.md", State: "todo"}, {ID: "cccccc", Path: "g/c.cccccc.c.md", State: "dropped"}}
 	fs := []Finding{{Path: "a.aaaaaa.a.md"}, {Path: "g/b.bbbbbb.b.md"}, {Path: "g/cccccc/sub/log.bin"}, {Path: "broken.md"}, {Path: "aaaaaa/x.txt"}}
 	open, closed := OpenFindings(fs, tasks)
 	if len(open) != 2 || open[0].Path != "g/b.bbbbbb.b.md" || open[1].Path != "broken.md" || len(closed) != 3 {
@@ -53,7 +53,7 @@ func TestOpenFindingsSplitsByStatus(t *testing.T) {
 // pbh9xq: broken findings are shown on open and closed tasks, broken first;
 // advice is shown on open tasks and hidden on closed ones.
 func TestShownFindingsBySeverity(t *testing.T) {
-	tasks := []Task{{ID: "aaaaaa", Path: "a.aaaaaa.a.md", Status: "done"}, {ID: "bbbbbb", Path: "b.bbbbbb.b.md", Status: "todo"}}
+	tasks := []Task{{ID: "aaaaaa", Path: "a.aaaaaa.a.md", State: "done"}, {ID: "bbbbbb", Path: "b.bbbbbb.b.md", State: "todo"}}
 	longTitle, cycle := "title is 90 characters (max 80): move detail into the Goal", "dependency cycle: aaaaaa -> bbbbbb -> aaaaaa"
 	fs := []Finding{
 		{Path: "b.bbbbbb.b.md", Problem: longTitle},                               // advice, open: shown

@@ -11,7 +11,7 @@ import (
 const mkzcqrOrder = `---
 id: mkzcqr
 title: "TUI sort builder"
-status: "todo"
+state: "todo"
 ---
 
 ## Goal
@@ -87,7 +87,7 @@ func TestCanonicalOrderKeepsText(t *testing.T) {
 // Other sections keep their relative order and go before Notes; History is
 // last; CRLF files stay CRLF.
 func TestCanonicalOrderOthersAndCRLF(t *testing.T) {
-	src := "---\nid: aaaaaa\ntitle: \"A\"\nstatus: \"todo\"\n---\n\n## Goal\nG\n\n## History\nh\n\n## Notes\nn\n\n## Zeta\nz\n\n## Acceptance\n- [ ] c\n\n## Alpha\na\n"
+	src := "---\nid: aaaaaa\ntitle: \"A\"\nstate: \"todo\"\n---\n\n## Goal\nG\n\n## History\nh\n\n## Notes\nn\n\n## Zeta\nz\n\n## Acceptance\n- [ ] c\n\n## Alpha\na\n"
 	crlf := strings.ReplaceAll(src, "\n", "\r\n")
 	for _, text := range []string{src, crlf} {
 		out, changed := Parse("aaaaaa.a.md", []byte(text)).Canonical()
@@ -150,7 +150,7 @@ func TestStoreReorderIdempotent(t *testing.T) {
 
 // A note on a task with History but no Notes goes above History.
 func TestNoteGoesBeforeHistory(t *testing.T) {
-	d := Parse("aaaaaa.a.md", []byte("---\nid: aaaaaa\ntitle: \"A\"\nstatus: \"todo\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] c\n\n## History\nh\n"))
+	d := Parse("aaaaaa.a.md", []byte("---\nid: aaaaaa\ntitle: \"A\"\nstate: \"todo\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] c\n\n## History\nh\n"))
 	d.Note("first")
 	if got := strings.Join(d.Task.Sections, "|"); got != "Goal|Acceptance|Notes|History" {
 		t.Fatalf("sections %s\n%s", got, d.Bytes())
@@ -164,7 +164,7 @@ func TestNoteGoesBeforeHistory(t *testing.T) {
 // place, before Acceptance and Notes, not at the end (ci/jnaspy caught the
 // old append in the cache tests).
 func TestNewDependsOnGoesInOrder(t *testing.T) {
-	d := Parse("aaaaaa.a.md", []byte("---\nid: aaaaaa\ntitle: \"A\"\nstatus: \"todo\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] c\n\n## Notes\nn\n"))
+	d := Parse("aaaaaa.a.md", []byte("---\nid: aaaaaa\ntitle: \"A\"\nstate: \"todo\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] c\n\n## Notes\nn\n"))
 	d.appendDependencies([]string{"bbbbbb"})
 	if got := strings.Join(d.Task.Sections, "|"); got != "Goal|Depends on|Acceptance|Notes" {
 		t.Fatalf("sections %s\n%s", got, d.Bytes())
@@ -176,7 +176,7 @@ func TestNewDependsOnGoesInOrder(t *testing.T) {
 		t.Fatalf("deps %v", d.Task.Dependencies)
 	}
 	// Only Goal: still appended after it.
-	e := Parse("aaaaaa.a.md", []byte("---\nid: aaaaaa\ntitle: \"A\"\nstatus: \"todo\"\n---\n\n## Goal\nG\n"))
+	e := Parse("aaaaaa.a.md", []byte("---\nid: aaaaaa\ntitle: \"A\"\nstate: \"todo\"\n---\n\n## Goal\nG\n"))
 	e.appendDependencies([]string{"bbbbbb"})
 	if got := strings.Join(e.Task.Sections, "|"); got != "Goal|Depends on" {
 		t.Fatalf("sections %s\n%s", got, e.Bytes())

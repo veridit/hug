@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-const SchemaVersion = "17" // 17: question findings from notes (at3qep); 16: file refs skip ' (lost)' and include .hug/tasks/ID/NAME paths (cvbpdy); 15: Task.Answer (3jtfw9); 14: table search, FTS5 (49n9kw); 13: backlog-leftover findings from the parse, set-based fixes for missing Goal and Acceptance (fkpyg3); 12: Task.Waits (16dxsr); 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev); 10: notes and description texts in table texts, not in the board blob (44w1ev); 11: Task.Stage and Task.Fields (6ephqk)
+const SchemaVersion = "18" // 18: Task JSON says state, not status (6ephqk step 4); 17: question findings from notes (at3qep); 16: file refs skip ' (lost)' and include .hug/tasks/ID/NAME paths (cvbpdy); 15: Task.Answer (3jtfw9); 14: table search, FTS5 (49n9kw); 13: backlog-leftover findings from the parse, set-based fixes for missing Goal and Acceptance (fkpyg3); 12: Task.Waits (16dxsr); 3: Task.Parent and Task.Sections; 4: strict Depends on lines, Finding.Fix (rx74bp); 5: not-a-dependency text (6neax1); 6: Task.Model (et85h1) (2026-11-16); 7: Task.Branch and Task.Worktree (x1t1t1); 8: board blob, board_delta and synced_ns (44w1ev: an older binary must drop them before it writes rows); 9: Task.Texts, notes, description texts and file refs kept from the parse (44w1ev); 10: notes and description texts in table texts, not in the board blob (44w1ev); 11: Task.Stage and Task.Fields (6ephqk)
 
 type Change struct{ Status, OldPath, Path string }
 type Git interface {
@@ -639,7 +639,7 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 		}
 		t := r.Task
 		assignee, _ := json.Marshal(t.Assignee)
-		if _, e = taskStmt.ExecContext(ctx, t.ID, p, t.Group, t.Rank, t.Slug, t.Title, t.Status, t.Type, t.Priority, string(assignee), t.Updated, string(payload), string(findings)); e != nil {
+		if _, e = taskStmt.ExecContext(ctx, t.ID, p, t.Group, t.Rank, t.Slug, t.Title, t.State, t.Type, t.Priority, string(assignee), t.Updated, string(payload), string(findings)); e != nil {
 			return stats, e
 		}
 		if texts := encodeBodies(bodies[p]); texts != nil {

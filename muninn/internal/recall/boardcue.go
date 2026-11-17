@@ -38,10 +38,10 @@ var LintEvery = 6 * time.Hour
 
 // BoardTask is one task as the nudge sees it.
 type BoardTask struct {
-	ID, Title, Status string
-	Assignee          []string
-	Branch, Worktree  string
-	Checks, Open      int
+	ID, Title, State string
+	Assignee         []string
+	Branch, Worktree string
+	Checks, Open     int
 	// Answer is a person's answer to a question on the task that its
 	// asker has not read yet (3jtfw9); nil when there is none.
 	Answer *BoardAnswer
@@ -55,7 +55,7 @@ type BoardAnswer struct {
 
 // BoardFinding is one open lint finding with its repair command.
 type BoardFinding struct {
-	TaskID, TaskStatus, Problem, Fix string
+	TaskID, TaskState, Problem, Fix string
 }
 
 // BoardSelf is who and where the session is.
@@ -239,7 +239,7 @@ func (d detection) candidates(editTurns int64, model string) []candidate {
 		out = append(out, candidate{"done", t.ID, fmt.Sprintf("Task board: every check of %s holds (%s). Close it: hug task done %s", t.ID, short(t.Title), t.ID)})
 	}
 	for _, t := range d.working {
-		out = append(out, candidate{"work", t.ID, fmt.Sprintf("Task board: you are working on %s but it is %s. hug task take %s --model %s", t.ID, t.Status, t.ID, model)})
+		out = append(out, candidate{"work", t.ID, fmt.Sprintf("Task board: you are working on %s but it is %s. hug task take %s --model %s", t.ID, t.State, t.ID, model)})
 	}
 	if d.edits && !d.hasMine {
 		switch {
@@ -280,10 +280,10 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 	mine := func(t BoardTask) bool {
 		// A task the session took itself is its own even while the board
 		// still says todo (the take commit lands after the turn starts).
-		if taken[t.ID] && t.Status != "done" && t.Status != "dropped" {
+		if taken[t.ID] && t.State != "done" && t.State != "dropped" {
 			return true
 		}
-		if t.Status != "doing" {
+		if t.State != "doing" {
 			return false
 		}
 		if taken[t.ID] {
@@ -306,7 +306,7 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 		if mine(t) {
 			d.hasMine = true
 			d.touched[t.ID] = true
-			if t.Status == "doing" {
+			if t.State == "doing" {
 				d.own[t.ID] = true
 			}
 			if t.Checks > 0 && t.Open == 0 {
@@ -340,7 +340,7 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 	}
 	if self.Name != "" {
 		for _, t := range in.Tasks {
-			if t.Status != "doing" || len(t.Assignee) == 0 {
+			if t.State != "doing" || len(t.Assignee) == 0 {
 				continue
 			}
 			assigned := false
@@ -358,7 +358,7 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 	var words []string
 	seenNamed := map[string]bool{}
 	addNamed := func(id string) {
-		if t, ok := byID[id]; ok && t.Status == "todo" && !seenNamed[id] && !taken[id] {
+		if t, ok := byID[id]; ok && t.State == "todo" && !seenNamed[id] && !taken[id] {
 			seenNamed[id] = true
 			d.named = append(d.named, t)
 		}
@@ -376,7 +376,7 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 			// coordinator records design talk on todo tasks it is not working
 			// on (dev replay, BOARD4.md). A note counts with code edits in the
 			// same window.
-			if t, ok := byID[h.ID]; ok && t.Status == "todo" && !seenWork[h.ID] && !taken[h.ID] {
+			if t, ok := byID[h.ID]; ok && t.State == "todo" && !seenWork[h.ID] && !taken[h.ID] {
 				if h.Verb == "check" {
 					seenWork[h.ID] = true
 					d.working = append(d.working, t)
@@ -436,7 +436,7 @@ func matchTitle(ts []BoardTask, text string) *BoardTask {
 	n := float64(len(ts))
 	best, second, bi := 0.0, 0.0, -1
 	for i, t := range ts {
-		if t.Status != "todo" {
+		if t.State != "todo" {
 			continue
 		}
 		s, hits := 0.0, 0
@@ -544,9 +544,9 @@ func (e *Engine) pickFinding(fs []BoardFinding, touched map[string]bool, any boo
 		switch {
 		case touched[f.TaskID]:
 			return 0
-		case f.TaskStatus == "doing":
+		case f.TaskState == "doing":
 			return 1
-		case f.TaskStatus == "todo":
+		case f.TaskState == "todo":
 			return 2
 		}
 		return 3

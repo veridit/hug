@@ -30,7 +30,7 @@ func TestBoardTakeNamedTask(t *testing.T) {
 	e := boardEngine(t)
 	now := time.Date(2026, 11, 16, 1, 0, 0, 0, time.UTC)
 	in := recall.BoardInput{
-		Tasks:   []recall.BoardTask{{ID: "7js5hw", Title: "TUI: human names for places", Status: "todo", Checks: 2, Open: 2}},
+		Tasks:   []recall.BoardTask{{ID: "7js5hw", Title: "TUI: human names for places", State: "todo", Checks: 2, Open: 2}},
 		Self:    recall.BoardSelf{Name: "crab", Model: "claude-opus-5-5"},
 		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "7js5hw"}}}, edit},
 	}
@@ -46,7 +46,7 @@ func TestBoardTakeNamedTask(t *testing.T) {
 		t.Fatalf("same line within the day: %q", line)
 	}
 	other := in
-	other.Tasks = append([]recall.BoardTask{{ID: "48hx44", Title: "hug setup wires desktop apps", Status: "todo"}}, in.Tasks...)
+	other.Tasks = append([]recall.BoardTask{{ID: "48hx44", Title: "hug setup wires desktop apps", State: "todo"}}, in.Tasks...)
 	other.Actions = []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "48hx44"}}}, edit}
 	if line, _ := e.BoardCue("jcode:s1", "continue", "", now.Add(62*time.Minute), src(other)); !strings.Contains(line, "48hx44") {
 		t.Fatalf("another task after the hour: %q", line)
@@ -65,7 +65,7 @@ func TestBoardSilentWhenTaskIsMine(t *testing.T) {
 		{Worktree: "/r", Branch: "feat/a"},                    // non-main branch
 	} {
 		in := recall.BoardInput{
-			Tasks:   []recall.BoardTask{{ID: "qawmnb", Title: "Recall nudges", Status: "doing", Assignee: []string{"guppy"}, Branch: "feat/a", Worktree: "/r/wt-a", Checks: 3, Open: 2}},
+			Tasks:   []recall.BoardTask{{ID: "qawmnb", Title: "Recall nudges", State: "doing", Assignee: []string{"guppy"}, Branch: "feat/a", Worktree: "/r/wt-a", Checks: 3, Open: 2}},
 			Self:    self,
 			Actions: []recall.BoardAction{edit, edit},
 		}
@@ -82,7 +82,7 @@ func TestBoardMainWorktreeIsNotOwnership(t *testing.T) {
 	// is not this session's (crab: never hide a real mismatch).
 	e := boardEngine(t)
 	in := recall.BoardInput{
-		Tasks:   []recall.BoardTask{{ID: "x1t1t1", Title: "Worktrees", Status: "doing", Assignee: []string{"dragon"}, Branch: "main", Worktree: "/r"}},
+		Tasks:   []recall.BoardTask{{ID: "x1t1t1", Title: "Worktrees", State: "doing", Assignee: []string{"dragon"}, Branch: "main", Worktree: "/r"}},
 		Self:    recall.BoardSelf{Name: "guppy", Branch: "main", Worktree: "/r"},
 		Actions: []recall.BoardAction{edit},
 	}
@@ -102,7 +102,7 @@ func TestBoardOwnTakeCounts(t *testing.T) {
 	e := boardEngine(t)
 	now := time.Now()
 	in := recall.BoardInput{
-		Tasks:   []recall.BoardTask{{ID: "5g86n6", Title: "Layout", Status: "doing", Assignee: []string{"Jørgen H. Fjeld"}, Checks: 6, Open: 3}},
+		Tasks:   []recall.BoardTask{{ID: "5g86n6", Title: "Layout", State: "doing", Assignee: []string{"Jørgen H. Fjeld"}, Checks: 6, Open: 3}},
 		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "take", ID: "5g86n6"}}}, edit},
 	}
 	if line, _ := e.BoardCue("s", "go", "", now, src(in)); line != "" {
@@ -117,7 +117,7 @@ func TestBoardOwnTakeCounts(t *testing.T) {
 func TestBoardDoneWhenEveryCheckHolds(t *testing.T) {
 	e := boardEngine(t)
 	in := recall.BoardInput{
-		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
+		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", State: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
 		Self:  recall.BoardSelf{Name: "crab"},
 	}
 	line, kind := e.BoardCue("s", "next", "", time.Now(), src(in))
@@ -129,7 +129,7 @@ func TestBoardDoneWhenEveryCheckHolds(t *testing.T) {
 func TestBoardWorkOnTodo(t *testing.T) {
 	e := boardEngine(t)
 	in := recall.BoardInput{
-		Tasks:   []recall.BoardTask{{ID: "npda3r", Title: "pattern", Status: "todo", Checks: 3, Open: 3}},
+		Tasks:   []recall.BoardTask{{ID: "npda3r", Title: "pattern", State: "todo", Checks: 3, Open: 3}},
 		Self:    recall.BoardSelf{Name: "crab", Model: "gpt-6.1-sol"},
 		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "check", ID: "npda3r", N: 1}}}},
 	}
@@ -141,7 +141,7 @@ func TestBoardWorkOnTodo(t *testing.T) {
 
 func TestBoardChatOnlySilent(t *testing.T) {
 	e := boardEngine(t)
-	in := recall.BoardInput{Tasks: []recall.BoardTask{{ID: "aaaaaa", Title: "x", Status: "todo"}}, Self: recall.BoardSelf{Name: "crab"}}
+	in := recall.BoardInput{Tasks: []recall.BoardTask{{ID: "aaaaaa", Title: "x", State: "todo"}}, Self: recall.BoardSelf{Name: "crab"}}
 	for i := 0; i < 5; i++ {
 		if line, _ := e.BoardCue("s", "what do you think?", "", time.Now().Add(time.Duration(i)*time.Hour), src(in)); line != "" {
 			t.Fatalf("chat turn: %q", line)
@@ -153,11 +153,11 @@ func TestBoardLintOnlyAtBreak(t *testing.T) {
 	e := boardEngine(t)
 	now := time.Now()
 	in := recall.BoardInput{
-		Tasks: []recall.BoardTask{{ID: "aaaaaa", Status: "done"}, {ID: "bbbbbb", Status: "todo"}, {ID: "cccccc", Status: "doing"}},
+		Tasks: []recall.BoardTask{{ID: "aaaaaa", State: "done"}, {ID: "bbbbbb", State: "todo"}, {ID: "cccccc", State: "doing"}},
 		Findings: func() []recall.BoardFinding {
 			return []recall.BoardFinding{
-				{TaskID: "bbbbbb", TaskStatus: "todo", Problem: "no acceptance items", Fix: "hug task edit bbbbbb"},
-				{TaskID: "cccccc", TaskStatus: "doing", Problem: "missing Goal", Fix: "hug task edit cccccc"},
+				{TaskID: "bbbbbb", TaskState: "todo", Problem: "no acceptance items", Fix: "hug task edit bbbbbb"},
+				{TaskID: "cccccc", TaskState: "doing", Problem: "missing Goal", Fix: "hug task edit cccccc"},
 			}
 		},
 		Self: recall.BoardSelf{Name: "crab"},
@@ -185,12 +185,12 @@ func TestBoardLintRotatesAcrossSessions(t *testing.T) {
 	e := boardEngine(t)
 	now := time.Now()
 	in := recall.BoardInput{
-		Tasks: []recall.BoardTask{{ID: "q70jjy", Status: "todo"}, {ID: "jy00xt", Status: "todo"}},
+		Tasks: []recall.BoardTask{{ID: "q70jjy", State: "todo"}, {ID: "jy00xt", State: "todo"}},
 		Findings: func() []recall.BoardFinding {
 			return []recall.BoardFinding{
-				{TaskID: "q70jjy", TaskStatus: "todo", Problem: "sections out of order", Fix: "hug upgrade"},
-				{TaskID: "q70jjy", TaskStatus: "todo", Problem: "title is 138 characters (max 80)", Fix: "hug task set q70jjy --title \"...\""},
-				{TaskID: "jy00xt", TaskStatus: "todo", Problem: "sections out of order", Fix: "hug task edit jy00xt"},
+				{TaskID: "q70jjy", TaskState: "todo", Problem: "sections out of order", Fix: "hug upgrade"},
+				{TaskID: "q70jjy", TaskState: "todo", Problem: "title is 138 characters (max 80)", Fix: "hug task set q70jjy --title \"...\""},
+				{TaskID: "jy00xt", TaskState: "todo", Problem: "sections out of order", Fix: "hug task edit jy00xt"},
 			}
 		},
 	}
@@ -208,9 +208,9 @@ func TestBoardLintRotatesAcrossSessions(t *testing.T) {
 // x325pp check 2: a turn that tells the agent to stop gets no board line.
 func TestBoardSilentOnStopOrder(t *testing.T) {
 	in := recall.BoardInput{
-		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
+		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", State: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
 		Findings: func() []recall.BoardFinding {
-			return []recall.BoardFinding{{TaskID: "p39w4a", TaskStatus: "todo", Problem: "title too long", Fix: "hug task set p39w4a --title \"...\""}}
+			return []recall.BoardFinding{{TaskID: "p39w4a", TaskState: "todo", Problem: "title too long", Fix: "hug task set p39w4a --title \"...\""}}
 		},
 		Self: recall.BoardSelf{Name: "crab"},
 	}
@@ -237,9 +237,9 @@ func TestBoardSilentOnStopOrder(t *testing.T) {
 func TestBoardStopTurnKeepsFinding(t *testing.T) {
 	now := time.Date(2026, 11, 11, 18, 13, 45, 0, time.UTC)
 	in := recall.BoardInput{
-		Tasks: []recall.BoardTask{{ID: "w96jpg", Status: "todo"}},
+		Tasks: []recall.BoardTask{{ID: "w96jpg", State: "todo"}},
 		Findings: func() []recall.BoardFinding {
-			return []recall.BoardFinding{{TaskID: "w96jpg", TaskStatus: "todo", Problem: "title is 151 characters (max 80)", Fix: "hug task set w96jpg --title \"...\""}}
+			return []recall.BoardFinding{{TaskID: "w96jpg", TaskState: "todo", Problem: "title is 151 characters (max 80)", Fix: "hug task set w96jpg --title \"...\""}}
 		},
 		Self: recall.BoardSelf{Name: "skunk"},
 	}
@@ -264,11 +264,11 @@ func TestBoardStopTurnKeepsFinding(t *testing.T) {
 // task; a passer-by gets the title finding instead (tpnd3n).
 func TestBoardMissingSectionOnlyToItsSession(t *testing.T) {
 	now := time.Date(2026, 11, 16, 10, 9, 34, 0, time.UTC)
-	section := recall.BoardFinding{TaskID: "s6ff5k", TaskStatus: "todo", Problem: "missing section Purpose (why)", Fix: "hug task set s6ff5k --purpose \"...\""}
-	title := recall.BoardFinding{TaskID: "q70jjy", TaskStatus: "todo", Problem: "title is 138 characters (max 80): move detail into the Goal", Fix: "hug task set q70jjy --title \"...\""}
+	section := recall.BoardFinding{TaskID: "s6ff5k", TaskState: "todo", Problem: "missing section Purpose (why)", Fix: "hug task set s6ff5k --purpose \"...\""}
+	title := recall.BoardFinding{TaskID: "q70jjy", TaskState: "todo", Problem: "title is 138 characters (max 80): move detail into the Goal", Fix: "hug task set q70jjy --title \"...\""}
 	fs := []recall.BoardFinding{section}
 	in := recall.BoardInput{
-		Tasks:    []recall.BoardTask{{ID: "s6ff5k", Status: "todo"}, {ID: "q70jjy", Status: "todo"}},
+		Tasks:    []recall.BoardTask{{ID: "s6ff5k", State: "todo"}, {ID: "q70jjy", State: "todo"}},
 		Findings: func() []recall.BoardFinding { return fs },
 		Self:     recall.BoardSelf{Name: "hog"},
 	}
@@ -292,12 +292,12 @@ func TestBoardMissingSectionOnlyToItsSession(t *testing.T) {
 // check is ticked.
 func TestBoardQuestionReachesOwnerOnly(t *testing.T) {
 	now := time.Date(2026, 11, 17, 10, 0, 0, 0, time.UTC)
-	q := recall.BoardFinding{TaskID: "0hkaa5", TaskStatus: "doing",
+	q := recall.BoardFinding{TaskID: "0hkaa5", TaskState: "doing",
 		Problem: "landed, but no check is ticked: commit 61bfb21 naming 0hkaa5 reached main (its note says so) and 0 of 6 checks are ticked or struck; kestrel: which checks hold?",
 		Fix:     "hug task check 0hkaa5 1"}
 	in := func(self string) recall.BoardInput {
 		return recall.BoardInput{
-			Tasks:    []recall.BoardTask{{ID: "0hkaa5", Status: "doing", Assignee: []string{"kestrel"}, Checks: 6, Open: 6}},
+			Tasks:    []recall.BoardTask{{ID: "0hkaa5", State: "doing", Assignee: []string{"kestrel"}, Checks: 6, Open: 6}},
 			Findings: func() []recall.BoardFinding { return []recall.BoardFinding{q} },
 			Self:     recall.BoardSelf{Name: self},
 		}
@@ -323,7 +323,7 @@ func TestBoardOnHarnessNotice(t *testing.T) {
 	// An autonomous night has only "[auto]" turns; the board still speaks.
 	e := boardEngine(t)
 	in := recall.BoardInput{
-		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
+		Tasks: []recall.BoardTask{{ID: "6tj2b8", Title: "lint codes", State: "doing", Assignee: []string{"crab"}, Checks: 3, Open: 0}},
 		Self:  recall.BoardSelf{Name: "crab"},
 	}
 	r, err := e.Recall(t.Context(), recall.Request{Session: "jcode:s", Message: "[auto] Do more validation", Board: src(in)})
@@ -340,7 +340,7 @@ func TestBoardOnHarnessNotice(t *testing.T) {
 // task it only looks at, gets none.
 func TestBoardOwnerLine(t *testing.T) {
 	now := time.Date(2026, 11, 17, 9, 44, 0, 0, time.UTC)
-	task := recall.BoardTask{ID: "44w1ev", Title: "Scale", Status: "doing", Assignee: []string{"humpback"}, Checks: 5, Open: 3}
+	task := recall.BoardTask{ID: "44w1ev", Title: "Scale", State: "doing", Assignee: []string{"humpback"}, Checks: 5, Open: 3}
 	for name, c := range map[string]struct {
 		in   recall.BoardInput
 		want string
@@ -350,7 +350,7 @@ func TestBoardOwnerLine(t *testing.T) {
 			"Task board: you are working on 44w1ev but the board says humpback. If it is yours now: hug task set 44w1ev --assignee wyvern"},
 		"notes it while editing": {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "wyvern"},
 			Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "note", ID: "44w1ev"}}}, edit}}, "owner"},
-		"works in its worktree": {recall.BoardInput{Tasks: []recall.BoardTask{{ID: "44w1ev", Status: "doing", Assignee: []string{"humpback"}, Worktree: "/s/hug-44w1ev", Checks: 5, Open: 3}},
+		"works in its worktree": {recall.BoardInput{Tasks: []recall.BoardTask{{ID: "44w1ev", State: "doing", Assignee: []string{"humpback"}, Worktree: "/s/hug-44w1ev", Checks: 5, Open: 3}},
 			Self: recall.BoardSelf{Name: "wyvern", Worktree: "/s/hug-44w1ev", Linked: true}, Actions: []recall.BoardAction{edit}}, "owner"},
 		"only shows it":   {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "wyvern"}, Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "44w1ev"}}}}}, ""},
 		"notes, no edits": {recall.BoardInput{Tasks: []recall.BoardTask{task}, Self: recall.BoardSelf{Name: "crab"}, Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "note", ID: "44w1ev"}}}}}, ""},
@@ -385,11 +385,11 @@ func TestBoardOwnerLine(t *testing.T) {
 func TestBoardUnrelatedLintWaitsForOwnTask(t *testing.T) {
 	e := boardEngine(t)
 	now := time.Date(2026, 11, 17, 10, 0, 0, 0, time.UTC)
-	own := recall.BoardFinding{TaskID: "own111", TaskStatus: "doing", Problem: "missing section Purpose", Fix: "hug task set own111 --purpose \"...\""}
-	other := recall.BoardFinding{TaskID: "oth222", TaskStatus: "doing", Problem: "title is 120 characters (max 80)", Fix: "hug task set oth222 --title \"...\""}
+	own := recall.BoardFinding{TaskID: "own111", TaskState: "doing", Problem: "missing section Purpose", Fix: "hug task set own111 --purpose \"...\""}
+	other := recall.BoardFinding{TaskID: "oth222", TaskState: "doing", Problem: "title is 120 characters (max 80)", Fix: "hug task set oth222 --title \"...\""}
 	fs := []recall.BoardFinding{other, own}
 	in := recall.BoardInput{
-		Tasks:    []recall.BoardTask{{ID: "own111", Status: "doing", Assignee: []string{"crab"}, Checks: 2, Open: 1}, {ID: "oth222", Status: "doing", Assignee: []string{"vole"}}},
+		Tasks:    []recall.BoardTask{{ID: "own111", State: "doing", Assignee: []string{"crab"}, Checks: 2, Open: 1}, {ID: "oth222", State: "doing", Assignee: []string{"vole"}}},
 		Findings: func() []recall.BoardFinding { return fs },
 		Self:     recall.BoardSelf{Name: "crab"},
 	}
@@ -409,7 +409,7 @@ func TestBoardUnrelatedLintWaitsForOwnTask(t *testing.T) {
 	// A session with no own task gets the unrelated finding as before.
 	e2 := boardEngine(t)
 	free := in
-	free.Tasks = []recall.BoardTask{{ID: "oth222", Status: "doing", Assignee: []string{"vole"}}}
+	free.Tasks = []recall.BoardTask{{ID: "oth222", State: "doing", Assignee: []string{"vole"}}}
 	free.Findings = func() []recall.BoardFinding { return []recall.BoardFinding{other} }
 	if line, _ := e2.BoardCue("s", "back", "return", now, src(free)); !strings.Contains(line, "oth222") {
 		t.Fatalf("no own task: %q", line)
@@ -423,8 +423,8 @@ func TestBoardAnswerForAsker(t *testing.T) {
 	ans := &recall.BoardAnswer{Stage: "design", Question: "one key or two?", Text: "one key: a", By: "jhf", For: "nautilus", At: "2026-11-17T13:30"}
 	in := recall.BoardInput{
 		Tasks: []recall.BoardTask{
-			{ID: "3jtfw9", Title: "answer in place", Status: "todo", Answer: ans},
-			{ID: "6tj2b8", Title: "lint codes", Status: "doing", Assignee: []string{"nautilus"}, Checks: 2, Open: 0},
+			{ID: "3jtfw9", Title: "answer in place", State: "todo", Answer: ans},
+			{ID: "6tj2b8", Title: "lint codes", State: "doing", Assignee: []string{"nautilus"}, Checks: 2, Open: 0},
 		},
 		Self: recall.BoardSelf{Name: "Nautilus"},
 	}

@@ -100,8 +100,8 @@ func TestDeduceLandedAndShipped(t *testing.T) {
 		t.Fatalf("done_release: y %q x %q", dy.Task.Fields["done_release"], dx.Task.Fields["done_release"])
 	}
 	// Never ticks, never done: x stays todo with its check open.
-	if dx.Task.Status != "todo" || dx.Task.Acceptance[0].Checked {
-		t.Fatalf("x changed: %s %v", dx.Task.Status, dx.Task.Acceptance)
+	if dx.Task.State != "todo" || dx.Task.Acceptance[0].Checked {
+		t.Fatalf("x changed: %s %v", dx.Task.State, dx.Task.Acceptance)
 	}
 	if got := deduced(t, a, "--since", "v0.1.0"); len(got) != 0 {
 		t.Fatalf("replay after tag wrote %v", got)

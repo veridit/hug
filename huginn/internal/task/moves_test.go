@@ -39,9 +39,9 @@ func load(t *testing.T, s *Store, id string) (Task, string) {
 
 func node(t Task) string {
 	if t.Stage == "" {
-		return t.Status
+		return t.State
 	}
-	return t.Status + "/" + t.Stage
+	return t.State + "/" + t.Stage
 }
 
 func fixedClock(t *testing.T) {
@@ -67,7 +67,7 @@ func wantRefused(t *testing.T, e error, fix string) {
 func TestMovesWriteNodeFields(t *testing.T) {
 	fixedClock(t)
 	s := &Store{Root: t.TempDir()}
-	a := stagedTask(t, s, "aaaaaa", "status: \"todo\"\nstage: \"ready\"")
+	a := stagedTask(t, s, "aaaaaa", "state: \"todo\"\nstage: \"ready\"")
 
 	// todo -> done is refused: take before done (Jørgen 11:37).
 	_, e := s.Done(a)
@@ -108,7 +108,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 		t.Fatalf("take: %s %v", node(tk), tk.Fields)
 	}
 	_, e = s.Design(a, "q", "x", "jhf")
-	wantRefused(t, e, "hug task set aaaaaa --status todo")
+	wantRefused(t, e, "hug task set aaaaaa --state todo")
 	_, e = s.Resume(a)
 	wantRefused(t, e, "hug task show aaaaaa")
 
@@ -145,7 +145,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 
 	// Reopen (Jørgen 11:40): done -> todo, done_at to History, the stage is
 	// derived again.
-	if _, e = s.Set(a, "status", "todo"); e != nil {
+	if _, e = s.Set(a, "state", "todo"); e != nil {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
@@ -156,7 +156,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 	// drop needs a reason; with one it writes dropped_reason and _at.
 	_, e = s.Drop(a, " ")
 	wantRefused(t, e, `hug task drop aaaaaa "duplicate of OTHER"`)
-	_, e = s.Set(a, "status", "dropped")
+	_, e = s.Set(a, "state", "dropped")
 	wantRefused(t, e, `hug task drop aaaaaa "duplicate of OTHER"`)
 	if _, e = s.Drop(a, "duplicate of 805p6y"); e != nil {
 		t.Fatal(e)
@@ -165,10 +165,10 @@ func TestMovesWriteNodeFields(t *testing.T) {
 	if node(tk) != "dropped" || tk.Fields["dropped_reason"] != "duplicate of 805p6y" || tk.Fields["dropped_at"] == "" {
 		t.Fatalf("drop: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
-	_, e = s.Set(a, "status", "done")
+	_, e = s.Set(a, "state", "done")
 	wantRefused(t, e, "hug task show aaaaaa")
 	// Reopen from dropped too; the reason goes to History.
-	if _, e = s.Set(a, "status", "todo"); e != nil {
+	if _, e = s.Set(a, "state", "todo"); e != nil {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
@@ -185,7 +185,7 @@ func TestMovesWriteNodeFields(t *testing.T) {
 func TestTakeForReviewAndGiveBack(t *testing.T) {
 	fixedClock(t)
 	s := &Store{Root: t.TempDir()}
-	a := stagedTask(t, s, "aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T08:00\"")
+	a := stagedTask(t, s, "aaaaaa", "state: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T08:00\"")
 	if _, e := s.TakeAs(a, "Jørgen", "human"); e != nil {
 		t.Fatal(e)
 	}
@@ -193,7 +193,7 @@ func TestTakeForReviewAndGiveBack(t *testing.T) {
 	if node(tk) != "doing/review" || tk.Fields["review_by"] != "Jørgen" || tk.Fields["doing_since"] == "" {
 		t.Fatalf("take for review: %s %v\n%s", node(tk), tk.Fields, raw)
 	}
-	if _, e := s.Set(a, "status", "todo"); e != nil {
+	if _, e := s.Set(a, "state", "todo"); e != nil {
 		t.Fatal(e)
 	}
 	tk, raw = load(t, s, a)
@@ -214,9 +214,9 @@ func TestStageCascadeChainAndCycle(t *testing.T) {
 	ids := make([]string, 10)
 	for i := range ids {
 		ids[i] = fmt.Sprintf("c%05d", i)
-		front := "status: \"todo\"\nstage: \"depends\""
+		front := "state: \"todo\"\nstage: \"depends\""
 		if i == 0 {
-			stagedTask(t, s, ids[i], "status: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00\"")
+			stagedTask(t, s, ids[i], "state: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00\"")
 			continue
 		}
 		stagedTask(t, s, ids[i], front, ids[i-1])
@@ -258,8 +258,8 @@ func TestStageCascadeChainAndCycle(t *testing.T) {
 	}
 
 	// A cycle: x <-> y. Dropping x settles y once and stops.
-	x := stagedTask(t, s, "xxxxxx", "status: \"todo\"\nstage: \"depends\"", "yyyyyy")
-	y := stagedTask(t, s, "yyyyyy", "status: \"todo\"\nstage: \"depends\"", "xxxxxx")
+	x := stagedTask(t, s, "xxxxxx", "state: \"todo\"\nstage: \"depends\"", "yyyyyy")
+	y := stagedTask(t, s, "yyyyyy", "state: \"todo\"\nstage: \"depends\"", "xxxxxx")
 	if _, e = s.Drop(x, "cycle test"); e != nil {
 		t.Fatal(e)
 	}
@@ -276,8 +276,8 @@ func TestStageCascadeChainAndCycle(t *testing.T) {
 func TestEveryWriteSettlesStagedFiles(t *testing.T) {
 	fixedClock(t)
 	s := &Store{Root: t.TempDir()}
-	a := stagedTask(t, s, "aaaaaa", "status: \"todo\"\nstage: \"ready\"")
-	b := stagedTask(t, s, "bbbbbb", "status: \"todo\"\nstage: \"ready\"")
+	a := stagedTask(t, s, "aaaaaa", "state: \"todo\"\nstage: \"ready\"")
+	b := stagedTask(t, s, "bbbbbb", "state: \"todo\"\nstage: \"ready\"")
 	if _, e := s.AddDependencies(a, []string{b}); e != nil {
 		t.Fatal(e)
 	}

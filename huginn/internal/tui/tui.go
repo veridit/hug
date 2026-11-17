@@ -566,7 +566,7 @@ func (m *model) apply(sn snapshot, path string) {
 		m.epics[id] = true
 	}
 	for _, t := range ts {
-		m.blocked[t.Path] = t.Status != "done" && t.Status != "dropped" && task.Waiting(t, ts)
+		m.blocked[t.Path] = t.State != "done" && t.State != "dropped" && task.Waiting(t, ts)
 	}
 	for _, f := range m.findings {
 		m.linted[f.Path] = true
@@ -598,7 +598,7 @@ func (m *model) applyFilter() {
 		}
 	}
 	for _, t := range m.all {
-		status := m.filter.Status
+		status := m.filter.State
 		// One place per task (zaec08): "depends" is todo with an open
 		// dependency, "todo" excludes it, "doing" keeps doing tasks that depend.
 		if status != "" && m.place(t) != status || m.filter.Type != "" && !optionalMatches(t.Type, m.filter.Type) || m.filter.Group != "" && !groupMatches(t.Group, m.filter.Group) {
@@ -634,7 +634,7 @@ func (m *model) applyFilter() {
 	m.clamp()
 }
 
-var boardStatuses = []string{"todo", "doing", "depends", "done", "dropped"}
+var boardStates = []string{"todo", "doing", "depends", "done", "dropped"}
 
 // Overview sections, top to bottom. Every task is in one place (zaec08).
 // A task with an open dependency stays in its own section with the stage
@@ -706,9 +706,9 @@ func (m *model) restore() {
 // blocked); anything else (a malformed status) is todo, still visible and
 // repairable, marked with !.
 func (m model) place(t task.Task) string {
-	switch t.Status {
+	switch t.State {
 	case "done", "dropped", "doing":
-		return t.Status
+		return t.State
 	}
 	if m.blocked[t.Path] {
 		return "depends"
@@ -716,10 +716,10 @@ func (m model) place(t task.Task) string {
 	return "todo"
 }
 
-// boardStatus is the status a detail shows: its place, except that a doing
+// boardState is the status a detail shows: its place, except that a doing
 // task waiting on a dependency is drawn depends where it stands.
-func (m model) boardStatus(t task.Task) string {
-	if t.Status == "doing" && m.blocked[t.Path] {
+func (m model) boardState(t task.Task) string {
+	if t.State == "doing" && m.blocked[t.Path] {
 		return "depends"
 	}
 	return m.place(t)
@@ -735,16 +735,16 @@ func (m model) paneIndices(p int) []int {
 		case "overview":
 			switch p {
 			case sectionDoing:
-				match = t.Status == "doing"
+				match = t.State == "doing"
 			case sectionNext:
 				// Unassigned todo, never an epic (it finishes through its
 				// children); one that depends shows its stage (Jørgen 11:43).
-				match = t.Status == "todo" && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
+				match = t.State == "todo" && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
 			case sectionLint:
 				match = m.linted[t.Path]
 			}
 		case "board":
-			match = m.place(t) == boardStatuses[p]
+			match = m.place(t) == boardStates[p]
 		case "lint":
 			match = m.linted[t.Path]
 		}
@@ -874,7 +874,7 @@ func (m *model) changePane(delta int) {
 		m.restore()
 	case "board":
 		m.remember()
-		m.pane = (m.pane + delta + len(boardStatuses)) % len(boardStatuses)
+		m.pane = (m.pane + delta + len(boardStates)) % len(boardStates)
 		m.restore()
 	default:
 		views := []string{"overview", "list", "board", "lint"}
@@ -1184,7 +1184,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if k == "1" || k == "2" || k == "3" || k == "4" {
-			m.setFilter("status", []string{"todo", "doing", "done", "depends"}[int(k[0]-'1')])
+			m.setFilter("state", []string{"todo", "doing", "done", "depends"}[int(k[0]-'1')])
 			m.setView("list")
 			return m, nil
 		}
@@ -1306,7 +1306,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "N":
 				return m, m.openInput("new title", "")
 			case "s":
-				return m, m.openInput(":", "status ")
+				return m, m.openInput(":", "state ")
 			case "y":
 				return m, m.openInput(":", "type ")
 			case "r":
@@ -1406,7 +1406,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case k == ":":
 			return m, m.openInput(":", "")
 		case k == "s":
-			return m, m.openInput(":", "status ")
+			return m, m.openInput(":", "state ")
 		case k == "y":
 			// y yanks the selected task; P and p paste it (3xcesq). The
 			// type palette is :type, f t, or y inside a task.

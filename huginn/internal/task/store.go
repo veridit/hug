@@ -36,7 +36,7 @@ type NewOptions struct {
 }
 type Filter struct {
 	Type, Priority, Label, Group, Mine string
-	Status                             string
+	State                              string
 	// Epic, when set, is an epic id: keep that epic and its children.
 	Epic string
 }
@@ -191,7 +191,7 @@ func (s *Store) load(ref string) (*Document, []Task, error) {
 	return Parse(t.Path, b), ts, nil
 }
 func hint(t Task) string {
-	switch t.Status {
+	switch t.State {
 	case "todo":
 		return "hug task take " + t.ID
 	case "doing":
@@ -293,7 +293,7 @@ func (s *Store) New(o NewOptions) (Result, error) {
 	path := filepath.ToSlash(filepath.Join(o.Group, BuildName(r, i, slug)))
 	q := func(s string) string { b, _ := json.Marshal(s); return string(b) }
 	today := time.Now().Format("2006-01-02")
-	body := "---\nid: " + i + "\ntitle: " + q(o.Title) + "\nstatus: todo\ntype: " + o.Type + "\npriority: " + q(o.Priority) + "\nassignee: []\nlabels: "
+	body := "---\nid: " + i + "\ntitle: " + q(o.Title) + "\nstate: todo\ntype: " + o.Type + "\npriority: " + q(o.Priority) + "\nassignee: []\nlabels: "
 	labels := []string{}
 	for _, l := range o.Labels {
 		labels = append(labels, q(l))
@@ -327,7 +327,7 @@ func (s *Store) New(o NewOptions) (Result, error) {
 	return created, e
 }
 func (s *Store) Set(ref, field, value string) (Result, error) {
-	if field == "status" {
+	if field == "state" {
 		return s.Transition(ref, value, "")
 	}
 	d, _, e := s.load(ref)
@@ -463,22 +463,22 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	if e != nil {
 		return Result{}, e
 	}
-	if !contains(Statuses, status) {
-		return Result{}, invalidFor(d.Task.ID, "status", status, Statuses)
+	if !contains(StateList, status) {
+		return Result{}, invalidFor(d.Task.ID, "state", status, StateList)
 	}
 	// Only the moves in Transitions (6ephqk check 3). done comes only from
 	// doing: take before done (Jørgen 11:37).
-	if d.Task.Status != status && !allowed(d.Task, status) {
+	if d.Task.State != status && !allowed(d.Task, status) {
 		fix := "hug task show " + d.Task.ID
-		if status == "done" && d.Task.Status == "todo" {
+		if status == "done" && d.Task.State == "todo" {
 			fix = "hug task take " + d.Task.ID + " --model MODEL"
 		}
 		return Result{}, refuse(d.Task, status, fix)
 	}
-	if status == "dropped" && d.Task.Status != "dropped" && strings.TrimSpace(reason) == "" {
+	if status == "dropped" && d.Task.State != "dropped" && strings.TrimSpace(reason) == "" {
 		return Result{}, usageErr(d.Task.ID, "drop needs a reason", "hug task drop "+d.Task.ID+` "duplicate of OTHER"`)
 	}
-	if d.Task.Status == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.Model == model) && (at.Branch == "" || d.Task.Branch == at.Branch) && (at.Worktree == "" || d.Task.Worktree == at.Worktree) {
+	if d.Task.State == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.Model == model) && (at.Branch == "" || d.Task.Branch == at.Branch) && (at.Worktree == "" || d.Task.Worktree == at.Worktree) {
 		return s.finish(d, false)
 	}
 	if status == "doing" && user != "" && len(d.Task.Assignee) > 0 && !contains(d.Task.Assignee, user) {
@@ -488,7 +488,7 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	// second active ticket is refused. Taking a todo/review task makes it
 	// doing/review, not active, so it is allowed (the reviewer's own work
 	// goes on).
-	if status == "doing" && user != "" && d.Task.Status != "doing" && d.Task.Stage != "review" {
+	if status == "doing" && user != "" && d.Task.State != "doing" && d.Task.Stage != "review" {
 		if a, ok := Active(user, d.Task.ID, ts); ok {
 			return Result{}, busy(d.Task, user, a)
 		}
@@ -550,7 +550,7 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 			warnings = append(warnings, "open child tasks")
 		}
 	}
-	if d.Task.Status != status {
+	if d.Task.State != status {
 		if e = stagedMove(d, ts, status, user, reason); e != nil {
 			return Result{}, e
 		}
@@ -583,7 +583,7 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	}
 	from := ""
 	if t, e := Resolve(ts, d.Task.ID); e == nil {
-		from = t.Status
+		from = t.State
 	}
 	r, e := s.finish(d, true)
 	r.Warnings = warnings
@@ -629,10 +629,10 @@ func Next(tasks []Task, f Filter) (Result, error) {
 		if newest != nil {
 			return Result{Task: *newest, Next: "hug task show " + newest.ID}, nil
 		}
-		sort.SliceStable(ts, func(i, j int) bool { return ts[i].Status == "doing" && ts[j].Status != "doing" })
+		sort.SliceStable(ts, func(i, j int) bool { return ts[i].State == "doing" && ts[j].State != "doing" })
 	}
 	for _, t := range ts {
-		if (t.Status != "todo" && !(f.Mine != "" && t.Status == "doing")) || Waiting(t, tasks) {
+		if (t.State != "todo" && !(f.Mine != "" && t.State == "doing")) || Waiting(t, tasks) {
 			continue
 		}
 		// An epic is finished through its children, never picked itself.

@@ -269,7 +269,7 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
 |---|---|
 | `init` | branch + worktree + exclude |
 | `new "title"` | create, rank at bottom (or `--top`, `--after id`) |
-| `ls [--status --label --mine]` | ranked list, from cache |
+| `ls [--state --label --mine]` | ranked list, from cache |
 | `show id` | print file |
 | `edit id` | `$EDITOR`, then lint |
 | `move id --before/--after/--top` | rerank, one file |
@@ -277,7 +277,7 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
 | `done id` | status done; blocks (exit 3) on unchecked acceptance (D17) |
 | `check id n` | tick acceptance item n (D13) |
 | `note id "text"` | append to Notes (D13) |
-| `set id --priority/--type/--label/--status/--title` | change one field (D13) |
+| `set id --priority/--type/--label/--state/--title` | change one field (D13) |
 | `drop id` | status dropped |
 | `next [--type --priority --label --group --mine]` | top unblocked, untaken todo in rank order within the filter (D12) |
 | `types` | the fixed types with one-line descriptions |

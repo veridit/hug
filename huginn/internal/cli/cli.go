@@ -33,7 +33,7 @@ Use --json with any command. IDs, unique prefixes, slugs and aliases work.
   setup                     hug task setup
   init                      hug task init
   new                       hug task new "Fix retry" --type bug --goal "Retries work" --accept "Test passes"
-  ls                        hug task ls --status todo --label api --mine
+  ls                        hug task ls --state todo --label api --mine
   show                      hug task show k7m2qx
   edit                      hug task edit k7m2qx
   move                      hug task move k7m2qx --before p3rt9a
@@ -498,7 +498,7 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	}
 	children := []Reply{}
 	for _, c := range childIndexFor(ts)[strings.ToLower(t.ID)] {
-		children = append(children, Reply{"id": c.ID, "title": c.Title, "status": c.Status})
+		children = append(children, Reply{"id": c.ID, "title": c.Title, "state": c.State})
 	}
 	out["children"] = children
 	out["notes"] = ""
@@ -560,7 +560,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "search": "status type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "upgrade": "dry-run"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -681,7 +681,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		return Reply{"next": next}, nil
 	}
-	filter := task.Filter{Type: f.get("type"), Priority: f.get("priority"), Label: f.get("label"), Group: f.get("group"), Status: f.get("status")}
+	filter := task.Filter{Type: f.get("type"), Priority: f.get("priority"), Label: f.get("label"), Group: f.get("group"), State: f.get("state")}
 	if ep := f.get("epic"); ep != "" {
 		ts, e := s.s.Tasks()
 		if e != nil {
@@ -713,13 +713,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		return nil, e
 	}
-	if filter.Status != "" && !slices.Contains(task.Statuses, filter.Status) {
-		e := task.Invalid("status", filter.Status, task.Statuses)
-		e.Fix = "hug task ls --status " + e.Closest
+	if filter.State != "" && !slices.Contains(task.StateList, filter.State) {
+		e := task.Invalid("state", filter.State, task.StateList)
+		e.Fix = "hug task ls --state " + e.Closest
 		if cmd == "set" && len(f.args) == 1 {
 			if d, err := s.s.Get(f.args[0]); err == nil {
 				e.ID = d.Task.ID
-				e.Fix = "hug task set " + d.Task.ID + " --status " + e.Closest
+				e.Fix = "hug task set " + d.Task.ID + " --state " + e.Closest
 			}
 		}
 		return nil, e
@@ -1091,7 +1091,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(1); e != nil {
 			return nil, e
 		}
-		fields := []string{"status", "type", "priority", "label", "title", "assignee", "parent"}
+		fields := []string{"state", "type", "priority", "label", "title", "assignee", "parent"}
 		count := 0
 		for _, field := range append(append([]string{}, fields...), "goal", "purpose", "principle", "details", "accept") {
 			if f.has(field) {
@@ -1099,13 +1099,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			}
 		}
 		if count == 0 {
-			return nil, usage("set needs a field: --priority, --type, --label, --status, --title, --assignee, --parent, --goal, --purpose, --principle, --details, --accept", "hug task show "+f.args[0])
+			return nil, usage("set needs a field: --priority, --type, --label, --state, --title, --assignee, --parent, --goal, --purpose, --principle, --details, --accept", "hug task show "+f.args[0])
 		}
 		if f.has("title") && strings.TrimSpace(f.get("title")) == "" {
 			return nil, usage("title must not be empty", "hug task show "+f.args[0])
 		}
-		if v := f.get("status"); v != "" && !slices.Contains(task.Statuses, v) {
-			return nil, task.Invalid("status", v, task.Statuses)
+		if v := f.get("state"); v != "" && !slices.Contains(task.StateList, v) {
+			return nil, task.Invalid("state", v, task.StateList)
 		}
 		for _, field := range fields {
 			if f.has(field) {
@@ -1253,7 +1253,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 func withGuide(reply Reply, cmd string, t task.Task, s *session) {
 	action := cmd
 	if cmd == "set" {
-		switch t.Status {
+		switch t.State {
 		case "done":
 			action = "done"
 		case "dropped":
@@ -1463,7 +1463,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			// does not crowd the list (show always names it), and the branch
 			// only when it is not the main one.
 			by := ""
-			if who := takenBy(t, main); who != "" && t["status"] == "doing" {
+			if who := takenBy(t, main); who != "" && t["state"] == "doing" {
 				by = "  [" + who + "]"
 			}
 			// Acceptance progress, ticked/total (d8yx7y); "-" without checks.
@@ -1478,11 +1478,11 @@ func (a *App) Run(ctx context.Context, args []string) int {
 				}
 				checks = fmt.Sprintf("%d/%d", done, len(items))
 			}
-			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-5s  %-*s  %s%s\n", t["id"], t["status"], t["type"], checks, w, t["slug"], t["title"], by)
+			fmt.Fprintf(a.Out, "%-6s  %-7s  %-7s  %-5s  %-*s  %s%s\n", t["id"], t["state"], t["type"], checks, w, t["slug"], t["title"], by)
 		}
 	}
 	if t, ok := reply["task"].(Reply); ok {
-		fmt.Fprintf(a.Out, "%s  %s  %s  %s\n", t["slug"], t["title"], t["id"], t["status"])
+		fmt.Fprintf(a.Out, "%s  %s  %s  %s\n", t["slug"], t["title"], t["id"], t["state"])
 		// The stage, worded as the TUI row's second line, so a wait or a
 		// review is seen in show too (456vyt: a wait printed nothing).
 		if line := stageLine(t); line != "" {
@@ -1525,7 +1525,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 		if ds, ok := t["dependency_details"].([]task.DependencyDetail); ok {
 			for _, d := range ds {
-				status := d.Status
+				status := d.State
 				if d.OpenChildren > 0 {
 					status += fmt.Sprintf(", epic: %d open", d.OpenChildren)
 				}
@@ -1550,7 +1550,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 		if cs, ok := t["children"].([]Reply); ok {
 			for _, c := range cs {
-				fmt.Fprintf(a.Out, "child: %s  %s  [%s]\n", c["id"], c["title"], c["status"])
+				fmt.Fprintf(a.Out, "child: %s  %s  [%s]\n", c["id"], c["title"], c["state"])
 			}
 		}
 	}
@@ -1737,7 +1737,7 @@ func stageLine(t Reply) string {
 		return strings.TrimSpace(head+" "+fields["waiting_on"]) + since("waiting_since")
 	case "review":
 		head := "waiting for review"
-		if t["status"] == "doing" {
+		if t["state"] == "doing" {
 			head = "in review"
 		}
 		return head + by("review_by") + since("review_since")

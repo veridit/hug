@@ -282,7 +282,7 @@ func TestTmuxGolden(t *testing.T) {
 				special("Escape")
 				wait("HUG TASKS · list")
 				send("1")
-				wait("status:todo")
+				wait("state:todo")
 				send("f")
 				wait("choose a field")
 				send("t")

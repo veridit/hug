@@ -386,7 +386,7 @@ func main() {
 				fs, _ := snap.Findings()
 				var bf []recall.BoardFinding
 				for _, f := range fs {
-					bf = append(bf, recall.BoardFinding{TaskID: f.TaskID, TaskStatus: f.TaskStatus, Problem: f.Problem, Fix: f.Fix})
+					bf = append(bf, recall.BoardFinding{TaskID: f.TaskID, TaskState: f.TaskState, Problem: f.Problem, Fix: f.Fix})
 				}
 				in.Findings = func() []recall.BoardFinding { return bf }
 			}
@@ -479,9 +479,9 @@ func boardState(s *board.Snapshot, id, self string) string {
 	var doing []string
 	for _, t := range s.Tasks {
 		if t.ID == id {
-			fmt.Fprintf(&b, "task %s %q is %s, assignee %v, %d of %d checks ticked. ", t.ID, t.Title, t.Status, t.Assignee, t.Checks-t.Open, t.Checks)
+			fmt.Fprintf(&b, "task %s %q is %s, assignee %v, %d of %d checks ticked. ", t.ID, t.Title, t.State, t.Assignee, t.Checks-t.Open, t.Checks)
 		}
-		if t.Status == "doing" {
+		if t.State == "doing" {
 			doing = append(doing, fmt.Sprintf("%s (%v)", t.ID, t.Assignee))
 		}
 	}

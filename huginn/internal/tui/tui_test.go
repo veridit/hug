@@ -114,12 +114,12 @@ func TestActions(t *testing.T) {
 	m = act(m, " ")
 	m = act(m, "t")
 	d, e := m.store.Get(first)
-	if e != nil || d.Task.Status != "doing" || len(d.Task.Assignee) != 1 {
+	if e != nil || d.Task.State != "doing" || len(d.Task.Assignee) != 1 {
 		t.Fatal(d, e)
 	}
 	m = act(m, "d")
 	d, _ = m.store.Get(first)
-	if d.Task.Status != "done" {
+	if d.Task.State != "done" {
 		t.Fatal(m.message)
 	}
 	// x asks why, then confirms the drop with the reason.
@@ -129,7 +129,7 @@ func TestActions(t *testing.T) {
 	}
 	m = press(m, "enter")
 	d, _ = m.store.Get(first)
-	if d.Task.Status != "dropped" {
+	if d.Task.State != "dropped" {
 		t.Fatal(m.message)
 	}
 	if commits != 7 {
@@ -137,7 +137,7 @@ func TestActions(t *testing.T) {
 	}
 	m.opts.Commit = func(string) error { return errors.New("commit failed") }
 	// A dropped task is not taken (6ephqk): reopen it first.
-	if _, err := m.store.Set(first, "status", "todo"); err != nil {
+	if _, err := m.store.Set(first, "state", "todo"); err != nil {
 		t.Fatal(err)
 	}
 	m.refresh("")
@@ -174,7 +174,7 @@ func TestFilters(t *testing.T) {
 	for _, tc := range []struct {
 		cmd  string
 		want int
-	}{{"status todo", 2}, {"type bug", 1}, {"group auth", 1}, {"label urgent", 1}} {
+	}{{"state todo", 2}, {"type bug", 1}, {"group auth", 1}, {"label urgent", 1}} {
 		t.Run(tc.cmd, func(t *testing.T) {
 			m := commandLine(fixture(t), tc.cmd)
 			if len(m.visible) != tc.want {

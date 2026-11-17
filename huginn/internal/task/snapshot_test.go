@@ -40,7 +40,7 @@ func TestSnapshotReadsOnceAndAfterWrites(t *testing.T) {
 		t.Fatal("board after a write is stale:", ts[0].Title)
 	}
 	before := reads
-	if e := os.WriteFile(filepath.Join(root, "a1.m3n4p5.other.md"), []byte("---\nid: m3n4p5\ntitle: Other\nstatus: todo\ntype: bug\n---\n\n## Goal\nx\n\n## Acceptance\n- [ ] y\n"), 0644); e != nil {
+	if e := os.WriteFile(filepath.Join(root, "a1.m3n4p5.other.md"), []byte("---\nid: m3n4p5\ntitle: Other\nstate: todo\ntype: bug\n---\n\n## Goal\nx\n\n## Acceptance\n- [ ] y\n"), 0644); e != nil {
 		t.Fatal(e)
 	}
 	s.Invalidate()

@@ -100,7 +100,7 @@ class Scorers(unittest.TestCase):
 
     def test_blocked_status_and_dependency_survive(self):
         s = next(s for s in SCENARIOS if s['id'] == 'blocked-finish')
-        for path, value in [(['tasks',1,'status'], 'done'), (['tasks',0,'status'], 'done'),
+        for path, value in [(['tasks',1,'state'], 'done'), (['tasks',0,'state'], 'done'),
                             (['tasks',1,'dependencies'], []), (['tasks',1,'notes'], 'blocked')]:
             broken = state(s)
             replace(broken, path, value)

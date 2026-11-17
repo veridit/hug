@@ -23,7 +23,7 @@ type sortField struct {
 var sortFields = []sortField{
 	{"p", "priority", "critical first", true},
 	{"t", "type", "feature, bug, chore, spike, docs", false},
-	{"s", "status", "todo, doing, depends, done, dropped", false},
+	{"s", "state", "todo, doing, depends, done, dropped", false},
 	{"u", "updated", "newest first", true},
 	{"c", "created", "newest first", true},
 	{"g", "group", "a to z", false},
@@ -167,7 +167,7 @@ func sortValue(field string, t task.Task) string {
 		return t.Priority
 	case "type":
 		return t.Type
-	case "status":
+	case "state":
 		return "set" // every task has a place
 	case "updated":
 		return strings.Trim(strings.TrimSpace(t.Updated), `"'`)
@@ -209,8 +209,8 @@ func (m model) compareBy(field string, a, b task.Task) int {
 		return pa - pb
 	case "type":
 		return order(task.Types, a.Type) - order(task.Types, b.Type)
-	case "status":
-		return order(boardStatuses, m.place(a)) - order(boardStatuses, m.place(b))
+	case "state":
+		return order(boardStates, m.place(a)) - order(boardStates, m.place(b))
 	}
 	// Dates in ISO form, and names, compare as text.
 	return strings.Compare(strings.ToLower(sortValue(field, a)), strings.ToLower(sortValue(field, b)))

@@ -171,7 +171,7 @@ func writeScaleBoard(t testing.TB, root string, n int) {
 		for c := 0; c < r.Intn(5); c++ {
 			notes = append(notes, text(20+r.Intn(100)))
 		}
-		body := fmt.Sprintf("---\nid: %s\ntitle: \"%s\"\nstatus: %s\ntype: feature\npriority: \"medium\"\nassignee: %s\nlabels: []\n%screated: 2026-10-%02d\nupdated: 2026-11-%02d\n---\n\n## Goal\n%s\n\n## Purpose\n%s\n\n## Principle\n%s\n\n## Relevant details\n%s\n\n## Depends on\n%s\n## Acceptance\n%s\n## Notes\n%s\n",
+		body := fmt.Sprintf("---\nid: %s\ntitle: \"%s\"\nstate: %s\ntype: feature\npriority: \"medium\"\nassignee: %s\nlabels: []\n%screated: 2026-10-%02d\nupdated: 2026-11-%02d\n---\n\n## Goal\n%s\n\n## Purpose\n%s\n\n## Principle\n%s\n\n## Relevant details\n%s\n\n## Depends on\n%s\n## Acceptance\n%s\n## Notes\n%s\n",
 			id, text(3+r.Intn(7)), st, assignee, parent, 1+r.Intn(28), 1+r.Intn(16), text(18), text(14), text(14), text(40), deps, checks.String(), strings.Join(notes, "\n\n"))
 		dir := filepath.Join(root, groups[r.Intn(len(groups))])
 		if e := os.MkdirAll(dir, 0o755); e != nil {

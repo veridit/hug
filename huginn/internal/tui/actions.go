@@ -23,12 +23,12 @@ const dropPrompt = "drop: why never?"
 func (m *model) startAction(k string) tea.Cmd {
 	t, ok := m.selected()
 	switch {
-	case ok && k == "d" && t.Status == "todo":
+	case ok && k == "d" && t.State == "todo":
 		m.message = t.ID + " is todo: t takes it, then d marks it done"
 		return nil
-	case ok && k == "x" && t.Status != "dropped":
+	case ok && k == "x" && t.State != "dropped":
 		return m.openInput(dropPrompt, "")
-	case ok && k == "t" && t.Status == "doing" && m.me() != "" && contains(t.Assignee, m.me()):
+	case ok && k == "t" && t.State == "doing" && m.me() != "" && contains(t.Assignee, m.me()):
 		// t on your own task gives it back to todo, keeping its stage
 		// (6ephqk check 6): confirmed as "Give back".
 		m.requestAction("t", "give back")
@@ -119,7 +119,7 @@ func (m *model) executeAction() tea.Cmd {
 		r, err = m.store.New(task.NewOptions{Title: value, Goal: value, Acceptance: []string{"Verify " + value}})
 	case "t":
 		if value == "give back" {
-			r, err = m.store.Set(t.ID, "status", "todo")
+			r, err = m.store.Set(t.ID, "state", "todo")
 			action = "give back"
 			break
 		}

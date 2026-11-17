@@ -17,7 +17,7 @@ func TestTransactionalRaceRefreshesWinner(t *testing.T) {
 		return task.Result{}, errors.New("taken by alice")
 	}
 	m = act(m, "t")
-	if m.message != "taken by alice" || !contains(m.visible[0].Assignee, "alice") || m.visible[0].Status != "doing" {
+	if m.message != "taken by alice" || !contains(m.visible[0].Assignee, "alice") || m.visible[0].State != "doing" {
 		t.Fatal(m.View())
 	}
 }
@@ -39,7 +39,7 @@ func TestTransactionalTakeOwnsCommit(t *testing.T) {
 		t.Fatalf("take=%d commits=%d", calls, commits)
 	}
 	d, err := m.store.Get(id)
-	if err != nil || d.Task.Status != "doing" || !contains(d.Task.Assignee, "remote-user") {
+	if err != nil || d.Task.State != "doing" || !contains(d.Task.Assignee, "remote-user") {
 		t.Fatal(d, err)
 	}
 	m = press(m, "x", "superseded", "enter", "enter")
@@ -56,7 +56,7 @@ func TestTransactionalTakeErrorsStayInline(t *testing.T) {
 		t.Fatal(m.View())
 	}
 	d, err := m.store.Get(m.visible[0].ID)
-	if err != nil || d.Task.Status != "todo" {
+	if err != nil || d.Task.State != "todo" {
 		t.Fatal(d, err)
 	}
 }

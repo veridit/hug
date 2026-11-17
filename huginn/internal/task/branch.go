@@ -15,7 +15,7 @@ import (
 func BranchFindings(repoDir, main string, ts []Task) []Finding {
 	var doing []Task
 	for _, t := range ts {
-		if t.Status == "doing" && t.Branch != "" && t.Branch != main {
+		if t.State == "doing" && t.Branch != "" && t.Branch != main {
 			doing = append(doing, t)
 		}
 	}

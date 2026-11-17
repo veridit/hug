@@ -42,10 +42,11 @@ var Codes = []CodeInfo{
 	{"frontmatter", "the --- header is missing or malformed", Broken},
 	{"duplicate-section", "a section heading appears twice", Broken},
 	{"duplicate-field", "a header field appears twice", Broken},
-	{"missing-field", "id, title or status is missing", Broken},
+	{"missing-field", "id, title or state is missing", Broken},
+	{"old-layout", "the file says status: where state: goes (a board from before the state: rename; hug upgrade moves it)", Broken},
 	{"invalid-id", "the id is not 6 characters of 0-9 a-z", Broken},
 	{"id-mismatch", "the file name id differs from the header id", Broken},
-	{"unknown-status", "status is not todo, doing, done or dropped", Broken},
+	{"unknown-state", "state is not todo, doing, done or dropped", Broken},
 	{"unknown-stage", "the stage is not a stage of the task's state (hug task states)", Broken},
 	{"stray-node-field", "a node field (doing_since, waiting_on ...) outside its node", Broken},
 	{"missing-node-field", "the state or stage needs a field the task lacks (waiting_on ...)", Broken},
@@ -187,8 +188,8 @@ func ShownFindings(fs []Finding, tasks []Task) (shown, hidden []Finding) {
 func closedPaths(tasks []Task) func(path string) bool {
 	status := map[string]string{}
 	for _, t := range tasks {
-		status[t.Path] = t.Status
-		status[FolderOf(t)+"/"] = t.Status
+		status[t.Path] = t.State
+		status[FolderOf(t)+"/"] = t.State
 	}
 	return func(path string) bool {
 		s, ok := status[path]

@@ -120,7 +120,7 @@ func TestQuestionsFromNotes(t *testing.T) {
 // a question is not asked twice.
 func TestIdleQuestion(t *testing.T) {
 	now := time.Date(2026, 11, 17, 18, 0, 0, 0, time.Local)
-	tk := Task{ID: "b1b1b1", Path: "x.b1b1b1.idle.md", Status: "doing", Stage: "active", Assignee: []string{"kestrel"},
+	tk := Task{ID: "b1b1b1", Path: "x.b1b1b1.idle.md", State: "doing", Stage: "active", Assignee: []string{"kestrel"},
 		Fields: map[string]string{"doing_since": now.Add(-5 * time.Hour).Format("2006-01-02T15:04")}}
 	ask := func(last map[string]time.Time, asked map[string]bool) []Finding {
 		return IdleFindings([]Task{tk}, last, asked, now)

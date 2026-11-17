@@ -22,7 +22,7 @@ func TestTextsLeaveTheBlob(t *testing.T) {
 	root := t.TempDir()
 	db := filepath.Join(t.TempDir(), "cache.db")
 	body := func(i int, note string) []byte {
-		return []byte(fmt.Sprintf("---\nid: %s\ntitle: Task %d\nstatus: todo\n---\n\n## Goal\nA visible result.\n\n## Purpose\nWhy %d.\n\n## Relevant details\nSee file:x.txt\n\n## Acceptance\n- [ ] passes\n\n## Notes\n%s\n", testID(i), i, i, note))
+		return []byte(fmt.Sprintf("---\nid: %s\ntitle: Task %d\nstate: todo\n---\n\n## Goal\nA visible result.\n\n## Purpose\nWhy %d.\n\n## Relevant details\nSee file:x.txt\n\n## Acceptance\n- [ ] passes\n\n## Notes\n%s\n", testID(i), i, i, note))
 	}
 	for i := 1; i <= 3; i++ {
 		put(t, root, fmt.Sprintf("A.%06d.task.md", i), body(i, fmt.Sprintf("note %d", i)))

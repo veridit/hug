@@ -15,7 +15,7 @@ import (
 	"unicode"
 )
 
-var Statuses = []string{"todo", "doing", "done", "dropped"}
+var StateList = []string{"todo", "doing", "done", "dropped"}
 var Types = []string{"feature", "bug", "chore", "spike", "docs"}
 
 type Finding struct {
@@ -42,9 +42,10 @@ var findingCodes = []struct{ prefix, code string }{
 	{"duplicate section", "duplicate-section"},
 	{"duplicate field", "duplicate-field"},
 	{"missing field", "missing-field"},
+	{"old layout", "old-layout"},
 	{"invalid id", "invalid-id"},
 	{"filename id differs", "id-mismatch"},
-	{"unknown status", "unknown-status"},
+	{"unknown state", "unknown-state"},
 	{"unknown stage", "unknown-stage"},
 	{"node field ", "stray-node-field"},
 	{"missing node field", "missing-node-field"},
@@ -123,8 +124,10 @@ func (f Finding) FixLine() string {
 		return "hug task lint"
 	}
 	switch FindingCode(f.Problem) {
-	case "unknown-status":
-		return "hug task set " + i + " --status todo"
+	case "unknown-state":
+		return "hug task set " + i + " --state todo"
+	case "old-layout":
+		return "hug upgrade"
 	case "unknown-type":
 		return "hug task set " + i + " --type feature"
 	case "missing-parent", "self-parent":
@@ -203,13 +206,13 @@ func isDay(s string) bool {
 }
 
 type Task struct {
-	ID     string `json:"id"`
-	Path   string `json:"path"`
-	Group  string `json:"group"`
-	Rank   string `json:"rank"`
-	Slug   string `json:"slug"`
-	Title  string `json:"title"`
-	Status string `json:"status"`
+	ID    string `json:"id"`
+	Path  string `json:"path"`
+	Group string `json:"group"`
+	Rank  string `json:"rank"`
+	Slug  string `json:"slug"`
+	Title string `json:"title"`
+	State string `json:"state"`
 	// Stage is the task's stage within its state (6ephqk): todo ready,
 	// doing waiting ... Empty on a board hug upgrade has not migrated yet.
 	Stage string `json:"stage,omitempty"`
@@ -493,8 +496,19 @@ func Parse(path string, data []byte) *Document {
 	if section != "" {
 		d.sections[section] = [2]int{sectionStart, len(d.lines)}
 	}
-	for _, field := range []struct{ k, v string }{{"id", d.Task.ID}, {"title", d.Task.Title}, {"status", d.Task.Status}} {
+	// A file from before 6ephqk step 4 says status: where state: goes.
+	// hug upgrade renames it; until then the task reads as its old state.
+	_, hasState := d.fields["state"]
+	if _, old := d.fields["status"]; old && !hasState {
+		d.add(d.fieldLine("status"), "old layout: status: is now state:")
+	}
+	for _, field := range []struct{ k, v string }{{"id", d.Task.ID}, {"title", d.Task.Title}, {"state", d.Task.State}} {
 		_, ok := d.fields[field.k]
+		if field.k == "state" && !ok {
+			if _, old := d.fields["status"]; old {
+				continue // the old-layout finding says it, with hug upgrade
+			}
+		}
 		if !ok || strings.TrimSpace(field.v) == "" {
 			d.add(1, "missing field "+field.k)
 		}
@@ -505,8 +519,8 @@ func Parse(path string, data []byte) *Document {
 	if i != "" && i != d.Task.ID {
 		d.add(1, "filename id differs from frontmatter id")
 	}
-	if !contains(Statuses, d.Task.Status) {
-		d.add(d.fieldLine("status"), "unknown status "+d.Task.Status)
+	if !contains(StateList, d.Task.State) {
+		d.add(d.fieldLine("state"), "unknown state "+d.Task.State)
 	}
 	d.stageFindings()
 	if d.Task.Type != "" && !contains(Types, d.Task.Type) {
@@ -524,7 +538,7 @@ func Parse(path string, data []byte) *Document {
 			Problem: "sections out of order: " + strings.Join(d.Task.Sections, ", ") + "; the order is " + strings.Join(OrderedSections(d.Task.Sections), ", "),
 			Fix:     "hug upgrade"})
 	}
-	if d.Task.Status == "done" {
+	if d.Task.State == "done" {
 		for n, a := range d.Task.Acceptance {
 			if !a.Settled() {
 				// Broken, not advice (Jørgen 2026-11-16, pbh9xq): the board says

@@ -46,7 +46,7 @@ func PeopleFindings(people []Person, ts []Task) []Finding {
 	known := KnownNames(people, ts)
 	var out []Finding
 	for _, t := range ts {
-		if t.Status == "done" || t.Status == "dropped" {
+		if t.State == "done" || t.State == "dropped" {
 			continue
 		}
 		for _, k := range personFields {

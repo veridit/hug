@@ -15,7 +15,7 @@ func wantBusy(t *testing.T, e error, active string) *Error {
 	want := []string{
 		"hug task done " + active,
 		"hug task wait " + active + ` "on what"`,
-		"hug task set " + active + " --status todo && hug task note " + active + ` "why it goes back"`,
+		"hug task set " + active + " --state todo && hug task note " + active + ` "why it goes back"`,
 	}
 	if strings.Join(te.Fixes, "|") != strings.Join(want, "|") || te.Fix != want[0] {
 		t.Fatalf("fixes %q (fix %q), want %q", te.Fixes, te.Fix, want)
@@ -31,14 +31,14 @@ func wantBusy(t *testing.T, e error, active string) *Error {
 // lines, and the refused task stays untouched in todo.
 func TestSecondTakeWhileActiveIsRefused(t *testing.T) {
 	s, _ := newStore(t)
-	a := stagedTask(t, s, "aaaaaa", `status: "todo"`)
-	b := stagedTask(t, s, "bbbbbb", `status: "todo"`)
+	a := stagedTask(t, s, "aaaaaa", `state: "todo"`)
+	b := stagedTask(t, s, "bbbbbb", `state: "todo"`)
 	if _, e := s.TakeAs(a, "kestrel", "claude-opus-5-5"); e != nil {
 		t.Fatal(e)
 	}
 	_, e := s.TakeAs(b, "kestrel", "claude-opus-5-5")
 	wantBusy(t, e, a)
-	if tk, _ := load(t, s, b); tk.Status != "todo" || len(tk.Assignee) != 0 {
+	if tk, _ := load(t, s, b); tk.State != "todo" || len(tk.Assignee) != 0 {
 		t.Fatalf("refused task changed: %s %v", node(tk), tk.Assignee)
 	}
 	// Someone else may still take it, and taking your own again is a no-op.
@@ -49,8 +49,8 @@ func TestSecondTakeWhileActiveIsRefused(t *testing.T) {
 		t.Fatalf("retaking your own active task: %v changed=%v", e, r.Changed)
 	}
 	// A person is held to the same rule.
-	c := stagedTask(t, s, "cccccc", `status: "todo"`)
-	d := stagedTask(t, s, "dddddd", `status: "todo"`)
+	c := stagedTask(t, s, "cccccc", `state: "todo"`)
+	d := stagedTask(t, s, "dddddd", `state: "todo"`)
 	if _, e = s.TakeAs(c, "Jørgen", "human"); e != nil {
 		t.Fatal(e)
 	}
@@ -58,7 +58,7 @@ func TestSecondTakeWhileActiveIsRefused(t *testing.T) {
 	wantBusy(t, e, c)
 	// Taking a review (todo/review -> doing/review) is not work of one's
 	// own: it is allowed beside the active ticket.
-	r := stagedTask(t, s, "rrrrrr", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T08:00\"")
+	r := stagedTask(t, s, "rrrrrr", "state: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T08:00\"")
 	if _, e = s.TakeAs(r, "Jørgen", "human"); e != nil {
 		t.Fatalf("review take beside active work: %v", e)
 	}
@@ -77,19 +77,19 @@ func TestTakeAllowedWhenEarlierIsNotActive(t *testing.T) {
 		front string
 		deps  []string
 	}{
-		{"waiting", "status: \"doing\"\nstage: \"waiting\"\nwaiting_on: \"landing turn: after hatchling\"\nwaiting_since: \"2026-11-17T13:33\"\ndoing_since: \"2026-11-17T12:51\"", nil},
-		{"review", "status: \"doing\"\nstage: \"review\"\nreview_by: \"kestrel\"\ndoing_since: \"2026-11-17T12:51\"", nil},
-		{"depends", "status: \"doing\"\ndoing_since: \"2026-11-17T12:51\"", []string{"zzzzzz"}},
+		{"waiting", "state: \"doing\"\nstage: \"waiting\"\nwaiting_on: \"landing turn: after hatchling\"\nwaiting_since: \"2026-11-17T13:33\"\ndoing_since: \"2026-11-17T12:51\"", nil},
+		{"review", "state: \"doing\"\nstage: \"review\"\nreview_by: \"kestrel\"\ndoing_since: \"2026-11-17T12:51\"", nil},
+		{"depends", "state: \"doing\"\ndoing_since: \"2026-11-17T12:51\"", []string{"zzzzzz"}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			s, _ := newStore(t)
-			stagedTask(t, s, "zzzzzz", `status: "todo"`)
+			stagedTask(t, s, "zzzzzz", `state: "todo"`)
 			first := stagedTask(t, s, "aaaaaa", tc.front+"\nmodel: \"claude-opus-5-5\"", tc.deps...)
 			mark(t, s, first, "kestrel")
 			if tk, _ := load(t, s, first); Stage(tk, all(t, s)) != tc.name {
 				t.Fatalf("setup: stage %q, want %q", Stage(tk, all(t, s)), tc.name)
 			}
-			b := stagedTask(t, s, "bbbbbb", `status: "todo"`)
+			b := stagedTask(t, s, "bbbbbb", `state: "todo"`)
 			if _, e := s.TakeAs(b, "kestrel", "claude-opus-5-5"); e != nil {
 				t.Fatalf("take with the earlier one %s: %v", tc.name, e)
 			}
@@ -105,8 +105,8 @@ func TestTakeAllowedWhenEarlierIsNotActive(t *testing.T) {
 		t.Run("after "+free, func(t *testing.T) {
 			s, _ := newStore(t)
 			s.AcceptanceMode = "warn"
-			a := stagedTask(t, s, "aaaaaa", `status: "todo"`)
-			b := stagedTask(t, s, "bbbbbb", `status: "todo"`)
+			a := stagedTask(t, s, "aaaaaa", `state: "todo"`)
+			b := stagedTask(t, s, "bbbbbb", `state: "todo"`)
 			if _, e := s.TakeAs(a, "kestrel", "claude-opus-5-5"); e != nil {
 				t.Fatal(e)
 			}
@@ -117,7 +117,7 @@ func TestTakeAllowedWhenEarlierIsNotActive(t *testing.T) {
 			case "wait":
 				_, e = s.Wait(a, "CI run 1", "")
 			case "todo":
-				_, e = s.Set(a, "status", "todo")
+				_, e = s.Set(a, "state", "todo")
 			}
 			if e != nil {
 				t.Fatal(e)

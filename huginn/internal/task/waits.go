@@ -116,7 +116,7 @@ func boardState(st cond.State, tasks []Task) cond.State {
 				for g := t.Group; g != ""; {
 					c := groups[strings.ToLower(g)]
 					c[0]++
-					if t.Status != "done" && t.Status != "dropped" {
+					if t.State != "done" && t.State != "dropped" {
 						c[1]++
 					}
 					groups[strings.ToLower(g)] = c
@@ -138,7 +138,7 @@ func boardState(st cond.State, tasks []Task) cond.State {
 // dropped, or t is an epic whose children are all done or dropped (16dxsr:
 // depending on an epic waits for its whole content, not its own status).
 func Closed(t Task, tasks []Task) bool {
-	if t.Status == "done" || t.Status == "dropped" {
+	if t.State == "done" || t.State == "dropped" {
 		return true
 	}
 	kids := childPositions(tasks, t)
@@ -146,7 +146,7 @@ func Closed(t Task, tasks []Task) bool {
 		return false
 	}
 	for _, i := range kids {
-		if s := tasks[i].Status; s != "done" && s != "dropped" {
+		if s := tasks[i].State; s != "done" && s != "dropped" {
 			return false
 		}
 	}
@@ -228,7 +228,7 @@ func Waits(t Task, tasks []Task) []WaitDetail {
 			n, known := inner(name)
 			g := strings.ToLower(strings.Trim(name, "/"))
 			mine := strings.ToLower(t.Group)
-			if known && n > 0 && t.Status != "done" && t.Status != "dropped" && (mine == g || strings.HasPrefix(mine, g+"/")) {
+			if known && n > 0 && t.State != "done" && t.State != "dropped" && (mine == g || strings.HasPrefix(mine, g+"/")) {
 				n--
 			}
 			return n, known
@@ -278,7 +278,7 @@ func Waiting(t Task, tasks []Task) bool {
 func WaitFindings(ts []Task) []Finding {
 	var out []Finding
 	for _, t := range ts {
-		if len(t.Waits) == 0 || t.Status == "done" || t.Status == "dropped" {
+		if len(t.Waits) == 0 || t.State == "done" || t.State == "dropped" {
 			continue
 		}
 		for _, w := range Waits(t, ts) {

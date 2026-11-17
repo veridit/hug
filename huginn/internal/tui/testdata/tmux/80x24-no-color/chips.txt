@@ -1,7 +1,7 @@
 HUG TASKS · list   2/60 tasks · ! 4 broken · 5 advice
  overview   [list]   board    !lint
 todo 2  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0
-[status:todo ×] [type:feature ×] [/ task] · ⌫ last · F clear
+[state:todo ×] [type:feature ×] [/ task] · ⌫ last · F clear
   ✓     ID       TYPE    PRIORITY STAGE     TITLE
 > ○ 2   000041   feature critical ready     Feature task 41: make the terminal …
  ·○ 2   000001   feature critical ready     ⎘2 Feature task 01: make the termin…
@@ -19,6 +19,6 @@ Rows 1–2 of 2 · ! lint finding · depends = a dependency is not done
 
 
 
-status=todo · type=feature · find=task · Esc clears
+state=todo · type=feature · find=task · Esc clears
 
 j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit

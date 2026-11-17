@@ -149,7 +149,7 @@ func (m model) paneCount() int {
 	case "overview":
 		return len(overviewSections)
 	case "board":
-		return len(boardStatuses)
+		return len(boardStates)
 	}
 	return 1
 }

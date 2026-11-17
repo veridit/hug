@@ -49,8 +49,8 @@ func TestGitHubIssuesImport(t *testing.T) {
 		}
 	}
 	login := by["GH-7"]
-	if login.Status != "todo" || len(login.Acceptance) != 2 || !login.Acceptance[0].Checked || login.Acceptance[1].Checked {
-		t.Errorf("GH-7: status %q acceptance %+v", login.Status, login.Acceptance)
+	if login.State != "todo" || len(login.Acceptance) != 2 || !login.Acceptance[0].Checked || login.Acceptance[1].Checked {
+		t.Errorf("GH-7: status %q acceptance %+v", login.State, login.Acceptance)
 	}
 	if len(login.Labels) != 1 || login.Labels[0] != "bug" || len(login.Assignee) != 1 || login.Assignee[0] != "ann" {
 		t.Errorf("GH-7 labels/assignee: %+v %+v", login.Labels, login.Assignee)
@@ -58,8 +58,8 @@ func TestGitHubIssuesImport(t *testing.T) {
 	if !strings.Contains(login.Goal, "Users cannot log in.") || strings.Contains(login.Goal, "reproduce") {
 		t.Errorf("GH-7 goal should hold the body without the checklist: %q", login.Goal)
 	}
-	if by["GH-8"].Status != "dropped" || by["GH-9"].Status != "done" {
-		t.Errorf("status: GH-8 %q, GH-9 %q", by["GH-8"].Status, by["GH-9"].Status)
+	if by["GH-8"].State != "dropped" || by["GH-9"].State != "done" {
+		t.Errorf("status: GH-8 %q, GH-9 %q", by["GH-8"].State, by["GH-9"].State)
 	}
 	if a := by["GH-9"].Acceptance; len(a) != 1 || !a[0].Checked {
 		t.Errorf("GH-9 default acceptance: %+v", a)

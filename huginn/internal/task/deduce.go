@@ -174,7 +174,7 @@ func (s *Store) ApplyDeductions(ds []Deduction) ([]Deduction, error) {
 			continue
 		}
 		d.Note(x.Note)
-		if tag, ok := strings.CutPrefix(x.Marked, "shipped in "); ok && d.Task.Status == "done" && d.Task.Fields["done_release"] == "" {
+		if tag, ok := strings.CutPrefix(x.Marked, "shipped in "); ok && d.Task.State == "done" && d.Task.Fields["done_release"] == "" {
 			if e := d.SetField("done_release", tag); e != nil {
 				return done, e
 			}

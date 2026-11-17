@@ -62,8 +62,8 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	write("aaaaaa", "Approve the status colours", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T09:00\"\nassignee: []")
-	write("bbbbbb", "My own work", "status: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00\"\nassignee: [\"Jørgen\"]\nmodel: \"human\"")
+	write("aaaaaa", "Approve the status colours", "state: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T09:00\"\nassignee: []")
+	write("bbbbbb", "My own work", "state: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00\"\nassignee: [\"Jørgen\"]\nmodel: \"human\"")
 	run("git", "-C", tasks, "add", "-A")
 	run("git", "-C", tasks, "commit", "-q", "-m", "fixture tasks")
 
@@ -118,7 +118,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 		return string(b)
 	}
 	a := file("aaaaaa")
-	for _, want := range []string{"status: \"doing\"", "stage: \"review\"", "review_by: \"Jørgen\"", "doing_since: ", "todo/review -> doing/review (take for review)"} {
+	for _, want := range []string{"state: \"doing\"", "stage: \"review\"", "review_by: \"Jørgen\"", "doing_since: ", "todo/review -> doing/review (take for review)"} {
 		if !strings.Contains(a, want) {
 			t.Fatalf("after t on todo/review, the file lacks %q:\n%s\n%s", want, a, screen)
 		}
@@ -140,7 +140,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	send("Enter")
 	wait("give back bbbbbb")
 	b := file("bbbbbb")
-	for _, want := range []string{"status: \"todo\"", "stage: \"ready\"", "doing/active -> todo/ready (give back; was assignee: Jørgen)"} {
+	for _, want := range []string{"state: \"todo\"", "stage: \"ready\"", "doing/active -> todo/ready (give back; was assignee: Jørgen)"} {
 		if !strings.Contains(b, want) {
 			t.Fatalf("after t on my own task, the file lacks %q:\n%s", want, b)
 		}
@@ -158,7 +158,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	wait("Give back aaaaaa to todo (review)?")
 	send("Enter")
 	wait("give back aaaaaa")
-	if a = file("aaaaaa"); !strings.Contains(a, "status: \"todo\"") || !strings.Contains(a, "stage: \"review\"") {
+	if a = file("aaaaaa"); !strings.Contains(a, "state: \"todo\"") || !strings.Contains(a, "stage: \"review\"") {
 		t.Fatalf("review given back:\n%s", a)
 	}
 }

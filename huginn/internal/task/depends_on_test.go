@@ -101,7 +101,7 @@ func TestMissingDependencyNamesIDAndFix(t *testing.T) {
 // Prose next to a real dependency: only the real line counts.
 func TestProseBesideRealDependency(t *testing.T) {
 	a := Parse("a.k7m2qx.a.md", withDeps("- p3rt9a\n"+jorgenEdit+"\n"))
-	b := Parse("b.p3rt9a.b.md", []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: p3rt9a", 1), "status: todo", "status: done", 1)))
+	b := Parse("b.p3rt9a.b.md", []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: p3rt9a", 1), "state: todo", "state: done", 1)))
 	if len(a.Task.Dependencies) != 1 || a.Task.Dependencies[0].Ref != "p3rt9a" {
 		t.Fatalf("deps: %+v", a.Task.Dependencies)
 	}
@@ -115,7 +115,7 @@ func TestEveryFindingHasFix(t *testing.T) {
 	docs := []*Document{
 		Parse("garbage.md", []byte("garbage")),
 		Parse("a.k7m2qx.a.md", withDeps("- zz9zz9\n"+jorgenEdit+"\n")),
-		Parse("b.p3rt9a.b.md", []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: p3rt9a", 1), "status: todo", "status: done", 1))),
+		Parse("b.p3rt9a.b.md", []byte(strings.Replace(strings.Replace(sample, "id: k7m2qx", "id: p3rt9a", 1), "state: todo", "state: done", 1))),
 	}
 	fs := Lint(docs)
 	if len(fs) < 4 {

@@ -274,7 +274,7 @@ func TestMetadataDoesNotClobberUnknownFields(t *testing.T) {
 	d := task.Parse("000001.synthetic.md", converted)
 	// Unknown backlog statuses become a valid huginn status; the original
 	// text is kept as backlog_status so nothing is lost (seid trial, 2026-11-09).
-	if d.Task.Status != "todo" || len(d.Task.Aliases) != 2 || !bytes.Contains(converted, []byte(`backlog_status: "Waiting"`)) {
+	if d.Task.State != "todo" || len(d.Task.Aliases) != 2 || !bytes.Contains(converted, []byte(`backlog_status: "Waiting"`)) {
 		t.Fatal(d.Task, string(converted))
 	}
 }
@@ -292,7 +292,7 @@ func TestStatusMappingAndDuplicateIDs(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if got := task.Parse("000001.synthetic.md", converted).Task.Status; got != want {
+		if got := task.Parse("000001.synthetic.md", converted).Task.State; got != want {
 			t.Errorf("status %q -> %q, want %q", in, got, want)
 		}
 	}
@@ -663,8 +663,8 @@ func TestRootImportKeepsNewestCopyAndIsIdempotent(t *testing.T) {
 		raw, _ := os.ReadFile(filepath.Join(dst.Root, tk.Path))
 		if strings.Contains(string(raw), "DEMO-001") {
 			found = true
-			if tk.Status != "done" || !strings.Contains(string(raw), "NEWEST NOTES") {
-				t.Fatalf("older copy won: status=%s\n%s", tk.Status, raw)
+			if tk.State != "done" || !strings.Contains(string(raw), "NEWEST NOTES") {
+				t.Fatalf("older copy won: status=%s\n%s", tk.State, raw)
 			}
 		}
 	}
@@ -736,7 +736,7 @@ func TestCollisionKeepsAlreadyLinkedTask(t *testing.T) {
 	}
 	after, _ := dst.Tasks()
 	for _, tk := range after {
-		if tk.ID == before[0].ID && (tk.Status != "done" || !strings.Contains(strings.ToLower(tk.Title), "synthetic")) {
+		if tk.ID == before[0].ID && (tk.State != "done" || !strings.Contains(strings.ToLower(tk.Title), "synthetic")) {
 			t.Fatalf("linked task changed: %+v", tk)
 		}
 	}

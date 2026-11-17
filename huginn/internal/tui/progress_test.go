@@ -23,7 +23,7 @@ func TestPieSteps(t *testing.T) {
 }
 
 func withChecks(done, total int) task.Task {
-	t := task.Task{ID: "aaaaaa", Path: "aaaaaa.a.md", Title: "A", Status: "todo"}
+	t := task.Task{ID: "aaaaaa", Path: "aaaaaa.a.md", Title: "A", State: "todo"}
 	for i := 0; i < total; i++ {
 		t.Acceptance = append(t.Acceptance, task.Acceptance{Text: "c", Checked: i < done})
 	}

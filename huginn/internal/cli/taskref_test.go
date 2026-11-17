@@ -52,7 +52,7 @@ func TestEveryRefCommandAcceptsTaskColon(t *testing.T) {
 		{"take", T(beta)},
 		{"done", T(beta)},
 		{"drop", T(gamma), "superseded"},
-		{"set", T(gamma), "--status", "todo"},
+		{"set", T(gamma), "--state", "todo"},
 		{"design", T(gamma), "which way?", "--for", "jhf"},
 		{"design", T(gamma), "--clear"},
 		{"take", T(gamma)},
@@ -71,8 +71,8 @@ func TestEveryRefCommandAcceptsTaskColon(t *testing.T) {
 		}
 	}
 	r := execute(t, a, "show", beta)
-	if tk := r["task"].(Reply); tk["status"] != "done" || tk["parent"] != epic {
-		t.Fatalf("beta after task:ID commands: status %v parent %v", tk["status"], tk["parent"])
+	if tk := r["task"].(Reply); tk["state"] != "done" || tk["parent"] != epic {
+		t.Fatalf("beta after task:ID commands: status %v parent %v", tk["state"], tk["parent"])
 	}
 	// A typo still says not-found, naming the bare id.
 	if _, e := a.Execute(context.Background(), []string{"show", "task:zzzzzz"}); e == nil {

@@ -115,11 +115,11 @@ var Transitions = []Transition{
 	{"doing/waiting", "doing/active", "hug task resume ID"},
 	{"todo/*", "todo/design", `hug task design ID "question"`},
 	{"todo/design", "todo/*", "hug task design ID --clear"},
-	{"doing/*", "todo/*", "hug task set ID --status todo (gives it back, keeping its stage)"},
+	{"doing/*", "todo/*", "hug task set ID --state todo (gives it back, keeping its stage)"},
 	{"doing/*", "done", "hug task done ID"},
 	{"any", "dropped", `hug task drop ID "reason"`},
-	{"done", "todo/*", "hug task set ID --status todo (reopens it)"},
-	{"dropped", "todo/*", "hug task set ID --status todo (reopens it)"},
+	{"done", "todo/*", "hug task set ID --state todo (reopens it)"},
+	{"dropped", "todo/*", "hug task set ID --state todo (reopens it)"},
 }
 
 // StateNode is the state named name, if it is one.
@@ -247,20 +247,20 @@ func Staged(t Task) bool { return t.Stage != "" || len(t.Fields) > 0 }
 // stageFindings checks rules 1-3 on the parsed frontmatter.
 func (d *Document) stageFindings() {
 	t := d.Task
-	state, ok := StateNode(t.Status)
+	state, ok := StateNode(t.State)
 	if !ok {
 		return // unknown status is its own finding
 	}
-	node := t.Status
+	node := t.State
 	var stage Node
 	if t.Stage != "" {
-		if stage, ok = StageNode(t.Status, t.Stage); !ok {
-			valid := StageNames(t.Status)
-			p := fmt.Sprintf("unknown stage %s for %s: a %s task's stage is one of %s", t.Stage, t.Status, t.Status, strings.Join(valid, ", "))
+		if stage, ok = StageNode(t.State, t.Stage); !ok {
+			valid := StageNames(t.State)
+			p := fmt.Sprintf("unknown stage %s for %s: a %s task's stage is one of %s", t.Stage, t.State, t.State, strings.Join(valid, ", "))
 			if len(valid) == 0 {
-				p = fmt.Sprintf("unknown stage %s for %s: a %s task has no stage; remove the stage line", t.Stage, t.Status, t.Status)
+				p = fmt.Sprintf("unknown stage %s for %s: a %s task has no stage; remove the stage line", t.Stage, t.State, t.State)
 			}
-			d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine("stage"), Problem: p, Fix: "hug task set " + t.ID + " --status " + t.Status})
+			d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine("stage"), Problem: p, Fix: "hug task set " + t.ID + " --state " + t.State})
 		} else {
 			node += "/" + t.Stage
 		}
@@ -270,7 +270,7 @@ func (d *Document) stageFindings() {
 		if !fieldHolds(t, k, owners[k]) {
 			d.Findings = append(d.Findings, Finding{Path: t.Path, Line: d.fieldLine(k),
 				Problem: fmt.Sprintf("node field %s belongs to %s, and this task is %s: hug moves it to ## History", k, strings.Join(owners[k], " and "), node),
-				Fix:     "hug task set " + t.ID + " --status " + t.Status})
+				Fix:     "hug task set " + t.ID + " --state " + t.State})
 		}
 	}
 	if !Staged(t) {
@@ -298,7 +298,7 @@ func requiredFix(t Task, field string) string {
 	case "review_by":
 		return "hug task take " + t.ID + " --model MODEL"
 	}
-	return "hug task set " + t.ID + " --status todo"
+	return "hug task set " + t.ID + " --state todo"
 }
 
 // fieldHolds says whether node field k may stand on t: one of its owners
@@ -306,7 +306,7 @@ func requiredFix(t Task, field string) string {
 func fieldHolds(t Task, k string, owners []string) bool {
 	for _, o := range owners {
 		state, stage, staged := strings.Cut(o, "/")
-		if state != t.Status {
+		if state != t.State {
 			continue
 		}
 		if !staged || stage == t.Stage || ownHolds(t, stage) {
@@ -328,7 +328,7 @@ func ownHolds(t Task, stage string) bool {
 	case "design":
 		return set("design_question")
 	case "review":
-		return set("review_by") || (t.Status == "todo" && set("review_since"))
+		return set("review_by") || (t.State == "todo" && set("review_since"))
 	case "waiting":
 		return set("waiting_on")
 	}
@@ -348,7 +348,7 @@ func Incomplete(t Task) bool {
 // dependencies' states.
 func Stage(t Task, tasks []Task) string {
 	open := len(Blocked(t, tasks)) > 0
-	switch t.Status {
+	switch t.State {
 	case "todo":
 		for _, g := range StageNames("todo") {
 			switch {
@@ -380,7 +380,7 @@ func derivedFindings(tasks []Task) []Finding {
 		if !Staged(t) {
 			continue
 		}
-		g, ok := StageNode(t.Status, t.Stage)
+		g, ok := StageNode(t.State, t.Stage)
 		if t.Stage != "" && !ok {
 			continue // rule 1 reports it
 		}
@@ -399,13 +399,13 @@ func derivedFindings(tasks []Task) []Finding {
 		switch want {
 		case "depends":
 			b := Blocked(t, tasks)[0]
-			why = "it depends on " + b.ID + " (" + b.Status + ")"
+			why = "it depends on " + b.ID + " (" + b.State + ")"
 		case "draft":
 			why = "it is not complete (no Goal or no acceptance item)"
 		case "ready", "active":
 			why = "nothing holds it: no open dependency, and none of its stage's fields is set"
 		case "":
-			why = "a " + t.Status + " task has no stage"
+			why = "a " + t.State + " task has no stage"
 		default:
 			why = "its " + want + " fields are set"
 		}
@@ -413,7 +413,7 @@ func derivedFindings(tasks []Task) []Finding {
 		if want == "" {
 			p = fmt.Sprintf("stage %s disagrees with the task: %s", t.Stage, why)
 		}
-		out = append(out, Finding{Path: t.Path, Line: 1, Problem: p, Fix: "hug task set " + t.ID + " --status " + t.Status})
+		out = append(out, Finding{Path: t.Path, Line: 1, Problem: p, Fix: "hug task set " + t.ID + " --state " + t.State})
 	}
 	return out
 }

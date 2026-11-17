@@ -64,12 +64,12 @@ func checkCount(t task.Task) (done, total int) {
 func (m model) progress(t task.Task) string {
 	width := m.progressWidth()
 	done, total := checkCount(t)
-	if total == 0 || t.Status == "dropped" {
+	if total == 0 || t.State == "dropped" {
 		return fit("", width)
 	}
 	style := m.styles.dim
 	switch {
-	case t.Status == "done" || done >= total:
+	case t.State == "done" || done >= total:
 		style = m.styles.status["done"]
 	case done > 0:
 		style = m.styles.progress
@@ -82,9 +82,9 @@ func (m model) progress(t task.Task) string {
 func progressText(t task.Task) string {
 	done, total := checkCount(t)
 	switch {
-	case total == 0 || t.Status == "dropped":
+	case total == 0 || t.State == "dropped":
 		return ""
-	case t.Status == "done":
+	case t.State == "done":
 		return fmt.Sprintf("%s %d", pies[4], total)
 	case done == 0:
 		return fmt.Sprintf("%s %d", pies[0], total)

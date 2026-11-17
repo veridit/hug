@@ -79,9 +79,9 @@ func AnswerFor(t Task, who string) bool {
 // design question, what a wait is on, or the review.
 func question(t Task) (stage, q, asker string) {
 	switch {
-	case t.Status == "todo" && ownHolds(t, "design"):
+	case t.State == "todo" && ownHolds(t, "design"):
 		return "design", t.Fields["design_question"], t.Fields["design_asked_by"]
-	case t.Status == "doing" && ownHolds(t, "waiting"):
+	case t.State == "doing" && ownHolds(t, "waiting"):
 		return "waiting", t.Fields["waiting_on"], t.Fields["waiting_asked_by"]
 	case ownHolds(t, "review"):
 		owner := strings.Join(t.Assignee, ", ")
@@ -122,7 +122,7 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 	if asker = strings.TrimSpace(asker); asker != "" {
 		line += ", for " + asker
 	}
-	if e = applyMove(d, ts, move{state: d.Task.Status, clear: clear, line: line}); e != nil {
+	if e = applyMove(d, ts, move{state: d.Task.State, clear: clear, line: line}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)

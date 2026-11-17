@@ -28,8 +28,8 @@ func TestTakeSecondTaskRefusedInTUI(t *testing.T) {
 		}
 	}
 	for _, v := range m.all {
-		if v.ID == second && v.Status != "todo" {
-			t.Fatalf("refused task is %s", v.Status)
+		if v.ID == second && v.State != "todo" {
+			t.Fatalf("refused task is %s", v.State)
 		}
 	}
 }

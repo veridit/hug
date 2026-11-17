@@ -73,7 +73,7 @@ func TestToolsAcceptTaskColon(t *testing.T) {
 	call("take", map[string]any{"id": "task:" + beta, "cwd": dir})
 	call("update", map[string]any{"id": "task:" + beta, "action": "check", "item": 1})
 	m := call("done", map[string]any{"id": "task:" + beta})
-	if tk := m["task"].(map[string]any); tk["status"] != "done" || tk["parent"] != epic {
+	if tk := m["task"].(map[string]any); tk["state"] != "done" || tk["parent"] != epic {
 		t.Fatalf("beta: %v", tk)
 	}
 }

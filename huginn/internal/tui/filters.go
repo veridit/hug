@@ -10,7 +10,7 @@ import (
 
 type filterChip struct{ field, value string }
 
-var filterFields = []struct{ letter, name string }{{"s", "status"}, {"t", "type"}, {"p", "priority"}, {"g", "group"}, {"l", "label"}, {"a", "assignee"}, {"e", "epic"}}
+var filterFields = []struct{ letter, name string }{{"s", "state"}, {"t", "type"}, {"p", "priority"}, {"g", "group"}, {"l", "label"}, {"a", "assignee"}, {"e", "epic"}}
 
 func ownerMatches(t task.Task, value string) bool {
 	return value == "(unassigned)" && len(t.Assignee) == 0 || contains(t.Assignee, value)
@@ -23,8 +23,8 @@ func optionalMatches(value, filter string) bool {
 }
 func (m *model) writeFilter(name, value string) {
 	switch name {
-	case "status":
-		m.filter.Status = value
+	case "state":
+		m.filter.State = value
 	case "type":
 		m.filter.Type = value
 	case "priority":
@@ -71,7 +71,7 @@ func (m model) filterBar() string {
 	for _, c := range m.chips {
 		style := m.styles.accent
 		switch c.field {
-		case "status":
+		case "state":
 			style = m.styles.status[c.value]
 		case "type":
 			style = m.styles.kind[c.value]

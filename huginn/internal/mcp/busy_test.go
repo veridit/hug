@@ -74,7 +74,7 @@ func TestSecondTakeOverMCPIsRefused(t *testing.T) {
 	want := []any{
 		"hug task done " + ids[0],
 		"hug task wait " + ids[0] + ` "on what"`,
-		"hug task set " + ids[0] + " --status todo && hug task note " + ids[0] + ` "why it goes back"`,
+		"hug task set " + ids[0] + " --state todo && hug task note " + ids[0] + ` "why it goes back"`,
 	}
 	fixes, _ := m["fixes"].([]any)
 	if len(fixes) != 3 || fixes[0] != want[0] || fixes[1] != want[1] || fixes[2] != want[2] || m["fix"] != want[0] {

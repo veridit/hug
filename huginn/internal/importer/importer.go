@@ -712,8 +712,8 @@ func convert(s source, id string, ids map[string]string, opts Options) ([]byte, 
 	updates := []struct {
 		k string
 		v any
-	}{{"id", id}, {"origin", opts.origin() + ":" + s.alias}, {"aliases", aliases}, {"status", status}, {"type", typ}, {metadataKey("import_type_inference"), reason}}
-	if raw := str(s.fields["status"]); raw != "" && canonicalStatus(raw) != raw {
+	}{{"id", id}, {"origin", opts.origin() + ":" + s.alias}, {"aliases", aliases}, {"state", status}, {"type", typ}, {metadataKey("import_type_inference"), reason}}
+	if raw := str(s.fields["status"]); raw != "" && canonicalState(raw) != raw {
 		updates = append(updates, struct {
 			k string
 			v any
@@ -748,6 +748,10 @@ func convert(s source, id string, ids map[string]string, opts Options) ([]byte, 
 				v any
 			}{"parent", ref})
 		}
+	}
+	// Backlog's status: line becomes hug's state: where it stands.
+	if _, err := d.RenameStatusKey(); err != nil {
+		return nil, err
 	}
 	for _, u := range updates {
 		if err := d.SetField(u.k, u.v); err != nil {
@@ -961,7 +965,7 @@ func (e *NoTasksError) Error() string {
 	return "no backlog task files (*.md) in " + e.Dir
 }
 
-func canonicalStatus(s string) string {
+func canonicalState(s string) string {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "todo", "doing", "done", "dropped":
 		return strings.ToLower(strings.TrimSpace(s))

@@ -12,10 +12,10 @@ import (
 	"testing"
 )
 
-const sample = "---\nid: k7m2qx\ntitle: Recall gate\nstatus: todo\ntype: bug\nlabels: [recall, bug]\naliases: [STATBUS-093]\nx-opaque: {wow: 'yes'} # keep\n---\n\n## Goal\nWorks.\n\n## Depends on\n\n## Acceptance\n- [ ] observable one\n- [x] observable two\n\n## Weird\n\x00\xff preserved\n\n## Notes\nExisting.\n"
+const sample = "---\nid: k7m2qx\ntitle: Recall gate\nstate: todo\ntype: bug\nlabels: [recall, bug]\naliases: [STATBUS-093]\nx-opaque: {wow: 'yes'} # keep\n---\n\n## Goal\nWorks.\n\n## Depends on\n\n## Acceptance\n- [ ] observable one\n- [x] observable two\n\n## Weird\n\x00\xff preserved\n\n## Notes\nExisting.\n"
 
 func TestRoundTripCorpus(t *testing.T) {
-	corpus := [][]byte{nil, {}, []byte("garbage"), []byte(sample), bytes.ReplaceAll([]byte(sample), []byte("\n"), []byte("\r\n")), []byte("---\nid:"), []byte("---\nstatus: []\n---"), {0, 255, 128, 10}, []byte("---\nunknown: |\n  nested: yes\n---\n## Free\nanything"), []byte(strings.TrimSuffix(sample, "\n"))}
+	corpus := [][]byte{nil, {}, []byte("garbage"), []byte(sample), bytes.ReplaceAll([]byte(sample), []byte("\n"), []byte("\r\n")), []byte("---\nid:"), []byte("---\nstate: []\n---"), {0, 255, 128, 10}, []byte("---\nunknown: |\n  nested: yes\n---\n## Free\nanything"), []byte(strings.TrimSuffix(sample, "\n"))}
 	for n, b := range corpus {
 		d := Parse("a0.k7m2qx.recall-gate.md", b)
 		if !bytes.Equal(d.Bytes(), b) {
@@ -98,7 +98,7 @@ func TestResolveAndErrors(t *testing.T) {
 			t.Fatal(e)
 		}
 	}
-	e := Invalid("status", "doin", Statuses)
+	e := Invalid("state", "doin", StateList)
 	if e.Closest != "doing" || e.ExitCode() != 2 {
 		t.Fatal(e)
 	}
@@ -218,7 +218,7 @@ func TestOperationsIsolationAndLifecycle(t *testing.T) {
 	t.Log("move/re-slug/rerank/mv hashes: all other files and moved contents unchanged")
 }
 func TestNextFilters(t *testing.T) {
-	ts := []Task{{ID: "000001", Rank: "Z", Status: "todo", Type: "bug", Priority: "high", Labels: []string{"x"}, Group: "auth"}, {ID: "000002", Rank: "A", Status: "todo", Type: "chore"}, {ID: "000003", Rank: "B", Status: "todo", Type: "bug", Assignee: []string{"alice"}}, {ID: "000004", Rank: "0", Status: "todo", Dependencies: []Dependency{{Ref: "000002"}}}}
+	ts := []Task{{ID: "000001", Rank: "Z", State: "todo", Type: "bug", Priority: "high", Labels: []string{"x"}, Group: "auth"}, {ID: "000002", Rank: "A", State: "todo", Type: "chore"}, {ID: "000003", Rank: "B", State: "todo", Type: "bug", Assignee: []string{"alice"}}, {ID: "000004", Rank: "0", State: "todo", Dependencies: []Dependency{{Ref: "000002"}}}}
 	for _, tc := range []struct {
 		f  Filter
 		id string

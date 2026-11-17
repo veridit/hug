@@ -61,7 +61,7 @@ func Seed(root string) error {
 			goal = "<!-- SECTION:DESCRIPTION:BEGIN -->\nProvide **compiler-lang** support with `huginn` and *clear sections*.\n\n- Render Markdown, not source\n- Keep the header fixed while scrolling\n\nRead [the guide](https://example.invalid/guide).\n\n```go\nfmt.Println(\"rendered code\")\n```\n<!-- SECTION:DESCRIPTION:END -->\n"
 		}
 		quoted, _ := json.Marshal(title)
-		body := fmt.Sprintf("---\nid: %s\ntitle: %s\nstatus: %s\ntype: %s\npriority: %s\nassignee: %s\n%slabels: [\"terminal\", \"%s\"]\naliases: [\"TASK-%d\"]\ncreated: 2026-11-01\nupdated: 2026-11-10\n---\n\n## Goal\n%s\n## Depends on\n%s\n## Acceptance\n%s\n## Notes\n%s\n\n## History\n%s\n", id, quoted, status, kind, priority, assignee, branch, group, 1783+i, goal, deps, acceptance, notes, history)
+		body := fmt.Sprintf("---\nid: %s\ntitle: %s\nstate: %s\ntype: %s\npriority: %s\nassignee: %s\n%slabels: [\"terminal\", \"%s\"]\naliases: [\"TASK-%d\"]\ncreated: 2026-11-01\nupdated: 2026-11-10\n---\n\n## Goal\n%s\n## Depends on\n%s\n## Acceptance\n%s\n## Notes\n%s\n\n## History\n%s\n", id, quoted, status, kind, priority, assignee, branch, group, 1783+i, goal, deps, acceptance, notes, history)
 		if i == 0 {
 			// Task 000001 has the whole description pattern, written after
 			// Goal as hug task new does (jnaspy: it shows above the checks).

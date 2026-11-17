@@ -30,13 +30,13 @@ func TestOwnerFindings(t *testing.T) {
 	touch("session_x.bak", now.Add(-90*time.Hour))
 	live := LivenessFrom(dir)
 	ts := []Task{
-		{ID: "44w1ev", Status: "doing", Assignee: []string{"humpback"}, Path: "a.md"},
-		{ID: "zhvkmj", Status: "doing", Assignee: []string{"wyvern"}},
-		{ID: "kx2ndm", Status: "doing", Assignee: []string{"vole"}},
-		{ID: "t7wetj", Status: "doing", Assignee: []string{"Jørgen"}},          // not a session name: never judged
-		{ID: "p39w4a", Status: "doing", Assignee: []string{"claude-opus-5-5"}}, // a model
-		{ID: "qawmnb", Status: "done", Assignee: []string{"humpback"}},
-		{ID: "e3vw30", Status: "doing", Assignee: []string{"humpback", "wyvern"}}, // one live owner is enough
+		{ID: "44w1ev", State: "doing", Assignee: []string{"humpback"}, Path: "a.md"},
+		{ID: "zhvkmj", State: "doing", Assignee: []string{"wyvern"}},
+		{ID: "kx2ndm", State: "doing", Assignee: []string{"vole"}},
+		{ID: "t7wetj", State: "doing", Assignee: []string{"Jørgen"}},          // not a session name: never judged
+		{ID: "p39w4a", State: "doing", Assignee: []string{"claude-opus-5-5"}}, // a model
+		{ID: "qawmnb", State: "done", Assignee: []string{"humpback"}},
+		{ID: "e3vw30", State: "doing", Assignee: []string{"humpback", "wyvern"}}, // one live owner is enough
 	}
 	fs := OwnerFindings(live, ts, now)
 	if len(fs) != 1 {

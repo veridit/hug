@@ -73,7 +73,7 @@ func OwnerFindings(live Liveness, ts []Task, now time.Time) []Finding {
 	}
 	var out []Finding
 	for _, t := range ts {
-		if t.Status != "doing" || len(t.Assignee) == 0 {
+		if t.State != "doing" || len(t.Assignee) == 0 {
 			continue
 		}
 		stale, last := true, time.Time{}

@@ -16,7 +16,7 @@ func Active(name, except string, ts []Task) (Task, bool) {
 		return Task{}, false
 	}
 	for _, t := range ts {
-		if t.ID == except || t.Status != "doing" || !contains(t.Assignee, name) {
+		if t.ID == except || t.State != "doing" || !contains(t.Assignee, name) {
 			continue
 		}
 		if Stage(t, ts) == "active" {
@@ -32,7 +32,7 @@ func BusyFixes(id string) []string {
 	return []string{
 		"hug task done " + id,
 		"hug task wait " + id + ` "on what"`,
-		"hug task set " + id + " --status todo && hug task note " + id + ` "why it goes back"`,
+		"hug task set " + id + " --state todo && hug task note " + id + ` "why it goes back"`,
 	}
 }
 

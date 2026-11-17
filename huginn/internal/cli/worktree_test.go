@@ -37,7 +37,7 @@ func TestLinkedWorktreeUsesMainBoard(t *testing.T) {
 			}
 			execute(t, linked, "take", id)
 			shown := execute(t, main, "show", id)
-			if s := jsonString(t, shown); !strings.Contains(s, `"assignee":["tester"]`) || !strings.Contains(s, `"status":"doing"`) || !strings.Contains(s, "From the linked worktree") {
+			if s := jsonString(t, shown); !strings.Contains(s, `"assignee":["tester"]`) || !strings.Contains(s, `"state":"doing"`) || !strings.Contains(s, "From the linked worktree") {
 				t.Fatalf("main does not see the linked take: %s", s)
 			}
 			if _, e := os.Stat(filepath.Join(linkedDir, ".hug")); !os.IsNotExist(e) {

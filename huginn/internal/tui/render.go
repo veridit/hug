@@ -127,7 +127,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	// (zgr01t).
 	word, text := m.rowStage(t)
 	if word == "" {
-		word = t.Status // done and dropped have no stage: the list shows the state
+		word = t.State // done and dropped have no stage: the list shows the state
 	}
 	title := oneLine(t.Title)
 	if text != "" {
@@ -165,14 +165,14 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	}
 	row += fit(title, max(0, c.title))
 	row = fit(row, width)
-	if t.Status == "done" || t.Status == "dropped" {
+	if t.State == "done" || t.State == "dropped" {
 		// A closed task is dim after its id: its state word keeps its
 		// colour, the one scheme of the count line (zhvkmj).
 		from := 2 + pw + idCell
 		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, from, width)))
 		if c.status && !compact {
 			at := from + on(c.kind, kindCell) + on(c.priority, priorityCell)
-			row = ansi.Cut(row, 0, at) + styled(m.styles.status, t.Status, stageCell-1) + " " + ansi.Cut(row, at+stageCell, width)
+			row = ansi.Cut(row, 0, at) + styled(m.styles.status, t.State, stageCell-1) + " " + ansi.Cut(row, at+stageCell, width)
 		}
 	}
 	if selected {
@@ -360,14 +360,14 @@ func (m model) overviewText() string {
 	return strings.Join(lines, "\n")
 }
 
-// sectionStatus is the status whose colour an overview section's title
+// sectionState is the status whose colour an overview section's title
 // takes (zhvkmj): one scheme for the count line, the status word, the
 // board columns and these titles. LINT takes the colour of the ! mark.
-var sectionStatus = map[int]string{sectionDoing: "doing", sectionNext: "todo", sectionRecent: "done"}
+var sectionState = map[int]string{sectionDoing: "doing", sectionNext: "todo", sectionRecent: "done"}
 
 // sectionStyle is the title style of overview section p.
 func (m model) sectionStyle(p int) lipgloss.Style {
-	if s, ok := sectionStatus[p]; ok {
+	if s, ok := sectionState[p]; ok {
 		return m.styles.status[s].Bold(true)
 	}
 	return m.styles.warning.Bold(true)
@@ -520,8 +520,8 @@ func (m model) sectionRows(p int) int {
 	return max(1, m.bodyHeight()-4) // a board column
 }
 func (m model) boardText() string {
-	count := min(len(boardStatuses), max(1, (m.width+2)/40))
-	first := min(max(0, m.pane-count+1), len(boardStatuses)-count)
+	count := min(len(boardStates), max(1, (m.width+2)/40))
+	first := min(max(0, m.pane-count+1), len(boardStates)-count)
 	width := max(1, (m.width-2*(count-1))/count)
 	cols := make([][]string, count)
 	rows := max(1, m.bodyHeight()-4)
@@ -532,11 +532,11 @@ func (m model) boardText() string {
 		if p == m.pane {
 			pointer = "> "
 		}
-		label := fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStatuses[p]), len(indices))
+		label := fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStates[p]), len(indices))
 		if len(indices) == 0 {
 			label += " · None" // one line, as in the overview (h9zghj)
 		}
-		label = m.styles.status[boardStatuses[p]].Bold(true).Render(fit(label, width))
+		label = m.styles.status[boardStates[p]].Bold(true).Render(fit(label, width))
 		if p == m.pane {
 			label = m.styles.selected.Render(label)
 		}
@@ -573,7 +573,7 @@ func (m model) boardText() string {
 		lines = append(lines, line)
 	}
 	lines = append(lines, m.legend())
-	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Columns %d–%d of %d · h/l or Tab/Shift-Tab reveals other columns", first+1, first+count, len(boardStatuses))))
+	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Columns %d–%d of %d · h/l or Tab/Shift-Tab reveals other columns", first+1, first+count, len(boardStates))))
 	return strings.Join(lines, "\n")
 }
 func (m model) paletteText() string {
@@ -678,12 +678,12 @@ func (m model) View() string {
 	doingBlocked := 0
 	for _, t := range m.visible {
 		counts[m.place(t)]++
-		if t.Status == "doing" && m.blocked[t.Path] {
+		if t.State == "doing" && m.blocked[t.Path] {
 			doingBlocked++
 		}
 	}
 	summary := []string{}
-	for _, s := range boardStatuses {
+	for _, s := range boardStates {
 		text := fmt.Sprintf("%s %d", s, counts[s])
 		if s == "doing" && doingBlocked > 0 {
 			text += fmt.Sprintf(" (%d depends)", doingBlocked)
@@ -733,7 +733,7 @@ func (m model) View() string {
 	}
 	if footer == "" {
 		filters := []string{}
-		for _, f := range []struct{ k, v string }{{"status", m.filter.Status}, {"type", m.filter.Type}, {"group", m.filter.Group}, {"label", m.filter.Label}, {"find", m.query}} {
+		for _, f := range []struct{ k, v string }{{"state", m.filter.State}, {"type", m.filter.Type}, {"group", m.filter.Group}, {"label", m.filter.Label}, {"find", m.query}} {
 			if f.v != "" {
 				filters = append(filters, f.k+"="+oneLine(f.v))
 			}
@@ -833,7 +833,7 @@ func (m model) confirmLine() string {
 		if t, ok := m.taskAt(m.confirmPath); ok {
 			question += oneLine(t.ID) + " " + oneLine(t.Title)
 			if m.pendingValue == "give back" {
-				stage := task.Stage(task.Task{Status: "todo", Fields: t.Fields, Goal: t.Goal, Acceptance: t.Acceptance, Dependencies: t.Dependencies}, m.all)
+				stage := task.Stage(task.Task{State: "todo", Fields: t.Fields, Goal: t.Goal, Acceptance: t.Acceptance, Dependencies: t.Dependencies}, m.all)
 				question = "Give back " + oneLine(t.ID) + " to todo (" + stage + ")"
 			} else if task.Stage(t, m.all) == "review" {
 				question = "Take " + oneLine(t.ID) + " for review as " + oneLine(m.me())

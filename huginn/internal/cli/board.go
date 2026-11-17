@@ -24,7 +24,7 @@ type BoardCard struct {
 // BoardColumn is one status column, in rank order. Hidden counts done tasks
 // left out when the column is shortened.
 type BoardColumn struct {
-	Status string      `json:"status"`
+	State  string      `json:"state"`
 	Cards  []BoardCard `json:"cards"`
 	Total  int         `json:"total"`
 	Hidden int         `json:"hidden,omitempty"`
@@ -42,13 +42,13 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 	if e != nil {
 		return nil, e
 	}
-	cols := []BoardColumn{{Status: "todo"}, {Status: "doing"}, {Status: "done"}}
+	cols := []BoardColumn{{State: "todo"}, {State: "doing"}, {State: "done"}}
 	for _, t := range ts {
 		if filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) || !task.InEpic(t, ts, filter.Epic) {
 			continue
 		}
 		for i := range cols {
-			if cols[i].Status == t.Status {
+			if cols[i].State == t.State {
 				cols[i].Cards = append(cols[i].Cards, BoardCard{ID: t.ID, Title: t.Title, Assignee: t.Assignee, Model: t.Model, Blocked: task.Waiting(t, ts)})
 			}
 		}
@@ -92,7 +92,7 @@ func writeBoard(w io.Writer, cols []BoardColumn, total int) {
 	cells := make([][]string, len(cols))
 	rows := 0
 	for i, c := range cols {
-		head := fmt.Sprintf("%s (%d)", strings.ToUpper(c.Status), c.Total)
+		head := fmt.Sprintf("%s (%d)", strings.ToUpper(c.State), c.Total)
 		cells[i] = append(cells[i], clip(head, width), strings.Repeat("-", min(width, utf8.RuneCountInString(head))))
 		for _, card := range c.Cards {
 			mark := ""
@@ -131,7 +131,7 @@ func writeBoardWide(w io.Writer, cols []BoardColumn) {
 		if i > 0 {
 			fmt.Fprintln(w)
 		}
-		fmt.Fprintf(w, "%s (%d)\n", strings.ToUpper(c.Status), c.Total)
+		fmt.Fprintf(w, "%s (%d)\n", strings.ToUpper(c.State), c.Total)
 		for _, card := range c.Cards {
 			mark := " "
 			if card.Blocked {

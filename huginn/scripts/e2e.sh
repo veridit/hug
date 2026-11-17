@@ -28,7 +28,7 @@ def run(*args,code=0,cwd=repo,json_mode=True,extra=None):
     assert (lines[-1].startswith('next: huginn ') if code==0 else len(lines)==2 and lines[-1].startswith('fix: ')),(args,lines)
     return p.stdout
 run(json_mode=False);help_text=run('help',json_mode=False);assert len(help_text.splitlines())<40
-run('types');run('init');run('init');run('next',code=4);run('nex',code=2);run('next','--typ','bug',code=2);run('ls','--status','don',code=2);run('next','--type','bugs',code=2)
+run('types');run('init');run('init');run('next',code=4);run('nex',code=2);run('next','--typ','bug',code=2);run('ls','--state','don',code=2);run('next','--type','bugs',code=2)
 a=run('new','API','--goal','API ready','--accept','First','--accept','Second','--type','bug','--priority','high','--label','api')['task']['id']
 b=run('new','Form','--goal','Form ready','--accept','UI works','--dep',a)['task']['id']
 assert run('show',b)['task']['dependencies']==[a]
@@ -42,7 +42,7 @@ assert run('next','--type','bug','--priority','high','--label','api')['task']['i
 run('take',a);run('take',a);assert run('next','--mine')['task']['id']==a
 run('check',a,'1');run('check',a,'1');run('check',a,'2');run('note',a,'Evidence retained');run('done',a);run('done',a)
 assert run('show','api')['task']['notes']=='Evidence retained'
-run('set',b,'--title','Better form','--priority','high','--type','docs','--label','web');run('set',b,'--status','todo')
+run('set',b,'--title','Better form','--priority','high','--type','docs','--label','web');run('set',b,'--state','todo')
 run('move',b,'--before',a);run('move',b,'--after',a);run('move',b,'--top');run('mv',b,'auth');run('rebalance');run('drop',b);run('drop',b)
 run('edit',a,extra={'EDITOR':'true'})
 assert len(run('ls')['tasks'])==2

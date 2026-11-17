@@ -133,7 +133,7 @@ func TestLifecycleJSONContract(t *testing.T) {
 func TestUsageAndText(t *testing.T) {
 	t.Parallel()
 	a := app(t)
-	for _, args := range [][]string{{"nex"}, {"next", "--typo", "bug"}, {"ls", "--status", "don"}, {"next", "--type", "bugs"}, {"new", "x"}, {"check", "abc", "zero"}} {
+	for _, args := range [][]string{{"nex"}, {"next", "--typo", "bug"}, {"ls", "--state", "don"}, {"next", "--type", "bugs"}, {"new", "x"}, {"check", "abc", "zero"}} {
 		expectCode(t, a, 2, args...)
 	}
 	if len(strings.Split(strings.TrimSpace(Help), "\n")) >= 40 {
@@ -171,7 +171,7 @@ func TestRejectedSetIsUnchanged(t *testing.T) {
 	a := app(t)
 	r := execute(t, a, "new", "Keep title", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")
 	id := r["task"].(Reply)["id"].(string)
-	expectCode(t, a, 2, "set", id, "--status", "doing", "--title", "")
+	expectCode(t, a, 2, "set", id, "--state", "doing", "--title", "")
 	expectCode(t, a, 2, "set", id, "--type", "bugs")
 	_, groupError := a.Execute(context.Background(), []string{"mv", "keep-title", "../bad"})
 	_, _, groupFix := ErrorDetails(groupError)
@@ -179,7 +179,7 @@ func TestRejectedSetIsUnchanged(t *testing.T) {
 		t.Fatal(groupFix)
 	}
 	r = execute(t, a, "show", id)
-	if r["task"].(Reply)["title"] != "Keep title" || r["task"].(Reply)["status"] != "todo" {
+	if r["task"].(Reply)["title"] != "Keep title" || r["task"].(Reply)["state"] != "todo" {
 		t.Fatal(r)
 	}
 	a.Out = &bytes.Buffer{}
@@ -225,7 +225,7 @@ func TestDependencyRecoveryAndCycle(t *testing.T) {
 func TestJSONErrors(t *testing.T) {
 	t.Parallel()
 	a := app(t)
-	if code := a.Run(context.Background(), []string{"ls", "--status", "don", "--json"}); code != 2 {
+	if code := a.Run(context.Background(), []string{"ls", "--state", "don", "--json"}); code != 2 {
 		t.Fatal(code)
 	}
 	var r Reply

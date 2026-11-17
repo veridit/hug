@@ -128,7 +128,7 @@ func TestTmuxReload(t *testing.T) {
 	send("-l", "v")
 	wait("HUG TASKS · list", 5*time.Second)
 	send("-l", "2")
-	wait("status:doing", 5*time.Second)
+	wait("state:doing", 5*time.Second)
 	send("-l", ":sort")
 	send("Enter")
 	wait("HUG TASKS · sort", 5*time.Second)

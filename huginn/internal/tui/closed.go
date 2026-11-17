@@ -77,6 +77,12 @@ func (c *closeLog) times(root string) map[string]int64 {
 	return next
 }
 
+// stateValue is the value of a "state: x" or "status: x" line.
+func stateValue(line string) string {
+	_, v, _ := strings.Cut(line, ":")
+	return v
+}
+
 func closedValue(v string) bool {
 	v = strings.Trim(strings.TrimSpace(v), `"'`)
 	return v == "done" || v == "dropped"
@@ -106,10 +112,13 @@ func mergeCloses(into map[string]int64, log string) {
 			file, opened = "", false
 		case strings.HasPrefix(line, "+++ "):
 			file = strings.TrimPrefix(strings.TrimPrefix(line, "+++ "), "b/")
-		case strings.HasPrefix(line, "-status:"):
-			opened = !closedValue(strings.TrimPrefix(line, "-status:"))
-		case strings.HasPrefix(line, "+status:"):
-			if opened && file != "" && closedValue(strings.TrimPrefix(line, "+status:")) {
+		// History holds both keys: status: before hug upgrade, state: after
+		// (6ephqk step 4). The upgrade's own -status:/+state: pair keeps
+		// the value, so it closes nothing.
+		case strings.HasPrefix(line, "-status:"), strings.HasPrefix(line, "-state:"):
+			opened = !closedValue(stateValue(line[1:]))
+		case strings.HasPrefix(line, "+status:"), strings.HasPrefix(line, "+state:"):
+			if opened && file != "" && closedValue(stateValue(line[1:])) {
 				if _, id, _, err := task.ParseName(file); err == nil {
 					record(id)
 				}
@@ -124,7 +133,7 @@ func mergeCloses(into map[string]int64, log string) {
 func (m model) recentIndices() []int {
 	var out []int
 	for i, t := range m.visible {
-		if t.Status == "done" || t.Status == "dropped" {
+		if t.State == "done" || t.State == "dropped" {
 			out = append(out, i)
 		}
 	}

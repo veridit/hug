@@ -129,7 +129,7 @@ func TestHoldsBranchAndTask(t *testing.T) {
 	// A board: dn0001 is done, op0001 is doing.
 	git(t, repo, "worktree", "add", "-q", "--orphan", "-b", "hug/tasks", ".hug/tasks")
 	for id, status := range map[string]string{"dn0001": "done", "op0001": "doing"} {
-		task := "---\nid: \"" + id + "\"\ntitle: \"T\"\nstatus: \"" + status + "\"\n---\n\n## Goal\nG\n"
+		task := "---\nid: \"" + id + "\"\ntitle: \"T\"\nstate: \"" + status + "\"\n---\n\n## Goal\nG\n"
 		if err := os.WriteFile(filepath.Join(repo, ".hug/tasks", "a."+id+".t.md"), []byte(task), 0o644); err != nil {
 			t.Fatal(err)
 		}

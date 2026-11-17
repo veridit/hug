@@ -109,7 +109,7 @@ func TestPaneKeysAndBoardSelection(t *testing.T) {
 				t.Fatal(m.View())
 			}
 			selected, _ := m.selected()
-			if m.boardStatus(selected) != "doing" {
+			if m.boardState(selected) != "doing" {
 				t.Fatal("invisible board selection", m.View())
 			}
 			m = press(m, "gg", left)
@@ -206,7 +206,7 @@ func TestEscAtEveryLevel(t *testing.T) {
 		t.Fatal("search was not cleared")
 	}
 	m = press(m, "1", "esc")
-	if m.filter.Status != "" || m.view != "list" {
+	if m.filter.State != "" || m.view != "list" {
 		t.Fatal("chips not cleared")
 	}
 	m = press(m, "#", "000", "esc")
@@ -259,7 +259,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	if m.completion != 0 {
 		t.Fatal(m.completion)
 	}
-	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"status dep", "status depends"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
+	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"state dep", "state depends"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
 		m := press(manyModel(t), ":", tc.query, "tab")
 		want := tc.want
 		if !strings.HasPrefix(want, "goto") {
@@ -281,7 +281,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	}
 	for _, status := range []string{"todo", "doing", "done", "dropped", "depends"} {
 		m := commandLine(manyModel(t), status)
-		if m.filter.Status != status || len(m.chips) != 1 {
+		if m.filter.State != status || len(m.chips) != 1 {
 			t.Fatal(status, m.View())
 		}
 	}
@@ -299,7 +299,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	}
 }
 func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
-	for _, tc := range []struct{ letter, field, value string }{{"s", "status", "todo"}, {"t", "type", "bug"}, {"p", "priority", "high"}, {"g", "group", "compiler"}, {"l", "label", "terminal"}, {"a", "assignee", "alice"}} {
+	for _, tc := range []struct{ letter, field, value string }{{"s", "state", "todo"}, {"t", "type", "bug"}, {"p", "priority", "high"}, {"g", "group", "compiler"}, {"l", "label", "terminal"}, {"a", "assignee", "alice"}} {
 		m := press(manyModel(t), "f", tc.letter, tc.value)
 		if len(m.filterChoices()) != 1 || m.valueCount(tc.field, tc.value) == 0 {
 			t.Fatal(tc, m.View())
@@ -322,18 +322,18 @@ func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
 	}
 	for i, status := range []string{"todo", "doing", "done", "depends"} {
 		m := press(manyModel(t), string(rune('1'+i)))
-		if m.filter.Status != status || len(m.chips) != 1 {
+		if m.filter.State != status || len(m.chips) != 1 {
 			t.Fatal(i, m.View())
 		}
 	}
-	m = commandLine(manyModel(t), "status doing")
+	m = commandLine(manyModel(t), "state doing")
 	m = commandLine(m, "type bug")
 	m = press(m, "/", "task", "tab")
 	if len(m.chips) != 2 || m.query != "task" || len(m.visible) == 0 {
 		t.Fatal(m.View())
 	}
 	m = press(m, "backspace")
-	if m.filter.Status != "doing" || m.filter.Type != "" || m.query != "task" {
+	if m.filter.State != "doing" || m.filter.Type != "" || m.query != "task" {
 		t.Fatal(m.View())
 	}
 	for _, clear := range []string{"F", "c"} {
@@ -494,7 +494,7 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 	}
 	for _, status := range []string{"done", "dropped"} {
 		task := linted
-		task.Status = status
+		task.State = status
 		row := m.taskRow(task, 140, false, false)
 		warning := m.styles.warning.Render("!")
 		if !strings.Contains(row, "38;2;0;191;255") || !strings.Contains(warning, "\x1b[") || !strings.Contains(row, warning) {
@@ -518,7 +518,7 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 func TestJumpRetainsFiltersAndDetailShortcuts(t *testing.T) {
 	m := press(manyModel(t), "2", "#", "1785", "enter")
 	selected, _ := m.selected()
-	if selected.ID != "000003" || m.filter.Status != "doing" {
+	if selected.ID != "000003" || m.filter.State != "doing" {
 		t.Fatal("jump lost filter context", m.View())
 	}
 	m = press(m, "F")
@@ -526,11 +526,11 @@ func TestJumpRetainsFiltersAndDetailShortcuts(t *testing.T) {
 		t.Fatal("clear from detail failed", m.View())
 	}
 	m = press(m, "1")
-	if m.detail || m.filter.Status != "todo" {
+	if m.detail || m.filter.State != "todo" {
 		t.Fatal(m.View())
 	}
 	m = press(m, "enter", "backspace")
-	if !m.detail || m.filter.Status != "" {
+	if !m.detail || m.filter.State != "" {
 		t.Fatal(m.View())
 	}
 }

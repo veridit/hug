@@ -55,7 +55,7 @@ func boardTasks(ts []board.Task) []recall.BoardTask {
 // BoardTask is the recall view of one board task, its unread answer
 // included (3jtfw9).
 func BoardTask(t board.Task) recall.BoardTask {
-	bt := recall.BoardTask{ID: t.ID, Title: t.Title, Status: t.Status, Assignee: t.Assignee, Branch: t.Branch, Worktree: t.Worktree, Checks: t.Checks, Open: t.Open}
+	bt := recall.BoardTask{ID: t.ID, Title: t.Title, State: t.State, Assignee: t.Assignee, Branch: t.Branch, Worktree: t.Worktree, Checks: t.Checks, Open: t.Open}
 	if a := t.Answer; a != nil {
 		bt.Answer = &recall.BoardAnswer{Stage: a.Stage, Question: a.Question, Text: a.Text, By: a.By, For: a.For, At: a.At}
 	}
@@ -65,7 +65,7 @@ func BoardTask(t board.Task) recall.BoardTask {
 func boardFindings(fs []board.Finding) []recall.BoardFinding {
 	out := make([]recall.BoardFinding, 0, len(fs))
 	for _, f := range fs {
-		out = append(out, recall.BoardFinding{TaskID: f.TaskID, TaskStatus: f.TaskStatus, Problem: f.Problem, Fix: f.Fix})
+		out = append(out, recall.BoardFinding{TaskID: f.TaskID, TaskState: f.TaskState, Problem: f.Problem, Fix: f.Fix})
 	}
 	return out
 }

@@ -32,7 +32,7 @@ func TestBoardAnswerReachesAsker(t *testing.T) {
 	git(repo, "init", "-q", "-b", "main")
 	git(repo, "commit", "-q", "--allow-empty", "-m", "init")
 	git(repo, "worktree", "add", "-q", "--orphan", "-b", "hug/tasks", ".hug/tasks")
-	md := "---\nid: \"abc123\"\ntitle: \"Board nudges\"\nstatus: \"doing\"\nassignee: [\"guppy\"]\nbranch: \"main\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [x] one\n- [ ] two\n\n## History\n" +
+	md := "---\nid: \"abc123\"\ntitle: \"Board nudges\"\nstate: \"doing\"\nassignee: [\"guppy\"]\nbranch: \"main\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [x] one\n- [ ] two\n\n## History\n" +
 		"- 2026-11-17T13:30 answered waiting: \"which colour?\" -> \"green\", by jhf, for guppy (doing/waiting -> doing/active)\n"
 	if err := os.WriteFile(filepath.Join(repo, ".hug/tasks/a.abc123.board-nudges.md"), []byte(md), 0o644); err != nil {
 		t.Fatal(err)

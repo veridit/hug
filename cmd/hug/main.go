@@ -29,7 +29,7 @@ Usage:
   hug tui                   task board (hug mem tui for memories)
   hug mcp                   one MCP server: memory_* and task_* tools
   hug apps [install]        Claude Desktop, Claude Code, ChatGPT/Codex: start hug mcp
-  hug upgrade               move this repository to the current hug layout
+  hug upgrade [--dry-run]   every migration to the current hug, then what changed
   hug version
 
 Details: hug task help, hug mem --help.

@@ -100,9 +100,9 @@ func TestPaletteIsATreeAndUsesTheScreen(t *testing.T) {
 		t.Fatalf("filter type spike did not run: visible=%d msg=%q", len(m.visible), m.message)
 	}
 	// Short forms still run when typed, and a field name finds its branch.
-	m.input.SetValue("status todo")
+	m.input.SetValue("state todo")
 	if !m.commandReady() {
-		t.Fatal("status todo should still run")
+		t.Fatal("state todo should still run")
 	}
 	m.input.SetValue("pri")
 	if cs := m.completions(); len(cs) != 1 || cs[0].value != "filter priority " {
@@ -121,12 +121,12 @@ func TestPaletteFindsValueWithoutField(t *testing.T) {
 		m.width, m.height = 100, 30
 		m = press(m, ":", typed)
 		cs := m.completions()
-		if len(cs) != 1 || cs[0].value != "filter status done" {
+		if len(cs) != 1 || cs[0].value != "filter state done" {
 			t.Fatalf("%q: %+v", typed, cs)
 		}
 		m = press(m, "enter", "enter")
-		if m.prompt != "" || m.filter.Status != "done" {
-			t.Fatalf("%q did not filter: prompt=%q status=%q", typed, m.prompt, m.filter.Status)
+		if m.prompt != "" || m.filter.State != "done" {
+			t.Fatalf("%q did not filter: prompt=%q status=%q", typed, m.prompt, m.filter.State)
 		}
 	}
 }

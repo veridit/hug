@@ -70,7 +70,7 @@ func TestStrikeOutCheck(t *testing.T) {
 
 // sfa8w4 check 4: a done task with an open check is reported as broken.
 func TestDoneWithOpenCheckIsBroken(t *testing.T) {
-	b := strings.Replace(strings.Replace(sample, "status: todo", "status: done", 1), "- [ ] observable one\n", "- [ ] observable one\n- [ ] ~~gone~~ (not relevant: superseded, crab, 2026-11-17)\n", 1)
+	b := strings.Replace(strings.Replace(sample, "state: todo", "state: done", 1), "- [ ] observable one\n", "- [ ] observable one\n- [ ] ~~gone~~ (not relevant: superseded, crab, 2026-11-17)\n", 1)
 	d := Parse("zzzzzz.k7m2qx.recall-gate.md", []byte(b))
 	fs := Lint([]*Document{d})
 	if len(fs) != 1 {

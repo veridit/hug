@@ -22,7 +22,7 @@ func git(t *testing.T, dir string, args ...string) {
 const doing = `---
 id: "abc123"
 title: "Board nudges"
-status: "doing"
+state: "doing"
 assignee: ["guppy"]
 branch: "main"
 ---
@@ -62,7 +62,7 @@ func TestOpenReadsBoardWithoutWriting(t *testing.T) {
 		t.Fatalf("open: %v %v", s, err)
 	}
 	defer s.Close()
-	if len(s.Tasks) != 1 || s.Tasks[0].ID != "abc123" || s.Tasks[0].Status != "doing" || s.Tasks[0].Checks != 2 || s.Tasks[0].Open != 1 || s.Tasks[0].Branch != "main" {
+	if len(s.Tasks) != 1 || s.Tasks[0].ID != "abc123" || s.Tasks[0].State != "doing" || s.Tasks[0].Checks != 2 || s.Tasks[0].Open != 1 || s.Tasks[0].Branch != "main" {
 		t.Fatalf("%+v", s.Tasks)
 	}
 	// 3jtfw9 check 3 (board half): the cue gets the unread answer.

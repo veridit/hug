@@ -209,98 +209,161 @@ func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, 
 	return Reply{"import": report, "issues": len(issues), "next": "hug task ls"}, nil
 }
 
-// runUpgrade moves the old huginn layout to hug's: branch huginn becomes
-// hug/tasks, worktree .huginn/ moves to .hug/tasks/, and the remote branch is
-// renamed. History is unchanged. Safe to run again.
+// runUpgrade does every mechanical migration (asr4t2): the old huginn
+// layout becomes hug's (branch, worktree, settings file), every task file is
+// tidied and says state: (6ephqk step 4), old waits on a person get
+// waiting_for, hook variables get HUG_ names, and a legacy memory file is
+// named with its command. It says per part what it changed, or "nothing to
+// do", then points at hug setup for choices. --dry-run changes nothing and
+// shows the same diff. Safe to run again.
 func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	if e := f.count(0); e != nil {
 		return nil, e
 	}
+	dry := f.has("dry-run")
 	cwd := a.Cwd
 	if cwd == "" {
 		cwd = "."
 	}
-	m, e := gitbranch.Upgrade(cwd, OldTaskBranch, OldTaskDir, TaskBranch, TaskDir)
-	if e != nil {
-		return nil, e
-	}
-	did := []string{}
+	var parts []string
 	upgradeDiff := ""
-	if m.LocalBranch {
-		did = append(did, "branch "+OldTaskBranch+" renamed to "+TaskBranch)
+	part := func(name string, did []string) {
+		if len(did) == 0 {
+			parts = append(parts, name+": nothing to do")
+			return
+		}
+		for _, d := range did {
+			parts = append(parts, name+": "+d)
+		}
 	}
-	if m.Worktree {
-		did = append(did, OldTaskDir+"/ moved to "+TaskDir+"/")
+	would := func(s string) string {
+		if dry {
+			return "would: " + s
+		}
+		return s
 	}
-	if m.RemoteBranch {
-		did = append(did, "remote branch renamed")
+	// Layout: the board branch, its worktree and the settings file.
+	var layout []string
+	if dry {
+		if top, e := gitbranch.MainRoot(cwd); e == nil {
+			if _, e := os.Stat(filepath.Join(top, OldTaskDir)); e == nil {
+				layout = append(layout, would(OldTaskDir+"/ moves to "+TaskDir+"/, branch "+OldTaskBranch+" becomes "+TaskBranch))
+			}
+		}
+	} else {
+		m, e := gitbranch.Upgrade(cwd, OldTaskBranch, OldTaskDir, TaskBranch, TaskDir)
+		if e != nil {
+			return nil, e
+		}
+		if m.LocalBranch {
+			layout = append(layout, "branch "+OldTaskBranch+" renamed to "+TaskBranch)
+		}
+		if m.Worktree {
+			layout = append(layout, OldTaskDir+"/ moved to "+TaskDir+"/")
+		}
+		if m.RemoteBranch {
+			layout = append(layout, "remote branch renamed")
+		}
 	}
 	// Settings file: huginn.toml becomes hug.toml (committed on the task branch).
 	if top, e := gitbranch.MainRoot(cwd); e == nil {
 		dir := filepath.Join(top, TaskDir)
 		if _, e := os.Stat(filepath.Join(dir, "huginn.toml")); e == nil {
 			if _, e := os.Stat(filepath.Join(dir, task.ConfigName)); os.IsNotExist(e) {
-				if out, e := exec.CommandContext(ctx, "git", "-C", dir, "mv", "huginn.toml", task.ConfigName).CombinedOutput(); e != nil {
-					return nil, &OperationError{Problem: "rename huginn.toml: " + strings.TrimSpace(string(out)), Fix: "git -C " + dir + " mv huginn.toml " + task.ConfigName}
+				if !dry {
+					if out, e := exec.CommandContext(ctx, "git", "-C", dir, "mv", "huginn.toml", task.ConfigName).CombinedOutput(); e != nil {
+						return nil, &OperationError{Problem: "rename huginn.toml: " + strings.TrimSpace(string(out)), Fix: "git -C " + dir + " mv huginn.toml " + task.ConfigName}
+					}
+					if out, e := exec.CommandContext(ctx, "git", "-C", dir, "commit", "-q", "-m", "hug upgrade: huginn.toml -> "+task.ConfigName).CombinedOutput(); e != nil {
+						return nil, &OperationError{Problem: "commit rename: " + strings.TrimSpace(string(out)), Fix: "git -C " + dir + " status"}
+					}
 				}
-				if out, e := exec.CommandContext(ctx, "git", "-C", dir, "commit", "-q", "-m", "hug upgrade: huginn.toml -> "+task.ConfigName).CombinedOutput(); e != nil {
-					return nil, &OperationError{Problem: "commit rename: " + strings.TrimSpace(string(out)), Fix: "git -C " + dir + " status"}
-				}
-				did = append(did, "huginn.toml renamed to "+task.ConfigName)
+				layout = append(layout, would("huginn.toml renamed to "+task.ConfigName))
 			}
 		}
 	}
-	// Section order (jnaspy): every task file in Goal, Purpose, Principle,
-	// Relevant details, Depends on, Acceptance, others, Notes, History, with
-	// each section's text unchanged. Only when the board opens: a repository
-	// without hug/tasks has nothing to reorder.
+	part("layout", layout)
+	// The board's task files, only when the board opens: a repository
+	// without hug/tasks has nothing to migrate.
+	var tasks []string
 	if s, e := a.open(ctx); e == nil {
-		changed, diff, e := s.s.Tidy(false)
-		if e == nil && len(changed) > 0 {
-			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: backlog leftovers and section order in %d tasks", len(changed)))
-		}
-		// The cache stays open for the waits below (89y0b7: closing it here
-		// made the move fail with "sql: database is closed").
 		defer s.c.Close()
+		// state: (6ephqk step 4): every status: key becomes state:, first,
+		// so every later step reads the new key.
+		changed, lines, e := s.s.MigrateState(dry)
+		if e == nil && len(changed) > 0 && !dry {
+			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: status: -> state: in %d tasks", len(changed)))
+		}
 		if e != nil {
 			return nil, e
 		}
 		if len(changed) > 0 {
-			did = append(did, fmt.Sprintf("%d tasks tidied: backlog leftovers removed, sections put in order (no section text changed)", len(changed)))
-			upgradeDiff = diff
+			tasks = append(tasks, would(fmt.Sprintf("%d tasks moved to state: (was status:)", len(changed))))
+			upgradeDiff += strings.Join(lines, "\n") + "\n"
+		}
+		// Section order (jnaspy): Goal, Purpose, Principle, Relevant
+		// details, Depends on, Acceptance, others, Notes, History, with each
+		// section's text unchanged; backlog leftovers go.
+		changed, diff, e := s.s.Tidy(dry)
+		if e == nil && len(changed) > 0 && !dry {
+			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: backlog leftovers and section order in %d tasks", len(changed)))
+		}
+		if e != nil {
+			return nil, e
+		}
+		if len(changed) > 0 {
+			tasks = append(tasks, would(fmt.Sprintf("%d tasks tidied: backlog leftovers removed, sections put in order (no section text changed)", len(changed))))
+			upgradeDiff += diff
 		}
 		// Waits on a person (89y0b7): an old waiting_on "NAME: what"
 		// with NAME in hug.toml [people] gets waiting_for NAME.
-		if e == nil {
-			people, _ := task.People(s.r.Dir)
-			moved, lines, e2 := s.s.MoveWaitingFor(people, false)
-			if e2 == nil && len(moved) > 0 {
-				e2 = s.r.Commit(moved, fmt.Sprintf("hug upgrade: waiting_for in %d tasks", len(moved)))
-			}
-			if e2 != nil {
-				return nil, e2
-			}
-			if len(moved) > 0 {
-				did = append(did, fmt.Sprintf("%d waits on a person moved to waiting_for", len(moved)))
-				upgradeDiff += strings.Join(lines, "\n") + "\n"
-			}
+		people, _ := task.People(s.r.Dir)
+		moved, wlines, e := s.s.MoveWaitingFor(people, dry)
+		if e == nil && len(moved) > 0 && !dry {
+			e = s.r.Commit(moved, fmt.Sprintf("hug upgrade: waiting_for in %d tasks", len(moved)))
 		}
+		if e != nil {
+			return nil, e
+		}
+		if len(moved) > 0 {
+			tasks = append(tasks, would(fmt.Sprintf("%d waits on a person moved to waiting_for", len(moved))))
+			upgradeDiff += strings.Join(wlines, "\n") + "\n"
+		}
+		part("tasks", tasks)
+	} else {
+		parts = append(parts, "tasks: no board here (hug task init makes one)")
 	}
 	// Variables (m1c28r): old names hug wrote into hook commands and its MCP
 	// server entries become HUG_ names, each changed file backed up.
+	var vars []string
 	if home, e := os.UserHomeDir(); e == nil {
-		files, e := renameEnv(envFiles(home), false)
+		files, e := renameEnv(envFiles(home), dry)
 		if e != nil {
 			return nil, &OperationError{Problem: "rename variables in " + strings.Join(files, ", ") + ": " + e.Error(), Fix: "hug upgrade"}
 		}
 		for _, f := range files {
-			did = append(did, "variables renamed to HUG_* in "+f+" (backup "+filepath.Base(f)+".bak-hug-upgrade)")
+			if dry {
+				vars = append(vars, would("variables renamed to HUG_* in "+f))
+			} else {
+				vars = append(vars, "variables renamed to HUG_* in "+f+" (backup "+filepath.Base(f)+".bak-hug-upgrade)")
+			}
 		}
 	}
-	if len(did) == 0 {
-		did = append(did, "already on the hug layout")
+	part("variables", vars)
+	// Memory: a legacy .muninn/memories.jsonl moves off the code branch with
+	// its own command, which talks to the remote; upgrade names it.
+	var mem []string
+	if top, e := gitbranch.MainRoot(cwd); e == nil {
+		if _, e := os.Stat(filepath.Join(top, ".muninn", "memories.jsonl")); e == nil {
+			mem = append(mem, "a legacy .muninn/memories.jsonl is on the code branch: hug mem sync --migrate moves it (hug mem sync --migrate --dry-run shows how)")
+		}
 	}
-	reply := Reply{"upgrade": did, "next": "hug setup"}
+	part("memory", mem)
+	next := "hug setup"
+	if dry {
+		next = "hug upgrade"
+	}
+	reply := Reply{"upgrade": parts, "next": next}
 	if upgradeDiff != "" {
 		reply["diff"] = upgradeDiff
 	}

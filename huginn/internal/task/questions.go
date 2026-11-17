@@ -44,7 +44,7 @@ func QuestionCode(code string) bool {
 // noteQuestion is the question a ticket's notes and state raise, if any:
 // (a), (c) or (d), the first that holds.
 func noteQuestion(t Task, notes string) *Finding {
-	if t.Status == "done" || t.Status == "dropped" {
+	if t.State == "done" || t.State == "dropped" {
 		return nil
 	}
 	landed := landedLine.FindStringSubmatch(notes)
@@ -60,15 +60,15 @@ func noteQuestion(t Task, notes string) *Finding {
 		who = "nobody"
 	}
 	switch {
-	case landed != nil && t.Status == "doing" && settled == 0 && len(t.Acceptance) > 0:
+	case landed != nil && t.State == "doing" && settled == 0 && len(t.Acceptance) > 0:
 		return &Finding{Path: t.Path, Line: 1, Code: "landed-unchecked",
 			Problem: "landed, but no check is ticked: commit " + landed[1][:7] + " naming " + t.ID + " reached " + landed[2] + " (its note says so) and 0 of " + itoa(len(t.Acceptance)) + " checks are ticked or struck; " + who + ": which checks hold?",
 			Fix:     "hug task check " + t.ID + " 1"}
 	case shipped != nil:
 		return &Finding{Path: t.Path, Line: 1, Code: "shipped-not-done",
-			Problem: "shipped, but " + t.Status + ": release " + shipped[1] + " contains commit " + shipped[2][:7] + " naming " + t.ID + " (its note says so); " + who + ": is it done?",
+			Problem: "shipped, but " + t.State + ": release " + shipped[1] + " contains commit " + shipped[2][:7] + " naming " + t.ID + " (its note says so); " + who + ": is it done?",
 			Fix:     "hug task done " + t.ID}
-	case landed != nil && t.Status == "todo":
+	case landed != nil && t.State == "todo":
 		return &Finding{Path: t.Path, Line: 1, Code: "todo-has-commit",
 			Problem: "todo, but commit " + landed[1][:7] + " naming " + t.ID + " reached " + landed[2] + " (its note says so); who is on it?",
 			Fix:     "hug task take " + t.ID + " --model MODEL"}
@@ -89,7 +89,7 @@ func IdleFindings(ts []Task, last map[string]time.Time, asked map[string]bool, n
 	}
 	var out []Finding
 	for _, t := range ts {
-		if t.Status != "doing" || t.Stage != "active" || asked[t.ID] {
+		if t.State != "doing" || t.Stage != "active" || asked[t.ID] {
 			continue
 		}
 		since, err := time.ParseInLocation("2006-01-02T15:04", t.Fields["doing_since"], time.Local)

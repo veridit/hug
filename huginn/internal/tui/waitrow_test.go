@@ -16,9 +16,9 @@ func waitBoard(t *testing.T, n int) model {
 	t.Helper()
 	s := &task.Store{Root: t.TempDir()}
 	for i := 0; i < n; i++ {
-		front := "status: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00:00Z\""
+		front := "state: \"doing\"\nstage: \"active\"\ndoing_since: \"2026-11-17T08:00:00Z\""
 		if i%2 == 1 {
-			front = "status: \"doing\"\nstage: \"waiting\"\ndoing_since: \"2026-11-17T08:00:00Z\"\nwaiting_on: \"CI run " + fmt.Sprint(i) + "\"\nwaiting_since: \"2026-11-17T08:30:00Z\""
+			front = "state: \"doing\"\nstage: \"waiting\"\ndoing_since: \"2026-11-17T08:00:00Z\"\nwaiting_on: \"CI run " + fmt.Sprint(i) + "\"\nwaiting_since: \"2026-11-17T08:30:00Z\""
 		}
 		id := fmt.Sprintf("w%05d", i)
 		body := "---\nid: \"" + id + "\"\ntitle: \"Task " + fmt.Sprint(i) + "\"\n" + front + "\ntype: \"chore\"\npriority: \"low\"\nlabels: []\nassignee: [\"a" + fmt.Sprint(i) + "\"]\ncreated: \"2026-11-01\"\nupdated: \"2026-11-01\"\n---\n\n## Goal\ng\n\n## Purpose\np\n\n## Principle\nq\n\n## Acceptance\n- [ ] a\n"

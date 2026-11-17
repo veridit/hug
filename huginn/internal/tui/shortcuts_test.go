@@ -31,7 +31,7 @@ func TestAssignShortcuts(t *testing.T) {
 		{"types", []string{"feature", "bug", "chore", "spike", "docs"}, "", "fbcsd"},
 		{"priorities", []string{"critical", "high", "medium", "low"}, "", "chml"},
 		// The same letters the f filter picker already uses.
-		{"filter fields", []string{"status", "type", "priority", "group", "label", "epic", "assignee"}, "", "stpglea"},
+		{"filter fields", []string{"state", "type", "priority", "group", "label", "epic", "assignee"}, "", "stpglea"},
 		{"reserved keys are skipped", []string{"quit", "query"}, "q", "ue"},
 		{"upper case and spaces", []string{"Done", "do it"}, "", "do"},
 		{"nothing left", []string{"aa", "a"}, "", "a-"},

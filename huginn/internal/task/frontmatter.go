@@ -53,8 +53,16 @@ func (d *Document) parseFrontmatter() {
 			target = &d.Task.ID
 		case "title":
 			target = &d.Task.Title
+		case "state":
+			target = &d.Task.State
 		case "status":
-			target = &d.Task.Status
+			// Before 6ephqk step 4 (old-layout): read so the board still
+			// shows, and hug upgrade can move it to state:. A state: key
+			// anywhere wins.
+			if hasKey(mapping, "state") {
+				continue
+			}
+			target = &d.Task.State
 		case "stage":
 			target = &d.Task.Stage
 		case "type":
@@ -98,4 +106,14 @@ func (d *Document) parseFrontmatter() {
 			d.add(key.Line+1, fmt.Sprintf("invalid %s: %v", k, e))
 		}
 	}
+}
+
+// hasKey says whether the mapping has key k.
+func hasKey(mapping *yaml.Node, k string) bool {
+	for n := 0; n+1 < len(mapping.Content); n += 2 {
+		if mapping.Content[n].Value == k {
+			return true
+		}
+	}
+	return false
 }

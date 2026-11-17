@@ -43,7 +43,7 @@ func TestMoveRepairsTiesAndUsesGlobalOrder(t *testing.T) {
 
 func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 	m := fixture(t)
-	m = commandLine(m, "status todo")
+	m = commandLine(m, "state todo")
 	m = commandLine(m, "type bug")
 	m = commandLine(m, "group auth")
 	m = commandLine(m, "label urgent")

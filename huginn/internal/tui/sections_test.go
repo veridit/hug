@@ -100,7 +100,7 @@ func TestRecentlyDoneScrollsThroughAll(t *testing.T) {
 	m := overviewAt(t, 140, 40)
 	closed := 0
 	for _, v := range m.visible {
-		if v.Status == "done" || v.Status == "dropped" {
+		if v.State == "done" || v.State == "dropped" {
 			closed++
 		}
 	}

@@ -83,7 +83,7 @@ func doc(t *testing.T, id, assignee, notes string) *Document {
 	if assignee != "" {
 		as = `["` + assignee + `"]`
 	}
-	text := "---\nid: " + id + "\ntitle: \"T\"\nstatus: todo\nassignee: " + as + "\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] C\n\n## Notes\n" + notes
+	text := "---\nid: " + id + "\ntitle: \"T\"\nstate: todo\nassignee: " + as + "\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] C\n\n## Notes\n" + notes
 	d := Parse("x."+id+".t.md", []byte(text))
 	if d.Task.ID != id {
 		t.Fatalf("fixture %s: %+v", id, d.Findings)

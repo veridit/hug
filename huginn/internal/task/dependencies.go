@@ -12,7 +12,7 @@ import (
 type DependencyDetail struct {
 	ID      string `json:"id"`
 	Title   string `json:"title"`
-	Status  string `json:"status"`
+	State   string `json:"state"`
 	Path    string `json:"path"`
 	Line    int    `json:"line"`
 	Note    string `json:"note,omitempty"`
@@ -28,7 +28,7 @@ func DependencyDetails(t Task, tasks []Task) []DependencyDetail {
 	out := make([]DependencyDetail, 0, len(t.Dependencies))
 	for _, d := range t.Dependencies {
 		target, e := ResolveDependency(tasks, d.Ref)
-		detail := DependencyDetail{ID: target.ID, Title: target.Title, Status: target.Status, Path: target.Path, Line: d.Line, Note: d.Note}
+		detail := DependencyDetail{ID: target.ID, Title: target.Title, State: target.State, Path: target.Path, Line: d.Line, Note: d.Note}
 		if e != nil {
 			detail.ID = d.Ref
 			detail.Missing = true
@@ -36,7 +36,7 @@ func DependencyDetails(t Task, tasks []Task) []DependencyDetail {
 		} else {
 			detail.Blocking = !Closed(target, tasks)
 			for _, i := range childPositions(tasks, target) {
-				if s := tasks[i].Status; s != "done" && s != "dropped" {
+				if s := tasks[i].State; s != "done" && s != "dropped" {
 					detail.OpenChildren++
 				}
 			}

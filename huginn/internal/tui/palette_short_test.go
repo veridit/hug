@@ -26,7 +26,7 @@ func TestPaletteShortFieldAfterFilter(t *testing.T) {
 			t.Fatalf("f g + space offered %q, want only groups", c.value)
 		}
 	}
-	for short, field := range map[string]string{"s": "status", "t": "type", "p": "priority", "g": "group", "l": "label", "e": "epic", "a": "assignee"} {
+	for short, field := range map[string]string{"s": "state", "t": "type", "p": "priority", "g": "group", "l": "label", "e": "epic", "a": "assignee"} {
 		if got := expandField(short); got != field {
 			t.Fatalf("expandField(%q) = %q, want %q", short, got, field)
 		}

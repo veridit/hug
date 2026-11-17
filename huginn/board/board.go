@@ -25,9 +25,9 @@ const (
 
 // Task is what a reader needs to compare the board with the work.
 type Task struct {
-	ID, Title, Status, Path string
-	Assignee                []string
-	Model                   string
+	ID, Title, State, Path string
+	Assignee               []string
+	Model                  string
 	// Branch and Worktree are where the task was taken (x1t1t1).
 	Branch, Worktree string
 	Parent           string
@@ -42,7 +42,7 @@ type Task struct {
 // Finding is one open lint finding (findings on done or dropped tasks are
 // left out, as hug task lint does) with the command that repairs it.
 type Finding struct {
-	Path, TaskID, TaskStatus, Code, Problem, Fix string
+	Path, TaskID, TaskState, Code, Problem, Fix string
 }
 
 // Place is where the reader works: its branch and worktree, and whether
@@ -73,12 +73,12 @@ func (s *Snapshot) Findings() ([]Finding, error) {
 	open, _ := task.OpenFindings(fs, ts)
 	status := map[string]string{}
 	for _, t := range ts {
-		status[t.ID] = t.Status
+		status[t.ID] = t.State
 	}
 	out := make([]Finding, 0, len(open))
 	for _, f := range open {
 		_, id, _, _ := task.ParseName(f.Path)
-		out = append(out, Finding{Path: f.Path, TaskID: id, TaskStatus: status[id], Code: task.FindingCode(f.Problem), Problem: f.Problem, Fix: f.FixLine()})
+		out = append(out, Finding{Path: f.Path, TaskID: id, TaskState: status[id], Code: task.FindingCode(f.Problem), Problem: f.Problem, Fix: f.FixLine()})
 	}
 	return out, nil
 }
@@ -180,7 +180,7 @@ func (f *Files) Snapshot() *Snapshot {
 func convert(ts []task.Task) []Task {
 	out := make([]Task, 0, len(ts))
 	for _, t := range ts {
-		x := Task{ID: t.ID, Title: t.Title, Status: t.Status, Path: t.Path, Assignee: t.Assignee, Model: t.Model,
+		x := Task{ID: t.ID, Title: t.Title, State: t.State, Path: t.Path, Assignee: t.Assignee, Model: t.Model,
 			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer}
 		for _, a := range t.Acceptance {
 			if !a.Settled() {

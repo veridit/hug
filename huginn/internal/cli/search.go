@@ -17,7 +17,7 @@ const searchLimit = 20
 // search is hug task search WORDS (49n9kw): the tasks matching every word,
 // ranked by BM25 over id, aliases, title, goal, description, acceptance and
 // notes, each with the field that matched and a snippet. The ls filters
-// (--status, --type, --epic, ...) narrow the results.
+// (--state, --type, --epic, ...) narrow the results.
 func (a *App) search(ctx context.Context, s *session, f flags, filter task.Filter) (Reply, error) {
 	query := strings.TrimSpace(strings.Join(f.args, " "))
 	if query == "" {
@@ -47,7 +47,7 @@ func (a *App) search(ctx context.Context, s *session, f flags, filter task.Filte
 	out := []Reply{}
 	for _, h := range hits {
 		t := byPath[h.Path]
-		out = append(out, Reply{"id": t.ID, "status": t.Status, "type": t.Type, "title": t.Title, "aliases": t.Aliases,
+		out = append(out, Reply{"id": t.ID, "state": t.State, "type": t.Type, "title": t.Title, "aliases": t.Aliases,
 			"field": h.Field, "snippet": h.Snippet, "score": h.Score})
 	}
 	reply := Reply{}
@@ -63,7 +63,7 @@ func (a *App) search(ctx context.Context, s *session, f flags, filter task.Filte
 
 // matchesFilter is the ls filter rule for one task.
 func matchesFilter(t task.Task, filter task.Filter, ts []task.Task) bool {
-	return !(filter.Status != "" && t.Status != filter.Status || filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) || !task.InEpic(t, ts, filter.Epic))
+	return !(filter.State != "" && t.State != filter.State || filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) || !task.InEpic(t, ts, filter.Epic))
 }
 
 // writeSearch prints search results: one line per task (id, status, title),
@@ -74,7 +74,7 @@ func writeSearch(w io.Writer, query string, rs []Reply) {
 		return
 	}
 	for _, r := range rs {
-		fmt.Fprintf(w, "%-6s  %-7s  %s\n", r["id"], r["status"], r["title"])
+		fmt.Fprintf(w, "%-6s  %-7s  %s\n", r["id"], r["state"], r["title"])
 		if r["field"] != "" {
 			fmt.Fprintf(w, "        %s: %s\n", r["field"], r["snippet"])
 		}
