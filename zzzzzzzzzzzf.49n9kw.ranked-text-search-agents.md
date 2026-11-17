@@ -34,7 +34,7 @@ Task cache: huginn/internal/task cache (schema now 12 after 16dxsr; 44w1ev keeps
 ## Acceptance
 - [x] hug task search "memory limit exit 137" on a fixture ranks the task with those words in its title first and prints the matched field and snippet (test)
 - [x] a search for STATBUS-402 finds the task with that alias first and tasks whose notes cite it after (test)
-- [ ] MCP task_search returns the same results as the CLI, as JSON (test)
+- [x] MCP task_search returns the same results as the CLI, as JSON (test)
 - [ ] the index follows writes: a note added is found by the next search without a rebuild (test)
 - [ ] HUG_BENCH: search at 10,000 tasks warm costs at most 0.5 of an uncached search, and under 100 ms on ubuntu CI (bench job)
 - [ ] the TUI / search ranks by the same index (test)
