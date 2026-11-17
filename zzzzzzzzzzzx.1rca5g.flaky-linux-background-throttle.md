@@ -1,13 +1,18 @@
 ---
 id: 1rca5g
 title: "Flaky on Linux: background throttle test reads nice=0 instead of 10"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T14:38"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "ci/1rca5g"
+worktree: "/Users/jhf/.jcode/scratch/guppy-own"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ muninn/internal/throttle/throttle_test.go:48. Linux nice is per thread (tid); Go
 - [ ] background work is niced on every thread hug uses for it (test reads every /proc/self/task entry), and the test passes -count=50 on ubuntu CI (run id)
 
 ## Notes
+
+
+## History
+- 2026-11-17T14:38 todo -> doing/active (take)
