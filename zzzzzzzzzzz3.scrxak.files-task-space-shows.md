@@ -1,13 +1,18 @@
 ---
 id: scrxak
 title: "Files in a task: Space shows a file inline, n/p step, Esc or u back"
-status: todo
+status: "doing"
 type: feature
 priority: "medium"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T15:02"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ FILES section: huginn/internal/tui/detail.go:421 (hint 'j/k or [ ] step · Enter
 - [ ] Jørgen looks through the TASK-2034.02 evidence on Seid with Space and n/p, and says it works
 
 ## Notes
+
+
+## History
+- 2026-11-17T15:02 todo -> doing/active (take)
