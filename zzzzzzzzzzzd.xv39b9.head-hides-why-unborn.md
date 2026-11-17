@@ -37,6 +37,7 @@ huginn/gitbranch/gitbranch.go Head() (~line 473): rev-parse fails; then symbolic
 
 kestrel: landed a201b2e..98444d7. Check 1: TestHeadNamesTheCallThatCrashed (a PATH git wrapper kills show-ref, then symbolic-ref, with SIGSEGV on an unborn hug/tasks) failed on main: 'the error does not name show-ref first: rev-parse --verify HEAD: fatal: Needed a single revision exit status 128'; now the error starts with the crashed call and says 'segmentation fault', fix re-runs it. gitbranch.Crashed(err): killed by a signal, or on Windows an NTSTATUS exit >= 0xC0000000. Check 2: TestHeadUnbornIsEmpty, plus -race gitbranch ok 22.578s, cli ok 158.120s.
 Reflection (open, 2026-11-17, calf): nothing misled.
+landed 98444d7 on main 2026-11-17: gitbranch: Head() reports a crashed symbolic-ref/show-ref as itself, not…
 ## History
 - 2026-11-17T23:43 todo -> doing/active (take)
 - 2026-11-17T23:52 doing/active -> done (done); was doing_since: 2026-11-17T23:43
