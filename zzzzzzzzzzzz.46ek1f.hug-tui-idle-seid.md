@@ -37,5 +37,12 @@ Likely candidates: the vnyz8z refresh spinner tick keeps running after the refre
 ## Notes
 
 
+Measured 2026-11-17 18:00-18:33 (Seid copy at ~/.jcode/scratch/seidcopy, 2,520 tasks, warm cache; ps time):
+- Idle with the board unchanged is already under the goal: main build 0.31 s/60 s; v0.7.43 0.22 s/60 s; v0.7.42 0.08 s/30 s; v0.7.41 0.18 s/60 s. Views counted with a scratch counter: 3 frames in 19 s idle; the spinner stops once the refresh lands.
+- The cost is per board change. One hug task note: v0.7.41 16.0 s (24.32 -> 40.33), v0.7.42 0.58-0.78 s, v0.7.44 1.0-1.1 s (1.68 -> 2.82 -> 3.74). Scratch event log: each commit gives 2 reloads, the file event and then the ref event about 300 ms later (debounce is 200 ms); each reload's loadSnapshot takes 150-250 ms.
+- Profile of 110 s with 2 notes (3.43 s of samples): View 1.33 s (overviewText 1.21 s: overviewRows 0.49, taskRowMark 0.31, paneIndices 0.14; task.Stage 0.38 s, mostly StageNames allocating); loadSnapshot 0.70 s (taskFiles WalkDir 0.57 s). The cache sync is 21-99 ms and reads 0-1 files.
+- crab's 19.2 s in 60 s (17:44) matches a first start, not idle: cache-16.db on live Seid was created at 17:42:10, so that TUI rebuilt the cache for the new schema. Fresh copy with no cache on v0.7.44: 0:01.85 -> 0:04.76 in the first 10 s, then 0.03 s per 10 s.
+- Live: Jørgen's pid 99030 (v0.7.43) used 12.5 s over 20.4 min (1:06 -> 1:18.55) while about 10 board commits landed; 0.21 s in the next 60 s.
+Next: the per-change cost (2 loads per commit; taskFiles walks every attachment folder on every load; a frame walks all 2,520 tasks), with a test that counts loads per commit.
 ## History
 - 2026-11-17T18:53 todo -> doing/active (take)
