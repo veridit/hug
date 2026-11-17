@@ -41,3 +41,5 @@ Jørgen 23:36 local: the state counts line 'todo 31 · doing 26 · depends 0 · 
 When tight, counts drop from the right (dropped, done) before the view names shorten.
 
 Jørgen 23:38 local: drop gg and G ('I never used it', 'vi specific'). Top and bottom stay on < > Home End. With gg gone, g is no prefix: the g item of this ticket is void; v is the only prefix so far.
+
+Header picture for all of tonight's rulings is attached to e3sevr as header-spec.md (crab 00:00 local). Build to it. Where it and this ticket differ, tell crab.
