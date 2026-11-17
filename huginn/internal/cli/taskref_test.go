@@ -50,7 +50,13 @@ func TestEveryRefCommandAcceptsTaskColon(t *testing.T) {
 		{"rebalance", T(epic), T(gamma)},
 		{"take", T(beta)},
 		{"done", T(beta)},
-		{"drop", T(gamma)},
+		{"drop", T(gamma), "superseded"},
+		{"set", T(gamma), "--status", "todo"},
+		{"design", T(gamma), "which way?"},
+		{"design", T(gamma), "--clear"},
+		{"take", T(gamma)},
+		{"wait", T(gamma), "CI"},
+		{"resume", T(gamma)},
 	} {
 		out := &bytes.Buffer{}
 		a.Out, a.Err = out, &bytes.Buffer{}

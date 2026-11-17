@@ -207,11 +207,11 @@ func TestOperationsIsolationAndLifecycle(t *testing.T) {
 	if _, e = os.Stat(filepath.Join(s.Root, c.Path)); e != nil {
 		t.Fatal("title changed slug", e)
 	}
-	r, e = s.Drop(c.ID)
+	r, e = s.Drop(c.ID, "test reason")
 	if e != nil || !r.Changed {
 		t.Fatal(r, e)
 	}
-	r, e = s.Drop(c.ID)
+	r, e = s.Drop(c.ID, "test reason")
 	if e != nil || r.Changed {
 		t.Fatal(r, e)
 	}

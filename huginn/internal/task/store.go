@@ -175,6 +175,17 @@ func hint(t Task) string {
 	}
 }
 func (s *Store) finish(d *Document, changed bool) (Result, error) {
+	if changed && Staged(d.Task) {
+		// Every write keeps a staged file's stage right: a check, a note,
+		// a dependency can change which stage holds (6ephqk).
+		ts, e := s.Tasks()
+		if e != nil {
+			return Result{}, e
+		}
+		if e = settle(d, ts); e != nil {
+			return Result{}, e
+		}
+	}
 	if changed {
 		path, e := s.diskPath(d.Task.Path)
 		if e != nil {
@@ -402,8 +413,8 @@ func (s *Store) TakeAt(ref, name, model string, at Place) (Result, error) {
 	}
 	return s.transitionAt(ref, "doing", name, model, at)
 }
-func (s *Store) Done(ref string) (Result, error) { return s.Transition(ref, "done", "") }
-func (s *Store) Drop(ref string) (Result, error) { return s.Transition(ref, "dropped", "") }
+func (s *Store) Done(ref string) (Result, error)         { return s.Transition(ref, "done", "") }
+func (s *Store) Drop(ref, reason string) (Result, error) { return s.DropBecause(ref, reason) }
 func (s *Store) Transition(ref, status, user string) (Result, error) {
 	return s.transition(ref, status, user, "")
 }
@@ -412,12 +423,33 @@ func (s *Store) transition(ref, status, user, model string) (Result, error) {
 }
 
 func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result, error) {
+	return s.transitionFull(ref, status, user, model, at, "")
+}
+
+// transitionWhy is a transition with a reason (drop's dropped_reason).
+func (s *Store) transitionWhy(ref, status, reason string) (Result, error) {
+	return s.transitionFull(ref, status, "", "", Place{}, reason)
+}
+
+func (s *Store) transitionFull(ref, status, user, model string, at Place, reason string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
 	}
 	if !contains(Statuses, status) {
 		return Result{}, invalidFor(d.Task.ID, "status", status, Statuses)
+	}
+	// Only the moves in Transitions (6ephqk check 3). done comes only from
+	// doing: take before done (Jørgen 11:37).
+	if d.Task.Status != status && !allowed(d.Task, status) {
+		fix := "hug task show " + d.Task.ID
+		if status == "done" && d.Task.Status == "todo" {
+			fix = "hug task take " + d.Task.ID + " --model MODEL"
+		}
+		return Result{}, refuse(d.Task, status, fix)
+	}
+	if status == "dropped" && d.Task.Status != "dropped" && strings.TrimSpace(reason) == "" {
+		return Result{}, usageErr(d.Task.ID, "drop needs a reason", "hug task drop "+d.Task.ID+` "duplicate of OTHER"`)
 	}
 	if d.Task.Status == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.Model == model) && (at.Branch == "" || d.Task.Branch == at.Branch) && (at.Worktree == "" || d.Task.Worktree == at.Worktree) {
 		return s.finish(d, false)
@@ -482,8 +514,10 @@ func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result,
 			warnings = append(warnings, "open child tasks")
 		}
 	}
-	if e = d.SetField("status", status); e != nil {
-		return Result{}, e
+	if d.Task.Status != status {
+		if e = stagedMove(d, ts, status, user, reason); e != nil {
+			return Result{}, e
+		}
 	}
 	if status == "doing" && user != "" {
 		if e = d.SetField("assignee", []string{user}); e != nil {
@@ -511,8 +545,22 @@ func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result,
 			}
 		}
 	}
+	from := ""
+	if t, e := Resolve(ts, d.Task.ID); e == nil {
+		from = t.Status
+	}
 	r, e := s.finish(d, true)
 	r.Warnings = warnings
+	if e == nil && from != status {
+		// Tasks that depend on this one: their depends stage follows it.
+		settled, ce := s.cascade(d.Task.ID)
+		for _, t := range settled {
+			r.Warnings = append(r.Warnings, "stage of "+t)
+		}
+		if ce != nil {
+			return r, ce
+		}
+	}
 	if e == nil && status == "done" {
 		// Items elsewhere that wait on this task ("done when task:<id> is
 		// done", from promote) are ticked now.

@@ -45,7 +45,7 @@ func TestLintStageOutsideItsState(t *testing.T) {
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"ready\"")), "unknown-stage", "a doing task's stage is one of active, waiting, depends, review")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"dropped\"\nstage: \"active\"\ndropped_reason: \"dup\"")), "unknown-stage", "a dropped task has no stage")
 	// review is a stage of both todo and doing: no finding under either.
-	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"")); len(got) != 0 {
+	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T10:00\"")); len(got) != 0 {
 		t.Fatalf("todo/review: %q", got)
 	}
 	// No stage yet (a board before hug upgrade) is not flagged.
@@ -63,13 +63,20 @@ func TestLintNodeFieldOutsideItsNode(t *testing.T) {
 	if ok.Task.Fields["waiting_on"] != "CI run 44057678727" || ok.Task.Fields["doing_since"] != "2026-11-17T08:46" || ok.Task.Stage != "waiting" {
 		t.Fatalf("parsed %q %q", ok.Task.Stage, ok.Task.Fields)
 	}
-	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"active\"\nwaiting_on: \"CI\"")), "stray-node-field", "node field waiting_on belongs to doing/waiting, and this task is doing/active")
+	// A field of another state is never allowed.
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"\nwaiting_on: \"CI\"")), "stray-node-field", "node field waiting_on belongs to doing/waiting, and this task is todo/ready")
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"active\"\ndone_at: \"2026-11-17T10:00\"")), "stray-node-field", "node field done_at belongs to done, and this task is doing/active")
+	// Proposal A (crab 11:37): an outranked stage keeps its fields while
+	// its condition holds: design_question on a todo task that depends.
+	if got := codes(stageDoc("bbbbbb", "status: \"doing\"\nstage: \"active\""), stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"\ndesign_question: \"q\"", "bbbbbb")); len(got) != 0 {
+		t.Fatalf("design_question under depends: %q", got)
+	}
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"\ndoing_since: \"2026-11-17T08:46\"")), "stray-node-field", "node field doing_since belongs to doing, and this task is todo/ready")
 	// review_by belongs to todo/review and doing/review alike.
 	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_by: \"Jørgen\"")); len(got) != 0 {
 		t.Fatalf("todo/review review_by: %q", got)
 	}
-	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"q\"\nreview_by: \"Jørgen\"")), "stray-node-field", "belongs to todo/review and doing/review")
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"dropped\"\ndropped_reason: \"dup\"\nreview_by: \"Jørgen\"")), "stray-node-field", "belongs to todo/review and doing/review")
 	// Unknown keys stay unknown keys, not node fields.
 	if d := stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"\nshipped: \"v1\""); len(d.Task.Fields) != 0 {
 		t.Fatal(d.Task.Fields)
@@ -84,8 +91,8 @@ func TestLintRequiredNodeFieldMissing(t *testing.T) {
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"")), "missing-node-field", "design_question")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"review\"")), "missing-node-field", "review_by")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"deferred\"")), "missing-node-field", "deferred_reason")
-	// todo/review's review_by is optional.
-	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"")); len(got) != 0 {
+	// todo/review's review_by is optional (review_since marks it).
+	if got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T10:00\"")); len(got) != 0 {
 		t.Fatalf("todo/review: %q", got)
 	}
 	// A state's required field: dropped needs dropped_reason, once the
@@ -100,26 +107,33 @@ func TestLintRequiredNodeFieldMissing(t *testing.T) {
 	}
 }
 
-// Rule 4: a stage hug sets (draft, depends, ready) agrees with its
-// condition; stages a person or agent sets are theirs.
+// Rule 4: the stage is the first in order whose condition holds
+// (Proposal A, crab 11:37).
 func TestLintDerivedStageDisagrees(t *testing.T) {
 	dep := stageDoc("bbbbbb", "status: \"doing\"\nstage: \"active\"")
 	done := stageDoc("cccccc", "status: \"dropped\"")
-	wantOnly(t, codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"", "bbbbbb")), "stage-disagrees", "stage ready disagrees with the task: it depends on bbbbbb (doing), so hug's stage is depends")
+	wantOnly(t, codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"", "bbbbbb")), "stage-disagrees", "stage ready disagrees with the task: it depends on bbbbbb (doing), so its stage is depends")
 	if got := codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"", "bbbbbb")); len(got) != 0 {
 		t.Fatalf("todo/depends on a doing task: %q", got)
 	}
-	wantOnly(t, codes(done, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"", "cccccc")), "stage-disagrees", "stage depends disagrees with the task: every dependency is done, so hug's stage is ready")
-	wantOnly(t, codes(done, stageDoc("aaaaaa", "status: \"doing\"\nstage: \"depends\"", "cccccc")), "stage-disagrees", "the stage is the owner's (active, waiting or review)")
+	wantOnly(t, codes(done, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"", "cccccc")), "stage-disagrees", "stage depends disagrees with the task: nothing holds it: no open dependency, and none of its stage's fields is set, so its stage is ready")
+	wantOnly(t, codes(done, stageDoc("aaaaaa", "status: \"doing\"\nstage: \"depends\"", "cccccc")), "stage-disagrees", "stage depends disagrees with the task: nothing holds it: no open dependency, and none of its stage's fields is set, so its stage is active")
+	// Precedence (Jørgen 10:18): depends beats design, deferred beats depends.
+	wantOnly(t, codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"q\"", "bbbbbb")), "stage-disagrees", "it depends on bbbbbb (doing), so its stage is depends")
+	if got := codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"deferred\"\ndeferred_reason: \"after v1\"", "bbbbbb")); len(got) != 0 {
+		t.Fatalf("deferred over depends: %q", got)
+	}
+	// A doing task waiting outside the board: waiting beats depends.
+	if got := codes(dep, stageDoc("aaaaaa", "status: \"doing\"\nstage: \"waiting\"\nwaiting_on: \"CI\"", "bbbbbb")); len(got) != 0 {
+		t.Fatalf("waiting over depends: %q", got)
+	}
+	// Setting a stage's field without its stage: the stage disagrees.
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"active\"\nwaiting_on: \"CI\"")), "stage-disagrees", "its waiting fields are set, so its stage is waiting")
 	// draft: no acceptance item.
 	draft := Parse("aaaaaa.t.md", []byte("---\nid: \"aaaaaa\"\ntitle: \"T\"\nstatus: \"todo\"\nstage: \"ready\"\n---\n\n## Goal\ng\n"))
 	got := codes(draft)
-	if len(got) != 2 || !strings.Contains(strings.Join(got, "\n"), "stage-disagrees: stage ready disagrees with the task: it is not complete (no Goal or no acceptance item), so hug's stage is draft") {
+	if len(got) != 2 || !strings.Contains(strings.Join(got, "\n"), "stage-disagrees: stage ready disagrees with the task: it is not complete (no Goal or no acceptance item), so its stage is draft") {
 		t.Fatalf("draft: %q", got)
-	}
-	// A stage someone set (design) beats depends: not checked.
-	if got := codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"q\"", "bbbbbb")); len(got) != 0 {
-		t.Fatalf("design over depends: %q", got)
 	}
 	if DerivedStage(done.Task, nil) != "" || DerivedStage(stageDoc("aaaaaa", "status: \"todo\"").Task, nil) != "ready" {
 		t.Fatal("DerivedStage")

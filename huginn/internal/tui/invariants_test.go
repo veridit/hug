@@ -52,7 +52,7 @@ func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 		t.Fatal(m.View())
 	}
 	id := m.visible[0].ID
-	if _, err := m.store.Drop(id); err != nil {
+	if _, err := m.store.Drop(id, "test reason"); err != nil {
 		t.Fatal(err)
 	}
 	m = press(m, "r")

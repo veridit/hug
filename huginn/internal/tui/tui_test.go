@@ -95,9 +95,10 @@ func TestActions(t *testing.T) {
 		}
 		return nil
 	}
-	m = act(m, "d")
-	if !strings.Contains(m.message, "hug task check "+first+" 1") {
-		t.Fatal(m.message)
+	// d on a todo task: take before done (6ephqk, Jørgen 11:37).
+	m = press(m, "d")
+	if m.confirm != "" || m.message != first+" is todo: t takes it, then d marks it done" {
+		t.Fatal(m.confirm, m.message)
 	}
 	m = press(m, "enter")
 	m = act(m, " ")
@@ -121,7 +122,12 @@ func TestActions(t *testing.T) {
 	if d.Task.Status != "done" {
 		t.Fatal(m.message)
 	}
-	m = act(m, "x")
+	// x asks why, then confirms the drop with the reason.
+	m = press(m, "x", "superseded", "enter")
+	if !strings.Contains(m.confirmLine(), "Drop "+first+": superseded") {
+		t.Fatal(m.confirmLine())
+	}
+	m = press(m, "enter")
 	d, _ = m.store.Get(first)
 	if d.Task.Status != "dropped" {
 		t.Fatal(m.message)
@@ -130,6 +136,11 @@ func TestActions(t *testing.T) {
 		t.Fatalf("commits=%d", commits)
 	}
 	m.opts.Commit = func(string) error { return errors.New("commit failed") }
+	// A dropped task is not taken (6ephqk): reopen it first.
+	if _, err := m.store.Set(first, "status", "todo"); err != nil {
+		t.Fatal(err)
+	}
+	m.refresh("")
 	m = act(m, "t")
 	if m.message != "commit failed" {
 		t.Fatal(m.message)

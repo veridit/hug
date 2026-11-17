@@ -376,6 +376,10 @@ func TestEveryEditRequiresConfirmation(t *testing.T) {
 	// TestMoveJPastHiddenEpicInNextUp and grab_test.go cover them.
 	for _, k := range []string{"t", "d", "x", " ", "e"} {
 		m := fixture(t)
+		if k == "d" {
+			// done only from doing (6ephqk): take first.
+			m = act(m, "t")
+		}
 		before, _ := os.ReadFile(filepath.Join(m.store.Root, m.all[0].Path))
 		commits := 0
 		m.opts.Commit = func(string) error { commits++; return nil }
@@ -384,6 +388,9 @@ func TestEveryEditRequiresConfirmation(t *testing.T) {
 			m = press(m, "enter")
 		}
 		m = press(m, k)
+		if k == "x" {
+			m = press(m, "dup", "enter") // the reason comes first
+		}
 		if m.confirm != k {
 			t.Fatal(k, "no confirmation")
 		}
@@ -560,6 +567,7 @@ func TestFullHelpFits140AndRepairStaysVisible(t *testing.T) {
 	}
 	m = press(m, "esc")
 	id := m.visible[0].ID
+	m = act(m, "t")
 	m = act(m, "d")
 	if !strings.Contains(m.View(), "fix: hug task check "+id+" 1") {
 		t.Fatal(m.View())

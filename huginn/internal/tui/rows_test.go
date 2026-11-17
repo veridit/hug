@@ -42,6 +42,9 @@ func longBoard(t *testing.T) model {
 					t.Fatal(err)
 				}
 			}
+			if _, err := s.Take(id, "tester"); err != nil { // take before done (6ephqk)
+				t.Fatal(err)
+			}
 			if _, err := s.Done(id); err != nil {
 				t.Fatal(err)
 			}

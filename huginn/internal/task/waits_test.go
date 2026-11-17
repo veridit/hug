@@ -22,10 +22,21 @@ func nextID(t *testing.T, s *Store) string {
 
 func setStatus(t *testing.T, s *Store, id, status string) {
 	t.Helper()
-	if status == "done" {
+	switch status {
+	case "done":
+		// done only from doing (6ephqk gap 4): take it first.
 		if _, e := s.Check(id, 1); e != nil {
 			t.Fatal(e)
 		}
+		if _, e := s.Take(id, "x"); e != nil {
+			t.Fatal(e)
+		}
+	case "dropped":
+		// A drop needs a reason (6ephqk).
+		if _, e := s.Drop(id, "not needed"); e != nil {
+			t.Fatal(e)
+		}
+		return
 	}
 	if _, e := s.Set(id, "status", status); e != nil {
 		t.Fatal(e)

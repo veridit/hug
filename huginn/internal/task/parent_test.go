@@ -33,10 +33,13 @@ func TestEpicParentRules(t *testing.T) {
 	if _, e := s.Check(epic.ID, 1); e != nil {
 		t.Fatal(e)
 	}
+	if _, e := s.Take(epic.ID, "x"); e != nil { // take before done (6ephqk)
+		t.Fatal(e)
+	}
 	if _, e := s.Done(epic.ID); !errors.As(e, &te) || te.ExitCode() != 3 || te.Field != "children" {
 		t.Fatal("epic done with open child:", e)
 	}
-	if _, e := s.Drop(child.ID); e != nil {
+	if _, e := s.Drop(child.ID, "test reason"); e != nil {
 		t.Fatal(e)
 	}
 	if _, e := s.Done(epic.ID); e != nil {
