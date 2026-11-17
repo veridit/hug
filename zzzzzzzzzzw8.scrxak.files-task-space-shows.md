@@ -9,14 +9,10 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T15:02"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 5: look through the TASK-2034.02 evidence on Seid with Space and n/p in a task's FILES (on main af51fc3)"
-waiting_since: "2026-11-17T17:17"
-waiting_asked_by: "nautilus"
-waiting_for: "jhf"
 ---
 
 ## Goal
@@ -50,3 +46,4 @@ shipped in v0.7.43 (af51fc3)
 ## History
 - 2026-11-17T15:02 todo -> doing/active (take)
 - 2026-11-17T15:08 doing/active -> doing/waiting (wait)
+- 2026-11-18T00:08 answered waiting: "check 5: look through the TASK-2034.02 evidence on Seid with Space and n/p in a task's FILES (on main af51fc3)" -> "This worked well. I tried it inside of Seid I do think that the markdown formatting will make sense at a later point. The space view the file N and P switch between files and yeah I don't think people who doesn't know this would know that NNP are next and previous, so you might need to write it out to make the footer a little bit longer. This is good approved and I will file more changes later when I find the need", by jhf, for nautilus (doing/waiting -> doing/active)
