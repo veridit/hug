@@ -1,13 +1,18 @@
 ---
 id: wdkqzx
 title: "Lint asks no question about a task that already waits on a person"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T23:22"
+stage: "active"
+model: "claude-opus-5-5/high"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ huginn/internal/task/questions.go noteQuestion and IdleFindings: skip when the s
 - [ ] the overview shows 6ephqk in WAITING and not in LINT (golden or test)
 
 ## Notes
+
+
+## History
+- 2026-11-17T23:22 todo -> doing/active (take)
