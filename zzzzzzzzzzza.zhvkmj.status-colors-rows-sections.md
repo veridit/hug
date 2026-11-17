@@ -47,5 +47,6 @@ vole: on ci/zhvkmj (run 44058841019). check 1: progress.go progressText; TestPro
 landed on main c6e0bff..c818f34 (ff). CI run 44066450337 (ff3c2a3, the same code; only crab's v0.7.40 CHANGELOG commit came in after): ubuntu, macos, windows and bench success. Checks 1-3 ticked with the evidence above. Check 4 (Jørgen confirms the look on his board after release) stays open, so the task stays doing until then.
 
 
+file:screen-1821.ans (10206 bytes, sha256:e77117eb) screen capture from hug tui
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
