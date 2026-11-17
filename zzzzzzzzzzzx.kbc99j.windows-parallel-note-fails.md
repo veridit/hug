@@ -28,7 +28,7 @@ Windows refuses to rename over a file another process holds open without FILE_SH
 ## Depends on
 
 ## Acceptance
-- [ ] a test reproduces the failure on Windows CI before the fix (run id), and passes after
+- [x] a test reproduces the failure on Windows CI before the fix (run id), and passes after
 - [ ] TestParallelNotesWithoutRemoteAllLand passes in a Windows -count=20 run (run id)
 
 ## Notes
