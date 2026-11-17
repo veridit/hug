@@ -1,13 +1,18 @@
 ---
 id: 5z4zt4
 title: "Attach screenshots and screen captures to a task; the detail shows them inline"
-status: todo
+status: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T17:18"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -39,3 +44,7 @@ Jørgen 2026-11-17 14:51: the dump key also copies to the clipboard, so he can p
 file:detail-stage.md (1564 bytes, sha256:a6a935a7) detail mock
 
 nautilus 16:18: dependency on scrxak removed: the code it builds on (Space shows a file, read only when shown) is on main af51fc3; scrxak stays open only for Jørgen's check 5.
+
+
+## History
+- 2026-11-17T17:18 todo -> doing/active (take)
