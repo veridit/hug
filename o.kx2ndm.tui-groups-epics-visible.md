@@ -49,3 +49,5 @@ vole: check 1 built on branch wip/kx2ndm (3c2f123, on top of zhvkmj): row cell '
 Jørgen 2026-11-17: no magic group names. 'later' is not special; 'not now' is the todo stage deferred in 6ephqk. Groups are folders with no meaning.
 
 Jørgen 2026-11-17 10:25 (ruling): the grouping toggle key is g (grouped); it cycles flat -> by group -> by epic. gg stays 'top'.
+
+vole 10:55: built per the rulings so far, on ci/kx2ndm: row cell '<group>·↳<epic>' before the title (no special group names; any group shows the same way) and the overview footer legend '! lint finding · ↳ epic'. Open question for Jørgen on the g ruling: a single g is already the pending prefix of gg (top). Either (a) g toggles at once and a second g undoes it and goes to the top (the grouping flickers on every gg), or (b) g waits for the next key: g again = top, any other key = cycle grouping, then that key runs (the toggle shows one key late), or (c) the pending g shows its choices in place, like the header-tree idea in 0sw0dd: 'g: g top · r grouping'. Proposal: (c). Question 3 (what starts folded) is still open; with no magic names, the default would be nothing folded.
