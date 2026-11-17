@@ -184,27 +184,31 @@ func TestDetailBandsInOrder(t *testing.T) {
 	goldenFile(t, filepath.Join("testdata", "detail", "bands.txt"), text)
 }
 
-// Jørgen: an empty WAITING section, focused, draws no column header.
+// Jørgen: an empty section, focused with a column marked, draws no column
+// header: there is nothing under it. A section with rows still does.
 func TestEmptyFocusedSectionHasNoColumnHeader(t *testing.T) {
-	m := manyModel(t)
-	m.width, m.height = 140, 40
+	m := stageBoard(t)
+	m.width, m.height = 100, 30
 	m.resize()
 	m.setView("overview")
+	m.column = 3 // a marked column draws the focused section's header
+	m.pane = sectionWaiting
+	header := regexp.MustCompile(`(?m)^\s+✓\s+ID\s`)
+	if screen := ansi.Strip(m.View()); !header.MatchString(screen) {
+		t.Fatalf("WAITING has rows and a marked column, yet no header:\n%s", screen)
+	}
+	empty := -1
 	for p := range overviewSections {
-		if len(m.paneIndices(p)) == 0 {
-			m.pane = p
-			screen := ansi.Strip(m.View())
-			if strings.Contains(screen, "PRIORITY") {
-				t.Fatalf("empty section %d focused draws a column header:\n%s", p, screen)
-			}
-			return
+		if p != sectionLint && len(m.paneIndices(p)) == 0 {
+			empty = p
 		}
 	}
-	// The seed has no empty section: empty one with a filter.
-	m = commandLine(m, "filter stage:nonesuch")
-	m.pane = 0
-	if screen := ansi.Strip(m.View()); strings.Contains(screen, "PRIORITY") {
-		t.Fatalf("empty section focused draws a column header:\n%s", screen)
+	if empty < 0 {
+		t.Fatal("the board has no empty section")
+	}
+	m.pane = empty
+	if screen := ansi.Strip(m.View()); header.MatchString(screen) {
+		t.Fatalf("empty %s focused draws a column header:\n%s", overviewSections[empty], screen)
 	}
 }
 
