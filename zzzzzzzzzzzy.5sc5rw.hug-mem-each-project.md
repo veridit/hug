@@ -30,7 +30,7 @@ Store: ~/Library/Application Support/muninn/memories.json; imp_ ids from muninn/
 ## Depends on
 
 ## Acceptance
-- [ ] a test: capture a memory in a project, sync the notes, re-import: the store holds one active row and search returns it once (fails before)
+- [x] a test: capture a memory in a project, sync the notes, re-import: the store holds one active row and search returns it once (fails before)
 - [ ] hug mem forget ID retires the memory and any copy of it from the same origin; a test fails before
 - [ ] on this machine, after hug upgrade or the next sync, 0 active pairs of a cap_ row and an imp_ row whose origin names it
 
