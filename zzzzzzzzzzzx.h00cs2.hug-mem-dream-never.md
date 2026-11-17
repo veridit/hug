@@ -1,13 +1,18 @@
 ---
 id: h00cs2
 title: "hug mem: dream never runs on its own unless hug mem serve is running"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T23:20"
+stage: "active"
+model: "claude-opus-5-5/high"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ muninn/internal/daemon/dream.go:14 QuietFor 30m, :17 DreamEvery 20h, :21 dreamWh
 - [ ] on this machine, dream_last_ns is set within a day of upgrading, with no hug mem serve running
 
 ## Notes
+
+
+## History
+- 2026-11-17T23:20 todo -> doing/active (take)
