@@ -127,7 +127,8 @@ func TestToolsSchemasAndRoundTrip(t *testing.T) {
 		{"drop", map[string]any{"text": "duplicate"}, []string{"drop", "abc123", "duplicate"}},
 		{"wait", map[string]any{"text": "CI run 1"}, []string{"wait", "abc123", "CI run 1"}},
 		{"resume", nil, []string{"resume", "abc123"}},
-		{"design", map[string]any{"text": "which way?"}, []string{"design", "abc123", "which way?"}},
+		{"design", map[string]any{"text": "which way?", "for": "jhf"}, []string{"design", "abc123", "which way?", "--for", "jhf"}},
+		{"wait", map[string]any{"text": "the look", "on": "jhf"}, []string{"wait", "abc123", "the look", "--on", "jhf"}},
 		{"design", nil, []string{"design", "abc123", "--clear"}},
 	} {
 		input := map[string]any{"id": "abc123", "action": tc.action, "status": "doing", "type": "chore", "item": 1, "title": "", "text": "", "assignee": "", "label": "", "priority": "", "before": "", "after": "", "group": "", "top": false, "add_deps": []any{}, "remove_deps": nil}

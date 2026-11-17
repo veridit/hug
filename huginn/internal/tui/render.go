@@ -110,6 +110,8 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 		}
 	} else if m.yanked != "" && t.ID == m.yanked {
 		pointer = m.styles.warning.Render("y") // yanked: P/p paste it
+	} else if m.forYou(t) {
+		pointer = m.styles.warning.Bold(true).Render("?") // waits on you (6ephqk check 8)
 	} else if mark != "" {
 		pointer = m.styles.dim.Render(mark)
 	}
@@ -586,6 +588,9 @@ func (m model) View() string {
 		mode = "help"
 	}
 	header := m.styles.accent.Render("HUG TASKS · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d findings", len(m.visible), len(m.all), len(m.findings)))
+	if n := m.forYouCount(); n > 0 {
+		header += m.styles.dim.Render(" · ") + m.styles.warning.Bold(true).Render(fmt.Sprintf("? %d for you", n))
+	}
 	if len(m.sort) > 0 {
 		// The active order, as the builder wrote it (mkzcqr).
 		header += m.styles.dim.Render(" · sort: " + sortLabel(m.sort))
@@ -764,6 +769,16 @@ func (m model) confirmLine() string {
 	switch m.confirm {
 	case "n":
 		question += oneLine(m.pendingValue)
+	case "t":
+		if t, ok := m.taskAt(m.confirmPath); ok {
+			question += oneLine(t.ID) + " " + oneLine(t.Title)
+			if m.pendingValue == "give back" {
+				stage := task.Stage(task.Task{Status: "todo", Fields: t.Fields, Goal: t.Goal, Acceptance: t.Acceptance, Dependencies: t.Dependencies}, m.all)
+				question = "Give back " + oneLine(t.ID) + " to todo (" + stage + ")"
+			} else if task.Stage(t, m.all) == "review" {
+				question = "Take " + oneLine(t.ID) + " for review as " + oneLine(m.opts.User)
+			}
+		}
 	case "x":
 		for _, t := range m.all {
 			if t.Path == m.confirmPath {

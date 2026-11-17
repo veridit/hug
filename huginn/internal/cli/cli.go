@@ -512,7 +512,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model", "wait": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "status type priority label group mine jsonl epic as model", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for", "wait": "as model on", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label status title assignee parent", "import": "dry-run cite", "show": "file", "lint": "code summary all", "sync": "background-pass", "attach": "name note replace safe-reason content"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -919,7 +919,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(2); e != nil {
 			return nil, e
 		}
-		r, e = s.s.Wait(f.args[0], f.args[1], a.whoTakes(f).assignee())
+		on := f.args[1]
+		if who := strings.TrimSpace(f.get("on")); who != "" {
+			// Waiting on a person: "NAME: what", so the TUI shows it to
+			// them as waiting: you (crab 12:38).
+			on = who + ": " + on
+		}
+		r, e = s.s.Wait(f.args[0], on, a.whoTakes(f).assignee())
 	case "resume":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -930,15 +936,15 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			if e = f.count(1); e != nil {
 				return nil, e
 			}
-			r, e = s.s.Design(f.args[0], "", "")
+			r, e = s.s.Design(f.args[0], "", "", "")
 		} else {
 			if len(f.args) == 1 {
-				return nil, usage("design needs the question, or --clear when it is answered", "hug task design "+f.args[0]+` "the question"`)
+				return nil, usage("design needs the question, or --clear when it is answered", "hug task design "+f.args[0]+` "the question" --for NAME`)
 			}
 			if e = f.count(2); e != nil {
 				return nil, e
 			}
-			r, e = s.s.Design(f.args[0], f.args[1], a.whoTakes(f).assignee())
+			r, e = s.s.Design(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("for"))
 		}
 	case "reflections":
 		return a.runReflections(s, f)

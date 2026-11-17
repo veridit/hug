@@ -28,6 +28,11 @@ func (m *model) startAction(k string) tea.Cmd {
 		return nil
 	case ok && k == "x" && t.Status != "dropped":
 		return m.openInput(dropPrompt, "")
+	case ok && k == "t" && t.Status == "doing" && m.opts.User != "" && contains(t.Assignee, m.opts.User):
+		// t on your own task gives it back to todo, keeping its stage
+		// (6ephqk check 6): confirmed as "Give back".
+		m.requestAction("t", "give back")
+		return nil
 	}
 	m.requestAction(k, "")
 	return nil
@@ -97,6 +102,11 @@ func (m *model) executeAction() tea.Cmd {
 	case "n":
 		r, err = m.store.New(task.NewOptions{Title: value, Goal: value, Acceptance: []string{"Verify " + value}})
 	case "t":
+		if value == "give back" {
+			r, err = m.store.Set(t.ID, "status", "todo")
+			action = "give back"
+			break
+		}
 		if m.opts.Take != nil {
 			r, err = m.opts.Take(t.ID)
 		} else {

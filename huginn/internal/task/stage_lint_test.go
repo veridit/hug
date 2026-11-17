@@ -68,7 +68,7 @@ func TestLintNodeFieldOutsideItsNode(t *testing.T) {
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"active\"\ndone_at: \"2026-11-17T10:00\"")), "stray-node-field", "node field done_at belongs to done, and this task is doing/active")
 	// Proposal A (crab 11:37): an outranked stage keeps its fields while
 	// its condition holds: design_question on a todo task that depends.
-	if got := codes(stageDoc("bbbbbb", "status: \"doing\"\nstage: \"active\""), stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"\ndesign_question: \"q\"", "bbbbbb")); len(got) != 0 {
+	if got := codes(stageDoc("bbbbbb", "status: \"doing\"\nstage: \"active\""), stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"\ndesign_question: \"q\"\ndesign_for: \"jhf\"", "bbbbbb")); len(got) != 0 {
 		t.Fatalf("design_question under depends: %q", got)
 	}
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"ready\"\ndoing_since: \"2026-11-17T08:46\"")), "stray-node-field", "node field doing_since belongs to doing, and this task is todo/ready")
@@ -88,7 +88,11 @@ func TestLintNodeFieldOutsideItsNode(t *testing.T) {
 func TestLintRequiredNodeFieldMissing(t *testing.T) {
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"waiting\"")), "missing-node-field", "missing node field waiting_on: a doing/waiting task needs it (what it waits on)")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"waiting\"\nwaiting_on: \"  \"")), "missing-node-field", "waiting_on")
-	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"")), "missing-node-field", "design_question")
+	got := codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\""))
+	if len(got) != 2 || !strings.Contains(strings.Join(got, "\n"), "missing node field design_question") || !strings.Contains(strings.Join(got, "\n"), "missing node field design_for") {
+		t.Fatalf("design without question and person: %q", got)
+	}
+	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"q\"")), "missing-node-field", "missing node field design_for: a todo/design task needs it")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"doing\"\nstage: \"review\"")), "missing-node-field", "review_by")
 	wantOnly(t, codes(stageDoc("aaaaaa", "status: \"todo\"\nstage: \"deferred\"")), "missing-node-field", "deferred_reason")
 	// todo/review's review_by is optional (review_since marks it).
@@ -119,7 +123,7 @@ func TestLintDerivedStageDisagrees(t *testing.T) {
 	wantOnly(t, codes(done, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"depends\"", "cccccc")), "stage-disagrees", "stage depends disagrees with the task: nothing holds it: no open dependency, and none of its stage's fields is set, so its stage is ready")
 	wantOnly(t, codes(done, stageDoc("aaaaaa", "status: \"doing\"\nstage: \"depends\"", "cccccc")), "stage-disagrees", "stage depends disagrees with the task: nothing holds it: no open dependency, and none of its stage's fields is set, so its stage is active")
 	// Precedence (Jørgen 10:18): depends beats design, deferred beats depends.
-	wantOnly(t, codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"q\"", "bbbbbb")), "stage-disagrees", "it depends on bbbbbb (doing), so its stage is depends")
+	wantOnly(t, codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"design\"\ndesign_question: \"q\"\ndesign_for: \"jhf\"", "bbbbbb")), "stage-disagrees", "it depends on bbbbbb (doing), so its stage is depends")
 	if got := codes(dep, stageDoc("aaaaaa", "status: \"todo\"\nstage: \"deferred\"\ndeferred_reason: \"after v1\"", "bbbbbb")); len(got) != 0 {
 		t.Fatalf("deferred over depends: %q", got)
 	}

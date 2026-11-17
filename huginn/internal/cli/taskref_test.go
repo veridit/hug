@@ -53,7 +53,7 @@ func TestEveryRefCommandAcceptsTaskColon(t *testing.T) {
 		{"done", T(beta)},
 		{"drop", T(gamma), "superseded"},
 		{"set", T(gamma), "--status", "todo"},
-		{"design", T(gamma), "which way?"},
+		{"design", T(gamma), "which way?", "--for", "jhf"},
 		{"design", T(gamma), "--clear"},
 		{"take", T(gamma)},
 		{"wait", T(gamma), "CI"},
