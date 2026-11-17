@@ -137,7 +137,7 @@ func TestTmuxReload(t *testing.T) {
 	wait("sort: priority", 5*time.Second)
 	send("-l", "jj")
 	send("Enter")
-	wait("HUG TASKS · detail", 5*time.Second)
+	wait("HUG TASKS · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
 	send("Tab")
 	time.Sleep(300 * time.Millisecond)
 	before := screen()

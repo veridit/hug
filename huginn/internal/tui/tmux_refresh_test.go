@@ -115,7 +115,7 @@ func TestTmuxAutoRefresh(t *testing.T) {
 	t.Logf("list: shown %v after hug task set returned, no key pressed", took)
 	// Detail: open Beta, another terminal adds a note.
 	keys("j", "Enter")
-	wait("HUG TASKS · detail", 5*time.Second)
+	wait("HUG TASKS · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
 	run(binary, "task", "note", ids["Beta"], "note from another terminal")
 	took = wait("note from another terminal", 3*time.Second)
 	t.Logf("detail: shown %v after hug task note returned, no key pressed", took)

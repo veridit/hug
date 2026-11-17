@@ -264,7 +264,7 @@ func TestTmuxGolden(t *testing.T) {
 				send("#000001")
 				wait("JUMP TO ID")
 				special("Enter")
-				snapshot("detail", "HUG TASKS · detail")
+				snapshot("detail", "HUG TASKS · list › 000001") // the breadcrumb band (e3sevr)
 				special("Escape")
 				wait("HUG TASKS · list")
 				send("#1785")
