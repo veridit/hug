@@ -1,13 +1,18 @@
 ---
 id: xv39b9
 title: "Head() hides why an unborn-branch check failed: rev-parse error shown instead"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T23:43"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ huginn/gitbranch/gitbranch.go Head() (~line 473): rev-parse fails; then symbolic
 - [ ] healthy unborn branch: Head() still returns empty and no error (existing tests pass)
 
 ## Notes
+
+
+## History
+- 2026-11-17T23:43 todo -> doing/active (take)
