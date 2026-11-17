@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"
-stage: "active"
+stage: "waiting"
 doing_since: "2026-11-17T15:01"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "jhf: check 3: tick on (a)+(b) measured and fsmonitor measured as no faster through the git CLI, or build the daemon IPC client? See the note of 14:10 and tmp/lanes/44w1ev-walk.md"
+waiting_since: "2026-11-17T15:09"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -89,3 +92,4 @@ Check 3 per the ruling, wyvern 14:10. (a)+(b) built: 5bd9cb5 on ci/44w1ev-walk. 
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:01 todo/ready -> doing/active (take)
+- 2026-11-17T15:09 doing/active -> doing/waiting (wait)
