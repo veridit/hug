@@ -32,6 +32,7 @@ huginn/internal/task/questions.go noteQuestion and IdleFindings: skip when the s
 ## Acceptance
 - [ ] a doing task with a 'shipped in' note and waiting_for: jhf gives no shipped-not-done; the same task active does (test, fails on main)
 - [ ] the overview shows 6ephqk in WAITING and not in LINT (golden or test)
+- [ ] shipped-not-done never offers a fix that hug refuses: with open checks its fix names the first open check ('hug task check ID N', or strike it), not 'hug task done ID' (test: 8/9 settled, active, gives 'fix: hug task check ID 9')
 
 ## Notes
 
