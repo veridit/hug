@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -184,9 +185,39 @@ func TestTUIWriteAndCLINoteAtOnce(t *testing.T) {
 	if n := strings.Count(subjects, "hug task note "+id); n != notes {
 		t.Errorf("%d of %d note commits", n, notes)
 	}
-	tuiCommits := strings.Count(subjects, "hug task check "+id) + strings.Count(subjects, "hug task uncheck "+id)
-	if tuiCommits != toggles {
-		t.Errorf("%d of %d TUI writes have their own commit", tuiCommits, toggles)
+	// Count the TUI's writes on the branch, not its commits (crab, 18:11):
+	// every commit that flips the checkbox is one write. A write merged into
+	// another commit still counts; a lost one does not, and leaves the box
+	// in the wrong state. Each flip is named with the commit that holds it,
+	// so a failure says which happened (nautilus saw "29 of 30" once at
+	// load ~150 and could not tell).
+	file := boardFile(t, a, id)
+	flips, holders := 0, []string{}
+	prev := ""
+	for _, h := range strings.Fields(git(t, board, "log", "--reverse", "--format=%h", "--", file)) {
+		box := ""
+		for _, l := range strings.Split(git(t, board, "show", h+":"+file), "\n") {
+			if strings.HasPrefix(l, "- [") && strings.HasSuffix(l, "] C") || strings.HasPrefix(l, "- [") && strings.Contains(l, "] #1 C") {
+				box = l[:5]
+			}
+		}
+		if prev != "" && box != prev {
+			flips++
+			subject := git(t, board, "log", "-1", "--format=%s", h)
+			holders = append(holders, h+" "+subject)
+			if !strings.HasPrefix(subject, "hug task check ") && !strings.HasPrefix(subject, "hug task uncheck ") {
+				// On the branch, so not lost; but its own commit failed or
+				// found nothing staged, and another write took it along.
+				t.Logf("TUI write %d is in commit %s %q, not its own", flips, h, subject)
+			}
+		}
+		prev = box
+	}
+	if flips != toggles || prev != "- [ ]" {
+		t.Errorf("%d of %d TUI writes on the branch, final box %q (want %q); the commits that hold them:\n%s", flips, toggles, prev, "- [ ]", strings.Join(holders, "\n"))
+	}
+	if n := strings.Count(subjects, "hug task tui"); n > 1 {
+		t.Errorf("%d exit commits", n)
 	}
 	if out := git(t, board, "status", "--porcelain"); out != "" {
 		t.Errorf("board left uncommitted: %s", out)
@@ -197,4 +228,14 @@ func TestTUIWriteAndCLINoteAtOnce(t *testing.T) {
 			t.Errorf("note %d missing", i)
 		}
 	}
+}
+
+// boardFile is the task file of id, relative to the board.
+func boardFile(t *testing.T, a *App, id string) string {
+	t.Helper()
+	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+id+"*.md"))
+	if len(m) != 1 {
+		t.Fatalf("task file for %s: %v", id, m)
+	}
+	return filepath.Base(m[0])
 }
