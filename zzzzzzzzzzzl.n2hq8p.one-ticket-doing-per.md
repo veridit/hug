@@ -1,7 +1,7 @@
 ---
 id: n2hq8p
 title: "One ticket in doing per agent; a second take says why or refuses"
-status: todo
+status: "doing"
 type: feature
 priority: "medium"
 assignee: ["kestrel"]
@@ -9,6 +9,11 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: "47sxn2"
+doing_since: "2026-11-17T14:34"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ Needs 6ephqk's stages (active, waiting, review, depends) and the wait command. O
 Repro case (kestrel, 2026-11-17 13:10): with 4vcwxk in doing (taken 12:51 as kestrel, claude-opus-5-5, active work in hand), 'hug task take kbc99j --model claude-opus-5-5 --as kestrel' succeeded and printed 'now: as each check holds: hug task check kbc99j N ...'. One agent then held two active doing tickets. Check 1's test can replay exactly this: take A, then take B with the same --as/--model, and expect the refusal with the three fix lines.
 
 kestrel 13:35, dependency on 6ephqk removed with crab's go (13:34): n2hq8p needs only the doing stages (active, waiting, review, depends) and hug task wait, both on main d198e01; 6ephqk's open steps (upgrade, look) do not touch take.
+
+
+## History
+- 2026-11-17T14:34 todo -> doing/active (take)
