@@ -46,5 +46,6 @@ file:detail-stage.md (1564 bytes, sha256:a6a935a7) detail mock
 nautilus 16:18: dependency on scrxak removed: the code it builds on (Space shows a file, read only when shown) is on main af51fc3; scrxak stays open only for Jørgen's check 5.
 
 
+file:design.md (2762 bytes, sha256:7c13bc5d)
 ## History
 - 2026-11-17T17:18 todo -> doing/active (take)
