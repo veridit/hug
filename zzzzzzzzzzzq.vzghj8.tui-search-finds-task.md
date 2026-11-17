@@ -1,13 +1,16 @@
 ---
 id: vzghj8
 title: "TUI search finds a task by its imported id (STATBUS-402)"
-status: todo
+status: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
