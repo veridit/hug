@@ -179,13 +179,18 @@ func TestFilters(t *testing.T) {
 	if len(m.visible) != 1 || m.query != "Alpha" {
 		t.Fatal("search is not live", m.View())
 	}
-	m = press(m, "enter")
+	m = press(m, "tab")
 	if m.prompt != "" || len(m.visible) != 1 {
-		t.Fatal(m.View())
+		t.Fatal("Tab keeps the search", m.View())
 	}
 	m = press(m, "esc")
 	if len(m.visible) != 2 {
 		t.Fatal(m.View())
+	}
+	// Enter goes to the match: the search ends (mcvfbz).
+	m = press(m, "/", "Beta", "enter")
+	if sel, _ := m.selected(); m.prompt != "" || m.query != "" || len(m.visible) != 2 || sel.Title != "Beta task" {
+		t.Fatal("Enter goes to the match", m.View())
 	}
 }
 func TestMalformedAndEditorRefresh(t *testing.T) {

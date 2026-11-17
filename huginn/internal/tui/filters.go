@@ -56,15 +56,15 @@ func (m *model) setFilter(name, value string) {
 func (m *model) removeChip() {
 	if len(m.chips) == 0 {
 		if m.query != "" {
-			m.query = ""
-			m.applyFilter()
+			m.clearKeeping(false, func() { m.query = "" })
 		}
 		return
 	}
 	c := m.chips[len(m.chips)-1]
-	m.chips = m.chips[:len(m.chips)-1]
-	m.writeFilter(c.field, "")
-	m.applyFilter()
+	m.clearKeeping(false, func() {
+		m.chips = m.chips[:len(m.chips)-1]
+		m.writeFilter(c.field, "")
+	})
 }
 func (m model) filterBar() string {
 	var chips []string

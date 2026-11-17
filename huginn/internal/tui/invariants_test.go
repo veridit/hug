@@ -31,7 +31,7 @@ func TestMoveRepairsTiesAndUsesGlobalOrder(t *testing.T) {
 	// With a filter showing one row, there is no shown row to move past: the
 	// move is refused with a message, never made past a hidden task (ksv323;
 	// this used to move past the next task in the global order).
-	m = press(m, "/", m.visible[0].Slug, "enter", "J")
+	m = press(m, "/", m.visible[0].Slug, "tab", "J")
 	if m.confirm != "" || !strings.Contains(m.message, "already the last row in the list (filtered); nothing moved") {
 		t.Fatal("filtered move past a hidden row", m.message)
 	}
@@ -47,7 +47,7 @@ func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 	m = commandLine(m, "type bug")
 	m = commandLine(m, "group auth")
 	m = commandLine(m, "label urgent")
-	m = press(m, "/", "Alpha", "enter")
+	m = press(m, "/", "Alpha", "tab")
 	if len(m.visible) != 1 {
 		t.Fatal(m.View())
 	}

@@ -53,7 +53,7 @@ func (m model) keyBar() string {
 	case m.prompt == "sort":
 		hints = []bkey.Binding{hint("letter", "add / flip"), hint("⌫", "remove last"), hint("Enter", "apply"), hint("Esc", "keep order"), hint("?", "help")}
 	case m.prompt == "/":
-		hints = []bkey.Binding{hint("Enter", "keep"), hint("Esc", "clear"), hint("?", "help")}
+		hints = []bkey.Binding{hint("↑↓", "pick"), hint("Enter", "go to it"), hint("Tab", "keep as filter"), hint("Esc", "clear"), hint("?", "help")}
 	case m.prompt != "":
 		hints = []bkey.Binding{hint("Enter", "submit"), hint("Esc", "cancel"), hint("?", "help")}
 	case m.detail:
@@ -135,7 +135,7 @@ func (m model) helpText() string {
 		hint("ctrl-d / ctrl-u", "half page down / up"), hint("PgDn / PgUp", "full page down / up"),
 		keys.prev, keys.next, hint("Enter", "open full task detail"),
 		hint("Esc", "back one level, never quits"), hint("q / ctrl-c", "quit (q only outside inputs)"),
-		hint("/", "live find; Enter keeps, Esc clears"), hint(":", "palette with command + value completion"),
+		hint("/", "live find; Enter goes to it, Tab keeps"), hint(":", "palette with command + value completion"),
 		hint("Tab / Enter", "complete palette choice; Enter runs complete command"),
 		hint("ctrl-n/p / ↑↓", "select palette completion"), hint("?", "help overlay, including from inputs"),
 		hint("#", "jump by id prefix / TASK-number alias"), hint("f", "filter picker: s/t/p/g/l/a/e"),
