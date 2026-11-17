@@ -62,6 +62,9 @@ type Options struct {
 	// board before its first frame, as before.
 	Initial *Initial
 	Refresh func(ctx context.Context) error
+	// Progress, when set, says how many task files the refresh has read
+	// of how many: a first start counts them on screen (vnyz8z).
+	Progress func() (read, total int)
 }
 
 func Run(ctx context.Context, store *task.Store, opts Options) error {
@@ -322,6 +325,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	case spinMsg:
 		m.spinning = false
+		if strings.HasPrefix(m.message, readingBoard) {
+			m.message = m.readingMessage()
+		}
 		return m, m.spin()
 	case watchStartedMsg:
 		if msg.w != nil {
@@ -331,7 +337,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case loadedMsg:
 		m.loading, m.refreshSince = false, time.Time{}
-		if m.message == readingBoard {
+		if strings.HasPrefix(m.message, readingBoard) {
 			m.message = ""
 		}
 		switch {

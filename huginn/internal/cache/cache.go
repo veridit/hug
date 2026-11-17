@@ -19,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -71,6 +72,15 @@ type Cache struct {
 	delta  int // rows in board_delta
 	// rebuilt: Open found another schema version (kept after the rebuild).
 	rebuilt bool
+	// read and total count the files a running sync reads, for a screen
+	// that waits on it (vnyz8z); atomics, as the sync holds mu.
+	read, total atomic.Int64
+}
+
+// Progress is how many task files the running sync has read, of how many
+// it found; total is 0 before the walk has listed the board.
+func (c *Cache) Progress() (read, total int) {
+	return int(c.read.Load()), int(c.total.Load())
 }
 
 // racyWindow covers coarse mtime clocks (FAT 2 s, some network shares 1 s)
@@ -357,6 +367,8 @@ func (c *Cache) ListAfterWrite(ctx context.Context, paths []string) ([]task.Task
 }
 func (c *Cache) sync(ctx context.Context, only map[string]bool) (Stats, error) {
 	var stats Stats
+	c.read.Store(0)
+	c.total.Store(0)
 	stats.Rebuilt = c.rebuild
 	started := time.Now().UnixNano()
 	racy := c.synced - int64(racyWindow)
@@ -452,6 +464,7 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 	next := make(map[string]record, len(disk))
 	changed := map[string]record{}
 	bodies := map[string]*task.Texts{} // notes and descriptions of parsed files, for table texts
+	c.total.Store(int64(len(disk)))
 	rechecked := false
 	renames := map[string]string{}
 	usedOld := map[string]bool{}
@@ -469,6 +482,7 @@ func (c *Cache) apply(ctx context.Context, stats Stats, disk map[string]Marker, 
 		if e != nil {
 			return stats, e
 		}
+		c.read.Add(1)
 		// A sync the caller gave up on (hug tui quit mid-refresh, vnyz8z)
 		// stops between files: nothing is stored, the next sync redoes it.
 		if e := ctx.Err(); e != nil {
@@ -786,6 +800,7 @@ func (c *Cache) List(ctx context.Context) ([]task.Task, error) {
 	}
 	return c.snapshot(), nil
 }
+
 // Listed is the board as this cache last knew it: as Open loaded it from
 // the database, or as the last sync left it. No walk, no git: what a screen
 // can draw at once while a sync runs (vnyz8z). Empty when the cache has

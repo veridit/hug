@@ -2,6 +2,7 @@ package tui
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -34,8 +35,20 @@ const spinEvery = 120 * time.Millisecond
 
 var spinFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 
-// readingBoard is the message of a first start, until the board arrives.
+// readingBoard is the message of a first start, until the board arrives;
+// readingMessage adds the count of files read.
 const readingBoard = "reading the board: the first start builds the task cache"
+
+func (m model) readingMessage() string {
+	if m.opts.Progress == nil {
+		return readingBoard
+	}
+	read, total := m.opts.Progress()
+	if total == 0 {
+		return readingBoard
+	}
+	return fmt.Sprintf("%s: %d of %d files", readingBoard, read, total)
+}
 
 type spinMsg struct{}
 

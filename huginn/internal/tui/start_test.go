@@ -192,14 +192,18 @@ func TestQuitDoesNotWaitForWatchSetup(t *testing.T) {
 func TestFirstStartWithoutCacheSaysSo(t *testing.T) {
 	m := fixture(t)
 	r := newSlowRefresh()
-	start := newModel(m.store, Options{User: "tester", NoWatch: true, Initial: &Initial{}, Refresh: r.fn(m.store)})
+	start := newModel(m.store, Options{User: "tester", NoWatch: true, Initial: &Initial{}, Refresh: r.fn(m.store),
+		Progress: func() (int, int) { return 1234, 3630 }})
 	start.width, start.height = 100, 12
 	start.resize()
 	start.refreshSince = time.Now().Add(-time.Second)
+	// A spinner tick counts the files the refresh has read.
+	next, _ := start.Update(spinMsg{})
+	start = next.(model)
 	var b bytes.Buffer
 	b.WriteString(ansi.Strip(start.View()))
 	text := strings.Join(strings.Fields(strings.ReplaceAll(b.String(), "\n", " ⏎ ")), " ")
-	if !strings.Contains(text, "refreshing") || !strings.Contains(text, "reading the board") {
+	if !strings.Contains(text, "refreshing") || !strings.Contains(text, "reading the board") || !strings.Contains(text, "1234 of 3630 files") {
 		t.Fatalf("first start screen:\n%s", b.String())
 	}
 	golden(t, "testdata/rows/first-start-100.txt", "TestFirstStartWithoutCacheSaysSo", spinnerFree(b.String()))

@@ -117,7 +117,8 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 		Initial: initial,
 		// The refresh syncs the cache with the files; the reload after it
 		// lists what the sync found.
-		Refresh: func(ctx context.Context) error { _, e := s.c.Sync(ctx); return e },
+		Refresh:  func(ctx context.Context) error { _, e := s.c.Sync(ctx); return e },
+		Progress: s.c.Progress,
 		// Findings come from the cache, which parsed each file once, as of
 		// the listing the reload just made (44w1ev).
 		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },
