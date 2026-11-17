@@ -36,7 +36,7 @@ Code: overview sections in huginn/internal/tui (render.go, stage.go forYou()). T
 ## Acceptance
 - [x] a doing/active task is in IN PROGRESS; doing/waiting, design and review are in WAITING; a todo task with an open dependency stays in NEXT UP (test + goldens at 80 and 140)
 - [x] WAITING's header counts its rows and those on you; rows on you sort first and only they carry ? (test)
-- [ ] Jørgen opens the overview and says IN PROGRESS and WAITING read clearly
+- [ ] ~~Jørgen opens the overview and says IN PROGRESS and WAITING read clearly~~ (not relevant: superseded by Jørgen's 2026-11-18 00:11-00:13 overview rulings (ASKED section on top, uniform columns in the heading: 41hhgn, 1bbe96); he confirms the new overview there, crab, 2026-11-18)
 - [x] only the row under the cursor shows its second line (└─ waiting on ... since ...); every other row is one line, with ? on rows waiting on you; j/k and scrolling count the extra line (test + goldens at 80 and 140)
 
 ## Notes
