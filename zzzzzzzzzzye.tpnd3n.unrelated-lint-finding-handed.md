@@ -1,13 +1,18 @@
 ---
 id: tpnd3n
 title: "an unrelated lint finding is handed out only when the session has no doing task…"
-status: todo
+status: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-17T15:10"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "ci/tpnd3n"
+worktree: "/Users/jhf/.jcode/scratch/guppy-lint"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ muninn/internal/recall/boardcue.go pickFinding/BoardCue; replay muninn/cmd/board
 hatchling 12:42, from x325pp: measured arms in muninn/docs/BOARD4.md 'Stop orders, and lint between tasks'. Lint lines right/false: main 97: 87/7; stop order 95: 89/3; + between tasks 81: 73/5; + busy when editing 73: 65/5. fresh2 seid: 8: 8/0 -> between tasks 3: 0/3. Raw: $JCODE_SCRATCH_DIR/board4/x325pp/ (main/ stop/ new/ newb/, judgments.json, score2.py).
 
 hatchling 12:58: carries x325pp check 3 too (crab ruling): the stop-order rule loses skunk's w96jpg finding in fresh, details in the x325pp note 12:58.
+
+
+## History
+- 2026-11-17T15:10 todo -> doing/active (take)
