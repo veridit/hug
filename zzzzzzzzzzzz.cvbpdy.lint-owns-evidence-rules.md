@@ -1,0 +1,33 @@
+---
+id: cvbpdy
+title: "Lint owns evidence rules: (lost) marker, path citations checked, setup offers them"
+status: todo
+type: feature
+priority: "high"
+assignee: []
+labels: []
+created: 2026-11-17
+updated: 2026-11-17
+---
+
+## Goal
+Seid can drop tools/evidence.py and its hook runs only hug task lint. hug lint already has forbidden-citation (hug.toml forbid_cite), missing-file and file-content (256 KiB, text only). Missing: (1) a citation followed by ' (lost)' is accepted, both for forbid_cite prefixes and for missing attachments; (2) a plain path under .hug/tasks/<id>/ cited in task text must exist, like file: and task:ID/NAME; (3) forbidden-citation names the exact cited path and line, not just the prefix; (4) hug setup offers forbid_cite = [".jcode/scratch/"] when the repo has .jcode/, since Seid has no hug.toml today, so the rule is off there.
+
+## Purpose
+Seid foreman (orangutan) requests 2026-11-17, file: seid-lang .jcode/scratch/TASK-2057/hug-agent-requests.md, read by crab 15:07, item 1. Jørgen (the King in Seid) wants hug lint to own these rules for every repo.
+
+## Principle
+Declarative in hug.toml, no Seid-specific names in code. Every finding has a fix: line an agent can run (hug task attach ID FILE, or mark it (lost)). Lint never deletes anything.
+
+## Relevant details
+Seid reference: tools/evidence.py lines 91-112: SCRATCH_REF, EVID_REF, LOST=' (lost)', KEEP_EXT, MAX=256 KiB. hug code: task/files.go LintFiles (line 267; forbid check line 300 uses strings.Contains on the whole doc, so no line number and no (lost) escape), task/config.go ForbidCite. Text-extension list: hug checks content (NUL, utf8), which is stricter than an extension list; keep that.
+
+## Depends on
+
+## Acceptance
+- [ ] a citation of a forbid_cite path followed by ' (lost)' gives no finding; without it, the finding names the path and line (test)
+- [ ] a cited .hug/tasks/<id>/NAME path that does not exist is missing-file, and ' (lost)' after it is accepted (test)
+- [ ] hug setup on a repo with .jcode/ and no forbid_cite offers the line, with a fix: that writes it (test)
+- [ ] on Seid, hug task lint reports what tools/evidence.py check reports (counts in the notes), so its hook can switch
+
+## Notes
