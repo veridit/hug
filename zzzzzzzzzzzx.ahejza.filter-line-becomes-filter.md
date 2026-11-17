@@ -33,3 +33,5 @@ Today: filters.go filterBar() prints 'No filters · f picker · 1 todo  2 doing 
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+Jørgen 23:39 local: sc sorts by the current column, the one the column marker is on (e3sevr's H/L). This replaces e3sevr's o: o is unbound after ahejza. sortFields' c (created) moves to another letter: crab picks d (date created), u stays updated. In the picker, c reads 'c current column (priority)', naming the marked column.
