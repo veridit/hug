@@ -17,9 +17,12 @@ import (
 // written as hug upgrade will write them, with fixed ids.
 func stageBoard(t *testing.T) model {
 	t.Helper()
-	old := now
+	// Both clocks: a wait stamped by the store reads "since HH:MM" on any
+	// day the test runs (it failed after midnight).
+	old, oldTask := now, task.Now
 	now = func() time.Time { return time.Date(2026, 11, 17, 9, 53, 0, 0, time.Local) }
-	t.Cleanup(func() { now = old })
+	task.Now = func() time.Time { return time.Date(2026, 11, 17, 9, 50, 0, 0, time.Local) }
+	t.Cleanup(func() { now, task.Now = old, oldTask })
 	s := &task.Store{Root: t.TempDir()}
 	write := func(id, title, front string, deps ...string) {
 		who := "[]"
