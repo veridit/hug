@@ -47,5 +47,6 @@ nautilus 13:47: built on nautilus/3jtfw9, commit fd95919, CI 44096102067 (queued
 
 file:needs-you.md (3264 bytes, sha256:d2e9eb8a) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
 file:waiting-rows.md (1583 bytes, sha256:5108b054) two-line waiting rows mock (Jørgen 14:55)
+file:detail-stage.md (1564 bytes, sha256:a6a935a7) detail: stage first mock (Jørgen 14:47)
 ## History
 - 2026-11-17T14:56 doing -> doing/waiting (wait)
