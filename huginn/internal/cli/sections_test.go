@@ -77,8 +77,9 @@ func TestUpgradeReordersSections(t *testing.T) {
 	if st := git(t, filepath.Join(a.Cwd, TaskDir), "status", "--porcelain"); st != "" {
 		t.Fatalf("not committed: %s", st)
 	}
-	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-1", "--format=%s"); log != "hug upgrade: backlog leftovers and section order in 1 tasks" {
-		t.Fatalf("commit %q", log)
+	// A board from before layout = N gets it last, after the files move (dx9vw2).
+	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-2", "--format=%s"); log != "hug upgrade: board layout 1 -> 2\nhug upgrade: backlog leftovers and section order in 1 tasks" {
+		t.Fatalf("commits %q", log)
 	}
 	if got := did(); strings.Contains(got, "tidied") {
 		t.Fatalf("second upgrade: %s", got)

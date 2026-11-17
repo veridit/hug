@@ -51,7 +51,7 @@ func TestPeopleAndWaitingFor(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(toml) != "[people.jhf]\nname = \"Jørgen H. Fjeld\"\nemail = [\"12345+jhf@users.noreply.github.com\", \"jorgen@veridit.no\"]\n" {
+	if string(toml) != "layout = 2\n\n[people.jhf]\nname = \"Jørgen H. Fjeld\"\nemail = [\"12345+jhf@users.noreply.github.com\", \"jorgen@veridit.no\"]\n" {
 		t.Fatalf("hug.toml:\n%s", toml)
 	}
 	if _, out = runText(a, "lint"); !strings.HasPrefix(out, "no findings") {

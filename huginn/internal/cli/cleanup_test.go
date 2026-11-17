@@ -225,8 +225,9 @@ func TestImportCleanupRefusedByHookChangesNothing(t *testing.T) {
 	if now, _ := os.ReadFile(filepath.Join(dir, ".mcp.json")); string(now) != string(mcp) {
 		t.Fatal(".mcp.json not restored")
 	}
-	if _, e := os.Stat(filepath.Join(dir, TaskDir, "hug.toml")); !os.IsNotExist(e) {
-		t.Fatal("a refused cleanup recorded the import")
+	// A new board's hug.toml says only its layout (dx9vw2); no import.
+	if toml, _ := os.ReadFile(filepath.Join(dir, TaskDir, "hug.toml")); strings.Contains(string(toml), "[[import]]") {
+		t.Fatalf("a refused cleanup recorded the import:\n%s", toml)
 	}
 }
 

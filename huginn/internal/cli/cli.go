@@ -788,6 +788,24 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(0); e != nil {
 			return nil, e
 		}
+		// A new board is this hug's layout (dx9vw2); a board with tasks
+		// keeps its own, which hug upgrade moves.
+		if board, known, _ := a.newerBoard(s.r.Dir); board < known {
+			ts, e := s.s.Tasks()
+			if e != nil {
+				return nil, e
+			}
+			if len(ts) == 0 {
+				path := filepath.Join(s.r.Dir, task.ConfigName)
+				b, e := os.ReadFile(path)
+				if e != nil && !os.IsNotExist(e) {
+					return nil, e
+				}
+				if e = os.WriteFile(path, []byte(task.WithLayout(string(b), known)), 0o644); e != nil {
+					return nil, e
+				}
+			}
+		}
 		e = s.commit("hug task init")
 		if e == nil {
 			e = s.r.EnsureFirstCommit("hug task init")

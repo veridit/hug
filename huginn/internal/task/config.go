@@ -105,14 +105,16 @@ func ForbidCite(root string) ([]string, error) {
 }
 
 // Board layout (dx9vw2). A board says which layout its task files use with a
-// top-level layout = N in hug.toml; a board without the key is BaseLayout,
-// the state: board (6ephqk step 4). Layout is the newest this hug reads and
-// writes. A hug that meets a newer board refuses to write it (it would write
-// what it can read, and lose the rest) and says so once on a read. Raise
-// Layout when task files change in a way an older hug misreads, and have
-// hug upgrade move the board to it.
+// top-level layout = N in hug.toml. A board without the key is BaseLayout:
+// from before the key, its task files may still say status:. Layout 2 is
+// the state: board (6ephqk step 4): hug upgrade moves every task to state:,
+// then writes layout = 2, and hug task init writes it on a new board.
+// Layout is the newest this hug reads and writes. A hug that meets a newer
+// board refuses to write it (it would write what it can read, and lose the
+// rest) and says so once on a read. Raise Layout when task files change in
+// a way an older hug misreads, and have hug upgrade move the board to it.
 const (
-	BaseLayout = 2
+	BaseLayout = 1
 	Layout     = 2
 )
 

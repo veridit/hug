@@ -87,9 +87,53 @@ func TestOlderHugWarnsOnceOnRead(t *testing.T) {
 	}
 }
 
+// dx9vw2 (crab 20:35): the state: rename is the first layout bump. A board
+// already on state: without the key (hug's and Seid's on 2026-11-17) gets
+// layout = 2 from hug upgrade --apply, after which a layout-1 hug writes
+// nothing; hug task init writes layout = 2 on a new board.
+func TestUpgradeMarksStateBoardLayoutTwo(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	id := execute(t, a, "new", "Look", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
+	dir := filepath.Join(a.Cwd, TaskDir)
+	if _, e := os.Stat(filepath.Join(dir, "hug.toml")); !os.IsNotExist(e) {
+		t.Fatalf("a board made by new has a hug.toml: %v", e)
+	}
+	if f := taskFile(t, a, id); !strings.Contains(f, "\nstate: ") {
+		t.Fatalf("not a state: board:\n%s", f)
+	}
+	if code, out := runText(a, "upgrade"); code != UpgradePending || !strings.Contains(out, "tasks: would: board layout 1 -> 2 in hug.toml") {
+		t.Fatalf("upgrade preview: exit %d\n%s", code, out)
+	}
+	if code, out := runText(a, "upgrade", "--apply"); code != 0 || !strings.Contains(out, "tasks: board layout 1 -> 2 in hug.toml") {
+		t.Fatalf("upgrade --apply: exit %d\n%s", code, out)
+	}
+	if toml, _ := os.ReadFile(filepath.Join(dir, "hug.toml")); string(toml) != "layout = 2\n" {
+		t.Fatalf("hug.toml:\n%s", toml)
+	}
+	if log := git(t, dir, "log", "-1", "--format=%s"); log != "hug upgrade: board layout 1 -> 2" {
+		t.Fatalf("commit %q", log)
+	}
+	older := *a
+	older.Layout = 1
+	if code, out := runText(&older, "note", id, "x"); code != 1 || !strings.Contains(out, "the board has layout 2 (hug.toml on branch hug/tasks), this hug knows layout 1") {
+		t.Fatalf("a layout-1 hug wrote: exit %d\n%s", code, out)
+	}
+	execute(t, a, "note", id, "this hug writes")
+
+	b := app(t)
+	execute(t, b, "init")
+	if toml, _ := os.ReadFile(filepath.Join(b.Cwd, TaskDir, "hug.toml")); string(toml) != "layout = 2\n" {
+		t.Fatalf("init's hug.toml:\n%s", toml)
+	}
+	if code, out := runText(b, "upgrade"); code != 0 || strings.Contains(out, "board layout") {
+		t.Fatalf("upgrade after init: exit %d\n%s", code, out)
+	}
+}
+
 // dx9vw2: hug upgrade by a newer hug records the layout, after which an
-// older hug refuses to write; a board without the key is layout 2, which
-// this hug writes as before.
+// older hug refuses to write; init's layout-2 board takes this hug's
+// writes as before.
 func TestUpgradeRecordsBoardLayout(t *testing.T) {
 	t.Parallel()
 	a := app(t)
