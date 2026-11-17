@@ -43,6 +43,7 @@ Mock, cursor on 3mavpt with the TYPE column marked:
 - [ ] Focus on the task id (the page stop) lists the task-wide keys in the footer (j/k scroll, e edit, t take, d done, x drop, w wait, y yank) and each of them works from there; no focus stop shows an empty footer (key test per listed key)
 - [ ] ~~In a detail the header is one line, 'HUG TASKS · <view> › <stacked parents> ›' with '? N for you' on the right; no view line, counts or filter line; the title line with the id follows (golden at 80 and 140, one task open and two stacked)~~ (not relevant: replaced by the next check (id in the breadcrumb, Jørgen 00:02), crab, 2026-11-18)
 - [ ] ~~In a detail, line 1 is 'HUG TASKS · <view> › <stacked parents> › <id>' with the id in the accent colour and '? N for you' on the right; then the bold title alone, then badges (no id badge) and dates, then a dim full-width rule, then the details; no view line, counts or filter line (golden at 80 and 140, one task open and two stacked)~~ (not relevant: reordered by Jørgen 00:03: breadcrumb, context, subject, details (next check), crab, 2026-11-18)
+- [ ] The detail is drawn in named bands per header-spec.md: breadcrumb 'HUG TASKS · <view> › <parents> › <id>' (id accent, '? N for you' right), context (badges without id, dates), subject (bold title, ▸ on page focus), a dim rule, then details; the global band (view line, counts, filter/sort) is not drawn (golden at 80 and 140, one task open and two stacked)
 
 ## Notes
 
