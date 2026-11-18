@@ -4,7 +4,7 @@ title: "Contributions: agent feedback and GitHub intake with minimal bureaucracy
 state: "doing"
 type: spike
 priority: ""
-assignee: ["kestrel"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzz2"
