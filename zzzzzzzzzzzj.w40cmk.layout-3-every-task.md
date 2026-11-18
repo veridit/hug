@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T01:48"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_since: "2026-11-18T02:26"
+waiting_asked_by: "kestrel"
+waiting_on: "parked for 3nhp67 (crab 02:26, high); WIP on kestrel/w40cmk (resolver + Parse), resume after"
 ---
 
 ## Goal
@@ -67,3 +70,4 @@ kestrel plan (lead, 01:58):
 Order: 1 and 4 first, then the preview counts from a clone of hug's board in a note, then 2, 3, 5, 6 and the test rewrite. hatchling owns check 5 (hug/memory).
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
+- 2026-11-18T02:26 doing/active -> doing/waiting (wait)
