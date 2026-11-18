@@ -42,6 +42,7 @@ User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task request
 - [ ] A board mock shows marking several tasks, selected count, and one request action for that exact set, reviewed by Jorgen.
 - [x] Submitting one request preserves its exact text and selected IDs, visible to the agent without asking the user to repeat it per task.
 - [x] User can see pending versus handled targets without a partial fix silently closing the whole request.
+- [ ] the home page of a request for several tasks shows a targets line, and a link page shows the request text and points to its home (golden at 80x24)
 
 ## Notes
 
