@@ -34,3 +34,5 @@ From mizaru's gmzd87 open questions 2 and 3 (2026-11-18). Inbox: <JCODE_HOME>/hu
 ## Notes
 
 piglet 15:08: crab assigned this to piglet, stacked on gmzd87 (19a5fc77). hug task take refuses ('bbxdd7 is blocked by gmzd87'); the dependency is real for landing, so it stays, and piglet works on branch bbxdd7 from origin/gmzd87 without the take.
+
+piglet 15:29: commit 2a22416d on branch bbxdd7 (stacked on gmzd87 19a5fc77), pushed with ci/bbxdd7, CI run 44324710425. Failing first: TestPendingReachesCoordinatorsNextSession 'crab's next session start delivered [], err <nil>; want [d68ekg request 1]', TestPendingOnlyForItsCoordinator, TestBoardCueSkipsDeliveredRequest 'the cue names request 1, already delivered to crab'. Outputs: ~/.jcode/scratch/lint-gaps2/bbxdd7-failfirst.txt and bbxdd7-check2-failfirst.txt. Full niced suite: 34 ok, 0 FAIL (lint-gaps2/bbxdd7-suite.txt). Check 2 is filtered in muninn/run/board.go (boardTasksFor + board.DeliveredTo), so boardcue.go is untouched; git merge-tree with origin/agh2h7 reports no conflict.
