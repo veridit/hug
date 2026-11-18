@@ -164,3 +164,70 @@ func TestDeliveryFlowInMCP(t *testing.T) {
 		t.Fatalf("task_requests receipt: %v", rc)
 	}
 }
+
+// ec6z6j (MCP half): task_update request with ids writes one request for
+// the selection: the text once on id (the home), a link on each of ids;
+// an unknown id writes nothing.
+func TestRequestForSeveralOverMCP(t *testing.T) {
+	dir := t.TempDir()
+	for _, args := range [][]string{{"init", "-q", "-b", "main"}, {"config", "user.name", "T"}, {"config", "user.email", "t@example.invalid"}, {"commit", "-q", "--allow-empty", "-m", "init"}} {
+		if out, e := exec.Command("git", append([]string{"-C", dir}, args...)...).CombinedOutput(); e != nil {
+			t.Fatalf("git %v: %s %v", args, out, e)
+		}
+	}
+	t.Setenv("HUG_USER", "")
+	t.Setenv("HUG_MODEL", "test-model")
+	t.Setenv("JCODE_SESSION_ID", "")
+	ctx := context.Background()
+	a := &cli.App{Cwd: dir, Out: os.Stderr, Err: os.Stderr}
+	if _, e := a.Execute(ctx, []string{"init"}); e != nil {
+		t.Fatal(e)
+	}
+	ct, st := sdk.NewInMemoryTransports()
+	ss, e := New(a).Connect(ctx, st, nil)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer ss.Close()
+	cs, e := sdk.NewClient(&sdk.Implementation{Name: "test", Version: "1"}, nil).Connect(ctx, ct, nil)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer cs.Close()
+	call := func(name string, input map[string]any) (map[string]any, string, bool) {
+		t.Helper()
+		out, e := cs.CallTool(ctx, &sdk.CallToolParams{Name: name, Arguments: input})
+		if e != nil {
+			t.Fatal(e)
+		}
+		text := out.Content[0].(*sdk.TextContent).Text
+		var m map[string]any
+		json.Unmarshal([]byte(text), &m)
+		return m, text, out.IsError
+	}
+	var ids []string
+	for _, title := range []string{"Rows", "Header"} {
+		m, text, bad := call("new", map[string]any{"title": title, "goal": "G", "purpose": "P", "principle": "Q", "accept": []any{"one"}})
+		if bad {
+			t.Fatal(text)
+		}
+		ids = append(ids, m["task"].(map[string]any)["id"].(string))
+	}
+	if _, text, bad := call("update", map[string]any{"id": ids[0], "action": "request", "ids": []any{ids[1], "zzzzzz"}, "text": "one fix", "agent": "jhf"}); !bad || !strings.Contains(text, "no task zzzzzz: nothing was written") {
+		t.Fatalf("unknown id: %v %s", bad, text)
+	}
+	if _, text, bad := call("update", map[string]any{"id": ids[0], "action": "request", "ids": []any{ids[1]}, "text": "one fix", "agent": "jhf"}); bad {
+		t.Fatal(text)
+	}
+	m, text, _ := call("show", map[string]any{"id": ids[1]})
+	rs, _ := m["task"].(map[string]any)["requests"].([]any)
+	if len(rs) != 1 {
+		t.Fatalf("link: %s", text)
+	}
+	r := rs[0].(map[string]any)
+	home, _ := r["home"].(map[string]any)
+	targets, _ := r["targets"].([]any)
+	if r["text"] != "one fix" || home["id"] != ids[0] || len(targets) != 2 {
+		t.Fatalf("link reads as the request: %s", text)
+	}
+}

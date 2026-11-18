@@ -597,6 +597,7 @@ func Parse(path string, data []byte) *Document {
 	d.Task.Woken = woken(d.historyLines())
 	d.Findings = append(d.Findings, untilFindings(d.Task)...)
 	d.Task.Requests = parseRequests(d.requestLines())
+	readTargets(&d.Task, d.historyLines())
 	d.Task.AnswerCount = answerCount(d.historyLines())
 	readReceipts(&d.Task, d.historyLines())
 	d.Task.Texts = &Texts{Bodies: true, Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}

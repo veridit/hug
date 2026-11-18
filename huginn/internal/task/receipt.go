@@ -179,7 +179,9 @@ func readReceipts(t *Task, history []string) {
 	}
 	for i := range t.Requests {
 		r := get("request " + strconv.Itoa(t.Requests[i].N))
-		if !t.Requests[i].Open() {
+		// A request for several tasks is answered when every target is
+		// (ec6z6j): its home's own resolve is one target of it.
+		if t.Requests[i].Targets != nil && t.Requests[i].AllResolved || t.Requests[i].Targets == nil && !t.Requests[i].Open() {
 			r.State = ReceiptAnswered
 		}
 		t.Requests[i].Receipt = r

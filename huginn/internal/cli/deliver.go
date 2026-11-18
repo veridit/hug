@@ -28,13 +28,13 @@ const DeliveryFlow = `Requests and answers reach the board coordinator (hug task
 
 // deliverMessage is what the coordinator's session reads: who, the task,
 // the text verbatim, the asker and the command that closes it.
-func deliverMessage(board string, t task.Task, item task.Item, by, text string, answer *task.Answer, token string) string {
+func deliverMessage(board string, t task.Task, item task.Item, by, text string, answer *task.Answer, token string, targets []targetRef) string {
 	var b strings.Builder
 	// Which board: a coordinator of several boards runs the command there.
 	where := " on board " + filepath.Base(board) + " (" + board + ")"
 	switch item.Kind {
 	case "request":
-		b.WriteString("hug: " + by + " wrote request " + strconv.Itoa(item.N) + " on " + t.ID + " (" + t.Title + ")" + where + ", to you as the board coordinator:\n")
+		b.WriteString("hug: " + by + " wrote request " + strconv.Itoa(item.N) + " on " + t.ID + " (" + t.Title + ")" + forTargets(targets) + where + ", to you as the board coordinator:\n")
 	case "answer":
 		head := "hug: " + by + " answered on " + t.ID + " (" + t.Title + ")"
 		if answer != nil && answer.Check > 0 {
@@ -55,7 +55,16 @@ func deliverMessage(board string, t task.Task, item task.Item, by, text string, 
 	}
 	switch item.Kind {
 	case "request":
-		b.WriteString("Turn it into changes to the ticket, then (in " + board + "): hug task resolve " + t.ID + " " + strconv.Itoa(item.N) + ` "what changed"` + "\n")
+		if ts := targets; len(ts) > 1 {
+			// One request for several tasks (ec6z6j): each target has its
+			// own resolve; the request closes when the last one resolves.
+			b.WriteString("Turn it into changes to each ticket, and resolve each one (in " + board + "):\n")
+			for _, tg := range ts {
+				b.WriteString("  hug task resolve " + tg.ID + " " + strconv.Itoa(tg.N) + ` "what changed"` + "\n")
+			}
+		} else {
+			b.WriteString("Turn it into changes to the ticket, then (in " + board + "): hug task resolve " + t.ID + " " + strconv.Itoa(item.N) + ` "what changed"` + "\n")
+		}
 		b.WriteString("If it is unclear: hug task ask " + t.ID + " --to " + by + ` "question"` + "\n")
 	case "answer":
 		if answer != nil && answer.For != "" && !strings.EqualFold(answer.For, by) {
@@ -130,7 +139,13 @@ func (a *App) Deliver(store *task.Store, root, board, id, kind, by string, commi
 	if coord != "" {
 		token := newToken(d.Task.ID, item)
 		it := harness.InboxItem{Board: board, Task: d.Task.ID, Kind: item.Kind, N: item.N, To: coord, Token: token}
-		s, reason = harness.Deliver(a.jcodeHomes(), a.getenv, coord, deliverMessage(board, d.Task, item, by, text, answer, token), it)
+		var targets []targetRef
+		if kind == "request" {
+			if ts, e := store.Tasks(); e == nil {
+				targets = requestTargets(ts, d.Task, item.N)
+			}
+		}
+		s, reason = harness.Deliver(a.jcodeHomes(), a.getenv, coord, deliverMessage(board, d.Task, item, by, text, answer, token, targets), it)
 	}
 	actor, action := store.Actor, store.Action
 	store.Actor, store.Action = "", ""
