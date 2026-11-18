@@ -7,6 +7,7 @@ j/k ↑/↓       move
 ctrl-d/u      half page down / up
 PgDn / PgUp   page down / up
 Enter         open the task
+Space         mark the task, then the next row; the footer acts on the marked
 J / K         page down / up
 H / L         mark the previous / next column
 o             order by the marked column: ▲ ▼ off
@@ -18,7 +19,6 @@ c             clear all filters
 g             group rows: flat, group, epic, tag (tag: first listed tag)
 
 EVERYWHERE
-v o            view: overview
 All tasks · : filters and commands
 
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · quit
