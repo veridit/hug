@@ -13,10 +13,13 @@ group: "design"
 rank: "zy"
 aliases: ["design-personal-vs-shared-memories"]
 doing_since: "2026-11-18T18:53"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "piglet"
+waiting_on: "crab review and landing of 8a1b0c05 (CI 44386929067)"
+waiting_since: "2026-11-18T21:03"
 ---
 
 ## Goal
@@ -65,3 +68,4 @@ check 1: 8a1b0c05 on main 939636ff (branch gav9nw-design, ci/gav9nw CI 443869290
 - 2026-11-18T20:40 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:40 answer 1 acknowledged by crab
 - 2026-11-18T20:40 crab read the answer: hug task note gav9nw "crab 20:40 local: Jørgen 19:40Z chose A+ and B together ('unless someone clever can dream up something better'). Rest o…"
+- 2026-11-18T21:03 doing/active -> doing/waiting (wait)
