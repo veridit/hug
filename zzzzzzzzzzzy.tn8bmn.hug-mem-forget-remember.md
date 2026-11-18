@@ -4,7 +4,7 @@ title: "hug mem: forget and remember report what the store really holds"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
