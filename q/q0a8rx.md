@@ -36,7 +36,7 @@ Labels: /Users/jhf/.jcode/scratch/gav9nw (measure.json corrected_counts: persona
 - [x] Jørgen answers: rewrite or leave
 - [x] If rewrite: the branch is rewritten from the backup minus the 58, force-pushed once, and ls-remote and a fresh clone show none of them (evidence in a note)
 - [x] A moves file lists all 58 with their target scope and a one-line reason; rescope --dry-run passes, then rescope writes, and hug mem search finds each one in its new scope (evidence in a note)
-- [ ] The rewritten branch holds none of the 58 in any commit (git log -p | grep for each id finds nothing), and the 810 that belong are byte-identical to before in the tip's memories.jsonl
+- [x] The rewritten branch holds none of the 58 in any commit (git log -p | grep for each id finds nothing), and the 810 that belong are byte-identical to before in the tip's memories.jsonl
 - [ ] Force-pushed once after 34r1ft is on main; ls-remote shows the new tip; a fresh clone's hug mem sync imports none of the 58
 
 ## Notes
