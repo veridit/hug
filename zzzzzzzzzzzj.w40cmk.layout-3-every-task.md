@@ -68,6 +68,7 @@ kestrel plan (lead, 01:58):
 (5) A write on a board with old-named files is refused with fix 'hug upgrade --apply'.
 (6) Sync: before a rebase with local commits, compare the layout in hug.toml at HEAD and at the remote. If they differ, refuse with fix 'hug upgrade --apply' (check 9).
 Order: 1 and 4 first, then the preview counts from a clone of hug's board in a note, then 2, 3, 5, 6 and the test rewrite. hatchling owns check 5 (hug/memory).
+Check 11 BEFORE baseline (wyvern, 2026-11-18 01:53Z), current layout. Binary: hug built from origin/main 48b1151f. Board: Seid copy, 2,520 tasks (2,491 top-level task files, 819 per-task folders), ~/.jcode/scratch/w40cmk-bench/before. Harness: w40cmk-bench/bench.sh, 10 rounds, A/A (same binary both sides, alternating), GOMAXPROCS=2 nice 10, HUG_NO_SYNC=1. Load avg 16 at the time. Median ms (min-max), git processes: ls 259 (249-331) 5; show 124 (117-153) 2; next 118 (112-131) 2; note 440 (397-518) 4; TUI first frame (tmux, until a known id is drawn) 390 (353-496) 16. Noise floor: A/A median gap at most 4% (next 113 vs 118), and 5 rounds earlier gave up to 7% on means. So an after-change must beat 4-7% to count. Raw: w40cmk-bench/baseline-48b1151f.tsv; summary: baseline-48b1151f-summary.txt. After: bench.sh hug-before-48b1151f before hug-w40cmk after-copy 10 on the same machine.
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
 - 2026-11-18T02:26 doing/active -> doing/waiting (wait)
