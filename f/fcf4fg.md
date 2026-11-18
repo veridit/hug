@@ -1,7 +1,7 @@
 ---
 id: fcf4fg
 title: "Sync recovers from an interrupted rebase on the tasks worktree"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["tigress"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzch"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T15:41"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T18:55"
 ---
 
 ## Goal
@@ -45,5 +44,7 @@ check 2: TestForeignRebaseStillRefuses (no marker; stale marker then a person's 
 crab review 17:42 local: accepted. 69d21471 on c84d3273: hug marks its own rebase (marker + lock while git runs); writers/sync/take/background pass end a dead hug rebase under the board turn, restore the autostash, print one line; a foreign rebase still refuses with worktree busy + rebase --abort. Failing-first and an ownership mutant. CI 44347035097 6/6. Pre-fix stuck states (no marker) still refuse by design. Stacked for landing.
 landed 4fb7833 on main 2026-11-18: sync: a write ends an interrupted rebase hug started itself (fcf4fg)
 shipped in v0.7.67 (4fb7833)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T15:41 todo -> doing/active (take)
+- 2026-11-18T18:55 doing/active -> done (done); was doing_since: 2026-11-18T15:41
