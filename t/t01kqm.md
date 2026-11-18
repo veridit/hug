@@ -10,11 +10,16 @@ group: ""
 rank: "zzzzzzzzzznh"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T14:36"
+asked_what: "t01kqm (lint judges open tasks only) shipped in v0.7.54; brew hug is v0.7.62. On Statbus today (read-only, ~/ssb/statbus) hug task lint --summary says '131 findings (13 broken) in 6 codes', with no 'closed tasks hidden' line and no done-unchecked (before: 446 findings, 314 broken, plus 170 hidden). Please open the Statbus LINT section in hug tui: does it now show only open tasks the way you wanted? If yes: hug task check t01kqm 6"
+asked_for: "jhf"
+asked_since: "2026-11-18T14:36"
+asked_by: "piglet"
+asked_check: "6"
 ---
 
 ## Goal
@@ -58,3 +63,4 @@ retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): 
 - 2026-11-18T03:30 doing/active -> doing/waiting (wait)
 - 2026-11-18T13:33 doing/waiting -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T02:56; waiting_asked_by: hatchling; waiting_on: the release carrying f6b63256, then Jørgen's look at the Statbus LINT section (check 6); waiting_since: 2026-11-18T03:30
 - 2026-11-18T14:36 todo/ready -> doing/active (take)
+- 2026-11-18T14:36 doing/active -> doing/asked (ask)
