@@ -1,15 +1,20 @@
 ---
 id: 4tycwd
 title: "Detour scratch for in-progress work"
-state: todo
+state: "doing"
 type: spike
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: ["needs-discussion"]
 group: ""
 rank: "zzzzzzv"
 created: 2026-11-16
 updated: 2026-11-16
+doing_since: "2026-11-18T18:57"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -43,3 +48,7 @@ b. next --mine skips my doing/waiting tasks (they come back via resume or --unti
 c. resume prints what the task waited on ('was waiting on: ...') once.
 Check 1 becomes: one command to park (dep + note), none to resume (it returns by itself), and next --mine shows the detour during it and the parked task right after.
 Open for crab: is (b) a bug fix or wanted behaviour (a CI wait showing in next --mine as a reminder)?
+
+
+## History
+- 2026-11-18T18:57 todo -> doing/active (take)
