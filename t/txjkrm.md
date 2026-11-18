@@ -11,10 +11,16 @@ rank: "zzzzzzzzzz38"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T15:45"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "qsqhpe"
 worktree: "/Users/jhf/.jcode/scratch/qsqhpe"
+asked_check: "1"
+asked_show: "seid-overview-tags.ans"
+asked_what: "Seid's real overview with tags on rows, in your 10:28 row order: pie, id, type, priority, tags, stage, text. Tags are dim, at most 22 columns. The proposed list keeps 38 tags used on 20+ tasks after merging (file seid-tags-proposal.txt: compiler 924, parser 341, and so on), moves bug/design/paused/low-pri to type, stage and priority, and drops rulings, provenance and rare labels. Does this look right, so I can build it? Ticking check 1 is yes; or answer with what to change (cutoff, a tag, the column)."
+asked_for: "jhf"
+asked_since: "2026-11-18T15:49"
+asked_by: "mizaru"
 ---
 
 ## Goal
@@ -53,3 +59,4 @@ file:seid-overview-tags.ans (3236 bytes, sha256:477072ab) check 1 preview: Seid'
 file:seid-tags-proposal.txt (4983 bytes, sha256:d1819ff2) check 1: proposed tag list for seid-lang: 38 tags kept (20+ tasks after merging, with what each merges), 14 labels moved to type/stage/priority, 133 dropped as provenance/rulings/references, 656 dropped as rare
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
+- 2026-11-18T15:49 doing/active -> doing/asked (ask)
