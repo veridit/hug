@@ -16,8 +16,14 @@ aliases: ["merge-muninn-and-huginn-into-one"]
 ## Goal
 A unified, easy-to-navigate, non-confusing CLI and system: one hug binary with tasks, memories and messages; .hug/<kind>/ on branches hug/<kind>; muninn and huginn kept only as compatibility aliases.
 
+## Purpose
+Jørgen 2026-11-18 (request 1 on this task): the goal is a unified, easy-to-navigate, non-confusing CLI and system. The decision behind it is his of 2026-11-11 (memory j9jdkh, docs/DESIGN.md): one tool named hug for memory, tasks and messages, files on branches as the truth, and memory file-oriented too (one Markdown file per memory) so humans can edit it and git merges stay clean.
+
 ## Principle
 Consistency through a clean sweep: once we decide hug is the thing, we change everything at once (commands, help, messages, docs, branches, folders, tests, every project's setup), never a mix of old and new names left behind.
+
+## Relevant details
+Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 tasks on branch hug/tasks at .hug/tasks (this repo and seid-lang migrated). Open: memories still live in the SQLite store and sync on branch muninn-notes (NotesBranch in muninn/internal/project/project.go:39), while hug mem help already says 'hug/memory'. Jørgen names the branch 'memory', not 'memories' (note 2026-11-16). Items 2 (memory branch) and 3 (file per memory, retire = move to _retired/) need a design talk with him before building. Children: 34r1ft (per-repo memory setting), gav9nw (personal vs shared).
 
 ## Depends on
 
