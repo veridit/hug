@@ -1,15 +1,20 @@
 ---
 id: rzfrgp
 title: "Board take line: never name a task the session only read"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T13:50"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ boardcue.go detect: 'if h.Verb == "show" || h.Verb == "check" || h.Verb == "note
 - [ ] replay (6 sets + fresh hug, two judgings of the new prompt): take/work/done/owner false lines do not rise on any set and right lines do not fall
 
 ## Notes
+
+
+## History
+- 2026-11-18T13:50 todo -> doing/active (take)
