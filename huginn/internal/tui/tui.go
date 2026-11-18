@@ -1687,6 +1687,16 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				t, ok := m.selected()
 				moved := false
+				// j and k mirror each other (ykta5g, Jørgen 19:55): j past the
+				// last item scrolls the page with it still marked, so while
+				// the marked item starts above the view k scrolls back a line
+				// and keeps it; only once it is in view does k step. j, the
+				// same way, reads a marked item taller than the view to its
+				// last line before it steps (check 4).
+				if s, e, ok := m.markedBlock(); ok && (step < 0 && s < m.viewport.YOffset || step > 0 && e >= m.viewport.YOffset+m.viewport.Height) {
+					m.scroll(&m.viewport, k)
+					return m, nil
+				}
 				if ok && m.detailPane == focusAcceptance && len(t.Acceptance) > 0 {
 					next := m.acceptance + step
 					if next >= 0 && next < len(t.Acceptance) {
@@ -1708,7 +1718,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				if moved {
 					m.syncDetail()
-					m.revealAcceptance()
+					// Scroll only as far as the new item needs, whole, its
+					// question and all (ykta5g): never a re-centre.
+					m.showMarked()
 				} else {
 					m.scroll(&m.viewport, k)
 				}
