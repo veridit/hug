@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Recall hook board lint (4vxqp4): a missing Purpose or Principle no longer goes to a session whose message only mentions the task: quoted (a prompt or output it quotes), as a dependency ("depends on n8zmjw"), or as a task not to start. A task the session owns, acted on (take, check, note, set, edit), or its message gives as the work still gets it. Reading another session's doing task with `hug task show` is not acting on it. On the six board4 replay sets (blind judge, muninn/docs/BOARD4.md), false board lines fell from 12 to 8 and right lines rose from 101 to 104. Fresh sessions kept their right lint lines (fresh hug 3 of 3, fresh2 seid 7 -> 9).
+
 ## v0.7.62 - 2026-11-18
 
 - The TUI sort picker (`s`) names the default order (nch9d4): `r  rank` is a row, "board order, the default: moves work only in it", and `r` goes back to it at once from any sort, clearing every field. The picker shows the order in force (`now: priority ↓`, or `now: rank (board order)`) apart from the one being built (`new: type · updated ↓`, or `new: nothing picked yet, Enter or r gives rank`), so an empty draft no longer reads as `sort: rank` while the rows are sorted by priority. With no column marked, the `c  current column` row is dim as a whole, since c cannot be picked then.
