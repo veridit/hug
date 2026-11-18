@@ -1,15 +1,20 @@
 ---
 id: bg1rd8
 title: "A waiting task whose checks all hold is told to finish"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T13:22"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ questions.go noteQuestion silences shipped-not-done when stageSaysWhy (waiting/a
 - [ ] A waiting task with an open check is unchanged (test).
 
 ## Notes
+
+
+## History
+- 2026-11-18T13:22 todo -> doing/active (take)
