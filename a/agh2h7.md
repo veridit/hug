@@ -43,5 +43,6 @@ BAR (duckling 13:40Z, before any run). Rule: checks-all-hold (problem 'every che
 
 
 duckling: removed dep bg1rd8 to take it; the code is stacked on bg1rd8's commit (cherry-pick 4bfd6797), and crab lands bg1rd8 before this (crab DM 13:33Z: z82qsy, b7517169 stack, gpyqq9, bg1rd8, qpp30y). Rebase on main after bg1rd8 lands and drop the cherry-picks.
+BAR AMEND (duckling 13:45Z, still before any run): with no coordinator on the board the gone-owner line goes to nobody (not any session): closing another's task is the coordinator's call. The hug board got coordinator=crab at 2026-11-18 02:05, after every replay window, so both arms replay hug sets with board4 -coordinator crab (counterfactual, same for both arms); seid sets have no coordinator. Lint clock pinned to turn time in both arms (else checks-all-hold fires on real time).
 ## History
 - 2026-11-18T14:40 todo -> doing/active (take)
