@@ -43,6 +43,7 @@ hatchling 15:30: CI 44112858767 on 0c72206 completed success (ubuntu, macos, win
 Landed on main as d107f9a (dde0b41..d107f9a, fast-forward; rebased from 0c72206 over v0.7.42, CHANGELOG line under the new ## Unreleased). Local: go test muninn/run, mcpserver, app ok. Main CI 44121274410 (pushed under crab's 15:36 rule: no pre-push CI; fix forward if red). Pre-rebase branch CI 44112858767 green on 3 OSes. (hatchling)
 Reflection (open, 2026-11-17, hatchling): One gap: hug task wait and take accept --as NAME but hug task note rejects it ('unknown flag --as; valid: --json, --help'), so an agent signing its work by habit loses the note. Accepting --as on note/check, or saying in the help that note never takes it, would close that.
 shipped in v0.7.43 (d107f9a)
+Reflection 1 is addressed by pw0t19 (branch pw0t19, 9aa1ae7, not on main yet): hug task check ID N "evidence" ticks and notes in one write; note and check accept --as; a wrong argument count names the command's usage and fix: hug task COMMAND --help. Resolve as applied once pw0t19 lands: hug task reflections resolve p29rbz 1 applied
 ## History
 - 2026-11-17T16:14 todo -> doing/active (take)
 - 2026-11-17T16:19 doing/active -> doing/waiting (wait)
