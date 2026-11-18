@@ -44,6 +44,8 @@ Decided so far: new Engram memories with no project default to personal, and glo
 ## Requests
 - 2026-11-18T20:36 request 1 by jhf:
   When I'm looking at this the zoom the thing I'm going to respond to the first line is displayed the whole section should be displayed otherwise I think I didn't scroll correctly
+  resolved 2026-11-18T20:37 by crab:
+    The detail now has to show a focused check whole, the question with it, not just its first line. If the check is taller than the screen, it shows from its top. It is check 4 on ykta5g (j/k in the detail): piglet is changing the same scroll code now, so it ships with that fix. Until then, j scrolls the rest of the question into view.
 
 ## Notes
 
@@ -59,3 +61,4 @@ file:screen-2036.ans (12706 bytes, sha256:f159358e) screen capture from hug tui
 - 2026-11-18T20:36 request 1 by jhf
 - 2026-11-18T20:36 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:37 request 1 acknowledged by crab
+- 2026-11-18T20:37 resolved request 1 by crab
