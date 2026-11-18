@@ -38,5 +38,6 @@ CI 44237364634 (a13d7c74), test-windows-cli: sync_test.go:223 'background pass s
 ## Notes
 
 
+Diagnostics implemented in d51a535c (not on main yet): queue/settle/run progress, separate RunHeld, fetch/turn/push and deduction boundaries with pid and time. Counting tests cover 20 passes (80 ordered lines observable inside the callback) and 20 actual queue-only/run-only/idle lock cycles. Mutations: disable logger -> missing log failure; report Queued as RunHeld -> 'queue-only round 0: queued true run held true'. Both restored. Package -race passed before rebase: gitbranch 15.911s, cli 124.792s; rebased package -race rerunning. Planned one ci/6ep7y2 push, exactly 3 full Windows CLI package runs, preserving its parallel tests. Evidence files in scratch/4vd1mz/6ep7y2-*. Clarification: old Busy includes the queue, so it does not prove run was held. A stuck run holder is a hypothesis, not an observed cause. Earlier different-shape failures do not prove the same cause either.
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
