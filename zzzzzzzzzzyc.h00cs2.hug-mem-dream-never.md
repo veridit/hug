@@ -41,6 +41,7 @@ Started design 22:21Z, paused for wdkqzx (crab). Facts so far: dream is called o
 Measured 2026-11-18 03:28Z on the live store with brew hug v0.7.54 (niced). meta dream_last_ns is unset. 0 hug mem serve processes. No LaunchAgent. hug mem dream --dry-run: 'Would retire 3 duplicate memories. Queued 111 new items for agents; 4 waiting.' 10.14 s real, 8.97 s user, 377 MB max RSS. So the v0.7.49 fold took the 2574 down to 3. The 111 are judgement items, uncapped in dry run. A real pass caps them: VetPerPass 10, AgentPerPass 10, EndedPerPass 20 (app/dream.go:336, agents.go:25, holds.go:25). Quiet windows, from hook.log user turns over the last 7 days (3035 turns): 54 gaps of 30 min or more, at least 3 every day, the longest each day 1:29 to 7:31. So 'quiet for 30 min' happens daily without serve. Proposal to crab follows.
 file:h00cs2-proposal.txt (3072 bytes, sha256:44e2d89c)
 Design proposal sent to crab, in file:h00cs2-proposal.txt. The capture turn_end/session_end hook checks whether dream is due and spawns a detached 'hug mem dream --when-quiet' waiter. The waiter runs the pass niced once 30 min pass with no user turn, sharing a lock with serve. Status goes on dream --status and the dry-run header, plus dream_last in stats. No code until crab rules.
+file:h00cs2-failfirst.txt (817 bytes, sha256:7c47eb71)
 ## History
 - 2026-11-17T23:20 todo -> doing/active (take)
 - 2026-11-17T23:22 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:20

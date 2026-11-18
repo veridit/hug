@@ -1,0 +1,21 @@
+    dreamfb_test.go:24: no dream started: dream_last_ns unset and the hook started no waiter (dream runs only in hug mem serve)
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	0.042s
+FAIL
+== mutation 1: no binary-swap check
+    dreamwait_test.go:152: exec'd [], want the installed hug's waiter
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	0.042s
+FAIL
+== mutation 2: no load gate
+    dreamwait_test.go:93: waited 5 steps and read the load 1 times, want 7 (5 for quiet, 2 for load) and 3
+--- FAIL: TestDreamWaiterGivesUpOnABusyMachine (0.01s)
+    dreamwait_test.go:123: slept 0 steps, want 144 (12 h)
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	0.054s
+FAIL
+== mutation 3: hook does not nudge
+    dreamwait_test.go:185: spawned [], want one waiter of the installed hug
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	0.044s
+FAIL
