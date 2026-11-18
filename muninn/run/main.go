@@ -752,6 +752,12 @@ func runHook(name string, budget time.Duration) error {
 		// gmzd87) is acknowledged once it is in the transcript: at the turn
 		// it started, or at the first tool call after a soft interrupt.
 		ackDelivered(ctx, jh, sid, os.Getenv("JCODE_HOOK_EVENT") == "post_tool_feedback")
+		// What could not reach this session's name while it had no live
+		// session (bbxdd7) is handed over at its turn's start, once; the
+		// session acknowledges it at its next tool call, as above.
+		if ev := os.Getenv("JCODE_HOOK_EVENT"); ev == "turn_start" || ev == "session_start" {
+			deliverPendingHook(ctx, jh, sid)
+		}
 		switch os.Getenv("JCODE_HOOK_EVENT") {
 		case "post_tool_feedback":
 			if err := deliverParked(parks, sessions, sid); err != nil {
@@ -804,6 +810,17 @@ func runHook(name string, budget time.Duration) error {
 		return err
 	default:
 		return fmt.Errorf("unknown harness %q (claude, codex, jcode)", name)
+	}
+}
+
+// deliverPendingHook hands session sid what waited for its name (bbxdd7).
+func deliverPendingHook(ctx context.Context, home, sid string) {
+	got, err := huginn.DeliverPending(ctx, home, sid, os.Getenv)
+	if err != nil {
+		logHook("jcode %s: deliver pending: %v", short(sid), err)
+	}
+	for _, g := range got {
+		logHook("jcode %s: delivered pending %s", short(sid), g)
 	}
 }
 

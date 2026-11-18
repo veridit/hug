@@ -97,3 +97,55 @@ func TestNudgeBoardOff(t *testing.T) {
 		}
 	}
 }
+
+// bbxdd7 check 2: a request hug already delivered to the coordinator's
+// session is not named again by the board cue; one not delivered still is.
+func TestBoardCueSkipsDeliveredRequest(t *testing.T) {
+	repo := t.TempDir()
+	git := func(dir string, args ...string) {
+		t.Helper()
+		c := exec.Command("git", append([]string{"-C", dir}, args...)...)
+		c.Env = append(os.Environ(), "GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@e", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@e")
+		if out, err := c.CombinedOutput(); err != nil {
+			t.Fatalf("git %v: %v\n%s", args, err, out)
+		}
+	}
+	git(repo, "init", "-q", "-b", "main")
+	git(repo, "commit", "-q", "--allow-empty", "-m", "init")
+	git(repo, "worktree", "add", "-q", "--orphan", "-b", "hug/tasks", ".hug/tasks")
+	md := "---\nid: \"abc123\"\ntitle: \"Tags\"\nstate: \"todo\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] one\n\n" +
+		"## Requests\n- 2026-11-18T12:00 request 1 by jhf:\n  make it per board\n- 2026-11-18T12:05 request 2 by jhf:\n  shorter title\n\n" +
+		"## History\n- 2026-11-18T12:00 request 1 delivered to crab (session_crab_1_aa)\n- 2026-11-18T12:05 request 2 not delivered: no jcode session named crab on this machine\n"
+	if err := os.WriteFile(filepath.Join(repo, ".hug/tasks/a.abc123.tags.md"), []byte(md), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	git(filepath.Join(repo, ".hug/tasks"), "add", "-A")
+	git(filepath.Join(repo, ".hug/tasks"), "commit", "-q", "-m", "t")
+	s, err := board.Open(context.Background(), repo)
+	if err != nil || s == nil {
+		t.Fatalf("open: %v %v", s, err)
+	}
+	defer s.Close()
+	if ts := boardTasksFor(s.Tasks, "nautilus"); len(ts) != 1 || len(ts[0].Requests) != 2 {
+		t.Fatalf("another session lost requests: %+v", ts)
+	}
+	in := recall.BoardInput{Tasks: boardTasksFor(s.Tasks, "crab"), Coordinator: "crab", Self: recall.BoardSelf{Name: "crab"}}
+	db, err := store.Open(filepath.Join(t.TempDir(), "m.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	e := &recall.Engine{DB: db}
+	var lines []string
+	for i := 0; i < 3; i++ {
+		line, _ := e.BoardCue("s", "go on", "", time.Now(), func(time.Time, bool) *recall.BoardInput { c := in; return &c })
+		lines = append(lines, line)
+	}
+	all := strings.Join(lines, "\n")
+	if strings.Contains(all, "make it per board") || strings.Contains(all, "(request 1)") {
+		t.Fatalf("the cue names request 1, already delivered to crab:\n%s", all)
+	}
+	if !strings.Contains(all, "shorter title") {
+		t.Fatalf("the cue lost request 2, not delivered:\n%s", all)
+	}
+}

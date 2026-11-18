@@ -154,21 +154,108 @@ func Deliver(homes []string, getenv func(string) string, name, message string, i
 	}
 	tried := false
 	for _, s := range ss {
-		for _, sock := range Sockets(s.Home, getenv) {
-			tried = true
-			if err := AddInbox(s.Home, s.ID, it); err != nil {
-				return Session{}, "cannot write " + name + "'s hug inbox: " + err.Error()
-			}
-			if err := Notify(sock, s.ID, message, 5*time.Second); err == nil {
-				return s, ""
-			}
-			RemoveInbox(s.Home, s.ID, it)
+		ok, sockets, err := DeliverTo(s, getenv, message, it)
+		if err != nil {
+			return Session{}, "cannot write " + name + "'s hug inbox: " + err.Error()
 		}
+		if ok {
+			return s, ""
+		}
+		tried = tried || sockets > 0
 	}
 	if !tried {
 		return Session{}, "no jcode daemon socket for " + name + "'s session " + ss[0].ID
 	}
 	return Session{}, name + "'s jcode session " + ss[0].ID + " is not live in a jcode daemon"
+}
+
+// DeliverTo hands message to session s on each of its daemon sockets in
+// turn, with it in s's inbox first (an idle session's hook looks before
+// Notify returns); true once a daemon took it. sockets is how many it
+// tried; err only when the inbox cannot be written.
+func DeliverTo(s Session, getenv func(string) string, message string, it InboxItem) (ok bool, sockets int, err error) {
+	for _, sock := range Sockets(s.Home, getenv) {
+		sockets++
+		if err := AddInbox(s.Home, s.ID, it); err != nil {
+			return false, sockets, err
+		}
+		if Notify(sock, s.ID, message, 5*time.Second) == nil {
+			return true, sockets, nil
+		}
+		RemoveInbox(s.Home, s.ID, it)
+	}
+	return false, sockets, nil
+}
+
+// Pending: what could not be delivered to coordinator NAME (no live
+// session) waits for NAME's next session (bbxdd7). One file per item,
+// <JCODE_HOME>/hug-inbox/pending/<name>/<task>-<kind>-<n>.json, in every
+// jcode home hug knows; the hook in a session called NAME reads that one
+// folder at its turn's start (one read of a missing folder when nothing
+// waits) and delivers it to itself. The task's History decides whether it
+// still needs delivering, so a copy in another home never delivers twice.
+
+// PendingDir is the folder of items waiting for name in jcode home.
+func PendingDir(home, name string) string {
+	return filepath.Join(home, "hug-inbox", "pending", safeName(strings.ToLower(name)))
+}
+
+// AddPending writes it into name's pending folder in home.
+func AddPending(home, name string, it InboxItem) error {
+	name = strings.ToLower(strings.TrimSpace(name))
+	if name == "" || strings.ContainsAny(name, `/\`) {
+		return fmt.Errorf("bad coordinator name %q", name)
+	}
+	dir := PendingDir(home, name)
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return err
+	}
+	b, _ := json.Marshal(it)
+	n := inboxName(it)
+	tmp := filepath.Join(dir, "."+n+".tmp")
+	if err := os.WriteFile(tmp, b, 0o600); err != nil {
+		return err
+	}
+	return os.Rename(tmp, filepath.Join(dir, n))
+}
+
+// Pending lists the items waiting for name in home with their files.
+func Pending(home, name string) (items []InboxItem, files []string) {
+	dir := PendingDir(home, name)
+	ents, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, nil
+	}
+	for _, e := range ents {
+		if strings.HasPrefix(e.Name(), ".") || !strings.HasSuffix(e.Name(), ".json") {
+			continue
+		}
+		b, err := os.ReadFile(filepath.Join(dir, e.Name()))
+		if err != nil {
+			continue
+		}
+		var it InboxItem
+		if json.Unmarshal(b, &it) != nil || it.Task == "" || it.Board == "" {
+			continue
+		}
+		items = append(items, it)
+		files = append(files, filepath.Join(dir, e.Name()))
+	}
+	return items, files
+}
+
+// SessionName is the name in a jcode session id (session_<name>_<ms>_<hex>),
+// "" if it is not one.
+func SessionName(sid string) string {
+	rest, ok := strings.CutPrefix(sid, "session_")
+	if !ok {
+		return ""
+	}
+	name, _, ok := strings.Cut(rest, "_")
+	if !ok {
+		return ""
+	}
+	return name
 }
 
 // Inbox: what hug delivered to a session and waits to see it receive. One

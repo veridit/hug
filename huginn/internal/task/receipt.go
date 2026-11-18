@@ -347,3 +347,55 @@ func hasItem(d *Document, item Item) bool {
 	}
 	return false
 }
+
+// ItemReceipt is item's receipt on d (bbxdd7: whether a pending delivery
+// is still owed), false when d has no such item.
+func (d *Document) ItemReceipt(item Item) (Receipt, bool) {
+	if !hasItem(d, item) {
+		return Receipt{}, false
+	}
+	switch item.Kind {
+	case "request":
+		for _, r := range d.Task.Requests {
+			if r.N == item.N {
+				return r.Receipt, true
+			}
+		}
+	case "answer":
+		for _, a := range d.Task.Answers {
+			if a.N == item.N {
+				return a.Receipt, true
+			}
+		}
+		return Receipt{State: ReceiptPending}, true
+	}
+	return Receipt{}, false
+}
+
+// AnswerN is the Nth answer block in d's History (from 1), nil if none.
+func (d *Document) AnswerN(n int) *Answer {
+	var out *Answer
+	i := 0
+	h := d.historyLines()
+	for j := range h {
+		l := strings.TrimRight(h[j], "\r\n")
+		if answerHeadAny.MatchString(l) {
+			i++
+			if i == n {
+				_, _, out = scanAnswers(h[:j+blockEnd(h, j)])
+				return out
+			}
+		}
+	}
+	return nil
+}
+
+// blockEnd is how many lines the answer at h[j] spans: its head and its
+// "  " continuation lines.
+func blockEnd(h []string, j int) int {
+	k := j + 1
+	for k < len(h) && strings.HasPrefix(h[k], "  ") {
+		k++
+	}
+	return k - j
+}

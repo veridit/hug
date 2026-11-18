@@ -24,7 +24,7 @@ import (
 // AGENTS.md section hug setup writes, the MCP tool descriptions) carry
 // exactly these words, and TestDeliveryInstructionsMatchCode drives the
 // code through each of its claims.
-const DeliveryFlow = `Requests and answers reach the board coordinator (hug task coordinator NAME) by hug itself: when a person writes hug task request or hug task answer (or r and a in hug tui), or ticks the check a question to them is about (that tick is their answer), hug hands it at once to the coordinator's live session (an idle session starts a turn, a busy one gets it at its next step) and History says delivered or not delivered with the reason. The coordinator's session acknowledges it on receipt (hug's hook), its first write on the task marks it in progress, and hug task resolve ID N answers a request (an answer: the asker's next write). hug task requests shows each state: pending, acknowledged, in progress, answered. Not delivered (no coordinator set, no live session, a harness hug cannot reach yet such as Claude Code or Codex) stays "pending, not delivered: REASON" and the request still comes first in hug task next. No agent polls.`
+const DeliveryFlow = `Requests and answers reach the board coordinator (hug task coordinator NAME) by hug itself: when a person writes hug task request or hug task answer (or r and a in hug tui), or ticks the check a question to them is about (that tick is their answer), hug hands it at once to the coordinator's live session (an idle session starts a turn, a busy one gets it at its next step) and History says delivered or not delivered with the reason. The coordinator's session acknowledges it on receipt (hug's hook), its first write on the task marks it in progress, and hug task resolve ID N answers a request (an answer: the asker's next write). hug task requests shows each state: pending, acknowledged, in progress, answered. Not delivered (no coordinator set, no live session, a harness hug cannot reach yet such as Claude Code or Codex) stays "pending, not delivered: REASON" and the request still comes first in hug task next. What no live session could take goes to the coordinator's next session when it starts, once (hug's hook); a coordinator renamed before then gets it under the old name. No agent polls.`
 
 // deliverMessage is what the coordinator's session reads: who, the task,
 // the text verbatim, the asker and the command that closes it.
@@ -130,7 +130,19 @@ func (a *App) Deliver(store *task.Store, root, board, id, kind, by string, commi
 	if coord != "" {
 		token := newToken(d.Task.ID, item)
 		it := harness.InboxItem{Board: board, Task: d.Task.ID, Kind: item.Kind, N: item.N, To: coord, Token: token}
-		s, reason = harness.Deliver(a.jcodeHomes(), a.getenv, coord, deliverMessage(board, d.Task, item, by, text, answer, token), it)
+		homes := a.jcodeHomes()
+		s, reason = harness.Deliver(homes, a.getenv, coord, deliverMessage(board, d.Task, item, by, text, answer, token), it)
+		if reason != "" {
+			// Not delivered: it waits for coord's next session, in every
+			// jcode home hug knows (bbxdd7). That session's hook hands it
+			// over at its start; History decides it is still owed.
+			for _, h := range homes {
+				if err := harness.AddPending(h, coord, it); err != nil {
+					reason += "; cannot keep it for " + coord + "'s next session: " + err.Error()
+					break
+				}
+			}
+		}
 	}
 	actor, action := store.Actor, store.Action
 	store.Actor, store.Action = "", ""

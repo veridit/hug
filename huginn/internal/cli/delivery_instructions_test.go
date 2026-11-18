@@ -172,13 +172,51 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 				t.Fatalf("receipt %v", r["receipt"])
 			}
 		}},
+		{"What no live session could take goes to the coordinator's next session when it starts, once (hug's hook)", func(t *testing.T) {
+			// "while away" (above) found crab not live. crab's next
+			// session starts: its hook hands it over, once (bbxdd7).
+			n := len(jc.messages())
+			next := jc.session(t, "crab", 4000, true)
+			none := func(string) string { return "" }
+			if got, err := DeliverPending(context.Background(), jc.home, next, none); err != nil || len(got) != 1 || !strings.HasSuffix(got[0], " request 3") {
+				t.Fatalf("next session start: %v %v", got, err)
+			}
+			// The daemon starts the turn; its hook acknowledges and writes
+			// the board. Wait for it, or it races the test's cleanup.
+			waitAck()
+			if got, _ := DeliverPending(context.Background(), jc.home, next, none); len(got) != 0 || len(jc.messages()) != n+1 {
+				t.Fatalf("delivered twice: %v, daemon messages %d", got, len(jc.messages()))
+			}
+		}},
+		{"; a coordinator renamed before then gets it under the old name.", func(t *testing.T) {
+			// The item waits for the name it was written to: a session of
+			// the new coordinator's name gets nothing (accepted, crab 15:49).
+			jc.mu.Lock()
+			for s := range jc.live {
+				jc.live[s] = false
+			}
+			jc.mu.Unlock()
+			execute(t, a, "request", id, "while renamed", "--as", "jhf")
+			execute(t, a, "coordinator", "lobster")
+			n := len(jc.messages())
+			lobster := jc.session(t, "lobster", 5000, true)
+			none := func(string) string { return "" }
+			if got, _ := DeliverPending(context.Background(), jc.home, lobster, none); len(got) != 0 || len(jc.messages()) != n {
+				t.Fatalf("the renamed coordinator got %v", got)
+			}
+			crab := jc.session(t, "crab", 6000, true)
+			if got, _ := DeliverPending(context.Background(), jc.home, crab, none); len(got) != 1 {
+				t.Fatalf("the old name's session got %v", got)
+			}
+			waitAck()
+		}},
 		{"No agent polls.", func(t *testing.T) {
 			// Delivery is in the write: every message above reached the
 			// daemon inside the command that wrote the item (counted
 			// there), and nothing of hug's runs between commands: the
 			// hook acks inside the coordinator's own turn.
-			if n := len(jc.messages()); n != 2 {
-				t.Fatalf("daemon got %d messages, want 2 (request 2, answer 1)", n)
+			if n := len(jc.messages()); n != 4 {
+				t.Fatalf("daemon got %d messages, want 4 (request 2, answer 1, requests 3 and 4 at crab's next starts)", n)
 			}
 		}},
 		{"or ticks the check a question to them is about (that tick is their answer)", func(t *testing.T) {
