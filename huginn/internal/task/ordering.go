@@ -92,6 +92,10 @@ func (s *Store) applyRanks(plan []rankChange, focus Task) (Result, error) {
 		if p.Task.Path == "" {
 			continue
 		}
+		// A layout-3 task keeps its path: a rank change is a line edit.
+		if _, ok := IDPath(p.Task.Path); ok {
+			continue
+		}
 		dest := filepath.ToSlash(filepath.Join(p.Task.Group, BuildName(p.Rank, p.Task.ID, p.Task.Slug)))
 		if dest == p.Task.Path {
 			continue
@@ -126,7 +130,9 @@ func (s *Store) applyRanks(plan []rankChange, focus Task) (Result, error) {
 			for n := len(applied) - 1; n >= 0; n-- {
 				old := applied[n]
 				current := old.Task
-				current.Path = filepath.ToSlash(filepath.Join(current.Group, BuildName(old.Rank, current.ID, current.Slug)))
+				if _, ok := IDPath(current.Path); !ok {
+					current.Path = filepath.ToSlash(filepath.Join(current.Group, BuildName(old.Rank, current.ID, current.Slug)))
+				}
 				_, re := local.rename(&Document{Task: current}, old.Task.Group, old.Task.Rank, old.Task.Slug)
 				rollback = errors.Join(rollback, re)
 			}
@@ -135,7 +141,11 @@ func (s *Store) applyRanks(plan []rankChange, focus Task) (Result, error) {
 		if r.Changed {
 			applied = append(applied, p)
 			result.Renamed = append(result.Renamed, p.Task.ID)
-			result.Renames = append(result.Renames, Rename{p.Task.ID, p.Task.Path, r.Task.Path})
+			// Renames lists real file renames only; a layout-3 rank edit
+			// keeps the path (w40cmk).
+			if r.Task.Path != p.Task.Path {
+				result.Renames = append(result.Renames, Rename{p.Task.ID, p.Task.Path, r.Task.Path})
+			}
 			result.Changed = true
 		}
 		if p.Task.ID == focus.ID {
