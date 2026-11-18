@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzlh"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T04:25"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_check: "6"
-asked_what: "after the release: line 2 now reads 'view: overview  list  board  !lint' with the counts at the right after │; press v (the line lights up, the footer lists o l b !), then o, l, b or ! to switch. Bare b, ! and i no longer switch views. Does it read clearly?"
-asked_for: "jhf"
-asked_since: "2026-11-18T05:00"
-asked_by: "nautilus"
 ---
 
 ## Goal
@@ -63,3 +58,6 @@ shipped in v0.7.56 (03e783d)
 ## History
 - 2026-11-18T04:25 todo -> doing/active (take)
 - 2026-11-18T05:00 doing/active -> doing/asked (ask)
+- 2026-11-18T19:54 answered asked (check 6), by jhf, for nautilus (doing/asked -> doing/active):
+  > after the release: line 2 now reads 'view: overview  list  board  !lint' with the counts at the right after │; press v (the line lights up, the footer lists o l b !), then o, l, b or ! to switch. Bare b, ! and i no longer switch views. Does it read clearly?
+  It is pretty good and it works the way I hoped, except for the colouring is too intense and it's over the top. What do I mean by that? I mean that right now I had another ticket to reduce the or to improve the coloring, but I think it needs to be toned down. You have both underscore and you have bold and you have color on the letter that you can pick. It's too much and you have background on the one that is active. It's like it's a we have to be subtle. So the underscore tells you it can be picked, right? And then the coloring, maybe either the bold or the color tells you which one is active. And the color tells you what you can pick. Something more subtle, please
