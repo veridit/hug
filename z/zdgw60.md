@@ -1,0 +1,34 @@
+---
+id: zdgw60
+title: "A set that wrote says what it wrote, before lint advice"
+state: todo
+type: feature
+priority: ""
+assignee: []
+labels: []
+group: ""
+rank: "zzzzzzzzzzzz"
+created: 2026-11-19
+updated: 2026-11-19
+---
+
+## Goal
+hug task set (and MCP task_update set) prints one line per field it changed, e.g. 'added check 2: VALUE', before any lint: block, so a reply that ends in a lint fix never reads as a failed write.
+
+## Purpose
+Reflection asr4t2 (nautilus, 2026-11-17): set --accept 'VALUE' added the check but the reply ended with a lint fix about a long title, which read as if the set had failed, so the check was added twice. Reproduced 2026-11-18 by piglet in a scratch repo: the reply lists the task, '2. [ ] VALUE', then 'lint: 1 finding ... fix: hug task set ID --title "..."', with no line saying what was written. Triage tb0dra check 5, group G1 (crab approved 2026-11-19).
+
+## Principle
+Say what changed first, then advice. No change to what lint finds or how set writes. One line per changed field, short.
+
+## Relevant details
+Triage: /Users/jhf/.jcode/scratch/reflections-triage.md G1. Related reflections 05r3pg (done on todo; now prints the take fix) and 3nhp67 (fix line a no-op; fixed in its ticket).
+
+## Depends on
+
+## Acceptance
+- [ ] set --accept X on a task with a lint finding prints 'added check N: X' before the lint: block (test, failing first, from the reproduction)
+- [ ] each other field set changes gets its own line (title, goal, purpose, principle, details, tag, parent, state) (test)
+- [ ] MCP task_update set's reply says the same (test)
+
+## Notes
