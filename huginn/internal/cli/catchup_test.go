@@ -326,6 +326,25 @@ func TestReadOnlyCloneFastForwardsAcrossLayoutMove(t *testing.T) {
 			if f := taskFile(t, b, ids[0]); !strings.Contains(f, "rank: \"a\"") {
 				t.Fatalf("B's file:\n%s", f)
 			}
+			// Both on layout 3 now: writes from both sides sync as before
+			// (check 9's second half), each clone ending with both.
+			execute(t, a, "note", ids[0], "A on layout 3")
+			execute(t, b, "note", ids[1], "B on layout 3")
+			execute(t, b, "move", ids[2], "--top")
+			execute(t, a, "sync")
+			execute(t, b, "sync")
+			execute(t, a, "sync")
+			for _, c := range []*App{a, b} {
+				if !strings.Contains(taskFile(t, c, ids[0]), "A on layout 3") || !strings.Contains(taskFile(t, c, ids[1]), "B on layout 3") {
+					t.Fatalf("a write is missing in %s", c.Cwd)
+				}
+			}
+			if git(t, boardA, "rev-parse", "HEAD") != git(t, boardB, "rev-parse", "HEAD") {
+				t.Fatalf("clones differ after sync")
+			}
+			if n := git(t, boardB, "log", "--diff-filter=R", "--format=%h", "-1", "--", "."); n != "" && git(t, boardB, "log", "-1", "--format=%s", n) != "hug upgrade: 4 tasks to C/ID.md, rank: and group: in the file (layout 3)" {
+				t.Fatalf("a rename after the move: %s", git(t, boardB, "log", "-1", "--format=%s", n))
+			}
 		})
 	})
 }
