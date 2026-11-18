@@ -37,4 +37,4 @@ COMMAND PALETTE
 
 All tasks · : filters and commands
 
-Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc close · ? help                                                                       hug v0.0.0
+Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc close · F1 help                                                                      hug v0.0.0

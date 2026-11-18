@@ -20,7 +20,7 @@ g             group rows: flat, group, epic                            S        
                                                                        r              refresh now (changes on disk show by themselves)
                                                                        Enter / Esc    confirm / cancel every editing action
                                                                        e again        after an edit left a finding: edit at once
-                                                                       ?              this help, from anywhere; / finds in it
+                                                                       ? / F1         this help (F1 in a text field); / finds in it
                                                                        Esc            back one level, never quits
                                                                        q / ctrl-c     quit (q only outside inputs)
 
