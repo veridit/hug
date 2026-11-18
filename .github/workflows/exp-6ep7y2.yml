@@ -1,0 +1,42 @@
+name: exp-6ep7y2
+# Branch-only experiment E5 for 6ep7y2 (H5: a push from a detached syncer
+# sporadically never returns on Windows because the remote's post-receive
+# hook, #!/bin/sh + cat, hangs). Never lands on main.
+on:
+  push:
+    branches: ["ci/6ep7y2-*"]
+permissions:
+  contents: read
+jobs:
+  e5:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Build test binaries
+        shell: bash
+        run: |
+          git --version
+          go test -c -o cli.test.exe ./huginn/internal/cli/
+          go test -c -o gb.test.exe ./huginn/gitbranch/
+      - name: Detached pushes beside the full cli package
+        shell: bash
+        run: |
+          (cd huginn/internal/cli && ../../../cli.test.exe -test.timeout 40m > ../../../full.log 2>&1) &
+          full=$!
+          (cd huginn/gitbranch && EXP_6EP7Y2=1 EXP_6EP7Y2_FOR=30m EXP_6EP7Y2_WORKERS=24 ../../gb.test.exe -test.v -test.timeout 50m -test.run '^TestExp6ep7y2Hook$' > ../../e5.log 2>&1) &
+          e5=$!
+          wait $e5; x=$?
+          wait $full; f=$?
+          echo "e5 exit $x, full exit $f"
+          grep -E 'E5 arm|E5 notes|--- (PASS|FAIL)' e5.log
+          grep -n -A60 'E5 SLOW\|E5 worker\|exit status' e5.log | head -400 || true
+          tail -3 full.log
+          grep -n -A120 'still running after 30 s' full.log || echo "no stall"
+          exit $((x|f))
