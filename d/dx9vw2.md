@@ -47,6 +47,7 @@ landed 9c9d4c4 on main 2026-11-17: hug board layout: the state: rename is layout
 hatchling 20:57: main CI 44170743115 (8856b2b) and 44172097835 (9c9d4c4) success on all 5 jobs (secrets, bench, ubuntu, macOS, windows).
 Reflection (dismissed, 2026-11-17, hatchling): My first cut set 'no key' = the current layout, which made the check inert on every existing board: the case that bit me today would not have been caught on its first recurrence. Crab caught it by asking what upgrade writes on today's boards. Lesson for version markers: absent must mean oldest, and the test must start from a real board as it is today, not from one the test wrote.
 shipped in v0.7.47 (8856b2b)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G12, positive, no gap.
 ## History
 - 2026-11-17T21:13 todo -> doing/active (take)
 - 2026-11-17T21:57 doing/active -> done (done); was doing_since: 2026-11-17T21:13
