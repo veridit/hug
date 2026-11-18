@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- TUI answer and request box (qpp30y): `a` and `r` draw the empty box with its label and cursor at once, not after the first key. Its cursor is `theme.cursor`, an underlined bold accent (`#00bfff` dark, `#006c9c` light) that blinks at 530 ms, instead of a steady reversed block. It is the only thing on screen that moves: the one-line inputs keep a steady cursor, and a closed box stops blinking.
+
 ## v0.7.62 - 2026-11-18
 
 - The TUI sort picker (`s`) names the default order (nch9d4): `r  rank` is a row, "board order, the default: moves work only in it", and `r` goes back to it at once from any sort, clearing every field. The picker shows the order in force (`now: priority ↓`, or `now: rank (board order)`) apart from the one being built (`new: type · updated ↓`, or `new: nothing picked yet, Enter or r gives rank`), so an empty draft no longer reads as `sort: rank` while the rows are sorted by priority. With no column marked, the `c  current column` row is dim as a whole, since c cannot be picked then.
