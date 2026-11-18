@@ -126,15 +126,29 @@ type SyncStats struct {
 	Imported      ingest.ImportStats
 	Written       int
 	SkippedSecret int
-	FileChanged   bool
+	// Held counts the lines the placement gate kept local, by reason
+	// (rnpdnm B); HeldPushed is how many of them the file held before
+	// this sync, so the remote's history still has them.
+	Held        map[string]int
+	HeldPushed  int
+	FileChanged bool
 	// snapshot is the store as the file was written from it: MarkSynced
 	// stamps only what still equals it (tn8bmn).
 	snapshot []ingest.NativeMemory
 }
 
 func (s SyncStats) String() string {
-	return fmt.Sprintf("in: %s | out: %d memories, %d withheld (look like secrets), file changed=%v",
-		s.Imported, s.Written, s.SkippedSecret, s.FileChanged)
+	return fmt.Sprintf("in: %s | out: %d memories, %d withheld (look like secrets), %d held (placement), file changed=%v",
+		s.Imported, s.Written, s.SkippedSecret, s.HeldTotal(), s.FileChanged)
+}
+
+// HeldTotal is how many lines the placement gate kept local.
+func (s SyncStats) HeldTotal() int {
+	n := 0
+	for _, c := range s.Held {
+		n += c
+	}
+	return n
 }
 
 // Sync merges the repository file into the native store (idempotent, keyed
@@ -142,17 +156,24 @@ func (s SyncStats) String() string {
 // the file, sorted. Personal and other scopes are never written. With dry,
 // nothing is written anywhere.
 func Sync(p Project, nativePath string, dry bool) (SyncStats, error) {
-	return syncFile(p, nativePath, dry, true)
+	return syncFile(p, nativePath, dry, true, nil)
 }
 
-func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
+// SyncGated is Sync with the placement gate (rnpdnm B).
+func SyncGated(p Project, nativePath string, dry bool, g *Gate) (SyncStats, error) {
+	return syncFile(p, nativePath, dry, true, g)
+}
+
+func syncFile(p Project, nativePath string, dry, mark bool, gate *Gate) (SyncStats, error) {
 	var st SyncStats
 	lines, err := ReadFile(p.File())
 	if err != nil && !os.IsNotExist(err) {
 		return st, err
 	}
 	items := make([]ingest.Imported, 0, len(lines))
+	inFile := make(map[string]bool, len(lines))
 	for _, l := range lines {
+		inFile[l.ID] = true
 		items = append(items, ingest.Imported{Origin: originFor(p, l.ID), ID: l.ID, Title: l.Title, Content: l.Content,
 			Category: l.Category, Tags: l.Tags, Scope: p.Scope(), Active: l.Active, Created: l.Created, Updated: l.Updated, Trigger: l.Trigger})
 	}
@@ -164,6 +185,7 @@ func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
 		return st, err
 	}
 	st.snapshot = mems
+	heldIDs := map[string]bool{}
 	var out []Line
 	for _, m := range mems {
 		if m.Scope != p.Scope() {
@@ -175,14 +197,35 @@ func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
 			st.SkippedSecret++
 			continue
 		}
-		id := m.ID
-		if strings.HasPrefix(m.Origin, originFor(p, "")) {
-			id = strings.TrimPrefix(m.Origin, originFor(p, "")) // keep the file's own id
+		id := lineID(p, m) // keep the file's own id
+		// The placement gate (rnpdnm B): a line that names a home folder,
+		// another place or the person, or is a preference, stays local.
+		if reason, _ := gate.Hold(m, id); reason != "" {
+			if st.Held == nil {
+				st.Held = map[string]int{}
+			}
+			st.Held[reason]++
+			heldIDs[m.ID] = true
+			if inFile[id] {
+				st.HeldPushed++
+			}
+			continue
 		}
 		out = append(out, Line{ID: id, Title: m.Title, Content: m.Content, Category: m.Category, Tags: m.Tags,
 			Active: m.Active, Created: m.Created.UTC(), Updated: m.Updated.UTC(), Trigger: m.Trigger})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].ID < out[j].ID })
+	if len(heldIDs) > 0 {
+		// A held line was not written: MarkSynced must not stamp it as
+		// synced, so its OriginHash keeps meaning it reached the file once.
+		kept := make([]ingest.NativeMemory, 0, len(mems))
+		for _, m := range mems {
+			if !heldIDs[m.ID] {
+				kept = append(kept, m)
+			}
+		}
+		st.snapshot = kept
+	}
 	st.Written = len(out)
 	var buf bytes.Buffer
 	for _, l := range out {

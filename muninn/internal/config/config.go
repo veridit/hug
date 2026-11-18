@@ -76,7 +76,22 @@ type Config struct {
 	// call, at most 2, each once per session (n7jbmx). Unset means off until
 	// the blind measurement on fresh calls passes its bar.
 	ToolRecall *bool `json:"tool_recall,omitempty"`
+	// SyncGate is the placement gate at hug mem sync (rnpdnm B). It is
+	// local only: config.json is never in a repository, and the terms name
+	// clients and people. Absent, sync seeds it once from the local store.
+	SyncGate *SyncGate `json:"sync_gate,omitempty"`
 }
+
+// SyncGate: Terms are the names (other projects, clients, people) that
+// keep a project memory local; Release lists memory ids that push anyway,
+// one local exception each (hug mem sync --release ID).
+type SyncGate struct {
+	Terms   []string `json:"terms"`
+	Release []string `json:"release,omitempty"`
+}
+
+// ConfigPath is config.json's location.
+func ConfigPath() string { return filepath.Join(ConfigDir(), "config.json") }
 
 // BoardNudges reports whether board nudges are on (nudge_board, default true).
 func (c Config) BoardNudges() bool { return c.NudgeBoard == nil || *c.NudgeBoard }
