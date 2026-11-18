@@ -42,6 +42,7 @@ landed edec38c on main 2026-11-17: hug tui: every write holds the board turn, as
 landed dcb20c2 on main 2026-11-17: Merge v0.7.44 into main (456vyt, 95ahtk stay under Unreleased)
 shipped in v0.7.45 (edec38c)
 Size change (0sbvnq, crab 22:02): TestEightWritersMixedCommandsAllLand now runs 8 writers x 3 rounds (24 writes; each writer runs note, check and set once, all at once), was 8 x 20 = 160. It cost 88-101 s of the Windows cli package (paired run 44180555871). Mutation, board turn removed (session.turn returns a no-op), 10 runs each on macOS: 1 round 10 of 10 fail, 2 rounds 10/10, 3 rounds 10/10, 6 rounds 10/10, 20 rounds 10/10. Failures: 'N commits for M writes' (e.g. '5 commits for 24 writes', '33 commits for 160 writes'), index.lock 'File exists', 'index already contains staged changes'. With the turn, 6 rounds passed 3 of 3. The test's end checks now follow rounds (items checked, the last set). Same size on every OS.
+landed 7592dc8 on main 2026-11-18: hug task writes start 4 git processes, was 6: worktree list from the files, no…
 ## History
 - 2026-11-17T17:47 todo -> doing/active (take)
 - 2026-11-17T18:53 doing/active -> done (done); was doing_since: 2026-11-17T17:47
