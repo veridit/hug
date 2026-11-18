@@ -40,5 +40,6 @@ Ask was rebuilt by iwazaru in q2adr8 (## Questions, d5c66a1f/fbf06637). Today as
 ## Notes
 
 
+Design, crab rulings 21:59 local. (1) ask on a todo task appends a numbered question to iwazaru's ## Questions (same writer and format); state, assignee and deps unchanged; design_* mirror the oldest open question; the stage derives as before (depends stays depends). (2) answer/answer N/tick by the person asked answers it, for the asker. (3) DISTINCTION for Jørgen to see and overrule: a question asked with hug task ask is in the person's ASKED at once, even while a dependency outranks design (the asker chose to ask now); a hug task design question keeps the 11-17 order (deferred, depends, design) and waits for its dependency. (4) withdrawOpen leaves a todo task's open questions open. (5) MCP ask goes through the same path. Take (ruling A): open questions come along, so the task becomes doing/asked with asked_* mirroring them, and nothing is withdrawn. --after on a todo task is refused (it parks the asker's own doing task). busy.go untouched.
 ## History
 - 2026-11-18T21:54 todo -> doing/active (take)
