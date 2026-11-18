@@ -30,7 +30,7 @@ Today: filters.go filterBar() prints 'No filters · f picker · 1 todo  2 doing 
 ## Depends on
 
 ## Acceptance
-- [ ] The line reads 'filter: none · sort: rank' with f and s marked when nothing is set, and shows chips and the order when set (golden at 80 and 140)
+- [x] The line reads 'filter: none · sort: rank' with f and s marked when nothing is set, and shows chips and the order when set (golden at 80 and 140)
 - [ ] s opens a sort picker panel listing the sort fields with hints; picks chain as 'then by', the same letter flips direction, Backspace drops the last, Enter applies, Esc leaves the order unchanged (key test)
 - [ ] f still opens the filter picker, and both panels share one look (golden)
 - [ ] Keys 1-4 do nothing and no hint names them; s no longer opens ':status ' (key test)
