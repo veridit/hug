@@ -4,7 +4,7 @@ title: "Shipped work leaves the board clean, not a pile of lint"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["bonehound"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzj"
@@ -87,3 +87,4 @@ shipped in v0.7.70 (2dd99bb)
 - 2026-11-18T20:56 resolved request 3 by crab
 - 2026-11-18T20:56 todo -> doing/active (take)
 - 2026-11-18T21:34 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)

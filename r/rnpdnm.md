@@ -4,7 +4,7 @@ title: "Memory placement: extractor places personal/other projects, sync gate ru
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["bonehound"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzc"
@@ -60,3 +60,4 @@ shipped in v0.7.71 (d142216)
 ## History
 - 2026-11-18T21:36 todo -> doing/active (take)
 - 2026-11-18T22:24 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)

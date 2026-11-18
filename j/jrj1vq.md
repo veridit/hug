@@ -4,7 +4,7 @@ title: "When-then memories: triggers stated at write time"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["bonehound"]
+assignee: ["crab"]
 labels: ["recall", "memory-format"]
 created: 2026-11-15
 updated: 2026-11-15
@@ -83,3 +83,4 @@ crab 20:56 local: check 3 stage 0 reviewed. A1 (WHEN match) changed the injected
 ## History
 - 2026-11-18T17:35 todo -> doing/active (take)
 - 2026-11-18T18:57 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)
