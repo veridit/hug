@@ -1,15 +1,14 @@
 ---
 id: 6ep7y2
 title: "Windows CI: a background syncer held the queue 30 s and no pass ran"
-state: "doing"
+state: "todo"
 type: feature
 priority: ""
-assignee: ["wyvern"]
+assignee: []
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T06:31"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -46,3 +45,4 @@ Permanent diagnostics LANDED on main as a681224e40256b5ac3e097faab32d4437bc7348d
 Crab 06:10Z authorizes resuming isolated 4vd1mz while ordinary main CI 44249085050 runs. Watcher 1001424im4 remains owned here. Parked unresolved awaiting recurrence, with check 1 still awaiting green main; no cause or fix established, checks 2/3/4 remain open.
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
+- 2026-11-18T07:10 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T06:31
