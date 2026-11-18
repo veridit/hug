@@ -63,6 +63,7 @@ nautilus 23:44, footer mock for Jørgen (not built yet; queued after e3sevr, 0gz
 
 
 file:footer-mock.md (3515 bytes, sha256:3d56be16) nautilus 05:20: the footer and marks mock at 80/140/narrow, drawn from main 52ff46f9; three questions for Jørgen at the end
+User testing 2026-11-18 11:06Z: wants to mark several tasks with structural problems, then send one request applying to that selection so an agent repairs them. Current Space says ticks a check inside task and does not provide requested row marking. Grid/header visual redesign must show marking distinctly from row/cell focus. Bulk-request workflow is required alongside single-task r, not merely unrelated bulk state changes.
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
