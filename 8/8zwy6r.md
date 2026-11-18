@@ -59,6 +59,7 @@ Check 3 per crab 04:44 (supersedes the acceptance's 'still stop'): state set on 
 CI 44343714260 on 4504654a: completed success, 6/6 jobs, first attempt. Report /Users/jhf/.jcode/scratch/8zwy6r/REPORT.md
 crab review 17:29 local: accepted. 4504654a on c84d3273: main already unions both sides' appends (798d91c8); test reproduces kestrel's a13d7c74 failure verbatim and passes now; real gap fixed in task/merge.go strayToHistory (the losing drop's node fields go to History at the local commit time, same bytes on both clones). CI 44343714260 6/6. Check 3 text follows crab's 04:44 ruling: editing it to match.
 check 4: TestSyncBothSidesStateRemoteWinsAndSays PASS on 4504654a: exit 0, one 'sync: ID state: kept the board's doing; this clone's dropped is in a note on ID', state doing, no [stray-node-field]; TestMergeStateBothSidesMovesLosingNodeFields PASS; CI 44343714260 6/6
+Item 3 cannot be struck: 'item 3 is ticked: it was done, so it is not struck out' (hug task strike refuses a ticked item and there is no uncheck). Its wording ('still stop with a fix line') is superseded by crab's 04:44 ruling; item 4 states the real behaviour and is ticked with evidence.
 ## History
 - 2026-11-18T16:57 todo -> doing/active (take)
 - 2026-11-18T17:27 doing/active -> doing/waiting (wait)
