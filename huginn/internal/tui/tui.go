@@ -198,7 +198,7 @@ type model struct {
 	grab                               grabState
 	filter                             task.Filter
 	input                              textinput.Model
-	columnHinted                       bool // H/L or o last: the footer says what o does, on rows (qtj177)
+	columnHinted                       bool           // H/L or o last: the footer says what o does, on rows (qtj177)
 	answerBox                          textarea.Model // the answer under a question: lines of its own (41hhgn)
 	viewport, helpViewport             viewport.Model
 	helpModel                          help.Model
