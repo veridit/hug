@@ -47,6 +47,7 @@ CI 44327807341 on 346800f5: success 6/6. Waiting for bg1rd8 on main to rebase (c
 CI 44327807341 on 346800f5 (stacked on agh2h7 c89178f9): 6/6 success. Lands after bg1rd8, rebased onto main.
 Rebased onto agh2h7 43e318d1: rk5q7r = 299f1d37, no conflicts. go test -count=1 recall/run/board/task: ok x4. Pushed rk5q7r and ci/rk5q7r.
 RESULT (15:53Z): rebased onto agh2h7 7a509517 = 6b7b5aab (conflicts: BoardInput field, LastSeen -> Gone, kept Reflections; CHANGELOG kept both). go build ./... ok; tests recall run board task ok x4. board4 v2: six sets + fh3 byte-identical to rk5q7r/new; synthetic -reflect-age 96h 11-17 22:00..11-18 12:00 base 35 -> probe 36 lines, identical files to the 14:41 run, the one added line crab 22:02:07Z '22 open reflections are older than 3 days'. Judge calls: 0. Pushed rk5q7r + ci/rk5q7r.
+Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
 ## History
 - 2026-11-18T15:25 todo -> doing/active (take)
 - 2026-11-18T15:55 doing/active -> doing/waiting (wait)
