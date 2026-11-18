@@ -1209,6 +1209,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// leaves the input intact underneath.
 		if k == "f1" || (k == "?" && ((m.help && !m.helpTyping) || (!m.help && !m.textInput()))) {
 			m.help = !m.help
+			m.pendingV = false // help answers the key, not the prefix
 			m.helpTyping = false
 			m.helpQuery = ""
 			m.helpViewport.SetContent(m.helpText())
@@ -1216,6 +1217,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if k == "esc" {
+			if m.pendingV && !m.help {
+				// Esc cancels the prefix, and only that (qh9ep1 check 3).
+				m.pendingV = false
+				m.message = ""
+				return m, nil
+			}
 			if m.grab.active && !m.help {
 				m.cancelGrab()
 				return m, nil
@@ -1271,6 +1278,29 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.prompt != "" {
 			return m.updateInput(msg)
 		}
+		// v is the view prefix (qh9ep1, 0sw0dd's key trie): vo, vl, vb
+		// and v! pick a view, from a list or a task. It waits for the next
+		// key, no timeout; that key picks, or cancels and does nothing
+		// else (Esc, an unknown key). No single key switches views.
+		if m.pendingV {
+			m.pendingV = false
+			if view, ok := pickView(k); ok {
+				m.detail = false
+				m.setView(view)
+				m.message = ""
+				return m, nil
+			}
+			m.message = "v " + oneLine(k) + " is no view; nothing changed"
+			if k == "esc" {
+				m.message = ""
+			}
+			return m, nil
+		}
+		if k == "v" {
+			m.pendingV = true
+			m.message = viewPrefix()
+			return m, nil
+		}
 		// After an edit that broke the file, e goes straight back into the
 		// editor on that task: the notice is the question (rx74bp).
 		if k == "e" {
@@ -1299,23 +1329,6 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// top and bottom are < > Home End).
 		if k == "g" && !m.detail {
 			m.setGrouping("next")
-			return m, nil
-		}
-		// v is the view branch of the header tree (0sw0dd, bejd89): v o
-		// overview, v i (or v v, v l) list, v b board, v ! lint. o alone
-		// orders by the marked column; i, b and ! stay one key.
-		if m.pendingV {
-			m.pendingV = false
-			if view, ok := map[string]string{"o": "overview", "i": "list", "v": "list", "l": "list", "b": "board", "!": "lint"}[k]; ok {
-				m.detail = false
-				m.setView(view)
-				m.message = ""
-				return m, nil
-			}
-			m.message = ""
-		} else if k == "v" {
-			m.pendingV = true
-			m.message = "view: " + mk("o") + "verview · l" + mk("i") + "st · " + mk("b") + "oard · ! lint"
 			return m, nil
 		}
 		// Filtering remains available from detail, without interfering with focused inputs.
@@ -1487,12 +1500,6 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					step = -1
 				}
 				m.stepTask(step)
-			case "i", "b", "!":
-				// The tab bar stays visible in detail, so its keys work here
-				// too: leave the task and switch view (2026-11-15, user).
-				// The overview is v o (bejd89).
-				m.detail = false
-				m.setView(map[string]string{"i": "list", "b": "board", "!": "lint"}[k])
 			case "j", "down", "k", "up":
 				// With a list focused, j/k step through it and scroll the
 				// page past either end; with the page focused they scroll.
@@ -1600,14 +1607,8 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.openFilter()
 		case k == "c":
 			m.clearFilters()
-		case k == "b":
-			m.setView("board")
 		case k == "o":
-			m.orderByColumn() // bejd89: the overview is v o
-		case k == "i":
-			m.setView("list")
-		case k == "!":
-			m.setView("lint")
+			m.orderByColumn() // the overview is vo (qh9ep1)
 		case k == "N":
 			// N, not n: n and p step like j and k, and to the next task
 			// inside one (2026-11-16, user).

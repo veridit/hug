@@ -46,6 +46,10 @@ func (m model) barHints() []bkey.Binding {
 		if m.prompt == "" {
 			hints = append(hints, hint("q", "quit"))
 		}
+	case m.pendingV:
+		// v waits for its view (qh9ep1): only its branches and Esc.
+		// The footer above lists the branches (viewPrefix).
+		hints = []bkey.Binding{hint("Esc", "cancel"), hint("?", "help")}
 	case m.confirm != "":
 		hints = []bkey.Binding{hint("Enter", "confirm"), hint("Esc", "cancel"), hint("?", "help"), hint("q", "quit")}
 	case m.grab.active:
@@ -73,7 +77,7 @@ func (m model) barHints() []bkey.Binding {
 		// h/l and Tab are one key (e3sevr): the bar names them together.
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order"), hint("r", "request")}
 	}
-	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" {
+	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" && !m.pendingV {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f", "find"), hint("#", "id"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
 	return hints

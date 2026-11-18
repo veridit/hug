@@ -107,7 +107,7 @@ func TestTmuxAutoRefresh(t *testing.T) {
 	keys := func(k ...string) { tmux(append([]string{"send-keys", "-t", "r:0.0"}, k...)...) }
 	type_ := func(text string) { tmux("send-keys", "-t", "r:0.0", "-l", text) }
 	wait("HUG TASKS · overview", 10*time.Second)
-	keys("i") // the list (v is the view prefix now, bejd89)
+	keys("v", "l") // the list (vl, qh9ep1)
 	wait("HUG TASKS · list", 5*time.Second)
 	// List: another terminal renames Gamma.
 	run(binary, "task", "set", ids["Gamma"], "--title", "Gamma renamed by another terminal")

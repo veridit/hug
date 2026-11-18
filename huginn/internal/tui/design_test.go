@@ -83,7 +83,7 @@ func TestKeyTableListNavigation(t *testing.T) {
 	for _, tc := range []struct {
 		down, up string
 		amount   int
-	}{{"ctrl+d", "ctrl+u", 8}, {"pgdown", "pgup", 17}} {
+	}{{"ctrl+d", "ctrl+u", 9}, {"pgdown", "pgup", 18}} { // the counts share the view line (qh9ep1): one row more
 		m := press(manyModel(t), tc.down)
 		if m.cursor != tc.amount {
 			t.Fatal(tc, m.cursor)

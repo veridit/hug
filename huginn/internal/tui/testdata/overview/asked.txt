@@ -1,7 +1,6 @@
 == overview at 80
 HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                     
-[overview]   list    board    !lint                                             
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
+view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
 > ASKED · for you  [3]                                                          
   ◑ 1/2  cccccc   feature high     asked     Warm cache under 50…  nautilus     
@@ -26,13 +25,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                 
                                                                                 
                                                                                 
+                                                                                
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == overview at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                 
-[overview]   list    board    !lint                                                                                                         
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
+view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
 > ASKED · for you  [3]                                                                                                                      
   ◑ 1/2  cccccc   feature high     asked     Warm cache under 50 ms                                                         nautilus        
@@ -51,6 +50,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

@@ -365,7 +365,7 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 	m.styles = newTheme()
 	m.resize()
 	crumb := func(m model) string { return strings.TrimRight(strings.Split(ansi.Strip(m.View()), "\n")[0], " ") }
-	for _, v := range []string{"[list]", "!lint", "/3 tasks", "todo 3", "f picker"} {
+	for _, v := range []string{"view: ", "!lint", "/3 tasks", "todo 3", "f picker"} {
 		if strings.Contains(ansi.Strip(m.View()), v) {
 			t.Fatalf("the global band shows %q inside a task:\n%s", v, ansi.Strip(m.View()))
 		}
@@ -381,7 +381,7 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 	if tk, _ := followed.selected(); crumb(followed) != "HUG TASKS · list › "+main.ID+" › "+tk.ID {
 		t.Fatalf("breadcrumb after following a dependency: %q", crumb(followed))
 	}
-	if back := press(m, "esc"); !strings.Contains(ansi.Strip(back.View()), "[list]") {
+	if back := press(m, "esc"); !strings.Contains(ansi.Strip(back.View()), "view: ") {
 		t.Fatalf("leaving the task draws the global band again:\n%s", ansi.Strip(back.View()))
 	}
 	if n := len(strings.Split(m.View(), "\n")); n != m.height {

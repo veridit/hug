@@ -125,7 +125,7 @@ func TestTmuxReload(t *testing.T) {
 	started := pid()
 	// A place worth keeping: list view, a filter, a sort, a search, then a
 	// task open with the checks focused.
-	send("-l", "i")
+	send("-l", "vl") // the list (qh9ep1)
 	wait("HUG TASKS · list", 5*time.Second)
 	send("-l", "2")
 	wait("state:doing", 5*time.Second)

@@ -47,12 +47,11 @@ func TestTabsMarkShortcutWithoutExtraWidth(t *testing.T) {
 	m.resize()
 	m = press(m, "v", "o")
 	v := m.View()
-	if !strings.Contains(v, "[overview]") || !strings.Contains(v, " list ") || !strings.Contains(v, " board ") || !strings.Contains(v, " !lint ") {
-		t.Fatal("tabs must read [overview] list board !lint with no separate key column\n", v)
+	if !strings.Contains(v, "view: overview  list  board  !lint") {
+		t.Fatal("the view line must read view: overview  list  board  !lint (qh9ep1)\n", v)
 	}
-	m = press(m, "i")
-	if !strings.Contains(m.View(), "[list]") {
-		t.Fatal("i opens list\n", m.View())
+	if m = press(m, "v", "l"); m.view != "list" {
+		t.Fatal("v l opens the list\n", m.View())
 	}
 }
 

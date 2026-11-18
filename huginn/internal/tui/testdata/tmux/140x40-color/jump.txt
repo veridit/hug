@@ -1,6 +1,5 @@
 HUG TASKS · jump   60/60 tasks · ! 2 broken · 5 advice
- overview   [list]   board    !lint
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
+view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
 JUMP TO ID · prefixes and TASK-number aliases
 # 178
@@ -12,6 +11,7 @@ JUMP TO ID · prefixes and TASK-number aliases
   000005  TASK-1787         Docs task 05: make the terminal workflow observable
   000006  TASK-1788         Feature task 06: make the terminal workflow observable
   000007  TASK-1789         Bug task 07: make the terminal workflow observable
+
 
 
 

@@ -1,7 +1,6 @@
 == overview at 60
 HUG TASKS · overview   5/5 tasks · ! 0 broken · 12 advice   
-[overview]   list    board    !lint                         
-todo 2  ·  doing 2  ·  depends 0  ·  done 1  ·  dropped 0   
+view: overview  list  board  !lint        │ todo 2 · doing 2
 No filters · f picker · 1 todo  2 doing  3 done  4 depends  
   ASKED · for you  [0] · None                               
 > IN PROGRESS · assigned to  [2]                            
@@ -26,13 +25,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                             
                                                             
                                                             
+                                                            
 All tasks · : filters and commands · ! lint finding · ↳ epic
                                                             
 j/k move · Enter open · find · # id · / search · : cmd …    
 == list at 60
 HUG TASKS · list   5/5 tasks · ! 0 broken · 12 advice       
- overview   [list]   board    !lint                         
-todo 2  ·  doing 2  ·  depends 0  ·  done 1  ·  dropped 0   
+view: overview  list  board  !lint        │ todo 2 · doing 2
 No filters · f picker · 1 todo  2 doing  3 done  4 depends  
   ✓        ID       PRIORITY STAGE     TITLE                
 > ○ 12    ·######   critical active    A very long title th…
@@ -57,18 +56,19 @@ Rows 1–5 of 5 · ! lint finding · ↳ epic · depends = a depen…
                                                             
                                                             
                                                             
+                                                            
 All tasks · : filters and commands                          
                                                             
 j/k move · Enter open · find · # id · / search · : cmd …    
 == board at 60
 HUG TASKS · board   5/5 tasks · ! 0 broken · 12 advice      
- overview    list   [board]   !lint                         
-todo 2  ·  doing 2  ·  depends 0  ·  done 1  ·  dropped 0   
+view: overview  list  board  !lint        │ todo 2 · doing 2
 No filters · f picker · 1 todo  2 doing  3 done  4 depends  
 > TODO [2]                                                  
   ✓        ID       T P TITLE                               
 > ○ 12    ·######   F C 🚀🔥 emoji rocket fire 🎉 A very lo…
   ○ 12    ·######   F C files A very long title that goes o…
+                                                            
                                                             
                                                             
                                                             

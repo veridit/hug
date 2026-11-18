@@ -1,7 +1,6 @@
 == overview at 80
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
-[overview]   list    board    !lint                                             
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
+view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
   ASKED · for you  [0] · None                                                   
 > IN PROGRESS · assigned to  [1]                                                
@@ -26,13 +25,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                 
                                                                                 
                                                                                 
+                                                                                
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == WAITING focused at 80
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
-[overview]   list    board    !lint                                             
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
+view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
   ASKED · for you  [0] · None                                                   
   IN PROGRESS · assigned to  [1]                                                
@@ -57,13 +56,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                 
                                                                                 
                                                                                 
+                                                                                
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == list at 80
 HUG TASKS · list   7/7 tasks · ! 0 broken                                       
- overview   [list]   board    !lint                                             
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
+view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                              
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections s…
@@ -88,13 +87,13 @@ Rows 1–7 of 7 · ! lint finding · ↳ epic · depends = a dependency is not d
                                                                                 
                                                                                 
                                                                                 
+                                                                                
 All tasks · : filters and commands                                              
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == overview at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
-[overview]   list    board    !lint                                                                                                         
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
+view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
   ASKED · for you  [0] · None                                                                                                               
 > IN PROGRESS · assigned to  [1]                                                                                                            
@@ -119,13 +118,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == WAITING focused at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
-[overview]   list    board    !lint                                                                                                         
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
+view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
   ASKED · for you  [0] · None                                                                                                               
   IN PROGRESS · assigned to  [1]                                                                                                            
@@ -150,13 +149,13 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == list at 140
 HUG TASKS · list   7/7 tasks · ! 0 broken                                                                                                   
- overview   [list]   board    !lint                                                                                                         
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
+view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                                                                                          
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                                       
@@ -167,6 +166,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic                                                                      
   ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
 Rows 1–7 of 7 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

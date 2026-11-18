@@ -176,8 +176,8 @@ func TestColumnOrderSurvives(t *testing.T) {
 	}
 }
 
-// bejd89 check 4: o no longer opens the overview; v o does (and v i, v b,
-// v !), also from a task; help lists both.
+// bejd89 check 4: o no longer opens the overview; v o does (and v l, v b,
+// v !, qh9ep1), also from a task; help lists each as a two-key row.
 func TestViewKeysMoveToV(t *testing.T) {
 	m := manyModel(t)
 	m = press(m, "o")
@@ -188,9 +188,9 @@ func TestViewKeysMoveToV(t *testing.T) {
 	if m.view != "overview" {
 		t.Fatalf("v o: %s", m.view)
 	}
-	m = press(m, "v", "i")
+	m = press(m, "v", "l")
 	if m.view != "list" {
-		t.Fatalf("v i: %s", m.view)
+		t.Fatalf("v l: %s", m.view)
 	}
 	m = press(m, "v", "b")
 	if m.view != "board" {
@@ -201,7 +201,7 @@ func TestViewKeysMoveToV(t *testing.T) {
 		t.Fatalf("v o from a task: detail %v view %s", m.detail, m.view)
 	}
 	help := ansi.Strip(m.helpText())
-	for _, want := range []string{"v o/i/b/!", "views: overview / list / board / lint", "H / L", "order by the marked column: ▲ ▼ off"} {
+	for _, want := range []string{"v o view: overview", "v l view: list", "v b view: board", "v ! view: lint", "H / L", "order by the marked column: ▲ ▼ off"} {
 		if !strings.Contains(strings.Join(strings.Fields(help), " "), want) {
 			t.Fatalf("help lacks %q:\n%s", want, help)
 		}

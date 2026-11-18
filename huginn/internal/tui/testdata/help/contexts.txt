@@ -16,7 +16,10 @@ s / c         state palette / clear all filters
 g             group rows: flat, group, epic                                     
 
 EVERYWHERE
-v o/i/b/!      views: overview / list / board / lint; i b ! alone too           
+v o            view: overview                                                   
+v l            view: list                                                       
+v b            view: board                                                      
+v !            view: lint                                                       
 /              live find; Enter goes to it, Tab keeps it as a filter            
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
@@ -53,7 +56,10 @@ s / T       state / type palette
 E           its files folder in the editor                                      
 
 EVERYWHERE
-v o/i/b/!      views: overview / list / board / lint; i b ! alone too           
+v o            view: overview                                                   
+v l            view: list                                                       
+v b            view: board                                                      
+v !            view: lint                                                       
 /              live find; Enter goes to it, Tab keeps it as a filter            
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
@@ -87,7 +93,10 @@ y           yank: P/p in the list paste it
 s / T       state / type palette                                                
 
 EVERYWHERE
-v o/i/b/!      views: overview / list / board / lint; i b ! alone too           
+v o            view: overview                                                   
+v l            view: list                                                       
+v b            view: board                                                      
+v !            view: lint                                                       
 /              live find; Enter goes to it, Tab keeps it as a filter            
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
@@ -121,20 +130,23 @@ F1      this help; ? is typed text here; / finds in it
 ctrl-c  quit                                                                    
 == list at 140
 IN THE LIST                                                            EVERYWHERE
-j/k ↑/↓       move                                                     v o/i/b/!      views: overview / list / board / lint; i b ! alone too
-< > Home End  top / bottom                                             /              live find; Enter goes to it, Tab keeps it as a filter 
-ctrl-d/u      half page down / up                                      :              palette: commands with completion                     
-PgDn / PgUp   page down / up                                           : commands     overview, list, board, todo, doing, done, depends,    
-Enter         open the task                                                           dropped, state <s>, type <t>, priority <p>, group <g>,
-J / K         page down / up                                                          label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-H / L         mark the previous / next column                                         grouping, lint, clear, help                           
-o             order by the marked column: ▲ ▼ off                      #              jump by id prefix or TASK-number alias                
-t / d / x     take / done / drop the task                              f              filter picker: s/t/p/g/l/a/e                          
-e             edit in $VISUAL, else $EDITOR, git core.editor, vi       1 / 2 / 3 / 4  filter todo / doing / done / depends                  
-m             grab to move: j/k move it, Enter places it               Backspace / F  remove the last chip / clear all filters              
-y, P p        yank, then paste above / below                           : sort         order by fields; : sort rank goes back                
-s / c         state palette / clear all filters                        N              new task                                              
-g             group rows: flat, group, epic                            S              copy the screen, Enter attaches it to the task        
+j/k ↑/↓       move                                                     v o            view: overview                                        
+< > Home End  top / bottom                                             v l            view: list                                            
+ctrl-d/u      half page down / up                                      v b            view: board                                           
+PgDn / PgUp   page down / up                                           v !            view: lint                                            
+Enter         open the task                                            /              live find; Enter goes to it, Tab keeps it as a filter 
+J / K         page down / up                                           :              palette: commands with completion                     
+H / L         mark the previous / next column                          : commands     overview, list, board, todo, doing, done, depends,    
+o             order by the marked column: ▲ ▼ off                                     dropped, state <s>, type <t>, priority <p>, group <g>,
+t / d / x     take / done / drop the task                                             label <l>, assignee <a>, epic <id>, goto <id>, sort,  
+e             edit in $VISUAL, else $EDITOR, git core.editor, vi                      grouping, lint, clear, help                           
+m             grab to move: j/k move it, Enter places it               #              jump by id prefix or TASK-number alias                
+y, P p        yank, then paste above / below                           f              filter picker: s/t/p/g/l/a/e                          
+s / c         state palette / clear all filters                        1 / 2 / 3 / 4  filter todo / doing / done / depends                  
+g             group rows: flat, group, epic                            Backspace / F  remove the last chip / clear all filters              
+                                                                       : sort         order by fields; : sort rank goes back                
+                                                                       N              new task                                              
+                                                                       S              copy the screen, Enter attaches it to the task        
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
@@ -143,21 +155,24 @@ g             group rows: flat, group, epic                            S        
                                                                        q / ctrl-c     quit (q only outside inputs)                          
 == task:checks at 140
 IN THIS TASK · ######                                                  EVERYWHERE
-j/k         step through the checks                                    v o/i/b/!      views: overview / list / board / lint; i b ! alone too
-[ ]         previous / next check                                      /              live find; Enter goes to it, Tab keeps it as a filter 
-Space       tick the check marked >                                    :              palette: commands with completion                     
--           strike it out as not relevant, with a reason               : commands     overview, list, board, todo, doing, done, depends,    
-h / l  Tab  previous / next stop: each task id, the page, checks,                     dropped, state <s>, type <t>, priority <p>, group <g>,
-            links, files                                                              label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-J / K       half a page down / up                                                     grouping, lint, clear, help                           
-n / p       next / previous task of the list                           #              jump by id prefix or TASK-number alias                
-u / Esc     up: back from a followed id, else to the list              f              filter picker: s/t/p/g/l/a/e                          
-t / d / x   take / done / drop it                                      1 / 2 / 3 / 4  filter todo / doing / done / depends                  
-e           edit in $VISUAL, else $EDITOR, git core.editor, vi         Backspace / F  remove the last chip / clear all filters              
-w           wait: park the doing task on what it waits on              : sort         order by fields; : sort rank goes back                
-y           yank: P/p in the list paste it                             N              new task                                              
-s / T       state / type palette                                       S              copy the screen, Enter attaches it to the task        
-E           its files folder in the editor                             r              request: ask the agents for a change; Enter sends     
+j/k         step through the checks                                    v o            view: overview                                        
+[ ]         previous / next check                                      v l            view: list                                            
+Space       tick the check marked >                                    v b            view: board                                           
+-           strike it out as not relevant, with a reason               v !            view: lint                                            
+h / l  Tab  previous / next stop: each task id, the page, checks,      /              live find; Enter goes to it, Tab keeps it as a filter 
+            links, files                                               :              palette: commands with completion                     
+J / K       half a page down / up                                      : commands     overview, list, board, todo, doing, done, depends,    
+n / p       next / previous task of the list                                          dropped, state <s>, type <t>, priority <p>, group <g>,
+u / Esc     up: back from a followed id, else to the list                             label <l>, assignee <a>, epic <id>, goto <id>, sort,  
+t / d / x   take / done / drop it                                                     grouping, lint, clear, help                           
+e           edit in $VISUAL, else $EDITOR, git core.editor, vi         #              jump by id prefix or TASK-number alias                
+w           wait: park the doing task on what it waits on              f              filter picker: s/t/p/g/l/a/e                          
+y           yank: P/p in the list paste it                             1 / 2 / 3 / 4  filter todo / doing / done / depends                  
+s / T       state / type palette                                       Backspace / F  remove the last chip / clear all filters              
+E           its files folder in the editor                             : sort         order by fields; : sort rank goes back                
+                                                                       N              new task                                              
+                                                                       S              copy the screen, Enter attaches it to the task        
+                                                                       r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
                                                                        ? / F1         this help (F1 in a text field); / finds in it         
@@ -165,18 +180,21 @@ E           its files folder in the editor                             r        
                                                                        q / ctrl-c     quit (q only outside inputs)                          
 == task:ids at 140
 IN THIS TASK · ######                                                  EVERYWHERE
-Enter       open the task id marked ▸                                  v o/i/b/!      views: overview / list / board / lint; i b ! alone too
-j/k         scroll the page                                            /              live find; Enter goes to it, Tab keeps it as a filter 
-h / l  Tab  previous / next stop: each task id, the page, checks,      :              palette: commands with completion                     
-            links, files                                               : commands     overview, list, board, todo, doing, done, depends,    
-J / K       half a page down / up                                                     dropped, state <s>, type <t>, priority <p>, group <g>,
-n / p       next / previous task of the list                                          label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-u / Esc     up: back from a followed id, else to the list                             grouping, lint, clear, help                           
-t / d / x   take / done / drop it                                      #              jump by id prefix or TASK-number alias                
-e           edit in $VISUAL, else $EDITOR, git core.editor, vi         f              filter picker: s/t/p/g/l/a/e                          
-w           wait: park the doing task on what it waits on              1 / 2 / 3 / 4  filter todo / doing / done / depends                  
-y           yank: P/p in the list paste it                             Backspace / F  remove the last chip / clear all filters              
-s / T       state / type palette                                       : sort         order by fields; : sort rank goes back                
+Enter       open the task id marked ▸                                  v o            view: overview                                        
+j/k         scroll the page                                            v l            view: list                                            
+h / l  Tab  previous / next stop: each task id, the page, checks,      v b            view: board                                           
+            links, files                                               v !            view: lint                                            
+J / K       half a page down / up                                      /              live find; Enter goes to it, Tab keeps it as a filter 
+n / p       next / previous task of the list                           :              palette: commands with completion                     
+u / Esc     up: back from a followed id, else to the list              : commands     overview, list, board, todo, doing, done, depends,    
+t / d / x   take / done / drop it                                                     dropped, state <s>, type <t>, priority <p>, group <g>,
+e           edit in $VISUAL, else $EDITOR, git core.editor, vi                        label <l>, assignee <a>, epic <id>, goto <id>, sort,  
+w           wait: park the doing task on what it waits on                             grouping, lint, clear, help                           
+y           yank: P/p in the list paste it                             #              jump by id prefix or TASK-number alias                
+s / T       state / type palette                                       f              filter picker: s/t/p/g/l/a/e                          
+                                                                       1 / 2 / 3 / 4  filter todo / doing / done / depends                  
+                                                                       Backspace / F  remove the last chip / clear all filters              
+                                                                       : sort         order by fields; : sort rank goes back                
                                                                        N              new task                                              
                                                                        S              copy the screen, Enter attaches it to the task        
                                                                        r              request: ask the agents for a change; Enter sends     

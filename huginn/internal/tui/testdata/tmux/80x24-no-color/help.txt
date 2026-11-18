@@ -1,6 +1,5 @@
 HUG TASKS · help   60/60 tasks · ! 2 broken · 5 advice
- overview   [list]   board    !lint
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
+view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
 IN THE LIST
 j/k ↑/↓       move
@@ -19,6 +18,7 @@ s / c         state palette / clear all filters
 g             group rows: flat, group, epic
 
 EVERYWHERE
+v o            view: overview
 All tasks · : filters and commands
 
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · quit

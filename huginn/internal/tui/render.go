@@ -96,15 +96,15 @@ func wrap(s string, width int) string {
 }
 func (m model) bodyHeight() int { return max(1, m.height-3-m.headLines()) }
 
-// headLines is how many lines the breadcrumb and global bands take: four
-// over a list (breadcrumb, views, counts, filters), one in a task, where
+// headLines is how many lines the breadcrumb and global bands take: three
+// over a list (breadcrumb, views with counts, filters), one in a task, where
 // only the breadcrumb draws (e3sevr, header-spec.md). A palette or picker
-// opened from a task lists, so it keeps four.
+// opened from a task lists, so it keeps three.
 func (m model) headLines() int {
 	if m.taskScreen() {
 		return 1
 	}
-	return 4
+	return 3
 }
 
 // taskScreen says whether the screen shows the open task (or one of its
@@ -796,50 +796,6 @@ func (m model) View() string {
 	if g := m.groupingLabel(); g != "" {
 		header += m.styles.dim.Render(" · " + g) // kx2ndm check 2
 	}
-	tabs := []string{}
-	// The shortcut letter is bold and underlined inside the tab name, which
-	// costs no width (2026-11-11, user). lint has no letter of its own; its
-	// key "!" shows as a prefix. The full list is on the help screen.
-	for _, v := range []struct{ key, name string }{{"o", "overview"}, {"i", "list"}, {"b", "board"}, {"!", "lint"}} {
-		base := m.styles.dim
-		// In a task no view tab is marked: focus is in the task, and the
-		// trail after the tabs says where it came from (2026-11-16, user).
-		current := v.name == m.view && !m.detail
-		if current {
-			base = m.styles.selected
-		}
-		keyStyle := base.Bold(true).Underline(true)
-		label := ""
-		if i := strings.Index(v.name, v.key); i >= 0 {
-			label = base.Render(v.name[:i]) + keyStyle.Render(v.key) + base.Render(v.name[i+1:])
-		} else {
-			label = keyStyle.Render(v.key) + base.Render(v.name)
-		}
-		if current {
-			label = base.Render("[") + label + base.Render("]")
-		} else {
-			label = base.Render(" ") + label + base.Render(" ")
-		}
-		tabs = append(tabs, label)
-	}
-	// Disjoint counts that add up to the tasks shown (zaec08): every task
-	// has one place; doing names how many of its tasks depend on another.
-	counts := map[string]int{}
-	doingBlocked := 0
-	for _, t := range m.visible {
-		counts[m.place(t)]++
-		if t.State == "doing" && m.blocked[t.Path] {
-			doingBlocked++
-		}
-	}
-	summary := []string{}
-	for _, s := range boardStates {
-		text := fmt.Sprintf("%s %d", s, counts[s])
-		if s == "doing" && doingBlocked > 0 {
-			text += fmt.Sprintf(" (%d depends)", doingBlocked)
-		}
-		summary = append(summary, m.styles.status[s].Render(text))
-	}
 	content := ""
 	switch {
 	case m.help:
@@ -867,7 +823,9 @@ func (m model) View() string {
 	default:
 		content = m.listText()
 	}
-	lines := []string{header, strings.Join(tabs, "  "), strings.Join(summary, "  ·  "), m.filterBar()}
+	// The global band: the view line with the counts on it (qh9ep1),
+	// then the filters.
+	lines := []string{header, m.viewLine(m.stateCounts()), m.filterBar()}
 	if m.taskScreen() {
 		lines = []string{m.breadcrumb()} // the global band goes in a task
 	}

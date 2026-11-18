@@ -4,7 +4,7 @@
   ○ 1    ######   feature          active    Task 02                                                                        ann             
 
   WAITING  [0] · None                                                                                                                       
-  NEXT UP · rank order  [32] · 1–23 shown                                                                                                   
+  NEXT UP · rank order  [32] · 1–24 shown                                                                                                   
   ○ 1    ######   feature          ready     Task 03                                                                                        
   ○ 1    ######   feature          ready     Task 04                                                                                        
   ○ 1    ######   feature          ready     Task 05                                                                                        
@@ -27,7 +27,8 @@
   ○ 1    ######   feature          ready     Task 22                                                                                        
   ○ 1    ######   feature          ready     Task 23                                                                                        
   ○ 1    ######   feature          ready     Task 24                                                                                        
-↓ ○ 1    ######   feature          ready     Task 25                                                                                        
+  ○ 1    ######   feature          ready     Task 25                                                                                        
+↓ ○ 1    ######   feature          ready     Task 26                                                                                        
 
   RECENTLY DONE · last closed  [0] · None                                                                                                   
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          

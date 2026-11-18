@@ -121,8 +121,14 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 // doing names how many of its tasks depend on another.
 func TestHeaderCountsAddUp(t *testing.T) {
 	m, _ := placeBoard(t)
-	header := strings.Split(ansi.Strip(m.View()), "\n")[2]
-	want := "todo 2  ·  doing 2 (1 depends)  ·  depends 1  ·  done 1  ·  dropped 1"
+	// The counts sit on the view line, after its │ (qh9ep1).
+	line := strings.Split(ansi.Strip(m.View()), "\n")[1]
+	at := strings.Index(line, "│ ")
+	if at < 0 {
+		t.Fatalf("view line %q has no │ before the counts", line)
+	}
+	header := line[at+len("│ "):]
+	want := "todo 2 · doing 2 (1 depends) · depends 1 · done 1 · dropped 1"
 	if strings.TrimSpace(header) != want {
 		t.Fatalf("header %q, want %q", strings.TrimSpace(header), want)
 	}

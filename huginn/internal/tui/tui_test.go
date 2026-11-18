@@ -80,7 +80,7 @@ func TestNavigationViews(t *testing.T) {
 	if m.acceptance != 1 {
 		t.Fatal(m.acceptance)
 	}
-	m = press(m, "[", "esc", "b")
+	m = press(m, "[", "esc", "v", "b")
 	if m.view != "board" {
 		t.Fatal(m.View())
 	}

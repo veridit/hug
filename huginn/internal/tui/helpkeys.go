@@ -190,7 +190,11 @@ func (m model) rowsHelp() helpSection {
 // globalHelp is the keys that work everywhere outside a prompt.
 func (m model) globalHelp() helpSection {
 	rows := []helpRow{
-		row("v o/i/b/!", "views: overview / list / board / lint; i b ! alone too", "v", "i", "b", "!"),
+		// Prefix keys are two-key rows (qh9ep1): v, then the view.
+		row("v o", "view: overview", "v"),
+		row("v l", "view: list", "v"),
+		row("v b", "view: board", "v"),
+		row("v !", "view: lint", "v"),
 		row("/", "live find; Enter goes to it, Tab keeps it as a filter", "/"),
 		row(":", "palette: commands with completion", ":"),
 		row(": commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
@@ -309,7 +313,8 @@ func (m model) helpSearchText(all []bkey.Binding) string {
 	var hits []bkey.Binding
 	for _, b := range all {
 		h := b.Help()
-		text := strings.ToLower(h.Key + " " + h.Desc)
+		// A two-key row is found by its keys typed together too: vo.
+		text := strings.ToLower(h.Key + " " + strings.ReplaceAll(h.Key, " ", "") + " " + h.Desc)
 		ok := true
 		for _, w := range words {
 			if !strings.Contains(text, w) {

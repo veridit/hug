@@ -1,7 +1,6 @@
 == list at 80
 HUG TASKS · list   60/60 tasks · ! 2 broken · 5 advice · sort: type             
- overview   [list]   board    !lint                                             
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15        
+view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
   ✓      ID       TYPE ▲  PRIORITY STAGE     TITLE                              
   ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make …
@@ -24,15 +23,15 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2 ·000022   bug     critical active    runtime Bug task 22: make the term…
   ● 2    000027   bug     high     done      docs Bug task 27: make the termina…
          000032   bug     medium   dropped   runtime Bug task 32: make the term…
-↓ ○ 2    000037   bug     low      depends   compiler Bug task 37: make the ter…
-Rows 1–21 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done  
+  ○ 2    000037   bug     low      depends   compiler Bug task 37: make the ter…
+↓ ◑ 1/2  000042   bug     critical active    runtime Bug task 42: make the term…
+Rows 1–22 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done  
 H/L column · order by type (▼)                                                  
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == list at 140
 HUG TASKS · list   60/60 tasks · ! 2 broken · 5 advice · sort: type                                                                         
- overview   [list]   board    !lint                                                                                                         
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15                                                                    
+view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
   ✓      ID       TYPE ▲  PRIORITY STAGE     TITLE                                                                                          
   ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long ti…
@@ -55,8 +54,9 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2 ·000022   bug     critical active    runtime Bug task 22: make the terminal workflow observable with a deliberately long title that…
   ● 2    000027   bug     high     done      docs Bug task 27: make the terminal workflow observable                                        
          000032   bug     medium   dropped   runtime Bug task 32: make the terminal workflow observable                                     
-↓ ○ 2    000037   bug     low      depends   compiler Bug task 37: make the terminal workflow observable                                    
-Rows 1–21 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done                                                              
+  ○ 2    000037   bug     low      depends   compiler Bug task 37: make the terminal workflow observable                                    
+↓ ◑ 1/2  000042   bug     critical active    runtime Bug task 42: make the terminal workflow observable                                     
+Rows 1–22 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done                                                              
 H/L column · order by type (▼)                                                                                                              
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        

@@ -1,6 +1,5 @@
 HUG TASKS · palette   60/60 tasks · ! 2 broken · 5 advice
- overview   [list]   board    !lint
-todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
+view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
 COMMAND PALETTE
 : type
@@ -12,6 +11,7 @@ COMMAND PALETTE
   filter type spike                         12 tasks
 
 5 choices · › opens a level · Tab or Enter completes · Enter runs a complete command
+
 
 
 
