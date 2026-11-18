@@ -86,7 +86,7 @@ func newTheme() theme {
 	// cyan, bold; the second-step letters a soft violet.
 	t.viewPrefixKey = color("#00bfff", "#006c9c").Bold(true)
 	t.viewKey = color("#c9b3ff", "#6a3fb0")
-	t.viewCurrent = base
+	t.viewCurrent = t.colHeadSelected // the active view: the one selection tint
 	t.viewNext = color("#c9b3ff", "#6a3fb0").Underline(true)
 	t.cursor = color("#00bfff", "#006c9c").Underline(true).Bold(true)
 	for i, s := range []string{"todo", "doing", "done", "depends", "dropped"} {

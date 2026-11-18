@@ -93,6 +93,12 @@ func (m model) mockViewLeft() string {
 		if m.pendingV && letters {
 			k = m.styles.viewNext
 		}
+		if v.name == m.view && !m.detail {
+			// The view you are in: the whole word on the selection tint
+			// (the same tint as the selected id and column heading), its
+			// key letter keeping its step-2 colour on it.
+			k = k.Background(m.styles.viewCurrent.GetBackground())
+		}
 		label := ""
 		if i := strings.Index(v.name, v.key); i >= 0 {
 			label = style.Render(v.name[:i]) + k.Render(v.key) + style.Render(v.name[i+1:])
