@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/veridit/hug/huginn/internal/harness"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -31,6 +32,7 @@ func Acknowledge(ctx context.Context, home, sid string) (acked []string, err err
 	}
 	var items []harness.InboxItem
 	var paths []string
+	var since time.Time
 	for _, e := range ents {
 		if strings.HasPrefix(e.Name(), ".") || !strings.HasSuffix(e.Name(), ".json") {
 			continue
@@ -45,11 +47,14 @@ func Acknowledge(ctx context.Context, home, sid string) (acked []string, err err
 		}
 		items = append(items, it)
 		paths = append(paths, filepath.Join(dir, e.Name()))
+		if fi, err := e.Info(); err == nil && (since.IsZero() || fi.ModTime().Before(since)) {
+			since = fi.ModTime()
+		}
 	}
 	if len(items) == 0 {
 		return nil, nil
 	}
-	seen := transcriptHas(filepath.Join(home, "sessions", sid), items)
+	seen := transcriptHas(filepath.Join(home, "sessions", sid), items, since)
 	for i, it := range items {
 		if !seen[it.Token] {
 			continue
@@ -78,14 +83,56 @@ func Acknowledge(ctx context.Context, home, sid string) (acked []string, err err
 
 // transcriptHas reports which items' tokens the session's transcript holds
 // in a message to it: the journal's appended messages, then the snapshot
-// (the compacted past) if any token is still unseen.
-func transcriptHas(base string, items []harness.InboxItem) map[string]bool {
+// (the compacted past) if any token is still unseen and the snapshot was
+// written after since (the oldest delivery).
+func transcriptHas(base string, items []harness.InboxItem, since time.Time) map[string]bool {
 	seen := map[string]bool{}
 	want := func() bool { return len(seen) < len(items) }
 	look := func(line []byte) {
+		hit := false
 		for _, it := range items {
-			if !seen[it.Token] && bytes.Contains(line, []byte(it.Token)) && bytes.Contains(line, []byte(`"role":"user"`)) {
-				seen[it.Token] = true
+			if !seen[it.Token] && bytes.Contains(line, []byte(it.Token)) {
+				hit = true
+			}
+		}
+		if !hit {
+			return
+		}
+		// Only a message to the session counts: a user message's text
+		// (a turn or a soft interrupt), never a tool's result or the
+		// session's own words that happen to quote the token.
+		var entry struct {
+			Append []struct {
+				Role    string `json:"role"`
+				Content []struct {
+					Type string `json:"type"`
+					Text string `json:"text"`
+				} `json:"content"`
+			} `json:"append_messages"`
+			Messages []struct {
+				Role    string `json:"role"`
+				Content []struct {
+					Type string `json:"type"`
+					Text string `json:"text"`
+				} `json:"content"`
+			} `json:"messages"`
+		}
+		if json.Unmarshal(line, &entry) != nil {
+			return
+		}
+		for _, m := range append(entry.Append, entry.Messages...) {
+			if m.Role != "user" {
+				continue
+			}
+			for _, c := range m.Content {
+				if c.Type != "text" {
+					continue
+				}
+				for _, it := range items {
+					if strings.Contains(c.Text, it.Token) {
+						seen[it.Token] = true
+					}
+				}
 			}
 		}
 	}
@@ -105,7 +152,9 @@ func transcriptHas(base string, items []harness.InboxItem) map[string]bool {
 		}
 	}
 	scan(base+".journal.jsonl", 8<<20)
-	if want() {
+	// The snapshot (one large JSON) holds a delivered message only if a
+	// compaction rewrote it after the delivery: read it only then.
+	if fi, err := os.Stat(base + ".json"); want() && err == nil && fi.ModTime().After(since) {
 		scan(base+".json", 0)
 	}
 	return seen

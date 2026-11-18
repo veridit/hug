@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -27,11 +28,13 @@ const DeliveryFlow = `Requests and answers reach the board coordinator (hug task
 
 // deliverMessage is what the coordinator's session reads: who, the task,
 // the text verbatim, the asker and the command that closes it.
-func deliverMessage(t task.Task, item task.Item, by, text string, answer *task.Answer, token string) string {
+func deliverMessage(board string, t task.Task, item task.Item, by, text string, answer *task.Answer, token string) string {
 	var b strings.Builder
+	// Which board: a coordinator of several boards runs the command there.
+	where := " on board " + filepath.Base(board) + " (" + board + ")"
 	switch item.Kind {
 	case "request":
-		b.WriteString("hug: " + by + " wrote request " + strconv.Itoa(item.N) + " on " + t.ID + " (" + t.Title + "), to you as the board coordinator:\n")
+		b.WriteString("hug: " + by + " wrote request " + strconv.Itoa(item.N) + " on " + t.ID + " (" + t.Title + ")" + where + ", to you as the board coordinator:\n")
 	case "answer":
 		head := "hug: " + by + " answered on " + t.ID + " (" + t.Title + ")"
 		if answer != nil && answer.Check > 0 {
@@ -40,7 +43,7 @@ func deliverMessage(t task.Task, item task.Item, by, text string, answer *task.A
 		if answer != nil && answer.For != "" {
 			head += ", the question " + answer.For + " asked"
 		}
-		b.WriteString(head + ", to you as the board coordinator:\n")
+		b.WriteString(head + where + ", to you as the board coordinator:\n")
 		if answer != nil && answer.Question != "" {
 			for _, l := range strings.Split(answer.Question, "\n") {
 				b.WriteString("> " + l + "\n")
@@ -52,7 +55,7 @@ func deliverMessage(t task.Task, item task.Item, by, text string, answer *task.A
 	}
 	switch item.Kind {
 	case "request":
-		b.WriteString("Turn it into changes to the ticket, then: hug task resolve " + t.ID + " " + strconv.Itoa(item.N) + ` "what changed"` + "\n")
+		b.WriteString("Turn it into changes to the ticket, then (in " + board + "): hug task resolve " + t.ID + " " + strconv.Itoa(item.N) + ` "what changed"` + "\n")
 		b.WriteString("If it is unclear: hug task ask " + t.ID + " --to " + by + ` "question"` + "\n")
 	case "answer":
 		if answer != nil && answer.For != "" && !strings.EqualFold(answer.For, by) {
@@ -127,7 +130,7 @@ func (a *App) Deliver(store *task.Store, root, board, id, kind, by string, commi
 	if coord != "" {
 		token := newToken(d.Task.ID, item)
 		it := harness.InboxItem{Board: board, Task: d.Task.ID, Kind: item.Kind, N: item.N, To: coord, Token: token}
-		s, reason = harness.Deliver(a.jcodeHomes(), a.getenv, coord, deliverMessage(d.Task, item, by, text, answer, token), it)
+		s, reason = harness.Deliver(a.jcodeHomes(), a.getenv, coord, deliverMessage(board, d.Task, item, by, text, answer, token), it)
 	}
 	actor, action := store.Actor, store.Action
 	store.Actor, store.Action = "", ""

@@ -133,16 +133,21 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 			// it came in. Busy: the inbox holds the item, the transcript
 			// does not yet: no ack; once it lands: ack.
 			busy := jc.session(t, "busybee", 3000, true)
-			it := harness.InboxItem{Board: a.Cwd, Task: id, Kind: "request", N: 99, To: "busybee", Token: "hug " + id + " request 99 deadbeef"}
+			it := harness.InboxItem{Board: a.Cwd, Task: id, Kind: "request", N: 2, To: "busybee", Token: "hug " + id + " request 2 deadbeef"}
 			harness.AddInbox(jc.home, busy, it)
-			if got, _ := Acknowledge(context.Background(), jc.home, busy); len(got) != 0 {
-				t.Fatalf("acknowledged before the message reached the transcript: %v", got)
+			if got, err := Acknowledge(context.Background(), jc.home, busy); len(got) != 0 || err != nil {
+				t.Fatalf("acknowledged before the message reached the transcript: %v %v", got, err)
 			}
 			jf, _ := os.OpenFile(filepath.Join(jc.home, "sessions", busy+".journal.jsonl"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
+			// The session quoting the token in a tool call, or a tool's
+			// result holding it, is not receipt.
+			jf.WriteString(`{"append_messages":[{"role":"assistant","content":[{"type":"tool_use","input":{"command":"grep '` + it.Token + `'"}}]}]}` + "\n")
+			jf.WriteString(`{"append_messages":[{"role":"user","content":[{"type":"tool_result","content":"` + it.Token + `"}]}]}` + "\n")
+			if got, err := Acknowledge(context.Background(), jc.home, busy); len(got) != 0 || err != nil {
+				t.Fatalf("a tool call or result quoting the token counted as receipt: %v %v", got, err)
+			}
 			jf.WriteString(`{"append_messages":[{"role":"user","content":[{"type":"text","text":"[` + it.Token + `]"}]}]}` + "\n")
 			jf.Close()
-			harness.RemoveInbox(jc.home, busy, it) // request 99 does not exist; only the gate is tested
-			harness.AddInbox(jc.home, busy, harness.InboxItem{Board: a.Cwd, Task: id, Kind: "request", N: 2, To: "busybee", Token: it.Token})
 			if got, _ := Acknowledge(context.Background(), jc.home, busy); len(got) != 1 {
 				t.Fatalf("not acknowledged once in the transcript: %v", got)
 			}

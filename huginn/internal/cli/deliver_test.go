@@ -173,9 +173,9 @@ func TestRequestReachesCoordinator(t *testing.T) {
 	}
 	sid, msg, _ := strings.Cut(msgs[0], "\x00")
 	for _, want := range []string{
-		"hug: jhf wrote request 2 on " + id + " (Tags), to you as the board coordinator:\n",
+		"hug: jhf wrote request 2 on " + id + " (Tags) on board " + filepath.Base(a.Cwd) + " (" + a.Cwd + "), to you as the board coordinator:\n",
 		"  make it per board: \"tags\"\n  and split the TUI part\n",
-		"Turn it into changes to the ticket, then: hug task resolve " + id + " 2 \"what changed\"\n",
+		"Turn it into changes to the ticket, then (in " + a.Cwd + "): hug task resolve " + id + " 2 \"what changed\"\n",
 		"[hug " + id + " request 2 ",
 	} {
 		if sid != crab || !strings.Contains(msg, want) {
@@ -251,7 +251,7 @@ func TestAnswerReachesCoordinator(t *testing.T) {
 	}
 	_, msg, _ := strings.Cut(msgs[0], "\x00")
 	for _, want := range []string{
-		"hug: jhf answered on " + id + " (Tags), check 2, the question nautilus asked, to you as the board coordinator:\n",
+		"hug: jhf answered on " + id + " (Tags), check 2, the question nautilus asked on board " + filepath.Base(a.Cwd) + " (" + a.Cwd + "), to you as the board coordinator:\n",
 		"> type stays, or drop?\n",
 		"  drop it\n  the column says it\n",
 		"Route it to nautilus, who asked, or act on it: hug task show " + id + "\n",
