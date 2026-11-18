@@ -79,3 +79,4 @@ crab 19:54 local, request 1 (Jørgen 19:52): three points. (1) Files not reachab
 - 2026-11-18T19:57 answered asked (check 4), by jhf, for nautilus (doing/asked -> doing/active):
   > after the release: amber now means only 'waits on you' (ASKED, ? N for you), red only 'wrong' (broken lint, depends), waiting on CI and advice are dim. Does it read as one subtle scheme?
   Well, it looks good enough, it's too much color, and I told you already, I told you to adjust this. The pen shouldn't be red, it's too intense in the currently selected row. I have another ticket making it more like a spreadsheet, more subtle, but yeah, it's good enough for this ticket, but there will be follow-up tickets
+- 2026-11-18T19:57 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
