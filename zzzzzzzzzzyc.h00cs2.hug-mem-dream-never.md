@@ -31,7 +31,7 @@ muninn/internal/daemon/dream.go:14 QuietFor 30m, :17 DreamEvery 20h, :21 dreamWh
 
 ## Acceptance
 - [x] a test: with no serve process, the trigger chosen runs dream once DreamEvery has passed and the machine is quiet (fails before)
-- [ ] hug mem status (or doctor) names when dream last ran, and says never when dream_last_ns is unset
+- [x] hug mem status (or doctor) names when dream last ran, and says never when dream_last_ns is unset
 - [ ] on this machine, dream_last_ns is set within a day of upgrading, with no hug mem serve running
 
 ## Notes
