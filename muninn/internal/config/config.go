@@ -71,10 +71,18 @@ type Config struct {
 	// NudgeBoard: the recall hook adds one line when the task board and the
 	// session's work disagree (qawmnb). Unset means on; false turns it off.
 	NudgeBoard *bool `json:"nudge_board,omitempty"`
+	// ToolRecall: jcode's post_tool_feedback hook also shows the rules,
+	// facts and preferences that name a path or command of the agent's tool
+	// call, at most 2, each once per session (n7jbmx). Unset means off until
+	// the blind measurement on fresh calls passes its bar.
+	ToolRecall *bool `json:"tool_recall,omitempty"`
 }
 
 // BoardNudges reports whether board nudges are on (nudge_board, default true).
 func (c Config) BoardNudges() bool { return c.NudgeBoard == nil || *c.NudgeBoard }
+
+// ToolRecalls reports whether tool-call recall is on (tool_recall, default off).
+func (c Config) ToolRecalls() bool { return c.ToolRecall != nil && *c.ToolRecall }
 
 // Defaults returns the built-in configuration.
 func Defaults() Config {

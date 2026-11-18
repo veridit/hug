@@ -492,6 +492,47 @@ func (s *Searcher) semantic(ctx context.Context, q []float32, o Options, out map
 	return nil
 }
 
+// Similarities is the cosine between query and each unit's stored vector,
+// embedded the way Search embeds a query. Units without a vector are left
+// out; an embedder error is returned (tool-call recall, n7jbmx).
+func (s *Searcher) Similarities(ctx context.Context, query string, ids []int64) (map[int64]float64, error) {
+	out := map[int64]float64{}
+	if s.Embedder == nil || len(ids) == 0 {
+		return out, nil
+	}
+	pipeline := s.DB.GetMeta("pipeline_hash")
+	if pipeline == "" {
+		pipeline = index.PipelineHash(s.Embedder.Model())
+	}
+	qtext := embed.Query(s.Embedder, query)
+	if pipeline != index.PipelineHash(s.Embedder.Model()) {
+		qtext = s.DB.GetMeta("pipeline_query_prefix") + query
+	}
+	vecs, err := s.Embedder.Embed(ctx, []string{qtext})
+	if err != nil || len(vecs) != 1 {
+		return nil, fmt.Errorf("embed tool call: %v", err)
+	}
+	list := make([]string, len(ids))
+	for i, id := range ids {
+		list[i] = strconv.FormatInt(id, 10)
+	}
+	rows, err := s.DB.QueryContext(ctx, `SELECT u.id, e.vec FROM units u JOIN embeddings e
+	  ON e.content_hash=u.content_hash AND e.pipeline_hash=? WHERE u.id IN (`+strings.Join(list, ",")+`)`, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		var blob []byte
+		if err := rows.Scan(&id, &blob); err != nil {
+			return nil, err
+		}
+		out[id] = float64(embed.Dot(vecs[0], embed.DecodeF32(blob)))
+	}
+	return out, rows.Err()
+}
+
 // Related returns a unit's stored nearest neighbours.
 func (s *Searcher) Related(ctx context.Context, unitID int64, limit int) ([]Result, error) {
 	return s.RelatedIn(ctx, unitID, limit, nil)

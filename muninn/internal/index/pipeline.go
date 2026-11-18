@@ -17,6 +17,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/veridit/hug/muninn/internal/anchor"
 	"github.com/veridit/hug/muninn/internal/embed"
 	"github.com/veridit/hug/muninn/internal/store"
 )
@@ -249,6 +250,11 @@ func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
 	if err := ix.prunedSources(&st, o); err != nil {
 		return st, err
 	}
+	if ix.DB.GetMeta("anchor_recipe") != anchor.Recipe {
+		if err := BackfillAnchors(ix.DB); err != nil {
+			return st, err
+		}
+	}
 	phase("sources")
 	// Communities: DF-Louvain on the frontier of what changed.
 	if len(ix.deltas) > 0 {
@@ -329,6 +335,45 @@ func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
 	phase("neighbors")
 	st.Elapsed = time.Since(t0)
 	return st, nil
+}
+
+// BackfillAnchors recomputes every active unit's anchors: once for a store
+// indexed before anchors existed, and again when anchor.Recipe changes. The
+// caller holds the transaction (Run does).
+func BackfillAnchors(db *store.DB) error {
+	rows, err := db.Query(`SELECT id, title, body FROM units WHERE active=1`)
+	if err != nil {
+		return err
+	}
+	type unit struct {
+		id          int64
+		title, body string
+	}
+	var us []unit
+	for rows.Next() {
+		var u unit
+		if err := rows.Scan(&u.id, &u.title, &u.body); err != nil {
+			rows.Close()
+			return err
+		}
+		us = append(us, u)
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	// Run holds the pass's transaction on the one pooled connection.
+	if _, err := db.Exec(`DELETE FROM unit_anchors`); err != nil {
+		return err
+	}
+	for _, u := range us {
+		for _, a := range anchor.Memory(u.title + " " + u.body) {
+			if _, err := db.Exec(`INSERT OR IGNORE INTO unit_anchors(unit_id, anchor) VALUES(?,?)`, u.id, a); err != nil {
+				return err
+			}
+		}
+	}
+	return db.SetMeta("anchor_recipe", anchor.Recipe)
 }
 
 // prunedSources removes units of sources that no longer exist on disk.

@@ -709,7 +709,10 @@ func runHook(name string, budget time.Duration) error {
 		parks := harness.ParkDir(config.DataDir())
 		switch os.Getenv("JCODE_HOOK_EVENT") {
 		case "post_tool_feedback":
-			return deliverParked(parks, sessions, sid)
+			if err := deliverParked(parks, sessions, sid); err != nil {
+				return err
+			}
+			return toolRecallHook(ctx, jh, sid)
 		case "turn_end", "session_end":
 			// What no tool call took is dropped: it was for this turn only.
 			if harness.HasPark(parks, sid) {
@@ -786,6 +789,71 @@ func deliverParked(parks, sessions, sid string) error {
 	fmt.Fprintln(os.Stdout, p.Block)
 	logHook("jcode %s: delivered turn=%s tool=%s", short(sid), p.Turn, os.Getenv("JCODE_HOOK_TOOL_NAME"))
 	return nil
+}
+
+// toolRecallHook is the second half of jcode's post_tool_feedback hook
+// (n7jbmx): with tool_recall on it prints the memories that name a path or
+// command of the call just made. It opens the store without an embedder and
+// never reindexes: it runs after every tool call.
+func toolRecallHook(ctx context.Context, jh, sid string) error {
+	cfg, err := config.Load()
+	if err != nil || !cfg.ToolRecalls() {
+		return nil
+	}
+	tool := os.Getenv("JCODE_HOOK_TOOL_NAME")
+	var touched []string
+	for _, p := range strings.Split(os.Getenv("JCODE_HOOK_TOUCHED_PATHS"), "\n") {
+		if p = strings.TrimSpace(p); p != "" {
+			touched = append(touched, p)
+		}
+	}
+	var command string
+	if tool == "bash" {
+		var in struct {
+			Command string `json:"command"`
+		}
+		json.Unmarshal([]byte(os.Getenv("JCODE_HOOK_TOOL_INPUT")), &in)
+		command = in.Command
+	}
+	if command == "" && len(touched) == 0 {
+		return nil
+	}
+	a, err := app.OpenAudit()
+	if err != nil {
+		return err
+	}
+	defer a.Close()
+	cwd := os.Getenv("JCODE_HOOK_CWD")
+	b := a.Bound(jh, cwd)
+	if b.Err != nil {
+		return b.Err
+	}
+	home, _ := os.UserHomeDir()
+	e := &recall.Engine{DB: a.DB}
+	resp, err := e.ToolRecall(ctx, recall.ToolRequest{Session: "jcode:" + sid, Harness: "jcode", Tool: tool, Command: command, Touched: touched,
+		Root: cwd, Home: home, Scopes: b.Scopes, ScopeFor: b.ScopeFor, Similar: toolSimilar(a)}.Shipped())
+	if err != nil {
+		logHook("jcode %s: tool=%s err=%v", short(sid), tool, err)
+		return err
+	}
+	if resp.Block != "" {
+		fmt.Fprintln(os.Stdout, resp.Block)
+	}
+	logHook("jcode %s: tool=%s hits=%d elapsed=%s skipped=%q", short(sid), tool, len(resp.Hits), resp.Elapsed, resp.Skipped)
+	return nil
+}
+
+// toolSimilar is the cosine gate of tool-call recall: it picks the embedder
+// only when an anchor already matched, so most tool calls never touch it. A
+// test replaces it.
+var toolSimilar = func(a *app.App) func(context.Context, string, []int64) (map[int64]float64, error) {
+	return func(ctx context.Context, text string, ids []int64) (map[int64]float64, error) {
+		em, note := app.PickEmbedder(ctx, a.Cfg)
+		if em == nil {
+			return nil, errors.New(note)
+		}
+		return (&search.Searcher{DB: a.DB, Embedder: em}).Similarities(ctx, text, ids)
+	}
 }
 
 func hookRecall(ctx context.Context, harnessName, session, msg, cwd string) (recall.Response, error) {

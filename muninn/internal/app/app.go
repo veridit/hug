@@ -61,6 +61,12 @@ func Open(ctx context.Context) (*App, error) {
 	return a, nil
 }
 
+// PickEmbedder is pickEmbedder, for a hook that opened the store without
+// one and needs it only sometimes (tool-call recall, n7jbmx).
+func PickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, string) {
+	return pickEmbedder(ctx, cfg)
+}
+
 // pickEmbedder resolves cfg.Embedder. For the built-in model it prefers a
 // running `hug mem serve` (model already loaded) over loading it in-process.
 func pickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, string) {

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/veridit/hug/muninn/internal/anchor"
 	"github.com/veridit/hug/muninn/internal/embed"
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/shortid"
@@ -119,6 +120,13 @@ func (ix *Indexer) SyncSource(sourceID int64, cands []Candidate, st *Stats) (dir
 				return nil, nil, err
 			}
 		} else if _, err = ix.setUnitConcepts(id, nil); err != nil {
+			return nil, nil, err
+		}
+		var anchors []string
+		if c.Active {
+			anchors = anchor.Memory(c.Title + " " + c.Body)
+		}
+		if err := ix.DB.SetUnitAnchors(id, anchors); err != nil {
 			return nil, nil, err
 		}
 		ix.deltas = append(ix.deltas, UnitDelta{Old: oldConcepts, New: newConcepts})

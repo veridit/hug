@@ -164,6 +164,13 @@ CREATE TABLE IF NOT EXISTS graph_state (id INTEGER PRIMARY KEY CHECK (id = 1), s
 CREATE TABLE IF NOT EXISTS inferred_types (
   content_hash TEXT PRIMARY KEY, mtype TEXT NOT NULL, model TEXT NOT NULL, at_ns INTEGER NOT NULL
 ) WITHOUT ROWID;
+-- Anchors a memory names (n7jbmx, package anchor): "path:a/b.go",
+-- "file:b.go", "cmd:go test". Tool-call recall matches a call's anchors
+-- here exactly. Written at index time, active units only.
+CREATE TABLE IF NOT EXISTS unit_anchors (
+  unit_id INTEGER NOT NULL, anchor TEXT NOT NULL, PRIMARY KEY (unit_id, anchor)
+) WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS unit_anchors_anchor ON unit_anchors(anchor, unit_id);
 -- Recall injections, for per-session dedupe and the web/TUI log.
 CREATE TABLE IF NOT EXISTS injections (
   session TEXT NOT NULL, unit_id INTEGER NOT NULL, content_hash TEXT NOT NULL,
@@ -322,9 +329,23 @@ func (d *DB) DeleteUnit(id int64) error {
 	for _, q := range []string{
 		`DELETE FROM unit_concepts WHERE unit_id=?`,
 		`DELETE FROM unit_communities WHERE unit_id=?`,
+		`DELETE FROM unit_anchors WHERE unit_id=?`,
 		`DELETE FROM units WHERE id=?`,
 	} {
 		if _, err := d.Exec(q, id); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// SetUnitAnchors replaces a unit's anchors (nil clears them).
+func (d *DB) SetUnitAnchors(id int64, anchors []string) error {
+	if _, err := d.Exec(`DELETE FROM unit_anchors WHERE unit_id=?`, id); err != nil {
+		return err
+	}
+	for _, a := range anchors {
+		if _, err := d.Exec(`INSERT OR IGNORE INTO unit_anchors(unit_id, anchor) VALUES(?,?)`, id, a); err != nil {
 			return err
 		}
 	}

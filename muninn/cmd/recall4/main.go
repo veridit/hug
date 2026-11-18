@@ -5,6 +5,12 @@
 //
 //	go run ./muninn/cmd/recall4 -db $JCODE_SCRATCH_DIR/recall4/real/<v>.db \
 //	  -input $JCODE_SCRATCH_DIR/recall3/replay.json -variant bm25 > out.jsonl
+//
+// Tool calls (n7jbmx): a message with "tool" set is one tool call. Variant
+// "anchor" runs tool-call recall (recall.ToolRecall) on it; any other
+// variant runs message recall on its rendered text. With -asof each call
+// sees only memories last written before its timestamp, so a memory written
+// from the replayed session itself cannot answer it.
 package main
 
 import (
@@ -19,22 +25,27 @@ import (
 	"strings"
 	"time"
 
+	"github.com/veridit/hug/muninn/internal/anchor"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/index"
 	"github.com/veridit/hug/muninn/internal/recall"
 	"github.com/veridit/hug/muninn/internal/search"
 	"github.com/veridit/hug/muninn/internal/store"
 )
 
 type message struct {
-	ID        int    `json:"id"`
-	Home      string `json:"home"`
-	Session   string `json:"session"`
-	Message   string `json:"message"`
-	Cwd       string `json:"cwd"`
-	Split     string `json:"split"`
-	Timestamp string `json:"timestamp"`
+	ID        int      `json:"id"`
+	Home      string   `json:"home"`
+	Session   string   `json:"session"`
+	Message   string   `json:"message"`
+	Cwd       string   `json:"cwd"`
+	Split     string   `json:"split"`
+	Timestamp string   `json:"timestamp"`
+	Tool      string   `json:"tool"`
+	Command   string   `json:"command"`
+	Paths     []string `json:"paths"`
 }
 
 // cachedEmbed caches query vectors on disk so variants share one embedding
@@ -66,9 +77,25 @@ func (c cachedEmbed) Embed(ctx context.Context, texts []string) ([][]float32, er
 }
 
 // variant adjusts search options and recall gates. Each name is one idea.
-func variant(name string, o *search.Options, e *recall.Engine) {
+// Tool-call parts (anchor, cos60, max40, lim2) set t.
+func variant(name string, o *search.Options, e *recall.Engine, t *recall.ToolRequest) {
 	for _, part := range strings.Split(name, "+") {
 		switch {
+		case part == "anchor": // tool-call recall by exact anchors (n7jbmx)
+		case part == "shipped": // the arm the hook runs: recall.ToolRequest.Shipped
+			*t = t.Shipped()
+		case strings.HasPrefix(part, "cos"): // cos60: anchor match and cosine >= 0.60
+			var f float64
+			fmt.Sscanf(part, "cos%g", &f)
+			t.MinCos = f / 100
+		case strings.HasPrefix(part, "max"): // max40: an anchor more than 40 memories share never triggers
+			fmt.Sscanf(part, "max%d", &t.MaxShared)
+		case part == "near": // path anchors end at the path or its folder
+			t.Near = true
+		case part == "needpath": // a command alone never triggers
+			t.NeedPath = true
+		case strings.HasPrefix(part, "lim"): // lim2: at most 2 memories per call
+			fmt.Sscanf(part, "lim%d", &t.Limit)
 		case part == "baseline": // flat points per word (pre-BM25 production)
 			o.BM25Scale = 0
 		case part == "default": // today's configured defaults
@@ -104,6 +131,7 @@ func main() {
 	dbpath := flag.String("db", "", "scratch copy of the frozen snapshot")
 	input := flag.String("input", "", "replay JSON")
 	name := flag.String("variant", "baseline", "variant, parts joined with +")
+	asof := flag.Bool("asof", false, "each message sees only memories last written before its timestamp")
 	flag.Parse()
 	root := filepath.Join(os.Getenv("JCODE_SCRATCH_DIR"), "recall4")
 	abs, _ := filepath.Abs(*dbpath)
@@ -125,7 +153,30 @@ func main() {
 	a := &app.App{Cfg: cfg, DB: db, Searcher: s, Embedder: em}
 	o := a.RecallOptions()
 	e := &recall.Engine{DB: db, Searcher: s, Options: o, RelativeFloor: cfg.RelativeFloor, MinSemantic: cfg.RecallMinSemantic, MinSemanticFull: cfg.RecallMinSemanticFull}
-	variant(*name, &e.Options, e)
+	if anchor.Recipe != db.GetMeta("anchor_recipe") {
+		_, err = db.Exec(`BEGIN IMMEDIATE`)
+		must(err)
+		must(index.BackfillAnchors(db))
+		_, err = db.Exec(`COMMIT`)
+		must(err)
+	}
+	userHome, err := os.UserHomeDir()
+	must(err)
+	var tool recall.ToolRequest
+	variant(*name, &e.Options, e, &tool)
+	anchorArm := strings.Contains("+"+*name+"+", "+anchor+") || strings.Contains("+"+*name+"+", "+shipped+")
+	written := map[int64]int64{}
+	if *asof {
+		rows, err := db.Query(`SELECT id, updated_ns FROM units`)
+		must(err)
+		for rows.Next() {
+			var id, ns int64
+			must(rows.Scan(&id, &ns))
+			written[id] = ns
+		}
+		must(rows.Err())
+		rows.Close()
+	}
 	data, err := os.ReadFile(*input)
 	must(err)
 	var messages []message
@@ -134,13 +185,33 @@ func main() {
 	for _, m := range messages {
 		b := a.Bound(m.Home, m.Cwd)
 		must(b.Err)
-		r := recall.Request{Session: "jcode:" + m.Session, Harness: "jcode", Message: m.Message, Scopes: b.Scopes, ScopeFor: b.ScopeFor}
+		scopeFor := b.ScopeFor
+		if *asof {
+			at, err := time.Parse(time.RFC3339Nano, m.Timestamp)
+			must(err)
+			cut := at.UnixNano()
+			scopeFor = func(u store.Unit) (string, bool) {
+				if written[u.ID] >= cut {
+					return "", false
+				}
+				return b.ScopeFor(u)
+			}
+		}
+		r := recall.Request{Session: "jcode:" + m.Session, Harness: "jcode", Message: m.Message, Scopes: b.Scopes, ScopeFor: scopeFor}
 		if strings.Contains(*name, "union") {
 			r.Session = ""
 		}
 		t := time.Now()
 		c, cancel := context.WithTimeout(ctx, 30*time.Second)
-		resp, err := e.Recall(c, r)
+		var resp recall.Response
+		if anchorArm {
+			tr := tool
+			tr.Session, tr.Harness, tr.Tool, tr.Command, tr.Touched = r.Session, "jcode", m.Tool, m.Command, m.Paths
+			tr.Root, tr.Home, tr.Scopes, tr.ScopeFor = m.Cwd, userHome, b.Scopes, scopeFor
+			resp, err = e.ToolRecall(c, tr)
+		} else {
+			resp, err = e.Recall(c, r)
+		}
 		cancel()
 		errText := ""
 		if err != nil {
