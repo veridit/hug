@@ -1,18 +1,17 @@
 ---
 id: tn8bmn
 title: "hug mem: forget and remember report what the store really holds"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T03:38"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T04:27"
 ---
 
 ## Goal
@@ -45,5 +44,7 @@ file:tn8bmn-failbefore.txt (410 bytes, sha256:8dc2ba71)
 Landed 27643306 on main (CI 44229580197). Fix A: ingest.MarkSynced takes the snapshot syncFile wrote the notes file from (SyncStats.snapshot) and stamps origin and OriginHash only on memories still equal to it. A memory changed after the snapshot keeps its old hash, so the next pass sees a local edit and writes it out. Fix B: ingest.Remembering.OriginFor, with project.OriginForScope(scope) from Binding.RememberPlaced, gives a new project or client-project memory its repo origin at write time, so its SID is final. Readback: Binding.ForgetMany goes through forgetHeld, and RememberPlaced through rememberHeld. Both reload the store under LockNative (loadLocked) and fail with 'forget did not hold: SID is active again ... fix: hug mem forget SID' or 'remember did not hold: ... fix: hug mem show SID'. Tests: project TestForgetDuringSyncPushStaysForgotten (check 1) uses the real interleaving through the markSynced seam: SyncBranch snapshots, writes and pushes, the forget lands, then MarkSynced runs, then the next SyncBranch. run TestRememberedSIDSurvivesProjectSync (check 5): remember --project, then hug mem sync, then another clone's Sync, and the printed SID equals the stored one in all three. run TestForgetUndoneByAnotherWriterFails and TestRememberUndoneByAnotherWriterFails (check 3) use the app.WriteLanded seam. Fail-before on origin/main 0a2f06ae, file:tn8bmn-failbefore.txt: 'branch_test.go:286: psq58f is active again after the next pass: the forget was lost' and 'writeheld_test.go:80: remember printed 2d7he6, after sync the store holds 5d9p7y'. Check 3 has no fail-before because its seam is new API; before the fix, forget printed 'forgot' with no readback (run/main.go forgetCmd). -race after rebase, niced, all ok: ingest 3.178s, project 5.615s, app 77.875s, run 35.568s, mcpserver 7.928s, web 7.923s.
 landed 2764330 on main 2026-11-18: hug mem: a forget during a project sync push stays forgotten; remember's short…
 CI 44229580197 on 27643306: completed success, 6/6 jobs (secrets, bench, test macos-latest, test-windows-cli, test ubuntu-latest, test windows-latest). Live effect needs the next release: the brew hug v0.7.52 still has the race. The one-off scan of reactivated memories is on 66ex4y (4 re-forgotten in hug).
+Reflection (open, 2026-11-18, hatchling): The 'concurrency' theory in the ticket was half right: it was a lost update, but the writers were sync's two steps, not two forgets. muninn-notes history (one commit per pass) named the culprit faster than any repro on a copy without a remote could. Lesson: when a write vanishes only on the live store, diff the shared branch's history before suspecting the lock.
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
+- 2026-11-18T04:27 doing/active -> done (done); was doing_since: 2026-11-18T03:38
