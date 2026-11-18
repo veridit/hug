@@ -1,7 +1,7 @@
 ---
 id: h8ys9s
 title: "Release v0.7.63: lint mentions, prompt history, framed file viewer"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzj"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T14:08"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "release.yml for v0.7.63"
-waiting_since: "2026-11-18T14:37"
-waiting_asked_by: "crab"
+done_at: "2026-11-18T14:44"
 ---
 
 ## Goal
@@ -43,3 +39,4 @@ release.yml run 44315534923 success on tag v0.7.63 (8a869ef7) before install; br
 ## History
 - 2026-11-18T14:08 todo -> doing/active (take)
 - 2026-11-18T14:37 doing/active -> doing/waiting (wait)
+- 2026-11-18T14:44 doing/waiting -> done (done); was doing_since: 2026-11-18T14:08; waiting_asked_by: crab; waiting_on: release.yml for v0.7.63; waiting_since: 2026-11-18T14:37
