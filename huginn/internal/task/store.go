@@ -303,8 +303,9 @@ func (s *Store) New(o NewOptions) (Result, error) {
 			r = p.Rank
 		}
 	}
-	slug := Slug(o.Title)
-	path := filepath.ToSlash(filepath.Join(o.Group, BuildName(r, i, slug)))
+	// Layout 3 (w40cmk): the task lives at C/ID.md from the start, its
+	// group and rank in the front matter.
+	path := PathFor(i)
 	q := func(s string) string { b, _ := json.Marshal(s); return string(b) }
 	today := time.Now().Format("2006-01-02")
 	body := "---\nid: " + i + "\ntitle: " + q(o.Title) + "\nstate: todo\ntype: " + o.Type + "\npriority: " + q(o.Priority) + "\nassignee: []\nlabels: "
@@ -312,7 +313,7 @@ func (s *Store) New(o NewOptions) (Result, error) {
 	for _, l := range o.Labels {
 		labels = append(labels, q(l))
 	}
-	body += "[" + strings.Join(labels, ", ") + "]\ncreated: " + today + "\nupdated: " + today + "\n---\n\n## Goal\n" + o.Goal + "\n" + patternSections(o) + "\n## Depends on\n"
+	body += "[" + strings.Join(labels, ", ") + "]\ngroup: " + q(filepath.ToSlash(o.Group)) + "\nrank: " + q(r) + "\ncreated: " + today + "\nupdated: " + today + "\n---\n\n## Goal\n" + o.Goal + "\n" + patternSections(o) + "\n## Depends on\n"
 	for _, dep := range deps {
 		body += "- " + dep + "\n"
 	}
@@ -724,6 +725,9 @@ func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	oldPath := d.Task.Path
 	if e := safeGroup(group); e != nil {
 		return Result{}, e
+	}
+	if _, layout3 := IDPath(d.Task.Path); layout3 {
+		return s.reorder(d, group, r, slug)
 	}
 	if slug == "" || strings.ContainsAny(slug, "/\\.\x00") {
 		return Result{}, &Error{Kind: "invalid-slug", Value: slug, Fix: "hug task show " + d.Task.ID}

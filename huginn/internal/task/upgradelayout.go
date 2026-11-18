@@ -203,3 +203,41 @@ func (s *Store) ApplyLayout3(p LayoutPlan) ([]string, error) {
 	s.Invalidate()
 	return paths, nil
 }
+
+// reorder is a move on a layout-3 task (w40cmk checks 2 and 3): the rank:
+// and group: lines change, nothing else. The file keeps its name and its
+// files folder, and updated: stays as it was (Jørgen 01:21: a reorder is
+// not an update), so no finish: no stage settle, no read marks. The slug
+// is the title's and is not stored, so slug is not used.
+func (s *Store) reorder(d *Document, group, r, _ string) (Result, error) {
+	path, e := s.diskPath(d.Task.Path)
+	if e != nil {
+		return Result{}, e
+	}
+	// applyRanks hands over a Document with only its Task: read the file.
+	raw, e := sharefile.ReadFile(path)
+	if e != nil {
+		return Result{}, e
+	}
+	fresh := Parse(d.Task.Path, raw)
+	if fresh.Task.Rank == r && fresh.Task.Group == group {
+		return Result{Task: fresh.Task, Next: hint(fresh.Task)}, nil
+	}
+	if fresh.frontEnd < 0 || !fresh.frontmatterValid {
+		return Result{}, &Error{Kind: "broken-file", ID: fresh.Task.ID, Fix: "hug task lint " + fresh.Task.ID}
+	}
+	if e = fresh.setFieldAfter("group", group, identityKeys); e != nil {
+		return Result{}, e
+	}
+	if e = fresh.setFieldAfter("rank", r, append([]string{"group"}, identityKeys...)); e != nil {
+		return Result{}, e
+	}
+	s.Invalidate()
+	if e = AtomicWrite(path, fresh.Bytes()); e != nil {
+		return Result{}, e
+	}
+	if e = s.refreshWritten(fresh.Task.Path); e != nil {
+		return Result{}, e
+	}
+	return Result{Task: fresh.Task, Changed: true, Next: hint(fresh.Task)}, nil
+}
