@@ -286,3 +286,118 @@ func TestMissingTaskLinkFixIsNonInteractive(t *testing.T) {
 		t.Fatalf("after the fix: %+v %v", fs, err)
 	}
 }
+
+// ydwamb check 1 (911j70's note: "open -a Preview
+// .hug/tasks/9/911j70/compare-*.png"): a citation whose last path part has
+// a shell glob (* ? [..]) is the pattern it is, matched against the task's
+// attached files. Two compare-*.png attached: no finding. Lint cut it at
+// the * before and reported ".../compare-: file not found".
+func TestGlobCitationMatchingFilesIsFine(t *testing.T) {
+	s, id := newStore(t)
+	for _, name := range []string{"compare-80.png", "compare-140.png"} {
+		if _, _, err := s.Attach(id, name, png1x1, "", false); err != nil {
+			t.Fatal(err)
+		}
+	}
+	tk, err := s.Get(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	folder := FolderOf(tk.Task)
+	s.Note(id, "Jørgen: open -a Preview .hug/tasks/"+folder+"/compare-*.png")
+	s.Note(id, "also `.hug/tasks/"+folder+"/compare-1?0.png`, .hug/tasks/"+folder+"/compare-[18]*.png, file:compare-*.png and task:"+id+"/compare-*.png")
+	fs, err := s.LintFiles(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(fs) != 0 {
+		t.Fatalf("glob citations that match attached files: want no finding, got %+v", fs)
+	}
+}
+
+// ydwamb check 2: a glob citation that matches no attached file is one
+// missing-file finding naming the whole pattern, and its fix attaches a
+// file under no cut-off name; a plain missing file is still found.
+func TestGlobCitationMatchingNothingNamesThePattern(t *testing.T) {
+	s, id := newStore(t)
+	if _, _, err := s.Attach(id, "compare-80.png", png1x1, "", false); err != nil {
+		t.Fatal(err)
+	}
+	tk, err := s.Get(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	folder := FolderOf(tk.Task)
+	s.Note(id, "see .hug/tasks/"+folder+"/shot-*.png and .hug/tasks/"+folder+"/gone.tsv")
+	fs, err := s.LintFiles(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	for _, f := range fs {
+		got = append(got, FindingCode(f.Problem)+": "+f.Problem+" | fix: "+f.FixLine())
+	}
+	if len(got) != 2 {
+		t.Fatalf("want 2 missing-file findings (the pattern, gone.tsv), got %q", got)
+	}
+	glob := ""
+	for _, g := range got {
+		if strings.Contains(g, "shot-") {
+			glob = g
+		}
+	}
+	if !strings.HasPrefix(glob, "missing-file: .hug/tasks/"+folder+"/shot-*.png: no attached file matches") {
+		t.Fatalf("the pattern finding: %q", glob)
+	}
+	if strings.Contains(glob, "--name shot-") || strings.Contains(glob, "--name shot-*") {
+		t.Fatalf("the fix attaches under a cut-off or glob name: %q", glob)
+	}
+	if !strings.Contains(glob, "fix: hug task attach "+id+" FILE") {
+		t.Fatalf("the fix is not an attach: %q", glob)
+	}
+	if !slicesContains(got, "missing-file: .hug/tasks/"+folder+"/gone.tsv: file not found") {
+		t.Fatalf("a plain missing file is no longer found: %q", got)
+	}
+}
+
+// png1x1 is a 1x1 PNG: an image is a task file when its name says so.
+var png1x1 = []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\x9cc\xf8\x0f\x00\x00\x01\x01\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82")
+
+// slicesContains says whether a string in list starts with prefix.
+func slicesContains(list []string, prefix string) bool {
+	for _, s := range list {
+		if strings.HasPrefix(s, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+// ydwamb: glob characters are read only as a pattern; prose around a plain
+// citation stays out of the name, as before.
+func TestCitedNameKeepsProseOut(t *testing.T) {
+	for in, want := range map[string]string{
+		"a.md":            "a.md",
+		"a.md?":           "a.md",
+		"a.md**":          "a.md",
+		"a.md]":           "a.md",
+		"a.md?raw=1":      "a.md",
+		"compare-*.png":   "compare-*.png",
+		"compare-1?0.png": "compare-1?0.png",
+		"c-[18]*.png":     "c-[18]*.png",
+		"logs/run-*.log":  "logs/run-*.log",
+		"a[b":             "",
+		"*/x.md":          "",
+	} {
+		got, ok := citedName(in)
+		if want == "" {
+			if ok {
+				t.Errorf("citedName(%q) = %q, want no citation", in, got)
+			}
+			continue
+		}
+		if !ok || got != want {
+			t.Errorf("citedName(%q) = %q %v, want %q", in, got, ok, want)
+		}
+	}
+}

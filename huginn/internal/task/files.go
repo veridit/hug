@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/veridit/hug/internal/sharefile"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -289,12 +290,58 @@ func (s *Store) Detach(ref, name string) (Result, error) {
 //	.hug/tasks/ID/NAME   a file of task ID, cited by its path (cvbpdy)
 //
 // A reference followed by " (lost)" names a file known to be gone and is
-// not checked (cvbpdy).
+// not checked (cvbpdy). The last part of NAME may be a shell glob (* ? and
+// [...]), as in "open .hug/tasks/9/911j70/compare-*.png": the pattern is
+// matched against the task's files (ydwamb).
 var (
-	fileRef = regexp.MustCompile(`(?:^|[\s(\[])file:([A-Za-z0-9_.+,=@/-]*[A-Za-z0-9_+=@-])`)
-	taskRef = regexp.MustCompile(`(?:^|[\s(\[])task:([A-Za-z0-9.@_-]+)/([A-Za-z0-9_.+,=@/-]*[A-Za-z0-9_+=@-])`)
-	pathRef = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `"'])\.hug/tasks/(?:[A-Za-z0-9._-]+/)*?([a-z0-9]{6})/([A-Za-z0-9_.+,=@/-]*[A-Za-z0-9_+=@-])`)
+	fileRef = regexp.MustCompile(`(?:^|[\s(\[])file:([A-Za-z0-9_.+,=@/*?\[\]-]*[A-Za-z0-9_+=@*?\]-])`)
+	taskRef = regexp.MustCompile(`(?:^|[\s(\[])task:([A-Za-z0-9.@_-]+)/([A-Za-z0-9_.+,=@/*?\[\]-]*[A-Za-z0-9_+=@*?\]-])`)
+	pathRef = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `"'])\.hug/tasks/(?:[A-Za-z0-9._-]+/)*?([a-z0-9]{6})/([A-Za-z0-9_.+,=@/*?\[\]-]*[A-Za-z0-9_+=@*?\]-])`)
 )
+
+// globChars are the shell glob characters a citation's last part may hold.
+const globChars = "*?["
+
+// citedName is name as a citation means it: a plain file name, or a glob
+// in its last path part (ydwamb). Prose around a plain name is not part of
+// it: a closing "]" with no "[" ("[file:a.md]"), and what follows a
+// whole name with an extension ("is it file:a.md?", "**file:a.md**",
+// "file:a.md?raw=1"). A glob character before the last "/" is no citation
+// hug can check. ok is false when no name is left.
+func citedName(name string) (string, bool) {
+	if i := strings.IndexAny(name, "*?"); i > 0 && wholeName(name[:i]) {
+		name = name[:i]
+	}
+	for strings.HasSuffix(name, "]") && !strings.Contains(name, "[") {
+		name = name[:len(name)-1]
+	}
+	if name == "" {
+		return "", false
+	}
+	if i := strings.LastIndexByte(name, '/'); i >= 0 && strings.ContainsAny(name[:i], globChars+"]") {
+		return "", false
+	}
+	if isGlob(name) {
+		if _, e := path.Match(name, ""); e != nil {
+			return "", false // a malformed pattern ("a[b") is prose
+		}
+	}
+	return name, true
+}
+
+// wholeName says whether s is a plain file name as a citation ends one: no
+// glob, an extension in its last part, a letter or digit at its end.
+func wholeName(s string) bool {
+	if s == "" || isGlob(s) || strings.Contains(s, "]") {
+		return false
+	}
+	c := s[len(s)-1]
+	base := s[strings.LastIndexByte(s, '/')+1:]
+	return strings.Contains(base, ".") && (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9')
+}
+
+// isGlob says whether a cited name is a pattern.
+func isGlob(name string) bool { return strings.ContainsAny(name, globChars) }
 
 // Lost is what follows a citation of a file known to be gone.
 const Lost = " (lost)"
@@ -344,13 +391,13 @@ func FileRefs(doc []byte, self string) []Ref {
 	// regexps cost 17 s over Seid's 2,677 imported files when run on each.
 	if bytes.Contains(doc, []byte("file:")) {
 		for _, m := range fileRef.FindAllSubmatchIndex(doc, -1) {
-			name := string(doc[m[2]:m[3]])
+			name, ok := citedName(string(doc[m[2]:m[3]]))
 			// Prose such as "file:line" and URLs (file:///...) are not
 			// references: a reference names a file (has an extension) or a path.
-			if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) {
+			if !ok || strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) {
 				continue
 			}
-			if lostAfter(doc, m[1]) {
+			if lostAfter(doc, m[2]+len(name)) {
 				lost["file:"+name] = true
 				continue
 			}
@@ -372,7 +419,11 @@ func FileRefs(doc []byte, self string) []Ref {
 			if ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789") {
 				continue
 			}
-			if lostAfter(doc, m[1]) {
+			name, ok := citedName(name)
+			if !ok {
+				continue
+			}
+			if lostAfter(doc, m[4]+len(name)) {
 				lost["task:"+ref+"/"+name] = true
 				continue
 			}
@@ -382,11 +433,16 @@ func FileRefs(doc []byte, self string) []Ref {
 	if bytes.Contains(doc, []byte(".hug/tasks/")) {
 		for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
 			start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
-			if lostAfter(doc, m[1]) {
-				lost[string(doc[start:m[1]])] = true
+			name, ok := citedName(string(doc[m[4]:m[5]]))
+			if !ok {
 				continue
 			}
-			all = append(all, at{Ref{Task: string(doc[m[2]:m[3]]), Name: string(doc[m[4]:m[5]]), Raw: string(doc[start:m[1]])}, start})
+			end := m[4] + len(name)
+			if lostAfter(doc, end) {
+				lost[string(doc[start:end])] = true
+				continue
+			}
+			all = append(all, at{Ref{Task: string(doc[m[2]:m[3]]), Name: name, Raw: string(doc[start:end])}, start})
 		}
 	}
 	var out []Ref
@@ -429,6 +485,30 @@ func forbiddenCites(doc []byte, forbid []string) []forbiddenCite {
 		}
 	}
 	return out
+}
+
+// globMatches says whether pattern, the last part of a citation, matches a
+// file in t's folder (ydwamb). A pattern with a folder part matches in that
+// folder. Reading only: lint never writes.
+func (s *Store) globMatches(t Task, pattern string) bool {
+	dir, base := path.Split(pattern)
+	folder, e := s.diskPath(FolderOf(t) + "/" + strings.TrimSuffix(dir, "/"))
+	if e != nil {
+		return false
+	}
+	entries, e := os.ReadDir(folder)
+	if e != nil {
+		return false
+	}
+	for _, en := range entries {
+		if en.IsDir() {
+			continue
+		}
+		if ok, _ := path.Match(base, en.Name()); ok {
+			return true
+		}
+	}
+	return false
 }
 
 // LintFiles checks task files and the references to them:
@@ -512,6 +592,18 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 					continue
 				}
 				owner = o
+			}
+			if isGlob(ref.Name) {
+				// A pattern (ydwamb): fine when it matches a file of the
+				// task; else one finding naming the whole pattern, whose fix
+				// attaches a file under its own name.
+				key := FolderOf(owner) + "/" + ref.Name
+				if s.globMatches(owner, ref.Name) || reported[key] {
+					continue
+				}
+				reported[key] = true
+				out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": no attached file matches (attach one, or mark the citation" + Lost + ")", Fix: "hug task attach " + owner.ID + " FILE"})
+				continue
 			}
 			fp, e := s.diskPath(FolderOf(owner) + "/" + ref.Name)
 			if e != nil {

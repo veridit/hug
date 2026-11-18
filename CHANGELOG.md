@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Lint reads a glob citation as the pattern it is (ydwamb). 911j70's note asks to run `open -a Preview .hug/tasks/9/911j70/compare-*.png`; lint cut it at the `*` and reported `.hug/tasks/9/911j70/compare-: file not found`, with `fix: hug task attach 911j70 FILE --name compare-`, which would attach a junk file. A citation whose last path part holds `*`, `?` or `[...]` (`file:`, `task:REF/` and `.hug/tasks/` forms) is now matched against the task's files: no finding when one matches, else one missing-file finding naming the whole pattern, `no attached file matches`, with `fix: hug task attach ID FILE`. A plain missing file is still `file not found`. Prose after a whole name stays out of it, as before (`file:a.md?`, `**file:a.md**`, `[file:a.md]`). Lint only reads. On this board, lint on 911j70 now reports no findings. Cache schema 28.
+
 ## v0.7.70 - 2026-11-18
 
 - `TestBackgroundSyncOfflineCatchesUp` no longer sits out a fixed hang (0n4rnx). Its fake remote slept 5 s per network call, and the passes after the timing check paid it again, 32 s for the test on Windows. The remote now hangs until the test releases it (at most 10 s), then fails at once, still unreachable: 11.67 s in CI 44370638232. This changes a test only, not hug.

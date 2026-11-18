@@ -8,29 +8,32 @@ import (
 )
 
 // fileRefsPlain is FileRefs without the literal prefilter: every regexp on
-// every document, as before 3mavpt.
+// every document, as before 3mavpt, with the same name rule (citedName,
+// ydwamb).
 func fileRefsPlain(doc []byte, self string) []Ref {
 	var out []Ref
 	for _, m := range fileRef.FindAllSubmatchIndex(doc, -1) {
-		name := string(doc[m[2]:m[3]])
-		if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) || lostAfter(doc, m[1]) {
+		name, ok := citedName(string(doc[m[2]:m[3]]))
+		if !ok || strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) || lostAfter(doc, m[2]+len(name)) {
 			continue
 		}
 		out = append(out, Ref{Task: self, Name: name, Raw: "file:" + name})
 	}
 	for _, m := range taskRef.FindAllSubmatchIndex(doc, -1) {
 		ref, name := string(doc[m[2]:m[3]]), string(doc[m[4]:m[5]])
-		if (ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789")) || lostAfter(doc, m[1]) {
+		name, ok := citedName(name)
+		if !ok || (ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789")) || lostAfter(doc, m[4]+len(name)) {
 			continue
 		}
 		out = append(out, Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name})
 	}
 	for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
-		if lostAfter(doc, m[1]) {
+		name, ok := citedName(string(doc[m[4]:m[5]]))
+		if !ok || lostAfter(doc, m[4]+len(name)) {
 			continue
 		}
 		start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
-		out = append(out, Ref{Task: string(doc[m[2]:m[3]]), Name: string(doc[m[4]:m[5]]), Raw: string(doc[start:m[1]])})
+		out = append(out, Ref{Task: string(doc[m[2]:m[3]]), Name: name, Raw: string(doc[start : m[4]+len(name)])})
 	}
 	return out
 }
