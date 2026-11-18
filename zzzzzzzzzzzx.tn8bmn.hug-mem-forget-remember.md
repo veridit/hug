@@ -34,6 +34,7 @@ Live store writers today: capture (turn_end, session_end hooks), recall hook, hu
 - [ ] remember prints the id the store keeps; when it folds into a twin it says so: 'kept as erf4tk (twin of your text)' (test)
 - [ ] forget and remember read their result back under the write lock and exit non-zero with a fix line if it is not there (test)
 - [ ] The cause of (A) and (B) is named in a note, with the evidence
+- [ ] remember prints the SID the store keeps, and that SID is unchanged after project sync on every clone (test)
 
 ## Notes
 
