@@ -3,7 +3,7 @@ id: mbdfzs
 title: "hug mcp serves with the installed hug, never an old binary"
 state: todo
 type: bug
-priority: "high"
+priority: "urgent"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
