@@ -1,15 +1,20 @@
 ---
 id: yphbra
 title: "Asking a person about a todo task: ask works without taking it"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T21:54"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "askfree"
+worktree: "/Users/jhf/.jcode/scratch/askfree"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Ask was rebuilt by iwazaru in q2adr8 (## Questions, d5c66a1f/fbf06637). Today as
 - [ ] ask on a doing task behaves as today (existing tests stay green)
 
 ## Notes
+
+
+## History
+- 2026-11-18T21:54 todo -> doing/active (take)
