@@ -37,7 +37,7 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [x] hug task states lists doing/question with its fields; 'hug task ask ID --to jhf --check 9 "look at ..."' sets stage question with them, and a bad N is refused with 'task has 9 checks' and a fix: line (test)
 - [x] hug task wait ID --on NAME refuses with 'fix: hug task ask ID --to NAME "..."'; plain wait still works (test)
 - [x] hug upgrade previews, and --apply moves each doing/waiting with waiting_for into doing/question, a leading 'check N:' (real N) into question_check; on hug's own board the preview lists the tasks and the apply leaves 0 waiting_for fields (test, plus the board numbers in a note)
-- [ ] The TUI shows no '?' glyph; a question row's stage cell reads 'question' and questions for the viewer sort first (golden)
+- [x] The TUI shows no '?' glyph; a question row's stage cell reads 'question' and questions for the viewer sort first (golden)
 - [x] MCP task_update action ask behaves like the CLI (test)
 - [ ] Jørgen confirms on his board after release
 - [ ] A multi-line answer survives every path: TUI (Alt-Enter adds a line, a paste keeps its lines, Enter sends), 'hug task answer ID -' from stdin, and MCP; History holds it as an indented block, and show, the detail and the asker's notice print every line verbatim (test with a 3-line answer holding a quote and a colon)
