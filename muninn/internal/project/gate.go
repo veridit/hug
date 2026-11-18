@@ -34,17 +34,29 @@ type Gate struct {
 	// Own are this project's own names (its folder label and client):
 	// never a reason to hold its memories back.
 	Own []string
+	// Team holds a line that names the team or this machine (rnpdnm
+	// attempt 2, PREREG2 (a)): the board coordinator, the agents whose
+	// sessions worked in this repository, and TeamPhrases. Read at each
+	// sync from hug.toml and the session list, never stored, never
+	// printed. Only with extract.wide_places on; empty, nothing changes.
+	Team []string
 }
+
+// TeamPhrases are the fixed phrases of the team set (PREREG2 (a)).
+var TeamPhrases = []string{"this machine", "this environment", "agents should", "the agent gate"}
 
 // The reasons a line is held, one sync output line each.
 const (
 	HeldHome       = "names a home folder"
 	HeldPreference = "is a preference or correction"
 	HeldName       = "names another project, client or person"
+	// HeldTeam: a working rule for this team or a fact about this machine
+	// (attempt 1's 8 hand leaks: 7 team rules, 1 machine fact).
+	HeldTeam = "names the team or this machine"
 )
 
 // HeldReasons is the order sync reports them in.
-var HeldReasons = []string{HeldHome, HeldName, HeldPreference}
+var HeldReasons = []string{HeldHome, HeldName, HeldTeam, HeldPreference}
 
 // homeRe: a home folder on macOS, Linux or Windows, or ~/.
 // /home/ counts only where a path starts ("internal/home/x.go" is a repo path).
@@ -68,6 +80,9 @@ func (g *Gate) Hold(m ingest.NativeMemory, lineID string) (reason, term string) 
 	if t := g.names(text); t != "" {
 		return HeldName, t
 	}
+	if t := g.match(text, g.Team); t != "" {
+		return HeldTeam, t
+	}
 	switch strings.ToLower(m.Category) {
 	case "preference", "correction":
 		return HeldPreference, ""
@@ -76,13 +91,17 @@ func (g *Gate) Hold(m ingest.NativeMemory, lineID string) (reason, term string) 
 }
 
 // names returns the first configured term text names as a whole word.
-func (g *Gate) names(text string) string {
+func (g *Gate) names(text string) string { return g.match(text, g.Terms) }
+
+// match returns the first of terms text names as a whole word, the
+// project's own names excepted.
+func (g *Gate) match(text string, terms []string) string {
 	hay := fold(text)
 	own := map[string]bool{}
 	for _, o := range g.Own {
 		own[fold(o)] = true
 	}
-	for _, t := range g.Terms {
+	for _, t := range terms {
 		ft := fold(strings.TrimSpace(t))
 		if len([]rune(ft)) < 2 || own[ft] {
 			continue
@@ -242,6 +261,32 @@ func PeopleTerms(hugToml []byte) []string {
 		}
 	}
 	return out
+}
+
+// CoordinatorTerm reads hug.toml [board] coordinator, "" when unset.
+func CoordinatorTerm(hugToml []byte) string {
+	section := ""
+	for _, line := range strings.Split(string(hugToml), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		if strings.HasPrefix(line, "[") {
+			section = strings.TrimSpace(strings.Trim(line, "[]"))
+			continue
+		}
+		if key, value, ok := strings.Cut(line, "="); ok && section == "board" && strings.TrimSpace(key) == "coordinator" {
+			value = strings.TrimSpace(value)
+			// A quoted value may carry a comment after it.
+			if q := value[:min(1, len(value))]; q == `"` || q == "'" {
+				if end := strings.Index(value[1:], q); end >= 0 {
+					return value[1 : end+1]
+				}
+			}
+			return unquote(value)
+		}
+	}
+	return ""
 }
 
 func unquote(s string) string {

@@ -11,6 +11,7 @@ import (
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/internal/memshare"
+	"github.com/veridit/hug/muninn/internal/agents"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/ingest"
@@ -39,7 +40,42 @@ func syncGate(a *app.App, p project.Project, w io.Writer, dry bool) (*project.Ga
 	if p.Client != "" {
 		own = append(own, p.Client)
 	}
-	return &project.Gate{Terms: cfg.SyncGate.Terms, Release: cfg.SyncGate.Release, Own: own}, nil
+	g := &project.Gate{Terms: cfg.SyncGate.Terms, Release: cfg.SyncGate.Release, Own: own}
+	if cfg.Extract.WidePlaces {
+		g.Team = teamTerms(a, p)
+	}
+	return g, nil
+}
+
+// teamTerms is the team set (rnpdnm attempt 2, PREREG2 (a)): the board
+// coordinator from hug.toml, the agents whose jcode sessions worked in this
+// repository or one of its worktrees, and the fixed phrases. It is read at
+// each sync and never stored or printed: the names come and go, and a list
+// of them is not for a repository.
+func teamTerms(a *app.App, p project.Project) []string {
+	terms := append([]string(nil), project.TeamPhrases...)
+	if toml, ok := memshare.Config(p.Root); ok {
+		if c := project.CoordinatorTerm(toml); c != "" {
+			terms = append(terms, c)
+		}
+	}
+	roots := []string{p.Root}
+	if l, err := gitbranch.Locate(p.Root); err == nil {
+		roots = append(roots, l.Main)
+		es, _ := os.ReadDir(filepath.Join(l.Common, "worktrees"))
+		for _, e := range es {
+			if b, err := os.ReadFile(filepath.Join(l.Common, "worktrees", e.Name(), "gitdir")); err == nil {
+				roots = append(roots, filepath.Dir(strings.TrimSpace(string(b))))
+			}
+		}
+	}
+	var homes []string
+	if a != nil {
+		for _, i := range a.JcodeInstances() {
+			homes = append(homes, i.Home)
+		}
+	}
+	return append(terms, agents.NamesIn(homes, roots)...)
 }
 
 // seedTerms: the names of the places this store holds memories for, other

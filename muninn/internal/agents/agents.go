@@ -9,7 +9,9 @@
 package agents
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -38,6 +40,76 @@ func Names(homes []string) []string {
 	}
 	sort.Strings(out)
 	return out
+}
+
+// tailBytes is how much of a session file's end NamesIn reads for its
+// working_dir: jcode writes it after the messages.
+const tailBytes = 256 << 10
+
+var workingDir = regexp.MustCompile(`"working_dir":"((?:[^"\\]|\\.)*)"`)
+
+// NamesIn is the agents whose sessions worked in one of roots: the
+// session's working_dir is a root or inside one (rnpdnm attempt 2: the
+// team of this repository, not every agent of the machine). Only the end
+// of each .json session file is read.
+func NamesIn(homes, roots []string) []string {
+	var clean []string
+	for _, r := range roots {
+		if r != "" {
+			clean = append(clean, filepath.Clean(r))
+		}
+	}
+	set := map[string]bool{}
+	for name, ss := range Sessions(homes) {
+		for _, s := range ss {
+			if strings.HasSuffix(s.Path, ".json") && inRoots(sessionDir(s.Path), clean) {
+				set[name] = true
+				break
+			}
+		}
+	}
+	out := make([]string, 0, len(set))
+	for n := range set {
+		out = append(out, n)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// sessionDir is the last working_dir in the end of a session file, "".
+func sessionDir(path string) string {
+	f, err := os.Open(path)
+	if err != nil {
+		return ""
+	}
+	defer f.Close()
+	if fi, err := f.Stat(); err == nil && fi.Size() > tailBytes {
+		f.Seek(fi.Size()-tailBytes, 0)
+	}
+	b := make([]byte, tailBytes)
+	n, _ := io.ReadFull(f, b)
+	ms := workingDir.FindAllSubmatch(b[:n], -1)
+	if len(ms) == 0 {
+		return ""
+	}
+	var wd string
+	if err := json.Unmarshal([]byte(`"`+string(ms[len(ms)-1][1])+`"`), &wd); err != nil {
+		return ""
+	}
+	return wd
+}
+
+func inRoots(wd string, roots []string) bool {
+	if wd == "" {
+		return false
+	}
+	wd = filepath.Clean(wd)
+	for _, r := range roots {
+		if wd == r || strings.HasPrefix(wd, r+string(filepath.Separator)) {
+			return true
+		}
+	}
+	return false
 }
 
 // Sessions maps each agent name to its sessions, oldest first. Names are
