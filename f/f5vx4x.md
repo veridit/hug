@@ -64,6 +64,7 @@ landed a13d7c7 on main 2026-11-18: hug upgrade --apply changes only this board; 
 Reflection (dismissed, 2026-11-18, kestrel): A command's reach has to match where it runs. hug upgrade mixed board steps and machine steps under one --apply, so testing one board touched every repo's hooks. Check 2's 'golden' is verbatim heading blocks asserted in TestUpgradeTouchesMachineOnlyWithMachine, not a golden file: the output holds temp paths.
 landed 50747ea on main 2026-11-18: test: upgrade preview's board heading compared as the same folder, not the same…
 shipped in v0.7.56 (a13d7c7)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G10, a lesson about one's own method, fixed in its own ticket; no instruction misled.
 ## History
 - 2026-11-18T05:18 todo -> doing/active (take)
 - 2026-11-18T05:26 doing/active -> done (done); was doing_since: 2026-11-18T05:18
