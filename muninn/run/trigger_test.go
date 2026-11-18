@@ -72,6 +72,7 @@ func TestCLIRememberTrigger(t *testing.T) {
 func TestCLISyncRestoresTriggerDroppedByOlderHug(t *testing.T) {
 	home := memHome(t)
 	p := gitProject(t, home)
+	sharesMemories(t, home) // 34r1ft: this test syncs through the branch
 	text := "Synthetic jrj1vq: gateway deploys need the canary flag"
 	if out, errOut, code := runCLI(t, "", "remember", "--project", "--when", "deploying the gateway", text); code != 0 {
 		t.Fatalf("remember: %d %s%s", code, out, errOut)
