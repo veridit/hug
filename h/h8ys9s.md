@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T14:08"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "release.yml for v0.7.63"
+waiting_since: "2026-11-18T14:37"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -38,3 +41,4 @@ Exact-SHA all-job CI green; release.yml success before brew upgrade; no --machin
 Tag v0.7.63 on 8a869ef7 (CHANGELOG commit: heading over 4vxqp4, xfv9pw, z82qsy; 4vxqp4 line now also gives the re-judged 106/9; 0 removed lines from released sections vs v0.7.62; no conflict markers). Release merge 832167b8 on main. Content CI, exact SHAs: 8d26d050 44304709971, c87da5a8 44307241896, 161381f3 44309663696 (WindowsCLI first attempt hit the 6ep7y2 push stall, rerun green). Install only after release.yml success.
 ## History
 - 2026-11-18T14:08 todo -> doing/active (take)
+- 2026-11-18T14:37 doing/active -> doing/waiting (wait)
