@@ -42,6 +42,10 @@ Progress pie came with d8yx7y (v0.7.33). Count line colors: huginn/internal/tui 
 - [x] no-color goldens still distinguish everything by text
 - [ ] Jørgen confirms the look on his board after release
 
+## Requests
+- 2026-11-18T19:52 request 1 by jhf:
+  I would love something is off when I open this I see one of the colors overview screens but unfortunately for me I can't navigate and put focus into the files section and thus view with the embedded viewer using space on purpose and I think I would like zooming as well by all means there and the color for dependency is red I don't like that that seems like dependencies is a problem it isn't
+
 ## Notes
 
 Jørgen 2026-11-17 08:42, on NEXT UP: the pie and fraction are useful on todo tasks that were started and paused (h176dp 4/5, c3hszg 3/4, n7jbmx 1/4, 0sw0dd 1/5): they show resumable work. Keep the fraction on todo, doing and blocked whenever some checks are ticked. Only done drops it, to ● N. Todo with nothing ticked: dim ○ N.
@@ -68,3 +72,4 @@ shipped in v0.7.54 (28791de)
 - 2026-11-18T02:50 nautilus read the answer: hug task wait zhvkmj "crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting)"
 - 2026-11-18T03:18 doing/waiting -> doing/asked (ask)
 - 2026-11-18T12:56 doing/asked -> doing/asked (settle: one stage, asked); was waiting_asked_by: nautilus; waiting_on: crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting); waiting_since: 2026-11-18T02:50
+- 2026-11-18T19:52 request 1 by jhf
