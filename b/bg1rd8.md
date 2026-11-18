@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzl"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T13:22"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review"
+waiting_since: "2026-11-18T13:42"
+waiting_asked_by: "piglet"
 ---
 
 ## Goal
@@ -42,3 +45,4 @@ questions.go noteQuestion silences shipped-not-done when stageSaysWhy (waiting/a
 commit 59fdd2c on branch bg1rd8 (stacked on gpyqq9 d177829), ci/bg1rd8 run 44306358102. check 1: TestWaitingTaskWhoseChecksAllHold (huginn/internal/task/questions_test.go) fails before: 'got <nil> want "every check holds, but doing/waiting on landing slot for 25 hours: 2 of 2 checks are ticked or struck and 2 of 2 children are done; wyvern: is it done?", fix hug task done ID'; TestLintAsksAWaitingTaskWithEveryCheckToFinish (cli) fails before: 'no findings'. Both pass; code checks-all-hold, broken, a question code; only after the wait is IdleAfter (2h) old, not with an open dep/board condition, not for ask --after waits. check 3: same test, waiting with check 2 open (just parked and 25h later) and with 2 open children gives no question. Local niced suite: ok huginn/internal/task 11.376s, ok huginn/internal/cli 163.963s, ok muninn/internal/recall 0.564s, all huginn+cmd/hug ok. check 2 (board cue) split to agh2h7 (depends on bg1rd8), agreed with duckling: duckling's 4vxqp4 owns boardcue.go now.
 ## History
 - 2026-11-18T13:22 todo -> doing/active (take)
+- 2026-11-18T13:42 doing/active -> doing/waiting (wait)
