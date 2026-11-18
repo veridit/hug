@@ -36,6 +36,8 @@ type hitsOut struct {
 type rememberIn struct {
 	NewReason   string   `json:"new_reason,omitempty" jsonschema:"answer to the duplicate question: why this is a different fact worth storing"`
 	Reinforce   string   `json:"reinforce,omitempty" jsonschema:"answer to the duplicate question: SID to reinforce instead of storing a new note"`
+	Supersedes  string   `json:"supersedes,omitempty" jsonschema:"id of the older memory this one corrects; recorded in the local fix trail, it forgets nothing (memory_forget it if it no longer holds)"`
+	Reason      string   `json:"reason,omitempty" jsonschema:"with reinforce or supersedes: why, in a few words; kept in the local fix trail"`
 	Content     string   `json:"content" jsonschema:"the fact, preference or correction to store"`
 	Type        string   `json:"type,omitempty" jsonschema:"rule (an instruction: do, never, how to) | preference | fact (durable knowledge) | record (something that happened, a state at a time)"`
 	Holds       string   `json:"holds,omitempty" jsonschema:"how long it is true, when you know it now: 'until 2026-12-01', 'while task:ID open', 'while branch NAME unmerged'. When it ends, recall stops showing it and a dream item asks to retire or keep it"`
@@ -60,6 +62,7 @@ type idOut struct {
 type forgetIn struct {
 	ID      string `json:"id" jsonschema:"short memory id, unique prefix (4+ chars), or legacy id"`
 	Session string `json:"session,omitempty" jsonschema:"the session id passed to memory_recall, if any; lets you forget a memory recalled there"`
+	Reason  string `json:"reason,omitempty" jsonschema:"why this memory no longer holds, in a few words; kept in the local fix trail"`
 }
 
 type relatedIn struct {
@@ -144,7 +147,8 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_remember", Description: "Store a durable memory: a rule, preference, decision or correction the user stated that will matter in future sessions. One fact per call. Ask: Would this still be true and useful in a different project? Use here (default, also when unsure) for this project, client across this client's projects, global for user-wide facts (only this client inside a client). Answer project-mention questions with place_reason or use here. Never store real secrets. If the reply says the text looks like it may hold a secret, judge it: remove the secret, or call again with safe_reason when it is safe."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in rememberIn) (*mcp.CallToolResult, idOut, error) {
-			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce, Type: in.Type, Holds: in.Holds})
+			ctx = app.WithFix(ctx, a.HarnessFix("mcp", in.Reason))
+			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce, Type: in.Type, Holds: in.Holds, Supersedes: in.Supersedes})
 			if err != nil {
 				return nil, idOut{}, err
 			}
@@ -159,6 +163,7 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 			if s := strings.TrimSpace(in.Session); s != "" {
 				sessions = append(sessions, "mcp:"+s)
 			}
+			ctx = app.WithFix(ctx, a.HarnessFix("mcp", in.Reason))
 			result, err := opt.Forget(ctx, a, in.ID, sessions...)
 			if err != nil {
 				return nil, idOut{}, err

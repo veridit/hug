@@ -292,7 +292,7 @@ func ensureFresh(ctx context.Context, a *app.App) (index.Stats, error) {
 }
 
 func rememberCmd() *cobra.Command {
-	var category, scope, home, safeReason, place, placeReason, newReason, reinforce, typ, holdsCond string
+	var category, scope, home, safeReason, place, placeReason, newReason, reinforce, typ, holdsCond, supersedes, reason string
 	var tags []string
 	var inProject bool
 	c := &cobra.Command{Use: "remember <text>", Short: "Store a memory", Args: cobra.MinimumNArgs(1),
@@ -314,7 +314,8 @@ func rememberCmd() *cobra.Command {
 						b = b.Refresh(a)
 					}
 				}
-				u, reinforced, err := b.RememberPlaced(ctx, a, strings.Join(args, " "), category, scope, tags, safeReason, place, placeReason, app.RememberDecision{NewReason: newReason, Reinforce: reinforce, Type: typ, Holds: holdsCond})
+				ctx = app.WithFix(ctx, a.HarnessFix("cli", reason))
+				u, reinforced, err := b.RememberPlaced(ctx, a, strings.Join(args, " "), category, scope, tags, safeReason, place, placeReason, app.RememberDecision{NewReason: newReason, Reinforce: reinforce, Type: typ, Holds: holdsCond, Supersedes: supersedes})
 				if err != nil {
 					return err
 				}
@@ -341,6 +342,8 @@ func rememberCmd() *cobra.Command {
 	c.Flags().StringVar(&placeReason, "place-reason", "", "why this applies beyond this project, when the project-mention check asks")
 	c.Flags().StringVar(&newReason, "new-reason", "", "why a similar memory is a different fact, when the duplicate check asks")
 	c.Flags().StringVar(&reinforce, "reinforce", "", "reinforce this existing memory instead of adding, answering the duplicate question")
+	c.Flags().StringVar(&supersedes, "supersedes", "", "the id of the memory this one corrects; recorded in the fix trail (hug mem stats --fixes), it forgets nothing: hug mem forget ID if the old one no longer holds")
+	c.Flags().StringVar(&reason, "reason", "", "with --reinforce or --supersedes: why, kept in the fix trail")
 	c.Flags().StringVar(&home, "jcode-home", "", "bind to this JCODE_HOME")
 	c.Flags().StringSliceVar(&tags, "tag", nil, "tag (repeatable)")
 	c.Flags().StringVar(&safeReason, "safe-reason", "", "why text that looks secret is safe to store (asked for when the secret check fires)")
@@ -351,6 +354,7 @@ func rememberCmd() *cobra.Command {
 func forgetCmd() *cobra.Command {
 	var view viewFlags
 	var stdin, asJSON bool
+	var reason string
 	c := &cobra.Command{Use: "forget <memory-id>... | --stdin", Short: "Retire memories or suppress upstream memories locally (several ids: one transaction)",
 		Example: "  hug mem forget k7m2qx\n  hug mem forget k7m2qx 3nfhgr 9xybgp\n  hug mem list --json | jq -r '.memories[].id' | hug mem forget --stdin",
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -380,6 +384,8 @@ func forgetCmd() *cobra.Command {
 				if err := a.FreshFor(ctx, ids); err != nil {
 					return err
 				}
+				// The fix trail (rjk44w): who forgot, and why when given.
+				ctx = app.WithFix(ctx, a.HarnessFix("cli", reason))
 				out, err := view.binding(a).ForgetMany(ctx, a, ids, app.HarnessSessions()...)
 				if err != nil {
 					return err
@@ -400,6 +406,7 @@ func forgetCmd() *cobra.Command {
 		}}
 	c.Flags().BoolVar(&stdin, "stdin", false, "read memory ids from stdin, one per line (first field; # starts a comment)")
 	c.Flags().BoolVar(&asJSON, "json", false, "JSON output: {\"forgotten\": [...]}")
+	c.Flags().StringVar(&reason, "reason", "", "why this memory no longer holds (kept in the fix trail: hug mem stats --fixes)")
 	view.flags(c)
 	return c
 }
@@ -640,8 +647,34 @@ func relatedCmd() *cobra.Command {
 
 func statsCmd() *cobra.Command {
 	var view viewFlags
+	var fixes, asJSON bool
+	var since string
 	c := &cobra.Command{Use: "stats", Short: "Index statistics", RunE: func(*cobra.Command, []string) error {
 		return withApp(func(ctx context.Context, a *app.App) error {
+			if fixes {
+				// The fix trail (rjk44w): recall blocks, and the forgets and
+				// corrections that followed, per UTC day.
+				var from time.Time
+				if since != "" {
+					t, err := time.Parse("2006-01-02", since)
+					if err != nil {
+						return fmt.Errorf("--since %q is not a date\nfix: hug mem stats --fixes --since 2026-11-16", since)
+					}
+					from = t
+				}
+				s, err := app.SummarizeFixes(ctx, a, from)
+				if err != nil {
+					return err
+				}
+				if asJSON {
+					return json.NewEncoder(os.Stdout).Encode(s)
+				}
+				fmt.Print(app.FixReport(s))
+				return nil
+			}
+			if since != "" {
+				return fmt.Errorf("--since applies to --fixes only\nfix: hug mem stats --fixes --since %s", since)
+			}
 			s, err := app.Stats(ctx, a, view.binding(a))
 			if err != nil {
 				return err
@@ -651,6 +684,9 @@ func statsCmd() *cobra.Command {
 			return nil
 		})
 	}}
+	c.Flags().BoolVar(&fixes, "fixes", false, "the memory fix trail: recall blocks, forgets, reinforces and supersedes per UTC day, whether recall showed the memory first, undone forgets, and the last 20 fixes")
+	c.Flags().StringVar(&since, "since", "", "with --fixes: from this UTC day (YYYY-MM-DD)")
+	c.Flags().BoolVar(&asJSON, "json", false, "with --fixes: JSON output")
 	view.flags(c)
 	return c
 }

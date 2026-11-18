@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/search"
 	"github.com/veridit/hug/muninn/internal/store"
 	"github.com/veridit/hug/muninn/internal/tidy"
@@ -357,7 +358,7 @@ func (m model) executeAction() tea.Cmd {
 		}
 		switch p.kind {
 		case "x":
-			r, err := b.Forget(context.Background(), a, u.SID)
+			r, err := b.Forget(app.WithFix(context.Background(), app.FixContext{Surface: "tui"}), a, u.SID)
 			return actionMsg{note: r.Message, err: err}
 		case "m":
 			id, err := b.Rescope(context.Background(), a, u.SID, p.target, false)
