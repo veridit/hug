@@ -45,5 +45,6 @@ Landed 88a6ac89.
 - Race ok: task 25.9s, cli 111.9s, mcp 9.5s, cache 11.1s. tui -short ok 43.0s.
 - Cache schema 22. TUI WAITING row shows '· until 24 Nov' (nautilus ok'd waitrow.go).
 - Check 3 holds until the release is installed. A v0.7.54 hug that writes on the task moves the unknown waiting_ask_* fields to History, and it never wakes the task.
+landed 88a6ac8 on main 2026-11-18: hug task wait --until DATE and ask --after DATE: hug wakes the task on the first…
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
