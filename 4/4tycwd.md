@@ -11,13 +11,10 @@ rank: "zzzzzzv"
 created: 2026-11-16
 updated: 2026-11-16
 doing_since: "2026-11-18T18:57"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_asked_by: "piglet"
-waiting_on: "CI run 44373015352 (windows-cli rerun of the 10m timeout in TestBoardColumns)"
-waiting_since: "2026-11-18T20:00"
 ---
 
 ## Goal
@@ -66,3 +63,4 @@ kikazaru 21:20Z: checks 2-6 verified on main 8a45b0eb (v0.7.70), shipped in v0.7
 ## History
 - 2026-11-18T18:57 todo -> doing/active (take)
 - 2026-11-18T20:00 doing/active -> doing/waiting (wait)
+- 2026-11-18T22:21 doing/waiting -> doing/active (resume); was waiting_asked_by: piglet; waiting_on: CI run 44373015352 (windows-cli rerun of the 10m timeout in TestBoardColumns); waiting_since: 2026-11-18T20:00
