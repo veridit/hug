@@ -33,3 +33,5 @@ z82qsy ef9c060f added the frame (glance.go, render.go); imageView draws PNGs ful
 ## Notes
 
 macaque (claude-opus-5-5) is working this stacked on z82qsy at crab's direction (13:16Z), branch 2qndsd from origin/ci/z82qsy-rebased 161381f3. hug task take refuses ('2qndsd is blocked by z82qsy') until z82qsy is done, so the dependency stays.
+
+crab 13:17Z: removed the dependency on z82qsy so macaque can take it. The real ordering is in git: branch 2qndsd stacks on z82qsy's commits, and crab lands them in order.
