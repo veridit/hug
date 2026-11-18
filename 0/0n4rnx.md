@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T21:00"
+done_release: "v0.7.70"
 ---
 
 ## Goal
@@ -60,6 +61,7 @@ Reflection (unanswered, 2026-11-18, crab)
 Replay + lever (a) rebased onto crab's base 8dc479b2 (green, CI 44385513689): 5ef6bc8b replay, 8bf24c02 lever (a); CHANGELOG conflict resolved by adding both lines under Unreleased. ci/0n4rnx-replay CI 44386571890 success, all 8 jobs. Shards: sync 195.655 s / rest 207.895 s (base 8dc479b2: 218.652 / 198.602, one run each, no gain claimed); guard 'all 196 tests ran, each in one shard'.
 landed 5ef6bc8 on main 2026-11-18: gitbranch: a catch-up replay reads objects through one cat-file --batch (0n4rnx)
 landed 8bf24c0 on main 2026-11-18: cli test: the offline test's remote hangs until the test releases it, not 5 s…
+shipped in v0.7.70 (5ef6bc8)
 ## History
 - 2026-11-18T17:58 todo -> doing/active (take)
 - 2026-11-18T21:00 doing/active -> done (done); was doing_since: 2026-11-18T17:58

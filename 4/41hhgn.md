@@ -104,6 +104,7 @@ check 11 CI green: run 44362462921 on ci/41hhgn-11 @ 66034a19: secrets, test-win
 crab 20:16 local: check 11 66034a19 accepted on review (outcome line via Deliver, offline receipt, answer cut 120, board cue skips delivered outcome; CI 44362462921 6/6). Lands after 34r1ft.
 check 11: on main 8dc479b2 (CI 44385513689 9/9), from 66034a19 accepted on review
 landed 08ab507 on main 2026-11-18: cli: failing tests, an answer's outcome reaches the coordinator (41hhgn check…
+shipped in v0.7.70 (08ab507)
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)

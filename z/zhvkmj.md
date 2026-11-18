@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T21:49"
+done_release: "v0.7.70"
 ---
 
 ## Goal
@@ -68,6 +69,7 @@ check 5: 57dd9e90, CI 44387204008 success (ubuntu, macos, windows, windows-cli x
 check 6: 57dd9e90, CI 44387204008 success. depends #6b6bd6/#2e2e78 (calm indigo) in the count line, the row's stage word and the board's DEPENDS heading; red only on broken lint, its ! and LINT. TestOneColourPerMeaning failed first ('dark: depends #ff8585 is close to a problem #ff8585', 'the DEPENDS heading is not calm', 8 lines), passes after; golden testdata/colour/depends-140.txt (140 truecolor, overview + board) and header/view-cursor.txt reviewed: only 255;133;133 -> 107;107;214 on depends.
 Reflection (unanswered, 2026-11-18, crab)
 landed 5355e78 on main 2026-11-18: hug tui: Files on zhvkmj is in sight when Tab reaches it; depends is a calm…
+shipped in v0.7.70 (5355e78)
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)

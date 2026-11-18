@@ -45,6 +45,7 @@ bonehound: local backup written, nothing on the remote touched (no delete, no pu
 crab 18:25 local, on Jørgen's answer (keep, if the agent places memories right): measured on the branch head 1abcc497, 868 memories. No memory carries a personal/project/elsewhere field today (keys: id, content, category, active, created, updated); everything captured in hug's checkout goes to hug's branch, so no judgment is made now. Pattern counts (lower bounds): 32 are about other projects (e.g. 'Seid lives at /Users/jhf/Veridit/src/seid-lang and is observe-only', Statbus ticket steps), 6 contain /Users/jhf paths, 4 are Jørgen preferences, 39 are category preference. None holds a secret. So: keep the branch (not deleted); sharing resumes only once each memory is placed at write time (gav9nw), and hug opts in (34r1ft A).
 check 1: Jørgen 18:19: keep the branch, provided memories are placed right (personal vs repo). Kept; nothing deleted. Placement is gav9nw; opt-in waits for it.
 landed cee68ee on main 2026-11-18: upgrade: the memory layout rename stays local unless the repo shares memories…
+shipped in v0.7.70 (cee68ee)
 ## History
 - 2026-11-18T16:36 todo -> doing/active (take)
 - 2026-11-18T16:36 doing/active -> doing/asked (ask)
