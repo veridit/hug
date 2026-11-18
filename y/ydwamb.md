@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T22:34"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ydwamb"
 worktree: "/Users/jhf/.jcode/scratch/ydwamb"
+waiting_on: "reviewed; crab lands it as ci/ydwamb-rebased 878e4464 after v0.7.71"
+waiting_since: "2026-11-18T23:24"
+waiting_asked_by: "duckling"
 ---
 
 ## Goal
@@ -46,3 +49,4 @@ check 3: Built 49249f5f, read-only on this board: 'hug task lint 911j70' old -> 
 CI 44406523669 on 49249f5f: completed/success, 8/8 jobs success (secrets, bench, test macos/windows/ubuntu, test-windows-cli sync+rest, test-windows-cli-shards).
 ## History
 - 2026-11-18T22:34 todo -> doing/active (take)
+- 2026-11-18T23:24 doing/active -> doing/waiting (wait)
