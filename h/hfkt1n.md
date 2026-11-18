@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T22:38"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing: stacked as ci/hfkt1n-rebased bc217cb3 on rxr4z8; crab says when it lands"
+waiting_since: "2026-11-19T00:52"
+waiting_asked_by: "tigress"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ Pushed once: hfkt1n and ci/hfkt1n at a943b528 (1340c90a failing test, a943b528 f
 check 2: crab 23:52 ruling: met for the reload path. Pre-fix 5/8 under 16 hogs; post-fix 48/50 with 0 reload-path failures; the 2 failures are tmux harness deadlines (tmux_test.go:82, reload_tmux_test.go:86), split into their own task. CI 44422776917 8/8.
 ## History
 - 2026-11-18T22:38 todo -> doing/active (take)
+- 2026-11-19T00:52 doing/active -> doing/waiting (wait)
