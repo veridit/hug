@@ -64,5 +64,9 @@ CI 44342320033 on d977b452: secrets, ubuntu-latest, windows-latest, test-windows
 crab review 17:20 local: checks 2+3 accepted. d977b452 on 56e2cc6f: header 'HUG · <project> · view' (folder, hug.toml [board] project overrides, plain HUG when unknown); / takes field:value filters (state/status/type/priority/group/label/assignee/epic), other words rank. Goldens 69 files, header lines only. CI 5/6 green, macOS never got a runner; crab runs exact-SHA CI on the landing stack. Integration note: txjkrm renames label to tag in the TUI, so search must say tag: once both land.
 check 5 verified on main c84d3273 (kx2ndm a6485206 is an ancestor), main's binary in tmux, NO_COLOR, synthetic repo: task j3dje3 in group compiler with parent epic 1kcjth. List row at 80 and 140: '  ○ 1    j3dje3            compiler·↳1kcjth Grouped child'. Detail at 80 and 140: '[todo]  [feature]  group:compiler  unassigned  epic:1kcjth'. Footer legend '↳ epic'. Capture: /Users/jhf/.jcode/scratch/0sw0dd/check5-capture-main-c84d3273.txt (script /Users/jhf/.jcode/scratch/cap5.sh). Also: 4013cbae on 0sw0dd adds tag: beside label: in / search (txjkrm); TestSearchFieldStateDone failed without it ('/ tag:urgent: [], want [Alpha task]'), passes with it.
 crab 17:29 local: 4013cbae adds tag: (and label:) to / search; check 5 held on main c84d3273 (kx2ndm), ticked with capture. Lands with d977b452 after the current stack.
+landed 5050b97 on main 2026-11-18: tui: failing tests, header 'HUG · <project>' and state:done in / search (0sw0dd…
+landed 3686f17 on main 2026-11-18: tui: header 'HUG · <project>', field terms in / search (0sw0dd checks 2, 3)
+landed 31499b8 on main 2026-11-18: tui: / search takes tag: beside label: (0sw0dd, for txjkrm)
+landed 8ee3737 on main 2026-11-18: tui goldens: check-ids and picture-framed say 'HUG · list' (0sw0dd header, after…
 ## History
 - 2026-11-18T16:37 todo -> doing/active (take)
