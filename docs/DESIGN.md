@@ -136,6 +136,19 @@ uses no model.
   leak at most 1 in 200 pushed, judged blind, with the withheld rate and its
   interval reported. No repository opts in to sharing before it holds.
 
+**Confirmation, 2026-11-18: FAIL.** Blind hand 8/254 leaked (3.1%, 95% CI
+1.6 to 6.1), judge 17/254. The 0/699 proxy overstated A+: the labeler saw
+the memory alone, the extractor sees a hug transcript. 7 of 8 are team rules
+said in hug work ("crab runs hug task done himself", "use absolute paths
+when applying patches"); the eighth is personal. So A+ stays off
+(`extract.wide_places`), B ships (it only ever holds more), and no
+repository opts in. hug keeps its memories local (34r1ft), so nothing leaks
+meanwhile. Next attempt: coordination terms in B's gate plus a prompt rule
+that agent and coordination rules are global, measured only on captures
+made after 2026-11-19 00:00Z. A team scope (873tqd) is the larger design
+behind both. Evidence: rnpdnm notes (pre-registration, sealed hand labels,
+50 Flash calls).
+
 **Not taken.**
 
 - C, share only what an agent writes on purpose (`remember`) and keep the
