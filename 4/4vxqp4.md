@@ -1,20 +1,21 @@
 ---
 id: 4vxqp4
 title: "Board lint: a task the message only mentions is not the session's task"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab-engineer"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
 parent: ""
 group: ""
 rank: "zzzzzzzzzzx7"
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T12:20"
 ---
 
 ## Goal
@@ -47,3 +48,4 @@ hatchling 15:08: detached from tpnd3n so tpnd3n can close on landing (b8f9000); 
 ## History
 - 2026-11-17T15:53 todo -> doing/active (take)
 - 2026-11-17T16:03 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T15:53
+- 2026-11-18T12:20 todo/ready -> doing/active (take)
