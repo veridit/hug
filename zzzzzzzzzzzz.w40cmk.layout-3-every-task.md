@@ -40,3 +40,5 @@ Jørgen 01:24 local, on Statbus's tree on GitHub ('000000000001.37bryg.ladder-ne
 Jørgen 01:25 local: (a) keep hug/tasks (and hug/memory) as real branches so GitHub links work; accept GitHub's 'recent pushes / Compare & pull request' banner (GitHub has no per-branch setting to hide it; refs/hug/* would hide it but break web links). Still open: one folder per task with README.md (crab's 01:24 proposal) vs ID.md.
 
 Jørgen 01:25 local proposes instead: .hug/tasks/37bryg.md (the task), .hug/tasks/37bryg/ (its files), .hug/tasks/37bryg.json. Replaces crab's README.md folder proposal. Open: what 37bryg.json holds (crab reads it as the machine fields, e.g. rank and group, so a reorder touches only the .json and never the .md); awaiting his confirmation.
+
+Jørgen 01:27 local, DECIDED layout 3: .hug/tasks/ID.md (front matter + body; GitHub renders YAML front matter as a table at the top of the page, so no .json) and .hug/tasks/ID/ for the task's files. Neither name ever changes. rank and group live in the front matter. Supersedes the plain ID.md plan (files now move from the sibling folder convention into ID/ explicitly) and crab's README.md folder proposal.
