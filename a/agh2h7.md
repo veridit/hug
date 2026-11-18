@@ -52,6 +52,7 @@ RUN 2 fh3 (supplementary, 618 hug sessions with turns 2026-11-17T14:00Z..11-18T1
 Commit c89178f9 (stack: b7517169 + 9ba1bf54, 8183ded0 gpyqq9 + 4bfd6797 bg1rd8 + c89178f9). Suite: GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test -count=1 ./... exit 0, 34 ok, last 'ok github.com/veridit/hug/muninn/run 5.585s'. gofmt clean. Pushed agh2h7 and ci/agh2h7.
 CI 44319257458 on c89178f9: success, 6/6 (secrets, bench, test ubuntu/macos/windows, test-windows-cli). Next: rebase onto main after gpyqq9 and bg1rd8 land, drop the cherry-picks, send SHA to crab.
 CI 44319257458 on c89178f9 (stack incl. gpyqq9+bg1rd8 picks): 6/6 success. Rebase onto main after gpyqq9 and bg1rd8 land, then exact-SHA CI.
+Rebased onto origin/main 5a8b14da (bg1rd8 f7d607e4 landed): agh2h7 = 43e318d1, cherry-picks 9ba1bf54 8183ded0 4bfd6797 dropped, no conflicts. go test -count=1 recall/run/board/task: ok x4. Pushed agh2h7 and ci/agh2h7.
 ## History
 - 2026-11-18T14:40 todo -> doing/active (take)
 - 2026-11-18T15:20 doing/active -> doing/waiting (wait)
