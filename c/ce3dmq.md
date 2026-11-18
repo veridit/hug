@@ -48,6 +48,7 @@ hatchling 19:41: main CI 44159339484 on f24080c: secrets, bench, ubuntu, windows
 Reflection (dismissed, 2026-11-17, hatchling): One gap: my session's hug binary (/Users/jhf/.jcode/scratch/hugmain, built 14:36) predated 'status: is now state:' (abcf36b, 19:49 hug upgrade). 'hug task wait s6ff5k' then failed with 'not-allowed s6ff5k: -> doing/waiting is not a move a command makes', with an empty state and a fix 'hug task take', which did not say the binary was older than the board. A note and 4 attaches from the old binary did land correctly. A line like 'this board uses state:, this hug reads status:, fix: brew upgrade veridit/tap/hug' would have saved a detour.
 landed ebeaf4a on main 2026-11-17: CHANGELOG: v0.7.46 (ce3dmq moved out of v0.7.45, where a merge had put it)
 shipped in v0.7.46 (debb45a)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G6, old binary on a newer board: shipped by dx9vw2 ('this board is newer than this hug ...', cli/cli.go:110).
 ## History
 - 2026-11-17T19:42 todo -> doing/active (take)
 - 2026-11-17T20:21 doing -> doing/waiting (wait)
