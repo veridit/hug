@@ -80,6 +80,12 @@ kestrel 01:15, check 11 built with hbgybn (one writer for boardcue.go, crab 00:5
 landed 8737541 on main 2026-11-18: hug task request/resolve/requests: a person's request on a task, turned into…
 shipped in v0.7.52 (7defaf1)
 crab 02:05: v0.7.52 hug upgrade --apply on hug's board moved 7 waits to asked. One was wrong: s6ff5k ('parked per crab ruling, no fourth arm') is a park, not a question, but moved to asked_for crab because it waited on 'crab'. New check added for it. Repair of s6ff5k is for its owner hatchling (hug task resume s6ff5k, then hug task wait s6ff5k "parked per crab ruling, no fourth arm") once wdkqzx frees the doing slot.
+check 13 landed as 2c7ea8b on main. Rule: a waiting_for wait moves to asked only when it has a '?', names a check of the task, or starts with a request verb (approve, answer, confirm, decide, choose, pick, review, rule, look, try, please). Otherwise it stays a wait: waiting_for goes, History says so, and the preview lists it with 'hug task ask ID --to NAME "...?"'.
+Failing first: 'upgrade_park_test.go:55: preview (exit 5) lacks "2 questions to a person moved from waiting to asked"', because the old rule moved all 3.
+Tests: TestUpgradeLeavesAParkAsWait (cli) and TestReadsAsQuestion (task, a table of all 12 waiting_for waits on hug's board (7, from 8a18427b) and Statbus's (5)). 9 mutants, each failing a test.
+Clone of hug's board at 8a18427b^ (/Users/jhf/.jcode/scratch/kestrel-41hhgn13-clone): preview exit 5, 'would: 6 questions to a person moved from waiting to asked (bxqtkt, 47sxn2, zhvkmj, vzghj8, 5z4zt4, jr55s8)' and 'would: 1 wait on a person left waiting ...: s6ff5k waiting_for crab: "H3 failed Part 2 ...; parked per crab ruling, no fourth arm"'. Apply: commit 'hug upgrade: 6 questions to a person moved from waiting to asked, 1 waits left waiting (no question)', waiting_for left 0, s6ff5k stage waiting.
+Statbus (read only): 3 of its 5 would stay waits ('the hug release that stops linting...', 'owner looks at the new-record prototype...', 'owner confirms time frames...').
+race: 'ok task 25.700s', 'ok cli 132.796s'.
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
