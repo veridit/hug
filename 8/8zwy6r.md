@@ -1,7 +1,7 @@
 ---
 id: 8zwy6r
 title: "Sync merges notes added on both sides instead of stopping"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["macaque"]
@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T16:57"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -42,3 +47,7 @@ crab06:26Z shared catch-up translator ruling: if remote base remains layout2 whi
 Crab06:46 required ordinary SAME-task shared resolver in w40cmk before check9. Committed35d560e6 on kestrel/w40cmk, no main push. Ordinary foreground and detached background handles now use exact catch-up translator/private replay for all true divergences, including scalar disjoint-line text changes. Same-task A-sync/B-sync/A-sync both clones once and matching HEADs proved by TestOrdinarySyncSameTaskAppendsConvergeAfterUpgrade: --- PASS (3.95s), focused95727423zo exit0. Scalar remote-wins/local-note/report, detached child same-task append, malformed-task full rollback/no premature report also pass. Both scalar note metadata and source commit remain visible, background summary in sync log. Spec huginn/docs/LAYOUT3-CATCHUP.md now describes shared normal sync. This ticket not taken/done, coordinator decides overlap after actual final gates and CI.
 
 Shared ordinary resolver safety correction11c0df2e: two legacy-layout clones must not implicitly migrate during ordinary sync. Failing-first22237123ow reproduced layout3 unexpectedly, corrected with TargetLayout guard; test passes2.95s. Pure disjoint Goal-line test passes4.77s, proves semantic scalar handling cannot be deferred until Git text conflict. Focused287786gtef exit0. Final local gates pending390827vrmb, no main push or ticket completion inferred.
+
+
+## History
+- 2026-11-18T16:57 todo -> doing/active (take)
