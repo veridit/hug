@@ -146,3 +146,35 @@ func TestShowJSONStageObject(t *testing.T) {
 		t.Fatalf("text show lost the design line:\n%s", out)
 	}
 }
+
+// qsqhpe check 4: a ticked check cannot be asked about (a tick is the
+// answer): hug task ask --check N on a ticked check, now or --after, is
+// refused with exit 2 and a fix: line, and writes nothing.
+func TestAskOnTickedCheckRefused(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Ask", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a", "--accept", "b")["task"].(Reply)["id"].(string)
+	execute(t, a, "take", id, "--as", "nautilus", "--model", "m")
+	execute(t, a, "check", id, "1")
+	before := taskFile(t, a, id)
+	for _, args := range [][]string{
+		{"ask", id, "--to", "jhf", "--check", "1", "does it hold?", "--as", "nautilus"},
+		{"ask", id, "--to", "jhf", "--check", "1", "--after", "2099-01-01", "does it hold?", "--as", "nautilus"},
+	} {
+		code, out := runText(a, args...)
+		if code != 2 || !strings.Contains(out, "check 1 is already ticked: ask about an open check, or add one with hug task set "+id+" --accept ...") ||
+			!strings.Contains(out, "fix: hug task ask "+id+" --to jhf --check 2 \"does it hold?\"\n") {
+			t.Fatalf("%v: exit %d\n%s", args, code, out)
+		}
+	}
+	if after := taskFile(t, a, id); after != before {
+		t.Fatalf("a refused ask wrote:\n%s", after)
+	}
+	// Every check ticked: the fix adds one.
+	execute(t, a, "check", id, "2")
+	code, out := runText(a, "ask", id, "--to", "jhf", "--check", "2", "does it hold?", "--as", "nautilus")
+	if code != 2 || !strings.Contains(out, "fix: hug task set "+id+" --accept \"does it hold?\"\n") {
+		t.Fatalf("all ticked: exit %d\n%s", code, out)
+	}
+}
