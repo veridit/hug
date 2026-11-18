@@ -39,7 +39,7 @@ Candidates: hug task park ID 'where I was' (a dated note plus a marker), shown b
 - [x] hug task take refused for one-in-doing prints a fourth fix: hug task dep A --add B && hug task note A "where I was" (A the doing task, B the refused one), in text and in the JSON fixes array
 - [x] hug task next --mine skips my doing tasks in stage waiting; a woken wait (--until day reached or its condition holds) counts as active and comes first as today
 - [x] when nothing else is left, hug task next --mine says so and lists my waiting tasks one line each (id, what it waits on), exit 4
-- [ ] hug task resume ID prints once what the task was waiting on ('was waiting on: ...')
+- [x] hug task resume ID prints once what the task was waiting on ('was waiting on: ...')
 - [ ] one CHANGELOG line; tests fail first on origin/main and pass after; CI green
 
 ## Notes
