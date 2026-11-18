@@ -7,6 +7,9 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 ## Unreleased
 
 - A question to a person is now its own doing stage, `asked`, set with `hug task ask ID --to NAME [--check N] [--show FILE] "question"` (MCP `task_update` action `ask`). The question is kept verbatim, line breaks too. `hug task wait` is for things with no person to answer: `--on NAME` is refused with a fix that runs `hug task ask`. Answers may span lines (`hug task answer ID -` reads stdin) and go to History as one block, the question quoted with `> ` and the answer indented. `hug upgrade --apply` moves each wait on a person to `asked`, and a leading `check N:` becomes `asked_check`. Until then, `hug task lint` reports a leftover `waiting_for:` as old-layout, with the fix `hug upgrade`. `hug task show --json` and MCP `task_show` put each stage's own fields in an object named after the stage, next to `stage` (`"asked": {"what", "for", "check", "since", "by"}`, and likewise for `waiting`, `design`, `review` and `deferred`). The flat `fields` map no longer repeats them (41hhgn).
+
+## v0.7.51 - 2026-11-18
+
 - `hug tui` rows say where a task belongs, with no extra line (kx2ndm). A dim cell before the text names its group and epic: `later·↳gem59b Launch posts`. The overview footer explains `↳`. g (or `: grouping`) cycles the rows flat, by group, then by epic, and the header says `grouped by epic`. gg and G are gone (Jørgen: "never used it, vi specific"): top and bottom are `<` `>` Home End, in rows, the detail, help and a grab. Each value gets a heading with its count (`▾ later  [3]`). Space or Enter on a heading folds it to `▸ later  [3]`, and the count stays. No group is special and nothing starts folded. A task you jump or find to opens its heading. Actions on a heading are refused, not guessed.
 
 - `hug tui` file viewer: the footer spells out `n next file · p previous file` instead of `n/p file` (scrxak, Jørgen: nobody guesses n/p).
