@@ -39,5 +39,6 @@ v0.7.59 tag 6d994e71 remains unchanged. Recovery candidate dcb80a5d passed all s
 
 Recovery source dcb80a5d independently verified all six jobs success in CI44268461420. Tag4c94ede4 and merge7f9f7bd8 pushed. CHANGELOG grouping manually reviewed, old v0.7.59-and-earlier section byte-identical via cmp, only CHANGELOG differs from green source, repocheck0.275s and diff-check pass. Failed v0.7.59 tag unchanged. Publication/install pending.
 Release workflow44269866555 succeeded on exact tag4c94ede4 before targeted installation.
+Successful publish44269866555 followed by targeted brew upgrade veridit/tap/hug; installed version verified byte-exact hug v0.7.60. No machine configuration or layout migration run.
 ## History
 - 2026-11-18T09:45 todo -> doing/active (take)
