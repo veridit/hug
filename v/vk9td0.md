@@ -29,6 +29,10 @@ Choose session start vs turn end/idle for handing dream items to the agent, with
 ## Acceptance
 - [ ] decision recorded in DESIGN.md with reason
 
+## Requests
+- 2026-11-18T12:22 request 1 by jhf:
+  I think that for sync thing I had an agent make a histograph of when there was activity and then figure out the longest stretch of non-activity and then at the start of such a stretch when you have one week of data start the dreaming. And the histogram was per hour per day and per hour per week. So you can have an idea. And I think it gives you an idea of, but I think the per hour of the week is a sensible thing because then you can kind of capture that there are different days throughout the week, and a week is a natural cycle
+
 ## Notes
 
 Built a first answer (2026-11-12): cue at a break (session start, return after 20 min, wrap-up), at most once per 6 h per session; Response.Break reports which fired. User wants to discuss after trying it.
@@ -38,3 +42,4 @@ hatchling 2026-11-18: summary for Jørgen sent to crab, no code. h00cs2 (1151ada
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T06:32 doing/active -> doing/waiting (wait)
+- 2026-11-18T12:22 request 1 by jhf
