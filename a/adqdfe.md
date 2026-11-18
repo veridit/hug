@@ -1,7 +1,7 @@
 ---
 id: adqdfe
 title: "TUI reload waits on git start under load: test 5 s wait trips"
-state: todo
+state: "doing"
 type: feature
 priority: ""
 assignee: ["macaque"]
@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T00:45"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "adqdfe"
+worktree: "/Users/jhf/.jcode/scratch/adqdfe"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Stack at the failure (file:/Users/jhf/.jcode/scratch/mq5ger-probes/reload-stuck-
 - [ ] fixed at the cause: 0 failures in the same forced-load run, no timeout raised, no retry, no skip
 
 ## Notes
+
+
+## History
+- 2026-11-19T00:45 todo -> doing/active (take)
