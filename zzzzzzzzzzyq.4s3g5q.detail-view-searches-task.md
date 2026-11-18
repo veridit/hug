@@ -43,5 +43,6 @@ Today's footer while typing: '↑↓ pick · Enter go to it · Tab keep as filte
 Jørgen 23:29: covers the inline file viewer too (glance): / finds text in the shown file, n/N step. Add as part of check 1-2's tests.
 
 
+Implementation candidate 95dc4329 on ci/4s3g5q, CI 44245688668 pending. Separate find prompt never assigns m.query. Three occurrences include one wrapped occurrence with two highlight spans, n/N count occurrences once. Title-band, smart-case, wide-cell, Esc, no-match Enter handoff, help, glance and Tab-not-filter tests pass (focused tui 0.583s). Base black-box fails detail match/no-match/help and Tab-filter checks. Final rebased race and CI still pending, no acceptance checks ticked yet. Evidence: /Users/jhf/.jcode/scratch/4s3g5q-evidence.md
 ## History
 - 2026-11-18T06:19 todo -> doing/active (take)
