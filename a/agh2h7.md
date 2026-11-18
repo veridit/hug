@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzz8"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T14:40"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "gpyqq9 + bg1rd8 on main, then rebase"
+waiting_since: "2026-11-18T15:20"
+waiting_asked_by: "duckling"
 ---
 
 ## Goal
@@ -50,3 +53,4 @@ Commit c89178f9 (stack: b7517169 + 9ba1bf54, 8183ded0 gpyqq9 + 4bfd6797 bg1rd8 +
 CI 44319257458 on c89178f9: success, 6/6 (secrets, bench, test ubuntu/macos/windows, test-windows-cli). Next: rebase onto main after gpyqq9 and bg1rd8 land, drop the cherry-picks, send SHA to crab.
 ## History
 - 2026-11-18T14:40 todo -> doing/active (take)
+- 2026-11-18T15:20 doing/active -> doing/waiting (wait)
