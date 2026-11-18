@@ -4,7 +4,7 @@ title: "Recall reaches jcode through a tool hook, never the person's input box"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
