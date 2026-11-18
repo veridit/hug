@@ -40,5 +40,6 @@ Detect via ps + the executable path (Cellar version or deleted file). macOS/Linu
 crab 18:20 local: mcp reload server=hug in crab's session replaced pid 15206 (0.7.14) with 18560 (Cellar 0.7.66): the restart fix works. Still stale: 3175 (Statbus, 0.7.2), 56816 truth_tribe (0.7.2), 65214 GenderedGames (0.7.2), 77273 Claude.app (0.7.43), 90712 (0.7.52).
 
 
+mizaru: built on 4fb78339, commit baa6d5ea (branch z77pem, ci/z77pem). Check 1: TestHookNamesStaleMCPServers starts fake hug mcp servers at Cellar/hug/0.7.2 and Cellar/hug/0.7.54; the session's first jcode turn shows 'pid N hug 0.7.2 in jcode /srv/statbus/.jcode' plus fix: 'mcp action=reload server=hug' with its recall; 0.7.54 is not named; the second turn says nothing; the old pid still runs (signal 0). The Claude/Codex prompt hook says it once per session too. Fails first on 4fb78339's main.go (stalemcp_test.go:101, :144). Mutants 4/4 killed: z77pem-mut/mutants.txt. Smoke on this machine 17:41 named exactly 3175, 56816, 65214 (0.7.2), 77273 (0.7.43 Claude), 90712 (0.7.52) in 116 ms; 56357 (Brovs, started 13:08 after v0.7.54, lsof txt '/hug') is not named. Check 2 waits on the release + Jørgen's machine.
 ## History
 - 2026-11-18T18:23 todo -> doing/active (take)
