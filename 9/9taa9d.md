@@ -29,6 +29,8 @@ Consistency through a clean sweep: once we decide hug is the thing, we change ev
 ## Requests
 - 2026-11-18T12:00 request 1 by jhf:
   I think the principle here is that we always are consistent. So when we decide that, okay, we're going to go into make hug the thing, we have to run a clean cone chip and do everything, and so that is the principle. And the goal is a unified, easy-to-navigate, non-confusing CLI and system
+  resolved 2026-11-18T12:20 by crab:
+    Principle set to: consistency through a clean sweep, everything changes at once, no mix of old and new names. Goal now leads with 'a unified, easy-to-navigate, non-confusing CLI and system', then the concrete one-binary layout. Read 'clean cone chip' as 'clean sweep'; correct me if you meant something else.
 
 ## Notes
 
@@ -43,3 +45,4 @@ Status 2026-11-16: item 2 half done: tasks moved to branch hug/tasks at .hug/tas
 
 ## History
 - 2026-11-18T12:00 request 1 by jhf
+- 2026-11-18T12:20 resolved request 1 by crab
