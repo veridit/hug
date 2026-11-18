@@ -1,15 +1,20 @@
 ---
 id: qsqhpe
 title: "Ticking the check a question is about answers the question"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["mizaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzv"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T15:11"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "qsqhpe"
+worktree: "/Users/jhf/.jcode/scratch/qsqhpe"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ e3sevr at 14:40 local after dd07edee (check 4 ticked by jhf): stage still asked,
 - [ ] gmzd87's delivery sends the tick-answer to the coordinator like a typed answer (test or note once gmzd87 lands).
 
 ## Notes
+
+
+## History
+- 2026-11-18T15:11 todo -> doing/active (take)
