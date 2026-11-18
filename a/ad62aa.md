@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzz8"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:21"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "c25065c0 (ci/ad62aa-rebased) to land on main; all 3 checks ticked; close when landed"
+waiting_since: "2026-11-18T22:10"
+waiting_asked_by: "tigress"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ check 2: Fail first at f7903264 on main d5c66a1f: 'output_test.go:47: Locate aft
 Rebased onto d5c66a1f, as crab asked. Commits: f7903264 (failing test), e6e3c36b (fix + CHANGELOG). Main's catch-up now reads objects with cat-file --batch (objects.go: StdoutPipe read directly, no WaitDelay), so only runAt changed. The earlier CI 44391237795 failure, windows lost-ack 'TempDir RemoveAll cleanup: ... remote.git: being used by another process', came from the old sleep-3 post-receive fixture. 3t4a49 on main already removed it. No fixture edit was needed and upgrade_test.go is untouched. CI 44396660537: success. Report: ~/.jcode/scratch/ad62aa-ev/REPORT.md
 ## History
 - 2026-11-18T20:21 todo -> doing/active (take)
+- 2026-11-18T22:10 doing/active -> doing/waiting (wait)
