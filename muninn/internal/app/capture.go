@@ -350,7 +350,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 				providerCtx, callCancel = context.WithTimeout(providerCtx, 20*time.Second)
 			}
 			extractStart := time.Now()
-			result, err = extract.Run(providerCtx, callCfg, text, known, b.extractionPlaces()...)
+			result, err = extract.Run(providerCtx, callCfg, text, known, b.extractionPlacesFor(callCfg.WidePlaces)...)
 			report.ExtractMS += time.Since(extractStart).Milliseconds()
 			callCancel()
 			providerCancel()
@@ -394,7 +394,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 		}
 		local := map[string]bool{}
 		for n, c := range result.Candidates {
-			destination, err := b.Placement("", c.Place)
+			destination, err := b.capturePlacement(c.Place, a.Cfg.Extract.WidePlaces)
 			if err != nil {
 				return report, err
 			}

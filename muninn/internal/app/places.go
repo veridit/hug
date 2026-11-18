@@ -123,12 +123,50 @@ func (b Binding) places(here, client, global string) []Place {
 }
 
 func (b Binding) extractionPlaces() []extract.Place {
+	return b.extractionPlacesFor(false)
+}
+
+// extractionPlacesFor adds the wide places (rnpdnm A+) when wide is on and
+// this binding may write the personal scope: never in a client session,
+// where personal is out of reach and the list stays as before.
+func (b Binding) extractionPlacesFor(wide bool) []extract.Place {
 	var out []extract.Place
 	for _, p := range b.Places() {
 		out = append(out, extract.Place{Name: p.Name, Meaning: p.Meaning})
 	}
+	if wide && b.personalWritable() {
+		out = append(out, extract.WidePlaces...)
+	}
 	return out
 }
+
+// PersonalScope is the person's own scope: local, never synced to a
+// repository (project.Sync writes only the project's scope).
+const PersonalScope = "personal"
+
+func (b Binding) personalWritable() bool {
+	if b.Client != "" {
+		return false
+	}
+	_, err := b.WriteScope(PersonalScope)
+	return err == nil
+}
+
+// capturePlacement is Placement for a capture candidate. With wide places
+// on, personal and other land in the personal scope (crab, rnpdnm: never
+// written into another project's scope automatically; hug mem tidy place
+// moves them deliberately, and other's about:NAME tag makes that cheap).
+// Off, or where personal is out of reach, it is Placement as before.
+func (b Binding) capturePlacement(name string, wide bool) (Place, error) {
+	if wide && (name == extract.PersonalPlace || name == extract.OtherPlace) && b.personalWritable() {
+		return Place{Name: name, Scope: PersonalScope, Meaning: "the person's own memory, never shared with a repository"}, nil
+	}
+	return b.Placement("", name)
+}
+
+// AboutTag is the tag an "other" capture carries: the project, client or
+// product the extractor said it is about.
+func AboutTag(name string) string { return "about:" + name }
 
 // Placement maps missing, unavailable and unknown names to here. Literal scopes
 // retain the binding's existing owner policy and take precedence over place.

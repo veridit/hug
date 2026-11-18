@@ -205,7 +205,11 @@ func (c *captureBatch) apply(ctx context.Context, b Binding, a *App, scope strin
 	if a.Cfg.Extract.Triggers {
 		tr = action.Candidate.Trigger()
 	}
-	c.mems = append(c.mems, ingest.NativeMemory{ID: id, Origin: action.Origin, Content: action.Content, Category: action.Category, Type: NormalType(action.Type), Trust: action.Trust, Scope: scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureEvents: []string{receipt}, CaptureSupersedes: retireTarget, Updates: action.Updates, SafeReason: action.SafeReason, Branch: b.workBranch(), Trigger: tr})
+	var tags []string
+	if a.Cfg.Extract.WidePlaces && scope == PersonalScope && action.Candidate.Place == extract.OtherPlace && action.PlaceName != "" {
+		tags = []string{AboutTag(action.PlaceName)}
+	}
+	c.mems = append(c.mems, ingest.NativeMemory{ID: id, Origin: action.Origin, Content: action.Content, Category: action.Category, Type: NormalType(action.Type), Trust: action.Trust, Tags: tags, Scope: scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureEvents: []string{receipt}, CaptureSupersedes: retireTarget, Updates: action.Updates, SafeReason: action.SafeReason, Branch: b.workBranch(), Trigger: tr})
 	c.receipts[receipt] = true
 	c.dirty = true
 	return nil
