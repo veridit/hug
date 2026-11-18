@@ -32,12 +32,13 @@ huginn/internal/tui/tui.go:1608 (case j/down/k/up in the detail): moving the sel
 ## Depends on
 
 ## Acceptance
-- [ ] A key test: in a task whose checks end above the bottom of a 24-row screen, j until the page scrolls N lines past the last check, then k N times scrolls back up one line each with the last check still marked, and the next k marks the previous check with no jump (fails first on main)
+- [x] A key test: in a task whose checks end above the bottom of a 24-row screen, j until the page scrolls N lines past the last check, then k N times scrolls back up one line each with the last check still marked, and the next k marks the previous check with no jump (fails first on main)
 - [ ] The same holds for dependencies, links and files lists (table test over the four panes)
 - [ ] Jørgen confirms j/k in a task feel symmetric after release
 
 ## Notes
 
 
+check 1: 944b165d (pushed ykta5g, ci/ykta5g, CI 44381652998). TestDetailJKMirrorInEveryList/checks failed first on main 6a6b6573: 'ykta5g_test.go:121: k 1 (item 2, line 6, offset 7): the page jumped to 0'; passes after: 'ok github.com/veridit/hug/huginn/internal/tui 1.133s'. Crab's probe on kprobe-board-1856, zhvkmj at 100x24: k now y=23->22->21->20 with acc=5 still marked.
 ## History
 - 2026-11-18T20:00 todo -> doing/active (take)
