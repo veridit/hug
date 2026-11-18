@@ -173,3 +173,57 @@ func TestAnswerBoxKeepsLines(t *testing.T) {
 		}
 	}
 }
+
+// 41hhgn check 10 (Jørgen 00:12/00:13, header-spec.md 'Overview
+// sections'): ASKED · for you is the first section, oldest question
+// first; each row shows its title, only the focused row adds
+// '└ asked: check N · <question> · <by>'; WAITING holds the wait on a
+// thing and the question asked of someone else; '? N for you' equals the
+// ASKED count. Golden at 80 and 140.
+func TestAskedSectionOnTop(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	m := askedBoard(t) // aaaaaa (check 2) and cccccc asked of jhf at 09:50; eeeeee's design for jhf has no stamp
+	// One asked of someone else: WAITING, named. One older for jhf.
+	if _, err := m.store.Ask("dddddd", task.Question{What: "is the name list final?", For: "carol"}, "nautilus"); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := os.ReadFile(filepath.Join(m.store.Root, "0c.cccccc.t.md"))
+	if err := os.WriteFile(filepath.Join(m.store.Root, "0c.cccccc.t.md"), []byte(strings.Replace(string(raw), `asked_since: "2026-11-17T09:50"`, `asked_since: "2026-11-17T08:10"`, 1)), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	m.refresh("")
+	var golden []string
+	for _, w := range []int{80, 140} {
+		view := focusAt(t, m, w, "aaaaaa")
+		asked := strings.Split(section(view, "ASKED"), "\n")
+		if !strings.HasPrefix(strings.TrimSpace(asked[0]), "> ASKED · for you  [3]") && !strings.HasPrefix(strings.TrimSpace(asked[0]), "ASKED · for you  [3]") {
+			t.Fatalf("at %d ASKED is not first with 3:\n%s", w, view)
+		}
+		if !strings.Contains(view, "? 3 for you") {
+			t.Fatalf("at %d the header count is not ASKED's:\n%s", w, view)
+		}
+		order := []string{}
+		for _, l := range asked[1:] {
+			for _, id := range []string{"aaaaaa", "cccccc", "eeeeee"} {
+				if strings.Contains(l, id) {
+					order = append(order, id)
+				}
+			}
+		}
+		if strings.Join(order, " ") != "cccccc aaaaaa eeeeee" {
+			t.Fatalf("at %d ASKED order %v, want oldest first (cccccc 08:10, aaaaaa 09:50, eeeeee unstamped):\n%s", w, order, view)
+		}
+		if n := strings.Count(view, "─ asked:"); n != 1 || !strings.Contains(view, "└─ asked: check 2 · look at the state/stage") || w == 140 && !strings.Contains(view, "on your board · nautilus") {
+			t.Fatalf("at %d not exactly the focused row has its asked line (%d):\n%s", w, n, view)
+		}
+		if !strings.Contains(view, "Status colors: rows") {
+			t.Fatalf("at %d the focused ASKED row lost its title:\n%s", w, view)
+		}
+		waiting := section(view, "WAITING")
+		if !strings.Contains(waiting, "dddddd") || strings.Contains(waiting, "aaaaaa") || strings.Contains(waiting, "cccccc") || !strings.Contains(waiting, "bbbbbb") {
+			t.Fatalf("at %d WAITING is not the others' question and the review only:\n%s", w, waiting)
+		}
+		golden = append(golden, "== overview at "+strconv.Itoa(w), view)
+	}
+	goldenFile(t, "testdata/overview/asked.txt", strings.Join(golden, "\n")+"\n")
+}
