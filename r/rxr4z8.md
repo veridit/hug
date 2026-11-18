@@ -79,6 +79,7 @@ check 4: TestGrabMarkedBlock: m with A and C marked gathers A C at A's row (A C 
 check 5: Detail tests unchanged and green: go test ./huginn/internal/tui/ ok 115.216s on f385c3a0, incl. TestAcceptanceSelectionClampedAcrossTasks (Space in a task ticks) and TestErrorAndTerminalInputSafety (now asserts Space in a list marks, never ticks).
 check 8: TestNarrowMarkedFooter at 60: footer exactly '3 marked · ? actions · Esc unmark'; ? leads with '3 MARKED' and lists 'move the marked as one block…', 'drop every marked task…', 'unmark all'. f385c3a0
 check 9: TestDoneMarkedOneRefused: after d, only the refused task stays marked (marks == [B]); TestDropMarked, TestWaitMarked, TestTakeMarked: all went through, marks empty. f385c3a0
+f385c3a0, CI 44402446974 success 8/8. Report /Users/jhf/.jcode/scratch/rxr4z8/REPORT.md. Next: rebase after hjbfzd + byj479 land (t on N marked: Take + TakeWith; drop captureKey confirm case).
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
