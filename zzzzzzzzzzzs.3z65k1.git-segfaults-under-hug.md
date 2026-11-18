@@ -44,5 +44,9 @@ check 1 cause found: Go's bug in its race detector, golang/go#79804 (fixed in go
 (c) 'go tool objdump -s ^syscall.rawSyscall$': 5 runtime.race calls in the go1.26.4 -race binary, 0 in the plain one, 0 in a go1.26.11 -race build.
 (d) Outside hug: 0 failures in either loop. /usr/bin/git (Apple Git-157), 8 workers x about 1030 iterations x 6 commands (49k git processes), load 661-754: 'failures: 0; segv (exit 139): 0'. Earlier, homebrew git: 64k processes, 0. A 20,000-spawn Go -race loop gave 0 on go1.26.4 and 0 on go1.26.11, so it is rare and not reproduced on demand. The crash reports are the evidence.
 Consequence: only -race test binaries on darwin are affected. Release hug builds without -race, so users cannot hit it. CI races only on ubuntu. Fix: go.mod 'toolchain go1.26.11'. Logs: /Users/jhf/.jcode/scratch/kestrel-3z65k1-apple-out, kestrel-3z65k1-offsets.txt.
+check 2 landed in 6f7e869. runAt reports a signal-killed git as 'the git process died before it finished (<git's output> signal: segmentation fault): this is no answer about the board; run it again', with fix 'git -C DIR <args>'. If index.lock is left, it adds 'it left LOCK, which blocks every later write: remove it once no other git is running in DIR' and the fix becomes 'rm LOCK && git -C ...'.
+Failing first (before the change): 'crash_test.go:45: missing "git crashed" in: --literal-pathspecs add --verbose --all -- .: signal: segmentation fault' and 'crash_test.go:74: fix does not remove the leftover lock'.
+Tests: TestCommitReportsGitCrash, TestCrashNamesLeftoverIndexLock, TestFailureIsNotACrash (exit 128 stays git's own message). 5 mutants (crash branch off, lock check off or forced, no rm, no retry text) each fail a test.
+Race on go1.26.11: 'ok gitbranch 22.321s', 'ok cli 156.475s', 'ok task 26.148s'. No retry loop, per the principle: the cause is Go's -race bug, and the fix is the toolchain line.
 ## History
 - 2026-11-18T01:18 todo -> doing/active (take)
