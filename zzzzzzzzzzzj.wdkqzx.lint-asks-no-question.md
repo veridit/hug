@@ -62,6 +62,7 @@ file:wdkqzx-c56-fail-before.txt (765 bytes, sha256:dbc00103)
 Checks 5, 6 landed fe4937fa on main (CI 44212208934). ask --to, review --by and design --for call readyToHand (cli/lintdetail.go) before writing: a task with a broken finding is refused with exit 2, 'hug task CMD: ID is not ready to hand to PERSON: N broken finding(s): [code] problem; ...' and one combined fix; nothing written. design --for is a draft: missing-goal and no-acceptance do not hold it back (crab 00:05). wait is never held back. ask --check N on a shipped task where N is the only open check is not held back by shipped-not-done. Tests TestAskingAPersonRefusesABrokenTask and TestAskAboutTheOpenCheckOfAShippedTask (cli/askgate_test.go) fail on a509c2f3, see file:wdkqzx-c56-fail-before.txt; pass after. -race cli, mcp, task, tui -short: all ok (cli 194.2s, mcp 12.9s, task 29.1s, tui 110.0s); cli -race again after the rebase onto 6f7e8698: ok 151.9s.
 Check 7 landed in a509c2f3 (CI 44209919112, 5/5 jobs success): stageSaysWhy (waiting, asked, review) means no shipped-not-done; TestShippedQuestionNotWhileStageSaysWhy fails before, see file:wdkqzx-stage-fail-before.txt.
 shipped in v0.7.52 (a509c2f)
+CI 44212208934 for fe4937fa: success, all 7 jobs (secrets, test-windows-cli, bench, test ubuntu/windows/macos).
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:22
