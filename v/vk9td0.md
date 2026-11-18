@@ -54,6 +54,7 @@ sabertooth 2026-11-18: built on branch vk9td0, commit 4f0465fb (not merged). PRI
 check 1: docs/DESIGN.md '## When dream runs (vk9td0, decided 2026-11-18)': Decision, Reason (activityhist, week as the cycle), How, Not taken. Commit 4f0465fb.
 check 2: 'hug mem dream --week' prints the 168-bucket grid and 'Longest quiet stretch: ...'. Tests on a synthetic week: TestHourOfWeekHistogramNamesTheLongestQuietStretch ('Sat 14:00 for 19 h'), TestUnderAWeekIsStillLearning, TestAStrayTurnInFourWeeks, TestSeedFromHookLog, TestDreamWeekShowsTheHistogram. Fail-first: 'SQL logic error: no such table: activity_hours (1)' x4; 'dream --week: 1 "" "hug mem: unknown flag: --week"'.
 check 3: TestDreamStartsAtTheQuietStretch (waiter started Tue 08:00, away 1 h: the pass runs at Tue 22:00 after 168 steps; fail-first: 'pass ran at 2026-11-10 08:00:00 +0000 UTC after 0 steps, want 2026-11-10 22:00:00'), TestDreamInsideTheStretchAfterATurnWaitsForQuiet, TestDreamUnderAWeekKeepsTheOldRule (6 days: runs after 30 min away, same as today; fail-first on the status 'learning your week: 6 of 7 days').
+CI 44315701688 on ci/vk9td0 @ 4f0465fb: success, 6/6 (secrets, bench, test-windows-cli, test macos/windows/ubuntu). Branch vk9td0 is not merged; it is ready for a landing turn.
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T06:32 doing/active -> doing/waiting (wait)
