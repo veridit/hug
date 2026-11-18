@@ -33,7 +33,7 @@ Exact-SHA all-job CI green; release.yml success before brew upgrade; no --machin
 
 ## Acceptance
 - [x] CHANGELOG v0.7.63 heading covers exactly the landed entries, no conflict markers, earlier releases byte-identical
-- [ ] release.yml succeeds on the tag before targeted brew upgrade; hug version prints v0.7.63
+- [x] release.yml succeeds on the tag before targeted brew upgrade; hug version prints v0.7.63
 
 ## Notes
 
