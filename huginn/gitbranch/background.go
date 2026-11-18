@@ -40,6 +40,10 @@ type State struct {
 	Unpushed int       `json:"unpushed"`
 	Error    string    `json:"error,omitempty"`
 	Conflict []string  `json:"conflict,omitempty"`
+	// Layout is set when the pass stopped because this clone's unpushed
+	// commits and the remote are on different board layouts (w40cmk check
+	// 9): its fix is hug upgrade, not sync.
+	Layout string `json:"layout,omitempty"`
 	// Skipped says why a pass pushed nothing without an error, e.g.
 	// uncommitted task edits (the commit that ends them nudges again).
 	Skipped string `json:"skipped,omitempty"`
@@ -397,6 +401,12 @@ func (r *Repository) SyncPass(turn func() (func(), error)) (s State) {
 		var conflict *ConflictError
 		if errors.As(e, &conflict) {
 			s.Conflict, s.Error = conflict.Files, "rebase conflict in "+strings.Join(conflict.Files, ", ")+"; local commits are kept"
+			return s
+		}
+		var layout *LayoutError
+		if errors.As(e, &layout) {
+			s.Error = firstLine(e)
+			s.Layout = layout.Fix
 			return s
 		}
 		if e != nil {

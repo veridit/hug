@@ -267,7 +267,7 @@ func (a *App) openBoard(ctx context.Context, lazy bool) (*session, error) {
 	}
 	// One board per repository: a linked worktree (git worktree add) uses the
 	// main worktree's hug/tasks checkout, never a second one (065wwn).
-	r, e := loc.Open(TaskBranch, TaskDir)
+	r, e := loc.Open(TaskBranch, TaskDir, gitbranch.WithLayout(task.LayoutOf))
 	if e != nil {
 		return nil, e
 	}
@@ -1617,6 +1617,14 @@ func ErrorDetails(err error) (int, string, string) {
 	var c *gitbranch.ConflictError
 	if errors.As(err, &c) {
 		fix = c.Fix
+	}
+	var lay *gitbranch.LayoutError
+	if errors.As(err, &lay) {
+		fix = lay.Fix
+	}
+	var cu *gitbranch.CatchUpError
+	if errors.As(err, &cu) {
+		fix = cu.Fix
 	}
 	if fix == "" {
 		fix = "hug task help"
