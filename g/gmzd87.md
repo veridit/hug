@@ -1,15 +1,20 @@
 ---
 id: gmzd87
 title: "Requests reach the board coordinator by design"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["mizaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T12:34"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Split from ec6z6j (multi-task requests, which still waits on row marking rxr4z8)
 - [ ] Jørgen writes a request in hug tui and the coordinator reports receiving it, unprompted.
 
 ## Notes
+
+
+## History
+- 2026-11-18T12:34 todo -> doing/active (take)
