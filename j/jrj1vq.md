@@ -17,8 +17,8 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing: check 1 on jrj1vq c54f9be9 (CI 44361077927 6/6), awaiting crab review; checks 2-4 open"
-waiting_since: "2026-11-18T18:57"
+waiting_on: "parked: check 2 bar failed on judge/hand agreement 15/20 \u003c 16, switch stays off; code 0293fddb (ci/jrj1vq-c2, CI 6/6) ready to land with check 1 57c86e5a; crab to choose: land as is, or approve a judge-only rerun (\u003c=40 calls)"
+waiting_since: "2026-11-18T19:38"
 waiting_asked_by: "bonehound"
 ---
 
