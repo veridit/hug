@@ -295,6 +295,9 @@ type Document struct {
 	frontEnd         int
 	frontmatterValid bool
 	newline          string
+	// layout3: the file is C/ID.md (w40cmk), so rank: and group: are read
+	// from the front matter.
+	layout3 bool
 }
 
 func ParseName(path string) (r, i, s string, err error) {
@@ -397,14 +400,23 @@ func Parse(path string, data []byte) *Document {
 	}
 	d.lines = strings.SplitAfter(string(data), "\n")
 	d.Task.Path = path
-	d.Task.Group = filepath.ToSlash(filepath.Dir(path))
-	if d.Task.Group == "." {
-		d.Task.Group = ""
-	}
-	r, i, s, e := ParseName(path)
-	d.Task.Rank, d.Task.ID, d.Task.Slug = r, i, s
-	if e != nil {
-		d.add(1, e.Error())
+	// Layout 3 (w40cmk): C/ID.md says only the id; rank and group are in
+	// the front matter, and the slug comes from the title.
+	i3, layout3 := IDPath(filepath.ToSlash(path))
+	d.layout3 = layout3
+	var i string
+	if layout3 {
+		d.Task.ID, i = i3, i3
+	} else {
+		d.Task.Group = filepath.ToSlash(filepath.Dir(path))
+		if d.Task.Group == "." {
+			d.Task.Group = ""
+		}
+		r, i2, s, e := ParseName(path)
+		d.Task.Rank, d.Task.ID, d.Task.Slug, i = r, i2, s, i2
+		if e != nil {
+			d.add(1, e.Error())
+		}
 	}
 	clean := func(s string) string {
 		return strings.ToValidUTF8(strings.TrimSuffix(strings.TrimSuffix(s, "\n"), "\r"), "\ufffd")
@@ -422,6 +434,11 @@ func Parse(path string, data []byte) *Document {
 		d.add(1, "missing or unterminated frontmatter")
 	} else {
 		d.parseFrontmatter()
+	}
+	if d.layout3 {
+		// The slug is no longer in the name: it is the title's, so a
+		// slug ref ("task-state-stage-hard") still finds the task.
+		d.Task.Slug = Slug(d.Task.Title)
 	}
 	start := d.frontEnd + 1
 	if start < 0 {

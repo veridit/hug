@@ -90,6 +90,18 @@ func (d *Document) parseFrontmatter() {
 			target = &d.Task.Labels
 		case "parent":
 			target = &d.Task.Parent
+		case "rank", "group":
+			// Layout 3 (w40cmk): order and group are fields. On an
+			// old-named file the name says them, and these keys are not
+			// read.
+			if !d.layout3 {
+				continue
+			}
+			if k == "rank" {
+				target = &d.Task.Rank
+			} else {
+				target = &d.Task.Group
+			}
 		case "aliases":
 			target = &d.Task.Aliases
 		case "created":
