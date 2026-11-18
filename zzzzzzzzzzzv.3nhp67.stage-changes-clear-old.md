@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T02:44"
+done_release: "v0.7.53"
 ---
 
 ## Goal
@@ -41,6 +42,7 @@ landed 5b276f2 on main 2026-11-18: task: one stage at a time; a same-state set s
 Landed 5b276f28. Failing first in task/stagepairs_test.go: 8 failures on main, e.g. 'doing/asked wait: two stages' fields map[asked:[...] waiting:[...]]'. cli/stagefix_test.go TestStageDisagreesFixRuns fails on main with 'stage waiting disagrees with the task: its asked fields are set, so its stage is asked' (that fix did nothing). After the change, lint reads 'holds the fields of 2 stages (asked, waiting) ... the asked fields go to History and the stage is waiting', and its next: line 'hug task set ID --state doing' clears it. Mutants: 8 of 10 killed. Survivors: review without stage (Review already refuses when waiting/asked is held, so it has nothing to clear) and clear-own-shared (stages share no field names). Race: task 35.2s, cli 176.6s, mcp 24.1s ok. -short huginn+muninn: 28 ok.
 s6ff5k repaired at 01:44Z with a build of 5b276f28: 'hug task set s6ff5k --state doing'. File now: stage waiting, waiting_on/waiting_since/waiting_asked_by, no asked_*. lint s6ff5k shows only the advice-level missing-section findings.
 Reflection (open, 2026-11-18, kestrel): The hole was every stage move, not the one wait. A table over all stage pairs caught 5 instances where a fix to wait alone would have caught 1. The lint fix line was a no-op because a same-state set returned unchanged; a test that runs the fix closes that family.
+shipped in v0.7.53 (5b276f2)
 ## History
 - 2026-11-18T02:26 todo -> doing/active (take)
 - 2026-11-18T02:44 doing/active -> done (done); was doing_since: 2026-11-18T02:26

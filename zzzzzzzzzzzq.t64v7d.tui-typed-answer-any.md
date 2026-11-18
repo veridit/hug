@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T02:50"
+done_release: "v0.7.53"
 ---
 
 ## Goal
@@ -40,6 +41,7 @@ landed 0c3d3924..48b1151f (abbec690 fix, 959ff8d1 tmux goldens from ubuntu CI 44
 Reflection (open, 2026-11-18, nautilus): The old rule ('help always wins over text input') was a deliberate comment that a test pinned; ruling reversals need the pinning tests rewritten, not just the code.
 landed abbec69 on main 2026-11-18: tui: in a text field ? is text; help there is F1, named in the footer (t64v7d)
 landed 959ff8d on main 2026-11-18: tui: tmux goldens for F1 help in text fields, from ubuntu CI run 44212782275…
+shipped in v0.7.53 (abbec69)
 ## History
 - 2026-11-18T02:03 todo -> doing/active (take)
 - 2026-11-18T02:35 doing/active -> doing/waiting (wait)

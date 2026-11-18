@@ -64,6 +64,7 @@ landed 4e475c8 on main 2026-11-18: tui: ASKED section first, for you, oldest fir
 landed 3435fc7 on main 2026-11-18: tui: gofmt (0gztsy)
 landed 1d260a6 on main 2026-11-18: CHANGELOG: ASKED, the question once, the answer textarea (0gztsy, 41hhgn)
 landed 4b93356 on main 2026-11-18: tui: tmux overview goldens with ASKED, from ubuntu CI run 44218017150 (0gztsy)
+shipped in v0.7.53 (4e475c8)
 ## History
 - 2026-11-18T01:39 todo -> doing/active (take)
 - 2026-11-18T02:03 doing/active -> doing/waiting (wait)

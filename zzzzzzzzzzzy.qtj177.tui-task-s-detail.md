@@ -48,6 +48,7 @@ landed 48b1151 on main 2026-11-18: tui: glance golden: j/k not named for a file 
 landed 0c3d3924..48b1151f (e89ebc24, 48b1151f). CI 44217631803 on 37d71929: 6/6 jobs success. Local -race ./huginn/internal/tui ok 148.9s; after rebase tui ok 55.8s. Cause: H/L/o wrote m.message = columnHint(), and a message survives Enter into a task. Fix: showColumnHint() sets columnHinted; the footer draws columnHint() only on rows (not detail, help, prompt, confirm); any key but H/L/o clears it. Check 1: TestDetailDrawsNoColumnHint (qtj177_test.go): L L o on the list, Enter, then the stage id Enter (two stacked), at 80 and 140: no 'H/L column', 'order by' or 'H/L pick'; back on the rows H shows it again; golden testdata/detail/no-column-hint.txt. On main: 'at 80, one open, a list hint shows'. Check 2: TestEveryShownKeyActsWhereShown presses every key every key bar names in the 18 helpContexts places at 80 and 140, via pressed(); on main it failed 'file at 80: "j" shown ("j/k" "scroll") does nothing there' (a file that fits the screen), fixed: j/k named only when the file scrolls (glance.txt golden updated).
 
 
+shipped in v0.7.53 (e89ebc2)
 ## History
 - 2026-11-18T02:50 todo -> doing/active (take)
 - 2026-11-18T02:50 doing/active -> doing/asked (ask)

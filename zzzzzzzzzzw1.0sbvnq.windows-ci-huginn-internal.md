@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T02:52"
+done_release: "v0.7.53"
 ---
 
 ## Goal
@@ -67,6 +68,7 @@ landed 3c6be7e on main 2026-11-18: test(cli): setup tests use a 20-file backlog 
 Main run 1 of 2 from 3c6be7ee: CI 44216381870 (3c6be7ee, success). test-windows-cli: huginn/internal/cli 192.202s, job 01:31:10-01:38:18 (7m08s). test (windows-latest): 01:31:10-01:35:17 (4m07s) vs baseline 11m20s (main 44206328950). Both under the bar (cli < 240s, Windows job no slower than 11m20s). Waiting on the next main run.
 Main run 2 of 2: CI 44218058296 (5b276f28, success). test-windows-cli: huginn/internal/cli 179.934s, job 01:44:18-01:51:37 (7m19s). test (windows-latest): 01:44:18-01:49:42 (5m24s). With run 1 (CI 44216381870: cli 192.202s, Windows job 4m07s), that is 2 consecutive main runs from 3c6be7ee with cli < 240s (was 407s in 44206328950) and Windows job well under the 11m20s baseline.
 Reflection (open, 2026-11-18, wyvern): Most of the Windows time was git processes (25-45 ms each) and real-time sleeps, not test logic. Reading refs and worktrees from files cut reads 5->2 and writes 9->4 git processes. Moving cli onto its own runner and shrinking three fixtures, each with a mutation check, took cli from 407 s to 180-192 s (CI 44216381870, 44218058296). Next time: count processes per command before tuning tests.
+shipped in v0.7.53 (1c40426)
 ## History
 - 2026-11-17T14:32 doing -> doing/waiting (wait)
 - 2026-11-17T14:46 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: 3 main Windows runs with huginn/internal/cli under 300 s (landing run 44087396396: 299.686 s); waiting_since: 2026-11-17T14:32

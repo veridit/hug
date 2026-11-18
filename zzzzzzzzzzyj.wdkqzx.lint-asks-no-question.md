@@ -12,6 +12,7 @@ model: "claude-opus-5-5/high"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T02:10"
+done_release: "v0.7.53"
 ---
 
 ## Goal
@@ -63,6 +64,7 @@ Check 7 landed in a509c2f3 (CI 44209919112, 5/5 jobs success): stageSaysWhy (wai
 shipped in v0.7.52 (a509c2f)
 CI 44212208934 for fe4937fa: success, all 7 jobs (secrets, test-windows-cli, bench, test ubuntu/windows/macos).
 Reflection (open, 2026-11-18, hatchling): The ask gate turned on one detail: a shipped task asked about its own last open check must not be refused by the very finding the ask resolves, so readyToHand takes the ask's --check and drops shipped-not-done only when that check is the sole open one. design --for being a draft (no Goal or acceptance yet) was the other trap; a single 'draft' flag kept it to one gate instead of three. Rebases kept conflicting only in CHANGELOG; pushing straight after a short race rerun beat waiting on a long one while main moved.
+shipped in v0.7.53 (fe4937f)
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:22

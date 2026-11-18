@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T01:48"
+done_release: "v0.7.53"
 ---
 
 ## Goal
@@ -49,6 +50,7 @@ Tests: TestCommitReportsGitCrash, TestCrashNamesLeftoverIndexLock, TestFailureIs
 Race on go1.26.11: 'ok gitbranch 22.321s', 'ok cli 156.475s', 'ok task 26.148s'. No retry loop, per the principle: the cause is Go's -race bug, and the fix is the toolchain line.
 landed 6f7e869 on main 2026-11-18: gitbranch: a git process killed by a signal is reported as such, with a retry…
 Reflection (open, 2026-11-18, kestrel): The crash reports in ~/Library/Logs/DiagnosticReports held the answer all along ('crashed on child side of fork pre-exec' in cli.test); I first looked only for git-named reports and spent a 64k-process loop on the wrong binary. Next time: list every report in the failure window, whatever its name, before reproducing.
+shipped in v0.7.53 (6f7e869)
 ## History
 - 2026-11-18T01:18 todo -> doing/active (take)
 - 2026-11-18T01:48 doing/active -> done (done); was doing_since: 2026-11-18T01:18
