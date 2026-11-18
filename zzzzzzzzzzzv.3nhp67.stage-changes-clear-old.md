@@ -32,7 +32,7 @@ Code: huginn/internal/task stage transitions (wait, resume, ask, answer, review,
 ## Acceptance
 - [x] wait on an asked task either refuses with a fix line or moves it to waiting and clears asked_* (History keeps them); same for every pair of stages (table test, fails first on main)
 - [x] resume from asked or waiting clears that stage's fields and only those (test)
-- [ ] stage-disagrees' fix is a command that, when run, makes lint report nothing for that finding (test runs the fix)
+- [x] stage-disagrees' fix is a command that, when run, makes lint report nothing for that finding (test runs the fix)
 - [ ] s6ff5k on hug's board ends as doing/waiting with no asked_* fields, done with hug commands
 
 ## Notes
