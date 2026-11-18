@@ -49,6 +49,7 @@ v0.7.1 (2026-11-13): hug mcp serves memory_* and task_* from one process. Switch
 Status 2026-11-16: item 2 half done: tasks moved to branch hug/tasks at .hug/tasks (hug upgrade, v0.7.3; this repo and seid-lang migrated). Memory is still in the muninn SQLite DB; branch hug/memory (user's name: 'memory', not 'memories') and item 3 (file per memory, retire = move to _retired/) need a design discussion with the user before building.
 
 
+crab 17:29 local, from bonehound: the move to hug/memory is already on main (c16b7fd6, v0.7.61; hug, statbus, seid-lang moved). But gitbranch.Upgrade (gitbranch.go:1139) pushes hug/memory and deletes muninn-notes on the remote with no share check: a likely route for veridit/hug's public 868 memories (wxsyc5). Fix goes with 34r1ft: the upgrade renames locally only unless the repo opts in.
 ## History
 - 2026-11-18T12:00 request 1 by jhf
 - 2026-11-18T12:20 resolved request 1 by crab
