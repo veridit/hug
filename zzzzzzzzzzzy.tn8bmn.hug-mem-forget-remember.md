@@ -1,13 +1,18 @@
 ---
 id: tn8bmn
 title: "hug mem: forget and remember report what the store really holds"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T03:38"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Live store writers today: capture (turn_end, session_end hooks), recall hook, hu
 - [ ] The cause of (A) and (B) is named in a note, with the evidence
 
 ## Notes
+
+
+## History
+- 2026-11-18T03:38 todo -> doing/active (take)
