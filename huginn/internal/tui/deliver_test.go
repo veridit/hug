@@ -70,3 +70,36 @@ func TestDeliverFromBoxes(t *testing.T) {
 		t.Fatalf("a refused answer delivered: %q", calls)
 	}
 }
+
+// qsqhpe check 3 (TUI): Space on the asked check, confirmed, by the person
+// asked, answers the question and delivers it as an answer, by the same
+// Options.Deliver as a; the message says it answered.
+func TestTickAnswerDelivers(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	m := askedBoard(t)
+	// As hug tui sets it (cli/hooks.go): the store writes as the TUI user.
+	m.store.Actor = m.me()
+	m.width, m.height = 120, 30
+	m.resize()
+	var calls []string
+	m.opts.Deliver = func(id, kind, by string) (string, error) {
+		calls = append(calls, id+" "+kind+" "+by)
+		return "pending, delivered to crab (session_crab_1_ab)", nil
+	}
+	m = openTask(t, m, "aaaaaa")
+	m = press(m, " ")
+	if m.confirm != " " {
+		t.Fatalf("Space on the asked check: confirm %q", m.confirm)
+	}
+	m = press(m, "enter")
+	if len(calls) != 1 || calls[0] != "aaaaaa answer jhf" {
+		t.Fatalf("delivered %q (message %q)", calls, m.message)
+	}
+	if !strings.Contains(m.message, "answered aaaaaa by ticking check 2: pending, delivered to crab") {
+		t.Fatalf("message %q", m.message)
+	}
+	tk := mustSelected(t, m)
+	if tk.Stage != "active" {
+		t.Fatalf("stage %q after the tick", tk.Stage)
+	}
+}

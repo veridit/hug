@@ -186,7 +186,7 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 		return Result{}, e
 	}
 	text, by = strings.Trim(strings.ReplaceAll(text, "\r\n", "\n"), " \t\n"), strings.TrimSpace(by)
-	stage, q, asker := question(d.Task)
+	stage, _, _ := question(d.Task)
 	if stage == "" {
 		fix := "hug task show " + d.Task.ID
 		if d.Task.State == "doing" && ownHolds(d.Task, "waiting") {
@@ -200,6 +200,17 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 	if by == "" {
 		return Result{}, usageErr(d.Task.ID, "answer needs who answers: --as NAME, or HUG_USER", "hug task answer "+d.Task.ID+" "+strconv.Quote(oneLineFix(text))+" --as NAME")
 	}
+	if e = answerOn(d, ts, text, by); e != nil {
+		return Result{}, e
+	}
+	return s.finish(d, true)
+}
+
+// answerOn writes the answer text by by to the question d's stage asks:
+// one answer block in History, the stage's fields go, the stage
+// re-derives. Answer and a tick by the person asked (qsqhpe) both use it.
+func answerOn(d *Document, ts []Task, text, by string) error {
+	stage, q, asker := question(d.Task)
 	clear := stageFields(d.Task.State, stage)
 	if stage == "review" {
 		clear = []string{"review_by", "review_since", "review_show"}
@@ -213,10 +224,7 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 		head += ", for " + asker
 	}
 	q = strings.ReplaceAll(q, "\r\n", "\n")
-	if e = applyMove(d, ts, move{state: d.Task.State, clear: clear, block: func(moved string) string { return answerBlock(head+" ("+moved+")", q, text, d.newline) }}); e != nil {
-		return Result{}, e
-	}
-	return s.finish(d, true)
+	return applyMove(d, ts, move{state: d.Task.State, clear: clear, block: func(moved string) string { return answerBlock(head+" ("+moved+")", q, text, d.newline) }})
 }
 
 // markRead appends "NAME read the answer" when actor, writing on d, is who
