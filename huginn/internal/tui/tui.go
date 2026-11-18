@@ -195,6 +195,7 @@ type model struct {
 	files           map[string][]string         // task path -> its file names (zgr01t)
 	people          []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
 	project         string                      // hug.toml [board] project, "" when unset (0sw0dd)
+	tagOrder        map[string]int              // hug.toml tags: tag -> its place on the list, for grouping by tag (txjkrm)
 	lastExec        *exec.Cmd                   // the editor command last started, for tests (zgr01t)
 	lastEdit        editorMsg                   // and the message it reports when it closes
 	memo            [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
@@ -577,6 +578,7 @@ type snapshot struct {
 	files        map[string][]string
 	people       []task.Person // hug.toml [people] (89y0b7)
 	project      string        // hug.toml [board] project (0sw0dd)
+	tags         []string      // hug.toml tags, in their order (txjkrm)
 	err, readErr error
 }
 
@@ -590,6 +592,9 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root), files: map[string][]string{}}
 	sn.people, _ = task.People(s.Root) // a broken hug.toml is lint's to report
 	sn.project, _ = task.ProjectName(s.Root)
+	if tl, e := task.Tags(s.Root); e == nil {
+		sn.tags = tl.List
+	}
 	// Task folders, from one ReadDir per group instead of a WalkDir per
 	// task (44w1ev: 10,000 walks of folders that mostly do not exist were
 	// half the first screen). Keys are lowercase: taskFiles decides.
@@ -658,6 +663,12 @@ func (m *model) apply(sn snapshot, path string) {
 	m.files = sn.files
 	m.people = sn.people
 	m.project = sn.project
+	m.tagOrder = map[string]int{}
+	for i, tg := range sn.tags {
+		if _, ok := m.tagOrder[tg]; !ok {
+			m.tagOrder[tg] = i
+		}
+	}
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.broken = map[string]bool{}
@@ -720,7 +731,7 @@ func (m *model) applyFilter() {
 		if status != "" && m.place(t) != status || m.filter.Type != "" && !optionalMatches(t.Type, m.filter.Type) || m.filter.Group != "" && !groupMatches(t.Group, m.filter.Group) {
 			continue
 		}
-		if m.filter.Label != "" && !contains(t.Labels, m.filter.Label) {
+		if m.filter.Label != "" && !contains(t.Labels, m.filter.Label) { // the tag filter (txjkrm)
 			continue
 		}
 		if !task.InEpic(t, m.all, m.filter.Epic) {

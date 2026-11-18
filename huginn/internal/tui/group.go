@@ -27,8 +27,9 @@ import (
 // out), paneRows adds the headings, encoded as headRow(h) = -(h+2) so
 // that -1 stays "no row".
 
-// groupings are the orders g (or : grouping) cycles through.
-var groupings = []string{"", "group", "epic"}
+// groupings are the orders g (or : grouping) cycles through; tag groups
+// by area (txjkrm).
+var groupings = []string{"", "group", "epic", "tag"}
 
 // groupedRows is one section's rows under its headings.
 type groupedRows struct {
@@ -50,9 +51,12 @@ func headOf(row int) int         { return -row - 2 }
 func isHead(row int) bool        { return row < -1 }
 func foldKey(g, v string) string { return g + ":" + v }
 
-// groupValue is the value t is grouped by: its group, or its epic's id;
-// an epic with no parent leads its own children.
+// groupValue is the value t is grouped by: its group, or its epic's id
+// (an epic with no parent leads its own children), or its tag.
 func (m model) groupValue(t task.Task) string {
+	if m.grouping == "tag" {
+		return m.leadTag(t)
+	}
 	if m.grouping == "epic" {
 		if e := m.epicOf[t.Path]; e != "" {
 			return e
@@ -63,6 +67,23 @@ func (m model) groupValue(t task.Task) string {
 		return ""
 	}
 	return oneLine(t.Group)
+}
+
+// leadTag is the one tag t is grouped under (txjkrm): a row has one
+// heading, so a task with several tags goes under the one hug.toml lists
+// first (the board's order of areas). With none of its tags listed, its
+// own first tag; with no tags, "" (the "no tag" heading).
+func (m model) leadTag(t task.Task) string {
+	lead, at := "", -1
+	for _, tg := range t.Labels {
+		if i, ok := m.tagOrder[tg]; ok && (at == -1 || i < at) {
+			lead, at = tg, i
+		}
+	}
+	if lead == "" && len(t.Labels) > 0 {
+		lead = t.Labels[0]
+	}
+	return oneLine(lead)
 }
 
 // buildGroups puts raw, a section's rows in their order, under headings.
@@ -188,8 +209,8 @@ func (m *model) setFold(key string, fold bool) {
 	m.visibleGen = nextVisibleGen()
 }
 
-// setGrouping groups rows by g ("", "group", "epic"); "next" cycles flat →
-// group → epic. The selected task stays selected.
+// setGrouping groups rows by g ("", "group", "epic", "tag"); "next"
+// cycles flat → group → epic → tag. The selected task stays selected.
 func (m *model) setGrouping(g string) bool {
 	switch g {
 	case "next":
@@ -197,9 +218,9 @@ func (m *model) setGrouping(g string) bool {
 		g = groupings[(at+1)%len(groupings)]
 	case "flat":
 		g = ""
-	case "", "group", "epic":
+	case "", "group", "epic", "tag":
 	default:
-		m.message = "unknown grouping: " + g + "\nfix: : grouping flat, : grouping group or : grouping epic"
+		m.message = "unknown grouping: " + g + "\nfix: : grouping flat, : grouping group, : grouping epic or : grouping tag"
 		return false
 	}
 	t, ok := m.rowTask()
@@ -231,6 +252,9 @@ func (m model) headLabel(v string) string {
 			return "no epic"
 		}
 		return "↳" + v + " " + m.epicTitle[strings.ToLower(v)]
+	}
+	if m.grouping == "tag" && v == "" {
+		return "no tag"
 	}
 	if v == "" {
 		return "no group"

@@ -15,7 +15,7 @@ e             edit in $VISUAL, else $EDITOR, git core.editor, vi
 m             grab to move: j/k move it, Enter places it
 y, P p        yank, then paste above / below
 c             clear all filters
-g             group rows: flat, group, epic
+g             group rows: flat, group, epic, tag (tag: first listed tag)
 
 EVERYWHERE
 v o            view: overview
