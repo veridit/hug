@@ -47,6 +47,8 @@ func (s *session) boardFindings(ctx context.Context, cwd string, live *task.Live
 		people, e := task.People(s.r.Dir)
 		if e == nil {
 			fs = append(fs, task.PeopleFindings(people, ts)...)
+			// A question written as a wait (agxqax).
+			fs = append(fs, task.PersonWaitFindings(people, ts)...)
 		}
 		// Harness session state, not file content (v3k6cp, 9ahvgt): a
 		// person in [people] is never judged.
