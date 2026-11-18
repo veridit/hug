@@ -45,6 +45,7 @@ landed 77806c9 on main (317f5c2..77806c9). Red first: TestReviewMove failed 'unk
 Reflection (dismissed, 2026-11-17, nautilus): nothing: the wait/design --show code was a clear template; crab's ruling on doing/review came before code.
 landed 63231d4 on main 2026-11-17: Merge v0.7.45 into main (6w0gve stays under Unreleased)
 shipped in v0.7.46 (77806c9)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G11, nothing misled (any gap named was fixed in this ticket).
 ## History
 - 2026-11-17T19:25 todo -> doing/active (take)
 - 2026-11-17T19:38 doing/active -> done (done); was doing_since: 2026-11-17T19:25
