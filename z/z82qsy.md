@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T12:53"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review"
+waiting_since: "2026-11-18T13:34"
+waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -46,3 +49,4 @@ check 3: pastTense maps take->took, give back->gave back, done->marked done, dro
 check 4: commit ef9c060f on branch z82qsy. Viewing a file, the screen holds: crumb 'HUG TASKS · list › 000001 › compiler/000001/screen.ans · 80 B · 7 of 7', then the attachment note dim ('screen capture from hug tui' or 'detail mock', parsed from the task's 'file:NAME (N bytes, sha256:H) WHY' note, with no line when there is no note and never the .md's H1), then a full-width rule, the file, a full-width rule, then the message line, input line and keys outside the frame. Chips, dates, lint and task title are gone. The 'File · %' footer is gone (the keys are on the bar). TestFileViewerFramesOnlyTheFile (80 and 140, .ans plus .md attached via Store.Attach) failed first at z82qsy_test.go:172 (crumb 'HUG TASKS · list › 000001', no file), and TestFileViewerNoNoteNoLine failed first at :202 (chips under the crumb). Both pass now. Golden testdata/detail/file-frame.txt is new. glance.txt, markdown-file.txt and file-rule.txt are rewritten to the frame, diffs reviewed. TestGlanceStepsAndScrolls runs at 80x9 so escapes.log still scrolls in the taller frame. Full suite: 34 ok, 0 FAIL ('ok github.com/veridit/hug/huginn/internal/tui 102.014s'). CI for commit 1 (d24bfd34) is run 44302950954, completed success. CI for this commit is 44305041418.
 ## History
 - 2026-11-18T12:53 todo -> doing/active (take)
+- 2026-11-18T13:34 doing/active -> doing/waiting (wait)
