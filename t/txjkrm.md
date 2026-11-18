@@ -64,6 +64,8 @@ crab review 16:45 local: check 4 accepted. 1506435b on c22587c6: TUI label filte
 Question for Jørgen (with check 1): the TUI tag filter's picker letter is l (f l, then the tag) because t is type. Keep l, or another letter?
 crab 18:35 local: stacked as 0a1fdbe4 + 5924cfdb on ybbfsa b2232191 (ci/txjkrm-ec6z6j-rebased c7ccbca7), code identical to mizaru's f85ac6ec, build+vet ok. Includes the pw0t19 wrong-count fix in tags.go.
 landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
+landed 709e327 on main 2026-11-18: Tags listed per board: hug.toml tags, unlisted-tag lint, hug task tags, set…
+landed dfe1aee on main 2026-11-18: TUI: tag filter (was label) and g grouping by tag, first listed tag (txjkrm…
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
