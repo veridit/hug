@@ -37,4 +37,4 @@ filter: none · sort: rank
 Rows 1–32 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
 All tasks · : filters and commands
 
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request              hug v0.0.0
+j/k move · Space mark · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request

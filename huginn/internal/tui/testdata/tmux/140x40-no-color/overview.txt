@@ -37,4 +37,4 @@ filter: none · sort: rank
 ↓ ◑ 1/2 ·000022   terminal runtime  bug     critical active    runtime Bug task 22: make the terminal workflow observable with a deliberate…
 All tasks · : filters and commands · ! lint finding · ↳ epic
 
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request              hug v0.0.0
+j/k move · Space mark · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request

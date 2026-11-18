@@ -21,4 +21,4 @@ Rows 1–2 of 2 · ! lint finding · ↳ epic · depends = a dependency is not d
 
 state=todo · type=feature · find=task · Esc clears
 
-j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
+j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …

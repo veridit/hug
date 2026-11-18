@@ -21,4 +21,4 @@ filter: none · sort: rank
 Rows 1–16 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
 All tasks · : filters and commands
 
-j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
+j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …
