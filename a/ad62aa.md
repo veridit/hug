@@ -34,12 +34,13 @@ iwazaru 34r1ft run: 2 git commit WaitDelay errors + TestDeduceTwoClonesOneLine a
 ## Acceptance
 - [x] Cause named in a note with a log line or reproduction
 - [ ] A test or amplified reproduction fails first, then passes -count=50 niced under load after the fix
-- [ ] No timeout raised and no retry added
+- [x] No timeout raised and no retry added
 
 ## Notes
 
 
 Cause (tigress): gitbranch.runAt (gitbranch.go:185-200) and catchup.go blob() run git with WaitDelay = 2 s and read stdout/stderr through pipes (c.Output). After git exits, os/exec Wait -> awaitGoroutines starts a 2 s wall-clock timer for the pipe-copying goroutines (go/src/os/exec/exec.go awaitGoroutines). When the test process is CPU-starved (niced at load 300-700), those goroutines don't run within 2 s, so a git that exited 0 returns ErrWaitDelay 'exec: WaitDelay expired before I/O complete' and its stdout is lost. On a commit the commit landed, but hug reports failure (34r1ft-full2.txt: '[hug/tasks d05097d] hug task wait xbqnj6 ... exec: WaitDelay expired before I/O complete'). On Locate's rev-parse, openBoard maps any error to 'hug task needs a Git checkout as its working directory' (cli.go:266), which is TestDeduceTwoClonesOneLine 'deduce_test.go:150: [sync]: hug task needs a Git checkout' and TestLintStaleOwnerSessions. Reproduction, main 477696be, gitbranch.Locate in a process with 400 spinning goroutines on GOMAXPROCS=1, 90 s: 'busy=400 Locate calls=282 WaitDelay errors=5 other errors=0', first: 'rev-parse --path-format=absolute --show-toplevel --git-common-dir: exec: WaitDelay expired before I/O complete'. A minimal os/exec probe of the same shape gives 'mode=pipe busy=400 runs=73 errors=4 (git exited 0 in 4) empty stdout 4', and with stdout/stderr to files 'errors=0'. iwazaru's runs (34r1ft HEADs) contain 6ecd08fc, so maintenance is not the cause. A full niced cli run on 477696be passed (load 192-402): the flake needs heavier starvation.
 check 1: Cause: gitbranch.runAt and catchup blob() read git's output through pipes with WaitDelay 2 s. After git exits, os/exec gives the pipe-copying goroutines 2 s, and a CPU-starved niced process misses that. A git that exited 0 then returns 'exec: WaitDelay expired before I/O complete' and its output is lost. Reproduction on 477696be (gitbranch.Locate, 400 spinning goroutines, GOMAXPROCS=1): 'busy=400 Locate calls=549 WaitDelay errors=12 other errors=0', first '--version: exec: WaitDelay expired before I/O complete'. TestDeduceTwoClonesOneLine is the same: openBoard maps Locate's error to 'hug task needs a Git checkout' (cli.go:266).
+check 3: Diff 477696be..f6834e53 touches no timeout (WaitDelay stays 2 s, NetTimeout unchanged) and adds no retry or skip: git's output goes to temp files (huginn/gitbranch/output.go).
 ## History
 - 2026-11-18T20:21 todo -> doing/active (take)
