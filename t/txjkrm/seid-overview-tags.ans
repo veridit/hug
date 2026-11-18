@@ -1,0 +1,27 @@
+[1mHUG TASKS · overview[0m   [2mseid-lang, 2531 tasks · preview for txjkrm: tags on rows, from the real board[0m
+
+[1mASKED · for you[0m  [2m[2][0m
+◔ 2/5  a71qfj  chore           [2m                      [0m  asked:     Your guidance is clear, and you are right; my wording was the problem. Since board layout …  [2morangutan[0m
+○ 2    0h64xj  feature         [2mcompiler              [0m  asked:     #Div question 1 of 4 (design note attached, section #Div). You ruled that possible non-ter…  [2morangutan[0m
+
+[1mWAITING[0m  [2m[5][0m
+◔ 1/6  q70jjy  feature high    [2mcompiler types        [0m  waiting:   its child tickets (the epic advances as they land)                                           [2morangutan[0m
+○ 3    jy00xt  feature high    [2mcompiler types        [0m  waiting:   the King's next-group order after the 2057 batch landing (picked from hug in the morning)    [2morangutan[0m
+○ 3    p39w4a  bug     high    [2mcache                 [0m  waiting:   re-check of its 9 c5-base reds on the new master and a gate slot                             [2morangutan[0m
+○ 4    ntc2e2  feature medium  [2mtooling memcheck      [0m  waiting:   a gate slot for lane/2050-memcheck-empty after the 2057 batch                                [2morangutan[0m
+◔ 1/4  n8zmjw  feature medium  [2mmemcheck              [0m  waiting:   the parity re-run and the King's gate-switch ruling (checks 1, 3, 4); the batch itself lan…  [2morangutan[0m
+
+[1mNEXT UP · rank order[0m  [2m[1239][0m
+○ 3    3yts7q  feature high    [2mcompiler types        [0m  ready      Seal IR and typed AST with abstract ids and fragile-match errors
+○ 4    vagwwf  feature high    [2mcompiler perceus types[0m  ready      IR ownership types: prove every allocation is released exactly once
+◑ 1/2  9kh042  feature medium  [2mcompiler types        [0m  ready      Close the TASK-1995 tc cluster (63 rows) by one type change
+○ 1    552sdh  feature medium  [2mparser                [0m  ready      Replace local-expect shapes with ast_builders expect primitive
+○ 5    q92ye5  feature medium  [2m                      [0m  ready      Compile-time word when @build misses TRMC (split from TASK-1782 AC#3)
+!      eat5rq  feature medium  [2mcodegen runtime       [0m  draft      DESIGN-GATED: unbounded _vrt_compose_env leak per yield-resume cycle
+○ 2    mkvb34  feature medium  [2mcodegen runtime       [0m  ready      C-backend TCO / trampoline (root fix for TASK-027)
+○ 2    8zetdz  feature medium  [2mlang codegen runtime  [0m  ready      Compile-once at function granularity (push claim-or-wait from module to fn-SCC)
+○ 2    y6w988  feature medium  [2mcompiler codegen      [0m  ready      Nomenclature — cache layer rename to Code-* vocabulary
+○ 2    8cynyv  docs    medium  [2mcompiler docs         [0m  ready      Nomenclature Campaign — systematic one-concept-one-name across code + docs
+○ 2    wfwwwy  feature medium  [2mstdlib                [0m  ready      Stdlib Namespace: trie-of-HAMTs implementation
+○ 4    9cv7tj  feature medium  [2mcompiler              [0m  ready      Design-prereq: type-level Nat arithmetic (n+1/n-1) in TYPE position
+

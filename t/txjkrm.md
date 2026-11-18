@@ -49,5 +49,6 @@ file:txjkrm-preview.md (4770 bytes, sha256:ab7fc3a2) design, moved here from tmp
 mizaru 14:45Z: reassigned from nautilus (session gone, crab 14:44Z said take it); take refused 'taken by nautilus (txjkrm)' with only 'fix: hug task next', so used the stale-owner fix hug task set txjkrm --assignee mizaru. Scope from crab: check 1 only (preview + question to jhf); no TUI code until approved.
 
 
+file:seid-overview-tags.ans (3236 bytes, sha256:477072ab) check 1 preview: Seid's overview (ASKED, WAITING, first 12 of NEXT UP) with tags on rows, row order pie, id, type, priority, tags, stage, text (Jørgen 10:28/10:56). Built read-only from ~/Veridit/src/seid-lang/.hug/tasks at 2eef4a7f2 with hug's own Store.Tasks and Stage; tags after the proposed cleanup in seid-tags-proposal.txt
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
