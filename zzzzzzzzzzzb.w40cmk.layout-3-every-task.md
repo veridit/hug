@@ -34,7 +34,7 @@ Front matter, grouped: identity (id, title, type, priority, labels, group, paren
 - [x] A move (J/K, move --before, rebalance) changes only rank: lines, renames nothing, and leaves updated: unchanged; git log --follow is never needed (test)
 - [x] Group moves (mv ID GROUP) edit group: and keep the file and its ID/ folder where they are (test)
 - [x] An old file name or slug still resolves as a ref: hug task show 00i.6ephqk.task-state-stage-hard finds 6ephqk (test)
-- [ ] Memories live on branch hug/memory at .hug/memory/; hug upgrade moves muninn-notes there, and hug mem search finds the same memories before and after (test, plus counts on Jørgen's store)
+- [x] Memories live on branch hug/memory at .hug/memory/; hug upgrade moves muninn-notes there, and hug mem search finds the same memories before and after (test, plus counts on Jørgen's store)
 - [x] Seid's board upgrades on a copy with the same order before and after (2,500 tasks, numbers in a note), before Seid's agent runs it for real
 - [ ] Jørgen links to a task by its path from outside hug and the link survives a reorder
 - [x] Paths follow from the id alone: every task is at .hug/tasks/C/ID.md (C = first character of the id) with its files in .hug/tasks/C/ID/; no group folders remain; hug upgrade on hug's and Statbus's boards (copies) previews it, exits 5, and --apply does it in one commit (test plus counts)
