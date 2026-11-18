@@ -1,0 +1,29 @@
+name: exp-6ep7y2
+# Branch-only experiment E1 for 6ep7y2 (H1: a below-normal pass is starved on
+# Windows under normal-priority load). Never lands on main.
+on:
+  push:
+    branches: ["ci/6ep7y2-*"]
+permissions:
+  contents: read
+jobs:
+  e1:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: E1a priority under load
+        run: go test -count=1 -v -timeout 20m -run "^TestExp6ep7y2Priority$" ./huginn/internal/cli/
+        env:
+          EXP_6EP7Y2: "1"
+      - name: E1b real pass under load
+        if: always()
+        run: go test -count=1 -v -timeout 20m -run "^TestExp6ep7y2Pass$" ./huginn/internal/cli/
+        env:
+          EXP_6EP7Y2: "1"
