@@ -1,13 +1,18 @@
 ---
 id: a0p5kt
 title: "hug refuses an unknown HUG_* variable instead of ignoring it"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T03:41"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Known today (git grep on main): HUG_HOME, HUG_SYNC, HUG_MODEL, HUG_USER, HUG_NO_
 - [ ] hug help lists every user-facing variable with one line each
 
 ## Notes
+
+
+## History
+- 2026-11-18T03:41 todo -> doing/active (take)
