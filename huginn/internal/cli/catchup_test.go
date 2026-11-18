@@ -199,6 +199,7 @@ func TestCatchUpKeepsBothSidesValueInNote(t *testing.T) {
 			}
 			execute(t, a, "set", ids[2], "--priority", "high")
 			execute(t, a, "sync")
+			git(t, boardB, "fetch", "-q", "origin") // explicit known cross-layout catch-up
 			code, out := runText(b, "upgrade", "--apply")
 			t.Logf("B's upgrade --apply: exit %d\n%s", code, out)
 			want := "\n      " + ids[2] + " priority: kept the board's high; this clone's low is in a note on " + ids[2] + "\n"
@@ -245,6 +246,7 @@ func TestCatchUpStopsOnUnreadableFileAndRestores(t *testing.T) {
 			}
 			execute(t, a, "note", ids[2], "A's note")
 			execute(t, a, "sync")
+			git(t, boardB, "fetch", "-q", "origin") // explicit known cross-layout catch-up
 			head := git(t, boardB, "rev-parse", "HEAD")
 			bad := git(t, boardB, "rev-parse", "--short=12", "HEAD")
 			code, out := runText(b, "upgrade", "--apply")
@@ -255,7 +257,7 @@ func TestCatchUpStopsOnUnreadableFileAndRestores(t *testing.T) {
 			if runtime.GOOS == "windows" {
 				q = "\""
 			}
-			if code == 0 || !strings.Contains(out, wantStart) || !strings.Contains(out, wantEnd) || !strings.HasSuffix(out, " show "+bad+" -- "+q+p+q+"\n") {
+			if code == 0 || !strings.Contains(out, wantStart) || !strings.Contains(out, wantEnd) || !strings.HasSuffix(out, " show "+q+head+":"+p+q+"\n") {
 				t.Fatalf("exit %d, want %q ... %q:\n%s", code, wantStart, wantEnd, out)
 			}
 			if now := git(t, boardB, "rev-parse", "HEAD"); now != head {

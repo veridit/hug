@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
@@ -12,17 +13,22 @@ import (
 // file it changed with the board's by task.MergeTask (w40cmk check 9, crab
 // 04:44).
 func catchUpTranslator() gitbranch.Translator {
+	same := func(a, b []byte) bool { return (a == nil) == (b == nil) && bytes.Equal(a, b) }
 	return gitbranch.Translator{
 		Names:   task.Layout3Names,
 		Content: task.Layout3Content,
 		Layout:  task.LayoutOf,
+		Recover: func(p string, base, ours, theirs []byte) bool {
+			_, taskFile := task.IDPath(p)
+			return !taskFile && !same(ours, base) && !same(theirs, base) && !same(ours, theirs)
+		},
 		Merge: func(p string, base, ours, theirs []byte, c gitbranch.Replayed) ([]byte, []string, error) {
 			if _, ok := task.IDPath(p); !ok {
 				// Not a task file (hug.toml, a task's files): the board's
 				// when both changed it, else the side that did. The
 				// layout in hug.toml is the board's either way.
 				switch {
-				case theirs == nil, string(theirs) == string(base):
+				case same(theirs, base):
 					return ours, nil, nil
 				default:
 					return theirs, nil, nil
@@ -83,7 +89,7 @@ func (a *App) catchUp(s *session, dry bool) ([]string, error) {
 	if dry {
 		head = fmt.Sprintf("would: the remote board moved to layout %d; %d commits of this clone are replayed onto it, one by one, each with its own message (nothing pushed until the next sync)", task.Layout, replay)
 	}
-	lines := []string{head}
+	lines := []string{head, "append order: explicit times compare actual instants; untimed prose keeps board-before-local order (no chronology inferred)"}
 	for _, c := range list {
 		short := c.Commit
 		if len(short) > 12 {

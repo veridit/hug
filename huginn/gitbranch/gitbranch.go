@@ -975,6 +975,12 @@ func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...O
 		if rem != "origin" && len(strings.Fields(remotes)) > 1 {
 			continue
 		}
+		// No old local layout and no known old remote branch means there
+		// is no branch rename to perform. Do not make local file-layout
+		// migrations depend on a reachable remote.
+		if !m.LocalBranch && !m.Worktree && !has("refs/remotes/"+rem+"/"+fromBranch) {
+			continue
+		}
 		heads, e := r.runAt(root, "ls-remote", "--heads", rem, "refs/heads/"+fromBranch, "refs/heads/"+toBranch)
 		if e != nil {
 			return m, e
