@@ -2,6 +2,7 @@ HUG TASKS · overview   60/60 tasks · ! 4 broken · 5 advice
 [overview]   list    board    !lint
 todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
+  ASKED · for you  [0] · None
 > IN PROGRESS · assigned to  [14] · 1–13 shown
 > ◑ 1/2  000002   bug     critical active    compiler Bug task 02: make the terminal workflow observable        alice · feat/terminal-000002
   ◑ 1/2  000006   feature high     active    runtime Feature task 06: make the terminal workflow observable     bob
@@ -17,7 +18,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2 ·000050   docs    high     active    runtime Docs task 50: make the terminal workflow observable with…  alice · feat/terminal-000050
 ↓ ◑ 1/2  000054   spike   medium   active    docs Spike task 54: make the terminal workflow observable          bob
 
-  WAITING · on you first  [1]
+  WAITING  [1]
   ◑ 1/2 !000026   feature high     depends   docs Feature task 26: make the terminal workflow observable        carol · feat/terminal-000026
 
   NEXT UP · rank order  [15] · 1–3 shown
@@ -34,7 +35,6 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long ti…
   ○ 2   !000013   chore   medium   depends   runtime Chore task 13: make the terminal workflow observable
 ↓ ◑ 1/2 ·000022   bug     critical active    runtime Bug task 22: make the terminal workflow observable with a deliberately long title that…
-
 All tasks · : filters and commands · ! lint finding · ↳ epic
 
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order                        hug v0.0.0
