@@ -79,6 +79,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"unknown condition", "unknown-condition"},
 	{"owner ", "stale-owner"},
 	{"nobody known: ", "unknown-person"},
+	{"a question waits as a wait: ", "wait-on-person"},
 	{"backlog leftover", "backlog-leftover"},
 }
 

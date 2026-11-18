@@ -258,6 +258,9 @@ func (s *Store) askable(d *Document, q Question) (what, who, check, show string,
 	if d.Task.State != "doing" {
 		return "", "", "", "", refuse(d.Task, "doing/asked", "hug task take "+id+" --model MODEL")
 	}
+	if who, e = s.answerer(id, who, what); e != nil {
+		return "", "", "", "", e
+	}
 	if n := len(d.Task.Acceptance); q.Check != 0 && (q.Check < 1 || q.Check > n) {
 		return "", "", "", "", &Error{Kind: "bad-check", ID: id, Value: fmt.Sprintf("--check %d: %s has %d checks", q.Check, id, n), Fix: fmt.Sprintf("hug task ask %s --to %s --check %d %q", id, who, max(1, n), oneLineFix(what))}
 	}
