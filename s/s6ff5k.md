@@ -35,6 +35,8 @@ Know whether agents act on the recall header's Fix line, and add an off-topic si
 ## Requests
 - 2026-11-18T12:23 request 1 by jhf:
   Any feedback to collect from our instances? Maybe you can assign another agent to go over this to see if there's something we have learned
+- 2026-11-18T12:23 request 2 by jhf:
+  And if there's nothing we have learned, if we can improve our instructions so that we can learn something.
 
 ## Notes
 
@@ -87,3 +89,4 @@ file:real-spot.py.txt (1943 bytes, sha256:dbfe9f2d)
 - 2026-11-18T02:10 doing/active -> doing/waiting (wait)
 - 2026-11-18T02:44 doing/waiting -> doing/waiting (settle: one stage, waiting); was asked_by: hatchling; asked_for: crab; asked_since: 2026-11-17T20:20; asked_what: H3 failed Part 2 (10 wrong vs bar 6); parked per crab ruling, no fourth arm
 - 2026-11-18T12:23 request 1 by jhf
+- 2026-11-18T12:23 request 2 by jhf
