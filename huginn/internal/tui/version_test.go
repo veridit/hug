@@ -47,3 +47,20 @@ func TestVersionCorner(t *testing.T) {
 		t.Fatalf("width 40: %q", ansi.Strip(m.keyBar()))
 	}
 }
+
+// At 140 columns every list view's key bar leaves room for the version
+// corner, a long one too (rxr4z8, crab 21:26): the next hint that crosses
+// it fails here instead of silently dropping the version.
+func TestWideBarKeepsTheVersion(t *testing.T) {
+	m := manyModel(t)
+	m.opts.Version = "v0.10.100"
+	m.width, m.height = 140, 40
+	m.resize()
+	for _, view := range []string{"overview", "list", "board", "lint"} {
+		v := m
+		v.setView(view)
+		if bar := strings.TrimRight(ansi.Strip(v.keyBar()), " "); !strings.HasSuffix(bar, "hug v0.10.100") {
+			t.Fatalf("%s at 140: the key bar has no room for the version (%d wide):\n%q", view, lipgloss.Width(bar), bar)
+		}
+	}
+}
