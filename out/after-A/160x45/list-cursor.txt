@@ -1,0 +1,45 @@
+HUG TASKS · list   173/173 tasks · ! 5 broken · 28 advice · ? 14 for you
+view: overview  list  board  !lint                                                                       │ todo 25 · doing 35 · depends 1 · done 109 · dropped 3
+filter: none · sort: rank
+    ID      ✓       TYPE    PRIORITY STAGE     TITLE
+    6ephqk  ● 9     feature          done      ⎘3 Task state and stage: a hard-coded tree replaces status
+    v3k6cp  ● 4     bug              done      Board nudges when the assignee is not the agent doing the work
+    102bc0  ● 4     bug              done      TUI rows always fit one line at any terminal width
+    tzc9hb  ● 4     feature high     done      Agents use todos for their own next steps, tickets for everything else
+    tb0dra  ◕ 4/5   feature          waiting   Agents reflect on the instructions and propose fixes
+    mcvfbz  ● 3     bug     high     done      Search keeps the found task selected when you leave it
+    9xfnwr  ● 4     feature high     done      u inside a task goes back up to the list
+  · 9taa9d  ◔ 1/3   feature high     ready     req 1 Merge muninn and huginn into one hug binary
+    zrjgyr  ● 1     bug     high     done      CI red on macOS and Windows since 6 Nov
+    mqzpyg  ● 6     feature high     done      dream Dreaming: consolidate memories, hand judgement to the driving agent
+    4emme8  ● 2     bug     high     done      CI green on Windows again (lint, auto-refresh and memory worktree tests)
+    8bsx4y  ● 2     bug     medium   done      TUI: inline code in a quiet tint, not red
+    kx2ndm  ● 5     feature high     done      TUI: groups and epics visible and collapsible
+    16dxsr  ● 4     feature high     done      Depend on a group or epic, and on a stated condition
+    rzbgqe  ● 2     chore   high     done      placement Apply tidy place plan for home and Projects captures
+    rr378d  ● 2     chore   medium   done      placement Review and apply 226 duplicate retirements
+    4k35r1  ● 2     bug     medium   done      recall Save cue fires repeatedly on one message
+    sfa8w4  ● 5     feature high     done      Acceptance checks can be struck out as not relevant, with a reason
+    a1dx7s  ○ 3     chore            ready     seid-lang: restore epic links and work the lint list
+    p277bp  ○ 3     docs             ready     ↳gem59b Brand: hug as the tool, Huginn and Muninn as mascots
+    pbh9xq  ● 5     feature medium   done      Lint: separate broken from not up to par
+  · 34r1ft  ○ 2     feature medium   ready     sync·↳9taa9d Per-repo setting: store project memories in the repo or not
+    7js5hw  ● 1     bug     medium   done      tui TUI: human names for places
+    63tyrz          chore   medium   dropped   process Use huginn for muninn work
+    66ex4y  ● 1/1   chore   medium   ready     capture ⎘6 Capture: daily quality check
+  · ta306h  ○ 1     spike   low      ready     recall·↳d634kr Short-message topic check experiment
+  · gav9nw  ○ 1     spike   low      ready     design·↳9taa9d Design: personal vs shared memories
+  · hpqt99  ○ 1     spike   low      ready     design Design: imported data pass
+  · vk9td0  ○ 1     spike   high     waiting   dream Decide when dream items are handed out
+    2easb0  ● 1     feature low      done      design Self-guiding CLI hints
+  · h0t41j  ○ 1     feature low      ready     later·↳gem59b Web UI
+  · j0xa38  ○ 1     spike   low      ready     later Hosted sync service (maybe)
+    zmy9rw  ● 1     bug     high     done      Capture records who said it
+    3z7zrs  ● 1     bug              done      forget works on any memory shown to you
+    n3ybbc          feature          dropped   probe
+    6tj2b8  ● 3     feature          done      huginn: lint codes, board --wide, init says what it did
+↓   5z0rdq  ● 2     chore            done      Archive veridit/muninn and veridit/huginn, point to hug
+Rows 1–37 of 173 · ! lint finding · ↳ epic · depends = a dependency is not done
+All tasks · : filters and commands
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                     hug dev

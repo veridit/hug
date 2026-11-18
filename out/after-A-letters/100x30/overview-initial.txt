@@ -1,0 +1,30 @@
+HUG TASKS · overview   173/173 tasks · ! 5 broken · 28 advice · ? 14 for you
+view: overview  list  board  !lint           │ todo 25 · doing 35 · depends 1 · done 109 · dropped 3
+filter: none · sort: rank
+> ASKED · for you  [14] · 1–3 shown · all asked
+    bxqtkt  ○ 3     spike            ⎘1 Contributions: agent feedback and GitHub…   kestrel
+    └─ asked: approve the design (attached: ▸ bxqtkt.md), check 1, and answer Q1-Q6 a…  since 17 Nov
+    vzghj8  ◑ 2/3   bug     high     TUI search finds a task by its imported id …   wyvern
+↓   5z4zt4  ◑ 2/4   feature high     ⎘2 Attach screenshots and screen captures t…   nautilus
+
+  IN PROGRESS · assigned to  [3] · 1–2 shown · all active · all feature
+    4vxqp4  ○ 2              Board lint: a task the message only mentions is not…   crab-engineer
+↓ ! 6ep7y2  ◔ 1/4            Windows CI: a background syncer held the queue 30 s…   tigress
+
+  WAITING  [18] · 1–2 shown · all waiting
+    tb0dra  ◕ 4/5   feature          Agents reflect on the instructions and prop…   hatchling
+↓ · vk9td0  ○ 1     spike   high     dream Decide when dream items are handed out   hatchling
+
+  NEXT UP · rank order  [20] · 1–2 shown
+    a1dx7s  ○ 3     chore            ready     seid-lang: restore epic links and work the lint list
+↓   p277bp  ○ 3     docs             ready     ↳gem59b Brand: hug as the tool, Huginn and Muninn a…
+
+  RECENTLY DONE · last closed  [112] · 1–1 shown
+↓   4c7327  ● 2     bug              done      ⎘1 Secret check flags 'task-900' in a file path as …
+
+  LINT · tasks needing attention  [19] · 5 broken · 28 advice · 1–2 shown
+  · 9taa9d  ◔ 1/3   feature high     ready     req 1 Merge muninn and huginn into one hug binary
+↓ · 34r1ft  ○ 2     feature medium   ready     sync·↳9taa9d Per-repo setting: store project memori…
+All tasks · : filters and commands · ! lint finding · ↳ epic
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column

@@ -27,6 +27,15 @@ type theme struct {
 	// column tints the column the cursor marks (e3sevr); columnCursor is
 	// that column's cell on the cursor row.
 	column, columnCursor   lipgloss.Style
+	// PROTOTYPE (mock/grid): the row header (id cell), its selected form,
+	// the column headings and the selected heading, the owner cell, and
+	// the view line's two key tiers.
+	idCell, rowHeader, colHead, colHeadSelected, owner lipgloss.Style
+	viewPrefixKey, viewKey, viewCurrent, viewNext       lipgloss.Style
+	// cursor is the one "you are here" cursor: an underline that blinks
+	// (vBlinkRate, the bubbles cursor's 530 ms). Shared with the answer
+	// box cursor (qpp30y), so both read as the same thing.
+	cursor lipgloss.Style
 	progress               lipgloss.Style // a task partly ticked (d8yx7y)
 	status, kind, priority map[string]lipgloss.Style
 }
@@ -61,6 +70,25 @@ func newTheme() theme {
 	// without colour too (NO_COLOR); on the cursor row the row's tint, bold.
 	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)
 	t.columnCursor = t.selected.Underline(true)
+	// PROTOTYPE (mock/grid): one selection tint, used in two places only:
+	// the selected row's id cell and the marked column's heading. The
+	// section headings keep their bold state colour on the plain
+	// background, so the two never look alike.
+	selTint := lipgloss.AdaptiveColor{Dark: "#2b5a78", Light: "#bfe3f5"}
+	t.idCell = color("#00bfff", "#006c9c")
+	t.rowHeader = base.Background(selTint).Foreground(lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#0b1620"}).Bold(true)
+	t.colHead = color("#8795a8", "#586474")
+	t.colHeadSelected = base.Background(selTint).Foreground(lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#0b1620"})
+	t.owner = color("#9fb3c8", "#3d4a5a")
+	// The view line: v in one colour (the prefix), the view letters in a
+	// second (the second step), the current view's name normal, the rest dim.
+	// Amber is taken (waits on you), red is a problem: v is the accent
+	// cyan, bold; the second-step letters a soft violet.
+	t.viewPrefixKey = color("#00bfff", "#006c9c").Bold(true)
+	t.viewKey = color("#c9b3ff", "#6a3fb0")
+	t.viewCurrent = base
+	t.viewNext = color("#c9b3ff", "#6a3fb0").Underline(true)
+	t.cursor = color("#00bfff", "#006c9c").Underline(true).Bold(true)
 	for i, s := range []string{"todo", "doing", "done", "depends", "dropped"} {
 		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", "#ff8585", "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", "#ae2525", "#586474"}[i])
 	}
@@ -183,7 +211,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	// whether a row has it or not: "↓ ◐ 3/4 !89y0b7".
 	pointer := " "
 	if selected {
-		pointer = ">"
+		pointer = " " // PROTOTYPE (mock/grid): the id cell is the row cursor
 		if m.grab.active && t.Path == m.grab.path {
 			pointer = "≡" // grabbed: it moves with j/k (3xcesq)
 		}
@@ -228,6 +256,10 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 		if alias := matchedAlias(t, q); alias != "" {
 			title += m.styles.dim.Render(" · " + alias)
 		}
+	}
+	if mockOn() {
+		// PROTOTYPE (mock/grid): the spreadsheet row.
+		return m.gridRow(t, width, selected, compact, pointer, title, word, c)
 	}
 	if compact {
 		// Board columns are narrow: type and priority are one coloured
@@ -316,6 +348,9 @@ func (m model) columns(width int, compact bool) string {
 // headerCell draws it, so the column the cursor marks is underlined and the
 // column the rows are ordered by carries ▲ or ▼ (bejd89).
 func (m model) columnsOwner(width int, compact bool, c rowCols) string {
+	if mockOn() {
+		return m.gridHeader(width, compact, c) // PROTOTYPE (mock/grid)
+	}
 	s := "  " + m.headerCell(0, "✓", m.progressWidth()) + " " + m.headerCell(1, "ID", idCell-1) + " "
 	if compact {
 		if c.kind {
@@ -447,7 +482,7 @@ func (m model) overviewText() string {
 			label = m.sectionStyle(p).Render(label) + tail + m.sectionStyle(p).Render(strings.Repeat(" ", max(0, m.width-lipgloss.Width(label)-lipgloss.Width(tail))))
 			label = fit(label, m.width)
 		}
-		if p == m.pane {
+		if p == m.pane && !mockOn() {
 			label = m.styles.selected.Render(label)
 		}
 		lines = append(lines, label)
@@ -465,7 +500,7 @@ func (m model) overviewText() string {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
-			if ownerSection(p) && doing.owner > 0 {
+			if ownerSection(p) && doing.owner > 0 && !mockOn() {
 				// Owners get a reserved column, never lost behind a long
 				// title. On the selected row the highlight runs through it,
 				// so the owner reads as part of that row.
@@ -702,10 +737,15 @@ func (m model) boardText() string {
 			label += " · None" // one line, as in the overview (h9zghj)
 		}
 		label = m.styles.status[boardStates[p]].Bold(true).Render(fit(label, width))
-		if p == m.pane {
+		if p == m.pane && !mockOn() {
 			label = m.styles.selected.Render(label)
 		}
 		heading := m.columns(width, true)
+		if p != m.pane && mockOn() {
+			unmarked := m
+			unmarked.column = -1 // PROTOTYPE: only the focused column's heading shows the selection
+			heading = unmarked.columns(width, true)
+		}
 		if len(indices) == 0 {
 			heading = fit("", width)
 		}

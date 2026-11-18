@@ -191,6 +191,8 @@ type model struct {
 	// view letter follows (v o, v i, v b, v !).
 	column                             int
 	pendingV                           bool
+	vBlinkGen                          int  // PROTOTYPE (mock/grid): one press of v
+	vBlinkOff                          bool // PROTOTYPE (mock/grid): the v cursor's blink phase
 	helpTyping                         bool   // typing a help search after "/"
 	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
@@ -1171,6 +1173,14 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 	}
 	switch msg := msg.(type) {
+	case vBlinkMsg:
+		// PROTOTYPE (mock/grid): the pending-v cursor blinks while v waits.
+		if (!m.pendingV && !cellBlink()) || msg.gen != m.vBlinkGen {
+			m.vBlinkOff = false
+			return m, nil
+		}
+		m.vBlinkOff = !m.vBlinkOff
+		return m, m.vBlink()
 	case tea.WindowSizeMsg:
 		// Some PTYs report zero before their first usable size is available.
 		// Keep the default or last layout until both dimensions are known.
@@ -1321,7 +1331,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k == "v" {
 			m.pendingV = true
 			m.message = viewPrefix()
-			return m, nil
+			m.vBlinkGen++
+			m.vBlinkOff = false
+			return m, m.vBlink()
 		}
 		// After an edit that broke the file, e goes straight back into the
 		// editor on that task: the notice is the question (rx74bp).

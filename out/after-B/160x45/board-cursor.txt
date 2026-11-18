@@ -1,0 +1,45 @@
+HUG TASKS · board   173/173 tasks · ! 5 broken · 28 advice · ? 14 for you
+view: overview  list  board  !lint                                                                       │ todo 25 · doing 35 · depends 1 · done 109 · dropped 3
+filter: none · sort: rank
+  TODO [25]                             > DOING [35]                              DEPENDS [1]                             DONE [109]
+    ID      TITLE         ✓       T P       ID      TITLE         ✓       T P       ID      TITLE         ✓       T P       ID      TITLE         ✓       T P
+  · 9taa9d  req 1 Merge … ◔ 1/3   F H       tb0dra  Agents refle… ◕ 4/5   F         ec6z6j  Send one req… ○ 3     F         6ephqk  ⎘3 Task stat… ● 9     F
+    a1dx7s  seid-lang: r… ○ 3     C       · vk9td0  Decide when … ○ 1     S H                                               v3k6cp  Board nudges… ● 4     B
+    p277bp  Brand: hug a… ○ 3     D       · s6ff5k  ⎘8 Measure a… ◔ 1/3   F                                                 102bc0  TUI rows alw… ● 4     B
+  · 34r1ft  Per-repo set… ○ 2     F M     · n7jbmx  ⎘3 Recall on… ◑ 3/5   S                                                 tzc9hb  Agents use t… ● 4     F H
+    66ex4y  ⎘6 Capture: … ● 1/1   C M       44w1ev  ⎘2 Scale: st… ● 5/5   C M                                               mcvfbz  Search keeps… ● 3     B H
+  · ta306h  Short-messag… ○ 1     S L       bxqtkt  ⎘1 Contribut… ○ 3     S                                                 9xfnwr  u inside a t… ● 4     F H
+  · gav9nw  Design: pers… ○ 1     S L       47sxn2  ⎘1 The board… ◑ 1/2   F H                                               zrjgyr  CI red on ma… ● 1     B H
+  · hpqt99  Design: impo… ○ 1     S L     └─ waiting on the date…  since 05:08                                              mqzpyg  Dreaming: co… ● 6     F H
+  · h0t41j  Web UI        ○ 1     F L     ! zhvkmj  ⎘2 Status co… ◕ 3/4   F                                                 4emme8  CI green on … ● 2     B H
+  · j0xa38  Hosted sync … ○ 1     S L       vzghj8  TUI search f… ◑ 2/3   B H                                               8bsx4y  TUI: inline … ● 2     B M
+  · c3hszg  Recall: user… ◕ 3/4   S         ggydj2  ⎘1 Import is… ◕ 3/4   F H                                               kx2ndm  TUI: groups … ● 5     F H
+  · 6assqk  Recall: lear… ○ 4     S         4vxqp4  Board lint: … ○ 2     F                                                 16dxsr  Depend on a … ● 4     F H
+  · jrj1vq  When-then me… ○ 4     F         5z4zt4  ⎘2 Attach sc… ◑ 2/4   F H                                               rzbgqe  Apply tidy p… ● 2     C H
+    d634kr  Recall quali… ○ 1     F         jr55s8  ⎘1 Model tra… ◕ 3/4   F H                                               rr378d  Review and a… ● 2     C M
+    gem59b  Launch        ○ 1     D         h00cs2  ⎘2 hug mem: … ◑ 2/3   F                                                 4k35r1  Save cue fir… ● 2     B M
+    0sw0dd  TUI navigati… ◔ 1/5   F         e3sevr  ⎘1 TUI keys:… ◑ 9/16  F H                                               sfa8w4  Acceptance c… ● 5     F H
+    4tycwd  Detour scrat… ○ 1     S       ! 0gztsy  Detail: one … ◑ 3/5   F H                                               pbh9xq  Lint: separa… ● 5     F M
+    05r3pg  TUI: context… ○ 6     F H       4s3g5q  Detail view:… ◕ 6/7   F                                                 7js5hw  TUI: human n… ● 1     B M
+  · e4w9ya  Launch posts… ○ 1     D L       tmz060  File viewer:… ◕ 4/5   F                                                 2easb0  Self-guiding… ● 1     F L
+    5dxzxe  Own agent ha… ○ 2     S         qh9ep1  Key prefixes… ◕ 6/8   F                                                 zmy9rw  Capture reco… ● 1     B H
+    txjkrm  ⎘1 Tags: lis… ○ 5     F         ahejza  Filter line … ◕ 6/8   F                                                 3z7zrs  forget works… ● 1     B
+    xgwwhn  Seid switche… ○ 1     F H     ! rxr4z8  ⎘1 In lists,… ○ 6     F                                                 6tj2b8  huginn: lint… ● 3     F
+    fcf4fg  Sync recover… ○ 2     B H       41hhgn  Questions to… ◑ 9/13  F                                                 5z0rdq  Archive veri… ● 2     C
+  ! 4vd1mz  hug mem forg… ● 3/3   B H       hbgybn  Requests: a … ◕ 5/6   F                                                 h176dp  Import and s… ● 5     F
+    8zwy6r  Sync merges … ○ 3     B H       1bbe96  A column tha… ◕ 4/5   F                                                 5g86n6  hug task lay… ● 6     F
+                                            t01kqm  ⎘3 Lint judg… ◕ 5/6   F                                                 npda3r  Task descrip… ● 3     S
+                                            w40cmk  Layout 3: ev… ◕ 10/11 F                                                 wdkq16  Skip record … ● 2     S
+                                            z9q42h  ⎘2 Recall re… ◕ 3/4   B H                                               48hx44  hug setup wi… ● 3     F
+                                            z2vmte  Wait for a d… ◕ 3/4   F H                                               heype5  Promoted tas… ● 2     B M
+                                            qtj177  TUI: a task'… ◑ 2/3   B H                                               x1t1t1  Worktrees: r… ● 7     F H
+                                            mbdfzs  hug mcp serv… ◑ 2/3   B U                                               065wwn  hug task ls … ● 6     B H
+                                          ! 6ep7y2  Windows CI: … ◔ 1/4   F                                                 qawmnb  Recall nudge… ● 3     F
+                                            aqjrv8  req 1 Releas… ○ 1     F                                                 mkzcqr  TUI sort bui… ● 4     F H
+                                            rt80x4  req 1 Releas… ● 3/3   F                                                 mv4vye  TUI detail: … ● 6     F H
+                                        ↓   w2wr9b  Release v0.7… ◑ 2/3   F                                             ↓   jmx10s  TUI help: co… ● 5     F M
+Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low
+Columns 1–4 of 5 · h/l reveals other columns
+All tasks · : filters and commands
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                     hug dev

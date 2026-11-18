@@ -25,15 +25,7 @@ type column struct {
 // gridColumns are the columns rows show, left to right: the pie (checks
 // done), id, type, priority, stage, title, and in IN PROGRESS the owner.
 // A column the width dropped is skipped by the cursor.
-var gridColumns = []column{
-	{"✓", "checks", func(rowCols) bool { return true }},
-	{"id", "id", func(rowCols) bool { return true }},
-	{"type", "type", func(c rowCols) bool { return c.kind }},
-	{"priority", "priority", func(c rowCols) bool { return c.priority }},
-	{"stage", "stage", func(c rowCols) bool { return c.status }},
-	{"title", "title", func(rowCols) bool { return true }},
-	{"owner", "assignee", func(c rowCols) bool { return c.owner > 0 }},
-}
+var gridColumns = buildGridColumns() // PROTOTYPE (mock/grid): in the mock order
 
 // columnLayout is the layout the cursor moves over in the current view:
 // the focused section's rows, with the owner cell in IN PROGRESS.

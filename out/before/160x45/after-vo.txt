@@ -1,0 +1,45 @@
+HUG TASKS · overview   173/173 tasks · ! 5 broken · 28 advice · ? 14 for you
+view: overview  list  board  !lint                                                                       │ todo 25 · doing 35 · depends 1 · done 109 · dropped 3
+filter: none · sort: rank
+> ASKED · for you  [14] · 1–11 shown · all asked
+  ✓        ID       TYPE    PRIORITY TITLE                                                                                                      OWNER
+> ○ 3      bxqtkt   spike  >         ⎘1 Contributions: agent feedback and GitHub intake with minimal bureaucracy                                kestrel
+           └─ asked: approve the design (attached: ▸ bxqtkt.md), check 1, and answer Q1-Q6 at its end · calf                                        since 17 Nov
+  ◑ 2/3    vzghj8   bug     high     TUI search finds a task by its imported id (STATBUS-402)                                                   wyvern
+  ◑ 2/4    5z4zt4   feature high     ⎘2 Attach screenshots and screen captures to a task; the detail shows them inline                          nautilus
+  ◕ 3/4    jr55s8   feature high     ⎘1 Model trailer carries the effort: Model: id/effort, checked per model                                   wyvern
+  ◑ 9/16   e3sevr   feature high     ⎘1 TUI keys: H/L move the column marker; J/K page; marker sits on the cursor row                           nautilus
+  ◑ 2/3    qtj177   bug     high     TUI: a task's detail draws no list hints ('H/L column · order by owner')                                   nautilus
+  ◑ 3/5   !0gztsy   feature high     Detail: one place for what a task asks of you; open with focus on it                                       nautilus
+  ◕ 3/4   !zhvkmj   feature          ⎘2 Status colors: rows and sections share one subtle scheme; done shows a count                            nautilus
+  ◕ 6/8    qh9ep1   feature          Key prefixes: v picks the view (vo vl vb v!), a pending prefix shows its choices                           nautilus
+  ◕ 6/8    ahejza   feature          Filter line becomes 'filter: … · sort: …'; f and s open matching pickers                                   nautilus
+↓ ◕ 4/5    1bbe96   feature          A column that is the same on every row of a section moves into its header                                  nautilus
+
+  IN PROGRESS · assigned to  [3] · all active · all feature
+  ○ 2      4vxqp4            Board lint: a task the message only mentions is not the session's task                                             crab-engineer
+  ◔ 1/4   !6ep7y2            Windows CI: a background syncer held the queue 30 s and no pass ran                                                tigress
+  ○ 3      nch9d4            Sort picker offers default board order explicitly                                                                  macaque
+
+  WAITING  [18] · 1–3 shown · all waiting
+  ◕ 4/5    tb0dra   feature          Agents reflect on the instructions and propose fixes                                                       hatchling
+  ○ 1     ·vk9td0   spike   high     dream Decide when dream items are handed out                                                               hatchling
+↓ ◔ 1/3   ·s6ff5k   feature          ↳d634kr ⎘8 Measure amortized cleanup: forgets and corrections after recall                                 hatchling
+
+  NEXT UP · rank order  [20] · 2–4 shown
+↑ ○ 3      p277bp   docs             ready     ↳gem59b Brand: hug as the tool, Huginn and Muninn as mascots
+  ○ 2     ·34r1ft   feature medium   ready     sync·↳9taa9d Per-repo setting: store project memories in the repo or not
+↓ ● 1/1    66ex4y   chore   medium   ready     capture ⎘6 Capture: daily quality check
+
+  RECENTLY DONE · last closed  [112] · 1–3 shown
+  ● 2      4c7327   bug              done      ⎘1 Secret check flags 'task-900' in a file path as a credential (sk-900)
+  ● 3      t64v7d   bug     high     done      TUI: ? typed in an answer or any text prompt is text, not help
+↓ ● 4      3nhp67   bug     high     done      Stage changes clear the old stage's fields: wait/resume leave asked_* behind
+
+  LINT · tasks needing attention  [19] · 5 broken · 28 advice · 1–3 shown
+  ◔ 1/3   ·9taa9d   feature high     ready     req 1 Merge muninn and huginn into one hug binary
+  ○ 2     ·34r1ft   feature medium   ready     sync·↳9taa9d Per-repo setting: store project memories in the repo or not
+↓ ○ 1     ·ta306h   spike   low      ready     recall·↳d634kr Short-message topic check experiment
+All tasks · : filters and commands · ! lint finding · ↳ epic
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                     hug dev

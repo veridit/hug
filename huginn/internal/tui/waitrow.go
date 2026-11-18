@@ -274,6 +274,9 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 		return ""
 	}
 	indent := 3 + m.progressWidth() // pointer, space, pie, lint mark (e3sevr)
+	if mockOn() {
+		indent = rowHead + 1 // PROTOTYPE (mock/grid): under the id, the row header
+	}
 	if width < 40 {
 		indent = 2
 	}
@@ -290,7 +293,7 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 	}
 	left = ansi.Truncate(left, room, "…")
 	line := left + strings.Repeat(" ", max(0, width-lipgloss.Width(left)-lipgloss.Width(right))) + right
-	if selected {
+	if selected && !mockOn() {
 		return m.styles.selected.Render(fit(line, width))
 	}
 	// The head names the stage in its colour: amber and bold when it

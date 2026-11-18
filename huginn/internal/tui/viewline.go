@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -37,6 +38,9 @@ func pickView(k string) (string, bool) {
 // While v waits the whole line lights up. When the line is tight the
 // counts drop from the right first (dropped, done …), then the separator.
 func (m model) viewLine(summary []string) string {
+	if mockOn() {
+		return m.fitViewLine(m.mockViewLeft(), summary)
+	}
 	base := m.styles.dim
 	if m.pendingV {
 		base = m.styles.accent // the line its prefix belongs to (qh9ep1 check 3)
@@ -60,6 +64,62 @@ func (m model) viewLine(summary []string) string {
 		parts = append(parts, label)
 	}
 	left := key.Render("v") + base.Render("iew: ") + strings.Join(parts, base.Render("  "))
+	return m.fitViewLine(left, summary)
+}
+
+// mockViewLeft is the PROTOTYPE (mock/grid) view line: the two steps of
+// the key trie in two stable colours, v the first (accent cyan, bold), o l
+// b ! the second (violet). The line never recolours as a whole. While v
+// waits, v shows as entered (the selection tint, as a typed key) and the
+// one "you are here" cursor (Jørgen 11:43Z: an underline that blinks
+// gently, the only motion on the screen; shared with the answer box,
+// qpp30y) stands in the slot after "view:", where the second key goes.
+// It goes when the second key is chosen. MOCKGRID_VNEXT=letters is the
+// alternative: the four second-step letters underlined, static.
+func (m model) mockViewLeft() string {
+	dim, cur := m.styles.dim, m.styles.viewCurrent
+	vkey := m.styles.viewPrefixKey.Render("v")
+	if m.pendingV {
+		vkey = m.styles.rowHeader.Render("v")
+	}
+	letters := os.Getenv("MOCKGRID_VNEXT") == "letters"
+	parts := []string{}
+	for _, v := range views {
+		style := dim
+		if v.name == m.view && !m.detail {
+			style = cur
+		}
+		k := m.styles.viewKey
+		if m.pendingV && letters {
+			k = m.styles.viewNext
+		}
+		label := ""
+		if i := strings.Index(v.name, v.key); i >= 0 {
+			label = style.Render(v.name[:i]) + k.Render(v.key) + style.Render(v.name[i+1:])
+		} else {
+			label = k.Render(v.key) + style.Render(v.name)
+		}
+		parts = append(parts, label)
+	}
+	slot := " "
+	if m.pendingV && !letters {
+		slot = m.cursorCell(" ")
+	}
+	return vkey + dim.Render("iew:") + slot + strings.Join(parts, dim.Render("  "))
+}
+
+// cursorCell draws text as the one "you are here" cursor: underlined in
+// the cursor colour while the blink is on, plain while it is off.
+func (m model) cursorCell(text string) string {
+	if m.vBlinkOff {
+		return text
+	}
+	return m.styles.cursor.Render(text)
+}
+
+// fitViewLine puts the state counts right of left, dropping them from the
+// right while the line is tight.
+func (m model) fitViewLine(left string, summary []string) string {
 	sep := m.styles.dim.Render("│ ")
 	for n := len(summary); n > 0; n-- {
 		right := strings.Join(summary[:n], m.styles.dim.Render(" · "))

@@ -1,0 +1,45 @@
+HUG TASKS · overview   173/173 tasks · ! 5 broken · 28 advice · ? 14 for you
+view: overview  list  board  !lint                                                                       │ todo 25 · doing 35 · depends 1 · done 109 · dropped 3
+filter: none · sort: rank
+  ASKED · for you  [14] · 1–3 shown · all asked
+  ○ 3      bxqtkt   spike            ⎘1 Contributions: agent feedback and GitHub intake with minimal bureaucracy                                kestrel
+  ◑ 2/3    vzghj8   bug     high     TUI search finds a task by its imported id (STATBUS-402)                                                   wyvern
+↓ ◑ 2/4    5z4zt4   feature high     ⎘2 Attach screenshots and screen captures to a task; the detail shows them inline                          nautilus
+
+  IN PROGRESS · assigned to  [3] · all active · all feature
+  ○ 2      4vxqp4            Board lint: a task the message only mentions is not the session's task                                             crab-engineer
+  ◔ 1/4   !6ep7y2            Windows CI: a background syncer held the queue 30 s and no pass ran                                                tigress
+  ○ 3      nch9d4            Sort picker offers default board order explicitly                                                                  macaque
+
+  WAITING  [18] · 1–3 shown · all waiting
+  ◕ 4/5    tb0dra   feature          Agents reflect on the instructions and propose fixes                                                       hatchling
+  ○ 1     ·vk9td0   spike   high     dream Decide when dream items are handed out                                                               hatchling
+↓ ◔ 1/3   ·s6ff5k   feature          ↳d634kr ⎘8 Measure amortized cleanup: forgets and corrections after recall                                 hatchling
+
+> NEXT UP · rank order  [20] · 1–12 shown
+  ✓        ID       TYPE    PRIORITY STAGE     TITLE
+  ○ 3      a1dx7s   chore            ready     seid-lang: restore epic links and work the lint list
+  ○ 3      p277bp   docs             ready     ↳gem59b Brand: hug as the tool, Huginn and Muninn as mascots
+  ○ 2     ·34r1ft   feature medium   ready     sync·↳9taa9d Per-repo setting: store project memories in the repo or not
+> ● 1/1    66ex4y   chore  >medium   ready     capture ⎘6 Capture: daily quality check
+  ○ 1     ·ta306h   spike   low      ready     recall·↳d634kr Short-message topic check experiment
+  ○ 1     ·gav9nw   spike   low      ready     design·↳9taa9d Design: personal vs shared memories
+  ○ 1     ·hpqt99   spike   low      ready     design Design: imported data pass
+  ○ 1     ·h0t41j   feature low      ready     later·↳gem59b Web UI
+  ○ 1     ·j0xa38   spike   low      ready     later Hosted sync service (maybe)
+  ◕ 3/4   ·c3hszg   spike            ready     ↳d634kr Recall: user-weighted BM25F and best-passage scoring in muninn search
+  ○ 4     ·6assqk   spike            ready     ↳d634kr Recall: learned 'not when' triggers and a local candidate rule
+↓ ○ 4     ·jrj1vq   feature          ready     ↳d634kr When-then memories: triggers stated at write time
+
+  RECENTLY DONE · last closed  [112] · 1–3 shown
+  ● 2      4c7327   bug              done      ⎘1 Secret check flags 'task-900' in a file path as a credential (sk-900)
+  ● 3      t64v7d   bug     high     done      TUI: ? typed in an answer or any text prompt is text, not help
+↓ ● 4      3nhp67   bug     high     done      Stage changes clear the old stage's fields: wait/resume leave asked_* behind
+
+  LINT · tasks needing attention  [19] · 5 broken · 28 advice · 1–3 shown
+  ◔ 1/3   ·9taa9d   feature high     ready     req 1 Merge muninn and huginn into one hug binary
+  ○ 2     ·34r1ft   feature medium   ready     sync·↳9taa9d Per-repo setting: store project memories in the repo or not
+↓ ○ 1     ·ta306h   spike   low      ready     recall·↳d634kr Short-message topic check experiment
+H/L column · order by priority (▲)
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                     hug dev
