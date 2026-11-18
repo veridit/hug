@@ -1,15 +1,20 @@
 ---
 id: nch9d4
 title: "Sort picker offers default board order explicitly"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T12:15"
+stage: "active"
+model: "openai"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ User screenshot 2026-11-18: filter line says priority descending while fresh pic
 - [ ] Picker text does not misleadingly present an unapplied rank draft as the current priority ordering.
 
 ## Notes
+
+
+## History
+- 2026-11-18T12:15 todo -> doing/active (take)
