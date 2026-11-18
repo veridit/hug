@@ -30,7 +30,7 @@ Code: muninn run/main.go:376 (pre-forget reindex), ForgetMany (post-write Reinde
 
 ## Acceptance
 - [x] A test counts full index passes: hug mem forget ID does 0 (fails first on main, which does 2)
-- [ ] After N forgets the index equals a full reindex of the same store, byte for byte or by recall results on a fixed query set (test)
+- [x] After N forgets the index equals a full reindex of the same store, byte for byte or by recall results on a fixed query set (test)
 - [ ] On a copy of Jørgen's store, one forget's wall time and max RSS before and after, 4 runs each, in a note (expect well under 1 s)
 
 ## Notes
