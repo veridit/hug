@@ -1,7 +1,7 @@
 ---
 id: 9ahvgt
 title: "stale-owner lint misses owners whose sessions are gone"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["iwazaru"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzz3"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T13:44"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab lands acd46d65 in the next stack (accepted 15:24Z, CI 44331139852 6/6)"
-waiting_since: "2026-11-18T16:24"
-waiting_asked_by: "iwazaru"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -52,6 +48,8 @@ Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/
 landed ae04196 on main 2026-11-18: hug task lint: stale-owner sees owners whose sessions are gone (9ahvgt)
 landed 83f7e05 on main 2026-11-18: hug task take: a task whose owner is gone ends with a fix that takes it over…
 shipped in v0.7.66 (ae04196)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T13:44 todo -> doing/active (take)
 - 2026-11-18T16:24 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T13:44; waiting_asked_by: iwazaru; waiting_on: crab lands acd46d65 in the next stack (accepted 15:24Z, CI 44331139852 6/6); waiting_since: 2026-11-18T16:24
