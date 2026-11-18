@@ -104,7 +104,7 @@ func TestFixReportGolden(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v (HUG_UPDATE_GOLDEN=1 writes it)", err)
 	}
-	if got != string(want) {
+	if got != strings.ReplaceAll(string(want), "\r\n", "\n") { // a Windows checkout may turn LF into CRLF
 		t.Fatalf("report differs from %s:\n%s", path, got)
 	}
 }
