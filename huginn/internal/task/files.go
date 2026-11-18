@@ -323,7 +323,16 @@ type Ref struct {
 
 // FileRefs returns the file references in a task document's text.
 func FileRefs(doc []byte, self string) []Ref {
-	var out []Ref
+	type at struct {
+		ref Ref
+		pos int
+	}
+	var all []at
+	// gone maps a file of this task to where hug task detach noted it
+	// ("detached file:NAME", bqfrda): a citation of it before that is of a
+	// file removed on purpose, not a missing one. A later one (attached
+	// again) is checked.
+	var gone map[string]int
 	// The literals first (3mavpt): most task files cite nothing, and the
 	// regexps cost 17 s over Seid's 2,677 imported files when run on each.
 	if bytes.Contains(doc, []byte("file:")) {
@@ -334,7 +343,14 @@ func FileRefs(doc []byte, self string) []Ref {
 			if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) || lostAfter(doc, m[1]) {
 				continue
 			}
-			out = append(out, Ref{Task: self, Name: name, Raw: "file:" + name})
+			if bytes.HasSuffix(doc[:m[2]], []byte("detached file:")) {
+				if gone == nil {
+					gone = map[string]int{}
+				}
+				gone[name] = m[2]
+				continue
+			}
+			all = append(all, at{Ref{Task: self, Name: name, Raw: "file:" + name}, m[2]})
 		}
 	}
 	if bytes.Contains(doc, []byte("task:")) {
@@ -345,18 +361,24 @@ func FileRefs(doc []byte, self string) []Ref {
 			if (ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789")) || lostAfter(doc, m[1]) {
 				continue
 			}
-			out = append(out, Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name})
+			all = append(all, at{Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name}, m[2]})
 		}
 	}
-	if !bytes.Contains(doc, []byte(".hug/tasks/")) {
-		return out
+	if bytes.Contains(doc, []byte(".hug/tasks/")) {
+		for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
+			if lostAfter(doc, m[1]) {
+				continue
+			}
+			start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
+			all = append(all, at{Ref{Task: string(doc[m[2]:m[3]]), Name: string(doc[m[4]:m[5]]), Raw: string(doc[start:m[1]])}, start})
+		}
 	}
-	for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
-		if lostAfter(doc, m[1]) {
+	var out []Ref
+	for _, a := range all {
+		if p, ok := gone[a.ref.Name]; ok && a.ref.Task == self && a.pos < p {
 			continue
 		}
-		start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
-		out = append(out, Ref{Task: string(doc[m[2]:m[3]]), Name: string(doc[m[4]:m[5]]), Raw: string(doc[start:m[1]])})
+		out = append(out, a.ref)
 	}
 	return out
 }
@@ -455,6 +477,9 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 				refs = FileRefs(doc, t.ID)
 			}
 		}
+		// One finding per missing file (bqfrda): a file cited three times
+		// is one fact.
+		reported := map[string]bool{}
 		for _, ref := range refs {
 			owner := t
 			if ref.Task != t.ID {
@@ -469,7 +494,8 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			if e != nil {
 				continue
 			}
-			if _, e := os.Stat(fp); e != nil {
+			if _, e := os.Stat(fp); e != nil && !reported[fp] {
+				reported[fp] = true
 				out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": file not found (attach it, or mark the citation" + Lost + ")", Fix: "hug task attach " + owner.ID + " FILE --name " + ref.Name})
 			}
 		}

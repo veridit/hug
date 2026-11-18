@@ -152,3 +152,88 @@ func TestTaskPathCitationMustExist(t *testing.T) {
 		t.Errorf("missing-file findings: %q; want exactly missing.tsv with an attach fix", missing)
 	}
 }
+
+// TestDetachLeavesNoMissingFile (bqfrda check 1; piglet 2026-11-18 on
+// gpyqq9): after attach and detach the attach note's file:NAME and the
+// detach note's "detached file:NAME" stayed citations, and lint reported
+// the same missing file twice. The detach says the file is gone on
+// purpose: no missing-file for it. Attached again, it is checked again.
+func TestDetachLeavesNoMissingFile(t *testing.T) {
+	s, id := newStore(t)
+	missing := func() []string {
+		t.Helper()
+		fs, err := s.LintFiles(nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var out []string
+		for _, f := range fs {
+			if FindingCode(f.Problem) == "missing-file" {
+				out = append(out, f.Problem)
+			}
+		}
+		return out
+	}
+	if _, _, err := s.Attach(id, "ev.txt", []byte("x\n"), "", false); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Detach(id, "ev.txt"); err != nil {
+		t.Fatal(err)
+	}
+	if got := missing(); len(got) != 0 {
+		t.Fatalf("after attach and detach: want no missing-file, got %q", got)
+	}
+	if _, _, err := s.Attach(id, "ev.txt", []byte("y\n"), "", false); err != nil {
+		t.Fatal(err)
+	}
+	if got := missing(); len(got) != 0 {
+		t.Fatalf("attached again: want no missing-file, got %q", got)
+	}
+	// Attached again, then removed by hand: that citation is checked again.
+	p, err := s.diskPath(FolderOf(Task{ID: id, Path: taskPath(t, s, id)}) + "/ev.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Remove(p); err != nil {
+		t.Fatal(err)
+	}
+	if got := missing(); len(got) != 1 || !strings.HasPrefix(got[0], "file:ev.txt: file not found") {
+		t.Fatalf("re-attached, then removed by hand: want one missing-file for ev.txt, got %q", got)
+	}
+}
+
+// TestMissingFileReportedOnce (bqfrda check 2): a cited file that is not
+// there is one finding, however often the task cites it.
+func TestMissingFileReportedOnce(t *testing.T) {
+	s, id := newStore(t)
+	s.Note(id, "see file:gone.tsv")
+	s.Note(id, "and again file:gone.tsv, also .hug/tasks/"+id+"/gone.tsv")
+	fs, err := s.LintFiles(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	for _, f := range fs {
+		if FindingCode(f.Problem) == "missing-file" {
+			got = append(got, f.Problem+" | fix: "+f.FixLine())
+		}
+	}
+	if len(got) != 1 || !strings.Contains(got[0], "gone.tsv: file not found") || !strings.HasSuffix(got[0], "fix: hug task attach "+id+" FILE --name gone.tsv") {
+		t.Fatalf("one missing file cited 3 times: want one finding with the attach fix, got %q", got)
+	}
+}
+
+func taskPath(t *testing.T, s *Store, id string) string {
+	t.Helper()
+	ts, err := s.Tasks()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, x := range ts {
+		if x.ID == id {
+			return x.Path
+		}
+	}
+	t.Fatalf("no task %s", id)
+	return ""
+}
