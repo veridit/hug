@@ -1,18 +1,17 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "doing"
+state: "todo"
 type: bug
 priority: "high"
-assignee: ["wyvern"]
+assignee: []
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-18T04:12"
 ---
 
 ## Goal
@@ -46,3 +45,4 @@ crab 04:25 approved per-vertex graph storage with conditions: (1) a test that co
 - 2026-11-18T02:53 todo -> doing/active (take)
 - 2026-11-18T03:41 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T02:53
 - 2026-11-18T04:12 todo/ready -> doing/active (take)
+- 2026-11-18T04:26 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T04:12
