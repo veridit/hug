@@ -32,6 +32,14 @@ func WithLayout(layout func(text string) (int, error)) Option {
 	return func(r *Repository) { r.Layout = layout }
 }
 
+// LocalOnly makes Upgrade rename the branch and move its checkout here only:
+// no push, and no upstream set, so the remote's refs stay as they were and a
+// plain git push from the checkout publishes nothing (34r1ft: a repository
+// that keeps its project memories local).
+func LocalOnly(local bool) Option {
+	return func(r *Repository) { r.localOnly = local }
+}
+
 // Repository is a branch worktree. Dir is absolute. Remote is empty in local-only mode.
 // Root is the checkout Open was called from. In a linked worktree (git
 // worktree add) Dir is the branch's one checkout, in the main worktree.
@@ -56,6 +64,8 @@ type Repository struct {
 	// OnRepaired reports, in one line, an interrupted rebase hug itself
 	// started that a later write ended (fcf4fg).
 	OnRepaired func(string)
+	// localOnly: Upgrade changes nothing on the remote (LocalOnly).
+	localOnly bool
 }
 
 // LayoutError is a sync stopped because this clone's unpushed commits and
@@ -962,6 +972,8 @@ func (r *Repository) checkIdle() error {
 type Moved struct {
 	FromBranch, ToBranch, FromDir, ToDir string
 	LocalBranch, Worktree, RemoteBranch  bool // what was renamed or moved
+	// RemoteKept: the remote has the old branch and LocalOnly left it there.
+	RemoteKept bool
 }
 
 // Upgrade moves a tool's branch and worktree to a new name and directory
@@ -1159,6 +1171,21 @@ func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...O
 			return m, err
 		}
 		m.Worktree = true
+	}
+	if r.localOnly {
+		// Nothing on the remote changes, and no upstream is set: the old
+		// remote branch is kept for the clones that still read it (34r1ft).
+		// branch -m carried the old upstream over; drop it so a plain git
+		// push from the checkout has nowhere to go.
+		m.RemoteKept = remoteOld != ""
+		remote = ""
+		if has("refs/heads/" + toBranch) {
+			if _, e := r.runAt(root, "config", "--get", "branch."+toBranch+".remote"); e == nil {
+				if _, err = r.runAt(root, "branch", "--unset-upstream", toBranch); err != nil {
+					return m, err
+				}
+			}
+		}
 	}
 	if remote != "" && has("refs/heads/"+toBranch) {
 		if _, err = r.runAt(root, "config", "branch."+toBranch+".remote", remote); err != nil {
