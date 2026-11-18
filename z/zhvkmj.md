@@ -4,7 +4,7 @@ title: "Status colors: rows and sections share one subtle scheme; done shows a c
 state: "doing"
 type: feature
 priority: ""
-assignee: ["nautilus"]
+assignee: ["kikazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzz6h"
@@ -83,3 +83,4 @@ crab 19:58 local: check 4 ticked on Jørgen's answer. His remaining points are t
   Well, it looks good enough, it's too much color, and I told you already, I told you to adjust this. The pen shouldn't be red, it's too intense in the currently selected row. I have another ticket making it more like a spreadsheet, more subtle, but yeah, it's good enough for this ticket, but there will be follow-up tickets
 - 2026-11-18T19:57 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T19:58 answer 2 acknowledged by crab
+- 2026-11-18T20:54 answer 2 in progress by crab: hug task set zhvkmj
