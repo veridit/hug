@@ -9,6 +9,21 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
+// semanticSync installs the same resolver as upgrade catch-up on every
+// task-board sync handle, including the background child and the TUI's
+// session. Reports go to stderr (the child's durable sync log).
+func (a *App) semanticSync(r *gitbranch.Repository) {
+	t := catchUpTranslator()
+	r.Resolver = &t
+	r.OnResolved = func(c gitbranch.Replayed) {
+		if a.Err != nil {
+			for _, line := range c.Kept {
+				fmt.Fprintln(a.Err, "sync: "+line)
+			}
+		}
+	}
+}
+
 // catchUpTranslator reads an old-layout commit as layout 3 and merges each
 // file it changed with the board's by task.MergeTask (w40cmk check 9, crab
 // 04:44).

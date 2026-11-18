@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -59,11 +60,16 @@ type Replayed struct {
 // CatchUpError is a replay that stopped; nothing changed.
 type CatchUpError struct {
 	Commit, Subject, Path, Detail, Fix string
-	Kept                               int // local commits, all still there
+	Operation                          string // empty means upgrade catch-up
+	Kept                               int    // local commits, all still there
 }
 
 func (e *CatchUpError) Error() string {
-	return fmt.Sprintf("catch-up stopped at %s %q: %s: %s; HEAD is back where it was, %d local commits kept, nothing pushed\nfix: %s", e.Commit, e.Subject, e.Path, e.Detail, e.Kept, e.Fix)
+	op := e.Operation
+	if op == "" {
+		op = "catch-up"
+	}
+	return fmt.Sprintf("%s stopped at %s %q: %s: %s; HEAD is back where it was, %d local commits kept, nothing pushed\nfix: %s", op, e.Commit, e.Subject, e.Path, e.Detail, e.Kept, e.Fix)
 }
 
 // Pending lists the commits CatchUp would replay, oldest first, with the
@@ -85,6 +91,13 @@ func (r *Repository) Pending(t Translator) ([]Replayed, error) {
 	if _, ok := e.(*LayoutError); !ok {
 		return nil, e
 	}
+	return r.pendingCommits(t)
+}
+
+// pendingCommits reads complete first-parent deltas for either kind of
+// replay. The caller decides whether cross-layout recovery was requested
+// or an ordinary same-layout sync found divergent commits.
+func (r *Repository) pendingCommits(t Translator) ([]Replayed, error) {
 	out, e := r.git("rev-list", "--reverse", "--first-parent", "--format=%H%x00%s%x00%an%x00%ae%x00%aI", r.remoteRef()+"..HEAD")
 	if e != nil {
 		return nil, e
@@ -361,6 +374,64 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 	list, e = r.Pending(t)
 	if e != nil || len(list) == 0 {
 		return list, e
+	}
+	return r.replay(list, t)
+}
+
+// resolveDiverged uses semantic replay for ordinary same-layout sync too.
+// It does not fetch and never makes upgrade/catch-up a prerequisite. Even
+// a text merge without Git conflicts can mix two edits of one scalar
+// section, so every divergent task-board merge uses the shared resolver.
+func (r *Repository) resolveDiverged() (bool, error) {
+	if r.Resolver == nil {
+		return false, nil
+	}
+	counts, e := r.git("rev-list", "--left-right", "--count", "HEAD..."+r.remoteRef())
+	if e != nil {
+		return true, e
+	}
+	f := strings.Fields(counts)
+	if len(f) != 2 {
+		return true, &Error{Op: "sync", Detail: "cannot read divergent commit counts; nothing replayed", Fix: r.fix("status")}
+	}
+	left, le := strconv.Atoi(f[0])
+	right, re := strconv.Atoi(f[1])
+	if le != nil || re != nil {
+		return true, &Error{Op: "sync", Detail: "cannot read divergent commit counts; nothing replayed", Fix: r.fix("status")}
+	}
+	if left == 0 || right == 0 {
+		return false, nil // normal fast-forward or already ahead
+	}
+	list, e := r.pendingCommits(*r.Resolver)
+	if e != nil {
+		return true, e
+	}
+	list, e = r.replay(list, *r.Resolver)
+	if e != nil {
+		var stopped *CatchUpError
+		if errors.As(e, &stopped) {
+			stopped.Operation = "sync"
+		}
+		return true, e
+	}
+	if r.OnResolved != nil {
+		for _, c := range list {
+			r.OnResolved(c)
+		}
+	}
+	return true, nil
+}
+
+// replay validates and materializes the complete result privately before
+// replacing live HEAD. Both ordinary sync and layout catch-up use it.
+func (r *Repository) replay(list []Replayed, t Translator) (replayed []Replayed, err error) {
+	if e := r.checkIdle(); e != nil {
+		return nil, e
+	}
+	if status, e := r.git("status", "--porcelain"); e != nil {
+		return nil, e
+	} else if status != "" {
+		return nil, &Error{Op: "sync replay", Detail: "worktree has uncommitted changes; no replay installed", Fix: r.fix("status")}
 	}
 	head, e := r.Head()
 	if e != nil {

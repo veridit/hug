@@ -155,6 +155,7 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 	if e != nil || r.Remote == "" {
 		return Reply{"next": "hug task ls"}, e
 	}
+	a.semanticSync(r)
 	b, e := r.Background()
 	if e != nil {
 		return nil, e

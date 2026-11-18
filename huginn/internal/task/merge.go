@@ -11,7 +11,7 @@ import (
 )
 
 // Merging one task file changed on two sides (w40cmk check 9, crab 04:44;
-// 8zwy6r makes sync use the same resolver). base is the file before this
+// ordinary sync and catch-up use the same resolver). base is the file before this
 // clone's change, ours after it, theirs the board's. The rule:
 //
 //  1. Append-only parts merge as the union, in time order where the

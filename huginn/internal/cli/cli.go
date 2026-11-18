@@ -271,6 +271,7 @@ func (a *App) openBoard(ctx context.Context, lazy bool) (*session, error) {
 	if e != nil {
 		return nil, e
 	}
+	a.semanticSync(r)
 	// Waits (16dxsr) are checked against this checkout: its branches and
 	// tags, and this machine's load. Git is asked only when a wait asks.
 	world := cond.Local(cwd, func() string { return gitbranch.DefaultBranch(cwd) })
