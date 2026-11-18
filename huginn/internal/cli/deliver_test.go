@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -268,13 +269,13 @@ func TestAnswerReachesCoordinator(t *testing.T) {
 	}
 }
 
-// realPath is dir with its symlinks resolved, as git names a repository's
-// root (macOS: /var is /private/var).
+// realPath is the board's root as git names it, which is what hug puts in
+// the message (macOS: /var is /private/var; Windows: forward slashes).
 func realPath(t *testing.T, dir string) string {
 	t.Helper()
-	p, err := filepath.EvalSymlinks(dir)
+	out, err := exec.Command("git", "-C", dir, "rev-parse", "--show-toplevel").Output()
 	if err != nil {
 		t.Fatal(err)
 	}
-	return p
+	return strings.TrimSpace(string(out))
 }
