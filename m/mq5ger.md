@@ -33,7 +33,7 @@ Test: huginn/internal/tui/taskdirs_test.go:83 (np2kk2 check 2). The CI failure i
 
 ## Acceptance
 - [x] a test or harness shows the failure first under forced starvation on origin/main, with the verbatim failure line
-- [ ] the cause is named with file:line evidence
+- [x] the cause is named with file:line evidence
 - [ ] the fix passes the same starvation run 0 failures in N runs, with no timeout raised, no retry and no skip
 - [ ] full tui suite green locally (non-short) and CI green
 
