@@ -53,6 +53,7 @@ Landed f6b63256 on main (CI 44223058200). Tests: cli TestLintJudgesOpenTasksOnly
 landed f6b6325 on main 2026-11-18: hug task lint judges open tasks only; closed tasks are history, nothing hidden…
 CI 44223058200 for f6b63256: success, all 7 jobs (secrets, bench, test ubuntu/windows/macos, test-windows-cli). Check 1: 24 broken, not the ticket's 'about 18': 11 branch-gone + 8 missing-goal match crab's 18 on open tasks (10 branch-gone, 8 missing-goal at v0.7.50, one more branch since); the other 5 are old-layout, a code added after v0.7.50 (41hhgn), all on open tasks, which hug upgrade fixes.
 shipped in v0.7.54 (f6b6325)
+retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): the wait on the release is over. f6b63256 shipped in v0.7.54 and brew hug is v0.7.62. Statbus today (read-only, ~/ssb/statbus, v0.7.62): '131 findings (13 broken) in 6 codes', no 'closed tasks hidden' line, no done-unchecked. Work remains: check 6 needs Jørgen's look, and nobody has asked him. Next owner: take it and run hug task ask t01kqm --to jhf --check 6 with the Statbus numbers above. Given back to todo because the owner (hatchling) is no longer running.
 ## History
 - 2026-11-18T01:43 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T01:43
