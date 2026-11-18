@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug task lint` stale-owner sees owners whose sessions are gone (9ahvgt). It used to say "no findings with code stale-owner" while 22 doing tasks on hug's board belonged to sessions jcode had reaped or closed hours earlier, because only a session file older than a day counted. Now a jcode session that says `"status":"Closed"` (ended, or reaped after 30 min idle) is gone an hour after its last write. The journal (`.journal.jsonl`) counts as a write. A name taken with `--as` by a session told "You are NAME" is matched to that session (`(kestrel was session calf)`). A name no session knows is gone once its task has been doing for a day. Sessions are read from `JCODE_HOME` and every jcode instance in the zsh registry, but only those that worked in this repository, since names repeat across instances. A person (`--model human`, or a hug.toml `[people]` name) is never judged. When a sessions folder exists but cannot be read, lint says so once with `fix: ls -ld DIR`.
+
 ## v0.7.65 - 2026-11-18
 
 - A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.
