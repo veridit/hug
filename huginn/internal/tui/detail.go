@@ -925,33 +925,64 @@ func (m model) markRequests(t task.Task, lines []string, markAt func(string, int
 // and its fix take two lines, rx74bp) and must not hide the focus.
 func (m *model) openTop() {
 	m.viewport.GotoTop()
-	if m.detailPane == focusPage {
+	// A question asked with a picture opens with that picture (zhvkmj):
+	// the page starts at it, and j reaches the check it is about.
+	if t, ok := m.selected(); ok && m.askedPicture(t) != "" {
 		return
 	}
-	if t, ok := m.selected(); ok {
-		for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
-			if strings.HasPrefix(line, "> ") {
-				if i >= m.viewport.Height {
-					m.viewport.SetYOffset(i - m.viewport.Height + 1)
-				}
-				return
-			}
-		}
-	}
+	// The whole focused check, its question and all (ykta5g check 4),
+	// scrolled no further than that: the header can grow (a finding and
+	// its fix take two lines, rx74bp) and must not hide the focus.
+	m.showMarked()
 }
 func (m *model) revealAcceptance() {
+	s, e, ok := m.markedBlock()
+	if !ok || s >= m.viewport.YOffset && e < m.viewport.YOffset+m.viewport.Height {
+		return
+	}
+	// Centred when it fits; a block taller than the view from its
+	// first line (ykta5g check 4).
+	m.viewport.SetYOffset(max(0, min(s, s-(m.viewport.Height-(e-s+1))/2)))
+}
+
+// showMarked scrolls the page only as far as the marked block needs to
+// be in view whole (ykta5g check 4, Jørgen 19:37: the check with its
+// question, not only its first line); a block taller than the view shows
+// from its first line.
+func (m *model) showMarked() {
+	s, e, ok := m.markedBlock()
+	if !ok {
+		return
+	}
+	y := m.viewport.YOffset
+	if e >= y+m.viewport.Height {
+		y = e - m.viewport.Height + 1
+	}
+	if s < y {
+		y = s
+	}
+	m.viewport.SetYOffset(max(0, y))
+}
+
+// markedBlock is the first and last page line of what the focus marks:
+// a list item with the lines that hang under it (a check's wrapped text,
+// the question asked on it and who asked), or the line of an id marked
+// ▸ in the text.
+func (m model) markedBlock() (int, int, bool) {
 	if m.detailPane == focusPage {
-		return // nothing is marked; the page keeps its scroll
+		return 0, 0, false // nothing is marked; the page keeps its scroll
 	}
 	t, ok := m.selected()
 	if !ok {
-		return
+		return 0, 0, false
 	}
 	// An id is marked ▸ where it stands, in the text (0ga6m0); in the
 	// header it is always on screen.
 	marker := func(line string) bool { return strings.HasPrefix(line, "> ") }
+	id := false
 	if s, ok := m.markedStop(t); ok {
 		marker = func(line string) bool { return strings.Contains(line, "▸"+s.shown) }
+		id = true
 	}
 	lines := strings.Split(ansi.Strip(m.detailText(t)), "\n")
 	// The > is looked for under the focused section's ▸ heading: a capture
@@ -968,13 +999,21 @@ func (m *model) revealAcceptance() {
 		}
 	}
 	for i := from; i < len(lines); i++ {
-		if marker(lines[i]) {
-			if i < m.viewport.YOffset || i >= m.viewport.YOffset+m.viewport.Height {
-				m.viewport.SetYOffset(max(0, i-m.viewport.Height/2))
-			}
-			break
+		if !marker(lines[i]) {
+			continue
 		}
+		end := i
+		// What hangs under an item is indented past the next item's
+		// pointer column (2): wrapped text, the question (its blank
+		// lines between paragraphs are indented too), └ who asked.
+		for j := i + 1; !id && j < len(lines) && strings.HasPrefix(lines[j], "    "); j++ {
+			if strings.TrimSpace(lines[j]) != "" {
+				end = j
+			}
+		}
+		return i, end, true
 	}
+	return 0, 0, false
 }
 
 // focusedHeading is the capitalised heading of the section that has the

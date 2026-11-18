@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- TUI: in a task, j and k mirror each other (ykta5g, Jørgen: "J goes down but K goes to top again"). After j steps to the last check, dependency, link or file and then scrolls the page past it, k first scrolls back one line at a time with that item still marked, and steps to the previous one only once it is in view. Before, the first k re-centred the page, to the top on zhvkmj (offset 23 to 0 at 100x24). A step that leaves the view now scrolls the page just far enough to show the new item, never re-centring. And when a check gets focus, on open or by j/k, the whole check shows, its question and who asked included, not only its first line (Jørgen, gav9nw request 1); a check taller than the page shows from its first line, and j reads it down a line at a time before stepping on.
+
 ## v0.7.69 - 2026-11-18
 
 - Windows CI runs the `huginn/internal/cli` tests in two shards on two runners (0n4rnx): shard sync takes the sync, catch-up and layout-upgrade tests (`-run`), shard rest the others (`-skip`, same pattern), each one `go test` run under its 10-minute limit. One run of the package took 387-403 s on one runner and crossed 600 s on slow ones. A new job, `test-windows-cli-shards`, fails when a test ran in neither shard or in both.
