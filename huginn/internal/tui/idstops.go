@@ -3,6 +3,9 @@ package tui
 import (
 	"regexp"
 	"strings"
+	"sync"
+
+	"github.com/charmbracelet/lipgloss"
 
 	"github.com/veridit/hug/huginn/internal/task"
 )
@@ -11,19 +14,39 @@ import (
 // reading order, every task id the detail shows a stop of its own (4bwcgp,
 // e3sevr: focusRing), and Enter opens the one marked; Esc or u comes back
 // (Jørgen 19:43: "there is no way to tab to the dependency" in jr55s8's
-// "waiting on after 46ek1f"). The ids are marked where they stand:
-// the parent badge and the stage line in the header, the Dependencies,
-// Children and Links rows, and an id named in the Notes (crab 19:50). An
-// id or alias that resolves to no task is not a stop.
+// "waiting on after 46ek1f"). One rule (0ga6m0, Jørgen 11:45Z: "6ephqk"
+// in a check and its question could not be reached): every id or alias
+// the detail shows is a stop, marked where it stands, wherever that is:
+// the parent badge, the stage line, an unread answer, the title, the
+// question, the description sections, each check and the question under
+// it, a dependency's note, a condition, any other section, a request and
+// its account, the Notes and the History; dependencies, children and
+// links are stops as rows. An id named in several places is a stop in
+// each; named twice in one place, once there, the first. A task:ID is a
+// link: its stop is its Links row. An id or alias that resolves to no
+// task is not a stop.
 
 // Where an id stop stands.
 const (
 	stopParent   = "parent"
 	stopStage    = "stage"
+	stopFinding  = "finding"  // the header's finding: index 0 the problem, 1 its fix
+	stopAnswer   = "answer"   // the unread answer in the header
+	stopTitle    = "title"    // the task's own title
+	stopQuestion = "question" // a question to you that names no check
+	stopText     = "text"     // Goal, Purpose, Principle, Relevant details: index 0..3
+	stopCheck    = "check"    // acceptance check index
+	stopAsked    = "asked"    // the question under check index
 	stopDeps     = "deps"
+	stopDepNote  = "depnote" // dependency index's note
+	stopWait     = "wait"    // condition index
 	stopChildren = "children"
 	stopLinks    = "links"
+	stopSection  = "section"  // any other section: index in m.sections
+	stopRequest  = "request"  // request index's text
+	stopResolved = "resolved" // request index's account
 	stopNotes    = "notes"
+	stopHistory  = "history"
 )
 
 // idStop is one task id the detail shows: where it stands, its place in
@@ -40,21 +63,61 @@ type idStop struct {
 var idWord = regexp.MustCompile(`[A-Za-z0-9][A-Za-z0-9_-]*[A-Za-z0-9]`)
 
 // idsIn are the tasks text names by id or alias, in order, each once,
-// never t itself or one in skip.
-func (m model) idsIn(t task.Task, text string, skip map[string]bool) []idStop {
+// never t itself. linked: the text is a section whose task:ID is a link
+// (links), so a task:ID there is its Links row, not a stop here.
+func (m model) idsIn(t task.Task, text string, linked bool) []idStop {
 	var out []idStop
-	for _, w := range idWord.FindAllString(text, -1) {
-		if len(w) < 3 || len(w) > 40 {
+	seen := map[string]bool{}
+	names := refWordsOf(m.all)
+	for _, loc := range idWord.FindAllStringIndex(text, -1) {
+		w := text[loc[0]:loc[1]]
+		if len(w) < 3 || len(w) > 40 || !names[strings.ToLower(w)] || linked && taskPrefixed(text, loc[0]) {
 			continue
 		}
 		target, err := task.ResolveDependency(m.all, w)
-		if err != nil || strings.EqualFold(target.ID, t.ID) || skip[strings.ToLower(target.ID)] {
+		if err != nil || strings.EqualFold(target.ID, t.ID) || seen[strings.ToLower(target.ID)] {
 			continue
 		}
-		skip[strings.ToLower(target.ID)] = true
+		seen[strings.ToLower(target.ID)] = true
 		out = append(out, idStop{shown: w, target: target})
 	}
 	return out
+}
+
+// taskPrefixed: the word at i in s is written task:ID.
+func taskPrefixed(s string, i int) bool {
+	return i >= 5 && strings.EqualFold(s[i-5:i], "task:")
+}
+
+// refWords is every id and alias on the board, lower case. A word not
+// in it names no task, decided without ResolveDependency, which scans
+// the board for a word it does not know; idStops reads every word the
+// detail shows. Kept for the last board, keyed as task.refIndexFor keys
+// its index: a reload makes a new slice.
+var refWords struct {
+	sync.Mutex
+	first *task.Task
+	n     int
+	set   map[string]bool
+}
+
+func refWordsOf(all []task.Task) map[string]bool {
+	if len(all) == 0 {
+		return nil
+	}
+	refWords.Lock()
+	defer refWords.Unlock()
+	if refWords.first != &all[0] || refWords.n != len(all) {
+		set := make(map[string]bool, len(all))
+		for _, t := range all {
+			set[strings.ToLower(t.ID)] = true
+			for _, a := range t.Aliases {
+				set[strings.ToLower(a)] = true
+			}
+		}
+		refWords.first, refWords.n, refWords.set = &all[0], len(all), set
+	}
+	return refWords.set
 }
 
 // children are the tasks whose parent is t, in board order.
@@ -80,35 +143,68 @@ func (m model) stageWords(t task.Task) string {
 	return ""
 }
 
-// idStops are the task ids t's detail shows, in reading order.
+// idStops are the task ids t's detail shows, in reading order: each
+// place the detail draws text, scanned as it is drawn (0ga6m0).
 func (m model) idStops(t task.Task) []idStop {
 	var out []idStop
+	add := func(where string, index int, text string, linked bool) {
+		for _, s := range m.idsIn(t, text, linked) {
+			s.where, s.index = where, index
+			out = append(out, s)
+		}
+	}
+	// The header: the epic badge, the stage's line (asked of you it is
+	// not drawn, 0gztsy), the finding, an unread answer, the title.
 	if p := strings.TrimSpace(t.Parent); p != "" {
 		if target, err := task.ResolveDependency(m.all, p); err == nil {
 			out = append(out, idStop{where: stopParent, shown: target.ID, target: target})
 		}
 	}
-	// The stage's line names ids; asked of you it is not drawn (0gztsy).
-	if _, mine := m.askedOf(t); !mine {
-		for _, s := range m.idsIn(t, m.stageWords(t), map[string]bool{}) {
-			s.where = stopStage
-			out = append(out, s)
+	q, mine := m.askedOf(t)
+	if !mine {
+		add(stopStage, 0, m.stageWords(t), false)
+	}
+	if warning, fix, ok := m.headFinding(t); ok {
+		add(stopFinding, 0, warning, false)
+		add(stopFinding, 1, fix, false)
+	}
+	if a := t.Answer; a != nil {
+		add(stopAnswer, 0, safe(a.Text), false)
+	}
+	add(stopTitle, 0, oneLine(t.Title), false)
+	// The details, top down, as detailText draws them.
+	if mine && q.check == 0 {
+		add(stopQuestion, 0, questionText(q), false)
+	}
+	sections := m.sections(t)
+	text := func(name string) string { return sectionText(sections, name) }
+	add(stopText, 0, text("description"), true)
+	for i, name := range task.DescriptionSections {
+		add(stopText, i+1, text(strings.ToLower(name)), true)
+	}
+	for i, a := range t.Acceptance {
+		add(stopCheck, i, checkText(a), true)
+		if mine && q.check == i+1 {
+			add(stopAsked, i, strings.TrimSpace(q.what), false)
 		}
 	}
 	for i, d := range task.DependencyDetails(t, m.all) {
-		if d.Missing {
-			continue
+		if !d.Missing {
+			if target, err := task.Resolve(m.all, d.ID); err == nil {
+				out = append(out, idStop{where: stopDeps, index: i, shown: target.ID, target: target})
+			}
 		}
-		if target, err := task.Resolve(m.all, d.ID); err == nil {
-			out = append(out, idStop{where: stopDeps, index: i, shown: target.ID, target: target})
-		}
+		add(stopDepNote, i, oneLine(d.Note), false)
+	}
+	// A condition as written; what hug saw when it checked is not
+	// scanned: checking runs git, and this runs on every frame.
+	for i, w := range t.Waits {
+		add(stopWait, i, oneLine(w.Text), false)
 	}
 	for i, c := range m.children(t) {
 		out = append(out, idStop{where: stopChildren, index: i, shown: c.ID, target: c})
 	}
-	linked := map[string]bool{}
 	for i, l := range m.links(t) {
-		linked[strings.ToLower(l.ID)] = true
 		if l.Missing {
 			continue
 		}
@@ -116,18 +212,20 @@ func (m model) idStops(t task.Task) []idStop {
 			out = append(out, idStop{where: stopLinks, index: i, shown: l.ID, target: target})
 		}
 	}
-	// A task:ID in the Notes is already a link; a bare id is a stop of its
-	// own, marked in the text.
-	notes := ""
-	for _, s := range m.sections(t) {
-		if s.name == "notes" {
-			notes += s.text + "\n"
+	for i, s := range sections {
+		if otherSection(s.name) {
+			add(stopSection, i, s.text, true)
 		}
 	}
-	for _, s := range m.idsIn(t, notes, linked) {
-		s.where = stopNotes
-		out = append(out, s)
+	for i, r := range t.Requests {
+		add(stopRequest, i, r.Text, true)
+		if r.Resolved != nil {
+			add(stopResolved, i, r.Resolved.Text, true)
+		}
 	}
+	add(stopNotes, 0, text("notes"), true)
+	// History is not scanned for links (links), so task:ID there is a stop.
+	add(stopHistory, 0, text("history"), false)
 	return out
 }
 
@@ -147,8 +245,7 @@ func (m model) idAtFocus(stops []idStop) int {
 	return -1
 }
 
-// markedStop is the stop marked in the header or the text (parent,
-// stage, children, notes), if one is.
+// markedStop is the stop marked in the header or the text, if one is.
 func (m model) markedStop(t task.Task) (idStop, bool) {
 	if m.detailPane != focusIDs {
 		return idStop{}, false
@@ -179,30 +276,142 @@ func (m *model) followID() {
 	m.openTop()
 }
 
-// markWord draws the first whole word w in s marked: ▸ before it and the
+// marked is the word to mark at a place (where, index): the marked
+// stop's, if it stands there, else "".
+func (m model) marked(t task.Task) func(where string, index int) string {
+	s, ok := m.markedStop(t)
+	return func(where string, index int) string {
+		if ok && s.where == where && s.index == index {
+			return s.shown
+		}
+		return ""
+	}
+}
+
+// visible is s without its escape sequences, and for each byte of it
+// the byte's offset in s.
+func visible(s string) (string, []int) {
+	var b strings.Builder
+	var at []int
+	for i := 0; i < len(s); {
+		if s[i] == 0x1b && i+1 < len(s) {
+			j := i + 2
+			switch s[i+1] {
+			case '[': // CSI: parameters, then one final byte
+				for j < len(s) && (s[j] < 0x40 || s[j] > 0x7e) {
+					j++
+				}
+				j++
+			case ']': // OSC: up to BEL or ST
+				for j < len(s) && s[j] != 0x07 && !(s[j] == 0x1b && j+1 < len(s) && s[j+1] == '\\') {
+					j++
+				}
+				if j < len(s) && s[j] == 0x1b {
+					j++
+				}
+				j++
+			}
+			i = min(j, len(s))
+			continue
+		}
+		b.WriteByte(s[i])
+		at = append(at, i)
+		i++
+	}
+	return b.String(), at
+}
+
+// wordAt is the offset in s of the first word w as idsIn reads words
+// (idWord: in "x-abc123" abc123 is no word of its own), past escape
+// sequences, skipping task:ID when linked; -1 when there is none.
+func wordAt(s, w string, linked bool) int {
+	if w == "" {
+		return -1
+	}
+	v, at := visible(s)
+	for _, loc := range idWord.FindAllStringIndex(v, -1) {
+		if v[loc[0]:loc[1]] != w || linked && taskPrefixed(v, loc[0]) {
+			continue
+		}
+		if i := at[loc[0]]; at[loc[1]-1]-i == len(w)-1 {
+			return i
+		}
+	}
+	return -1
+}
+
+// markWord draws the first word w in s marked: ▸ before it and the
 // selection tint, so it shows without colour too. rest styles the text
 // around it.
 func (m model) markWord(s, w string, rest func(string) string) string {
-	at := -1
-	for from := 0; from < len(s); {
-		i := strings.Index(s[from:], w)
-		if i < 0 {
-			break
-		}
-		i += from
-		end := i + len(w)
-		if (i == 0 || !isWordByte(s[i-1])) && (end == len(s) || !isWordByte(s[end])) {
-			at = i
-			break
-		}
-		from = i + 1
-	}
+	at := wordAt(s, w, false)
 	if at < 0 {
 		return rest(s)
 	}
 	return rest(s[:at]) + m.styles.selected.Render("▸"+w) + rest(s[at+len(w):])
 }
 
-func isWordByte(b byte) bool {
-	return b == '_' || b == '-' || b >= '0' && b <= '9' || b >= 'a' && b <= 'z' || b >= 'A' && b <= 'Z'
+// markPlain puts ▸ before the first word w in plain text s, before it is
+// wrapped or fit, so the mark's column is counted; styleMarked then
+// tints it.
+func markPlain(s, w string, linked bool) string {
+	at := wordAt(s, w, linked)
+	if at < 0 {
+		return s
+	}
+	return s[:at] + "▸" + s[at:]
+}
+
+// styleMarked styles each line of s, the ▸w markPlain put there in the
+// selection tint. Lines are styled one by one only when one is marked,
+// so an unmarked block renders as before.
+func (m model) styleMarked(s, w string, style lipgloss.Style) string {
+	if w == "" || !strings.Contains(s, "▸"+w) {
+		return style.Render(s)
+	}
+	lines := strings.Split(s, "\n")
+	for k, l := range lines {
+		if i := strings.Index(l, "▸"+w); i >= 0 {
+			j := i + len("▸"+w)
+			lines[k] = renderSome(style, l[:i]) + m.styles.selected.Render(l[i:j]) + renderSome(style, l[j:])
+		} else {
+			lines[k] = style.Render(l)
+		}
+	}
+	return strings.Join(lines, "\n")
+}
+
+func renderSome(style lipgloss.Style, s string) string {
+	if s == "" {
+		return ""
+	}
+	return style.Render(s)
+}
+
+// markStyled marks the first word w in s, text already styled (rendered
+// Markdown, a request): ▸ and the selection tint, then the style in
+// force before it again.
+func (m model) markStyled(s, w string, linked bool) string {
+	at := wordAt(s, w, linked)
+	if at < 0 {
+		return s
+	}
+	return s[:at] + m.styles.selected.Render("▸"+w) + lastSGR(s[:at]) + s[at+len(w):]
+}
+
+// lastSGR is the last colour sequence in s, "" after a reset.
+func lastSGR(s string) string {
+	i := strings.LastIndex(s, "\x1b[")
+	if i < 0 {
+		return ""
+	}
+	j := strings.IndexByte(s[i:], 'm')
+	if j < 0 {
+		return ""
+	}
+	seq := s[i : i+j+1]
+	if seq == "\x1b[0m" || seq == "\x1b[m" {
+		return ""
+	}
+	return seq
 }

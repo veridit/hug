@@ -151,11 +151,12 @@ func (m model) detailTitle(t task.Task) string {
 	// subject: the title alone, bold; page focus shows as a ▸ before it,
 	// as a focused heading shows it, so it reads without colour too. The
 	// id is the breadcrumb's last crumb (header-spec.md, Jørgen 00:02).
-	title := m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width))
+	title := oneLine(t.Title)
+	w := m.marked(t)(stopTitle, 0)
 	if m.detailPane == focusPage {
-		title = m.styles.focus.Render("▸ ") + m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width-2))
+		return m.styles.focus.Render("▸ ") + m.styleMarked(fit(markPlain(title, w, false), m.width-2), w, m.styles.normal.Bold(true))
 	}
-	return title
+	return m.styleMarked(fit(markPlain(title, w, false), m.width), w, m.styles.normal.Bold(true))
 }
 
 func (m model) detailHeader(t task.Task) []string {
@@ -195,6 +196,7 @@ func (m model) detailHeader(t task.Task) []string {
 	badges = append(badges, m.styles.dim.Render("group:"+oneLine(group)), m.styles.accent.Render(oneLine(owner)))
 	// The epic it belongs to, one Tab away (4bwcgp).
 	marked, isMarked := m.markedStop(t)
+	mark := m.marked(t)
 	if p := oneLine(t.Parent); p != "" {
 		badge := m.styles.dim.Render("epic:") + m.styles.accent.Render(p)
 		if isMarked && marked.where == stopParent {
@@ -231,9 +233,27 @@ func (m model) detailHeader(t task.Task) []string {
 		}
 		lines = append(lines, line)
 	}
+	if warning, fix, ok := m.headFinding(t); ok {
+		// Broken is a problem (red); advice only is dim (zhvkmj).
+		style := m.styles.dim
+		if m.headProblems(t)[0].Severity() == task.Broken {
+			style = m.styles.problem
+		}
+		for i, l := range []string{warning, fix} {
+			w := mark(stopFinding, i)
+			lines = append(lines, m.styleMarked(fit(markPlain(l, w, false), m.width), w, style))
+		}
+	}
+	// A dim rule above the subject too, so it stands out (Jørgen 00:04):
+	// breadcrumb, context, rule, subject, rule, details.
+	return append(append(lines, m.questionLines(t)...), m.styles.dim.Render(strings.Repeat("─", m.width)), title)
+}
+
+// headProblems are the findings the header shows for t: what the last
+// edit broke first, then the rest in line order.
+func (m model) headProblems(t task.Task) []task.Finding {
 	var problems []task.Finding
 	seen := map[string]bool{}
-	// What the last edit broke comes first, then the rest in line order.
 	var fresh []task.Finding
 	if nt, fs, ok := m.noticeTask(); ok && nt.Path == t.Path {
 		fresh = fs
@@ -244,29 +264,27 @@ func (m model) detailHeader(t task.Task) []string {
 			problems = append(problems, f)
 		}
 	}
-	if len(problems) > 0 {
-		// What is wrong, on which line, then the fix on its own line so a
-		// long problem never cuts it off (rx74bp).
-		f := problems[0]
-		warning := "⚠ "
-		if f.Line > 0 {
-			warning += fmt.Sprintf("line %d: ", f.Line)
-		}
-		warning += oneLine(f.Problem)
-		if len(problems) > 1 {
-			warning += fmt.Sprintf(" (+%d more findings)", len(problems)-1)
-		}
-		// Broken is a problem (red); advice only is dim (zhvkmj).
-		style := m.styles.dim
-		if f.Severity() == task.Broken {
-			style = m.styles.problem
-		}
-		lines = append(lines, style.Render(fit(warning, m.width)))
-		lines = append(lines, style.Render(fit("  fix: "+oneLine(f.FixLine()), m.width)))
+	return problems
+}
+
+// headFinding is the header's finding: what is wrong, on which line,
+// then the fix on its own line so a long problem never cuts it off
+// (rx74bp). ok is false when t has none.
+func (m model) headFinding(t task.Task) (warning, fix string, ok bool) {
+	problems := m.headProblems(t)
+	if len(problems) == 0 {
+		return "", "", false
 	}
-	// A dim rule above the subject too, so it stands out (Jørgen 00:04):
-	// breadcrumb, context, rule, subject, rule, details.
-	return append(append(lines, m.questionLines(t)...), m.styles.dim.Render(strings.Repeat("─", m.width)), title)
+	f := problems[0]
+	warning = "⚠ "
+	if f.Line > 0 {
+		warning += fmt.Sprintf("line %d: ", f.Line)
+	}
+	warning += oneLine(f.Problem)
+	if len(problems) > 1 {
+		warning += fmt.Sprintf(" (+%d more findings)", len(problems)-1)
+	}
+	return warning, "  fix: " + oneLine(f.FixLine()), true
 }
 
 // asked is the question t asks the viewer: what it asks, who asked,
@@ -305,11 +323,19 @@ func (m model) questionLines(t task.Task) []string {
 	var out []string
 	if a := t.Answer; a != nil {
 		// Every line of the answer, verbatim (41hhgn check 8): the first
-		// after who answered, the rest under it.
-		lines := strings.Split(strings.TrimRight(a.Text, "\n"), "\n")
-		out = append(out, m.styles.accent.Render(fit(fmt.Sprintf("✓ %s answered %s: %s", oneLine(a.By), a.Stage, safe(lines[0])), m.width)))
+		// after who answered, the rest under it. An id in it is marked
+		// where it stands (0ga6m0).
+		w := m.marked(t)(stopAnswer, 0)
+		lines := strings.Split(strings.TrimRight(safe(a.Text), "\n"), "\n")
+		for i, l := range lines {
+			if marked := markPlain(l, w, false); marked != l {
+				lines[i] = marked // the first only
+				break
+			}
+		}
+		out = append(out, m.styleMarked(fit(fmt.Sprintf("✓ %s answered %s: %s", oneLine(a.By), a.Stage, lines[0]), m.width), w, m.styles.accent))
 		for _, l := range lines[1:] {
-			out = append(out, m.styles.accent.Render(fit("  "+safe(l), m.width)))
+			out = append(out, m.styleMarked(fit("  "+l, m.width), w, m.styles.accent))
 		}
 		out = append(out, m.styles.dim.Render(fit("  unread by "+oneLine(a.For), m.width)))
 	}
@@ -360,10 +386,8 @@ func (m model) questionBlock(t task.Task) []string {
 	}
 	prefix := pointer + " ? "
 	indent := strings.Repeat(" ", len(prefix))
-	text := strings.TrimSpace(q.what)
-	if q.stage != "asked" {
-		text = q.stage + ": " + text
-	}
+	w := m.marked(t)(stopQuestion, 0)
+	text := markPlain(questionText(q), w, false)
 	var lines []string
 	for i, para := range strings.Split(text, "\n") {
 		for j, l := range strings.Split(wrap(para, max(10, m.width-len(indent))), "\n") {
@@ -378,9 +402,59 @@ func (m model) questionBlock(t task.Task) []string {
 	if focused {
 		label = m.styles.selected.Render(label)
 	} else {
-		label = m.styles.forYou.Render(label)
+		label = m.styleMarked(label, w, m.styles.forYou)
 	}
 	return append([]string{label}, m.askedBy(q, indent)...)
+}
+
+// questionText is a question's text as its block shows it: the stage
+// first unless it is a plain ask.
+func questionText(q asked) string {
+	text := strings.TrimSpace(q.what)
+	if q.stage != "asked" {
+		text = q.stage + ": " + text
+	}
+	return text
+}
+
+// checkText is a check's text as its row shows it: one line, and a
+// struck check's decision after it (sfa8w4).
+func checkText(a task.Acceptance) string {
+	text := oneLine(cleanMarkdown(a.Text))
+	if a.Struck {
+		why := "not relevant: " + oneLine(a.Reason)
+		if a.StruckBy != "" {
+			why += ", " + oneLine(a.StruckBy)
+		}
+		if a.StruckOn != "" {
+			why += ", " + oneLine(a.StruckOn)
+		}
+		text += " (" + why + ")"
+	}
+	return text
+}
+
+// sectionText is the text of every section called name, as the detail
+// draws it.
+func sectionText(sections []detailSection, name string) string {
+	var out []string
+	for _, s := range sections {
+		if s.name == name && strings.TrimSpace(s.text) != "" {
+			out = append(out, s.text)
+		}
+	}
+	return strings.Join(out, "\n")
+}
+
+// otherSection: a section the detail draws as written, in file order,
+// after the Files, not in a place of its own.
+func otherSection(name string) bool {
+	for _, n := range task.DescriptionSections {
+		if strings.ToLower(n) == name {
+			return false
+		}
+	}
+	return !contains([]string{"description", "acceptance", "dependencies", "notes", "history", "requests"}, name)
 }
 
 type detailSection struct{ name, text string }
@@ -499,32 +573,42 @@ type focusStop struct{ pane, index int }
 
 // focusRing is every place h/l and Tab/Shift-Tab stop in t's detail, in
 // reading order (e3sevr, Jørgen 23:28: Tab = l, Shift-Tab = h, one ring):
-// the ids in the header (the epic badge, an id the stage line names),
-// the page, the checks, each dependency, each child, each link, the
-// files, and each id named in the Notes. Enter opens a stop that is an id.
+// the ids in the header, the page, the ids in the title and the
+// description, the checks and the ids in them, each dependency, each
+// child, each link, the files, and the ids in the text below (0ga6m0).
+// Enter opens a stop that is an id.
 func (m model) focusRing(t task.Task) []focusStop {
 	stops := m.idStops(t)
 	var ring []focusStop
-	ids := func(where string) {
+	ids := func(where ...string) {
 		for k, s := range stops {
-			if s.where == where {
+			if contains(where, s.where) {
 				ring = append(ring, focusStop{focusIDs, k})
 			}
 		}
 	}
-	ids(stopParent)
-	ids(stopStage)
+	// The header, then the title (the page stop), the details top down;
+	// an id stands where idStops found it (0ga6m0).
+	ids(stopParent, stopStage, stopFinding, stopAnswer)
 	ring = append(ring, focusStop{focusPage, 0})
+	ids(stopTitle)
 	if q, mine := m.askedOf(t); mine && q.check == 0 {
 		ring = append(ring, focusStop{focusQuestion, 0})
 	}
+	ids(stopQuestion, stopText)
 	if len(t.Acceptance) > 0 {
 		ring = append(ring, focusStop{focusAcceptance, 0})
 	}
+	ids(stopCheck, stopAsked)
 	for i := range t.Dependencies {
 		ring = append(ring, focusStop{focusDeps, i})
+		for k, s := range stops {
+			if s.where == stopDepNote && s.index == i {
+				ring = append(ring, focusStop{focusIDs, k})
+			}
+		}
 	}
-	ids(stopChildren)
+	ids(stopWait, stopChildren)
 	for i, l := range m.links(t) {
 		if !l.Missing { // an id that is no task is not a stop
 			ring = append(ring, focusStop{focusLinks, i})
@@ -533,7 +617,7 @@ func (m model) focusRing(t task.Task) []focusStop {
 	if len(m.filesOf(t)) > 0 {
 		ring = append(ring, focusStop{focusFiles, 0})
 	}
-	ids(stopNotes)
+	ids(stopSection, stopRequest, stopResolved, stopNotes, stopHistory)
 	return ring
 }
 
@@ -632,22 +716,19 @@ func (m model) detailText(t task.Task) string {
 		b.WriteString(heading + "\n" + body + "\n\n")
 	}
 	plain := func(title string) string { return m.sectionHeading(title, "", false) }
-	text := func(name string) string {
-		var out []string
-		for _, s := range sections {
-			if s.name == name && strings.TrimSpace(s.text) != "" {
-				out = append(out, s.text)
-			}
-		}
-		return strings.Join(out, "\n")
+	text := func(name string) string { return sectionText(sections, name) }
+	// Every id the page shows is marked where it stands when Tab is on it
+	// (0ga6m0): rendered text is marked after rendering, plain text before
+	// it is wrapped, so the mark's column is counted.
+	markAt := m.marked(t)
+	markdown := func(where string, index int, s string) string {
+		return m.markStyled(m.markdown(s), markAt(where, index), true)
 	}
-	section(plain("Description"), m.markdown(text("description")), "no description yet")
+	section(plain("Description"), markdown(stopText, 0, text("description")), "no description yet")
 	// What the task is about comes first (jnaspy): Purpose, Principle and
 	// Relevant details right under the goal, above the checks.
-	described := map[string]bool{}
-	for _, name := range task.DescriptionSections {
-		described[strings.ToLower(name)] = true
-		section(plain(name), m.markdown(text(strings.ToLower(name))), "")
+	for i, name := range task.DescriptionSections {
+		section(plain(name), markdown(stopText, i+1, text(strings.ToLower(name))), "")
 	}
 	var checks []string
 	q, mine := m.askedOf(t)
@@ -672,20 +753,8 @@ func (m model) detailText(t task.Task) string {
 		}
 		prefix := fmt.Sprintf("%s %s%s %d. ", pointer, mark, box, i+1)
 		indent := strings.Repeat(" ", lipgloss.Width(prefix))
-		text := oneLine(cleanMarkdown(a.Text))
-		if a.Struck {
-			// Struck out with a reason (sfa8w4): the text crossed through
-			// and dim, the decision after it.
-			why := "not relevant: " + oneLine(a.Reason)
-			if a.StruckBy != "" {
-				why += ", " + oneLine(a.StruckBy)
-			}
-			if a.StruckOn != "" {
-				why += ", " + oneLine(a.StruckOn)
-			}
-			text += " (" + why + ")"
-		}
-		body := wrap(text, max(10, m.width-len(indent)))
+		w := markAt(stopCheck, i)
+		body := wrap(markPlain(checkText(a), w, true), max(10, m.width-len(indent)))
 		lines := strings.Split(body, "\n")
 		for j := range lines {
 			if j == 0 {
@@ -698,16 +767,19 @@ func (m model) detailText(t task.Task) string {
 		if m.detailPane == focusAcceptance && i == m.acceptance {
 			checks = append(checks, m.styles.selected.Render(label))
 		} else if a.Struck {
-			checks = append(checks, m.styles.dim.Strikethrough(true).Render(label))
+			// Struck out with a reason (sfa8w4): the text crossed through
+			// and dim, the decision after it.
+			checks = append(checks, m.styleMarked(label, w, m.styles.dim.Strikethrough(true)))
 		} else {
-			checks = append(checks, m.checkStyle(a.Checked).Render(label))
+			checks = append(checks, m.styleMarked(label, w, m.checkStyle(a.Checked)))
 		}
 		if mark != "" {
 			// The question once, under its check: what it asks, then who.
-			if w := strings.TrimSpace(q.what); w != "" {
-				for _, para := range strings.Split(w, "\n") {
+			asked := markAt(stopAsked, i)
+			if what := markPlain(strings.TrimSpace(q.what), asked, false); what != "" {
+				for _, para := range strings.Split(what, "\n") {
 					for _, l := range strings.Split(wrap(para, max(10, m.width-len(indent))), "\n") {
-						checks = append(checks, m.styles.forYou.Render(indent+l))
+						checks = append(checks, m.styleMarked(indent+l, asked, m.styles.forYou))
 					}
 				}
 			}
@@ -732,7 +804,7 @@ func (m model) detailText(t task.Task) string {
 		if d.OpenChildren > 0 {
 			flag += fmt.Sprintf(" (epic: %d open)", d.OpenChildren)
 		}
-		line := fmt.Sprintf("%s ↳ %s %s [%s]%s %s", pointer, m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, oneLine(d.Note))
+		line := fmt.Sprintf("%s ↳ %s %s [%s]%s %s", pointer, m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, m.markStyled(oneLine(d.Note), markAt(stopDepNote, i), false))
 		if pointer == ">" {
 			line = m.styles.selected.Render(ansi.Strip(line))
 		}
@@ -741,12 +813,12 @@ func (m model) detailText(t task.Task) string {
 	// Conditions (16dxsr), after the task dependencies: what it waits for
 	// and what hug saw when it checked. Not focusable: there is nothing to
 	// follow.
-	for _, w := range task.Waits(t, m.all) {
+	for i, w := range task.Waits(t, m.all) {
 		flag, style := " WAITING", m.styles.status["blocked"]
 		if w.Met {
 			flag, style = " met", m.styles.status["done"]
 		}
-		line := fmt.Sprintf("  ⧗ when %s%s · %s", oneLine(w.Text), style.Render(flag), m.styles.dim.Render(oneLine(w.Seen)))
+		line := fmt.Sprintf("  ⧗ when %s%s · %s", m.markStyled(oneLine(w.Text), markAt(stopWait, i), false), style.Render(flag), m.styles.dim.Render(oneLine(w.Seen)))
 		if w.Wakes != "" {
 			line += m.styles.dim.Render(" · wakes " + oneLine(w.Wakes))
 		}
@@ -792,28 +864,48 @@ func (m model) detailText(t task.Task) string {
 	// Files: the task's folder, each opening in the editor (zgr01t).
 	section(m.sectionHeading(fmt.Sprintf("Files (%d)", len(m.filesOf(t))), "j/k or [ ] step · Space shows · Enter edits · E folder", m.detailPane == focusFiles), strings.Join(m.filesLines(t), "\n"), "")
 	// Any other section, in file order, then Notes and History last.
-	for _, s := range sections {
-		if !described[s.name] && !contains([]string{"description", "acceptance", "dependencies", "notes", "history", "requests"}, s.name) {
-			section(plain(s.name), m.markdown(s.text), "")
+	for i, s := range sections {
+		if otherSection(s.name) {
+			section(plain(s.name), markdown(stopSection, i, s.text), "")
 		}
 	}
 	// Requests (hbgybn): each verbatim, with its account once resolved;
 	// the box r opens sits at its end.
 	if reqs := m.requestLines(t); len(reqs) > 0 {
+		m.markRequests(t, reqs, markAt)
 		heading := plain("Requests")
 		if m.prompt == requestPrompt {
 			heading = m.sectionHeading("Requests", "Enter sends · Alt-Enter a new line · Esc cancels", true)
 		}
 		section(heading, strings.Join(reqs, "\n"), "")
 	}
-	notes := m.markdown(text("notes"))
-	if marked, ok := m.markedStop(t); ok && marked.where == stopNotes {
-		// The id named in a note, marked where it stands (4bwcgp).
-		notes = m.markWord(notes, marked.shown, func(s string) string { return s })
-	}
-	section(plain("Notes"), notes, "")
-	section(plain("History"), m.markdown(text("history")), "")
+	section(plain("Notes"), markdown(stopNotes, 0, text("notes")), "")
+	// History has no Links (links), so a task:ID there is marked too.
+	section(plain("History"), m.markStyled(m.markdown(text("history")), markAt(stopHistory, 0), false), "")
 	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
+}
+
+// markRequests marks, in requestLines' lines, the id the focus is on in
+// a request's text or its account: request i takes its head line, a line
+// per line of its text, then one per line of its account.
+func (m model) markRequests(t task.Task, lines []string, markAt func(string, int) string) {
+	at := 0
+	markIn := func(n int, w string) {
+		for k := at; k < min(at+n, len(lines)); k++ {
+			if marked := m.markStyled(lines[k], w, true); marked != lines[k] {
+				lines[k] = marked
+				break
+			}
+		}
+		at += n
+	}
+	for i, r := range t.Requests {
+		at++ // who and when
+		markIn(len(strings.Split(strings.TrimRight(r.Text, "\n"), "\n")), markAt(stopRequest, i))
+		if a := r.Resolved; a != nil {
+			markIn(len(strings.Split(strings.TrimRight(a.Text, "\n"), "\n")), markAt(stopResolved, i))
+		}
+	}
 }
 
 // openTop shows a just-opened task from the top, scrolled only as far as
@@ -839,14 +931,22 @@ func (m *model) revealAcceptance() {
 	if m.detailPane == focusPage {
 		return // nothing is marked; the page keeps its scroll
 	}
-	if t, ok := m.selected(); ok {
-		for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
-			if strings.HasPrefix(line, "> ") {
-				if i < m.viewport.YOffset || i >= m.viewport.YOffset+m.viewport.Height {
-					m.viewport.SetYOffset(max(0, i-m.viewport.Height/2))
-				}
-				break
+	t, ok := m.selected()
+	if !ok {
+		return
+	}
+	// An id is marked ▸ where it stands, in the text (0ga6m0); in the
+	// header it is always on screen.
+	marker := func(line string) bool { return strings.HasPrefix(line, "> ") }
+	if s, ok := m.markedStop(t); ok {
+		marker = func(line string) bool { return strings.Contains(line, "▸"+s.shown) }
+	}
+	for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
+		if marker(line) {
+			if i < m.viewport.YOffset || i >= m.viewport.YOffset+m.viewport.Height {
+				m.viewport.SetYOffset(max(0, i-m.viewport.Height/2))
 			}
+			break
 		}
 	}
 }
