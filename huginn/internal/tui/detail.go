@@ -138,7 +138,8 @@ func renderMarkdown(s string, width int, dark bool, profile termenv.Profile) str
 }
 
 // stageLineStyle is the colour of a task's stage line in its detail: the
-// depends red, else dim; a wait on a thing is calm (zhvkmj, crab 02:52).
+// calm depends colour (zhvkmj check 6: not red), else dim; a wait on a
+// thing is calm (zhvkmj, crab 02:52).
 // What waits on you has no stage line: its question is in the details.
 func (m model) stageLineStyle(t task.Task) lipgloss.Style {
 	if m.stageOf(t) == "depends" {
@@ -952,14 +953,45 @@ func (m *model) revealAcceptance() {
 	if s, ok := m.markedStop(t); ok {
 		marker = func(line string) bool { return strings.Contains(line, "▸"+s.shown) }
 	}
-	for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
-		if marker(line) {
+	lines := strings.Split(ansi.Strip(m.detailText(t)), "\n")
+	// The > is looked for under the focused section's ▸ heading: a capture
+	// the page shows above it (asked_show, an overview with its own "> "
+	// rows) is not the focus (zhvkmj check 5: Files had the focus, the page
+	// scrolled to the capture's rows, and Files was never in sight).
+	from := 0
+	if heading := m.focusedHeading(); heading != "" {
+		for i, line := range lines {
+			if strings.HasPrefix(line, "▸ "+heading) {
+				from = i
+				break
+			}
+		}
+	}
+	for i := from; i < len(lines); i++ {
+		if marker(lines[i]) {
 			if i < m.viewport.YOffset || i >= m.viewport.YOffset+m.viewport.Height {
 				m.viewport.SetYOffset(max(0, i-m.viewport.Height/2))
 			}
 			break
 		}
 	}
+}
+
+// focusedHeading is the capitalised heading of the section that has the
+// focus, as sectionHeading draws it after "▸ ", or "" when the focus has
+// no section of its own (the page, an id, the question at the top).
+func (m model) focusedHeading() string {
+	switch m.detailPane {
+	case focusAcceptance:
+		return "ACCEPTANCE"
+	case focusDeps:
+		return "DEPENDENCIES"
+	case focusLinks:
+		return "LINKS"
+	case focusFiles:
+		return "FILES"
+	}
+	return ""
 }
 func (m *model) followDependency() {
 	t, ok := m.selected()
