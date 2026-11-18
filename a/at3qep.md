@@ -51,6 +51,7 @@ hatchling 17:10, landed 09466ed on main (ea2d369..09466ed, fast-forward; rebased
 Reflection (open, 2026-11-17, hatchling): One gap: hug task check takes no evidence text ('hug task check ID N'), but AGENTS.md says 'hug task check ID N with evidence'; I wrote the evidence as a separate note each time. Either check could take a text, or AGENTS.md could say 'then hug task note ID evidence'.
 landed 09466ed on main 2026-11-17: hug task lint: states only the owner can settle are one question on the ticket…
 shipped in v0.7.44 (09466ed)
+Reflection 1 is addressed by pw0t19 (branch pw0t19, 9aa1ae7, not on main yet): hug task check ID N "evidence" ticks and notes in one write; note and check accept --as; a wrong argument count names the command's usage and fix: hug task COMMAND --help. Resolve as applied once pw0t19 lands: hug task reflections resolve at3qep 1 applied
 ## History
 - 2026-11-17T17:39 todo -> doing/active (take)
 - 2026-11-17T18:10 doing/active -> done (done); was doing_since: 2026-11-17T17:39
