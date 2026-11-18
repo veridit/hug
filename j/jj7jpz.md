@@ -29,7 +29,7 @@ Found while working 6ep7y2 (tigress). Fix in huginn/internal/cli/sync.go plus gi
 ## Acceptance
 - [x] a counting test that runs the real detached child against a board Open cannot open: N of N passes leave no .pending (fails first on origin/main)
 - [x] mutation: dropping the removal makes the counting test fail
-- [ ] ordinary CI green on the fix commit (run id)
+- [x] ordinary CI green on the fix commit (run id)
 
 ## Notes
 
