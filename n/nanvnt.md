@@ -1,15 +1,20 @@
 ---
 id: nanvnt
 title: "A withdrawn question reads as withdrawn, never as open"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T23:34"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "hpqt99"
+worktree: "/Users/jhf/.jcode/scratch/hpqt99"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ huginn/internal/cli/askquestions.go questionText renders q.Answer and has no q.W
 - [ ] ASKED neither lists nor counts a withdrawn question, also when the task holds a second open one (test)
 
 ## Notes
+
+
+## History
+- 2026-11-18T23:34 todo -> doing/active (take)
