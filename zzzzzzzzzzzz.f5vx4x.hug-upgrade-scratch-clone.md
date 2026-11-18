@@ -58,5 +58,6 @@ Landed a13d7c74 on main.
 - Mutants: 7 of 7 killed (machineDry=dry, vars use dry, mem uses dry, no exit 5 after apply, no then line, no headings, --machine alone allowed).
 - Two existing tests are rewritten, not deleted: TestUpgradeRenamesEnvInHugConfigs uses --apply --machine; TestUpgradeMemoryPartRunsMemUpgrade asserts that --apply alone leaves the memory part pending with fix --apply --machine.
 - Suites -short: all 12 ok. Race: cli 115.3s ok, cmd/hug 19.2s ok.
+landed a13d7c7 on main 2026-11-18: hug upgrade --apply changes only this board; this machine's files need --apply…
 ## History
 - 2026-11-18T05:18 todo -> doing/active (take)
