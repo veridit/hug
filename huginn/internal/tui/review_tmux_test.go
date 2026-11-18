@@ -111,6 +111,9 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	screen := wait("take aaaaaa")
 	file := func(id string) string {
 		matches, _ := filepath.Glob(filepath.Join(tasks, "*"+id+"*.md"))
+		// Layout 3 (w40cmk): C/ID.md.
+		more, _ := filepath.Glob(filepath.Join(tasks, "?", id+".md"))
+		matches = append(matches, more...)
 		if len(matches) != 1 {
 			t.Fatalf("%s: %v", id, matches)
 		}

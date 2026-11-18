@@ -743,8 +743,22 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	// upgrade moves it: a write now would put a C/ID.md file beside
 	// rank.id.slug.md ones. Reads go on; old boards read as before. sync
 	// goes on too, so a clone can fetch a board another clone upgraded.
+	// Only a board below layout 3 is looked at, and only its old-named
+	// files count: a new board without hug.toml has none.
 	if !newer && board < 3 && known >= 3 && !readOnly[cmd] && cmd != "sync" && cmd != "init" {
-		return nil, &OperationError{Problem: fmt.Sprintf("this board has layout %d (hug.toml on branch %s): its task files are named rank.id.slug.md, and this hug writes C/ID.md (layout %d); it writes nothing until the board is moved", board, TaskBranch, known), Fix: "hug upgrade --apply"}
+		ts, e := s.s.Tasks()
+		if e != nil {
+			return nil, e
+		}
+		old := 0
+		for _, t := range ts {
+			if task.OldName(t.Path) {
+				old++
+			}
+		}
+		if old > 0 {
+			return nil, &OperationError{Problem: fmt.Sprintf("this board has layout %d (hug.toml on branch %s): %d task files are named rank.id.slug.md, and this hug writes C/ID.md (layout %d); it writes nothing until the board is moved", board, TaskBranch, old, known), Fix: "hug upgrade --apply"}
+		}
 	}
 	if newer {
 		if !readOnly[cmd] {

@@ -2,26 +2,29 @@ package cli
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // newerBoardFixture is a board one layout ahead of this hug: hug.toml on
-// the task branch says layout = 3, committed as a newer hug's upgrade
-// would.
+// the task branch says layout = task.Layout+1, committed as a newer hug's
+// upgrade would.
 func newerBoardFixture(t *testing.T) (*App, string, string) {
 	t.Helper()
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Look", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
 	dir := filepath.Join(a.Cwd, TaskDir)
-	if e := os.WriteFile(filepath.Join(dir, "hug.toml"), []byte("layout = 3\n"), 0o644); e != nil {
+	if e := os.WriteFile(filepath.Join(dir, "hug.toml"), []byte(fmt.Sprintf("layout = %d\n", newerLayout)), 0o644); e != nil {
 		t.Fatal(e)
 	}
 	git(t, dir, "add", "hug.toml")
-	git(t, dir, "commit", "-q", "-m", "hug upgrade: board layout 2 -> 3")
+	git(t, dir, "commit", "-q", "-m", fmt.Sprintf("hug upgrade: board layout %d -> %d", task.Layout, newerLayout))
 	return a, id, dir
 }
 
@@ -43,7 +46,7 @@ func TestOlderHugRefusesToWriteNewerBoard(t *testing.T) {
 		{"sync"},
 	} {
 		code, out := runText(a, args...)
-		want := "this board is newer than this hug: the board has layout 3 (hug.toml on branch hug/tasks), this hug knows layout 2"
+		want := fmt.Sprintf("this board is newer than this hug: the board has layout %d (hug.toml on branch hug/tasks), this hug knows layout %d", newerLayout, task.Layout)
 		if code != 1 || !strings.Contains(out, want) || !strings.HasSuffix(out, "fix: brew upgrade veridit/tap/hug\n") {
 			t.Fatalf("%v: exit %d, want 1 with %q and the brew fix:\n%s", args, code, want, out)
 		}
@@ -82,15 +85,16 @@ func TestOlderHugWarnsOnceOnRead(t *testing.T) {
 		}
 	}
 	r := execute(t, a, "ls", "--json")
-	if w, ok := r["board_newer"].(Reply); !ok || w["board"] != 3 || w["fix"] != "brew upgrade veridit/tap/hug" {
+	if w, ok := r["board_newer"].(Reply); !ok || w["board"] != newerLayout || w["fix"] != "brew upgrade veridit/tap/hug" {
 		t.Fatalf("--json has no board_newer: %#v", r["board_newer"])
 	}
 }
 
 // dx9vw2 (crab 20:35): the state: rename is the first layout bump. A board
 // already on state: without the key (hug's and Seid's on 2026-11-17) gets
-// layout = 2 from hug upgrade --apply, after which a layout-1 hug writes
-// nothing; hug task init writes layout = 2 on a new board.
+// this hug's layout from hug upgrade --apply, its task files moved to
+// C/ID.md (w40cmk) in the same commit, after which a layout-1 hug writes
+// nothing; hug task init writes this hug's layout on a new board.
 func TestUpgradeMarksStateBoardLayoutTwo(t *testing.T) {
 	t.Parallel()
 	a := app(t)
@@ -102,28 +106,28 @@ func TestUpgradeMarksStateBoardLayoutTwo(t *testing.T) {
 	if f := taskFile(t, a, id); !strings.Contains(f, "\nstate: ") {
 		t.Fatalf("not a state: board:\n%s", f)
 	}
-	if code, out := runText(a, "upgrade"); code != UpgradePending || !strings.Contains(out, "tasks: would: board layout 1 -> 2 in hug.toml") {
+	if code, out := runText(a, "upgrade"); code != UpgradePending || !strings.Contains(out, fmt.Sprintf("tasks: would: board layout 1 -> %d in hug.toml", task.Layout)) {
 		t.Fatalf("upgrade preview: exit %d\n%s", code, out)
 	}
-	if code, out := runText(a, "upgrade", "--apply"); code != 0 || !strings.Contains(out, "tasks: board layout 1 -> 2 in hug.toml") {
+	if code, out := runText(a, "upgrade", "--apply"); code != 0 || !strings.Contains(out, fmt.Sprintf("tasks: board layout 1 -> %d in hug.toml", task.Layout)) {
 		t.Fatalf("upgrade --apply: exit %d\n%s", code, out)
 	}
-	if toml, _ := os.ReadFile(filepath.Join(dir, "hug.toml")); string(toml) != "layout = 2\n" {
+	if toml, _ := os.ReadFile(filepath.Join(dir, "hug.toml")); string(toml) != layoutLine {
 		t.Fatalf("hug.toml:\n%s", toml)
 	}
-	if log := git(t, dir, "log", "-1", "--format=%s"); log != "hug upgrade: board layout 1 -> 2" {
+	if log := git(t, dir, "log", "-1", "--format=%s"); log != upgradedFrom(1) {
 		t.Fatalf("commit %q", log)
 	}
 	older := *a
 	older.Layout = 1
-	if code, out := runText(&older, "note", id, "x"); code != 1 || !strings.Contains(out, "the board has layout 2 (hug.toml on branch hug/tasks), this hug knows layout 1") {
+	if code, out := runText(&older, "note", id, "x"); code != 1 || !strings.Contains(out, fmt.Sprintf("the board has layout %d (hug.toml on branch hug/tasks), this hug knows layout 1", task.Layout)) {
 		t.Fatalf("a layout-1 hug wrote: exit %d\n%s", code, out)
 	}
 	execute(t, a, "note", id, "this hug writes")
 
 	b := app(t)
 	execute(t, b, "init")
-	if toml, _ := os.ReadFile(filepath.Join(b.Cwd, TaskDir, "hug.toml")); string(toml) != "layout = 2\n" {
+	if toml, _ := os.ReadFile(filepath.Join(b.Cwd, TaskDir, "hug.toml")); string(toml) != layoutLine {
 		t.Fatalf("init's hug.toml:\n%s", toml)
 	}
 	if code, out := runText(b, "upgrade"); code != 0 || strings.Contains(out, "board layout") {
@@ -140,28 +144,30 @@ func TestUpgradeRecordsBoardLayout(t *testing.T) {
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Look", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
 	execute(t, a, "people", "add", "jhf", "jorgen@veridit.no")
-	execute(t, a, "note", id, "a layout-2 board takes writes")
+	execute(t, a, "note", id, "a board at this hug's layout takes writes")
 	newer := *a
-	newer.Layout = 3
-	if code, out := runText(&newer, "upgrade"); code != UpgradePending || !strings.Contains(out, "tasks: would: board layout 2 -> 3 in hug.toml") {
+	newer.Layout = newerLayout
+	bump := fmt.Sprintf("board layout %d -> %d in hug.toml", task.Layout, newerLayout)
+	if code, out := runText(&newer, "upgrade"); code != UpgradePending || !strings.Contains(out, "tasks: would: "+bump) {
 		t.Fatalf("upgrade preview: exit %d\n%s", code, out)
 	}
-	if code, out := runText(&newer, "upgrade", "--apply"); code != 0 || !strings.Contains(out, "tasks: board layout 2 -> 3 in hug.toml") {
+	if code, out := runText(&newer, "upgrade", "--apply"); code != 0 || !strings.Contains(out, "tasks: "+bump) {
 		t.Fatalf("upgrade --apply: exit %d\n%s", code, out)
 	}
 	toml, e := os.ReadFile(filepath.Join(a.Cwd, TaskDir, "hug.toml"))
-	if e != nil || !strings.HasPrefix(string(toml), "layout = 3\n\n[people.jhf]\n") {
+	if e != nil || !strings.HasPrefix(string(toml), fmt.Sprintf("layout = %d\n\n[people.jhf]\n", newerLayout)) {
 		t.Fatalf("hug.toml (%v):\n%s", e, toml)
 	}
 	if code, out := runText(&newer, "upgrade"); code != 0 || !strings.Contains(out, "tasks: nothing to do") {
 		t.Fatalf("a second upgrade: exit %d\n%s", code, out)
 	}
 	execute(t, &newer, "note", id, "the newer hug writes")
-	if code, out := runText(a, "note", id, "x"); code != 1 || !strings.Contains(out, "board has layout 3") {
+	has := fmt.Sprintf("board has layout %d", newerLayout)
+	if code, out := runText(a, "note", id, "x"); code != 1 || !strings.Contains(out, has) {
 		t.Fatalf("the older hug wrote: exit %d\n%s", code, out)
 	}
 	// An older hug's upgrade stops too: it would move the board back.
-	if code, out := runText(a, "upgrade", "--apply"); code != 1 || !strings.Contains(out, "board has layout 3") {
+	if code, out := runText(a, "upgrade", "--apply"); code != 1 || !strings.Contains(out, has) {
 		t.Fatalf("the older hug's upgrade: exit %d\n%s", code, out)
 	}
 }

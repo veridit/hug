@@ -7,14 +7,26 @@ import (
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/veridit/hug/huginn/internal/task"
 )
 
 func TestMoveRepairsTiesAndUsesGlobalOrder(t *testing.T) {
 	m := fixture(t)
 	for _, v := range m.all {
-		dest := filepath.Join(m.store.Root, v.Group, task.BuildName("A", v.ID, v.Slug))
-		if e := os.Rename(filepath.Join(m.store.Root, v.Path), dest); e != nil {
+		// Every task at rank A, a tie the move must repair: in layout 3
+		// (w40cmk) the rank is the file's rank: line.
+		p := filepath.Join(m.store.Root, filepath.FromSlash(v.Path))
+		b, e := os.ReadFile(p)
+		if e != nil {
+			t.Fatal(e)
+		}
+		var out []string
+		for _, l := range strings.SplitAfter(string(b), "\n") {
+			if strings.HasPrefix(l, "rank: ") {
+				l = "rank: \"A\"\n"
+			}
+			out = append(out, l)
+		}
+		if e := os.WriteFile(p, []byte(strings.Join(out, "")), 0o644); e != nil {
 			t.Fatal(e)
 		}
 	}
