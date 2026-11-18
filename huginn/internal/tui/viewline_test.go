@@ -42,13 +42,20 @@ func TestViewLineCarriesCounts(t *testing.T) {
 		}
 		golden = append(golden, "== "+strconv.Itoa(w), strings.Join(lines[:3], "\n"))
 	}
-	// The marks: v and each view letter carry the key style.
+	// The marks: v and each view letter carry their tier's key style (v
+	// step 1, o l b ! step 2; 911j70 rewrote the one shared key style).
 	m := manyModel(t)
 	m.width = 140
 	m.resize()
 	raw := m.viewLine(m.stateCounts())
-	key := m.styles.accent.Underline(true)
 	for _, k := range []string{"v", "o", "l", "b", "!"} {
+		key := m.styles.viewKey
+		if k == "v" {
+			key = m.styles.viewPrefixKey
+		}
+		if k == "l" { // list is the view: its letter sits on the tint
+			key = key.Background(m.styles.viewCurrent.GetBackground())
+		}
 		if !strings.Contains(raw, key.Render(k)) {
 			t.Fatalf("%q is not marked on the view line: %q", k, raw)
 		}
@@ -96,8 +103,10 @@ func TestViewPrefixPicksEveryView(t *testing.T) {
 	}
 }
 
-// qh9ep1 check 3: after v alone the view line lights up and the footer
-// lists the choices; Esc or an unknown key cancels and changes nothing.
+// qh9ep1 check 3: after v alone the view line shows it waits and the
+// footer lists the choices; Esc or an unknown key cancels and changes
+// nothing. Since 911j70 only v and the cursor slot change
+// (TestViewLineMarksActiveView), not the whole line.
 func TestPendingViewPrefixShowsChoices(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
 	m := manyModel(t)
@@ -116,7 +125,7 @@ func TestPendingViewPrefixShowsChoices(t *testing.T) {
 	lit.styles.renderer.SetColorProfile(termenv.TrueColor)
 	plain.styles.renderer.SetColorProfile(termenv.TrueColor)
 	if lit.viewLine(lit.stateCounts()) == plain.viewLine(plain.stateCounts()) {
-		t.Fatal("the view line does not light up while v waits")
+		t.Fatal("the view line does not show that v waits")
 	}
 	for _, k := range []string{"esc", "x", "j", "q", "e", "S", "?"} {
 		after := press(v, k)

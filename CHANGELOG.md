@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The view line keeps its colours (911j70). `v` is the accent and `o l b !` violet, two stable tiers of the key trie, and the view you are in sits on the selection tint. After `v` the line no longer lights up as a whole: `v` shows as entered and one underlined cursor blinks after `view:`, where the second key goes, the same cursor as the answer box's. It goes when the view is chosen or `v` is cancelled.
+
 ## v0.7.65 - 2026-11-18
 
 - A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.

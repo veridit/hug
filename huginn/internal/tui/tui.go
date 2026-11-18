@@ -219,6 +219,7 @@ type model struct {
 	input                              textinput.Model
 	columnHinted                       bool           // H/L or o last: the footer says what o does, on rows (qtj177)
 	answerBox                          textarea.Model // the answer under a question: lines of its own (41hhgn)
+	vCursor                            cursor.Model   // the one cursor while v waits, after 'view:' (911j70)
 	viewport, helpViewport             viewport.Model
 	helpModel                          help.Model
 	completion                         int
@@ -494,6 +495,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, pictures: map[string]pictureMemo{}, panes: &paneMemo{forYou: -1},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	styleAnswerCursor(&m.answerBox, m.styles.cursor)
+	m.vCursor = cursor.New() // blinks at bubbles' 530 ms, as the box's
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	if o.Initial != nil {
 		// The board the cache last saw, drawn now; the refresh brings the
@@ -1191,8 +1193,15 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	switch msg := msg.(type) {
 	case cursor.BlinkMsg:
-		// The answer or request box's cursor blinks (qpp30y); nothing
-		// else on screen does.
+		// The answer or request box's cursor blinks (qpp30y), and the view
+		// cursor while v waits (911j70); nothing else on screen does. The
+		// two never show at once: v in a box is text.
+		if m.pendingV {
+			var cmd tea.Cmd
+			m.vCursor, cmd = m.vCursor.Update(msg)
+			return m, cmd
+		}
+		m.vCursor.Blur() // v was answered: its last tick ends the blink
 		return m, m.blinkBox(msg)
 	case tea.WindowSizeMsg:
 		// Some PTYs report zero before their first usable size is available.
@@ -1249,6 +1258,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k == "f1" || (k == "?" && ((m.help && !m.helpTyping) || (!m.help && !m.textInput()))) {
 			m.help = !m.help
 			m.pendingV = false // help answers the key, not the prefix
+			m.vCursor.Blur()
 			m.helpTyping = false
 			m.helpQuery = ""
 			m.helpViewport.SetContent(m.helpText())
@@ -1259,6 +1269,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.pendingV && !m.help {
 				// Esc cancels the prefix, and only that (qh9ep1 check 3).
 				m.pendingV = false
+				m.vCursor.Blur()
 				m.message = ""
 				return m, nil
 			}
@@ -1323,6 +1334,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// else (Esc, an unknown key). No single key switches views.
 		if m.pendingV {
 			m.pendingV = false
+			m.vCursor.Blur() // the cursor goes with the prefix (911j70)
 			if view, ok := pickView(k); ok {
 				m.detail = false
 				m.setView(view)
@@ -1338,7 +1350,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k == "v" {
 			m.pendingV = true
 			m.message = viewPrefix()
-			return m, nil
+			return m, m.vCursor.Focus() // the cursor shows, then blinks
 		}
 		// After an edit that broke the file, e goes straight back into the
 		// editor on that task: the notice is the question (rx74bp).
