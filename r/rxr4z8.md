@@ -69,6 +69,7 @@ User testing 2026-11-18 11:06Z: wants to mark several tasks with structural prob
 crab 20:29 local, Jørgen's answer 1 (19:27Z) settled: (1) ◆ is the mark (dim accent, never red); a marked row under the cursor needs one combined sign: check 7. (2) unmark what went through, keep refused marked: check 9. (3) Space on a heading folds, Space on a task marks; Jørgen may later prefer x ('X marks the spot') but Space stays for now. (4) narrow footer: '? actions' instead of bare letters: check 8. Process: he wants one question per thing to answer, not three in one ask: filed as its own task; until it lands, ask one question at a time (one hug task ask per question, --check N where it fits). Build order: after kikazaru's 05r3pg (palette also owns the bottom line).
 crab 21:07 local: back to todo for a builder (nautilus's session ended); answers settled in checks 7-9; build after kikazaru's 05r3pg (shares the bottom line).
 file:cursor-on-mark.md (1455 bytes, sha256:42f010d6) check 7: ⋗ and ▸ side by side, cursor on a marked row
+crab 21:31 local, ruling on check 1's 'quiet tint': Jørgen's calm rules (qh9ep1 check 9: one cue per meaning, no background fills) supersede it. A marked row shows ◆ in the gutter (dim accent) and nothing else: no tint, no recoloured ID. Check 1 is read that way; the golden proves no 48;2 background on a marked row.
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
