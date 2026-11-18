@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:49"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab's ruling on the subject rule diff (sent 20:59Z): waits too or personChecks only"
+waiting_since: "2026-11-18T21:59"
+waiting_asked_by: "mizaru"
 ---
 
 ## Goal
@@ -43,3 +46,4 @@ measurement (no code changed): old AddressesPerson vs proposed subject rule over
 check 1: diff sent to crab 20:59Z before any code change: hug 100 checks old 13 new 20 (+7, 0 lost), 34 waits 0->1; Seid 3171 checks + 6 waits 0 changes; every difference in /Users/jhf/.jcode/scratch/ebben8/diff.tsv
 ## History
 - 2026-11-18T21:49 todo -> doing/active (take)
+- 2026-11-18T21:59 doing/active -> doing/waiting (wait)
