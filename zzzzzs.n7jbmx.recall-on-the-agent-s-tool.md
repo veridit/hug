@@ -35,5 +35,6 @@ Gate sweep 2026-11-16: norecords1 vs default on 66 calls: useful -12.1 [-18.4,-4
 
 
 file:n7jbmx-plan.txt (3047 bytes, sha256:506d2708)
+Check 2 plan sent to crab (file:n7jbmx-plan.txt). The trigger matches exact anchors: touched paths, basenames and bash command heads against paths and commands named in memories, which a local extractor writes into an anchors table. jrj1vq's CASE fields feed the same table later. Types rule, fact and preference only, at most 2 per call. Dev set: 300 calls from 11-16..18. Ship decision only on a fresh held-out set of 150 calls from 11-19 on, judged blind with judge_tool.py unchanged. Bar, fixed before any run: noise <=10/100 (CI upper <=15), useful >=10/100 (CI lower >0), precision >=50%, noise below default with the CI excluding 0, hook p95 <200 ms. No code until crab rules.
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
