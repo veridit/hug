@@ -226,8 +226,9 @@ func mustSelected(t *testing.T, m model) task.Task {
 }
 
 // 5z4zt4 (Jørgen 14:51): S copies the screen as plain text at once, then
-// asks to attach the coloured frame to the task in view; Enter attaches and
-// commits screen-HHMM.ans, Esc keeps only the copy.
+// asks where to attach the coloured frame, offering the task in view;
+// Enter attaches and commits screen-HHMM.ans, Esc keeps only the copy
+// (hjbfzd: the prompt, not a confirm).
 func TestScreenCaptureCopiesThenAsks(t *testing.T) {
 	var copied []string
 	old, oldNow := clipboard, captureNow
@@ -248,11 +249,11 @@ func TestScreenCaptureCopiesThenAsks(t *testing.T) {
 		t.Fatalf("the copy is not the screen as seen: %q", first)
 	}
 	bar := ansi.Strip(asked.View())
-	if asked.confirm != "S" || !strings.Contains(bar, "Confirm attach screen") && !strings.Contains(bar, "Attach this screen to 000002 as screen-1452.ans") {
+	if asked.prompt != capturePrompt || !strings.Contains(bar, "Attach this screen to: 000002") {
 		t.Fatalf("S did not ask:\n%s", bar)
 	}
-	if kept := press(asked, "esc"); kept.confirm != "" || kept.hasFile(mustSelected(t, kept), "screen-1452.ans") || !strings.Contains(kept.message, "screen copied (") || !strings.Contains(kept.message, "not attached") {
-		t.Fatalf("Esc: confirm %q message %q", kept.confirm, kept.message)
+	if kept := press(asked, "esc"); kept.prompt != "" || kept.hasFile(mustSelected(t, kept), "screen-1452.ans") || !strings.Contains(kept.message, "screen copied (") || !strings.Contains(kept.message, "not attached") {
+		t.Fatalf("Esc: prompt %q message %q", kept.prompt, kept.message)
 	}
 	done := press(asked, "enter")
 	sel := mustSelected(t, done)
@@ -267,8 +268,8 @@ func TestScreenCaptureCopiesThenAsks(t *testing.T) {
 		t.Fatalf("attached capture: %v\n%s", err, b)
 	}
 	// A second capture in the same minute gets its own name.
-	again := press(done, "S")
-	if again.pendingValue != "screen-1452-2.ans" {
-		t.Fatalf("second capture named %q", again.pendingValue)
+	again := press(done, "S", "enter")
+	if !again.hasFile(mustSelected(t, again), "screen-1452-2.ans") {
+		t.Fatalf("second capture: files %v message %q", again.filesOf(mustSelected(t, again)), again.message)
 	}
 }

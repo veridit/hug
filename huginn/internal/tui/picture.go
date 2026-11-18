@@ -398,7 +398,9 @@ func foldBlankRows(s string) string {
 
 // The screen capture (S, Jørgen 14:51): the frame as you see it goes to the
 // clipboard as plain text, so it pastes cleanly into a chat with an agent,
-// and S asks to attach it to the task in view as a coloured .ans file.
+// and S asks where to attach it as a coloured .ans file: the task in view,
+// another by id, one picked from the rows, or a new one (hjbfzd,
+// capture.go).
 
 // captureKey takes the screen.
 const captureKey = "S"
@@ -426,8 +428,9 @@ var clipboard = func(text string, tmux bool) error {
 var captureNow = time.Now
 
 // capture takes the frame as drawn now, before the bar asks anything:
-// plain text to the clipboard, the coloured frame kept for attaching.
-func (m *model) capture() {
+// plain text to the clipboard, the coloured frame kept for attaching, and
+// the prompt asks where it goes, offering the task in view.
+func (m *model) capture() tea.Cmd {
 	frame := m.frameView() // text only: a shown image's codes stay out (2qndsd)
 	plain := ansi.Strip(frame)
 	var lines []string
@@ -440,24 +443,18 @@ func (m *model) capture() {
 		copied = "screen not copied (" + err.Error() + ")"
 	}
 	n := strings.Count(plain, "\n")
-	t, ok := m.selected()
-	if !ok {
-		m.message = fmt.Sprintf("%s (%d lines) · no task in view to attach it to", copied, n)
-		return
-	}
-	name := "screen-" + captureNow().Format("1504") + ".ans"
-	for i := 2; m.hasFile(t, name); i++ {
-		name = fmt.Sprintf("screen-%s-%d.ans", captureNow().Format("1504"), i)
-	}
 	var rows []string
 	for _, l := range strings.Split(strings.TrimRight(frame, "\n"), "\n") {
 		rows = append(rows, trimPadding(l))
 	}
 	m.captured = strings.Join(rows, "\n") + "\n"
 	m.capturedNote = fmt.Sprintf("%s (%d lines)", copied, n)
-	m.confirm = captureKey
-	m.confirmPath = t.Path
-	m.pendingValue = name
+	m.captureStamp = captureNow().Format("1504")
+	offer := ""
+	if t, ok := m.selected(); ok {
+		offer = t.ID
+	}
+	return m.openCapture(offer)
 }
 
 // hasFile says whether t already has a file called name.
@@ -470,11 +467,12 @@ func (m model) hasFile(t task.Task, name string) bool {
 	return false
 }
 
-// attachCapture attaches the captured frame (the confirm's Enter).
+// attachCapture attaches the captured frame to t as name (hjbfzd: the
+// task typed, offered or picked).
 func (m *model) attachCapture(t task.Task, name string) {
 	body := []byte(m.captured)
 	note := m.capturedNote
-	m.captured, m.capturedNote = "", ""
+	m.captured, m.capturedNote, m.captureTyped = "", "", false
 	// The attach and its commit hold the board turn (95ahtk).
 	defer m.hold()()
 	r, _, err := m.store.Attach(t.ID, name, body, "screen capture from hug tui", false)

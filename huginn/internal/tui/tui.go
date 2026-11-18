@@ -202,6 +202,14 @@ type model struct {
 	// captured is the frame S took (5z4zt4), waiting for Enter to attach
 	// it; capturedNote says what went to the clipboard.
 	captured, capturedNote string
+	// picking: s in the capture prompt chose a row for it (hjbfzd);
+	// pickFrom is where S was pressed, to come back to. captureStamp is
+	// the HHMM the capture was taken at; captureTyped says the reader has
+	// typed in its prompt, so s and c are text.
+	picking      bool
+	pickFrom     pickReturn
+	captureStamp string
+	captureTyped bool
 	// pictures keeps each question picture as last read, by file, width
 	// and mtime, so a redraw does not read it again (5z4zt4).
 	pictures        map[string]pictureMemo
@@ -1196,14 +1204,23 @@ func (m *model) back() {
 	case m.help:
 		m.help = false
 	case m.confirm != "":
-		if m.confirm == captureKey {
-			// Esc keeps only the copy (5z4zt4): nothing is attached.
-			m.message = m.capturedNote + " · not attached"
-			m.captured, m.capturedNote = "", ""
-		}
 		m.confirm = ""
 		m.pendingValue = ""
 		m.pendingArgs = nil
+	case m.prompt == captureTitlePrompt:
+		// Esc on the new task's title goes back to where (hjbfzd).
+		m.input.Blur()
+		m.openCapture("")
+	case m.prompt == capturePrompt:
+		// Esc keeps only the copy (5z4zt4): nothing is attached.
+		m.prompt = ""
+		m.input.Blur()
+		m.dropCapture()
+	case m.picking && m.prompt == "":
+		// Esc while picking: nothing attached, back where S was pressed. A
+		// find or jump opened while picking closes first.
+		m.endPick()
+		m.dropCapture()
 	case m.editNotice != "" && m.prompt == "":
 		m.editNotice = ""
 	case m.prompt == "filter" && m.pickerField != "":
@@ -1448,9 +1465,14 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		// S takes the screen as you see it (5z4zt4): copied to the
-		// clipboard at once, then the bar asks to attach it to the task.
-		if k == captureKey {
-			m.capture()
+		// clipboard at once, then the input line asks where it goes
+		// (hjbfzd). While a task is picked for a capture, S is no new one.
+		if k == captureKey && !m.picking {
+			return m, m.capture()
+		}
+		// Picking a task for the capture (hjbfzd): Enter attaches, the
+		// writers say so, every other key is the rows' own.
+		if m.picking && m.pickKey(k) {
 			return m, nil
 		}
 		// R reloads into the newer hug in the corner (j2vwk0); without one
@@ -1825,6 +1847,9 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
 	if m.boxPrompt() {
 		return m.updateAnswer(msg)
+	}
+	if m.prompt == capturePrompt || m.prompt == captureTitlePrompt {
+		return m.updateCapture(msg)
 	}
 	if m.prompt == "sort" {
 		return m.updateSort(msg)

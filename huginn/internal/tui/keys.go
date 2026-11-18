@@ -52,6 +52,13 @@ func (m model) barHints() []bkey.Binding {
 		hints = []bkey.Binding{hint("Esc", "cancel"), hint("?", "help")}
 	case m.confirm != "":
 		hints = []bkey.Binding{hint("Enter", "confirm"), hint("Esc", "cancel"), hint("?", "help"), hint("q", "quit")}
+	case m.prompt == capturePrompt:
+		// hjbfzd: s and c are on the line above, beside the field.
+		hints = []bkey.Binding{hint("Enter", "attach"), hint("Tab", "complete"), hint("Esc", "not attached"), hint(m.helpKey(), "help")}
+	case m.prompt == captureTitlePrompt:
+		hints = []bkey.Binding{hint("Enter", "create and attach"), hint("Esc", "back"), hint(m.helpKey(), "help")}
+	case m.picking && m.prompt == "" && !m.help:
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "attach here"), hint("/", "find"), hint("#", "id"), hint("Esc", "not attached")}
 	case m.grab.active:
 		// Only the keys that work while a task is grabbed (3xcesq).
 		hints = []bkey.Binding{hint("j/k", "move"), hint("< >", "top/bottom"), hint("Enter", "drop"), hint("Esc", "cancel")}
@@ -79,7 +86,7 @@ func (m model) barHints() []bkey.Binding {
 		// h/l and Tab are one key (e3sevr): the bar names them together.
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order"), hint("r", "request")}
 	}
-	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" && !m.pendingV {
+	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" && !m.pendingV && !m.picking {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f", "find"), hint("#", "id"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
 	return hints

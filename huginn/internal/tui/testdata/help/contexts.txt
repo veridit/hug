@@ -31,7 +31,7 @@ s              sort picker: c column, p t s u d g a n; again flips
 Backspace / F  remove the last chip / clear all filters                         
 : sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
-S              copy the screen, Enter attaches it to the task                   
+S              copy the screen, attach: id, s select, c create                  
 r              request: ask the agents for a change; Enter sends                
 Enter / Esc    confirm / cancel every editing action                            
 e again        after an edit left a finding: edit at once                       
@@ -72,7 +72,7 @@ s              sort picker: c column, p t s u d g a n; again flips
 Backspace / F  remove the last chip / clear all filters                         
 : sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
-S              copy the screen, Enter attaches it to the task                   
+S              copy the screen, attach: id, s select, c create                  
 r              request: ask the agents for a change; Enter sends                
 Enter / Esc    confirm / cancel every editing action                            
 e again        after an edit left a finding: edit at once                       
@@ -110,7 +110,7 @@ s              sort picker: c column, p t s u d g a n; again flips
 Backspace / F  remove the last chip / clear all filters                         
 : sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
-S              copy the screen, Enter attaches it to the task                   
+S              copy the screen, attach: id, s select, c create                  
 r              request: ask the agents for a change; Enter sends                
 Enter / Esc    confirm / cancel every editing action                            
 e again        after an edit left a finding: edit at once                       
@@ -151,7 +151,7 @@ c             clear all filters                                        s        
 g             group rows: flat, group, epic, tag (tag: first listed    Backspace / F  remove the last chip / clear all filters              
               tag)                                                     : sort         order by fields; s r or : sort rank goes back         
                                                                        N              new task                                              
-                                                                       S              copy the screen, Enter attaches it to the task        
+                                                                       S              copy the screen, attach: id, s select, c create       
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
@@ -176,7 +176,7 @@ w           wait: park the doing task on what it waits on              s        
 y           yank: P/p in the list paste it                             Backspace / F  remove the last chip / clear all filters              
 T           type palette                                               : sort         order by fields; s r or : sort rank goes back         
 E           its files folder in the editor                             N              new task                                              
-                                                                       S              copy the screen, Enter attaches it to the task        
+                                                                       S              copy the screen, attach: id, s select, c create       
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
@@ -201,7 +201,7 @@ T           type palette                                               s        
                                                                        Backspace / F  remove the last chip / clear all filters              
                                                                        : sort         order by fields; s r or : sort rank goes back         
                                                                        N              new task                                              
-                                                                       S              copy the screen, Enter attaches it to the task        
+                                                                       S              copy the screen, attach: id, s select, c create       
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
