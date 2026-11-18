@@ -34,7 +34,7 @@ Activity source: session/turn timestamps already in the jcode and claude journal
 
 ## Acceptance
 - [x] decision recorded in DESIGN.md with reason
-- [ ] With 7+ days of activity, hug computes a 168-bucket hour-of-week histogram and names the longest quiet stretch; shown by a command or debug line (test with a synthetic week)
+- [x] With 7+ days of activity, hug computes a 168-bucket hour-of-week histogram and names the longest quiet stretch; shown by a command or debug line (test with a synthetic week)
 - [ ] Dreaming starts at the beginning of that stretch, and with under a week of data the current behaviour stays (test)
 
 ## Requests
