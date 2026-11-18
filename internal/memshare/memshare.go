@@ -59,17 +59,27 @@ const (
 // origin/hug/tasks before this clone has its own. Absent means no; outside
 // a git repository, no. A value other than true or false is an error.
 func Shares(dir string) (bool, error) {
-	if exec.Command("git", "-C", dir, "rev-parse", "--git-dir").Run() != nil {
+	out, ok := Config(dir)
+	if !ok {
 		return false, nil
+	}
+	return Parse(out)
+}
+
+// Config returns hug.toml as committed on hug/tasks (or origin/hug/tasks
+// before this clone has its own), and false when there is none.
+func Config(dir string) ([]byte, bool) {
+	if exec.Command("git", "-C", dir, "rev-parse", "--git-dir").Run() != nil {
+		return nil, false
 	}
 	for _, ref := range []string{"refs/heads/" + taskBranch, "refs/remotes/origin/" + taskBranch} {
 		out, err := exec.Command("git", "-C", dir, "cat-file", "blob", ref+":"+configName).Output()
 		if err != nil {
 			continue // no such branch, or no hug.toml on it
 		}
-		return Parse(out)
+		return out, true
 	}
-	return false, nil
+	return nil, false
 }
 
 // Parse reads [memory] share from hug.toml's content.

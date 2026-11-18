@@ -12,7 +12,12 @@ import (
 	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
-type BranchOptions struct{ DryRun, Migrate bool }
+type BranchOptions struct {
+	DryRun, Migrate bool
+	// Gate is the placement gate (rnpdnm B); nil writes every line of the
+	// project scope that is not secret-shaped.
+	Gate *Gate
+}
 type BranchStats struct {
 	SyncStats
 	Branch, Mount string
@@ -79,7 +84,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 	}
 	st.Migrated = o.Migrate && (hasLegacy || tracked)
 	if o.DryRun {
-		st.SyncStats, err = syncFile(p, nativePath, true, false)
+		st.SyncStats, err = syncFile(p, nativePath, true, false, o.Gate)
 		if err != nil {
 			return st, err
 		}
@@ -100,7 +105,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 		if err = mergeLegacy(); err != nil {
 			return st, err
 		}
-		st.SyncStats, err = Sync(p, nativePath, false)
+		st.SyncStats, err = SyncGated(p, nativePath, false, o.Gate)
 	} else {
 		repository, e := gitbranch.Open(p.Root, NotesBranch, NotesDir, gitbranch.WithIdentity("muninn", "muninn@users.noreply.github.com"))
 		if e != nil {
@@ -119,7 +124,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 				return err
 			}
 			var err error
-			st.SyncStats, err = syncFile(p, nativePath, false, false)
+			st.SyncStats, err = syncFile(p, nativePath, false, false, o.Gate)
 			return err
 		})
 		if err == nil {
