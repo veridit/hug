@@ -1,17 +1,16 @@
 ---
 id: rxr4z8
 title: "In lists, Space marks tasks and the footer offers actions for the marked ones"
-state: "doing"
+state: "todo"
 type: feature
 priority: ""
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "zzzzzzzzzzm8"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T06:18"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -71,3 +70,4 @@ crab 20:29 local, Jørgen's answer 1 (19:27Z) settled: (1) ◆ is the mark (dim 
 - 2026-11-18T20:27 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:27 answer 1 acknowledged by crab
 - 2026-11-18T20:29 answer 1 in progress by crab: hug task set rxr4z8
+- 2026-11-18T21:07 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T06:18
