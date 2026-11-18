@@ -58,7 +58,7 @@ func (m model) barHints() []bkey.Binding {
 	case m.yanked != "" && m.prompt == "" && !m.detail:
 		hints = []bkey.Binding{hint("j/k", "select"), hint("P", "paste above"), hint("p", "paste below"), hint("Esc", "forget "+m.yanked)}
 	case m.prompt == ":":
-		hints = []bkey.Binding{hint("Tab/Enter", "complete/run"), hint("↑↓ ^n/^p", "pick"), hint("Esc", "close"), hint(m.helpKey(), "help")}
+		hints = []bkey.Binding{hint("Tab/Enter", "complete/run"), hint("↑↓ ^n/^p", "pick"), hint("Esc", "up/close"), hint(m.helpKey(), "help")}
 	case m.prompt == "#":
 		hints = []bkey.Binding{hint("Enter", "open"), hint("Tab", "complete"), hint("↑↓ ^n/^p", "pick"), hint("Esc", "back"), hint(m.helpKey(), "help")}
 	case m.prompt == "filter":

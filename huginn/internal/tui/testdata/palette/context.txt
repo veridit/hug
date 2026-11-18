@@ -1,0 +1,132 @@
+== task, check 2 focused, 80x24
+HUG · list › ALPHA_                                                             
+[todo]  [feature]  group:root  unassigned                                       
+created ########## · updated ########## · alpha                                 
+⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
+  fix: hug task set ALPHA_ --principle "..."                                    
+────────────────────────────────────────────────────────────────────────────────
+Alpha                                                                           
+────────────────────────────────────────────────────────────────────────────────
+  ☐ 1. first check of Alpha                                                     
+> ☐ 2. second check of Alpha                                                    
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+:                                                                               
+TASK ALPHA_ Alpha                                                               
+  CHECK 2 second check of Alpha                                                 
+>   Space tick               Tick this check                                    
+    -     strike             Strike it out as not relevant, with why            
+          promote            Make this check its own task                       
+  t     take                 Take it: doing, yours                              
+  x     drop                 Drop it, with why                                  
+  e     edit                 Open it in the editor                              
+Palette · 25 choices, ALPHA_'s first · type to narrow · › opens a level         
+                                                                                
+Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                 
+== list, Beta selected, 80x24
+HUG · list   2/2 tasks · ! 0 broken · 4 advice                                  
+view: overview  list  board  !lint       │ todo 2 · doing 0 · depends 0 · done 0
+filter: none · sort: rank                                                       
+  ✓      ID       PRIORITY TITLE                       · all ready · all feature
+  ○ 2   ·ALPHA_            Alpha                                                
+> ○ 2   ·BETA__            Beta                                                 
+Rows 1–2 of 2 · ! lint finding · ↳ epic · depends = a dependency is not done    
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+:                                                                               
+TASK BETA__ Beta                                                                
+> t   take                 Take it: doing, yours                                
+  x   drop                 Drop it, with why                                    
+  e   edit                 Open it in the editor                                
+  r   request              Write a request to the agents                        
+  y   yank                 Pick it up to paste elsewhere                        
+Palette · 22 choices, BETA__'s first · type to narrow · › opens a level         
+                                                                                
+Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                 
+== task, check 2 focused, 140x40
+HUG · list › ALPHA_                                                                                                                         
+[todo]  [feature]  group:root  unassigned                                                                                                   
+created ########## · updated ########## · alpha                                                                                             
+⚠ line 1: missing section Principle (what we do and do not do) (+1 more findings)                                                           
+  fix: hug task set ALPHA_ --principle "..."                                                                                                
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Alpha                                                                                                                                       
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                                                                
+  ☐ 1. first check of Alpha                                                                                                                 
+> ☐ 2. second check of Alpha                                                                                                                
+                                                                                                                                            
+no dependencies                                                                                                                             
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+:                                                                                                                                           
+TASK ALPHA_ Alpha                                                                                                                           
+  CHECK 2 second check of Alpha                                                                                                             
+>   Space tick                         Tick this check                                                                                      
+    -     strike                       Strike it out as not relevant, with why                                                              
+          promote                      Make this check its own task                                                                         
+  t     take                           Take it: doing, yours                                                                                
+  x     drop                           Drop it, with why                                                                                    
+  e     edit                           Open it in the editor                                                                                
+  r     request                        Write a request to the agents                                                                        
+  y     yank                           Pick it up to paste elsewhere                                                                        
+        note                           Add a note                                                                                           
+        set ›                          Change a field                                                                                       
+        move ›                         Change its rank                                                                                      
+        mv ›                           Move it to another group                                                                             
+        dep ›                          Add or remove a dependency                                                                           
+        design ›                       A question before anyone starts                                                                      
+        attach                         Attach a file or folder                                                                              
+  S     screen                         Copy the screen, then attach it                                                                      
+GLOBAL                                                                                                                                      
+  v     view ›                         Overview, list, board, lint                                                                          
+  f     filter ›                       Narrow the tasks by a field                                                                          
+  #     goto ›                         Open a task by id                                                                                    
+Palette · 25 choices, ALPHA_'s first · type to narrow · › opens a level                                                                     
+                                                                                                                                            
+Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                                                                             
+== list, Beta selected, 140x40
+HUG · list   2/2 tasks · ! 0 broken · 4 advice                                                                                              
+view: overview  list  board  !lint                                                       │ todo 2 · doing 0 · depends 0 · done 0 · dropped 0
+filter: none · sort: rank                                                                                                                   
+  ✓      ID       PRIORITY TITLE                                                                                   · all ready · all feature
+  ○ 2   ·ALPHA_            Alpha                                                                                                            
+> ○ 2   ·BETA__            Beta                                                                                                             
+Rows 1–2 of 2 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+:                                                                                                                                           
+TASK BETA__ Beta                                                                                                                            
+> t   take                           Take it: doing, yours                                                                                  
+  x   drop                           Drop it, with why                                                                                      
+  e   edit                           Open it in the editor                                                                                  
+  r   request                        Write a request to the agents                                                                          
+  y   yank                           Pick it up to paste elsewhere                                                                          
+      note                           Add a note                                                                                             
+      set ›                          Change a field                                                                                         
+  m   move ›                         Change its rank                                                                                        
+      mv ›                           Move it to another group                                                                               
+      dep ›                          Add or remove a dependency                                                                             
+      design ›                       A question before anyone starts                                                                        
+      attach                         Attach a file or folder                                                                                
+  S   screen                         Copy the screen, then attach it                                                                        
+GLOBAL                                                                                                                                      
+  v   view ›                         Overview, list, board, lint                                                                            
+  f   filter ›                       Narrow the tasks by a field                                                                            
+  #   goto ›                         Open a task by id                                                                                      
+  s   sort                           Order rows by fields, then Enter                                                                       
+  g   grouping                       Rows flat, by group, by epic, by tag: cycles                                                           
+  F   clear                          Back to every task, nothing narrowed                                                                   
+Palette · 22 choices, BETA__'s first · type to narrow · › opens a level                                                                     
+                                                                                                                                            
+Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                                                                             

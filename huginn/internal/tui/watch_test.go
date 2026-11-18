@@ -245,7 +245,7 @@ func TestChangeOnDiskWaitsForPrompt(t *testing.T) {
 		keys []string
 	}{
 		{"search prompt", []string{"/", "Al"}},
-		{"palette", []string{":", "state "}},
+		{"palette", []string{":"}}, // one Esc closes it; from "state " Esc goes up a level (05r3pg)
 		{"confirm", []string{"t"}},
 	} {
 		t.Run(open.name, func(t *testing.T) {

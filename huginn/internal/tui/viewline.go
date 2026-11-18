@@ -21,6 +21,16 @@ func viewPrefix() string {
 	return "v: " + strings.Join(parts, " · ") + " · Esc cancel"
 }
 
+// pickViewName is name when it is a view (the palette's view branch).
+func pickViewName(name string) (string, bool) {
+	for _, v := range views {
+		if v.name == name {
+			return name, true
+		}
+	}
+	return "", false
+}
+
 // pickView is the view the key after v names, if any.
 func pickView(k string) (string, bool) {
 	for _, v := range views {
