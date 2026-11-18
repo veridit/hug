@@ -37,7 +37,7 @@ Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate
 ## Acceptance
 - [x] a preview of the Seid overview with tags on rows, built from real tasks, is shown to Jørgen and approved before the TUI work starts
 - [x] hug.toml tags = [...] is read; lint flags a task tag not on the list with a fix: line (test)
-- [ ] rows show the task's tags dimmed before the title and cut by 102bc0's order (goldens at 80 and 140 columns)
+- [x] rows show the task's tags dimmed before the title and cut by 102bc0's order (goldens at 80 and 140 columns)
 - [x] filter tag:compiler and g grouping by tag work (test)
 - [x] hug upgrade --tags on Seid proposes the merges, field moves and drops as a diff with counts, writes nothing until approved; after approval lint is clean of tag findings
 - [ ] Jørgen 19:35Z: tags sit right after the task ID (pie, id, tags, type, priority, stage, text), dim, at most 22 columns; this supersedes 'before the title' in check 3 (goldens at 80 and 140)
