@@ -20,14 +20,15 @@ import (
 // keeps its lines. As every text field, ? is text in it and help is F1
 // (t64v7d).
 
-// newAnswerBox is the empty, unfocused answer box.
+// newAnswerBox is the empty, unfocused answer box. Its cursor blinks
+// (qpp30y); styleAnswerCursor gives it the theme's look.
 func newAnswerBox() textarea.Model {
 	a := textarea.New()
 	a.ShowLineNumbers = false
 	a.Prompt = ""
 	a.CharLimit = 0
 	a.MaxHeight = 0 // the box grows; answerHeight caps what shows
-	a.Cursor.SetMode(cursor.CursorStatic)
+	a.Cursor.SetMode(cursor.CursorBlink)
 	// Enter sends: only these keys start a new line.
 	a.KeyMap.InsertNewline = bkey.NewBinding(bkey.WithKeys("alt+enter", "shift+enter", "ctrl+j"))
 	a.FocusedStyle.CursorLine = lipgloss.NewStyle()
@@ -35,6 +36,17 @@ func newAnswerBox() textarea.Model {
 	a.BlurredStyle.Base = lipgloss.NewStyle()
 	a.SetHeight(1)
 	return a
+}
+
+// styleAnswerCursor draws the box's cursor in theme.cursor, an
+// underline, not bubbles' reversed block (qpp30y). bubbles reverses the
+// cursor's cell itself, so the style is a transform that draws the cell
+// whole: its own codes then follow the reverse and a reset, leaving only
+// the underlined accent. Blinked off, the cell is plain text.
+func styleAnswerCursor(a *textarea.Model, cur lipgloss.Style) {
+	a.Cursor.Style = lipgloss.NewStyle().Transform(func(cell string) string {
+		return "\x1b[0m" + cur.Render(ansi.Strip(cell))
+	})
 }
 
 // answerIndent is the margin of the box under the question: "  answer: ".
@@ -71,12 +83,28 @@ func (m *model) fitAnswerBox() {
 // openAnswer opens the empty box under the question.
 func (m *model) openAnswer() tea.Cmd { return m.openBox(answerPrompt) }
 
-// openBox opens the empty multi-line box for prompt.
+// openBox opens the empty multi-line box for prompt, drawn at once
+// (qpp30y: it showed only after the first key), its cursor blinking.
 func (m *model) openBox(prompt string) tea.Cmd {
 	m.prompt = prompt
 	m.answerBox.Reset()
 	m.fitAnswerBox()
-	return m.answerBox.Focus()
+	cmd := m.answerBox.Focus()
+	m.syncDetail()
+	return cmd
+}
+
+// blinkBox passes a cursor blink to the open box and draws the page
+// again: the cursor is the only thing on screen that moves (qpp30y). A
+// closed box takes no blink and asks for none.
+func (m *model) blinkBox(msg tea.Msg) tea.Cmd {
+	if !m.boxPrompt() || !m.answerBox.Focused() {
+		return nil
+	}
+	var cmd tea.Cmd
+	m.answerBox, cmd = m.answerBox.Update(msg)
+	m.syncDetail()
+	return cmd
 }
 
 // answerLines are the box as drawn under the question: "answer:" before

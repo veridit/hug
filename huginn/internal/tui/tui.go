@@ -16,6 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/help"
 	bkey "github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textarea"
@@ -484,9 +485,10 @@ func newModel(s *task.Store, o Options) model {
 func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
-	input.Cursor.Blink = false
+	input.Cursor.SetMode(cursor.CursorStatic) // only the box cursor moves (qpp30y)
 	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, pictures: map[string]pictureMemo{}, panes: &paneMemo{forYou: -1},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
+	styleAnswerCursor(&m.answerBox, m.styles.cursor)
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	if o.Initial != nil {
 		// The board the cache last saw, drawn now; the refresh brings the
@@ -1183,6 +1185,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 	}
 	switch msg := msg.(type) {
+	case cursor.BlinkMsg:
+		// The answer or request box's cursor blinks (qpp30y); nothing
+		// else on screen does.
+		return m, m.blinkBox(msg)
 	case tea.WindowSizeMsg:
 		// Some PTYs report zero before their first usable size is available.
 		// Keep the default or last layout until both dimensions are known.

@@ -1,0 +1,30 @@
+== answer box at 80
+HUG TASKS · list › eeeeee                                            ? 1 for you
+[todo]  [design]  [feature]  [high]  group:root  unassigned
+created 2026-11-01 · updated 2026-11-01 · t
+────────────────────────────────────────────────────────────────────────────────
+Tags listed per board
+────────────────────────────────────────────────────────────────────────────────
+> ? design: drop type from the rows, keep it, or show it only when not feature?
+    └ crab · 8 min ago
+    answer:
+
+DESCRIPTION
+g
+cursor on:  "  \x1b[1;38;2;0;191;255manswer:\x1b[0m \x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m                                                                    "
+cursor off: "  \x1b[1;38;2;0;191;255manswer:\x1b[0m                                                                      "
+== answer box at 140
+HUG TASKS · list › eeeeee                                                                                                        ? 1 for you
+[todo]  [design]  [feature]  [high]  group:root  unassigned
+created 2026-11-01 · updated 2026-11-01 · t
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Tags listed per board
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+> ? design: drop type from the rows, keep it, or show it only when not feature?
+    └ crab · 8 min ago
+    answer:
+
+DESCRIPTION
+g
+cursor on:  "  \x1b[1;38;2;0;191;255manswer:\x1b[0m \x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m                                                                                                                                "
+cursor off: "  \x1b[1;38;2;0;191;255manswer:\x1b[0m                                                                                                                                  "

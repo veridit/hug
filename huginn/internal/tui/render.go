@@ -24,6 +24,11 @@ type theme struct {
 	// focus marks where focus is in a task: one heading or the task id.
 	// ask is every confirm line: a question the reader cannot miss.
 	focus, ask lipgloss.Style
+	// cursor is the one thing on screen that moves (qpp30y, puppy's
+	// mock/grid spec): where typing goes, an underlined bold accent that
+	// blinks at bubbles' 530 ms. The answer and request box use it; the
+	// pending view-key prefix is to reuse it.
+	cursor lipgloss.Style
 	// column tints the column the cursor marks (e3sevr); columnCursor is
 	// that column's cell on the cursor row.
 	column, columnCursor   lipgloss.Style
@@ -57,6 +62,7 @@ func newTheme() theme {
 		ask:    base.Background(lipgloss.AdaptiveColor{Dark: "#ffb454", Light: "#995200"}).Foreground(lipgloss.AdaptiveColor{Dark: "#1a1200", Light: "#ffffff"}).Bold(true),
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
 	t.progress = progressStyle(color)
+	t.cursor = color("#00bfff", "#006c9c").Underline(true).Bold(true)
 	// A quiet tint down the marked column, and underlined, so it shows
 	// without colour too (NO_COLOR); on the cursor row the row's tint, bold.
 	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)
