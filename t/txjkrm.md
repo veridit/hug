@@ -42,7 +42,7 @@ Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate
 - [x] hug.toml tags = [...] is read; lint flags a task tag not on the list with a fix: line (test)
 - [ ] rows show the task's tags dimmed before the title and cut by 102bc0's order (goldens at 80 and 140 columns)
 - [x] filter tag:compiler and g grouping by tag work (test)
-- [ ] hug upgrade --tags on Seid proposes the merges, field moves and drops as a diff with counts, writes nothing until approved; after approval lint is clean of tag findings
+- [x] hug upgrade --tags on Seid proposes the merges, field moves and drops as a diff with counts, writes nothing until approved; after approval lint is clean of tag findings
 
 ## Notes
 
