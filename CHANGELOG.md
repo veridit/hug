@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Lint reads a glob citation as the pattern it is (ydwamb). 911j70's note asks to run `open -a Preview .hug/tasks/9/911j70/compare-*.png`; lint cut it at the `*` and reported `.hug/tasks/9/911j70/compare-: file not found`, with `fix: hug task attach 911j70 FILE --name compare-`, which would attach a junk file. A citation whose last path part holds `*`, `?` or `[...]` (`file:`, `task:REF/` and `.hug/tasks/` forms) is now matched against the task's files: no finding when one matches, else one missing-file finding naming the whole pattern, `no attached file matches`, with `fix: hug task attach ID FILE`. A plain missing file is still `file not found`. Prose after a whole name stays out of it, as before (`file:a.md?`, `**file:a.md**`, `[file:a.md]`). Lint only reads. On this board, lint on 911j70 now reports no findings. Cache schema 28.
+
 ## v0.7.71 - 2026-11-18
 
 - `hug mem` no longer panics on a machine without `~/.jcode` (h2yn55). With only Claude Code or Codex installed, every `hug mem` command stopped with `slice bounds out of range [1:0]`; now `hug mem remember` and `recall` work there and create no `~/.jcode`.

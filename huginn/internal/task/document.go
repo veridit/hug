@@ -96,7 +96,7 @@ func FindingCode(problem string) string {
 	switch {
 	case strings.Contains(problem, ": no task "):
 		return "missing-task-ref"
-	case strings.Contains(problem, ": file not found"):
+	case strings.Contains(problem, ": file not found"), strings.Contains(problem, ": no attached file matches"):
 		return "missing-file"
 	case strings.Contains(problem, "binary"), strings.Contains(problem, "KiB"), strings.Contains(problem, "too large"):
 		return "file-content"
