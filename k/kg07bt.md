@@ -1,15 +1,20 @@
 ---
 id: kg07bt
 title: "Detail: a calm ACCEPTANCE heading; only the cursor marks the question"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T16:25"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 - [ ] Jørgen opens a task asked of him and says it is calm and the cursor is where his answer goes.
 
 ## Notes
+
+
+## History
+- 2026-11-18T16:25 todo -> doing/active (take)
