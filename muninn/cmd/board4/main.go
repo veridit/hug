@@ -282,6 +282,7 @@ func main() {
 	summaryOut := flag.String("summary", "", "write per-session summaries (JSON lines) here")
 	onlyCwd := flag.String("cwd", "", "skip sessions whose working_dir is not this folder (or inside it)")
 	coordinator := flag.String("coordinator", "", "the board's coordinator for the replay (hug.toml [board] coordinator); \"\" for none")
+	reflectAge := flag.Duration("reflect-age", 0, "age every open reflection by this much (rk5q7r: the replay windows predate any reflection older than 3 days)")
 	flag.Parse()
 	live := board.ReplayOwners(*onlyCwd, *sessions)
 	root := filepath.Join(os.Getenv("JCODE_SCRATCH_DIR"), "board4")
@@ -396,6 +397,17 @@ func main() {
 					bf = append(bf, recall.BoardFinding{TaskID: f.TaskID, TaskState: f.TaskState, Problem: f.Problem, Fix: f.Fix})
 				}
 				in.Findings = func() []recall.BoardFinding { return bf }
+				if *coordinator != "" && strings.EqualFold(*coordinator, name) {
+					rs, _ := snap.OpenReflections()
+					var dates []string
+					for _, r := range rs {
+						if d, err := time.Parse("2006-01-02", r.Date); err == nil && *reflectAge != 0 {
+							r.Date = d.Add(-*reflectAge).Format("2006-01-02")
+						}
+						dates = append(dates, r.Date)
+					}
+					in.Reflections = func() []string { return dates }
+				}
 			}
 			return in
 		}
