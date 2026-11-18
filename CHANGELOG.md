@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `scripts/ci-goldens.sh RUNID [JOB]` rewrites the TUI goldens a failed CI run reported as drifted, from that run's own screens, for when a local `HUG_UPDATE_GOLDEN=1` run cannot finish (a0gwvg). It writes nothing unless every WANT block in the log matches the committed golden byte for byte. First used on CI 44403710185 (4d7eec2d). A repository tool, not part of hug.
+
 ## v0.7.71 - 2026-11-18
 
 - `hug mem` no longer panics on a machine without `~/.jcode` (h2yn55). With only Claude Code or Codex installed, every `hug mem` command stopped with `slice bounds out of range [1:0]`; now `hug mem remember` and `recall` work there and create no `~/.jcode`.
