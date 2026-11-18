@@ -20,6 +20,7 @@ import (
 
 	"github.com/veridit/hug/muninn/internal/project"
 	"github.com/veridit/hug/muninn/internal/shortid"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // Config is nested under extract in config.json. No credentials belong here.
@@ -41,6 +42,11 @@ type Config struct {
 	// captured (eval sandboxes, scratch dirs). Matching is a plain substring
 	// on the session's working directory.
 	SkipDirs []string `json:"skip_dirs,omitempty"`
+	// Triggers asks the extractor for a when-then trigger (when, when_not,
+	// case) on rule and preference candidates (jrj1vq check 2). Off by
+	// default: the prompt is then byte-identical to the one before
+	// triggers. Turn on only after its measurement passed (jrj1vq notes).
+	Triggers bool `json:"triggers,omitempty"`
 }
 
 // Skips reports whether a session in cwd must not be captured.
@@ -108,7 +114,28 @@ type Candidate struct {
 	// SafeReason is the model's judgment that content which looks secret
 	// (key-shaped token, random-path URL) is safe to keep.
 	SafeReason string `json:"safe_reason,omitempty"`
+	// When, WhenNot and Case are the trigger the extractor proposes for a
+	// rule or preference when Config.Triggers is on (jrj1vq). Parse drops
+	// them on other types and when malformed, keeping the memory.
+	When    string        `json:"when,omitempty"`
+	WhenNot string        `json:"when_not,omitempty"`
+	Case    *trigger.Case `json:"case,omitempty"`
 }
+
+// Trigger is the candidate's trigger, canonical; nil when none.
+func (c Candidate) Trigger() *trigger.Trigger {
+	t, err := trigger.Canonical(&trigger.Trigger{When: c.When, WhenNot: c.WhenNot, Case: c.Case})
+	if err != nil {
+		return nil
+	}
+	return t
+}
+
+// triggerTypes are the memory types a trigger is proposed for: an
+// instruction or a wish applies in a situation; a fact or record does not
+// (jrj1vq, 2026-11-15: KIND is the useful structure).
+func triggerType(t string) bool { return t == "rule" || t == "preference" }
+
 type Known struct {
 	SID     string `json:"sid"`
 	Content string `json:"content"`
@@ -162,12 +189,22 @@ func parseDetailed(text string) ([]Candidate, []Rejection) {
 		var wire struct {
 			candidateFields
 			Place json.RawMessage `json:"place"`
+			// case is read leniently: a malformed trigger must never cost
+			// the memory (jrj1vq).
+			Case json.RawMessage `json:"case"`
 		}
 		d := json.NewDecoder(strings.NewReader(line))
 		d.DisallowUnknownFields()
 		err := d.Decode(&wire)
 		c := Candidate(wire.candidateFields)
 		_ = json.Unmarshal(wire.Place, &c.Place)
+		c.Case = nil
+		if len(wire.Case) > 0 {
+			var cs trigger.Case
+			if json.Unmarshal(wire.Case, &cs) == nil {
+				c.Case = &cs
+			}
+		}
 		var extra any
 		if err != nil || d.Decode(&extra) != io.EOF {
 			reject("invalid JSON or unknown fields")
@@ -224,6 +261,13 @@ func parseDetailed(text string) ([]Candidate, []Rejection) {
 		c.SafeReason = strings.TrimSpace(c.SafeReason)
 		if !project.LooksSecret(c.Content) {
 			c.SafeReason = ""
+		}
+		// A trigger stays only on a rule or preference and only when it is
+		// well-formed; dropping it never drops the memory.
+		if tr := c.Trigger(); tr == nil || !triggerType(c.Type) {
+			c.When, c.WhenNot, c.Case = "", "", nil
+		} else {
+			c.When, c.WhenNot, c.Case = tr.When, tr.WhenNot, tr.Case
 		}
 		out = append(out, c)
 		if len(out) >= 100 {
@@ -284,6 +328,20 @@ func placementPrompt(places []Place) string {
 	return out.String()
 }
 
+// triggerPrompt is added to the capture prompt when Config.Triggers is on.
+const triggerPrompt = `
+For a candidate of type rule or preference, also say when it applies, so it can be recalled when the situation matches rather than when the words do. Add "when": one sentence naming the situation where an agent needs this memory, phrased as what the agent is doing or being asked ("choosing a model for a coding subagent", "reviewing a STATBUS ticket's history"); describe the activity, not the topic. Optionally add "when_not": one sentence naming a look-alike situation where it does not help, especially the same project, ticket or tool but a different activity; omit it when none comes to mind. Optionally add "case": {"scope": [projects], "paths": [file paths or globs], "tools": [tools, commands or services]} ONLY with entries the transcript states for this memory; never invent one, omit case otherwise. Omit when, when_not and case for every other type.`
+
+// SystemPrompt is the capture system prompt for c and places. With
+// triggers off it is exactly the prompt hug used before triggers.
+func SystemPrompt(c Config, places []Place) string {
+	p := prompt
+	if c.Triggers {
+		p += triggerPrompt
+	}
+	return p + placementPrompt(places)
+}
+
 // Run makes a bounded non-streaming request. Ollama uses its OpenAI-compatible
 // /v1 endpoint, with no API key. Redirects are forbidden to avoid key leakage.
 func Run(ctx context.Context, c Config, transcript string, known []Known, places ...Place) (Result, error) {
@@ -294,7 +352,7 @@ func Run(ctx context.Context, c Config, transcript string, known []Known, places
 		Known      []Known `json:"known"`
 		Transcript string  `json:"transcript"`
 	}{known, transcript})
-	out, err := Complete(ctx, c, prompt+placementPrompt(places), string(input))
+	out, err := Complete(ctx, c, SystemPrompt(c, places), string(input))
 	if err == nil {
 		out.Candidates, out.Rejections = parseDetailed(out.Raw)
 		knownIDs := map[string]bool{}

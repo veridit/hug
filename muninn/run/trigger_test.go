@@ -107,3 +107,22 @@ func TestCLISyncRestoresTriggerDroppedByOlderHug(t *testing.T) {
 		t.Fatalf("sync did not restore the key: %s", b)
 	}
 }
+
+// jrj1vq check 2 (1): remember's help asks for --when/--when-not on a rule or
+// pattern, and every flag its words name exists.
+func TestCLIRememberHelpAsksForTrigger(t *testing.T) {
+	memHome(t)
+	out, errOut, code := runCLI(t, "", "remember", "--help")
+	help := out + errOut
+	if code != 0 {
+		t.Fatalf("help: %d %s", code, help)
+	}
+	for _, want := range []string{"For a rule or pattern", "--when ", "--when-not ", "--case-scope", "--case-path", "--case-tool", "--no-trigger", "--supersedes", "The text is then the THEN"} {
+		if !strings.Contains(help, want) {
+			t.Errorf("help lacks %q", want)
+		}
+	}
+	if strings.Contains(help, "--then") {
+		t.Error("help names --then, which does not exist")
+	}
+}
