@@ -1,15 +1,20 @@
 ---
 id: hpqt99
 title: "Design: imported data pass"
-state: todo
+state: "doing"
 type: spike
 priority: "low"
-assignee: []
+assignee: ["piglet"]
 labels: ["design"]
 group: "design"
 rank: "zz"
 created: 2026-11-10
 updated: 2026-11-10
+doing_since: "2026-11-18T23:18"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "hpqt99"
+worktree: "/Users/jhf/.jcode/scratch/hpqt99"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Today: hug setup turns jcode's own memory off per instance and routes saves to m
 - [ ] decision in DESIGN.md
 
 ## Notes
+
+
+## History
+- 2026-11-18T23:18 todo -> doing/active (take)
