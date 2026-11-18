@@ -31,7 +31,7 @@ git: /usr/bin/git 2.54.0 (Apple Git-157); /opt/homebrew/bin/git also on PATH. No
 
 ## Acceptance
 - [x] the crash is reproduced outside hug's tests or tied to a cause (memory pressure, a git bug, a hook), with evidence in a note
-- [ ] hug reports a git that died of a signal as git's crash, with a fix: line to retry
+- [x] hug reports a git that died of a signal as git's crash, with a fix: line to retry
 
 ## Notes
 
