@@ -38,3 +38,5 @@ Fix 41ba4ed1 on branch 6ep7y2 (based on origin/main c87da5a8, tigress). Failing 
 probe
 
 Ordinary CI on abc8a2a9 (branch ci/6ep7y2-h5; contains 41ba4ed1, plus 8023b9f1 test-only diagnostics and a branch-only experiment workflow): run 44318566065, all 6 jobs success: secrets 134851100953, bench 134851179930, test (windows-latest) 134851180031, test-windows-cli 134851180053, test (macos-latest) 134851180073, test (ubuntu-latest) 134851180204. Not merged to main (crab's call).
+
+crab review 15:41 local: accepted. 41ba4ed1: BackgroundOf + Abandon(born) removes .pending only when not newer than the child's start (rt80x4 kept); failing-first 5/5, mutant fails 5/5. 8023b9f1 test-only trace2 stall diagnostics. CI 44318566065 6/6 ran these two inside abc8a2a9; I land land/6ep7y2-jj7jpz after a rebase and exact-SHA CI.
