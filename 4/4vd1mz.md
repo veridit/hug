@@ -10,15 +10,11 @@ group: ""
 rank: "zzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "bbxdd7"
 worktree: "/Users/jhf/.jcode/scratch/bbxdd7"
 doing_since: "2026-11-18T17:05"
-asked_what: "hug mem forget now takes 0.92 s instead of 3.4 s, done?"
-asked_for: "jhf"
-asked_since: "2026-11-18T17:05"
-asked_by: "piglet"
 ---
 
 ## Goal
@@ -93,3 +89,6 @@ piglet 17:05: taken per crab 16:05Z. Before the ask, hug task lint 4vd1mz (v0.7.
 - 2026-11-18T13:09 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:56
 - 2026-11-18T17:05 todo/ready -> doing/active (take)
 - 2026-11-18T17:05 doing/active -> doing/asked (ask)
+- 2026-11-18T20:35 answered asked, by jhf, for piglet (doing/asked -> doing/active):
+  > hug mem forget now takes 0.92 s instead of 3.4 s, done?
+  Approved
