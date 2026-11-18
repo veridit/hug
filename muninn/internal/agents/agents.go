@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -56,7 +57,7 @@ func NamesIn(homes, roots []string) []string {
 	var clean []string
 	for _, r := range roots {
 		if r != "" {
-			clean = append(clean, filepath.Clean(r))
+			clean = append(clean, canonical(r))
 		}
 	}
 	set := map[string]bool{}
@@ -103,13 +104,27 @@ func inRoots(wd string, roots []string) bool {
 	if wd == "" {
 		return false
 	}
-	wd = filepath.Clean(wd)
+	wd = canonical(wd)
 	for _, r := range roots {
 		if wd == r || strings.HasPrefix(wd, r+string(filepath.Separator)) {
 			return true
 		}
 	}
 	return false
+}
+
+// canonical is p cleaned, with symlinks resolved when it exists (macOS
+// /var is /private/var; Windows 8.3 short names), folded to lower case on
+// Windows, as huginn's owner check reads a session's folder.
+func canonical(p string) string {
+	p = filepath.Clean(p)
+	if r, err := filepath.EvalSymlinks(p); err == nil {
+		p = r
+	}
+	if runtime.GOOS == "windows" {
+		p = strings.ToLower(p)
+	}
+	return p
 }
 
 // Sessions maps each agent name to its sessions, oldest first. Names are

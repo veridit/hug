@@ -116,6 +116,16 @@ func TestNamesIn(t *testing.T) {
 	if got := NamesIn([]string{h}, []string{repo}); !reflect.DeepEqual(got, []string{"quillback", "zarf"}) {
 		t.Fatalf("NamesIn = %v", got)
 	}
+	// The root as git names it and the folder a session recorded may be
+	// two spellings of one place (macOS /var is /private/var, CI 44406772764;
+	// Windows short names): a link to the repo is the same team.
+	link := filepath.Join(h, "link")
+	if err := os.Symlink(repo, link); err != nil {
+		t.Skip("no symlinks:", err)
+	}
+	if got := NamesIn([]string{h}, []string{link}); !reflect.DeepEqual(got, []string{"quillback", "zarf"}) {
+		t.Fatalf("NamesIn via a link = %v", got)
+	}
 }
 
 func quoteJSON(s string) string {
