@@ -469,6 +469,10 @@ func (r *Repository) SyncPass(turn func() (func(), error)) (s State) {
 }
 
 func (r *Repository) passIntegrate(exists bool) (string, error) {
+	// A pass killed mid-rebase is ended here, under the turn (fcf4fg).
+	if e := r.Recover(); e != nil {
+		return "", e
+	}
 	if e := r.checkIdle(); e != nil {
 		return "", e
 	}

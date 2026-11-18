@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Sync recovers from an interrupted rebase it started itself (fcf4fg). hug marks each rebase it runs on the tasks branch and holds a lock while it runs; when a sync dies mid-rebase (as in Seid on 2026-11-16, which left `rebase-merge` holding only an autostash and failed every agent's write until someone ran git by hand), the next write, sync or background pass ends it under the board turn, puts the autostashed edits back, prints one `sync: ended an interrupted hug rebase ...` line and goes on. A rebase hug did not start (no marker, a marker from another rebase, a different head) still stops with `worktree busy` and its `git rebase --abort` fix; edits the rebase did not make are kept in `git stash list` first.
+
 ## v0.7.65 - 2026-11-18
 
 - A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.
