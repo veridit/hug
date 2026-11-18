@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
@@ -56,9 +55,10 @@ func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
 				run(t, r.Dir, "-c", "protocol.file.allow=always", "submodule", "add", "-q", sub, "nested")
 				run(t, r.Dir, "commit", "-qam", "submodule blocks worktree move")
 			case "lost-ack":
-				if err := os.WriteFile(filepath.Join(remote, "hooks", "post-receive"), []byte("#!/bin/sh\nprintf committed > ack-marker\nsleep 3\n"), 0o755); err != nil {
+				if err := os.WriteFile(filepath.Join(remote, "hooks", "post-receive"), []byte("#!/bin/sh\nprintf committed > ack-marker\n"), 0o755); err != nil {
 					t.Fatal(err)
 				}
+				loseAck(t, root, base, "muninn-notes", "hug/memory")
 			case "unknown-before", "unknown-after", "unknown-advanced":
 				hook := "post-receive"
 				script := "#!/bin/sh\ngit --git-dir=" + quote(filepath.ToSlash(filepath.Join(root, ".git"))) + " config remote.origin.url " + quote(filepath.ToSlash(filepath.Join(base, "missing.git"))) + "\n"
@@ -66,7 +66,7 @@ func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
 					hook = "pre-receive"
 					script += "exit 1\n"
 				} else {
-					script += "sleep 3\n"
+					loseAck(t, root, base, "muninn-notes", "hug/memory")
 				}
 				if err := os.WriteFile(filepath.Join(remote, "hooks", hook), []byte(script), 0o755); err != nil {
 					t.Fatal(err)
@@ -81,11 +81,6 @@ func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
 			beforeConfig, err := os.ReadFile(config)
 			if err != nil {
 				t.Fatal(err)
-			}
-			if failure == "lost-ack" || strings.HasPrefix(failure, "unknown-") {
-				before := NetTimeout
-				NetTimeout = time.Second
-				defer func() { NetTimeout = before }()
 			}
 			m, err := Upgrade(root, "muninn-notes", ".muninn-notes", "hug/memory", ".hug/memory")
 			if failure == "lost-ack" {
@@ -115,6 +110,15 @@ func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
 				}
 				for _, hook := range []string{"pre-receive", "post-receive"} {
 					if e := os.WriteFile(filepath.Join(remote, "hooks", hook), []byte("#!/bin/sh\nexit 0\n"), 0o755); e != nil {
+						t.Fatal(e)
+					}
+				}
+				if failure != "unknown-before" {
+					if _, e := os.Stat(filepath.Join(base, "ack-lost")); e != nil {
+						t.Fatalf("%s: the push never reached the point where its ack is lost: %v", failure, e)
+					}
+					// The remote answers again: the retries' pushes finish.
+					if e := os.Remove(filepath.Join(base, "ack-lose-armed")); e != nil {
 						t.Fatal(e)
 					}
 				}
@@ -177,13 +181,53 @@ func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
 	}
 }
 
+// loseAck makes the push of from and to from root lose its
+// acknowledgement, with no clock involved (3t4a49): the remote commits the
+// push, then the client fails it. A client reference-transaction hook
+// refuses the push's own record of the result (refs/remotes/origin/<from>
+// and <to>), so git push exits non-zero after the remote's refs moved: to
+// hug that is a lost ack, a failed push whose effect landed. git records
+// each tracking ref in its own transaction, so the hook refuses both names
+// while base/ack-lose-armed exists; the test removes that file when it
+// wants pushes to finish again. The hook writes base/ack-lost when it
+// refuses, the evidence that the push got that far.
+//
+// Before, the remote hook slept 3 s and NetTimeout, cut to 1 s, killed the
+// push. Under load that clock fired early, before the push reached the
+// hook or during Upgrade's first ls-remote (6/25 failures at load 232-423,
+// ybbfsa). A hook that only blocks would still need the clock to kill the
+// push, and a hook that kills receive-pack ($PPID) is not portable: Git for
+// Windows' sh does not see its native parent's pid.
+func loseAck(t *testing.T, root, base, from, to string) {
+	t.Helper()
+	armed := filepath.Join(base, "ack-lose-armed")
+	if err := os.WriteFile(armed, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	script := "#!/bin/sh\n" +
+		"[ \"$1\" = prepared ] || exit 0\n" +
+		"[ -e " + quote(filepath.ToSlash(armed)) + " ] || exit 0\n" +
+		"grep -q -e ' refs/remotes/origin/" + from + "$' -e ' refs/remotes/origin/" + to + "$' || exit 0\n" +
+		"printf lost > " + quote(filepath.ToSlash(filepath.Join(base, "ack-lost"))) + "\n" +
+		"exit 1\n"
+	hooks := filepath.Join(root, ".git", "hooks")
+	if err := os.MkdirAll(hooks, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(hooks, "reference-transaction"), []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+}
+
 // quietRemote turns off a fixture remote's auto maintenance (ybbfsa,
 // crab's ruling: test fixtures only, never hug's own push). receive-pack
 // starts `git maintenance run --auto --detach` after the post-receive hook.
-// The lost-ack and unknown-* cases kill the push at NetTimeout (1 s) while
-// their hook sleeps 3 s, so receive-pack outlives the test: it finishes the
-// hook, then its maintenance writes objects/maintenance.lock while
-// t.TempDir removes the folder ("remote.git/objects: directory not empty").
+// The detached child can outlive the test and write
+// objects/maintenance.lock while t.TempDir removes the folder
+// ("remote.git/objects: directory not empty"). That was certain when the
+// lost-ack and unknown-* cases killed the push at NetTimeout while their
+// hook slept 3 s; since loseAck (3t4a49) no push is killed, but any push
+// can still start the child.
 // gc.auto=0 alone is not enough: receive-pack still spawns the maintenance
 // child (probed on git 2.54: 1 child with gc.auto=0, 0 with
 // maintenance.auto=false).
