@@ -330,6 +330,8 @@ func (a *App) refreshExisting(ctx context.Context) error {
 // the person at the keyboard, not the agent doing the work.
 type taker struct {
 	Name, Model string
+	// With is the active task this one is taken with (byj479), "" for none.
+	With string
 	// At is where the take happens (x1t1t1): detected from the working
 	// directory, or --branch/--worktree.
 	At task.Place
@@ -538,6 +540,13 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	_ = json.Unmarshal(b, &out)
 	out["model"] = t.Model
 	stageObjects(out, t)
+	// Taken with another task (byj479): its id, and its title for show.
+	if w := task.TakenWith(t); w != "" {
+		out["doing_with"] = w
+		if o, err := task.Resolve(ts, w); err == nil {
+			out["doing_with_title"] = o.Title
+		}
+	}
 	if t.Effort != "" {
 		out["effort"] = t.Effort
 	}
@@ -680,7 +689,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model task", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "memory": "", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label tag state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "tags": "", "models": "", "upgrade": "apply machine tags min"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree with", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model task", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "memory": "", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label tag state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "tags": "", "models": "", "upgrade": "apply machine tags min"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1212,6 +1221,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		// Where the take happens (x1t1t1): asked of git for take only, not
 		// for every command that needs a name (three git processes: 0sbvnq).
 		who.At = a.takePlace(f)
+		who.With = f.get("with")
 		r, e = a.take(ctx, s, f.args[0], who)
 	case "dep":
 		if e = f.count(1); e != nil {
@@ -1656,6 +1666,18 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	if e == nil && r.Changed {
 		withGuide(reply, cmd, r.Task, s)
 	}
+	// A tick on a todo task the writer has not taken (byj479 check 3,
+	// sql_saga bqtzce: 2/2 ticked while todo, in NEXT UP): it is work in
+	// hand, so the reply says to take it, with the active one when they
+	// ship together.
+	if e == nil && cmd == "check" && r.Task.State == "todo" {
+		who := a.whoTakes(f)
+		ts, _ := s.s.Tasks()
+		if fix := task.TakeHint(r.Task, task.Taker{Name: who.assignee(), Model: who.Model}, ts); fix != "" {
+			reply["message"] = r.Task.ID + " is not taken: a check ticked on it is work in hand, so take it (with the task you are on when they ship together)"
+			reply["fix"] = fix
+		}
+	}
 	// The task's own findings, every one, with one fix (fkpyg3): what was
 	// just written or taken is checked by the same list lint uses. Every
 	// write gets it (wdkqzx, Jørgen 23:51: the lint goes to the agent that
@@ -1958,6 +1980,11 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			fmt.Fprintf(a.Out, "stage: %s\n", line)
 		}
 		if who := takenBy(t, ""); who != "" {
+			if w, _ := t["doing_with"].(string); w != "" {
+				// byj479: held with the task it ships with.
+				title, _ := t["doing_with_title"].(string)
+				who += " · with " + w + " (" + title + ")"
+			}
 			fmt.Fprintf(a.Out, "taken by: %s\n", who)
 		}
 		// An answer the asker has not seen comes first (3jtfw9).
@@ -2189,6 +2216,13 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			fmt.Fprintf(a.Out, "renamed: %s and %d more (files only, see --json)\n", strings.Join(ids[:10], ", "), len(ids)-10)
 		} else {
 			fmt.Fprintln(a.Out, "renamed: "+strings.Join(ids, ", "))
+		}
+	}
+	// A fix the write itself suggests (byj479: take the task you ticked);
+	// a reply with an exit code prints its fix after next.
+	if fix, ok := reply["fix"].(string); ok {
+		if _, coded := reply["exit_code"]; !coded {
+			fmt.Fprintln(a.Out, "fix: "+fix)
 		}
 	}
 	fmt.Fprintln(a.Out, "next: "+reply["next"].(string))

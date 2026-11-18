@@ -254,6 +254,11 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	if text != "" {
 		title = text
 	}
+	// Taken with the owner's active task (byj479): said on its row, so
+	// two in IN PROGRESS read as one piece of work, never a slip.
+	if w := task.TakenWith(t); w != "" {
+		title += m.styles.dim.Render(" · with " + oneLine(w))
+	}
 	if mark := m.requestCount(t); mark != "" {
 		title = m.styles.accent.Render(mark) + title // an open request: an agent's to act on (hbgybn)
 	}

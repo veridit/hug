@@ -9,7 +9,7 @@ import (
 // wantBusy checks the refusal naming active. taken is the task a take was
 // refused for (4tycwd: the detour to it is a fourth fix); "" for a resume,
 // which has no detour.
-func wantBusy(t *testing.T, e error, active, taken string) *Error {
+func wantBusy(t *testing.T, e error, active, taken string, as ...string) *Error {
 	t.Helper()
 	var te *Error
 	if !errors.As(e, &te) || te.Kind != "busy" {
@@ -22,6 +22,13 @@ func wantBusy(t *testing.T, e error, active, taken string) *Error {
 	}
 	if taken != "" {
 		want = append(want, "hug task dep "+active+" --add "+taken+" && hug task note "+active+` "where I was"`)
+		// byj479: and take it with the active one, the fifth, as the
+		// taker wrote it (default kestrel on claude-opus-5-5).
+		who := " --model claude-opus-5-5 --as kestrel"
+		if len(as) > 0 {
+			who = as[0]
+		}
+		want = append(want, "hug task take "+taken+" --with "+active+who)
 	}
 	if strings.Join(te.Fixes, "|") != strings.Join(want, "|") || te.Fix != want[0] {
 		t.Fatalf("fixes %q (fix %q), want %q", te.Fixes, te.Fix, want)
@@ -61,7 +68,7 @@ func TestSecondTakeWhileActiveIsRefused(t *testing.T) {
 		t.Fatal(e)
 	}
 	_, e = s.TakeAs(d, "Jørgen", "human")
-	wantBusy(t, e, c, d)
+	wantBusy(t, e, c, d, " --model human --as Jørgen")
 	// Taking a review (todo/review -> doing/review) is not work of one's
 	// own: it is allowed beside the active ticket.
 	r := stagedTask(t, s, "rrrrrr", "state: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T08:00\"")

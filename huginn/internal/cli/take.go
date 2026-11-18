@@ -46,7 +46,11 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 		local := *s.s
 		local.Refresh = nil
 		var err error
-		result, err = local.TakeAt(ref, who.Name, who.Model, who.At)
+		if who.With != "" {
+			result, err = local.TakeAtWith(ref, who.With, who.Name, who.Model, who.At)
+		} else {
+			result, err = local.TakeAt(ref, who.Name, who.Model, who.At)
+		}
 		return err
 	})
 	var raced *gitbranch.ErrRaced

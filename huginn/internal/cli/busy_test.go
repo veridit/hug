@@ -19,11 +19,12 @@ func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	second := execute(t, a, "new", "Second", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "take", first, "--model", "claude-opus-5-5", "--as", "kestrel")
 	code, out := runText(a, "take", second, "--model", "claude-opus-5-5", "--as", "kestrel")
-	want := "not taking " + second + ": kestrel is on " + first + " (First): one ticket in doing at a time\n" +
+	want := "not taking " + second + ": kestrel is on " + first + " (First): one ticket in doing at a time; if they ship together (one change or release), take it with the active one; if it is a detour, the active one waits on it\n" +
 		"fix: hug task done " + first + "\n" +
 		"fix: hug task wait " + first + " \"on what\"\n" +
 		"fix: hug task set " + first + " --state todo && hug task note " + first + " \"why it goes back\"\n" +
-		"fix: hug task dep " + first + " --add " + second + " && hug task note " + first + " \"where I was\"\n"
+		"fix: hug task dep " + first + " --add " + second + " && hug task note " + first + " \"where I was\"\n" +
+		"fix: hug task take " + second + " --with " + first + " --model claude-opus-5-5 --as kestrel\n"
 	if code != 3 || out != want {
 		t.Fatalf("exit %d, want 3 and\n%s\ngot\n%s", code, want, out)
 	}
@@ -32,7 +33,7 @@ func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	if e := json.Unmarshal([]byte(out), &r); e != nil || code != 3 {
 		t.Fatalf("exit %d: %v\n%s", code, e, out)
 	}
-	if fixes, _ := r["fixes"].([]any); len(fixes) != 4 || r["fix"] != "hug task done "+first || r["next"] != r["fix"] {
+	if fixes, _ := r["fixes"].([]any); len(fixes) != 5 || r["fix"] != "hug task done "+first || r["next"] != r["fix"] {
 		t.Fatalf("json: %s", out)
 	}
 	if f := taskFile(t, a, second); !strings.Contains(f, "state: todo") && !strings.Contains(f, `state: "todo"`) || strings.Contains(f, "kestrel") {

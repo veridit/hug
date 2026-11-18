@@ -491,7 +491,26 @@ func (s *Store) TakeAt(ref, name, model string, at Place) (Result, error) {
 	if name == "" {
 		name, _ = SplitModel(model) // the model is the assignee; the effort is not part of a name
 	}
-	return s.transitionAt(ref, "doing", name, model, at)
+	return s.transitionFull(ref, "doing", name, model, at, "", "")
+}
+
+// TakeWith takes ref for user alongside with, user's active task (byj479):
+// both are doing, ref marked doing_with: with. For tasks that ship
+// together (one change or release); the TUI calls it per marked task.
+func (s *Store) TakeWith(ref, with, user string) (Result, error) {
+	return s.transitionFull(ref, "doing", user, "", Place{}, "", with)
+}
+
+// TakeAtWith is TakeAt alongside with (TakeWith): the CLI's take --with.
+func (s *Store) TakeAtWith(ref, with, name, model string, at Place) (Result, error) {
+	name, model = strings.TrimSpace(name), strings.TrimSpace(model)
+	if model == "" {
+		return Result{}, &Error{Kind: "no-model", ID: ref, Fix: "hug task take " + ref + " --with " + with + " --model MODEL"}
+	}
+	if name == "" {
+		name, _ = SplitModel(model)
+	}
+	return s.transitionFull(ref, "doing", name, model, at, "", with)
 }
 func (s *Store) Done(ref string) (Result, error)         { return s.Transition(ref, "done", "") }
 func (s *Store) Drop(ref, reason string) (Result, error) { return s.DropBecause(ref, reason) }
@@ -503,15 +522,15 @@ func (s *Store) transition(ref, status, user, model string) (Result, error) {
 }
 
 func (s *Store) transitionAt(ref, status, user, model string, at Place) (Result, error) {
-	return s.transitionFull(ref, status, user, model, at, "")
+	return s.transitionFull(ref, status, user, model, at, "", "")
 }
 
 // transitionWhy is a transition with a reason (drop's dropped_reason).
 func (s *Store) transitionWhy(ref, status, reason string) (Result, error) {
-	return s.transitionFull(ref, status, "", "", Place{}, reason)
+	return s.transitionFull(ref, status, "", "", Place{}, reason, "")
 }
 
-func (s *Store) transitionFull(ref, status, user, model string, at Place, reason string) (Result, error) {
+func (s *Store) transitionFull(ref, status, user, model string, at Place, reason, with string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -557,9 +576,27 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	// second active ticket is refused. Taking a todo/review task makes it
 	// doing/review, not active, so it is allowed (the reviewer's own work
 	// goes on).
-	if status == "doing" && user != "" && d.Task.State != "doing" && d.Task.Stage != "review" {
+	who := Taker{Name: user, Model: model}
+	with = strings.TrimSpace(with)
+	if with != "" {
+		// Taken with the taker's active task (byj479): only that one, so
+		// the link is what the taker is on now, never guessed.
+		a, ok := Active(user, d.Task.ID, ts)
+		if status != "doing" || user == "" || d.Task.State != "todo" {
+			return Result{}, usageErr(d.Task.ID, "--with takes a todo task alongside your active one", "hug task show "+d.Task.ID)
+		}
+		w, err := Resolve(ts, with)
+		if err != nil || !ok || w.ID != a.ID {
+			name := with
+			if err == nil {
+				name = w.ID
+			}
+			return Result{}, withRefused(d.Task, who, name, a, ok)
+		}
+		with = w.ID
+	} else if status == "doing" && user != "" && d.Task.State != "doing" && d.Task.Stage != "review" {
 		if a, ok := Active(user, d.Task.ID, ts); ok {
-			return Result{}, busy(d.Task, user, a, true)
+			return Result{}, busy(d.Task, who, a, true)
 		}
 	}
 	var warnings []string
@@ -628,6 +665,9 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 		}
 	}
 	if d.Task.State != status {
+		if with != "" {
+			reason = with
+		}
 		if e = stagedMove(d, ts, status, user, reason); e != nil {
 			return Result{}, e
 		}

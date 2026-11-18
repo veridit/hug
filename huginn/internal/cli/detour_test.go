@@ -24,15 +24,16 @@ func TestDetourThroughTheCLI(t *testing.T) {
 	// Check 2: a fourth fix: line, and the same in the JSON fixes array.
 	code, out := runText(a, "take", second, "--model", "claude-opus-5-5", "--as", "kestrel")
 	detour := "hug task dep " + first + " --add " + second + " && hug task note " + first + ` "where I was"`
-	if code != 3 || !strings.HasSuffix(out, "fix: "+detour+"\n") || strings.Count(out, "\nfix: ") != 4 {
-		t.Fatalf("exit %d, want 3 and four fix: lines ending with %q:\n%s", code, detour, out)
+	// byj479: the take-with is a fifth line after the detour.
+	if code != 3 || !strings.Contains(out, "fix: "+detour+"\nfix: hug task take "+second+" --with "+first) || strings.Count(out, "\nfix: ") != 5 {
+		t.Fatalf("exit %d, want 3 and five fix: lines, the detour %q fourth:\n%s", code, detour, out)
 	}
 	code, out = runText(a, "take", second, "--model", "claude-opus-5-5", "--as", "kestrel", "--json")
 	var r map[string]any
 	if e := json.Unmarshal([]byte(out), &r); e != nil || code != 3 {
 		t.Fatalf("exit %d: %v\n%s", code, e, out)
 	}
-	if fixes, _ := r["fixes"].([]any); len(fixes) != 4 || fixes[3] != detour || r["fix"] != "hug task done "+first {
+	if fixes, _ := r["fixes"].([]any); len(fixes) != 5 || fixes[3] != detour || r["fix"] != "hug task done "+first {
 		t.Fatalf("json fixes: %s", out)
 	}
 

@@ -24,8 +24,9 @@ func TestBusyOffersTheDetourFix(t *testing.T) {
 		t.Fatalf("want busy, got %v", e)
 	}
 	want := "hug task dep " + a + " --add " + b + " && hug task note " + a + ` "where I was"`
-	if len(te.Fixes) != 4 || te.Fixes[3] != want || te.Fix != te.Fixes[0] {
-		t.Fatalf("fixes %q, want a fourth %q", te.Fixes, want)
+	// byj479: the take-with is the fifth, after the detour.
+	if len(te.Fixes) != 5 || te.Fixes[3] != want || te.Fixes[4] != "hug task take "+b+" --with "+a+" --model claude-opus-5-5 --as kestrel" || te.Fix != te.Fixes[0] {
+		t.Fatalf("fixes %q, want a fourth %q and the take-with fifth", te.Fixes, want)
 	}
 	if _, e = s.AddDependencies(a, []string{b}); e != nil {
 		t.Fatal(e)

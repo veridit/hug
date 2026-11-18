@@ -9,6 +9,7 @@ import (
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/veridit/hug/huginn/internal/cli"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // n2hq8p check 3: task_take gives the same refusal as the CLI when the
@@ -76,12 +77,13 @@ func TestSecondTakeOverMCPIsRefused(t *testing.T) {
 		"hug task wait " + ids[0] + ` "on what"`,
 		"hug task set " + ids[0] + " --state todo && hug task note " + ids[0] + ` "why it goes back"`,
 		"hug task dep " + ids[0] + " --add " + ids[1] + " && hug task note " + ids[0] + ` "where I was"`,
+		"hug task take " + ids[1] + " --with " + ids[0] + " --model claude-opus-5-5 --as kestrel",
 	}
 	fixes, _ := m["fixes"].([]any)
-	if len(fixes) != 4 || fixes[0] != want[0] || fixes[1] != want[1] || fixes[2] != want[2] || fixes[3] != want[3] || m["fix"] != want[0] {
+	if len(fixes) != 5 || fixes[0] != want[0] || fixes[1] != want[1] || fixes[2] != want[2] || fixes[3] != want[3] || fixes[4] != want[4] || m["fix"] != want[0] {
 		t.Fatalf("fixes %v fix %v, want %v", m["fixes"], m["fix"], want)
 	}
-	if p, _ := m["error"].(string); p != "not taking "+ids[1]+": kestrel is on "+ids[0]+" (First): one ticket in doing at a time" {
+	if p, _ := m["error"].(string); p != "not taking "+ids[1]+": kestrel is on "+ids[0]+" (First): one ticket in doing at a time; "+task.WithWhen {
 		t.Fatalf("error %q", p)
 	}
 	if code, _ := m["exit_code"].(float64); code != 3 {
@@ -89,8 +91,18 @@ func TestSecondTakeOverMCPIsRefused(t *testing.T) {
 	}
 	// The CLI says the same, with one fix: line per way out.
 	code, p, fix := cli.ErrorDetails(mustTakeErr(t, a, ids[1]))
-	if code != 3 || p != m["error"] || fix != want[0] || len(cli.ErrorFixes(mustTakeErr(t, a, ids[1]))) != 4 {
+	if code != 3 || p != m["error"] || fix != want[0] || len(cli.ErrorFixes(mustTakeErr(t, a, ids[1]))) != 5 {
 		t.Fatalf("CLI: %d %q %q", code, p, fix)
+	}
+	// byj479 check 3 over MCP: ticking a check on the second (todo, not
+	// taken) ticks it and the reply's fix takes it with the first.
+	m, bad = call("update", map[string]any{"id": ids[1], "action": "check", "item": float64(1), "agent": "kestrel", "model": "claude-opus-5-5"})
+	if bad || m["fix"] != want[4] {
+		t.Fatalf("check on an untaken task over MCP: fix %v, want %v (%v)", m["fix"], want[4], m)
+	}
+	// byj479 check 1 over MCP: task_take with: both doing.
+	if m, bad = call("take", map[string]any{"id": ids[1], "with": ids[0], "model": "claude-opus-5-5", "agent": "kestrel", "cwd": dir}); bad || m["task"].(map[string]any)["doing_with"] != ids[0] {
+		t.Fatalf("task_take with: %v", m)
 	}
 }
 

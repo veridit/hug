@@ -379,7 +379,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		}
 		return args, nil
 	})
-	add("take", "Claim a task using the remote push lock and set it doing. Say which model you are (model, required: claude-opus-5-5, gpt-6.1-sol, ...; a person: human), the folder you work in (cwd, required: the branch and worktree are read from it and recorded) and, if you have one, your agent or session name (agent). Without agent the assignee is the model. One ticket in doing per agent: while you have an active doing task, take is refused naming it, with fixes (done, wait, or back to todo); a waiting, review or depends task does not count.", map[string]any{"id": str("Task reference"), "model": str("The model doing the work, e.g. claude-opus-5-5 or gpt-6.1-sol; a person: human. Required unless HUG_MODEL is set for the server"), "cwd": str("Your working directory (absolute path), e.g. the git worktree you edit in. Required: hug records its branch and worktree on the task"), "agent": str("Your agent or session name, e.g. poodle (optional; default HUG_USER or the harness session)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
+	add("take", "Claim a task using the remote push lock and set it doing. Say which model you are (model, required: claude-opus-5-5, gpt-6.1-sol, ...; a person: human), the folder you work in (cwd, required: the branch and worktree are read from it and recorded) and, if you have one, your agent or session name (agent). Without agent the assignee is the model. One ticket in doing per agent: while you have an active doing task, take is refused naming it, with fixes (done, wait, back to todo, a detour, or take it with the active one); a waiting, review or depends task does not count. Tasks that ship together (one change or release) are both doing: take the second with with set to your active task's id.", map[string]any{"id": str("Task reference"), "with": str("Your active task's id, when this one ships together with it (one change or release): both are doing, this one marked with it"), "model": str("The model doing the work, e.g. claude-opus-5-5 or gpt-6.1-sol; a person: human. Required unless HUG_MODEL is set for the server"), "cwd": str("Your working directory (absolute path), e.g. the git worktree you edit in. Required: hug records its branch and worktree on the task"), "agent": str("Your agent or session name, e.g. poodle (optional; default HUG_USER or the harness session)")}, []string{"id"}, func(m map[string]any) ([]string, error) {
 		id := get(m, "id")
 		// One habit for agents (x1t1t1, Jørgen 2026-11-16): the server's
 		// own folder is not where the agent works, so cwd is always given.
@@ -396,6 +396,9 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 			return nil, &cli.UsageError{Problem: "cwd " + strconv.Quote(cwd) + " is not inside a git checkout", Fix: "task_take with cwd set to the git worktree you work in (git -C DIR rev-parse --show-toplevel)"}
 		}
 		args := []string{"take", id}
+		if v := get(m, "with"); v != "" {
+			args = append(args, "--with", v)
+		}
 		if at.Branch != "" {
 			args = append(args, "--branch", at.Branch)
 		}

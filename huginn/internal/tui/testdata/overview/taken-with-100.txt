@@ -1,0 +1,25 @@
+== overview at 100x24
+HUG · overview   7/7 tasks · ! 0 broken                                                             
+view: overview  list  board  !lint   │ todo 2 · doing 5 (1 depends) · depends 0 · done 0 · dropped 0
+filter: none · sort: rank                                                                           
+  ASKED · for you  [0] · None                                                                       
+> IN PROGRESS · assigned to  [2] · all active · all feature · all high · all nautilus               
+> ◑ 1/2  aaaaaa   Status colors: rows and sections share one subtle scheme                          
+  ◑ 1/2  ffffff   Depend on a group or epic · with aaaaaa                                           
+                                                                                                    
+  WAITING  [4] · all feature · all high                                                             
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                    nautilus        
+  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                                  nautilus        
+  ◑ 1/2  dddddd   depends   One set of variable names                               nautilus        
+  ◑ 1/2  eeeeee   design    Tags listed per board                                   unassigned      
+                                                                                                    
+  NEXT UP · rank order  [1]                                                                         
+  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                             
+                                                                                                    
+  RECENTLY DONE · last closed  [0] · None                                                           
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                  
+                                                                                                    
+                                                                                                    
+All tasks · : filters and commands · ! lint finding · ↳ epic                                        
+                                                                                                    
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column  
