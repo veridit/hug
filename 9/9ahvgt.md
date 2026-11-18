@@ -1,15 +1,20 @@
 ---
 id: 9ahvgt
 title: "stale-owner lint misses owners whose sessions are gone"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["iwazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T13:44"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Code: huginn/internal/task/owner.go:95 builds the finding; it reads ~/.jcode/ses
 - [ ] A live worker's task is not reported (test).
 
 ## Notes
+
+
+## History
+- 2026-11-18T13:44 todo -> doing/active (take)
