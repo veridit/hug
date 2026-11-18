@@ -32,3 +32,5 @@ From mizaru's gmzd87 open questions 2 and 3 (2026-11-18). Inbox: <JCODE_HOME>/hu
 - [ ] The board cue does not name a request that was delivered (test).
 
 ## Notes
+
+piglet 15:08: crab assigned this to piglet, stacked on gmzd87 (19a5fc77). hug task take refuses ('bbxdd7 is blocked by gmzd87'); the dependency is real for landing, so it stays, and piglet works on branch bbxdd7 from origin/gmzd87 without the take.
