@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -123,7 +124,7 @@ func (m model) note(t task.Task) (head, text, stamp string) {
 		// Asked of the viewer it sits in ASKED, so "you" is said by the
 		// section; asked of someone else the line names them.
 		var parts []string
-		if n := f("asked_check"); n != "" {
+		if n := f("asked_check"); n != "" && !tickedCheck(t, n) {
 			parts = append(parts, "check "+n)
 		}
 		parts = append(parts, m.attachments(t, f("asked_what")))
@@ -416,4 +417,11 @@ func untilDay(v string) string {
 		return d.Format("2 Jan 2006")
 	}
 	return d.Format("2 Jan")
+}
+
+// tickedCheck says whether check n (as written in asked_check) of t is
+// ticked: a ticked check carries no question (qsqhpe).
+func tickedCheck(t task.Task, n string) bool {
+	i, err := strconv.Atoi(strings.TrimSpace(n))
+	return err == nil && i >= 1 && i <= len(t.Acceptance) && t.Acceptance[i-1].Checked
 }

@@ -227,3 +227,33 @@ func TestAskedSectionOnTop(t *testing.T) {
 	}
 	goldenFile(t, "testdata/overview/asked.txt", strings.Join(golden, "\n")+"\n")
 }
+
+// qsqhpe check 4 (TUI): a question about a check that is ticked (by
+// someone else than the person asked, or before this rule) is never drawn
+// on that check: no ? on a ticked row, the question shows as its own
+// block, answerable with a.
+func TestNoQuestionOnTickedCheck(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	m := askedBoard(t)
+	m.width, m.height = 120, 30
+	m.resize()
+	// nautilus (not the person asked) ticks check 2 of aaaaaa.
+	m.store.Actor = "nautilus"
+	if _, err := m.store.Check("aaaaaa", 2); err != nil {
+		t.Fatal(err)
+	}
+	m.store.Actor = ""
+	m.refresh("")
+	m = openTask(t, m, "aaaaaa")
+	screen := ansi.Strip(m.View())
+	if strings.Contains(screen, "? ☑") || strings.Contains(screen, "? ☒") {
+		t.Fatalf("a question drawn on a ticked check:\n%s", screen)
+	}
+	if !strings.Contains(screen, "look at the state/stage rows") || m.detailPane != focusQuestion {
+		t.Fatalf("the question is not its own block (pane %d):\n%s", m.detailPane, screen)
+	}
+	// The overview row names no check either.
+	if _, text, _ := m.note(mustSelected(t, m)); strings.Contains(text, "check 2") {
+		t.Fatalf("the row still points at check 2: %q", text)
+	}
+}
