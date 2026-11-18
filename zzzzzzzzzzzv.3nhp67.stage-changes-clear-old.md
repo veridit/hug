@@ -39,5 +39,6 @@ Code: huginn/internal/task stage transitions (wait, resume, ask, answer, review,
 
 
 landed 5b276f2 on main 2026-11-18: task: one stage at a time; a same-state set settles two stages (3nhp67)
+Landed 5b276f28. Failing first in task/stagepairs_test.go: 8 failures on main, e.g. 'doing/asked wait: two stages' fields map[asked:[...] waiting:[...]]'. cli/stagefix_test.go TestStageDisagreesFixRuns fails on main with 'stage waiting disagrees with the task: its asked fields are set, so its stage is asked' (that fix did nothing). After the change, lint reads 'holds the fields of 2 stages (asked, waiting) ... the asked fields go to History and the stage is waiting', and its next: line 'hug task set ID --state doing' clears it. Mutants: 8 of 10 killed. Survivors: review without stage (Review already refuses when waiting/asked is held, so it has nothing to clear) and clear-own-shared (stages share no field names). Race: task 35.2s, cli 176.6s, mcp 24.1s ok. -short huginn+muninn: 28 ok.
 ## History
 - 2026-11-18T02:26 todo -> doing/active (take)
