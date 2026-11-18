@@ -63,3 +63,4 @@ piglet 14:37: asked jhf about check 6 (hug task ask --check 6; the ask went thro
 - 2026-11-18T19:48 answered asked (check 6), by jhf, for piglet (doing/asked -> doing/active):
   > t01kqm (lint judges open tasks only) shipped in v0.7.54; brew hug is v0.7.62. On Statbus today (read-only, ~/ssb/statbus) hug task lint --summary says '131 findings (13 broken) in 6 codes', with no 'closed tasks hidden' line and no done-unchecked (before: 446 findings, 314 broken, plus 170 hidden). Please open the Statbus LINT section in hug tui: does it now show only open tasks the way you wanted? If yes: hug task check t01kqm 6
   answered by ticking check 6
+- 2026-11-18T19:48 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
