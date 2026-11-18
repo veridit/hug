@@ -26,7 +26,7 @@ func TestAskOnBlockedTodoTask(t *testing.T) {
 	for _, want := range []string{
 		"## Questions\n",
 		" question 1 by piglet to jhf (check 1):\n  Box at the bottom of the list, or in the first marked task's page?\n",
-		`state: "todo"`,
+		"state: todo\n",
 		`stage: "depends"`,
 		`design_question: "Box at the bottom of the list, or in the first marked task's page?"`,
 		`design_for: "jhf"`,
@@ -86,7 +86,7 @@ func TestAnswerOnTodoTaskGoesToAsker(t *testing.T) {
 	execute(t, a, "check", id, "1")
 	a.Env["HUG_USER"] = "tester"
 	f = taskFile(t, a, id)
-	if !strings.Contains(f, "answered design (question 1, check 1), by jhf, for piglet") || strings.Contains(f, "design_question") || !strings.Contains(f, `state: "todo"`) || !strings.Contains(f, `stage: "ready"`) {
+	if !strings.Contains(f, "answered design (question 1, check 1), by jhf, for piglet") || strings.Contains(f, "\ndesign_question:") || !strings.Contains(f, "state: todo\n") || !strings.Contains(f, `stage: "ready"`) {
 		t.Fatalf("tick did not answer question 1:\n%s", f)
 	}
 }
@@ -110,7 +110,7 @@ func TestTakeCarriesOpenQuestion(t *testing.T) {
 			t.Fatalf("take lost the question: lacks %q:\n%s", want, f)
 		}
 	}
-	if strings.Contains(f, "withdrawn") || strings.Contains(f, "design_question") {
+	if strings.Contains(f, "withdrawn") || strings.Contains(f, "\ndesign_question:") {
 		t.Fatalf("take withdrew the question or kept design:\n%s", f)
 	}
 	execute(t, a, "answer", id, "A", "--as", "jhf")

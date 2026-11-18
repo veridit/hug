@@ -371,7 +371,7 @@ task next. Turn it into changes to the ticket, then hug task resolve ID N
 "what changed"; if it is unclear, hug task ask instead.
 Questions: one question per ask (hug task ask ID --to NAME "..."), never a
 numbered list in one; each is numbered on the task and the person answers each
-on its own (hug task answer ID N "...").
+on its own (hug task answer ID N "..."). A todo task is asked without taking it.
 ` + DeliveryFlow + `
 Old backlog ids (TASK-123) work as aliases.
 Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.`

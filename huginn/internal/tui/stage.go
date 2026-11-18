@@ -158,6 +158,17 @@ func (m model) waitingFor(t task.Task) (who, what string) {
 // waiting_for. Only the stage that holds counts, so an outranked design
 // question waits until its dependency is done.
 func (m model) forYou(t task.Task) bool {
+	// A question asked with hug task ask on a todo task (yphbra, crab
+	// 21:59) is for the person now, whatever stage outranks it: the asker
+	// chose to ask now. A hug task design question keeps the 11-17 rule
+	// below and waits for its dependency.
+	if t.State == "todo" {
+		for _, q := range task.OpenQuestions(t) {
+			if m.isMe(q.To) {
+				return true
+			}
+		}
+	}
 	switch m.taskStage(t) {
 	case "review":
 		return m.isMe(t.Fields["review_by"])

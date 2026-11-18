@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug task ask` works on a todo task without taking it (yphbra). Before, asking a design question on a todo task that waited on another needed the dependency removed, a take, the ask, and the dependency added back (ec6z6j). Now the question goes in `## Questions` as on a doing task; the task stays todo with its assignee and dependencies, `design_*` show the oldest open question, and it is in the asked person's ASKED at once, even while a dependency is open, because the asker chose to ask now. A `hug task design` question keeps the old order and waits for the task's dependencies. Answers (`answer ID N`, or ticking the check) go to the asker. Taking a task with open questions keeps them: it becomes doing/asked, nothing is withdrawn. `--after` still needs your own doing task. MCP `task_update` ask does the same.
+
 ## v0.7.70 - 2026-11-18
 
 - `TestBackgroundSyncOfflineCatchesUp` no longer sits out a fixed hang (0n4rnx). Its fake remote slept 5 s per network call, and the passes after the timing check paid it again, 32 s for the test on Windows. The remote now hangs until the test releases it (at most 10 s), then fails at once, still unreachable: 11.67 s in CI 44370638232. This changes a test only, not hug.

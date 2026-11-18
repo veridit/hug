@@ -250,7 +250,7 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 		if q.Text == what && q.To == who && checkText(q.Check) == check && q.Show == show {
 			// Unchanged, unless the stage's fields went stale (written by
 			// hand or an older hug): then they show the oldest open again.
-			set, clear := mirror(open[0])
+			set, clear := mirrorOn(d.Task.State, open[0])
 			stale := false
 			for k, v := range set {
 				stale = stale || d.Task.Fields[k] != v
@@ -261,7 +261,7 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 			if !stale {
 				return s.finish(d, false)
 			}
-			m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}
+			m := askMove(d.Task.State, set, clear)
 			m.line = "asked question " + strconv.Itoa(q.N) + " of " + who + " again"
 			if e = applyMove(d, ts, m); e != nil {
 				return Result{}, e
@@ -277,8 +277,8 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 		if e = d.rewriteQuestionHead(q, who, c, show); e != nil {
 			return Result{}, e
 		}
-		set, clear := mirror(OpenQuestions(d.Task)[0])
-		m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}
+		set, clear := mirrorOn(d.Task.State, OpenQuestions(d.Task)[0])
+		m := askMove(d.Task.State, set, clear)
 		m.line = "asked question " + strconv.Itoa(q.N) + " of " + who + " instead"
 		if e = applyMove(d, ts, m); e != nil {
 			return Result{}, e
@@ -305,11 +305,11 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 	c, _ := strconv.Atoi(check)
 	d.appendToSection(QuestionsSection, questionBlock(n, asker, who, c, show, what, d.newline))
 	// The stage shows the oldest open question (crab 19:49).
-	set, clear := mirror(OpenQuestions(d.Task)[0])
+	set, clear := mirrorOn(d.Task.State, OpenQuestions(d.Task)[0])
 	// Every ask is a History line. A first one moves the stage and names
 	// what it left ("; was waiting_on: ..."); a second moves nothing, so
 	// it says what it adds.
-	m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}
+	m := askMove(d.Task.State, set, clear)
 	if now := len(OpenQuestions(d.Task)); now > 1 {
 		m.line = "asked question " + strconv.Itoa(n) + " of " + who + ", " + strconv.Itoa(now) + " open"
 	}
@@ -317,6 +317,18 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 		return Result{}, e
 	}
 	return s.finish(d, true)
+}
+
+// askMove is the move an ask makes on a task in state: a doing task goes
+// to doing/asked; a todo task (yphbra: asked without taking it) stays
+// todo, nobody takes it, its dependencies stay, and its design_* fields
+// mirror the oldest open question. Its stage derives as before: design,
+// or depends, deferred or draft when one of those outranks it.
+func askMove(state string, set map[string]string, clear []string) move {
+	if state == "todo" {
+		return move{state: "todo", set: set, clear: clear, why: "ask"}
+	}
+	return move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}
 }
 
 // orStamp is at, or now when at is empty.
@@ -347,8 +359,8 @@ func (s *Store) askable(d *Document, q Question) (what, who, check, show string,
 	if who == "" {
 		return "", "", "", "", usageErr(id, "ask needs who must answer: --to NAME", "hug task ask "+id+` --to NAME "`+oneLineFix(what)+`"`)
 	}
-	if d.Task.State != "doing" {
-		return "", "", "", "", refuse(d.Task, "doing/asked", "hug task take "+id+" --model MODEL")
+	if d.Task.State != "doing" && d.Task.State != "todo" {
+		return "", "", "", "", refuse(d.Task, "doing/asked", "hug task set "+id+" --state todo")
 	}
 	if who, e = s.answerer(id, who, what); e != nil {
 		return "", "", "", "", e
@@ -588,6 +600,16 @@ func stagedMove(d *Document, ts []Task, state, user, reason string) error {
 				set["review_by"] = user
 				set["review_since"] = stamp()
 				why = "take for review"
+			}
+			// Questions asked on the todo task (yphbra) come along, open:
+			// the task is doing/asked and the taker sees what he waits on
+			// (crab 21:59: a question is never lost).
+			if open := OpenQuestions(d.Task); d.Task.State == "todo" && len(open) > 0 {
+				askedSet, askedClear := mirror(open[0])
+				for k, v := range askedSet {
+					set[k] = v
+				}
+				return applyMove(d, ts, move{state: state, stage: "asked", set: set, clear: append(askedClear, stageFields("todo", "design")...), why: why + ", " + strconv.Itoa(len(open)) + " open question(s) kept"})
 			}
 		}
 	case "todo":
