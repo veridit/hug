@@ -2,23 +2,23 @@
 
 <img src="docs/logo.svg" alt="Huginn, raven of thought" width="160">
 
-A git-branch task tracker for people and agents. Markdown is the source of truth,
-Git is the sync protocol, and the CLI, terminal UI and MCP server share the same
-operations. Sister of [muninn](https://github.com/veridit/hug/tree/main/muninn), the raven of memory.
-Huginn is the raven of thought: what to do next, why, and how to know it is done.
+A git-branch task tracker for people and agents: the tasks part of
+[hug](../README.md), used as `hug task`. Markdown is the source of truth, Git is
+the sync protocol, and the CLI, terminal UI and MCP server share the same
+operations. Huginn, Odin's raven of thought, gives this part its folder name
+and its mascot: what to do next, why, and how to know it is done. Its sister is
+[muninn](../muninn/README.md), memory.
 Licensed under MPL-2.0. Contributions need the contributor agreement in
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Install
 
 Requires Git 2.42 or newer on PATH. No database service or account needed.
-
-huginn ships inside [hug](../README.md#install): install hug and you get the
-`huginn` command too.
+Install [hug](../README.md#install):
 
 ```sh
 brew install veridit/tap/hug
-huginn version
+hug version
 ```
 
 ## 60-second quickstart
@@ -31,34 +31,33 @@ origin, `take` claims through a remote push lock.
 Without an origin, everything works locally.
 
 ```sh
-huginn init
-huginn new "Ship greeting" --goal "Visitors see a greeting" --accept "Greeting test passes"
-huginn next
-huginn take ship-greeting --model human
+hug task init
+hug task new "Ship greeting" --goal "Visitors see a greeting" --purpose "First visit feels welcome" --principle "Plain text only" --accept "Greeting test passes"
+hug task next
+hug task take ship-greeting --model human
 # Implement and test the change, then record the observed check:
-huginn check ship-greeting 1
-huginn done ship-greeting
-huginn sync
+hug task check ship-greeting 1
+hug task done ship-greeting
 ```
 
-Use `huginn board` to print todo, doing and done side by side (`--all` for every
-done task), `huginn tui` for an interactive view, and `huginn help COMMAND` for flags.
+Use `hug task board` to print todo, doing and done side by side (`--all` for every
+done task), `hug tui` for an interactive view, and `hug task help COMMAND` for flags.
 Dependencies and unchecked acceptance items block completion. `drop` preserves
 history instead of deleting a task. Ranking and priority are separate concepts.
 
 ## Files, branches and groups
 
 Tasks are `[rank.]id.slug.md`, with a stable six-character ID and readable slug.
-They live on the dedicated `huginn` branch, mounted as the `.huginn/` Git worktree
-inside your checkout. Folders are groups, not statuses. `huginn mv ID auth` moves
-a task to the auth group. `huginn move ID --before OTHER` changes its rank.
+They live on the dedicated `hug/tasks` branch, mounted as the `.hug/tasks/` Git
+worktree inside your checkout. Folders are groups, not statuses. `hug task mv ID auth`
+moves a task to the auth group. `hug task move ID --before OTHER` changes its rank.
 Edit Markdown directly or use the CLI. Mutations commit the task branch, not
-your application branch. `sync` commits, rebases and pushes the task branch.
-The SQLite cache under the Git common directory is disposable.
+your application branch, and reach the other clones by themselves (`hug task sync`
+does it at once). The SQLite cache under the Git common directory is disposable.
 
 ## Agents
 
-Use `huginn COMMAND --json` for structured replies. Every reply includes a
+Use `hug task COMMAND --json` for structured replies. Every reply includes a
 `next` hint. Errors include an actionable `fix` and `exit_code`.
 
 | Exit | Meaning |
@@ -68,32 +67,34 @@ Use `huginn COMMAND --json` for structured replies. Every reply includes a
 | 2 | Usage error |
 | 3 | Blocked |
 | 4 | No next task |
+| 5 | An upgrade is pending (`hug upgrade` previews it) |
 
-`huginn mcp` speaks MCP over stdio. Configure a server named `huginn` with
-`{"command":"huginn","args":["mcp"]}` and start it in the project checkout.
-For Jcode, installation keeps backups and preserves other MCP servers:
+`hug mcp` speaks MCP over stdio with the `task_*` and `memory_*` tools; start it
+in the project checkout. `hug apps install` adds it to Claude Desktop, Claude
+Code and ChatGPT/Codex. For Jcode, installation keeps backups and preserves other
+MCP servers:
 
 ```sh
-huginn install jcode --dry-run
-huginn install jcode
-huginn install jcode --all-instances
-huginn install jcode --jcode-home /path/to/.jcode
-huginn uninstall jcode
+hug task install jcode --dry-run
+hug task install jcode
+hug task install jcode --all-instances
+hug task install jcode --jcode-home /path/to/.jcode
+hug task uninstall jcode
 ```
 
 Restart the agent after changing configuration. The installer records the
-absolute path of the running Huginn executable with `args: ["mcp"]` and `env: {}`.
+absolute path of the executable with `args: ["mcp"]` and `env: {}`.
 It preserves an existing `servers` or `mcpServers` schema, defaults to `servers`,
 and repairs v0.1.0 mixed-schema files without dropping other servers. Re-run the
-installer after upgrading Huginn if its executable path changes. MCP tools use
+installer after upgrading if the executable path changes. MCP tools use
 the same validation, completion checks and next-step hints as the CLI.
 
 ## Import backlog-md
 
 ```sh
-huginn import backlog ./backlog
-huginn lint
-huginn board
+hug task import backlog ./backlog
+hug task lint
+hug task board
 ```
 
 The backlog folder or its `tasks/` folder both work. Archived tasks stay out

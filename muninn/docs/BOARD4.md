@@ -2,7 +2,7 @@
 
 **Shipped:** the recall hook adds at most one line about the task board, only
 when the session's work and the board disagree, and the line carries the
-command that fixes it. `"nudge_board": false` in muninn config.json turns it
+command that fixes it. `"nudge_board": false` in hug's memory config.json (`hug mem config` shows where) turns it
 off. Nothing paid runs in the hook: it reads the board cache and the
 session's own transcript.
 

@@ -1,6 +1,6 @@
 # Owner terminal browser
 
-`muninn tui` opens a populated, Binding-scoped overview. Its four panes are Places,
+`hug mem tui` opens a populated, Binding-scoped overview. Its four panes are Places,
 Recent, Told agents lately and Needs a look. Nothing is written by browsing,
 searching, rendering details or previewing recall. The CLI's existing startup
 indexing still runs before the terminal browser starts.
@@ -65,7 +65,7 @@ Owner actions always re-resolve the memory and write policy at confirmation:
 Needs a look reads the newest valid duplicate and move plans from the data dir
 or its `tidy` child. Only wholly visible duplicate clusters and visible-source,
 permitted-target moves appear. No plan is generated automatically. Empty states
-show `muninn tidy dupes` and `muninn tidy scan`. In review, j/k and paging scroll
+show `hug mem tidy dupes` and `hug mem tidy scan`. In review, j/k and paging scroll
 long entries, Enter opens the current keeper/memory, `n` skips without modifying
 plans or memories, `y` approves this one entry through App.ApplyTidy and its
 existing backup/receipt path, and Esc stops. Unreviewed entries are never applied.

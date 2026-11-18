@@ -15,7 +15,7 @@ import (
 )
 
 func importCmd() *cobra.Command {
-	c := &cobra.Command{Use: "import", Short: "Copy memories from another memory system into muninn (idempotent)"}
+	c := &cobra.Command{Use: "import", Short: "Copy memories from another memory system into hug's memory (idempotent)"}
 	var dry bool
 	c.PersistentFlags().BoolVar(&dry, "dry-run", false, "show counts without writing")
 

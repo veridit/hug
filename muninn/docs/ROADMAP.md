@@ -1,5 +1,9 @@
 # muninn roadmap
 
+> A record from 2026-11, before hug was one tool; commands are written as typed
+> now (`hug mem ...`), and shared project memories live on `hug/memory` at
+> `.hug/memory/` (they were on `muninn-notes`).
+
 Decided by the user on 2026-11-05. Completed items are marked below.
 
 ## Short ids, like huginn tasks (done 2026-11-05)
@@ -12,7 +16,7 @@ Decided by the user on 2026-11-05. Completed items are marked below.
   imported and live harness rows of the same memory share one sid.
   Upstream identity stays in `units.origin`, `sources`, and the original unit key.
   Native JSON stores `sid` without changing import idempotency or legacy ids.
-- [x] `muninn show <id>` exposes source kind, path, key and origin. `--explain`
+- [x] `hug mem show <id>` exposes source kind, path, key and origin. `--explain`
   exposes origin, not the ordinary injected recall block.
 - [x] CLI, MCP, TUI and web actions use one resolver. Forgetting a harness note
   suppresses it only in muninn, with no upstream writes. A native imported copy
@@ -47,7 +51,7 @@ Decided by the user on 2026-11-05. Completed items are marked below.
 
 ## Project memories on their own branch
 
-Shipped 2026-11-06. `muninn sync` uses orphan branch `muninn-notes`, mounted
+Shipped 2026-11-06. `hug mem sync` used orphan branch `muninn-notes`, mounted
 at `.muninn-notes/` and excluded from the code worktree. The matching visible
 name follows huginn's branch/mount convention while preserving `.muninn/`
 project and client markers. The shared implementation is
@@ -64,7 +68,7 @@ recall stay small.
 
 ## Web UI from vendor apps
 
-Both tools run a local web UI (`muninn serve`, `huginn serve`) that can be
+Both tools run a local web UI (`hug mem serve` for memories; tasks next) that can be
 opened from vendor apps (Claude, ChatGPT/Codex) to view and edit memories and
 tasks. TUI first, web UI later.
 

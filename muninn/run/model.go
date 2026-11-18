@@ -32,7 +32,7 @@ func modelCmd() *cobra.Command {
 			fmt.Println("ok")
 			return nil
 		}})
-	c.AddCommand(&cobra.Command{Use: "status", Short: "Show which embedder muninn uses now",
+	c.AddCommand(&cobra.Command{Use: "status", Short: "Show which embedder hug mem uses now",
 		RunE: func(*cobra.Command, []string) error {
 			return withApp(func(_ context.Context, a *app.App) error {
 				fmt.Println(a.EmbedNote)

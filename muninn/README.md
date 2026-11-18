@@ -2,32 +2,23 @@
 
 # muninn
 
-**Local-first memory recall for AI coding agents.** muninn indexes your memories
+**Local-first memory recall for AI coding agents**: the memory part of
+[hug](../README.md), used as `hug mem`. It indexes your memories
 on your own machine and injects the few that matter into the agent's context,
 automatically, before it answers. Recall needs no account, API key or remote
 service. Optional automatic capture calls your configured model provider and
 requires its credentials. Capture is opt-in and keeps a private, local audit.
 
-## What's new in v0.4.0
-
-- Short memory IDs and strict instance, project and client scoping.
-- Compact SDD recall rows with the shipped date, ID and note columns.
-- Opt-in capture with resumable bounded hooks, category/trust decisions and
-  `muninn capture log` / `stats` for a private 30-day audit.
-- Project memories shared on `muninn-notes`, mounted at `.muninn-notes/`,
-  independently of your code branch. Preview legacy migration with
-  `muninn sync --migrate --dry-run`.
-
-See [CHANGELOG.md](CHANGELOG.md) and [capture documentation](docs/CAPTURE.md).
+See [CHANGELOG.md](../CHANGELOG.md) and [capture documentation](docs/CAPTURE.md).
 
 It works with **jcode**, **Claude Code** and **Codex** through their hooks, with
-any MCP client through `muninn mcp`, and it has a local **web UI** and a **TUI**.
+any MCP client through `hug mcp`, and it has a local **web UI** and a **TUI**.
 One static binary for macOS, Linux and Windows (arm64 and amd64).
 
 > Muninn is Odin's raven of memory: it flies out every morning and brings back
-> what matters.
+> what matters. It gives this part its folder name and its mascot.
 
-## Deliberate cleanup with `muninn tidy`
+## Deliberate cleanup with `hug mem tidy`
 
 `tidy` is an owner CLI tool, never a hook, MCP tool, TUI action or web route.
 It reads the existing index without rewriting dated notes or revalidating their
@@ -40,11 +31,11 @@ historical truth. These terms distinguish its evidence:
 - **Client group**: a topic group that mostly belongs to one scope.
 
 ```sh
-muninn tidy scan                         # read-only scan, private JSON + Markdown
-muninn tidy scan --judge --max-judge 40  # optional configured extract model
+hug mem tidy scan                         # read-only scan, private JSON + Markdown
+hug mem tidy scan --judge --max-judge 40  # optional configured extract model
 # Review the printed plan path. Unjudged entries are unsure, not move decisions.
-muninn tidy apply /path/to/plan.json --dry-run
-muninn tidy apply /path/to/plan.json --only 'global->client:example'
+hug mem tidy apply /path/to/plan.json --dry-run
+hug mem tidy apply /path/to/plan.json --only 'global->client:example'
 ```
 
 Defaults are `--min-sim 0.70 --majority 10 --own-max 3`, plus
@@ -122,27 +113,27 @@ or source symlinks change after review: stored fingerprints do not cover those
 filesystem-only provenance changes. Apply blocks capture with its
 lease, rejects stale reviewed entries, backs up `memories.json`, saves recovery
 files and a receipt, and reindexes once after the batch. Native memories use the
-same rescope path as `muninn rescope`. Upstream memories become exact native
+same rescope path as `hug mem rescope`. Upstream memories become exact native
 copies with `tidy:<upstream-origin>` identities, while the original identities
 are suppressed without changing upstream files. Each printed undo command uses
-`muninn rescope <id> --to <original-scope> --cross-client`. For upstream moves,
+`hug mem rescope <id> --to <original-scope> --cross-client`. For upstream moves,
 this moves the native copy back and intentionally keeps the upstream suppressed
 to prevent duplicates. Recovery backups retain the original native file bytes;
 ordinary errors roll back files and newly added suppressions.
 
 ### Reader-assisted placement
 
-`muninn tidy place` uses the configured cheap capture model to read memories
+`hug mem tidy place` uses the configured cheap capture model to read memories
 whose correct place cannot be inferred from neighbors. It **only writes a review
 plan**, never applies one or refreshes the index:
 
 ```sh
-muninn tidy place --from-scope jcode@global \
+hug mem tidy place --from-scope jcode@global \
   --cwd-origin "$HOME" --cwd-origin "$HOME/Projects" --max 0 --out /private/path/place.json
-muninn tidy place --from-scope 'jcode@global:folderhash' --max 0 --out /private/path/folder.json
-muninn tidy place --sids /private/path/memories.tsv --out /private/path/selected.json
+hug mem tidy place --from-scope 'jcode@global:folderhash' --max 0 --out /private/path/folder.json
+hug mem tidy place --sids /private/path/memories.tsv --out /private/path/selected.json
 # Review the JSON and the complete, target-grouped .md summary first.
-muninn tidy apply /private/path/place.json --dry-run
+hug mem tidy apply /private/path/place.json --dry-run
 ```
 
 Repeated scopes or origin directories are OR filters, and different filter
@@ -222,13 +213,13 @@ model are not counted as parser rejections.
 ### Deliberate duplicate cleanup
 
 ```sh
-muninn tidy dupes --out /private/path/dupes.json
-muninn tidy dupes --judge --max-judge 60 --out /private/path/judged-dupes.json
+hug mem tidy dupes --out /private/path/dupes.json
+hug mem tidy dupes --judge --max-judge 60 --out /private/path/judged-dupes.json
 # Read the JSON and Markdown, including reasons and exact keeper/retirement IDs.
 # Set a cluster's decision to "keep" to exclude it. Apply only after approval.
-muninn tidy apply /private/path/dupes.json --dry-run
-muninn tidy apply /private/path/dupes.json
-muninn tidy undo /path/printed/in/the/apply/result
+hug mem tidy apply /private/path/dupes.json --dry-run
+hug mem tidy apply /private/path/dupes.json
+hug mem tidy undo /path/printed/in/the/apply/result
 ```
 
 The scan is read-only apart from private proposal files. It reuses stored kNN
@@ -252,7 +243,7 @@ layout and rollback on ordinary errors. It retires duplicate native rows with
 `active=false`, records `retired_into` and `retired_origin`, and adds their strength
 to the keeper. Historical text and timestamps are never rewritten. Upstream
 files remain byte-identical: their duplicate identities are suppressed locally
-and exact inactive archival copies are kept in muninn. An upstream-only keeper
+and exact inactive archival copies are kept in hug's store. An upstream-only keeper
 gets an exact native mirror carrying the strength. Undo restores the original
 native bytes and removes only this batch's suppressions. It refuses to overwrite
 any later change to an affected native file. Interrupted applies retain backups
@@ -263,8 +254,8 @@ and receipts for manual recovery. Stop other manual memory writers before tidy.
 ```mermaid
 flowchart LR
     U[Your message] --> H[harness hook]
-    H --> M[muninn recall]
-    S[(memories: jcode, markdown notes, muninn)] -->|incremental index| DB[(SQLite: FTS5 + vectors + concept graph)]
+    H --> M[hug mem recall]
+    S[(memories: jcode, markdown notes, hug)] -->|incremental index| DB[(SQLite: FTS5 + vectors + concept graph)]
     DB --> M
     M -->|0-5 memories, labelled| C[agent context]
 ```
@@ -316,24 +307,23 @@ On an Apple M1 Max, synthetic data (`go test ./internal/index -run Scale -v`):
 | Change 1 of 2000 memories | 69 ms, exactly 1 embedding |
 | No-op pass | 2.3 ms |
 | Search over 2000 memories | 31 ms |
-| One `muninn recall` process, 5 synthetic memories, real Ollama | 60-90 ms |
+| One `hug mem recall` process, 5 synthetic memories, real Ollama | 60-90 ms |
 | One hook call, 960 real memories, real Ollama (model warm) | 110-180 ms |
-| One `muninn recall` process, 16,600 real memories in 6 jcode instances, scoped to one | 170-210 ms |
+| One `hug mem recall` process, 16,600 real memories in 6 jcode instances, scoped to one | 170-210 ms |
 
 The first hook call after Ollama has unloaded the embedding model pays a
-model load (measured 420-650 ms). muninn asks Ollama to keep the ~300 MB
+model load (measured 420-650 ms). hug asks Ollama to keep the ~300 MB
 `nomic-embed-text` resident for 30 minutes.
 
 ## Install
 
-muninn ships inside [hug](../README.md#install): install hug and you get the
-`muninn` command too (`brew install veridit/tap/hug`, or the other ways listed
-there). `brew install veridit/tap/muninn` also still works.
+Install [hug](../README.md#install) (`brew install veridit/tap/hug`, or the
+other ways listed there).
 
 Then wire it into your agents and, optionally, keep it running in the background:
 
 ```sh
-muninn install all            # Claude Code, Codex and jcode; keeps backups, idempotent
+hug mem install all           # Claude Code, Codex and jcode; keeps backups, idempotent
 brew services start hug       # Homebrew: watcher + web UI on http://127.0.0.1:7431
 ```
 
@@ -342,22 +332,22 @@ release's SHA-256 sums; the root `install.sh` verifies the archive the same way.
 Recent Homebrew asks you to trust a third-party formula once (`brew trust`);
 upgrades need nothing extra.
 
-Semantic search needs an embedding model, and muninn brings its own:
-`muninn install` downloads **snowflake-arctic-embed-s** once (~127 MB,
+Semantic search needs an embedding model, and hug brings its own:
+`hug mem install` downloads **snowflake-arctic-embed-s** once (~127 MB,
 Apache-2.0, pinned to an exact revision and SHA-256-verified) and runs it in
-pure Go, no Ollama or Python needed. With `muninn serve` running (for example
-`brew services start muninn`) the model stays loaded and a hook's recall takes
+pure Go, no Ollama or Python needed. With `hug mem serve` running (for example
+`brew services start hug`) the model stays loaded and a hook's recall takes
 ~30 ms; without it each hook loads the model (~0.2 s).
 
 If a local [Ollama](https://ollama.com) with `nomic-embed-text` is running,
-muninn uses that instead (GPU-accelerated, faster bulk indexing). Choose
+hug uses that instead (GPU-accelerated, faster bulk indexing). Choose
 explicitly with `"embedder": "builtin" | "ollama" | "none"` in the config;
-`muninn model status` shows what is in use. Without any model, muninn falls
+`hug mem model status` shows what is in use. Without any model, hug falls
 back to keyword and concept matching.
 
 ## Automatic capture
 
-`muninn capture --session <id>` extracts durable memories from stdin, or use
+`hug mem capture --session <id>` extracts durable memories from stdin, or use
 `--harness jcode` to read a jcode session. Capture defaults to a configurable
 remote DeepSeek Flash chat model, with Ollama and `off` alternatives. It reuses
 the same client/instance binding as recall. `--dry-run` shows proposed actions
@@ -387,9 +377,9 @@ duplicates are reinforced where they already live, and corrections
 retain their target's scope instead of moving it.
 
 ```sh
-muninn remember "This repository's release checklist is in docs/release.md"
-muninn remember --place global "I prefer concise explanations"
-muninn remember --place client "This client schedules releases on Tuesdays"
+hug mem remember "This repository's release checklist is in docs/release.md"
+hug mem remember --place global "I prefer concise explanations"
+hug mem remember --place client "This client schedules releases on Tuesdays"
 ```
 
 MCP `memory_remember` and web `/api/remember` accept `place` with the same names.
@@ -409,12 +399,12 @@ same proposed placement without saving memories or advancing capture checkpoints
 ## Use
 
 ```sh
-muninn index                         # incremental; safe to run any time
-muninn remember "The project uses 4-space indentation"
-muninn search --explain "what indentation does this repo use"
-muninn recall "banana mode please"   # the exact block a hook would inject
-muninn tui                           # interactive browser
-muninn serve                         # watcher + web UI on http://127.0.0.1:7431
+hug mem index                         # incremental; safe to run any time
+hug mem remember "The project uses 4-space indentation"
+hug mem search --explain "what indentation does this repo use"
+hug mem recall "banana mode please"   # the exact block a hook would inject
+hug mem tui                           # interactive browser
+hug mem serve                         # watcher + web UI on http://127.0.0.1:7431
 ```
 
 ### Memory ids and corrections
@@ -435,9 +425,9 @@ are migrated automatically on open, without re-embedding. Source keys and import
 origins remain the idempotency keys, so importing again does not create copies.
 
 ```sh
-muninn show k7m2qx                    # text, source kind, path, upstream key/origin
-muninn forget k7m2                    # any unique prefix of at least 4 characters
-muninn remember "The corrected fact"
+hug mem show k7m2qx                    # text, source kind, path, upstream key/origin
+hug mem forget k7m2                    # any unique prefix of at least 4 characters
+hug mem remember "The corrected fact"
 ```
 
 A memory that is only true for a while says so when it is written, with
@@ -494,8 +484,8 @@ memory naming an agent that is still running waits until it stops.
 
 `forget`, `show`, `related`, MCP and the web UI also accept the old native/import
 ids and full `jcode:<upstream-id>` references. Ambiguous prefixes fail explicitly.
-For memories muninn owns, forget retires the memory. For harness memories and
-markdown notes, it suppresses recall **only in muninn**, even after reindexing.
+For memories hug owns, forget retires the memory. For harness memories and
+markdown notes, it suppresses recall **only in hug**, even after reindexing.
 It never changes the harness's files. The command and API response say which
 operation happened. MCP clients use `memory_forget` then `memory_remember` to fix
 wrong or outdated notes, and `memory_related` accepts the same ids in `id`.
@@ -509,12 +499,12 @@ memory.
 ### Wire it into your agent
 
 ```sh
-muninn install claude   # ~/.claude/settings.json  UserPromptSubmit -> additionalContext
-muninn install codex    # ~/.codex/hooks.json; then trust the hook in Codex with /hooks
-muninn install jcode    # ~/.jcode/config.toml [hooks] turn_start, post_tool_feedback, turn_end
-muninn install jcode --all-instances   # every jcode instance (see below)
-muninn install all --dry-run
-muninn uninstall all
+hug mem install claude   # ~/.claude/settings.json  UserPromptSubmit -> additionalContext
+hug mem install codex    # ~/.codex/hooks.json; then trust the hook in Codex with /hooks
+hug mem install jcode    # ~/.jcode/config.toml [hooks] turn_start, post_tool_feedback, turn_end
+hug mem install jcode --all-instances   # every jcode instance (see below)
+hug mem install all --dry-run
+hug mem uninstall all
 ```
 
 Installers are idempotent, keep a timestamped backup, and leave your other hooks in place.
@@ -524,7 +514,7 @@ Installers are idempotent, keep a timestamped backup, and leave your other hooks
 | Claude Code | `UserPromptSubmit` hook, `additionalContext` | before the model answers (output format verified against the docs; not yet run in a live session) |
 | Codex | `UserPromptSubmit` hook, `additionalContext` | before the model answers (output format verified against codex-rs; not yet run in a live session) |
 | jcode | `turn_start` computes and parks the block; `post_tool_feedback` prints it into the turn's first successful tool result; `turn_end` drops what no tool call took | with the turn's first tool result, once; a turn without a tool call gets none (jcode has no synchronous context hook yet; see [jcode#2069](https://github.com/1jehuang/jcode/issues/2069)). Nothing goes into your input box. |
-| any MCP client | `muninn mcp` (stdio) | when the agent calls `memory_search` / `memory_recall` |
+| any MCP client | `hug mcp` (stdio) | when the agent calls `memory_search` / `memory_recall` |
 
 MCP tools: `memory_search`, `memory_recall`, `memory_remember`, `memory_forget`,
 `memory_related`, `memory_stats`.
@@ -532,7 +522,7 @@ MCP tools: `memory_search`, `memory_recall`, `memory_remember`, `memory_forget`,
 ### Several jcode instances
 
 If you run isolated jcode instances (one `JCODE_HOME` per client or project),
-muninn indexes each one separately and keeps them apart:
+hug indexes each one separately and keeps them apart:
 
 - Each instance's memories get the scope `jcode@<instance>` (instance-wide) or
   `jcode@<instance>:<project>`.
@@ -552,13 +542,13 @@ Instances are found in `~/.jcode`, in a zsh `typeset -gA JCODE_INSTANCES=(name r
 (read as text, never executed), and in `jcode_homes` in the config.
 
 ```sh
-muninn jcode instances                     # name, memories, hook installed?, JCODE_HOME
-muninn install jcode --all-instances --dry-run
-muninn install jcode --jcode-home ~/client/.jcode
-muninn search --scope 'jcode@client:*' "deploy" # explicit owner read view
-muninn search --all "deploy"                 # all non-client-root memories
-muninn tui --jcode-home ~/client/.jcode       # status shows active binding
-muninn serve --all                          # explicit owner web view
+hug mem jcode instances                     # name, memories, hook installed?, JCODE_HOME
+hug mem install jcode --all-instances --dry-run
+hug mem install jcode --jcode-home ~/client/.jcode
+hug mem search --scope 'jcode@client:*' "deploy" # explicit owner read view
+hug mem search --all "deploy"                 # all non-client-root memories
+hug mem tui --jcode-home ~/client/.jcode       # status shows active binding
+hug mem serve --all                          # explicit owner web view
 ```
 
 CLI memory commands accept `--jcode-home` (otherwise `$JCODE_HOME`, then
@@ -609,7 +599,7 @@ presented at their folder's effective scope: `client:<name>:<project-id>` within
 a project, otherwise `client:<name>:folder:<absolute-path>`. The root's store
 and unknown or deleted folders stay at `client:<name>` top level. Other
 non-native client sources keep that top-level overlay. Folder hashes are
-resolved during background maintenance (`muninn index`, or `muninn serve` at
+resolved during background maintenance (`hug mem index`, or `hug mem serve` at
 startup, on source changes and every five minutes), at lowered priority (nice
 10). The walk is breadth-first, at most three directory levels and 16,384
 entries, skipping `.git`, `node_modules`, `vendor`, `.muninn` and `.muninn-notes`.
@@ -633,8 +623,8 @@ Invalid source-root markers hide those sources from every binding.
 Only an explicit admin CLI operation can move an owned memory across it:
 
 ```sh
-muninn rescope k7m2qx --to client:acme --cross-client
-muninn rescope k7m2qx --to personal --cross-client
+hug mem rescope k7m2qx --to client:acme --cross-client
+hug mem rescope k7m2qx --to personal --cross-client
 ```
 
 Rescoping retains the sid and upstream identity. It requires an owned native
@@ -648,8 +638,8 @@ rebuilt once, with capture held off. A backup of the original file goes to
 `tidy/rescope-*` under the data folder:
 
 ```sh
-muninn rescope --from moves.tsv --dry-run
-muninn rescope --from moves.tsv
+hug mem rescope --from moves.tsv --dry-run
+hug mem rescope --from moves.tsv
 ```
 
 These are memory visibility
@@ -659,7 +649,7 @@ memory files directly.
 ### Sources
 
 - **jcode memories**: `<JCODE_HOME>/memory/global.json` and `projects/*.json` of every instance, read-only.
-- **muninn memories**: created with `muninn remember`, the web UI or MCP.
+- **hug's own memories**: created with `hug mem remember`, the web UI or MCP.
 - **Markdown notes**: set `notes_roots` in the config. Files are split at headings.
 
 ### Sharing project memories with your team
@@ -669,23 +659,27 @@ memories follow it through renames, moves and fresh clones (a folder outside
 git gets an id in `.muninn/project` instead).
 
 ```sh
-muninn project                         # id, label, scope of the current repo
-muninn remember --project "Releases are cut with make release"
-muninn sync                            # merge, commit, pull --rebase, push notes
+hug mem project                        # id, label, scope of the current repo
+hug mem remember --project "Releases are cut with make release"
+hug task memory share                  # opt in: this repository shares project memories
+hug mem sync                           # merge, commit, pull --rebase, push notes
 ```
 
-With Git 2.42 or newer, notes live on the independent `muninn-notes` branch,
-mounted at `.muninn-notes/`. The hidden mount uses the branch's name, following
-huginn's naming convention, without colliding with `.muninn/` project and client
+Project memories stay on this machine unless the repository opts in with
+`hug task memory share` (`[memory] share = true` in `hug.toml` on `hug/tasks`);
+without it `hug mem sync` pushes nothing. With Git 2.42 or newer, shared notes
+live on the independent `hug/memory` branch, mounted at `.hug/memory/`, next to
+the tasks at `.hug/tasks/`, without colliding with `.muninn/` project and client
 markers. The mount is locally excluded from the code worktree. No memory commit
 is added to main. Without a remote, sync works locally until one is configured.
-Outside Git, notes remain a local `.muninn-notes/memories.jsonl` file.
+`hug upgrade` previews moving an older `muninn-notes` branch and
+`.muninn-notes/` mount to the new place.
 
 Existing tracked notes require an explicit migration:
 
 ```sh
-muninn sync --migrate --dry-run
-muninn sync --migrate
+hug mem sync --migrate --dry-run
+hug mem sync --migrate
 # Push the single code-branch removal commit through your normal Git workflow.
 ```
 
@@ -700,23 +694,23 @@ other personal, global, client and project scopes are excluded, as are likely
 credentials. The local capture audit is never exported. Inside a client root
 only that client's project notes are shared. Client identities include the
 client name, so a personal clone cannot alias them. A teammate clones the code
-and runs `muninn sync` to fetch and mount the notes branch. Local edits remain
+and runs `hug mem sync` to fetch and mount the notes branch. Local edits remain
 protected if a push fails. Resolve authentication or remote failures and retry.
 
 ### Importing
 
-Imports copy memories into muninn's own store, so they stay when the other
-tool goes away and can be corrected in muninn. Every import is idempotent:
+Imports copy memories into hug's own store, so they stay when the other
+tool goes away and can be corrected in hug. Every import is idempotent:
 memories are keyed by their upstream id, so running it again changes
 nothing. Changed upstream text updates the copy, unless you edited the copy
-in muninn, in which case your edit wins. Upstream deletions are not
+in hug, in which case your edit wins. Upstream deletions are not
 propagated.
 
 ```sh
-muninn import engram --dry-run                       # ~/.engram/engram.db, read-only
-muninn import engram --file engram-export.json       # or an `engram export` file
-JCODE_HOME=~/statbus/.jcode muninn import engram --map statbus=jcode@statbus
-JCODE_HOME=~/statbus/.jcode muninn import jcode       # this instance's scope
+hug mem import engram --dry-run                       # ~/.engram/engram.db, read-only
+hug mem import engram --file engram-export.json       # or an `engram export` file
+JCODE_HOME=~/statbus/.jcode hug mem import engram --map statbus=jcode@statbus
+JCODE_HOME=~/statbus/.jcode hug mem import jcode       # this instance's scope
 ```
 
 Imports use the active binding too. Run an import in the intended instance;
@@ -733,7 +727,7 @@ client root can be imported into that same client. File formats are unchanged.
 New engram `personal` or empty-project observations become `personal`;
 existing rows keep their scopes, with no automatic rescope. `global` is for
 working rules deliberately shared with non-client bindings. Project
-observations are placed where they were written, as if muninn had written
+observations are placed where they were written, as if hug had written
 them there: a session directory inside a jcode instance root becomes
 `jcode@<instance>`, one inside a git project becomes that project's
 `project:<id>`. Only observations from the home folder or a folder that no
@@ -743,8 +737,8 @@ a `project:` scope only from inside that project. Identical text indexed from tw
 (a live jcode memory and its imported copy) is shown once.
 
 ```sh
-muninn config        # shows paths and effective settings
-muninn config init   # writes config.json with the defaults
+hug mem config        # shows paths and effective settings
+hug mem config init   # writes config.json with the defaults
 ```
 
 ### Background work stays polite
@@ -776,7 +770,7 @@ last pass and when the next one can run.
 Everything stays on your machine. The only network call goes to the embedding
 server you configure (default `http://127.0.0.1:11434`). The database is
 created owner-only (0600). The web UI binds to
-loopback only and rejects foreign `Host` and cross-origin writes. muninn never
+loopback only and rejects foreign `Host` and cross-origin writes. hug never
 reads harness credential files. See [SECURITY.md](SECURITY.md).
 
 ## Development
@@ -787,7 +781,7 @@ go test ./...
 scripts/e2e.sh             # real Ollama, synthetic data, throwaway home
 scripts/hooks-e2e.sh       # Claude/Codex hook protocol, dedupe, loop guard, web API
 scripts/jcode-instances-e2e.sh  # two isolated jcode instances: install, hook, no leakage
-python3 scripts/mcp-e2e.py bin/muninn
+python3 scripts/mcp-e2e.py bin/hug
 ```
 
 ## Credits
