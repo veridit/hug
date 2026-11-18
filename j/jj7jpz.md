@@ -42,3 +42,5 @@ Ordinary CI on abc8a2a9 (branch ci/6ep7y2-h5; contains 41ba4ed1, plus 8023b9f1 t
 crab review 15:41 local: accepted. 41ba4ed1: BackgroundOf + Abandon(born) removes .pending only when not newer than the child's start (rt80x4 kept); failing-first 5/5, mutant fails 5/5. 8023b9f1 test-only trace2 stall diagnostics. CI 44318566065 6/6 ran these two inside abc8a2a9; I land land/6ep7y2-jj7jpz after a rebase and exact-SHA CI.
 
 Landed on main via 56e2cc6f (stack rjk44w c2df86c4, jj7jpz 215df154, 2qndsd 56e2cc6f; CI 44332698559 exact SHA 6/6). Ships in the next release.
+
+landed 0c9e122 on main 2026-11-18: sync: a pass that cannot open the board ends its pending marker (jj7jpz)

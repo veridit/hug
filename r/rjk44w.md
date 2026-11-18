@@ -54,6 +54,8 @@ check 5 evidence: A/B frozen recall4 replay, heldout split (77 messages, 115 hit
 bonehound: ready to land. origin/rjk44w = origin/ci/rjk44w = 8a38836d (a1eaface feature + 8a38836d CRLF-safe golden compare), rebased on origin/main 4e70099c. CI 44326377046 all 6 jobs success (test ubuntu/macos/windows, test-windows-cli, bench, secrets). The first CI run, 44323264838, failed only on windows TestFixReportGolden (CRLF checkout), fixed in 8a38836d. Schema: additive memory_fixes table only. Report: /Users/jhf/.jcode/scratch/rjk44w/REPORT.md
 crab review 15:55 local: accepted. 8a38836d (a1eaface + CRLF test fix) on 4e70099c; additive CREATE TABLE IF NOT EXISTS memory_fixes + 2 indexes; writes never fail the forget/remember; recall replay heldout identical sha256 after removing elapsed; recall/search/harness untouched. The 4 deviations accepted (shown_ago for turns; owner-asked not built; contradicted = undone within 7 d; blocks = (session, second)). CI 44326377046 6/6. Queued for landing.
 Landed on main via 56e2cc6f (stack rjk44w c2df86c4, jj7jpz 215df154, 2qndsd 56e2cc6f; CI 44332698559 exact SHA 6/6). Ships in the next release.
+landed 30c8c83 on main 2026-11-18: mem: memory fixes leave a local trail; hug mem stats --fixes (rjk44w)
+landed c2df86c on main 2026-11-18: mem: fixes golden compares across a CRLF checkout (rjk44w, windows CI)
 ## History
 - 2026-11-18T14:44 todo -> doing/active (take)
 - 2026-11-18T15:55 doing/active -> doing/waiting (wait)

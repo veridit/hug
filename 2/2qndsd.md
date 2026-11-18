@@ -53,6 +53,7 @@ Check 2: TestStepImagesAndTextInOneFrame (n/p through board.png, rows.ans, shot.
 CI 44316906824 on 499f9220: attempt 1 failed only test (ubuntu-latest), huginn/internal/cli TestBackgroundSyncParallelNotesAllLand 'sync_test.go:92: background pass still running after 30 s' (known flake d2n0h7, package untouched by this diff); attempt 2 (rerun failed): completed success, all 6 jobs success. Report: /Users/jhf/.jcode/scratch/2qndsd/REPORT.md
 crab review 15:20 local: accepted. 499f9220 on 161381f3 (now on main). Diff: picture.go/render.go/glance.go/tui.go + 2qndsd_test.go + golden image-frame.txt; failing-first 4 tests quoted in REPORT. CI 44316906824 6/6 on attempt 2 (attempt 1 ubuntu: d2n0h7 sync flake, package untouched). Queued after the current landings. Open: scale small images up to the frame, or natural size up to it; Jørgen's call at check after release.
 Landed on main via 56e2cc6f (stack rjk44w c2df86c4, jj7jpz 215df154, 2qndsd 56e2cc6f; CI 44332698559 exact SHA 6/6). Ships in the next release.
+landed 56e2cc6 on main 2026-11-18: tui: images open inside the file frame (2qndsd)
 ## History
 - 2026-11-18T14:18 todo -> doing/active (take)
 - 2026-11-18T15:11 doing/active -> doing/waiting (wait)
