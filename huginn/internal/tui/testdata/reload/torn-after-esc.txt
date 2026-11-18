@@ -1,0 +1,40 @@
+HUG · repo · list   15/60 tasks · ! 2 broken · 5 advice
+view: overview  list  board  !lint                                          │ todo 0 · doing 15 (1 depends) · depends 0 · done 0 · dropped 0
+filter: [state:doing ×] ⌫ last · F clear · sort: priority ↓
+  ✓      ID       TYPE    PRIORI ▼ STAGE     TITLE
+  ◑ 1/2  000002   bug     critical active    compiler Bug task 02: make the terminal workflow observable
+  ◑ 1/2 ·000022   bug     critical active    runtime Bug task 22: make the terminal workflow observable with a deliberately long title that…
+> ◑ 1/2  000042   bug     critical active    runtime Bug task 42: make the terminal workflow observable
+  ◑ 1/2  000006   feature high     active    runtime Feature task 06: make the terminal workflow observable
+  ◑ 1/2  000010   docs    high     active    compiler Docs task 10: make the terminal workflow observable
+  ◑ 1/2 !000026   feature high     depends   docs Feature task 26: make the terminal workflow observable
+  ◑ 1/2  000030   docs    high     active    compiler Docs task 30: make the terminal workflow observable
+  ◑ 1/2  000046   feature high     active    compiler Feature task 46: make the terminal workflow observable
+  ◑ 1/2 ·000050   docs    high     active    runtime Docs task 50: make the terminal workflow observable with a deliberately long title tha…
+  ◑ 1/2  000014   spike   medium   active    runtime Spike task 14: make the terminal workflow observable
+  ◑ 1/2  000034   spike   medium   active    docs Spike task 34: make the terminal workflow observable
+  ◑ 1/2  000054   spike   medium   active    docs Spike task 54: make the terminal workflow observable
+  ◑ 1/2  000018   chore   low      active    docs Chore task 18: make the terminal workflow observable
+  ◑ 1/2  000038   chore   low      active    compiler Chore task 38: make the terminal workflow observable
+  ◑ 1/2  000058   chore   low      active    runtime Chore task 58: make the terminal workflow observable
+Rows 1–15 of 15 · ! lint finding · ↳ epic · depends = a dependency is not done
+
+
+
+
+
+
+
+
+
+
+
+
+                                                 xture.
+
+
+
+
+reloaded hug v0.0.2
+
+j/k scroll · edit · done · wait · x drop · h/l Tab next · New · Screen · up · request · / find · next-, previous task · J/K ½ page …

@@ -1,0 +1,40 @@
+HUG · repo · list › 000042                                                                                                    · ⠋ refreshing
+[doing]  [bug]  [critical]  group:runtime  assigned:carol · main
+created 2026-11-01 · updated 2026-11-10 · bug-item-42-make
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+▸ Bug task 42: make the terminal workflow observable
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+Deliver compiler-lang support with huginn and readable evidence.
+
+• Preserve the public interface
+• See the guide https://example.invalid/guide for the synthetic contract.
+
+Verification
+
+fmt.Println("synthetic acceptance")
+
+PURPOSE
+Synthetic.
+
+PRINCIPLE
+Synthetic.
+
+ACCEPTANCE
+  ☑ 1. First acceptance check
+  ☐ 2. Second acceptance check
+
+no dependencies
+
+NOTES
+Evidence: integration tests are synthetic.
+
+HISTORY
+2026-11-10: created by the terminal acceptance fixture.
+
+
+
+
+Task 3 of 15 · 100% · next · previous · Esc back
+
+j/k scroll · edit · done · wait · x drop · h/l Tab next · New · Screen · up · request · / find · next-, p…   hug v0.0.1 → v0.0.2 · R reloads
