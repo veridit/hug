@@ -8,7 +8,12 @@ import (
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/internal/layout"
+	"github.com/veridit/hug/internal/memshare"
 )
+
+// memoryShares is memshare.Shares, a variable so tests of the shared
+// rename can opt in (34r1ft).
+var memoryShares = memshare.Shares
 
 // Project memory is this repository's independent data branch, not the
 // machine's native store. It deliberately uses the same branch/worktree
@@ -72,7 +77,14 @@ func upgradeMemoryLayout(cwd string, dry bool) ([]string, error) {
 		}
 		return nil, nil
 	}
-	m, err := gitbranch.Upgrade(root, layout.OldMemoryBranch, layout.OldMemoryDir, layout.MemoryBranch, layout.MemoryDir)
+	// A repository that keeps its memories local renames here only: the
+	// remote keeps muninn-notes untouched (34r1ft, wxsyc5: this rename was
+	// how a public repository's memories reached its remote).
+	shares, err := memoryShares(root)
+	if err != nil {
+		return nil, &OperationError{Problem: "cannot read whether this repository shares project memories: " + err.Error() + "; nothing changed", Fix: "hug upgrade"}
+	}
+	m, err := gitbranch.Upgrade(root, layout.OldMemoryBranch, layout.OldMemoryDir, layout.MemoryBranch, layout.MemoryDir, gitbranch.LocalOnly(!shares))
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +97,9 @@ func upgradeMemoryLayout(cwd string, dry bool) ([]string, error) {
 	}
 	if m.RemoteBranch {
 		changes = append(changes, "remote memory branch renamed")
+	}
+	if m.RemoteKept {
+		changes = append(changes, memshare.KeptNote)
 	}
 	return changes, nil
 }
