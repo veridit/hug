@@ -9,10 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T06:18"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "Before I build marks: is footer-mock.md (in FILES) what you want? Three choices in it: (1) ◆ as the mark, or another sign; (2) after an action, unmark the tasks that went through and keep the refused ones marked, or keep every mark; (3) Space on a grouped heading keeps folding, Space on a task marks."
+asked_for: "jhf"
+asked_since: "2026-11-18T06:19"
+asked_by: "nautilus"
 ---
 
 ## Goal
@@ -56,3 +60,4 @@ nautilus 23:44, footer mock for Jørgen (not built yet; queued after e3sevr, 0gz
 file:footer-mock.md (3515 bytes, sha256:3d56be16) nautilus 05:20: the footer and marks mock at 80/140/narrow, drawn from main 52ff46f9; three questions for Jørgen at the end
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
+- 2026-11-18T06:19 doing/active -> doing/asked (ask)
