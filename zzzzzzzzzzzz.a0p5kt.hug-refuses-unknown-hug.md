@@ -4,7 +4,7 @@ title: "hug refuses an unknown HUG_* variable instead of ignoring it"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
