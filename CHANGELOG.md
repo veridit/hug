@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug task reflections` reads reflections the way they were written (2k68eg). The instruction quote opens only after a non-letter and closes only before one, so the apostrophe in AGENTS.md's or Jørgen's no longer starts a quote: 10 of the 28 instruction fields on hug's board were fragments such as `'s help says '`. `--by-instruction` groups open reflections by what they name (the hug command in the quote, else the quote, else a hug command in the text), the largest group first, so the three reports of `hug task check ID N` taking no evidence show as one group. A `hug task done` without `--reflect` now leaves one `Reflection (unanswered, DATE, WHO)` line, which `reflections` counts (`unanswered: N done without an answer: IDS`) and never lists as open; a later answer, or "nothing", takes its place.
+
 ## v0.7.62 - 2026-11-18
 
 - The TUI sort picker (`s`) names the default order (nch9d4): `r  rank` is a row, "board order, the default: moves work only in it", and `r` goes back to it at once from any sort, clearing every field. The picker shows the order in force (`now: priority ↓`, or `now: rank (board order)`) apart from the one being built (`new: type · updated ↓`, or `new: nothing picked yet, Enter or r gives rank`), so an empty draft no longer reads as `sort: rank` while the rows are sorted by priority. With no column marked, the `c  current column` row is dim as a whole, since c cannot be picked then.

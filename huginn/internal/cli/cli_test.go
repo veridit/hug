@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/veridit/hug/huginn/internal/cache"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -94,7 +95,8 @@ func TestLifecycleJSONContract(t *testing.T) {
 	execute(t, a, "done", id)
 	r = execute(t, a, "show", id)
 	task := r["task"].(Reply)
-	if task["notes"] != "Evidence here" {
+	// The plain done left one unanswered line (2k68eg); the repeat no second.
+	if task["notes"] != "Evidence here\nReflection (unanswered, "+time.Now().Format("2006-01-02")+", tester)" {
 		t.Fatal(task)
 	}
 	r = execute(t, a, "show", form)

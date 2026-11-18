@@ -449,7 +449,7 @@ func parse(args []string, allowed string, optionalValue ...string) (flags, error
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "apply", "machine", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "apply", "machine", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", "by-instruction", strings.TrimPrefix(SyncChildArg, "--")}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -654,7 +654,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply machine"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply machine"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1167,13 +1167,17 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if cmd == "done" {
 			r, e = s.s.Done(f.args[0])
 			// The reflection is stored only once done succeeded (tb0dra):
-			// a blocked done keeps the answer for the next try.
-			if e == nil && strings.TrimSpace(f.get("reflect")) != "" && !task.NothingToReflect(f.get("reflect")) {
+			// a blocked done keeps the answer for the next try. No answer is
+			// recorded too (2k68eg), so the answer rate shows.
+			if e == nil {
 				who := a.whoTakes(f).assignee()
 				if who == "" {
 					who = strings.Join(r.Task.Assignee, ", ")
 				}
-				r, e = s.s.Note(r.Task.ID, task.ReflectionNote(f.get("reflect"), who, time.Now()))
+				var rr task.Result
+				if rr, e = s.s.SetReflection(r.Task.ID, f.get("reflect"), who, time.Now()); e == nil && rr.Changed {
+					r = rr
+				}
 			}
 		} else {
 			r, e = s.s.Drop(f.args[0], f.args[1])
@@ -1882,16 +1886,22 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			fmt.Fprintln(a.Out, "no open reflections")
 		}
 		for _, r := range rs {
-			who := ""
-			if r.Who != "" {
-				who = " " + r.Who
-			}
-			fmt.Fprintf(a.Out, "%s %d  %s  %s%s  %s\n", r.ID, r.N, r.State, r.Date, who, clip(r.Title, 60))
-			if r.Instruction != "" {
-				fmt.Fprintf(a.Out, "  instruction: %q\n", r.Instruction)
-			}
-			fmt.Fprintf(a.Out, "  %s\n", r.Text)
+			writeReflection(a.Out, r, "")
 		}
+	}
+	if gs, ok := reply["groups"].([]task.ReflectionGroup); ok {
+		if len(gs) == 0 {
+			fmt.Fprintln(a.Out, "no open reflections")
+		}
+		for _, g := range gs {
+			fmt.Fprintln(a.Out, reflectionGroupHead(g))
+			for _, r := range g.Reflections {
+				writeReflection(a.Out, r, "  ")
+			}
+		}
+	}
+	if u, ok := reply["unanswered"].([]string); ok && len(u) > 0 {
+		fmt.Fprintf(a.Out, "unanswered: %d done without an answer: %s\n", len(u), clip(strings.Join(u, " "), 200))
 	}
 	if fs, ok := reply["findings"].([]task.Finding); ok {
 		sum, _ := reply["summary"].(LintSummary)
