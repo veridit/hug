@@ -1,6 +1,8 @@
 package tui
 
 import (
+	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -28,83 +30,142 @@ func colourModel(t *testing.T, w int, view string) model {
 	return m
 }
 
-// selectionTint is the one selection tint of 911j70 (#2b5a78 on dark) as
-// the renderer writes a background.
-const selectionTint = "48;2;43;89;120"
-
-// 911j70 check 3: the view line marks the active view, the word on the
-// selection tint, in every view and while v waits; the other views'
-// words are not tinted. The key colours are stable: after v the line
-// from the views on is drawn exactly as before (it no longer lights up
-// as a whole), only v and the slot after 'view:' change.
+// qh9ep1 check 9 (Jørgen 19:54: "too intense and over the top ...
+// something more subtle"), 911j70 check 3: one cue per meaning on the
+// view line. An underline marks only a key you can press; colour tells the
+// keys apart (v the accent, o l b ! violet) and none is bold; the view you
+// are in is told by bold alone on its word; nothing has a background; no
+// cell is underlined, bold and coloured at once. The cursor after v (the
+// slot at column 5) is theme.cursor, shared with the answer box. The key
+// colours are stable: after v only that slot changes.
 func TestViewLineMarksActiveView(t *testing.T) {
-	for _, v := range views {
-		m := colourModel(t, 140, v.name)
-		idle := m.viewLine(m.stateCounts())
-		// The word as drawn: !lint carries its key in front.
-		want := v.name
-		if !strings.Contains(v.name, v.key) {
-			want = v.key + v.name
-		}
-		words := tintedWords(idle)
-		if len(words) != 1 || words[0] != want {
-			t.Fatalf("in %s the tinted words are %q, want only %q:\n%q", v.name, words, want, idle)
-		}
-		pending := press(m, "v")
-		lit := pending.viewLine(pending.stateCounts())
-		if got := tintedWords(lit); len(got) != 2 || got[0] != "v" || got[1] != words[0] {
-			t.Fatalf("in %s after v the tinted words are %q, want v (entered) and %q:\n%q", v.name, got, words[0], lit)
-		}
-		const head = len("view: ")
-		for col := head; col < m.width; col++ {
-			if a, b := cellAt(idle, col), cellAt(lit, col); a != b {
-				t.Fatalf("in %s v recoloured column %d of the line after 'view: ':\nidle    %q\npending %q", v.name, col, a, b)
+	const slot = len("view:") // the column after 'view:'
+	for _, w := range []int{80, 140} {
+		for _, v := range views {
+			m := colourModel(t, w, v.name)
+			idle := m.viewLine(m.stateCounts())
+			pending := press(m, "v")
+			lit := pending.viewLine(pending.stateCounts())
+			text := ansi.Strip(idle)
+			end := strings.Index(text, "lint") + len("lint")
+			for col := 0; col < end; col++ {
+				if col == slot {
+					continue
+				}
+				if a, b := cellAt(idle, col), cellAt(lit, col); a != b {
+					t.Fatalf("at %d in %s v recoloured column %d:\nidle    %q\npending %q", w, v.name, col, a, b)
+				}
 			}
-		}
-		if ansi.Strip(idle) != ansi.Strip(lit) {
-			t.Fatalf("in %s v changed the text of the line:\n%q\n%q", v.name, ansi.Strip(idle), ansi.Strip(lit))
+			if _, on := cursorSlot(t, m); on {
+				t.Fatalf("at %d in %s the cursor shows before v", w, v.name)
+			}
+			if _, on := cursorSlot(t, pending); !on {
+				t.Fatalf("at %d in %s no cursor after v", w, v.name)
+			}
+			active := strings.Index(text, v.name)
+			for col := 0; col < end; col++ {
+				if col == slot || text[col] == ' ' {
+					continue
+				}
+				c := sgrAt(idle, col)
+				ch := string(text[col])
+				if c.bg {
+					t.Fatalf("at %d in %s %q at column %d has a background: %q", w, v.name, ch, col, cellAt(idle, col))
+				}
+				if c.underline && c.bold && c.fg != "" {
+					t.Fatalf("at %d in %s %q at column %d is underlined, bold and coloured: %q", w, v.name, ch, col, cellAt(idle, col))
+				}
+				key := col == 0 || keyAt(text, col)
+				if c.underline != key {
+					t.Fatalf("at %d in %s %q at column %d: underlined %v, a key %v: %q", w, v.name, ch, col, c.underline, key, cellAt(idle, col))
+				}
+				if key {
+					want := sgrColour(stepTwoColour[0])
+					if col == 0 {
+						want = sgrColour("#00bfff")
+					}
+					if c.fg != want || c.bold {
+						t.Fatalf("at %d in %s key %q: colour %q bold %v, want %q not bold", w, v.name, ch, c.fg, c.bold, want)
+					}
+					continue
+				}
+				inActive := col >= active && col < active+len(v.name)
+				if c.bold != inActive {
+					t.Fatalf("at %d in %s %q at column %d: bold %v, in the active word %v", w, v.name, ch, col, c.bold, inActive)
+				}
+				if c.fg != sgrColour("#8795a8") {
+					t.Fatalf("at %d in %s %q at column %d is %q, not the dim of the line: bold alone tells the view", w, v.name, ch, col, c.fg)
+				}
+			}
 		}
 	}
 }
 
-// tintedWords are the runs of visible text drawn on the selection tint,
-// in order: a run ends at the first character off the tint, not at a
-// code (a key letter in its own colour stays in its word).
-func tintedWords(s string) []string {
-	var words []string
-	var cur strings.Builder
-	on := false
-	flush := func() {
-		if w := strings.TrimSpace(cur.String()); w != "" {
-			words = append(words, w)
+// keyAt says whether column col of the view line's text is a view's key
+// letter: the l of list, the ! of !lint.
+func keyAt(text string, col int) bool {
+	for _, v := range views {
+		label := v.name
+		at := strings.Index(v.name, v.key)
+		if at < 0 {
+			label, at = v.key+v.name, 0
 		}
-		cur.Reset()
+		if i := strings.Index(text, " "+label); i >= 0 && col == i+1+at {
+			return true
+		}
 	}
-	for i := 0; i < len(s); {
-		if s[i] == 0x1b {
-			j := strings.IndexByte(s[i:], 'm')
-			if j < 0 {
-				break
+	return false
+}
+
+// sgrColour is a #rrggbb foreground as the renderer writes it.
+func sgrColour(hex string) string {
+	var r, g, b int
+	fmt.Sscanf(hex, "#%02x%02x%02x", &r, &g, &b)
+	return fmt.Sprintf("38;2;%d;%d;%d", r, g, b)
+}
+
+// cell is what a terminal draws a character with.
+type cell struct {
+	bold, underline, bg bool
+	fg                  string
+}
+
+// sgrAt is the attributes in effect at column col of a one-line s.
+func sgrAt(s string, col int) cell {
+	var c cell
+	for _, code := range regexp.MustCompile(`\x1b\[([0-9;]*)m`).FindAllStringSubmatch(cellAt(s, col), -1) {
+		ps := strings.Split(code[1], ";")
+		for i := 0; i < len(ps); i++ {
+			switch p := ps[i]; {
+			case p == "" || p == "0":
+				c = cell{}
+			case p == "1":
+				c.bold = true
+			case p == "22":
+				c.bold = false
+			case p == "4":
+				c.underline = true
+			case p == "24":
+				c.underline = false
+			case p == "39":
+				c.fg = ""
+			case p == "49":
+				c.bg = false
+			case (p == "38" || p == "48") && i+4 < len(ps) && ps[i+1] == "2":
+				if p == "38" {
+					c.fg = strings.Join(ps[i:i+5], ";")
+				} else {
+					c.bg = true
+				}
+				i += 4
+			case len(p) == 2 && p[0] == '4', len(p) == 3 && p[:2] == "10":
+				c.bg = true // 40-47, 100-107
+			case len(p) == 2 && (p[0] == '3' || p[0] == '9'):
+				c.fg = p
 			}
-			code := s[i+2 : i+j]
-			switch {
-			case strings.Contains(code, selectionTint):
-				on = true
-			case code == "0" || code == "" || strings.Contains(";"+code+";", ";49;") || strings.Contains(code, "48;"):
-				on = false
-			}
-			i += j + 1
-			continue
 		}
-		if on {
-			cur.WriteByte(s[i])
-		} else {
-			flush()
-		}
-		i++
 	}
-	flush()
-	return words
+	return c
 }
 
 // cursorSlot is the cell after 'view:' with its codes, and whether the
@@ -234,6 +295,18 @@ func TestViewCursorGolden(t *testing.T) {
 		}{{"idle", m}, {"after v", pending}, {"after v, blink off", blinked}, {"after v l", chosen}} {
 			line := s.m.viewLine(s.m.stateCounts())
 			golden = append(golden, s.name+": "+ansi.Strip(line), "  "+strconv.Quote(line))
+		}
+		// NO_COLOR: the renderer writes no attribute at all; the line is
+		// its text, the same before and after v.
+		plain := m
+		plain.styles = newTheme()
+		plain.styles.renderer.SetColorProfile(termenv.Ascii)
+		plainV := press(plain, "v")
+		for _, s := range []struct {
+			name string
+			m    model
+		}{{"NO_COLOR idle", plain}, {"NO_COLOR after v", plainV}} {
+			golden = append(golden, s.name+": "+strconv.Quote(s.m.viewLine(s.m.stateCounts())))
 		}
 	}
 	goldenFile(t, "testdata/header/view-cursor.txt", strings.Join(golden, "\n")+"\n")
