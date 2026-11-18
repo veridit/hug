@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.57 - 2026-11-18
+
 - `hug task attach` no longer refuses a file over `sk-` inside a word (4c7327). On 2026-11-18 a seid report was refused over the file name `task-900-task979-ownership-reconciliation-2026-08-17.md` (`credential-shaped text near sk-900...`). A key now has to start at a word boundary, the rule hug's memory check and the CI secrets job already used, and real keys after `=`, `(` or a quote are still refused. A test now runs the CI gate script itself, so the three checks stay on one rule.
 - `hug mem upgrade` records the paths and commands every memory names, the one pass tool-call recall needs (n7jbmx): the preview says `memory: would record the paths and commands memories name (tool-call recall)`, `--apply` does it, so it rarely lands in a hook. `hug mem index` does it too and says `anchors recorded for N memories (once)`. Wherever it runs, `hook.log` gets one line.
 - Tool-call recall, off by default (n7jbmx). With `"tool_recall": true` in config.json, jcode's post_tool_feedback hook adds at most 2 memories to a tool result. They must be rules, facts or preferences that name the file, folder or path the call touches and embed close to the call, and each is shown once per session. Indexing now records the paths, file names and commands each memory names (once, 2.2 s on a 30k-memory store). On 300 replayed tool calls of 2026-11-16..18, judged blind: 10.7 useful and 9.0 noise memories per 100 calls, against 57.3 and 135.3 for message recall on the same calls. The hook's p95 was 150 ms on a copy of the live store at load 15. It stays off until fresh calls from 2026-11-19..20 pass the same bar (muninn/docs/RECALL-TOOL.md).
