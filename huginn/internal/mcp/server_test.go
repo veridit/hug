@@ -131,7 +131,8 @@ func TestToolsSchemasAndRoundTrip(t *testing.T) {
 		{"ask", map[string]any{"text": "the look\nand the rows", "to": "jhf", "check": float64(2), "show": "rows.ans"}, []string{"ask", "abc123", "the look\nand the rows", "--to", "jhf", "--check", "2", "--show", "rows.ans"}},
 		{"review", map[string]any{"by": "jhf", "show": "rows.ans"}, []string{"review", "abc123", "--by", "jhf", "--show", "rows.ans"}},
 		{"design", nil, []string{"design", "abc123", "--clear"}},
-		{"answer", map[string]any{"text": "drop it", "agent": "crab"}, []string{"answer", "abc123", "drop it", "--as", "crab"}},
+		{"answer", map[string]any{"text": "drop it", "agent": "crab", "item": nil}, []string{"answer", "abc123", "drop it", "--as", "crab"}},
+		{"answer", map[string]any{"text": "drop it", "agent": "crab", "item": float64(2)}, []string{"answer", "abc123", "2", "drop it", "--as", "crab"}},
 	} {
 		input := map[string]any{"id": "abc123", "action": tc.action, "state": "doing", "type": "chore", "item": 1, "title": "", "text": "", "assignee": "", "label": "", "priority": "", "before": "", "after": "", "group": "", "top": false, "add_deps": []any{}, "remove_deps": nil}
 		for key, value := range tc.fields {

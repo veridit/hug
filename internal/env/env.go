@@ -67,6 +67,7 @@ var Known = []Var{
 	{TestRoot, Test, "", "the board a TUI pty test drives"},
 	{"HUG_BENCH", Test, "1", "run the benchmark tests"},
 	{"HUG_UPDATE_GOLDEN", Test, "1", "rewrite golden files"},
+	{"HUG_REAL_BOARD", Test, "", "a board's tasks folder the ask replay probe reads (q2adr8)"},
 	{"HUG_TUI_ARTIFACTS", Test, "", "also save TUI captures in this folder"},
 	{"HUG_MIGRATION_COPY", Test, "", "a disposable database snapshot for the migration test"},
 	{"HUG_REPAIR_COPY", Test, "", "a disposable store copy for the capture repair test"},

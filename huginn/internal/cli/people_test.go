@@ -34,12 +34,15 @@ func TestPeopleAndWaitingFor(t *testing.T) {
 	if code, out = runText(a, "lint", id); !strings.Contains(out, want) || !strings.Contains(out, "asked_for jhf is not in hug.toml [people]") {
 		t.Fatalf("lint %s lacks %q:\n%s", id, want, out)
 	}
-	// An agent on the board is known: asking nautilus is fine.
+	// An agent on the board is known: asking nautilus is fine. Resume
+	// first: an ask adds a question (q2adr8), and jhf's would stay open.
+	execute(t, a, "resume", id)
 	execute(t, a, "ask", id, "--to", "nautilus", "review my diff", "--as", "nautilus")
 	if _, out = runText(a, "lint"); !strings.HasPrefix(out, "no findings") {
 		t.Fatalf("waiting on an agent that works here was flagged:\n%s", out)
 	}
 	// Add the person; lint is quiet.
+	execute(t, a, "resume", id)
 	execute(t, a, "ask", id, "--to", "jhf", "look at the colours", "--as", "nautilus")
 	if code, out = runText(a, "people", "add", "jhf", "jorgen@veridit.no", "--name", "Jørgen H. Fjeld"); code != 0 {
 		t.Fatalf("people add: %d\n%s", code, out)
@@ -219,10 +222,11 @@ func TestWaitShowsAPicture(t *testing.T) {
 	if f := taskFile(t, a, id); !strings.Contains(f, `asked_show: "rows.ans"`) || !strings.Contains(f, `asked_for: "jhf"`) {
 		t.Fatalf("ask --show:\n%s", f)
 	}
-	// Asked again without --show: no picture.
+	// A second question without --show has no picture; the first keeps
+	// its own (q2adr8: each ask is its own question).
 	execute(t, a, "ask", id, "and now?", "--to", "jhf")
-	if f := taskFile(t, a, id); strings.Contains(f, "\nasked_show:") {
-		t.Fatalf("ask without --show kept asked_show:\n%s", f)
+	if f := taskFile(t, a, id); !strings.Contains(f, " to jhf (show rows.ans):\n  look at the rows\n") || !strings.Contains(f, " to jhf:\n  and now?\n") {
+		t.Fatalf("second ask without --show:\n%s", f)
 	}
 	todo := execute(t, a, "new", "Ask", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
 	execute(t, a, "attach", todo, ans)

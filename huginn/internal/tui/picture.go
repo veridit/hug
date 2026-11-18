@@ -233,6 +233,12 @@ func (m model) getenv(k string) string {
 // --show named (waiting_show, design_show, review_show), else the first task file the
 // question names. "" when it names none.
 func (m model) questionPicture(t task.Task, stage, question string) string {
+	return m.questionPictureOf(t, t.Fields[map[string]string{"waiting": "waiting_show", "asked": "asked_show", "design": "design_show", "review": "review_show"}[stage]], question)
+}
+
+// questionPictureOf is the task file show names, if the task has it, else
+// one question names, else "".
+func (m model) questionPictureOf(t task.Task, show, question string) string {
 	files := m.filesOf(t)
 	has := func(name string) bool {
 		for _, f := range files {
@@ -242,7 +248,7 @@ func (m model) questionPicture(t task.Task, stage, question string) string {
 		}
 		return false
 	}
-	if v := strings.TrimSpace(t.Fields[map[string]string{"waiting": "waiting_show", "asked": "asked_show", "design": "design_show", "review": "review_show"}[stage]]); v != "" && has(v) {
+	if v := strings.TrimSpace(show); v != "" && has(v) {
 		return v
 	}
 	for _, w := range strings.Fields(question) {
@@ -266,6 +272,19 @@ func (m model) askedPicture(t task.Task) string {
 	case "design":
 		return m.questionPicture(t, g, t.Fields["design_question"])
 	case "waiting", "asked":
+		// Several questions (q2adr8): the picture of the first one asked
+		// of you that has one, its own show or a file its text names.
+		if g == "asked" && len(t.Questions) > 0 {
+			for _, q := range task.OpenQuestions(t) {
+				if !m.isMe(q.To) {
+					continue
+				}
+				if p := m.questionPictureOf(t, q.Show, q.Text); p != "" {
+					return p
+				}
+			}
+			return ""
+		}
 		_, what := m.waitingFor(t)
 		return m.questionPicture(t, g, what)
 	case "review":
