@@ -29,7 +29,7 @@ CI 44237364634 (a13d7c74), test-windows-cli: sync_test.go:223 'background pass s
 ## Depends on
 
 ## Acceptance
-- [ ] settled's failure reports the run lock held or free, and the pass log has a line when a syncer takes the queue and when it takes the run lock, with pid and time
+- [x] settled's failure reports the run lock held or free, and the pass log has a line when a syncer takes the queue and when it takes the run lock, with pid and time
 - [ ] the Windows stall is reproduced on a ci/ branch with those diagnostics, and the cause is named on this ticket with the log lines
 - [ ] a counting test that fails first on the cause, and passes with the fix; mutation check noted
 - [ ] main CI green on all jobs with the fix (run id)
