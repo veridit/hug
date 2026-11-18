@@ -1,13 +1,18 @@
 ---
 id: 3z65k1
 title: "git segfaults under hug's test load on the owner's Mac (3 today)"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T01:18"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ git: /usr/bin/git 2.54.0 (Apple Git-157); /opt/homebrew/bin/git also on PATH. No
 ## Notes
 
 kestrel 23:10, standalone repro (crab 22:53): /Users/jhf/.jcode/scratch/kestrel-3z65k1-loop.sh, 8 parallel workers for 600 s, each looping git add -A / diff --cached --name-only / commit / status --porcelain / rev-parse --verify HEAD / diff --name-status -z --find-renames, under nice -n 19. Result: 'failures: 0; segv (exit 139): 0', iterations per worker 1319-1365 (about 64,000 git processes). Load average before '{ 372,53 358,15 344,16 }', after '{ 608,63 516,81 432,84 }'. Gap: sh resolved git to /opt/homebrew/bin/git (git version 2.54.0), while the hug tests' Go exec.LookPath may find /usr/bin/git (Apple Git-157) first depending on PATH; this run says nothing about Apple's git yet.
+
+
+## History
+- 2026-11-18T01:18 todo -> doing/active (take)
