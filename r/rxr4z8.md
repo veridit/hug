@@ -10,11 +10,17 @@ group: ""
 rank: "zzzzzzzzzzm8"
 created: 2026-11-17
 updated: 2026-11-17
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T21:27"
+asked_check: "7"
+asked_show: "cursor-on-mark.md"
+asked_what: "When the cursor is on a marked row, which sign should it show: A ⋗ or B ▸? The file draws both in your terminal."
+asked_for: "jhf"
+asked_since: "2026-11-18T21:30"
+asked_by: "macaque"
 ---
 
 ## Goal
@@ -75,3 +81,4 @@ file:cursor-on-mark.md (1455 bytes, sha256:42f010d6) check 7: ⋗ and ▸ side b
 - 2026-11-18T20:29 answer 1 in progress by crab: hug task set rxr4z8
 - 2026-11-18T21:07 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T06:18
 - 2026-11-18T21:27 todo/ready -> doing/active (take)
+- 2026-11-18T21:30 doing/active -> doing/asked (ask)
