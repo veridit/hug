@@ -1,0 +1,22 @@
+32 findings (4 broken) on 18 tasks, in 2 codes:
+   4  broken  shipped-not-done  question: a release contains the task, but it is not done  hug task lint --code shipped-not-done
+  28  advice  missing-section   an open task lacks Purpose or Principle                    hug task lint --code missing-section
+  0sbvnq  shipped-not-done  -> hug task lint 0sbvnq
+  ggydj2  shipped-not-done  -> hug task lint ggydj2
+  5z4zt4  shipped-not-done  -> hug task lint 5z4zt4
+  jr55s8  shipped-not-done  -> hug task lint jr55s8
+  9taa9d  missing-section  -> hug task lint 9taa9d
+  gav9nw  missing-section  -> hug task lint gav9nw
+  hpqt99  missing-section  -> hug task lint hpqt99
+  vk9td0  missing-section  -> hug task lint vk9td0
+  h0t41j  missing-section  -> hug task lint h0t41j
+  j0xa38  missing-section  -> hug task lint j0xa38
+  e4w9ya  missing-section  -> hug task lint e4w9ya
+  ta306h  missing-section  -> hug task lint ta306h
+  34r1ft  missing-section  -> hug task lint 34r1ft
+  s6ff5k  missing-section  -> hug task lint s6ff5k
+  c3hszg  missing-section  -> hug task lint c3hszg
+  6assqk  missing-section  -> hug task lint 6assqk
+  jrj1vq  missing-section  -> hug task lint jrj1vq
+  n7jbmx  missing-section  -> hug task lint n7jbmx
+next: hug task done 0sbvnq

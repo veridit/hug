@@ -1,0 +1,4 @@
+    questions_test.go:252: doing/waiting on jhf: want no question, got "shipped-not-done"
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/task	0.053s
+FAIL

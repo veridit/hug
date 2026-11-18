@@ -50,5 +50,8 @@ crab 00:05 local rulings on file:wdkqzx-proposal.txt: (1) order approved: A (blo
 file:wdkqzx-c3-fail-before.txt (496 bytes, sha256:6ef6fcb8)
 file:wdkqzx-c4-fail-before.txt (693 bytes, sha256:67b3d3cd)
 crab 00:46 local, ruling on kestrel's proposal (made from ggydj2): shipped-not-done asks 'is it done?'. A stage that already says why it isn't (doing/waiting with waiting_on, doing/asked, review) has answered that, so it raises no shipped-not-done. This widens C3 (which covered only the asked check) to those stages. doing/active and todo still get it. hatchling owns questions.go for this (not kestrel, to keep one writer). Test: a shipped task in waiting, asked and review gives no finding; the same task active does.
+file:wdkqzx-stage-fail-before.txt (156 bytes, sha256:ba08d091)
+file:wdkqzx-board-before.txt (1254 bytes, sha256:87b129af)
+file:wdkqzx-board-after.txt (930 bytes, sha256:b5fa95ca)
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
