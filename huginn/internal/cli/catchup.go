@@ -30,9 +30,10 @@ func (a *App) semanticSync(r *gitbranch.Repository) {
 func catchUpTranslator() gitbranch.Translator {
 	same := func(a, b []byte) bool { return (a == nil) == (b == nil) && bytes.Equal(a, b) }
 	return gitbranch.Translator{
-		Names:   task.Layout3Names,
-		Content: task.Layout3Content,
-		Layout:  task.LayoutOf,
+		Names:        task.Layout3Names,
+		Content:      task.Layout3Content,
+		Layout:       task.LayoutOf,
+		TargetLayout: task.Layout,
 		Recover: func(p string, base, ours, theirs []byte) bool {
 			_, taskFile := task.IDPath(p)
 			return !taskFile && !same(ours, base) && !same(theirs, base) && !same(ours, theirs)

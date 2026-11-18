@@ -8,6 +8,29 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
+// Sync remains allowed on an old board, but cannot silently perform the
+// explicit upgrade while integrating two ordinary old-layout writers.
+func TestOrdinarySyncLegacyLayoutDoesNotImplicitlyUpgrade(t *testing.T) {
+	catchupPair(t, func(a, b *App, ba, bb string, ids []string) {
+		pa, pb := oldPath(t, ba, ids[0]), oldPath(t, bb, ids[1])
+		oldNote(t, ba, pa, "legacy board A append")
+		oldNote(t, bb, pb, "legacy board B append")
+		execute(t, a, "sync")
+		execute(t, b, "sync")
+		if config := git(t, bb, "show", "HEAD:hug.toml"); !strings.Contains(config, "layout = 2") {
+			t.Fatalf("ordinary sync implicitly upgraded instead of hug upgrade:\n%s", config)
+		}
+		for _, p := range []string{pa, pb} {
+			if git(t, bb, "ls-files", "--", p) != p {
+				t.Fatalf("ordinary sync renamed legacy path %s", p)
+			}
+		}
+		if !strings.Contains(git(t, bb, "show", "HEAD:"+pa), "legacy board A append") || !strings.Contains(git(t, bb, "show", "HEAD:"+pb), "legacy board B append") {
+			t.Fatal("legacy sync lost independent content")
+		}
+	})
+}
+
 // Check9's ordinary sync acceptance is deliberately SAME-task. Once both
 // clones have layout3, only sync is called: no upgrade/CatchUp can supply
 // the merge. Each independent append must reach both clones exactly once.
@@ -152,4 +175,46 @@ func TestBackgroundSyncSameTaskAppendsConvergeAfterUpgrade(t *testing.T) {
 	if git(t, filepath.Join(a.Cwd, TaskDir), "rev-parse", "HEAD") != git(t, filepath.Join(b.Cwd, TaskDir), "rev-parse", "HEAD") {
 		t.Fatal("background ordinary sync did not converge")
 	}
+}
+
+func TestOrdinarySyncDisjointScalarLinesNeverFormHybrid(t *testing.T) {
+	catchupPair(t, func(a, b *App, ba, bb string, ids []string) {
+		applyCatchup(t, a)
+		execute(t, a, "sync")
+		execute(t, b, "sync")
+		baseGoal := "base one\nbase middle\nbase last"
+		execute(t, a, "set", ids[0], "--goal", baseGoal)
+		execute(t, a, "sync")
+		execute(t, b, "sync")
+		boardGoal := "board first\nbase middle\nbase last"
+		localGoal := "base one\nbase middle\nlocal last"
+		p := ids[0][:1] + "/" + ids[0] + ".md"
+		// Change only separate Goal lines. There is no competing History,
+		// Notes, updated date or front-matter change to force a Git conflict.
+		for _, side := range []struct {
+			app  *App
+			dir  string
+			goal string
+		}{{a, ba, boardGoal}, {b, bb, localGoal}} {
+			text := taskFile(t, side.app, ids[0])
+			if strings.Count(text, baseGoal) != 1 {
+				t.Fatal("fixture does not have one base Goal")
+			}
+			oldWrite(t, side.dir, "change only Goal lines", func() {
+				writeCatchupFile(t, side.dir, p, []byte(strings.Replace(text, baseGoal, side.goal, 1)))
+			})
+		}
+		execute(t, a, "sync")
+		code, out := runText(b, "sync")
+		if code != 0 || strings.Count(out, "sync: "+ids[0]+" ## Goal:") != 1 {
+			t.Fatalf("disjoint-line scalar summary: exit%d\n%s", code, out)
+		}
+		execute(t, a, "sync")
+		for _, c := range []*App{a, b} {
+			text := taskFile(t, c, ids[0])
+			if d := task.Parse(p, []byte(text)); strings.TrimSpace(d.Task.Goal) != boardGoal || !strings.Contains(text, "> base one\n> base middle\n> local last") {
+				t.Fatalf("hybrid Goal or lost local text:\n%s", text)
+			}
+		}
+	})
 }

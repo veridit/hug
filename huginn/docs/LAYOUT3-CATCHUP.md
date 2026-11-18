@@ -32,4 +32,6 @@ A file hug cannot parse stops catch-up and names its original source file and co
 
 Once both clones use layout 3, divergent ordinary `hug task sync` uses this same per-file resolver and private replay, without invoking upgrade. The detached background pass uses it too. Fast-forward and already-ahead paths retain their normal Git behavior. All divergent task-board changes use semantic merging, even if Git could text-merge different lines of one scalar section into a hybrid value.
 
+If both clones still use the old layout, ordinary sync retains its existing same-layout Git behavior and never translates their files implicitly. Migration still requires explicit `hug upgrade --apply`.
+
 Independent same-task appends converge on both clones exactly once after A-sync, B-sync, A-sync. Competing scalar values keep the board's value and preserve this clone's value in a visible note. Foreground sync prints one `sync:` summary line per retained competing value to stderr. Background sync writes those lines to its sync log. Summaries are emitted only after the entire replay is installed, never for a private partial replay that later fails. Unreadable files and the safe-stop cases above preserve every original local commit and live HEAD here too.
