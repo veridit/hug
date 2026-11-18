@@ -151,3 +151,9 @@ To switch, run the prototype with `MOCKGRID_ORDER=A` (default) or `MOCKGRID_ORDE
   - With `MOCKGRID_OFF=1`, 10 tests still fail (e.g. `TestColumnCursorMarksHeader`, `TestPendingViewPrefixShowsChoices`). These are parts of the prototype not behind the switch: the reordered `gridColumns`, the removed row `>` pointer, and the blink tick `v` now schedules. I did not diagnose each test one by one.
   - Nothing here is meant to land. A real implementation would rewrite those tests.
 - **Root checkout `/Users/jhf/Projects/hug`:** never edited, reset or committed. One patch addressed it by mistake through a relative path, failed to match, and wrote nothing. Every later edit used absolute scratch paths.
+
+## Branch
+
+- Commit `802cf0be` on `mock/grid`, pushed for reference to `origin/mock/grid`. It was never merged or pushed to main, and no tag was made.
+- The commit carries the code, the scripts, this report, the comparison sheets and the `.txt`/`.ansi` captures.
+- The 64 per-screen PNGs stay local under `out/` (16 MB in total).
