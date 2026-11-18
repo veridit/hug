@@ -53,23 +53,23 @@ HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group
 [overview]   list    board    !lint                                             
 todo 6  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
-> IN PROGRESS · assigned to  [0] · None                                         
-                                                                                
-  WAITING · on you first  [0] · None                                            
-                                                                                
-  NEXT UP · rank order  [5] · 1–2 shown                                         
+  ASKED · for you  [0] · None                                                   
+  IN PROGRESS · assigned to  [0] · None                                         
+  WAITING  [0] · None                                                           
+> NEXT UP · rank order  [5]                                                     
   ▾ later  [2]                                                                  
   ○ 1   ·POSTS0   feature          ready     ↳LAUNCH Launch posts               
   ○ 1   ·MAIL00   feature          ready     ↳LAUNCH Launch mail                
-  ▾ ops  [2]                                                                    
+> ▸ ops  [2]                                                                    
+  ▾ no group  [1]                                                               
+  ○ 1   ·PLAIN0   feature          ready     Plain                              
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
-                                                                                
   LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–2 shown        
   ▾ no group  [2]                                                               
   ○ 1   ·LAUNCH   feature          ready     Launch                             
-↓ ○ 1   ·PLAIN0   feature          ready     Plain                              
-                                                                                
+  ○ 1   ·PLAIN0   feature          ready     Plain                              
+  ▾ later  [2]                                                                  
 rows grouped by group: Space on a heading folds it · grouping next              
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
@@ -78,23 +78,23 @@ HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group
 [overview]   list    board    !lint                                                                                                         
 todo 6  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0                                                                                   
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
-> IN PROGRESS · assigned to  [0] · None                                                                                                     
-                                                                                                                                            
-  WAITING · on you first  [0] · None                                                                                                        
-                                                                                                                                            
-  NEXT UP · rank order  [5] · 1–2 shown                                                                                                     
+  ASKED · for you  [0] · None                                                                                                               
+  IN PROGRESS · assigned to  [0] · None                                                                                                     
+  WAITING  [0] · None                                                                                                                       
+> NEXT UP · rank order  [5]                                                                                                                 
   ▾ later  [2]                                                                                                                              
   ○ 1   ·POSTS0   feature          ready     ↳LAUNCH Launch posts                                                                           
   ○ 1   ·MAIL00   feature          ready     ↳LAUNCH Launch mail                                                                            
-  ▾ ops  [2]                                                                                                                                
+> ▸ ops  [2]                                                                                                                                
+  ▾ no group  [1]                                                                                                                           
+  ○ 1   ·PLAIN0   feature          ready     Plain                                                                                          
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
-                                                                                                                                            
   LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–2 shown                                                                    
   ▾ no group  [2]                                                                                                                           
   ○ 1   ·LAUNCH   feature          ready     Launch                                                                                         
-↓ ○ 1   ·PLAIN0   feature          ready     Plain                                                                                          
-                                                                                                                                            
+  ○ 1   ·PLAIN0   feature          ready     Plain                                                                                          
+  ▾ later  [2]                                                                                                                              
 rows grouped by group: Space on a heading folds it · grouping next                                                                          
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order                                  
@@ -203,23 +203,23 @@ HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic
 [overview]   list    board    !lint                                             
 todo 6  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
-> IN PROGRESS · assigned to  [0] · None                                         
-                                                                                
-  WAITING · on you first  [0] · None                                            
-                                                                                
-  NEXT UP · rank order  [5] · 1–2 shown                                         
-  ▾ ↳LAUNCH Launch  [2]                                                         
-  ○ 1   ·POSTS0   feature          ready     later Launch posts                 
-  ○ 1   ·MAIL00   feature          ready     later Launch mail                  
+  ASKED · for you  [0] · None                                                   
+  IN PROGRESS · assigned to  [0] · None                                         
+  WAITING  [0] · None                                                           
+> NEXT UP · rank order  [5]                                                     
+> ▸ ↳LAUNCH Launch  [2]                                                         
   ▾ no epic  [3]                                                                
+  ○ 1   ·OPS001   feature          ready     ops Ops one                        
+  ○ 1   ·OPS002   feature          ready     ops Ops two                        
+  ○ 1   ·PLAIN0   feature          ready     Plain                              
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
-                                                                                
-  LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–2 shown        
-  ▾ ↳LAUNCH Launch  [3]                                                         
-  ○ 1   ·LAUNCH   feature          ready     Launch                             
-↓ ○ 1   ·POSTS0   feature          ready     later Launch posts                 
-                                                                                
+  LINT · tasks needing attention  [6] · 0 broken · 12 advice                    
+  ▸ ↳LAUNCH Launch  [3]                                                         
+  ▾ no epic  [3]                                                                
+  ○ 1   ·OPS001   feature          ready     ops Ops one                        
+  ○ 1   ·OPS002   feature          ready     ops Ops two                        
+  ○ 1   ·PLAIN0   feature          ready     Plain                              
 rows grouped by epic: Space on a heading folds it · grouping next               
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
@@ -228,23 +228,23 @@ HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic
 [overview]   list    board    !lint                                                                                                         
 todo 6  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0                                                                                   
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
-> IN PROGRESS · assigned to  [0] · None                                                                                                     
-                                                                                                                                            
-  WAITING · on you first  [0] · None                                                                                                        
-                                                                                                                                            
-  NEXT UP · rank order  [5] · 1–2 shown                                                                                                     
-  ▾ ↳LAUNCH Launch  [2]                                                                                                                     
-  ○ 1   ·POSTS0   feature          ready     later Launch posts                                                                             
-  ○ 1   ·MAIL00   feature          ready     later Launch mail                                                                              
+  ASKED · for you  [0] · None                                                                                                               
+  IN PROGRESS · assigned to  [0] · None                                                                                                     
+  WAITING  [0] · None                                                                                                                       
+> NEXT UP · rank order  [5]                                                                                                                 
+> ▸ ↳LAUNCH Launch  [2]                                                                                                                     
   ▾ no epic  [3]                                                                                                                            
+  ○ 1   ·OPS001   feature          ready     ops Ops one                                                                                    
+  ○ 1   ·OPS002   feature          ready     ops Ops two                                                                                    
+  ○ 1   ·PLAIN0   feature          ready     Plain                                                                                          
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
-                                                                                                                                            
-  LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–2 shown                                                                    
-  ▾ ↳LAUNCH Launch  [3]                                                                                                                     
-  ○ 1   ·LAUNCH   feature          ready     Launch                                                                                         
-↓ ○ 1   ·POSTS0   feature          ready     later Launch posts                                                                             
-                                                                                                                                            
+  LINT · tasks needing attention  [6] · 0 broken · 12 advice                                                                                
+  ▸ ↳LAUNCH Launch  [3]                                                                                                                     
+  ▾ no epic  [3]                                                                                                                            
+  ○ 1   ·OPS001   feature          ready     ops Ops one                                                                                    
+  ○ 1   ·OPS002   feature          ready     ops Ops two                                                                                    
+  ○ 1   ·PLAIN0   feature          ready     Plain                                                                                          
 rows grouped by epic: Space on a heading folds it · grouping next                                                                           
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order                                  

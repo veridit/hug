@@ -117,9 +117,25 @@ func (m model) name(who string) string {
 func (m model) note(t task.Task) (head, text, stamp string) {
 	f := func(k string) string { return oneLine(t.Fields[k]) }
 	switch m.stageOf(t) {
-	case "waiting", "asked":
-		// Stage asked keeps the look a wait on a person had until 0gztsy
-		// (nautilus) draws it as "asked: you · check N".
+	case "asked":
+		// The question in its own words (41hhgn check 10, header-spec.md
+		// 'Overview sections'): "asked: check 9 · <question> · nautilus".
+		// Asked of the viewer it sits in ASKED, so "you" is said by the
+		// section; asked of someone else the line names them.
+		var parts []string
+		if n := f("asked_check"); n != "" {
+			parts = append(parts, "check "+n)
+		}
+		parts = append(parts, m.attachments(t, f("asked_what")))
+		if by := m.name(t.Fields["asked_by"]); by != "" && by != "you" {
+			parts = append(parts, by)
+		}
+		head := "asked:"
+		if who := m.name(t.Fields["asked_for"]); who != "" && who != "you" {
+			head = "asked " + who + ":"
+		}
+		return head, strings.Join(parts, " · "), t.Fields["asked_since"]
+	case "waiting":
 		who, what := m.waitingFor(t)
 		at := t.Fields["waiting_since"]
 		if v := t.Fields["asked_since"]; v != "" {

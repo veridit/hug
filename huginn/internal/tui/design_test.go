@@ -98,13 +98,14 @@ func TestPaneKeysAndBoardSelection(t *testing.T) {
 	for _, right := range []string{"l", "right"} {
 		for _, left := range []string{"h", "left"} {
 			m := manyModel(t)
-			m.setView("overview")
+			m.setView("overview") // the first section with rows: IN PROGRESS (ASKED is empty)
+			first := m.pane
 			m = press(m, right)
-			if m.pane != 1 {
+			if m.pane != first+1 {
 				t.Fatal(right, m.pane)
 			}
 			m = press(m, left)
-			if m.pane != 0 {
+			if m.pane != first {
 				t.Fatal(left, m.pane)
 			}
 			m.setView("board")
@@ -521,7 +522,7 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 		}
 	}
 	m.setView("overview")
-	if header := strings.Split(m.overviewText(), "\n")[0]; !strings.Contains(header, "48;2;") {
+	if header := strings.Split(m.overviewText(), "\n")[m.pane]; !strings.Contains(header, "48;2;") { // under ASKED's one empty line
 		t.Fatal("selected overview pane lacks a background highlight", header)
 	}
 	darkAccent := m.styles.accent.Render("badge")

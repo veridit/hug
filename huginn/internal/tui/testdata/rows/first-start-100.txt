@@ -2,11 +2,11 @@ HUG TASKS · overview   0/0 tasks · ! 0 broken · * refreshing
 [overview]   list    board    !lint                                                                 
 todo 0  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0                                           
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                          
+  ASKED · for you  [0] · None                                                                       
   IN PROGRESS · assigned to  [0] · None                                                             
-                                                                                                    
-  WAITING · on you first  [0] · None                                                                
-                                                                                                    
+  WAITING  [0] · None                                                                               
   NEXT UP · rank order  [0] · None                                                                  
+  RECENTLY DONE · last closed  [0] · None                                                           
 reading the board: the first start builds the task cache: 1234 of 3630 files                        
                                                                                                     
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column  

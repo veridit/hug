@@ -126,8 +126,8 @@ func TestRowsShowStage(t *testing.T) {
 			t.Errorf("%s has %d rows, want %d (one line each, nothing else):\n%s", name, n, len(ids), got)
 		}
 	}
-	if !regexp.MustCompile(`(?m)^  WAITING · on you first  \[4\]\s*$`).MatchString(view) {
-		t.Errorf("WAITING header is not 'WAITING · on you first  [4]':\n%s", view)
+	if !regexp.MustCompile(`(?m)^  WAITING  \[4\]\s*$`).MatchString(view) {
+		t.Errorf("WAITING header is not 'WAITING  [4]' (what asks you is in ASKED, 41hhgn):\n%s", view)
 	}
 	// Check 4: no row the cursor is not on has a second line.
 	if strings.Contains(view, "└─") {
@@ -209,17 +209,19 @@ func TestWaitingOnYou(t *testing.T) {
 	marked := regexp.MustCompile(`(?m)^\? `) // the ? glyph is gone (e3sevr, 41hhgn): none may show
 	// jhf: the design question (design_for) is theirs; nothing else.
 	m.opts.User = "jhf"
+	m.refresh("") // sections are found per load: who "you" is is read then
 	view := ansi.Strip(viewAt(m, "overview", 140))
-	waiting := section(view, "WAITING")
-	rows := strings.Split(waiting, "\n")
-	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[0], "WAITING · on you first  [4]") {
-		t.Fatalf("header lacks ? 1 for you, or WAITING is not titled 'WAITING · on you first  [4]':\n%s", view)
+	// What asks you is in ASKED at the top, its count the header's
+	// (41hhgn check 10); WAITING keeps the rest.
+	rows := strings.Split(section(view, "ASKED"), "\n")
+	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[0], "ASKED · for you  [1]") || strings.Count(section(view, "ASKED"), "feature") != 1 {
+		t.Fatalf("header lacks ? 1 for you, or ASKED is not 'ASKED · for you  [1]' with one row:\n%s", view)
 	}
 	if !strings.Contains(rows[1], "eeeeee   feature high     design    Tags listed per board") || len(marked.FindAllString(view, -1)) != 0 {
-		t.Fatalf("the design question for jhf is not first in WAITING, or a row still carries ?:\n%s", view)
+		t.Fatalf("the design question for jhf is not in ASKED, or a row still carries ?:\n%s", view)
 	}
-	if strings.Contains(section(view, "NEXT UP"), "eeeeee") {
-		t.Fatalf("the design question is still in NEXT UP:\n%s", view)
+	if strings.Contains(section(view, "NEXT UP"), "eeeeee") || strings.Contains(section(view, "WAITING"), "eeeeee") {
+		t.Fatalf("the design question is still in NEXT UP or WAITING:\n%s", view)
 	}
 	if focused := focusAt(t, m, 140, "eeeeee"); !strings.Contains(focused, "└─ question for you: should type leave the rows") {
 		t.Fatalf("focused, jhf's question does not say you:\n%s", focused)
@@ -228,9 +230,9 @@ func TestWaitingOnYou(t *testing.T) {
 	m.opts.User = "Jørgen"
 	m.refresh("")
 	view = ansi.Strip(viewAt(m, "overview", 140))
-	rows = strings.Split(section(view, "WAITING"), "\n")
+	rows = strings.Split(section(view, "ASKED"), "\n")
 	if !strings.Contains(view, "? 1 for you") || !strings.Contains(rows[1], "bbbbbb   feature high     review    Release, then hug setup") || len(marked.FindAllString(view, -1)) != 0 {
-		t.Fatalf("Jørgen's review is not first in WAITING, or a row still carries ?:\n%s", view)
+		t.Fatalf("Jørgen's review is not in ASKED, or a row still carries ?:\n%s", view)
 	}
 	focused := focusAt(t, m, 140, "bbbbbb")
 	if note := regexp.MustCompile(`(?m)^\s+└─ in review by you\s+since 09:48\s*$`); !note.MatchString(focused) {
@@ -240,7 +242,7 @@ func TestWaitingOnYou(t *testing.T) {
 	m.opts.User = "carol"
 	m.refresh("")
 	view = ansi.Strip(viewAt(m, "overview", 140))
-	if strings.Contains(view, "for you") || marked.MatchString(view) {
+	if strings.Contains(view, "? 1 for you") || strings.Contains(view, "ASKED · for you  [1]") || marked.MatchString(view) {
 		t.Fatalf("carol sees something for her:\n%s", view)
 	}
 	// Waiting on a person: --on carol writes waiting_for. cccccc waits already;
@@ -255,18 +257,19 @@ func TestWaitingOnYou(t *testing.T) {
 	}
 	m.refresh("")
 	view = ansi.Strip(viewAt(m, "overview", 140))
-	rows = strings.Split(section(view, "WAITING"), "\n")
+	rows = strings.Split(section(view, "ASKED"), "\n")
 	if !strings.Contains(view, "? 1 for you") || !strings.Contains(rows[1], "cccccc   feature high     asked     Warm cache under 50 ms") {
-		t.Fatalf("carol's wait is not first in WAITING, marked ?:\n%s", view)
+		t.Fatalf("carol's question is not in ASKED:\n%s", view)
 	}
-	if focused := focusAt(t, m, 140, "cccccc"); !regexp.MustCompile(`(?m)^> .*cccccc.*\n\s+└─ waiting on you: approve the look\s+since \d\d:\d\d`).MatchString(focused) {
-		t.Fatalf("carol's wait, focused:\n%s", focused)
+	if focused := focusAt(t, m, 140, "cccccc"); !regexp.MustCompile(`(?m)^> .*cccccc.*\n\s+└─ asked: approve the look · nautilus\s+since \d\d:\d\d`).MatchString(focused) {
+		t.Fatalf("carol's question, focused:\n%s", focused)
 	}
-	// Anyone else sees her name, never initials typed in the text.
+	// Anyone else sees it in WAITING with her name, never initials typed
+	// in the text.
 	m.opts.User = "dave"
 	m.refresh("")
-	if view = focusAt(t, m, 140, "cccccc"); !strings.Contains(view, "└─ waiting on carol: approve the look") {
-		t.Fatalf("dave's view of carol's wait:\n%s", view)
+	if view = focusAt(t, m, 140, "cccccc"); !strings.Contains(section(view, "WAITING"), "cccccc") || !strings.Contains(view, "└─ asked carol: approve the look · nautilus") {
+		t.Fatalf("dave's view of carol's question:\n%s", view)
 	}
 }
 
@@ -298,7 +301,7 @@ func TestYouByGitEmail(t *testing.T) {
 	// An agent committing with Jørgen's email is the agent.
 	m.opts.User, m.opts.Email = "nautilus", "jorgen@veridit.no"
 	m.refresh("")
-	if view := focusAt(t, m, 140, "eeeeee"); m.me() != "nautilus" || strings.Contains(view, "for you") || !strings.Contains(view, "└─ question for jhf:") {
+	if view := focusAt(t, m, 140, "eeeeee"); m.me() != "nautilus" || strings.Contains(view, "? 1 for you") || strings.Contains(view, "question for you") || !strings.Contains(view, "└─ question for jhf:") {
 		t.Fatalf("an agent with jhf's email took his question (me %q):\n%s", m.me(), view)
 	}
 }

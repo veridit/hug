@@ -19,17 +19,28 @@ import (
 // e3sevr check 7: column 1 holds only the pointer, the grab or yank mark
 // and the scroll arrows; the lint mark has its own cell right before the
 // id, so ids line up and an arrow never shares a cell with a mark. The
-// golden has a waiting-on-you task as the last row shown, under ↓.
+// golden has a waiting-on-you task as the last row shown, under ↓: since
+// 41hhgn those are in ASKED, cut short with the cursor elsewhere.
 func TestGutterHoldsOnlyPointerAndArrows(t *testing.T) {
 	m := stageBoard(t)
 	m.opts.User = "jhf" // eeeeee's design question is for jhf
+	// Two more questions for jhf: three in ASKED, more than a short
+	// screen shows.
+	if _, err := m.store.Ask("cccccc", task.Question{What: "approve the look", For: "jhf", Check: 2}, "nautilus"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := m.store.Ask("aaaaaa", task.Question{What: "which colour for asked", For: "jhf"}, "nautilus"); err != nil {
+		t.Fatal(err)
+	}
 	m.refresh("")
 	var golden []string
 	for _, w := range []int{80, 140} {
 		g := m
-		g.width, g.height = w, 14 // short: WAITING is cut, ↓ on its last row
+		g.width, g.height = w, 18 // short: ASKED is cut, ↓ on its last row; every title fits
 		g.resize()
 		g.setView("overview")
+		g.pane = sectionNext // the cursor elsewhere: ASKED shows its first rows
+		g.clamp()
 		screen := ansi.Strip(g.View())
 		rows := strings.Split(screen, "\n")
 		ids := regexp.MustCompile(`\b(aaaaaa|bbbbbb|cccccc|dddddd|eeeeee|ffffff|gggggg)\b`)
@@ -52,15 +63,12 @@ func TestGutterHoldsOnlyPointerAndArrows(t *testing.T) {
 				t.Fatalf("at %d the ids do not line up (%d, %d):\n%s", w, col, at, screen)
 			}
 		}
-		waiting := strings.Split(section(screen, "WAITING"), "\n")
-		last := waiting[len(waiting)-1]
-		if !strings.HasPrefix(last, "↓") || strings.Contains(last, "?") {
-			t.Fatalf("at %d WAITING's last shown row has no ↓, or a ?: %q\n%s", w, last, screen)
+		asked := strings.Split(section(screen, "ASKED"), "\n")
+		last := asked[len(asked)-1]
+		if !strings.HasPrefix(last, "↓") || strings.Contains(last, "?") || !strings.Contains(asked[0], "shown") {
+			t.Fatalf("at %d ASKED is not cut with ↓ on its last shown row, or it holds a ?: %q\n%s", w, last, screen)
 		}
-		if !strings.Contains(waiting[1], "eeeeee") {
-			t.Fatalf("at %d the question for jhf is not first in WAITING:\n%s", w, screen)
-		}
-		golden = append(golden, "== overview at "+strconv.Itoa(w)+"x14, jhf", screen)
+		golden = append(golden, "== overview at "+strconv.Itoa(w)+"x18, jhf", screen)
 	}
 	goldenFile(t, filepath.Join("testdata", "rows", "gutter.txt"), strings.Join(golden, "\n"))
 }

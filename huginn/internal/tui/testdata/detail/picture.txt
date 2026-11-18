@@ -3,7 +3,7 @@ HUG TASKS · list › 000002                                            ? 1 for 
 [doing]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-     
 000002                                                                          
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                      
-└─ waiting on you: look at the IN PROGRESS rows · since 14:42                   
+└─ asked: look at the IN PROGRESS rows · alice · since 14:42                    
 ? asked: look at the IN PROGRESS rows                                           
   asked by alice · 10 min ago                                                   
   answer                                                                        
@@ -33,7 +33,7 @@ j/k scroll · edit · done · wait · x drop · yank · h/l Tab next · answer �
 HUG TASKS · list › 000002                                                                                                        ? 1 for you
 [doing]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-000002                                                           
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                                                                                  
-└─ waiting on you: look at the IN PROGRESS rows · since 14:42                                                                               
+└─ asked: look at the IN PROGRESS rows · alice · since 14:42                                                                                
 ? asked: look at the IN PROGRESS rows                                                                                                       
   asked by alice · 10 min ago                                                                                                               
   answer                                                                                                                                    

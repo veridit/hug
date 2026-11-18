@@ -706,24 +706,35 @@ var boardStates = []string{"todo", "doing", "depends", "done", "dropped"}
 // (tje4sx, Jørgen 19:54, crab 20:10: reverses "waiting is a stage, not a
 // section"). A todo task with an open dependency stays in NEXT UP with
 // the stage depends: it is not ready yet, and nobody is asked anything.
-var overviewSections = []string{"IN PROGRESS · assigned to", "WAITING · on you first", "NEXT UP · rank order", "RECENTLY DONE · last closed", "LINT · tasks needing attention"}
+//
+// ASKED is at the top (41hhgn check 10, Jørgen 00:12: "a separate section
+// that I really need to address"): every task whose stage asks the viewer
+// (forYou: asked, a design question or a review naming them), oldest
+// first. WAITING keeps the waits with no person and what is asked of
+// others ("a place to live for things that aren't active right now").
+var overviewSections = []string{"ASKED · for you", "IN PROGRESS · assigned to", "WAITING", "NEXT UP · rank order", "RECENTLY DONE · last closed", "LINT · tasks needing attention"}
 
 const (
-	sectionDoing = iota
+	sectionAsked = iota
+	sectionDoing
 	sectionWaiting
 	sectionNext
 	sectionRecent
 	sectionLint
 )
 
+// ownerSection says whether overview section p draws the owner cell:
+// ASKED, IN PROGRESS and WAITING hold tasks someone has (102bc0, tje4sx).
+func ownerSection(p int) bool { return p == sectionAsked || p == sectionDoing || p == sectionWaiting }
+
 // recentDone is how many closed tasks RECENTLY DONE shows while the cursor
 // is in another section; focused, it scrolls through all of them (h9zghj).
 // Every other unfocused section shows as many rows.
 const recentDone = 3
 
-// maxSections is the most sections a view has: 5 overview sections, 5
+// maxSections is the most sections a view has: 6 overview sections, 5
 // board columns.
-const maxSections = 5
+const maxSections = 6
 
 // sectionMemo is where a section was when the cursor left it: its first
 // row shown and the task selected in it (h9zghj).
@@ -826,14 +837,16 @@ func (m model) scanPane(p int) []int {
 		switch m.view {
 		case "overview":
 			switch p {
+			case sectionAsked:
+				match = m.forYou(t)
 			case sectionDoing:
-				match = t.State == "doing" && !m.waits(t)
+				match = t.State == "doing" && !m.waits(t) && !m.forYou(t)
 			case sectionWaiting:
-				match = m.waits(t)
+				match = m.waits(t) && !m.forYou(t)
 			case sectionNext:
 				// Unassigned todo, never an epic (it finishes through its
 				// children); one that depends shows its stage (Jørgen 11:43).
-				match = t.State == "todo" && !m.waits(t) && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
+				match = t.State == "todo" && !m.waits(t) && !m.forYou(t) && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
 			case sectionLint:
 				match = m.linted[t.Path]
 			}
@@ -846,10 +859,11 @@ func (m model) scanPane(p int) []int {
 			out = append(out, i)
 		}
 	}
-	if m.view == "overview" && p == sectionWaiting {
-		// A task waiting on you sorts to the top of its section (6ephqk
-		// check 8, Jørgen 11:42), the rest keep their order.
-		sort.SliceStable(out, func(a, b int) bool { return m.forYou(m.visible[out[a]]) && !m.forYou(m.visible[out[b]]) })
+	if m.view == "overview" && p == sectionAsked {
+		// Oldest question first: it has waited longest (41hhgn check 10).
+		sort.SliceStable(out, func(a, b int) bool {
+			return askedSince(m.visible[out[a]]) < askedSince(m.visible[out[b]])
+		})
 	}
 	return out
 }
@@ -927,6 +941,9 @@ func (m *model) setView(view string) {
 	m.detailStack = nil
 	m.detailPane = 0
 	m.head = ""
+	if view == "overview" {
+		m.firstPane() // ASKED is first and often empty (41hhgn)
+	}
 	m.clamp()
 }
 

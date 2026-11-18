@@ -41,6 +41,19 @@ func spareBoard(t *testing.T, doing, todo int) model {
 
 var taskID = regexp.MustCompile(`(?m)^([>↑↓ ] (?:[○◔◑◕●] \d+(?:/\d+)? +)?)[0-9a-z]{6}\b`)
 
+// rowBudget is the overview's lines for rows: the body less a title and
+// a blank per section with rows, a title alone per empty one (41hhgn).
+func rowBudget(m model) int {
+	b := m.bodyHeight()
+	for p := range overviewSections {
+		b-- // its title
+		if n := len(m.paneRows(p)); n > 0 && p < len(overviewSections)-1 {
+			b-- // the blank after it
+		}
+	}
+	return b
+}
+
 // overviewBlank counts blank rows after the last drawn line of the body.
 func overviewBlank(m model) int {
 	lines := strings.Split(ansi.Strip(m.overviewText()), "\n")
@@ -54,7 +67,7 @@ func TestOverviewSpareRowsGolden(t *testing.T) {
 	m.pane = sectionDoing
 	m.clamp()
 	rows := m.overviewRows()
-	budget := m.bodyHeight() - 2*len(overviewSections)
+	budget := rowBudget(m)
 	if rows[sectionDoing] != 2 || rows[sectionNext] != budget-2 {
 		t.Fatalf("rows %v, want IN PROGRESS 2 and NEXT UP %d", rows, budget-2)
 	}
@@ -84,7 +97,7 @@ func TestOverviewSpareRowsInProgressFirst(t *testing.T) {
 	m := spareBoard(t, 12, 40)
 	m.pane = sectionRecent // empty: the smallest there is
 	m.clamp()
-	budget := m.bodyHeight() - 2*len(overviewSections)
+	budget := rowBudget(m)
 	rows := m.overviewRows()
 	if rows[sectionDoing] != 12 || rows[sectionNext] != budget-12 {
 		t.Fatalf("rows %v, want IN PROGRESS 12 and NEXT UP %d", rows, budget-12)

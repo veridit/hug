@@ -59,7 +59,7 @@ func TestOverviewFocusedSectionGrows(t *testing.T) {
 			t.Fatalf("the fixture must overflow the focused sections: %v", counts)
 		}
 		rows, shown := m.overviewRows(), shownRows(m)
-		budget := m.bodyHeight() - 2*len(overviewSections)
+		budget := rowBudget(m)
 		spare := budget
 		for p := range overviewSections {
 			if p != focus {

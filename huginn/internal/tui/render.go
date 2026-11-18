@@ -354,7 +354,7 @@ func (m model) ownerWidth() int {
 	if m.width < 120 {
 		return w
 	}
-	for _, i := range append(m.paneIndices(sectionDoing), m.paneIndices(sectionWaiting)...) {
+	for _, i := range append(append(m.paneIndices(sectionAsked), m.paneIndices(sectionDoing)...), m.paneIndices(sectionWaiting)...) {
 		w = max(w, min(30, lipgloss.Width(m.rowOwner(m.visible[i]))))
 	}
 	return w
@@ -414,7 +414,7 @@ func (m model) overviewText() string {
 		doing := m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(m.paneIndices(p)))
 		if p == m.pane && m.overviewHeading() && p != sectionLint && len(indices) > 0 {
 			c := m.rowLayout(m.width, false, 0, 0)
-			if p == sectionDoing || p == sectionWaiting {
+			if ownerSection(p) {
 				c = doing
 			}
 			lines = append(lines, m.columnsOwner(m.width, false, c))
@@ -427,7 +427,7 @@ func (m model) overviewText() string {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
-			if p == sectionDoing || p == sectionWaiting {
+			if ownerSection(p) {
 				// Owners get a reserved column, never lost behind a long
 				// title. On the selected row the highlight runs through it,
 				// so the owner reads as part of that row.
@@ -448,9 +448,33 @@ func (m model) overviewText() string {
 				}
 			}
 		}
-		lines = append(lines, "")
+		if sectionBlank(p, len(indices), len(names)) {
+			// A blank parts a section with rows from the next; an empty
+			// one is its title alone ("· None"), and the last needs none
+			// (41hhgn: six sections fit 80x24).
+			lines = append(lines, "")
+		}
 	}
 	return strings.Join(lines, "\n")
+}
+
+// sectionBlank says whether a blank line follows overview section p: one
+// with rows, not the last. An empty one is its title alone ("· None"):
+// six sections fit 80x24 (41hhgn).
+func sectionBlank(p, rows, sections int) bool { return rows > 0 && p < sections-1 }
+
+// sectionChrome is the overview's lines that are not rows: each title and
+// the blanks between sections.
+func (m model) sectionChrome() int {
+	n := len(overviewSections)
+	lines := 0
+	for p := range n {
+		lines++
+		if sectionBlank(p, len(m.paneRows(p)), n) {
+			lines++
+		}
+	}
+	return lines
 }
 
 // sectionState is the status whose colour an overview section's title
@@ -478,7 +502,7 @@ func (m model) sectionStyle(p int) lipgloss.Style {
 func (m model) overviewRows() []int {
 	n := len(overviewSections)
 	want, got := make([]int, n), make([]int, n)
-	budget := m.bodyHeight() - n*2 // a label and a blank line per section
+	budget := m.bodyHeight() - m.sectionChrome()
 	if m.overviewHeading() {
 		budget-- // the focused section's column header (bejd89)
 	}
@@ -581,7 +605,7 @@ func (m model) drawnLines(p, lines int) int {
 }
 
 // spareOrder is who gets the overview's spare rows first (z6kz20).
-var spareOrder = []int{sectionDoing, sectionWaiting, sectionNext, sectionRecent, sectionLint}
+var spareOrder = []int{sectionAsked, sectionDoing, sectionWaiting, sectionNext, sectionRecent, sectionLint}
 
 // scrollOf is the first row section p of the current view showed last.
 func (m model) scrollOf(p int) int {

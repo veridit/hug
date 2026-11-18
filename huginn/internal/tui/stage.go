@@ -157,6 +157,17 @@ func (m model) forYou(t task.Task) bool {
 	return false
 }
 
+// askedSince is when t's question to the viewer was asked, as written
+// (stamps sort as text), for ASKED's oldest-first order.
+func askedSince(t task.Task) string {
+	for _, k := range []string{"asked_since", "design_since", "review_since", "waiting_since"} {
+		if v := strings.TrimSpace(t.Fields[k]); v != "" {
+			return v
+		}
+	}
+	return "~" // no stamp: after every dated question
+}
+
 // forYouCount is how many shown tasks wait on the TUI user: counted once
 // per set of shown rows, as the sections are (46ek1f).
 func (m model) forYouCount() int {

@@ -3,10 +3,11 @@ HUG TASKS · overview   7/7 tasks · ! 0 broken
 [overview]   list    board    !lint                                             
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+  ASKED · for you  [0] · None                                                   
 > IN PROGRESS · assigned to  [1]                                                
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows…  nautilus     
                                                                                 
-  WAITING · on you first  [4]                                                   
+  WAITING  [4]                                                                  
   ◑ 1/2  bbbbbb   feature high     review    Release, then hug s…  nautilus     
   ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50…  nautilus     
   ◑ 1/2  dddddd   feature high     depends   One set of variable…  nautilus     
@@ -17,7 +18,6 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2  gggggg   feature high     deferred  Answer a question in place         
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
-                                                                                
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
                                                                                 
                                                                                 
@@ -34,10 +34,11 @@ HUG TASKS · overview   7/7 tasks · ! 0 broken
 [overview]   list    board    !lint                                             
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+  ASKED · for you  [0] · None                                                   
   IN PROGRESS · assigned to  [1]                                                
   ◑ 1/2  aaaaaa   feature high     active    Status colors: rows…  nautilus     
                                                                                 
-> WAITING · on you first  [4]                                                   
+> WAITING  [4]                                                                  
   ◑ 1/2  bbbbbb   feature high     review    Release, then hug s…  nautilus     
 > ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50…  nautilus     
          └─ waiting on CI run 44063552584                            since 09:41
@@ -49,7 +50,6 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2  gggggg   feature high     deferred  Answer a question in place         
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
-                                                                                
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
                                                                                 
                                                                                 
@@ -96,10 +96,11 @@ HUG TASKS · overview   7/7 tasks · ! 0 broken
 [overview]   list    board    !lint                                                                                                         
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+  ASKED · for you  [0] · None                                                                                                               
 > IN PROGRESS · assigned to  [1]                                                                                                            
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                       nautilus        
                                                                                                                                             
-  WAITING · on you first  [4]                                                                                                               
+  WAITING  [4]                                                                                                                              
   ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                           nautilus        
   ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50 ms                                                         nautilus        
   ◑ 1/2  dddddd   feature high     depends   One set of variable names                                                      nautilus        
@@ -110,7 +111,6 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
-                                                                                                                                            
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
                                                                                                                                             
                                                                                                                                             
@@ -127,10 +127,11 @@ HUG TASKS · overview   7/7 tasks · ! 0 broken
 [overview]   list    board    !lint                                                                                                         
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+  ASKED · for you  [0] · None                                                                                                               
   IN PROGRESS · assigned to  [1]                                                                                                            
   ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                       nautilus        
                                                                                                                                             
-> WAITING · on you first  [4]                                                                                                               
+> WAITING  [4]                                                                                                                              
   ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                           nautilus        
 > ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50 ms                                                         nautilus        
          └─ waiting on CI run 44063552584                                                                                        since 09:41
@@ -142,7 +143,6 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
-                                                                                                                                            
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
                                                                                                                                             
                                                                                                                                             

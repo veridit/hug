@@ -43,7 +43,7 @@ func (m model) columnLayout() rowCols {
 		count := min(len(boardStates), max(1, (m.width+2)/40))
 		return m.rowLayout(max(1, (m.width-2*(count-1))/count), true, 0, 0)
 	case "overview":
-		if m.pane == sectionDoing || m.pane == sectionWaiting {
+		if ownerSection(m.pane) {
 			return m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(m.paneIndices(m.pane)))
 		}
 	}

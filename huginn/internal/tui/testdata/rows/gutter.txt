@@ -1,30 +1,38 @@
-== overview at 80x14, jhf
-HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 1 for you                     
+== overview at 80x18, jhf
+HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                     
 [overview]   list    board    !lint                                             
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
-> IN PROGRESS · assigned to  [1]                                                
-> ◑ 1/2  aaaaaa   feature high     active    Status colors: rows…  nautilus     
+  ASKED · for you  [3] · 1–1 shown                                              
+↓ ◑ 1/2  aaaaaa   feature high     asked     Status colors: rows…  nautilus     
                                                                                 
-  WAITING · on you first  [4] · 1–1 shown                                       
-↓ ◑ 1/2  eeeeee   feature high     design    Tags listed per boa…  unassigned   
+  IN PROGRESS · assigned to  [0] · None                                         
+  WAITING  [2] · 1–1 shown                                                      
+↓ ◑ 1/2  bbbbbb   feature high     review    Release, then hug s…  nautilus     
                                                                                 
-  NEXT UP · rank order  [2] · 1–1 shown                                         
+> NEXT UP · rank order  [2]                                                     
+> ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic          
+  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place         
+                                                                                
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
-== overview at 140x14, jhf
-HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 1 for you                                                                                 
+== overview at 140x18, jhf
+HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                 
 [overview]   list    board    !lint                                                                                                         
 todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
 No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
-> IN PROGRESS · assigned to  [1]                                                                                                            
-> ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                       nautilus        
+  ASKED · for you  [3] · 1–1 shown                                                                                                          
+↓ ◑ 1/2  aaaaaa   feature high     asked     Status colors: rows and sections share one subtle scheme                       nautilus        
                                                                                                                                             
-  WAITING · on you first  [4] · 1–1 shown                                                                                                   
-↓ ◑ 1/2  eeeeee   feature high     design    Tags listed per board                                                          unassigned      
+  IN PROGRESS · assigned to  [0] · None                                                                                                     
+  WAITING  [2] · 1–1 shown                                                                                                                  
+↓ ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                           nautilus        
                                                                                                                                             
-  NEXT UP · rank order  [2] · 1–1 shown                                                                                                     
+> NEXT UP · rank order  [2]                                                                                                                 
+> ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic                                                                      
+  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
+                                                                                                                                            
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order                                  
