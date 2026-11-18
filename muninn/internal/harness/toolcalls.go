@@ -170,14 +170,111 @@ func ParseToolCall(at time.Time, name string, input json.RawMessage) Action {
 	return a
 }
 
-// HugCalls finds hug task commands in a shell command line.
+// HugCalls finds hug task commands in a shell command line. A command
+// inside a quoted argument is text, not a call: crab's `hug task new
+// --goal "... next: hug task take vk9td0 ..."` never took vk9td0
+// (4vxqp4). A quoted script given to sh -c / bash -c / zsh -c runs, and so
+// does $(...) inside double quotes.
 func HugCalls(cmd string) []HugCall {
 	var out []HugCall
-	for _, m := range hugCmd.FindAllStringSubmatch(cmd, -1) {
-		n, _ := strconv.Atoi(m[3])
-		out = append(out, HugCall{Verb: m[1], ID: m[2], N: n})
+	quoted := shellQuoted(cmd)
+	for _, m := range hugCmd.FindAllStringSubmatchIndex(cmd, -1) {
+		if quoted[m[0]] {
+			continue
+		}
+		sub := func(i int) string {
+			if m[2*i] < 0 {
+				return ""
+			}
+			return cmd[m[2*i]:m[2*i+1]]
+		}
+		n, _ := strconv.Atoi(sub(3))
+		out = append(out, HugCall{Verb: sub(1), ID: sub(2), N: n})
 	}
 	return out
+}
+
+// shellRunner ends right before a quote whose content a shell runs.
+var shellRunner = regexp.MustCompile(`\b(?:ba|z|da)?sh\s+(?:-[a-z]+\s+)*-[a-z]*c\s*$|\beval\s+$`)
+
+// shellQuoted marks each byte of cmd that sits inside a quoted shell word
+// (single, double, or $'...'), leaving out the scripts a shell runs
+// (sh -c '...') and command substitution inside double quotes.
+func shellQuoted(cmd string) []bool {
+	q := make([]bool, len(cmd)+1)
+	// stack of open contexts: '\'' single, '"' double, '$' $(...), 'r' a
+	// quote that runs (sh -c).
+	var stack []byte
+	top := func() byte {
+		if len(stack) == 0 {
+			return 0
+		}
+		return stack[len(stack)-1]
+	}
+	inQuote := func() bool {
+		for i := len(stack) - 1; i >= 0; i-- {
+			switch stack[i] {
+			case '$', 'r', 'R':
+				return false
+			case '\'', '"':
+				return true
+			}
+		}
+		return false
+	}
+	for i := 0; i < len(cmd); i++ {
+		c := cmd[i]
+		switch t := top(); {
+		case t == '\'' || t == 'R':
+			// single-quoted: only the closing quote ends it
+			if c == '\'' {
+				stack = stack[:len(stack)-1]
+				q[i] = inQuote()
+				continue
+			}
+		case c == '\\':
+			q[i] = inQuote()
+			if i+1 < len(cmd) {
+				i++
+				q[i] = inQuote()
+			}
+			continue
+		case (t == '"' || t == 'r') && c == '"':
+			stack = stack[:len(stack)-1]
+			q[i] = inQuote()
+			continue
+		case c == '$' && i+1 < len(cmd) && cmd[i+1] == '(':
+			stack = append(stack, '$')
+			q[i], q[i+1] = inQuote(), inQuote()
+			i++
+			continue
+		case t == '$' && c == ')':
+			stack = stack[:len(stack)-1]
+			q[i] = inQuote()
+			continue
+		case t != '"' && t != 'r' && (c == '\'' || c == '"'):
+			runs := shellRunner.MatchString(cmd[max(0, i-40):i])
+			switch {
+			case c == '\'' && runs:
+				stack = append(stack, 'R')
+			case c == '\'':
+				stack = append(stack, '\'')
+			case runs:
+				stack = append(stack, 'r')
+			default:
+				stack = append(stack, '"')
+			}
+			q[i] = true
+			continue
+		}
+		q[i] = inQuote()
+	}
+	// Quotes that do not balance (an apostrophe in a heredoc or a comment)
+	// say nothing reliable: then nothing counts as quoted.
+	if len(stack) > 0 {
+		return make([]bool, len(cmd)+1)
+	}
+	return q
 }
 
 func firstLine(s string) string {

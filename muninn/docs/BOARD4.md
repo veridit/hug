@@ -272,6 +272,33 @@ any other lint finding may go to any agent at a break.
   any lint was right. 4vxqp4's fresh-hug "3 right lint lines" were judged
   under the old prompt.
 
+## Quoted hug commands are not calls; reading a task does not name it (6fqhg9, rzfrgp, 2026-11-18)
+
+Shipped, two changes measured together under the judge above (two
+judgings, same sets and ids as 4vxqp4):
+
+- The hook no longer reads a hug command quoted inside another command's
+  argument as a call (`harness.HugCalls`): crab's `hug task new --goal
+  "... next: hug task take vk9td0 ..."` never took vk9td0. A quoted
+  script a shell runs (`sh -c '...'`, `$(...)`) still counts, and when the
+  quotes do not balance nothing counts as quoted.
+- The take line ("this looks like ID") no longer names a task the session
+  only opened with `hug task show`.
+
+| arm | six sets lines / right / false (take/work/done/owner false) | fresh hug |
+|---|---|---|
+| 4vxqp4 + judge (e66eeb65) | 115 / 106 / 9 (6) | 14 / 10 / 4 (2) |
+| + show does not name | 115 / 106 / 9 (6) | 14 / 10 / 4 (2) |
+| + quoted commands are not calls | 114 / 107 / 7 (6) | 14 / 11 / 3 (2) |
+
+Both judgings gave every number in the table. The parser alone (without
+the show change) moved guppy's 2026-11-16 20:16 line from a right lint
+line to a take line on jrj1vq, a task guppy had only read (judged wrong
+twice): a quoted `hug task take p277bp` in its own note had counted p277bp
+as guppy's and hidden the take line. With both, the take line names
+ez50rb, which crab's message gives guppy first (judged right twice).
+On the 7 sets no set has fewer right lines or more false lines.
+
 ## Latency
 
 The board read on every turn (activity + board, 40 runs, warm cache):
