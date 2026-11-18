@@ -41,7 +41,7 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 - [x] Space in overview, list and board marks or unmarks the focused task and moves to the next row; marked rows show a mark and a quiet tint (golden at 80 and 140)
 - [x] With N marked, the footer reads 'N marked ·' followed by the actions valid for all of them and 'Esc unmark'; Esc clears every mark (key test)
 - [x] t, d, x and w act on every marked task after one confirm naming the count, and a refused task is named with its fix: line while the others go ahead (key test with 3 marked, one refused)
-- [ ] m grabs the marked tasks as one block; J/K and the drop move them together and keep their order (key test)
+- [x] m grabs the marked tasks as one block; J/K and the drop move them together and keep their order (key test)
 - [ ] Inside a task Space still ticks the focused check (existing tests stay green)
 - [ ] Jørgen confirms on his board after release
 - [ ] Jørgen 19:27Z (answer 1): a marked row that also has the cursor shows one combined sign, not > or ◆ alone. Proposed ⋗ (U+22D7, greater-than with dot: the cursor carrying a mark; single width); the alternative ▸ (U+25B8). The mock shows both rows side by side and asks this one question
@@ -75,6 +75,7 @@ macaque: built on main 8a45b0eb (05r3pg landed), commits bafad978 + d9a8dcec on 
 check 1: TestSpaceMarksAndSteps (list, overview, board): Space marks, steps to the next row, stays on the last, Space again unmarks, 0 commits. TestMarkIsTheGutterOnly (truecolor): gutter ◆, no 48;2 on the marked row, cells after the gutter byte-identical marked and unmarked (crab 20:31 ruling: no tint). Golden testdata/marks/marked.txt at 80, 140, 60 (list and overview). f385c3a0
 check 2: TestMarkedFooterAndEsc: footer '2 marked · move · edit · Esc unmark' for 2 todo (drop too; done, wait, take not offered); key bar 'Space mark'; Esc clears all, says 'unmarked 2; nothing changed'. TestMarkedCountInTheHeading: NEXT UP heading '· 2 marked'. f385c3a0
 check 3: TestDoneMarkedOneRefused: 3 doing marked, d confirms 'Done 3 tasks: A, B, C', Enter: 2 done (2 commits), B refused 'marked done 2 of 3 · B refused: unchecked-acceptance…' with 'fix: hug task check B 1'. TestDropMarked: x asks the reason once, 'Drop 2 tasks: …: not needed', 2 dropped, 2 commits. TestWaitMarked: w asks once, both waiting. t: one marked task after one confirm (TestTakeMarked); 2+ marked not offered and says 'take one at a time: mark one task to take it' (crab 20:44, n2hq8p; byj479 swaps it for take-with). f385c3a0
+check 4: TestGrabMarkedBlock: m with A and C marked gathers A C at A's row (A C B D E F), j j moves the block (B D A C E F), Enter writes that order on disk, marks cleared; Esc after k puts every row back. f385c3a0
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
