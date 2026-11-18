@@ -34,7 +34,7 @@ User screenshot 2026-11-18: filter line says priority descending while fresh pic
 ## Acceptance
 - [x] Sort picker shows an explicit selectable default board order (rank) option.
 - [x] Choosing default from a multi-field sort clears every sort key and restores board rank order, with a regression test.
-- [ ] Picker text does not misleadingly present an unapplied rank draft as the current priority ordering.
+- [x] Picker text does not misleadingly present an unapplied rank draft as the current priority ordering.
 
 ## Notes
 
