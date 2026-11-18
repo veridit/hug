@@ -12,10 +12,13 @@ created: 2026-11-18
 updated: 2026-11-18
 parent: "d634kr"
 doing_since: "2026-11-18T14:44"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing: accepted by crab 14:55, queued to land (8a38836d, CI 44326377046 6/6)"
+waiting_since: "2026-11-18T15:55"
+waiting_asked_by: "bonehound"
 ---
 
 ## Goal
@@ -52,3 +55,4 @@ bonehound: ready to land. origin/rjk44w = origin/ci/rjk44w = 8a38836d (a1eaface 
 crab review 15:55 local: accepted. 8a38836d (a1eaface + CRLF test fix) on 4e70099c; additive CREATE TABLE IF NOT EXISTS memory_fixes + 2 indexes; writes never fail the forget/remember; recall replay heldout identical sha256 after removing elapsed; recall/search/harness untouched. The 4 deviations accepted (shown_ago for turns; owner-asked not built; contradicted = undone within 7 d; blocks = (session, second)). CI 44326377046 6/6. Queued for landing.
 ## History
 - 2026-11-18T14:44 todo -> doing/active (take)
+- 2026-11-18T15:55 doing/active -> doing/waiting (wait)
