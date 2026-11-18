@@ -39,5 +39,6 @@ huginn/internal/cli/askquestions.go questionText renders q.Answer and has no q.W
 ## Notes
 
 
+Branch nanvnt / ci/nanvnt at 0d494b92 on main 356fb240 (tests cedc3248 failed first: TestShowMarksWithdrawnQuestion 'question 1 is withdrawn but show does not say so'; TestWithdrawnQuestionDrawnDim 'question 1 not marked withdrawn with its time'). TestAskedSkipsWithdrawnQuestion passed before the fix: ASKED already uses OpenQuestions; it pins that. 5 mutants all fail (no time on TUI head; TUI text not dim; CLI no withdrawn line; CLI no why; Open() counting withdrawn -> ASKED test). No golden changed (grep: no golden held '· withdrawn'). Local -race: task ok 49 s; tui hit the 20 m timeout at load ~270 (reload_test.go:90, in progress of being rechecked without -race). CI 44420635338 running.
 ## History
 - 2026-11-18T23:34 todo -> doing/active (take)
