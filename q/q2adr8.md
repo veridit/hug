@@ -1,15 +1,20 @@
 ---
 id: q2adr8
 title: "Ask several questions at once, each answered on its own"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["iwazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T20:43"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -37,3 +42,7 @@ Today: hug task ask sets one asked/asked_check/asked_show on the stage (41hhgn);
 ## Notes
 
 crab 20:30 local: queued; next free TUI/CLI worker after the windows-cli shard lands. Until then coordinators and workers ask one question per hug task ask (memory saved).
+
+
+## History
+- 2026-11-18T20:43 todo -> doing/active (take)
