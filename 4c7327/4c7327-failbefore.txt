@@ -1,0 +1,8 @@
+--- FAIL: TestAttachSkInsideAWordIsNoSecret (0.50s)
+    secret_word_test.go:24: [attach yazeb7 /Users/jhf/.jcode/scratch/TestAttachSkInsideAWordIsNoSecret1792222394/002/report.md]: report.md looks like it may contain a secret (credential-shaped text near sk-900...)
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/cli	0.532s
+FAIL
+b1063988
+memory check (muninn/internal/project TestSecretHint, same 4 cases): ok on main. secretRe already requires (^|[^A-Za-z0-9]) before sk-.
+CI secrets job (muninn/scripts/check-secrets.sh --all) on a repo holding only the task-900 line: exit 0 on main (same boundary).
