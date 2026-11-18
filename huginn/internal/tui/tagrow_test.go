@@ -25,7 +25,7 @@ func tagRowBoard(t *testing.T, width int) (model, map[string]string) {
 	ids := map[string]string{}
 	for _, c := range []struct {
 		title, kind, priority, dep string
-		tags                      []string
+		tags                       []string
 	}{
 		{"Bare", "chore", "low", "", nil},
 		{"Lex the input", "bug", "high", "", []string{"parser"}},
