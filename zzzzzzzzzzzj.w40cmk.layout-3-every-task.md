@@ -9,13 +9,10 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T01:48"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-18T02:26"
-waiting_asked_by: "kestrel"
-waiting_on: "parked for 3nhp67 (crab 02:26, high); WIP on kestrel/w40cmk (resolver + Parse), resume after"
 ---
 
 ## Goal
@@ -73,3 +70,4 @@ Correction to the 01:53Z baseline note (wyvern): w40cmk-bench/before was an APFS
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
 - 2026-11-18T02:26 doing/active -> doing/waiting (wait)
+- 2026-11-18T04:23 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: parked for 3nhp67 (crab 02:26, high); WIP on kestrel/w40cmk (resolver + Parse), resume after; waiting_since: 2026-11-18T02:26
