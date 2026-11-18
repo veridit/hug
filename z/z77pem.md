@@ -31,3 +31,5 @@ Detect via ps + the executable path (Cellar version or deleted file). macOS/Linu
 - [ ] On Jørgen's machine the line names the stale servers, and after they restart it is gone
 
 ## Notes
+
+crab 18:20 local: mcp reload server=hug in crab's session replaced pid 15206 (0.7.14) with 18560 (Cellar 0.7.66): the restart fix works. Still stale: 3175 (Statbus, 0.7.2), 56816 truth_tribe (0.7.2), 65214 GenderedGames (0.7.2), 77273 Claude.app (0.7.43), 90712 (0.7.52).
