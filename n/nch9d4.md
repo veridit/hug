@@ -53,6 +53,7 @@ crab review 11:51Z: diff read (sort.go r row, now:/new: lines, 2 failing-first t
 landed 6aee8e3 on main 2026-11-18: TUI sort picker: r rank row, now/new lines (nch9d4)
 Follow-up (Jørgen 11:50Z): with no column marked the whole 'c  current column' row is dim, rendered as styles.dim of '  c  current column mark one with H/L first'. Pressing c keeps the picker open and shows 'sort: c orders by the marked column; mark one with H/L first'. With a column marked the row is unchanged ('  c  current column (NAME) ' + dim 'same as o'). TestSortPickerColumnRowDimWithoutColumn failed first at nch9d4_test.go:86 (got undimmed letter and name, only the hint dim) and passes now. TUI package: 'ok  github.com/veridit/hug/huginn/internal/tui 115.898s'. Commit 65ef4d07 on branch nch9d4-dimc from origin/main 6aee8e30, CI run 44298750806 on ci/nch9d4-dimc.
 landed 65ef4d0 on main 2026-11-18: TUI sort picker: dim the whole c row with no column marked (nch9d4); in v0.7.62 tag
+shipped in v0.7.62 (6aee8e3)
 ## History
 - 2026-11-18T12:15 todo -> doing/active (take)
 - 2026-11-18T12:17 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:15
