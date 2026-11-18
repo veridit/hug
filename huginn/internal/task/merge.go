@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Merging one task file changed on two sides (w40cmk check 9, crab 04:44;
@@ -341,6 +342,22 @@ func mergeFrontMatter(b, o, t *mergeDoc, keep func(string, []string, []string, b
 			out = append(out, o.fm[a]...)
 		}
 	}
+	// Comments outside a key are still user content. Keep new local raw
+	// lines even when both sides changed keyed fields around them.
+	rawSeen := map[string]bool{}
+	for _, order := range [][]string{b.fmOrder, t.fmOrder} {
+		for _, line := range order {
+			if strings.HasPrefix(line, "\x00") {
+				rawSeen[line] = true
+			}
+		}
+	}
+	for _, line := range o.fmOrder {
+		if strings.HasPrefix(line, "\x00") && !rawSeen[line] {
+			out = append(out, line[1:])
+			rawSeen[line] = true
+		}
+	}
 	return out
 }
 
@@ -370,7 +387,7 @@ func mergeHeadings(b, o, t []string) []string {
 	return out
 }
 
-var entryTime = regexp.MustCompile(`^(?:- )?(\d{4}-\d\d-\d\d(?:T\d\d:\d\d(?::\d\d)?)?)\b`)
+var entryTime = regexp.MustCompile(`^(?:- )?(\d{4}-\d\d-\d\d(?:T\d\d:\d\d(?::\d\d(?:\.\d+)?)?(?:Z|[+-]\d\d:\d\d)?)?)\b`)
 
 // mergeAppend is the union of both append-only sections (rule 1). Compare
 // entries, not a common text prefix: an earlier replay may have inserted
@@ -457,7 +474,11 @@ func blockTime(b []string) string {
 			continue
 		}
 		if m := entryTime.FindStringSubmatch(l); m != nil {
-			return m[1]
+			for _, layout := range []string{time.RFC3339Nano, "2006-01-02T15:04Z07:00", "2006-01-02T15:04:05", "2006-01-02T15:04", "2006-01-02"} {
+				if at, e := time.Parse(layout, m[1]); e == nil {
+					return at.UTC().Format("2006-01-02T15:04:05.000000000Z")
+				}
+			}
 		}
 		return ""
 	}

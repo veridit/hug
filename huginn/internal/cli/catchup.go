@@ -29,9 +29,6 @@ func catchUpTranslator() gitbranch.Translator {
 				}
 			}
 			at := c.At
-			if len(at) >= 16 {
-				at = at[:16]
-			}
 			short := c.Commit
 			if len(short) > 12 {
 				short = short[:12]

@@ -155,3 +155,32 @@ func TestLayout3OldNamesResolve(t *testing.T) {
 		t.Errorf("v0.7.55 resolved to %s", got.ID)
 	}
 }
+
+func TestLayout3KeepsLegacyBareSlugAsAlias(t *testing.T) {
+	s := &Store{Root: t.TempDir()}
+	old := "a.8q6v7b.seal-the-ir-and-typed-ast.md"
+	raw := []byte("---\nid: 8q6v7b\ntitle: Seal IR and typed AST\nstate: todo\naliases: [TASK-2034]\nupdated: 2026-11-17\n---\n\n## Goal\nG\n")
+	if e := os.WriteFile(filepath.Join(s.Root, old), raw, 0o644); e != nil {
+		t.Fatal(e)
+	}
+	plan, e := s.PlanLayout3()
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e := s.ApplyLayout3(plan); e != nil {
+		t.Fatal(e)
+	}
+	ts, e := s.Tasks()
+	if e != nil {
+		t.Fatal(e)
+	}
+	for _, ref := range []string{"seal-the-ir-and-typed-ast", "seal-ir-typed-ast", "TASK-2034", old} {
+		if got, e := Resolve(ts, ref); e != nil || got.ID != "8q6v7b" {
+			t.Errorf("legacy ref %q: id=%s error=%v", ref, got.ID, e)
+		}
+	}
+	got, e := os.ReadFile(filepath.Join(s.Root, filepath.FromSlash(PathFor("8q6v7b"))))
+	if e != nil || !strings.Contains(string(got), "updated: 2026-11-17\n") {
+		t.Fatalf("migration changed updated: e=%v\n%s", e, got)
+	}
+}
