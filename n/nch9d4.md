@@ -1,7 +1,7 @@
 ---
 id: nch9d4
 title: "Sort picker offers default board order explicitly"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["macaque"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-18T12:18"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T12:50"
-waiting_asked_by: "macaque"
+done_at: "2026-11-18T17:58"
 ---
 
 ## Goal
@@ -54,8 +50,10 @@ landed 6aee8e3 on main 2026-11-18: TUI sort picker: r rank row, now/new lines (n
 Follow-up (Jørgen 11:50Z): with no column marked the whole 'c  current column' row is dim, rendered as styles.dim of '  c  current column mark one with H/L first'. Pressing c keeps the picker open and shows 'sort: c orders by the marked column; mark one with H/L first'. With a column marked the row is unchanged ('  c  current column (NAME) ' + dim 'same as o'). TestSortPickerColumnRowDimWithoutColumn failed first at nch9d4_test.go:86 (got undimmed letter and name, only the hint dim) and passes now. TUI package: 'ok  github.com/veridit/hug/huginn/internal/tui 115.898s'. Commit 65ef4d07 on branch nch9d4-dimc from origin/main 6aee8e30, CI run 44298750806 on ci/nch9d4-dimc.
 landed 65ef4d0 on main 2026-11-18: TUI sort picker: dim the whole c row with no column marked (nch9d4); in v0.7.62 tag
 shipped in v0.7.62 (6aee8e3)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T12:15 todo -> doing/active (take)
 - 2026-11-18T12:17 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:15
 - 2026-11-18T12:18 todo/ready -> doing/active (take)
 - 2026-11-18T12:50 doing/active -> doing/waiting (wait)
+- 2026-11-18T17:58 doing/waiting -> done (done); was doing_since: 2026-11-18T12:18; waiting_asked_by: macaque; waiting_on: crab review; waiting_since: 2026-11-18T12:50
