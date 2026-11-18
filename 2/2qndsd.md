@@ -1,7 +1,7 @@
 ---
 id: 2qndsd
 title: "PNG screenshots open inside the file frame"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["macaque"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzz6"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T14:18"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_asked_by: "macaque"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T15:11"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -55,6 +51,8 @@ crab review 15:20 local: accepted. 499f9220 on 161381f3 (now on main). Diff: pic
 Landed on main via 56e2cc6f (stack rjk44w c2df86c4, jj7jpz 215df154, 2qndsd 56e2cc6f; CI 44332698559 exact SHA 6/6). Ships in the next release.
 landed 56e2cc6 on main 2026-11-18: tui: images open inside the file frame (2qndsd)
 shipped in v0.7.65 (56e2cc6)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T14:18 todo -> doing/active (take)
 - 2026-11-18T15:11 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T14:18; waiting_asked_by: macaque; waiting_on: crab review; waiting_since: 2026-11-18T15:11
