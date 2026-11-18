@@ -38,5 +38,6 @@ questions.go noteQuestion: case shipped != nil && stageSaysWhy(t) returns nil, s
 ## Notes
 
 
+commit ebf1c40 on branch gpyqq9 (ci/gpyqq9, run 44303286385). check 1: TestAskSettlesShippedNotDone (askgate_test.go) fails on main: 'ask on a shipped, all-ticked task: exit 2, want 0 / hug task ask: fanrse is not ready to hand to jhf: 1 broken finding: [shipped-not-done] ...'; passes with the fix (stage asked, lint has no shipped-not-done). check 2: TestAskOnShippedTaskStillRefusesOtherBrokenFindings: unknown-type still refuses, names only [unknown-type], fix 'hug task set ID --type feature', writes nothing. Local niced suite: ok huginn/internal/cli 246.793s, ok huginn/internal/task 13.743s, all huginn + cmd/hug ok. Fix: readyToHand excuses task.StageSettles codes for ask (replaces the one-open-check special case).
 ## History
 - 2026-11-18T13:17 todo -> doing/active (take)
