@@ -1,0 +1,10 @@
+    branch_test.go:286: psq58f is active again after the next pass: the forget was lost
+--- FAIL: TestForgetDuringSyncPushStaysForgotten (0.11s)
+FAIL
+FAIL	github.com/veridit/hug/muninn/internal/project	0.123s
+FAIL
+--- FAIL: TestRememberedSIDSurvivesProjectSync (1.08s)
+    writeheld_test.go:80: remember printed 2d7he6, after sync the store holds 5d9p7y
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	1.113s
+FAIL
