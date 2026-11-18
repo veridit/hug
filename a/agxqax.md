@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzs"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T15:55"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing: accepted by crab 16:13 as 5da549a7, in crab's next stack after 80c8ac28"
+waiting_since: "2026-11-18T17:29"
+waiting_asked_by: "bonehound"
 ---
 
 ## Goal
@@ -49,3 +52,4 @@ crab review 17:13 local: accepted. e886b474 on c84d3273: store-level refusal of 
 bonehound: rebased onto crab's landing stack 80c8ac28 at crab's request: origin/agxqax = 5da549a7. Conflicts in help.go (wait/ask), codes.go and CHANGELOG kept both sides. Niced go build ./... ok; cli ok 295.641s, task ok 37.598s, mcp ok 38.354s. Accepted by crab 16:13.
 ## History
 - 2026-11-18T15:55 todo -> doing/active (take)
+- 2026-11-18T17:29 doing/active -> doing/waiting (wait)
