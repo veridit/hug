@@ -1,15 +1,20 @@
 ---
 id: ad62aa
 title: "cli tests: commit WaitDelay and TestDeduceTwoClonesOneLine fail under load"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["tigress"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T20:21"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ iwazaru 34r1ft run: 2 git commit WaitDelay errors + TestDeduceTwoClonesOneLine a
 - [ ] No timeout raised and no retry added
 
 ## Notes
+
+
+## History
+- 2026-11-18T20:21 todo -> doing/active (take)
