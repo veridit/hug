@@ -1,8 +1,11 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -22,7 +25,61 @@ func TestMain(m *testing.M) {
 	if from, ok := os.LookupEnv(editFrom); ok && len(os.Args) > 1 {
 		os.Exit(fakeEdit(os.Args[len(os.Args)-1], from, os.Getenv(editTo)))
 	}
+	quietGit()
 	os.Exit(m.Run())
+}
+
+// quietGit turns off git's auto maintenance for every git this test binary
+// and its children start (0n4rnx): after each commit, fetch and merge git
+// runs `git maintenance run --auto`, which Windows git runs in the
+// foreground (daemonize is ENOSYS there). One catch-up test started 31 of
+// them (trace2, 2026-11-18). The variables reach hug's own git calls and
+// background passes, which inherit the environment; a fixture remote's
+// receive-pack does not read them, so quietRemote sets the remotes' config.
+// Test fixtures only: hug never sets this for a user.
+func quietGit() {
+	n := 0
+	if s, ok := os.LookupEnv("GIT_CONFIG_COUNT"); ok {
+		fmt.Sscan(s, &n)
+	}
+	os.Setenv(fmt.Sprintf("GIT_CONFIG_KEY_%d", n), "maintenance.auto")
+	os.Setenv(fmt.Sprintf("GIT_CONFIG_VALUE_%d", n), "false")
+	os.Setenv("GIT_CONFIG_COUNT", fmt.Sprint(n+1))
+}
+
+// quietRemote sets maintenance.auto=false in a fixture remote: receive-pack
+// starts `git maintenance run --auto` after every push and reads only the
+// remote's own config (not GIT_CONFIG_COUNT from quietGit).
+func quietRemote(t *testing.T, bare string) {
+	t.Helper()
+	git(t, bare, "config", "maintenance.auto", "false")
+}
+
+// 0n4rnx: a fixture commit and a push to a fixture remote start no
+// `git maintenance run --auto`. Without quietGit and quietRemote, git 2.54
+// started one per commit and one per receive-pack.
+func TestFixtureGitStartsNoMaintenance(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	bare := filepath.Join(t.TempDir(), "remote.git")
+	git(t, a.Cwd, "init", "--bare", "-b", "main", bare)
+	quietRemote(t, bare)
+	git(t, a.Cwd, "remote", "add", "origin", bare)
+	trace := filepath.Join(t.TempDir(), "trace2")
+	for _, args := range [][]string{{"commit", "--allow-empty", "-m", "x"}, {"push", "-q", "origin", "main"}} {
+		c := exec.Command("git", append([]string{"-C", a.Cwd}, args...)...)
+		c.Env = append(os.Environ(), "GIT_TRACE2_EVENT="+trace)
+		if out, e := c.CombinedOutput(); e != nil {
+			t.Fatalf("git %v: %v\n%s", args, e, out)
+		}
+	}
+	b, e := os.ReadFile(trace)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if n := bytes.Count(b, []byte(`"maintenance","run"`)); n != 0 {
+		t.Errorf("fixture commit and push started git maintenance %d times, want 0", n)
+	}
 }
 
 // fakeEdit replaces the first from with to in path, as the editor would.
