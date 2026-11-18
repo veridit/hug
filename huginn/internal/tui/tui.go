@@ -200,9 +200,9 @@ type model struct {
 	helpTyping                         bool   // typing a help search after "/"
 	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
-	// result is the message an action left and resultAt the place it was
-	// shown (z82qsy): moving to another task, file or view clears it.
-	result, resultAt                   string
+	// messageAt is the screen the message was set on (messagePlace):
+	// moving to another task, file or view clears it (z82qsy, tz9z14).
+	messageAt                          string
 	confirm, confirmPath, pendingValue string
 	yanked                             string // y: the task id P and p paste (3xcesq)
 	hidden                             string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
@@ -391,7 +391,6 @@ func (m *model) applyKeeping(sn snapshot) {
 // close, once it has closed.
 func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	m.remember()
-	m.clearStaleResult()
 	if m.stale && !m.busy() && !m.loading {
 		cmd = tea.Batch(cmd, m.reload())
 	}
@@ -408,7 +407,24 @@ func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// Update is one step, after which a message left from another screen
+// goes (clearStaleMessage, tz9z14).
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// A message set outside a step (Run's "reloaded hug") belongs to the
+	// screen it first shows on.
+	if m.message != "" && m.messageAt == "" {
+		m.messageAt = m.messagePlace()
+	}
+	before := m.message
+	next, cmd := m.step(msg)
+	if n, ok := next.(model); ok {
+		n.clearStaleMessage(before)
+		return n, cmd
+	}
+	return next, cmd
+}
+
+func (m model) step(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case glanceFormattedMsg:
 		m.glanceFormatted(msg)

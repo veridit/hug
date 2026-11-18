@@ -323,12 +323,19 @@ func (m model) pictureLines(t task.Task, name string) []string {
 		}
 	}()
 	// A capture is drawn at full width, as it was taken (a frame as wide
-	// as the screen loses nothing); other text is indented under the ▸.
+	// as the screen loses nothing), between dim rules under a dim label, so
+	// it cannot read as the live screen (tz9z14: zhvkmj's overview capture
+	// looked like the overview leaking into the detail); runs of blank
+	// rows fold to one here, and Space in FILES shows it as taken. Other
+	// text is indented under the ▸.
 	body, indent := glanceText(b, info.Size(), m.width-2), "  "
-	if ansName(name) {
-		body, indent = colourOnly(b, m.width, os.Getenv("NO_COLOR") == ""), ""
+	capture := ansName(name)
+	if capture {
+		body, indent = foldBlankRows(colourOnly(b, m.width, os.Getenv("NO_COLOR") == "")), ""
+		rule := m.styles.dim.Render(strings.Repeat("─", m.width))
+		out = []string{m.styles.dim.Render(fit(head+" · "+humanBytes(info.Size())+" · capture, as it was taken", m.width)), rule}
 	}
-	lines := strings.Split(body, "\n")
+	lines := strings.Split(strings.TrimRight(body, "\n"), "\n")
 	for i, l := range lines {
 		if i == pictureLimit {
 			out = append(out, m.styles.dim.Render(fit(fmt.Sprintf("  … %d more lines: Space in FILES shows all", len(lines)-pictureLimit), m.width)))
@@ -336,7 +343,26 @@ func (m model) pictureLines(t task.Task, name string) []string {
 		}
 		out = append(out, indent+l)
 	}
+	if capture {
+		out = append(out, m.styles.dim.Render(strings.Repeat("─", m.width)))
+	}
 	return out
+}
+
+// foldBlankRows folds each run of blank rows in a capture to one: the
+// inline preview of a capture keeps its content, not its empty screen.
+func foldBlankRows(s string) string {
+	var out []string
+	blank := false
+	for _, l := range strings.Split(s, "\n") {
+		empty := strings.TrimSpace(ansi.Strip(l)) == ""
+		if empty && blank {
+			continue
+		}
+		blank = empty
+		out = append(out, l)
+	}
+	return strings.Join(out, "\n")
 }
 
 // The screen capture (S, Jørgen 14:51): the frame as you see it goes to the
