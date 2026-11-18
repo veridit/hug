@@ -1,21 +1,17 @@
 ---
 id: t64v7d
 title: "TUI: ? typed in an answer or any text prompt is text, not help"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T02:03"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "CI 44215682407 windows; lands with qtj177 (crab 01:31)"
-waiting_since: "2026-11-18T02:35"
-waiting_asked_by: "nautilus"
+done_at: "2026-11-18T02:50"
 ---
 
 ## Goal
@@ -41,6 +37,8 @@ Code: huginn/internal/tui/tui.go:1162-1170 (the ? branch runs before the prompt 
 
 
 landed 0c3d3924..48b1151f (abbec690 fix, 959ff8d1 tmux goldens from ubuntu CI 44212782275). CI 44217631803 on the pre-rebase tip 37d71929: all 6 jobs success (secrets, bench, test ubuntu/macos/windows, test-windows-cli). Local: -race ./huginn/internal/tui ok 148.9s; after rebase on 0c3d3924 tui ok 55.8s, task ok 12.8s. Check 1: TestQuestionMarkIsTextInEveryInput (t64v7d_test.go), 9 inputs (answer, wait, strike, drop, new title, filter text, find, palette, jump); on main all 9 failed, e.g. 'answer: ? opened help' / 'answer: the field holds "done by morning", want "done by morning?"'. Check 2: TestF1IsHelpInATextInput: F1 opens help over the field, Esc and F1 return with the text; footer 'F1 help', help row 'F1 this help; ? is typed text here'. Check 3: TestQuestionMarkIsHelpOutsideText (list, task, sort builder, filter fields, confirm) plus TestHelpKeysAreBound and the rest of the suite pass; TestInputsNeverSwallowHelpOrQuit and TestEscAtEveryLevel now pin F1.
+Reflection (open, 2026-11-18, nautilus): The old rule ('help always wins over text input') was a deliberate comment that a test pinned; ruling reversals need the pinning tests rewritten, not just the code.
 ## History
 - 2026-11-18T02:03 todo -> doing/active (take)
 - 2026-11-18T02:35 doing/active -> doing/waiting (wait)
+- 2026-11-18T02:50 doing/waiting -> done (done); was doing_since: 2026-11-18T02:03; waiting_asked_by: nautilus; waiting_on: CI 44215682407 windows; lands with qtj177 (crab 01:31); waiting_since: 2026-11-18T02:35
