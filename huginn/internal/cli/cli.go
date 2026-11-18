@@ -1166,17 +1166,36 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		// What the main line and tags say, on the pulled board (g9dg32).
 		release := s.turn()
 		ds, e := s.deduce(ctx, s.r.Root, "")
+		// Tasks of workers whose sessions ended go to the coordinator
+		// (yf39ya check 4); stale-owner's fix names this command.
+		var hs []task.Handover
+		if e == nil {
+			hs, e = s.handover(a)
+		}
 		release()
 		if e != nil {
 			return nil, e
 		}
-		if len(ds) == 0 {
+		if len(ds) == 0 && len(hs) == 0 {
 			return empty()
 		}
 		if e = s.syncNow(); e != nil {
 			return nil, e
 		}
-		return deduceReply(ds), nil
+		reply := deduceReply(ds)
+		if len(hs) > 0 {
+			lines := make([]string, len(hs))
+			for i, h := range hs {
+				lines[i] = h.ID + ": " + h.Line()
+			}
+			reply["handovers"] = lines
+			msg, _ := reply["message"].(string)
+			if len(ds) == 0 {
+				msg = ""
+			}
+			reply["message"] = strings.TrimPrefix(msg+"\n"+strings.Join(lines, "\n"), "\n")
+		}
+		return reply, nil
 	case "new":
 		if e = f.count(1); e != nil {
 			return nil, e

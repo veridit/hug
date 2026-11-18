@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -15,7 +16,8 @@ import (
 // once they are on the main line, and release tags that first contain them,
 // are written onto the ticket and reported to its owner. Only certain
 // facts: the id in the subject, the commit reachable from main or the tag.
-// Never a tick, never done.
+// Never a tick; done only when a release contains a task whose every check
+// and child holds (yf39ya), through the ordinary done.
 //
 // Each clone remembers what it has read in two refs of the code repository
 // (refs/hug/seen/main, and refs/hug/seen/tags/<tag> per tag read), so a pass
@@ -233,4 +235,41 @@ func contains(xs []string, x string) bool {
 		}
 	}
 	return false
+}
+
+// handover gives every doing task whose workers have all gone to the
+// board's coordinator (yf39ya check 4), in one commit. Only hug task sync
+// and the background pass run it (crab 20:09: lint never writes, it runs in
+// pre-commit hooks and CI). The board turn must be held.
+func (s *session) handover(a *App) ([]task.Handover, error) {
+	coordinator, e := task.Coordinator(s.r.Dir)
+	if e != nil || coordinator == "" {
+		return nil, e
+	}
+	ts, e := s.s.Tasks()
+	if e != nil {
+		return nil, e
+	}
+	people, _ := task.People(s.r.Dir)
+	plan := task.PlanHandover(s.liveness(a), ts, coordinator, time.Now(), people...)
+	var done []task.Handover
+	for _, h := range plan {
+		r, e := s.s.HandOver(h)
+		if e != nil {
+			return done, e
+		}
+		if r.Changed {
+			done = append(done, h)
+		}
+	}
+	if len(done) > 0 {
+		ids := make([]string, len(done))
+		for i, h := range done {
+			ids[i] = h.ID
+		}
+		if e := s.commit("hug task handover: " + strings.Join(ids, ", ") + " to " + coordinator); e != nil {
+			return done, e
+		}
+	}
+	return done, nil
 }

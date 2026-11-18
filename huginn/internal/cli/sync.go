@@ -213,14 +213,21 @@ func (a *App) deducePass(ctx context.Context, cwd string) bool {
 	s.nudged = true // this pass pushes what it writes
 	release := s.turn()
 	ds, e := s.deduce(ctx, s.r.Root, "")
+	hs, he := s.handover(a)
 	release()
 	for _, d := range ds {
 		fmt.Fprintf(a.Err, "%s pid %d: deduce %s: %s\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), d.ID, d.Report())
 	}
+	for _, h := range hs {
+		fmt.Fprintf(a.Err, "%s pid %d: handover %s: %s\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), h.ID, h.Line())
+	}
+	if he != nil {
+		fmt.Fprintf(a.Err, "%s pid %d: handover error=%q\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), he.Error())
+	}
 	if e != nil {
 		fmt.Fprintf(a.Err, "%s pid %d: deduce error=%q\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), e.Error())
 	}
-	return len(ds) > 0
+	return len(ds) > 0 || len(hs) > 0
 }
 
 // syncStatus reports a sync problem from the last pass: commits not pushed,
