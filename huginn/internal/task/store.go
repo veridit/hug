@@ -383,7 +383,13 @@ func (s *Store) Set(ref, field, value string) (Result, error) {
 	}
 	return s.finish(d, before != string(d.Bytes()))
 }
-func (s *Store) Check(ref string, n int) (Result, error) {
+func (s *Store) Check(ref string, n int) (Result, error) { return s.CheckWith(ref, n, "") }
+
+// CheckWith ticks item n and, with evidence, notes "check N: EVIDENCE" in
+// the same write (pw0t19: the instructions say "hug task check ID N with
+// evidence"; the tick and its evidence were two commands and two commits).
+// Evidence on an item already ticked is still noted.
+func (s *Store) CheckWith(ref string, n int, evidence string) (Result, error) {
 	d, _, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -391,6 +397,9 @@ func (s *Store) Check(ref string, n int) (Result, error) {
 	before := string(d.Bytes())
 	if e = d.Check(n); e != nil {
 		return Result{}, e
+	}
+	if evidence = strings.TrimSpace(evidence); evidence != "" {
+		d.Note(fmt.Sprintf("check %d: %s", n, evidence))
 	}
 	return s.finish(d, before != string(d.Bytes()))
 }

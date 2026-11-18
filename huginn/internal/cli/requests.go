@@ -15,7 +15,7 @@ import (
 // ones included with --all.
 func (a *App) runRequests(s *session, f flags) (Reply, error) {
 	if len(f.args) > 1 {
-		return nil, usage("requests takes at most one task", "hug task requests ID")
+		return nil, f.wrongCount("requests takes at most one task")
 	}
 	ts, e := s.s.Tasks()
 	if e != nil {
@@ -103,7 +103,7 @@ func requestBody(r task.Request) string {
 func (a *App) runCoordinator(s *session, f flags) (Reply, error) {
 	root := s.r.Dir
 	if len(f.args) > 1 {
-		return nil, usage("coordinator takes one name", "hug task coordinator NAME")
+		return nil, f.wrongCount("coordinator takes one name")
 	}
 	if len(f.args) == 0 && !f.has("clear") {
 		name, e := task.Coordinator(root)

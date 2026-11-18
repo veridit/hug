@@ -36,8 +36,8 @@ How huginn works, in short:
   (CLI shown; MCP has list, show, new, next, take, done and update):
     hug task next            pick the top task, then hug task take ID --model MODEL
     hug task show ID         read goal, checks, notes, dependencies
-    hug task check ID N      tick check N when you have evidence
-    hug task note ID "..."   record evidence, commands, findings
+    hug task check ID N "evidence"   tick check N with what shows it holds
+    hug task note ID "..."   record commands, findings, decisions
     hug task done ID         only when every check is ticked
 - New work: hug task new "title" --goal "outcome" --accept "observable check"
 - Use --json for structured replies; every reply has a "next" hint.
@@ -346,7 +346,8 @@ Track all work with hug tasks (on the git branch "hug/tasks", at .hug/tasks/).
 Start: hug task next, then hug task take ID --model MODEL (the model you are, e.g.
 claude-opus-5-5 or gpt-6.1-sol; a person: --model human; --as NAME adds your agent
 or session name, optional), then hug task show ID.
-While working: hug task check ID N with evidence, hug task note ID "evidence".
+While working: hug task check ID N "evidence" ticks check N and notes what shows it
+holds; hug task note ID "text" for anything else.
 Finish: hug task done ID when every acceptance check is ticked. Done asks whether
 the instructions guided you well; answer honestly with --reflect "...": quote the
 instruction that misled you or left a gap and say what happened, or "nothing".

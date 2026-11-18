@@ -16,7 +16,7 @@ import (
 func (a *App) runReflections(s *session, f flags) (Reply, error) {
 	if len(f.args) > 0 && f.args[0] == "resolve" {
 		if len(f.args) != 4 {
-			return nil, usage("resolve needs ID N applied|dismissed", "hug task reflections resolve ID 1 applied")
+			return nil, f.wrongCount("resolve needs ID N applied|dismissed")
 		}
 		n, err := strconv.Atoi(f.args[2])
 		if err != nil || n < 1 {

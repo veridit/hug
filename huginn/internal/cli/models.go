@@ -30,7 +30,7 @@ func (a *App) runModels(ctx context.Context, s *session, f flags) (Reply, error)
 		return Reply{"models": ms, "next": next}, nil
 	}
 	if f.args[0] != "add" || len(f.args) < 3 {
-		return nil, usage("models takes no arguments, or add ID LEVEL...", "hug task models add claude-opus-5-5 low medium high max")
+		return nil, f.wrongCount("models takes no arguments, or add ID LEVEL...")
 	}
 	id := strings.TrimSpace(f.args[1])
 	if id == "" || strings.ContainsAny(id, "/ \t\"[]=") || id == "human" {

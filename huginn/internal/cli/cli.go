@@ -433,6 +433,9 @@ func (a *App) identity(f flags) (string, error) {
 type flags struct {
 	values map[string][]string
 	args   []string
+	// cmd is the command the flags are for: a wrong count names its usage
+	// line and its help (pw0t19).
+	cmd string
 }
 
 func parse(args []string, allowed string, optionalValue ...string) (flags, error) {
@@ -509,9 +512,20 @@ func bareRefs(cmd string, f *flags) {
 }
 func (f flags) count(n int) error {
 	if len(f.args) != n {
-		return usage(fmt.Sprintf("expected %d positional arguments, got %d", n, len(f.args)), "hug task help")
+		return f.wrongCount(fmt.Sprintf("expected %d positional arguments, got %d", n, len(f.args)))
 	}
 	return nil
+}
+
+// wrongCount refuses a wrong number of positional arguments with the
+// command's own usage line and its help as the fix (pw0t19: four sessions
+// got 'fix: hug task help', which names no command).
+func (f flags) wrongCount(problem string) error {
+	if f.cmd == "" {
+		return usage(problem, "hug task help")
+	}
+	line, _, _ := strings.Cut(commandHelp(f.cmd), "\n")
+	return usage(problem+"; usage: "+line, "hug task "+f.cmd+" --help")
 }
 
 func taskJSON(t task.Task, root string, ts []task.Task) Reply {
@@ -658,12 +672,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply machine"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply machine"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
 	}
 	f, e := parse(args, allowed[cmd], optional...)
+	f.cmd = cmd
 	if e != nil {
 		// A flag mistake is fixed by that command's help, not the index.
 		var u *UsageError
@@ -688,7 +703,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		target := cmd
 		if cmd == "help" {
 			if len(f.args) > 1 {
-				return nil, usage("help expects at most one command", "hug task help")
+				return nil, f.wrongCount("help expects at most one command")
 			}
 			if len(f.args) == 0 {
 				return Reply{"help": Help, "next": "hug task next"}, nil
@@ -1053,7 +1068,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		r, e = s.s.Next(filter)
 	case "lint":
 		if len(f.args) > 1 {
-			return nil, usage("lint takes at most one task", "hug task lint ID")
+			return nil, f.wrongCount("lint takes at most one task")
 		}
 		mode, code, e := lintFlags(f)
 		if e != nil {
@@ -1316,14 +1331,27 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	case "reflections":
 		return a.runReflections(s, f)
 	case "check":
-		if e = f.count(2); e != nil {
-			return nil, e
+		// check ID N "evidence" (pw0t19): the instructions' "check ID N with
+		// evidence", one write: the tick and a note "check N: evidence".
+		if len(f.args) != 3 {
+			if e = f.count(2); e != nil {
+				return nil, f.wrongCount(fmt.Sprintf("expected 2 or 3 positional arguments (ID N [\"evidence\"]), got %d", len(f.args)))
+			}
 		}
 		n, err := strconv.Atoi(f.args[1])
 		if err != nil || n < 1 {
 			return nil, usage("acceptance index must be a positive integer", "hug task show "+f.args[0])
 		}
-		r, e = s.s.Check(f.args[0], n)
+		evidence := ""
+		if len(f.args) == 3 {
+			if evidence, e = a.textArg(f.args[2]); e != nil {
+				return nil, e
+			}
+			if strings.TrimSpace(evidence) == "" {
+				return nil, usage("the evidence is empty", "hug task check "+f.args[0]+" "+f.args[1]+` "what shows it holds"`)
+			}
+		}
+		r, e = s.s.CheckWith(f.args[0], n, evidence)
 	case "strike":
 		if e = f.count(2); e != nil {
 			return nil, e

@@ -27,7 +27,7 @@ func Guide(action string, t Task, ts []Task) []string {
 		// "blocked" items). Two lines at most.
 		return []string{
 			fmt.Sprintf("todos: your own next steps on %s, each named with the id (\"%s: ...\"); a wait, a dependency or another agent's work is not a todo: hug task note %s \"...\", hug task dep %s --add OTHER", t.ID, t.ID, t.ID, t.ID),
-			fmt.Sprintf("as each check holds: hug task check %s N, evidence in hug task note %s \"...\"; todos done: hug task done %s, then hug task next", t.ID, t.ID, t.ID),
+			fmt.Sprintf("as each check holds: hug task check %s N \"evidence\"; todos done: hug task done %s, then hug task next", t.ID, t.ID),
 		}
 	case "check":
 		// next: already names the following check or done; add only the

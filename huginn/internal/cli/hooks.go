@@ -24,7 +24,7 @@ func (a *App) runImport(ctx context.Context, s *session, f flags) (Reply, error)
 	}
 	if len(f.args) >= 1 && f.args[0] == "files" {
 		if e := f.count(2); e != nil {
-			return nil, usage("import files needs the folder of per-task folders", "hug task import files DIR [--cite PREFIX] [--dry-run]")
+			return nil, f.wrongCount("import files needs the folder of per-task folders")
 		}
 		dry := f.has("dry-run")
 		r, e := importer.ImportFiles(f.args[1], f.get("cite"), s.s, dry)
@@ -184,7 +184,7 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 // merges GitHub changes; edits made in huginn win, as with backlog imports.
 func (a *App) runImportGitHub(ctx context.Context, s *session, f flags) (Reply, error) {
 	if len(f.args) > 2 {
-		return nil, usage("too many arguments", "hug task import github [OWNER/REPO] [--dry-run]")
+		return nil, f.wrongCount("import github takes at most OWNER/REPO")
 	}
 	repo := ""
 	if len(f.args) == 2 {
