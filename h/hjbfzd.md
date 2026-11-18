@@ -34,7 +34,7 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 ## Acceptance
 - [x] After S, the prompt reads e.g. 'Attach this screen to: ID_ · s select · c create · Esc' and typing a task ID (prefix completes) then Enter attaches it there (key test)
 - [x] s opens the task list in pick mode; Enter on a row attaches the capture to that task and returns (key test)
-- [ ] c asks for a title, creates the task with the capture attached, and opens it (key test; the new task has the file in Files)
+- [x] c asks for a title, creates the task with the capture attached, and opens it (key test; the new task has the file in Files)
 - [ ] Golden of the prompt at 80 and 140 columns
 - [ ] Jørgen confirms on his board after release
 
@@ -45,5 +45,6 @@ Design (duckling, before code). S copies as today, then opens the where-prompt i
 f68a9a5d on main 8a45b0eb (v0.7.70), branch hjbfzd + ci/hjbfzd. Fail-first: all 6 new tests failed on the old code (prompt lacks 'Attach this screen to: 000002'; S with no task: prompt "" message 'no task in view to attach it to'; s/c opened nothing; golden: old bar had '48;2;255;179;84' background). After: TUI suite ok 108.563s (pre-rebase); post-rebase one failure, TestTmuxReload ('the reload line stayed after leaving the task', reload_tmux_test.go:216, no S involved) at load ~120, then ok 19.503s and 16.038s alone. Rebase conflicts with v0.7.70 (runKey confirm, palette footer, pendingArgs) resolved, keeping both. Help row now 'copy the screen, attach: id, s select, c create' (one line at 80/140; goldens are 1:1 swaps).
 check 1: f68a9a5d: TestCaptureAttachesToATypedTask (typed 000012 attaches there, commit 'hug task attach 000012'; Tab completes 000010; ambiguous/unknown keep the prompt, no file) and TestCaptureWithNoTaskInViewAsks; prompt reads 'Attach this screen to: 000002 → Bug task 02: ... · select · create' (golden); fail-first on 8a45b0eb: 'the prompt lacks "Attach this screen to: 000002"'
 check 2: TestCaptureSelectPicksARow: s opens the rows (picking, not detail), 9 writers only say so, j j Enter attaches to that row with one commit and returns to 000002; Esc attaches nothing; # 000020 Enter Enter attaches there. Fail-first: 's did not open the rows to pick'
+check 3: TestCaptureCreatesATask: c asks 'title:', Esc goes back to where with the capture kept, empty title creates nothing, 'Broken bar' Enter creates it with screen-1452.ans in Files (on disk and in the detail), one commit 'hug task new ID', opens it. Fail-first: 'c opened ""'
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
