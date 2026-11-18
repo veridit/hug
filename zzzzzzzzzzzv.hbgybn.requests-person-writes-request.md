@@ -63,5 +63,6 @@ kestrel 01:15, built on kestrel/hbgybn (4d2c8a5, rebased on eeb8f93). Evidence p
 5. TestRequestOverMCP: task_update request and resolve (item = N), task_requests, task_show requests[].resolved.
 Mutants, 13 in total, each failing a test. 5 in task/cli, e.g. Next ignoring requests -> 'requests_test.go:79: next for wyvern: ...hug task take'; numbers reused -> 'requests_test.go:29'. 4 in recall, e.g. a held task going to the coordinator -> 'boardcue_test.go:479: coordinator heard a held task's request'. 4 for 41hhgn check 11.
 Open: 4 (TUI R box, nautilus), 6 (Jørgen after release).
+landed 8737541 on main
 ## History
 - 2026-11-18T00:57 todo -> doing/active (take)
