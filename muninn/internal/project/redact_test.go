@@ -22,6 +22,11 @@ func TestSecretHint(t *testing.T) {
 		{"token " + "sk-" + strings.Repeat("z", 30) + " leaked", true},
 		{"see [[t" + "ask-636-deferred-recursion-anonymous-self]] for detail", false},
 		{"handoff design/examples/t" + "ask-855-port-parity-01", false},
+		// 4c7327: 'sk-' inside a word is not a key; after punctuation it is.
+		{"see t" + "ask-900-task979-ownership-reconciliation-2026-08-17.md", false},
+		{"the desk-12345678901234567890ab rota", false},
+		{"OPENAI=sk-" + strings.Repeat("Ab3", 13) + "x", true},
+		{"(sk-" + strings.Repeat("Q", 24) + ")", true},
 	} {
 		if got := SecretHint(tc.in) != ""; got != tc.hint {
 			t.Errorf("SecretHint(%q) fired=%v, want %v", tc.in, got, tc.hint)

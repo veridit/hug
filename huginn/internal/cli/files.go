@@ -65,14 +65,19 @@ func readAttach(path, name string) ([]attachIn, error) {
 }
 
 // secretHint mirrors muninn's write-time check: credential-shaped tokens.
-var secretPattern = regexp.MustCompile(`(?:sk-(?:proj-|ant-|or-)?[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AKIA[0-9A-Z]{16}|xox[abprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|-----BEGIN [A-Z ]*PRIVATE KEY-----)`)
+// A key starts at a word boundary, as in muninn and check-secrets.sh:
+// 'task-900-...' is a file name, not 'sk-900...' (4c7327).
+var secretPattern = regexp.MustCompile(`(?:(?:^|[^A-Za-z0-9])(sk-(?:proj-|ant-|or-)?[A-Za-z0-9_-]{20,})|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AKIA[0-9A-Z]{16}|xox[abprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|-----BEGIN [A-Z ]*PRIVATE KEY-----)`)
 
 func secretHint(b []byte) string {
 	if secretPattern.Find(b) == nil && namedSecret(string(b)) {
 		return "credential-shaped text (a secret-named key with a key-like value)"
 	}
-	if m := secretPattern.Find(b); m != nil {
-		s := string(m)
+	if m := secretPattern.FindSubmatch(b); m != nil {
+		s := string(m[0])
+		if len(m[1]) > 0 {
+			s = string(m[1]) // the key, without the boundary character
+		}
 		if len(s) > 12 {
 			s = s[:6] + "..."
 		}
