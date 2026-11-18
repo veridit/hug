@@ -46,6 +46,7 @@ macaque: branch kg07bt (ci/kg07bt) 5e3890a2 + 3b985709 on main 56e2cc6f (has qpp
 Check 2: cursorMark draws the focused asked check (checkStyle colour) and the focused question block (forYou amber) with no fill and no bold; the > is theme.cursor (qpp30y), static, the one underlined cell. Before '<1;48;2;22;54;73>> ? ☐ 2. b<0>', after '<1;4;38;2;0;191;255;4>><0> ? ☐ 2. b'. TestFocusedAskedRowIsCalm failed first: 'kg07bt_test.go:113: aaaaaa: the focused checks row is [bold background 1;48;2;22;54;73]'; now PASS (row starts with theme.cursor '>', then no bold, no 48;, no 4). Focus and keys unchanged (a answers; asked-check/asked-block goldens unchanged). Full ./... 35/35 ok. Report /Users/jhf/.jcode/scratch/kg07bt/REPORT.md
 CI 44338340390 on 3b985709 (kg07bt on main 56e2cc6f): completed success, 6/6 jobs, first attempt.
 crab review 16:56 local: accepted. 5e3890a2 + 3b985709 (on tz9z14 replay 0a95a06c): heading loses its background fill (bold accent, dim key hint); asked check and question block keep their unfocused colours, no fill, the > drawn in qpp30y's theme.cursor (one cursor style; the answer box's cursor blinks). SGR test failing-first, calm-focus.txt at 80/140, asked goldens unchanged. CI 44338340390 6/6. Lands stacked on the current landing stack.
+Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
 ## History
 - 2026-11-18T16:25 todo -> doing/active (take)
 - 2026-11-18T16:56 doing/active -> doing/waiting (wait)
