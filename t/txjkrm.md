@@ -1,7 +1,7 @@
 ---
 id: txjkrm
 title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned up"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["kikazaru"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzz38"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T15:45"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "txjkrm"
 worktree: "/Users/jhf/.jcode/scratch/txjkrm"
-waiting_on: "crab landing ci/txjkrm6-rebased 3f5e89d9 and a release; then ask Jørgen the check-6 question with --show (crab 21:09)"
-waiting_since: "2026-11-18T22:21"
-waiting_asked_by: "kikazaru"
+done_at: "2026-11-18T23:24"
+done_release: "v0.7.71"
 ---
 
 ## Goal
@@ -76,6 +73,10 @@ file:after-140x40.ans (9165 bytes, sha256:ec918981) check 6: the after capture a
 kikazaru checks 3+6: 4d2da9f1 + 54f31124 (gofmt) on kikazaru/txjkrm6 / ci/txjkrm6, on origin/main 8bf24c02. Rows read pie, id, TAGS, type, priority, stage, text (Jørgen 19:35Z). Tags dim; listed tags first in hug.toml order, then unlisted in the task's order; one cell wide per board = widest tag text, at most 22, at least 4 (TAGS). Squeeze: tags cut first down to 8, drop last (after stage); a board column shows tags only while its title keeps 20 (so the board goldens are unchanged). TAGS is a column-cursor stop between ID and TYPE; o orders by the shown tag text, untagged last. Board without tags: no cell, rows as before (TestNoTagsNoCell). macaque OK'd (gutter-only, no overlap). Failing first ($JCODE_SCRATCH_DIR/txjkrm6-ff.txt): tagrow_test.go:67 header not ID TAGS TYPE…; :104 at 80 the tags do not follow the id; :133 the third column is title, want tags. Mutants: tagMax 99 -> tagrow_test.go:90 + golden tags-140; no listed-order sort -> :77, :120, :158. Goldens: new testdata/rows/tags-80.txt, tags-140.txt; updated text-only 26 files (cursor.txt, view-pending.txt, tmux 80x24/140x40 color+no-color chips/grab/list/overview/sort): each row gains the TAGS cell after the id; columns_test L counts +1 (TAGS stop). Local: go vet ok; full tui suite non-short 'ok github.com/veridit/hug/huginn/internal/tui 123.585s'. Seid captures attached (seid-overview-tags-row.txt, after-140x40.ans). CI 44396528366 pending.
 kikazaru: CI 44396528366 on 54f31124 completed success 8/8 (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards). Checks 3 and 6 ticked; Seid before/after captures attached for Jørgen's look.
 mizaru 21:13Z: cleared the old wait (resume). It read 'check 1: Jørgen sees the Seid overview preview; check 3: rows show tags' and would become a wait-on-person finding under ebben8. Both are settled now: check 1 ticked 20:36 local (Jørgen's 19:35Z answer), checks 3 and 6 ticked 22:08 local after kikazaru's goldens (CI 44396528366). So there is nothing left to ask Jørgen. Every check holds: done is crab's.
+landed 3ce9119 on main 2026-11-18: TUI: tags right after the id on every row (txjkrm checks 3, 6)
+landed 3f5e89d on main 2026-11-18: gofmt tagrow_test.go (txjkrm)
+landed 4d7eec2 on main 2026-11-18: tui: tmux palette goldens with tags column (txjkrm x 05r3pg)
+shipped in v0.7.71 (3ce9119)
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
@@ -89,3 +90,4 @@ mizaru 21:13Z: cleared the old wait (resume). It read 'check 1: Jørgen sees the
 - 2026-11-18T20:44 mizaru read the answer: hug task wait txjkrm "check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19…"
 - 2026-11-18T22:13 doing/waiting -> doing/active (resume); was waiting_asked_by: mizaru; waiting_on: check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19:44Z); waiting_since: 2026-11-18T20:44
 - 2026-11-18T22:21 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> done (done, by release v0.7.71: every check holds); was doing_since: 2026-11-18T15:45; waiting_asked_by: kikazaru; waiting_on: crab landing ci/txjkrm6-rebased 3f5e89d9 and a release; then ask Jørgen the check-6 question with --show (crab 21:09); waiting_since: 2026-11-18T22:21

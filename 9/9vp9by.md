@@ -1,7 +1,7 @@
 ---
 id: 9vp9by
 title: "Memory layout migration commit runs no repo hooks"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["tigress"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzr"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T22:11"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "0b724ec3 (ci/9vp9by-rebased) to land on main; all 3 checks ticked; close when landed"
-waiting_since: "2026-11-18T22:38"
-waiting_asked_by: "tigress"
+done_at: "2026-11-18T23:24"
+done_release: "v0.7.71"
 ---
 
 ## Goal
@@ -47,6 +44,10 @@ check 2: Fail first: 'migration_hooks_test.go:67: the migration ran the code rep
 check 3: The fix is one flag, -c core.hooksPath=/dev/null, in migrationGit (branch.go:166). No timeout, no retry. TestMigrationCommitRunsNoRepoHooks -count=50 niced: 'ok github.com/veridit/hug/muninn/internal/project 61.782s'. Package: 'ok 11.210s'.
 Branch 9vp9by / ci/9vp9by on main 8a45b0eb: 21b1ea39 (failing test), b6848d6e (fix + CHANGELOG). CI 44399475509 queued.
 CI 44399475509 on b6848d6e: completed success, 9/9 jobs (ubuntu, windows, macos, both windows-cli shards, bench, secrets). All 3 checks ticked; not closing it myself (crab lands it).
+landed 5281611 on main 2026-11-18: project: failing test, the memory migration commit runs no repo hooks (9vp9by)
+landed 0b724ec on main 2026-11-18: project: the memory migration commit runs no repo hooks (9vp9by)
+shipped in v0.7.71 (5281611)
 ## History
 - 2026-11-18T22:11 todo -> doing/active (take)
 - 2026-11-18T22:38 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> done (done, by release v0.7.71: every check holds); was doing_since: 2026-11-18T22:11; waiting_asked_by: tigress; waiting_on: 0b724ec3 (ci/9vp9by-rebased) to land on main; all 3 checks ticked; close when landed; waiting_since: 2026-11-18T22:38

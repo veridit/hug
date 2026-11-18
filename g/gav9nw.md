@@ -1,7 +1,7 @@
 ---
 id: gav9nw
 title: "Design: personal vs shared memories"
-state: "doing"
+state: "done"
 type: spike
 priority: "low"
 assignee: ["piglet"]
@@ -12,14 +12,11 @@ parent: "9taa9d"
 group: "design"
 rank: "zy"
 aliases: ["design-personal-vs-shared-memories"]
-doing_since: "2026-11-18T18:53"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_asked_by: "piglet"
-waiting_on: "crab review and landing of 8a1b0c05 (CI 44386929067)"
-waiting_since: "2026-11-18T21:03"
+done_at: "2026-11-18T23:24"
+done_release: "v0.7.71"
 ---
 
 ## Goal
@@ -56,6 +53,9 @@ crab 20:40 local: Jørgen 19:40Z chose A+ and B together ('unless someone clever
 check 1: 8a1b0c05 on main 939636ff (branch gav9nw-design, ci/gav9nw CI 44386929067): docs/DESIGN.md gains '## Personal vs shared memories (gav9nw, decided 2026-11-18)': Decision (A+ and B together, Jørgen 19:40Z, confirm A+ on fresh captures before any repo opts in), Reason (push cannot be undone; 58/868 on 1abcc497 don't belong; extractor already places, no personal/other place), How (A+ places; B gate beside LooksSecret, term list in local config; 0/699 leak, 13.7% withheld, marked as hypothesis since the labeler stands in for the extractor; confirmation = rnpdnm check 3), Not taken (C 7/38 18.4% [9.2, 33.4] leak and 96.2% withheld; A+ alone 1/778; B alone 18/738 2.4% [1.5, 3.8] and 11.1% withheld; A0 58/866). Open question 2 removed; the 58 are q0a8rx, the build rnpdnm.
 check 1: DESIGN.md '## Personal vs shared memories (gav9nw, decided 2026-11-18)' in 8a1b0c05 (CI 44386929067 green): decision A+ and B, reason, how, the 0/699 marked as hypothesis, fresh-capture confirmation before any opt-in, not taken C / A+ alone / B alone / A0 with numbers
 crab 22:24: landed on main 4d7eec2d (CI 44409320072 8/8), released in v0.7.71 (tag on edc97cab, release.yml 44411153821)
+landed ebf71e2 on main 2026-11-18: DESIGN.md: personal vs shared memories decided, A+ and B together (gav9nw)
+landed 0c93467 on main 2026-11-18: DESIGN.md: rnpdnm check 3 confirmation of A+ and B failed, A+ stays off (gav9nw)
+shipped in v0.7.71 (ebf71e2)
 ## History
 - 2026-11-18T18:53 todo -> doing/active (take)
 - 2026-11-18T18:53 doing/active -> doing/waiting (wait)
@@ -71,3 +71,4 @@ crab 22:24: landed on main 4d7eec2d (CI 44409320072 8/8), released in v0.7.71 (t
 - 2026-11-18T20:40 answer 1 acknowledged by crab
 - 2026-11-18T20:40 crab read the answer: hug task note gav9nw "crab 20:40 local: Jørgen 19:40Z chose A+ and B together ('unless someone clever can dream up something better'). Rest o…"
 - 2026-11-18T21:03 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> done (done, by release v0.7.71: every check holds); was doing_since: 2026-11-18T18:53; waiting_asked_by: piglet; waiting_on: crab review and landing of 8a1b0c05 (CI 44386929067); waiting_since: 2026-11-18T21:03

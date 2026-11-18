@@ -11,13 +11,15 @@ rank: "zzzzzzzzzzzl"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:16"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "hjbfzd"
 worktree: "/Users/jhf/.jcode/scratch/hjbfzd"
-waiting_on: "crab lands ci/hjbfzd-rebased 69b5cebc with the stack, then a release; check 5 is Jørgen's confirmation after release"
-waiting_since: "2026-11-18T22:34"
-waiting_asked_by: "duckling"
+asked_what: "Jørgen confirms on his board after release"
+asked_for: "jhf"
+asked_since: "2026-11-18T23:24"
+asked_by: "crab"
+asked_check: "5"
 ---
 
 ## Goal
@@ -41,6 +43,10 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 - [x] Golden of the prompt at 80 and 140 columns
 - [ ] Jørgen confirms on his board after release
 
+## Questions
+- 2026-11-18T23:24 question 1 by crab to jhf (check 5):
+  Jørgen confirms on his board after release
+
 ## Notes
 
 
@@ -51,6 +57,9 @@ check 2: TestCaptureSelectPicksARow: s opens the rows (picking, not detail), 9 w
 check 3: TestCaptureCreatesATask: c asks 'title:', Esc goes back to where with the capture kept, empty title creates nothing, 'Broken bar' Enter creates it with screen-1452.ans in Files (on disk and in the detail), one commit 'hug task new ID', opens it. Fail-first: 'c opened ""'
 check 4: testdata/detail/capture-prompt.txt: offered, typed, title and picking at 80 and 140, text and codes; the test fails on any 48; background and any SGR with both 1 and 4. Fail-first: old bar '48;2;255;179;84'
 CI 44400498760 on f68a9a5d: success, all 8 jobs. ubuntu -race huginn/internal/tui: 290.273s. Checks 1-4 ticked; check 5 (Jørgen confirms on his board after release) open.
+landed 69b5ceb on main 2026-11-18: tui: S asks where the screen goes: a task id, s select, c create (hjbfzd)
+shipped in v0.7.71 (69b5ceb)
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> doing/asked (ask); was waiting_asked_by: duckling; waiting_on: crab lands ci/hjbfzd-rebased 69b5cebc with the stack, then a release; check 5 is Jørgen's confirmation after release; waiting_since: 2026-11-18T22:34

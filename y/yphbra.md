@@ -1,7 +1,7 @@
 ---
 id: yphbra
 title: "Asking a person about a todo task: ask works without taking it"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzq"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T21:54"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "askfree"
 worktree: "/Users/jhf/.jcode/scratch/askfree"
-waiting_on: "CI run 44400965600 on b51a2cda (ci/yphbra), then crab's review and landing"
-waiting_since: "2026-11-18T22:23"
-waiting_asked_by: "piglet"
+done_at: "2026-11-18T23:24"
+done_release: "v0.7.71"
 ---
 
 ## Goal
@@ -48,6 +45,10 @@ check 1: b51a2cda (tests 4cb68eb0 failing first on 8a45b0eb: every ask on a todo
 check 2: b51a2cda (tests 4cb68eb0 failing first on 8a45b0eb: every ask on a todo task refused 'todo -> doing/asked is not a move a command makes'); TestAnswerOnTodoTaskGoesToAsker (answer 2 and tick on check 1, 'answered design (question N, check N), by jhf, for piglet', show answer.for piglet) and tui TestAskedTodoQuestionInAsked (in jhf's ASKED while blocked, a answers it; an outranked hug task design question is not in ASKED); mutants M3, M4, M5, M6 each fail
 check 3: b51a2cda (tests 4cb68eb0 failing first on 8a45b0eb: every ask on a todo task refused 'todo -> doing/asked is not a move a command makes'); mcp asktodo_test.go TestAskTodoTaskOverMCP: task_update ask on a blocked todo task by a non-holder, stays todo/depends, answer for piglet; M7 fails it
 check 4: full huginn suite niced -count=1 on b51a2cda: 11 ok, 0 FAIL (cli 304.871s, tui 168.284s); existing ask/answer/q2adr8 tests unchanged
+landed 89ce012 on main 2026-11-18: task, cli, mcp, tui: failing tests, ask on a todo task without taking it; take…
+landed 6448e7d on main 2026-11-18: task, cli, mcp, tui: hug task ask on a todo task without taking it; take keeps…
+shipped in v0.7.71 (89ce012)
 ## History
 - 2026-11-18T21:54 todo -> doing/active (take)
 - 2026-11-18T22:23 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> done (done, by release v0.7.71: every check holds); was doing_since: 2026-11-18T21:54; waiting_asked_by: piglet; waiting_on: CI run 44400965600 on b51a2cda (ci/yphbra), then crab's review and landing; waiting_since: 2026-11-18T22:23

@@ -11,13 +11,15 @@ rank: "zzzzzzzzzzz5"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:00"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "CI run 44386677307"
-waiting_since: "2026-11-18T21:02"
-waiting_asked_by: "piglet"
+asked_what: "Jørgen confirms j/k in a task feel symmetric after release"
+asked_for: "jhf"
+asked_since: "2026-11-18T23:24"
+asked_by: "crab"
+asked_check: "3"
 ---
 
 ## Goal
@@ -40,6 +42,10 @@ huginn/internal/tui/tui.go:1608 (case j/down/k/up in the detail): moving the sel
 - [ ] Jørgen confirms j/k in a task feel symmetric after release
 - [x] Jørgen 19:37Z (gav9nw request 1): when a check gets focus (on open, or by j/k), the whole check shows, question and all, not only its first line; a check taller than the screen shows from its first line. Key test on a task asked with a long multi-line question at 100x24 (e.g. gav9nw)
 
+## Questions
+- 2026-11-18T23:24 question 1 by crab to jhf (check 3):
+  Jørgen confirms j/k in a task feel symmetric after release
+
 ## Notes
 
 
@@ -48,6 +54,9 @@ check 2: Same table test over panes checks, dependencies, links, files: all 4 fa
 check 4: 68029838 on main 939636ff (pushed ykta5g + ci/ykta5g, CI 44386677307). TestFocusedCheckShowsWhole at 100x24, asked of jhf on check 2 with a 3-paragraph question: on e9bc27ce 'ykta5g_test.go:196: on open: the focused check is not whole on screen, missing "Which option do we take?"' (page ended at '> ? ☐ 2. two: decide which option'); after: 'ok ... 0.986s'. Covers open, j onto it, k back onto it, and a 40-line question: shown from its first line, j reads it a line at a time then steps to check 3. markedBlock (detail.go) replaces the first-line search in openTop and revealAcceptance. TestTmuxReload failed once at load 151 (paused 190 s by its load guard), passed 2/2 after at load 73: 'PASS (14.26s)', 'PASS (13.65s)'.
 14481822 (ykta5g, ci/ykta5g, run 44393599578) stacks on kikazaru's 57dd9e90 (zhvkmj; not yet on origin/main 8bf24c02). markedBlock searches from focusedHeading. Rebasing exposed a real conflict: openTop's showMarked scrolled zhvkmj's page past its asked capture (page line 0) to check 4 (line 53 at 140x40), and TestTmuxZhvkmjFilesOnItself failed 'never showed "capture, as it was taken"'. It passed on 57dd9e90 alone at load 78. Fix: openTop leaves the page at the top when askedPicture is set. Local: the whole huginn/internal/tui package gives 'ok ... 119.946s'.
 crab 21:50 local: 14481822 accepted on review (CI 44393599578 8/8; openTop keeps the page at the top when an asked picture shows, so zhvkmj's capture stays in view). Stacked as ci/ykta5g-rebased 2c609710 on gav9nw, z77pem, mbdfzs3 over main d5c66a1f.
+landed c0ac0d5 on main 2026-11-18: TUI: j and k mirror each other in a task's lists; a focused check shows whole…
+shipped in v0.7.71 (c0ac0d5)
 ## History
 - 2026-11-18T20:00 todo -> doing/active (take)
 - 2026-11-18T21:02 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> doing/asked (ask); was waiting_asked_by: piglet; waiting_on: CI run 44386677307; waiting_since: 2026-11-18T21:02

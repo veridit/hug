@@ -1,7 +1,7 @@
 ---
 id: ad62aa
 title: "cli tests: commit WaitDelay and TestDeduceTwoClonesOneLine fail under load"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["tigress"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzz8"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T20:21"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "c25065c0 (ci/ad62aa-rebased) to land on main; all 3 checks ticked; close when landed"
-waiting_since: "2026-11-18T22:10"
-waiting_asked_by: "tigress"
+done_at: "2026-11-18T23:24"
+done_release: "v0.7.71"
 ---
 
 ## Goal
@@ -48,6 +45,10 @@ check 3: Diff 477696be..f6834e53 touches no timeout (WaitDelay stays 2 s, NetTim
 Fix f6834e53 (failing test 9bc7ae14) on branch ad62aa/ci/ad62aa, base 477696be. Fail first: 'output_test.go:47: Locate after a git that exited 0 (2.044945708s): ... exec: WaitDelay expired before I/O complete'; mutation (output() back to pipes) fails the same way at 2.04 s. After: TestGitAnswerOnceGitExits -count=50 niced 'ok huginn/gitbranch 20.118s' (load 97-123). Paired starved amplifier, same load, 240 s: before 'Locate calls=549 WaitDelay errors=12', after 'Locate calls=46 WaitDelay errors=0'. TestDeduceTwoClonesOneLine -count=50 niced: PASS (load 57-104). Full niced cli package: PASS, gitbranch: 'ok 67.101s'. Before the fix, a full niced cli run on 477696be at load 192-402 also passed, so the flake needs heavier starvation than this machine had now; the amplifier is the fail-first evidence. Cost unloaded: git --version 19.6-20.6 ms with files vs 17.7-22.9 ms with pipes. CI 44391237795 running. Report: ~/.jcode/scratch/ad62aa-ev/REPORT.md
 check 2: Fail first at f7903264 on main d5c66a1f: 'output_test.go:47: Locate after a git that exited 0 (2.052644792s): ... exec: WaitDelay expired before I/O complete'. Fix e6e3c36b: TestGitAnswerOnceGitExits -count=50 niced 'ok huginn/gitbranch 9.304s'. Amplifier paired at the same load: before 'Locate calls=549 WaitDelay errors=12', after 'Locate calls=46 WaitDelay errors=0'. TestDeduceTwoClonesOneLine -count=50 niced: PASS. Niced suites on the rebased tree: gitbranch 'ok 55.515s', cli 'ok 267.615s'. CI 44396660537 on e6e3c36b: success, 9 of 9 jobs, windows-latest included.
 Rebased onto d5c66a1f, as crab asked. Commits: f7903264 (failing test), e6e3c36b (fix + CHANGELOG). Main's catch-up now reads objects with cat-file --batch (objects.go: StdoutPipe read directly, no WaitDelay), so only runAt changed. The earlier CI 44391237795 failure, windows lost-ack 'TempDir RemoveAll cleanup: ... remote.git: being used by another process', came from the old sleep-3 post-receive fixture. 3t4a49 on main already removed it. No fixture edit was needed and upgrade_test.go is untouched. CI 44396660537: success. Report: ~/.jcode/scratch/ad62aa-ev/REPORT.md
+landed c923a71 on main 2026-11-18: gitbranch: failing test, a git that exited 0 is its answer though its output is…
+landed c25065c on main 2026-11-18: gitbranch: git's output goes to temp files, read once git exits (ad62aa)
+shipped in v0.7.71 (c923a71)
 ## History
 - 2026-11-18T20:21 todo -> doing/active (take)
 - 2026-11-18T22:10 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> done (done, by release v0.7.71: every check holds); was doing_since: 2026-11-18T20:21; waiting_asked_by: tigress; waiting_on: c25065c0 (ci/ad62aa-rebased) to land on main; all 3 checks ticked; close when landed; waiting_since: 2026-11-18T22:10

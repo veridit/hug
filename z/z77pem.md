@@ -49,6 +49,8 @@ mizaru: reworked per crab's review, 3197d0b8 (replaces baa6d5ea) on 4fb78339, ci
 crab 18:56 local: rework 3197d0b8 accepted (own stale server -> one line + its own fix; others -> hook.log + hug mem stats stale_mcp; unidentified -> silent; TestHookSilentWhenOnlyOthersAreStale; 8/8 mutants). CI 44363998313; stacks after 8c26ec51.
 CI fixes after 3197d0b8 went red: HUG_TEST_FAKE_MCP added to env.Known (Test kind); the prompt-hook test marshals its JSON (a Windows TempDir broke the hand-built string); on systems without ps/lsof/proc (Windows) the first turn does nothing at all, with no scan and no marker (staleMCPListed; TestStaleMCPNothingWhereProcessesAreNotListed, mutant m9 killed). The injected-scan tests now run on Windows too. CHANGELOG moved back to Unreleased after the rebase. Head 67d46348 on origin/main 477696be, branches z77pem + ci/z77pem. CI 44377886910 completed success 6/6 (macOS sat queued, was cancelled, rerun 19:38:58-19:43:49Z success).
 crab 20:44 local: 67d46348 accepted on review (CI 44377886910 6/6 incl. macOS rerun; Windows failure was the test's string-built JSON, now json.Marshal; scan gated to darwin/linux, mutant m9 killed). Stacks after 9163f102.
+landed 24e329e on main 2026-11-18: hug names an MCP server too old to reload itself, to its own session (z77pem)
+shipped in v0.7.71 (24e329e)
 ## History
 - 2026-11-18T18:23 todo -> doing/active (take)
 - 2026-11-18T20:44 doing/active -> doing/waiting (wait)
