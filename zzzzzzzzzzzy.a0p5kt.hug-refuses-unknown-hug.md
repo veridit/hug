@@ -1,21 +1,17 @@
 ---
 id: a0p5kt
 title: "hug refuses an unknown HUG_* variable instead of ignoring it"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T03:41"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "main CI 44227585322 on 0a2f06ae (hook log line)"
-waiting_since: "2026-11-18T04:04"
-waiting_asked_by: "wyvern"
+done_at: "2026-11-18T04:12"
 ---
 
 ## Goal
@@ -45,6 +41,8 @@ landed 085a81c on main 2026-11-18: hug refuses an unknown HUG_* variable instead
 landed 0a2f06a on main 2026-11-18: hug: a hook refused for an unknown HUG_ variable says so in the hook log…
 Checks 1-3 green on main CI 44226874819 (085a81ce): ubuntu, macos, windows, test-windows-cli, bench, secrets all success. Hook-log addition (crab 03:58: a refused hook must leave a hook.log line) is 0a2f06ae, CI 44227585322.
 Hook-log line green on main CI 44227585322 (0a2f06ae): ubuntu, macos, windows, test-windows-cli, bench, secrets success.
+Reflection (open, 2026-11-18, wyvern): A safety switch that is only a convention (a variable hug happens to read) fails open on a typo, so the one list of known names plus a repo scan now makes a typo loud. The incident also exposed two harness gaps of mine: a benchmark cwd with a live remote, and a copied repo whose worktree pointed at the original (ygay9c). Next time a bench runs from a remote-less clone with HUG_SYNC=off from the start.
 ## History
 - 2026-11-18T03:41 todo -> doing/active (take)
 - 2026-11-18T03:57 doing/active -> doing/waiting (wait)
+- 2026-11-18T04:12 doing/waiting -> done (done); was doing_since: 2026-11-18T03:41; waiting_asked_by: wyvern; waiting_on: main CI 44227585322 on 0a2f06ae (hook log line); waiting_since: 2026-11-18T04:04
