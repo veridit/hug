@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzr"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T15:11"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "qsqhpe"
 worktree: "/Users/jhf/.jcode/scratch/qsqhpe"
+waiting_on: "crab rebases onto main and lands after exact-SHA CI"
+waiting_since: "2026-11-18T15:44"
+waiting_asked_by: "mizaru"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ crab review 15:41 local: accepted. fbb3a174 (3a9a9b02 + fbb3a174 on gmzd87 19a5f
 crab 14:44Z: accepted (ticker from HUG_USER, session or git email is right); crab rebases onto main and lands after exact-SHA CI. CI 44325825385 at fbb3a174 so far: secrets, bench, ubuntu, windows success; test-windows-cli in progress, macos queued.
 ## History
 - 2026-11-18T15:11 todo -> doing/active (take)
+- 2026-11-18T15:44 doing/active -> doing/waiting (wait)
