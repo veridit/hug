@@ -4,7 +4,7 @@ title: "TUI: a task's detail draws no list hints ('H/L column · order by owner'
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
