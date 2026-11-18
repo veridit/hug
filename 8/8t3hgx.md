@@ -1,0 +1,33 @@
+---
+id: 8t3hgx
+title: "Release v0.7.72"
+state: todo
+type: chore
+priority: "high"
+assignee: []
+labels: []
+group: ""
+rank: "zzzzzzzzzzzz"
+created: 2026-11-19
+updated: 2026-11-19
+---
+
+## Goal
+v0.7.72 published: main c1031e55, release merge 356fb240, tag v0.7.72 on CHANGELOG commit 6a22e017
+
+## Purpose
+Hourly release
+
+## Principle
+Exact-SHA green CI only; released CHANGELOG sections never edited
+
+## Relevant details
+CI 44416338720 8/8 on c1031e55. Content: ydwamb, p277bp checks 1 and 2 (README, help/docs, hug mem completion removed), a0gwvg scripts/ci-goldens.sh. release.yml 44417704498
+
+## Depends on
+
+## Acceptance
+- [ ] release.yml run for v0.7.72 succeeds
+- [ ] brew upgrade veridit/tap/hug; hug version prints v0.7.72
+
+## Notes

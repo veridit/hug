@@ -7,7 +7,7 @@ priority: ""
 assignee: ["piglet"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzx"
+rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T23:34"
