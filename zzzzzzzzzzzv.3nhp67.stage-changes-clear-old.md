@@ -1,13 +1,18 @@
 ---
 id: 3nhp67
 title: "Stage changes clear the old stage's fields: wait/resume leave asked_* behind"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T02:26"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Code: huginn/internal/task stage transitions (wait, resume, ask, answer, review,
 - [ ] s6ff5k on hug's board ends as doing/waiting with no asked_* fields, done with hug commands
 
 ## Notes
+
+
+## History
+- 2026-11-18T02:26 todo -> doing/active (take)
