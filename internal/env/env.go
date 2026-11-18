@@ -77,6 +77,7 @@ var Known = []Var{
 	{"HUG_CAPTURE_KILL_HOME", Test, "", "the capture kill test's jcode home"},
 	{"HUG_TEST_SETTLE", Test, "", "sync test children's settle time"},
 	{"HUG_TEST_CHILD_DELAY", Test, "", "sync test children's delay"},
+	{"HUG_TEST_SYNC_TIMEOUT_REPORT", Test, "", "the sync timeout-output test's child receipt"},
 	{"HUG_TEST_EDIT_FROM", Test, "", "the editor test's text to replace"},
 	{"HUG_TEST_EDIT_TO", Test, "", "the editor test's replacement"},
 	{"HUG_TEST_TUI_EDIT", Test, "", "the TUI editor test's text to append"},
