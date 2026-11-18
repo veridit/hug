@@ -53,6 +53,7 @@ Commit c89178f9 (stack: b7517169 + 9ba1bf54, 8183ded0 gpyqq9 + 4bfd6797 bg1rd8 +
 CI 44319257458 on c89178f9: success, 6/6 (secrets, bench, test ubuntu/macos/windows, test-windows-cli). Next: rebase onto main after gpyqq9 and bg1rd8 land, drop the cherry-picks, send SHA to crab.
 CI 44319257458 on c89178f9 (stack incl. gpyqq9+bg1rd8 picks): 6/6 success. Rebase onto main after gpyqq9 and bg1rd8 land, then exact-SHA CI.
 Rebased onto origin/main 5a8b14da (bg1rd8 f7d607e4 landed): agh2h7 = 43e318d1, cherry-picks 9ba1bf54 8183ded0 4bfd6797 dropped, no conflicts. go test -count=1 recall/run/board/task: ok x4. Pushed agh2h7 and ci/agh2h7.
+Bar before replay (crab 15:33, rebase onto 5c115a62 with 9ahvgt): the gone rule is now 9ahvgt's own (task.Liveness.Gone: newest session Closed over 1 h, or silent 24 h, 'You are NAME' alias, sessions limited to this repo's worktrees), not my 2 h mtime span. Bar: six board4 sets (dev night ho-hug ho-seid fresh fresh2 fh) byte-identical to agh2h7/new (217 lines); fh3 (hug, 2026-11-17T14:00Z..11-18T12:00Z, fh3.ids) identical to agh2h7/new/fh3.jsonl (44 lines) except lines of kind lint starting 'every check holds' to crab, each listed with the owner's Closed time; any other diff fails the bar. go build ./... clean; recall/run/board/task tests ok. Judge calls: 0 planned (a coordinator-line change gets judged only if fh3 differs).
 ## History
 - 2026-11-18T14:40 todo -> doing/active (take)
 - 2026-11-18T15:20 doing/active -> doing/waiting (wait)
