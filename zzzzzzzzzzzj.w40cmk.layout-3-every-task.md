@@ -9,13 +9,10 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T01:48"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "f5vx4x first (crab 04:04: after check 1, small fix lands on its own); then checks 9 and 6 on kestrel/w40cmk ad854bd2"
-waiting_since: "2026-11-18T05:18"
-waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -106,3 +103,4 @@ Order: f5vx4x, then checks 9 and 6.
 - 2026-11-18T04:34 doing/active -> doing/waiting (wait)
 - 2026-11-18T04:42 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: ygay9c first (crab 03:33: same gitbranch code, small fix lands on its own); waiting_since: 2026-11-18T04:34
 - 2026-11-18T05:18 doing/active -> doing/waiting (wait)
+- 2026-11-18T05:28 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: f5vx4x first (crab 04:04: after check 1, small fix lands on its own); then checks 9 and 6 on kestrel/w40cmk ad854bd2; waiting_since: 2026-11-18T05:18
