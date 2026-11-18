@@ -62,7 +62,7 @@ landed 963df49 on main 2026-11-17: hug task lint: every finding is broken or adv
 landed 372ff7a on main 2026-11-17: hug tui goldens: header reads 'N broken · M advice' in the glance, alias search…
 shipped in v0.7.44 (963df49)
 Ticks on green main: dcb20c2 contains 963df49..ea2d369 (and ceb9d1a, f9e5664), CI 44143180871 success on ubuntu -race, macos, windows, bench, secrets. 1: Severity column per code in codes.go, shown in text and JSON and in help (help.go 'broken or advice'). 2: default lint 5,299 shown, --all 5,746 on the Seid copy (note above). 3: header 'N broken · M advice', goldens 372ff7a. 4: numbers in the note above (5,299 shown, 447 hidden, 19-line overview). 5: TestLintHidesClosedTasks and TestLintOverviewDetailAndSameBlock cover a broken and an advice code on open and closed tasks.
-Reflection (open, 2026-11-17, wyvern): The rebase met four parallel changes (codes, help, render, tui); the gap was TestTmuxGolden racing the refresh, fixed by waiting for the refreshed board's mark. Nothing in the instructions misled.
+Reflection (dismissed, 2026-11-17, wyvern): The rebase met four parallel changes (codes, help, render, tui); the gap was TestTmuxGolden racing the refresh, fixed by waiting for the refreshed board's mark. Nothing in the instructions misled.
 ## History
 - 2026-11-17T14:32 doing -> todo/ready (give back; was assignee: wyvern)
 - 2026-11-17T15:23 todo/ready -> doing/active (take)
