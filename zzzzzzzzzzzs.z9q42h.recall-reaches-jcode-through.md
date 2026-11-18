@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T02:11"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "hatchling"
+waiting_on: "the release carrying 0c3d3924 and 'hug upgrade --apply' on Jørgen's machine, then a day of jcode use for check 1"
+waiting_since: "2026-11-18T02:55"
 ---
 
 ## Goal
@@ -46,3 +49,4 @@ landed 0c3d392 on main 2026-11-18: hug mem: jcode recall rides the turn's first 
 CI 44218259565 for 0c3d3924: success, all 7 jobs (secrets, bench, test macos/ubuntu/windows, test-windows-cli).
 ## History
 - 2026-11-18T02:11 todo -> doing/active (take)
+- 2026-11-18T02:55 doing/active -> doing/waiting (wait)
