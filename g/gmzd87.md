@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzxh"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T12:34"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab lands 4e70099c (ci/gmzd87-rebased), then release, then Jørgen's check 4 in hug tui"
+waiting_since: "2026-11-18T15:11"
+waiting_asked_by: "mizaru"
 ---
 
 ## Goal
@@ -61,3 +64,4 @@ CI green at head 56cbe503: run 44315165470 success, 6/6 jobs (secrets, test-wind
 crab review 13:57Z: accepted. Read: harness/deliver.go (notify over the jcode daemon's unix socket only, DialTimeout plus deadline, inbox entry before notify, removed if nobody took it), receipt.go, setup/MCP instruction text from one constant guarded by TestDeliveryInstructionsMatchCode. CI 44315165470 on 56cbe503 6/6. Rebase onto main 832167b8 conflicts in huginn/internal/cli/hooks.go with c87da5a8 (xfv9pw prompt history wiring): sent back to mizaru to resolve. Rulings on mizaru's open questions: (1) release first, then Jørgen's check 4; (2) duplicate cue: boardcue.go should skip a request already delivered, follow-up; (3) coordinator offline: yes, the coordinator's next session start delivers pending items, by design, follow-up; (4) answered = the coordinator may close a relayed answer with an explicit command, follow-up; (5) other machines: not delivered with reason is right for now.
 ## History
 - 2026-11-18T12:34 todo -> doing/active (take)
+- 2026-11-18T15:11 doing/active -> doing/waiting (wait)
