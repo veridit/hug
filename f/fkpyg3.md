@@ -63,7 +63,7 @@ hatchling 13:21: rebased on d74af5d (wyvern, 0sbvnq parallel tests, m1c28r env):
 
 
 hatchling 14:04: on main b023624 (with x325pp 38ff464). Landing CI 44096348851 (see x325pp note); full matrix green on the same code in 44095242756.
-Reflection (open, 2026-11-17, hatchling): AGENTS.md's TUI golden line said HUGINN_UPDATE_GOLDEN while tests read HUG_UPDATE_GOLDEN (since fixed on main by m1c28r). The 'every error ends with a fix: line' rule shaped the one combined fix design well.
+Reflection (dismissed, 2026-11-17, hatchling): AGENTS.md's TUI golden line said HUGINN_UPDATE_GOLDEN while tests read HUG_UPDATE_GOLDEN (since fixed on main by m1c28r). The 'every error ends with a fix: line' rule shaped the one combined fix design well.
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-17T15:03 doing/waiting -> done (done); was waiting_asked_by: hatchling; waiting_on: landing turn; waiting_since: 2026-11-17T14:36
