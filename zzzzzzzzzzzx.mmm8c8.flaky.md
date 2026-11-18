@@ -36,5 +36,6 @@ Test: huginn/internal/cli/sync_test.go:184 TestSettledWaitsForSlowChild; settle 
 ## Notes
 
 
+Cause: Queued() probes by TryAcquire+release of the queue lock; a syncer's Run TryAcquire in that window failed and it exited without a pass. Path in the CI failure: child held 6 s > pendingFor 5 s, so settled's own polls (Busy->Queued) fell through to the lock probe and met the child. Fix 4336e2b0: probe holds .probe while it holds the queue; a refused Run waits on .probe and retries once (refused again = a real syncer). Fails first: TestProbeNeverCostsASyncerItsTurn (300 Runs vs a looping Queued) on main: 10 of 10 runs fail, 4-6 of 300 lost, e.g. 'background_test.go:40: 5 of 300 syncers gave up their turn to a probe and ran no pass'. Fixed: -count=10 ok (0 of 3000). -race gitbranch 20.3 s, cli 136.3 s ok. Check 2 signal: the outcome is decided by the .queue/.probe locks and the pass's own push (test reads the bare remote's head), no settle time decides it: settled's 30 s is a failure deadline only. CI 44231734696 pending. Also removed a stray '||||||| parent of c9ad1b2e' line from CHANGELOG.md (from 27643306).
 ## History
 - 2026-11-18T04:26 todo -> doing/active (take)
