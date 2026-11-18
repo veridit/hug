@@ -10,17 +10,14 @@ group: ""
 rank: "zzzzzzzzzzm8"
 created: 2026-11-17
 updated: 2026-11-17
-stage: "asked"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T21:27"
-asked_check: "7"
-asked_show: "cursor-on-mark.md"
-asked_what: "When the cursor is on a marked row, which sign should it show: A ⋗ or B ▸? The file draws both in your terminal."
-asked_for: "jhf"
-asked_since: "2026-11-18T21:30"
-asked_by: "macaque"
+waiting_on: "byj479 + hjbfzd on main, then rebase; Jørgen on check 7"
+waiting_since: "2026-11-18T22:45"
+waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -93,3 +90,4 @@ f385c3a0, CI 44402446974 success 8/8. Report /Users/jhf/.jcode/scratch/rxr4z8/RE
 - 2026-11-18T21:07 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T06:18
 - 2026-11-18T21:27 todo/ready -> doing/active (take)
 - 2026-11-18T21:30 doing/active -> doing/asked (ask)
+- 2026-11-18T22:45 doing/asked -> doing/waiting (wait); was asked_by: macaque; asked_check: 7; asked_for: jhf; asked_show: cursor-on-mark.md; asked_since: 2026-11-18T21:30; asked_what: When the cursor is on a marked row, which sign should it show: A ⋗ or B ▸? The file draws both in your terminal.
