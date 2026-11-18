@@ -1,13 +1,18 @@
 ---
 id: f5vx4x
 title: "hug upgrade in a scratch clone changed the machine's jcode configs"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T05:18"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -38,3 +43,7 @@ Shape approved by crab (04:04Z) before building:
 - Test, failing first: a clone plus a fake HOME/JCODE_HOME with an old-hook jcode config. After --apply the config is byte-identical; after --apply --machine it is migrated and the .bak exists.
 - The two headings get a golden.
 - Order: kestrel builds this after w40cmk check 1.
+
+
+## History
+- 2026-11-18T05:18 todo -> doing/active (take)
