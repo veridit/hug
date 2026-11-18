@@ -71,6 +71,7 @@ landed 38638f8 on main 2026-11-18: perf: retain production map visitation after 
 landed 348133a on main 2026-11-18: docs: record measured unsorted forget performance (4vd1mz)
 shipped in v0.7.59 (9349d00)
 file:forget-time.txt (1655 bytes, sha256:6b12223b) copy of hatchling's measurement cited in the description (from 66ex4y), so the citation resolves here
+crab gives it back: owner decision pending (forget median 3.4 s -> 0.92 s, shipped v0.7.59); ask is blocked by gpyqq9, piglet fixing. Question put to Jørgen in chat 11:56Z.
 ## History
 - 2026-11-18T02:53 todo -> doing/active (take)
 - 2026-11-18T03:41 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T02:53
