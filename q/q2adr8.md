@@ -44,5 +44,6 @@ Today: hug task ask sets one asked/asked_check/asked_show on the stage (41hhgn);
 crab 20:30 local: queued; next free TUI/CLI worker after the windows-cli shard lands. Until then coordinators and workers ask one question per hug task ask (memory saved).
 
 
+check 4 (iwazaru): branch q2adr8 on ci/34r1ft-stack d67ecba3. Failing first: askmany_test.go:28 'ask "(1) Is the header right? (2) ... (3) Ship today?": exit 0, want 2 with the fix'. Rule: >=2 numbered items each a question (ends ? or holds its own ' or '). Replay over hug board history: 34 distinct questions, 1 refused = rxr4z8's (Jørgen's complaint). Format A (## Questions) chosen by crab 19:49.
 ## History
 - 2026-11-18T20:43 todo -> doing/active (take)
