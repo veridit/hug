@@ -37,5 +37,6 @@ Parser: huginn/internal/task/reflect.go var quoted, the third alternative '([^']
 ## Notes
 
 
+BAR (duckling 14:27Z, before any run): (1) six sets + fh3 replayed with agh2h7 (c89178f9) as base and rk5q7r as new, same flags (-coordinator crab on hug sets): outputs byte-identical except added lines of the new kind; (2) every new line is in a session named crab (the coordinator) at a break turn; 0 elsewhere; (3) judge calls <=10, spent only on new lines (2 judgings, if any). Count source: main's ParseReflections (open state), dated > 3 days before the turn. Report the count on today's boards under main's parser and under 2k68eg's (origin/2k68eg).
 ## History
 - 2026-11-18T15:25 todo -> doing/active (take)
