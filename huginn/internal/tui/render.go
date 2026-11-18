@@ -39,13 +39,13 @@ type theme struct {
 	viewPrefixKey, viewKey, viewCurrent lipgloss.Style
 	// column tints the column the cursor marks (e3sevr); columnCursor is
 	// that column's cell on the cursor row.
-	column, columnCursor   lipgloss.Style
+	column, columnCursor lipgloss.Style
 	// PROTOTYPE (mock/grid): the row header (id cell), its selected form,
 	// the column headings and the selected heading, the owner cell. The
 	// view line and the cursor are main's (qh9ep1 check 9), not the mock's.
 	idCell, rowHeader, colHead, colHeadSelected, owner lipgloss.Style
-	progress               lipgloss.Style // a task partly ticked (d8yx7y)
-	status, kind, priority map[string]lipgloss.Style
+	progress                                           lipgloss.Style // a task partly ticked (d8yx7y)
+	status, kind, priority                             map[string]lipgloss.Style
 }
 
 // The colours of the theme, dark then light, one meaning each: the table
