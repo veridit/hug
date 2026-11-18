@@ -49,6 +49,7 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 	run("git", "init", "-q", "-b", "main")
 	run("git", "commit", "-q", "--allow-empty", "-m", "code")
 	run(bin, "task", "init")
+	run(bin, "task", "memory", "share") // 34r1ft: a repository opts in to sync its memories
 	run(bin, "mem", "remember", "--project", "Quartz migration proof keeps the same raven memory.")
 	run(bin, "mem", "sync")
 	canonical := filepath.Join(root, ".hug", "memory")
