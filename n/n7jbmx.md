@@ -23,7 +23,7 @@ aliases: ["recall-on-the-agent-s-tool"]
 ---
 
 ## Goal
-Memories reach the agent mid-turn when what it is doing (files touched, commands run) matches them, with a stricter bar than message recall
+Memories reach the agent mid-turn when what it is doing (files touched, commands run) matches them, with a stricter bar than message recall; done when a fresh held-out test decides whether tool-call recall is turned on
 
 ## Purpose
 Jørgen 2026-11-15 10:28Z (crab session): 'now we only match on input, or do we also match on output from the AI when it's thinking? ... have a stricter relevance criteria', and 10:29Z: what we are truly doing is injecting into the chain of thought something the agent overlooked but wrote down before. jcode has no hook before the model answers, but post_tool_feedback runs after every tool call and sees what the agent does (files touched, commands run), not its hidden reasoning (memories 5fs1tj, d537hc). So this is the nearest place to reach the agent mid-turn. The stricter bar is because an injection there interrupts work: the 2026-11-16 test showed message recall reused on tool calls is net noise (30 useful vs 49 noise per 100 calls, muninn/docs/RECALL-TOOL.md).
