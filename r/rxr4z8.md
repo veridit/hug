@@ -1,7 +1,7 @@
 ---
 id: rxr4z8
 title: "In lists, Space marks tasks and the footer offers actions for the marked ones"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
 assignee: ["macaque"]
@@ -10,10 +10,11 @@ group: ""
 rank: "zzzzzzzzzzm8"
 created: 2026-11-17
 updated: 2026-11-17
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T21:27"
 ---
 
 ## Goal
@@ -72,3 +73,4 @@ crab 21:07 local: back to todo for a builder (nautilus's session ended); answers
 - 2026-11-18T20:27 answer 1 acknowledged by crab
 - 2026-11-18T20:29 answer 1 in progress by crab: hug task set rxr4z8
 - 2026-11-18T21:07 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T06:18
+- 2026-11-18T21:27 todo/ready -> doing/active (take)
