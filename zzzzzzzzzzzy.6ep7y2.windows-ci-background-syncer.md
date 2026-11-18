@@ -1,18 +1,17 @@
 ---
 id: 6ep7y2
 title: "Windows CI: a background syncer held the queue 30 s and no pass ran"
-state: "doing"
+state: "todo"
 type: feature
 priority: ""
-assignee: ["wyvern"]
+assignee: []
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-18T07:20"
 ---
 
 ## Goal
@@ -51,3 +50,4 @@ Fix-forward1dbcf63a1bca8d4433b1acf9e5c4c9f1d021ea7f landed on verified latest pa
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T07:10 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T06:31
 - 2026-11-18T07:20 todo/ready -> doing/active (take)
+- 2026-11-18T07:23 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T07:20
