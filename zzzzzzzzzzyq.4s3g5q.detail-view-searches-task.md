@@ -30,7 +30,7 @@ Today's footer while typing: '↑↓ pick · Enter go to it · Tab keep as filte
 ## Depends on
 
 ## Acceptance
-- [ ] In the detail of a task, typing '/ row lay' highlights each match in the text and scrolls the first one into view (golden on a fixture with 3 matches, one in a wrapped note line)
+- [x] In the detail of a task, typing '/ row lay' highlights each match in the text and scrolls the first one into view (golden on a fixture with 3 matches, one in a wrapped note line)
 - [ ] n and N step forward and back through the matches and wrap around, and the footer shows 'match K of M' (key test)
 - [ ] With no match the footer reads '0 matches in ID · Enter searches all tasks', and Enter runs today's task search (key test)
 - [ ] Esc clears the highlights and leaves the cursor where it is. In list, board and overview, / still finds tasks as before (existing tests stay green)
