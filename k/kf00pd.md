@@ -24,7 +24,7 @@ Release only new content with exact-SHA all-job CI green; release.yml success be
 ## Depends on
 
 ## Acceptance
-- [ ] CHANGELOG v0.7.62 heading covers only nch9d4, no conflict markers, released history unchanged
+- [x] CHANGELOG v0.7.62 heading covers only nch9d4, no conflict markers, released history unchanged
 - [ ] Tag release workflow succeeds before targeted brew upgrade, hug version prints v0.7.62
 
 ## Notes
