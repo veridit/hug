@@ -86,7 +86,7 @@ func (s *Snapshot) Findings() ([]Finding, error) {
 	}
 	out := make([]Finding, 0, len(open))
 	for _, f := range open {
-		_, id, _, _ := task.ParseName(f.Path)
+		id, _ := task.IDOf(f.Path)
 		out = append(out, Finding{Path: f.Path, TaskID: id, TaskState: status[id], Code: task.FindingCode(f.Problem), Problem: f.Problem, Fix: f.FixLine()})
 	}
 	return out, nil

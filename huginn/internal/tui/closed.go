@@ -119,7 +119,7 @@ func mergeCloses(into map[string]int64, log string) {
 			opened = !closedValue(stateValue(line[1:]))
 		case strings.HasPrefix(line, "+status:"), strings.HasPrefix(line, "+state:"):
 			if opened && file != "" && closedValue(stateValue(line[1:])) {
-				if _, id, _, err := task.ParseName(file); err == nil {
+				if id, ok := task.IDOf(file); ok {
 					record(id)
 				}
 			}

@@ -120,8 +120,8 @@ func (f Finding) FixLine() string {
 	if f.Fix != "" {
 		return f.Fix
 	}
-	_, i, _, err := ParseName(f.Path)
-	if err != nil || i == "" {
+	i, ok := IDOf(f.Path)
+	if !ok {
 		return "hug task lint"
 	}
 	switch FindingCode(f.Problem) {

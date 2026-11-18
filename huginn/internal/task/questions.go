@@ -222,7 +222,7 @@ func TouchedSince(lines []string) map[string]time.Time {
 			mark(f[3], at)
 		}
 		for _, file := range parts[2:] {
-			if _, id, _, err := ParseName(file); err == nil && id != "" {
+			if id, ok := IDOf(file); ok {
 				mark(id, at)
 			}
 		}
