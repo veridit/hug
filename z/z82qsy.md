@@ -52,6 +52,7 @@ crab review 12:52Z: read file-frame.txt golden (crumb with path, size, n of m; d
 landed afaa5df on main 2026-11-18: TUI file viewer: rule under the file header; results past tense, cleared on…
 landed 161381f on main 2026-11-18: TUI file viewer: only the file, framed by rules (z82qsy check 4)
 shipped in v0.7.63 (afaa5df)
+landed 161381f on main 2026-11-18 (with ef9c060 rebased as 161381f3, afaa5df2): TUI file viewer frame (z82qsy); in v0.7.63.
 ## History
 - 2026-11-18T12:53 todo -> doing/active (take)
 - 2026-11-18T13:34 doing/active -> doing/waiting (wait)
