@@ -4,7 +4,7 @@ title: "Questions to a person get their own doing stage, 'asked'"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["kestrel"]
+assignee: ["iwazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzmh"
