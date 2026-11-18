@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -333,6 +334,12 @@ func FileRefs(doc []byte, self string) []Ref {
 	// file removed on purpose, not a missing one. A later one (attached
 	// again) is checked.
 	var gone map[string]int
+	// lost are the citations the text marks gone somewhere (" (lost)" or
+	// "(not kept ...)" after one of them): every citation of the same ref
+	// is then known gone, so a note marking it settles an earlier one
+	// (1phmre: hug task note ID "REF (lost)" is the fix an agent runs
+	// without an editor).
+	lost := map[string]bool{}
 	// The literals first (3mavpt): most task files cite nothing, and the
 	// regexps cost 17 s over Seid's 2,677 imported files when run on each.
 	if bytes.Contains(doc, []byte("file:")) {
@@ -340,7 +347,11 @@ func FileRefs(doc []byte, self string) []Ref {
 			name := string(doc[m[2]:m[3]])
 			// Prose such as "file:line" and URLs (file:///...) are not
 			// references: a reference names a file (has an extension) or a path.
-			if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) || lostAfter(doc, m[1]) {
+			if strings.HasPrefix(name, "/") || (!strings.Contains(name, ".") && !strings.Contains(name, "/")) {
+				continue
+			}
+			if lostAfter(doc, m[1]) {
+				lost["file:"+name] = true
 				continue
 			}
 			if bytes.HasSuffix(doc[:m[2]], []byte("detached file:")) {
@@ -358,7 +369,11 @@ func FileRefs(doc []byte, self string) []Ref {
 			// Syntax in prose ("task:REF/NAME", "task:ID/PATH") is not a
 			// reference: a real ref is a lowercase id, alias or slug.
 			ref, name := string(doc[m[2]:m[3]]), string(doc[m[4]:m[5]])
-			if (ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789")) || lostAfter(doc, m[1]) {
+			if ref == strings.ToUpper(ref) && strings.ToLower(ref) != ref && !strings.ContainsAny(ref, "0123456789") {
+				continue
+			}
+			if lostAfter(doc, m[1]) {
+				lost["task:"+ref+"/"+name] = true
 				continue
 			}
 			all = append(all, at{Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name}, m[2]})
@@ -366,16 +381,17 @@ func FileRefs(doc []byte, self string) []Ref {
 	}
 	if bytes.Contains(doc, []byte(".hug/tasks/")) {
 		for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
+			start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
 			if lostAfter(doc, m[1]) {
+				lost[string(doc[start:m[1]])] = true
 				continue
 			}
-			start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
 			all = append(all, at{Ref{Task: string(doc[m[2]:m[3]]), Name: string(doc[m[4]:m[5]]), Raw: string(doc[start:m[1]])}, start})
 		}
 	}
 	var out []Ref
 	for _, a := range all {
-		if p, ok := gone[a.ref.Name]; ok && a.ref.Task == self && a.pos < p {
+		if p, ok := gone[a.ref.Name]; (ok && a.ref.Task == self && a.pos < p) || lost[a.ref.Raw] {
 			continue
 		}
 		out = append(out, a.ref)
@@ -485,7 +501,14 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			if ref.Task != t.ID {
 				o, e := Resolve(ts, ref.Task)
 				if e != nil {
-					out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": no task " + ref.Task, Fix: "hug task edit " + t.ID})
+					// A .hug/tasks/ID/NAME path of an id no task here has
+					// is quoted from another board (1phmre: w40cmk quotes
+					// Statbus's .hug/tasks/37bryg/README.md), not a link.
+					// Only task:REF/NAME is a link to a task.
+					if strings.HasPrefix(ref.Raw, ".hug/tasks/") {
+						continue
+					}
+					out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": no task " + ref.Task + " (fix the id, or mark the link" + Lost + ")", Fix: "hug task note " + t.ID + " " + strconv.Quote(ref.Raw+Lost)})
 					continue
 				}
 				owner = o
