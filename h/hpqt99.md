@@ -11,10 +11,15 @@ rank: "zz"
 created: 2026-11-10
 updated: 2026-11-10
 doing_since: "2026-11-18T23:18"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "hpqt99"
 worktree: "/Users/jhf/.jcode/scratch/hpqt99"
+asked_since: "2026-11-18T23:32"
+asked_by: "piglet"
+asked_check: "1"
+asked_what: "Imported data, see docs/DESIGN.md section 'Imported data' (branch hpqt99, 32ed02dd): do you approve 1B-amended plus 2B? 1B-amended: an import keeps the scope the source states (engram personal stays personal) and places by the folder it was written in only when the source states none. 2B: import each jcode instance's memories once, then stop reading jcode files live. The alternatives are 1A (as today, the owner rescopes by hand) and 2A (keep reading jcode files live). I recommend 1B-amended plus 2B."
+asked_for: "jhf"
 ---
 
 ## Goal
@@ -38,6 +43,8 @@ Today: hug setup turns jcode's own memory off per instance and routes saves to m
 - 2026-11-18T23:30 question 1 by piglet to jhf (check 1):
   Imported data (docs/DESIGN.md, 'Imported data', branch hpqt99 9c8fb6a1). Recommend both: (1B) an import places a memory by the folder it was written in, so a memory written under a client folder lands in that client's scope (narrowing only; one leak today: 2kb574, written in ~/Projects/frogs, sits in global). (2B) import each jcode instance's memories once (17,089 rows; jcode files frozen since 2026-11-05), gated by a dry-run whose per-scope counts must match the live read, then stop reading jcode files live. Approve 1B+2B, or name another option (1A/1C, 2A/2C)?
   withdrawn 2026-11-18T23:32 (doing/asked -> doing/active)
+- 2026-11-18T23:32 question 2 by piglet to jhf (check 1):
+  Imported data, see docs/DESIGN.md section 'Imported data' (branch hpqt99, 32ed02dd): do you approve 1B-amended plus 2B? 1B-amended: an import keeps the scope the source states (engram personal stays personal) and places by the folder it was written in only when the source states none. 2B: import each jcode instance's memories once, then stop reading jcode files live. The alternatives are 1A (as today, the owner rescopes by hand) and 2A (keep reading jcode files live). I recommend 1B-amended plus 2B.
 
 ## Notes
 
@@ -48,3 +55,4 @@ Amended before answer (crab review): 1B now keeps a scope the source states (eng
 - 2026-11-18T23:18 todo -> doing/active (take)
 - 2026-11-18T23:30 doing/active -> doing/asked (ask)
 - 2026-11-18T23:32 doing/asked -> doing/active (resume); was asked_by: piglet; asked_check: 1; asked_for: jhf; asked_since: 2026-11-18T23:30; asked_what: Imported data (docs/DESIGN.md, 'Imported data', branch hpqt99 9c8fb6a1). Recommend both: (1B) an import places a memory by the folder it was written in, so a memory written under a client folder lands in that client's scope (narrowing only; one leak today: 2kb574, written in ~/Projects/frogs, sits in global). (2B) import each jcode instance's memories once (17,089 rows; jcode files frozen since 2026-11-05), gated by a dry-run whose per-scope counts must match the live read, then stop reading jcode files live. Approve 1B+2B, or name another option (1A/1C, 2A/2C)?
+- 2026-11-18T23:32 doing/active -> doing/asked (ask)
