@@ -69,8 +69,42 @@ func PeopleFindings(people []Person, ts []Task) []Finding {
 }
 
 // checkPrefix is a leading "check N:" in a question (0gztsy wrote them so
-// before asked_check, 41hhgn).
-var checkPrefix = regexp.MustCompile(`^(?i)check\s+(\d+)\s*[:,-]\s*`)
+// before asked_check, 41hhgn); Statbus writes "check #4:".
+var checkPrefix = regexp.MustCompile(`^(?i)check\s+#?(\d+)\s*[:,-]\s*`)
+
+// namesCheck finds "check N" anywhere in a wait's text, N a check of a
+// task with n checks.
+var namesCheck = regexp.MustCompile(`(?i)\bchecks?\s+#?(\d+)\b`)
+
+// readsAsQuestion says whether a wait's text asks a person something: a
+// '?', a check of the task named ("approve ..., check 1"), or a request
+// verb first ("approve Seid's commit-msg switch ..."). A park such as
+// "parked per crab ruling, no fourth arm" does not (41hhgn check 13:
+// v0.7.52 moved s6ff5k's park to asked_for crab). The rule is narrow on
+// purpose: a question left as a wait loses nothing (hug upgrade lists it
+// with the ask that moves it), a park moved to asked tells a person it is
+// theirs when it is not.
+func readsAsQuestion(what string, checks int) bool {
+	if strings.Contains(what, "?") {
+		return true
+	}
+	if first, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(what)), " "); requestVerbs[first] {
+		return true
+	}
+	for _, m := range namesCheck.FindAllStringSubmatch(what, -1) {
+		if n, _ := strconv.Atoi(m[1]); n >= 1 && n <= checks {
+			return true
+		}
+	}
+	return false
+}
+
+// requestVerbs open a wait that asks a person to do or decide something.
+var requestVerbs = map[string]bool{"approve": true, "answer": true, "confirm": true, "decide": true, "choose": true, "pick": true, "review": true, "rule": true, "look": true, "try": true, "please": true}
+
+// Left is a wait on a person hug upgrade left waiting: it named someone in
+// waiting_for but asks nothing (41hhgn check 13).
+type Left struct{ ID, For, What string }
 
 // MoveToAsked is hug upgrade's move for questions written as waits
 // (41hhgn, Jørgen 23:48): a doing/waiting with waiting_for, or (before
@@ -78,12 +112,14 @@ var checkPrefix = regexp.MustCompile(`^(?i)check\s+(\d+)\s*[:,-]\s*`)
 // doing/asked. asked_what is the question, with a leading "check N:" (N a
 // check of the task) moved to asked_check; asked_for, asked_since,
 // asked_by and asked_show come from waiting_for, waiting_since,
-// waiting_asked_by and waiting_show. Waits on things stay. It returns the
+// waiting_asked_by and waiting_show. Waits on things stay, and so does a
+// waiting_for wait that asks nothing (readsAsQuestion): its waiting_for
+// goes, History says so, and it is returned in left. It returns the
 // changed paths and a line per change.
-func (s *Store) MoveToAsked(people []Person, dryRun bool) (changed, lines []string, err error) {
+func (s *Store) MoveToAsked(people []Person, dryRun bool) (changed, lines []string, left []Left, err error) {
 	ts, e := s.Tasks()
 	if e != nil {
-		return nil, nil, e
+		return nil, nil, nil, e
 	}
 	for _, t := range ts {
 		on := strings.TrimSpace(t.Fields["waiting_on"])
@@ -92,12 +128,38 @@ func (s *Store) MoveToAsked(people []Person, dryRun bool) (changed, lines []stri
 		}
 		d, ts2, e := s.load(t.ID)
 		if e != nil {
-			return changed, lines, e
+			return changed, lines, left, e
 		}
 		// waiting_for and waiting_show are no longer node fields (41hhgn),
 		// so Parse leaves them out of Task.Fields: read them off the file.
 		who, show := d.legacyField("waiting_for"), d.legacyField("waiting_show")
 		what := on
+		if who != "" && !readsAsQuestion(on, len(t.Acceptance)) {
+			// A park, not a question: it stays a wait. waiting_for is no
+			// field any more (lint calls it old-layout), so it goes.
+			left = append(left, Left{t.ID, who, on})
+			for _, k := range []string{"waiting_for", "waiting_show"} {
+				if _, ok := d.fields[k]; ok {
+					if e = d.RemoveField(k); e != nil {
+						return changed, lines, left, e
+					}
+				}
+			}
+			d.History(stamp() + " waiting_for " + who + " removed by hug upgrade (it asks nothing: no '?', no check named, no request such as approve; the wait stays, 41hhgn)")
+			changed = append(changed, t.Path)
+			if dryRun {
+				continue
+			}
+			path, e := s.diskPath(t.Path)
+			if e != nil {
+				return changed, lines, left, e
+			}
+			s.Invalidate()
+			if e = AtomicWrite(path, d.Bytes()); e != nil {
+				return changed, lines, left, e
+			}
+			continue
+		}
 		if who == "" {
 			name, rest, ok := strings.Cut(on, ":")
 			p, listed := PersonByName(people, name)
@@ -126,18 +188,18 @@ func (s *Store) MoveToAsked(people []Person, dryRun bool) (changed, lines []stri
 		}
 		for _, k := range sortedKeys(set) {
 			if e = d.SetField(k, set[k]); e != nil {
-				return changed, lines, e
+				return changed, lines, left, e
 			}
 		}
 		for _, k := range []string{"waiting_on", "waiting_for", "waiting_since", "waiting_asked_by", "waiting_show"} {
 			if _, ok := d.fields[k]; ok {
 				if e = d.RemoveField(k); e != nil {
-					return changed, lines, e
+					return changed, lines, left, e
 				}
 			}
 		}
 		if e = settle(d, ts2); e != nil {
-			return changed, lines, e
+			return changed, lines, left, e
 		}
 		line := t.ID + ": doing/waiting -> doing/asked, asked_for " + who
 		if check != "" {
@@ -152,12 +214,12 @@ func (s *Store) MoveToAsked(people []Person, dryRun bool) (changed, lines []stri
 		}
 		path, e := s.diskPath(t.Path)
 		if e != nil {
-			return changed, lines, e
+			return changed, lines, left, e
 		}
 		s.Invalidate()
 		if e = AtomicWrite(path, d.Bytes()); e != nil {
-			return changed, lines, e
+			return changed, lines, left, e
 		}
 	}
-	return changed, lines, nil
+	return changed, lines, left, nil
 }

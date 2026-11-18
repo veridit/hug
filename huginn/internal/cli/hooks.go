@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -341,21 +342,40 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		// (or, before 89y0b7, a waiting_on "NAME: what" with NAME in
 		// hug.toml [people]) becomes doing/asked.
 		people, _ := task.People(s.r.Dir)
-		moved, wlines, e := s.s.MoveToAsked(people, dry)
+		moved, wlines, left, e := s.s.MoveToAsked(people, dry)
+		asked := len(moved) - len(left)
 		if e == nil && len(moved) > 0 && !dry {
-			e = s.r.Commit(moved, fmt.Sprintf("hug upgrade: %d questions to a person moved from waiting to asked", len(moved)))
+			msg := fmt.Sprintf("hug upgrade: %d questions to a person moved from waiting to asked", asked)
+			if len(left) > 0 {
+				msg += fmt.Sprintf(", %d waits left waiting (no question)", len(left))
+			}
+			e = s.r.Commit(moved, msg)
 		}
 		if e != nil {
 			return nil, e
 		}
-		if len(moved) > 0 {
+		if asked > 0 {
 			ids := make([]string, 0, len(wlines))
 			for _, l := range wlines {
 				id, _, _ := strings.Cut(l, ":")
 				ids = append(ids, id)
 			}
-			tasks = append(tasks, would(fmt.Sprintf("%d questions to a person moved from waiting to asked (%s)", len(moved), strings.Join(ids, ", "))))
+			tasks = append(tasks, would(fmt.Sprintf("%d questions to a person moved from waiting to asked (%s)", asked, strings.Join(ids, ", "))))
 			upgradeDiff += strings.Join(wlines, "\n") + "\n"
+		}
+		// A wait that named a person but asks nothing (a park) stays a
+		// wait (41hhgn check 13): each is listed, with the ask that makes
+		// it a question if it was one.
+		if len(left) > 0 {
+			noun := "waits"
+			if len(left) == 1 {
+				noun = "wait"
+			}
+			line := fmt.Sprintf("%d %s on a person left waiting (it asks nothing: no '?', no check named, no request such as approve); waiting_for goes:", len(left), noun)
+			for _, l := range left {
+				line += fmt.Sprintf(" %s waiting_for %s: %s (if it is a question: hug task ask %s --to %s \"...?\");", l.ID, l.For, strconv.Quote(l.What), l.ID, l.For)
+			}
+			tasks = append(tasks, would(strings.TrimSuffix(line, ";")))
 		}
 		// Last, once the task files are moved: the board says its layout,
 		// so an older hug stops before writing it (dx9vw2).
