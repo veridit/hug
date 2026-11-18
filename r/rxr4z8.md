@@ -4,7 +4,7 @@ title: "In lists, Space marks tasks and the footer offers actions for the marked
 state: "todo"
 type: feature
 priority: ""
-assignee: []
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzm8"
