@@ -4,7 +4,7 @@ title: "Agents reflect on the instructions and propose fixes"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["hatchling"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "0r"
