@@ -37,7 +37,7 @@ Today: units has active/updated_ns only; holds_ended has reason but only for hol
 - [x] memory_remember naming an old id (supersedes or reinforce) records the same row (test)
 - [x] hug mem stats --fixes prints recall blocks shown, fixes of a shown id, and fixes without a shown id per day and instance; a golden over a fixture store
 - [x] A forget whose id is remembered again or reinforced within 7 days is counted as undone in the stats (test)
-- [ ] No recall output changes: the recall4 frozen replay is byte-identical before and after
+- [x] No recall output changes: the recall4 frozen replay is byte-identical before and after
 
 ## Notes
 
