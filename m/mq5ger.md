@@ -1,15 +1,20 @@
 ---
 id: mq5ger
 title: "tui watch test misses a change under load"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["kikazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T22:22"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "kikazaru/watchflake"
+worktree: "/Users/jhf/.jcode/scratch/watchflake"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Test: huginn/internal/tui/taskdirs_test.go:83 (np2kk2 check 2). The CI failure i
 - [ ] full tui suite green locally (non-short) and CI green
 
 ## Notes
+
+
+## History
+- 2026-11-18T22:22 todo -> doing/active (take)
