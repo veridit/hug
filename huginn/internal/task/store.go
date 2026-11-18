@@ -22,6 +22,10 @@ type Result struct {
 	Guide   []string `json:"guide,omitempty"`
 	Renamed []string `json:"renamed,omitempty"`
 	Renames []Rename `json:"renames,omitempty"`
+	// Answered: this write answered the question the task asked (qsqhpe:
+	// the person asked ticked the check it is about), so it goes to the
+	// coordinator as an answer does (gmzd87).
+	Answered bool `json:"answered,omitempty"`
 }
 type NewOptions struct {
 	Title, Goal, Group, Type, Priority string
@@ -384,7 +388,7 @@ func (s *Store) Set(ref, field, value string) (Result, error) {
 	return s.finish(d, before != string(d.Bytes()))
 }
 func (s *Store) Check(ref string, n int) (Result, error) {
-	d, _, e := s.load(ref)
+	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
 	}
@@ -392,7 +396,21 @@ func (s *Store) Check(ref string, n int) (Result, error) {
 	if e = d.Check(n); e != nil {
 		return Result{}, e
 	}
-	return s.finish(d, before != string(d.Bytes()))
+	changed := before != string(d.Bytes())
+	// The person asked ticking the check the question is about holds it:
+	// that tick is their answer (qsqhpe, Jørgen on e3sevr).
+	answered := false
+	if stage, _, _ := question(d.Task); changed && stage == "asked" && s.Actor != "" &&
+		strings.EqualFold(strings.TrimSpace(d.Task.Fields["asked_for"]), strings.TrimSpace(s.Actor)) &&
+		strings.TrimSpace(d.Task.Fields["asked_check"]) == strconv.Itoa(n) {
+		if e = answerOn(d, ts, "answered by ticking check "+strconv.Itoa(n), strings.TrimSpace(s.Actor)); e != nil {
+			return Result{}, e
+		}
+		answered = true
+	}
+	r, e := s.finish(d, changed)
+	r.Answered = answered
+	return r, e
 }
 
 // Strike strikes acceptance item n of ref out as not relevant, with the

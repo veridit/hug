@@ -181,6 +181,22 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 				t.Fatalf("daemon got %d messages, want 2 (request 2, answer 1)", n)
 			}
 		}},
+		{"or ticks the check a question to them is about (that tick is their answer)", func(t *testing.T) {
+			// qsqhpe: the person asked ticks the asked check: an answer,
+			// delivered. The full message: TestTickAnswerReachesCoordinator.
+			jc.mu.Lock()
+			jc.live[crab] = true
+			jc.mu.Unlock()
+			tid := id // nautilus holds it; its question was answered above
+			execute(t, a, "ask", tid, "--to", "jhf", "--check", "1", "holds?", "--as", "nautilus")
+			a.Env["HUG_USER"] = "jhf"
+			r := execute(t, a, "check", tid, "1")
+			a.Env["HUG_USER"] = "tester"
+			if r["receipt"] != "pending, delivered to crab ("+crab+")" {
+				t.Fatalf("tick receipt %v", r["receipt"])
+			}
+			waitAck()
+		}},
 	}
 	rest := DeliveryFlow
 	for _, c := range claims {

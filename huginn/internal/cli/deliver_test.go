@@ -279,3 +279,52 @@ func realPath(t *testing.T, dir string) string {
 	}
 	return strings.TrimSpace(string(out))
 }
+
+// qsqhpe check 3: the person asked ticking the check the question is about
+// answers it, and that answer reaches the coordinator like a typed one; a
+// tick by anyone else sends nothing.
+func TestTickAnswerReachesCoordinator(t *testing.T) {
+	t.Parallel()
+	jc := newFakeJcode(t)
+	crab := jc.session(t, "crab", 2000, true)
+	a := app(t)
+	a.JcodeHomes = []string{jc.home}
+	execute(t, a, "init")
+	execute(t, a, "coordinator", "crab")
+	id := execute(t, a, "new", "Tags", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a", "--accept", "b")["task"].(Reply)["id"].(string)
+	execute(t, a, "take", id, "--as", "nautilus", "--model", "m")
+	execute(t, a, "ask", id, "--to", "jhf", "--check", "2", "type stays, or drop?", "--as", "nautilus")
+	// check has no --as: who ticks is HUG_USER (or the agent session).
+	// jhf ticking another check: still asked, nothing sent (the asker's
+	// own tick is TestTickByOthersLeavesQuestion).
+	a.Env["HUG_USER"] = "jhf"
+	if r := execute(t, a, "check", id, "1"); r["receipt"] != nil || r["answered"] != nil {
+		t.Fatalf("another check answered: %v", r)
+	}
+	r := execute(t, a, "check", id, "2")
+	if r["receipt"] != "pending, delivered to crab ("+crab+")" {
+		t.Fatalf("receipt: %v", r["receipt"])
+	}
+	if st := r["task"].(Reply)["stage"]; st != "active" {
+		t.Fatalf("stage after the tick: %v", st)
+	}
+	msgs := jc.messages()
+	if len(msgs) != 1 {
+		t.Fatalf("daemon got %q", msgs)
+	}
+	_, msg, _ := strings.Cut(msgs[0], "\x00")
+	board := realPath(t, a.Cwd)
+	for _, want := range []string{
+		"hug: jhf answered on " + id + " (Tags), check 2, the question nautilus asked on board " + filepath.Base(board) + " (" + board + "), to you as the board coordinator:\n",
+		"> type stays, or drop?\n",
+		"  answered by ticking check 2\n",
+		"Route it to nautilus, who asked, or act on it: hug task show " + id + "\n",
+	} {
+		if !strings.Contains(msg, want) {
+			t.Fatalf("message lacks %q:\n%s", want, msg)
+		}
+	}
+	if f := taskFile(t, a, id); !strings.Contains(f, " answer 1 delivered to crab ("+crab+")") || !strings.Contains(f, "  answered by ticking check 2\n") {
+		t.Fatalf("History:\n%s", f)
+	}
+}

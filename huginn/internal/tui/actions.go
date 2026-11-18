@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -144,6 +145,15 @@ func (m *model) executeAction() tea.Cmd {
 		if !t.Acceptance[n-1].Checked {
 			r, err = m.store.Check(t.ID, n)
 			action = "check"
+			// The person asked ticking the asked check answered it
+			// (qsqhpe): it goes to the coordinator as a typed answer.
+			if err == nil && r.Answered {
+				m.finish(r, err, action)
+				m.message = "answered " + r.Task.ID + " by ticking check " + strconv.Itoa(n)
+				m.deliver(r, err, "answer", m.me())
+				m.result = m.message
+				return nil
+			}
 		} else {
 			d, e := m.store.Get(t.ID)
 			err = e
