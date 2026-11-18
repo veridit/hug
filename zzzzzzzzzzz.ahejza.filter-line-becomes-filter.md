@@ -1,13 +1,18 @@
 ---
 id: ahejza
 title: "Filter line becomes 'filter: … · sort: …'; f and s open matching pickers"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T05:01"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -43,3 +48,7 @@ Jørgen 23:39:34 local reverses the 23:39 note: o was good. o keeps sorting by t
 Jørgen 23:39:44 local, final: o is the same as sc. Both stay: o is the one-key shortcut, sc is the picker's way to the same thing.
 
 Header picture for all of tonight's rulings is attached to e3sevr as header-spec.md (crab 00:00 local). Build to it. Where it and this ticket differ, tell crab.
+
+
+## History
+- 2026-11-18T05:01 todo -> doing/active (take)
