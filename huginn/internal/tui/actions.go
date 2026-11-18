@@ -248,12 +248,12 @@ func (m *model) finish(r task.Result, err error, action string) {
 		m.detailPath = r.Task.Path
 	}
 	m.refresh(r.Task.Path)
-	m.result, m.resultAt = m.message, m.resultPlace()
 }
 
-// resultPlace names what the screen shows: the view, the open task and
-// the file in it. A result belongs to where it was made (z82qsy).
-func (m model) resultPlace() string {
+// messagePlace names the screen: the view, the open task and the file
+// shown in it. A message belongs to the screen that made it (z82qsy for
+// action results, tz9z14 for every message).
+func (m model) messagePlace() string {
 	p := m.view
 	if m.detail {
 		p += "\x00" + m.detailPath
@@ -264,20 +264,21 @@ func (m model) resultPlace() string {
 	return p
 }
 
-// clearStaleResult clears an action's result once the reader has moved
-// on to another task, file or view (z82qsy, Jørgen 11:37Z: "answer
-// vzghj8" stayed under a file of another task). Any other message, and
-// a result replaced since, is left as it is.
-func (m *model) clearStaleResult() {
-	if m.result == "" {
-		return
-	}
-	if m.message != m.result {
-		m.result, m.resultAt = "", ""
-		return
-	}
-	if m.resultPlace() != m.resultAt {
-		m.message, m.result, m.resultAt = "", "", ""
+// clearStaleMessage clears the message once the reader has moved on to
+// another task, file or view (Jørgen 11:37Z: "answer vzghj8" stayed under
+// a file of another task; 15:19: "reloaded hug v0.7.63" stayed under a
+// task's detail, "noise because it's from the main screen"). A message
+// set in a step belongs to the screen the step ends on; one that was
+// already showing goes when the screen changes.
+func (m *model) clearStaleMessage(before string) {
+	place := m.messagePlace()
+	switch {
+	case m.message == "":
+		m.messageAt = ""
+	case m.message != before:
+		m.messageAt = place
+	case m.messageAt != place:
+		m.message, m.messageAt = "", ""
 	}
 }
 
