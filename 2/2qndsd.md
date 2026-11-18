@@ -44,5 +44,6 @@ crab 13:17Z: removed the dependency on z82qsy so macaque can take it. The real o
 
 file:tmux-iterm-image-frame.txt (826 bytes, sha256:e2165d8a) tmux capture-pane, real hug tui from 499f9220 at 100x24, TERM_PROGRAM=iTerm.app, Space on board.png: crumb, note, rule, 17 blank rows the image is drawn over, rule, keys
 file:tmux-iterm-raw-overlay.txt (430 bytes, sha256:275af325) pipe-pane bytes: OSC 1337 drawn at row 4, 100x17 cells, inside tmux passthrough
+file:tmux-n-to-text.txt (818 bytes, sha256:c63d4e09) n from the image to notes.txt: same frame, 2 of 2
 ## History
 - 2026-11-18T14:18 todo -> doing/active (take)
