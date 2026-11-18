@@ -1,20 +1,21 @@
 ---
 id: q0a8rx
 title: "Public hug/memory: keep or rewrite without the 58 misplaced memories"
-state: "todo"
+state: "doing"
 type: chore
 priority: ""
-assignee: [""]
+assignee: ["mizaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
-effort: "high"
-branch: "main"
-worktree: "/Users/jhf/Projects/hug"
+effort: ""
+branch: "txjkrm5"
+worktree: "/Users/jhf/.jcode/scratch/txjkrm5"
+doing_since: "2026-11-18T20:44"
 ---
 
 ## Goal
@@ -52,3 +53,4 @@ check 1: Jørgen 19:42Z: rewrite, after moving the memories to the right place f
 - 2026-11-18T20:42 answer 1 acknowledged by crab
 - 2026-11-18T20:43 crab read the answer: hug task set q0a8rx
 - 2026-11-18T20:43 doing/active -> todo/ready (give back); was doing_since: 2026-11-18T20:41
+- 2026-11-18T20:44 todo/ready -> doing/active (take)
