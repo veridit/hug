@@ -23,20 +23,20 @@ var commands = []command{
 	{"goto", "id", "Open a task by id", false},
 	{"sort", "", "Order rows by fields: p priority, t type, ... then Enter", false},
 	{"sort rank", "", "Back to rank order, the order moves change", true},
-	{"grouping", "", "Rows flat, by group, by epic: cycles; Space folds a heading", false},
+	{"grouping", "", "Rows flat, by group, by epic, by tag: cycles; Space folds a heading", false},
 	{"grouping flat", "", "Rows without headings", true}, {"grouping group", "", "A heading per group", true},
-	{"grouping epic", "", "A heading per epic", true},
+	{"grouping epic", "", "A heading per epic", true}, {"grouping tag", "", "A heading per tag (tag: first listed tag)", true},
 	{"clear", "", "Clear every filter", false}, {"help", "", "All keys and commands", false},
 	{"todo", "", "Filter todo", true}, {"doing", "", "Filter in progress", true}, {"done", "", "Filter completed", true},
 	{"depends", "", "Filter tasks whose dependency is not done", true}, {"dropped", "", "Filter dropped", true},
 	{"state", "state", "todo, doing, done, depends, dropped", true}, {"type", "type", "feature, bug, chore, spike, docs", true},
 	{"priority", "priority", "critical, high, medium, low", true}, {"group", "group", "Folder the task lives in", true},
-	{"label", "label", "Free labels", true}, {"epic", "epic", "An epic and its children", true},
+	{"tag", "tag", "One of the board's tags", true}, {"epic", "epic", "An epic and its children", true},
 	{"assignee", "name", "Who is assigned", true},
 }
 
 // paletteFields are the branches under "filter", in display order.
-var paletteFields = []string{"state", "type", "priority", "group", "label", "epic", "assignee"}
+var paletteFields = []string{"state", "type", "priority", "group", "tag", "epic", "assignee"}
 
 // completion is one palette row. branch rows open a further level; field is
 // set on filter values so the row can show how many tasks it would leave.
@@ -95,7 +95,7 @@ func (m model) values(name string) []string {
 			if t.Group == "" {
 				set["(root)"] = true
 			}
-		case "label":
+		case "tag":
 			for _, s := range t.Labels {
 				set[s] = true
 			}
@@ -209,10 +209,17 @@ func cutFilter(value string) (string, bool) {
 }
 
 // expandField turns a shortened field name into the full one when exactly
-// one field starts with it; anything else comes back unchanged.
+// one field starts with it; anything else comes back unchanged. One letter
+// is the filter picker's letter (f t is type, f l is tag), as before tag
+// and type shared a first letter (txjkrm).
 func expandField(name string) string {
 	if name == "" {
 		return name
+	}
+	for _, f := range filterFields {
+		if f.letter == name {
+			return f.name
+		}
 	}
 	found := ""
 	for _, f := range paletteFields {
@@ -268,7 +275,7 @@ func (m *model) executeCommand() bool {
 	case "todo", "doing", "done", "dropped", "depends":
 		m.setFilter("state", name)
 		m.setView("list")
-	case "state", "type", "priority", "group", "label", "assignee", "epic":
+	case "state", "type", "priority", "group", "tag", "assignee", "epic":
 		if name == "epic" {
 			// Accept the bare id (or prefix) as well as "ID title".
 			for _, v := range m.values("epic") {

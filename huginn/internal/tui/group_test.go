@@ -79,8 +79,8 @@ func TestRowsShowGroupAndEpic(t *testing.T) {
 	}
 }
 
-// kx2ndm check 2: g (or : grouping) cycles flat → group → epic → flat,
-// and the header says which.
+// kx2ndm check 2: g (or : grouping) cycles flat → group → epic → tag
+// (txjkrm) → flat, and the header says which.
 func TestGroupingCyclesAndHeaderSays(t *testing.T) {
 	m, ids := groupBoard(t)
 	if strings.Contains(screen(m), "grouped by") {
@@ -112,8 +112,12 @@ func TestGroupingCyclesAndHeaderSays(t *testing.T) {
 		}
 	}
 	m = press(m, "g")
+	if s := screen(m); !strings.Contains(strings.Split(s, "\n")[0], "grouped by tag") {
+		t.Fatalf("g after epic is not by tag (txjkrm):\n%s", s)
+	}
+	m = press(m, "g")
 	if s := screen(m); strings.Contains(s, "grouped by") || strings.Contains(s, "▾") {
-		t.Fatalf("g after epic is not flat:\n%s", s)
+		t.Fatalf("g after tag is not flat:\n%s", s)
 	}
 	// g alone cycles too (Jørgen 2026-11-17 23:37): flat → group.
 	if m = press(m, "g"); m.grouping != "group" {

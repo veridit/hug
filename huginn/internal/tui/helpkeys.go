@@ -68,12 +68,12 @@ func (m model) contextHelp() helpSection {
 			row("Tab", "complete the choice", "tab"), row("Enter", "complete, or run a complete command", "enter"),
 			row("↑↓ ctrl-n/p", "pick a completion"), row("Esc", "close", "esc"),
 			row("↑ empty", "recall earlier commands, ↑ again older, ↓ newer; Enter runs it"),
-			row("commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
+			row("commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, tag <t>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
 		}}
 	case "filter":
 		return helpSection{"IN THE FILTER PICKER", []helpRow{
 			row("j/k ↑↓", "pick", "j", "k"), row("Enter", "add the chip", "enter"), row("type", "narrow the choices"), row("Esc", "back", "esc"),
-			row("fields", "s state, t type, p priority, g group, l label, a assignee, e epic"),
+			row("fields", "s state, t type, p priority, g group, l tag, a assignee, e epic"),
 		}}
 	case "sort":
 		return helpSection{"IN THE SORT PICKER", []helpRow{
@@ -198,7 +198,7 @@ func (m model) rowsHelp() helpSection {
 	// s and c share a row, so g costs no line and EVERYWHERE stays on the
 	// first screen at 80x24.
 	rows = append(rows, row("c", "clear all filters", "c"),
-		row("g", "group rows: flat, group, epic", "g"))
+		row("g", "group rows: flat, group, epic, tag (tag: first listed tag)", "g"))
 	if m.grouping != "" {
 		// Only grouped rows have headings to fold (kx2ndm).
 		rows = append(rows, row("Space / Enter", "on a heading: fold or unfold it", " "))
@@ -216,7 +216,7 @@ func (m model) globalHelp() helpSection {
 		row("v !", "view: lint", "v"),
 		row("/", "live find; Enter goes to it, Tab keeps it as a filter", "/"),
 		row(":", "palette: commands with completion", ":"),
-		row(": commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
+		row(": commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, tag <t>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
 		row("#", "jump by id prefix or TASK-number alias", "#"),
 		row("f", "filter picker: s t p g l a e (state type priority …)", "f"),
 		row("s", "sort picker: c column, p t s u d g a n; again flips", "s"),

@@ -58,7 +58,7 @@ func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 	m = commandLine(m, "state todo")
 	m = commandLine(m, "type bug")
 	m = commandLine(m, "group auth")
-	m = commandLine(m, "label urgent")
+	m = commandLine(m, "tag urgent")
 	m = press(m, "/", "Alpha", "tab")
 	if len(m.visible) != 1 {
 		t.Fatal(m.View())
