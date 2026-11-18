@@ -39,5 +39,6 @@ User screenshot 2026-11-18: filter line says priority descending while fresh pic
 ## Notes
 
 
+Coordinator crab hands this to a swarm engineer at 2026-11-18 11:18Z; no code changes made by crab.
 ## History
 - 2026-11-18T12:15 todo -> doing/active (take)
