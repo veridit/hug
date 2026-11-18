@@ -1,13 +1,18 @@
 ---
 id: rt80x4
 title: "Release blocked by early settled sync return"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T09:10"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Exact release44264072826 TestSettledWaitsForSlowChild sync_test.go193 reports re
 - [ ] Latest-base touched race and ordinary approved CI are green, with exact source SHA and compact evidence packet.
 
 ## Notes
+
+
+## History
+- 2026-11-18T09:10 todo -> doing/active (take)
