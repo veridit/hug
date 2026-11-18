@@ -194,6 +194,7 @@ type model struct {
 	hist            *promptHistory              // / and : history (xfv9pw, history.go)
 	files           map[string][]string         // task path -> its file names (zgr01t)
 	people          []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
+	project         string                      // hug.toml [board] project, "" when unset (0sw0dd)
 	lastExec        *exec.Cmd                   // the editor command last started, for tests (zgr01t)
 	lastEdit        editorMsg                   // and the message it reports when it closes
 	memo            [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
@@ -503,6 +504,9 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 		// The board the cache last saw, drawn now; the refresh brings the
 		// rest (vnyz8z).
 		m.apply(initialSnapshot(o.Initial), "")
+		// One small file, so the first frame names the project as every
+		// later one does (0sw0dd).
+		m.project, _ = task.ProjectName(s.Root)
 		m.loading, m.refreshSince = true, time.Now()
 		if len(o.Initial.Tasks) == 0 {
 			m.message = readingBoard
@@ -556,6 +560,7 @@ type snapshot struct {
 	closedAt     map[string]int64 // close times from git (closeLog)
 	files        map[string][]string
 	people       []task.Person // hug.toml [people] (89y0b7)
+	project      string        // hug.toml [board] project (0sw0dd)
 	err, readErr error
 }
 
@@ -568,6 +573,7 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 	task.Sort(ts)
 	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root), files: map[string][]string{}}
 	sn.people, _ = task.People(s.Root) // a broken hug.toml is lint's to report
+	sn.project, _ = task.ProjectName(s.Root)
 	// Task folders, from one ReadDir per group instead of a WalkDir per
 	// task (44w1ev: 10,000 walks of folders that mostly do not exist were
 	// half the first screen). Keys are lowercase: taskFiles decides.
@@ -635,6 +641,7 @@ func (m *model) apply(sn snapshot, path string) {
 	m.closedAt = sn.closedAt
 	m.files = sn.files
 	m.people = sn.people
+	m.project = sn.project
 	m.blocked = map[string]bool{}
 	m.linted = map[string]bool{}
 	m.broken = map[string]bool{}
@@ -681,8 +688,9 @@ func (m *model) applyFilter() {
 	// The index's ranking of the query (49n9kw): its hits are kept even when
 	// the substring rule misses them (a word in the notes), and come first.
 	var rank map[string]int
-	if m.query != "" && m.opts.Search != nil {
-		if paths, e := m.opts.Search(m.query); e == nil {
+	terms, words := parseSearch(m.query)
+	if words != "" && m.opts.Search != nil {
+		if paths, e := m.opts.Search(words); e == nil {
 			rank = make(map[string]int, len(paths))
 			for i, p := range paths {
 				rank[p] = i + 1
@@ -705,7 +713,11 @@ func (m *model) applyFilter() {
 		if m.filter.Priority != "" && !optionalMatches(t.Priority, m.filter.Priority) || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
 			continue
 		}
-		if m.query != "" && rank[t.Path] == 0 && !searchMatches(t, m.query) {
+		if words != "" && rank[t.Path] == 0 && !searchMatches(t, words) {
+			continue
+		}
+		// state:done type:bug in / (0sw0dd check 3, searchfields.go).
+		if len(terms) > 0 && !m.fieldsMatch(t, terms) {
 			continue
 		}
 		m.visible = append(m.visible, t)

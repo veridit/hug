@@ -159,6 +159,9 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// cache (one repository, every worktree, one history), never on the
 	// task branch.
 	opts.HistoryFile = filepath.Join(s.r.Common, "huginn", "tui-history.json")
+	// The header names the project by this checkout's folder (0sw0dd):
+	// a linked worktree reads as itself, hug-testing beside hug.
+	opts.Checkout = s.r.Root
 	// Not a terminal (a test's input): keys from In, no screen.
 	if _, tty := a.In.(*os.File); !tty && a.In != nil {
 		opts.Input, opts.Output, opts.NoReload = a.In, a.Out, true

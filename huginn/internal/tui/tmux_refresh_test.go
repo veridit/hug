@@ -106,16 +106,16 @@ func TestTmuxAutoRefresh(t *testing.T) {
 	}
 	keys := func(k ...string) { tmux(append([]string{"send-keys", "-t", "r:0.0"}, k...)...) }
 	type_ := func(text string) { tmux("send-keys", "-t", "r:0.0", "-l", text) }
-	wait("HUG TASKS · overview", 10*time.Second)
+	wait("HUG · repo · overview", 10*time.Second)
 	keys("v", "l") // the list (vl, qh9ep1)
-	wait("HUG TASKS · list", 5*time.Second)
+	wait("HUG · repo · list", 5*time.Second)
 	// List: another terminal renames Gamma.
 	run(binary, "task", "set", ids["Gamma"], "--title", "Gamma renamed by another terminal")
 	took := wait("Gamma renamed by another terminal", 3*time.Second)
 	t.Logf("list: shown %v after hug task set returned, no key pressed", took)
 	// Detail: open Beta, another terminal adds a note.
 	keys("j", "Enter")
-	wait("HUG TASKS · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
+	wait("HUG · repo · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
 	run(binary, "task", "note", ids["Beta"], "note from another terminal")
 	took = wait("note from another terminal", 3*time.Second)
 	t.Logf("detail: shown %v after hug task note returned, no key pressed", took)
@@ -125,7 +125,7 @@ func TestTmuxAutoRefresh(t *testing.T) {
 	// A prompt stays open and keeps what was typed while a change arrives;
 	// the change shows once it closes.
 	keys("Escape")
-	wait("HUG TASKS · list", 5*time.Second)
+	wait("HUG · repo · list", 5*time.Second)
 	keys("/")
 	type_("Alp")
 	wait("/ Alp", 5*time.Second)

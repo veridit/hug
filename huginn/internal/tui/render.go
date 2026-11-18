@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"unicode"
 
@@ -126,11 +127,25 @@ func (m model) taskScreen() bool {
 	return true
 }
 
-// breadcrumb is a task's one header band: HUG TASKS, the view u goes
-// back to, each task followed to get here, then this task's id; "? N for
-// you" on the right (header-spec.md).
+// brand opens the header: 'HUG · <project>' (0sw0dd, Jørgen 2026-11-16),
+// the project being hug.toml [board] project, else the checkout's folder
+// name; plain 'HUG' when neither is known.
+func (m model) brand() string {
+	name := strings.TrimSpace(m.project)
+	if name == "" && m.opts.Checkout != "" {
+		name = filepath.Base(filepath.Clean(m.opts.Checkout))
+	}
+	if name = oneLine(name); name == "" || name == "." || name == string(filepath.Separator) {
+		return "HUG"
+	}
+	return "HUG · " + name
+}
+
+// breadcrumb is a task's one header band: HUG and the project, the view u
+// goes back to, each task followed to get here, then this task's id; "? N
+// for you" on the right (header-spec.md).
 func (m model) breadcrumb() string {
-	left := m.styles.accent.Render("HUG TASKS ·") + " " + m.detailTrail()
+	left := m.styles.accent.Render(m.brand()+" ·") + " " + m.detailTrail()
 	right := ""
 	if n := m.forYouCount(); n > 0 {
 		right = m.styles.forYou.Bold(true).Render(fmt.Sprintf("? %d for you", n))
@@ -230,8 +245,8 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	}
 	// A search that found the task by an imported id says which (vzghj8).
 	// Only when nothing else matched: the title already shows why.
-	if q := strings.ToLower(m.query); !textMatches(t, q) {
-		if alias := matchedAlias(t, q); alias != "" {
+	if _, words := parseSearch(m.query); !textMatches(t, strings.ToLower(words)) {
+		if alias := matchedAlias(t, strings.ToLower(words)); alias != "" {
 			title += m.styles.dim.Render(" · " + alias)
 		}
 	}
@@ -817,7 +832,7 @@ func (m model) frameView() string {
 	}
 	// The warning count is broken findings only; advice never raises it
 	// (pbh9xq).
-	header := m.styles.accent.Render("HUG TASKS · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d broken", len(m.visible), len(m.all), m.brokenCount()))
+	header := m.styles.accent.Render(m.brand()+" · "+mode) + m.styles.dim.Render(fmt.Sprintf("   %d/%d tasks · ! %d broken", len(m.visible), len(m.all), m.brokenCount()))
 	if n := len(m.findings) - m.brokenCount(); n > 0 {
 		header += m.styles.dim.Render(fmt.Sprintf(" · %d advice", n))
 	}

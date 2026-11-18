@@ -1,4 +1,4 @@
-HUG TASKS · overview   0/0 tasks · ! 0 broken · * refreshing                                        
+HUG · overview   0/0 tasks · ! 0 broken · * refreshing                                              
 view: overview  list  board  !lint               │ todo 0 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                           
   ASKED · for you  [0] · None                                                                       

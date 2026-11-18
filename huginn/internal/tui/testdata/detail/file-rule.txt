@@ -1,5 +1,5 @@
 == overview
-HUG TASKS · overview › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5 
+HUG · overview › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5       
 ────────────────────────────────────────────────────────────────────────────────
 Bench                                                                           
                                                                                 
@@ -24,7 +24,7 @@ Synthetic bench notes.
                                                                                 
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == list
-HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5     
+HUG · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5           
 ────────────────────────────────────────────────────────────────────────────────
 Bench                                                                           
                                                                                 
@@ -49,7 +49,7 @@ Synthetic bench notes.
                                                                                 
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == board
-HUG TASKS · board › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5    
+HUG · board › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5          
 ────────────────────────────────────────────────────────────────────────────────
 Bench                                                                           
                                                                                 

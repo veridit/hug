@@ -1,4 +1,4 @@
-HUG TASKS · overview   60/60 tasks · ! 2 broken · 5 advice
+HUG · repo · overview   60/60 tasks · ! 2 broken · 5 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank
   ASKED · for you  [0] · None

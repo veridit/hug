@@ -1,5 +1,5 @@
 == README at 80
-HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5     
+HUG · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5           
 ────────────────────────────────────────────────────────────────────────────────
 Bench                                                                           
                                                                                 
@@ -24,7 +24,7 @@ Synthetic bench notes.
                                                                                 
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == escapes.log at 80
-HUG TASKS · list › 000001 › compiler/000001/evidence/escapes.log · 241 B · 4 of…
+HUG · list › 000001 › compiler/000001/evidence/escapes.log · 241 B · 4 of 5     
 ────────────────────────────────────────────────────────────────────────────────
 ok line                                                                         
 \x1b[2Jcleared?\a bell    tab                                                   
@@ -49,7 +49,7 @@ long long long long long long long long long end
                                                                                 
 next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
 == README at 140
-HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5                                                                 
+HUG · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5                                                                       
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Bench                                                                                                                                       
                                                                                                                                             
@@ -74,7 +74,7 @@ Synthetic bench notes.
                                                                                                                                             
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                     
 == escapes.log at 140
-HUG TASKS · list › 000001 › compiler/000001/evidence/escapes.log · 241 B · 4 of 5                                                           
+HUG · list › 000001 › compiler/000001/evidence/escapes.log · 241 B · 4 of 5                                                                 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ok line                                                                                                                                     
 \x1b[2Jcleared?\a bell    tab                                                                                                               

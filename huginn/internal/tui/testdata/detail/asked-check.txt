@@ -1,5 +1,5 @@
 == aaaaaa at 80
-HUG TASKS · list › aaaaaa                                            ? 3 for you
+HUG · list › aaaaaa                                                  ? 3 for you
 [doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus              
 created 2026-11-01 · updated 2026-11-01 · t                                     
 ────────────────────────────────────────────────────────────────────────────────
@@ -30,7 +30,7 @@ Task 1 of 7 · 100% · next · previous · Esc back
                                                                                 
 j/k check · Space tick · h/l Tab next · answer · take · done · x drop · edit …  
 == aaaaaa at 140
-HUG TASKS · list › aaaaaa                                                                                                        ? 3 for you
+HUG · list › aaaaaa                                                                                                              ? 3 for you
 [doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus                                                                          
 created 2026-11-01 · updated 2026-11-01 · t                                                                                                 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

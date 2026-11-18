@@ -1,4 +1,4 @@
-HUG TASKS · list   1/2 tasks · ! 0 broken                                                                               
+HUG · list   1/2 tasks · ! 0 broken                                                                                     
 view: overview  list  board  !lint                                   │ todo 1 · doing 0 · depends 0 · done 0 · dropped 0
 filter: [/ statbus-402] ⌫ last · F clear · sort: rank                                                                   
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                                                                      

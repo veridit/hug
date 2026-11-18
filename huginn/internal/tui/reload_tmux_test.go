@@ -126,19 +126,19 @@ func TestTmuxReload(t *testing.T) {
 	// A place worth keeping: list view, a filter, a sort, a search, then a
 	// task open with the checks focused.
 	send("-l", "vl") // the list (qh9ep1)
-	wait("HUG TASKS · list", 5*time.Second)
+	wait("HUG · repo · list", 5*time.Second)
 	send("-l", ":doing") // the digits are gone (ahejza)
 	send("Enter")
 	wait("state:doing", 5*time.Second)
 	send("-l", ":sort")
 	send("Enter")
-	wait("HUG TASKS · sort", 5*time.Second)
+	wait("HUG · repo · sort", 5*time.Second)
 	send("-l", "p")
 	send("Enter")
 	wait("sort: priority", 5*time.Second)
 	send("-l", "jj")
 	send("Enter")
-	wait("HUG TASKS · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
+	wait("HUG · repo · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
 	send("Tab")
 	time.Sleep(300 * time.Millisecond)
 	before := screen()
@@ -209,7 +209,7 @@ func TestTmuxReload(t *testing.T) {
 		t.Fatalf("broken binary:\n%s", failed)
 	}
 	send("Escape")
-	wait("HUG TASKS · list", 5*time.Second) // still working
+	wait("HUG · repo · list", 5*time.Second) // still working
 	send("-l", "q")
 	t.Log("tmux reload: PASS (v0.0.1 -> v0.0.2 by symlink swap: corner only until R, R reloads, same pane pid, same place; broken v0.0.3 refused)")
 }

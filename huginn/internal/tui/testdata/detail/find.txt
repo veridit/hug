@@ -1,4 +1,4 @@
-HUG TASKS · list › TASKID                                                       
+HUG · list › TASKID                                                             
 [todo]  [feature]  group:root  unassigned                                       
 created YYYY-MM-DD · updated YYYY-MM-DD · rows-board                            
 ────────────────────────────────────────────────────────────────────────────────
