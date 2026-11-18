@@ -200,7 +200,17 @@ func TestTmuxReload(t *testing.T) {
 	// clears it (tz9z14, Jørgen 15:19: "noise because it's from the main
 	// screen").
 	send("Escape")
-	listed := wait("HUG TASKS · list", 5*time.Second)
+	// The detail's crumb also reads "HUG TASKS · list › ID": wait for the
+	// list itself, the crumb without › (CI 44326448795 asserted too early).
+	var listed string
+	for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline); time.Sleep(100 * time.Millisecond) {
+		if listed = screen(); !strings.Contains(strings.SplitN(listed, "\n", 2)[0], "›") {
+			break
+		}
+	}
+	if strings.Contains(strings.SplitN(listed, "\n", 2)[0], "›") {
+		t.Fatalf("Esc did not leave the task:\n%s", listed)
+	}
 	if strings.Contains(listed, "reloaded hug") {
 		t.Fatalf("the reload line stayed after leaving the task:\n%s", listed)
 	}
