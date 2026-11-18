@@ -95,6 +95,10 @@ Check 1, kestrel, branch kestrel/w40cmk at ad854bd2 (rebased onto origin/main 07
   - Layout numbers in 5 tests now come from task.Layout.
   - files_test, task_test (isolation), tui invariants_test, writers_test boardFile, and lintdetail_test's title word now follow layout 3.
 - Still open: check 5 (hatchling, hug/memory), 6 (Seid copy), 7 (Jørgen), 8 (no group folders: met by the upgrade, Statbus copy still to do), 9 (sync across the move), 10 (CI), 11 (wyvern's bench).
+crab 04:18Z, two conditions for main:
+(1) The write refusal says in one line what the upgrade does ('N task files get fixed names; preview: hug upgrade'), so an agent reads before it applies. The fix line becomes the preview, hug upgrade, not --apply. Still to do on kestrel/w40cmk, with the cli test updated.
+(2) w40cmk ships in a release of its own, with nothing else new in it. crab upgrades hug's board right after he installs it, and tells Seid's and Statbus's agents before their next write.
+Order: f5vx4x, then checks 9 and 6.
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
 - 2026-11-18T02:26 doing/active -> doing/waiting (wait)
