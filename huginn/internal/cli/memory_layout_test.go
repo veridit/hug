@@ -18,6 +18,9 @@ func memoryLayoutApp(t *testing.T) (*App, string, string) {
 	t.Setenv("HUG_HOME", filepath.Join(home, "hug"))
 	t.Setenv("HUG_SYNC", "off")
 	a := app(t)
+	// Preserve fixture bytes through later Git checkouts even when the
+	// machine-wide Windows default enables core.autocrlf.
+	git(t, a.Cwd, "config", "core.autocrlf", "false")
 	a.Env["HOME"], a.Env["JCODE_HOME"], a.Env["HUG_HOME"], a.Env["HUG_SYNC"] = home, filepath.Join(home, "jcode"), filepath.Join(home, "hug"), "off"
 	execute(t, a, "init")
 	old := filepath.Join(a.Cwd, ".muninn-notes")
@@ -129,7 +132,13 @@ func TestMemoryLayoutUnregisteredDirectoryIsNotSilentlyIgnored(t *testing.T) {
 	refs := git(t, a.Cwd, "show-ref")
 	for _, args := range [][]string{{"upgrade"}, {"upgrade", "--apply"}} {
 		code, out := runText(a, args...)
-		if code != 1 || !strings.Contains(out, "fix:") || !strings.Contains(out, old) {
+		shown, hasPrefix := strings.CutPrefix(out, "project memory path ")
+		shown, _, hasSuffix := strings.Cut(shown, " is not a readable registered Git worktree;")
+		shownInfo, shownErr := os.Stat(shown)
+		oldInfo, oldErr := os.Stat(old)
+		// Git resolves temporary-directory aliases such as RUNNER~1. Require
+		// the exact directory, rather than one spelling of its path.
+		if code != 1 || !strings.Contains(out, "fix:") || !hasPrefix || !hasSuffix || shownErr != nil || oldErr != nil || !os.SameFile(shownInfo, oldInfo) {
 			t.Fatalf("unregistered memory directory silently ignored: exit%d\n%s", code, out)
 		}
 		if b, err := os.ReadFile(file); err != nil || string(b) != raw {
@@ -161,6 +170,13 @@ func TestMemoryLayoutLinkedWorktreeUsesOneCanonicalCheckout(t *testing.T) {
 }
 
 func TestMemoryLayoutTwoClonesKeepUnpushedMemory(t *testing.T) {
+	// Exercise the Windows Git default on every OS. The byte-preservation
+	// fixture must explicitly select its checkout policy, not normalize data.
+	config := filepath.Join(t.TempDir(), "global.gitconfig")
+	if err := os.WriteFile(config, []byte("[core]\n\tautocrlf = true\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("GIT_CONFIG_GLOBAL", config)
 	a, old, raw := memoryLayoutApp(t)
 	remote := filepath.Join(t.TempDir(), "remote.git")
 	git(t, a.Cwd, "init", "--bare", "-b", "main", remote)
@@ -170,6 +186,7 @@ func TestMemoryLayoutTwoClonesKeepUnpushedMemory(t *testing.T) {
 	b := *a
 	b.Cwd = filepath.Join(t.TempDir(), "two")
 	git(t, a.Cwd, "clone", remote, b.Cwd)
+	git(t, b.Cwd, "config", "core.autocrlf", "false")
 	git(t, b.Cwd, "config", "user.name", "Test B")
 	git(t, b.Cwd, "config", "user.email", "b@example.invalid")
 	oldB := filepath.Join(b.Cwd, ".muninn-notes")
