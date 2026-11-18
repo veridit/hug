@@ -36,7 +36,7 @@ Today's footer while typing: '↑↓ pick · Enter go to it · Tab keep as filte
 - [x] Esc clears the highlights and leaves the cursor where it is. In list, board and overview, / still finds tasks as before (existing tests stay green)
 - [x] Context help (?) and the footer list the detail search keys (help test)
 - [ ] Jørgen confirms on his board after release
-- [ ] A search typed in a detail or the file viewer never becomes a list filter: after u the overview shows every task, with no '[/ …]' line (key test, from Jørgen's 23:30 screenshot where '/ row lay' in 6ephqk hid all but one task)
+- [x] A search typed in a detail or the file viewer never becomes a list filter: after u the overview shows every task, with no '[/ …]' line (key test, from Jørgen's 23:30 screenshot where '/ row lay' in 6ephqk hid all but one task)
 
 ## Notes
 
