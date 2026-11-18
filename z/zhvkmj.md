@@ -41,6 +41,8 @@ Progress pie came with d8yx7y (v0.7.33). Count line colors: huginn/internal/tui 
 - [x] each section header and the status word use that status's color; the count line uses the same colors (golden, 140x40 color)
 - [x] no-color goldens still distinguish everything by text
 - [ ] Jørgen confirms the look on his board after release
+- [ ] On zhvkmj itself (2 .ans captures), Tab or ]/[ from the top of the detail reaches the Files section, j/k picks a capture and Space shows it in the embedded viewer; a tmux test on a copy of hug's board drives exactly that and fails first if it cannot (Jørgen 2026-11-18 19:52: he could not put focus in Files)
+- [ ] Depends is not a problem colour: a task waiting on another task's checks reads in a calm colour of its own (not red, not amber), in the count line, the DEPENDS section heading and the row; red stays only for broken lint (TestOneColourPerMeaning updated, golden at 140 colour)
 
 ## Requests
 - 2026-11-18T19:52 request 1 by jhf:
@@ -75,3 +77,4 @@ shipped in v0.7.54 (28791de)
 - 2026-11-18T19:52 request 1 by jhf
 - 2026-11-18T19:52 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T19:52 request 1 acknowledged by crab
+- 2026-11-18T19:53 request 1 in progress by crab: hug task set zhvkmj
