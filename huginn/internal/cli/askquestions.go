@@ -33,5 +33,14 @@ func questionText(q task.AskedQuestion) string {
 			b.WriteString("    " + l + "\n")
 		}
 	}
+	// A withdrawn question (nanvnt) keeps its text for the record but
+	// says so under it, so it never reads as one still waiting.
+	if w := q.Withdrawn; w != nil && q.Answer == nil {
+		line := "  withdrawn " + strings.Replace(w.At, "T", " ", 1)
+		if w.Text != "" {
+			line += " (" + w.Text + ")"
+		}
+		b.WriteString(line + "\n")
+	}
 	return b.String()
 }

@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- A withdrawn question reads as withdrawn: `hug task show` prints `withdrawn <at> (<why>)` under it, and the TUI detail draws it dim with its time; ASKED never counts it (nanvnt).
+
 ## v0.7.72 - 2026-11-18
 
 - The README leads with `hug`: one command, named for Old Norse *hugr* (mind), with Odin's ravens as mascots, Huginn for tasks and Muninn for memory (p277bp check 1). Its commands table lists only `hug` commands, adds `hug apps` and `hug upgrade`, and says memories sync on `hug/memory`.

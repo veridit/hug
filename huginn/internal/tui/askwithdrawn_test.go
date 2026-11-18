@@ -41,18 +41,25 @@ func TestWithdrawnQuestionDrawnDim(t *testing.T) {
 	}
 	color := m.detailText(tk)
 	page := ansi.Strip(color)
-	if !strings.Contains(page, "1. nautilus → jhf") || !strings.Contains(page, "· withdrawn 2026-11-17 09:50") {
+	if !strings.Contains(page, "1. nautilus → you · 3 min ago · withdrawn 2026-11-17 09:50") {
 		t.Fatalf("question 1 not marked withdrawn with its time:\n%s", page)
 	}
 	if !strings.Contains(page, "? should the ASKED title take the warning colour?") || answerActions(page) != 1 {
 		t.Fatalf("question 2 is not the one open block with its answer:\n%s", page)
 	}
+	// The record's own lines, before the page wraps them.
+	record := m.questionRecord(tk)
 	for _, l := range []string{
 		"   which colour should the ASKED title take on a light terminal, given that the warning colour already marks lint findings and the rows there are long?",
 		"   And should it differ under NO_COLOR?",
 	} {
-		if dim := m.styles.dim.Render(l); !strings.Contains(color, dim) {
-			t.Fatalf("withdrawn text line not dim: %q\n%q", l, color)
+		dim := m.styles.dim.Render(l)
+		found := false
+		for _, r := range record {
+			found = found || r == dim
+		}
+		if dim == l || !found {
+			t.Fatalf("withdrawn text line not dim: %q\n%q", l, record)
 		}
 	}
 }
