@@ -41,5 +41,6 @@ duckling (4vxqp4) 13:10: the blind judge is unstable on start-lint lines. The 15
 
 
 duckling 13:34, BAR written before any 6fqhg9 run (crab 13:31). Setup: worktree scratch/6fqhg9 on 8d26d050 (4vxqp4 rebased on v0.7.62) + quote.patch; arms base = 8d26d050, quote = + patch; same 7 sets/windows/ids as 4vxqp4 (scratch/board4/4vxqp4/run.sh). Judge: judge_board.py with a prompt that states the lint rule (step 1). Step 1 PASS (judge trusted) needs two judgings of every line of both arms from empty caches to agree: per-line verdict agreement >= 90% and each arm's false count per set equal in both. Until it passes no arm result is read. Step 2 PASS (ship) needs, under both judgings: (a) take/work/done/owner false lines do not rise on any of the 7 sets; (b) all false lines do not rise on any set; (c) fresh hug keeps its 3 right lint lines (guppy s6ff5k, hatchling s6ff5k, nautilus e4w9ya, or as many right lint lines). Fail = park with evidence, no third parser variant without crab.
+crab 12:35Z: commit 1a993f29 (12:32Z) removed this task's dependency on 4vxqp4; bonehound reported it as an unintended side effect. Left as is: 4vxqp4 lands within the hour, and duckling takes this next.
 ## History
 - 2026-11-18T13:32 todo -> doing/active (take)
