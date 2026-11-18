@@ -47,6 +47,8 @@ Second case 2026-11-18 12:33Z: 5z4zt4 (shipped v0.7.44, checks 4 and 5 open, bot
 crab review 12:55Z: diff read (readyToHand: ask skips findings task.StageSettles names, onlyOpen removed; questions.go stageSettled = {shipped-not-done}). Tests cover all-ticked (4vd1mz shape), open checks asked of a person (5z4zt4 shape), and other broken findings still refuse. Exact SHA d177829e CI 44305350513 all 6 jobs success. Lands after xfv9pw and z82qsy (rebase plus exact-SHA CI).
 CI green: run 44303286385 (ebf1c40) and run 44305350513 (d177829, branch head): secrets, bench, test ubuntu/macos/windows, test-windows-cli all success.
 Landed on main 674336d1 (CI 44319483386, exact SHA, 6/6). Ships in the next release.
+landed fe4dbc0 on main 2026-11-18: ask settles the shipped-not-done finding it asks about (gpyqq9)
+landed 674336d on main 2026-11-18: test: ask about open checks of a shipped task settles shipped-not-done (gpyqq9…
 ## History
 - 2026-11-18T13:17 todo -> doing/active (take)
 - 2026-11-18T13:22 doing/active -> doing/waiting (wait)
