@@ -95,3 +95,60 @@ func TestAskAboutTheOpenCheckOfAShippedTask(t *testing.T) {
 		t.Fatalf("asked about check 9, lint still asks:\n%s", out)
 	}
 }
+
+// gpyqq9 check 1 (crab on 4vd1mz, 2026-11-18 11:56Z): a shipped task with
+// every check ticked has one question left, is it done, and only its owner
+// decides. Asking that person is how it is settled: ask goes through, the
+// stage is asked, and lint no longer reports shipped-not-done.
+func TestAskSettlesShippedNotDone(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Shipped", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "one", "--accept", "two")["task"].(Reply)["id"].(string)
+	execute(t, a, "take", id, "--model", "test-model", "--as", "crab")
+	execute(t, a, "note", id, "shipped in v0.7.59 (9349d00aaaa)")
+	execute(t, a, "check", id, "1")
+	execute(t, a, "check", id, "2")
+	if _, out := runText(a, "show", id); !strings.Contains(out, "[shipped-not-done]") || !strings.Contains(out, "fix: hug task done "+id) {
+		t.Fatalf("shipped with every check ticked, want shipped-not-done:\n%s", out)
+	}
+	code, out := runText(a, "ask", id, "is it done?", "--to", "jhf", "--as", "crab")
+	if code != 0 || strings.Contains(out, "not ready to hand") {
+		t.Fatalf("ask on a shipped, all-ticked task: exit %d, want 0\n%s", code, out)
+	}
+	if tk := execute(t, a, "show", id, "--json")["task"].(Reply); tk["stage"] != "asked" {
+		t.Fatalf("after ask: stage %v, want asked", tk["stage"])
+	}
+	if _, out := runText(a, "lint", id); strings.Contains(out, "shipped-not-done") {
+		t.Fatalf("asked whether it is done, lint still reports shipped-not-done:\n%s", out)
+	}
+}
+
+// gpyqq9 check 2: ask is excused only the question it settles. Another
+// broken finding on a shipped, all-ticked task (an unknown type, edited by
+// hand) still holds the ask back, names only that finding, gives its fix,
+// and writes nothing.
+func TestAskOnShippedTaskStillRefusesOtherBrokenFindings(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Shipped", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "one")["task"].(Reply)["id"].(string)
+	execute(t, a, "take", id, "--model", "test-model", "--as", "crab")
+	execute(t, a, "note", id, "shipped in v0.7.59 (9349d00aaaa)")
+	execute(t, a, "check", id, "1")
+	useEditor(t, a, "type: feature", "type: featur")
+	execute(t, a, "edit", id)
+	before := taskFile(t, a, id)
+	code, out := runText(a, "ask", id, "is it done?", "--to", "jhf", "--as", "crab")
+	if code != 2 || !strings.Contains(out, "is not ready to hand to jhf: 1 broken finding: [unknown-type] unknown type featur") || strings.Contains(out, "[shipped-not-done]") || !strings.HasSuffix(out, "fix: hug task set "+id+" --type feature\n") {
+		t.Fatalf("ask on a shipped task with an unknown type: exit %d, want 2 naming only unknown-type with its fix:\n%s", code, out)
+	}
+	if after := taskFile(t, a, id); after != before {
+		t.Fatalf("ask wrote the task while refusing:\n%s", after)
+	}
+	// After the fix the same ask goes through.
+	execute(t, a, "set", id, "--type", "feature")
+	if code, out := runText(a, "ask", id, "is it done?", "--to", "jhf", "--as", "crab"); code != 0 {
+		t.Fatalf("after the fix the ask is still refused: exit %d\n%s", code, out)
+	}
+}
