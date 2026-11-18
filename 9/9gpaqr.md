@@ -34,11 +34,12 @@ Main d5c66a1f (stack CI 44393153152 8/8): 34r1ft, 41hhgn c11, 0n4rnx replay + of
 
 ## Acceptance
 - [x] release.yml succeeds for v0.7.70
-- [ ] brew upgrade veridit/tap/hug; hug version reports v0.7.70
+- [x] brew upgrade veridit/tap/hug; hug version reports v0.7.70
 
 ## Notes
 
 
 check 1: release.yml 44396400817 completed success (first tag push started no run; re-pushing the same tag c4eb6fed did)
+check 2: brew upgrade veridit/tap/hug; hug version: hug v0.7.70
 ## History
 - 2026-11-18T22:10 todo -> doing/active (take)
