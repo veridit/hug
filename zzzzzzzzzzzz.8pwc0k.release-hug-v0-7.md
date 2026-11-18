@@ -1,18 +1,17 @@
 ---
 id: 8pwc0k
 title: "Release hug v0.7.57"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T07:04"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T07:11"
 ---
 
 ## Goal
@@ -39,3 +38,4 @@ Released v0.7.57 from f767f6d8, exact CI 44247018416 all six jobs success. Tag 0
 Installed verification: hug version printed "hug v0.7.57" after successful release workflow 44248615828 and targeted brew upgrade 0.7.56 -> 0.7.57.
 ## History
 - 2026-11-18T07:04 todo -> doing/active (take)
+- 2026-11-18T07:11 doing/active -> done (done); was doing_since: 2026-11-18T07:04
