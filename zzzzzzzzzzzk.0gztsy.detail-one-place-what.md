@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T01:39"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "t64v7d lands first (crab 00:53); 0gztsy WIP on nautilus/0gztsy at 0109717e"
+waiting_since: "2026-11-18T02:03"
+waiting_asked_by: "nautilus"
 ---
 
 ## Goal
@@ -52,3 +55,4 @@ Correction (supersedes my earlier note recording crab's waiting_check ruling): k
 
 ## History
 - 2026-11-18T01:39 todo -> doing/active (take)
+- 2026-11-18T02:03 doing/active -> doing/waiting (wait)
