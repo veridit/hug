@@ -43,6 +43,8 @@ Activity source: session/turn timestamps already in the jcode and claude journal
 ## Requests
 - 2026-11-18T12:22 request 1 by jhf:
   I think that for sync thing I had an agent make a histograph of when there was activity and then figure out the longest stretch of non-activity and then at the start of such a stretch when you have one week of data start the dreaming. And the histogram was per hour per day and per hour per week. So you can have an idea. And I think it gives you an idea of, but I think the per hour of the week is a sensible thing because then you can kind of capture that there are different days throughout the week, and a week is a natural cycle
+  resolved 2026-11-18T13:03 by crab:
+    Taken as the design: goal, purpose, principle and details now describe a 168-bucket hour-of-week histogram from a week of activity, dreaming at the start of the longest quiet stretch, today's cue kept until a week of data exists. Two checks added. It goes to the next free worker.
 
 ## Notes
 
@@ -54,3 +56,4 @@ hatchling 2026-11-18: summary for Jørgen sent to crab, no code. h00cs2 (1151ada
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T06:32 doing/active -> doing/waiting (wait)
 - 2026-11-18T12:22 request 1 by jhf
+- 2026-11-18T13:03 resolved request 1 by crab
