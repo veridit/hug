@@ -7,7 +7,42 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
+
+// TestRemoveWatchedDirReturns: Remove on a watched folder also drops the
+// watches of the files in it. PR 789's lock, ported to v1.10.1, made that
+// inner removal take the lock Remove already held (v1.10.1 called the public
+// Remove there; upstream main calls the unlocked remove2), so it hung.
+func TestRemoveWatchedDirReturns(t *testing.T) {
+	dir := t.TempDir()
+	for i := range 3 {
+		if err := os.WriteFile(filepath.Join(dir, fmt.Sprint(i)), nil, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	w, err := NewWatcher()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	if err := w.Add(dir); err != nil {
+		t.Fatal(err)
+	}
+	done := make(chan error, 1)
+	go func() { done <- w.Remove(dir) }()
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatal(err)
+		}
+	case <-time.After(10 * time.Second):
+		t.Fatal("Remove of a watched folder with files did not return in 10 s")
+	}
+	if l := w.WatchList(); len(l) != 0 {
+		t.Fatalf("watches left after Remove: %v", l)
+	}
+}
 
 // fsnotify v1.10.1's kqueue Close closed every watch descriptor while
 // readEvents closed the same ones on the Remove events of files being
