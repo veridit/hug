@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T02:44"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "check 3: crab's ps check after the next brew upgrade (8dee4a86 released); CI run 44223950419"
+waiting_since: "2026-11-18T03:38"
+waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -44,3 +47,4 @@ landed 8dee4a8 on main 2026-11-18: hug mcp: reload the installed hug between req
 Mutant 'reload always' (ignore start identity) killed: 'reload_test.go:89: connect: context deadline exceeded' in TestMCPReloadsChangedBinary and TestMCPNoReloadWhenUnchanged. Now 12 of 12 killed.
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
+- 2026-11-18T03:38 doing/active -> doing/waiting (wait)
