@@ -19,7 +19,7 @@ func TestStageDisagreesFixRuns(t *testing.T) {
 	execute(t, a, "take", id, "--as", "hatchling", "--model", "m")
 	execute(t, a, "wait", id, "parked: no fourth arm", "--as", "hatchling")
 	board := filepath.Join(a.Cwd, TaskDir)
-	m, _ := filepath.Glob(filepath.Join(board, "*"+id+"*.md"))
+	m, _ := globID(board, id)
 	raw, _ := os.ReadFile(m[0])
 	stale := "asked_by: \"hatchling\"\nasked_for: \"crab\"\nasked_since: \"2026-11-17T20:20\"\nasked_what: \"H3 failed Part 2; parked per crab ruling\"\n"
 	old := strings.Replace(string(raw), "\nwaiting_on:", "\n"+stale+"waiting_on:", 1)

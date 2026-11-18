@@ -141,6 +141,10 @@ func TestOperationsIsolationAndLifecycle(t *testing.T) {
 	b := newTest(t, s, "Second task", a.ID)
 	c := newTest(t, s, "Third task", b.ID)
 	initial := hashes(t, s.Root)
+	before, e := os.ReadFile(filepath.Join(s.Root, b.Path))
+	if e != nil {
+		t.Fatal(e)
+	}
 	for _, op := range []func() (Result, error){func() (Result, error) { return s.Move(b.ID, MoveOptions{Top: true}) }, func() (Result, error) { return s.Reslug(b.ID, "new-slug") }, func() (Result, error) { return s.MoveGroup(b.ID, "auth/nested") }} {
 		r, e := op()
 		if e != nil {
@@ -148,14 +152,19 @@ func TestOperationsIsolationAndLifecycle(t *testing.T) {
 		}
 		now := hashes(t, s.Root)
 		if now[a.Path] != initial[a.Path] || now[c.Path] != initial[c.Path] {
-			t.Fatal("rename changed another task")
+			t.Fatal("move changed another task")
+		}
+		// Layout 3 (w40cmk checks 2, 3): a move keeps the path and changes
+		// the rank: and group: lines only.
+		if r.Task.Path != b.Path {
+			t.Fatalf("move renamed %s to %s", b.Path, r.Task.Path)
 		}
 		bb, e := os.ReadFile(filepath.Join(s.Root, r.Task.Path))
 		if e != nil {
 			t.Fatal(e)
 		}
-		if sha256.Sum256(bb) != initial[b.Path] {
-			t.Fatal("rename changed content")
+		if got, want := withoutOrder(string(bb)), withoutOrder(string(before)); got != want {
+			t.Fatalf("move changed more than rank: and group:\n%s\nwant\n%s", got, want)
 		}
 	}
 	if _, e := s.Take(b.ID, "alice"); e == nil {
@@ -256,4 +265,16 @@ func TestLintAll(t *testing.T) {
 		t.Fatal("no findings")
 	}
 	t.Log(fmt.Sprint(findings))
+}
+
+// withoutOrder is a task file without its rank: and group: lines, the only
+// lines a layout-3 move may change (w40cmk).
+func withoutOrder(s string) string {
+	var keep []string
+	for _, l := range strings.SplitAfter(s, "\n") {
+		if !strings.HasPrefix(l, "rank: ") && !strings.HasPrefix(l, "group: ") {
+			keep = append(keep, l)
+		}
+	}
+	return strings.Join(keep, "")
 }

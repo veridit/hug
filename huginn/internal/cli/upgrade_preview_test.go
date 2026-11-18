@@ -22,7 +22,7 @@ func TestUpgradePreviewsThenApplies(t *testing.T) {
 	execute(t, a, "people", "add", "jhf", "jorgen@veridit.no")
 	board := filepath.Join(a.Cwd, TaskDir)
 	head := git(t, board, "rev-parse", "HEAD")
-	m, _ := filepath.Glob(filepath.Join(board, "*"+id+"*.md"))
+	m, _ := globID(board, id)
 	before, _ := os.ReadFile(m[0])
 
 	code, out := runText(a, "upgrade")

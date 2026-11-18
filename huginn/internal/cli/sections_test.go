@@ -42,7 +42,7 @@ func TestUpgradeReordersSections(t *testing.T) {
 	a := app(t)
 	r := execute(t, a, "new", "Sort builder", "--goal", "Build a nested sort", "--purpose", "Jørgen sorts", "--principle", "Esc keeps the order", "--accept", "p t Enter")
 	id := r["task"].(Reply)["id"].(string)
-	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+id+"*.md"))
+	m, _ := globID(filepath.Join(a.Cwd, TaskDir), id)
 	b, _ := os.ReadFile(m[0])
 	// mkzcqr's layout: Depends on moved up between Goal and Purpose.
 	text := strings.Replace(string(b), "\n## Depends on\n", "\n", 1)
@@ -78,7 +78,7 @@ func TestUpgradeReordersSections(t *testing.T) {
 		t.Fatalf("not committed: %s", st)
 	}
 	// A board from before layout = N gets it last, after the files move (dx9vw2).
-	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-2", "--format=%s"); log != "hug upgrade: board layout 1 -> 2\nhug upgrade: backlog leftovers and section order in 1 tasks" {
+	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-2", "--format=%s"); log != upgradedFrom(1)+"\nhug upgrade: backlog leftovers and section order in 1 tasks" {
 		t.Fatalf("commits %q", log)
 	}
 	if got := did(); strings.Contains(got, "tidied") {

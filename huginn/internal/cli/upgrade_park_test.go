@@ -36,7 +36,7 @@ func TestUpgradeLeavesAParkAsWait(t *testing.T) {
 	board := filepath.Join(a.Cwd, TaskDir)
 	for name, w := range waits {
 		execute(t, a, "wait", ids[name], w[0])
-		m, _ := filepath.Glob(filepath.Join(board, "*"+ids[name]+"*.md"))
+		m, _ := globID(board, ids[name])
 		raw, _ := os.ReadFile(m[0])
 		old := strings.Replace(string(raw), "\nwaiting_on:", "\nwaiting_for: \""+w[1]+"\"\nwaiting_on:", 1)
 		if e := os.WriteFile(m[0], []byte(old), 0o644); e != nil {

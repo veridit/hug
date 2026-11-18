@@ -482,7 +482,7 @@ func TestLintJudgesOpenTasksOnly(t *testing.T) {
 	execute(t, a, "done", closedBroken)
 	// Advice (section-order) on a task that is then dropped.
 	closedAdvice := execute(t, a, "new", "Closed advice", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+closedAdvice+"*.md"))
+	m, _ := globID(filepath.Join(a.Cwd, TaskDir), closedAdvice)
 	b, _ := os.ReadFile(m[0])
 	text := strings.Replace(string(b), "\n## Depends on\n", "\n", 1)
 	if err := os.WriteFile(m[0], []byte(strings.Replace(text, "\n## Purpose\n", "\n## Depends on\n\n## Purpose\n", 1)), 0o644); err != nil {
@@ -492,7 +492,7 @@ func TestLintJudgesOpenTasksOnly(t *testing.T) {
 	execute(t, a, "drop", closedAdvice, "not needed")
 	// A done task with an open check, as an import or a hand edit leaves it.
 	doneOpen := execute(t, a, "new", "Done by hand", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-	m, _ = filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+doneOpen+"*.md"))
+	m, _ = globID(filepath.Join(a.Cwd, TaskDir), doneOpen)
 	b, _ = os.ReadFile(m[0])
 	if err := os.WriteFile(m[0], []byte(strings.Replace(string(b), "state: todo", "state: done", 1)), 0o644); err != nil {
 		t.Fatal(err)

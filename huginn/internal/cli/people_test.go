@@ -51,7 +51,7 @@ func TestPeopleAndWaitingFor(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(toml) != "layout = 2\n\n[people.jhf]\nname = \"Jørgen H. Fjeld\"\nemail = [\"12345+jhf@users.noreply.github.com\", \"jorgen@veridit.no\"]\n" {
+	if string(toml) != layoutLine+"\n[people.jhf]\nname = \"Jørgen H. Fjeld\"\nemail = [\"12345+jhf@users.noreply.github.com\", \"jorgen@veridit.no\"]\n" {
 		t.Fatalf("hug.toml:\n%s", toml)
 	}
 	if _, out = runText(a, "lint"); !strings.HasPrefix(out, "no findings") {
@@ -164,7 +164,7 @@ func TestUpgradeMovesWaitingForFromFile(t *testing.T) {
 	execute(t, a, "attach", id, "--name", "rows.ans", "--content", "rows")
 	execute(t, a, "wait", id, "check 2: look at the rows", "--as", "nautilus")
 	board := filepath.Join(a.Cwd, TaskDir)
-	m, _ := filepath.Glob(filepath.Join(board, "*"+id+"*.md"))
+	m, _ := globID(board, id)
 	raw, _ := os.ReadFile(m[0])
 	old := strings.Replace(string(raw), "\nwaiting_on:", "\nwaiting_for: \"jhf\"\nwaiting_show: \"rows.ans\"\nwaiting_on:", 1)
 	if e := os.WriteFile(m[0], []byte(old), 0o644); e != nil {

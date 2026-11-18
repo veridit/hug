@@ -59,19 +59,23 @@ func TestTaskFiles(t *testing.T) {
 	if err != nil || len(ts) != 1 {
 		t.Fatalf("tasks = %d %v; files folder was read as tasks", len(ts), err)
 	}
-	// moving the task to a group carries its folder
+	// moving the task to a group keeps it and its folder where they are
+	// (w40cmk check 3: the group is a field, the path follows from the id)
 	if _, err := s.MoveGroup(id, "perf"); err != nil {
 		t.Fatal(err)
 	}
 	if b, err := s.ReadFile(id, "bench/runs.txt"); err != nil || string(b) != "13ms\n" {
 		t.Fatalf("after move: %q %v", b, err)
 	}
-	if _, err := os.Stat(filepath.Join(s.Root, "perf", id, "notes.md")); err != nil {
-		t.Errorf("folder did not move with the task: %v", err)
+	if _, err := os.Stat(filepath.Join(s.Root, filepath.FromSlash(FolderFor(id)), "notes.md")); err != nil {
+		t.Errorf("folder left C/ID/ on a group move: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(s.Root, "perf")); !os.IsNotExist(err) {
+		t.Errorf("a group move made a perf/ folder: %v", err)
 	}
 	// lint: a missing reference, and a hand-placed binary file
 	s.Note(id, "see file:missing.tsv and task:"+id+"/bench/runs.txt; prose like file:line is no reference")
-	os.WriteFile(filepath.Join(s.Root, "perf", id, "hand.bin"), []byte{0, 1}, 0o644)
+	os.WriteFile(filepath.Join(s.Root, filepath.FromSlash(FolderFor(id)), "hand.bin"), []byte{0, 1}, 0o644)
 	fs, err := s.LintFiles([]string{".jcode/scratch/"})
 	if err != nil {
 		t.Fatal(err)
