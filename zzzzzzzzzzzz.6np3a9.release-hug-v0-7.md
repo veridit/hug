@@ -1,18 +1,17 @@
 ---
 id: 6np3a9
 title: "Release hug v0.7.60"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T09:45"
-stage: "active"
 model: "openai"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T09:52"
 ---
 
 ## Goal
@@ -42,3 +41,4 @@ Release workflow44269866555 succeeded on exact tag4c94ede4 before targeted insta
 Successful publish44269866555 followed by targeted brew upgrade veridit/tap/hug; installed version verified byte-exact hug v0.7.60. No machine configuration or layout migration run.
 ## History
 - 2026-11-18T09:45 todo -> doing/active (take)
+- 2026-11-18T09:52 doing/active -> done (done); was doing_since: 2026-11-18T09:45
