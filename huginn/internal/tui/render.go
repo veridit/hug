@@ -30,6 +30,11 @@ type theme struct {
 	// blinks at bubbles' 530 ms. The answer and request box use it; the
 	// pending view-key prefix is to reuse it.
 	cursor lipgloss.Style
+	// The view line's stable tiers (911j70): viewPrefixKey is v, step 1
+	// of the key trie; viewKey the second step's letters, o l b !;
+	// viewCurrent the view you are in, on the selection tint; viewEntered
+	// v once pressed, as a typed key.
+	viewPrefixKey, viewKey, viewCurrent, viewEntered lipgloss.Style
 	// column tints the column the cursor marks (e3sevr); columnCursor is
 	// that column's cell on the cursor row.
 	column, columnCursor   lipgloss.Style
@@ -42,6 +47,11 @@ type theme struct {
 var (
 	forYouColour  = [2]string{"#ffb454", "#995200"} // waits on you
 	problemColour = [2]string{"#ff8585", "#ae2525"} // something is wrong: depends, broken lint
+	// selectionColour is the one selection tint (911j70, puppy's
+	// mock/grid): the view you are in, and v as entered.
+	selectionColour = [2]string{"#2b5a78", "#bfe3f5"}
+	// stepTwoColour is the second key of a two-key trie, o l b ! after v.
+	stepTwoColour = [2]string{"#c9b3ff", "#6a3fb0"}
 	// typeColours follow task.Types: feature, bug, chore, spike, docs.
 	typeColours = [][2]string{{"#bc9dff", "#7143a8"}, {"#ff9ecb", "#a8327f"}, {"#b8bccb", "#586474"}, {"#c4b48a", "#6b5a2a"}, {"#7bd4c2", "#146f61"}}
 	// priorityColours: critical, high, medium, low.
@@ -64,6 +74,18 @@ func newTheme() theme {
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
 	t.progress = progressStyle(color)
 	t.cursor = color("#00bfff", "#006c9c").Underline(true).Bold(true)
+	onTint := base.Background(lipgloss.AdaptiveColor{Dark: selectionColour[0], Light: selectionColour[1]}).Foreground(lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#0b1620"})
+	t.viewPrefixKey = color("#00bfff", "#006c9c").Bold(true)
+	t.viewKey = color(stepTwoColour[0], stepTwoColour[1])
+	t.viewCurrent = onTint
+	t.viewEntered = onTint.Bold(true)
+	if os.Getenv("NO_COLOR") != "" {
+		// Without colour the keys stay underlined and the view you are in
+		// bold, as before 911j70; the cursor is the underline after v.
+		t.viewPrefixKey = t.viewPrefixKey.Underline(true)
+		t.viewKey = t.viewKey.Underline(true)
+		t.viewCurrent = t.viewCurrent.Bold(true)
+	}
 	// A quiet tint down the marked column, and underlined, so it shows
 	// without colour too (NO_COLOR); on the cursor row the row's tint, bold.
 	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)
