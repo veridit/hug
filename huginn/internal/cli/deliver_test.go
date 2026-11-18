@@ -143,9 +143,10 @@ func TestRequestReachesCoordinator(t *testing.T) {
 	os.Chtimes(filepath.Join(jc.home, "sessions", old+".json"), now, now)
 	acked := make(chan []string, 4)
 	jc.hook = func(sid string) {
+		// No t here: the hook may run after the test has failed.
 		got, err := Acknowledge(context.Background(), jc.home, sid)
 		if err != nil {
-			t.Errorf("acknowledge: %v", err)
+			got = append(got, "error: "+err.Error())
 		}
 		acked <- got
 	}
@@ -172,10 +173,11 @@ func TestRequestReachesCoordinator(t *testing.T) {
 		t.Fatalf("daemon got %d messages: %q", len(msgs), msgs)
 	}
 	sid, msg, _ := strings.Cut(msgs[0], "\x00")
+	board := realPath(t, a.Cwd)
 	for _, want := range []string{
-		"hug: jhf wrote request 2 on " + id + " (Tags) on board " + filepath.Base(a.Cwd) + " (" + a.Cwd + "), to you as the board coordinator:\n",
+		"hug: jhf wrote request 2 on " + id + " (Tags) on board " + filepath.Base(board) + " (" + board + "), to you as the board coordinator:\n",
 		"  make it per board: \"tags\"\n  and split the TUI part\n",
-		"Turn it into changes to the ticket, then (in " + a.Cwd + "): hug task resolve " + id + " 2 \"what changed\"\n",
+		"Turn it into changes to the ticket, then (in " + board + "): hug task resolve " + id + " 2 \"what changed\"\n",
 		"[hug " + id + " request 2 ",
 	} {
 		if sid != crab || !strings.Contains(msg, want) {
@@ -250,8 +252,9 @@ func TestAnswerReachesCoordinator(t *testing.T) {
 		t.Fatalf("daemon got %q", msgs)
 	}
 	_, msg, _ := strings.Cut(msgs[0], "\x00")
+	board := realPath(t, a.Cwd)
 	for _, want := range []string{
-		"hug: jhf answered on " + id + " (Tags), check 2, the question nautilus asked on board " + filepath.Base(a.Cwd) + " (" + a.Cwd + "), to you as the board coordinator:\n",
+		"hug: jhf answered on " + id + " (Tags), check 2, the question nautilus asked on board " + filepath.Base(board) + " (" + board + "), to you as the board coordinator:\n",
 		"> type stays, or drop?\n",
 		"  drop it\n  the column says it\n",
 		"Route it to nautilus, who asked, or act on it: hug task show " + id + "\n",
@@ -263,4 +266,15 @@ func TestAnswerReachesCoordinator(t *testing.T) {
 	if f := taskFile(t, a, id); !strings.Contains(f, " answer 1 delivered to crab ("+crab+")") {
 		t.Fatalf("History:\n%s", f)
 	}
+}
+
+// realPath is dir with its symlinks resolved, as git names a repository's
+// root (macOS: /var is /private/var).
+func realPath(t *testing.T, dir string) string {
+	t.Helper()
+	p, err := filepath.EvalSymlinks(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return p
 }
