@@ -4,6 +4,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/veridit/hug/internal/memshare"
 )
 
 // The board's coordinator (hbgybn, crab 00:58): the session that hears what
@@ -103,4 +105,77 @@ func RequestFor(t Task, who, coordinator string) bool {
 		return false
 	}
 	return coordinator == "" || strings.EqualFold(coordinator, who)
+}
+
+// SetMemoryShare writes hug.toml [memory] share = true (share) or removes
+// the key, and the [memory] section with it once empty (34r1ft: absent
+// means local), keeping every other line. It reports whether the file
+// changed.
+func SetMemoryShare(root string, share bool) (bool, error) {
+	path := configPath(root)
+	b, e := os.ReadFile(path)
+	if e != nil && !os.IsNotExist(e) {
+		return false, e
+	}
+	var lines []string
+	if len(b) > 0 {
+		lines = strings.Split(strings.TrimRight(string(b), "\n"), "\n")
+	}
+	var out []string
+	in, section := false, -1
+	for _, l := range lines {
+		t := strings.TrimSpace(l)
+		if strings.HasPrefix(t, "[") {
+			in = strings.TrimSpace(strings.Trim(t, "[]")) == "memory"
+			if in {
+				section = len(out)
+			}
+		} else if key, _, ok := strings.Cut(t, "="); in && ok && strings.TrimSpace(key) == "share" {
+			continue
+		}
+		out = append(out, l)
+	}
+	if share {
+		if section >= 0 {
+			out = append(out[:section+1], append([]string{"share = true"}, out[section+1:]...)...)
+		} else {
+			if len(out) > 0 {
+				out = append(out, "")
+			}
+			out = append(out, "[memory]", "share = true")
+		}
+	} else if section >= 0 {
+		// Drop a [memory] header left with nothing under it.
+		end := section + 1
+		for end < len(out) && strings.TrimSpace(out[end]) == "" {
+			end++
+		}
+		if end == len(out) || strings.HasPrefix(strings.TrimSpace(out[end]), "[") {
+			out = append(out[:section], out[end:]...)
+			for len(out) > 0 && strings.TrimSpace(out[len(out)-1]) == "" {
+				out = out[:len(out)-1]
+			}
+		}
+	}
+	next := strings.Join(out, "\n") + "\n"
+	if len(out) == 0 {
+		next = ""
+	}
+	if next == string(b) {
+		return false, nil
+	}
+	return true, os.WriteFile(path, []byte(next), 0o644)
+}
+
+// MemoryShare is hug.toml [memory] share as this checkout has it (34r1ft);
+// absent is false. memshare.Shares reads the committed one.
+func MemoryShare(root string) (bool, error) {
+	b, e := os.ReadFile(configPath(root))
+	if os.IsNotExist(e) {
+		return false, nil
+	}
+	if e != nil {
+		return false, e
+	}
+	return memshare.Parse(b)
 }

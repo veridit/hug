@@ -106,6 +106,7 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	run(one, homeA, "git", "push", "-q", "origin", "main")
 	run(root, homeB, "git", "clone", "-q", bare, two)
 	run(one, homeA, bin, "task", "init")
+	run(one, homeA, bin, "task", "memory", "share") // 34r1ft: committed, so clone two follows it
 	run(one, homeA, bin, "task", "sync")
 	run(two, homeB, bin, "task", "init")
 	out := run(one, homeA, bin, "task", "new", "Shared work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--json")

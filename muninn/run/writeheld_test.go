@@ -38,6 +38,32 @@ func gitProject(t *testing.T, dir string) project.Project {
 	return p
 }
 
+// sharesMemories commits hug.toml [memory] share = true on hug/tasks in
+// the repository at dir, as hug task memory share does (34r1ft): a test
+// that syncs project memories through a remote must opt in.
+func sharesMemories(t *testing.T, dir string) {
+	t.Helper()
+	wt := filepath.Join(t.TempDir(), "tasks")
+	env := append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid")
+	for _, args := range [][]string{
+		{"-C", dir, "worktree", "add", "-q", "--orphan", "-b", "hug/tasks", wt},
+		{"-C", wt, "add", "hug.toml"},
+		{"-C", wt, "commit", "-q", "-m", "hug task memory share"},
+		{"-C", dir, "worktree", "remove", "--force", wt},
+	} {
+		if args[2] == "add" && args[1] == wt {
+			if err := os.WriteFile(filepath.Join(wt, "hug.toml"), []byte("[memory]\nshare = true\n"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+		}
+		cmd := exec.Command("git", args...)
+		cmd.Env = env
+		if out, err := cmd.CombinedOutput(); err != nil {
+			t.Fatalf("git %v: %v %s", args, err, out)
+		}
+	}
+}
+
 func storedSID(t *testing.T, text string) (string, bool) {
 	t.Helper()
 	mems, err := ingest.LoadNative(app.NativePath())
@@ -60,6 +86,7 @@ func storedSID(t *testing.T, text string) (string, bool) {
 func TestRememberedSIDSurvivesProjectSync(t *testing.T) {
 	home := memHome(t)
 	p := gitProject(t, home)
+	sharesMemories(t, home)
 	text := "Synthetic tn8bmn rule: the printed id is the kept id."
 	out, errOut, code := runCLI(t, "", "remember", "--project", text)
 	if code != 0 {

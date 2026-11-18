@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/memshare"
 )
 
 // runRequests is hug task requests [ID] [--all] (hbgybn): the open requests
@@ -104,6 +105,62 @@ func requestBody(r task.Request) string {
 		}
 	}
 	return b.String()
+}
+
+// runMemory is hug task memory [share | local] (34r1ft, Jørgen 18:18: the
+// setting is committed with the tasks): share writes hug.toml [memory]
+// share = true on hug/tasks, so hug mem sync may push this repository's
+// project memories to its remote; local removes it (the default). Bare,
+// it says which.
+func (a *App) runMemory(s *session, f flags) (Reply, error) {
+	root := s.r.Dir
+	if len(f.args) > 1 {
+		return nil, f.wrongCount("memory takes share or local")
+	}
+	says := func(share bool) string {
+		if share {
+			return "share"
+		}
+		return "local"
+	}
+	if len(f.args) == 0 {
+		share, e := task.MemoryShare(root)
+		if e != nil {
+			return nil, e
+		}
+		next := memshare.Fix
+		msg := "project memories: local (hug mem sync pushes nothing; hug.toml [memory] share is not true)"
+		if share {
+			next = "hug mem sync"
+			msg = "project memories: share (hug.toml [memory] share = true; hug mem sync pushes them to hug/memory)"
+		}
+		return Reply{"memory": says(share), "message": msg, "next": next}, nil
+	}
+	var share bool
+	switch f.args[0] {
+	case "share":
+		share = true
+	case "local":
+	default:
+		return nil, usage("memory is share or local, not "+strconv.Quote(f.args[0]), memshare.Fix)
+	}
+	changed, e := task.SetMemoryShare(root, share)
+	if e != nil {
+		return nil, e
+	}
+	next := "hug mem sync"
+	msg := "project memories: share, committed on hug/tasks; every clone follows it"
+	if !share {
+		next = "hug task memory"
+		msg = "project memories: local, committed on hug/tasks; hug mem sync pushes nothing"
+	}
+	if !changed {
+		return Reply{"memory": says(share), "changed": false, "message": "project memories: already " + says(share), "next": next}, nil
+	}
+	if e := s.commit("hug task memory " + says(share)); e != nil {
+		return nil, e
+	}
+	return Reply{"memory": says(share), "changed": true, "message": msg, "next": next}, nil
 }
 
 // runCoordinator is hug task coordinator [NAME | --clear] (hbgybn, crab
