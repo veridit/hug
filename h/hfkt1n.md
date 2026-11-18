@@ -1,15 +1,20 @@
 ---
 id: hfkt1n
 title: "TestTmuxReload: 'reload line stayed' under load"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["tigress"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T22:38"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Verbatim: 'reload_tmux_test.go:216: the reload line stayed after leaving the tas
 - [ ] No sleep added and no timeout raised unless the cause is a real wait, said in the note
 
 ## Notes
+
+
+## History
+- 2026-11-18T22:38 todo -> doing/active (take)
