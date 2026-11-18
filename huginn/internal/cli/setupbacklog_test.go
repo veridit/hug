@@ -12,15 +12,21 @@ import (
 	"time"
 )
 
-// setupBacklog500 is a repository with a 500-task backlog, imported.
-func setupBacklog500(t *testing.T) *App {
+// setupBacklog500 is a repository with a 500-task backlog, imported: the
+// size 3mavpt check 1 names, for the test that counts what setup reads.
+func setupBacklog500(t *testing.T) *App { return setupBacklogN(t, 500) }
+
+// setupBacklogN is a repository with an n-task backlog, imported. Tests
+// whose point is not the size use a small one: importing 500 files cost
+// 40-76 s per test on the Windows runner (0sbvnq, run 44213937720).
+func setupBacklogN(t *testing.T, n int) *App {
 	t.Helper()
 	a := app(t)
 	dir := filepath.Join(a.Cwd, ".backlog", "tasks")
 	if e := os.MkdirAll(dir, 0o755); e != nil {
 		t.Fatal(e)
 	}
-	for i := 1; i <= 500; i++ {
+	for i := 1; i <= n; i++ {
 		body := fmt.Sprintf("---\nid: TASK-%d\ntitle: Task %d\nstatus: To Do\n---\n\n## Description\nGoal %d.\n\n## Acceptance Criteria\n- [ ] #1 It works\n", i, i, i)
 		if e := os.WriteFile(filepath.Join(dir, fmt.Sprintf("task-%d - Task-%d.md", i, i)), []byte(body), 0o644); e != nil {
 			t.Fatal(e)
@@ -80,7 +86,7 @@ func TestSetupReadsNoBacklogFileAfterImport(t *testing.T) {
 // file, and a task gone from the board each send setup back to the dry run.
 func TestSetupComparesAgainWhenBacklogOrBoardChanges(t *testing.T) {
 	t.Parallel()
-	a := setupBacklog500(t)
+	a := setupBacklogN(t, 20)
 	dir := filepath.Join(a.Cwd, ".backlog", "tasks")
 	if s, stderr := setupStep(t, a, "import backlog-md"); !s.Done || strings.Contains(stderr, "comparing") {
 		t.Fatalf("after import: %+v %s", s, stderr)
@@ -94,7 +100,7 @@ func TestSetupComparesAgainWhenBacklogOrBoardChanges(t *testing.T) {
 	later := time.Now().Add(2 * time.Second)
 	os.Chtimes(p, later, later)
 	s, stderr := setupStep(t, a, "import backlog-md")
-	if s.Done || !strings.Contains(s.Detail, "0 to add, 1 to update, 499 in sync") || !strings.Contains(stderr, "hug setup: comparing .backlog/ with the board") {
+	if s.Done || !strings.Contains(s.Detail, "0 to add, 1 to update, 19 in sync") || !strings.Contains(stderr, "hug setup: comparing .backlog/ with the board") {
 		t.Fatalf("edited source: %+v\nstderr: %s", s, stderr)
 	}
 	// The dry run is remembered too: the next setup reads nothing.
@@ -106,7 +112,7 @@ func TestSetupComparesAgainWhenBacklogOrBoardChanges(t *testing.T) {
 	if e := os.WriteFile(filepath.Join(dir, "task-501 - New.md"), []byte("---\nid: TASK-501\ntitle: New\nstatus: To Do\n---\n\nNew.\n"), 0o644); e != nil {
 		t.Fatal(e)
 	}
-	if s, stderr = setupStep(t, a, "import backlog-md"); s.Done || !strings.Contains(s.Detail, "1 to add, 0 to update, 500 in sync") || !strings.Contains(stderr, "comparing") {
+	if s, stderr = setupStep(t, a, "import backlog-md"); s.Done || !strings.Contains(s.Detail, "1 to add, 0 to update, 20 in sync") || !strings.Contains(stderr, "comparing") {
 		t.Fatalf("new source: %+v %s", s, stderr)
 	}
 	execute(t, a, "import", "backlog", ".backlog")
@@ -147,7 +153,7 @@ func TestSetupInterruptedSaysSo(t *testing.T) {
 		t.Fatalf("cancelled before start: %v", e)
 	}
 	// Cancelled in the middle, during the backlog dry run.
-	b := setupBacklog500(t)
+	b := setupBacklogN(t, 20)
 	f := filepath.Join(b.Cwd, ".backlog", "tasks", "task-1 - Task-1.md")
 	later := time.Now().Add(2 * time.Second)
 	os.Chtimes(f, later, later)
@@ -223,7 +229,7 @@ func TestSetupFilesStepRemembered(t *testing.T) {
 // differs.
 func TestSetupRememberedAcrossReleases(t *testing.T) {
 	t.Parallel()
-	a := setupBacklog500(t)
+	a := setupBacklogN(t, 20)
 	a.Version = "v0.7.99"
 	if s, stderr := setupStep(t, a, "import backlog-md"); !s.Done || strings.Contains(stderr, "comparing") {
 		t.Fatalf("another release, same converter: %+v %s", s, stderr)
