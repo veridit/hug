@@ -119,6 +119,10 @@ type BoardInput struct {
 	// known is false for a name the harness does not know (a person, a
 	// model). Nil: no harness list, nobody counts as gone.
 	Gone func(name string, now time.Time) (gone, known bool)
+	// Reflections returns the open reflections' dates (YYYY-MM-DD), for
+	// the coordinator's cue on old ones (rk5q7r). Read only at a break, for
+	// the coordinator; nil: none.
+	Reflections func() []string
 }
 
 // BoardSource yields the input for actions after since. It returns nil when
@@ -160,7 +164,12 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 		seen = now.Add(-30 * time.Minute).UnixNano()
 	}
 	wantLint := brk != "" && e.boardDue(session, "lint", LintEvery, now)
-	in := src(time.Unix(0, seen), wantLint)
+	// Old reflections have their own daily rate (rk5q7r): the board is read
+	// at a break where either is due. Only the coordinator ever hears of
+	// them; any other session marks the rate on reading, so it reads the
+	// board at a break at most once a day more than lint asks.
+	wantReflect := brk != "" && e.boardDue(session, "reflect", ReflectEvery, now)
+	in := src(time.Unix(0, seen), wantLint || wantReflect)
 	if in == nil {
 		e.DB.Exec(`INSERT INTO board_seen(session, seen_ns, edit_turns) VALUES(?,?,0) ON CONFLICT(session) DO UPDATE SET seen_ns=excluded.seen_ns`, session, now.UnixNano())
 		return "", ""
@@ -224,7 +233,54 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 			return fmt.Sprintf("Task board (%s): %s: %s. Its owner %s has no live session, so it is yours as coordinator. fix: %s", brk, f.TaskID, Truncate(oneLine(f.Problem), 160), who, f.Fix), "lint"
 		}
 	}
+	// Old open reflections reach the coordinator at a break (rk5q7r: 0 of
+	// 56 reflections on three boards were resolved by 2026-11-18): their
+	// count and the command that reads them, once per ReflectEvery, at a
+	// break no other line took, so no other line moves.
+	if wantReflect {
+		// Checked once per ReflectEvery whatever it finds: a break that
+		// reads nothing old does not read the board again until tomorrow.
+		e.boardMark(session, "reflect", now)
+		if isCoordinator(in) && in.Reflections != nil {
+			if n := oldReflections(in.Reflections(), now); n > 0 {
+				its := "reflections are"
+				if n == 1 {
+					its = "reflection is"
+				}
+				return fmt.Sprintf("Task board (%s): %d open %s older than %d days; read them grouped by the instruction they name: hug task reflections --by-instruction", brk, n, its, int(ReflectAfter.Hours()/24)), "reflect"
+			}
+		}
+	}
 	return "", ""
+}
+
+// ReflectAfter is how old an open reflection is before the coordinator
+// hears of it; ReflectEvery how often it hears (rk5q7r).
+var (
+	ReflectAfter = 3 * 24 * time.Hour
+	ReflectEvery = 24 * time.Hour
+)
+
+// isCoordinator reports whether the session is the board's coordinator.
+func isCoordinator(in *BoardInput) bool {
+	self := strings.TrimSpace(in.Self.Name)
+	return self != "" && in.Coordinator != "" && strings.EqualFold(strings.TrimSpace(in.Coordinator), self)
+}
+
+// oldReflections counts the dates (YYYY-MM-DD) more than ReflectAfter
+// whole days before now's day: on 11-21 a reflection of 11-17 is old, one
+// of 11-18 (3 days) not yet.
+func oldReflections(dates []string, now time.Time) int {
+	y, m, d := now.Date()
+	today := time.Date(y, m, d, 0, 0, 0, 0, time.UTC)
+	n := 0
+	for _, s := range dates {
+		day, err := time.Parse("2006-01-02", s)
+		if err == nil && today.Sub(day) > ReflectAfter {
+			n++
+		}
+	}
+	return n
 }
 
 func (e *Engine) boardDue(session, kind string, every time.Duration, now time.Time) bool {
@@ -670,8 +726,7 @@ func ownerGone(in *BoardInput, id string, now time.Time) []string {
 // call; with no coordinator set nobody is told), at a break where an
 // unrelated finding may be said.
 func (e *Engine) pickGone(fs []BoardFinding, in *BoardInput, any bool, now time.Time) (BoardFinding, string, bool) {
-	self := strings.TrimSpace(in.Self.Name)
-	if !any || self == "" || in.Coordinator == "" || !strings.EqualFold(strings.TrimSpace(in.Coordinator), self) {
+	if !any || !isCoordinator(in) {
 		return BoardFinding{}, "", false
 	}
 	for _, f := range fs {

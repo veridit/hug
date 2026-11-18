@@ -50,6 +50,18 @@ func boardSource(ctx context.Context, on bool, cwd, name, jcodeHome string, acti
 			}
 			found := boardFindings(fs)
 			in.Findings = func() []recall.BoardFinding { return found }
+			// Only the coordinator hears of old reflections (rk5q7r).
+			if name != "" && strings.EqualFold(strings.TrimSpace(snap.Coordinator), name) {
+				rs, err := snap.OpenReflections()
+				if err != nil {
+					logHook("board reflections: %v", err)
+				}
+				dates := make([]string, 0, len(rs))
+				for _, r := range rs {
+					dates = append(dates, r.Date)
+				}
+				in.Reflections = func() []string { return dates }
+			}
 		}
 		return in
 	}

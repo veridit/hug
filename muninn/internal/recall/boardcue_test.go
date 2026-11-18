@@ -448,6 +448,56 @@ func TestBoardChecksHoldOwnerElseCoordinator(t *testing.T) {
 	}
 }
 
+// rk5q7r: open reflections older than 3 days reach the board's coordinator
+// at a break, as a count with hug task reflections --by-instruction; never
+// another session, never mid-work, never young ones, at most once a day.
+func TestBoardOldReflectionsToCoordinator(t *testing.T) {
+	now := time.Date(2026, 11, 21, 10, 0, 0, 0, time.Local)
+	dates := []string{"2026-11-17", "2026-11-17", "2026-11-18", "2026-11-20"} // 2 older than 3 days
+	in := func(self, coordinator string) recall.BoardInput {
+		return recall.BoardInput{
+			Coordinator: coordinator,
+			Findings:    func() []recall.BoardFinding { return nil },
+			Self:        recall.BoardSelf{Name: self},
+			Reflections: func() []string { return dates },
+		}
+	}
+	want := "Task board (return): 2 open reflections are older than 3 days; read them grouped by the instruction they name: hug task reflections --by-instruction"
+	e := boardEngine(t)
+	if line, kind := e.BoardCue("crab", "back", "return", now, src(in("crab", "crab"))); line != want || kind != "reflect" {
+		t.Fatalf("coordinator at a break: %q (%s)", line, kind)
+	}
+	if line, _ := e.BoardCue("crab", "back", "return", now.Add(7*time.Hour), src(in("crab", "crab"))); line != "" {
+		t.Errorf("said again within a day: %q", line)
+	}
+	if line, _ := e.BoardCue("crab", "back", "return", now.Add(25*time.Hour), src(in("crab", "crab"))); !strings.Contains(line, "3 open reflections") {
+		t.Errorf("next day (11-18 now old too): %q", line)
+	}
+	for _, c := range []struct{ name, self, coordinator, brk string }{
+		{"another session", "kestrel", "crab", "return"},
+		{"no coordinator", "crab", "", "return"},
+		{"mid-work", "crab", "crab", ""},
+	} {
+		if line, _ := boardEngine(t).BoardCue(c.self, "back", c.brk, now, src(in(c.self, c.coordinator))); line != "" {
+			t.Errorf("%s: %q", c.name, line)
+		}
+	}
+	young := in("crab", "crab")
+	young.Reflections = func() []string { return []string{"2026-11-18", "2026-11-20"} }
+	if line, _ := boardEngine(t).BoardCue("crab", "back", "return", now, src(young)); line != "" {
+		t.Errorf("only young reflections: %q", line)
+	}
+	// A lint finding for the coordinator comes first; the reflections wait.
+	lint := in("crab", "crab")
+	lint.Tasks = []recall.BoardTask{{ID: "abc123", State: "todo"}}
+	lint.Findings = func() []recall.BoardFinding {
+		return []recall.BoardFinding{{TaskID: "abc123", TaskState: "todo", Problem: "title is longer than 80 characters", Fix: "hug task set abc123 --title \"...\""}}
+	}
+	if line, _ := boardEngine(t).BoardCue("crab", "back", "return", now, src(lint)); !strings.Contains(line, "abc123: title") {
+		t.Errorf("lint first: %q", line)
+	}
+}
+
 func TestBoardOffWhenNoSource(t *testing.T) {
 	e := boardEngine(t)
 	if line, _ := e.BoardCue("s", "go", "start", time.Now(), nil); line != "" {

@@ -68,8 +68,40 @@ type Snapshot struct {
 	// request on a task nobody holds; "" means every session.
 	Coordinator string
 	lint        func() ([]task.Finding, []task.Task, error)
+	reflect     func() ([]Reflection, error)
 	close       func() error
 	common      string // the git common dir, for the worktree roots
+}
+
+// Reflection is one open reflection (tb0dra): the task it is on and the
+// day it was written (YYYY-MM-DD).
+type Reflection struct {
+	TaskID, Date string
+}
+
+// OpenReflections returns the board's open reflections, as hug task
+// reflections lists them (rk5q7r: the coordinator's cue counts the old
+// ones). Computed on demand: it reads every task's notes.
+func (s *Snapshot) OpenReflections() ([]Reflection, error) {
+	if s == nil || s.reflect == nil {
+		return nil, nil
+	}
+	return s.reflect()
+}
+
+func openReflections(ts []task.Task) []Reflection {
+	var out []Reflection
+	for _, t := range ts {
+		if t.Texts == nil || !strings.Contains(t.Texts.Notes, "Reflection (") {
+			continue
+		}
+		for _, r := range task.ParseReflections(t, t.Texts.Notes) {
+			if r.State == "open" {
+				out = append(out, Reflection{TaskID: r.ID, Date: r.Date})
+			}
+		}
+	}
+	return out
 }
 
 // Findings returns the open lint findings. It is computed on demand: the
@@ -205,6 +237,13 @@ func Open(ctx context.Context, cwd string) (*Snapshot, error) {
 		fs, err := c.Lint(ctx)
 		return fs, ts, err
 	}
+	s.reflect = func() ([]Reflection, error) {
+		cp := append([]task.Task(nil), ts...)
+		if err := c.FillTexts(ctx, cp); err != nil {
+			return nil, err
+		}
+		return openReflections(cp), nil
+	}
 	return s, nil
 }
 
@@ -241,7 +280,8 @@ func (f *Files) Snapshot() *Snapshot {
 		ts = append(ts, d.Task)
 	}
 	task.Sort(ts)
-	return &Snapshot{Tasks: convert(ts), lint: func() ([]task.Finding, []task.Task, error) { return task.Lint(docs), ts, nil }}
+	return &Snapshot{Tasks: convert(ts), lint: func() ([]task.Finding, []task.Task, error) { return task.Lint(docs), ts, nil },
+		reflect: func() ([]Reflection, error) { return openReflections(ts), nil }}
 }
 
 func convert(ts []task.Task) []Task {

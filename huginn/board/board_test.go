@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/veridit/hug/huginn/board"
@@ -97,5 +98,54 @@ func TestFilesSnapshot(t *testing.T) {
 	f.Delete("a.abc123.board-nudges.md")
 	if s := f.Snapshot(); len(s.Tasks) != 0 {
 		t.Fatalf("%+v", s.Tasks)
+	}
+}
+
+const reflected = `---
+id: "def456"
+title: "Reflected"
+state: "done"
+---
+
+## Goal
+G
+
+## Acceptance
+- [x] one
+
+## Notes
+Reflection (open, 2026-11-14, guppy): the AGENTS.md line "Track all work" left a gap.
+Reflection (dismissed, 2026-11-14, guppy): nothing to change.
+Reflection (open, 2026-11-17): "hug task next" named a task in review.
+`
+
+// rk5q7r: the board lists open reflections with their dates, through the
+// cache (Open) and from files (replays), as hug task reflections does.
+func TestOpenReflections(t *testing.T) {
+	want := []board.Reflection{{TaskID: "def456", Date: "2026-11-14"}, {TaskID: "def456", Date: "2026-11-17"}}
+	f := board.NewFiles()
+	f.Set("d/def456.md", []byte(reflected))
+	f.Set("a/abc123.md", []byte(doing))
+	if rs, err := f.Snapshot().OpenReflections(); err != nil || !reflect.DeepEqual(rs, want) {
+		t.Fatalf("files: %+v %v", rs, err)
+	}
+	repo := t.TempDir()
+	git(t, repo, "init", "-q", "-b", "main")
+	git(t, repo, "commit", "-q", "--allow-empty", "-m", "init")
+	git(t, repo, "worktree", "add", "-q", "--orphan", "-b", "hug/tasks", ".hug/tasks")
+	os.WriteFile(filepath.Join(repo, ".hug/tasks/def456.md"), []byte(reflected), 0o644)
+	os.WriteFile(filepath.Join(repo, ".hug/tasks/abc123.md"), []byte(doing), 0o644)
+	git(t, filepath.Join(repo, ".hug/tasks"), "add", "-A")
+	git(t, filepath.Join(repo, ".hug/tasks"), "commit", "-q", "-m", "t")
+	for i := 0; i < 2; i++ { // the second Open reads the cache
+		s, err := board.Open(context.Background(), repo)
+		if err != nil || s == nil {
+			t.Fatalf("open: %v %v", s, err)
+		}
+		rs, err := s.OpenReflections()
+		s.Close()
+		if err != nil || !reflect.DeepEqual(rs, want) {
+			t.Fatalf("open %d: %+v %v", i, rs, err)
+		}
 	}
 }
