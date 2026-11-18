@@ -6,6 +6,10 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.72 - 2026-11-18
+
+- The README leads with `hug`: one command, named for Old Norse *hugr* (mind), with Odin's ravens as mascots, Huginn for tasks and Muninn for memory (p277bp check 1). Its commands table lists only `hug` commands, adds `hug apps` and `hug upgrade`, and says memories sync on `hug/memory`.
+
 - Lint reads a glob citation as the pattern it is (ydwamb). 911j70's note asks to run `open -a Preview .hug/tasks/9/911j70/compare-*.png`; lint cut it at the `*` and reported `.hug/tasks/9/911j70/compare-: file not found`, with `fix: hug task attach 911j70 FILE --name compare-`, which would attach a junk file. A citation whose last path part holds `*`, `?` or `[...]` (`file:`, `task:REF/` and `.hug/tasks/` forms) is now matched against the task's files: no finding when one matches, else one missing-file finding naming the whole pattern, `no attached file matches`, with `fix: hug task attach ID FILE`. A plain missing file is still `file not found`. Prose after a whole name stays out of it, as before (`file:a.md?`, `**file:a.md**`, `[file:a.md]`). Lint only reads. On this board, lint on 911j70 now reports no findings. Cache schema 28.
 
 - `scripts/ci-goldens.sh RUNID [JOB]` rewrites the TUI goldens a failed CI run reported as drifted, from that run's own screens, for when a local `HUG_UPDATE_GOLDEN=1` run cannot finish (a0gwvg). It writes nothing unless every WANT block in the log matches the committed golden byte for byte. First used on CI 44403710185 (4d7eec2d). A repository tool, not part of hug.
