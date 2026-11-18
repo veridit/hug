@@ -1,13 +1,18 @@
 ---
 id: ygay9c
 title: "hug refuses a board worktree that belongs to another repo"
-state: todo
+state: "doing"
 type: bug
 priority: "medium"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T04:34"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Code: huginn/gitbranch (board worktree discovery). Seen in ~/.jcode/scratch/w40c
 - [ ] The check adds no git process to a normal command (test counts git calls)
 
 ## Notes
+
+
+## History
+- 2026-11-18T04:34 todo -> doing/active (take)
