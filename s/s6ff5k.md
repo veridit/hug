@@ -25,6 +25,15 @@ aliases: ["measure-amortized-cleanup-forgets-and-corrections"]
 ## Goal
 Know whether agents act on the recall header's Fix line, and add an off-topic signal that never deletes
 
+## Purpose
+Jørgen 2026-11-12 16:26Z (crab session) proposed amortized cleanup: when a memory is recalled, add a very short instruction ('modify incorrect, remove obsolete') so cleanup happens a little at a time whenever memories are shown, instead of in big tidy passes. This task checks whether agents actually do it. Item 1 says they essentially never do (0 of 454 sessions with recall called memory_forget), and an agent told Jørgen on 2026-11-16 that it read the header as a caution, not a task. Wrong memories that are never fixed keep being recalled into later prompts.
+
+## Principle
+Off-topic is not wrong: an off-topic signal lowers recall at most and never deletes, and the header must not make agents forget notes that still hold. Jørgen's recall format (the '.0 .1 .2' table) stays the baseline; only the header line varies unless a format arm is added on purpose (his note 2026-11-16). The header is part of what recall shows, so the recall rule applies (crab ruling B, 2026-11-17): real replayed messages, blind judge, fresh confirmation; synthetic evals are supporting evidence only. Each arm gets its bar written before it runs, and a failed arm is not tuned on the same data.
+
+## Relevant details
+Check 2 measured offline, not built (2026-11-17, $JCODE_SCRATCH_DIR/header4/offtopic_sim.py): even with perfect feedback, per-memory similar-message suppression costs relevant recall at every threshold; fresh set dropped only 3 irrelevant (-0.020 [-0.052, +0.000]). Check 3 real replay (40 turns with a stale shown memory, 5 models, attachments real-report.txt, real-report-h3.txt): H2 'Fix with the muninn MCP tools' raised right fixes +32 of 200 [+22, +43] but wrong memory calls 3 -> 37 (28 forgets of notes that still hold); H3 (no forget, remember naming the old id, or reinforce) +41 of 200 [+30, +52] with wrong calls 10 against a bar of 6. Both failed part 2. Parked 2026-11-18 02:10 per crab's ruling: no fourth arm. Current header is unchanged (H0). Jørgen's open requests 1 and 2 (2026-11-18 12:23) ask what we can learn from our instances' feedback, and how to improve instructions if nothing; those are for another lane.
+
 ## Depends on
 
 ## Acceptance
