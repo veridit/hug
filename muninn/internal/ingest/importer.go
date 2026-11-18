@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/trigger"
 	"os"
 	"strings"
 	"time"
@@ -25,15 +26,18 @@ type Imported struct {
 	// it was written here and read back (5sc5rw: a capture keeps its
 	// capture origin, so its repo origin never matched, and every sync
 	// added a twin).
-	ID        string
-	Title     string
-	Content   string
-	Category  string
-	Tags      []string
-	Scope     string
-	Active    bool
-	Created   time.Time
-	Updated   time.Time
+	ID       string
+	Title    string
+	Content  string
+	Category string
+	Tags     []string
+	Scope    string
+	Active   bool
+	Created  time.Time
+	Updated  time.Time
+	// Trigger is the item's when-then trigger (jrj1vq). Nil never clears
+	// one: a file line from a hug that does not know triggers lacks it.
+	Trigger   *trigger.Trigger
 	keepScope bool // new default only; existing Engram identities keep their scope
 	// Placed: the scope came from the directory the memory was written in.
 	// That physical provenance, not the importing binding, decides where it
@@ -52,9 +56,24 @@ func (s ImportStats) String() string {
 		s.Added, s.Updated, s.Unchanged, s.LocalKept, s.Skipped)
 }
 
-func originHash(title, content, scope string, active bool) string {
-	h := sha256.Sum256([]byte(fmt.Sprintf("%s\x00%s\x00%s\x00%t", title, content, scope, active)))
+func originHash(title, content, scope string, active bool, tr ...*trigger.Trigger) string {
+	s := fmt.Sprintf("%s\x00%s\x00%s\x00%t", title, content, scope, active)
+	if len(tr) > 0 {
+		// Only a memory with a trigger hashes it (jrj1vq), so every hash
+		// written before triggers existed still matches its memory.
+		if e := trigger.Encode(tr[0]); e != "" {
+			s += "\x00trigger:" + e
+		} else if trigger.Cleared(tr[0]) {
+			s += "\x00trigger:none" // a deliberate clear is a change too
+		}
+	}
+	h := sha256.Sum256([]byte(s))
 	return hex.EncodeToString(h[:12])
+}
+
+// memHash is originHash over a stored memory.
+func memHash(m NativeMemory) string {
+	return originHash(m.Title, m.Content, m.Scope, m.Active, m.Trigger)
 }
 
 // importID derives the native id from the origin, so the same upstream memory
@@ -111,7 +130,15 @@ func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 		if ok && (it.keepScope || it.Placed && strings.HasPrefix(mems[i].Scope, "jcode@")) {
 			it.Scope = mems[i].Scope
 		}
-		h := originHash(it.Title, it.Content, it.Scope, it.Active)
+		canon, err := trigger.Stored(it.Trigger) // keeps a clear ("trigger":{}) as None
+		if err != nil {
+			canon = it.Trigger // a hand-edited file: keep what it says
+		}
+		it.Trigger = canon
+		if ok && it.Trigger == nil {
+			it.Trigger = mems[i].Trigger
+		}
+		h := originHash(it.Title, it.Content, it.Scope, it.Active, it.Trigger)
 		if !ok {
 			created, updated := it.Created, it.Updated
 			if created.IsZero() {
@@ -122,7 +149,7 @@ func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 			}
 			mems = append(mems, NativeMemory{ID: importID(it.Origin), Title: it.Title, Content: it.Content,
 				Category: it.Category, Tags: it.Tags, Scope: it.Scope, Active: it.Active, Strength: 1,
-				Created: created, Updated: updated, Origin: it.Origin, OriginHash: h})
+				Created: created, Updated: updated, Origin: it.Origin, OriginHash: h, Trigger: trigger.Clone(it.Trigger)})
 			byOrigin[it.Origin] = len(mems) - 1
 			st.Added++
 			continue
@@ -132,7 +159,7 @@ func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 			st.Unchanged++
 			continue
 		}
-		if originHash(m.Title, m.Content, m.Scope, m.Active) != m.OriginHash {
+		if memHash(*m) != m.OriginHash {
 			st.LocalKept++ // edited in muninn since the last import
 			continue
 		}
@@ -140,6 +167,7 @@ func MergeImport(path string, items []Imported, dry bool) (ImportStats, error) {
 			return st, fmt.Errorf("import cannot cross a client boundary; use hug mem rescope --cross-client")
 		}
 		m.Title, m.Content, m.Category, m.Tags, m.Active = it.Title, it.Content, it.Category, it.Tags, it.Active
+		m.Trigger = trigger.Clone(it.Trigger)
 		m.Scope, m.OriginHash, m.Updated = it.Scope, h, now
 		if !it.Updated.IsZero() {
 			m.Updated = it.Updated // a copy, not a new edit: keep upstream time
@@ -180,7 +208,7 @@ func MarkSynced(path, scope string, origin func(id string) string, written []Nat
 	}
 	snapshot := make(map[string]string, len(written))
 	for _, m := range written {
-		snapshot[m.ID] = originHash(m.Title, m.Content, m.Scope, m.Active)
+		snapshot[m.ID] = memHash(m)
 	}
 	changed := false
 	for i := range mems {
@@ -189,7 +217,7 @@ func MarkSynced(path, scope string, origin func(id string) string, written []Nat
 			continue
 		}
 		h, ok := snapshot[m.ID]
-		if !ok || originHash(m.Title, m.Content, m.Scope, m.Active) != h {
+		if !ok || memHash(*m) != h {
 			continue // not in the file, or changed since it was written
 		}
 		if m.Origin == "" {

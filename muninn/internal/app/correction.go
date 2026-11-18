@@ -17,6 +17,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/project"
 	"github.com/veridit/hug/muninn/internal/store"
 	"github.com/veridit/hug/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // Correct is an owner action, not a capture/hook path. It appends a new dated
@@ -101,6 +102,7 @@ func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out sto
 	if err = load(NativePath()); err != nil {
 		return out, "", err
 	}
+	var kept *trigger.Trigger
 	for _, v := range units {
 		var kind, path string
 		if err = a.DB.QueryRow(`SELECT kind,path FROM sources WHERE id=?`, v.SourceID).Scan(&kind, &path); err != nil {
@@ -125,6 +127,9 @@ func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out sto
 				if !m.Active || m.Content != v.Body || m.Category != v.Category || m.Scope != v.Scope {
 					return out, "", fmt.Errorf("native memory changed: reindex before correcting")
 				}
+				if kept == nil {
+					kept = trigger.Clone(m.Trigger) // the situation stays; the note changes (jrj1vq)
+				}
 				m.Active = false
 				files[path][i] = m
 				found = true
@@ -140,7 +145,7 @@ func (b Binding) Correct(ctx context.Context, a *App, ref, text string) (out sto
 	}
 	now := time.Now().UTC()
 	id := "cor_" + hex.EncodeToString(random)
-	files[NativePath()] = append(files[NativePath()], ingest.NativeMemory{ID: id, Content: text, Category: "correction", Scope: u.Scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureSupersedes: u.SID, Trust: "high"})
+	files[NativePath()] = append(files[NativePath()], ingest.NativeMemory{ID: id, Content: text, Category: "correction", Scope: u.Scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureSupersedes: u.SID, Trust: "high", Trigger: kept})
 	root := filepath.Join(config.DataDir(), "tidy")
 	if err = os.MkdirAll(root, 0700); err != nil {
 		return out, "", err

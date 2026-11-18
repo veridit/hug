@@ -457,6 +457,35 @@ still holding. A memory with only a recorded branch is never hidden: when that
 branch is merged or deleted, dream asks once (kind `branch`) whether it is still
 true.
 
+A rule or pattern can say when it applies (jrj1vq). The text stays the note
+that is shown, the THEN. `--when` names the situation where an agent needs it,
+as an activity. `--when-not` names look-alike situations where it does not
+help. `--case-scope`, `--case-path` and `--case-tool` (each repeatable) bind it
+to projects, files and tools. MCP takes `when`, `when_not` and
+`case {scope, paths, tools}`:
+
+```sh
+hug mem remember --type rule --when "choosing a model for a coding subagent" \
+  --when-not "picking a model for a search scout" --case-tool swarm \
+  "Coding agents run at medium effort or higher"
+```
+
+A plain memory without them stays valid. The trigger is stored with the memory
+(`"trigger": {...}` in the native file and in the project's `memories.jsonl`,
+column `units.mtrigger` in the index) and `hug mem show` prints it. Recall does
+not use it yet: that is measured first (jrj1vq checks 3 and 4).
+
+Remembering the same text with the same trigger, or without one, reinforces it.
+With a different trigger it is refused (`NOT STORED`, exit 3): a changed trigger
+is a correction, `--supersedes ID --when ...`, which replaces the trigger and
+keeps the id when the text is the same. `--supersedes ID --no-trigger` clears it.
+A clear is stored as `"trigger": {}`, so sync carries it to the other clones.
+A line without the key (a plain memory, or a line rewritten by an older hug)
+never clears a trigger, and the next sync writes the trigger back.
+
+Dream never merges twins whose triggers differ; it asks an agent instead. An
+owner correction keeps the trigger of the memory it corrects.
+
 Memories should not name swarm agents ("report to coordinator orangutan"):
 agents stop within hours and the name then means nothing. Dream offers each
 memory that names a stopped agent once (kind `agent`, 10 per pass), with the

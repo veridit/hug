@@ -13,6 +13,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/shortid"
 	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // Stats summarises one indexing pass.
@@ -83,6 +84,7 @@ type Candidate struct {
 	Key, Kind, Title, Body, Category, Scope string
 	Type                                    string // memory type, see store.Unit.Type
 	Holds                                   string // condition, see store.Unit.Holds
+	Trigger                                 string // when-then trigger, see store.Unit.Trigger
 	SID, Origin                             string
 	Tags                                    []string
 	Active                                  bool
@@ -144,6 +146,10 @@ func (ix *Indexer) syncCandidate(sourceID int64, c Candidate, old [2]string, had
 		// Same rule for the condition (ez50rb): no condition, no change.
 		ident = ContentHash(ident + "\x00holds:" + c.Holds)
 	}
+	if c.Trigger != "" {
+		// Same rule for the trigger (jrj1vq): no trigger, no change.
+		ident = ContentHash(ident + "\x00trigger:" + c.Trigger)
+	}
 	if had && old[1] == ident {
 		st.Unchanged++
 		return 0, false, nil
@@ -158,7 +164,7 @@ func (ix *Indexer) syncCandidate(sourceID int64, c Candidate, old [2]string, had
 	}
 	id, err := ix.DB.UpsertUnit(store.Unit{
 		SourceID: sourceID, SID: c.SID, Origin: c.Origin, Key: c.Key, ContentHash: ContentHash(text), Ident: ident, Kind: c.Kind,
-		Title: c.Title, Body: c.Body, Category: c.Category, Type: c.Type, Holds: c.Holds, Tags: c.Tags, Scope: c.Scope,
+		Title: c.Title, Body: c.Body, Category: c.Category, Type: c.Type, Holds: c.Holds, Trigger: c.Trigger, Tags: c.Tags, Scope: c.Scope,
 		Active: c.Active, Updated: c.Updated,
 	})
 	if err != nil {
@@ -195,7 +201,7 @@ func nativeCandidate(m ingest.NativeMemory) Candidate {
 		origin = shortid.Identity(m.ID, m.Origin)
 	}
 	return Candidate{Key: m.ID, SID: m.SID, Origin: origin, Kind: "memory", Title: m.Title, Body: m.Content, Category: m.Category,
-		Type: m.Type, Holds: m.Holds, Tags: m.Tags, Scope: m.Scope, Active: m.Active, Updated: m.Updated}
+		Type: m.Type, Holds: m.Holds, Trigger: trigger.Encode(m.Trigger), Tags: m.Tags, Scope: m.Scope, Active: m.Active, Updated: m.Updated}
 }
 
 // statOf returns a file's (mtime ns, size).

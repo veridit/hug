@@ -1,6 +1,10 @@
 package ingest
 
-import "reflect"
+import (
+	"reflect"
+
+	"github.com/veridit/hug/muninn/internal/trigger"
+)
 
 // MergeSave writes edits made to base, a copy loaded earlier, onto the store
 // as it is now. Memories another process added or changed since base was
@@ -61,6 +65,7 @@ func CloneNative(mems []NativeMemory) []NativeMemory {
 	for i, m := range mems {
 		m.Tags = append([]string(nil), m.Tags...)
 		m.CaptureEvents = append([]string(nil), m.CaptureEvents...)
+		m.Trigger = trigger.Clone(m.Trigger)
 		out[i] = m
 	}
 	return out

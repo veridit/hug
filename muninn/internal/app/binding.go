@@ -16,6 +16,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/project"
 	"github.com/veridit/hug/muninn/internal/search"
 	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // Binding is the single visibility and write policy shared by every surface.
@@ -687,6 +688,17 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 	if err != nil {
 		return store.Unit{}, false, err
 	}
+	// So is the trigger (jrj1vq): canonical, within its limits.
+	tr, err := trigger.Canonical(decision.Trigger)
+	if err != nil {
+		return store.Unit{}, false, err
+	}
+	if decision.ClearTrigger && tr != nil {
+		return store.Unit{}, false, fmt.Errorf("a trigger cannot be stated and cleared at once\nfix: leave out --no-trigger, or leave out --when, --when-not and --case-*")
+	}
+	if decision.ClearTrigger && strings.TrimSpace(decision.Supersedes) == "" {
+		return store.Unit{}, false, fmt.Errorf("clearing a trigger corrects a memory: name it\nfix: hug mem remember --supersedes ID --no-trigger \"TEXT\" (hug mem search WORDS finds the id)")
+	}
 	hits, err := b.rememberMatches(ctx, a, strings.TrimSpace(content))
 	if err != nil {
 		return store.Unit{}, false, err
@@ -697,6 +709,9 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 			return store.Unit{}, false, fmt.Errorf("no visible active memory")
 		}
 		if _, err = b.WriteScope(u.Scope); err != nil {
+			return store.Unit{}, false, err
+		}
+		if err = fillTrigger(u.SID, tr); err != nil {
 			return store.Unit{}, false, err
 		}
 		score := 0.0
@@ -719,11 +734,20 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 		if superseded, err = b.Resolve(a, ref); err != nil {
 			return store.Unit{}, false, fmt.Errorf("supersedes %s: no visible memory\nfix: hug mem search WORDS to find its id, or leave out --supersedes", ref)
 		}
+		// The same text with a new trigger, or none (jrj1vq): the note is
+		// unchanged, so the memory keeps its id and only its trigger is
+		// replaced; the trail records the supersede on itself.
+		if superseded.Body == strings.TrimSpace(content) && (tr != nil || decision.ClearTrigger) {
+			return b.replaceTrigger(ctx, a, superseded, tr)
+		}
 	}
 	automatic, review := a.Cfg.Extract.DedupeThresholds()
 	if len(hits) > 0 {
 		h := hits[0]
 		if h.Semantic >= automatic {
+			if err := fillTrigger(h.Unit.SID, tr); err != nil {
+				return store.Unit{}, false, err
+			}
 			return b.reinforceMemory(ctx, a, h.Unit, h.Semantic, "cosine meets dedupe threshold")
 		}
 		if h.Semantic >= review && strings.TrimSpace(decision.NewReason) == "" && (superseded.SID == "" || h.Unit.SID != superseded.SID) {
@@ -735,7 +759,7 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 		repo = b.workRepo() // only then: a git lookup per remember is not free
 	}
 	m, reinforced, err := ingest.RememberWith(NativePath(), ingest.Remembering{Content: content, Category: category, Type: NormalType(decision.Type), Scope: scope, Tags: tags,
-		SafeReason: safeReason, NewReason: decision.NewReason, Branch: branch, Holds: cond.Text, Repo: repo,
+		SafeReason: safeReason, NewReason: decision.NewReason, Branch: branch, Holds: cond.Text, Repo: repo, Trigger: tr,
 		OriginFor: project.OriginForScope(scope)})
 	if err != nil {
 		return store.Unit{}, false, err
@@ -754,6 +778,62 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 		recordFixes(ctx, a, "supersede", []fixTarget{a.fixTargetFor(superseded, u.SID)})
 	}
 	return u, reinforced, nil
+}
+
+// fillTrigger is the trigger side of a reinforce (jrj1vq): no trigger stated
+// keeps the memory's; one stated fills a memory that has none; a different
+// one is refused (crab: a changed trigger is a correction, --supersedes).
+func fillTrigger(sid string, tr *trigger.Trigger) error {
+	if tr == nil {
+		return nil
+	}
+	mems, err := ingest.LoadNative(NativePath())
+	if err != nil {
+		return err
+	}
+	for _, m := range mems {
+		if m.SID != sid || !m.Active {
+			continue
+		}
+		if trigger.Equal(m.Trigger, tr) {
+			return nil
+		}
+		if !trigger.Empty(m.Trigger) {
+			return &ingest.TriggerChangeError{ID: m.ID, SID: sid, Old: m.Trigger, New: tr}
+		}
+		_, _, err := ingest.ReplaceTrigger(NativePath(), m.ID, tr)
+		return err
+	}
+	return notOwnedTrigger(sid)
+}
+
+func notOwnedTrigger(sid string) error {
+	return fmt.Errorf("NOT STORED: memory %s comes from another memory system, so hug cannot keep a trigger on it\nfix: hug mem remember --supersedes %s --new-reason \"with a trigger\" --when ... \"TEXT\" (a hug memory that corrects it)", sid, sid)
+}
+
+// replaceTrigger is a supersede whose text is the memory's own: the trigger
+// is replaced in place (tr nil stores None, a clear sync carries), the id
+// stays, and the fix trail records the supersede on itself (jrj1vq).
+func (b Binding) replaceTrigger(ctx context.Context, a *App, old store.Unit, tr *trigger.Trigger) (store.Unit, bool, error) {
+	if _, err := b.WriteScope(old.Scope); err != nil {
+		return store.Unit{}, false, err
+	}
+	_, found, err := ingest.ReplaceTrigger(NativePath(), old.SID, tr)
+	if err != nil {
+		return store.Unit{}, false, err
+	}
+	if !found {
+		return store.Unit{}, false, notOwnedTrigger(old.SID)
+	}
+	if _, err := a.Reindex(ctx); err != nil {
+		return store.Unit{}, false, err
+	}
+	u, err := b.Resolve(a, old.SID)
+	if err != nil {
+		return u, false, err
+	}
+	recordFixes(ctx, a, "supersede", []fixTarget{a.fixTargetFor(old, old.SID)})
+	return u, false, nil
 }
 
 // fixTargetFor is the trail's view of u: its sid, hash and every unit row
