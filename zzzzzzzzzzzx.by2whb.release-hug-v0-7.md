@@ -30,7 +30,7 @@ CI44250806129. Diagnostic stall remains unresolved; layout3 and forget optimizat
 ## Depends on
 
 ## Acceptance
-- [ ] Tag and main merge pushed, release workflow success, hug version reports v0.7.58
+- [x] Tag and main merge pushed, release workflow success, hug version reports v0.7.58
 
 ## Notes
 
