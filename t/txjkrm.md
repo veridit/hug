@@ -32,7 +32,7 @@ Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate
 ## Depends on
 
 ## Acceptance
-- [ ] a preview of the Seid overview with tags on rows, built from real tasks, is shown to Jørgen and approved before the TUI work starts
+- [x] a preview of the Seid overview with tags on rows, built from real tasks, is shown to Jørgen and approved before the TUI work starts
 - [x] hug.toml tags = [...] is read; lint flags a task tag not on the list with a fix: line (test)
 - [ ] rows show the task's tags dimmed before the title and cut by 102bc0's order (goldens at 80 and 140 columns)
 - [x] filter tag:compiler and g grouping by tag work (test)
@@ -63,6 +63,7 @@ landed dfe1aee on main 2026-11-18: TUI: tag filter (was label) and g grouping by
 check 5 (mizaru, branch txjkrm5 on 8c26ec51, uncommitted pending suite): hug upgrade --tags built to crab's rulings. Failing first: /Users/jhf/.jcode/scratch/txjkrm-preview/check5-ff.txt (exit 2, unknown flag). Tests TestUpgradeTagsPreviewThenApply + TestUpgradeTagsProposesAList pass; 13 mutants all killed (/Users/jhf/.jcode/scratch/txjkrm5-mut/mutants-round1.txt, mutants-round2.txt; overlay, no source edits). Seid copy (/Users/jhf/.jcode/scratch/txjkrm5-seid, proposal's 38 tags + design, 50 merges): lint before 1754 unlisted-tag; preview exit 5, 1451 tasks, 21 deferred, 196 design kept, 6 draft, 0 open disagreements, 1005 closed tasks merges-only; apply = one commit a29158c2b 'hug upgrade --tags: labels cleaned in 1451 tasks'; lint after: no findings with code unlisted-tag; second run: tags: nothing to do. Preview/apply output: /Users/jhf/.jcode/scratch/txjkrm-preview/seid-preview.txt, seid-apply.txt.
 shipped in v0.7.68 (709e327)
 check 5 committed: 782a807c on origin/main 6a6b6573 (v0.7.68), branches txjkrm5 + ci/txjkrm5. CI 44376607765 completed success 6/6: secrets, bench, test ubuntu/macos/windows, test-windows-cli (19:28:14Z). Local: task + mcp ok; TestUpgradeTags* ok; full cli suite did not finish locally (load average ~677: WaitDelay/git timeouts in sync tests, untouched by this change); CI is the clean run.
+check 1: Jørgen 19:35Z (answer 1): the list and preview are approved with one change. Tags go right after the ticket ID, because they say quickly what the task is about. See check 6.
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
@@ -71,3 +72,4 @@ check 5 committed: 782a807c on origin/main 6a6b6573 (v0.7.68), branches txjkrm5 
   So I think the tags should be after the ticket ID because they allow you to quickly understand what this is all about and I think we can discuss later if we can make groupings for things that have the same tab somehow like an auto group on that
 - 2026-11-18T20:33 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:35 answer 1 acknowledged by crab
+- 2026-11-18T20:36 answer 1 in progress by crab: hug task check txjkrm 1 "Jørgen 19:35Z (answer 1): the list and preview are approved with one change. Tags go right after the ticket ID, because…"
