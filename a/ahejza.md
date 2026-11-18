@@ -61,3 +61,4 @@ shipped in v0.7.56 (4247303)
 - 2026-11-18T19:57 answered asked (check 6), by jhf, for nautilus (doing/asked -> doing/active):
   > after the release: line 3 reads 'filter: none · sort: rank'. Press s for the sort picker (c is the marked column, the same as o; created moved to d) and f for the filter picker; 1-4 no longer filter (use :todo etc.). Does it read clearly?
   I like these pickers. Keep it
+- 2026-11-18T19:57 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
