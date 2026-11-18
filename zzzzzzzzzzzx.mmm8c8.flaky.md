@@ -4,7 +4,7 @@ title: "Flaky TestSettledWaitsForSlowChild since the 100 ms settle"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
