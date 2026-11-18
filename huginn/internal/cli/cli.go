@@ -1190,6 +1190,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, err
 		}
 		q.What = text
+		if e = s.readyToHand("ask", f.args[0], q.For, false, q.Check); e != nil {
+			return nil, e
+		}
 		r, e = s.s.Ask(f.args[0], q, a.whoTakes(f).assignee())
 	case "resume":
 		if e = f.count(1); e != nil {
@@ -1204,6 +1207,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		if strings.TrimSpace(f.get("by")) == "" {
 			return nil, usage("review needs who reviews: --by NAME", "hug task review "+f.args[0]+" --by NAME")
+		}
+		if e = s.readyToHand("review", f.args[0], f.get("by"), false); e != nil {
+			return nil, e
 		}
 		r, e = s.s.Review(f.args[0], f.get("by"), f.get("show"))
 	case "answer":
@@ -1230,6 +1236,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			}
 			if e = f.count(2); e != nil {
 				return nil, e
+			}
+			if who := strings.TrimSpace(f.get("for")); who != "" {
+				if e = s.readyToHand("design", f.args[0], who, true); e != nil {
+					return nil, e
+				}
 			}
 			r, e = s.s.DesignShowing(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("for"), f.get("show"))
 		}

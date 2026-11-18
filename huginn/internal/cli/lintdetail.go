@@ -122,6 +122,59 @@ func forTask(fs []task.Finding, t task.Task) []task.Finding {
 	return out
 }
 
+// readyToHand refuses to hand ref to a person (ask --to, review --by,
+// design --for) while its own file has a broken finding (wdkqzx check 5,
+// Jørgen 23:51: a person is never handed a broken task). The agent sees
+// every broken finding and one fix hug takes. design passes draft: a
+// missing Goal or acceptance does not hold a design question back, since
+// the answer is often what fills them (crab 00:05). Nothing is written.
+func (s *session) readyToHand(cmd, ref, person string, draft bool, check ...int) error {
+	d, e := s.s.Get(ref)
+	if e != nil {
+		return e
+	}
+	l := s.taskLint(d.Task)
+	if l == nil {
+		return nil
+	}
+	var broken []task.Finding
+	// Asked about the one open check of a shipped task (wdkqzx check 6,
+	// 6ephqk's shape): the ask is the release question, so it is not held
+	// back by it, and after the ask lint has none.
+	asksOpen := len(check) == 1 && onlyOpen(d.Task, check[0])
+	for _, f := range l.Findings {
+		code := task.FindingCode(f.Problem)
+		if f.Severity() != task.Broken || (draft && (code == "missing-goal" || code == "no-acceptance")) || (asksOpen && code == "shipped-not-done") {
+			continue
+		}
+		broken = append(broken, f)
+	}
+	if len(broken) == 0 {
+		return nil
+	}
+	parts := make([]string, len(broken))
+	for i, f := range broken {
+		parts[i] = "[" + task.FindingCode(f.Problem) + "] " + f.Problem
+	}
+	return &UsageError{
+		Problem: "hug task " + cmd + ": " + d.Task.ID + " is not ready to hand to " + strings.TrimSpace(person) + ": " + plural(len(broken), "broken finding", "broken findings") + ": " + strings.Join(parts, "; "),
+		Fix:     task.CombinedFix(d.Task.ID, broken),
+	}
+}
+
+// onlyOpen reports whether check n (1-based) is t's one open check.
+func onlyOpen(t task.Task, n int) bool {
+	if n < 1 || n > len(t.Acceptance) || t.Acceptance[n-1].Settled() {
+		return false
+	}
+	for i, a := range t.Acceptance {
+		if i != n-1 && !a.Settled() {
+			return false
+		}
+	}
+	return true
+}
+
 // writesTask are the commands an agent runs that write one task and end
 // with its lint block (wdkqzx check 4). done and drop close the task and
 // get none; request is the person's own words, not the agent's write.
