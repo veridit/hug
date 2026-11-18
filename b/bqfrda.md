@@ -32,7 +32,7 @@ Seen on piglet's gpyqq9 branch tests and on main. Related: the ask gate sees onl
 ## Depends on
 
 ## Acceptance
-- [ ] After hug task detach, lint shows no missing-file for that file, or one finding with a runnable fix; a test fails first on main.
+- [x] After hug task detach, lint shows no missing-file for that file, or one finding with a runnable fix; a test fails first on main.
 - [ ] A genuinely missing cited file is reported exactly once (test).
 
 ## Notes
