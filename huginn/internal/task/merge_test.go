@@ -118,6 +118,25 @@ func TestMergeRepeatedDocumentNotesKeepUnion(t *testing.T) {
 	}
 }
 
+func TestMergeTimedNotesCompareInstantsAcrossZones(t *testing.T) {
+	base := edit(mergeBase, "2026-11-18T05:00 first\n", "")
+	ours := edit(string(base), "## Notes\n\n", "## Notes\n\n2026-11-18T01:00:00-05:00 local note\n")
+	theirs := edit(string(base), "## Notes\n\n", "## Notes\n\n2026-11-18T05:30:00Z remote note\n")
+	got, kept, e := MergeTask("8/8q6v7b.md", base, ours, theirs, side)
+	if e != nil || len(kept) != 0 || strings.Count(string(got), "remote note") != 1 || strings.Count(string(got), "local note") != 1 || strings.Index(string(got), "remote note") > strings.Index(string(got), "local note") {
+		t.Fatalf("notes not ordered by instant: e=%v kept=%+v\n%s", e, kept, got)
+	}
+}
+
+func TestMergeLocalFrontMatterCommentIsNotLost(t *testing.T) {
+	ours := edit(mergeBase, "state: \"todo\"\n", "# local explanation\nstate: \"doing\"\n")
+	theirs := edit(mergeBase, "state: \"todo\"\n", "state: \"done\"\n")
+	got, _, e := MergeTask("8/8q6v7b.md", []byte(mergeBase), ours, theirs, side)
+	if e != nil || !strings.Contains(string(got), "# local explanation\n") {
+		t.Fatalf("local comment lost: e=%v\n%s", e, got)
+	}
+}
+
 func TestMergeDeletionAndChangeUsesBoardAndNotesLocal(t *testing.T) {
 	ours := edit(mergeBase, `state: "todo"`, `state: "doing"`)
 	theirs := edit(mergeBase, "state: \"todo\"\n", "")

@@ -54,3 +54,12 @@ func TestReplayTreeRejectsUnparseableMode(t *testing.T) {
 		t.Fatalf("fixture unexpectedly installed a symlink: %v %v", info, e)
 	}
 }
+
+func TestReplayModeKeepsRemoteWhenOnlyLocalContentChanged(t *testing.T) {
+	if got := replayMode("100644", "100644", "100755"); got != "100755" {
+		t.Fatalf("remote's executable bit was lost: %s", got)
+	}
+	if got := replayMode("100755", "100644", "100755"); got != "100644" {
+		t.Fatalf("local's mode change was lost: %s", got)
+	}
+}

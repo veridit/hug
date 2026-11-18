@@ -163,12 +163,28 @@ func (r *Repository) sameTranslated(a, b tree, t Translator) (bool, error) {
 type tree map[string]struct{ old, blob, mode string }
 
 type replayPathError struct {
-	path, detail string
+	path, detail, fix string
 }
 
-func (e *replayPathError) Error() string { return e.path + ": " + e.detail }
+func (e *replayPathError) Error() string { return e.path + ": " + e.detail + "\nfix: " + e.fix }
+
+func replayMode(base, ours, theirs string) string {
+	switch {
+	case theirs == "":
+		return ours
+	case ours == base:
+		return theirs
+	case theirs == base, ours == theirs:
+		return ours
+	default:
+		return theirs
+	}
+}
 
 func (r *Repository) tree(commit string, t Translator) (tree, error) {
+	bad := func(p, detail string) error {
+		return &replayPathError{p, detail, r.fix("show " + quote(commit) + " -- " + quote(p))}
+	}
 	out, e := r.git("ls-tree", "-r", "-z", "--full-tree", "--end-of-options", commit+"^{tree}")
 	if e != nil {
 		return nil, e
@@ -184,10 +200,10 @@ func (r *Repository) tree(commit string, t Translator) (tree, error) {
 		}
 		f := strings.Fields(meta)
 		if len(f) != 3 {
-			return nil, &replayPathError{p, "hug cannot parse this tree entry"}
+			return nil, bad(p, "hug cannot parse this tree entry")
 		}
 		if f[1] != "blob" || (f[0] != "100644" && f[0] != "100755") {
-			return nil, &replayPathError{p, "hug cannot replay this file as a regular board file (mode " + f[0] + ")"}
+			return nil, bad(p, "hug cannot replay this file as a regular board file (mode "+f[0]+")")
 		}
 		blobs[p] = f[2]
 		modes[p] = f[0]
@@ -198,10 +214,10 @@ func (r *Repository) tree(commit string, t Translator) (tree, error) {
 	for _, old := range paths {
 		to, ok := names[old]
 		if !ok || to == "" || filepath.IsAbs(to) || filepath.ToSlash(filepath.Clean(to)) != to || strings.HasPrefix(to, "../") || strings.Contains(to, "\\") {
-			return nil, &replayPathError{old, "hug cannot read the translated path " + fmt.Sprintf("%q", to)}
+			return nil, bad(old, "hug cannot read the translated path "+fmt.Sprintf("%q", to))
 		}
 		if prior, exists := tr[to]; exists {
-			return nil, &replayPathError{old, "both " + prior.old + " and " + old + " translate to " + to + "; neither file was discarded"}
+			return nil, bad(old, "both "+prior.old+" and "+old+" translate to "+to+"; neither file was discarded")
 		}
 		tr[to] = struct{ old, blob, mode string }{old, blobs[old], modes[old]}
 	}
@@ -319,6 +335,10 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 		if e != nil {
 			return nil, stop(*c, "its tree", e)
 		}
+		current, e := r.tree("HEAD", t)
+		if e != nil {
+			return nil, stop(*c, "the board's tree", e)
+		}
 		sources = map[string]string{}
 		for p, f := range after {
 			sources[p] = f.old
@@ -337,12 +357,10 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 			}
 		}
 		sort.Strings(touched)
+		modeChanges := map[string]string{}
 		for _, p := range touched {
 			disk := filepath.Join(r.Dir, filepath.FromSlash(p))
-			theirs, e := os.ReadFile(disk)
-			if os.IsNotExist(e) {
-				theirs, e = nil, nil
-			}
+			theirs, e := r.file(current, p, t)
 			if e != nil {
 				return nil, stop(*c, p, e)
 			}
@@ -381,16 +399,31 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 			if e := os.WriteFile(disk, merged, 0o644); e != nil {
 				return nil, stop(*c, p, e)
 			}
+			chosen := replayMode(before[p].mode, after[p].mode, current[p].mode)
 			mode := os.FileMode(0o644)
-			if after[p].mode == "100755" {
+			if chosen == "100755" {
 				mode = 0o755
 			}
 			if e := os.Chmod(disk, mode); e != nil {
 				return nil, stop(*c, p, e)
 			}
+			if chosen != current[p].mode && (current[p].mode != "" || chosen == "100755") {
+				modeChanges[p] = chosen
+			}
 		}
 		if _, e := r.git("add", "--all", "--", "."); e != nil {
 			return nil, stop(*c, "(staging)", e)
+		}
+		for _, p := range touched {
+			if mode, ok := modeChanges[p]; ok {
+				chmod := "--chmod=-x"
+				if mode == "100755" {
+					chmod = "--chmod=+x"
+				}
+				if _, e := r.git("update-index", chmod, "--", p); e != nil {
+					return nil, stop(*c, p, e)
+				}
+			}
 		}
 		staged, e := r.git("diff", "--cached", "--name-only")
 		if e != nil {

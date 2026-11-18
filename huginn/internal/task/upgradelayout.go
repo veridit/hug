@@ -13,7 +13,8 @@ import (
 // Layout 3 upgrade (w40cmk check 1): every old-named task file
 // ([group/]rank.id.slug.md) moves to C/ID.md, the rank and group its name
 // said become rank: and group: in its front matter, and its files folder
-// [group/]ID/ moves to C/ID/. No other line of the file changes.
+// [group/]ID/ moves to C/ID/. A differing old slug is retained as an
+// alias so references that do not contain the id still find the task.
 
 // LayoutMove is one task's move to layout 3.
 type LayoutMove struct {
@@ -98,6 +99,13 @@ func Layout3Fields(raw []byte, m LayoutMove) ([]byte, error) {
 	d := Parse(m.From, raw)
 	if d.frontEnd < 0 || !d.frontmatterValid {
 		return nil, &Error{Kind: "broken-file", ID: m.ID, Value: m.From, Fix: "hug task lint " + m.ID}
+	}
+	legacy := d.Task.Slug
+	if legacy != "" && !strings.EqualFold(legacy, Slug(d.Task.Title)) && !containsFold(d.Task.Aliases, legacy) {
+		aliases := append(append([]string(nil), d.Task.Aliases...), legacy)
+		if e := d.SetField("aliases", aliases); e != nil {
+			return nil, e
+		}
 	}
 	for _, k := range []string{"rank", "group"} {
 		v := m.Rank
