@@ -11,10 +11,15 @@ rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T16:36"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_since: "2026-11-18T16:36"
+asked_by: "crab"
+asked_check: "1"
+asked_what: "hug's public repo has 868 of our memories on the hug/memory branch, pushed since yesterday 11:02 (no passwords, keys or tokens found; 15 mention 'secret' as a word). The push stops when 34r1ft ships (your answer there picks where the opt-in lives). For the branch already there: keep it, or delete it from GitHub after I save a local copy?"
+asked_for: "jhf"
 ---
 
 ## Goal
@@ -40,3 +45,4 @@ Fix path: 34r1ft check 2 (iwazaru, guard in muninn/internal/project SyncBranch, 
 
 ## History
 - 2026-11-18T16:36 todo -> doing/active (take)
+- 2026-11-18T16:36 doing/active -> doing/asked (ask)
