@@ -86,6 +86,76 @@ as 03:00, would be a guess, not learned. Moving the hand-out to wrap-up only
 (hatchling's open question) was not taken either. Items made in the quiet
 stretch are handed out at the person's return, which is a break already.
 
+## Personal vs shared memories (gav9nw, decided 2026-11-18)
+
+**Decision.** A repository that shares memories (34r1ft: `hug.toml [memory]
+share = true`, absent means local) pushes a memory only when two checks both
+say push. A+: the capture extractor places the memory, with personal and
+other-project places added to the ones it has. B: a local rule at sync holds
+back any line that names something outside the repository. Jørgen 19:40Z
+chose A+ and B together, "unless someone clever can dream up something
+better". Before any repository opts in, A+ is confirmed on fresh captures.
+
+**Reason.** A pushed memory cannot be taken back. `hug mem forget` keeps the
+line with its text and `active: false` (all 22 retired lines on 1abcc497
+still carry it), git history keeps every earlier commit, and another clone
+keeps its copy, since an import is a copy and not a mirror
+(`ingest/importer.go`). So the leak rate decides. A memory held back that
+belonged is the cheap mistake, released later by rescope. Of the 868
+memories on hug's public `hug/memory` (1abcc497), 58 (6.7%) do not belong
+there: 29 personal, 16 about another project, 13 cross-project team rules.
+They got there because the extractor already places every capture (here,
+client or global, since v0.4.0-31) but has no personal or other-project
+place and is told "when unsure choose here". In 21 of 570 placed captures it
+named what the memory was about and still chose here ("Specific local repo
+path and access mode for this project").
+
+**How.** No extra paid call: A+ uses the call capture already makes, and B
+uses no model.
+
+- A+: the extractor's places gain `personal` (the person, his machine, home
+  paths) and `project:<other>` / `client:<name>`, resolved from the catalog
+  `hug mem tidy place` already builds. `here` stays the repository. Team
+  rules go to global until a team scope exists. `hug mem remember --place`
+  takes the same places.
+- B: a gate in sync beside the secret gate (`LooksSecret`, `sync.go`) holds a
+  line that names a home path (`/Users/`, `~/`), another known project or
+  client, or the person, or whose category is preference or correction. Its
+  term list lives in local config, never in the repository: a list that
+  names clients is itself private. Being a gate at sync, it also covers
+  memories written before it.
+- Measured on the 868 (OPTIONS.md, attached to gav9nw): a blind labeler
+  (DeepSeek Flash, 30 calls) labeled each memory, corrected by hand where it
+  was suspect (all 90 it kept off the branch and 63 regex suspects read; a
+  random 30 agreed 30/30). A+ and B together pushed 699 and leaked 0,
+  holding back 13.7% of the memories that belonged. **This is a hypothesis,
+  not a measurement of the extractor.** The A+ row is the labeler's verdict
+  standing in for the extractor, so its leak is a lower bound, and the 868
+  are the data the options were chosen on.
+- Confirmation (rnpdnm check 3): on fresh captures, not the 868, A+ and B
+  leak at most 1 in 200 pushed, judged blind, with the withheld rate and its
+  interval reported. No repository opts in to sharing before it holds.
+
+**Not taken.**
+
+- C, share only what an agent writes on purpose (`remember`) and keep the
+  rest local. The deliberate writes leaked most, 7 of 38 (18.4%, 95% CI 9.2
+  to 33.4), mostly coordinator rules, and C held back 96.2% of hug's own
+  memories, so clones would lose nearly all of them. It is the option
+  Jørgen first leaned to (wxsyc5: keep the public branch as long as the
+  agent placing a memory judges personal vs repository well); on this
+  branch the agents did not.
+- A+ alone: 1 leak in 778 (0.1%), but it rests on the labeler alone, and a
+  model's slip is pushed with nothing behind it. B catches the slips that
+  name a path, a project or the person.
+- B alone: 18 leaks in 738 (2.4%, CI 1.5 to 3.8), memories with no marker
+  word ("the background shell's python3 lacks PIL"), and 11.1% held back,
+  such as hug decisions credited to Jørgen.
+- Today's placement as it is (A0): 58 leaks in 866 pushed (6.7%).
+
+What to do with the 58 already on the public branch is its own question
+(q0a8rx). The build is rnpdnm.
+
 ## Migration
 
 - huginn: branch `huginn` -> `hug/tasks`, folder `.huginn/` -> `.hug/tasks/`.
@@ -98,4 +168,3 @@ stretch are handed out at the person's return, which is a break already.
 
 1. Repository: rename veridit/muninn to veridit/hug and merge huginn in with
    history, or a new repo.
-2. Personal vs shared memories (gav9nw).
