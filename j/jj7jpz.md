@@ -1,0 +1,34 @@
+---
+id: jj7jpz
+title: "A background pass that cannot open the board leaves .pending forever"
+state: todo
+type: feature
+priority: ""
+assignee: []
+labels: []
+group: ""
+rank: "zzzzzzzzzzzy"
+created: 2026-11-18
+updated: 2026-11-18
+---
+
+## Goal
+A detached pass that returns before Background.Run (board Open fails, no remote, Background error) removes the .pending marker its Nudge wrote, so settled and Busy stop reporting a start that will never queue.
+
+## Purpose
+CI 44230245084 (ubuntu, d75c1691): 'sync_test.go:92: background pass still running after 30 s: queued false, busy false, pending true, turn held false', with the pass log line 'open: .../two/.hug/tasks is not a working checkout of hug/tasks (git no longer knows it as a worktree)'. backgroundPass returns at the Open error before b.Run, so the marker Run would remove stays. Pending() has no expiry, so a test waiting on it waits forever.
+
+## Principle
+Only the early-return paths remove the marker. After Run it is never removed again, because a newer Nudge's marker must stay visible (rt80x4). No timeouts raised.
+
+## Relevant details
+Found while working 6ep7y2 (tigress). Fix in huginn/internal/cli/sync.go plus gitbranch.BackgroundOf. Branch 6ep7y2 stack.
+
+## Depends on
+
+## Acceptance
+- [ ] a counting test that runs the real detached child against a board Open cannot open: N of N passes leave no .pending (fails first on origin/main)
+- [ ] mutation: dropping the removal makes the counting test fail
+- [ ] ordinary CI green on the fix commit (run id)
+
+## Notes
