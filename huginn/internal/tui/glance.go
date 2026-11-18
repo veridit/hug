@@ -96,7 +96,7 @@ func (m *model) showGlance() {
 	m.glanceMD = glanceMarkdown{}
 	m.find = findState{} // the file's own find (4s3g5q)
 	m.glanceHead, m.glanceBody = m.glanceRead(t, name)
-	m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-2)
+	m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-glanceChrome)
 	m.viewport.SetContent(m.glanceBody)
 	m.viewport.GotoTop()
 }
@@ -161,3 +161,8 @@ func (m *model) closeGlance() {
 	m.syncDetail()
 	m.revealAcceptance()
 }
+
+// glanceChrome is the lines a shown file takes above its text, under the
+// task's header: the rule, "path · size · i of N", and the rule under it
+// (z82qsy).
+const glanceChrome = 3

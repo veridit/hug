@@ -108,7 +108,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	send("t")
 	wait("Take aaaaaa for review as Jørgen?")
 	send("Enter")
-	screen := wait("take aaaaaa")
+	screen := wait("took aaaaaa")
 	file := func(id string) string {
 		matches, _ := filepath.Glob(filepath.Join(tasks, "*"+id+"*.md"))
 		// Layout 3 (w40cmk): C/ID.md.
@@ -141,7 +141,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	send("t")
 	wait("Give back bbbbbb to todo (ready)?")
 	send("Enter")
-	wait("give back bbbbbb")
+	wait("gave back bbbbbb")
 	b := file("bbbbbb")
 	for _, want := range []string{"state: \"todo\"", "stage: \"ready\"", "doing/active -> todo/ready (give back; was assignee: Jørgen)"} {
 		if !strings.Contains(b, want) {
@@ -160,7 +160,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	send("t")
 	wait("Give back aaaaaa to todo (review)?")
 	send("Enter")
-	wait("give back aaaaaa")
+	wait("gave back aaaaaa")
 	if a = file("aaaaaa"); !strings.Contains(a, "state: \"todo\"") || !strings.Contains(a, "stage: \"review\"") {
 		t.Fatalf("review given back:\n%s", a)
 	}

@@ -44,7 +44,7 @@ func TestRequestBox(t *testing.T) {
 		}
 		golden = append(golden, "== typing at "+strconv.Itoa(w), lastLines(screen, 12))
 		m = press(m, "enter")
-		if m.prompt != "" || !strings.HasPrefix(m.message, "request ") {
+		if m.prompt != "" || !strings.HasPrefix(m.message, "requested ") {
 			t.Fatalf("at %d Enter did not send: prompt %q message %q", w, m.prompt, m.message)
 		}
 		tk := mustSelected(t, m)

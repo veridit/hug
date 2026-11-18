@@ -77,7 +77,7 @@ func TestAnswerInDetail(t *testing.T) {
 	}
 	got = append(got, "== typing", typing)
 	m = press(m, "enter")
-	if !strings.HasPrefix(m.message, "answer ") {
+	if !strings.HasPrefix(m.message, "answered ") {
 		t.Fatalf("message %q", m.message)
 	}
 	var tk task.Task

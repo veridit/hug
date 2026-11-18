@@ -235,7 +235,7 @@ func (m *model) finish(r task.Result, err error, action string) {
 		m.message = err.Error()
 		return
 	}
-	m.message = action + " " + r.Task.ID
+	m.message = pastTense(action) + " " + r.Task.ID
 	if len(r.Warnings) > 0 {
 		m.message += "\n" + strings.Join(r.Warnings, "\n")
 	}
@@ -248,6 +248,37 @@ func (m *model) finish(r task.Result, err error, action string) {
 		m.detailPath = r.Task.Path
 	}
 	m.refresh(r.Task.Path)
+	m.result, m.resultAt = m.message, m.resultPlace()
+}
+
+// resultPlace names what the screen shows: the view, the open task and
+// the file in it. A result belongs to where it was made (z82qsy).
+func (m model) resultPlace() string {
+	p := m.view
+	if m.detail {
+		p += "\x00" + m.detailPath
+		if m.glance {
+			p += "\x00" + m.glanceHead
+		}
+	}
+	return p
+}
+
+// clearStaleResult clears an action's result once the reader has moved
+// on to another task, file or view (z82qsy, Jørgen 11:37Z: "answer
+// vzghj8" stayed under a file of another task). Any other message, and
+// a result replaced since, is left as it is.
+func (m *model) clearStaleResult() {
+	if m.result == "" {
+		return
+	}
+	if m.message != m.result {
+		m.result, m.resultAt = "", ""
+		return
+	}
+	if m.resultPlace() != m.resultAt {
+		m.message, m.result, m.resultAt = "", "", ""
+	}
 }
 
 // Malformed files stay repairable, but neither absolute paths nor symlinks may escape the store.
@@ -387,4 +418,18 @@ func (m *model) hold() func() {
 		return func() {}
 	}
 	return m.opts.Turn()
+}
+
+// pastTense is an action as its result reads (z82qsy): what was done,
+// not the command that did it.
+func pastTense(action string) string {
+	if p, ok := map[string]string{
+		"take": "took", "give back": "gave back", "done": "marked done", "drop": "dropped",
+		"wait": "parked", "answer": "answered", "request": "requested", "strike": "struck",
+		"restore": "restored", "check": "checked", "uncheck": "unchecked", "new": "created",
+		"move": "moved",
+	}[action]; ok {
+		return p
+	}
+	return action
 }

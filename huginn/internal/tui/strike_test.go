@@ -33,7 +33,7 @@ func TestStrikeInTUI(t *testing.T) {
 		m = press(m, string(r))
 	}
 	m = press(m, "enter")
-	if !strings.HasPrefix(m.message, "strike ") {
+	if !strings.HasPrefix(m.message, "struck ") {
 		t.Fatalf("message %q", m.message)
 	}
 	var tk task.Task

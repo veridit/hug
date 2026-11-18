@@ -8,6 +8,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long…
 ────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 274 B · 1 of 5                                
+────────────────────────────────────────────────────────────────────────────────
 A quiet heading                                                                 
                                                                                 
 A paragraph with inline code and bold words, long enough to wrap at a narrow    
@@ -20,7 +21,6 @@ pane without losing the words at its edge.
 fmt.Println("quiet code")                                                       
                                                                                 
 Find the needle here, and another needle here.                                  
-                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -41,6 +41,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long…
 ────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 274 B · 1 of 5                                
+────────────────────────────────────────────────────────────────────────────────
 # A quiet heading                                                               
                                                                                 
 A paragraph with `inline code` and **bold words**, long enough to wrap at a     
@@ -60,7 +61,6 @@ Find the needle here, and another needle here.
                                                                                 
                                                                                 
                                                                                 
-                                                                                
 File · 100% · next-, previous file · Esc back to files                          
                                                                                 
 M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help  
@@ -74,6 +74,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 274 B · 1 of 5                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 A quiet heading                                                                                                                             
                                                                                                                                             
 A paragraph with inline code and bold words, long enough to wrap at a narrow pane without losing the words at its edge.                     
@@ -85,7 +86,6 @@ A paragraph with inline code and bold words, long enough to wrap at a narrow pan
 fmt.Println("quiet code")                                                                                                                   
                                                                                                                                             
 Find the needle here, and another needle here.                                                                                              
-                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
@@ -107,6 +107,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 274 B · 1 of 5                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # A quiet heading                                                                                                                           
                                                                                                                                             
 A paragraph with `inline code` and **bold words**, long enough to wrap at a narrow pane without losing the words at its edge.               
@@ -120,7 +121,6 @@ fmt.Println("quiet code")
 ```                                                                                                                                         
                                                                                                                                             
 Find the needle here, and another needle here.                                                                                              
-                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

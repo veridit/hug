@@ -8,10 +8,10 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long…
 ────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 32 B · 1 of 5                                 
+────────────────────────────────────────────────────────────────────────────────
 Bench                                                                           
                                                                                 
 Synthetic bench notes.                                                          
-                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -33,12 +33,12 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long…
 ────────────────────────────────────────────────────────────────────────────────
 compiler/000001/evidence/escapes.log · 241 B · 4 of 5                           
+────────────────────────────────────────────────────────────────────────────────
 ok line                                                                         
 \x1b[2Jcleared?\a bell    tab                                                   
 next long long long long long long long long long long long long long long long 
 long long long long long long long long long long long long long long long long 
 long long long long long long long long long end                                
-                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -58,10 +58,10 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 32 B · 1 of 5                                                                                             
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Bench                                                                                                                                       
                                                                                                                                             
 Synthetic bench notes.                                                                                                                      
-                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
@@ -83,11 +83,11 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 compiler/000001/evidence/escapes.log · 241 B · 4 of 5                                                                                       
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ok line                                                                                                                                     
 \x1b[2Jcleared?\a bell    tab                                                                                                               
 next long long long long long long long long long long long long long long long long long long long long long long long long long long long 
 long long long long long long long long long long long long long end                                                                        
-                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
