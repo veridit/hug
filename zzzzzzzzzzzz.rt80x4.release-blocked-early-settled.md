@@ -37,5 +37,6 @@ Exact release44264072826 TestSettledWaitsForSlowChild sync_test.go193 reports re
 ## Notes
 
 
+Initial evidence/plan scratch/rt80x4/initial-plan.md sent to crab+calf08:11:20Z BEFORE any source edits. Exact release6d994e71d0b5e43069be2c9ccb701a5f39c0a537 CI44264072826 job134664162174 Test go test ./..., TestSettledWaitsForSlowChild7.48s, cli29.662s. Full raw failure/JSON in scratch/4vd1mz/release-recurrence-failed.log and release-recurrence-ci.json. Early-return assertion lacks phase/state log while timeout helper retains it. Separate-sample Busy(queue then run) followed by Pending admits candidate handoff-observation gap, HYPOTHESIS ONLY, not proven actual releasecause. Proposed writes exactly4paths: gitbranch/background.go,new background_idle_test.go, cli/sync_test.go,sync_timeout_output_test.go. Need crab approval+actual calf boundary ACK before edits. No waiting-limit/throttle/parallelism changes,newworkers,release reruns/tags/live writes. Final-layoutbenchmarkpaused.
 ## History
 - 2026-11-18T09:10 todo -> doing/active (take)
