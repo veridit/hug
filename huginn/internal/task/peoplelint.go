@@ -43,7 +43,9 @@ func KnownNames(people []Person, ts []Task) map[string]bool {
 
 // PeopleFindings flags an open task whose asked_for, design_for or
 // review_by names nobody known: not a [people] short name and no agent on
-// the board. The fix adds the person; an email names its entry.
+// the board. The fix adds the person; an email names its entry. A name
+// that is a person's other name ("jorgen" for jhf: alias, long or first
+// name, agxqax) is asked again of the short name, so it reaches them.
 func PeopleFindings(people []Person, ts []Task) []Finding {
 	known := KnownNames(people, ts)
 	var out []Finding
@@ -54,6 +56,12 @@ func PeopleFindings(people []Person, ts []Task) []Finding {
 		for _, k := range personFields {
 			who := strings.TrimSpace(t.Fields[k])
 			if who == "" || known[strings.ToLower(strings.TrimPrefix(who, "@"))] {
+				continue
+			}
+			if p, ok := PersonMatch(people, who); ok {
+				out = append(out, Finding{Path: t.Path, Line: 1, Code: "unknown-person",
+					Problem: "nobody known: " + k + " " + who + " is not a name hug lists; " + p.Short + " is, so " + p.Short + " never sees it as theirs",
+					Fix:     reaskCommand(t, k, p.Short)})
 				continue
 			}
 			short, email := who, "EMAIL"
@@ -67,6 +75,27 @@ func PeopleFindings(people []Person, ts []Task) []Finding {
 	}
 	sort.SliceStable(out, func(i, j int) bool { return out[i].Path < out[j].Path })
 	return out
+}
+
+// reaskCommand is the command that asks t's question again of short:
+// the same words, check and file, for the field k that named someone
+// else.
+func reaskCommand(t Task, k, short string) string {
+	f := t.Fields
+	switch k {
+	case "asked_for":
+		cmd := "hug task ask " + t.ID + " --to " + short
+		if c := strings.TrimSpace(f["asked_check"]); c != "" {
+			cmd += " --check " + c
+		}
+		if s := strings.TrimSpace(f["asked_show"]); s != "" {
+			cmd += " --show " + s
+		}
+		return cmd + " " + strconv.Quote(oneLineFix(f["asked_what"]))
+	case "design_for":
+		return "hug task design " + t.ID + " " + strconv.Quote(oneLineFix(f["design_question"])) + " --for " + short
+	}
+	return "hug task review " + t.ID + " --by " + short
 }
 
 // checkPrefix is a leading "check N:" in a question (0gztsy wrote them so
