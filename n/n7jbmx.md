@@ -4,7 +4,7 @@ title: "Recall on the agent's tool calls (post_tool_feedback)"
 state: "doing"
 type: spike
 priority: ""
-assignee: ["hatchling"]
+assignee: ["crab"]
 labels: ["recall"]
 created: 2026-11-15
 updated: 2026-11-15
