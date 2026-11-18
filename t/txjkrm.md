@@ -11,10 +11,13 @@ rank: "zzzzzzzzzz38"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T15:45"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "txjkrm"
 worktree: "/Users/jhf/.jcode/scratch/txjkrm"
+waiting_on: "check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19:44Z)"
+waiting_since: "2026-11-18T20:44"
+waiting_asked_by: "mizaru"
 ---
 
 ## Goal
@@ -75,3 +78,5 @@ crab 20:36 local: Jørgen also floated auto-grouping tasks that share a tag; 'di
 - 2026-11-18T20:33 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:35 answer 1 acknowledged by crab
 - 2026-11-18T20:36 answer 1 in progress by crab: hug task check txjkrm 1 "Jørgen 19:35Z (answer 1): the list and preview are approved with one change. Tags go right after the ticket ID, because…"
+- 2026-11-18T20:44 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:44 mizaru read the answer: hug task wait txjkrm "check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19…"
