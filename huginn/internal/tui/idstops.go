@@ -160,7 +160,7 @@ func (m model) idStops(t task.Task) []idStop {
 			out = append(out, idStop{where: stopParent, shown: target.ID, target: target})
 		}
 	}
-	q, mine := m.askedOf(t)
+	_, mine := m.askedOf(t)
 	if !mine {
 		add(stopStage, 0, m.stageWords(t), false)
 	}
@@ -173,8 +173,8 @@ func (m model) idStops(t task.Task) []idStop {
 	}
 	add(stopTitle, 0, oneLine(t.Title), false)
 	// The details, top down, as detailText draws them.
-	if mine && q.check == 0 {
-		add(stopQuestion, 0, questionText(q), false)
+	for k, b := range m.blockQuestions(t) {
+		add(stopQuestion, k, questionText(b), false)
 	}
 	sections := m.sections(t)
 	text := func(name string) string { return sectionText(sections, name) }
@@ -184,8 +184,8 @@ func (m model) idStops(t task.Task) []idStop {
 	}
 	for i, a := range t.Acceptance {
 		add(stopCheck, i, checkText(a), true)
-		if mine && q.check == i+1 {
-			add(stopAsked, i, strings.TrimSpace(q.what), false)
+		if cq, ok := m.checkQuestion(t, i+1); ok {
+			add(stopAsked, i, strings.TrimSpace(cq.what), false)
 		}
 	}
 	for i, d := range task.DependencyDetails(t, m.all) {

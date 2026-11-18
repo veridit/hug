@@ -1,0 +1,75 @@
+== opened
+HUG · list › aaaaaa                                                                      ? 2 for you
+[doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus                                  
+created 2026-11-01 · updated 2026-11-01 · t                                                         
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Status colors: rows and sections share one subtle scheme                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────
+> ? Is the mark sign right?                                                                         
+    └ question 1 · nautilus · 3 min ago · answer                                                    
+                                                                                                    
+  ? Keep folding on grouped headings?                                                               
+    └ question 2 · nautilus · 3 min ago · answer                                                    
+                                                                                                    
+DESCRIPTION                                                                                         
+g                                                                                                   
+                                                                                                    
+PURPOSE                                                                                             
+p                                                                                                   
+                                                                                                    
+PRINCIPLE                                                                                           
+q                                                                                                   
+                                                                                                    
+Task 1 of 7 · 0% · next · previous · Esc back                                                       
+                                                                                                    
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
+== typing under question 2
+HUG · list › aaaaaa                                                                      ? 2 for you
+[doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus                                  
+created 2026-11-01 · updated 2026-11-01 · t                                                         
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Status colors: rows and sections share one subtle scheme                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────
+  ? Is the mark sign right?                                                                         
+    └ question 1 · nautilus · 3 min ago · answer                                                    
+                                                                                                    
+> ? Keep folding on grouped headings?                                                               
+    └ question 2 · nautilus · 3 min ago                                                             
+    answer: yes, keep folding                                                                       
+                                                                                                    
+DESCRIPTION                                                                                         
+g                                                                                                   
+                                                                                                    
+PURPOSE                                                                                             
+p                                                                                                   
+                                                                                                    
+PRINCIPLE                                                                                           
+q                                                                                                   
+Task 1 of 7 · 0% · next · previous · Esc back                                                       
+                                                                                                    
+Enter send · Alt-Enter new line · Esc cancel · F1 help                                              
+== question 2 answered
+HUG · list › aaaaaa                                                                      ? 2 for you
+[doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus                                  
+created 2026-11-01 · updated 2026-11-01 · t                                                         
+✓ jhf answered question 2: yes, keep folding                                                        
+  unread by nautilus                                                                                
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Status colors: rows and sections share one subtle scheme                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────
+> ? Is the mark sign right?                                                                         
+    └ question 1 · nautilus · 3 min ago · answer                                                    
+                                                                                                    
+DESCRIPTION                                                                                         
+g                                                                                                   
+                                                                                                    
+PURPOSE                                                                                             
+p                                                                                                   
+                                                                                                    
+PRINCIPLE                                                                                           
+q                                                                                                   
+                                                                                                    
+ACCEPTANCE                                                                                          
+answered aaaaaa                                                                                     
+                                                                                                    
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
