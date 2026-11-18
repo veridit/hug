@@ -1,17 +1,18 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "todo"
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T04:12"
 ---
 
 ## Goal
@@ -42,3 +43,4 @@ wyvern 03:41: work in progress parked as commit 80e31e6a on local branch wy/4vd1
 ## History
 - 2026-11-18T02:53 todo -> doing/active (take)
 - 2026-11-18T03:41 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T02:53
+- 2026-11-18T04:12 todo/ready -> doing/active (take)
