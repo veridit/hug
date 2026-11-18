@@ -46,6 +46,7 @@ Permanent diagnostics LANDED on main as a681224e40256b5ac3e097faab32d4437bc7348d
 Crab 06:10Z authorizes resuming isolated 4vd1mz while ordinary main CI 44249085050 runs. Watcher 1001424im4 remains owned here. Parked unresolved awaiting recurrence, with check 1 still awaiting green main; no cause or fix established, checks 2/3/4 remain open.
 landed a681224 on main 2026-11-18: sync: retain queue, run and pass phase diagnostics (6ep7y2)
 Main CI44249085050 red on TestEveryHUGNameIsKnown on all3 OS: fixture HUG_TEST_SYNC_TIMEOUT_REPORT missing from env.Known (my omission). Windows CLI passed. No check ticked. Registering Test-kind variable alongside existing fixtures; env/gitbranch/CLI latest-base race781888fmel before fix-forward push. Raw6ep7y2-main-ci-failed.log and result.json, exact failure preserved in landing-review.md. No stall reproduction or diagnostic rerun.
+Fix-forward1dbcf63a1bca8d4433b1acf9e5c4c9f1d021ea7f landed on verified latest parent1541e271. Registered fixture as Test. Latest-base -race passed env4.900s, gitbranch15.397s, CLI116.298s (6ep7y2-env-fix-race.txt). Waiting on ordinary main CI44250806129 via watcher955583g6r9. Review/privacy/cost and exact race lines retained6ep7y2-landing-review.md. No acceptance ticks yet, no cause/fix claim. Parked unresolved awaiting recurrence, resuming approved isolated4vd1mz while normal CI runs.
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T07:10 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T06:31
