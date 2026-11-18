@@ -1,0 +1,30 @@
+--- FAIL: TestJcodeRecallRidesTheFirstToolResult (0.12s)
+    jcodepark_test.go:98: recall went through jcode transcript (the person's input box):
+        transcript
+        --mode
+        send
+        -S
+        session_parktest_1
+        -- AI memory (muninn): not the user; newer wins; verify. Fix: memory_forget <id>, memory_remember
+        :.Memory .date@0:Day .id@1:Unique .note@2:Markdown
+        .0:2026-11-18 .1:d6v58t .2:`Matrix(Shared) quartz deployment policy marker remains durable`
+        .0:2026-11-18 .1:g0njhw .2:`Matrix(Personal) quartz deployment policy marker remains durable`
+        .0:2026-11-18 .1:54dcft .2:`Matrix(JcodeGlobal) quartz deployment policy marker remains durable`
+        .0:2026-11-18 .1:qq52cb .2:`Matrix(Engram) quartz deployment policy marker remains durable`
+        .0:2026-11-18 .1:k4q2q1 .2:`Matrix(Named) quartz deployment policy marker remains durable`
+        .0:2026-11-18 .1:bkpk4q .2:`Matrix(Project) quartz deployment policy marker remains durable`
+        .0: .1:b6kdh5 .2:`OutsideNote Matrix(OutsideNote) quartz deployment policy marker remains durable`
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	0.515s
+FAIL
+--- FAIL: TestJcodeFeedbackWithNothingParkedIsOneStat (0.15s)
+    jcodepark_test.go:170: feedback with nothing parked did work: 0 claims, hook.log grew by:
+        2026-11-18T02:40:25+01:00 jcode[global] session_parktest_1: msg="quartz deployment policy" hits=7 elapsed=2ms transcript_err=<nil> 
+        2026-11-18T02:40:25+01:00 jcode[global] session_parktest_1: msg="quartz deployment policy" hits=0 skipped="" elapsed=2ms
+        2026-11-18T02:40:25+01:00 jcode[global] session_parktest_1: msg="quartz deployment policy" hits=0 skipped="" elapsed=2ms
+--- FAIL: TestMemUpgradeMovesJcodeRecallOffTheInputBox (0.00s)
+    jcodepark_test.go:197: preview: exit 0
+        memory: nothing to do
+FAIL
+FAIL	github.com/veridit/hug/muninn/run	0.191s
+FAIL
