@@ -32,7 +32,7 @@ Split from ec6z6j (multi-task requests, which still waits on row marking rxr4z8)
 ## Depends on
 
 ## Acceptance
-- [ ] A request written while the coordinator session is idle reaches it without any agent-side poller, shown by an end-to-end test or recorded live run (session ids, timestamps).
+- [x] A request written while the coordinator session is idle reaches it without any agent-side poller, shown by an end-to-end test or recorded live run (session ids, timestamps).
 - [ ] Each request shows its receipt state (pending, acknowledged, in progress, answered) in hug task requests and the TUI, and acknowledged is set only by the coordinator's actual receipt (test).
 - [ ] The instructions hug installs (AGENTS.md block from hug setup, MCP tool descriptions, hook text) describe this delivery flow, and a test fails when the instruction text and the behaviour disagree.
 - [ ] Jørgen writes a request in hug tui and the coordinator reports receiving it, unprompted.
