@@ -21,4 +21,4 @@ Rows 1–1 of 1 · ! lint finding · ↳ epic · depends = a dependency is not d
                                                                                                                         
 find=statbus-402 · Esc clears                                                                                           
 / statbus-402                                                                                                           
-↑↓ pick · Enter go to it · Tab keep as filter · Esc clear · ? help                                                      
+↑↓ pick · Enter go to it · Tab keep as filter · Esc clear · F1 help                                                     

@@ -105,6 +105,14 @@ func filtered(m model) model {
 
 // helpContexts opens ? from every place hug tui has keys: the four views,
 // a task in each detail focus, a task's file, and each prompt.
+// helpKeyOf is the key that opens help in m: F1 in text (t64v7d), else ?.
+func helpKeyOf(m model) string {
+	if m.textInput() {
+		return "f1"
+	}
+	return "?"
+}
+
 func helpContexts(t *testing.T) map[string]model {
 	t.Helper()
 	out := map[string]model{}
@@ -143,9 +151,9 @@ func helpContexts(t *testing.T) map[string]model {
 // does something there, pressed in that very context.
 func TestHelpKeysAreBound(t *testing.T) {
 	for name, m := range helpContexts(t) {
-		help := press(m, "?")
+		help := press(m, helpKeyOf(m))
 		if !help.help {
-			t.Fatalf("%s: ? did not open help", name)
+			t.Fatalf("%s: %s did not open help", name, helpKeyOf(m))
 		}
 		text := ansi.Strip(help.helpText())
 		sections := help.helpSections()
@@ -168,7 +176,7 @@ func TestHelpKeysAreBound(t *testing.T) {
 		"task:checks": "IN THIS TASK · 000001", "file": "IN THIS FILE", "palette": "IN THE : PALETTE", "filter": "IN THE FILTER PICKER",
 		"find": "IN / FIND", "jump": "IN # JUMP", "confirm": "IN THIS CONFIRM"} {
 		m := helpContexts(t)[name]
-		if got := ansi.Strip(press(m, "?").helpText()); !strings.HasPrefix(got, want+" ") && !strings.HasPrefix(got, want+"\n") {
+		if got := ansi.Strip(press(m, helpKeyOf(m)).helpText()); !strings.HasPrefix(got, want+" ") && !strings.HasPrefix(got, want+"\n") {
 			t.Fatalf("%s: help starts %q, want %q", name, strings.SplitN(got, "\n", 2)[0], want)
 		}
 	}
@@ -240,7 +248,7 @@ func TestHelpFitsAndGolden(t *testing.T) {
 			}
 			m.resize()
 			m.syncDetail()
-			m = press(m, "?")
+			m = press(m, helpKeyOf(m))
 			screen := ansi.Strip(m.View())
 			lines := strings.Split(screen, "\n")
 			if len(lines) != m.height {

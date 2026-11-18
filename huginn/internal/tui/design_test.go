@@ -190,7 +190,7 @@ func TestDetailAndHelpScrollKeys(t *testing.T) {
 }
 func TestEscAtEveryLevel(t *testing.T) {
 	m := manyModel(t)
-	m = press(m, "enter", ":", "type b", "?", "esc")
+	m = press(m, "enter", ":", "type b", "f1", "esc") // in text help is F1 (t64v7d)
 	if m.help || m.prompt != ":" || !m.detail {
 		t.Fatal("help did not close one level")
 	}
@@ -235,11 +235,14 @@ func TestEscAtEveryLevel(t *testing.T) {
 		t.Fatal("Esc quit from overview")
 	}
 }
+
+// In text ? and q are typed; F1 is help, its text intact underneath
+// (t64v7d).
 func TestInputsNeverSwallowHelpOrQuit(t *testing.T) {
 	for _, prefix := range [][]string{{":"}, {"/"}, {"#"}, {"N"}, {"f", "g"}} {
 		m := press(manyModel(t), prefix...)
-		m = press(m, "a?q")
-		if !m.help || strings.Contains(m.input.Value(), "?") {
+		m = press(m, "a?q", "f1")
+		if !m.help || !strings.HasSuffix(m.input.Value(), "a?q") {
 			t.Fatal(prefix, m.input.Value())
 		}
 		before := m.input.Value()

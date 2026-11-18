@@ -291,6 +291,28 @@ func (m model) waitChange() tea.Cmd {
 	}
 }
 
+// textInput says whether keys type text in the prompt open here (under
+// help too): every prompt but the sort builder and the filter's field
+// chooser, whose keys are letters to pick (t64v7d). In text every
+// printable key is text; help is F1.
+func (m model) textInput() bool {
+	switch {
+	case m.confirm != "" || m.prompt == "" || m.prompt == "sort":
+		return false
+	case m.prompt == "filter":
+		return m.pickerField != ""
+	}
+	return true
+}
+
+// helpKey is the key that opens help here: F1 in text, else ?.
+func (m model) helpKey() string {
+	if m.textInput() {
+		return "F1"
+	}
+	return "?"
+}
+
 // busy is true while a reload would interrupt the reader: a prompt or the
 // palette, a confirm question, or the editor.
 func (m model) busy() bool {
@@ -1159,8 +1181,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k == "ctrl+c" {
 			return m, tea.Quit
 		}
-		// Help always wins over text input, and leaves that input intact underneath.
-		if k == "?" && !(m.help && m.helpTyping) {
+		// In text every printable key is text, ? too (t64v7d, Jørgen
+		// 2026-11-18 01:52): there help is F1. F1 is help everywhere, and
+		// leaves the input intact underneath.
+		if k == "f1" || (k == "?" && ((m.help && !m.helpTyping) || (!m.help && !m.textInput()))) {
 			m.help = !m.help
 			m.helpTyping = false
 			m.helpQuery = ""

@@ -198,7 +198,7 @@ func (m model) globalHelp() helpSection {
 		row("r", "refresh now (changes on disk show by themselves)", "r"),
 		row("Enter / Esc", "confirm / cancel every editing action"),
 		row("e again", "after an edit left a finding: edit at once"),
-		row("?", "this help, from anywhere; / finds in it", "?"),
+		row("? / F1", "this help (F1 in a text field); / finds in it", "?", "f1"),
 		row("Esc", "back one level, never quits", "esc"),
 		row("q / ctrl-c", "quit (q only outside inputs)"),
 	}
@@ -217,7 +217,12 @@ func (m model) helpSections() []helpSection {
 	case "confirm", "palette", "filter", "sort", "find", "jump", "prompt", "file":
 		// In a prompt the letters are typed text; in a file they are the
 		// file's keys (scrxak): the rest waits for Esc.
-		return []helpSection{ctx, {"EVERYWHERE", []helpRow{row("?", "this help, from anywhere; / finds in it"), row("ctrl-c", "quit")}}}
+		// In text ? is typed (t64v7d): there help is F1.
+		help := row("?", "this help, from anywhere; / finds in it", "?")
+		if m.textInput() {
+			help = row("F1", "this help; ? is typed text here; / finds in it", "f1")
+		}
+		return []helpSection{ctx, {"EVERYWHERE", []helpRow{help, row("ctrl-c", "quit")}}}
 	}
 	return []helpSection{ctx, m.globalHelp()}
 }
