@@ -249,7 +249,9 @@ func Locate(dir string) (*Location, error) {
 		return nil, &Error{Op: "rev-parse", Detail: "unexpected output " + strconv.Quote(paths), Fix: "git -C " + quote(dir) + " rev-parse --path-format=absolute --show-toplevel --git-common-dir"}
 	}
 	l := &Location{Root: root, Common: strings.TrimSpace(common)}
-	if l.list, err = r.worktrees(root); err != nil {
+	if list, ok := fastWorktrees(l.Common); ok {
+		l.list = list
+	} else if l.list, err = r.worktrees(root); err != nil {
 		return nil, err
 	}
 	l.Main = mainRoot(l.list, filepath.Clean(root))
@@ -548,12 +550,19 @@ func (r *Repository) Commit(paths []string, message string) error {
 	if e := r.checkIdle(); e != nil {
 		return e
 	}
-	staged, e := r.git("diff", "--cached", "--name-only")
-	if e != nil {
-		return e
-	}
-	if staged != "" {
-		return &Error{Op: "commit", Detail: "index already contains staged changes", Fix: r.fix("restore --staged .")}
+	// Changes staged before this commit are refused when paths names what
+	// to commit, so the list cannot leak them. Without paths everything is
+	// committed anyway, staged or not: no diff --cached first (0sbvnq, one
+	// git process less per hug write, ~30 ms on Windows).
+	explicit := len(paths) > 0
+	if explicit {
+		staged, e := r.git("diff", "--cached", "--name-only")
+		if e != nil {
+			return e
+		}
+		if staged != "" {
+			return &Error{Op: "commit", Detail: "index already contains staged changes", Fix: r.fix("restore --staged .")}
+		}
 	}
 	for _, p := range paths {
 		c := filepath.Clean(p)
@@ -564,16 +573,23 @@ func (r *Repository) Commit(paths []string, message string) error {
 	if len(paths) == 0 {
 		paths = []string{"."}
 	}
-	// --verbose names each path the add staged. The index matched HEAD
-	// before it (refused above), so no output is nothing to commit: no
-	// second diff --cached (0sbvnq, one git process less per write).
+	// --verbose names each path the add staged. With paths the index
+	// matched HEAD before it (refused above), so no output is nothing to
+	// commit. Without paths a change staged earlier (a command stopped
+	// between add and commit) prints nothing here: only then is the index
+	// asked, so the common write is add and commit, two processes.
 	args := append([]string{"--literal-pathspecs", "add", "--verbose", "--all", "--"}, paths...)
 	added, e := r.git(args...)
 	if e != nil {
 		return e
 	}
 	if strings.TrimSpace(added) == "" {
-		return nil
+		if explicit {
+			return nil
+		}
+		if staged, e := r.git("diff", "--cached", "--name-only"); e != nil || staged == "" {
+			return e
+		}
 	}
 	_, e = r.git("commit", "-m", r.withTrailers(message))
 	return e

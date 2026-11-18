@@ -14,12 +14,15 @@ import (
 )
 
 // 95ahtk check 1: Seid (2026-11-17, item 3b) saw two agents writing at once
-// race on git's index and on temp files. Eight writers on one board, twenty
-// rounds each of note, check and set, all at once: every write succeeds and
+// race on git's index and on temp files. Eight writers on one board, each
+// running note, check and set, all at once: every write succeeds and
 // every write is its own commit on the board branch.
 func TestEightWritersMixedCommandsAllLand(t *testing.T) {
 	t.Parallel()
-	const writers, rounds = 8, 20
+	// 3 rounds: every writer runs note, check and set once, all at once.
+	// With the board turn removed this fails 10 of 10 runs at 1, 2, 3, 6 and
+	// 20 rounds alike (0sbvnq, 2026-11-17); 20 rounds cost ~90 s on Windows.
+	const writers, rounds = 8, 3
 	a := app(t)
 	execute(t, a, "init")
 	ids := make([]string, writers)
@@ -70,8 +73,17 @@ func TestEightWritersMixedCommandsAllLand(t *testing.T) {
 	if got := after - before; got != writers*rounds {
 		t.Errorf("%d commits for %d writes", got, writers*rounds)
 	}
-	// Per writer: notes at rounds 0, 3, ..., 18; checks at 1, 4, ..., 19
-	// (7 items); sets at 2, 5, ..., 17, the last one winning.
+	// Per writer: notes at rounds 0, 3, 6, ...; checks at 1, 4, 7, ...;
+	// sets at 2, 5, 8, ..., the last one winning.
+	checks, lastSet := 0, -1
+	for r := 0; r < rounds; r++ {
+		switch r % 3 {
+		case 1:
+			checks++
+		case 2:
+			lastSet = r
+		}
+	}
 	for i, id := range ids {
 		f := taskFile(t, a, id)
 		for r := 0; r < rounds; r += 3 {
@@ -79,11 +91,11 @@ func TestEightWritersMixedCommandsAllLand(t *testing.T) {
 				t.Errorf("%s: note w%d r%d missing", id, i, r)
 			}
 		}
-		if n := strings.Count(f, "[x]"); n != 7 {
-			t.Errorf("%s: %d of 7 items checked", id, n)
+		if n := strings.Count(f, "[x]"); n != checks {
+			t.Errorf("%s: %d of %d items checked", id, n, checks)
 		}
-		if !strings.Contains(f, fmt.Sprintf("p%d-17", i)) {
-			t.Errorf("%s: priority is not p%d-17", id, i)
+		if !strings.Contains(f, fmt.Sprintf("p%d-%d", i, lastSet)) {
+			t.Errorf("%s: priority is not p%d-%d", id, i, lastSet)
 		}
 	}
 }

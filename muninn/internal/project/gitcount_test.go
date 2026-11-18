@@ -61,8 +61,9 @@ func TestFindInMainWorktreeStartsTwoGit(t *testing.T) {
 	if err != nil || p.Notes != filepath.Join(main, NotesDir) {
 		t.Fatalf("linked worktree: Notes %q, want the main checkout's %q (%v)", p.Notes, filepath.Join(main, NotesDir), err)
 	}
-	if len(calls) != 4 {
-		t.Errorf("Find in a linked worktree starts %d git processes, want 4:\n  %s", len(calls), strings.Join(calls, "\n  "))
+	// 3: the worktree list is read from the common git dir (0sbvnq).
+	if len(calls) != 3 {
+		t.Errorf("Find in a linked worktree starts %d git processes, want 3:\n  %s", len(calls), strings.Join(calls, "\n  "))
 	}
 	// A plain folder (no .git above it; t.TempDir is outside any checkout)
 	// needs no git to learn that it is not one.
