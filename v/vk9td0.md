@@ -22,7 +22,16 @@ aliases: ["decide-when-dream-items-are-handed"]
 ---
 
 ## Goal
-Choose session start vs turn end/idle for handing dream items to the agent, with evidence
+Dreaming runs at the start of the person's usual quiet stretch: from at least one week of activity, hug builds a per-hour-of-week histogram (168 buckets), finds the longest stretch of no activity, and starts dreaming at its beginning; the hand-out moment for dream items follows from that.
+
+## Purpose
+Jørgen 2026-11-18: an earlier sync design used an activity histogram (per hour of day and per hour of week) to find the longest quiet stretch; the week is a natural cycle and captures that days differ. Dreaming should use the same idea instead of a fixed cue on return.
+
+## Principle
+Learn the rhythm from data, don't guess a clock time. Hour-of-week, not hour-of-day. Until a week of data exists, keep today's behaviour. Local and free: no paid calls at read time.
+
+## Relevant details
+Activity source: session/turn timestamps already in the jcode and claude journals and hook.log. Today: the dream cue fires on a break turn (start, return after 20 min, wrap-up word) at most once per 6 h (recall/dream.go); hatchling's open question was return vs wrap-up. Find the earlier sync histogram design (Jørgen recalls an agent built it) and reuse it.
 
 ## Depends on
 
