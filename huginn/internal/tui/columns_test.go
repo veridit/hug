@@ -40,7 +40,7 @@ func TestColumnCursorMarksHeader(t *testing.T) {
 			t.Fatalf("a column is marked before L: %d", m.column)
 		}
 		m = press(m, "L")
-		if gridColumns[m.column].label != "✓" || !strings.Contains(m.message, "o order by ✓") {
+		if gridColumns[m.column].label != "✓" || !strings.Contains(plainMarks(m.message), "order by ✓") {
 			t.Fatalf("first L marks %q, footer %q", gridColumns[m.column].label, m.message)
 		}
 		m = press(m, "L", "L", "L") // ✓ id type priority
@@ -158,7 +158,7 @@ func TestColumnOrderSurvives(t *testing.T) {
 	m.width, m.height = 140, 40
 	m.resize()
 	m = press(m, "L", "L", "L", "L", "o")
-	if !strings.Contains(m.message, "o order by priority (▼)") {
+	if !strings.Contains(plainMarks(m.message), "order by priority (▼)") {
 		t.Fatalf("footer: %q", m.message)
 	}
 	m.setFilter("type", "feature")

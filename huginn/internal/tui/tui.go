@@ -1268,7 +1268,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.message = ""
 		} else if k == "v" {
 			m.pendingV = true
-			m.message = "view: o overview · i list · b board · ! lint"
+			m.message = "view: " + mk("o") + "verview · l" + mk("i") + "st · " + mk("b") + "oard · ! lint"
 			return m, nil
 		}
 		// Filtering remains available from detail, without interfering with focused inputs.

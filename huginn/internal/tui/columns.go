@@ -94,7 +94,7 @@ func (m model) columnHint() string {
 			next = "off"
 		}
 	}
-	return "H/L column · o order by " + col.label + " (" + next + ")"
+	return "H/L column · " + mk("o") + "rder by " + col.label + " (" + next + ")"
 }
 
 // columnOrder is the one-column order the cursor set, if that is the

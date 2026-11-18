@@ -25,6 +25,16 @@ func hint(label, description string) bkey.Binding {
 	return binding([]string{label}, label, description)
 }
 func (m model) keyBar() string {
+	// Never wider than the terminal: trailing hints drop and "…" shows
+	// (2026-11-16: the footer ran to 75 columns at width 70). A letter key
+	// is marked in its word, and neighbours sharing a last word are one
+	// item (e3sevr, Jørgen 00:44-00:45): footer.go.
+	bar, _ := m.renderHintsShown(m.barHints(), m.width)
+	return m.withVersion(bar)
+}
+
+// barHints are the hints the key bar offers here, before any are cut.
+func (m model) barHints() []bkey.Binding {
 	var hints []bkey.Binding
 	switch {
 	case m.help:
@@ -64,13 +74,7 @@ func (m model) keyBar() string {
 	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
-	h := m.helpModel
-	h.ShortSeparator = " · "
-	// Never wider than the terminal: the help model drops trailing hints
-	// and shows "…" (2026-11-16: the footer ran to 75 columns at width 70).
-	h.Width = m.width
-	bar := h.ShortHelpView(hints)
-	return m.withVersion(bar)
+	return hints
 }
 
 // withVersion ends the key bar with "hug vX.Y.Z", right-aligned and dim,
@@ -159,7 +163,7 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	if !narrow {
 		hints = append(hints, hint("N", "new"))
 	}
-	hints = append(hints, hint("u", "up"), hint("n/p", "task"))
+	hints = append(hints, hint("u", "up"), hint("n", "next task"), hint("p", "previous task"))
 	hints = append(hints, hint("J/K", "½ page"))
 	if len(m.filesOf(t)) > 0 {
 		hints = append(hints, hint("E", "files"))

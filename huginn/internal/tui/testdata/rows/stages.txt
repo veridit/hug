@@ -28,7 +28,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                 
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
-j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
+j/k move · Enter open · f/# find · / search · : cmd · ? help · quit             
 == WAITING focused at 80
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
 [overview]   list    board    !lint                                             
@@ -59,7 +59,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                 
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
-j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
+j/k move · Enter open · f/# find · / search · : cmd · ? help · quit             
 == list at 80
 HUG TASKS · list   7/7 tasks · ! 0 broken                                       
  overview   [list]   board    !lint                                             
@@ -90,7 +90,7 @@ Rows 1–7 of 7 · ! lint finding · ↳ epic · depends = a dependency is not d
                                                                                 
 All tasks · : filters and commands                                              
                                                                                 
-j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
+j/k move · Enter open · f/# find · / search · : cmd · ? help · quit             
 == overview at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
 [overview]   list    board    !lint                                                                                                         
@@ -121,7 +121,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                                                                             
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
-j/k move · Enter open · h/l Tab pane · f/# filter/id · / find · : cmd · ? help · q quit · H/L o column/order                                
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L o column/order                                  
 == WAITING focused at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
 [overview]   list    board    !lint                                                                                                         
@@ -152,7 +152,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                                                                             
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
-j/k move · Enter open · h/l Tab pane · f/# filter/id · / find · : cmd · ? help · q quit · H/L o column/order                                
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L o column/order                                  
 == list at 140
 HUG TASKS · list   7/7 tasks · ! 0 broken                                                                                                   
  overview   [list]   board    !lint                                                                                                         
@@ -183,4 +183,4 @@ Rows 1–7 of 7 · ! lint finding · ↳ epic · depends = a dependency is not d
                                                                                                                                             
 All tasks · : filters and commands                                                                                                          
                                                                                                                                             
-j/k move · Enter open · h/l Tab pane · f/# filter/id · / find · : cmd · ? help · q quit · H/L o column/order                                
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L o column/order                                  

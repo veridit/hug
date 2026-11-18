@@ -269,7 +269,7 @@ func (m model) questionLines(t task.Task) []string {
 			// Typed right under the question (Jørgen 11:45), not in the footer.
 			out = append(out, "  "+m.input.View())
 		} else {
-			out = append(out, m.styles.dim.Render(fit("  a answer", m.width)))
+			out = append(out, fit(m.renderMarks("  "+mk("a")+"nswer", m.styles.dim), m.width))
 		}
 	}
 	if a := t.Answer; a != nil {

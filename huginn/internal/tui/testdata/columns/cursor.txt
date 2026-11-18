@@ -26,9 +26,9 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
          000032   bug     medium   dropped   runtime Bug task 32: make the term…
 ↓ ○ 2    000037   bug     low      depends   compiler Bug task 37: make the ter…
 Rows 1–21 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done  
-H/L column · o order by type (▼)                                                
+H/L column · order by type (▼)                                                  
                                                                                 
-j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit           
+j/k move · Enter open · f/# find · / search · : cmd · ? help · quit             
 == list at 140
 HUG TASKS · list   60/60 tasks · ! 4 broken · 5 advice · sort: type                                                                         
  overview   [list]   board    !lint                                                                                                         
@@ -57,6 +57,6 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
          000032   bug     medium   dropped   runtime Bug task 32: make the terminal workflow observable                                     
 ↓ ○ 2    000037   bug     low      depends   compiler Bug task 37: make the terminal workflow observable                                    
 Rows 1–21 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done                                                              
-H/L column · o order by type (▼)                                                                                                            
+H/L column · order by type (▼)                                                                                                              
                                                                                                                                             
-j/k move · Enter open · h/l Tab pane · f/# filter/id · / find · : cmd · ? help · q quit · H/L o column/order                                
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L o column/order                                  

@@ -162,7 +162,7 @@ func TestYankAndPaste(t *testing.T) {
 	if m.yanked != o[5] || !strings.Contains(m.message, "P puts it above the selected row, p below") {
 		t.Fatalf("yank: %q %q", m.yanked, m.message)
 	}
-	if bar := m.keyBar(); !strings.Contains(bar, "P paste above") || !strings.Contains(bar, "Esc forget "+o[5]) {
+	if bar := m.keyBar(); !strings.Contains(plainMarks(bar), "Paste above") || !strings.Contains(bar, "Esc forget "+o[5]) {
 		t.Fatalf("key bar while yanked:\n%s", bar)
 	}
 	m = selectRow(t, m, o[1])

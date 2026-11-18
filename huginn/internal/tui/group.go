@@ -209,9 +209,9 @@ func (m *model) setGrouping(g string) bool {
 	if !ok || !m.follow(t.ID) {
 		m.clamp()
 	}
-	m.message = "rows flat · g groups them"
+	m.message = "rows flat · " + mk("g") + "roup them"
 	if g != "" {
-		m.message = "rows grouped by " + g + ": Space on a heading folds it · g next grouping"
+		m.message = "rows grouped by " + g + ": Space on a heading folds it · " + mk("g") + "rouping next"
 	}
 	return true
 }

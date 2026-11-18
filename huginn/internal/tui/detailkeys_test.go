@@ -104,13 +104,12 @@ func TestDetailWritingKeysAreNamed(t *testing.T) {
 				if pane == focusPage && label == "t/d/x/e" {
 					// On the task itself each writer has its own hint,
 					// those that apply to its state (e3sevr check 9).
-					label = k
 					tk, _ := m.selected()
 					if k == "d" && tk.State != "doing" || k == "t" && tk.State != "todo" {
 						continue
 					}
 				}
-				if !strings.Contains(bar, label+" ") {
+				if !barNames(m, k) {
 					t.Fatalf("width %d pane %d: %q writes but the bar shows %q", w, pane, k, bar)
 				}
 				before := rankOrder(t, m)
@@ -137,4 +136,16 @@ func panesOf(m model, t task.Task) []int {
 		}
 	}
 	return out
+}
+
+// barNames says whether the key bar as drawn names key k: as a label
+// before its words, or marked inside a word (e3sevr check 14).
+func barNames(m model, k string) bool {
+	_, shown := m.renderHintsShown(m.barHints(), m.width)
+	for _, it := range shown {
+		if it.label == "" && strings.Contains(it.words, mk(k)) || it.label == k || k == " " && it.label == "Space" || it.label == "-" && k == "-" {
+			return true
+		}
+	}
+	return false
 }

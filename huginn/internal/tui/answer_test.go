@@ -3,6 +3,7 @@ package tui
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -41,7 +42,7 @@ func TestAnswerInDetail(t *testing.T) {
 	}
 	var got []string
 	asked := head(m)
-	for _, want := range []string{"? design: drop type from the rows, keep it, or show it only when not feature?", "asked by crab · 8 min ago", "a answer"} {
+	for _, want := range []string{"? design: drop type from the rows, keep it, or show it only when not feature?", "asked by crab · 8 min ago", "  answer"} {
 		if !strings.Contains(asked, want) {
 			t.Fatalf("header lacks %q:\n%s", want, asked)
 		}
@@ -65,7 +66,7 @@ func TestAnswerInDetail(t *testing.T) {
 		m = press(m, string(r))
 	}
 	typing := head(m)
-	if !strings.Contains(typing, "answer: drop it") || strings.Contains(typing, "a answer") {
+	if !strings.Contains(typing, "answer: drop it") || regexp.MustCompile(`(?m)^  answer\s*$`).MatchString(typing) {
 		t.Fatalf("input not under the question:\n%s", typing)
 	}
 	got = append(got, "== typing", typing)

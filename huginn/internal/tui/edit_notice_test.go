@@ -66,7 +66,7 @@ func TestEditNoticeShowsFindingFixAndReopens(t *testing.T) {
 	for _, want := range []string{
 		"⚠ " + target.ID + " line ",
 		`not a dependency: "Is there a task:asdfasdf or ticket:asdlfkjasldkfj?"`,
-		"▶ fix: hug task edit " + target.ID + " · e edit again · Esc dismiss",
+		"▶ fix: hug task edit " + target.ID + " · edit again · Esc dismiss",
 	} {
 		if !strings.Contains(view, want) {
 			t.Fatalf("missing %q in:\n%s", want, view)
@@ -101,7 +101,7 @@ func TestEditNoticeShowsFindingFixAndReopens(t *testing.T) {
 		t.Fatalf("prose shown as a dependency:\n%s", detail)
 	}
 	m = press(m, "esc")
-	if strings.Contains(ansi.Strip(m.View()), "e edit again") {
+	if strings.Contains(ansi.Strip(m.View()), "edit again") {
 		t.Fatal("notice survived Esc")
 	}
 	if _, cmd := key(m, "e"); cmd != nil {
@@ -115,12 +115,12 @@ func TestEditNoticeGoneWhenClean(t *testing.T) {
 	m.width, m.height = 160, 30
 	m.resize()
 	m = editWith(t, m, addDep(jorgenEdit))
-	if !strings.Contains(ansi.Strip(m.View()), "e edit again") {
+	if !strings.Contains(ansi.Strip(m.View()), "edit again") {
 		t.Fatal("no notice")
 	}
 	m = editWith(t, m, func(s string) string { return strings.Replace(s, jorgenEdit+"\n", "", 1) })
 	v := ansi.Strip(m.View())
-	if strings.Contains(v, "e edit again") || !strings.Contains(v, "editor closed; re-linted") {
+	if strings.Contains(v, "edit again") || !strings.Contains(v, "editor closed; re-linted") {
 		t.Fatalf("clean edit:\n%s", v)
 	}
 }
@@ -133,7 +133,7 @@ func TestEditNoticeMissingDependency(t *testing.T) {
 	target, _ := m.selected()
 	m = editWith(t, m, addDep("- zz9zz9"))
 	view := ansi.Strip(m.View())
-	if !strings.Contains(view, "depends on zz9zz9, but no task has that id or alias") || !strings.Contains(view, "▶ fix: hug task dep "+target.ID+" --remove zz9zz9 · e edit again") {
+	if !strings.Contains(view, "depends on zz9zz9, but no task has that id or alias") || !strings.Contains(view, "▶ fix: hug task dep "+target.ID+" --remove zz9zz9 · edit again") {
 		t.Fatal(view)
 	}
 }
@@ -144,7 +144,7 @@ func TestEditNoticeNarrowKeepsKey(t *testing.T) {
 	m.width, m.height = 60, 20
 	m.resize()
 	m = editWith(t, m, addDep(jorgenEdit))
-	if !strings.Contains(ansi.Strip(m.View()), "· e edit again · Esc dismiss") {
+	if !strings.Contains(ansi.Strip(m.View()), "· edit again · Esc dismiss") {
 		t.Fatal(ansi.Strip(m.View()))
 	}
 }

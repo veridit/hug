@@ -117,11 +117,12 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if after = press(fresh, "enter"); len(after.detailStack) != 1 {
 					t.Fatal("Enter shown but did not follow the dependency")
 				}
-			case "n/p":
-				after = press(fresh, "n")
-				if tk, _ := after.selected(); tk.Title != "Plain" {
-					t.Fatalf("n went to %q", tk.Title)
+			case "n":
+				if after = press(fresh, "n"); func() bool { tk, _ := after.selected(); return tk.Title != "Plain" }() {
+					t.Fatal("n did not go to the next task")
 				}
+			case "p":
+				after = press(fresh, "n")
 				if tk, _ := press(after, "p").selected(); tk.Title != "Main" {
 					t.Fatalf("p went to %q", tk.Title)
 				}

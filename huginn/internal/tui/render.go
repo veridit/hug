@@ -855,10 +855,10 @@ func (m model) View() string {
 		if m.detail {
 			footer = fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
 			if pos := m.detailPosition(); pos != "" {
-				footer = fmt.Sprintf("Task %s · %.0f%% · n next · p previous · Esc back", pos, m.viewport.ScrollPercent()*100)
+				footer = fmt.Sprintf("Task %s · %.0f%% · %sext · %srevious · Esc back", pos, m.viewport.ScrollPercent()*100, mk("n"), mk("p"))
 			}
 			if m.glance {
-				footer = fmt.Sprintf("File · %.0f%% · n next file · p previous file · Esc back to files", m.viewport.ScrollPercent()*100)
+				footer = fmt.Sprintf("File · %.0f%% · %sext-, %srevious file · Esc back to files", m.viewport.ScrollPercent()*100, mk("n"), mk("p"))
 			}
 		}
 		if m.grab.active {
@@ -866,7 +866,7 @@ func (m model) View() string {
 			footer = fmt.Sprintf("Moving %s · row %d of %d in %s (was %d) · nothing written until Enter", m.grab.id, m.rowOf(rows, m.grab.path)+1, len(rows), m.sectionName(), m.grab.start+1)
 		}
 	}
-	lines = append(lines, m.styles.dim.Render(oneLine(footer)))
+	lines = append(lines, m.renderMarks(oneLine(footer), m.styles.dim))
 	inputLine := ""
 	if len(messageLines) > 1 {
 		for _, line := range messageLines[1:] {
@@ -916,10 +916,14 @@ func (m model) editNoticeLines() (string, string, bool) {
 	if len(fs) > 1 {
 		what += fmt.Sprintf(" (+%d more)", len(fs)-1)
 	}
-	keys := " · e edit again · Esc dismiss"
+	keys := " · " + mk("e") + "dit again · Esc dismiss"
 	fix := "▶ fix: " + oneLine(f.FixLine())
-	line := ansi.Truncate(fix, max(1, m.width-ansi.StringWidth(keys)), "…") + keys
-	return m.styles.warning.Render(fit(what, m.width)), m.styles.ask.Render(fit(line, m.width)), true
+	// The marks are drawn before measuring: they take no cells.
+	keysWidth := ansi.StringWidth(plainMarks(keys))
+	fix = ansi.Truncate(fix, max(1, m.width-keysWidth), "…")
+	pad := strings.Repeat(" ", max(0, m.width-ansi.StringWidth(fix)-keysWidth))
+	line := m.styles.ask.Render(fix) + m.renderMarks(keys, m.styles.ask) + m.styles.ask.Render(pad)
+	return m.styles.warning.Render(fit(what, m.width)), line, true
 }
 
 // confirmLine is the question every confirm asks, in one style that cannot be

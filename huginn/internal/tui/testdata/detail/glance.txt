@@ -20,9 +20,9 @@ Synthetic bench notes.
                                                                                 
                                                                                 
                                                                                 
-File · 100% · n next file · p previous file · Esc back to files                 
+File · 100% · next-, previous file · Esc back to files                          
                                                                                 
-j/k scroll · n next file · p previous file · Enter edit · u/Esc files · ? help …
+j/k scroll · next-, previous file · Enter edit · u/Esc files · ? help · quit    
 == escapes.log at 80
 HUG TASKS · list › 000001                                                       
 [todo]  [feature]  [critical]  group:compiler  unassigned                       
@@ -45,9 +45,9 @@ long long long long long long long long long end
                                                                                 
                                                                                 
                                                                                 
-File · 100% · n next file · p previous file · Esc back to files                 
+File · 100% · next-, previous file · Esc back to files                          
                                                                                 
-j/k scroll · n next file · p previous file · Enter edit · u/Esc files · ? help …
+j/k scroll · next-, previous file · Enter edit · u/Esc files · ? help · quit    
 == README at 140
 HUG TASKS · list › 000001                                                                                                                   
 [todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
@@ -70,9 +70,9 @@ Synthetic bench notes.
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-File · 100% · n next file · p previous file · Esc back to files                                                                             
+File · 100% · next-, previous file · Esc back to files                                                                                      
                                                                                                                                             
-j/k scroll · n next file · p previous file · Enter edit · u/Esc files · ? help · q quit                                                     
+j/k scroll · next-, previous file · Enter edit · u/Esc files · ? help · quit                                                                
 == escapes.log at 140
 HUG TASKS · list › 000001                                                                                                                   
 [todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
@@ -95,6 +95,6 @@ long long long long long long long long long long long long long end
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-File · 100% · n next file · p previous file · Esc back to files                                                                             
+File · 100% · next-, previous file · Esc back to files                                                                                      
                                                                                                                                             
-j/k scroll · n next file · p previous file · Enter edit · u/Esc files · ? help · q quit                                                     
+j/k scroll · next-, previous file · Enter edit · u/Esc files · ? help · quit                                                                

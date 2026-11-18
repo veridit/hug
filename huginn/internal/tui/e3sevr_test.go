@@ -9,7 +9,9 @@ import (
 	"testing"
 	"time"
 
+	bkey "github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/muesli/termenv"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -82,11 +84,13 @@ func TestPageFocusListsTaskKeys(t *testing.T) {
 			t.Fatalf("%s: no page stop on the ring", id)
 		}
 		bar := ansi.Strip(d.keyBar())
-		want := []string{"j/k scroll", "e edit", "x drop", "y yank"}
+		// A letter key is marked in its word (check 14): "edit" with e
+		// marked; x keeps its label, drop has no x.
+		want := []string{"j/k scroll", "edit", "x drop", "yank"}
 		if tk.State == "doing" {
-			want = append(want, "d done", "w wait")
+			want = append(want, "done", "wait")
 		} else {
-			want = append(want, "t take")
+			want = append(want, "take")
 		}
 		for _, k := range want {
 			if !strings.Contains(bar, k) {
@@ -97,6 +101,9 @@ func TestPageFocusListsTaskKeys(t *testing.T) {
 			letter := strings.Fields(k)[0]
 			if letter == "j/k" {
 				continue
+			}
+			if len(letter) > 1 { // marked in its word: the key is its first letter
+				letter = letter[:1]
 			}
 			after := press(d, letter)
 			switch letter {
@@ -236,5 +243,62 @@ func goldenFile(t *testing.T, path, text string) {
 	}
 	if text != strings.ReplaceAll(string(want), "\r\n", "\n") {
 		t.Fatalf("differs from %s:\n%s", path, text)
+	}
+}
+
+// e3sevr check 14 (Jørgen 00:44): a letter key is marked inside its
+// action word, never repeated before it: no footer, key bar or status line
+// shows "n next", "e edit", "o order". The marked letter is in the key
+// colour and underlined.
+func TestFooterMarksTheKeyInItsWord(t *testing.T) {
+	repeat := regexp.MustCompile(`(?:^|[ ·,:(])([A-Za-z]) ([A-Za-z])`)
+	check := func(where, text string) {
+		t.Helper()
+		for _, m := range repeat.FindAllStringSubmatch(text, -1) {
+			if strings.EqualFold(m[1], m[2]) {
+				t.Fatalf("%s repeats the key %q before its word:\n%s", where, m[1], text)
+			}
+		}
+	}
+	ctx := helpContexts(t)
+	for name, m := range ctx {
+		for _, w := range []int{80, 140} {
+			m.width = w
+			m.resize()
+			lines := strings.Split(plainMarks(ansi.Strip(m.View())), "\n")
+			if len(lines) >= 3 {
+				check(name+" footer", lines[len(lines)-3])
+			}
+			check(name+" key bar", lines[len(lines)-1])
+		}
+	}
+	// The marked letter is styled as a key: accent and underlined.
+	m := ctx["task:checks"]
+	m.styles.renderer.SetColorProfile(termenv.TrueColor)
+	t.Cleanup(func() { m.styles.renderer.SetColorProfile(termenv.Ascii) })
+	bar := m.keyBar()
+	key := m.styles.accent.Underline(true).Render("e")
+	if !strings.Contains(bar, key) || !strings.Contains(ansi.Strip(bar), "edit") {
+		t.Fatalf("e is not marked inside edit: %q", bar)
+	}
+}
+
+// e3sevr check 16 (Jørgen 00:45): neighbouring hints that share their last
+// word are one item: the earlier end in '-', ', ' joins them, ' · '
+// separates items. The file viewer reads 'next-, previous file'.
+func TestFooterGroupsHintsSharingAWord(t *testing.T) {
+	m := manyModel(t)
+	got := plainMarks(ansi.Strip(m.renderHints([]bkey.Binding{hint("j/k", "scroll"), hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("u/Esc", "files")}, 200)))
+	if want := "j/k scroll · next-, previous file · Enter edit · u/Esc files"; got != want {
+		t.Fatalf("grouped hints %q, want %q", got, want)
+	}
+	// Only neighbours: the same last word apart stays apart.
+	got = plainMarks(ansi.Strip(m.renderHints([]bkey.Binding{hint("n", "next file"), hint("Enter", "edit"), hint("p", "previous file")}, 200)))
+	if want := "next file · Enter edit · previous file"; got != want {
+		t.Fatalf("apart %q, want %q", got, want)
+	}
+	// Narrow: whole items drop, ending in …
+	if got := ansi.Strip(m.renderHints([]bkey.Binding{hint("j/k", "scroll"), hint("n", "next file"), hint("p", "previous file")}, 20)); got != "j/k scroll …" {
+		t.Fatalf("narrow %q", got)
 	}
 }

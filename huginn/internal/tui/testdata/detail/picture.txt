@@ -6,7 +6,7 @@ created 2026-11-01 · updated 2026-11-10 · bug-item-02-make
 └─ waiting on you: look at the IN PROGRESS rows · since 14:42                   
 ? asked: look at the IN PROGRESS rows                                           
   asked by alice · 10 min ago                                                   
-  a answer                                                                      
+  answer                                                                        
 ────────────────────────────────────────────────────────────────────────────────
 ▸ Bug task 02: make the terminal workflow observable                            
 ────────────────────────────────────────────────────────────────────────────────
@@ -26,9 +26,9 @@ Verification
 fmt.Println("synthetic acceptance")                                             
                                                                                 
 PURPOSE                                                                         
-Task 2 of 60 · 0% · n next · p previous · Esc back                              
+Task 2 of 60 · 0% · next · previous · Esc back                                  
                                                                                 
-j/k scroll · e edit · d done · w wait · x drop · y yank · h/l Tab next …        
+j/k scroll · edit · done · wait · x drop · yank · h/l Tab next · answer · up …  
 == 000002 at 140
 HUG TASKS · list › 000002                                                                                                        ? 1 for you
 [doing]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-000002                                                           
@@ -36,7 +36,7 @@ created 2026-11-01 · updated 2026-11-10 · bug-item-02-make
 └─ waiting on you: look at the IN PROGRESS rows · since 14:42                                                                               
 ? asked: look at the IN PROGRESS rows                                                                                                       
   asked by alice · 10 min ago                                                                                                               
-  a answer                                                                                                                                  
+  answer                                                                                                                                    
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ▸ Bug task 02: make the terminal workflow observable                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -57,6 +57,6 @@ fmt.Println("synthetic acceptance")
                                                                                                                                             
 PURPOSE                                                                                                                                     
 Synthetic.                                                                                                                                  
-Task 2 of 60 · 0% · n next · p previous · Esc back                                                                                          
+Task 2 of 60 · 0% · next · previous · Esc back                                                                                              
                                                                                                                                             
-j/k scroll · e edit · d done · w wait · x drop · y yank · h/l Tab next · a answer · N new · u up · n/p task · J/K ½ page · E files …        
+j/k scroll · edit · done · wait · x drop · yank · h/l Tab next · answer · New · up · next-, previous task · J/K ½ page · E files · Screen … 

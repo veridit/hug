@@ -59,13 +59,13 @@ func TestDetailKeyBarShowsUUp(t *testing.T) {
 		m.resize()
 		m = press(m, "enter")
 		bar := ansi.Strip(m.keyBar())
-		if !strings.Contains(bar, "u up") {
+		if !strings.Contains(bar, "· up") { // u marked in its word (e3sevr check 14)
 			t.Fatalf("at %d the detail key bar lacks 'u up': %q", w, bar)
 		}
 	}
 	// Outside a task u is not shown: only keys that work are.
 	m := fixture(t)
-	if strings.Contains(ansi.Strip(m.keyBar()), "u up") {
+	if strings.Contains(ansi.Strip(m.keyBar()), " up") {
 		t.Fatal("u up shown outside a task")
 	}
 }
