@@ -9,10 +9,15 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T06:19"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "After the release containing f767f6d8, please try / row lay in a long task such as 6ephqk, Enter then n/N, Esc to clear, and u back. Do all matches highlight, including a wrapped one, and does the overview still show every task rather than a search filter? Please also try / in a shown file. This is the after-release confirmation for check 6."
+asked_for: "jhf"
+asked_since: "2026-11-18T06:50"
+asked_by: "nautilus"
+asked_check: "6"
 ---
 
 ## Goal
@@ -47,3 +52,4 @@ Implementation candidate 95dc4329 on ci/4s3g5q, CI 44245688668 pending. Separate
 Landed d544f777..f767f6d8 on main. CI 44245688668 passed all six jobs on candidate 95dc4329 (Linux tui/race 191.501s, tmux goldens unchanged from reviewed local goldens). Rebasing over the independent attachment-only d544f777 changed no find code. Exact landed-tree tui -race: ok github.com/veridit/hug/huginn/internal/tui 154.046s. Focused post-rebase tests 2.904s. find_test.go covers three occurrences with one split across two lines, title-band find, wide-cell positioning, n/N wrap and counts, smart case, no-match task-search handoff, Esc preserving offset, task/list separation including Tab, glance find/navigation and help. Base fails-first reproduced missing find/no-match/help and Tab leaking into a list filter. Golden detail/find.txt masks dates/ID. Evidence /Users/jhf/.jcode/scratch/4s3g5q-evidence.md, Linux log /Users/jhf/.jcode/scratch/4s3g5q-linux.log. CI branch deleted. Only person check 6 remains.
 ## History
 - 2026-11-18T06:19 todo -> doing/active (take)
+- 2026-11-18T06:50 doing/active -> doing/asked (ask)
