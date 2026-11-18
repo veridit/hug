@@ -9,14 +9,14 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T18:10"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "a week of use: has he had to remind an agent to update a ticket? look again 2026-11-24"
-waiting_since: "2026-11-17T18:10"
-waiting_asked_by: "crab"
-waiting_for: "jhf"
+asked_by: "crab"
+asked_for: "jhf"
+asked_since: "2026-11-17T18:10"
+asked_what: "a week of use: has he had to remind an agent to update a ticket? look again 2026-11-24"
 ---
 
 ## Goal
@@ -49,3 +49,4 @@ crab 17:10: all three children done (g9dg32, at3qep 09466ed, n2hq8p 300abb8); sh
 ## History
 - 2026-11-17T18:10 todo -> doing/active (take)
 - 2026-11-17T18:10 doing/active -> doing/waiting (wait)
+- 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)

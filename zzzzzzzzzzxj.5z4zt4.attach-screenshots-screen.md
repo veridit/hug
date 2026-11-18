@@ -9,14 +9,15 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T17:18"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_for: "jhf"
-waiting_on: "check 1: open an image in iTerm2 (Space on a .png in FILES), and check 4: answer zhvkmj's colour question from the capture under it (on main 65fe3db)"
-waiting_since: "2026-11-17T18:26"
-waiting_asked_by: "nautilus"
+asked_by: "nautilus"
+asked_check: "1"
+asked_for: "jhf"
+asked_since: "2026-11-17T18:26"
+asked_what: "open an image in iTerm2 (Space on a .png in FILES), and check 4: answer zhvkmj's colour question from the capture under it (on main 65fe3db)"
 ---
 
 ## Goal
@@ -58,3 +59,4 @@ shipped in v0.7.44 (f2deaf0)
 ## History
 - 2026-11-17T17:18 todo -> doing/active (take)
 - 2026-11-17T18:26 doing/active -> doing/waiting (wait)
+- 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)

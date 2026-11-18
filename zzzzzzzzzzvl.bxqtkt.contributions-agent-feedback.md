@@ -9,14 +9,14 @@ labels: []
 created: 2026-11-16
 updated: 2026-11-16
 doing_since: "2026-11-17T15:42"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-17T15:58"
-waiting_asked_by: "calf"
-waiting_on: "approve the design (attached: bxqtkt.md), check 1, and answer Q1-Q6 at its end"
-waiting_for: "jhf"
+asked_by: "calf"
+asked_for: "jhf"
+asked_since: "2026-11-17T15:58"
+asked_what: "approve the design (attached: bxqtkt.md), check 1, and answer Q1-Q6 at its end"
 ---
 
 ## Goal
@@ -50,3 +50,4 @@ kestrel 14:58: the design is attached as bxqtkt.md (crab). tmp/lanes/bxqtkt.md i
 ## History
 - 2026-11-17T15:42 todo -> doing/active (take)
 - 2026-11-17T15:48 doing/active -> doing/waiting (wait)
+- 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)

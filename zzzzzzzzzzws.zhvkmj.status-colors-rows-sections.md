@@ -11,12 +11,13 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-17T18:21"
-waiting_asked_by: "nautilus"
-waiting_on: "check 4: do the status colours read as one subtle scheme? The capture shows the overview on this board (IN PROGRESS, NEXT UP, RECENTLY DONE, done rows with a green count)"
-stage: "waiting"
-waiting_for: "jhf"
-waiting_show: "screen-1821.ans"
+stage: "asked"
+asked_by: "nautilus"
+asked_check: "4"
+asked_for: "jhf"
+asked_show: "screen-1821.ans"
+asked_since: "2026-11-17T18:21"
+asked_what: "do the status colours read as one subtle scheme? The capture shows the overview on this board (IN PROGRESS, NEXT UP, RECENTLY DONE, done rows with a green count)"
 ---
 
 ## Goal
@@ -51,3 +52,4 @@ landed on main c6e0bff..c818f34 (ff). CI run 44066450337 (ff3c2a3, the same code
 file:screen-1821.ans (10206 bytes, sha256:e77117eb) screen capture from hug tui
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
+- 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
