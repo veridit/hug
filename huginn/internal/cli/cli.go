@@ -757,7 +757,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			}
 		}
 		if old > 0 {
-			return nil, &OperationError{Problem: fmt.Sprintf("this board has layout %d (hug.toml on branch %s): %d task files are named rank.id.slug.md, and this hug writes C/ID.md (layout %d); it writes nothing until the board is moved", board, TaskBranch, old, known), Fix: "hug upgrade --apply"}
+			// crab 04:18: say in one line what the upgrade does, and send the
+			// agent to the preview, so it reads before it applies.
+			return nil, &OperationError{Problem: fmt.Sprintf("this board has layout %d (hug.toml on branch %s) and this hug writes layout %d: %d task files get fixed names (C/ID.md, rank and group in the file), one commit; it writes nothing until then", board, TaskBranch, known, old), Fix: "hug upgrade"}
 		}
 	}
 	if newer {

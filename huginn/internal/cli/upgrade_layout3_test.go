@@ -73,7 +73,7 @@ func TestUpgradeMovesBoardToLayout3(t *testing.T) {
 	head := git(t, board, "rev-parse", "HEAD")
 
 	code, out := runText(a, "note", ids[0], "x")
-	if code != 1 || !strings.Contains(out, "this board has layout 2 (hug.toml on branch hug/tasks): 4 task files are named rank.id.slug.md") || !strings.HasSuffix(out, "fix: hug upgrade --apply\n") {
+	if code != 1 || !strings.Contains(out, "this board has layout 2 (hug.toml on branch hug/tasks) and this hug writes layout 3: 4 task files get fixed names (C/ID.md, rank and group in the file), one commit; it writes nothing until then") || !strings.HasSuffix(out, "fix: hug upgrade\n") {
 		t.Fatalf("a write on a layout-2 board: exit %d\n%s", code, out)
 	}
 	ls := func() string {
