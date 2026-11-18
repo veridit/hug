@@ -4,7 +4,7 @@ title: "TUI reload waits on git start under load: test 5 s wait trips"
 state: todo
 type: feature
 priority: ""
-assignee: []
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
