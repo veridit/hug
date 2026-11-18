@@ -63,6 +63,7 @@ Check 4 at 1506435b (on c22587c6). TUI filter 'label' renamed 'tag' (no alias; p
 crab review 16:45 local: check 4 accepted. 1506435b on c22587c6: TUI label filter -> tag (no alias, letter l, one-letter fields resolve picker letters first), g cycles flat/group/epic/tag (first listed tag), tag order loaded with the snapshot. Failing-first + 3 mutants; goldens text-only 6 files 21+/21-. Lands after the current stack. Open for Jørgen with check 1: tag picker letter l (t is type), keep or swap.
 Question for Jørgen (with check 1): the TUI tag filter's picker letter is l (f l, then the tag) because t is type. Keep l, or another letter?
 crab 18:35 local: stacked as 0a1fdbe4 + 5924cfdb on ybbfsa b2232191 (ci/txjkrm-ec6z6j-rebased c7ccbca7), code identical to mizaru's f85ac6ec, build+vet ok. Includes the pw0t19 wrong-count fix in tags.go.
+landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
