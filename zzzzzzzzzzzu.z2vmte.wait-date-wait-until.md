@@ -1,13 +1,18 @@
 ---
 id: z2vmte
 title: "Wait for a date: wait --until and ask --after, woken by hug"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T03:38"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Today: hug task dep --add 'when date YYYY-MM-DD' holds a todo task out of next, 
 - [ ] Jørgen sees 47sxn2 come back into his ASKED on 2026-11-24 without anyone touching it
 
 ## Notes
+
+
+## History
+- 2026-11-18T03:38 todo -> doing/active (take)
