@@ -148,8 +148,12 @@ func (m *model) executeAction() tea.Cmd {
 			// The person asked ticking the asked check answered it
 			// (qsqhpe): it goes to the coordinator as a typed answer.
 			if err == nil && r.Answered {
+				did, _ := m.store.AfterAnswer(t.ID, n, m.me())
 				m.finish(r, err, action)
 				m.message = "answered " + r.Task.ID + " by ticking check " + strconv.Itoa(n)
+				if did != "" {
+					m.message += "; after the release: " + did
+				}
 				m.deliver(r, err, "answer", m.me())
 				return nil
 			}
