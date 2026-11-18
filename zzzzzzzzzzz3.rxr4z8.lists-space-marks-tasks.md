@@ -17,6 +17,9 @@ asked_what: "Before I build marks: is footer-mock.md (in FILES) what you want? T
 asked_for: "jhf"
 asked_since: "2026-11-18T06:19"
 asked_by: "nautilus"
+waiting_on: "Jørgen's answer on footer-mock.md (asked 05:19), then build"
+waiting_since: "2026-11-18T06:19"
+waiting_asked_by: "nautilus"
 ---
 
 ## Goal
