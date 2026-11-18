@@ -30,7 +30,7 @@ Check os.Executable()'s resolved target (the Homebrew symlink moves to the new C
 ## Depends on
 
 ## Acceptance
-- [ ] A test starts hug mcp, replaces the binary under it, sends a request, and the reply comes from the new binary (version field) on the same connection (fails first on main)
+- [x] A test starts hug mcp, replaces the binary under it, sends a request, and the reply comes from the new binary (version field) on the same connection (fails first on main)
 - [ ] A request in flight when the binary changes completes with the old binary; the next one runs on the new (test)
 - [ ] After the next brew upgrade, ps shows no hug mcp whose binary is older than the installed version (crab checks on Jørgen's machine)
 
