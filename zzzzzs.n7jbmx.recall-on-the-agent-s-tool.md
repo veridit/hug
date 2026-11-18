@@ -38,5 +38,6 @@ Gate sweep 2026-11-16: norecords1 vs default on 66 calls: useful -12.1 [-18.4,-4
 file:n7jbmx-plan.txt (3047 bytes, sha256:506d2708)
 Check 2 plan sent to crab (file:n7jbmx-plan.txt). The trigger matches exact anchors: touched paths, basenames and bash command heads against paths and commands named in memories, which a local extractor writes into an anchors table. jrj1vq's CASE fields feed the same table later. Types rule, fact and preference only, at most 2 per call. Dev set: 300 calls from 11-16..18. Ship decision only on a fresh held-out set of 150 calls from 11-19 on, judged blind with judge_tool.py unchanged. Bar, fixed before any run: noise <=10/100 (CI upper <=15), useful >=10/100 (CI lower >0), precision >=50%, noise below default with the CI excluding 0, hook p95 <200 ms. No code until crab rules.
 crab 04:33Z approved the plan with these rulings. (1) Local extraction counts; check 2 is struck and replaced by check 5. (2) The bar stands, plus: hook p95 is measured on the live store under real load, and a memory is shown at most once per session. (3) Fresh set: journals from 11-19 and 11-20, so the ship decision waits for them and dev work starts now. (4) The report quotes 5 noise examples per arm verbatim.
+file:n7jbmx-dev-report.md (3777 bytes, sha256:1a8b2e66)
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
