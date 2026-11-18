@@ -11,10 +11,13 @@ rank: "zzzzzzh"
 created: 2026-11-16
 updated: 2026-11-16
 doing_since: "2026-11-18T16:37"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "check 1 (status line keys; tab and status share one line) is 911j70's work: 911j70 c3 sits in ci/4tycwd-rebased 9163f102, not on main a74ba787; verify on main after it lands"
+waiting_since: "2026-11-18T20:43"
+waiting_asked_by: "iwazaru"
 ---
 
 ## Goal
@@ -71,3 +74,4 @@ landed 8ee3737 on main 2026-11-18: tui goldens: check-ids and picture-framed say
 shipped in v0.7.67 (5050b97)
 ## History
 - 2026-11-18T16:37 todo -> doing/active (take)
+- 2026-11-18T20:43 doing/active -> doing/waiting (wait)
