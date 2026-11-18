@@ -10,10 +10,13 @@ created: 2026-11-15
 updated: 2026-11-15
 parent: "d634kr"
 doing_since: "2026-11-18T05:32"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "fresh held-out tool calls of 2026-11-19 and 11-20 (complete after 2026-11-21T00:00Z): build 150 with muninn/scripts/build_tool_set.py --from 2026-11-19 --to 2026-11-21 --n 150 --seed 1121 --first-id 400000, replay shipped and default with -asof on a fresh store copy, judge with judge_tool_set.py, decide check 4 against the bar; arm frozen in recall.ToolRequest.Shipped()"
+waiting_since: "2026-11-18T06:24"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -45,3 +48,4 @@ Landed 94ef2140 (CI 44243962498). tool_recall is off by default. Check 5: anchor
 landed 94ef214 on main 2026-11-18: hug mem: tool-call recall by exact anchors, off by default (n7jbmx)
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
+- 2026-11-18T06:24 doing/active -> doing/waiting (wait)
