@@ -1,15 +1,20 @@
 ---
 id: z82qsy
 title: "File viewer: a rule under the header; no stale action message"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T12:53"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Message comes from actions.go finish(): m.message = action + ' ' + ID, never cle
 - [ ] Action results read as past tense with the id ('answered vzghj8'), not as a command (test).
 
 ## Notes
+
+
+## History
+- 2026-11-18T12:53 todo -> doing/active (take)
