@@ -11,10 +11,16 @@ rank: "zzzzzzzzzzwj"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:53"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "ykta5g"
 worktree: "/Users/jhf/.jcode/scratch/ykta5g"
+asked_show: "board-request-mock.md"
+asked_what: "Where should the box open when you press r with tasks marked? A: at the bottom of the list, so the marked rows stay in view while you write (proposed). B: in the first marked task's page, as r on a row does today. board-request-mock.md draws both, under section 2."
+asked_for: "jhf"
+asked_since: "2026-11-18T21:53"
+asked_by: "piglet"
+asked_check: "1"
 ---
 
 ## Goal
@@ -65,3 +71,4 @@ crab 21:53 local: reassigned to piglet (mizaru's hold was stale from the morning
 
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
+- 2026-11-18T21:53 doing/active -> doing/asked (ask)
