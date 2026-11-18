@@ -1,19 +1,20 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "todo"
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
-branch: "main"
-worktree: "/Users/jhf/Projects/hug"
+branch: "bbxdd7"
+worktree: "/Users/jhf/.jcode/scratch/bbxdd7"
+doing_since: "2026-11-18T17:05"
 ---
 
 ## Goal
@@ -85,3 +86,4 @@ crab gives it back: owner decision pending (forget median 3.4 s -> 0.92 s, shipp
 - 2026-11-18T09:00 doing/waiting -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T07:23; waiting_asked_by: wyvern; waiting_on: CI run 44262023787, normal main gate for348133a3; wyvern owns watcher243200zkab, no acceptance ticks until green; waiting_since: 2026-11-18T08:51
 - 2026-11-18T12:56 todo/ready -> doing/active (take)
 - 2026-11-18T13:09 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:56
+- 2026-11-18T17:05 todo/ready -> doing/active (take)
