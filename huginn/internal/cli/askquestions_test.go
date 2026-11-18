@@ -82,7 +82,7 @@ func TestAnswerNAnswersQuestionN(t *testing.T) {
 	if strings.Contains(strings.SplitN(f, " question 2 ", 2)[0], "answered") {
 		t.Fatalf("question 1 got an answer:\n%s", f)
 	}
-	ans, _ := execute(t, a, "show", id, "--as", "nautilus")["task"].(Reply)["answer"].(map[string]any)
+	ans, _ := execute(t, a, "show", id)["task"].(Reply)["answer"].(map[string]any)
 	if ans["question_n"] != float64(2) && ans["question_n"] != 2 {
 		t.Fatalf("the asker does not see which question was answered: %#v", ans)
 	}

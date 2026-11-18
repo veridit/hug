@@ -1302,14 +1302,23 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if len(f.args) == 1 {
 			return nil, usage("answer needs the answer", "hug task answer "+f.args[0]+` "the answer"`)
 		}
-		if e = f.count(2); e != nil {
+		// answer ID N TEXT answers question N (q2adr8); answer ID TEXT the
+		// only open one.
+		qn, at := 0, 1
+		if len(f.args) == 3 {
+			n, err := strconv.Atoi(f.args[1])
+			if err != nil || n < 1 {
+				return nil, usage("answer takes ID, the question's number and the answer: "+strconv.Quote(f.args[1])+" is not a question number", "hug task show "+f.args[0])
+			}
+			qn, at = n, 2
+		} else if e = f.count(2); e != nil {
 			return nil, e
 		}
-		text, err := a.textArg(f.args[1])
+		text, err := a.textArg(f.args[at])
 		if err != nil {
 			return nil, err
 		}
-		r, e = s.s.Answer(f.args[0], text, a.actor(f))
+		r, e = s.s.AnswerQuestion(f.args[0], qn, text, a.actor(f))
 	case "design":
 		if f.has("clear") {
 			if e = f.count(1); e != nil {
@@ -1943,6 +1952,19 @@ func (a *App) Run(ctx context.Context, args []string) int {
 				if r.Open() {
 					fmt.Fprintf(a.Out, "  fix: hug task resolve %s %d \"what changed\"\n", t["id"], r.N)
 				}
+			}
+		}
+		// Questions (q2adr8): each on its own, its answer under it. An open
+		// one carries no fix line: the person asked answers it, an agent
+		// reading show must not.
+		if qs, ok := t["questions"].([]any); ok {
+			for _, x := range qs {
+				b, _ := json.Marshal(x)
+				var q task.AskedQuestion
+				if json.Unmarshal(b, &q) != nil {
+					continue
+				}
+				fmt.Fprint(a.Out, questionText(q))
 			}
 		}
 		fmt.Fprintf(a.Out, "goal: %s\n", t["goal"])

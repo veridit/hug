@@ -128,6 +128,9 @@ func applyMove(d *Document, ts []Task, m move) error {
 	if d.Task.Stage != "" {
 		to += "/" + d.Task.Stage
 	}
+	// Questions left open when the task leaves asked are withdrawn
+	// (q2adr8): no later ask brings them back.
+	withdrawOpen(d, from+" -> "+to)
 	if m.block != nil {
 		d.History(stamp() + " " + m.block(from+" -> "+to))
 		return nil
@@ -222,25 +225,52 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 		return Result{}, e
 	}
 	f := d.Task.Fields
-	if f["asked_what"] == what && f["asked_for"] == who && f["asked_check"] == check && f["asked_show"] == show {
-		return s.finish(d, false)
-	}
-	set := map[string]string{"asked_what": what, "asked_for": who, "asked_since": stamp()}
-	var clear []string
-	if by = strings.TrimSpace(by); by != "" {
-		set["asked_by"] = by
-	}
-	for k, v := range map[string]string{"asked_check": check, "asked_show": show} {
-		if v != "" {
-			set[k] = v
-		} else {
-			clear = append(clear, k)
+	open := OpenQuestions(d.Task)
+	// The same question again, still open, is no change.
+	for _, q := range open {
+		if q.Text == what && q.To == who && checkText(q.Check) == check && q.Show == show {
+			return s.finish(d, false)
 		}
 	}
-	if e = applyMove(d, ts, move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}); e != nil {
+	if len(d.Task.Questions) == 0 && f["asked_what"] == what && f["asked_for"] == who && f["asked_check"] == check && f["asked_show"] == show {
+		return s.finish(d, false)
+	}
+	if by = strings.TrimSpace(by); by == "" {
+		by = strings.TrimSpace(f["asked_by"])
+	}
+	asker := by
+	if asker == "" {
+		asker = strings.Join(d.Task.Assignee, ", ")
+	}
+	// A question asked before q2adr8 (asked_* and no Questions) becomes
+	// question 1, so both are numbered and each is answered on its own.
+	if lq, ok := legacyQuestion(d.Task); ok {
+		d.appendToSection(QuestionsSection, strings.Replace(questionBlock(1, lq.By, lq.To, lq.Check, lq.Show, lq.Text, d.newline), "- "+stamp(), "- "+orStamp(lq.At), 1))
+	}
+	n := nextQuestion(d)
+	c, _ := strconv.Atoi(check)
+	d.appendToSection(QuestionsSection, questionBlock(n, asker, who, c, show, what, d.newline))
+	// The stage shows the oldest open question (crab 19:49).
+	set, clear := mirror(OpenQuestions(d.Task)[0])
+	// Every ask is a History line. A first one moves the stage and names
+	// what it left ("; was waiting_on: ..."); a second moves nothing, so
+	// it says what it adds.
+	m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask, question " + strconv.Itoa(n)}
+	if now := len(OpenQuestions(d.Task)); now > 1 {
+		m.line = "asked question " + strconv.Itoa(n) + " of " + who + ", " + strconv.Itoa(now) + " open"
+	}
+	if e = applyMove(d, ts, m); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
+}
+
+// orStamp is at, or now when at is empty.
+func orStamp(at string) string {
+	if strings.TrimSpace(at) == "" {
+		return stamp()
+	}
+	return at
 }
 
 // askable checks q on d, a task to ask: the question, who answers, a doing

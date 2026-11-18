@@ -267,6 +267,9 @@ type Task struct {
 	// Requests are the person's requests in ## Requests (hbgybn), open
 	// and resolved, in file order.
 	Requests []Request `json:"requests,omitempty"`
+	// Questions are the questions asked on it in ## Questions (q2adr8),
+	// open and answered, in file order.
+	Questions []AskedQuestion `json:"questions,omitempty"`
 	// Outcome is what the asker did first after the newest answer (41hhgn
 	// check 11), from its History read line; nil before it acts.
 	Outcome *Outcome `json:"outcome,omitempty"`
@@ -601,6 +604,7 @@ func Parse(path string, data []byte) *Document {
 	d.Task.Woken = woken(d.historyLines())
 	d.Findings = append(d.Findings, untilFindings(d.Task)...)
 	d.Task.Requests = parseRequests(d.requestLines())
+	d.Task.Questions = parseQuestions(d.questionLines())
 	readTargets(&d.Task, d.historyLines())
 	d.Task.AnswerCount = answerCount(d.historyLines())
 	readReceipts(&d.Task, d.historyLines())
