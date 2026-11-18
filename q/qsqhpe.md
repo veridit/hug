@@ -39,5 +39,6 @@ e3sevr at 14:40 local after dd07edee (check 4 ticked by jhf): stage still asked,
 ## Notes
 
 
+Design (mizaru): Store.Check, when the Store's Actor is asked_for (case-insensitive), the stage is asked and N is asked_check, writes the answer through the same answerOn that hug task answer uses, text 'answered by ticking check N'. One History block 'answered asked (check N), by jhf, for ASKER (doing/asked -> doing/active)', asked fields cleared, Answer seen by the asker. Result.Answered makes cli.Execute (CLI and MCP) and the TUI's Space call the same Deliver(kind answer) as a typed answer. Base 19a5fc77 (gmzd87), branch qsqhpe, worktree /Users/jhf/.jcode/scratch/qsqhpe.
 ## History
 - 2026-11-18T15:11 todo -> doing/active (take)
