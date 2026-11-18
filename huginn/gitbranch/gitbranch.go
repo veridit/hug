@@ -476,14 +476,60 @@ func remoteOf(common string) (string, error) {
 	return "origin", nil
 }
 
-// reuse points r at the branch's existing checkout w.
+// reuse points r at the branch's existing checkout w; r.Dir is where this
+// repository keeps it.
 func (r *Repository) reuse(w worktree, host string) (*Repository, error) {
+	want := r.Dir
 	if w.Prunable {
 		return nil, &Error{Op: "open", Detail: "branch " + r.Branch + " is registered as checked out at " + w.Path + " but that folder is gone",
 			Fix: "git -C " + quote(host) + " worktree prune"}
 	}
 	r.Dir = w.Path
+	if e := r.owned(want); e != nil {
+		return nil, e
+	}
 	return r, nil
+}
+
+// owned refuses a board checkout that belongs to another repository
+// (ygay9c): a copied or moved repo keeps .git/worktrees/NAME/gitdir naming
+// the original's checkout, so hug in the copy would read and commit the
+// original's board (wyvern 2026-11-18: 37 notes landed there). The
+// checkout's .git file must name a gitdir inside this repository's common
+// dir. One file read, no git process. A .git that is no gitdir file is left
+// to git. want is where this repository keeps the board; git worktree
+// repair there points both links back at this repository.
+func (r *Repository) owned(want string) error {
+	b, e := os.ReadFile(filepath.Join(r.Dir, ".git"))
+	if e != nil {
+		return nil
+	}
+	gitdir, ok := strings.CutPrefix(strings.TrimSpace(string(b)), "gitdir:")
+	if !ok {
+		return nil
+	}
+	gitdir = strings.TrimSpace(gitdir)
+	if !filepath.IsAbs(gitdir) {
+		gitdir = filepath.Join(r.Dir, gitdir)
+	}
+	if within(gitdir, r.Common) {
+		return nil
+	}
+	return &Error{Op: "open", Detail: "the board checkout " + r.Dir + " belongs to another repository: its .git names " + gitdir + ", outside this repository's " + r.Common + " (a copied or moved repo keeps the original's link); hug writes nothing to it",
+		Fix: "git -C " + quote(r.Root) + " worktree repair " + quote(want)}
+}
+
+// within says whether p is dir or inside it, symlinks resolved (macOS
+// /var is /private/var).
+func within(p, dir string) bool {
+	real := func(s string) string {
+		if x, e := filepath.EvalSymlinks(s); e == nil {
+			return x
+		}
+		return filepath.Clean(s)
+	}
+	rel, e := filepath.Rel(real(dir), real(p))
+	return e == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) && !filepath.IsAbs(rel)
 }
 func (r *Repository) ioerr(e error) error {
 	return &Error{Op: "filesystem", Detail: e.Error(), Fix: r.fix("status"), Cause: e}

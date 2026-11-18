@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -371,4 +372,53 @@ func TestMissingCheckoutFixIsPrune(t *testing.T) {
 	if _, e := os.Stat(filepath.Join(third.Dir, "a.md")); e != nil {
 		t.Fatal(e)
 	}
+}
+
+// ygay9c: a copy of the repository (cp -Rp) finds the original's board
+// checkout through the copied worktree list; Open refuses it, and git
+// worktree repair, the fix, gives the copy its own. The original and a
+// linked worktree of it open their board as before.
+func TestOpenRefusesAnotherRepositorysBoard(t *testing.T) {
+	root, _ := fixture(t, false)
+	r := openRepo(t, root, "hug/tasks", ".hug/tasks")
+	writeFile(t, r, "a.md", "a\n")
+	must(t, r.Commit(nil, "a"))
+	linked := filepath.Join(filepath.Dir(root), "linked")
+	command(t, root, "worktree", "add", "--detach", linked, "HEAD")
+	openRepo(t, linked, "hug/tasks", ".hug/tasks")
+	cp := filepath.Join(t.TempDir(), "copy")
+	if out, e := exec.Command("cp", "-Rp", root, cp).CombinedOutput(); e != nil {
+		t.Skipf("cp: %v %s", e, out)
+	}
+	_, e := Open(cp, "hug/tasks", ".hug/tasks", WithIdentity("Test", "test@example.invalid"))
+	var ge *Error
+	if !errors.As(e, &ge) || !strings.Contains(ge.Detail, "belongs to another repository") || !strings.Contains(ge.Fix, "worktree repair") {
+		t.Fatalf("Open in the copy: %v", e)
+	}
+	if out, e := exec.Command("sh", "-c", ge.Fix).CombinedOutput(); e != nil {
+		t.Fatalf("fix %q: %v %s", ge.Fix, e, out)
+	}
+	c := openRepo(t, cp, "hug/tasks", ".hug/tasks")
+	if want := filepath.Join(cp, ".hug", "tasks"); !within(c.Dir, want) || !within(want, c.Dir) {
+		t.Fatalf("copy's board at %s, want %s", c.Dir, want)
+	}
+	openRepo(t, root, "hug/tasks", ".hug/tasks")
+	openRepo(t, linked, "hug/tasks", ".hug/tasks")
+}
+
+// A repository reached through a symlink (macOS /var is /private/var; a
+// symlinked home) owns its board: git writes the resolved path in .git,
+// hug may hold the link.
+func TestOwnedThroughSymlink(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("symlinks need privileges")
+	}
+	root, _ := fixture(t, false)
+	openRepo(t, root, "hug/tasks", ".hug/tasks")
+	link := filepath.Join(t.TempDir(), "via")
+	must(t, os.Symlink(filepath.Dir(root), link))
+	r := openRepo(t, filepath.Join(link, filepath.Base(root)), "hug/tasks", ".hug/tasks")
+	must(t, r.owned(r.Dir))
+	r.Common = filepath.Join(link, filepath.Base(root), ".git")
+	must(t, r.owned(r.Dir))
 }
