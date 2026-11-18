@@ -4,7 +4,7 @@ title: "TUI: ? typed in an answer or any text prompt is text, not help"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
