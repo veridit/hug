@@ -12,8 +12,8 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 stage: "waiting"
-waiting_on: "2 consecutive main CI runs from 1c40426d on: test-windows-cli huginn/internal/cli under 240 s, Windows job no slower than 11 min 20 s (44206328950)"
-waiting_since: "2026-11-18T01:58"
+waiting_on: "main run 2 of 2 from 3c6be7ee on (run 1 = CI 44216381870 passed): test-windows-cli huginn/internal/cli under 240 s, Windows job no slower than 11 min 20 s (44206328950)"
+waiting_since: "2026-11-18T02:44"
 waiting_asked_by: "wyvern"
 ---
 
