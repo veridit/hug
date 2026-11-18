@@ -53,3 +53,5 @@ landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
 landed 38ed468 on main 2026-11-18: One request for several tasks: request ID1,ID2 / --task / MCP ids, written once…
 
 shipped in v0.7.68 (38ed468)
+
+file:board-request-mock.md (6444 bytes, sha256:77db2258) piglet: check 1 mock: marks (rxr4z8), r for the marked set, the box, after Enter, pending/handled per target; one question (A or B)
