@@ -44,6 +44,7 @@ Landed on main 085a81ce (unchecked until CI is green). Check 1: TestUnknownHUGVa
 landed 085a81c on main 2026-11-18: hug refuses an unknown HUG_* variable instead of ignoring it (a0p5kt)
 landed 0a2f06a on main 2026-11-18: hug: a hook refused for an unknown HUG_ variable says so in the hook log…
 Checks 1-3 green on main CI 44226874819 (085a81ce): ubuntu, macos, windows, test-windows-cli, bench, secrets all success. Hook-log addition (crab 03:58: a refused hook must leave a hook.log line) is 0a2f06ae, CI 44227585322.
+Hook-log line green on main CI 44227585322 (0a2f06ae): ubuntu, macos, windows, test-windows-cli, bench, secrets success.
 ## History
 - 2026-11-18T03:41 todo -> doing/active (take)
 - 2026-11-18T03:57 doing/active -> doing/waiting (wait)
