@@ -25,7 +25,6 @@ One viewer frame for every file kind. The terminal draws the image (iTerm2/kitty
 z82qsy ef9c060f added the frame (glance.go, render.go); imageView draws PNGs full screen outside it. Jørgen's terminal: iTerm2 (OSC 1337).
 
 ## Depends on
-- z82qsy
 
 ## Acceptance
 - [ ] A PNG opens with the crumb, the note, a top rule, the image within the frame rows, a bottom rule and the keys (golden for the fallback; tmux capture in iTerm2 attached to this task).
