@@ -16,7 +16,7 @@ func TestMemoryShareSettingCommand(t *testing.T) {
 	a := app(t)
 	execute(t, a, "init")
 	execute(t, a, "coordinator", "crab")
-	if r := execute(t, a, "memory"); r["memory"] != "local" || r["next"] != memshare.Fix {
+	if r := execute(t, a, "memory"); r["memory"] != "local" || r["next"] == memshare.Fix || !strings.HasSuffix(r["message"].(string), memshare.PersonHint) {
 		t.Fatalf("bare memory on a new board: %v", r)
 	}
 	if s, err := memshare.Shares(a.Cwd); s || err != nil {
@@ -48,7 +48,7 @@ func TestMemoryShareSettingCommand(t *testing.T) {
 	if strings.Contains(git(t, a.Cwd, "show", TaskBranch+":hug.toml"), "[memory]") {
 		t.Fatalf("local left an empty [memory] section:\n%s", git(t, a.Cwd, "show", TaskBranch+":hug.toml"))
 	}
-	if code, out := runText(a, "memory", "yes"); code != 2 || !strings.HasSuffix(out, "fix: hug task memory share\n") {
+	if code, out := runText(a, "memory", "yes"); code != 2 || !strings.HasSuffix(out, "fix: hug task memory --help\n") {
 		t.Fatalf("memory yes: exit %d\n%s", code, out)
 	}
 }

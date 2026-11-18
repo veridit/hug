@@ -24,11 +24,23 @@ import (
 	"strings"
 )
 
-// Fix is the command that opts a repository in.
+// Fix is the command that opts a repository in. It is for a person: hug
+// never prints it as a fix: or next: line on a local repository, since an
+// agent runs those as given and in a public repository that would publish
+// (crab review of e2582a0f).
 const Fix = "hug task memory share"
 
+// LocalStatus is what hug mem sync says on a repository that keeps its
+// memories local: the intended state, not an error.
+const LocalStatus = "project memories stay on this machine (hug.toml [memory] share is not set)"
+
+// PersonHint is the one sentence naming the opt-in, for a person reading
+// hug task memory; never a fix: or next: line.
+const PersonHint = "a private repository can share them with: " + Fix
+
 // ErrLocal: this repository keeps its project memories on this machine.
-var ErrLocal = errors.New("this repository keeps project memories local: hug.toml [memory] share = true is not committed on hug/tasks, so nothing was written to a branch or pushed (a private repository opts in; a public one leaves it local)\nfix: " + Fix)
+// Callers that print it print LocalStatus and succeed.
+var ErrLocal = errors.New(LocalStatus)
 
 // KeptNote is what hug upgrade says when it renamed the memory branch here
 // only and left the remote's old branch as it was.
@@ -86,7 +98,7 @@ func Parse(content []byte) (bool, error) {
 		case "false":
 			share = false
 		default:
-			return false, fmt.Errorf("hug.toml [memory] share = %s: want true or false; memories stay local (hug task memory local writes the default)\nfix: %s", strings.TrimSpace(value), Fix)
+			return false, fmt.Errorf("hug.toml [memory] share = %s: want true or false; memories stay local\nfix: hug task memory local", strings.TrimSpace(value))
 		}
 	}
 	return share, nil

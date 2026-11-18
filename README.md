@@ -56,9 +56,9 @@ at its next command, at most about 7 s later. `hug task sync` and
 
 Project memories stay on this machine unless the repository opts in:
 `hug task memory share` commits `[memory] share = true` to `hug.toml` on
-`hug/tasks`, and every clone follows it. Without it, `hug mem sync` refuses
-and pushes nothing, so a public repository never publishes memories.
-`hug task memory local` goes back.
+`hug/tasks`, and every clone follows it. Without it, `hug mem sync` says
+`project memories stay on this machine` and pushes nothing, so a public
+repository never publishes memories. `hug task memory local` goes back.
 
 ## Who made a commit
 

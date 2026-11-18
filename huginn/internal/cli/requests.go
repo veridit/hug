@@ -128,8 +128,11 @@ func (a *App) runMemory(s *session, f flags) (Reply, error) {
 		if e != nil {
 			return nil, e
 		}
-		next := memshare.Fix
-		msg := "project memories: local (hug mem sync pushes nothing; hug.toml [memory] share is not true)"
+		// Local: the state, and the opt-in as one sentence for a person.
+		// next: is never the opt-in (crab review of e2582a0f): an agent
+		// runs next: lines, and in a public repository that publishes.
+		next := "hug task next"
+		msg := "project memories: local (hug.toml [memory] share is not set; hug mem sync pushes nothing). " + memshare.PersonHint
 		if share {
 			next = "hug mem sync"
 			msg = "project memories: share (hug.toml [memory] share = true; hug mem sync pushes them to hug/memory)"
@@ -142,7 +145,7 @@ func (a *App) runMemory(s *session, f flags) (Reply, error) {
 		share = true
 	case "local":
 	default:
-		return nil, usage("memory is share or local, not "+strconv.Quote(f.args[0]), memshare.Fix)
+		return nil, usage("memory is share or local, not "+strconv.Quote(f.args[0]), "hug task memory --help")
 	}
 	changed, e := task.SetMemoryShare(root, share)
 	if e != nil {
@@ -151,7 +154,7 @@ func (a *App) runMemory(s *session, f flags) (Reply, error) {
 	next := "hug mem sync"
 	msg := "project memories: share, committed on hug/tasks; every clone follows it"
 	if !share {
-		next = "hug task memory"
+		next = "hug task next"
 		msg = "project memories: local, committed on hug/tasks; hug mem sync pushes nothing"
 	}
 	if !changed {
