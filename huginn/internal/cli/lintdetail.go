@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
+	"github.com/veridit/hug/huginn/internal/harness"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -20,8 +23,8 @@ import (
 
 // boardFindings is every finding lint knows: file content (cached),
 // attached files and citations, git branch state and harness sessions
-// (jcodeHome is the app's JCODE_HOME, "" for ~/.jcode).
-func (s *session) boardFindings(ctx context.Context, cwd, jcodeHome string) ([]task.Finding, error) {
+// (live is the harness's sessions, from (a *App) liveness).
+func (s *session) boardFindings(ctx context.Context, cwd string, live *task.Liveness) ([]task.Finding, error) {
 	fs, e := s.c.Lint(ctx)
 	if e != nil {
 		return nil, e
@@ -41,11 +44,13 @@ func (s *session) boardFindings(ctx context.Context, cwd, jcodeHome string) ([]t
 		// Waits hug cannot check here (16dxsr): git and the machine, not files.
 		fs = append(fs, task.WaitFindings(ts)...)
 		// Who a question is for must be someone hug can find (89y0b7).
-		if people, e := task.People(s.r.Dir); e == nil {
+		people, e := task.People(s.r.Dir)
+		if e == nil {
 			fs = append(fs, task.PeopleFindings(people, ts)...)
 		}
-		// Harness session state, not file content (v3k6cp).
-		fs = append(fs, task.OwnerFindings(task.JcodeLivenessAt(jcodeHome), ts, time.Now())...)
+		// Harness session state, not file content (v3k6cp, 9ahvgt): a
+		// person in [people] is never judged.
+		fs = append(fs, task.OwnerFindings(live, ts, time.Now(), people...)...)
 		// A doing ticket nothing has touched for 2 hours is a question to its
 		// owner (at3qep), unless it already has one; then one question per
 		// ticket, the most important.
@@ -301,4 +306,53 @@ func detailCommand(g task.TaskFindings) string {
 		return "hug task lint " + g.ID
 	}
 	return g.Fix
+}
+
+// liveness reads the harness sessions every jcode instance on this machine
+// keeps (9ahvgt): JCODE_HOME (or ~/.jcode) and the instances the zsh
+// registry names, so a worker a coordinator spawned in another instance is
+// seen. Only sessions that worked in this repository count (its main
+// checkout and every linked worktree): names repeat across instances. HOME
+// from the app's environment (tests) or the process.
+func (s *session) liveness(a *App) *task.Liveness {
+	home := a.getenv("HOME")
+	if home == "" {
+		home, _ = os.UserHomeDir()
+	}
+	jh := a.getenv("JCODE_HOME")
+	if jh == "" && home != "" {
+		jh = filepath.Join(home, ".jcode")
+	}
+	var more []string
+	if home != "" {
+		for _, i := range harness.DiscoverJcode(home, nil) {
+			more = append(more, i.Home)
+		}
+	}
+	return task.JcodeLivenessAt(jh, repoRoots(s.r.Root, s.r.Common), more...)
+}
+
+// repoRoots is the repository's worktree folders: the main checkout and
+// each linked worktree (<common>/worktrees/ID/gitdir names its .git).
+func repoRoots(root, common string) []string {
+	roots := []string{root}
+	if common != "" {
+		roots = append(roots, filepath.Dir(common))
+		es, _ := os.ReadDir(filepath.Join(common, "worktrees"))
+		for _, e := range es {
+			if b, err := os.ReadFile(filepath.Join(common, "worktrees", e.Name(), "gitdir")); err == nil {
+				roots = append(roots, filepath.Dir(strings.TrimSpace(string(b))))
+			}
+		}
+	}
+	return roots
+}
+
+// unreadSessions says, once, that a session folder exists but cannot be
+// read, so stale-owner may miss owners (9ahvgt), with what to run.
+func unreadSessions(l *task.Liveness) string {
+	if l == nil || len(l.Unread) == 0 {
+		return ""
+	}
+	return "stale-owner cannot read " + strings.Join(l.Unread, ", ") + ": owners there are not judged\nfix: ls -ld " + l.Unread[0]
 }

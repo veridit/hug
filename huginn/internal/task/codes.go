@@ -72,7 +72,7 @@ var Codes = []CodeInfo{
 	{"unknown-condition", "a Depends on condition hug cannot check (unreadable, or not checkable here): the task waits", Broken},
 	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped", Broken},
 	{"unknown-person", "asked_for, design_for or review_by names nobody in hug.toml [people] and no agent on the board", Broken},
-	{"stale-owner", "a doing task's assignee has had no live harness session for over a day", Broken},
+	{"stale-owner", "a doing task's assignee has no live harness session: closed over an hour ago, silent over a day, or never had one", Broken},
 	{"landed-unchecked", "question: a commit naming a doing task reached main, but no check is ticked", Broken},
 	{"shipped-not-done", "question: a release contains the task, but it is not done", Broken},
 	{"checks-all-hold", "question: a waiting task has every check and child done, but it is not done", Broken},

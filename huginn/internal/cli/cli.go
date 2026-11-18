@@ -1074,7 +1074,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e != nil {
 			return nil, e
 		}
-		fs, e := s.boardFindings(ctx, a.Cwd, a.getenv("JCODE_HOME"))
+		live := s.liveness(a)
+		fs, e := s.boardFindings(ctx, a.Cwd, live)
 		if e != nil {
 			return nil, e
 		}
@@ -1117,7 +1118,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e != nil {
 			return nil, e
 		}
-		return lintReply(reply, fs, mode, code), nil
+		reply = lintReply(reply, fs, mode, code)
+		// 9ahvgt: when hug cannot see sessions, say so once, rather than
+		// a silent "no findings with code stale-owner".
+		if w := unreadSessions(live); w != "" {
+			reply["warnings"] = []string{w}
+		}
+		return reply, nil
 	case "deduce":
 		if e = f.count(0); e != nil {
 			return nil, e
