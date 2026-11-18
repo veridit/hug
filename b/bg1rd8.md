@@ -34,7 +34,7 @@ questions.go noteQuestion silences shipped-not-done when stageSaysWhy (waiting/a
 ## Acceptance
 - [x] A doing task in waiting with every check ticked and every child done gets a lint finding naming hug task done ID; a test fails first on main.
 - [ ] The board cue reaches its owner, or the coordinator when the owner is gone, with that finding (test).
-- [ ] A waiting task with an open check is unchanged (test).
+- [x] A waiting task with an open check is unchanged (test).
 
 ## Notes
 
