@@ -32,7 +32,7 @@ questions.go noteQuestion: case shipped != nil && stageSaysWhy(t) returns nil, s
 ## Depends on
 
 ## Acceptance
-- [ ] hug task ask on a shipped, all-ticked task succeeds, sets stage asked, and lint no longer reports shipped-not-done for it; a test fails first on main.
+- [x] hug task ask on a shipped, all-ticked task succeeds, sets stage asked, and lint no longer reports shipped-not-done for it; a test fails first on main.
 - [ ] Other broken findings (e.g. missing-file) still block ask (test).
 
 ## Notes
