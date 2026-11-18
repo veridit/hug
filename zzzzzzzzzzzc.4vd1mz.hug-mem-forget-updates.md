@@ -66,6 +66,7 @@ landed 880befc on main 2026-11-18: docs: state measured forget preparation and t
 landed e1ed5d1 on main 2026-11-18: test: compare complete ordered forget results (4vd1mz)
 landed 38638f8 on main 2026-11-18: perf: retain production map visitation after graph move (4vd1mz)
 landed 348133a on main 2026-11-18: docs: record measured unsorted forget performance (4vd1mz)
+shipped in v0.7.59 (9349d00)
 ## History
 - 2026-11-18T02:53 todo -> doing/active (take)
 - 2026-11-18T03:41 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T02:53
