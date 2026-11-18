@@ -35,7 +35,7 @@ Ask was rebuilt by iwazaru in q2adr8 (## Questions, d5c66a1f/fbf06637). Today as
 - [x] hug task ask on a todo task that depends on an unfinished task records the question, leaves state todo, assignee and the dependency unchanged, and exits 0 (CLI test)
 - [x] the asked person sees it in ASKED with its answer action, and answering delivers the answer to the asker (test)
 - [x] MCP task_update ask does the same on a todo task (test)
-- [ ] ask on a doing task behaves as today (existing tests stay green)
+- [x] ask on a doing task behaves as today (existing tests stay green)
 
 ## Notes
 
@@ -44,5 +44,6 @@ Design, crab rulings 21:59 local. (1) ask on a todo task appends a numbered ques
 check 1: b51a2cda (tests 4cb68eb0 failing first on 8a45b0eb: every ask on a todo task refused 'todo -> doing/asked is not a move a command makes'); cli asktodo_test.go TestAskOnBlockedTodoTask: state todo, stage depends, assignee and dep kept, question 1 in ## Questions, exit 0; mutants M1 (withdraw guard) and M7 (askable) fail it
 check 2: b51a2cda (tests 4cb68eb0 failing first on 8a45b0eb: every ask on a todo task refused 'todo -> doing/asked is not a move a command makes'); TestAnswerOnTodoTaskGoesToAsker (answer 2 and tick on check 1, 'answered design (question N, check N), by jhf, for piglet', show answer.for piglet) and tui TestAskedTodoQuestionInAsked (in jhf's ASKED while blocked, a answers it; an outranked hug task design question is not in ASKED); mutants M3, M4, M5, M6 each fail
 check 3: b51a2cda (tests 4cb68eb0 failing first on 8a45b0eb: every ask on a todo task refused 'todo -> doing/asked is not a move a command makes'); mcp asktodo_test.go TestAskTodoTaskOverMCP: task_update ask on a blocked todo task by a non-holder, stays todo/depends, answer for piglet; M7 fails it
+check 4: full huginn suite niced -count=1 on b51a2cda: 11 ok, 0 FAIL (cli 304.871s, tui 168.284s); existing ask/answer/q2adr8 tests unchanged
 ## History
 - 2026-11-18T21:54 todo -> doing/active (take)
