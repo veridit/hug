@@ -37,7 +37,7 @@ Patch: /Users/jhf/.jcode/scratch/board4/4vxqp4/quote.patch (muninn/internal/harn
 - rzfrgp
 ## Acceptance
 - [x] replay on the 6 board4 sets plus fresh hug: every take/work/done line the patch adds or removes is blind-judged, and false lines do not rise on any set
-- [ ] fresh hug keeps its right lint lines (3 under 4vxqp4)
+- [x] fresh hug keeps its right lint lines (3 under 4vxqp4)
 
 ## Notes
 
