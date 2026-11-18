@@ -96,6 +96,7 @@ func variant(name string, o *search.Options, e *recall.Engine, t *recall.ToolReq
 			t.NeedPath = true
 		case strings.HasPrefix(part, "lim"): // lim2: at most 2 memories per call
 			fmt.Sscanf(part, "lim%d", &t.Limit)
+		case part == "when", part == "whennot": // handled after variant(): needs -triggers
 		case part == "baseline": // flat points per word (pre-BM25 production)
 			o.BM25Scale = 0
 		case part == "default": // today's configured defaults
@@ -132,6 +133,7 @@ func main() {
 	input := flag.String("input", "", "replay JSON")
 	name := flag.String("variant", "baseline", "variant, parts joined with +")
 	asof := flag.Bool("asof", false, "each message sees only memories last written before its timestamp")
+	trigFile := flag.String("triggers", "", "JSON {body sha256[:16]: {when, when_not}}: WHEN for variant parts when/whennot (jrj1vq check 3)")
 	flag.Parse()
 	root := filepath.Join(os.Getenv("JCODE_SCRATCH_DIR"), "recall4")
 	abs, _ := filepath.Abs(*dbpath)
@@ -165,6 +167,16 @@ func main() {
 	must(err)
 	var tool recall.ToolRequest
 	variant(*name, &e.Options, e, &tool)
+	if parts := "+" + *name + "+"; strings.Contains(parts, "+when+") || strings.Contains(parts, "+whennot+") {
+		if *trigFile == "" {
+			panic("variant when/whennot needs -triggers")
+		}
+		tr, n, err := loadTriggers(ctx, db, em, *trigFile)
+		must(err)
+		tr.Veto = strings.Contains(parts, "+whennot+")
+		e.Options.Triggers = tr
+		fmt.Fprintf(os.Stderr, "triggers: %d units carry a WHEN (%d with WHEN_NOT), veto=%v\n", n, len(tr.Not), tr.Veto)
+	}
 	anchorArm := strings.Contains("+"+*name+"+", "+anchor+") || strings.Contains("+"+*name+"+", "+shipped+")
 	written := map[int64]int64{}
 	if *asof {
@@ -226,4 +238,68 @@ func must(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// loadTriggers attaches WHEN/WHEN_NOT text to every active unit whose body
+// hash is in file, indexes WHEN in a temp FTS5 table and embeds both with
+// the document recipe (cached like query vectors).
+func loadTriggers(ctx context.Context, db *store.DB, em embed.Embedder, file string) (*search.Triggers, int, error) {
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return nil, 0, err
+	}
+	var byHash map[string]struct {
+		When    string `json:"when"`
+		WhenNot string `json:"when_not"`
+	}
+	if err := json.Unmarshal(data, &byHash); err != nil {
+		return nil, 0, err
+	}
+	tr := &search.Triggers{When: map[int64][]float32{}, Not: map[int64][]float32{}, FTS: "when_fts"}
+	if _, err := db.Exec(`CREATE VIRTUAL TABLE IF NOT EXISTS temp.when_fts USING fts5(w)`); err != nil {
+		return nil, 0, err
+	}
+	rows, err := db.Query(`SELECT id, body FROM units WHERE active=1`)
+	if err != nil {
+		return nil, 0, err
+	}
+	type hit struct {
+		id             int64
+		when, whenNot string
+	}
+	var hits []hit
+	for rows.Next() {
+		var id int64
+		var body string
+		if err := rows.Scan(&id, &body); err != nil {
+			rows.Close()
+			return nil, 0, err
+		}
+		h := sha256.Sum256([]byte(body))
+		if t, ok := byHash[hex.EncodeToString(h[:])[:16]]; ok && strings.TrimSpace(t.When) != "" {
+			hits = append(hits, hit{id, t.When, strings.TrimSpace(t.WhenNot)})
+		}
+	}
+	rows.Close()
+	vec := func(text string) ([]float32, error) {
+		v, err := em.Embed(ctx, embed.Documents(em, []string{index.EmbeddingText("", text)}))
+		if err != nil {
+			return nil, err
+		}
+		return v[0], nil
+	}
+	for _, h := range hits {
+		if _, err := db.Exec(`INSERT INTO temp.when_fts(rowid, w) VALUES (?, ?)`, h.id, h.when); err != nil {
+			return nil, 0, err
+		}
+		if tr.When[h.id], err = vec(h.when); err != nil {
+			return nil, 0, err
+		}
+		if h.whenNot != "" {
+			if tr.Not[h.id], err = vec(h.whenNot); err != nil {
+				return nil, 0, err
+			}
+		}
+	}
+	return tr, len(hits), nil
 }

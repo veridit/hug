@@ -45,6 +45,20 @@ type Options struct {
 	// branch and project names) up and common words down, and normalises
 	// for memory length. 0 keeps the flat points.
 	BM25Scale float64
+	// Triggers, when set, also matches the query against each memory's WHEN
+	// (jrj1vq check 3 pilot, replay harness only; nil changes nothing).
+	Triggers *Triggers
+}
+
+// Triggers is an experimental when-then match. A memory with a WHEN scores
+// the better of its note and its WHEN (BM25 on FTS, the WHEN vector); with
+// Veto, a memory whose WHEN_NOT is closer to the query than its WHEN is
+// dropped. When and Not map unit id to vector; FTS names an FTS5 table
+// (rowid = unit id, one column) holding WHEN text.
+type Triggers struct {
+	When, Not map[int64][]float32
+	FTS       string
+	Veto      bool
 }
 
 // DefaultOptions mirrors seid search.
@@ -246,6 +260,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 	// 5c. semantic similarity.
 	sem := map[int64]float64{}
 	semOn := false
+	var qvec []float32
 	if s.Embedder != nil && strings.TrimSpace(query) != "" &&
 		(!o.DocumentQuery || s.DB.GetMeta("pipeline_hash") == index.PipelineHash(s.Embedder.Model())) {
 		// Embed the query the way the active pipeline's documents were
@@ -260,6 +275,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		vecs, err := s.Embedder.Embed(ctx, []string{qtext})
 		if err == nil && len(vecs) == 1 {
 			semOn = true
+			qvec = vecs[0]
 			if err := s.semantic(ctx, vecs[0], o, sem); err != nil {
 				return nil, err
 			}
@@ -268,6 +284,52 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 			}
 		}
 	}
+
+	// 5d. WHEN match (experimental, o.Triggers): a separate score per memory.
+	whenBM, whenSem, whenWords := map[int64]float64{}, map[int64]float64{}, map[int64]int{}
+	vetoed := map[int64]bool{}
+	if tr := o.Triggers; tr != nil {
+		scale := o.BM25Scale
+		if scale <= 0 {
+			scale = 1
+		}
+		if tr.FTS != "" {
+			seen := map[string]bool{}
+			for _, w := range words {
+				if seen[w] {
+					continue
+				}
+				seen[w] = true
+				rows, err := s.DB.QueryContext(ctx, `SELECT rowid, -bm25(`+tr.FTS+`) FROM `+tr.FTS+` WHERE `+tr.FTS+` MATCH ?`, fts5Quote(w))
+				if err != nil {
+					continue
+				}
+				for rows.Next() {
+					var id int64
+					var v float64
+					if rows.Scan(&id, &v) == nil {
+						whenBM[id] += v * scale
+						whenWords[id]++
+						get(id)
+					}
+				}
+				rows.Close()
+			}
+		}
+		if qvec != nil {
+			for id, v := range tr.When {
+				c := float64(embed.Dot(qvec, v))
+				if c > o.SemanticFloor {
+					whenSem[id] = c
+					get(id)
+				}
+				if nv, ok := tr.Not[id]; tr.Veto && ok && float64(embed.Dot(qvec, nv)) > c {
+					vetoed[id] = true
+				}
+			}
+		}
+	}
+	semOf := func(id int64) float64 { return math.Max(sem[id], whenSem[id]) }
 
 	// Score candidates without touching rows, keep the best few (by total and
 	// by semantic, for the reserved slots), and only then load those units.
@@ -314,10 +376,13 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		return nil, err
 	}
 	for id, a := range scores {
-		if !visible[id] {
+		if !visible[id] || vetoed[id] {
 			continue
 		}
 		t := float64(a.kw) + a.bm + math.Log(1+float64(a.comm)) + sem[id]*o.SemanticWeight
+		if o.Triggers != nil {
+			t = math.Max(t, whenBM[id]+whenSem[id]*o.SemanticWeight)
+		}
 		if t > 0.001 && t >= o.MinScore {
 			cands = append(cands, cand{id, a, t})
 		}
@@ -329,7 +394,7 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		keep[cands[i].id] = true
 	}
 	bySem := append([]cand(nil), cands...)
-	sort.Slice(bySem, func(i, j int) bool { return sem[bySem[i].id] > sem[bySem[j].id] })
+	sort.Slice(bySem, func(i, j int) bool { return semOf(bySem[i].id) > semOf(bySem[j].id) })
 	for i := 0; i < len(bySem) && i < pool; i++ {
 		keep[bySem[i].id] = true
 	}
@@ -363,9 +428,9 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		}
 		seenText[u.ContentHash] = true
 		seenSID[u.SID] = true
-		r := Result{Unit: u, Keyword: a.kw + int(math.Round(a.bm)), Community: a.comm, Semantic: sem[id], Total: c.total, SemanticOn: semOn}
+		r := Result{Unit: u, Keyword: a.kw + int(math.Round(a.bm)), Community: a.comm, Semantic: semOf(id), Total: c.total, SemanticOn: semOn}
 		if len(words) > 0 {
-			r.Coverage = math.Min(1, float64(a.words)/float64(len(words)))
+			r.Coverage = math.Min(1, float64(max(a.words, whenWords[id]))/float64(len(words)))
 		}
 		results = append(results, r)
 	}
