@@ -34,7 +34,7 @@ Code: huginn/internal/task lint severity rules; huginn/internal/cli/lint.go:134-
 - [x] A done or dropped task gives no finding; hug task lint ID on one prints 'ID is done: lint judges open tasks only' and exits 0 (test, fails on main)
 - [x] The TUI LINT section and header counts match the CLI and show no hidden-on-closed text (golden)
 - [x] A file hug cannot parse as a task still shows as broken (test)
-- [ ] The lint all-tasks flag and the JSON hidden fields are gone, and help says lint judges open tasks (help test)
+- [x] The lint all-tasks flag and the JSON hidden fields are gone, and help says lint judges open tasks (help test)
 - [ ] Jørgen confirms the Statbus LINT section after release
 
 ## Notes
