@@ -48,6 +48,7 @@ check 1: 917a3a28: scripts/ci-goldens.sh (shellcheck 0.11.0: 0 findings); AGENTS
 check 2: TestCIGoldensRebuildsDriftedGoldens (internal/repocheck): --log testdata/ci-goldens/failed.log (2 blocks of CI 44403710185, 140x40 screen with 6 blank lines, last rows with trailing spaces) gives bytes equal to 4d7eec2d's goldens, with and without JOB. Failed first: the files came out one '\n' long, fixed. Real run: the script in a worktree of 6448e7d5 wrote 4 files, 'git diff --quiet 4d7eec2d -- huginn/internal/tui/testdata' exit 0.
 check 3: Same test: one byte changed in the 140x40 golden (GLOBAL->GLOBAl) -> exit non-zero, 'ci-goldens: wrote nothing' and a 'fix:' line, 80x24 golden left as it was; an empty log -> "no 'golden drift' block" + fix: line.
 CI 44411972128 on 917a3a28: completed/success, 8/8 jobs.
+Landed on main as c53dae61 (crab), CI 44413400970 8/8.
 ## History
 - 2026-11-18T23:24 todo -> doing/active (take)
 - 2026-11-18T23:37 doing/active -> doing/waiting (wait)
