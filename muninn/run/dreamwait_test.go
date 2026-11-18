@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/veridit/hug/muninn/internal/activity"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/store"
@@ -250,5 +251,109 @@ func TestDreamStatusNamesTheLastPass(t *testing.T) {
 	app.RecordDreamFailed(db, f.now, errors.New("disk full\nfix: free space"))
 	if l := app.ReadDreamLast(db); l.How != "failed (disk full)" || app.DreamDue(db, f.now.Add(time.Hour)) {
 		t.Fatalf("failed pass: %+v", l)
+	}
+}
+
+// weekOfTurns records the synthetic week of activity_test.go into the store:
+// busy 07:00-21:59 (Saturday to 13:59, Sunday from 09:00), for days days
+// from Monday 2026-11-02 UTC. Each weekday's quiet stretch is 22:00 for 9 h.
+func weekOfTurns(t *testing.T, db *store.DB, days int) {
+	t.Helper()
+	old := activity.Location
+	activity.Location = func() *time.Location { return time.UTC }
+	t.Cleanup(func() { activity.Location = old })
+	mon := time.Date(2026, 11, 2, 0, 0, 0, 0, time.UTC)
+	for d := 0; d < days; d++ {
+		for h := 0; h < 24; h++ {
+			at := mon.AddDate(0, 0, d).Add(time.Duration(h)*time.Hour + 10*time.Minute)
+			wd := at.Weekday()
+			if h < 7 || h >= 22 || wd == time.Saturday && h >= 14 || wd == time.Sunday && h < 9 {
+				continue
+			}
+			if err := activity.Record(db, at); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+}
+
+// vk9td0 check 3: with a week of activity, the pass waits for the start of
+// the day's quiet stretch, not for 30 minutes away. Started in the morning,
+// the waiter outlives DreamWaitMax (12 h) to reach it.
+func TestDreamStartsAtTheQuietStretch(t *testing.T) {
+	memHome(t)
+	f := newFakeDream(t)
+	db := dreamDB(t)
+	weekOfTurns(t, db, 8)
+	f.now = time.Date(2026, 11, 10, 8, 0, 0, 0, time.UTC) // Tue 08:00
+	lastTurn(t, db, f.now.Add(-time.Hour))                // away an hour: the old rule runs now
+	if err := waitAndDream(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	l := app.ReadDreamLast(db)
+	if want := time.Date(2026, 11, 10, 22, 0, 0, 0, time.UTC); !l.At.Equal(want) {
+		t.Fatalf("pass ran at %s after %d steps, want %s (Tuesday's quiet stretch, 22:00)", l.At, f.sleeps, want)
+	}
+	if f.sleeps != 14*12 {
+		t.Fatalf("slept %d steps, want 168 (14 h)", f.sleeps)
+	}
+	if log := hookLog(t); !strings.Contains(log, "in your quiet stretch Tue 22:00") {
+		t.Fatalf("hook.log: %q", log)
+	}
+}
+
+// Inside the stretch, a turn after it began means the person is up: the old
+// rule (away 30 min) decides.
+func TestDreamInsideTheStretchAfterATurnWaitsForQuiet(t *testing.T) {
+	memHome(t)
+	f := newFakeDream(t)
+	db := dreamDB(t)
+	weekOfTurns(t, db, 8)
+	f.now = time.Date(2026, 11, 10, 23, 0, 0, 0, time.UTC) // Tue 23:00
+	lastTurn(t, db, f.now.Add(-10*time.Minute))            // typed at 22:50
+	if err := waitAndDream(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if l := app.ReadDreamLast(db); !l.At.Equal(f.now) || f.sleeps != 4 {
+		t.Fatalf("pass at %s after %d steps, want 23:20 after 4 (30 min after the 22:50 turn)", l.At, f.sleeps)
+	}
+}
+
+// vk9td0 check 3: under a week of activity, today's rule stays: the pass runs
+// once the person has been away 30 minutes.
+func TestDreamUnderAWeekKeepsTheOldRule(t *testing.T) {
+	memHome(t)
+	f := newFakeDream(t)
+	db := dreamDB(t)
+	weekOfTurns(t, db, 6)
+	f.now = time.Date(2026, 11, 8, 8, 0, 0, 0, time.UTC) // Sun 08:00, 6 days of data
+	lastTurn(t, db, f.now.Add(-5*time.Minute))
+	if err := waitAndDream(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if l := app.ReadDreamLast(db); !l.At.Equal(f.now) || f.sleeps != 5 {
+		t.Fatalf("pass at %s after %d steps, want 08:25 after 5 (away 30 min)", l.At, f.sleeps)
+	}
+	out, _, _ := runCLI(t, "", "dream", "--status")
+	if !strings.Contains(out, "learning your week: 6 of 7 days of activity") {
+		t.Fatalf("status while learning: %q", out)
+	}
+}
+
+// vk9td0 check 2: hug mem dream --week shows the 168-bucket histogram and
+// names the longest quiet stretch; --status names it too.
+func TestDreamWeekShowsTheHistogram(t *testing.T) {
+	memHome(t)
+	f := newFakeDream(t)
+	db := dreamDB(t)
+	weekOfTurns(t, db, 8)
+	f.now = time.Date(2026, 11, 10, 15, 0, 0, 0, time.UTC)
+	out, errOut, code := runCLI(t, "", "dream", "--week")
+	if code != 0 || !strings.Contains(out, "Longest quiet stretch: Sat 14:00 for 19 h") || !strings.Contains(out, "Tue 22:00 for 9 h") || strings.Count(out, "\n") < 10 {
+		t.Fatalf("dream --week: %d %q %q", code, out, errOut)
+	}
+	out, _, _ = runCLI(t, "", "dream", "--status")
+	if !strings.Contains(out, "Next quiet stretch: Tue 22:00 to Wed 07:00") {
+		t.Fatalf("status: %q", out)
 	}
 }

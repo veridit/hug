@@ -136,3 +136,21 @@ func TestRecallSkipsRecordsOnLongMessages(t *testing.T) {
 		t.Errorf("long message still recalls the record: %q", long.Block)
 	}
 }
+
+// vk9td0: each turn the person types is counted in activity_hours for the
+// dream pass's week; harness notices and swarm DMs are not the person.
+func TestRecallCountsThePersonsTurns(t *testing.T) {
+	db := setup(t)
+	e := engine(db, failing{})
+	ctx := context.Background()
+	for _, m := range []string{"banana mode", "and staging?", "DM from crab: carry on", "**Background task** done", "Cross-swarm DM from x: hi"} {
+		if _, err := e.Recall(ctx, recall.Request{Session: "jcode:s1", Message: m}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	e.Recall(ctx, recall.Request{Message: "no session, a CLI query"})
+	var n int
+	if err := db.QueryRow(`SELECT COALESCE(SUM(turns),0) FROM activity_hours`).Scan(&n); err != nil || n != 2 {
+		t.Fatalf("counted %d turns (%v), want 2: the person's two", n, err)
+	}
+}

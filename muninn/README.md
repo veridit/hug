@@ -730,8 +730,13 @@ person is waiting on them. Set `HUG_FULL_SPEED=1` to opt out, or set
 The daily `dream` pass (retire near-identical duplicates with an undo receipt,
 queue the rest for agents) runs by itself on every machine that captures, with
 or without `hug mem serve`. When a pass is due (once a day), the capture hook
-starts a waiter. The waiter runs the pass once nobody has typed for 30 minutes
-and the 5-minute load is below 120, and gives up after 12 hours. A waiter that
+starts a waiter. Once hug has seen a week of your turns, the waiter starts the
+pass at the beginning of the day's quiet stretch. hug learns that stretch
+from an hour-of-week histogram of when you type (`hug mem dream --week`; it
+is local, one row per hour, and seeded once from `hook.log`). Until then it
+runs the pass once nobody has typed for 30 minutes. Either way the 5-minute
+load must be below 120. A waiter gives up 12 hours after it started, or 12
+hours after the quiet stretch it waited for began. A waiter that
 slept through an upgrade hands the pass to the hug installed now. Every pass
 leaves one line, naming its receipt, in `hug mem stats` (`"dream"`), in the
 TUI's *Needs a look* pane and in `hook.log`. `hug mem dream --status` shows the

@@ -14,7 +14,7 @@ import (
 // dreamCmd runs one dream pass: mechanical duplicates are retired with an
 // undo receipt, judgement items are queued for agents (memory_dream).
 func dreamCmd() *cobra.Command {
-	var dry, list, asJSON, summary, whenQuiet, status bool
+	var dry, list, asJSON, summary, whenQuiet, status, week bool
 	c := &cobra.Command{Use: "dream", Short: "Tidy memories: retire exact duplicates (with undo), queue the rest for agents",
 		Long: `dream runs one memory housekeeping pass.
 
@@ -25,17 +25,24 @@ their work (session start, return after a break, wrap-up) through the
 memory_dream MCP tool. Undo a pass with: hug mem tidy undo <receipt>.
 
 dream also runs by itself: when a pass is due (one a day), the capture hook
-starts a waiter that runs it once you have been away 30 minutes and the
-machine's 5-minute load is below 120. hug mem dream --status names the last
-pass and its undo receipt.`,
+starts a waiter. Once hug has seen a week of your turns, the waiter starts
+the pass at the beginning of the day's quiet stretch, learned from an
+hour-of-week histogram of when you type (hug mem dream --week). Until then
+it runs the pass once you have been away 30 minutes. Either way the
+machine's 5-minute load must be below 120. hug mem dream --status names the
+last pass, its undo receipt, and the next quiet stretch.`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if whenQuiet {
 				return waitAndDream(cmd.Context())
 			}
 			return withApp(func(ctx context.Context, a *app.App) error {
-				if status {
-					for _, line := range dreamStatus(a) {
+				if status || week {
+					lines := dreamStatus(a)
+					if week {
+						lines = dreamWeek(a)
+					}
+					for _, line := range lines {
 						fmt.Fprintln(cmd.OutOrStdout(), line)
 					}
 					return nil
@@ -93,6 +100,7 @@ pass and its undo receipt.`,
 	c.Flags().BoolVar(&list, "list", false, "show the items an agent here would be handed (marks them handed)")
 	c.Flags().BoolVar(&asJSON, "json", false, "print JSON")
 	c.Flags().BoolVar(&status, "status", false, "when dream last ran, what it did, its undo receipt, and when it runs next")
+	c.Flags().BoolVar(&week, "week", false, "your week: turns per hour of the week, and the quiet stretches dream starts in")
 	c.Flags().BoolVar(&whenQuiet, "when-quiet", false, "wait until you are away and the machine is idle, then run one pass (the capture hook starts this)")
 	_ = c.Flags().MarkHidden("when-quiet")
 	c.Flags().BoolVar(&summary, "summary", false, "one line: merged, handed out, resolved and open in the last 24 hours")
