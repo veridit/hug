@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzz3"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T13:44"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab lands acd46d65 in the next stack (accepted 15:24Z, CI 44331139852 6/6)"
+waiting_since: "2026-11-18T16:24"
+waiting_asked_by: "iwazaru"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ Ready to land: branch 9ahvgt = ci/9ahvgt at acd46d65 (43b03284 lint + acd46d65 t
 crab review 16:24 local: accepted. 43b03284 + acd46d65 on 62c20712; owner.go gone rule (Closed + 1 h quiet, any 24 h quiet, unknown name doing > 24 h), 'You are NAME' alias, instances via the existing harness jcode_instances discovery limited to sessions in this repo, people never judged, take fix 'hug task set ID --assignee ME && hug task take ID --as ME --model MODEL'. Real board 22 findings, 0 live workers flagged. CI 44331139852 6/6. Rulings: 1 h for Closed stays; && over --force is right; role names as unknown names are fine.
 ## History
 - 2026-11-18T13:44 todo -> doing/active (take)
+- 2026-11-18T16:24 doing/active -> doing/waiting (wait)
