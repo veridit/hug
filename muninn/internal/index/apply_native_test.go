@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"testing"
@@ -21,14 +22,11 @@ import (
 // index answers like the one an index pass over the same store keeps: the
 // same units and active flags, unit concepts, neighbour lists (ids and
 // sims), concept graph (edge weights, degrees, total) and, for a fixed
-// query set, the same results with the same keyword and semantic scores.
-// The pass-maintained index is a second database that got the same store
-// file and ran the incremental pass hug ran before 4vd1mz, after each
-// forget. Community labels are not compared across the two: DF-Louvain
-// visits Go maps, so two passes over one file already label communities
-// differently (measured 2026-11-18: two fresh indexes of one 60-memory
-// file, 5 of 5 runs); each index must instead keep
-// its per-unit community counts equal to a recount (checkUnitCommunities).
+// query set, the same ordered results with every Unit and score field equal,
+// including community-only candidates and unrounded floating-point scores.
+// The sorted frontier makes independently built initial graphs deterministic;
+// no result order or candidate is normalized away. Per-unit community counts
+// must also equal a recount (checkUnitCommunities).
 // A next pass on the targeted index finds nothing to do. Twins (5sc5rw)
 // forget together.
 func TestApplyNativeForgetsMatchIndexPass(t *testing.T) {
@@ -143,8 +141,8 @@ func compareIndexes(t *testing.T, round int, a, b *store.DB) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if ka, kb := resultKeys(ra), resultKeys(rb); ka != kb {
-			t.Fatalf("round %d: search %q differs\ntargeted %s\npass     %s", round, q, ka, kb)
+		if !reflect.DeepEqual(ra, rb) {
+			t.Fatalf("round %d: search %q differs\ntargeted %#v\npass     %#v", round, q, ra, rb)
 		}
 	}
 }
@@ -179,16 +177,4 @@ func diffLines(a, b string) string {
 	}
 	sort.Strings(out)
 	return strings.Join(out, "\n")
-}
-
-func resultKeys(rs []search.Result) string {
-	var out []string
-	for _, r := range rs {
-		if r.Keyword == 0 && r.Semantic <= 0 {
-			continue // a community-only candidate: labels differ, see above
-		}
-		out = append(out, fmt.Sprintf("%s:k%d:s%.4f", r.Unit.Key, r.Keyword, r.Semantic))
-	}
-	sort.Strings(out)
-	return strings.Join(out, " ")
 }
