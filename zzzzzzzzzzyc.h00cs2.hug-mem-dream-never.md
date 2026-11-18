@@ -8,11 +8,14 @@ assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T04:27"
+waiting_on: "check 3: dream_last set on Jørgen's machine within a day of the release holding 1151adad and 07183cf5, with no hug mem serve; read with hug mem dream --status"
+waiting_since: "2026-11-18T05:28"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -50,3 +53,4 @@ CI: 1151adad (CI 44234533682) failed only test (windows-latest): 'TestDreamStatu
 - 2026-11-17T23:20 todo -> doing/active (take)
 - 2026-11-17T23:22 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:20
 - 2026-11-18T04:27 todo/ready -> doing/active (take)
+- 2026-11-18T05:28 doing/active -> doing/waiting (wait)
