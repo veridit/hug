@@ -38,5 +38,12 @@ Today: hug task dep --add 'when date YYYY-MM-DD' holds a todo task out of next, 
 ## Notes
 
 
+Landed 88a6ac89.
+- Failing first on main: task timedwait_test.go fails with 's.WaitUntil undefined'. cli TestTimedWaitCommands fails with 'unknown flag --after; valid: --as, --model, --to, --check, --show'.
+- Tests: TestWaitUntilWakesOnTheDate, TestAskAfterAsksOnTheDate, TestWaitReplacesHeldAsk, TestWakeMarksNothingRead, TestTimedWaitRefusesBadDates and TestTimedWaitCommands (cli: one wake commit for 2 tasks, nothing committed the day before or on a second read). MCP until/ask_after are covered in TestAskOverMCP.
+- Mutants: 12 of 12 killed, including due-a-day-late ('due on 24 Nov: []') and read-never-wakes.
+- Race ok: task 25.9s, cli 111.9s, mcp 9.5s, cache 11.1s. tui -short ok 43.0s.
+- Cache schema 22. TUI WAITING row shows '· until 24 Nov' (nautilus ok'd waitrow.go).
+- Check 3 holds until the release is installed. A v0.7.54 hug that writes on the task moves the unknown waiting_ask_* fields to History, and it never wakes the task.
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
