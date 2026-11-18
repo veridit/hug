@@ -245,12 +245,13 @@ func frameLines(s string) (first, last string) {
 // load runs past spinAfter, which under load can be any frame. The frames
 // TestTmuxReload compares line by line must not differ by it.
 func settled(s string) bool {
-	return true
+	first, _ := frameLines(s)
+	return !strings.Contains(first, "refreshing")
 }
 
 // reloadShown says a capture shows the reloaded hug, its first load done.
 func reloadShown(s string) bool {
-	return strings.Contains(s, "reloaded hug v0.0.2")
+	return strings.Contains(s, "reloaded hug v0.0.2") && settled(s)
 }
 
 // listShown says a capture shows the list after Esc left the task, drawn
@@ -259,8 +260,8 @@ func reloadShown(s string) bool {
 // key bar last (hfkt1n). So the crumb without › is not enough; the key bar
 // must be the list's own, "j/k move", not the detail's "j/k scroll".
 func listShown(s string) bool {
-	first, _ := frameLines(s)
-	return !strings.Contains(first, "›")
+	first, last := frameLines(s)
+	return !strings.Contains(first, "›") && strings.HasPrefix(last, "j/k move")
 }
 
 // TestReloadFramesSettle holds TestTmuxReload's waits to frames it can
@@ -292,8 +293,9 @@ func TestReloadFramesSettle(t *testing.T) {
 		{"torn-after-esc.txt", false, listShown},
 		// The detail, before Esc.
 		{"after.txt", false, listShown},
-		// The R offer, then the same with a load running: line 1 differs
-		// from the task's before R.
+		// The task before R, then the R offer, then the same with a load
+		// running: line 1 differs from the task's before R.
+		{"before.txt", true, settled},
 		{"offered.txt", true, settled},
 		{"offered-refreshing.txt", false, settled},
 	} {
