@@ -1,15 +1,21 @@
 ---
 id: 8t3hgx
 title: "Release v0.7.72"
-state: todo
+state: "doing"
 type: chore
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T00:15"
+stage: "active"
+model: "claude-opus-5-5"
+effort: "high"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +37,7 @@ CI 44416338720 8/8 on c1031e55. Content: ydwamb, p277bp checks 1 and 2 (README, 
 - [ ] brew upgrade veridit/tap/hug; hug version prints v0.7.72
 
 ## Notes
+
+
+## History
+- 2026-11-19T00:15 todo -> doing/active (take)
