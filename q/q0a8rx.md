@@ -43,6 +43,7 @@ Labels: /Users/jhf/.jcode/scratch/gav9nw (measure.json corrected_counts: persona
 
 
 check 1: Jørgen 19:42Z: rewrite, after moving the memories to the right place first.
+check 3 (mizaru 19:51Z): moves file /Users/jhf/.jcode/scratch/q0a8rx/moves.tsv, 58 lines, each with its label, full id and a one-line reason (the58.json holds content and targets). Final split per crab's ruling B (19:49Z): personal 45 (29 personal + 16 other: 8 machine state; 8 about Seid/Statbus, which are never written into Seid's or Statbus's scope because both sync a hug/memory branch and are observe-only), global 13 (team rules). Dry-run 1 needed --cross-client for the 8 (dryrun1.txt: 'nothing moved, 8 of 58 items failed checks'); after B, dryrun2.txt: 'would rescope 45 to personal / 13 to global'. Real: rescope.txt 'rescoped 58 memories', backup ~/Library/Application Support/muninn/tidy/rescope-20261118T194951Z-4179401420 (+ my copy memories.json.before-rescope, sha256 cf0c2d97). DB: 56 active at target + 2 at target and inactive (cap_32ec68 w1x6w0, cap_6e05d2 rt2hky: inactive before the move, and inactive on the branch tip too). hug mem search --all finds 56/56 active in their new scope (search-check.txt; the 2 inactive are not searchable, and hug mem show --all shows both). hug's project scope now holds 827 memories.
 ## History
 - 2026-11-18T20:41 todo -> doing/active (take)
 - 2026-11-18T20:41 doing/active -> doing/asked (ask)
