@@ -32,10 +32,11 @@ Changes: agxqax 8zwy6r 0sw0dd fcf4fg
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml green and hug version says 0.7.67
+- [x] release.yml green and hug version says 0.7.67
 
 ## Notes
 
 
+check 1: release.yml 44362714454 success; brew upgrade veridit/tap/hug -> hug v0.7.67 (merge e6853a7c, tag v0.7.67 on 3ef0e7f8)
 ## History
 - 2026-11-18T18:48 todo -> doing/active (take)
