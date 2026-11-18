@@ -3,6 +3,7 @@ package run
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -11,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/harness"
 	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
@@ -35,14 +37,26 @@ Without --apply it only says what would change. With --apply it writes a backup
 of the store next to it, folds, and reindexes.`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			out := cmd.OutOrStdout()
+			// jcode instances still on the turn_start-only hook, which put
+			// recall into the person's input box (z9q42h).
+			hooks, err := migrateJcodeHooks(out, apply)
+			if err != nil {
+				return err
+			}
 			path := app.NativePath()
 			st, err := ingest.FoldTwins(path, true)
 			if err != nil {
 				return err
 			}
-			out := cmd.OutOrStdout()
 			if st.Folded == 0 {
-				fmt.Fprintln(out, "memory: nothing to do")
+				if hooks == 0 {
+					fmt.Fprintln(out, "memory: nothing to do")
+				} else if !apply {
+					fmt.Fprintln(out, "fix: hug mem upgrade --apply")
+					cmd.SilenceErrors = true
+					return pendingErr{}
+				}
 				return nil
 			}
 			verb := "would fold"
@@ -93,3 +107,37 @@ of the store next to it, folds, and reindexes.`,
 type pendingErr struct{}
 
 func (pendingErr) Error() string { return "" }
+
+// migrateJcodeHooks moves every jcode instance whose config runs muninn's
+// recall hook on turn_start only (hug before 0.7.53, which delivered with
+// jcode transcript into the person's input box) onto turn_start,
+// post_tool_feedback and turn_end, keeping the binary it already runs. It
+// returns how many instances need (or got) the change.
+func migrateJcodeHooks(out io.Writer, apply bool) (int, error) {
+	var homes []harness.JcodeInstance
+	if err := withApp(func(_ context.Context, a *app.App) error {
+		homes = a.JcodeInstances()
+		return nil
+	}); err != nil {
+		return 0, err
+	}
+	n := 0
+	for _, inst := range homes {
+		bin, stale := harness.JcodeRecallNeedsMigration(inst.Home)
+		if !stale {
+			continue
+		}
+		n++
+		file := filepath.Join(inst.Home, "config.toml")
+		if !apply {
+			fmt.Fprintf(out, "memory: would deliver jcode[%s] recall in a tool result, not the input box: %s runs %s on turn_start, post_tool_feedback and turn_end\n", inst.Name, file, bin+" hook jcode")
+			continue
+		}
+		r, err := harness.InstallJcodeHome(inst.Home, "jcode["+inst.Name+"]", bin, true, false)
+		if err != nil {
+			return n, fmt.Errorf("jcode[%s]: %w; fix: hug mem install jcode --jcode-home %s", inst.Name, err, inst.Home)
+		}
+		fmt.Fprintf(out, "memory: jcode[%s] recall now arrives in a tool result, not the input box: %s (backup %s)\n", inst.Name, file, filepath.Base(r.Backup))
+	}
+	return n, nil
+}

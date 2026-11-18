@@ -482,7 +482,7 @@ memory.
 ```sh
 muninn install claude   # ~/.claude/settings.json  UserPromptSubmit -> additionalContext
 muninn install codex    # ~/.codex/hooks.json; then trust the hook in Codex with /hooks
-muninn install jcode    # ~/.jcode/config.toml [hooks] turn_start
+muninn install jcode    # ~/.jcode/config.toml [hooks] turn_start, post_tool_feedback, turn_end
 muninn install jcode --all-instances   # every jcode instance (see below)
 muninn install all --dry-run
 muninn uninstall all
@@ -494,7 +494,7 @@ Installers are idempotent, keep a timestamped backup, and leave your other hooks
 |---|---|---|
 | Claude Code | `UserPromptSubmit` hook, `additionalContext` | before the model answers (output format verified against the docs; not yet run in a live session) |
 | Codex | `UserPromptSubmit` hook, `additionalContext` | before the model answers (output format verified against codex-rs; not yet run in a live session) |
-| jcode | `turn_start` hook + `jcode transcript` | at the next safe point of the running turn (jcode has no synchronous context hook yet; see [jcode#2069](https://github.com/1jehuang/jcode/issues/2069)). Verified live. |
+| jcode | `turn_start` computes and parks the block; `post_tool_feedback` prints it into the turn's first successful tool result; `turn_end` drops what no tool call took | with the turn's first tool result, once; a turn without a tool call gets none (jcode has no synchronous context hook yet; see [jcode#2069](https://github.com/1jehuang/jcode/issues/2069)). Nothing goes into your input box. |
 | any MCP client | `muninn mcp` (stdio) | when the agent calls `memory_search` / `memory_recall` |
 
 MCP tools: `memory_search`, `memory_recall`, `memory_remember`, `memory_forget`,

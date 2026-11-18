@@ -166,8 +166,9 @@ func InstallCodex(bin string, install, dry bool) (InstallResult, error) {
 	return r, err
 }
 
-// InstallJcode wires `muninn hook jcode` into [hooks] turn_start of the global
-// ~/.jcode/config.toml with a minimal line edit that keeps other hooks.
+// InstallJcode wires `muninn hook jcode` into [hooks] turn_start,
+// post_tool_feedback and turn_end of the global ~/.jcode/config.toml with a
+// minimal line edit that keeps other hooks.
 func InstallJcode(bin string, install, dry bool) (InstallResult, error) {
 	home, _ := os.UserHomeDir()
 	return InstallJcodeHome(filepath.Join(home, ".jcode"), "jcode", bin, install, dry)
@@ -182,7 +183,7 @@ func InstallJcodeHome(jcodeHome, label, bin string, install, dry bool) (InstallR
 		return res, err
 	}
 	cmd := bin + " hook jcode"
-	text, changed, err := editJcodeTurnStart(string(b), cmd, install)
+	text, changed, err := editJcodeHooks(string(b), cmd, install)
 	if err != nil {
 		return res, err
 	}
@@ -226,6 +227,58 @@ func InstallJcodeHome(jcodeHome, label, bin string, install, dry bool) (InstallR
 
 const jcodeMarker = "# muninn: automatic local memory recall"
 
+// JcodeRecallNeedsMigration reports whether the jcode config in jcodeHome
+// runs muninn's recall hook but not on every key that delivers it now
+// (before hug 0.7.53 it ran on turn_start alone and typed the block into
+// the person's input box). bin is the muninn binary that config runs, so
+// the migration keeps it.
+func JcodeRecallNeedsMigration(jcodeHome string) (bin string, stale bool) {
+	b, err := os.ReadFile(filepath.Join(jcodeHome, "config.toml"))
+	if err != nil {
+		return "", false
+	}
+	text := string(b)
+	for _, key := range jcodeRecallKeys {
+		cmds, err := jcodeHookCommands(text, key)
+		if err != nil {
+			return "", false
+		}
+		for _, c := range cmds {
+			if isRecallHook(c) && bin == "" {
+				bin = strings.TrimSuffix(c, " hook jcode")
+			}
+		}
+	}
+	if bin == "" {
+		return "", false
+	}
+	_, changed, err := editJcodeHooks(text, bin+" hook jcode", true)
+	return bin, err == nil && changed
+}
+
+// jcodeHookCommands returns the commands on one [hooks] key, read the way
+// editJcodeHook reads them.
+func jcodeHookCommands(text, key string) ([]string, error) {
+	lines := strings.Split(text, "\n")
+	inHooks := false
+	for i := 0; i < len(lines); i++ {
+		t := strings.TrimSpace(lines[i])
+		if strings.HasPrefix(t, "[") {
+			inHooks = t == "[hooks]"
+			continue
+		}
+		if inHooks && (strings.HasPrefix(t, key+"=") || strings.HasPrefix(t, key+" ")) {
+			end := i
+			for end < len(lines)-1 && !tomlBalanced(strings.Join(lines[i:end+1], "\n")) {
+				end++
+			}
+			raw := strings.Join(lines[i:end+1], "\n")
+			return tomlStrings(strings.TrimSpace(raw[strings.Index(raw, "=")+1:]))
+		}
+	}
+	return nil, nil
+}
+
 // JcodeHookInstalled reports whether a jcode config.toml already runs muninn.
 func JcodeHookInstalled(jcodeHome string) bool {
 	b, err := os.ReadFile(filepath.Join(jcodeHome, "config.toml"))
@@ -233,17 +286,44 @@ func JcodeHookInstalled(jcodeHome string) bool {
 		return false
 	}
 	// Removing muninn would change the file exactly when it is installed.
-	_, changed, err := editJcodeTurnStart(string(b), "muninn hook jcode", false)
+	_, changed, err := editJcodeHooks(string(b), "muninn hook jcode", false)
 	return err == nil && changed
 }
 
-// editJcodeTurnStart edits the turn_start key inside [hooks]. jcode accepts a
-// string or an array of strings, so an existing hook is kept alongside muninn.
-func editJcodeTurnStart(text, cmd string, install bool) (string, bool, error) {
+// jcodeRecallKeys are the [hooks] keys that run muninn's recall hook: the
+// turn's start computes and parks the block, the first successful tool call
+// delivers it inside its result, and the turn's end drops what was not
+// taken (z9q42h). The command switches on JCODE_HOOK_EVENT.
+var jcodeRecallKeys = []string{"turn_start", "post_tool_feedback", "turn_end"}
+
+// editJcodeHooks puts cmd on every recall key (install) or takes muninn's
+// recall hook off them, keeping every other hook on those keys.
+func editJcodeHooks(text, cmd string, install bool) (string, bool, error) {
+	changed := false
+	for _, key := range jcodeRecallKeys {
+		next, c, err := editJcodeHook(text, key, cmd, install)
+		if err != nil {
+			return text, false, err
+		}
+		text, changed = next, changed || c
+	}
+	return text, changed, nil
+}
+
+// isRecallHook reports whether a hook command is muninn's recall hook (not,
+// say, "muninn capture --hook", which shares turn_end).
+func isRecallHook(e string) bool {
+	return strings.Contains(e, "muninn") && strings.HasSuffix(e, " hook jcode")
+}
+
+// editJcodeHook edits one key inside [hooks]. jcode accepts a string or an
+// array of strings, on one line or several, so an existing hook is kept
+// alongside muninn.
+func editJcodeHook(text, key, cmd string, install bool) (string, bool, error) {
 	lines := strings.Split(text, "\n")
-	inHooks, hooksAt, keyAt := false, -1, -1
-	for i, l := range lines {
-		t := strings.TrimSpace(l)
+	inHooks, hooksAt, keyAt, keyEnd := false, -1, -1, -1
+	for i := 0; i < len(lines); i++ {
+		t := strings.TrimSpace(lines[i])
 		if strings.HasPrefix(t, "[") {
 			inHooks = t == "[hooks]"
 			if inHooks {
@@ -251,36 +331,33 @@ func editJcodeTurnStart(text, cmd string, install bool) (string, bool, error) {
 			}
 			continue
 		}
-		if inHooks && (strings.HasPrefix(t, "turn_start=") || strings.HasPrefix(t, "turn_start ")) {
-			keyAt = i
+		if inHooks && keyAt < 0 && (strings.HasPrefix(t, key+"=") || strings.HasPrefix(t, key+" ")) {
+			keyAt, keyEnd = i, i
+			// A multi-line array runs until its brackets balance.
+			for keyEnd < len(lines)-1 && !tomlBalanced(strings.Join(lines[keyAt:keyEnd+1], "\n")) {
+				keyEnd++
+			}
 		}
 	}
-	quoted := fmt.Sprintf("%q", cmd)
 	var existing []string
 	if keyAt >= 0 {
-		v := strings.TrimSpace(lines[keyAt][strings.Index(lines[keyAt], "=")+1:])
-		if strings.HasPrefix(v, "[") {
-			var arr []string
-			if err := json.Unmarshal([]byte(v), &arr); err != nil {
-				return text, false, fmt.Errorf("cannot parse turn_start %s: edit it by hand", v)
-			}
-			existing = arr
-		} else if v != "" && v != `""` {
-			var s string
-			if err := json.Unmarshal([]byte(v), &s); err != nil {
-				return text, false, fmt.Errorf("cannot parse turn_start %s: edit it by hand", v)
-			}
-			existing = []string{s}
+		raw := strings.Join(lines[keyAt:keyEnd+1], "\n")
+		v := strings.TrimSpace(raw[strings.Index(raw, "=")+1:])
+		arr, err := tomlStrings(v)
+		if err != nil {
+			return text, false, fmt.Errorf("cannot parse %s = %s (%v): edit it by hand", key, v, err)
 		}
+		existing = arr
 	}
 	var next []string
 	has := false
 	for _, e := range existing {
-		if strings.Contains(e, "muninn") && strings.HasSuffix(e, " hook jcode") {
-			has = true
-			if !install {
+		if isRecallHook(e) {
+			if has || !install {
+				has = true
 				continue
 			}
+			has = true
 			e = cmd
 		}
 		next = append(next, e)
@@ -288,10 +365,7 @@ func editJcodeTurnStart(text, cmd string, install bool) (string, bool, error) {
 	if install && !has {
 		next = append(next, cmd)
 	}
-	if install && has && len(next) == len(existing) && strings.Join(next, "\x00") == strings.Join(existing, "\x00") {
-		return text, false, nil
-	}
-	if !install && !has {
+	if strings.Join(next, "\x00") == strings.Join(existing, "\x00") && len(next) == len(existing) {
 		return text, false, nil
 	}
 	var value string
@@ -304,22 +378,147 @@ func editJcodeTurnStart(text, cmd string, install bool) (string, bool, error) {
 		b, _ := json.Marshal(next)
 		value = string(b)
 	}
-	_ = quoted
+	line := key + " = " + value
 	switch {
 	case keyAt >= 0 && value == "":
-		lines = append(lines[:keyAt], lines[keyAt+1:]...)
-		if keyAt > 0 && strings.TrimSpace(lines[keyAt-1]) == jcodeMarker {
+		lines = append(lines[:keyAt], lines[keyEnd+1:]...)
+		if keyAt > 0 && strings.TrimSpace(lines[keyAt-1]) == jcodeMarker && (keyAt >= len(lines) || !isRecallLine(lines[keyAt])) {
 			lines = append(lines[:keyAt-1], lines[keyAt:]...)
 		}
 	case keyAt >= 0:
-		lines[keyAt] = "turn_start = " + value
+		lines = append(lines[:keyAt], append([]string{line}, lines[keyEnd+1:]...)...)
 	case hooksAt >= 0:
-		ins := []string{jcodeMarker, "turn_start = " + value}
-		lines = append(lines[:hooksAt+1], append(ins, lines[hooksAt+1:]...)...)
+		// New keys go together under muninn's marker, right after [hooks].
+		at := hooksAt + 1
+		if at < len(lines) && strings.TrimSpace(lines[at]) == jcodeMarker {
+			for at++; at < len(lines) && isRecallLine(lines[at]); at++ {
+			}
+			lines = append(lines[:at], append([]string{line}, lines[at:]...)...)
+		} else {
+			lines = append(lines[:at], append([]string{jcodeMarker, line}, lines[at:]...)...)
+		}
 	default:
-		lines = append(lines, "", "[hooks]", jcodeMarker, "turn_start = "+value)
+		lines = append(lines, "", "[hooks]", jcodeMarker, line)
 	}
 	return strings.Join(lines, "\n"), true, nil
+}
+
+// isRecallLine reports whether a config line sets a recall key to muninn's
+// hook alone (the lines muninn adds under its marker).
+func isRecallLine(l string) bool {
+	t := strings.TrimSpace(l)
+	for _, k := range jcodeRecallKeys {
+		if strings.HasPrefix(t, k+" = \"") && isRecallHook(strings.TrimSuffix(strings.TrimPrefix(t, k+" = \""), "\"")) {
+			return true
+		}
+	}
+	return false
+}
+
+// tomlBalanced reports whether every [ in s outside strings and comments is
+// closed.
+func tomlBalanced(s string) bool {
+	depth, quote, comment := 0, byte(0), false
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		switch {
+		case comment:
+			comment = c != '\n'
+		case quote != 0:
+			if c == '\\' && quote == '"' {
+				i++
+			} else if c == quote {
+				quote = 0
+			}
+		case c == '"' || c == '\'':
+			quote = c
+		case c == '#':
+			comment = true
+		case c == '[':
+			depth++
+		case c == ']':
+			depth--
+		}
+	}
+	return depth <= 0 && quote == 0
+}
+
+// tomlStrings parses a TOML string or array of strings: basic ("...") and
+// literal ('...') strings, commas, a trailing comma, newlines and comments.
+func tomlStrings(v string) ([]string, error) {
+	var out []string
+	i, arr := 0, false
+	skip := func() {
+		for i < len(v) {
+			switch c := v[i]; {
+			case c == ' ' || c == '\t' || c == '\n' || c == '\r' || (arr && c == ','):
+				i++
+			case c == '#':
+				for i < len(v) && v[i] != '\n' {
+					i++
+				}
+			default:
+				return
+			}
+		}
+	}
+	skip()
+	if i < len(v) && v[i] == '[' {
+		arr = true
+		i++
+	}
+	for {
+		skip()
+		if i >= len(v) {
+			if arr {
+				return nil, errors.New("unclosed array")
+			}
+			return out, nil
+		}
+		switch v[i] {
+		case ']':
+			if !arr {
+				return nil, errors.New("unexpected ]")
+			}
+			i++
+			skip()
+			if i < len(v) {
+				return nil, errors.New("text after the array")
+			}
+			return out, nil
+		case '"':
+			j := i + 1
+			for j < len(v) && v[j] != '"' {
+				if v[j] == '\\' {
+					j++
+				}
+				j++
+			}
+			if j >= len(v) {
+				return nil, errors.New("unclosed string")
+			}
+			var s string
+			if err := json.Unmarshal([]byte(v[i:j+1]), &s); err != nil {
+				return nil, err
+			}
+			out, i = append(out, s), j+1
+		case '\'':
+			j := strings.IndexByte(v[i+1:], '\'')
+			if j < 0 {
+				return nil, errors.New("unclosed string")
+			}
+			out, i = append(out, v[i+1:i+1+j]), i+j+2
+		default:
+			return nil, fmt.Errorf("unexpected %q", v[i])
+		}
+		if !arr {
+			skip()
+			if i < len(v) {
+				return nil, errors.New("text after the string")
+			}
+			return out, nil
+		}
+	}
 }
 
 func shellQuote(s string) string {

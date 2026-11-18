@@ -23,7 +23,7 @@ func TestJcodeTakeoverRoundTrip(t *testing.T) {
 	}
 	b, _ := os.ReadFile(filepath.Join(home, "config.toml"))
 	got := string(b)
-	for _, want := range []string{"memory = false", `disabled = ["browser","memory"]`, `post_tool_feedback = "echo keep-me"`, `turn_start = "/bin/muninn hook jcode"`, "swarm = true"} {
+	for _, want := range []string{"memory = false", `disabled = ["browser","memory"]`, `post_tool_feedback = ["echo keep-me","/bin/muninn hook jcode"]`, `turn_start = "/bin/muninn hook jcode"`, `turn_end = "/bin/muninn hook jcode"`, "swarm = true"} {
 		if !strings.Contains(got, want) {
 			t.Errorf("config missing %q:\n%s", want, got)
 		}

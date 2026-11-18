@@ -8,7 +8,6 @@ import (
 	"github.com/veridit/hug/internal/env"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime/pprof"
 	"strings"
@@ -706,10 +705,25 @@ func runHook(name string, budget time.Duration) error {
 			home, _ := os.UserHomeDir()
 			jh = filepath.Join(home, ".jcode")
 		}
-		msg, err := harness.JcodeLastUserMessage(filepath.Join(jh, "sessions"), sid)
+		sessions := filepath.Join(jh, "sessions")
+		parks := harness.ParkDir(config.DataDir())
+		switch os.Getenv("JCODE_HOOK_EVENT") {
+		case "post_tool_feedback":
+			return deliverParked(parks, sessions, sid)
+		case "turn_end", "session_end":
+			// What no tool call took is dropped: it was for this turn only.
+			if harness.HasPark(parks, sid) {
+				if p, ok, _ := harness.Claim(parks, sid); ok {
+					logHook("jcode %s: dropped=no-tool-call turn=%s", short(sid), p.Turn)
+				}
+			}
+			return nil
+		}
+		turn, err := harness.ReadJcodeTurn(sessions, sid)
 		if err != nil {
 			return err
 		}
+		msg := turn.Text
 		a, err := app.Open(ctx)
 		if err != nil {
 			return err
@@ -721,7 +735,6 @@ func runHook(name string, budget time.Duration) error {
 			return binding.Err
 		}
 		cwd := os.Getenv("JCODE_HOOK_CWD")
-		sessions := filepath.Join(jh, "sessions")
 		bs := boardSource(ctx, a.Cfg.BoardNudges(), cwd, sessionName(sid), func(since time.Time) harness.Activity {
 			act, _ := harness.JcodeActivity(sessions, sid, since)
 			return act
@@ -734,33 +747,45 @@ func runHook(name string, budget time.Duration) error {
 			logHook("jcode[%s] %s: msg=%q hits=0 skipped=%q elapsed=%s", inst.Name, short(sid), recall.Truncate(msg, 60), resp.Skipped, resp.Elapsed)
 			return err
 		}
-		if !harness.JcodeTurnOpen(filepath.Join(jh, "sessions"), sid, msg) {
-			// The turn already ended: send would start a new turn that looks
-			// like the user speaking. Drop it; the agent can still search.
-			logHook("jcode[%s] %s: msg=%q hits=%d dropped=turn-ended elapsed=%s", inst.Name, short(sid), recall.Truncate(msg, 60), len(resp.Hits), resp.Elapsed)
-			return nil
-		}
-		bin := inst.Binary()
-		if bin == "" {
-			bin = "jcode"
-		}
-		// The block goes on stdin, never argv: it starts with "-- muninn recall",
-		// which jcode's argument parser rejects as an unknown flag (exit 2).
-		cmd := exec.CommandContext(ctx, bin, "transcript", "--mode", "send", "-S", sid)
-		cmd.Stdin = strings.NewReader(resp.Block)
-		cmd.Env = append(os.Environ(), "JCODE_HOME="+inst.Home)
-		if os.Getenv("JCODE_RUNTIME_DIR") == "" {
-			if rt := filepath.Join(inst.Home, "runtime"); dirExists(rt) {
-				cmd.Env = append(cmd.Env, "JCODE_RUNTIME_DIR="+rt)
-			}
-		}
-		out, err := cmd.CombinedOutput()
-		logHook("jcode[%s] %s: msg=%q hits=%d elapsed=%s transcript_err=%v %s", inst.Name, short(sid), recall.Truncate(msg, 60),
-			len(resp.Hits), resp.Elapsed, err, strings.TrimSpace(string(out)))
+		// The block waits for this turn's first tool result (z9q42h): it
+		// never goes into the person's input box, where jcode transcript
+		// put it while he typed.
+		err = harness.Park(parks, sid, harness.Parked{Turn: turn.ID, Block: resp.Block})
+		logHook("jcode[%s] %s: msg=%q hits=%d elapsed=%s parked turn=%s err=%v", inst.Name, short(sid), recall.Truncate(msg, 60),
+			len(resp.Hits), resp.Elapsed, turn.ID, err)
 		return err
 	default:
 		return fmt.Errorf("unknown harness %q (claude, codex, jcode)", name)
 	}
+}
+
+// feedbackProbe, when set by a test, hears every load deliverParked does
+// beyond its one stat.
+var feedbackProbe func(what string)
+
+// deliverParked is jcode's post_tool_feedback hook: it prints the session's
+// parked recall block, which jcode appends to the tool result. With nothing
+// parked, the cost is one stat. A block parked for another turn (the person
+// has typed again, or the turn answered) is dropped, never shown.
+func deliverParked(parks, sessions, sid string) error {
+	if !harness.HasPark(parks, sid) {
+		return nil
+	}
+	if feedbackProbe != nil {
+		feedbackProbe("claim")
+	}
+	p, ok, err := harness.Claim(parks, sid)
+	if err != nil || !ok {
+		return err
+	}
+	turn, err := harness.ReadJcodeTurn(sessions, sid)
+	if err != nil || !turn.Current(p.Turn) {
+		logHook("jcode %s: dropped=stale parked=%s current=%s ended=%v err=%v", short(sid), p.Turn, turn.ID, turn.Ended, err)
+		return nil
+	}
+	fmt.Fprintln(os.Stdout, p.Block)
+	logHook("jcode %s: delivered turn=%s tool=%s", short(sid), p.Turn, os.Getenv("JCODE_HOOK_TOOL_NAME"))
+	return nil
 }
 
 func hookRecall(ctx context.Context, harnessName, session, msg, cwd string) (recall.Response, error) {

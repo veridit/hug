@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -183,31 +182,28 @@ func TestScopeMatrixCLIAndHooks(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			// The jcode hook step drives a /bin/sh stub as the instance's jcode
-			// binary; Windows cannot run it. Every other surface still runs there.
+			// The jcode hook step parks the block at turn_start and reads it from
+			// the turn's first tool result (z9q42h).
 			jcodeHook := func() {
-				if err := os.WriteFile(filepath.Join(home, "sessions", "matrix-jcode.json"), []byte(`{"messages":[{"role":"user","content":[{"type":"text","text":"`+scopetest.Query+`"}]}]}`), 0600); err != nil {
-					t.Fatal(err)
-				}
-				if err := os.WriteFile(filepath.Join(home, "bin", "jcode"), []byte("#!/bin/sh\n# Like jcode's parser: unknown dash-leading args exit 2.\nfor a in \"$@\"; do case \"$a\" in --mode|-S|--session) ;; -*) exit 2;; esac; done\n{ printf '%s\\n' \"$@\"; cat; } > \"$JCODE_HOME/injected\"\n"), 0700); err != nil {
+				if err := os.WriteFile(filepath.Join(home, "sessions", "matrix-jcode.json"), []byte(`{"messages":[{"id":"m1","role":"user","content":[{"type":"text","text":"`+scopetest.Query+`"}]}]}`), 0600); err != nil {
 					t.Fatal(err)
 				}
 				t.Setenv("JCODE_HOME", home)
 				t.Setenv("JCODE_HOOK_SESSION_ID", "matrix-jcode")
 				t.Setenv("JCODE_HOOK_CWD", cwd)
+				t.Setenv("JCODE_HOOK_EVENT", "turn_start")
 				if err := runHook("jcode", 5*time.Second); err != nil {
 					t.Fatal(err)
 				}
-				injected, err := os.ReadFile(filepath.Join(home, "injected"))
+				t.Setenv("JCODE_HOOK_EVENT", "post_tool_feedback")
+				injected, err := captureSurface(t, func() error { return runHook("jcode", 5*time.Second) })
 				if err != nil {
 					t.Fatal(err)
 				}
-				f.Read(t, binding, string(injected))
+				f.Read(t, binding, injected)
 				scopetest.Pass(t, "hook.jcode", binding)
 			}
-			if runtime.GOOS != "windows" {
-				jcodeHook()
-			}
+			jcodeHook()
 
 			for _, args := range [][]string{{scopetest.Query, "--all", "--limit", "30"}, {scopetest.Query, "--scope", "client:*", "--limit", "30"}} {
 				out, err := cliSurface(t, searchCmd(), args...)

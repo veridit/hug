@@ -6,14 +6,18 @@
 //     Context lands before the model answers. (Verified against the Claude Code
 //     hooks reference and codex-rs/hooks/src/engine/output_parser.rs.)
 //   - jcode: turn_start is a fire-and-forget observer without the prompt, so
-//     the adapter reads the last user message from the session journal and
-//     delivers the block with `jcode transcript --mode send -S <session>`.
-//     It arrives at the next safe point of the running turn.
+//     the adapter reads the turn's user message from the session journal,
+//     recalls, and parks the block (park.go). The turn's first successful
+//     tool call runs the post_tool_feedback hook, which prints it into that
+//     tool result; turn_end drops what no tool call took (z9q42h). Nothing
+//     goes into the person's input box.
 package harness
 
 import (
 	"bufio"
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"os"
@@ -60,6 +64,7 @@ func PromptHookOutput(block string) []byte {
 
 // jcodeMessage is the subset of a jcode message muninn reads.
 type jcodeMessage struct {
+	ID      string `json:"id"`
 	Role    string `json:"role"`
 	Content []struct {
 		Type string `json:"type"`
@@ -86,114 +91,58 @@ func userText(m jcodeMessage) string {
 	return t
 }
 
-// JcodeLastUserMessage returns the most recent user text of a jcode session.
-// jcode keeps a snapshot (<id>.json, {"messages":[...]}) and an append journal
-// (<id>.journal.jsonl, lines with {"append_messages":[...]}) that is compacted
-// into the snapshot; the journal is newer, so it wins when it has user text.
-func JcodeLastUserMessage(sessionsDir, sessionID string) (string, error) {
-	if strings.ContainsAny(sessionID, `/\`) || sessionID == "" {
-		return "", os.ErrInvalid
-	}
-	base := filepath.Join(sessionsDir, sessionID)
-	if t, err := lastFromJournal(base + ".journal.jsonl"); err == nil && t != "" {
-		return t, nil
-	}
-	b, err := os.ReadFile(base + ".json")
-	if err != nil {
-		return "", err
-	}
-	var snap struct {
-		Messages []jcodeMessage `json:"messages"`
-	}
-	if err := json.Unmarshal(b, &snap); err != nil {
-		return "", err
-	}
-	for i := len(snap.Messages) - 1; i >= 0; i-- {
-		if t := userText(snap.Messages[i]); t != "" {
-			return t, nil
-		}
-	}
-	return "", nil
+// JcodeTurn is the turn a jcode session is in: its latest typed user
+// message and whether an answer has ended it.
+type JcodeTurn struct {
+	// ID is the user message's id (a hash of its text when it has none):
+	// jcode gives hooks no turn id, so the message is the turn.
+	ID   string
+	Text string
+	// Ended is true once an assistant message with text and no tool call
+	// followed the user message: the turn has answered.
+	Ended bool
 }
 
-func lastFromJournal(path string) (string, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return "", err
+// ReadJcodeTurn reads the session's current turn from the journal's last
+// 2 MB, and from the snapshot only when that holds no typed user message
+// (just after jcode compacts). A recall block earlier hugs delivered as a
+// user message is not the user speaking and starts no turn.
+func ReadJcodeTurn(sessionsDir, sessionID string) (JcodeTurn, error) {
+	var turn JcodeTurn
+	if strings.ContainsAny(sessionID, `/\`) || sessionID == "" {
+		return turn, os.ErrInvalid
 	}
-	defer f.Close()
-	const tail = 2 << 20
-	if fi, err := f.Stat(); err == nil && fi.Size() > tail {
-		f.Seek(fi.Size()-tail, io.SeekStart)
-	}
-	sc := bufio.NewScanner(f)
-	sc.Buffer(make([]byte, 0, 1<<20), 16<<20)
-	last := ""
-	for sc.Scan() {
-		line := sc.Bytes()
-		if !bytes.Contains(line, []byte(`"append_messages"`)) || !bytes.Contains(line, []byte(`"user"`)) {
-			continue
-		}
-		var entry struct {
-			Append []jcodeMessage `json:"append_messages"`
-		}
-		if json.Unmarshal(line, &entry) != nil {
-			continue
-		}
-		for _, m := range entry.Append {
-			if t := userText(m); t != "" {
-				last = t
+	base := filepath.Join(sessionsDir, sessionID)
+	seen := false
+	see := func(m jcodeMessage) {
+		switch m.Role {
+		case "user":
+			if t := userText(m); t != "" && !strings.Contains(t, "-- AI memory (muninn):") {
+				id := m.ID
+				if id == "" {
+					h := sha256.Sum256([]byte(t))
+					id = "text:" + hex.EncodeToString(h[:8])
+				}
+				turn, seen = JcodeTurn{ID: id, Text: t}, true
+			}
+		case "assistant":
+			// A final answer: text and no tool call. Tool calls mean the
+			// turn goes on.
+			text, tool := false, false
+			for _, c := range m.Content {
+				text = text || (c.Type == "text" && strings.TrimSpace(c.Text) != "")
+				tool = tool || c.Type == "tool_use"
+			}
+			if seen && text && !tool {
+				turn.Ended = true
 			}
 		}
 	}
-	return last, sc.Err()
-}
-
-// JcodeTurnOpen reports whether the jcode turn that started with msg is still
-// running: the journal's last user text is msg and no assistant message has
-// ended the turn with text and no tool call. jcode transcript --mode send
-// submits a NEW user turn when the session is idle (2026-11-15: two late
-// recall blocks arrived as empty "[transcription]" user messages), so the
-// hook only delivers while this is true.
-func JcodeTurnOpen(sessionsDir, sessionID, msg string) bool {
-	if strings.ContainsAny(sessionID, `/\`) || sessionID == "" {
-		return false
-	}
-	base := filepath.Join(sessionsDir, sessionID)
-	lastUser, ended := "", false
-	see := func(msgs []jcodeMessage) {
-		for _, m := range msgs {
-			switch m.Role {
-			case "user":
-				// An earlier recall block delivered mid-turn is a user message
-				// too; it is not the user speaking and does not start a turn.
-				if t := userText(m); t != "" && !strings.Contains(t, "-- AI memory (muninn):") {
-					lastUser, ended = t, false
-				}
-			case "assistant":
-				// A final answer: text and no tool call. Tool calls mean the
-				// turn goes on.
-				text, tool := false, false
-				for _, c := range m.Content {
-					text = text || (c.Type == "text" && strings.TrimSpace(c.Text) != "")
-					tool = tool || c.Type == "tool_use"
-				}
-				if text && !tool {
-					ended = true
-				}
-			}
+	journal := func() error {
+		f, err := os.Open(base + ".journal.jsonl")
+		if err != nil {
+			return err
 		}
-	}
-	// The snapshot holds the compacted past; the journal appends after it.
-	if b, err := os.ReadFile(base + ".json"); err == nil {
-		var snap struct {
-			Messages []jcodeMessage `json:"messages"`
-		}
-		if json.Unmarshal(b, &snap) == nil {
-			see(snap.Messages)
-		}
-	}
-	if f, err := os.Open(base + ".journal.jsonl"); err == nil {
 		defer f.Close()
 		const tail = 2 << 20
 		if fi, err := f.Stat(); err == nil && fi.Size() > tail {
@@ -210,9 +159,41 @@ func JcodeTurnOpen(sessionsDir, sessionID, msg string) bool {
 				Append []jcodeMessage `json:"append_messages"`
 			}
 			if json.Unmarshal(line, &entry) == nil {
-				see(entry.Append)
+				for _, m := range entry.Append {
+					see(m)
+				}
 			}
 		}
+		return sc.Err()
 	}
-	return lastUser != "" && lastUser == strings.TrimSpace(msg) && !ended
+	jerr := journal()
+	if seen {
+		return turn, jerr
+	}
+	// The snapshot holds the compacted past; the journal appends after it,
+	// so read the snapshot first and the journal again on top.
+	f, err := os.Open(base + ".json")
+	if err != nil {
+		if jerr != nil {
+			return turn, jerr
+		}
+		return turn, err
+	}
+	_, err = streamSnapshot(bufio.NewReaderSize(f, 1<<20), func(c captureStored) {
+		see(jcodeMessage{ID: c.ID, Role: c.Role, Content: c.Content})
+	})
+	f.Close()
+	if err != nil {
+		return turn, err
+	}
+	journal()
+	return turn, nil
+}
+
+// Current reports whether the block parked for turn id may still be shown:
+// id is the session's current turn and that turn has not answered. Anything
+// else (a newer message, a final answer, an unreadable session) drops it,
+// so a block is lost rather than shown in a turn it was not recalled for.
+func (t JcodeTurn) Current(id string) bool {
+	return id != "" && t.ID == id && !t.Ended
 }
