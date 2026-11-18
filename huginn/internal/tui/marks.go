@@ -102,10 +102,11 @@ func (m model) markedRefusal(k string, ts []task.Task) string {
 	for _, t := range ts {
 		switch k {
 		case "t":
-			// One ticket in doing at a time (n2hq8p, crab 20:44): until
-			// byj479 takes several together, t takes one.
-			if len(ts) > 1 {
-				return "take one at a time: mark one task to take it"
+			// Several are taken together (byj479): the first plainly, the
+			// rest with it, so each must be a todo task. One may also be
+			// someone else's to take for review, as t does on a row.
+			if len(ts) > 1 && t.State != "todo" {
+				return t.ID + " is " + t.State + ": t takes several todo tasks together"
 			}
 			if t.State == "done" || t.State == "dropped" || (t.State == "doing" && contains(t.Assignee, m.me())) {
 				return t.ID + " is " + t.State + ": t takes a task that is not yours yet"
@@ -244,8 +245,9 @@ func (m *model) markedKey(k string) tea.Cmd {
 	return nil
 }
 
-// takeMarked asks to take the marked task. One for now (n2hq8p); when
-// byj479 lands (hug task take B --with A), the first with the rest.
+// takeMarked asks to take the marked tasks: one plainly; several, the
+// first plainly and the rest with it (byj479: tasks that ship together are
+// both doing), after one confirm naming them.
 func (m *model) takeMarked(ids []string) tea.Cmd {
 	m.bulk = ids
 	m.confirm, m.pendingValue = "t", ""
@@ -270,6 +272,10 @@ func (m model) bulkQuestion() string {
 		}
 	}
 	switch m.confirm {
+	case "t":
+		if len(m.bulk) > 1 {
+			q += ", " + strings.Join(m.bulk[1:], ", ") + " with " + m.bulk[0]
+		}
 	case "x":
 		q += ": " + oneLine(m.pendingValue)
 	case "w":
@@ -292,8 +298,17 @@ func (m *model) runBulk() tea.Cmd {
 	}
 	action := map[string]string{"t": "take", "d": "done", "x": "drop", "w": "wait"}[k]
 	var done, refused, fixes []string
-	for _, id := range ids {
-		if err := m.bulkOne(k, action, id, value); err != nil {
+	for n, id := range ids {
+		with := ""
+		if k == "t" && n > 0 {
+			if len(done) == 0 || done[0] != ids[0] {
+				// The first was refused: the rest have nothing to go with.
+				refused = append(refused, id+" not taken: "+ids[0]+" was not")
+				continue
+			}
+			with = ids[0]
+		}
+		if err := m.bulkOne(k, action, id, value, with); err != nil {
 			first, _, _ := strings.Cut(err.Error(), "\n")
 			refused = append(refused, id+" refused: "+strings.Replace(first, " "+id, "", 1))
 			for _, line := range strings.Split(err.Error(), "\n") {
@@ -323,9 +338,10 @@ func (m *model) runBulk() tea.Cmd {
 	return nil
 }
 
-// bulkOne is one write of a bulk action and its commit.
-func (m *model) bulkOne(k, action, id, value string) error {
-	viaTake := k == "t" && m.opts.Take != nil // it takes the turn and commits itself
+// bulkOne is one write of a bulk action and its commit; with is the task
+// a take goes with (byj479), "" for a plain take.
+func (m *model) bulkOne(k, action, id, value, with string) error {
+	viaTake := k == "t" && with == "" && m.opts.Take != nil // it takes the turn and commits itself
 	release := func() {}
 	if !viaTake {
 		release = m.hold()
@@ -335,9 +351,12 @@ func (m *model) bulkOne(k, action, id, value string) error {
 	var err error
 	switch k {
 	case "t":
-		if viaTake {
+		switch {
+		case with != "":
+			r, err = m.store.TakeWith(id, with, m.me())
+		case viaTake:
 			r, err = m.opts.Take(id)
-		} else {
+		default:
 			r, err = m.store.Take(id, m.me())
 		}
 	case "d":
@@ -351,6 +370,9 @@ func (m *model) bulkOne(k, action, id, value string) error {
 		return err
 	}
 	if r.Changed && m.opts.Commit != nil && !viaTake {
+		if with != "" {
+			return m.opts.Commit("hug task take " + id + " --with " + with)
+		}
 		return m.opts.Commit("hug task " + action + " " + id)
 	}
 	return nil
