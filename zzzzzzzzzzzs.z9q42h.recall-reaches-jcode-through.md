@@ -32,7 +32,7 @@ jcode docs/HOOKS.md: post_tool_feedback stdout is appended to the tool result un
 ## Acceptance
 - [ ] With a draft typed in the jcode input box, a turn's recall never appears in that box or as a user message (test drives the hook path; and Jørgen confirms after a day of use)
 - [x] The block appears once, on the first tool result of the turn it was computed for; a turn without a tool call drops it at turn_end; it never shows in a later turn (tests, fail first on main)
-- [ ] hug setup writes the post_tool_feedback entry next to any existing one (array), previewed first, and hug upgrade migrates current installs off jcode transcript (test)
+- [x] hug setup writes the post_tool_feedback entry next to any existing one (array), previewed first, and hug upgrade migrates current installs off jcode transcript (test)
 - [ ] The feedback hook on a call with nothing parked does one file check and no store load (test counts work)
 
 ## Notes
