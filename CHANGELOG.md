@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Recall hook board lines (6fqhg9, rzfrgp): a hug command quoted inside another command's argument (a `--goal`, a note, a quoted lint line) no longer counts as run, so quoting `hug task take ID` does not make ID yours; `sh -c '...'` and `$(...)` still count. The "this looks like ID" take line no longer names a task you only opened with `hug task show`. The board4 judge now states that a missing-section or owner question is right only on the agent's own task; two judgings agree on 134 of 145 lines (was 7 of 15 on the lines that flipped). Replayed under it: six sets false 9 -> 7, right 106 -> 107; fresh hug false 4 -> 3 (muninn/docs/BOARD4.md).
+
 ## v0.7.63 - 2026-11-18
 
 - Recall hook board lint (4vxqp4): a missing Purpose or Principle no longer goes to a session whose message only mentions the task: quoted (a prompt or output it quotes), as a dependency ("depends on n8zmjw"), or as a task not to start. A task the session owns, acted on (take, check, note, set, edit), or its message gives as the work still gets it. Reading another session's doing task with `hug task show` is not acting on it. On the six board4 replay sets (blind judge, muninn/docs/BOARD4.md), false board lines fell from 12 to 8 and right lines rose from 101 to 104; re-judged with the corrected judge prompt (6fqhg9, two judgings agreeing), the shipped rule's sets read 115 lines, 106 right, 9 false. Fresh sessions kept their right lint lines (the same count before and after).
