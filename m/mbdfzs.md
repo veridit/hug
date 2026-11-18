@@ -4,7 +4,7 @@ title: "hug mcp serves with the installed hug, never an old binary"
 state: "doing"
 type: bug
 priority: "urgent"
-assignee: ["kestrel"]
+assignee: ["mizaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzr8"
