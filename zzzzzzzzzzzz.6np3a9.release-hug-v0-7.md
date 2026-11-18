@@ -30,7 +30,7 @@ v0.7.59 tag 6d994e71 remains unchanged. Recovery candidate dcb80a5d passed all s
 ## Depends on
 
 ## Acceptance
-- [ ] Exact green source, CHANGELOG grouping and conflict-marker checks verified
+- [x] Exact green source, CHANGELOG grouping and conflict-marker checks verified
 - [ ] Release workflow succeeds before installation
 - [ ] Targeted brew upgrade installs hug v0.7.60
 
