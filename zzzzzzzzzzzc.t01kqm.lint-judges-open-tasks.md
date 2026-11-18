@@ -40,6 +40,7 @@ Code: huginn/internal/task lint severity rules; huginn/internal/cli/lint.go:134-
 ## Notes
 
 
+Built on ci/t01kqm (from 48b1151f). task.Judged replaces ShownFindings: findings on open tasks only, broken first; a path no task owns (a file hug cannot read as one) stays. done-unchecked code and its parse finding removed. CLI lint: closed lint ID answers 'ID is done: lint judges open tasks only' (exit 0, next: hug task show ID); --all, setHidden/writeHidden/hiddenCommand, summary.hidden/hidden_codes and reply.hidden removed; bounded lists end 'every one: hug task lint --json'. TUI: closedFindings gone; LINT header has no hidden text; a closed task's detail shows no finding. Help and MCP lint description say lint judges open tasks. Statbus measured read-only from /Users/jhf/ssb/statbus: brew v0.7.52 'hug task lint --summary' = '446 findings (314 broken) in 8 codes' (236 done-unchecked, 59 missing-goal, 11 branch-gone, 5 old-layout, 3 duplicate-section; 98 missing-section, 32 long-title, 2 no-acceptance) plus '170 advice findings on closed tasks hidden (170 no-acceptance)'; this build = '156 findings (24 broken) in 6 codes' (11 branch-gone, 8 missing-goal, 5 old-layout; 98 missing-section, 32 long-title, 2 no-acceptance), no hidden line, no done-unchecked. The ticket's 'about 18 broken' was 18 at crab's v0.7.50 count; the 5 old-layout are hug upgrade's (41hhgn) and open.
 ## History
 - 2026-11-18T01:43 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T01:43
