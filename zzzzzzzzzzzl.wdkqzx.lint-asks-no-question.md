@@ -53,5 +53,6 @@ crab 00:46 local, ruling on kestrel's proposal (made from ggydj2): shipped-not-d
 file:wdkqzx-stage-fail-before.txt (156 bytes, sha256:ba08d091)
 file:wdkqzx-board-before.txt (1254 bytes, sha256:87b129af)
 file:wdkqzx-board-after.txt (930 bytes, sha256:b5fa95ca)
+landed a509c2f on main 2026-11-18: hug task: every write ends with the task's own lint; shipped-not-done names the…
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
