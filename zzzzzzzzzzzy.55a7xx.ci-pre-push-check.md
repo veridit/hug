@@ -1,13 +1,18 @@
 ---
 id: 55a7xx
 title: "CI and the pre-push check refuse leftover merge conflict markers"
-state: todo
+state: "doing"
 type: chore
 priority: "medium"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T05:29"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ A test under the repo root's test package that walks git ls-files. Exclude only 
 - [ ] It runs in go test ./... in under a second on this repo (counting: one git ls-files call)
 
 ## Notes
+
+
+## History
+- 2026-11-18T05:29 todo -> doing/active (take)
