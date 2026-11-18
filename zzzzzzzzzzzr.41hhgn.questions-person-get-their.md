@@ -88,6 +88,10 @@ Statbus (read only): 3 of its 5 would stay waits ('the hug release that stops li
 race: 'ok task 25.700s', 'ok cli 132.796s'.
 landed 2c7ea8b on main 2026-11-18: hug upgrade: a wait on a person moves to asked only when it asks something ('?'…
 landed 3b47f26 on main 2026-11-18: hug upgrade: a request verb anywhere in a wait's first clause, base, -s or -ies…
+check 13 widened (crab 02:18) as 3b47f26: a request verb anywhere in the first clause, in base, -s or -ies form. -ed/-ing and the noun senses rule/test don't count.
+Fail first against 2c7ea8b's rule, 6 lines, e.g. 'askrule_test.go:45: readsAsQuestion("owner confirms time frames on Norway after the release (rc.02 shipped)") = false, want true'. 7 mutants each fail the table.
+hug clone at 8a18427b^: 6 moved, s6ff5k left waiting. Statbus copy: 'would: 4 questions to a person moved from waiting to asked (yq5tr6, ezp3h0, mtw92d, hmgadt)', 'would: 1 wait on a person left waiting ...: j2g6wd waiting_for jhf: "the hug release that stops linting done tasks (installed now: v0.7.50)"'.
+race: 'ok task 27.784s', 'ok cli 180.194s'.
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
