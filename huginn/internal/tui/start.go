@@ -66,9 +66,9 @@ func initialSnapshot(in *Initial) snapshot {
 	ts := append([]task.Task(nil), in.Tasks...)
 	task.Sort(ts)
 	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, files: map[string][]string{}}
-	// The same split as every load (pbh9xq), so the counts do not change
-	// when the refresh lands.
-	sn.findings, sn.closed = task.ShownFindings(in.Findings, ts)
+	// The same judgement as every load, so the counts do not change when
+	// the refresh lands.
+	sn.findings = task.Judged(in.Findings, ts)
 	return sn
 }
 

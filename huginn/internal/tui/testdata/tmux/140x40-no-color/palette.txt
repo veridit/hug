@@ -1,4 +1,4 @@
-HUG TASKS · palette   60/60 tasks · ! 4 broken · 5 advice
+HUG TASKS · palette   60/60 tasks · ! 2 broken · 5 advice
  overview   [list]   board    !lint
 todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends

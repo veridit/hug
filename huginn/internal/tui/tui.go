@@ -212,9 +212,6 @@ type model struct {
 	editNotice string
 	// editBefore holds the problems the task had when the editor opened.
 	editBefore map[string]bool
-	// closedFindings are advice findings on done or dropped tasks, hidden
-	// from the header count, the lint view and the marks (6neax1, pbh9xq).
-	closedFindings []task.Finding
 	// Reload on changes on disk (nfv18p): watch signals a settled burst of
 	// changes; loading runs off the UI thread; stale says a change came while
 	// a prompt, confirm, palette or the editor was open, so the reload waits
@@ -519,13 +516,13 @@ func (m *model) refresh(path string) {
 // files and the lint findings. loadSnapshot builds it without touching the
 // model, so a reload after a change on disk runs off the UI thread (nfv18p).
 type snapshot struct {
-	tasks            []task.Task
-	docs             map[string]*task.Document
-	findings, closed []task.Finding
-	closedAt         map[string]int64 // close times from git (closeLog)
-	files            map[string][]string
-	people           []task.Person // hug.toml [people] (89y0b7)
-	err, readErr     error
+	tasks        []task.Task
+	docs         map[string]*task.Document
+	findings     []task.Finding
+	closedAt     map[string]int64 // close times from git (closeLog)
+	files        map[string][]string
+	people       []task.Person // hug.toml [people] (89y0b7)
+	err, readErr error
 }
 
 func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func() ([]task.Finding, error)) snapshot {
@@ -582,11 +579,8 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 		}
 		findings = task.Lint(docs)
 	}
-	// As in hug task lint: broken findings show on every task; advice on
-	// closed tasks (done, dropped) is hidden; closedFindings keeps it for
-	// counts and for the detail of a closed task opened on purpose (6neax1,
-	// pbh9xq).
-	sn.findings, sn.closed = task.ShownFindings(findings, ts)
+	// As in hug task lint: open tasks only, broken first (t01kqm).
+	sn.findings = task.Judged(findings, ts)
 	return sn
 }
 
@@ -603,7 +597,7 @@ func (m *model) apply(sn snapshot, path string) {
 	if sn.readErr != nil {
 		m.message = sn.readErr.Error()
 	}
-	m.findings, m.closedFindings = sn.findings, sn.closed
+	m.findings = sn.findings
 	m.closedAt = sn.closedAt
 	m.files = sn.files
 	m.people = sn.people

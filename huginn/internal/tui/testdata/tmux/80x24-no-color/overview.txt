@@ -1,4 +1,4 @@
-HUG TASKS · overview   60/60 tasks · ! 4 broken · 5 advice
+HUG TASKS · overview   60/60 tasks · ! 2 broken · 5 advice
 [overview]   list    board    !lint
 todo 8  ·  doing 15 (1 depends)  ·  depends 7  ·  done 15  ·  dropped 15
 No filters · f picker · 1 todo  2 doing  3 done  4 depends
@@ -17,7 +17,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   RECENTLY DONE · last closed  [30] · 1–1 shown
 ↓        000003   feature medium   done      compiler Render compiler-lang task…
 
-  LINT · tasks needing attention  [9] · 4 broken · 5 advice (1 on closed tasks …
+  LINT · tasks needing attention  [7] · 2 broken · 5 advice · 1–1 shown
 ↓ ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make …
 All tasks · : filters and commands · ! lint finding · ↳ epic
 

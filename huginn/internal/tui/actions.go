@@ -190,11 +190,11 @@ func (m *model) runEditor(t task.Task) tea.Cmd {
 	return tea.ExecProcess(cmd, func(e error) tea.Msg { return editorMsg{path: path, err: e} })
 }
 
-// editFindings are the lint findings of the task file at path, closed
-// task or not: an edit is judged on the file itself.
+// editFindings are the lint findings of the task file at path (an open
+// task: a closed one is not judged, t01kqm).
 func (m model) editFindings(path string) []task.Finding {
 	var out []task.Finding
-	for _, f := range append(append([]task.Finding(nil), m.findings...), m.closedFindings...) {
+	for _, f := range m.findings {
 		if f.Path == path {
 			out = append(out, f)
 		}

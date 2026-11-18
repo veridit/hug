@@ -68,17 +68,15 @@ func TestStrikeOutCheck(t *testing.T) {
 	}
 }
 
-// sfa8w4 check 4: a done task with an open check is reported as broken.
-func TestDoneWithOpenCheckIsBroken(t *testing.T) {
-	b := strings.Replace(strings.Replace(sample, "state: todo", "state: done", 1), "- [ ] observable one\n", "- [ ] observable one\n- [ ] ~~gone~~ (not relevant: superseded, crab, 2026-11-17)\n", 1)
+// t01kqm: a done task with an open check (an import or a hand edit; done
+// itself refuses one) is history, not a finding: lint judges open tasks.
+func TestDoneWithOpenCheckIsNotAFinding(t *testing.T) {
+	b := strings.Replace(sample, "state: todo", "state: done", 1)
 	d := Parse("zzzzzz.k7m2qx.recall-gate.md", []byte(b))
-	fs := Lint([]*Document{d})
-	if len(fs) != 1 {
-		t.Fatalf("want one finding (check 1 open; check 2 struck is settled): %v", fs)
-	}
-	f := fs[0]
-	if FindingCode(f.Problem) != "done-unchecked" || !strings.HasPrefix(f.Problem, "done with unchecked acceptance: broken, k7m2qx is done but check 1 is open") || !strings.Contains(f.Problem, "hug task strike k7m2qx 1 --reason") || f.FixLine() != "hug task check k7m2qx 1" {
-		t.Fatalf("finding: %s / fix %s", f.Problem, f.FixLine())
+	for _, f := range Lint([]*Document{d}) {
+		if strings.Contains(f.Problem, "unchecked") {
+			t.Fatalf("finding on a done task's open check: %s", f.Problem)
+		}
 	}
 }
 

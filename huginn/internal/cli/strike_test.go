@@ -38,8 +38,8 @@ func TestStrikeThroughCLI(t *testing.T) {
 	if f := taskFile(t, a, id); !strings.Contains(f, "\n- [ ] no longer applies\n") {
 		t.Fatalf("undo:\n%s", f)
 	}
-	// Now done with an open check: lint calls it broken.
-	if _, out := runText(a, "lint", id, "--all"); !strings.Contains(out, "[done-unchecked] done with unchecked acceptance: broken, "+id+" is done but check 2 is open") {
+	// Now done with an open check: lint judges open tasks only (t01kqm).
+	if _, out := runText(a, "lint", id); out != id+" is done: lint judges open tasks only\nnext: hug task show "+id+"\n" {
 		t.Fatalf("lint:\n%s", out)
 	}
 }

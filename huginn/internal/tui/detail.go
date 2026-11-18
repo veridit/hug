@@ -226,8 +226,7 @@ func (m model) detailHeader(t task.Task) []string {
 	if nt, fs, ok := m.noticeTask(); ok && nt.Path == t.Path {
 		fresh = fs
 	}
-	// One task opened on purpose shows all its findings, closed or not.
-	for _, f := range append(append(fresh, m.findings...), m.closedFindings...) {
+	for _, f := range append(fresh, m.findings...) {
 		if f.Path == t.Path && !seen[f.Problem] {
 			seen[f.Problem] = true
 			problems = append(problems, f)

@@ -58,7 +58,6 @@ var findingCodes = []struct{ prefix, code string }{
 	{"missing section", "missing-section"},
 	{"sections out of order", "section-order"},
 	{"Acceptance requires", "no-acceptance"},
-	{"done with unchecked acceptance", "done-unchecked"},
 	{"landed, but no check", "landed-unchecked"},
 	{"shipped, but ", "shipped-not-done"},
 	{"todo, but commit ", "todo-has-commit"},
@@ -555,15 +554,6 @@ func Parse(path string, data []byte) *Document {
 		d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: 1,
 			Problem: "sections out of order: " + strings.Join(d.Task.Sections, ", ") + "; the order is " + strings.Join(OrderedSections(d.Task.Sections), ", "),
 			Fix:     "hug upgrade"})
-	}
-	if d.Task.State == "done" {
-		for n, a := range d.Task.Acceptance {
-			if !a.Settled() {
-				// Broken, not advice (Jørgen 2026-11-16, pbh9xq): the board says
-				// done but this check is neither ticked nor struck out.
-				d.Findings = append(d.Findings, Finding{Path: d.Task.Path, Line: a.Line, Problem: fmt.Sprintf("done with unchecked acceptance: broken, %s is done but check %d is open; tick it if it holds, or strike it out with hug task strike %s %d --reason \"why it no longer applies\"", d.Task.ID, n+1, d.Task.ID, n+1), Fix: fmt.Sprintf("hug task check %s %d", d.Task.ID, n+1)})
-			}
-		}
 	}
 	// Backlog import leftovers on open tasks (fkpyg3); hug upgrade removes them.
 	if Pattern(d.Task) {

@@ -1,8 +1,6 @@
 HUG TASKS · list › 000003
 [done]  [feature]  [medium]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task
-⚠ line 1: Acceptance requires at least one item
-  fix: hug task set 000003 --accept "observable check"
 ────────────────────────────────────────────────────────────────────────────────
 ▸ Render compiler-lang task detail without storage markers
 ────────────────────────────────────────────────────────────────────────────────
@@ -19,6 +17,8 @@ fmt.Println("rendered code")
 no acceptance items yet
 
 no dependencies
+
+
 Task 3 of 60 · 100% · next · previous · Esc back
 
 j/k scroll · edit · x drop · yank · up · next-, previous task · J/K ½ page …

@@ -411,9 +411,6 @@ func (m model) overviewText() string {
 		if p == sectionLint {
 			broken := m.brokenCount()
 			label += fmt.Sprintf(" · %d broken · %d advice", broken, len(m.findings)-broken)
-			if n := len(m.closedFindings); n > 0 {
-				label += fmt.Sprintf(" (%d on closed tasks hidden)", n)
-			}
 		}
 		per := rows[p]
 		cursor := m.rowCursor(p)

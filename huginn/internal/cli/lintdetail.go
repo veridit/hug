@@ -284,7 +284,7 @@ func writeOverview(w io.Writer, fs []task.Finding, sum LintSummary) {
 	fmt.Fprintf(w, "%s (%d broken) on %s, in %s:\n", plural(sum.Total, "finding", "findings"), sum.Broken, plural(len(groups), "task", "tasks"), plural(len(sum.Codes), "code", "codes"))
 	writeCodes(w, sum.Codes)
 	shown := groups
-	if sum.mode != "all" && len(groups) > lintBound {
+	if len(groups) > lintBound {
 		shown = groups[:lintShown]
 		fmt.Fprintf(w, "first %d tasks:\n", lintShown)
 	}
@@ -296,7 +296,7 @@ func writeOverview(w io.Writer, fs []task.Finding, sum LintSummary) {
 		fmt.Fprintf(w, "  %-*s  %s  -> %s\n", wid, label(g), strings.Join(g.Codes, ", "), detailCommand(g))
 	}
 	if len(shown) < len(groups) {
-		fmt.Fprintf(w, "%d of %d tasks shown; every one: hug task lint --all; one kind: hug task lint --code CODE\n", len(shown), len(groups))
+		fmt.Fprintf(w, "%d of %d tasks shown; one kind: hug task lint --code CODE; every one: hug task lint --json\n", len(shown), len(groups))
 	}
 }
 

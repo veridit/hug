@@ -435,18 +435,19 @@ func TestMarkdownDetailFixedHeaderAndEmptySections(t *testing.T) {
 	if strings.Contains(v, "[000003]") {
 		t.Fatalf("the id is bare, never in brackets (xxvm6t)\n%s", v)
 	}
-	for _, want := range []string{"[done]", "000003", "⚠ line 1: Acceptance requires at least one item", "  fix: hug task set 000003 --accept \"observable check\"", "compiler-lang", "rendered code", "no acceptance items yet", "no dependencies"} {
+	// A done task is not judged (t01kqm): its detail shows no finding.
+	for _, want := range []string{"[done]", "000003", "compiler-lang", "rendered code", "no acceptance items yet", "no dependencies"} {
 		if !strings.Contains(v, want) {
 			t.Fatalf("missing %s\n%s", want, v)
 		}
 	}
-	for _, bad := range []string{"<!--", "SECTION:", "**compiler-lang**", "`huginn`", "## Notes", ".md:1:"} {
+	for _, bad := range []string{"<!--", "SECTION:", "**compiler-lang**", "`huginn`", "## Notes", ".md:1:", "⚠"} {
 		if strings.Contains(v, bad) {
 			t.Fatal("raw storage/markdown", bad, v)
 		}
 	}
-	if strings.Count(v, "Acceptance requires at least one item") != 1 {
-		t.Fatal(v)
+	if strings.Contains(v, "Acceptance requires at least one item") {
+		t.Fatal("a done task is judged (t01kqm)\n" + v)
 	}
 	header := m.detailHeader(m.visible[m.cursor])
 	m = press(m, ">")

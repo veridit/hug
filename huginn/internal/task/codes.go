@@ -57,7 +57,6 @@ var Codes = []CodeInfo{
 	{"missing-section", "an open task lacks Purpose or Principle", Advice},
 	{"section-order", "sections are not in Goal, Purpose, Principle, ... order", Advice},
 	{"no-acceptance", "no acceptance item (- [ ] ...)", Advice},
-	{"done-unchecked", "done, but an acceptance item is not ticked", Broken},
 	{"filename-collision", "two file names differ only by case", Broken},
 	{"duplicate-id", "two tasks have the same id", Broken},
 	{"dangling-dependency", "depends on an id no task has", Broken},
@@ -144,13 +143,11 @@ func Summarize(fs []Finding, all bool) []CodeCount {
 	return out
 }
 
-// OpenFindings splits findings into those on open tasks (todo, doing,
-// blocked) and those on closed ones (done, dropped). A finding belongs to
-// the task whose file it is, or whose folder (group/ID/...) holds the file;
-// a finding that belongs to no known task (a broken file) is open, since
-// nothing says it is finished. Lint, MCP and the TUI hide closed findings
-// by default (6neax1, Jørgen: 986 of 2,477 seid findings were on closed
-// tasks).
+// OpenFindings splits findings into those on open tasks (todo, doing) and
+// those on closed ones (done, dropped). A finding belongs to the task whose
+// file it is, or whose folder (group/ID/...) holds the file; a finding that
+// belongs to no known task (a file hug cannot read as one) is open, since
+// nothing says it is finished.
 func OpenFindings(fs []Finding, tasks []Task) (open, closed []Finding) {
 	closedAt := closedPaths(tasks)
 	for _, f := range fs {
@@ -163,23 +160,22 @@ func OpenFindings(fs []Finding, tasks []Task) (open, closed []Finding) {
 	return open, closed
 }
 
-// ShownFindings splits findings into what lint and the TUI show by default
-// and what they hide (pbh9xq): broken findings are always shown, first;
-// advice is shown on open tasks and hidden on closed ones.
-func ShownFindings(fs []Finding, tasks []Task) (shown, hidden []Finding) {
-	closedAt := closedPaths(tasks)
-	var advice []Finding
-	for _, f := range fs {
-		switch {
-		case f.Severity() == Broken:
-			shown = append(shown, f)
-		case closedAt(f.Path):
-			hidden = append(hidden, f)
-		default:
+// Judged is what lint, MCP and the TUI report: the findings on open tasks,
+// broken first (pbh9xq). Done and dropped tasks are history: lint judges
+// open tasks only and counts nothing else (t01kqm, Jørgen 2026-11-18: "I
+// don't think linting should show the done tasks"). A task is checked when
+// it closes: done refuses an open check.
+func Judged(fs []Finding, tasks []Task) []Finding {
+	open, _ := OpenFindings(fs, tasks)
+	var broken, advice []Finding
+	for _, f := range open {
+		if f.Severity() == Broken {
+			broken = append(broken, f)
+		} else {
 			advice = append(advice, f)
 		}
 	}
-	return append(shown, advice...), hidden
+	return append(broken, advice...)
 }
 
 // closedPaths reports whether a finding's path belongs to a done or dropped

@@ -1,4 +1,4 @@
-HUG TASKS · list   2/60 tasks · ! 4 broken · 5 advice
+HUG TASKS · list   2/60 tasks · ! 2 broken · 5 advice
  overview   [list]   board    !lint
 todo 2  ·  doing 0  ·  depends 0  ·  done 0  ·  dropped 0
 [state:todo ×] [type:feature ×] [/ task] · ⌫ last · F clear

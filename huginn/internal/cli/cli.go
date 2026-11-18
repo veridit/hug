@@ -653,7 +653,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "ask": "as model to check show", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "ask": "as model to check show", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1026,11 +1026,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, e
 		}
 		// hug task lint ID: every finding of that task in detail, with the
-		// one combined fix (fkpyg3), closed or not.
+		// one combined fix (fkpyg3). A closed task is history (t01kqm).
 		if len(f.args) == 1 {
 			d, e := s.s.Get(f.args[0])
 			if e != nil {
 				return nil, e
+			}
+			if st := d.Task.State; st == "done" || st == "dropped" {
+				return Reply{"message": d.Task.ID + " is " + d.Task.State + ": lint judges open tasks only", "next": "hug task show " + d.Task.ID}, nil
 			}
 			mine := forTask(fs, d.Task)
 			if code != "" {
@@ -1047,26 +1050,21 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			}
 			return reply, nil
 		}
-		// Broken findings always show; advice on closed tasks is hidden
-		// unless --all (6neax1, pbh9xq).
-		var hidden []task.Finding
-		if !f.has("all") {
-			ts, e := s.s.Tasks()
-			if e != nil {
-				return nil, e
-			}
-			fs, hidden = task.ShownFindings(fs, ts)
+		// Lint judges open tasks only (t01kqm): done and dropped tasks are
+		// history, neither shown nor counted.
+		ts, e := s.s.Tasks()
+		if e != nil {
+			return nil, e
 		}
+		fs = task.Judged(fs, ts)
 		if code != "" {
-			fs, hidden = withCode(fs, code), withCode(hidden, code)
+			fs = withCode(fs, code)
 		}
 		reply, e := empty()
 		if e != nil {
 			return nil, e
 		}
-		reply = lintReply(reply, fs, mode, code)
-		setHidden(reply, hidden, code)
-		return reply, nil
+		return lintReply(reply, fs, mode, code), nil
 	case "deduce":
 		if e = f.count(0); e != nil {
 			return nil, e

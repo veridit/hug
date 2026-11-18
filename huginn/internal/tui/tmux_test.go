@@ -270,7 +270,9 @@ func TestTmuxGolden(t *testing.T) {
 				send("#1785")
 				wait("JUMP TO ID")
 				special("Enter")
-				snapshot("markdown-warning", "⚠ line 1: Acceptance requires at least one item")
+				// 000003 is done: its detail renders the Markdown and shows no
+				// finding, since lint judges open tasks only (t01kqm).
+				snapshot("markdown-done", "rendered code")
 				special("Escape")
 				wait("HUG TASKS · list")
 				send(":type ")

@@ -410,7 +410,7 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 	// help as a positional, before or after flags, is lint's help.
 	for _, args := range [][]string{{"lint", "help"}, {"lint", "help", "--code"}, {"lint", "--code", "x", "help"}, {"lint", "--summary", "help"}, {"lint", "--help"}} {
 		code, out, errs := run(args...)
-		if code != 0 || !strings.HasPrefix(out, "hug task lint [ID] [--summary] [--all] [--code [CODE]]\n") || errs != "" {
+		if code != 0 || !strings.HasPrefix(out, "hug task lint [ID] [--summary] [--code [CODE]]\n") || errs != "" {
 			t.Fatalf("%v: %d %q %q", args, code, out, errs)
 		}
 	}
@@ -425,8 +425,8 @@ func TestLintNeverSilentSummaryCodesHelp(t *testing.T) {
 	}
 }
 
-// More than lintBound findings: summary, the first lintShown, how to see all.
-// --all prints every one.
+// More than lintBound findings: summary, the first lintShown, how to see all
+// (--json; --all went with t01kqm).
 func TestLintBoundedOutput(t *testing.T) {
 	t.Parallel()
 	var fs []task.Finding
@@ -449,94 +449,103 @@ func TestLintBoundedOutput(t *testing.T) {
 	if lines[0] != "36 findings (1 broken) on 36 tasks, in 2 codes:" || lines[1] != "   1  broken  missing-goal   no Goal section, or it is empty  hug task lint --code missing-goal" ||
 		lines[2] != "  35  advice  no-acceptance  no acceptance item (- [ ] ...)   hug task lint --code no-acceptance" || lines[3] != "first 10 tasks:" ||
 		lines[4] != "  k7m2q0  no-acceptance  -> hug task lint k7m2q0" ||
-		len(lines) != 4+lintShown+1 || lines[len(lines)-1] != "10 of 36 tasks shown; every one: hug task lint --all; one kind: hug task lint --code CODE" {
+		len(lines) != 4+lintShown+1 || lines[len(lines)-1] != "10 of 36 tasks shown; one kind: hug task lint --code CODE; every one: hug task lint --json" {
 		t.Fatalf("bounded:\n%s", out)
 	}
-	if all := write("all", ""); strings.Count(all, "  -> hug task lint ") != 36 || strings.Contains(all, "shown") {
-		t.Fatalf("--all:\n%s", all)
-	}
-	if one := write("", "no-acceptance"); !strings.HasSuffix(one, "10 of 36 shown; every one: hug task lint --code no-acceptance --all\n") || strings.Contains(one, " in 2 codes") {
+	if one := write("", "no-acceptance"); !strings.HasSuffix(one, "10 of 36 shown; every one: hug task lint --code no-acceptance --json\n") || strings.Contains(one, " in 2 codes") {
 		t.Fatalf("--code bounded:\n%s", one)
 	}
 }
 
-// 6neax1, pbh9xq check 5: a broken finding shows on an open task and on a
-// closed one; advice shows on an open task and is hidden, and counted, on a
-// closed one; --all shows everything.
-func TestLintHidesClosedTasks(t *testing.T) {
+// t01kqm: lint judges open tasks only. A done or dropped task gets no
+// finding, broken or advice, and nothing counts it ("N on closed tasks
+// hidden" is gone, so is --all); hug task lint ID on one says it is closed.
+// A file hug cannot read as a task still shows: nothing says it is closed.
+func TestLintJudgesOpenTasksOnly(t *testing.T) {
 	t.Parallel()
 	a := app(t)
 	execute(t, a, "init")
-	// Broken (not-a-dependency) on a task, then the task is done.
-	id := execute(t, a, "new", "Closed one", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-	useEditor(t, a, "## Depends on\n", "## Depends on\nNothing\n")
-	execute(t, a, "edit", id)
-	execute(t, a, "check", id, "1")
-	execute(t, a, "take", id)
-	execute(t, a, "done", id)
 	run := func(args ...string) string {
 		out := &bytes.Buffer{}
 		a.Out, a.Err = out, &bytes.Buffer{}
 		if code := a.Run(context.Background(), args); code != 0 {
-			t.Fatalf("%v: %d", args, code)
+			t.Fatalf("%v: %d\n%s", args, code, out)
 		}
 		return out.String()
 	}
-	// Broken on a closed task: shown, never hidden; lint ID names its
-	// severity.
-	if out := run("lint"); !strings.HasPrefix(out, "1 finding (1 broken) on 1 task, in 1 code:\n") || !strings.Contains(out, "  "+id+"  not-a-dependency  -> hug task lint "+id+"\n") || strings.Contains(out, "hidden") {
-		t.Fatalf("broken on a closed task:\n%s", out)
-	}
-	if out := run("lint", id); !strings.HasPrefix(out, "h."+id+".closed-one.md:") || !strings.Contains(strings.SplitN(out, "\n", 2)[0], ": broken [not-a-dependency] ") {
-		t.Fatalf("broken on a closed task, detail:\n%s", out)
-	}
-	// Advice (section-order: Depends on moved above Purpose) on a closed
-	// task: hidden and counted.
-	closedLong := execute(t, a, "new", "Closed advice", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
-	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+closedLong+"*.md"))
+	// Broken (not-a-dependency) on a task, then the task is done.
+	closedBroken := execute(t, a, "new", "Closed one", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	useEditor(t, a, "## Depends on\n", "## Depends on\nNothing\n")
+	execute(t, a, "edit", closedBroken)
+	execute(t, a, "check", closedBroken, "1")
+	execute(t, a, "take", closedBroken)
+	execute(t, a, "done", closedBroken)
+	// Advice (section-order) on a task that is then dropped.
+	closedAdvice := execute(t, a, "new", "Closed advice", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+closedAdvice+"*.md"))
 	b, _ := os.ReadFile(m[0])
 	text := strings.Replace(string(b), "\n## Depends on\n", "\n", 1)
 	if err := os.WriteFile(m[0], []byte(strings.Replace(text, "\n## Purpose\n", "\n## Depends on\n\n## Purpose\n", 1)), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	git(t, filepath.Join(a.Cwd, TaskDir), "commit", "-qam", "out of order")
-	execute(t, a, "check", closedLong, "1")
-	execute(t, a, "take", closedLong) // done needs a doing task (6ephqk)
-	execute(t, a, "done", closedLong)
-	out := run("lint")
-	if strings.Contains(out, closedLong) || !strings.Contains(out, "\n1 advice finding on closed tasks hidden (1 section-order): hug task lint --all\n") {
-		t.Fatalf("advice on a closed task:\n%s", out)
+	execute(t, a, "drop", closedAdvice, "not needed")
+	// A done task with an open check, as an import or a hand edit leaves it.
+	doneOpen := execute(t, a, "new", "Done by hand", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+	m, _ = filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+doneOpen+"*.md"))
+	b, _ = os.ReadFile(m[0])
+	if err := os.WriteFile(m[0], []byte(strings.Replace(string(b), "state: todo", "state: done", 1)), 0o644); err != nil {
+		t.Fatal(err)
 	}
-	if out := run("lint", "--code", "section-order"); !strings.HasPrefix(out, "no findings with code section-order (none broken, no advice on open tasks)\n") ||
-		!strings.Contains(out, "hug task lint --code section-order --all\n") {
-		t.Fatalf("code:\n%s", out)
+	git(t, filepath.Join(a.Cwd, TaskDir), "commit", "-qam", "done by hand")
+
+	if out := run("lint"); !strings.HasPrefix(out, "no findings\nnext: ") {
+		t.Fatalf("closed tasks were judged:\n%s", out)
+	}
+	if out := run("lint", "--summary"); strings.Contains(out, "hidden") || strings.Contains(out, "done-unchecked") {
+		t.Fatalf("summary:\n%s", out)
+	}
+	for _, id := range []string{closedBroken, closedAdvice, doneOpen} {
+		state := "done"
+		if id == closedAdvice {
+			state = "dropped"
+		}
+		if out := run("lint", id); out != id+" is "+state+": lint judges open tasks only\nnext: hug task show "+id+"\n" {
+			t.Fatalf("lint %s:\n%s", id, out)
+		}
 	}
 	r := execute(t, a, "lint")
-	if r["hidden"] != 1 || len(r["findings"].([]task.Finding)) != 1 {
-		t.Fatalf("json: %v", r)
+	jb, _ := json.Marshal(r)
+	if strings.Contains(string(jb), "hidden") || len(r["findings"].([]task.Finding)) != 0 {
+		t.Fatalf("json: %s", jb)
 	}
-	b, _ = json.Marshal(r)
-	if !strings.Contains(string(b), `"severity":"broken"`) || !strings.Contains(string(b), `"hidden":1,"hidden_codes":[{"code":"section-order","count":1`) {
-		t.Fatalf("json: %s", b)
+	// --all is gone.
+	if code, out := runText(a, "lint", "--all"); code != 2 || !strings.Contains(out, "--all") {
+		t.Fatalf("lint --all: exit %d\n%s", code, out)
 	}
-	// Advice and broken on open tasks: both shown, broken first.
+	// Open tasks: advice and broken both shown, broken first.
 	openLong := execute(t, a, "new", "Open advice", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "set", openLong, "--title", strings.Repeat("Long title ", 9)) // new refuses it (fkpyg3); set keeps it as advice
 	openBroken := execute(t, a, "new", "Open broken", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	execute(t, a, "edit", openBroken)
-	out = run("lint")
+	out := run("lint")
 	iBroken, iAdvice := strings.Index(out, "  "+openBroken+"  not-a-dependency  -> "), strings.Index(out, "  "+openLong+"  long-title  -> ")
-	if iBroken < 0 || iAdvice < 0 || iAdvice < iBroken || strings.Contains(out, closedLong) {
+	if iBroken < 0 || iAdvice < 0 || iAdvice < iBroken || strings.Contains(out, closedAdvice) || strings.Contains(out, closedBroken) || strings.Contains(out, doneOpen) {
 		t.Fatalf("open tasks:\n%s", out)
+	}
+	if !strings.HasPrefix(out, "2 findings (1 broken) on 2 tasks, in 2 codes:\n") {
+		t.Fatalf("counts:\n%s", out)
 	}
 	if d := run("lint", openLong); !strings.Contains(d, ": advice [long-title] ") {
 		t.Fatalf("open advice, detail:\n%s", d)
 	}
-	all := run("lint", "--all")
-	if !strings.Contains(all, closedLong) || strings.Contains(all, "hidden") {
-		t.Fatalf("--all:\n%s", all)
+	// A file hug cannot read as a task shows, closed or not unknown.
+	if err := os.WriteFile(filepath.Join(a.Cwd, TaskDir, "zz.qqqqqq.garbage.md"), []byte("no header at all\n"), 0o644); err != nil {
+		t.Fatal(err)
 	}
-	if r := execute(t, a, "lint", "--all"); r["hidden"] != nil && r["hidden"] != 0 {
-		t.Fatalf("--all json: %v", r)
+	git(t, filepath.Join(a.Cwd, TaskDir), "add", "-A")
+	git(t, filepath.Join(a.Cwd, TaskDir), "commit", "-qm", "garbage")
+	if out := run("lint"); !strings.Contains(out, "zz.qqqqqq.garbage.md") && !strings.Contains(out, "qqqqqq") {
+		t.Fatalf("an unreadable file is not shown:\n%s", out)
 	}
 }

@@ -50,25 +50,25 @@ func TestOpenFindingsSplitsByStatus(t *testing.T) {
 	}
 }
 
-// pbh9xq: broken findings are shown on open and closed tasks, broken first;
-// advice is shown on open tasks and hidden on closed ones.
-func TestShownFindingsBySeverity(t *testing.T) {
-	tasks := []Task{{ID: "aaaaaa", Path: "a.aaaaaa.a.md", State: "done"}, {ID: "bbbbbb", Path: "b.bbbbbb.b.md", State: "todo"}}
+// t01kqm: lint judges open tasks only, broken first (pbh9xq). A finding on
+// a done or dropped task is not judged, broken or not; a file no task owns
+// (hug cannot read it as one) is judged.
+func TestJudgedOpenTasksOnly(t *testing.T) {
+	tasks := []Task{{ID: "aaaaaa", Path: "a.aaaaaa.a.md", State: "done"}, {ID: "bbbbbb", Path: "b.bbbbbb.b.md", State: "todo"}, {ID: "cccccc", Path: "c.cccccc.c.md", State: "dropped"}}
 	longTitle, cycle := "title is 90 characters (max 80): move detail into the Goal", "dependency cycle: aaaaaa -> bbbbbb -> aaaaaa"
 	fs := []Finding{
-		{Path: "b.bbbbbb.b.md", Problem: longTitle},                               // advice, open: shown
-		{Path: "a.aaaaaa.a.md", Problem: longTitle},                               // advice, closed: hidden
-		{Path: "a.aaaaaa.a.md", Problem: cycle},                                   // broken, closed: shown
-		{Path: "b.bbbbbb.b.md", Problem: "done with unchecked acceptance item 2"}, // broken, open: shown
+		{Path: "b.bbbbbb.b.md", Problem: longTitle},      // advice, open
+		{Path: "a.aaaaaa.a.md", Problem: longTitle},      // advice, done
+		{Path: "a.aaaaaa.a.md", Problem: cycle},          // broken, done
+		{Path: "c.cccccc.c.md", Problem: "missing Goal"}, // broken, dropped
+		{Path: "b.bbbbbb.b.md", Problem: cycle},          // broken, open
+		{Path: "z.zzzzzz.z.md", Problem: "missing ---"},  // a file no task owns
 	}
-	shown, hidden := ShownFindings(fs, tasks)
-	if len(shown) != 3 || shown[0].Problem != cycle || shown[1].Severity() != Broken || shown[2].Path != "b.bbbbbb.b.md" || shown[2].Severity() != Advice {
-		t.Fatalf("shown %+v", shown)
+	got := Judged(fs, tasks)
+	if len(got) != 3 || got[0].Path != "b.bbbbbb.b.md" || got[0].Problem != cycle || got[1].Path != "z.zzzzzz.z.md" || got[2].Problem != longTitle || got[2].Path != "b.bbbbbb.b.md" {
+		t.Fatalf("judged %+v", got)
 	}
-	if len(hidden) != 1 || hidden[0].Path != "a.aaaaaa.a.md" || hidden[0].Severity() != Advice {
-		t.Fatalf("hidden %+v", hidden)
-	}
-	for code, want := range map[string]string{"done-unchecked": Broken, "missing-goal": Broken, "dangling-dependency": Broken, "long-title": Advice, "no-acceptance": Advice, "section-order": Advice, "missing-section": Advice, "a-code-not-yet-known": Broken} {
+	for code, want := range map[string]string{"missing-goal": Broken, "dangling-dependency": Broken, "long-title": Advice, "no-acceptance": Advice, "section-order": Advice, "missing-section": Advice, "a-code-not-yet-known": Broken} {
 		if got := Severity(code); got != want {
 			t.Errorf("Severity(%s) = %s, want %s", code, got, want)
 		}
