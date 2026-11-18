@@ -1,7 +1,7 @@
 ---
 id: z82qsy
 title: "File viewer: a rule under the header; no stale action message"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["macaque"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T12:53"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T13:34"
-waiting_asked_by: "macaque"
+done_at: "2026-11-18T18:40"
 ---
 
 ## Goal
@@ -53,6 +49,8 @@ landed afaa5df on main 2026-11-18: TUI file viewer: rule under the file header; 
 landed 161381f on main 2026-11-18: TUI file viewer: only the file, framed by rules (z82qsy check 4)
 shipped in v0.7.63 (afaa5df)
 landed 161381f on main 2026-11-18 (with ef9c060 rebased as 161381f3, afaa5df2): TUI file viewer frame (z82qsy); in v0.7.63.
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T12:53 todo -> doing/active (take)
 - 2026-11-18T13:34 doing/active -> doing/waiting (wait)
+- 2026-11-18T18:40 doing/waiting -> done (done); was doing_since: 2026-11-18T12:53; waiting_asked_by: macaque; waiting_on: crab review; waiting_since: 2026-11-18T13:34
