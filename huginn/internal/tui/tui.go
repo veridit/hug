@@ -196,6 +196,7 @@ type model struct {
 	yanked                             string // y: the task id P and p paste (3xcesq)
 	hidden                             string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
 	grab                               grabState
+	find                               findState // / in a task or a file: matches in its text (4s3g5q)
 	filter                             task.Filter
 	input                              textinput.Model
 	columnHinted                       bool           // H/L or o last: the footer says what o does, on rows (qtj177)
@@ -933,6 +934,7 @@ func (m *model) setView(view string) {
 	m.offset = 0
 	m.detail = false
 	m.glance = false
+	m.find = findState{}
 	m.detailPath = ""
 	m.detailStack = nil
 	m.detailPane = 0
@@ -1056,6 +1058,9 @@ func (m *model) syncDetail() {
 	if t, ok := m.selected(); ok {
 		m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-1)
 		m.viewport.SetContent(m.detailText(t))
+		if m.find.text != "" {
+			m.refind() // the page drawn again keeps its matches (4s3g5q)
+		}
 	}
 }
 func (m *model) openInput(prompt, value string) tea.Cmd {
@@ -1104,6 +1109,13 @@ func (m *model) back() {
 		m.completion = 0
 	case m.prompt == "/":
 		m.leaveSearch(false) // Esc clears the search, keeping the task (mcvfbz)
+	case m.prompt == findPrompt || (m.detail && m.prompt == "" && m.find.text != ""):
+		// Esc clears the find and its tints; the page stays where it is
+		// (4s3g5q check 4). The next Esc goes back.
+		m.prompt = ""
+		m.input.Blur()
+		m.clearFind()
+		m.message = ""
 	case m.prompt != "":
 		m.prompt = ""
 		m.input.Blur()
@@ -1121,6 +1133,7 @@ func (m *model) back() {
 	case m.detail:
 		t, ok := m.taskAt(m.detailPath)
 		m.detail = false
+		m.find = findState{}
 		m.detailPath = ""
 		if ok && !m.follow(t.ID) {
 			// Opened with # while a filter or the view hides it: no
@@ -1346,7 +1359,18 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// In a file: n/p step files, j/k and pages scroll, Enter edits
 			// it, E opens the folder, Esc and u go back (scrxak).
 			switch k {
-			case "n", "ctrl+n":
+			case "/":
+				// / finds in the file (4s3g5q); n / N step its matches
+				// while a find is on, else n / p step files.
+				m.openFind()
+				m.message = m.findSays()
+			case "n", "N":
+				if m.find.text != "" {
+					m.stepHit(map[string]int{"n": 1, "N": -1}[k])
+				} else if k == "n" {
+					m.stepGlance(1)
+				}
+			case "ctrl+n":
 				m.stepGlance(1)
 			case "p", "ctrl+p":
 				m.stepGlance(-1)
@@ -1460,11 +1484,20 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			case "t", "d", "x", "e":
 				return m, m.startAction(k)
-			case "/", ":", "#":
+			case "/":
+				// / finds in this task's text (4s3g5q), never tasks: a
+				// task's / is the page's, as in less.
+				m.openFind()
+				m.message = m.findSays()
+			case ":", "#":
 				return m, m.openInput(k, "")
 			case "f":
 				return m, m.openFilter()
 			case "N":
+				if m.find.text != "" {
+					m.stepHit(-1) // N steps back through the matches while a find is on
+					return m, nil
+				}
 				return m, m.openInput("new title", "")
 			case "s":
 				m.openSort() // sorts the list it came from, as f filters it (ahejza)
@@ -1486,8 +1519,15 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// followed link, else to the list it was opened from
 				// (9xfnwr, Jørgen 2026-11-16). In : sort u is the
 				// updated field; that prompt takes its keys before this.
+				// u goes up at once with a find on: only Esc clears it
+				// first (4s3g5q check 7).
+				m.find = findState{}
 				m.back()
 			case "n", "p", "ctrl+n", "ctrl+p":
+				if k == "n" && m.find.text != "" {
+					m.stepHit(1) // n is the next match while a find is on (4s3g5q)
+					return m, nil
+				}
 				// Next or previous task of the list the detail was opened
 				// from, without going back first. n and p, not { and }, which
 				// are hard to reach on a Norwegian keyboard (2026-11-16, user).
@@ -1642,6 +1682,11 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if m.prompt == "/" && m.updateSearch(k) {
 		return m, nil
 	}
+	if m.prompt == findPrompt {
+		if next, done := m.updateFind(k); done {
+			return next, nil
+		}
+	}
 	if m.prompt == ":" {
 		cs := m.completions()
 		switch k {
@@ -1722,6 +1767,9 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	m.completion = 0
 	if m.prompt == "/" {
 		m.searchTyped()
+	}
+	if m.prompt == findPrompt {
+		m.findTyped()
 	}
 	return m, cmd
 }

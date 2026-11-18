@@ -196,6 +196,10 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if after = press(fresh, "S"); after.confirm != "S" {
 					t.Fatalf("S did not ask to attach: %q", after.message)
 				}
+			case "/":
+				if after = press(fresh, "/"); after.prompt != findPrompt {
+					t.Fatalf("/ shown but opened no find: %q", after.prompt)
+				}
 			case "N":
 				if after = press(fresh, "N"); after.prompt != "new title" {
 					t.Fatalf("N did not open the new title prompt: %q", after.prompt)

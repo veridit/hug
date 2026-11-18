@@ -59,4 +59,4 @@ Synthetic.
                                                                                                                                             
 Task 2 of 60 · 0% · next · previous · Esc back                                                                                              
                                                                                                                                             
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · next-, previous task …        
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find · next-, previous task 

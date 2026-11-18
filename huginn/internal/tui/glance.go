@@ -92,6 +92,7 @@ func (m *model) showGlance() {
 		return
 	}
 	name, _, _ := m.glanceFile(t)
+	m.find = findState{} // the file's own find (4s3g5q)
 	m.glanceHead, m.glanceBody = m.glanceRead(t, name)
 	m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-2)
 	m.viewport.SetContent(m.glanceBody)
@@ -145,6 +146,7 @@ func (m *model) stepGlance(step int) {
 func (m *model) closeGlance() {
 	m.glance = false
 	m.glanceHead, m.glanceBody = "", ""
+	m.find = findState{}
 	m.detailPane = focusFiles
 	m.syncDetail()
 	m.revealAcceptance()

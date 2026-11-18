@@ -65,6 +65,8 @@ func (m model) barHints() []bkey.Binding {
 		hints = []bkey.Binding{hint("j/k ↑↓", "pick"), hint("Enter", "add chip"), hint("type", "narrow"), hint("Esc", "back"), hint(m.helpKey(), "help")}
 	case m.prompt == "sort":
 		hints = []bkey.Binding{hint("letter", "add / flip"), hint("⌫", "remove last"), hint("Enter", "apply"), hint("Esc", "keep order"), hint(m.helpKey(), "help")}
+	case m.prompt == findPrompt:
+		hints = []bkey.Binding{hint("type", "find"), hint("Enter", "keep"), hint("↑↓", "match"), hint("Esc", "clear"), hint(m.helpKey(), "help")}
 	case m.prompt == "/":
 		hints = []bkey.Binding{hint("↑↓", "pick"), hint("Enter", "go to it"), hint("Tab", "keep as filter"), hint("Esc", "clear"), hint(m.helpKey(), "help")}
 	case m.boxPrompt():
@@ -114,9 +116,13 @@ func (m model) withVersion(bar string) string {
 func (m model) detailHints(narrow bool) []bkey.Binding {
 	t, _ := m.selected()
 	var hints []bkey.Binding
+	if m.find.text != "" {
+		// A find is on (4s3g5q): its keys come first, as in less.
+		return []bkey.Binding{hint("n", "next match"), hint("N", "previous match"), hint("/", "find again"), hint("Esc", "clear"), hint("?", "help"), hint("q", "quit")}
+	}
 	if m.glance {
 		// n and p spelled out (scrxak, Jørgen 00:08: nobody guesses n/p).
-		hints := []bkey.Binding{hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
+		hints := []bkey.Binding{hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("/", "find"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
 		if m.viewport.TotalLineCount() > m.viewport.Height {
 			// j/k only when the file is longer than the screen (qtj177).
 			hints = append([]bkey.Binding{hint("j/k", "scroll")}, hints...)
@@ -190,7 +196,7 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	// r opens the request box (hbgybn): it writes only on Enter, in
 	// the box, so it follows up; at 80 the bar cuts it and ? help and
 	// the list bar name it.
-	hints = append(hints, hint("u", "up"), hint("r", "request"), hint("n", "next task"), hint("p", "previous task"))
+	hints = append(hints, hint("u", "up"), hint("r", "request"), hint("/", "find"), hint("n", "next task"), hint("p", "previous task"))
 	hints = append(hints, hint("J/K", "½ page"))
 	if files && narrow {
 		hints = append(hints, hint("E", "edit files")) // u up first (9xfnwr check 3)

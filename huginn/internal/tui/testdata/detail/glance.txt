@@ -22,7 +22,7 @@ Synthetic bench notes.
                                                                                 
 File · 100% · next-, previous file · Esc back to files                          
                                                                                 
-next-, previous file · Enter edit · u/Esc files · ? help · quit                 
+next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
 == escapes.log at 80
 HUG TASKS · list › 000001                                                       
 [todo]  [feature]  [critical]  group:compiler  unassigned                       
@@ -47,7 +47,7 @@ long long long long long long long long long end
                                                                                 
 File · 100% · next-, previous file · Esc back to files                          
                                                                                 
-next-, previous file · Enter edit · u/Esc files · ? help · quit                 
+next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
 == README at 140
 HUG TASKS · list › 000001                                                                                                                   
 [todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
@@ -72,7 +72,7 @@ Synthetic bench notes.
                                                                                                                                             
 File · 100% · next-, previous file · Esc back to files                                                                                      
                                                                                                                                             
-next-, previous file · Enter edit · u/Esc files · ? help · quit                                                                             
+next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    
 == escapes.log at 140
 HUG TASKS · list › 000001                                                                                                                   
 [todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
@@ -97,4 +97,4 @@ long long long long long long long long long long long long long end
                                                                                                                                             
 File · 100% · next-, previous file · Esc back to files                                                                                      
                                                                                                                                             
-next-, previous file · Enter edit · u/Esc files · ? help · quit                                                                             
+next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    

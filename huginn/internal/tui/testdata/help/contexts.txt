@@ -48,6 +48,7 @@ h / l  Tab  previous / next stop: each task id, the page, checks, links, files
 J / K       half a page down / up                                               
 n / p       next / previous task of the list                                    
 u / Esc     up: back from a followed id, else to the list                       
+/           find in this task; n / N step the matches                           
 t / d / x   take / done / drop it                                               
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                  
 w           wait: park the doing task on what it waits on                       
@@ -86,6 +87,7 @@ h / l  Tab  previous / next stop: each task id, the page, checks, links, files
 J / K       half a page down / up                                               
 n / p       next / previous task of the list                                    
 u / Esc     up: back from a followed id, else to the list                       
+/           find in this task; n / N step the matches                           
 t / d / x   take / done / drop it                                               
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                  
 w           wait: park the doing task on what it waits on                       
@@ -164,13 +166,13 @@ h / l  Tab  previous / next stop: each task id, the page, checks,      /        
 J / K       half a page down / up                                      : commands     overview, list, board, todo, doing, done, depends,    
 n / p       next / previous task of the list                                          dropped, state <s>, type <t>, priority <p>, group <g>,
 u / Esc     up: back from a followed id, else to the list                             label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-t / d / x   take / done / drop it                                                     grouping, lint, clear, help                           
-e           edit in $VISUAL, else $EDITOR, git core.editor, vi         #              jump by id prefix or TASK-number alias                
-w           wait: park the doing task on what it waits on              f              filter picker: s t p g l a e (state type priority …)  
-y           yank: P/p in the list paste it                             s              sort picker: c column, p t s u d g a n; again flips   
-T           type palette                                               Backspace / F  remove the last chip / clear all filters              
-E           its files folder in the editor                             : sort         order by fields; : sort rank goes back                
-                                                                       N              new task                                              
+/           find in this task; n / N step the matches                                 grouping, lint, clear, help                           
+t / d / x   take / done / drop it                                      #              jump by id prefix or TASK-number alias                
+e           edit in $VISUAL, else $EDITOR, git core.editor, vi         f              filter picker: s t p g l a e (state type priority …)  
+w           wait: park the doing task on what it waits on              s              sort picker: c column, p t s u d g a n; again flips   
+y           yank: P/p in the list paste it                             Backspace / F  remove the last chip / clear all filters              
+T           type palette                                               : sort         order by fields; : sort rank goes back                
+E           its files folder in the editor                             N              new task                                              
                                                                        S              copy the screen, Enter attaches it to the task        
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
@@ -187,12 +189,12 @@ h / l  Tab  previous / next stop: each task id, the page, checks,      v b      
 J / K       half a page down / up                                      /              live find; Enter goes to it, Tab keeps it as a filter 
 n / p       next / previous task of the list                           :              palette: commands with completion                     
 u / Esc     up: back from a followed id, else to the list              : commands     overview, list, board, todo, doing, done, depends,    
-t / d / x   take / done / drop it                                                     dropped, state <s>, type <t>, priority <p>, group <g>,
-e           edit in $VISUAL, else $EDITOR, git core.editor, vi                        label <l>, assignee <a>, epic <id>, goto <id>, sort,  
-w           wait: park the doing task on what it waits on                             grouping, lint, clear, help                           
-y           yank: P/p in the list paste it                             #              jump by id prefix or TASK-number alias                
-T           type palette                                               f              filter picker: s t p g l a e (state type priority …)  
-                                                                       s              sort picker: c column, p t s u d g a n; again flips   
+/           find in this task; n / N step the matches                                 dropped, state <s>, type <t>, priority <p>, group <g>,
+t / d / x   take / done / drop it                                                     label <l>, assignee <a>, epic <id>, goto <id>, sort,  
+e           edit in $VISUAL, else $EDITOR, git core.editor, vi                        grouping, lint, clear, help                           
+w           wait: park the doing task on what it waits on              #              jump by id prefix or TASK-number alias                
+y           yank: P/p in the list paste it                             f              filter picker: s t p g l a e (state type priority …)  
+T           type palette                                               s              sort picker: c column, p t s u d g a n; again flips   
                                                                        Backspace / F  remove the last chip / clear all filters              
                                                                        : sort         order by fields; : sort rank goes back                
                                                                        N              new task                                              

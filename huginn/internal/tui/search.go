@@ -115,7 +115,7 @@ func (m model) hiddenWhy(t task.Task) string {
 		}
 	}
 	where := map[string]string{"overview": "the overview", "board": "the board", "lint": "the lint view", "list": "the list"}[m.view]
-	return fmt.Sprintf("%s has no row in %s: i lists every task, # %s opens it", t.ID, where, t.ID)
+	return fmt.Sprintf("%s has no row in %s: vl lists every task, # %s opens it", t.ID, where, t.ID)
 }
 
 // follow selects the task with id where the current view shows it: its

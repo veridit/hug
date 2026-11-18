@@ -1,0 +1,24 @@
+HUG TASKS · list › TASKID                                                       
+[todo]  [feature]  group:root  unassigned                                       
+created YYYY-MM-DD · updated YYYY-MM-DD · rows-board                            
+────────────────────────────────────────────────────────────────────────────────
+Rows on the board                                                               
+────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION                                                                     
+G                                                                               
+                                                                                
+PURPOSE                                                                         
+P                                                                               
+                                                                                
+PRINCIPLE                                                                       
+Q                                                                               
+                                                                                
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
+> ☐ 1. The row layout keeps its columns                                         
+                                                                                
+no dependencies                                                                 
+                                                                                
+NOTES                                                                           
+match 1 of 3 · next · N previous · Esc clear                                    
+/ row lay                                                                       
+type find · Enter keep · ↑↓ match · Esc clear · F1 help                         

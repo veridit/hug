@@ -140,7 +140,7 @@ func (m model) stageLineStyle(t task.Task) lipgloss.Style {
 	return m.styles.dim
 }
 
-func (m model) detailHeader(t task.Task) []string {
+func (m model) detailTitle(t task.Task) string {
 	// subject: the title alone, bold; page focus shows as a ▸ before it,
 	// as a focused heading shows it, so it reads without colour too. The
 	// id is the breadcrumb's last crumb (header-spec.md, Jørgen 00:02).
@@ -148,6 +148,11 @@ func (m model) detailHeader(t task.Task) []string {
 	if m.detailPane == focusPage {
 		title = m.styles.focus.Render("▸ ") + m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width-2))
 	}
+	return title
+}
+
+func (m model) detailHeader(t task.Task) []string {
+	title := m.tintFindTitle(m.detailTitle(t))
 	badges := []string{m.styles.status[m.boardState(t)].Bold(true).Render("[" + oneLine(m.boardState(t)) + "]")}
 	if _, mine := m.askedOf(t); mine {
 		// One word, no question text: the question shows once, in the
@@ -459,6 +464,7 @@ const (
 func (m *model) startFocus() {
 	m.acceptance, m.dependency, m.link, m.file, m.idAt = 0, 0, 0, 0, 0
 	m.glance, m.glanceHead, m.glanceBody = false, "", ""
+	m.find = findState{} // a find is the page's: a new page starts without (4s3g5q)
 	m.detailPane = focusPage
 	t, ok := m.selected()
 	if !ok {

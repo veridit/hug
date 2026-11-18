@@ -21,4 +21,4 @@ no dependencies
 
 Task 3 of 60 · 100% · next · previous · Esc back
 
-j/k scroll · edit · x drop · yank · up · request · next-, previous task …
+j/k scroll · edit · x drop · yank · up · request · / find · next-, previous task

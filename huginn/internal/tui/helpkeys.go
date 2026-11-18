@@ -44,6 +44,8 @@ func (m model) helpContext() string {
 		return "sort"
 	case m.prompt == "/":
 		return "find"
+	case m.prompt == findPrompt:
+		return "findpage"
 	case m.prompt == "#":
 		return "jump"
 	case m.prompt != "":
@@ -84,6 +86,11 @@ func (m model) contextHelp() helpSection {
 			row("type", "find as you type"), row("↑↓", "pick a match"), row("Enter", "go to it", "enter"),
 			row("Tab", "keep it as a filter", "tab"), row("Esc", "clear", "esc"),
 		}}
+	case "findpage":
+		return helpSection{"IN / FIND IN THIS " + strings.ToUpper(m.pageNoun()), []helpRow{
+			row("type", "find in the text; all lower case ignores case"), row("Enter", "keep the matches; with none, search all tasks", "enter"),
+			row("↑↓", "previous / next match"), row("Esc", "clear the matches", "esc"),
+		}}
 	case "jump":
 		return helpSection{"IN # JUMP", []helpRow{
 			row("type", "an id prefix or a TASK-number alias"), row("Tab", "complete", "tab"), row("↑↓ ctrl-n/p", "pick"),
@@ -98,6 +105,7 @@ func (m model) contextHelp() helpSection {
 	case "file":
 		return helpSection{"IN THIS FILE", []helpRow{
 			row("j/k PgDn/PgUp", "scroll a long file"), row("n / p", "next / previous file", "n", "p"), row("Enter", "edit it", "enter"),
+			row("/", "find in the file; n / N step the matches", "/"),
 			row("E", "the task's files folder in the editor", "E"), row("u / Esc", "back to the task", "u"),
 		}}
 	case "task":
@@ -138,6 +146,7 @@ func (m model) taskHelp() helpSection {
 		row("J / K", "half a page down / up", "J", "K"),
 		row("n / p", "next / previous task of the list", "n", "p"),
 		row("u / Esc", "up: back from a followed id, else to the list", "u"),
+		row("/", "find in this task; n / N step the matches", "/"),
 		row("t / d / x", "take / done / drop it", "t", "d", "x"),
 		row("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi", "e"),
 		row("w", "wait: park the doing task on what it waits on", "w"),
@@ -226,7 +235,7 @@ func (m model) globalHelp() helpSection {
 func (m model) helpSections() []helpSection {
 	ctx := m.contextHelp()
 	switch m.helpContext() {
-	case "confirm", "palette", "filter", "sort", "find", "jump", "prompt", "file":
+	case "confirm", "palette", "filter", "sort", "find", "findpage", "jump", "prompt", "file":
 		// In a prompt the letters are typed text; in a file they are the
 		// file's keys (scrxak): the rest waits for Esc.
 		// In text ? is typed (t64v7d): there help is F1.
