@@ -18,7 +18,7 @@ c             clear all filters                                        s        
 g             group rows: flat, group, epic, tag (tag: first listed    Backspace / F  remove the last chip / clear all filters
               tag)                                                     : sort         order by fields; s r or : sort rank goes back
                                                                        N              new task
-                                                                       S              copy the screen, Enter attaches it to the task
+                                                                       S              copy the screen, attach: id, s select, c create
                                                                        r              request: ask the agents for a change; Enter sends
                                                                        Enter / Esc    confirm / cancel every editing action
                                                                        e again        after an edit left a finding: edit at once

@@ -285,6 +285,14 @@ func (m model) updateJump(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		} else {
 			m.prompt = ""
 			m.input.Blur()
+			if m.picking {
+				// Picking a task for the capture (hjbfzd): # finds the row;
+				// Enter on it attaches.
+				if !m.follow(t.ID) {
+					m.message = t.ID + " is not in these rows: Esc, then type it at S"
+				}
+				return m, nil
+			}
 			m.openTask(t)
 		}
 		return m, nil

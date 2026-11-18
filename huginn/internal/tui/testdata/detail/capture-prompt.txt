@@ -1,0 +1,24 @@
+== 80
+offered: Attach this screen to: 000002 → Bug task 02: make the termin… · select · create
+  "\x1b[1;38;2;0;191;255mAttach this screen to: \x1b[0m000002\x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m\x1b[38;2;135;149;168m→ Bug task 02: make the termin…\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[4;38;2;0;191;255;4ms\x1b[0m\x1b[38;2;135;149;168melect · \x1b[0m\x1b[4;38;2;0;191;255;4mc\x1b[0m\x1b[38;2;135;149;168mreate\x1b[0m "
+  keys: Enter attach · Tab complete · Esc not attached · F1 help
+typed: Attach this screen to: 000012 → Bug task 12: make the terminal workflow observ…
+  "\x1b[1;38;2;0;191;255mAttach this screen to: \x1b[0m000012\x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m\x1b[38;2;135;149;168m→ Bug task 12: make the terminal workflow observ…\x1b[0m "
+  keys: Enter attach · Tab complete · Esc not attached · F1 help
+title: new task with this screen, title:
+  "\x1b[1;38;2;0;191;255mnew task with this screen, title: \x1b[0m\x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m                                             "
+  keys: Enter create and attach · Esc back · F1 help
+picking: pick the task for the screen · Enter attaches it there · Esc not attached
+  keys: j/k move · Enter attach here · / find · # id · Esc not attached
+== 140
+offered: Attach this screen to: 000002 → Bug task 02: make the terminal workflow observable · select · create
+  "\x1b[1;38;2;0;191;255mAttach this screen to: \x1b[0m000002\x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m\x1b[38;2;135;149;168m→ Bug task 02: make the terminal workflow observable\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[4;38;2;0;191;255;4ms\x1b[0m\x1b[38;2;135;149;168melect · \x1b[0m\x1b[4;38;2;0;191;255;4mc\x1b[0m\x1b[38;2;135;149;168mreate\x1b[0m                                        "
+  keys: Enter attach · Tab complete · Esc not attached · F1 help
+typed: Attach this screen to: 000012 → Bug task 12: make the terminal workflow observable
+  "\x1b[1;38;2;0;191;255mAttach this screen to: \x1b[0m000012\x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m\x1b[38;2;135;149;168m→ Bug task 12: make the terminal workflow observable\x1b[0m                                                          "
+  keys: Enter attach · Tab complete · Esc not attached · F1 help
+title: new task with this screen, title:
+  "\x1b[1;38;2;0;191;255mnew task with this screen, title: \x1b[0m\x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m                                                                                                         "
+  keys: Enter create and attach · Esc back · F1 help
+picking: pick the task for the screen · Enter attaches it there · Esc not attached
+  keys: j/k move · Enter attach here · / find · # id · Esc not attached

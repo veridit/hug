@@ -241,7 +241,7 @@ func (m model) globalHelp() helpSection {
 		row("Backspace / F", "remove the last chip / clear all filters", "backspace", "F"),
 		row(": sort", "order by fields; s r or : sort rank goes back"),
 		row("N", "new task", "N"),
-		row("S", "copy the screen, Enter attaches it to the task", "S"),
+		row("S", "copy the screen, attach: id, s select, c create", "S"),
 		row("r", "request: ask the agents for a change; Enter sends", "r"),
 		row("Enter / Esc", "confirm / cancel every editing action"),
 		row("e again", "after an edit left a finding: edit at once"),

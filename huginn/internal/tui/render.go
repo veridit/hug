@@ -1084,6 +1084,9 @@ func (m model) frameView() string {
 		if m.prompt == ":" && !m.help {
 			footer = m.paletteFooter()
 		}
+		if m.picking && m.prompt == "" {
+			footer = pickFooter() // hjbfzd: Enter attaches the screen
+		}
 	}
 	lines = append(lines, m.renderMarks(oneLine(footer), m.styles.dim))
 	inputLine := ""
@@ -1101,6 +1104,8 @@ func (m model) frameView() string {
 	}
 	if m.confirm != "" {
 		inputLine = m.confirmLine()
+	} else if m.prompt == capturePrompt || m.prompt == captureTitlePrompt {
+		inputLine = m.captureLine() // the keys s and c beside the field (hjbfzd)
 	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" && !m.boxPrompt() {
 		inputLine = m.input.View()
 	}
@@ -1157,11 +1162,6 @@ func (m model) confirmLine() string {
 		// The command itself, as the CLI takes it (05r3pg): what runs is
 		// what an agent would type.
 		question = "Run " + oneLine(shellLine(m.pendingArgs))
-	case captureKey:
-		// S (5z4zt4): the copy is made; this asks only about attaching.
-		if t, ok := m.taskAt(m.confirmPath); ok {
-			question = m.capturedNote + " · Attach this screen to " + oneLine(t.ID) + " as " + oneLine(m.pendingValue)
-		}
 	case "n":
 		question += oneLine(m.pendingValue)
 	case "t":

@@ -192,9 +192,10 @@ func TestFocusHintsAreHonest(t *testing.T) {
 					t.Fatal("a shown but opened no answer input")
 				}
 			case "S":
-				// S copies at once and asks before it attaches (5z4zt4).
-				if after = press(fresh, "S"); after.confirm != "S" {
-					t.Fatalf("S did not ask to attach: %q", after.message)
+				// S copies at once and asks where it goes before it attaches
+				// (5z4zt4, hjbfzd).
+				if after = press(fresh, "S"); after.prompt != capturePrompt {
+					t.Fatalf("S did not ask where to attach: %q", after.message)
 				}
 			case "/":
 				if after = press(fresh, "/"); after.prompt != findPrompt {
@@ -467,10 +468,6 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 		case "x":
 			if !strings.Contains(plain, "Drop "+main.ID+": superseded?") {
 				t.Fatalf("drop wording: %q", plain)
-			}
-		case "S":
-			if !strings.Contains(plain, "screen copied (") || !strings.Contains(plain, "Attach this screen to "+main.ID+" as screen-") {
-				t.Fatalf("screen wording: %q", plain)
 			}
 		default:
 			if !strings.Contains(plain, "Confirm "+actionNames[k]+" "+main.ID+" Main?") {
