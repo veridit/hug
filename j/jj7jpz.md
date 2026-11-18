@@ -44,3 +44,5 @@ crab review 15:41 local: accepted. 41ba4ed1: BackgroundOf + Abandon(born) remove
 Landed on main via 56e2cc6f (stack rjk44w c2df86c4, jj7jpz 215df154, 2qndsd 56e2cc6f; CI 44332698559 exact SHA 6/6). Ships in the next release.
 
 landed 0c9e122 on main 2026-11-18: sync: a pass that cannot open the board ends its pending marker (jj7jpz)
+
+shipped in v0.7.65 (0c9e122)

@@ -49,6 +49,7 @@ CI run 44308766736 on ci/qpp30y (aee5b13e) finished completed success, all 6 job
 crab review 13:16Z: answerbox.go diff read (syncDetail in openBox, CursorBlink, Transform redraws the cell in theme.cursor over bubbles' reverse, blinks only while the box is open). Exact SHA aee5b13e CI 44308766736 6/6. Bold dropped on an empty cell is fine: underline plus accent still reads as the cursor. Lands after z82qsy, gpyqq9, bg1rd8 (rebase plus exact CI). Check 3 waits on 911j70 (Jørgen picks the grid), check 4 on Jørgen after release.
 Landed on main via 5a8b14da (stack bg1rd8 f7d607e4, qpp30y 3d74229a, 2k68eg 7fafab16, vk9td0 5a8b14da; CI 44328375780 exact SHA 6/6, ubuntu passed on rerun after an unrelated muninn/internal/project flake, see ybbfsa). Ships in the next release.
 landed 3d74229 on main 2026-11-18: TUI answer/request box: drawn at once, blinking underline cursor (qpp30y)
+shipped in v0.7.65 (3d74229)
 ## History
 - 2026-11-18T13:34 todo -> doing/active (take)
 - 2026-11-18T14:15 doing/active -> doing/waiting (wait)
