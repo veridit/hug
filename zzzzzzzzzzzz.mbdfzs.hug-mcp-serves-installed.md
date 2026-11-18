@@ -30,3 +30,5 @@ Check os.Executable()'s resolved target (the Homebrew symlink moves to the new C
 - [ ] After the next brew upgrade, ps shows no hug mcp whose binary is older than the installed version (crab checks on Jørgen's machine)
 
 ## Notes
+
+Jørgen 02:39 local: 'auto-reloading the MCP is immensely important, good catch, get it out.' Ruling (crab): mbdfzs goes first for kestrel, ahead of 3nhp67, and ships in the first hourly release after it is green.
