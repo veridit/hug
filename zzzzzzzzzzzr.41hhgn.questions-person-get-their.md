@@ -86,6 +86,7 @@ Tests: TestUpgradeLeavesAParkAsWait (cli) and TestReadsAsQuestion (task, a table
 Clone of hug's board at 8a18427b^ (/Users/jhf/.jcode/scratch/kestrel-41hhgn13-clone): preview exit 5, 'would: 6 questions to a person moved from waiting to asked (bxqtkt, 47sxn2, zhvkmj, vzghj8, 5z4zt4, jr55s8)' and 'would: 1 wait on a person left waiting ...: s6ff5k waiting_for crab: "H3 failed Part 2 ...; parked per crab ruling, no fourth arm"'. Apply: commit 'hug upgrade: 6 questions to a person moved from waiting to asked, 1 waits left waiting (no question)', waiting_for left 0, s6ff5k stage waiting.
 Statbus (read only): 3 of its 5 would stay waits ('the hug release that stops linting...', 'owner looks at the new-record prototype...', 'owner confirms time frames...').
 race: 'ok task 25.700s', 'ok cli 132.796s'.
+landed 2c7ea8b on main 2026-11-18: hug upgrade: a wait on a person moves to asked only when it asks something ('?'…
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
