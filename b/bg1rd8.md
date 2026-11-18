@@ -1,7 +1,7 @@
 ---
 id: bg1rd8
 title: "A waiting task whose checks all hold is told to finish"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzyn"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T13:22"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T13:42"
-waiting_asked_by: "piglet"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -48,6 +44,8 @@ crab review 13:02Z: ChecksHoldFindings read (waiting only, every check settled, 
 Landed on main via 5a8b14da (stack bg1rd8 f7d607e4, qpp30y 3d74229a, 2k68eg 7fafab16, vk9td0 5a8b14da; CI 44328375780 exact SHA 6/6, ubuntu passed on rerun after an unrelated muninn/internal/project flake, see ybbfsa). Ships in the next release.
 landed f7d607e on main 2026-11-18: lint: a waiting task whose checks all hold is asked to finish (bg1rd8)
 shipped in v0.7.65 (f7d607e)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T13:22 todo -> doing/active (take)
 - 2026-11-18T13:42 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T13:22; waiting_asked_by: piglet; waiting_on: crab review; waiting_since: 2026-11-18T13:42
