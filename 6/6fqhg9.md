@@ -56,6 +56,7 @@ Landed on main c6e49638 (CI 44315991740, exact SHA, 6/6 green). Ships in the nex
 landed 5fbf547 on main 2026-11-18: board4 judge: state the lint ownership rule; two judgings now agree (6fqhg9)
 landed c6e4963 on main 2026-11-18: recall hook: a hug command quoted inside another's argument is not a call…
 shipped in v0.7.64 (5fbf547)
+crab 21:34: shipped (2k68eg afc0d238 in v0.7.65, 3t4a49 50ab1bba in v0.7.69, 6fqhg9 c6e49638 in v0.7.64 per git tag --contains); all checks hold; closed by crab
 ## History
 - 2026-11-18T13:32 todo -> doing/active (take)
 - 2026-11-18T13:50 doing/active -> doing/waiting (wait)
