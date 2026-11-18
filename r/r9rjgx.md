@@ -1,15 +1,20 @@
 ---
 id: r9rjgx
 title: "Release v0.7.67"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T18:48"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Changes: agxqax 8zwy6r 0sw0dd fcf4fg
 - [ ] release.yml green and hug version says 0.7.67
 
 ## Notes
+
+
+## History
+- 2026-11-18T18:48 todo -> doing/active (take)
