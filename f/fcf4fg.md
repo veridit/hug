@@ -32,7 +32,7 @@ gitbranch/gitbranch.go:598 refuses on rebase-merge/rebase-apply/MERGE_HEAD/... w
 ## Depends on
 
 ## Acceptance
-- [ ] a test kills a sync mid-rebase (rebase-merge with autostash left), then hug task note succeeds, the note and the autostashed change are both on the branch
+- [x] a test kills a sync mid-rebase (rebase-merge with autostash left), then hug task note succeeds, the note and the autostashed change are both on the branch
 - [ ] a rebase hug did not start still refuses with the fix line (test)
 
 ## Notes
@@ -40,5 +40,6 @@ gitbranch/gitbranch.go:598 refuses on rebase-merge/rebase-apply/MERGE_HEAD/... w
 
 tigress took over from kestrel (session gone) on crab's 14:41 assignment; assignee set to tigress.
 Fix 69d21471 on ci/fcf4fg (rebased on origin/main c84d3273), CI run 44347035097 pending. Design: integrate() writes <gitdir>/hug-rebase (the marked head) and holds hug-rebase.lock while git rebase runs; a dead process frees the lock. Writers (under the board turn, before reading), sync, take and the background pass call Repository.Recover: rebase state begun within 1 min of a free marker, from the marked head, on this branch = hug's; full state -> git rebase --abort; autostash-only (Seid) -> HEAD back on the unmoved branch, reset, stash apply; one 'sync: ended an interrupted hug rebase ...' line. Edits the rebase did not make are stashed first. Failing first (Recover stubbed): 'rebase_recover_test.go:84: rebase-merge left after recovery: <nil>' (autostash and pick shapes), CLI 'rebase_recover_test.go:71: note on the stuck board: exit 2'. Mutant removing the ownership checks: TestForeignRebaseStillRefuses fails on both cases (no marker; stale marker). Local -race before rebase: 'ok  	github.com/veridit/hug/huginn/gitbranch	70.514s', 'ok  	github.com/veridit/hug/huginn/internal/cli	281.602s', 'ok  	github.com/veridit/hug/internal/env	6.045s'; after rebase, focused gitbranch 11.140s and cli 38.429s ok, repocheck ok.
+check 1: TestWriteEndsInterruptedSyncRebase (cli): sync stopped mid-rebase with rebase-merge holding only autostash (Seid's state, asserted), then 'hug task note' exits 0, prints one 'sync: ended an interrupted hug rebase' line, and the other clone gets 'from a', 'from b' and the autostashed edit once each. gitbranch TestInterruptedHugRebaseIsEnded covers autostash-only and full pick states. Fails first with Recover stubbed: 'note on the stuck board: exit 2'. Fix 69d21471, CI 44347035097 all 6 jobs success (test-windows-cli 134952205150).
 ## History
 - 2026-11-18T15:41 todo -> doing/active (take)
