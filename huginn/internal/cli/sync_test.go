@@ -140,6 +140,9 @@ func syncTimeoutFailure(t *testing.T, bg gitbranch.Background) {
 	if err != nil {
 		log = []byte(fmt.Sprintf("reading phase log: %v", err))
 	}
+	if expProcs != nil {
+		log = append(log, []byte("\nEXP processes:\n"+expProcs())...)
+	}
 	t.Fatalf("background pass still running after 30 s: queued %v, busy %v, pending %v, turn held %v, run held %v (log %s):\n%s", bg.Queued(), bg.Busy(), bg.Pending(), bg.TurnHeld(), bg.RunHeld(), bg.Log(), log)
 }
 

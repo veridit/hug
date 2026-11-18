@@ -25,6 +25,21 @@ const (
 	expFull  = "EXP_6EP7Y2_FULL"
 )
 
+// expProcs lists live git/sh/test processes for a stall (E2), bounded 20 s.
+var expProcs = func() string {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	var c *osexec.Cmd
+	if runtime.GOOS == "windows" {
+		c = osexec.CommandContext(ctx, "powershell", "-NoProfile", "-Command",
+			"Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'git|sh|cli.test|ssh' } | ForEach-Object { '{0} ppid {1} start {2:o} {3}' -f $_.ProcessId, $_.ParentProcessId, $_.CreationDate, $_.CommandLine }")
+	} else {
+		c = osexec.CommandContext(ctx, "ps", "-eo", "pid,ppid,lstart,args")
+	}
+	out, e := c.CombinedOutput()
+	return fmt.Sprintf("%s(err %v)", out, e)
+}
+
 // TestExp6ep7y2Spin is a spinner process: one busy thread until killed.
 func TestExp6ep7y2Spin(t *testing.T) {
 	if os.Getenv(expSpin) != "1" {
