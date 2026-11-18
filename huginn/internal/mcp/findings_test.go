@@ -77,6 +77,11 @@ func TestNewAndUpdateReturnFindingsAndOneFix(t *testing.T) {
 	if failed || l == nil || l["fix"] != "hug task set "+id+` --title "..."` || len(l["findings"].([]any)) != 1 {
 		t.Fatalf("update: %v", m)
 	}
+	// wdkqzx check 4: a note (and every other write) returns the same block.
+	failed, m = call("update", map[string]any{"id": id, "action": "note", "text": "where it stands"})
+	if l, _ = m["lint"].(map[string]any); failed || l == nil || l["fix"] != "hug task set "+id+` --title "..."` {
+		t.Fatalf("update note: %v", m)
+	}
 	failed, m = call("update", map[string]any{"id": id, "action": "set", "title": "Short", "purpose": "Why now", "accept": []string{"D"}})
 	if failed || m["lint"] != nil {
 		t.Fatalf("update fix: %v", m)

@@ -1000,7 +1000,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		reply["attached"] = results
 		reply["next"] = "hug task show " + r.Task.ID
-		return reply, nil
+		return reply.withLint(s, r.Task), nil
 	case "detach":
 		if e = f.count(2); e != nil {
 			return nil, e
@@ -1301,6 +1301,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			reply, e := resultJSON(r, s)
 			if e == nil {
 				withGuide(reply, "promote", r.Task, s)
+				reply.withLint(s, r.Task)
 			}
 			return reply, e
 		}
@@ -1462,8 +1463,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		withGuide(reply, cmd, r.Task, s)
 	}
 	// The task's own findings, every one, with one fix (fkpyg3): what was
-	// just written or taken is checked by the same list lint uses.
-	if e == nil && r.Task.ID != "" && (cmd == "new" || cmd == "set" || cmd == "take") {
+	// just written or taken is checked by the same list lint uses. Every
+	// write gets it (wdkqzx, Jørgen 23:51: the lint goes to the agent that
+	// writes the task, not to the person it later asks); done and drop do
+	// not: done refuses open checks itself and drop takes a reason.
+	if e == nil && r.Task.ID != "" && writesTask[cmd] {
 		reply.withLint(s, r.Task)
 	}
 	// One question at done, never a form (tb0dra): asked when no answer

@@ -122,6 +122,12 @@ func forTask(fs []task.Finding, t task.Task) []task.Finding {
 	return out
 }
 
+// writesTask are the commands an agent runs that write one task and end
+// with its lint block (wdkqzx check 4). done and drop close the task and
+// get none; request is the person's own words, not the agent's write.
+var writesTask = map[string]bool{"new": true, "set": true, "take": true, "check": true, "strike": true, "note": true,
+	"detach": true, "dep": true, "wait": true, "ask": true, "resume": true, "review": true, "design": true, "answer": true, "resolve": true}
+
 // TaskLint is one task's findings with the one combined fix, as show,
 // take, new, set and MCP return it.
 type TaskLint struct {

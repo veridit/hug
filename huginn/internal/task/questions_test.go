@@ -169,3 +169,106 @@ func TestTopQuestionsOnePerTicket(t *testing.T) {
 		t.Fatalf("top questions: %v", s)
 	}
 }
+
+// TestShippedQuestionFixIsAccepted (wdkqzx check 3, Jørgen 23:48 on
+// 6ephqk: its fix 'hug task done 6ephqk' is refused, check 9 is open):
+// with open checks, shipped-not-done names the first open one and its fix
+// ticks it; with every check settled, the fix is done.
+func TestShippedQuestionFixIsAccepted(t *testing.T) {
+	s := &Store{Root: t.TempDir(), DepsMode: "warn"}
+	checks := []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
+	r, err := s.New(NewOptions{Title: "Shipped with check 9 open", Goal: "g", Purpose: "p", Principle: "q", Acceptance: checks})
+	if err != nil {
+		t.Fatal(err)
+	}
+	id := r.Task.ID
+	if _, err := s.Take(id, "nautilus"); err != nil {
+		t.Fatal(err)
+	}
+	s.Note(id, LandedNote(Commit{Hash: "f4ee48baaaa", Subject: "x (" + id + ")", Date: "2026-11-17"}, "main"))
+	s.Note(id, ShippedNote("v0.7.45", Commit{Hash: "f4ee48baaaa"}))
+	for n := 1; n <= 7; n++ {
+		if _, err := s.Check(id, n); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := s.Strike(id, 8, "not relevant", "nautilus", false); err != nil {
+		t.Fatal(err)
+	}
+	q := questionOf(t, s, id)
+	want := "shipped, but doing: release v0.7.45 contains commit f4ee48b naming " + id + " (its note says so) and check 9 is open; nautilus: does it hold, or strike it?"
+	if q == nil || q.Problem != want || q.FixLine() != "hug task check "+id+" 9" {
+		t.Fatalf("8 of 9 settled:\n got %+v\nwant %q, fix hug task check %s 9", q, want, id)
+	}
+	if _, err := s.Check(id, 9); err != nil {
+		t.Fatal(err)
+	}
+	q = questionOf(t, s, id)
+	if q == nil || !strings.HasSuffix(q.Problem, "nautilus: is it done?") || q.FixLine() != "hug task done "+id {
+		t.Fatalf("9 of 9 settled: %+v", q)
+	}
+	// The fix it names is one hug takes: done now goes through.
+	if _, err := s.Done(id); err != nil {
+		t.Fatalf("the fix %q is refused: %v", q.FixLine(), err)
+	}
+}
+
+// TestShippedQuestionNotWhileStageSaysWhy (wdkqzx, kestrel's ggydj2
+// finding via crab 00:49): a stage that already says why the task is not
+// done (doing/waiting, doing/asked, review) gets no shipped-not-done;
+// doing/active and todo still do.
+func TestShippedQuestionNotWhileStageSaysWhy(t *testing.T) {
+	s := &Store{Root: t.TempDir(), DepsMode: "warn"}
+	shipped := func(title, who string) string {
+		r, err := s.New(NewOptions{Title: title, Goal: "g", Purpose: "p", Principle: "q", Acceptance: []string{"one", "two"}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := s.Take(r.Task.ID, who); err != nil {
+			t.Fatal(err)
+		}
+		s.Note(r.Task.ID, LandedNote(Commit{Hash: "f4ee48baaaa", Subject: "x (" + r.Task.ID + ")", Date: "2026-11-17"}, "main"))
+		s.Note(r.Task.ID, ShippedNote("v0.7.45", Commit{Hash: "f4ee48baaaa"}))
+		if _, err := s.Check(r.Task.ID, 1); err != nil {
+			t.Fatal(err)
+		}
+		return r.Task.ID
+	}
+	code := func(id string) string {
+		t.Helper()
+		if q := questionOf(t, s, id); q != nil {
+			return FindingCode(q.Problem)
+		}
+		return ""
+	}
+	a := shipped("Asks jhf", "nautilus")
+	if got := code(a); got != "shipped-not-done" {
+		t.Fatalf("doing/active: want shipped-not-done, got %q", got)
+	}
+	if _, err := s.Ask(a, Question{What: "look at the rows", For: "jhf", Check: 2}, "nautilus"); err != nil {
+		t.Fatal(err)
+	}
+	if got := code(a); got != "" {
+		t.Fatalf("doing/asked of jhf: want no question, got %q", got)
+	}
+	b := shipped("Waits on CI", "kestrel")
+	if _, err := s.Wait(b, "CI run 44188866860", "kestrel"); err != nil {
+		t.Fatal(err)
+	}
+	if got := code(b); got != "" {
+		t.Fatalf("doing/waiting on CI: want no question, got %q", got)
+	}
+	c := shipped("In review", "wyvern")
+	if _, err := s.Review(c, "crab", ""); err != nil {
+		t.Fatal(err)
+	}
+	if got := code(c); got != "" {
+		t.Fatalf("doing/review: want no question, got %q", got)
+	}
+	if _, err := s.Resume(a); err != nil {
+		t.Fatal(err)
+	}
+	if got := code(a); got != "shipped-not-done" {
+		t.Fatalf("resumed to doing/active: want shipped-not-done again, got %q", got)
+	}
+}

@@ -49,10 +49,16 @@ func noteQuestion(t Task, notes string) *Finding {
 	}
 	landed := landedLine.FindStringSubmatch(notes)
 	shipped := shippedLine.FindStringSubmatch(notes)
-	settled := 0
-	for _, a := range t.Acceptance {
+	settled, firstOpen := 0, 0
+	var open []string
+	for i, a := range t.Acceptance {
 		if a.Settled() {
 			settled++
+		} else {
+			if firstOpen == 0 {
+				firstOpen = i + 1
+			}
+			open = append(open, itoa(i+1))
 		}
 	}
 	who := strings.Join(t.Assignee, ", ")
@@ -64,6 +70,20 @@ func noteQuestion(t Task, notes string) *Finding {
 		return &Finding{Path: t.Path, Line: 1, Code: "landed-unchecked",
 			Problem: "landed, but no check is ticked: commit " + landed[1][:7] + " naming " + t.ID + " reached " + landed[2] + " (its note says so) and 0 of " + itoa(len(t.Acceptance)) + " checks are ticked or struck; " + who + ": which checks hold?",
 			Fix:     "hug task check " + t.ID + " 1"}
+	case shipped != nil && stageSaysWhy(t):
+		// The stage already says why it is not done (kestrel's ggydj2
+		// finding, crab 00:49): waiting, asked, review. No question.
+		return nil
+	case shipped != nil && len(open) > 0:
+		// A fix hug takes (wdkqzx, Jørgen 23:48): done refuses open
+		// checks, so the question is the first open one.
+		which, does := "check "+open[0]+" is open", "does it hold"
+		if len(open) > 1 {
+			which, does = "checks "+andList(open)+" are open", "do they hold"
+		}
+		return &Finding{Path: t.Path, Line: 1, Code: "shipped-not-done",
+			Problem: "shipped, but " + t.State + ": release " + shipped[1] + " contains commit " + shipped[2][:7] + " naming " + t.ID + " (its note says so) and " + which + "; " + who + ": " + does + ", or strike it?",
+			Fix:     "hug task check " + t.ID + " " + itoa(firstOpen)}
 	case shipped != nil:
 		return &Finding{Path: t.Path, Line: 1, Code: "shipped-not-done",
 			Problem: "shipped, but " + t.State + ": release " + shipped[1] + " contains commit " + shipped[2][:7] + " naming " + t.ID + " (its note says so); " + who + ": is it done?",
@@ -112,6 +132,25 @@ func IdleFindings(ts []Task, last map[string]time.Time, asked map[string]bool, n
 			Fix:     "hug task note " + t.ID + ` "where it stands"`})
 	}
 	return out
+}
+
+// stageSaysWhy reports whether t's stage already says why it is not done:
+// doing/waiting, doing/asked (41hhgn) or review. doing/active and todo do
+// not.
+func stageSaysWhy(t Task) bool {
+	switch t.Stage {
+	case "waiting", "asked", "review":
+		return true
+	}
+	return ownHolds(t, "asked") || ownHolds(t, "waiting") || ownHolds(t, "review")
+}
+
+// andList joins "7", "8", "9" as "7, 8 and 9".
+func andList(xs []string) string {
+	if len(xs) < 2 {
+		return strings.Join(xs, "")
+	}
+	return strings.Join(xs[:len(xs)-1], ", ") + " and " + xs[len(xs)-1]
 }
 
 func hours(d time.Duration) string {
