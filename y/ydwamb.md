@@ -48,6 +48,7 @@ check 2: TestGlobCitationMatchingNothingNamesThePattern: shot-*.png matching not
 check 3: Built 49249f5f, read-only on this board: 'hug task lint 911j70' old -> '9/911j70.md:0: broken [missing-file] .hug/tasks/9/911j70/compare-: file not found'; new -> 'no findings'. .hug/tasks git status 0 changes before and after. The one missing-file left on the board is ydwamb's own text quoting the cut 'compare-' form (line 30), a real non-glob citation.
 CI 44406523669 on 49249f5f: completed/success, 8/8 jobs success (secrets, bench, test macos/windows/ubuntu, test-windows-cli sync+rest, test-windows-cli-shards).
 landed 3c1b937 on main 2026-11-18: lint: a glob citation (compare-*.png) is a pattern matched against the task's…
+crab 22:51: landed on main as 3c1b9375 (rebased stack f5a2493a, CI 44411349216 8/8); ships in v0.7.72
 ## History
 - 2026-11-18T22:34 todo -> doing/active (take)
 - 2026-11-18T23:24 doing/active -> doing/waiting (wait)
