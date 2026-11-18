@@ -1,17 +1,18 @@
 ---
 id: t01kqm
 title: "Lint judges open tasks only; closed tasks are history, no hidden count"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
-model: "claude-opus-5-5/high"
+stage: "active"
+model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T02:56"
 ---
 
 ## Goal
@@ -42,3 +43,4 @@ Code: huginn/internal/task lint severity rules; huginn/internal/cli/lint.go:134-
 ## History
 - 2026-11-18T01:43 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T01:43
+- 2026-11-18T02:56 todo/ready -> doing/active (take)
