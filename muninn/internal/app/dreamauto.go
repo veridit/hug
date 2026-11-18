@@ -11,6 +11,7 @@ import (
 
 	"github.com/veridit/hug/internal/cond"
 	"github.com/veridit/hug/internal/flock"
+	"github.com/veridit/hug/muninn/internal/activity"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/store"
 )
@@ -101,10 +102,54 @@ func DreamDue(db *store.DB, now time.Time) bool {
 	return l.At.IsZero() || now.Sub(l.At) >= DreamEvery
 }
 
+// DreamPlan is when the next pass may start, from the hour-of-week histogram
+// (vk9td0).
+type DreamPlan struct {
+	Ready      bool      // a week of activity exists
+	Learning   string    // the line while not Ready
+	Start, End time.Time // the quiet stretch running now or next; zero when none
+	Name       string    // "Tue 22:00 for 9 h"
+	Longest    string    // the week's longest quiet stretch, "" when none
+	Hist       *activity.Hist
+}
+
+// ReadDreamPlan reads the histogram as of now. The first read on a store
+// counts the turns hook.log already holds (activity.SeedOnce).
+func ReadDreamPlan(db *store.DB, now time.Time) DreamPlan {
+	activity.SeedOnce(db, filepath.Join(config.DataDir(), "hook.log"))
+	h, err := activity.Read(db, now)
+	if err != nil {
+		return DreamPlan{Learning: "activity: " + err.Error(), Hist: &activity.Hist{Now: now}}
+	}
+	p := DreamPlan{Ready: h.Ready(), Learning: h.Learning(), Hist: h}
+	if l, ok := h.Longest(); ok {
+		p.Longest = l.String()
+	}
+	if s, e, ok := h.Window(now); ok {
+		p.Start, p.End = s, e
+		p.Name = fmt.Sprintf("%s for %d h", s.In(activity.Location()).Format("Mon 15:04"), int(e.Sub(s).Hours()))
+	}
+	return p
+}
+
 // DreamGate says whether a due pass may run now, and why not.
+//
+// With a week of activity (vk9td0) the pass waits for the start of the day's
+// quiet stretch, learned from the hour-of-week histogram; inside the stretch
+// it runs at once, unless the person typed after it began, when the old rule
+// decides. Under a week, or with no quiet stretch, the old rule: away
+// QuietFor. The load gate holds either way.
 func DreamGate(db *store.DB, now time.Time) (ok bool, why string) {
 	var lastTurn int64
 	db.QueryRow(`SELECT COALESCE(MAX(last_ns),0) FROM session_turns`).Scan(&lastTurn)
+	p := ReadDreamPlan(db, now)
+	switch {
+	case !p.Ready || p.Start.IsZero():
+	case now.Before(p.Start):
+		return false, "waiting for your quiet stretch " + p.Name
+	case lastTurn < p.Start.UnixNano():
+		lastTurn = 0 // nobody typed since the stretch began
+	}
 	if lastTurn > 0 {
 		if away := now.Sub(time.Unix(0, lastTurn)); away < QuietFor {
 			return false, "a user turn " + away.Round(time.Minute).String() + " ago"
@@ -140,6 +185,7 @@ func RecordDream(db *store.DB, at time.Time, how string, r DreamResult) (DreamLa
 	if r.Backup != "" {
 		l.Receipt = r.Backup
 	}
+	activity.Prune(db, at) // once a day: the histogram keeps 8 weeks
 	return l, writeDreamLast(db, l)
 }
 

@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/veridit/hug/muninn/internal/activity"
 )
 
 // Dream hand-out (2026-11-12, user: "find when there's a break"). Judgement
@@ -27,9 +29,14 @@ var CueEvery = 6 * time.Hour
 var wrapUp = regexp.MustCompile(`^\W*(thanks|thank you|thx|ty|great|perfect|nice work|good work|well done|good night|goodnight|that'?s all|that'?s it|done for (now|today)|let'?s (stop|call it|pause)|i'?ll be back|takk|god natt|ha det)\b`)
 
 // noteTurn records this user turn and reports a break signal ("" if none).
+// A turn the person typed (not a swarm DM) also counts in the hour-of-week
+// histogram that places the dream pass (vk9td0, internal/activity).
 func (e *Engine) noteTurn(session, msg string, now time.Time) string {
 	if session == "" {
 		return ""
+	}
+	if activity.IsPerson(msg) {
+		activity.Record(e.DB, now)
 	}
 	var last, turns int64
 	err := e.DB.QueryRow(`SELECT last_ns, turns FROM session_turns WHERE session=?`, session).Scan(&last, &turns)

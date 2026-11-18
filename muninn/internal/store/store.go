@@ -73,6 +73,9 @@ CREATE TABLE IF NOT EXISTS dream_items (
 CREATE TABLE IF NOT EXISTS session_turns (
   session TEXT PRIMARY KEY, last_ns INTEGER NOT NULL, turns INTEGER NOT NULL,
   dream_cued_ns INTEGER NOT NULL DEFAULT 0);
+-- The person's turns per clock hour (hour = unix seconds / 3600), for the
+-- hour-of-week histogram that places the dream pass (vk9td0). Kept 8 weeks.
+CREATE TABLE IF NOT EXISTS activity_hours (hour INTEGER PRIMARY KEY, turns INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS sources (
   id INTEGER PRIMARY KEY,
   kind TEXT NOT NULL,          -- jcode | markdown | native

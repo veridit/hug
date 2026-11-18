@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/veridit/hug/muninn/internal/activity"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/store"
@@ -114,6 +115,13 @@ func waitAndDream(ctx context.Context) error {
 		return err
 	}
 	start := app.DreamClock()
+	// With a week of activity the pass waits for the day's quiet stretch,
+	// which may begin more than DreamWaitMax away: wait until it has begun,
+	// then DreamWaitMax more at most (vk9td0).
+	deadline := start.Add(app.DreamWaitMax)
+	if p := app.ReadDreamPlan(db, start); p.Ready && p.Start.After(start) {
+		deadline = p.Start.Add(app.DreamWaitMax)
+	}
 	for {
 		now := app.DreamClock()
 		if !app.DreamDue(db, now) {
@@ -125,7 +133,8 @@ func waitAndDream(ctx context.Context) error {
 		if ok {
 			break
 		}
-		if waited := now.Sub(start); waited >= app.DreamWaitMax {
+		if !now.Before(deadline) {
+			waited := now.Sub(start)
 			db.Close()
 			release()
 			logHook("dream: gave up after %s waiting: %s; the next turn_end starts another", waited.Round(time.Minute), why)
@@ -134,6 +143,10 @@ func waitAndDream(ctx context.Context) error {
 		dreamSleep(dreamStep)
 	}
 	waited := app.DreamClock().Sub(start)
+	stretch := ""
+	if p := app.ReadDreamPlan(db, app.DreamClock()); p.Ready && !p.Start.IsZero() && !app.DreamClock().Before(p.Start) {
+		stretch = ", in your quiet stretch " + p.Name
+	}
 	db.Close()
 	// A waiter that slept for hours may be an old hug: run the installed
 	// one (crab 2026-11-18, the mbdfzs rule). It finds the gate open and
@@ -171,18 +184,60 @@ func waitAndDream(ctx context.Context) error {
 	if last.At.IsZero() {
 		return nil
 	}
-	logHook("%s (%s, waited %s for quiet)", last.Line(), time.Since(began).Round(100*time.Millisecond), waited.Round(time.Minute))
+	logHook("%s (%s, waited %s for quiet%s)", last.Line(), time.Since(began).Round(100*time.Millisecond), waited.Round(time.Minute), stretch)
 	return nil
 }
 
 // dreamStatus is what --status and the dry-run header print.
 func dreamStatus(a *app.App) []string {
 	l := app.ReadDreamLast(a.DB)
+	p := app.ReadDreamPlan(a.DB, app.DreamClock())
 	gate := fmt.Sprintf("once you have been away %s and the load is below %.0f", app.QuietFor, app.DreamLoadBelow)
-	if l.At.IsZero() {
-		return []string{"Last pass: never (dream runs by itself " + gate + ", after your next turn ends)"}
+	if p.Ready && !p.Start.IsZero() {
+		gate = fmt.Sprintf("at the start of your quiet stretch, load below %.0f", app.DreamLoadBelow)
 	}
-	out := []string{"Last pass: " + strings.TrimPrefix(l.Line(), "dream ")}
-	out = append(out, "Next pass: after "+l.At.Add(app.DreamEvery).Local().Format("2006-01-02 15:04")+", "+gate)
-	return out
+	var out []string
+	if l.At.IsZero() {
+		out = []string{"Last pass: never (dream runs by itself " + gate + ", after your next turn ends)"}
+	} else {
+		out = []string{"Last pass: " + strings.TrimPrefix(l.Line(), "dream ")}
+		out = append(out, "Next pass: after "+l.At.Add(app.DreamEvery).Local().Format("2006-01-02 15:04")+", "+gate)
+	}
+	return append(out, planLine(p))
+}
+
+// planLine names the quiet stretch the pass waits for, or how much of a
+// week is still to learn.
+func planLine(p app.DreamPlan) string {
+	switch {
+	case !p.Ready:
+		return "Your week: " + p.Learning + "; until then dream waits for 30 minutes away (hug mem dream --week)"
+	case p.Start.IsZero():
+		return "Your week: no quiet stretch found; dream waits for 30 minutes away (hug mem dream --week)"
+	}
+	loc := activity.Location()
+	return fmt.Sprintf("Next quiet stretch: %s to %s; longest: %s (hug mem dream --week)",
+		p.Start.In(loc).Format("Mon 15:04"), p.End.In(loc).Format("Mon 15:04"), p.Longest)
+}
+
+// dreamWeek is hug mem dream --week: the hour-of-week histogram, the
+// longest quiet stretch, and each day's.
+func dreamWeek(a *app.App) []string {
+	p := app.ReadDreamPlan(a.DB, app.DreamClock())
+	out := []string{strings.TrimRight(p.Hist.Grid(), "\n")}
+	if !p.Ready {
+		return append(out, p.Learning+": until then dream waits for 30 minutes away")
+	}
+	if p.Longest == "" {
+		return append(out, "No quiet stretch: dream waits for 30 minutes away")
+	}
+	out = append(out, "Longest quiet stretch: "+p.Longest)
+	var each []string
+	for d := 0; d < 7; d++ {
+		if s, ok := p.Hist.ForDay(d); ok {
+			each = append(each, s.String())
+		}
+	}
+	out = append(out, "Dream starts each day at: "+strings.Join(each, ", "))
+	return append(out, planLine(p))
 }
