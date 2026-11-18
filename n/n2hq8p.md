@@ -50,6 +50,7 @@ kestrel 15:38: CI 44112302694 on 300abb8 was red on Windows only: '--- FAIL: Tes
 kestrel 15:41: landed on main as b8f9000..21ee039 (300abb8 rule plus 21ee039 test fix), fast-forward. Touched packages passed first: 'ok huginn/internal/cli 146.945s', 'ok huginn/internal/mcp 12.140s', 'ok huginn/internal/task 10.492s', 'ok huginn/internal/tui 97.987s'. Main CI 44116988262 running; a red from these commits gets fixed forward (crab 15:37).
 Reflection (applied, 2026-11-17, calf): A gap: since fkpyg3, hug task new requires --purpose and --principle, but my tests written before it still passed locally on the old base, and only CI on main showed it. Nothing told me to recheck test fixtures for 'new' after a rule change landed. Also, TestHandEditedNotesSeenByLsAndShow's comment said 'right after a sync' while the test kept an old mtime, so it hid an elapsed-time assumption.
 kestrel 15:57: main CI 44116988262 on 21ee039 is green on all 5 jobs (secrets, bench, ubuntu, macos, windows success); Windows ran the fixed TestHandEditedNotesSeenByLsAndShow.
+Reflection 1 applied (tb0dra check 5 triage, crab 2026-11-19): G7, rebase and CI surprises: AGENTS.md Landing now says go vet after rebase and read a red run per package (commit a0939668, ci/reflections).
 ## History
 - 2026-11-17T14:34 todo -> doing/active (take)
 - 2026-11-17T15:02 doing/active -> doing/waiting (wait)
