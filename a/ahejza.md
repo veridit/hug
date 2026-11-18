@@ -56,6 +56,7 @@ landed 4247303 on main 2026-11-18: tui: 'filter: … · sort: …' line with f a
 shipped in v0.7.56 (4247303)
 check 6: Jørgen 19:58 local: 'I like these pickers. Keep it'
 Reflection (dismissed, 2026-11-18, crab): nothing: Jørgen's answer came as a hug answer event naming the check, and tick + done closed it
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G11, nothing misled (any gap named was fixed in this ticket).
 ## History
 - 2026-11-18T05:01 todo -> doing/active (take)
 - 2026-11-18T05:47 doing/active -> doing/asked (ask)
