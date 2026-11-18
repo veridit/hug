@@ -1,17 +1,18 @@
 ---
 id: h00cs2
 title: "hug mem: dream never runs on its own unless hug mem serve is running"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-stage: "ready"
-model: "claude-opus-5-5/high"
+stage: "active"
+model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T04:27"
 ---
 
 ## Goal
@@ -40,3 +41,4 @@ Started design 22:21Z, paused for wdkqzx (crab). Facts so far: dream is called o
 ## History
 - 2026-11-17T23:20 todo -> doing/active (take)
 - 2026-11-17T23:22 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:20
+- 2026-11-18T04:27 todo/ready -> doing/active (take)
