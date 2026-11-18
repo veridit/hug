@@ -26,7 +26,6 @@ Fix path: 34r1ft check 2 (iwazaru, guard in muninn/internal/project SyncBranch, 
 
 ## Depends on
 
-- 34r1ft
 ## Acceptance
 - [ ] Jørgen decides on the existing hug/memory branch (keep, or delete with a local backup), recorded in a note
 - [ ] After the 34r1ft release, a hug mem remember in hug's repo does not move origin/hug/memory (git ls-remote before/after in a note)
