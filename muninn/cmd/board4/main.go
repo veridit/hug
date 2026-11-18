@@ -281,7 +281,9 @@ func main() {
 	worktree := flag.String("worktree", "", "the session's worktree (default: snapshot working_dir)")
 	summaryOut := flag.String("summary", "", "write per-session summaries (JSON lines) here")
 	onlyCwd := flag.String("cwd", "", "skip sessions whose working_dir is not this folder (or inside it)")
+	coordinator := flag.String("coordinator", "", "the board's coordinator for the replay (hug.toml [board] coordinator); \"\" for none")
 	flag.Parse()
+	live := board.ReplayOwners(*onlyCwd, *sessions)
 	root := filepath.Join(os.Getenv("JCODE_SCRATCH_DIR"), "board4")
 	abs, _ := filepath.Abs(*dbpath)
 	if os.Getenv("JCODE_SCRATCH_DIR") == "" || !strings.HasPrefix(abs, root+string(filepath.Separator)) {
@@ -371,7 +373,8 @@ func main() {
 		x.last = t.at
 		actions := t.actions
 		src := func(since time.Time, wantLint bool) *recall.BoardInput {
-			in := &recall.BoardInput{Self: recall.BoardSelf{Name: name, Model: model, Branch: "main", Worktree: wd}}
+			in := &recall.BoardInput{Self: recall.BoardSelf{Name: name, Model: model, Branch: "main", Worktree: wd}, Coordinator: *coordinator}
+			in.Gone = live
 			for _, y := range snap.Tasks {
 				in.Tasks = append(in.Tasks, run.BoardTask(y))
 			}
@@ -383,7 +386,11 @@ func main() {
 				in.Actions = append(in.Actions, b)
 			}
 			if wantLint {
+				// Lint reads the clock (a waiting task's age, bg1rd8): the
+				// turn's time, not today.
+				restore := board.At(t.at)
 				fs, _ := snap.Findings()
+				restore()
 				var bf []recall.BoardFinding
 				for _, f := range fs {
 					bf = append(bf, recall.BoardFinding{TaskID: f.TaskID, TaskState: f.TaskState, Problem: f.Problem, Fix: f.Fix})

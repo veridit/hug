@@ -11,9 +11,11 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/cache"
+	"github.com/veridit/hug/huginn/internal/harness"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -67,6 +69,7 @@ type Snapshot struct {
 	Coordinator string
 	lint        func() ([]task.Finding, []task.Task, error)
 	close       func() error
+	common      string // the git common dir, for the worktree roots
 }
 
 // Findings returns the open lint findings. It is computed on demand: the
@@ -98,6 +101,60 @@ func (s *Snapshot) Close() error {
 		return nil
 	}
 	return s.close()
+}
+
+// Owners reads the harness sessions that worked in this repository (its
+// main checkout and every linked worktree) from the jcode instance at
+// jcodeHome ("" is ~/.jcode) and every instance the zsh registry under
+// home names, as hug task lint's stale-owner does (9ahvgt), and returns
+// whether a name is gone by the same rule (task.Liveness.Gone): its
+// newest session closed over an hour ago, or silent for a day, also
+// under a "You are NAME" alias. known is false for a name no session has
+// (a person, a model). Read once, on the first call (agh2h7).
+func (s *Snapshot) Owners(jcodeHome, home string) func(name string, now time.Time) (gone, known bool) {
+	var live *task.Liveness
+	read := false
+	return func(name string, now time.Time) (bool, bool) {
+		if !read {
+			read = true
+			var more []string
+			if home != "" {
+				for _, i := range harness.DiscoverJcode(home, nil) {
+					more = append(more, i.Home)
+				}
+			}
+			live = task.JcodeLivenessAt(jcodeHome, task.RepoRoots(s.Place.Main, s.common), more...)
+		}
+		return live.Gone(name, now)
+	}
+}
+
+// ReplayOwners is Owners for an offline replay (agh2h7): the sessions in
+// dirs that worked in the repository at repo (its main checkout and the
+// linked worktrees git lists now; "": every session), each name judged
+// as its sessions stood at the moment asked (task.Liveness.At).
+func ReplayOwners(repo string, dirs ...string) func(name string, at time.Time) (gone, known bool) {
+	var roots []string
+	if repo != "" {
+		roots = task.RepoRoots(repo, filepath.Join(repo, ".git"))
+	}
+	all := task.LivenessIn(roots, time.Time{}, dirs...)
+	var cached *task.Liveness
+	var cachedAt time.Time
+	return func(name string, at time.Time) (bool, bool) {
+		if cached == nil || !at.Equal(cachedAt) {
+			cached, cachedAt = all.At(at), at
+		}
+		return cached.Gone(name, at)
+	}
+}
+
+// At pins the clock lint reads (a waiting task's age, bg1rd8) for offline
+// replays, and returns a func that restores it. Not for concurrent use.
+func At(t time.Time) (restore func()) {
+	old := task.Now
+	task.Now = func() time.Time { return t }
+	return func() { task.Now = old }
 }
 
 // Open reads the board of the repository that holds cwd. It returns nil and
@@ -142,7 +199,7 @@ func Open(ctx context.Context, cwd string) (*Snapshot, error) {
 		c.Close()
 		return nil, err
 	}
-	s := &Snapshot{Tasks: convert(ts), Place: p, close: c.Close}
+	s := &Snapshot{Tasks: convert(ts), Place: p, close: c.Close, common: common}
 	s.Coordinator, _ = task.Coordinator(root)
 	s.lint = func() ([]task.Finding, []task.Task, error) {
 		fs, err := c.Lint(ctx)

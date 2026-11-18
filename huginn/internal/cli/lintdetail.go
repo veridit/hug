@@ -329,23 +329,7 @@ func (s *session) liveness(a *App) *task.Liveness {
 			more = append(more, i.Home)
 		}
 	}
-	return task.JcodeLivenessAt(jh, repoRoots(s.r.Root, s.r.Common), more...)
-}
-
-// repoRoots is the repository's worktree folders: the main checkout and
-// each linked worktree (<common>/worktrees/ID/gitdir names its .git).
-func repoRoots(root, common string) []string {
-	roots := []string{root}
-	if common != "" {
-		roots = append(roots, filepath.Dir(common))
-		es, _ := os.ReadDir(filepath.Join(common, "worktrees"))
-		for _, e := range es {
-			if b, err := os.ReadFile(filepath.Join(common, "worktrees", e.Name(), "gitdir")); err == nil {
-				roots = append(roots, filepath.Dir(strings.TrimSpace(string(b))))
-			}
-		}
-	}
-	return roots
+	return task.JcodeLivenessAt(jh, task.RepoRoots(s.r.Root, s.r.Common), more...)
 }
 
 // unreadSessions says, once, that a session folder exists but cannot be

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -40,6 +41,101 @@ type Liveness struct {
 	// Read is the session folders that were read; Unread those that exist
 	// but could not be (9ahvgt: say so once rather than stay silent).
 	Read, Unread []string
+	// Sessions is each counted session, for At (offline replays, agh2h7).
+	Sessions []SessionRecord
+}
+
+// SessionRecord is one counted session: its name, start stamp, newest
+// write, final status and the name its title gave it ("" for none).
+type SessionRecord struct {
+	Name, Start, Status, Alias string
+	Seen                       time.Time
+}
+
+// Gone reports whether name (a session name or a "You are NAME" alias)
+// has gone by the rule stale-owner uses (9ahvgt): its newest session
+// closed over GoneOwnerAfter ago, or no write for over StaleOwnerAfter.
+// known is false when the session list does not know the name (a person,
+// a model, an agent name no session took on): it is never gone here. The
+// recall hook's coordinator line on a finished task uses it (agh2h7), so
+// the hook and lint agree on who is gone.
+func (l *Liveness) Gone(name string, now time.Time) (gone, known bool) {
+	if !l.Known() {
+		return false, false
+	}
+	s, _, ok := l.ownerSeen(name)
+	if !ok {
+		return false, false
+	}
+	return sessionGone(s, now), true
+}
+
+// sessionGone is the gone rule for a known session name (9ahvgt).
+func sessionGone(s Session, now time.Time) bool {
+	return s.Closed && now.Sub(s.Seen) > GoneOwnerAfter || now.Sub(s.Seen) > StaleOwnerAfter
+}
+
+// At is the session list as it stood at t, for offline replays (agh2h7):
+// only sessions started by t count, a session still writing after t was
+// live at t (seen at t, not closed), and a name is closed at t when its
+// newest session by then had stopped writing and ended Closed. Nil when
+// no session had started by t.
+func (l *Liveness) At(t time.Time) *Liveness {
+	if l == nil {
+		return nil
+	}
+	stamp := strconv.FormatInt(t.UnixMilli(), 10)
+	out := &Liveness{Names: map[string]Session{}, Aliases: map[string]string{}, Read: l.Read, Unread: l.Unread}
+	newest := map[string]SessionRecord{}
+	for _, s := range l.Sessions {
+		if later(s.Start, stamp) {
+			continue
+		}
+		seen := s.Seen
+		if seen.After(t) {
+			seen = t
+		}
+		n := out.Names[s.Name]
+		if seen.After(n.Seen) {
+			n.Seen = seen
+		}
+		out.Names[s.Name] = n
+		if w, ok := newest[s.Name]; !ok || later(s.Start, w.Start) {
+			newest[s.Name] = s
+		}
+		if s.Alias != "" && s.Alias != s.Name {
+			if had, ok := out.Aliases[s.Alias]; !ok || seen.After(out.Names[had].Seen) {
+				out.Aliases[s.Alias] = s.Name
+			}
+		}
+	}
+	for name, s := range newest {
+		n := out.Names[name]
+		n.Closed = s.Status == "Closed" && !s.Seen.After(t)
+		out.Names[name] = n
+	}
+	if len(out.Names) == 0 {
+		return nil
+	}
+	return out
+}
+
+// RepoRoots is a repository's worktree folders: the checkout at root, the
+// main one (common's parent) and each linked worktree
+// (<common>/worktrees/ID/gitdir names its .git). Sessions that worked in
+// one of them are this board's (9ahvgt).
+func RepoRoots(root, common string) []string {
+	roots := []string{root}
+	if common != "" {
+		roots = append(roots, filepath.Dir(common))
+		es, _ := os.ReadDir(filepath.Join(common, "worktrees"))
+		for _, e := range es {
+			if b, err := os.ReadFile(filepath.Join(common, "worktrees", e.Name(), "gitdir")); err == nil {
+				roots = append(roots, filepath.Dir(strings.TrimSpace(string(b))))
+			}
+		}
+	}
+	return roots
 }
 
 // Known reports whether the session list was read at all.
@@ -157,8 +253,10 @@ func LivenessIn(roots []string, since time.Time, dirs ...string) *Liveness {
 			newest[s.name] = s
 			closed[s.name] = status == "Closed"
 		}
+		alias := titleName(title)
+		l.Sessions = append(l.Sessions, SessionRecord{Name: s.name, Start: s.start, Status: status, Alias: alias, Seen: s.seen})
 		// Several sessions told "You are kestrel": the one seen last.
-		if alias := titleName(title); alias != "" && alias != s.name {
+		if alias != "" && alias != s.name {
 			if had, ok := l.Aliases[alias]; !ok || s.seen.After(l.Names[had].Seen) {
 				l.Aliases[alias] = s.name
 			}
@@ -335,7 +433,7 @@ func OwnerFindings(live *Liveness, ts []Task, now time.Time, people ...Person) [
 				} else if why == "" {
 					why = "no session is named " + a
 				}
-			case s.Closed && now.Sub(s.Seen) > GoneOwnerAfter, now.Sub(s.Seen) > StaleOwnerAfter:
+			case sessionGone(s, now):
 				if s.Seen.After(last) {
 					last = s.Seen
 				}

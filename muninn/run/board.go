@@ -2,6 +2,7 @@ package run
 
 import (
 	"context"
+	"os"
 	"strings"
 	"time"
 
@@ -12,8 +13,10 @@ import (
 
 // Board nudges in the recall hook (qawmnb). boardSource reads the task board
 // of the repository at cwd and the session's tool calls since the last
-// check; activity reads them from the harness transcript.
-func boardSource(ctx context.Context, on bool, cwd, name string, activity func(since time.Time) harness.Activity) recall.BoardSource {
+// check; activity reads them from the harness transcript. jcodeHome is the
+// session's jcode instance, whose session list says whether a task's owner
+// is still around (agh2h7); "" for another harness: nobody counts as gone.
+func boardSource(ctx context.Context, on bool, cwd, name, jcodeHome string, activity func(since time.Time) harness.Activity) recall.BoardSource {
 	if cwd == "" || !on {
 		return nil
 	}
@@ -32,6 +35,13 @@ func boardSource(ctx context.Context, on bool, cwd, name string, activity func(s
 		in.Tasks = boardTasks(snap.Tasks)
 		in.Coordinator = snap.Coordinator
 		in.Actions = boardActions(act.Actions, snap.Place.Worktree)
+		if jcodeHome != "" {
+			// Read only when asked: at a break, for the coordinator, on a
+			// finished task. Who is gone is lint's stale-owner rule, over
+			// this repository's sessions in every jcode instance (9ahvgt).
+			home, _ := os.UserHomeDir()
+			in.Gone = snap.Owners(jcodeHome, home)
+		}
 		if wantLint {
 			// Read now: the snapshot closes when this returns.
 			fs, err := snap.Findings()

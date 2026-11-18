@@ -112,6 +112,13 @@ type BoardInput struct {
 	Findings    func() []BoardFinding
 	Self        BoardSelf
 	Actions     []BoardAction
+	// Gone reports whether a harness session name has gone at now, by the
+	// rule hug task lint's stale-owner uses (9ahvgt: its newest session
+	// closed over an hour ago, or silent for a day, also under a "You are
+	// NAME" alias), for the coordinator's checks-all-hold line (agh2h7);
+	// known is false for a name the harness does not know (a person, a
+	// model). Nil: no harness list, nobody counts as gone.
+	Gone func(name string, now time.Time) (gone, known bool)
 }
 
 // BoardSource yields the input for actions after since. It returns nil when
@@ -209,6 +216,12 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 			e.boardMark(session, "lint", now)
 			e.DB.Exec(`INSERT INTO board_lint(key, at_ns) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET at_ns=excluded.at_ns`, f.key(), now.UnixNano())
 			return fmt.Sprintf("Task board (%s): %s: %s. fix: %s", brk, f.TaskID, Truncate(oneLine(f.Problem), 160), f.Fix), "lint"
+		} else if f, who, ok := e.pickGone(fs, in, unrelated, now); ok {
+			// The owner of a finished task is gone: the coordinator closes it
+			// (agh2h7; 44w1ev sat a day waiting after wyvern's session ended).
+			e.boardMark(session, "lint", now)
+			e.DB.Exec(`INSERT INTO board_lint(key, at_ns) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET at_ns=excluded.at_ns`, f.key(), now.UnixNano())
+			return fmt.Sprintf("Task board (%s): %s: %s. Its owner %s has no live session, so it is yours as coordinator. fix: %s", brk, f.TaskID, Truncate(oneLine(f.Problem), 160), who, f.Fix), "lint"
 		}
 	}
 	return "", ""
@@ -616,7 +629,66 @@ func ownerOnly(f BoardFinding) bool {
 
 // ownerOnlyPrefixes start the problems of ownerOnly findings (hug task
 // lint's missing-section and the at3qep question codes).
-var ownerOnlyPrefixes = []string{"missing section", "landed, but no check", "shipped, but ", "todo, but commit ", "doing, but nothing on it"}
+var ownerOnlyPrefixes = []string{"missing section", "landed, but no check", "shipped, but ", "todo, but commit ", "doing, but nothing on it", checksHold}
+
+// checksHold starts the problem of a checks-all-hold finding (bg1rd8): a
+// waiting task with every check and child done. Its owner closes it, or,
+// with the owner gone, the board's coordinator (agh2h7).
+const checksHold = "every check holds, but "
+
+// ownerGone returns the assignees of task id when every one of them is a
+// harness session name that has gone (BoardInput.Gone, the stale-owner
+// rule), or ["nobody"] for a task with no assignee. Nil when someone may
+// still be there: a live session, a name the harness does not know, no
+// harness list.
+func ownerGone(in *BoardInput, id string, now time.Time) []string {
+	if in.Gone == nil {
+		return nil
+	}
+	for _, t := range in.Tasks {
+		if t.ID != id {
+			continue
+		}
+		if len(t.Assignee) == 0 {
+			return []string{"nobody"}
+		}
+		var out []string
+		for _, a := range t.Assignee {
+			a = strings.TrimSpace(strings.TrimPrefix(a, "@"))
+			if gone, known := in.Gone(strings.ToLower(a), now); !known || !gone {
+				return nil
+			}
+			out = append(out, a)
+		}
+		return out
+	}
+	return nil
+}
+
+// pickGone returns a checks-all-hold finding whose owner is gone, for the
+// board's coordinator only (closing another's task is the coordinator's
+// call; with no coordinator set nobody is told), at a break where an
+// unrelated finding may be said.
+func (e *Engine) pickGone(fs []BoardFinding, in *BoardInput, any bool, now time.Time) (BoardFinding, string, bool) {
+	self := strings.TrimSpace(in.Self.Name)
+	if !any || self == "" || in.Coordinator == "" || !strings.EqualFold(strings.TrimSpace(in.Coordinator), self) {
+		return BoardFinding{}, "", false
+	}
+	for _, f := range fs {
+		if !runnable(f) || !strings.HasPrefix(f.Problem, checksHold) {
+			continue
+		}
+		var at int64
+		e.DB.QueryRow(`SELECT at_ns FROM board_lint WHERE key=?`, f.key()).Scan(&at)
+		if at > 0 && now.Sub(time.Unix(0, at)) < LintRepeat {
+			continue
+		}
+		if who := ownerGone(in, f.TaskID, now); who != nil {
+			return f, strings.Join(who, ", "), true
+		}
+	}
+	return BoardFinding{}, "", false
+}
 
 // ownHasFinding reports whether one of the session's own doing tasks has
 // a finding with a fix it can run (tpnd3n).

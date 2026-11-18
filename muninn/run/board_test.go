@@ -91,7 +91,7 @@ func TestNudgeBoardOff(t *testing.T) {
 		if cfg.BoardNudges() != tc.on {
 			t.Fatalf("%s: BoardNudges() = %v", tc.json, cfg.BoardNudges())
 		}
-		bs := boardSource(context.Background(), cfg.BoardNudges(), t.TempDir(), "guppy", func(time.Time) harness.Activity { return harness.Activity{} })
+		bs := boardSource(context.Background(), cfg.BoardNudges(), t.TempDir(), "guppy", "", func(time.Time) harness.Activity { return harness.Activity{} })
 		if (bs != nil) != tc.on {
 			t.Fatalf("%s: board source present = %v", tc.json, bs != nil)
 		}
