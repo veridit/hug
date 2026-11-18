@@ -42,5 +42,6 @@ macaque (claude-opus-5-5) is working this stacked on z82qsy at crab's direction 
 crab 13:17Z: removed the dependency on z82qsy so macaque can take it. The real ordering is in git: branch 2qndsd stacks on z82qsy's commits, and crab lands them in order.
 
 
+file:tmux-iterm-image-frame.txt (826 bytes, sha256:e2165d8a) tmux capture-pane, real hug tui from 499f9220 at 100x24, TERM_PROGRAM=iTerm.app, Space on board.png: crumb, note, rule, 17 blank rows the image is drawn over, rule, keys
 ## History
 - 2026-11-18T14:18 todo -> doing/active (take)
