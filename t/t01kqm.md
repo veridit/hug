@@ -1,7 +1,7 @@
 ---
 id: t01kqm
 title: "Lint judges open tasks only; closed tasks are history, no hidden count"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["piglet"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzznh"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-18T14:36"
+done_at: "2026-11-18T19:48"
 ---
 
 ## Goal
@@ -52,6 +51,7 @@ CI 44223058200 for f6b63256: success, all 7 jobs (secrets, bench, test ubuntu/wi
 shipped in v0.7.54 (f6b6325)
 retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): the wait on the release is over. f6b63256 shipped in v0.7.54 and brew hug is v0.7.62. Statbus today (read-only, ~/ssb/statbus, v0.7.62): '131 findings (13 broken) in 6 codes', no 'closed tasks hidden' line, no done-unchecked. Work remains: check 6 needs Jørgen's look, and nobody has asked him. Next owner: take it and run hug task ask t01kqm --to jhf --check 6 with the Statbus numbers above. Given back to todo because the owner (hatchling) is no longer running.
 piglet 14:37: asked jhf about check 6 (hug task ask --check 6; the ask went through, stage asked; gpyqq9 is not needed here because the ask gate already excused shipped-not-done for the one open check). Own read-only Statbus check, hug v0.7.62 in ~/ssb/statbus: 'hug task lint --summary' = '130 findings (13 broken) in 7 codes' (6 branch-gone, 5 missing-goal, 1 doing-idle, 1 unknown-person; 84 missing-section, 31 long-title, 2 no-acceptance), no 'closed tasks hidden' line, no done-unchecked. The question says 131/6 codes from retriever's 13:35 read; one finding changed since.
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T01:43 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T01:43
@@ -64,3 +64,4 @@ piglet 14:37: asked jhf about check 6 (hug task ask --check 6; the ask went thro
   > t01kqm (lint judges open tasks only) shipped in v0.7.54; brew hug is v0.7.62. On Statbus today (read-only, ~/ssb/statbus) hug task lint --summary says '131 findings (13 broken) in 6 codes', with no 'closed tasks hidden' line and no done-unchecked (before: 446 findings, 314 broken, plus 170 hidden). Please open the Statbus LINT section in hug tui: does it now show only open tasks the way you wanted? If yes: hug task check t01kqm 6
   answered by ticking check 6
 - 2026-11-18T19:48 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-18T19:48 doing/active -> done (done); was doing_since: 2026-11-18T14:36
