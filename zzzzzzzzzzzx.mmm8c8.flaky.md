@@ -1,13 +1,18 @@
 ---
 id: mmm8c8
 title: "Flaky TestSettledWaitsForSlowChild since the 100 ms settle"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T04:26"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ Test: huginn/internal/cli/sync_test.go:184 TestSettledWaitsForSlowChild; settle 
 - [ ] No sleep or settle time decides the test's outcome (code review note naming the signal)
 
 ## Notes
+
+
+## History
+- 2026-11-18T04:26 todo -> doing/active (take)
