@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzl"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:16"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "hjbfzd"
 worktree: "/Users/jhf/.jcode/scratch/hjbfzd"
+waiting_on: "crab lands ci/hjbfzd-rebased 69b5cebc with the stack, then a release; check 5 is Jørgen's confirmation after release"
+waiting_since: "2026-11-18T22:34"
+waiting_asked_by: "duckling"
 ---
 
 ## Goal
@@ -50,3 +53,4 @@ check 4: testdata/detail/capture-prompt.txt: offered, typed, title and picking a
 CI 44400498760 on f68a9a5d: success, all 8 jobs. ubuntu -race huginn/internal/tui: 290.273s. Checks 1-4 ticked; check 5 (Jørgen confirms on his board after release) open.
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
+- 2026-11-18T22:34 doing/active -> doing/waiting (wait)
