@@ -46,6 +46,7 @@ func clones(t *testing.T) (a, b *App, bare string) {
 	base := t.TempDir()
 	bare = filepath.Join(base, "remote.git")
 	git(t, base, "init", "--bare", "-b", "main", bare)
+	quietRemote(t, bare)
 	// Count pushes: every push appends its refs to bare/pushes.
 	hook := "#!/bin/sh\ncat >> \"$GIT_DIR/pushes\"\n"
 	if e := os.WriteFile(filepath.Join(bare, "hooks", "post-receive"), []byte(hook), 0o755); e != nil {

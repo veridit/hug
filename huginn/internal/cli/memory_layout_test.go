@@ -180,6 +180,7 @@ func TestMemoryLayoutTwoClonesKeepUnpushedMemory(t *testing.T) {
 	a, old, raw := memoryLayoutApp(t)
 	remote := filepath.Join(t.TempDir(), "remote.git")
 	git(t, a.Cwd, "init", "--bare", "-b", "main", remote)
+	quietRemote(t, remote)
 	git(t, a.Cwd, "remote", "add", "origin", remote)
 	git(t, a.Cwd, "push", "-u", "origin", "main")
 	git(t, old, "push", "-u", "origin", "muninn-notes")
