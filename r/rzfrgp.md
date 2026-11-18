@@ -1,7 +1,7 @@
 ---
 id: rzfrgp
 title: "Board take line: never name a task the session only read"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["duckling"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzz5"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T13:50"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab lands stack b7517169 after z82qsy"
-waiting_since: "2026-11-18T14:21"
-waiting_asked_by: "duckling"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -48,6 +44,8 @@ crab review 13:20Z: stack e66eeb65 (judge prompt) + 819f0f64 (show no longer fee
 Landed on main c6e49638 (CI 44315991740, exact SHA, 6/6 green). Ships in the next release.
 landed cdfee0b on main 2026-11-18: recall hook: the board take line does not name a task the session only read with…
 shipped in v0.7.64 (cdfee0b)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T13:50 todo -> doing/active (take)
 - 2026-11-18T14:21 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T13:50; waiting_asked_by: duckling; waiting_on: crab lands stack b7517169 after z82qsy; waiting_since: 2026-11-18T14:21
