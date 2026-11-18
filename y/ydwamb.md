@@ -1,15 +1,20 @@
 ---
 id: ydwamb
 title: "Lint reads a glob citation (compare-*.png) as a missing file"
-state: todo
+state: "doing"
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T22:34"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "ydwamb"
+worktree: "/Users/jhf/.jcode/scratch/ydwamb"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Finding: hug task lint 911j70 -> 9/911j70.md:0: broken [missing-file] .hug/tasks
 - [ ] hug task lint on this board shows no missing-file finding for 911j70
 
 ## Notes
+
+
+## History
+- 2026-11-18T22:34 todo -> doing/active (take)
