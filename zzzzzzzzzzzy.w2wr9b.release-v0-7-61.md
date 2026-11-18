@@ -37,5 +37,6 @@ Source ead1be4ca37a1042e64c4878d0afcdba7c921b3f, CI44277147694 all6 success incl
 ## Notes
 
 
+Standalone v0.7.61 tag7da883ae245e2fb9097060a9493b7c930679701d, exact source ead1be4c CI44277147694 all6 green. CHANGELOG adds only version heading over exactly2 w40cmk bullets; all .60-and-earlier bytes identical, repocheck0.491s and diff/marker guards pass. Trailer Model: claude-opus-5-5/high. Atomic push main+tag completed; release44279353151 running. Publish-gated targeted brew install then preview-only background3606026c6i owns follow-through. No --machine or apply yet.
 ## History
 - 2026-11-18T10:46 todo -> doing/active (take)
