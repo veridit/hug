@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzs"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:00"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "CI run 44386677307"
+waiting_since: "2026-11-18T21:02"
+waiting_asked_by: "piglet"
 ---
 
 ## Goal
@@ -45,3 +48,4 @@ check 2: Same table test over panes checks, dependencies, links, files: all 4 fa
 check 4: 68029838 on main 939636ff (pushed ykta5g + ci/ykta5g, CI 44386677307). TestFocusedCheckShowsWhole at 100x24, asked of jhf on check 2 with a 3-paragraph question: on e9bc27ce 'ykta5g_test.go:196: on open: the focused check is not whole on screen, missing "Which option do we take?"' (page ended at '> ? ☐ 2. two: decide which option'); after: 'ok ... 0.986s'. Covers open, j onto it, k back onto it, and a 40-line question: shown from its first line, j reads it a line at a time then steps to check 3. markedBlock (detail.go) replaces the first-line search in openTop and revealAcceptance. TestTmuxReload failed once at load 151 (paused 190 s by its load guard), passed 2/2 after at load 73: 'PASS (14.26s)', 'PASS (13.65s)'.
 ## History
 - 2026-11-18T20:00 todo -> doing/active (take)
+- 2026-11-18T21:02 doing/active -> doing/waiting (wait)
