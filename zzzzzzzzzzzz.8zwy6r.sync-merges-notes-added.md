@@ -4,7 +4,7 @@ title: "Sync merges notes added on both sides instead of stopping"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
