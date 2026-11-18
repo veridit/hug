@@ -48,5 +48,6 @@ check 2 landed in 6f7e869. runAt reports a signal-killed git as 'the git process
 Failing first (before the change): 'crash_test.go:45: missing "git crashed" in: --literal-pathspecs add --verbose --all -- .: signal: segmentation fault' and 'crash_test.go:74: fix does not remove the leftover lock'.
 Tests: TestCommitReportsGitCrash, TestCrashNamesLeftoverIndexLock, TestFailureIsNotACrash (exit 128 stays git's own message). 5 mutants (crash branch off, lock check off or forced, no rm, no retry text) each fail a test.
 Race on go1.26.11: 'ok gitbranch 22.321s', 'ok cli 156.475s', 'ok task 26.148s'. No retry loop, per the principle: the cause is Go's -race bug, and the fix is the toolchain line.
+landed 6f7e869 on main 2026-11-18: gitbranch: a git process killed by a signal is reported as such, with a retry…
 ## History
 - 2026-11-18T01:18 todo -> doing/active (take)
