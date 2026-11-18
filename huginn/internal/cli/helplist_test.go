@@ -12,8 +12,10 @@ import (
 func TestHelpListsEveryCommand(t *testing.T) {
 	listed := map[string]bool{}
 	for _, line := range strings.Split(Help, "\n") {
-		if f := strings.Fields(line); len(f) > 1 && strings.HasPrefix(line, "  ") {
-			listed[f[0]] = true
+		if f := strings.Fields(line); len(f) > 1 && strings.HasPrefix(line, "  ") && strings.HasSuffix(f[0], ":") {
+			for _, c := range f[1:] {
+				listed[c] = true
+			}
 		}
 	}
 	for _, c := range Commands {
