@@ -33,7 +33,7 @@ Code: huginn/internal/task/owner.go:95 builds the finding; it reads ~/.jcode/ses
 
 ## Acceptance
 - [x] On hug's board, lint reports stale-owner for nautilus, kestrel and hatchling tasks; a test with a gone owner and with an owner that has no session file fails first on main.
-- [ ] A live worker's task is not reported (test).
+- [x] A live worker's task is not reported (test).
 
 ## Notes
 
