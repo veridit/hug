@@ -4,7 +4,7 @@ title: "Wait for a date: wait --until and ask --after, woken by hug"
 state: todo
 type: feature
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
