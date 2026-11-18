@@ -25,6 +25,9 @@ type IndexStats struct {
 	// GraphMoved is when and how the concept graph moved from the old gob
 	// to its tables (4vd1mz), empty when this store never had a gob.
 	GraphMoved string `json:"graph_moved,omitempty"`
+	// StaleMCP names the hug mcp servers on this machine too old to reload
+	// themselves (z77pem), for a person: an agent hears only of its own.
+	StaleMCP string `json:"stale_mcp,omitempty"`
 }
 
 // Stats defaults to the same environment binding as every other surface.
