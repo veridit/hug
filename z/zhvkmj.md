@@ -64,6 +64,7 @@ file:colours-overview.ans (6580 bytes, sha256:27713b8f) after 28791dea: one colo
 landed 6012b15e..28791dea (32e62173 rebased over the v0.7.53 CHANGELOG; code identical). CI 44221245136 on 32e62173: 6/6 success; tmux colour goldens did not drift. -race ./huginn/internal/tui ok 113.9s; tui suite ok 56.2s. TestOneColourPerMeaning passes; on main it failed with 15 lines (verbatim in the note above).
 landed 28791de on main 2026-11-18: tui: one colour per meaning: amber only for what waits on you, red only for what…
 shipped in v0.7.54 (28791de)
+crab 19:54 local, request 1 (Jørgen 19:52): three points. (1) Files not reachable on this task: new check 5, reproduce on zhvkmj itself first. (2) zoom: that is 33v71x (+/- zoom, j/k scroll, o opens Preview), filed 19:48 from his 911j70 request. (3) red for depends reads like a problem, which it is not: new check 6, depends gets its own calm colour, red only for broken lint. That overrides crab's 02:52 ruling that grouped depends with problems.
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
