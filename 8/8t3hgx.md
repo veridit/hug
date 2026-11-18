@@ -33,11 +33,12 @@ CI 44416338720 8/8 on c1031e55. Content: ydwamb, p277bp checks 1 and 2 (README, 
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml run for v0.7.72 succeeds
+- [x] release.yml run for v0.7.72 succeeds
 - [ ] brew upgrade veridit/tap/hug; hug version prints v0.7.72
 
 ## Notes
 
 
+check 1: release.yml 44417704498 completed success
 ## History
 - 2026-11-19T00:15 todo -> doing/active (take)
