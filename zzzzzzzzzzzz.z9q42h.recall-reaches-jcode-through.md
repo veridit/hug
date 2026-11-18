@@ -1,13 +1,18 @@
 ---
 id: z9q42h
 title: "Recall reaches jcode through a tool hook, never the person's input box"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T02:11"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ jcode docs/HOOKS.md: post_tool_feedback stdout is appended to the tool result un
 - [ ] The feedback hook on a call with nothing parked does one file check and no store load (test counts work)
 
 ## Notes
+
+
+## History
+- 2026-11-18T02:11 todo -> doing/active (take)
