@@ -1,13 +1,18 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T02:53"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Code: muninn run/main.go:376 (pre-forget reindex), ForgetMany (post-write Reinde
 ## Notes
 
 crab 02:52 local: moved from hatchling to wyvern (hatchling is on t01kqm; wyvern owns speed). hatchling's measurements on 66ex4y stay the baseline.
+
+
+## History
+- 2026-11-18T02:53 todo -> doing/active (take)
