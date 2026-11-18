@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzc"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T14:18"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "macaque"
+waiting_on: "crab review"
+waiting_since: "2026-11-18T15:11"
 ---
 
 ## Goal
@@ -50,3 +53,4 @@ Check 2: TestStepImagesAndTextInOneFrame (n/p through board.png, rows.ans, shot.
 CI 44316906824 on 499f9220: attempt 1 failed only test (ubuntu-latest), huginn/internal/cli TestBackgroundSyncParallelNotesAllLand 'sync_test.go:92: background pass still running after 30 s' (known flake d2n0h7, package untouched by this diff); attempt 2 (rerun failed): completed success, all 6 jobs success. Report: /Users/jhf/.jcode/scratch/2qndsd/REPORT.md
 ## History
 - 2026-11-18T14:18 todo -> doing/active (take)
+- 2026-11-18T15:11 doing/active -> doing/waiting (wait)
