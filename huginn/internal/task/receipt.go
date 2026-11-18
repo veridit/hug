@@ -80,7 +80,7 @@ func (r Receipt) Label() string {
 }
 
 var (
-	receiptLine   = regexp.MustCompile(`^- (\S+) ((?:request|answer) \d+) (delivered to|not delivered to|not delivered|acknowledged by|in progress by)(?: ([^\s:()]+))?(?: \((\S+)\))?(?:: (.*))?$`)
+	receiptLine   = regexp.MustCompile(`^- (\S+) ((?:request|answer|outcome) \d+) (delivered to|not delivered to|not delivered|acknowledged by|in progress by)(?: ([^\s:()]+))?(?: \((\S+)\))?(?:: (.*))?$`)
 	answerHeadAny = regexp.MustCompile(`^- \S+ answered \w+`)
 )
 
@@ -201,6 +201,13 @@ func readReceipts(t *Task, history []string) {
 		}
 		t.Answers = append(t.Answers, Item{Kind: "answer", N: n, Receipt: r})
 	}
+	// An outcome is told, not acted on: acknowledged is as far as it goes.
+	if o := t.Outcome; o != nil && o.N > 0 {
+		if r := rs["outcome "+strconv.Itoa(o.N)]; r != nil {
+			c := *r
+			o.Receipt = &c
+		}
+	}
 }
 
 // NewestItem is the item a write just made: the request with the highest
@@ -220,6 +227,10 @@ func NewestItem(t Task, kind string) (Item, bool) {
 	case "answer":
 		if t.AnswerCount > 0 {
 			return Item{Kind: "answer", N: t.AnswerCount}, true
+		}
+	case "outcome":
+		if o := t.Outcome; o != nil && o.N > 0 {
+			return Item{Kind: "outcome", N: o.N}, true
 		}
 	}
 	return Item{}, false
@@ -346,6 +357,11 @@ func hasItem(d *Document, item Item) bool {
 		}
 	case "answer":
 		return item.N >= 1 && item.N <= d.Task.AnswerCount
+	case "outcome":
+		// The outcome of answer N: the asker has acted on it (41hhgn
+		// check 11). Only the newest answer's outcome is read.
+		o := d.Task.Outcome
+		return o != nil && o.N == item.N
 	}
 	return false
 }
@@ -368,6 +384,11 @@ func (d *Document) ItemReceipt(item Item) (Receipt, bool) {
 			if a.N == item.N {
 				return a.Receipt, true
 			}
+		}
+		return Receipt{State: ReceiptPending}, true
+	case "outcome":
+		if r := d.Task.Outcome.Receipt; r != nil {
+			return *r, true
 		}
 		return Receipt{State: ReceiptPending}, true
 	}

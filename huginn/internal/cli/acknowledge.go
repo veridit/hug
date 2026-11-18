@@ -238,7 +238,11 @@ func deliverPendingItem(ctx context.Context, home, sid string, getenv func(strin
 	}
 	it.Token = newToken(d.Task.ID, item)
 	ss := harness.Session{ID: sid, Home: home}
-	took, _, err := harness.DeliverTo(ss, getenv, deliverMessage(it.Board, d.Task, item, by, text, answer, it.Token, targets), it)
+	msg := deliverMessage(it.Board, d.Task, item, by, text, answer, it.Token, targets)
+	if it.Kind == "outcome" {
+		msg = outcomeMessage(it.Board, d.Task, it.Token)
+	}
+	took, _, err := harness.DeliverTo(ss, getenv, msg, it)
 	if err != nil || !took {
 		return "", err
 	}

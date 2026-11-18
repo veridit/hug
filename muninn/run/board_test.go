@@ -149,3 +149,60 @@ func TestBoardCueSkipsDeliveredRequest(t *testing.T) {
 		t.Fatalf("the cue lost request 2, not delivered:\n%s", all)
 	}
 }
+
+// 41hhgn check 11: an outcome hug already delivered to the coordinator's
+// session (or that session acknowledged) is not said again by the board
+// cue: it is in that session's transcript. One that could not be delivered
+// is still said, once, as before.
+func TestBoardCueSkipsDeliveredOutcome(t *testing.T) {
+	for _, tc := range []struct {
+		receipt string
+		said    bool
+	}{
+		{"- 2026-11-18T01:00 outcome 1 delivered to crab (session_crab_1_aa)\n", false},
+		{"- 2026-11-18T01:00 outcome 1 not delivered to crab: no jcode session named crab on this machine\n", true},
+		{"", true},
+	} {
+		repo := t.TempDir()
+		git := func(dir string, args ...string) {
+			t.Helper()
+			c := exec.Command("git", append([]string{"-C", dir}, args...)...)
+			c.Env = append(os.Environ(), "GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@e", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@e")
+			if out, err := c.CombinedOutput(); err != nil {
+				t.Fatalf("git %v: %v\n%s", args, err, out)
+			}
+		}
+		git(repo, "init", "-q", "-b", "main")
+		git(repo, "commit", "-q", "--allow-empty", "-m", "init")
+		git(repo, "worktree", "add", "-q", "--orphan", "-b", "hug/tasks", ".hug/tasks")
+		md := "---\nid: \"abc123\"\ntitle: \"Tags\"\nstate: \"doing\"\nassignee: [nautilus]\n---\n\n## Goal\nG\n\n## Acceptance\n- [ ] one\n- [ ] two\n\n" +
+			"## History\n- 2026-11-18T00:50 answered asked (check 2), by jhf, for nautilus (doing/active):\n  > which rows?\n  the open ones\n" +
+			"- 2026-11-18T00:59 nautilus read the answer: hug task note abc123 \"rows now list the open ones first\"\n" + tc.receipt
+		if err := os.WriteFile(filepath.Join(repo, ".hug/tasks/a.abc123.tags.md"), []byte(md), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		git(filepath.Join(repo, ".hug/tasks"), "add", "-A")
+		git(filepath.Join(repo, ".hug/tasks"), "commit", "-q", "-m", "t")
+		s, err := board.Open(context.Background(), repo)
+		if err != nil || s == nil {
+			t.Fatalf("open: %v %v", s, err)
+		}
+		in := recall.BoardInput{Tasks: boardTasksFor(s.Tasks, "crab"), Coordinator: "crab", Self: recall.BoardSelf{Name: "crab"}}
+		s.Close()
+		db, err := store.Open(filepath.Join(t.TempDir(), "m.db"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		e := &recall.Engine{DB: db}
+		var lines []string
+		for i := 0; i < 3; i++ {
+			line, _ := e.BoardCue("s", "go on", "", time.Now(), func(time.Time, bool) *recall.BoardInput { c := in; return &c })
+			lines = append(lines, line)
+		}
+		db.Close()
+		all := strings.Join(lines, "\n")
+		if said := strings.Contains(all, "nautilus acted on jhf's answer on abc123"); said != tc.said {
+			t.Fatalf("receipt %q: the cue said the outcome = %v, want %v:\n%s", tc.receipt, said, tc.said, all)
+		}
+	}
+}

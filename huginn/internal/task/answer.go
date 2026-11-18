@@ -40,6 +40,8 @@ type Answer struct {
 	By       string `json:"by"`
 	For      string `json:"for,omitempty"`
 	At       string `json:"at"`
+	// n is the block's number in History ("answer n").
+	n int
 }
 
 var (
@@ -67,6 +69,14 @@ type Outcome struct {
 	For   string `json:"for"`
 	At    string `json:"at"`
 	Text  string `json:"text"`
+	// N is the answer's number ("answer N"), the item "outcome N" hug
+	// hands to the coordinator (41hhgn check 11); Check the check the
+	// question was about; Answer the answer's text.
+	N      int    `json:"n,omitempty"`
+	Check  int    `json:"check,omitempty"`
+	Answer string `json:"answer,omitempty"`
+	// Receipt is how far the outcome has reached the coordinator.
+	Receipt *Receipt `json:"receipt,omitempty"`
 }
 
 // readAnswers is unseenAnswer, and the newest answer's outcome, if its
@@ -84,11 +94,15 @@ func scanAnswers(history []string) (cur *Answer, outcome *Outcome, last *Answer)
 			cur = nil
 		}
 	}
+	n := 0 // answer blocks so far, counted as answerCount does: cur is "answer n"
 	for i := 0; i < len(history); i++ {
 		line := strings.TrimRight(history[i], "\r\n")
+		if answerHeadAny.MatchString(line) {
+			n++
+		}
 		if m := answeredHead.FindStringSubmatch(line); m != nil {
-			n, _ := strconv.Atoi(m[3])
-			a := &Answer{At: m[1], Stage: m[2], Check: n, By: m[4], For: m[5]}
+			c, _ := strconv.Atoi(m[3])
+			a := &Answer{At: m[1], Stage: m[2], Check: c, By: m[4], For: m[5], n: n}
 			var q, t []string
 			for i+1 < len(history) && strings.HasPrefix(history[i+1], "  ") {
 				i++
@@ -112,7 +126,7 @@ func scanAnswers(history []string) (cur *Answer, outcome *Outcome, last *Answer)
 			if e1 != nil || e2 != nil {
 				continue
 			}
-			cur = &Answer{At: m[1], Stage: m[2], Question: q, Text: a, By: m[5], For: m[6]}
+			cur = &Answer{At: m[1], Stage: m[2], Question: q, Text: a, By: m[5], For: m[6], n: n}
 			last = cur
 			seen()
 			continue
@@ -120,7 +134,7 @@ func scanAnswers(history []string) (cur *Answer, outcome *Outcome, last *Answer)
 		if m := readLine.FindStringSubmatch(line); m != nil && cur != nil && strings.EqualFold(m[2], cur.For) {
 			outcome = nil
 			if m[3] != "" {
-				outcome = &Outcome{Stage: cur.Stage, By: cur.By, For: cur.For, At: m[1], Text: m[3]}
+				outcome = &Outcome{Stage: cur.Stage, By: cur.By, For: cur.For, At: m[1], Text: m[3], N: cur.n, Check: cur.Check, Answer: cur.Text}
 			}
 			cur = nil
 		}
@@ -229,14 +243,16 @@ func answerOn(d *Document, ts []Task, text, by string) error {
 
 // markRead appends "NAME read the answer" when actor, writing on d, is who
 // its newest unseen answer is for (crab 13:26: any write by the asker after
-// the answer counts as seen).
-func markRead(d *Document, actor, action string) {
+// the answer counts as seen). It reports whether it wrote an outcome (a
+// read line with the write in it, 41hhgn check 11).
+func markRead(d *Document, actor, action string) bool {
 	if actor = strings.TrimSpace(actor); actor == "" || !AnswerFor(d.Task, actor) {
-		return
+		return false
 	}
 	line := stamp() + " " + actor + " read the answer"
 	if action = strings.Join(strings.Fields(action), " "); action != "" {
 		line += ": " + action
 	}
 	d.History(line)
+	return action != ""
 }

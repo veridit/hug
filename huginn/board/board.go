@@ -332,3 +332,14 @@ func DeliveredTo(r task.Request, name string) bool {
 	}
 	return r.Receipt.Delivered != "" || r.Receipt.State != task.ReceiptPending
 }
+
+// OutcomeDeliveredTo is DeliveredTo for an answer's outcome (41hhgn check
+// 11): hug handed it to the session named name, or name acknowledged it,
+// so the board cue does not say it to that session again.
+func OutcomeDeliveredTo(o *task.Outcome, name string) bool {
+	name = strings.TrimSpace(name)
+	if o == nil || o.Receipt == nil || name == "" || !strings.EqualFold(o.Receipt.To, name) {
+		return false
+	}
+	return o.Receipt.Delivered != "" || o.Receipt.State != task.ReceiptPending
+}
