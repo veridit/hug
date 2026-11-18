@@ -32,6 +32,10 @@ Know whether agents act on the recall header's Fix line, and add an off-topic si
 - [ ] memory_feedback <id> off-topic lowers recall of that memory for similar messages, no deletion
 - [ ] header wording change only if the 5-agent eval does not regress
 
+## Requests
+- 2026-11-18T12:23 request 1 by jhf:
+  Any feedback to collect from our instances? Maybe you can assign another agent to go over this to see if there's something we have learned
+
 ## Notes
 
 Item 1 measured 2026-11-16 (local data only): of 454 jcode sessions that received recall injections (injections table, keys jcode:<session>), 0 called memory_forget as a tool (counted from tool-use records '"name":"mcp__muninn__memory_forget"', not text mentions; the recall header itself contains 'memory_forget'), and 13 memory_remember calls occurred across them. Agents essentially never act on the header's Fix line. Implication for item 2: cleanup must not depend on agents volunteering it; an off-topic feedback signal needs to be cheap and prompted, or inferred.
@@ -82,3 +86,4 @@ file:real-spot.py.txt (1943 bytes, sha256:dbfe9f2d)
 - 2026-11-18T02:10 doing/asked -> doing/active (resume); was waiting_asked_by: crab; waiting_on: parked: H3 failed Part 2 (10 wrong vs bar 6); no fourth arm (crab ruling 2026-11-17 20:20); waiting_since: 2026-11-18T02:05
 - 2026-11-18T02:10 doing/active -> doing/waiting (wait)
 - 2026-11-18T02:44 doing/waiting -> doing/waiting (settle: one stage, waiting); was asked_by: hatchling; asked_for: crab; asked_since: 2026-11-17T20:20; asked_what: H3 failed Part 2 (10 wrong vs bar 6); parked per crab ruling, no fourth arm
+- 2026-11-18T12:23 request 1 by jhf
