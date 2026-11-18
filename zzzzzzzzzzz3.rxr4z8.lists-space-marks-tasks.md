@@ -1,13 +1,18 @@
 ---
 id: rxr4z8
 title: "In lists, Space marks tasks and the footer offers actions for the marked ones"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T06:18"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -46,3 +51,7 @@ nautilus 23:44, footer mock for Jørgen (not built yet; queued after e3sevr, 0gz
   j/k move · Space mark · Enter open · ? help · q quit
 
  ◆ (dim accent, never red) in gutter column 1 marks a row, with a quiet tint; the cursor row keeps >. t asks once: 'Take 3 tasks? Enter confirm · Esc cancel'. A refused task (e.g. taken by someone else) is named with its fix: line; the others go ahead. Narrow screens drop the action words to keys: '3 marked · m t x w e · Esc'.
+
+
+## History
+- 2026-11-18T06:18 todo -> doing/active (take)
