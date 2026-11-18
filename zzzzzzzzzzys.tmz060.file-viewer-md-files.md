@@ -33,7 +33,7 @@ glanceText(b, size, width) today: escapeControls + tab expansion + wrap, line by
 - [x] Space on a .md file shows headings in the accent colour, inline code and code blocks in the blue-grey tint, lists indented, no raw '#' or backticks (golden at 80 and 140 columns)
 - [x] A .md file holding \x1b[2J and a BEL shows them escaped, not acted on (test)
 - [x] M flips the shown file between formatted and raw source, and the footer names the key; a .txt or .go file is unchanged (test)
-- [ ] Opening a .md file under 1 MiB renders within 200 ms on a 900 KiB fixture, or shows a spinner while it renders (counting test, not a timer)
+- [x] Opening a .md file under 1 MiB renders within 200 ms on a 900 KiB fixture, or shows a spinner while it renders (counting test, not a timer)
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
