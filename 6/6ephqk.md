@@ -105,7 +105,7 @@ shipped in v0.7.45 (f4ee48b)
 file:upgrade-hug-board.md (8467 bytes, sha256:a615a181) check 4: hug upgrade preview, --apply, lint before/after on hug's own board
 check 4 on hug's board with v0.7.45: 'hug upgrade' preview exit 5, 'tasks: would: 126 tasks moved to state: (was status:)' + 3 waits; '--apply' exit 0, commits abcf36b (126 files, only status:X->state:X, values cmp-identical) and 37aec93 (waiting_for in ggydj2, np2kk2, vnyz8z), pushed. lint 167 (136 broken, 126 old-layout) -> 41 (10 broken), other codes unchanged. Second 'hug upgrade': nothing to do x4, exit 0. file:upgrade-hug-board.md.
 Check 9: Jørgen answered in the TUI 23:47: 'this one is approved' (crowding is filed separately); relayed by crab 00:27 (nautilus)
-Reflection (open, 2026-11-18, nautilus): The tree-in-one-table instruction guided well: lint, upgrade and transitions all read from states.go. Gap: 'Jørgen confirms the look' waited on a release with no cue to him; the TUI answer field closed that loop. (nautilus)
+Reflection (dismissed, 2026-11-18, nautilus): The tree-in-one-table instruction guided well: lint, upgrade and transitions all read from states.go. Gap: 'Jørgen confirms the look' waited on a release with no cue to him; the TUI answer field closed that loop. (nautilus)
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-17T19:25 doing/waiting -> doing/waiting (wait); was waiting_for: jhf
