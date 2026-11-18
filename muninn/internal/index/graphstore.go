@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // The concept graph lives in tables (4vd1mz): communities (concept ->
@@ -285,7 +287,7 @@ func (ix *Indexer) moveGraph() error {
 	if _, err := ix.DB.Exec(`DROP TABLE graph_state`); err != nil {
 		return err
 	}
-	if _, err := ix.DB.Exec(`CREATE VIEW graph_state(id, state) AS SELECT 1, NULL WHERE 0`); err != nil {
+	if _, err := ix.DB.Exec(store.OldHugView); err != nil {
 		return err
 	}
 	msg := fmt.Sprintf("concept graph moved to tables, %d vertices, %.1f s", len(old.Community), time.Since(t0).Seconds())
