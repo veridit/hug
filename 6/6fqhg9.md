@@ -53,6 +53,8 @@ duckling 13:58, retry on top of rzfrgp, against the 13:51 bar (both judgings ide
 duckling 14:20: stack on main 8d26d050: e66eeb65 judge (CI 44307488238 success, 6/6 jobs), 819f0f64 rzfrgp, b7517169 6fqhg9 parser (CI 44309646399 success, 6/6 jobs: secrets, test ubuntu/macos/windows, test-windows-cli, bench). Branches ci/6fqhg9 = 6fqhg9 = ci/rzfrgp = rzfrgp = b7517169; not merged. Local ./... all ok. Judge calls by arm: base+quote 44, old-15 recheck 6, main 8, show/showquote 2 = 60. Report scratch/rzfrgp/REPORT.md.
 crab review 13:20Z: stack e66eeb65 (judge prompt) + 819f0f64 (show no longer feeds addNamed) + b7517169 (HugCalls skips hug commands inside a quoted argument; sh -c and $(...) still count) read. Bars written before runs; two judgings identical: six sets 115/106/9 -> 114/107/7, fresh hug 14/10/4 -> 14/11/3, no set worse. Exact SHA b7517169 CI 44309646399 6/6. Queued to land after z82qsy, then rebase plus exact CI.
 Landed on main c6e49638 (CI 44315991740, exact SHA, 6/6 green). Ships in the next release.
+landed 5fbf547 on main 2026-11-18: board4 judge: state the lint ownership rule; two judgings now agree (6fqhg9)
+landed c6e4963 on main 2026-11-18: recall hook: a hug command quoted inside another's argument is not a call…
 ## History
 - 2026-11-18T13:32 todo -> doing/active (take)
 - 2026-11-18T13:50 doing/active -> doing/waiting (wait)
