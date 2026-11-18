@@ -1,13 +1,18 @@
 ---
 id: 8pwc0k
 title: "Release hug v0.7.57"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T07:04"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -28,3 +33,7 @@ CI 44247018416. Layout w40cmk remains off main and must ship separately.
 - [ ] Tag and merge pushed, release workflow succeeds, brew-installed hug reports v0.7.57
 
 ## Notes
+
+
+## History
+- 2026-11-18T07:04 todo -> doing/active (take)
