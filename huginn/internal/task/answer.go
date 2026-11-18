@@ -36,10 +36,13 @@ type Answer struct {
 	Stage    string `json:"stage"`
 	Check    int    `json:"check,omitempty"`
 	Question string `json:"question"`
-	Text     string `json:"text"`
-	By       string `json:"by"`
-	For      string `json:"for,omitempty"`
-	At       string `json:"at"`
+	// QuestionN is the numbered question it answers (q2adr8), 0 for one
+	// asked before questions were numbered.
+	QuestionN int    `json:"question_n,omitempty"`
+	Text      string `json:"text"`
+	By        string `json:"by"`
+	For       string `json:"for,omitempty"`
+	At        string `json:"at"`
 	// n is the block's number in History ("answer n").
 	n int
 }
@@ -48,8 +51,11 @@ var (
 	answeredLine = regexp.MustCompile(`^- (\S+) answered (\w+): ("(?:[^"\\]|\\.)*") -> ("(?:[^"\\]|\\.)*"), by (.+?)(?:, for (.+?))? \(`)
 	// answeredHead starts a block answer (41hhgn): the texts follow on
 	// "  > " (question) and "  " (answer) lines.
-	answeredHead = regexp.MustCompile(`^- (\S+) answered (\w+)(?: \(check (\d+)\))?, by (.+?)(?:, for (.+?))? \([^()]*\):$`)
-	readLine     = regexp.MustCompile(`^- (\S+) (.+?) read the answer(?:: (.*))?$`)
+	// q2adr8: "(question N, check C)", "(question N)" or "(check C)";
+	// the question number is the last group, so the others keep theirs.
+	answeredHead      = regexp.MustCompile(`^- (\S+) answered (\w+)(?: \((?:question \d+, )?check (\d+)\)| \(question \d+\))?, by (.+?)(?:, for (.+?))? \([^()]*\):$`)
+	answeredQuestionN = regexp.MustCompile(`^- \S+ answered \w+ \(question (\d+)`)
+	readLine          = regexp.MustCompile(`^- (\S+) (.+?) read the answer(?:: (.*))?$`)
 )
 
 // unseenAnswer is the newest answered line in history whose asker has not
@@ -103,6 +109,9 @@ func scanAnswers(history []string) (cur *Answer, outcome *Outcome, last *Answer)
 		if m := answeredHead.FindStringSubmatch(line); m != nil {
 			c, _ := strconv.Atoi(m[3])
 			a := &Answer{At: m[1], Stage: m[2], Check: c, By: m[4], For: m[5], n: n}
+			if qm := answeredQuestionN.FindStringSubmatch(line); qm != nil {
+				a.QuestionN, _ = strconv.Atoi(qm[1])
+			}
 			var q, t []string
 			for i+1 < len(history) && strings.HasPrefix(history[i+1], "  ") {
 				i++
@@ -195,6 +204,12 @@ func question(t Task) (stage, q, asker string) {
 // with text, as by: the stage's fields go to History in one answer block,
 // both texts verbatim (text may span lines); the stage re-derives.
 func (s *Store) Answer(ref, text, by string) (Result, error) {
+	return s.AnswerQuestion(ref, 0, text, by)
+}
+
+// AnswerQuestion is Answer for question n of an asked task (q2adr8): n 0
+// is the only open question; with several open, n is required.
+func (s *Store) AnswerQuestion(ref string, n int, text, by string) (Result, error) {
 	d, ts, e := s.load(ref)
 	if e != nil {
 		return Result{}, e
@@ -214,7 +229,17 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 	if by == "" {
 		return Result{}, usageErr(d.Task.ID, "answer needs who answers: --as NAME, or HUG_USER", "hug task answer "+d.Task.ID+" "+strconv.Quote(oneLineFix(text))+" --as NAME")
 	}
-	if e = answerOn(d, ts, text, by); e != nil {
+	q := 0
+	if stage == "asked" && len(d.Task.Questions) > 0 {
+		picked, e := pickQuestion(d.Task, n, text)
+		if e != nil {
+			return Result{}, e
+		}
+		q = picked.N
+	} else if n > 0 {
+		return Result{}, usageErr(d.Task.ID, d.Task.ID+" has no numbered questions: answer it without a number", "hug task answer "+d.Task.ID+" "+strconv.Quote(oneLineFix(text)))
+	}
+	if e = answerOn(d, ts, q, text, by); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
@@ -223,22 +248,52 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 // answerOn writes the answer text by by to the question d's stage asks:
 // one answer block in History, the stage's fields go, the stage
 // re-derives. Answer and a tick by the person asked (qsqhpe) both use it.
-func answerOn(d *Document, ts []Task, text, by string) error {
-	stage, q, asker := question(d.Task)
+// q is the numbered question it answers (q2adr8), 0 for none: its answer
+// goes under it in ## Questions, and while another stays open the task
+// stays asked, its fields on the oldest open one.
+func answerOn(d *Document, ts []Task, q int, text, by string) error {
+	stage, qtext, asker := question(d.Task)
 	clear := stageFields(d.Task.State, stage)
 	if stage == "review" {
 		clear = []string{"review_by", "review_since", "review_show"}
 	}
+	check := strings.TrimSpace(d.Task.Fields["asked_check"])
+	var set map[string]string
+	if q > 0 {
+		for _, aq := range d.Task.Questions {
+			if aq.N == q {
+				qtext, check = aq.Text, checkText(aq.Check)
+				if aq.By != "" {
+					asker = aq.By
+				}
+			}
+		}
+		if e := d.writeAnswerUnder(q, text, by); e != nil {
+			return e
+		}
+		if open := OpenQuestions(d.Task); len(open) > 0 {
+			set, clear = mirror(open[0])
+		}
+	}
 	head := "answered " + stage
-	if n := strings.TrimSpace(d.Task.Fields["asked_check"]); stage == "asked" && n != "" {
-		head += " (check " + n + ")"
+	var about []string
+	// The number tells questions apart; a task asked once has nothing to
+	// tell apart, and its History reads as before q2adr8.
+	if q > 0 && len(d.Task.Questions) > 1 {
+		about = append(about, "question "+strconv.Itoa(q))
+	}
+	if stage == "asked" && check != "" {
+		about = append(about, "check "+check)
+	}
+	if len(about) > 0 {
+		head += " (" + strings.Join(about, ", ") + ")"
 	}
 	head += ", by " + by
 	if asker = strings.TrimSpace(asker); asker != "" {
 		head += ", for " + asker
 	}
-	q = strings.ReplaceAll(q, "\r\n", "\n")
-	return applyMove(d, ts, move{state: d.Task.State, clear: clear, block: func(moved string) string { return answerBlock(head+" ("+moved+")", q, text, d.newline) }})
+	qtext = strings.ReplaceAll(qtext, "\r\n", "\n")
+	return applyMove(d, ts, move{state: d.Task.State, set: set, clear: clear, block: func(moved string) string { return answerBlock(head+" ("+moved+")", qtext, text, d.newline) }})
 }
 
 // markRead appends "NAME read the answer" when actor, writing on d, is who

@@ -418,10 +418,8 @@ func (s *Store) CheckWith(ref string, n int, evidence string) (Result, error) {
 	// The person asked ticking the check the question is about holds it:
 	// that tick is their answer (qsqhpe, Jørgen on e3sevr).
 	answered := false
-	if stage, _, _ := question(d.Task); ticked && stage == "asked" && s.Actor != "" &&
-		strings.EqualFold(strings.TrimSpace(d.Task.Fields["asked_for"]), strings.TrimSpace(s.Actor)) &&
-		strings.TrimSpace(d.Task.Fields["asked_check"]) == strconv.Itoa(n) {
-		if e = answerOn(d, ts, "answered by ticking check "+strconv.Itoa(n), strings.TrimSpace(s.Actor)); e != nil {
+	if q, ok := tickAnswers(d.Task, n, s.Actor); ticked && ok {
+		if e = answerOn(d, ts, q, "answered by ticking check "+strconv.Itoa(n), strings.TrimSpace(s.Actor)); e != nil {
 			return Result{}, e
 		}
 		answered = true

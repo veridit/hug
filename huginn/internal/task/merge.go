@@ -170,6 +170,8 @@ func MergeTask(path string, base, ours, theirs []byte, side MergeSide) ([]byte, 
 			lines = mergeItems(bs, os_, ts, bok, ook, tok, keep)
 		case RequestsSection:
 			lines = mergeRequests(bs, os_, ts, bok, ook, tok, keep)
+		case QuestionsSection:
+			lines = mergeQuestions(bs, os_, ts, bok, ook, tok, keep)
 		default:
 			var c bool
 			var present bool
@@ -638,15 +640,44 @@ func itemOnly(l []string) []string { body, _ := trimBlank(l); return body }
 // not its display number. Earlier replay may have renumbered a local
 // request after a collision, and a later resolve must follow that request.
 func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []string, []string, bool)) []string {
+	return mergeNumbered(numberedKind{noun: "request", head: requestHead, closed: resolvedHead, renumber: func(header string, n int) string {
+		return requestHead.ReplaceAllString(header, "- ${1} request "+strconv.Itoa(n)+" by ${3}:")
+	}}, b, o, t, bok, ook, tok, keep)
+}
+
+// mergeQuestions merges ## Questions (q2adr8) as requests merge: a
+// question asked on both sides keeps both, the later one renumbered past
+// the other's; an answer under it on one side is kept.
+func mergeQuestions(b, o, t []string, bok, ook, tok bool, keep func(string, []string, []string, bool)) []string {
+	return mergeNumbered(numberedKind{noun: "question", head: questionHead, closed: closedUnder, renumber: func(header string, n int) string {
+		m := questionHead.FindStringSubmatchIndex(header)
+		if m == nil {
+			return header
+		}
+		return header[:m[4]] + strconv.Itoa(n) + header[m[5]:]
+	}}, b, o, t, bok, ook, tok, keep)
+}
+
+// numberedKind is a section of numbered blocks: its head line (number in
+// group 2), the line that closes one (resolved, answered), and how a head
+// gets a new number.
+type numberedKind struct {
+	noun     string
+	head     *regexp.Regexp
+	closed   *regexp.Regexp
+	renumber func(header string, n int) string
+}
+
+func mergeNumbered(k numberedKind, b, o, t []string, bok, ook, tok bool, keep func(string, []string, []string, bool)) []string {
 	if !tok {
 		return o
 	}
 	if !ook {
 		return t
 	}
-	start := func(l string) bool { return requestHead.MatchString(l) }
+	start := func(l string) bool { return k.head.MatchString(l) }
 	num := func(e []string) int {
-		m := requestHead.FindStringSubmatch(strings.TrimRight(e[0], "\r\n"))
+		m := k.head.FindStringSubmatch(strings.TrimRight(e[0], "\r\n"))
 		n, _ := strconv.Atoi(m[2])
 		return n
 	}
@@ -659,13 +690,13 @@ func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []str
 		}
 		out := append([]string(nil), e...)
 		header := strings.TrimRight(out[0], "\r\n")
-		out[0] = requestHead.ReplaceAllString(header, "- ${1} request "+strconv.Itoa(n)+" by ${3}:") + strings.TrimPrefix(out[0], header)
+		out[0] = k.renumber(header, n) + strings.TrimPrefix(out[0], header)
 		return out
 	}
 	key := func(e []string) string {
 		core := renumber(e, 0)
 		for i, l := range core {
-			if resolvedHead.MatchString(strings.TrimRight(l, "\r\n")) {
+			if k.closed.MatchString(strings.TrimRight(l, "\r\n")) {
 				core = core[:i]
 				break
 			}
@@ -682,7 +713,7 @@ func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []str
 	bm, om, tm := byKey(be), byKey(oe), byKey(te)
 	out, c := pick3(bp, op, tp, bok, ook, tok)
 	if c {
-		keep("the text above the requests", op, tp, true)
+		keep("the text above the "+k.noun+"s", op, tp, true)
 	}
 	max := 0
 	used := map[int]bool{}
@@ -696,9 +727,9 @@ func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []str
 	var entries [][]string
 	for _, e := range te {
 		n := num(e)
-		k := key(e)
-		bv, bok := bm[k]
-		ov, ook := om[k]
+		key0 := key(e)
+		bv, bok := bm[key0]
+		ov, ook := om[key0]
 		if !bok && !ook {
 			entries = append(entries, itemOnly(e))
 			continue
@@ -708,7 +739,7 @@ func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []str
 			// the board. Its initial text is the base for any resolution.
 			bv = e
 			for i, l := range bv {
-				if resolvedHead.MatchString(strings.TrimRight(l, "\r\n")) {
+				if k.closed.MatchString(strings.TrimRight(l, "\r\n")) {
 					bv = bv[:i]
 					break
 				}
@@ -717,17 +748,17 @@ func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []str
 		}
 		v, _, c := pick3p(renumber(bv, n), renumber(ov, n), e, bok, ook, true)
 		if c {
-			field := fmt.Sprintf("request %d", n)
+			field := fmt.Sprintf("%s %d", k.noun, n)
 			resolved := func(lines []string) bool {
 				for _, line := range lines {
-					if resolvedHead.MatchString(strings.TrimRight(line, "\r\n")) {
+					if k.closed.MatchString(strings.TrimRight(line, "\r\n")) {
 						return true
 					}
 				}
 				return false
 			}
 			if resolved(ov) && resolved(e) {
-				field = fmt.Sprintf("competing resolution for request %d (identity %x)", n, sha256.Sum256([]byte(k)))
+				field = fmt.Sprintf("competing resolution for %s %d (identity %x)", k.noun, n, sha256.Sum256([]byte(key0)))
 			}
 			keep(field, itemOnly(ov), itemOnly(e), true)
 		}
