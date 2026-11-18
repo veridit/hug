@@ -924,6 +924,12 @@ func short(s string) string {
 // unknown variable uses it, a0p5kt).
 func LogHook(format string, args ...any) { logHook(format, args...) }
 
+func init() {
+	index.OnBackfill = func(units int, took time.Duration) {
+		logHook("anchors: recorded for %d memories in %s (once, tool-call recall)", units, took.Round(time.Millisecond))
+	}
+}
+
 func logHook(format string, args ...any) {
 	p := filepath.Join(config.DataDir(), "hook.log")
 	os.MkdirAll(filepath.Dir(p), 0o700)

@@ -21,6 +21,7 @@ type Stats struct {
 	Added, Changed, Removed, Unchanged int
 	Embedded, EmbedReused              int
 	EmbedPending                       int // left for a later pass (MaxEmbed)
+	AnchorsRecorded                    int // units whose anchors the one-time backfill wrote (n7jbmx)
 	Elapsed                            time.Duration
 	Phases                             []Phase
 	EmbedErr                           error
@@ -35,6 +36,9 @@ type Phase struct {
 func (s Stats) String() string {
 	out := fmt.Sprintf("sources scanned=%d skipped=%d | units added=%d changed=%d removed=%d unchanged=%d | embedded=%d reused=%d | %s",
 		s.SourcesScanned, s.SourcesSkipped, s.Added, s.Changed, s.Removed, s.Unchanged, s.Embedded, s.EmbedReused, s.Elapsed.Round(time.Millisecond))
+	if s.AnchorsRecorded > 0 {
+		out += fmt.Sprintf(" | anchors recorded for %d memories (once)", s.AnchorsRecorded)
+	}
 	if s.EmbedPending > 0 {
 		out += fmt.Sprintf(" | %d still to embed (run `hug mem index`)", s.EmbedPending)
 	}

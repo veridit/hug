@@ -13,6 +13,7 @@ import (
 
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/index"
 	"github.com/veridit/hug/muninn/internal/ingest"
 )
 
@@ -49,8 +50,31 @@ of the store next to it, folds, and reindexes.`,
 			if err != nil {
 				return err
 			}
+			// Tool-call recall's anchors (n7jbmx): one pass over every
+			// memory, done here so it rarely lands in a hook.
+			anchors, err := anchorsPending()
+			if err != nil {
+				return err
+			}
+			if anchors {
+				if !apply {
+					fmt.Fprintln(out, "memory: would record the paths and commands memories name (tool-call recall)")
+				} else if err := withApp(func(ctx context.Context, a *app.App) error {
+					var n int
+					prev := index.OnBackfill
+					index.OnBackfill = func(units int, took time.Duration) { n = units; prev(units, took) }
+					defer func() { index.OnBackfill = prev }()
+					if _, err := a.Reindex(ctx); err != nil {
+						return err
+					}
+					fmt.Fprintf(out, "memory: recorded the paths and commands of %d memories (tool-call recall)\n", n)
+					return nil
+				}); err != nil {
+					return fmt.Errorf("recording anchors: %w; fix: hug mem index", err)
+				}
+			}
 			if st.Folded == 0 {
-				if hooks == 0 {
+				if hooks == 0 && !anchors {
 					fmt.Fprintln(out, "memory: nothing to do")
 				} else if !apply {
 					fmt.Fprintln(out, "fix: hug mem upgrade --apply")
@@ -101,6 +125,16 @@ of the store next to it, folds, and reindexes.`,
 		}}
 	c.Flags().BoolVar(&apply, "apply", false, "fold, with a backup of the store")
 	return c
+}
+
+// anchorsPending reports whether the store's anchors need their one pass.
+func anchorsPending() (bool, error) {
+	a, err := app.OpenAudit()
+	if err != nil {
+		return false, err
+	}
+	defer a.Close()
+	return index.AnchorsPending(a.DB), nil
 }
 
 // pendingErr ends a preview with changes pending: exit 5, nothing printed.

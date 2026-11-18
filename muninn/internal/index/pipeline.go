@@ -251,8 +251,14 @@ func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
 		return st, err
 	}
 	if ix.DB.GetMeta("anchor_recipe") != anchor.Recipe {
-		if err := BackfillAnchors(ix.DB); err != nil {
+		t := time.Now()
+		n, err := BackfillAnchors(ix.DB)
+		if err != nil {
 			return st, err
+		}
+		st.AnchorsRecorded = n
+		if OnBackfill != nil {
+			OnBackfill(n, time.Since(t))
 		}
 	}
 	phase("sources")
@@ -337,13 +343,26 @@ func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
 	return st, nil
 }
 
+// OnBackfill, when set, hears every anchor backfill (units, time taken):
+// the hug binary writes it to hook.log, so a pass that landed in a hook is
+// visible (n7jbmx).
+var OnBackfill func(units int, took time.Duration)
+
+// AnchorsPending reports whether the next index pass recomputes every
+// memory's anchors (a store from before anchors, or a new anchor.Recipe).
+func AnchorsPending(db *store.DB) bool {
+	var n int
+	db.QueryRow(`SELECT COUNT(*) FROM units WHERE active=1`).Scan(&n)
+	return n > 0 && db.GetMeta("anchor_recipe") != anchor.Recipe
+}
+
 // BackfillAnchors recomputes every active unit's anchors: once for a store
 // indexed before anchors existed, and again when anchor.Recipe changes. The
-// caller holds the transaction (Run does).
-func BackfillAnchors(db *store.DB) error {
+// caller holds the transaction (Run does). It returns the units read.
+func BackfillAnchors(db *store.DB) (int, error) {
 	rows, err := db.Query(`SELECT id, title, body FROM units WHERE active=1`)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	type unit struct {
 		id          int64
@@ -354,26 +373,26 @@ func BackfillAnchors(db *store.DB) error {
 		var u unit
 		if err := rows.Scan(&u.id, &u.title, &u.body); err != nil {
 			rows.Close()
-			return err
+			return 0, err
 		}
 		us = append(us, u)
 	}
 	rows.Close()
 	if err := rows.Err(); err != nil {
-		return err
+		return 0, err
 	}
 	// Run holds the pass's transaction on the one pooled connection.
 	if _, err := db.Exec(`DELETE FROM unit_anchors`); err != nil {
-		return err
+		return 0, err
 	}
 	for _, u := range us {
 		for _, a := range anchor.Memory(u.title + " " + u.body) {
 			if _, err := db.Exec(`INSERT OR IGNORE INTO unit_anchors(unit_id, anchor) VALUES(?,?)`, u.id, a); err != nil {
-				return err
+				return 0, err
 			}
 		}
 	}
-	return db.SetMeta("anchor_recipe", anchor.Recipe)
+	return len(us), db.SetMeta("anchor_recipe", anchor.Recipe)
 }
 
 // prunedSources removes units of sources that no longer exist on disk.

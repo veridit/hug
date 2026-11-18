@@ -156,7 +156,8 @@ func main() {
 	if anchor.Recipe != db.GetMeta("anchor_recipe") {
 		_, err = db.Exec(`BEGIN IMMEDIATE`)
 		must(err)
-		must(index.BackfillAnchors(db))
+		_, err = index.BackfillAnchors(db)
+		must(err)
 		_, err = db.Exec(`COMMIT`)
 		must(err)
 	}
