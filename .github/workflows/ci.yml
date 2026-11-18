@@ -67,8 +67,10 @@ jobs:
         shell: bash
         run: |
           mkdir -p $RUNNER_TEMP/tr
-          GIT_TRACE2_EVENT=$RUNNER_TEMP/tr go test -json -timeout 20m ./huginn/internal/cli/ > cli.json || true
+          GIT_TRACE2_EVENT=$RUNNER_TEMP/tr ZZ_SAMPLE=$PWD/sample.tsv go test -json -timeout 20m ./huginn/internal/cli/ > cli.json || true
           go run ./scripts/testtimes cli.json 40
+          echo '== goroutine-seconds per test, by state (100 ms samples): test exec sleep lock run'
+          awk -F'\t' '{s[$1,$2]+=$3/10; t[$1]=1} END{for(k in t) printf "%s\t%.1f\t%.1f\t%.1f\t%.1f\n", k, s[k,"exec"], s[k,"sleep"], s[k,"lock"], s[k,"run"]}' sample.tsv | sort -t$'\t' -k2 -rn | head -30
           go run ./scripts/testsplit $RUNNER_TEMP/tr > split.tsv
           echo "git processes: $(ls $RUNNER_TEMP/tr | wc -l)"
           head -40 split.tsv
@@ -81,6 +83,7 @@ jobs:
           path: |
             cli.json
             split.tsv
+            sample.tsv
 
   bench:
     # Benchmarks out of the normal suite (Jørgen, 2026-11-17 10:00): one
