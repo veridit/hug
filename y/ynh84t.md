@@ -14,8 +14,8 @@ parent: "gem59b"
 doing_since: "2026-11-18T23:37"
 stage: "active"
 model: "claude-opus-5-5"
-branch: "ci-goldens"
-worktree: "/Users/jhf/.jcode/scratch/ci-goldens"
+branch: "ynh84t"
+worktree: "/Users/jhf/.jcode/scratch/ynh84t"
 ---
 
 ## Goal
