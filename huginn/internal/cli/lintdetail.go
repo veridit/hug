@@ -44,6 +44,10 @@ func (s *session) boardFindings(ctx context.Context, cwd, jcodeHome string) ([]t
 		if people, e := task.People(s.r.Dir); e == nil {
 			fs = append(fs, task.PeopleFindings(people, ts)...)
 		}
+		// Each tag on hug.toml's list (txjkrm): config, not file content.
+		if tags, e := task.Tags(s.r.Dir); e == nil {
+			fs = append(fs, task.TagFindings(tags, ts)...)
+		}
 		// Harness session state, not file content (v3k6cp).
 		fs = append(fs, task.OwnerFindings(task.JcodeLivenessAt(jcodeHome), ts, time.Now())...)
 		// A doing ticket nothing has touched for 2 hours is a question to its
@@ -188,6 +192,11 @@ func (s *session) taskLint(t task.Task) *TaskLint {
 	}
 	fs := s.c.LintListed()
 	mine := forTask(fs, t)
+	// Its tags against hug.toml's list (txjkrm): config, not the cache,
+	// so a write that adds a tag hears about it at once.
+	if tags, e := task.Tags(s.r.Dir); e == nil {
+		mine = append(mine, task.TagFindings(tags, []task.Task{t})...)
+	}
 	if len(mine) == 0 {
 		return nil
 	}

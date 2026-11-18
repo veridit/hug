@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Tags listed per board (txjkrm, step 1 of 5). `hug.toml` takes a top-level `tags = ["compiler", "parser", ...]`, and optionally `[tag_merges]` with `OLD = "LISTED"` lines. With a list, lint flags an open task's tag not on it as `unlisted-tag` (advice). A variant of a listed tag (the same word ignoring case, `-` and `_`, or a stated merge) gets one fix: `hug task set ID --tag OLD=LISTED`. Any other tag gets two: `hug task tags add NAME`, or `hug task set ID --tag NAME=`, which removes it. A board with no list is not judged. `hug task tags` lists the board's tags and `hug task tags add NAME` adds one. `hug task set ID --tag` takes `NAME` (add), `OLD=NEW` (replace) or `OLD=` (remove); it is repeatable, and running it again changes nothing. MCP `task_update` set takes `tag` too. A lint finding may carry `fixes`, its alternative commands; text output prints the others as `or:` lines. The task field is still `labels`; showing tags on rows and `hug upgrade --tags` come next.
+
 ## v0.7.64 - 2026-11-18
 
 - Recall hook board lines (6fqhg9, rzfrgp): a hug command quoted inside another command's argument (a `--goal`, a note, a quoted lint line) no longer counts as run, so quoting `hug task take ID` does not make ID yours; `sh -c '...'` and `$(...)` still count. The "this looks like ID" take line no longer names a task you only opened with `hug task show`. The board4 judge now states that a missing-section or owner question is right only on the agent's own task; two judgings agree on 134 of 145 lines (was 7 of 15 on the lines that flipped). Replayed under it: six sets false 9 -> 7, right 106 -> 107; fresh hug false 4 -> 3 (muninn/docs/BOARD4.md).

@@ -29,7 +29,9 @@ type Finding struct {
 	Code string `json:"code"`
 	// Fix is one command that repairs the problem (or opens the task to
 	// repair it). Empty means the default for the code, see FixLine.
-	Fix string `json:"fix"`
+	Fix string `json:"fix"` // Fixes are alternative ways out, each one command (txjkrm: add the
+	// tag to the list, or remove it from the task); Fix is the first.
+	Fixes []string `json:"fixes,omitempty"`
 }
 
 // Severity is Broken or Advice, from the finding's code (pbh9xq).
@@ -78,6 +80,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"unknown condition", "unknown-condition"},
 	{"owner ", "stale-owner"},
 	{"nobody known: ", "unknown-person"},
+	{"unlisted tag: ", "unlisted-tag"},
 	{"backlog leftover", "backlog-leftover"},
 }
 

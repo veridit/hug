@@ -71,6 +71,7 @@ var Codes = []CodeInfo{
 	{"duplicate-origin", "two tasks were imported from one source", Broken},
 	{"unknown-condition", "a Depends on condition hug cannot check (unreadable, or not checkable here): the task waits", Broken},
 	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped", Broken},
+	{"unlisted-tag", "a task has a tag hug.toml tags does not list", Advice},
 	{"unknown-person", "asked_for, design_for or review_by names nobody in hug.toml [people] and no agent on the board", Broken},
 	{"stale-owner", "a doing task's assignee has had no live harness session for over a day", Broken},
 	{"landed-unchecked", "question: a commit naming a doing task reached main, but no check is ticked", Broken},

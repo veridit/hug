@@ -123,6 +123,7 @@ func writeFindings(w io.Writer, fs []task.Finding, sum LintSummary) {
 		// fix is the next: line.
 		for _, v := range fs {
 			fmt.Fprintln(w, v.String())
+			writeOtherFixes(w, v)
 		}
 		return
 	case sum.code == "":
@@ -137,6 +138,7 @@ func writeFindings(w io.Writer, fs []task.Finding, sum LintSummary) {
 	for _, v := range shown {
 		fmt.Fprintln(w, v.String())
 		fmt.Fprintln(w, "  fix: "+v.FixLine())
+		writeOtherFixes(w, v)
 	}
 	if len(shown) < len(fs) {
 		fmt.Fprintf(w, "%d of %d shown; every one: hug task lint --code %s --json\n", len(shown), len(fs), sum.code)
@@ -162,4 +164,15 @@ func plural(n int, one, many string) string {
 		return "1 " + one
 	}
 	return fmt.Sprintf("%d %s", n, many)
+}
+
+// writeOtherFixes prints a finding's other ways out, one "or:" line each
+// (txjkrm: add the tag to the list, or remove it from the task); the
+// first is the fix or next: line.
+func writeOtherFixes(w io.Writer, f task.Finding) {
+	for i, x := range f.Fixes {
+		if i > 0 {
+			fmt.Fprintln(w, "  or: "+x)
+		}
+	}
 }
