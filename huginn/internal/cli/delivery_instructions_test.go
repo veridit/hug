@@ -116,13 +116,25 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 			}
 			waitAck()
 		}},
-		{"(an answer: the asker's next write)", func(t *testing.T) {
+		{"(an answer: the asker's next write", func(t *testing.T) {
 			a.Env["HUG_USER"] = "nautilus"
-			execute(t, a, "note", id, "acted")
+			r := execute(t, a, "note", id, "acted")
 			a.Env["HUG_USER"] = "tester"
 			d, _ := (&task.Store{Root: a.Cwd + "/" + TaskDir}).Get(id)
 			if len(d.Task.Answers) != 1 || d.Task.Answers[0].Receipt.State != task.ReceiptAnswered {
 				t.Fatalf("answers: %+v", d.Task.Answers)
+			}
+			if r["outcome_receipt"] != "pending, delivered to crab ("+crab+")" {
+				t.Fatalf("outcome receipt %v", r["outcome_receipt"])
+			}
+			waitAck()
+		}},
+		{"its outcome, which hug hands to the coordinator the same way in one line: \"NAME acted on PERSON's answer on ID: WRITE\")", func(t *testing.T) {
+			// The delivery above; its words: TestOutcomeReachesCoordinator.
+			msgs := jc.messages()
+			_, msg, _ := strings.Cut(msgs[len(msgs)-1], "\x00")
+			if !strings.HasPrefix(msg, "hug: nautilus acted on jhf's answer on "+id+" ") || !strings.Contains(msg, `: hug task note `+id+` acted`) || strings.Contains(msg, "\n") {
+				t.Fatalf("outcome message: %q", msg)
 			}
 		}},
 		{"(an idle session starts a turn, a busy one gets it at its next step)", func(t *testing.T) {
@@ -222,8 +234,8 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 			// daemon inside the command that wrote the item (counted
 			// there), and nothing of hug's runs between commands: the
 			// hook acks inside the coordinator's own turn.
-			if n := len(jc.messages()); n != 4 {
-				t.Fatalf("daemon got %d messages, want 4 (request 2, answer 1, requests 3 and 4 at crab's next starts)", n)
+			if n := len(jc.messages()); n != 5 {
+				t.Fatalf("daemon got %d messages, want 5 (request 2, answer 1, outcome 1, requests 3 and 4 at crab's next starts)", n)
 			}
 		}},
 		{"or ticks the check a question to them is about (that tick is their answer)", func(t *testing.T) {

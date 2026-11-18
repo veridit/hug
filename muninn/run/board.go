@@ -92,6 +92,11 @@ func boardTasksFor(ts []board.Task, name string) []recall.BoardTask {
 			}
 		}
 		out[i].Requests = keep
+		// An outcome hug delivered to name is in its transcript too (41hhgn
+		// check 11).
+		if board.OutcomeDeliveredTo(t.Outcome, name) {
+			out[i].Outcome = nil
+		}
 	}
 	return out
 }

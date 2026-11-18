@@ -26,6 +26,10 @@ type Result struct {
 	// the person asked ticked the check it is about), so it goes to the
 	// coordinator as an answer does (gmzd87).
 	Answered bool `json:"answered,omitempty"`
+	// Outcome: this write was the asker's first after an answer, so it is
+	// that answer's outcome, which goes to the coordinator too (41hhgn
+	// check 11).
+	Outcome bool `json:"outcome,omitempty"`
 }
 type NewOptions struct {
 	Title, Goal, Group, Type, Priority string
@@ -236,8 +240,9 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		}
 	}
 	if changed {
+		outcome := false
 		if !s.waking && !s.quiet {
-			markRead(d, s.Actor, s.Action)
+			outcome = markRead(d, s.Actor, s.Action)
 			markBack(d, s.Actor)
 			markProgress(d, s.Actor, s.Action)
 		}
@@ -252,6 +257,7 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		if e := s.refreshWritten(d.Task.Path); e != nil {
 			return Result{}, e
 		}
+		return Result{Task: d.Task, Changed: changed, Next: hint(d.Task), Outcome: outcome}, nil
 	}
 	return Result{Task: d.Task, Changed: changed, Next: hint(d.Task)}, nil
 }

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -43,7 +44,7 @@ func TestOutcomeReachesCoordinator(t *testing.T) {
 	}
 	sid, msg, _ := strings.Cut(msgs[1], "\x00")
 	board := realPath(t, a.Cwd)
-	want := "hug: nautilus acted on jhf's answer on " + id + " (Tags), check 2, on board " + strings.TrimSuffix(board[strings.LastIndexAny(board, `/\`)+1:], "") + " (" + board + "): hug task note " + id + ` "rows now list the open ones first". hug task show ` + id + " ["
+	want := "hug: nautilus acted on jhf's answer on " + id + " (Tags), check 2, on board " + filepath.Base(board) + " (" + board + "): hug task note " + id + ` "rows now list the open ones first" (the answer: "the open ones"). hug task show ` + id + " ["
 	if sid != crab || !strings.HasPrefix(msg, want) || strings.Contains(strings.TrimSpace(msg), "\n") {
 		t.Fatalf("outcome message to %s (want %s), want one line starting\n%s\ngot\n%s", sid, crab, want, msg)
 	}
@@ -91,14 +92,15 @@ func TestOutcomeOfTickAnswerReachesCoordinator(t *testing.T) {
 	if len(msgs) != 2 {
 		t.Fatalf("daemon got %q", msgs)
 	}
-	if _, msg, _ := strings.Cut(msgs[1], "\x00"); !strings.Contains(msg, "hug: nautilus acted on jhf's answer on "+id+" (Tags), check 2,") || !strings.Contains(msg, ": hug task check "+id+" 1. hug task show "+id) {
+	if _, msg, _ := strings.Cut(msgs[1], "\x00"); !strings.Contains(msg, "hug: nautilus acted on jhf's answer on "+id+" (Tags), check 2,") || !strings.Contains(msg, ": hug task check "+id+" 1 (the answer: \"answered by ticking check 2\"). hug task show "+id) {
 		t.Fatalf("outcome message:\n%s", msg)
 	}
 }
 
 // Offline (bbxdd7): an outcome written while the coordinator has no live
-// session waits for its next session, which receives it once at its start,
-// with the answer it is the outcome of.
+// session waits for its next session, which receives it once at its start.
+// The answer itself was pending too, but its asker has acted, so it is no
+// longer owed (bbxdd7's rule); the outcome line carries the answer.
 func TestOutcomeReachesCoordinatorsNextSession(t *testing.T) {
 	t.Parallel()
 	jc := newFakeJcode(t)
@@ -118,17 +120,17 @@ func TestOutcomeReachesCoordinatorsNextSession(t *testing.T) {
 	next := jc.session(t, "crab", 3000, true)
 	none := func(string) string { return "" }
 	got, err := DeliverPending(context.Background(), jc.home, next, none)
-	if err != nil || strings.Join(got, ",") != id+" answer 1,"+id+" outcome 1" {
+	if err != nil || strings.Join(got, ",") != id+" outcome 1" {
 		t.Fatalf("crab's next session start delivered %v, err %v", got, err)
 	}
 	msgs := jc.messages()
-	if len(msgs) != 2 {
+	if len(msgs) != 1 {
 		t.Fatalf("daemon got %q", msgs)
 	}
-	if _, msg, _ := strings.Cut(msgs[1], "\x00"); !strings.Contains(msg, "hug: nautilus acted on jhf's answer on "+id+" (Tags), check 2,") {
+	if _, msg, _ := strings.Cut(msgs[0], "\x00"); !strings.Contains(msg, "hug: nautilus acted on jhf's answer on "+id+" (Tags), check 2,") || !strings.Contains(msg, `(the answer: "the open ones")`) {
 		t.Fatalf("outcome message:\n%s", msg)
 	}
-	if got, err := DeliverPending(context.Background(), jc.home, next, none); err != nil || len(got) != 0 || len(jc.messages()) != 2 {
+	if got, err := DeliverPending(context.Background(), jc.home, next, none); err != nil || len(got) != 0 || len(jc.messages()) != 1 {
 		t.Fatalf("second start delivered %v, err %v", got, err)
 	}
 	if f := taskFile(t, a, id); strings.Count(f, " outcome 1 delivered to crab") != 1 {

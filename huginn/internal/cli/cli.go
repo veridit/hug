@@ -1559,6 +1559,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			reply["receipt"] = receipt
 		}
 	}
+	// The asker's first write after an answer is its outcome (41hhgn check
+	// 11): it goes to the coordinator the same way, once.
+	if e == nil && r.Changed && r.Outcome {
+		var out string
+		if out, e = a.Deliver(s.s, s.r.Dir, s.r.Root, r.Task.ID, "outcome", a.actor(f), s.commit); e == nil && out != "" {
+			reply["outcome_receipt"] = out
+		}
+	}
 	if e == nil && r.Changed {
 		withGuide(reply, cmd, r.Task, s)
 	}

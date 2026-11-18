@@ -24,7 +24,7 @@ import (
 // AGENTS.md section hug setup writes, the MCP tool descriptions) carry
 // exactly these words, and TestDeliveryInstructionsMatchCode drives the
 // code through each of its claims.
-const DeliveryFlow = `Requests and answers reach the board coordinator (hug task coordinator NAME) by hug itself: when a person writes hug task request or hug task answer (or r and a in hug tui), or ticks the check a question to them is about (that tick is their answer), hug hands it at once to the coordinator's live session (an idle session starts a turn, a busy one gets it at its next step) and History says delivered or not delivered with the reason. The coordinator's session acknowledges it on receipt (hug's hook), its first write on the task marks it in progress, and hug task resolve ID N answers a request (an answer: the asker's next write). hug task requests shows each state: pending, acknowledged, in progress, answered. Not delivered (no coordinator set, no live session, a harness hug cannot reach yet such as Claude Code or Codex) stays "pending, not delivered: REASON" and the request still comes first in hug task next. What no live session could take goes to the coordinator's next session when it starts, once (hug's hook); a coordinator renamed before then gets it under the old name. No agent polls.`
+const DeliveryFlow = `Requests and answers reach the board coordinator (hug task coordinator NAME) by hug itself: when a person writes hug task request or hug task answer (or r and a in hug tui), or ticks the check a question to them is about (that tick is their answer), hug hands it at once to the coordinator's live session (an idle session starts a turn, a busy one gets it at its next step) and History says delivered or not delivered with the reason. The coordinator's session acknowledges it on receipt (hug's hook), its first write on the task marks it in progress, and hug task resolve ID N answers a request (an answer: the asker's next write, its outcome, which hug hands to the coordinator the same way in one line: "NAME acted on PERSON's answer on ID: WRITE"). hug task requests shows each state: pending, acknowledged, in progress, answered. Not delivered (no coordinator set, no live session, a harness hug cannot reach yet such as Claude Code or Codex) stays "pending, not delivered: REASON" and the request still comes first in hug task next. What no live session could take goes to the coordinator's next session when it starts, once (hug's hook); a coordinator renamed before then gets it under the old name. No agent polls.`
 
 // deliverMessage is what the coordinator's session reads: who, the task,
 // the text verbatim, the asker and the command that closes it.
@@ -68,6 +68,28 @@ func deliverMessage(board string, t task.Task, item task.Item, by, text string, 
 	return b.String()
 }
 
+// outcomeMessage is the one line the coordinator's session reads when an
+// asker acts on an answer (41hhgn check 11, Jørgen 00:26: the outcome comes
+// back through the coordinator): who acted on whose answer, the answer cut
+// short (an answer still waiting for the coordinator's next session is not
+// owed once its asker acted, so this line is all it gets), the task, and
+// the write as the command reads.
+func outcomeMessage(board string, t task.Task, token string) string {
+	o := t.Outcome
+	line := "hug: " + o.For + " acted on " + o.By + "'s answer on " + t.ID + " (" + t.Title + ")"
+	if o.Check > 0 {
+		line += ", check " + strconv.Itoa(o.Check)
+	}
+	line += ", on board " + filepath.Base(board) + " (" + board + "): " + strings.Join(strings.Fields(o.Text), " ")
+	if a := strings.Join(strings.Fields(o.Answer), " "); a != "" {
+		if r := []rune(a); len(r) > 120 {
+			a = string(r[:119]) + "…"
+		}
+		line += " (the answer: " + strconv.Quote(a) + ")"
+	}
+	return line + ". hug task show " + t.ID + " [" + token + "]"
+}
+
 // jcodeHomes are the jcode homes whose sessions Deliver looks in: App.
 // JcodeHomes when set, else every instance on this machine. A test binary
 // gets none unless it sets them: a test never reaches the machine's real
@@ -94,10 +116,11 @@ func (a *App) jcodeHomes() []string {
 	return out
 }
 
-// Deliver hands the item kind ("request" or "answer") just written on id
-// by by to the board's coordinator, and records the daemon's answer on the
-// task with its own commit. It returns the receipt label for the reply. A
-// failed delivery is no error: it is the receipt, kept on the task.
+// Deliver hands the item kind ("request", "answer" or "outcome") just
+// written on id by by to the board's coordinator, and records the daemon's
+// answer on the task with its own commit. It returns the receipt label for
+// the reply. A failed delivery is no error: it is the receipt, kept on the
+// task.
 func (a *App) Deliver(store *task.Store, root, board, id, kind, by string, commit func(string) error) (string, error) {
 	d, err := store.Get(id)
 	if err != nil {
@@ -131,7 +154,11 @@ func (a *App) Deliver(store *task.Store, root, board, id, kind, by string, commi
 		token := newToken(d.Task.ID, item)
 		it := harness.InboxItem{Board: board, Task: d.Task.ID, Kind: item.Kind, N: item.N, To: coord, Token: token}
 		homes := a.jcodeHomes()
-		s, reason = harness.Deliver(homes, a.getenv, coord, deliverMessage(board, d.Task, item, by, text, answer, token), it)
+		msg := deliverMessage(board, d.Task, item, by, text, answer, token)
+		if kind == "outcome" {
+			msg = outcomeMessage(board, d.Task, token)
+		}
+		s, reason = harness.Deliver(homes, a.getenv, coord, msg, it)
 		if reason != "" {
 			// Not delivered: it waits for coord's next session, in every
 			// jcode home hug knows (bbxdd7). That session's hook hands it
