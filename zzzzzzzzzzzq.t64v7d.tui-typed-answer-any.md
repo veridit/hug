@@ -35,7 +35,7 @@ Code: huginn/internal/tui/tui.go:1162-1170 (the ? branch runs before the prompt 
 ## Acceptance
 - [x] In each text input, typing 'done by morning?' leaves exactly that text in the field and help stays closed (test per input, fails first on main)
 - [x] F1 in a text input opens help with the typed text intact underneath; Esc or F1 returns to it (test)
-- [ ] Outside text input ? still opens help (existing tests pass)
+- [x] Outside text input ? still opens help (existing tests pass)
 
 ## Notes
 
