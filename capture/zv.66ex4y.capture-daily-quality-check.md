@@ -1,18 +1,17 @@
 ---
 id: 66ex4y
 title: "Capture: daily quality check"
-state: "doing"
+state: "todo"
 type: chore
 priority: "medium"
-assignee: ["hatchling"]
+assignee: []
 labels: ["capture"]
 created: 2026-11-10
 updated: 2026-11-10
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-18T03:31"
 ---
 
 ## Goal
@@ -45,3 +44,4 @@ Daily 2026-11-18 (hatchling): 57 captures since 2026-11-17T21:23Z read (56 Seid 
 - 2026-11-17T21:58 todo -> doing/active (take)
 - 2026-11-17T22:24 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T21:58
 - 2026-11-18T03:31 todo/ready -> doing/active (take)
+- 2026-11-18T03:37 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T03:31
