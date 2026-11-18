@@ -67,6 +67,36 @@ func TestTickByOthersLeavesQuestion(t *testing.T) {
 	}
 }
 
+// pw0t19 and qsqhpe together: the person asked ticking the check with
+// evidence answers too, and the evidence is noted in the same write.
+func TestTickWithEvidenceAnswers(t *testing.T) {
+	s, id := tickAskStore(t)
+	s.Actor = "jhf"
+	r, e := s.CheckWith(id, 2, "looked at it, keep the type")
+	if e != nil || !r.Answered {
+		t.Fatalf("tick with evidence did not answer: %+v %v", r, e)
+	}
+	tk, raw := readTask(t, s, id)
+	if tk.Stage != "active" || !strings.Contains(raw, "answered by ticking check 2") || !strings.Contains(raw, "check 2: looked at it, keep the type") {
+		t.Fatalf("stage %s:\n%s", tk.Stage, raw)
+	}
+	// Evidence on the already ticked check is noted, and is no second answer.
+	if r, e := s.CheckWith(id, 2, "again"); e != nil || r.Answered {
+		t.Fatalf("evidence on a ticked check answered again: %+v %v", r, e)
+	}
+	// Only a tick answers: when someone else ticked the check first, the
+	// person asked adding evidence to it does not answer the question.
+	s, id = tickAskStore(t)
+	s.Actor = "nautilus"
+	if _, e := s.Check(id, 2); e != nil {
+		t.Fatal(e)
+	}
+	s.Actor = "jhf"
+	if r, e := s.CheckWith(id, 2, "seen"); e != nil || r.Answered {
+		t.Fatalf("evidence on a check another ticked answered: %+v %v", r, e)
+	}
+}
+
 // tickAskStore: nautilus holds a task with checks a and b and asked jhf
 // about check 2.
 func tickAskStore(t *testing.T) (*Store, string) {
