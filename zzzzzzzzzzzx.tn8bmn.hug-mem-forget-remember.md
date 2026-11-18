@@ -33,7 +33,7 @@ Live store writers today: capture (turn_end, session_end hooks), recall hook, hu
 - [x] A test with two concurrent writers (forget and a capture or remember) shows the forget survives: the memory is inactive after both finish (fails first if the race is the cause)
 - [ ] ~~remember prints the id the store keeps; when it folds into a twin it says so: 'kept as erf4tk (twin of your text)' (test)~~ (not relevant: crab 03:03Z: remember never folds synchronously (the fold runs in sync); replaced by check 5, printed SID == stored SID after sync on every clone, hatchling, 2026-11-18)
 - [x] forget and remember read their result back under the write lock and exit non-zero with a fix line if it is not there (test)
-- [ ] The cause of (A) and (B) is named in a note, with the evidence
+- [x] The cause of (A) and (B) is named in a note, with the evidence
 - [ ] remember prints the SID the store keeps, and that SID is unchanged after project sync on every clone (test)
 
 ## Notes
