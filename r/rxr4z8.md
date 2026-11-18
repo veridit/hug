@@ -77,6 +77,7 @@ check 5: Detail tests unchanged and green: go test ./huginn/internal/tui/ ok 115
 check 8: TestNarrowMarkedFooter at 60: footer exactly '3 marked · ? actions · Esc unmark'; ? leads with '3 MARKED' and lists 'move the marked as one block…', 'drop every marked task…', 'unmark all'. f385c3a0
 check 9: TestDoneMarkedOneRefused: after d, only the refused task stays marked (marks == [B]); TestDropMarked, TestWaitMarked, TestTakeMarked: all went through, marks empty. f385c3a0
 f385c3a0, CI 44402446974 success 8/8. Report /Users/jhf/.jcode/scratch/rxr4z8/REPORT.md. Next: rebase after hjbfzd + byj479 land (t on N marked: Take + TakeWith; drop captureKey confirm case).
+Rebased on main 4e287c1a (hjbfzd + byj479 in): 33616641, CI 44421843248 success 8/8. t on several marked: one confirm 'Take 2 tasks: A, B, B with A', then Take(A) + TakeWith(B, A, me), one commit each ('hug task take B --with A'); if A is refused the rest are not taken and all stay marked. Fail-first: TestTakeMarked 'footer with 2 todo marked does not offer take: "2 marked · move · x drop · edit · Esc unmark"'. New TestTakeMarkedFirstRefused. captureKey confirm case dropped (hjbfzd removed it). Local: go test -short ./huginn/internal/tui/ ok 71.214s (load ~230 held the tmux tests; the two 140x40 tmux help goldens are CI 44419243717's capture, diff = the Space row only).
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
