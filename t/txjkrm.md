@@ -1,7 +1,7 @@
 ---
 id: txjkrm
 title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned up"
-state: todo
+state: "doing"
 type: feature
 priority: ""
 assignee: ["mizaru"]
@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzz38"
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T15:45"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "qsqhpe"
+worktree: "/Users/jhf/.jcode/scratch/qsqhpe"
 ---
 
 ## Goal
@@ -42,3 +47,7 @@ Jørgen 2026-11-17 10:56, settles the open question: the reason replaces the tit
 file:txjkrm-preview.md (4770 bytes, sha256:ab7fc3a2) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
 
 mizaru 14:45Z: reassigned from nautilus (session gone, crab 14:44Z said take it); take refused 'taken by nautilus (txjkrm)' with only 'fix: hug task next', so used the stale-owner fix hug task set txjkrm --assignee mizaru. Scope from crab: check 1 only (preview + question to jhf); no TUI code until approved.
+
+
+## History
+- 2026-11-18T15:45 todo -> doing/active (take)
