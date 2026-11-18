@@ -1,12 +1,15 @@
 package gitbranch
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
 // Catching up across a layout move (w40cmk check 9, crab 04:44). This
@@ -29,7 +32,7 @@ type Translator struct {
 	Names func(paths []string) map[string]string
 	// Content is a file's text on the new layout, from its old path and
 	// text.
-	Content func(path string, b []byte) []byte
+	Content func(path, translated string, b []byte) []byte
 	// Merge merges one file this commit changed. base or theirs is nil
 	// when that side has no such file; it returns the content to write
 	// and one line per value it kept from ours in a note.
@@ -69,10 +72,9 @@ func (r *Repository) Pending(t Translator) ([]Replayed, error) {
 	if _, e := r.git("rev-parse", "--verify", "--quiet", r.remoteRef()); e != nil {
 		return nil, nil
 	}
-	saved := r.Layout
-	r.Layout = t.Layout
-	e := r.sameLayout()
-	r.Layout = saved
+	probe := *r
+	probe.Layout = t.Layout
+	e := probe.sameLayout()
 	if e == nil {
 		return nil, nil
 	}
@@ -90,14 +92,27 @@ func (r *Repository) Pending(t Translator) ([]Replayed, error) {
 		}
 		f := strings.SplitN(l, "\x00", 5)
 		if len(f) != 5 {
-			continue
+			return nil, &Error{Op: "catch-up preview", Detail: "cannot read a local commit's metadata; no commit was skipped", Fix: r.fix("log --oneline")}
 		}
 		c := Replayed{Commit: f[0], Subject: f[1], Author: f[2], Email: f[3], At: f[4]}
 		moved, e := r.movesLayout(c.Commit, t)
 		if e != nil {
 			return nil, e
 		}
-		c.Skipped = moved
+		if moved {
+			before, e := r.tree(c.Commit+"^", t)
+			if e != nil {
+				return nil, e
+			}
+			after, e := r.tree(c.Commit, t)
+			if e != nil {
+				return nil, e
+			}
+			c.Skipped, e = r.sameTranslated(before, after, t)
+			if e != nil {
+				return nil, e
+			}
+		}
 		list = append(list, c)
 	}
 	return list, nil
@@ -109,20 +124,49 @@ func (r *Repository) movesLayout(commit string, t Translator) (bool, error) {
 	if e != nil {
 		return false, nil // a root commit moves nothing
 	}
-	saved := r.Layout
-	r.Layout = t.Layout
-	defer func() { r.Layout = saved }()
-	now, e := r.layoutAt(commit)
+	probe := *r
+	probe.Layout = t.Layout
+	now, e := probe.layoutAt(commit)
 	if e != nil {
 		return false, e
 	}
-	then, e := r.layoutAt(parent)
+	then, e := probe.layoutAt(parent)
 	return now != then, e
+}
+
+func (r *Repository) sameTranslated(a, b tree, t Translator) (bool, error) {
+	if len(a) != len(b) {
+		return false, nil
+	}
+	for p, av := range a {
+		bv, ok := b[p]
+		if !ok || av.mode != bv.mode {
+			return false, nil
+		}
+		x, e := r.file(a, p, t)
+		if e != nil {
+			return false, e
+		}
+		y, e := r.file(b, p, t)
+		if e != nil {
+			return false, e
+		}
+		if string(x) != string(y) {
+			return false, nil
+		}
+	}
+	return true, nil
 }
 
 // tree is a commit's files on the new layout: new path to the old path
 // and blob id, so two trees compare without reading a file.
-type tree map[string]struct{ old, blob string }
+type tree map[string]struct{ old, blob, mode string }
+
+type replayPathError struct {
+	path, detail string
+}
+
+func (e *replayPathError) Error() string { return e.path + ": " + e.detail }
 
 func (r *Repository) tree(commit string, t Translator) (tree, error) {
 	out, e := r.git("ls-tree", "-r", "-z", "--full-tree", "--end-of-options", commit+"^{tree}")
@@ -130,6 +174,7 @@ func (r *Repository) tree(commit string, t Translator) (tree, error) {
 		return nil, e
 	}
 	blobs := map[string]string{}
+	modes := map[string]string{}
 	var paths []string
 	for _, l := range strings.Split(strings.TrimSuffix(out, "\x00"), "\x00") {
 		// "<mode> blob <id>\t<path>"
@@ -138,22 +183,37 @@ func (r *Repository) tree(commit string, t Translator) (tree, error) {
 			continue
 		}
 		f := strings.Fields(meta)
-		if len(f) != 3 || f[1] != "blob" {
-			continue
+		if len(f) != 3 {
+			return nil, &replayPathError{p, "hug cannot parse this tree entry"}
+		}
+		if f[1] != "blob" || (f[0] != "100644" && f[0] != "100755") {
+			return nil, &replayPathError{p, "hug cannot replay this file as a regular board file (mode " + f[0] + ")"}
 		}
 		blobs[p] = f[2]
+		modes[p] = f[0]
 		paths = append(paths, p)
 	}
 	tr := tree{}
-	for old, to := range t.Names(paths) {
-		tr[to] = struct{ old, blob string }{old, blobs[old]}
+	names := t.Names(paths)
+	for _, old := range paths {
+		to, ok := names[old]
+		if !ok || to == "" || filepath.IsAbs(to) || filepath.ToSlash(filepath.Clean(to)) != to || strings.HasPrefix(to, "../") || strings.Contains(to, "\\") {
+			return nil, &replayPathError{old, "hug cannot read the translated path " + fmt.Sprintf("%q", to)}
+		}
+		if prior, exists := tr[to]; exists {
+			return nil, &replayPathError{old, "both " + prior.old + " and " + old + " translate to " + to + "; neither file was discarded"}
+		}
+		tr[to] = struct{ old, blob, mode string }{old, blobs[old], modes[old]}
 	}
 	return tr, nil
 }
 
 // blob is a file's bytes, exactly (git() trims a trailing newline).
 func (r *Repository) blob(id string) ([]byte, error) {
-	c := exec.Command("git", "-C", r.Dir, "cat-file", "blob", id)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	c := exec.CommandContext(ctx, "git", "-C", r.Dir, "cat-file", "blob", id)
+	c.WaitDelay = 2 * time.Second
 	c.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0")
 	b, e := c.Output()
 	if e != nil {
@@ -172,13 +232,13 @@ func (r *Repository) file(tr tree, p string, t Translator) ([]byte, error) {
 	if e != nil {
 		return nil, e
 	}
-	return t.Content(f.old, b), nil
+	return t.Content(f.old, p, b), nil
 }
 
 // CatchUp replays this clone's unpushed commits onto the fetched remote
 // (see above). It returns what each commit did, oldest first. It fetches
 // first, so it replays onto the board as it is now.
-func (r *Repository) CatchUp(t Translator) ([]Replayed, error) {
+func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 	if e := r.checkIdle(); e != nil {
 		return nil, e
 	}
@@ -200,26 +260,53 @@ func (r *Repository) CatchUp(t Translator) ([]Replayed, error) {
 	if e != nil {
 		return nil, e
 	}
+	// Never replay against the live board. A failure after writing a new
+	// path must not leave untracked files behind, and an interrupted run
+	// must not strand HEAD halfway through the replay.
+	live := r
+	// Validate remote paths too, before checking out or reading their
+	// contents. In particular, never follow a remote symlink while writing
+	// a local attachment beneath it.
+	if _, e := live.tree(live.remoteRef(), t); e != nil {
+		return nil, e
+	}
+	dir, e := os.MkdirTemp("", "hug-catchup-")
+	if e != nil {
+		return nil, e
+	}
+	if _, e = live.git("-c", "core.hooksPath="+os.DevNull, "worktree", "add", "--detach", dir, live.remoteRef()); e != nil {
+		_ = os.Remove(dir)
+		return nil, e
+	}
+	defer func() {
+		if _, e := live.git("worktree", "remove", "--force", dir); e != nil {
+			err = errors.Join(err, e)
+		}
+	}()
+	private := *live
+	private.Dir = dir
+	r = &private
+	sources := map[string]string{}
 	stop := func(c Replayed, path string, cause error) error {
-		// Put HEAD and the work tree back: every local commit is still
-		// there, as it was.
-		_, _ = r.git("reset", "-q", "--hard", head)
+		// The live board has not changed: every local commit is still
+		// there, as it was. The private worktree is removed on return.
 		detail := strings.SplitN(cause.Error(), "\nfix: ", 2)[0]
+		var pe *replayPathError
+		if errors.As(cause, &pe) {
+			path, detail = pe.path, pe.detail
+		}
 		// The file as that commit has it: what to read before making the
 		// change again with hug task (the only stop is a file hug cannot
 		// read, which hug itself never writes).
-		fix := r.fix("show " + c.Commit[:12] + " -- " + path)
+		original := path
+		if old, ok := sources[path]; ok {
+			original = old
+		}
+		fix := live.fix("show " + c.Commit[:12] + " -- " + quote(original))
 		return &CatchUpError{Commit: c.Commit[:12], Subject: c.Subject, Path: path, Detail: detail, Fix: fix, Kept: len(list)}
-	}
-	if _, e = r.git("reset", "-q", "--hard", r.remoteRef()); e != nil {
-		_, _ = r.git("reset", "-q", "--hard", head)
-		return nil, e
 	}
 	for i := range list {
 		c := &list[i]
-		if c.Skipped {
-			continue
-		}
 		parent, e := r.git("rev-parse", "--verify", c.Commit+"^")
 		if e != nil {
 			return nil, stop(*c, "(root commit)", e)
@@ -231,6 +318,10 @@ func (r *Repository) CatchUp(t Translator) ([]Replayed, error) {
 		after, e := r.tree(c.Commit, t)
 		if e != nil {
 			return nil, stop(*c, "its tree", e)
+		}
+		sources = map[string]string{}
+		for p, f := range after {
+			sources[p] = f.old
 		}
 		// A file changed when its blob or its old name did (a rank move
 		// on the old layout is a rename: on the new one, its rank: line).
@@ -278,23 +369,57 @@ func (r *Repository) CatchUp(t Translator) ([]Replayed, error) {
 				return nil, stop(*c, p, e)
 			}
 			c.Kept = append(c.Kept, kept...)
+			if merged == nil {
+				if e := os.Remove(disk); e != nil && !os.IsNotExist(e) {
+					return nil, stop(*c, p, e)
+				}
+				continue
+			}
 			if e := os.MkdirAll(filepath.Dir(disk), 0o755); e != nil {
 				return nil, stop(*c, p, e)
 			}
 			if e := os.WriteFile(disk, merged, 0o644); e != nil {
 				return nil, stop(*c, p, e)
 			}
+			mode := os.FileMode(0o644)
+			if after[p].mode == "100755" {
+				mode = 0o755
+			}
+			if e := os.Chmod(disk, mode); e != nil {
+				return nil, stop(*c, p, e)
+			}
 		}
 		if _, e := r.git("add", "--all", "--", "."); e != nil {
 			return nil, stop(*c, "(staging)", e)
 		}
-		if staged, _ := r.git("diff", "--cached", "--name-only"); staged == "" {
-			continue // already on the board: nothing left to replay
+		staged, e := r.git("diff", "--cached", "--name-only")
+		if e != nil {
+			return nil, stop(*c, "(staging)", e)
+		}
+		if staged == "" && c.Skipped {
+			continue // only a layout move, already on the remote
 		}
 		// The commit's own message and author; the committer is this run.
-		if _, e := r.git("commit", "-q", "--no-verify", "-C", c.Commit); e != nil {
+		if _, e := r.git("commit", "-q", "--no-verify", "--allow-empty", "-C", c.Commit); e != nil {
 			return nil, stop(*c, "(commit)", e)
 		}
+		// A layout-changing commit may contain other edits. Translate
+		// and compare it just like every other commit, never skip its
+		// entire delta merely because it also bumped layout.
+		c.Skipped = false
+	}
+	result, e := r.Head()
+	if e != nil {
+		return nil, e
+	}
+	if now, e := live.Head(); e != nil || now != head {
+		return nil, &Error{Op: "catch-up", Detail: "board HEAD changed while replaying; no replay was installed", Fix: "hug upgrade --apply", Cause: e}
+	}
+	if status, e := live.git("status", "--porcelain"); e != nil || status != "" {
+		return nil, &Error{Op: "catch-up", Detail: "board acquired uncommitted changes while replaying; no replay was installed", Fix: live.fix("status"), Cause: e}
+	}
+	if _, e := live.git("reset", "--hard", result); e != nil {
+		return nil, e
 	}
 	return list, nil
 }

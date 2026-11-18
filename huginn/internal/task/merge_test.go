@@ -75,6 +75,67 @@ func TestMergeNotesWithoutTimeKeepBoardFirst(t *testing.T) {
 	}
 }
 
+func TestMergeRepeatedNotesKeepUnion(t *testing.T) {
+	first := edit(mergeBase, "2026-11-18T05:00 first\n", "2026-11-18T05:00 first\n\n2026-11-18T05:20 B first\n")
+	second := edit(string(first), "2026-11-18T05:20 B first\n", "2026-11-18T05:20 B first\n\n2026-11-18T05:30 B second\n")
+	remote := edit(mergeBase, "2026-11-18T05:00 first\n", "2026-11-18T05:00 first\n\n2026-11-18T05:10 A note\n")
+	merged, _, e := MergeTask("8/8q6v7b.md", []byte(mergeBase), first, remote, side)
+	if e != nil {
+		t.Fatal(e)
+	}
+	got, kept, e := MergeTask("8/8q6v7b.md", first, second, merged, side)
+	if e != nil || len(kept) != 0 {
+		t.Fatalf("e=%v kept=%+v\n%s", e, kept, got)
+	}
+	want := edit(mergeBase, "2026-11-18T05:00 first\n", "2026-11-18T05:00 first\n\n2026-11-18T05:10 A note\n\n2026-11-18T05:20 B first\n\n2026-11-18T05:30 B second\n")
+	if string(got) != string(want) {
+		t.Fatalf("repeated note replay:\n%s\nwant:\n%s", got, want)
+	}
+}
+
+func TestMergeRepeatedDocumentNotesKeepUnion(t *testing.T) {
+	note := func(raw []byte, text string) []byte {
+		d := Parse("8/8q6v7b.md", raw)
+		d.Note(text)
+		return d.Bytes()
+	}
+	base := []byte(mergeBase)
+	first := note(base, "B first")
+	second := note(first, "B second")
+	remote := note(base, "A note")
+	merged, _, e := MergeTask("8/8q6v7b.md", base, first, remote, side)
+	if e != nil {
+		t.Fatal(e)
+	}
+	got, kept, e := MergeTask("8/8q6v7b.md", first, second, merged, side)
+	if e != nil || len(kept) != 0 {
+		t.Fatalf("e=%v kept=%+v\n%s", e, kept, got)
+	}
+	for _, text := range []string{"2026-11-18T05:00 first", "A note", "B first", "B second"} {
+		if n := strings.Count(string(got), text); n != 1 {
+			t.Fatalf("%q appears %d times:\n%s", text, n, got)
+		}
+	}
+}
+
+func TestMergeDeletionAndChangeUsesBoardAndNotesLocal(t *testing.T) {
+	ours := edit(mergeBase, `state: "todo"`, `state: "doing"`)
+	theirs := edit(mergeBase, "state: \"todo\"\n", "")
+	got, kept, e := MergeTask("8/8q6v7b.md", []byte(mergeBase), ours, theirs, side)
+	if e != nil || len(kept) != 1 || kept[0].Field != "state" || strings.Contains(string(got), "state: ") {
+		t.Fatalf("e=%v kept=%+v\n%s", e, kept, got)
+	}
+}
+
+func TestMergeNewFieldAfterDeletedAnchorIsKept(t *testing.T) {
+	ours := edit(mergeBase, "state: \"todo\"\n", "state: \"todo\"\nmodel: \"local\"\n")
+	theirs := edit(mergeBase, "state: \"todo\"\n", "")
+	got, _, e := MergeTask("8/8q6v7b.md", []byte(mergeBase), ours, theirs, side)
+	if e != nil || !strings.Contains(string(got), "model: \"local\"\n") {
+		t.Fatalf("e=%v\n%s", e, got)
+	}
+}
+
 func TestMergeDifferentChecksBothTicked(t *testing.T) {
 	ours := edit(mergeBase, "- [ ] two", "- [x] two")
 	theirs := edit(mergeBase, "- [ ] one", "- [x] one", "- [ ] two\n", "- [ ] two\n- [ ] three\n")
@@ -140,6 +201,25 @@ func TestMergeRequestsRenumbersOursAfterBoards(t *testing.T) {
 	}
 }
 
+func TestMergeResolutionFollowsRenumberedRequest(t *testing.T) {
+	base := []byte(mergeBase)
+	ours := edit(mergeBase, "## Notes\n", "## Requests\n- 2026-11-18T05:20 request 1 by jhf:\n  B's request\n\n## Notes\n")
+	theirs := edit(mergeBase, "## Notes\n", "## Requests\n- 2026-11-18T05:10 request 1 by sam:\n  A's request\n\n## Notes\n")
+	merged, _, e := MergeTask("8/8q6v7b.md", base, ours, theirs, side)
+	if e != nil {
+		t.Fatal(e)
+	}
+	resolved := edit(string(ours), "  B's request\n", "  B's request\n  resolved 2026-11-18T05:30 by kestrel:\n    B's outcome\n")
+	got, kept, e := MergeTask("8/8q6v7b.md", ours, resolved, merged, side)
+	if e != nil || len(kept) != 0 {
+		t.Fatalf("e=%v kept=%+v\n%s", e, kept, got)
+	}
+	reqs := Parse("8/8q6v7b.md", got).Task.Requests
+	if len(reqs) != 2 || reqs[0].N != 1 || reqs[0].Resolved != nil || reqs[1].N != 2 || reqs[1].Text != "B's request" || reqs[1].Resolved == nil || reqs[1].Resolved.Text != "B's outcome" {
+		t.Fatalf("resolution followed a number rather than its request: %+v\n%s", reqs, got)
+	}
+}
+
 func TestMergeOneSideOnlyIsThatSide(t *testing.T) {
 	ours := edit(mergeBase, `state: "todo"`, `state: "doing"`, "updated: 2026-11-18", "updated: 2026-11-19\nmodel: \"x\"")
 	got, kept, e := MergeTask("8/8q6v7b.md", []byte(mergeBase), ours, []byte(mergeBase), side)
@@ -159,9 +239,9 @@ func TestMergeUnreadableFileStops(t *testing.T) {
 	if e == nil || !strings.Contains(e.Error(), "hug cannot read this file") {
 		t.Fatalf("e=%v", e)
 	}
-	// One side changed it: that side, read or not.
-	got, _, e := MergeTask("8/8q6v7b.md", []byte(mergeBase), []byte("no front matter\n"), []byte(mergeBase), side)
-	if e != nil || string(got) != "no front matter\n" {
-		t.Fatalf("e=%v got %q", e, got)
+	// A fast path must not introduce an unreadable task either.
+	_, _, e = MergeTask("8/8q6v7b.md", []byte(mergeBase), []byte("no front matter\n"), []byte(mergeBase), side)
+	if e == nil || !strings.Contains(e.Error(), "hug cannot read this file") {
+		t.Fatalf("unreadable single-sided edit: e=%v", e)
 	}
 }
