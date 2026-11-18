@@ -147,7 +147,6 @@ func (m *model) moveTo(id string, o task.MoveOptions, where, target string) {
 		// failed commit, which finish put after or instead of "moved ID".
 		done := fmt.Sprintf("moved %s %s %s%s", id, where, target, m.rowPlace(r.Task.Path))
 		m.message = strings.Replace(m.message, "moved "+r.Task.ID, done, 1)
-		m.result = m.message
 	}
 }
 

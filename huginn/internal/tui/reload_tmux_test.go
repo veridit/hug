@@ -196,6 +196,16 @@ func TestTmuxReload(t *testing.T) {
 	if !strings.Contains(after, strings.TrimSpace(header[0])) {
 		t.Fatalf("header changed: %q\n%s", header[0], after)
 	}
+	// The line belongs to the screen it came back on: leaving that task
+	// clears it (tz9z14, Jørgen 15:19: "noise because it's from the main
+	// screen").
+	send("Escape")
+	listed := wait("HUG TASKS · list", 5*time.Second)
+	if strings.Contains(listed, "reloaded hug") {
+		t.Fatalf("the reload line stayed after leaving the task:\n%s", listed)
+	}
+	send("Enter")
+	wait("› ", 5*time.Second)
 	// A broken binary: v0.0.2 keeps running and says how to fix it (check 3).
 	broken := cellar("0.0.3")
 	os.MkdirAll(filepath.Dir(broken), 0o755)
