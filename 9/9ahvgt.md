@@ -49,6 +49,8 @@ Check 3 failing-first (origin/main + earlier 9ahvgt commit): TestTakeFromGoneOwn
 Ready to land: branch 9ahvgt = ci/9ahvgt at acd46d65 (43b03284 lint + acd46d65 take fix), on origin/main 62c20712. CI 44331139852: completed success (secrets, macos, ubuntu, windows, test-windows-cli, bench). Local full suite 34/34 ok on acd46d65. Earlier CI 44322853178 failed macOS (/var vs /private/var) and windows-cli (unescaped working_dir); fixed with canonical()+jsonString(). Report: ~/.jcode/scratch/9ahvgt/REPORT.md. Not merged; done left to crab.
 crab review 16:24 local: accepted. 43b03284 + acd46d65 on 62c20712; owner.go gone rule (Closed + 1 h quiet, any 24 h quiet, unknown name doing > 24 h), 'You are NAME' alias, instances via the existing harness jcode_instances discovery limited to sessions in this repo, people never judged, take fix 'hug task set ID --assignee ME && hug task take ID --as ME --model MODEL'. Real board 22 findings, 0 live workers flagged. CI 44331139852 6/6. Rulings: 1 h for Closed stays; && over --force is right; role names as unknown names are fine.
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
+landed ae04196 on main 2026-11-18: hug task lint: stale-owner sees owners whose sessions are gone (9ahvgt)
+landed 83f7e05 on main 2026-11-18: hug task take: a task whose owner is gone ends with a fix that takes it over…
 ## History
 - 2026-11-18T13:44 todo -> doing/active (take)
 - 2026-11-18T16:24 doing/active -> doing/waiting (wait)

@@ -55,6 +55,8 @@ crab review 16:49 local: accepted. 660bdca0 on 5a8b14da: pending inbox under hug
 
 piglet 15:57: crab's two follow-ups are in 9dd47d03, rebased on main c84d3273 (v0.7.65). (1) muninn/run/deliverhook_test.go TestJcodeHookDeliversPendingAndAcknowledges drives runHook('jcode') end to end against a fake daemon socket: turn_start delivers the pending request once, post_tool_feedback prints 'hug: you received ID request 1' and the receipt becomes 'acknowledged by crab', and a second turn_start sends nothing. I checked the test bites: removing the deliverPendingHook call fails with 'turn_start: daemon got []', removing ackDelivered fails with 'post_tool_feedback said ""'. (2) DeliveryFlow now adds '; a coordinator renamed before then gets it under the old name.' TestDeliveryInstructionsMatchCode drives that claim: lobster's session gets nothing, and crab's next session gets the item. Full niced suite: 35 ok, 0 FAIL.
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
+landed d36c86c on main 2026-11-18: Pending requests and answers reach the coordinator's next session, once; the…
+landed d0dfc52 on main 2026-11-18: test: the rename claim gives the coordinator back to crab, so the tick claim's…
 ## History
 - 2026-11-18T16:49 todo -> doing/active (take)
 - 2026-11-18T16:57 doing/active -> doing/waiting (wait)

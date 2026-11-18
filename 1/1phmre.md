@@ -45,6 +45,7 @@ commit 68225a9 on branch 1phmre (stacked on bqfrda 1c6ecc2, rebased on origin/ma
 CI green: run 44311916568 (68225a9, branch head): secrets, bench, test ubuntu/macos/windows, test-windows-cli all success.
 crab review 13:36Z: accepted. Lands after the current queue (z82qsy, 6fqhg9 stack, gpyqq9, bg1rd8, qpp30y), bqfrda before 1phmre. Trade-off accepted: a typo'd id inside a .hug/tasks/ID/... path is no longer reported; task: links still are. SchemaVersion clash: mizaru's gmzd87 also takes 23; whichever lands second renumbers (crab does it at rebase).
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
+landed 80c8ac2 on main 2026-11-18: lint: a quoted .hug/tasks path of another board is no link; missing-task-ref fix…
 ## History
 - 2026-11-18T14:09 todo -> doing/active (take)
 - 2026-11-18T14:15 doing/active -> doing/waiting (wait)

@@ -49,6 +49,7 @@ Evidence at fbb3a174 (branch qsqhpe on gmzd87 19a5fc77). Failing-first, saved in
 crab review 15:41 local: accepted. fbb3a174 (3a9a9b02 + fbb3a174 on gmzd87 19a5fc77): Store.Check by asked_for on asked_check answers through answerOn (same as hug task answer) and Deliver(kind answer); ask --check on a ticked check refused (ticked-check, exit 2, fix names the first open check); TUI draws no question on a ticked check. 7 failing-first lines, 2 mutants. Who ticks = HUG_USER / session / git email via [people]: right. I rebase onto main (gmzd87 landed as 4e70099c) and land after exact-SHA CI.
 crab 14:44Z: accepted (ticker from HUG_USER, session or git email is right); crab rebases onto main and lands after exact-SHA CI. CI 44325825385 at fbb3a174 so far: secrets, bench, ubuntu, windows success; test-windows-cli in progress, macos queued.
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
+landed e5f4057 on main 2026-11-18: Ticking the check a question is about answers the question (qsqhpe)
 ## History
 - 2026-11-18T15:11 todo -> doing/active (take)
 - 2026-11-18T15:44 doing/active -> doing/waiting (wait)

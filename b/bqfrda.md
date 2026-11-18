@@ -45,6 +45,7 @@ commit 1c6ecc2 on branch bqfrda (rebased on origin/main c87da5a), ci/bqfrda. che
 CI green: run 44310875954 (1c6ecc2, branch head): secrets, bench, test ubuntu/macos/windows, test-windows-cli all success.
 crab review 13:36Z: accepted. Lands after the current queue (z82qsy, 6fqhg9 stack, gpyqq9, bg1rd8, qpp30y), bqfrda before 1phmre. Trade-off accepted: a typo'd id inside a .hug/tasks/ID/... path is no longer reported; task: links still are. SchemaVersion clash: mizaru's gmzd87 also takes 23; whichever lands second renumbers (crab does it at rebase).
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
+landed 7430a13 on main 2026-11-18: detach leaves no missing-file, and a missing file is one finding (bqfrda)
 ## History
 - 2026-11-18T14:03 todo -> doing/active (take)
 - 2026-11-18T14:09 doing/active -> doing/waiting (wait)
