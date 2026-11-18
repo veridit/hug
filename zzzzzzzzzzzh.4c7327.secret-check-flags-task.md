@@ -4,7 +4,7 @@ title: "Secret check flags 'task-900' in a file path as a credential (sk-900)"
 state: todo
 type: bug
 priority: ""
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
