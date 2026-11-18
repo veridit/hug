@@ -1,23 +1,19 @@
 ---
 id: vk9td0
 title: "Decide when dream items are handed out"
-state: "doing"
+state: "todo"
 type: spike
 priority: "high"
-assignee: ["hatchling"]
+assignee: []
 labels: ["dream"]
 group: "dream"
 rank: "zz8"
 created: 2026-11-10
 updated: 2026-11-10
-doing_since: "2026-11-18T06:31"
-stage: "waiting"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "Jørgen's answer on the dream cue moment (crab recommended wrap-up only, 05:32)"
-waiting_since: "2026-11-18T06:32"
-waiting_asked_by: "hatchling"
 aliases: ["decide-when-dream-items-are-handed"]
 ---
 
@@ -58,3 +54,4 @@ crab 12:25Z: hatchling's session is gone; handing to retriever with Jørgen's hi
 - 2026-11-18T06:32 doing/active -> doing/waiting (wait)
 - 2026-11-18T12:22 request 1 by jhf
 - 2026-11-18T13:03 resolved request 1 by crab
+- 2026-11-18T13:24 doing/waiting -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T06:31; waiting_asked_by: hatchling; waiting_on: Jørgen's answer on the dream cue moment (crab recommended wrap-up only, 05:32); waiting_since: 2026-11-18T06:32
