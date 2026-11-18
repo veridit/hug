@@ -1,7 +1,7 @@
 ---
 id: ahejza
 title: "Filter line becomes 'filter: … · sort: …'; f and s open matching pickers"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["nautilus"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzlq"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T05:01"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T19:58"
 ---
 
 ## Goal
@@ -56,6 +55,7 @@ landed e36ecca4..4247303e (nautilus). CI run 44238251338 green on all 6 jobs (ub
 landed 4247303 on main 2026-11-18: tui: 'filter: … · sort: …' line with f and s marked; s opens the sort picker (c…
 shipped in v0.7.56 (4247303)
 check 6: Jørgen 19:58 local: 'I like these pickers. Keep it'
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T05:01 todo -> doing/active (take)
 - 2026-11-18T05:47 doing/active -> doing/asked (ask)
@@ -64,3 +64,5 @@ check 6: Jørgen 19:58 local: 'I like these pickers. Keep it'
   I like these pickers. Keep it
 - 2026-11-18T19:57 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T19:58 answer 1 acknowledged by crab
+- 2026-11-18T19:58 doing/active -> done (done); was doing_since: 2026-11-18T05:01
+- 2026-11-18T19:58 answer 1 in progress by crab: hug task done ahejza
