@@ -155,9 +155,9 @@ func TestMarkedFooterAndEsc(t *testing.T) {
 			t.Fatalf("footer %q lacks %q", f, want)
 		}
 	}
-	// d on todo tasks is refused (take before done), w needs doing, and
-	// two cannot be taken at once (crab 20:44): none of them is offered.
-	for _, not := range []string{"done", "wait", "take"} {
+	// d on todo tasks is refused (take before done) and w needs doing:
+	// neither is offered.
+	for _, not := range []string{"done", "wait"} {
 		if strings.Contains(f, not) {
 			t.Fatalf("footer %q offers %q, which every marked task refuses", f, not)
 		}
@@ -189,16 +189,40 @@ func TestMarkedCountInTheHeading(t *testing.T) {
 	}
 }
 
-// t with 2+ marked (crab 20:44, n2hq8p: one ticket in doing at a time):
-// not offered, and pressed it says why. With one marked, t takes it after
-// one confirm.
+// t with 2+ marked (byj479, crab 21:11): one confirm naming them, then the
+// first is taken and the rest are taken with it (doing_with: the first),
+// one commit each. With one marked, t takes it after one confirm.
 func TestTakeMarked(t *testing.T) {
 	m, o, commits := markBoard(t)
 	m = selectRow(t, m, o[0])
 	m = press(m, " ", " ")
+	if f := plainMarks(footerText(m)); !strings.Contains(f, "take") {
+		t.Fatalf("footer with 2 todo marked does not offer take: %q", f)
+	}
 	m = press(m, "t")
-	if m.confirm != "" || m.message != "take one at a time: mark one task to take it" {
-		t.Fatalf("t with 2 marked: confirm %q, message %q", m.confirm, m.message)
+	if q := ansi.Strip(m.confirmLine()); !strings.Contains(q, "Take 2 tasks: "+o[0]+", "+o[1]+", "+o[1]+" with "+o[0]) {
+		t.Fatalf("t with 2 marked: confirm %q, message %q", q, m.message)
+	}
+	m = press(m, "enter")
+	first, _ := m.taskAt(pathOf(t, m, o[0]))
+	second, _ := m.taskAt(pathOf(t, m, o[1]))
+	if first.State != "doing" || second.State != "doing" || task.TakenWith(second) != o[0] {
+		t.Fatalf("after Enter: %s %s, %s %s with %q; message %q", o[0], first.State, o[1], second.State, task.TakenWith(second), m.message)
+	}
+	if *commits != 2 || len(m.marks) != 0 || m.message != "took 2 of 2" {
+		t.Fatalf("commits %d marks %v message %q", *commits, m.marks, m.message)
+	}
+	// A doing task among the marked: take is not offered for them all.
+	m = selectRow(t, m, o[0])
+	m = press(m, " ")
+	m = selectRow(t, m, o[2])
+	m = press(m, " ")
+	if f := plainMarks(footerText(m)); strings.Contains(f, "take") {
+		t.Fatalf("take offered with a doing task marked: %q", f)
+	}
+	m = press(m, "t")
+	if m.confirm != "" || !strings.Contains(m.message, o[0]+" is doing") {
+		t.Fatalf("t with a doing task marked: confirm %q message %q", m.confirm, m.message)
 	}
 	m = press(m, "esc")
 	m = selectRow(t, m, o[3])
@@ -206,12 +230,28 @@ func TestTakeMarked(t *testing.T) {
 	if !strings.Contains(ansi.Strip(m.View()), "Take 1 task: "+o[3]) {
 		t.Fatalf("t with 1 marked does not confirm naming it:\n%s", screen(m))
 	}
-	m = press(m, "enter")
-	if got, _ := m.taskAt(pathOf(t, m, o[3])); got.State != "doing" || *commits != 1 {
-		t.Fatalf("after Enter: %s is %s, commits %d", o[3], got.State, *commits)
+}
+
+// The first marked task refused (busy: the taker is on another one): the
+// rest are not taken, all stay marked, and the fix: line is the refusal's.
+func TestTakeMarkedFirstRefused(t *testing.T) {
+	m, o, commits := markBoard(t)
+	if _, err := m.store.Take(o[5], m.me()); err != nil { // tester is on F
+		t.Fatal(err)
 	}
-	if len(m.marks) != 0 {
-		t.Fatalf("the taken task is still marked: %v", m.marks)
+	m.refresh("")
+	m = selectRow(t, m, o[0])
+	m = press(m, " ", " ", "t", "enter")
+	for _, id := range o[:2] {
+		if got, _ := m.taskAt(pathOf(t, m, id)); got.State != "todo" {
+			t.Fatalf("%s is %s, want todo", id, got.State)
+		}
+	}
+	if *commits != 0 || len(m.marks) != 2 {
+		t.Fatalf("commits %d marks %v", *commits, m.marks)
+	}
+	if !strings.HasPrefix(m.message, "took 0 of 2 · "+o[0]+" refused: busy") || !strings.Contains(m.message, o[1]+" not taken: "+o[0]+" was not") || !strings.Contains(m.message, "\nfix: hug task done "+o[5]) {
+		t.Fatalf("message %q", m.message)
 	}
 }
 
