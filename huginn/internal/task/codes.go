@@ -71,6 +71,7 @@ var Codes = []CodeInfo{
 	{"duplicate-origin", "two tasks were imported from one source", Broken},
 	{"unknown-condition", "a Depends on condition hug cannot check (unreadable, or not checkable here): the task waits", Broken},
 	{"branch-gone", "a doing task's branch is merged into main or deleted: the work landed or was dropped", Broken},
+	{"unlisted-tag", "a task has a tag hug.toml tags does not list", Advice},
 	{"unknown-person", "asked_for, design_for or review_by names nobody in hug.toml [people] and no agent on the board", Broken},
 	{"wait-on-person", "a doing task waits on a question to a person ('owner: ...', a [people] name): nobody sees it as theirs; hug task ask", Broken},
 	{"stale-owner", "a doing task's assignee has no live harness session: closed over an hour ago, silent over a day, or never had one", Broken},
