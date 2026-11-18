@@ -2,6 +2,7 @@ package run
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/veridit/hug/internal/memshare"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/project"
 )
@@ -60,6 +62,12 @@ Credential-like project memories are withheld. Capture audits are never synced.`
 						return err
 					}
 					st, err := project.SyncBranch(p, app.NativePath(), project.BranchOptions{DryRun: dry, Migrate: migrate})
+					if errors.Is(err, project.ErrMemoriesLocal) {
+						// The intended state, not a failure (34r1ft): no fix or
+						// next line, so no agent is steered to publish.
+						fmt.Printf("%s%s (%s): %s\n", dryTag(dry), p.Label, p.ID, memshare.LocalStatus)
+						return nil
+					}
 					if err != nil {
 						return err
 					}

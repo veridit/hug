@@ -115,21 +115,26 @@ func TestSharesOutsideGit(t *testing.T) {
 	}
 }
 
-// A value hug cannot read is an error with a fix, never a quiet share.
+// A value hug cannot read is an error with a fix, never a quiet share, and
+// the fix goes back to local, never to sharing.
 func TestSharesRejectsUnknownValue(t *testing.T) {
 	repo := newRepo(t)
 	commitConfig(t, repo, "[memory]\nshare = \"yes\"\n")
 	s, err := Shares(repo)
-	if s || err == nil || !strings.Contains(err.Error(), "\nfix: hug task memory share") {
+	if s || err == nil || !strings.HasSuffix(err.Error(), "\nfix: hug task memory local") {
 		t.Fatalf("share = \"yes\": Shares = %v, %v; want an error with a fix", s, err)
 	}
 }
 
-// The refusal says how to opt in, as every hug error does.
-func TestErrLocalHasFix(t *testing.T) {
+// Local is a status, not a refusal with a fix (crab review of e2582a0f):
+// nothing an agent would run names the opt-in.
+func TestErrLocalSteersNowhere(t *testing.T) {
 	msg := ErrLocal.Error()
-	if !strings.HasPrefix(msg, "this repository keeps project memories local") || !strings.Contains(msg, "[memory] share = true") || !strings.HasSuffix(msg, "\nfix: hug task memory share") {
+	if msg != "project memories stay on this machine (hug.toml [memory] share is not set)" || strings.Contains(msg, "fix:") || strings.Contains(msg, "next:") {
 		t.Fatalf("ErrLocal = %q", msg)
+	}
+	if strings.HasPrefix(PersonHint, "fix:") || strings.HasPrefix(PersonHint, "next:") {
+		t.Fatalf("PersonHint = %q", PersonHint)
 	}
 	if !errors.Is(ErrLocal, ErrLocal) {
 		t.Fatal("ErrLocal is not itself")
