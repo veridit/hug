@@ -73,3 +73,4 @@ shipped in v0.7.54 (28791de)
 - 2026-11-18T03:18 doing/waiting -> doing/asked (ask)
 - 2026-11-18T12:56 doing/asked -> doing/asked (settle: one stage, asked); was waiting_asked_by: nautilus; waiting_on: crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting); waiting_since: 2026-11-18T02:50
 - 2026-11-18T19:52 request 1 by jhf
+- 2026-11-18T19:52 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
