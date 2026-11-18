@@ -174,9 +174,10 @@ func TestCaptureKeepsOnlyColours(t *testing.T) {
 	}
 }
 
-// 5z4zt4 check 1: Space on an image draws it where the terminal can
-// (iTerm2's OSC 1337, kitty's graphics protocol, wrapped for tmux), and
-// says in one line what it is elsewhere, without reading it.
+// 5z4zt4 check 1, in the file frame since 2qndsd: Space on an image draws
+// it where the terminal can (iTerm2's OSC 1337, kitty's graphics protocol,
+// wrapped for tmux), and says in one line what it is elsewhere, without
+// reading it.
 func TestImageShownWhereTheTerminalCan(t *testing.T) {
 	m, reads := pictureModel(t, 100, 30, nil, "")
 	m = openTask(t, m, "000002")
@@ -190,9 +191,9 @@ func TestImageShownWhereTheTerminalCan(t *testing.T) {
 	if name, _, _ := m.glanceFile(mustSelected(t, m)); name != "shot.png" {
 		t.Fatalf("marked %q", name)
 	}
-	next, cmd := key(m, " ")
-	if cmd != nil || !strings.Contains(next.message, "shot.png · image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it") || len(*reads) != 0 {
-		t.Fatalf("plain terminal: cmd %v message %q reads %v", cmd != nil, next.message, *reads)
+	next := press(m, " ")
+	if !next.glance || next.glanceImage != nil || !strings.Contains(ansi.Strip(next.View()), "image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it") || len(*reads) != 0 {
+		t.Fatalf("plain terminal: frame %v image %v reads %v", next.glance, next.glanceImage != nil, *reads)
 	}
 	for _, c := range []struct {
 		env  map[string]string
@@ -204,11 +205,11 @@ func TestImageShownWhereTheTerminalCan(t *testing.T) {
 	} {
 		m.opts.Getenv = func(k string) string { return c.env[k] }
 		*reads = nil
-		_, cmd := key(m, " ")
-		if cmd == nil || len(*reads) != 1 {
-			t.Fatalf("%v: no image view (reads %v)", c.env, *reads)
+		shown := press(m, " ")
+		if shown.glanceImage == nil || len(*reads) != 1 || !strings.Contains(shown.View(), c.want[:12]) {
+			t.Fatalf("%v: no image drawn (reads %v)", c.env, *reads)
 		}
-		seq := imageSequence(imageTerminal(m.getenv), "shot.png", png1, m.getenv("TMUX") != "")
+		seq := imageSequenceSized(imageTerminal(m.getenv), "shot.png", png1, m.getenv("TMUX") != "", 0, 0)
 		if !strings.HasPrefix(seq, c.want) {
 			t.Fatalf("%v: sequence starts %q", c.env, seq[:min(60, len(seq))])
 		}

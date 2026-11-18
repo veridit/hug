@@ -3,7 +3,6 @@ package tui
 import (
 	"encoding/base64"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -15,7 +14,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/veridit/hug/huginn/internal/task"
-	"golang.org/x/term"
 )
 
 // Pictures in a task (5z4zt4, Jørgen 14:51: "I'm supposed to look at
@@ -97,16 +95,28 @@ func imageTerminal(getenv func(string) string) string {
 	return ""
 }
 
-// imageSequence is what draws b in the terminal: one OSC 1337 for iTerm2,
-// or kitty's graphics protocol in chunks of 4096 base64 bytes. Inside tmux
-// each is wrapped as a passthrough.
-func imageSequence(proto, name string, b []byte, tmux bool) string {
+// imageSequenceSized is what draws b in the terminal: one OSC 1337 for
+// iTerm2, or kitty's graphics protocol in chunks of 4096 base64 bytes,
+// each wrapped as a passthrough inside tmux. It fits b into cols x rows
+// cells (0: its own size), keeping its aspect, the cursor left where it
+// was drawn (kitty C=1), so the frame around it stays put (2qndsd).
+func imageSequenceSized(proto, name string, b []byte, tmux bool, cols, rows int) string {
 	data := base64.StdEncoding.EncodeToString(b)
 	var seq string
 	switch proto {
 	case "iterm":
-		seq = fmt.Sprintf("\x1b]1337;File=name=%s;size=%d;inline=1;preserveAspectRatio=1;width=auto:%s\a", base64.StdEncoding.EncodeToString([]byte(name)), len(b), data)
+		size := "preserveAspectRatio=1;width=auto"
+		if cols > 0 && rows > 0 {
+			size = fmt.Sprintf("width=%d;height=%d;preserveAspectRatio=1", cols, rows)
+		}
+		seq = fmt.Sprintf("\x1b]1337;File=name=%s;size=%d;inline=1;%s:%s\a", base64.StdEncoding.EncodeToString([]byte(name)), len(b), size, data)
 	case "kitty":
+		size := ""
+		if rows > 0 {
+			// r= fits the height; kitty keeps the aspect, and C=1 does not
+			// move the cursor.
+			size = fmt.Sprintf(",C=1,r=%d", rows)
+		}
 		var s strings.Builder
 		for i := 0; i < len(data); i += 4096 {
 			end := min(i+4096, len(data))
@@ -115,84 +125,100 @@ func imageSequence(proto, name string, b []byte, tmux bool) string {
 				more = 1
 			}
 			if i == 0 {
-				fmt.Fprintf(&s, "\x1b_Ga=T,f=100,m=%d;%s\x1b\\", more, data[i:end])
+				fmt.Fprintf(&s, "\x1b_Ga=T,f=100%s,m=%d;%s\x1b\\", size, more, data[i:end])
 			} else {
 				fmt.Fprintf(&s, "\x1b_Gm=%d;%s\x1b\\", more, data[i:end])
 			}
 		}
 		seq = s.String()
 	}
+	return wrapTmux(seq, tmux)
+}
+
+// wrapTmux passes seq through tmux to the terminal outside it.
+func wrapTmux(seq string, tmux bool) string {
 	if tmux && seq != "" {
 		seq = "\x1bPtmux;" + strings.ReplaceAll(seq, "\x1b", "\x1b\x1b") + "\x1b\\"
 	}
 	return seq
 }
 
-// imageView draws an image full screen outside the frame and waits for a
-// key; the TUI steps aside for it as it does for the editor.
-type imageView struct {
-	seq, title string
-	in         io.Reader
-	out        io.Writer
+// glanceImage is the image the file frame shows (2qndsd, Jørgen: a
+// screenshot is seen inside the ticket): its bytes, read when shown, and
+// the protocol that draws it. nil when the file shown is no image, or the
+// terminal draws none.
+type glanceImage struct {
+	name  string
+	proto string
+	data  []byte
 }
 
-func (v *imageView) Run() error {
-	out := v.out
-	if out == nil {
-		out = os.Stdout
-	}
-	fmt.Fprint(out, "\x1b[2J\x1b[H"+v.title+"\r\n\r\n"+v.seq+"\r\n\r\nany key goes back")
-	in := v.in
-	if in == nil {
-		tty, e := os.Open("/dev/tty")
-		if e != nil {
-			tty = os.Stdin
-		} else {
-			defer tty.Close()
-		}
-		in = tty
-	}
-	if f, ok := in.(*os.File); ok && term.IsTerminal(int(f.Fd())) {
-		if old, e := term.MakeRaw(int(f.Fd())); e == nil {
-			defer term.Restore(int(f.Fd()), old)
-		}
-	}
-	var one [1]byte
-	_, _ = in.Read(one[:])
-	return nil
-}
-func (v *imageView) SetStdin(r io.Reader)  { v.in = r }
-func (v *imageView) SetStdout(w io.Writer) { v.out = w }
-func (v *imageView) SetStderr(io.Writer)   {}
-
-// imageShown is what an image view reports when it is closed.
-type imageShown struct{ err error }
-
-// showImage draws the marked image where the terminal can, else says in
-// one line what it is and that Enter opens it. Its bytes are read only here.
-func (m *model) showImage(t task.Task, name string) tea.Cmd {
-	path, err := m.insideFolder(t, name)
-	if err != nil {
-		m.message = err.Error()
-		return nil
-	}
-	info, err := os.Stat(path)
-	if err != nil {
-		m.message = err.Error()
-		return nil
-	}
+// glanceReadImage is an image's text in the frame: empty rows the terminal
+// draws the image over, or, where it draws none (or the file cannot be
+// read), one line that says so. Its bytes are read only here, when shown.
+func (m *model) glanceReadImage(path string, size int64) string {
 	proto := imageTerminal(m.getenv)
 	if proto == "" {
-		m.message = fmt.Sprintf("%s · image, %s: this terminal draws no images (iTerm2 and kitty do): Enter opens it", name, humanBytes(info.Size()))
-		return nil
+		return fmt.Sprintf("image, %s: this terminal draws no images (iTerm2 and kitty do): Enter opens it", humanBytes(size))
+	}
+	if size > glanceLimit*16 {
+		return fmt.Sprintf("image, %s: too large to draw here, Enter opens it", humanBytes(size))
 	}
 	b, err := readFile(path)
 	if err != nil {
-		m.message = err.Error()
-		return nil
+		return err.Error()
 	}
-	v := &imageView{seq: imageSequence(proto, name, b, m.getenv("TMUX") != ""), title: task.FolderOf(t) + "/" + name + " · " + humanBytes(info.Size())}
-	return tea.Exec(v, func(e error) tea.Msg { return imageShown{e} })
+	m.glanceImage = &glanceImage{name: filepath.Base(path), proto: proto, data: b}
+	return ""
+}
+
+// imageDrawn says whether the frame draws an image now: one shows, and
+// nothing covers the frame.
+func (m model) imageDrawn() bool {
+	return m.detail && m.glance && m.glanceImage != nil && !m.help && m.prompt == "" && m.confirm == ""
+}
+
+// eraseImage repaints the whole screen once the image drawn last is gone
+// or replaced: the renderer rewrites only lines that changed, and the
+// frame's blank rows under an iTerm2 picture do not, so they would keep
+// pieces of it.
+func (m *model) eraseImage() tea.Cmd {
+	var now *glanceImage
+	if m.imageDrawn() {
+		now = m.glanceImage
+	}
+	was := m.imageWasDrawn
+	m.imageWasDrawn = now
+	if was != nil && was != now {
+		return tea.ClearScreen
+	}
+	return nil
+}
+
+// imageOverlay is what draws the shown image over the frame's rows, after
+// the frame (View): the cursor saved, moved to the first row under the
+// top rule, the image scaled into the frame's rows and width, the cursor
+// put back. The frame itself keeps those rows blank, so a screen capture
+// (S) holds no image bytes. In kitty a frame without an image deletes the
+// last one; an iTerm2 picture sits in its cells until eraseImage repaints.
+func (m model) imageOverlay() (before, after string) {
+	img := m.glanceImage
+	if !m.imageDrawn() {
+		if imageTerminal(m.getenv) == "kitty" {
+			return wrapTmux("\x1b_Ga=d,d=A\x1b\\", m.getenv("TMUX") != ""), ""
+		}
+		return "", ""
+	}
+	row := 2 // the crumb's row is 1: the top rule, then the image
+	if m.glanceNote() != "" {
+		row++
+	}
+	before = ""
+	if img.proto == "kitty" {
+		before = wrapTmux("\x1b_Ga=d,d=A\x1b\\", m.getenv("TMUX") != "")
+	}
+	seq := imageSequenceSized(img.proto, img.name, img.data, m.getenv("TMUX") != "", m.width, m.viewport.Height)
+	return before, fmt.Sprintf("\x1b7\x1b[%d;1H%s\x1b8", row+1, seq)
 }
 
 // getenv reads the environment through Options, so tests choose a terminal.
@@ -345,7 +371,7 @@ var captureNow = time.Now
 // capture takes the frame as drawn now, before the bar asks anything:
 // plain text to the clipboard, the coloured frame kept for attaching.
 func (m *model) capture() {
-	frame := m.View()
+	frame := m.frameView() // text only: a shown image's codes stay out (2qndsd)
 	plain := ansi.Strip(frame)
 	var lines []string
 	for _, l := range strings.Split(plain, "\n") {

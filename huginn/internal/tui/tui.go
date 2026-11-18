@@ -171,6 +171,8 @@ type model struct {
 	glance                 bool
 	glanceHead, glanceBody string
 	glanceMD               glanceMarkdown
+	glanceImage            *glanceImage // the image shown, drawn over the frame (2qndsd)
+	imageWasDrawn          *glanceImage // what the last frame drew: eraseImage
 	glanceGen              uint64
 	// captured is the frame S took (5z4zt4), waiting for Enter to attach
 	// it; capturedNote says what went to the clipboard.
@@ -399,6 +401,9 @@ func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	// A load running: the spinner ticks until it ends (vnyz8z).
 	if spin := m.spin(); spin != nil {
 		cmd = tea.Batch(cmd, spin)
+	}
+	if erase := m.eraseImage(); erase != nil {
+		cmd = tea.Batch(cmd, erase)
 	}
 	return m, cmd
 }
@@ -1185,12 +1190,6 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.height = msg.Height
 			m.resize()
 		}
-	case imageShown:
-		// Back from an image (5z4zt4): Files, the image still marked.
-		if msg.err != nil {
-			m.message = msg.err.Error()
-		}
-		return m, tea.ClearScreen
 	case editorMsg:
 		m.refresh(msg.path)
 		m.editNotice = ""
@@ -1466,15 +1465,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case " ":
 				// Space ticks the check marked >; with focus elsewhere no
 				// check is marked, and ticking an unmarked one is a guess.
-				// In Files it shows the marked file (scrxak).
+				// In Files it shows the marked file (scrxak), an image too,
+				// in the same frame (2qndsd).
 				if m.detailPane == focusFiles {
-					if t, ok := m.selected(); ok {
-						if name, _, _ := m.glanceFile(t); task.IsImageName(name) {
-							// An image is drawn outside the frame where the
-							// terminal can (5z4zt4), else one line.
-							return m, m.showImage(t, name)
-						}
-					}
 					m.openGlance()
 				} else if m.detailPane == focusAcceptance {
 					m.requestAction(k, "")

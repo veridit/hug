@@ -94,6 +94,7 @@ func (m *model) showGlance() {
 	name, _, _ := m.glanceFile(t)
 	m.glanceGen++
 	m.glanceMD = glanceMarkdown{}
+	m.glanceImage = nil
 	m.find = findState{} // the file's own find (4s3g5q)
 	m.glanceHead, m.glanceBody = m.glanceRead(t, name)
 	m.viewport.Height = m.glanceHeight()
@@ -113,6 +114,11 @@ func (m *model) glanceRead(t task.Task, name string) (head, body string) {
 		return oneLine(name), err.Error()
 	}
 	head = fmt.Sprintf("%s · %s · %d of %d", oneLine(task.FolderOf(t)+"/"+name), humanBytes(info.Size()), i+1, n)
+	if task.IsImageName(name) {
+		// An image shows in the frame too (2qndsd): the terminal draws it
+		// over the frame's rows (imageOverlay), or one line says why not.
+		return head, m.glanceReadImage(path, info.Size())
+	}
 	if info.Size() > glanceLimit {
 		return head, glanceText(nil, info.Size(), m.width)
 	}
@@ -154,6 +160,7 @@ func (m *model) stepGlance(step int) {
 // closeGlance goes back to Files with the file last shown marked.
 func (m *model) closeGlance() {
 	m.glance = false
+	m.glanceImage = nil
 	m.glanceHead, m.glanceBody = "", ""
 	m.glanceMD = glanceMarkdown{}
 	m.find = findState{}

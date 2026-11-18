@@ -775,7 +775,21 @@ func (m model) paletteText() string {
 	lines = append(lines, "", m.styles.dim.Render(fmt.Sprintf("%d choices · › opens a level · Tab or Enter completes · Enter runs a complete command", len(cs))))
 	return strings.Join(lines, "\n")
 }
+
+// View is the frame, with the shown image drawn over its rows where the
+// terminal can (2qndsd): imageOverlay's codes go before the first line
+// and after the last, taking no cells.
 func (m model) View() string {
+	frame := m.frameView()
+	before, after := m.imageOverlay()
+	if before == "" && after == "" {
+		return frame
+	}
+	return before + frame + after
+}
+
+// frameView is the screen as text: what S captures.
+func (m model) frameView() string {
 	mode := m.view
 	if m.detail {
 		mode = "detail"
