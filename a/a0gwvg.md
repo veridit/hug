@@ -1,15 +1,20 @@
 ---
 id: a0gwvg
 title: "Repo tool: regenerate TUI goldens from a failed CI run's log"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T23:24"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "ci-goldens"
+worktree: "/Users/jhf/.jcode/scratch/ci-goldens"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ Prototype attached (ci-goldens.sh, from $JCODE_SCRATCH_DIR). Format source: hugi
 ## Notes
 
 file:ci-goldens.sh (4365 bytes, sha256:5e41e14e)
+
+
+## History
+- 2026-11-18T23:24 todo -> doing/active (take)
