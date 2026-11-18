@@ -1,15 +1,14 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "doing"
+state: "todo"
 type: bug
 priority: "high"
-assignee: ["wyvern"]
+assignee: []
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T02:53"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -42,3 +41,4 @@ crab 02:52 local: moved from hatchling to wyvern (hatchling is on t01kqm; wyvern
 wyvern 03:41: work in progress parked as commit 80e31e6a on local branch wy/4vd1mz (worktree ~/.jcode/scratch/hug-0sbvnq-t4). It adds ingest.ForgetManyChanged, Indexer.ApplyNative (targeted update), App.FreshFor, and an early exit in UpdateNeighbors when there are no offers. On the store copy (30,794 units) the index stays consistent: the pass after the forget skips the source. But wall time is not yet sub-second: 1.95-3.6 s at load 50-120, and the profile shows refill topK over every vector plus loadGraph/saveGraph of the 28 MB gob as most of it. Paused for a0p5kt (crab: land first). Also waiting on hatchling (tn8bmn touches the same forget path).
 ## History
 - 2026-11-18T02:53 todo -> doing/active (take)
+- 2026-11-18T03:41 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T02:53
