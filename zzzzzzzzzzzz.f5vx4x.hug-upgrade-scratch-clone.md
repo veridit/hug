@@ -4,7 +4,7 @@ title: "hug upgrade in a scratch clone changed the machine's jcode configs"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
