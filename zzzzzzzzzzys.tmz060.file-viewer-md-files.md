@@ -1,13 +1,18 @@
 ---
 id: tmz060
 title: "File viewer: .md files show as formatted Markdown, in subtle colours"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T06:51"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ glanceText(b, size, width) today: escapeControls + tab expansion + wrap, line by
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+
+## History
+- 2026-11-18T06:51 todo -> doing/active (take)
