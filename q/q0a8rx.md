@@ -11,11 +11,16 @@ rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:41"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 effort: "high"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_for: "jhf"
+asked_since: "2026-11-18T20:41"
+asked_by: "crab"
+asked_check: "1"
+asked_what: "hug's public hug/memory branch still holds 58 memories that don't belong there (29 personal, 16 other projects, 13 team). Forget can't remove them; only rewriting the branch can, and clones that already fetched it keep their copies. A backup exists. Rewrite the branch without them, or leave it?"
 ---
 
 ## Goal
@@ -41,3 +46,4 @@ Branch tip 1abcc497 (46 commits). The 58 are listed by the corrected labels next
 
 ## History
 - 2026-11-18T20:41 todo -> doing/active (take)
+- 2026-11-18T20:41 doing/active -> doing/asked (ask)
