@@ -40,6 +40,7 @@ Today: the tab line underlines o, l, b and ! as single keys. After: line 2 is 'v
 - [ ] Jørgen confirms on his board after release
 - [x] The state counts sit on the view line, right aligned after a dim separator, and the old counts line is gone (golden at 80 and 140; at 80 counts drop from the right first)
 - [x] gg and G are gone (keys, hints, help); < Home go to top and > End to bottom as before (key test)
+- [ ] The view line is subtle, one cue per meaning (Jørgen 19:54 on check 6): an underline only marks a letter you can press, colour marks the keys (v, then o l b !), the active view is told by bold OR colour alone on its word, and nothing has a background fill; no letter carries underline+bold+colour together (golden at 80 and 140, colour)
 
 ## Notes
 
@@ -63,3 +64,4 @@ shipped in v0.7.56 (03e783d)
   It is pretty good and it works the way I hoped, except for the colouring is too intense and it's over the top. What do I mean by that? I mean that right now I had another ticket to reduce the or to improve the coloring, but I think it needs to be toned down. You have both underscore and you have bold and you have color on the letter that you can pick. It's too much and you have background on the one that is active. It's like it's a we have to be subtle. So the underscore tells you it can be picked, right? And then the coloring, maybe either the bold or the color tells you which one is active. And the color tells you what you can pick. Something more subtle, please
 - 2026-11-18T19:54 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T19:54 answer 1 acknowledged by crab
+- 2026-11-18T19:54 answer 1 in progress by crab: hug task set qh9ep1
