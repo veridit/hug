@@ -75,6 +75,7 @@ var Codes = []CodeInfo{
 	{"stale-owner", "a doing task's assignee has had no live harness session for over a day", Broken},
 	{"landed-unchecked", "question: a commit naming a doing task reached main, but no check is ticked", Broken},
 	{"shipped-not-done", "question: a release contains the task, but it is not done", Broken},
+	{"checks-all-hold", "question: a waiting task has every check and child done, but it is not done", Broken},
 	{"todo-has-commit", "question: a todo task has a commit on main", Broken},
 	{"doing-idle", "question: a doing task has had no note, check or commit for 2 hours", Broken},
 	{"backlog-leftover", "Backlog.md markers or unused imported fields; hug upgrade removes them", Advice},

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -189,5 +190,35 @@ func TestAskAboutOpenChecksOfAShippedTask(t *testing.T) {
 		if _, out := runText(a, "lint", id); strings.Contains(out, "shipped-not-done") {
 			t.Fatalf("ask %v: lint still reports shipped-not-done:\n%s", ask, out)
 		}
+	}
+}
+
+// bg1rd8 check 1, end to end (44w1ev's shape): a task parked in waiting a
+// day ago with every check ticked is a broken checks-all-hold finding in
+// hug task lint ID, with the fix hug task done ID, and that fix goes
+// through.
+func TestLintAsksAWaitingTaskWithEveryCheckToFinish(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Parked", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "one")["task"].(Reply)["id"].(string)
+	execute(t, a, "take", id, "--model", "test-model", "--as", "wyvern")
+	execute(t, a, "check", id, "1")
+	execute(t, a, "wait", id, "landing slot", "--as", "wyvern")
+	if _, out := runText(a, "lint", id); strings.Contains(out, "checks-all-hold") {
+		t.Fatalf("parked just now: want no checks-all-hold yet:\n%s", out)
+	}
+	since := regexp.MustCompile(`waiting_since: "?[0-9T:-]+"?`).FindString(taskFile(t, a, id))
+	if since == "" {
+		t.Fatalf("no waiting_since:\n%s", taskFile(t, a, id))
+	}
+	useEditor(t, a, since, `waiting_since: "2026-01-01T09:00"`)
+	execute(t, a, "edit", id)
+	_, out := runText(a, "lint", id)
+	if !strings.Contains(out, "broken [checks-all-hold] every check holds, but doing/waiting on landing slot for ") || !strings.Contains(out, "1 of 1 checks are ticked or struck; wyvern: is it done?") || !strings.Contains(out, "hug task done "+id) {
+		t.Fatalf("a day in waiting with every check ticked:\n%s", out)
+	}
+	if code, out := runText(a, "done", id); code != 0 {
+		t.Fatalf("the fix hug task done %s is refused: exit %d\n%s", id, code, out)
 	}
 }

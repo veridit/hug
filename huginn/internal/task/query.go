@@ -326,6 +326,8 @@ func Lint(docs []*Document) []Finding {
 	}
 	out = append(out, parentFindings(tasks)...)
 	out = append(out, derivedFindings(tasks)...)
+	// A waiting task with nothing left is asked to finish (bg1rd8).
+	out = append(out, ChecksHoldFindings(tasks, Now())...)
 	// The description pattern holds for every open task (fkpyg3, Jørgen
 	// 2026-11-17: the old 2026-11-16 cutoff hid it on most of a board).
 	// Done and dropped tasks are history. Same check list as hug task new;

@@ -272,3 +272,90 @@ func TestShippedQuestionNotWhileStageSaysWhy(t *testing.T) {
 		t.Fatalf("resumed to doing/active: want shipped-not-done again, got %q", got)
 	}
 }
+
+// TestWaitingTaskWhoseChecksAllHold (bg1rd8 checks 1 and 3; Jørgen on
+// 44w1ev: every check ticked, every child done, a day in waiting on a
+// long-landed "landing slot", and nothing told anyone): a doing/waiting task
+// whose checks all hold and whose children are all done is asked to finish,
+// with a fix hug takes. With an open check, or an open child, it is not.
+func TestWaitingTaskWhoseChecksAllHold(t *testing.T) {
+	old := Now
+	t.Cleanup(func() { Now = old })
+	start := time.Date(2026, 11, 17, 9, 0, 0, 0, time.Local)
+	Now = func() time.Time { return start }
+	later := func() { Now = func() time.Time { return start.Add(25 * time.Hour) } }
+	s := &Store{Root: t.TempDir(), DepsMode: "warn"}
+	newTask := func(title string, checks ...string) string {
+		r, err := s.New(NewOptions{Title: title, Goal: "g", Purpose: "p", Principle: "q", Acceptance: checks})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return r.Task.ID
+	}
+	must := func(_ Result, err error) {
+		t.Helper()
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	epic := newTask("Epic", "one", "two")
+	kids := []string{newTask("Child 1", "c"), newTask("Child 2", "c")}
+	for _, k := range kids {
+		must(s.Set(k, "parent", epic))
+	}
+	must(s.Take(epic, "wyvern"))
+	must(s.Check(epic, 1))
+	must(s.Wait(epic, "landing slot", "wyvern"))
+	if q := questionOf(t, s, epic); q != nil {
+		t.Fatalf("waiting with check 2 open: want no question, got %+v", q)
+	}
+	must(s.Check(epic, 2))
+	if q := questionOf(t, s, epic); q != nil {
+		t.Fatalf("waiting, every check ticked, 2 children open: want no question (done would refuse), got %+v", q)
+	}
+	for _, k := range kids {
+		must(s.Take(k, "wyvern"))
+		must(s.Check(k, 1))
+		must(s.Done(k))
+	}
+	// Parked a moment ago (a review, a CI run): not yet a question.
+	if q := questionOf(t, s, epic); q != nil {
+		t.Fatalf("waiting under IdleAfter, every check and child done: want no question yet, got %+v", q)
+	}
+	later()
+	q := questionOf(t, s, epic)
+	want := "every check holds, but doing/waiting on landing slot for 25 hours: 2 of 2 checks are ticked or struck and 2 of 2 children are done; wyvern: is it done?"
+	if q == nil || q.Problem != want || FindingCode(q.Problem) != "checks-all-hold" || q.FixLine() != "hug task done "+epic {
+		t.Fatalf("waiting, every check and child done:\n got %+v\nwant %q, fix hug task done %s", q, want, epic)
+	}
+	if Severity("checks-all-hold") != Broken || !QuestionCode("checks-all-hold") {
+		t.Fatalf("checks-all-hold is not a broken question code")
+	}
+	// The fix is one hug takes.
+	must(s.Done(epic))
+	if q := questionOf(t, s, epic); q != nil {
+		t.Fatalf("done: want no question, got %+v", q)
+	}
+
+	// No children: the checks alone. A struck check holds too, as done
+	// accepts it.
+	Now = func() time.Time { return start }
+	solo := newTask("Solo", "one", "two")
+	must(s.Take(solo, "kestrel"))
+	must(s.Check(solo, 1))
+	must(s.Wait(solo, "CI run 1", "kestrel"))
+	if q := questionOf(t, s, solo); q != nil {
+		t.Fatalf("bg1rd8 check 3: waiting with an open check: want no question, got %+v", q)
+	}
+	later()
+	if q := questionOf(t, s, solo); q != nil {
+		t.Fatalf("bg1rd8 check 3: a day in waiting with an open check: want no question, got %+v", q)
+	}
+	if _, err := s.Strike(solo, 2, "not relevant", "kestrel", false); err != nil {
+		t.Fatal(err)
+	}
+	q = questionOf(t, s, solo)
+	if q == nil || q.Problem != "every check holds, but doing/waiting on CI run 1 for 25 hours: 2 of 2 checks are ticked or struck; kestrel: is it done?" || q.FixLine() != "hug task done "+solo {
+		t.Fatalf("waiting, one ticked and one struck: %+v", q)
+	}
+}
