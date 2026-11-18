@@ -39,5 +39,6 @@ Finding: hug task lint 911j70 -> 9/911j70.md:0: broken [missing-file] .hug/tasks
 ## Notes
 
 
+49249f5f on main 8a45b0eb (ydwamb, ci/ydwamb). Fail-first: TestGlobCitationMatchingFilesIsFine got 'task:kdap66/compare-: file not found' and '.hug/tasks/k/kdap66/compare-1: file not found'; TestGlobCitationMatchingNothingNamesThePattern got 'shot-: file not found ... | fix: hug task attach hc607d FILE --name shot-'. After: both pass, plus TestCitedNameKeepsProseOut; task ok 25.624s, mcp ok 267.517s, cache ok 2.709s locally. Check 3, read-only with the built binary on this board: old 'hug task lint 911j70' -> '9/911j70.md:0: broken [missing-file] .hug/tasks/9/911j70/compare-: file not found'; new -> 'no findings'; board missing-file count 2 -> 1 (the one left is ydwamb's own goal text, which cites the cut form 'compare-' literally... it reads '.hug/tasks/9/911j70/compare-: file not found' in the task's relevant details). .hug/tasks git status: 0 changed before and after (lint never writes).
 ## History
 - 2026-11-18T22:34 todo -> doing/active (take)
