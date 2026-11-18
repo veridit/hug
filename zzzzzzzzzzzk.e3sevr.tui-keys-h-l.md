@@ -47,7 +47,7 @@ Mock, cursor on 3mavpt with the TYPE column marked:
 - [x] The detail is drawn in named bands per header-spec.md: breadcrumb 'HUG TASKS · <view> › <parents> › <id>' (id accent, '? N for you' right), context (badges without id, dates), a dim rule, subject (bold title, ▸ on page focus), a dim rule, then details; the global band is not drawn (golden at 80 and 140, one task open and two stacked)
 - [x] Footers and hint lines mark a letter key inside its action word instead of repeating it ('next file · previous file' with n and p highlighted; 'edit · take · done · drop'); keys that are not a letter of the word keep their label (Enter, Esc, Space, Tab, j/k, ?, /) (golden of the file viewer footer and the overview footer; a test that no footer shows a letter key followed by a word starting with that letter)
 - [ ] ~~Neighbouring footer hints that share their last word write it once with a '-' on the earlier ones: the file viewer footer reads 'next- · previous file' with n and p highlighted (golden)~~ (not relevant: Jørgen 00:45:54: comma inside a group (next check), crab, 2026-11-18)
-- [ ] Neighbouring footer hints that share their last word form one item: the earlier ones end in '-', they are joined by ', ', and ' · ' separates items; the file viewer footer reads 'next-, previous file · …' with n and p highlighted (golden)
+- [x] Neighbouring footer hints that share their last word form one item: the earlier ones end in '-', they are joined by ', ', and ' · ' separates items; the file viewer footer reads 'next-, previous file · …' with n and p highlighted (golden)
 
 ## Notes
 
