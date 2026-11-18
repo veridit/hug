@@ -31,7 +31,7 @@ A test under the repo root's test package that walks git ls-files. Exclude only 
 
 ## Acceptance
 - [x] The test fails on 27643306's tree with 'CHANGELOG.md:NN: leftover conflict marker' and passes on main (fails first)
-- [ ] It runs in go test ./... in under a second on this repo (counting: one git ls-files call)
+- [x] It runs in go test ./... in under a second on this repo (counting: one git ls-files call)
 
 ## Notes
 
