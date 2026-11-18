@@ -151,7 +151,6 @@ func (m *model) executeAction() tea.Cmd {
 				m.finish(r, err, action)
 				m.message = "answered " + r.Task.ID + " by ticking check " + strconv.Itoa(n)
 				m.deliver(r, err, "answer", m.me())
-				m.result = m.message
 				return nil
 			}
 		} else {
