@@ -41,5 +41,6 @@ Message comes from actions.go finish(): m.message = action + ' ' + ID, never cle
 
 
 check 1: commit d24bfd34 on branch z82qsy. render.go draws the detail header's dim rule under the file header line too, and glanceChrome=3 keeps the screen height. TestFileViewerRuleUnderHeader opens 000001 by Enter on its row in overview, list and board (the breadcrumbs read 'HUG TASKS · overview › 000001', '... list ...', '... board ...'), then shows bench/README.md. It failed first at z82qsy_test.go:58 ('under the file header "Bench..." / "   ...", want the rule then the contents') and passes now. New golden testdata/detail/file-rule.txt. glance.txt and markdown-file.txt changed by +8 rule lines and -8 blank padding lines, nothing else.
+check 2: finish() records result and resultAt (view + open task path + file head). clearStaleResult in afterUpdate clears the message when the place changes, and leaves it alone once another message has replaced it. TestActionMessageClearsOnMovingOn does t Enter on 000001, j keeps the result, then opening 000002, a file, or v b clears it. It failed first on main at z82qsy_test.go:75 ('another task: the old result stays: "take 000001"') and passes now.
 ## History
 - 2026-11-18T12:53 todo -> doing/active (take)
