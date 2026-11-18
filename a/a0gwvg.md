@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzs"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T23:24"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ci-goldens"
 worktree: "/Users/jhf/.jcode/scratch/ci-goldens"
+waiting_on: "reviewed by crab; he stacks it with ydwamb"
+waiting_since: "2026-11-18T23:37"
+waiting_asked_by: "duckling"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ check 3: Same test: one byte changed in the 140x40 golden (GLOBAL->GLOBAl) -> ex
 CI 44411972128 on 917a3a28: completed/success, 8/8 jobs.
 ## History
 - 2026-11-18T23:24 todo -> doing/active (take)
+- 2026-11-18T23:37 doing/active -> doing/waiting (wait)
