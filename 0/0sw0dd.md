@@ -59,5 +59,6 @@ v0.7.15 released and installed 2026-11-16 (commit 6d36b9e, release run 'complete
 crab 2026-11-17: item 4 (search by field with BM25) moves to 49n9kw (ranked search for CLI, MCP and TUI); the alias part of TUI search is vzghj8.
 
 
+iwazaru 0sw0dd checks 2+3 on branch 0sw0dd d977b452 (base origin/main 56e2cc6f), pushed + ci/0sw0dd, CI run 44342320033. Failing-first ff85e140: 'list header: "HUG TASKS · list   2/2 tasks · ! 0 broken · 4 advice ..."' and '/ state:done: [], want [Alpha task Beta task]'. Check 2: render.go brand() 'HUG · <project>' in global header + breadcrumb; project = hug.toml [board] project (task.ProjectName) else filepath.Base(checkout) (Options.Checkout = s.r.Root, hooks.go); tests TestHeaderNamesProjectFromCheckout, TestHeaderProjectOverrideFromHugToml, TestHeaderWithoutProjectIsHUG. Check 3: searchfields.go parseSearch cuts state:/status:/type:/priority:/group:/label:/assignee:/epic: off the / query, words go to the index as before; TestSearchFieldStateDone. Goldens: 69 files, 110 lines, every one a header line (pairs identical after normalising HUG TASKS/HUG · repo), 80 and 140. Local: 'ok github.com/veridit/hug/huginn/internal/tui 115.624s', 'ok .../internal/task 14.233s', whole ./huginn/... ok. Untouched: sort.go, palette.go, detail.go.
 ## History
 - 2026-11-18T16:37 todo -> doing/active (take)
