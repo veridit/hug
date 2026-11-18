@@ -13,8 +13,8 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab landing review of all-green CI44268461420 exactdcb80a5d; main push requires coordinator authorization"
-waiting_since: "2026-11-18T09:44"
+waiting_on: "ordinary main CI44269636894 exactdcb80a5d, watcher508678ai65 owned to terminal, no reruns"
+waiting_since: "2026-11-18T09:45"
 waiting_asked_by: "wyvern"
 ---
 
