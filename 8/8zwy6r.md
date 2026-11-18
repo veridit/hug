@@ -32,7 +32,7 @@ Today: no .gitattributes; the note goes at the end of ## Notes, so both sides in
 ## Depends on
 
 ## Acceptance
-- [ ] Two clones each note the same task offline; both syncs succeed and both notes are in the file in time order (test, fails first on main)
+- [x] Two clones each note the same task offline; both syncs succeed and both notes are in the file in time order (test, fails first on main)
 - [ ] Same for a check ticked on each side (different items), an answer and a request (table test)
 - [ ] Two sides setting state differently still stop with a fix line naming the field (test)
 
