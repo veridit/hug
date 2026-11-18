@@ -11,7 +11,10 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+stage: "waiting"
+waiting_on: "crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting)"
+waiting_since: "2026-11-18T02:50"
+waiting_asked_by: "nautilus"
 ---
 
 ## Goal
@@ -50,3 +53,5 @@ file:screen-1821.ans (10206 bytes, sha256:e77117eb) screen capture from hug tui
 - 2026-11-18T02:32 answered asked (check 4), by jhf, for nautilus (doing/asked -> doing/active):
   > do the status colours read as one subtle scheme? The capture shows the overview on this board (IN PROGRESS, NEXT UP, RECENTLY DONE, done rows with a green count)
   It bugs me that weighting and lint are two different issues. I'm wondering if lint should be more red, like an error, or if warning, or if whiting should be less alarmist
+- 2026-11-18T02:50 doing/active -> doing/waiting (wait)
+- 2026-11-18T02:50 nautilus read the answer: hug task wait zhvkmj "crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting)"
