@@ -64,6 +64,9 @@ type Deduction struct {
 	// Note is the line written to the ticket's Notes; empty when the ticket
 	// already has it (then nothing is written and nothing reported).
 	Note string
+	// Closed is set by ApplyDeductions when the release closed the task
+	// (yf39ya check 2): every check and child held and done went through.
+	Closed bool
 }
 
 // Report is the line shown to the owner: "observed: ...; marked: ...; if
@@ -182,7 +185,64 @@ func (s *Store) ApplyDeductions(ds []Deduction) ([]Deduction, error) {
 		if _, e := s.finish(d, true); e != nil {
 			return done, e
 		}
+		if tag, ok := strings.CutPrefix(x.Marked, "shipped in "); ok {
+			closed, e := s.closeShipped(x.ID, tag)
+			if e != nil {
+				return done, e
+			}
+			x.Closed = closed
+			if closed {
+				x.Marked += ", done (every check holds)"
+				x.Fix = "hug task set " + x.ID + " --state todo"
+			}
+		}
 		done = append(done, x)
 	}
 	return done, nil
+}
+
+// ReleaseLine is the History reason a release close writes (yf39ya).
+func ReleaseLine(tag string) string { return "done, by release " + tag + ": every check holds" }
+
+// closeShipped closes id after its shipped note for tag (yf39ya check 2,
+// Jørgen 2026-11-18: shipped work left the board full of lint): a doing
+// task, active or waiting (asked and review wait on a person), whose every
+// check and child holds is closed by the ordinary done, so whatever hug
+// task done refuses (an open dependency, a board condition) leaves it as
+// it was, and its finding stands. done_release is the tag. A todo task is
+// never closed: nobody took it. Only on the pass that writes the shipped
+// note, so a clone that finds the note already written closes nothing and
+// two clones give one done.
+func (s *Store) closeShipped(id, tag string) (bool, error) {
+	d, ts, e := s.load(id)
+	if e != nil || d.Task.State != "doing" || (d.Task.Stage != "active" && d.Task.Stage != "waiting") || len(d.Task.Acceptance) == 0 {
+		return false, nil
+	}
+	for _, a := range d.Task.Acceptance {
+		if !a.Settled() {
+			return false, nil
+		}
+	}
+	if len(OpenChildren(d.Task, ts)) > 0 || len(Blocked(d.Task, ts)) > 0 || len(Unmet(d.Task, ts, true)) > 0 {
+		return false, nil
+	}
+	if _, e := s.transitionWhy(id, "done", ""); e != nil {
+		return false, nil // refused: the finding says why
+	}
+	return true, s.releaseDone(id, tag, ReleaseLine(tag))
+}
+
+// releaseDone sets done_release and replaces the done History line's
+// reason with why, on a task just closed.
+func (s *Store) releaseDone(id, tag, why string) error {
+	d, _, e := s.load(id)
+	if e != nil {
+		return e
+	}
+	if e := d.SetField("done_release", tag); e != nil {
+		return e
+	}
+	d.retagLastHistory("(done)", "("+why+")")
+	_, e = s.finish(d, true)
+	return e
 }
