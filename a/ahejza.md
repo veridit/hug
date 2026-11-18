@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzlq"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T05:01"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_since: "2026-11-18T05:47"
-asked_by: "nautilus"
-asked_check: "6"
-asked_what: "after the release: line 3 reads 'filter: none · sort: rank'. Press s for the sort picker (c is the marked column, the same as o; created moved to d) and f for the filter picker; 1-4 no longer filter (use :todo etc.). Does it read clearly?"
-asked_for: "jhf"
 ---
 
 ## Goal
@@ -63,3 +58,6 @@ shipped in v0.7.56 (4247303)
 ## History
 - 2026-11-18T05:01 todo -> doing/active (take)
 - 2026-11-18T05:47 doing/active -> doing/asked (ask)
+- 2026-11-18T19:57 answered asked (check 6), by jhf, for nautilus (doing/asked -> doing/active):
+  > after the release: line 3 reads 'filter: none · sort: rank'. Press s for the sort picker (c is the marked column, the same as o; created moved to d) and f for the filter picker; 1-4 no longer filter (use :todo etc.). Does it read clearly?
+  I like these pickers. Keep it
