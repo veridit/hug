@@ -209,6 +209,13 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 				t.Fatalf("the old name's session got %v", got)
 			}
 			waitAck()
+			// Leave the board as the claims after this one expect it:
+			// crab coordinates, and no session this claim made is live
+			// (the newest live crab session would take what is next).
+			execute(t, a, "coordinator", "crab")
+			jc.mu.Lock()
+			jc.live[lobster], jc.live[crab] = false, false
+			jc.mu.Unlock()
 		}},
 		{"No agent polls.", func(t *testing.T) {
 			// Delivery is in the write: every message above reached the
