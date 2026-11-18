@@ -33,7 +33,7 @@ Applies to every row column (stage, type, priority, owner), not only stage (crab
 - [x] A section whose tasks all share a stage draws no STAGE column and its heading ends '· all <stage>' in that stage's colour; the title gets the width (golden at 80 and 140, Jørgen's 13-active IN PROGRESS shape)
 - [x] The same holds for type, priority and owner; two uniform columns read '· all active · all feature' (golden)
 - [x] The decision uses every task in the section after filters, not the rows on screen: scrolling a 28-task section whose hidden rows differ keeps the column (test)
-- [ ] H/L skip a hidden column and o never sorts by one (key test)
+- [x] H/L skip a hidden column and o never sorts by one (key test)
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
