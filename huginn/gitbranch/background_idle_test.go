@@ -1,7 +1,10 @@
 package gitbranch
 
 import (
+	"errors"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sync"
 	"sync/atomic"
@@ -94,11 +97,36 @@ func TestExpiredPendingAllowsNudgeRetry(t *testing.T) {
 	}
 	missing := filepath.Join(common, "missing-sync-child")
 	err := b.Nudge(common, []string{missing})
-	if !os.IsNotExist(err) {
+	if !missingExecutableError(err) {
 		t.Fatalf("expired marker suppressed retry: Nudge error %v, want attempted missing executable", err)
 	}
 	if b.Pending() || b.Busy() {
 		t.Fatal("failed child startup left its pending marker behind")
 	}
 	t.Log("expired orphan: Busy true, Queued false; Nudge attempted missing executable and cleared pending on failure")
+}
+
+func missingExecutableError(err error) bool {
+	return err != nil && (os.IsNotExist(err) || errors.Is(err, exec.ErrNotFound))
+}
+
+func TestMissingExecutableErrorClasses(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		err  error
+		want bool
+	}{
+		{"path not exist", &os.PathError{Op: "fork/exec", Path: "missing-sync-child", Err: os.ErrNotExist}, true},
+		{"wrapped Windows lookup", fmt.Errorf("start: %w", &exec.Error{Name: "missing-sync-child", Err: exec.ErrNotFound}), true},
+		{"nil means no attempt", nil, false},
+		{"unrelated error", errors.New("unrelated"), false},
+		{"path permission error", &os.PathError{Op: "fork/exec", Path: "missing-sync-child", Err: os.ErrPermission}, false},
+		{"lookup permission error", &exec.Error{Name: "missing-sync-child", Err: os.ErrPermission}, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := missingExecutableError(tc.err); got != tc.want {
+				t.Fatalf("missing executable classification = %t, want %t, error %v", got, tc.want, tc.err)
+			}
+		})
+	}
 }
