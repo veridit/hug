@@ -1,0 +1,34 @@
+---
+id: kg07bt
+title: "Detail: a calm ACCEPTANCE heading; only the cursor marks the question"
+state: todo
+type: feature
+priority: ""
+assignee: []
+labels: []
+group: ""
+rank: "zzzzzzzzzzzz"
+created: 2026-11-18
+updated: 2026-11-18
+---
+
+## Goal
+In a task's detail the ACCEPTANCE heading is quiet (no background fill; at most bold or dim, like the other section headings), and the focused asked check / question is not bold plus background plus strong colour at once: it reads as a normal row, and the one blinking underline cursor (accent #00bfff/#006c9c, 530 ms) is the only thing that says 'you are here'.
+
+## Purpose
+Jørgen 2026-11-18 14:58 local, answering 0gztsy check 4: the focus was correct, but there is too much visual noise. The ACCEPTANCE heading draws so much attention that it competes with the question line below it, and the question is bold, background-filled and strongly coloured at once. He wants it toned down, with the glowing cursor marking the one place you are, not a visual competition.
+
+## Principle
+One motion and one emphasis on screen: the cursor. No bold everywhere, no background fills for emphasis. Stable key-hierarchy colours. Do not change what has focus or which keys act, only how it looks.
+
+## Relevant details
+Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering from 41hhgn/0gztsy). Goldens: testdata/detail/asked-check.txt, asked-block.txt at 80 and 140; update with HUGINN_UPDATE_GOLDEN=1 and show the before/after rows in the report. kikazaru is in detail.go for 0ga6m0: take this after 0ga6m0, on top of it.
+
+## Depends on
+
+## Acceptance
+- [ ] The ACCEPTANCE heading has no background colour and the same weight as the other detail section headings (golden + style assertion).
+- [ ] The focused asked check renders with no background fill and no bold; the cursor alone marks it (test asserts the SGR codes on that row).
+- [ ] Jørgen opens a task asked of him and says it is calm and the cursor is where his answer goes.
+
+## Notes
