@@ -831,6 +831,9 @@ func (m model) View() string {
 		lines = append(lines, line)
 	}
 	footer := m.message
+	if footer == "" && m.columnHinted && !m.detail && !m.help && m.prompt == "" && m.confirm == "" {
+		footer = m.columnHint() // rows only: a task has no column (qtj177)
+	}
 	messageLines := strings.Split(m.message, "\n")
 	if len(messageLines) > 1 {
 		footer = messageLines[0]

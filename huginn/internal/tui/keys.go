@@ -110,7 +110,12 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	var hints []bkey.Binding
 	if m.glance {
 		// n and p spelled out (scrxak, Jørgen 00:08: nobody guesses n/p).
-		return []bkey.Binding{hint("j/k", "scroll"), hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
+		hints := []bkey.Binding{hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
+		if m.viewport.TotalLineCount() > m.viewport.Height {
+			// j/k only when the file is longer than the screen (qtj177).
+			hints = append([]bkey.Binding{hint("j/k", "scroll")}, hints...)
+		}
+		return hints
 	}
 	switch m.detailPane {
 	case focusAcceptance:

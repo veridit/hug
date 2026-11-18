@@ -78,7 +78,15 @@ func (m *model) moveColumn(delta int) {
 		at = (at + delta + len(shown)) % len(shown)
 	}
 	m.column = shown[at]
-	m.message = m.columnHint()
+	m.showColumnHint()
+}
+
+// showColumnHint puts what o will do in the footer, on rows only: the
+// hint is drawn from the column, never kept as a message, so it cannot
+// follow into a task, where H/L and o have no column (qtj177).
+func (m *model) showColumnHint() {
+	m.message = ""
+	m.columnHinted = true
 }
 
 // columnHint is what o will do on the marked column, for the footer.
@@ -110,7 +118,7 @@ func (m model) columnOrder() (sortKey, bool) {
 // then off (rank order). Another column's order is replaced.
 func (m *model) orderByColumn() {
 	if m.column < 0 {
-		m.message = m.columnHint()
+		m.showColumnHint()
 		return
 	}
 	field := gridColumns[m.column].field
@@ -123,7 +131,7 @@ func (m *model) orderByColumn() {
 	default:
 		m.applySort(nil)
 	}
-	m.message = m.columnHint()
+	m.showColumnHint()
 }
 
 // arrow is the order mark a header puts after a column: ▲ ascending, ▼

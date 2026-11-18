@@ -20,7 +20,7 @@ func state(m model) string {
 	return fmt.Sprintf("%s|%d|%d|%v|%s|%d|%d|%d|%d|%d|%d|%d|%q|%q|%q|%v|%v|%d|%d|%s|%v|%v|%v|%d|%s|%q|%v|%d|%d|%s",
 		m.view, m.pane, m.cursor, m.detail, m.detailPath, m.detailPane, m.acceptance, m.dependency, m.link, m.file, m.idAt, m.column,
 		m.message, m.confirm, m.prompt, m.help, m.glance, m.viewport.YOffset, len(m.detailStack), m.query, m.grab.active, m.pendingV, m.grouping+"/"+m.head,
-		len(m.sort), m.yanked, m.input.Value(), m.filter, loads, m.completion, m.pickerField)
+		len(m.sort), m.yanked, m.input.Value(), m.filter, loads, m.completion, m.pickerField) + fmt.Sprintf("|%v", m.columnHinted)
 }
 
 // pressed reports whether k did something in m: changed its state, or
@@ -103,8 +103,6 @@ func filtered(m model) model {
 	return m
 }
 
-// helpContexts opens ? from every place hug tui has keys: the four views,
-// a task in each detail focus, a task's file, and each prompt.
 // helpKeyOf is the key that opens help in m: F1 in text (t64v7d), else ?.
 func helpKeyOf(m model) string {
 	if m.textInput() {
@@ -113,6 +111,8 @@ func helpKeyOf(m model) string {
 	return "?"
 }
 
+// helpContexts opens ? from every place hug tui has keys: the four views,
+// a task in each detail focus, a task's file, and each prompt.
 func helpContexts(t *testing.T) map[string]model {
 	t.Helper()
 	out := map[string]model{}

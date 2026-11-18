@@ -197,6 +197,7 @@ type model struct {
 	grab                               grabState
 	filter                             task.Filter
 	input                              textinput.Model
+	columnHinted                       bool // H/L or o last: the footer says what o does, on rows (qtj177)
 	viewport, helpViewport             viewport.Model
 	helpModel                          help.Model
 	completion                         int
@@ -1180,6 +1181,10 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		k := msg.String()
 		if k == "ctrl+c" {
 			return m, tea.Quit
+		}
+		// The column hint answers H/L and o; any other key ends it (qtj177).
+		if k != "H" && k != "L" && k != "o" {
+			m.columnHinted = false
 		}
 		// In text every printable key is text, ? too (t64v7d, Jørgen
 		// 2026-11-18 01:52): there help is F1. F1 is help everywhere, and
