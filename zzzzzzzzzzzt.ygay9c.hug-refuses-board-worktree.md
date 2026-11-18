@@ -48,6 +48,7 @@ Reflection (open, 2026-11-18, kestrel): The copy's board link is two files (admi
 landed a90f4d4 on main 2026-11-18: hug refuses a board checkout that belongs to another repository; the fix is git…
 shipped in v0.7.55 (a90f4d4)
 landed 6c66ee2 on main 2026-11-18: test: board-owner refusal names the original as a resolved folder (ygay9c)
+shipped in v0.7.57 (6c66ee2)
 ## History
 - 2026-11-18T04:34 todo -> doing/active (take)
 - 2026-11-18T04:41 doing/active -> done (done); was doing_since: 2026-11-18T04:34

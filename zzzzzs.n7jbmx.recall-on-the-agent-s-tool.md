@@ -49,6 +49,7 @@ landed 94ef214 on main 2026-11-18: hug mem: tool-call recall by exact anchors, o
 crab 05:24 rulings. (1) On the fresh-set day, hook p95 is measured twice: at ordinary load, and during a busy period with load above 100. Both are reported, and the bar applies to the busy one. The 150.3 ms at load 14.9 does not count as 'under real load'. (2) Landed b1063988 (CI 44244786051). hug mem upgrade previews 'memory: would record the paths and commands memories name (tool-call recall)', and --apply runs the anchor backfill. hug mem index runs it too and prints 'anchors recorded for N memories (once)'. Wherever it runs, hook.log gets one 'anchors: recorded for N memories in T (once, tool-call recall)' line. TestMemUpgradeRecordsAnchors failed before this ('preview: exit 0') and passes now; TestMemIndexRecordsAnchors also passes. -race on run, index and recall4 is ok.
 landed b106398 on main 2026-11-18: hug mem upgrade and index record memory anchors first, with one hook.log line…
 Post-push CI confirmed successful: 44243962498 for frozen opt-in recall arm 94ef2140; 44244786051 for explicit anchor backfill b1063988, all six jobs successful. Fresh-set and busy-live-store gates remain pending, feature remains off by default.
+shipped in v0.7.57 (94ef214)
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
