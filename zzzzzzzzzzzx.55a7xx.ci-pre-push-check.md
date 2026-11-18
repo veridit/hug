@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T05:54"
+done_release: "v0.7.56"
 ---
 
 ## Goal
@@ -40,6 +41,7 @@ Landed e36ecca4 (CI 44237780297). New internal/repocheck/markers_test.go. TestNo
 landed e36ecca on main 2026-11-18: go test fails on a leftover merge conflict marker in any tracked file (55a7xx)
 CI 44237780297 on e36ecca4: internal/repocheck ok on all 3 OSes ('ok github.com/veridit/hug/internal/repocheck 0.061s' macos, '1.328s' ubuntu, '0.128s' windows). The run is red only on TestUpgradeTouchesMachineOnlyWithMachine (huginn/internal/cli, macos and test-windows-cli). That test already failed the same way on the parent run 44237364634 (a13d7c74, f5vx4x), so it is not from this change.
 Reflection (open, 2026-11-18, hatchling): The marker test caught nothing new, since main was already clean. CI went red on an unrelated cli test from f5vx4x. Read a red run per package before blaming your own change.
+shipped in v0.7.56 (e36ecca)
 ## History
 - 2026-11-18T05:29 todo -> doing/active (take)
 - 2026-11-18T05:30 doing/active -> doing/waiting (wait)

@@ -49,6 +49,7 @@ Landed 1151adad on main. Built to crab's approval and his three adjustments (03:
 landed 1151ada on main 2026-11-18: hug mem: dream runs by itself without serve, when you are away and the machine…
 landed 07183cf on main 2026-11-18: hug mem: the dream status test decodes stats JSON; a Windows path's escaped…
 CI: 1151adad (CI 44234533682) failed only test (windows-latest): 'TestDreamStatusNamesTheLastPass: stats after a pass'. stats JSON escapes the Windows receipt path (C:\\Users...), so the plain-text match missed. The fix-forward 07183cf5 decodes the stats JSON in the test (statsDream). CI 44235890132 completed success, 6/6. The v0.7.55 merge fa63bb2f (CI 44234594270) failed Windows for the same reason, since it holds 1151adad without the fix. crab removed 2 '|||||||' lines my CHANGELOG resolve left in 1151adad, and I now grep for markers before every push. Check 3 is live: it needs the release with 1151adad+07183cf5 on this machine, then a quiet, low-load stretch. Read it with: hug mem dream --status, or sqlite3 muninn.db "select value from meta where key='dream_last'".
+shipped in v0.7.56 (1151ada)
 ## History
 - 2026-11-17T23:20 todo -> doing/active (take)
 - 2026-11-17T23:22 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:20

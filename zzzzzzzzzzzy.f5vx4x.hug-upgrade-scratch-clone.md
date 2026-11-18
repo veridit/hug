@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T05:26"
+done_release: "v0.7.56"
 ---
 
 ## Goal
@@ -59,6 +60,8 @@ Landed a13d7c74 on main.
 - Suites -short: all 12 ok. Race: cli 115.3s ok, cmd/hug 19.2s ok.
 landed a13d7c7 on main 2026-11-18: hug upgrade --apply changes only this board; this machine's files need --apply…
 Reflection (open, 2026-11-18, kestrel): A command's reach has to match where it runs. hug upgrade mixed board steps and machine steps under one --apply, so testing one board touched every repo's hooks. Check 2's 'golden' is verbatim heading blocks asserted in TestUpgradeTouchesMachineOnlyWithMachine, not a golden file: the output holds temp paths.
+landed 50747ea on main 2026-11-18: test: upgrade preview's board heading compared as the same folder, not the same…
+shipped in v0.7.56 (a13d7c7)
 ## History
 - 2026-11-18T05:18 todo -> doing/active (take)
 - 2026-11-18T05:26 doing/active -> done (done); was doing_since: 2026-11-18T05:18
