@@ -43,6 +43,7 @@ kestrel: landed e28f7f6 (58fcd3c..e28f7f6), rebased onto the state rename: the f
 Reflection (applied, 2026-11-17, calf): The state rename broke this branch's test at vet time ('d.Task.Status undefined'), which a rebase reports only when the tests are built; nothing in the instructions misled.
 landed e28f7f6 on main 2026-11-17: hug task: a field write replaces a multi-line value whose lines start with #…
 shipped in v0.7.48 (e28f7f6)
+Reflection 1 applied (tb0dra check 5 triage, crab 2026-11-19): G7, rebase and CI surprises: AGENTS.md Landing now says go vet after rebase and read a red run per package (commit a0939668, ci/reflections).
 ## History
 - 2026-11-17T18:56 todo -> doing/active (take)
 - 2026-11-17T19:03 doing/active -> doing/waiting (wait)
