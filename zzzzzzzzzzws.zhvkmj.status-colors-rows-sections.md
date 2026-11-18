@@ -11,10 +11,16 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "waiting"
+stage: "asked"
 waiting_on: "crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting)"
 waiting_since: "2026-11-18T02:50"
 waiting_asked_by: "nautilus"
+asked_check: "4"
+asked_what: "after the release: amber now means only 'waits on you' (ASKED, ? N for you), red only 'wrong' (broken lint, depends), waiting on CI and advice are dim. Does it read as one subtle scheme?"
+asked_for: "jhf"
+asked_since: "2026-11-18T03:18"
+asked_by: "nautilus"
+asked_show: "colours-overview.ans"
 ---
 
 ## Goal
@@ -59,3 +65,4 @@ landed 6012b15e..28791dea (32e62173 rebased over the v0.7.53 CHANGELOG; code ide
   It bugs me that weighting and lint are two different issues. I'm wondering if lint should be more red, like an error, or if warning, or if whiting should be less alarmist
 - 2026-11-18T02:50 doing/active -> doing/waiting (wait)
 - 2026-11-18T02:50 nautilus read the answer: hug task wait zhvkmj "crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting)"
+- 2026-11-18T03:18 doing/waiting -> doing/asked (ask)
