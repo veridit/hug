@@ -1,15 +1,20 @@
 ---
 id: ybbfsa
 title: "Three test flakes seen on 2026-11-18 stop recurring"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T15:56"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Logs: gh run view 44316906824 --log-failed (attempt 1). TempDir cleanup: likely 
 - [ ] No timeout raised and no retry added.
 
 ## Notes
+
+
+## History
+- 2026-11-18T15:56 todo -> doing/active (take)
