@@ -33,11 +33,12 @@ CI 44409320072 8/8 on 4d7eec2d. Content: gav9nw z77pem mbdfzs3 ykta5g h2yn55 ad6
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml run for v0.7.71 succeeds
+- [x] release.yml run for v0.7.71 succeeds
 - [ ] brew upgrade veridit/tap/hug; hug version prints v0.7.71
 
 ## Notes
 
 
+check 1: release.yml 44411153821 completed success
 ## History
 - 2026-11-18T23:36 todo -> doing/active (take)
