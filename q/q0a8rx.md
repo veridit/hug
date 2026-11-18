@@ -33,7 +33,7 @@ Labels: /Users/jhf/.jcode/scratch/gav9nw (measure.json corrected_counts: persona
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen answers: rewrite or leave
+- [x] Jørgen answers: rewrite or leave
 - [ ] If rewrite: the branch is rewritten from the backup minus the 58, force-pushed once, and ls-remote and a fresh clone show none of them (evidence in a note)
 - [ ] A moves file lists all 58 with their target scope and a one-line reason; rescope --dry-run passes, then rescope writes, and hug mem search finds each one in its new scope (evidence in a note)
 - [ ] The rewritten branch holds none of the 58 in any commit (git log -p | grep for each id finds nothing), and the 810 that belong are byte-identical to before in the tip's memories.jsonl
@@ -42,6 +42,7 @@ Labels: /Users/jhf/.jcode/scratch/gav9nw (measure.json corrected_counts: persona
 ## Notes
 
 
+check 1: Jørgen 19:42Z: rewrite, after moving the memories to the right place first.
 ## History
 - 2026-11-18T20:41 todo -> doing/active (take)
 - 2026-11-18T20:41 doing/active -> doing/asked (ask)
