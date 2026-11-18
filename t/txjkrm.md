@@ -4,7 +4,7 @@ title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned
 state: "doing"
 type: feature
 priority: ""
-assignee: ["mizaru"]
+assignee: ["kikazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzz38"
