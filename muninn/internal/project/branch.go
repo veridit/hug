@@ -43,6 +43,16 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 		}
 	}
 	if isGit {
+		// Default local: nothing reaches a branch, so nothing is pushed,
+		// unless the repository opts in (34r1ft). Checked before any
+		// worktree, migration or fetch.
+		share, err := shareSetting(p.Root)
+		if err != nil {
+			return st, err
+		}
+		if !share {
+			return st, ErrMemoriesLocal
+		}
 		st.Branch, st.Mount = NotesBranch, NotesDir
 	}
 	legacy, err := ReadFile(p.LegacyFile())
