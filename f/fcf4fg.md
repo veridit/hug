@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["kestrel"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzxh"
+rank: "zzzzzzzzzzch"
 created: 2026-11-17
 updated: 2026-11-17
 ---

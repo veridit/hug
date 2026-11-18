@@ -7,7 +7,7 @@ priority: "medium"
 assignee: ["dragon"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzv5"
+rank: "zzzzzzzzzz0i"
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"

@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["kestrel"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzva"
+rank: "zzzzzzzzzz0r"
 created: 2026-11-16
 updated: 2026-11-16
 model: "claude-opus-5-5"

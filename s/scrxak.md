@@ -7,7 +7,7 @@ priority: "medium"
 assignee: ["nautilus"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzw8"
+rank: "zzzzzzzzzz4"
 created: 2026-11-17
 updated: 2026-11-17
 model: "claude-opus-5-5"

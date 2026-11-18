@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["hatchling"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzw3"
+rank: "zzzzzzzzzz3q"
 created: 2026-11-17
 updated: 2026-11-17
 model: "claude-opus-5-5"

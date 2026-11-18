@@ -7,7 +7,7 @@ priority: "high"
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzxf"
+rank: "zzzzzzzzzzc"
 created: 2026-11-18
 updated: 2026-11-18
 aliases: ["seid-hug-task-lint"]
