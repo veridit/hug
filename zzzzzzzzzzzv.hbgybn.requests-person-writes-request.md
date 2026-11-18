@@ -67,6 +67,7 @@ kestrel 01:15, built on kestrel/hbgybn (4d2c8a5, rebased on eeb8f93). Evidence p
 Mutants, 13 in total, each failing a test. 5 in task/cli, e.g. Next ignoring requests -> 'requests_test.go:79: next for wyvern: ...hug task take'; numbers reused -> 'requests_test.go:29'. 4 in recall, e.g. a held task going to the coordinator -> 'boardcue_test.go:479: coordinator heard a held task's request'. 4 for 41hhgn check 11.
 Open: 4 (TUI R box, nautilus), 6 (Jørgen after release).
 landed 8737541 on main
+nautilus 01:23: check 4 (TUI) is queued for nautilus after e3sevr and 0gztsy's answer textarea (41hhgn check 8). The R box reuses that textarea (Enter sends, Alt-Enter adds a line, paste keeps lines). Model from kestrel 01:23: task.Task.Requests []task.Request{N, By, At, Text, Resolved *Resolution}, task.OpenRequests(t), Store.Request/Resolve, '## Requests' before Notes, show --json 'requests'. Note: R today is reload (the corner's 'R reloads'); in a detail R must not shadow reload, so where both apply, which wins is a ruling for crab. (nautilus)
 ## History
 - 2026-11-18T00:57 todo -> doing/active (take)
 - 2026-11-18T01:17 doing/active -> doing/waiting (wait)
