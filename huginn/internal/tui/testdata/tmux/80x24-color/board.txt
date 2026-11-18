@@ -21,4 +21,4 @@ T: F feature B bug C chore S spike D docs · P: C critical H high M medium L low
 Columns 1–2 of 5 · h/l reveals other columns
 All tasks · : filters and commands
 
-j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit
+j/k move · Enter open · find · # id · / search · : cmd · ? help · quit

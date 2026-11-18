@@ -35,6 +35,6 @@ no dependencies
 
 
 
-Task 3 of 60 · 100% · n next · p previous · Esc back
+Task 3 of 60 · 100% · next · previous · Esc back
 
-j/k scroll · e edit · x drop · y yank · N new · u up · n/p task · J/K ½ page · S screen · Esc back · : cmd · ? help · q quit      hug v0.0.0
+j/k scroll · edit · x drop · yank · New · up · next-, previous task · J/K ½ page · Screen · Esc back · : cmd · ? help · quit      hug v0.0.0

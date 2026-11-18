@@ -19,6 +19,6 @@ Synthetic fixture: 60 tasks, two files on 000001.
 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out
 > ☐ 1. First acceptance check
-Task 1 of 60 · 38% · n next · p previous · Esc back
+Task 1 of 60 · 38% · next · previous · Esc back
 
-j/k check · Space tick · h/l Tab next · t/d/x/e take/done/drop/edit · u up …
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …

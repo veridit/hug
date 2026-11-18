@@ -21,4 +21,4 @@ g             group rows: flat, group, epic
 EVERYWHERE
 All tasks · : filters and commands
 
-/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · q quit
+/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · quit

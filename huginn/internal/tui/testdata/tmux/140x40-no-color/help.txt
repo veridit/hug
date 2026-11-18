@@ -37,4 +37,4 @@ g             group rows: flat, group, epic                            S        
 
 All tasks · : filters and commands
 
-/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · q quit                                                     hug v0.0.0
+/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · quit                                                       hug v0.0.0

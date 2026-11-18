@@ -19,6 +19,6 @@ fmt.Println("rendered code")
 no acceptance items yet
 
 no dependencies
-Task 3 of 60 · 100% · n next · p previous · Esc back
+Task 3 of 60 · 100% · next · previous · Esc back
 
-j/k scroll · e edit · x drop · y yank · u up · n/p task · J/K ½ page · Esc back…
+j/k scroll · edit · x drop · yank · up · next-, previous task · J/K ½ page …

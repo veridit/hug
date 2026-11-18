@@ -21,4 +21,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
 
 All tasks · : filters and commands · ! lint finding · ↳ epic
 
-j/k move · Enter open · f/# find · / search · : cmd · ? help · q quit
+j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
