@@ -41,7 +41,10 @@ func TestBoardOfAnotherRepoRefused(t *testing.T) {
 	_, after, _ := strings.Cut(msg, "\nfix: ")
 	fix, _, _ := strings.Cut(after, "\n")
 	t.Logf("refusal:\n%s", msg)
-	if !strings.Contains(msg, "belongs to another repository") || !strings.Contains(msg, orig.Cwd) || !strings.Contains(fix, "worktree repair") {
+	// The message names the original as git resolves it (a symlinked
+	// TMPDIR, /private/var on macOS): the same folder, not the same string.
+	origShown, _ := filepath.EvalSymlinks(orig.Cwd)
+	if !strings.Contains(msg, "belongs to another repository") || !(strings.Contains(msg, orig.Cwd) || strings.Contains(msg, origShown)) || !strings.Contains(fix, "worktree repair") {
 		t.Fatalf("refusal:\n%s\nfix: %s", msg, fix)
 	}
 	if now := git(t, origBoard, "rev-parse", "HEAD"); now != origHead {
