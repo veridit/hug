@@ -40,5 +40,6 @@ Test: huginn/internal/tui/taskdirs_test.go:83 (np2kk2 check 2). The CI failure i
 ## Notes
 
 
+Fail first, stock fsnotify v1.10.1 (origin/main 8a45b0eb plus probe only): TestStrayClose (closes a watch while its files are deleted, holds files open meanwhile), STRAY=300 -count=6: 3 of 6 runs FAIL, verbatim: 'zz_stray_test.go:90: 3 descriptors closed underneath in 300 rounds; first: round 34: unlinkat /Users/jhf/.jcode/scratch/TestStrayClose3079977529/001/34/g0/t15.md: bad file descriptor' (the CI line's shape) and 'first: round 205: fd 36 closed underneath: fstat bad file descriptor ino 0'. The real test under STARVE=8 GOMAXPROCS=4 on stock, 2x1500: '--- FAIL: TestStarvedChangeBeforeWatch (0.01s) taskdirs_test.go:84: close /Users/jhf/.jcode/scratch/TestStarvedChangeBeforeWatch3502987801/001/h/.huginn-809769911: bad file descriptor' (store.New's temp file lost its fd to a watcher's stray close). Logs: $JCODE_SCRATCH_DIR/mq5ger-stray-stock.txt, mq5ger-starve-stock-b.txt.
 ## History
 - 2026-11-18T22:22 todo -> doing/active (take)
