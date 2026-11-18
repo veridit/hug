@@ -34,7 +34,7 @@ Today: units has active/updated_ns only; holds_ended has reason but only for hol
 
 ## Acceptance
 - [x] hug mem forget ID --reason TEXT and MCP memory_forget reason are stored with session, harness, time and shown-in-session (test with a recall block injected first)
-- [ ] memory_remember naming an old id (supersedes or reinforce) records the same row (test)
+- [x] memory_remember naming an old id (supersedes or reinforce) records the same row (test)
 - [ ] hug mem stats --fixes prints recall blocks shown, fixes of a shown id, and fixes without a shown id per day and instance; a golden over a fixture store
 - [ ] A forget whose id is remembered again or reinforced within 7 days is counted as undone in the stats (test)
 - [ ] No recall output changes: the recall4 frozen replay is byte-identical before and after
