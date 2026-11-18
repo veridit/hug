@@ -30,7 +30,7 @@ Code: huginn/internal/task lint severity rules; huginn/internal/cli/lint.go:134-
 ## Depends on
 
 ## Acceptance
-- [ ] On Statbus's board hug task lint --summary counts only open tasks (about 18 broken), has no done-unchecked and no 'closed tasks hidden' line (numbers in a note)
+- [x] On Statbus's board hug task lint --summary counts only open tasks (about 18 broken), has no done-unchecked and no 'closed tasks hidden' line (numbers in a note)
 - [ ] A done or dropped task gives no finding; hug task lint ID on one prints 'ID is done: lint judges open tasks only' and exits 0 (test, fails on main)
 - [ ] The TUI LINT section and header counts match the CLI and show no hidden-on-closed text (golden)
 - [ ] A file hug cannot parse as a task still shows as broken (test)
