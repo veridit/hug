@@ -1,13 +1,14 @@
 name: exp-6ep7y2
-# Branch-only experiment E2 for 6ep7y2 (H2: a pass holds the run lock inside
-# one phase; which one). Never lands on main.
+# Branch-only experiment E3 for 6ep7y2 (H3: a network-class git call to a
+# local bare remote occasionally hangs on Windows until NetTimeout). Never
+# lands on main.
 on:
   push:
     branches: ["ci/6ep7y2-*"]
 permissions:
   contents: read
 jobs:
-  e2:
+  e3:
     strategy:
       fail-fast: false
       matrix:
@@ -18,22 +19,22 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Build test binary
-        shell: bash
-        run: go test -c -o cli.test.exe ./huginn/internal/cli/
-      - name: Full package beside amplified sync tests
+      - name: Build test binaries
         shell: bash
         run: |
-          cd huginn/internal/cli
-          ../../../cli.test.exe -test.timeout 40m > ../../../full.log 2>&1 &
+          go test -c -o cli.test.exe ./huginn/internal/cli/
+          go test -c -o gb.test.exe ./huginn/gitbranch/
+      - name: Net ops beside the full cli package
+        shell: bash
+        run: |
+          (cd huginn/internal/cli && ../../../cli.test.exe -test.timeout 40m > ../../../full.log 2>&1) &
           full=$!
-          ../../../cli.test.exe -test.timeout 40m -test.count 6 -test.parallel 8 -test.run 'TestBackgroundSync(BurstIsBatched|ParallelNotesAllLand|NoteReachesOtherClone|OfflineCatchesUp)$|TestSettledWaitsForSlowChild$' > ../../../amp.log 2>&1 &
-          amp=$!
+          (cd huginn/gitbranch && EXP_6EP7Y2=1 EXP_6EP7Y2_FOR=8m ../../gb.test.exe -test.v -test.timeout 30m -test.run '^TestExp6ep7y2NetOps$' > ../../e3.log 2>&1) &
+          e3=$!
+          wait $e3; x=$?
           wait $full; f=$?
-          wait $amp; a=$?
-          echo "full exit $f, amp exit $a"
-          echo "=== full.log tail"; tail -5 ../../../full.log
-          echo "=== amp.log tail"; tail -5 ../../../amp.log
-          echo "=== stalls"; grep -n -A80 'still running after 30 s' ../../../full.log ../../../amp.log || echo "no stall"
-          echo "=== FAIL lines"; grep -n -- '--- FAIL' ../../../full.log ../../../amp.log || echo "no FAIL"
-          exit $((f|a))
+          echo "e3 exit $x, full exit $f"
+          grep -E 'E3 |--- (PASS|FAIL)' e3.log
+          tail -3 full.log
+          grep -n -A80 'still running after 30 s' full.log || echo "no stall"
+          exit $((x|f))
