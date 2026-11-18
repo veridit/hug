@@ -1,13 +1,18 @@
 ---
 id: 6ep7y2
 title: "Windows CI: a background syncer held the queue 30 s and no pass ran"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T06:31"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ CI 44237364634 (a13d7c74), test-windows-cli: sync_test.go:223 'background pass s
 - [ ] main CI green on all jobs with the fix (run id)
 
 ## Notes
+
+
+## History
+- 2026-11-18T06:31 todo -> doing/active (take)
