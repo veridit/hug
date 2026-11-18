@@ -46,7 +46,7 @@ Landed a90f4d44.
 - gitbranch: TestOpenRefusesAnotherRepositorysBoard (copy refused, then repaired; original and linked worktree still open) and TestOwnedThroughSymlink.
 - Mutants: 6 of 6 killed (no check, always owned, inverted, fix repairs the other, within always, no symlink resolve).
 - Race ok: gitbranch 25.1s, cli 151.7s.
-Reflection (open, 2026-11-18, kestrel): The copy's board link is two files (admin gitdir and checkout .git); git worktree repair from the copy fixes both, so the fix line is git's own command, not a hug repair.
+Reflection (dismissed, 2026-11-18, kestrel): The copy's board link is two files (admin gitdir and checkout .git); git worktree repair from the copy fixes both, so the fix line is git's own command, not a hug repair.
 landed a90f4d4 on main 2026-11-18: hug refuses a board checkout that belongs to another repository; the fix is git…
 shipped in v0.7.55 (a90f4d4)
 landed 6c66ee2 on main 2026-11-18: test: board-owner refusal names the original as a resolved folder (ygay9c)
