@@ -1,7 +1,7 @@
 ---
 id: 9gpaqr
 title: "Release v0.7.70"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T22:10"
-stage: "active"
 model: "claude-opus-5-5"
 effort: "high"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T22:10"
 ---
 
 ## Goal
@@ -41,5 +40,7 @@ Main d5c66a1f (stack CI 44393153152 8/8): 34r1ft, 41hhgn c11, 0n4rnx replay + of
 
 check 1: release.yml 44396400817 completed success (first tag push started no run; re-pushing the same tag c4eb6fed did)
 check 2: brew upgrade veridit/tap/hug; hug version: hug v0.7.70
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T22:10 todo -> doing/active (take)
+- 2026-11-18T22:10 doing/active -> done (done); was doing_since: 2026-11-18T22:10
