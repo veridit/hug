@@ -1,15 +1,14 @@
 ---
 id: wdkqzx
 title: "Lint goes to the agent writing the task, not to the person it asks"
-state: "doing"
+state: "todo"
 type: bug
 priority: "high"
-assignee: ["hatchling"]
+assignee: []
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T23:22"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5/high"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -58,3 +57,4 @@ Landed a509c2f3 on main (A + C1-2 + the stage widening, per crab's 00:05 and 00:
 Back to todo for t01kqm (crab 00:38: t01kqm next after A+C). Checks 5 (ask/review/design refuse a broken task; design --for not blocked by incomplete/draft) and 6 (no shipped-not-done when every open check is asked_check) are left; 41hhgn's ask --check (asked_check) is on main now, so 6 needs no parsing.
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
+- 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:22
