@@ -13,14 +13,11 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-17T16:08"
-stage: "asked"
+stage: "active"
 asked_by: "hatchling"
 asked_for: "crab"
 asked_since: "2026-11-17T20:20"
 asked_what: "H3 failed Part 2 (10 wrong vs bar 6); parked per crab ruling, no fourth arm"
-waiting_on: "parked: H3 failed Part 2 (10 wrong vs bar 6); no fourth arm (crab ruling 2026-11-17 20:20)"
-waiting_since: "2026-11-18T02:05"
-waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -80,3 +77,4 @@ file:real-spot.py.txt (1943 bytes, sha256:dbfe9f2d)
 - 2026-11-17T17:40 doing/active -> doing/waiting (wait)
 - 2026-11-17T20:20 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
+- 2026-11-18T02:10 doing/asked -> doing/active (resume); was waiting_asked_by: crab; waiting_on: parked: H3 failed Part 2 (10 wrong vs bar 6); no fourth arm (crab ruling 2026-11-17 20:20); waiting_since: 2026-11-18T02:05
