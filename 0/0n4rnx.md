@@ -57,6 +57,7 @@ Check 1 table (top-level test Elapsed, Windows). Before: CI 44360222667, ci/0n4r
 check 1: CI 44360222667 (before, 593.924 s) vs CI 44384341239 (after, shards 207.655/176.987 s): 15 slowest before -> after, all 15 dropped, max after 25.71 s; table in note
 check 2: 3 consecutive runs with the shard (a74ba787), each shard under 300 s: CI 44379205716 sync 211.348/rest 196.195; main CI 44382063226 sync 237.316/rest 175.752; CI 44379205716 attempt 2 sync 273.553/rest 215.834. Also measure CI 44384341239: 207.655/176.987. Shard guard 'all 188 tests ran, each in one shard' in all. Margin: worst 273.553 s, 26 s under the bar.
 Reflection (unanswered, 2026-11-18, crab)
+Replay + lever (a) rebased onto crab's base 8dc479b2 (green, CI 44385513689): 5ef6bc8b replay, 8bf24c02 lever (a); CHANGELOG conflict resolved by adding both lines under Unreleased. ci/0n4rnx-replay CI 44386571890 success, all 8 jobs. Shards: sync 195.655 s / rest 207.895 s (base 8dc479b2: 218.652 / 198.602, one run each, no gain claimed); guard 'all 196 tests ran, each in one shard'.
 ## History
 - 2026-11-18T17:58 todo -> doing/active (take)
 - 2026-11-18T21:00 doing/active -> done (done); was doing_since: 2026-11-18T17:58
