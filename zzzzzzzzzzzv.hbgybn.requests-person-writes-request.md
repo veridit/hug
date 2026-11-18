@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T00:57"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "kestrel"
+waiting_on: "check 4: nautilus's TUI R box on top of 8737541; 6: Jørgen after the release"
+waiting_since: "2026-11-18T01:17"
 ---
 
 ## Goal
@@ -66,3 +69,4 @@ Open: 4 (TUI R box, nautilus), 6 (Jørgen after release).
 landed 8737541 on main
 ## History
 - 2026-11-18T00:57 todo -> doing/active (take)
+- 2026-11-18T01:17 doing/active -> doing/waiting (wait)
