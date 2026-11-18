@@ -44,5 +44,11 @@ Offline 2026-11-15 (notes): the rule adds relevant memories but also noise on lo
 Offline 2026-11-15, 277 frozen messages, earlier-session history only (55 sessions), blind judge. Long: rule vs current rel +0.48 [+0.32,+0.65], irr +0.30 [-0.01,+0.60]; learned veto vs rule: irr -0.50 [-0.71,-0.35], rel -0.12 [-0.22,-0.05]; learned vs current rel +0.36 [+0.19,+0.53], irr -0.20 [-0.54,+0.09]. Short: rule vs current rel +0.28 [+0.13,+0.41], irr +0.02 [-0.19,+0.25]; veto barely acts (19% of candidates have history). Script muninn/scripts/learned.py.
 
 
+bonehound measure-only, no judge calls yet ($JCODE_SCRATCH_DIR/6assqk/coverage.py, output coverage-out.txt). Candidate rule (top 20 ungated pool, own project, <=2000 chars, vector >= 0.64, top 5, session dedup) vs SHIPPED recall (recall4 'default' = bm25x2, identical hits on all 277 frozen messages), cached blind judgments only; an unjudged pick counts as neither. Paired deltas, 95% session-cluster CI (2000 reps, seed 813):
+frozen human n=124 (10 sessions): rel 0.50 -> 0.88, +0.38 [+0.22,+0.55]; irr 0.21 -> 0.47, +0.26 [+0.05,+0.56]; unjudged 0.08/msg.
+frozen long n=153 (53): rel 0.92 -> 0.99, +0.07 [-0.12,+0.25]; irr 0.96 -> 1.51, +0.55 [+0.19,+0.88]; unjudged 0.09.
+fresh human n=83 (6 sessions, under the 8-session bar): rel 0.28 -> 0.18, -0.10 [-0.26,+0.06]; irr 0.33 -> 0.18, -0.14 [-0.50,+0.13]; unjudged 0.05.
+fresh long n=64 (62): rel 0.38 -> 0.42, +0.05 [-0.25,+0.32]; irr 3.38 -> 1.62, -1.75 [-2.15,-1.32]; unjudged 0.89 (57 of 188 picks).
+Reading so far (not a verdict, 71 picks unjudged): against today's BM25 recall the rule is no clean win. On frozen it adds relevant short-message recall but also irrelevant (irr CI clear of 0 both strata). On fresh long it cuts noise hard, but rel is flat and 57 picks are unjudged. The 2026-11-15 offline numbers were against pre-BM25 recall.
 ## History
 - 2026-11-18T17:30 todo -> doing/active (take)
