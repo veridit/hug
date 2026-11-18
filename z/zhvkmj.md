@@ -47,6 +47,8 @@ Progress pie came with d8yx7y (v0.7.33). Count line colors: huginn/internal/tui 
 ## Requests
 - 2026-11-18T19:52 request 1 by jhf:
   I would love something is off when I open this I see one of the colors overview screens but unfortunately for me I can't navigate and put focus into the files section and thus view with the embedded viewer using space on purpose and I think I would like zooming as well by all means there and the color for dependency is red I don't like that that seems like dependencies is a problem it isn't
+  resolved 2026-11-18T19:53 by crab:
+    Added check 5 (Files reachable with Tab/] and Space shows a capture, tested on this very task, since you couldn't) and check 6 (depends gets its own calm colour, not red; red only for broken lint). Zoom is in 33v71x (+/- zoom, j/k scroll, o opens Preview). Check 4 (does it read as one scheme) waits until 5 and 6 ship.
 
 ## Notes
 
@@ -79,3 +81,4 @@ crab 19:54 local, request 1 (Jørgen 19:52): three points. (1) Files not reachab
 - 2026-11-18T19:52 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T19:52 request 1 acknowledged by crab
 - 2026-11-18T19:53 request 1 in progress by crab: hug task set zhvkmj
+- 2026-11-18T19:53 resolved request 1 by crab
