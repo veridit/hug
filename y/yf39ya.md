@@ -33,7 +33,7 @@ Measured 19:53Z on hug's board (hug task lint): 40 findings, 37 broken, on 31 ta
 
 ## Acceptance
 - [ ] ~~Verify Figure out the better flow right now. Things that have shipped have a validation failure, so they show up in lint. So somehow we are leading ourselves into a place of lots of lint errors~~ (not relevant: replaced by checks 2-6: the request is now a stated goal with observable checks, crab, 2026-11-18)
-- [ ] A release names the tasks it contains; each whose checks all hold is closed by the release step (hug command the coordinator runs, or hug upgrade/release hook), with the version in History (test)
+- [x] A release names the tasks it contains; each whose checks all hold is closed by the release step (hug command the coordinator runs, or hug upgrade/release hook), with the version in History (test)
 - [ ] A shipped task whose only open check is the person's after-release confirmation shows as asked of that person (ASKED for them), not as a broken lint finding (test + golden)
 - [ ] When a worker's session ends, its doing tasks go back to the board coordinator with a note, so stale-owner fires only when there is no coordinator either (test)
 - [ ] On hug's board after the next release, hug task lint shows no checks-all-hold, shipped-not-done or stale-owner that the above should have prevented (count in a note)
