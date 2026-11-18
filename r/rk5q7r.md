@@ -1,7 +1,7 @@
 ---
 id: rk5q7r
 title: "When an open reflection is older than 3 days the coordinator's board cue names…"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["duckling"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzz1"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T15:25"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "bg1rd8 on main, then rebase onto main"
-waiting_since: "2026-11-18T15:55"
-waiting_asked_by: "duckling"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -50,6 +46,8 @@ RESULT (15:53Z): rebased onto agh2h7 7a509517 = 6b7b5aab (conflicts: BoardInput 
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
 landed 4d80135 on main 2026-11-18: recall hook: the coordinator hears of open reflections older than 3 days…
 shipped in v0.7.66 (4d80135)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T15:25 todo -> doing/active (take)
 - 2026-11-18T15:55 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T15:25; waiting_asked_by: duckling; waiting_on: bg1rd8 on main, then rebase onto main; waiting_since: 2026-11-18T15:55
