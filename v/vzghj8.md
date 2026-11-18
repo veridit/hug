@@ -1,7 +1,7 @@
 ---
 id: vzghj8
 title: "TUI search finds a task by its imported id (STATBUS-402)"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["wyvern"]
@@ -13,7 +13,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+done_at: "2026-11-18T13:33"
 ---
 
 ## Goal
@@ -50,3 +50,4 @@ Jørgen 2026-11-18 12:36 answered check 3: 'I did this already, so this is appro
 - 2026-11-18T12:36 answered asked (check 3), by jhf, for wyvern (doing/asked -> doing/active):
   > find a Statbus task by an old id you remember (/ STATBUS-402 in hug tui on ~/ssb/statbus); 1 and 2 on main d661273, CI 44118189933
   I did this already, so this is approved
+- 2026-11-18T13:33 doing/active -> done (done)
