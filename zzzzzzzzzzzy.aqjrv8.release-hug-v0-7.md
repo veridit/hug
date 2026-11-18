@@ -1,13 +1,18 @@
 ---
 id: aqjrv8
 title: "Release hug v0.7.59"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T09:05"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -28,3 +33,7 @@ MainCI44262023787 all6green; migration277 normalized responses identical. Worktr
 - [ ] Tag/main pushed, release workflow success, installed hug version v0.7.59
 
 ## Notes
+
+
+## History
+- 2026-11-18T09:05 todo -> doing/active (take)
