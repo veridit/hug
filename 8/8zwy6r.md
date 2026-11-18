@@ -38,6 +38,7 @@ Today: no .gitattributes; the note goes at the end of ## Notes, so both sides in
 - [x] Two clones each note the same task offline; both syncs succeed and both notes are in the file in time order (test, fails first on main)
 - [x] Same for a check ticked on each side (different items), an answer and a request (table test)
 - [x] Two sides setting state differently still stop with a fix line naming the field (test)
+- [ ] Two sides setting state differently: the sync succeeds, the board's state is kept whole (the losing state's node fields go to History), this clone's value is kept in a note, and one 'sync: ID state:' line is printed (test; crab 04:44 ruling)
 
 ## Notes
 
