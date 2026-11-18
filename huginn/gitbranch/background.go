@@ -3,6 +3,7 @@ package gitbranch
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -193,6 +194,12 @@ func (b Background) Busy() bool {
 	if b.Queued() {
 		return true
 	}
+	return b.RunHeld()
+}
+
+// RunHeld reports a held run lock, independently of the queue. Busy includes
+// the queue, so it cannot distinguish a settling child from a running pass.
+func (b Background) RunHeld() bool {
 	release, ok, e := flock.TryAcquire(b.base + ".run")
 	if e != nil || !ok {
 		return e == nil
@@ -207,6 +214,21 @@ const pendingFor = 5 * time.Second
 
 // Log is the file background passes write to.
 func (b Background) Log() string { return b.base + ".log" }
+
+// LogPhase records progress before a potentially long wait, not just when a
+// pass finishes. Diagnostics must never change whether a sync can run.
+func (b Background) LogPhase(format string, args ...any) {
+	if b.base == "" {
+		return
+	}
+	f, err := os.OpenFile(b.Log(), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	line := fmt.Sprintf(format, args...)
+	fmt.Fprintf(f, "%s pid %d: %s\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), line)
+}
 
 // Stale reports whether the last pass finished more than age ago (or never).
 func (b Background) Stale(age time.Duration) bool {
@@ -311,13 +333,17 @@ func (b Background) Run(settle Settle, pass func(turn func() (func(), error)) St
 	if e != nil || !ok {
 		return e
 	}
+	b.LogPhase("queue taken; settling (quiet %s, max %s)", settle.Quiet, settle.Max)
 	settle.wait()
+	b.LogPhase("settled; waiting for run lock")
 	run, e := flock.Acquire(b.base + ".run")
 	queue()
 	if e != nil {
 		return e
 	}
 	defer run()
+	b.LogPhase("run taken; queue released; starting pass")
+	defer b.LogPhase("pass finished; releasing run lock")
 	return b.Record(pass(b.Turn))
 }
 
@@ -343,21 +369,27 @@ func (d dirtyError) Is(t error) bool { return t == errDirty }
 // conflict aborts the rebase and is recorded, as is a failed fetch or push;
 // the next pass tries again.
 func (r *Repository) SyncPass(turn func() (func(), error)) (s State) {
+	b, _ := r.Background()
 	defer func() { s.Unpushed = r.Unpushed() }()
 	for attempt := 0; attempt < 3; attempt++ {
+		b.LogPhase("sync attempt %d: fetch starting", attempt+1)
 		exists, e := r.fetch()
+		b.LogPhase("sync attempt %d: fetch returned (failed %t)", attempt+1, e != nil)
 		if e != nil {
 			s.Error = firstLine(e)
 			return s
 		}
 		s.Fetched = true
+		b.LogPhase("waiting for board turn")
 		release, e := turn()
 		if e != nil {
 			s.Error = e.Error()
 			return s
 		}
+		b.LogPhase("board turn taken; integrating")
 		head, e := r.passIntegrate(exists)
 		release()
+		b.LogPhase("board turn released; integrate returned (failed %t)", e != nil)
 		if errors.Is(e, errDirty) {
 			s.Skipped = e.Error()
 			return s
@@ -381,7 +413,10 @@ func (r *Repository) SyncPass(turn func() (func(), error)) (s State) {
 		}
 		// Push the commit rebased under the turn, not HEAD: a foreground
 		// command may be mid-operation by now.
-		if _, e = r.git("push", r.Remote, head+":refs/heads/"+r.Branch); e == nil {
+		b.LogPhase("push starting")
+		_, e = r.git("push", r.Remote, head+":refs/heads/"+r.Branch)
+		b.LogPhase("push returned (failed %t)", e != nil)
+		if e == nil {
 			s.Pushed, s.Error = true, ""
 			return s
 		}

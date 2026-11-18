@@ -128,10 +128,19 @@ func settled(t *testing.T, a *App) {
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
-	// Which wait: queued (a syncer holds the queue: settling), running (the
-	// run lock), or pending (started, never queued); and what the pass said.
-	log, _ := os.ReadFile(bg.Log())
-	t.Fatalf("background pass still running after 30 s: queued %v, busy %v, pending %v, turn held %v (log %s):\n%s", bg.Queued(), bg.Busy(), bg.Pending(), bg.TurnHeld(), bg.Log(), log)
+	syncTimeoutFailure(t, bg)
+}
+
+// syncTimeoutFailure reads the phase file before Fatalf triggers TempDir
+// cleanup. Keep this path shared with the subprocess regression test: Go
+// prints failed test output without -v, so ordinary CI retains the phases.
+func syncTimeoutFailure(t *testing.T, bg gitbranch.Background) {
+	t.Helper()
+	log, err := os.ReadFile(bg.Log())
+	if err != nil {
+		log = []byte(fmt.Sprintf("reading phase log: %v", err))
+	}
+	t.Fatalf("background pass still running after 30 s: queued %v, busy %v, pending %v, turn held %v, run held %v (log %s):\n%s", bg.Queued(), bg.Busy(), bg.Pending(), bg.TurnHeld(), bg.RunHeld(), bg.Log(), log)
 }
 
 // arrival is how long a change may take to reach the other clone: 10 s,

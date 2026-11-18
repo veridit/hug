@@ -163,14 +163,19 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 	// the pass to finish must not race this write.
 	pass := func(turn func() (func(), error)) gitbranch.State {
 		began := time.Now()
+		b.LogPhase("sync pass starting")
 		st := r.SyncPass(turn)
+		b.LogPhase("sync pass returned; failed=%t skipped=%t", st.Error != "", st.Skipped != "")
 		// Deduce from the code repository's main line and tags (g9dg32),
 		// after integrating, so a note another clone pushed is seen first;
 		// a pass that wrote notes pushes them.
 		if st.Error == "" && len(st.Conflict) == 0 && st.Skipped == "" {
+			b.LogPhase("deduction starting")
 			if wrote := a.deducePass(ctx, cwd); wrote {
+				b.LogPhase("deduction wrote notes; sync pass starting")
 				st = r.SyncPass(turn)
 			}
+			b.LogPhase("deduction finished")
 		}
 		fmt.Fprintf(a.Err, "%s pid %d: fetched=%v pushed=%v unpushed=%d error=%q skipped=%q (waited %v, pass %v, %s)\n", time.Now().UTC().Format(time.RFC3339Nano), os.Getpid(), st.Fetched, st.Pushed, st.Unpushed, st.Error, st.Skipped, began.Sub(born).Round(time.Millisecond), time.Since(began).Round(time.Millisecond), throttle.Priority())
 		return st
