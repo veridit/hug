@@ -67,6 +67,7 @@ kikazaru: 57dd9e90 on kikazaru/zhvkmj (CI ci/zhvkmj-56 run 44387204008). Check 5
 check 5: 57dd9e90, CI 44387204008 success (ubuntu, macos, windows, windows-cli x3, bench). Cause: Tab reached Files, but the page scrolled to the '> ASKED' row of the asked_show overview capture drawn above it. TestTmuxZhvkmjFilesOnItself (hug in tmux on a copy of hug's board at 19:51, hug/tasks 75320b0) failed first 'never showed "> ⎘ colours-overview.ans"', passes after (5.55s): Tab -> ▸ FILES, j -> screen-1821.ans, Space -> file frame 'screen-1821.ans · 10.0 KiB · 2 of 2'. TestZhvkmjFilesReachableOnItself the same at 140x40 and 80x24.
 check 6: 57dd9e90, CI 44387204008 success. depends #6b6bd6/#2e2e78 (calm indigo) in the count line, the row's stage word and the board's DEPENDS heading; red only on broken lint, its ! and LINT. TestOneColourPerMeaning failed first ('dark: depends #ff8585 is close to a problem #ff8585', 'the DEPENDS heading is not calm', 8 lines), passes after; golden testdata/colour/depends-140.txt (140 truecolor, overview + board) and header/view-cursor.txt reviewed: only 255;133;133 -> 107;107;214 on depends.
 Reflection (unanswered, 2026-11-18, crab)
+landed 5355e78 on main 2026-11-18: hug tui: Files on zhvkmj is in sight when Tab reaches it; depends is a calm…
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
