@@ -1,10 +1,10 @@
 ---
 id: 6assqk
 title: "Recall: learned 'not when' triggers and a local candidate rule"
-state: "doing"
+state: "todo"
 type: spike
 priority: ""
-assignee: ["bonehound"]
+assignee: []
 labels: ["recall"]
 created: 2026-11-15
 updated: 2026-11-15
@@ -12,8 +12,7 @@ parent: "d634kr"
 group: ""
 rank: "zzzzh"
 aliases: ["recall-learned-not-when-triggers-and"]
-doing_since: "2026-11-18T17:30"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -58,3 +57,4 @@ rule60: frozen irr +0.82 / +0.71, both CI above 0. rule68: frozen irr +0.03 [-0.
 Verdict: FAIL at all three thresholds. No arm keeps frozen irr from rising, and at 0.64 and 0.60 it rises with the CI clear of 0. The 2026-11-15 gain was against pre-BM25 recall; BM25 v0.7.2 took most of it. What remains: the rule halves fresh-long noise (irr -0.88 to -1.30, CI clear) with rel flat. That is a long-message noise lead (compare jrj1vq's kind rule, long irr -1.98), not this rule. Scripts: $JCODE_SCRATCH_DIR/6assqk/{coverage,arms,table}.py; arms written as recall4/real/rule{60,64,68}-*.jsonl. Nothing shipped.
 ## History
 - 2026-11-18T17:30 todo -> doing/active (take)
+- 2026-11-18T17:35 doing/active -> todo/ready (give back; was assignee: bonehound); was doing_since: 2026-11-18T17:30
