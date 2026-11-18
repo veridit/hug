@@ -67,6 +67,7 @@ func (m model) contextHelp() helpSection {
 		return helpSection{"IN THE : PALETTE", []helpRow{
 			row("Tab", "complete the choice", "tab"), row("Enter", "complete, or run a complete command", "enter"),
 			row("↑↓ ctrl-n/p", "pick a completion"), row("Esc", "close", "esc"),
+			row("↑ empty", "recall earlier commands, ↑ again older, ↓ newer; Enter runs it"),
 			row("commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
 		}}
 	case "filter":
@@ -85,12 +86,14 @@ func (m model) contextHelp() helpSection {
 	case "find":
 		return helpSection{"IN / FIND", []helpRow{
 			row("type", "find as you type"), row("↑↓", "pick a match"), row("Enter", "go to it", "enter"),
+			row("↑ empty", "recall earlier searches, ↑ again older, ↓ newer; Enter runs it"),
 			row("Tab", "keep it as a filter", "tab"), row("Esc", "clear", "esc"),
 		}}
 	case "findpage":
 		return helpSection{"IN / FIND IN THIS " + strings.ToUpper(m.pageNoun()), []helpRow{
 			row("type", "find in the text; all lower case ignores case"), row("Enter", "keep the matches; with none, search all tasks", "enter"),
 			row("↑↓", "previous / next match"), row("Esc", "clear the matches", "esc"),
+			row("↑ empty", "recall earlier searches, ↑ again older, ↓ newer"),
 		}}
 	case "jump":
 		return helpSection{"IN # JUMP", []helpRow{

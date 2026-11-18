@@ -151,6 +151,10 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },
 		// / search ranks by the cache's index, as hug task search (49n9kw).
 		Search: func(query string) ([]string, error) { return s.c.Rank(ctx, query) }}
+	// / and : histories (xfv9pw): per board, in the git dir beside the task
+	// cache (one repository, every worktree, one history), never on the
+	// task branch.
+	opts.HistoryFile = filepath.Join(s.r.Common, "huginn", "tui-history.json")
 	// Not a terminal (a test's input): keys from In, no screen.
 	if _, tty := a.In.(*os.File); !tty && a.In != nil {
 		opts.Input, opts.Output, opts.NoReload = a.In, a.Out, true

@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug tui`: the `/` search and the `:` palette keep a history, like a shell (xfv9pw). In an empty prompt Up recalls the last entry, Up again goes further back, Down comes forward and past the newest is the empty prompt; Enter runs it. A recalled entry that is edited becomes a new entry; a repeat of the newest is kept once. A find in a task or file recalls the same searches. Once text is typed, Up/Down pick rows, matches and completions as before; ctrl-n/p never recall. The history is per board, in `<git-common-dir>/huginn/tui-history.json` beside the task cache (200 entries per list), never on the task branch.
+
 ## v0.7.62 - 2026-11-18
 
 - The TUI sort picker (`s`) names the default order (nch9d4): `r  rank` is a row, "board order, the default: moves work only in it", and `r` goes back to it at once from any sort, clearing every field. The picker shows the order in force (`now: priority ↓`, or `now: rank (board order)`) apart from the one being built (`new: type · updated ↓`, or `new: nothing picked yet, Enter or r gives rank`), so an empty draft no longer reads as `sort: rank` while the rows are sorted by priority. With no column marked, the `c  current column` row is dim as a whole, since c cannot be picked then.

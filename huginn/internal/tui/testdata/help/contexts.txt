@@ -123,6 +123,7 @@ Tab          complete the choice
 Enter        complete, or run a complete command                                
 ↑↓ ctrl-n/p  pick a completion                                                  
 Esc          close                                                              
+↑ empty      recall earlier commands, ↑ again older, ↓ newer; Enter runs it     
 commands     overview, list, board, todo, doing, done, depends, dropped, state  
              <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>,   
              epic <id>, goto <id>, sort, grouping, lint, clear, help            
@@ -211,6 +212,8 @@ Tab          complete the choice                                       F1      t
 Enter        complete, or run a complete command                       ctrl-c  quit                                                         
 ↑↓ ctrl-n/p  pick a completion                                         
 Esc          close                                                     
+↑ empty      recall earlier commands, ↑ again older, ↓ newer; Enter    
+             runs it                                                   
 commands     overview, list, board, todo, doing, done, depends,        
              dropped, state <s>, type <t>, priority <p>, group <g>,    
              label <l>, assignee <a>, epic <id>, goto <id>, sort,      
