@@ -1,7 +1,7 @@
 ---
 id: 4tycwd
 title: "Detour scratch for in-progress work"
-state: "doing"
+state: "done"
 type: spike
 priority: ""
 assignee: ["kikazaru"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzv"
 created: 2026-11-16
 updated: 2026-11-16
-doing_since: "2026-11-18T18:57"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T22:21"
 ---
 
 ## Goal
@@ -60,7 +59,9 @@ CI 44373015352 on 1a5b6778: ubuntu, macos, windows-latest, secrets, bench succes
 landed 9163f10 on main 2026-11-18: Detour from a doing task: fourth take fix, next --mine skips waits, resume says…
 shipped in v0.7.69 (9163f10)
 kikazaru 21:20Z: checks 2-6 verified on main 8a45b0eb (v0.7.70), shipped in v0.7.69 as 9163f10. Run on main (niced, -count=1): '--- PASS: TestBusyOffersTheDetourFix', '--- PASS: TestNextMineSkipsWaiting', '--- PASS: TestResumeSaysWhatItWaitedOn', 'ok github.com/veridit/hug/huginn/internal/task 0.416s', '--- PASS: TestDetourThroughTheCLI (6.81s)', 'ok github.com/veridit/hug/huginn/internal/cli 6.961s'. Check 2: fourth fix built in huginn/internal/task/busy.go:46, text + JSON fixes[3] asserted at cli/detour_test.go:26-38 and task/detour_test.go:26-29. Check 3: next --mine skips my waiting doing tasks, woken wait first: task/detour_test.go:54-99 (TestNextMineSkipsWaiting; skip at store.go, message store.go:771), cli/detour_test.go:42-46. Check 4: exit 4 'nothing for NAME to work on now; waiting:' one line per wait, JSON waiting[]: store.go:771, task/detour_test.go:74-84, cli/detour_test.go:49-58. Check 5: resume 'was waiting on: ...' once: moves.go:463, TestResumeSaysWhatItWaitedOn, cli/detour_test.go:61-64. Check 6: CHANGELOG.md:41 (one line, 4tycwd); failing first recorded above (detour_test.go:28 on e6853a7c, 3 fix lines); CI: 9163f10's own run 44384875316 had one red job, test (macos-latest), '--- FAIL: TestChangeBeforeWatchIsUpIsSeen' in huginn/internal/tui (a watch test this change does not touch; 7 other jobs success); main 8bf24c02, which contains 9163f10, is green on 44389156059. Nothing unbuilt: all 6 checks done (1 struck).
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T18:57 todo -> doing/active (take)
 - 2026-11-18T20:00 doing/active -> doing/waiting (wait)
 - 2026-11-18T22:21 doing/waiting -> doing/active (resume); was waiting_asked_by: piglet; waiting_on: CI run 44373015352 (windows-cli rerun of the 10m timeout in TestBoardColumns); waiting_since: 2026-11-18T20:00
+- 2026-11-18T22:21 doing/active -> done (done); was doing_since: 2026-11-18T18:57
