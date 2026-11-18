@@ -5,6 +5,7 @@ j/k ↑/↓       move
 ctrl-d/u      half page down / up                                               
 PgDn / PgUp   page down / up                                                    
 Enter         open the task                                                     
+Space         mark the task, then the next row; the footer acts on the marked   
 J / K         page down / up                                                    
 H / L         mark the previous / next column                                   
 o             order by the marked column: ▲ ▼ off                               
@@ -140,18 +141,18 @@ j/k ↑/↓       move                                                     v o  
 ctrl-d/u      half page down / up                                      v b            view: board                                           
 PgDn / PgUp   page down / up                                           v !            view: lint                                            
 Enter         open the task                                            /              live find; Enter goes to it, Tab keeps it as a filter 
-J / K         page down / up                                           :              palette: commands with completion                     
-H / L         mark the previous / next column                          : commands     overview, list, board, todo, doing, done, depends,    
-o             order by the marked column: ▲ ▼ off                                     dropped, state <s>, type <t>, priority <p>, group <g>,
-t / d / x     take / done / drop the task                                             tag <t>, assignee <a>, epic <id>, goto <id>, sort,    
-e             edit in $VISUAL, else $EDITOR, git core.editor, vi                      grouping, lint, clear, help                           
-m             grab to move: j/k move it, Enter places it               #              jump by id prefix or TASK-number alias                
-y, P p        yank, then paste above / below                           f              filter picker: s t p g l a e (state type priority …)  
-c             clear all filters                                        s              sort picker: c column, p t s u d g a n; again flips   
-g             group rows: flat, group, epic, tag (tag: first listed    Backspace / F  remove the last chip / clear all filters              
-              tag)                                                     : sort         order by fields; s r or : sort rank goes back         
-                                                                       N              new task                                              
-                                                                       S              copy the screen, attach: id, s select, c create       
+Space         mark the task, then the next row; the footer acts on     :              palette: commands with completion                     
+              the marked                                               : commands     overview, list, board, todo, doing, done, depends,    
+J / K         page down / up                                                          dropped, state <s>, type <t>, priority <p>, group <g>,
+H / L         mark the previous / next column                                         tag <t>, assignee <a>, epic <id>, goto <id>, sort,    
+o             order by the marked column: ▲ ▼ off                                     grouping, lint, clear, help                           
+t / d / x     take / done / drop the task                              #              jump by id prefix or TASK-number alias                
+e             edit in $VISUAL, else $EDITOR, git core.editor, vi       f              filter picker: s t p g l a e (state type priority …)  
+m             grab to move: j/k move it, Enter places it               s              sort picker: c column, p t s u d g a n; again flips   
+y, P p        yank, then paste above / below                           Backspace / F  remove the last chip / clear all filters              
+c             clear all filters                                        : sort         order by fields; s r or : sort rank goes back         
+g             group rows: flat, group, epic, tag (tag: first listed    N              new task                                              
+              tag)                                                     S              copy the screen, attach: id, s select, c create       
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
