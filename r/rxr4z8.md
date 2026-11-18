@@ -38,6 +38,9 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 - [ ] m grabs the marked tasks as one block; J/K and the drop move them together and keep their order (key test)
 - [ ] Inside a task Space still ticks the focused check (existing tests stay green)
 - [ ] Jørgen confirms on his board after release
+- [ ] Jørgen 19:27Z (answer 1): a marked row that also has the cursor shows one combined sign, not > or ◆ alone. Proposed ⋗ (U+22D7, greater-than with dot: the cursor carrying a mark; single width); the alternative ▸ (U+25B8). The mock shows both rows side by side and asks this one question
+- [ ] Jørgen 19:27Z: the narrow footer (under 70 columns) never shows bare letters: it reads e.g. '3 marked · ? actions · Esc unmark', and ? lists the actions with their words (key test at 60 columns)
+- [ ] Jørgen 19:27Z: after an action, the tasks that went through are unmarked and the refused ones stay marked (key test, extends check 3)
 
 ## Notes
 
@@ -66,3 +69,4 @@ User testing 2026-11-18 11:06Z: wants to mark several tasks with structural prob
   1. If you ask three questions, I should have three questions to answer in the ticket. This makes no sense. Let's structure this better. Make a new ticket if you need to. Now for the responses. Yes, the sigil for the mark is okay, but we need to have a combined sigil for when there is mark and focus. Is there a Unicode that can assist us that has something and >. I agree. If something is done, unmark everything that was processed and keep the ones that weren't. I agree. Let's keep the folding and the for grouped headings and space on task marks for now, unless I find something better to do. I know sometimes you can use X marks the spot too. That's a common enough, but uh maybe space is the easy one. And the short view. I think you should rather see like a question mark for guidance or CLI or help or something rather than showing just the letters without any explanation
 - 2026-11-18T20:27 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:27 answer 1 acknowledged by crab
+- 2026-11-18T20:29 answer 1 in progress by crab: hug task set rxr4z8
