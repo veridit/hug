@@ -1,7 +1,7 @@
 ---
 id: fcf4fg
 title: "Sync recovers from an interrupted rebase on the tasks worktree"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["tigress"]
@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzch"
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T15:41"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ gitbranch/gitbranch.go:598 refuses on rebase-merge/rebase-apply/MERGE_HEAD/... w
 - [ ] a rebase hug did not start still refuses with the fix line (test)
 
 ## Notes
+
+
+## History
+- 2026-11-18T15:41 todo -> doing/active (take)
