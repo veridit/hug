@@ -77,6 +77,7 @@ landed 3ce9119 on main 2026-11-18: TUI: tags right after the id on every row (tx
 landed 3f5e89d on main 2026-11-18: gofmt tagrow_test.go (txjkrm)
 landed 4d7eec2 on main 2026-11-18: tui: tmux palette goldens with tags column (txjkrm x 05r3pg)
 shipped in v0.7.71 (3ce9119)
+kikazaru 22:37Z: shipped in v0.7.71 (3ce9119a, 3f5e89d9, 4d7eec2d). The owed question for Jørgen ('Seid's overview with tags right after the ID, as you asked: does it read right?', --show seid-overview-tags-row.txt) was not asked: hug task ask refuses a done task ('done -> doing/asked is not a move a command makes'); reopening is crab's call.
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
