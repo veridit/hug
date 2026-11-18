@@ -1,0 +1,10 @@
+=== RUN   TestAskingAPersonRefusesABrokenTask
+=== RUN   TestAskAboutTheOpenCheckOfAShippedTask
+    askgate_test.go:40: [ask nffmr5 does check 2 hold? --to jhf --check 2 --as kestrel]: exit 0, want 2 with "hug task ask: nffmr5 is not ready to hand to jhf: 1 broken finding: [missing-goal] missing Goal" and the dep fix:
+--- FAIL: TestAskingAPersonRefusesABrokenTask (1.21s)
+--- PASS: TestAskAboutTheOpenCheckOfAShippedTask (2.12s)
+
+Check 6 against check 5's gate without the asked-check exemption (intermediate build, 00:46Z):
+--- FAIL: TestAskAboutTheOpenCheckOfAShippedTask (2.20s)
+    askgate_test.go:92: ask about check 9: exit 2
+(On main before check 5 it passes: main has no gate, and the stage widening of a509c2f3 already drops shipped-not-done once asked.)

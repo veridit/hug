@@ -58,6 +58,7 @@ Landed a509c2f3 on main (A + C1-2 + the stage widening, per crab's 00:05 and 00:
 Back to todo for t01kqm (crab 00:38: t01kqm next after A+C). Checks 5 (ask/review/design refuse a broken task; design --for not blocked by incomplete/draft) and 6 (no shipped-not-done when every open check is asked_check) are left; 41hhgn's ask --check (asked_check) is on main now, so 6 needs no parsing.
 Retaken 00:43 (crab: finish checks 5 and 6 first, then t01kqm).
 landed fe4937f on main 2026-11-18: hug task: ask, review and design refuse to hand a person a task with a broken…
+file:wdkqzx-c56-fail-before.txt (765 bytes, sha256:dbc00103)
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:22
