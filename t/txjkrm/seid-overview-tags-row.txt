@@ -1,0 +1,137 @@
+txjkrm check 6: Seid overview before/after (scratch copy txjkrm5-seid after hug upgrade --tags --apply; before = origin/main 8bf24c02, after = kikazaru/txjkrm6 54f31124)
+
+== before-80x24
+HUG · txjkrm5-seid · overview   2532/2532 tasks · ! 4 broken · 329 advice
+view: overview  list  board  !lint             │ todo 1161 · doing 7 (2 depends)
+filter: none · sort: rank
+  ASKED · for you  [0] · None
+> IN PROGRESS · assigned to  [1]
+> ◔ 2/5    a71qfj   chore            active    tracker ⎘73 Retire …  orangutan
+
+  WAITING  [6] · 1–2 shown · all orangutan
+  ◔ 1/6   ·q70jjy   feature high     waiting   Close bug classes by constructio…
+↓ ○ 3      jy00xt   feature high     waiting   typed-ids ⎘26 Typed names: seal …
+
+  NEXT UP · rank order  [1153] · 1–2 shown
+  ○ 3      3yts7q   feature high     ready     typed-ids ⎘13 Seal IR and typed …
+↓ ○ 4      vagwwf   feature high     ready     typed-ids ⎘68 IR ownership types…
+
+  RECENTLY DONE · last closed  [1285] · 1–1 shown
+↓ ● 3      h87fsj   feature          done      Scratch check reads hug's state …
+
+  LINT · tasks needing attention  [231] · 4 broken · 329 advice · 1–2 shown
+  ◔ 1/6   ·q70jjy   feature high     waiting   Close bug classes by constructio…
+↓ ○ 1     ·552sdh   feature medium   ready     Replace local-expect shapes with…
+All tasks · : filters and commands · ! lint finding · ↳ epic
+
+j/k move · Enter open · find · # id · / search · : cmd · ? help · quit   hug dev
+
+== after-80x24
+HUG · txjkrm5-seid · overview   2532/2532 tasks · ! 4 broken · 329 advice
+view: overview  list  board  !lint             │ todo 1161 · doing 7 (2 depends)
+filter: none · sort: rank
+  ASKED · for you  [0] · None
+> IN PROGRESS · assigned to  [1]
+> ◔ 2/5    a71qfj                     active    tracker ⎘73 Retire th…  orangut…
+
+  WAITING  [6] · 1–2 shown · all orangutan
+  ◔ 1/6   ·q70jjy   compiler ty… feature high     waiting   Close bug classes b…
+↓ ○ 3      jy00xt   compiler ty… feature high     waiting   typed-… ⎘26 Typed n…
+
+  NEXT UP · rank order  [1153] · 1–2 shown
+  ○ 3      3yts7q   compiler ty… feature high     ready     typed-… ⎘13 Seal IR…
+↓ ○ 4      vagwwf   compiler pe… feature high     ready     typed-… ⎘68 IR owne…
+
+  RECENTLY DONE · last closed  [1285] · 1–1 shown
+↓ ● 3      h87fsj                feature          done      Scratch check reads…
+
+  LINT · tasks needing attention  [231] · 4 broken · 329 advice · 1–2 shown
+  ◔ 1/6   ·q70jjy   compiler ty… feature high     waiting   Close bug classes b…
+↓ ○ 1     ·552sdh   parser       feature medium   ready     Replace local-expec…
+All tasks · : filters and commands · ! lint finding · ↳ epic
+
+j/k move · Enter open · find · # id · / search · : cmd · ? help · quit   hug dev
+
+== before-140x40
+HUG · txjkrm5-seid · overview   2532/2532 tasks · ! 4 broken · 329 advice
+view: overview  list  board  !lint                                   │ todo 1161 · doing 7 (2 depends) · depends 79 · done 1248 · dropped 37
+filter: none · sort: rank
+  ASKED · for you  [0] · None
+> IN PROGRESS · assigned to  [1]
+> ◔ 2/5    a71qfj   chore            active    tracker ⎘73 Retire the old .backlog board into hug                           orangutan
+
+  WAITING  [6] · all orangutan
+  ◔ 1/6   ·q70jjy   feature high     waiting   Close bug classes by construction: compiler-proven impossibility
+  ○ 3      jy00xt   feature high     waiting   typed-ids ⎘26 Typed names: seal Qname/Referent/Owner, remove slash splits and cid_name reads
+  ○ 3      p39w4a   bug     high     waiting   typed-ids ⎘39 Typed-module bytes depend on load history despite identical resolved inputs
+  ○ 4      ntc2e2   feature medium   waiting   tcc-memcheck run-memcheck reports GREEN when MEMCHECK_ONLY selects zero programs
+  ◔ 1/4    n8zmjw   feature medium   waiting   tcc-memcheck TCC gate memcheck: rt coverage, exit-reachable leak policy and stack false reds
+  ○ 2      0h64xj   feature          asked     ⎘3 Lower general structural recursion to heap worklists, not C stack
+
+  NEXT UP · rank order  [1153] · 1–11 shown
+  ○ 3      3yts7q   feature high     ready     typed-ids ⎘13 Seal IR and typed AST with abstract ids and fragile-match errors
+  ○ 4      vagwwf   feature high     ready     typed-ids ⎘68 IR ownership types: prove every allocation is released exactly once
+  ○ 5      q92ye5   feature medium   ready     ⎘1 Compile-time word when @build misses TRMC (split from TASK-1782 AC#3)
+  ○ 2      mkvb34   feature medium   ready     C-backend TCO / trampoline (root fix for TASK-027)
+  ○ 2      wfwwwy   feature medium   ready     Stdlib Namespace: trie-of-HAMTs implementation
+          ·h05n4x   feature low      draft     Refactor: TSum canonical-id vs zonk-use-chain disambiguation in typecheck.ml
+  ○ 4     ·xxfq4w   feature high     ready     Compile-time bounds elision via Nat type-level index calculations, steps A-D
+          ·zjedy0   feature medium   draft     Unified ability/handler surface tightenings (.Refactor .Compiler.Lang)
+  ○ 2      gbwtn3   feature low      ready     .Feature .Compiler.Staging — EWith quote full support (Expr/With variant)
+  ○ 2      spbe1c   feature medium   ready     Namespace-aware Source.location (content-addressable, optional field)
+↓         ·tmt5pk   feature high     draft     Principal axis: make all .sd tests run and pass (.Foundation .Compiler.Test)
+
+  RECENTLY DONE · last closed  [1285] · 1–3 shown
+  ● 3      h87fsj   feature          done      Scratch check reads hug's state field (hug v0.7.43 renamed status)
+  ● 2      xwjb13   bug     high     done      ctl ⎘2 Called #continue under a twice-resuming grant double-releases a loop cell
+↓ ● 3      n0fzz1   bug     medium   done      tcc-memcheck Test runner calls any exit 137 a memory-limit stop
+
+  LINT · tasks needing attention  [231] · 4 broken · 329 advice · 1–3 shown
+  ◔ 1/6   ·q70jjy   feature high     waiting   Close bug classes by construction: compiler-proven impossibility
+  ○ 1     ·552sdh   feature medium   ready     Replace local-expect shapes with ast_builders expect primitive
+↓         ·eat5rq   feature medium   draft     DESIGN-GATED: unbounded _vrt_compose_env leak per yield-resume cycle
+All tasks · : filters and commands · ! lint finding · ↳ epic
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                 hug dev
+
+== after-140x40
+HUG · txjkrm5-seid · overview   2532/2532 tasks · ! 4 broken · 329 advice
+view: overview  list  board  !lint                                   │ todo 1161 · doing 7 (2 depends) · depends 79 · done 1248 · dropped 37
+filter: none · sort: rank
+  ASKED · for you  [0] · None
+> IN PROGRESS · assigned to  [1]
+> ◔ 2/5    a71qfj                          chore            active    tracker ⎘73 Retire the old .backlog board into hug    orangutan
+
+  WAITING  [6] · all orangutan
+  ◔ 1/6   ·q70jjy   compiler types         feature high     waiting   Close bug classes by construction: compiler-proven impossibility
+  ○ 3      jy00xt   compiler types         feature high     waiting   typed-ids ⎘26 Typed names: seal Qname/Referent/Owner, remove slash sp…
+  ○ 3      p39w4a   cache                  bug     high     waiting   typed-ids ⎘39 Typed-module bytes depend on load history despite ident…
+  ○ 4      ntc2e2   tooling memcheck       feature medium   waiting   tcc-memcheck run-memcheck reports GREEN when MEMCHECK_ONLY selects ze…
+  ◔ 1/4    n8zmjw   memcheck               feature medium   waiting   tcc-memcheck TCC gate memcheck: rt coverage, exit-reachable leak poli…
+  ○ 2      0h64xj   compiler               feature          asked     ⎘3 Lower general structural recursion to heap worklists, not C stack
+
+  NEXT UP · rank order  [1153] · 1–11 shown
+  ○ 3      3yts7q   compiler types         feature high     ready     typed-ids ⎘13 Seal IR and typed AST with abstract ids and fragile-mat…
+  ○ 4      vagwwf   compiler perceus types feature high     ready     typed-ids ⎘68 IR ownership types: prove every allocation is released …
+  ○ 5      q92ye5                          feature medium   ready     ⎘1 Compile-time word when @build misses TRMC (split from TASK-1782 AC…
+  ○ 2      mkvb34   codegen runtime        feature medium   ready     C-backend TCO / trampoline (root fix for TASK-027)
+  ○ 2      wfwwwy   stdlib design          feature medium   ready     Stdlib Namespace: trie-of-HAMTs implementation
+          ·h05n4x   typecheck lang         feature low      draft     Refactor: TSum canonical-id vs zonk-use-chain disambiguation in typec…
+  ○ 4     ·xxfq4w   typecheck lang perfor… feature high     ready     Compile-time bounds elision via Nat type-level index calculations, st…
+          ·zjedy0   parser lang design     feature medium   draft     Unified ability/handler surface tightenings (.Refactor .Compiler.Lang)
+  ○ 2      gbwtn3   compiler staging       feature low      ready     .Feature .Compiler.Staging — EWith quote full support (Expr/With vari…
+  ○ 2      spbe1c   compiler design        feature medium   ready     Namespace-aware Source.location (content-addressable, optional field)
+↓         ·tmt5pk   compiler testing       feature high     draft     Principal axis: make all .sd tests run and pass (.Foundation .Compile…
+
+  RECENTLY DONE · last closed  [1285] · 1–3 shown
+  ● 3      h87fsj                          feature          done      Scratch check reads hug's state field (hug v0.7.43 renamed status)
+  ● 2      xwjb13                          bug     high     done      ctl ⎘2 Called #continue under a twice-resuming grant double-releases …
+↓ ● 3      n0fzz1   memcheck               bug     medium   done      tcc-memcheck Test runner calls any exit 137 a memory-limit stop
+
+  LINT · tasks needing attention  [231] · 4 broken · 329 advice · 1–3 shown
+  ◔ 1/6   ·q70jjy   compiler types         feature high     waiting   Close bug classes by construction: compiler-proven impossibility
+  ○ 1     ·552sdh   parser                 feature medium   ready     Replace local-expect shapes with ast_builders expect primitive
+↓         ·eat5rq   codegen runtime design feature medium   draft     DESIGN-GATED: unbounded _vrt_compose_env leak per yield-resume cycle
+All tasks · : filters and commands · ! lint finding · ↳ epic
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                 hug dev

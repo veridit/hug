@@ -71,6 +71,7 @@ check 1: Jørgen 19:35Z (answer 1): the list and preview are approved with one c
 crab 20:36 local: Jørgen also floated auto-grouping tasks that share a tag; 'discuss later', so not in scope here (g grouping by tag already exists, check 4). txjkrm5 (check 5) 782a807c is rebased as 67569a0d on 477696be for landing.
 landed 4dcbf91 on main 2026-11-18: hug upgrade --tags: labels cleaned against hug.toml tags, previewed, one commit…
 shipped in v0.7.69 (4dcbf91)
+file:seid-overview-tags-row.txt (10814 bytes, sha256:5fcea285) check 6 for Jørgen: Seid's overview at 80x24 and 140x40, before (origin/main 8bf24c02) and after (kikazaru/txjkrm6 54f31124), from the scratch copy txjkrm5-seid after hug upgrade --tags --apply; plain text
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
