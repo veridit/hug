@@ -9,10 +9,15 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T06:51"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "After a release containing 1541e271: open a .md file with Space and confirm quiet Markdown headings/code/lists, M toggles raw/formatted with its footer hint, and / then n/N searches the displayed text. Please confirm on your board."
+asked_for: "jhf"
+asked_since: "2026-11-18T07:15"
+asked_by: "nautilus"
+asked_check: "5"
 ---
 
 ## Goal
@@ -43,3 +48,4 @@ Final candidate c117872c on ci/tmz060 after rebase over v0.7.57, CI 44248966190 
 Landed a681224e..1541e271 (1541e271a0dbec1e327de0eedfd99b9d49685330) on main by fast-forward; ci/tmz060 deleted. Final CI 44248966190 all six jobs success on c117872c. Final rebase adds only main sync diagnostics; git diff --exit-code c117872c HEAD -- huginn/internal/tui proved identical TUI bytes. Exact landing-tree full TUI -race passed 184.958s, Linux TUI 156.430s, no golden drift. Baseline fails-first and three killed mutations logged. Checks 1-4: reviewed 80/140 formatted/raw goldens and palette; pre-render ESC/BEL capture and safe rendering; M cached toggle plus unchanged txt/go and read-only source; actual Space command on 900KiB fixture counts zero formatting calls before delivery and one after, visible spinner, no timer assertion. Rendered / n/N and raw toggles tested with no list query mutation. Evidence /Users/jhf/.jcode/scratch/tmz060-evidence.md. Human check 5 remains after release.
 ## History
 - 2026-11-18T06:51 todo -> doing/active (take)
+- 2026-11-18T07:15 doing/active -> doing/asked (ask)
