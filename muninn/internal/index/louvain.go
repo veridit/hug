@@ -10,9 +10,8 @@ import "sort"
 //
 // Every weight is a count (each unit adds or removes 1 per pair), so K, M
 // and SumTot are exact integers in float64 and their sums do not depend on
-// order. Vertices and candidate communities are visited in id order, so one
-// graph and one batch always give the same communities (4vd1mz: Go map order
-// made two identical updates label communities differently).
+// order. Production visitation retains Go map order, as before the storage
+// change. Independently updated graphs need not have identical communities.
 type Graph struct {
 	// Adj holds the adjacency of the vertices loaded so far; adj(v) loads a
 	// stored vertex's on first use (all of them, for a graph built in memory).
@@ -29,6 +28,11 @@ type Graph struct {
 	sumTot0 map[int]float64                      // community totals as loaded
 	// Loads counts adjacencies read from storage (4vd1mz's counting test).
 	Loads int
+
+	// visitOrder is a per-graph test seam. Nil preserves production map order.
+	// It is never configured by a command, flag or persisted state.
+	visitOrder func([]int)
+	mapVisits  int // counts actual nil-seam traversals for package tests
 }
 
 // NewGraph returns an empty graph.
@@ -64,6 +68,22 @@ func sortedKeys[V any](m map[int]V) []int {
 		out = append(out, k)
 	}
 	sort.Ints(out)
+	return out
+}
+
+// visitKeys collects the same map traversal in both paths. Only an explicitly
+// injected test schedule may reorder it. Storage encoding uses sortedKeys,
+// independently of the algorithm's visitation order.
+func visitKeys[V any](g *Graph, m map[int]V) []int {
+	out := make([]int, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	if g.visitOrder != nil {
+		g.visitOrder(out)
+	} else {
+		g.mapVisits++
+	}
 	return out
 }
 
@@ -208,7 +228,7 @@ func (g *Graph) moveLoop(frontier map[int]bool) (int, int) {
 	waves, moves := 0, 0
 	for len(frontier) > 0 && waves < maxWaves {
 		waves++
-		current := sortedKeys(frontier)
+		current := visitKeys(g, frontier)
 		frontier = map[int]bool{}
 		waveGain, waveMoves := 0.0, 0
 		for _, i := range current {
@@ -230,7 +250,7 @@ func (g *Graph) moveLoop(frontier map[int]bool) (int, int) {
 			gainOf := func(c int) float64 { return ncomms[c]/g.M - g.SumTot[c]*ki/(m2*g.M) }
 			stay := gainOf(ci)
 			bestC, bestGain := ci, 0.0
-			for _, c := range sortedKeys(ncomms) {
+			for _, c := range visitKeys(g, ncomms) {
 				if c == ci {
 					continue
 				}

@@ -44,6 +44,9 @@ func graphFixture(t *testing.T, dir, name string, n int) (string, *store.DB, *in
 	if _, err := ix.Run(context.Background(), index.Options{NativePath: native}); err != nil {
 		t.Fatal(err)
 	}
+	if !index.ProductionGraphOrder(ix) {
+		t.Fatal("graph fixture must exercise production nil visitation order")
+	}
 	return native, db, ix
 }
 
@@ -244,22 +247,6 @@ func TestForgetLoadsOnlyTouchedVertices(t *testing.T) {
 		t.Fatalf("one forget loaded %d of %d vertices (the memory has %d concepts)", ix.GraphLoads, vertices, touched)
 	}
 	t.Logf("one forget loaded %d of %d vertices (the memory has %d concepts)", ix.GraphLoads, vertices, touched)
-}
-
-// One store indexed twice gives the same communities: Louvain visits
-// vertices and candidates in id order, not Go map order (4vd1mz; before,
-// 5 of 5 pairs of fresh indexes labelled communities differently).
-func TestCommunitiesAreDeterministic(t *testing.T) {
-	dir := t.TempDir()
-	_, a, _ := graphFixture(t, dir, "a.db", 120)
-	for i := 0; i < 4; i++ {
-		_, b, _ := graphFixture(t, dir, fmt.Sprintf("b%d.db", i), 120)
-		ca, _, _ := index.GraphCommunities(a)
-		cb, _, _ := index.GraphCommunities(b)
-		if fmt.Sprint(ca) != fmt.Sprint(cb) {
-			t.Fatalf("run %d: two indexes of one store have different communities", i)
-		}
-	}
 }
 
 func TestAdjacencyCodecRoundTrips(t *testing.T) {

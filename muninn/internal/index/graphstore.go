@@ -30,6 +30,7 @@ func (ix *Indexer) loadGraph() (*Graph, error) {
 		return nil, err
 	}
 	g := NewGraph()
+	g.visitOrder = ix.graphVisitOrder
 	g.M, _ = strconv.ParseFloat(ix.DB.GetMeta("graph_m"), 64)
 	rows, err := ix.DB.Query(`SELECT concept_id, community_id FROM communities`)
 	if err != nil {

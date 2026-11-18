@@ -72,6 +72,10 @@ type Indexer struct {
 	GraphLoads       int
 	GraphMoved       string
 	graphMovePending string
+	// graphVisitOrder is package-private, per-instance and nil in production.
+	// Tests may inject a common visitation schedule into independently built
+	// graphs without changing production recall ordering.
+	graphVisitOrder func([]int)
 }
 
 // Candidate is a unit as produced by a source, before storage.

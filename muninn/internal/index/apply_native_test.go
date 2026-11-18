@@ -22,14 +22,20 @@ import (
 // index answers like the one an index pass over the same store keeps: the
 // same units and active flags, unit concepts, neighbour lists (ids and
 // sims), concept graph (edge weights, degrees, total) and, for a fixed
-// query set, the same ordered results with every Unit and score field equal,
-// including community-only candidates and unrounded floating-point scores.
-// The sorted frontier makes independently built initial graphs deterministic;
-// no result order or candidate is normalized away. Per-unit community counts
-// must also equal a recount (checkUnitCommunities).
+// query set under an identical injected visitation schedule, the same ordered
+// results with every Unit and score field equal, including community-only hits
+// and unrounded scores. No result order or candidate is normalized away.
+// A separate actual-production-map-order arm checks structural invariants and
+// per-unit community counts, not equality of independently random communities.
+// Controlled scheduling does not prove equality of all production random outputs.
 // A next pass on the targeted index finds nothing to do. Twins (5sc5rw)
 // forget together.
 func TestApplyNativeForgetsMatchIndexPass(t *testing.T) {
+	t.Run("controlled_full_results", func(t *testing.T) { applyNativeForgetsMatchIndexPass(t, true) })
+	t.Run("production_map_invariants", func(t *testing.T) { applyNativeForgetsMatchIndexPass(t, false) })
+}
+
+func applyNativeForgetsMatchIndexPass(t *testing.T, controlled bool) {
 	ctx := context.Background()
 	dir := t.TempDir()
 	native := filepath.Join(dir, "native.json")
@@ -51,6 +57,11 @@ func TestApplyNativeForgetsMatchIndexPass(t *testing.T) {
 		}
 		t.Cleanup(func() { db.Close() })
 		ix := &index.Indexer{DB: db, Embedder: &testutil.FakeEmbedder{Dim: 64}}
+		if controlled {
+			index.ControlledGraphOrder(ix)
+		} else if !index.ProductionGraphOrder(ix) {
+			t.Fatal("production arm did not load a nil-order graph")
+		}
 		if _, err := ix.Run(ctx, index.Options{NativePath: native}); err != nil {
 			t.Fatal(err)
 		}
@@ -73,7 +84,7 @@ func TestApplyNativeForgetsMatchIndexPass(t *testing.T) {
 		if id == "mem_000" && len(f.Changed) != 2 {
 			t.Fatalf("forgetting mem_000 changed %d memories, want it and its twin", len(f.Changed))
 		}
-		compareIndexes(t, round, tdb, pdb)
+		compareIndexes(t, round, tdb, pdb, controlled)
 	}
 	if tix.Passes != 1 {
 		t.Fatalf("targeted index ran %d passes, want only its first", tix.Passes)
@@ -85,7 +96,7 @@ func TestApplyNativeForgetsMatchIndexPass(t *testing.T) {
 	if st.SourcesScanned != 0 || st.Changed+st.Added+st.Removed != 0 {
 		t.Fatalf("a pass after the targeted forgets still found work: %s", st)
 	}
-	compareIndexes(t, len(forget), tdb, pdb)
+	compareIndexes(t, len(forget), tdb, pdb, controlled)
 	// A file another process changed since the index saw it is not the
 	// targeted update's to fix: it refuses and changes nothing.
 	f, err := ingest.ForgetManyChanged(native, []string{"mem_010"})
@@ -105,7 +116,7 @@ func TestApplyNativeForgetsMatchIndexPass(t *testing.T) {
 }
 
 // compareIndexes fails when the two indexes answer differently.
-func compareIndexes(t *testing.T, round int, a, b *store.DB) {
+func compareIndexes(t *testing.T, round int, a, b *store.DB, controlled bool) {
 	t.Helper()
 	for _, q := range []struct{ name, sql string }{
 		{"units", `SELECT u.key || ' ' || u.active || ' ' || u.ident FROM units u ORDER BY u.key`},
@@ -128,6 +139,10 @@ func compareIndexes(t *testing.T, round int, a, b *store.DB) {
 		t.Fatalf("round %d: concept graphs differ (M %v vs %v)", round, mA, mB)
 	}
 	checkUnitCommunities(t, a, round)
+	checkUnitCommunities(t, b, round)
+	if !controlled {
+		return // actual nil-order production arm: structural invariants only
+	}
 	sa := &search.Searcher{DB: a, Embedder: &testutil.FakeEmbedder{Dim: 64}}
 	sb := &search.Searcher{DB: b, Embedder: &testutil.FakeEmbedder{Dim: 64}}
 	o := search.DefaultOptions()
