@@ -13,10 +13,13 @@ group: ""
 rank: "zzzzq"
 aliases: ["when-then-memories-triggers-stated-at"]
 doing_since: "2026-11-18T17:35"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing: check 1 on jrj1vq c54f9be9 (CI 44361077927 6/6), awaiting crab review; checks 2-4 open"
+waiting_since: "2026-11-18T18:57"
+waiting_asked_by: "bonehound"
 ---
 
 ## Goal
@@ -56,3 +59,4 @@ Tests failing-first on 80c8ac28 (build fails: 'unknown field Trigger in struct l
 E2E real binary: $JCODE_SCRATCH_DIR/jrj1vq-e2e.txt. Report: $JCODE_SCRATCH_DIR/jrj1vq/REPORT.md (written next).
 ## History
 - 2026-11-18T17:35 todo -> doing/active (take)
+- 2026-11-18T18:57 doing/active -> doing/waiting (wait)
