@@ -38,5 +38,6 @@ Code: huginn/internal/task stage transitions (wait, resume, ask, answer, review,
 ## Notes
 
 
+landed 5b276f2 on main 2026-11-18: task: one stage at a time; a same-state set settles two stages (3nhp67)
 ## History
 - 2026-11-18T02:26 todo -> doing/active (take)
