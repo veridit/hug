@@ -33,11 +33,12 @@ Tag v0.7.65 on the CHANGELOG commit, merge c84d3273 on main 18b6b86d. Contents: 
 
 ## Acceptance
 - [x] release.yml for v0.7.65 succeeds
-- [ ] brew upgrade veridit/tap/hug installs it and hug version prints v0.7.65
+- [x] brew upgrade veridit/tap/hug installs it and hug version prints v0.7.65
 
 ## Notes
 
 
 check 1: release.yml 44338496791 success
+check 2: brew upgrade -> hug v0.7.65
 ## History
 - 2026-11-18T16:48 todo -> doing/active (take)
