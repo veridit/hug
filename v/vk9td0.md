@@ -16,10 +16,10 @@ branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 aliases: ["decide-when-dream-items-are-handed"]
 doing_since: "2026-11-18T13:25"
-asked_since: "2026-11-18T14:53"
+asked_since: "2026-11-18T15:24"
 asked_by: "crab"
-asked_check: "1"
-asked_what: "sabertooth built it from your syncthing histogram idea (hour-of-week, 4-week window, a quiet hour = a turn in at most 1 of 4 weeks). From your hook.log: each day's quiet stretch starts Mon 02:00 (3 h), Tue 06:00 (2 h), Wed 05:00, Thu 05:00, Fri 03:00 (1 h each), Sat 01:00 (5 h), Sun 01:00 (6 h). Dream runs at the start of each day's stretch. Does that match how your week looks, and is daily (not only Sunday's longest) right?"
+asked_check: "4"
+asked_what: "The dream schedule from your hook.log: each day's quiet stretch starts Mon 02:00 (3 h), Tue 06:00 (2 h), Wed 05:00, Thu 05:00, Fri 03:00 (1 h each), Sat 01:00 (5 h), Sun 01:00 (6 h). Dream runs at the start of each day's stretch. Does that match your week, and is daily right (rather than only Sunday's longest)?"
 asked_for: "jhf"
 ---
 
