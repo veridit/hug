@@ -17,16 +17,45 @@ func catchupPair(t *testing.T, f func(a, b *App, ba, bb string, ids []string)) {
 	// Use the existing bounded test pool, just like the older clones tests,
 	// instead of delaying every parallel test behind these serial fixtures.
 	t.Parallel()
-	a, b, _ := clones(t)
+	a, b, _, ids := oldPair(t)
 	ba, bb := filepath.Join(a.Cwd, TaskDir), filepath.Join(b.Cwd, TaskDir)
 	offline(t, a, func() {
 		offline(t, b, func() {
-			ids := oldLayoutBoard(t, a)
-			git(t, ba, "push", "-q", "origin", "HEAD:"+TaskBranch)
-			git(t, bb, "pull", "-q", "--rebase", "origin", TaskBranch)
 			f(a, b, ba, bb, ids)
 		})
 	})
+}
+
+// oldPair is clones with a layout-2 board (oldLayoutBoard) made in A,
+// pushed, and pulled into B, both offline; ids are its tasks in board
+// order. The repositories are a copy of one built per test process
+// (0n4rnx): the build started 117 git processes.
+func oldPair(t *testing.T) (a, b *App, bare string, ids []string) {
+	t.Helper()
+	base := fixture(t, "old-pair", func(t *testing.T, base string) {
+		buildClones(t, base)
+		a, b := cloneApps(t, base)
+		var ids []string
+		offline(t, a, func() {
+			offline(t, b, func() {
+				ids = oldLayoutBoard(t, a)
+				git(t, filepath.Join(a.Cwd, TaskDir), "push", "-q", "origin", "HEAD:"+TaskBranch)
+				git(t, filepath.Join(b.Cwd, TaskDir), "pull", "-q", "--rebase", "origin", TaskBranch)
+			})
+		})
+		settled(t, a)
+		settled(t, b)
+		if e := os.WriteFile(filepath.Join(base, "ids"), []byte(strings.Join(ids, "\n")), 0o644); e != nil {
+			t.Fatal(e)
+		}
+	})
+	raw, e := os.ReadFile(filepath.Join(base, "ids"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	a, b = cloneApps(t, base)
+	t.Cleanup(func() { settled(t, a); settled(t, b) })
+	return a, b, filepath.Join(base, "remote.git"), strings.Split(string(raw), "\n")
 }
 
 func applyCatchup(t *testing.T, a *App) string {

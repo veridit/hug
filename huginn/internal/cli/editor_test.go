@@ -26,7 +26,11 @@ func TestMain(m *testing.M) {
 		os.Exit(fakeEdit(os.Args[len(os.Args)-1], from, os.Getenv(editTo)))
 	}
 	quietGit()
-	os.Exit(m.Run())
+	code := m.Run()
+	if fixtureRoot != "" {
+		os.RemoveAll(fixtureRoot) // the fixture templates (fixture_test.go)
+	}
+	os.Exit(code)
 }
 
 // quietGit turns off git's auto maintenance for every git this test binary

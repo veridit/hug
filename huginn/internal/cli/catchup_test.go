@@ -59,16 +59,10 @@ func oldPath(t *testing.T, board, id string) string {
 
 func TestCatchUpAcrossLayoutMove(t *testing.T) {
 	t.Parallel()
-	a, b, bare := clones(t)
-	boardA := filepath.Join(a.Cwd, TaskDir)
+	a, b, bare, ids := oldPair(t)
 	boardB := filepath.Join(b.Cwd, TaskDir)
-	var ids []string
 	offline(t, a, func() {
 		offline(t, b, func() {
-			ids = oldLayoutBoard(t, a)
-			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
-			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
-
 			// B, on an older hug: two notes and a rank move, unpushed.
 			first := oldPath(t, boardB, ids[0])
 			oldWrite(t, boardB, "hug task note "+ids[0], func() { oldNote(t, boardB, first, "2026-11-18T06:01 B's first note") })
@@ -169,14 +163,10 @@ func TestCatchUpAcrossLayoutMove(t *testing.T) {
 // for it. Nothing stops.
 func TestCatchUpKeepsBothSidesValueInNote(t *testing.T) {
 	t.Parallel()
-	a, b, _ := clones(t)
-	boardA := filepath.Join(a.Cwd, TaskDir)
+	a, b, _, ids := oldPair(t)
 	boardB := filepath.Join(b.Cwd, TaskDir)
 	offline(t, a, func() {
 		offline(t, b, func() {
-			ids := oldLayoutBoard(t, a)
-			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
-			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
 			p := oldPath(t, boardB, ids[2])
 			oldWrite(t, boardB, "hug task set "+ids[2], func() {
 				f := filepath.Join(boardB, filepath.FromSlash(p))
@@ -220,14 +210,10 @@ func TestCatchUpKeepsBothSidesValueInNote(t *testing.T) {
 // and the fix names the commit and the file.
 func TestCatchUpStopsOnUnreadableFileAndRestores(t *testing.T) {
 	t.Parallel()
-	a, b, _ := clones(t)
-	boardA := filepath.Join(a.Cwd, TaskDir)
+	a, b, _, ids := oldPair(t)
 	boardB := filepath.Join(b.Cwd, TaskDir)
 	offline(t, a, func() {
 		offline(t, b, func() {
-			ids := oldLayoutBoard(t, a)
-			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
-			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
 			first := oldPath(t, boardB, ids[0])
 			oldWrite(t, boardB, "hug task note "+ids[0], func() {
 				oldNote(t, boardB, first, "fine")
@@ -278,14 +264,10 @@ func TestCatchUpStopsOnUnreadableFileAndRestores(t *testing.T) {
 // replays the rest.
 func TestCatchUpWhenBothClonesMoved(t *testing.T) {
 	t.Parallel()
-	a, b, _ := clones(t)
-	boardA := filepath.Join(a.Cwd, TaskDir)
+	a, b, _, ids := oldPair(t)
 	boardB := filepath.Join(b.Cwd, TaskDir)
 	offline(t, a, func() {
 		offline(t, b, func() {
-			ids := oldLayoutBoard(t, a)
-			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
-			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
 			first := oldPath(t, boardB, ids[0])
 			oldWrite(t, boardB, "hug task note "+ids[0], func() { oldNote(t, boardB, first, "2026-11-18T06:01 B before its move") })
 			for _, c := range []*App{a, b} {
@@ -318,14 +300,10 @@ func TestCatchUpWhenBothClonesMoved(t *testing.T) {
 
 func TestCatchUpLayoutCommitAlsoKeepsItsNote(t *testing.T) {
 	t.Parallel()
-	a, b, _ := clones(t)
-	boardA := filepath.Join(a.Cwd, TaskDir)
+	a, b, _, ids := oldPair(t)
 	boardB := filepath.Join(b.Cwd, TaskDir)
 	offline(t, a, func() {
 		offline(t, b, func() {
-			ids := oldLayoutBoard(t, a)
-			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
-			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
 			for _, c := range []*App{a, b} {
 				if code, out := runText(c, "upgrade", "--apply"); code != 0 && code != UpgradePending {
 					t.Fatalf("upgrade: exit %d\n%s", code, out)
@@ -359,14 +337,11 @@ func TestCatchUpLayoutCommitAlsoKeepsItsNote(t *testing.T) {
 // A clone with nothing unpushed is fast-forwarded across the move.
 func TestReadOnlyCloneFastForwardsAcrossLayoutMove(t *testing.T) {
 	t.Parallel()
-	a, b, _ := clones(t)
+	a, b, _, ids := oldPair(t)
 	boardA := filepath.Join(a.Cwd, TaskDir)
 	boardB := filepath.Join(b.Cwd, TaskDir)
 	offline(t, a, func() {
 		offline(t, b, func() {
-			ids := oldLayoutBoard(t, a)
-			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
-			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
 			if code, out := runText(a, "upgrade", "--apply"); code != 0 && code != UpgradePending {
 				t.Fatalf("A's upgrade: exit %d\n%s", code, out)
 			}

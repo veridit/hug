@@ -41,10 +41,25 @@ func runSyncChild() {
 // clones makes a bare remote and two clones with boards, background sync on.
 // Everything it sets is the clones' own (repository config, App.Env,
 // App.Sync), never the process's, so these tests run in parallel (0sbvnq).
+// The repositories are a copy of one built per test process (0n4rnx).
 func clones(t *testing.T) (a, b *App, bare string) {
 	t.Helper()
-	base := t.TempDir()
-	bare = filepath.Join(base, "remote.git")
+	base := fixture(t, "clones", buildClones)
+	a, b = cloneApps(t, base)
+	// Let any passes a test starts finish before its folders go.
+	t.Cleanup(func() { settled(t, a); settled(t, b) })
+	return a, b, filepath.Join(base, "remote.git")
+}
+
+// buildClones makes clones' repositories in base: remote.git, one and two,
+// with a board initialized in one and two and one's synced. It leaves no
+// pass running.
+func buildClones(t *testing.T, base string) {
+	t.Helper()
+	if e := os.MkdirAll(base, 0o755); e != nil {
+		t.Fatal(e)
+	}
+	bare := filepath.Join(base, "remote.git")
 	git(t, base, "init", "--bare", "-b", "main", bare)
 	quietRemote(t, bare)
 	// Count pushes: every push appends its refs to bare/pushes.
@@ -73,6 +88,17 @@ func clones(t *testing.T) (a, b *App, bare string) {
 	two := filepath.Join(base, "two")
 	git(t, base, "clone", "-q", bare, two)
 	identity(two)
+	a, b := cloneApps(t, base)
+	execute(t, a, "init")
+	execute(t, a, "sync")
+	execute(t, b, "init")
+	settled(t, a)
+	settled(t, b)
+}
+
+// cloneApps are the Apps of clones' repositories in base.
+func cloneApps(t *testing.T, base string) (a, b *App) {
+	t.Helper()
 	exe, e := os.Executable()
 	if e != nil {
 		t.Fatal(e)
@@ -90,13 +116,7 @@ func clones(t *testing.T) (a, b *App, bare string) {
 			Sync: &SyncSettings{Spawn: []string{exe, "task", "sync", SyncChildArg}, FetchAfter: 500 * time.Millisecond,
 				Env: []string{"GIT_CONFIG_GLOBAL=" + os.DevNull, "GIT_CONFIG_NOSYSTEM=1", childSettle + "=" + testSettle, "GIT_TRACE2_EVENT=" + trace}}}
 	}
-	a, b = mk(one), mk(two)
-	execute(t, a, "init")
-	execute(t, a, "sync")
-	execute(t, b, "init")
-	// Let any passes the setup started finish before a test counts.
-	t.Cleanup(func() { settled(t, a); settled(t, b) })
-	return a, b, bare
+	return mk(filepath.Join(base, "one")), mk(filepath.Join(base, "two"))
 }
 
 // offline runs f with a's background sync off, then turns it back on. A
