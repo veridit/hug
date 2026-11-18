@@ -38,5 +38,6 @@ boardcue.go detect: 'if h.Verb == "show" || h.Verb == "check" || h.Verb == "note
 ## Notes
 
 
+duckling 13:51, BAR before any run. Arms: base = e66eeb65 (main 8d26d050 + judge fix); show = base + show no longer feeds addNamed (boardcue.go detect); show+quote = show + 6fqhg9 quote-parked.patch (for 6fqhg9's retry). Same 7 sets/windows/ids (scratch/board4/6fqhg9/run.sh), judge_board.py at e66eeb65, two judgings judgeA/judgeB.json (lines already judged reuse their verdicts; new lines judged twice from empty caches). Trust: agreement >= 0.90 on new lines and no arm-delta differing between A and B. rzfrgp PASS (both judgings): take/work/done/owner false does not rise on any set AND right lines do not fall on any set, show vs base. 6fqhg9 retry PASS (both judgings): show+quote vs show, same two conditions + all false not rising on any set + fresh hug right lint not falling. Fail = park, report.
 ## History
 - 2026-11-18T13:50 todo -> doing/active (take)
