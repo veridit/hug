@@ -36,3 +36,5 @@ Front matter, grouped: identity (id, title, type, priority, labels, group, paren
 ## Notes
 
 Jørgen 01:24 local, on Statbus's tree on GitHub ('000000000001.37bryg.ladder-never….md' next to a separate '37bryg/' holding its attachment): 'assets OUTSIDE the dir?' Proposal (crab, pending his yes): one folder per task holding everything: .hug/tasks/37bryg/README.md is the task, its files sit beside it (37bryg/STATBUS-369-fresh-install-blocker.md). GitHub renders README.md under the folder listing, so github.com/<repo>/tree/hug/tasks/37bryg shows the task and its files on one page, and that URL never changes. Every task gets a folder, not only tasks with files.
+
+Jørgen 01:25 local: (a) keep hug/tasks (and hug/memory) as real branches so GitHub links work; accept GitHub's 'recent pushes / Compare & pull request' banner (GitHub has no per-branch setting to hide it; refs/hug/* would hide it but break web links). Still open: one folder per task with README.md (crab's 01:24 proposal) vs ID.md.
