@@ -40,6 +40,7 @@ Code: huginn/internal/tui/tui.go:1162-1170 (the ? branch runs before the prompt 
 ## Notes
 
 
+landed 0c3d3924..48b1151f (abbec690 fix, 959ff8d1 tmux goldens from ubuntu CI 44212782275). CI 44217631803 on the pre-rebase tip 37d71929: all 6 jobs success (secrets, bench, test ubuntu/macos/windows, test-windows-cli). Local: -race ./huginn/internal/tui ok 148.9s; after rebase on 0c3d3924 tui ok 55.8s, task ok 12.8s. Check 1: TestQuestionMarkIsTextInEveryInput (t64v7d_test.go), 9 inputs (answer, wait, strike, drop, new title, filter text, find, palette, jump); on main all 9 failed, e.g. 'answer: ? opened help' / 'answer: the field holds "done by morning", want "done by morning?"'. Check 2: TestF1IsHelpInATextInput: F1 opens help over the field, Esc and F1 return with the text; footer 'F1 help', help row 'F1 this help; ? is typed text here'. Check 3: TestQuestionMarkIsHelpOutsideText (list, task, sort builder, filter fields, confirm) plus TestHelpKeysAreBound and the rest of the suite pass; TestInputsNeverSwallowHelpOrQuit and TestEscAtEveryLevel now pin F1.
 ## History
 - 2026-11-18T02:03 todo -> doing/active (take)
 - 2026-11-18T02:35 doing/active -> doing/waiting (wait)
