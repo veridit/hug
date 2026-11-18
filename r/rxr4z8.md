@@ -70,6 +70,7 @@ crab 20:29 local, Jørgen's answer 1 (19:27Z) settled: (1) ◆ is the mark (dim 
 crab 21:07 local: back to todo for a builder (nautilus's session ended); answers settled in checks 7-9; build after kikazaru's 05r3pg (shares the bottom line).
 file:cursor-on-mark.md (1455 bytes, sha256:42f010d6) check 7: ⋗ and ▸ side by side, cursor on a marked row
 crab 21:31 local, ruling on check 1's 'quiet tint': Jørgen's calm rules (qh9ep1 check 9: one cue per meaning, no background fills) supersede it. A marked row shows ◆ in the gutter (dim accent) and nothing else: no tint, no recoloured ID. Check 1 is read that way; the golden proves no 48;2 background on a marked row.
+crab 20:44 ruling: with 2+ marked, t is not offered; pressed, it says 'take one at a time: mark one task to take it'. t on 1 marked takes it after one confirm. Once byj479 (hug task take B --with A, iwazaru) lands, t on N marked becomes 'take the first, the rest with it' after one confirm naming them; t's marked path is kept in one function (takeMarked) so that change is small. Also crab 20:31: the mark is ◆ in the gutter only, no tint, no recoloured id (calm rule); check 1 reads that way.
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
