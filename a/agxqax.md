@@ -1,15 +1,20 @@
 ---
 id: agxqax
 title: "Person questions written as plain waits, and asks to unknown names"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["bonehound"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzs"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T15:55"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Statbus: hug.toml [people] jhf, erik, hhz. Plain wait refuses only --on NAME (cl
 - [ ] Lint flags an existing waiting task whose reason addresses a person and an asked task whose asked_for is no known person, each with a runnable fix; on a copy of Statbus's board it finds these 6 (counts in a note).
 
 ## Notes
+
+
+## History
+- 2026-11-18T15:55 todo -> doing/active (take)
