@@ -74,6 +74,24 @@ Check 1 preview on a scratch clone of hug's board (kestrel, WIP 7c064ed6, clone 
 - A second upgrade --apply says nothing to do in every part.
 - git log --follow -- 6/6ephqk.md gives 60 commits (the rename is detected), and the old slug task-state-stage-hard still resolves.
 - Not done yet: the TUI frame comparison, and new/move still writing old names (plan steps 2, 3, 5). The real board is untouched, and nothing will be applied to it until crab says go.
+Check 1, kestrel, branch kestrel/w40cmk at ad854bd2 (rebased onto origin/main 07183cf5).
+- TestUpgradeMovesBoardToLayout3 (cli) covers a layout-2 board with 4 tasks, 1 of them in later/ with a files folder:
+  - A write is refused: 'this board has layout 2 (hug.toml on branch hug/tasks): 4 task files are named rank.id.slug.md, and this hug writes C/ID.md (layout 3); it writes nothing until the board is moved', then 'fix: hug upgrade --apply'.
+  - The preview exits 5, names every move, and leaves HEAD and status unchanged.
+  - --apply makes exactly one commit, 'hug upgrade: 4 tasks to C/ID.md, rank: and group: in the file (layout 3)', with hug.toml 'layout = 3'. Each file gains group:/rank: lines, the files folder lands at C/ID/, later/ is gone, ls (id, rank, group, state) and next are byte-identical, the old name a.ID.first-look still shows the task, and a second upgrade says nothing to do.
+  - Mutants: 7 of 7 killed (layout in its own commit, no folder move, no group cleanup, no write guard, the preview applies, rank not set, no old-name ref).
+- Clone of hug's board (hug/tasks b7409a4, 182 .md files, 163 tasks), with HOME, JCODE_HOME and HUG_HOME in scratch. No new ~/.jcode backup appeared; the newest is still muninn-bak-20261118-045310.
+  - Preview: exit 5, HEAD unchanged, git status empty, 163 move lines.
+  - --apply: exit 0, one commit 709611d, 234 files changed (233 R, 1 M), status clean.
+  - Same before and after: ls --jsonl on 163 rows, next, lint (32 findings, 4 broken, on 18 tasks), and the TUI first frame (tmux 160x40; before drawn by main a90f4d44 on HEAD~1, after by ad854bd2: diff empty).
+  - git log --follow on 6/6ephqk.md gives 60 commits.
+- Checks 2-4: TestLayout3MovesEditLinesOnly and TestLayout3OldNamesResolve (task), mutants 7 of 7 killed after one redundant guard was removed.
+- Unit suites, -short: all 12 packages ok (cli 109.1s, tui 59.4s, task 11.7s). Race, the tmux goldens and CI are still to run.
+- Old tests rewritten, none deleted, none skipped:
+  - 15 globs use globID.
+  - Layout numbers in 5 tests now come from task.Layout.
+  - files_test, task_test (isolation), tui invariants_test, writers_test boardFile, and lintdetail_test's title word now follow layout 3.
+- Still open: check 5 (hatchling, hug/memory), 6 (Seid copy), 7 (Jørgen), 8 (no group folders: met by the upgrade, Statbus copy still to do), 9 (sync across the move), 10 (CI), 11 (wyvern's bench).
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
 - 2026-11-18T02:26 doing/active -> doing/waiting (wait)
