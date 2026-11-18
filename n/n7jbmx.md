@@ -47,6 +47,8 @@ Plan for check 4 (the only open check): (1) after 2026-11-21T00:00Z, build 150 c
 ## Requests
 - 2026-11-18T12:24 request 1 by jhf:
   What is the purpose? What is the goal? So this needs to be brought in line with linting. And I think that it's missing some details how you plan to achieve this. So this is the problem here is that the principles that we're going to use by this and the relevant details, these are missing, I think
+  resolved 2026-11-18T13:22 by retriever:
+    Purpose now says why (your 2026-11-15 10:28Z ask to match what the agent is doing, with a stricter bar; post_tool_feedback is the only mid-turn hook; message recall on tool calls was net noise, 30 useful vs 49 noise per 100). Goal now also says when it is done (a fresh held-out test decides whether tool-call recall is turned on). Principle: exact anchors not similarity, rule/fact/preference only, at most 2 per call and once per session, local and free, off by default until a bar written before the run passes on frozen-arm fresh data. Relevant details: what is built (v0.7.57, b106398), dev numbers, the bar, and a 5-step plan for check 4 starting after 2026-11-21T00:00Z. Lint: no findings.
 
 ## Notes
 
@@ -71,3 +73,4 @@ shipped in v0.7.57 (94ef214)
 - 2026-11-18T05:32 todo -> doing/active (take)
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
 - 2026-11-18T12:24 request 1 by jhf
+- 2026-11-18T13:22 resolved request 1 by retriever
