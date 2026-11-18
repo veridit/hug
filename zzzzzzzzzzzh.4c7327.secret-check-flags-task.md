@@ -1,13 +1,18 @@
 ---
 id: 4c7327
 title: "Secret check flags 'task-900' in a file path as a credential (sk-900)"
-state: todo
+state: "doing"
 type: bug
 priority: ""
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T06:32"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -29,3 +34,7 @@ secretHint in huginn/internal/cli (attach). The same pattern may exist in muninn
 - [ ] The memory secret check gets the same test, or the note says it uses a different rule
 
 ## Notes
+
+
+## History
+- 2026-11-18T06:32 todo -> doing/active (take)
