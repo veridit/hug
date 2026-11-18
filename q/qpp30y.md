@@ -40,5 +40,6 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 ## Notes
 
 
+check 1: commit aee5b13e on branch qpp30y. openBox now calls syncDetail after Focus, so the box is drawn in the frame a or r is pressed. TestBoxShowsAtOnce (80 and 140, a and r) failed first at qpp30y_test.go:49 ('at 80 a drew no box before a key') and passes now.
 ## History
 - 2026-11-18T13:34 todo -> doing/active (take)
