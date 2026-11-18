@@ -10,7 +10,7 @@ created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T01:48"
 stage: "active"
-model: "claude-opus-5-5"
+model: "openai"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 ---
