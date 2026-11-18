@@ -11,16 +11,10 @@ rank: "zzzzzzzzzz38"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T15:45"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "txjkrm"
 worktree: "/Users/jhf/.jcode/scratch/txjkrm"
-asked_check: "1"
-asked_show: "seid-overview-tags.ans"
-asked_what: "Seid's real overview with tags on rows, in your 10:28 row order: pie, id, type, priority, tags, stage, text. Tags are dim, at most 22 columns. The proposed list keeps 38 tags used on 20+ tasks after merging (file seid-tags-proposal.txt: compiler 924, parser 341, and so on), moves bug/design/paused/low-pri to type, stage and priority, and drops rulings, provenance and rare labels. Does this look right, so I can build it? Ticking check 1 is yes; or answer with what to change (cutoff, a tag, the column)."
-asked_for: "jhf"
-asked_since: "2026-11-18T15:49"
-asked_by: "mizaru"
 ---
 
 ## Goal
@@ -72,3 +66,6 @@ check 5 committed: 782a807c on origin/main 6a6b6573 (v0.7.68), branches txjkrm5 
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
+- 2026-11-18T20:33 answered asked (check 1), by jhf, for mizaru (doing/asked -> doing/active):
+  > Seid's real overview with tags on rows, in your 10:28 row order: pie, id, type, priority, tags, stage, text. Tags are dim, at most 22 columns. The proposed list keeps 38 tags used on 20+ tasks after merging (file seid-tags-proposal.txt: compiler 924, parser 341, and so on), moves bug/design/paused/low-pri to type, stage and priority, and drops rulings, provenance and rare labels. Does this look right, so I can build it? Ticking check 1 is yes; or answer with what to change (cutoff, a tag, the column).
+  So I think the tags should be after the ticket ID because they allow you to quickly understand what this is all about and I think we can discuss later if we can make groupings for things that have the same tab somehow like an auto group on that
