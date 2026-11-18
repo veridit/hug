@@ -106,7 +106,7 @@ func TestBranchSyncTwoClonesKeepCodeClean(t *testing.T) {
 	if got := branchGit(t, a, "ls-tree", "--name-only", NotesBranch); got != "memories.jsonl" {
 		t.Fatalf("unexpected branch contents: %s", got)
 	}
-	t.Log("PROJECT branch: two clones exchange only project memories on muninn-notes, both code worktrees clean")
+	t.Log("PROJECT branch: two clones exchange only project memories on hug/memory, both code worktrees clean")
 }
 
 func TestBranchMigrationDryRunIdempotenceAndMarkers(t *testing.T) {
@@ -177,7 +177,7 @@ func TestBranchMigrationDryRunIdempotenceAndMarkers(t *testing.T) {
 
 // 065wwn: memories follow the same rule as tasks. hug mem sync from a linked
 // worktree (git worktree add --detach) writes and commits into the main
-// worktree's .muninn-notes checkout, never a second checkout or a plain
+// worktree's .hug/memory checkout, never a second checkout or a plain
 // folder in the linked worktree; the main worktree then reads that memory.
 func TestBranchSyncFromLinkedWorktreeUsesMainCheckout(t *testing.T) {
 	for _, first := range []string{"main", "linked"} {

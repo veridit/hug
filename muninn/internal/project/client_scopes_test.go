@@ -17,7 +17,7 @@ func TestClientFoldersBoundsAndSymlinks(t *testing.T) {
 	}
 	t.Setenv("HOME", root)
 	t.Setenv("USERPROFILE", root) // os.UserHomeDir on Windows
-	for _, path := range []string{"visible/child/grandchild", "visible/child/grandchild/too-deep", ".git/hidden", "node_modules/hidden", "vendor/hidden"} {
+	for _, path := range []string{"visible/child/grandchild", "visible/child/grandchild/too-deep", ".git/hidden", ".hug/memory/hidden", ".hug/tasks/hidden", "node_modules/hidden", "vendor/hidden"} {
 		if err := os.MkdirAll(filepath.Join(root, path), 0700); err != nil {
 			t.Fatal(err)
 		}
@@ -45,7 +45,7 @@ func TestClientFoldersBoundsAndSymlinks(t *testing.T) {
 			}
 		}
 	}
-	for _, path := range []string{"visible/child/grandchild/too-deep", ".git", ".git/hidden", "node_modules", "node_modules/hidden", "vendor", "outside", "visible/cycle"} {
+	for _, path := range []string{"visible/child/grandchild/too-deep", ".git", ".git/hidden", ".hug", ".hug/memory", ".hug/tasks", "node_modules", "node_modules/hidden", "vendor", "outside", "visible/cycle"} {
 		if got := folders[harness.JcodeProjectHash(filepath.Join(root, path))]; got != "" {
 			t.Errorf("out-of-bounds folder %s resolved as %s", path, got)
 		}

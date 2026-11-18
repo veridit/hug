@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -15,6 +16,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
+	"github.com/veridit/hug/internal/layout"
 )
 
 // Project is a repository (or plain folder) muninn keeps memories for.
@@ -23,8 +25,8 @@ type Project struct {
 	ID     string // stable: git root commit, or the id in .muninn/project
 	Label  string // human name (the folder name)
 	Root   string // top-level directory
-	// Notes is the folder of the muninn-notes checkout. In git it is the main
-	// worktree's .muninn-notes, also from a linked worktree (git worktree
+	// Notes is the folder of the hug/memory checkout. In git it is the main
+	// worktree's .hug/memory, also from a linked worktree (git worktree
 	// add): memories follow the same one-checkout rule as tasks (065wwn).
 	Notes string
 }
@@ -38,8 +40,8 @@ func (p Project) Scope() string {
 }
 
 // File is the shared memory file inside the repository.
-const NotesBranch = "muninn-notes"
-const NotesDir = ".muninn-notes"
+const NotesBranch = layout.MemoryBranch
+const NotesDir = layout.MemoryDir
 
 // File is the shared memory file: memories.jsonl in the notes checkout.
 func (p Project) File() string {
@@ -49,6 +51,73 @@ func (p Project) File() string {
 	return filepath.Join(p.Root, NotesDir, "memories.jsonl")
 }
 func (p Project) LegacyFile() string { return filepath.Join(p.Root, ".muninn", "memories.jsonl") }
+
+var errMemoryLayout = errors.New("project memories need an explicit layout upgrade")
+
+// Inspect local metadata only. Placement is a hot read path, so a normal
+// main checkout needs no extra git process and never contacts a remote.
+func memoryLayoutGuard(root string) error {
+	refuse := func() error {
+		return fmt.Errorf("%w: %s or branch %s still exists; nothing was migrated\nfix: hug upgrade", errMemoryLayout, layout.OldMemoryDir, layout.OldMemoryBranch)
+	}
+	if _, err := os.Lstat(filepath.Join(root, layout.OldMemoryDir)); err == nil {
+		return refuse()
+	} else if !os.IsNotExist(err) {
+		return fmt.Errorf("%w: inspect old checkout: %v\nfix: hug upgrade", errMemoryLayout, err)
+	}
+	common := filepath.Join(root, ".git")
+	if info, err := os.Stat(common); err == nil && !info.IsDir() {
+		var e error
+		common, e = git(root, "rev-parse", "--path-format=absolute", "--git-common-dir")
+		if e != nil {
+			return fmt.Errorf("%w: inspect git directory: %v\nfix: hug upgrade", errMemoryLayout, e)
+		}
+	}
+	packed, err := os.ReadFile(filepath.Join(common, "packed-refs"))
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("%w: inspect packed refs: %v\nfix: hug upgrade", errMemoryLayout, err)
+	}
+	has := func(ref string) bool {
+		if _, err := os.Lstat(filepath.Join(common, filepath.FromSlash(ref))); err == nil {
+			return true
+		}
+		return strings.Contains(string(packed), " "+ref+"\n")
+	}
+	if has("refs/heads/" + layout.OldMemoryBranch) {
+		return refuse()
+	}
+	// A stale remote-tracking ref must not block an already-moved local
+	// checkout. Without the canonical local branch it must not seed a new,
+	// empty branch beside existing remote memories either.
+	if has("refs/heads/" + NotesBranch) {
+		return nil
+	}
+	for _, line := range strings.Split(string(packed), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) == 2 && strings.HasPrefix(fields[1], "refs/remotes/") && strings.HasSuffix(fields[1], "/"+layout.OldMemoryBranch) {
+			return refuse()
+		}
+	}
+	err = filepath.WalkDir(filepath.Join(common, "refs", "remotes"), func(path string, entry os.DirEntry, err error) error {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if !entry.IsDir() && entry.Name() == layout.OldMemoryBranch {
+			return errMemoryLayout
+		}
+		return nil
+	})
+	if errors.Is(err, errMemoryLayout) {
+		return refuse()
+	}
+	if err != nil {
+		return fmt.Errorf("%w: inspect remote refs: %v\nfix: hug upgrade", errMemoryLayout, err)
+	}
+	return nil
+}
 
 // Find resolves the project containing dir. In a git repository the id is
 // the first root commit (identical for every clone, unchanged by renames
@@ -64,6 +133,9 @@ func Find(dir string, create bool) (Project, error) {
 		return find(dir, create)
 	}
 	p, err := find(dir, false)
+	if errors.Is(err, errMemoryLayout) {
+		return Project{}, err
+	}
 	if err == nil {
 		// root is physical (ClientRoot resolves symlinks); compare physical
 		// paths too, or /tmp -> /private/tmp style links hide the project.
@@ -149,6 +221,12 @@ func findUncached(abs string, create bool) (Project, error) {
 				p.Notes = filepath.Join(top, NotesDir)
 			} else if main, e := gitbranch.MainRoot(top); e == nil {
 				p.Notes = filepath.Join(main, NotesDir)
+			}
+			if p.Notes != "" {
+				main := filepath.Dir(filepath.Dir(p.Notes))
+				if e := memoryLayoutGuard(main); e != nil {
+					return Project{}, e
+				}
 			}
 		}
 		return p, err

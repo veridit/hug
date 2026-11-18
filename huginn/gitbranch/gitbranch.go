@@ -932,8 +932,8 @@ type Moved struct {
 // the old remote branch is deleted (other checkouts upgrade themselves; their
 // old local branch is found from the old remote-tracking ref). Running it
 // again does nothing. It refuses while either worktree has uncommitted edits.
-func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...Option) (Moved, error) {
-	m := Moved{FromBranch: fromBranch, ToBranch: toBranch, FromDir: fromDir, ToDir: toDir}
+func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...Option) (m Moved, err error) {
+	m = Moved{FromBranch: fromBranch, ToBranch: toBranch, FromDir: fromDir, ToDir: toDir}
 	r := &Repository{Dir: repoRoot}
 	for _, o := range options {
 		o(r)
@@ -943,32 +943,177 @@ func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...O
 		return m, err
 	}
 	// The checkouts belong to the main worktree, also when run from a linked one.
-	if list, e := r.worktrees(root); e == nil {
-		root = mainRoot(list, filepath.Clean(root))
+	list, err := r.worktrees(root)
+	if err != nil {
+		return m, err
 	}
+	root = mainRoot(list, filepath.Clean(root))
 	r.Root, r.Dir = root, root
+	r.Common, err = r.runAt(root, "rev-parse", "--path-format=absolute", "--git-common-dir")
+	if err != nil {
+		return m, err
+	}
 	has := func(ref string) bool { _, e := r.runAt(root, "show-ref", "--verify", "--quiet", ref); return e == nil }
 	oldPath, newPath := filepath.Join(root, fromDir), filepath.Join(root, toDir)
-	if _, e := os.Stat(filepath.Join(oldPath, ".git")); e == nil {
+	oldBranch, newBranch := has("refs/heads/"+fromBranch), has("refs/heads/"+toBranch)
+	if oldBranch && newBranch {
+		return m, &Error{Op: "upgrade", Detail: "both branches " + fromBranch + " and " + toBranch + " exist", Fix: "git -C " + quote(root) + " log --oneline -3 " + fromBranch + " " + toBranch}
+	}
+	_, oldGitErr := os.Lstat(filepath.Join(oldPath, ".git"))
+	oldCheckout := oldGitErr == nil
+	if oldGitErr != nil && !os.IsNotExist(oldGitErr) {
+		return m, r.ioerr(oldGitErr)
+	}
+	if oldCheckout {
+		if _, e := os.Lstat(newPath); e == nil {
+			return m, &Error{Op: "upgrade", Detail: toDir + " already exists", Fix: "ls -la " + quote(newPath)}
+		} else if !os.IsNotExist(e) {
+			return m, r.ioerr(e)
+		}
+		r.Dir = oldPath
+		ownership := r.owned(oldPath)
+		r.Dir = root
+		if ownership != nil {
+			return m, ownership
+		}
+		common, e := r.runAt(oldPath, "rev-parse", "--path-format=absolute", "--git-common-dir")
+		if e != nil {
+			return m, e
+		}
+		if !within(common, r.Common) || !within(r.Common, common) {
+			return m, &Error{Op: "upgrade", Detail: fromDir + " belongs to another repository; nothing changed", Fix: "git -C " + quote(root) + " worktree repair " + quote(oldPath)}
+		}
+		branch, e := r.runAt(oldPath, "symbolic-ref", "--short", "HEAD")
+		if e != nil {
+			return m, e
+		}
+		if branch != fromBranch && !(branch == toBranch && !oldBranch && newBranch) {
+			return m, &Error{Op: "upgrade", Detail: fromDir + " has branch " + branch + ", not " + fromBranch, Fix: "git -C " + quote(root) + " worktree list"}
+		}
 		if st, e := r.runAt(oldPath, "status", "--porcelain"); e != nil {
 			return m, e
 		} else if st != "" {
 			return m, &Error{Op: "upgrade", Detail: fromDir + " has uncommitted changes", Fix: "git -C " + quote(oldPath) + " add --all && git -C " + quote(oldPath) + " commit -m " + strconv.Quote("Save before upgrade")}
 		}
 	}
-	switch {
-	case has("refs/heads/"+toBranch) && has("refs/heads/"+fromBranch):
-		return m, &Error{Op: "upgrade", Detail: "both branches " + fromBranch + " and " + toBranch + " exist", Fix: "git -C " + quote(root) + " log --oneline -3 " + fromBranch + " " + toBranch}
-	case has("refs/heads/" + fromBranch):
+	if w, ok := checkout(list, fromBranch); ok && (!oldCheckout || !within(w.Path, oldPath) || !within(oldPath, w.Path)) {
+		return m, &Error{Op: "upgrade", Detail: fromBranch + " is checked out at " + w.Path + ", not " + oldPath, Fix: "git -C " + quote(root) + " worktree list"}
+	}
+	// Probe before touching local refs, config or paths. A network failure
+	// is not permission to leave this checkout half migrated.
+	remotes, err := r.runAt(root, "remote")
+	if err != nil {
+		return m, err
+	}
+	remote, remoteOld, remoteNew := "", "", ""
+	for _, rem := range strings.Fields(remotes) {
+		if rem != "origin" && len(strings.Fields(remotes)) > 1 {
+			continue
+		}
+		if !oldBranch && !oldCheckout && !has("refs/remotes/"+rem+"/"+fromBranch) {
+			continue
+		}
+		heads, e := r.runAt(root, "ls-remote", "--heads", rem, "refs/heads/"+fromBranch, "refs/heads/"+toBranch)
+		if e != nil {
+			return m, e
+		}
+		remote = rem
+		for _, line := range strings.Split(heads, "\n") {
+			fields := strings.Fields(line)
+			if len(fields) == 2 && fields[1] == "refs/heads/"+fromBranch {
+				remoteOld = fields[0]
+			}
+			if len(fields) == 2 && fields[1] == "refs/heads/"+toBranch {
+				remoteNew = fields[0]
+			}
+		}
+		if remoteOld != "" && remoteNew != "" {
+			return m, &Error{Op: "upgrade", Detail: "both remote branches " + fromBranch + " and " + toBranch + " exist; neither was changed", Fix: "git -C " + quote(root) + " ls-remote --heads " + quote(remote) + " " + quote(fromBranch) + " " + quote(toBranch)}
+		}
+		if remoteOld != "" && (oldBranch || newBranch) {
+			local := toBranch
+			if oldBranch {
+				local = fromBranch
+			}
+			if _, e := r.runAt(root, "merge-base", "--is-ancestor", remoteOld, "refs/heads/"+local); e != nil {
+				return m, &Error{Op: "upgrade", Detail: "the remote " + fromBranch + " has commits not proved present locally; nothing changed", Fix: "git -C " + quote(root) + " fetch " + quote(remote) + " && hug upgrade", Cause: e}
+			}
+		}
+		if remoteOld == "" && remoteNew != "" && oldBranch {
+			local, e := r.runAt(root, "rev-parse", "refs/heads/"+fromBranch)
+			if e != nil {
+				return m, e
+			}
+			if _, e := r.runAt(root, "merge-base", "--is-ancestor", remoteNew, local); e != nil {
+				return m, &Error{Op: "upgrade", Detail: "remote refs/heads/" + toBranch + " is " + remoteNew + ", not the expected local " + local + " or an ancestor; refs/heads/" + fromBranch + " is absent; nothing changed or rewound", Fix: "git -C " + quote(root) + " ls-remote --heads " + quote(remote) + " " + quote(fromBranch) + " " + quote(toBranch) + " && hug upgrade", Cause: e}
+			}
+		}
+		break
+	}
+	config := filepath.Join(r.Common, "config")
+	configInfo, err := os.Stat(config)
+	if err != nil {
+		return m, r.ioerr(err)
+	}
+	configBefore, err := os.ReadFile(config)
+	if err != nil {
+		return m, r.ioerr(err)
+	}
+	refsBefore, err := r.runAt(root, "for-each-ref", "--format=%(refname) %(objectname)")
+	if err != nil {
+		return m, err
+	}
+	started := false
+	unknownRemote, unknownExpected := false, ""
+	defer func() {
+		if err == nil || !started {
+			return
+		}
+		var failed []string
+		// A failed git command can itself have changed a ref. Inspect the
+		// effect, rather than using only its exit status as evidence.
+		if _, e := os.Stat(filepath.Join(oldPath, ".git")); os.IsNotExist(e) && oldCheckout {
+			if _, e := r.runAt(root, "worktree", "move", newPath, oldPath); e != nil {
+				failed = append(failed, e.Error())
+			}
+		}
+		if oldBranch && !has("refs/heads/"+fromBranch) && has("refs/heads/"+toBranch) {
+			if _, e := r.runAt(root, "branch", "-m", toBranch, fromBranch); e != nil {
+				failed = append(failed, e.Error())
+			}
+		}
+		if e := os.WriteFile(config, configBefore, configInfo.Mode().Perm()); e != nil {
+			failed = append(failed, e.Error())
+		}
+		m.LocalBranch, m.Worktree, m.RemoteBranch = false, false, false
+		if unknownRemote && len(failed) == 0 {
+			refsAfter, re := r.runAt(root, "for-each-ref", "--format=%(refname) %(objectname)")
+			localOK := re == nil && refsAfter == refsBefore
+			if oldCheckout {
+				branch, e := r.runAt(oldPath, "symbolic-ref", "--short", "HEAD")
+				status, se := r.runAt(oldPath, "status", "--porcelain")
+				localOK = localOK && e == nil && se == nil && status == "" && (branch == fromBranch || (!oldBranch && branch == toBranch))
+			}
+			restored, e := os.ReadFile(config)
+			localOK = localOK && e == nil && bytes.Equal(restored, configBefore)
+			if localOK {
+				err = &Error{Op: "upgrade", Detail: "local original layout restoration VERIFIED; all original commits kept; remote outcome UNKNOWN for refs/heads/" + fromBranch + " (expected " + remoteOld + ") and refs/heads/" + toBranch + " (expected " + unknownExpected + "); neither remote success nor unchanged refs is proved", Fix: "git -C " + quote(root) + " ls-remote --heads " + quote(remote) + " " + quote(fromBranch) + " " + quote(toBranch) + " && hug upgrade", Cause: err}
+			} else {
+				failed = append(failed, "local restoration could not be verified; remote outcome UNKNOWN")
+			}
+		}
+		if len(failed) != 0 {
+			err = &Error{Op: "upgrade rollback", Detail: err.Error() + "; rollback could not finish: " + strings.Join(failed, "; "), Fix: "git -C " + quote(root) + " worktree list", Cause: err}
+		}
+	}()
+	started = true
+	if oldBranch {
 		if _, err = r.runAt(root, "branch", "-m", fromBranch, toBranch); err != nil {
 			return m, err
 		}
 		m.LocalBranch = true
 	}
-	if _, e := os.Stat(filepath.Join(oldPath, ".git")); e == nil {
-		if _, e := os.Stat(newPath); e == nil {
-			return m, &Error{Op: "upgrade", Detail: toDir + " already exists", Fix: "ls -la " + quote(newPath)}
-		}
+	if oldCheckout {
 		if err = os.MkdirAll(filepath.Dir(newPath), 0o755); err != nil {
 			return m, r.ioerr(err)
 		}
@@ -977,39 +1122,45 @@ func Upgrade(repoRoot, fromBranch, fromDir, toBranch, toDir string, options ...O
 		}
 		m.Worktree = true
 	}
-	remotes, err := r.runAt(root, "remote")
-	if err != nil {
-		return m, err
-	}
-	for _, rem := range strings.Fields(remotes) {
-		if rem != "origin" && len(strings.Fields(remotes)) > 1 {
-			continue
+	if remote != "" && has("refs/heads/"+toBranch) {
+		if _, err = r.runAt(root, "config", "branch."+toBranch+".remote", remote); err != nil {
+			return m, err
 		}
-		// No old local layout and no known old remote branch means there
-		// is no branch rename to perform. Do not make local file-layout
-		// migrations depend on a reachable remote.
-		if !m.LocalBranch && !m.Worktree && !has("refs/remotes/"+rem+"/"+fromBranch) {
-			continue
+		if _, err = r.runAt(root, "config", "branch."+toBranch+".merge", "refs/heads/"+toBranch); err != nil {
+			return m, err
 		}
-		heads, e := r.runAt(root, "ls-remote", "--heads", rem, "refs/heads/"+fromBranch, "refs/heads/"+toBranch)
-		if e != nil {
-			return m, e
-		}
-		oldThere := strings.Contains(heads, "refs/heads/"+fromBranch)
-		newThere := strings.Contains(heads, "refs/heads/"+toBranch)
-		if oldThere && !newThere && has("refs/heads/"+toBranch) {
-			if _, e = r.runAt(root, "push", rem, "refs/heads/"+toBranch+":refs/heads/"+toBranch); e != nil {
+		if remoteOld != "" && remoteNew == "" {
+			wanted, e := r.runAt(root, "rev-parse", "refs/heads/"+toBranch)
+			if e != nil {
 				return m, e
 			}
-			if _, e = r.runAt(root, "push", rem, "--delete", fromBranch); e != nil {
-				return m, e
+			// The two remote ref changes must succeed together, with leases
+			// on both names. Never publish a new ref then fail deleting old.
+			if _, err = r.runAt(root, "push", "--atomic", "--force-with-lease=refs/heads/"+fromBranch+":"+remoteOld, "--force-with-lease=refs/heads/"+toBranch+":", remote, "refs/heads/"+toBranch+":refs/heads/"+toBranch, ":refs/heads/"+fromBranch); err != nil {
+				// A timeout can lose only the acknowledgement: the remote may
+				// already have committed both refs. Its observed state, not
+				// the client's exit code, decides whether local rollback fits.
+				heads, verifyErr := r.runAt(root, "ls-remote", "--heads", remote, "refs/heads/"+fromBranch, "refs/heads/"+toBranch)
+				committed := false
+				oldStillThere := false
+				for _, line := range strings.Split(heads, "\n") {
+					fields := strings.Fields(line)
+					if len(fields) == 2 {
+						oldStillThere = oldStillThere || fields[1] == "refs/heads/"+fromBranch
+						committed = committed || (fields[0] == wanted && fields[1] == "refs/heads/"+toBranch)
+					}
+				}
+				if verifyErr != nil {
+					unknownRemote, unknownExpected = true, wanted
+					return m, errors.Join(err, verifyErr)
+				}
+				if !committed || oldStillThere {
+					return m, err
+				}
+				err = nil
 			}
 			m.RemoteBranch = true
 		}
-		if has("refs/heads/" + toBranch) {
-			r.runAt(root, "branch", "--set-upstream-to="+rem+"/"+toBranch, toBranch)
-		}
-		break
 	}
 	// The exclude entry for the old directory is harmless; add the new one.
 	common, err := r.runAt(root, "rev-parse", "--path-format=absolute", "--git-common-dir")

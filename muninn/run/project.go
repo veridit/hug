@@ -31,10 +31,13 @@ func projectCmd() *cobra.Command {
 func syncCmd() *cobra.Command {
 	var dir string
 	var dry, migrate, background bool
-	c := &cobra.Command{Use: "sync", Short: "Commit, rebase and push project memories on the muninn-notes branch",
-		Long: `sync merges .muninn-notes/memories.jsonl into your local store, writes only
-this project's memories, and uses the independent muninn-notes branch mounted
-at .muninn-notes/. The code branch stays clean. Requires Git >= 2.42.
+	c := &cobra.Command{Use: "sync", Short: "Commit, rebase and push project memories on the hug/memory branch",
+		Long: `sync merges .hug/memory/memories.jsonl into your local store, writes only
+this project's memories, and uses the independent hug/memory branch mounted
+at .hug/memory/. The code branch stays clean. Requires Git >= 2.42.
+
+Run hug upgrade to preview an old muninn-notes/.muninn-notes layout move,
+then hug upgrade --apply to move this repository's branch and worktree.
 
 Use --migrate to move a legacy .muninn/memories.jsonl after a successful branch
 sync. A tracked legacy file is removed in one commit on the current code branch.

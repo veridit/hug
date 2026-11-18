@@ -171,7 +171,7 @@ func clientFolders(root string, aliases ...string) map[string]string {
 			for _, e := range entries {
 				budget--
 				switch e.Name() {
-				case ".git", "node_modules", "vendor", ".muninn", ".muninn-notes":
+				case ".git", "node_modules", "vendor", ".muninn", ".muninn-notes", ".hug":
 					continue
 				}
 				next := filepath.Join(f.path, e.Name())

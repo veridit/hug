@@ -325,6 +325,11 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 			}
 		}
 	}
+	memoryLayout, err := upgradeMemoryLayout(cwd, dry)
+	if err != nil {
+		return nil, err
+	}
+	layout = append(layout, memoryLayout...)
 	part("layout", layout)
 	// The board's task files, only when the board opens: a repository
 	// without hug/tasks has nothing to migrate.

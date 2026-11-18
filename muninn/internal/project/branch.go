@@ -33,6 +33,15 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 	var st BranchStats
 	root, gitErr := git(p.Root, "rev-parse", "--show-toplevel")
 	isGit := gitErr == nil && filepath.Clean(root) == filepath.Clean(p.Root)
+	if gitErr == nil {
+		main, err := gitbranch.MainRoot(p.Root)
+		if err != nil {
+			return st, err
+		}
+		if err := memoryLayoutGuard(main); err != nil {
+			return st, err
+		}
+	}
 	if isGit {
 		st.Branch, st.Mount = NotesBranch, NotesDir
 	}
@@ -93,7 +102,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 			repository.Trailers = []string{"Model: " + m}
 		}
 		// Write where the branch is checked out: the main worktree's
-		// .muninn-notes, also from a linked worktree (065wwn).
+		// .hug/memory, also from a linked worktree (065wwn).
 		p.Notes = repository.Dir
 		err = repository.Update(func(_ *gitbranch.Repository) error {
 			if err := mergeLegacy(); err != nil {
@@ -116,7 +125,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 		if _, err = migrationGit(p.Root, "rm", "--", ".muninn/memories.jsonl"); err != nil {
 			return st, err
 		}
-		if _, err = migrationGit(p.Root, "commit", "--only", "-m", "Move project memories to muninn-notes branch", "--", ".muninn/memories.jsonl"); err != nil {
+		if _, err = migrationGit(p.Root, "commit", "--only", "-m", "Move project memories to "+NotesBranch+" branch", "--", ".muninn/memories.jsonl"); err != nil {
 			_, restoreErr := migrationGit(p.Root, "restore", "--staged", "--worktree", "--", ".muninn/memories.jsonl")
 			if restoreErr != nil {
 				return st, fmt.Errorf("migration commit failed: %w (restore also failed: %v)", err, restoreErr)
