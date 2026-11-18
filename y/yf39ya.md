@@ -41,6 +41,8 @@ Measured 19:53Z on hug's board (hug task lint): 40 findings, 37 broken, on 31 ta
     Cleaned up. The title is now 'Shipped work leaves the board clean, not a pile of lint'. The ticket has a Goal, Purpose and Principle and 5 observable checks: the release closes what it ships, an after-release confirmation shows as a question for you rather than a broken finding, and a worker's tasks return to the coordinator when its session ends. From your screenshot I also cleaned the board by hand: 11 shipped tasks whose checks all held are closed, and 17 tasks of ended workers are handed to live workers or crab. Attaching a screenshot to another task is its own task, hjbfzd.
 - 2026-11-18T20:49 request 2 by jhf:
   And I didn't mean attach it to the current selected ticket, but I could say, okay, attach to ticket so-and-so or S for select or C for create. And if I press select, I can go pick one. And if I pray, if I put create, I can create a new one
+  resolved 2026-11-18T20:56 by crab:
+    Done as you describe, in hjbfzd (high): after S, the prompt takes a task ID, or s to pick one from the list, or c to create a new task with the capture attached.
 - 2026-11-18T20:49 request 3 by jhf:
   Also, help fix this ticket with linting and other requirements so you can get it going
 
@@ -63,3 +65,4 @@ file:screen-2048.ans (22856 bytes, sha256:8a9e2d1c) screen capture from hug tui
 - 2026-11-18T20:55 request 2 in progress by crab: hug task set yf39ya
 - 2026-11-18T20:55 request 3 in progress by crab: hug task set yf39ya
 - 2026-11-18T20:56 resolved request 1 by crab
+- 2026-11-18T20:56 resolved request 2 by crab
