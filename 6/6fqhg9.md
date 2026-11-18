@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzn"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T13:32"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "rzfrgp lands"
+waiting_since: "2026-11-18T13:50"
+waiting_asked_by: "duckling"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ duckling 13:49, cause of the one new false line (scratch debug build, no paid ca
 duckling 13:50: committed e66eeb65 (judge prompt + BOARD4 'The judge states the lint ownership rule') on ci/6fqhg9 and 6fqhg9, on top of main 8d26d050; not merged. Parser NOT included: quote.patch kept at scratch/board4/6fqhg9/quote-parked.patch. Judge calls this ticket: 44 (2 x 22 batches, 129 lines) + 6 (2 x 3, the old 15) + 8 (2 x 4, 19 main lines) = 58. Under the new prompt fresh hug right lint is 1 in every arm (main 4e776695, 8d26d050, parser): nautilus e4w9ya and hatchling s6ff5k Purpose turn false because they are owner-only lint on tasks those sessions do not own; check 2's '3 right' came from the old prompt.
 ## History
 - 2026-11-18T13:32 todo -> doing/active (take)
+- 2026-11-18T13:50 doing/active -> doing/waiting (wait)
