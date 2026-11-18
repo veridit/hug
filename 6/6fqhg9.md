@@ -1,7 +1,7 @@
 ---
 id: 6fqhg9
 title: "Hook: a hug command quoted inside another's argument is not a call"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["duckling"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzwx"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T13:32"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "rzfrgp lands"
-waiting_since: "2026-11-18T13:50"
-waiting_asked_by: "duckling"
+done_at: "2026-11-18T22:33"
 ---
 
 ## Goal
@@ -57,6 +53,8 @@ landed 5fbf547 on main 2026-11-18: board4 judge: state the lint ownership rule; 
 landed c6e4963 on main 2026-11-18: recall hook: a hug command quoted inside another's argument is not a call…
 shipped in v0.7.64 (5fbf547)
 crab 21:34: shipped (2k68eg afc0d238 in v0.7.65, 3t4a49 50ab1bba in v0.7.69, 6fqhg9 c6e49638 in v0.7.64 per git tag --contains); all checks hold; closed by crab
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T13:32 todo -> doing/active (take)
 - 2026-11-18T13:50 doing/active -> doing/waiting (wait)
+- 2026-11-18T22:33 doing/waiting -> done (done); was doing_since: 2026-11-18T13:32; waiting_asked_by: duckling; waiting_on: rzfrgp lands; waiting_since: 2026-11-18T13:50
