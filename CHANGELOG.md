@@ -18,6 +18,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - Background sync: a pass that cannot open the board (its checkout pruned, no remote) removes the pending marker its start wrote, so `hug task ls`'s sync state and waiters stop counting a pass that will never run (jj7jpz, CI 44230245084).
 
+- TUI images in the file frame (2qndsd): Space on a PNG, JPEG or GIF in FILES opens it in the same frame as any other file, crumb (`HUG TASKS · list › ID › path · size · n of m`), note, rule, the image, rule, keys, instead of full screen until any key. iTerm2 and kitty (also inside tmux) draw it over the frame's rows, fitted to their height and width; elsewhere the frame holds one line, `image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it`. `n` and `p` step between images and text files in that frame, and leaving an image repaints the screen once so no piece of it stays. `S` captures the frame as text, without the image bytes.
+
 ## v0.7.64 - 2026-11-18
 
 - Recall hook board lines (6fqhg9, rzfrgp): a hug command quoted inside another command's argument (a `--goal`, a note, a quoted lint line) no longer counts as run, so quoting `hug task take ID` does not make ID yours; `sh -c '...'` and `$(...)` still count. The "this looks like ID" take line no longer names a task you only opened with `hug task show`. The board4 judge now states that a missing-section or owner question is right only on the agent's own task; two judgings agree on 134 of 145 lines (was 7 of 15 on the lines that flipped). Replayed under it: six sets false 9 -> 7, right 106 -> 107; fresh hug false 4 -> 3 (muninn/docs/BOARD4.md).
