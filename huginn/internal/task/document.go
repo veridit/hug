@@ -265,6 +265,11 @@ type Task struct {
 	// Outcome is what the asker did first after the newest answer (41hhgn
 	// check 11), from its History read line; nil before it acts.
 	Outcome *Outcome `json:"outcome,omitempty"`
+	// AnswerCount is how many answer blocks History holds (gmzd87: the
+	// newest is "answer <count>"); Answers are the ones handed to the
+	// coordinator, each with its receipt. Read from History.
+	AnswerCount int    `json:"answer_count,omitempty"`
+	Answers     []Item `json:"answers,omitempty"`
 	// Woken is whether the newest History line is a timed wait ending
 	// (z2vmte): nothing has moved the task since; next --mine puts it
 	// first. Read from History, never written.
@@ -591,6 +596,8 @@ func Parse(path string, data []byte) *Document {
 	d.Task.Woken = woken(d.historyLines())
 	d.Findings = append(d.Findings, untilFindings(d.Task)...)
 	d.Task.Requests = parseRequests(d.requestLines())
+	d.Task.AnswerCount = answerCount(d.historyLines())
+	readReceipts(&d.Task, d.historyLines())
 	d.Task.Texts = &Texts{Bodies: true, Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}
 	for _, sec := range DescriptionSections {
 		d.Task.Texts.Description[sec] = d.sectionText(sec)

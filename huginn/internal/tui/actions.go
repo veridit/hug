@@ -409,6 +409,23 @@ func (m *model) answer(text string) {
 	defer m.hold()()
 	r, err := m.store.Answer(t.ID, text, m.me())
 	m.finish(r, err, "answer")
+	m.deliver(r, err, "answer", m.me())
+}
+
+// deliver hands what a write just stored to the coordinator (gmzd87) and
+// says the receipt in the message line.
+func (m *model) deliver(r task.Result, err error, kind, by string) {
+	if err != nil || !r.Changed || m.opts.Deliver == nil {
+		return
+	}
+	receipt, e := m.opts.Deliver(r.Task.ID, kind, by)
+	switch {
+	case e != nil:
+		m.message = e.Error()
+	case receipt != "":
+		m.message += ": " + receipt
+	}
+	m.refresh(r.Task.Path)
 }
 
 // hold takes the board's write turn when the TUI was given one (95ahtk):

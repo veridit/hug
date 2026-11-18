@@ -90,6 +90,10 @@ type App struct {
 	// upgrade's memory part and returns its exit code and output (5sc5rw).
 	// Nil: the part names the command instead.
 	MemUpgrade func(args []string) (int, string)
+	// JcodeHomes are the jcode homes whose sessions a request or answer is
+	// delivered in (gmzd87); nil: every jcode instance on this machine (none
+	// in a test binary).
+	JcodeHomes []string
 }
 
 // boardNewer is the error a hug older than its board gives on a write
@@ -1502,6 +1506,15 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 	}
 	reply, e = resultJSON(r, s)
+	// A person's request or answer goes to the board's coordinator now
+	// (gmzd87), after its commit, by the one function the TUI uses too.
+	var receipt string
+	if e == nil && r.Changed && (cmd == "request" || cmd == "answer") {
+		receipt, e = a.Deliver(s.s, s.r.Dir, s.r.Root, r.Task.ID, cmd, a.actor(f), s.commit)
+		if e == nil && receipt != "" {
+			reply["receipt"] = receipt
+		}
+	}
 	if e == nil && r.Changed {
 		withGuide(reply, cmd, r.Task, s)
 	}

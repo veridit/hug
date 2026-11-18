@@ -35,6 +35,9 @@ type Request struct {
 	At       string      `json:"at"`
 	Text     string      `json:"text"`
 	Resolved *Resolution `json:"resolved,omitempty"`
+	// Receipt is how far the request has reached the board's coordinator
+	// (gmzd87), read from History.
+	Receipt Receipt `json:"receipt"`
 }
 
 // Resolution is how a request was closed: who, when, and what they did.

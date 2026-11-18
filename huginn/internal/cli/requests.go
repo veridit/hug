@@ -71,6 +71,8 @@ func requestsText(rows []RequestRow) string {
 			head += ", resolved by " + x.Req.Resolved.By
 		}
 		b.WriteString(head + ": " + x.Title + "\n")
+		// Its receipt (gmzd87): how far it has reached the coordinator.
+		b.WriteString("  receipt: " + x.Req.Receipt.Label() + "\n")
 		b.WriteString(requestBody(x.Req))
 		if x.Fix != "" {
 			b.WriteString("  fix: " + x.Fix + "\n")

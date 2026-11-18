@@ -72,8 +72,13 @@ type Outcome struct {
 // readAnswers is unseenAnswer, and the newest answer's outcome, if its
 // asker has acted on it.
 func readAnswers(history []string) (*Answer, *Outcome) {
-	var cur *Answer
-	var outcome *Outcome
+	cur, outcome, _ := scanAnswers(history)
+	return cur, outcome
+}
+
+// scanAnswers is readAnswers, and the newest answer block seen or not
+// (gmzd87: what an answer's delivery says).
+func scanAnswers(history []string) (cur *Answer, outcome *Outcome, last *Answer) {
 	seen := func() {
 		if cur != nil && (cur.For == "" || strings.EqualFold(cur.For, cur.By)) {
 			cur = nil
@@ -97,7 +102,7 @@ func readAnswers(history []string) (*Answer, *Outcome) {
 				}
 			}
 			a.Question, a.Text = strings.Join(q, "\n"), strings.Join(t, "\n")
-			cur = a
+			cur, last = a, a
 			seen()
 			continue
 		}
@@ -108,6 +113,7 @@ func readAnswers(history []string) (*Answer, *Outcome) {
 				continue
 			}
 			cur = &Answer{At: m[1], Stage: m[2], Question: q, Text: a, By: m[5], For: m[6]}
+			last = cur
 			seen()
 			continue
 		}
@@ -119,7 +125,7 @@ func readAnswers(history []string) (*Answer, *Outcome) {
 			cur = nil
 		}
 	}
-	return cur, outcome
+	return cur, outcome, last
 }
 
 // answerBlock is the History block of an answer: the head (without the

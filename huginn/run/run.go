@@ -66,3 +66,10 @@ func RegisterMCP(s *sdk.Server, prefix string) error {
 
 // MCPInstructions describes the task tools registered under prefix.
 func MCPInstructions(prefix string) string { return mcp.PrefixedInstructions(prefix) }
+
+// Acknowledge is hug's hook in jcode session sid (JCODE_HOME home)
+// acknowledging what hug delivered to it once its transcript holds it
+// (gmzd87). It returns what it acknowledged, "ID request N" each.
+func Acknowledge(ctx context.Context, home, sid string) ([]string, error) {
+	return cli.Acknowledge(ctx, home, sid)
+}

@@ -150,7 +150,11 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 		// the listing the reload just made (44w1ev).
 		Lint: func() ([]task.Finding, error) { return s.c.LintListed(), nil },
 		// / search ranks by the cache's index, as hug task search (49n9kw).
-		Search: func(query string) ([]string, error) { return s.c.Rank(ctx, query) }}
+		Search: func(query string) ([]string, error) { return s.c.Rank(ctx, query) },
+		// r and a deliver as hug task request and answer do (gmzd87).
+		Deliver: func(id, kind, by string) (string, error) {
+			return a.Deliver(s.s, s.r.Dir, s.r.Root, id, kind, by, s.commit)
+		}}
 	// / and : histories (xfv9pw): per board, in the git dir beside the task
 	// cache (one repository, every worktree, one history), never on the
 	// task branch.
