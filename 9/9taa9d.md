@@ -23,6 +23,10 @@ One hug binary with tasks, memories and messages; .hug/<kind>/ on branches hug/<
 - [ ] branches hug/tasks and hug/memories; huginn branch migrated in muninn, huginn, seid-lang
 - [ ] memories stored one Markdown file per memory, retire = move to _retired/
 
+## Requests
+- 2026-11-18T12:00 request 1 by jhf:
+  I think the principle here is that we always are consistent. So when we decide that, okay, we're going to go into make hug the thing, we have to run a clean cone chip and do everything, and so that is the principle. And the goal is a unified, easy-to-navigate, non-confusing CLI and system
+
 ## Notes
 
 v0.7.0 released 2026-11-13: one hug binary (hug task / hug mem / hug setup / hug tui), muninn and huginn as links. CI green on ubuntu, macos, windows (run 43437457236); release run 43439376684 published 6 archives + SHA256SUMS. brew upgrade huginn installed hug 0.7.0 with muninn/huginn symlinks; 'hug v0.7.0 (memory: muninn v0.7.0, tasks: huginn v0.7.0)'. Claude and jcode hooks exit 0, both MCP servers answer initialize. Steps 2 and 3 (hug/<kind> branches, file-per-memory) remain.
@@ -32,3 +36,7 @@ Correction: item 1 was ticked too early. 'One MCP server' is NOT done: muninn mc
 v0.7.1 (2026-11-13): hug mcp serves memory_* and task_* from one process. Switched 6 configs to it (~/.jcode, Brovs, GenderedGames, truth_tribe_and_treasure jcode mcp.json; ~/.claude.json; Claude app), backups *.bak-<stamp>. Verified: Brovs binding client:brovs, 17 tools. Item 1 now complete.
 
 Status 2026-11-16: item 2 half done: tasks moved to branch hug/tasks at .hug/tasks (hug upgrade, v0.7.3; this repo and seid-lang migrated). Memory is still in the muninn SQLite DB; branch hug/memory (user's name: 'memory', not 'memories') and item 3 (file per memory, retire = move to _retired/) need a design discussion with the user before building.
+
+
+## History
+- 2026-11-18T12:00 request 1 by jhf
