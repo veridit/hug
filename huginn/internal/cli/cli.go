@@ -47,7 +47,7 @@ Every command:
   work:   next take show check strike note attach detach done reflections
   people: wait ask resume review design answer request requests resolve coordinator
   shape:  new edit set dep promote move mv drop rebalance
-  find:   ls search board types states people models lint deduce
+  find:   ls search board types states people tags models lint deduce
   repo:   setup init sync import upgrade tui mcp install uninstall version help
 New flags: --dep ID (repeatable), --group FOLDER, --label LABEL, --top, --after ID.
 Details: hug task help COMMAND (for every flag and examples).
@@ -58,7 +58,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task, 5 upgrade has chan
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "ask", "resume", "review", "design", "answer", "request", "resolve", "requests", "coordinator", "next", "rebalance", "types", "states", "people", "models", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "ask", "resume", "review", "design", "answer", "request", "resolve", "requests", "coordinator", "next", "rebalance", "types", "states", "people", "tags", "models", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -673,7 +673,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply machine"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label tag state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "tags": "", "models": "", "upgrade": "apply machine"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -844,6 +844,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	}()
 	if cmd == "people" {
 		return a.runPeople(ctx, s, f)
+	}
+	if cmd == "tags" {
+		return a.runTags(s, f)
 	}
 	if cmd == "coordinator" {
 		return a.runCoordinator(s, f)
@@ -1408,13 +1411,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		fields := []string{"state", "type", "priority", "label", "title", "assignee", "parent"}
 		count := 0
-		for _, field := range append(append([]string{}, fields...), "goal", "purpose", "principle", "details", "accept") {
+		for _, field := range append(append([]string{}, fields...), "goal", "purpose", "principle", "details", "accept", "tag") {
 			if f.has(field) {
 				count++
 			}
 		}
 		if count == 0 {
-			return nil, usage("set needs a field: --priority, --type, --label, --state, --title, --assignee, --parent, --goal, --purpose, --principle, --details, --accept", "hug task show "+f.args[0])
+			return nil, usage("set needs a field: --priority, --type, --label, --tag, --state, --title, --assignee, --parent, --goal, --purpose, --principle, --details, --accept", "hug task show "+f.args[0])
 		}
 		if f.has("title") && strings.TrimSpace(f.get("title")) == "" {
 			return nil, usage("title must not be empty", "hug task show "+f.args[0])
@@ -1442,6 +1445,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			if len(sections) > 0 || len(f.values["accept"]) > 0 {
 				r, e = s.s.SetText(f.args[0], sections, f.values["accept"])
 			}
+		}
+		// --tag NAME adds one tag, OLD=NEW replaces one, OLD= removes one
+		// (txjkrm check 2, crab 14:52); repeatable.
+		for _, spec := range f.values["tag"] {
+			if e != nil {
+				break
+			}
+			r, e = s.s.Tag(f.args[0], spec)
 		}
 	case "move":
 		if e = f.count(1); e != nil {
@@ -1968,6 +1979,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	if text, ok := reply["states_text"].(string); ok {
 		fmt.Fprint(a.Out, text)
+	}
+	if ts, ok := reply["tags"].([]string); ok {
+		if len(ts) == 0 {
+			fmt.Fprintln(a.Out, "no tags in hug.toml: lint judges no task's tags")
+		}
+		for _, t := range ts {
+			fmt.Fprintln(a.Out, t)
+		}
 	}
 	if ps, ok := reply["people"].([]task.Person); ok {
 		if len(ps) == 0 {

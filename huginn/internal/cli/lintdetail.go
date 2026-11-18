@@ -50,6 +50,10 @@ func (s *session) boardFindings(ctx context.Context, cwd string, live *task.Live
 			// A question written as a wait (agxqax).
 			fs = append(fs, task.PersonWaitFindings(people, ts)...)
 		}
+		// Each tag on hug.toml's list (txjkrm): config, not file content.
+		if tags, e := task.Tags(s.r.Dir); e == nil {
+			fs = append(fs, task.TagFindings(tags, ts)...)
+		}
 		// Harness session state, not file content (v3k6cp, 9ahvgt): a
 		// person in [people] is never judged.
 		fs = append(fs, task.OwnerFindings(live, ts, time.Now(), people...)...)
@@ -195,6 +199,11 @@ func (s *session) taskLint(t task.Task) *TaskLint {
 	}
 	fs := s.c.LintListed()
 	mine := forTask(fs, t)
+	// Its tags against hug.toml's list (txjkrm): config, not the cache,
+	// so a write that adds a tag hears about it at once.
+	if tags, e := task.Tags(s.r.Dir); e == nil {
+		mine = append(mine, task.TagFindings(tags, []task.Task{t})...)
+	}
 	if len(mine) == 0 {
 		return nil
 	}
