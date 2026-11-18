@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:54"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "askfree"
 worktree: "/Users/jhf/.jcode/scratch/askfree"
+waiting_on: "CI run 44400965600 on b51a2cda (ci/yphbra), then crab's review and landing"
+waiting_since: "2026-11-18T22:23"
+waiting_asked_by: "piglet"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ check 3: b51a2cda (tests 4cb68eb0 failing first on 8a45b0eb: every ask on a todo
 check 4: full huginn suite niced -count=1 on b51a2cda: 11 ok, 0 FAIL (cli 304.871s, tui 168.284s); existing ask/answer/q2adr8 tests unchanged
 ## History
 - 2026-11-18T21:54 todo -> doing/active (take)
+- 2026-11-18T22:23 doing/active -> doing/waiting (wait)
