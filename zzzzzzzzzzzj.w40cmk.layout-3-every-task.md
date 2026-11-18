@@ -30,7 +30,7 @@ Front matter, grouped: identity (id, title, type, priority, labels, group, paren
 ## Depends on
 
 ## Acceptance
-- [ ] On a scratch clone of hug's board, hug upgrade previews the move of every task to ID.md with rank: and group: set and exits 5; --apply does it in one commit; afterwards ls, next and the TUI show the same order and groups as before (test plus the clone's numbers)
+- [x] On a scratch clone of hug's board, hug upgrade previews the move of every task to ID.md with rank: and group: set and exits 5; --apply does it in one commit; afterwards ls, next and the TUI show the same order and groups as before (test plus the clone's numbers)
 - [ ] A move (J/K, move --before, rebalance) changes only rank: lines, renames nothing, and leaves updated: unchanged; git log --follow is never needed (test)
 - [ ] Group moves (mv ID GROUP) edit group: and keep the file and its ID/ folder where they are (test)
 - [ ] An old file name or slug still resolves as a ref: hug task show 00i.6ephqk.task-state-stage-hard finds 6ephqk (test)
