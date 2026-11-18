@@ -30,7 +30,7 @@ Code: cmd/hug upgrade dispatch, muninn/run/upgrade.go (jcode hook migration), hu
 ## Depends on
 
 ## Acceptance
-- [ ] In a test, hug upgrade --apply run in a scratch clone with a fake HOME holding jcode configs changes only the clone's board unless the machine step is asked for (fails first on main)
+- [x] In a test, hug upgrade --apply run in a scratch clone with a fake HOME holding jcode configs changes only the clone's board unless the machine step is asked for (fails first on main)
 - [ ] The preview groups lines under 'this board:' and 'this machine:' (golden)
 
 ## Notes
