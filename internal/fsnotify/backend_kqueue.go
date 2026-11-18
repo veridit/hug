@@ -352,7 +352,9 @@ func (w *kqueue) remove(name string, unwatchFiles bool) error {
 			// Since these are internal, not much sense in propagating error to
 			// the user, as that will just confuse them with an error about a
 			// path they did not explicitly watch themselves.
-			w.Remove(name)
+			// hug (mq5ger): opMu is held here, so not the public Remove,
+			// which takes it again; upstream main calls remove2(name, false).
+			w.remove(name, false)
 		}
 	}
 	return nil
