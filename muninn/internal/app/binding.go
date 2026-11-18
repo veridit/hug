@@ -346,18 +346,24 @@ func (b Binding) ForgetMany(ctx context.Context, a *App, refs []string, sessions
 	if len(hidden) > 0 {
 		return nil, fmt.Errorf("nothing forgotten: no visible memory %s", strings.Join(hidden, ", "))
 	}
-	return forgetHeld(a.ForgetMany(ctx, refs))
+	return forgetHeld(a.forgetMany(ctx, refs))
 }
 
 // forgetHeld reads a forget back: every memory it reports forgotten is
 // inactive in the store now. A writer that put one back (tn8bmn: a project
 // sync read a stale line over it) makes the forget fail, never report
-// success it does not have.
-func forgetHeld(out []ForgetResult, err error) ([]ForgetResult, error) {
+// success it does not have. A store file whose stat, under its lock, is
+// still the one this forget saved has had no other writer since, so it holds
+// what the forget wrote and is not read again (4vd1mz: the reload was
+// 120 ms of a forget on a 30,000-memory store).
+func forgetHeld(out []ForgetResult, saved map[string]ingest.FileStat, err error) ([]ForgetResult, error) {
 	if err != nil {
 		return out, err
 	}
 	WriteLanded()
+	if unchangedSince(saved) {
+		return out, nil
+	}
 	mems, err := loadLocked()
 	if err != nil {
 		return out, err
@@ -391,6 +397,27 @@ func loadLocked() ([]ingest.NativeMemory, error) {
 	}
 	defer unlock()
 	return ingest.LoadNative(NativePath())
+}
+
+// unchangedSince reports every saved store file still at the stat its write
+// left it with, checked under the file's lock; false when nothing was saved
+// (a suppression only) or any file moved on.
+func unchangedSince(saved map[string]ingest.FileStat) bool {
+	if len(saved) == 0 {
+		return false
+	}
+	for path, want := range saved {
+		unlock, err := ingest.LockNative(path)
+		if err != nil {
+			return false
+		}
+		got, err := ingest.StatFile(path)
+		unlock()
+		if err != nil || got != want || want.Mtime <= 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func (b Binding) mayForget(a *App, ref string, sessions []string) error {

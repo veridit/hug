@@ -22,6 +22,9 @@ type IndexStats struct {
 	// Dream is the last dream pass in one line, with its undo receipt, or
 	// "dream: never ran" (h00cs2: nothing writes silently).
 	Dream string `json:"dream"`
+	// GraphMoved is when and how the concept graph moved from the old gob
+	// to its tables (4vd1mz), empty when this store never had a gob.
+	GraphMoved string `json:"graph_moved,omitempty"`
 }
 
 // Stats defaults to the same environment binding as every other surface.
@@ -83,5 +86,6 @@ func Stats(ctx context.Context, a *App, bindings ...Binding) (IndexStats, error)
 		s.Embedder = a.Embedder.Model() + " @ " + a.Cfg.OllamaURL
 	}
 	s.DBPath = a.DB.Path
+	s.GraphMoved = a.DB.GetMeta("graph_moved")
 	return s, nil
 }

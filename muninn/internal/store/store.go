@@ -131,6 +131,16 @@ CREATE TABLE IF NOT EXISTS sketches (
   sketch BLOB NOT NULL,
   PRIMARY KEY (content_hash, pipeline_hash)
 ) WITHOUT ROWID;
+-- Narrow copy of the int8 vectors for the neighbour update, which reads
+-- every active one (4vd1mz): in embeddings each qvec sits behind the 3 KB
+-- float vector on overflow pages, and a cold read of all of them took
+-- 635 ms of a 1.6 s forget on a 30,000-memory store (here: 430 ms).
+CREATE TABLE IF NOT EXISTS qvecs (
+  content_hash TEXT NOT NULL,
+  pipeline_hash TEXT NOT NULL,
+  qvec BLOB NOT NULL,
+  PRIMARY KEY (content_hash, pipeline_hash)
+) WITHOUT ROWID;
 -- Incremental neighbour graph (k nearest by cosine), maintained per dirty unit.
 CREATE TABLE IF NOT EXISTS neighbors (
   unit_id INTEGER NOT NULL,
@@ -155,8 +165,14 @@ CREATE TABLE IF NOT EXISTS unit_communities (
   PRIMARY KEY (community_id, unit_id)
 ) WITHOUT ROWID;
 CREATE INDEX IF NOT EXISTS unit_communities_u ON unit_communities(unit_id);
--- Persisted DF-Louvain state (gob), so incremental updates resume exactly.
-CREATE TABLE IF NOT EXISTS graph_state (id INTEGER PRIMARY KEY CHECK (id = 1), state BLOB NOT NULL);
+-- The concept graph (4vd1mz): each concept's weighted degree and packed
+-- adjacency (uvarint id gap, weight), and each community's total degree;
+-- its total weight is meta graph_m. graph_state held the whole graph as one
+-- gob before; the first writer moves it here (index.moveGraph) and leaves an
+-- empty view in its place.
+CREATE TABLE IF NOT EXISTS graph_vertex (concept_id INTEGER PRIMARY KEY, k REAL NOT NULL, adj BLOB NOT NULL);
+CREATE TABLE IF NOT EXISTS graph_community (community_id INTEGER PRIMARY KEY, sum_tot REAL NOT NULL);
+CREATE VIEW IF NOT EXISTS graph_state(id, state) AS SELECT 1, NULL WHERE 0;
 -- Memory types inferred for memories whose source has no type field (jcode
 -- memory files, untyped native memories): keyed by content hash, so a type
 -- follows the text and survives re-indexing. A type stated on the memory
@@ -232,6 +248,14 @@ func Open(path string) (*DB, error) {
 		  SELECT content_hash, pipeline_hash, sketch FROM embeddings`); err != nil {
 			db.Close()
 			return nil, fmt.Errorf("backfill sketches: %w", err)
+		}
+	}
+	db.QueryRow(`SELECT EXISTS(SELECT 1 FROM qvecs), EXISTS(SELECT 1 FROM embeddings)`).Scan(&have, &want)
+	if have == 0 && want == 1 {
+		if _, err := db.Exec(`INSERT OR IGNORE INTO qvecs(content_hash, pipeline_hash, qvec)
+		  SELECT content_hash, pipeline_hash, qvec FROM embeddings`); err != nil {
+			db.Close()
+			return nil, fmt.Errorf("backfill qvecs: %w", err)
 		}
 	}
 	db.QueryRow(`SELECT EXISTS(SELECT 1 FROM unit_communities), EXISTS(SELECT 1 FROM communities)`).Scan(&have, &want)
@@ -382,6 +406,10 @@ func (d *DB) PutEmbedding(hash, pipeline string, dim int, vec, qvec, sketch []by
 		return err
 	}
 	_, err = d.Exec(`INSERT OR REPLACE INTO sketches(content_hash, pipeline_hash, sketch) VALUES(?,?,?)`, hash, pipeline, sketch)
+	if err != nil {
+		return err
+	}
+	_, err = d.Exec(`INSERT OR REPLACE INTO qvecs(content_hash, pipeline_hash, qvec) VALUES(?,?,?)`, hash, pipeline, qvec)
 	return err
 }
 
@@ -392,6 +420,9 @@ func (d *DB) GC(pipeline string) (int64, error) {
 		return 0, err
 	}
 	if _, err := d.Exec(`DELETE FROM sketches WHERE pipeline_hash<>? OR content_hash NOT IN (SELECT content_hash FROM units)`, pipeline); err != nil {
+		return 0, err
+	}
+	if _, err := d.Exec(`DELETE FROM qvecs WHERE pipeline_hash<>? OR content_hash NOT IN (SELECT content_hash FROM units)`, pipeline); err != nil {
 		return 0, err
 	}
 	return res.RowsAffected()

@@ -168,6 +168,9 @@ func indexCmd() *cobra.Command {
 				return fmt.Errorf("legacy folder cache: %w", err)
 			}
 			fmt.Println(st)
+			if a.Indexer.GraphMoved != "" {
+				fmt.Println(a.Indexer.GraphMoved)
+			}
 			if st.EmbedErr != nil {
 				fmt.Fprintln(os.Stderr, "embedding skipped:", st.EmbedErr)
 			}
@@ -365,14 +368,15 @@ func forgetCmd() *cobra.Command {
 				return fmt.Errorf("no memory id given\nfix: hug mem forget ID [ID...], or one id per line: hug mem forget --stdin")
 			}
 			return withApp(func(ctx context.Context, a *app.App) error {
-				// One write turn for the whole call: the freshness pass, the
-				// checks and the forget queue once, not once per step.
+				// One write turn for the whole call: the freshness check, the
+				// checks and the forget queue once, not once per step. A full
+				// pass only when the index is not current (4vd1mz).
 				ctx, release, err := a.WriteTurn(ctx)
 				if err != nil {
 					return err
 				}
 				defer release()
-				if _, err := a.Reindex(ctx); err != nil {
+				if err := a.FreshFor(ctx, ids); err != nil {
 					return err
 				}
 				out, err := view.binding(a).ForgetMany(ctx, a, ids, app.HarnessSessions()...)

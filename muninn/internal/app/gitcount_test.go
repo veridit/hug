@@ -46,8 +46,10 @@ func TestPlacementLooksUpTheProjectOnce(t *testing.T) {
 				lookups++
 			}
 		}
-		if lookups != 1 {
-			t.Errorf("Placement(%q) looks the project up %d times, want 1 (%d git processes):\n  %s", name, lookups, len(calls), strings.Join(calls, "\n  "))
+		// At most one: Bound above has usually found the project already,
+		// and project.Find keeps it for the command (4vd1mz), so 0 is right.
+		if lookups > 1 {
+			t.Errorf("Placement(%q) looks the project up %d times, want at most 1 (%d git processes):\n  %s", name, lookups, len(calls), strings.Join(calls, "\n  "))
 		}
 	}
 }

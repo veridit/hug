@@ -1,23 +1,70 @@
 package index
 
+import "sort"
+
 // Graph is the concept co-occurrence graph with Louvain communities, updated
 // incrementally with DF-Louvain (arXiv:2404.19634, Algorithm 1) exactly as in
 // seid search: apply the batch edge delta, seed a frontier from structural
 // changes, and run a frontier-restricted move loop. Only the neighbourhood of
 // what changed is reconsidered; nothing is recomputed from scratch.
+//
+// Every weight is a count (each unit adds or removes 1 per pair), so K, M
+// and SumTot are exact integers in float64 and their sums do not depend on
+// order. Vertices and candidate communities are visited in id order, so one
+// graph and one batch always give the same communities (4vd1mz: Go map order
+// made two identical updates label communities differently).
 type Graph struct {
+	// Adj holds the adjacency of the vertices loaded so far; adj(v) loads a
+	// stored vertex's on first use (all of them, for a graph built in memory).
 	Adj       map[int]map[int]float64 // symmetric weights
 	K         map[int]float64         // weighted degree
 	Community map[int]int
 	SumTot    map[int]float64
-	SumIn     map[int]float64
 	M         float64 // total edge weight
+
+	load    func(v int) (map[int]float64, error) // nil: Adj is complete
+	err     error                                // first load error
+	dirty   map[int]bool                         // K, community or adjacency changed
+	comm0   map[int]int                          // communities as loaded
+	sumTot0 map[int]float64                      // community totals as loaded
+	// Loads counts adjacencies read from storage (4vd1mz's counting test).
+	Loads int
 }
 
 // NewGraph returns an empty graph.
 func NewGraph() *Graph {
 	return &Graph{Adj: map[int]map[int]float64{}, K: map[int]float64{}, Community: map[int]int{},
-		SumTot: map[int]float64{}, SumIn: map[int]float64{}}
+		SumTot: map[int]float64{}, dirty: map[int]bool{}}
+}
+
+// adj is v's adjacency, loaded from storage the first time it is needed.
+func (g *Graph) adj(v int) map[int]float64 {
+	if m, ok := g.Adj[v]; ok {
+		return m
+	}
+	var m map[int]float64
+	if _, stored := g.Community[v]; stored && g.load != nil {
+		g.Loads++
+		var err error
+		if m, err = g.load(v); err != nil && g.err == nil {
+			g.err = err
+		}
+	}
+	if m == nil {
+		m = map[int]float64{}
+	}
+	g.Adj[v] = m
+	return m
+}
+
+// sortedKeys returns m's keys in increasing order.
+func sortedKeys[V any](m map[int]V) []int {
+	out := make([]int, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	sort.Ints(out)
+	return out
 }
 
 // UnitDelta is one unit's concept set before and after a change.
@@ -66,6 +113,7 @@ func (g *Graph) ensure(v int) (isNew bool) {
 		g.Adj[v] = map[int]float64{}
 	}
 	g.SumTot[v] += g.K[v]
+	g.dirty[v] = true
 	return true
 }
 
@@ -101,7 +149,9 @@ func (g *Graph) Update(deltas []UnitDelta) (int, int) {
 		}
 		g.ensure(e.a)
 		g.ensure(e.b)
-		oldW := g.Adj[e.a][e.b]
+		adjA, adjB := g.adj(e.a), g.adj(e.b)
+		g.dirty[e.a], g.dirty[e.b] = true, true
+		oldW := adjA[e.b]
 		newW := oldW + dw
 		g.K[e.a] += dw
 		g.K[e.b] += dw
@@ -109,18 +159,15 @@ func (g *Graph) Update(deltas []UnitDelta) (int, int) {
 		ca, cb := g.Community[e.a], g.Community[e.b]
 		g.SumTot[ca] += dw
 		g.SumTot[cb] += dw
-		if ca == cb {
-			g.SumIn[ca] += dw
-		}
 		if newW <= 1e-9 {
-			delete(g.Adj[e.a], e.b)
-			delete(g.Adj[e.b], e.a)
+			delete(adjA, e.b)
+			delete(adjB, e.a)
 			if oldW > 1e-9 {
 				removed = append(removed, e)
 			}
 		} else {
-			g.Adj[e.a][e.b] = newW
-			g.Adj[e.b][e.a] = newW
+			adjA[e.b] = newW
+			adjB[e.a] = newW
 			if oldW <= 1e-9 {
 				added = append(added, e)
 			}
@@ -161,18 +208,16 @@ func (g *Graph) moveLoop(frontier map[int]bool) (int, int) {
 	waves, moves := 0, 0
 	for len(frontier) > 0 && waves < maxWaves {
 		waves++
-		current := make([]int, 0, len(frontier))
-		for v := range frontier {
-			current = append(current, v)
-		}
+		current := sortedKeys(frontier)
 		frontier = map[int]bool{}
 		waveGain, waveMoves := 0.0, 0
 		for _, i := range current {
+			adjI := g.adj(i) // loads K[i] too
 			ci := g.Community[i]
 			ki := g.K[i]
 			// Weight from i to each neighbouring community (ci included).
 			ncomms := map[int]float64{ci: 0}
-			for j, w := range g.Adj[i] {
+			for j, w := range adjI {
 				if j != i {
 					ncomms[g.Community[j]] += w
 				}
@@ -181,12 +226,11 @@ func (g *Graph) moveLoop(frontier map[int]bool) (int, int) {
 			// Blondel gain dQ(c) = k_i,c/m - SumTot_c*k_i/(2m^2). seid search
 			// used k_i,c/(2m) for the first term, which halves the pull of a
 			// community and leaves new concepts stranded alone.
-			g.SumIn[ci] -= ncomms[ci]
 			g.SumTot[ci] -= ki
 			gainOf := func(c int) float64 { return ncomms[c]/g.M - g.SumTot[c]*ki/(m2*g.M) }
 			stay := gainOf(ci)
 			bestC, bestGain := ci, 0.0
-			for c := range ncomms {
+			for _, c := range sortedKeys(ncomms) {
 				if c == ci {
 					continue
 				}
@@ -194,14 +238,14 @@ func (g *Graph) moveLoop(frontier map[int]bool) (int, int) {
 					bestGain, bestC = d, c
 				}
 			}
-			g.SumIn[bestC] += ncomms[bestC]
 			g.SumTot[bestC] += ki
 			g.Community[i] = bestC
 			if bestC != ci {
+				g.dirty[i] = true
 				moves++
 				waveMoves++
 				waveGain += bestGain
-				for j := range g.Adj[i] { // onChange(i): expand to neighbours
+				for j := range adjI { // onChange(i): expand to neighbours
 					if j != i {
 						frontier[j] = true
 					}

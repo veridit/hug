@@ -90,3 +90,47 @@ func TestAnchorsIndexed(t *testing.T) {
 		t.Fatalf("%d anchors left on active units after forget", n)
 	}
 }
+
+// 4vd1mz: the shared candidate path keeps main's anchor maintenance even
+// when forget no longer runs a full pass (and its one-time anchor backfill).
+func TestTargetedForgetClearsAnchors(t *testing.T) {
+	dir := t.TempDir()
+	db, err := store.Open(filepath.Join(dir, "m.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	native := filepath.Join(dir, "native.json")
+	m, _, err := ingest.RememberTyped(native, "Run `go test` before editing muninn/run/main.go.", "preference", "rule", "global", nil, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ix := &index.Indexer{DB: db}
+	if _, err := ix.Run(context.Background(), index.Options{NativePath: native}); err != nil {
+		t.Fatal(err)
+	}
+	count := func() int {
+		t.Helper()
+		var n int
+		if err := db.QueryRow(`SELECT COUNT(*) FROM unit_anchors a JOIN units u ON u.id=a.unit_id WHERE u.key=?`, m.ID).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	if n := count(); n == 0 {
+		t.Fatal("fixture has no anchors before forget")
+	}
+	f, err := ingest.ForgetManyChanged(native, []string{m.ID})
+	if err != nil || !f.Done[m.ID] {
+		t.Fatalf("forget: %+v, %v", f, err)
+	}
+	if err := ix.ApplyNative(context.Background(), native, f.Before, f.After, f.Changed); err != nil {
+		t.Fatal(err)
+	}
+	if n := count(); n != 0 {
+		t.Fatalf("targeted forget left %d anchor rows", n)
+	}
+	if ix.Passes != 1 {
+		t.Fatalf("targeted forget ran a full pass: %d passes", ix.Passes)
+	}
+}

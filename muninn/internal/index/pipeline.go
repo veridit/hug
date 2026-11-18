@@ -1,11 +1,10 @@
 package index
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
-	"encoding/gob"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -19,6 +18,7 @@ import (
 
 	"github.com/veridit/hug/muninn/internal/anchor"
 	"github.com/veridit/hug/muninn/internal/embed"
+	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/store"
 )
 
@@ -63,61 +63,6 @@ func (ix *Indexer) setUnitConcepts(unitID int64, terms []string) ([]int, error) 
 	return ids, nil
 }
 
-func (ix *Indexer) loadGraph() (*Graph, error) {
-	var blob []byte
-	err := ix.DB.QueryRow(`SELECT state FROM graph_state WHERE id=1`).Scan(&blob)
-	if err == sql.ErrNoRows {
-		return NewGraph(), nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	g := NewGraph()
-	if err := gob.NewDecoder(bytes.NewReader(blob)).Decode(g); err != nil {
-		return NewGraph(), nil // corrupt or old state: start over
-	}
-	return g, nil
-}
-
-func (ix *Indexer) saveGraph(g *Graph, touched map[int]bool, units map[int64]bool) error {
-	var buf bytes.Buffer
-	if err := gob.NewEncoder(&buf).Encode(g); err != nil {
-		return err
-	}
-	if _, err := ix.DB.Exec(`INSERT INTO graph_state(id, state) VALUES(1, ?) ON CONFLICT(id) DO UPDATE SET state=excluded.state`, buf.Bytes()); err != nil {
-		return err
-	}
-	// Persist community assignments for concepts whose community may have
-	// moved, and collect the units whose per-community counts go stale.
-	var moved []string
-	for c := range touched {
-		var old int
-		err := ix.DB.QueryRow(`SELECT community_id FROM communities WHERE concept_id=?`, c).Scan(&old)
-		if err == nil && old == g.Community[c] {
-			continue
-		}
-		if _, err := ix.DB.Exec(`INSERT INTO communities(concept_id, community_id) VALUES(?,?)
-		  ON CONFLICT(concept_id) DO UPDATE SET community_id=excluded.community_id`, c, g.Community[c]); err != nil {
-			return err
-		}
-		moved = append(moved, strconv.Itoa(c))
-	}
-	for start := 0; start < len(moved); start += 500 {
-		rows, err := ix.DB.Query(`SELECT DISTINCT unit_id FROM unit_concepts WHERE concept_id IN (` +
-			strings.Join(moved[start:min(start+500, len(moved))], ",") + `)`)
-		if err != nil {
-			return err
-		}
-		for rows.Next() {
-			var u int64
-			rows.Scan(&u)
-			units[u] = true
-		}
-		rows.Close()
-	}
-	return ix.refreshUnitCommunities(units)
-}
-
 // refreshUnitCommunities recomputes per-community concept counts of units.
 func (ix *Indexer) refreshUnitCommunities(units map[int64]bool) error {
 	ids := make([]string, 0, len(units))
@@ -147,6 +92,100 @@ func dirtyUnits(ids []int64) map[int64]bool {
 	return m
 }
 
+// applyDeltas runs DF-Louvain on the pass's concept deltas and persists the
+// moved communities; dirty units get their per-community counts refreshed.
+func (ix *Indexer) applyDeltas(dirty []int64) error {
+	g, err := ix.loadGraph()
+	if err != nil {
+		return err
+	}
+	g.Update(ix.deltas)
+	ix.GraphLoads += g.Loads
+	return ix.saveGraph(g, dirtyUnits(dirty))
+}
+
+// ErrNotCurrent means the index did not record the source file a targeted
+// update starts from; the caller runs a full pass instead.
+var ErrNotCurrent = errors.New("index: source not current")
+
+// ApplyNative updates the index for memories one write changed in the
+// native store at path, and nothing else (4vd1mz): their units, the concept
+// graph's delta, and the neighbour lists they were in. before is the file's
+// stat the write started from and after its stat once saved, both taken
+// under the store lock. When the index had not recorded before, some other
+// change is unindexed and ApplyNative returns ErrNotCurrent without
+// changing anything. Recall afterwards equals a full pass on the same file:
+// each unit goes through the same reconciliation a pass uses, and the
+// source's stat becomes after, so the next pass skips the file.
+//
+// The caller holds the write turn and no transaction.
+func (ix *Indexer) ApplyNative(ctx context.Context, path string, before, after ingest.FileStat, changed []ingest.NativeMemory) error {
+	ix.GraphMoved, ix.graphMovePending = "", ""
+	defer func() { ix.graphMovePending = "" }()
+	if _, err := ix.DB.Exec(`BEGIN IMMEDIATE`); err != nil {
+		return err
+	}
+	if err := ix.applyNative(path, before, after, changed); err != nil {
+		ix.DB.Exec(`ROLLBACK`)
+		return err
+	}
+	if _, err := ix.DB.Exec(`COMMIT`); err != nil {
+		ix.DB.Exec(`ROLLBACK`)
+		return err
+	}
+	ix.finishGraphMove()
+	return nil
+}
+
+func (ix *Indexer) applyNative(path string, before, after ingest.FileStat, changed []ingest.NativeMemory) error {
+	if ix.DB.GetMeta("source_recipe") != SourceRecipe {
+		return ErrNotCurrent
+	}
+	var id, mtime, size int64
+	if err := ix.DB.QueryRow(`SELECT id, mtime_ns, size FROM sources WHERE kind='native' AND path=?`, path).Scan(&id, &mtime, &size); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrNotCurrent
+		}
+		return err
+	}
+	if mtime != before.Mtime || size != before.Size || before.Mtime < 0 {
+		return ErrNotCurrent
+	}
+	ix.deltas = nil
+	var st Stats
+	var dirty []int64
+	for _, m := range changed {
+		var uid, ident string
+		err := ix.DB.QueryRow(`SELECT id, ident FROM units WHERE source_id=? AND key=?`, id, m.ID).Scan(&uid, &ident)
+		if errors.Is(err, sql.ErrNoRows) {
+			// The index never saw this memory although it recorded the
+			// file: not the state a targeted update assumes.
+			return ErrNotCurrent
+		}
+		if err != nil {
+			return err
+		}
+		u, ok, err := ix.syncCandidate(id, nativeCandidate(m), [2]string{uid, ident}, true, &st)
+		if err != nil {
+			return err
+		}
+		if ok {
+			dirty = append(dirty, u)
+		}
+	}
+	if len(ix.deltas) > 0 {
+		if err := ix.applyDeltas(dirty); err != nil {
+			return err
+		}
+	}
+	// No text changed, so nothing needs a vector; neighbours lose the
+	// forgotten units exactly as a pass would detach them.
+	if err := ix.UpdateNeighbors(dirty, nil); err != nil {
+		return err
+	}
+	return ix.DB.SetSourceStat(id, after.Mtime, after.Size)
+}
+
 // JcodeSource is one jcode instance's memory directory and its scope prefix.
 type JcodeSource struct {
 	Dir    string // <JCODE_HOME>/memory
@@ -169,6 +208,9 @@ type Options struct {
 var ErrBusy = errors.New("index busy: another muninn process is writing")
 
 func (ix *Indexer) Run(ctx context.Context, o Options) (Stats, error) {
+	ix.GraphMoved, ix.graphMovePending = "", ""
+	defer func() { ix.graphMovePending = "" }()
+	ix.Passes++
 	if ix.NoWait {
 		// busy_timeout applies per statement; drop it for the lock attempt,
 		// then restore store.Open's value. (It used to be put back as 5000,
@@ -192,8 +234,10 @@ func (ix *Indexer) Run(ctx context.Context, o Options) (Stats, error) {
 		return st, err
 	}
 	if _, err := ix.DB.Exec(`COMMIT`); err != nil {
+		ix.DB.Exec(`ROLLBACK`)
 		return st, err
 	}
+	ix.finishGraphMove()
 	return st, nil
 }
 
@@ -206,6 +250,11 @@ func (ix *Indexer) Run(ctx context.Context, o Options) (Stats, error) {
 const SourceRecipe = "2"
 
 func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
+	// A store whose graph is still the gob moves to the tables in the first
+	// pass, even one with nothing else to do (4vd1mz, crab 04:44).
+	if err := ix.moveGraph(); err != nil {
+		return Stats{}, fmt.Errorf("move concept graph: %w", err)
+	}
 	if ix.DB.GetMeta("source_recipe") != SourceRecipe {
 		if _, err := ix.DB.Exec(`UPDATE sources SET mtime_ns=-1, size=-1`); err != nil {
 			return Stats{}, err
@@ -264,26 +313,7 @@ func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
 	phase("sources")
 	// Communities: DF-Louvain on the frontier of what changed.
 	if len(ix.deltas) > 0 {
-		g, err := ix.loadGraph()
-		if err != nil {
-			return st, err
-		}
-		g.Update(ix.deltas)
-		touched := map[int]bool{}
-		for _, d := range ix.deltas {
-			for _, c := range d.New {
-				touched[c] = true
-			}
-			for _, c := range d.Old {
-				touched[c] = true
-			}
-			for _, c := range d.New {
-				for j := range g.Adj[c] {
-					touched[j] = true
-				}
-			}
-		}
-		if err := ix.saveGraph(g, touched, dirtyUnits(dirty)); err != nil {
+		if err := ix.applyDeltas(dirty); err != nil {
 			return st, err
 		}
 		phase("communities")
@@ -469,7 +499,7 @@ type vecRow struct {
 
 func (ix *Indexer) activeVectors() ([]vecRow, error) {
 	pipeline := ix.DB.GetMeta("pipeline_hash")
-	rows, err := ix.DB.Query(`SELECT u.id, e.qvec FROM units u JOIN embeddings e
+	rows, err := ix.DB.Query(`SELECT u.id, e.qvec FROM units u JOIN qvecs e
 	  ON e.content_hash=u.content_hash AND e.pipeline_hash=? WHERE u.active=1`, pipeline)
 	if err != nil {
 		return nil, err
@@ -597,7 +627,18 @@ func (ix *Indexer) UpdateNeighbors(dirty, removed []int64) error {
 	for _, v := range vecs {
 		lists[v.id] = &list{}
 	}
-	if len(dirty) > 0 {
+	var offers []vecRow
+	for _, d := range dirty {
+		if q, ok := byID[d]; ok {
+			offers = append(offers, vecRow{d, q})
+		}
+	}
+	if len(offers) == 0 {
+		// Only forgotten (inactive) units: nothing to offer, every list that
+		// referenced them was refilled above (4vd1mz).
+		return nil
+	}
+	{
 		rows, err := ix.DB.Query(`SELECT unit_id, nbr_id, sim FROM neighbors`)
 		if err != nil {
 			return err
@@ -616,12 +657,6 @@ func (ix *Indexer) UpdateNeighbors(dirty, removed []int64) error {
 		rows.Close()
 		if err := rows.Err(); err != nil {
 			return err
-		}
-	}
-	var offers []vecRow
-	for _, d := range dirty {
-		if q, ok := byID[d]; ok {
-			offers = append(offers, vecRow{d, q})
 		}
 	}
 	parallel(len(vecs), func(i int) {
@@ -669,22 +704,32 @@ func (ix *Indexer) UpdateNeighbors(dirty, removed []int64) error {
 	return nil
 }
 
-// topK returns id's NeighborK most similar vectors.
+// topK is q's NeighborK nearest vectors, by similarity then id. It keeps
+// the best NeighborK seen so far instead of sorting every vector (4vd1mz: a
+// forget refills ~65 lists over 30,000 vectors; sorting each was most of the
+// neighbour update). Same order, same ties, so the same list.
 func topK(q []byte, id int64, vecs []vecRow) []nbr {
-	best := make([]nbr, 0, len(vecs))
+	better := func(a, b nbr) bool { return a.sim > b.sim || (a.sim == b.sim && a.id < b.id) }
+	best := make([]nbr, 0, NeighborK+1)
 	for _, v := range vecs {
-		if v.id != id {
-			best = append(best, nbr{v.id, embed.DotQ(q, v.q)})
+		if v.id == id {
+			continue
 		}
-	}
-	sort.Slice(best, func(i, j int) bool {
-		if best[i].sim == best[j].sim {
-			return best[i].id < best[j].id
+		n := nbr{v.id, embed.DotQ(q, v.q)}
+		if len(best) == NeighborK && !better(n, best[NeighborK-1]) {
+			continue
 		}
-		return best[i].sim > best[j].sim
-	})
-	if len(best) > NeighborK {
-		best = best[:NeighborK]
+		// Insert in order; drop the worst past NeighborK.
+		i := len(best)
+		best = append(best, n)
+		for i > 0 && better(n, best[i-1]) {
+			best[i] = best[i-1]
+			i--
+		}
+		best[i] = n
+		if len(best) > NeighborK {
+			best = best[:NeighborK]
+		}
 	}
 	return best
 }

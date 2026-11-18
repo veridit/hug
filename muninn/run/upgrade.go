@@ -39,6 +39,12 @@ of the store next to it, folds, and reindexes.`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			out := cmd.OutOrStdout()
+			// A concept graph still in the old gob moves to its tables on
+			// first use anyway (4vd1mz); --apply moves it now, so the first
+			// hook after an upgrade does not pay the seconds it takes.
+			if err := moveConceptGraph(out, apply); err != nil {
+				return err
+			}
 			// jcode instances still on the turn_start-only hook, which put
 			// recall into the person's input box (z9q42h).
 			hooks, err := migrateJcodeHooks(out, apply)
@@ -141,6 +147,26 @@ func anchorsPending() (bool, error) {
 type pendingErr struct{}
 
 func (pendingErr) Error() string { return "" }
+
+// moveConceptGraph reports (preview) or does (apply) the move of a store's
+// concept graph from the old gob to its tables. The preview leaves the exit
+// code alone: the move needs no upgrade step, the next index pass does it.
+func moveConceptGraph(out io.Writer, apply bool) error {
+	return withApp(func(_ context.Context, a *app.App) error {
+		if !a.Indexer.GraphNeedsMove() {
+			return nil
+		}
+		if !apply {
+			fmt.Fprintln(out, "memory: the concept graph is still in its old form; the next index pass moves it to tables (--apply moves it now)")
+			return nil
+		}
+		if _, err := a.Indexer.MoveGraph(); err != nil {
+			return fmt.Errorf("moving the concept graph to tables: %w; the store is unchanged\nfix: hug mem index", err)
+		}
+		fmt.Fprintln(out, "memory:", a.Indexer.GraphMoved)
+		return nil
+	})
+}
 
 // migrateJcodeHooks moves every jcode instance whose config runs muninn's
 // recall hook on turn_start only (hug before 0.7.53, which delivered with

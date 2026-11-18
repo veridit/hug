@@ -88,3 +88,37 @@ func TestSketchPrefilterRecall(t *testing.T) {
 		t.Fatalf("recall@5 %.3f < 0.95", recall)
 	}
 }
+
+// 4vd1mz: the unrolled DotQ equals the plain loop bit for bit, for every
+// length (tails of 0-7 bytes) and for extreme values (-127/127).
+func TestDotQMatchesPlainLoop(t *testing.T) {
+	plain := func(a, b []byte) float32 {
+		if len(a) < 4 || len(b) < 4 {
+			return 0
+		}
+		sa := math.Float32frombits(uint32(a[0]) | uint32(a[1])<<8 | uint32(a[2])<<16 | uint32(a[3])<<24)
+		sb := math.Float32frombits(uint32(b[0]) | uint32(b[1])<<8 | uint32(b[2])<<16 | uint32(b[3])<<24)
+		var s int32
+		for i := 4; i < min(len(a), len(b)); i++ {
+			s += int32(int8(a[i])) * int32(int8(b[i]))
+		}
+		return float32(s) * sa * sb
+	}
+	r := rand.New(rand.NewSource(1))
+	for dim := 0; dim <= 1030; dim += 1 + dim/16 {
+		for k := 0; k < 20; k++ {
+			a, b := Quantize(randUnit(r, max(dim, 1))[:dim]), Quantize(randUnit(r, max(dim+k%3, 1))[:dim+k%3])
+			if k == 0 {
+				for i := 4; i < len(a); i++ {
+					a[i] = 0x81 // -127
+				}
+				for i := 4; i < len(b); i++ {
+					b[i] = 0x81
+				}
+			}
+			if got, want := DotQ(a, b), plain(a, b); got != want {
+				t.Fatalf("dim %d: DotQ %v, plain %v", dim, got, want)
+			}
+		}
+	}
+}

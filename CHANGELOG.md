@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug mem forget` updates the memories it changed instead of running two full index passes (4vd1mz), including a batch of ids. Concept adjacency loads and writes only for the changed frontier, neighbor selection keeps a bounded top list, and a successful save is not read again unless another writer changed the file. On a 30,794-unit store copy, four cold-cache paired runs fell from 3.34-3.83 s / 952-959 MB to 0.81-0.95 s / 214-238 MB. The old whole-graph gob and quantized vectors move into narrow tables once on first use. Graph conversion is inside the writer's transaction, needs no upgrade command, and leaves one committed receipt in `hook.log` and `hug mem stats`; `hug mem index` reports it, and `hug mem upgrade --apply` can do it ahead of a hook. A rolled-back pass leaves no success receipt. Recall comparison gates are recorded on the task before this change ships.
+
 ## v0.7.58 - 2026-11-18
 
 - `hug tui`: showing a `.md` or `.markdown` file formats it with the task detail's quiet Markdown renderer (tmz060): accent headings, blue-grey inline code and code blocks, and lists, wrapped to the pane. `M` switches that file between formatted text and raw source without rereading or writing it. Other file types stay plain text, and the binary and 1 MiB limits still apply. Controls are escaped before Markdown is rendered, so a file cannot clear the terminal or set its clipboard. Formatting runs off the UI thread with a spinner, including large files; a late result from a file you left, or an old pane width, cannot replace the page. `/` and `n`/`N` find the text actually shown, and an existing find is recomputed when `M` changes the view.

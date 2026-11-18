@@ -11,6 +11,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 )
@@ -86,6 +88,52 @@ func find(dir string, create bool) (Project, error) {
 	if err != nil {
 		return Project{}, err
 	}
+	key := findKey{abs, create}
+	findMu.Lock()
+	c, ok := findMemo[key]
+	findMu.Unlock()
+	if ok && time.Since(c.at) < findFor {
+		return c.p, nil
+	}
+	p, err := findUncached(abs, create)
+	if err == nil {
+		findMu.Lock()
+		findMemo[key] = foundAt{p, time.Now()}
+		findMu.Unlock()
+	}
+	return p, err
+}
+
+// One command asks for the same folder's project several times (4vd1mz: a
+// forget resolved its binding three times, two git processes each, ~150 ms
+// of ~1.6 s). A found project is kept for findFor: long enough for a
+// command, short enough that a long-lived server sees a new repository or
+// its first commit. Failures are never kept.
+const findFor = 2 * time.Second
+
+type findKey struct {
+	dir    string
+	create bool
+}
+
+type foundAt struct {
+	p  Project
+	at time.Time
+}
+
+var (
+	findMu   sync.Mutex
+	findMemo = map[findKey]foundAt{}
+)
+
+// forgetFinds drops the memo (tests that change a repository in place).
+func forgetFinds() {
+	findMu.Lock()
+	findMemo = map[findKey]foundAt{}
+	findMu.Unlock()
+}
+
+func findUncached(abs string, create bool) (Project, error) {
 	if top, err := gitTop(abs); err == nil && top != "" {
 		top = filepath.Clean(top)
 		p, err := gitProject(top)

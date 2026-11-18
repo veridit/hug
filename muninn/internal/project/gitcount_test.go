@@ -77,3 +77,30 @@ func TestFindInMainWorktreeStartsTwoGit(t *testing.T) {
 		t.Errorf("Find in a plain folder starts %d git processes, want 0:\n  %s", len(calls), strings.Join(calls, "\n  "))
 	}
 }
+
+// 4vd1mz: one command asks Find for the same folder several times (a
+// forget: its binding, the view, the refresh); the git processes run once.
+// A failure is not kept: a folder that becomes a repository is found.
+func TestFindAgainStartsNoGit(t *testing.T) {
+	forgetFinds()
+	t.Cleanup(forgetFinds)
+	base := t.TempDir()
+	repo := filepath.Join(base, "repo")
+	os.MkdirAll(repo, 0o700)
+	count := gitCalls(t)
+	if calls := count(func() { Find(repo, false) }); len(calls) != 0 {
+		t.Fatalf("a plain folder started git: %v", calls)
+	}
+	gitInit(t, repo)
+	var p Project
+	var err error
+	if calls := count(func() { p, err = Find(repo, false) }); err != nil || len(calls) != 2 {
+		t.Fatalf("first Find after git init: %+v %v, %d git processes:\n  %s", p, err, len(calls), strings.Join(calls, "\n  "))
+	}
+	for i := 0; i < 3; i++ {
+		var again Project
+		if calls := count(func() { again, err = Find(repo, false) }); err != nil || len(calls) != 0 || again != p {
+			t.Fatalf("Find %d again: %+v %v, %d git processes:\n  %s", i+2, again, err, len(calls), strings.Join(calls, "\n  "))
+		}
+	}
+}

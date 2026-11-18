@@ -63,6 +63,15 @@ type Indexer struct {
 	deltas           []UnitDelta // concept-set changes collected during a pass
 	pipelineSwitched bool        // this pass completed a new embedding pipeline
 	embeddedHashes   []string    // vectors materialized during this pass
+
+	// Passes counts full index passes (Run) on this Indexer, so tests can
+	// prove a command did none (4vd1mz).
+	Passes int
+	// GraphLoads counts concept adjacencies read from storage (4vd1mz);
+	// GraphMoved is set when this indexer moved a gob graph to the tables.
+	GraphLoads       int
+	GraphMoved       string
+	graphMovePending string
 }
 
 // Candidate is a unit as produced by a source, before storage.
@@ -87,59 +96,14 @@ func (ix *Indexer) SyncSource(sourceID int64, cands []Candidate, st *Stats) (dir
 	seen := map[string]bool{}
 	for _, c := range cands {
 		seen[c.Key] = true
-		text := EmbeddingText(c.Title, c.Body)
-		ident := ContentHash(text + "\x00" + c.Category + "\x00" + c.Scope + "\x00" +
-			strconv.FormatBool(c.Active) + "\x00" + c.Origin + "\x00" + strings.Join(c.Tags, " "))
-		if c.Type != "" {
-			// Only typed memories hash the type, so existing idents (and with
-			// them every untyped unit) stay unchanged by this field.
-			ident = ContentHash(ident + "\x00type:" + c.Type)
-		}
-		if c.Holds != "" {
-			// Same rule for the condition (ez50rb): no condition, no change.
-			ident = ContentHash(ident + "\x00holds:" + c.Holds)
-		}
-		if old, ok := existing[c.Key]; ok && old[1] == ident {
-			st.Unchanged++
-			continue
-		}
-		var oldConcepts []int
-		if old, ok := existing[c.Key]; ok {
-			oldID, _ := strconv.ParseInt(old[0], 10, 64)
-			if oldConcepts, err = ix.unitConcepts(oldID); err != nil {
-				return nil, nil, err
-			}
-		}
-		id, err := ix.DB.UpsertUnit(store.Unit{
-			SourceID: sourceID, SID: c.SID, Origin: c.Origin, Key: c.Key, ContentHash: ContentHash(text), Ident: ident, Kind: c.Kind,
-			Title: c.Title, Body: c.Body, Category: c.Category, Type: c.Type, Holds: c.Holds, Tags: c.Tags, Scope: c.Scope,
-			Active: c.Active, Updated: c.Updated,
-		})
+		old, had := existing[c.Key]
+		id, changed, err := ix.syncCandidate(sourceID, c, old, had, st)
 		if err != nil {
 			return nil, nil, err
 		}
-		var newConcepts []int
-		if c.Active {
-			if newConcepts, err = ix.setUnitConcepts(id, Concepts(c.Title+" "+c.Body+" "+strings.Join(c.Tags, " "))); err != nil {
-				return nil, nil, err
-			}
-		} else if _, err = ix.setUnitConcepts(id, nil); err != nil {
-			return nil, nil, err
+		if changed {
+			dirty = append(dirty, id)
 		}
-		var anchors []string
-		if c.Active {
-			anchors = anchor.Memory(c.Title + " " + c.Body)
-		}
-		if err := ix.DB.SetUnitAnchors(id, anchors); err != nil {
-			return nil, nil, err
-		}
-		ix.deltas = append(ix.deltas, UnitDelta{Old: oldConcepts, New: newConcepts})
-		if _, ok := existing[c.Key]; ok {
-			st.Changed++
-		} else {
-			st.Added++
-		}
-		dirty = append(dirty, id)
 	}
 	for key, old := range existing {
 		if seen[key] {
@@ -158,6 +122,76 @@ func (ix *Indexer) SyncSource(sourceID int64, cands []Candidate, st *Stats) (dir
 		st.Removed++
 	}
 	return dirty, removed, nil
+}
+
+// syncCandidate reconciles one candidate with its stored unit (old = (id,
+// ident) when had). It reports the unit id and whether it changed; an
+// unchanged unit is not touched.
+func (ix *Indexer) syncCandidate(sourceID int64, c Candidate, old [2]string, had bool, st *Stats) (int64, bool, error) {
+	text := EmbeddingText(c.Title, c.Body)
+	ident := ContentHash(text + "\x00" + c.Category + "\x00" + c.Scope + "\x00" +
+		strconv.FormatBool(c.Active) + "\x00" + c.Origin + "\x00" + strings.Join(c.Tags, " "))
+	if c.Type != "" {
+		// Only typed memories hash the type, so existing idents (and with
+		// them every untyped unit) stay unchanged by this field.
+		ident = ContentHash(ident + "\x00type:" + c.Type)
+	}
+	if c.Holds != "" {
+		// Same rule for the condition (ez50rb): no condition, no change.
+		ident = ContentHash(ident + "\x00holds:" + c.Holds)
+	}
+	if had && old[1] == ident {
+		st.Unchanged++
+		return 0, false, nil
+	}
+	var oldConcepts []int
+	if had {
+		oldID, _ := strconv.ParseInt(old[0], 10, 64)
+		var err error
+		if oldConcepts, err = ix.unitConcepts(oldID); err != nil {
+			return 0, false, err
+		}
+	}
+	id, err := ix.DB.UpsertUnit(store.Unit{
+		SourceID: sourceID, SID: c.SID, Origin: c.Origin, Key: c.Key, ContentHash: ContentHash(text), Ident: ident, Kind: c.Kind,
+		Title: c.Title, Body: c.Body, Category: c.Category, Type: c.Type, Holds: c.Holds, Tags: c.Tags, Scope: c.Scope,
+		Active: c.Active, Updated: c.Updated,
+	})
+	if err != nil {
+		return 0, false, err
+	}
+	var newConcepts []int
+	if c.Active {
+		if newConcepts, err = ix.setUnitConcepts(id, Concepts(c.Title+" "+c.Body+" "+strings.Join(c.Tags, " "))); err != nil {
+			return 0, false, err
+		}
+	} else if _, err = ix.setUnitConcepts(id, nil); err != nil {
+		return 0, false, err
+	}
+	var anchors []string
+	if c.Active {
+		anchors = anchor.Memory(c.Title + " " + c.Body)
+	}
+	if err := ix.DB.SetUnitAnchors(id, anchors); err != nil {
+		return 0, false, err
+	}
+	ix.deltas = append(ix.deltas, UnitDelta{Old: oldConcepts, New: newConcepts})
+	if had {
+		st.Changed++
+	} else {
+		st.Added++
+	}
+	return id, true, nil
+}
+
+// nativeCandidate is how IndexNative turns a stored memory into a unit.
+func nativeCandidate(m ingest.NativeMemory) Candidate {
+	origin := m.Origin
+	if strings.HasPrefix(m.ID, "cap_repair_") {
+		origin = shortid.Identity(m.ID, m.Origin)
+	}
+	return Candidate{Key: m.ID, SID: m.SID, Origin: origin, Kind: "memory", Title: m.Title, Body: m.Content, Category: m.Category,
+		Type: m.Type, Holds: m.Holds, Tags: m.Tags, Scope: m.Scope, Active: m.Active, Updated: m.Updated}
 }
 
 // statOf returns a file's (mtime ns, size).
@@ -209,12 +243,7 @@ func (ix *Indexer) IndexNative(ctx context.Context, path string, st *Stats) ([]i
 		loaded = mems
 		out := make([]Candidate, 0, len(mems))
 		for _, m := range mems {
-			origin := m.Origin
-			if strings.HasPrefix(m.ID, "cap_repair_") {
-				origin = shortid.Identity(m.ID, m.Origin)
-			}
-			out = append(out, Candidate{Key: m.ID, SID: m.SID, Origin: origin, Kind: "memory", Title: m.Title, Body: m.Content, Category: m.Category,
-				Type: m.Type, Holds: m.Holds, Tags: m.Tags, Scope: m.Scope, Active: m.Active, Updated: m.Updated})
+			out = append(out, nativeCandidate(m))
 		}
 		return out, nil
 	})

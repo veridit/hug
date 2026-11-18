@@ -12,6 +12,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/veridit/hug/internal/sharefile"
@@ -75,9 +76,14 @@ type nativeFile struct {
 	Memories []NativeMemory `json:"memories"`
 }
 
+// Loads counts LoadNative calls in this process, so tests can count the
+// reads a command makes (4vd1mz).
+var Loads atomic.Int64
+
 // LoadNative reads the native store; a missing file is empty. It opens the
 // file so a save may rename over it meanwhile (Windows, zd3x24).
 func LoadNative(path string) ([]NativeMemory, error) {
+	Loads.Add(1)
 	b, err := sharefile.ReadFile(path)
 	if errors.Is(err, os.ErrNotExist) {
 		return nil, nil
@@ -317,15 +323,54 @@ func Forget(path, id string) (bool, error) {
 // ForgetMany deactivates every listed memory (by id or sid) with one load and
 // one save under the write lock. The result marks the ids that were active.
 func ForgetMany(path string, ids []string) (map[string]bool, error) {
-	done := map[string]bool{}
+	f, err := ForgetManyChanged(path, ids)
+	return f.Done, err
+}
+
+// FileStat is a file's (mtime ns, size), as the indexer records per source.
+type FileStat struct{ Mtime, Size int64 }
+
+// StatFile returns path's FileStat.
+func StatFile(path string) (FileStat, error) {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return FileStat{}, err
+	}
+	return FileStat{fi.ModTime().UnixNano(), fi.Size()}, nil
+}
+
+// Forgotten is what one ForgetManyChanged call did to the store file.
+type Forgotten struct {
+	Done map[string]bool // listed ids that were active
+	// Changed holds every memory the call deactivated, twins included, as
+	// saved: what an index needs to update, and nothing else changed.
+	Changed []NativeMemory
+	// Before and After are the file's stat just before the load and just
+	// after the save, both under the lock: if an index recorded Before, the
+	// file at After differs from what it indexed by Changed only.
+	Before, After FileStat
+}
+
+// ForgetManyChanged is ForgetMany that also reports what it changed (4vd1mz).
+func ForgetManyChanged(path string, ids []string) (Forgotten, error) {
+	f := Forgotten{Done: map[string]bool{}}
+	done := f.Done
 	unlock, err := LockNative(path)
 	if err != nil {
-		return done, err
+		return f, err
 	}
 	defer unlock()
+	if f.Before, err = StatFile(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return f, err
+	}
 	mems, err := LoadNative(path)
 	if err != nil {
-		return done, err
+		return f, err
+	}
+	if after, err := StatFile(path); err == nil && after != f.Before {
+		// LoadNative repaired duplicates and saved: the file is no longer
+		// the one an index may have recorded. Make Before say so.
+		f.Before = FileStat{-1, -1}
 	}
 	want := map[string]bool{}
 	for _, id := range ids {
@@ -348,10 +393,26 @@ func ForgetMany(path string, ids []string) (map[string]bool, error) {
 		}
 	}
 	if len(done) == 0 {
-		return done, nil
+		f.After = f.Before
+		return f, nil
+	}
+	wasActive := make(map[string]bool, len(mems))
+	for i, m := range mems {
+		if m.Active || retired[i] {
+			wasActive[m.ID] = true
+		}
 	}
 	// A twin a sync made (5sc5rw) is the same memory: it goes too, or
 	// recall shows it in the forgotten one's place.
 	retireTwins(mems, retired, now)
-	return done, SaveNative(path, mems)
+	if err := SaveNative(path, mems); err != nil {
+		return f, err
+	}
+	for _, m := range mems {
+		if wasActive[m.ID] && !m.Active {
+			f.Changed = append(f.Changed, m)
+		}
+	}
+	f.After, err = StatFile(path)
+	return f, err
 }
