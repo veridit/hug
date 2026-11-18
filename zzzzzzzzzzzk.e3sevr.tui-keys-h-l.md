@@ -9,10 +9,15 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T23:27"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "e3sevr is on main (f85c01f, next release). Please move the column marker with H/L, order with o, and page with J/K, and say whether it reads clearly. Also look at the footers: a key letter is now marked inside its word ('next-, previous file', 'edit · take · done', 'H/L column · order')."
+asked_for: "jhf"
+asked_since: "2026-11-18T01:39"
+asked_by: "nautilus"
+asked_check: "4"
 ---
 
 ## Goal
@@ -100,3 +105,4 @@ landed be784f6 on main 2026-11-18: hug tui: split combined hints so each key mar
 landed f85c01f on main 2026-11-18: hug tui: tmux goldens for the marked footers (e3sevr checks 14, 16)
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
+- 2026-11-18T01:39 doing/active -> doing/asked (ask)
