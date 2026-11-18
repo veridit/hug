@@ -65,6 +65,7 @@ check 5 (mizaru, branch txjkrm5 on 8c26ec51, uncommitted pending suite): hug upg
 shipped in v0.7.68 (709e327)
 check 5 committed: 782a807c on origin/main 6a6b6573 (v0.7.68), branches txjkrm5 + ci/txjkrm5. CI 44376607765 completed success 6/6: secrets, bench, test ubuntu/macos/windows, test-windows-cli (19:28:14Z). Local: task + mcp ok; TestUpgradeTags* ok; full cli suite did not finish locally (load average ~677: WaitDelay/git timeouts in sync tests, untouched by this change); CI is the clean run.
 check 1: Jørgen 19:35Z (answer 1): the list and preview are approved with one change. Tags go right after the ticket ID, because they say quickly what the task is about. See check 6.
+crab 20:36 local: Jørgen also floated auto-grouping tasks that share a tag; 'discuss later', so not in scope here (g grouping by tag already exists, check 4). txjkrm5 (check 5) 782a807c is rebased as 67569a0d on 477696be for landing.
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
