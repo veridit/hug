@@ -35,7 +35,7 @@ Today: hug task ask sets one asked/asked_check/asked_show on the stage (41hhgn);
 - [x] hug task ask twice on one task keeps both questions; show lists them numbered; the stage stays asked until both are answered (test)
 - [x] hug task answer ID N answers question N only, and the asker sees which (test); answering by ticking --check N still works
 - [x] hug tui shows each open question with its own answer action (golden at 100x24)
-- [ ] An ask whose text holds a numbered list of questions is refused with 'fix: ask each question on its own: hug task ask ID --to NAME "..."' (test)
+- [x] An ask whose text holds a numbered list of questions is refused with 'fix: ask each question on its own: hug task ask ID --to NAME "..."' (test)
 - [ ] The ask/answer help and the agent instructions say: one question per ask
 - [ ] Jørgen confirms on his board after release
 
@@ -49,5 +49,6 @@ check 1: branch q2adr8 76c19719 on main 8dc479b2. Failing first (f72db4e9): askq
 check 2: Failing first (f72db4e9): askquestions_test.go:70 'expected 2 positional arguments, got 3'. TestAnswerNAnswersQuestionN passes at 9b952f51: answer ID 2 writes the answer under question 2 only, History 'answered asked (question 2, check 3), by jhf, for nautilus', show --json answer.question_n = 2; answering 2 again and question 7 refused (exit 2, 'open: 1'); bare answer with 2 open refused with 'fix: hug task answer ID 3 "plain"'; ticking check 2 as jhf answers question 4 (about check 2) alone.
 check 3: Failing first (on fba767c2): askmany_test.go:49 'lacks "└ question 1 · nautilus"'. TestSeveralQuestionsEachAnswered passes at 76c19719: 3 questions to jhf, 3 lines ending '· answer' (two blocks at the top, each its own Tab stop, one under check 2); Tab to block 2, a, the box opens under question 2 only; Enter answers question 2 alone (2 open left: 1 and 3), > moves to question 1, header 'jhf answered question 2'. Golden huginn/internal/tui/testdata/detail/several-questions-100.txt at 100x24, reviewed.
 check 4 (iwazaru): rebased: failing test b7cc3b84, fix f75763be on main 8dc479b2. Not ticked by me before: ticking now.
+check 4: Failing first b7cc3b84: askmany_test.go:28 'ask "(1) Is the header right? (2) ... (3) Ship today?": exit 0, want 2 with the fix'. f75763be refuses >=2 numbered items each a question with 'fix: ask each question on its own: hug task ask ID --to NAME "<first>"'. Replay over hug's board history: 34 distinct asks, 1 refused (rxr4z8's).
 ## History
 - 2026-11-18T20:43 todo -> doing/active (take)
