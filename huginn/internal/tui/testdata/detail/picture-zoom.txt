@@ -1,0 +1,186 @@
+== picture, fitted at 80
++/- zoom · open in Preview · next-, previous file · u/Esc files · ? help · quit
+IN THIS PICTURE
++ / -    zoom in / out, in steps from fit                                       
+h/j/k/l  scroll the zoomed picture                                              
+0        fit the picture to the frame                                           
+o Enter  open it in Preview, never the editor                                   
+n / p    next / previous file                                                   
+E        the task's files folder in the editor                                  
+u / Esc  back to the task                                                       
+== picture, zoomed at 80
++/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file …
+IN THIS PICTURE
++ / -    zoom in / out, in steps from fit                                       
+h/j/k/l  scroll the zoomed picture                                              
+0        fit the picture to the frame                                           
+o Enter  open it in Preview, never the editor                                   
+n / p    next / previous file                                                   
+E        the task's files folder in the editor                                  
+u / Esc  back to the task                                                       
+== picture, no image protocol at 80
+open in Preview · next-, previous file · u/Esc files · ? help · quit
+IN THIS PICTURE
+o Enter  open it in Preview, never the editor                                   
+n / p    next / previous file                                                   
+E        the task's files folder in the editor                                  
+u / Esc  back to the task                                                       
+== text file at 80
+M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
+IN THIS FILE
+j/k PgDn/PgUp  scroll a long file                                               
+n / p          next / previous file                                             
+Enter          edit it                                                          
+/              find in the file; n / N step the matches                         
+M              Markdown: raw source / formatted text                            
+E              the task's files folder in the editor                            
+u / Esc        back to the task                                                 
+== zoomed screen at 80x24
+HUG · list › 000002 › compiler/000002/sheet.png · 1.4 KiB · 2 of 3 · zoom 200%  
+comparison sheet                                                                
+────────────────────────────────────────────────────────────────────────────────
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+zoom 200%: h/j/k/l scroll, 0 fits                                               
+                                                                                
++/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file …    
+== picture, fitted at 100
++/- zoom · open in Preview · next-, previous file · u/Esc files · ? help · quit
+IN THIS PICTURE
++ / -    zoom in / out, in steps from fit                                                           
+h/j/k/l  scroll the zoomed picture                                                                  
+0        fit the picture to the frame                                                               
+o Enter  open it in Preview, never the editor                                                       
+n / p    next / previous file                                                                       
+E        the task's files folder in the editor                                                      
+u / Esc  back to the task                                                                           
+== picture, zoomed at 100
++/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file · u/Esc files · ? help …
+IN THIS PICTURE
++ / -    zoom in / out, in steps from fit                                                           
+h/j/k/l  scroll the zoomed picture                                                                  
+0        fit the picture to the frame                                                               
+o Enter  open it in Preview, never the editor                                                       
+n / p    next / previous file                                                                       
+E        the task's files folder in the editor                                                      
+u / Esc  back to the task                                                                           
+== picture, no image protocol at 100
+open in Preview · next-, previous file · u/Esc files · ? help · quit
+IN THIS PICTURE
+o Enter  open it in Preview, never the editor                                                       
+n / p    next / previous file                                                                       
+E        the task's files folder in the editor                                                      
+u / Esc  back to the task                                                                           
+== text file at 100
+M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit
+IN THIS FILE
+j/k PgDn/PgUp  scroll a long file                                                                   
+n / p          next / previous file                                                                 
+Enter          edit it                                                                              
+/              find in the file; n / N step the matches                                             
+M              Markdown: raw source / formatted text                                                
+E              the task's files folder in the editor                                                
+u / Esc        back to the task                                                                     
+== zoomed screen at 100x24
+HUG · list › 000002 › compiler/000002/sheet.png · 1.4 KiB · 2 of 3 · zoom 200%           ? 1 for you
+comparison sheet                                                                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────
+zoom 200%: h/j/k/l scroll, 0 fits                                                                   
+                                                                                                    
++/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file · u/Esc files · ? help … 
+== picture, fitted at 140
++/- zoom · open in Preview · next-, previous file · u/Esc files · ? help · quit
+IN THIS PICTURE
++ / -    zoom in / out, in steps from fit                                                                                                   
+h/j/k/l  scroll the zoomed picture                                                                                                          
+0        fit the picture to the frame                                                                                                       
+o Enter  open it in Preview, never the editor                                                                                               
+n / p    next / previous file                                                                                                               
+E        the task's files folder in the editor                                                                                              
+u / Esc  back to the task                                                                                                                   
+== picture, zoomed at 140
++/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file · u/Esc files · ? help · quit
+IN THIS PICTURE
++ / -    zoom in / out, in steps from fit                                                                                                   
+h/j/k/l  scroll the zoomed picture                                                                                                          
+0        fit the picture to the frame                                                                                                       
+o Enter  open it in Preview, never the editor                                                                                               
+n / p    next / previous file                                                                                                               
+E        the task's files folder in the editor                                                                                              
+u / Esc  back to the task                                                                                                                   
+== picture, no image protocol at 140
+open in Preview · next-, previous file · u/Esc files · ? help · quit
+IN THIS PICTURE
+o Enter  open it in Preview, never the editor                                                                                               
+n / p    next / previous file                                                                                                               
+E        the task's files folder in the editor                                                                                              
+u / Esc  back to the task                                                                                                                   
+== text file at 140
+M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit
+IN THIS FILE
+j/k PgDn/PgUp  scroll a long file                                                                                                           
+n / p          next / previous file                                                                                                         
+Enter          edit it                                                                                                                      
+/              find in the file; n / N step the matches                                                                                     
+M              Markdown: raw source / formatted text                                                                                        
+E              the task's files folder in the editor                                                                                        
+u / Esc        back to the task                                                                                                             
+== zoomed screen at 140x24
+HUG · list › 000002 › compiler/000002/sheet.png · 1.4 KiB · 2 of 3 · zoom 200%                                                   ? 1 for you
+comparison sheet                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+zoom 200%: h/j/k/l scroll, 0 fits                                                                                                           
+                                                                                                                                            
++/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file · u/Esc files · ? help · quit                                    

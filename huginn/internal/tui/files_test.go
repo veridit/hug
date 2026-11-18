@@ -19,6 +19,11 @@ func TestMain(m *testing.M) {
 	fakeHug() // j2vwk0: the test binary as a hug that answers "version"
 	// No test writes the real clipboard or the terminal (5z4zt4).
 	clipboard = func(string, bool) error { return nil }
+	// No test opens Preview (33v71x): the opener is a no-op, and every
+	// screen names the macOS viewer, so goldens read the same on each OS;
+	// TestPictureOpensInTheViewer checks each OS's argv.
+	startOpener = func([]string) error { return nil }
+	openerOS = "darwin"
 	if text, ok := os.LookupEnv(tuiEdit); ok && len(os.Args) > 1 {
 		os.Exit(fakeAppend(os.Args[len(os.Args)-1], text))
 	}

@@ -1095,8 +1095,13 @@ func (m model) detailTrail() string {
 	}
 	parts = append(parts, m.styles.accent.Render(oneLine(t.ID)))
 	if m.detail && m.glance && m.glanceHead != "" {
-		// A shown file is the last crumb: path · size · n of m (z82qsy).
-		parts = append(parts, m.styles.accent.Render(m.glanceHead))
+		// A shown file is the last crumb: path · size · n of m (z82qsy),
+		// and a zoomed picture's zoom (33v71x).
+		head := m.glanceHead
+		if m.picZoom > 0 && m.zoomable() {
+			head += " · zoom " + zoomPercent(m.picZoom)
+		}
+		parts = append(parts, m.styles.accent.Render(head))
 	}
 	return strings.Join(parts, m.styles.dim.Render(" › "))
 }

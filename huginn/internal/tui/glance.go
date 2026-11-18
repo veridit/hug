@@ -95,6 +95,8 @@ func (m *model) showGlance() {
 	m.glanceGen++
 	m.glanceMD = glanceMarkdown{}
 	m.glanceImage = nil
+	// Each file opens fitted (33v71x).
+	m.picZoom, m.picX, m.picY = 0, 0, 0
 	m.find = findState{} // the file's own find (4s3g5q)
 	m.glanceHead, m.glanceBody = m.glanceRead(t, name)
 	m.viewport.Height = m.glanceHeight()
@@ -161,6 +163,7 @@ func (m *model) stepGlance(step int) {
 func (m *model) closeGlance() {
 	m.glance = false
 	m.glanceImage = nil
+	m.picZoom, m.picX, m.picY = 0, 0, 0
 	m.glanceHead, m.glanceBody = "", ""
 	m.glanceMD = glanceMarkdown{}
 	m.find = findState{}

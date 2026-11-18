@@ -50,6 +50,8 @@ func (m model) helpContext() string {
 		return "jump"
 	case m.prompt != "":
 		return "prompt"
+	case m.detail && m.glance && m.glancePicture():
+		return "picture"
 	case m.detail && m.glance:
 		return "file"
 	case m.detail:
@@ -107,6 +109,16 @@ func (m model) contextHelp() helpSection {
 			rows = []helpRow{row("Enter", "send the answer", "enter"), row("Alt-Enter ctrl-j", "a new line; a paste keeps its lines", "ctrl+j"), row("Esc", "cancel: nothing is written", "esc")}
 		}
 		return helpSection{"IN THIS PROMPT", rows}
+	case "picture":
+		// A picture (33v71x): its zoom keys only while the terminal
+		// draws it; o and Enter open it in the system viewer always.
+		var rows []helpRow
+		if m.zoomable() {
+			rows = append(rows, row("+ / -", "zoom in / out, in steps from fit", "+", "-"), row("h/j/k/l", "scroll the zoomed picture", "h", "l"), row("0", "fit the picture to the frame", "0"))
+		}
+		rows = append(rows, row("o Enter", "open it in "+viewerName()+", never the editor", "o", "enter"), row("n / p", "next / previous file", "n", "p"),
+			row("E", "the task's files folder in the editor", "E"), row("u / Esc", "back to the task", "u"))
+		return helpSection{"IN THIS PICTURE", rows}
 	case "file":
 		rows := []helpRow{
 			row("j/k PgDn/PgUp", "scroll a long file"), row("n / p", "next / previous file", "n", "p"), row("Enter", "edit it", "enter"),
@@ -136,7 +148,11 @@ func (m model) taskHelp() helpSection {
 	case focusLinks:
 		rows = append(rows, row("j/k", "step through the links", "j", "k"), row("Enter", "open the link marked >", "enter"))
 	case focusFiles:
-		rows = append(rows, row("j/k", "step through the files", "j", "k"), row("Space", "show the file", " "), row("Enter", "edit the file", "enter"))
+		enter := row("Enter", "edit the file", "enter")
+		if m.markedPicture() {
+			enter = row("Enter", "open the picture in "+viewerName(), "enter")
+		}
+		rows = append(rows, row("j/k", "step through the files", "j", "k"), row("Space", "show the file", " "), enter)
 	case focusIDs:
 		rows = append(rows, row("Enter", "open the task id marked ▸", "enter"), row("j/k", "scroll the page", "j", "k"))
 	case focusQuestion:
@@ -243,7 +259,7 @@ func (m model) globalHelp() helpSection {
 func (m model) helpSections() []helpSection {
 	ctx := m.contextHelp()
 	switch m.helpContext() {
-	case "confirm", "palette", "filter", "sort", "find", "findpage", "jump", "prompt", "file":
+	case "confirm", "palette", "filter", "sort", "find", "findpage", "jump", "prompt", "file", "picture":
 		// In a prompt the letters are typed text; in a file they are the
 		// file's keys (scrxak): the rest waits for Esc.
 		// In text ? is typed (t64v7d): there help is F1.
