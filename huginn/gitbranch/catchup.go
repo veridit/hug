@@ -15,13 +15,13 @@ import (
 
 // Catching up across a layout move (w40cmk check 9, crab 04:44). This
 // clone has unpushed commits made on the old layout and the remote moved
-// the board (or both moved, each on its own). A rebase would replay the
+// the board (or this clone moved first). A rebase would replay the
 // old commits' renames and edits against files that are no longer there.
 // CatchUp replays them instead, one by one, onto the remote: each commit's
 // change is read as files on the new layout (Translate), merged file by
 // file with what the remote has (Merge), and committed with its own
-// message and author. This clone's own layout move is not replayed: the
-// remote's stands. Nothing is pushed; the next sync pushes the result.
+// message and author. A pure layout move is omitted only if the translated
+// base is already committed. Nothing is pushed; the next sync pushes the result.
 //
 // Every commit lands or none does: a file Merge cannot read stops the run,
 // HEAD and the work tree are put back, and the error names the commit and
@@ -51,8 +51,8 @@ type Replayed struct {
 	// Kept is one line per value both sides changed (the board's stays,
 	// this clone's is in a note on the task).
 	Kept []string
-	// Skipped is set on this clone's own layout move, which is not
-	// replayed: the remote's stands.
+	// Skipped marks a pure layout move. It is omitted only if no staged
+	// translation remains, otherwise its message retains that translation.
 	Skipped bool
 }
 
@@ -255,9 +255,89 @@ func (r *Repository) file(tr tree, p string, t Translator) ([]byte, error) {
 	return t.Content(f.old, p, b), nil
 }
 
+// prepareReplay uses the same name/content translator as each commit, not
+// a second migration algorithm. Remote layout2 may be the base when this
+// clone independently moved first. Materialize its coherent translated tree
+// privately and stage it for the first replay commit, never on live HEAD.
+func (r *Repository) prepareReplay(commit string, tr tree, t Translator) error {
+	needed := false
+	for p, f := range tr {
+		needed = needed || p != f.old
+	}
+	if config, ok := tr["hug.toml"]; ok {
+		raw, e := r.blob(config.blob)
+		if e != nil {
+			return e
+		}
+		needed = needed || !bytes.Equal(raw, t.Content(config.old, "hug.toml", raw))
+	}
+	if !needed {
+		return nil
+	}
+	var paths []string
+	for p := range tr {
+		paths = append(paths, p)
+	}
+	sort.Strings(paths)
+	bad := func(p string, e error) error {
+		original := tr[p].old
+		return &replayPathError{original, e.Error(), r.fix("show " + quote(commit+":"+original))}
+	}
+	// Validate every translated file before any filesystem transform. A
+	// selected task is parsed by the same resolver used during replay.
+	content := map[string][]byte{}
+	for _, p := range paths {
+		raw, e := r.file(tr, p, t)
+		if e != nil {
+			return bad(p, e)
+		}
+		validated, _, e := t.Merge(p, nil, raw, raw, Replayed{})
+		if e != nil {
+			return bad(p, e)
+		}
+		content[p] = validated
+	}
+	for _, p := range paths {
+		if old := tr[p].old; old != p {
+			if e := os.Remove(filepath.Join(r.Dir, filepath.FromSlash(old))); e != nil {
+				return bad(p, e)
+			}
+		}
+	}
+	for _, p := range paths {
+		disk := filepath.Join(r.Dir, filepath.FromSlash(p))
+		if e := os.MkdirAll(filepath.Dir(disk), 0o755); e != nil {
+			return bad(p, e)
+		}
+		mode := os.FileMode(0o644)
+		if tr[p].mode == "100755" {
+			mode = 0o755
+		}
+		if e := os.WriteFile(disk, content[p], mode); e != nil {
+			return bad(p, e)
+		}
+		if e := os.Chmod(disk, mode); e != nil {
+			return bad(p, e)
+		}
+	}
+	if _, e := r.git("add", "--all", "--", "."); e != nil {
+		return e
+	}
+	for _, p := range paths {
+		chmod := "--chmod=-x"
+		if tr[p].mode == "100755" {
+			chmod = "--chmod=+x"
+		}
+		if _, e := r.git("update-index", chmod, "--", p); e != nil {
+			return bad(p, e)
+		}
+	}
+	return nil
+}
+
 // CatchUp replays this clone's unpushed commits onto the fetched remote
 // (see above). It returns what each commit did, oldest first. It fetches
-// first, so it replays onto the board as it is now.
+// only for known layout divergence, then replays onto the fetched board.
 func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 	if e := r.checkIdle(); e != nil {
 		return nil, e
@@ -293,7 +373,8 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 	// Validate remote paths too, before checking out or reading their
 	// contents. In particular, never follow a remote symlink while writing
 	// a local attachment beneath it.
-	if _, e := live.tree(live.remoteRef(), t); e != nil {
+	remoteTree, e := live.tree(live.remoteRef(), t)
+	if e != nil {
 		return nil, e
 	}
 	dir, e := os.MkdirTemp("", "hug-catchup-")
@@ -312,6 +393,13 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 	private := *live
 	private.Dir = dir
 	r = &private
+	if e := r.prepareReplay(live.remoteRef(), remoteTree, t); e != nil {
+		var pe *replayPathError
+		if errors.As(e, &pe) {
+			return nil, &CatchUpError{Commit: live.remoteRef(), Subject: "remote board translation", Path: pe.path, Detail: pe.detail, Fix: pe.fix, Kept: len(list)}
+		}
+		return nil, e
+	}
 	sources := map[string]string{}
 	stop := func(c Replayed, path string, cause error) error {
 		// The live board has not changed: every local commit is still
@@ -493,6 +581,15 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 		// and compare it just like every other commit, never skip its
 		// entire delta merely because it also bumped layout.
 		c.Skipped = false
+	}
+	// A translated base is never installed as an uncommitted transform,
+	// even if all source commits were pure layout moves.
+	if staged, e := r.git("diff", "--cached", "--name-only"); e != nil {
+		return nil, e
+	} else if staged != "" {
+		if _, e := r.git("commit", "-q", "--no-verify", "-m", "hug upgrade: translate the remote board to layout 3"); e != nil {
+			return nil, e
+		}
 	}
 	result, e := r.Head()
 	if e != nil {

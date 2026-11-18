@@ -85,9 +85,9 @@ func (a *App) catchUp(s *session, dry bool) ([]string, error) {
 			replay++
 		}
 	}
-	head := fmt.Sprintf("the remote board moved to layout %d; %d commits of this clone replayed onto it, one by one, each with its own message (nothing pushed until the next sync)", task.Layout, replay)
+	head := fmt.Sprintf("the fetched board is translated to layout %d; %d commits of this clone replayed onto it, one by one, each with its own message (nothing pushed until the next sync)", task.Layout, replay)
 	if dry {
-		head = fmt.Sprintf("would: the remote board moved to layout %d; %d commits of this clone are replayed onto it, one by one, each with its own message (nothing pushed until the next sync)", task.Layout, replay)
+		head = fmt.Sprintf("would: the fetched board is translated to layout %d; %d commits of this clone are replayed onto it, one by one, each with its own message (nothing pushed until the next sync)", task.Layout, replay)
 	}
 	lines := []string{head, "append order: explicit times compare actual instants; untimed prose keeps board-before-local order (no chronology inferred)"}
 	for _, c := range list {

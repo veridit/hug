@@ -10,6 +10,8 @@ Replay runs in a private worktree. Each first-parent commit contributes its comp
 
 Every changed file is translated to layout 3 before its three-way merge. Rank changes become `rank:` edits. A successful complete replay is installed only if the live board's HEAD and clean status are still unchanged. A failed replay leaves the original HEAD and all local commits intact.
 
+The reverse case is supported too: when this clone moved first and the fetched board still uses layout 2, the same translator prepares the entire remote base in the private worktree before replay. Task paths, attachment paths and `hug.toml` become coherent together in the first retained local commit. No uncommitted transform is installed. Remote-only content, modes, aliases and `updated:` values survive this preparation. Ambiguous paths or unreadable tasks stop before any live change.
+
 ## Task values and append-only content
 
 Notes, History, requests, answers and independent checks retain both sides. Explicit timestamps compare real instants, including timezone offsets, with stable board-first ties. Untimed prose has no recoverable chronology. It uses deterministic board-before-local order, preserves order within each side, and retains each distinct append once. No timestamp is invented and this fallback is not a claim of recovered time order.
