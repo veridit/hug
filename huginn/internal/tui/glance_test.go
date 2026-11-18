@@ -132,7 +132,7 @@ func TestGlanceShowsFile(t *testing.T) {
 // scrxak check 2: n/p step files and stop at the ends with a note; j/k and
 // PgDn/PgUp scroll.
 func TestGlanceStepsAndScrolls(t *testing.T) {
-	m, _ := glanceModel(t, 80, 14)
+	m, _ := glanceModel(t, 80, 9) // the frame shows 3 of escapes.log's 5 lines (z82qsy: the file gets the whole body)
 	m = toFiles(t, openTask(t, m, "000001"))
 	m = press(m, " ", "p")
 	if m.file != 0 || !strings.Contains(m.message, "first file: 1 of 5") {
@@ -141,19 +141,23 @@ func TestGlanceStepsAndScrolls(t *testing.T) {
 	// The footer spells the keys out (Jørgen 00:08: nobody guesses n/p).
 	// n and p marked in their words, "file" written once (e3sevr checks
 	// 14 and 16, Jørgen 00:44-00:45).
-	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "scroll · M raw source · next-, previous file · Enter edit") {
+	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "M raw source · next-, previous file · Enter edit") {
 		t.Fatalf("file footer: %q", bar)
 	}
 	m = press(m, "n", "n", "n", "n", "n")
 	if m.file != 4 || !strings.Contains(m.message, "last file: 5 of 5") {
 		t.Fatalf("n past the last: file %d message %q", m.file, m.message)
 	}
-	m = press(m, "p") // escapes.log: long enough to scroll at 80x14
+	m = press(m, "p") // escapes.log: long enough to scroll at 80x9
 	if m.file != 3 || !strings.Contains(m.glanceHead, "evidence/escapes.log") {
 		t.Fatalf("p: %d %q", m.file, m.glanceHead)
 	}
 	if m.viewport.YOffset != 0 {
 		t.Fatal("a new file does not start at the top")
+	}
+	// Longer than the frame (z82qsy: the README now fits): j/k scroll.
+	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "j/k scroll · next-, previous file") {
+		t.Fatalf("long file footer: %q", bar)
 	}
 	m = press(m, "j")
 	if m.viewport.YOffset != 1 {

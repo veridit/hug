@@ -6,7 +6,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
-- TUI file viewer (z82qsy): a rule, the detail header's own, separates a shown file's `path · size · i of N` line from its contents. An action's result now reads as done, with the id (`took ID`, `marked done ID`, `answered ID`, `parked ID`, `gave back ID`, ...), not as the command (`answer vzghj8`), and it clears once you open another task, a file or another view, so it never shows under something it is not about.
+- TUI file viewer (z82qsy): a shown file is all the screen holds. The crumb names it (`HUG TASKS · list › ID › path · size · n of m`), the note it was attached with follows dim (none, no line), then a full-width rule, the file, a full-width rule, and outside the frame the message line and the keys. The task's chips, dates, lint and title no longer show above a file, so a screenshot's own lines read as inside the frame. An action's result now reads as done, with the id (`took ID`, `marked done ID`, `answered ID`, `parked ID`, `gave back ID`, ...), not as the command (`answer vzghj8`), and it clears once you open another task, a file or another view, so it never shows under something it is not about.
 
 - The TUI sort picker (`s`) names the default order (nch9d4): `r  rank` is a row, "board order, the default: moves work only in it", and `r` goes back to it at once from any sort, clearing every field. The picker shows the order in force (`now: priority ↓`, or `now: rank (board order)`) apart from the one being built (`new: type · updated ↓`, or `new: nothing picked yet, Enter or r gives rank`), so an empty draft no longer reads as `sort: rank` while the rows are sorted by priority.
 

@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -48,11 +49,13 @@ func TestFileViewerRuleUnderHeader(t *testing.T) {
 		for i, l := range lines {
 			if strings.Contains(l, "bench/README.md · 32 B · 1 of 5") {
 				at = i
+				break
 			}
 		}
 		if at < 0 || at+2 >= len(lines) {
 			t.Fatalf("%s: no file header:\n%s", view, strings.Join(lines, "\n"))
 		}
+		// check 4 put the header in the crumb, line 0; the rule follows.
 		rule := strings.Repeat("─", m.width)
 		if lines[at+1] != rule || strings.TrimRight(lines[at+2], " ") != "Bench" {
 			t.Fatalf("%s: under the file header %q / %q, want the rule then the contents", view, lines[at+1], lines[at+2])
@@ -109,5 +112,96 @@ func TestActionResultIsPastTense(t *testing.T) {
 	m = openTask(t, m, "000001")
 	if got := press(m, "t", "enter"); got.message != "took 000001" {
 		t.Fatalf("t Enter: %q, want %q", got.message, "took 000001")
+	}
+}
+
+// attachedViewer is task 000001 with screen.ans and notes.md attached
+// through the store, each with its note, at width w; Files focused.
+func attachedViewer(t *testing.T, w int) model {
+	t.Helper()
+	m, _ := glanceModel(t, w, 24)
+	ans := "\x1b[1;38;2;0;191;255mHUG TASKS\x1b[0m · list\n\x1b[38;2;135;149;168mrow one\x1b[0m\nrow two\n"
+	for _, f := range []struct{ name, body, why string }{
+		{"screen.ans", ans, "screen capture from hug tui"},
+		{"notes.md", "# Notes heading\n\nA paragraph about the mock.\n", "detail mock"},
+	} {
+		if _, _, err := m.store.Attach("000001", f.name, []byte(f.body), f.why, false); err != nil {
+			t.Fatal(err)
+		}
+	}
+	m.refresh("")
+	m = openTask(t, m, "000001")
+	return toFiles(t, m)
+}
+
+// z82qsy check 4: viewing a file, only the file shows: on top the crumb
+// (task id › file path · size · n of m) and the attachment's note, under
+// it a full-width rule; the file; a full-width rule; then outside the
+// frame the message line and the keys. No chips, dates, lint or task
+// title; a .md's own heading is not repeated as the note.
+func TestFileViewerFramesOnlyTheFile(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	var golden []string
+	for _, w := range []int{80, 140} {
+		m := attachedViewer(t, w)
+		files := m.filesOf(mustSelected(t, m))
+		for _, want := range []struct{ name, note, first string }{
+			{"screen.ans", "screen capture from hug tui", "HUG TASKS · list"},
+			{"notes.md", "detail mock", "Notes heading"},
+		} {
+			at := -1
+			for i, f := range files {
+				if f == want.name {
+					at = i
+				}
+			}
+			if at < 0 {
+				t.Fatalf("no %s in %v", want.name, files)
+			}
+			v := m
+			v.file = at
+			v = press(v, " ")
+			if v.glanceMD.eligible {
+				v = finishMarkdown(v)
+			}
+			screen := ansi.Strip(v.View())
+			lines := strings.Split(screen, "\n")
+			trim := func(i int) string { return strings.TrimRight(lines[i], " ") }
+			rule := strings.Repeat("─", w)
+			crumb := "HUG TASKS · list › 000001 › compiler/000001/" + want.name
+			if !strings.HasPrefix(trim(0), crumb+" · ") || !strings.HasSuffix(trim(0), fmt.Sprintf("%d of %d", at+1, len(files))) {
+				t.Fatalf("at %d %s: crumb %q, want %q · size · n of m", w, want.name, trim(0), crumb)
+			}
+			if trim(1) != want.note || lines[2] != rule || trim(3) != want.first {
+				t.Fatalf("at %d %s: top reads %q / %q / %q, want the note, a rule, then the file\n%s", w, want.name, trim(1), lines[2], trim(3), screen)
+			}
+			// Under the frame: the message line, the input line (a fix: or a
+			// prompt), the keys.
+			if lines[len(lines)-4] != rule {
+				t.Fatalf("at %d %s: no rule above the message line and keys:\n%s", w, want.name, screen)
+			}
+			for _, gone := range []string{"[todo]", "created 2026", "⚠ line", "Feature task 01", "File · "} {
+				if strings.Contains(screen, gone) {
+					t.Fatalf("at %d %s: %q still shows:\n%s", w, want.name, gone, screen)
+				}
+			}
+			if strings.Count(screen, "Notes heading") > 1 {
+				t.Fatalf("at %d: the .md heading shows twice:\n%s", w, screen)
+			}
+			if len(lines) != v.height {
+				t.Fatalf("at %d %s: %d lines, want %d", w, want.name, len(lines), v.height)
+			}
+			golden = append(golden, fmt.Sprintf("== %s at %d", want.name, w), screen)
+		}
+	}
+	goldenFile(t, "testdata/detail/file-frame.txt", strings.Join(golden, "\n")+"\n")
+}
+
+// z82qsy check 4: a file with no attachment note has no note line; the
+// rule is right under the crumb.
+func TestFileViewerNoNoteNoLine(t *testing.T) {
+	_, lines := fileScreen(t, "list")
+	if !strings.HasPrefix(lines[0], "HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5") || lines[1] != strings.Repeat("─", 80) || strings.TrimRight(lines[2], " ") != "Bench" {
+		t.Fatalf("no note: %q / %q / %q", lines[0], lines[1], lines[2])
 	}
 }

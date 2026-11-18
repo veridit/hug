@@ -1063,9 +1063,7 @@ func (m *model) syncDetail() {
 	if m.glance {
 		m.resizeGlanceMarkdown()
 		// The file stays as it was read: a refresh does not read it again.
-		if t, ok := m.selected(); ok {
-			m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-glanceChrome)
-		}
+		m.viewport.Height = m.glanceHeight()
 		return
 	}
 	if t, ok := m.selected(); ok {

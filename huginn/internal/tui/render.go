@@ -826,12 +826,21 @@ func (m model) View() string {
 	case m.prompt == "sort":
 		content = m.sortText()
 	case m.detail && m.glance:
-		if t, ok := m.selected(); ok {
-			// A rule under the file's own header line too (z82qsy), the
-			// detail header's rule: the contents start under it.
-			rule := m.styles.dim.Render(strings.Repeat("─", m.width))
-			content = strings.Join(m.detailHeader(t), "\n") + "\n" + rule + "\n" + m.styles.accent.Render(fit(m.glanceHead, m.width)) + "\n" + rule + "\n" + m.viewport.View()
+		// A shown file is all the screen holds (z82qsy check 4, Jørgen's
+		// 5z4zt4 request 2): the crumb names it on top, its attachment note
+		// under that, then a rule; the file; a rule; then the message line
+		// and the keys. A screenshot's own lines read as inside the frame.
+		rule := m.styles.dim.Render(strings.Repeat("─", m.width))
+		var top []string
+		if note := m.glanceNote(); note != "" {
+			top = append(top, m.styles.dim.Render(fit(note, m.width)))
 		}
+		top = append(top, rule)
+		body := strings.Split(m.viewport.View(), "\n")
+		for len(body) < m.viewport.Height {
+			body = append(body, "")
+		}
+		content = strings.Join(append(append(top, body...), rule), "\n")
 	case m.detail:
 		if t, ok := m.selected(); ok {
 			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.viewport.View()
@@ -888,7 +897,9 @@ func (m model) View() string {
 				footer = fmt.Sprintf("Task %s · %.0f%% · %sext · %srevious · Esc back", pos, m.viewport.ScrollPercent()*100, mk("n"), mk("p"))
 			}
 			if m.glance {
-				footer = fmt.Sprintf("File · %.0f%% · %sext-, %srevious file · Esc back to files", m.viewport.ScrollPercent()*100, mk("n"), mk("p"))
+				// The file view's keys are on the bar under it; this line
+				// is only for a message (z82qsy check 4).
+				footer = ""
 			}
 		}
 		if m.grab.active {
@@ -1048,6 +1059,10 @@ func (m model) detailTrail() string {
 		}
 	}
 	parts = append(parts, m.styles.accent.Render(oneLine(t.ID)))
+	if m.detail && m.glance && m.glanceHead != "" {
+		// A shown file is the last crumb: path · size · n of m (z82qsy).
+		parts = append(parts, m.styles.accent.Render(m.glanceHead))
+	}
 	return strings.Join(parts, m.styles.dim.Render(" › "))
 }
 

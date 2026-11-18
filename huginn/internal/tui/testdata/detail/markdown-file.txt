@@ -1,13 +1,5 @@
 == formatted at 80
-HUG TASKS · list › 000001                                                       
-[todo]  [feature]  [critical]  group:compiler  unassigned                       
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                  
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal           
-  fix: hug task set 000001 --title "..."                                        
-────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long…
-────────────────────────────────────────────────────────────────────────────────
-compiler/000001/bench/README.md · 274 B · 1 of 5                                
+HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 274 B · 1 of 5    
 ────────────────────────────────────────────────────────────────────────────────
 A quiet heading                                                                 
                                                                                 
@@ -28,19 +20,19 @@ Find the needle here, and another needle here.
                                                                                 
                                                                                 
                                                                                 
-File · 100% · next-, previous file · Esc back to files                          
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+                                                                                
                                                                                 
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == raw at 80
-HUG TASKS · list › 000001                                                       
-[todo]  [feature]  [critical]  group:compiler  unassigned                       
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                  
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal           
-  fix: hug task set 000001 --title "..."                                        
-────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long…
-────────────────────────────────────────────────────────────────────────────────
-compiler/000001/bench/README.md · 274 B · 1 of 5                                
+HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 274 B · 1 of 5    
 ────────────────────────────────────────────────────────────────────────────────
 # A quiet heading                                                               
                                                                                 
@@ -61,19 +53,19 @@ Find the needle here, and another needle here.
                                                                                 
                                                                                 
                                                                                 
-File · 100% · next-, previous file · Esc back to files                          
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+                                                                                
                                                                                 
 M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help  
 == formatted at 140
-HUG TASKS · list › 000001                                                                                                                   
-[todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                                                                              
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal                                                                       
-  fix: hug task set 000001 --title "..."                                                                                                    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-compiler/000001/bench/README.md · 274 B · 1 of 5                                                                                            
+HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 274 B · 1 of 5                                                                
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 A quiet heading                                                                                                                             
                                                                                                                                             
@@ -94,19 +86,19 @@ Find the needle here, and another needle here.
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-File · 100% · next-, previous file · Esc back to files                                                                                      
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                                            
                                                                                                                                             
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                     
 == raw at 140
-HUG TASKS · list › 000001                                                                                                                   
-[todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                                                                              
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal                                                                       
-  fix: hug task set 000001 --title "..."                                                                                                    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-compiler/000001/bench/README.md · 274 B · 1 of 5                                                                                            
+HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 274 B · 1 of 5                                                                
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # A quiet heading                                                                                                                           
                                                                                                                                             
@@ -127,6 +119,14 @@ Find the needle here, and another needle here.
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-File · 100% · next-, previous file · Esc back to files                                                                                      
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                                            
                                                                                                                                             
 M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                       
