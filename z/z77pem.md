@@ -32,7 +32,7 @@ Detect via ps + the executable path (Cellar version or deleted file). macOS/Linu
 ## Depends on
 
 ## Acceptance
-- [ ] A test starts a fake old hug mcp (binary path under a Cellar version < 0.7.54) and the hook prints one line naming its pid and a fix: line
+- [x] A test starts a fake old hug mcp (binary path under a Cellar version < 0.7.54) and the hook prints one line naming its pid and a fix: line
 - [ ] On Jørgen's machine the line names the stale servers, and after they restart it is gone
 
 ## Notes
