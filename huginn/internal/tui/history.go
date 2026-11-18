@@ -151,7 +151,7 @@ func (m *model) historyKey(k string) bool {
 		return m.recall(kind, k == "up")
 	case k == "enter" && m.prompt == findPrompt:
 		m.history().add(kind, m.input.Value())
-	case k == "enter" && m.prompt == ":" && m.commandReady():
+	case k == "enter" && m.prompt == ":" && (m.commandReady() || m.contextReady(m.input.Value())):
 		// A command not whole yet is completed by Enter, not run.
 		m.history().add(kind, m.input.Value())
 	}

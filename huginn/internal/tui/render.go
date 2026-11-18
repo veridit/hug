@@ -120,6 +120,15 @@ func wrap(s string, width int) string {
 }
 func (m model) bodyHeight() int { return max(1, m.height-3-m.headLines()) }
 
+// viewHeight is the body the view has to itself: all of it, or what the
+// palette leaves above it (05r3pg), so the row it acts on stays in sight.
+func (m model) viewHeight() int {
+	if m.prompt == ":" && !m.help {
+		return max(1, m.bodyHeight()-m.paletteHeight())
+	}
+	return m.bodyHeight()
+}
+
 // headLines is how many lines the breadcrumb and global bands take: three
 // over a list (breadcrumb, views with counts, filters), one in a task, where
 // only the breadcrumb draws (e3sevr, header-spec.md). A palette or picker
@@ -138,7 +147,7 @@ func (m model) taskScreen() bool {
 		return false
 	}
 	switch m.prompt {
-	case ":", "#", "filter", "sort":
+	case "#", "filter", "sort":
 		return false
 	}
 	return true
@@ -400,7 +409,7 @@ func (m model) listText() string {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
 	cur := m.rowCursor(m.pane)
-	start, end := m.window(indices, cur, 0, max(1, m.bodyHeight()-2), m.cursor)
+	start, end := m.window(indices, cur, 0, max(1, m.viewHeight()-2), m.cursor)
 	for n, i := range indices[start:end] {
 		if isHead(i) {
 			lines = append(lines, m.headText(i, m.pane, m.width, i == cur))
@@ -720,14 +729,14 @@ func (m model) sectionRows(p int) int {
 	if m.view == "overview" {
 		return m.overviewRows()[p]
 	}
-	return max(1, m.bodyHeight()-4) // a board column
+	return max(1, m.viewHeight()-4) // a board column
 }
 func (m model) boardText() string {
 	count := min(len(boardStates), max(1, (m.width+2)/40))
 	first := min(max(0, m.pane-count+1), len(boardStates)-count)
 	width := max(1, (m.width-2*(count-1))/count)
 	cols := make([][]string, count)
-	rows := max(1, m.bodyHeight()-4)
+	rows := max(1, m.viewHeight()-4)
 	for c := 0; c < count; c++ {
 		p := first + c
 		indices := m.paneRows(p)
@@ -783,35 +792,141 @@ func (m model) boardText() string {
 	return strings.Join(lines, "\n")
 }
 func (m model) paletteText() string {
-	lines := []string{m.styles.accent.Render("COMMAND PALETTE"), m.input.View(), ""}
+	return strings.Join(m.paletteLines(m.paletteHeight()), "\n")
+}
+
+// paletteHeight is how many lines the palette takes at the bottom of the
+// body (05r3pg check 1): at least a third of the screen (eight lines at
+// the least), more when its rows need it, but the view keeps a third of
+// the body and ten lines, so what the palette acts on stays above.
+func (m model) paletteHeight() int {
+	body := m.bodyHeight()
+	least := max(8, m.height/3)
+	most := body - max(10, body/3)
+	return max(1, min(body-3, max(least, min(m.paletteNeed(), most))))
+}
+
+// paletteNeed is the lines every row of the palette takes: the rule, the
+// input, the rows and their headings.
+func (m model) paletteNeed() int {
+	need, last := 2, "\x00"
+	for _, c := range m.completions() {
+		if c.group != last {
+			need++
+			if c.group == "CHECK" {
+				need++ // TASK id above it
+			}
+			last = c.group
+		}
+		need++
+	}
+	return need
+}
+
+// paletteLines draws the palette in n lines (05r3pg): a rule, the input,
+// then the rows under their headings, TASK id (and CHECK n) first, then
+// GLOBAL; each row is its key, its name and what it does. The rows scroll
+// with the pick; the headings say which group a row is in.
+func (m model) paletteLines(n int) []string {
+	rule := m.styles.dim.Render(strings.Repeat("─", m.width))
+	lines := []string{rule, m.input.View()}
 	cs := m.completions()
 	if len(cs) == 0 {
-		return strings.Join(append(lines, "No completions. Esc closes; ? shows help."), "\n")
+		lines = append(lines, m.styles.dim.Render("  no choices: Esc goes up a level; F1 shows help"))
 	}
-	// Use the screen: as many rows as fit (2026-11-16, user).
-	rows := max(1, m.bodyHeight()-5)
-	start := max(0, m.completion-rows+1)
-	nameWidth := min(40, max(8, m.width/3))
-	for i := start; i < min(len(cs), start+rows); i++ {
-		pointer := "  "
-		if i == m.completion {
-			pointer = "> "
+	subject, _ := m.subject()
+	heading := func(group string) string {
+		switch group {
+		case "TASK":
+			return "TASK " + oneLine(subject.ID) + " " + oneLine(subject.Title)
+		case "CHECK":
+			text := ""
+			if a, ok := m.focusedCheck(subject); ok {
+				text = " " + oneLine(cleanMarkdown(a.Text))
+			}
+			return fmt.Sprintf("  CHECK %d%s", m.acceptance+1, text)
 		}
-		name, desc := oneLine(cs[i].value), oneLine(cs[i].description)
-		if cs[i].branch {
+		return "GLOBAL"
+	}
+	// Every row with its heading before it, as drawn; the pick's line is
+	// kept in view.
+	type row struct {
+		text string
+		pick int // the completion's index, -1 for a heading
+	}
+	var rows []row
+	keyWidth := 5
+	if !m.detail {
+		keyWidth = 3
+	}
+	for _, c := range cs {
+		keyWidth = max(keyWidth, ansi.StringWidth(c.key))
+	}
+	nameWidth := min(30, max(12, m.width/4))
+	last, taskHead := "\x00", false
+	for i, c := range cs {
+		// CHECK n is a branch of TASK id (a tree, 05r3pg principle): the
+		// task's heading comes first, the check's under it, indented, and
+		// its rows under that.
+		if (c.group == "CHECK" || c.group == "TASK") && !taskHead {
+			rows = append(rows, row{m.styles.accent.Render(fit(heading("TASK"), m.width)), -1})
+			taskHead = true
+			last = "TASK"
+		}
+		if c.group != last {
+			if c.group != "TASK" {
+				rows = append(rows, row{m.styles.accent.Render(fit(heading(c.group), m.width)), -1})
+			}
+			last = c.group
+		}
+		indent := "  "
+		if c.group == "CHECK" {
+			indent = "    "
+		}
+		name, desc := oneLine(c.value), oneLine(c.description)
+		if c.branch {
 			name = strings.TrimRight(name, " ") + " ›"
 		}
-		if cs[i].field != "" {
-			desc = fmt.Sprintf("%d tasks", m.valueCount(cs[i].field, cs[i].fieldValue))
+		if c.field != "" {
+			desc = fmt.Sprintf("%d tasks", m.valueCount(c.field, c.fieldValue))
 		}
-		line := fit(pointer+fit(name, nameWidth)+"  "+desc, m.width)
+		key := fit(c.key, keyWidth)
+		width := nameWidth - (len(indent) - 2) // the names line up across groups
+		line := indent + key + " " + fit(name, width) + " " + desc
 		if i == m.completion {
-			line = m.styles.selected.Render(line)
+			rows = append(rows, row{m.styles.selected.Render(fit(">"+line[1:], m.width)), i})
+			continue
 		}
-		lines = append(lines, line)
+		rows = append(rows, row{fit(m.styles.accent.Render(indent+key)+" "+fit(name, width)+" "+m.styles.dim.Render(desc), m.width), i})
 	}
-	lines = append(lines, "", m.styles.dim.Render(fmt.Sprintf("%d choices · › opens a level · Tab or Enter completes · Enter runs a complete command", len(cs))))
-	return strings.Join(lines, "\n")
+	space := max(0, n-len(lines))
+	at := 0
+	for j, r := range rows {
+		if r.pick == m.completion {
+			at = j
+		}
+	}
+	start := max(0, at-space+1)
+	for j := start; j < len(rows) && len(lines) < n; j++ {
+		lines = append(lines, rows[j].text)
+	}
+	for len(lines) < n {
+		lines = append(lines, "")
+	}
+	return lines
+}
+
+// paletteFooter says what the palette offers, in place of the view's
+// footer (05r3pg check 5): how many choices, and what Enter does.
+func (m model) paletteFooter() string {
+	cs := m.completions()
+	subject, ok := m.subject()
+	for _, c := range cs {
+		if c.group != "" && ok {
+			return fmt.Sprintf("Palette · %d choices, %s's first · type to narrow · › opens a level", len(cs), oneLine(subject.ID))
+		}
+	}
+	return fmt.Sprintf("Palette · %d choices · type to narrow · › opens a level", len(cs))
 }
 
 // View is the frame, with the shown image drawn over its rows where the
@@ -831,9 +946,6 @@ func (m model) frameView() string {
 	mode := m.view
 	if m.detail {
 		mode = "detail"
-	}
-	if m.prompt == ":" {
-		mode = "palette"
 	}
 	if m.prompt == "#" {
 		mode = "jump"
@@ -869,8 +981,6 @@ func (m model) frameView() string {
 	switch {
 	case m.help:
 		content = m.helpViewport.View()
-	case m.prompt == ":":
-		content = m.paletteText()
 	case m.prompt == "#":
 		content = m.jumpText()
 	case m.prompt == "filter":
@@ -911,6 +1021,19 @@ func (m model) frameView() string {
 		lines = []string{m.breadcrumb()} // the global band goes in a task
 	}
 	body := strings.Split(content, "\n")
+	// The palette takes the bottom rows of the body; what it acts on
+	// stays drawn above it (05r3pg check 1).
+	if m.prompt == ":" && !m.help {
+		n := m.paletteHeight()
+		keep := max(0, m.bodyHeight()-n)
+		if len(body) > keep {
+			body = body[:keep]
+		}
+		for len(body) < keep {
+			body = append(body, "")
+		}
+		body = append(body, m.paletteLines(n)...)
+	}
 	for n := 0; n < m.bodyHeight(); n++ {
 		line := ""
 		if n < len(body) {
@@ -957,6 +1080,9 @@ func (m model) frameView() string {
 		if m.grab.active {
 			rows := m.indices()
 			footer = fmt.Sprintf("Moving %s · row %d of %d in %s (was %d) · nothing written until Enter", m.grab.id, m.rowOf(rows, m.grab.path)+1, len(rows), m.sectionName(), m.grab.start+1)
+		}
+		if m.prompt == ":" && !m.help {
+			footer = m.paletteFooter()
 		}
 	}
 	lines = append(lines, m.renderMarks(oneLine(footer), m.styles.dim))
@@ -1027,6 +1153,10 @@ func (m model) editNoticeLines() (string, string, bool) {
 func (m model) confirmLine() string {
 	question := "Confirm " + actionNames[m.confirm] + " "
 	switch m.confirm {
+	case runKey:
+		// The command itself, as the CLI takes it (05r3pg): what runs is
+		// what an agent would type.
+		question = "Run " + oneLine(shellLine(m.pendingArgs))
 	case captureKey:
 		// S (5z4zt4): the copy is made; this asks only about attaching.
 		if t, ok := m.taskAt(m.confirmPath); ok {

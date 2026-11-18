@@ -14,19 +14,25 @@ type command struct {
 	hidden bool
 }
 
-// The palette is a tree: views and actions at the top, every filter under
-// "filter", then the field, then its values (2026-11-16, user).
+// The palette's global tree (05r3pg: the group after the context ones,
+// palettetree.go): views under "view", every filter under "filter", then
+// the field, then its values (2026-11-16, user). Hidden commands still run
+// when typed.
 var commands = []command{
-	{"overview", "", "At a glance", false}, {"list", "", "Ranked task list", false}, {"board", "", "State columns", false},
-	{"lint", "", "Tasks with findings", false},
+	{"view", "view", "Overview, list, board, lint", false},
+	{"overview", "", "At a glance", true}, {"list", "", "Ranked task list", true}, {"board", "", "State columns", true},
+	{"lint", "", "Tasks with findings", true},
 	{"filter", "field", "Narrow the tasks by a field", false},
 	{"goto", "id", "Open a task by id", false},
-	{"sort", "", "Order rows by fields: p priority, t type, ... then Enter", false},
+	{"sort", "", "Order rows by fields, then Enter", false},
 	{"sort rank", "", "Back to rank order, the order moves change", true},
-	{"grouping", "", "Rows flat, by group, by epic, by tag: cycles; Space folds a heading", false},
+	{"grouping", "", "Rows flat, by group, by epic, by tag: cycles", false},
 	{"grouping flat", "", "Rows without headings", true}, {"grouping group", "", "A heading per group", true},
 	{"grouping epic", "", "A heading per epic", true}, {"grouping tag", "", "A heading per tag (tag: first listed tag)", true},
-	{"clear", "", "Clear every filter", false}, {"help", "", "All keys and commands", false},
+	{"clear", "", "Back to every task, nothing narrowed", false},
+	{"new", "title", "A new task, titled", false},
+	{"rebalance", "", "Rekey rank prefixes; order unchanged", false},
+	{"help", "", "All keys and commands", false},
 	{"todo", "", "Filter todo", true}, {"doing", "", "Filter in progress", true}, {"done", "", "Filter completed", true},
 	{"depends", "", "Filter tasks whose dependency is not done", true}, {"dropped", "", "Filter dropped", true},
 	{"state", "state", "todo, doing, done, depends, dropped", true}, {"type", "type", "feature, bug, chore, spike, docs", true},
@@ -44,6 +50,44 @@ type completion struct {
 	value, description string
 	branch             bool
 	field, fieldValue  string
+	// group is the heading the row is under: "CHECK", "TASK", or "" for
+	// GLOBAL; key the key that does the same outside the palette.
+	group, key string
+}
+
+// globalKey is the key that does what a global command does, here.
+func (m model) globalKey(name string) string {
+	switch name {
+	case "view":
+		return "v"
+	case "filter":
+		return "f"
+	case "goto":
+		return "#"
+	case "sort":
+		return "s"
+	case "grouping":
+		if !m.detail {
+			return "g"
+		}
+	case "clear":
+		return "F"
+	case "new":
+		return "N"
+	case "help":
+		return "?"
+	}
+	return ""
+}
+
+// filterKey is f and the field's letter in the filter picker.
+func filterKey(field string) string {
+	for _, f := range filterFields {
+		if f.name == field {
+			return "f " + f.letter
+		}
+	}
+	return ""
 }
 
 func describe(name string) string {
@@ -114,7 +158,19 @@ func (m model) values(name string) []string {
 	sort.Strings(out)
 	return out
 }
+
+// completions are the palette's rows for what is typed: the context
+// groups first (CHECK, TASK), then the global tree (05r3pg).
 func (m model) completions() []completion {
+	raw := strings.TrimLeft(m.input.Value(), " ")
+	var out []completion
+	if _, isFilter := cutFilter(raw); !isFilter {
+		out = m.contextCompletions(raw)
+	}
+	return append(out, m.globalCompletions()...)
+}
+
+func (m model) globalCompletions() []completion {
 	value := strings.TrimLeft(m.input.Value(), " ")
 	prefix := ""
 	if rest, ok := cutFilter(value); ok {
@@ -138,7 +194,7 @@ func (m model) completions() []completion {
 	fields := func() {
 		for _, f := range paletteFields {
 			if strings.HasPrefix(f, name) {
-				out = append(out, completion{value: "filter " + f + " ", description: describe(f), branch: true})
+				out = append(out, completion{value: "filter " + f + " ", description: describe(f), branch: true, key: filterKey(f)})
 			}
 		}
 	}
@@ -158,12 +214,26 @@ func (m model) completions() []completion {
 				if c.argument != "" {
 					v += " "
 				}
-				out = append(out, completion{value: v, description: c.description, branch: c.argument != ""})
+				out = append(out, completion{value: v, description: c.description, branch: c.argument != "" && c.name != "new", key: m.globalKey(c.name)})
 			}
 		}
-		// Typing a field name finds it without spelling out "filter".
+		// Typing a field name finds it without spelling out "filter",
+		// and a view's without "view" ("bo" is board, 05r3pg).
 		if name != "" && !strings.HasPrefix("filter", name) {
 			fields()
+		}
+		if name != "" && !strings.HasPrefix("view", name) {
+			for _, v := range views {
+				if strings.HasPrefix(v.name, name) {
+					out = append(out, completion{value: v.name, description: describe(v.name), key: "v " + v.key})
+				}
+			}
+		}
+	case name == "view":
+		for _, v := range views {
+			if strings.HasPrefix(v.name, strings.TrimLeft(arg, " ")) {
+				out = append(out, completion{value: "view " + v.name, description: describe(v.name), key: "v " + v.key})
+			}
 		}
 	default:
 		arg = strings.TrimLeft(arg, " ")
@@ -270,6 +340,16 @@ func (m *model) executeCommand() bool {
 	name, arg, _ := strings.Cut(value, " ")
 	arg = strings.TrimSpace(arg)
 	switch name {
+	case "view":
+		if _, ok := pickViewName(arg); !ok {
+			m.message = "unknown view: " + arg + "; overview, list, board or lint"
+			return false
+		}
+		m.setView(arg)
+	case "new":
+		m.requestAction("n", arg)
+	case "rebalance":
+		m.askRun([]string{"rebalance"}, "")
 	case "overview", "list", "board", "lint":
 		m.setView(name)
 	case "todo", "doing", "done", "dropped", "depends":

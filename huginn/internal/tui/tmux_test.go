@@ -276,8 +276,9 @@ func TestTmuxGolden(t *testing.T) {
 				special("Escape")
 				wait("HUG · repo · list")
 				send(":type ")
-				snapshot("palette", "COMMAND PALETTE")
-				special("Escape")
+				snapshot("palette", "GLOBAL")
+				special("Escape") // up a level (05r3pg)
+				special("Escape") // closed
 				wait("HUG · repo · list")
 				send("#178")
 				snapshot("jump", "JUMP TO ID")

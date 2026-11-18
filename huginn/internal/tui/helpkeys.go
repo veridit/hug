@@ -68,9 +68,11 @@ func (m model) contextHelp() helpSection {
 	case "palette":
 		return helpSection{"IN THE : PALETTE", []helpRow{
 			row("Tab", "complete the choice", "tab"), row("Enter", "complete, or run a complete command", "enter"),
-			row("↑↓ ctrl-n/p", "pick a completion"), row("Esc", "close", "esc"),
+			row("↑↓ ctrl-n/p", "pick a completion"), row("Esc", "up a level; on the top level, close", "esc"),
 			row("↑ empty", "recall earlier commands, ↑ again older, ↓ newer; Enter runs it"),
-			row("commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, tag <t>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
+			row("TASK id", "the task you are in or on: take, done, drop, edit, note, set, move, mv, dep ..."),
+			row("CHECK n", "with a check focused: tick or untick, strike, promote"),
+			row("GLOBAL", "view, filter (state, type, priority, group, tag, assignee, epic), goto, sort, grouping, clear, new, rebalance, help"),
 		}}
 	case "filter":
 		return helpSection{"IN THE FILTER PICKER", []helpRow{

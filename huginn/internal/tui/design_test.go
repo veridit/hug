@@ -196,6 +196,10 @@ func TestEscAtEveryLevel(t *testing.T) {
 		t.Fatal("help did not close one level")
 	}
 	m = press(m, "esc")
+	if m.prompt != ":" || m.input.Value() != "" || !m.detail {
+		t.Fatal("palette did not back out one level (05r3pg: Esc goes up, then closes)")
+	}
+	m = press(m, "esc")
 	if m.prompt != "" || !m.detail {
 		t.Fatal("palette did not close one level")
 	}

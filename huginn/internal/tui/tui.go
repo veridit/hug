@@ -87,6 +87,11 @@ type Options struct {
 	// hug task answer call. It runs inside the write's turn, after its
 	// commit.
 	Deliver func(id, kind, by string) (string, error)
+	// Run, when set, runs a hug task command (args after "hug task") as
+	// the CLI and MCP do, its board turn and commit included, and returns
+	// what it says in one line (05r3pg: the palette's task actions that
+	// have no key of their own).
+	Run func(args []string) (string, error)
 	// Initial, when set, is drawn before anything is read: the board the
 	// task cache last saw (vnyz8z). Then Refresh, when set, brings the
 	// board up to date (the cache's sync) before the first reload, off the
@@ -221,21 +226,23 @@ type model struct {
 	// moving to another task, file or view clears it (z82qsy, tz9z14).
 	messageAt                          string
 	confirm, confirmPath, pendingValue string
-	yanked                             string // y: the task id P and p paste (3xcesq)
-	hidden                             string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
-	grab                               grabState
-	find                               findState // / in a task or a file: matches in its text (4s3g5q)
-	filter                             task.Filter
-	input                              textinput.Model
-	columnHinted                       bool           // H/L or o last: the footer says what o does, on rows (qtj177)
-	answerBox                          textarea.Model // the answer under a question: lines of its own (41hhgn)
-	vCursor                            cursor.Model   // the one cursor while v waits, after 'view:' (911j70)
-	viewport, helpViewport             viewport.Model
-	helpModel                          help.Model
-	completion                         int
-	chips                              []filterChip
-	pickerField                        string
-	styles                             theme
+	// pendingArgs is the hug task command a run confirm asks about (05r3pg).
+	pendingArgs            []string
+	yanked                 string // y: the task id P and p paste (3xcesq)
+	hidden                 string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
+	grab                   grabState
+	find                   findState // / in a task or a file: matches in its text (4s3g5q)
+	filter                 task.Filter
+	input                  textinput.Model
+	columnHinted           bool           // H/L or o last: the footer says what o does, on rows (qtj177)
+	answerBox              textarea.Model // the answer under a question: lines of its own (41hhgn)
+	vCursor                cursor.Model   // the one cursor while v waits, after 'view:' (911j70)
+	viewport, helpViewport viewport.Model
+	helpModel              help.Model
+	completion             int
+	chips                  []filterChip
+	pickerField            string
+	styles                 theme
 	// editNotice is the task file whose edit introduced lint findings: the
 	// notice shows the first one with its fix, and e reopens the editor,
 	// until Esc, another action, or the file is clean (rx74bp).
@@ -434,9 +441,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.messageAt = m.messagePlace()
 	}
 	before := m.message
+	height := m.viewHeight()
 	next, cmd := m.step(msg)
 	if n, ok := next.(model); ok {
 		n.clearStaleMessage(before)
+		if n.viewHeight() != height && n.detail && !n.glance {
+			// The page is as tall as the palette leaves it (05r3pg): it
+			// shrinks when the palette opens or grows, and grows back
+			// when it closes, so its rows are where they were.
+			n.syncDetail()
+			if n.prompt == ":" {
+				n.revealAcceptance()
+			}
+		}
 		return n, cmd
 	}
 	return next, cmd
@@ -1133,7 +1150,9 @@ func (m *model) syncDetail() {
 		return
 	}
 	if t, ok := m.selected(); ok {
-		m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-1)
+		// viewHeight: the palette takes the bottom rows (05r3pg), the page
+		// above is shorter, so the check it acts on stays in sight.
+		m.viewport.Height = max(1, m.viewHeight()-len(m.detailHeader(t))-1)
 		m.viewport.SetContent(m.detailText(t))
 		if m.find.text != "" {
 			m.refind() // the page drawn again keeps its matches (4s3g5q)
@@ -1178,11 +1197,17 @@ func (m *model) back() {
 		}
 		m.confirm = ""
 		m.pendingValue = ""
+		m.pendingArgs = nil
 	case m.editNotice != "" && m.prompt == "":
 		m.editNotice = ""
 	case m.prompt == "filter" && m.pickerField != "":
 		m.pickerField = ""
 		m.input.SetValue("")
+		m.completion = 0
+	case m.prompt == ":" && strings.TrimSpace(m.input.Value()) != "":
+		// Esc backs out one level of the tree, then closes (05r3pg).
+		m.input.SetValue(paletteUp(m.input.Value()))
+		m.input.CursorEnd()
 		m.completion = 0
 	case m.prompt == "/":
 		m.leaveSearch(false) // Esc clears the search, keeping the task (mcvfbz)
@@ -1365,6 +1390,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.confirm != "" {
 			if k == "q" {
 				return m, tea.Quit
+			}
+			if k == "enter" && m.confirm == runKey {
+				args, path := m.pendingArgs, m.confirmPath
+				m.confirm, m.confirmPath, m.pendingArgs = "", "", nil
+				m.runArgs(args, path)
+				return m, nil
 			}
 			if k == "enter" {
 				cmd := m.executeAction()
@@ -1824,6 +1855,16 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				m.input.SetValue("")
 				m.openSort()
 				return m, nil
+			}
+			// The context groups first (05r3pg): "edit" is this task's
+			// edit, run as its key runs it, or asked in the confirm line.
+			if value := m.input.Value(); m.contextReady(value) {
+				m.prompt = ""
+				m.input.Blur()
+				m.input.SetValue("")
+				cmd := m.runContext(value)
+				m.syncDetail()
+				return m, cmd
 			}
 			if m.commandReady() {
 				if m.executeCommand() {

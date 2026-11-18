@@ -162,6 +162,20 @@ func (a *App) runTUI(ctx context.Context, s *session, f flags) (Reply, error) {
 	// The header names the project by this checkout's folder (0sw0dd):
 	// a linked worktree reads as itself, hug-testing beside hug.
 	opts.Checkout = s.r.Root
+	// The : palette's keyless actions (05r3pg) run the command itself,
+	// through Execute, the code the shell and MCP task_update run: it takes
+	// the turn and commits on its own. The TUI's store then reads the files
+	// again, and the cache syncs, so the board it draws is what was written.
+	opts.Run = func(args []string) (string, error) {
+		reply, e := a.Execute(ctx, args)
+		s.s.Invalidate()
+		_, _ = s.c.Sync(ctx)
+		if e != nil {
+			_, problem, fix := ErrorDetails(e)
+			return "", fmt.Errorf("%s\nfix: %s", problem, fix)
+		}
+		return runSummary(args, reply), nil
+	}
 	// Not a terminal (a test's input): keys from In, no screen.
 	if _, tty := a.In.(*os.File); !tty && a.In != nil {
 		opts.Input, opts.Output, opts.NoReload = a.In, a.Out, true
@@ -596,4 +610,22 @@ func writeLayout(dir string, n int) error {
 		return e
 	}
 	return os.WriteFile(path, []byte(task.WithLayout(string(b), n)), 0o644)
+}
+
+// runSummary is one line for the TUI's message after a palette command
+// (05r3pg): the command as typed, and whether it changed anything; the
+// reply's next step when it names one.
+func runSummary(args []string, reply Reply) string {
+	line := "hug task " + strings.Join(args, " ")
+	if len(line) > 60 {
+		line = line[:57] + "..."
+	}
+	said := "done: " + line
+	if changed, ok := reply["changed"].(bool); ok && !changed {
+		said = "nothing to change: " + line
+	}
+	if next, ok := reply["next"].(string); ok && next != "" {
+		said += " · next: " + next
+	}
+	return said
 }
