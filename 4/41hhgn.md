@@ -101,6 +101,7 @@ nautilus: TUI parts landed 48b1151f..4b93356a (0gztsy), CI 44218985753 6/6 succe
 shipped in v0.7.53 (2c7ea8b)
 check 11 parked (iwazaru, for 34r1ft): branch 41hhgn-11 = ci/41hhgn-11 at 66034a19 on main 80c8ac28 (failing tests 680c8966). The outcome is delivered to the coordinator in one line with outcome_receipt, offline at the next session start, and the board cue skips a delivered outcome. Touched packages ok (cli 570.161s, task 18.376s, board 5.231s, mcp 35.670s, cache 2.401s, muninn/run 10.393s). huginn+muninn tui timed out under load 315 and pass alone. CI 44362462921: ubuntu, windows, bench, secrets success; macos and windows-cli were still running at 17:58Z. Report: /Users/jhf/.jcode/scratch/41hhgn-11-REPORT.md. Not ticked yet: tick after CI is green.
 check 11 CI green: run 44362462921 on ci/41hhgn-11 @ 66034a19: secrets, test-windows-cli, test (macos-latest), bench, test (windows-latest), test (ubuntu-latest) all success. Ready for crab's review; parked while 34r1ft goes first.
+crab 20:16 local: check 11 66034a19 accepted on review (outcome line via Deliver, offline receipt, answer cut 120, board cue skips delivered outcome; CI 44362462921 6/6). Lands after 34r1ft.
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
