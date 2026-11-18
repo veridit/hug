@@ -1,15 +1,20 @@
 ---
 id: rnpdnm
 title: "Memory placement: extractor places personal/other projects, sync gate rule"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["bonehound"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T21:36"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
 ## Notes
 
 crab 21:36 local: dependency on gav9nw removed. The decision is written (8a1b0c05, DESIGN.md 'Personal vs shared memories', CI 44386929067 green) and accepted; it lands in the next stack.
+
+
+## History
+- 2026-11-18T21:36 todo -> doing/active (take)
