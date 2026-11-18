@@ -1,13 +1,18 @@
 ---
 id: w2wr9b
 title: "Release v0.7.61: standalone layout 3"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T10:46"
+stage: "active"
+model: "openai"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Source ead1be4ca37a1042e64c4878d0afcdba7c921b3f, CI44277147694 all6 success incl
 - [ ] Hug own-board preview is reviewed, board-only apply verified, machine configs/native bytes not migrated, Seid and Statbus agents notified
 
 ## Notes
+
+
+## History
+- 2026-11-18T10:46 todo -> doing/active (take)
