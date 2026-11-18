@@ -55,3 +55,5 @@ landed 38ed468 on main 2026-11-18: One request for several tasks: request ID1,ID
 shipped in v0.7.68 (38ed468)
 
 file:board-request-mock.md (6444 bytes, sha256:77db2258) piglet: check 1 mock: marks (rxr4z8), r for the marked set, the box, after Enter, pending/handled per target; one question (A or B)
+
+crab 21:53 local: reassigned to piglet (mizaru's hold was stale from the morning request work; he is on other tasks). piglet mock board-request-mock.md attached. Gap found: the TUI shows no targets line for a multi-target request on its home page, and a resolved link page shows no text and no pointer home; check 3 holds in the CLI only, so the build adds that line.
