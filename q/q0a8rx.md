@@ -4,7 +4,7 @@ title: "Public hug/memory: keep or rewrite without the 58 misplaced memories"
 state: "doing"
 type: chore
 priority: ""
-assignee: ["crab"]
+assignee: [""]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
