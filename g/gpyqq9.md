@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T15:29"
+done_release: "v0.7.64"
 ---
 
 ## Goal
@@ -45,6 +46,7 @@ CI green: run 44303286385 (ebf1c40) and run 44305350513 (d177829, branch head): 
 Landed on main 674336d1 (CI 44319483386, exact SHA, 6/6). Ships in the next release.
 landed fe4dbc0 on main 2026-11-18: ask settles the shipped-not-done finding it asks about (gpyqq9)
 landed 674336d on main 2026-11-18: test: ask about open checks of a shipped task settles shipped-not-done (gpyqq9…
+shipped in v0.7.64 (fe4dbc0)
 ## History
 - 2026-11-18T13:17 todo -> doing/active (take)
 - 2026-11-18T13:22 doing/active -> doing/waiting (wait)

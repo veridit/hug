@@ -55,6 +55,7 @@ crab review 13:20Z: stack e66eeb65 (judge prompt) + 819f0f64 (show no longer fee
 Landed on main c6e49638 (CI 44315991740, exact SHA, 6/6 green). Ships in the next release.
 landed 5fbf547 on main 2026-11-18: board4 judge: state the lint ownership rule; two judgings now agree (6fqhg9)
 landed c6e4963 on main 2026-11-18: recall hook: a hug command quoted inside another's argument is not a call…
+shipped in v0.7.64 (5fbf547)
 ## History
 - 2026-11-18T13:32 todo -> doing/active (take)
 - 2026-11-18T13:50 doing/active -> doing/waiting (wait)
