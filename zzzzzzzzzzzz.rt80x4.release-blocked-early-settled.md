@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T09:10"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "CI run 44266307354, single ordinary CI-only cross-platform gate on00df677f; wyvern owns watcher130570yi3u, main authorization retained by crab"
+waiting_since: "2026-11-18T09:22"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -42,3 +45,4 @@ Actual calf four-path ACK08:11/08:12 and crab scope/fix approvals08:11:50/08:14:
 Actual exact-source race9575492wnl exit0113.7s: gitbranch14.804s, cli109.339s, env4.711s, repocheck1.260s. Candidate00df677fdeca8a9df61864c024e8094a1c45d1da clean latestbaseecf6a268, source and rawlines scratch/rt80x4/final-race-source.txt/final-touched-race.txt. Crab08:21 authorizes ONEfreshCI-only branch afterthese gates. Fetchedbaseunchanged, diffcheck/ancestry/cleantree guards passed. Push099606dl01 created ci/rt80x4-20261118, remoteexact00df verified. OrdinaryCI44266307354 push-event in_progress, exactheadconfirmed, ownwatcher130570yi3u toterminal, no reruns. No main/CHANGELOG/release/tag/newenv/waitchanges. HistoricalreleasecauseNOTestablished, benchmarkpaused. Packet scratch/rt80x4/review-packet.md. No acceptance ticks until approvedgreenmain.
 ## History
 - 2026-11-18T09:10 todo -> doing/active (take)
+- 2026-11-18T09:22 doing/active -> doing/waiting (wait)
