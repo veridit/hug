@@ -47,5 +47,6 @@ check 1: f68a9a5d: TestCaptureAttachesToATypedTask (typed 000012 attaches there,
 check 2: TestCaptureSelectPicksARow: s opens the rows (picking, not detail), 9 writers only say so, j j Enter attaches to that row with one commit and returns to 000002; Esc attaches nothing; # 000020 Enter Enter attaches there. Fail-first: 's did not open the rows to pick'
 check 3: TestCaptureCreatesATask: c asks 'title:', Esc goes back to where with the capture kept, empty title creates nothing, 'Broken bar' Enter creates it with screen-1452.ans in Files (on disk and in the detail), one commit 'hug task new ID', opens it. Fail-first: 'c opened ""'
 check 4: testdata/detail/capture-prompt.txt: offered, typed, title and picking at 80 and 140, text and codes; the test fails on any 48; background and any SGR with both 1 and 4. Fail-first: old bar '48;2;255;179;84'
+CI 44400498760 on f68a9a5d: success, all 8 jobs. ubuntu -race huginn/internal/tui: 290.273s. Checks 1-4 ticked; check 5 (Jørgen confirms on his board after release) open.
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
