@@ -276,6 +276,11 @@ func (m model) headText(r, p, width int, selected bool) string {
 	}
 	count := fmt.Sprintf("  [%d]", h.count)
 	label := ansi.Truncate(oneLine(m.headLabel(h.value)), max(0, width-2-2-len(count)), "…")
+	if selected && mockOn() {
+		// PROTOTYPE (mock/grid): a selected heading row shows the
+		// selection on its row-header cell (the fold arrow), as a task's id.
+		return fit("  "+m.styles.rowHeader.Render(arrow)+" "+m.styles.normal.Bold(true).Render(label)+m.styles.dim.Render(count), width)
+	}
 	if selected {
 		return m.styles.selected.Render(fit(pointer+" "+arrow+" "+label+count, width))
 	}

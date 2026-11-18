@@ -25,7 +25,10 @@ type column struct {
 // gridColumns are the columns rows show, left to right: the pie (checks
 // done), id, tags (txjkrm), type, priority, stage, title, and in IN
 // PROGRESS the owner. A column the width dropped is skipped by the cursor.
-var gridColumns = []column{
+// PROTOTYPE (mock/grid, 911j70 sheets): with the mock on, in its order.
+var gridColumns = buildGridColumns()
+
+var mainColumns = []column{
 	{"✓", "checks", func(rowCols) bool { return true }},
 	{"id", "id", func(rowCols) bool { return true }},
 	{"tags", "tags", func(c rowCols) bool { return c.tags > 0 }},
