@@ -33,7 +33,7 @@ z82qsy ef9c060f added the frame (glance.go, render.go); imageView draws PNGs ful
 
 ## Acceptance
 - [x] A PNG opens with the crumb, the note, a top rule, the image within the frame rows, a bottom rule and the keys (golden for the fallback; tmux capture in iTerm2 attached to this task).
-- [ ] n/p moves between images and text files with the same frame (test).
+- [x] n/p moves between images and text files with the same frame (test).
 
 ## Notes
 
