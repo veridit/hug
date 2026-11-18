@@ -2,16 +2,13 @@ package gitbranch
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // Catching up across a layout move (w40cmk check 9, crab 04:44). This
@@ -102,34 +99,37 @@ func (r *Repository) Pending(t Translator) ([]Replayed, error) {
 // replay. The caller decides whether cross-layout recovery was requested
 // or an ordinary same-layout sync found divergent commits.
 func (r *Repository) pendingCommits(t Translator) ([]Replayed, error) {
-	out, e := r.git("rev-list", "--reverse", "--first-parent", "--format=%H%x00%s%x00%an%x00%ae%x00%aI", r.remoteRef()+"..HEAD")
+	out, e := r.git("rev-list", "--reverse", "--first-parent", "--format=%H%x00%P%x00%s%x00%an%x00%ae%x00%aI", r.remoteRef()+"..HEAD")
 	if e != nil {
 		return nil, e
 	}
+	o := readObjects(r.Dir)
+	defer o.close()
 	var list []Replayed
 	for _, l := range strings.Split(out, "\n") {
 		if strings.HasPrefix(l, "commit ") || l == "" {
 			continue
 		}
-		f := strings.SplitN(l, "\x00", 5)
-		if len(f) != 5 {
+		f := strings.SplitN(l, "\x00", 6)
+		if len(f) != 6 {
 			return nil, &Error{Op: "catch-up preview", Detail: "cannot read a local commit's metadata; no commit was skipped", Fix: r.fix("log --oneline")}
 		}
-		c := Replayed{Commit: f[0], Subject: f[1], Author: f[2], Email: f[3], At: f[4]}
-		moved, e := r.movesLayout(c.Commit, t)
+		c := Replayed{Commit: f[0], Subject: f[2], Author: f[3], Email: f[4], At: f[5]}
+		parent, _, _ := strings.Cut(f[1], " ")
+		moved, e := r.movesLayout(o, c.Commit, parent, t)
 		if e != nil {
 			return nil, e
 		}
 		if moved {
-			before, e := r.tree(c.Commit+"^", t)
+			before, e := r.treeVia(o, parent, t)
 			if e != nil {
 				return nil, e
 			}
-			after, e := r.tree(c.Commit, t)
+			after, e := r.treeVia(o, c.Commit, t)
 			if e != nil {
 				return nil, e
 			}
-			c.Skipped, e = r.sameTranslated(before, after, t)
+			c.Skipped, e = r.sameTranslated(o, before, after, t)
 			if e != nil {
 				return nil, e
 			}
@@ -139,23 +139,23 @@ func (r *Repository) pendingCommits(t Translator) ([]Replayed, error) {
 	return list, nil
 }
 
-// movesLayout says whether commit changes hug.toml's layout.
-func (r *Repository) movesLayout(commit string, t Translator) (bool, error) {
-	parent, e := r.git("rev-parse", "--verify", "--quiet", commit+"^")
-	if e != nil {
-		return false, nil // a root commit moves nothing
+// movesLayout says whether commit changes hug.toml's layout from parent's
+// ("" for a root commit, which moves nothing).
+func (r *Repository) movesLayout(o *objects, commit, parent string, t Translator) (bool, error) {
+	if parent == "" {
+		return false, nil
 	}
 	probe := *r
 	probe.Layout = t.Layout
-	now, e := probe.layoutAt(commit)
+	now, e := probe.layoutVia(o, commit)
 	if e != nil {
 		return false, e
 	}
-	then, e := probe.layoutAt(parent)
+	then, e := probe.layoutVia(o, parent)
 	return now != then, e
 }
 
-func (r *Repository) sameTranslated(a, b tree, t Translator) (bool, error) {
+func (r *Repository) sameTranslated(o *objects, a, b tree, t Translator) (bool, error) {
 	if len(a) != len(b) {
 		return false, nil
 	}
@@ -164,11 +164,11 @@ func (r *Repository) sameTranslated(a, b tree, t Translator) (bool, error) {
 		if !ok || av.mode != bv.mode {
 			return false, nil
 		}
-		x, e := r.file(a, p, t)
+		x, e := r.file(o, a, p, t)
 		if e != nil {
 			return false, e
 		}
-		y, e := r.file(b, p, t)
+		y, e := r.file(o, b, p, t)
 		if e != nil {
 			return false, e
 		}
@@ -203,31 +203,30 @@ func replayMode(base, ours, theirs string) string {
 }
 
 func (r *Repository) tree(commit string, t Translator) (tree, error) {
+	o := readObjects(r.Dir)
+	defer o.close()
+	return r.treeVia(o, commit, t)
+}
+
+// treeVia is tree through the call's object reader.
+func (r *Repository) treeVia(o *objects, commit string, t Translator) (tree, error) {
 	bad := func(p, detail string) error {
 		return &replayPathError{p, detail, r.fix("show " + quote(commit) + " -- " + quote(p))}
 	}
-	out, e := r.git("ls-tree", "-r", "-z", "--full-tree", "--end-of-options", commit+"^{tree}")
+	entries, e := o.files(commit)
 	if e != nil {
 		return nil, e
 	}
 	blobs := map[string]string{}
 	modes := map[string]string{}
 	var paths []string
-	for _, l := range strings.Split(strings.TrimSuffix(out, "\x00"), "\x00") {
-		// "<mode> blob <id>\t<path>"
-		meta, p, ok := strings.Cut(l, "\t")
-		if !ok {
-			continue
+	for _, en := range entries {
+		p := en.path
+		if en.kind != "blob" || (en.mode != "100644" && en.mode != "100755") {
+			return nil, bad(p, "hug cannot replay this file as a regular board file (mode "+en.mode+")")
 		}
-		f := strings.Fields(meta)
-		if len(f) != 3 {
-			return nil, bad(p, "hug cannot parse this tree entry")
-		}
-		if f[1] != "blob" || (f[0] != "100644" && f[0] != "100755") {
-			return nil, bad(p, "hug cannot replay this file as a regular board file (mode "+f[0]+")")
-		}
-		blobs[p] = f[2]
-		modes[p] = f[0]
+		blobs[p] = en.id
+		modes[p] = en.mode
 		paths = append(paths, p)
 	}
 	tr := tree{}
@@ -245,27 +244,13 @@ func (r *Repository) tree(commit string, t Translator) (tree, error) {
 	return tr, nil
 }
 
-// blob is a file's bytes, exactly (git() trims a trailing newline).
-func (r *Repository) blob(id string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	c := exec.CommandContext(ctx, "git", "-C", r.Dir, "cat-file", "blob", id)
-	c.WaitDelay = 2 * time.Second
-	c.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0")
-	b, e := c.Output()
-	if e != nil {
-		return nil, &Error{Op: "cat-file blob " + id, Detail: e.Error(), Fix: r.fix("cat-file -t " + id)}
-	}
-	return b, nil
-}
-
 // file is a tree's file on the new layout; nil when it has none.
-func (r *Repository) file(tr tree, p string, t Translator) ([]byte, error) {
+func (r *Repository) file(o *objects, tr tree, p string, t Translator) ([]byte, error) {
 	f, ok := tr[p]
 	if !ok {
 		return nil, nil
 	}
-	b, e := r.blob(f.blob)
+	b, e := o.blob(f.blob)
 	if e != nil {
 		return nil, e
 	}
@@ -276,13 +261,13 @@ func (r *Repository) file(tr tree, p string, t Translator) ([]byte, error) {
 // a second migration algorithm. Remote layout2 may be the base when this
 // clone independently moved first. Materialize its coherent translated tree
 // privately and stage it for the first replay commit, never on live HEAD.
-func (r *Repository) prepareReplay(commit string, tr tree, t Translator) error {
+func (r *Repository) prepareReplay(o *objects, commit string, tr tree, t Translator) error {
 	needed := false
 	for p, f := range tr {
 		needed = needed || p != f.old
 	}
 	if config, ok := tr["hug.toml"]; ok {
-		raw, e := r.blob(config.blob)
+		raw, e := o.blob(config.blob)
 		if e != nil {
 			return e
 		}
@@ -304,7 +289,7 @@ func (r *Repository) prepareReplay(commit string, tr tree, t Translator) error {
 	// selected task is parsed by the same resolver used during replay.
 	content := map[string][]byte{}
 	for _, p := range paths {
-		raw, e := r.file(tr, p, t)
+		raw, e := r.file(o, tr, p, t)
 		if e != nil {
 			return bad(p, e)
 		}
@@ -456,10 +441,15 @@ func (r *Repository) replay(list []Replayed, t Translator) (replayed []Replayed,
 	// path must not leave untracked files behind, and an interrupted run
 	// must not strand HEAD halfway through the replay.
 	live := r
+	// One object reader for the whole replay (0n4rnx); the private
+	// worktree shares live's object store. It reads objects by id or by
+	// the remote ref, never by HEAD, which moves under it.
+	o := readObjects(live.Dir)
+	defer o.close()
 	// Validate remote paths too, before checking out or reading their
 	// contents. In particular, never follow a remote symlink while writing
 	// a local attachment beneath it.
-	remoteTree, e := live.tree(live.remoteRef(), t)
+	remoteTree, e := live.treeVia(o, live.remoteRef(), t)
 	if e != nil {
 		return nil, e
 	}
@@ -479,7 +469,7 @@ func (r *Repository) replay(list []Replayed, t Translator) (replayed []Replayed,
 	private := *live
 	private.Dir = dir
 	r = &private
-	if e := r.prepareReplay(live.remoteRef(), remoteTree, t); e != nil {
+	if e := r.prepareReplay(o, live.remoteRef(), remoteTree, t); e != nil {
 		var pe *replayPathError
 		if errors.As(e, &pe) {
 			return nil, &CatchUpError{Commit: live.remoteRef(), Subject: "remote board translation", Path: pe.path, Detail: pe.detail, Fix: pe.fix, Kept: len(list)}
@@ -507,19 +497,26 @@ func (r *Repository) replay(list []Replayed, t Translator) (replayed []Replayed,
 	}
 	for i := range list {
 		c := &list[i]
-		parent, e := r.git("rev-parse", "--verify", c.Commit+"^")
+		parent, ok, e := o.parent(c.Commit)
+		if e == nil && !ok {
+			e = &Error{Op: "rev-parse --verify " + c.Commit + "^", Detail: "a root commit has no parent to replay from", Fix: live.fix("log -1 " + quote(c.Commit))}
+		}
 		if e != nil {
 			return nil, stop(*c, "(root commit)", e)
 		}
-		before, e := r.tree(parent, t)
+		before, e := r.treeVia(o, parent, t)
 		if e != nil {
 			return nil, stop(*c, "its parent", e)
 		}
-		after, e := r.tree(c.Commit, t)
+		after, e := r.treeVia(o, c.Commit, t)
 		if e != nil {
 			return nil, stop(*c, "its tree", e)
 		}
-		current, e := r.tree("HEAD", t)
+		at, e := r.Head()
+		if e != nil {
+			return nil, stop(*c, "the board's tree", e)
+		}
+		current, e := r.treeVia(o, at, t)
 		if e != nil {
 			return nil, stop(*c, "the board's tree", e)
 		}
@@ -544,11 +541,11 @@ func (r *Repository) replay(list []Replayed, t Translator) (replayed []Replayed,
 		modeChanges := map[string]string{}
 		for _, p := range touched {
 			disk := filepath.Join(r.Dir, filepath.FromSlash(p))
-			theirs, e := r.file(current, p, t)
+			theirs, e := r.file(o, current, p, t)
 			if e != nil {
 				return nil, stop(*c, p, e)
 			}
-			base, e := r.file(before, p, t)
+			base, e := r.file(o, before, p, t)
 			if e != nil {
 				return nil, stop(*c, p, e)
 			}
@@ -562,19 +559,19 @@ func (r *Repository) replay(list []Replayed, t Translator) (replayed []Replayed,
 				}
 				continue
 			}
-			ours, e := r.file(after, p, t)
+			ours, e := r.file(o, after, p, t)
 			if e != nil {
 				return nil, stop(*c, p, e)
 			}
 			if t.Recover != nil && t.Recover(p, base, ours, theirs) {
 				recovery := p + ".local-" + c.Commit
 				sources[recovery] = after[p].old
-				original, e := r.blob(after[p].blob)
+				original, e := o.blob(after[p].blob)
 				if e != nil {
 					return nil, stop(*c, p, e)
 				}
 				if prior, exists := current[recovery]; exists {
-					priorBytes, e := r.blob(prior.blob)
+					priorBytes, e := o.blob(prior.blob)
 					if e != nil {
 						return nil, stop(*c, recovery, e)
 					}
