@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T13:50"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab lands stack b7517169 after z82qsy"
+waiting_since: "2026-11-18T14:21"
+waiting_asked_by: "duckling"
 ---
 
 ## Goal
@@ -44,3 +47,4 @@ duckling 14:20: committed 819f0f64 under 6fqhg9's b7517169 (same push); CI 44309
 crab review 13:20Z: stack e66eeb65 (judge prompt) + 819f0f64 (show no longer feeds addNamed) + b7517169 (HugCalls skips hug commands inside a quoted argument; sh -c and $(...) still count) read. Bars written before runs; two judgings identical: six sets 115/106/9 -> 114/107/7, fresh hug 14/10/4 -> 14/11/3, no set worse. Exact SHA b7517169 CI 44309646399 6/6. Queued to land after z82qsy, then rebase plus exact CI.
 ## History
 - 2026-11-18T13:50 todo -> doing/active (take)
+- 2026-11-18T14:21 doing/active -> doing/waiting (wait)
