@@ -654,6 +654,10 @@ func resultJSON(r task.Result, s *session) (Reply, error) {
 	if len(r.Warnings) > 0 {
 		out["warnings"] = r.Warnings
 	}
+	// What the command says once (resume: what it waited on, 4tycwd).
+	if r.Said != "" {
+		out["message"] = r.Said
+	}
 	if len(r.Renamed) > 0 {
 		out["renamed"] = r.Renamed
 		out["renames"] = r.Renames
@@ -1647,6 +1651,16 @@ func ErrorFixes(err error) []string {
 	return nil
 }
 
+// ErrorWaiting are the lines an error lists under its problem, one each:
+// next --mine with nothing to work on, my waits (4tycwd); nil otherwise.
+func ErrorWaiting(err error) []string {
+	var t *task.Error
+	if errors.As(err, &t) {
+		return t.Waiting
+	}
+	return nil
+}
+
 func ErrorDetails(err error) (int, string, string) {
 	code, problem, fix := 1, strings.ReplaceAll(err.Error(), "\n", "; "), "hug task help"
 	var op *OperationError
@@ -1771,14 +1785,21 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		code, p, fix := ErrorDetails(e)
 		p = strings.NewReplacer("\r", " ", "\n", "; ").Replace(p)
 		fixes := ErrorFixes(e)
+		waiting := ErrorWaiting(e)
 		if jsonMode {
 			r := Reply{"error": p, "fix": fix, "next": fix, "exit_code": code}
 			if fixes != nil {
 				r["fixes"] = fixes
 			}
+			if waiting != nil {
+				r["waiting"] = waiting
+			}
 			_ = json.NewEncoder(a.Out).Encode(r)
 		} else {
 			fmt.Fprintln(a.Err, p)
+			for _, w := range waiting {
+				fmt.Fprintln(a.Err, w)
+			}
 			if fixes == nil {
 				fixes = []string{fix}
 			}

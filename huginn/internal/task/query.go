@@ -35,6 +35,9 @@ type Error struct {
 	// Fixes are alternative ways out, each one fix: line (n2hq8p); Fix
 	// is the first.
 	Fixes []string `json:"fixes,omitempty"`
+	// Waiting: next --mine with nothing to work on lists my waits, one
+	// line each (4tycwd).
+	Waiting []string `json:"waiting,omitempty"`
 }
 
 func (e *Error) Error() string {
@@ -56,6 +59,9 @@ func (e *Error) Error() string {
 	}
 	for _, d := range e.Dependencies {
 		msg += "\n" + d.ID + " " + d.Title
+	}
+	for _, w := range e.Waiting {
+		msg += "\n" + w
 	}
 	for _, a := range e.Unchecked {
 		msg += fmt.Sprintf("\n%d. %s\nfix: %s", a.Index, a.Text, a.Fix)

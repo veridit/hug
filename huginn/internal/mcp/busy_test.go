@@ -75,9 +75,10 @@ func TestSecondTakeOverMCPIsRefused(t *testing.T) {
 		"hug task done " + ids[0],
 		"hug task wait " + ids[0] + ` "on what"`,
 		"hug task set " + ids[0] + " --state todo && hug task note " + ids[0] + ` "why it goes back"`,
+		"hug task dep " + ids[0] + " --add " + ids[1] + " && hug task note " + ids[0] + ` "where I was"`,
 	}
 	fixes, _ := m["fixes"].([]any)
-	if len(fixes) != 3 || fixes[0] != want[0] || fixes[1] != want[1] || fixes[2] != want[2] || m["fix"] != want[0] {
+	if len(fixes) != 4 || fixes[0] != want[0] || fixes[1] != want[1] || fixes[2] != want[2] || fixes[3] != want[3] || m["fix"] != want[0] {
 		t.Fatalf("fixes %v fix %v, want %v", m["fixes"], m["fix"], want)
 	}
 	if p, _ := m["error"].(string); p != "not taking "+ids[1]+": kestrel is on "+ids[0]+" (First): one ticket in doing at a time" {
@@ -88,7 +89,7 @@ func TestSecondTakeOverMCPIsRefused(t *testing.T) {
 	}
 	// The CLI says the same, with one fix: line per way out.
 	code, p, fix := cli.ErrorDetails(mustTakeErr(t, a, ids[1]))
-	if code != 3 || p != m["error"] || fix != want[0] || len(cli.ErrorFixes(mustTakeErr(t, a, ids[1]))) != 3 {
+	if code != 3 || p != m["error"] || fix != want[0] || len(cli.ErrorFixes(mustTakeErr(t, a, ids[1]))) != 4 {
 		t.Fatalf("CLI: %d %q %q", code, p, fix)
 	}
 }
