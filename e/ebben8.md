@@ -7,7 +7,7 @@ priority: ""
 assignee: ["mizaru"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzh"
+rank: "zzzzzzzzzzze"
 created: 2026-11-18
 updated: 2026-11-18
 model: "claude-opus-5-5"

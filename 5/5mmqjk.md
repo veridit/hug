@@ -7,7 +7,7 @@ priority: ""
 assignee: ["mizaru"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzs"
+rank: "zzzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "gem59b"
