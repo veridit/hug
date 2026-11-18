@@ -32,7 +32,7 @@ Not the asked stage: that blocks the task on a person; a request is an open item
 ## Acceptance
 - [x] hug task request ID - stores a multi-line request verbatim with who and when, and hug task requests lists every open one across the board (test)
 - [x] hug task resolve ID N "what changed" closes request N with the account and who; resolving an unknown N refuses with a fix: line (test)
-- [ ] The assignee's session gets one recall line naming the task, the request text and the resolve command, on its next turn; a task with no assignee routes to the coordinator (harness test)
+- [x] The assignee's session gets one recall line naming the task, the request text and the resolve command, on its next turn; a task with no assignee routes to the coordinator (harness test)
 - [ ] In the TUI, R in a detail opens a multi-line box (Enter sends, Alt-Enter adds a line); the row shows 'req 1' while open, and the detail shows each request with its account once resolved (golden)
 - [ ] MCP task_update request and resolve behave like the CLI (test)
 - [ ] Jørgen writes a real request on hug's board after release and an agent resolves it into ticket changes he agrees with
