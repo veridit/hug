@@ -1,15 +1,20 @@
 ---
 id: wxsyc5
 title: "Stop pushing hug's own memories to the public repo"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T16:36"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Fix path: 34r1ft check 2 (iwazaru, guard in muninn/internal/project SyncBranch, 
 - [ ] After the 34r1ft release, a hug mem remember in hug's repo does not move origin/hug/memory (git ls-remote before/after in a note)
 
 ## Notes
+
+
+## History
+- 2026-11-18T16:36 todo -> doing/active (take)
