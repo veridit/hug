@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.65 - 2026-11-18
+
 - A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.
 
 - TUI answer and request box (qpp30y): `a` and `r` draw the empty box with its label and cursor at once, not after the first key. Its cursor is `theme.cursor`, an underlined bold accent (`#00bfff` dark, `#006c9c` light) that blinks at 530 ms, instead of a steady reversed block. It is the only thing on screen that moves: the one-line inputs keep a steady cursor, and a closed box stops blinking.
