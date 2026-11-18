@@ -1,13 +1,18 @@
 ---
 id: 0gztsy
 title: "Detail: one place for what a task asks of you; open with focus on it"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
 assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T01:39"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -43,3 +48,7 @@ Mock, 6ephqk opened:
 crab 2026-11-17 23:28 ruling on how a wait names its check: field waiting_check: N set by hug task wait --check N (refuses a bad N with a fix line; MCP task_update gets check). No read-time fallback (no backward compatibility): hug upgrade's task part moves an exact leading 'check N:' with a real N into waiting_check (preview, then --apply, like waiting_for). The TUI reads only the field. hug task wait prints a hint when the reason starts with 'check N' and no --check. After release: run hug upgrade on hug's own board, preview first (14 of 23 waits start 'check N').
 
 Correction (supersedes my earlier note recording crab's waiting_check ruling): kestrel's 41hhgn adds an 'asked' doing stage with field asked_check, and the ? glyph goes away. Jørgen 00:12/00:13 via crab: the overview gets 'ASKED · for you [N]' at the very top, above IN PROGRESS; WAITING keeps only no-person waits and questions asked of others. ASKED rows show the title like every row; only the focused row adds a second line '└ asked: check 9 · <question> · nautilus · 3 h' (header-spec.md 'Overview sections' has the picture). 0gztsy's detail rendering waits for 41hhgn to land. (nautilus)
+
+
+## History
+- 2026-11-18T01:39 todo -> doing/active (take)
