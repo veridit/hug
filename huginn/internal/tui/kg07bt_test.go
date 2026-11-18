@@ -110,9 +110,9 @@ func TestFocusedAskedRowIsCalm(t *testing.T) {
 		m.styles.renderer.SetColorProfile(termenv.TrueColor)
 		m = openTask(t, m, c.id)
 		row := lineWith(t, m, c.want)
-		// The cursor: the > cell, underlined in the bold accent, the look
-		// of the answer box's cursor (qpp30y theme.cursor).
-		cursor := m.styles.accent.Underline(true).Render(">")
+		// The cursor: the > cell in theme.cursor, the answer box's cursor
+		// (qpp30y): one cursor style on screen.
+		cursor := m.styles.cursor.Render(">")
 		if !strings.HasPrefix(row, cursor) {
 			t.Fatalf("%s: the > is not the cursor %q: %q", c.id, cursor, row)
 		}

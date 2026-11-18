@@ -887,13 +887,14 @@ func (m *model) followDependency() {
 }
 
 // cursorMark draws a focused row calm (kg07bt): its text in style, as it
-// reads unfocused, and its leading > as the cursor, the one underlined
-// accent cell on the page, so nothing else competes with it.
+// reads unfocused, and its leading > in theme.cursor, the answer box's
+// own look (qpp30y), so nothing else competes with it. It stays still:
+// the box's cursor is the one that blinks, once a opens it.
 func (m model) cursorMark(label string, style lipgloss.Style) string {
 	lines := strings.Split(label, "\n")
 	for i, l := range lines {
 		if i == 0 && strings.HasPrefix(l, ">") {
-			lines[i] = m.styles.accent.Underline(true).Render(">") + style.Render(l[1:])
+			lines[i] = m.styles.cursor.Render(">") + style.Render(l[1:])
 		} else {
 			lines[i] = style.Render(l)
 		}
