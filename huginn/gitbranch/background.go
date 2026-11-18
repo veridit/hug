@@ -189,9 +189,12 @@ func (b Background) Pending() bool {
 	return e == nil
 }
 
-// Busy reports a pass queued, starting or running.
+// Busy reports a pass queued, starting or running. Check Pending first,
+// including expired markers: a slow child can take the queue and remove
+// pending between the queue/run observations and a caller's Pending check
+// (rt80x4). Queued alone expires pending so Nudge can retry a dead startup.
 func (b Background) Busy() bool {
-	if b.Queued() {
+	if b.Pending() || b.Queued() {
 		return true
 	}
 	return b.RunHeld()

@@ -75,3 +75,66 @@ func TestSyncTimeoutFailureRetainsPhases(t *testing.T) {
 		t.Fatalf("child's temporary phase directory survived cleanup: %s (error %v)", common, err)
 	}
 }
+
+const earlyReturnPhase = "retained-early-return-fixture: queue taken before pass"
+const earlyReturnHead = "hug task new early-return-fixture"
+
+// The same assertion helper called by TestSettledWaitsForSlowChild, forced
+// without a six-second child delay or a probabilistic background failure.
+func TestSyncEarlyReturnFailureHelper(t *testing.T) {
+	receipt := os.Getenv(timeoutReportFixture)
+	if receipt == "" {
+		return
+	}
+	a, _, _ := clones(t)
+	settled(t, a)
+	r, err := gitbranch.Open(a.Cwd, TaskBranch, TaskDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bg, err := r.Background()
+	if err != nil {
+		t.Fatal(err)
+	}
+	bg.LogPhase(earlyReturnPhase)
+	if err := os.WriteFile(receipt, []byte(a.Cwd), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	syncEarlyReturnFailure(t, a, earlyReturnHead)
+}
+
+func TestSyncEarlyReturnFailureRetainsPhases(t *testing.T) {
+	exe, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	receipt := filepath.Join(t.TempDir(), "early-return-path")
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, exe, "-test.run=^TestSyncEarlyReturnFailureHelper$", "-test.count=1")
+	cmd.Env = append(os.Environ(), timeoutReportFixture+"="+receipt)
+	out, err := cmd.CombinedOutput()
+	var exit *exec.ExitError
+	if !errors.As(err, &exit) || exit.ExitCode() != 1 || ctx.Err() != nil {
+		t.Fatalf("expected an early-return assertion failure, got %v (context %v):\n%s", err, ctx.Err(), out)
+	}
+	for _, want := range []string{
+		"--- FAIL: TestSyncEarlyReturnFailureHelper",
+		"settled returned before the pass pushed; remote head:",
+		earlyReturnHead,
+		"busy false, pending false",
+		earlyReturnPhase,
+		"pid ",
+	} {
+		if !strings.Contains(string(out), want) {
+			t.Errorf("early-return failure output lost %q:\n%s", want, out)
+		}
+	}
+	common, err := os.ReadFile(receipt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(string(common)); !os.IsNotExist(err) {
+		t.Fatalf("child's early-return phase directory survived cleanup: %s (error %v)", common, err)
+	}
+}

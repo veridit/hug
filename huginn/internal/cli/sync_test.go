@@ -190,8 +190,15 @@ func TestSettledWaitsForSlowChild(t *testing.T) {
 	execute(t, a, "note", id, "after a slow start")
 	settled(t, a)
 	if got := git(t, bare, "log", "-1", "--format=%s", TaskBranch); !strings.Contains(got, "note "+id) {
-		t.Fatalf("settled returned before the pass pushed; remote head: %q", got)
+		syncEarlyReturnFailure(t, a, got)
 	}
+}
+
+// Keep the actual remote-head assertion's failure path shared with its
+// deterministic subprocess regression, so ordinary CI retains diagnostics.
+func syncEarlyReturnFailure(t *testing.T, a *App, got string) {
+	t.Helper()
+	t.Fatalf("settled returned before the pass pushed; remote head: %q; state: %s; log:\n%s", got, syncStateOf(t, a), syncLogOf(t, a))
 }
 
 // Check 1: a note in clone A shows up in clone B within 10 s, nobody syncs.
