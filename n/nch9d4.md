@@ -48,6 +48,7 @@ check 1: commit 6aee8e30 on branch nch9d4. Picker now lists '  r  rank      boar
 check 2: TestSortPickerRankRowRestoresBoardOrder applies p t u (3 keys, rows differ from rank), then s r and s n a r: prompt closed, sort and draft empty, row IDs equal the rank order, filter line 'sort: rank'. Failed first (no rank row), passes at 6aee8e30.
 check 3: picker lines 1-2 are now 'now: priority ↓' and 'new: nothing picked yet, Enter or r gives rank' (was 'sort: rank'). TestSortPickerShowsCurrentAndDraft failed first at nch9d4_test.go:48 'at rank: "sort: rank" / ...', passes. Full suite: 0 FAIL lines, tui ok 100.491s.
 CI run 44295351540 on ci/nch9d4 (6aee8e30): completed success, all 6 jobs. Report: /Users/jhf/.jcode/scratch/nch9d4/REPORT.md
+Jørgen 11:50Z: with no column marked, the 'c current column' row is not selectable and must be drawn fully dimmed (letter and name, not just the hint); normal when a column is marked. Added to macaque's scope.
 ## History
 - 2026-11-18T12:15 todo -> doing/active (take)
 - 2026-11-18T12:17 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:15
