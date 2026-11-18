@@ -30,7 +30,7 @@ Code: huginn/gitbranch (board worktree discovery). Seen in ~/.jcode/scratch/w40c
 ## Depends on
 
 ## Acceptance
-- [ ] A test copies a repo with its board worktree; hug task note in the copy exits non-zero, writes nothing to either repo, and the fix line, when run, makes the copy's own board work (fails first on main)
+- [x] A test copies a repo with its board worktree; hug task note in the copy exits non-zero, writes nothing to either repo, and the fix line, when run, makes the copy's own board work (fails first on main)
 - [ ] The check adds no git process to a normal command (test counts git calls)
 
 ## Notes
