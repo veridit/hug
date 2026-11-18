@@ -36,6 +36,10 @@ func runMCP(args []string) int {
 		case a == "--help" || a == "-h" || a == "help":
 			fmt.Print(mcpHelp)
 			return 0
+		case a == "--can-resume":
+			// A reloading hug mcp asks this before it execs us (mbdfzs).
+			fmt.Println(resumeProbe)
+			return 0
 		case a == "--jcode-home" && i+1 < len(args):
 			jcodeHome = args[i+1]
 			i++
@@ -54,7 +58,14 @@ func runMCP(args []string) int {
 		return 1
 	}
 	defer closeFn()
-	if err := s.Run(ctx, &sdk.StdioTransport{}); err != nil && ctx.Err() == nil {
+	resumed, err := takeResume()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "hug mcp: the session handed over by the old hug is lost:", err)
+		return 1
+	}
+	r := newReloader(launchPath(), os.Stdout, os.Stderr)
+	go r.pump(os.Stdin, resumed)
+	if err := s.Run(ctx, &sdk.IOTransport{Reader: r, Writer: r}); err != nil && ctx.Err() == nil {
 		fmt.Fprintln(os.Stderr, "hug mcp:", err)
 		return 1
 	}
@@ -82,8 +93,50 @@ func newMCPServer(ctx context.Context, jcodeHome string) (*sdk.Server, func(), e
 		closeFn()
 		return nil, nil, err
 	}
-	s.AddReceivingMiddleware(staleBinaryNotice())
+	s.AddReceivingMiddleware(staleBinaryNotice(), versionMeta(), testHold(os.Getenv("HUG_MCP_TEST_HOLD")))
 	return s, closeFn, nil
+}
+
+// versionMeta names the hug that served each result in its _meta, so a
+// client (and the reload test, mbdfzs) can see which binary answered.
+func versionMeta() sdk.Middleware {
+	return func(next sdk.MethodHandler) sdk.MethodHandler {
+		return func(ctx context.Context, method string, req sdk.Request) (sdk.Result, error) {
+			res, err := next(ctx, method, req)
+			if r, ok := res.(*sdk.CallToolResult); ok && r != nil {
+				m := r.GetMeta()
+				if m == nil {
+					m = map[string]any{}
+				}
+				m["hug/version"] = Version
+				r.SetMeta(m)
+			}
+			return res, err
+		}
+	}
+}
+
+// testHold is for the reload test (mbdfzs check 2): with HUG_MCP_TEST_HOLD
+// set to a path, a task_types call writes PATH.started and returns only once
+// PATH exists, so a test can change the binary while a request is running.
+func testHold(path string) sdk.Middleware {
+	return func(next sdk.MethodHandler) sdk.MethodHandler {
+		if path == "" {
+			return next
+		}
+		return func(ctx context.Context, method string, req sdk.Request) (sdk.Result, error) {
+			if p, ok := req.GetParams().(*sdk.CallToolParamsRaw); ok && method == "tools/call" && p.Name == taskPrefix+"types" {
+				os.WriteFile(path+".started", nil, 0o644)
+				for {
+					if _, e := os.Stat(path); e == nil || ctx.Err() != nil {
+						break
+					}
+					time.Sleep(10 * time.Millisecond)
+				}
+			}
+			return next(ctx, method, req)
+		}
+	}
 }
 
 // staleBinaryNotice adds a note to tool results when the hug on disk is newer
