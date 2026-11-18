@@ -3,7 +3,7 @@ id: ykta5g
 title: "In a task, k after j scrolled past the last check jumps to the top"
 state: todo
 type: bug
-priority: ""
+priority: "high"
 assignee: []
 labels: []
 group: ""
