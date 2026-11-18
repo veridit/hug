@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T16:57"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review"
+waiting_since: "2026-11-18T17:27"
+waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -55,3 +58,4 @@ Check 3 per crab 04:44 (supersedes the acceptance's 'still stop'): state set on 
 CI 44343714260 on 4504654a: completed success, 6/6 jobs, first attempt. Report /Users/jhf/.jcode/scratch/8zwy6r/REPORT.md
 ## History
 - 2026-11-18T16:57 todo -> doing/active (take)
+- 2026-11-18T17:27 doing/active -> doing/waiting (wait)
