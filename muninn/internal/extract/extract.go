@@ -47,6 +47,13 @@ type Config struct {
 	// default: the prompt is then byte-identical to the one before
 	// triggers. Turn on only after its measurement passed (jrj1vq notes).
 	Triggers bool `json:"triggers,omitempty"`
+	// WidePlaces adds two places to the capture prompt (rnpdnm A+, gav9nw:
+	// Jørgen chose A+ and B together): personal (about the person, never
+	// shared with a repository) and other (about a different project,
+	// client or product, with place_name). Off by default: the prompt is
+	// then byte-identical to the one before. Turn on only after rnpdnm
+	// check 3 passed on fresh captures, judged blind.
+	WidePlaces bool `json:"wide_places,omitempty"`
 }
 
 // Skips reports whether a session in cwd must not be captured.
@@ -98,7 +105,11 @@ func (c Config) DedupeThresholds() (automatic, review float64) {
 type Candidate struct {
 	Place       string `json:"place,omitempty"`
 	PlaceReason string `json:"place_reason,omitempty"`
-	Category    string `json:"category"`
+	// PlaceName is the project, client or product an "other" place is
+	// about, as the transcript names it (rnpdnm A+, Config.WidePlaces).
+	// Advisory: capture stores the memory as personal, tagged about:NAME.
+	PlaceName string `json:"place_name,omitempty"`
+	Category  string `json:"category"`
 	// Type is how the memory is used: rule | preference | fact | record.
 	// Unknown values are dropped (stored as ""), never rejected.
 	Type    string `json:"type,omitempty"`
@@ -198,6 +209,7 @@ func parseDetailed(text string) ([]Candidate, []Rejection) {
 		err := d.Decode(&wire)
 		c := Candidate(wire.candidateFields)
 		_ = json.Unmarshal(wire.Place, &c.Place)
+		c.PlaceName = cleanPlaceName(c.PlaceName)
 		c.Case = nil
 		if len(wire.Case) > 0 {
 			var cs trigger.Case
@@ -333,13 +345,54 @@ const triggerPrompt = `
 For a candidate of type rule or preference, also say when it applies, so it can be recalled when the situation matches rather than when the words do. Add "when": one sentence naming the situation where an agent needs this memory, phrased as what the agent is doing or being asked ("choosing a model for a coding subagent", "reviewing a STATBUS ticket's history"); describe the activity, not the topic. Optionally add "when_not": one sentence naming a look-alike situation where it does not help, especially the same project, ticket or tool but a different activity; omit it when none comes to mind. Optionally add "case": {"scope": [projects], "paths": [file paths or globs], "tools": [tools, commands or services]} ONLY with entries the transcript states for this memory; never invent one, omit case otherwise. Omit when, when_not and case for every other type.`
 
 // SystemPrompt is the capture system prompt for c and places. With
-// triggers off it is exactly the prompt hug used before triggers.
+// triggers off it is exactly the prompt hug used before triggers. With
+// wide places off (or no personal place offered) the placement part is
+// exactly the one before rnpdnm.
 func SystemPrompt(c Config, places []Place) string {
 	p := prompt
 	if c.Triggers {
 		p += triggerPrompt
 	}
-	return p + placementPrompt(places)
+	p += placementPrompt(places)
+	if c.WidePlaces && hasPlace(places, PersonalPlace) {
+		p += widePlacePrompt
+	}
+	return p
+}
+
+// The wide places (rnpdnm A+). The model gets their meanings, never a
+// scope or another project's or client's name.
+const (
+	PersonalPlace = "personal"
+	OtherPlace    = "other"
+)
+
+// WidePlaces are the two places Config.WidePlaces adds to the list.
+var WidePlaces = []Place{
+	{PersonalPlace, "the person who owns this machine: their preferences, habits, machine, home folder paths, accounts and work outside this project; never shared with a repository"},
+	{OtherPlace, "a different project, client or product than this one; also return place_name"},
+}
+
+const widePlacePrompt = `Choose personal for a memory about the person rather than this project: their preferences, habits, opinions, schedule, machine, home folder paths, accounts, private infrastructure, or their work outside this project. Choose other for a memory about a different project, client or product, and return place_name: its name as the transcript writes it. A working rule for agents or the team that holds across projects (how agents coordinate, report, commit, review, which models to use) and is not about this project's code is global. A memory about this project that also states the person's wish for how this project should behave is here. These override "when unsure choose here": a memory kept private by mistake costs little, one shared by mistake cannot be taken back.
+`
+
+func hasPlace(places []Place, name string) bool {
+	for _, p := range places {
+		if p.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
+// cleanPlaceName keeps a short one-line name, else "": it becomes a tag
+// (about:NAME), never a scope, so a malformed one costs only the tag.
+func cleanPlaceName(s string) string {
+	s = strings.Join(strings.Fields(s), " ")
+	if s == "" || utf8.RuneCountInString(s) > 60 || !utf8.ValidString(s) || project.LooksSecret(s) || strings.ContainsAny(s, ":/\\") {
+		return ""
+	}
+	return s
 }
 
 // Run makes a bounded non-streaming request. Ollama uses its OpenAI-compatible
