@@ -1,15 +1,20 @@
 ---
 id: 6fqhg9
 title: "Hook: a hug command quoted inside another's argument is not a call"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T13:32"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Patch: /Users/jhf/.jcode/scratch/board4/4vxqp4/quote.patch (muninn/internal/harn
 ## Notes
 
 duckling (4vxqp4) 13:10: the blind judge is unstable on start-lint lines. The 15 lines that differ between base and quote were rejudged twice from empty caches (judge_board.py, DeepSeek Flash): base-only lines 2 correct / 5 wrong / 1 unclear, then 8 / 0 / 0; rule-only lines 3 / 3 / 1, then 5 / 1 / 1. hog s6ff5k (named only in a quoted prompt in a brief that forbids other tasks) was judged wrong in rejudge 1 ('not this worker's task') and correct in rejudge 2 ('board lint is independent'). The judge prompt says a lint reminder 'does not need to relate to the current work', so verdicts on missing-section lines flip on that reading. Files: scratch/board4/4vxqp4/rejudge1.json, rejudge2.json, rejudge-summary.txt.
+
+
+## History
+- 2026-11-18T13:32 todo -> doing/active (take)
