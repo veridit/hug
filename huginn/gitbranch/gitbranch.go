@@ -457,6 +457,13 @@ func (l *Location) Open(branch, dir string, options ...Option) (*Repository, err
 	}
 	if _, e := os.Stat(filepath.Join(r.Dir, ".git")); e == nil {
 		actual, e := r.git("symbolic-ref", "--short", "HEAD")
+		if e != nil && r.rebasing(branch) {
+			// A rebase (a background pass integrating) detaches HEAD for its
+			// length, so git lists no branch here: the checkout is still
+			// the branch's (ybbfsa, CI 44316906824: a pass opening the
+			// board mid-rebase was told to move it away).
+			return r, nil
+		}
 		if e != nil {
 			// Git does not list this folder as a worktree (it was pruned or
 			// copied): repeating the command cannot help. Keep the folder,
@@ -568,6 +575,21 @@ func remoteOf(common string) (string, error) {
 		return "", fmt.Errorf("no origin in %s", filepath.Join(common, "config"))
 	}
 	return "origin", nil
+}
+
+// rebasing reports a rebase in progress in r.Dir of branch: git keeps the
+// branch it rebases in rebase-merge/head-name (or rebase-apply/head-name).
+func (r *Repository) rebasing(branch string) bool {
+	gitdir, _, e := gitDir(r.Dir)
+	if e != nil {
+		return false
+	}
+	for _, d := range []string{"rebase-merge", "rebase-apply"} {
+		if b, e := os.ReadFile(filepath.Join(gitdir, d, "head-name")); e == nil && strings.TrimSpace(string(b)) == "refs/heads/"+branch {
+			return true
+		}
+	}
+	return false
 }
 
 // reuse points r at the branch's existing checkout w; r.Dir is where this
