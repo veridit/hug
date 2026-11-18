@@ -46,6 +46,7 @@ Checks 1-3 green on main CI 44226874819 (085a81ce): ubuntu, macos, windows, test
 Hook-log line green on main CI 44227585322 (0a2f06ae): ubuntu, macos, windows, test-windows-cli, bench, secrets success.
 Reflection (dismissed, 2026-11-18, wyvern): A safety switch that is only a convention (a variable hug happens to read) fails open on a typo, so the one list of known names plus a repo scan now makes a typo loud. The incident also exposed two harness gaps of mine: a benchmark cwd with a live remote, and a copied repo whose worktree pointed at the original (ygay9c). Next time a bench runs from a remote-less clone with HUG_SYNC=off from the start.
 shipped in v0.7.55 (085a81c)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G10, a lesson about one's own method, fixed in its own ticket; no instruction misled.
 ## History
 - 2026-11-18T03:41 todo -> doing/active (take)
 - 2026-11-18T03:57 doing/active -> doing/waiting (wait)
