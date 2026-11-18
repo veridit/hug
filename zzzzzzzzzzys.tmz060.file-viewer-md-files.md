@@ -39,5 +39,6 @@ glanceText(b, size, width) today: escapeControls + tab expansion + wrap, line by
 ## Notes
 
 
+Final candidate c117872c on ci/tmz060 after rebase over v0.7.57, CI 44248966190 pending. Existing detail renderer extracted to value-only renderMarkdown so formatting runs off the UI thread. Pre-render control escaping, source/format cache and M toggle, existing binary/1MiB limits, generation guard for file/width, rendered-page / n/N and find recomputation on M. Real 900KiB fixture: zero formatter calls before actual queued command delivery, visible spinner, exactly one call after. Baseline f767f6d8 fails formatting/M/spinner checks. Three mutations killed: bypass escaping, remove generation guard, discard formatter command. Initial tui -race passed 172.342s; final post-rebase race is running, not yet claimed. Footer-loading cleanup regression failed first and was fixed, focused tests passed 8.221s. Superseded CI 44248408288 cancelled. Evidence /Users/jhf/.jcode/scratch/tmz060-evidence.md. No acceptance checks ticked before landing.
 ## History
 - 2026-11-18T06:51 todo -> doing/active (take)
