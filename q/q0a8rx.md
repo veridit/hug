@@ -1,15 +1,21 @@
 ---
 id: q0a8rx
 title: "Public hug/memory: keep or rewrite without the 58 misplaced memories"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T20:41"
+stage: "active"
+model: "claude-opus-5-5"
+effort: "high"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +37,7 @@ Branch tip 1abcc497 (46 commits). The 58 are listed by the corrected labels next
 - [ ] If rewrite: the branch is rewritten from the backup minus the 58, force-pushed once, and ls-remote and a fresh clone show none of them (evidence in a note)
 
 ## Notes
+
+
+## History
+- 2026-11-18T20:41 todo -> doing/active (take)
