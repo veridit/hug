@@ -30,7 +30,7 @@ CI 44247018416. Layout w40cmk remains off main and must ship separately.
 ## Depends on
 
 ## Acceptance
-- [ ] Tag and merge pushed, release workflow succeeds, brew-installed hug reports v0.7.57
+- [x] Tag and merge pushed, release workflow succeeds, brew-installed hug reports v0.7.57
 
 ## Notes
 
