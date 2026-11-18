@@ -18,6 +18,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - Recall hook (rk5q7r): at a break, the board's coordinator hears once a day how many open reflections are older than 3 days, with the command that reads them: "Task board (return): 22 open reflections are older than 3 days; read them grouped by the instruction they name: hug task reflections --by-instruction". No other session hears it, and it never takes the place of another board line. Replays: the six board4 sets and 2026-11-17 14:00 to 11-18 12:00 are byte-identical (no reflection there was 3 days old); with every reflection aged 4 days, one new line, crab's, at a break where nothing else was said.
 
+- TUI detail is calmer where focus sits (kg07bt, Jørgen on 0gztsy): a focused section heading (ACCEPTANCE, DEPENDENCIES, LINKS, FILES, REQUESTS) is drawn like the others, bold accent, with `▸` before it and its keys dim after, no longer a filled block. A focused check asked of you, and a focused question that names no check, read as normal rows in their own colour, no fill and no bold; the `>` before them is drawn as the cursor, an underlined accent, the one mark of where you are. What has focus and what each key does are unchanged.
+
 ## v0.7.65 - 2026-11-18
 
 - A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.
