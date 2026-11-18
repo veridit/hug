@@ -1,19 +1,20 @@
 ---
 id: nch9d4
 title: "Sort picker offers default board order explicitly"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
-model: "openai"
+stage: "active"
+model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T12:18"
 ---
 
 ## Goal
@@ -42,3 +43,4 @@ Coordinator crab hands this to a swarm engineer at 2026-11-18 11:18Z; no code ch
 ## History
 - 2026-11-18T12:15 todo -> doing/active (take)
 - 2026-11-18T12:17 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:15
+- 2026-11-18T12:18 todo/ready -> doing/active (take)
