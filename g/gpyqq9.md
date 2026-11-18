@@ -1,7 +1,7 @@
 ---
 id: gpyqq9
 title: "ask is refused by the shipped-not-done finding that asking would settle"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzyl"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T13:17"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T13:22"
-waiting_asked_by: "piglet"
+done_at: "2026-11-18T15:29"
 ---
 
 ## Goal
@@ -52,3 +48,4 @@ landed 674336d on main 2026-11-18: test: ask about open checks of a shipped task
 ## History
 - 2026-11-18T13:17 todo -> doing/active (take)
 - 2026-11-18T13:22 doing/active -> doing/waiting (wait)
+- 2026-11-18T15:29 doing/waiting -> done (done); was doing_since: 2026-11-18T13:17; waiting_asked_by: piglet; waiting_on: crab review; waiting_since: 2026-11-18T13:22
