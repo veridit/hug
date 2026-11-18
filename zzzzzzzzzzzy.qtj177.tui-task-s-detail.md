@@ -30,3 +30,7 @@ Seen at the bottom of the detail, between HISTORY and the footer ('j/k scroll ·
 - [ ] Jørgen sees no list hint in a task on his board after release
 
 ## Notes
+
+landed e89ebc2 on main 2026-11-18: tui: the column hint is drawn on the rows only, never kept into a task; file…
+
+landed 48b1151 on main 2026-11-18: tui: glance golden: j/k not named for a file that fits (qtj177)
