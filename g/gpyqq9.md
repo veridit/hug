@@ -1,15 +1,20 @@
 ---
 id: gpyqq9
 title: "ask is refused by the shipped-not-done finding that asking would settle"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzq"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T13:17"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ questions.go noteQuestion: case shipped != nil && stageSaysWhy(t) returns nil, s
 - [ ] Other broken findings (e.g. missing-file) still block ask (test).
 
 ## Notes
+
+
+## History
+- 2026-11-18T13:17 todo -> doing/active (take)
