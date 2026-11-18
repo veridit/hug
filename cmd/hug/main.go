@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	huginn "github.com/veridit/hug/huginn/run"
+	"github.com/veridit/hug/internal/env"
 	muninn "github.com/veridit/hug/muninn/run"
 )
 
@@ -65,6 +66,15 @@ func run(name string, args []string) int {
 	// Old huginn and muninn variables are not read (m1c28r): say so, once
 	// per command, on stderr (stdout may be JSON or a hook's reply).
 	warnStale(os.Stderr, nil)
+	// A HUG_ variable hug does not know is a misspelt setting: stop before
+	// anything runs (a0p5kt). A hook does nothing and exits 0, so the
+	// harness is never broken (exit 2 blocks a Claude Code prompt).
+	if !helpOrVersion(args) && refuseUnknown(os.Stderr, nil, commandName(name, args)) {
+		if isHook(name, args) {
+			return 0
+		}
+		return 2
+	}
 	// Called through a link named after a part: behave exactly as that part.
 	switch strings.TrimSuffix(name, ".exe") {
 	case "huginn":
@@ -74,6 +84,7 @@ func run(name string, args []string) int {
 	}
 	if len(args) == 0 {
 		fmt.Print(help)
+		fmt.Print("\n" + env.HelpText())
 		return 0
 	}
 	switch args[0] {
@@ -92,6 +103,7 @@ func run(name string, args []string) int {
 		return 0
 	case "help", "-h", "--help":
 		fmt.Print(help)
+		fmt.Print("\n" + env.HelpText())
 		return 0
 	}
 	fmt.Fprintf(os.Stderr, "hug: unknown command %q\nfix: hug help\n", args[0])
