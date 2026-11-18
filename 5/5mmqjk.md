@@ -1,16 +1,22 @@
 ---
 id: 5mmqjk
 title: "hug completion: one script for task, mem and the top level"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["mizaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzv"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "gem59b"
+doing_since: "2026-11-18T23:58"
+doing_with: "p277bp"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +39,7 @@ cobra's completion scripts take the program name from c.Root().Name() (cobra v1.
 - [ ] README Install names the completion line for each shell
 
 ## Notes
+
+
+## History
+- 2026-11-18T23:58 todo -> doing/active (take with p277bp)
