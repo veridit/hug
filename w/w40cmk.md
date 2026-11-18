@@ -141,6 +141,7 @@ landed 6d74c3c on main 2026-11-18: test: feed printed recovery command directly 
 landed 2600e44 on main 2026-11-18: test: isolate memory checkout bytes and compare directory identity (w40cmk)
 landed ead1be4 on main 2026-11-18: test: schedule isolated layout fixtures in existing test pool (w40cmk)
 shipped in v0.7.61 (1f22181)
+Released and installed v0.7.61. Own live board migrated in bc774bd7 with 171 task IDs/order/core fields unchanged. Project memory commit/JSONL and native/config bytes unchanged. Owner check7 remains open: stable external path .hug/tasks/w/w40cmk.md. Full live verification: /Users/jhf/.jcode/scratch/crab-w40cmk-post-0760/live-migration-verification.md.
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
 - 2026-11-18T02:26 doing/active -> doing/waiting (wait)
