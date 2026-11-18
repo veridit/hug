@@ -127,7 +127,7 @@ var Transitions = []Transition{
 	{"doing/active", "doing/waiting", `hug task wait ID "on what"`},
 	{"doing/waiting", "doing/active", "hug task resume ID"},
 	{"doing/active", "doing/asked", `hug task ask ID --to NAME [--check N] "question"`},
-	{"doing/asked", "doing/active", `hug task answer ID "answer"` + " (or hug task resume ID: the owner withdraws it)"},
+	{"doing/asked", "doing/active", `hug task answer ID "answer"` + " (or hug task check ID N by the person asked, N the check it is about; or hug task resume ID: the owner withdraws it)"},
 	{"doing/active", "doing/review", "hug task review ID --by NAME"},
 	{"todo/*", "todo/design", `hug task design ID "question"`},
 	{"todo/design", "todo/*", "hug task design ID --clear"},

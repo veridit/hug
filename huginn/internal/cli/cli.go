@@ -1547,9 +1547,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	reply, e = resultJSON(r, s)
 	// A person's request or answer goes to the board's coordinator now
 	// (gmzd87), after its commit, by the one function the TUI uses too.
+	// A tick by the person asked on the check the question is about is
+	// their answer (qsqhpe) and goes the same way.
 	var receipt string
-	if e == nil && r.Changed && (cmd == "request" || cmd == "answer") {
-		receipt, e = a.Deliver(s.s, s.r.Dir, s.r.Root, r.Task.ID, cmd, a.actor(f), s.commit)
+	if kind := cmd; e == nil && r.Changed && (cmd == "request" || cmd == "answer" || r.Answered) {
+		if r.Answered {
+			kind = "answer"
+		}
+		receipt, e = a.Deliver(s.s, s.r.Dir, s.r.Root, r.Task.ID, kind, a.actor(f), s.commit)
 		if e == nil && receipt != "" {
 			reply["receipt"] = receipt
 		}
