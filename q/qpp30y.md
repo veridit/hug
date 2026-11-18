@@ -32,7 +32,7 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 ## Depends on
 
 ## Acceptance
-- [ ] Pressing a or r draws the box with its label and cursor in the same frame, before any keystroke; a test fails first on main.
+- [x] Pressing a or r draws the box with its label and cursor in the same frame, before any keystroke; a test fails first on main.
 - [ ] The cursor in the answer and request box is an underline that blinks (or pulses), and no other element on the screen animates (test of the cursor mode plus golden).
 - [ ] The pending view-key prefix uses the same underline cursor style.
 - [ ] Jørgen answers a question in hug tui and says the box and cursor read clearly.
