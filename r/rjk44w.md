@@ -1,7 +1,7 @@
 ---
 id: rjk44w
 title: "Memory fixes leave a trail: who forgot what, after which recall, and why"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["bonehound"]
@@ -11,14 +11,10 @@ rank: "zzzzzzzzzzyx"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "d634kr"
-doing_since: "2026-11-18T14:44"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing: accepted by crab 14:55, queued to land (8a38836d, CI 44326377046 6/6)"
-waiting_since: "2026-11-18T15:55"
-waiting_asked_by: "bonehound"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -57,6 +53,8 @@ Landed on main via 56e2cc6f (stack rjk44w c2df86c4, jj7jpz 215df154, 2qndsd 56e2
 landed 30c8c83 on main 2026-11-18: mem: memory fixes leave a local trail; hug mem stats --fixes (rjk44w)
 landed c2df86c on main 2026-11-18: mem: fixes golden compares across a CRLF checkout (rjk44w, windows CI)
 shipped in v0.7.65 (30c8c83)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T14:44 todo -> doing/active (take)
 - 2026-11-18T15:55 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T14:44; waiting_asked_by: bonehound; waiting_on: landing: accepted by crab 14:55, queued to land (8a38836d, CI 44326377046 6/6); waiting_since: 2026-11-18T15:55
