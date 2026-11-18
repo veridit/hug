@@ -38,5 +38,6 @@ gitbranch/gitbranch.go:598 refuses on rebase-merge/rebase-apply/MERGE_HEAD/... w
 ## Notes
 
 
+tigress took over from kestrel (session gone) on crab's 14:41 assignment; assignee set to tigress.
 ## History
 - 2026-11-18T15:41 todo -> doing/active (take)
