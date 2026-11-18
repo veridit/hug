@@ -1,15 +1,20 @@
 ---
 id: jj7jpz
 title: "A background pass that cannot open the board leaves .pending forever"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzl"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T17:46"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -46,3 +51,7 @@ Landed on main via 56e2cc6f (stack rjk44w c2df86c4, jj7jpz 215df154, 2qndsd 56e2
 landed 0c9e122 on main 2026-11-18: sync: a pass that cannot open the board ends its pending marker (jj7jpz)
 
 shipped in v0.7.65 (0c9e122)
+
+
+## History
+- 2026-11-18T17:46 todo -> doing/active (take)
