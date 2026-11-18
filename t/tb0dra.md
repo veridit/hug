@@ -54,5 +54,6 @@ guppy (hatchling) 12:35: on main 6d88d74 (fast-forward after rebase over 0be2c34
 guppy (hatchling) 12:41: stays doing, waits on check 5 (a week of use since landing 6d88d74 on 2026-11-17). Look again 2026-11-24.
 
 
+retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone, journal last written 06:47): the wait is real and still holds. Check 5 needs a week of use since 6d88d74 landed on 2026-11-17, so it can next move on 2026-11-24. Who: a worker crab assigns that day; owner hatchling is no longer running. Material for check 5 today: hug task reflections lists 6 open reflections (6ephqk, kx2ndm, pbh9xq, h176dp, jmx10s, 44w1ev).
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
