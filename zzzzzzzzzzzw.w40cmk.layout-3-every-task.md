@@ -57,5 +57,13 @@ Jørgen 01:27 local: agreed, a reorder (rank or group change) leaves updated: un
 Jørgen 01:32 local, DECIDED: shard by the first character of the id: .hug/tasks/3/37bryg.md and .hug/tasks/3/37bryg/ (its files). The path follows from the id alone (no index), never changes, and keeps folders near 330 entries at 10,000 tasks (GitHub's web listing stops at about 1,000). Group and epic (parent) stay in the front matter, as do rank and group; no folder means anything to a person. Rejected: group as folder (moves break links; a generated group id fixes renames only), creation month (uneven fill).
 
 
+kestrel plan (lead, 01:58):
+(1) Path resolver: task.PathFor(id) = C/ID.md, files in C/ID/. Parse reads rank: and group: from front matter when the file is named ID.md. A rank.id.slug.md file still parses, but only for upgrade and refs. The slug comes from the title, so old slugs and file names resolve as refs (check 4).
+(2) Moves and groups become field edits through SetField. Nothing renames. Today nothing bumps updated: after New, so the test pins that it stays.
+(3) Walkers (Store.Tasks, cache walkMarkers, IsTaskFolder, FolderOwners, taskFileIDs) learn that ID.md owns ID/.
+(4) Layout = 3. A hug upgrade step moves every old-named file to C/ID.md, sets rank:/group:, moves ID/ folders and writes layout = 3, all in one commit, refusing if the board is dirty. The preview gives counts and exits 5.
+(5) A write on a board with old-named files is refused with fix 'hug upgrade --apply'.
+(6) Sync: before a rebase with local commits, compare the layout in hug.toml at HEAD and at the remote. If they differ, refuse with fix 'hug upgrade --apply' (check 9).
+Order: 1 and 4 first, then the preview counts from a clone of hug's board in a note, then 2, 3, 5, 6 and the test rewrite. hatchling owns check 5 (hug/memory).
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
