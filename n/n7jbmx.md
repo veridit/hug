@@ -34,6 +34,10 @@ Memories reach the agent mid-turn when what it is doing (files touched, commands
 - [ ] ship only if judged-useful injections per 100 tool calls rises with irrelevant ones under a stated cap
 - [x] trigger uses anchors from the memory text (paths, commands) and, once jrj1vq lands, its CASE fields; each memory at most once per session
 
+## Requests
+- 2026-11-18T12:24 request 1 by jhf:
+  What is the purpose? What is the goal? So this needs to be brought in line with linting. And I think that it's missing some details how you plan to achieve this. So this is the problem here is that the principles that we're going to use by this and the relevant details, these are missing, I think
+
 ## Notes
 
 Item 1 done (2026-11-16): offline set real/tool (66 tool calls, 7 sessions) replayed through recall4 on the typed snapshot, judged blind with the strict rubric (judge_tool.py, DeepSeek Flash). default: 30.3 useful and 48.5 noise per 100 calls, 44% of calls get an injection. union (all candidates): 259 useful vs 1741 noise per 100. Conclusion: message recall reused for tool calls is net noise (precision ~38%); the hook must not ship on the default gate. Next (item 2): a trigger keyed on CASE paths/commands from rule-type memories and when-then fields, then rejudge; ship cap proposal: noise <= 10 per 100 calls.
@@ -56,3 +60,4 @@ shipped in v0.7.57 (94ef214)
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
+- 2026-11-18T12:24 request 1 by jhf
