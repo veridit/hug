@@ -193,7 +193,8 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 	}
 	defer cancel()
 	c := exec.CommandContext(ctx, "git", append([]string{"-C", dir}, full...)...)
-	// ssh may outlive a killed git and hold its output pipes: stop waiting.
+	// After a deadline kill, stop waiting on git after 2 s (its output goes
+	// to files, so nothing else holds this call open: see output).
 	c.WaitDelay = 2 * time.Second
 	c.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_EDITOR=true", "GIT_MERGE_AUTOEDIT=no")
 	if net {
@@ -205,15 +206,13 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 	if r.Identity.Email != "" {
 		c.Env = append(c.Env, "GIT_AUTHOR_EMAIL="+r.Identity.Email, "GIT_COMMITTER_EMAIL="+r.Identity.Email)
 	}
-	var stderr bytes.Buffer
-	c.Stderr = &stderr
-	b, err := c.Output()
+	b, stderr, err := output(c)
 	if err != nil {
 		quoted := make([]string, len(args))
 		for i, a := range args {
 			quoted[i] = quote(a)
 		}
-		detail := strings.TrimSpace(string(b) + stderr.String() + " " + err.Error())
+		detail := strings.TrimSpace(string(b) + string(stderr) + " " + err.Error())
 		fix := "git -C " + quote(dir) + " " + strings.Join(quoted, " ")
 		if net && errors.Is(ctx.Err(), context.DeadlineExceeded) {
 			return string(b), &Error{Op: strings.Join(args, " "), Detail: netTimeout(args), Fix: fix, Cause: ErrNetTimeout}
