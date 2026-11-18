@@ -1,6 +1,7 @@
 package gitbranch
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -37,6 +38,9 @@ type Translator struct {
 	// when that side has no such file; it returns the content to write
 	// and one line per value it kept from ours in a note.
 	Merge func(path string, base, ours, theirs []byte, c Replayed) ([]byte, []string, error)
+	// Recover marks a non-task true conflict. The board's active path stays;
+	// this commit's exact original blob is saved at path.local-FULLCOMMIT.
+	Recover func(path string, base, ours, theirs []byte) bool
 	// Layout reads a hug.toml's layout, as Repository.Layout.
 	Layout func(text string) (int, error)
 }
@@ -81,7 +85,7 @@ func (r *Repository) Pending(t Translator) ([]Replayed, error) {
 	if _, ok := e.(*LayoutError); !ok {
 		return nil, e
 	}
-	out, e := r.git("rev-list", "--reverse", "--topo-order", "--no-merges", "--format=%H%x00%s%x00%an%x00%ae%x00%aI", r.remoteRef()+"..HEAD")
+	out, e := r.git("rev-list", "--reverse", "--first-parent", "--format=%H%x00%s%x00%an%x00%ae%x00%aI", r.remoteRef()+"..HEAD")
 	if e != nil {
 		return nil, e
 	}
@@ -258,9 +262,15 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 	if e := r.checkIdle(); e != nil {
 		return nil, e
 	}
+	// Ordinary migration is local and works offline. Only a known layout
+	// divergence warrants fetching and replaying remote state.
+	list, e := r.Pending(t)
+	if e != nil || len(list) == 0 {
+		return list, e
+	}
 	if r.Remote != "" {
 		if _, e := r.fetch(); e != nil {
-			return nil, e
+			return nil, &Error{Op: "catch-up", Detail: "remote could not be fetched; HEAD and local commits are unchanged", Fix: "hug upgrade --apply", Cause: e}
 		}
 	}
 	if status, e := r.git("status", "--porcelain"); e != nil {
@@ -268,7 +278,7 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 	} else if status != "" {
 		return nil, &Error{Op: "catch-up", Detail: "worktree has uncommitted changes", Fix: r.fix("add --all") + " && " + r.fix("commit -m "+fmt.Sprintf("%q", "Save local changes"))}
 	}
-	list, e := r.Pending(t)
+	list, e = r.Pending(t)
 	if e != nil || len(list) == 0 {
 		return list, e
 	}
@@ -318,7 +328,7 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 		if old, ok := sources[path]; ok {
 			original = old
 		}
-		fix := live.fix("show " + c.Commit[:12] + " -- " + quote(original))
+		fix := live.fix("show " + quote(c.Commit+":"+original))
 		return &CatchUpError{Commit: c.Commit[:12], Subject: c.Subject, Path: path, Detail: detail, Fix: fix, Kept: len(list)}
 	}
 	for i := range list {
@@ -382,6 +392,44 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 			if e != nil {
 				return nil, stop(*c, p, e)
 			}
+			if t.Recover != nil && t.Recover(p, base, ours, theirs) {
+				recovery := p + ".local-" + c.Commit
+				sources[recovery] = after[p].old
+				original, e := r.blob(after[p].blob)
+				if e != nil {
+					return nil, stop(*c, p, e)
+				}
+				if prior, exists := current[recovery]; exists {
+					priorBytes, e := r.blob(prior.blob)
+					if e != nil {
+						return nil, stop(*c, recovery, e)
+					}
+					if !bytes.Equal(priorBytes, original) || prior.mode != after[p].mode {
+						return nil, stop(*c, recovery, fmt.Errorf("recovery collision: %s already has different content or mode; neither copy was overwritten", recovery))
+					}
+				} else {
+					// Another source path in this commit must not overwrite a
+					// freshly generated recovery later in the replay loop.
+					if _, exists := after[recovery]; exists {
+						return nil, stop(*c, recovery, fmt.Errorf("recovery collision: %s also exists in the local commit", recovery))
+					}
+					recoveryDisk := filepath.Join(r.Dir, filepath.FromSlash(recovery))
+					if e := os.MkdirAll(filepath.Dir(recoveryDisk), 0o755); e != nil {
+						return nil, stop(*c, recovery, e)
+					}
+					mode := os.FileMode(0o644)
+					if after[p].mode == "100755" {
+						mode = 0o755
+					}
+					if e := os.WriteFile(recoveryDisk, original, mode); e != nil {
+						return nil, stop(*c, recovery, e)
+					}
+					if after[p].mode == "100755" {
+						modeChanges[recovery] = "100755"
+					}
+				}
+				c.Kept = append(c.Kept, fmt.Sprintf("%s: kept the board's bytes at %s; exact local bytes and mode from commit %s retained at %s", p, p, c.Commit, recovery))
+			}
 			merged, kept, e := t.Merge(p, base, ours, theirs, *c)
 			if e != nil {
 				return nil, stop(*c, p, e)
@@ -414,7 +462,12 @@ func (r *Repository) CatchUp(t Translator) (replayed []Replayed, err error) {
 		if _, e := r.git("add", "--all", "--", "."); e != nil {
 			return nil, stop(*c, "(staging)", e)
 		}
-		for _, p := range touched {
+		var modePaths []string
+		for p := range modeChanges {
+			modePaths = append(modePaths, p)
+		}
+		sort.Strings(modePaths)
+		for _, p := range modePaths {
 			if mode, ok := modeChanges[p]; ok {
 				chmod := "--chmod=-x"
 				if mode == "100755" {

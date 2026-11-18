@@ -1,6 +1,7 @@
 package task
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"regexp"
 	"sort"
@@ -23,8 +24,9 @@ import (
 //     the task that says who set what, when, in which commit. Each such
 //     value is returned in Kept, so the run prints one line for it.
 //     Nothing is lost, nothing is silent, nothing stops.
-//  3. Only a file hug cannot read (no front matter, broken YAML) stops
-//     the merge, with the file named.
+//  3. A file hug cannot read (no front matter, broken YAML), or a task
+//     deleted remotely but edited locally, stops with its content retained
+//     in the original commit. The latter has no deletion-preservation policy.
 
 // MergeSide says where ours came from, for the note a kept value gets.
 type MergeSide struct {
@@ -107,6 +109,10 @@ func splitForMerge(path string, raw []byte) (*mergeDoc, error) {
 // (the task is new on that side); ours is never nil. kept lists every
 // value both sides changed, in file order.
 func MergeTask(path string, base, ours, theirs []byte, side MergeSide) ([]byte, []Kept, error) {
+	if base != nil && theirs == nil && string(ours) != string(base) {
+		id, _ := IDOf(path)
+		return nil, nil, fmt.Errorf("task %s was deleted on the board but edited in this commit; its exact local content remains in the original commit; deletion preservation requires an explicit policy", id)
+	}
 	// A fast path still validates the selected result. Copying malformed
 	// bytes unchanged would strand an unreadable task on the new board.
 	selected := func(raw []byte) ([]byte, []Kept, error) {
@@ -135,9 +141,7 @@ func MergeTask(path string, base, ours, theirs []byte, side MergeSide) ([]byte, 
 		if !b.present {
 			return ours, nil, nil
 		}
-		// The board removed it, this clone changed it: keep ours (a
-		// change is never lost to a removal).
-		return ours, nil, nil
+		return nil, nil, nil
 	}
 	id, _ := IDOf(path)
 	var kept []Kept
@@ -189,7 +193,10 @@ func MergeTask(path string, base, ours, theirs []byte, side MergeSide) ([]byte, 
 	}
 	d := Parse(path, merged)
 	for _, k := range kept {
-		d.Note(keptNote(k, side))
+		note := keptNote(k, side)
+		if !strings.Contains(d.Task.Texts.Notes, note) {
+			d.Note(note)
+		}
 	}
 	return d.Bytes(), kept, nil
 }
@@ -199,6 +206,9 @@ func MergeTask(path string, base, ours, theirs []byte, side MergeSide) ([]byte, 
 // "kestrel set state doing here at T; the board had done; kept done").
 func keptNote(k Kept, s MergeSide) string {
 	where := fmt.Sprintf("%s (commit %s %q)", s.At, s.Commit, s.Subject)
+	if strings.HasPrefix(k.Field, "competing resolution for request ") {
+		return fmt.Sprintf("Competing request resolution retained: %s on task %s. The board's resolution remains canonical. Local replay by %s at %s. Local request and resolution (verbatim):\n%s", k.Field, k.ID, s.Who, where, quoteBlock(k.Ours))
+	}
 	if strings.Contains(k.Ours, "\n") || strings.Contains(k.Theirs, "\n") {
 		return fmt.Sprintf("%s set %s here at %s; the board had changed it too; kept the board's. This clone's text was:\n%s", s.Who, k.Field, where, quoteBlock(k.Ours))
 	}
@@ -409,6 +419,16 @@ func mergeAppend(h string, b, o, t []string, bok, ook, tok bool, keep func(strin
 	// an earlier local note together with its newly appended continuation.
 	if hasPrefix(ob, bb) {
 		ob = ob[len(bb):]
+	}
+	// An unseparated note may already be embedded in the board's larger
+	// paragraph. Match complete appended line sequences, not substrings.
+	if h == "Notes" {
+		for i := 0; i < len(tb); i++ {
+			if len(ob) > 0 && hasPrefix(tb[i:], ob) {
+				ob = nil
+				break
+			}
+		}
 	}
 	var entries [][]string
 	seen := map[string]bool{}
@@ -662,7 +682,19 @@ func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []str
 		}
 		v, _, c := pick3p(renumber(bv, n), renumber(ov, n), e, bok, ook, true)
 		if c {
-			keep(fmt.Sprintf("request %d", n), itemOnly(ov), itemOnly(e), true)
+			field := fmt.Sprintf("request %d", n)
+			resolved := func(lines []string) bool {
+				for _, line := range lines {
+					if resolvedHead.MatchString(strings.TrimRight(line, "\r\n")) {
+						return true
+					}
+				}
+				return false
+			}
+			if resolved(ov) && resolved(e) {
+				field = fmt.Sprintf("competing resolution for request %d (identity %x)", n, sha256.Sum256([]byte(k)))
+			}
+			keep(field, itemOnly(ov), itemOnly(e), true)
 		}
 		entries = append(entries, itemOnly(v))
 	}
