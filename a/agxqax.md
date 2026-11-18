@@ -33,7 +33,7 @@ Statbus: hug.toml [people] jhf, erik, hhz. Plain wait refuses only --on NAME (cl
 
 ## Acceptance
 - [x] hug task wait ID 'owner: check 4 ...' (and 'jhf: ...', 'the owner's decision ...') is refused with the hug task ask fix; a test fails first on main.
-- [ ] hug task ask --to jorgen on a board whose [people] has jhf with name Jørgen resolves to jhf or is refused naming jhf (test).
+- [x] hug task ask --to jorgen on a board whose [people] has jhf with name Jørgen resolves to jhf or is refused naming jhf (test).
 - [ ] Lint flags an existing waiting task whose reason addresses a person and an asked task whose asked_for is no known person, each with a runnable fix; on a copy of Statbus's board it finds these 6 (counts in a note).
 
 ## Notes
