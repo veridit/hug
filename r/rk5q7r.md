@@ -1,15 +1,20 @@
 ---
 id: rk5q7r
 title: "When an open reflection is older than 3 days the coordinator's board cue names…"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz1"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T15:25"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ Parser: huginn/internal/task/reflect.go var quoted, the third alternative '([^']
 - [ ] When an open reflection is older than 3 days the coordinator's board cue names the count and hug task reflections --by-instruction (test)
 
 ## Notes
+
+
+## History
+- 2026-11-18T15:25 todo -> doing/active (take)
