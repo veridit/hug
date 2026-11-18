@@ -43,6 +43,7 @@ Checks 1 and 2 on main d74af5d (25459c1, CI 44087396396 green on all 5 jobs). Te
 
 
 Check 1 on main d661273, CI 44118189933 green on all 5 jobs (secrets, bench, ubuntu, macos, windows): 802b042 adds the golden testdata/rows/alias-search-120.txt; TestSearchAndJumpFindImportedAlias passes there. Check 3 stays Jørgen's (Statbus board).
+Jørgen 2026-11-18 12:36 answered check 3: 'I did this already, so this is approved.'
 ## History
 - 2026-11-17T14:32 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
