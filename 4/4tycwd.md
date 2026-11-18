@@ -4,7 +4,7 @@ title: "Detour scratch for in-progress work"
 state: "doing"
 type: spike
 priority: ""
-assignee: ["piglet"]
+assignee: ["kikazaru"]
 labels: ["needs-discussion"]
 group: ""
 rank: "zzzzzzv"
