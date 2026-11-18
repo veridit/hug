@@ -48,3 +48,27 @@ go build -o $JCODE_SCRATCH_DIR/recall4/recall4 ./muninn/cmd/recall4
 python3 muninn/scripts/run_real.py baseline default   # needs recall3's frozen snapshots
 python3 muninn/scripts/judge_real.py                  # blind judge + report.md
 ```
+
+## Best-passage scoring on real memories (c3hszg, 2026-11-18): not shipped
+
+Best-passage scoring (branch `c3hszg`, d84ae1aa: option `passage_mix`, recall4
+variant `passageNN`; not merged) scores a long memory's keyword match as
+(1-mix) x whole + mix x best ~600-byte passage, both with FTS5 bm25().
+Measured against shipped recall (`bm25_scale` 2.0; today's default
+reproduces the 14 Nov run on 200/200 development messages), same binary,
+blind judge (4 paid calls; every other pair was already judged).
+
+| split / stratum | n | mix 0.35 rel [CI] | irr [CI] | mix 0.65 rel [CI] | irr [CI] |
+|---|---:|---:|---:|---:|---:|
+| development / long | 103 | +0.00 [-0.03, +0.03] | +0.02 [+0.00, +0.07] | -0.01 [-0.06, +0.03] | +0.01 [-0.04, +0.07] |
+| held-out / long | 50 | -0.02 [-0.08, +0.00] | +0.02 [-0.05, +0.13] | +0.00 [-0.06, +0.06] | -0.02 [-0.15, +0.13] |
+| fresh / long | 64 | +0.00 [+0.00, +0.00] | +0.05 [-0.03, +0.13] | +0.00 [+0.00, +0.00] | +0.08 [-0.02, +0.18] |
+| short (all splits) | 124 + 83 | +0.00 | +0.00 | +0.00 | +0.00 |
+
+It changes few injections (development 4 and 6 of 200 messages, held-out 8
+and 16 of 77, fresh 31 and 43 of 147) and none for the better: real
+memories are short (median 168 bytes; 3,663 of 20,185 active memories in the
+development snapshot are over 600, and 48 of 253 injected on development are
+longer). A likely reason, not tested: the long memories that match are found
+by rare ids that whole-memory BM25 already ranks. The code stays on the
+branch only: no option without a measured gain.
