@@ -36,7 +36,7 @@ Today: the tab line underlines o, l, b and ! as single keys. After: line 2 is 'v
 - [ ] ~~g uses the same prefix mechanism: gg top, the grouping key from kx2ndm, footer shows the choices while pending (key test)~~ (not relevant: Jørgen 23:38 local: gg and G dropped, so g is no prefix (it groups rows, kx2ndm); v is the only prefix, and check 8 covers the gg/G removal, nautilus, 2026-11-18)
 - [x] Context help (?) lists prefix keys as two-key rows and its search finds them by either key or name (help test)
 - [ ] Jørgen confirms on his board after release
-- [ ] The state counts sit on the view line, right aligned after a dim separator, and the old counts line is gone (golden at 80 and 140; at 80 counts drop from the right first)
+- [x] The state counts sit on the view line, right aligned after a dim separator, and the old counts line is gone (golden at 80 and 140; at 80 counts drop from the right first)
 - [ ] gg and G are gone (keys, hints, help); < Home go to top and > End to bottom as before (key test)
 
 ## Notes
