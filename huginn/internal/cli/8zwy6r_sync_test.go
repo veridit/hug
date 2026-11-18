@@ -54,7 +54,9 @@ func TestSyncMergesBothSidesAppends(t *testing.T) {
 			},
 			sideA: []string{"note", "{id}", "A noted while asked"},
 			sideB: []string{"answer", "{id}", "the IN PROGRESS rows", "--as", "jhf"},
-			want:  []string{"A noted while asked", "the IN PROGRESS rows"}},
+			// q2adr8: the answer is under its question in ## Questions
+			// (before Notes) and in History's answer block, once each.
+			want: []string{"  which rows?\n  answered ", "    the IN PROGRESS rows\n", "A noted while asked", "> which rows?\n  the IN PROGRESS rows\n"}},
 		{name: "a request on each side",
 			sideA: []string{"request", "{id}", "A wants the rows wider", "--as", "jhf"},
 			sideB: []string{"request", "{id}", "B wants a key for it", "--as", "alice"},

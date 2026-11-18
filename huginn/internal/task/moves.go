@@ -243,11 +243,47 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 	}
 	f := d.Task.Fields
 	open := OpenQuestions(d.Task)
-	// The same question again, still open, is no change.
+	// The same question again, still open, is no change; the same text to
+	// another person, check or picture corrects that question in place
+	// (lint's unknown-person fix re-asks it to the right name).
 	for _, q := range open {
 		if q.Text == what && q.To == who && checkText(q.Check) == check && q.Show == show {
-			return s.finish(d, false)
+			// Unchanged, unless the stage's fields went stale (written by
+			// hand or an older hug): then they show the oldest open again.
+			set, clear := mirror(open[0])
+			stale := false
+			for k, v := range set {
+				stale = stale || d.Task.Fields[k] != v
+			}
+			for _, k := range clear {
+				stale = stale || d.Task.Fields[k] != ""
+			}
+			if !stale {
+				return s.finish(d, false)
+			}
+			m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}
+			m.line = "asked question " + strconv.Itoa(q.N) + " of " + who + " again"
+			if e = applyMove(d, ts, m); e != nil {
+				return Result{}, e
+			}
+			return s.finish(d, true)
 		}
+	}
+	for _, q := range open {
+		if q.Text != what {
+			continue
+		}
+		c, _ := strconv.Atoi(check)
+		if e = d.rewriteQuestionHead(q, who, c, show); e != nil {
+			return Result{}, e
+		}
+		set, clear := mirror(OpenQuestions(d.Task)[0])
+		m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}
+		m.line = "asked question " + strconv.Itoa(q.N) + " of " + who + " instead"
+		if e = applyMove(d, ts, m); e != nil {
+			return Result{}, e
+		}
+		return s.finish(d, true)
 	}
 	if len(d.Task.Questions) == 0 && f["asked_what"] == what && f["asked_for"] == who && f["asked_check"] == check && f["asked_show"] == show {
 		return s.finish(d, false)
@@ -260,9 +296,10 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 		asker = strings.Join(d.Task.Assignee, ", ")
 	}
 	// A question asked before q2adr8 (asked_* and no Questions) becomes
-	// question 1, so both are numbered and each is answered on its own.
-	if lq, ok := legacyQuestion(d.Task); ok {
-		d.appendToSection(QuestionsSection, strings.Replace(questionBlock(1, lq.By, lq.To, lq.Check, lq.Show, lq.Text, d.newline), "- "+stamp(), "- "+orStamp(lq.At), 1))
+	// question 1, so both are numbered and each is answered on its own;
+	// the same text again replaces it, as before.
+	if lq, ok := legacyQuestion(d.Task); ok && lq.Text != what {
+		d.appendToSection(QuestionsSection, questionHeadAt(orStamp(lq.At), 1, lq.By, lq.To, lq.Check, lq.Show)+d.newline+indent(lq.Text, "  ", d.newline))
 	}
 	n := nextQuestion(d)
 	c, _ := strconv.Atoi(check)
@@ -272,7 +309,7 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 	// Every ask is a History line. A first one moves the stage and names
 	// what it left ("; was waiting_on: ..."); a second moves nothing, so
 	// it says what it adds.
-	m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask, question " + strconv.Itoa(n)}
+	m := move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}
 	if now := len(OpenQuestions(d.Task)); now > 1 {
 		m.line = "asked question " + strconv.Itoa(n) + " of " + who + ", " + strconv.Itoa(now) + " open"
 	}

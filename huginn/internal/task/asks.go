@@ -158,6 +158,11 @@ func nextQuestion(d *Document) int {
 
 // questionBlock is a question's block in the Questions section.
 func questionBlock(n int, by, to string, check int, show, text, nl string) string {
+	return questionHeadAt(stamp(), n, by, to, check, show) + nl + indent(text, "  ", nl)
+}
+
+// questionHeadAt is a question's head line, asked at at.
+func questionHeadAt(at string, n int, by, to string, check int, show string) string {
 	var meta []string
 	if check > 0 {
 		meta = append(meta, "check "+strconv.Itoa(check))
@@ -165,11 +170,11 @@ func questionBlock(n int, by, to string, check int, show, text, nl string) strin
 	if show != "" {
 		meta = append(meta, "show "+show)
 	}
-	head := "- " + stamp() + " question " + strconv.Itoa(n) + " by " + by + " to " + to
+	head := "- " + at + " question " + strconv.Itoa(n) + " by " + by + " to " + to
 	if len(meta) > 0 {
 		head += " (" + strings.Join(meta, ", ") + ")"
 	}
-	return head + ":" + nl + indent(text, "  ", nl)
+	return head + ":"
 }
 
 // mirror is the asked_* fields for q, the oldest open question (crab
@@ -260,6 +265,26 @@ func tickAnswers(t Task, n int, actor string) (q int, ok bool) {
 		}
 	}
 	return 0, false
+}
+
+// rewriteQuestionHead points open question q at who, check and show, its
+// number, asker, stamp and text kept: a correction, not a new question.
+func (d *Document) rewriteQuestionHead(q AskedQuestion, who string, check int, show string) error {
+	sec, ok := d.sections[QuestionsSection]
+	if !ok {
+		return &Error{Kind: "broken-file", ID: d.Task.ID, Fix: "hug task lint " + d.Task.ID}
+	}
+	lines := append([]string(nil), d.lines...)
+	for i := sec[0] + 1; i < sec[1]; i++ {
+		m := questionHead.FindStringSubmatch(strings.TrimRight(lines[i], "\r\n"))
+		if m == nil || m[2] != strconv.Itoa(q.N) {
+			continue
+		}
+		lines[i] = questionHeadAt(q.At, q.N, q.By, who, check, show) + d.newline
+		d.replace(lines)
+		return nil
+	}
+	return &Error{Kind: "broken-file", ID: d.Task.ID, Fix: "hug task lint " + d.Task.ID}
 }
 
 // writeAnswerUnder puts the answer block under question n in the
