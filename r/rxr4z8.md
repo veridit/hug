@@ -19,9 +19,6 @@ asked_what: "Before I build marks: is footer-mock.md (in FILES) what you want? T
 asked_for: "jhf"
 asked_since: "2026-11-18T06:19"
 asked_by: "nautilus"
-waiting_on: "Jørgen's answer on footer-mock.md (asked 05:19), then build"
-waiting_since: "2026-11-18T06:19"
-waiting_asked_by: "nautilus"
 ---
 
 ## Goal
@@ -67,3 +64,4 @@ User testing 2026-11-18 11:06Z: wants to mark several tasks with structural prob
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
+- 2026-11-18T12:56 doing/asked -> doing/asked (settle: one stage, asked); was waiting_asked_by: nautilus; waiting_on: Jørgen's answer on footer-mock.md (asked 05:19), then build; waiting_since: 2026-11-18T06:19
