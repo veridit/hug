@@ -39,7 +39,7 @@ func TestDeliverFromBoxes(t *testing.T) {
 	if len(calls) != 1 || calls[0] != "ffffff request jhf" {
 		t.Fatalf("r delivered %q", calls)
 	}
-	if !strings.Contains(m.message, "request ffffff: pending, delivered to crab (session_crab_1_ab)") {
+	if !strings.Contains(m.message, "requested ffffff: pending, delivered to crab (session_crab_1_ab)") {
 		t.Fatalf("message %q", m.message)
 	}
 	page := ansi.Strip(m.detailText(mustSelected(t, m)))
