@@ -1,15 +1,20 @@
 ---
 id: 0sw0dd
 title: "TUI navigation, search and sort"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["iwazaru"]
 labels: ["needs-discussion"]
 group: ""
 rank: "zzzzzzh"
 created: 2026-11-16
 updated: 2026-11-16
+doing_since: "2026-11-18T16:37"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -52,3 +57,7 @@ v0.7.15 released and installed 2026-11-16 (commit 6d36b9e, release run 'complete
 2026-11-16 crab: back to todo, unassigned. It showed doing under Jørgen's name from a take before take required a model; nobody is building it. Waits on Jørgen's answers (key scheme, sort, field search).
 
 crab 2026-11-17: item 4 (search by field with BM25) moves to 49n9kw (ranked search for CLI, MCP and TUI); the alias part of TUI search is vzghj8.
+
+
+## History
+- 2026-11-18T16:37 todo -> doing/active (take)
