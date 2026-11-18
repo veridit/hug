@@ -7,7 +7,7 @@ priority: ""
 assignee: ["hatchling"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzz8"
+rank: "zzzzzzzzzzz7"
 created: 2026-11-18
 updated: 2026-11-18
 stage: "waiting"
