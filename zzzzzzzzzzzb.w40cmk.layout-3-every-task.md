@@ -4,7 +4,7 @@ title: "Layout 3: every task file is ID.md and never renamed; rank and group in 
 state: "doing"
 type: feature
 priority: ""
-assignee: ["kestrel"]
+assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
