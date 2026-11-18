@@ -1,7 +1,7 @@
 ---
 id: vk9td0
 title: "Decide when dream items are handed out"
-state: "doing"
+state: "done"
 type: spike
 priority: "high"
 assignee: ["sabertooth"]
@@ -10,12 +10,11 @@ group: "dream"
 rank: "zz8"
 created: 2026-11-10
 updated: 2026-11-10
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 aliases: ["decide-when-dream-items-are-handed"]
-doing_since: "2026-11-18T13:25"
+done_at: "2026-11-18T20:38"
 ---
 
 ## Goal
@@ -61,6 +60,7 @@ Landed on main via 5a8b14da (stack bg1rd8 f7d607e4, qpp30y 3d74229a, 2k68eg 7faf
 landed 5a8b14d on main 2026-11-18: hug mem: dream starts at the beginning of your quiet stretch (vk9td0)
 shipped in v0.7.65 (5a8b14d)
 check 4: Jørgen 19:35Z (answer 1): 'go for the adaptive', no hard-coded schedule. 4f0465fb already learns each day's quiet stretch from the last 4 weeks of turns (activity.go Weeks = 4, prune at 8 weeks), so a change in rhythm shows within a month. The stretches from his hook.log were only the current reading of that, not a fixed schedule.
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T06:32 doing/active -> doing/waiting (wait)
@@ -75,3 +75,4 @@ check 4: Jørgen 19:35Z (answer 1): 'go for the adaptive', no hard-coded schedul
 - 2026-11-18T20:32 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:35 answer 1 acknowledged by crab
 - 2026-11-18T20:36 crab read the answer: hug task check vk9td0 4 "Jørgen 19:35Z (answer 1): 'go for the adaptive', no hard-coded schedule. 4f0465fb already learns each day's quiet stret…"
+- 2026-11-18T20:38 doing/active -> done (done); was doing_since: 2026-11-18T13:25
