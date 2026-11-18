@@ -1,7 +1,7 @@
 ---
 id: bqfrda
 title: "detach leaves a citation that lint reports as missing-file twice"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzz7"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T14:03"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_asked_by: "piglet"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T14:09"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -47,6 +43,8 @@ crab review 13:36Z: accepted. Lands after the current queue (z82qsy, 6fqhg9 stac
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
 landed 7430a13 on main 2026-11-18: detach leaves no missing-file, and a missing file is one finding (bqfrda)
 shipped in v0.7.66 (7430a13)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T14:03 todo -> doing/active (take)
 - 2026-11-18T14:09 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T14:03; waiting_asked_by: piglet; waiting_on: crab review; waiting_since: 2026-11-18T14:09
