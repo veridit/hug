@@ -37,6 +37,7 @@ User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task request
 
 ## Depends on
 
+- rxr4z8
 ## Acceptance
 - [ ] A board mock shows marking several tasks, selected count, and one request action for that exact set, reviewed by Jorgen.
 - [x] Submitting one request preserves its exact text and selected IDs, visible to the agent without asking the user to repeat it per task.
