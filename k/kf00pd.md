@@ -1,7 +1,7 @@
 ---
 id: kf00pd
 title: "Release v0.7.62: default sort row"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T13:09"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "release.yml for v0.7.62"
-waiting_since: "2026-11-18T13:09"
-waiting_asked_by: "crab"
+done_at: "2026-11-18T13:15"
 ---
 
 ## Goal
@@ -45,3 +41,4 @@ release.yml run 44301186296 success on tag v0.7.62 (e4206e21) before install; br
 ## History
 - 2026-11-18T13:09 todo -> doing/active (take)
 - 2026-11-18T13:09 doing/active -> doing/waiting (wait)
+- 2026-11-18T13:15 doing/waiting -> done (done); was doing_since: 2026-11-18T13:09; waiting_asked_by: crab; waiting_on: release.yml for v0.7.62; waiting_since: 2026-11-18T13:09
