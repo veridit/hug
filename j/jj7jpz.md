@@ -36,3 +36,5 @@ Found while working 6ep7y2 (tigress). Fix in huginn/internal/cli/sync.go plus gi
 Fix 41ba4ed1 on branch 6ep7y2 (based on origin/main c87da5a8, tigress). Failing first, before the production edit: 'sync_pending_test.go:61: 5 of 5 passes that could not open the board left their pending marker'. With the fix, -count=3: 'ok  	github.com/veridit/hug/huginn/internal/cli	5.744s'. Mutant without b.Abandon(born): '5 of 5 passes that could not open the board left their pending marker' again, then restored. Raw: scratch/6ep7y2-local/jj7jpz-*.txt. The test removes the board worktree's admin folder, so gitbranch.Open refuses it, as on CI 44230245084. CI pending on the 4th 6ep7y2 push.
 
 probe
+
+Ordinary CI on abc8a2a9 (branch ci/6ep7y2-h5; contains 41ba4ed1, plus 8023b9f1 test-only diagnostics and a branch-only experiment workflow): run 44318566065, all 6 jobs success: secrets 134851100953, bench 134851179930, test (windows-latest) 134851180031, test-windows-cli 134851180053, test (macos-latest) 134851180073, test (ubuntu-latest) 134851180204. Not merged to main (crab's call).
