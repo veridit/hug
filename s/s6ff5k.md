@@ -48,6 +48,8 @@ Check 2 measured offline, not built (2026-11-17, $JCODE_SCRATCH_DIR/header4/offt
     Collected (bonehound, report /Users/jhf/.jcode/scratch/s6ff5k-feedback/REPORT.md): 56 reflections since tb0dra (hug 49, Seid 5, Statbus 2; none resolved), task notes on all three boards, muninn.db injections and 4 jcode instances' transcripts since 2026-11-16 12:00. Learned: (1) prove the ticket's premise first (6 reflections, e.g. 46ek1f, 95ahtk, mmm8c8); (2) fix the family, not the instance (5, e.g. 3nhp67, dx9vw2); (3) count, not time (4 + Statbus nst6hb); (4) a written bar and fail-first tests keep work honest (5). Memory: 5 working sessions forgot a shown id; in 3 (orangutan, spider, rabbit) the owner had told them to, so agents fix when told, not from the header, consistent with check 1 and the H2/H3 wrong-forget results. Instruction gaps: check 'with evidence' is false (3 reflections, 4 refused calls) -> pw0t19; handoff ownership (5) is bg1rd8.
 - 2026-11-18T12:23 request 2 by jhf:
   And if there's nothing we have learned, if we can improve our instructions so that we can learn something.
+  resolved 2026-11-18T13:34 by bonehound:
+    Three changes so we can learn: pw0t19 makes the installed line 'hug task check ID N with evidence' true (check takes the evidence, note/check take --as, a wrong count names the command's help). 2k68eg makes reflections reach a reviewer: the instruction quote parses right (10 of 28 are cut at an apostrophe now), --by-instruction groups repeats, an unanswered done is counted (Statbus answered 2 of 10), and the coordinator's cue names open reflections older than 3 days. rjk44w (epic d634kr) records every memory fix with session, shown-before and an optional reason, and hug mem stats --fixes reports them, so header-driven and owner-driven fixes and wrong forgets become measurable without transcript regex. Not filed: superseded checks need a link (7 reflections, proposal in the report, B2).
 
 ## Notes
 
@@ -103,3 +105,4 @@ retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): 
 - 2026-11-18T12:23 request 1 by jhf
 - 2026-11-18T12:23 request 2 by jhf
 - 2026-11-18T13:34 resolved request 1 by bonehound
+- 2026-11-18T13:34 resolved request 2 by bonehound
