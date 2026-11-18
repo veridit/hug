@@ -7,6 +7,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 ## Unreleased
 
 - `hug task detach` no longer leaves a missing-file finding (bqfrda): a file cited before its "detached file:NAME" note is gone on purpose, and lint reports a missing cited file once however often it is cited (was twice after attach and detach).
+- Lint no longer reads a quoted `.hug/tasks/ID/...` path of another board's task as a broken link (1phmre: w40cmk quotes Statbus's `.hug/tasks/37bryg/README.md`); only `task:REF/NAME` links to a task. A `task:` link to no task keeps `missing-task-ref`, and its fix is now `hug task note ID "task:REF/NAME (lost)"`, run without an editor (was `hug task edit ID`): a citation marked (lost) anywhere in the task settles every citation of it.
 
 ## v0.7.65 - 2026-11-18
 
