@@ -42,5 +42,6 @@ Audit 2026-11-18 (tigress, origin/main 8a45b0eb): migrationGit at muninn/interna
 check 1: Fail first at 21b1ea39 on main 8a45b0eb: 'migration_hooks_test.go:64: migration with a commit-msg hook: migrated=true err=migration git commit: refused: no Model: trailer: exit status 1'. After b6848d6e: --- PASS commit-msg_refuses (0.48s). Mutation (flag removed): fails the same way again.
 check 2: Fail first: 'migration_hooks_test.go:67: the migration ran the code repository's post-commit hook (took 20.338774334s)' (the hook's background sleep 20 held CombinedOutput). After b6848d6e: --- PASS post-commit_leaves_a_process_holding_output (0.48s), and the hook never runs (marker file absent).
 check 3: The fix is one flag, -c core.hooksPath=/dev/null, in migrationGit (branch.go:166). No timeout, no retry. TestMigrationCommitRunsNoRepoHooks -count=50 niced: 'ok github.com/veridit/hug/muninn/internal/project 61.782s'. Package: 'ok 11.210s'.
+Branch 9vp9by / ci/9vp9by on main 8a45b0eb: 21b1ea39 (failing test), b6848d6e (fix + CHANGELOG). CI 44399475509 queued.
 ## History
 - 2026-11-18T22:11 todo -> doing/active (take)
