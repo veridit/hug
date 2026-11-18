@@ -52,19 +52,84 @@ jobs:
           CGO_ENABLED: "0"
 
   test-windows-cli:
-    # huginn/internal/cli on Windows, alone on its runner, beside the test
-    # job: same tests, no skips; its time is its own (0sbvnq).
+    # huginn/internal/cli on Windows, alone on its runners, beside the test
+    # job: same tests, no skips; its time is its own (0sbvnq). Two shards,
+    # each one go test run on its own runner with go test's 10-minute
+    # limit, so a hang still fails: shard sync runs the tests with two
+    # clones and a remote (sync, catch-up, layout upgrade), shard rest
+    # every other test. One run of the package took 387-403 s on one runner
+    # (CI 44370619880, -parallel 4 no faster) and crossed 600 s on slow
+    # ones (CI 44356197911). Each shard lists the tests it ran;
+    # test-windows-cli-shards checks every test ran in exactly one.
     needs: secrets
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [sync, rest]
     runs-on: windows-latest
+    env:
+      SYNC_TESTS: "^(TestCatchUp|TestOrdinarySync|TestBackgroundSync|TestReadOnlyClone|TestSyncMerges|TestSyncBothSides|TestWriteEndsInterruptedSyncRebase|TestDeduce|TestSettled|TestUpgrade)"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Test huginn/internal/cli
-        run: go test ./huginn/internal/cli/
+      - name: Test huginn/internal/cli (shard ${{ matrix.shard }})
+        shell: bash
+        run: |
+          if [ "${{ matrix.shard }}" = sync ]; then
+            set -- -run "$SYNC_TESTS"
+          else
+            set -- -skip "$SYNC_TESTS"
+          fi
+          # -v only to list the tests that ran: a pass prints go test's
+          # last lines, a failure the whole log.
+          go test -v "$@" ./huginn/internal/cli/ > cli.log 2>&1 && ok=0 || ok=$?
+          if [ "$ok" = 0 ]; then tail -n 2 cli.log; else cat cli.log; fi
+          sed -n 's/^=== RUN   \(Test[^/]*\)$/\1/p' cli.log | sort -u > ran-${{ matrix.shard }}.txt
+          echo "shard ${{ matrix.shard }}: $(wc -l < ran-${{ matrix.shard }}.txt) top-level tests ran"
+          exit "$ok"
         env:
           CGO_ENABLED: "1"
+      - name: List every cli test
+        if: always() && matrix.shard == 'sync'
+        shell: bash
+        run: go test -list '.*' ./huginn/internal/cli/ | grep '^Test' | sort -u > all.txt
+        env:
+          CGO_ENABLED: "1"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cli-shard-${{ matrix.shard }}
+          path: |
+            ran-${{ matrix.shard }}.txt
+            all.txt
+          if-no-files-found: ignore
+
+  test-windows-cli-shards:
+    # Every top-level huginn/internal/cli test that exists on Windows ran
+    # in exactly one test-windows-cli shard: a test the pattern misses, or
+    # one both shards run, fails here.
+    needs: test-windows-cli
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cli-shard-*
+          merge-multiple: true
+      - name: Each cli test ran in exactly one shard
+        shell: bash
+        env:
+          LC_ALL: C
+        run: |
+          for f in all ran-sync ran-rest; do tr -d '\r' < $f.txt | sort -u > $f.sorted; done
+          wc -l all.sorted ran-sync.sorted ran-rest.sorted
+          if [ ! -s ran-sync.sorted ] || [ ! -s ran-rest.sorted ]; then echo "a shard ran no test"; exit 1; fi
+          both=$(comm -12 ran-sync.sorted ran-rest.sorted)
+          if [ -n "$both" ]; then echo "ran in both shards:"; echo "$both"; exit 1; fi
+          if ! diff <(sort -u ran-sync.sorted ran-rest.sorted) all.sorted; then echo "the shards did not run every test (< ran, > listed)"; exit 1; fi
+          echo "all $(wc -l < all.sorted) tests ran, each in one shard"
 
   bench:
     # Benchmarks out of the normal suite (Jørgen, 2026-11-17 10:00): one
