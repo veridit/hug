@@ -55,7 +55,7 @@ landed e36ecca4..4247303e (nautilus). CI run 44238251338 green on all 6 jobs (ub
 landed 4247303 on main 2026-11-18: tui: 'filter: … · sort: …' line with f and s marked; s opens the sort picker (c…
 shipped in v0.7.56 (4247303)
 check 6: Jørgen 19:58 local: 'I like these pickers. Keep it'
-Reflection (open, 2026-11-18, crab): nothing: Jørgen's answer came as a hug answer event naming the check, and tick + done closed it
+Reflection (dismissed, 2026-11-18, crab): nothing: Jørgen's answer came as a hug answer event naming the check, and tick + done closed it
 ## History
 - 2026-11-18T05:01 todo -> doing/active (take)
 - 2026-11-18T05:47 doing/active -> doing/asked (ask)
