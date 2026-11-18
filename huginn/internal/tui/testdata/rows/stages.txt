@@ -1,5 +1,5 @@
 == overview at 80
-HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
+HUG · overview   7/7 tasks · ! 0 broken                                         
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
@@ -30,7 +30,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == WAITING focused at 80
-HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
+HUG · overview   7/7 tasks · ! 0 broken                                         
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
@@ -61,7 +61,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == list at 80
-HUG TASKS · list   7/7 tasks · ! 0 broken                                       
+HUG · list   7/7 tasks · ! 0 broken                                             
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
   ✓      ID       STAGE     TITLE                       · all feature · all high
@@ -92,7 +92,7 @@ All tasks · : filters and commands
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == overview at 140
-HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
+HUG · overview   7/7 tasks · ! 0 broken                                                                                                     
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
@@ -123,7 +123,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == WAITING focused at 140
-HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
+HUG · overview   7/7 tasks · ! 0 broken                                                                                                     
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
@@ -154,7 +154,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == list at 140
-HUG TASKS · list   7/7 tasks · ! 0 broken                                                                                                   
+HUG · list   7/7 tasks · ! 0 broken                                                                                                         
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
   ✓      ID       STAGE     TITLE                                                                                   · all feature · all high

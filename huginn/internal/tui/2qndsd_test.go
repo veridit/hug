@@ -72,7 +72,7 @@ func TestImageOpensInTheFrame(t *testing.T) {
 			t.Fatalf("at %d Space on an image did not open it in the frame", w)
 		}
 		screen := ansi.Strip(v.View())
-		body := frameOf(t, v, screen, "HUG TASKS · list › 000002 › ", "screenshot of the board")
+		body := frameOf(t, v, screen, "HUG · list › 000002 › ", "screenshot of the board")
 		if got := strings.TrimRight(body[0], " "); got != "image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it" {
 			t.Fatalf("at %d the fallback reads %q", w, got)
 		}
@@ -108,7 +108,7 @@ func TestImageDrawnInTheFrameRows(t *testing.T) {
 		if !strings.HasPrefix(seq, c.start) || !strings.HasSuffix(seq, c.end) {
 			t.Fatalf("%v: sequence %q…%q, want %q…%q", c.env, seq[:min(80, len(seq))], seq[max(0, len(seq)-10):], c.start, c.end)
 		}
-		body := frameOf(t, v, ansi.Strip(v.frameView()), "HUG TASKS · list › 000002 › compiler/000002/board.png · 67 B", "screenshot of the board")
+		body := frameOf(t, v, ansi.Strip(v.frameView()), "HUG · list › 000002 › compiler/000002/board.png · 67 B", "screenshot of the board")
 		for i, l := range body {
 			if strings.TrimSpace(l) != "" {
 				t.Fatalf("%v: frame row %d is not left for the image: %q", c.env, i, l)
@@ -134,7 +134,7 @@ func TestStepImagesAndTextInOneFrame(t *testing.T) {
 		if name == "board.png" {
 			note = "screenshot of the board"
 		}
-		frameOf(t, v, screen, fmt.Sprintf("HUG TASKS · list › 000002 › compiler/000002/%s · ", name), note)
+		frameOf(t, v, screen, fmt.Sprintf("HUG · list › 000002 › compiler/000002/%s · ", name), note)
 		if !strings.Contains(strings.Split(screen, "\n")[0], fmt.Sprintf("%d of %d", i+1, len(files))) {
 			t.Fatalf("%s: crumb lacks %d of %d", name, i+1, len(files))
 		}

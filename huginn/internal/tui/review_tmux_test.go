@@ -100,7 +100,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	}
 	send := func(keys ...string) { tmux(append([]string{"send-keys", "-t", "review:0.0"}, keys...)...) }
 
-	wait("HUG TASKS · overview")
+	wait("HUG · repo · overview")
 	send("#aaaaaa")
 	wait("JUMP TO ID")
 	send("Enter")
@@ -133,7 +133,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 
 	// t on my own task: give it back, keeping its stage.
 	send("Escape")
-	wait("HUG TASKS · list")
+	wait("HUG · repo · list")
 	send("#bbbbbb")
 	wait("JUMP TO ID")
 	send("Enter")
@@ -153,7 +153,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	}
 	// Taken for review and given back: todo/review again, review_by kept.
 	send("Escape")
-	wait("HUG TASKS · list")
+	wait("HUG · repo · list")
 	send("#aaaaaa")
 	wait("JUMP TO ID")
 	send("Enter")

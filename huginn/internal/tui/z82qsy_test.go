@@ -168,7 +168,7 @@ func TestFileViewerFramesOnlyTheFile(t *testing.T) {
 			lines := strings.Split(screen, "\n")
 			trim := func(i int) string { return strings.TrimRight(lines[i], " ") }
 			rule := strings.Repeat("─", w)
-			crumb := "HUG TASKS · list › 000001 › compiler/000001/" + want.name
+			crumb := "HUG · list › 000001 › compiler/000001/" + want.name
 			if !strings.HasPrefix(trim(0), crumb+" · ") || !strings.HasSuffix(trim(0), fmt.Sprintf("%d of %d", at+1, len(files))) {
 				t.Fatalf("at %d %s: crumb %q, want %q · size · n of m", w, want.name, trim(0), crumb)
 			}
@@ -201,7 +201,7 @@ func TestFileViewerFramesOnlyTheFile(t *testing.T) {
 // rule is right under the crumb.
 func TestFileViewerNoNoteNoLine(t *testing.T) {
 	_, lines := fileScreen(t, "list")
-	if !strings.HasPrefix(lines[0], "HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5") || lines[1] != strings.Repeat("─", 80) || strings.TrimRight(lines[2], " ") != "Bench" {
+	if !strings.HasPrefix(lines[0], "HUG · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5") || lines[1] != strings.Repeat("─", 80) || strings.TrimRight(lines[2], " ") != "Bench" {
 		t.Fatalf("no note: %q / %q / %q", lines[0], lines[1], lines[2])
 	}
 }
