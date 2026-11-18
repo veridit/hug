@@ -138,6 +138,7 @@ landed f5a5bd1 on main 2026-11-18: Translate an older remote base before layout 
 landed 6d74c3c on main 2026-11-18: test: feed printed recovery command directly to native shell (w40cmk)
 landed 2600e44 on main 2026-11-18: test: isolate memory checkout bytes and compare directory identity (w40cmk)
 landed ead1be4 on main 2026-11-18: test: schedule isolated layout fixtures in existing test pool (w40cmk)
+shipped in v0.7.61 (1f22181)
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
 - 2026-11-18T02:26 doing/active -> doing/waiting (wait)
