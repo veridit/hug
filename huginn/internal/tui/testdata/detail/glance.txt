@@ -1,13 +1,5 @@
 == README at 80
-HUG TASKS · list › 000001                                                       
-[todo]  [feature]  [critical]  group:compiler  unassigned                       
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                  
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal           
-  fix: hug task set 000001 --title "..."                                        
-────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long…
-────────────────────────────────────────────────────────────────────────────────
-compiler/000001/bench/README.md · 32 B · 1 of 5                                 
+HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5     
 ────────────────────────────────────────────────────────────────────────────────
 Bench                                                                           
                                                                                 
@@ -20,19 +12,19 @@ Synthetic bench notes.
                                                                                 
                                                                                 
                                                                                 
-File · 100% · next-, previous file · Esc back to files                          
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+                                                                                
                                                                                 
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == escapes.log at 80
-HUG TASKS · list › 000001                                                       
-[todo]  [feature]  [critical]  group:compiler  unassigned                       
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                  
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal           
-  fix: hug task set 000001 --title "..."                                        
-────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long…
-────────────────────────────────────────────────────────────────────────────────
-compiler/000001/evidence/escapes.log · 241 B · 4 of 5                           
+HUG TASKS · list › 000001 › compiler/000001/evidence/escapes.log · 241 B · 4 of…
 ────────────────────────────────────────────────────────────────────────────────
 ok line                                                                         
 \x1b[2Jcleared?\a bell    tab                                                   
@@ -45,19 +37,19 @@ long long long long long long long long long end
                                                                                 
                                                                                 
                                                                                 
-File · 100% · next-, previous file · Esc back to files                          
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+                                                                                
                                                                                 
 next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
 == README at 140
-HUG TASKS · list › 000001                                                                                                                   
-[todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                                                                              
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal                                                                       
-  fix: hug task set 000001 --title "..."                                                                                                    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-compiler/000001/bench/README.md · 32 B · 1 of 5                                                                                             
+HUG TASKS · list › 000001 › compiler/000001/bench/README.md · 32 B · 1 of 5                                                                 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Bench                                                                                                                                       
                                                                                                                                             
@@ -70,19 +62,19 @@ Synthetic bench notes.
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-File · 100% · next-, previous file · Esc back to files                                                                                      
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                                            
                                                                                                                                             
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                     
 == escapes.log at 140
-HUG TASKS · list › 000001                                                                                                                   
-[todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   
-created 2026-11-01 · updated 2026-11-10 · feature-item-01-make                                                                              
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal                                                                       
-  fix: hug task set 000001 --title "..."                                                                                                    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-compiler/000001/evidence/escapes.log · 241 B · 4 of 5                                                                                       
+HUG TASKS · list › 000001 › compiler/000001/evidence/escapes.log · 241 B · 4 of 5                                                           
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ok line                                                                                                                                     
 \x1b[2Jcleared?\a bell    tab                                                                                                               
@@ -95,6 +87,14 @@ long long long long long long long long long long long long long end
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-File · 100% · next-, previous file · Esc back to files                                                                                      
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                                            
                                                                                                                                             
 next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    

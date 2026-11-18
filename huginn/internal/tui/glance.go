@@ -96,7 +96,7 @@ func (m *model) showGlance() {
 	m.glanceMD = glanceMarkdown{}
 	m.find = findState{} // the file's own find (4s3g5q)
 	m.glanceHead, m.glanceBody = m.glanceRead(t, name)
-	m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-glanceChrome)
+	m.viewport.Height = m.glanceHeight()
 	m.viewport.SetContent(m.glanceBody)
 	m.viewport.GotoTop()
 }
@@ -162,7 +162,57 @@ func (m *model) closeGlance() {
 	m.revealAcceptance()
 }
 
-// glanceChrome is the lines a shown file takes above its text, under the
-// task's header: the rule, "path · size · i of N", and the rule under it
-// (z82qsy).
-const glanceChrome = 3
+// glanceHeight is how many lines the shown file gets (z82qsy check 4):
+// the body less the note line (when the file has a note) and the two rules
+// that frame it. The crumb above is the task screen's one head line.
+func (m model) glanceHeight() int {
+	chrome := 2
+	if m.glanceNote() != "" {
+		chrome++
+	}
+	return max(1, m.bodyHeight()-chrome)
+}
+
+// glanceNote is what the task's notes say about the shown file when it
+// was attached, "file:NAME (N bytes, sha256:H) WHY": the WHY of the
+// latest such note, without a "replaces sha256:H". "" with none.
+func (m model) glanceNote() string {
+	t, ok := m.selected()
+	if !ok {
+		return ""
+	}
+	name, _, _ := m.glanceFile(t)
+	d := m.doc(t)
+	if name == "" || d == nil || d.Task.Texts == nil {
+		return ""
+	}
+	return attachmentNote(d.Task.Texts.Notes, name)
+}
+
+// attachmentNote finds the note an attach left for name in notes.
+func attachmentNote(notes, name string) string {
+	note := ""
+	prefix := "file:" + name + " ("
+	for _, l := range strings.Split(notes, "\n") {
+		l = strings.TrimSpace(l)
+		if !strings.HasPrefix(l, prefix) {
+			continue
+		}
+		rest := l[len(prefix):]
+		close := strings.Index(rest, ")")
+		if close < 0 {
+			continue
+		}
+		why := strings.TrimSpace(rest[close+1:])
+		if strings.HasPrefix(why, "replaces sha256:") {
+			why = strings.TrimSpace(strings.TrimPrefix(why, "replaces sha256:"))
+			if sp := strings.IndexByte(why, ' '); sp >= 0 {
+				why = strings.TrimSpace(why[sp+1:])
+			} else {
+				why = ""
+			}
+		}
+		note = oneLine(why) // the latest attach says what the file is now
+	}
+	return note
+}
