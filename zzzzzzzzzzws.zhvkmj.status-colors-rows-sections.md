@@ -47,6 +47,7 @@ landed on main c6e0bff..c818f34 (ff). CI run 44066450337 (ff3c2a3, the same code
 
 
 file:screen-1821.ans (10206 bytes, sha256:e77117eb) screen capture from hug tui
+crab ruling 02:52 local on Jørgen's 02:32 answer ('it bugs me that waiting and lint are two different issues [in one colour]... should lint be more red, like an error, or warning, or should waiting be less alarmist'): both. Today both use warning #ffb454. From his rules (red only for problems; subtle; ASKED is what he must address, WAITING is where inactive work parks): broken lint is a problem, so red (the blocked red #ff8585/#ae2525), and the ! mark and LINT section with it; advice-only lint is dim. Waiting on a thing (CI, a date) is calm: dim, no orange. Amber (#ffb454) is kept for one meaning only: something waits on YOU (asked of you, ? N for you, the ASKED section). Re-ask check 4 with a capture after the change.
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
