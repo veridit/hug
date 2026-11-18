@@ -4,7 +4,7 @@ title: "Key prefixes: v picks the view (vo vl vb v!), a pending prefix shows its
 state: "doing"
 type: feature
 priority: ""
-assignee: ["nautilus"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzlh"
