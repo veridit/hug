@@ -8,11 +8,14 @@ assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T07:23"
+waiting_on: "CI run 44262023787, normal main gate for348133a3; wyvern owns watcher243200zkab, no acceptance ticks until green"
+waiting_since: "2026-11-18T08:51"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -70,3 +73,4 @@ Authorized landing348133a32987e20052bc8b14c4f77742fb2f4778 pushed main non-force
 - 2026-11-18T07:10 todo/ready -> doing/active (take)
 - 2026-11-18T07:20 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T07:10
 - 2026-11-18T07:23 todo/ready -> doing/active (take)
+- 2026-11-18T08:51 doing/active -> doing/waiting (wait)
