@@ -3,6 +3,7 @@ package index_test
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/gob"
 	"fmt"
 	"math/rand"
@@ -289,4 +290,56 @@ func searchLines(t *testing.T, db *store.DB, q string) string {
 		fmt.Fprintf(&b, "%s %s\n", r.Unit.Key, r.Explain())
 	}
 	return b.String()
+}
+
+// oldHugIndexes runs what every hug from v0.7.2 to v0.7.58 does to the
+// graph in an index pass (pipeline.go loadGraph, then saveGraph): it reads
+// graph_state, then upserts it. It returns the first error, as the old
+// code returns it to the CLI and to MCP memory_remember.
+func oldHugIndexes(db *store.DB) error {
+	var blob []byte
+	err := db.QueryRow(`SELECT state FROM graph_state WHERE id=1`).Scan(&blob)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+	_, err = db.Exec(`INSERT INTO graph_state(id, state) VALUES(1, ?) ON CONFLICT(id) DO UPDATE SET state=excluded.state`, []byte{1})
+	return err
+}
+
+// mbdfzs check 3 (crab 19:52Z): an MCP server started before v0.7.54 never
+// reloads, and from v0.7.59 its memory_remember failed with "cannot modify
+// graph_state because it is a view", which names no fix. Its read comes
+// first, so the view now fails that read with the fix: restart this server.
+// Fresh stores, moved stores and stores with the plain view all say it.
+func TestOldHugIsToldToRestart(t *testing.T) {
+	const want = "hug: this hug mcp server is older than v0.7.59 and cannot write this memory store; fix: restart it"
+	dir := t.TempDir()
+	_, fresh, _ := graphFixture(t, dir, "fresh.db", 20)
+	_, moved, _ := graphFixture(t, dir, "moved.db", 20)
+	asLegacy(t, moved)
+	if _, err := (&index.Indexer{DB: moved}).MoveGraph(); err != nil {
+		t.Fatal(err)
+	}
+	plain := filepath.Join(dir, "plain.db")
+	_, p, _ := graphFixture(t, dir, "plain.db", 20)
+	for _, q := range []string{`DROP VIEW graph_state`, `CREATE VIEW graph_state(id, state) AS SELECT 1, NULL WHERE 0`} {
+		if _, err := p.Exec(q); err != nil {
+			t.Fatal(q, err)
+		}
+	}
+	p.Close()
+	reopened, err := store.Open(plain)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reopened.Close()
+	for name, db := range map[string]*store.DB{"fresh": fresh, "moved": moved, "plain view, reopened": reopened} {
+		err := oldHugIndexes(db)
+		if err == nil || !strings.Contains(err.Error(), want) || !strings.Contains(err.Error(), "mcp action=reload server=hug") {
+			t.Errorf("%s store: an old hug's index pass says %v, want the fix %q", name, err, want)
+		}
+		if (&index.Indexer{DB: db}).GraphNeedsMove() {
+			t.Errorf("%s store: reported as needing the gob move", name)
+		}
+	}
 }
