@@ -1,7 +1,7 @@
 ---
 id: ydwamb
 title: "Lint reads a glob citation (compare-*.png) as a missing file"
-state: "doing"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["duckling"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T22:34"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ydwamb"
 worktree: "/Users/jhf/.jcode/scratch/ydwamb"
-waiting_on: "reviewed; crab lands it as ci/ydwamb-rebased 878e4464 after v0.7.71"
-waiting_since: "2026-11-18T23:24"
-waiting_asked_by: "duckling"
+done_at: "2026-11-18T23:51"
 ---
 
 ## Goal
@@ -52,3 +48,4 @@ crab 22:51: landed on main as 3c1b9375 (rebased stack f5a2493a, CI 44411349216 8
 ## History
 - 2026-11-18T22:34 todo -> doing/active (take)
 - 2026-11-18T23:24 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:51 doing/waiting -> done (done); was doing_since: 2026-11-18T22:34; waiting_asked_by: duckling; waiting_on: reviewed; crab lands it as ci/ydwamb-rebased 878e4464 after v0.7.71; waiting_since: 2026-11-18T23:24
