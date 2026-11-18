@@ -13,10 +13,13 @@ group: "design"
 rank: "zy"
 aliases: ["design-personal-vs-shared-memories"]
 doing_since: "2026-11-18T18:53"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review, then Jørgen picks an option"
+waiting_since: "2026-11-18T18:53"
+waiting_asked_by: "piglet"
 ---
 
 ## Goal
@@ -43,3 +46,4 @@ OPTIONS at /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs al
 file:OPTIONS.md (9890 bytes, sha256:adf62c91)
 ## History
 - 2026-11-18T18:53 todo -> doing/active (take)
+- 2026-11-18T18:53 doing/active -> doing/waiting (wait)
