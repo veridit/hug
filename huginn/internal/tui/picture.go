@@ -3,6 +3,7 @@ package tui
 import (
 	"encoding/base64"
 	"fmt"
+	"image"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -151,6 +152,13 @@ type glanceImage struct {
 	name  string
 	proto string
 	data  []byte
+	// w, h are its size in pixels, from its header (0: unknown, not
+	// zoomed); decoded, crop and cropAt keep the last zoomed crop, so a
+	// frame drawn again sends the same bytes (33v71x).
+	w, h    int
+	decoded image.Image
+	crop    []byte
+	cropAt  picView
 }
 
 // glanceReadImage is an image's text in the frame: empty rows the terminal
@@ -168,7 +176,8 @@ func (m *model) glanceReadImage(path string, size int64) string {
 	if err != nil {
 		return err.Error()
 	}
-	m.glanceImage = &glanceImage{name: filepath.Base(path), proto: proto, data: b}
+	w, h := pictureSize(b)
+	m.glanceImage = &glanceImage{name: filepath.Base(path), proto: proto, data: b, w: w, h: h}
 	return ""
 }
 
@@ -181,15 +190,17 @@ func (m model) imageDrawn() bool {
 // eraseImage repaints the whole screen once the image drawn last is gone
 // or replaced: the renderer rewrites only lines that changed, and the
 // frame's blank rows under an iTerm2 picture do not, so they would keep
-// pieces of it.
+// pieces of it. A new zoom or scroll of the same picture is a new one
+// (33v71x).
 func (m *model) eraseImage() tea.Cmd {
 	var now *glanceImage
+	view := m.picView()
 	if m.imageDrawn() {
 		now = m.glanceImage
 	}
-	was := m.imageWasDrawn
-	m.imageWasDrawn = now
-	if was != nil && was != now {
+	was, wasView := m.imageWasDrawn, m.viewWasDrawn
+	m.imageWasDrawn, m.viewWasDrawn = now, view
+	if was != nil && (was != now || wasView != view) {
 		return tea.ClearScreen
 	}
 	return nil
@@ -217,7 +228,8 @@ func (m model) imageOverlay() (before, after string) {
 	if img.proto == "kitty" {
 		before = wrapTmux("\x1b_Ga=d,d=A\x1b\\", m.getenv("TMUX") != "")
 	}
-	seq := imageSequenceSized(img.proto, img.name, img.data, m.getenv("TMUX") != "", m.width, m.viewport.Height)
+	data, cols, rows := m.picDrawn()
+	seq := imageSequenceSized(img.proto, img.name, data, m.getenv("TMUX") != "", cols, rows)
 	return before, fmt.Sprintf("\x1b7\x1b[%d;1H%s\x1b8", row+1, seq)
 }
 

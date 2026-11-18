@@ -125,6 +125,18 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		return append(hints, hint("Esc", "clear"), hint("?", "help"), hint("q", "quit"))
 	}
 	if m.glance {
+		if m.glancePicture() {
+			// A picture (33v71x): zoom while the terminal draws it, scroll
+			// and fit once zoomed, open it in the viewer always.
+			var hints []bkey.Binding
+			if m.zoomable() {
+				hints = append(hints, hint("+/-", "zoom"))
+				if m.picZoom > 0 {
+					hints = append(hints, hint("h/j/k/l", "scroll"), hint("0", "fit"))
+				}
+			}
+			return append(hints, hint("o", "open in "+viewerName()), hint("n", "next file"), hint("p", "previous file"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit"))
+		}
 		// n and p spelled out (scrxak, Jørgen 00:08: nobody guesses n/p).
 		hints := []bkey.Binding{hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("/", "find"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
 		if m.glanceMD.eligible {
@@ -154,6 +166,10 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		// a answers, named first: it is what the question is for (0gztsy).
 		hints = append(hints, hint("a", "answer"), hint("j/k", "scroll"))
 	case focusFiles:
+		if m.markedPicture() {
+			hints = append(hints, hint("j/k", "file"), hint("Space", "show"), hint("Enter", "open in "+viewerName()))
+			break
+		}
 		hints = append(hints, hint("j/k", "file"), hint("Space", "show"), hint("Enter", "edit"))
 	default:
 		// Focus on the task itself (its id on the title line): the bar

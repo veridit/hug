@@ -184,7 +184,11 @@ type model struct {
 	glanceMD               glanceMarkdown
 	glanceImage            *glanceImage // the image shown, drawn over the frame (2qndsd)
 	imageWasDrawn          *glanceImage // what the last frame drew: eraseImage
+	viewWasDrawn           picView      // and the crop of it (33v71x)
 	glanceGen              uint64
+	// picZoom is the zoom step of the picture shown (33v71x), picX, picY
+	// the corner of its crop, in pixels; 0, 0, 0 is fit.
+	picZoom, picX, picY int
 	// captured is the frame S took (5z4zt4), waiting for Enter to attach
 	// it; capturedNote says what went to the clipboard.
 	captured, capturedNote string
@@ -1437,6 +1441,16 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		if m.detail && m.glance {
+			// A picture first (33v71x): + - 0 zoom, h/j/k/l scroll it, o
+			// and Enter open it in the system viewer.
+			if m.glancePicture() && m.find.text == "" {
+				if k == "enter" {
+					k = "o" // a picture is looked at, never edited (check 5)
+				}
+				if m.pictureKey(k) {
+					return m, nil
+				}
+			}
 			// In a file: n/p step files, j/k and pages scroll, Enter edits
 			// it, E opens the folder, Esc and u go back (scrxak).
 			switch k {
@@ -1524,7 +1538,19 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				case focusIDs:
 					m.followID()
 				case focusFiles:
+					if m.markedPicture() {
+						// A picture opens in the system viewer, never the
+						// editor (33v71x check 5, Jørgen on 911j70).
+						m.openPicture()
+						break
+					}
 					return m, m.openFile()
+				}
+			case "o":
+				// o opens a picture marked in Files in the viewer, as in
+				// its frame (33v71x); elsewhere in a task it does nothing.
+				if m.detailPane == focusFiles && m.markedPicture() {
+					m.openPicture()
 				}
 			case "E":
 				// The task's whole files folder, in the editor (zgr01t).
