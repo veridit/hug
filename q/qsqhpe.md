@@ -32,7 +32,7 @@ e3sevr at 14:40 local after dd07edee (check 4 ticked by jhf): stage still asked,
 ## Depends on
 
 ## Acceptance
-- [ ] jhf ticking the asked check moves the task from asked to active with a History line 'answered by ticking check N', and the asker sees it; a test fails first on main.
+- [x] jhf ticking the asked check moves the task from asked to active with a History line 'answered by ticking check N', and the asker sees it; a test fails first on main.
 - [ ] Someone other than the asked person ticking that check leaves the question open (test).
 - [ ] gmzd87's delivery sends the tick-answer to the coordinator like a typed answer (test or note once gmzd87 lands).
 - [ ] hug task ask --check N on a check that is already ticked is refused (exit 2, 'check N is already ticked: ask about an open check, or add one with hug task set ID --accept ...' and a fix: line); the TUI never shows a question on a ticked check (test, failing first)
