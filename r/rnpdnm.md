@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzc"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "fresh captures after 2026-11-19 for the (a)+(b) attempt"
+waiting_since: "2026-11-18T22:24"
+waiting_asked_by: "bonehound"
 ---
 
 ## Goal
@@ -51,3 +54,4 @@ check 2 CI: aa708f00 CI 44398795828 8/8 success (secrets, bench, test ubuntu/mac
 next attempt design (crab 21:23, measured only on captures made after 2026-11-19 00:00Z; the 254 are training data now; pre-register bar and budget before any call): (a) B gate gains a coordination term set held as its own reason ('names the team or this machine'): the coordinator's and live agents' names from hug.toml [board] coordinator and the session list, plus fixed phrases 'this machine', 'this environment', 'agents should', 'the agent gate'; terms stay in local config. Cost check first, free: withheld on the 868 and the 297. (b) wide prompt adds: 'A working rule for agents (how to edit, commit, poll, report, which tools or limits apply) is global even when said while working in this project.' Both behind the existing wide_places switch; the off prompt stays pinned. (c) team scope (873tqd) is a larger design for Jørgen, noted only. DESIGN.md result: rnpdnm-design 423a39c4 on gav9nw-design 8a1b0c05.
 ## History
 - 2026-11-18T21:36 todo -> doing/active (take)
+- 2026-11-18T22:24 doing/active -> doing/waiting (wait)
