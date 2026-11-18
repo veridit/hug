@@ -276,6 +276,7 @@ func (a *App) openBoard(ctx context.Context, lazy bool) (*session, error) {
 		return nil, e
 	}
 	a.semanticSync(r)
+	a.reportRepairs(r)
 	// Waits (16dxsr) are checked against this checkout: its branches and
 	// tags, and this machine's load. Git is asked only when a wait asks.
 	world := cond.Local(cwd, func() string { return gitbranch.DefaultBranch(cwd) })
@@ -814,6 +815,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	s.s.Action = actionLine(cmd, f.args)
 	if writer {
 		defer s.turn()()
+		// A sync killed mid-rebase is ended before the first read, under
+		// the turn (fcf4fg): it stopped every write until someone ran git.
+		if e = s.r.Recover(); e != nil {
+			return nil, e
+		}
 		// The first read happens under the turn: a background rebase
 		// cannot move task files between this command reading and
 		// committing them.
