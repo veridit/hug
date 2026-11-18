@@ -35,7 +35,7 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 - [x] After S, the prompt reads e.g. 'Attach this screen to: ID_ · s select · c create · Esc' and typing a task ID (prefix completes) then Enter attaches it there (key test)
 - [x] s opens the task list in pick mode; Enter on a row attaches the capture to that task and returns (key test)
 - [x] c asks for a title, creates the task with the capture attached, and opens it (key test; the new task has the file in Files)
-- [ ] Golden of the prompt at 80 and 140 columns
+- [x] Golden of the prompt at 80 and 140 columns
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
@@ -46,5 +46,6 @@ f68a9a5d on main 8a45b0eb (v0.7.70), branch hjbfzd + ci/hjbfzd. Fail-first: all 
 check 1: f68a9a5d: TestCaptureAttachesToATypedTask (typed 000012 attaches there, commit 'hug task attach 000012'; Tab completes 000010; ambiguous/unknown keep the prompt, no file) and TestCaptureWithNoTaskInViewAsks; prompt reads 'Attach this screen to: 000002 → Bug task 02: ... · select · create' (golden); fail-first on 8a45b0eb: 'the prompt lacks "Attach this screen to: 000002"'
 check 2: TestCaptureSelectPicksARow: s opens the rows (picking, not detail), 9 writers only say so, j j Enter attaches to that row with one commit and returns to 000002; Esc attaches nothing; # 000020 Enter Enter attaches there. Fail-first: 's did not open the rows to pick'
 check 3: TestCaptureCreatesATask: c asks 'title:', Esc goes back to where with the capture kept, empty title creates nothing, 'Broken bar' Enter creates it with screen-1452.ans in Files (on disk and in the detail), one commit 'hug task new ID', opens it. Fail-first: 'c opened ""'
+check 4: testdata/detail/capture-prompt.txt: offered, typed, title and picking at 80 and 140, text and codes; the test fails on any 48; background and any SGR with both 1 and 4. Fail-first: old bar '48;2;255;179;84'
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
