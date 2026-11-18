@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T16:36"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_since: "2026-11-18T16:36"
-asked_by: "crab"
-asked_check: "1"
-asked_what: "hug's public repo has 868 of our memories on the hug/memory branch, pushed since yesterday 11:02 (no passwords, keys or tokens found; 15 mention 'secret' as a word). The push stops when 34r1ft ships (your answer there picks where the opt-in lives). For the branch already there: keep it, or delete it from GitHub after I save a local copy?"
-asked_for: "jhf"
 ---
 
 ## Goal
@@ -47,3 +42,6 @@ bonehound: local backup written, nothing on the remote touched (no delete, no pu
 ## History
 - 2026-11-18T16:36 todo -> doing/active (take)
 - 2026-11-18T16:36 doing/active -> doing/asked (ask)
+- 2026-11-18T18:19 answered asked (check 1), by jhf, for crab (doing/asked -> doing/active):
+  > hug's public repo has 868 of our memories on the hug/memory branch, pushed since yesterday 11:02 (no passwords, keys or tokens found; 15 mention 'secret' as a word). The push stops when 34r1ft ships (your answer there picks where the opt-in lives). For the branch already there: keep it, or delete it from GitHub after I save a local copy?
+  I think we have to discuss this because truly other repositories are also public, and as long as there are no secrets and the system is working, it's sensible to have it with the repository, isn't it? As long as the classification between personal things and repository things stay, like if like the discussion is really, are we able to properly place things? And does the agent that puts the memory there do the proper judgment call. If it does, then it's okay
