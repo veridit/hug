@@ -9,10 +9,15 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T05:01"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_since: "2026-11-18T05:47"
+asked_by: "nautilus"
+asked_check: "6"
+asked_what: "after the release: line 3 reads 'filter: none · sort: rank'. Press s for the sort picker (c is the marked column, the same as o; created moved to d) and f for the filter picker; 1-4 no longer filter (use :todo etc.). Does it read clearly?"
+asked_for: "jhf"
 ---
 
 ## Goal
@@ -53,3 +58,4 @@ Header picture for all of tonight's rulings is attached to e3sevr as header-spec
 landed e36ecca4..4247303e (nautilus). CI run 44238251338 green on all 6 jobs (ubuntu with tmux goldens, macos, windows, windows-cli, bench, secrets); -race on tui ok (121.8s); tui + repocheck green after the final rebase. Tests: huginn/internal/tui/ahejza_test.go, all six fail first on main 03e783d0 (shim currentColumn): TestFilterLineNamesFilterAndSort 'at 80 the filter line reads "No filters · f picker · 1 todo  2 doing  3 done  4 depends"', TestSortPickerOnS 's opened ":", want the sort picker', TestFilterAndSortPickersLookAlike 'headings: "QUICK FILTER · choose a field" / ...', TestDigitsNoLongerFilter '1 changed something: ... State:todo', TestHelpListsFilterAndSortPickers 'help lacks "f filter picker: s t p g l a e"', TestSortCIsTheMarkedColumn 'sc with no column: prompt ":"'. Check 1: line 3 'filter: none · sort: rank' at 80 and 140, f and s in the key style; with a chip and an order 'filter: [state:doing ×] ⌫ last · F clear · sort: priority ↓ · updated ↓' (golden testdata/header/filter-line.txt); the order left line 1. Check 2: s opens the picker (also in a task), p t = 'priority ↓ · type', t again flips, ⌫ drops, Enter applies, Esc keeps (the old sort_test mkzcqr tests still pass via ': sort'). Check 3: both panels = accent heading, bold 'filter: …' / 'sort: …', then 'letter name hint' rows (golden testdata/header/pickers.txt; tmux quick-filter/sort frames). Check 4: 1-4 leave state() unchanged; no hint or help row names them; s no longer opens ': state ' (state palette is ': state', type T). Check 5: help 'f filter picker: s t p g l a e (state type priority …)', 's sort picker: c column, p t s u d g a n; again flips'; in the picker '? ' shows IN THE SORT PICKER with c and d created. Check 8: o and sc give the same single-key order on the marked column, again flips (o then sc flips too); with no column sc says 'mark one with H/L first'; s d sorts by created; the picker reads 'c  current column (priority)'.
 ## History
 - 2026-11-18T05:01 todo -> doing/active (take)
+- 2026-11-18T05:47 doing/active -> doing/asked (ask)
