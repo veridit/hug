@@ -134,3 +134,67 @@ func TestPeopleTerms(t *testing.T) {
 		t.Fatalf("got %q, want %q", strings.Join(got, "|"), want)
 	}
 }
+
+// rnpdnm attempt 2 (a), PREREG2: a coordination term (the board
+// coordinator, an agent of this repo, or a fixed phrase about the team or
+// the machine) holds a line under its own reason, counted apart from
+// HeldName; without Team the same lines push as before. The 8 hand leaks
+// of attempt 1 (REPORT.md) are the in-sample cases; the fresh set is the
+// evidence, not these.
+func TestGateHoldsTeam(t *testing.T) {
+	g := &Gate{Team: append([]string{"zarf", "quillback"}, TeamPhrases...), Own: []string{"hug"}}
+	cases := []struct{ text, want string }{
+		{"zarf approves pushes for this investigation", HeldTeam},
+		{"Zarf's limit for proposals is 15 lines", HeldTeam},
+		{"Report to quillback when CI is green", HeldTeam},
+		{"The hug CLI installed on this machine is v0.7.64", HeldTeam},
+		{"In this environment background jobs are capped at 600 s", HeldTeam},
+		{"Agents should use absolute paths when applying patches", HeldTeam},
+		{"The agent gate refuses desktop input", HeldTeam},
+		// Pushes: no coordination term, whole words only.
+		{"hug task lint never writes", ""},
+		{"zarfish is not a name", ""},
+		{"The machine-readable output is JSON", ""},
+	}
+	for _, c := range cases {
+		got, term := g.Hold(ingest.NativeMemory{ID: "mem_1", Content: c.text, Category: "fact"}, "mem_1")
+		if got != c.want {
+			t.Errorf("%q: held %q, want %q", c.text, got, c.want)
+		}
+		if c.want == HeldTeam && term == "" {
+			t.Errorf("%q: no term named for --held", c.text)
+		}
+	}
+	// Without Team (wide places off): unchanged, they push.
+	plain := &Gate{Own: []string{"hug"}}
+	if got, _ := plain.Hold(ingest.NativeMemory{Content: "zarf approves pushes on this machine"}, ""); got != "" {
+		t.Errorf("no Team, held %q", got)
+	}
+	// A person's name in Terms keeps its own reason.
+	both := &Gate{Terms: []string{"jhf"}, Team: []string{"zarf"}}
+	if got, _ := both.Hold(ingest.NativeMemory{Content: "jhf asked zarf"}, ""); got != HeldName {
+		t.Errorf("person and team: %q, want %q", got, HeldName)
+	}
+	if !contains(HeldReasons, HeldTeam) {
+		t.Errorf("HeldReasons lacks %q: sync would not print its line", HeldTeam)
+	}
+}
+
+func contains(xs []string, x string) bool {
+	for _, y := range xs {
+		if y == x {
+			return true
+		}
+	}
+	return false
+}
+
+// CoordinatorTerm reads hug.toml [board] coordinator.
+func TestCoordinatorTerm(t *testing.T) {
+	if got := CoordinatorTerm([]byte("[people.jhf]\nname = \"J\"\n\n[board]\ncoordinator = \"zarf\" # lead\n")); got != "zarf" {
+		t.Fatalf("got %q", got)
+	}
+	if got := CoordinatorTerm([]byte("[memory]\nshare = true\n")); got != "" {
+		t.Fatalf("no board: got %q", got)
+	}
+}

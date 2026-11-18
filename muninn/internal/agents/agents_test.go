@@ -1,6 +1,7 @@
 package agents
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -94,4 +95,30 @@ func TestNames(t *testing.T) {
 	if got := Names([]string{h, filepath.Join(h, "missing")}); !reflect.DeepEqual(got, []string{"crab"}) {
 		t.Fatalf("Names = %v", got)
 	}
+}
+
+// rnpdnm attempt 2 (a): NamesIn is the agents whose sessions worked in
+// one of roots (working_dir is a root or inside one), read from the end of
+// each session file; another repository's agents are not this team.
+func TestNamesIn(t *testing.T) {
+	h := t.TempDir()
+	os.MkdirAll(filepath.Join(h, "sessions"), 0o755)
+	repo := filepath.Join(h, "repo")
+	os.MkdirAll(filepath.Join(repo, "sub"), 0o755)
+	write := func(name, wd string) {
+		body := `{"id":"x","messages":[],"working_dir":` + quoteJSON(wd) + `,"short_name":"x","status":"Active"}`
+		os.WriteFile(filepath.Join(h, "sessions", name), []byte(body), 0o644)
+	}
+	write("session_zarf_1_ab.json", repo)
+	write("session_quillback_2_cd.json", filepath.Join(repo, "sub"))
+	write("session_wyvern_3_ef.json", filepath.Join(h, "elsewhere"))
+	os.WriteFile(filepath.Join(h, "sessions", "session_vole_4_aa.json"), []byte(`{"messages":[]}`), 0o644)
+	if got := NamesIn([]string{h}, []string{repo}); !reflect.DeepEqual(got, []string{"quillback", "zarf"}) {
+		t.Fatalf("NamesIn = %v", got)
+	}
+}
+
+func quoteJSON(s string) string {
+	b, _ := json.Marshal(s)
+	return string(b)
 }

@@ -228,3 +228,74 @@ func mustID(t *testing.T, text string) string {
 	t.Fatalf("%q not stored", text)
 	return ""
 }
+
+// rnpdnm attempt 2 (a), PREREG2: with extract.wide_places on, sync holds a
+// line naming the board coordinator, an agent of this repository or a
+// fixed team phrase under its own reason line; the terms are never
+// printed, never in config.json's sync_gate.terms (read at each sync from
+// hug.toml and the session list) and never on hug/memory. With wide
+// places off the same line pushes, as before.
+func TestCLISyncGateHoldsTeam(t *testing.T) {
+	home := memHome(t)
+	p := gitProject(t, home)
+	boardToml(t, home, "[memory]\nshare = true\n\n[board]\ncoordinator = \"zarf\"\n")
+	jh := filepath.Join(home, "no-jcode")
+	os.MkdirAll(filepath.Join(jh, "sessions"), 0o755)
+	wd, _ := json.Marshal(home)
+	os.WriteFile(filepath.Join(jh, "sessions", "session_quillback_1_ab.json"), []byte(`{"messages":[],"working_dir":`+string(wd)+`,"short_name":"q","status":"Active"}`), 0o644)
+	native := app.NativePath()
+	for _, text := range []string{
+		"Synthetic project fact that pushes",
+		"Synthetic: zarf approves pushes for this investigation",
+		"Synthetic: report to quillback when CI is green",
+		"Synthetic: background jobs on this machine are capped at 600 s",
+	} {
+		if _, _, err := ingest.Remember(native, text, "fact", p.Scope(), nil); err != nil {
+			t.Fatal(err)
+		}
+	}
+	cfg, _ := config.Load()
+	cfg.JcodeHomes = []string{jh}
+	cfg.Extract.WidePlaces = true
+	if err := config.Save(cfg); err != nil {
+		t.Fatal(err)
+	}
+	out, errOut, code := runCLI(t, "", "sync")
+	if code != 0 {
+		t.Fatalf("sync: %d %s%s", code, out, errOut)
+	}
+	if !strings.Contains(out, "held 3: names the team or this machine\n") {
+		t.Fatalf("no team reason line:\n%s", out)
+	}
+	for _, w := range []string{"zarf", "quillback"} {
+		if strings.Contains(out, w) {
+			t.Errorf("sync output prints %q:\n%s", w, out)
+		}
+	}
+	if b, _ := os.ReadFile(config.ConfigPath()); strings.Contains(string(b), "zarf") || strings.Contains(string(b), "quillback") {
+		t.Errorf("team terms written to config.json: %s", b)
+	}
+	branch, _ := exec.Command("git", "-C", home, "log", "-p", "hug/memory").CombinedOutput()
+	if !strings.Contains(string(branch), "Synthetic project fact that pushes") {
+		t.Fatalf("the passing line is not on hug/memory: %s", branch)
+	}
+	for _, w := range []string{"zarf", "quillback", "this machine"} {
+		if strings.Contains(string(branch), w) {
+			t.Errorf("hug/memory carries %q", w)
+		}
+	}
+	// --held names the term for the person reading it.
+	if out, _, _ = runCLI(t, "", "sync", "--held"); !strings.Contains(out, "names the team or this machine (zarf)") {
+		t.Errorf("--held lacks the team line:\n%s", out)
+	}
+	// Wide places off: the team set is not used, the lines push.
+	cfg, _ = config.Load()
+	cfg.Extract.WidePlaces = false
+	config.Save(cfg)
+	if out, errOut, code = runCLI(t, "", "sync"); code != 0 || strings.Contains(out, "names the team") {
+		t.Fatalf("off: %d %s%s", code, out, errOut)
+	}
+	if raw, _ := os.ReadFile(p.File()); !strings.Contains(string(raw), "zarf approves") {
+		t.Fatalf("off: team line not pushed: %s", raw)
+	}
+}
