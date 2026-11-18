@@ -42,5 +42,6 @@ Today: units has active/updated_ns only; holds_ended has reason but only for hol
 ## Notes
 
 
+bonehound 15:00 plan (worktree /Users/jhf/.jcode/scratch/rjk44w from origin/main 832167b8, v0.7.63). Additive schema: new table memory_fixes (CREATE TABLE IF NOT EXISTS, as holds_ended was), no column changes. One row per forget (every surface: Binding.ForgetMany, so CLI, MCP, web, TUI), per remember naming an old id (--reinforce, new optional --supersedes / MCP supersedes: recorded only, it forgets nothing), with session, harness, jcode instance, surface, shown-in-session from the injections table and the time since it was shown, content hash, optional reason (--reason / MCP reason). Recording errors are ignored: never blocks the write. hug mem stats --fixes [--since DATE] prints per UTC day: recall blocks (distinct session+second in injections), fixes, of-shown, not-shown, undone; and per instance. Deviation from the goal text: 'how many turns earlier' is recorded as time since the recall showed it (shown_ago); injections keep no turn index. 'Owner asked vs unprompted' cannot be told from local data without transcripts: not built. Not touched: muninn/internal/recall (boardcue.go), muninn/internal/harness.
 ## History
 - 2026-11-18T14:44 todo -> doing/active (take)
