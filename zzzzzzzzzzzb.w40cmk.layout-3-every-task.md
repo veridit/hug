@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T01:48"
-stage: "active"
+stage: "waiting"
 model: "openai"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "All implementation acceptance complete, exact ead1be4c CI44277147694 all6 green. Coordinator is cutting standalone layout release, then own-board preview/apply; owner check7 remains after install."
+waiting_since: "2026-11-18T10:46"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -133,3 +136,4 @@ FINAL exact candidate ead1be4ca37a1042e64c4878d0afcdba7c921b3f CI44277147694 com
 - 2026-11-18T04:42 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: ygay9c first (crab 03:33: same gitbranch code, small fix lands on its own); waiting_since: 2026-11-18T04:34
 - 2026-11-18T05:18 doing/active -> doing/waiting (wait)
 - 2026-11-18T05:28 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: f5vx4x first (crab 04:04: after check 1, small fix lands on its own); then checks 9 and 6 on kestrel/w40cmk ad854bd2; waiting_since: 2026-11-18T05:18
+- 2026-11-18T10:46 doing/active -> doing/waiting (wait)
