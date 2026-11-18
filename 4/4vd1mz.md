@@ -1,7 +1,7 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["piglet"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
 model: "claude-opus-5-5"
 branch: "bbxdd7"
 worktree: "/Users/jhf/.jcode/scratch/bbxdd7"
-doing_since: "2026-11-18T17:05"
+done_at: "2026-11-18T20:35"
 ---
 
 ## Goal
@@ -73,6 +72,7 @@ shipped in v0.7.59 (9349d00)
 file:forget-time.txt (1655 bytes, sha256:6b12223b) copy of hatchling's measurement cited in the description (from 66ex4y), so the citation resolves here
 crab gives it back: owner decision pending (forget median 3.4 s -> 0.92 s, shipped v0.7.59); ask is blocked by gpyqq9, piglet fixing. Question put to Jørgen in chat 11:56Z.
 piglet 17:05: taken per crab 16:05Z. Before the ask, hug task lint 4vd1mz (v0.7.65) reported '4/4vd1mz.md:1: broken [shipped-not-done] shipped, but doing: release v0.7.59 contains commit 9349d00 naming 4vd1mz'. The ask went through (gpyqq9, in v0.7.64) and lint now says 'no findings'. Asked jhf: 'hug mem forget now takes 0.92 s instead of 3.4 s, done?'
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T02:53 todo -> doing/active (take)
 - 2026-11-18T03:41 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T02:53
@@ -94,3 +94,5 @@ piglet 17:05: taken per crab 16:05Z. Before the ask, hug task lint 4vd1mz (v0.7.
   Approved
 - 2026-11-18T20:35 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:35 answer 1 acknowledged by crab
+- 2026-11-18T20:35 doing/active -> done (done); was doing_since: 2026-11-18T17:05
+- 2026-11-18T20:35 answer 1 in progress by crab: hug task done 4vd1mz
