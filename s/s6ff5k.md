@@ -44,6 +44,8 @@ Check 2 measured offline, not built (2026-11-17, $JCODE_SCRATCH_DIR/header4/offt
 ## Requests
 - 2026-11-18T12:23 request 1 by jhf:
   Any feedback to collect from our instances? Maybe you can assign another agent to go over this to see if there's something we have learned
+  resolved 2026-11-18T13:34 by bonehound:
+    Collected (bonehound, report /Users/jhf/.jcode/scratch/s6ff5k-feedback/REPORT.md): 56 reflections since tb0dra (hug 49, Seid 5, Statbus 2; none resolved), task notes on all three boards, muninn.db injections and 4 jcode instances' transcripts since 2026-11-16 12:00. Learned: (1) prove the ticket's premise first (6 reflections, e.g. 46ek1f, 95ahtk, mmm8c8); (2) fix the family, not the instance (5, e.g. 3nhp67, dx9vw2); (3) count, not time (4 + Statbus nst6hb); (4) a written bar and fail-first tests keep work honest (5). Memory: 5 working sessions forgot a shown id; in 3 (orangutan, spider, rabbit) the owner had told them to, so agents fix when told, not from the header, consistent with check 1 and the H2/H3 wrong-forget results. Instruction gaps: check 'with evidence' is false (3 reflections, 4 refused calls) -> pw0t19; handoff ownership (5) is bg1rd8.
 - 2026-11-18T12:23 request 2 by jhf:
   And if there's nothing we have learned, if we can improve our instructions so that we can learn something.
 
@@ -100,3 +102,4 @@ retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): 
 - 2026-11-18T02:44 doing/waiting -> doing/waiting (settle: one stage, waiting); was asked_by: hatchling; asked_for: crab; asked_since: 2026-11-17T20:20; asked_what: H3 failed Part 2 (10 wrong vs bar 6); parked per crab ruling, no fourth arm
 - 2026-11-18T12:23 request 1 by jhf
 - 2026-11-18T12:23 request 2 by jhf
+- 2026-11-18T13:34 resolved request 1 by bonehound
