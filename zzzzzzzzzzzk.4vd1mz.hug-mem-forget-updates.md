@@ -1,17 +1,18 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "todo"
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T07:10"
 ---
 
 ## Goal
@@ -54,3 +55,4 @@ Parked for 6ep7y2 (crab 04:54: Windows queue stall first). State: branch wy/4vd1
 - 2026-11-18T04:26 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T04:12
 - 2026-11-18T04:38 todo/ready -> doing/active (take)
 - 2026-11-18T06:31 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T04:38
+- 2026-11-18T07:10 todo/ready -> doing/active (take)
