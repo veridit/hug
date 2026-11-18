@@ -30,7 +30,7 @@ secretHint in huginn/internal/cli (attach). The same pattern may exist in muninn
 ## Depends on
 
 ## Acceptance
-- [ ] attach of a file holding 'task-900-task979-x.md' succeeds with no secret warning; a file holding 'sk-' plus 40 base62 characters is still refused (test, fails on main)
+- [x] attach of a file holding 'task-900-task979-x.md' succeeds with no secret warning; a file holding 'sk-' plus 40 base62 characters is still refused (test, fails on main)
 - [ ] The memory secret check gets the same test, or the note says it uses a different rule
 
 ## Notes
