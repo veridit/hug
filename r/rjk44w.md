@@ -1,16 +1,21 @@
 ---
 id: rjk44w
 title: "Memory fixes leave a trail: who forgot what, after which recall, and why"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["bonehound"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzyx"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "d634kr"
+doing_since: "2026-11-18T14:44"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ Today: units has active/updated_ns only; holds_ended has reason but only for hol
 - [ ] No recall output changes: the recall4 frozen replay is byte-identical before and after
 
 ## Notes
+
+
+## History
+- 2026-11-18T14:44 todo -> doing/active (take)
