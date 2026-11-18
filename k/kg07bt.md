@@ -39,5 +39,6 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 ## Notes
 
 
+macaque: branch kg07bt (ci/kg07bt) 5e3890a2 + 3b985709 on main 56e2cc6f (has qpp30y 3d74229a); tz9z14 replayed as a8ee13f5/0a95a06c. Check 1: sectionHeading(focused) = accent bold '▸ HEAD' + dim hint, no fill (all focused headings, crab ok). Before '<1;38;2;11;22;32;48;2;0;191;255>▸ ACCEPTANCE · j/k ...', after '<1;38;2;0;191;255>▸ ACCEPTANCE<0><38;2;135;149;168> · j/k ...'. TestFocusedHeadingIsCalm failed first: 'kg07bt_test.go:81: the focused heading has a background'; now PASS (no 48;, same bold as DESCRIPTION). Golden testdata/detail/calm-focus.txt at 80/140.
 ## History
 - 2026-11-18T16:25 todo -> doing/active (take)
