@@ -14,9 +14,6 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 stage: "asked"
-waiting_on: "crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting)"
-waiting_since: "2026-11-18T02:50"
-waiting_asked_by: "nautilus"
 asked_check: "4"
 asked_what: "after the release: amber now means only 'waits on you' (ASKED, ? N for you), red only 'wrong' (broken lint, depends), waiting on CI and advice are dim. Does it read as one subtle scheme?"
 asked_for: "jhf"
@@ -70,3 +67,4 @@ shipped in v0.7.54 (28791de)
 - 2026-11-18T02:50 doing/active -> doing/waiting (wait)
 - 2026-11-18T02:50 nautilus read the answer: hug task wait zhvkmj "crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting)"
 - 2026-11-18T03:18 doing/waiting -> doing/asked (ask)
+- 2026-11-18T12:56 doing/asked -> doing/asked (settle: one stage, asked); was waiting_asked_by: nautilus; waiting_on: crab's ruling on Jørgen's 02:xx answer: lint vs waiting colour (red/error for lint, or a calmer waiting); waiting_since: 2026-11-18T02:50
