@@ -289,10 +289,15 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	a, _, bare := clones(t)
 	id := execute(t, a, "new", "Offline", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	settled(t, a)
-	// The remote hangs: any network call by the note would cost 5 s. (A
-	// missing remote fails at once, so it could not show a wait.)
+	// The remote hangs until the test releases it (at most 10 s): a note
+	// that waited on the network would take that long. (A missing remote
+	// fails at once, so it could not show a wait.) The release, not a
+	// clock, ends each hang, so the passes after the timing check finish
+	// at once: a fixed 5 s hang per network call cost this test 16 s of
+	// settled on its own (0n4rnx).
+	release := filepath.ToSlash(filepath.Join(t.TempDir(), "release"))
 	git(t, a.Cwd, "remote", "set-url", "origin", "ssh://hang.invalid/remote.git")
-	git(t, a.Cwd, "config", "core.sshCommand", "sleep 5; false")
+	git(t, a.Cwd, "config", "core.sshCommand", "i=0; while [ ! -e '"+release+"' ] && [ $i -lt 100 ]; do sleep 0.1; i=$((i+1)); done; false")
 	var baseline time.Duration
 	offline(t, a, func() {
 		start := time.Now()
@@ -307,6 +312,11 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	// Windows runner, ~1.9 s a note there); waiting on the remote is 5 s.
 	if offline > baseline+max(2*time.Second, baseline) {
 		t.Fatalf("note took %v with the remote hanging, %v without background sync: it waited on the network; log:\n%s", offline, baseline, syncLogOf(t, a))
+	}
+	// The remote now fails at once, still unreachable: the pass ends
+	// with the 2 notes unpushed.
+	if e := os.WriteFile(filepath.FromSlash(release), nil, 0o644); e != nil {
+		t.Fatal(e)
 	}
 	settled(t, a)
 	code, out := runText(a, "ls")
