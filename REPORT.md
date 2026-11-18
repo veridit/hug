@@ -157,3 +157,10 @@ To switch, run the prototype with `MOCKGRID_ORDER=A` (default) or `MOCKGRID_ORDE
 - Commit `802cf0be` on `mock/grid`, pushed for reference to `origin/mock/grid`. It was never merged or pushed to main, and no tag was made.
 - The commit carries the code, the scripts, this report, the comparison sheets and the `.txt`/`.ansi` captures.
 - The 64 per-screen PNGs stay local under `out/` (16 MB in total).
+
+## Revision 1 (crab 11:58Z): the active view is marked again
+
+- On main, the view you are in was tinted. In the first prototype it had lost all marking.
+- Now the active view word (`overview`) carries the selection tint (`#2b5a78`, the same tint as the selected id and column heading) in every state: idle, after `v` (both blink phases), after `v o`, and in the letters variant. Its key letter keeps its violet on the tint. The line as a whole never recolours.
+- Recaptured: all `after-*` captures and every `compare-*.png`. The new `out/compare-viewline.png` (sha256 `c8dab745`) is attached to ticket 911j70 with `--replace`, replacing `38784f52`.
+- Commit `0a342028` on `mock/grid`.
