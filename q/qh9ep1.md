@@ -11,10 +11,15 @@ rank: "zzzzzzzzzzlh"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T04:25"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "v0.7.69 is installed. Is the view line calm now? It should show an underline only on keys you can press, the active view in bold alone, and no background colour."
+asked_for: "jhf"
+asked_since: "2026-11-18T21:07"
+asked_by: "crab"
+asked_check: "6"
 ---
 
 ## Goal
@@ -73,3 +78,4 @@ shipped in v0.7.69 (f9ff43b)
 - 2026-11-18T19:54 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T19:54 answer 1 acknowledged by crab
 - 2026-11-18T19:54 answer 1 in progress by crab: hug task set qh9ep1
+- 2026-11-18T21:07 doing/active -> doing/asked (ask)
