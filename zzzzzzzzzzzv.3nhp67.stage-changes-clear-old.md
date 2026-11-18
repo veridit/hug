@@ -4,7 +4,7 @@ title: "Stage changes clear the old stage's fields: wait/resume leave asked_* be
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
