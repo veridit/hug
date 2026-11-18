@@ -1,15 +1,21 @@
 ---
 id: 9gpaqr
 title: "Release v0.7.70"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T22:10"
+stage: "active"
+model: "claude-opus-5-5"
+effort: "high"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +37,7 @@ Main d5c66a1f (stack CI 44393153152 8/8): 34r1ft, 41hhgn c11, 0n4rnx replay + of
 - [ ] brew upgrade veridit/tap/hug; hug version reports v0.7.70
 
 ## Notes
+
+
+## History
+- 2026-11-18T22:10 todo -> doing/active (take)
