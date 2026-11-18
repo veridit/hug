@@ -73,7 +73,7 @@ landed a798378 on main 2026-11-17: hug setup: the remembered backlog answer surv
 landed 55f5c67 on main 2026-11-17: test(cli): TestSetupFilesStepRemembered says why nothing was remembered (key…
 landed b62a0a4 on main 2026-11-17: test(cli): TestSetupFilesStepRemembered also prints the key before the step, the…
 kestrel: follow-ups landed in 09b85e3..c4da284: key on importer.ConverterVersion + layout (survives releases), cold-run progress on stderr, field-only drift named; the Windows red from e971d24 (44172854884) is fixed under 557s7n (cache writes lost/torn, now sharefile + own temp + a warning). All 3 checks hold.
-Reflection (open, 2026-11-17, calf): nothing misled; the Windows red came from a swallowed error I wrote, which crab's 'shortcuts must be certain' rule should have caught at review time.
+Reflection (dismissed, 2026-11-17, calf): nothing misled; the Windows red came from a swallowed error I wrote, which crab's 'shortcuts must be certain' rule should have caught at review time.
 shipped in v0.7.49 (a798378)
 ## History
 - 2026-11-17T20:17 todo -> doing/active (take)
