@@ -23,7 +23,7 @@ Jørgen 2026-11-18 (request 1 on this task): the goal is a unified, easy-to-navi
 Consistency through a clean sweep: once we decide hug is the thing, we change everything at once (commands, help, messages, docs, branches, folders, tests, every project's setup), never a mix of old and new names left behind.
 
 ## Relevant details
-Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 tasks on branch hug/tasks at .hug/tasks (this repo and seid-lang migrated). Open: memories still live in the SQLite store and sync on branch muninn-notes (NotesBranch in muninn/internal/project/project.go:39), while hug mem help already says 'hug/memory'. Jørgen names the branch 'memory', not 'memories' (note 2026-11-16). Items 2 (memory branch) and 3 (file per memory, retire = move to _retired/) need a design talk with him before building. Children: 34r1ft (per-repo memory setting), gav9nw (personal vs shared).
+Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 tasks on branch hug/tasks at .hug/tasks (this repo and seid-lang migrated). Open: memories still live in the SQLite store. On main the sync branch is still muninn-notes (muninn/internal/project/project.go:39); commit c16b7fd6 (2026-11-18, on lane branches, not yet on main) moves project memory to hug/memory through an explicit layout upgrade, and this repo already has a hug/memory branch. Jørgen names it 'memory', not 'memories' (note 2026-11-16). Item 3 (one file per memory, retire = move to _retired/) needs a design talk with him before building. Children: 34r1ft (per-repo memory setting), gav9nw (personal vs shared).
 
 ## Depends on
 
