@@ -1,15 +1,20 @@
 ---
 id: 1phmre
 title: "Lint reads a path quoted in a note on another board as a task link"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzn"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T14:09"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Finding: w/w40cmk.md missing-task-ref '.hug/tasks/37bryg/README.md: no task 37br
 - [ ] A real task: link to a missing id is still reported, with a non-interactive fix (test).
 
 ## Notes
+
+
+## History
+- 2026-11-18T14:09 todo -> doing/active (take)
