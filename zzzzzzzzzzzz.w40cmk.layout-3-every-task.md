@@ -1,13 +1,18 @@
 ---
 id: w40cmk
 title: "Layout 3: every task file is ID.md and never renamed; rank and group in the file"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T01:48"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -50,3 +55,7 @@ Jørgen 01:27 local, DECIDED layout 3: .hug/tasks/ID.md (front matter + body; Gi
 Jørgen 01:27 local: agreed, a reorder (rank or group change) leaves updated: unchanged; updated: marks real edits only.
 
 Jørgen 01:32 local, DECIDED: shard by the first character of the id: .hug/tasks/3/37bryg.md and .hug/tasks/3/37bryg/ (its files). The path follows from the id alone (no index), never changes, and keeps folders near 330 entries at 10,000 tasks (GitHub's web listing stops at about 1,000). Group and epic (parent) stay in the front matter, as do rank and group; no folder means anything to a person. Rejected: group as folder (moves break links; a generated group id fixes renames only), creation month (uneven fill).
+
+
+## History
+- 2026-11-18T01:48 todo -> doing/active (take)
