@@ -103,11 +103,14 @@ func (m model) contextHelp() helpSection {
 		}
 		return helpSection{"IN THIS PROMPT", rows}
 	case "file":
-		return helpSection{"IN THIS FILE", []helpRow{
+		rows := []helpRow{
 			row("j/k PgDn/PgUp", "scroll a long file"), row("n / p", "next / previous file", "n", "p"), row("Enter", "edit it", "enter"),
 			row("/", "find in the file; n / N step the matches", "/"),
-			row("E", "the task's files folder in the editor", "E"), row("u / Esc", "back to the task", "u"),
-		}}
+		}
+		if m.glanceMD.eligible {
+			rows = append(rows, row("M", "Markdown: raw source / formatted text", "M"))
+		}
+		return helpSection{"IN THIS FILE", append(rows, row("E", "the task's files folder in the editor", "E"), row("u / Esc", "back to the task", "u"))}
 	case "task":
 		return m.taskHelp()
 	}

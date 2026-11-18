@@ -8,7 +8,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long…
 ────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 32 B · 1 of 5                                 
-# Bench                                                                         
+Bench                                                                           
                                                                                 
 Synthetic bench notes.                                                          
                                                                                 
@@ -22,7 +22,7 @@ Synthetic bench notes.
                                                                                 
 File · 100% · next-, previous file · Esc back to files                          
                                                                                 
-next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
+M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == escapes.log at 80
 HUG TASKS · list › 000001                                                       
 [todo]  [feature]  [critical]  group:compiler  unassigned                       
@@ -58,7 +58,7 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖    
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 compiler/000001/bench/README.md · 32 B · 1 of 5                                                                                             
-# Bench                                                                                                                                     
+Bench                                                                                                                                       
                                                                                                                                             
 Synthetic bench notes.                                                                                                                      
                                                                                                                                             
@@ -72,7 +72,7 @@ Synthetic bench notes.
                                                                                                                                             
 File · 100% · next-, previous file · Esc back to files                                                                                      
                                                                                                                                             
-next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    
+M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                     
 == escapes.log at 140
 HUG TASKS · list › 000001                                                                                                                   
 [todo]  [feature]  [critical]  group:compiler  unassigned                                                                                   

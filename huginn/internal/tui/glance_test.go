@@ -141,7 +141,7 @@ func TestGlanceStepsAndScrolls(t *testing.T) {
 	// The footer spells the keys out (Jørgen 00:08: nobody guesses n/p).
 	// n and p marked in their words, "file" written once (e3sevr checks
 	// 14 and 16, Jørgen 00:44-00:45).
-	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "scroll · next-, previous file · Enter edit") {
+	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "scroll · M raw source · next-, previous file · Enter edit") {
 		t.Fatalf("file footer: %q", bar)
 	}
 	m = press(m, "n", "n", "n", "n", "n")

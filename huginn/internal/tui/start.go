@@ -74,7 +74,7 @@ func initialSnapshot(in *Initial) snapshot {
 
 // spin ticks the spinner while a load runs; one ticker at a time.
 func (m *model) spin() tea.Cmd {
-	if m.spinning || !m.loading {
+	if m.spinning || (!m.loading && !m.markdownLoading()) {
 		return nil
 	}
 	m.spinning = true
@@ -84,6 +84,10 @@ func (m *model) spin() tea.Cmd {
 // spinner is the header's refresh mark: a frame and "refreshing" while a
 // load has run longer than spinAfter, else nothing.
 func (m model) spinner() string {
+	if m.markdownLoading() {
+		n := int(time.Since(m.glanceMD.since)/spinEvery) % len(spinFrames)
+		return spinFrames[n] + " formatting Markdown"
+	}
 	if !m.loading || m.refreshSince.IsZero() || time.Since(m.refreshSince) < spinAfter {
 		return ""
 	}

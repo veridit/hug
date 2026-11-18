@@ -14,8 +14,8 @@ import (
 // A glance at a task file (scrxak, Jørgen 11:05): Space on a file in Files
 // shows its text in the detail pane, read only, under a header "path ·
 // size · i of N"; j/k and PgUp/PgDn scroll, n/p step to the next and
-// previous file, Esc or u go back to Files with that file marked. Plain text
-// only: no highlighting, no Markdown, no search, no editing. The file is
+// previous file, Esc or u go back to Files with that file marked. Markdown
+// uses the detail renderer, M shows its source, and / finds text. The file is
 // read when it is shown, never on list or detail load, and its bytes never
 // reach the terminal raw: control characters and escape sequences are
 // shown escaped.
@@ -92,6 +92,8 @@ func (m *model) showGlance() {
 		return
 	}
 	name, _, _ := m.glanceFile(t)
+	m.glanceGen++
+	m.glanceMD = glanceMarkdown{}
 	m.find = findState{} // the file's own find (4s3g5q)
 	m.glanceHead, m.glanceBody = m.glanceRead(t, name)
 	m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-2)
@@ -100,7 +102,7 @@ func (m *model) showGlance() {
 }
 
 // glanceRead reads one file of t: the header line and the text.
-func (m model) glanceRead(t task.Task, name string) (head, body string) {
+func (m *model) glanceRead(t task.Task, name string) (head, body string) {
 	_, i, n := m.glanceFile(t)
 	path, err := m.insideFolder(t, name)
 	if err != nil {
@@ -118,10 +120,17 @@ func (m model) glanceRead(t task.Task, name string) (head, body string) {
 	if err != nil {
 		return head, err.Error()
 	}
+	if len(b) > glanceLimit {
+		return head, glanceText(nil, int64(len(b)), m.width)
+	}
 	if ansName(name) && utf8.Valid(b) {
 		// A screen capture shows with its colours, nothing else of its
 		// escapes (5z4zt4).
 		return head, colourOnly(b, m.width, os.Getenv("NO_COLOR") == "")
+	}
+	if markdownName(name) && bytes.IndexByte(b, 0) < 0 && utf8.Valid(b) {
+		m.beginGlanceMarkdown(escapedFileSource(b))
+		return head, "formatting Markdown · M shows raw source"
 	}
 	return head, glanceText(b, info.Size(), m.width)
 }
@@ -146,6 +155,7 @@ func (m *model) stepGlance(step int) {
 func (m *model) closeGlance() {
 	m.glance = false
 	m.glanceHead, m.glanceBody = "", ""
+	m.glanceMD = glanceMarkdown{}
 	m.find = findState{}
 	m.detailPane = focusFiles
 	m.syncDetail()

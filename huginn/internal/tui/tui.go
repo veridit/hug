@@ -167,6 +167,8 @@ type model struct {
 	// "path · size · i of N" line, glanceBody its escaped text.
 	glance                 bool
 	glanceHead, glanceBody string
+	glanceMD               glanceMarkdown
+	glanceGen              uint64
 	// captured is the frame S took (5z4zt4), waiting for Enter to attach
 	// it; capturedNote says what went to the clipboard.
 	captured, capturedNote string
@@ -383,6 +385,9 @@ func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	if m.stale && !m.busy() && !m.loading {
 		cmd = tea.Batch(cmd, m.reload())
 	}
+	if format := m.formatGlance(); format != nil {
+		cmd = tea.Batch(cmd, format)
+	}
 	// A load running: the spinner ticks until it ends (vnyz8z).
 	if spin := m.spin(); spin != nil {
 		cmd = tea.Batch(cmd, spin)
@@ -392,6 +397,9 @@ func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case glanceFormattedMsg:
+		m.glanceFormatted(msg)
+		return m.afterUpdate(nil)
 	case changedMsg:
 		cmd := m.reload()
 		return m, tea.Batch(cmd, m.waitChange(), m.spin())
@@ -1049,6 +1057,7 @@ func (m *model) resize() {
 }
 func (m *model) syncDetail() {
 	if m.glance {
+		m.resizeGlanceMarkdown()
 		// The file stays as it was read: a refresh does not read it again.
 		if t, ok := m.selected(); ok {
 			m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-2)
@@ -1362,8 +1371,14 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "/":
 				// / finds in the file (4s3g5q); n / N step its matches
 				// while a find is on, else n / p step files.
+				if m.markdownLoading() {
+					m.message = "formatting Markdown · M shows raw source"
+					break
+				}
 				m.openFind()
 				m.message = m.findSays()
+			case "M":
+				m.toggleGlanceMarkdown()
 			case "n", "N":
 				if m.find.text != "" {
 					m.stepHit(map[string]int{"n": 1, "N": -1}[k])

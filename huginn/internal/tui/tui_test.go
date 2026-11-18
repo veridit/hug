@@ -52,6 +52,13 @@ func pasteKey(s string) tea.KeyMsg {
 func press(m model, ks ...string) model {
 	for _, k := range ks {
 		m, _ = key(m, k)
+		// Most key tests want the settled file page. Async/spinner tests
+		// use key directly and withhold the result (tmz060). Do not run
+		// unrelated commands, watches or repeating spinner ticks here.
+		if m.glance && m.glanceMD.loading {
+			next, _ := m.Update(m.glanceFormatCommand()())
+			m = next.(model)
+		}
 	}
 	return m
 }

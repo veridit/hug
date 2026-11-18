@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug tui`: showing a `.md` or `.markdown` file formats it with the task detail's quiet Markdown renderer (tmz060): accent headings, blue-grey inline code and code blocks, and lists, wrapped to the pane. `M` switches that file between formatted text and raw source without rereading or writing it. Other file types stay plain text, and the binary and 1 MiB limits still apply. Controls are escaped before Markdown is rendered, so a file cannot clear the terminal or set its clipboard. Formatting runs off the UI thread with a spinner, including large files; a late result from a file you left, or an old pane width, cannot replace the page. `/` and `n`/`N` find the text actually shown, and an existing find is recomputed when `M` changes the view.
+
 ## v0.7.57 - 2026-11-18
 
 - `hug task attach` no longer refuses a file over `sk-` inside a word (4c7327). On 2026-11-18 a seid report was refused over the file name `task-900-task979-ownership-reconciliation-2026-08-17.md` (`credential-shaped text near sk-900...`). A key now has to start at a word boundary, the rule hug's memory check and the CI secrets job already used, and real keys after `=`, `(` or a quote are still refused. A test now runs the CI gate script itself, so the three checks stay on one rule.

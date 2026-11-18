@@ -118,11 +118,18 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	var hints []bkey.Binding
 	if m.find.text != "" {
 		// A find is on (4s3g5q): its keys come first, as in less.
-		return []bkey.Binding{hint("n", "next match"), hint("N", "previous match"), hint("/", "find again"), hint("Esc", "clear"), hint("?", "help"), hint("q", "quit")}
+		hints = []bkey.Binding{hint("n", "next match"), hint("N", "previous match"), hint("/", "find again")}
+		if m.glance && m.glanceMD.eligible {
+			hints = append(hints, m.markdownHint())
+		}
+		return append(hints, hint("Esc", "clear"), hint("?", "help"), hint("q", "quit"))
 	}
 	if m.glance {
 		// n and p spelled out (scrxak, Jørgen 00:08: nobody guesses n/p).
 		hints := []bkey.Binding{hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("/", "find"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
+		if m.glanceMD.eligible {
+			hints = append([]bkey.Binding{m.markdownHint()}, hints...)
+		}
 		if m.viewport.TotalLineCount() > m.viewport.Height {
 			// j/k only when the file is longer than the screen (qtj177).
 			hints = append([]bkey.Binding{hint("j/k", "scroll")}, hints...)

@@ -13,6 +13,7 @@ import (
 	gansi "github.com/charmbracelet/glamour/ansi"
 	"github.com/charmbracelet/glamour/styles"
 	"github.com/charmbracelet/x/ansi"
+	"github.com/muesli/termenv"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -80,6 +81,12 @@ func tagStart(c byte) bool {
 	return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '/' || c == '!' || c == '?'
 }
 func (m model) markdown(s string) string {
+	return renderMarkdown(s, m.width, m.styles.renderer.HasDarkBackground(), m.styles.renderer.ColorProfile())
+}
+
+// All inputs are values: file formatting can run off the UI thread without
+// reading the model or sharing its mutable terminal renderer (tmz060).
+func renderMarkdown(s string, width int, dark bool, profile termenv.Profile) string {
 	s = cleanMarkdown(s)
 	if strings.TrimSpace(s) == "" {
 		return ""
@@ -87,7 +94,7 @@ func (m model) markdown(s string) string {
 	style := styles.DarkStyleConfig
 	accent := "#00bfff"
 	codeFg, codeBg := "#c9d6e3", "#1a2630"
-	if !m.styles.renderer.HasDarkBackground() {
+	if !dark {
 		style = styles.LightStyleConfig
 		accent = "#006c9c"
 		codeFg, codeBg = "#2b3a48", "#e8eef3"
@@ -114,13 +121,13 @@ func (m model) markdown(s string) string {
 	style.CodeBlock.Chroma = nil
 	style.CodeBlock.StylePrimitive = gansi.StylePrimitive{Color: &codeFg, BackgroundColor: &codeBg}
 	style.CodeBlock.Margin = &zero
-	renderer, err := glamour.NewTermRenderer(glamour.WithStyles(style), glamour.WithWordWrap(max(1, m.width-2)), glamour.WithColorProfile(m.styles.renderer.ColorProfile()))
+	renderer, err := glamour.NewTermRenderer(glamour.WithStyles(style), glamour.WithWordWrap(max(1, width-2)), glamour.WithColorProfile(profile))
 	if err != nil {
-		return wrap(s, m.width)
+		return wrap(s, width)
 	}
 	out, err := renderer.Render(literalAngles(s))
 	if err != nil {
-		return wrap(s, m.width)
+		return wrap(s, width)
 	}
 	// Without syntax colours glamour ends a code block with its reset on a
 	// line of its own, which shows as an extra blank line: keep it on the
