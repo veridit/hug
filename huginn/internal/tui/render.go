@@ -37,6 +37,9 @@ type theme struct {
 	// never bold. viewCurrent is the view you are in: bold alone, on the
 	// line's dim.
 	viewPrefixKey, viewKey, viewCurrent lipgloss.Style
+	// marked is the mark in a marked row's gutter, and only that (rxr4z8,
+	// crab 20:31: one cue, no tint).
+	marked lipgloss.Style
 	// column tints the column the cursor marks (e3sevr); columnCursor is
 	// that column's cell on the cursor row.
 	column, columnCursor   lipgloss.Style
@@ -79,6 +82,7 @@ func newTheme() theme {
 	t.progress = progressStyle(color)
 	t.cursor = color("#00bfff", "#006c9c").Underline(true).Bold(true)
 	t.viewPrefixKey = color("#00bfff", "#006c9c").Underline(true)
+	t.marked = color("#00bfff", "#006c9c").Faint(true) // dim accent, never red
 	t.viewKey = color(stepTwoColour[0], stepTwoColour[1]).Underline(true)
 	t.viewCurrent = t.dim.Bold(true)
 	// A quiet tint down the marked column, and underlined, so it shows
@@ -229,13 +233,20 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	// mark ! has a cell of its own right before the id, so ids line up
 	// whether a row has it or not: "↓ ◐ 3/4 !89y0b7".
 	pointer := " "
+	marked := m.isMarked(t.ID) // rxr4z8: the gutter only, nothing else on the row
 	if selected {
 		pointer = ">"
-		if m.grab.active && t.Path == m.grab.path {
+		if m.grab.active && (t.Path == m.grab.path || contains(m.grab.block, t.Path)) {
 			pointer = "≡" // grabbed: it moves with j/k (3xcesq)
+		} else if marked {
+			pointer = cursorOnMark // the cursor on a marked row: one sign (check 7)
 		}
+	} else if m.grab.active && contains(m.grab.block, t.Path) {
+		pointer = m.styles.marked.Render("≡") // the rest of a grabbed block
 	} else if m.yanked != "" && t.ID == m.yanked {
 		pointer = m.styles.accent.Render("y") // yanked: P/p paste it
+	} else if marked {
+		pointer = m.styles.marked.Render(markSign)
 	} else if mark != "" {
 		pointer = m.styles.dim.Render(mark)
 	}
@@ -495,6 +506,9 @@ func (m model) overviewText() string {
 			label += " · None"
 		} else {
 			label += shownLabel(indices, start, end)
+		}
+		if n := m.marksIn(p); n > 0 {
+			label += fmt.Sprintf(" · %d marked", n) // a mark out of sight is not forgotten (rxr4z8)
 		}
 		// A column the same on every task of the section is said once,
 		// here, not drawn on each row (1bbe96).
@@ -1092,6 +1106,11 @@ func (m model) frameView() string {
 		if m.grab.active {
 			rows := m.indices()
 			footer = fmt.Sprintf("Moving %s · row %d of %d in %s (was %d) · nothing written until Enter", m.grab.id, m.rowOf(rows, m.grab.path)+1, len(rows), m.sectionName(), m.grab.start+1)
+			if n := len(m.grab.block); n > 1 {
+				footer = fmt.Sprintf("Moving %d marked · rows %d–%d of %d in %s · nothing written until Enter", n, m.rowOf(rows, m.grab.path)+1, m.rowOf(rows, m.grab.path)+n, len(rows), m.sectionName())
+			}
+		} else if len(m.marks) > 0 && !m.detail && m.prompt == "" && m.confirm == "" {
+			footer = m.markedFooter() // the action bar (rxr4z8 check 2)
 		}
 		if m.prompt == ":" && !m.help {
 			footer = m.paletteFooter()
@@ -1169,14 +1188,18 @@ func (m model) editNoticeLines() (string, string, bool) {
 // went unnoticed).
 func (m model) confirmLine() string {
 	question := "Confirm " + actionNames[m.confirm] + " "
-	switch m.confirm {
-	case runKey:
+	if len(m.bulk) > 0 {
+		question = m.bulkQuestion() // the marked (rxr4z8)
+	}
+	switch {
+	case len(m.bulk) > 0:
+	case m.confirm == runKey:
 		// The command itself, as the CLI takes it (05r3pg): what runs is
 		// what an agent would type.
 		question = "Run " + oneLine(shellLine(m.pendingArgs))
-	case "n":
+	case m.confirm == "n":
 		question += oneLine(m.pendingValue)
-	case "t":
+	case m.confirm == "t":
 		if t, ok := m.taskAt(m.confirmPath); ok {
 			question += oneLine(t.ID) + " " + oneLine(t.Title)
 			if m.pendingValue == "give back" {
@@ -1186,21 +1209,21 @@ func (m model) confirmLine() string {
 				question = "Take " + oneLine(t.ID) + " for review as " + oneLine(m.me())
 			}
 		}
-	case "x":
+	case m.confirm == "x":
 		for _, t := range m.all {
 			if t.Path == m.confirmPath {
 				question = "Drop " + oneLine(t.ID) + ": " + oneLine(m.pendingValue)
 				break
 			}
 		}
-	case "e":
+	case m.confirm == "e":
 		for _, t := range m.all {
 			if t.Path == m.confirmPath {
 				question = "Edit " + oneLine(t.ID) + " in " + oneLine(m.pendingValue)
 				break
 			}
 		}
-	case "-":
+	case m.confirm == "-":
 		for _, t := range m.all {
 			if t.Path == m.confirmPath && len(t.Acceptance) > 0 {
 				n := min(m.acceptance, len(t.Acceptance)-1)
@@ -1208,7 +1231,7 @@ func (m model) confirmLine() string {
 				break
 			}
 		}
-	case " ":
+	case m.confirm == " ":
 		// Say exactly what Space will do: tick or untick which item, quoted
 		// as the ticket shows it, box and number after the colon.
 		for _, t := range m.all {

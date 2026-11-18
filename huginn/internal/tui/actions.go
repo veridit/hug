@@ -76,6 +76,7 @@ func (m *model) requestAction(k, value string) {
 		return
 	}
 	m.confirm = k
+	m.bulk = nil // one task, not the marked (rxr4z8)
 	m.confirmPath = t.Path
 	m.pendingValue = value
 	if k == "e" {

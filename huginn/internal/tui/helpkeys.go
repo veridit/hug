@@ -56,6 +56,8 @@ func (m model) helpContext() string {
 		return "file"
 	case m.detail:
 		return "task"
+	case len(m.marks) > 0:
+		return "marked" // the actions on the marked first (rxr4z8 check 8)
 	}
 	return m.view
 }
@@ -132,6 +134,8 @@ func (m model) contextHelp() helpSection {
 		return helpSection{"IN THIS FILE", append(rows, row("E", "the task's files folder in the editor", "E"), row("u / Esc", "back to the task", "u"))}
 	case "task":
 		return m.taskHelp()
+	case "marked":
+		return m.markedHelp()
 	}
 	return m.rowsHelp()
 }
@@ -192,6 +196,7 @@ func (m model) rowsHelp() helpSection {
 		row("j/k ↑/↓", "move", "j", "k"), row("< > Home End", "top / bottom", "<", ">", "home", "end"),
 		row("ctrl-d/u", "half page down / up", "ctrl+d", "ctrl+u"), row("PgDn / PgUp", "page down / up", "pgdown", "pgup"),
 		row("Enter", "open the task", "enter"),
+		row("Space", "mark the task, then the next row; the footer acts on the marked", " "),
 	}
 	rows = append(rows, row("J / K", "page down / up", "J", "K"))
 	if m.paneCount() > 1 {
@@ -219,7 +224,7 @@ func (m model) rowsHelp() helpSection {
 		row("g", "group rows: flat, group, epic, tag (tag: first listed tag)", "g"))
 	if m.grouping != "" {
 		// Only grouped rows have headings to fold (kx2ndm).
-		rows = append(rows, row("Space / Enter", "on a heading: fold or unfold it", " "))
+		rows = append(rows, row("Space / Enter", "on a heading: fold or unfold it", "enter"))
 	}
 	return helpSection{title, rows}
 }

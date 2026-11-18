@@ -156,6 +156,9 @@ type editorMsg struct {
 	// commit is the commit message; "" means "hug task edit" (zgr01t:
 	// task files say which file).
 	commit string
+	// ids are the marked tasks edited together (rxr4z8): unmarked once
+	// the editor closes.
+	ids []string
 }
 type model struct {
 	store           *task.Store
@@ -240,8 +243,14 @@ type model struct {
 	messageAt                          string
 	confirm, confirmPath, pendingValue string
 	// pendingArgs is the hug task command a run confirm asks about (05r3pg).
-	pendingArgs            []string
-	yanked                 string // y: the task id P and p paste (3xcesq)
+	pendingArgs []string
+	yanked      string // y: the task id P and p paste (3xcesq)
+	// marks are the task ids Space marked in a list, in the order
+	// marked; the footer acts on them (rxr4z8).
+	marks []string
+	// bulk is the marked ids a confirm acts on (rxr4z8), fixed when it
+	// was asked.
+	bulk                   []string
 	hidden                 string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
 	grab                   grabState
 	find                   findState // / in a task or a file: matches in its text (4s3g5q)
@@ -1174,6 +1183,7 @@ func (m *model) syncDetail() {
 	}
 }
 func (m *model) openInput(prompt, value string) tea.Cmd {
+	m.bulk = nil // a prompt for the marked sets it after (rxr4z8)
 	m.prompt = prompt
 	m.jumpPending = false
 	m.completion = 0
@@ -1207,6 +1217,7 @@ func (m *model) back() {
 		m.confirm = ""
 		m.pendingValue = ""
 		m.pendingArgs = nil
+		m.bulk = nil // the marks stay (rxr4z8)
 	case m.prompt == captureTitlePrompt:
 		// Esc on the new task's title goes back to where (hjbfzd).
 		m.input.Blur()
@@ -1313,10 +1324,16 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.message = msg.err.Error()
 		} else {
 			m.message = "editor closed; re-linted"
+			if len(msg.ids) > 0 {
+				m.unmark(msg.ids)
+			}
 			if m.opts.Commit != nil {
 				subject := msg.commit
 				if subject == "" {
 					subject = "hug task edit"
+				}
+				if len(msg.ids) > 1 {
+					subject = "hug task edit " + strings.Join(msg.ids, " ")
 				}
 				// The turn covers the commit, not the editor, as hug task edit.
 				release := m.hold()
@@ -1377,6 +1394,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.yanked = ""
 				return m, nil
 			}
+			if len(m.marks) > 0 && !m.detail && !m.help && m.prompt == "" && m.confirm == "" {
+				// Esc unmarks every mark first (rxr4z8 check 2).
+				m.message = fmt.Sprintf("unmarked %d; nothing changed", len(m.marks))
+				m.marks = nil
+				return m, nil
+			}
 			m.back()
 			return m, nil
 		}
@@ -1421,6 +1444,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			if k == "enter" {
+				if len(m.bulk) > 0 {
+					return m, m.runBulk() // the marked tasks (rxr4z8)
+				}
 				cmd := m.executeAction()
 				return m, cmd
 			}
@@ -1815,6 +1841,8 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.paste(k)
 			}
+		case k == "m" && len(m.marks) > 0:
+			return m, m.markedKey(k) // the marked as one block (rxr4z8 check 4)
 		case k == "m":
 			m.startGrab()
 		case k == "#":
@@ -1832,11 +1860,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case k == "r":
 			return m, m.requestKey() // a request on the selected task (hbgybn)
 		case k == " ":
-			// Ticking a check you cannot see is a guess: Space ticks only
-			// inside the task, where the checks are shown (2026-11-16, user).
-			if t, ok := m.selected(); ok {
-				m.message = fmt.Sprintf("Space ticks a check inside the task: Enter opens %s", t.ID)
-			}
+			// Space marks the task and steps on (rxr4z8, Jørgen 23:42);
+			// inside a task it ticks the focused check, and on a heading
+			// it folds (above).
+			m.toggleMark()
+		case len(m.marks) > 0 && contains([]string{"t", "d", "x", "w", "e"}, k):
+			return m, m.markedKey(k)
 		case contains([]string{"t", "d", "x", "e"}, k):
 			return m, m.startAction(k)
 		}
@@ -1939,16 +1968,24 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.prompt = ""
 			m.input.Blur()
 			if on == "" {
+				m.bulk = nil
 				m.message = "not parked: a wait needs what it waits on (w again, then type it)"
+				return m, nil
+			}
+			if len(m.bulk) > 0 {
+				m.confirm, m.pendingValue = "w", on // one confirm for the marked (rxr4z8)
 				return m, nil
 			}
 			m.wait(on)
 			return m, nil
 		}
 		if m.prompt == dropPrompt {
-			if why := strings.TrimSpace(m.input.Value()); why != "" {
+			if why := strings.TrimSpace(m.input.Value()); why != "" && len(m.bulk) > 0 {
+				m.confirm, m.pendingValue = "x", why
+			} else if why != "" {
 				m.requestAction("x", why)
 			} else {
+				m.bulk = nil
 				m.message = "not dropped: a drop needs a reason"
 			}
 		}
