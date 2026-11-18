@@ -1,13 +1,18 @@
 ---
 id: 4s3g5q
 title: "Detail view: / searches the task's own text, with n/N"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
+doing_since: "2026-11-18T06:19"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -36,3 +41,7 @@ Today's footer while typing: '↑↓ pick · Enter go to it · Tab keep as filte
 ## Notes
 
 Jørgen 23:29: covers the inline file viewer too (glance): / finds text in the shown file, n/N step. Add as part of check 1-2's tests.
+
+
+## History
+- 2026-11-18T06:19 todo -> doing/active (take)
