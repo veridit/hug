@@ -1,0 +1,4 @@
+raw byte stream from `tmux pipe-pane` while pressing p back onto board.png (cat -v, image data cut at the ':'):
+^[7^[[4;1H^[Ptmux;^[^[]1337;File=name=Ym9hcmQucG5n;size=742;inline=1;width=100;height=17;preserveAspectRatio=1
+= save cursor, row 4 col 1 (the first row under the top rule), tmux passthrough of iTerm2 OSC 1337 sized 100x17 cells.
+`\x1b[2J` (the repaint when leaving the image with n) occurrences in the same stream: 1
