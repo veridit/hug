@@ -738,7 +738,15 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	// A hug older than its board (dx9vw2) writes nothing to it: every
 	// command but a read stops here, before the board turn and any write
 	// (take, tui, edit and sync write too). A read says it once and goes on.
-	if board, known, newer := a.newerBoard(s.r.Dir); newer {
+	board, known, newer := a.newerBoard(s.r.Dir)
+	// A board older than layout 3 (w40cmk) is written by nobody until hug
+	// upgrade moves it: a write now would put a C/ID.md file beside
+	// rank.id.slug.md ones. Reads go on; old boards read as before. sync
+	// goes on too, so a clone can fetch a board another clone upgraded.
+	if !newer && board < 3 && known >= 3 && !readOnly[cmd] && cmd != "sync" && cmd != "init" {
+		return nil, &OperationError{Problem: fmt.Sprintf("this board has layout %d (hug.toml on branch %s): its task files are named rank.id.slug.md, and this hug writes C/ID.md (layout %d); it writes nothing until the board is moved", board, TaskBranch, known), Fix: "hug upgrade --apply"}
+	}
+	if newer {
 		if !readOnly[cmd] {
 			return nil, boardNewer(board, known)
 		}
