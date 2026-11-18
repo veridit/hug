@@ -58,6 +58,7 @@ RESULT (15:53Z, crab 15:33 integration break): rebased onto 5c115a62 (main 56e2c
 crab 16:54 local: duckling adapted to 9ahvgt: one gone rule task.Liveness.Gone (Closed > 1 h or silent > 24 h, 'You are NAME' alias), hook and board4 replay use it; LastSeen/OwnerGoneAfter removed. Bars byte-identical (217+44), live board 6 of 16 doing assignees gone with 0 disagreement vs stale-owner. 7a509517 (rk5q7r 6b7b5aab on it), on 5c115a62. Lands after the 9ahvgt/tz9z14/0ga6m0/qsqhpe stack.
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
 landed 464c2a3 on main 2026-11-18: recall hook: checks-all-hold goes to its owner, or to the coordinator when the…
+shipped in v0.7.66 (464c2a3)
 ## History
 - 2026-11-18T14:40 todo -> doing/active (take)
 - 2026-11-18T15:20 doing/active -> doing/waiting (wait)

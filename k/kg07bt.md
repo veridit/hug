@@ -49,6 +49,7 @@ crab review 16:56 local: accepted. 5e3890a2 + 3b985709 (on tz9z14 replay 0a95a06
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
 landed 3517e62 on main 2026-11-18: tui: a calm focused heading and asked row; the > is the cursor (kg07bt)
 landed 4778ebf on main 2026-11-18: tui: the focused row's > is theme.cursor, the answer box's cursor (kg07bt)
+shipped in v0.7.66 (3517e62)
 ## History
 - 2026-11-18T16:25 todo -> doing/active (take)
 - 2026-11-18T16:56 doing/active -> doing/waiting (wait)
