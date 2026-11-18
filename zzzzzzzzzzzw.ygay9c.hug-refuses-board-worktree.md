@@ -36,5 +36,13 @@ Code: huginn/gitbranch (board worktree discovery). Seen in ~/.jcode/scratch/w40c
 ## Notes
 
 
+Landed a90f4d44.
+- Failing first on main: TestBoardOfAnotherRepoRefused (cli) fails with 'boardowner_test.go:40: note in the copy went through'.
+- Refusal now: 'open: the board checkout ORIG/.hug/tasks belongs to another repository: its .git names ORIG/.git/worktrees/tasks, outside this repository's COPY/.git (a copied or moved repo keeps the original's link); hug writes nothing to it', then 'fix: git -C COPY worktree repair COPY/.hug/tasks'.
+- The test runs that fix with sh. After it the copy's note lands on its own board, and the original's HEAD is unchanged throughout. Experiment: worktree repair rewrites both links (copy/.git/worktrees/tasks/gitdir and copy/.hug/tasks/.git); orig untouched.
+- Check 2: TestGitProcessesPerCommand passes with unchanged counts (show 2, ls 2, note 4 ...). The check is one os.ReadFile plus EvalSymlinks.
+- gitbranch: TestOpenRefusesAnotherRepositorysBoard (copy refused, then repaired; original and linked worktree still open) and TestOwnedThroughSymlink.
+- Mutants: 6 of 6 killed (no check, always owned, inverted, fix repairs the other, within always, no symlink resolve).
+- Race ok: gitbranch 25.1s, cli 151.7s.
 ## History
 - 2026-11-18T04:34 todo -> doing/active (take)
