@@ -1,7 +1,7 @@
 ---
 id: 4vxqp4
 title: "Board lint: a task the message only mentions is not the session's task"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab-engineer"]
@@ -11,11 +11,10 @@ updated: 2026-11-17
 parent: ""
 group: ""
 rank: "zzzzzzzzzz9h"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-18T12:20"
+done_at: "2026-11-18T13:46"
 ---
 
 ## Goal
@@ -54,3 +53,4 @@ landed 8d26d05 on main 2026-11-18: recall hook: a missing section goes only to a
 - 2026-11-17T15:53 todo -> doing/active (take)
 - 2026-11-17T16:03 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T15:53
 - 2026-11-18T12:20 todo/ready -> doing/active (take)
+- 2026-11-18T13:46 doing/active -> done (done); was doing_since: 2026-11-18T12:20
