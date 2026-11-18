@@ -1,20 +1,21 @@
 ---
 id: vk9td0
 title: "Decide when dream items are handed out"
-state: "todo"
+state: "doing"
 type: spike
 priority: "high"
-assignee: []
+assignee: ["sabertooth"]
 labels: ["dream"]
 group: "dream"
 rank: "zz8"
 created: 2026-11-10
 updated: 2026-11-10
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 aliases: ["decide-when-dream-items-are-handed"]
+doing_since: "2026-11-18T13:25"
 ---
 
 ## Goal
@@ -55,3 +56,4 @@ crab 12:25Z: hatchling's session is gone; handing to retriever with Jørgen's hi
 - 2026-11-18T12:22 request 1 by jhf
 - 2026-11-18T13:03 resolved request 1 by crab
 - 2026-11-18T13:24 doing/waiting -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T06:31; waiting_asked_by: hatchling; waiting_on: Jørgen's answer on the dream cue moment (crab recommended wrap-up only, 05:32); waiting_since: 2026-11-18T06:32
+- 2026-11-18T13:25 todo/ready -> doing/active (take)
