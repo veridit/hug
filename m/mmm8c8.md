@@ -43,6 +43,7 @@ landed 4336e2b on main 2026-11-18: background sync: a queue check never costs a 
 Main CI 44231734696 (4336e2b0) green: ubuntu, macos, windows, test-windows-cli, bench, secrets all success; TestProbeNeverCostsASyncerItsTurn and TestSettledWaitsForSlowChild pass on every OS.
 Reflection (dismissed, 2026-11-18, wyvern): The flake looked like a settle-time problem (0sbvnq had just cut it to 100 ms), but the cause was a lost wakeup: a read-only probe briefly took the same lock the syncer uses to decide whether it is redundant. Lesson: a try-lock used both as a query and as an ownership claim can't tell an observer from an owner; give observers their own lock. The counting stress test found it in 0.2 s, where the timed test took a CI run to hit it once.
 shipped in v0.7.55 (4336e2b)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G10, a lesson about one's own method, fixed in its own ticket; no instruction misled.
 ## History
 - 2026-11-18T04:26 todo -> doing/active (take)
 - 2026-11-18T04:38 doing/active -> doing/waiting (wait)
