@@ -7,7 +7,7 @@ priority: ""
 assignee: ["mizaru"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzx"
+rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
 stage: "active"
