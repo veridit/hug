@@ -1,0 +1,20 @@
+Per notes-file id: number of active lines per muninn-notes commit since 7 days ago. Flagged: the count rose again after a drop (a forget undone), and the live store state now.
+== /Users/jhf/Veridit/src/seid-lang 29 commits
+  flagged 0
+== /Users/jhf/Projects/hug 43 commits
+  cap_424946c25c26bd8d: active lines [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; dropped 2026-11-17T15:40:06+01:00 (752e111b), rose 2026-11-17T15:57:52+01:00 (bf5477e6); live now [('adx0yj', True)]
+  cap_cde8d70f4329ac0b: active lines [1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; dropped 2026-11-17T11:59:14+01:00 (fd623b63), rose 2026-11-17T14:29:07+01:00 (543b50df); live now [('8w458j', True)]
+  cap_cee71ea5743e3ea5: active lines [1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; dropped 2026-11-17T12:51:34+01:00 (0f7c9d23), rose 2026-11-17T13:34:17+01:00 (f07c026e); live now [('ns66c0', True)]
+  cap_ea34574fa5f8bfd7: active lines [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; dropped 2026-11-17T16:16:27+01:00 (df83a1a5), rose 2026-11-17T16:16:36+01:00 (bbe50fe9); live now [('x1yxka', True)]
+  flagged 4
+== /Users/jhf/ssb/statbus 3 commits
+  flagged 0
+
+Method: for every id in muninn-notes:memories.jsonl, the count of active lines per commit over the last 7 days (twins share a line id, so a count, not a flag). Flagged when the count dropped (a forget) and rose again later. Session journals: no record of who forgot the four or why, and the 2026-11-17 daily did not list them.
+Judged against the code before re-forgetting:
+- adx0yj "Tagging by worktree (x1t1t1) ... must not be built yet": x1t1t1 is done, so the memory is stale.
+- ns66c0 "cache schema version is 4": huginn/internal/cache/cache.go:26 is SchemaVersion "21", so it is stale.
+- 8w458j "TUI rows show a pie glyph and N/M": an old feature note, already forgotten once by its owner.
+- x1yxka "huginn task/cli/mcp/TUI rows are vole's area": a lane assignment from 2026-11-16 that is no longer current.
+Re-forgot 2026-11-18T03:17:10Z: hug mem forget adx0yj ns66c0 8w458j x1yxka printed exit 0.
+Readback after the background pass, at 03:18Z: live store active=False for all 4. muninn-notes 48fe231f (04:17:15+01:00) has active=false for all 4 line ids.
