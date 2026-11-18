@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -227,7 +228,12 @@ func TestCatchUpStopsOnUnreadableFileAndRestores(t *testing.T) {
 			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
 			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
 			first := oldPath(t, boardB, ids[0])
-			oldWrite(t, boardB, "hug task note "+ids[0], func() { oldNote(t, boardB, first, "fine") })
+			oldWrite(t, boardB, "hug task note "+ids[0], func() {
+				oldNote(t, boardB, first, "fine")
+				if e := os.WriteFile(filepath.Join(boardB, "new-local-attachment.txt"), []byte("local attachment\n"), 0o644); e != nil {
+					t.Fatal(e)
+				}
+			})
 			p := oldPath(t, boardB, ids[2])
 			oldWrite(t, boardB, "edit by hand "+ids[2], func() {
 				if e := os.WriteFile(filepath.Join(boardB, filepath.FromSlash(p)), []byte("no front matter, typed by hand\n"), 0o644); e != nil {
@@ -243,9 +249,13 @@ func TestCatchUpStopsOnUnreadableFileAndRestores(t *testing.T) {
 			bad := git(t, boardB, "rev-parse", "--short=12", "HEAD")
 			code, out := runText(b, "upgrade", "--apply")
 			t.Logf("B's upgrade --apply: exit %d\n%s", code, out)
-			wantStart := "catch-up stopped at " + bad + " \"edit by hand " + ids[2] + "\": " + task.PathFor(ids[2]) + ": hug cannot read this file (no front matter, or front matter that is not YAML), and both this clone and the board changed it; HEAD is back where it was, 2 local commits kept, nothing pushed\n"
+			wantStart := "catch-up stopped at " + bad + " \"edit by hand " + ids[2] + "\": " + task.PathFor(ids[2]) + ": hug cannot read this file (no front matter, or front matter that is not YAML); HEAD is back where it was, 2 local commits kept, nothing pushed\n"
 			wantEnd := "; HEAD is back where it was, 2 local commits kept, nothing pushed\nfix: git -C "
-			if code == 0 || !strings.Contains(out, wantStart) || !strings.Contains(out, wantEnd) || !strings.HasSuffix(out, " show "+bad+" -- "+task.PathFor(ids[2])+"\n") {
+			q := "'"
+			if runtime.GOOS == "windows" {
+				q = "\""
+			}
+			if code == 0 || !strings.Contains(out, wantStart) || !strings.Contains(out, wantEnd) || !strings.HasSuffix(out, " show "+bad+" -- "+q+p+q+"\n") {
 				t.Fatalf("exit %d, want %q ... %q:\n%s", code, wantStart, wantEnd, out)
 			}
 			if now := git(t, boardB, "rev-parse", "HEAD"); now != head {
@@ -300,6 +310,46 @@ func TestCatchUpWhenBothClonesMoved(t *testing.T) {
 				t.Fatalf("%s:\n%s", ids[1], f)
 			}
 			execute(t, b, "sync")
+		})
+	})
+}
+
+func TestCatchUpLayoutCommitAlsoKeepsItsNote(t *testing.T) {
+	t.Parallel()
+	a, b, _ := clones(t)
+	boardA := filepath.Join(a.Cwd, TaskDir)
+	boardB := filepath.Join(b.Cwd, TaskDir)
+	offline(t, a, func() {
+		offline(t, b, func() {
+			ids := oldLayoutBoard(t, a)
+			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
+			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
+			for _, c := range []*App{a, b} {
+				if code, out := runText(c, "upgrade", "--apply"); code != 0 && code != UpgradePending {
+					t.Fatalf("upgrade: exit %d\n%s", code, out)
+				}
+			}
+			oldNote(t, boardB, task.PathFor(ids[0]), "B's note in its layout-changing commit")
+			git(t, boardB, "add", "-A")
+			git(t, boardB, "commit", "--amend", "--no-edit", "-q")
+			execute(t, a, "sync")
+			if code, out := runText(b, "sync"); code == 0 || !strings.Contains(out, "fix: hug upgrade") {
+				t.Fatalf("mixed layout sync refusal: exit %d\n%s", code, out)
+			}
+			code, out := runText(b, "upgrade")
+			if code != UpgradePending || strings.Contains(out, "not replayed") {
+				t.Fatalf("mixed layout commit preview: exit %d\n%s", code, out)
+			}
+			code, out = runText(b, "upgrade", "--apply")
+			if code != 0 || strings.Contains(out, "not replayed") {
+				t.Fatalf("mixed layout commit: exit %d\n%s", code, out)
+			}
+			if f := taskFile(t, b, ids[0]); strings.Count(f, "B's note in its layout-changing commit") != 1 {
+				t.Fatalf("mixed layout commit lost or repeated its note:\n%s", f)
+			}
+			if got := git(t, boardB, "log", "--format=%s", "origin/"+TaskBranch+"..HEAD"); got != "hug upgrade: 4 tasks to C/ID.md, rank: and group: in the file (layout 3)" {
+				t.Fatalf("mixed layout commit message lost: %s", got)
+			}
 		})
 	})
 }

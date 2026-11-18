@@ -17,7 +17,7 @@ func catchUpTranslator() gitbranch.Translator {
 		Content: task.Layout3Content,
 		Layout:  task.LayoutOf,
 		Merge: func(p string, base, ours, theirs []byte, c gitbranch.Replayed) ([]byte, []string, error) {
-			if _, ok := task.IDOf(p); !ok || !strings.HasSuffix(p, ".md") {
+			if _, ok := task.IDPath(p); !ok {
 				// Not a task file (hug.toml, a task's files): the board's
 				// when both changed it, else the side that did. The
 				// layout in hug.toml is the board's either way.

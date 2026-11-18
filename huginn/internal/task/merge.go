@@ -61,7 +61,7 @@ func splitForMerge(path string, raw []byte) (*mergeDoc, error) {
 	}
 	d := Parse(path, raw)
 	if d.frontEnd < 0 || !d.frontmatterValid {
-		return nil, fmt.Errorf("hug cannot read this file (no front matter, or front matter that is not YAML), and both this clone and the board changed it")
+		return nil, fmt.Errorf("hug cannot read this file (no front matter, or front matter that is not YAML)")
 	}
 	m.present, m.newline = true, d.newline
 	starts := map[int]string{}
@@ -88,7 +88,7 @@ func splitForMerge(path string, raw []byte) (*mergeDoc, error) {
 	for _, h := range d.Task.Sections {
 		if seen[h] {
 			// One heading twice: the sections cannot be told apart.
-			return nil, fmt.Errorf("hug cannot read this file (section %s twice), and both this clone and the board changed it", h)
+			return nil, fmt.Errorf("hug cannot read this file (section %s twice)", h)
 		}
 		seen[h] = true
 		s := d.sections[h]
@@ -106,13 +106,17 @@ func splitForMerge(path string, raw []byte) (*mergeDoc, error) {
 // (the task is new on that side); ours is never nil. kept lists every
 // value both sides changed, in file order.
 func MergeTask(path string, base, ours, theirs []byte, side MergeSide) ([]byte, []Kept, error) {
-	// One side changed it: that side, read or not (rule 3 stops only a
-	// file both changed that hug cannot read).
+	// A fast path still validates the selected result. Copying malformed
+	// bytes unchanged would strand an unreadable task on the new board.
+	selected := func(raw []byte) ([]byte, []Kept, error) {
+		_, e := splitForMerge(path, raw)
+		return raw, nil, e
+	}
 	switch {
 	case theirs == nil && base == nil, string(theirs) == string(base) && theirs != nil:
-		return ours, nil, nil
+		return selected(ours)
 	case string(ours) == string(base), string(ours) == string(theirs):
-		return theirs, nil, nil
+		return selected(theirs)
 	}
 	b, e := splitForMerge(path, base)
 	if e != nil {
@@ -247,12 +251,8 @@ func pick3p(b, o, t []string, bok, ook, tok bool) (v []string, present, conflict
 		return o, ook, false
 	case same(o, t, ook, tok):
 		return t, tok, false
-	case !tok:
-		return o, ook, false // the board removed it, ours changed it: kept
-	case !ook:
-		return t, tok, false // ours removed it, the board changed it: kept
 	}
-	return t, true, true
+	return t, tok, true
 }
 
 func equalText(x, y []string) bool {
@@ -335,9 +335,10 @@ func mergeFrontMatter(b, o, t *mergeDoc, keep func(string, []string, []string, b
 		}
 		if v, ok := value(k); ok {
 			out = append(out, v...)
-			for _, a := range added[k] {
-				out = append(out, o.fm[a]...)
-			}
+		}
+		// A new key must survive even when its anchor was removed.
+		for _, a := range added[k] {
+			out = append(out, o.fm[a]...)
 		}
 	}
 	return out
@@ -371,10 +372,10 @@ func mergeHeadings(b, o, t []string) []string {
 
 var entryTime = regexp.MustCompile(`^(?:- )?(\d{4}-\d\d-\d\d(?:T\d\d:\d\d(?::\d\d)?)?)\b`)
 
-// mergeAppend is the union of what each side appended (rule 1), the
-// board's entries first where neither entry says its time. A side that
-// changed an earlier entry (not an append) makes the section a single
-// value: the board's wins, ours is kept.
+// mergeAppend is the union of both append-only sections (rule 1). Compare
+// entries, not a common text prefix: an earlier replay may have inserted
+// remote entries between the base's entries. Timed entries are ordered
+// chronologically, with untimed entries retaining their board-first order.
 func mergeAppend(h string, b, o, t []string, bok, ook, tok bool, keep func(string, []string, []string, bool)) []string {
 	if !tok {
 		return o
@@ -382,41 +383,46 @@ func mergeAppend(h string, b, o, t []string, bok, ook, tok bool, keep func(strin
 	if !ook {
 		return t
 	}
-	bb, _ := trimBlank(b)
 	ob, _ := trimBlank(o)
 	tb, tail := trimBlank(t)
-	if !hasPrefix(ob, bb) || !hasPrefix(tb, bb) {
-		v, c := pick3(b, o, t, bok, ook, tok)
-		if c {
-			keep("## "+h, o, t, true)
-		}
-		return v
+	bb, _ := trimBlank(b)
+	// This commit's actual append is reliable even when the remote no
+	// longer begins with base. hug task note also permits adjacent notes
+	// without blank separators, so unioning entire paragraphs would repeat
+	// an earlier local note together with its newly appended continuation.
+	if hasPrefix(ob, bb) {
+		ob = ob[len(bb):]
 	}
-	ours := blocks(h, ob[len(bb):])
-	theirs := blocks(h, tb[len(bb):])
-	out := append([]string(nil), bb...)
+	var entries [][]string
 	seen := map[string]bool{}
-	for _, x := range theirs {
-		seen[strings.Join(x, "")] = true
+	for _, lines := range [][]string{tb, ob} {
+		for _, entry := range blocks(h, lines) {
+			key := strings.TrimSpace(strings.ReplaceAll(strings.Join(entry, ""), "\r\n", "\n"))
+			if key == "" || seen[key] {
+				continue
+			}
+			seen[key] = true
+			entries = append(entries, entry)
+		}
 	}
-	i, j := 0, 0
-	for i < len(theirs) || j < len(ours) {
-		if j < len(ours) && seen[strings.Join(ours[j], "")] {
-			j++ // the same entry on both sides (one note synced twice)
-			continue
+	// Sort timed entries only, leaving untimed entries in their original
+	// slots. Comparing a timed entry with an untimed one as equal would
+	// make the sort's ordering non-transitive.
+	var positions []int
+	var timed [][]string
+	for i, entry := range entries {
+		if blockTime(entry) != "" {
+			positions = append(positions, i)
+			timed = append(timed, entry)
 		}
-		takeOurs := i == len(theirs)
-		if !takeOurs && j < len(ours) {
-			ot, tt := blockTime(ours[j]), blockTime(theirs[i])
-			takeOurs = ot != "" && tt != "" && ot < tt
-		}
-		if takeOurs {
-			out = append(out, ours[j]...)
-			j++
-		} else {
-			out = append(out, theirs[i]...)
-			i++
-		}
+	}
+	sort.SliceStable(timed, func(i, j int) bool { return blockTime(timed[i]) < blockTime(timed[j]) })
+	for i, at := range positions {
+		entries[at] = timed[i]
+	}
+	var out []string
+	for _, entry := range entries {
+		out = append(out, entry...)
 	}
 	return append(out, tail...)
 }
@@ -552,9 +558,9 @@ func mergeItems(b, o, t []string, bok, ook, tok bool, keep func(string, []string
 
 func itemOnly(l []string) []string { body, _ := trimBlank(l); return body }
 
-// mergeRequests merges requests by number: each request (its text and its
-// resolve) a single value, new requests on both sides kept; a new request
-// of ours whose number the board's new one took gets the next free one.
+// mergeRequests follows a request by its original time, author and text,
+// not its display number. Earlier replay may have renumbered a local
+// request after a collision, and a later resolve must follow that request.
 func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []string, []string, bool)) []string {
 	if !tok {
 		return o
@@ -571,66 +577,97 @@ func mergeRequests(b, o, t []string, bok, ook, tok bool, keep func(string, []str
 	bp, be := keyed(b, start)
 	op, oe := keyed(o, start)
 	tp, te := keyed(t, start)
-	byNum := func(es [][]string) map[int][]string {
-		m := map[int][]string{}
+	renumber := func(e []string, n int) []string {
+		if len(e) == 0 {
+			return e
+		}
+		out := append([]string(nil), e...)
+		header := strings.TrimRight(out[0], "\r\n")
+		out[0] = requestHead.ReplaceAllString(header, "- ${1} request "+strconv.Itoa(n)+" by ${3}:") + strings.TrimPrefix(out[0], header)
+		return out
+	}
+	key := func(e []string) string {
+		core := renumber(e, 0)
+		for i, l := range core {
+			if resolvedHead.MatchString(strings.TrimRight(l, "\r\n")) {
+				core = core[:i]
+				break
+			}
+		}
+		return strings.TrimSpace(strings.ReplaceAll(strings.Join(core, ""), "\r\n", "\n"))
+	}
+	byKey := func(es [][]string) map[string][]string {
+		m := map[string][]string{}
 		for _, e := range es {
-			m[num(e)] = e
+			m[key(e)] = e
 		}
 		return m
 	}
-	bm, om, tm := byNum(be), byNum(oe), byNum(te)
+	bm, om, tm := byKey(be), byKey(oe), byKey(te)
 	out, c := pick3(bp, op, tp, bok, ook, tok)
 	if c {
 		keep("the text above the requests", op, tp, true)
 	}
 	max := 0
-	for n := range tm {
+	used := map[int]bool{}
+	for _, e := range te {
+		n := num(e)
+		used[n] = true
 		if n > max {
 			max = n
 		}
 	}
+	var entries [][]string
 	for _, e := range te {
 		n := num(e)
-		bv, bok := bm[n]
-		if !bok {
-			// New on the board: kept as it is; ours of that number, if
-			// any, is another new request (renumbered below).
-			out = append(out, e...)
+		k := key(e)
+		bv, bok := bm[k]
+		ov, ook := om[k]
+		if !bok && !ook {
+			entries = append(entries, itemOnly(e))
 			continue
 		}
-		ov, ook := om[n]
-		v, _, c := pick3p(bv, ov, e, bok, ook, true)
+		if !bok {
+			// The same request was independently added or is already on
+			// the board. Its initial text is the base for any resolution.
+			bv = e
+			for i, l := range bv {
+				if resolvedHead.MatchString(strings.TrimRight(l, "\r\n")) {
+					bv = bv[:i]
+					break
+				}
+			}
+			bok = true
+		}
+		v, _, c := pick3p(renumber(bv, n), renumber(ov, n), e, bok, ook, true)
 		if c {
 			keep(fmt.Sprintf("request %d", n), itemOnly(ov), itemOnly(e), true)
 		}
-		out = append(out, v...)
+		entries = append(entries, itemOnly(v))
 	}
-	var fresh []int
-	for n := range om {
-		if _, inB := bm[n]; inB {
+	for _, e := range oe {
+		if _, inT := tm[key(e)]; inT {
 			continue
 		}
-		if t, inT := tm[n]; inT && equalText(t, om[n]) {
-			continue
-		}
-		fresh = append(fresh, n)
-	}
-	sort.Ints(fresh)
-	body, tail := trimBlank(out)
-	body = append([]string(nil), body...)
-	tail = append([]string(nil), tail...)
-	if len(tail) == 0 && len(oe) > 0 {
-		_, tail = trimBlank(oe[len(oe)-1])
-	}
-	for _, n := range fresh {
-		e := append([]string(nil), itemOnly(om[n])...)
-		if _, taken := tm[n]; taken {
+		n := num(e)
+		if used[n] {
 			max++
-			e[0] = strings.Replace(e[0], fmt.Sprintf(" request %d by ", n), fmt.Sprintf(" request %d by ", max), 1)
+			n = max
 		} else if n > max {
 			max = n
 		}
-		body = append(body, e...)
+		used[n] = true
+		entries = append(entries, itemOnly(renumber(e, n)))
 	}
-	return append(body, tail...)
+	sort.SliceStable(entries, func(i, j int) bool { return blockTime(entries[i]) < blockTime(entries[j]) })
+	for _, e := range entries {
+		out = append(out, e...)
+	}
+	var tail []string
+	if len(te) > 0 {
+		_, tail = trimBlank(te[len(te)-1])
+	} else if len(oe) > 0 {
+		_, tail = trimBlank(oe[len(oe)-1])
+	}
+	return append(out, tail...)
 }

@@ -71,7 +71,8 @@ func (r *Repository) layoutAt(ref string) (int, error) {
 	text, e := r.git("cat-file", "-p", ref+":hug.toml")
 	if e != nil {
 		// No hug.toml at ref: the base layout, as on disk.
-		if _, ve := r.git("rev-parse", "--verify", "--quiet", ref+"^{commit}"); ve == nil {
+		// An object read failure is not proof that the file is missing.
+		if entries, ve := r.git("ls-tree", ref, "--", "hug.toml"); ve == nil && entries == "" {
 			text, e = "", nil
 		}
 	}

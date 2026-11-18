@@ -333,6 +333,24 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	if s, e := a.open(ctx); e == nil {
 		defer s.c.Close()
 		boardDir = s.r.Dir
+		// The background pass takes Exclusive then Turn. Use that same
+		// order and fail closed: no rebase or other writer may move HEAD
+		// while upgrade is planning or installing its replay.
+		locks, e := s.r.Background()
+		if e != nil {
+			return nil, e
+		}
+		release, e := locks.Exclusive()
+		if e != nil {
+			return nil, e
+		}
+		defer release()
+		turn, e := locks.Turn()
+		if e != nil {
+			return nil, e
+		}
+		defer turn()
+		s.s.Invalidate()
 		// Catch-up first (w40cmk check 9): the remote moved to this
 		// layout and this clone has commits from before. They are
 		// replayed onto the remote one by one, so every step below works

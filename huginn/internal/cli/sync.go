@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/veridit/hug/internal/env"
 	"os"
@@ -127,6 +128,10 @@ func (s *session) syncNow() error {
 	st := gitbranch.State{Fetched: e == nil, Pushed: e == nil, Unpushed: s.r.Unpushed()}
 	if e != nil {
 		st.Error = strings.SplitN(e.Error(), "\n", 2)[0]
+		var layout *gitbranch.LayoutError
+		if errors.As(e, &layout) {
+			st.Layout = layout.Fix
+		}
 	}
 	_ = b.Record(st)
 	return e
