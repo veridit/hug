@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -39,6 +40,9 @@ type Filter struct {
 	State                              string
 	// Epic, when set, is an epic id: keep that epic and its children.
 	Epic string
+	// Me is who asks for next, and Coordinator the board's (hbgybn): an
+	// open request that routes to Me comes first, until it is resolved.
+	Me, Coordinator string
 }
 
 // InEpic reports whether t is the epic with id epic or one of its children.
@@ -82,8 +86,12 @@ type Store struct {
 	// agent session; the TUI's user). A write by the asker of an unseen
 	// answer marks it read (3jtfw9).
 	Actor string
-	board []Task
-	held  bool
+	// Action is the write being made, as the command reads (hug task note
+	// ID "..."): an asker's first write after an answer records it as the
+	// answer's outcome (41hhgn check 11).
+	Action string
+	board  []Task
+	held   bool
 }
 
 // Invalidate drops the kept board: the next Tasks reads the files again.
@@ -218,7 +226,7 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		}
 	}
 	if changed {
-		markRead(d, s.Actor)
+		markRead(d, s.Actor, s.Action)
 		path, e := s.diskPath(d.Task.Path)
 		if e != nil {
 			return Result{}, e
@@ -631,6 +639,22 @@ func Next(tasks []Task, f Filter) (Result, error) {
 	ts := append([]Task(nil), tasks...)
 	Sort(ts)
 	epics := ChildIndex(tasks)
+	// An open request for me comes before everything (hbgybn, crab 00:58):
+	// the cue is not its only path. Oldest first.
+	var req *Task
+	var reqAt string
+	for i := range ts {
+		if !RequestFor(ts[i], f.Me, f.Coordinator) {
+			continue
+		}
+		if at := OpenRequests(ts[i])[0].At; req == nil || at < reqAt {
+			req, reqAt = &ts[i], at
+		}
+	}
+	if req != nil {
+		r := OpenRequests(*req)[0]
+		return Result{Task: *req, Next: "hug task show " + req.ID + ", act on request " + strconv.Itoa(r.N) + " by " + r.By + ", then: hug task resolve " + req.ID + " " + strconv.Itoa(r.N) + ` "what changed"`}, nil
+	}
 	if f.Mine != "" {
 		// An answer to my question comes first, whatever its state
 		// (3jtfw9): reading it is the next thing to do. Newest first.

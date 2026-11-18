@@ -37,6 +37,12 @@ type Task struct {
 	// asker (Answer.For) has not read yet (3jtfw9), for the recall board
 	// cue: "jhf answered your question on ID: ...".
 	Answer *task.Answer
+	// Requests are the task's open requests (hbgybn), oldest first, for
+	// the recall cue "jhf asks on ID: ...".
+	Requests []task.Request
+	// Outcome is what the asker did first after the newest answer (41hhgn
+	// check 11), for the coordinator's cue.
+	Outcome *task.Outcome
 }
 
 // Finding is one open lint finding (findings on done or dropped tasks are
@@ -56,8 +62,11 @@ type Place struct {
 type Snapshot struct {
 	Tasks []Task
 	Place Place
-	lint  func() ([]task.Finding, []task.Task, error)
-	close func() error
+	// Coordinator is hug.toml [board] coordinator (hbgybn): who hears a
+	// request on a task nobody holds; "" means every session.
+	Coordinator string
+	lint        func() ([]task.Finding, []task.Task, error)
+	close       func() error
 }
 
 // Findings returns the open lint findings. It is computed on demand: the
@@ -134,6 +143,7 @@ func Open(ctx context.Context, cwd string) (*Snapshot, error) {
 		return nil, err
 	}
 	s := &Snapshot{Tasks: convert(ts), Place: p, close: c.Close}
+	s.Coordinator, _ = task.Coordinator(root)
 	s.lint = func() ([]task.Finding, []task.Task, error) {
 		fs, err := c.Lint(ctx)
 		return fs, ts, err
@@ -181,7 +191,7 @@ func convert(ts []task.Task) []Task {
 	out := make([]Task, 0, len(ts))
 	for _, t := range ts {
 		x := Task{ID: t.ID, Title: t.Title, State: t.State, Path: t.Path, Assignee: t.Assignee, Model: t.Model,
-			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer}
+			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer, Requests: task.OpenRequests(t), Outcome: t.Outcome}
 		for _, a := range t.Acceptance {
 			if !a.Settled() {
 				x.Open++

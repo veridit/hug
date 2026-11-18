@@ -68,7 +68,7 @@ Exit: 0 success, 1 error, 2 usage, 3 blocked, 4 no next task, 5 upgrade has chan
 next: hug task next
 `
 
-var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "ask", "resume", "review", "design", "answer", "next", "rebalance", "types", "states", "people", "models", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
+var Commands = []string{"setup", "init", "new", "ls", "search", "show", "edit", "move", "mv", "take", "done", "check", "strike", "promote", "note", "dep", "set", "drop", "wait", "ask", "resume", "review", "design", "answer", "request", "resolve", "requests", "coordinator", "next", "rebalance", "types", "states", "people", "models", "lint", "sync", "deduce", "import", "board", "tui", "mcp", "install", "uninstall", "upgrade", "attach", "detach", "reflections", "help"}
 
 type UsageError struct{ Problem, Fix string }
 type OperationError struct{ Problem, Fix string }
@@ -495,7 +495,7 @@ func (f flags) has(k string) bool { _, ok := f.values[k]; return ok }
 // as their value. Both accept task:ID, the form running text uses, and are
 // turned into the bare id here so every reply and printed command shows
 // the bare id and runs when pasted into a shell (xxvm6t).
-var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "ask", "resume", "review", "design", "answer", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
+var refCommands = []string{"show", "edit", "move", "mv", "take", "done", "drop", "wait", "ask", "resume", "review", "design", "answer", "request", "resolve", "check", "strike", "promote", "note", "dep", "set", "attach", "detach"}
 var refFlags = []string{"before", "after", "dep", "add", "remove", "parent", "epic"}
 
 func bareRefs(cmd string, f *flags) {
@@ -663,7 +663,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "ask": "as model to check show", "review": "as model by show", "answer": "as model", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "ask": "as model to check show", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary all", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -775,6 +775,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	}
 	// Who writes: the asker's own write marks an answer read (3jtfw9).
 	s.s.Actor = a.actor(f)
+	// What it writes, as the command reads: the outcome of an answer it
+	// acts on (41hhgn check 11). Text arguments are cut, "-" (stdin) named.
+	s.s.Action = actionLine(cmd, f.args)
 	if writer {
 		defer s.turn()()
 		// The first read happens under the turn: a background rebase
@@ -792,6 +795,12 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	}()
 	if cmd == "people" {
 		return a.runPeople(ctx, s, f)
+	}
+	if cmd == "coordinator" {
+		return a.runCoordinator(s, f)
+	}
+	if cmd == "requests" {
+		return a.runRequests(s, f)
 	}
 	if cmd == "models" {
 		return a.runModels(ctx, s, f)
@@ -1011,6 +1020,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(0); e != nil {
 			return nil, e
 		}
+		filter.Me = a.actor(f)
+		filter.Coordinator, _ = task.Coordinator(s.r.Dir)
 		r, e = s.s.Next(filter)
 	case "lint":
 		if len(f.args) > 1 {
@@ -1232,6 +1243,35 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			}
 			r, e = s.s.DesignShowing(f.args[0], f.args[1], a.whoTakes(f).assignee(), f.get("for"), f.get("show"))
 		}
+	case "request":
+		// hbgybn: a person's request on a task, verbatim; "-" reads stdin.
+		if len(f.args) == 1 {
+			return nil, usage("request needs the request", "hug task request "+f.args[0]+` "what you want changed"`)
+		}
+		if e = f.count(2); e != nil {
+			return nil, e
+		}
+		text, err := a.textArg(f.args[1])
+		if err != nil {
+			return nil, err
+		}
+		r, e = s.s.Request(f.args[0], text, a.actor(f))
+	case "resolve":
+		if len(f.args) < 3 {
+			return nil, usage("resolve needs ID N and what you changed", "hug task resolve "+f.args[0]+` 1 "what changed"`)
+		}
+		if e = f.count(3); e != nil {
+			return nil, e
+		}
+		n, err := strconv.Atoi(f.args[1])
+		if err != nil || n < 1 {
+			return nil, usage("resolve takes a request number (1, 2, ...), not "+strconv.Quote(f.args[1]), "hug task requests "+f.args[0])
+		}
+		text, err := a.textArg(f.args[2])
+		if err != nil {
+			return nil, err
+		}
+		r, e = s.s.Resolve(f.args[0], n, text, a.actor(f))
 	case "reflections":
 		return a.runReflections(s, f)
 	case "check":
@@ -1419,7 +1459,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		return Reply{"changed": r.Changed, "next": r.Next, "renamed": r.Renamed, "renames": r.Renames, "message": msg}, nil
 	}
 	if cmd != "next" && cmd != "take" {
-		if e = s.commit("hug task " + cmd + " " + r.Task.ID); e != nil {
+		msg := "hug task " + cmd + " " + r.Task.ID
+		if cmd == "resolve" {
+			msg += " " + f.args[1]
+		}
+		if e = s.commit(msg); e != nil {
 			return nil, e
 		}
 	}
@@ -1707,6 +1751,25 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		if ans, ok := t["answer"].(map[string]any); ok {
 			fmt.Fprintf(a.Out, "%s\n", answerLine(t["id"], ans))
 		}
+		// Requests (hbgybn): open ones with the command that closes them,
+		// resolved ones with their account, every line verbatim.
+		if rs, ok := t["requests"].([]any); ok {
+			for _, x := range rs {
+				b, _ := json.Marshal(x)
+				var r task.Request
+				if json.Unmarshal(b, &r) != nil {
+					continue
+				}
+				head := fmt.Sprintf("request %d by %s, %s", r.N, r.By, strings.Replace(r.At, "T", " ", 1))
+				if r.Open() {
+					head += " (open)"
+				}
+				fmt.Fprint(a.Out, head+":\n"+requestBody(r))
+				if r.Open() {
+					fmt.Fprintf(a.Out, "  fix: hug task resolve %s %d \"what changed\"\n", t["id"], r.N)
+				}
+			}
+		}
 		fmt.Fprintf(a.Out, "goal: %s\n", t["goal"])
 		for _, sec := range task.DescriptionSections {
 			if v, _ := t[descriptionKey(sec)].(string); v != "" {
@@ -1765,6 +1828,9 @@ func (a *App) Run(ctx context.Context, args []string) int {
 				fmt.Fprintf(a.Out, "child: %s  %s  [%s]\n", c["id"], c["title"], c["state"])
 			}
 		}
+	}
+	if rows, ok := reply["requests"].([]RequestRow); ok {
+		fmt.Fprint(a.Out, requestsText(rows))
 	}
 	if rs, ok := reply["reflections"].([]task.Reflection); ok {
 		if len(rs) == 0 {

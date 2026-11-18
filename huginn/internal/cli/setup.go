@@ -106,6 +106,16 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		}
 		add("people", len(offers) == 0, detail, do)
 	}
+	// Coordinator (hbgybn, crab 00:58): who hears a request on a task
+	// nobody holds. Unset, every session hears it once.
+	if branch && statErr == nil {
+		name, _ := task.Coordinator(filepath.Join(board, TaskDir))
+		detail := "hug.toml [board] coordinator is " + name + ": a person's request on a task nobody holds goes to them"
+		if name == "" {
+			detail = "no coordinator set: a person's request on a task nobody holds goes to every session on the board; name the session that coordinates the agents"
+		}
+		add("coordinator", name != "", detail, "hug task coordinator NAME")
+	}
 	// Models (jr55s8): each model's effort levels, for the Model: gate.
 	if branch && statErr == nil {
 		done, detail, do := modelsStatus(filepath.Join(board, TaskDir))
@@ -353,7 +363,11 @@ Epics: hug task set ID --parent EPIC; hug task promote ID N turns item N into
 its own task. hug task ls --epic EPIC shows an epic and its children.
 MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take (model
 and cwd required: your working folder, its branch is recorded; agent optional),
-task_done, task_update (actions set, check, promote, note, move, dep, drop).
+task_done, task_update (actions set, check, promote, note, move, dep, drop,
+request, resolve), task_requests.
+Requests: a person's request on a task (hug task requests) comes first in hug
+task next. Turn it into changes to the ticket, then hug task resolve ID N
+"what changed"; if it is unclear, hug task ask instead.
 Old backlog ids (TASK-123) work as aliases.
 Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.`
 

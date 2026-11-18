@@ -451,3 +451,82 @@ func TestBoardAnswerForAsker(t *testing.T) {
 		t.Fatalf("answer for nautilus shown to crab: %q", line)
 	}
 }
+
+// hbgybn check 3: a person's open request is said once to the task's
+// assignee, with its text and the resolve command; a task nobody holds
+// routes to the coordinator, or with none set to every session (each once);
+// another session does not hear a held task's request.
+func TestBoardRequestRouting(t *testing.T) {
+	now := time.Date(2026, 11, 18, 1, 0, 0, 0, time.UTC)
+	req := []recall.BoardRequest{{N: 1, By: "jhf", At: "2026-11-18T00:58", Text: "make it per board\nand split the TUI part"}}
+	held := recall.BoardTask{ID: "6ephqk", Title: "tags", State: "doing", Assignee: []string{"nautilus"}, Checks: 2, Open: 1, Requests: req}
+	free := recall.BoardTask{ID: "x1t1t1", Title: "rows", State: "todo", Requests: []recall.BoardRequest{{N: 2, By: "jhf", At: "2026-11-18T00:59", Text: "shorter title"}}}
+	in := func(self, coordinator string, ts ...recall.BoardTask) recall.BoardInput {
+		return recall.BoardInput{Tasks: ts, Self: recall.BoardSelf{Name: self}, Coordinator: coordinator}
+	}
+	e := boardEngine(t)
+	line, kind := e.BoardCue("s", "go on", "", now, src(in("nautilus", "crab", held)))
+	want := `Task board: jhf asks on 6ephqk: "make it per board and split the TUI part" (request 1). Act on it, then: hug task resolve 6ephqk 1 "what changed"`
+	if kind != "request" || line != want {
+		t.Fatalf("assignee: got %q %q, want %q", kind, line, want)
+	}
+	// Said once.
+	if line, kind = e.BoardCue("s", "go on", "", now.Add(time.Minute), src(in("nautilus", "crab", held))); kind == "request" {
+		t.Fatalf("said twice: %q", line)
+	}
+	// Held by nautilus: the coordinator does not hear it.
+	if line, _ = boardEngine(t).BoardCue("c", "go on", "", now, src(in("crab", "crab", held))); line != "" {
+		t.Fatalf("coordinator heard a held task's request: %q", line)
+	}
+	// Nobody holds it: the coordinator hears it, another session does not.
+	if line, kind = boardEngine(t).BoardCue("c", "go on", "", now, src(in("crab", "crab", free))); kind != "request" || !strings.Contains(line, "hug task resolve x1t1t1 2") {
+		t.Fatalf("coordinator, unowned: %q %q", kind, line)
+	}
+	if line, _ = boardEngine(t).BoardCue("w", "go on", "", now, src(in("wyvern", "crab", free))); line != "" {
+		t.Fatalf("a non-coordinator heard an unowned request: %q", line)
+	}
+	// No coordinator: every session hears it, once each.
+	for _, who := range []string{"wyvern", "crab"} {
+		ew := boardEngine(t)
+		if line, kind = ew.BoardCue(who, "go on", "", now, src(in(who, "", free))); kind != "request" {
+			t.Fatalf("%s, no coordinator: %q %q", who, kind, line)
+		}
+		if line, kind = ew.BoardCue(who, "go on", "", now.Add(time.Minute), src(in(who, "", free))); kind == "request" {
+			t.Fatalf("%s heard it twice: %q", who, line)
+		}
+	}
+	// Without the session's name, nothing is routed.
+	if line, _ = boardEngine(t).BoardCue("n", "go on", "", now, src(in("", "", free))); line != "" {
+		t.Fatalf("nameless session heard: %q", line)
+	}
+}
+
+// 41hhgn check 11 (cue half): the board's coordinator hears once what the
+// asker did after a person's answer; the asker itself, or a board with no
+// coordinator, hears nothing.
+func TestBoardAnswerOutcomeToCoordinator(t *testing.T) {
+	now := time.Date(2026, 11, 18, 1, 0, 0, 0, time.UTC)
+	tk := recall.BoardTask{ID: "41hhgn", Title: "asked", State: "doing", Assignee: []string{"nautilus"}, Checks: 2, Open: 1,
+		Outcome: &recall.BoardOutcome{Stage: "asked", By: "jhf", For: "nautilus", At: "2026-11-18T00:59", Text: `hug task note 41hhgn "rows now list the open ones first"`}}
+	in := func(self, coordinator string) recall.BoardInput {
+		return recall.BoardInput{Tasks: []recall.BoardTask{tk}, Self: recall.BoardSelf{Name: self}, Coordinator: coordinator}
+	}
+	e := boardEngine(t)
+	line, kind := e.BoardCue("c", "go on", "", now, src(in("crab", "crab")))
+	want := `Task board: nautilus acted on jhf's answer on 41hhgn (asked): hug task note 41hhgn "rows now list the open ones first". hug task show 41hhgn`
+	if kind != "answered" || line != want {
+		t.Fatalf("coordinator: got %q %q, want %q", kind, line, want)
+	}
+	if line, kind = e.BoardCue("c", "go on", "", now.Add(time.Minute), src(in("crab", "crab"))); kind == "answered" {
+		t.Fatalf("said twice: %q", line)
+	}
+	if line, _ = boardEngine(t).BoardCue("n", "go on", "", now, src(in("nautilus", "nautilus"))); strings.Contains(line, "acted on") {
+		t.Fatalf("the asker heard its own outcome: %q", line)
+	}
+	if line, _ = boardEngine(t).BoardCue("w", "go on", "", now, src(in("wyvern", "crab"))); strings.Contains(line, "acted on") {
+		t.Fatalf("a non-coordinator heard it: %q", line)
+	}
+	if line, _ = boardEngine(t).BoardCue("c", "go on", "", now, src(in("crab", ""))); strings.Contains(line, "acted on") {
+		t.Fatalf("heard with no coordinator set: %q", line)
+	}
+}

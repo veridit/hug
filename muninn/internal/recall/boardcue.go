@@ -21,6 +21,13 @@ import (
 //            second turn of edits and points at hug task next / new.
 //   - work:  the session checked or noted a task that is still todo (M3).
 //   - done:  a task doing for the session has every check ticked (M2).
+//   - request: a person's open request on a task (hbgybn), to its
+//            assignee, else the board's coordinator, else every session;
+//            said once per request, never held back by the hourly rate.
+//   - answered: the board's coordinator hears, once, what an asker did
+//            after a person's answer (41hhgn check 11): the asker's first
+//            write on the task. Only with a coordinator set, never to the
+//            asker itself.
 //   - lint:  at a break only, one open finding with its fix, at most once per
 //            LintEvery (the dream hand-out rule), preferring tasks the
 //            session touched, then doing, then todo.
@@ -45,6 +52,24 @@ type BoardTask struct {
 	// Answer is a person's answer to a question on the task that its
 	// asker has not read yet (3jtfw9); nil when there is none.
 	Answer *BoardAnswer
+	// Requests are the task's open requests (hbgybn), oldest first.
+	Requests []BoardRequest
+	// Outcome is what the asker did first after the newest answer (41hhgn
+	// check 11); nil before it acts.
+	Outcome *BoardOutcome
+}
+
+// BoardOutcome is an answer's outcome: Stage and By of the answer, For the
+// asker, At and Text its first write after reading it.
+type BoardOutcome struct {
+	Stage, By, For, At, Text string
+}
+
+// BoardRequest is one open request a person wrote on a task: N its number
+// on the task, By who asked, At when, Text the request verbatim.
+type BoardRequest struct {
+	N            int
+	By, At, Text string
 }
 
 // BoardAnswer is the newest unread answer on a task: Stage is design,
@@ -80,10 +105,13 @@ type BoardHug struct {
 
 // BoardInput is the board and the session's recent actions.
 type BoardInput struct {
-	Tasks    []BoardTask
-	Findings func() []BoardFinding
-	Self     BoardSelf
-	Actions  []BoardAction
+	Tasks []BoardTask
+	// Coordinator is the board's coordinator (hbgybn): who hears a request
+	// on a task nobody holds; "" means every session.
+	Coordinator string
+	Findings    func() []BoardFinding
+	Self        BoardSelf
+	Actions     []BoardAction
 }
 
 // BoardSource yields the input for actions after since. It returns nil when
@@ -154,11 +182,11 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 		}
 		// An answer is said once (its key names the answer), never held
 		// back by the hourly rate: a person is waiting on the agent.
-		if c.kind == "answer" && e.boardDue(session, c.key(), RepeatEvery, now) {
+		if (c.kind == "answer" || c.kind == "request" || c.kind == "answered") && e.boardDue(session, c.key(), RepeatEvery, now) {
 			e.boardMark(session, c.key(), now)
 			return c.line, c.kind
 		}
-		if c.kind != "answer" && e.boardDue(session, rate, BoardEvery, now) && e.boardDue(session, c.key(), RepeatEvery, now) {
+		if c.kind != "answer" && c.kind != "request" && c.kind != "answered" && e.boardDue(session, rate, BoardEvery, now) && e.boardDue(session, c.key(), RepeatEvery, now) {
 			e.boardMark(session, rate, now)
 			e.boardMark(session, c.key(), now)
 			return c.line, c.kind
@@ -208,6 +236,8 @@ type detection struct {
 	touched map[string]bool
 	own     map[string]bool // the session's own doing tasks (tpnd3n)
 	answers []BoardTask     // tasks with an unread answer for this session (3jtfw9)
+	asks    []BoardTask     // tasks with an open request routed to this session (hbgybn)
+	acted   []BoardTask     // tasks whose answer was acted on, for the coordinator (41hhgn)
 }
 
 type candidate struct{ kind, id, line string }
@@ -231,6 +261,19 @@ func (d detection) candidates(editTurns int64, model string) []candidate {
 	for _, t := range d.answers {
 		a := t.Answer
 		out = append(out, candidate{"answer", t.ID + "@" + a.At, fmt.Sprintf("%s answered your question on %s: %s (%s: %s). hug task show %s", a.By, t.ID, Truncate(oneLine(a.Text), 300), a.Stage, short(a.Question), t.ID)})
+	}
+	// The coordinator hears what an asker did with an answer (41hhgn check
+	// 11), once per outcome.
+	for _, t := range d.acted {
+		o := t.Outcome
+		out = append(out, candidate{"answered", t.ID + "@" + o.At, fmt.Sprintf("Task board: %s acted on %s's answer on %s (%s): %s. hug task show %s", o.For, o.By, t.ID, o.Stage, Truncate(oneLine(o.Text), 200), t.ID)})
+	}
+	// A person's request (hbgybn): a person waits on it too. Once per
+	// request (the id carries its number), oldest first.
+	for _, t := range d.asks {
+		for _, r := range t.Requests {
+			out = append(out, candidate{"request", fmt.Sprintf("%s#%d", t.ID, r.N), fmt.Sprintf("Task board: %s asks on %s: \"%s\" (request %d). Act on it, then: hug task resolve %s %d \"what changed\"", r.By, t.ID, Truncate(oneLine(r.Text), 300), r.N, t.ID, r.N)})
+		}
 	}
 	for _, t := range d.owned {
 		out = append(out, candidate{"owner", t.ID, fmt.Sprintf("Task board: you are working on %s but the board says %s. If it is yours now: hug task set %s --assignee %s", t.ID, strings.Join(t.Assignee, ", "), t.ID, d.self)})
@@ -318,6 +361,14 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 	for _, t := range in.Tasks {
 		if t.Answer != nil && self.Name != "" && strings.EqualFold(strings.TrimSpace(strings.TrimPrefix(t.Answer.For, "@")), self.Name) {
 			d.answers = append(d.answers, t)
+		}
+	}
+	for _, t := range in.Tasks {
+		if o := t.Outcome; o != nil && in.Coordinator != "" && strings.EqualFold(in.Coordinator, self.Name) && !strings.EqualFold(o.For, self.Name) {
+			d.acted = append(d.acted, t)
+		}
+		if len(t.Requests) > 0 && requestFor(t, self.Name, in.Coordinator) {
+			d.asks = append(d.asks, t)
 		}
 	}
 	// owner (v3k6cp): the session works a doing task (took it, works in its
@@ -585,4 +636,24 @@ func oneLine(s string) string { return strings.Join(strings.Fields(s), " ") }
 
 func samePlace(a, b string) bool {
 	return strings.TrimRight(a, `/\`) == strings.TrimRight(b, `/\`)
+}
+
+// requestFor says whether an open request on t reaches the session named
+// who, as hug task next routes it (task.RequestFor): the assignee of a
+// doing task; on a task nobody holds, the coordinator; with no
+// coordinator, every session. Without the session's name, nothing.
+func requestFor(t BoardTask, who, coordinator string) bool {
+	who = strings.TrimSpace(who)
+	if who == "" {
+		return false
+	}
+	for _, a := range t.Assignee {
+		if strings.EqualFold(strings.TrimSpace(strings.TrimPrefix(a, "@")), who) {
+			return true
+		}
+	}
+	if len(t.Assignee) > 0 && t.State == "doing" {
+		return false
+	}
+	return coordinator == "" || strings.EqualFold(coordinator, who)
 }

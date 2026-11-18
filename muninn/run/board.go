@@ -30,6 +30,7 @@ func boardSource(ctx context.Context, on bool, cwd, name string, activity func(s
 		defer snap.Close()
 		in := &recall.BoardInput{Self: recall.BoardSelf{Name: name, Model: act.Model, Branch: snap.Place.Branch, Worktree: snap.Place.Worktree, Linked: snap.Place.Linked}}
 		in.Tasks = boardTasks(snap.Tasks)
+		in.Coordinator = snap.Coordinator
 		in.Actions = boardActions(act.Actions, snap.Place.Worktree)
 		if wantLint {
 			// Read now: the snapshot closes when this returns.
@@ -58,6 +59,12 @@ func BoardTask(t board.Task) recall.BoardTask {
 	bt := recall.BoardTask{ID: t.ID, Title: t.Title, State: t.State, Assignee: t.Assignee, Branch: t.Branch, Worktree: t.Worktree, Checks: t.Checks, Open: t.Open}
 	if a := t.Answer; a != nil {
 		bt.Answer = &recall.BoardAnswer{Stage: a.Stage, Question: a.Question, Text: a.Text, By: a.By, For: a.For, At: a.At}
+	}
+	if o := t.Outcome; o != nil {
+		bt.Outcome = &recall.BoardOutcome{Stage: o.Stage, By: o.By, For: o.For, At: o.At, Text: o.Text}
+	}
+	for _, r := range t.Requests {
+		bt.Requests = append(bt.Requests, recall.BoardRequest{N: r.N, By: r.By, At: r.At, Text: r.Text})
 	}
 	return bt
 }

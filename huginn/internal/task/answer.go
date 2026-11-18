@@ -26,7 +26,9 @@ import (
 //
 // The asker sees the newest answer first (show, next --mine, the recall
 // board cue) until it writes anything on the task after it; that write
-// appends "NAME read the answer", which counts as seen.
+// appends "NAME read the answer: WHAT", which counts as seen, WHAT being the
+// write itself (41hhgn check 11: the answer's outcome, which the board's
+// coordinator hears once). Older lines without ": WHAT" still read.
 
 // Answer is the newest answer on a task its asker has not seen yet, read
 // from History when the file is parsed. Derived, never written as a field.
@@ -45,14 +47,33 @@ var (
 	// answeredHead starts a block answer (41hhgn): the texts follow on
 	// "  > " (question) and "  " (answer) lines.
 	answeredHead = regexp.MustCompile(`^- (\S+) answered (\w+)(?: \(check (\d+)\))?, by (.+?)(?:, for (.+?))? \([^()]*\):$`)
-	readLine     = regexp.MustCompile(`^- \S+ (.+) read the answer$`)
+	readLine     = regexp.MustCompile(`^- (\S+) (.+?) read the answer(?:: (.*))?$`)
 )
 
 // unseenAnswer is the newest answered line in history whose asker has not
 // written on the task since, or nil. An answer the asker gave themselves is
 // seen.
 func unseenAnswer(history []string) *Answer {
+	a, _ := readAnswers(history)
+	return a
+}
+
+// Outcome is what the asker did first after reading an answer (41hhgn
+// check 11): the answer's stage and who gave it (By) for whom (For), and
+// the asker's write (Text, at At).
+type Outcome struct {
+	Stage string `json:"stage"`
+	By    string `json:"by"`
+	For   string `json:"for"`
+	At    string `json:"at"`
+	Text  string `json:"text"`
+}
+
+// readAnswers is unseenAnswer, and the newest answer's outcome, if its
+// asker has acted on it.
+func readAnswers(history []string) (*Answer, *Outcome) {
 	var cur *Answer
+	var outcome *Outcome
 	seen := func() {
 		if cur != nil && (cur.For == "" || strings.EqualFold(cur.For, cur.By)) {
 			cur = nil
@@ -90,11 +111,15 @@ func unseenAnswer(history []string) *Answer {
 			seen()
 			continue
 		}
-		if m := readLine.FindStringSubmatch(line); m != nil && cur != nil && strings.EqualFold(m[1], cur.For) {
+		if m := readLine.FindStringSubmatch(line); m != nil && cur != nil && strings.EqualFold(m[2], cur.For) {
+			outcome = nil
+			if m[3] != "" {
+				outcome = &Outcome{Stage: cur.Stage, By: cur.By, For: cur.For, At: m[1], Text: m[3]}
+			}
 			cur = nil
 		}
 	}
-	return cur
+	return cur, outcome
 }
 
 // answerBlock is the History block of an answer: the head (without the
@@ -191,9 +216,13 @@ func (s *Store) Answer(ref, text, by string) (Result, error) {
 // markRead appends "NAME read the answer" when actor, writing on d, is who
 // its newest unseen answer is for (crab 13:26: any write by the asker after
 // the answer counts as seen).
-func markRead(d *Document, actor string) {
+func markRead(d *Document, actor, action string) {
 	if actor = strings.TrimSpace(actor); actor == "" || !AnswerFor(d.Task, actor) {
 		return
 	}
-	d.History(stamp() + " " + actor + " read the answer")
+	line := stamp() + " " + actor + " read the answer"
+	if action = strings.Join(strings.Fields(action), " "); action != "" {
+		line += ": " + action
+	}
+	d.History(line)
 }

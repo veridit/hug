@@ -260,6 +260,12 @@ type Task struct {
 	// Answer is the newest answer in History its asker has not seen
 	// (3jtfw9): read from the file, never written as a field.
 	Answer *Answer `json:"answer,omitempty"`
+	// Requests are the person's requests in ## Requests (hbgybn), open
+	// and resolved, in file order.
+	Requests []Request `json:"requests,omitempty"`
+	// Outcome is what the asker did first after the newest answer (41hhgn
+	// check 11), from its History read line; nil before it acts.
+	Outcome *Outcome `json:"outcome,omitempty"`
 }
 
 // Texts of one task file, see Task.Texts.
@@ -570,7 +576,8 @@ func Parse(path string, data []byte) *Document {
 		d.Findings = append(d.Findings, *q)
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
-	d.Task.Answer = unseenAnswer(d.historyLines())
+	d.Task.Answer, d.Task.Outcome = readAnswers(d.historyLines())
+	d.Task.Requests = parseRequests(d.requestLines())
 	d.Task.Texts = &Texts{Bodies: true, Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}
 	for _, sec := range DescriptionSections {
 		d.Task.Texts.Description[sec] = d.sectionText(sec)

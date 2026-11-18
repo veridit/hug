@@ -229,7 +229,7 @@ func (s *session) syncStatus(reply Reply) {
 }
 
 // readOnly commands change no task file: they take no board turn.
-var readOnly = map[string]bool{"ls": true, "search": true, "show": true, "next": true, "lint": true, "board": true, "types": true, "help": true, "setup": true, "mcp": true, "upgrade": true}
+var readOnly = map[string]bool{"ls": true, "search": true, "show": true, "next": true, "requests": true, "lint": true, "board": true, "types": true, "help": true, "setup": true, "mcp": true, "upgrade": true}
 
 // exclusive is take's lock order: a running background pass finishes, the
 // next waits, then the board turn; the release frees both.
