@@ -18,6 +18,10 @@ type Person struct {
 	Short string   `json:"short"`
 	Name  string   `json:"name,omitempty"`
 	Email []string `json:"email,omitempty"`
+	// Alias are other names the person is called by on this board
+	// (agxqax): hug.toml alias = ["jorgen"]. Asking or waiting on one
+	// resolves to Short; rows and asked_for always say Short.
+	Alias []string `json:"alias,omitempty"`
 }
 
 // People reads hug.toml [people.SHORT] tables, in the order written. A
@@ -60,6 +64,8 @@ func People(root string) ([]Person, error) {
 			out[cur].Name = scalar(value)
 		case cur >= 0 && key == "email":
 			out[cur].Email = list(value)
+		case cur >= 0 && key == "alias":
+			out[cur].Alias = list(value)
 		}
 	}
 	return out, nil
@@ -135,6 +141,13 @@ func PeopleEntry(p Person) string {
 	out := "[people." + p.Short + "]\n"
 	if p.Name != "" {
 		out += "name = " + q(p.Name) + "\n"
+	}
+	if len(p.Alias) > 0 {
+		aliases := make([]string, len(p.Alias))
+		for i, a := range p.Alias {
+			aliases[i] = q(a)
+		}
+		out += "alias = [" + strings.Join(aliases, ", ") + "]\n"
 	}
 	return out + "email = [" + strings.Join(emails, ", ") + "]\n"
 }

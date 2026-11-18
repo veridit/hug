@@ -87,6 +87,13 @@ func (s *Store) WaitUntil(ref, on, until, by string) (Result, error) {
 		}
 		return Result{}, usageErr(id, "wait needs what it waits on", fix)
 	}
+	// A question to a person is asked, never waited on (agxqax): "owner:
+	// check 4 ..." as a wait is in nobody's ASKED.
+	if people, _ := People(s.Root); len(people) > 0 {
+		if w, ok := AddressesPerson(people, on, len(d.Task.Acceptance)); ok {
+			return Result{}, usageErr(id, "wait is for things with no person to answer (CI, a release); a question to a person is hug task ask: "+strconv.Quote(oneLineFix(on))+" is for "+w.For, w.AskCommand(id))
+		}
+	}
 	if d.Task.State != "doing" {
 		return Result{}, refuse(d.Task, "doing/waiting", "hug task take "+id+" --model MODEL")
 	}
