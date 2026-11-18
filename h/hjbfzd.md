@@ -1,15 +1,20 @@
 ---
 id: hjbfzd
 title: "Screen capture: attach to a chosen task, pick one, or create a new task"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T21:16"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "hjbfzd"
+worktree: "/Users/jhf/.jcode/scratch/hjbfzd"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+
+## History
+- 2026-11-18T21:16 todo -> doing/active (take)
