@@ -1,15 +1,20 @@
 ---
 id: bbxdd7
 title: "Pending requests and answers reach the coordinator's next session"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzt"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T16:49"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "bbxdd7"
+worktree: "/Users/jhf/.jcode/scratch/bbxdd7"
 ---
 
 ## Goal
@@ -43,3 +48,7 @@ check 1: commit 660bdca0 (on main 5a8b14da), CI 44335726331 all 7 jobs success. 
 check 2: TestBoardCueSkipsDeliveredRequest in muninn/run/board_test.go. Failing first: 'the cue names request 1, already delivered to crab' (lint-gaps2/bbxdd7-check2-failfirst.txt). The fix is boardTasksFor in muninn/run/board.go plus board.DeliveredTo. boardcue.go is untouched, so agh2h7 merges cleanly apart from CHANGELOG.
 
 crab review 16:49 local: accepted. 660bdca0 on 5a8b14da: pending inbox under hug-inbox/pending/NAME in every home, delivered on the next turn_start of that name, History re-read so delivered once; board cue skips requests delivered/acknowledged to that session (muninn/run/board.go, boardcue.go untouched); DeliveryFlow claim tested. 3 failing-first. CI 44335726331 green. Dependency on gmzd87 removed (shipped in v0.7.64; gmzd87 waits only on Jørgen's live check 4). Rulings: (1) yes, add a muninn/run hook-wiring test; (2) rename before next session: acceptable, documented.
+
+
+## History
+- 2026-11-18T16:49 todo -> doing/active (take)
