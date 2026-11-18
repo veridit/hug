@@ -1,17 +1,18 @@
 ---
 id: 66ex4y
 title: "Capture: daily quality check"
-state: "todo"
+state: "doing"
 type: chore
 priority: "medium"
-assignee: []
+assignee: ["hatchling"]
 labels: ["capture"]
 created: 2026-11-10
 updated: 2026-11-10
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T03:31"
 ---
 
 ## Goal
@@ -40,3 +41,4 @@ crab 00:43 asked: does each hug mem forget run a full index pass? Measured 2026-
 ## History
 - 2026-11-17T21:58 todo -> doing/active (take)
 - 2026-11-17T22:24 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T21:58
+- 2026-11-18T03:31 todo/ready -> doing/active (take)
