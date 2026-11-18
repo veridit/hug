@@ -1,19 +1,20 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "todo"
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T12:56"
 ---
 
 ## Goal
@@ -82,3 +83,4 @@ file:forget-time.txt (1655 bytes, sha256:6b12223b) copy of hatchling's measureme
 - 2026-11-18T07:23 todo/ready -> doing/active (take)
 - 2026-11-18T08:51 doing/active -> doing/waiting (wait)
 - 2026-11-18T09:00 doing/waiting -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T07:23; waiting_asked_by: wyvern; waiting_on: CI run 44262023787, normal main gate for348133a3; wyvern owns watcher243200zkab, no acceptance ticks until green; waiting_since: 2026-11-18T08:51
+- 2026-11-18T12:56 todo/ready -> doing/active (take)
