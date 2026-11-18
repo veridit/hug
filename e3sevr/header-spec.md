@@ -101,3 +101,25 @@ v: o overview · l list · b board · ! lint · Esc cancel
 ```
 
 The view line lights up while `v` waits.
+
+## Colours: one meaning each (zhvkmj)
+
+crab 02:52 and 03:01 local, from Jørgen 02:32 ("it bugs me that waiting and lint are two
+different issues" in one colour). Each meaning has one colour, and no two meanings share one.
+TestOneColourPerMeaning (huginn/internal/tui) holds the palette to this table: each type and
+priority sits at least 60 RGB away from amber and red, and the five types stay apart from each
+other. The colours live in render.go (forYouColour, problemColour, typeColours,
+priorityColours), dark / light.
+
+| Meaning | Colour (dark / light) | Where |
+|---|---|---|
+| Waits on you | amber #ffb454 / #995200 | ASKED title, `? N for you`, a task's `[asked]` badge, the question block and line, the stage word of a question to you, the confirm bar (background) |
+| Something is wrong | red #ff8585 / #ae2525 | broken lint: its `!`, the LINT title, the detail's `⚠` and `fix:` lines; depends; a picture that cannot be read |
+| Calm, inactive | dim #8795a8 / #586474 | WAITING title, a wait on a thing (CI, a date), a question asked of someone else, advice-only lint (`·` and its detail lines), deferred |
+| State | todo #75bfff / #215da1, doing #00bfff / #006c9c, done #8ac987 / #31732c, dropped dim | the count line, the status word, IN PROGRESS / NEXT UP / RECENTLY DONE titles, board columns |
+| Type | feature #bc9dff / #7143a8, bug #ff9ecb / #a8327f, chore #b8bccb / #586474, spike #c4b48a / #6b5a2a, docs #7bd4c2 / #146f61 | the type cell and badge |
+| Priority | critical #ff7ad9 / #a3246f, high #d8cc85 / #5f6b1a, medium #a7b4c4 / #586474, low #8795a8 / #586474 | the priority cell and badge |
+
+Priority is no problem: critical is magenta, never red. A yanked row's `y` is the accent blue,
+not amber. On a light terminal chore, medium and low share the dim grey: quiet values, no meaning
+of their own.

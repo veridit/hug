@@ -104,6 +104,7 @@ landed be165b3 on main 2026-11-18: hug tui: footers mark a letter key inside its
 landed be784f6 on main 2026-11-18: hug tui: split combined hints so each key marks its own word (H/L column ·…
 landed f85c01f on main 2026-11-18: hug tui: tmux goldens for the marked footers (e3sevr checks 14, 16)
 shipped in v0.7.52 (385f774)
+file:header-spec.md (7778 bytes, sha256:b44592e4) replaces sha256:32713c2e zhvkmj: 'Colours: one meaning each' table (crab 02:52, 03:01)
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
 - 2026-11-18T01:39 doing/active -> doing/asked (ask)
