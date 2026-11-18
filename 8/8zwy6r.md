@@ -1,7 +1,7 @@
 ---
 id: 8zwy6r
 title: "Sync merges notes added on both sides instead of stopping"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["macaque"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T16:57"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T17:27"
-waiting_asked_by: "macaque"
+done_at: "2026-11-18T18:55"
 ---
 
 ## Goal
@@ -62,6 +58,8 @@ check 4: TestSyncBothSidesStateRemoteWinsAndSays PASS on 4504654a: exit 0, one '
 Item 3 cannot be struck: 'item 3 is ticked: it was done, so it is not struck out' (hug task strike refuses a ticked item and there is no uncheck). Its wording ('still stop with a fix line') is superseded by crab's 04:44 ruling; item 4 states the real behaviour and is ticked with evidence.
 landed 518ecc1 on main 2026-11-18: sync: both sides' appends tested on a plain board; a kept state stays whole…
 shipped in v0.7.67 (518ecc1)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T16:57 todo -> doing/active (take)
 - 2026-11-18T17:27 doing/active -> doing/waiting (wait)
+- 2026-11-18T18:55 doing/waiting -> done (done); was doing_since: 2026-11-18T16:57; waiting_asked_by: macaque; waiting_on: crab review; waiting_since: 2026-11-18T17:27
