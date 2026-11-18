@@ -62,6 +62,7 @@ landed 28791de on main 2026-11-18: tui: one colour per meaning: amber only for w
 shipped in v0.7.54 (28791de)
 crab 19:54 local, request 1 (Jørgen 19:52): three points. (1) Files not reachable on this task: new check 5, reproduce on zhvkmj itself first. (2) zoom: that is 33v71x (+/- zoom, j/k scroll, o opens Preview), filed 19:48 from his 911j70 request. (3) red for depends reads like a problem, which it is not: new check 6, depends gets its own calm colour, red only for broken lint. That overrides crab's 02:52 ruling that grouped depends with problems.
 check 4: Jørgen 19:57 local: 'good enough for this ticket, but there will be follow-up tickets': still too much colour, depends must not be red (check 6), the selected row too intense (911j70).
+crab 19:58 local: check 4 ticked on Jørgen's answer. His remaining points are tracked: depends not red = check 6 (kikazaru), Files reachable = check 5 (kikazaru), the selected row too intense = 911j70 (spreadsheet, waiting on his A/B), 'too much colour' overall = qh9ep1 check 9 (one cue per meaning, macaque). zhvkmj closes when 5 and 6 land.
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
