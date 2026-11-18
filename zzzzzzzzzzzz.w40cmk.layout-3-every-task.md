@@ -44,3 +44,5 @@ Jørgen 01:25 local proposes instead: .hug/tasks/37bryg.md (the task), .hug/task
 Jørgen 01:27 local, DECIDED layout 3: .hug/tasks/ID.md (front matter + body; GitHub renders YAML front matter as a table at the top of the page, so no .json) and .hug/tasks/ID/ for the task's files. Neither name ever changes. rank and group live in the front matter. Supersedes the plain ID.md plan (files now move from the sibling folder convention into ID/ explicitly) and crab's README.md folder proposal.
 
 Jørgen 01:27 local: agreed, a reorder (rank or group change) leaves updated: unchanged; updated: marks real edits only.
+
+Jørgen 01:32 local, DECIDED: shard by the first character of the id: .hug/tasks/3/37bryg.md and .hug/tasks/3/37bryg/ (its files). The path follows from the id alone (no index), never changes, and keeps folders near 330 entries at 10,000 tasks (GitHub's web listing stops at about 1,000). Group and epic (parent) stay in the front matter, as do rank and group; no folder means anything to a person. Rejected: group as folder (moves break links; a generated group id fixes renames only), creation month (uneven fill).
