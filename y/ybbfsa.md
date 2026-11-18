@@ -34,7 +34,7 @@ Logs: gh run view 44316906824 --log-failed (attempt 1). TempDir cleanup: likely 
 ## Acceptance
 - [ ] Each of the 3 has its cause named with evidence in a note (log line or a reproduction).
 - [ ] Each fixed one passes -count=50 locally (niced) and a test that reproduces it failed first where possible.
-- [ ] No timeout raised and no retry added.
+- [x] No timeout raised and no retry added.
 - [ ] Fourth flake: TestBranchSyncFromLinkedWorktreeUsesMainCheckout/main_first (muninn/internal/project) on ubuntu CI 44328375780 attempt 1: 'git worktree add --detach .../linked HEAD: fatal: could not open .git/worktrees/linked/locked for writing: No such file or directory'. Cause named and fixed like the other three.
 
 ## Notes
@@ -45,5 +45,6 @@ Flake 4 cause (muninn/internal/project TestBranchSyncFromLinkedWorktreeUsesMainC
 crab 17:48: fifth flake: huginn/gitbranch TestUpgradeFailuresKeepOriginalLayout failed once in iwazaru's full 196 s package run, passed alone (56.985s); no LocalOnly involved.
 Bars (16:14-16:51Z, niced GOMAXPROCS=2, machine load avg 224-423): f4 TestBranchSyncFromLinkedWorktreeUsesMainCheckout+TestGitInitCommitPrunesNoWorktree -count=50: 'ok muninn/internal/project 149.216s', 0 FAIL. f1 TestOpenDuringRebase -count=50: 'ok huginn/gitbranch 33.989s', 0 FAIL; TestBackgroundSyncParallelNotesAllLand -count=25: 'ok huginn/internal/cli 188.779s', 0 FAIL (second 25 running). f2: original symptom ('TempDir RemoveAll cleanup' / 'directory not empty') 0 times in 125 runs (base 30 + fix 25+25+50 partial + base A/B 25). BUT under this load lost-ack/unknown-after fail on NetTimeout=1s ('the remote did not answer within 1s', 'ack-marker: no such file'): fix arm 6/25 (f2-count25b.log) and 0/25 (f2-count25a.log), base arm (origin/main upgrade_test.go) 6/25 (f2-base-count25.log): the same rate without my change, so a separate load-sensitivity of the 1s fixture timeout, not flake 2. Not fixed here (no timeout raises): asking crab.
 Committed 4c1317a0 on origin/main 0b3c0e96 (v0.7.66), pushed ybbfsa + ci/ybbfsa; CI 44353109208 queued. Files: huginn/gitbranch/gitbranch.go (+rebasing, Open returns r while rebase-merge/head-name names the branch, ~line 457), gitbranch_test.go (TestOpenDuringRebase), upgrade_test.go (quietRemote + TestFixtureRemoteStartsNoMaintenance), muninn/internal/project/project_test.go (gitInit maintenance.auto=false + TestGitInitCommitPrunesNoWorktree), CHANGELOG. Rebased tip: go test -count=1 huginn/gitbranch 'ok 71.736s', muninn/internal/project 'ok 7.511s' (load avg 229). f1 TestBackgroundSyncParallelNotesAllLand -count=25+25: 'ok 188.779s' and 'ok 171.773s', 0 FAIL. Flake 3 (TestCatchUpAcrossLayoutMove invalid object) NOT fixed here: not reproduced (0/40 alone, 0/1 full traced package), handed to tigress on branch ybbfsa-f3 (16:48Z). Load-only failure of lost-ack/unknown-* at NetTimeout=1s filed as 3t4a49 (crab 16:54).
+check 3: No timeout raised and no retry added: diff 4c1317a0 vs origin/main touches no NetTimeout, sleep, deadline or retry; fixes are config (maintenance.auto=false) in two test helpers and a rebase-state check in Open.
 ## History
 - 2026-11-18T15:56 todo -> doing/active (take)
