@@ -2,12 +2,22 @@ package cli
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 )
+
+// sharesMemories makes this test's repositories opt in to sharing project
+// memories (34r1ft), for tests of the shared rename itself.
+func sharesMemories(t *testing.T) {
+	t.Helper()
+	old := memoryShares
+	memoryShares = func(string) (bool, error) { return true, nil }
+	t.Cleanup(func() { memoryShares = old })
+}
 
 func memoryLayoutApp(t *testing.T) (*App, string, string) {
 	t.Helper()
@@ -170,6 +180,9 @@ func TestMemoryLayoutLinkedWorktreeUsesOneCanonicalCheckout(t *testing.T) {
 }
 
 func TestMemoryLayoutTwoClonesKeepUnpushedMemory(t *testing.T) {
+	// A repository that shares its memories (34r1ft opt-in): the rename
+	// reaches the remote. Not parallel (t.Setenv), so the swap is safe.
+	sharesMemories(t)
 	// Exercise the Windows Git default on every OS. The byte-preservation
 	// fixture must explicitly select its checkout policy, not normalize data.
 	config := filepath.Join(t.TempDir(), "global.gitconfig")
@@ -282,5 +295,45 @@ func TestMemoryLayoutSharedUpgradeRollbackOnDestinationCollision(t *testing.T) {
 	}
 	if b, err := os.ReadFile(filepath.Join(old, "memories.jsonl")); err != nil || string(b) != raw {
 		t.Fatalf("failure changed source: %v %q", err, b)
+	}
+}
+
+// 34r1ft (bonehound, wxsyc5): hug upgrade --apply renamed muninn-notes to
+// hug/memory on the remote with no share check: the route by which a
+// public repository published its memories. A repository that keeps its
+// memories local (the default) renames only here: the remote's refs are
+// byte-identical before and after, and the upgrade says why.
+func TestMemoryLayoutUpgradeLeavesRemoteWhenRepoKeepsMemoriesLocal(t *testing.T) {
+	a, old, raw := memoryLayoutApp(t)
+	remote := filepath.Join(t.TempDir(), "remote.git")
+	git(t, a.Cwd, "init", "--bare", "-b", "main", remote)
+	git(t, a.Cwd, "remote", "add", "origin", remote)
+	git(t, a.Cwd, "push", "-u", "origin", "main")
+	git(t, old, "push", "-u", "origin", "muninn-notes")
+	before := git(t, a.Cwd, "ls-remote", "origin")
+	if !strings.Contains(before, "refs/heads/muninn-notes") {
+		t.Fatalf("fixture: remote lacks muninn-notes:\n%s", before)
+	}
+	code, out := runText(a, "upgrade", "--apply")
+	if code != 0 {
+		t.Fatalf("upgrade: exit %d\n%s", code, out)
+	}
+	if after := git(t, a.Cwd, "ls-remote", "origin"); after != before {
+		t.Fatalf("remote refs changed by a local-only upgrade:\nbefore:\n%s\nafter:\n%s", before, after)
+	}
+	if !strings.Contains(out, "remote muninn-notes kept; this repo keeps memories local") {
+		t.Fatalf("upgrade did not say the remote was kept:\n%s", out)
+	}
+	canonical := filepath.Join(a.Cwd, ".hug", "memory")
+	if got := git(t, canonical, "branch", "--show-current"); got != "hug/memory" {
+		t.Fatalf("local branch not renamed: %q", got)
+	}
+	if b, err := os.ReadFile(filepath.Join(canonical, "memories.jsonl")); err != nil || string(b) != raw {
+		t.Fatalf("memory bytes lost: %v %q", err, b)
+	}
+	// No upstream: the old one (origin/muninn-notes) is not carried over, so
+	// a plain git push from the checkout has nowhere to go.
+	if up, err := exec.Command("git", "-C", canonical, "rev-parse", "--abbrev-ref", "@{upstream}").CombinedOutput(); err == nil {
+		t.Fatalf("hug/memory has an upstream after a local-only upgrade: %s", up)
 	}
 }
