@@ -1,10 +1,10 @@
 ---
 id: c3hszg
 title: "Recall: user-weighted BM25F and best-passage scoring in muninn search"
-state: todo
+state: "doing"
 type: spike
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: ["recall"]
 created: 2026-11-13
 updated: 2026-11-13
@@ -12,6 +12,11 @@ parent: "d634kr"
 group: ""
 rank: "zzzz"
 aliases: ["recall-user-weighted-bm25f-and-best"]
+doing_since: "2026-11-18T17:19"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "c3hszg"
+worktree: "/Users/jhf/.jcode/scratch/c3hszg"
 ---
 
 ## Goal
@@ -41,3 +46,7 @@ recall4 (LongMemEval_S, round level, all@5, paired bootstrap vs plain BM25): hel
 Shipped v0.7.2 (2026-11-14): BM25 keyword scoring, bm25_scale 2.0. Real memories, 277 frozen messages, blind judge: long +0.39 rel/msg [+0.25,+0.55], irr -0.07 [-0.22,+0.10]; held-out long +0.26 [+0.03,+0.48]; short +0.01 [-0.04,+0.06]. Default reproduces measured arm on 277/277 messages. Rejected: rarest-12 terms, no all-words bonus, relative floor 0.50, no gates. Item 2 open: user-weighting needs captured source (0/11,885 memories have it) and best-passage is untested on real memories. Evidence: muninn/docs/RECALL4.md.
 
 Fresh check 2026-11-14 (147 post-freeze messages, sessions started after 6 Nov, frozen 5 Nov snapshot, blind judge). Short typed n=83 (6 sessions, below the 8-session bar): BM25 rel +0.02 [0.00,+0.05], irr -0.07 [-0.12,-0.02]: confirmed, fewer irrelevant. Long n=64: rel +0.05 [-0.05,+0.16], irr +0.41 [+0.16,+0.64]: worse. 59 of 64 long are one templated statbus job ('You review one Backlog ticket...'); BM25 matches the ticket id to memories about that ticket's history, which the judge rates irrelevant to a description-style review. Failure mode: rare-id match is not task relevance. Artifacts: $JCODE_SCRATCH_DIR/recall4/real/report-fresh.md
+
+
+## History
+- 2026-11-18T17:19 todo -> doing/active (take)
