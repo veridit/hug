@@ -36,5 +36,6 @@ CI 44247018416. Layout w40cmk remains off main and must ship separately.
 
 
 Released v0.7.57 from f767f6d8, exact CI 44247018416 all six jobs success. Tag 0052c823, main merge e9c65c6f. Release workflow 44248615828 succeeded before brew upgrade. CHANGELOG merge has no extra diff versus tag; layout3 absent. Installed version verified below.
+Installed verification: hug version printed "hug v0.7.57" after successful release workflow 44248615828 and targeted brew upgrade 0.7.56 -> 0.7.57.
 ## History
 - 2026-11-18T07:04 todo -> doing/active (take)
