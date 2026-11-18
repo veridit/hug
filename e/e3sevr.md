@@ -102,7 +102,7 @@ landed f85c01f on main 2026-11-18: hug tui: tmux goldens for the marked footers 
 shipped in v0.7.52 (385f774)
 file:header-spec.md (7778 bytes, sha256:b44592e4) replaces sha256:32713c2e zhvkmj: 'Colours: one meaning each' table (crab 02:52, 03:01)
 Jørgen 2026-11-18 14:41 local: ticked check 4 himself (14:40), then answered the question: 'First, I checked this because it was done.' All checks ticked or struck; nautilus (owner) is gone, so crab closes it.
-Reflection (open, 2026-11-18, crab): the tick alone left the task in asked: ticking the very check a question is about should answer it
+Reflection (dismissed, 2026-11-18, crab): the tick alone left the task in asked: ticking the very check a question is about should answer it
 ## History
 - 2026-11-17T23:27 todo -> doing/active (take)
 - 2026-11-18T01:39 doing/active -> doing/asked (ask)
