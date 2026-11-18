@@ -134,13 +134,7 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 	if fix == "" {
 		t.Fatal("remote-only refusal has no runnable fix")
 	}
-	var preview string
-	var previewErr error
-	if runtime.GOOS == "windows" {
-		preview, previewErr = try("cmd", "/C", fix)
-	} else {
-		preview, previewErr = try("sh", "-c", fix)
-	}
+	preview, previewErr := runMemoryLayoutPrintedFix(root, env, fix)
 	if e, ok := previewErr.(*exec.ExitError); !ok || e.ExitCode() != 5 || !strings.Contains(preview, "layout: would: .muninn-notes/ moves to .hug/memory/") {
 		t.Fatalf("printed fix did not attach then preview5: %v\nfix: %s\n%s", previewErr, fix, preview)
 	}
@@ -151,5 +145,39 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 	run(bin, "upgrade", "--apply")
 	if run("git", "rev-parse", "hug/memory") != head {
 		t.Fatal("remote-only recovery changed original memory history")
+	}
+}
+
+// Feed the exact printed command to the native shell. exec.Command's Windows
+// argument quoting follows CommandLineToArgvW, not cmd.exe's /C grammar, and
+// passing a quoted command as an argument can leave literal quotes in paths.
+func runMemoryLayoutPrintedFix(root string, env []string, fix string) (string, error) {
+	cmd := exec.Command("sh")
+	input := fix + "\n"
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/D", "/Q")
+		input = fix + "\r\nexit /b %errorlevel%\r\n"
+	}
+	cmd.Dir, cmd.Env = root, env
+	cmd.Stdin = strings.NewReader(input)
+	out, err := cmd.CombinedOutput()
+	return string(out), err
+}
+
+func TestMemoryLayoutPrintedFixKeepsQuotedPathAndExitCode(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "quoted recovery path")
+	if err := os.MkdirAll(root, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := exec.Command("git", "init", "-q", root).CombinedOutput(); err != nil {
+		t.Fatalf("init: %v\n%s", err, out)
+	}
+	exit := "exit 5"
+	if runtime.GOOS == "windows" {
+		exit = "exit /b 5"
+	}
+	out, err := runMemoryLayoutPrintedFix(root, os.Environ(), `git -C "`+root+`" rev-parse --is-inside-work-tree && `+exit)
+	if e, ok := err.(*exec.ExitError); !ok || e.ExitCode() != 5 || !strings.Contains(out, "true") {
+		t.Fatalf("quoted recovery command: %v\n%s", err, out)
 	}
 }
