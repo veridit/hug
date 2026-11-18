@@ -139,7 +139,9 @@ func TestReadersDoNotWaitOnHeldTurn(t *testing.T) {
 // its own commit, every note lands, and nothing fails.
 func TestTUIWriteAndCLINoteAtOnce(t *testing.T) {
 	t.Parallel()
-	const toggles, notes = 30, 30
+	// 10 of each: with the TUI's board turn removed this fails 10 of 10 runs
+	// at 5, 10 and 30 alike (0sbvnq, 2026-11-18); 30 cost 36-46 s on Windows.
+	const toggles, notes = 10, 10
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Shared", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)

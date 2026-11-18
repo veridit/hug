@@ -28,6 +28,11 @@ func runSyncChild() {
 	if d, e := time.ParseDuration(os.Getenv(childDelay)); e == nil {
 		time.Sleep(d)
 	}
+	// The settle a test gave its passes (clones: testSettle); the burst
+	// test keeps the real one, which it is about.
+	if d, e := time.ParseDuration(os.Getenv(childSettle)); e == nil {
+		Settle = d
+	}
 	cwd, _ := os.Getwd()
 	a := &App{Cwd: cwd, In: strings.NewReader(""), Out: os.Stdout, Err: os.Stderr}
 	os.Exit(a.Run(context.Background(), []string{"sync", SyncChildArg}))
@@ -77,7 +82,7 @@ func clones(t *testing.T) (a, b *App, bare string) {
 		return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{},
 			Env: map[string]string{"HUG_USER": "tester", "HUG_MODEL": "test-model", "JCODE_SESSION_ID": "", "JCODE_HOME": filepath.Join(base, ".no-jcode")},
 			Sync: &SyncSettings{Spawn: []string{exe, "task", "sync", SyncChildArg}, FetchAfter: 500 * time.Millisecond,
-				Env: []string{"GIT_CONFIG_GLOBAL=" + os.DevNull, "GIT_CONFIG_NOSYSTEM=1"}}}
+				Env: []string{"GIT_CONFIG_GLOBAL=" + os.DevNull, "GIT_CONFIG_NOSYSTEM=1", childSettle + "=" + testSettle}}}
 	}
 	a, b = mk(one), mk(two)
 	execute(t, a, "init")
@@ -154,6 +159,15 @@ func until(d time.Duration, f func() bool) bool {
 // childDelay holds a spawned pass back before it starts (tests only).
 const childDelay = "HUG_TEST_CHILD_DELAY"
 
+// childSettle is the quiet a spawned pass waits for (tests only), and
+// testSettle the one clones gives: the real 1.5 s is waited for in every
+// pass of every sync test (0sbvnq). Only TestBackgroundSyncBurstIsBatched
+// needs the real settle.
+const (
+	childSettle = "HUG_TEST_SETTLE"
+	testSettle  = "100ms"
+)
+
 // settled waits for the pass a write started, however slowly the child
 // starts: one slower than pendingFor (5 s) made settled return before the
 // pass ran, and TestBackgroundSyncConflictKeepsCommits failed on Windows CI
@@ -195,6 +209,8 @@ func TestBackgroundSyncNoteReachesOtherClone(t *testing.T) {
 func TestBackgroundSyncBurstIsBatched(t *testing.T) {
 	t.Parallel()
 	a, _, bare := clones(t)
+	// The real settle: batching a burst is what it is for.
+	a.Sync.Env = withoutEnv(a.Sync.Env, childSettle)
 	settle := Settle // the child's: it never sees a test's change to it
 	id := execute(t, a, "new", "Burst", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	settled(t, a)
@@ -368,4 +384,15 @@ func syncLogOf(t *testing.T, a *App) string {
 	}
 	b, _ := os.ReadFile(bg.Log())
 	return string(b)
+}
+
+// withoutEnv is env without the variable name.
+func withoutEnv(env []string, name string) []string {
+	out := []string{}
+	for _, kv := range env {
+		if !strings.HasPrefix(kv, name+"=") {
+			out = append(out, kv)
+		}
+	}
+	return out
 }

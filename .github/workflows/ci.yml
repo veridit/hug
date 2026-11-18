@@ -33,13 +33,38 @@ jobs:
       - name: Test
         # The race detector runs once, on ubuntu (fastest); macOS and Windows
         # run plain tests for platform behaviour. -race made windows ~14 min.
-        run: go test ${{ matrix.os == 'ubuntu-latest' && '-race' || '' }} ./...
+        # Windows tests huginn/internal/cli in its own job (test-windows-cli):
+        # beside 30 packages on one 4-CPU runner its time measured the
+        # runner's load, 323 s and 407 s for one tree (runs 44204301242,
+        # 44206328950; 0sbvnq, crab 2026-11-18).
+        shell: bash
+        run: |
+          if [ "${{ matrix.os }}" = windows-latest ]; then
+            go test $(go list ./... | grep -vx 'github.com/veridit/hug/huginn/internal/cli')
+          else
+            go test ${{ matrix.os == 'ubuntu-latest' && '-race' || '' }} ./...
+          fi
         env:
           CGO_ENABLED: "1"
       - name: Build hug (pure Go)
         run: go build ./cmd/hug
         env:
           CGO_ENABLED: "0"
+
+  test-windows-cli:
+    # huginn/internal/cli on Windows, alone on its runner, beside the test
+    # job: same tests, no skips; its time is its own (0sbvnq).
+    needs: secrets
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Test huginn/internal/cli
+        run: go test ./huginn/internal/cli/
+        env:
+          CGO_ENABLED: "1"
 
   bench:
     # Benchmarks out of the normal suite (Jørgen, 2026-11-17 10:00): one
