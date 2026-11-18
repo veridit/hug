@@ -11,10 +11,13 @@ rank: "zzzzzzv"
 created: 2026-11-16
 updated: 2026-11-16
 doing_since: "2026-11-18T18:57"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "piglet"
+waiting_on: "CI run 44373015352 (windows-cli rerun of the 10m timeout in TestBoardColumns)"
+waiting_since: "2026-11-18T20:00"
 ---
 
 ## Goal
@@ -58,3 +61,4 @@ Open for crab: is (b) a bug fix or wanted behaviour (a CI wait showing in next -
 1a5b6778 on origin/main 8c26ec51, pushed as 4tycwd and ci/4tycwd (CI run 44373015352). Failing first: TestDetourThroughTheCLI on e6853a7c: 'detour_test.go:28: exit 3, want 3 and four fix: lines ending with "hug task dep 6dak1j --add fs5ecd && hug task note 6dak1j \"where I was\""' (output had 3 fix lines). After: task 'ok 18.206s', mcp 'ok 50.412s', TestDetourThroughTheCLI PASS. Correction to my proposal: gap (2) was wrong; the resume refusal already names the detour task. Local full cli/gitbranch/tui runs hit timeouts at load avg 314-354 (cli 10m timeout; gitbranch TestUpgradeFailuresKeepOriginalLayout 'remote did not answer within 1s'; tui 600s), in packages/tests this change does not touch; CI is the gate.
 ## History
 - 2026-11-18T18:57 todo -> doing/active (take)
+- 2026-11-18T20:00 doing/active -> doing/waiting (wait)
