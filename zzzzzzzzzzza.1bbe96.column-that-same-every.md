@@ -1,13 +1,18 @@
 ---
 id: 1bbe96
 title: "A column that is the same on every row of a section moves into its header"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["nautilus"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T05:47"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ Applies to every row column (stage, type, priority, owner), not only stage (crab
 ## Notes
 
 Jørgen 00:12 local: 'same for' the WAITING section (all 18 rows 'waiting'). With 41hhgn's ASKED split, both ASKED and WAITING are uniform in stage, so neither draws STAGE.
+
+
+## History
+- 2026-11-18T05:47 todo -> doing/active (take)
