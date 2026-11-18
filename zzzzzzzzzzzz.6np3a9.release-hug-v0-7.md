@@ -1,13 +1,18 @@
 ---
 id: 6np3a9
 title: "Release hug v0.7.60"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T09:45"
+stage: "active"
+model: "openai"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ v0.7.59 tag 6d994e71 remains unchanged. Recovery candidate dcb80a5d passed all s
 - [ ] Targeted brew upgrade installs hug v0.7.60
 
 ## Notes
+
+
+## History
+- 2026-11-18T09:45 todo -> doing/active (take)
