@@ -156,8 +156,15 @@ func legacyItems(p Project, lines []Line) []ingest.Imported {
 	}
 	return out
 }
+
+// migrationGit runs the migration's git on the code branch. Like hug's
+// other commits (gitbranch.runAt), it runs none of the code repository's
+// hooks (9vp9by): they check the project's code, not hug's one-file move.
+// Seid's commit-msg hook is hug's own Model: gate, which refused the
+// commit; a hook that leaves a process holding git's output kept this call
+// waiting for that process.
 func migrationGit(root string, args ...string) (string, error) {
-	cmd := exec.Command("git", append([]string{"-C", root}, args...)...)
+	cmd := exec.Command("git", append([]string{"-C", root, "-c", "core.hooksPath=" + os.DevNull}, args...)...)
 	cmd.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "GIT_EDITOR=true", "GIT_AUTHOR_NAME=muninn", "GIT_COMMITTER_NAME=muninn", "GIT_AUTHOR_EMAIL=muninn@users.noreply.github.com", "GIT_COMMITTER_EMAIL=muninn@users.noreply.github.com")
 	output, err := cmd.CombinedOutput()
 	if err != nil {

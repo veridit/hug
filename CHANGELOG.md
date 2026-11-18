@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug mem sync --migrate` no longer runs the code repository's git hooks (9vp9by). The migration commit removes the old `.muninn/memories.jsonl` from the code branch, and it ran the project's hooks, unlike hug's other commits. A commit-msg gate, such as hug's own `Model:` gate in a repository that installed it, refused it, and a hook that left a background process running made the migration wait for that process. The commit now runs with `core.hooksPath=/dev/null`, as hug's task and memory branch commits do.
+
 ## v0.7.70 - 2026-11-18
 
 - `TestBackgroundSyncOfflineCatchesUp` no longer sits out a fixed hang (0n4rnx). Its fake remote slept 5 s per network call, and the passes after the timing check paid it again, 32 s for the test on Windows. The remote now hangs until the test releases it (at most 10 s), then fails at once, still unreachable: 11.67 s in CI 44370638232. This changes a test only, not hug.
