@@ -42,7 +42,10 @@ func Refusal(err error) bool {
 // RememberDecision carries the writer's answers to remember's checks, and
 // the memory type (rule | preference | fact | record, "" = unstated).
 // Holds is the condition the memory holds under (ez50rb, holds.Parse).
-type RememberDecision struct{ Reinforce, NewReason, Type, Holds string }
+// Supersedes names the old memory this one corrects: it is recorded in the
+// fix trail (rjk44w) and retires nothing; forget the old one separately if
+// it no longer holds.
+type RememberDecision struct{ Reinforce, NewReason, Type, Holds, Supersedes string }
 
 // MemoryTypes are the accepted memory types; see ingest.NativeMemory.Type.
 var MemoryTypes = []string{"rule", "preference", "fact", "record"}

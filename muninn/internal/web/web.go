@@ -164,7 +164,7 @@ func (s *Server) Handler() http.Handler {
 		}
 		s.Mu.Lock()
 		defer s.Mu.Unlock()
-		out, err := b.Forget(r.Context(), s.App, in.ID)
+		out, err := b.Forget(app.WithFix(r.Context(), app.FixContext{Surface: "web"}), s.App, in.ID)
 		if err != nil {
 			fail(w, 404, err)
 			return

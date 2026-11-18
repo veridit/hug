@@ -346,7 +346,18 @@ func (b Binding) ForgetMany(ctx context.Context, a *App, refs []string, sessions
 	if len(hidden) > 0 {
 		return nil, fmt.Errorf("nothing forgotten: no visible memory %s", strings.Join(hidden, ", "))
 	}
-	return forgetHeld(a.forgetMany(ctx, refs))
+	return forgetHeld(a.forgetMany(withSessions(ctx, sessions), refs))
+}
+
+// withSessions adds the caller's sessions to the fix context on ctx, so the
+// trail sees whether recall showed the memory to them (rjk44w).
+func withSessions(ctx context.Context, sessions []string) context.Context {
+	if len(sessions) == 0 {
+		return ctx
+	}
+	fc := fixFrom(ctx)
+	fc.Sessions = append(append([]string(nil), fc.Sessions...), sessions...)
+	return WithFix(ctx, fc)
 }
 
 // forgetHeld reads a forget back: every memory it reports forgotten is
@@ -694,7 +705,20 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 				score = h.Semantic
 			}
 		}
-		return b.reinforceMemory(ctx, a, u, score, "writer confirmed same fact")
+		got, re, err := b.reinforceMemory(ctx, a, u, score, "writer confirmed same fact")
+		if err == nil {
+			recordFixes(ctx, a, "reinforce", []fixTarget{a.fixTargetFor(u, "")})
+		}
+		return got, re, err
+	}
+	// supersedes names the memory this one corrects (rjk44w): checked before
+	// anything is written, recorded after; it retires nothing. When that
+	// memory is the near-duplicate, naming it answers the duplicate question.
+	var superseded store.Unit
+	if ref := strings.TrimSpace(decision.Supersedes); ref != "" {
+		if superseded, err = b.Resolve(a, ref); err != nil {
+			return store.Unit{}, false, fmt.Errorf("supersedes %s: no visible memory\nfix: hug mem search WORDS to find its id, or leave out --supersedes", ref)
+		}
 	}
 	automatic, review := a.Cfg.Extract.DedupeThresholds()
 	if len(hits) > 0 {
@@ -702,7 +726,7 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 		if h.Semantic >= automatic {
 			return b.reinforceMemory(ctx, a, h.Unit, h.Semantic, "cosine meets dedupe threshold")
 		}
-		if h.Semantic >= review && strings.TrimSpace(decision.NewReason) == "" {
+		if h.Semantic >= review && strings.TrimSpace(decision.NewReason) == "" && (superseded.SID == "" || h.Unit.SID != superseded.SID) {
 			return store.Unit{}, false, &DuplicateCheckError{SID: h.Unit.SID, Text: h.Unit.Body, Score: h.Semantic}
 		}
 	}
@@ -723,7 +747,26 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 	if err != nil {
 		return u, reinforced, err
 	}
-	return u, reinforced, rememberHeld(m, u)
+	if err := rememberHeld(m, u); err != nil {
+		return u, reinforced, err
+	}
+	if superseded.SID != "" {
+		recordFixes(ctx, a, "supersede", []fixTarget{a.fixTargetFor(superseded, u.SID)})
+	}
+	return u, reinforced, nil
+}
+
+// fixTargetFor is the trail's view of u: its sid, hash and every unit row
+// that carries its sid (twins).
+func (a *App) fixTargetFor(u store.Unit, newSID string) fixTarget {
+	t := fixTarget{sid: u.SID, newSID: newSID, hash: u.ContentHash, ids: []int64{u.ID}}
+	if units, err := a.DB.ResolveAll(u.SID); err == nil {
+		t.ids = t.ids[:0]
+		for _, x := range units {
+			t.ids = append(t.ids, x.ID)
+		}
+	}
+	return t
 }
 
 // rememberHeld reads a remember back: the memory the store holds now is

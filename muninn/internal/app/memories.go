@@ -49,6 +49,7 @@ func (a *App) forgetMany(ctx context.Context, refs []string) ([]ForgetResult, ma
 	type plan struct {
 		out              ForgetResult
 		retire, suppress bool
+		target           fixTarget
 	}
 	plans := make([]plan, len(refs))
 	byPath := map[string][]string{}
@@ -62,8 +63,9 @@ func (a *App) forgetMany(ctx context.Context, refs []string) ([]ForgetResult, ma
 			problems = append(problems, fmt.Sprintf("%s: %v", ref, err))
 			continue
 		}
-		p := plan{out: ForgetResult{ID: units[0].SID}}
+		p := plan{out: ForgetResult{ID: units[0].SID}, target: fixTarget{sid: units[0].SID, hash: units[0].ContentHash}}
 		for _, u := range units {
+			p.target.ids = append(p.target.ids, u.ID)
 			var kind, path string
 			if err := a.DB.QueryRow(`SELECT kind,path FROM sources WHERE id=?`, u.SourceID).Scan(&kind, &path); err != nil {
 				return nil, nil, err
@@ -149,7 +151,9 @@ func (a *App) forgetMany(ctx context.Context, refs []string) ([]ForgetResult, ma
 		}
 	}
 	out := make([]ForgetResult, len(plans))
+	targets := make([]fixTarget, len(plans))
 	for i, p := range plans {
+		targets[i] = p.target
 		r := p.out
 		r.Suppressed = p.suppress
 		switch {
@@ -162,6 +166,8 @@ func (a *App) forgetMany(ctx context.Context, refs []string) ([]ForgetResult, ma
 		}
 		out[i] = r
 	}
+	// The trail (rjk44w): written after the forget landed, never blocking it.
+	recordFixes(ctx, a, "forget", targets)
 	return out, saved, nil
 }
 

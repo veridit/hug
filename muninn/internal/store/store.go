@@ -47,6 +47,18 @@ CREATE TABLE IF NOT EXISTS capture_backlog (session TEXT NOT NULL, message TEXT 
 -- Memories whose stated condition (units.holds) has ended: recall skips
 -- them, a dream item asks an agent to retire or keep them (ez50rb).
 CREATE TABLE IF NOT EXISTS holds_ended (sid TEXT PRIMARY KEY, holds TEXT NOT NULL, reason TEXT NOT NULL, at_ns INTEGER NOT NULL);
+-- Memory fixes (rjk44w): one row per forget, and per remember that names
+-- an old memory (reinforce, supersedes), with who, whether recall showed
+-- it to that session first, and an optional reason. Recall never reads it.
+CREATE TABLE IF NOT EXISTS memory_fixes (
+  at_ns INTEGER NOT NULL, action TEXT NOT NULL, sid TEXT NOT NULL,
+  new_sid TEXT NOT NULL DEFAULT '', session TEXT NOT NULL DEFAULT '',
+  harness TEXT NOT NULL DEFAULT '', instance TEXT NOT NULL DEFAULT '',
+  surface TEXT NOT NULL DEFAULT '', reason TEXT NOT NULL DEFAULT '',
+  shown INTEGER NOT NULL DEFAULT 0, shown_ago_ns INTEGER NOT NULL DEFAULT 0,
+  content_hash TEXT NOT NULL DEFAULT '');
+CREATE INDEX IF NOT EXISTS memory_fixes_at ON memory_fixes(at_ns);
+CREATE INDEX IF NOT EXISTS memory_fixes_sid ON memory_fixes(sid, at_ns);
 CREATE TABLE IF NOT EXISTS capture_bindings (session TEXT PRIMARY KEY, scope TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS capture_seen (
  session TEXT NOT NULL, message TEXT NOT NULL, PRIMARY KEY(session,message)
