@@ -305,7 +305,9 @@ func (m model) sortText() string {
 		m.styles.normal.Bold(true).Render("new: ") + next,
 		"  r  " + fit("rank", 10) + m.styles.dim.Render("board order, the default: moves work only in it"),
 	}
-	current := "  c  current column " + m.styles.dim.Render("mark one with H/L first")
+	// With no column marked c cannot be picked: the whole row is dim
+	// (nch9d4, Jørgen 11:50Z), and c only says why.
+	current := m.styles.dim.Render("  c  current column mark one with H/L first")
 	if f, ok := m.currentColumn(); ok {
 		current = "  c  current column (" + f.name + ") " + m.styles.dim.Render("same as o")
 	}

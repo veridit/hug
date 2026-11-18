@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/charmbracelet/x/ansi"
+	"github.com/muesli/termenv"
 )
 
 // nch9d4 check 1 and 2: the sort picker offers rank, the default board
@@ -60,5 +61,38 @@ func TestSortPickerShowsCurrentAndDraft(t *testing.T) {
 	built := lines(press(applied, "s", "t", "u"))
 	if built[1] != "now: priority ↓" || built[2] != "new: type · updated ↓" {
 		t.Fatalf("building t u: %q / %q", built[1], built[2])
+	}
+}
+
+// nch9d4 (Jørgen 11:50Z): with no column marked the c row cannot be
+// picked, so the whole row is dim, letter and name too, and c only says
+// why; with a column marked the row reads as the others do.
+func TestSortPickerColumnRowDimWithoutColumn(t *testing.T) {
+	m := manyModel(t)
+	m.width, m.height = 140, 40
+	m.resize()
+	m.styles.renderer.SetColorProfile(termenv.TrueColor)
+	cRow := func(m model) string {
+		for _, l := range strings.Split(m.sortText(), "\n") {
+			if strings.Contains(ansi.Strip(l), "c  current column") {
+				return l
+			}
+		}
+		t.Fatalf("no c row:\n%s", ansi.Strip(m.sortText()))
+		return ""
+	}
+	open := press(m, "s")
+	if got, want := cRow(open), open.styles.dim.Render("  c  current column mark one with H/L first"); got != want {
+		t.Fatalf("no column marked: the c row is not dim as a whole:\n got %q\nwant %q", got, want)
+	}
+	pressed := press(open, "c")
+	if pressed.prompt != "sort" || len(pressed.sort) != 0 || len(pressed.sortDraft) != 0 || !strings.Contains(pressed.message, "mark one with H/L first") {
+		t.Fatalf("c with no column: prompt %q sort %v draft %v message %q", pressed.prompt, pressed.sort, pressed.sortDraft, pressed.message)
+	}
+	marked := press(m, "L", "L", "L")
+	col, _ := marked.currentColumn()
+	row := cRow(press(marked, "s"))
+	if !strings.HasPrefix(row, "  c  current column ("+col.name+") ") {
+		t.Fatalf("column marked: the c row's letter and name are styled: %q", row)
 	}
 }
