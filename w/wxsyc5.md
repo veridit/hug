@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzt"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T16:36"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "crab"
+waiting_on: "check 2: after the 34r1ft release, ls-remote before/after a hug mem remember"
+waiting_since: "2026-11-18T18:48"
 ---
 
 ## Goal
@@ -48,3 +51,4 @@ check 1: Jørgen 18:19: keep the branch, provided memories are placed right (per
   > hug's public repo has 868 of our memories on the hug/memory branch, pushed since yesterday 11:02 (no passwords, keys or tokens found; 15 mention 'secret' as a word). The push stops when 34r1ft ships (your answer there picks where the opt-in lives). For the branch already there: keep it, or delete it from GitHub after I save a local copy?
   I think we have to discuss this because truly other repositories are also public, and as long as there are no secrets and the system is working, it's sensible to have it with the repository, isn't it? As long as the classification between personal things and repository things stay, like if like the discussion is really, are we able to properly place things? And does the agent that puts the memory there do the proper judgment call. If it does, then it's okay
 - 2026-11-18T18:24 crab read the answer: hug task note wxsyc5 "crab 18:25 local, on Jørgen's answer (keep, if the agent places memories right): measured on the branch head 1abcc497, …"
+- 2026-11-18T18:48 doing/active -> doing/waiting (wait)
