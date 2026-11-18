@@ -32,7 +32,7 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 ## Depends on
 
 ## Acceptance
-- [ ] The ACCEPTANCE heading has no background colour and the same weight as the other detail section headings (golden + style assertion).
+- [x] The ACCEPTANCE heading has no background colour and the same weight as the other detail section headings (golden + style assertion).
 - [ ] The focused asked check renders with no background fill and no bold; the cursor alone marks it (test asserts the SGR codes on that row).
 - [ ] Jørgen opens a task asked of him and says it is calm and the cursor is where his answer goes.
 
