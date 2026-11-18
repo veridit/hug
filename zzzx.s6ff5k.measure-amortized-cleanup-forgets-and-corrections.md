@@ -18,6 +18,9 @@ asked_by: "hatchling"
 asked_for: "crab"
 asked_since: "2026-11-17T20:20"
 asked_what: "H3 failed Part 2 (10 wrong vs bar 6); parked per crab ruling, no fourth arm"
+waiting_on: "parked: H3 failed Part 2 (10 wrong vs bar 6); no fourth arm (crab ruling 2026-11-17 20:20)"
+waiting_since: "2026-11-18T02:05"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
