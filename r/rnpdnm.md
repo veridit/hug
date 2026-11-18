@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["bonehound"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzu"
+rank: "zzzzzzzzzzzc"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
