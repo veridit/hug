@@ -33,3 +33,5 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
 - [ ] hug mem sync prints how many were held, by reason, and how to release one (fix: line)
 
 ## Notes
+
+crab 21:36 local: dependency on gav9nw removed. The decision is written (8a1b0c05, DESIGN.md 'Personal vs shared memories', CI 44386929067 green) and accepted; it lands in the next stack.
