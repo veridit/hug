@@ -34,5 +34,6 @@ Item 1 done (2026-11-16): offline set real/tool (66 tool calls, 7 sessions) repl
 Gate sweep 2026-11-16: norecords1 vs default on 66 calls: useful -12.1 [-18.4,-4.4], noise -21.2 [-37.8,-5.0] per 100; precision ~40% either way. Wide pool precision by type: rule 28%, fact 15%, record 8%, preference 4%. Decision recorded in muninn/docs/RECALL-TOOL.md: do not ship a hook on message-recall gates. Item 2 (CASE paths/commands trigger) is the next experiment; it needs memories that name a path/command, which the when-then extraction (jrj1vq) would supply.
 
 
+file:n7jbmx-plan.txt (3047 bytes, sha256:506d2708)
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)

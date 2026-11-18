@@ -1,0 +1,54 @@
+n7jbmx check 2 plan (hatchling, 2026-11-18). Nothing built yet.
+
+WHERE WE ARE (measured 2026-11-16, muninn/docs/RECALL-TOOL.md)
+- Message recall reused for tool calls: 30 useful vs 49 noise per 100 calls,
+  precision 38%. Do not ship that gate.
+- That set is small: 66 calls, 7 sessions, 55 of them bash, only 11 with paths.
+- Live store today: 13,286 active memories. 6,891 name a path, 2,538 a
+  backticked command. Inferred types: rule 4,537, fact 7,990, record 13,241,
+  preference 2,072. No memory has when-then CASE fields: jrj1vq (which would
+  write them) is not built.
+
+THE SIGNAL: exact anchors, not text similarity
+- A tool call yields anchors: repo-relative touched paths
+  (JCODE_HOOK_TOUCHED_PATHS) plus their basenames, and for bash the command
+  head (first 1-3 words of each pipeline step: `hug task done`,
+  `git rebase`, `go test`, `sqlite3`).
+- A memory yields anchors at index time, extracted locally with no model call:
+  paths, file names and backticked commands in its text. A table
+  anchors(unit_id, kind, value) stores them. When jrj1vq lands, its CASE
+  paths/tools feed the same table. That is the "CASE from when-then fields"
+  part of check 2. Until then local extraction stands in, so ruling needed:
+  is that acceptable for check 2?
+- The trigger fires when at least one anchor matches exactly (a path suffix of
+  2 or more segments, a basename only when rare, a command head) AND the
+  memory's type is rule, fact or preference (records were 8% precise) AND it
+  is in a visible scope. Rank by anchor rarity (IDF over the store). Show at
+  most 2 per call, each memory at most once per session, never one already
+  shown this turn.
+- Local and free: SQLite lookups only, no embedder in the hook. The p95
+  target is under 200 ms in a fresh hook process.
+
+DATA (two sets, both from real jcode journals)
+- dev: 300 tool calls from 2026-11-16..18, at least 20 sessions,
+  stratified by tool (bash, edit, write, apply_patch) and project. Each call
+  sees only memories created before it, so nothing leaks.
+- fresh held-out: 150 calls from sessions after the code is frozen (taken on
+  11-19 or later, never looked at while tuning). Ship decisions use only this.
+- Arms: none (0/0), default (message recall, as on 11-16), anchor, and
+  anchor+cosine>=0.6.
+- Judge: judge_tool.py unchanged (strict rubric, DeepSeek Flash, blind,
+  shuffled, credentials redacted). Paid calls happen in evaluation only;
+  the recall itself stays free.
+
+BAR (written now, before any run). Ship anchor on the fresh set only if ALL:
+1. noise <= 10 per 100 calls, with the 95% session-cluster CI upper <= 15
+2. useful >= 10 per 100 calls, with the CI lower > 0
+3. precision >= 50%
+4. noise vs default lower, CI excluding 0
+5. hook p95 < 200 ms on the live store, silent when nothing passes
+If anchor misses, report it and ship nothing.
+
+FILES (if approved): index/anchors.go (extract + table), recall/tool.go
+(trigger), run/main.go post_tool_feedback (after deliverParked), a replay
+arm in cmd/recall4, and muninn/scripts/build_tool_set.py.
