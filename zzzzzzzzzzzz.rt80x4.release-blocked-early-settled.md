@@ -13,8 +13,8 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "CI run 44266307354, single ordinary CI-only cross-platform gate on00df677f; wyvern owns watcher130570yi3u, main authorization retained by crab"
-waiting_since: "2026-11-18T09:22"
+waiting_on: "CI 44268461420 on dcb80a5d, watcher026980d3cw owned, awaiting all actual jobs terminal"
+waiting_since: "2026-11-18T09:37"
 waiting_asked_by: "wyvern"
 ---
 
