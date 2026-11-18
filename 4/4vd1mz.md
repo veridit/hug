@@ -10,11 +10,15 @@ group: ""
 rank: "zzzzzzzzzzp"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "bbxdd7"
 worktree: "/Users/jhf/.jcode/scratch/bbxdd7"
 doing_since: "2026-11-18T17:05"
+asked_what: "hug mem forget now takes 0.92 s instead of 3.4 s, done?"
+asked_for: "jhf"
+asked_since: "2026-11-18T17:05"
+asked_by: "piglet"
 ---
 
 ## Goal
@@ -87,3 +91,4 @@ crab gives it back: owner decision pending (forget median 3.4 s -> 0.92 s, shipp
 - 2026-11-18T12:56 todo/ready -> doing/active (take)
 - 2026-11-18T13:09 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:56
 - 2026-11-18T17:05 todo/ready -> doing/active (take)
+- 2026-11-18T17:05 doing/active -> doing/asked (ask)
