@@ -1,0 +1,56 @@
+HUG TASKS · overview › zhvkmj                                                                                                              ? 1 for you
+[doing]  [asked]  [feature]  group:root  assigned:nautilus · claude-opus-5-5 · main
+created 2026-11-17 · updated 2026-11-17 · status-colors-rows-sections
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Status colors: rows and sections share one subtle scheme; done shows a count
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ▸ colours-overview.ans · 6.4 KiB · capture, as it was taken
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 2 for you
+[overview]   list    board    !lint
+todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0
+No filters · f picker · 1 todo  2 doing  3 done  4 depends
+> ASKED · for you  [2]
+> ◑ 1/2  aaaaaa   feature high     asked     Status colors: rows and sections share one subtle scheme   nautilus
+         └─ asked: check 2 · look at the state/stage rows on your board · nautilus                           since 09:50
+  ◑ 1/2  eeeeee   feature high     design    Tags listed per board                                      unassigned
+
+  IN PROGRESS · assigned to  [0] · None
+  WAITING  [3]
+  ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                       nautilus
+  ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50 ms                                     nautilus
+  ◑ 1/2  dddddd   feature high     depends   One set of variable names                                  nautilus
+
+  NEXT UP · rank order  [2]
+  ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic
+  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place
+
+  RECENTLY DONE · last closed  [0] · None
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None
+
+All tasks · : filters and commands · ! lint finding · ↳ epic
+
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPTION
+Each status (todo, doing, blocked, done, dropped) has one subtle color, used in the status word, its section header (NEXT UP, IN PROGRESS, BLOCKED,
+RECENTLY DONE) and the overview count line, so a glance tells the state. The progress column shows a fraction only while work is partial: a done
+task shows its check count in the done color (● 5), not 5/5.
+
+PURPOSE
+Jørgen 2026-11-17 on the hug overview (v0.7.37): 5/5 on done rows says nothing, since lint already requires every check ticked before done; he wants
+the plain count in green. He also wants todo, doing, blocked and done to have their own colors, reflected subtly in each section's header.
+
+PRINCIPLE
+Subtle, not loud: tint, not background blocks. Reuse the colors the count line already has (todo, doing, blocked red, done green) so there is one
+scheme. Red stays for problems only (blocked counts as one). Works in no-color mode by text alone. Proposed, for Jørgen to confirm in review: done
+shows ● N; todo with nothing ticked shows the check count dim (○ 3), no 0/3; a fraction or pie appears only when some but not all checks are ticked;
+dropped shows no progress.
+
+RELEVANT DETAILS
+Progress pie came with d8yx7y (v0.7.33). Count line colors: huginn/internal/tui render. Section headers are all the same blue today. Coordinate with
+102bc0 (rows fit one line) in the same render code.
+Task 1 of 1 · 0% · next · previous · Esc back
+
+j/k check · Space tick · - strike out · h/l Tab next · answer · take · done · x drop · edit · New · Screen · Edit files · up · request · / find …
