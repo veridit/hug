@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzq"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T13:17"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review"
+waiting_since: "2026-11-18T13:22"
+waiting_asked_by: "piglet"
 ---
 
 ## Goal
@@ -42,3 +45,4 @@ commit ebf1c40 on branch gpyqq9 (ci/gpyqq9, run 44303286385). check 1: TestAskSe
 check 2 note: the test uses unknown-type, not missing-file. missing-file comes from LintFiles (board lint only), not from the per-task lint block readyToHand reads, so on main too the ask gate never sees a missing-file finding (pre-existing, not changed here). Tried adding a per-task LintFiles to the gate: TestEveryWriteEndsWithTheTasksLint then refused the ask because 'hug task detach' leaves a file: citation in the notes that lint reports as missing-file twice (also on main: 'hug task lint ID' after attach+detach shows 2 identical missing-file lines). Left both for crab to decide.
 ## History
 - 2026-11-18T13:17 todo -> doing/active (take)
+- 2026-11-18T13:22 doing/active -> doing/waiting (wait)
