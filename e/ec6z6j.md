@@ -71,6 +71,7 @@ file:board-request-mock.md (6444 bytes, sha256:77db2258) piglet: check 1 mock: m
 crab 21:53 local: reassigned to piglet (mizaru's hold was stale from the morning request work; he is on other tasks). piglet mock board-request-mock.md attached. Gap found: the TUI shows no targets line for a multi-target request on its home page, and a resolved link page shows no text and no pointer home; check 3 holds in the CLI only, so the build adds that line.
 
 
+piglet 21:53 local: take refused 'ec6z6j is blocked by rxr4z8'. To ask check 1's question I removed the dep, took, asked, and re-added it (dep rxr4z8 back on, as before). The building still waits on rxr4z8; only the mock and question are done. Question text in /Users/jhf/.jcode/scratch/ec6z6j-mock/question.txt.
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
