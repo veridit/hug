@@ -87,6 +87,7 @@ Clone of hug's board at 8a18427b^ (/Users/jhf/.jcode/scratch/kestrel-41hhgn13-cl
 Statbus (read only): 3 of its 5 would stay waits ('the hug release that stops linting...', 'owner looks at the new-record prototype...', 'owner confirms time frames...').
 race: 'ok task 25.700s', 'ok cli 132.796s'.
 landed 2c7ea8b on main 2026-11-18: hug upgrade: a wait on a person moves to asked only when it asks something ('?'…
+landed 3b47f26 on main 2026-11-18: hug upgrade: a request verb anywhere in a wait's first clause, base, -s or -ies…
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
