@@ -44,5 +44,6 @@ CUT 2 plan (fixture reuse, test-only, crab ok 17:35Z). clones() is built once pe
 landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
 landed 6ecd08f on main 2026-11-18: test(cli): no git maintenance in cli test gits (0n4rnx)
 REGRESSION WINDOW (main CI, test-windows-cli package line, 60 main runs read, table ~/.jcode/scratch/0n4rnx-maintimes.tsv): 41 runs from 0c3d3924 to 7f9f7bd8 (v0.7.60) 133-273 s; first run after is ead1be4c 403.7 s, then 356-507 s on all 11 green runs. 7f9f7bd8..ead1be4c is the w40cmk layout-3 merge (21 commits: catch-up, ordinary sync, layout tests). SPLIT (local macOS, niced, goroutine samples every 100 ms on the test goroutine, cut 1 tree): FirstParentRetainsMergeResolutionOnce 35.7 s wall = exec 31.2 / sleep 2.2 (settled) / other 0.3; BoardColumns 20.1 = exec 18.1 / other 0.8; OrdinarySyncScalarFields 24.6 = exec 21.0 / sleep 1.6 / other 0.4; BackgroundSyncOfflineCatchesUp 29.6 = exec 10.9 / sleep 16.4 (settled waiting a 5 s ssh hang) / other 0.7; RequestRoutesThroughNext 2.7 = exec 1.8. Exec = waiting on a child process. Windows split runs: ci/0n4rnx-measure (main+cut1) and ci/0n4rnx-measure-old (7f9f7bd8).
+shipped in v0.7.68 (6ecd08f)
 ## History
 - 2026-11-18T17:58 todo -> doing/active (take)

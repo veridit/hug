@@ -51,3 +51,5 @@ crab 18:35 local: stacked as c7ccbca7. mizaru's rebase fix: deliverPendingItem n
 landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
 
 landed 38ed468 on main 2026-11-18: One request for several tasks: request ID1,ID2 / --task / MCP ids, written once…
+
+shipped in v0.7.68 (38ed468)

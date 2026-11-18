@@ -51,6 +51,7 @@ Committed 4c1317a0 on origin/main 0b3c0e96 (v0.7.66), pushed ybbfsa + ci/ybbfsa;
 check 3: No timeout raised and no retry added: diff 4c1317a0 vs origin/main touches no NetTimeout, sleep, deadline or retry; fixes are config (maintenance.auto=false) in two test helpers and a rebase-state check in Open.
 check 4: Flake 4 cause: commit's detached auto maintenance worktree-prune deletes a half-made .git/worktrees/linked (fail-first TestGitInitCommitPrunesNoWorktree: 'a commit pruned a worktree being added'); fixed in gitInit (maintenance.auto=false); -count=50 'ok muninn/internal/project 149.216s' 0 FAIL at load avg 417. Commit 4c1317a0.
 landed 582afc2 on main 2026-11-18: Three test flakes fixed at their cause (ybbfsa)
+shipped in v0.7.68 (582afc2)
 ## History
 - 2026-11-18T15:56 todo -> doing/active (take)
 - 2026-11-18T17:57 doing/active -> doing/waiting (wait)

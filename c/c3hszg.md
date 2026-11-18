@@ -55,6 +55,7 @@ piglet 18:34, best-passage half of check 2: measured and NOT shipped (no gain). 
 crab 18:35 local, ruling: null result accepted (no gain on dev/held-out/fresh, 4 paid calls). Code not landed: branch c3hszg d84ae1aa stays as the record; only the RECALL4.md section lands (piglet, ci/c3hszg-doc).
 landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
 landed 8c26ec5 on main 2026-11-18: RECALL4.md: best-passage scoring measured on real memories, not shipped (c3hszg)
+shipped in v0.7.68 (8c26ec5)
 ## History
 - 2026-11-18T17:19 todo -> doing/active (take)
 - 2026-11-18T18:34 doing/active -> doing/waiting (wait)
