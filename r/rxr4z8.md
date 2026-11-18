@@ -39,7 +39,7 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 
 ## Acceptance
 - [x] Space in overview, list and board marks or unmarks the focused task and moves to the next row; marked rows show a mark and a quiet tint (golden at 80 and 140)
-- [ ] With N marked, the footer reads 'N marked ·' followed by the actions valid for all of them and 'Esc unmark'; Esc clears every mark (key test)
+- [x] With N marked, the footer reads 'N marked ·' followed by the actions valid for all of them and 'Esc unmark'; Esc clears every mark (key test)
 - [ ] t, d, x and w act on every marked task after one confirm naming the count, and a refused task is named with its fix: line while the others go ahead (key test with 3 marked, one refused)
 - [ ] m grabs the marked tasks as one block; J/K and the drop move them together and keep their order (key test)
 - [ ] Inside a task Space still ticks the focused check (existing tests stay green)
@@ -73,6 +73,7 @@ crab 21:31 local, ruling on check 1's 'quiet tint': Jørgen's calm rules (qh9ep1
 crab 20:44 ruling: with 2+ marked, t is not offered; pressed, it says 'take one at a time: mark one task to take it'. t on 1 marked takes it after one confirm. Once byj479 (hug task take B --with A, iwazaru) lands, t on N marked becomes 'take the first, the rest with it' after one confirm naming them; t's marked path is kept in one function (takeMarked) so that change is small. Also crab 20:31: the mark is ◆ in the gutter only, no tint, no recoloured id (calm rule); check 1 reads that way.
 macaque: built on main 8a45b0eb (05r3pg landed), commits bafad978 + d9a8dcec on branch rxr4z8 / ci/rxr4z8. Fail-first: 12 new tests in marks_test.go failed against a stub marks.go (isMarked false), e.g. 'footer with 2 marked: "Space ticks a check inside the task: Enter opens sbehks"' and 'block not gathered'. Two old tests asserted that old Space message and now assert Space marks: group_test.go TestSpaceFoldsAHeading, invariants_test.go TestErrorAndTerminalInputSafety. Golden: testdata/marks/marked.txt (list and overview at 80, 140, 60). Other goldens changed only by 'Space mark' in the key bar and the Space row in help.
 check 1: TestSpaceMarksAndSteps (list, overview, board): Space marks, steps to the next row, stays on the last, Space again unmarks, 0 commits. TestMarkIsTheGutterOnly (truecolor): gutter ◆, no 48;2 on the marked row, cells after the gutter byte-identical marked and unmarked (crab 20:31 ruling: no tint). Golden testdata/marks/marked.txt at 80, 140, 60 (list and overview). f385c3a0
+check 2: TestMarkedFooterAndEsc: footer '2 marked · move · edit · Esc unmark' for 2 todo (drop too; done, wait, take not offered); key bar 'Space mark'; Esc clears all, says 'unmarked 2; nothing changed'. TestMarkedCountInTheHeading: NEXT UP heading '· 2 marked'. f385c3a0
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
