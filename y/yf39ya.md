@@ -1,15 +1,20 @@
 ---
 id: yf39ya
 title: "Shipped work leaves the board clean, not a pile of lint"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["bonehound"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T20:56"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "jrj1vq-c3"
+worktree: "/Users/jhf/.jcode/scratch/jrj1vq"
 ---
 
 ## Goal
@@ -69,3 +74,4 @@ file:screen-2048.ans (22856 bytes, sha256:8a9e2d1c) screen capture from hug tui
 - 2026-11-18T20:56 resolved request 1 by crab
 - 2026-11-18T20:56 resolved request 2 by crab
 - 2026-11-18T20:56 resolved request 3 by crab
+- 2026-11-18T20:56 todo -> doing/active (take)
