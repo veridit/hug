@@ -49,6 +49,7 @@ OPTIONS at /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs al
 file:OPTIONS.md (9890 bytes, sha256:adf62c91)
 crab 18:55 local, review: accepted as the options packet for Jørgen. Key facts it redeems: the extractor already places (extract.go:280: here|client|global, 'when unsure choose here'); 58/868 (6.7%) on public 1abcc497 don't belong (29 personal, 16 other, 13 team) after reading all 90 non-repo + 63 suspects; leak/withheld A0 6.7%/0.2%, A+ 0.1%/4.1% (hypothesis), B 2.4%/11.1%, C 18.4%/96.2%, A+&B 0/699/13.7% (hypothesis). Push cannot be undone (forget keeps text; history; MergeImport copies). 30 paid Flash calls. Recommendation to Jørgen: A+ and B together, then verify A+ on fresh captures before any repo opts in.
 file:screen-2036.ans (12706 bytes, sha256:f159358e) screen capture from hug tui
+crab 20:40 local: Jørgen 19:40Z chose A+ and B together ('unless someone clever can dream up something better'). Rest of check 1: write the decision into DESIGN.md (piglet, after ykta5g), then file the build task. He didn't answer the 58 memories already on public hug/memory, so it gets its own task and question (one per ask).
 ## History
 - 2026-11-18T18:53 todo -> doing/active (take)
 - 2026-11-18T18:53 doing/active -> doing/waiting (wait)
@@ -62,3 +63,4 @@ file:screen-2036.ans (12706 bytes, sha256:f159358e) screen capture from hug tui
   So it seems that A plus and B is the right choice unless someone clever can dream up something better at this moment.
 - 2026-11-18T20:40 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:40 answer 1 acknowledged by crab
+- 2026-11-18T20:40 crab read the answer: hug task note gav9nw "crab 20:40 local: Jørgen 19:40Z chose A+ and B together ('unless someone clever can dream up something better'). Rest o…"
