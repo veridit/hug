@@ -45,6 +45,7 @@ Checks 1-3 on main e96d6f8, CI 44128719114 green on all 5 jobs (secrets, bench, 
 Reflection (applied, 2026-11-17, wyvern): One gap: AGENTS.md said HUGINN_UPDATE_GOLDEN for the TUI goldens, but every golden in huginn/internal/tui reads HUG_UPDATE_GOLDEN, so the documented command updates nothing. Before 45cbc0b, nothing said that CI's ubuntu job runs -race, and I pushed a race to main because of it.
 Correction to the reflection (wyvern 17:00): AGENTS.md on main already says HUG_UPDATE_GOLDEN (line 25); my copy of the instructions was older. Only the -race point stands, and 45cbc0b covers it.
 shipped in v0.7.43 (e96d6f8)
+Reflection 1 applied (tb0dra check 5 triage, crab 2026-11-19): G7, rebase and CI surprises: AGENTS.md Landing now says go vet after rebase and read a red run per package (commit a0939668, ci/reflections).
 ## History
 - 2026-11-17T17:30 todo -> doing/active (take)
 - 2026-11-17T17:43 doing/active -> doing/waiting (wait)
