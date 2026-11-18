@@ -26,6 +26,12 @@ func WithIdentity(name, email string) Option {
 	return func(r *Repository) { r.Identity = Identity{name, email} }
 }
 
+// WithLayout sets how the board layout is read from hug.toml, so sync
+// refuses to rebase across a layout move (w40cmk check 9).
+func WithLayout(layout func(text string) (int, error)) Option {
+	return func(r *Repository) { r.Layout = layout }
+}
+
 // Repository is a branch worktree. Dir is absolute. Remote is empty in local-only mode.
 // Root is the checkout Open was called from. In a linked worktree (git
 // worktree add) Dir is the branch's one checkout, in the main worktree.
@@ -36,6 +42,84 @@ type Repository struct {
 	// Trailers end every commit message this handle makes, e.g.
 	// "Model: claude-opus-5-5" (t709he).
 	Trailers []string
+	// Layout reads the board layout from hug.toml's text ("" when the
+	// ref has none). When set, a rebase of local commits onto a remote
+	// whose layout differs is refused (w40cmk check 9): the two sides
+	// name task files differently and git would merge them wrong.
+	Layout func(text string) (int, error)
+}
+
+// LayoutError is a sync stopped because this clone's unpushed commits and
+// the remote are on different board layouts. Nothing was rebased or lost.
+type LayoutError struct {
+	Local, Remote, Unpushed int
+	// Base is the layout where the two sides parted, when both moved
+	// from it on their own (two clones each ran hug upgrade); else 0.
+	Base int
+	Fix  string
+}
+
+func (e *LayoutError) Error() string {
+	if e.Base != 0 {
+		return fmt.Sprintf("sync stopped: this clone and the remote each moved the board from layout %d to %d on their own, and this clone's %d unpushed commits include its own move; nothing was rebased, local commits are kept\nfix: %s", e.Base, e.Local, e.Unpushed, e.Fix)
+	}
+	return fmt.Sprintf("sync stopped: the remote board is layout %d, this clone's %d unpushed commits are layout %d; nothing was rebased, local commits are kept\nfix: %s", e.Remote, e.Unpushed, e.Local, e.Fix)
+}
+
+// layoutAt is the board layout at ref, from its hug.toml.
+func (r *Repository) layoutAt(ref string) (int, error) {
+	text, e := r.git("cat-file", "-p", ref+":hug.toml")
+	if e != nil {
+		// No hug.toml at ref: the base layout, as on disk.
+		if _, ve := r.git("rev-parse", "--verify", "--quiet", ref+"^{commit}"); ve == nil {
+			text, e = "", nil
+		}
+	}
+	if e != nil {
+		return 0, e
+	}
+	return r.Layout(text)
+}
+
+// sameLayout refuses to rebase this clone's unpushed commits onto a remote
+// on another layout (w40cmk check 9). A clone with nothing unpushed is
+// fast-forwarded as always: that is how every reader gets the move. The
+// check costs a merge-base and two cat-files, only when commits would be
+// rebased.
+func (r *Repository) sameLayout() error {
+	if r.Layout == nil {
+		return nil
+	}
+	// HEAD already in the remote (fast-forward), or the remote already in
+	// HEAD (nothing to rebase onto): no history from the other side mixes.
+	if _, e := r.git("merge-base", "--is-ancestor", "HEAD", r.remoteRef()); e == nil {
+		return nil
+	}
+	if _, e := r.git("merge-base", "--is-ancestor", r.remoteRef(), "HEAD"); e == nil {
+		return nil
+	}
+	local, e := r.layoutAt("HEAD")
+	if e != nil {
+		return e
+	}
+	remote, e := r.layoutAt(r.remoteRef())
+	if e != nil {
+		return e
+	}
+	then := 0
+	if local == remote {
+		// Both moved, each on its own (two clones ran hug upgrade): the
+		// local commits from before the move still rename files the
+		// remote moved, so the rebase would replay them wrong too.
+		base, e := r.git("merge-base", "HEAD", r.remoteRef())
+		if e != nil {
+			return e
+		}
+		if then, e = r.layoutAt(base); e != nil || then == local {
+			return e
+		}
+	}
+	return &LayoutError{Local: local, Remote: remote, Base: then, Unpushed: r.Unpushed(), Fix: "hug upgrade"}
 }
 
 // Error includes a copyable repair command and the original Git diagnostic.
@@ -695,6 +779,9 @@ func (r *Repository) integrate() error {
 	}
 	if head == "" {
 		_, e = r.git("reset", "--hard", r.remoteRef())
+		return e
+	}
+	if e = r.sameLayout(); e != nil {
 		return e
 	}
 	if _, e = r.git("rebase", r.remoteRef()); e != nil {

@@ -333,6 +333,19 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	if s, e := a.open(ctx); e == nil {
 		defer s.c.Close()
 		boardDir = s.r.Dir
+		// Catch-up first (w40cmk check 9): the remote moved to this
+		// layout and this clone has commits from before. They are
+		// replayed onto the remote one by one, so every step below works
+		// on the board as everyone has it.
+		lines, e := a.catchUp(s, dry)
+		if e != nil {
+			return nil, e
+		}
+		caughtUp := len(lines) > 0
+		if caughtUp {
+			part("catch-up", []string{strings.Join(lines, "\n    ")})
+		}
+		diffBefore := len(upgradeDiff)
 		// An older hug's upgrade would move the board back (dx9vw2).
 		if board, known, newer := a.newerBoard(s.r.Dir); newer {
 			return nil, boardNewer(board, known)
@@ -454,6 +467,13 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 			tasks = append(tasks, would(fmt.Sprintf("board layout %d -> %d in %s (an older hug then refuses to write it)", board, known, task.ConfigName)))
 		} else if len(plan.Moves) > 0 && !dry {
 			tasks = append(tasks, fmt.Sprintf("board layout %d -> %d in %s, in the same commit (an older hug then refuses to write it)", from, known, task.ConfigName))
+		}
+		if caughtUp && dry {
+			// The steps above read this clone's board as it is; after the
+			// catch-up it is the remote's, so what they would do here is
+			// not what --apply does. --apply runs them after the catch-up.
+			tasks = []string{would("run after the catch-up, on the remote's board (hug upgrade shows them then)")}
+			upgradeDiff = upgradeDiff[:diffBefore]
 		}
 		part("tasks", tasks)
 	} else {

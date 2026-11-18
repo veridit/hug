@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
+	"github.com/veridit/hug/huginn/internal/task"
 	"github.com/veridit/hug/internal/throttle"
 )
 
@@ -145,7 +146,7 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 	if cwd == "" {
 		cwd = "."
 	}
-	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir)
+	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir, gitbranch.WithLayout(task.LayoutOf))
 	if e != nil || r.Remote == "" {
 		return Reply{"next": "hug task ls"}, e
 	}
@@ -230,7 +231,13 @@ func (s *session) syncStatus(reply Reply) {
 	if len(st.Conflict) > 0 {
 		msg = fmt.Sprintf("%d unpushed, sync conflict in %s: local commits are kept, nothing was lost", n, strings.Join(st.Conflict, ", "))
 	}
-	reply["sync"] = Reply{"unpushed": n, "error": st.Error, "conflict": st.Conflict, "at": st.At, "message": msg, "fix": "hug task sync"}
+	fix := "hug task sync"
+	if st.Layout != "" {
+		// w40cmk check 9: the remote moved to another layout; sync cannot
+		// help, the upgrade's catch-up does.
+		fix = st.Layout
+	}
+	reply["sync"] = Reply{"unpushed": n, "error": st.Error, "conflict": st.Conflict, "at": st.At, "message": msg, "fix": fix}
 }
 
 // readOnly commands change no task file: they take no board turn.

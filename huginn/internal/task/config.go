@@ -129,8 +129,15 @@ func BoardLayout(root string) (int, error) {
 	if e != nil {
 		return 0, e
 	}
+	return LayoutOf(string(b))
+}
+
+// LayoutOf reads the layout from hug.toml's text ("" is BaseLayout), so
+// a hug.toml at a git ref reads the same as the one on disk (w40cmk check
+// 9: sync compares the layout at HEAD and at the remote).
+func LayoutOf(text string) (int, error) {
 	section := ""
-	for _, line := range strings.Split(string(b), "\n") {
+	for _, line := range strings.Split(text, "\n") {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "[") {
 			section = line
