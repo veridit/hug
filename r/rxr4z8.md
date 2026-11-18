@@ -46,7 +46,7 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 - [ ] Jørgen confirms on his board after release
 - [ ] Jørgen 19:27Z (answer 1): a marked row that also has the cursor shows one combined sign, not > or ◆ alone. Proposed ⋗ (U+22D7, greater-than with dot: the cursor carrying a mark; single width); the alternative ▸ (U+25B8). The mock shows both rows side by side and asks this one question
 - [x] Jørgen 19:27Z: the narrow footer (under 70 columns) never shows bare letters: it reads e.g. '3 marked · ? actions · Esc unmark', and ? lists the actions with their words (key test at 60 columns)
-- [ ] Jørgen 19:27Z: after an action, the tasks that went through are unmarked and the refused ones stay marked (key test, extends check 3)
+- [x] Jørgen 19:27Z: after an action, the tasks that went through are unmarked and the refused ones stay marked (key test, extends check 3)
 
 ## Notes
 
@@ -78,6 +78,7 @@ check 3: TestDoneMarkedOneRefused: 3 doing marked, d confirms 'Done 3 tasks: A, 
 check 4: TestGrabMarkedBlock: m with A and C marked gathers A C at A's row (A C B D E F), j j moves the block (B D A C E F), Enter writes that order on disk, marks cleared; Esc after k puts every row back. f385c3a0
 check 5: Detail tests unchanged and green: go test ./huginn/internal/tui/ ok 115.216s on f385c3a0, incl. TestAcceptanceSelectionClampedAcrossTasks (Space in a task ticks) and TestErrorAndTerminalInputSafety (now asserts Space in a list marks, never ticks).
 check 8: TestNarrowMarkedFooter at 60: footer exactly '3 marked · ? actions · Esc unmark'; ? leads with '3 MARKED' and lists 'move the marked as one block…', 'drop every marked task…', 'unmark all'. f385c3a0
+check 9: TestDoneMarkedOneRefused: after d, only the refused task stays marked (marks == [B]); TestDropMarked, TestWaitMarked, TestTakeMarked: all went through, marks empty. f385c3a0
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
