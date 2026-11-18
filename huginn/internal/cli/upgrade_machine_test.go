@@ -66,8 +66,20 @@ func TestUpgradeTouchesMachineOnlyWithMachine(t *testing.T) {
 
 	// The preview: two headings, both steps named, nothing changed.
 	code, out := runText(a, "upgrade")
+	// The heading names the board as git resolves it: /private/var on
+	// macOS, long names and forward slashes on Windows (main CI
+	// 44237364634). The same folder, not the same string.
+	shown := ""
+	if _, rest, ok := strings.Cut(out, "this board ("); ok {
+		shown, _, _ = strings.Cut(rest, "):\n")
+	}
+	if st1, e1 := os.Stat(shown); e1 != nil {
+		t.Fatalf("preview: board heading names %q: %v\n%s", shown, e1, out)
+	} else if st2, e2 := os.Stat(board); e2 != nil || !os.SameFile(st1, st2) {
+		t.Fatalf("preview: board heading names %q, want %s (%v)\n%s", shown, board, e2, out)
+	}
 	for _, want := range []string{
-		"this board (" + board + "):\n  layout: nothing to do\n  tasks: would: 1 questions to a person moved from waiting to asked (" + id + ")\n",
+		"this board (" + shown + "):\n  layout: nothing to do\n  tasks: would: 1 questions to a person moved from waiting to asked (" + id + ")\n",
 		"this machine (hook and MCP configs in ~/.jcode, ~/.claude, ~/.codex; the memory store):\n  variables: would: variables renamed to HUG_* in " + cfg + "\n  memory: would deliver jcode[default] recall in a tool result\n",
 		"next: hug upgrade --apply\nthen: hug upgrade --apply --machine  (this machine, once you have read it)\nfix: hug upgrade --apply\n",
 	} {
