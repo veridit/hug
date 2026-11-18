@@ -1,15 +1,20 @@
 ---
 id: awht8w
 title: "deliver test: hook ack misses under load"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["iwazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T22:20"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "byj479"
+worktree: "/Users/jhf/.jcode/scratch/byj479"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ iwazaru byj479 full niced run on fcd1adb1 (scratch/byj479-full.txt): '--- FAIL: 
 - [ ] No timeout raised and no retry added
 
 ## Notes
+
+
+## History
+- 2026-11-18T22:20 todo -> doing/active (take)
