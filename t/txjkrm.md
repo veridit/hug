@@ -1,7 +1,7 @@
 ---
 id: txjkrm
 title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned up"
-state: "done"
+state: "todo"
 type: feature
 priority: ""
 assignee: ["kikazaru"]
@@ -13,8 +13,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "txjkrm"
 worktree: "/Users/jhf/.jcode/scratch/txjkrm"
-done_at: "2026-11-18T23:24"
-done_release: "v0.7.71"
+stage: "ready"
 ---
 
 ## Goal
@@ -92,3 +91,4 @@ kikazaru 22:37Z: shipped in v0.7.71 (3ce9119a, 3f5e89d9, 4d7eec2d). The owed que
 - 2026-11-18T22:13 doing/waiting -> doing/active (resume); was waiting_asked_by: mizaru; waiting_on: check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19:44Z); waiting_since: 2026-11-18T20:44
 - 2026-11-18T22:21 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 doing/waiting -> done (done, by release v0.7.71: every check holds); was doing_since: 2026-11-18T15:45; waiting_asked_by: kikazaru; waiting_on: crab landing ci/txjkrm6-rebased 3f5e89d9 and a release; then ask Jørgen the check-6 question with --show (crab 21:09); waiting_since: 2026-11-18T22:21
+- 2026-11-18T23:38 done -> todo/ready (reopen); was done_at: 2026-11-18T23:24; done_release: v0.7.71
