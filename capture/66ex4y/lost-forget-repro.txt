@@ -1,0 +1,8 @@
+forget fw19vq -> 0 forgot fw19vq
+forget a03gkc -> 0 forgot a03gkc
+forget 7g8dke -> 0 forgot 7g8dke
+forget 87vqea -> 0 forgot 87vqea
+forget agn3qr -> 0 forgot agn3qr
+forget f87hb5 -> 0 forgot f87hb5
+remember -> 0 remembered p7pq5j (place: here)
+active after: {'fw19vq': False, 'a03gkc': False, '7g8dke': False, '87vqea': False, 'agn3qr': False, 'f87hb5': False}

@@ -38,6 +38,8 @@ Back to todo (hatchling): today's check is done and noted; it recurs daily, and 
 file:forget-time.txt (1655 bytes, sha256:6b12223b)
 file:forget-pprof.txt (6918 bytes, sha256:12f96282)
 crab 00:43 asked: does each hug mem forget run a full index pass? Measured 2026-11-18 00:51 local on a HUG_HOME copy of Jørgen's store (13,685 memories, 13,275 active; brew hug v0.7.51; load avg ~650 on the machine). Yes: the forget command reindexes before (run/main.go:376 a.Reindex) and ForgetMany reindexes after. One forget: 2.91-3.20 s wall (4 runs: 3.20 warm-up, 2.91, 3.09, 2.92), 948 MB max RSS. A no-change 'hug mem index' on the same store: 0.48 s. CPU profile of one forget (3.14 s): App.Reindex inside ForgetMany 1.42 s (UpdateNeighbors 0.58 s, IndexNative 0.29 s, loadGraph 0.20 s), ingest.ForgetMany 0.33 s (LoadNative of the 15 MB memories.json 0.27 s). So the post-forget reindex, which re-derives neighbours after a change, is about half; it is a full pass over the native source, not an incremental one. file:forget-time.txt, file:forget-pprof.txt. For crab to rule; no change made.
+file:daily-2026-11-18.txt (5081 bytes, sha256:ad4725fa)
+file:lost-forget-repro.txt (361 bytes, sha256:95324e55)
 ## History
 - 2026-11-17T21:58 todo -> doing/active (take)
 - 2026-11-17T22:24 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T21:58

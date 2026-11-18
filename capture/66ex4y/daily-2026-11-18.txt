@@ -1,0 +1,51 @@
+66ex4y daily check 2026-11-18 (hatchling, read 02:31-02:36 UTC)
+
+Read: every capture created since yesterday's check (2026-11-17T21:23Z) in the live store, cap_ rows: 57, all active before this check.
+Store: ~/Library/Application Support/muninn/memories.json (13,705 memories at read).
+Live capture binary: brew hug v0.7.52.
+
+By scope: Seid project:rc-3557a74eab224a4c 56, jcode@seid 1.
+By time: 21:36-21:37 15 (orangutan), 23:57-23:58 24, 01:28 16, 02:07 2.
+
+Checked against sources:
+- seid-lang master (/Users/jhf/Veridit/src/seid-lang): tools/red-ceiling.tsv says memcheck 111, memcheck-known-red-rows 217 (last change 9a9009e9c, 2026-11-13); no commit on any branch sets 110/215.
+- hug CHANGELOG.md: missing-section first appears in v0.7.7, backlog-leftover in v0.7.42, the state: rename in v0.7.45, "hug task help lists every command" in v0.7.51 (not v0.7.52).
+- Memories z7g6hc and d52q4a (King, 2026-11-17 15:04-15:06): Co-Authored-By trailers are retired, one Model: trailer instead.
+- Seid tickets: c1s5kc doing (daisy), c3k8wy, z37r5h, j5zxv0, g27e9q todo; tools/scratch_check.py still reads status: on master.
+
+Findings (each memory counted once):
+
+1. Wrong: 4
+   - rhgj4y "hug v0.7.52 fixed hug task help so it lists every command". It was v0.7.51 (CHANGELOG line 37, under v0.7.51).
+   - ps7rtr "hug v0.7.43 added a missing-section lint check and a backlog-leftover check". missing-section dates from v0.7.7, backlog-leftover from v0.7.42.
+   - eqav5d "Seid gate ceilings in tools/red-ceiling.tsv: memcheck 110, memcheck-known-red-rows 215". Master says 111/217, and no commit sets 110/215: a lane's unlanded state written as the file's content.
+   - xr634s "Seid lane rules: ... commit with normal hooks and the Co-Authored-By trailer". The trailer was retired at 15:06 the day before (z7g6hc); the rest of the rule is right, so it is replaced by a corrected memory.
+
+2. Stale / one-assignment status: 1
+   - b215fd "The Perceus ceilings are now 110 and 215, with gate-run2 measurements recorded". The same unlanded lane state as eqav5d, phrased as progress.
+
+3. Duplicates within today: 1 retired, 3 kept
+   - 18s9f3 = mh6x74 (regression_925 is load-sensitive, filed as c3k8wy). 18s9f3 retired; mh6x74 kept.
+   - 1z1k7x, axzbv0, rnehrs, ce6f6w all say the scratch checker must move from --status to state. Kept: they differ (the rule, the error text, the ticket h87fsj waiting on c1s5kc, the decision), and c1s5kc is still doing, so the fact is current.
+   - xvtb0v "export TMPDIR=/tmp in every shell" and tm8r7h "forcing /tmp breaks the probe-key test": kept both, they are a real tension, and z37r5h tracks it.
+   - 0mpzzc and wrj5kw (memcheck limits 1800 s / 540 s; 120 s is not the gate's limit): kept, wrj5kw is the rule and 0mpzzc the numbers.
+
+4. Wrong place: 0. 637gnj ("No $var redirect targets") is in jcode@seid, and it is a rule for that instance's bash gate, so jcode@seid is right.
+
+5. Trivial or short-lived, kept: 9 (the 21:36 batch's suite counts 9fx1gp, y2q0tv; ticket filings harf65, 8h618h; 4y77ww hug setup's remaining step; 5jmecw and 13wcdj clerk rules; bte7nv hug.toml on hug/tasks; d6y35m gate worker count). They are true today; 9fx1gp and y2q0tv will go stale when the suite moves, and the next check should look at them.
+
+Changes (all with brew hug v0.7.52 from /Users/jhf/Veridit/src/seid-lang):
+  hug mem forget rhgj4y -> forgot rhgj4y
+  hug mem forget ps7rtr -> forgot ps7rtr
+  hug mem forget eqav5d -> forgot eqav5d
+  hug mem forget b215fd -> forgot b215fd
+  hug mem forget 18s9f3 -> forgot 18s9f3
+  hug mem forget xr634s -> forgot xr634s, but xr634s stayed active (see A); a second forget at 02:35:51Z took
+  hug mem remember "Seid lane rules: never run land.sh, never push, never bypass hooks; commit with normal hooks and one Model: trailer naming the model (Co-Authored-By is retired, King 2026-11-17)." --project
+    -> printed "remembered yx7vxv (place: here)"; the store holds it as erf4tk (mem_1b78f08288ad0778, 02:35:03Z), and hug mem show yx7vxv now prints erf4tk (see B)
+Verified in memories.json after: rhgj4y, ps7rtr, eqav5d, b215fd, 18s9f3, xr634s active=false; erf4tk active=true in project:rc-3557a74eab224a4c.
+
+Observations for crab (no code changed; neither reproduced in isolation):
+A. hug mem forget xr634s printed "forgot xr634s" (exit 0), the 6th of 6 forgets run back to back on the live store, yet memories.json afterwards (mtime 03:35:05 local) still had xr634s active=true with its old updated time. A remember ran right after and wrote the file. A second forget alone at 02:35:51Z wrote active=false.
+B. That remember printed "remembered yx7vxv (place: here)", but the store holds the text as erf4tk (mem_1b78f08288ad0778), and hug mem show yx7vxv prints erf4tk.
+Repro on the HUG_HOME copy (/Users/jhf/.jcode/scratch/5sc5rw/fgt, HUG_SYNC=off, same binary, same cwd): 6 forgets then a remember; all 6 active=false afterwards, and the remember printed and stored the same id (p7pq5j). See lost-forget-repro.txt. So both need the live store's other writers (capture, sync, MCP) to show; cause not established.
