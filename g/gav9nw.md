@@ -1,10 +1,10 @@
 ---
 id: gav9nw
 title: "Design: personal vs shared memories"
-state: todo
+state: "doing"
 type: spike
 priority: "low"
-assignee: []
+assignee: ["piglet"]
 labels: ["design"]
 created: 2026-11-10
 updated: 2026-11-10
@@ -12,6 +12,11 @@ parent: "9taa9d"
 group: "design"
 rank: "zy"
 aliases: ["design-personal-vs-shared-memories"]
+doing_since: "2026-11-18T18:53"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Decided so far: new Engram memories with no project default to personal, and glo
 - [ ] decision in DESIGN.md
 
 ## Notes
+
+
+## History
+- 2026-11-18T18:53 todo -> doing/active (take)
