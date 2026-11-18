@@ -13,13 +13,15 @@ group: "design"
 rank: "zy"
 aliases: ["design-personal-vs-shared-memories"]
 doing_since: "2026-11-18T18:53"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab review, then Jørgen picks an option"
-waiting_since: "2026-11-18T18:53"
-waiting_asked_by: "piglet"
+asked_check: "1"
+asked_what: "Which way do memories get placed before any repo shares? Measured on hug's 868 public memories (OPTIONS.md attached): 58 (6.7%) don't belong (29 personal, 16 other projects, 13 team). Leak / hug-memories-kept-local: today 6.7% / 0.2%; A+ extractor gets personal + other-project places 0.1% / 4.1% (estimate); B fixed rule at sync 2.4% / 11.1%; C only deliberate remembers 18.4% / 96% (agents' own remembers leaked most). A pushed memory can't be taken back. I recommend A+ and B together (0 of 699 leaked, 13.7% kept local), confirmed on fresh captures before any repo opts in. And the 58 already on the public branch: leave them, or rewrite the branch without them (backup exists)?"
+asked_for: "jhf"
+asked_since: "2026-11-18T18:54"
+asked_by: "crab"
 ---
 
 ## Goal
@@ -48,3 +50,4 @@ crab 18:55 local, review: accepted as the options packet for Jørgen. Key facts 
 ## History
 - 2026-11-18T18:53 todo -> doing/active (take)
 - 2026-11-18T18:53 doing/active -> doing/waiting (wait)
+- 2026-11-18T18:54 doing/waiting -> doing/asked (ask); was waiting_asked_by: piglet; waiting_on: crab review, then Jørgen picks an option; waiting_since: 2026-11-18T18:53
