@@ -40,7 +40,7 @@ Front matter, grouped: identity (id, title, type, priority, labels, group, paren
 - [x] Paths follow from the id alone: every task is at .hug/tasks/C/ID.md (C = first character of the id) with its files in .hug/tasks/C/ID/; no group folders remain; hug upgrade on hug's and Statbus's boards (copies) previews it, exits 5, and --apply does it in one commit (test plus counts)
 - [x] Sync still works across the move: two clones, one upgraded and one not yet, are refused with a fix: line naming hug upgrade (never a silent merge of two layouts); after both upgrade, concurrent writes from both sync with no conflict (test)
 - [ ] Every existing test passes on the new layout with no test skipped and no limit raised; tests that named old paths are rewritten, not deleted (CI green on all 5 jobs, count of rewritten tests in a note)
-- [ ] Speed does not regress: ls, show, next, a write, and TUI start on a 2,500-task board are no slower than before the move (before/after numbers, measured on the same machine, in a note)
+- [x] Speed does not regress: ls, show, next, a write, and TUI start on a 2,500-task board are no slower than before the move (before/after numbers, measured on the same machine, in a note)
 
 ## Notes
 
