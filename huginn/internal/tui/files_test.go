@@ -132,12 +132,14 @@ func TestFileMarkOnRows(t *testing.T) {
 // it in $EDITOR and the change is committed when the editor closes.
 func TestFilesOpenInEditorAndCommit(t *testing.T) {
 	m, commits := filesModel(t)
+	m.width = 160 // the whole key bar, Edit files included (e3sevr: E marked in its word)
+	m.resize()
 	m = openTask(t, m, "000001")
 	sel0, _ := m.selected()
 	// The whole page: FILES sits below the first screen once Purpose,
 	// Principle and Relevant details come first (jnaspy).
 	text := ansi.Strip(m.detailText(sel0)) + "\n" + ansi.Strip(m.keyBar())
-	for _, want := range []string{"FILES (2)", "⎘ bench/README.md", "⎘ bench/results.tsv", "E files"} {
+	for _, want := range []string{"FILES (2)", "⎘ bench/README.md", "⎘ bench/results.tsv", "Edit files"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("missing %q in:\n%s", want, text)
 		}
@@ -186,7 +188,7 @@ func TestFolderKeyOnlyWithFiles(t *testing.T) {
 	m, _ = filesModel(t)
 	m = openTask(t, m, "000002")
 	text := ansi.Strip(m.View())
-	if strings.Contains(text, "E files") || strings.Contains(text, "FILES") {
+	if strings.Contains(text, "Edit files") || strings.Contains(text, "FILES") {
 		t.Fatalf("a task without files shows the files key or section:\n%s", text)
 	}
 	m, cmd := key(m, "E")

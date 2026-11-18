@@ -28,7 +28,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                             
 All tasks · : filters and commands · ! lint finding · ↳ epic
                                                             
-j/k move · Enter open · f/# find · / search · : cmd · ? help
+j/k move · Enter open · find · # id · / search · : cmd …    
 == list at 60
 HUG TASKS · list   5/5 tasks · ! 0 broken · 12 advice       
  overview   [list]   board    !lint                         
@@ -59,7 +59,7 @@ Rows 1–5 of 5 · ! lint finding · ↳ epic · depends = a depen…
                                                             
 All tasks · : filters and commands                          
                                                             
-j/k move · Enter open · f/# find · / search · : cmd · ? help
+j/k move · Enter open · find · # id · / search · : cmd …    
 == board at 60
 HUG TASKS · board   5/5 tasks · ! 0 broken · 12 advice      
  overview    list   [board]   !lint                         
@@ -90,4 +90,4 @@ T: F feature B bug C chore S spike D docs · P: C critical H…
 Columns 1–1 of 5 · h/l reveals other columns                
 All tasks · : filters and commands                          
                                                             
-j/k move · Enter open · f/# find · / search · : cmd · ? help
+j/k move · Enter open · find · # id · / search · : cmd …    

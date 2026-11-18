@@ -12,7 +12,7 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   NEXT UP · rank order  [2] · 1–1 shown                                         
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
-j/k move · Enter open · f/# find · / search · : cmd · ? help · quit             
+j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == overview at 140x14, jhf
 HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 1 for you                                                                                 
 [overview]   list    board    !lint                                                                                                         
@@ -27,4 +27,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   NEXT UP · rank order  [2] · 1–1 shown                                                                                                     
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L o column/order                                  
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order                                  

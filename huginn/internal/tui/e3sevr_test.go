@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"unicode"
 
 	bkey "github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/x/ansi"
@@ -246,10 +247,12 @@ func goldenFile(t *testing.T, path, text string) {
 	}
 }
 
-// e3sevr check 14 (Jørgen 00:44): a letter key is marked inside its
-// action word, never repeated before it: no footer, key bar or status line
-// shows "n next", "e edit", "o order". The marked letter is in the key
-// colour and underlined.
+// e3sevr check 14 (Jørgen 00:44; crab 00:10): a letter key is marked
+// inside its action word, never written as a label beside a description
+// that holds its letter anywhere ("n next", "o column/order", "f find"):
+// a combined hint is split so each key marks its own word. Checked on the
+// key bar's items in every help context at 80 and 140, and on the plain
+// footer and status lines for "k kword". The mark is accent, underlined.
 func TestFooterMarksTheKeyInItsWord(t *testing.T) {
 	repeat := regexp.MustCompile(`(?:^|[ ·,:(])([A-Za-z]) ([A-Za-z])`)
 	check := func(where, text string) {
@@ -270,6 +273,14 @@ func TestFooterMarksTheKeyInItsWord(t *testing.T) {
 				check(name+" footer", lines[len(lines)-3])
 			}
 			check(name+" key bar", lines[len(lines)-1])
+			// A one-letter key shown as a label: its letter is nowhere in
+			// its words (else it is marked there). A pair such as j/k or
+			// H/L moves both ways and keeps its label (crab 00:10).
+			for _, it := range itemsOf(m.barHints()) {
+				if r := []rune(it.label); len(r) == 1 && unicode.IsLetter(r[0]) && strings.ContainsRune(strings.ToLower(plainMarks(it.words)), unicode.ToLower(r[0])) {
+					t.Fatalf("%s at %d: key %q is a label beside %q, which holds its letter", name, w, it.label, plainMarks(it.words))
+				}
+			}
 		}
 	}
 	// The marked letter is styled as a key: accent and underlined.

@@ -69,10 +69,10 @@ func (m model) barHints() []bkey.Binding {
 		hints = m.detailHints(m.width < 100)
 	default:
 		// h/l and Tab are one key (e3sevr): the bar names them together.
-		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L o", "column/order")}
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order")}
 	}
 	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" {
-		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f/#", "find"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f", "find"), hint("#", "id"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
 	return hints
 }
@@ -166,7 +166,7 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	hints = append(hints, hint("u", "up"), hint("n", "next task"), hint("p", "previous task"))
 	hints = append(hints, hint("J/K", "½ page"))
 	if len(m.filesOf(t)) > 0 {
-		hints = append(hints, hint("E", "files"))
+		hints = append(hints, hint("E", "edit files"))
 	}
 	if m.width >= 140 {
 		// S copies the screen and asks to attach it (5z4zt4); on a

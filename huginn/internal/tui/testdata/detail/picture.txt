@@ -59,4 +59,4 @@ PURPOSE
 Synthetic.                                                                                                                                  
 Task 2 of 60 · 0% · next · previous · Esc back                                                                                              
                                                                                                                                             
-j/k scroll · edit · done · wait · x drop · yank · h/l Tab next · answer · New · up · next-, previous task · J/K ½ page · E files · Screen … 
+j/k scroll · edit · done · wait · x drop · yank · h/l Tab next · answer · New · up · next-, previous task · J/K ½ page · Edit files · Screen

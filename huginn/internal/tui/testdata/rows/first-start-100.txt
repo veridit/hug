@@ -9,4 +9,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
   NEXT UP · rank order  [0] · None                                                                  
 reading the board: the first start builds the task cache: 1234 of 3630 files                        
                                                                                                     
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit …             
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column  
