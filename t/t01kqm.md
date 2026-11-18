@@ -1,23 +1,19 @@
 ---
 id: t01kqm
 title: "Lint judges open tasks only; closed tasks are history, no hidden count"
-state: "doing"
+state: "todo"
 type: feature
 priority: ""
-assignee: ["hatchling"]
+assignee: []
 labels: []
 group: ""
 rank: "zzzzzzzzzznh"
 created: 2026-11-18
 updated: 2026-11-18
-stage: "waiting"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-18T02:56"
-waiting_on: "the release carrying f6b63256, then Jørgen's look at the Statbus LINT section (check 6)"
-waiting_since: "2026-11-18T03:30"
-waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -59,3 +55,4 @@ retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): 
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T01:43
 - 2026-11-18T02:56 todo/ready -> doing/active (take)
 - 2026-11-18T03:30 doing/active -> doing/waiting (wait)
+- 2026-11-18T13:33 doing/waiting -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T02:56; waiting_asked_by: hatchling; waiting_on: the release carrying f6b63256, then Jørgen's look at the Statbus LINT section (check 6); waiting_since: 2026-11-18T03:30
