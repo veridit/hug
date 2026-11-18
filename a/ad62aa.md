@@ -33,7 +33,7 @@ iwazaru 34r1ft run: 2 git commit WaitDelay errors + TestDeduceTwoClonesOneLine a
 
 ## Acceptance
 - [x] Cause named in a note with a log line or reproduction
-- [ ] A test or amplified reproduction fails first, then passes -count=50 niced under load after the fix
+- [x] A test or amplified reproduction fails first, then passes -count=50 niced under load after the fix
 - [x] No timeout raised and no retry added
 
 ## Notes
@@ -43,5 +43,6 @@ Cause (tigress): gitbranch.runAt (gitbranch.go:185-200) and catchup.go blob() ru
 check 1: Cause: gitbranch.runAt and catchup blob() read git's output through pipes with WaitDelay 2 s. After git exits, os/exec gives the pipe-copying goroutines 2 s, and a CPU-starved niced process misses that. A git that exited 0 then returns 'exec: WaitDelay expired before I/O complete' and its output is lost. Reproduction on 477696be (gitbranch.Locate, 400 spinning goroutines, GOMAXPROCS=1): 'busy=400 Locate calls=549 WaitDelay errors=12 other errors=0', first '--version: exec: WaitDelay expired before I/O complete'. TestDeduceTwoClonesOneLine is the same: openBoard maps Locate's error to 'hug task needs a Git checkout' (cli.go:266).
 check 3: Diff 477696be..f6834e53 touches no timeout (WaitDelay stays 2 s, NetTimeout unchanged) and adds no retry or skip: git's output goes to temp files (huginn/gitbranch/output.go).
 Fix f6834e53 (failing test 9bc7ae14) on branch ad62aa/ci/ad62aa, base 477696be. Fail first: 'output_test.go:47: Locate after a git that exited 0 (2.044945708s): ... exec: WaitDelay expired before I/O complete'; mutation (output() back to pipes) fails the same way at 2.04 s. After: TestGitAnswerOnceGitExits -count=50 niced 'ok huginn/gitbranch 20.118s' (load 97-123). Paired starved amplifier, same load, 240 s: before 'Locate calls=549 WaitDelay errors=12', after 'Locate calls=46 WaitDelay errors=0'. TestDeduceTwoClonesOneLine -count=50 niced: PASS (load 57-104). Full niced cli package: PASS, gitbranch: 'ok 67.101s'. Before the fix, a full niced cli run on 477696be at load 192-402 also passed, so the flake needs heavier starvation than this machine had now; the amplifier is the fail-first evidence. Cost unloaded: git --version 19.6-20.6 ms with files vs 17.7-22.9 ms with pipes. CI 44391237795 running. Report: ~/.jcode/scratch/ad62aa-ev/REPORT.md
+check 2: Fail first at f7903264 on main d5c66a1f: 'output_test.go:47: Locate after a git that exited 0 (2.052644792s): ... exec: WaitDelay expired before I/O complete'. Fix e6e3c36b: TestGitAnswerOnceGitExits -count=50 niced 'ok huginn/gitbranch 9.304s'. Amplifier paired at the same load: before 'Locate calls=549 WaitDelay errors=12', after 'Locate calls=46 WaitDelay errors=0'. TestDeduceTwoClonesOneLine -count=50 niced: PASS. Niced suites on the rebased tree: gitbranch 'ok 55.515s', cli 'ok 267.615s'. CI 44396660537 on e6e3c36b: success, 9 of 9 jobs, windows-latest included.
 ## History
 - 2026-11-18T20:21 todo -> doing/active (take)
