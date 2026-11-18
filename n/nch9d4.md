@@ -7,7 +7,7 @@ priority: ""
 assignee: ["macaque"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzw"
+rank: "zzzzzzzzzzzv"
 created: 2026-11-18
 updated: 2026-11-18
 stage: "active"
