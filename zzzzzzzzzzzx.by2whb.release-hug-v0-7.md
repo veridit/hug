@@ -1,13 +1,18 @@
 ---
 id: by2whb
 title: "Release hug v0.7.58"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T08:04"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -28,3 +33,7 @@ CI44250806129. Diagnostic stall remains unresolved; layout3 and forget optimizat
 - [ ] Tag and main merge pushed, release workflow success, hug version reports v0.7.58
 
 ## Notes
+
+
+## History
+- 2026-11-18T08:04 todo -> doing/active (take)
