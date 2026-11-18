@@ -56,7 +56,7 @@ func (s *session) boardFindings(ctx context.Context, cwd string, live *task.Live
 		}
 		// Harness session state, not file content (v3k6cp, 9ahvgt): a
 		// person in [people] is never judged.
-		fs = append(fs, task.OwnerFindings(live, ts, time.Now(), people...)...)
+		fs = append(fs, handoverFix(task.OwnerFindings(live, ts, time.Now(), people...), live, ts, s.r.Dir, people)...)
 		// A doing ticket nothing has touched for 2 hours is a question to its
 		// owner (at3qep), unless it already has one; then one question per
 		// ticket, the most important.
@@ -350,4 +350,28 @@ func unreadSessions(l *task.Liveness) string {
 		return ""
 	}
 	return "stale-owner cannot read " + strings.Join(l.Unread, ", ") + ": owners there are not judged\nfix: ls -ld " + l.Unread[0]
+}
+
+// handoverFix points a stale-owner finding at hug task sync when that
+// command would hand the task to the coordinator (yf39ya check 4, crab
+// 20:09): lint itself never writes. The finding stands until a sync or
+// the background pass hands it over; with no live coordinator the fix is
+// unchanged.
+func handoverFix(fs []task.Finding, live *task.Liveness, ts []task.Task, dir string, people []task.Person) []task.Finding {
+	coordinator, _ := task.Coordinator(dir)
+	plan := task.PlanHandover(live, ts, coordinator, time.Now(), people...)
+	if len(plan) == 0 {
+		return fs
+	}
+	to := map[string]bool{}
+	for _, h := range plan {
+		to[h.ID] = true
+	}
+	for i, f := range fs {
+		if id, ok := task.IDOf(f.Path); ok && to[id] && f.Code == "stale-owner" {
+			fs[i].Problem = strings.Replace(f.Problem, "; whoever works it now takes the assignee", "; hug task sync hands it to the coordinator "+coordinator, 1)
+			fs[i].Fix = "hug task sync"
+		}
+	}
+	return fs
 }

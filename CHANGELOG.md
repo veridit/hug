@@ -16,6 +16,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - `hug tui` looks at a picture properly (33v71x). In a task's file frame, `+` (or `=`) and `-` zoom in steps from fit to 150, 200, 300, 400, 600 and 800 %, `h/j/k/l` scroll the zoomed picture, `0` fits it again, and the crumb shows `zoom N%`. `o` (and Enter), on a picture in the frame or marked in Files, hands it to the system viewer (`open` on macOS, Preview; `xdg-open` on Linux; `explorer` on Windows) and stays on the same screen; hug does not wait for the viewer. A picture never opens in the text editor; Enter on a text file still edits it. The footer and `?` help list these keys for pictures only, and zoom keys only where the terminal draws images.
 
+- Shipped work leaves the board clean (yf39ya, Jørgen 2026-11-18: after a release hug's board showed 40 findings, 37 broken, mostly bookkeeping). No finding is silenced or downgraded; the flow now acts when each thing happens.
+
 ## v0.7.69 - 2026-11-18
 
 - Windows CI runs the `huginn/internal/cli` tests in two shards on two runners (0n4rnx): shard sync takes the sync, catch-up and layout-upgrade tests (`-run`), shard rest the others (`-skip`, same pattern), each one `go test` run under its 10-minute limit. One run of the package took 387-403 s on one runner and crossed 600 s on slow ones. A new job, `test-windows-cli-shards`, fails when a test ran in neither shard or in both.
