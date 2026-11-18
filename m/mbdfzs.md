@@ -49,6 +49,7 @@ landed 8dee4a8 on main 2026-11-18: hug mcp: reload the installed hug between req
 Mutant 'reload always' (ignore start identity) killed: 'reload_test.go:89: connect: context deadline exceeded' in TestMCPReloadsChangedBinary and TestMCPNoReloadWhenUnchanged. Now 12 of 12 killed.
 shipped in v0.7.54 (8dee4a8)
 crab 18:19 local, check 3 FAILS on Jørgen's machine with v0.7.66 installed: hug mcp pids 3175 (ssb/.jcode, Statbus), 56816, 65214 run Cellar 0.7.2; 15206 0.7.14; 77273 0.7.43 (Claude.app); 90712 0.7.52. All started before v0.7.54, so they predate the reload and can never reload. Statbus hit it: memory_remember -> 'cannot modify graph_state because it is a view' (the 4vd1mz guard refusing a pre-v0.7.59 writer, as designed). Follow-up filed for servers older than the reload.
+check 3: commit 09462c2e (branch mbdfzs3, on origin/main 939636ff). CI 44388310353 attempt 2: all jobs success (ubuntu, windows, macos, windows-cli rest+sync+shards, bench, secrets). Attempt 1 macOS job was cancelled with 0 steps after sitting queued 22 minutes with no runner; the rerun passed 20:42-20:47Z. Tests failed first: TestOldHugIsToldToRestart. 5 of 5 mutants killed (mbdfzs3/mut/mutants.txt). Live v0.7.2 evidence: scratch mbdfzs3/live-*.txt.
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
