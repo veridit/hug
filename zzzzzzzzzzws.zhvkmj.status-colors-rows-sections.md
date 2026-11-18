@@ -11,13 +11,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "asked"
-asked_by: "nautilus"
-asked_check: "4"
-asked_for: "jhf"
-asked_show: "screen-1821.ans"
-asked_since: "2026-11-17T18:21"
-asked_what: "do the status colours read as one subtle scheme? The capture shows the overview on this board (IN PROGRESS, NEXT UP, RECENTLY DONE, done rows with a green count)"
+stage: "active"
 ---
 
 ## Goal
@@ -53,3 +47,6 @@ file:screen-1821.ans (10206 bytes, sha256:e77117eb) screen capture from hug tui
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
+- 2026-11-18T02:32 answered asked (check 4), by jhf, for nautilus (doing/asked -> doing/active):
+  > do the status colours read as one subtle scheme? The capture shows the overview on this board (IN PROGRESS, NEXT UP, RECENTLY DONE, done rows with a green count)
+  It bugs me that weighting and lint are two different issues. I'm wondering if lint should be more red, like an error, or if warning, or if whiting should be less alarmist
