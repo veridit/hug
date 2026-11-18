@@ -10,13 +10,14 @@ group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+parent: "d634kr"
 ---
 
 ## Goal
 Every hug mem forget and memory_remember that corrects a note records, locally, the session, the harness, whether that id was shown in a recall block in the same session and how many turns earlier, and an optional reason (--reason / MCP reason). hug mem stats --fixes prints, per day and per instance, recall blocks shown, fixes of a shown id, fixes the owner asked for versus unprompted, and forgets later undone or contradicted.
 
 ## Purpose
-s6ff5k item 1 had to be measured by regex over four jcode instances' transcripts, and the answer is still soft: the injections table holds 84 jcode sessions since 2026-11-16 12:00 but only 35 of their transcripts contain the block (the rest are absent or rewritten), and nothing says why a memory was retired. Of the 8 working sessions that forgot a shown id since then, the turns before the forgets in orangutan, spider and rabbit include the owner telling the agent to ('Okay, if you see a recalled note that is obsolete, you have to remove it'; 'Doesn't that instruction tell you to?'; 'Remove obsolete memory'). Without a trail we cannot tell header-driven fixes from owner-driven ones, or see a wrong forget at all (H2 made 28 forgets of notes that still held, found only by a blind judge in a replay).
+s6ff5k item 1 had to be measured by regex over four jcode instances' transcripts, and the answer is still soft: the injections table holds 84 jcode sessions since 2026-11-16 12:00 but only 35 of their transcripts contain the block (the rest are absent or rewritten), and nothing says why a memory was retired. Of the 5 working sessions that forgot a shown id since then, in 3 (orangutan, spider, rabbit) the owner had told the agent to ('Okay, if you see a recalled note that is obsolete, you have to remove it'; 'Doesn't that instruction tell you to?'; 'Remove obsolete memory'). Without a trail we cannot tell header-driven fixes from owner-driven ones, or see a wrong forget at all (H2 made 28 forgets of notes that still held, found only by a blind judge in a replay).
 
 ## Principle
 Local and free: a row in muninn.db per fix, no model call, no change to what recall shows or ranks. Recording never blocks the write and never asks a question. The reason is optional; absent is recorded as absent. The stats read the trail, not transcripts.
