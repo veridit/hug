@@ -49,5 +49,6 @@ Crab06:46 required ordinary SAME-task shared resolver in w40cmk before check9. C
 Shared ordinary resolver safety correction11c0df2e: two legacy-layout clones must not implicitly migrate during ordinary sync. Failing-first22237123ow reproduced layout3 unexpectedly, corrected with TargetLayout guard; test passes2.95s. Pure disjoint Goal-line test passes4.77s, proves semantic scalar handling cannot be deferred until Git text conflict. Focused287786gtef exit0. Final local gates pending390827vrmb, no main push or ticket completion inferred.
 
 
+macaque 4504654a (branch 8zwy6r + ci/8zwy6r, on origin/main c84d3273). Finding: the shared semantic replay already on main (798d91c8 'Use shared semantic replay for ordinary task-board sync', kestrel's w40cmk work) makes ordinary sync merge same-task appends; no gitbranch change needed, so no overlap with tigress's fcf4fg. Check 1: TestSyncMergesBothSidesAppends/note_on_each_side (cli, plain fresh board, no layout upgrade): on a13d7c74 (kestrel's baseline) it fails 'sync in .../two: exit 1 / sync conflicts: h.88px62.shared-task.md (rebase aborted)'; on c84d3273 and 4504654a '--- PASS' (A, B, A sync all exit 0, each note once, A before B, HEADs equal).
 ## History
 - 2026-11-18T16:57 todo -> doing/active (take)
