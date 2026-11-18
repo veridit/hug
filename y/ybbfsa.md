@@ -40,5 +40,6 @@ Logs: gh run view 44316906824 --log-failed (attempt 1). TempDir cleanup: likely 
 ## Notes
 
 
+Flake 2 cause (gitbranch TestUpgradeFailuresKeepOriginalLayout TempDir cleanup 'remote.git/objects: directory not empty'): lost-ack and unknown-* kill the push at NetTimeout=1s while the remote's post-receive sleeps 3s. The killed push leaves git-receive-pack running (probe: push returned after 1.008s 'signal: killed'; ps still shows git-receive-pack, /bin/sh hooks/post-receive, sleep 3). After the hook ends, receive-pack starts 'git maintenance run --auto --quiet --detach' (trace2: child_start 3.063841s after hook exit), which creates objects/maintenance.lock 3100-3172 ms after the push started (3 of 3 runs), while t.TempDir removes the folder. gc.auto=0 does not stop it: receive-pack still spawns the child (1 child with gc.auto=0, 1 with no config, 0 with maintenance.auto=false). Env config (GIT_CONFIG_COUNT) does not reach receive-pack (commit 0 children, push 1). Fix per crab's ruling (fixtures only): quietRemote() sets maintenance.auto=false on both upgrade_test remotes. Fail-first: TestFixtureRemoteStartsNoMaintenance with quietRemote setting true: 'upgrade_test.go:223: quietRemote: receive-pack started maintenance 2 times' FAIL; with false: PASS.
 ## History
 - 2026-11-18T15:56 todo -> doing/active (take)
