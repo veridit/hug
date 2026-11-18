@@ -6,15 +6,15 @@ filter: none · sort: rank
 > IN PROGRESS · assigned to  [1]                                                
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows…  nautilus     
                                                                                 
-  WAITING  [4]                                                                  
-  ◑ 1/2  bbbbbb   feature high     review    Release, then hug s…  nautilus     
-  ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50…  nautilus     
-  ◑ 1/2  dddddd   feature high     depends   One set of variable…  nautilus     
-  ◑ 1/2  eeeeee   feature high     design    Tags listed per boa…  unassigned   
+  WAITING  [4] · all feature · all high                                         
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-l…  nautilus        
+  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms              nautilus        
+  ◑ 1/2  dddddd   depends   One set of variable names           nautilus        
+  ◑ 1/2  eeeeee   design    Tags listed per board               unassigned      
                                                                                 
-  NEXT UP · rank order  [2]                                                     
-  ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic          
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place         
+  NEXT UP · rank order  [2] · all feature · all high                            
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                           
+  ◑ 1/2  gggggg   deferred  Answer a question in place                          
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
@@ -37,16 +37,16 @@ filter: none · sort: rank
   IN PROGRESS · assigned to  [1]                                                
   ◑ 1/2  aaaaaa   feature high     active    Status colors: rows…  nautilus     
                                                                                 
-> WAITING  [4]                                                                  
-  ◑ 1/2  bbbbbb   feature high     review    Release, then hug s…  nautilus     
-> ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50…  nautilus     
+> WAITING  [4] · all feature · all high                                         
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-l…  nautilus        
+> ◑ 1/2  cccccc   waiting   Warm cache under 50 ms              nautilus        
          └─ waiting on CI run 44063552584                            since 09:41
-  ◑ 1/2  dddddd   feature high     depends   One set of variable…  nautilus     
-  ◑ 1/2  eeeeee   feature high     design    Tags listed per boa…  unassigned   
+  ◑ 1/2  dddddd   depends   One set of variable names           nautilus        
+  ◑ 1/2  eeeeee   design    Tags listed per board               unassigned      
                                                                                 
-  NEXT UP · rank order  [2]                                                     
-  ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic          
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place         
+  NEXT UP · rank order  [2] · all feature · all high                            
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                           
+  ◑ 1/2  gggggg   deferred  Answer a question in place                          
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
@@ -64,14 +64,14 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 HUG TASKS · list   7/7 tasks · ! 0 broken                                       
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
-  ✓      ID       TYPE    PRIORITY STAGE     TITLE                              
-> ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections s…
-  ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-la…
-  ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50 ms             
-  ◑ 1/2  dddddd   feature high     depends   One set of variable names          
-  ◑ 1/2  eeeeee   feature high     design    Tags listed per board              
-  ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic          
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place         
+  ✓      ID       STAGE     TITLE                       · all feature · all high
+> ◑ 1/2  aaaaaa   active    Status colors: rows and sections share one subtle s…
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                
+  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                              
+  ◑ 1/2  dddddd   depends   One set of variable names                           
+  ◑ 1/2  eeeeee   design    Tags listed per board                               
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                           
+  ◑ 1/2  gggggg   deferred  Answer a question in place                          
 Rows 1–7 of 7 · ! lint finding · ↳ epic · depends = a dependency is not done    
                                                                                 
                                                                                 
@@ -99,15 +99,15 @@ filter: none · sort: rank
 > IN PROGRESS · assigned to  [1]                                                                                                            
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                       nautilus        
                                                                                                                                             
-  WAITING  [4]                                                                                                                              
-  ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                           nautilus        
-  ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50 ms                                                         nautilus        
-  ◑ 1/2  dddddd   feature high     depends   One set of variable names                                                      nautilus        
-  ◑ 1/2  eeeeee   feature high     design    Tags listed per board                                                          unassigned      
+  WAITING  [4] · all feature · all high                                                                                                     
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                                                            nautilus        
+  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                                                                          nautilus        
+  ◑ 1/2  dddddd   depends   One set of variable names                                                                       nautilus        
+  ◑ 1/2  eeeeee   design    Tags listed per board                                                                           unassigned      
                                                                                                                                             
-  NEXT UP · rank order  [2]                                                                                                                 
-  ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic                                                                      
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
+  NEXT UP · rank order  [2] · all feature · all high                                                                                        
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                                                                                       
+  ◑ 1/2  gggggg   deferred  Answer a question in place                                                                                      
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
@@ -130,16 +130,16 @@ filter: none · sort: rank
   IN PROGRESS · assigned to  [1]                                                                                                            
   ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                       nautilus        
                                                                                                                                             
-> WAITING  [4]                                                                                                                              
-  ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                           nautilus        
-> ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50 ms                                                         nautilus        
+> WAITING  [4] · all feature · all high                                                                                                     
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                                                            nautilus        
+> ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                                                                          nautilus        
          └─ waiting on CI run 44063552584                                                                                        since 09:41
-  ◑ 1/2  dddddd   feature high     depends   One set of variable names                                                      nautilus        
-  ◑ 1/2  eeeeee   feature high     design    Tags listed per board                                                          unassigned      
+  ◑ 1/2  dddddd   depends   One set of variable names                                                                       nautilus        
+  ◑ 1/2  eeeeee   design    Tags listed per board                                                                           unassigned      
                                                                                                                                             
-  NEXT UP · rank order  [2]                                                                                                                 
-  ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic                                                                      
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
+  NEXT UP · rank order  [2] · all feature · all high                                                                                        
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                                                                                       
+  ◑ 1/2  gggggg   deferred  Answer a question in place                                                                                      
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
@@ -157,14 +157,14 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 HUG TASKS · list   7/7 tasks · ! 0 broken                                                                                                   
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-  ✓      ID       TYPE    PRIORITY STAGE     TITLE                                                                                          
-> ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                                       
-  ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                                           
-  ◑ 1/2  cccccc   feature high     waiting   Warm cache under 50 ms                                                                         
-  ◑ 1/2  dddddd   feature high     depends   One set of variable names                                                                      
-  ◑ 1/2  eeeeee   feature high     design    Tags listed per board                                                                          
-  ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic                                                                      
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
+  ✓      ID       STAGE     TITLE                                                                                   · all feature · all high
+> ◑ 1/2  aaaaaa   active    Status colors: rows and sections share one subtle scheme                                                        
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                                                                            
+  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                                                                                          
+  ◑ 1/2  dddddd   depends   One set of variable names                                                                                       
+  ◑ 1/2  eeeeee   design    Tags listed per board                                                                                           
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                                                                                       
+  ◑ 1/2  gggggg   deferred  Answer a question in place                                                                                      
 Rows 1–7 of 7 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                
                                                                                                                                             
                                                                                                                                             

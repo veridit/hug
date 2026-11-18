@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -69,8 +70,16 @@ func since(stamp string) string {
 // on you; a wait on a thing or on someone else dim, the rest dim
 // (zhvkmj, crab 02:52).
 func (m model) stageWord(t task.Task, word string, width int) string {
+	return m.stageStyle(t, word).Render(fit(word, width))
+}
+
+// stageStyle is the colour stageWord gives word; a closed task's state
+// word is in its state colour, as its row draws it.
+func (m model) stageStyle(t task.Task, word string) lipgloss.Style {
 	style := m.styles.dim
 	switch strings.TrimSuffix(word, ":") {
+	case "done", "dropped":
+		style = m.styles.status[word]
 	case "depends":
 		style = m.styles.status["depends"]
 	case "waiting", "asked", "design", "review":
@@ -82,7 +91,7 @@ func (m model) stageWord(t task.Task, word string, width int) string {
 	case "ready":
 		style = m.styles.status["todo"]
 	}
-	return style.Render(fit(word, width))
+	return style
 }
 
 // me is the TUI user as tasks name them: Options.User (an agent's

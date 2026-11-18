@@ -2,21 +2,21 @@ HUG TASKS · overview   60/60 tasks · ! 2 broken · 5 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank
   ASKED · for you  [0] · None
-> IN PROGRESS · assigned to  [14]
-> ◑ 1/2  000002   bug     critical active    compiler Bug task 02: make the terminal workflow observable        alice · feat/terminal-000002
-  ◑ 1/2  000006   feature high     active    runtime Feature task 06: make the terminal workflow observable     bob
-  ◑ 1/2  000010   docs    high     active    compiler Docs task 10: make the terminal workflow observable       bob
-  ◑ 1/2  000014   spike   medium   active    runtime Spike task 14: make the terminal workflow observable       carol · feat/terminal-000014
-  ◑ 1/2  000018   chore   low      active    docs Chore task 18: make the terminal workflow observable          alice
-  ◑ 1/2 ·000022   bug     critical active    runtime Bug task 22: make the terminal workflow observable with …  bob
-  ◑ 1/2  000030   docs    high     active    compiler Docs task 30: make the terminal workflow observable       carol
-  ◑ 1/2  000034   spike   medium   active    docs Spike task 34: make the terminal workflow observable          alice
-  ◑ 1/2  000038   chore   low      active    compiler Chore task 38: make the terminal workflow observable      bob · feat/terminal-000038
-  ◑ 1/2  000042   bug     critical active    runtime Bug task 42: make the terminal workflow observable         carol
-  ◑ 1/2  000046   feature high     active    compiler Feature task 46: make the terminal workflow observable    alice
-  ◑ 1/2 ·000050   docs    high     active    runtime Docs task 50: make the terminal workflow observable with…  alice · feat/terminal-000050
-  ◑ 1/2  000054   spike   medium   active    docs Spike task 54: make the terminal workflow observable          bob
-  ◑ 1/2  000058   chore   low      active    runtime Chore task 58: make the terminal workflow observable       carol
+> IN PROGRESS · assigned to  [14] · all active
+> ◑ 1/2  000002   bug     critical compiler Bug task 02: make the terminal workflow observable                  alice · feat/terminal-000002
+  ◑ 1/2  000006   feature high     runtime Feature task 06: make the terminal workflow observable               bob
+  ◑ 1/2  000010   docs    high     compiler Docs task 10: make the terminal workflow observable                 bob
+  ◑ 1/2  000014   spike   medium   runtime Spike task 14: make the terminal workflow observable                 carol · feat/terminal-000014
+  ◑ 1/2  000018   chore   low      docs Chore task 18: make the terminal workflow observable                    alice
+  ◑ 1/2 ·000022   bug     critical runtime Bug task 22: make the terminal workflow observable with a delibera…  bob
+  ◑ 1/2  000030   docs    high     compiler Docs task 30: make the terminal workflow observable                 carol
+  ◑ 1/2  000034   spike   medium   docs Spike task 34: make the terminal workflow observable                    alice
+  ◑ 1/2  000038   chore   low      compiler Chore task 38: make the terminal workflow observable                bob · feat/terminal-000038
+  ◑ 1/2  000042   bug     critical runtime Bug task 42: make the terminal workflow observable                   carol
+  ◑ 1/2  000046   feature high     compiler Feature task 46: make the terminal workflow observable              alice
+  ◑ 1/2 ·000050   docs    high     runtime Docs task 50: make the terminal workflow observable with a deliber…  alice · feat/terminal-000050
+  ◑ 1/2  000054   spike   medium   docs Spike task 54: make the terminal workflow observable                    bob
+  ◑ 1/2  000058   chore   low      runtime Chore task 58: make the terminal workflow observable                 carol
 
   WAITING  [1]
   ◑ 1/2 !000026   feature high     depends   docs Feature task 26: make the terminal workflow observable        carol · feat/terminal-000026

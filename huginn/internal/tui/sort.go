@@ -99,10 +99,10 @@ func (m *model) openSort() {
 // currentColumn is the marked column's field, the one c in the picker
 // and o order by; ok is false with no column marked.
 func (m model) currentColumn() (sortField, bool) {
-	if m.column < 0 || m.column >= len(gridColumns) {
-		return sortField{}, false
+	if i := m.markedColumn(); i >= 0 {
+		return fieldByName(gridColumns[i].field), true
 	}
-	return fieldByName(gridColumns[m.column].field), true
+	return sortField{}, false
 }
 
 // updateSort handles a key while the builder is open.

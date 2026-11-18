@@ -2,16 +2,16 @@
 HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                     
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
-  ASKED · for you  [3] · 1–1 shown                                              
-↓ ◑ 1/2  aaaaaa   feature high     asked     Status colors: rows…  nautilus     
+  ASKED · for you  [3] · 1–1 shown · all feature · all high                     
+↓ ◑ 1/2  aaaaaa   asked     Status colors: rows and sections …  nautilus        
                                                                                 
   IN PROGRESS · assigned to  [0] · None                                         
-  WAITING  [2] · 1–1 shown                                                      
-↓ ◑ 1/2  bbbbbb   feature high     review    Release, then hug s…  nautilus     
+  WAITING  [2] · 1–1 shown · all feature · all high · all nautilus              
+↓ ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                
                                                                                 
-> NEXT UP · rank order  [2]                                                     
-> ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic          
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place         
+> NEXT UP · rank order  [2] · all feature · all high                            
+> ◑ 1/2  ffffff   ready     Depend on a group or epic                           
+  ◑ 1/2  gggggg   deferred  Answer a question in place                          
                                                                                 
   RECENTLY DONE · last closed  [0] · None                                       
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
@@ -21,16 +21,16 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                 
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-  ASKED · for you  [3] · 1–1 shown                                                                                                          
-↓ ◑ 1/2  aaaaaa   feature high     asked     Status colors: rows and sections share one subtle scheme                       nautilus        
+  ASKED · for you  [3] · 1–1 shown · all feature · all high                                                                                 
+↓ ◑ 1/2  aaaaaa   asked     Status colors: rows and sections share one subtle scheme                                        nautilus        
                                                                                                                                             
   IN PROGRESS · assigned to  [0] · None                                                                                                     
-  WAITING  [2] · 1–1 shown                                                                                                                  
-↓ ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                           nautilus        
+  WAITING  [2] · 1–1 shown · all feature · all high · all nautilus                                                                          
+↓ ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                                                                            
                                                                                                                                             
-> NEXT UP · rank order  [2]                                                                                                                 
-> ◑ 1/2  ffffff   feature high     ready     Depend on a group or epic                                                                      
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                                                                     
+> NEXT UP · rank order  [2] · all feature · all high                                                                                        
+> ◑ 1/2  ffffff   ready     Depend on a group or epic                                                                                       
+  ◑ 1/2  gggggg   deferred  Answer a question in place                                                                                      
                                                                                                                                             
   RECENTLY DONE · last closed  [0] · None                                                                                                   
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                

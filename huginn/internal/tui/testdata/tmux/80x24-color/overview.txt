@@ -2,10 +2,10 @@ HUG TASKS · overview   60/60 tasks · ! 2 broken · 5 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank
   ASKED · for you  [0] · None
-> IN PROGRESS · assigned to  [14] · 1–3 shown
-> ◑ 1/2  000002   bug     critical active    compil… Bug task 02…  alice · feat…
-  ◑ 1/2  000006   feature high     active    runtime Feature tas…  bob
-↓ ◑ 1/2  000010   docs    high     active    compil… Docs task 1…  bob
+> IN PROGRESS · assigned to  [14] · 1–3 shown · all active
+> ◑ 1/2  000002   bug     critical compiler Bug task 02: make…  alice · feat/te…
+  ◑ 1/2  000006   feature high     runtime Feature task 06: m…  bob
+↓ ◑ 1/2  000010   docs    high     compiler Docs task 10: mak…  bob
 
   WAITING  [1]
   ◑ 1/2 !000026   feature high     depends   docs Feature task 2…  carol · feat…

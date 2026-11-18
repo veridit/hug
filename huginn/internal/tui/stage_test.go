@@ -98,13 +98,16 @@ func TestRowsShowStage(t *testing.T) {
 	m := stageBoard(t)
 	view := ansi.Strip(viewAt(m, "overview", 140))
 	for _, want := range []string{
+		// IN PROGRESS holds one task, so it keeps its columns; WAITING and
+		// NEXT UP share type and priority, said once in the heading
+		// (1bbe96).
 		`aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme`,
-		`bbbbbb   feature high     review    Release, then hug setup in seid-lang`,
-		`cccccc   feature high     waiting   Warm cache under 50 ms`,
-		`dddddd   feature high     depends   One set of variable names`,
-		`eeeeee   feature high     design    Tags listed per board`,
-		`ffffff   feature high     ready     Depend on a group or epic`,
-		`gggggg   feature high     deferred  Answer a question in place`,
+		`bbbbbb   review    Release, then hug setup in seid-lang`,
+		`cccccc   waiting   Warm cache under 50 ms`,
+		`dddddd   depends   One set of variable names`,
+		`eeeeee   design    Tags listed per board`,
+		`ffffff   ready     Depend on a group or epic`,
+		`gggggg   deferred  Answer a question in place`,
 	} {
 		if !strings.Contains(view, want) {
 			t.Errorf("overview lacks %q", want)
@@ -126,7 +129,7 @@ func TestRowsShowStage(t *testing.T) {
 			t.Errorf("%s has %d rows, want %d (one line each, nothing else):\n%s", name, n, len(ids), got)
 		}
 	}
-	if !regexp.MustCompile(`(?m)^  WAITING  \[4\]\s*$`).MatchString(view) {
+	if !regexp.MustCompile(`(?m)^  WAITING  \[4\] · all feature · all high\s*$`).MatchString(view) {
 		t.Errorf("WAITING header is not 'WAITING  [4]' (what asks you is in ASKED, 41hhgn):\n%s", view)
 	}
 	// Check 4: no row the cursor is not on has a second line.

@@ -45,9 +45,10 @@ func TestInProgressRowShowsBranch(t *testing.T) {
 	}
 	m.width = 80
 	// The stage column (6ephqk) is 2 cells wider than status was and the
-	// lint mark has its own cell (e3sevr): the branch is cut further, the
-	// owner still comes first.
-	if out = m.overviewText(); !strings.Contains(out, "alice · feat…") {
+	// lint mark has its own cell (e3sevr): the branch is cut, the owner
+	// still comes first. Both tasks share stage and type, so those
+	// columns give the title room (1bbe96).
+	if out = m.overviewText(); !strings.Contains(out, "alice · feat/te…") {
 		t.Fatalf("80 columns: owner first, branch cut:\n%s", out)
 	}
 }

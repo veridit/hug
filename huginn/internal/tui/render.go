@@ -344,7 +344,20 @@ func (m model) columnsOwner(width int, compact bool, c rowCols) string {
 
 func (m model) listText() string {
 	indices := m.paneRows(m.pane)
-	lines := []string{m.columns(m.width, false)}
+	c := m.sectionLayout(m.pane) // the list is one section (1bbe96)
+	head := m.columnsOwner(m.width, false, c)
+	if same := m.sectionSame(m.pane); same.any() {
+		// The list has no section title: the column header says it,
+		// after TITLE, which gives the room.
+		// When TITLE and the label do not both fit, the label is cut,
+		// never the column names.
+		label := m.sameLabel(same, m.visible[m.rawPane(m.pane)[0]])
+		short := c
+		short.title = max(len("TITLE"), c.title-lipgloss.Width(label))
+		room := c.title - short.title
+		head = m.columnsOwner(m.width-room, false, short) + ansi.Truncate(label, room, "…")
+	}
+	lines := []string{head}
 	if len(indices) == 0 {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
@@ -356,7 +369,7 @@ func (m model) listText() string {
 			continue
 		}
 		t := m.visible[i]
-		lines = append(lines, m.taskRowMark(t, m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices))))
+		lines = append(lines, m.taskRowCols(t, m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices)), c))
 		if i == m.cursor {
 			if note := m.noteRow(t, m.width, true); note != "" {
 				lines = append(lines, note) // what it waits on, under the selected row (89y0b7, tje4sx)
@@ -424,20 +437,25 @@ func (m model) overviewText() string {
 		} else {
 			label += shownLabel(indices, start, end)
 		}
-		label = m.sectionStyle(p).Render(fit(label, m.width))
+		// A column the same on every task of the section is said once,
+		// here, not drawn on each row (1bbe96).
+		same := m.sectionSame(p)
+		if !same.any() {
+			label = m.sectionStyle(p).Render(fit(label, m.width))
+		} else {
+			tail := m.sameLabel(same, m.visible[m.rawPane(p)[0]])
+			label = m.sectionStyle(p).Render(label) + tail + m.sectionStyle(p).Render(strings.Repeat(" ", max(0, m.width-lipgloss.Width(label)-lipgloss.Width(tail))))
+			label = fit(label, m.width)
+		}
 		if p == m.pane {
 			label = m.styles.selected.Render(label)
 		}
 		lines = append(lines, label)
 		// IN PROGRESS and WAITING rows share one layout with the owner cell
-		// (102bc0, tje4sx).
-		doing := m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(m.paneIndices(p)))
+		// (102bc0, tje4sx), without the columns the section shares.
+		doing := m.sectionLayout(p)
 		if p == m.pane && m.overviewHeading() && p != sectionLint && len(indices) > 0 {
-			c := m.rowLayout(m.width, false, 0, 0)
-			if ownerSection(p) {
-				c = doing
-			}
-			lines = append(lines, m.columnsOwner(m.width, false, c))
+			lines = append(lines, m.columnsOwner(m.width, false, doing))
 		}
 		for n, i := range indices[start:end] {
 			if isHead(i) {
@@ -447,7 +465,7 @@ func (m model) overviewText() string {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
-			if ownerSection(p) {
+			if ownerSection(p) && doing.owner > 0 {
 				// Owners get a reserved column, never lost behind a long
 				// title. On the selected row the highlight runs through it,
 				// so the owner reads as part of that row.
@@ -460,7 +478,7 @@ func (m model) overviewText() string {
 				rest := max(0, m.width-doing.owner-ownerGap)
 				lines = append(lines, fit(m.taskRowCols(t, rest, sel, false, mark, doing)+ownerCell, m.width))
 			} else {
-				lines = append(lines, m.taskRowMark(t, m.width, sel, false, mark))
+				lines = append(lines, m.taskRowCols(t, m.width, sel, false, mark, doing))
 			}
 			if sel {
 				if note := m.noteRow(t, m.width, true); note != "" {

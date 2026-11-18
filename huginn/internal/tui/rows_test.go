@@ -26,7 +26,13 @@ func longBoard(t *testing.T) model {
 		"files " + long,
 	}
 	for i, title := range titles {
-		r, err := s.New(task.NewOptions{Title: title, Goal: "G", Acceptance: []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"}, Type: "feature", Priority: "critical"})
+		kind, priority := "feature", "critical"
+		if i == 4 {
+			// One differs, so the list draws TYPE and PRIORITY (1bbe96: a
+			// column every task shares is said once in the header).
+			kind, priority = "bug", "high"
+		}
+		r, err := s.New(task.NewOptions{Title: title, Goal: "G", Acceptance: []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"}, Type: kind, Priority: priority})
 		if err != nil {
 			t.Fatal(err)
 		}

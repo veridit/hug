@@ -42,12 +42,28 @@ func (m model) columnLayout() rowCols {
 	case "board":
 		count := min(len(boardStates), max(1, (m.width+2)/40))
 		return m.rowLayout(max(1, (m.width-2*(count-1))/count), true, 0, 0)
-	case "overview":
-		if ownerSection(m.pane) {
-			return m.rowLayout(m.width, false, m.ownerWidth(), m.ownerNames(m.paneIndices(m.pane)))
-		}
+	case "overview", "list", "lint":
+		return m.sectionLayout(m.pane) // without the columns it shares (1bbe96)
 	}
 	return m.rowLayout(m.width, false, 0, 0)
+}
+
+// markedColumn is the column the marker stands on: m.column when the
+// focused section draws it, else the next column it draws (1bbe96: a
+// column the section's tasks share is not drawn, so the marker and o
+// move past it); -1 with no column marked.
+func (m model) markedColumn() int {
+	if m.column < 0 || m.column >= len(gridColumns) {
+		return -1
+	}
+	c := m.columnLayout()
+	for n := 0; n < len(gridColumns); n++ {
+		i := (m.column + n) % len(gridColumns)
+		if gridColumns[i].shown(c) {
+			return i
+		}
+	}
+	return -1
 }
 
 // moveColumn moves the column cursor by delta over the columns shown,
@@ -65,7 +81,7 @@ func (m *model) moveColumn(delta int) {
 	}
 	at := -1
 	for n, i := range shown {
-		if i == m.column {
+		if i == m.markedColumn() {
 			at = n
 		}
 	}
@@ -91,10 +107,10 @@ func (m *model) showColumnHint() {
 
 // columnHint is what o will do on the marked column, for the footer.
 func (m model) columnHint() string {
-	if m.column < 0 {
+	if m.markedColumn() < 0 {
 		return "H/L pick a column, then o orders by it"
 	}
-	col := gridColumns[m.column]
+	col := gridColumns[m.markedColumn()]
 	next := "▲"
 	if k, ok := m.columnOrder(); ok && k.field == col.field {
 		next = "▼"
@@ -117,11 +133,11 @@ func (m model) columnOrder() (sortKey, bool) {
 // orderByColumn is o: on the marked column, ascending, then descending,
 // then off (rank order). Another column's order is replaced.
 func (m *model) orderByColumn() {
-	if m.column < 0 {
+	if m.markedColumn() < 0 {
 		m.showColumnHint()
 		return
 	}
-	field := gridColumns[m.column].field
+	field := gridColumns[m.markedColumn()].field // never a column the section does not draw (1bbe96)
 	k, ok := m.columnOrder()
 	switch {
 	case !ok || k.field != field:
@@ -218,10 +234,14 @@ func (m model) colSpan(i int, compact bool, c rowCols) (from, width int, ok bool
 // row's > sigil, the in-row > and the column tint together show where the
 // cursor is. Without a marked column the row is as it was.
 func (m model) markColumn(row string, width int, compact bool, c rowCols, selected bool) string {
-	if m.column < 0 || m.column >= len(gridColumns) {
+	col := m.column
+	if !compact {
+		col = m.markedColumn()
+	}
+	if col < 0 || col >= len(gridColumns) {
 		return row
 	}
-	from, w, ok := m.colSpan(m.column, compact, c)
+	from, w, ok := m.colSpan(col, compact, c)
 	if !ok || from+w > width {
 		return row
 	}

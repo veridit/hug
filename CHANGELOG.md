@@ -6,6 +6,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug tui`: a column that every task of a section shares moves into the section's heading (1bbe96, Jørgen 00:11). `IN PROGRESS · assigned to [13] · all active · all feature` draws no STAGE or TYPE column, and the title gets the width. This applies to stage, type, priority and owner in the overview, each value in its own colour. The list says it after TITLE in its column header. It is decided on every task of the section after filters, never on the rows on screen, so scrolling cannot make a column come or go. A section of one task keeps its columns. H/L skip a hidden column, and o (and sc) never sort by one: a marker left on it stands on the next drawn column.
 ## v0.7.56 - 2026-11-18
 
 - `hug tui`: the line under the view line reads `filter: none · sort: rank` (ahejza), with f and s marked, and shows the chips and the order once set. The order no longer sits in the top line. s opens the sort picker, which looks like the f filter picker: each field letter has a hint, picks chain as "then by", the same letter flips, ⌫ drops the last, Enter applies and Esc keeps the order. In the picker, c is the marked column, the same as o, and created moves to d. The digit quick filters 1-4 are gone (`: todo`, `: doing` … remain), and s no longer opens `: state` (`: state` still does). Help lists f and s with their picker keys.
