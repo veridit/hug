@@ -25,6 +25,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/recall"
 	"github.com/veridit/hug/muninn/internal/search"
 	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 type viewFlags struct {
@@ -293,10 +294,13 @@ func ensureFresh(ctx context.Context, a *app.App) (index.Stats, error) {
 
 func rememberCmd() *cobra.Command {
 	var category, scope, home, safeReason, place, placeReason, newReason, reinforce, typ, holdsCond, supersedes, reason string
+	var when, whenNot string
+	var casePaths, caseTools, caseScopes []string
+	var noTrigger bool
 	var tags []string
 	var inProject bool
 	c := &cobra.Command{Use: "remember <text>", Short: "Store a memory", Args: cobra.MinimumNArgs(1),
-		Long: "Store a memory.\n\nWhen remember refuses (a near-duplicate, a possible secret, or a project-specific note sent global) it stores nothing: the output starts \"NOT STORED:\", asks its question with the flag that answers it, and the exit code is 3. Other errors exit 1.",
+		Long: "Store a memory. The text is the note shown when it is recalled.\n\nFor a rule or pattern, say when it applies (jrj1vq): --when names the situation where an agent needs the note, as an activity (\"reviewing a ticket's history\", not \"tickets\"); --when-not names look-alike situations where it does not help; --case-scope, --case-path and --case-tool bind it to projects, files and tools (each repeatable). The text is then the THEN. A plain memory without them stays valid. A changed trigger on an existing note is a correction: --supersedes ID with the new --when, or --supersedes ID --no-trigger to clear it.\n\nWhen remember refuses (a near-duplicate, a possible secret, a project-specific note sent global, or a changed trigger) it stores nothing: the output starts \"NOT STORED:\", asks its question with the flag that answers it, and the exit code is 3. Other errors exit 1.",
 		RunE: func(_ *cobra.Command, args []string) error {
 			return withApp(func(ctx context.Context, a *app.App) error {
 				cwd, _ := os.Getwd()
@@ -315,7 +319,7 @@ func rememberCmd() *cobra.Command {
 					}
 				}
 				ctx = app.WithFix(ctx, a.HarnessFix("cli", reason))
-				u, reinforced, err := b.RememberPlaced(ctx, a, strings.Join(args, " "), category, scope, tags, safeReason, place, placeReason, app.RememberDecision{NewReason: newReason, Reinforce: reinforce, Type: typ, Holds: holdsCond, Supersedes: supersedes})
+				u, reinforced, err := b.RememberPlaced(ctx, a, strings.Join(args, " "), category, scope, tags, safeReason, place, placeReason, app.RememberDecision{NewReason: newReason, Reinforce: reinforce, Type: typ, Holds: holdsCond, Supersedes: supersedes, Trigger: cliTrigger(when, whenNot, caseScopes, casePaths, caseTools), ClearTrigger: noTrigger})
 				if err != nil {
 					return err
 				}
@@ -337,6 +341,12 @@ func rememberCmd() *cobra.Command {
 	c.Flags().StringVar(&category, "category", "fact", "fact | preference | correction | entity")
 	c.Flags().StringVar(&typ, "type", "", "rule (an instruction) | preference | fact (durable knowledge) | record (something that happened)")
 	c.Flags().StringVar(&holdsCond, "holds", "", "how long it is true, when you know: \"until 2026-12-01\", \"while task:ID open\", \"while branch NAME unmerged\"; when it ends, recall stops showing it and a dream item asks to retire or keep it")
+	c.Flags().StringVar(&when, "when", "", "the situation where an agent needs this note, as an activity (\"choosing a model for a coding subagent\"); the text is then what is shown")
+	c.Flags().StringVar(&whenNot, "when-not", "", "look-alike situations where the note does not help (same ticket or tool, another activity)")
+	c.Flags().StringArrayVar(&caseScopes, "case-scope", nil, "a project or scope the note is bound to (repeatable)")
+	c.Flags().StringArrayVar(&casePaths, "case-path", nil, "a file path or glob the note is bound to (repeatable)")
+	c.Flags().StringArrayVar(&caseTools, "case-tool", nil, "a tool, command or service the note is bound to (repeatable)")
+	c.Flags().BoolVar(&noTrigger, "no-trigger", false, "with --supersedes ID and the same text: clear that memory's --when/--when-not/--case-*")
 	c.Flags().StringVar(&scope, "scope", "", "literal memory scope (overrides --place)")
 	c.Flags().StringVar(&place, "place", "", "here (default), client, or global; when unsure choose here")
 	c.Flags().StringVar(&placeReason, "place-reason", "", "why this applies beyond this project, when the project-mention check asks")
@@ -525,6 +535,18 @@ func readRescopeItems(path string) ([]app.RescopeItem, error) {
 	return items, nil
 }
 
+// cliTrigger is the trigger stated with remember's flags, nil for none.
+func cliTrigger(when, whenNot string, scopes, paths, tools []string) *trigger.Trigger {
+	t := &trigger.Trigger{When: when, WhenNot: whenNot}
+	if len(scopes)+len(paths)+len(tools) > 0 {
+		t.Case = &trigger.Case{Scope: scopes, Paths: paths, Tools: tools}
+	}
+	if trigger.Empty(t) {
+		return nil
+	}
+	return t
+}
+
 func showCmd() *cobra.Command {
 	var view viewFlags
 	c := &cobra.Command{Use: "show <memory-id>", Short: "Show memory text and its upstream mapping", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
@@ -535,6 +557,11 @@ func showCmd() *cobra.Command {
 			}
 			canonical := units[0]
 			fmt.Printf("[%s] %s\ncategory: %s\n", canonical.SID, canonical.Body, canonical.Category)
+			if t, err := trigger.Decode(canonical.Trigger); err == nil {
+				for _, l := range trigger.Lines(t) {
+					fmt.Println(l)
+				}
+			}
 			if rs := a.Recalled(canonical.SID); rs.Count > 0 {
 				fmt.Printf("recalled: %d times in %d sessions, last %s\n", rs.Count, rs.Sessions, rs.Last.Format("2006-01-02"))
 			} else if since := a.RecallLogSince(); !since.IsZero() {
@@ -608,19 +635,21 @@ type memoriesJSON struct {
 }
 
 type memoryJSON struct {
-	ID       string    `json:"id"`
-	Kind     string    `json:"kind"`
-	Scope    string    `json:"scope"`
-	Category string    `json:"category,omitempty"`
-	Type     string    `json:"type,omitempty"`
-	Tags     []string  `json:"tags,omitempty"`
-	Text     string    `json:"text"`
-	Updated  time.Time `json:"updated"`
-	Score    *float64  `json:"score,omitempty"`
+	ID       string           `json:"id"`
+	Kind     string           `json:"kind"`
+	Scope    string           `json:"scope"`
+	Category string           `json:"category,omitempty"`
+	Type     string           `json:"type,omitempty"`
+	Trigger  *trigger.Trigger `json:"trigger,omitempty"`
+	Tags     []string         `json:"tags,omitempty"`
+	Text     string           `json:"text"`
+	Updated  time.Time        `json:"updated"`
+	Score    *float64         `json:"score,omitempty"`
 }
 
 func unitJSON(u store.Unit) memoryJSON {
-	return memoryJSON{ID: u.SID, Kind: u.Kind, Scope: u.Scope, Category: u.Category, Type: u.Type, Tags: u.Tags, Text: u.Body, Updated: u.Updated}
+	t, _ := trigger.Decode(u.Trigger)
+	return memoryJSON{ID: u.SID, Kind: u.Kind, Scope: u.Scope, Category: u.Category, Type: u.Type, Trigger: t, Tags: u.Tags, Text: u.Body, Updated: u.Updated}
 }
 
 func relatedCmd() *cobra.Command {

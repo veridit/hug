@@ -11,6 +11,7 @@ import (
 
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/tidy"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // Dreaming (2026-11-12, user): memory housekeeping runs by itself, with undo.
@@ -61,7 +62,7 @@ func (a *App) Dream(ctx context.Context, dry bool) (DreamResult, error) {
 	var safe []tidy.DuplicateCluster
 	var judge []tidy.DuplicateCluster
 	for _, c := range plan.Duplicates {
-		if c.Band == "automatic" && !losesDetail(c) {
+		if c.Band == "automatic" && !losesDetail(c) && !a.triggersDiffer(c) {
 			safe = append(safe, c)
 		} else {
 			judge = append(judge, c)
@@ -160,6 +161,33 @@ func losesDetail(c tidy.DuplicateCluster) bool {
 		}
 	}
 	return false
+}
+
+// triggersDiffer reports a cluster whose members state different triggers
+// (jrj1vq): merging would drop one, so an agent judges it instead.
+func (a *App) triggersDiffer(c tidy.DuplicateCluster) bool {
+	keep := a.unitTrigger(c.Keeper.SID)
+	for _, r := range c.Retire {
+		if a.unitTrigger(r.SID) != keep {
+			return true
+		}
+	}
+	return false
+}
+
+func (a *App) unitTrigger(sid string) string {
+	var s string
+	a.DB.QueryRow(`SELECT u.mtrigger FROM units u JOIN sources s ON s.id=u.source_id WHERE u.sid=? ORDER BY (s.kind='native') DESC,u.updated_ns DESC,u.id LIMIT 1`, sid).Scan(&s)
+	return s
+}
+
+// storedTrigger turns an index encoding back into a trigger (nil for "").
+func storedTrigger(enc string) *trigger.Trigger {
+	t, err := trigger.Decode(enc)
+	if err != nil {
+		return nil
+	}
+	return t
 }
 
 func (a *App) queueDupes(c tidy.DuplicateCluster, dry bool) (bool, error) {

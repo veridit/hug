@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // Line is one memory in .muninn-notes/memories.jsonl. The file is sorted by id
@@ -26,6 +27,10 @@ type Line struct {
 	Active   bool      `json:"active"`
 	Created  time.Time `json:"created"`
 	Updated  time.Time `json:"updated"`
+	// Trigger is the memory's when-then trigger (jrj1vq); absent for a plain
+	// memory, so its line is unchanged. A hug that does not know the key
+	// drops it on rewrite; reading such a line never clears a trigger.
+	Trigger *trigger.Trigger `json:"trigger,omitempty"`
 }
 
 // secretRe mirrors scripts/check-secrets.sh: a memory that looks like it
@@ -149,7 +154,7 @@ func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
 	items := make([]ingest.Imported, 0, len(lines))
 	for _, l := range lines {
 		items = append(items, ingest.Imported{Origin: originFor(p, l.ID), ID: l.ID, Title: l.Title, Content: l.Content,
-			Category: l.Category, Tags: l.Tags, Scope: p.Scope(), Active: l.Active, Created: l.Created, Updated: l.Updated})
+			Category: l.Category, Tags: l.Tags, Scope: p.Scope(), Active: l.Active, Created: l.Created, Updated: l.Updated, Trigger: l.Trigger})
 	}
 	if st.Imported, err = ingest.MergeImport(nativePath, items, dry); err != nil {
 		return st, err
@@ -175,7 +180,7 @@ func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
 			id = strings.TrimPrefix(m.Origin, originFor(p, "")) // keep the file's own id
 		}
 		out = append(out, Line{ID: id, Title: m.Title, Content: m.Content, Category: m.Category, Tags: m.Tags,
-			Active: m.Active, Created: m.Created.UTC(), Updated: m.Updated.UTC()})
+			Active: m.Active, Created: m.Created.UTC(), Updated: m.Updated.UTC(), Trigger: m.Trigger})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].ID < out[j].ID })
 	st.Written = len(out)
