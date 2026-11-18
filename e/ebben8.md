@@ -1,15 +1,20 @@
 ---
 id: ebben8
 title: "After-release: a check is a person's when a [people] person is its subject"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["mizaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T21:49"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ personq.go: subject regexp has a fixed verb list (approve|answer|confirm|...|tic
 - [ ] mutants of the new subject rule are killed, CI passes on all jobs
 
 ## Notes
+
+
+## History
+- 2026-11-18T21:49 todo -> doing/active (take)
