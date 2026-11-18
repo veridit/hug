@@ -202,9 +202,15 @@ harness files stay read-only (muninn/docs/ROADMAP.md).
 - Engram: 3,703 observations, newest 2026-11-15, so engram is still in use.
   1,526 were written under a client root (ssb 903, frogs 342, brovs 282).
   1,525 of them are in a client scope today (how each got there is not
-  recorded, only that import alone cannot do it). 1 is not: `2kb574`,
-  written in `~/Projects/frogs` on 2026-06-29 with engram scope `personal`,
-  sits in `global`, visible outside frogs. That is a leak today.
+  recorded, only that import alone cannot do it). Split by the scope engram
+  itself gives them: 1,525 say `project` and are all in a client scope
+  (client:ssb 903, client:frogs 341, client:brovs 282). 1 says `personal`:
+  `2kb574`, written in `~/Projects/frogs` on 2026-06-29, sits in `global`.
+  It is not a leak. It is Jørgen's rule for how he writes ("lead with the
+  positive"), injected into 6 sessions (`injections`), and it belongs
+  everywhere.
+  Of all 3,703, engram marks 11 `personal` (9 stored `personal`, 2
+  `global`) and 3,692 `project`. None has an empty project.
   No engram observation has been written under a client root since
   2026-11-05.
 
@@ -219,19 +225,32 @@ every project to `client:<name>`, while the live read keeps one scope per
 project.
 
 - **1A. Keep it: the owner rescopes by hand.** Cost: none. Risk: every
-  engram observation written in a client folder is visible to every other
-  session until someone notices. `2kb574` shows that this happens.
-- **1B. Place by the directory it was written in, client included.** The
-  place a memory was written is its provenance: engram's
-  `sessions.directory`, a jcode file's path. If that directory is under a
-  client root, the new row gets the scope a live read there would give it
-  (`ClientSourceScope`, per project). This only ever narrows who sees a
-  row, so it also applies to engram's `personal` observations, which today
-  keep their scope (`keepScope`). A row already stored outside the client
-  is not moved: that is still a crossing, and stays the admin
-  `rescope --cross-client`. Import then lists
-  such rows with the exact rescope command, e.g. one line for `2kb574`.
-  A row whose directory is gone or unknown keeps today's fallback.
+  engram `project` observation written in a client folder is visible to
+  every other session until someone rescopes it.
+- **1B. The source's own scope first, then the directory it was written
+  in, client included.** (Amended 2026-11-18 after crab's review: the first
+  draft placed every row by directory, which would have narrowed `2kb574`
+  into client:frogs and hidden it from every other session.)
+  - When the source states a scope, the import keeps it and never narrows
+    it by directory. Engram `personal` stays `personal` (or `global` where
+    it already is), wherever it was written. The source said who it is for.
+  - When the source states no place, the directory is the provenance:
+    engram `project` (it means the project it was written in) and a jcode
+    project file. If that directory is under a client root, the new row
+    gets the scope a live read there would give it (`ClientSourceScope`,
+    per project). jcode's own `global.json` under a client root is the
+    client's top level, as the live read has it.
+  - A row already stored outside the client is not moved: that is still a
+    crossing, and stays the admin `rescope --cross-client`. Import lists
+    such rows with the exact rescope command, for the owner to judge.
+  - A row whose directory is gone or unknown keeps today's fallback.
+
+  What it does with the 1,526 engram rows written under a client root:
+  the 1,525 `project` rows are in a client scope already and stay there
+  (an unchanged source row is never rewritten). The 1 `personal` row,
+  `2kb574`, keeps its scope and stays in `global`. New observations
+  follow the same split.
+
   Cost: about one day. The change is in ImportScopeForDir and
   Binding.MergeImport, plus rows in the alpha/global/client matrix test.
   Risk: a folder that became a client after the memory was written also
@@ -241,8 +260,10 @@ project.
   Cost: about two days, plus a review screen. Risk: they go unseen, and the
   review is one more chore for the owner.
 
-**Recommend 1B.** The evidence is already in the source data. 1A is how
-`2kb574` leaked. 1C asks the owner to do by hand what the path already says.
+**Recommend 1B.** The evidence is already in the source data: the scope
+it states, and otherwise the folder it was written in. 1A leaves every new
+client `project` row visible until someone notices. 1C asks the owner to do
+by hand what the source already says.
 
 ### 2. Import jcode memories once, or read them live
 
