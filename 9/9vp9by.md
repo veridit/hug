@@ -1,15 +1,20 @@
 ---
 id: 9vp9by
 title: "Memory layout migration commit runs no repo hooks"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["tigress"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T22:11"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Audit 2026-11-18 (tigress, origin/main 8a45b0eb): migrationGit at muninn/interna
 - [ ] No timeout raised, no retry; niced -count=50 of the new tests passes
 
 ## Notes
+
+
+## History
+- 2026-11-18T22:11 todo -> doing/active (take)
