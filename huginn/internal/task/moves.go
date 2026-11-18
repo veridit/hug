@@ -64,6 +64,23 @@ func (d *Document) History(text string) {
 	d.replace(lines)
 }
 
+// retagLastHistory replaces old with new in the last History line that
+// holds old (yf39ya: a release's done says which release).
+func (d *Document) retagLastHistory(old, new string) {
+	s, ok := d.sections["History"]
+	if !ok {
+		return
+	}
+	lines := append([]string(nil), d.lines...)
+	for i := s[1] - 1; i > s[0]; i-- {
+		if strings.Contains(lines[i], old) {
+			lines[i] = strings.Replace(lines[i], old, new, 1)
+			d.replace(lines)
+			return
+		}
+	}
+}
+
 // move is one change of state or stage: the state to go to, the fields
 // to write there, and which node fields to drop (to History) though their
 // node holds still (resume drops waiting_on).
