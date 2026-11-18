@@ -35,6 +35,7 @@ Logs: gh run view 44316906824 --log-failed (attempt 1). TempDir cleanup: likely 
 - [ ] Each of the 3 has its cause named with evidence in a note (log line or a reproduction).
 - [ ] Each fixed one passes -count=50 locally (niced) and a test that reproduces it failed first where possible.
 - [ ] No timeout raised and no retry added.
+- [ ] Fourth flake: TestBranchSyncFromLinkedWorktreeUsesMainCheckout/main_first (muninn/internal/project) on ubuntu CI 44328375780 attempt 1: 'git worktree add --detach .../linked HEAD: fatal: could not open .git/worktrees/linked/locked for writing: No such file or directory'. Cause named and fixed like the other three.
 
 ## Notes
 
