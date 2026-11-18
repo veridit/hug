@@ -1,0 +1,88 @@
+File: hug
+Type: cpu
+Time: 2026-11-18 01:51:58 CET
+Duration: 3.14s, Total samples = 2.71s (86.18%)
+Showing nodes accounting for 1.06s, 39.11% of 2.71s total
+Dropped 215 nodes (cum <= 0.01s)
+Showing top 80 nodes out of 270
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      1.84s 67.90%  github.com/spf13/cobra.(*Command).Execute (inline)
+         0     0%     0%      1.84s 67.90%  github.com/spf13/cobra.(*Command).ExecuteC
+         0     0%     0%      1.84s 67.90%  github.com/spf13/cobra.(*Command).execute
+         0     0%     0%      1.84s 67.90%  github.com/veridit/hug/muninn/run.Main
+         0     0%     0%      1.84s 67.90%  github.com/veridit/hug/muninn/run.forgetCmd.func1
+         0     0%     0%      1.84s 67.90%  github.com/veridit/hug/muninn/run.withApp
+         0     0%     0%      1.84s 67.90%  main.main
+         0     0%     0%      1.84s 67.90%  main.run
+         0     0%     0%      1.84s 67.90%  runtime.main
+         0     0%     0%      1.80s 66.42%  github.com/veridit/hug/muninn/run.forgetCmd.func1.1
+         0     0%     0%      1.71s 63.10%  github.com/veridit/hug/muninn/internal/app.Binding.ForgetMany
+         0     0%     0%      1.69s 62.36%  github.com/veridit/hug/muninn/internal/app.(*App).ForgetMany
+         0     0%     0%      1.42s 52.40%  github.com/veridit/hug/muninn/internal/app.(*App).Reindex
+         0     0%     0%      1.42s 52.40%  github.com/veridit/hug/muninn/internal/index.(*Indexer).Run
+         0     0%     0%      1.34s 49.45%  github.com/veridit/hug/muninn/internal/index.(*Indexer).run
+         0     0%     0%         1s 36.90%  database/sql.withLock
+         0     0%     0%      0.88s 32.47%  modernc.org/sqlite.(*conn).step
+         0     0%     0%      0.88s 32.47%  modernc.org/sqlite/lib.Xsqlite3_step
+         0     0%     0%      0.86s 31.73%  modernc.org/sqlite/lib._sqlite3Step
+     0.01s  0.37%  0.37%      0.83s 30.63%  modernc.org/sqlite/lib._sqlite3VdbeExec
+         0     0%  0.37%      0.62s 22.88%  runtime.systemstack
+         0     0%  0.37%      0.58s 21.40%  github.com/veridit/hug/muninn/internal/index.(*Indexer).UpdateNeighbors
+         0     0%  0.37%      0.57s 21.03%  runtime.(*mheap).alloc.func1
+         0     0%  0.37%      0.57s 21.03%  runtime.(*mheap).allocSpan
+         0     0%  0.37%      0.55s 20.30%  database/sql.(*Rows).Next
+         0     0%  0.37%      0.55s 20.30%  database/sql.(*Rows).Next.func1
+         0     0%  0.37%      0.55s 20.30%  database/sql.(*Rows).nextLocked
+         0     0%  0.37%      0.55s 20.30%  modernc.org/sqlite.(*rows).Next
+         0     0%  0.37%      0.54s 19.93%  modernc.org/sqlite.(*rows).step
+         0     0%  0.37%      0.54s 19.93%  modernc.org/sqlite/lib._getAndInitPage
+     0.50s 18.45% 18.82%      0.50s 18.45%  runtime.madvise
+         0     0% 18.82%      0.50s 18.45%  runtime.sysUsed (inline)
+         0     0% 18.82%      0.50s 18.45%  runtime.sysUsedOS (inline)
+         0     0% 18.82%      0.48s 17.71%  modernc.org/sqlite/lib._moveToChild
+         0     0% 18.82%      0.47s 17.34%  database/sql.(*DB).retry
+         0     0% 18.82%      0.43s 15.87%  modernc.org/sqlite/lib._sqlite3BtreeNext
+         0     0% 18.82%      0.42s 15.50%  modernc.org/sqlite/lib._moveToLeftmost
+     0.38s 14.02% 32.84%      0.38s 14.02%  modernc.org/sqlite/lib._btreeInitPage
+         0     0% 32.84%      0.36s 13.28%  modernc.org/sqlite/lib._btreeNext
+         0     0% 32.84%      0.35s 12.92%  database/sql.(*DB).QueryContext
+         0     0% 32.84%      0.35s 12.92%  database/sql.(*DB).QueryContext.func1
+         0     0% 32.84%      0.35s 12.92%  database/sql.(*DB).query
+         0     0% 32.84%      0.33s 12.18%  database/sql.(*DB).queryDC
+         0     0% 32.84%      0.33s 12.18%  database/sql.(*DB).queryDC.func1
+         0     0% 32.84%      0.33s 12.18%  database/sql.ctxDriverQuery
+         0     0% 32.84%      0.33s 12.18%  github.com/veridit/hug/muninn/internal/ingest.ForgetMany
+         0     0% 32.84%      0.33s 12.18%  modernc.org/sqlite.(*conn).QueryContext
+         0     0% 32.84%      0.33s 12.18%  modernc.org/sqlite.(*conn).query
+         0     0% 32.84%      0.29s 10.70%  github.com/veridit/hug/muninn/internal/index.(*Indexer).IndexNative
+         0     0% 32.84%      0.27s  9.96%  github.com/veridit/hug/muninn/internal/ingest.LoadNative
+         0     0% 32.84%      0.25s  9.23%  encoding/json.Unmarshal
+     0.01s  0.37% 33.21%      0.24s  8.86%  modernc.org/sqlite.(*stmt).query
+         0     0% 33.21%      0.20s  7.38%  encoding/gob.(*Decoder).Decode
+         0     0% 33.21%      0.20s  7.38%  encoding/gob.(*Decoder).DecodeValue
+         0     0% 33.21%      0.20s  7.38%  encoding/gob.(*Decoder).decOpFor.func2
+         0     0% 33.21%      0.20s  7.38%  encoding/gob.(*Decoder).decodeMap
+         0     0% 33.21%      0.20s  7.38%  encoding/gob.(*Decoder).decodeStruct
+         0     0% 33.21%      0.20s  7.38%  encoding/gob.(*Decoder).decodeValue
+         0     0% 33.21%      0.20s  7.38%  github.com/veridit/hug/muninn/internal/index.(*Indexer).loadGraph
+         0     0% 33.21%      0.20s  7.38%  modernc.org/sqlite/lib._getPageMMap
+         0     0% 33.21%      0.20s  7.38%  modernc.org/sqlite/lib._pcache1Fetch
+     0.16s  5.90% 39.11%      0.20s  7.38%  modernc.org/sqlite/lib._pcache1FetchNoMutex
+         0     0% 39.11%      0.20s  7.38%  modernc.org/sqlite/lib._pcache1FetchWithMutex
+         0     0% 39.11%      0.20s  7.38%  modernc.org/sqlite/lib._sqlite3PagerGet (inline)
+         0     0% 39.11%      0.20s  7.38%  modernc.org/sqlite/lib._sqlite3PcacheFetch
+         0     0% 39.11%      0.18s  6.64%  database/sql.(*DB).QueryRow
+         0     0% 39.11%      0.18s  6.64%  database/sql.(*DB).QueryRowContext (inline)
+         0     0% 39.11%      0.18s  6.64%  github.com/veridit/hug/muninn/internal/index.parallel.func1
+         0     0% 39.11%      0.17s  6.27%  database/sql.(*DB).Query (inline)
+         0     0% 39.11%      0.17s  6.27%  encoding/gob.decodeIntoValue
+         0     0% 39.11%      0.17s  6.27%  github.com/veridit/hug/muninn/internal/index.(*Indexer).UpdateNeighbors.func3
+         0     0% 39.11%      0.17s  6.27%  github.com/veridit/hug/muninn/internal/index.topK
+         0     0% 39.11%      0.16s  5.90%  github.com/veridit/hug/muninn/internal/index.(*Indexer).activeVectors
+         0     0% 39.11%      0.16s  5.90%  modernc.org/sqlite/lib._sqlite3PagerLookup
+         0     0% 39.11%      0.15s  5.54%  encoding/json.(*decodeState).array
+         0     0% 39.11%      0.15s  5.54%  encoding/json.(*decodeState).object
+         0     0% 39.11%      0.15s  5.54%  encoding/json.(*decodeState).unmarshal
+         0     0% 39.11%      0.15s  5.54%  encoding/json.(*decodeState).value
+         0     0% 39.11%      0.15s  5.54%  github.com/veridit/hug/muninn/internal/index.(*Indexer).saveGraph
+         0     0% 39.11%      0.15s  5.54%  runtime.mallocgc

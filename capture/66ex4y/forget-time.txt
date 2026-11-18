@@ -1,0 +1,20 @@
+store: 13685 memories, 13275 active; live sha 4e10bab2e0fe
+index (first pass on the copy): wall 414.43s user 685.18s exit 0 | next: hug mem stats
+index again (nothing changed): wall 0.48s user 0.24s exit 0 | next: hug mem stats
+warm-up bfq9n5: wall 0.29s user 0.15s exit 1 | hug mem: no visible memory
+forget 1 yv3x05: wall 0.22s user 0.15s exit 1 | hug mem: no visible memory
+forget 2 x3j084: wall 0.22s user 0.15s exit 1 | hug mem: no visible memory
+forget 3 y3rfmk: wall 0.22s user 0.15s exit 1 | hug mem: no visible memory
+live sha after 4e10bab2e0fe
+
+rerun from the hug repo, scope project:rc-0ca4bf6be5d989c3: 581 active memories in it
+warm-up qb1985: wall 3.20s user 3.24s exit 0 | forgot qb1985
+forget 1 7c4rrv: wall 2.91s user 2.52s exit 0 | forgot 7c4rrv
+forget 2 he74vq: wall 3.09s user 3.10s exit 0 | forgot he74vq
+forget 3 fecvjp: wall 2.92s user 2.56s exit 0 | forgot fecvjp
+index after the forgets: wall 0.65s exit 0
+live sha after 46a762496bb4 (the live store changes on its own from other agents; this run never wrote it: HUG_HOME)
+
+/usr/bin/time -l, one forget: 3,12 real 3,58 user 0,38 sys; 947847168 maximum resident set size
+CPU profile of one forget (HUG_CPUPROFILE, 3.14 s, 2.71 s samples): run.forgetCmd 1.80 s; app.ForgetMany 1.69 s, of it App.Reindex 1.42 s (Indexer.run 1.34 s: UpdateNeighbors 0.58 s, IndexNative 0.29 s, loadGraph 0.20 s; sqlite step 0.88 s); ingest.ForgetMany 0.33 s (LoadNative 0.27 s). Full: forget-pprof.txt.
+Note: the first 'index' on the copy (414 s) is the copy's own catch-up: the scratch index named the live path as its native source, so the copy's memories.json was a new source. Not a forget cost.
