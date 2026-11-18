@@ -13,10 +13,13 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "a week of use, look again 2026-11-24"
-waiting_since: "2026-11-17T14:36"
-waiting_asked_by: "hatchling"
-stage: "waiting"
+stage: "asked"
+asked_what: "Approve these three additions to the AGENTS.md section hug setup writes into every repo?"
+asked_for: "jhf"
+asked_since: "2026-11-19T00:58"
+asked_by: "piglet"
+asked_check: "5"
+asked_show: "agentsection-proposal.md"
 ---
 
 ## Goal
@@ -41,6 +44,10 @@ Builds on tzc9hb (the loop in the AGENTS.md section) and x325pp (nudges only bet
 - [x] the hug setup AGENTS.md section tells agents to answer the question honestly, including 'nothing'
 - [ ] after a week of use, one instruction change in this repo traced to a reflection (link in Notes)
 
+## Questions
+- 2026-11-19T00:58 question 1 by piglet to jhf (check 5, show agentsection-proposal.md):
+  Approve these three additions to the AGENTS.md section hug setup writes into every repo?
+
 ## Notes
 
 guppy 2026-11-17 10:09: take refused (blocked on tzc9hb). tzc9hb checks 1-3 are on ci/tzc9hb d355085; its check 4 needs a release with that commit (hug setup in this repo and seid-lang), which the releaser does. I build tb0dra on top of ci/tzc9hb meanwhile and take it once tzc9hb is done. Question for the coordinator: promote tzc9hb check 4 to a release-time task so tzc9hb can close at merge?
@@ -58,3 +65,4 @@ retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone, j
 file:agentsection-proposal.md (3031 bytes, sha256:60579bed) Three additions to agentSection (G2b, G3 trimmed, G5) from the reflections triage; crab-reviewed 2026-11-19; for Jørgen
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
+- 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
