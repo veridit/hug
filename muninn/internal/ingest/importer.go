@@ -160,11 +160,15 @@ func clientBoundary(scope string) string {
 	return name
 }
 
-// MarkSynced records that every memory in scope now equals its copy in an
-// external file: memories without an origin get origin(id), and every
-// OriginHash is set to the current text. The next merge of that file is then
-// a no-op, and later edits on either side are detected again.
-func MarkSynced(path, scope string, origin func(id string) string) error {
+// MarkSynced records that the memories written to an external file equal
+// their copies there: written is the snapshot the file was made from. Those
+// without an origin get origin(id), and OriginHash is set to the written
+// state, but only where the store still holds that state. A memory changed
+// after the snapshot (a forget while the sync pushed) keeps its old hash, so
+// the next merge sees a local edit, keeps it and writes it out, instead of
+// reading the stale line back over it (tn8bmn). The next merge of that file
+// is then a no-op, and later edits on either side are detected again.
+func MarkSynced(path, scope string, origin func(id string) string, written []NativeMemory) error {
 	unlock, err := LockNative(path)
 	if err != nil {
 		return err
@@ -174,16 +178,24 @@ func MarkSynced(path, scope string, origin func(id string) string) error {
 	if err != nil {
 		return err
 	}
+	snapshot := make(map[string]string, len(written))
+	for _, m := range written {
+		snapshot[m.ID] = originHash(m.Title, m.Content, m.Scope, m.Active)
+	}
 	changed := false
 	for i := range mems {
 		m := &mems[i]
 		if m.Scope != scope {
 			continue
 		}
+		h, ok := snapshot[m.ID]
+		if !ok || originHash(m.Title, m.Content, m.Scope, m.Active) != h {
+			continue // not in the file, or changed since it was written
+		}
 		if m.Origin == "" {
 			m.Origin, changed = origin(m.ID), true
 		}
-		if h := originHash(m.Title, m.Content, m.Scope, m.Active); m.OriginHash != h {
+		if m.OriginHash != h {
 			m.OriginHash, changed = h, true
 		}
 	}

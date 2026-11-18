@@ -104,7 +104,7 @@ func SyncBranch(p Project, nativePath string, o BranchOptions) (BranchStats, err
 			return err
 		})
 		if err == nil {
-			err = ingest.MarkSynced(nativePath, p.Scope(), func(id string) string { return originFor(p, id) })
+			err = markSynced(p, nativePath, st.SyncStats)
 		}
 	}
 	if err != nil {

@@ -51,7 +51,7 @@ func TestSharedOriginHasSameSIDOnAnotherMachine(t *testing.T) {
 		t.Fatal(err)
 	}
 	origin := "repo:shared-project/" + m.ID
-	if err := ingest.MarkSynced(nativeA, "project:test", func(string) string { return origin }); err != nil {
+	if err := ingest.MarkSynced(nativeA, "project:test", func(string) string { return origin }, []ingest.NativeMemory{m}); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := ingest.MergeImport(nativeB, []ingest.Imported{{Origin: origin, Content: m.Content, Scope: m.Scope, Active: true}}, false); err != nil {

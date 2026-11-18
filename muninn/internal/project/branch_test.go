@@ -250,3 +250,71 @@ func TestBranchSyncFromLinkedWorktreeUsesMainCheckout(t *testing.T) {
 		})
 	}
 }
+
+// tn8bmn check 1: a forget that lands while a background sync pushes stays
+// forgotten. On 2026-11-18 a forget of xr634s printed "forgot", then the
+// next pass read the pushed (still active) line back over it: MarkSynced
+// had stamped the forgotten state as "equal to the file". The interleaving
+// is the real one: snapshot, file written and pushed, the forget lands,
+// MarkSynced, next pass.
+func TestForgetDuringSyncPushStaysForgotten(t *testing.T) {
+	base := t.TempDir()
+	remote := filepath.Join(base, "remote.git")
+	if err := os.MkdirAll(remote, 0700); err != nil {
+		t.Fatal(err)
+	}
+	branchGit(t, remote, "init", "--bare", "--initial-branch=main")
+	root := filepath.Join(base, "alice")
+	os.MkdirAll(root, 0700)
+	gitInit(t, root)
+	branchGit(t, root, "remote", "add", "origin", remote)
+	branchGit(t, root, "push", "origin", "HEAD:main")
+	p, err := Find(root, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	native := filepath.Join(base, "native.json")
+	m, _, err := ingest.Remember(native, "Synthetic rule that is forgotten mid-push.", "fact", p.Scope(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := SyncBranch(p, native, BranchOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	// The second pass: its snapshot has the memory active; the forget lands
+	// after the push, before MarkSynced.
+	real := markSynced
+	t.Cleanup(func() { markSynced = real })
+	markSynced = func(p Project, nativePath string, st SyncStats) error {
+		if done, err := ingest.Forget(nativePath, m.ID); err != nil || !done {
+			t.Fatalf("forget mid-push: %v %v", done, err)
+		}
+		return real(p, nativePath, st)
+	}
+	ingest.Remember(native, "Synthetic second memory, so the second pass pushes.", "fact", p.Scope(), nil)
+	if _, err := SyncBranch(p, native, BranchOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	markSynced = real
+	if _, err := SyncBranch(p, native, BranchOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	mems, err := ingest.LoadNative(native)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, got := range mems {
+		if got.ID == m.ID && got.Active {
+			t.Fatalf("%s is active again after the next pass: the forget was lost", got.SID)
+		}
+	}
+	lines, err := ReadFile(p.File())
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, l := range lines {
+		if l.ID == m.ID && l.Active {
+			t.Fatalf("the notes file still says %s is active", l.ID)
+		}
+	}
+}

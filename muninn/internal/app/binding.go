@@ -346,7 +346,51 @@ func (b Binding) ForgetMany(ctx context.Context, a *App, refs []string, sessions
 	if len(hidden) > 0 {
 		return nil, fmt.Errorf("nothing forgotten: no visible memory %s", strings.Join(hidden, ", "))
 	}
-	return a.ForgetMany(ctx, refs)
+	return forgetHeld(a.ForgetMany(ctx, refs))
+}
+
+// forgetHeld reads a forget back: every memory it reports forgotten is
+// inactive in the store now. A writer that put one back (tn8bmn: a project
+// sync read a stale line over it) makes the forget fail, never report
+// success it does not have.
+func forgetHeld(out []ForgetResult, err error) ([]ForgetResult, error) {
+	if err != nil {
+		return out, err
+	}
+	WriteLanded()
+	mems, err := loadLocked()
+	if err != nil {
+		return out, err
+	}
+	var back []string
+	for _, r := range out {
+		for _, m := range mems {
+			if m.SID == r.ID && m.Active {
+				back = append(back, r.ID)
+				break
+			}
+		}
+	}
+	if len(back) > 0 {
+		ids := strings.Join(back, " ")
+		return out, fmt.Errorf("forget did not hold: %s is active again in the store (another writer restored it)\nfix: hug mem forget %s", ids, ids)
+	}
+	return out, nil
+}
+
+// WriteLanded runs between a remember or forget and its readback; tests put
+// another writer there.
+var WriteLanded = func() {}
+
+// loadLocked reads the native store under its write lock: a write's
+// readback sees every writer that finished before it, none half done.
+func loadLocked() ([]ingest.NativeMemory, error) {
+	unlock, err := ingest.LockNative(NativePath())
+	if err != nil {
+		return nil, err
+	}
+	defer unlock()
+	return ingest.LoadNative(NativePath())
 }
 
 func (b Binding) mayForget(a *App, ref string, sessions []string) error {
@@ -640,7 +684,8 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 		repo = b.workRepo() // only then: a git lookup per remember is not free
 	}
 	m, reinforced, err := ingest.RememberWith(NativePath(), ingest.Remembering{Content: content, Category: category, Type: NormalType(decision.Type), Scope: scope, Tags: tags,
-		SafeReason: safeReason, NewReason: decision.NewReason, Branch: branch, Holds: cond.Text, Repo: repo})
+		SafeReason: safeReason, NewReason: decision.NewReason, Branch: branch, Holds: cond.Text, Repo: repo,
+		OriginFor: project.OriginForScope(scope)})
 	if err != nil {
 		return store.Unit{}, false, err
 	}
@@ -648,7 +693,30 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 		return store.Unit{}, false, err
 	}
 	u, err := b.Resolve(a, m.ID)
-	return u, reinforced, err
+	if err != nil {
+		return u, reinforced, err
+	}
+	return u, reinforced, rememberHeld(m, u)
+}
+
+// rememberHeld reads a remember back: the memory the store holds now is
+// active and has the short id remember prints (tn8bmn).
+func rememberHeld(m ingest.NativeMemory, u store.Unit) error {
+	WriteLanded()
+	mems, err := loadLocked()
+	if err != nil {
+		return err
+	}
+	for _, got := range mems {
+		if got.ID != m.ID {
+			continue
+		}
+		if !got.Active || got.SID != u.SID {
+			return fmt.Errorf("remember did not hold: the store has %s (active=%v), not %s as written\nfix: hug mem show %s", got.SID, got.Active, u.SID, got.SID)
+		}
+		return nil
+	}
+	return fmt.Errorf("remember did not hold: memory %s is not in the store after the write\nfix: hug mem remember again, then hug mem show ID", u.SID)
 }
 
 // globalFolderStores names the jcode@global:<hash> stores that belong to a

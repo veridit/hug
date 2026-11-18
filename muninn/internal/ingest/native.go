@@ -244,6 +244,10 @@ type Remembering struct {
 	Branch                         string // see NativeMemory.Branch
 	Holds                          string // see NativeMemory.Holds (canonical form)
 	Repo                           string // see NativeMemory.Repo
+	// OriginFor, when set, gives a new memory its origin from its id: the
+	// repo origin a project sync would give it later, so its short id is
+	// final when remember prints it (tn8bmn).
+	OriginFor func(id string) string
 }
 
 // RememberWith stores r, or reinforces an active memory with the same text,
@@ -294,6 +298,9 @@ func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
 		NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch), Holds: strings.TrimSpace(r.Holds)}
 	if m.Branch != "" || m.Holds != "" {
 		m.Repo = strings.TrimSpace(r.Repo)
+	}
+	if r.OriginFor != nil {
+		m.Origin = r.OriginFor(m.ID)
 	}
 	mems = append(mems, m)
 	assignNativeSIDs(mems)

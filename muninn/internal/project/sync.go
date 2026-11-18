@@ -122,6 +122,9 @@ type SyncStats struct {
 	Written       int
 	SkippedSecret int
 	FileChanged   bool
+	// snapshot is the store as the file was written from it: MarkSynced
+	// stamps only what still equals it (tn8bmn).
+	snapshot []ingest.NativeMemory
 }
 
 func (s SyncStats) String() string {
@@ -155,6 +158,7 @@ func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
 	if err != nil {
 		return st, err
 	}
+	st.snapshot = mems
 	var out []Line
 	for _, m := range mems {
 		if m.Scope != p.Scope() {
@@ -204,7 +208,33 @@ func syncFile(p Project, nativePath string, dry, mark bool) (SyncStats, error) {
 	if !mark {
 		return st, nil
 	}
-	return st, ingest.MarkSynced(nativePath, p.Scope(), func(id string) string { return originFor(p, id) })
+	return st, markSynced(p, nativePath, st)
+}
+
+// markSynced stamps the memories the file was written from as synced; one
+// changed since keeps its old hash and goes out on the next pass (tn8bmn).
+var markSynced = func(p Project, nativePath string, st SyncStats) error {
+	return ingest.MarkSynced(nativePath, p.Scope(), func(id string) string { return originFor(p, id) }, st.snapshot)
+}
+
+// OriginForScope is the repo origin a memory in scope gets when it is synced
+// to its project's notes file, or nil when scope is no project's. remember
+// sets it at write time, so the short id it prints (derived from the origin)
+// is the one every clone derives and a later sync never changes (tn8bmn).
+func OriginForScope(scope string) func(id string) string {
+	var p Project
+	if id, ok := strings.CutPrefix(scope, "project:"); ok && id != "" && !strings.Contains(id, ":") {
+		p.ID = id
+	} else if rest, ok := strings.CutPrefix(scope, "client:"); ok {
+		client, id, ok := strings.Cut(rest, ":")
+		if !ok || client == "" || id == "" || strings.Contains(id, ":") {
+			return nil // a client's own scope or one of its folders: not synced
+		}
+		p.Client, p.ID = client, id
+	} else {
+		return nil
+	}
+	return func(id string) string { return originFor(p, id) }
 }
 
 // originFor keys a repository memory by project and line id, so the same
