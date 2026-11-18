@@ -40,3 +40,5 @@ Jørgen 2026-11-17 10:28 (row layout): the state is the section header, so rows 
 Jørgen 2026-11-17 10:56, settles the open question: the reason replaces the title fully. The colon is the marker: 'waiting: CI run N' means the text is the stage's reason, a bare 'active' means the text is the title. No dim title after the reason.
 
 file:txjkrm-preview.md (4770 bytes, sha256:ab7fc3a2) design, moved here from tmp/lanes (git-ignored, so other clones never saw it)
+
+mizaru 14:45Z: reassigned from nautilus (session gone, crab 14:44Z said take it); take refused 'taken by nautilus (txjkrm)' with only 'fix: hug task next', so used the stale-owner fix hug task set txjkrm --assignee mizaru. Scope from crab: check 1 only (preview + question to jhf); no TUI code until approved.
