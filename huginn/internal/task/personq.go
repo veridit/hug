@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 // A question to a person is asked, never waited on (agxqax, Jørgen
@@ -104,10 +105,38 @@ const lead = `^\s*(?:check\s+#?\d+\s*[:,-]\s*)?`
 // and a thing of theirs is no question ("on Jørgen's machine").
 var possessive = regexp.MustCompile(`(?i)` + lead + `(?:the\s+)?([\p{L}][\p{L}\p{N}._-]*)['’]s\s+(?:decision|decisions|go-ahead|go ahead|answer|answers|approval|ok|okay|sign-off|signoff|verdict|choice|call|ruling|input|feedback|reply|confirmation|review|opinion|pick|say-so|word|look)\b`)
 
-// subject is a wait that opens on who must act and what they do: "owner
-// confirms time frames", "check #4: owner removes a test record" (Statbus
-// waits of 2026-11-17), "Jørgen looks at the colours".
-var subject = regexp.MustCompile(`(?i)` + lead + `(?:the\s+)?([\p{L}][\p{L}\p{N}._-]*)\s+(?:approve|answer|confirm|decide|choose|pick|review|look|try|verify|test|check|remove|open|say|run|sign|tick)s?\b`)
+// ownerActs is a wait that opens on the owner and what they do: "owner
+// confirms time frames", "check #4: owner removes a test record"
+// (Statbus waits of 2026-11-17). "owner" is a word as well as a person
+// ("the owner table"), so it keeps a list of what the owner does; a
+// person by name needs none (personActs).
+var ownerActs = regexp.MustCompile(`(?i)` + lead + `(?:the\s+)?(owner)\s+(?:approve|answer|confirm|decide|choose|pick|review|look|try|verify|test|check|remove|open|say|run|sign|tick)s?\b`)
+
+// leadThe is what personActs skips before the subject: "check N:" and
+// "the" ("the King signs off").
+var leadThe = regexp.MustCompile(`(?i)` + lead + `(?:the\s+)?`)
+
+// personActs finds the person a text opens on as its subject, whatever
+// the verb (ebben8: 5z4zt4's "Jørgen attaches a screenshot ..." was
+// missed by a list of verbs): the first one to four words are a person
+// here by any of their names (PersonMatch: "Jørgen", "Jørgen H. Fjeld",
+// "Erik Søberg", "King" as an alias), and the next word is lower case,
+// a verb or a clause ("Jørgen, after the release, attaches", "Jørgen and
+// crab review"). His words quoted as a spec ("Jørgen 19:35Z: tags
+// ..."), a thing of his ("Jørgen's machine") or a file ("jhf/tasks")
+// are not him acting.
+func personActs(people []Person, text string) (Person, bool) {
+	words := strings.Fields(text[len(leadThe.FindString(text)):])
+	for k := min(4, len(words)-1); k >= 1; k-- {
+		if next, _ := utf8.DecodeRuneInString(words[k]); !unicode.IsLower(next) {
+			continue
+		}
+		if p, ok := PersonMatch(people, strings.Join(words[:k], " ")); ok {
+			return p, true
+		}
+	}
+	return Person{}, false
+}
 
 // theOwner finds the owner as the one who acts: "waiting for the owner
 // to merge", "until the owner confirms", "an answer from the owner".
@@ -125,9 +154,11 @@ type PersonWait struct {
 // (agxqax): it opens with "NAME:" where NAME is the owner or a person
 // here (short name, alias, long name, first name), opens on "NAME's"
 // decision, go-ahead, answer or the like ("the owner's decision"), opens
-// on NAME doing what is asked ("owner confirms ...", "check #4: owner
+// on a person doing anything ("Jørgen attaches ...", personActs) or the
+// owner doing what is asked ("owner confirms ...", "check #4: owner
 // removes ..."), or names the owner as the one who acts ("for the owner
-// to merge"). A person named in passing ("PR approved by jhf, CI run 9",
+// to merge"). One reading for a wait, an ask and a check after a release
+// (personChecks). A person named in passing ("PR approved by jhf, CI run 9",
 // "on Jørgen's machine", "tje4sx first (Jørgen's ruling)") is not a
 // question to them. checks is how many acceptance checks the task has,
 // so "check N" can become --check N.
@@ -150,13 +181,18 @@ func AddressesPerson(people []Person, text string, checks int) (PersonWait, bool
 		}
 	}
 	if w.For == "" {
-		for _, re := range []*regexp.Regexp{possessive, subject} {
+		for _, re := range []*regexp.Regexp{possessive, ownerActs} {
 			if m := re.FindStringSubmatch(text); m != nil {
 				if p, ok := who(m[1]); ok {
 					w.For = p.Short
 					break
 				}
 			}
+		}
+	}
+	if w.For == "" {
+		if p, ok := personActs(people, text); ok {
+			w.For = p.Short
 		}
 	}
 	if w.For == "" && theOwner.MatchString(text) {

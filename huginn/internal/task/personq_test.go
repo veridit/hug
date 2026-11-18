@@ -23,6 +23,21 @@ func TestAddressesPerson(t *testing.T) {
 		{"Erik Søberg: the import mapping", "erik", 0},
 		{"Hedda looks at the new form", "hhz", 0},
 		{"waiting for the owner to merge PR 12", "jhf", 0},
+		// ebben8: a person in [people] as the subject, whatever the verb
+		// (hug's open checks of 2026-11-18 that the verb list missed).
+		{"Jørgen attaches a screenshot to a task from hug (or the CLI) and the detail shows it inline in iTerm2 and kitty, ANSI captures with colours anywhere, one line elsewhere (golden for the fallback)", "jhf", 0},
+		{"Jørgen writes a real request on hug's board after release and an agent resolves it into ticket changes he agrees with", "jhf", 0},
+		{"Jørgen links to a task by its path from outside hug and the link survives a reorder", "jhf", 0},
+		{"Jørgen sees 47sxn2 come back into his ASKED on 2026-11-24 without anyone touching it", "jhf", 0},
+		{"Jørgen writes a request in hug tui and the coordinator reports receiving it, unprompted.", "jhf", 0},
+		{"Jørgen reloads after an upgrade, opens a task and sees no leftover line.", "jhf", 0},
+		{"Jørgen reads 911j70's comparison sheets from hug tui with zoom or Preview and answers check 1", "jhf", 0},
+		{"check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19:44Z)", "jhf", 1},
+		{"Jørgen H. Fjeld attaches a screenshot", "jhf", 0},
+		{"Erik Søberg imports the mapping", "erik", 0},
+		{"Jørgen, after the release, attaches a screenshot", "jhf", 0},
+		{"Jørgen and crab go through it", "jhf", 0},
+		{"the King signs off on it", "jhf", 0},
 		// Not questions to a person: things, agents, people in passing.
 		{"CI run 7", "", 0},
 		{"crab: landing queue after qpp30y", "", 0},
@@ -36,6 +51,15 @@ func TestAddressesPerson(t *testing.T) {
 		{"PR approved by jhf, CI run 9", "", 0},
 		{"the user table migration", "", 0},
 		{"bob: approve it", "", 0},
+		// ebben8: a person named, but not as who acts.
+		{"Jørgen 19:35Z: tags sit right after the task ID (pie, id, tags, type, priority, stage, text), dim, at most 22 columns", "", 0},
+		{"Jørgen's machine shows the stale-server line", "", 0},
+		{"Hedda's form opens", "", 0},
+		{"the owner table has a column", "", 0},
+		{"JHF.md lists the tasks", "", 0},
+		{"jhf/tasks is a branch", "", 0},
+		{"Jørgen", "", 0},
+		{"a mock reviewed by Jørgen", "", 0},
 	} {
 		w, ok := AddressesPerson(people, c.on, 9)
 		if ok != (c.want != "") || w.For != c.want || w.Check != c.check {
