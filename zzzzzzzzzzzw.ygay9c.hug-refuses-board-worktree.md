@@ -44,6 +44,7 @@ Landed a90f4d44.
 - Mutants: 6 of 6 killed (no check, always owned, inverted, fix repairs the other, within always, no symlink resolve).
 - Race ok: gitbranch 25.1s, cli 151.7s.
 Reflection (open, 2026-11-18, kestrel): The copy's board link is two files (admin gitdir and checkout .git); git worktree repair from the copy fixes both, so the fix line is git's own command, not a hug repair.
+landed a90f4d4 on main 2026-11-18: hug refuses a board checkout that belongs to another repository; the fix is git…
 ## History
 - 2026-11-18T04:34 todo -> doing/active (take)
 - 2026-11-18T04:41 doing/active -> done (done); was doing_since: 2026-11-18T04:34
