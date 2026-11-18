@@ -34,7 +34,7 @@ Exact release44264072826 TestSettledWaitsForSlowChild sync_test.go193 reports re
 
 ## Acceptance
 - [x] Actual early-return failure output retains phase/state logs before cleanup, proven by deterministic failure-output regression.
-- [ ] Deterministic counting/interleaving test fails on exact release source, passes with scoped fix, and fails under the corresponding mutation.
+- [x] Deterministic counting/interleaving test fails on exact release source, passes with scoped fix, and fails under the corresponding mutation.
 - [ ] Latest-base touched race and ordinary approved CI are green, with exact source SHA and compact evidence packet.
 
 ## Notes
