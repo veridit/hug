@@ -33,7 +33,7 @@ Message comes from actions.go finish(): m.message = action + ' ' + ID, never cle
 
 ## Acceptance
 - [x] The file viewer draws a horizontal rule between its header lines and the contents, in overview, list and board (golden).
-- [ ] After an action on one task, opening another task or file clears the message line; a test fails first on main.
+- [x] After an action on one task, opening another task or file clears the message line; a test fails first on main.
 - [ ] Action results read as past tense with the id ('answered vzghj8'), not as a command (test).
 - [ ] Viewing a file, everything else goes away: the top shows only the crumb (task id > file path, n of m), the bottom only the keys (next/previous file, back), and a full-width rule at the top and bottom frames the file so a screenshot's own lines read as inside it (golden; Jørgen's 5z4zt4 request 2)
 
