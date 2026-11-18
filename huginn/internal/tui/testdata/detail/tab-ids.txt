@@ -1,5 +1,5 @@
 == waiting-on id marked at 80
-HUG TASKS · list › MAIN__                                                       
+HUG · list › MAIN__                                                             
 [doing]  [feature]  group:root  assigned:wyvern · m  epic:EPIC__                
 created ########## · updated ########## · main                                  
 └─ waiting on after ▸BLOCKE (crab 17:52) · since ##:##                          
@@ -40,7 +40,7 @@ Task 1 of 7 · 100% · next · previous · Esc back
                                                                                 
 j/k scroll · Enter open · h/l Tab next · take · done · x drop · edit · up …     
 == waiting-on id marked at 140
-HUG TASKS · list › MAIN__                                                                                                                   
+HUG · list › MAIN__                                                                                                                         
 [doing]  [feature]  group:root  assigned:wyvern · m  epic:EPIC__                                                                            
 created ########## · updated ########## · main                                                                                              
 └─ waiting on after ▸BLOCKE (crab 17:52) · since ##:##                                                                                      

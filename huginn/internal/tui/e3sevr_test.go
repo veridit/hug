@@ -162,7 +162,7 @@ func TestDetailBandsInOrder(t *testing.T) {
 	var golden []string
 	for _, stacked := range []bool{false, true} {
 		d := openID(t, m, ids["Main"])
-		want := "HUG TASKS · list › " + ids["Main"]
+		want := "HUG · list › " + ids["Main"]
 		title := "Main"
 		if stacked {
 			d = press(d, "tab", "enter") // the dependency, from the checks

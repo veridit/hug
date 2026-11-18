@@ -1,5 +1,5 @@
 == group · list · 80x24
-HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group        
+HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group              
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
   ✓      ID       PRIORITY TITLE                       · all ready · all feature
@@ -24,7 +24,7 @@ rows grouped by group: Space on a heading folds it · grouping next
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == group · list · 140x24
-HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                    
+HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                          
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
   ✓      ID       PRIORITY TITLE                                                                                   · all ready · all feature
@@ -49,7 +49,7 @@ rows grouped by group: Space on a heading folds it · grouping next
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == group · overview · 80x24
-HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group    
+HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group          
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
@@ -74,7 +74,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == group · overview · 140x24
-HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                
+HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                      
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
@@ -99,7 +99,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == group · board · 80x24
-HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group       
+HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group             
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
 > TODO [6]                                 DOING [0] · None                     
@@ -124,7 +124,7 @@ All tasks · : filters and commands
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == group · board · 140x24
-HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                   
+HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                         
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
 > TODO [6]                                       DOING [0] · None                               DEPENDS [0] · None                          
@@ -149,7 +149,7 @@ All tasks · : filters and commands
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == epic · list · 80x24
-HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic         
+HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic               
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
   ✓      ID       PRIORITY TITLE                       · all ready · all feature
@@ -174,7 +174,7 @@ rows grouped by epic: Space on a heading folds it · grouping next
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == epic · list · 140x24
-HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                     
+HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                           
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
   ✓      ID       PRIORITY TITLE                                                                                   · all ready · all feature
@@ -199,7 +199,7 @@ rows grouped by epic: Space on a heading folds it · grouping next
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == epic · overview · 80x24
-HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic     
+HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic           
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
@@ -224,7 +224,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == epic · overview · 140x24
-HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                 
+HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                       
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
@@ -249,7 +249,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                                                                             
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
 == epic · board · 80x24
-HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic        
+HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic              
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
 > TODO [6]                                 DOING [0] · None                     
@@ -274,7 +274,7 @@ All tasks · : filters and commands
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == epic · board · 140x24
-HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                    
+HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                          
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
 > TODO [6]                                       DOING [0] · None                               DEPENDS [0] · None                          

@@ -1,5 +1,5 @@
 == overview at 80
-HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                     
+HUG · overview   7/7 tasks · ! 0 broken · ? 3 for you                           
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
 > ASKED · for you  [3] · all feature · all high                                 
@@ -30,7 +30,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                                                 
 j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
 == overview at 140
-HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                 
+HUG · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                       
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
 > ASKED · for you  [3] · all feature · all high                                                                                             

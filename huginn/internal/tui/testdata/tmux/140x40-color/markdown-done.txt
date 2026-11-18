@@ -1,4 +1,4 @@
-HUG TASKS · list › 000003
+HUG · repo · list › 000003
 [done]  [feature]  [medium]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

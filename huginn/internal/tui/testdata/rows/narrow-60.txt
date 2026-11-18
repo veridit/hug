@@ -1,5 +1,5 @@
 == overview at 60
-HUG TASKS · overview   5/5 tasks · ! 0 broken · 12 advice   
+HUG · overview   5/5 tasks · ! 0 broken · 12 advice         
 view: overview  list  board  !lint        │ todo 2 · doing 2
 filter: none · sort: rank                                   
   ASKED · for you  [0] · None                               
@@ -30,7 +30,7 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                             
 j/k move · Enter open · find · # id · / search · : cmd …    
 == list at 60
-HUG TASKS · list   5/5 tasks · ! 0 broken · 12 advice       
+HUG · list   5/5 tasks · ! 0 broken · 12 advice             
 view: overview  list  board  !lint        │ todo 2 · doing 2
 filter: none · sort: rank                                   
   ✓        ID       PRIORITY STAGE     TITLE                
@@ -61,7 +61,7 @@ All tasks · : filters and commands
                                                             
 j/k move · Enter open · find · # id · / search · : cmd …    
 == board at 60
-HUG TASKS · board   5/5 tasks · ! 0 broken · 12 advice      
+HUG · board   5/5 tasks · ! 0 broken · 12 advice            
 view: overview  list  board  !lint        │ todo 2 · doing 2
 filter: none · sort: rank                                   
 > TODO [2]                                                  
