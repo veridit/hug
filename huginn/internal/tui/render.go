@@ -876,7 +876,7 @@ func (m model) View() string {
 	}
 	if footer == "" {
 		filters := []string{}
-		for _, f := range []struct{ k, v string }{{"state", m.filter.State}, {"type", m.filter.Type}, {"group", m.filter.Group}, {"label", m.filter.Label}, {"find", m.query}} {
+		for _, f := range []struct{ k, v string }{{"state", m.filter.State}, {"type", m.filter.Type}, {"group", m.filter.Group}, {"tag", m.filter.Label}, {"find", m.query}} {
 			if f.v != "" {
 				filters = append(filters, f.k+"="+oneLine(f.v))
 			}

@@ -10,13 +10,13 @@ Enter         open the task                                            /        
 J / K         page down / up                                           :              palette: commands with completion
 H / L         mark the previous / next column                          : commands     overview, list, board, todo, doing, done, depends,
 o             order by the marked column: ▲ ▼ off                                     dropped, state <s>, type <t>, priority <p>, group <g>,
-t / d / x     take / done / drop the task                                             label <l>, assignee <a>, epic <id>, goto <id>, sort,
+t / d / x     take / done / drop the task                                             tag <t>, assignee <a>, epic <id>, goto <id>, sort,
 e             edit in $VISUAL, else $EDITOR, git core.editor, vi                      grouping, lint, clear, help
 m             grab to move: j/k move it, Enter places it               #              jump by id prefix or TASK-number alias
 y, P p        yank, then paste above / below                           f              filter picker: s t p g l a e (state type priority …)
 c             clear all filters                                        s              sort picker: c column, p t s u d g a n; again flips
-g             group rows: flat, group, epic                            Backspace / F  remove the last chip / clear all filters
-                                                                       : sort         order by fields; s r or : sort rank goes back
+g             group rows: flat, group, epic, tag (tag: first listed    Backspace / F  remove the last chip / clear all filters
+              tag)                                                     : sort         order by fields; s r or : sort rank goes back
                                                                        N              new task
                                                                        S              copy the screen, Enter attaches it to the task
                                                                        r              request: ask the agents for a change; Enter sends

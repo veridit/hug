@@ -193,7 +193,7 @@ func TestFilters(t *testing.T) {
 	for _, tc := range []struct {
 		cmd  string
 		want int
-	}{{"state todo", 2}, {"type bug", 1}, {"group auth", 1}, {"label urgent", 1}} {
+	}{{"state todo", 2}, {"type bug", 1}, {"group auth", 1}, {"tag urgent", 1}} {
 		t.Run(tc.cmd, func(t *testing.T) {
 			m := commandLine(fixture(t), tc.cmd)
 			if len(m.visible) != tc.want {

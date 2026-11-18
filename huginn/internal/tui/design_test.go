@@ -277,7 +277,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	if m.completion != 0 {
 		t.Fatal(m.completion)
 	}
-	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"state dep", "state depends"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"label term", "label terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
+	for _, tc := range []struct{ query, want string }{{"type b", "type bug"}, {"state dep", "state depends"}, {"priority h", "priority high"}, {"group comp", "group compiler"}, {"tag term", "tag terminal"}, {"assignee al", "assignee alice"}, {"goto 000001", "goto 000001"}} {
 		m := press(manyModel(t), ":", tc.query, "tab")
 		want := tc.want
 		if !strings.HasPrefix(want, "goto") {
@@ -317,7 +317,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 	}
 }
 func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
-	for _, tc := range []struct{ letter, field, value string }{{"s", "state", "todo"}, {"t", "type", "bug"}, {"p", "priority", "high"}, {"g", "group", "compiler"}, {"l", "label", "terminal"}, {"a", "assignee", "alice"}} {
+	for _, tc := range []struct{ letter, field, value string }{{"s", "state", "todo"}, {"t", "type", "bug"}, {"p", "priority", "high"}, {"g", "group", "compiler"}, {"l", "tag", "terminal"}, {"a", "assignee", "alice"}} {
 		m := press(manyModel(t), "f", tc.letter, tc.value)
 		if len(m.filterChoices()) != 1 || m.valueCount(tc.field, tc.value) == 0 {
 			t.Fatal(tc, m.View())
