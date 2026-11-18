@@ -44,6 +44,7 @@ landed a201b2e on main 2026-11-17: hug task sync: the detached background pass r
 shipped in v0.7.50 (a201b2e)
 landed f557613 on main 2026-11-18: style: gofmt muninn/run/main.go (internal/throttle import sorted; b6jgpn)
 shipped in v0.7.51 (f557613)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G11, nothing misled (any gap named was fixed in this ticket).
 ## History
 - 2026-11-17T23:01 todo -> doing/active (take)
 - 2026-11-17T23:42 doing/active -> done (done); was doing_since: 2026-11-17T23:01
