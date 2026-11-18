@@ -123,7 +123,9 @@ func (s *session) syncNow() error {
 	}
 	defer release()
 	turn := s.turn()
-	e = s.r.Sync()
+	if e = s.r.Recover(); e == nil {
+		e = s.r.Sync()
+	}
 	turn()
 	st := gitbranch.State{Fetched: e == nil, Pushed: e == nil, Unpushed: s.r.Unpushed()}
 	if e != nil {
@@ -161,6 +163,7 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 		return Reply{"next": "hug task ls"}, e
 	}
 	a.semanticSync(r)
+	a.reportRepairs(r)
 	b, e := r.Background()
 	if e != nil {
 		return nil, e
@@ -266,5 +269,16 @@ func (s *session) exclusive() func() {
 		return func() {}
 	}
 	turn := s.turn()
+	_ = s.r.Recover() // fcf4fg; a failure stops the write at its check
 	return func() { turn(); run() }
+}
+
+// reportRepairs prints the line for an interrupted hug rebase a write ended
+// (fcf4fg): stderr, which is the background child's sync log.
+func (a *App) reportRepairs(r *gitbranch.Repository) {
+	r.OnRepaired = func(line string) {
+		if a.Err != nil {
+			fmt.Fprintln(a.Err, "sync: "+line)
+		}
+	}
 }

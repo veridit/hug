@@ -53,6 +53,9 @@ type Repository struct {
 	// OnResolved reports retained competing values only after the whole
 	// private replay has been installed successfully.
 	OnResolved func(Replayed)
+	// OnRepaired reports, in one line, an interrupted rebase hug itself
+	// started that a later write ended (fcf4fg).
+	OnRepaired func(string)
 }
 
 // LayoutError is a sync stopped because this clone's unpushed commits and
@@ -795,17 +798,30 @@ func (r *Repository) integrate() error {
 	if handled, err := r.resolveDiverged(); handled {
 		return err
 	}
+	// Marked as hug's, so a write after this process dies mid-rebase ends
+	// it instead of stopping every write (fcf4fg).
+	end, e := r.startRebase(head)
+	if e != nil {
+		return e
+	}
+	if BeforeRebase != nil {
+		BeforeRebase(r.Dir)
+	}
 	if _, e = r.git("rebase", r.remoteRef()); e != nil {
 		out, _ := r.git("diff", "--name-only", "--diff-filter=U", "-z")
 		files := strings.Split(strings.TrimSuffix(out, "\x00"), "\x00")
 		if _, abort := r.git("rebase", "--abort"); abort != nil {
+			// Left for the next write, which ends it (fcf4fg).
+			end(true)
 			return abort
 		}
+		end(false)
 		if out != "" {
 			return &ConflictError{Files: files, Fix: r.fix("rebase " + r.remoteRef())}
 		}
 		return e
 	}
+	end(false)
 	return nil
 }
 func (r *Repository) push() error {
