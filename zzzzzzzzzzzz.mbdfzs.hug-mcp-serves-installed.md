@@ -1,13 +1,18 @@
 ---
 id: mbdfzs
 title: "hug mcp serves with the installed hug, never an old binary"
-state: todo
+state: "doing"
 type: bug
 priority: "urgent"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T02:44"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Check os.Executable()'s resolved target (the Homebrew symlink moves to the new C
 ## Notes
 
 Jørgen 02:39 local: 'auto-reloading the MCP is immensely important, good catch, get it out.' Ruling (crab): mbdfzs goes first for kestrel, ahead of 3nhp67, and ships in the first hourly release after it is green.
+
+
+## History
+- 2026-11-18T02:44 todo -> doing/active (take)
