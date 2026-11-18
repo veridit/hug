@@ -244,6 +244,34 @@ crab take/work lines differs: the session file changed model since).
   was "not this worker's task" once and "board lint is independent" the
   other time. Either way the shipped arm has no fewer right lines.
 
+## The judge states the lint ownership rule (6fqhg9, 2026-11-18)
+
+The judge prompt used to say a lint reminder "does not need to relate to the
+current work", which contradicts the ownerOnly rule (tpnd3n, 4vxqp4) for a
+missing section or an owner's question. It now names the two kinds: an
+owner-only finding is correct only on the agent's own task (doing for it,
+taken, checked, noted, set or edited, or given as the work by the message);
+any other lint finding may go to any agent at a break.
+
+- The 15 lines that differ between 4vxqp4's base and quote arms, judged
+  twice from empty caches: old prompt 7 of 15 verdicts the same, new
+  prompt 15 of 15.
+- Every line of main 4e776695, 4vxqp4 (8d26d050) and 8d26d050 + the
+  quote-aware parser, judged twice: 134 of 145 the same (0.924). The 11
+  that differ are 5 work, 3 lint, 2 owner, 1 done lines. Between 4vxqp4
+  and the parser arm none of them is in only one arm, so that comparison
+  is the same under both judgings; 3 sit only in main (main's lint / take
+  split is 5 / 7 under one judging and 7 / 5 under the other).
+- Under the new prompt the six sets read: main 115 lines, 103 right, 12
+  false (both judgings); 4vxqp4 115, 106, 9; + quote-aware parser 114, 107,
+  7. Fresh hug: 4 false in all three arms; the parser moves one false line
+  from lint to take (guppy 2026-11-16 20:16, `take jrj1vq`, a task it only
+  read with `hug task show`), so it is not shipped (6fqhg9).
+- Under the new prompt nautilus's e4w9ya and hatchling's s6ff5k Purpose
+  (fresh hug) are judged false: the old prompt counted them right because
+  any lint was right. 4vxqp4's fresh-hug "3 right lint lines" were judged
+  under the old prompt.
+
 ## Latency
 
 The board read on every turn (activity + board, 40 runs, warm cache):
