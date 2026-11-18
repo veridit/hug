@@ -55,7 +55,7 @@ func TestCombinedFiltersAndExternalRefresh(t *testing.T) {
 	if _, err := m.store.Drop(id, "test reason"); err != nil {
 		t.Fatal(err)
 	}
-	m = press(m, "r")
+	m.refresh("") // r is request now (hbgybn); the board updates live
 	if len(m.visible) != 0 {
 		t.Fatal("external status edit not reflected", m.View())
 	}

@@ -207,6 +207,9 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	if text != "" {
 		title = text
 	}
+	if mark := m.requestCount(t); mark != "" {
+		title = m.styles.accent.Render(mark) + title // an open request: an agent's to act on (hbgybn)
+	}
 	if mark := m.fileCount(t); mark != "" {
 		title = m.styles.dim.Render(mark) + title
 	}
@@ -931,7 +934,7 @@ func (m model) View() string {
 	}
 	if m.confirm != "" {
 		inputLine = m.confirmLine()
-	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" && m.prompt != answerPrompt {
+	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" && !m.boxPrompt() {
 		inputLine = m.input.View()
 	}
 	lines = append(lines, inputLine, m.keyBar())

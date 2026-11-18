@@ -89,7 +89,7 @@ func (m model) contextHelp() helpSection {
 		}}
 	case "prompt":
 		rows := []helpRow{row("Enter", "submit", "enter"), row("Esc", "cancel", "esc")}
-		if m.prompt == answerPrompt {
+		if m.boxPrompt() {
 			rows = []helpRow{row("Enter", "send the answer", "enter"), row("Alt-Enter ctrl-j", "a new line; a paste keeps its lines", "ctrl+j"), row("Esc", "cancel: nothing is written", "esc")}
 		}
 		return helpSection{"IN THIS PROMPT", rows}
@@ -201,7 +201,7 @@ func (m model) globalHelp() helpSection {
 		row(": sort", "order by fields; : sort rank goes back"),
 		row("N", "new task", "N"),
 		row("S", "copy the screen, Enter attaches it to the task", "S"),
-		row("r", "refresh now (changes on disk show by themselves)", "r"),
+		row("r", "request: ask the agents for a change; Enter sends", "r"),
 		row("Enter / Esc", "confirm / cancel every editing action"),
 		row("e again", "after an edit left a finding: edit at once"),
 		row("? / F1", "this help (F1 in a text field); / finds in it", "?", "f1"),

@@ -35,4 +35,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
                                                                                                                                             
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order                                  
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        

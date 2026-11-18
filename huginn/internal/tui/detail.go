@@ -780,9 +780,18 @@ func (m model) detailText(t task.Task) string {
 	section(m.sectionHeading(fmt.Sprintf("Files (%d)", len(m.filesOf(t))), "j/k or [ ] step · Space shows · Enter edits · E folder", m.detailPane == focusFiles), strings.Join(m.filesLines(t), "\n"), "")
 	// Any other section, in file order, then Notes and History last.
 	for _, s := range sections {
-		if !described[s.name] && !contains([]string{"description", "acceptance", "dependencies", "notes", "history"}, s.name) {
+		if !described[s.name] && !contains([]string{"description", "acceptance", "dependencies", "notes", "history", "requests"}, s.name) {
 			section(plain(s.name), m.markdown(s.text), "")
 		}
+	}
+	// Requests (hbgybn): each verbatim, with its account once resolved;
+	// the box r opens sits at its end.
+	if reqs := m.requestLines(t); len(reqs) > 0 {
+		heading := plain("Requests")
+		if m.prompt == requestPrompt {
+			heading = m.sectionHeading("Requests", "Enter sends · Alt-Enter a new line · Esc cancels", true)
+		}
+		section(heading, strings.Join(reqs, "\n"), "")
 	}
 	notes := m.markdown(text("notes"))
 	if marked, ok := m.markedStop(t); ok && marked.where == stopNotes {

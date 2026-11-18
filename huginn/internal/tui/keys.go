@@ -63,7 +63,7 @@ func (m model) barHints() []bkey.Binding {
 		hints = []bkey.Binding{hint("letter", "add / flip"), hint("⌫", "remove last"), hint("Enter", "apply"), hint("Esc", "keep order"), hint(m.helpKey(), "help")}
 	case m.prompt == "/":
 		hints = []bkey.Binding{hint("↑↓", "pick"), hint("Enter", "go to it"), hint("Tab", "keep as filter"), hint("Esc", "clear"), hint(m.helpKey(), "help")}
-	case m.prompt == answerPrompt:
+	case m.boxPrompt():
 		hints = []bkey.Binding{hint("Enter", "send"), hint("Alt-Enter", "new line"), hint("Esc", "cancel"), hint(m.helpKey(), "help")}
 	case m.prompt != "":
 		hints = []bkey.Binding{hint("Enter", "submit"), hint("Esc", "cancel"), hint(m.helpKey(), "help")}
@@ -71,7 +71,7 @@ func (m model) barHints() []bkey.Binding {
 		hints = m.detailHints(m.width < 100)
 	default:
 		// h/l and Tab are one key (e3sevr): the bar names them together.
-		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order")}
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order"), hint("r", "request")}
 	}
 	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Enter", "open"), hint("f", "find"), hint("#", "id"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
@@ -173,15 +173,23 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	if !narrow {
 		hints = append(hints, hint("N", "new"))
 	}
-	hints = append(hints, hint("u", "up"), hint("n", "next task"), hint("p", "previous task"))
-	hints = append(hints, hint("J/K", "½ page"))
-	if len(m.filesOf(t)) > 0 {
-		hints = append(hints, hint("E", "edit files"))
-	}
 	if m.width >= 140 {
-		// S copies the screen and asks to attach it (5z4zt4); on a
-		// narrower bar ? help names it, as - (sfa8w4).
+		// S copies the screen and asks to attach it (5z4zt4), a writer
+		// like the rest, so ahead of navigation; on a narrower bar
+		// ? help names it, as - (sfa8w4).
 		hints = append(hints, hint("S", "screen"))
+	}
+	files := len(m.filesOf(t)) > 0
+	if files && !narrow {
+		hints = append(hints, hint("E", "edit files")) // commits when the editor closes
+	}
+	// r opens the request box (hbgybn): it writes only on Enter, in
+	// the box, so it follows up; at 80 the bar cuts it and ? help and
+	// the list bar name it.
+	hints = append(hints, hint("u", "up"), hint("r", "request"), hint("n", "next task"), hint("p", "previous task"))
+	hints = append(hints, hint("J/K", "½ page"))
+	if files && narrow {
+		hints = append(hints, hint("E", "edit files")) // u up first (9xfnwr check 3)
 	}
 	hints = append(hints, hint("Esc", "back"))
 	if !narrow {

@@ -59,4 +59,4 @@ No filters · f picker · 1 todo  2 doing  3 done  4 depends
 Rows 1–21 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done                                                              
 H/L column · order by type (▼)                                                                                                              
                                                                                                                                             
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order                                  
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        

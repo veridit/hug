@@ -1,0 +1,40 @@
+== typing at 80
+                                                                                
+no dependencies                                                                 
+                                                                                
+▸ REQUESTS · Enter sends · Alt-Enter a new line · Esc cancels                   
+  request: make it per board                                                    
+           and split "the TUI part"?                                            
+                                                                                
+                                                                                
+                                                                                
+Task 6 of 7 · 100% · next · previous · Esc back                                 
+                                                                                
+Enter send · Alt-Enter new line · Esc cancel · F1 help                          
+== resolved at 80
+REQUESTS
+1. jhf · 3 min ago · resolved
+   make it per board
+   and split "the TUI part"?
+   └ nautilus: split into two checks; per board in the goal
+
+== typing at 140
+                                                                                                                                            
+no dependencies                                                                                                                             
+                                                                                                                                            
+▸ REQUESTS · Enter sends · Alt-Enter a new line · Esc cancels                                                                               
+  request: make it per board                                                                                                                
+           and split "the TUI part"?                                                                                                        
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+Task 6 of 7 · 100% · next · previous · Esc back                                                                                             
+                                                                                                                                            
+Enter send · Alt-Enter new line · Esc cancel · F1 help                                                                                      
+== resolved at 140
+REQUESTS
+1. jhf · 3 min ago · resolved
+   make it per board
+   and split "the TUI part"?
+   └ nautilus: split into two checks; per board in the goal
+

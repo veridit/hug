@@ -1469,9 +1469,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "w":
 				return m, m.waitKey()
 			case "r":
-				if t, ok := m.selected(); ok {
-					m.refresh(t.Path)
-				}
+				// r writes a request to the agents (hbgybn, crab 01:30);
+				// the board updates live, so refresh needs no key.
+				return m, m.requestKey()
 			case "u":
 				// u goes up one level, as Esc does in a task: back from a
 				// followed link, else to the list it was opened from
@@ -1613,11 +1613,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// inside one (2026-11-16, user).
 			return m, m.openInput("new title", "")
 		case k == "r":
-			path := ""
-			if t, ok := m.selected(); ok {
-				path = t.Path
-			}
-			m.refresh(path)
+			return m, m.requestKey() // a request on the selected task (hbgybn)
 		case k == " ":
 			// Ticking a check you cannot see is a guess: Space ticks only
 			// inside the task, where the checks are shown (2026-11-16, user).
@@ -1632,7 +1628,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
-	if m.prompt == answerPrompt {
+	if m.boxPrompt() {
 		return m.updateAnswer(msg)
 	}
 	if m.prompt == "sort" {

@@ -221,7 +221,7 @@ func TestMalformedAndEditorRefresh(t *testing.T) {
 	if e := os.WriteFile(filepath.Join(m.store.Root, "broken.md"), []byte("---\nnot: [yaml\n---\n\x1b]52;c;BAD\a"), 0600); e != nil {
 		t.Fatal(e)
 	}
-	m = press(m, "r")
+	m.refresh("") // r is request now (hbgybn); the board updates live
 	if len(m.visible) != 3 || len(m.findings) == 0 {
 		t.Fatal(m.View())
 	}

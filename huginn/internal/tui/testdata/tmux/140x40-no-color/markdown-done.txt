@@ -37,4 +37,4 @@ no dependencies
 
 Task 3 of 60 · 100% · next · previous · Esc back
 
-j/k scroll · edit · x drop · yank · New · up · next-, previous task · J/K ½ page · Screen · Esc back · : cmd · ? help · quit      hug v0.0.0
+j/k scroll · edit · x drop · yank · New · Screen · up · request · next-, previous task · J/K ½ page · Esc back · : cmd · ? help · quit

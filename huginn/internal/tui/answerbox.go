@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/cursor"
@@ -8,6 +9,8 @@ import (
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/ansi"
+	"github.com/veridit/hug/huginn/internal/task"
 )
 
 // The answer box (41hhgn check 8, Jørgen 23:50: "my answers can be
@@ -37,10 +40,21 @@ func newAnswerBox() textarea.Model {
 // answerIndent is the margin of the box under the question: "  answer: ".
 const answerIndent = "  "
 
+// requestPrompt is the box r opens in a task or on its row (hbgybn, crab
+// 01:30): the reader asks the agents for a change, in their own words.
+const requestPrompt = "request:"
+
+// boxPrompt says whether the open prompt is the multi-line box: the
+// answer or a request.
+func (m model) boxPrompt() bool { return m.prompt == answerPrompt || m.prompt == requestPrompt }
+
+// boxLabel is the width the box's label takes, the same for both.
+const boxLabel = len(requestPrompt) + 1
+
 // answerHeight is how many lines the box shows for its value: every line
 // it holds, wrapped, up to half the screen.
 func (m model) answerHeight() int {
-	w := max(1, m.width-len(answerIndent)-len(answerPrompt)-1)
+	w := max(1, m.width-len(answerIndent)-boxLabel)
 	lines := 0
 	for _, l := range strings.Split(m.answerBox.Value(), "\n") {
 		lines += max(1, (lipgloss.Width(l)+w)/w)
@@ -50,13 +64,16 @@ func (m model) answerHeight() int {
 
 // fitAnswerBox sizes the box to the screen and to what it holds.
 func (m *model) fitAnswerBox() {
-	m.answerBox.SetWidth(max(1, m.width-len(answerIndent)-len(answerPrompt)-1))
+	m.answerBox.SetWidth(max(1, m.width-len(answerIndent)-boxLabel))
 	m.answerBox.SetHeight(m.answerHeight())
 }
 
 // openAnswer opens the empty box under the question.
-func (m *model) openAnswer() tea.Cmd {
-	m.prompt = answerPrompt
+func (m *model) openAnswer() tea.Cmd { return m.openBox(answerPrompt) }
+
+// openBox opens the empty multi-line box for prompt.
+func (m *model) openBox(prompt string) tea.Cmd {
+	m.prompt = prompt
 	m.answerBox.Reset()
 	m.fitAnswerBox()
 	return m.answerBox.Focus()
@@ -65,8 +82,10 @@ func (m *model) openAnswer() tea.Cmd {
 // answerLines are the box as drawn under the question: "answer:" before
 // its first line, the rest under the first.
 func (m model) answerLines() []string {
-	head := m.styles.accent.Render(answerPrompt) + " "
-	pad := strings.Repeat(" ", len(answerPrompt)+1)
+	// Each label as it reads ("answer: ", "request: "); the box is as
+	// wide as the longer one leaves, so both wrap alike.
+	head := m.styles.accent.Render(m.prompt) + " "
+	pad := strings.Repeat(" ", len(m.prompt)+1)
 	var out []string
 	for i, l := range strings.Split(m.answerBox.View(), "\n") {
 		if i == 0 {
@@ -78,19 +97,25 @@ func (m model) answerLines() []string {
 	return out
 }
 
-// updateAnswer handles a key in the answer box: Enter sends what it holds,
-// every other key edits it.
+// updateAnswer handles a key in the box: Enter sends what it holds, as
+// the answer or the request, every other key edits it.
 func (m model) updateAnswer(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if msg.String() == "enter" && !msg.Paste {
 		text := strings.TrimSpace(m.answerBox.Value())
+		prompt := m.prompt
 		m.prompt = ""
 		m.answerBox.Blur()
 		m.syncDetail()
-		if text == "" {
+		switch {
+		case text == "" && prompt == requestPrompt:
+			m.message = "no request sent: it is empty (r again, then write what you want changed)"
+		case text == "":
 			m.message = "not answered: the answer is empty (a again, then type it)"
-			return m, nil
+		case prompt == requestPrompt:
+			m.request(text)
+		default:
+			m.answer(text)
 		}
-		m.answer(text)
 		return m, nil
 	}
 	var cmd tea.Cmd
@@ -106,5 +131,103 @@ func (m model) updateAnswer(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	m.answerBox, cmd = m.answerBox.Update(msg)
 	m.fitAnswerBox()
 	m.syncDetail() // the box sits in the page: its height moves what follows
+	if m.prompt == requestPrompt {
+		m.revealRequestBox()
+	}
 	return m, cmd
+}
+
+// requestKey opens the request box for the selected task, in its detail
+// or on its row (hbgybn check 4, crab 01:30: r = request).
+func (m *model) requestKey() tea.Cmd {
+	t, ok := m.selected()
+	if !ok {
+		m.message = "no task selected: j/k to one, then r writes a request on it"
+		return nil
+	}
+	m.confirmPath = t.Path
+	if !m.detail {
+		// On a row the box needs the task's page to sit in: open it.
+		m.detailPath = t.Path
+		m.detail = true
+		m.startFocus()
+	}
+	cmd := m.openBox(requestPrompt)
+	m.syncDetail()
+	m.revealRequestBox()
+	return cmd
+}
+
+// request stores text as the reader's request on the task r opened it on.
+func (m *model) request(text string) {
+	t, ok := m.taskAt(m.confirmPath)
+	m.confirmPath = ""
+	if !ok {
+		m.message = "task disappeared; refresh and try again"
+		return
+	}
+	who := m.me()
+	if who == "" {
+		who = "human"
+	}
+	defer m.hold()()
+	r, err := m.store.Request(t.ID, text, who)
+	m.finish(r, err, "request")
+}
+
+// requestCount is the "req N" row mark while N requests are open, with a
+// trailing space, or "".
+func (m model) requestCount(t task.Task) string {
+	if n := len(task.OpenRequests(t)); n > 0 {
+		return fmt.Sprintf("req %d ", n)
+	}
+	return ""
+}
+
+// requestLines are the REQUESTS section: each request with who and when,
+// its text verbatim, then its account once resolved, or "open"; with the
+// box open, the box last (hbgybn check 4).
+func (m model) requestLines(t task.Task) []string {
+	var out []string
+	for _, r := range t.Requests {
+		head := fmt.Sprintf("%d. %s", r.N, oneLine(r.By))
+		if s := strings.TrimPrefix(since(r.At), " · "); s != "" {
+			head += " · " + s + " ago"
+		}
+		state := m.styles.accent.Render("open")
+		if r.Resolved != nil {
+			state = m.styles.status["done"].Render("resolved")
+		}
+		out = append(out, m.styles.dim.Render(head+" · ")+state)
+		for _, l := range strings.Split(strings.TrimRight(r.Text, "\n"), "\n") {
+			out = append(out, "   "+safe(l))
+		}
+		if a := r.Resolved; a != nil {
+			lines := strings.Split(strings.TrimRight(a.Text, "\n"), "\n")
+			out = append(out, m.styles.status["done"].Render("   └ "+oneLine(a.By)+": "+safe(lines[0])))
+			for _, l := range lines[1:] {
+				out = append(out, m.styles.status["done"].Render("     "+safe(l)))
+			}
+		}
+	}
+	if m.prompt == requestPrompt {
+		out = append(out, m.answerLines()...)
+	}
+	return out
+}
+
+// revealRequestBox scrolls the page so the open request box shows.
+func (m *model) revealRequestBox() {
+	t, ok := m.selected()
+	if !ok {
+		return
+	}
+	for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
+		if strings.HasPrefix(strings.TrimSpace(line), requestPrompt) {
+			if i < m.viewport.YOffset || i >= m.viewport.YOffset+m.viewport.Height {
+				m.viewport.SetYOffset(max(0, i-m.viewport.Height/2))
+			}
+			return
+		}
+	}
 }

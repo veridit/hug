@@ -17,7 +17,7 @@ m             grab to move: j/k move it, Enter places it               Backspace
 y, P p        yank, then paste above / below                           : sort         order by fields; : sort rank goes back
 s / c         state palette / clear all filters                        N              new task
 g             group rows: flat, group, epic                            S              copy the screen, Enter attaches it to the task
-                                                                       r              refresh now (changes on disk show by themselves)
+                                                                       r              request: ask the agents for a change; Enter sends
                                                                        Enter / Esc    confirm / cancel every editing action
                                                                        e again        after an edit left a finding: edit at once
                                                                        ? / F1         this help (F1 in a text field); / finds in it
