@@ -79,10 +79,15 @@ func clones(t *testing.T) (a, b *App, bare string) {
 	// The passes run in a fresh process, with the real settle time (1.5 s),
 	// and without the machine's git config; FetchAfter is the parent's, for reads.
 	mk := func(dir string) *App {
+		// git's own trace of every pass, read when a wait times out (6ep7y2).
+		trace := traceDir(dir)
+		if e := os.MkdirAll(trace, 0o700); e != nil {
+			t.Fatal(e)
+		}
 		return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{},
 			Env: map[string]string{"HUG_USER": "tester", "HUG_MODEL": "test-model", "JCODE_SESSION_ID": "", "JCODE_HOME": filepath.Join(base, ".no-jcode")},
 			Sync: &SyncSettings{Spawn: []string{exe, "task", "sync", SyncChildArg}, FetchAfter: 500 * time.Millisecond,
-				Env: []string{"GIT_CONFIG_GLOBAL=" + os.DevNull, "GIT_CONFIG_NOSYSTEM=1", childSettle + "=" + testSettle}}}
+				Env: []string{"GIT_CONFIG_GLOBAL=" + os.DevNull, "GIT_CONFIG_NOSYSTEM=1", childSettle + "=" + testSettle, "GIT_TRACE2_EVENT=" + trace}}}
 	}
 	a, b = mk(one), mk(two)
 	execute(t, a, "init")
@@ -140,6 +145,7 @@ func syncTimeoutFailure(t *testing.T, bg gitbranch.Background) {
 	if err != nil {
 		log = []byte(fmt.Sprintf("reading phase log: %v", err))
 	}
+	log = append(log, "\n"+unfinishedGit(traceDirOf(bg.Log()))+liveProcesses()...)
 	t.Fatalf("background pass still running after 30 s: queued %v, busy %v, pending %v, turn held %v, run held %v (log %s):\n%s", bg.Queued(), bg.Busy(), bg.Pending(), bg.TurnHeld(), bg.RunHeld(), bg.Log(), log)
 }
 
