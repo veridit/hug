@@ -290,7 +290,9 @@ func (m model) askedOf(t task.Task) (asked, bool) {
 		q.by, q.at = t.Fields["waiting_asked_by"], t.Fields["waiting_since"]
 	case "asked":
 		q.what, q.by, q.at = t.Fields["asked_what"], t.Fields["asked_by"], t.Fields["asked_since"]
-		if n, err := strconv.Atoi(strings.TrimSpace(t.Fields["asked_check"])); err == nil && n >= 1 && n <= len(t.Acceptance) {
+		if n, err := strconv.Atoi(strings.TrimSpace(t.Fields["asked_check"])); err == nil && n >= 1 && n <= len(t.Acceptance) && !t.Acceptance[n-1].Checked {
+			// A ticked check carries no question (qsqhpe: a tick is the
+			// answer); one asked before the tick shows as its own block.
 			q.check = n
 		}
 	case "review":

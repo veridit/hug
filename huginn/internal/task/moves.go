@@ -261,6 +261,17 @@ func (s *Store) askable(d *Document, q Question) (what, who, check, show string,
 	if n := len(d.Task.Acceptance); q.Check != 0 && (q.Check < 1 || q.Check > n) {
 		return "", "", "", "", &Error{Kind: "bad-check", ID: id, Value: fmt.Sprintf("--check %d: %s has %d checks", q.Check, id, n), Fix: fmt.Sprintf("hug task ask %s --to %s --check %d %q", id, who, max(1, n), oneLineFix(what))}
 	}
+	// A tick is the answer (qsqhpe): a ticked check is not asked about.
+	if q.Check > 0 && d.Task.Acceptance[q.Check-1].Checked {
+		fix := fmt.Sprintf("hug task set %s --accept %q", id, oneLineFix(what))
+		for i, a := range d.Task.Acceptance {
+			if !a.Checked && !a.Struck {
+				fix = fmt.Sprintf("hug task ask %s --to %s --check %d %q", id, who, i+1, oneLineFix(what))
+				break
+			}
+		}
+		return "", "", "", "", &Error{Kind: "ticked-check", ID: id, Value: fmt.Sprintf("check %d is already ticked: ask about an open check, or add one with hug task set %s --accept ...", q.Check, id), Fix: fix}
+	}
 	if show, e = s.showable(d.Task, q.Show); e != nil {
 		return "", "", "", "", e
 	}
