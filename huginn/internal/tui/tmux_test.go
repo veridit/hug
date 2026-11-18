@@ -283,12 +283,13 @@ func TestTmuxGolden(t *testing.T) {
 				snapshot("jump", "JUMP TO ID")
 				special("Escape")
 				wait("HUG TASKS · list")
-				send("1")
+				send(":todo")
+				special("Enter")
 				wait("state:todo")
 				send("f")
-				wait("choose a field")
+				wait("a letter picks a field")
 				send("t")
-				snapshot("quick-filter", "counts include your other filters")
+				snapshot("quick-filter", "counts include your other filters") // the FILTER picker
 				send("feature")
 				special("Enter")
 				wait("type:feature")
@@ -296,14 +297,13 @@ func TestTmuxGolden(t *testing.T) {
 				special("Tab") // keep the search as a filter (mcvfbz)
 				snapshot("chips", "[/ task]")
 				send("F")
-				wait("No filters")
+				wait("filter: none")
 				send("?")
 				snapshot("help", "EVERYWHERE")
 				special("Escape")
 				wait("HUG TASKS · list")
-				// Sort builder (mkzcqr): priority then type, Enter applies.
-				send(":sort")
-				special("Enter")
+				// Sort picker (mkzcqr, ahejza): s, priority then type, Enter applies.
+				send("s")
 				wait("HUG TASKS · sort")
 				send("p")
 				send("t")
@@ -311,7 +311,7 @@ func TestTmuxGolden(t *testing.T) {
 				snapshot("sort", "sort: priority ↓ · type")
 				send(":sort rank")
 				special("Enter")
-				wait("sort: rank order")
+				wait("sort: rank")
 				// Grab mode (3xcesq): the grabbed row moves on screen and the
 				// key bar shows only the keys that work; Esc writes nothing.
 				send("<")

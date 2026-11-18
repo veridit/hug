@@ -1,7 +1,7 @@
 == overview at 80
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
 > IN PROGRESS · assigned to  [1]                                                
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows…  nautilus     
@@ -32,7 +32,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == WAITING focused at 80
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                   
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
   IN PROGRESS · assigned to  [1]                                                
   ◑ 1/2  aaaaaa   feature high     active    Status colors: rows…  nautilus     
@@ -63,7 +63,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == list at 80
 HUG TASKS · list   7/7 tasks · ! 0 broken                                       
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                              
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections s…
   ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-la…
@@ -94,7 +94,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == overview at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
 > IN PROGRESS · assigned to  [1]                                                                                                            
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                       nautilus        
@@ -125,7 +125,7 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 == WAITING focused at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken                                                                                               
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
   IN PROGRESS · assigned to  [1]                                                                                                            
   ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                       nautilus        
@@ -156,7 +156,7 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 == list at 140
 HUG TASKS · list   7/7 tasks · ! 0 broken                                                                                                   
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                                                                                          
 > ◑ 1/2  aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme                                       
   ◑ 1/2  bbbbbb   feature high     review    Release, then hug setup in seid-lang                                                           

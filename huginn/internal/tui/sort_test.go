@@ -35,7 +35,7 @@ func TestSortBuilderPriorityThenType(t *testing.T) {
 	if m.prompt != "" {
 		t.Fatalf("Enter left the builder open: %q", m.prompt)
 	}
-	header := strings.Split(ansi.Strip(m.View()), "\n")[0]
+	header := strings.Split(ansi.Strip(m.View()), "\n")[2] // the filter line (ahejza)
 	if !strings.Contains(header, "sort: priority ↓ · type") {
 		t.Fatalf("header: %q", header)
 	}
@@ -51,7 +51,7 @@ func TestSortBuilderPriorityThenType(t *testing.T) {
 	}
 	// ": sort rank" brings rank order back.
 	m = press(m, ":", "sort rank", "enter")
-	if len(m.sort) != 0 || strings.Contains(strings.Split(ansi.Strip(m.View()), "\n")[0], "sort:") {
+	if len(m.sort) != 0 || !strings.Contains(strings.Split(ansi.Strip(m.View()), "\n")[2], "sort: rank") {
 		t.Fatalf("sort rank left %v", m.sort)
 	}
 }

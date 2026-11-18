@@ -1,7 +1,7 @@
 == overview at 60
 HUG TASKS · overview   5/5 tasks · ! 0 broken · 12 advice   
 view: overview  list  board  !lint        │ todo 2 · doing 2
-No filters · f picker · 1 todo  2 doing  3 done  4 depends  
+filter: none · sort: rank                                   
   ASKED · for you  [0] · None                               
 > IN PROGRESS · assigned to  [2]                            
 > ○ 12    ·######   active    A very long title t…  an-agen…
@@ -32,7 +32,7 @@ j/k move · Enter open · find · # id · / search · : cmd …
 == list at 60
 HUG TASKS · list   5/5 tasks · ! 0 broken · 12 advice       
 view: overview  list  board  !lint        │ todo 2 · doing 2
-No filters · f picker · 1 todo  2 doing  3 done  4 depends  
+filter: none · sort: rank                                   
   ✓        ID       PRIORITY STAGE     TITLE                
 > ○ 12    ·######   critical active    A very long title th…
   ○ 12    ·######   critical active    数据库迁移：把所有的…
@@ -63,7 +63,7 @@ j/k move · Enter open · find · # id · / search · : cmd …
 == board at 60
 HUG TASKS · board   5/5 tasks · ! 0 broken · 12 advice      
 view: overview  list  board  !lint        │ todo 2 · doing 2
-No filters · f picker · 1 todo  2 doing  3 done  4 depends  
+filter: none · sort: rank                                   
 > TODO [2]                                                  
   ✓        ID       T P TITLE                               
 > ○ 12    ·######   F C 🚀🔥 emoji rocket fire 🎉 A very lo…

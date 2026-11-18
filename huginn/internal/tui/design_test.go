@@ -219,7 +219,8 @@ func TestEscAtEveryLevel(t *testing.T) {
 	if m.query != "" || m.view != "list" {
 		t.Fatal("search was not cleared")
 	}
-	m = press(m, "1", "esc")
+	m = commandLine(m, "todo")
+	m = press(m, "esc")
 	if m.filter.State != "" || m.view != "list" {
 		t.Fatal("chips not cleared")
 	}
@@ -337,10 +338,10 @@ func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
 	if len(m.chips) != 1 {
 		t.Fatal(m.View())
 	}
-	for i, status := range []string{"todo", "doing", "done", "depends"} {
-		m := press(manyModel(t), string(rune('1'+i)))
+	for _, status := range []string{"todo", "doing", "done", "depends"} {
+		m := commandLine(manyModel(t), status) // the digits are gone (ahejza); : todo … stay
 		if m.filter.State != status || len(m.chips) != 1 {
-			t.Fatal(i, m.View())
+			t.Fatal(status, m.View())
 		}
 	}
 	m = commandLine(manyModel(t), "state doing")
@@ -534,7 +535,7 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 }
 
 func TestJumpRetainsFiltersAndDetailShortcuts(t *testing.T) {
-	m := press(manyModel(t), "2", "#", "1785", "enter")
+	m := press(commandLine(manyModel(t), "doing"), "#", "1785", "enter")
 	selected, _ := m.selected()
 	if selected.ID != "000003" || m.filter.State != "doing" {
 		t.Fatal("jump lost filter context", m.View())
@@ -543,7 +544,7 @@ func TestJumpRetainsFiltersAndDetailShortcuts(t *testing.T) {
 	if !m.detail || len(m.chips) != 0 || len(m.visible) != 60 {
 		t.Fatal("clear from detail failed", m.View())
 	}
-	m = press(m, "1")
+	m = commandLine(m, "todo")
 	if m.detail || m.filter.State != "todo" {
 		t.Fatal(m.View())
 	}

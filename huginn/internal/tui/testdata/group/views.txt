@@ -1,7 +1,7 @@
 == group · list · 80x24
 HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group        
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                              
   ▾ no group  [2]                                                               
   ○ 1   ·LAUNCH   feature          ready     Launch                             
@@ -26,7 +26,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == group · list · 140x24
 HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                    
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                                                                                          
   ▾ no group  [2]                                                                                                                           
   ○ 1   ·LAUNCH   feature          ready     Launch                                                                                         
@@ -51,7 +51,7 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 == group · overview · 80x24
 HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group    
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
   IN PROGRESS · assigned to  [0] · None                                         
   WAITING  [0] · None                                                           
@@ -76,7 +76,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == group · overview · 140x24
 HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
   IN PROGRESS · assigned to  [0] · None                                                                                                     
   WAITING  [0] · None                                                                                                                       
@@ -101,7 +101,7 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 == group · board · 80x24
 HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group       
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
 > TODO [6]                                 DOING [0] · None                     
   ✓      ID       T P TITLE                                                     
   ▾ no group  [2]                                                               
@@ -126,7 +126,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == group · board · 140x24
 HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                   
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
 > TODO [6]                                       DOING [0] · None                               DEPENDS [0] · None                          
   ✓      ID       T P TITLE                                                                                                                 
   ▾ no group  [2]                                                                                                                           
@@ -151,7 +151,7 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 == epic · list · 80x24
 HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic         
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                              
 > ▸ ↳LAUNCH Launch  [3]                                                         
   ▾ no epic  [3]                                                                
@@ -176,7 +176,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == epic · list · 140x24
 HUG TASKS · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                     
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
   ✓      ID       TYPE    PRIORITY STAGE     TITLE                                                                                          
 > ▸ ↳LAUNCH Launch  [3]                                                                                                                     
   ▾ no epic  [3]                                                                                                                            
@@ -201,7 +201,7 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 == epic · overview · 80x24
 HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic     
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
   ASKED · for you  [0] · None                                                   
   IN PROGRESS · assigned to  [0] · None                                         
   WAITING  [0] · None                                                           
@@ -226,7 +226,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == epic · overview · 140x24
 HUG TASKS · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                 
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
   ASKED · for you  [0] · None                                                                                                               
   IN PROGRESS · assigned to  [0] · None                                                                                                     
   WAITING  [0] · None                                                                                                                       
@@ -251,7 +251,7 @@ j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ?
 == epic · board · 80x24
 HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic        
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
 > TODO [6]                                 DOING [0] · None                     
   ✓      ID       T P TITLE                                                     
 > ▸ ↳LAUNCH Launch  [3]                                                         
@@ -276,7 +276,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == epic · board · 140x24
 HUG TASKS · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                    
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
 > TODO [6]                                       DOING [0] · None                               DEPENDS [0] · None                          
   ✓      ID       T P TITLE                                                                                                                 
 > ▸ ↳LAUNCH Launch  [3]                                                                                                                     

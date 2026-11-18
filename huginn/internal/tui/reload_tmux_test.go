@@ -127,7 +127,8 @@ func TestTmuxReload(t *testing.T) {
 	// task open with the checks focused.
 	send("-l", "vl") // the list (qh9ep1)
 	wait("HUG TASKS · list", 5*time.Second)
-	send("-l", "2")
+	send("-l", ":doing") // the digits are gone (ahejza)
+	send("Enter")
 	wait("state:doing", 5*time.Second)
 	send("-l", ":sort")
 	send("Enter")

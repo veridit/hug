@@ -73,8 +73,10 @@ func (m model) contextHelp() helpSection {
 			row("fields", "s state, t type, p priority, g group, l label, a assignee, e epic"),
 		}}
 	case "sort":
-		return helpSection{"IN THE SORT BUILDER", []helpRow{
-			row("letter", "add a field, again flips it"), row("Backspace", "remove the last field", "backspace"),
+		return helpSection{"IN THE SORT PICKER", []helpRow{
+			row("letter", "add a field (then by), again flips it"), row("c", "the marked column, as o: again flips, then off", "c"),
+			row("fields", "p priority, t type, s state, u updated, d created, g group, a assignee, n title"),
+			row("Backspace", "remove the last field", "backspace"),
 			row("Enter", "apply the order", "enter"), row("Esc", "keep the order as it was", "esc"),
 		}}
 	case "find":
@@ -140,7 +142,7 @@ func (m model) taskHelp() helpSection {
 		row("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi", "e"),
 		row("w", "wait: park the doing task on what it waits on", "w"),
 		row("y", "yank: P/p in the list paste it", "y"),
-		row("s / T", "state / type palette", "s", "T"),
+		row("T", "type palette", "T"),
 	)
 	if len(m.filesOf(t)) > 0 {
 		rows = append(rows, row("E", "its files folder in the editor", "E"))
@@ -178,7 +180,7 @@ func (m model) rowsHelp() helpSection {
 	}
 	// s and c share a row, so g costs no line and EVERYWHERE stays on the
 	// first screen at 80x24.
-	rows = append(rows, row("s / c", "state palette / clear all filters", "s", "c"),
+	rows = append(rows, row("c", "clear all filters", "c"),
 		row("g", "group rows: flat, group, epic", "g"))
 	if m.grouping != "" {
 		// Only grouped rows have headings to fold (kx2ndm).
@@ -199,8 +201,8 @@ func (m model) globalHelp() helpSection {
 		row(":", "palette: commands with completion", ":"),
 		row(": commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
 		row("#", "jump by id prefix or TASK-number alias", "#"),
-		row("f", "filter picker: s/t/p/g/l/a/e", "f"),
-		row("1 / 2 / 3 / 4", "filter todo / doing / done / depends", "1"),
+		row("f", "filter picker: s t p g l a e (state type priority …)", "f"),
+		row("s", "sort picker: c column, p t s u d g a n; again flips", "s"),
 		row("Backspace / F", "remove the last chip / clear all filters", "backspace", "F"),
 		row(": sort", "order by fields; : sort rank goes back"),
 		row("N", "new task", "N"),

@@ -9,9 +9,11 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-// The sort builder (mkzcqr): ": sort" opens it; each field letter adds a
-// field (then by ...), the same letter again flips that field, Backspace
-// removes the last one, Enter applies, Esc keeps the order as it was.
+// The sort picker (mkzcqr, ahejza): s opens it (and ": sort"); each field
+// letter adds a field (then by ...), the same letter again flips that
+// field, Backspace removes the last one, Enter applies, Esc keeps the
+// order as it was. c is the marked column, as o is (Jørgen 23:39:44: "o
+// is the same as sc"); created is d.
 // Without a sort, rows are in rank order, the only order moves change.
 
 // sortField is one field the builder offers.
@@ -25,7 +27,7 @@ var sortFields = []sortField{
 	{"t", "type", "feature, bug, chore, spike, docs", false},
 	{"s", "state", "todo, doing, depends, done, dropped", false},
 	{"u", "updated", "newest first", true},
-	{"c", "created", "newest first", true},
+	{"d", "created", "date created, newest first", true},
 	{"g", "group", "a to z", false},
 	{"a", "assignee", "a to z, unassigned last", false},
 	{"n", "title", "a to z", false},
@@ -68,7 +70,7 @@ var columnFields = []sortField{
 // flipped it is ↑; a-to-z fields show no arrow until flipped (↓).
 func sortLabel(keys []sortKey) string {
 	if len(keys) == 0 {
-		return "rank order"
+		return "rank" // as the filter line says it (ahejza)
 	}
 	var parts []string
 	for _, k := range keys {
@@ -94,9 +96,29 @@ func (m *model) openSort() {
 	m.input.Blur()
 }
 
+// currentColumn is the marked column's field, the one c in the picker
+// and o order by; ok is false with no column marked.
+func (m model) currentColumn() (sortField, bool) {
+	if m.column < 0 || m.column >= len(gridColumns) {
+		return sortField{}, false
+	}
+	return fieldByName(gridColumns[m.column].field), true
+}
+
 // updateSort handles a key while the builder is open.
 func (m model) updateSort(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
+	if k == "c" {
+		// sc is o (ahejza check 8): the marked column, at once; again
+		// flips it, then off, as o does.
+		if _, ok := m.currentColumn(); !ok {
+			m.message = "sort: c orders by the marked column; mark one with H/L first"
+			return m, nil
+		}
+		m.prompt = ""
+		m.orderByColumn()
+		return m, nil
+	}
 	switch k {
 	case "enter":
 		m.applySort(m.sortDraft)
@@ -255,11 +277,17 @@ func (m model) compareBy(field string, a, b task.Task) int {
 
 // sortText is the builder screen.
 func (m model) sortText() string {
+	// The filter picker's look (ahejza check 3): heading, then one line
+	// per field with its letter and a dim hint.
 	lines := []string{
-		m.styles.accent.Render("SORT · a letter adds a field, the same letter flips it · ⌫ removes the last · Enter applies · Esc keeps the order"),
+		m.styles.accent.Render("SORT · a letter adds a field (then by), again flips it · ⌫ last · Enter applies · Esc keeps the order"),
 		m.styles.normal.Bold(true).Render("sort: " + sortLabel(m.sortDraft)),
-		"",
 	}
+	current := "  c  current column " + m.styles.dim.Render("mark one with H/L first")
+	if f, ok := m.currentColumn(); ok {
+		current = "  c  current column (" + f.name + ") " + m.styles.dim.Render("same as o")
+	}
+	lines = append(lines, current)
 	for _, f := range sortFields {
 		line := "  " + f.letter + "  " + fit(f.name, 10) + m.styles.dim.Render(f.hint)
 		for _, k := range m.sortDraft {

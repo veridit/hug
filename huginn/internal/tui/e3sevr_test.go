@@ -190,7 +190,7 @@ func TestDetailBandsInOrder(t *testing.T) {
 			if !strings.Contains(strings.Join(lines[1:rules[0]], "\n"), "created ") {
 				t.Fatalf("at %d: the context band (dates) is not between the breadcrumb and the first rule:\n%s", w, strings.Join(lines, "\n"))
 			}
-			for _, global := range []string{"view: ", "f picker", "No filters"} {
+			for _, global := range []string{"view: ", "filter: none", "sort: rank"} {
 				if strings.Contains(strings.Join(lines, "\n"), global) {
 					t.Fatalf("at %d the global band shows %q", w, global)
 				}

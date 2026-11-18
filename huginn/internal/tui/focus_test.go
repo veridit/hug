@@ -365,7 +365,7 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 	m.styles = newTheme()
 	m.resize()
 	crumb := func(m model) string { return strings.TrimRight(strings.Split(ansi.Strip(m.View()), "\n")[0], " ") }
-	for _, v := range []string{"view: ", "!lint", "/3 tasks", "todo 3", "f picker"} {
+	for _, v := range []string{"view: ", "!lint", "/3 tasks", "todo 3", "filter: none"} {
 		if strings.Contains(ansi.Strip(m.View()), v) {
 			t.Fatalf("the global band shows %q inside a task:\n%s", v, ansi.Strip(m.View()))
 		}

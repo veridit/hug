@@ -1,6 +1,6 @@
 HUG TASKS · board   60/60 tasks · ! 2 broken · 5 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
-No filters · f picker · 1 todo  2 doing  3 done  4 depends
+filter: none · sort: rank
 > TODO [8]                                       DOING [15]                                     DEPENDS [7]
   ✓      ID       T P TITLE                      ✓      ID       T P TITLE                      ✓      ID       T P TITLE
 > ○ 2   ·000001   F C compiler ⎘2 Feature ta…    ◑ 1/2  000002   B C compiler Bug task 02: …    ○ 2    000005   D C runtime Docs task 05: …

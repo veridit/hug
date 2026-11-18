@@ -12,7 +12,7 @@ t / d / x     take / done / drop the task
 e             edit in $VISUAL, else $EDITOR, git core.editor, vi                
 m             grab to move: j/k move it, Enter places it                        
 y, P p        yank, then paste above / below                                    
-s / c         state palette / clear all filters                                 
+c             clear all filters                                                 
 g             group rows: flat, group, epic                                     
 
 EVERYWHERE
@@ -26,8 +26,8 @@ v !            view: lint
                <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, 
                epic <id>, goto <id>, sort, grouping, lint, clear, help          
 #              jump by id prefix or TASK-number alias                           
-f              filter picker: s/t/p/g/l/a/e                                     
-1 / 2 / 3 / 4  filter todo / doing / done / depends                             
+f              filter picker: s t p g l a e (state type priority …)             
+s              sort picker: c column, p t s u d g a n; again flips              
 Backspace / F  remove the last chip / clear all filters                         
 : sort         order by fields; : sort rank goes back                           
 N              new task                                                         
@@ -52,7 +52,7 @@ t / d / x   take / done / drop it
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                  
 w           wait: park the doing task on what it waits on                       
 y           yank: P/p in the list paste it                                      
-s / T       state / type palette                                                
+T           type palette                                                        
 E           its files folder in the editor                                      
 
 EVERYWHERE
@@ -66,8 +66,8 @@ v !            view: lint
                <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, 
                epic <id>, goto <id>, sort, grouping, lint, clear, help          
 #              jump by id prefix or TASK-number alias                           
-f              filter picker: s/t/p/g/l/a/e                                     
-1 / 2 / 3 / 4  filter todo / doing / done / depends                             
+f              filter picker: s t p g l a e (state type priority …)             
+s              sort picker: c column, p t s u d g a n; again flips              
 Backspace / F  remove the last chip / clear all filters                         
 : sort         order by fields; : sort rank goes back                           
 N              new task                                                         
@@ -90,7 +90,7 @@ t / d / x   take / done / drop it
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                  
 w           wait: park the doing task on what it waits on                       
 y           yank: P/p in the list paste it                                      
-s / T       state / type palette                                                
+T           type palette                                                        
 
 EVERYWHERE
 v o            view: overview                                                   
@@ -103,8 +103,8 @@ v !            view: lint
                <s>, type <t>, priority <p>, group <g>, label <l>, assignee <a>, 
                epic <id>, goto <id>, sort, grouping, lint, clear, help          
 #              jump by id prefix or TASK-number alias                           
-f              filter picker: s/t/p/g/l/a/e                                     
-1 / 2 / 3 / 4  filter todo / doing / done / depends                             
+f              filter picker: s t p g l a e (state type priority …)             
+s              sort picker: c column, p t s u d g a n; again flips              
 Backspace / F  remove the last chip / clear all filters                         
 : sort         order by fields; : sort rank goes back                           
 N              new task                                                         
@@ -141,8 +141,8 @@ o             order by the marked column: ▲ ▼ off                           
 t / d / x     take / done / drop the task                                             label <l>, assignee <a>, epic <id>, goto <id>, sort,  
 e             edit in $VISUAL, else $EDITOR, git core.editor, vi                      grouping, lint, clear, help                           
 m             grab to move: j/k move it, Enter places it               #              jump by id prefix or TASK-number alias                
-y, P p        yank, then paste above / below                           f              filter picker: s/t/p/g/l/a/e                          
-s / c         state palette / clear all filters                        1 / 2 / 3 / 4  filter todo / doing / done / depends                  
+y, P p        yank, then paste above / below                           f              filter picker: s t p g l a e (state type priority …)  
+c             clear all filters                                        s              sort picker: c column, p t s u d g a n; again flips   
 g             group rows: flat, group, epic                            Backspace / F  remove the last chip / clear all filters              
                                                                        : sort         order by fields; : sort rank goes back                
                                                                        N              new task                                              
@@ -166,9 +166,9 @@ n / p       next / previous task of the list                                    
 u / Esc     up: back from a followed id, else to the list                             label <l>, assignee <a>, epic <id>, goto <id>, sort,  
 t / d / x   take / done / drop it                                                     grouping, lint, clear, help                           
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi         #              jump by id prefix or TASK-number alias                
-w           wait: park the doing task on what it waits on              f              filter picker: s/t/p/g/l/a/e                          
-y           yank: P/p in the list paste it                             1 / 2 / 3 / 4  filter todo / doing / done / depends                  
-s / T       state / type palette                                       Backspace / F  remove the last chip / clear all filters              
+w           wait: park the doing task on what it waits on              f              filter picker: s t p g l a e (state type priority …)  
+y           yank: P/p in the list paste it                             s              sort picker: c column, p t s u d g a n; again flips   
+T           type palette                                               Backspace / F  remove the last chip / clear all filters              
 E           its files folder in the editor                             : sort         order by fields; : sort rank goes back                
                                                                        N              new task                                              
                                                                        S              copy the screen, Enter attaches it to the task        
@@ -191,8 +191,8 @@ t / d / x   take / done / drop it                                               
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                        label <l>, assignee <a>, epic <id>, goto <id>, sort,  
 w           wait: park the doing task on what it waits on                             grouping, lint, clear, help                           
 y           yank: P/p in the list paste it                             #              jump by id prefix or TASK-number alias                
-s / T       state / type palette                                       f              filter picker: s/t/p/g/l/a/e                          
-                                                                       1 / 2 / 3 / 4  filter todo / doing / done / depends                  
+T           type palette                                               f              filter picker: s t p g l a e (state type priority …)  
+                                                                       s              sort picker: c column, p t s u d g a n; again flips   
                                                                        Backspace / F  remove the last chip / clear all filters              
                                                                        : sort         order by fields; : sort rank goes back                
                                                                        N              new task                                              

@@ -1,6 +1,6 @@
 HUG TASKS · list   2/60 tasks · ! 2 broken · 5 advice
 view: overview  list  board  !lint                                                       │ todo 2 · doing 0 · depends 0 · done 0 · dropped 0
-[state:todo ×] [type:feature ×] [/ task] · ⌫ last · F clear
+filter: [state:todo ×] [type:feature ×] [/ task] ⌫ last · F clear · sort: rank
   ✓      ID       TYPE    PRIORITY STAGE     TITLE
 > ○ 2    000041   feature critical ready     runtime Feature task 41: make the terminal workflow observable
   ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long ti…

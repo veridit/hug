@@ -789,10 +789,9 @@ func (m model) View() string {
 	if n := m.forYouCount(); n > 0 {
 		header += m.styles.dim.Render(" · ") + m.styles.forYou.Bold(true).Render(fmt.Sprintf("? %d for you", n))
 	}
-	if len(m.sort) > 0 {
-		// The active order, as the builder wrote it (mkzcqr).
-		header += m.styles.dim.Render(" · sort: " + sortLabel(m.sort))
-	}
+	// The active order is on the filter line, 'sort: …' (ahejza), the
+	// line that says what shapes the rows; a task (no global band) has no
+	// rows to order.
 	if g := m.groupingLabel(); g != "" {
 		header += m.styles.dim.Render(" · " + g) // kx2ndm check 2
 	}

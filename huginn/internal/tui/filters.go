@@ -12,6 +12,14 @@ type filterChip struct{ field, value string }
 
 var filterFields = []struct{ letter, name string }{{"s", "state"}, {"t", "type"}, {"p", "priority"}, {"g", "group"}, {"l", "label"}, {"a", "assignee"}, {"e", "epic"}}
 
+// filterHints say what each filter field picks, as the sort picker's
+// hints do (ahejza: both panels look alike).
+var filterHints = map[string]string{
+	"state": "todo, doing, depends, done, dropped", "type": "feature, bug, chore, spike, docs",
+	"priority": "critical, high, medium, low", "group": "a group, or (root)", "label": "one label",
+	"assignee": "a person or agent, or (unassigned)", "epic": "an epic's children",
+}
+
 func ownerMatches(t task.Task, value string) bool {
 	return value == "(unassigned)" && len(t.Assignee) == 0 || contains(t.Assignee, value)
 }
@@ -83,10 +91,17 @@ func (m model) filterBar() string {
 	if m.query != "" {
 		chips = append(chips, m.styles.accent.Render("[/ "+oneLine(m.query)+"]"))
 	}
+	// The line that says what shapes the rows (ahejza): its letters f
+	// and s are the keys that change them, and they open look-alike
+	// pickers.
+	key := m.styles.accent.Underline(true)
+	line := key.Render("f") + m.styles.dim.Render("ilter: ")
 	if len(chips) == 0 {
-		return m.styles.dim.Render("No filters · f picker · 1 todo  2 doing  3 done  4 depends")
+		line += m.styles.dim.Render("none")
+	} else {
+		line += strings.Join(chips, " ") + m.styles.dim.Render(" ⌫ last · F clear")
 	}
-	return strings.Join(chips, " ") + m.styles.dim.Render(" · ⌫ last · F clear")
+	return line + m.styles.dim.Render(" · ") + key.Render("s") + m.styles.dim.Render("ort: "+sortLabel(m.sort))
 }
 func (m *model) openFilter() tea.Cmd { m.pickerField = ""; return m.openInput("filter", "") }
 func (m model) filterChoices() []string {
@@ -171,10 +186,18 @@ func (m model) updateFilter(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 func (m model) filterText() string {
-	lines := []string{m.styles.accent.Render("QUICK FILTER · choose a field")}
+	now := "none"
+	var set []string
+	for _, c := range m.chips {
+		set = append(set, c.field+":"+oneLine(c.value))
+	}
+	if len(set) > 0 {
+		now = strings.Join(set, " ")
+	}
+	lines := []string{m.styles.accent.Render("FILTER · a letter picks a field · j/k and Enter · Esc back"), m.styles.normal.Bold(true).Render("filter: " + now)}
 	if m.pickerField == "" {
 		for i, f := range filterFields {
-			line := fmt.Sprintf("  %s  %s", f.letter, f.name)
+			line := "  " + f.letter + "  " + fit(f.name, 10) + m.styles.dim.Render(filterHints[f.name])
 			if i == m.completion {
 				line = m.styles.selected.Render("> " + line[2:])
 			}
@@ -182,8 +205,7 @@ func (m model) filterText() string {
 		}
 		return strings.Join(lines, "\n")
 	}
-	lines[0] = m.styles.accent.Render("QUICK FILTER · " + m.pickerField + " · counts include your other filters")
-	lines = append(lines, m.input.View(), "")
+	lines = []string{m.styles.accent.Render("FILTER · " + m.pickerField + " · counts include your other filters"), m.input.View(), ""}
 	choices := m.filterChoices()
 	rows := max(1, m.bodyHeight()-4)
 	start := max(0, m.completion-rows+1)

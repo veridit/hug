@@ -1,0 +1,6 @@
+== 80
+filter: none · sort: rank
+filter: [state:doing ×] ⌫ last · F clear · sort: priority ↓ · updated ↓
+== 140
+filter: none · sort: rank
+filter: [state:doing ×] ⌫ last · F clear · sort: priority ↓ · updated ↓

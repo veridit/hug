@@ -1,7 +1,7 @@
 == overview at 80
 HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                     
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
+filter: none · sort: rank                                                       
 > ASKED · for you  [3]                                                          
   ◑ 1/2  cccccc   feature high     asked     Warm cache under 50…  nautilus     
 > ◑ 1/2  aaaaaa   feature high     asked     Status colors: rows…  nautilus     
@@ -32,7 +32,7 @@ j/k move · Enter open · find · # id · / search · : cmd · ? help · quit
 == overview at 140
 HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                 
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
+filter: none · sort: rank                                                                                                                   
 > ASKED · for you  [3]                                                                                                                      
   ◑ 1/2  cccccc   feature high     asked     Warm cache under 50 ms                                                         nautilus        
 > ◑ 1/2  aaaaaa   feature high     asked     Status colors: rows and sections share one subtle scheme                       nautilus        

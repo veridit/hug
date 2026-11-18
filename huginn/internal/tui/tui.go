@@ -1342,11 +1342,6 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.syncDetail()
 			return m, nil
 		}
-		if k == "1" || k == "2" || k == "3" || k == "4" {
-			m.setFilter("state", []string{"todo", "doing", "done", "depends"}[int(k[0]-'1')])
-			m.setView("list")
-			return m, nil
-		}
 		if m.detail && m.glance {
 			// In a file: n/p step files, j/k and pages scroll, Enter edits
 			// it, E opens the folder, Esc and u go back (scrxak).
@@ -1472,7 +1467,8 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "N":
 				return m, m.openInput("new title", "")
 			case "s":
-				return m, m.openInput(":", "state ")
+				m.openSort() // sorts the list it came from, as f filters it (ahejza)
+				return m, nil
 			case "y":
 				// y yanks the task, as on its row (e3sevr: the task's
 				// actions are its row's); the type palette is T.
@@ -1543,7 +1539,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case m.head != "" && (k == " " || k == "enter"):
 			// Space or Enter on a heading folds or unfolds it (kx2ndm).
 			m.toggleFold()
-		case m.head != "" && contains([]string{"t", "d", "x", "e", "m", "y", "P", "p", "s"}, k):
+		case m.head != "" && contains([]string{"t", "d", "x", "e", "m", "y", "P", "p"}, k):
 			// A heading is not a task: nothing to act on, and no guess.
 			m.message = "a heading is not a task: Space folds it, j/k select a task"
 		case bkey.Matches(msg, keys.down) || k == "n":
@@ -1585,7 +1581,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case k == ":":
 			return m, m.openInput(":", "")
 		case k == "s":
-			return m, m.openInput(":", "state ")
+			// s opens the sort picker (ahejza): the filter line's s, as
+			// f is its filter; the state palette is ": state".
+			m.openSort()
 		case k == "y":
 			// y yanks the selected task; P and p paste it (3xcesq). The
 			// type palette is :type, f t, or y inside a task.

@@ -1,6 +1,6 @@
 HUG TASKS · overview   0/0 tasks · ! 0 broken · * refreshing                                        
 view: overview  list  board  !lint               │ todo 0 · doing 0 · depends 0 · done 0 · dropped 0
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                          
+filter: none · sort: rank                                                                           
   ASKED · for you  [0] · None                                                                       
   IN PROGRESS · assigned to  [0] · None                                                             
   WAITING  [0] · None                                                                               

@@ -1,0 +1,21 @@
+FILTER · a letter picks a field · j/k and Enter · Esc back
+filter: none
+> s  state     todo, doing, depends, done, dropped
+  t  type      feature, bug, chore, spike, docs
+  p  priority  critical, high, medium, low
+  g  group     a group, or (root)
+  l  label     one label
+  a  assignee  a person or agent, or (unassigned)
+  e  epic      an epic's children
+--
+SORT · a letter adds a field (then by), again flips it · ⌫ last · Enter applies · Esc keeps the order
+sort: rank
+  c  current column mark one with H/L first
+  p  priority  critical first
+  t  type      feature, bug, chore, spike, docs
+  s  state     todo, doing, depends, done, dropped
+  u  updated   newest first
+  d  created   date created, newest first
+  g  group     a to z
+  a  assignee  a to z, unassigned last
+  n  title     a to z
