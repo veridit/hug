@@ -1,17 +1,18 @@
 ---
 id: wdkqzx
 title: "Lint goes to the agent writing the task, not to the person it asks"
-state: "todo"
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-17
 updated: 2026-11-17
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5/high"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T01:43"
 ---
 
 ## Goal
@@ -58,3 +59,4 @@ Back to todo for t01kqm (crab 00:38: t01kqm next after A+C). Checks 5 (ask/revie
 ## History
 - 2026-11-17T23:22 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T23:22
+- 2026-11-18T01:43 todo/ready -> doing/active (take)
