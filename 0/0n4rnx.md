@@ -3,7 +3,7 @@ id: 0n4rnx
 title: "Windows CLI tests run at 450 of the 600 s cap"
 state: "doing"
 type: feature
-priority: ""
+priority: "high"
 assignee: ["duckling"]
 labels: []
 group: ""
