@@ -64,6 +64,9 @@ func (m *model) searchTyped() {
 // otherwise the search is cleared and the task selected in it stays
 // selected in the full view.
 func (m *model) leaveSearch(keep bool) {
+	// Enter, Tab and Esc all leave a found task selected: each keeps the
+	// search for Up to recall (xfv9pw, history.go).
+	m.history().add(searchHistory, m.query)
 	m.prompt = ""
 	m.input.Blur()
 	if keep {

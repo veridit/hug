@@ -57,6 +57,9 @@ type Options struct {
 	// (j2vwk0); Binary is that path, the one the shell found ("" finds it).
 	NoReload bool
 	Binary   string
+	// HistoryFile keeps the / and : prompt histories (xfv9pw), per board,
+	// outside the task branch; "" keeps them for this session only.
+	HistoryFile string
 	// Getenv reads the environment (nil: os.Getenv): which terminal draws
 	// images, tmux (5z4zt4). Tests choose a terminal with it.
 	Getenv func(string) string
@@ -175,6 +178,7 @@ type model struct {
 	// pictures keeps each question picture as last read, by file, width
 	// and mtime, so a redraw does not read it again (5z4zt4).
 	pictures        map[string]pictureMemo
+	hist            *promptHistory              // / and : history (xfv9pw, history.go)
 	files           map[string][]string         // task path -> its file names (zgr01t)
 	people          []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
 	lastExec        *exec.Cmd                   // the editor command last started, for tests (zgr01t)
@@ -1693,6 +1697,9 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 	if m.prompt == "#" {
 		return m.updateJump(msg)
+	}
+	if m.historyKey(k) { // Up/Down recall, Enter records (xfv9pw)
+		return m, nil
 	}
 	if m.prompt == "/" && m.updateSearch(k) {
 		return m, nil

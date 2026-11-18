@@ -7,6 +7,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 ## Unreleased
 
 - Recall hook board lint (4vxqp4): a missing Purpose or Principle no longer goes to a session whose message only mentions the task: quoted (a prompt or output it quotes), as a dependency ("depends on n8zmjw"), or as a task not to start. A task the session owns, acted on (take, check, note, set, edit), or its message gives as the work still gets it. Reading another session's doing task with `hug task show` is not acting on it. On the six board4 replay sets (blind judge, muninn/docs/BOARD4.md), false board lines fell from 12 to 8 and right lines rose from 101 to 104. Fresh sessions kept their right lint lines (fresh hug 3 of 3, fresh2 seid 7 -> 9).
+- `hug tui`: the `/` search and the `:` palette keep a history, like a shell (xfv9pw). In an empty prompt Up recalls the last entry, Up again goes further back, Down comes forward and past the newest is the empty prompt; Enter runs it. A recalled entry that is edited becomes a new entry; a repeat of the newest is kept once. A find in a task or file recalls the same searches. Once text is typed, Up/Down pick rows, matches and completions as before; ctrl-n/p never recall. The history is per board, in `<git-common-dir>/huginn/tui-history.json` beside the task cache (200 entries per list), never on the task branch.
 
 ## v0.7.62 - 2026-11-18
 
