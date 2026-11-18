@@ -32,7 +32,7 @@ Log: /Users/jhf/.jcode/scratch/wincli-44350205436.log. Running at the panic: Tes
 ## Depends on
 
 ## Acceptance
-- [ ] A table of the 15 slowest cli tests on windows-latest, before and after
+- [x] A table of the 15 slowest cli tests on windows-latest, before and after
 - [ ] huginn/internal/cli on windows-latest under 300 s in 3 consecutive CI runs
 
 ## Notes
@@ -55,5 +55,6 @@ Cut 2 (fixture templates, 030d0fe4 on branch 0n4rnx-cut2) DROPPED, crab 2026-11-
 Check 1 plan: before = CI 44360222667 (ci/0n4rnx-measure 5322c325, single runner, go test -json, 593.9 s). After = ci/0n4rnx-measure-after (main a74ba787 + upload of each shard's -v cli.log, measure only, never lands): per-test '--- PASS: TestX (Ns)' times from both shards. Table: 15 slowest top-level tests before, with their after times.
 shipped in v0.7.69 (a74ba78)
 Check 1 table (top-level test Elapsed, Windows). Before: CI 44360222667, ci/0n4rnx-measure 5322c325, one runner, go test -json, package 593.924 s, 179 tests. After: CI 44384341239, ci/0n4rnx-measure-after 38e2e389 = main a74ba787 + cli.log upload (measure only), shard sync 'ok ... 207.655s', rest 'ok ... 176.987s', 188 tests. The 15 slowest before -> after (all in shard sync): WhenBothClonesMoved 51.75->22.13; StopsOnUnreadableFileAndRestores 50.88->14.70; ReadOnlyCloneFastForwardsAcrossLayoutMove 41.21->19.28; LayoutCommitAlsoKeepsItsNote 38.31->19.34; BackgroundSyncSameTaskAppendsConvergeAfterUpgrade 31.72->25.71; OrdinarySyncScalarFieldsKeepBoardAndReportLocal 30.04->24.65; BackgroundSyncOfflineCatchesUp 30.01->22.53 (lever a not on main yet); RemoteOldLayoutIsTranslatedAtomically 29.31->22.61; AcrossLayoutMove 27.94->21.40; DisjointScalarLinesNeverFormHybrid 27.10->22.71; BackgroundSyncConflictKeepsCommits 26.75->18.08; BurstIsBatched 24.41->19.31; ParallelNotesAllLand 24.41->15.00; OrdinarySyncSameTaskAppendsConvergeAfterUpgrade 24.43->20.51; UnreadableTaskKeepsLocalCommits 23.93->19.14. Cause: the shard halves the tests contending on one runner; no per-test cost change is claimed. Full table: scratch 0n4rnx-table.tsv.
+check 1: CI 44360222667 (before, 593.924 s) vs CI 44384341239 (after, shards 207.655/176.987 s): 15 slowest before -> after, all 15 dropped, max after 25.71 s; table in note
 ## History
 - 2026-11-18T17:58 todo -> doing/active (take)
