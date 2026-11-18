@@ -1,7 +1,7 @@
 ---
 id: bbxdd7
 title: "Pending requests and answers reach the coordinator's next session"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzd"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T16:49"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "bbxdd7"
 worktree: "/Users/jhf/.jcode/scratch/bbxdd7"
-waiting_since: "2026-11-18T16:57"
-waiting_asked_by: "piglet"
-waiting_on: "crab review"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -58,6 +54,8 @@ Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/
 landed d36c86c on main 2026-11-18: Pending requests and answers reach the coordinator's next session, once; the…
 landed d0dfc52 on main 2026-11-18: test: the rename claim gives the coordinator back to crab, so the tick claim's…
 shipped in v0.7.66 (d36c86c)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T16:49 todo -> doing/active (take)
 - 2026-11-18T16:57 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T16:49; waiting_asked_by: piglet; waiting_on: crab review; waiting_since: 2026-11-18T16:57
