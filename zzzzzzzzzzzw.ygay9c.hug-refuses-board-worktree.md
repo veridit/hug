@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T04:41"
+done_release: "v0.7.55"
 ---
 
 ## Goal
@@ -45,6 +46,7 @@ Landed a90f4d44.
 - Race ok: gitbranch 25.1s, cli 151.7s.
 Reflection (open, 2026-11-18, kestrel): The copy's board link is two files (admin gitdir and checkout .git); git worktree repair from the copy fixes both, so the fix line is git's own command, not a hug repair.
 landed a90f4d4 on main 2026-11-18: hug refuses a board checkout that belongs to another repository; the fix is git…
+shipped in v0.7.55 (a90f4d4)
 ## History
 - 2026-11-18T04:34 todo -> doing/active (take)
 - 2026-11-18T04:41 doing/active -> done (done); was doing_since: 2026-11-18T04:34

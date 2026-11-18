@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T04:12"
+done_release: "v0.7.55"
 ---
 
 ## Goal
@@ -42,6 +43,7 @@ landed 0a2f06a on main 2026-11-18: hug: a hook refused for an unknown HUG_ varia
 Checks 1-3 green on main CI 44226874819 (085a81ce): ubuntu, macos, windows, test-windows-cli, bench, secrets all success. Hook-log addition (crab 03:58: a refused hook must leave a hook.log line) is 0a2f06ae, CI 44227585322.
 Hook-log line green on main CI 44227585322 (0a2f06ae): ubuntu, macos, windows, test-windows-cli, bench, secrets success.
 Reflection (open, 2026-11-18, wyvern): A safety switch that is only a convention (a variable hug happens to read) fails open on a typo, so the one list of known names plus a repo scan now makes a typo loud. The incident also exposed two harness gaps of mine: a benchmark cwd with a live remote, and a copied repo whose worktree pointed at the original (ygay9c). Next time a bench runs from a remote-less clone with HUG_SYNC=off from the start.
+shipped in v0.7.55 (085a81c)
 ## History
 - 2026-11-18T03:41 todo -> doing/active (take)
 - 2026-11-18T03:57 doing/active -> doing/waiting (wait)

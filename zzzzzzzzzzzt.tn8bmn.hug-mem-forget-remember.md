@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T04:27"
+done_release: "v0.7.55"
 ---
 
 ## Goal
@@ -45,6 +46,7 @@ Landed 27643306 on main (CI 44229580197). Fix A: ingest.MarkSynced takes the sna
 landed 2764330 on main 2026-11-18: hug mem: a forget during a project sync push stays forgotten; remember's short…
 CI 44229580197 on 27643306: completed success, 6/6 jobs (secrets, bench, test macos-latest, test-windows-cli, test ubuntu-latest, test windows-latest). Live effect needs the next release: the brew hug v0.7.52 still has the race. The one-off scan of reactivated memories is on 66ex4y (4 re-forgotten in hug).
 Reflection (open, 2026-11-18, hatchling): The 'concurrency' theory in the ticket was half right: it was a lost update, but the writers were sync's two steps, not two forgets. muninn-notes history (one commit per pass) named the culprit faster than any repro on a copy without a remote could. Lesson: when a write vanishes only on the live store, diff the shared branch's history before suspecting the lock.
+shipped in v0.7.55 (2764330)
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
 - 2026-11-18T04:27 doing/active -> done (done); was doing_since: 2026-11-18T03:38

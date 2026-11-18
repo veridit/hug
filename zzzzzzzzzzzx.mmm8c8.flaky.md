@@ -12,6 +12,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T04:46"
+done_release: "v0.7.55"
 ---
 
 ## Goal
@@ -39,6 +40,7 @@ Cause: Queued() probes by TryAcquire+release of the queue lock; a syncer's Run T
 landed 4336e2b on main 2026-11-18: background sync: a queue check never costs a syncer its pass (mmm8c8)
 Main CI 44231734696 (4336e2b0) green: ubuntu, macos, windows, test-windows-cli, bench, secrets all success; TestProbeNeverCostsASyncerItsTurn and TestSettledWaitsForSlowChild pass on every OS.
 Reflection (open, 2026-11-18, wyvern): The flake looked like a settle-time problem (0sbvnq had just cut it to 100 ms), but the cause was a lost wakeup: a read-only probe briefly took the same lock the syncer uses to decide whether it is redundant. Lesson: a try-lock used both as a query and as an ownership claim can't tell an observer from an owner; give observers their own lock. The counting stress test found it in 0.2 s, where the timed test took a CI run to hit it once.
+shipped in v0.7.55 (4336e2b)
 ## History
 - 2026-11-18T04:26 todo -> doing/active (take)
 - 2026-11-18T04:38 doing/active -> doing/waiting (wait)
