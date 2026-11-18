@@ -1,5 +1,5 @@
 == 000002 asked_show colours-overview.ans at 80
-HUG TASKS · list › 000002                                            ? 1 for you
+HUG · list › 000002                                                  ? 1 for you
 [doing]  [asked]  [bug]  [critical]  group:compiler  assigned:alice ·           
 feat/terminal-000002                                                            
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                      
@@ -60,7 +60,7 @@ Task 2 of 60 · 0% · next · previous · Esc back
                                                                                 
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · up · request 
 == 000002 asked_show colours-overview.ans at 140
-HUG TASKS · list › 000002                                                                                                        ? 1 for you
+HUG · list › 000002                                                                                                              ? 1 for you
 [doing]  [asked]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-000002                                                  
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                                                                                  
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
