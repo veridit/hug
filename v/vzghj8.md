@@ -13,12 +13,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "asked"
-asked_by: "wyvern"
-asked_check: "3"
-asked_for: "jhf"
-asked_since: "2026-11-17T16:58"
-asked_what: "find a Statbus task by an old id you remember (/ STATBUS-402 in hug tui on ~/ssb/statbus); 1 and 2 on main d661273, CI 44118189933"
+stage: "active"
 ---
 
 ## Goal
@@ -51,3 +46,6 @@ Check 1 on main d661273, CI 44118189933 green on all 5 jobs (secrets, bench, ubu
 ## History
 - 2026-11-17T14:32 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
+- 2026-11-18T12:36 answered asked (check 3), by jhf, for wyvern (doing/asked -> doing/active):
+  > find a Statbus task by an old id you remember (/ STATBUS-402 in hug tui on ~/ssb/statbus); 1 and 2 on main d661273, CI 44118189933
+  I did this already, so this is approved
