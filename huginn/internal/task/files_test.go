@@ -237,3 +237,52 @@ func taskPath(t *testing.T, s *Store, id string) string {
 	t.Fatalf("no task %s", id)
 	return ""
 }
+
+// TestQuotedPathOfAnotherBoardIsNoLink (1phmre check 1; w40cmk's note
+// quotes Statbus's '.hug/tasks/37bryg/README.md' from a design talk): a
+// .hug/tasks/ID/NAME path whose id is no task on this board is quoted
+// history from another board, not a link: no missing-task-ref, no
+// missing-file. A path of a task on this board is still checked.
+func TestQuotedPathOfAnotherBoardIsNoLink(t *testing.T) {
+	s, id := newStore(t)
+	s.Note(id, "Proposal (crab): one folder per task: .hug/tasks/37bryg/README.md is the task, 'its files sit beside it (.hug/tasks/37bryg/STATBUS-369.md)'")
+	s.Note(id, "and ours: .hug/tasks/"+id+"/gone.tsv")
+	fs, err := s.LintFiles(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	for _, f := range fs {
+		got = append(got, FindingCode(f.Problem)+": "+f.Problem)
+	}
+	if len(got) != 1 || !strings.HasPrefix(got[0], "missing-file: .hug/tasks/"+id+"/gone.tsv: file not found") {
+		t.Fatalf("quoted Statbus paths and one missing file of ours: want only the missing-file, got %q", got)
+	}
+}
+
+// TestMissingTaskLinkFixIsNonInteractive (1phmre check 2): a task:REF/NAME
+// link to an id no task has is still missing-task-ref, and its fix is a
+// command an agent runs without an editor: the note that marks the link
+// (lost). After that note, lint has no finding for it.
+func TestMissingTaskLinkFixIsNonInteractive(t *testing.T) {
+	s, id := newStore(t)
+	s.Note(id, "evidence in task:zz9zz9/run.log")
+	fs, err := s.LintFiles(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(fs) != 1 || FindingCode(fs[0].Problem) != "missing-task-ref" || fs[0].Problem != "task:zz9zz9/run.log: no task zz9zz9 (fix the id, or mark the link (lost))" {
+		t.Fatalf("a task: link to no task: %+v", fs)
+	}
+	fix := fs[0].FixLine()
+	if want := `hug task note ` + id + ` "task:zz9zz9/run.log (lost)"`; fix != want {
+		t.Fatalf("fix %q, want the non-interactive %q", fix, want)
+	}
+	// The fix, as hug task note runs it.
+	if _, err := s.Note(id, "task:zz9zz9/run.log (lost)"); err != nil {
+		t.Fatal(err)
+	}
+	if fs, err = s.LintFiles(nil); err != nil || len(fs) != 0 {
+		t.Fatalf("after the fix: %+v %v", fs, err)
+	}
+}
