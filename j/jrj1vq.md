@@ -64,6 +64,7 @@ Bar, all must hold, else the switch stays off and check 2 part (2) parks with th
 (b) good trigger share >= 0.60 among proposed triggers, good = when_good AND when_not_ok AND NOT case_invented; my blind hand check of 30 random proposed triggers (seed 813, rated before reading the judge's ratings) must also reach >= 0.60 and agree with the judge on >= 24/30 for 'good'.
 (c) invented case: triggers with case_invented <= 0.10 (judge), and <= 3/30 in the hand check.
 Reported without a bar: how many candidates of type rule/preference get a trigger (coverage), and triggers proposed on other types (should be 0).
+check 2 sample deviation, noted BEFORE any paid call: after 2026-11-17 10:17 the audit holds 155 real capture calls in 33 sessions (148 with transcript >= 1500 chars), so 'one per session, 40' cannot be met. Sample = 40 calls: one per session (33) plus a second call from 7 sessions drawn with seed 813; the bootstrap in (a) resamples sessions (cluster), not calls. All 155 recorded requests carry the system prompt whose sha256 without the placement block is fecb1569...ed0fd, the off prompt TestCapturePromptOffIsByteIdentical pins, so arm OFF = the recorded responses (155/155 match, 0 other), no OFF re-run. Bar thresholds unchanged.
 ## History
 - 2026-11-18T17:35 todo -> doing/active (take)
 - 2026-11-18T18:57 doing/active -> doing/waiting (wait)
