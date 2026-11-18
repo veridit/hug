@@ -12,8 +12,8 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 stage: "waiting"
-waiting_on: "crab: target not met on main 44206328950 (cli 407 s in the full run, 323 s on the same tree one run earlier); next lever needs a ruling"
-waiting_since: "2026-11-18T01:27"
+waiting_on: "2 consecutive main CI runs from 1c40426d on: test-windows-cli huginn/internal/cli under 240 s, Windows job no slower than 11 min 20 s (44206328950)"
+waiting_since: "2026-11-18T01:58"
 waiting_asked_by: "wyvern"
 ---
 
