@@ -1,0 +1,75 @@
+Proposed tags for seid-lang (hug.toml tags = [...]), from 2531 tasks, 894 labels today
+
+KEPT: 38 tags, each on 20+ tasks after merging (tasks carrying it, merged from)
+  compiler        924   <- compiler 898, Compiler 26
+  parser          341   <- parser 304, parse 15, parse-v2 23, parse-v3 4
+  typecheck       261
+  lang            237   <- lang 156, Lang 3, compiler-lang 60, language 18
+  stdlib          228
+  effects         215   <- effects 171, abilities 41, handlers 9
+  port            185   <- port 41, Compiler.Port 5, backend-parity 5, parity 22, port-parity 66, port-parser 58
+  tooling         170   <- tooling 160, Tooling 5, toolchain 5
+  memory          167   <- memory 65, leak 67, memory-safety 54, uaf 15
+  performance     161   <- performance 71, Performance 4, perf 84, speed 3
+  c-backend       160   <- c-backend 24, backend-c 133, c 3
+  perceus         160   <- perceus 151, Perceus 9
+  staging         154
+  testing         134   <- testing 21, runner 11, test 49, test-harness 6, test-infra 8, test-infrastructure 2, test-runner 8, tests 31
+  codegen         131
+  diagnostics     115   <- diagnostics 100, diagnostic 3, error-messages 4, errors 8
+  soundness        71
+  macro            68   <- macro 42, macros 20, metaprogramming 6
+  cache            60
+  formatter        52   <- formatter 32, compiler-format 13, format 10
+  docs             51   <- docs 49, Docs 2
+  js-backend       50   <- js-backend 9, backend-js 41
+  runtime          50
+  monomorphize     49   <- monomorphize 33, mono 10, monomorphization 6
+  syntax           47
+  types            45   <- types 32, type-system 8, type-theory 5
+  infra            44   <- infra 38, Infra 3, infrastructure 3
+  gate             41
+  concurrency      37
+  selfhost         33   <- selfhost 25, self-hosting 8
+  regression       32
+  bench            27   <- bench 7, benchmark 16, benchmarks 4
+  comptime         27
+  lowering         22
+  migration        21
+  ffi              20
+  koka             20
+  memcheck         20
+
+MOVED to a field (14 labels, 830 uses): type, stage or priority already say it
+  Bug 17, Design 2, PARKED 9, bug 468, chore 5, deferred 7, design 246, draft 6, feature 26, low-pri 27, parked 2, paused 11, spike 2, urgent 2
+
+DROPPED as not an area (136 labels, 1002 uses): rulings, provenance, references, process words
+  .Compiler.Run 2, King-decision 1, TASK-1951 1, TASK-2034 3, TASK-613 1, TASK-615 1, TASK-615-followon 3,
+  TASK-643 2, TASK-649 1, TASK-887-residual 1, campaign 26, concepts 56, craftsman 6, craftsman-surfaced 37,
+  decision 27, decomposed 17, evidence-backed 10, follow-up 12, found-by-370 4, found-by-371 1, from-039 1,
+  from-044 8, from-050 1, from-057 1, from-070 1, from-076 10, from-351 1, from-385 1, from-426 2,
+  from-426.01 3, from-459 1, from-461 1, from-466-468 1, from-472-474-verification 1, from-479 1,
+  from-480-probe 1, from-484 4, from-494 2, from-497 3, from-512 1, from-516 6, from-521 6, from-522 1,
+  from-524 1, from-526 2, from-527 1, from-530 2, from-531 2, from-539 1, from-549 1, from-550 2, from-554 1,
+  from-555 1, from-563 4, from-564 2, from-567 1, from-721 1, from-839 1, from-PSplat 2, from-code-value 1,
+  from-resolution-model 1, from-resolver-gap 1, from-task-470 1, horizon 115, inherited-red 37, inquisitor 11,
+  king 74, king-adjacent 1, king-approved 8, king-call 1, king-critical-path 1, king-decided 1,
+  king-decision 2, king-decree 1, king-design-question 1, king-designed 7, king-directed 23, king-floated 1,
+  king-gate 2, king-gated 1, king-go 1, king-goal 1, king-idea 1, king-input-wanted 1, king-interest 3,
+  king-ordered 29, king-pending 4, king-proposed 1, king-question 3, king-ratified 15, king-request 1,
+  king-reviewed 7, king-ruled 71, king-ruled-fix 3, king-ruling 20, king-ruling-needed 1, king-sealed 20,
+  king-seed 1, king-sitting 1, king-wants 1, librarian 16, magi-diagnosed 3, magi-surfaced 2, north-star 21,
+  phase-1 4, phase-2 2, research 50, ruled 16, scout-surfaced 4, task-043-cluster 2, task-076 5, task-079 8,
+  task-103 2, task-1040 1, task-1067-family 7, task-1073-family 4, task-1332 2, task-370-family 2, task-393 1,
+  task-397-survivor 3, task-419-followup 2, task-426-family 1, task-439-followup 1, task-579-gap 1, task-580 1,
+  task-615 2, task-632 52, task-683-prereq 1, task-907 1, task-918 1, task-928 2, task-933 1, task-943 1,
+  task-944 7, task-946 1, task-975 1
+
+DROPPED as rare (656 labels, 1674 uses): fewer than 20 tasks after merging (420 of them are used once)
+
+As hug.toml:
+  tags = ["compiler", "parser", "typecheck", "lang", "stdlib", "effects", "port", "tooling", "memory",
+          "performance", "c-backend", "perceus", "staging", "testing", "codegen", "diagnostics", "soundness",
+          "macro", "cache", "formatter", "docs", "js-backend", "runtime", "monomorphize", "syntax", "types",
+          "infra", "gate", "concurrency", "selfhost", "regression", "bench", "comptime", "lowering",
+          "migration", "ffi", "koka", "memcheck"]

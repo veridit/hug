@@ -50,5 +50,6 @@ mizaru 14:45Z: reassigned from nautilus (session gone, crab 14:44Z said take it)
 
 
 file:seid-overview-tags.ans (3236 bytes, sha256:477072ab) check 1 preview: Seid's overview (ASKED, WAITING, first 12 of NEXT UP) with tags on rows, row order pie, id, type, priority, tags, stage, text (Jørgen 10:28/10:56). Built read-only from ~/Veridit/src/seid-lang/.hug/tasks at 2eef4a7f2 with hug's own Store.Tasks and Stage; tags after the proposed cleanup in seid-tags-proposal.txt
+file:seid-tags-proposal.txt (4983 bytes, sha256:d1819ff2) check 1: proposed tag list for seid-lang: 38 tags kept (20+ tasks after merging, with what each merges), 14 labels moved to type/stage/priority, 133 dropped as provenance/rulings/references, 656 dropped as rare
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
