@@ -33,7 +33,7 @@ Known today (git grep on main): HUG_HOME, HUG_SYNC, HUG_MODEL, HUG_USER, HUG_NO_
 ## Depends on
 
 ## Acceptance
-- [ ] HUG_NO_SYNC=1 hug mem forget X exits 2, writes nothing, and the fix line names HUG_SYNC=off (test, fails first on main)
+- [x] HUG_NO_SYNC=1 hug mem forget X exits 2, writes nothing, and the fix line names HUG_SYNC=off (test, fails first on main)
 - [ ] A test greps the code for every HUG_ name and fails if one is missing from the known list, so a new variable cannot be forgotten
 - [ ] hug help lists every user-facing variable with one line each
 
