@@ -1,15 +1,20 @@
 ---
 id: ykta5g
 title: "In a task, k after j scrolled past the last check jumps to the top"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T20:00"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ huginn/internal/tui/tui.go:1608 (case j/down/k/up in the detail): moving the sel
 - [ ] Jørgen confirms j/k in a task feel symmetric after release
 
 ## Notes
+
+
+## History
+- 2026-11-18T20:00 todo -> doing/active (take)
