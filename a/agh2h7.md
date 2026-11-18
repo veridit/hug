@@ -26,7 +26,6 @@ Add the prefix 'every check holds, but ' to ownerOnlyPrefixes; the coordinator f
 
 ## Depends on
 
-- bg1rd8
 ## Acceptance
 - [ ] A checks-all-hold finding reaches its owner's session as a board line naming hug task done ID (test)
 - [ ] With the owner gone (no live session), the board coordinator gets it instead (test)
