@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.68 - 2026-11-18
+
 - Windows CLI tests start no `git maintenance` (0n4rnx). Every commit, fetch and push in the `huginn/internal/cli` tests ran `git maintenance run --auto`, which Windows git runs in the foreground: 31 in one catch-up test, 4 for one commit and one push. The test binary now sets `maintenance.auto=false` for itself and every git it starts, and the fixture remotes set it in their own config, since receive-pack does not read the environment. This changes tests only, not hug.
 
 - Three test flakes fixed at their cause (ybbfsa). A background pass that opens the board while another pass rebases it no longer fails with "not a working checkout of hug/tasks": the checkout is the branch's while `rebase-merge/head-name` names it (CI 44316906824, TestBackgroundSyncParallelNotesAllLand; the new TestOpenDuringRebase failed first with the CI's error). Test fixtures set `maintenance.auto=false` so git's detached auto maintenance cannot outlive or race a test: a fixture remote's receive-pack wrote `objects/maintenance.lock` after a push killed at NetTimeout (TempDir cleanup "directory not empty"; `gc.auto=0` alone still starts it), and a commit's worktree-prune deleted `.git/worktrees/linked` while `git worktree add` was filling it in (CI 44328375780). hug's own pushes and commits are unchanged.
