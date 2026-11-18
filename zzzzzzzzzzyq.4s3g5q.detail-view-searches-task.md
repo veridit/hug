@@ -33,7 +33,7 @@ Today's footer while typing: '↑↓ pick · Enter go to it · Tab keep as filte
 - [x] In the detail of a task, typing '/ row lay' highlights each match in the text and scrolls the first one into view (golden on a fixture with 3 matches, one in a wrapped note line)
 - [x] n and N step forward and back through the matches and wrap around, and the footer shows 'match K of M' (key test)
 - [x] With no match the footer reads '0 matches in ID · Enter searches all tasks', and Enter runs today's task search (key test)
-- [ ] Esc clears the highlights and leaves the cursor where it is. In list, board and overview, / still finds tasks as before (existing tests stay green)
+- [x] Esc clears the highlights and leaves the cursor where it is. In list, board and overview, / still finds tasks as before (existing tests stay green)
 - [ ] Context help (?) and the footer list the detail search keys (help test)
 - [ ] Jørgen confirms on his board after release
 - [ ] A search typed in a detail or the file viewer never becomes a list filter: after u the overview shows every task, with no '[/ …]' line (key test, from Jørgen's 23:30 screenshot where '/ row lay' in 6ephqk hid all but one task)
