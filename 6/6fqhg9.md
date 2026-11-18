@@ -1,0 +1,33 @@
+---
+id: 6fqhg9
+title: "Hook: a hug command quoted inside another's argument is not a call"
+state: todo
+type: feature
+priority: ""
+assignee: []
+labels: []
+group: ""
+rank: "zzzzzzzzzzzz"
+created: 2026-11-18
+updated: 2026-11-18
+---
+
+## Goal
+harness.HugCalls skips a hug task command that sits inside a quoted argument (a --goal, a note, a quoted lint line), so the board nudge does not count a task as taken, checked or done because an agent quoted the command
+
+## Purpose
+4vxqp4 replay: crab's hug task new --goal quoted 'next: hug task take vk9td0', so the nudge counted vk9td0 as crab's and handed crab and poodle its missing Principle (judged false). On 16 sessions the quote-aware parser drops 20+ quoted take/done strings, which also moves take/work/done lines
+
+## Principle
+Measure on board4 replays with the blind judge before shipping; a command a shell runs (sh -c, $(...)) still counts; unbalanced quotes count nothing as quoted; no paid calls in the hook
+
+## Relevant details
+Patch: /Users/jhf/.jcode/scratch/board4/4vxqp4/quote.patch (muninn/internal/harness/toolcalls.go HugCalls + shellQuoted, 7 test cases in toolcalls_test.go). Arms on the 6 board4 sets, right/false: base 101/12, read2 (4vxqp4 as shipped) 104/8, quote (read2 + this patch) 105/7. Fresh hug (367 sessions, 2026-11-16 20:00 to 11-17 14:00): read2 lint 3 (3 right), false 3; quote lint 2, false 4 (guppy loses the s6ff5k start line, judged right, and gets a take line on jrj1vq, judged wrong). Arms and scripts: scratch/board4/4vxqp4 (run.sh, score.py, diff.py, judgments4.json).
+
+## Depends on
+
+## Acceptance
+- [ ] replay on the 6 board4 sets plus fresh hug: every take/work/done line the patch adds or removes is blind-judged, and false lines do not rise on any set
+- [ ] fresh hug keeps its right lint lines (3 under 4vxqp4)
+
+## Notes
