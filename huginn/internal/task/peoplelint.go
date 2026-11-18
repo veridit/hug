@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 // Who a question is for must be someone hug can find (89y0b7, crab 15:28):
@@ -78,18 +79,27 @@ var namesCheck = regexp.MustCompile(`(?i)\bchecks?\s+#?(\d+)\b`)
 
 // readsAsQuestion says whether a wait's text asks a person something: a
 // '?', a check of the task named ("approve ..., check 1"), or a request
-// verb first ("approve Seid's commit-msg switch ..."). A park such as
+// verb in its first clause ("approve Seid's commit-msg switch ...",
+// Statbus's "owner confirms time frames on Norway ..."). A park such as
 // "parked per crab ruling, no fourth arm" does not (41hhgn check 13:
-// v0.7.52 moved s6ff5k's park to asked_for crab). The rule is narrow on
-// purpose: a question left as a wait loses nothing (hug upgrade lists it
-// with the ask that moves it), a park moved to asked tells a person it is
-// theirs when it is not.
+// v0.7.52 moved s6ff5k's park to asked_for crab). The verb counts in its
+// base, -s or -ies form (confirm, confirms, verifies), never -ed or -ing:
+// "approved" and "ruling" say what happened, not what is asked. A
+// question left as a wait loses nothing (hug upgrade lists it with the ask
+// that moves it); a park moved to asked tells a person it is theirs when
+// it is not.
 func readsAsQuestion(what string, checks int) bool {
 	if strings.Contains(what, "?") {
 		return true
 	}
-	if first, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(what)), " "); requestVerbs[first] {
-		return true
+	clause := strings.ToLower(strings.TrimSpace(what))
+	if n := strings.IndexAny(clause, ",;:("); n >= 0 {
+		clause = clause[:n]
+	}
+	for _, w := range strings.FieldsFunc(clause, func(r rune) bool { return !unicode.IsLetter(r) }) {
+		if requestVerbs[w] || requestVerbs[strings.TrimSuffix(w, "s")] || strings.HasSuffix(w, "ies") && requestVerbs[strings.TrimSuffix(w, "ies")+"y"] {
+			return true
+		}
 	}
 	for _, m := range namesCheck.FindAllStringSubmatch(what, -1) {
 		if n, _ := strconv.Atoi(m[1]); n >= 1 && n <= checks {
@@ -99,8 +109,10 @@ func readsAsQuestion(what string, checks int) bool {
 	return false
 }
 
-// requestVerbs open a wait that asks a person to do or decide something.
-var requestVerbs = map[string]bool{"approve": true, "answer": true, "confirm": true, "decide": true, "choose": true, "pick": true, "review": true, "rule": true, "look": true, "try": true, "please": true}
+// requestVerbs ask a person to do or decide something. Words that are as
+// often a noun as a verb in a wait ("rule", "test": "per crab rule",
+// "CI test 9") are left out: they would move a park.
+var requestVerbs = map[string]bool{"approve": true, "answer": true, "confirm": true, "decide": true, "choose": true, "pick": true, "review": true, "look": true, "try": true, "verify": true, "please": true}
 
 // Left is a wait on a person hug upgrade left waiting: it named someone in
 // waiting_for but asks nothing (41hhgn check 13).
