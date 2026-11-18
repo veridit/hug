@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.51 - 2026-11-18
+
 - `hug tui` rows say where a task belongs, with no extra line (kx2ndm). A dim cell before the text names its group and epic: `later·↳gem59b Launch posts`. The overview footer explains `↳`. g (or `: grouping`) cycles the rows flat, by group, then by epic, and the header says `grouped by epic`. gg and G are gone (Jørgen: "never used it, vi specific"): top and bottom are `<` `>` Home End, in rows, the detail, help and a grab. Each value gets a heading with its count (`▾ later  [3]`). Space or Enter on a heading folds it to `▸ later  [3]`, and the count stays. No group is special and nothing starts folded. A task you jump or find to opens its heading. Actions on a heading are refused, not guessed.
 
 - `hug tui` file viewer: the footer spells out `n next file · p previous file` instead of `n/p file` (scrxak, Jørgen: nobody guesses n/p).
