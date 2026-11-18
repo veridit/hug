@@ -1,17 +1,16 @@
 ---
 id: nch9d4
 title: "Sort picker offers default board order explicitly"
-state: "doing"
+state: "todo"
 type: feature
 priority: ""
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T12:15"
-stage: "active"
+stage: "ready"
 model: "openai"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -42,3 +41,4 @@ User screenshot 2026-11-18: filter line says priority descending while fresh pic
 Coordinator crab hands this to a swarm engineer at 2026-11-18 11:18Z; no code changes made by crab.
 ## History
 - 2026-11-18T12:15 todo -> doing/active (take)
+- 2026-11-18T12:17 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:15
