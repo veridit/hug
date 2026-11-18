@@ -39,7 +39,7 @@ func (a *App) runPeople(ctx context.Context, s *session, f flags) (Reply, error)
 		return Reply{"people": people, "offers": offers, "fixes": fixes, "next": next}, nil
 	}
 	if f.args[0] != "add" || len(f.args) != 3 {
-		return nil, usage("people takes no arguments, or add SHORT EMAIL", `hug task people add jhf jorgen@veridit.no --name "Jørgen H. Fjeld"`)
+		return nil, f.wrongCount("people takes no arguments, or add SHORT EMAIL")
 	}
 	short, email := strings.TrimSpace(f.args[1]), strings.TrimSpace(f.args[2])
 	if short == "" || strings.ContainsAny(short, " \t.[]=\"") {
