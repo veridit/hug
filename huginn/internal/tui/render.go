@@ -13,8 +13,14 @@ import (
 )
 
 type theme struct {
-	renderer                               *lipgloss.Renderer
-	normal, dim, accent, selected, warning lipgloss.Style
+	renderer                      *lipgloss.Renderer
+	normal, dim, accent, selected lipgloss.Style
+	// One colour per meaning (zhvkmj, crab 02:52): forYou (amber) is
+	// only what waits on the reader: asked of you, '? N for you', ASKED,
+	// a confirm. problem (the depends red) is only what is wrong: broken
+	// lint, its ! and LINT, a file that cannot be read. A wait on a thing
+	// and advice are dim.
+	forYou, problem lipgloss.Style
 	// focus marks where focus is in a task: one heading or the task id.
 	// ask is every confirm line: a question the reader cannot miss.
 	focus, ask lipgloss.Style
@@ -24,6 +30,17 @@ type theme struct {
 	progress               lipgloss.Style // a task partly ticked (d8yx7y)
 	status, kind, priority map[string]lipgloss.Style
 }
+
+// The colours of the theme, dark then light, one meaning each: the table
+// is in header-spec.md 'Colours' (zhvkmj, crab 03:01).
+var (
+	forYouColour  = [2]string{"#ffb454", "#995200"} // waits on you
+	problemColour = [2]string{"#ff8585", "#ae2525"} // something is wrong: depends, broken lint
+	// typeColours follow task.Types: feature, bug, chore, spike, docs.
+	typeColours = [][2]string{{"#bc9dff", "#7143a8"}, {"#ff9ecb", "#a8327f"}, {"#b8bccb", "#586474"}, {"#c4b48a", "#6b5a2a"}, {"#7bd4c2", "#146f61"}}
+	// priorityColours: critical, high, medium, low.
+	priorityColours = [][2]string{{"#ff7ad9", "#a3246f"}, {"#d8cc85", "#5f6b1a"}, {"#a7b4c4", "#586474"}, {"#8795a8", "#586474"}}
+)
 
 func newTheme() theme {
 	r := lipgloss.NewRenderer(os.Stdout)
@@ -35,7 +52,7 @@ func newTheme() theme {
 		return base.Foreground(lipgloss.AdaptiveColor{Dark: dark, Light: light})
 	}
 	t := theme{renderer: r, normal: base, dim: color("#8795a8", "#586474"), accent: color("#00bfff", "#006c9c").Bold(true),
-		selected: base.Background(lipgloss.AdaptiveColor{Dark: "#16364a", Light: "#d8eef8"}).Bold(true), warning: color("#ffb454", "#995200"),
+		selected: base.Background(lipgloss.AdaptiveColor{Dark: "#16364a", Light: "#d8eef8"}).Bold(true), forYou: color(forYouColour[0], forYouColour[1]), problem: color(problemColour[0], problemColour[1]),
 		focus:  base.Background(lipgloss.AdaptiveColor{Dark: "#00bfff", Light: "#006c9c"}).Foreground(lipgloss.AdaptiveColor{Dark: "#0b1620", Light: "#ffffff"}).Bold(true),
 		ask:    base.Background(lipgloss.AdaptiveColor{Dark: "#ffb454", Light: "#995200"}).Foreground(lipgloss.AdaptiveColor{Dark: "#1a1200", Light: "#ffffff"}).Bold(true),
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
@@ -47,11 +64,14 @@ func newTheme() theme {
 	for i, s := range []string{"todo", "doing", "done", "depends", "dropped"} {
 		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", "#ff8585", "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", "#ae2525", "#586474"}[i])
 	}
+	// Types and priorities are no problem and wait on no one: none takes
+	// the problem red or the for-you amber, and no two types look alike
+	// (zhvkmj, crab 03:01; TestOneColourPerMeaning).
 	for i, s := range task.Types {
-		t.kind[s] = color([]string{"#bc9dff", "#ff8585", "#a7b4c4", "#edbc6f", "#7bd4c2"}[i], []string{"#7143a8", "#ae2525", "#586474", "#885b0c", "#146f61"}[i])
+		t.kind[s] = color(typeColours[i][0], typeColours[i][1])
 	}
 	for i, s := range []string{"critical", "high", "medium", "low"} {
-		t.priority[s] = color([]string{"#ff7373", "#ffb454", "#d8cc85", "#8795a8"}[i], []string{"#ae2525", "#995200", "#746115", "#586474"}[i])
+		t.priority[s] = color(priorityColours[i][0], priorityColours[i][1])
 	}
 	return t
 }
@@ -107,7 +127,7 @@ func (m model) breadcrumb() string {
 	left := m.styles.accent.Render("HUG TASKS ·") + " " + m.detailTrail()
 	right := ""
 	if n := m.forYouCount(); n > 0 {
-		right = m.styles.warning.Bold(true).Render(fmt.Sprintf("? %d for you", n))
+		right = m.styles.forYou.Bold(true).Render(fmt.Sprintf("? %d for you", n))
 	}
 	if s := m.spinner(); s != "" {
 		right = strings.TrimSpace(right + m.styles.dim.Render(" · "+s))
@@ -124,7 +144,7 @@ func (m model) lintMark(path string) string { return ansi.Strip(m.marker(path)) 
 
 func (m model) marker(path string) string {
 	if m.broken[path] {
-		return m.styles.warning.Render("!")
+		return m.styles.problem.Render("!")
 	}
 	if m.linted[path] {
 		return m.styles.dim.Render("·") // advice only (pbh9xq)
@@ -168,7 +188,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 			pointer = "≡" // grabbed: it moves with j/k (3xcesq)
 		}
 	} else if m.yanked != "" && t.ID == m.yanked {
-		pointer = m.styles.warning.Render("y") // yanked: P/p paste it
+		pointer = m.styles.accent.Render("y") // yanked: P/p paste it
 	} else if mark != "" {
 		pointer = m.styles.dim.Render(mark)
 	}
@@ -223,7 +243,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 			row += styled(m.styles.priority, t.Priority, priorityCell-1) + " "
 		}
 		if c.status {
-			row += m.stageWord(word, stageCell-1) + " "
+			row += m.stageWord(t, word, stageCell-1) + " "
 		}
 	}
 	row += fit(title, max(0, c.title))
@@ -482,15 +502,20 @@ func (m model) sectionChrome() int {
 // board columns and these titles. LINT takes the colour of the ! mark.
 var sectionState = map[int]string{sectionDoing: "doing", sectionNext: "todo", sectionRecent: "done"}
 
-// sectionWaiting's title takes the warning colour of its stage words
-// (waiting, design, review) and of the ? mark: someone waits.
-
-// sectionStyle is the title style of overview section p.
+// sectionStyle is the title style of overview section p: ASKED amber,
+// what waits on you; LINT the problem red of its ! mark; WAITING dim,
+// where inactive work parks (zhvkmj, crab 02:52).
 func (m model) sectionStyle(p int) lipgloss.Style {
 	if s, ok := sectionState[p]; ok {
 		return m.styles.status[s].Bold(true)
 	}
-	return m.styles.warning.Bold(true)
+	switch p {
+	case sectionAsked:
+		return m.styles.forYou.Bold(true)
+	case sectionLint:
+		return m.styles.problem.Bold(true)
+	}
+	return m.styles.dim.Bold(true)
 }
 
 // overviewRows shares the overview's rows (h9zghj): every section the
@@ -762,7 +787,7 @@ func (m model) View() string {
 		header += m.styles.dim.Render(" · " + s) // a load past 200 ms (vnyz8z)
 	}
 	if n := m.forYouCount(); n > 0 {
-		header += m.styles.dim.Render(" · ") + m.styles.warning.Bold(true).Render(fmt.Sprintf("? %d for you", n))
+		header += m.styles.dim.Render(" · ") + m.styles.forYou.Bold(true).Render(fmt.Sprintf("? %d for you", n))
 	}
 	if len(m.sort) > 0 {
 		// The active order, as the builder wrote it (mkzcqr).
@@ -950,7 +975,7 @@ func (m model) editNoticeLines() (string, string, bool) {
 	fix = ansi.Truncate(fix, max(1, m.width-keysWidth), "…")
 	pad := strings.Repeat(" ", max(0, m.width-ansi.StringWidth(fix)-keysWidth))
 	line := m.styles.ask.Render(fix) + m.renderMarks(keys, m.styles.ask) + m.styles.ask.Render(pad)
-	return m.styles.warning.Render(fit(what, m.width)), line, true
+	return m.styles.problem.Render(fit(what, m.width)), line, true
 }
 
 // confirmLine is the question every confirm asks, in one style that cannot be

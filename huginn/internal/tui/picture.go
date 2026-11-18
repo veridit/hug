@@ -266,11 +266,11 @@ func (m model) pictureLines(t task.Task, name string) []string {
 	head := "  ▸ " + name
 	path, err := m.insideFolder(t, name)
 	if err != nil {
-		return []string{m.styles.warning.Render(fit(head+": "+err.Error(), m.width))}
+		return []string{m.styles.problem.Render(fit(head+": "+err.Error(), m.width))}
 	}
 	info, err := os.Stat(path)
 	if err != nil {
-		return []string{m.styles.warning.Render(fit(head+": "+err.Error(), m.width))}
+		return []string{m.styles.problem.Render(fit(head+": "+err.Error(), m.width))}
 	}
 	if task.IsImageName(name) {
 		where := "Space in FILES shows it"
@@ -288,7 +288,7 @@ func (m model) pictureLines(t task.Task, name string) []string {
 	}
 	b, err := readFile(path)
 	if err != nil {
-		return []string{m.styles.warning.Render(fit(head+": "+err.Error(), m.width))}
+		return []string{m.styles.problem.Render(fit(head+": "+err.Error(), m.width))}
 	}
 	out := []string{m.styles.accent.Render(fit(head+" · "+humanBytes(info.Size()), m.width))}
 	defer func() {

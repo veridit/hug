@@ -513,7 +513,7 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 		task := linted
 		task.State = status
 		row := m.taskRow(task, 140, false, false)
-		warning := m.styles.warning.Render("!")
+		warning := m.styles.problem.Render("!")
 		if !strings.Contains(row, "38;2;0;191;255") || !strings.Contains(warning, "\x1b[") || !strings.Contains(row, warning) {
 			t.Fatal("completed row lost id or warning colour", row)
 		}

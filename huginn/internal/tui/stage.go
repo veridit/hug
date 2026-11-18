@@ -64,15 +64,19 @@ func since(stamp string) string {
 	return fmt.Sprintf(" · %d d", int(d.Hours()/24))
 }
 
-// stageStyle colours the stage word: depends in the colour BLOCKED had,
-// waiting and design in the warning colour (someone waits), the rest dim.
-func (m model) stageWord(word string, width int) string {
+// stageWord colours t's stage word: depends in the colour BLOCKED had; a
+// question to you (asked, design, review) amber, as everything that waits
+// on you; a wait on a thing or on someone else dim, the rest dim
+// (zhvkmj, crab 02:52).
+func (m model) stageWord(t task.Task, word string, width int) string {
 	style := m.styles.dim
 	switch strings.TrimSuffix(word, ":") {
 	case "depends":
 		style = m.styles.status["depends"]
 	case "waiting", "asked", "design", "review":
-		style = m.styles.warning
+		if m.forYou(t) {
+			style = m.styles.forYou
+		}
 	case "active":
 		style = m.styles.status["doing"]
 	case "ready":

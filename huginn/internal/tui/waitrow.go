@@ -288,16 +288,14 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 	if selected {
 		return m.styles.selected.Render(fit(line, width))
 	}
-	// The head names the stage in its colour (warning: someone waits);
-	// you in bold, so the line that is yours stands out.
-	style := m.styles.warning
+	// The head names the stage in its colour: amber and bold when it
+	// waits on you, the depends red, else dim (zhvkmj, crab 02:52).
+	style := m.styles.dim
 	if m.stageOf(t) == "depends" {
 		style = m.styles.status["depends"]
-	} else if m.stageOf(t) == "deferred" {
-		style = m.styles.dim
 	}
 	if m.forYou(t) {
-		style = style.Bold(true)
+		style = m.styles.forYou.Bold(true)
 	}
 	pad := strings.Repeat(" ", indent)
 	body := strings.TrimPrefix(left, pad+"└─ "+head)

@@ -129,6 +129,17 @@ func (m model) markdown(s string) string {
 	out = strings.TrimSuffix(out, "\n\x1b[0m")
 	return strings.Trim(out, "\n")
 }
+
+// stageLineStyle is the colour of a task's stage line in its detail: the
+// depends red, else dim; a wait on a thing is calm (zhvkmj, crab 02:52).
+// What waits on you has no stage line: its question is in the details.
+func (m model) stageLineStyle(t task.Task) lipgloss.Style {
+	if m.stageOf(t) == "depends" {
+		return m.styles.status["depends"]
+	}
+	return m.styles.dim
+}
+
 func (m model) detailHeader(t task.Task) []string {
 	// subject: the title alone, bold; page focus shows as a ▸ before it,
 	// as a focused heading shows it, so it reads without colour too. The
@@ -141,7 +152,7 @@ func (m model) detailHeader(t task.Task) []string {
 	if _, mine := m.askedOf(t); mine {
 		// One word, no question text: the question shows once, in the
 		// details (0gztsy, crab 01:06).
-		badges = append(badges, m.styles.warning.Bold(true).Render("["+oneLine(m.taskStage(t))+"]"))
+		badges = append(badges, m.styles.forYou.Bold(true).Render("["+oneLine(m.taskStage(t))+"]"))
 	}
 	// An unset type or priority shows no badge, not "[]" (2026-11-16, user).
 	if v := oneLine(t.Type); v != "" {
@@ -202,9 +213,9 @@ func (m model) detailHeader(t task.Task) []string {
 		if isMarked && marked.where == stopStage {
 			// The id it waits on, marked where it stands (4bwcgp); fit
 			// after the mark, so the line keeps its width.
-			line = fit(m.markWord(line, marked.shown, func(s string) string { return m.styles.warning.Render(s) }), m.width)
+			line = fit(m.markWord(line, marked.shown, func(s string) string { return m.stageLineStyle(t).Render(s) }), m.width)
 		} else {
-			line = m.styles.warning.Render(fit(line, m.width))
+			line = m.stageLineStyle(t).Render(fit(line, m.width))
 		}
 		lines = append(lines, line)
 	}
@@ -234,8 +245,13 @@ func (m model) detailHeader(t task.Task) []string {
 		if len(problems) > 1 {
 			warning += fmt.Sprintf(" (+%d more findings)", len(problems)-1)
 		}
-		lines = append(lines, m.styles.warning.Render(fit(warning, m.width)))
-		lines = append(lines, m.styles.warning.Render(fit("  fix: "+oneLine(f.FixLine()), m.width)))
+		// Broken is a problem (red); advice only is dim (zhvkmj).
+		style := m.styles.dim
+		if f.Severity() == task.Broken {
+			style = m.styles.problem
+		}
+		lines = append(lines, style.Render(fit(warning, m.width)))
+		lines = append(lines, style.Render(fit("  fix: "+oneLine(f.FixLine()), m.width)))
 	}
 	// A dim rule above the subject too, so it stands out (Jørgen 00:04):
 	// breadcrumb, context, rule, subject, rule, details.
@@ -351,7 +367,7 @@ func (m model) questionBlock(t task.Task) []string {
 	if focused {
 		label = m.styles.selected.Render(label)
 	} else {
-		label = m.styles.warning.Render(label)
+		label = m.styles.forYou.Render(label)
 	}
 	return append([]string{label}, m.askedBy(q, indent)...)
 }
@@ -679,7 +695,7 @@ func (m model) detailText(t task.Task) string {
 			if w := strings.TrimSpace(q.what); w != "" {
 				for _, para := range strings.Split(w, "\n") {
 					for _, l := range strings.Split(wrap(para, max(10, m.width-len(indent))), "\n") {
-						checks = append(checks, m.styles.warning.Render(indent+l))
+						checks = append(checks, m.styles.forYou.Render(indent+l))
 					}
 				}
 			}
