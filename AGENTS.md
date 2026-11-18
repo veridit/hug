@@ -33,13 +33,18 @@ compatibility links only. Never tell a user to type them.
   a non-wait (a hanging remote gives up) stays a normal test.
 - Messages, fixes and help must name `hug task ...` / `hug mem ...`, and every
   error ends with a `fix:` line an agent can run.
+- A ruling that reverses or narrows an earlier one is written on the earlier
+  ticket too (hug task note OLD "superseded by NEW: ..."), and the tests that
+  pinned the old rule are rewritten in the same change.
 - Every commit ends with one trailer naming the model that made it and the
   effort it ran at, `Model: claude-opus-5-5/<effort>` (e.g. `/high`), or
   `Model: human`. The levels per model are `hug task models`; the gate is
   `hug task install commit-msg` (jr55s8).
-- Landing: rebase onto origin/main, run the touched packages' tests locally
-  with `-race` (as CI's ubuntu job does), then push straight to main. No
-  pre-push CI run. If main CI goes red from your commit, fixing it forward
+- Landing: rebase onto origin/main, run `go vet ./...` (a rename or a new
+  required flag on main breaks tests only once they are built), run the
+  touched packages' tests locally with `-race` (as CI's ubuntu job does), then
+  push straight to main. No pre-push CI run. Read a red run per package before
+  blaming your change. If main CI goes red from your commit, fixing it forward
   comes first; revert if it is not fixed within 30 minutes.
 - Releases: hourly, from the newest main commit green on every job. Add your
   CHANGELOG.md line under `## Unreleased`; the release turns it into
