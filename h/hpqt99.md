@@ -16,7 +16,7 @@ updated: 2026-11-10
 Decide client provenance for imports and live-read vs import of jcode memories
 
 ## Purpose
-Two open points Jørgen parked to revisit (memories 1c49sh and 5zwpx7: "how imported data is handled ... should be added to the to-dos"). (1) Imported data (e.g. Engram) does not record client origin, so it becomes client-only only through the explicit cross-client admin rescope (fqdv6k, 2026-11-06; muninn/docs/ROADMAP.md). (2) jcode memories are both read live and imported, and Jørgen wants muninn to own all memories eventually: import jcode memories once, stop jcode writing, stop reading jcode files live, so forget and sync work on one source of truth (b97h8c).
+Jørgen 2026-11-05 17:00Z (crab session), in the same breath as personal vs shared (gav9nw): 'Imported data. Okay, we have to do that again later and write into the to-dos' (memories 5zwpx7, 1c49sh). Two points are open. (1) Imported data (e.g. Engram) does not record client origin, so it becomes client-only only through the explicit cross-client admin rescope (fqdv6k, 2026-11-06; muninn/docs/ROADMAP.md). (2) jcode memories are both read live and imported, and Jørgen wants muninn to own all memories eventually: import jcode memories once, stop jcode writing, stop reading jcode files live, so forget and sync work on one source of truth (b97h8c).
 
 ## Principle
 A design decision first, written down, no code in this task. Keep the client boundary that shipped 2026-11-05: imports and sync can never bypass it, and harness files stay read-only (ROADMAP.md). The direction is Jørgen's (one source of truth in muninn); the task decides how and when to get there, and he makes the call.
