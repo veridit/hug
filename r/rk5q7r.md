@@ -45,6 +45,7 @@ RESULT (duckling 14:41Z). Base board4 = agh2h7 c89178f9; new = rk5q7r. (1) Six s
 Commit 346800f5 on rk5q7r + ci/rk5q7r (stacked on agh2h7 c89178f9). Suite: 33 ok + huginn/gitbranch FAIL TestUpgradeFailuresKeepOriginalLayout/lost-ack 'TempDir RemoveAll cleanup: ... remote.git/objects: directory not empty' (untouched package), rerun alone: ok github.com/veridit/hug/huginn/gitbranch 40.921s. gofmt clean.
 CI 44327807341 on 346800f5: success 6/6. Waiting for bg1rd8 on main to rebase (crab 14:55Z).
 CI 44327807341 on 346800f5 (stacked on agh2h7 c89178f9): 6/6 success. Lands after bg1rd8, rebased onto main.
+Rebased onto agh2h7 43e318d1: rk5q7r = 299f1d37, no conflicts. go test -count=1 recall/run/board/task: ok x4. Pushed rk5q7r and ci/rk5q7r.
 ## History
 - 2026-11-18T15:25 todo -> doing/active (take)
 - 2026-11-18T15:55 doing/active -> doing/waiting (wait)
