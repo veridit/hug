@@ -68,5 +68,6 @@ landed 5050b97 on main 2026-11-18: tui: failing tests, header 'HUG · <project>'
 landed 3686f17 on main 2026-11-18: tui: header 'HUG · <project>', field terms in / search (0sw0dd checks 2, 3)
 landed 31499b8 on main 2026-11-18: tui: / search takes tag: beside label: (0sw0dd, for txjkrm)
 landed 8ee3737 on main 2026-11-18: tui goldens: check-ids and picture-framed say 'HUG · list' (0sw0dd header, after…
+shipped in v0.7.67 (5050b97)
 ## History
 - 2026-11-18T16:37 todo -> doing/active (take)

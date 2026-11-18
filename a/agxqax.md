@@ -51,6 +51,7 @@ check 3 evidence (e886b474): TestLintFlagsPersonWaitsAndUnknownAsk (a Statbus-sh
 crab review 17:13 local: accepted. e886b474 on c84d3273: store-level refusal of person-addressed waits on boards with [people] (fix = matching ask), ask --to resolves any of a person's names or a new alias list, unknown names refused with the people listed; lint wait-on-person, unknown-person re-ask fix. Statbus copy exactly the 6; hug and sql_saga 0; 24 of 141 past waits flagged, all real. CI 44339826571 6/6. Choices 1-4 accepted. Lands after the current stack.
 bonehound: rebased onto crab's landing stack 80c8ac28 at crab's request: origin/agxqax = 5da549a7. Conflicts in help.go (wait/ask), codes.go and CHANGELOG kept both sides. Niced go build ./... ok; cli ok 295.641s, task ok 37.598s, mcp ok 38.354s. Accepted by crab 16:13.
 landed b878852 on main 2026-11-18: task: a question to a person is asked, never waited on, and only of someone hug…
+shipped in v0.7.67 (b878852)
 ## History
 - 2026-11-18T15:55 todo -> doing/active (take)
 - 2026-11-18T17:29 doing/active -> doing/waiting (wait)

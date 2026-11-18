@@ -61,6 +61,7 @@ crab review 17:29 local: accepted. 4504654a on c84d3273: main already unions bot
 check 4: TestSyncBothSidesStateRemoteWinsAndSays PASS on 4504654a: exit 0, one 'sync: ID state: kept the board's doing; this clone's dropped is in a note on ID', state doing, no [stray-node-field]; TestMergeStateBothSidesMovesLosingNodeFields PASS; CI 44343714260 6/6
 Item 3 cannot be struck: 'item 3 is ticked: it was done, so it is not struck out' (hug task strike refuses a ticked item and there is no uncheck). Its wording ('still stop with a fix line') is superseded by crab's 04:44 ruling; item 4 states the real behaviour and is ticked with evidence.
 landed 518ecc1 on main 2026-11-18: sync: both sides' appends tested on a plain board; a kept state stays whole…
+shipped in v0.7.67 (518ecc1)
 ## History
 - 2026-11-18T16:57 todo -> doing/active (take)
 - 2026-11-18T17:27 doing/active -> doing/waiting (wait)

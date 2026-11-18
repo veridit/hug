@@ -44,5 +44,6 @@ check 1: TestWriteEndsInterruptedSyncRebase (cli): sync stopped mid-rebase with 
 check 2: TestForeignRebaseStillRefuses (no marker; stale marker then a person's rebase): Sync returns Op 'worktree busy' with Fix 'git -C <board> rebase --abort' and rebase-merge/head-name stays; TestExistingRebaseIsNotTouched still passes; TestRunningHugRebaseIsLeftAlone: a held lock is never ended. Mutant dropping the ownership checks fails both foreign cases. CI 44347035097 green.
 crab review 17:42 local: accepted. 69d21471 on c84d3273: hug marks its own rebase (marker + lock while git runs); writers/sync/take/background pass end a dead hug rebase under the board turn, restore the autostash, print one line; a foreign rebase still refuses with worktree busy + rebase --abort. Failing-first and an ownership mutant. CI 44347035097 6/6. Pre-fix stuck states (no marker) still refuse by design. Stacked for landing.
 landed 4fb7833 on main 2026-11-18: sync: a write ends an interrupted rebase hug started itself (fcf4fg)
+shipped in v0.7.67 (4fb7833)
 ## History
 - 2026-11-18T15:41 todo -> doing/active (take)
