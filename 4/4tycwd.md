@@ -24,7 +24,7 @@ When an agent must leave an in-progress task for a detour, it parks where it was
 Detours (a bug found mid-task, a user question) make agents forget the half-done task; the board says doing but the thread is lost
 
 ## Principle
-Light: one note per task, not a second tracker; the task stays doing; the guide reminds on return
+Light: no park command, no marker. A detour to another task is a dependency (hug task dep A --add B plus a note); a wait is for things outside the board and hug wakes it (--until or its condition). next means what to work on now, so a waiting task is never offered as next work during its wait (crab 17:57).
 
 ## Relevant details
 Candidates: hug task park ID 'where I was' (a dated note plus a marker), shown by hug task next --mine and in the take guide; or reuse notes with a 'parked:' prefix. Decide after the nudge work (qawmnb) shows how often detours happen
@@ -33,6 +33,11 @@ Candidates: hug task park ID 'where I was' (a dated note plus a marker), shown b
 
 ## Acceptance
 - [ ] an agent can park and resume a task with one command each, and next --mine shows parked work first
+- [ ] hug task take refused for one-in-doing prints a fourth fix: hug task dep A --add B && hug task note A "where I was" (A the doing task, B the refused one), in text and in the JSON fixes array
+- [ ] hug task next --mine skips my doing tasks in stage waiting; a woken wait (--until day reached or its condition holds) counts as active and comes first as today
+- [ ] when nothing else is left, hug task next --mine says so and lists my waiting tasks one line each (id, what it waits on), exit 4
+- [ ] hug task resume ID prints once what the task was waiting on ('was waiting on: ...')
+- [ ] one CHANGELOG line; tests fail first on origin/main and pass after; CI green
 
 ## Notes
 
