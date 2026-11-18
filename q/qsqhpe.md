@@ -1,7 +1,7 @@
 ---
 id: qsqhpe
 title: "Ticking the check a question is about answers the question"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["mizaru"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzb"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T15:11"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "qsqhpe"
 worktree: "/Users/jhf/.jcode/scratch/qsqhpe"
-waiting_on: "crab rebases onto main and lands after exact-SHA CI"
-waiting_since: "2026-11-18T15:44"
-waiting_asked_by: "mizaru"
+done_at: "2026-11-18T20:54"
 ---
 
 ## Goal
@@ -51,6 +47,8 @@ crab 14:44Z: accepted (ticker from HUG_USER, session or git email is right); cra
 Landed on main via 80c8ac28 (stack of 10 on v0.7.65; CI 44344774710 exact SHA 6/6). Ships in the next release.
 landed e5f4057 on main 2026-11-18: Ticking the check a question is about answers the question (qsqhpe)
 shipped in v0.7.66 (e5f4057)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T15:11 todo -> doing/active (take)
 - 2026-11-18T15:44 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:54 doing/waiting -> done (done); was doing_since: 2026-11-18T15:11; waiting_asked_by: mizaru; waiting_on: crab rebases onto main and lands after exact-SHA CI; waiting_since: 2026-11-18T15:44
