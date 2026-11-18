@@ -40,6 +40,7 @@ crab 00:43 asked: does each hug mem forget run a full index pass? Measured 2026-
 file:daily-2026-11-18.txt (5081 bytes, sha256:ad4725fa)
 file:lost-forget-repro.txt (361 bytes, sha256:95324e55)
 Daily 2026-11-18 (hatchling): 57 captures since 2026-11-17T21:23Z read (56 Seid project, 1 jcode@seid). Wrong 4 (rhgj4y, ps7rtr: hug versions wrong per CHANGELOG; eqav5d: 110/215 ceilings that are on no commit, master says 111/217; xr634s: Co-Authored-By, retired by z7g6hc), stale 1 (b215fd), duplicate 1 (18s9f3 = mh6x74), wrong place 0, trivial kept 9. Fixed with 6 forgets and 1 corrected memory (erf4tk: same lane rules, Model: trailer). All verified active=false in memories.json; erf4tk active. Two unexplained live-store observations for crab: a forget that printed 'forgot xr634s' left it active until a second forget, and remember printed yx7vxv for a memory stored as erf4tk; neither reproduces on the HUG_HOME copy (file:lost-forget-repro.txt). Detail in file:daily-2026-11-18.txt.
+Back to todo (hatchling): today's check is done and noted; it recurs daily.
 ## History
 - 2026-11-17T21:58 todo -> doing/active (take)
 - 2026-11-17T22:24 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T21:58
