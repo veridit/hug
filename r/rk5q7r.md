@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzz1"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T15:25"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "bg1rd8 on main, then rebase onto main"
+waiting_since: "2026-11-18T15:55"
+waiting_asked_by: "duckling"
 ---
 
 ## Goal
@@ -43,3 +46,4 @@ Commit 346800f5 on rk5q7r + ci/rk5q7r (stacked on agh2h7 c89178f9). Suite: 33 ok
 CI 44327807341 on 346800f5: success 6/6. Waiting for bg1rd8 on main to rebase (crab 14:55Z).
 ## History
 - 2026-11-18T15:25 todo -> doing/active (take)
+- 2026-11-18T15:55 doing/active -> doing/waiting (wait)
