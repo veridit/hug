@@ -32,3 +32,5 @@ Add the prefix 'every check holds, but ' to ownerOnlyPrefixes; the coordinator f
 - [ ] With the owner gone (no live session), the board coordinator gets it instead (test)
 
 ## Notes
+
+duckling 13:33Z: piglet confirmed not started (DM 13:31Z). Worktree scratch/agh2h7 branch agh2h7 = b7517169 + cherry-picks of gpyqq9 (9ba1bf54, 8183ded0) + bg1rd8 (4bfd6797), CHANGELOG conflicts resolved keeping all entries.
