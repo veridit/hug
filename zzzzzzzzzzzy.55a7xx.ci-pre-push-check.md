@@ -4,7 +4,7 @@ title: "CI and the pre-push check refuse leftover merge conflict markers"
 state: todo
 type: chore
 priority: "medium"
-assignee: []
+assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
