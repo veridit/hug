@@ -1,16 +1,21 @@
 ---
 id: ynh84t
 title: "hug mem install writes 'muninn hook'; task install names the MCP entry huginn"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzt"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "gem59b"
+doing_since: "2026-11-18T23:37"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "ci-goldens"
+worktree: "/Users/jhf/.jcode/scratch/ci-goldens"
 ---
 
 ## Goal
@@ -34,3 +39,7 @@ muninn/run/surfaces.go:105 selfPath: 'writing .../hug into a hook would run hug 
 - [ ] On Jørgen's machine after the release, no harness config names muninn or huginn (grep in a note)
 
 ## Notes
+
+
+## History
+- 2026-11-18T23:37 todo -> doing/active (take)
