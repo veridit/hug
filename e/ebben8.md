@@ -36,7 +36,7 @@ personq.go: subject regexp has a fixed verb list (approve|answer|confirm|...|tic
 
 ## Acceptance
 - [x] a table of every open check on hug's and Seid's boards with the old and new matcher's result, every difference listed, sent to crab before any code change
-- [ ] 5z4zt4 check 5 ('Jørgen attaches a screenshot ...') is a person's check for jhf; a test that failed first shows it, and a check naming a person only as object or owner of a thing is not
+- [x] 5z4zt4 check 5 ('Jørgen attaches a screenshot ...') is a person's check for jhf; a test that failed first shows it, and a check naming a person only as object or owner of a thing is not
 - [ ] mutants of the new subject rule are killed, CI passes on all jobs
 
 ## Notes
@@ -45,6 +45,7 @@ personq.go: subject regexp has a fixed verb list (approve|answer|confirm|...|tic
 measurement (no code changed): old AddressesPerson vs proposed subject rule over every open check and waiting_on of open tasks; hug board copy b2cb4e3b (100 checks, 34 waits), Seid board copy 26f97c0be (3171 checks, 6 waits). hug checks: old 13 person, new 20 (+7, 0 lost); hug waits: old 0, new 1; Seid: 0 and 0 (its person 'jorgen' is called 'the King' there, not in [people]; with alias king added hypothetically, 2 checks gain: rkfa4j 1, spjvd6 1). Diff: /Users/jhf/.jcode/scratch/ebben8/diff.tsv; full: v1.tsv; harness: zz_measure_test.go, zz_cases_test.go.
 check 1: diff sent to crab 20:59Z before any code change: hug 100 checks old 13 new 20 (+7, 0 lost), 34 waits 0->1; Seid 3171 checks + 6 waits 0 changes; every difference in /Users/jhf/.jcode/scratch/ebben8/diff.tsv
 build: 281035af on origin/main d5c66a1f (branches ebben8, ci/ebben8). Tests that failed first (/Users/jhf/.jcode/scratch/ebben8/failfirst-task.txt, failfirst-cli.txt): TestAddressesPerson 12 new cases failed on main (the 8 negatives already passed), TestWaitAddressedToPersonIsRefused ('check 1: Jørgen sees ...' wait was accepted), TestShippedPersonCheckIsAsked (check 4 'Jørgen attaches a screenshot ...' not asked). All pass after. One function: personActs inside AddressesPerson, used by personChecks, wait and lint (no second copy). Re-measure on the board copies with the shipped code: identical to the approved v1.tsv (3311 rows). Mutants: 11 of 11 killed, mut/mutants.txt. Local: task, mcp, cli, tui packages ok. CI 44398766272 running.
+check 2: 281035af: 5z4zt4 check 5 text reads as jhf's (TestAddressesPerson, failed first on d5c66a1f, passes after); 8 negatives (object, possessive thing, quoted spec, file, owner table) stay not a person's
 ## History
 - 2026-11-18T21:49 todo -> doing/active (take)
 - 2026-11-18T21:59 doing/active -> doing/waiting (wait)
