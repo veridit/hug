@@ -53,5 +53,6 @@ nautilus 23:44, footer mock for Jørgen (not built yet; queued after e3sevr, 0gz
  ◆ (dim accent, never red) in gutter column 1 marks a row, with a quiet tint; the cursor row keeps >. t asks once: 'Take 3 tasks? Enter confirm · Esc cancel'. A refused task (e.g. taken by someone else) is named with its fix: line; the others go ahead. Narrow screens drop the action words to keys: '3 marked · m t x w e · Esc'.
 
 
+file:footer-mock.md (3515 bytes, sha256:3d56be16) nautilus 05:20: the footer and marks mock at 80/140/narrow, drawn from main 52ff46f9; three questions for Jørgen at the end
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
