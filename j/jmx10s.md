@@ -46,6 +46,7 @@ Reflection (dismissed, 2026-11-17, nautilus): AGENTS.md 'Tests must fail first' 
 landed ac4409f on main 2026-11-17: hug tui: ? leads with the keys for where you are, then EVERYWHERE (jmx10s)
 landed 58fcd3c on main 2026-11-17: Merge v0.7.47 into main (jmx10s, 3mavpt stay under Unreleased)
 shipped in v0.7.48 (ac4409f)
+Reflection 1 dismissed (tb0dra check 5 triage, crab 2026-11-19): G9, a measurement rule that held; no instruction change. 5sc5rw's RECALL4.md gap is task nrp268.
 ## History
 - 2026-11-17T21:37 todo -> doing/active (take)
 - 2026-11-17T21:59 doing/active -> done (done); was doing_since: 2026-11-17T21:37
