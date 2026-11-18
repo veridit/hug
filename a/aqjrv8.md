@@ -40,6 +40,8 @@ MainCI44262023787 all6green; migration277 normalized responses identical. Worktr
 ## Requests
 - 2026-11-18T12:19 request 1 by jhf:
   Isn't this obsolete now?
+  resolved 2026-11-18T12:20 by crab:
+    Yes, obsolete: the v0.7.59 tag's release failed and v0.7.60 superseded it (then v0.7.61). Dropped.
 
 ## Notes
 
@@ -49,3 +51,4 @@ Release44264072826 failed before build/publish: TestSettledWaitsForSlowChild syn
 - 2026-11-18T09:05 todo -> doing/active (take)
 - 2026-11-18T09:45 doing/active -> doing/waiting (wait)
 - 2026-11-18T12:19 request 1 by jhf
+- 2026-11-18T12:20 resolved request 1 by crab
