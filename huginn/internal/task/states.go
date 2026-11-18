@@ -89,6 +89,11 @@ var States = []Node{
 			{Name: "waiting_on", Required: true, SetBy: ByAgent, Means: "what it waits on"},
 			{Name: "waiting_since", SetBy: ByHug, Means: "since when"},
 			{Name: "waiting_asked_by", SetBy: ByHug, Means: "who waits (the agent or person that ran hug task wait)"},
+			{Name: "waiting_until", SetBy: ByAgent, Means: "the date (YYYY-MM-DD, local) the wait ends on its own (--until, --after; z2vmte): on the first hug read that day the task wakes"},
+			{Name: "waiting_ask_what", SetBy: ByAgent, Means: "hug task ask --after: the question, verbatim, asked when waiting_until comes; not in anyone's ASKED before"},
+			{Name: "waiting_ask_for", SetBy: ByAgent, Means: "hug task ask --after: who it will ask (asked_for at the date)"},
+			{Name: "waiting_ask_check", SetBy: ByAgent, Means: "hug task ask --after: the check the question is about (asked_check at the date)"},
+			{Name: "waiting_ask_show", SetBy: ByAgent, Means: "hug task ask --after: the task file to look at (asked_show at the date)"},
 		}},
 		{Name: "depends", SetBy: ByHug, Means: "the owner can't go on until another task is done"},
 		{Name: "review", SetBy: ByReviewer, Means: "someone is reviewing it: a reviewer took it, or the owner asked with hug task review (and keeps it)", Fields: []NodeField{

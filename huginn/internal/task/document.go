@@ -265,6 +265,10 @@ type Task struct {
 	// Outcome is what the asker did first after the newest answer (41hhgn
 	// check 11), from its History read line; nil before it acts.
 	Outcome *Outcome `json:"outcome,omitempty"`
+	// Woken is whether the newest History line is a timed wait ending
+	// (z2vmte): nothing has moved the task since; next --mine puts it
+	// first. Read from History, never written.
+	Woken bool `json:"woken,omitempty"`
 }
 
 // Texts of one task file, see Task.Texts.
@@ -567,6 +571,8 @@ func Parse(path string, data []byte) *Document {
 	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
 	d.Task.Answer, d.Task.Outcome = readAnswers(d.historyLines())
+	d.Task.Woken = woken(d.historyLines())
+	d.Findings = append(d.Findings, untilFindings(d.Task)...)
 	d.Task.Requests = parseRequests(d.requestLines())
 	d.Task.Texts = &Texts{Bodies: true, Notes: notesText(data), Description: map[string]string{}, Refs: FileRefs(data, d.Task.ID)}
 	for _, sec := range DescriptionSections {

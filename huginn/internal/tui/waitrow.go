@@ -142,7 +142,12 @@ func (m model) note(t task.Task) (head, text, stamp string) {
 			at = v
 		}
 		if who == "" {
-			return "waiting on", m.attachments(t, oneLine(what)), at
+			note := m.attachments(t, oneLine(what))
+			// A wait for a date says when it ends (z2vmte).
+			if u := t.Fields["waiting_until"]; u != "" {
+				note += " · until " + untilDay(u)
+			}
+			return "waiting on", note, at
 		}
 		return "waiting on " + m.name(who) + ":", m.attachments(t, oneLine(what)), at
 	case "review":
@@ -397,4 +402,18 @@ func (m model) withLongName(t task.Task, head string) string {
 		head += ":"
 	}
 	return head
+}
+
+// untilDay is a waiting_until date as a row says it: "24 Nov" (z2vmte),
+// the year only when it is not this one; the text as written when it is no
+// date.
+func untilDay(v string) string {
+	d, err := time.ParseInLocation("2006-01-02", strings.TrimSpace(v), time.Local)
+	if err != nil {
+		return v
+	}
+	if d.Year() != task.Now().Year() {
+		return d.Format("2 Jan 2006")
+	}
+	return d.Format("2 Jan")
 }

@@ -198,30 +198,7 @@ func refuse(t Task, to, fix string) error {
 // Wait moves ref, a doing task, to doing/waiting on what: a thing outside
 // the board with no person to answer (CI, a release). by is who waits
 // (waiting_asked_by). A question to a person is Ask (41hhgn).
-func (s *Store) Wait(ref, on, by string) (Result, error) {
-	d, ts, e := s.load(ref)
-	if e != nil {
-		return Result{}, e
-	}
-	on = strings.TrimSpace(on)
-	if on == "" {
-		return Result{}, usageErr(d.Task.ID, "wait needs what it waits on", "hug task wait "+d.Task.ID+` "CI run 123"`)
-	}
-	if d.Task.State != "doing" {
-		return Result{}, refuse(d.Task, "doing/waiting", "hug task take "+d.Task.ID+" --model MODEL")
-	}
-	if d.Task.Fields["waiting_on"] == on {
-		return s.finish(d, false)
-	}
-	set := map[string]string{"waiting_on": on, "waiting_since": stamp()}
-	if by = strings.TrimSpace(by); by != "" {
-		set["waiting_asked_by"] = by
-	}
-	if e = applyMove(d, ts, move{state: "doing", stage: "waiting", set: set, why: "wait"}); e != nil {
-		return Result{}, e
-	}
-	return s.finish(d, true)
-}
+func (s *Store) Wait(ref, on, by string) (Result, error) { return s.WaitUntil(ref, on, "", by) }
 
 // Question is what Ask asks: the text (verbatim, may span lines), who must
 // answer, the check it is about (0: none) and a task file to show.
@@ -239,28 +216,9 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 	if e != nil {
 		return Result{}, e
 	}
-	id := d.Task.ID
-	what := strings.TrimSpace(q.What)
-	if what == "" {
-		return Result{}, usageErr(id, "ask needs the question", "hug task ask "+id+` --to NAME "the question"`)
-	}
-	who := strings.TrimSpace(q.For)
-	if who == "" {
-		return Result{}, usageErr(id, "ask needs who must answer: --to NAME", "hug task ask "+id+` --to NAME "`+oneLineFix(what)+`"`)
-	}
-	if d.Task.State != "doing" {
-		return Result{}, refuse(d.Task, "doing/asked", "hug task take "+id+" --model MODEL")
-	}
-	if n := len(d.Task.Acceptance); q.Check != 0 && (q.Check < 1 || q.Check > n) {
-		return Result{}, &Error{Kind: "bad-check", ID: id, Value: fmt.Sprintf("--check %d: %s has %d checks", q.Check, id, n), Fix: fmt.Sprintf("hug task ask %s --to %s --check %d %q", id, who, max(1, n), oneLineFix(what))}
-	}
-	show, e := s.showable(d.Task, q.Show)
+	what, who, check, show, e := s.askable(d, q)
 	if e != nil {
 		return Result{}, e
-	}
-	check := ""
-	if q.Check > 0 {
-		check = strconv.Itoa(q.Check)
 	}
 	f := d.Task.Fields
 	if f["asked_what"] == what && f["asked_for"] == who && f["asked_check"] == check && f["asked_show"] == show {
@@ -282,6 +240,34 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 		return Result{}, e
 	}
 	return s.finish(d, true)
+}
+
+// askable checks q on d, a task to ask: the question, who answers, a doing
+// task, a check in 1..N, a show that is a task file. It returns them as
+// written (check "" for none).
+func (s *Store) askable(d *Document, q Question) (what, who, check, show string, e error) {
+	id := d.Task.ID
+	what = strings.TrimSpace(q.What)
+	if what == "" {
+		return "", "", "", "", usageErr(id, "ask needs the question", "hug task ask "+id+` --to NAME "the question"`)
+	}
+	who = strings.TrimSpace(q.For)
+	if who == "" {
+		return "", "", "", "", usageErr(id, "ask needs who must answer: --to NAME", "hug task ask "+id+` --to NAME "`+oneLineFix(what)+`"`)
+	}
+	if d.Task.State != "doing" {
+		return "", "", "", "", refuse(d.Task, "doing/asked", "hug task take "+id+" --model MODEL")
+	}
+	if n := len(d.Task.Acceptance); q.Check != 0 && (q.Check < 1 || q.Check > n) {
+		return "", "", "", "", &Error{Kind: "bad-check", ID: id, Value: fmt.Sprintf("--check %d: %s has %d checks", q.Check, id, n), Fix: fmt.Sprintf("hug task ask %s --to %s --check %d %q", id, who, max(1, n), oneLineFix(what))}
+	}
+	if show, e = s.showable(d.Task, q.Show); e != nil {
+		return "", "", "", "", e
+	}
+	if q.Check > 0 {
+		check = strconv.Itoa(q.Check)
+	}
+	return what, who, check, show, nil
 }
 
 // oneLineFix is text for a fix: line: its first line.

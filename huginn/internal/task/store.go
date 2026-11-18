@@ -90,6 +90,9 @@ type Store struct {
 	// ID "..."): an asker's first write after an answer records it as the
 	// answer's outcome (41hhgn check 11).
 	Action string
+	// waking is set while Wake writes: the wake is hug's, not the
+	// reader's, so it marks nothing read or back (z2vmte).
+	waking bool
 	board  []Task
 	held   bool
 }
@@ -226,7 +229,10 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		}
 	}
 	if changed {
-		markRead(d, s.Actor, s.Action)
+		if !s.waking {
+			markRead(d, s.Actor, s.Action)
+			markBack(d, s.Actor)
+		}
 		path, e := s.diskPath(d.Task.Path)
 		if e != nil {
 			return Result{}, e
@@ -682,6 +688,13 @@ func Next(tasks []Task, f Filter) (Result, error) {
 		}
 		if newest != nil {
 			return Result{Task: *newest, Next: "hug task show " + newest.ID}, nil
+		}
+		// A task its date woke comes next (z2vmte): the owner asked to be
+		// brought back to it.
+		for _, t := range ts {
+			if t.Woken && t.State == "doing" && contains(t.Assignee, f.Mine) && InEpic(t, tasks, f.Epic) {
+				return Result{Task: t, Next: hint(t)}, nil
+			}
 		}
 		sort.SliceStable(ts, func(i, j int) bool { return ts[i].State == "doing" && ts[j].State != "doing" })
 	}

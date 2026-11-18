@@ -653,7 +653,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show", "ask": "as model to check show", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -774,6 +774,15 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		// cannot move task files between this command reading and
 		// committing them.
 		s.s.Invalidate()
+	}
+	// A timed wait whose date has come ends on this read (z2vmte), before
+	// the command sees the board. Not on a board newer than this hug.
+	if _, _, newer := a.newerBoard(s.r.Dir); !newer && cmd != "tui" {
+		if ts, e := s.s.Tasks(); e == nil {
+			s.wakeDue(ts, writer)
+		}
+	} else if !newer {
+		s.wakeDue(s.c.Listed(), false)
 	}
 	// Reads bring in other clones' changes: a background pass when the last
 	// is stale (a lock try and a stat; it never waits on git or the network).
@@ -1167,7 +1176,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = f.count(2); e != nil {
 			return nil, e
 		}
-		r, e = s.s.Wait(f.args[0], f.args[1], a.whoTakes(f).assignee())
+		r, e = s.s.WaitUntil(f.args[0], f.args[1], strings.TrimSpace(f.get("until")), a.whoTakes(f).assignee())
 	case "ask":
 		if len(f.args) == 1 {
 			return nil, usage("ask needs the question", "hug task ask "+f.args[0]+` --to NAME "the question"`)
@@ -1191,7 +1200,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if e = s.readyToHand("ask", f.args[0], q.For, false, q.Check); e != nil {
 			return nil, e
 		}
-		r, e = s.s.Ask(f.args[0], q, a.whoTakes(f).assignee())
+		r, e = s.s.AskAfter(f.args[0], q, strings.TrimSpace(f.get("after")), a.whoTakes(f).assignee())
 	case "resume":
 		if e = f.count(1); e != nil {
 			return nil, e
@@ -2052,7 +2061,11 @@ func stageLine(t Reply) string {
 	}
 	switch stage {
 	case "waiting":
-		return strings.TrimSpace("waiting on "+fields["waiting_on"]) + since("waiting_since")
+		line := strings.TrimSpace("waiting on "+fields["waiting_on"]) + since("waiting_since")
+		if u := fields["waiting_until"]; u != "" {
+			line += " · until " + u
+		}
+		return line
 	case "asked":
 		head := "asked " + fields["asked_for"]
 		if n := fields["asked_check"]; n != "" {

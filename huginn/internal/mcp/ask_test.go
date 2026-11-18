@@ -108,4 +108,17 @@ func TestAskOverMCP(t *testing.T) {
 	if ans, _ := shown["task"].(map[string]any)["answer"].(map[string]any); ans["text"] != answer {
 		t.Fatalf("show's answer: %s", text)
 	}
+	// z2vmte over MCP: wait takes until, ask takes ask_after.
+	if text, bad := call("update", map[string]any{"id": id, "action": "wait", "text": "a week of use", "until": "2099-01-02"}); bad {
+		t.Fatal(text)
+	}
+	if f = file(); !strings.Contains(f, `waiting_until: "2099-01-02"`) {
+		t.Fatalf("wait until over MCP:\n%s", f)
+	}
+	if text, bad := call("update", map[string]any{"id": id, "action": "ask", "to": "jhf", "text": "look again?", "ask_after": "2099-01-03"}); bad {
+		t.Fatal(text)
+	}
+	if f = file(); !strings.Contains(f, `waiting_until: "2099-01-03"`) || !strings.Contains(f, `waiting_ask_what: "look again?"`) || strings.Contains(f, "\nasked_") {
+		t.Fatalf("ask after over MCP:\n%s", f)
+	}
 }
