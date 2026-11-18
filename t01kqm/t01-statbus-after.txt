@@ -1,0 +1,8 @@
+156 findings (24 broken) in 6 codes:
+  11  broken  branch-gone      a doing task's branch is merged into main or deleted: the work landed or was dropped                                                                             hug task lint --code branch-gone
+   8  broken  missing-goal     no Goal section, or it is empty                                                                                                                                  hug task lint --code missing-goal
+   5  broken  old-layout       the file says status: where state: goes, or waiting_for: where a question goes (a board from before the state: rename or the asked stage; hug upgrade moves it)  hug task lint --code old-layout
+  98  advice  missing-section  an open task lacks Purpose or Principle                                                                                                                          hug task lint --code missing-section
+  32  advice  long-title       the title is longer than 80 characters                                                                                                                           hug task lint --code long-title
+   2  advice  no-acceptance    no acceptance item (- [ ] ...)                                                                                                                                   hug task lint --code no-acceptance
+next: hug task lint --code branch-gone

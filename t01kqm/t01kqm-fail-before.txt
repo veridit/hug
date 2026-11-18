@@ -1,0 +1,16 @@
+--- FAIL: TestStrikeThroughCLI (1.98s)
+    strike_test.go:43: lint:
+        h.qagx0e.strike-cli.md:30: broken [done-unchecked] done with unchecked acceptance: broken, qagx0e is done but check 2 is open; tick it if it holds, or strike it out with hug task strike qagx0e 2 --reason "why it no longer applies"
+        next: hug task check qagx0e 2
+--- FAIL: TestLintJudgesOpenTasksOnly (2.22s)
+    cli_test.go:503: closed tasks were judged:
+        2 findings (2 broken) on 2 tasks, in 2 codes:
+          1  broken  done-unchecked    done, but an acceptance item is not ticked  hug task lint --code done-unchecked
+          1  broken  not-a-dependency  a Depends on line that is not a dependency  hug task lint --code not-a-dependency
+          28tx05  not-a-dependency  -> hug task lint 28tx05
+          1je0m7  done-unchecked  -> hug task lint 1je0m7
+        1 advice finding on closed tasks hidden (1 section-order): hug task lint --all
+        next: hug task edit 28tx05
+FAIL
+FAIL	github.com/veridit/hug/huginn/internal/cli	2.267s
+FAIL
