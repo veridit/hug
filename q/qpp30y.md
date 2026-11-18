@@ -37,7 +37,7 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 ## Acceptance
 - [x] Pressing a or r draws the box with its label and cursor in the same frame, before any keystroke; a test fails first on main.
 - [x] The cursor in the answer and request box is an underline that blinks (or pulses), and no other element on the screen animates (test of the cursor mode plus golden).
-- [ ] The pending view-key prefix uses the same underline cursor style.
+- [x] The pending view-key prefix uses the same underline cursor style.
 - [ ] Jørgen answers a question in hug tui and says the box and cursor read clearly.
 
 ## Notes
@@ -50,6 +50,7 @@ crab review 13:16Z: answerbox.go diff read (syncDetail in openBox, CursorBlink, 
 Landed on main via 5a8b14da (stack bg1rd8 f7d607e4, qpp30y 3d74229a, 2k68eg 7fafab16, vk9td0 5a8b14da; CI 44328375780 exact SHA 6/6, ubuntu passed on rerun after an unrelated muninn/internal/project flake, see ybbfsa). Ships in the next release.
 landed 3d74229 on main 2026-11-18: TUI answer/request box: drawn at once, blinking underline cursor (qpp30y)
 shipped in v0.7.65 (3d74229)
+check 3: 911j70 check 3 (macaque 89e280c9): after v, the slot after 'view:' shows theme.cursor (the qpp30y style, #00bfff underline) blinking at 530 ms via bubbles cursor.Model; golden testdata/header/view-cursor.txt 'after v' shows ESC[38;2;0;191;255;4m. Lands with 911j70 check 3.
 ## History
 - 2026-11-18T13:34 todo -> doing/active (take)
 - 2026-11-18T14:15 doing/active -> doing/waiting (wait)
