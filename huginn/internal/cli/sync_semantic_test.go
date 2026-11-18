@@ -144,6 +144,7 @@ func TestOrdinarySyncScalarFieldsKeepBoardAndReportLocal(t *testing.T) {
 }
 
 func TestBackgroundSyncSameTaskAppendsConvergeAfterUpgrade(t *testing.T) {
+	t.Parallel()
 	a, b, _ := clones(t)
 	var id string
 	offline(t, a, func() {

@@ -13,6 +13,10 @@ import (
 
 func catchupPair(t *testing.T, f func(a, b *App, ba, bb string, ids []string)) {
 	t.Helper()
+	// Each pair owns its repositories, App environments and child processes.
+	// Use the existing bounded test pool, just like the older clones tests,
+	// instead of delaying every parallel test behind these serial fixtures.
+	t.Parallel()
 	a, b, _ := clones(t)
 	ba, bb := filepath.Join(a.Cwd, TaskDir), filepath.Join(b.Cwd, TaskDir)
 	offline(t, a, func() {
