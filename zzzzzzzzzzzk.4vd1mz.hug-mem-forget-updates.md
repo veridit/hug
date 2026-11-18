@@ -1,17 +1,18 @@
 ---
 id: 4vd1mz
 title: "hug mem forget updates only what it touched, no full reindex"
-state: "todo"
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["wyvern"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-18T04:38"
 ---
 
 ## Goal
@@ -47,3 +48,4 @@ parked for mmm8c8 (crab 04:25: flaky settle test first while 4vd1mz is far from 
 - 2026-11-18T03:41 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T02:53
 - 2026-11-18T04:12 todo/ready -> doing/active (take)
 - 2026-11-18T04:26 doing/active -> todo/ready (give back; was assignee: wyvern); was doing_since: 2026-11-18T04:12
+- 2026-11-18T04:38 todo/ready -> doing/active (take)
