@@ -4,7 +4,7 @@ title: "hug mcp serves with the installed hug, never an old binary"
 state: todo
 type: bug
 priority: "high"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
