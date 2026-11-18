@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T05:29"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "CI 44237780297 on e36ecca4"
+waiting_since: "2026-11-18T05:30"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -40,3 +43,4 @@ file:55a7xx-failbefore.txt (416 bytes, sha256:315575f8)
 Landed e36ecca4 (CI 44237780297). New internal/repocheck/markers_test.go. TestNoConflictMarkers makes one 'git ls-files -z' call and reads every tracked file, skipping binary ones (a NUL in the first 8000 bytes). It fails on <<<<<<<, ||||||| or >>>>>>> at a line start (alone or followed by a space), and on ======= only in a file that also has one of those, since the LICENSE files' heading rules are 34 '=' and a 7-'=' rule is legal Markdown. Each finding reads 'FILE:N: leftover conflict marker "|||||||"', followed by 'fix: resolve the conflict in FILE and delete line N'. Exceptions go in withMarkers by path; it is empty today. TestMarkerLines pins the classifier. Fail-first in file:55a7xx-failbefore.txt: on 27643306's tree, 'CHANGELOG.md:14: leftover conflict marker "|||||||"' FAIL. On main a13d7c74, PASS in 0.07s, part of go test ./... with no new tool.
 ## History
 - 2026-11-18T05:29 todo -> doing/active (take)
+- 2026-11-18T05:30 doing/active -> doing/waiting (wait)
