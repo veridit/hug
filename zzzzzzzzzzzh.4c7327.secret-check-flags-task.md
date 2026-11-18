@@ -37,5 +37,6 @@ secretHint in huginn/internal/cli (attach). The same pattern may exist in muninn
 
 
 file:4c7327-failbefore.txt (605 bytes, sha256:63a053e5)
+Landed d544f777 on main. Fail-before transcript attached: TestAttachSkInsideAWordIsNoSecret fails on b1063988 with credential-shaped text near sk-900. Attachment sk- matching now requires the same preceding boundary already used by memory write-time check and CI check-secrets.sh. Added memory cases and a temporary-repo test invoking the actual CI secrets script: path passes, real key fails. Focused tests and repository secrets script pass. Race results: ok github.com/veridit/hug/huginn/internal/cli 119.304s; ok github.com/veridit/hug/muninn/internal/project 6.754s; ok github.com/veridit/hug/internal/repocheck 1.273s. Main ancestor and CHANGELOG marker checks passed before fast-forward push.
 ## History
 - 2026-11-18T06:32 todo -> doing/active (take)
