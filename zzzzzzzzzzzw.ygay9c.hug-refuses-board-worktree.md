@@ -1,18 +1,17 @@
 ---
 id: ygay9c
 title: "hug refuses a board worktree that belongs to another repo"
-state: "doing"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T04:34"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T04:41"
 ---
 
 ## Goal
@@ -44,5 +43,7 @@ Landed a90f4d44.
 - gitbranch: TestOpenRefusesAnotherRepositorysBoard (copy refused, then repaired; original and linked worktree still open) and TestOwnedThroughSymlink.
 - Mutants: 6 of 6 killed (no check, always owned, inverted, fix repairs the other, within always, no symlink resolve).
 - Race ok: gitbranch 25.1s, cli 151.7s.
+Reflection (open, 2026-11-18, kestrel): The copy's board link is two files (admin gitdir and checkout .git); git worktree repair from the copy fixes both, so the fix line is git's own command, not a hug repair.
 ## History
 - 2026-11-18T04:34 todo -> doing/active (take)
+- 2026-11-18T04:41 doing/active -> done (done); was doing_since: 2026-11-18T04:34
