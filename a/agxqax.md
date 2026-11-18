@@ -39,5 +39,6 @@ Statbus: hug.toml [people] jhf, erik, hhz. Plain wait refuses only --on NAME (cl
 ## Notes
 
 
+bonehound plan (worktree /Users/jhf/.jcode/scratch/agxqax from origin/main 62c20712 v0.7.64; Statbus board copy cloned read-only at $JCODE_SCRATCH_DIR/agxqax-statbus, push URL disabled). (1) task.AddressesPerson(people, text): a wait text addresses a person when it starts 'NAME:' or says 'NAME's' with NAME = owner / the owner / a [people] short name, alias or (diacritics-folded) name, or says 'the owner'. WaitUntil refuses it (CLI, MCP via CLI, TUI) with fix: hug task ask ID --to SHORT "what" (owner -> the first [people] entry; the 'NAME:' prefix dropped). (2) [people.X] gains optional alias = [...]; PersonMatch finds short, alias, or folded name (jorgen -> jhf). ask --to a name that matches a person resolves to the short name; one that is no person, no agent on the board and not the coordinator, on a board with [people], is refused naming the people. (3) lint: new code wait-on-person (fix: the ask), and unknown-person on a person's long name or alias gets fix hug task ask/design/review ... jhf, not people add. Failing-first tests in huginn/internal/cli.
 ## History
 - 2026-11-18T15:55 todo -> doing/active (take)
