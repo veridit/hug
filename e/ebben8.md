@@ -1,7 +1,7 @@
 ---
 id: ebben8
 title: "After-release: a check is a person's when a [people] person is its subject"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["mizaru"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzo"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T21:49"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab's ruling on the subject rule diff (sent 20:59Z): waits too or personChecks only"
-waiting_since: "2026-11-18T21:59"
-waiting_asked_by: "mizaru"
+done_at: "2026-11-18T23:24"
 ---
 
 ## Goal
@@ -51,3 +47,4 @@ crab 22:24: landed on main 4d7eec2d (CI 44409320072 8/8), released in v0.7.71 (t
 ## History
 - 2026-11-18T21:49 todo -> doing/active (take)
 - 2026-11-18T21:59 doing/active -> doing/waiting (wait)
+- 2026-11-18T23:24 doing/waiting -> done (done); was doing_since: 2026-11-18T21:49; waiting_asked_by: mizaru; waiting_on: crab's ruling on the subject rule diff (sent 20:59Z): waits too or personChecks only; waiting_since: 2026-11-18T21:59
