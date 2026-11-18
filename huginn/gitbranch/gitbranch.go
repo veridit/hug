@@ -114,6 +114,24 @@ func (r *Repository) runAt(dir string, args ...string) (string, error) {
 		if net && errors.Is(ctx.Err(), context.DeadlineExceeded) {
 			return string(b), &Error{Op: strings.Join(args, " "), Detail: netTimeout(args), Fix: fix, Cause: ErrNetTimeout}
 		}
+		// A git process killed by a signal or an exception answered nothing:
+		// its output says nothing about the board, so say it died and retry
+		// it (3z65k1). On 2026-11-17 these were go1.26.4 -race test binaries
+		// whose forked child died before it exec'd git (golang/go#79804,
+		// fixed in go1.26.5); an out-of-memory kill or a git crash looks the
+		// same. A git that dies while writing the index leaves index.lock, and
+		// every later write fails on it: name the lock and remove it in the fix.
+		if Crashed(err) {
+			detail = "the git process died before it finished (" + detail + "): this is no answer about the board; run it again"
+			if gd, _, x := gitDir(dir); x == nil {
+				lock := filepath.Join(gd, "index.lock")
+				if _, x = os.Stat(lock); x == nil {
+					detail += "; it left " + lock + ", which blocks every later write: remove it once no other git is running in " + dir
+					fix = "rm " + quote(lock) + " && " + fix
+				}
+			}
+			return string(b), &Error{Op: strings.Join(args, " "), Detail: detail, Fix: fix, Cause: err}
+		}
 		// An unreachable remote (offline, DNS, a moved path) is not a key
 		// problem, though ssh ends both with "Could not read from remote
 		// repository": say which (0hkaa5).
