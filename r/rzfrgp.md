@@ -33,7 +33,7 @@ boardcue.go detect: 'if h.Verb == "show" || h.Verb == "check" || h.Verb == "note
 
 ## Acceptance
 - [x] a test: a session that only ran hug task show X and edits code gets no take line naming X
-- [ ] replay (6 sets + fresh hug, two judgings of the new prompt): take/work/done/owner false lines do not rise on any set and right lines do not fall
+- [x] replay (6 sets + fresh hug, two judgings of the new prompt): take/work/done/owner false lines do not rise on any set and right lines do not fall
 
 ## Notes
 
