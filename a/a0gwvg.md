@@ -32,7 +32,7 @@ Prototype attached (ci-goldens.sh, from $JCODE_SCRATCH_DIR). Format source: hugi
 ## Depends on
 
 ## Acceptance
-- [ ] scripts/ci-goldens.sh exists and AGENTS.md's TUI goldens line names it
+- [x] scripts/ci-goldens.sh exists and AGENTS.md's TUI goldens line names it
 - [ ] a test feeds a recorded --log-failed excerpt (with a blank line and a last-line golden) and gets byte-identical files
 - [ ] a tampered WANT block makes it write nothing and exit non-zero with a fix: line
 
@@ -41,5 +41,6 @@ Prototype attached (ci-goldens.sh, from $JCODE_SCRATCH_DIR). Format source: hugi
 file:ci-goldens.sh (4365 bytes, sha256:5e41e14e)
 
 
+check 1: 917a3a28: scripts/ci-goldens.sh (shellcheck 0.11.0: 0 findings); AGENTS.md line 27 under TUI goldens: 'Under load, take the GOT screens from a failed CI run: scripts/ci-goldens.sh RUNID.'
 ## History
 - 2026-11-18T23:24 todo -> doing/active (take)
