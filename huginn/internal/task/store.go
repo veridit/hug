@@ -487,6 +487,22 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 		return Result{}, usageErr(d.Task.ID, "drop needs a reason", "hug task drop "+d.Task.ID+` "duplicate of OTHER"`)
 	}
 	if d.Task.State == status && (status != "doing" || user == "" || contains(d.Task.Assignee, user)) && (model == "" || d.Task.ModelLabel() == model) && (at.Branch == "" || d.Task.Branch == at.Branch) && (at.Worktree == "" || d.Task.Worktree == at.Worktree) {
+		// Same state: settle it (3nhp67). This is the fix lint gives for
+		// stage-disagrees and stray-node-field, so it must make them go:
+		// one stage stays, the others' fields go to History.
+		if g := settleStage(d.Task); g != "" {
+			before := string(d.Bytes())
+			if e = applyMove(d, ts, move{state: status, stage: g, why: "settle: one stage, " + g}); e != nil {
+				return Result{}, e
+			}
+			return s.finish(d, before != string(d.Bytes()))
+		}
+		if Staged(d.Task) && Stage(d.Task, ts) != d.Task.Stage {
+			if e = applyMove(d, ts, move{state: status, why: "settle"}); e != nil {
+				return Result{}, e
+			}
+			return s.finish(d, true)
+		}
 		return s.finish(d, false)
 	}
 	if status == "doing" && user != "" && len(d.Task.Assignee) > 0 && !contains(d.Task.Assignee, user) {

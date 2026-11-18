@@ -167,6 +167,59 @@ func stageFields(state, stage string) []string {
 	return out
 }
 
+// otherStageFields are the fields of state's stages other than stage, but
+// none that stage owns too: what a command putting a task in stage takes
+// off it, so the task holds one stage (3nhp67).
+func otherStageFields(state, stage string) []string {
+	keep := map[string]bool{}
+	for _, f := range stageFields(state, stage) {
+		keep[f] = true
+	}
+	var out []string
+	for _, g := range StageNames(state) {
+		if g == stage {
+			continue
+		}
+		for _, f := range stageFields(state, g) {
+			if !keep[f] {
+				out = append(out, f)
+			}
+		}
+	}
+	return out
+}
+
+// heldStages are the stages of t's state whose own fields are set, in
+// precedence order (DoingOrder for doing).
+func heldStages(t Task) []string {
+	order := StageNames(t.State)
+	if t.State == "doing" {
+		order = DoingOrder
+	}
+	var out []string
+	for _, g := range order {
+		if ownHolds(t, g) {
+			out = append(out, g)
+		}
+	}
+	return out
+}
+
+// settleStage is the one stage to keep when t holds more than one stage's
+// fields (3nhp67): the stage its stage line names, when that is one of
+// them (the last command set it: s6ff5k's wait), else the first by
+// precedence. "" when t holds one stage or none.
+func settleStage(t Task) string {
+	held := heldStages(t)
+	if len(held) < 2 {
+		return ""
+	}
+	if contains(held, t.Stage) {
+		return t.Stage
+	}
+	return held[0]
+}
+
 // StateNames are the states in tree order.
 func StateNames() []string {
 	var out []string
@@ -402,6 +455,22 @@ func derivedFindings(tasks []Task) []Finding {
 	var out []Finding
 	for _, t := range tasks {
 		if !Staged(t) {
+			continue
+		}
+		// Two stages' fields at once (3nhp67: s6ff5k held asked_* and
+		// waiting_*): one must go, whatever the stage line says. The fix
+		// keeps the stage the line names (settleStage).
+		if held := heldStages(t); len(held) > 1 {
+			keep := settleStage(t)
+			var drop []string
+			for _, g := range held {
+				if g != keep {
+					drop = append(drop, g)
+				}
+			}
+			out = append(out, Finding{Path: t.Path, Line: 1,
+				Problem: fmt.Sprintf("stage %s disagrees with the task: it holds the fields of %d stages (%s); one stage at a time, so the %s fields go to History and the stage is %s", t.Stage, len(held), strings.Join(held, ", "), strings.Join(drop, " and "), keep),
+				Fix:     "hug task set " + t.ID + " --state " + t.State})
 			continue
 		}
 		g, ok := StageNode(t.State, t.Stage)

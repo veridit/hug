@@ -69,6 +69,10 @@ func (d *Document) History(text string) {
 // node holds still (resume drops waiting_on).
 type move struct {
 	state string
+	// stage, when set, is the stage the command puts the task in (wait,
+	// ask, review, design): every other stage of the state is left, so its
+	// fields go to History (3nhp67: a wait on an asked task kept asked_*).
+	stage string
 	set   map[string]string
 	clear []string
 	why   string // History line suffix: "take", "wait", "reopen" ...
@@ -101,6 +105,9 @@ func applyMove(d *Document, ts []Task, m move) error {
 		}
 	}
 	owners := NodeFields()
+	if m.stage != "" {
+		m.clear = append(append([]string(nil), m.clear...), otherStageFields(m.state, m.stage)...)
+	}
 	var moved []string
 	for _, k := range sortedKeys(d.Task.Fields) {
 		if _, set := m.set[k]; set {
@@ -210,7 +217,7 @@ func (s *Store) Wait(ref, on, by string) (Result, error) {
 	if by = strings.TrimSpace(by); by != "" {
 		set["waiting_asked_by"] = by
 	}
-	if e = applyMove(d, ts, move{state: "doing", set: set, why: "wait"}); e != nil {
+	if e = applyMove(d, ts, move{state: "doing", stage: "waiting", set: set, why: "wait"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
@@ -271,7 +278,7 @@ func (s *Store) Ask(ref string, q Question, by string) (Result, error) {
 			clear = append(clear, k)
 		}
 	}
-	if e = applyMove(d, ts, move{state: "doing", set: set, clear: clear, why: "ask"}); e != nil {
+	if e = applyMove(d, ts, move{state: "doing", stage: "asked", set: set, clear: clear, why: "ask"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
@@ -357,7 +364,7 @@ func (s *Store) Review(ref, who, show string) (Result, error) {
 	} else {
 		clear = []string{"review_show"}
 	}
-	if e = applyMove(d, ts, move{state: "doing", set: set, clear: clear, why: "review"}); e != nil {
+	if e = applyMove(d, ts, move{state: "doing", stage: "review", set: set, clear: clear, why: "review"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
@@ -410,7 +417,7 @@ func (s *Store) DesignShowing(ref, question, by, who, show string) (Result, erro
 	} else {
 		clear = []string{"design_show"}
 	}
-	if e = applyMove(d, ts, move{state: "todo", set: set, clear: clear, why: "design"}); e != nil {
+	if e = applyMove(d, ts, move{state: "todo", stage: "design", set: set, clear: clear, why: "design"}); e != nil {
 		return Result{}, e
 	}
 	return s.finish(d, true)
