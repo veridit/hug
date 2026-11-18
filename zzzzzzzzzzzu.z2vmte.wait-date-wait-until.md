@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T03:38"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "check 3: crab converts 47sxn2 after the release with 88a6ac89; check 4: Jørgen sees it in ASKED on 2026-11-24"
+waiting_since: "2026-11-18T04:23"
+waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -48,3 +51,4 @@ Landed 88a6ac89.
 landed 88a6ac8 on main 2026-11-18: hug task wait --until DATE and ask --after DATE: hug wakes the task on the first…
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
+- 2026-11-18T04:23 doing/active -> doing/waiting (wait)
