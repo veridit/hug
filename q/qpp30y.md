@@ -1,15 +1,20 @@
 ---
 id: qpp30y
 title: "Answer box shows at once, with the only moving cursor on screen"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzyh"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T13:34"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 - [ ] Jørgen answers a question in hug tui and says the box and cursor read clearly.
 
 ## Notes
+
+
+## History
+- 2026-11-18T13:34 todo -> doing/active (take)
