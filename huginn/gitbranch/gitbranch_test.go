@@ -422,3 +422,38 @@ func TestOwnedThroughSymlink(t *testing.T) {
 	r.Common = filepath.Join(link, filepath.Base(root), ".git")
 	must(t, r.owned(r.Dir))
 }
+
+// ybbfsa (flake 1, CI 44316906824): a second process opens the board
+// while a background pass rebases it. Mid-rebase the checkout's HEAD is
+// detached, so git worktree list names no branch for it and symbolic-ref
+// fails: Open said "not a working checkout of hug/tasks (git no longer
+// knows it as a worktree)" with a fix that moves the folder away.
+func TestOpenDuringRebase(t *testing.T) {
+	root, _ := fixture(t, false)
+	r := openRepo(t, root, "hug/tasks", ".hug/tasks")
+	writeFile(t, r, "f.md", "base\n")
+	must(t, r.Commit(nil, "base"))
+	command(t, r.Dir, "checkout", "-q", "-b", "side")
+	writeFile(t, r, "f.md", "side\n")
+	command(t, r.Dir, "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-q", "-am", "side")
+	command(t, r.Dir, "checkout", "-q", "hug/tasks")
+	writeFile(t, r, "g.md", "mine\n")
+	must(t, r.Commit(nil, "mine"))
+	// Stop the rebase after its first pick, as a pass is mid-way.
+	c := exec.Command("git", "-C", r.Dir, "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "rebase", "-q", "--exec", "false", "side")
+	c.Env = append(os.Environ(), "GIT_CONFIG_NOSYSTEM=1")
+	if out, e := c.CombinedOutput(); e == nil {
+		t.Fatalf("rebase did not stop: %s", out)
+	}
+	if _, e := os.Stat(filepath.Join(command(t, r.Dir, "rev-parse", "--absolute-git-dir"), "rebase-merge")); e != nil {
+		t.Fatalf("no rebase in progress: %v", e)
+	}
+	got, e := Open(root, "hug/tasks", ".hug/tasks", WithIdentity("Test", "test@example.invalid"))
+	if e != nil {
+		t.Fatalf("Open mid-rebase: %v", e)
+	}
+	if !within(got.Dir, r.Dir) || !within(r.Dir, got.Dir) {
+		t.Fatalf("Open mid-rebase: board at %s, want %s", got.Dir, r.Dir)
+	}
+	command(t, r.Dir, "rebase", "--abort")
+}

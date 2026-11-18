@@ -22,6 +22,7 @@ func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
 			base := t.TempDir()
 			remote := filepath.Join(base, "remote.git")
 			run(t, base, "init", "-q", "--bare", remote)
+			quietRemote(t, remote)
 			root := filepath.Join(base, "repo")
 			run(t, base, "clone", "-q", remote, root)
 			run(t, root, "commit", "-q", "--allow-empty", "-m", "code")
@@ -176,6 +177,59 @@ func TestUpgradeFailuresKeepOriginalLayout(t *testing.T) {
 	}
 }
 
+// quietRemote turns off a fixture remote's auto maintenance (ybbfsa,
+// crab's ruling: test fixtures only, never hug's own push). receive-pack
+// starts `git maintenance run --auto --detach` after the post-receive hook.
+// The lost-ack and unknown-* cases kill the push at NetTimeout (1 s) while
+// their hook sleeps 3 s, so receive-pack outlives the test: it finishes the
+// hook, then its maintenance writes objects/maintenance.lock while
+// t.TempDir removes the folder ("remote.git/objects: directory not empty").
+// gc.auto=0 alone is not enough: receive-pack still spawns the maintenance
+// child (probed on git 2.54: 1 child with gc.auto=0, 0 with
+// maintenance.auto=false).
+func quietRemote(t *testing.T, remote string) {
+	t.Helper()
+	run(t, remote, "config", "maintenance.auto", "false")
+}
+
+// ybbfsa flake 2: a push to a fixture remote starts no git process that
+// can outlive the test. Traced with GIT_TRACE2_EVENT: receive-pack's
+// `git maintenance run --auto --detach` child is there on a plain bare
+// remote (the cause) and gone on a quietRemote one (the fix).
+func TestFixtureRemoteStartsNoMaintenance(t *testing.T) {
+	for _, quiet := range []bool{false, true} {
+		base := t.TempDir()
+		remote := filepath.Join(base, "remote.git")
+		run(t, base, "init", "-q", "--bare", remote)
+		if quiet {
+			quietRemote(t, remote)
+		}
+		root := filepath.Join(base, "repo")
+		run(t, base, "clone", "-q", remote, root)
+		run(t, root, "-c", "maintenance.auto=false", "commit", "-q", "--allow-empty", "-m", "code")
+		trace := filepath.Join(base, "trace")
+		c := exec.Command("git", "push", "-q", "origin", "HEAD")
+		c.Dir = root
+		c.Env = append(os.Environ(), "GIT_TRACE2_EVENT="+trace)
+		if out, err := c.CombinedOutput(); err != nil {
+			t.Fatalf("push: %v\n%s", err, out)
+		}
+		b, err := os.ReadFile(trace)
+		if err != nil {
+			t.Fatal(err)
+		}
+		n := bytes.Count(b, []byte(`"maintenance","run","--auto"`))
+		if quiet && n != 0 {
+			t.Errorf("quietRemote: receive-pack started maintenance %d times", n)
+		}
+		if !quiet && n == 0 {
+			// This git starts none on its own: the fixture is safe here,
+			// and the test no longer shows the cause.
+			t.Logf("plain remote: this git started no maintenance")
+		}
+	}
+}
+
 func run(t *testing.T, dir string, args ...string) string {
 	t.Helper()
 	c := exec.Command("git", args...)
@@ -195,6 +249,7 @@ func TestUpgradeTwoCheckouts(t *testing.T) {
 	base := t.TempDir()
 	remote := filepath.Join(base, "remote.git")
 	run(t, base, "init", "-q", "--bare", remote)
+	quietRemote(t, remote)
 	a := filepath.Join(base, "a")
 	run(t, base, "clone", "-q", remote, a)
 	run(t, a, "commit", "-q", "--allow-empty", "-m", "init")
