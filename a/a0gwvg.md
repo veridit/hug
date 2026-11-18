@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "ci-goldens"
 worktree: "/Users/jhf/.jcode/scratch/ci-goldens"
 done_at: "2026-11-18T23:50"
+done_release: "v0.7.72"
 ---
 
 ## Goal
@@ -47,6 +48,7 @@ CI 44411972128 on 917a3a28: completed/success, 8/8 jobs.
 Landed on main as c53dae61 (crab), CI 44413400970 8/8.
 Reflection (open, 2026-11-18, duckling): One gap: the scratch prototype assumed bash 4 (declare -A) and failed on macOS bash 3.2 ('declare: -A: invalid option'); AGENTS.md says nothing about which shell scripts/ targets. Also, the tool gate refused file writes into a runtime-computed path ($T/...), which pushed the real-run check into a git worktree: better, since gh needs a repo to resolve the run.
 landed c53dae6 on main 2026-11-18: scripts/ci-goldens.sh: rewrite drifted TUI goldens from a failed CI run (a0gwvg)
+shipped in v0.7.72 (c53dae6)
 ## History
 - 2026-11-18T23:24 todo -> doing/active (take)
 - 2026-11-18T23:37 doing/active -> doing/waiting (wait)
