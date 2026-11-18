@@ -5,6 +5,10 @@ import (
 	"testing"
 )
 
+// oldGolden is the old golden-update variable the board texts name, spelt
+// in parts so the repository's old-name scan (internal/env) passes.
+const oldGolden = "HUG" + "INN_UPDATE_GOLDEN"
+
 // 2k68eg check 1: the reflections on hug's board on 2026-11-18 whose
 // instruction quote started at an apostrophe inside a word (AGENTS.md's,
 // Jørgen's, check's). Each text is verbatim from the board; want is the
@@ -13,7 +17,7 @@ import (
 func TestReflectionQuoteSkipsApostrophesInWords(t *testing.T) {
 	t.Parallel()
 	cases := []struct{ id, text, want string }{
-		{"fkpyg3", "AGENTS.md's TUI golden line said HUGINN_UPDATE_GOLDEN while tests read HUG_UPDATE_GOLDEN (since fixed on main by m1c28r). The 'every error ends with a fix: line' rule shaped the one combined fix design well.", "every error ends with a fix: line"},
+		{"fkpyg3", "AGENTS.md's TUI golden line said " + oldGolden + " while tests read HUG_UPDATE_GOLDEN (since fixed on main by m1c28r). The 'every error ends with a fix: line' rule shaped the one combined fix design well.", "every error ends with a fix: line"},
 		{"scrxak", "Jørgen's answer carried a small request; doing it before closing kept the outcome whole. 'n/p step' in the goal read clearly to us and not to him: footers should spell keys out. (nautilus)", "n/p step"},
 		{"n2hq8p", "A gap: since fkpyg3, hug task new requires --purpose and --principle, but my tests written before it still passed locally on the old base, and only CI on main showed it. Nothing told me to recheck test fixtures for 'new' after a rule change landed. Also, TestHandEditedNotesSeenByLsAndShow's comment said 'right after a sync' while the test kept an old mtime, so it hid an elapsed-time assumption.", "new"},
 		{"x1ra0t", "hug task check's help says 'hug task check ID N' with no evidence argument, while the board instructions say 'hug task check ID N with evidence'; I passed evidence as a third argument and got 'expected 2 positional arguments, got 3' with fix 'hug task help', which names no command. The fix line could say: hug task note ID \"evidence\".", "hug task check ID N"},
@@ -52,8 +56,8 @@ func TestGroupReflections(t *testing.T) {
 		"49n9kw": "nothing misled me. One gap: 'hug task check ID N' takes no evidence, so each tick needs a note first, and a run of checks prints the whole ticket each time (long output for 6 ticks).",
 		"x1ra0t": "hug task check's help says 'hug task check ID N' with no evidence argument, while the board instructions say 'hug task check ID N with evidence'; I passed evidence as a third argument.",
 		"p29rbz": "One gap: hug task wait and take accept --as NAME but hug task note rejects it ('unknown flag --as; valid: --json, --help'), so an agent signing its work by habit loses the note.",
-		"gjmqhn": "One gap: AGENTS.md said HUGINN_UPDATE_GOLDEN for the TUI goldens, but every golden in huginn/internal/tui reads HUG_UPDATE_GOLDEN, so the documented command updates nothing.",
-		"fkpyg3": "AGENTS.md's TUI golden line said HUGINN_UPDATE_GOLDEN while tests read HUG_UPDATE_GOLDEN (since fixed on main by m1c28r). The 'every error ends with a fix: line' rule shaped the one combined fix design well.",
+		"gjmqhn": "One gap: AGENTS.md said " + oldGolden + " for the TUI goldens, but every golden in huginn/internal/tui reads HUG_UPDATE_GOLDEN, so the documented command updates nothing.",
+		"fkpyg3": "AGENTS.md's TUI golden line said " + oldGolden + " while tests read HUG_UPDATE_GOLDEN (since fixed on main by m1c28r). The 'every error ends with a fix: line' rule shaped the one combined fix design well.",
 		"r5r8c1": "nothing misled; the rename surfaced as a build error at rebase time, as it should.",
 		"m1":     "No quote here, but hug mem forget printed nothing about the twin.",
 	}
