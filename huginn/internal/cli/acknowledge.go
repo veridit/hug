@@ -218,12 +218,18 @@ func deliverPendingItem(ctx context.Context, home, sid string, getenv func(strin
 	}
 	by, text := "", ""
 	var answer *task.Answer
+	var targets []targetRef
 	switch it.Kind {
 	case "request":
 		for _, q := range d.Task.Requests {
 			if q.N == it.N {
 				by, text = q.By, q.Text
 			}
+		}
+		// The same message as a delivery at once (ec6z6j): a request for
+		// several tasks names them.
+		if ts, e := s.s.Tasks(); e == nil {
+			targets = requestTargets(ts, d.Task, it.N)
 		}
 	case "answer":
 		if answer = d.AnswerN(it.N); answer != nil {
@@ -232,7 +238,7 @@ func deliverPendingItem(ctx context.Context, home, sid string, getenv func(strin
 	}
 	it.Token = newToken(d.Task.ID, item)
 	ss := harness.Session{ID: sid, Home: home}
-	took, _, err := harness.DeliverTo(ss, getenv, deliverMessage(it.Board, d.Task, item, by, text, answer, it.Token), it)
+	took, _, err := harness.DeliverTo(ss, getenv, deliverMessage(it.Board, d.Task, item, by, text, answer, it.Token, targets), it)
 	if err != nil || !took {
 		return "", err
 	}
