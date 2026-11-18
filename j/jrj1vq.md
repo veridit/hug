@@ -1,10 +1,10 @@
 ---
 id: jrj1vq
 title: "When-then memories: triggers stated at write time"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["bonehound"]
 labels: ["recall", "memory-format"]
 created: 2026-11-15
 updated: 2026-11-15
@@ -12,6 +12,11 @@ parent: "d634kr"
 group: ""
 rank: "zzzzq"
 aliases: ["when-then-memories-triggers-stated-at"]
+doing_since: "2026-11-18T17:35"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -41,3 +46,7 @@ Extraction test 2026-11-15: DeepSeek Flash wrote kind/case/when/when_not/then fo
 Fresh check 2026-11-15 (147 post-freeze messages, frozen 5 Nov snapshot, blind judge), kind rule = top-20 ungated pool, own project, <2000 chars, vector>=0.60, CASE agrees, kind!=record, vs shipped v0.7.2. Long n=64: irr 3.38 -> 1.39, -1.98 [-2.44,-1.50]; rel 0.38 -> 0.42, +0.05 [-0.25,+0.32]. Short n=83 (6 sessions): rel +0.04 [-0.22,+0.38], irr +0.18 [-0.46,+0.79], not significant; 26 of the 33 added irrelevant picks come from one session (session_lion_179447205, hours logging). Verdict: CI-clear noise cut on long messages, no evidence either way on short. Next: ship kind for long messages first, or gate short ones by a stricter vector floor.
 
 Lead from bonehound's 6assqk check 1 (2026-11-18, 27 Flash calls): a situation filter cut irrelevant recall on FRESH LONG messages by -0.88 [-1.23,-0.48] with rel flat, while failing on frozen sets. Long messages are mostly templated jobs; when/when_not triggers (check 3) are the natural place to test it. Table: 6assqk file check1-table.md.
+
+
+## History
+- 2026-11-18T17:35 todo -> doing/active (take)
