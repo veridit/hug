@@ -44,6 +44,10 @@ type Translator struct {
 	Recover func(path string, base, ours, theirs []byte) bool
 	// Layout reads a hug.toml's layout, as Repository.Layout.
 	Layout func(text string) (int, error)
+	// TargetLayout restricts ordinary semantic sync to an already migrated
+	// board. Explicit CatchUp still translates older layouts. Zero imposes
+	// no restriction for generic resolvers.
+	TargetLayout int
 }
 
 // Replayed is one local commit and what its replay did.
@@ -401,6 +405,17 @@ func (r *Repository) resolveDiverged() (bool, error) {
 	}
 	if left == 0 || right == 0 {
 		return false, nil // normal fast-forward or already ahead
+	}
+	if r.Resolver.TargetLayout != 0 {
+		probe := *r
+		probe.Layout = r.Resolver.Layout
+		layout, e := probe.layoutAt("HEAD")
+		if e != nil {
+			return true, e
+		}
+		if layout != r.Resolver.TargetLayout {
+			return false, nil // migration remains explicit hug upgrade
+		}
 	}
 	list, e := r.pendingCommits(*r.Resolver)
 	if e != nil {
