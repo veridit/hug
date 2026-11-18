@@ -51,6 +51,7 @@ CI run 44305041418 on ci/z82qsy (ef9c060f) finished completed success, all 6 job
 crab review 12:52Z: read file-frame.txt golden (crumb with path, size, n of m; dim attachment note; rules frame the file; keys alone at the bottom). Matches Jørgen's 5z4zt4 request 2. d24bfd34 CI 44302950954 and ef9c060f CI 44305041418 both 6/6. Lands after xfv9pw (rebase plus exact-SHA CI). Gap: a .png opens full screen via imageView, outside the frame; follow-up task filed.
 landed afaa5df on main 2026-11-18: TUI file viewer: rule under the file header; results past tense, cleared on…
 landed 161381f on main 2026-11-18: TUI file viewer: only the file, framed by rules (z82qsy check 4)
+shipped in v0.7.63 (afaa5df)
 ## History
 - 2026-11-18T12:53 todo -> doing/active (take)
 - 2026-11-18T13:34 doing/active -> doing/waiting (wait)

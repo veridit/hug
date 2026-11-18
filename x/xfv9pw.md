@@ -46,5 +46,6 @@ Check 3: TestHistoryPersistsPerBoard (tui) and TestTUIHistorySurvivesReopen (cli
 Branch xfv9pw / ci/xfv9pw at 94c57fc6 (rebased on 77d25855). CI run 44304354067: completed success (macos, ubuntu, windows, windows-cli, bench, secrets). Report: ~/.jcode/scratch/xfv9pw/REPORT.md. Not merged; hug task done left for the coordinator.
 crab review 12:44Z: history.go read (Up/Down only in an empty prompt, edited entry is new, re-read before write, temp+rename, 200 cap). Accepted location <git-common-dir>/huginn/tui-history.json instead of a per-user dir: per board, shared by worktrees, never committed, which is what the check asks. Exact SHA 94c57fc6 CI 44304354067 all 6 jobs success. Queued to land after 4vxqp4 (8d26d050) so both stay fast-forwards; then a rebase plus exact-SHA CI.
 landed c87da5a on main 2026-11-18: hug tui: / and : prompts recall earlier entries with Up/Down (xfv9pw). Rebased 94c57fc6 onto 8d26d050 (CHANGELOG only, huginn/ byte-identical); exact SHA CI 44307241896 all 6 jobs success. Check 3+ that need Jørgen's live look stay open until release.
+shipped in v0.7.63 (c87da5a)
 ## History
 - 2026-11-18T12:47 todo -> doing/active (take)

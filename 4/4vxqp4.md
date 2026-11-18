@@ -15,6 +15,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-18T13:46"
+done_release: "v0.7.63"
 ---
 
 ## Goal
@@ -50,6 +51,7 @@ check 2: fresh lint right/false base -> shipped: fresh seid 5/0 -> 5/0, fresh2 s
 duckling 13:31: committed 1d2b144f on ci/4vxqp4 (and branch 4vxqp4), not merged. CI 44302251186 success: secrets, test ubuntu/macos/windows, test-windows-cli, bench. Local: GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test -count=1 ./... all ok (last line 'ok  github.com/veridit/hug/muninn/run 5.911s'). Report: scratch/4vxqp4/REPORT.md. Quote-parser fix split to 6fqhg9 (crab ruling).
 landed 8d26d05 on main 2026-11-18: recall hook: a missing section goes only to a session that owns, acted on or was given the task (4vxqp4). crab rebased 1d2b144f onto v0.7.62 (CHANGELOG only; muninn/ byte-identical); exact SHA CI 44304709971 all 6 jobs success.
 Correction 2026-11-18 12:50Z (duckling, re-judged with the fixed judge prompt, e66eeb65): fresh-hug right lint lines are 1 in every arm, base included, not 3; the old prompt counted nautilus e4w9ya and hatchling s6ff5k Purpose lines as right although both are owner-only lint on tasks those sessions don't own. Check 2 (fresh sessions keep their right lint lines) still holds: same count before and after. Six sets under the new judge: base 115 lines 106 right 9 false (landed 8d26d050).
+shipped in v0.7.63 (8d26d05)
 ## History
 - 2026-11-17T15:53 todo -> doing/active (take)
 - 2026-11-17T16:03 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-17T15:53
