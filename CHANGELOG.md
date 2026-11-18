@@ -22,6 +22,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - A request or answer the coordinator had no live session for now reaches its next jcode session when it starts, once (bbxdd7). It waits in every known jcode home (`hug-inbox/pending/NAME/`), hug's `turn_start` hook delivers it and writes `delivered to NAME (SESSION)`, and History keeps a second session or home from delivering it again. A coordinator renamed before its next session gets it under the old name. A muninn/run test drives the jcode hook end to end: delivery at turn_start, acknowledgement at the next tool call.
 
+- `hug task detach` no longer leaves a missing-file finding (bqfrda): a file cited before its "detached file:NAME" note is gone on purpose, and lint reports a missing cited file once however often it is cited (was twice after attach and detach).
+
 ## v0.7.65 - 2026-11-18
 
 - A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.
