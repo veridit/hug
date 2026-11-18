@@ -33,7 +33,7 @@ No history exists today in find.go, palette.go or filters.go (no 'history' anywh
 
 ## Acceptance
 - [x] In the / prompt, Up recalls the last search, repeated Up goes further back, Down returns, and Enter runs it; a test fails first on main.
-- [ ] The : prompt has its own history with the same keys (test).
+- [x] The : prompt has its own history with the same keys (test).
 - [ ] History survives quitting and reopening hug tui on the same board, is per board, and is never written into .hug/tasks (test).
 
 ## Notes
