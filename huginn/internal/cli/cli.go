@@ -448,7 +448,7 @@ func parse(args []string, allowed string, optionalValue ...string) (flags, error
 			e := task.Invalid("flag", key, valid)
 			return f, usage("unknown flag --"+key+"; valid: --"+strings.Join(valid, ", --")+"; closest: --"+e.Closest, "hug task help")
 		}
-		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "apply", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
+		if slices.Contains([]string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "apply", "machine", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", strings.TrimPrefix(SyncChildArg, "--")}, key) {
 			if eq && val != "true" {
 				return f, usage("--"+key+" is a boolean flag", "hug task help")
 			}
@@ -653,7 +653,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "models": "", "upgrade": "apply machine"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -1917,6 +1917,25 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 	}
 	if us, ok := reply["upgrade"].([]string); ok {
+		// Two headings (f5vx4x): what changes in this board, and what
+		// changes on this machine, which only --apply --machine does.
+		board, okb := reply["board"].([]string)
+		machine, okm := reply["machine"].([]string)
+		if okb && okm {
+			dir, _ := reply["board_dir"].(string)
+			if dir == "" {
+				dir = "no board here"
+			}
+			fmt.Fprintf(a.Out, "this board (%s):\n", dir)
+			for _, u := range board {
+				fmt.Fprintln(a.Out, "  "+u)
+			}
+			fmt.Fprintln(a.Out, "this machine (hook and MCP configs in ~/.jcode, ~/.claude, ~/.codex; the memory store):")
+			for _, u := range machine {
+				fmt.Fprintln(a.Out, "  "+u)
+			}
+			us = nil
+		}
 		for _, u := range us {
 			fmt.Fprintln(a.Out, u)
 		}
@@ -1945,6 +1964,10 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 	}
 	fmt.Fprintln(a.Out, "next: "+reply["next"].(string))
+	// hug upgrade with both parts pending (f5vx4x): the step after next.
+	if then, ok := reply["then"].(string); ok {
+		fmt.Fprintln(a.Out, "then: "+then+"  (this machine, once you have read it)")
+	}
 	// A preview with changes pending (hug upgrade, asr4t2) ends with the
 	// command that applies them and its own exit code.
 	if code, ok := reply["exit_code"].(int); ok {

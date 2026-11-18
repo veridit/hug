@@ -34,7 +34,8 @@ func TestUpgradeRenamesEnvInHugConfigs(t *testing.T) {
 	codex := write(".codex/config.toml", "[mcp_servers.theirs]\nenv = { "+home+" = \"/x\" }\n")
 
 	a := app(t)
-	r := execute(t, a, "upgrade", "--apply")
+	// This machine's files change with --machine only (f5vx4x).
+	r := execute(t, a, "upgrade", "--apply", "--machine")
 	did := strings.Join(r["upgrade"].([]string), "\n")
 	for _, f := range []string{claude, mcp, toml} {
 		if !strings.Contains(did, "variables renamed to HUG_* in "+f) {
@@ -58,7 +59,7 @@ func TestUpgradeRenamesEnvInHugConfigs(t *testing.T) {
 		t.Errorf("a server that is not hug's was changed:\n%s\n%s", c, did)
 	}
 	// Again: nothing left to rename.
-	r = execute(t, a, "upgrade", "--apply")
+	r = execute(t, a, "upgrade", "--apply", "--machine")
 	if did := strings.Join(r["upgrade"].([]string), "\n"); strings.Contains(did, "variables renamed") {
 		t.Errorf("second upgrade renamed again:\n%s", did)
 	}

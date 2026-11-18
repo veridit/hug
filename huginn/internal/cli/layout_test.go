@@ -191,14 +191,19 @@ func TestUpgradeMemoryPartRunsMemUpgrade(t *testing.T) {
 	if !strings.Contains(did, "memory: would fold 3 copies of this machine's own memories in project:rc-x") || strings.Contains(did, "fix:") || r["exit_code"] != UpgradePending {
 		t.Fatalf("preview: %s (exit %v)", did, r["exit_code"])
 	}
+	// The memory store is this machine's: --apply alone leaves it (f5vx4x).
 	r = execute(t, a, "upgrade", "--apply")
+	if did = strings.Join(r["upgrade"].([]string), "; "); !strings.Contains(did, "memory: would fold 3 copies") || r["exit_code"] != UpgradePending || r["fix"] != "hug upgrade --apply --machine" {
+		t.Fatalf("--apply alone: %s (exit %v, fix %v)", did, r["exit_code"], r["fix"])
+	}
+	r = execute(t, a, "upgrade", "--apply", "--machine")
 	if did = strings.Join(r["upgrade"].([]string), "; "); !strings.Contains(did, "memory: folded 3 copies") || !strings.Contains(did, "memory: backup memories.json.bak-upgrade-1") {
 		t.Fatalf("apply: %s", did)
 	}
 	if r = execute(t, a, "upgrade"); r["exit_code"] != nil || !strings.Contains(strings.Join(r["upgrade"].([]string), "; "), "memory: nothing to do") {
 		t.Fatalf("after: %v", r)
 	}
-	if len(calls) != 3 || len(calls[0]) != 0 || calls[1][0] != "--apply" {
+	if len(calls) != 4 || len(calls[0]) != 0 || len(calls[1]) != 0 || calls[2][0] != "--apply" {
 		t.Fatalf("calls %v", calls)
 	}
 	a.MemUpgrade = func([]string) (int, string) { return 1, "hug mem: store locked\n" }

@@ -32,8 +32,10 @@ Usage:
   hug tui                   task board (hug mem tui for memories)
   hug mcp                   one MCP server: memory_* and task_* tools
   hug apps [install]        Claude Desktop, Claude Code, ChatGPT/Codex: start hug mcp
-  hug upgrade [--apply]     what every migration to the current hug would change (exit 5
-                            if any); --apply does it
+  hug upgrade [--apply [--machine]]
+                            what every migration to the current hug would change (exit 5
+                            if any); --apply does this board's, --apply --machine this
+                            machine's too (hook and MCP configs, the memory store)
   hug version
 
 Details: hug task help, hug mem --help.

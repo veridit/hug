@@ -235,28 +235,52 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		return nil, e
 	}
 	dry := !f.has("apply")
+	// This machine's files (hook and MCP configs, the memory store) change
+	// only with --apply --machine (f5vx4x, crab 04:04): a board's upgrade
+	// never reaches them. 2026-11-18 04:53 an upgrade in a scratch clone
+	// rewrote six live jcode configs.
+	machine := f.has("machine")
+	if machine && dry {
+		return nil, usage("--machine goes with --apply: hug upgrade shows this machine's changes already", "hug upgrade --apply --machine")
+	}
+	machineDry := !machine
 	cwd := a.Cwd
 	if cwd == "" {
 		cwd = "."
 	}
-	var parts []string
+	var parts, machineParts []string
 	upgradeDiff := ""
-	pending := false
+	pending, machinePending := false, false
 	part := func(name string, did []string) {
+		onMachine := name == "variables" || name == "memory"
 		// memory only names a command; it is never pending here.
 		if len(did) > 0 && name != "memory" {
-			pending = true
+			if onMachine {
+				machinePending = machinePending || machineDry
+			} else {
+				pending = pending || dry
+			}
+		}
+		out := &parts
+		if onMachine {
+			out = &machineParts
 		}
 		if len(did) == 0 {
-			parts = append(parts, name+": nothing to do")
+			*out = append(*out, name+": nothing to do")
 			return
 		}
 		for _, d := range did {
-			parts = append(parts, name+": "+d)
+			*out = append(*out, name+": "+d)
 		}
 	}
 	would := func(s string) string {
 		if dry {
+			return "would: " + s
+		}
+		return s
+	}
+	wouldMachine := func(s string) string {
+		if machineDry {
 			return "would: " + s
 		}
 		return s
@@ -305,8 +329,10 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	// The board's task files, only when the board opens: a repository
 	// without hug/tasks has nothing to migrate.
 	var tasks []string
+	boardDir := ""
 	if s, e := a.open(ctx); e == nil {
 		defer s.c.Close()
+		boardDir = s.r.Dir
 		// An older hug's upgrade would move the board back (dx9vw2).
 		if board, known, newer := a.newerBoard(s.r.Dir); newer {
 			return nil, boardNewer(board, known)
@@ -403,13 +429,13 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	// server entries become HUG_ names, each changed file backed up.
 	var vars []string
 	if home, e := os.UserHomeDir(); e == nil {
-		files, e := renameEnv(envFiles(home), dry)
+		files, e := renameEnv(envFiles(home), machineDry)
 		if e != nil {
 			return nil, &OperationError{Problem: "rename variables in " + strings.Join(files, ", ") + ": " + e.Error(), Fix: "hug upgrade"}
 		}
 		for _, f := range files {
-			if dry {
-				vars = append(vars, would("variables renamed to HUG_* in "+f))
+			if machineDry {
+				vars = append(vars, wouldMachine("variables renamed to HUG_* in "+f))
 			} else {
 				vars = append(vars, "variables renamed to HUG_* in "+f+" (backup "+filepath.Base(f)+".bak-hug-upgrade)")
 			}
@@ -429,7 +455,7 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	foldPending := false
 	if a.MemUpgrade != nil {
 		args := []string{}
-		if !dry {
+		if !machineDry {
 			args = append(args, "--apply")
 		}
 		code, out := a.MemUpgrade(args)
@@ -448,12 +474,24 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		}
 	}
 	part("memory", mem)
-	pending = pending || foldPending
-	reply := Reply{"upgrade": parts, "next": "hug setup"}
-	if dry && pending {
+	machinePending = machinePending || foldPending
+	reply := Reply{"upgrade": append(append([]string(nil), parts...), machineParts...), "board": parts, "machine": machineParts, "board_dir": boardDir, "next": "hug setup"}
+	switch {
+	case dry && pending:
 		reply["pending"] = true
 		reply["fix"] = "hug upgrade --apply"
 		reply["next"] = "hug upgrade --apply"
+		reply["exit_code"] = UpgradePending
+		if machinePending {
+			reply["then"] = "hug upgrade --apply --machine"
+		}
+	case machinePending:
+		// The board is done (or had nothing); this machine's part waits for
+		// its own step: exit 5, since upgrade has changes pending (crab
+		// 04:04), so a script never reads half an upgrade as done.
+		reply["pending"] = true
+		reply["fix"] = "hug upgrade --apply --machine"
+		reply["next"] = "hug upgrade --apply --machine"
 		reply["exit_code"] = UpgradePending
 	}
 	if upgradeDiff != "" {
