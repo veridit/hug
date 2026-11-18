@@ -33,3 +33,5 @@ User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task request
 - [ ] User can see pending versus handled targets without a partial fix silently closing the whole request.
 
 ## Notes
+
+APPROVED by Jorgen 2026-11-18 11:08Z: Separate request, delivery, and work tasks. One request preserves the instruction and exact selected task IDs; each selected task links to it rather than owning an independent duplicate. Route to the board coordinator inbox, not an arbitrary worker. Visible lifecycle: pending -> acknowledged -> in progress -> answered. Saved is not received, acknowledgement requires actual coordinator receipt. Sending feedback does not automatically create another work task. Coordinator may act on existing tasks or propose a new coordinating task when warranted. Bulk partial completion must remain visible, not close unhandled scope. This is approved design, not implemented delivery.
