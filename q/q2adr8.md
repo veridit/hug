@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzza"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:43"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "v0.7.70 release, then Jørgen confirms on his board (check 6); accepted by crab at 335a39a5, stacked as ci/q2adr8-rebased d5c66a1f"
+waiting_since: "2026-11-18T21:39"
+waiting_asked_by: "iwazaru"
 ---
 
 ## Goal
@@ -54,3 +57,4 @@ check 5: Failing first a1f09ba7: askone_test.go:17 'help ask does not say one qu
 iwazaru: branch q2adr8 = ci/q2adr8 at 335a39a5 on main 8dc479b2. CI 44391011491 completed success (8 jobs). Full niced go test ./...: exit 0 (cli 368.074s, tui 133.184s, task 11.300s, mcp 15.510s). Report: scratch/q2adr8-REPORT.md. Check 6 is Jørgen's after release.
 ## History
 - 2026-11-18T20:43 todo -> doing/active (take)
+- 2026-11-18T21:39 doing/active -> doing/waiting (wait)
