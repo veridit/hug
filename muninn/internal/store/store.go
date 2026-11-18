@@ -43,6 +43,40 @@ type DB struct {
 	Path string
 }
 
+// OldHugView is graph_state since 4vd1mz: an empty view in place of the
+// gob table, so a hug from before v0.7.59 cannot write a graph built from
+// nothing. An MCP server started before v0.7.54 never reloads itself, so
+// such a hug keeps running (mbdfzs check 3). Its index pass reads
+// graph_state before it writes it, and SQLite refuses the write (an UPSERT
+// on a view) before any trigger could speak, so the read carries the fix:
+// state is a json_extract with a bad path, whose error SQLite returns
+// verbatim ("bad JSON path: '<text>'"). Nothing current reads state.
+const OldHugView = `CREATE VIEW graph_state(id, state) AS SELECT 1, json_extract('{}', '` + OldHugFix + `') WHERE 1`
+
+// OldHugFix is what a hug older than v0.7.59 says when it tries to index.
+const OldHugFix = "hug: this hug mcp server is older than v0.7.59 and cannot write this memory store; " +
+	"fix: restart it (jcode: mcp action=reload server=hug; Claude/Codex: quit and reopen the app). " +
+	"The note was saved: the next current hug that writes or indexes (hug mem index) makes it searchable."
+
+// oldHugView gives a store with the plain graph_state view the one that
+// names the fix. A store whose graph_state is still the gob table keeps it
+// until its first writer moves it (index.moveGraph).
+func oldHugView(db *sql.DB) error {
+	var typ, def string
+	if err := db.QueryRow(`SELECT type, sql FROM sqlite_master WHERE name='graph_state'`).Scan(&typ, &def); err != nil {
+		return err
+	}
+	if typ != "view" || def == OldHugView {
+		return nil
+	}
+	for _, q := range []string{`DROP VIEW graph_state`, OldHugView} {
+		if _, err := db.Exec(q); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 const schema = `
 CREATE TABLE IF NOT EXISTS capture_backlog (session TEXT NOT NULL, message TEXT NOT NULL, PRIMARY KEY(session,message));
 -- Memories whose stated condition (units.holds) has ended: recall skips
@@ -188,6 +222,8 @@ CREATE INDEX IF NOT EXISTS unit_communities_u ON unit_communities(unit_id);
 -- empty view in its place.
 CREATE TABLE IF NOT EXISTS graph_vertex (concept_id INTEGER PRIMARY KEY, k REAL NOT NULL, adj BLOB NOT NULL);
 CREATE TABLE IF NOT EXISTS graph_community (community_id INTEGER PRIMARY KEY, sum_tot REAL NOT NULL);
+-- On a new store this is the plain view; Open then makes it the one that
+-- tells a hug older than v0.7.59 to restart (OldHugView, mbdfzs).
 CREATE VIEW IF NOT EXISTS graph_state(id, state) AS SELECT 1, NULL WHERE 0;
 -- Memory types inferred for memories whose source has no type field (jcode
 -- memory files, untyped native memories): keyed by content hash, so a type
@@ -251,6 +287,9 @@ func Open(path string) (*DB, error) {
 		return nil, err
 	}
 	_, err = db.Exec(schema)
+	if err == nil {
+		err = oldHugView(db)
+	}
 	unlockInit()
 	if err != nil {
 		db.Close()

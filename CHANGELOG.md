@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- A hug MCP server too old to reload itself now says how to fix its failed memory write (mbdfzs check 3). Servers started before v0.7.54 never reload, and since v0.7.59 their `memory_remember` failed with `cannot modify graph_state because it is a view`, which names no fix (Statbus, 2026-11-18). The memory store's `graph_state` view now fails the read such a hug makes first, so it reports: `hug: this hug mcp server is older than v0.7.59 and cannot write this memory store; fix: restart it (jcode: mcp action=reload server=hug; Claude/Codex: quit and reopen the app). The note was saved: the next current hug that writes or indexes (hug mem index) makes it searchable.` Its searches still work. Checked with a v0.7.2 build: CLI and MCP `memory_search` answer, and CLI and MCP `memory_remember` print that line. Every store gets the view the next time a current hug opens it.
+
 ## v0.7.69 - 2026-11-18
 
 - Windows CI runs the `huginn/internal/cli` tests in two shards on two runners (0n4rnx): shard sync takes the sync, catch-up and layout-upgrade tests (`-run`), shard rest the others (`-skip`, same pattern), each one `go test` run under its 10-minute limit. One run of the package took 387-403 s on one runner and crossed 600 s on slow ones. A new job, `test-windows-cli-shards`, fails when a test ran in neither shard or in both.
