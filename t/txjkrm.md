@@ -11,10 +11,13 @@ rank: "zzzzzzzzzz38"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T15:45"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "txjkrm"
 worktree: "/Users/jhf/.jcode/scratch/txjkrm"
+waiting_on: "crab landing ci/txjkrm6-rebased 3f5e89d9 and a release; then ask Jørgen the check-6 question with --show (crab 21:09)"
+waiting_since: "2026-11-18T22:21"
+waiting_asked_by: "kikazaru"
 ---
 
 ## Goal
@@ -85,3 +88,4 @@ mizaru 21:13Z: cleared the old wait (resume). It read 'check 1: Jørgen sees the
 - 2026-11-18T20:44 doing/active -> doing/waiting (wait)
 - 2026-11-18T20:44 mizaru read the answer: hug task wait txjkrm "check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19…"
 - 2026-11-18T22:13 doing/waiting -> doing/active (resume); was waiting_asked_by: mizaru; waiting_on: check 1: Jørgen sees the Seid overview preview; check 3: rows show tags (not started, mizaru moved to q0a8rx by crab 19:44Z); waiting_since: 2026-11-18T20:44
+- 2026-11-18T22:21 doing/active -> doing/waiting (wait)
