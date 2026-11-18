@@ -1,7 +1,7 @@
 ---
 id: 8t3hgx
 title: "Release v0.7.72"
-state: "doing"
+state: "done"
 type: chore
 priority: "high"
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T00:15"
-stage: "active"
 model: "claude-opus-5-5"
 effort: "high"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T00:15"
 ---
 
 ## Goal
@@ -43,3 +42,4 @@ check 1: release.yml 44417704498 completed success
 check 2: brew upgrade veridit/tap/hug; hug version -> hug v0.7.72 (23:15Z)
 ## History
 - 2026-11-19T00:15 todo -> doing/active (take)
+- 2026-11-19T00:15 doing/active -> done (done); was doing_since: 2026-11-19T00:15
