@@ -39,5 +39,6 @@ Check os.Executable()'s resolved target (the Homebrew symlink moves to the new C
 Jørgen 02:39 local: 'auto-reloading the MCP is immensely important, good catch, get it out.' Ruling (crab): mbdfzs goes first for kestrel, ahead of 3nhp67, and ships in the first hourly release after it is green.
 
 
+Landed 8dee4a86. Windows choice: exit cleanly between requests. Each request already read gets JSON-RPC error -32000 'hug was upgraded while this server ran: it stops now so the app starts the installed hug; run the call again', then exit 0, and the client restarts the server. No proxy (crab scope 02:40). Fails first: with main's StdioTransport path, TestMCPReloadsChangedBinary fails with 'reload_test.go:141: after the upgrade: version "0.0.1-old", err <nil>'. Mutants, 12 run, 11 killed: never-reload, no-drain (check 2: 'running request: version "", err context deadline exceeded'), no-replay, replay-reply-leaks, held-request-lost, inflight-never-clears, windows-no-answer, main. 'reload always' was not reached before the 600 s cap. 1 did not compile and was redone as a compiling variant, which was killed. Race on cmd/hug: ok 28.2s. Servers started before this release need one app restart.
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
