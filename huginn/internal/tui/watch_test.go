@@ -10,9 +10,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/fsnotify/fsnotify"
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/fsnotify"
 )
 
 // gitBoard is a task store in a git repository on its own branch, like the

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fsnotify/fsnotify"
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/fsnotify"
 )
 
 // The TUI reloads when tasks change on disk (nfv18p). Every hug task command
