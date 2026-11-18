@@ -14,11 +14,12 @@ import (
 // search as typed.
 
 // searchFields are the fields / understands, and the older names hug used
-// for them: status is state since 6ephqk.
+// for them: status is state since 6ephqk. tag is label's new name (txjkrm);
+// both find a task's labels until the CLI field is renamed too.
 var searchFields = map[string]string{
 	"state": "state", "status": "state",
 	"type": "type", "priority": "priority", "group": "group",
-	"label": "label", "assignee": "assignee", "epic": "epic",
+	"label": "label", "tag": "label", "assignee": "assignee", "epic": "epic",
 }
 
 // fieldTerm is one field:value of a search, both lower case.
