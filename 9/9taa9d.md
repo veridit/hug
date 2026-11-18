@@ -14,7 +14,10 @@ aliases: ["merge-muninn-and-huginn-into-one"]
 ---
 
 ## Goal
-One hug binary with tasks, memories and messages; .hug/<kind>/ on branches hug/<kind>; muninn and huginn kept as aliases
+A unified, easy-to-navigate, non-confusing CLI and system: one hug binary with tasks, memories and messages; .hug/<kind>/ on branches hug/<kind>; muninn and huginn kept only as compatibility aliases.
+
+## Principle
+Consistency through a clean sweep: once we decide hug is the thing, we change everything at once (commands, help, messages, docs, branches, folders, tests, every project's setup), never a mix of old and new names left behind.
 
 ## Depends on
 
