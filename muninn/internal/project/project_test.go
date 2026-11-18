@@ -12,13 +12,68 @@ import (
 
 func gitInit(t *testing.T, dir string) {
 	t.Helper()
+	// maintenance.auto=false before the first commit (ybbfsa flake 4,
+	// fixtures only): a commit starts `git maintenance run --auto --detach`,
+	// whose worktree-prune task deletes .git/worktrees/NAME while a test's
+	// next `git worktree add` is still filling it in ("could not open
+	// .git/worktrees/linked/locked for writing", CI 44328375780).
 	for _, args := range [][]string{
-		{"init", "-q"}, {"-c", "user.email=t@example.invalid", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "root"},
+		{"init", "-q"}, {"config", "maintenance.auto", "false"}, {"-c", "user.email=t@example.invalid", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "root"},
 	} {
 		if out, err := exec.Command("git", append([]string{"-C", dir}, args...)...).CombinedOutput(); err != nil {
 			t.Skipf("git unavailable: %v %s", err, out)
 		}
 	}
+}
+
+// ybbfsa flake 4: a commit in a gitInit repository starts no auto
+// maintenance, so nothing prunes .git/worktrees/NAME behind a concurrent
+// `git worktree add`. The race itself (prune between add's mkdir and its
+// locked file) cannot be timed in a test; the precondition can. A half-made
+// worktree admin folder (no gitdir yet, as add leaves it for a moment)
+// survives a commit here; with git's default config the same commit's
+// detached worktree-prune deletes it (git 2.54).
+func TestGitInitCommitPrunesNoWorktree(t *testing.T) {
+	for _, fixture := range []bool{false, true} {
+		dir := t.TempDir()
+		if fixture {
+			gitInit(t, dir)
+		} else {
+			for _, args := range [][]string{{"init", "-q"}, {"-c", "user.email=t@example.invalid", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "root"}} {
+				if out, err := exec.Command("git", append([]string{"-C", dir}, args...)...).CombinedOutput(); err != nil {
+					t.Skipf("git unavailable: %v %s", err, out)
+				}
+			}
+		}
+		half := filepath.Join(dir, ".git", "worktrees", "linked")
+		if err := os.MkdirAll(half, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		trace := filepath.Join(t.TempDir(), "trace")
+		c := exec.Command("git", "-C", dir, "-c", "user.email=t@example.invalid", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "next")
+		c.Env = append(os.Environ(), "GIT_TRACE2_EVENT="+trace)
+		if out, err := c.CombinedOutput(); err != nil {
+			t.Fatalf("commit: %v\n%s", err, out)
+		}
+		b, _ := os.ReadFile(trace)
+		started := strings.Count(string(b), `"maintenance","run","--auto"`)
+		if fixture && started != 0 {
+			t.Errorf("gitInit repository: the commit started maintenance %d times", started)
+		}
+		if fixture && !exists(half) {
+			t.Error("gitInit repository: a commit pruned a worktree being added")
+		}
+		if !fixture {
+			// The cause, shown when this git has it: default config starts
+			// the detached maintenance, which removes the folder.
+			t.Logf("default config: commit started maintenance %d times", started)
+		}
+	}
+}
+
+func exists(p string) bool {
+	_, err := os.Stat(p)
+	return err == nil
 }
 
 func TestIdentitySurvivesMoveAndClone(t *testing.T) {
