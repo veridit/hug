@@ -57,6 +57,8 @@ landed a90f4d44..03e783d0 (nautilus). CI run 44233304533 green on all 6 jobs (ub
 landed 03e783d on main 2026-11-18: tui: v is the view prefix (vo vl vb v!), the view line reads 'view: …' and…
 shipped in v0.7.56 (03e783d)
 crab 19:55 local, on Jørgen's check 6 answer 'pretty good and works the way I hoped, but the colouring is too intense... underscore AND bold AND colour on the pickable letter, and background on the active one... subtle please': new check 9 spells his rule. It supersedes 911j70 check 3 as built in 89e280c9 (active view on #2b5a78 background, v bold accent): macaque reworks it before it lands. Check 6 stays open until he confirms the toned-down line.
+file:view-line-before.ans (2994 bytes, sha256:66e6ccf8) check 9 before (main 6a6b6573) / after (dd1830f0): hug tui top 3 lines, tmux 100x24 truecolor, idle, after v, +530 ms, after v l. After: v accent and o l b ! violet, underlined, not bold; the active view in bold dim only; no background (48;2 count 0, before 2)
+file:view-line-after.ans (3082 bytes, sha256:00c2ab26) check 9 before (main 6a6b6573) / after (dd1830f0): hug tui top 3 lines, tmux 100x24 truecolor, idle, after v, +530 ms, after v l. After: v accent and o l b ! violet, underlined, not bold; the active view in bold dim only; no background (48;2 count 0, before 2)
 ## History
 - 2026-11-18T04:25 todo -> doing/active (take)
 - 2026-11-18T05:00 doing/active -> doing/asked (ask)
