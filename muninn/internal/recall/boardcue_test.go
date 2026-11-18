@@ -32,7 +32,7 @@ func TestBoardTakeNamedTask(t *testing.T) {
 	in := recall.BoardInput{
 		Tasks:   []recall.BoardTask{{ID: "7js5hw", Title: "TUI: human names for places", State: "todo", Checks: 2, Open: 2}},
 		Self:    recall.BoardSelf{Name: "crab", Model: "claude-opus-5-5"},
-		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "7js5hw"}}}, edit},
+		Actions: []recall.BoardAction{{Subject: "TUI: human names (7js5hw)"}, edit},
 	}
 	line, kind := e.BoardCue("jcode:s1", "continue", "", now, src(in))
 	if kind != "take" || !strings.Contains(line, "hug task take 7js5hw --model claude-opus-5-5") {
@@ -47,12 +47,29 @@ func TestBoardTakeNamedTask(t *testing.T) {
 	}
 	other := in
 	other.Tasks = append([]recall.BoardTask{{ID: "48hx44", Title: "hug setup wires desktop apps", State: "todo"}}, in.Tasks...)
-	other.Actions = []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "48hx44"}}}, edit}
+	other.Actions = []recall.BoardAction{{Subject: "setup: desktop apps (48hx44)"}, edit}
 	if line, _ := e.BoardCue("jcode:s1", "continue", "", now.Add(62*time.Minute), src(other)); !strings.Contains(line, "48hx44") {
 		t.Fatalf("another task after the hour: %q", line)
 	}
 	if line, _ := e.BoardCue("jcode:s1", "continue", "", now.Add(25*time.Hour), src(in)); line == "" {
 		t.Fatal("no line after a day")
+	}
+}
+
+// rzfrgp: reading a task with hug task show does not make it the task the
+// take line names. guppy 2026-11-16 20:16 read jrj1vq (a dependency of
+// ez50rb), edited code with no task doing, and was told 'this looks like
+// jrj1vq'; both judgings called it wrong.
+func TestBoardTakeNotFromShow(t *testing.T) {
+	e := boardEngine(t)
+	now := time.Date(2026, 11, 16, 20, 16, 10, 0, time.UTC)
+	in := recall.BoardInput{
+		Tasks:   []recall.BoardTask{{ID: "jrj1vq", Title: "When-then memories: triggers stated at write time", State: "todo"}},
+		Self:    recall.BoardSelf{Name: "guppy", Model: "claude-opus-5-5"},
+		Actions: []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "jrj1vq"}}}, edit},
+	}
+	if line, _ := e.BoardCue("guppy", "continue", "", now, src(in)); strings.Contains(line, "jrj1vq") {
+		t.Fatalf("take line names a task the session only read: %q", line)
 	}
 }
 

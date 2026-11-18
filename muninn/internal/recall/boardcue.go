@@ -463,7 +463,10 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 					noted[h.ID] = true
 				}
 			}
-			if h.Verb == "show" || h.Verb == "check" || h.Verb == "note" {
+			// Reading a task is not working on it: guppy read jrj1vq (a
+			// dependency of its queue) and was told 'this looks like jrj1vq ...
+			// hug task take jrj1vq' (rzfrgp, 6fqhg9 replay; judged wrong twice).
+			if h.Verb == "check" || h.Verb == "note" {
 				addNamed(h.ID)
 			}
 		}
