@@ -41,6 +41,10 @@ Decided so far: new Engram memories with no project default to personal, and glo
 ## Acceptance
 - [ ] decision in DESIGN.md
 
+## Requests
+- 2026-11-18T20:36 request 1 by jhf:
+  When I'm looking at this the zoom the thing I'm going to respond to the first line is displayed the whole section should be displayed otherwise I think I didn't scroll correctly
+
 ## Notes
 
 
@@ -52,3 +56,4 @@ file:screen-2036.ans (12706 bytes, sha256:f159358e) screen capture from hug tui
 - 2026-11-18T18:53 todo -> doing/active (take)
 - 2026-11-18T18:53 doing/active -> doing/waiting (wait)
 - 2026-11-18T18:54 doing/waiting -> doing/asked (ask); was waiting_asked_by: piglet; waiting_on: crab review, then Jørgen picks an option; waiting_since: 2026-11-18T18:53
+- 2026-11-18T20:36 request 1 by jhf
