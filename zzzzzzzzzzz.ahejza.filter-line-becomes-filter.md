@@ -33,7 +33,7 @@ Today: filters.go filterBar() prints 'No filters · f picker · 1 todo  2 doing 
 - [x] The line reads 'filter: none · sort: rank' with f and s marked when nothing is set, and shows chips and the order when set (golden at 80 and 140)
 - [x] s opens a sort picker panel listing the sort fields with hints; picks chain as 'then by', the same letter flips direction, Backspace drops the last, Enter applies, Esc leaves the order unchanged (key test)
 - [x] f still opens the filter picker, and both panels share one look (golden)
-- [ ] Keys 1-4 do nothing and no hint names them; s no longer opens ':status ' (key test)
+- [x] Keys 1-4 do nothing and no hint names them; s no longer opens ':status ' (key test)
 - [ ] Context help (?) lists f filter and s sort with their picker keys (help test)
 - [ ] Jørgen confirms on his board after release
 - [ ] ~~sc sorts by the marked column and repeated sc flips its direction; o no longer sorts; created moves to d; the picker lists 'c current column (NAME)' (key test)~~ (not relevant: Jørgen 23:39:44: o stays; o is the same as sc, crab, 2026-11-17)
