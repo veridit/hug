@@ -177,6 +177,39 @@ func questionHeadAt(at string, n int, by, to string, check int, show string) str
 	return head + ":"
 }
 
+// mirrorOn is mirror for a task in state: a todo task's open questions
+// (yphbra: asked without taking it) show in its design_* fields, which
+// have no check (the check is in ## Questions); a doing task's in asked_*.
+func mirrorOn(state string, q AskedQuestion) (set map[string]string, clear []string) {
+	set, clear = mirror(q)
+	if state != "todo" {
+		return set, clear
+	}
+	design := map[string]string{"asked_what": "design_question", "asked_for": "design_for", "asked_since": "design_since", "asked_by": "design_asked_by", "asked_show": "design_show"}
+	dset := map[string]string{}
+	for k, v := range set {
+		if d, ok := design[k]; ok {
+			dset[d] = v
+		}
+	}
+	var dclear []string
+	for _, k := range clear {
+		if d, ok := design[k]; ok {
+			dclear = append(dclear, d)
+		}
+	}
+	return dset, dclear
+}
+
+// askStage is the stage a question puts a task in state in: asked on a
+// doing task, design on a todo one (yphbra).
+func askStage(state string) string {
+	if state == "todo" {
+		return "design"
+	}
+	return "asked"
+}
+
 // mirror is the asked_* fields for q, the oldest open question (crab
 // 19:49): what the stage shows. since is when q was asked.
 func mirror(q AskedQuestion) (set map[string]string, clear []string) {
@@ -205,10 +238,15 @@ func checkText(n int) string {
 // section. It is adopted as question 1 when a second question is asked,
 // so both are numbered.
 func legacyQuestion(t Task) (AskedQuestion, bool) {
+	f := t.Fields
+	// A todo task's hug task design question is adopted the same way when
+	// someone asks on it (yphbra).
+	if len(t.Questions) == 0 && t.State == "todo" && ownHolds(t, "design") {
+		return AskedQuestion{N: 1, By: f["design_asked_by"], To: f["design_for"], At: f["design_since"], Show: f["design_show"], Text: f["design_question"]}, true
+	}
 	if len(t.Questions) > 0 || t.State != "doing" || !ownHolds(t, "asked") {
 		return AskedQuestion{}, false
 	}
-	f := t.Fields
 	c, _ := strconv.Atoi(strings.TrimSpace(f["asked_check"]))
 	return AskedQuestion{N: 1, By: f["asked_by"], To: f["asked_for"], At: f["asked_since"], Check: c, Show: f["asked_show"], Text: f["asked_what"]}, true
 }
@@ -252,7 +290,13 @@ func pickQuestion(t Task, n int, text string) (AskedQuestion, error) {
 // q2adr8.
 func tickAnswers(t Task, n int, actor string) (q int, ok bool) {
 	actor = strings.TrimSpace(actor)
-	if stage, _, _ := question(t); stage != "asked" || actor == "" {
+	stage, _, _ := question(t)
+	if (stage != "asked" && stage != "design") || actor == "" {
+		return 0, false
+	}
+	// A design question names no check; one asked on a todo task (yphbra)
+	// is in ## Questions with its check.
+	if stage == "design" && len(t.Questions) == 0 {
 		return 0, false
 	}
 	if len(t.Questions) == 0 {
@@ -321,6 +365,11 @@ func (d *Document) writeAnswerUnder(n int, text, by string) error {
 // doing/active".
 func withdrawOpen(d *Document, moved string) {
 	if ownHolds(d.Task, "asked") && d.Task.State == "doing" {
+		return
+	}
+	// A todo task asked without taking it (yphbra) keeps its questions
+	// open while design_* mirror them, whatever stage outranks design.
+	if ownHolds(d.Task, "design") && d.Task.State == "todo" {
 		return
 	}
 	for _, q := range OpenQuestions(d.Task) {

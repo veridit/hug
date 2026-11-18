@@ -131,6 +131,7 @@ var Transitions = []Transition{
 	{"doing/asked", "doing/active", `hug task answer ID "answer"` + " (or hug task check ID N by the person asked, N the check it is about; or hug task resume ID: the owner withdraws it)"},
 	{"doing/active", "doing/review", "hug task review ID --by NAME"},
 	{"todo/*", "todo/design", `hug task design ID "question"`},
+	{"todo/*", "todo/design", `hug task ask ID --to NAME [--check N] "question" (yphbra: asked without taking it; the question is in the person's ASKED even while depends outranks design)`},
 	{"todo/design", "todo/*", "hug task design ID --clear"},
 	{"doing/*", "todo/*", "hug task set ID --state todo (gives it back, keeping its stage)"},
 	{"doing/*", "done", "hug task done ID"},

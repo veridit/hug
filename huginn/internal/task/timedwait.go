@@ -143,6 +143,11 @@ func (s *Store) AskAfter(ref string, q Question, after, by string) (Result, erro
 	if e != nil {
 		return Result{}, e
 	}
+	// --after parks the asker's own doing task until the day; a todo task
+	// has nobody to park (yphbra): ask it now, or take it first.
+	if d.Task.State != "doing" {
+		return Result{}, refuse(d.Task, "doing/waiting", "hug task ask "+id+" --to "+who+" "+strconv.Quote(oneLineFix(what)))
+	}
 	fix := "hug task ask " + id + " --to " + who + " --after %s"
 	if check != "" {
 		fix += " --check " + check

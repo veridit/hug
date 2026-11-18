@@ -230,7 +230,9 @@ func (s *Store) AnswerQuestion(ref string, n int, text, by string) (Result, erro
 		return Result{}, usageErr(d.Task.ID, "answer needs who answers: --as NAME, or HUG_USER", "hug task answer "+d.Task.ID+" "+strconv.Quote(oneLineFix(text))+" --as NAME")
 	}
 	q := 0
-	if stage == "asked" && len(d.Task.Questions) > 0 {
+	// A todo task asked without taking it (yphbra) numbers its questions
+	// as a doing one does.
+	if (stage == "asked" || stage == "design") && len(d.Task.Questions) > 0 {
 		picked, e := pickQuestion(d.Task, n, text)
 		if e != nil {
 			return Result{}, e
@@ -272,7 +274,7 @@ func answerOn(d *Document, ts []Task, q int, text, by string) error {
 			return e
 		}
 		if open := OpenQuestions(d.Task); len(open) > 0 {
-			set, clear = mirror(open[0])
+			set, clear = mirrorOn(d.Task.State, open[0])
 		}
 	}
 	head := "answered " + stage
@@ -282,7 +284,7 @@ func answerOn(d *Document, ts []Task, q int, text, by string) error {
 	if q > 0 && len(d.Task.Questions) > 1 {
 		about = append(about, "question "+strconv.Itoa(q))
 	}
-	if stage == "asked" && check != "" {
+	if (stage == "asked" || stage == "design") && check != "" {
 		about = append(about, "check "+check)
 	}
 	if len(about) > 0 {

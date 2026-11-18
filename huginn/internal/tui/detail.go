@@ -317,7 +317,10 @@ func (m model) askedAll(t task.Task) []asked {
 	if !m.forYou(t) {
 		return nil
 	}
-	if g := m.taskStage(t); g == "asked" && len(t.Questions) > 0 {
+	if g := m.taskStage(t); (g == "asked" || t.State == "todo") && len(t.Questions) > 0 {
+		if g != "asked" {
+			g = "asked" // a plain ask (yphbra): the block shows no stage word
+		}
 		var out []asked
 		for _, q := range task.OpenQuestions(t) {
 			if !m.isMe(q.To) {
