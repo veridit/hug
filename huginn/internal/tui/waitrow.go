@@ -128,6 +128,11 @@ func (m model) note(t task.Task) (head, text, stamp string) {
 			parts = append(parts, "check "+n)
 		}
 		parts = append(parts, m.attachments(t, f("asked_what")))
+		// Several open (q2adr8): the row shows the oldest and says how
+		// many; the detail shows each with its own answer.
+		if n := len(task.OpenQuestions(t)); n > 1 {
+			parts = append(parts, strconv.Itoa(n)+" questions")
+		}
 		if by := m.name(t.Fields["asked_by"]); by != "" && by != "you" {
 			parts = append(parts, by)
 		}

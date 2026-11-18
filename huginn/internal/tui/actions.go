@@ -398,6 +398,20 @@ func (m *model) answerKey() tea.Cmd {
 		return nil
 	}
 	m.confirmPath = t.Path
+	// Which question a answers (q2adr8): the one marked > (its check or
+	// its block), else the oldest asked of you.
+	q, _ := m.askedOf(t)
+	switch {
+	case m.detailPane == focusAcceptance:
+		if c, ok := m.checkQuestion(t, m.acceptance+1); ok {
+			q = c
+		}
+	case m.detailPane == focusQuestion:
+		if bs := m.blockQuestions(t); m.question >= 0 && m.question < len(bs) {
+			q = bs[m.question]
+		}
+	}
+	m.answerN = q.n
 	return m.openAnswer()
 }
 
@@ -417,9 +431,17 @@ func (m *model) answer(text string) {
 		return
 	}
 	defer m.hold()()
-	r, err := m.store.Answer(t.ID, text, m.me())
+	n := m.answerN
+	m.answerN = 0
+	r, err := m.store.AnswerQuestion(t.ID, n, text, m.me())
 	m.finish(r, err, "answer")
 	m.deliver(r, err, "answer", m.me())
+	// Questions left (q2adr8): the > goes to the oldest still open, so
+	// the next a answers it.
+	if tk, ok := m.selected(); ok && err == nil && len(m.askedAll(tk)) > 0 {
+		m.startFocus()
+		m.syncDetail()
+	}
 }
 
 // deliver hands what a write just stored to the coordinator (gmzd87) and

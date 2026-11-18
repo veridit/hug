@@ -177,6 +177,10 @@ type model struct {
 	link                       int // the task:ID marked > in Links (xxvm6t)
 	idAt                       int // with focusIDs: the task id marked, by place in idStops (4bwcgp)
 	file                       int // the file marked > in Files (zgr01t)
+	// question is the question block marked > (focusQuestion), by place
+	// among the questions that name no check (q2adr8); answerN is the
+	// number of the question the open answer box answers, 0 for none.
+	question, answerN int
 	// glance: a file shown in the detail pane (scrxak); glanceHead is its
 	// "path · size · i of N" line, glanceBody its escaped text.
 	glance                 bool
