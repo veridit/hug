@@ -66,6 +66,7 @@ crab 18:35 local: stacked as 0a1fdbe4 + 5924cfdb on ybbfsa b2232191 (ci/txjkrm-e
 landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
 landed 709e327 on main 2026-11-18: Tags listed per board: hug.toml tags, unlisted-tag lint, hug task tags, set…
 landed dfe1aee on main 2026-11-18: TUI: tag filter (was label) and g grouping by tag, first listed tag (txjkrm…
+check 5 (mizaru, branch txjkrm5 on 8c26ec51, uncommitted pending suite): hug upgrade --tags built to crab's rulings. Failing first: /Users/jhf/.jcode/scratch/txjkrm-preview/check5-ff.txt (exit 2, unknown flag). Tests TestUpgradeTagsPreviewThenApply + TestUpgradeTagsProposesAList pass; 13 mutants all killed (/Users/jhf/.jcode/scratch/txjkrm5-mut/mutants-round1.txt, mutants-round2.txt; overlay, no source edits). Seid copy (/Users/jhf/.jcode/scratch/txjkrm5-seid, proposal's 38 tags + design, 50 merges): lint before 1754 unlisted-tag; preview exit 5, 1451 tasks, 21 deferred, 196 design kept, 6 draft, 0 open disagreements, 1005 closed tasks merges-only; apply = one commit a29158c2b 'hug upgrade --tags: labels cleaned in 1451 tasks'; lint after: no findings with code unlisted-tag; second run: tags: nothing to do. Preview/apply output: /Users/jhf/.jcode/scratch/txjkrm-preview/seid-preview.txt, seid-apply.txt.
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
