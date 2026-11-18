@@ -1,0 +1,506 @@
+From 8b7f5ae54a7d98e8cd732b51a18fbe3223cd2bd9 Mon Sep 17 00:00:00 2001
+From: =?utf-8?q?J=C3=B8rgen=20H=2E=20Fjeld?= <jorgen@veridit.no>
+Date: Wed, 18 Nov 2026 17:17:54 +0100
+Subject: [PATCH] hooks: commit-msg calls hug's Model: <id>/<effort> gate (hug
+ jr55s8)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+.githooks/commit-msg now hands the message to hug's gate
+(<git-common-dir>/hooks/hug-commit-msg, written by hug task install
+commit-msg): exactly one trailer, Model: <model-id>/<effort> or
+Model: human, the effort checked against the model's levels in hug.toml
+[models] on hug/tasks. Without the gate installed it refuses, with
+fix: hug task install commit-msg.
+
+Removed: the Co-Authored-By check and .githooks/known-models.txt (the
+roster moves to hug.toml [models]: hug task models add ID LEVEL...), and
+SEID_ALLOW_NO_COAUTHOR (bypass: git commit --no-verify). Exemptions are
+unchanged: merges, cherry-picks, reverts, rebases, fixup!/squash!/amend!.
+
+compiler/test/infra/test_commit_msg_attribution_guard.sh checks the new
+hook: 17 checks, all passing here; on the old hook 7 fail (the
+Model: and gate checks) and the 10 exemption checks pass, as before.
+TOOLING.md and the two skills name the new trailer.
+
+Ruling: Jørgen 2026-11-17, one trailer line Model: <model-id>/<effort>.
+
+Model: claude-opus-5-5/high
+---
+ .claude/skills/ocaml-compiler-work/SKILL.md   |   2 +-
+ .claude/skills/seid-language/SKILL.md         |   2 +-
+ .githooks/commit-msg                          | 138 +++--------------
+ .githooks/known-models.txt                    |  76 ----------
+ TOOLING.md                                    |   5 +-
+ .../test_commit_msg_attribution_guard.sh      | 141 ++++--------------
+ 6 files changed, 51 insertions(+), 313 deletions(-)
+ delete mode 100644 .githooks/known-models.txt
+
+diff --git a/.claude/skills/ocaml-compiler-work/SKILL.md b/.claude/skills/ocaml-compiler-work/SKILL.md
+index 78cc3db..565c13a 100644
+--- a/.claude/skills/ocaml-compiler-work/SKILL.md
++++ b/.claude/skills/ocaml-compiler-work/SKILL.md
+@@ -94,7 +94,7 @@ order, the invariants, and a small worked example with its expected output.
+ - Cache ON. `--no-cache` only for a cross-binary A/B from one path.
+ - Before handing off, run a FULL-tree `dune build` in `compiler/`: the landing's
+   pair gate rebuilds everything, including `compiler/scratch` probes.
+-- Signed commits, commit at each green step, truthful `Co-Authored-By` trailer.
++- Signed commits, commit at each green step, truthful `Model: <model-id>/<effort>` trailer (`Model: human` for a person).
+ 
+ ## 6. Handoff
+ 
+diff --git a/.claude/skills/seid-language/SKILL.md b/.claude/skills/seid-language/SKILL.md
+index 0d645b1..f2d9f29 100644
+--- a/.claude/skills/seid-language/SKILL.md
++++ b/.claude/skills/seid-language/SKILL.md
+@@ -118,7 +118,7 @@ Treat any doc example you have not run as unverified.
+ - Every compile through `tools/gatelock -n <slot> --wait --`, at most one
+   compiler process of yours at a time.
+ - Private HOME and TMPDIR under your lane's `.jcode/lane/`. Cache ON.
+-- Signed commits, commit at each green step, truthful `Co-Authored-By` trailer.
++- Signed commits, commit at each green step, truthful `Model: <model-id>/<effort>` trailer (`Model: human` for a person).
+ 
+ ## 6. Handoff
+ 
+diff --git a/.githooks/commit-msg b/.githooks/commit-msg
+index 47b2da2..b7ff7bc 100755
+--- a/.githooks/commit-msg
++++ b/.githooks/commit-msg
+@@ -1,124 +1,22 @@
+-#!/bin/bash
+-# commit-msg — every commit must name the model that ACTUALLY wrote it.
++#!/bin/sh
++# commit-msg: every commit names the model that ACTUALLY made it and the
++# effort it ran at, in one trailer line:
+ #
+-# WHY (King, 2026-08-26): "They commit as me, and add the extra line I wish...
+-# but for the ACTUAL LLM running."
++#     Model: <model-id>/<effort>      (or Model: human, when the author wrote it)
+ #
+-# Every agent here commits as Jørgen H. Fjeld <jorgen@veridit.no> with the King's
+-# signing key. Author, committer and signature are IDENTICAL across The Hedgehog,
+-# the foreman and every lane, so git alone carries ZERO information about who did
+-# the work. Proven the hard way: a guard written to detect a rebase dropping
+-# "another author's" commits stayed SILENT on the real incident, because all three
+-# parties were the same git identity. The trailer is the only attribution channel
+-# this repo has, and it was used ZERO times in the 1500 commits before this hook.
++# WHY (King, 2026-08-26): every agent here commits as Jørgen H. Fjeld with the
++# King's signing key, so git alone cannot tell who did the work; the trailer is
++# the only attribution channel. Ruling 2026-11-17: one line, Model: id/effort,
++# because effort can change a model's behaviour entirely (hug jr55s8).
+ #
+-# THE COPY-PASTE PROBLEM (King, 2026-08-26): "the suggestion must then be generic,
+-# so the model must replace". A concrete example in an error message gets pasted
+-# verbatim, and then the log is confidently WRONG — worse than empty, because it
+-# looks like attribution. So every family template this hook prints is
+-# DELIBERATELY UNPASTABLE: any unreplaced <...> slot is refused.
++# The gate is hug's (hug task help install): it checks the model and its
++# effort against hug.toml [models] on the hug/tasks branch, and refuses each
++# mistake with a fix: line. Add a model with: hug task models add ID LEVEL...
++# This replaces the Co-Authored-By check and .githooks/known-models.txt.
+ #
+-# The roster of acceptable names lives in `.githooks/known-models.txt`, one regex
+-# per line. Add a model by appending a line; no hook edit required.
+-#
+-# A hook cannot verify a model tells the truth about itself. It CAN force a
+-# deliberate, specific, checkable claim. Honest self-identification is still
+-# required — and now a lie has to be a lie, not an oversight.
+-#
+-# Exempt: merges, cherry-picks, reverts, rebases, fixup!/squash!/amend!.
+-# Bypass: SEID_ALLOW_NO_COAUTHOR=1 (say why in the message).
+-
+-MSG_FILE="$1"
+-HOOK_DIR=$(dirname "$0")
+-ROOT=$(git -C "$HOOK_DIR/.." rev-parse --show-toplevel 2>/dev/null)
+-GIT_DIR=$(git -C "$ROOT" rev-parse --absolute-git-dir 2>/dev/null)
+-ROSTER="$ROOT/.githooks/known-models.txt"
+-
+-# --- exemptions -------------------------------------------------------------
+-[ "${SEID_ALLOW_NO_COAUTHOR:-0}" = "1" ] && exit 0
+-[ -f "$GIT_DIR/MERGE_HEAD" ] && exit 0
+-[ -f "$GIT_DIR/CHERRY_PICK_HEAD" ] && exit 0
+-[ -f "$GIT_DIR/REVERT_HEAD" ] && exit 0
+-[ -d "$GIT_DIR/rebase-merge" ] && exit 0
+-[ -d "$GIT_DIR/rebase-apply" ] && exit 0
+-
+-case "$(head -1 "$MSG_FILE")" in
+-  "Merge "*|"Revert "*|"fixup!"*|"squash!"*|"amend!"*) exit 0 ;;
+-esac
+-
+-# --- helpers ----------------------------------------------------------------
+-show_guidance() {
+-  printf 'Trailer-shape families (replace EVERY <...> slot before retrying):\n\n' >&2
+-  printf '    Co-Authored-By: <provider-and-model-family> <noreply@<vendor>.com>\n' >&2
+-  printf '    Co-Authored-By: <provider-model-family-and-version> <noreply@<vendor>.com>\n' >&2
+-  printf '    Co-Authored-By: <provider-model-series-and-route> <noreply@<vendor>.com>\n\n' >&2
+-  printf 'The accepted model families are regexes in .githooks/known-models.txt.\n' >&2
+-  printf 'That roster includes multiple families per provider; the hook does not\n' >&2
+-  printf 'hard-code one model as the answer. If your family is absent, append its\n' >&2
+-  printf 'regex in the SAME commit so the roster grows deliberately.\n\n' >&2
+-}
+-
+-# --- extract the trailer ----------------------------------------------------
+-TRAILER=$(grep -iE '^Co-Authored-By:' "$MSG_FILE" | head -1)
+-
+-if [ -z "$TRAILER" ]; then
+-  printf '\n\033[31mcommit-msg: REFUSED — missing Co-Authored-By trailer\033[0m\n\n' >&2
+-  printf 'Every agent here commits as the King, with the King'"'"'s signing key. Git\n' >&2
+-  printf 'cannot tell you apart. Name the model you ACTUALLY are.\n\n' >&2
+-  show_guidance
+-  printf 'If someone TOLD you which model to name: that is not attribution,\n' >&2
+-  printf 'it is dictation. Name what you are, or refuse and say who told you.\n\n' >&2
+-  printf 'Exempt: merges, cherry-picks, reverts, fixup!/squash!.\n' >&2
+-  printf 'Override: SEID_ALLOW_NO_COAUTHOR=1 (and say why in the message).\n\n' >&2
+-  exit 1
+-fi
+-
+-# Every shape printed above contains an angle-bracket slot. Catch a literal
+-# paste before parsing so the refusal explains the actual mistake.
+-if printf '%s' "$TRAILER" | grep -qiE '<[^>]*(provider|model|family|version|series|route|vendor|actual|your)[^>]*>|placeholder'; then
+-  printf '\n\033[31mcommit-msg: REFUSED — a trailer-shape slot was pasted, not replaced\033[0m\n\n' >&2
+-  printf '    got: %s\n\n' "$TRAILER" >&2
+-  printf 'Every <...> slot is an instruction, never an accepted value.\n\n' >&2
+-  show_guidance
+-  exit 1
+-fi
+-
+-# Require one exact trailer: a non-placeholder name, then one ordinary email
+-# address in angle brackets, with no suffix or second address.
+-if ! printf '%s\n' "$TRAILER" | grep -qiE '^Co-Authored-By:[[:space:]]+[^<>[:space:]][^<>]*[[:space:]]+<[^<>[:space:]@]+@[^<>[:space:]@]+>[[:space:]]*$'; then
+-  printf '\n\033[31mcommit-msg: REFUSED — malformed Co-Authored-By trailer\033[0m\n\n' >&2
+-  printf '    got: %s\n\n' "$TRAILER" >&2
+-  printf 'Supply one actual model name and one vendor email, with nothing after it.\n\n' >&2
+-  show_guidance
+-  exit 1
+-fi
+-
+-NAME=$(printf '%s' "$TRAILER" | sed -E 's/^[Cc][Oo]-[Aa]uthored-[Bb]y:[[:space:]]+//; s/[[:space:]]+<[^<>[:space:]@]+@[^<>[:space:]@]+>[[:space:]]*$//')
+-
+-# --- roster check -----------------------------------------------------------
+-if [ ! -f "$ROSTER" ]; then
+-  printf '\n\033[31mcommit-msg: REFUSED — roster missing: %s\033[0m\n\n' "$ROSTER" >&2
+-  printf 'The known-model list is part of the repo. Restore it before committing.\n\n' >&2
+-  exit 1
+-fi
+-
+-MATCHED=0
+-while IFS= read -r pattern; do
+-  case "$pattern" in ''|'#'*) continue ;; esac
+-  if printf '%s' "$NAME" | grep -qiE "$pattern"; then
+-    MATCHED=1
+-    break
+-  fi
+-done < "$ROSTER"
+-
+-if [ "$MATCHED" -eq 0 ]; then
+-  printf '\n\033[31mcommit-msg: REFUSED — "%s" is not a known model\033[0m\n\n' "$NAME" >&2
+-  printf 'This is not a real model name, or the roster does not know it yet.\n' >&2
+-  printf 'Generic words (AI, LLM, assistant, agent, bot) are refused on purpose:\n' >&2
+-  printf 'a vague name makes the log confidently misleading, which is worse than\n' >&2
+-  printf 'no attribution at all.\n\n' >&2
+-  show_guidance
+-  exit 1
+-fi
+-
+-exit 0
++# Exempt (in hug's gate): merges, cherry-picks, reverts, rebases,
++# fixup!/squash!/amend!, and the hug/tasks and muninn-notes branches.
++# Bypass: git commit --no-verify (say why in the message).
++h="$(git rev-parse --git-common-dir)/hooks/hug-commit-msg"
++[ -x "$h" ] || { echo "commit refused: hug's Model: gate is not installed" >&2; echo "fix: hug task install commit-msg" >&2; exit 1; }
++"$h" "$@" || exit 1
+diff --git a/.githooks/known-models.txt b/.githooks/known-models.txt
+deleted file mode 100644
+index 9abfb63..0000000
+--- a/.githooks/known-models.txt
++++ /dev/null
+@@ -1,76 +0,0 @@
+-# Known models — the roster of agents permitted to author commits here.
+-#
+-# WHY THIS FILE EXISTS (King, 2026-08-26):
+-#
+-# Every agent commits as Jørgen H. Fjeld <jorgen@veridit.no> with the King's
+-# signing key. Author, committer and signature are IDENTICAL for every agent, so
+-# git alone cannot say who did the work. The Co-Authored-By trailer is the only
+-# attribution channel this repo has, and it was used ZERO times in the 1500
+-# commits before enforcement.
+-#
+-# A hook cannot verify that a model tells the truth about itself. What it CAN do
+-# is refuse names that are not real models, so an agent must make a deliberate,
+-# specific claim rather than pasting whatever the error message showed it. The
+-# hook therefore prints only GENERIC family templates whose <...> slots are
+-# refused: the guidance cannot be copied, only completed.
+-#
+-# FORMAT: one regex per line, matched case-insensitively against the NAME part
+-# of the trailer (everything before the <email>). Blank lines and # comments are
+-# ignored. These are deliberately uncopyable shape families, not accepted
+-# answers; every angle-bracket slot must be replaced with runtime truth:
+-#
+-#     Co-Authored-By: <provider-model-family-and-version> <noreply@<vendor>.com>
+-#     Co-Authored-By: <provider-model-series-and-route> <noreply@<vendor>.com>
+-#
+-# TO ADD A MODEL: append a line. No hook edit, no code change. Keep it specific
+-# enough that a placeholder cannot slip through — `^ai$` would defeat the point.
+-
+-# --- Anthropic --------------------------------------------------------------
+-^claude[[:space:]]+opus([[:space:]].*)?$
+-^claude[[:space:]]+sonnet([[:space:]].*)?$
+-^claude[[:space:]]+haiku([[:space:]].*)?$
+-^claude[[:space:]]+fable([[:space:]].*)?$
+-^claude([[:space:]]+[0-9].*)?$
+-
+-# --- OpenAI -----------------------------------------------------------------
+-^gpt[-[:space:]]*[0-9.]+[[:space:]]+terra([[:space:]].*)?$
+-^gpt[-[:space:]]*[0-9.]+[[:space:]]+luna([[:space:]].*)?$
+-^gpt[-[:space:]]*[0-9.]+[[:space:]]+sol([[:space:]].*)?$
+-^gpt[[:space:]]+terra([[:space:]].*)?$
+-^gpt[[:space:]]+luna([[:space:]].*)?$
+-^gpt[[:space:]]+sol([[:space:]].*)?$
+-^gpt[-[:space:]]*[0-9.]+([[:space:]].*)?$
+-^o[0-9]+([[:space:]].*)?$
+-
+-# --- DeepSeek ---------------------------------------------------------------
+-^deepseek([[:space:]]+v[0-9.]+)?[[:space:]]+pro([[:space:]].*)?$
+-^deepseek([[:space:]]+v[0-9.]+)?[[:space:]]+flash([[:space:]].*)?$
+-^deepseek([[:space:]]+v[0-9.]+)?([[:space:]].*)?$
+-
+-# --- Moonshot ---------------------------------------------------------------
+-^kimi[[:space:]]+k[0-9]+([[:space:]].*)?$
+-# Dotted model versions, for example Kimi K3.1.
+-^kimi[[:space:]]+k[0-9]+([.][0-9]+)*([[:space:]].*)?$
+-
+-# --- Google -----------------------------------------------------------------
+-^gemini[[:space:]]*[0-9.]*([[:space:]].*)?$
+-
+-# --- Meta -------------------------------------------------------------------
+-^llama[[:space:]]*[0-9.]*([[:space:]].*)?$
+-
+-# --- Mistral ----------------------------------------------------------------
+-^mistral([[:space:]].*)?$
+-^codestral([[:space:]].*)?$
+-
+-# --- xAI --------------------------------------------------------------------
+-^grok[[:space:]]*[0-9.]*([[:space:]].*)?$
+-
+-# --- Qwen -------------------------------------------------------------------
+-^qwen[[:space:]]*[0-9.]*([[:space:]].*)?$
+-
+-# --- Jcode ------------------------------------------------------------------
+-# The Jcode agent harness (github.com/1jehuang/jcode). This lane runs as the
+-# Jcode agent; the roster governs AGENT attribution, and the underlying model
+-# route is not disclosed to the agent itself, so "Jcode" is the most specific
+-# true name it can give. Added deliberately with the commit it authors.
+-^jcode([[:space:]].*)?$
+diff --git a/TOOLING.md b/TOOLING.md
+index c9dbc03..bda2a41 100644
+--- a/TOOLING.md
++++ b/TOOLING.md
+@@ -1149,8 +1149,9 @@ window resets. A dead lane may leave a half-done `git merge` in its worktree:
+   through the backlog MCP dirties the main tree, not its worktree. Expect a
+   modified ticket file after every spawn; commit it or let the merge take
+   theirs.
+-- **Commit trailer:** `Co-Authored-By: claude opus <noreply@anthropic.com>`
+-  (name the model that did the work).
++- **Commit trailer:** `Model: <model-id>/<effort>`, the model that did the work
++  and the effort it actually ran at (`Model: human` for a person). hug's gate
++  checks it (`.githooks/commit-msg`; one-time per clone: `hug task install commit-msg`).
+ - **King's report preferences (2026-09-25):** concrete syntax in every
+   report, every claim run on both targets with a fresh store; when the King
+   is deciding, present options with consequences; record his rulings verbatim
+diff --git a/compiler/test/infra/test_commit_msg_attribution_guard.sh b/compiler/test/infra/test_commit_msg_attribution_guard.sh
+index 86fcaa3..7080f0b 100755
+--- a/compiler/test/infra/test_commit_msg_attribution_guard.sh
++++ b/compiler/test/infra/test_commit_msg_attribution_guard.sh
+@@ -1,25 +1,24 @@
+ #!/bin/bash
+-# Regression checks for .githooks/commit-msg. Runs in an isolated git repo so
+-# exemption sentinel files never touch the caller's real .git directory.
++# Regression checks for .githooks/commit-msg, the call into hug's Model: gate
++# (hug jr55s8). Runs in an isolated git repo so exemption sentinel files never
++# touch the caller's real .git directory. Needs hug on PATH; without it the
++# checks are skipped with a message (the tracked hook itself refuses then).
+ 
+ set -u
+ 
+ SOURCE_ROOT=$(git -C "$(dirname "$0")/../../.." rev-parse --show-toplevel)
+ SOURCE_HOOK="$SOURCE_ROOT/.githooks/commit-msg"
+-SOURCE_ROSTER="$SOURCE_ROOT/.githooks/known-models.txt"
+ TMP_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/seid-commit-msg-test.XXXXXX")
+ trap 'rm -rf "$TMP_ROOT"' EXIT INT TERM HUP
+ 
+ REPO="$TMP_ROOT/repo"
+ MSG="$TMP_ROOT/message"
+ OUT="$TMP_ROOT/output"
+-PATTERNS="$TMP_ROOT/patterns"
+-SAMPLES="$TMP_ROOT/samples"
+ 
+ mkdir -p "$REPO/.githooks"
+-git -C "$REPO" init -q
++git -C "$REPO" init -q -b master
++git -C "$REPO" config core.hooksPath .githooks
+ cp "$SOURCE_HOOK" "$REPO/.githooks/commit-msg"
+-cp "$SOURCE_ROSTER" "$REPO/.githooks/known-models.txt"
+ chmod +x "$REPO/.githooks/commit-msg"
+ HOOK="$REPO/.githooks/commit-msg"
+ GIT_DIR=$(git -C "$REPO" rev-parse --absolute-git-dir)
+@@ -40,120 +39,43 @@ not_ok() {
+ 
+ invoke() {
+   : > "$OUT"
+-  "$HOOK" "$MSG" >"$OUT" 2>&1
++  (cd "$REPO" && "$HOOK" "$MSG") >"$OUT" 2>&1
+   return $?
+ }
+ 
+ accept() {
+-  label=$1
+-  body=$2
+-  printf '%b\n' "$body" > "$MSG"
+-  if invoke; then ok "$label"; else not_ok "$label (expected acceptance)"; fi
++  printf '%b\n' "$2" > "$MSG"
++  if invoke; then ok "$1"; else not_ok "$1 (expected acceptance)"; fi
+ }
+ 
+ refuse() {
+-  label=$1
+-  body=$2
+-  expected=$3
+-  printf '%b\n' "$body" > "$MSG"
++  printf '%b\n' "$2" > "$MSG"
+   if invoke; then
+-    not_ok "$label (expected refusal)"
+-  elif grep -q "$expected" "$OUT"; then
+-    ok "$label"
++    not_ok "$1 (expected refusal)"
++  elif grep -qF -- "$3" "$OUT"; then
++    ok "$1"
+   else
+-    not_ok "$label (wrong refusal; wanted: $expected)"
++    not_ok "$1 (refused without '$3')"
+   fi
+ }
+ 
+-# One sample per non-comment roster regex, in the same order. Pairwise matching
+-# below means a new roster family must add an explicit regression sample.
+-grep -vE '^[[:space:]]*(#|$)' "$SOURCE_ROSTER" > "$PATTERNS"
+-cat > "$SAMPLES" <<'EOF'
+-Claude Opus 5|noreply@anthropic.com
+-Claude Sonnet 5|noreply@anthropic.com
+-Claude Haiku 4.5|noreply@anthropic.com
+-Claude Fable 5|noreply@anthropic.com
+-Claude 5|noreply@anthropic.com
+-GPT-5.6 Terra|noreply@openai.com
+-GPT-5.6 Luna|noreply@openai.com
+-GPT-5.6 Sol|noreply@openai.com
+-GPT Terra|noreply@openai.com
+-GPT Luna|noreply@openai.com
+-GPT Sol|noreply@openai.com
+-GPT-5.6|noreply@openai.com
+-o3|noreply@openai.com
+-DeepSeek v4 Pro|noreply@deepseek.com
+-DeepSeek v4 Flash|noreply@deepseek.com
+-DeepSeek v4|noreply@deepseek.com
+-Kimi K3|noreply@moonshot.cn
+-Gemini 2.5 Pro|noreply@google.com
+-Llama 4 Scout|noreply@meta.com
+-Mistral Large 2|noreply@mistral.ai
+-Codestral 25.01|noreply@mistral.ai
+-Grok 4|noreply@x.ai
+-Qwen 3 Coder|noreply@alibaba.com
+-EOF
+-
+-pattern_count=$(wc -l < "$PATTERNS" | tr -d ' ')
+-sample_count=$(wc -l < "$SAMPLES" | tr -d ' ')
+-if [ "$pattern_count" -eq "$sample_count" ]; then
+-  ok "roster has one regression sample per regex ($pattern_count)"
+-else
+-  not_ok "roster/sample count differs: $pattern_count regexes, $sample_count samples"
+-fi
++# Without hug's gate installed the tracked hook refuses, naming the fix.
++refuse "gate not installed" "test: x\n\nModel: claude-opus-5-5/high" "fix: hug task install commit-msg"
+ 
+-i=0
+-while IFS='|' read -r model email; do
+-  i=$((i + 1))
+-  pattern=$(sed -n "${i}p" "$PATTERNS")
+-  if printf '%s\n' "$model" | grep -qiE "$pattern"; then
+-    ok "roster regex $i matches its sample"
+-  else
+-    printf 'pattern: %s\nsample:  %s\n' "$pattern" "$model" > "$OUT"
+-    not_ok "roster regex $i does not match its sample"
+-  fi
+-  accept "hook accepts roster family $i" "test: accepted family $i\n\nCo-Authored-By: $model <$email>"
+-done < "$SAMPLES"
+-
+-refuse "missing trailer" "test: no attribution" "missing Co-Authored-By trailer"
+-MISSING_OUTPUT=$(cat "$OUT")
+-
+-refuse "generic identity" "test: generic\n\nCo-Authored-By: AI <ai@example.com>" "not a known model"
+-refuse "unrostered identity" "test: unknown\n\nCo-Authored-By: Fictional Model 9 <noreply@example.com>" "not a known model"
+-refuse "name slot copied" "test: slot\n\nCo-Authored-By: <provider-and-model-family> <noreply@example.com>" "slot was pasted"
+-refuse "full shape copied" "test: shape\n\nCo-Authored-By: <provider-model-family-and-version> <noreply@<vendor>.com>" "slot was pasted"
+-refuse "missing email" "test: malformed\n\nCo-Authored-By: GPT-5.6 Sol" "malformed Co-Authored-By trailer"
+-refuse "nested email slot" "test: malformed\n\nCo-Authored-By: GPT-5.6 Sol <noreply@<vendor>.com>" "slot was pasted"
+-refuse "trailing garbage" "test: malformed\n\nCo-Authored-By: GPT-5.6 Sol <noreply@openai.com> copied" "malformed Co-Authored-By trailer"
+-refuse "second email" "test: malformed\n\nCo-Authored-By: GPT-5.6 Sol <noreply@openai.com> <other@example.com>" "malformed Co-Authored-By trailer"
+-
+-# Every complete trailer printed by the refusal must itself be refused. Also
+-# ensure none of the concrete accepted samples leaks into the guidance text.
+-printf '%s\n' "$MISSING_OUTPUT" | grep 'Co-Authored-By:' | while IFS= read -r shown; do
+-  shown=$(printf '%s' "$shown" | sed -E 's/^[[:space:]]+//')
+-  printf 'test: copied guidance\n\n%s\n' "$shown" > "$MSG"
+-  if "$HOOK" "$MSG" >/dev/null 2>&1; then
+-    printf '%s\n' "$shown" >> "$TMP_ROOT/copyable-guidance"
+-  fi
+-done
+-if [ -f "$TMP_ROOT/copyable-guidance" ]; then
+-  cp "$TMP_ROOT/copyable-guidance" "$OUT"
+-  not_ok "refusal output contains a copyable accepted trailer"
+-else
+-  ok "every displayed trailer shape is refused verbatim"
++if ! command -v hug >/dev/null 2>&1; then
++  printf '1..%d\n# hug not on PATH: gate checks skipped (brew install veridit/tap/hug)\n' "$PASS"
++  [ "$FAIL" -eq 0 ] || exit 1
++  exit 0
+ fi
++(cd "$REPO" && hug task install commit-msg) >/dev/null 2>&1
++[ -x "$GIT_DIR/hooks/hug-commit-msg" ] || { not_ok "hug task install commit-msg wrote no hug-commit-msg"; exit 1; }
+ 
+-: > "$OUT"
+-while IFS='|' read -r model email; do
+-  if printf '%s\n' "$MISSING_OUTPUT" | grep -qiF "$model"; then
+-    printf '%s\n' "$model" >> "$OUT"
+-  fi
+-done < "$SAMPLES"
+-if [ -s "$OUT" ]; then
+-  not_ok "refusal output leaks concrete accepted model names"
+-else
+-  ok "refusal output contains families, not concrete accepted answers"
+-fi
++accept "model and effort" "test: x\n\nModel: claude-opus-5-5/high"
++accept "a person" "test: x\n\nModel: human"
++refuse "missing trailer" "test: no attribution" "fix:"
++refuse "missing effort" "test: x\n\nModel: claude-opus-5-5" "fix:"
++refuse "unknown effort word" "test: x\n\nModel: claude-opus-5-5/hgih" "fix:"
++refuse "two Model lines" "test: x\n\nModel: claude-opus-5-5/high\nModel: human" "fix:"
+ 
+ for subject in "Merge branch 'lane-x'" "Revert \"test\"" "fixup! test" "squash! test" "amend! test"; do
+   accept "subject exemption: $subject" "$subject"
+@@ -171,13 +93,6 @@ for sentinel in rebase-merge rebase-apply; do
+   rmdir "$GIT_DIR/$sentinel"
+ done
+ 
+-printf 'test: explicit bypass\n' > "$MSG"
+-if SEID_ALLOW_NO_COAUTHOR=1 invoke; then
+-  ok "explicit bypass"
+-else
+-  not_ok "explicit bypass (expected acceptance)"
+-fi
+-
+ printf '1..%d\n' $((PASS + FAIL))
+ if [ "$FAIL" -ne 0 ]; then
+   printf '%d test(s) failed\n' "$FAIL" >&2
+-- 
+2.54.0 (Apple Git-157)
+
