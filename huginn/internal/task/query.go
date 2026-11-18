@@ -135,7 +135,9 @@ func BareRef(ref string) string {
 	if !strings.HasSuffix(strings.ToLower(name), ".md") {
 		name += ".md"
 	}
-	if i, ok := IDOf(name); ok && strings.ContainsAny(ref, "./") {
+	// IDOf needs a dot (rank.id.slug) or a slash (C/ID), so a bare id or
+	// slug never gets here.
+	if i, ok := IDOf(name); ok {
 		return i
 	}
 	return ref

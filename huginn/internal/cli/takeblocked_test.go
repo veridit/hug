@@ -83,7 +83,7 @@ func TestTakeEmptyAssigneeIsNotTaken(t *testing.T) {
 
 func taskPath(t *testing.T, a *App, id string) string {
 	t.Helper()
-	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+id+"*.md"))
+	m, _ := globID(filepath.Join(a.Cwd, TaskDir), id)
 	if len(m) != 1 {
 		t.Fatalf("task file for %s: %v", id, m)
 	}

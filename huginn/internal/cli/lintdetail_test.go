@@ -16,7 +16,9 @@ func TestLintOverviewDetailAndSameBlock(t *testing.T) {
 	id := execute(t, a, "new", "Two problems", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	useEditor(t, a, "## Principle\nQ\n", "")
 	execute(t, a, "edit", id)
-	execute(t, a, "set", id, "--title", strings.Repeat("Long title ", 9))
+	// The title's words are not a finding code: a layout-3 slug is the
+	// title's (w40cmk), and ls shows it.
+	execute(t, a, "set", id, "--title", strings.Repeat("Wide title ", 9))
 
 	_, over := runText(a, "lint")
 	wantOver := "2 findings (0 broken) on 1 task, in 2 codes:\n"

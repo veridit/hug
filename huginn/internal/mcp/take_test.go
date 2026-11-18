@@ -80,7 +80,7 @@ func TestTakeRecordsAgentAndModel(t *testing.T) {
 	if tk := m["task"].(map[string]any); tk["model"] != "claude-opus-5-5" {
 		t.Fatal(m)
 	}
-	files, _ := filepath.Glob(filepath.Join(dir, cli.TaskDir, "*"+id+"*.md"))
+	files, _ := globID(filepath.Join(dir, cli.TaskDir), id)
 	b, _ := os.ReadFile(files[0])
 	if !strings.Contains(string(b), `assignee: ["poodle"]`) || !strings.Contains(string(b), `model: "claude-opus-5-5"`) || strings.Contains(string(b), "Git Person") {
 		t.Fatalf("task file:\n%s", b)

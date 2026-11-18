@@ -28,7 +28,7 @@ func questionOf(t *testing.T, s *Store, id string) *Finding {
 		docs = append(docs, Parse(tk.Path, b))
 	}
 	for _, f := range TopQuestions(Lint(docs)) {
-		if _, fid, _, _ := ParseName(f.Path); fid == id && QuestionCode(FindingCode(f.Problem)) {
+		if fid, _ := IDOf(f.Path); fid == id && QuestionCode(FindingCode(f.Problem)) {
 			return &f
 		}
 	}

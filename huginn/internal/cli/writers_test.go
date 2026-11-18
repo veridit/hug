@@ -247,9 +247,14 @@ func TestTUIWriteAndCLINoteAtOnce(t *testing.T) {
 // boardFile is the task file of id, relative to the board.
 func boardFile(t *testing.T, a *App, id string) string {
 	t.Helper()
-	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+id+"*.md"))
+	m, _ := globID(filepath.Join(a.Cwd, TaskDir), id)
 	if len(m) != 1 {
 		t.Fatalf("task file for %s: %v", id, m)
 	}
-	return filepath.Base(m[0])
+	// Relative to the board, slash separated: C/ID.md keeps its shard.
+	rel, e := filepath.Rel(filepath.Join(a.Cwd, TaskDir), m[0])
+	if e != nil {
+		t.Fatal(e)
+	}
+	return filepath.ToSlash(rel)
 }

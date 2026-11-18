@@ -16,7 +16,7 @@ func TestUpgradeMigratesStateKey(t *testing.T) {
 	a.Env["HOME"] = t.TempDir()
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Old file", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
-	m, _ := filepath.Glob(filepath.Join(a.Cwd, TaskDir, "*"+id+"*.md"))
+	m, _ := globID(filepath.Join(a.Cwd, TaskDir), id)
 	b, _ := os.ReadFile(m[0])
 	old := strings.Replace(string(b), "\nstate: todo\n", "\nstatus: todo\n", 1)
 	if old == string(b) {

@@ -95,7 +95,7 @@ func TestRequestRoutesThroughNext(t *testing.T) {
 		t.Fatalf("setup with a coordinator: %+v", st)
 	}
 	toml, _ := os.ReadFile(filepath.Join(a.Cwd, TaskDir, "hug.toml"))
-	if !strings.Contains(string(toml), "[board]\ncoordinator = \"crab\"\n") || !strings.HasPrefix(string(toml), "layout = 2\n") {
+	if !strings.Contains(string(toml), "[board]\ncoordinator = \"crab\"\n") || !strings.HasPrefix(string(toml), layoutLine) {
 		t.Fatalf("hug.toml:\n%s", toml)
 	}
 	if got := next("wyvern")["task"].(Reply)["id"]; got != first {

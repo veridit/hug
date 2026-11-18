@@ -69,7 +69,7 @@ func TestAskOverMCP(t *testing.T) {
 	}
 	file := func() string {
 		t.Helper()
-		m, _ := filepath.Glob(filepath.Join(dir, cli.TaskDir, "*"+id+"*.md"))
+		m, _ := globID(filepath.Join(dir, cli.TaskDir), id)
 		if len(m) != 1 {
 			t.Fatalf("task file of %s: %v", id, m)
 		}
