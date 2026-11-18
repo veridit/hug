@@ -126,7 +126,17 @@ func distance(a, b string) int {
 func BareRef(ref string) string {
 	ref = strings.TrimSpace(ref)
 	if len(ref) > 5 && strings.EqualFold(ref[:5], "task:") {
-		return ref[5:]
+		ref = ref[5:]
+	}
+	// A task's file name, in either layout, is a ref to it (w40cmk check
+	// 4): an old link to 00i.6ephqk.task-state-stage-hard.md, or to
+	// later/6ephqk.slug, finds 6ephqk after the move to 6/6ephqk.md.
+	name := ref
+	if !strings.HasSuffix(strings.ToLower(name), ".md") {
+		name += ".md"
+	}
+	if i, ok := IDOf(name); ok && strings.ContainsAny(ref, "./") {
+		return i
 	}
 	return ref
 }

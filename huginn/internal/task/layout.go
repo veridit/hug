@@ -33,6 +33,17 @@ func IDPath(p string) (string, bool) {
 	return n, true
 }
 
+// IDOf is the id a task path names, in either layout: C/ID.md, or
+// [group/][rank.]id.slug.md. ok is false for a path that names no task.
+func IDOf(p string) (string, bool) {
+	p = path.Clean(strings.ReplaceAll(p, "\\", "/"))
+	if i, ok := IDPath(p); ok {
+		return i, true
+	}
+	_, i, _, e := ParseName(p)
+	return i, e == nil && i != ""
+}
+
 // OldName says whether p is named the layout-2 way ([group/]rank.id.slug.md
 // or [group/]id.slug.md), which hug upgrade moves to PathFor.
 func OldName(p string) bool {

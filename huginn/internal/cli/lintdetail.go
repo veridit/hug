@@ -52,7 +52,7 @@ func (s *session) boardFindings(ctx context.Context, cwd, jcodeHome string) ([]t
 		asked := map[string]bool{}
 		for _, f := range fs {
 			if task.QuestionCode(task.FindingCode(f.Problem)) {
-				if _, id, _, err := task.ParseName(f.Path); err == nil {
+				if id, ok := task.IDOf(f.Path); ok {
 					asked[id] = true
 				}
 			}

@@ -30,8 +30,8 @@ func ByTask(fs []Finding) []TaskFindings {
 	at := map[string]int{}
 	for _, f := range fs {
 		key := f.Path
-		_, id, _, err := ParseName(f.Path)
-		if err != nil || id == "" {
+		id, ok := IDOf(f.Path)
+		if !ok {
 			key = ""
 		}
 		i, ok := at[key]

@@ -115,7 +115,9 @@ func ForbidCite(root string) ([]string, error) {
 // a way an older hug misreads, and have hug upgrade move the board to it.
 const (
 	BaseLayout = 1
-	Layout     = 2
+	// Layout 3 (w40cmk): every task at C/ID.md, rank: and group: in the
+	// front matter.
+	Layout = 3
 )
 
 // BoardLayout reads the board's layout from hug.toml at root.

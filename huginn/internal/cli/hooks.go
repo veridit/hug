@@ -377,23 +377,57 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 			}
 			tasks = append(tasks, would(strings.TrimSuffix(line, ";")))
 		}
+		// Layout 3 (w40cmk): every task to C/ID.md, its rank and group in
+		// its front matter, its files folder to C/ID/, in one commit.
+		from, _, _ := a.newerBoard(s.r.Dir)
+		plan, e := s.s.PlanLayout3()
+		if e != nil {
+			return nil, e
+		}
+		if len(plan.Moves) > 0 {
+			if !dry {
+				paths, e := s.s.ApplyLayout3(plan)
+				// The layout goes in the same commit: no commit has C/ID.md
+				// files on a board that says layout 2 (check 1: one commit).
+				if e == nil {
+					e = writeLayout(s.r.Dir, task.Layout)
+					paths = append(paths, task.ConfigName)
+				}
+				if e == nil {
+					e = s.r.Commit(paths, fmt.Sprintf("hug upgrade: %d tasks to C/ID.md, rank: and group: in the file (layout %d)", len(plan.Moves), task.Layout))
+				}
+				if e != nil {
+					return nil, e
+				}
+			}
+			line := fmt.Sprintf("%d tasks move to C/ID.md (the path never changes again), rank: and group: set in each file", len(plan.Moves))
+			if plan.Files > 0 {
+				line += fmt.Sprintf(", %d files folders to C/ID/", plan.Files)
+			}
+			if len(plan.Groups) > 0 {
+				line += fmt.Sprintf(", group folders %s become group: values", strings.Join(plan.Groups, ", "))
+			}
+			tasks = append(tasks, would(line))
+			var b strings.Builder
+			for _, m := range plan.Moves {
+				fmt.Fprintf(&b, "%s: %s -> %s (rank %q, group %q)\n", m.ID, m.From, m.To, m.Rank, m.Group)
+			}
+			upgradeDiff += b.String()
+		}
 		// Last, once the task files are moved: the board says its layout,
 		// so an older hug stops before writing it (dx9vw2).
 		if board, known, _ := a.newerBoard(s.r.Dir); board < known {
 			if !dry {
-				path := filepath.Join(s.r.Dir, task.ConfigName)
-				b, e := os.ReadFile(path)
-				if e != nil && !os.IsNotExist(e) {
+				if e := writeLayout(s.r.Dir, known); e != nil {
 					return nil, e
 				}
-				if e = os.WriteFile(path, []byte(task.WithLayout(string(b), known)), 0o644); e != nil {
-					return nil, e
-				}
-				if e = s.r.Commit([]string{task.ConfigName}, fmt.Sprintf("hug upgrade: board layout %d -> %d", board, known)); e != nil {
+				if e := s.r.Commit([]string{task.ConfigName}, fmt.Sprintf("hug upgrade: board layout %d -> %d", board, known)); e != nil {
 					return nil, e
 				}
 			}
 			tasks = append(tasks, would(fmt.Sprintf("board layout %d -> %d in %s (an older hug then refuses to write it)", board, known, task.ConfigName)))
+		} else if len(plan.Moves) > 0 && !dry {
+			tasks = append(tasks, fmt.Sprintf("board layout %d -> %d in %s, in the same commit (an older hug then refuses to write it)", from, known, task.ConfigName))
 		}
 		part("tasks", tasks)
 	} else {
@@ -460,4 +494,14 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		reply["diff"] = upgradeDiff
 	}
 	return reply, nil
+}
+
+// writeLayout sets layout = n in the board's hug.toml (dx9vw2).
+func writeLayout(dir string, n int) error {
+	path := filepath.Join(dir, task.ConfigName)
+	b, e := os.ReadFile(path)
+	if e != nil && !os.IsNotExist(e) {
+		return e
+	}
+	return os.WriteFile(path, []byte(task.WithLayout(string(b), n)), 0o644)
 }
