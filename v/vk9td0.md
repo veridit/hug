@@ -71,3 +71,4 @@ shipped in v0.7.65 (5a8b14d)
 - 2026-11-18T20:32 answered asked (check 4), by jhf, for crab (doing/asked -> doing/active):
   > The dream schedule from your hook.log: each day's quiet stretch starts Mon 02:00 (3 h), Tue 06:00 (2 h), Wed 05:00, Thu 05:00, Fri 03:00 (1 h each), Sat 01:00 (5 h), Sun 01:00 (6 h). Dream runs at the start of each day's stretch. Does that match your week, and is daily right (rather than only Sunday's longest)?
   It doesn't matter because it's going to be adaptive. So, yes, we can use this for now, but let's be adaptive. Meaning, you don't hard code a schedule. So, I'm not going to prove this one, I'm going to say go for the adaptive. So, you do this heuristics and be adaptive
+- 2026-11-18T20:32 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
