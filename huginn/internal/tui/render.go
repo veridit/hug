@@ -230,6 +230,10 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	head := pointer + " " + m.progress(t) + m.marker(t.Path) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
 	pw := m.progressWidth()
 	row := head
+	if c.tags > 0 {
+		// Tags right after the id, dim, cut to the cell (txjkrm check 6).
+		row += m.styles.dim.Render(fit(m.tagText(t), c.tags)) + " "
+	}
 	// The text: the stage's reason in place of the title, or the title
 	// (6ephqk check 5). A task with files: ⎘ and the count before it
 	// (zgr01t).
@@ -291,7 +295,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 		from := 3 + pw + idCell
 		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, from, width)))
 		if c.status && !compact {
-			at := from + on(c.kind, kindCell) + on(c.priority, priorityCell)
+			at := from + on(c.tags > 0, c.tags+1) + on(c.kind, kindCell) + on(c.priority, priorityCell)
 			row = ansi.Cut(row, 0, at) + styled(m.styles.status, t.State, stageCell-1) + " " + ansi.Cut(row, at+stageCell, width)
 		}
 	}
@@ -351,27 +355,30 @@ func (m model) columns(width int, compact bool) string {
 // column the rows are ordered by carries ▲ or ▼ (bejd89).
 func (m model) columnsOwner(width int, compact bool, c rowCols) string {
 	s := "  " + m.headerCell(0, "✓", m.progressWidth()) + " " + m.headerCell(1, "ID", idCell-1) + " "
+	if c.tags > 0 {
+		s += m.headerCell(2, "TAGS", c.tags) + " "
+	}
 	if compact {
 		if c.kind {
-			s += m.headerCell(2, "T", 1) + " "
+			s += m.headerCell(3, "T", 1) + " "
 		}
 		if c.priority {
-			s += m.headerCell(3, "P", 1) + " "
+			s += m.headerCell(4, "P", 1) + " "
 		}
 	} else {
 		if c.kind {
-			s += m.headerCell(2, "TYPE", kindCell-1) + " "
+			s += m.headerCell(3, "TYPE", kindCell-1) + " "
 		}
 		if c.priority {
-			s += m.headerCell(3, "PRIORITY", priorityCell-1) + " "
+			s += m.headerCell(4, "PRIORITY", priorityCell-1) + " "
 		}
 		if c.status {
-			s += m.headerCell(4, "STAGE", stageCell-1) + " "
+			s += m.headerCell(5, "STAGE", stageCell-1) + " "
 		}
 	}
-	s += m.headerCell(5, "TITLE", max(0, c.title))
+	s += m.headerCell(6, "TITLE", max(0, c.title))
 	if c.owner > 0 {
-		s += strings.Repeat(" ", ownerGap) + m.headerCell(6, "OWNER", c.owner)
+		s += strings.Repeat(" ", ownerGap) + m.headerCell(7, "OWNER", c.owner)
 	}
 	return fit(s, width)
 }

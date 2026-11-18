@@ -3,38 +3,38 @@ view: overview  list  board  !lint                                        │ to
 filter: none · sort: rank
   ASKED · for you  [0] · None
 > IN PROGRESS · assigned to  [14] · all active
-> ◑ 1/2  000002   bug     critical compiler Bug task 02: make the terminal workflow observable                  alice · feat/terminal-000002
-  ◑ 1/2  000006   feature high     runtime Feature task 06: make the terminal workflow observable               bob
-  ◑ 1/2  000010   docs    high     compiler Docs task 10: make the terminal workflow observable                 bob
-  ◑ 1/2  000014   spike   medium   runtime Spike task 14: make the terminal workflow observable                 carol · feat/terminal-000014
-  ◑ 1/2  000018   chore   low      docs Chore task 18: make the terminal workflow observable                    alice
-  ◑ 1/2 ·000022   bug     critical runtime Bug task 22: make the terminal workflow observable with a delibera…  bob
-  ◑ 1/2  000030   docs    high     compiler Docs task 30: make the terminal workflow observable                 carol
-  ◑ 1/2  000034   spike   medium   docs Spike task 34: make the terminal workflow observable                    alice
-  ◑ 1/2  000038   chore   low      compiler Chore task 38: make the terminal workflow observable                bob · feat/terminal-000038
-  ◑ 1/2  000042   bug     critical runtime Bug task 42: make the terminal workflow observable                   carol
-  ◑ 1/2  000046   feature high     compiler Feature task 46: make the terminal workflow observable              alice
-  ◑ 1/2 ·000050   docs    high     runtime Docs task 50: make the terminal workflow observable with a deliber…  alice · feat/terminal-000050
-  ◑ 1/2  000054   spike   medium   docs Spike task 54: make the terminal workflow observable                    bob
-  ◑ 1/2  000058   chore   low      runtime Chore task 58: make the terminal workflow observable                 carol
+> ◑ 1/2  000002   terminal compiler bug     critical compiler Bug task 02: make the terminal workflow observa…  alice · feat/terminal-000002
+  ◑ 1/2  000006   terminal runtime  feature high     runtime Feature task 06: make the terminal workflow obse…  bob
+  ◑ 1/2  000010   terminal compiler docs    high     compiler Docs task 10: make the terminal workflow observ…  bob
+  ◑ 1/2  000014   terminal runtime  spike   medium   runtime Spike task 14: make the terminal workflow observ…  carol · feat/terminal-000014
+  ◑ 1/2  000018   terminal docs     chore   low      docs Chore task 18: make the terminal workflow observable  alice
+  ◑ 1/2 ·000022   terminal runtime  bug     critical runtime Bug task 22: make the terminal workflow observab…  bob
+  ◑ 1/2  000030   terminal compiler docs    high     compiler Docs task 30: make the terminal workflow observ…  carol
+  ◑ 1/2  000034   terminal docs     spike   medium   docs Spike task 34: make the terminal workflow observable  alice
+  ◑ 1/2  000038   terminal compiler chore   low      compiler Chore task 38: make the terminal workflow obser…  bob · feat/terminal-000038
+  ◑ 1/2  000042   terminal runtime  bug     critical runtime Bug task 42: make the terminal workflow observab…  carol
+  ◑ 1/2  000046   terminal compiler feature high     compiler Feature task 46: make the terminal workflow obs…  alice
+  ◑ 1/2 ·000050   terminal runtime  docs    high     runtime Docs task 50: make the terminal workflow observa…  alice · feat/terminal-000050
+  ◑ 1/2  000054   terminal docs     spike   medium   docs Spike task 54: make the terminal workflow observable  bob
+  ◑ 1/2  000058   terminal runtime  chore   low      runtime Chore task 58: make the terminal workflow observ…  carol
 
   WAITING  [1]
-  ◑ 1/2 !000026   feature high     depends   docs Feature task 26: make the terminal workflow observable        carol · feat/terminal-000026
+  ◑ 1/2 !000026   terminal docs     feature high     depends   docs Feature task 26: make the terminal workfl…  carol · feat/terminal-000026
 
   NEXT UP · rank order  [15] · 1–3 shown
-  ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long ti…
-  ○ 2    000005   docs    critical depends   runtime Docs task 05: make the terminal workflow observable
-↓ ○ 2    000009   spike   high     ready     docs Spike task 09: make the terminal workflow observable
+  ○ 2   ·000001   terminal compiler feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a de…
+  ○ 2    000005   terminal runtime  docs    critical depends   runtime Docs task 05: make the terminal workflow observable
+↓ ○ 2    000009   terminal docs     spike   high     ready     docs Spike task 09: make the terminal workflow observable
 
   RECENTLY DONE · last closed  [30] · 1–3 shown
-         000003   feature medium   done      compiler Render compiler-lang task detail without storage markers
-         000004   spike   critical dropped   runtime Spike task 04: make the terminal workflow observable
-↓ ● 2    000007   bug     high     done      docs Bug task 07: make the terminal workflow observable
+         000003   terminal compiler feature medium   done      compiler Render compiler-lang task detail without storage markers
+         000004   terminal runtime  spike   critical dropped   runtime Spike task 04: make the terminal workflow observable
+↓ ● 2    000007   terminal docs     bug     high     done      docs Bug task 07: make the terminal workflow observable
 
   LINT · tasks needing attention  [7] · 2 broken · 5 advice · 1–3 shown
-  ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long ti…
-  ○ 2   !000013   chore   medium   depends   runtime Chore task 13: make the terminal workflow observable
-↓ ◑ 1/2 ·000022   bug     critical active    runtime Bug task 22: make the terminal workflow observable with a deliberately long title that…
+  ○ 2   ·000001   terminal compiler feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a de…
+  ○ 2   !000013   terminal runtime  chore   medium   depends   runtime Chore task 13: make the terminal workflow observable
+↓ ◑ 1/2 ·000022   terminal runtime  bug     critical active    runtime Bug task 22: make the terminal workflow observable with a deliberate…
 All tasks · : filters and commands · ! lint finding · ↳ epic
 
 j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request              hug v0.0.0

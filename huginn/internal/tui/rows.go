@@ -17,6 +17,12 @@ import (
 //     owner down to ownerMin;
 //  3. whole columns drop: type, then priority, then stage.
 //
+// The tags cell (txjkrm, Jørgen 19:35Z: right after the id) is cut right
+// after the title, down to tagMin, before the owner; it is the last
+// column to drop, after stage: the tags say what a task is about. A
+// board column, narrow by design, shows them only while its title keeps
+// titleMin.
+//
 // The gutter, the progress pie and the id always stay. Widths are display
 // cells (wide runes and emoji count 2), never bytes.
 
@@ -29,6 +35,13 @@ const (
 
 // ownerMin is the least an owner cell is cut to before columns drop.
 const ownerMin = 8
+
+// tagMax is the most the tags cell takes (Jørgen 19:35Z: at most 22
+// columns); tagMin the least it is cut to before other cells give way.
+const (
+	tagMax = 22
+	tagMin = 8
+)
 
 // Cell widths, each with the space after it.
 const (
@@ -43,6 +56,7 @@ const (
 // rowCols is the cells of a row at one width.
 type rowCols struct {
 	status, kind, priority bool
+	tags                   int // the tags cell's width, without the space after it; 0: none
 	title                  int // the title cell's width
 	owner                  int // the owner cell's width; 0: none
 }
@@ -59,13 +73,13 @@ func (m model) rowLayout(width int, compact bool, owner, names int) rowCols {
 // columns s names (1bbe96): those are not drawn, the heading says them
 // once, and the title takes their width.
 func (m model) rowLayoutSame(width int, compact bool, owner, names int, s sameCols) rowCols {
-	c := rowCols{status: !compact && s.stage == "", kind: s.kind == "", priority: s.priority == "", owner: max(0, owner)}
+	c := rowCols{status: !compact && s.stage == "", kind: s.kind == "", priority: s.priority == "", owner: max(0, owner), tags: m.tagWidth()}
 	if s.owner != "" {
 		c.owner = 0
 	}
 	head := rowHead + m.progressWidth() + idCell
 	title := func() int {
-		w := width - head
+		w := width - head - on(c.tags > 0, c.tags+1)
 		if c.owner > 0 {
 			w -= c.owner + ownerGap
 		}
@@ -78,8 +92,15 @@ func (m model) rowLayoutSame(width int, compact bool, owner, names int, s sameCo
 	if compact {
 		least = titleMinCompact
 	}
+	if compact && c.tags > 0 && title() < titleMin {
+		// A board column keeps its tags only while the title keeps
+		// titleMin: in a narrow card the title says more (txjkrm).
+		c.tags = 0
+	}
 	for short := least - title(); short > 0; short = least - title() {
 		switch {
+		case c.tags > tagMin:
+			c.tags = max(tagMin, c.tags-short)
 		case c.owner > max(names, ownerMin):
 			c.owner = max(names, ownerMin, c.owner-short) // the branch first
 		case c.owner > ownerMin:
@@ -90,6 +111,8 @@ func (m model) rowLayoutSame(width int, compact bool, owner, names int, s sameCo
 			c.priority = false
 		case c.status:
 			c.status = false
+		case c.tags > 0:
+			c.tags = 0
 		default:
 			c.title = max(0, title())
 			return c

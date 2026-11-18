@@ -43,7 +43,7 @@ func TestColumnCursorMarksHeader(t *testing.T) {
 		if gridColumns[m.column].label != "✓" || !strings.Contains(plainMarks(footerLine(m)), "order by ✓") {
 			t.Fatalf("first L marks %q, footer %q", gridColumns[m.column].label, m.message)
 		}
-		m = press(m, "L", "L", "L") // ✓ id type priority
+		m = press(m, "L", "L", "L", "L") // ✓ id tags type priority (the fixture is tagged: txjkrm)
 		if gridColumns[m.column].field != "priority" {
 			t.Fatalf("at %d three more L mark %s", w, gridColumns[m.column].field)
 		}
@@ -108,7 +108,7 @@ func TestColumnOrderCycles(t *testing.T) {
 	if len(m.sort) != 0 || !strings.Contains(footerLine(m), "H/L pick a column") {
 		t.Fatalf("o without a column: sort %v, %q", m.sort, m.message)
 	}
-	m = press(m, "L", "L", "L", "L") // priority
+	m = press(m, "L", "L", "L", "L", "L") // priority, past tags (txjkrm)
 	m = press(m, "o")
 	if len(m.sort) != 1 || m.sort[0] != (sortKey{"priority", false}) || !strings.Contains(headerLine(t, m.View(), "ID", "TITLE"), "PRIORI ▲") {
 		t.Fatalf("o once: %v\n%s", m.sort, headerLine(t, m.View(), "ID", "TITLE"))
@@ -131,7 +131,7 @@ func TestColumnOrderCycles(t *testing.T) {
 	m.applySort(nil)
 	m.setView("overview")
 	m.column = -1
-	m = press(m, "L", "L", "L", "L", "o", "o") // priority ▼
+	m = press(m, "L", "L", "L", "L", "L", "o", "o") // priority ▼
 	p := m.paneIndices(m.pane)
 	for n := 1; n < len(p); n++ {
 		if m.compareBy("priority", m.visible[p[n-1]], m.visible[p[n]]) < 0 {
@@ -157,7 +157,7 @@ func TestColumnOrderSurvives(t *testing.T) {
 	m := manyModel(t)
 	m.width, m.height = 140, 40
 	m.resize()
-	m = press(m, "L", "L", "L", "L", "o")
+	m = press(m, "L", "L", "L", "L", "L", "o")
 	if !strings.Contains(plainMarks(footerLine(m)), "order by priority (▼)") {
 		t.Fatalf("footer: %q", m.message)
 	}

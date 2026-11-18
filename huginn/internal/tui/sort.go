@@ -65,6 +65,7 @@ func fieldByName(name string) sortField {
 var columnFields = []sortField{
 	{"", "checks", "least done first", false},
 	{"", "id", "a to z", false},
+	{"", "tags", "a to z, untagged last", false},
 	{"", "stage", "in the tree's order", false},
 }
 
@@ -223,6 +224,8 @@ func sortValue(field string, t task.Task) string {
 		return t.Title
 	case "id":
 		return t.ID
+	case "tags":
+		return strings.Join(t.Labels, " ")
 	case "checks":
 		if len(t.Acceptance) == 0 {
 			return ""
@@ -267,6 +270,9 @@ func (m model) compareBy(field string, a, b task.Task) int {
 		da, ta := checkCount(a)
 		db, tb := checkCount(b)
 		return da*tb - db*ta
+	case "tags":
+		// As the row shows them: listed tags first, in hug.toml's order.
+		return strings.Compare(strings.ToLower(m.tagText(a)), strings.ToLower(m.tagText(b)))
 	case "stage":
 		wa, wb := m.stageOf(a), m.stageOf(b)
 		if wa == "" {

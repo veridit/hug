@@ -23,11 +23,12 @@ type column struct {
 }
 
 // gridColumns are the columns rows show, left to right: the pie (checks
-// done), id, type, priority, stage, title, and in IN PROGRESS the owner.
-// A column the width dropped is skipped by the cursor.
+// done), id, tags (txjkrm), type, priority, stage, title, and in IN
+// PROGRESS the owner. A column the width dropped is skipped by the cursor.
 var gridColumns = []column{
 	{"✓", "checks", func(rowCols) bool { return true }},
 	{"id", "id", func(rowCols) bool { return true }},
+	{"tags", "tags", func(c rowCols) bool { return c.tags > 0 }},
 	{"type", "type", func(c rowCols) bool { return c.kind }},
 	{"priority", "priority", func(c rowCols) bool { return c.priority }},
 	{"stage", "stage", func(c rowCols) bool { return c.status }},
@@ -204,7 +205,7 @@ func (m model) colSpan(i int, compact bool, c rowCols) (from, width int, ok bool
 		w     int
 		shown bool
 	}
-	cells := []cell{{m.progressWidth(), true}, {idCell, true}}
+	cells := []cell{{m.progressWidth(), true}, {idCell, true}, {c.tags + 1, c.tags > 0}}
 	if compact {
 		cells = append(cells, cell{letterCell, c.kind}, cell{letterCell, c.priority}, cell{0, false})
 	} else {
