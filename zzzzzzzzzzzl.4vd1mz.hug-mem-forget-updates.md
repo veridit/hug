@@ -30,3 +30,5 @@ Code: muninn run/main.go:376 (pre-forget reindex), ForgetMany (post-write Reinde
 - [ ] On a copy of Jørgen's store, one forget's wall time and max RSS before and after, 4 runs each, in a note (expect well under 1 s)
 
 ## Notes
+
+crab 02:52 local: moved from hatchling to wyvern (hatchling is on t01kqm; wyvern owns speed). hatchling's measurements on 66ex4y stay the baseline.
