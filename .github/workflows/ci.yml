@@ -62,9 +62,27 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Test huginn/internal/cli
-        run: go test ./huginn/internal/cli/
+        # MEASURE (0n4rnx, branch only, never lands): per-test times as JSON.
+        # -timeout 20m only so the measurement completes; the bar is 300 s.
+        shell: bash
+        run: |
+          # Paired on one runner: default -parallel (GOMAXPROCS) vs -parallel 4,
+          # then each again, so the order is not the variable.
+          for p in default 4 default 4; do
+            if [ $p = default ]; then a=; else a="-parallel $p"; fi
+            echo "== -parallel $p"
+            go test -count=1 -timeout 20m $a ./huginn/internal/cli/ | tail -1 || true
+          done
         env:
           CGO_ENABLED: "1"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wincli-json
+          path: |
+            cli.json
+            split.tsv
+            sample.tsv
 
   bench:
     # Benchmarks out of the normal suite (Jørgen, 2026-11-17 10:00): one
