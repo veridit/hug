@@ -1,0 +1,28 @@
+---
+id: zrjgyr
+title: "CI red on macOS and Windows since 6 Nov"
+state: "done"
+type: bug
+priority: "high"
+assignee: []
+labels: []
+group: ""
+rank: "8"
+created: 2026-11-11
+updated: 2026-11-11
+aliases: ["ci-red-on-macos-and-windows"]
+---
+
+## Goal
+ci workflow green on ubuntu, macos and windows
+
+## Depends on
+
+## Acceptance
+- [x] gh run on main: all three test jobs success
+
+## Notes
+
+Last green CI: fd2243c (2026-11-06). 42 of last 60 runs failed; ubuntu passes; releases still ship (release workflow builds only). Causes in run 43010513401: (1) Windows: internal/tidy/tidy.go ReadGraph builds a file: URL from a Windows path, 'invalid uri authority: C:%5CUsers...', breaks every tidy and place test. (2) macOS: /var vs /private/var TempDir symlink in places_test.go:68, clientroot legacy cache, TestClientPlacesDoNotLeakSiblingMemories. (3) Windows: 8.3 short path RUNNER~1 vs runneradmin, and client_scopes_test.go:43 ~/alias returns empty. Decide per case whether code or test is wrong.
+
+Green on all three: CI run for 493ca07, windows/ubuntu/macos success (2026-11-11). Fixes 503c563 + 493ca07.

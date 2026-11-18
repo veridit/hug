@@ -1,0 +1,65 @@
+---
+id: qh9ep1
+title: "Key prefixes: v picks the view (vo vl vb v!), a pending prefix shows its choices"
+state: "doing"
+type: feature
+priority: ""
+assignee: ["nautilus"]
+labels: []
+group: ""
+rank: "zzzzzzzzzzyv"
+created: 2026-11-17
+updated: 2026-11-17
+doing_since: "2026-11-18T04:25"
+stage: "asked"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
+asked_check: "6"
+asked_what: "after the release: line 2 now reads 'view: overview  list  board  !lint' with the counts at the right after │; press v (the line lights up, the footer lists o l b !), then o, l, b or ! to switch. Bare b, ! and i no longer switch views. Does it read clearly?"
+asked_for: "jhf"
+asked_since: "2026-11-18T05:00"
+asked_by: "nautilus"
+---
+
+## Goal
+The view line reads 'view: overview  list  board  !lint' with v and each view's letter marked, and the views are chosen with two keys: vo, vl, vb, v!. While a prefix key is pending, the line it belongs to lights up and the footer lists its choices ('v: o overview · l list · b board · ! lint · Esc cancel'). Every prefix in the TUI works the same way (a key trie), so g can be 'g: g top · r grouping' (kx2ndm).
+
+## Purpose
+Jørgen 23:35 local, on the header 'overview list board !lint': it should become 'view: overview ...' so that vo selects it, the trie idea from 0sw0dd (header tree). Single letters are scarce: o is now order and l is right (e3sevr), so the views move under one prefix.
+
+## Principle
+One prefix, one family, shown where it lives. Every key shown works, and every pending key shows what comes next. No timeout guessing: a prefix waits until the next key or Esc. No old single-key aliases kept (no backward compatibility). Subtle colours.
+
+## Relevant details
+Today: the tab line underlines o, l, b and ! as single keys. After: line 2 is 'view: overview  list  board  !lint', with 'v' and the first letter of each name marked. Pressing v highlights that line and sets the footer to its choices; the next key picks, any other key cancels with a footer note. Same mechanism for g (gg top, gr grouping, kx2ndm) and any later prefix; context help (?) lists them as 'v o  overview' rows. Depends on e3sevr (the key map) and lands with or after kx2ndm's g. Owner: nautilus.
+
+## Depends on
+
+## Acceptance
+- [x] The view line renders 'view: overview  list  board  !lint' with v and each view letter marked (golden at 80 and 140 columns)
+- [x] vo, vl, vb and v! switch views from every view; bare o, l, b and ! no longer switch views (key test)
+- [x] After v alone the view line is highlighted and the footer reads 'v: o overview · l list · b board · ! lint · Esc cancel'; Esc or an unknown key cancels and changes nothing (key test, golden)
+- [ ] ~~g uses the same prefix mechanism: gg top, the grouping key from kx2ndm, footer shows the choices while pending (key test)~~ (not relevant: Jørgen 23:38 local: gg and G dropped, so g is no prefix (it groups rows, kx2ndm); v is the only prefix, and check 8 covers the gg/G removal, nautilus, 2026-11-18)
+- [x] Context help (?) lists prefix keys as two-key rows and its search finds them by either key or name (help test)
+- [ ] Jørgen confirms on his board after release
+- [x] The state counts sit on the view line, right aligned after a dim separator, and the old counts line is gone (golden at 80 and 140; at 80 counts drop from the right first)
+- [x] gg and G are gone (keys, hints, help); < Home go to top and > End to bottom as before (key test)
+
+## Notes
+
+Jørgen 23:36 local: the state counts line 'todo 31 · doing 26 · depends 0 · done 79 · dropped 3' moves onto the view line, right of it, after a separator, probably right aligned. One line instead of two:
+  view: overview  list  board  !lint            │ todo 31 · doing 26 · depends 0 · done 79 · dropped 3
+When tight, counts drop from the right (dropped, done) before the view names shorten.
+
+Jørgen 23:38 local: drop gg and G ('I never used it', 'vi specific'). Top and bottom stay on < > Home End. With gg gone, g is no prefix: the g item of this ticket is void; v is the only prefix so far.
+
+Header picture for all of tonight's rulings is attached to e3sevr as header-spec.md (crab 00:00 local). Build to it. Where it and this ticket differ, tell crab.
+
+
+landed a90f4d44..03e783d0 (nautilus). CI run 44233304533 green on all 6 jobs (ubuntu with tmux goldens, macos, windows, windows-cli, bench, secrets); -race on tui ok (119.6s); tui + gitbranch green after the final rebase. Tests: huginn/internal/tui/viewline_test.go, all four fail first on main 28791dea..a90f4d44 with the shim viewLine/stateCounts: TestViewLineCarriesCounts 'at 80 line 2 is " overview   [list]   board    !lint"', TestViewPrefixPicksEveryView 'from overview bare "!" switched to lint', TestPendingViewPrefixShowsChoices 'footer while v waits: "view: overview · list · board · ! lint"', TestHelpListsPrefixRows 'help lacks "v o view: overview"'. Check 1: golden testdata/header/view-line.txt at 80 and 140; v, o, l, b, ! each in the key style (raw render). Check 2: vo vl vb v! from each of the 4 views and from a task; bare o (orders), b, ! and the old i switch nothing; l stays the pane key (h/l Tab, e3sevr), so it is not a view key by itself. Check 3: footer 'v: o overview · l list · b board · ! lint · Esc cancel', the view line renders differently while pending (TrueColor), Esc/x/j/q/e/S leave state unchanged, x says 'v x is no view; nothing changed', ? opens help and cancels v, Esc in a task cancels only the prefix; golden testdata/header/view-pending.txt. Check 5: help rows 'v o view: overview' etc., help find hits for vo, vb, v !, !, 'view: board'. Check 7: counts right-aligned after │ on line 2 (TestHeaderCountsAddUp now reads them there), the old line gone; at 80 'dropped' and 'done' drop first. Check 8: gg/G were already gone (kx2ndm), TestKeyTableListNavigation in design_test.go: '>' then 'G' does not move or speak, g groups; < > Home End unchanged. Check 4 struck (g is no prefix, Jørgen 23:38).
+landed 03e783d on main 2026-11-18: tui: v is the view prefix (vo vl vb v!), the view line reads 'view: …' and…
+shipped in v0.7.56 (03e783d)
+## History
+- 2026-11-18T04:25 todo -> doing/active (take)
+- 2026-11-18T05:00 doing/active -> doing/asked (ask)

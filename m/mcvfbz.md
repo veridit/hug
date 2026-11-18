@@ -1,0 +1,41 @@
+---
+id: mcvfbz
+title: "Search keeps the found task selected when you leave it"
+state: "done"
+type: bug
+priority: "high"
+assignee: ["nautilus"]
+labels: []
+group: ""
+rank: "1"
+created: 2026-11-16
+updated: 2026-11-16
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
+---
+
+## Goal
+After / search finds a task, leaving the search (Esc, or Enter on the match) returns to the full list with that same task still selected and scrolled into view, so m (grab) and J/K move it at once.
+
+## Purpose
+Jørgen 2026-11-16: search shows a limited view; he finds the task he wants, presses Esc to go back, and the selection jumps away, so he has lost the task and cannot pick it up to move it to its new place. Find-then-move is the main reason to search.
+
+## Principle
+The selection follows the task, not the row number: leaving search keeps the selected task's id and re-finds it in the full view. Esc still always backs out (it clears the search), it just does not lose your place. Works the same in overview, list and board. If the found task is hidden by an active filter, say so in the footer instead of jumping elsewhere.
+
+## Relevant details
+Related: moves refuse while sorted (mkzcqr), so the footer should also say ': sort rank' if the view is sorted. Ask Jørgen for a screen recording if the repro is unclear.
+
+## Depends on
+
+## Acceptance
+- [x] search for a task, Esc: the same task is selected in the full list and visible (test, all three views)
+- [x] search, Enter on a match, then m and J: the found task moves (test)
+- [x] a found task hidden by the active filter: footer says so, selection does not jump to another task (test)
+
+## Notes
+
+vole, commit on vole/mcvfbz (rebased on e18e26e v0.7.38). Cause: applyFilter sets cursor=0 on every change and Enter kept the search as a filter, so Esc then cleared it and selected row 1. Fix: huginn/internal/tui/search.go: clearKeeping/follow keep the task by id and re-find it in its section/column; Enter in / goes to the match (search ends), Esc clears and keeps, Tab keeps the search as a filter (was Enter); hidden task -> cursor -1 + footer. Tests search_test.go. On old main they fail: 'search_test.go:52: selected "ycgzgs", want sp6b1f (Zebra)' (overview/list/board esc), 'search not left: prompt "" query "Zebra", 1 shown' (enter), 'J: "m226cq is already the last row in the list (filtered); nothing moved" (commits 0)', 'selected Alpha task instead of nothing'. With the fix: --- PASS TestLeavingSearchKeepsFoundTask (6 subtests), TestSearchPickKeepsPick, TestFoundTaskMovesAtOnce, TestFoundTaskSortedSaysSortRank, TestFoundTaskHiddenByFilterSaysSo, TestKeptSearchClearedKeepsTask. Goldens: help.txt x4, one line ('/ live find; Enter goes to it, Tab keeps'). Behaviour change for review: Enter no longer keeps the search; Tab does.
+
+landed on main 71d7ff7..3187cf5 (ff). CI run 44056554292 (before rebase onto 44w1ev, code rebased cleanly, CHANGELOG conflict resolved): ubuntu/macos/windows success; after rebase 'ok  github.com/veridit/hug/huginn/internal/tui 70.636s'. check 1: TestLeavingSearchKeepsFoundTask overview/list/board x esc/enter. check 2: TestFoundTaskMovesAtOnce (J: 'moved <z> below <t51>, row 51 of 60 in the list', commits 1; grab m k k Enter: commits 2; NEXT UP K commits 3). check 3: TestFoundTaskHiddenByFilterSaysSo ('<id> is hidden by the filter type:bug: F clears it', no row selected, F reselects it).

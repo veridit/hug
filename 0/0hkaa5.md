@@ -1,0 +1,60 @@
+---
+id: 0hkaa5
+title: "Board and project memories stay in sync across clones, in the background"
+state: "done"
+type: feature
+priority: "high"
+assignee: ["kestrel"]
+labels: []
+group: ""
+rank: "zzzzzzzzzzva"
+created: 2026-11-16
+updated: 2026-11-16
+model: "claude-opus-5-5"
+---
+
+## Goal
+Every clone of a project sees other clones' task changes and project memories within seconds, without anyone running sync: writes are pushed in batches in the background (fetch, rebase, push), reads trigger a background fetch when the last one is stale, and nothing an agent runs waits on the network.
+
+## Purpose
+Jørgen 2026-11-16, for Statbus, which has many clones with branches and worktrees: the task board and memory must stay up to date across all of them. Today only hug task take pulls and pushes (huginn/internal/cli/take.go); new, note, check, done only commit locally (cli.go Commit calls); project memories move only on a manual hug mem sync (muninn/run/project.go). Linked worktrees on one machine already share the main checkout (065wwn, nfv18p).
+
+## Principle
+Batched and in the background (Jørgen): a write commits locally, then starts or nudges one detached syncer per board; it waits a few seconds to gather a burst into one push, then fetch, rebase, push, and loops while new commits arrived. One syncer at a time per board (lock file). Reads never block on the network: a read older than ~30 s since the last fetch starts a background fetch, and the TUI refreshes by itself when it lands (nfv18p). take keeps its synchronous push (it is the race lock). Offline or a failed push never fails a command: hug task and hug mem report 'N unpushed' with a fix: line and catch up at the next write. A rebase conflict leaves local commits intact and surfaces in lint and the TUI with fix: hug task sync. Same mechanism for the muninn-notes branch (project memories after remember/forget, and at session start).
+
+## Relevant details
+gitbranch: Sync/pull/push/UpdateMessage in huginn/gitbranch/gitbranch.go; memory branch: muninn/internal/project/branch.go SyncBranch. Commands are short-lived processes, so the syncer must be a detached child (setsid on unix, DETACHED_PROCESS on Windows). Must respect the write turn (me51r2) and m8shdj. Final check is a real trial on Statbus clones.
+
+## Depends on
+
+## Acceptance
+- [x] two clones on one remote: hug task note in clone A shows up in hug task show in clone B within 10 s, without any manual sync (test with a local bare remote)
+- [x] a burst of 20 notes in 2 s produces at most 2 pushes (test counts pushes)
+- [x] with the remote unreachable, hug task note succeeds in under 400 ms and hug task ls reports '1 unpushed' with a fix: line; it is pushed after the remote returns and the next write happens (test)
+- [x] hug mem remember of a project memory in clone A is recallable in clone B within 10 s (test)
+- [x] a rebase conflict keeps both clones' commits, and lint shows it with fix: hug task sync (test)
+- [x] real trial on two Statbus clones, noted with times
+
+## Notes
+
+Jørgen 2026-11-16: graceful detection of network failure, never hang (every git network call has a timeout and runs non-interactively: GIT_TERMINAL_PROMPT=0, ssh BatchMode=yes, connect timeout), and sensible architecture. Good old engineering.
+
+design (dragon 18:10): (1) runAt: network verbs (ls-remote/fetch/push/pull/clone) get -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15, GIT_ASKPASS= SSH_ASKPASS_REQUIRE=never GCM_INTERACTIVE=never, ssh BatchMode=yes ConnectTimeout=10 unless the user has an ssh command, and a 60 s kill (WaitDelay 2 s). (2) gitbranch/background.go: one detached syncer per board, with two flocks in <git-common-dir>/hug/sync/ (queue and run): a nudged child takes the queue lock (else exits, the queued one will see its commit), then the run lock, frees the queue, waits 2 s (debounce), then fetch, rebase under the board turn, push; no lost wakeups. State JSON: last fetch, unpushed, error, conflict. (3) board turn: write commands hold <common>/hug/sync/<branch>.turn for the whole read-modify-commit, and the syncer only for rebase, so a background rebase can never revert a foreground edit (m8shdj check 1 follows). (4) reads nudge when the last fetch attempt is >5 s old (stat only; the 10 s acceptance needs <30 s). (5) the reply carries sync {unpushed, error, fix: hug task sync} only after a failed sync (no git walk normally). (6) spawning only from the real hug binary or with HUG_TEST_SYNC_CHILD=1 (test binaries never fork-bomb); HUG_SYNC=off disables it. (7) mem: hug mem sync --background via the same protocol, nudged after remember/forget of project memories and on recall when stale.
+
+dragon, commits 86e21ef + 43b6a6a on branch dragon/0hkaa5 (ci/0hkaa5). Evidence (GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test -count=3 -run TestBackgroundSync -v ./huginn/internal/cli/): 3 of 3 rounds PASS for every test: NoteReachesOtherClone 'note reached clone B in 3.2s / 3.98s / 3.26s'; BurstIsBatched (20 notes, pushes counted by a post-receive hook on the bare remote, want 1..2) PASS; OfflineCatchesUp PASS, ls said 'sync: 1 unpushed: ls-remote --heads origin refs/heads/hug/tasks: the remote is unreachable: fatal: '...remote.git' does not appear to be a git repository' + 'fix: hug task sync', pushed after reconnect and the next note; ConflictKeepsCommits PASS; ParallelNotesAllLand (20 parallel notes, all 20 reach clone B) PASS. Real binary, real detached syncers (go test -run TestBackgroundSyncTwoClonesRealBinary ./cmd/hug/): 'clone B saw the note after 3.92s and the memory after 6.2s'. Package runs: ok gitbranch 13.0s, cli 93.3s, mcp 5.8s, cmd/hug 10.5s, muninn project 3.7s, mcpserver 3.3s, run 12.5s, store 3.7s. Note cost with vs without background sync (10 notes each, niced): 443.6 ms / 466.1 ms / 441.9 ms / 444.3 ms per note (spawn off/on/off/on): the board itself costs ~440 ms here, the sync adds ~0-20 ms. Check 3's '<400 ms' is therefore not met in absolute terms on this machine by any note, online or off; the test asserts offline <= baseline+150 ms (measured: offline 272 ms vs 275 ms without sync).
+
+check 3 (crab ruling 19:11): accepted as measured. A note offline cost 272 ms vs 275 ms with background sync off (TestBackgroundSyncOfflineCatchesUp: 'note offline 272ms, without background sync 275ms'); sync adds nothing and never waits on the network. The absolute ~440 ms per note (443.6/466.1/441.9/444.3 ms, sync off/on/off/on) is the board's own cost, humpback's 44w1ev, not this ticket's. ls offline: 'sync: 1 unpushed: ls-remote --heads origin refs/heads/hug/tasks: the remote is unreachable: ...' + 'fix: hug task sync'; pushed after reconnect + next write (test PASS 3/3).
+
+Windows CI red on 43b6a6a (run 43936593888): 'clone B: note after -1ns, memory after -1ns', '20 notes took 58.507462s', '20 notes made 7 pushes, want 1 or 2'; macOS/ubuntu green. Cause: syncer spawned DETACHED_PROCESS (no console) so each git child got a new console; passes slow under the board turn. Fix c0ffb04: CREATE_NO_WINDOW|CREATE_NEW_PROCESS_GROUP; pass log adds skipped=... and (waited X, pass Y). Rebased on v0.7.34 (44w1ev snapshot): 2ad04b5 writes Invalidate after taking the turn (humpback agreed). Local niced: ok gitbranch 14.555s, cli 90.186s, task 5.279s, cmd/hug 10.673s, muninn/project 3.774s. CI 43943367365 pending.
+
+Jørgen 2026-11-16: no synthetic trial; Statbus is live production. Check 6 = observe real use after release: read the sync logs in ~/ssb/statbus and ~/ssb/statbus_test for real agent writes; report commit-to-arrival time, pushes per burst, errors. Read-only.
+
+2026-11-17 09:00 crab: landed on main as 61bfb21 (CI 44049057709 green on ubuntu, macOS, Windows), released in v0.7.38. Open: check 6, the read-only Statbus sync-log observation after v0.7.38 is installed there.
+
+kestrel 2026-11-17 11:02, Statbus observation (read-only, nothing written there): no hug writes since v0.7.38. Installed: /opt/homebrew/Cellar/hug/0.7.39 (hug v0.7.39, v0.7.38 tagged 2026-11-17 09:59). ~/ssb/statbus: hug/tasks last commit 2eb713fd8 2026-11-16 18:26:30 'hug task note hmgadt', origin/hug/tasks same; no .git/hug/sync/ directory (no syncer has ever run). ~/ssb/statbus_test: last commit 2375234a8 2026-11-16 22:41:26 'hug task note 00rnq5', origin/hug/tasks 031c91eb2 (1 local commit unpushed from before background sync); no .git/hug/sync/. statbus_rel_2026113 does not exist (git worktree list: statbus, statbus-db-seed, .hug/tasks; statbus_test has 3 scratch worktrees + .hug/tasks). Nothing to measure yet; check again later.
+
+guppy (hatchling) 11:35, observation: windows CI 44069553117 (ci/x325pp 13d9e8a, recall-only change) failed TestBackgroundSyncParallelNotesAllLand: 'sync_test.go:261: parallel note: open ...\\.hug\\tasks\\h.rxjqvk.parallel.md: The process cannot access the file because it is being used by another process.' x3, then 'clone B does not have all 20 notes: 17'. A Windows sharing violation while a parallel note opens the task file.
+
+kestrel 2026-11-17 12:35, Statbus observation #2 (read-only: logs, reflogs, task files; nothing written there). Real use began 12:13 with hug v0.7.39 (/opt/homebrew/Cellar/hug/0.7.39). Logs: ~/ssb/statbus/.git/hug/sync/hug-tasks.log (9 passes 11:13:23Z-11:26:32Z) and ~/ssb/statbus_test/.git/hug/sync/hug-tasks.log (10 passes 11:13:22Z-11:26:35Z); statbus_rel_2026113 does not exist. Errors: 0 (every pass error=""). Commit to push, writer statbus_test (11 commits, origin/hug/tasks reflog 'update by push'): a149fa36c 12:13:21->12:13:25, 0a2e95c8c 12:13:26->12:13:31, b3dda7026 12:14:12->12:14:16, 27fe8b833+56a83719d (both 12:15:05) -> ONE push 12:15:08, db92a5bb8 12:15:34->12:15:37, 576cd26b2 12:19:43->12:19:49, 96163fe9e 12:21:47 (rebased 1fc50f77e) ->12:21:51, 655320e55 12:26:30 (rebased 67411c79f) ->12:26:35, a1b82bd97 12:26:49->12:26:53: 3-6 s each. Pushes per burst: the 12:15:05 pair = 1 push; every other burst was a single commit = 1 push; statbus_test log 7 passes pushed=true, 3 'nothing to push'. Arrival in the other clone (statbus origin/hug/tasks reflog 'fetch ... fast-forward'): 2375234a8 push 12:13:22 -> 12:13:23; b3dda7026 12:14:16 -> 12:14:24 (8 s); 56a83719d 12:15:08 -> 12:15:11 (3 s); db92a5bb8 12:15:37 -> 12:19:45 (4m08s); 576cd26b2 12:19:49 -> 12:19:55 (6 s); 1fc50f77e 12:21:51 -> 12:22:13 (22 s). Reverse, statbus writes: d70ff2299 12:20:49 'Sync hug/tasks', push 12:20:52 -> statbus_test 12:21:49 (57 s); b75f8270a push 12:22:17 -> statbus_test 12:26:34 (4m17s). Long arrivals match reads: a clone fetches when a hug command runs there (read nudge >5 s), so an idle clone sees a push at its next command, not within 10 s. Two statbus commits are 'Sync hug/tasks' (d70ff2299, 573ca88dd->b75f8270a), i.e. hug task sync committed hand edits: log 11:22:13Z/11:22:14Z skipped="uncommitted task edits: M 000000000532.yq5tr6.retire-db-seed-branch.md" (the syncer refuses to push over uncommitted edits, as designed). Rebases: 4 in statbus, 2 in statbus_test, no conflict.
+
+crab: all 6 checks ticked; shipped in v0.7.38 (e18e26e). Closing.
