@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzu"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T16:25"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review"
+waiting_since: "2026-11-18T16:56"
+waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -44,3 +47,4 @@ Check 2: cursorMark draws the focused asked check (checkStyle colour) and the fo
 CI 44338340390 on 3b985709 (kg07bt on main 56e2cc6f): completed success, 6/6 jobs, first attempt.
 ## History
 - 2026-11-18T16:25 todo -> doing/active (take)
+- 2026-11-18T16:56 doing/active -> doing/waiting (wait)
