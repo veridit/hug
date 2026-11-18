@@ -1,15 +1,21 @@
 ---
 id: n3zvms
 title: "Release v0.7.71"
-state: todo
+state: "doing"
 type: chore
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T23:36"
+stage: "active"
+model: "claude-opus-5-5"
+effort: "high"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +37,7 @@ CI 44409320072 8/8 on 4d7eec2d. Content: gav9nw z77pem mbdfzs3 ykta5g h2yn55 ad6
 - [ ] brew upgrade veridit/tap/hug; hug version prints v0.7.71
 
 ## Notes
+
+
+## History
+- 2026-11-18T23:36 todo -> doing/active (take)
