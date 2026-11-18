@@ -21,6 +21,7 @@ func (a *App) runRequests(s *session, f flags) (Reply, error) {
 	if e != nil {
 		return nil, e
 	}
+	all := ts
 	if len(f.args) == 1 {
 		t, e := task.Resolve(ts, f.args[0])
 		if e != nil {
@@ -30,8 +31,11 @@ func (a *App) runRequests(s *session, f flags) (Reply, error) {
 	}
 	rows := []RequestRow{}
 	for _, t := range ts {
-		for _, r := range t.Requests {
-			if !r.Open() && !f.has("all") {
+		for _, r := range withHomes(all, t.Requests) {
+			// A request for several tasks stays listed on its home until
+			// every target is resolved (ec6z6j): a partial fix is partial.
+			listed := r.Open() || r.Home == nil && r.Targets != nil && !r.Closed()
+			if !listed && !f.has("all") {
 				continue
 			}
 			x := RequestRow{ID: t.ID, Title: t.Title, Owner: t.Assignee, Req: r}
@@ -70,7 +74,7 @@ func requestsText(rows []RequestRow) string {
 		if x.Req.Resolved != nil {
 			head += ", resolved by " + x.Req.Resolved.By
 		}
-		b.WriteString(head + ": " + x.Title + "\n")
+		b.WriteString(head + ": " + x.Title + linkSuffix(x.Req) + "\n")
 		// Its receipt (gmzd87): how far it has reached the coordinator.
 		b.WriteString("  receipt: " + x.Req.Receipt.Label() + "\n")
 		b.WriteString(requestBody(x.Req))
@@ -87,6 +91,11 @@ func requestBody(r task.Request) string {
 	var b strings.Builder
 	for _, l := range strings.Split(r.Text, "\n") {
 		b.WriteString("  " + l + "\n")
+	}
+	// One request for several tasks (ec6z6j): each target pending or
+	// resolved, so a partial fix shows as partial.
+	if line := targetsLine(r); line != "" {
+		b.WriteString("  " + line + "\n")
 	}
 	if r.Resolved != nil {
 		b.WriteString("  resolved by " + r.Resolved.By + ", " + strings.Replace(r.Resolved.At, "T", " ", 1) + ":\n")

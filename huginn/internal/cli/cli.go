@@ -530,6 +530,9 @@ func (f flags) wrongCount(problem string) error {
 }
 
 func taskJSON(t task.Task, root string, ts []task.Task) Reply {
+	// A link to a request for several tasks reads as the request: its text
+	// comes from the home (ec6z6j), so show and MCP need no second read.
+	t.Requests = withHomes(ts, t.Requests)
 	b, _ := json.Marshal(t)
 	out := Reply{}
 	_ = json.Unmarshal(b, &out)
@@ -673,7 +676,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		e := task.Invalid("command", cmd, Commands)
 		return nil, usage("unknown command "+cmd+"; valid: "+strings.Join(Commands, ", ")+"; closest: "+e.Closest, "hug task "+e.Closest+" --help")
 	}
-	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label tag state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "tags": "", "models": "", "upgrade": "apply machine"}
+	allowed := map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model task", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label tag state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "tags": "", "models": "", "upgrade": "apply machine"}
 	var optional []string
 	if cmd == "lint" {
 		optional = []string{"code"}
@@ -912,6 +915,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		return nil, e
 	}
 	var r task.Result
+	// requested is the selection a request named (ec6z6j), for its commit.
+	var requested string
 	switch cmd {
 	case "init":
 		if e = f.count(0); e != nil {
@@ -1317,17 +1322,30 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 	case "request":
 		// hbgybn: a person's request on a task, verbatim; "-" reads stdin.
-		if len(f.args) == 1 {
-			return nil, usage("request needs the request", "hug task request "+f.args[0]+` "what you want changed"`)
+		// ec6z6j: one request for several tasks: ID1,ID2 and/or --task ID
+		// (repeatable), written once on the first, a link on each other.
+		refs := f.values["task"]
+		args := f.args
+		if len(refs) == 0 || len(args) == 2 {
+			if len(args) == 0 {
+				return nil, usage("request needs a task and the request", `hug task request ID "what you want changed"`)
+			}
+			refs = append(strings.Split(args[0], ","), refs...)
+			args = args[1:]
 		}
-		if e = f.count(2); e != nil {
-			return nil, e
+		list := strings.Join(refs, ",")
+		if len(args) == 0 {
+			return nil, usage("request needs the request", "hug task request "+list+` "what you want changed"`)
 		}
-		text, err := a.textArg(f.args[1])
+		if len(args) > 1 {
+			return nil, f.wrongCount(fmt.Sprintf("expected IDS and the request, got %d positional arguments", len(f.args)))
+		}
+		text, err := a.textArg(args[0])
 		if err != nil {
 			return nil, err
 		}
-		r, e = s.s.Request(f.args[0], text, a.actor(f))
+		r, e = s.s.RequestFor(refs, text, a.actor(f))
+		requested = list
 	case "resolve":
 		if len(f.args) < 3 {
 			return nil, usage("resolve needs ID N and what you changed", "hug task resolve "+f.args[0]+` 1 "what changed"`)
@@ -1556,6 +1574,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		msg := "hug task " + cmd + " " + r.Task.ID
 		if cmd == "resolve" {
 			msg += " " + f.args[1]
+		}
+		if cmd == "request" && strings.Contains(requested, ",") {
+			msg = "hug task request " + requestedIDs(r.Task)
 		}
 		if e = s.commit(msg); e != nil {
 			return nil, e
@@ -1883,7 +1904,7 @@ func (a *App) Run(ctx context.Context, args []string) int {
 				if r.Open() {
 					head += " (open)"
 				}
-				fmt.Fprint(a.Out, head+":\n"+requestBody(r))
+				fmt.Fprint(a.Out, head+linkSuffix(r)+":\n"+requestBody(r))
 				if r.Open() {
 					fmt.Fprintf(a.Out, "  fix: hug task resolve %s %d \"what changed\"\n", t["id"], r.N)
 				}
