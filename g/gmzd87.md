@@ -54,5 +54,6 @@ mizaru 11:58 design (before code; implementing unless crab objects by 12:18Z).
    Shown in hug task requests (state per row), show --json requests[].state, TUI REQUESTS label 'open' -> the state (one label, no highlighting).
 3. INSTRUCTION TEXTS that change: setup's AGENTS.md block 'Requests:' paragraph; MCP task_requests and task_update request descriptions; setup coordinator step detail; the delivered message itself. One Go constant describes the flow and is used by all of them; a test drives a fake daemon end to end and fails if the text names a state, command or route the code does not produce. boardcue.go (duckling) untouched; toolcalls.go untouched.
 Open: crab session must be live in a daemon; an offline coordinator gets 'not delivered' plus the existing next/cue paths, and no redelivery loop (would be a poller).
+Jørgen 11:59Z: answers to asked questions (hug task answer, TUI a) must be delivered to the coordinator by the same path as requests; he works through many asked tickets in random order and expects each to be acted on as it arrives.
 ## History
 - 2026-11-18T12:34 todo -> doing/active (take)
