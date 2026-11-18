@@ -69,6 +69,7 @@ crab 05:24 rulings. (1) On the fresh-set day, hook p95 is measured twice: at ord
 landed b106398 on main 2026-11-18: hug mem upgrade and index record memory anchors first, with one hook.log line…
 Post-push CI confirmed successful: 44243962498 for frozen opt-in recall arm 94ef2140; 44244786051 for explicit anchor backfill b1063988, all six jobs successful. Fresh-set and busy-live-store gates remain pending, feature remains off by default.
 shipped in v0.7.57 (94ef214)
+retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): the wait is real and still holds. The fresh held-out calls of 2026-11-19 and 11-20 do not exist yet; check 4 can next move after 2026-11-21T00:00Z, following the 5-step plan in Relevant details (build 150, replay shipped and default, judge blind, time the hook at ordinary load and at load above 100). Who: an engineer crab assigns on 2026-11-21; owner hatchling is no longer running.
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
