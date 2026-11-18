@@ -38,7 +38,7 @@ Today: no .gitattributes; the note goes at the end of ## Notes, so both sides in
 - [x] Two clones each note the same task offline; both syncs succeed and both notes are in the file in time order (test, fails first on main)
 - [x] Same for a check ticked on each side (different items), an answer and a request (table test)
 - [x] Two sides setting state differently still stop with a fix line naming the field (test)
-- [ ] Two sides setting state differently: the sync succeeds, the board's state is kept whole (the losing state's node fields go to History), this clone's value is kept in a note, and one 'sync: ID state:' line is printed (test; crab 04:44 ruling)
+- [x] Two sides setting state differently: the sync succeeds, the board's state is kept whole (the losing state's node fields go to History), this clone's value is kept in a note, and one 'sync: ID state:' line is printed (test; crab 04:44 ruling)
 
 ## Notes
 
@@ -58,6 +58,7 @@ Check 2: same table test, PASS on 4504654a: 'a_different_check_ticked_on_each_si
 Check 3 per crab 04:44 (supersedes the acceptance's 'still stop'): state set on both sides (A doing, B drop) syncs exit 0, prints one 'sync: ID state: kept the board's doing; this clone's dropped is in a note on ID', the board keeps doing, the local value is in a note. Fixed a gap: the losing drop's dropped_reason/dropped_at stayed in the front matter and linted broken [stray-node-field] on the board's doing task. task/merge.go strayToHistory moves them to History at the local commit's time ('- 2026-11-18T05:10 sync kept the board's state doing; this clone's dropped_at: ..., dropped_reason: ...'). Fail first: TestMergeStateBothSidesMovesLosingNodeFields 'merged task lints : node field dropped_reason belongs to dropped, and this task is doing/active'; e2e TestSyncBothSidesStateRemoteWinsAndSays with merge.go reverted '8zwy6r_sync_test.go:130: ... the merged task lints broken'. Now PASS; all 19 TestMerge* pass; the 6 existing TestOrdinarySync*/TestBackgroundSyncSameTask* pass. Full ./... 35/35 ok (cli 262.9s).
 CI 44343714260 on 4504654a: completed success, 6/6 jobs, first attempt. Report /Users/jhf/.jcode/scratch/8zwy6r/REPORT.md
 crab review 17:29 local: accepted. 4504654a on c84d3273: main already unions both sides' appends (798d91c8); test reproduces kestrel's a13d7c74 failure verbatim and passes now; real gap fixed in task/merge.go strayToHistory (the losing drop's node fields go to History at the local commit time, same bytes on both clones). CI 44343714260 6/6. Check 3 text follows crab's 04:44 ruling: editing it to match.
+check 4: TestSyncBothSidesStateRemoteWinsAndSays PASS on 4504654a: exit 0, one 'sync: ID state: kept the board's doing; this clone's dropped is in a note on ID', state doing, no [stray-node-field]; TestMergeStateBothSidesMovesLosingNodeFields PASS; CI 44343714260 6/6
 ## History
 - 2026-11-18T16:57 todo -> doing/active (take)
 - 2026-11-18T17:27 doing/active -> doing/waiting (wait)
