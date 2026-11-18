@@ -81,8 +81,8 @@ func TestSortPickerOnS(t *testing.T) {
 }
 
 // ahejza check 3: f still opens the filter picker, and both panels share
-// one look: an accent heading, a bold 'filter: …' / 'sort: …' line, then a
-// letter, a name and a dim hint per field.
+// one look: an accent heading, the order lines ('filter: …' / 'now: …'
+// and 'new: …', nch9d4), then a letter, a name and a dim hint per field.
 func TestFilterAndSortPickersLookAlike(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
 	m := manyModel(t)
@@ -95,11 +95,11 @@ func TestFilterAndSortPickersLookAlike(t *testing.T) {
 	if !strings.HasPrefix(fp[0], "FILTER · ") || !strings.HasPrefix(sp[0], "SORT · ") {
 		t.Fatalf("headings: %q / %q", fp[0], sp[0])
 	}
-	if fp[1] != "filter: none" || sp[1] != "sort: rank" {
+	if fp[1] != "filter: none" || sp[1] != "now: rank (board order)" {
 		t.Fatalf("second lines: %q / %q", fp[1], sp[1])
 	}
-	if !strings.HasPrefix(fp[2][1:], " s  state     todo, doing") || !strings.HasPrefix(sp[3], "  p  priority  critical first") {
-		t.Fatalf("field lines: %q / %q", fp[2], sp[3])
+	if !strings.HasPrefix(fp[2][1:], " s  state     todo, doing") || !strings.HasPrefix(sp[5], "  p  priority  critical first") {
+		t.Fatalf("field lines: %q / %q", fp[2], sp[5])
 	}
 	goldenFile(t, "testdata/header/pickers.txt", strings.Join(fp, "\n")+"\n--\n"+strings.Join(sp, "\n")+"\n")
 }
@@ -135,13 +135,13 @@ func TestHelpListsFilterAndSortPickers(t *testing.T) {
 	m.width, m.height = 140, 60
 	m.resize()
 	help := strings.Join(strings.Fields(ansi.Strip(press(m, "?").helpText())), " ")
-	for _, want := range []string{"f filter picker: s t p g l a e", "s sort picker: c column, p t s u d g a n; again flips"} {
+	for _, want := range []string{"f filter picker: s t p g l a e", "s sort picker: c column, p t s u d g a n; again flips", "s r or : sort rank goes back"} {
 		if !strings.Contains(help, want) {
 			t.Fatalf("help lacks %q:\n%s", want, help)
 		}
 	}
 	sortHelp := strings.Join(strings.Fields(ansi.Strip(press(m, "s", "?").helpText())), " ")
-	for _, want := range []string{"IN THE SORT PICKER", "c the marked column, as o", "d created"} {
+	for _, want := range []string{"IN THE SORT PICKER", "r rank: the default board order", "c the marked column, as o", "d created"} {
 		if !strings.Contains(sortHelp, want) {
 			t.Fatalf("sort picker help lacks %q:\n%s", want, sortHelp)
 		}

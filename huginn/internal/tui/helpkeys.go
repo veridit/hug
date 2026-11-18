@@ -76,7 +76,8 @@ func (m model) contextHelp() helpSection {
 		}}
 	case "sort":
 		return helpSection{"IN THE SORT PICKER", []helpRow{
-			row("letter", "add a field (then by), again flips it"), row("c", "the marked column, as o: again flips, then off", "c"),
+			row("letter", "add a field (then by), again flips it"), row("r", "rank: the default board order, at once; clears every field", "r"),
+			row("c", "the marked column, as o: again flips, then off", "c"),
 			row("fields", "p priority, t type, s state, u updated, d created, g group, a assignee, n title"),
 			row("Backspace", "remove the last field", "backspace"),
 			row("Enter", "apply the order", "enter"), row("Esc", "keep the order as it was", "esc"),
@@ -216,7 +217,7 @@ func (m model) globalHelp() helpSection {
 		row("f", "filter picker: s t p g l a e (state type priority …)", "f"),
 		row("s", "sort picker: c column, p t s u d g a n; again flips", "s"),
 		row("Backspace / F", "remove the last chip / clear all filters", "backspace", "F"),
-		row(": sort", "order by fields; : sort rank goes back"),
+		row(": sort", "order by fields; s r or : sort rank goes back"),
 		row("N", "new task", "N"),
 		row("S", "copy the screen, Enter attaches it to the task", "S"),
 		row("r", "request: ask the agents for a change; Enter sends", "r"),

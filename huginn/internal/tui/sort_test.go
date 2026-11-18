@@ -28,7 +28,7 @@ func TestSortBuilderPriorityThenType(t *testing.T) {
 	m.width, m.height = 140, 40
 	m.resize()
 	m = sorted(m, "p", "t")
-	if m.prompt != "sort" || !strings.Contains(ansi.Strip(m.View()), "sort: priority ↓ · type") {
+	if m.prompt != "sort" || !strings.Contains(ansi.Strip(m.View()), "new: priority ↓ · type") {
 		t.Fatalf("builder does not show the order being built:\n%s", ansi.Strip(m.View()))
 	}
 	m = press(m, "enter")

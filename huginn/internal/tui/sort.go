@@ -14,7 +14,10 @@ import (
 // field, Backspace removes the last one, Enter applies, Esc keeps the
 // order as it was. c is the marked column, as o is (Jørgen 23:39:44: "o
 // is the same as sc"); created is d.
-// Without a sort, rows are in rank order, the only order moves change.
+// Without a sort, rows are in rank order, the only order moves change;
+// r in the picker goes back to it at once (nch9d4), as c sorts at once.
+// r is free (p t s u d g a n c are fields) and is the word the filter
+// line, ": sort rank" and the move refusal already use.
 
 // sortField is one field the builder offers.
 type sortField struct {
@@ -108,6 +111,13 @@ func (m model) currentColumn() (sortField, bool) {
 // updateSort handles a key while the builder is open.
 func (m model) updateSort(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
+	if k == "r" {
+		// The default (nch9d4): every field goes, rows in rank order.
+		m.sortDraft = nil
+		m.applySort(nil)
+		m.prompt = ""
+		return m, nil
+	}
 	if k == "c" {
 		// sc is o (ahejza check 8): the marked column, at once; again
 		// flips it, then off, as o does.
@@ -132,7 +142,7 @@ func (m model) updateSort(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 	f, ok := fieldByLetter(k)
 	if !ok {
-		m.message = "sort: a field letter, ⌫ removes the last, Enter applies, Esc keeps the order"
+		m.message = "sort: a field letter, r rank, ⌫ removes the last, Enter applies, Esc keeps the order"
 		return m, nil
 	}
 	m.message = ""
@@ -279,9 +289,21 @@ func (m model) compareBy(field string, a, b task.Task) int {
 func (m model) sortText() string {
 	// The filter picker's look (ahejza check 3): heading, then one line
 	// per field with its letter and a dim hint.
+	// now: is the order in force, new: the one being built (nch9d4), so
+	// an empty draft never reads as the current order.
+	now := sortLabel(m.sort)
+	if len(m.sort) == 0 {
+		now += " (board order)"
+	}
+	next := m.styles.dim.Render("nothing picked yet, Enter or r gives rank")
+	if len(m.sortDraft) > 0 {
+		next = m.styles.normal.Bold(true).Render(sortLabel(m.sortDraft))
+	}
 	lines := []string{
 		m.styles.accent.Render("SORT · a letter adds a field (then by), again flips it · ⌫ last · Enter applies · Esc keeps the order"),
-		m.styles.normal.Bold(true).Render("sort: " + sortLabel(m.sortDraft)),
+		"now: " + now,
+		m.styles.normal.Bold(true).Render("new: ") + next,
+		"  r  " + fit("rank", 10) + m.styles.dim.Render("board order, the default: moves work only in it"),
 	}
 	current := "  c  current column " + m.styles.dim.Render("mark one with H/L first")
 	if f, ok := m.currentColumn(); ok {

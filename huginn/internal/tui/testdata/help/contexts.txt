@@ -29,7 +29,7 @@ v !            view: lint
 f              filter picker: s t p g l a e (state type priority …)             
 s              sort picker: c column, p t s u d g a n; again flips              
 Backspace / F  remove the last chip / clear all filters                         
-: sort         order by fields; : sort rank goes back                           
+: sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
 S              copy the screen, Enter attaches it to the task                   
 r              request: ask the agents for a change; Enter sends                
@@ -70,7 +70,7 @@ v !            view: lint
 f              filter picker: s t p g l a e (state type priority …)             
 s              sort picker: c column, p t s u d g a n; again flips              
 Backspace / F  remove the last chip / clear all filters                         
-: sort         order by fields; : sort rank goes back                           
+: sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
 S              copy the screen, Enter attaches it to the task                   
 r              request: ask the agents for a change; Enter sends                
@@ -108,7 +108,7 @@ v !            view: lint
 f              filter picker: s t p g l a e (state type priority …)             
 s              sort picker: c column, p t s u d g a n; again flips              
 Backspace / F  remove the last chip / clear all filters                         
-: sort         order by fields; : sort rank goes back                           
+: sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
 S              copy the screen, Enter attaches it to the task                   
 r              request: ask the agents for a change; Enter sends                
@@ -146,7 +146,7 @@ m             grab to move: j/k move it, Enter places it               #        
 y, P p        yank, then paste above / below                           f              filter picker: s t p g l a e (state type priority …)  
 c             clear all filters                                        s              sort picker: c column, p t s u d g a n; again flips   
 g             group rows: flat, group, epic                            Backspace / F  remove the last chip / clear all filters              
-                                                                       : sort         order by fields; : sort rank goes back                
+                                                                       : sort         order by fields; s r or : sort rank goes back         
                                                                        N              new task                                              
                                                                        S              copy the screen, Enter attaches it to the task        
                                                                        r              request: ask the agents for a change; Enter sends     
@@ -171,7 +171,7 @@ t / d / x   take / done / drop it                                      #        
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi         f              filter picker: s t p g l a e (state type priority …)  
 w           wait: park the doing task on what it waits on              s              sort picker: c column, p t s u d g a n; again flips   
 y           yank: P/p in the list paste it                             Backspace / F  remove the last chip / clear all filters              
-T           type palette                                               : sort         order by fields; : sort rank goes back                
+T           type palette                                               : sort         order by fields; s r or : sort rank goes back         
 E           its files folder in the editor                             N              new task                                              
                                                                        S              copy the screen, Enter attaches it to the task        
                                                                        r              request: ask the agents for a change; Enter sends     
@@ -196,7 +196,7 @@ w           wait: park the doing task on what it waits on              #        
 y           yank: P/p in the list paste it                             f              filter picker: s t p g l a e (state type priority …)  
 T           type palette                                               s              sort picker: c column, p t s u d g a n; again flips   
                                                                        Backspace / F  remove the last chip / clear all filters              
-                                                                       : sort         order by fields; : sort rank goes back                
+                                                                       : sort         order by fields; s r or : sort rank goes back         
                                                                        N              new task                                              
                                                                        S              copy the screen, Enter attaches it to the task        
                                                                        r              request: ask the agents for a change; Enter sends     
