@@ -33,7 +33,7 @@ Test: huginn/internal/cli/sync_test.go:184 TestSettledWaitsForSlowChild; settle 
 ## Depends on
 
 ## Acceptance
-- [ ] A stress run that fails first on main (N failures of M runs, quoted) passes M of M after the fix
+- [x] A stress run that fails first on main (N failures of M runs, quoted) passes M of M after the fix
 - [ ] No sleep or settle time decides the test's outcome (code review note naming the signal)
 
 ## Notes
