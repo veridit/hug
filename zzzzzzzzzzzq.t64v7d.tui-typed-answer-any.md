@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T02:03"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "CI 44215682407 windows; lands with qtj177 (crab 01:31)"
+waiting_since: "2026-11-18T02:35"
+waiting_asked_by: "nautilus"
 ---
 
 ## Goal
@@ -39,3 +42,4 @@ Code: huginn/internal/tui/tui.go:1162-1170 (the ? branch runs before the prompt 
 
 ## History
 - 2026-11-18T02:03 todo -> doing/active (take)
+- 2026-11-18T02:35 doing/active -> doing/waiting (wait)
