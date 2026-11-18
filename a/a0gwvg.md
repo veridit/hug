@@ -32,3 +32,5 @@ Prototype attached (ci-goldens.sh, from $JCODE_SCRATCH_DIR). Format source: hugi
 - [ ] a tampered WANT block makes it write nothing and exit non-zero with a fix: line
 
 ## Notes
+
+file:ci-goldens.sh (4365 bytes, sha256:5e41e14e)
