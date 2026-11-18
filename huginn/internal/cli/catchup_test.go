@@ -112,7 +112,7 @@ func TestCatchUpAcrossLayoutMove(t *testing.T) {
 			code, out = runText(b, "upgrade")
 			t.Logf("B's preview: exit %d\n%s", code, out)
 			for _, w := range []string{
-				"  catch-up: would: the remote board moved to layout 3; 3 commits of this clone are replayed onto it, one by one, each with its own message (nothing pushed until the next sync)\n",
+				"  catch-up: would: the fetched board is translated to layout 3; 3 commits of this clone are replayed onto it, one by one, each with its own message (nothing pushed until the next sync)\n",
 				" hug task note " + ids[0] + "\n    ", " hug task note " + ids[1] + "\n    ", " hug task move " + ids[1] + "\n",
 				"  tasks: would: run after the catch-up, on the remote's board (hug upgrade shows them then)\n",
 			} {
