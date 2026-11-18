@@ -117,8 +117,8 @@ func taskFileIDs(entries []os.DirEntry) map[string]bool {
 				ids[p[i]] = true
 			}
 		}
-		// "<id>.*.md"
-		if len(p) >= 3 {
+		// "<id>.*.md", and "<id>.md" (layout 3, w40cmk)
+		if len(p) >= 2 {
 			ids[p[0]] = true
 		}
 	}

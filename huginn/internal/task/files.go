@@ -77,7 +77,12 @@ func IsTaskFolder(root, dir string) bool {
 	}
 	matches, _ := filepath.Glob(filepath.Join(root, filepath.Dir(filepath.FromSlash(dir)), "*."+base+".*.md"))
 	more, _ := filepath.Glob(filepath.Join(root, filepath.Dir(filepath.FromSlash(dir)), base+".*.md"))
-	return len(matches)+len(more) > 0
+	if len(matches)+len(more) > 0 {
+		return true
+	}
+	// Layout 3 (w40cmk): C/ID.md owns C/ID/.
+	st, e := os.Lstat(filepath.Join(root, filepath.FromSlash(dir)+".md"))
+	return e == nil && st.Mode().IsRegular()
 }
 
 // FolderOf is the files folder of a task (relative, slash separated).
@@ -516,6 +521,10 @@ func FolderOwners(entries []os.DirEntry) map[string]bool {
 			continue
 		}
 		p := strings.Split(n, ".")
+		// "<id>.md" (layout 3, w40cmk).
+		if len(p) == 2 && id.Valid(p[0]) {
+			ids[p[0]] = true
+		}
 		// "<id>.*.md" and "*.<id>.*.md": any part but the last two.
 		for i := 0; i+2 < len(p); i++ {
 			if id.Valid(p[i]) {
