@@ -25,7 +25,13 @@ type captureLLM struct {
 	calls       atomic.Int32
 	reply       string
 	input       string
+	system      string
 	beforeReply atomic.Value
+}
+
+// fakeCaptureSystem is fakeCapture that also records the system prompt.
+func fakeCaptureSystem(t *testing.T, f *scopetest.Fixture, reply string) *captureLLM {
+	return fakeCapture(t, f, reply)
 }
 
 func fakeCapture(t *testing.T, f *scopetest.Fixture, reply string) *captureLLM {
@@ -44,6 +50,9 @@ func fakeCapture(t *testing.T, f *scopetest.Fixture, reply string) *captureLLM {
 		json.NewDecoder(r.Body).Decode(&v)
 		if len(v.Messages) > 1 {
 			m.input = v.Messages[1].Content
+		}
+		if len(v.Messages) > 0 {
+			m.system = v.Messages[0].Content
 		}
 		json.NewEncoder(w).Encode(map[string]any{"choices": []any{map[string]any{"message": map[string]string{"content": m.reply}, "finish_reason": "stop"}}, "usage": extract.Usage{PromptTokens: 10, CompletionTokens: 5, TotalTokens: 15}})
 	}))

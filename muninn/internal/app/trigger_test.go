@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/app"
+	"github.com/veridit/hug/muninn/internal/harness"
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/scopetest"
 	"github.com/veridit/hug/muninn/internal/trigger"
@@ -222,5 +223,40 @@ func TestCorrectionKeepsTrigger(t *testing.T) {
 	}
 	if got := nativeTrigger(t, next.SID); !trigger.Equal(got, tr) {
 		t.Fatalf("correction trigger %+v", got)
+	}
+}
+
+// jrj1vq check 2: with capture triggers on, a captured rule keeps the
+// trigger the extractor proposed; with them off the request carries no
+// trigger instructions and nothing is stored.
+func TestCaptureStoresProposedTrigger(t *testing.T) {
+	for _, on := range []bool{false, true} {
+		f := scopetest.New(t)
+		b := f.Bind(t, "alpha")
+		reply := `{"category":"decision","type":"rule","content":"Zebrafish coding agents run at medium effort or higher always","trust":"high","source":"user","when":"choosing a model for a coding subagent","case":{"tools":["swarm"]}}`
+		m := fakeCaptureSystem(t, f, reply)
+		f.App.Cfg.Extract.Triggers = on
+		r, err := b.Capture(context.Background(), f.App, app.CaptureOptions{Harness: "stdin", Session: "trig", Messages: []harness.CaptureMessage{{ID: "one", Role: "user", Text: "Always run coding agents at medium effort or higher."}}})
+		if err != nil || len(r.Actions) != 1 || r.Actions[0].Action != "add" {
+			t.Fatalf("on=%v %+v %v", on, r, err)
+		}
+		if strings.Contains(m.system, `"when_not"`) != on {
+			t.Fatalf("on=%v: trigger instructions in the request = %v", on, !on)
+		}
+		ms, _ := ingest.LoadNative(app.NativePath())
+		var got *trigger.Trigger
+		for _, x := range ms {
+			if strings.HasPrefix(x.Content, "Zebrafish coding agents") {
+				got = x.Trigger
+			}
+		}
+		// Off: the extractor was not asked; a stray trigger in its reply is
+		// still a proposal nobody asked for, and is not stored.
+		if on && (got == nil || got.When != "choosing a model for a coding subagent" || got.Case.Tools[0] != "swarm") {
+			t.Fatalf("on: stored %+v", got)
+		}
+		if !on && got != nil {
+			t.Fatalf("off: stored %+v", got)
+		}
 	}
 }

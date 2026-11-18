@@ -10,6 +10,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/project"
 	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // captureBatch is a chunk-local native snapshot. Receipts and deterministic IDs
@@ -198,7 +199,13 @@ func (c *captureBatch) apply(ctx context.Context, b Binding, a *App, scope strin
 		return nil
 	}
 	c.byID[id] = len(c.mems)
-	c.mems = append(c.mems, ingest.NativeMemory{ID: id, Origin: action.Origin, Content: action.Content, Category: action.Category, Type: NormalType(action.Type), Trust: action.Trust, Scope: scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureEvents: []string{receipt}, CaptureSupersedes: retireTarget, Updates: action.Updates, SafeReason: action.SafeReason, Branch: b.workBranch()})
+	// The extractor's trigger proposal (jrj1vq) is kept only when capture
+	// asked for it; Parse already dropped it on other types.
+	var tr *trigger.Trigger
+	if a.Cfg.Extract.Triggers {
+		tr = action.Candidate.Trigger()
+	}
+	c.mems = append(c.mems, ingest.NativeMemory{ID: id, Origin: action.Origin, Content: action.Content, Category: action.Category, Type: NormalType(action.Type), Trust: action.Trust, Scope: scope, Active: true, Strength: 1, Created: now, Updated: now, CaptureEvents: []string{receipt}, CaptureSupersedes: retireTarget, Updates: action.Updates, SafeReason: action.SafeReason, Branch: b.workBranch(), Trigger: tr})
 	c.receipts[receipt] = true
 	c.dirty = true
 	return nil

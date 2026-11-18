@@ -32,6 +32,7 @@ type item struct {
 	Transcript string          `json:"transcript"`
 	Known      []extract.Known `json:"known"`
 	Places     []extract.Place `json:"places"`
+	OffRaw     string          `json:"off_raw,omitempty"`
 }
 
 type cand struct {
@@ -55,6 +56,8 @@ func main() {
 	par := flag.Int("p", 2, "parallel calls")
 	scan := flag.Bool("scan", false, "no calls: print the agent names each transcript uses")
 	rematch := flag.String("rematch", "", "no calls: re-run the agent matcher on this earlier output (ARM.jsonl) with the items' transcripts")
+	triggers := flag.Bool("triggers", false, "ask the extractor for when-then triggers (extract.triggers, jrj1vq)")
+	reparse := flag.Bool("reparse", false, "no calls: parse each item's recorded off_raw with this tree's parser (jrj1vq arm OFF)")
 	flag.Parse()
 	cfg, err := config.Load()
 	if err != nil {
@@ -64,6 +67,7 @@ func main() {
 	xc := cfg.Extract
 	xc.MaxTokens = 1024 // the hook's cap (app/capture.go)
 	xc.TimeoutSeconds = 120
+	xc.Triggers = *triggers
 	home, _ := os.UserHomeDir()
 	ss := agents.Sessions([]string{filepath.Join(home, ".jcode")})
 	names := make([]string, 0, len(ss))
@@ -92,6 +96,29 @@ func main() {
 	if *scan {
 		for _, it := range its {
 			fmt.Printf("%s\t%s\t%v\n", it.ID, it.Kind, m.Find(it.Transcript))
+		}
+		return
+	}
+	if *reparse {
+		enc := json.NewEncoder(os.Stdout)
+		for _, it := range its {
+			r := row{ID: it.ID, Kind: it.Kind, Arm: *arm, Candidates: []cand{}}
+			cs, rejected := extract.Parse(it.OffRaw)
+			r.Rejected = rejected
+			// The same filter Run applies after Parse: a same_as/updates
+			// sid must be one the extractor was shown.
+			known := map[string]bool{}
+			for _, k := range it.Known {
+				known[k.SID] = true
+			}
+			for _, c := range cs {
+				if (c.SameAs != "" && !known[c.SameAs]) || (c.Updates != "" && !known[c.Updates]) {
+					r.Rejected++
+					continue
+				}
+				r.Candidates = append(r.Candidates, cand{Candidate: c, Agents: m.FindIn(c.Content, it.Transcript)})
+			}
+			enc.Encode(r)
 		}
 		return
 	}

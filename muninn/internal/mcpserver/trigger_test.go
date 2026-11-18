@@ -1,6 +1,7 @@
 package mcpserver
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
 	"testing"
@@ -59,4 +60,43 @@ func mcpTrigger(t *testing.T, sid string) *trigger.Trigger {
 	}
 	t.Fatalf("%s missing", sid)
 	return nil
+}
+
+// jrj1vq check 2 (1): memory_remember asks the agent for when/when_not on a
+// rule or pattern, and every field its words name is in its input schema.
+func TestMCPRememberAsksForTrigger(t *testing.T) {
+	f := scopetest.New(t)
+	cs := connect(t, f.App, f.Bind(t, "alpha"))
+	res, err := cs.ListTools(context.Background(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tool := range res.Tools {
+		if tool.Name != "memory_remember" {
+			continue
+		}
+		d := tool.Description
+		for _, want := range []string{"rule or pattern", "when (", "when_not (", "case (", "supersedes"} {
+			if !strings.Contains(d, want) {
+				t.Errorf("description lacks %q: %s", want, d)
+			}
+		}
+		raw, _ := json.Marshal(tool.InputSchema)
+		var schema struct {
+			Properties map[string]struct {
+				Description string `json:"description"`
+			} `json:"properties"`
+		}
+		json.Unmarshal(raw, &schema)
+		for _, field := range []string{"when", "when_not", "case", "clear_trigger", "supersedes", "content"} {
+			if _, ok := schema.Properties[field]; !ok {
+				t.Errorf("the words name %q, the schema has no such field", field)
+			}
+		}
+		if !strings.Contains(schema.Properties["when"].Description, "rule or pattern") || !strings.Contains(schema.Properties["content"].Description, "THEN") {
+			t.Errorf("field words: when=%q content=%q", schema.Properties["when"].Description, schema.Properties["content"].Description)
+		}
+		return
+	}
+	t.Fatal("memory_remember not listed")
 }
