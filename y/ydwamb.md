@@ -32,7 +32,7 @@ Finding: hug task lint 911j70 -> 9/911j70.md:0: broken [missing-file] .hug/tasks
 ## Depends on
 
 ## Acceptance
-- [ ] a test: a note citing .hug/tasks/X/ID/compare-*.png with two matching files gives no finding (fails before)
+- [x] a test: a note citing .hug/tasks/X/ID/compare-*.png with two matching files gives no finding (fails before)
 - [ ] a test: a glob citation matching no attached file gives one missing-file finding naming the whole pattern, and its fix: line does not suggest --name with a cut-off name
 - [ ] hug task lint on this board shows no missing-file finding for 911j70
 
@@ -40,5 +40,6 @@ Finding: hug task lint 911j70 -> 9/911j70.md:0: broken [missing-file] .hug/tasks
 
 
 49249f5f on main 8a45b0eb (ydwamb, ci/ydwamb). Fail-first: TestGlobCitationMatchingFilesIsFine got 'task:kdap66/compare-: file not found' and '.hug/tasks/k/kdap66/compare-1: file not found'; TestGlobCitationMatchingNothingNamesThePattern got 'shot-: file not found ... | fix: hug task attach hc607d FILE --name shot-'. After: both pass, plus TestCitedNameKeepsProseOut; task ok 25.624s, mcp ok 267.517s, cache ok 2.709s locally. Check 3, read-only with the built binary on this board: old 'hug task lint 911j70' -> '9/911j70.md:0: broken [missing-file] .hug/tasks/9/911j70/compare-: file not found'; new -> 'no findings'; board missing-file count 2 -> 1 (the one left is ydwamb's own goal text, which cites the cut form 'compare-' literally... it reads '.hug/tasks/9/911j70/compare-: file not found' in the task's relevant details). .hug/tasks git status: 0 changed before and after (lint never writes).
+check 1: 49249f5f TestGlobCitationMatchingFilesIsFine: compare-80.png and compare-140.png attached, notes cite .hug/tasks/G/ID/compare-*.png, compare-1?0.png, compare-[18]*.png, file:compare-*.png, task:ID/compare-*.png -> no finding. Failed first: '.hug/tasks/k/kdap66/compare-1: file not found' and 'task:kdap66/compare-: file not found'
 ## History
 - 2026-11-18T22:34 todo -> doing/active (take)
