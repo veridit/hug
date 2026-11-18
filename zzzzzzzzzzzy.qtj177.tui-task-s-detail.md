@@ -9,10 +9,15 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T02:50"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_by: "nautilus"
+asked_check: "3"
+asked_what: "after the 03:00 release: open a task after H/L or o on a list; is the column hint gone from it?"
+asked_for: "jhf"
+asked_since: "2026-11-18T02:50"
 ---
 
 ## Goal
@@ -45,3 +50,4 @@ landed 0c3d3924..48b1151f (e89ebc24, 48b1151f). CI 44217631803 on 37d71929: 6/6 
 
 ## History
 - 2026-11-18T02:50 todo -> doing/active (take)
+- 2026-11-18T02:50 doing/active -> doing/asked (ask)
