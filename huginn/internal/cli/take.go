@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -61,6 +62,22 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 	s.s.Invalidate()
 	if e == nil {
 		_, e = s.s.Tasks()
+	}
+	// Taken by an owner whose session is gone (9ahvgt check 3, mizaru on
+	// txjkrm): the fix takes it over, not "hug task next". The same test
+	// as lint's stale-owner; the take itself is still refused.
+	var te *task.Error
+	if errors.As(e, &te) && te.Kind == "taken" && who.Name != "" {
+		if d, err := s.s.Get(te.ID); err == nil {
+			people, _ := task.People(s.r.Dir)
+			if fs := task.OwnerFindings(s.liveness(a), []task.Task{d.Task}, time.Now(), people...); len(fs) > 0 {
+				takeAgain := "hug task take " + d.Task.ID + " --as " + who.Name + " --model " + who.Model
+				return task.Result{}, &OperationError{
+					Problem: "taken by " + te.Value + " (" + d.Task.ID + "), but " + strings.TrimPrefix(fs[0].Problem, "owner "+te.Value+" of "+d.Task.ID+" "),
+					Fix:     "hug task set " + d.Task.ID + " --assignee " + who.Name + " && " + takeAgain,
+				}
+			}
+		}
 	}
 	// Read the ticket first: its Goal, details and checks are what the
 	// todos are written from (tzc9hb).

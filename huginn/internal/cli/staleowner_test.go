@@ -92,3 +92,54 @@ func TestLintStaleOwnerSessions(t *testing.T) {
 		t.Fatalf("unreadable sessions: warnings %q", ws)
 	}
 }
+
+// 9ahvgt check 3 (mizaru on txjkrm, 2026-11-18): take on a task whose
+// owner is gone (the stale-owner test) is refused, as before, but the fix
+// takes it over in one runnable line; a live owner's task keeps "hug task
+// next". Running the fix makes the task the taker's.
+func TestTakeFromGoneOwner(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	sessions := filepath.Join(a.Env["JCODE_HOME"], "sessions")
+	if err := os.MkdirAll(sessions, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	quote := func(s string) string { b, _ := json.Marshal(s); return string(b) }
+	session := func(file, status string, ago time.Duration) {
+		t.Helper()
+		name := strings.Split(file, "_")[1]
+		p := filepath.Join(sessions, file)
+		body := `{"title":"x","messages":[],"working_dir":` + quote(a.Cwd) + `,"short_name":"` + name + `","status":"` + status + `"}`
+		if err := os.WriteFile(p, []byte(body), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		at := time.Now().Add(-ago)
+		if err := os.Chtimes(p, at, at); err != nil {
+			t.Fatal(err)
+		}
+	}
+	session("session_nautilus_1794905151412_33a1.json", "Closed", 6*time.Hour)
+	session("session_macaque_1795000000000_aaaa.json", "Active", time.Minute)
+	ids := map[string]string{}
+	for _, who := range []string{"nautilus", "macaque"} {
+		id := execute(t, a, "new", "Owned by "+who, "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
+		execute(t, a, "take", id, "--as", who, "--model", "claude-opus-5-5")
+		ids[who] = id
+	}
+	gone, live := ids["nautilus"], ids["macaque"]
+	code, out := runText(a, "take", gone, "--as", "mizaru", "--model", "claude-opus-5-5/high")
+	want := "fix: hug task set " + gone + " --assignee mizaru && hug task take " + gone + " --as mizaru --model claude-opus-5-5/high\n"
+	if code != 1 || !strings.Contains(out, "taken by nautilus ("+gone+")") || !strings.Contains(out, "no live session") || !strings.HasSuffix(out, want) {
+		t.Fatalf("exit %d, want 1 ending %q:\n%s", code, want, out)
+	}
+	if code, out := runText(a, "take", live, "--as", "mizaru", "--model", "claude-opus-5-5"); code != 1 || !strings.HasSuffix(out, "fix: hug task next\n") {
+		t.Fatalf("a live owner's task: exit %d\n%s", code, out)
+	}
+	// The fix runs: both commands, as written.
+	execute(t, a, "set", gone, "--assignee", "mizaru")
+	execute(t, a, "take", gone, "--as", "mizaru", "--model", "claude-opus-5-5/high")
+	if f := taskFile(t, a, gone); !strings.Contains(f, `assignee: ["mizaru"]`) {
+		t.Fatalf("after the fix:\n%s", f)
+	}
+}
