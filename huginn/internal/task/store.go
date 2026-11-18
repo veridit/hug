@@ -93,8 +93,11 @@ type Store struct {
 	// waking is set while Wake writes: the wake is hug's, not the
 	// reader's, so it marks nothing read or back (z2vmte).
 	waking bool
-	board  []Task
-	held   bool
+	// quiet is set while hug records a receipt (gmzd87): that write is
+	// hug's, not the actor's, so it marks nothing read or in progress.
+	quiet bool
+	board []Task
+	held  bool
 }
 
 // Invalidate drops the kept board: the next Tasks reads the files again.
@@ -229,9 +232,10 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		}
 	}
 	if changed {
-		if !s.waking {
+		if !s.waking && !s.quiet {
 			markRead(d, s.Actor, s.Action)
 			markBack(d, s.Actor)
+			markProgress(d, s.Actor, s.Action)
 		}
 		path, e := s.diskPath(d.Task.Path)
 		if e != nil {

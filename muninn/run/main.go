@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	huginn "github.com/veridit/hug/huginn/run"
 	"github.com/veridit/hug/internal/env"
 	"io"
 	"os"
@@ -711,6 +712,10 @@ func runHook(name string, budget time.Duration) error {
 		}
 		sessions := filepath.Join(jh, "sessions")
 		parks := harness.ParkDir(config.DataDir())
+		// What hug delivered to this session (a person's request or answer,
+		// gmzd87) is acknowledged once it is in the transcript: at the turn
+		// it started, or at the first tool call after a soft interrupt.
+		ackDelivered(ctx, jh, sid, os.Getenv("JCODE_HOOK_EVENT") == "post_tool_feedback")
 		switch os.Getenv("JCODE_HOOK_EVENT") {
 		case "post_tool_feedback":
 			if err := deliverParked(parks, sessions, sid); err != nil {
@@ -763,6 +768,21 @@ func runHook(name string, budget time.Duration) error {
 		return err
 	default:
 		return fmt.Errorf("unknown harness %q (claude, codex, jcode)", name)
+	}
+}
+
+// ackDelivered acknowledges what hug delivered to session sid (gmzd87);
+// in a tool's feedback it says so to the model, one line per item.
+func ackDelivered(ctx context.Context, home, sid string, say bool) {
+	acked, err := huginn.Acknowledge(ctx, home, sid)
+	if err != nil {
+		logHook("jcode %s: acknowledge: %v", short(sid), err)
+	}
+	for _, a := range acked {
+		logHook("jcode %s: acknowledged %s", short(sid), a)
+		if say {
+			fmt.Fprintf(os.Stdout, "hug: you received %s; it now shows as acknowledged (hug task requests)\n", a)
+		}
 	}
 }
 

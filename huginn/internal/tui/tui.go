@@ -76,6 +76,12 @@ type Options struct {
 	// best first, from the task cache's index (49n9kw, as hug task search).
 	// Without it, / search filters by substring in rank order.
 	Search func(query string) ([]string, error)
+	// Deliver, when set, hands a person's request or answer just written
+	// on id (kind "request" or "answer") to the board's coordinator and
+	// returns its receipt (gmzd87): the same function hug task request and
+	// hug task answer call. It runs inside the write's turn, after its
+	// commit.
+	Deliver func(id, kind, by string) (string, error)
 	// Initial, when set, is drawn before anything is read: the board the
 	// task cache last saw (vnyz8z). Then Refresh, when set, brings the
 	// board up to date (the cache's sync) before the first reload, off the

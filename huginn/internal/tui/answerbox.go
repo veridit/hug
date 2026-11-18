@@ -173,6 +173,7 @@ func (m *model) request(text string) {
 	defer m.hold()()
 	r, err := m.store.Request(t.ID, text, who)
 	m.finish(r, err, "request")
+	m.deliver(r, err, "request", who)
 }
 
 // requestCount is the "req N" row mark while N requests are open, with a
@@ -194,7 +195,9 @@ func (m model) requestLines(t task.Task) []string {
 		if s := strings.TrimPrefix(since(r.At), " · "); s != "" {
 			head += " · " + s + " ago"
 		}
-		state := m.styles.accent.Render("open")
+		// One label: the request's receipt (gmzd87), "pending, delivered
+		// to crab", "acknowledged by crab", ...
+		state := m.styles.accent.Render(oneLine(r.Receipt.Label()))
 		if r.Resolved != nil {
 			state = m.styles.status["done"].Render("resolved")
 		}

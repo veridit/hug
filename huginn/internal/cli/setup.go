@@ -110,9 +110,9 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	// nobody holds. Unset, every session hears it once.
 	if branch && statErr == nil {
 		name, _ := task.Coordinator(filepath.Join(board, TaskDir))
-		detail := "hug.toml [board] coordinator is " + name + ": a person's request on a task nobody holds goes to them"
+		detail := "hug.toml [board] coordinator is " + name + ": hug hands every request and answer a person writes to " + name + "'s live jcode session (gmzd87)"
 		if name == "" {
-			detail = "no coordinator set: a person's request on a task nobody holds goes to every session on the board; name the session that coordinates the agents"
+			detail = "no coordinator set: a person's requests and answers are not delivered to any session (they stay pending, not delivered: no coordinator set); name the session that coordinates the agents"
 		}
 		add("coordinator", name != "", detail, "hug task coordinator NAME")
 	}
@@ -368,6 +368,7 @@ request, resolve), task_requests.
 Requests: a person's request on a task (hug task requests) comes first in hug
 task next. Turn it into changes to the ticket, then hug task resolve ID N
 "what changed"; if it is unclear, hug task ask instead.
+` + DeliveryFlow + `
 Old backlog ids (TASK-123) work as aliases.
 Never edit .hug/tasks/ files by hand while another agent may be writing; use the commands.`
 

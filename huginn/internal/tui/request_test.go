@@ -52,7 +52,7 @@ func TestRequestBox(t *testing.T) {
 			t.Fatalf("at %d stored %+v", w, tk.Requests)
 		}
 		page := ansi.Strip(m.detailText(tk))
-		if !strings.Contains(page, "REQUESTS") || !strings.Contains(page, "1. jhf · ") || !strings.Contains(page, "· open") {
+		if !strings.Contains(page, "REQUESTS") || !strings.Contains(page, "1. jhf · ") || !strings.Contains(page, "· pending, not sent") {
 			t.Fatalf("at %d the detail lacks the open request:\n%s", w, page)
 		}
 		// The row says req 1 while it is open.
