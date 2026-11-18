@@ -1,15 +1,20 @@
 ---
 id: 0n4rnx
 title: "Windows CLI tests run at 450 of the 600 s cap"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["duckling"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T17:58"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Log: /Users/jhf/.jcode/scratch/wincli-44350205436.log. Running at the panic: Tes
 - [ ] huginn/internal/cli on windows-latest under 300 s in 3 consecutive CI runs
 
 ## Notes
+
+
+## History
+- 2026-11-18T17:58 todo -> doing/active (take)
