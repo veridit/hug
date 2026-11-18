@@ -9,7 +9,8 @@ import (
 
 // releaseBoard is personBoard's board (jhf, erik, hhz) with a coordinator
 // and a task whose checks 1-2 hold and whose checks 3-4 are Jørgen's
-// after-release confirmations, plus one whose open check is an agent's. A
+// after-release confirmations (check 4 with a verb no list names, as
+// 5z4zt4's, ebben8), plus one whose open check is an agent's. A
 // release tag contains both (deduced).
 func releaseBoard(t *testing.T) (a *App, person, agent string) {
 	t.Helper()
@@ -18,7 +19,7 @@ func releaseBoard(t *testing.T) (a *App, person, agent string) {
 	execute(t, a, "people", "add", "jhf", "jorgen@veridit.no", "--name", "Jørgen H. Fjeld")
 	execute(t, a, "coordinator", "crab")
 	person = execute(t, a, "new", "Lint view", "--goal", "g", "--purpose", "p", "--principle", "q",
-		"--accept", "built", "--accept", "tested", "--accept", "Jørgen confirms on his board after release", "--accept", "Jørgen opens it and says it reads clearly")["task"].(Reply)["id"].(string)
+		"--accept", "built", "--accept", "tested", "--accept", "Jørgen confirms on his board after release", "--accept", "Jørgen attaches a screenshot to it and the detail shows it inline")["task"].(Reply)["id"].(string)
 	agent = execute(t, a, "new", "Colours", "--goal", "g", "--purpose", "p", "--principle", "q",
 		"--accept", "built", "--accept", "a tmux test drives the Files section")["task"].(Reply)["id"].(string)
 	for i, id := range []string{person, agent} {

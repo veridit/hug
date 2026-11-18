@@ -46,6 +46,8 @@ func TestWaitAddressedToPersonIsRefused(t *testing.T) {
 		{"jorgen: approve the colours", `hug task ask ` + id + ` --to jhf "approve the colours"`},
 		{"Erik's go-ahead on the import", `hug task ask ` + id + ` --to erik "Erik's go-ahead on the import"`},
 		{"waiting for the owner to merge PR 12", `hug task ask ` + id + ` --to jhf "waiting for the owner to merge PR 12"`},
+		// ebben8: a person as the subject, whatever the verb.
+		{"check 1: Jørgen sees the Seid overview preview", `hug task ask ` + id + ` --to jhf --check 1 "Jørgen sees the Seid overview preview"`},
 	} {
 		code, out := runText(a, "wait", id, c.on, "--as", "rabbit")
 		if code != 2 || !strings.Contains(out, "a question to a person is hug task ask") || !strings.Contains(out, "fix: "+c.fix+"\n") {
