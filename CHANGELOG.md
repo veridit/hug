@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.59 - 2026-11-18
+
 - `hug mem forget` updates the memories it changed instead of running two full index passes (4vd1mz), including a batch of ids. Concept adjacency loads and writes only for the changed frontier, neighbor selection keeps a bounded top list, and a successful save is not read again unless another writer changed the file. On a 30,794-unit store copy, four paired runs after preparation fell from 3.19-4.26 s (median 3.415 s) to 0.81-1.07 s (median 0.920 s), with new-binary max RSS 218-230 MB. Reading the database before each run gave 2.48-3.06 s (median 2.545 s) before and 0.61-0.91 s (median 0.645 s) after, with new-binary max RSS 215-226 MB. MB are decimal. Seven of eight new-binary samples were below one second, with a 1.07 s tail: the goal of well under one second on every run is not achieved. These measurements did not flush the OS page cache and exclude preparation and one-time migration costs. The old whole-graph gob and quantized vectors move into narrow tables once on first use. Graph conversion is inside the writer's transaction, needs no upgrade command, and leaves one committed receipt in `hook.log` and `hug mem stats`; `hug mem index` reports it, and `hug mem upgrade --apply` can do it ahead of a hook. A rolled-back pass leaves no success receipt. Production Louvain traversal remains in Go map order, with no sorting added. Across the migration, all 277 replayed responses matched after excluding only `latency_ms` and `response.elapsed`. This is migration equality, not a recall-quality gain claim.
 
 ## v0.7.58 - 2026-11-18
