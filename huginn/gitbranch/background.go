@@ -141,12 +141,41 @@ func (b Background) Queued() bool {
 	if st, e := os.Stat(b.base + ".pending"); e == nil && time.Since(st.ModTime()) < pendingFor {
 		return true
 	}
+	return b.queueHeld()
+}
+
+// queueHeld reports a syncer holding the queue. Finding out takes the queue
+// lock for a moment, and a syncer whose Run tried it in that moment took the
+// probe for a queued syncer and exited without a pass, leaving its commit
+// unpushed (mmm8c8, macOS CI 44227534600). So a probe holds the probe lock
+// while it holds the queue, and a syncer refused the queue waits for the
+// probe lock before it tries again: refused a second time, it was refused by
+// a syncer, never by a probe. Lock order: probe, then queue.
+func (b Background) queueHeld() bool {
+	probe, e := flock.Acquire(b.base + ".probe")
+	if e != nil {
+		return false
+	}
+	defer probe()
 	release, ok, e := flock.TryAcquire(b.base + ".queue")
 	if e != nil || !ok {
 		return e == nil
 	}
 	release()
 	return false
+}
+
+// takeQueue takes the queue unless a syncer holds it (see queueHeld).
+func (b Background) takeQueue() (func(), bool, error) {
+	if release, ok, e := flock.TryAcquire(b.base + ".queue"); e != nil || ok {
+		return release, ok, e
+	}
+	probe, e := flock.Acquire(b.base + ".probe")
+	if e != nil {
+		return nil, false, e
+	}
+	defer probe()
+	return flock.TryAcquire(b.base + ".queue")
 }
 
 // Pending reports a syncer Nudge started that has not taken its place in
@@ -276,7 +305,7 @@ func (s Settle) wait() {
 // The run lock is held for the pass only: a foreground take or sync waits
 // for a running pass (Exclusive), never for a burst to settle.
 func (b Background) Run(settle Settle, pass func(turn func() (func(), error)) State) error {
-	queue, ok, e := flock.TryAcquire(b.base + ".queue")
+	queue, ok, e := b.takeQueue()
 	// In the queue (or another syncer is): this start is no longer pending.
 	_ = os.Remove(b.base + ".pending")
 	if e != nil || !ok {
