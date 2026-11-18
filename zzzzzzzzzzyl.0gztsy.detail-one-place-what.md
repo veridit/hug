@@ -45,6 +45,7 @@ Mock, 6ephqk opened:
 - [ ] a wait that names no check shows one question block styled like an acceptance row, focused on open; Space/a act on it (test)
 - [ ] ~~the detail of a task waiting on you shows the wait once in the header and no lint line for it (golden at 80 and 140)~~ (not relevant: replaced by check 5: header-spec says the question is not in the header (crab 01:06 ruling), nautilus, 2026-11-18)
 - [ ] Jørgen opens 6ephqk and says it reads clearly
+- [ ] a task asked of you shows the question once: the context has only a one-word stage badge ([asked], [design], [review]) and no stage line; with a check, the question sits under that check; without, one block at the top of the details, whole and wrapped, never cut; asked of someone else or waiting on a thing, the context line stays (crab 01:06; golden at 80 and 140)
 
 ## Notes
 
