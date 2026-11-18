@@ -1,7 +1,7 @@
 ---
 id: dayedr
 title: "Release v0.7.65"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T16:48"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T16:48"
 ---
 
 ## Goal
@@ -40,5 +39,7 @@ Tag v0.7.65 on the CHANGELOG commit, merge c84d3273 on main 18b6b86d. Contents: 
 
 check 1: release.yml 44338496791 success
 check 2: brew upgrade -> hug v0.7.65
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T16:48 todo -> doing/active (take)
+- 2026-11-18T16:48 doing/active -> done (done); was doing_since: 2026-11-18T16:48
