@@ -66,7 +66,7 @@ jobs:
         # -timeout 20m only so the measurement completes; the bar is 300 s.
         shell: bash
         run: |
-          go test -json -timeout 20m -run 'XXX_none' ./huginn/internal/cli/ > cli.json || true
+          go test -json -timeout 20m ./huginn/internal/cli/ > cli.json || true
           go run ./scripts/testtimes cli.json 40
         env:
           CGO_ENABLED: "1"
@@ -75,16 +75,6 @@ jobs:
         with:
           name: wincli-json
           path: cli.json
-      - name: Git cost of the slowest tests (measure only)
-        shell: bash
-        run: |
-          for T in TestCatchUpAcrossLayoutMove TestRequestRoutesThroughNext TestOrdinarySyncScalarFieldsKeepBoardAndReportLocal TestBoardColumns; do
-            rm -rf tr && mkdir tr
-            start=$(date +%s.%N)
-            GIT_TRACE2_EVENT=$PWD/tr go test -count=1 -run "^$T\$" ./huginn/internal/cli/ | tail -1
-            echo "== $T: $(echo "$(date +%s.%N) - $start" | bc) s with build"
-            go run ./scripts/gitcost tr | head -25
-          done
 
   bench:
     # Benchmarks out of the normal suite (Jørgen, 2026-11-17 10:00): one
