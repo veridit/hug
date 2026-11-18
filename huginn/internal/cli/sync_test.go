@@ -291,10 +291,11 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	}
 }
 
-// Check 5: a rebase conflict keeps both clones' commits and says so.
+// Competing titles keep the board's value and preserve the local value in a
+// visible note. The detached pass reports it and retains later local work.
 func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
 	t.Parallel()
-	a, b, bare := clones(t)
+	a, b, _ := clones(t)
 	// Both clones edit offline from each other first.
 	var id string
 	offline(t, a, func() {
@@ -311,15 +312,22 @@ func TestBackgroundSyncConflictKeepsCommits(t *testing.T) {
 	execute(t, b, "note", id, "after the conflict")
 	settled(t, b)
 	board := filepath.Join(b.Cwd, TaskDir)
-	if !isAncestor(board, mine) {
-		t.Fatalf("clone B lost its own commit %s", mine)
+	execute(t, a, "sync")
+	for _, c := range []*App{a, b} {
+		text := taskFile(t, c, id)
+		if !strings.Contains(text, "Title from A") || strings.Count(text, "Title from B") != 1 || strings.Count(text, "after the conflict") != 1 || !strings.Contains(text, strings.TrimSpace(mine)[:12]) {
+			t.Fatalf("competing title lost content or source commit:\n%s\nsync log:\n%s", text, syncLogOf(t, b))
+		}
+	}
+	if git(t, board, "rev-parse", "HEAD") != git(t, filepath.Join(a.Cwd, TaskDir), "rev-parse", "HEAD") {
+		t.Fatal("background title resolution did not converge")
 	}
 	code, out := runText(b, "ls")
-	if code != 0 || !strings.Contains(out, "sync conflict in ") || !strings.Contains(out, "\nfix: hug task sync\n") {
-		t.Fatalf("ls after a conflict: %d\n%s\nB's state: %s\nB's sync log:\n%s", code, out, syncStateOf(t, b), syncLogOf(t, b))
+	if code != 0 || strings.Contains(out, "sync conflict in ") {
+		t.Fatalf("ls after resolving competing values: %d\n%s\nB's state: %s\nB's sync log:\n%s", code, out, syncStateOf(t, b), syncLogOf(t, b))
 	}
-	if got := git(t, bare, "log", "-1", "--format=%s", TaskBranch); !strings.Contains(got, "set "+id) {
-		t.Fatalf("remote lost clone A's commit: %s", got)
+	if log := syncLogOf(t, b); strings.Count(log, "sync: "+id+" title:") != 1 {
+		t.Fatalf("background pass did not report the retained title once:\n%s", log)
 	}
 }
 

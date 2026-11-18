@@ -47,6 +47,12 @@ type Repository struct {
 	// whose layout differs is refused (w40cmk check 9): the two sides
 	// name task files differently and git would merge them wrong.
 	Layout func(text string) (int, error)
+	// Resolver is the board's same per-file resolver used by layout
+	// catch-up. Nil keeps Git's original behavior for other data branches.
+	Resolver *Translator
+	// OnResolved reports retained competing values only after the whole
+	// private replay has been installed successfully.
+	OnResolved func(Replayed)
 }
 
 // LayoutError is a sync stopped because this clone's unpushed commits and
@@ -771,8 +777,9 @@ func (r *Repository) pull() error {
 	return r.integrate()
 }
 
-// integrate rebases local commits onto the fetched remote branch, without
-// the network. A conflict aborts the rebase: local commits stay intact.
+// integrate integrates local commits onto the fetched remote branch, without
+// the network. Task boards use their semantic resolver for divergence. Other
+// branches keep Git's rebase, aborting conflicts with local commits intact.
 func (r *Repository) integrate() error {
 	head, e := r.Head()
 	if e != nil {
@@ -784,6 +791,9 @@ func (r *Repository) integrate() error {
 	}
 	if e = r.sameLayout(); e != nil {
 		return e
+	}
+	if handled, err := r.resolveDiverged(); handled {
+		return err
 	}
 	if _, e = r.git("rebase", r.remoteRef()); e != nil {
 		out, _ := r.git("diff", "--name-only", "--diff-filter=U", "-z")

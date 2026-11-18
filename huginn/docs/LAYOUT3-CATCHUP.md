@@ -28,4 +28,8 @@ For a true conflict in a non-task file, the board's bytes stay at the original p
 
 A file hug cannot parse stops catch-up and names its original source file and commit. A task deleted remotely but edited locally also stops: no resurrection or automatic drop is attempted. The error identifies the task, original commit and original file so its exact content remains recoverable. A tested explicit deletion-preservation policy is required before that case can proceed automatically. Recovery-file collisions and unsafe tree entries also stop without installing partial replay.
 
-The shared resolver is used by catch-up here. Normal same-layout sync is a separate integration tracked by 8zwy6r.
+## Ordinary sync after migration
+
+Once both clones use layout 3, divergent ordinary `hug task sync` uses this same per-file resolver and private replay, without invoking upgrade. The detached background pass uses it too. Fast-forward and already-ahead paths retain their normal Git behavior. All divergent task-board changes use semantic merging, even if Git could text-merge different lines of one scalar section into a hybrid value.
+
+Independent same-task appends converge on both clones exactly once after A-sync, B-sync, A-sync. Competing scalar values keep the board's value and preserve this clone's value in a visible note. Foreground sync prints one `sync:` summary line per retained competing value to stderr. Background sync writes those lines to its sync log. Summaries are emitted only after the entire replay is installed, never for a private partial replay that later fails. Unreadable files and the safe-stop cases above preserve every original local commit and live HEAD here too.
