@@ -4,7 +4,7 @@ title: "Wait for a date: wait --until and ask --after, woken by hug"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["kestrel"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzqq"
