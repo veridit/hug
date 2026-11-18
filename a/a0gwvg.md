@@ -34,7 +34,7 @@ Prototype attached (ci-goldens.sh, from $JCODE_SCRATCH_DIR). Format source: hugi
 ## Acceptance
 - [x] scripts/ci-goldens.sh exists and AGENTS.md's TUI goldens line names it
 - [x] a test feeds a recorded --log-failed excerpt (with a blank line and a last-line golden) and gets byte-identical files
-- [ ] a tampered WANT block makes it write nothing and exit non-zero with a fix: line
+- [x] a tampered WANT block makes it write nothing and exit non-zero with a fix: line
 
 ## Notes
 
@@ -43,5 +43,6 @@ file:ci-goldens.sh (4365 bytes, sha256:5e41e14e)
 
 check 1: 917a3a28: scripts/ci-goldens.sh (shellcheck 0.11.0: 0 findings); AGENTS.md line 27 under TUI goldens: 'Under load, take the GOT screens from a failed CI run: scripts/ci-goldens.sh RUNID.'
 check 2: TestCIGoldensRebuildsDriftedGoldens (internal/repocheck): --log testdata/ci-goldens/failed.log (2 blocks of CI 44403710185, 140x40 screen with 6 blank lines, last rows with trailing spaces) gives bytes equal to 4d7eec2d's goldens, with and without JOB. Failed first: the files came out one '\n' long, fixed. Real run: the script in a worktree of 6448e7d5 wrote 4 files, 'git diff --quiet 4d7eec2d -- huginn/internal/tui/testdata' exit 0.
+check 3: Same test: one byte changed in the 140x40 golden (GLOBAL->GLOBAl) -> exit non-zero, 'ci-goldens: wrote nothing' and a 'fix:' line, 80x24 golden left as it was; an empty log -> "no 'golden drift' block" + fix: line.
 ## History
 - 2026-11-18T23:24 todo -> doing/active (take)
