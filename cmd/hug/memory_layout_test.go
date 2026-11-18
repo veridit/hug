@@ -75,9 +75,6 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 		if err := json.Unmarshal([]byte(out), &response); err != nil || len(response.Memories) == 0 {
 			t.Fatalf("search has no proof memory: %v\n%s", err, out)
 		}
-		for _, memory := range response.Memories {
-			delete(memory, "score") // time-dependent ranking score is not a memory byte
-		}
 		b, err := json.Marshal(response)
 		if err != nil {
 			t.Fatal(err)
@@ -104,7 +101,7 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 		t.Fatalf("board-only migration changed native memory: %v", err)
 	}
 	if after := results(); !bytes.Equal(before, after) {
-		t.Fatalf("search memory IDs/text/metadata/order changed:\nbefore%s\nafter%s", before, after)
+		t.Fatalf("search memory IDs/text/metadata/order/scores changed:\nbefore%s\nafter%s", before, after)
 	}
 	if got := run("git", "rev-parse", "hug/memory"); got != head {
 		t.Fatalf("memory branch history changed: %s != %s", got, head)
