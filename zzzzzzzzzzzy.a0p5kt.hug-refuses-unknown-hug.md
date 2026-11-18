@@ -13,8 +13,8 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "main CI 44226874819 on 085a81ce"
-waiting_since: "2026-11-18T03:57"
+waiting_on: "main CI 44227585322 on 0a2f06ae (hook log line)"
+waiting_since: "2026-11-18T04:04"
 waiting_asked_by: "wyvern"
 ---
 
