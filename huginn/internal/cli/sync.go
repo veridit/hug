@@ -153,6 +153,11 @@ func (a *App) backgroundPass(ctx context.Context) (Reply, error) {
 	}
 	r, e := gitbranch.Open(cwd, TaskBranch, TaskDir, gitbranch.WithLayout(task.LayoutOf))
 	if e != nil || r.Remote == "" {
+		// No pass will run: end the pending marker Nudge wrote for this
+		// child, or a waiter counts it forever (jj7jpz).
+		if b, x := gitbranch.BackgroundOf(cwd, TaskBranch); x == nil {
+			b.Abandon(born)
+		}
 		return Reply{"next": "hug task ls"}, e
 	}
 	a.semanticSync(r)

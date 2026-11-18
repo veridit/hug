@@ -219,6 +219,32 @@ func (b Background) RunHeld() bool {
 // died before then no longer holds nudges back.
 const pendingFor = 5 * time.Second
 
+// BackgroundOf locates the background-sync files of branch for the checkout
+// at dir from its .git file or folder alone: for a pass whose board did not
+// open (jj7jpz), which has no Repository but must still end its pending.
+func BackgroundOf(dir, branch string) (Background, error) {
+	common, e := commonDir(dir)
+	if e != nil {
+		return Background{}, e
+	}
+	return BackgroundAt(common, branch), nil
+}
+
+// Abandon is a started syncer that will run no pass giving up its place:
+// it removes the pending marker Nudge wrote for it, so a waiter (settled,
+// Busy) stops counting a start that will never queue (jj7jpz, CI
+// 44230245084: the board did not open, pending stayed and settled waited
+// 30 s). A marker newer than born belongs to a later Nudge, whose child is
+// still starting: it stays (rt80x4).
+func (b Background) Abandon(born time.Time) {
+	if b.base == "" {
+		return
+	}
+	if st, e := os.Stat(b.base + ".pending"); e == nil && !st.ModTime().After(born) {
+		_ = os.Remove(b.base + ".pending")
+	}
+}
+
 // Log is the file background passes write to.
 func (b Background) Log() string { return b.base + ".log" }
 
