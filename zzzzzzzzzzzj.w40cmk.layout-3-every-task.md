@@ -96,6 +96,7 @@ crab 04:18Z, two conditions for main:
 (1) The write refusal says in one line what the upgrade does ('N task files get fixed names; preview: hug upgrade'), so an agent reads before it applies. The fix line becomes the preview, hug upgrade, not --apply. Still to do on kestrel/w40cmk, with the cli test updated.
 (2) w40cmk ships in a release of its own, with nothing else new in it. crab upgrades hug's board right after he installs it, and tells Seid's and Statbus's agents before their next write.
 Order: f5vx4x, then checks 9 and 6.
+crab ruling 04:44 (check 9 catch-up): translate-then-merge per file is approved. No --drop (it loses work). The per-file merge uses 8zwy6r's rule now: (1) append-only parts (Notes, History, Requests, answers, different checks) merge as the union in time order, never a stop; (2) a single-value field changed on both sides (state, stage, rank, title, a section's text): the remote wins, the local value is kept as a note on the task ('kestrel set state doing here at T; the board had done; kept done'), and the run prints one line per such field; (3) a stop only for a file hug cannot parse, with HEAD restored and the fix naming it. Baseline measured 04:38 on main a13d7c74: today's sync stops on a note appended on both sides, 'sync conflicts: h.ch02nx.noted-twice.md (rebase aborted)', exit 1, local commit kept.
 ## History
 - 2026-11-18T01:48 todo -> doing/active (take)
 - 2026-11-18T02:26 doing/active -> doing/waiting (wait)
