@@ -12,8 +12,8 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 stage: "waiting"
-waiting_on: "check 2: 2 more green main runs with Windows huginn/internal/cli under 240 s and no new skip; run 1 is 44118189933 (195.497 s)"
-waiting_since: "2026-11-17T16:58"
+waiting_on: "CI 44204301242 on ci/0sbvnq-4 (7592dc81), then land it and 2 green main Windows runs with cli under 240 s"
+waiting_since: "2026-11-18T01:01"
 waiting_asked_by: "wyvern"
 ---
 
