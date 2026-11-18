@@ -75,6 +75,7 @@ var States = []Node{
 	}},
 	{Name: "doing", Means: "someone has it", Fields: []NodeField{
 		{Name: "doing_since", SetBy: ByHug, Means: "when it was taken"},
+		{Name: "doing_with", SetBy: ByAgent, Means: "the task it was taken with (hug task take ID --with OTHER, byj479): they ship together, so both are doing while the owner works on OTHER"},
 	}, Stages: []Node{
 		{Name: "active", SetBy: ByAgent, Means: "the owner is working on it"},
 		{Name: "asked", SetBy: ByAgent, Means: "the owner asked a named person something and can't go on until they answer (41hhgn: a question to a person is its own stage, not a kind of waiting)", Fields: []NodeField{

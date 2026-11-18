@@ -348,6 +348,8 @@ claude-opus-5-5 or gpt-6.1-sol; a person: --model human; --as NAME adds your age
 or session name, optional), then hug task show ID.
 While working: hug task check ID N "evidence" ticks check N and notes what shows it
 holds; hug task note ID "text" for anything else.
+Two tasks that ship together (one change or release): take the second with the
+first, hug task take B --with A --model MODEL; both are doing.
 Finish: hug task done ID when every acceptance check is ticked. Done asks whether
 the instructions guided you well; answer honestly with --reflect "...": quote the
 instruction that misled you or left a gap and say what happened, or "nothing".

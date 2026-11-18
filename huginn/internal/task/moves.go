@@ -450,7 +450,7 @@ func (s *Store) Resume(ref string) (Result, error) {
 	// Resuming makes it active again: one active ticket per agent (n2hq8p).
 	for _, who := range d.Task.Assignee {
 		if a, ok := Active(who, d.Task.ID, ts); ok {
-			return Result{}, busy(d.Task, who, a, false)
+			return Result{}, busy(d.Task, Taker{Name: who}, a, false)
 		}
 	}
 	// Once only (4tycwd): after the move the text is in ## History alone.
@@ -584,6 +584,11 @@ func stagedMove(d *Document, ts []Task, state, user, reason string) error {
 		if d.Task.State != "doing" {
 			set["doing_since"] = stamp()
 			why = "take"
+			// reason is the task it is taken with (byj479).
+			if reason != "" {
+				set["doing_with"] = reason
+				why = "take with " + reason
+			}
 			if d.Task.State == "todo" && ownHolds(d.Task, "review") && user != "" {
 				set["review_by"] = user
 				set["review_since"] = stamp()
