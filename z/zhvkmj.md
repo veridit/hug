@@ -1,7 +1,7 @@
 ---
 id: zhvkmj
 title: "Status colors: rows and sections share one subtle scheme; done shows a count"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["kikazaru"]
@@ -13,7 +13,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+done_at: "2026-11-18T21:49"
 ---
 
 ## Goal
@@ -66,6 +66,7 @@ crab 19:58 local: check 4 ticked on Jørgen's answer. His remaining points are t
 kikazaru: 57dd9e90 on kikazaru/zhvkmj (CI ci/zhvkmj-56 run 44387204008). Check 5 cause, reproduced in tmux on a copy of hug's board at 19:51 (hug/tasks 75320b0: zhvkmj asked of jhf, asked_show colours-overview.ans) with v0.7.67 and main: Tab DID reach Files (▸ FILES (2) drawn, keys 'j/k file · Space show'), but revealAcceptance scrolled to the first '> ' line of the page, which was the '> ASKED · for you' row inside the overview capture drawn above the page; so Files was never on screen. Not the ring, not the 0ga6m0 id stops. Fix: look for the > under the focused section's ▸ heading. Failing first: TestZhvkmjFilesReachableOnItself '140x40: Files has the focus but is not on screen'; TestTmuxZhvkmjFilesOnItself 'never showed "> ⎘ colours-overview.ans"' (fixture testdata/zhvkmj-board). After: both PASS (tmux 5.55s). Check 6: dependsColour #6b6bd6 dark / #2e2e78 light (RGB distance to red 168/127, amber 177/118, dim 68/62, step-two 125/84); TestOneColourPerMeaning failing first with 8 lines ('dark: depends #ff8585 is close to a problem #ff8585', 'the DEPENDS heading is not calm', ...), passes after; golden testdata/colour/depends-140.txt (overview + board, truecolor) and header/view-cursor.txt: 8x 255;133;133 -> 107;107;214 on 'depends 7', nothing else changed. tui -short: 'ok github.com/veridit/hug/huginn/internal/tui 79.656s'.
 check 5: 57dd9e90, CI 44387204008 success (ubuntu, macos, windows, windows-cli x3, bench). Cause: Tab reached Files, but the page scrolled to the '> ASKED' row of the asked_show overview capture drawn above it. TestTmuxZhvkmjFilesOnItself (hug in tmux on a copy of hug's board at 19:51, hug/tasks 75320b0) failed first 'never showed "> ⎘ colours-overview.ans"', passes after (5.55s): Tab -> ▸ FILES, j -> screen-1821.ans, Space -> file frame 'screen-1821.ans · 10.0 KiB · 2 of 2'. TestZhvkmjFilesReachableOnItself the same at 140x40 and 80x24.
 check 6: 57dd9e90, CI 44387204008 success. depends #6b6bd6/#2e2e78 (calm indigo) in the count line, the row's stage word and the board's DEPENDS heading; red only on broken lint, its ! and LINT. TestOneColourPerMeaning failed first ('dark: depends #ff8585 is close to a problem #ff8585', 'the DEPENDS heading is not calm', 8 lines), passes after; golden testdata/colour/depends-140.txt (140 truecolor, overview + board) and header/view-cursor.txt reviewed: only 255;133;133 -> 107;107;214 on depends.
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
@@ -87,3 +88,4 @@ check 6: 57dd9e90, CI 44387204008 success. depends #6b6bd6/#2e2e78 (calm indigo)
 - 2026-11-18T19:57 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T19:58 answer 2 acknowledged by crab
 - 2026-11-18T20:54 answer 2 in progress by crab: hug task set zhvkmj
+- 2026-11-18T21:49 doing/active -> done (done)
