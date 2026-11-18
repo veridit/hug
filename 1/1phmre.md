@@ -38,5 +38,6 @@ Finding: w/w40cmk.md missing-task-ref '.hug/tasks/37bryg/README.md: no task 37br
 ## Notes
 
 
+commit 68225a9 on branch 1phmre (stacked on bqfrda 1c6ecc2, rebased on origin/main c87da5a), ci/1phmre. check 1: TestQuotedPathOfAnotherBoardIsNoLink (task) fails before: 'got ["missing-task-ref: .hug/tasks/37bryg/README.md: no task 37bryg" "missing-task-ref: .hug/tasks/37bryg/STATBUS-369.md: no task 37bryg" "missing-file: ...gone.tsv..."]'; TestQuotedOtherBoardPathAndTaskLinkFix (cli) fails before: '[missing-task-ref] .hug/tasks/37bryg/README.md: no task 37bryg / next: hug task edit ID'. Replay of w40cmk's real Notes on a scratch board with the new binary: no missing-task-ref. check 2: TestMissingTaskLinkFixIsNonInteractive: task:zz9zz9/run.log still 'task:zz9zz9/run.log: no task zz9zz9 (fix the id, or mark the link (lost))', fix 'hug task note ID "task:zz9zz9/run.log (lost)"'; running it clears the finding (on main the fix was 'hug task edit ID'). Local niced suite: ok huginn/internal/task 10.284s, ok huginn/internal/cli 153.142s, all huginn + cmd/hug ok. Cache schema 23 -> 24.
 ## History
 - 2026-11-18T14:09 todo -> doing/active (take)
