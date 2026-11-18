@@ -99,6 +99,9 @@ func TestSearchFieldStateDone(t *testing.T) {
 		{"state:done type:bug", []string{"Alpha task"}},
 		{"state:todo", []string{"Gamma task"}},
 		{"type:bug", []string{"Alpha task", "Gamma task"}},
+		// tag is label's new name (txjkrm): both, until the CLI says tag.
+		{"tag:urgent", []string{"Alpha task"}},
+		{"label:urgent", []string{"Alpha task"}},
 		{"gamma", []string{"Gamma task"}},
 	} {
 		got := press(newModel(m.store, m.opts), "/", c.query)

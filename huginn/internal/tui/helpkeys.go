@@ -85,7 +85,7 @@ func (m model) contextHelp() helpSection {
 		}}
 	case "find":
 		return helpSection{"IN / FIND", []helpRow{
-			row("type", "find as you type"), row("field:value", "keep tasks with it: state:done type:bug group: label: priority: assignee: epic:"),
+			row("type", "find as you type"), row("field:value", "keep tasks with it: state:done type:bug group: tag: priority: assignee: epic:"),
 			row("↑↓", "pick a match"), row("Enter", "go to it", "enter"),
 			row("↑ empty", "recall earlier searches, ↑ again older, ↓ newer; Enter runs it"),
 			row("Tab", "keep it as a filter", "tab"), row("Esc", "clear", "esc"),
