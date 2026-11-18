@@ -50,6 +50,7 @@ check 3: picker lines 1-2 are now 'now: priority ↓' and 'new: nothing picked y
 CI run 44295351540 on ci/nch9d4 (6aee8e30): completed success, all 6 jobs. Report: /Users/jhf/.jcode/scratch/nch9d4/REPORT.md
 Jørgen 11:50Z: with no column marked, the 'c current column' row is not selectable and must be drawn fully dimmed (letter and name, not just the hint); normal when a column is marked. Added to macaque's scope.
 crab review 11:51Z: diff read (sort.go r row, now:/new: lines, 2 failing-first tests TestSortPickerRankRowRestoresBoardOrder, TestSortPickerShowsCurrentAndDraft). Exact SHA 6aee8e30 CI 44295351540 all 6 jobs success. Fast-forwarded to main 6aee8e30. Open: Jørgen's 11:50Z dimmed current-column row (follow-up commit by macaque), and his look after the next release. The golden env var question was a false alarm: AGENTS.md already says HUG_UPDATE_GOLDEN.
+landed 6aee8e3 on main 2026-11-18: TUI sort picker: r rank row, now/new lines (nch9d4)
 ## History
 - 2026-11-18T12:15 todo -> doing/active (take)
 - 2026-11-18T12:17 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-18T12:15
