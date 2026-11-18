@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.64 - 2026-11-18
+
 - Recall hook board lines (6fqhg9, rzfrgp): a hug command quoted inside another command's argument (a `--goal`, a note, a quoted lint line) no longer counts as run, so quoting `hug task take ID` does not make ID yours; `sh -c '...'` and `$(...)` still count. The "this looks like ID" take line no longer names a task you only opened with `hug task show`. The board4 judge now states that a missing-section or owner question is right only on the agent's own task; two judgings agree on 134 of 145 lines (was 7 of 15 on the lines that flipped). Replayed under it: six sets false 9 -> 7, right 106 -> 107; fresh hug false 4 -> 3 (muninn/docs/BOARD4.md).
 
 - `hug task ask ID --to NAME` on a shipped task is no longer refused by the `shipped-not-done` finding that the ask settles (gpyqq9). A shipped task with every check ticked ("is it done?") can now be asked of its owner: the stage becomes asked and lint no longer reports it. Every other broken finding still holds the ask back, with its fix.
