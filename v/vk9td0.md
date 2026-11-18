@@ -37,6 +37,7 @@ Activity source: session/turn timestamps already in the jcode and claude journal
 
 ## Acceptance
 - [ ] decision recorded in DESIGN.md with reason
+- [ ] With 7+ days of activity, hug computes a 168-bucket hour-of-week histogram and names the longest quiet stretch; shown by a command or debug line (test with a synthetic week)
 
 ## Requests
 - 2026-11-18T12:22 request 1 by jhf:
