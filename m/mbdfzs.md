@@ -48,6 +48,7 @@ Landed 8dee4a86. Windows choice: exit cleanly between requests. Each request alr
 landed 8dee4a8 on main 2026-11-18: hug mcp: reload the installed hug between requests on the same connection…
 Mutant 'reload always' (ignore start identity) killed: 'reload_test.go:89: connect: context deadline exceeded' in TestMCPReloadsChangedBinary and TestMCPNoReloadWhenUnchanged. Now 12 of 12 killed.
 shipped in v0.7.54 (8dee4a8)
+crab 18:19 local, check 3 FAILS on Jørgen's machine with v0.7.66 installed: hug mcp pids 3175 (ssb/.jcode, Statbus), 56816, 65214 run Cellar 0.7.2; 15206 0.7.14; 77273 0.7.43 (Claude.app); 90712 0.7.52. All started before v0.7.54, so they predate the reload and can never reload. Statbus hit it: memory_remember -> 'cannot modify graph_state because it is a view' (the 4vd1mz guard refusing a pre-v0.7.59 writer, as designed). Follow-up filed for servers older than the reload.
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
