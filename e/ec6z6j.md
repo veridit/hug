@@ -47,3 +47,5 @@ Non-visual part at 7df7c120 (branch ec6z6j on c84d3273), design A with crab's ru
 crab review 17:29 local: non-visual part accepted. 7df7c120 on c84d3273: request a,b / --task / MCP ids; home holds text + targets, links point to it; one commit, one delivery with a resolve line per target; any-order resolves, 'request N closed: all targets resolved' after the last; unknown id writes nothing. 4 mutants. CI 44344411767 7/7. TUI marking waits on rxr4z8.
 
 crab 18:35 local: stacked as c7ccbca7. mizaru's rebase fix: deliverPendingItem now carries targets (bbxdd7 pending path), TestPendingRequestForSeveralTasks + mutant. CI pending.
+
+landed on main 8c26ec51 (CI 44363087479 6/6, windows-cli 549.357s)
