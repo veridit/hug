@@ -376,7 +376,9 @@ func (m model) questionBlock(t task.Task) []string {
 	}
 	label := strings.Join(lines, "\n")
 	if focused {
-		label = m.styles.selected.Render(label)
+		// Calm (kg07bt): the question in its own colour, the > alone
+		// drawn as the cursor.
+		label = m.cursorMark(label, m.styles.forYou)
 	} else {
 		label = m.styles.forYou.Render(label)
 	}
@@ -604,10 +606,13 @@ func (m model) sectionHeading(title, hint string, focused bool) string {
 	if !focused {
 		return m.styles.accent.Render(head)
 	}
+	// Focused: the heading as every other one, a ▸ before it and its keys
+	// dim after, no fill (kg07bt: the block competed with the question).
+	out := m.styles.accent.Render("▸ " + head)
 	if hint != "" {
-		head += " · " + hint
+		out += m.styles.dim.Render(fit(" · "+hint, max(0, m.width-len([]rune(head))-2)))
 	}
-	return m.styles.focus.Render(fit("▸ "+head, m.width))
+	return out
 }
 func (m model) detailText(t task.Task) string {
 	sections := m.sections(t)
@@ -695,7 +700,11 @@ func (m model) detailText(t task.Task) string {
 			}
 		}
 		label := strings.Join(lines, "\n")
-		if m.detailPane == focusAcceptance && i == m.acceptance {
+		if m.detailPane == focusAcceptance && i == m.acceptance && mark != "" {
+			// The check asked of you, focused (kg07bt, Jørgen 14:58: "too
+			// much visual noise"): a normal row, the > the one cursor.
+			checks = append(checks, m.cursorMark(label, m.checkStyle(a.Checked)))
+		} else if m.detailPane == focusAcceptance && i == m.acceptance {
 			checks = append(checks, m.styles.selected.Render(label))
 		} else if a.Struck {
 			checks = append(checks, m.styles.dim.Strikethrough(true).Render(label))
@@ -875,6 +884,21 @@ func (m *model) followDependency() {
 	m.startFocus()
 	m.syncDetail()
 	m.openTop()
+}
+
+// cursorMark draws a focused row calm (kg07bt): its text in style, as it
+// reads unfocused, and its leading > as the cursor, the one underlined
+// accent cell on the page, so nothing else competes with it.
+func (m model) cursorMark(label string, style lipgloss.Style) string {
+	lines := strings.Split(label, "\n")
+	for i, l := range lines {
+		if i == 0 && strings.HasPrefix(l, ">") {
+			lines[i] = m.styles.accent.Underline(true).Render(">") + style.Render(l[1:])
+		} else {
+			lines[i] = style.Render(l)
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 // checkStyle colours an acceptance check: ticked ones green, open ones in the
