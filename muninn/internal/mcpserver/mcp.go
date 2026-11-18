@@ -12,6 +12,7 @@ import (
 
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/recall"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 type searchIn struct {
@@ -33,19 +34,42 @@ type hitsOut struct {
 	Results []hit `json:"results"`
 }
 
+type caseIn struct {
+	Scope []string `json:"scope,omitempty"`
+	Paths []string `json:"paths,omitempty"`
+	Tools []string `json:"tools,omitempty"`
+}
+
+// triggerOf is the trigger in a remember call, nil when none is stated.
+func (in rememberIn) triggerOf() *trigger.Trigger {
+	t := &trigger.Trigger{When: in.When, WhenNot: in.WhenNot}
+	if in.Case != nil {
+		t.Case = &trigger.Case{Scope: in.Case.Scope, Paths: in.Case.Paths, Tools: in.Case.Tools}
+	}
+	if trigger.Empty(t) {
+		return nil
+	}
+	return t
+}
+
 type rememberIn struct {
-	NewReason   string   `json:"new_reason,omitempty" jsonschema:"answer to the duplicate question: why this is a different fact worth storing"`
-	Reinforce   string   `json:"reinforce,omitempty" jsonschema:"answer to the duplicate question: SID to reinforce instead of storing a new note"`
-	Supersedes  string   `json:"supersedes,omitempty" jsonschema:"id of the older memory this one corrects; recorded in the local fix trail, it forgets nothing (memory_forget it if it no longer holds)"`
-	Reason      string   `json:"reason,omitempty" jsonschema:"with reinforce or supersedes: why, in a few words; kept in the local fix trail"`
-	Content     string   `json:"content" jsonschema:"the fact, preference or correction to store"`
-	Type        string   `json:"type,omitempty" jsonschema:"rule (an instruction: do, never, how to) | preference | fact (durable knowledge) | record (something that happened, a state at a time)"`
-	Holds       string   `json:"holds,omitempty" jsonschema:"how long it is true, when you know it now: 'until 2026-12-01', 'while task:ID open', 'while branch NAME unmerged'. When it ends, recall stops showing it and a dream item asks to retire or keep it"`
-	Category    string   `json:"category,omitempty" jsonschema:"fact | preference | correction | entity"`
-	Scope       string   `json:"scope,omitempty" jsonschema:"literal binding scope, overrides place (owners only within the binding's write policy)"`
-	Place       string   `json:"place,omitempty" jsonschema:"here (default), client, or global; when unsure use here"`
-	PlaceReason string   `json:"place_reason,omitempty" jsonschema:"why this applies beyond the project when the project-mention check asks"`
-	Tags        []string `json:"tags,omitempty"`
+	NewReason  string `json:"new_reason,omitempty" jsonschema:"answer to the duplicate question: why this is a different fact worth storing"`
+	Reinforce  string `json:"reinforce,omitempty" jsonschema:"answer to the duplicate question: SID to reinforce instead of storing a new note"`
+	Supersedes string `json:"supersedes,omitempty" jsonschema:"id of the older memory this one corrects; recorded in the local fix trail, it forgets nothing (memory_forget it if it no longer holds)"`
+	Reason     string `json:"reason,omitempty" jsonschema:"with reinforce or supersedes: why, in a few words; kept in the local fix trail"`
+	Content    string `json:"content" jsonschema:"the note to store; with when/when_not/case it is the THEN, what is shown when the situation matches"`
+	Type       string `json:"type,omitempty" jsonschema:"rule (an instruction: do, never, how to) | preference | fact (durable knowledge) | record (something that happened, a state at a time)"`
+	Holds      string `json:"holds,omitempty" jsonschema:"how long it is true, when you know it now: 'until 2026-12-01', 'while task:ID open', 'while branch NAME unmerged'. When it ends, recall stops showing it and a dream item asks to retire or keep it"`
+	// When-then trigger (jrj1vq): the situation the note is for.
+	When         string   `json:"when,omitempty" jsonschema:"for a rule or pattern: the situation where an agent needs this note, as an activity ('reviewing a STATBUS ticket's history', 'choosing a model for a coding subagent'), not the topic. One sentence"`
+	WhenNot      string   `json:"when_not,omitempty" jsonschema:"look-alike situations where the note does not help, e.g. the same ticket or tool but another activity. One sentence"`
+	Case         *caseIn  `json:"case,omitempty" jsonschema:"hard context the note is bound to, only what it states: scope (projects), paths (files or globs), tools (tools, commands, services)"`
+	ClearTrigger bool     `json:"clear_trigger,omitempty" jsonschema:"with supersedes naming a memory with the same text: remove its when/when_not/case"`
+	Category     string   `json:"category,omitempty" jsonschema:"fact | preference | correction | entity"`
+	Scope        string   `json:"scope,omitempty" jsonschema:"literal binding scope, overrides place (owners only within the binding's write policy)"`
+	Place        string   `json:"place,omitempty" jsonschema:"here (default), client, or global; when unsure use here"`
+	PlaceReason  string   `json:"place_reason,omitempty" jsonschema:"why this applies beyond the project when the project-mention check asks"`
+	Tags         []string `json:"tags,omitempty"`
 	// SafeReason answers the secret check: why text that looks secret is safe.
 	SafeReason string `json:"safe_reason,omitempty" jsonschema:"only after a 'looks like it may contain a secret' reply: why this text is safe to store"`
 }
@@ -145,10 +169,10 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 			return text(out), out, nil
 		})
 
-	mcp.AddTool(s, &mcp.Tool{Name: "memory_remember", Description: "Store a durable memory: a rule, preference, decision or correction the user stated that will matter in future sessions. One fact per call. Ask: Would this still be true and useful in a different project? Use here (default, also when unsure) for this project, client across this client's projects, global for user-wide facts (only this client inside a client). Answer project-mention questions with place_reason or use here. Never store real secrets. If the reply says the text looks like it may hold a secret, judge it: remove the secret, or call again with safe_reason when it is safe."},
+	mcp.AddTool(s, &mcp.Tool{Name: "memory_remember", Description: "Store a durable memory: a rule, preference, decision or correction the user stated that will matter in future sessions. One fact per call. Ask: Would this still be true and useful in a different project? Use here (default, also when unsure) for this project, client across this client's projects, global for user-wide facts (only this client inside a client). Answer project-mention questions with place_reason or use here. Never store real secrets. If the reply says the text looks like it may hold a secret, judge it: remove the secret, or call again with safe_reason when it is safe. For a rule or pattern, say when it applies: when (the situation), when_not (look-alikes), case (scope, paths, tools); the content is then what is shown. A changed trigger on an existing note is a correction: name it in supersedes."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in rememberIn) (*mcp.CallToolResult, idOut, error) {
 			ctx = app.WithFix(ctx, a.HarnessFix("mcp", in.Reason))
-			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce, Type: in.Type, Holds: in.Holds, Supersedes: in.Supersedes})
+			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce, Type: in.Type, Holds: in.Holds, Supersedes: in.Supersedes, Trigger: in.triggerOf(), ClearTrigger: in.ClearTrigger})
 			if err != nil {
 				return nil, idOut{}, err
 			}

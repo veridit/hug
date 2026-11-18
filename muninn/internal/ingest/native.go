@@ -17,6 +17,7 @@ import (
 
 	"github.com/veridit/hug/internal/sharefile"
 	"github.com/veridit/hug/muninn/internal/shortid"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // NativeMemory is a memory muninn owns (created with `hug mem remember`).
@@ -64,6 +65,11 @@ type NativeMemory struct {
 	// it; nothing is deleted automatically. Empty: holds until judged
 	// otherwise.
 	Holds string `json:"holds,omitempty"`
+	// Trigger is the situation the memory is for, stated by its storer
+	// (jrj1vq): case (scopes, paths, tools), when and when_not. The memory
+	// text is the note shown (the THEN). Nil for a plain memory, whose JSON
+	// then has no trigger key, as before. Kept canonical (trigger.Canonical).
+	Trigger *trigger.Trigger `json:"trigger,omitempty"`
 	// Repo is the main checkout of the git repository the memory was written
 	// in, recorded only with Holds or Branch: where the dream pass looks up
 	// the task board and the branch. Without it a task or branch condition
@@ -247,9 +253,10 @@ type Remembering struct {
 	Content, Category, Type, Scope string
 	Tags                           []string
 	SafeReason, NewReason          string
-	Branch                         string // see NativeMemory.Branch
-	Holds                          string // see NativeMemory.Holds (canonical form)
-	Repo                           string // see NativeMemory.Repo
+	Branch                         string           // see NativeMemory.Branch
+	Holds                          string           // see NativeMemory.Holds (canonical form)
+	Repo                           string           // see NativeMemory.Repo
+	Trigger                        *trigger.Trigger // see NativeMemory.Trigger
 	// OriginFor, when set, gives a new memory its origin from its id: the
 	// repo origin a project sync would give it later, so its short id is
 	// final when remember prints it (tn8bmn).
@@ -263,6 +270,10 @@ func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
 	content = strings.TrimSpace(content)
 	if content == "" {
 		return NativeMemory{}, false, errors.New("empty memory")
+	}
+	tr, err := trigger.Canonical(r.Trigger)
+	if err != nil {
+		return NativeMemory{}, false, err
 	}
 	if scope == "" {
 		scope = "global"
@@ -280,6 +291,15 @@ func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
 	for i := range mems {
 		m := &mems[i]
 		if m.Active && m.Content == content && m.Category == category && m.Scope == scope {
+			// A different trigger is a correction, not the same memory again
+			// (jrj1vq, crab): refused, nothing written. None keeps the old;
+			// a memory without one (plain, or cleared) takes the new one.
+			if tr != nil && !trigger.Empty(m.Trigger) && !trigger.Equal(tr, m.Trigger) {
+				return *m, false, &TriggerChangeError{ID: m.ID, SID: m.SID, Old: m.Trigger, New: tr}
+			}
+			if tr != nil && trigger.Empty(m.Trigger) {
+				m.Trigger = tr
+			}
 			if safeReason != "" {
 				m.SafeReason = safeReason
 			}
@@ -301,7 +321,7 @@ func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
 	}
 	m := NativeMemory{ID: newID(), Content: content, Category: category, Type: typ, Tags: tags, Scope: scope,
 		Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason),
-		NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch), Holds: strings.TrimSpace(r.Holds)}
+		NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch), Holds: strings.TrimSpace(r.Holds), Trigger: tr}
 	if m.Branch != "" || m.Holds != "" {
 		m.Repo = strings.TrimSpace(r.Repo)
 	}
@@ -312,6 +332,57 @@ func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
 	assignNativeSIDs(mems)
 	m = mems[len(mems)-1]
 	return m, false, SaveNative(path, mems)
+}
+
+// TriggerChangeError refuses a reinforce whose trigger differs from the
+// memory's (jrj1vq, crab): a changed trigger is a correction, stated with
+// supersedes. Nothing was written.
+type TriggerChangeError struct {
+	ID, SID  string
+	Old, New *trigger.Trigger
+}
+
+func (e *TriggerChangeError) Error() string {
+	ref := e.SID
+	if ref == "" {
+		ref = e.ID
+	}
+	return fmt.Sprintf("NOT STORED: memory %s has this text with another trigger (%s), not %s. A changed trigger is a correction: say which memory it corrects.\nfix: hug mem remember --supersedes %s --when ... \"TEXT\" (MCP supersedes), or --supersedes %s --no-trigger to clear it",
+		ref, trigger.Encode(e.Old), trigger.Encode(e.New), ref, ref)
+}
+
+// ReplaceTrigger sets the trigger of the active memory with this id (or
+// sid) in place, under the write lock: a supersede whose text is the same
+// (jrj1vq). tr nil or empty stores None, a deliberate clear that sync
+// carries to other clones. It reports whether the memory was found.
+func ReplaceTrigger(path, ref string, tr *trigger.Trigger) (NativeMemory, bool, error) {
+	stored, err := trigger.Stored(tr)
+	if err != nil {
+		return NativeMemory{}, false, err
+	}
+	if stored == nil {
+		stored = trigger.None()
+	}
+	var got NativeMemory
+	found := false
+	err = UpdateNative(path, func(mems []NativeMemory) ([]NativeMemory, bool, error) {
+		for i := range mems {
+			m := &mems[i]
+			if !m.Active || (m.ID != ref && m.SID != ref) {
+				continue
+			}
+			found = true
+			if trigger.Encode(m.Trigger) == trigger.Encode(stored) && trigger.Cleared(m.Trigger) == trigger.Cleared(stored) {
+				got = *m
+				return mems, false, nil
+			}
+			m.Trigger, m.Updated = stored, time.Now().UTC()
+			got = *m
+			return mems, true, nil
+		}
+		return mems, false, nil
+	})
+	return got, found, err
 }
 
 // Forget deactivates a memory by id (kept on disk, excluded from recall).

@@ -9,8 +9,10 @@ import (
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/search"
 	"github.com/veridit/hug/muninn/internal/store"
+	"github.com/veridit/hug/muninn/internal/trigger"
 )
 
 // DuplicateCheckError is an advisory question. Re-call with Reinforce set to
@@ -35,7 +37,8 @@ func Refusal(err error) bool {
 	var d *DuplicateCheckError
 	var s *SecretCheckError
 	var p *PlaceCheckError
-	return errors.As(err, &d) || errors.As(err, &s) || errors.As(err, &p)
+	var tc *ingest.TriggerChangeError
+	return errors.As(err, &d) || errors.As(err, &s) || errors.As(err, &p) || errors.As(err, &tc)
 }
 
 // RememberDecision carries the writer's answer to the duplicate question.
@@ -45,7 +48,14 @@ func Refusal(err error) bool {
 // Supersedes names the old memory this one corrects: it is recorded in the
 // fix trail (rjk44w) and retires nothing; forget the old one separately if
 // it no longer holds.
-type RememberDecision struct{ Reinforce, NewReason, Type, Holds, Supersedes string }
+// Trigger is the situation the memory is for (jrj1vq); ClearTrigger, with
+// Supersedes naming a memory with the same text, clears that memory's
+// trigger on purpose (stored as None, so sync carries the clear).
+type RememberDecision struct {
+	Reinforce, NewReason, Type, Holds, Supersedes string
+	Trigger                                       *trigger.Trigger
+	ClearTrigger                                  bool
+}
 
 // MemoryTypes are the accepted memory types; see ingest.NativeMemory.Type.
 var MemoryTypes = []string{"rule", "preference", "fact", "record"}

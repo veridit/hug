@@ -223,7 +223,7 @@ func (a *App) applyDuplicates(ctx context.Context, p tidy.Plan, dry bool) (resul
 		if !active {
 			origin = "tidy:dupes:" + u.Origin
 		}
-		return ingest.NativeMemory{ID: id, SID: u.SID, Origin: origin, Content: u.Body, Title: u.Title, Category: u.Category, Tags: slices.Clone(u.Tags), Scope: u.Scope, Active: active, Created: u.Updated, Updated: u.Updated, Strength: 1}
+		return ingest.NativeMemory{ID: id, SID: u.SID, Origin: origin, Content: u.Body, Title: u.Title, Category: u.Category, Tags: slices.Clone(u.Tags), Scope: u.Scope, Active: active, Created: u.Updated, Updated: u.Updated, Strength: 1, Trigger: storedTrigger(a.unitTrigger(u.SID))}
 	}
 	for _, c := range clusters {
 		total := c.Keeper.Strength
