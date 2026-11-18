@@ -4,7 +4,7 @@ title: "Send one request for a selection of tasks"
 state: todo
 type: feature
 priority: ""
-assignee: ["mizaru"]
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzwj"
