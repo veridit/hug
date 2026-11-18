@@ -4,9 +4,10 @@ One tool for an AI-assisted project's **memory**, **tasks** and (soon) **message
 shared by every agent and harness you use: jcode, Claude Code, Codex, the Claude
 app, and plain shells.
 
-The name: Old Norse *hugr* is the mind, thought and intent, the root of Huginn,
-Odin's raven of thought. Odin's other raven, Muninn, is memory. And in English, a hug
-holds things together.
+You type one command, `hug`. The name is Old Norse *hugr*: mind, thought and intent
+(Norwegian still says *komme i hug*, to come to mind). Odin's two ravens are named
+from it and are hug's mascots: Huginn, thought, keeps the tasks, and Muninn, memory,
+keeps the memories. And in English, a hug holds things together.
 
 ## Install
 
@@ -17,10 +18,9 @@ holds things together.
 | macOS, Linux (no package manager) | `curl -fsSL https://raw.githubusercontent.com/veridit/hug/main/install.sh \| sh` | run it again |
 | Go (from a clone) | `git clone https://github.com/veridit/hug && cd hug && go install ./cmd/hug` | pull, run again |
 
-Requires Git 2.42 or newer on PATH. Every install also provides `muninn` and
-`huginn`, which are the same program under the part's name, so existing hooks and
-MCP configs keep working. `brew install veridit/tap/muninn` (or `huginn`) still
-works and installs hug.
+Requires Git 2.42 or newer on PATH. Machines set up before hug was one tool keep
+working: their hooks, MCP configs and Homebrew formulas named after the ravens now
+run or install hug.
 
 Then, inside a repository:
 
@@ -33,21 +33,23 @@ brew services start hug       # optional: memory watcher + web UI on http://127.
 
 ## Commands
 
-| Command | Same as | What it does |
-|---|---|---|
-| `hug mem ...` | `muninn ...` | memory: recall hooks, MCP server, capture, tidy, dream |
-| `hug task ...` | `huginn ...` | tasks: Markdown files on a git branch, claims, goals, checks |
-| `hug task search "words"` | | tasks that best match, ranked (BM25 over id, aliases, title, goal, notes, ...), with the field and a snippet; MCP `task_search` |
-| `hug tui` | | the tasks TUI (`hug mem tui` is the memory TUI) |
-| `hug mcp` | | one MCP server: `memory_*` and `task_*` tools |
-| `hug setup` | `huginn setup` | read-only setup checklist |
-| `hug task install commit-msg` | | refuse commits without one `Model:` trailer |
-| `hug version` | | versions of hug and both parts |
+| Command | What it does |
+|---|---|
+| `hug mem ...` | memory: recall hooks, capture, search, remember, tidy, dream |
+| `hug task ...` | tasks: Markdown files on a git branch, claims, goals, checks, questions to people |
+| `hug task search "words"` | tasks that best match, ranked (BM25 over id, aliases, title, goal, notes, ...), with the field and a snippet; MCP `task_search` |
+| `hug tui` | the tasks TUI (`hug mem tui` is the memory TUI) |
+| `hug mcp` | one MCP server: `memory_*` and `task_*` tools |
+| `hug apps [install]` | Claude Desktop, Claude Code, ChatGPT/Codex: start `hug mcp` |
+| `hug setup` | read-only setup checklist |
+| `hug upgrade [--apply]` | preview, then apply, every migration to this hug |
+| `hug task install commit-msg` | refuse commits without one `Model:` trailer |
+| `hug version` | the version of hug |
 
 ## Sharing between clones
 
-Tasks (`hug/tasks`) and project memories (`muninn-notes`) reach the other
-clones of a repository by themselves; nobody runs sync. A write commits
+Tasks (`hug/tasks`) and shared project memories (`hug/memory`, see below) reach
+the other clones of a repository by themselves; nobody runs sync. A write commits
 locally and starts one detached syncer, which waits until the burst is quiet
 for 1.5 s and then fetches, rebases and pushes. Another clone fetches when a
 hug command finds its last fetch older than 5 s: another clone sees a change
@@ -68,7 +70,7 @@ Every commit names what made it in one trailer line: `Model: claude-opus-5-5`
 `fix:` line to finish it; `hug setup` lists it until it is in place. With
 `core.hooksPath` (a project's own `.githooks`) hug never edits the tracked hook
 and prints the two lines to add instead. hug's own commits on `hug/tasks` and
-`muninn-notes` add `Model:` from `--model` or `HUG_MODEL` (the TUI: `human`).
+`hug/memory` add `Model:` from `--model` or `HUG_MODEL` (the TUI: `human`).
 Emergency exit: `git commit --no-verify`.
 
 ```sh
@@ -79,15 +81,16 @@ git -C .hug/tasks log --format='%(trailers:key=Model,valueonly,separator=%x2C) %
 
 ## Layout
 
+The source keeps the ravens' names for its two parts.
+
 | Folder | Part | Details |
 |---|---|---|
-| [`muninn/`](muninn/) | memory | [muninn/README.md](muninn/README.md) |
-| [`huginn/`](huginn/) | tasks | [huginn/README.md](huginn/README.md) |
+| [`muninn/`](muninn/) | memory (`hug mem`) | [muninn/README.md](muninn/README.md) |
+| [`huginn/`](huginn/) | tasks (`hug task`) | [huginn/README.md](huginn/README.md) |
 | [`cmd/hug/`](cmd/hug/) | the `hug` command | dispatches to the parts |
 
-Coming next: files on namespaced git branches (`hug/tasks`, `hug/memories`,
-`hug/messages`) as the truth, a local SQLite cache for speed, and one MCP server
-for every harness.
+Tasks and memories are files on git branches (`hug/tasks`, `hug/memory`), with a
+local SQLite cache for speed. Coming next: messages, on `hug/messages`.
 
 ## Releases
 
