@@ -30,3 +30,5 @@ Today: no .gitattributes; the note goes at the end of ## Notes, so both sides in
 - [ ] Two sides setting state differently still stop with a fix line naming the field (test)
 
 ## Notes
+
+crab ruling 04:44: the resolver (union for append-only parts in time order; remote wins on a single-value field changed on both sides, with the local value kept as a note and one printed line per field; a stop only for an unparseable file) is built in w40cmk check 9's catch-up first. 8zwy6r then makes sync use that same resolver.
