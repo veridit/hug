@@ -34,7 +34,7 @@ Code: huginn/internal/task/owner.go:95 builds the finding; it reads ~/.jcode/ses
 ## Acceptance
 - [x] On hug's board, lint reports stale-owner for nautilus, kestrel and hatchling tasks; a test with a gone owner and with an owner that has no session file fails first on main.
 - [x] A live worker's task is not reported (test).
-- [ ] hug task take on a task whose owner's session is gone (the same test stale-owner uses) ends with a runnable fix line that takes it over (e.g. hug task set ID --assignee ME, then take), not only 'fix: hug task next' (test; mizaru on txjkrm 2026-11-18 hit it)
+- [x] hug task take on a task whose owner's session is gone (the same test stale-owner uses) ends with a runnable fix line that takes it over (e.g. hug task set ID --assignee ME, then take), not only 'fix: hug task next' (test; mizaru on txjkrm 2026-11-18 hit it)
 
 ## Notes
 
