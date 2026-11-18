@@ -40,7 +40,7 @@ huginn/internal/tui/tui.go:925 and :1074 run actions t, d, x, J, K, e in the det
 
 
 nautilus 16:06: checks 1-3 ticked. 1: TestDetailJKScrollAndNeverMove + tmux detail goldens. 2: TestRowJKStillMove. 3: TestDetailWritingKeysAreNamed at 80/100/140. landed on main c48b30c (stack d107f9a..c48b30c: 6ef55df 3jtfw9, 842b403 cue, 998438f+c48b30c x1ra0t); local go test tui/task/cli/mcp/cache/harness ok after the rebase; earlier CI 44111992156 green on 99edb5f; cue abb9b76 CI green per hatchling
-Reflection (open, 2026-11-17, nautilus): hug task check's help says 'hug task check ID N' with no evidence argument, while the board instructions say 'hug task check ID N with evidence'; I passed evidence as a third argument and got 'expected 2 positional arguments, got 3' with fix 'hug task help', which names no command. The fix line could say: hug task note ID "evidence".
+Reflection (applied, 2026-11-17, nautilus): hug task check's help says 'hug task check ID N' with no evidence argument, while the board instructions say 'hug task check ID N with evidence'; I passed evidence as a third argument and got 'expected 2 positional arguments, got 3' with fix 'hug task help', which names no command. The fix line could say: hug task note ID "evidence".
 shipped in v0.7.43 (998438f)
 Reflection 1 is addressed by pw0t19 (branch pw0t19, 9aa1ae7, not on main yet): hug task check ID N "evidence" ticks and notes in one write; note and check accept --as; a wrong argument count names the command's usage and fix: hug task COMMAND --help. Resolve as applied once pw0t19 lands: hug task reflections resolve x1ra0t 1 applied
 ## History
