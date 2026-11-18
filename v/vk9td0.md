@@ -36,7 +36,7 @@ Activity source: session/turn timestamps already in the jcode and claude journal
 - [x] decision recorded in DESIGN.md with reason
 - [x] With 7+ days of activity, hug computes a 168-bucket hour-of-week histogram and names the longest quiet stretch; shown by a command or debug line (test with a synthetic week)
 - [x] Dreaming starts at the beginning of that stretch, and with under a week of data the current behaviour stays (test)
-- [ ] Jørgen confirms the hour-of-week schedule matches his week and that daily dreaming (each day's own quiet start) is right
+- [x] Jørgen confirms the hour-of-week schedule matches his week and that daily dreaming (each day's own quiet start) is right
 
 ## Requests
 - 2026-11-18T12:22 request 1 by jhf:
@@ -60,6 +60,7 @@ crab review 13:53Z: accepted. The earlier histogram is in Jørgen's syncthing fo
 Landed on main via 5a8b14da (stack bg1rd8 f7d607e4, qpp30y 3d74229a, 2k68eg 7fafab16, vk9td0 5a8b14da; CI 44328375780 exact SHA 6/6, ubuntu passed on rerun after an unrelated muninn/internal/project flake, see ybbfsa). Ships in the next release.
 landed 5a8b14d on main 2026-11-18: hug mem: dream starts at the beginning of your quiet stretch (vk9td0)
 shipped in v0.7.65 (5a8b14d)
+check 4: Jørgen 19:35Z (answer 1): 'go for the adaptive', no hard-coded schedule. 4f0465fb already learns each day's quiet stretch from the last 4 weeks of turns (activity.go Weeks = 4, prune at 8 weeks), so a change in rhythm shows within a month. The stretches from his hook.log were only the current reading of that, not a fixed schedule.
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T06:32 doing/active -> doing/waiting (wait)
@@ -73,3 +74,4 @@ shipped in v0.7.65 (5a8b14d)
   It doesn't matter because it's going to be adaptive. So, yes, we can use this for now, but let's be adaptive. Meaning, you don't hard code a schedule. So, I'm not going to prove this one, I'm going to say go for the adaptive. So, you do this heuristics and be adaptive
 - 2026-11-18T20:32 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:35 answer 1 acknowledged by crab
+- 2026-11-18T20:36 crab read the answer: hug task check vk9td0 4 "Jørgen 19:35Z (answer 1): 'go for the adaptive', no hard-coded schedule. 4f0465fb already learns each day's quiet stret…"
