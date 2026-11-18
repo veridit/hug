@@ -67,6 +67,10 @@ type Options struct {
 	// MainBranch is the repository's main line ("main"): IN PROGRESS rows
 	// name a task's branch only when it is another one (x1t1t1).
 	MainBranch string
+	// Checkout is the top folder of the checkout hug tui runs in: its
+	// last element names the project in the header, 'HUG · hug-testing'
+	// (0sw0dd, Jørgen 2026-11-16), unless hug.toml [board] project says.
+	Checkout string
 	// Lint, when set, returns the findings of the board the store's last
 	// Tasks returned, from the task cache (cache.LintListed). Then a reload
 	// parses no task file: a task's file is read when its detail opens
