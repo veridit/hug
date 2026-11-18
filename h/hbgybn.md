@@ -4,7 +4,7 @@ title: "Requests: a person writes a request in a task, an agent turns it into ed
 state: "doing"
 type: feature
 priority: ""
-assignee: ["kestrel"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzn"
