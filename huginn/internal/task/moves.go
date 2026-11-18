@@ -3,6 +3,7 @@ package task
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -252,6 +253,13 @@ func (s *Store) askable(d *Document, q Question) (what, who, check, show string,
 		return "", "", "", "", usageErr(id, "ask needs the question", "hug task ask "+id+` --to NAME "the question"`)
 	}
 	who = strings.TrimSpace(q.For)
+	if qs := severalQuestions(what); qs != nil {
+		to := who
+		if to == "" {
+			to = "NAME"
+		}
+		return "", "", "", "", usageErr(id, fmt.Sprintf("that is %d questions in one ask: each gets its own answer, so ask each on its own", len(qs)), "ask each question on its own: hug task ask "+id+" --to "+to+" "+strconv.Quote(oneLineFix(qs[0])))
+	}
 	if who == "" {
 		return "", "", "", "", usageErr(id, "ask needs who must answer: --to NAME", "hug task ask "+id+` --to NAME "`+oneLineFix(what)+`"`)
 	}
@@ -288,6 +296,41 @@ func (s *Store) askable(d *Document, q Question) (what, who, check, show string,
 func oneLineFix(text string) string {
 	first, _, _ := strings.Cut(text, "\n")
 	return strings.TrimSpace(first)
+}
+
+// numberedItem starts an item of a numbered list: "1.", "2)", "(3)",
+// "Q4:" at a line start or after a space.
+var numberedItem = regexp.MustCompile(`(?:^|\s)(?:\(\d{1,2}\)|\d{1,2}[.)]|[Qq]\d{1,2}:)\s`)
+
+// severalQuestions splits what into the questions of a numbered list (q2adr8
+// check 4, Jørgen: "If you ask three questions, I should have three
+// questions to answer"): two or more numbered items that are each a
+// question, ending in "?" or offering their own alternative (" or ", as
+// rxr4z8's "(1) ◆ as the mark, or another sign; (2) ..."). A list of
+// options under one question ("(1) the open ones, (2) the newest, or (3) by
+// rank?") or of facts is one question, and so returns nil.
+func severalQuestions(what string) []string {
+	locs := numberedItem.FindAllStringIndex(what, -1)
+	if len(locs) < 2 {
+		return nil
+	}
+	var qs []string
+	for i, l := range locs {
+		end := len(what)
+		if i+1 < len(locs) {
+			end = locs[i+1][0]
+		}
+		item := strings.TrimSpace(what[l[1]:end])
+		// The word joining one option to the next is not the item's own.
+		body := strings.TrimRight(strings.TrimSuffix(strings.TrimRight(item, " ,;"), " or"), " ,;")
+		if strings.HasSuffix(item, "?") || strings.Contains(" "+body+" ", " or ") {
+			qs = append(qs, item)
+		}
+	}
+	if len(qs) < 2 {
+		return nil
+	}
+	return qs
 }
 
 // showable checks that name is one of t's files, as a question's picture
