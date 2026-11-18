@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Sync with the same task changed in two clones (8zwy6r): notes, a different check ticked on each side, an answer and requests merge and both syncs succeed, as since the shared replay (798d91c8); now tested on a plain board, which on a13d7c74 stopped with `sync conflicts: ... (rebase aborted)`. When state was set on both sides, the board's state stays whole: the local move's node fields (`dropped_reason`, `dropped_at` of a drop) go to `## History` instead of staying in the front matter, where they linted broken `[stray-node-field]`; the local state is still in its note and the sync still prints `sync: ID state: kept the board's ...`.
+
 ## v0.7.65 - 2026-11-18
 
 - A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.

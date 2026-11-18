@@ -198,7 +198,42 @@ func MergeTask(path string, base, ours, theirs []byte, side MergeSide) ([]byte, 
 			d.Note(note)
 		}
 	}
+	if e := strayToHistory(d, kept, side); e != nil {
+		return nil, nil, e
+	}
 	return d.Bytes(), kept, nil
+}
+
+// strayToHistory keeps the board's state whole (8zwy6r): when state was
+// changed on both sides and the board's kept, the local move's node
+// fields (dropped_reason and dropped_at of a drop) belong to the state
+// that lost. Left in the front matter they lint broken
+// [stray-node-field]; they go to ## History, as a move puts them, at the
+// local commit's time so both clones write the same bytes.
+func strayToHistory(d *Document, kept []Kept, side MergeSide) error {
+	state := false
+	for _, k := range kept {
+		if k.Field == "state" {
+			state = true
+		}
+	}
+	if !state {
+		return nil
+	}
+	owners := NodeFields()
+	var moved []string
+	for _, k := range sortedKeys(d.Task.Fields) {
+		if o, node := owners[k]; node && !fieldHolds(d.Task, k, o) {
+			moved = append(moved, k+": "+d.Task.Fields[k])
+			if e := d.RemoveField(k); e != nil {
+				return e
+			}
+		}
+	}
+	if len(moved) > 0 {
+		d.History(side.At + " sync kept the board's state " + d.Task.State + "; this clone's " + strings.Join(moved, ", "))
+	}
+	return nil
 }
 
 // keptNote is the note that keeps ours: who set what here, when, in which
