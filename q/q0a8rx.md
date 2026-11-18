@@ -45,3 +45,4 @@ Branch tip 1abcc497 (46 commits). The 58 are listed by the corrected labels next
 - 2026-11-18T20:42 answered asked (check 1), by jhf, for crab (doing/asked -> doing/active):
   > hug's public hug/memory branch still holds 58 memories that don't belong there (29 personal, 16 other projects, 13 team). Forget can't remove them; only rewriting the branch can, and clones that already fetched it keep their copies. A backup exists. Rewrite the branch without them, or leave it?
   Rewrite, but maybe we should first move the memories to the right spot. We have a functionality for that, right?
+- 2026-11-18T20:42 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
