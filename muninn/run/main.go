@@ -708,6 +708,9 @@ func statsCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if l := harness.StaleList(staleMCPScan(ctx).Stale); l != "" {
+				s.StaleMCP = l + " (older than v" + harness.ReloadSince + ", cannot reload; restart each in its app: jcode mcp action=reload server=hug, or quit and reopen the app)"
+			}
 			b, _ := json.MarshalIndent(s, "", "  ")
 			fmt.Println(string(b))
 			return nil
@@ -760,6 +763,12 @@ func runHook(name string, budget time.Duration) error {
 		resp, err := hookRecallBoard(ctx, name, in)
 		if err != nil {
 			return err
+		}
+		// A hug mcp server too old to reload itself (z77pem), once per
+		// session, before what recall found: only the one serving this
+		// session (the app this hook runs under).
+		if in.SessionID != "" {
+			resp.Block = withStaleMCP(staleMCPOnce(ctx, name+"-"+in.SessionID, ""), resp.Block)
 		}
 		os.Stdout.Write(harness.PromptHookOutput(resp.Block))
 		return nil
@@ -825,6 +834,12 @@ func runHook(name string, budget time.Duration) error {
 		resp, err := hookRecallWith(ctx, a, name, sid, msg, binding, bs)
 		if resp.BoardKind != "" {
 			logHook("jcode[%s] %s: board=%s", inst.Name, short(sid), resp.BoardKind)
+		}
+		// A hug mcp server too old to reload itself (z77pem): checked once
+		// per session, said with this turn's block at the first tool result,
+		// only for the server of this session's jcode home.
+		if err == nil {
+			resp.Block = withStaleMCP(staleMCPOnce(ctx, sid, jh), resp.Block)
 		}
 		if err != nil || resp.Block == "" {
 			logHook("jcode[%s] %s: msg=%q hits=0 skipped=%q elapsed=%s", inst.Name, short(sid), recall.Truncate(msg, 60), resp.Skipped, resp.Elapsed)
