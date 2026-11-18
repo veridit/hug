@@ -1222,7 +1222,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, err
 		}
 		q.What = text
-		if e = s.readyToHand("ask", f.args[0], q.For, false, q.Check); e != nil {
+		if e = s.readyToHand("ask", f.args[0], q.For, false); e != nil {
 			return nil, e
 		}
 		r, e = s.s.AskAfter(f.args[0], q, strings.TrimSpace(f.get("after")), a.whoTakes(f).assignee())

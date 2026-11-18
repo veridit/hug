@@ -72,7 +72,8 @@ func noteQuestion(t Task, notes string) *Finding {
 			Fix:     "hug task check " + t.ID + " 1"}
 	case shipped != nil && stageSaysWhy(t):
 		// The stage already says why it is not done (kestrel's ggydj2
-		// finding, crab 00:49): waiting, asked, review. No question.
+		// finding, crab 00:49): waiting, asked, review. No question, so
+		// asking settles it (stageSettled, gpyqq9).
 		return nil
 	case shipped != nil && len(open) > 0:
 		// A fix hug takes (wdkqzx, Jørgen 23:48): done refuses open
@@ -133,6 +134,18 @@ func IdleFindings(ts []Task, last map[string]time.Time, asked map[string]bool, n
 	}
 	return out
 }
+
+// stageSettled are the question codes a stage that says why (waiting,
+// asked, review) settles: noteQuestion raises none of them on such a task.
+// So asking the owner is how such a question is answered, and hug task ask
+// is not held back by it (gpyqq9, crab on 4vd1mz: ask refused by the
+// shipped-not-done finding that asking settles, and wait pointed back to
+// ask).
+var stageSettled = map[string]bool{"shipped-not-done": true}
+
+// StageSettles reports whether moving a task to a stage that says why it
+// is not done (hug task ask: doing/asked) settles the finding code.
+func StageSettles(code string) bool { return stageSettled[code] }
 
 // stageSaysWhy reports whether t's stage already says why it is not done:
 // doing/waiting, doing/asked (41hhgn) or review. doing/active and todo do
