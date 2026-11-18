@@ -12,8 +12,8 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 stage: "waiting"
-waiting_on: "CI 44204301242 on ci/0sbvnq-4 (7592dc81), then land it and 2 green main Windows runs with cli under 240 s"
-waiting_since: "2026-11-18T01:01"
+waiting_on: "crab: target not met on main 44206328950 (cli 407 s in the full run, 323 s on the same tree one run earlier); next lever needs a ruling"
+waiting_since: "2026-11-18T01:27"
 waiting_asked_by: "wyvern"
 ---
 
