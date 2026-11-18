@@ -28,7 +28,7 @@ filter: none · sort: rank
                                                             
 All tasks · : filters and commands · ! lint finding · ↳ epic
                                                             
-j/k move · Enter open · find · # id · / search · : cmd …    
+j/k move · Space mark · Enter open · find · # id · / search 
 == list at 60
 HUG · list   5/5 tasks · ! 0 broken · 12 advice             
 view: overview  list  board  !lint        │ todo 2 · doing 2
@@ -59,7 +59,7 @@ Rows 1–5 of 5 · ! lint finding · ↳ epic · depends = a depen…
                                                             
 All tasks · : filters and commands                          
                                                             
-j/k move · Enter open · find · # id · / search · : cmd …    
+j/k move · Space mark · Enter open · find · # id · / search 
 == board at 60
 HUG · board   5/5 tasks · ! 0 broken · 12 advice            
 view: overview  list  board  !lint        │ todo 2 · doing 2
@@ -90,4 +90,4 @@ T: F feature B bug C chore S spike D docs · P: C critical H…
 Columns 1–1 of 5 · h/l reveals other columns                
 All tasks · : filters and commands                          
                                                             
-j/k move · Enter open · find · # id · / search · : cmd …    
+j/k move · Space mark · Enter open · find · # id · / search 

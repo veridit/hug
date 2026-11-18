@@ -25,6 +25,7 @@ type grabState struct {
 	visible       []task.Task // the order before the grab, for Esc
 	cursor, start int         // cursor and the task's row when grabbed
 	count         string      // a count typed before j/k, as in vim
+	block         []string    // the marked tasks' paths, moved as one block (rxr4z8)
 }
 
 // moveRefusal says why the current section cannot be reordered, or "".
@@ -161,16 +162,24 @@ func (m model) updateGrab(k string) (tea.Model, tea.Cmd) {
 	}
 	rows := m.indices()
 	at := m.rowOf(rows, m.grab.path)
+	move := m.grabMove
+	if len(m.grab.block) > 0 {
+		move = m.blockMove // the marked as one block (rxr4z8 check 4)
+	}
 	switch k {
 	case "j", "down":
-		m.grabMove(at + count)
+		move(at + count)
 	case "k", "up":
-		m.grabMove(at - count)
+		move(at - count)
 	case "<", "home":
-		m.grabMove(0)
+		move(0)
 	case ">", "end":
-		m.grabMove(len(rows) - 1)
+		move(len(rows) - 1)
 	case "enter":
+		if len(m.grab.block) > 0 {
+			m.dropBlock()
+			break
+		}
 		m.dropGrab()
 	case "esc":
 		m.cancelGrab()

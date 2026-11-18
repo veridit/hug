@@ -181,13 +181,15 @@ func TestSpaceFoldsAHeading(t *testing.T) {
 	if tk, ok := m.selected(); !ok || tk.ID != ids["Launch posts"] || m.head != "" {
 		t.Fatalf("j from the heading: %v %q head %q", ok, tk.ID, m.head)
 	}
-	// Space on a task row still does not tick a check outside the task.
+	// Space on a task row marks it (rxr4z8); it never ticks a check
+	// outside the task. Esc unmarks it again.
 	m = press(m, " ")
-	if !strings.Contains(m.message, "Space ticks a check inside the task") {
-		t.Fatalf("Space on a row: %q", m.message)
+	if len(m.marks) != 1 || m.confirm != "" {
+		t.Fatalf("Space on a row: marks %v confirm %q", m.marks, m.confirm)
 	}
+	m = press(m, "esc")
 	// A task found under a folded heading is shown: the heading unfolds.
-	m = press(m, "k", " ")
+	m = press(m, "k", "k", " ")
 	if !m.folded[foldKey("group", "later")] {
 		t.Fatalf("later not folded again")
 	}
