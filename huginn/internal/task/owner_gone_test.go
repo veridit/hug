@@ -3,6 +3,7 @@ package task
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -102,5 +103,64 @@ func TestOwnerFindingsGoneSessions(t *testing.T) {
 	}
 	if p := got["bxqtkt"]; p != "" && !strings.Contains(p, "kestrel") {
 		t.Errorf("kestrel: %s", p)
+	}
+}
+
+// agh2h7: the recall hook's coordinator line asks Gone, which is
+// stale-owner's own rule, so the two never disagree on who is gone; At is
+// the same list as it stood at an earlier moment (board4 replays).
+func TestLivenessGoneAndAt(t *testing.T) {
+	dir := t.TempDir()
+	repo := "/Users/jhf/Projects/hug"
+	now := time.Date(2026, 11, 18, 14, 0, 0, 0, time.UTC)
+	ms := func(at time.Time) string { return strconv.FormatInt(at.UnixMilli(), 10) }
+	write := func(name string, start time.Time, status string, at time.Time, title string) {
+		t.Helper()
+		meta := `"working_dir":"` + repo + `","short_name":"` + name + `","status":"` + status + `"`
+		p := filepath.Join(dir, "session_"+name+"_"+ms(start)+"_ab12.json")
+		if err := os.WriteFile(p, []byte(`{"id":"x","title":"`+title+`","messages":[],`+meta+`}`), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Chtimes(p, at, at); err != nil {
+			t.Fatal(err)
+		}
+	}
+	// wyvern: started 08:00, closed at 10:00 (4 h ago).
+	write("wyvern", now.Add(-6*time.Hour), "Closed", now.Add(-4*time.Hour), "")
+	// puppy: closed 20 minutes ago: not yet gone (GoneOwnerAfter).
+	write("puppy", now.Add(-time.Hour), "Closed", now.Add(-20*time.Minute), "")
+	// calf, told "You are kestrel", active a minute ago.
+	write("calf", now.Add(-2*time.Hour), "Active", now.Add(-time.Minute), "You are kestrel, a worker on hug")
+	live := LivenessIn([]string{repo}, time.Time{}, dir)
+	for _, c := range []struct {
+		name        string
+		gone, known bool
+	}{{"wyvern", true, true}, {"puppy", false, true}, {"kestrel", false, true}, {"calf", false, true}, {"jhf", false, false}} {
+		if gone, known := live.Gone(c.name, now); gone != c.gone || known != c.known {
+			t.Errorf("Gone(%s) = %v, %v; want %v, %v", c.name, gone, known, c.gone, c.known)
+		}
+		// The same answer as stale-owner on a doing task of that name.
+		f := OwnerFindings(live, []Task{{ID: "a1b2c3", State: "doing", Assignee: []string{c.name}, Path: "a/a1b2c3.md", Fields: map[string]string{"doing_since": "2026-11-18T13:00"}}}, now)
+		if (len(f) == 1) != c.gone {
+			t.Errorf("%s: Gone says %v, stale-owner says %v", c.name, c.gone, f)
+		}
+	}
+	// At 09:30 wyvern was still writing: live then, closed only later.
+	then := now.Add(-4*time.Hour - 30*time.Minute)
+	if gone, known := live.At(then).Gone("wyvern", then); gone || !known {
+		t.Errorf("wyvern at 09:30: gone %v known %v, want live", gone, known)
+	}
+	// At 11:30 it had closed 1.5 h before: gone.
+	later := now.Add(-2*time.Hour - 30*time.Minute)
+	if gone, _ := live.At(later).Gone("wyvern", later); !gone {
+		t.Error("wyvern at 11:30: not gone")
+	}
+	// Before puppy started, the list does not know it.
+	if _, known := live.At(now.Add(-2*time.Hour)).Gone("puppy", now.Add(-2*time.Hour)); known {
+		t.Error("puppy known before its session started")
+	}
+	// The alias holds in the past view too.
+	if _, known := live.At(now).Gone("kestrel", now); !known {
+		t.Error("kestrel alias lost in At")
 	}
 }

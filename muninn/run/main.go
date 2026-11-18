@@ -783,7 +783,7 @@ func runHook(name string, budget time.Duration) error {
 			return binding.Err
 		}
 		cwd := os.Getenv("JCODE_HOOK_CWD")
-		bs := boardSource(ctx, a.Cfg.BoardNudges(), cwd, sessionName(sid), func(since time.Time) harness.Activity {
+		bs := boardSource(ctx, a.Cfg.BoardNudges(), cwd, sessionName(sid), jh, func(since time.Time) harness.Activity {
 			act, _ := harness.JcodeActivity(sessions, sid, since)
 			return act
 		})
@@ -946,7 +946,7 @@ func hookRecallBoard(ctx context.Context, harnessName string, in harness.PromptH
 	}
 	var bs recall.BoardSource
 	if in.TranscriptPath != "" {
-		bs = boardSource(ctx, a.Cfg.BoardNudges(), in.Cwd, "", func(since time.Time) harness.Activity {
+		bs = boardSource(ctx, a.Cfg.BoardNudges(), in.Cwd, "", "", func(since time.Time) harness.Activity {
 			act, _ := harness.ClaudeActivity(in.TranscriptPath, since)
 			return act
 		})

@@ -371,6 +371,83 @@ func TestBoardQuestionReachesOwnerOnly(t *testing.T) {
 	}
 }
 
+// agh2h7 (bg1rd8 check 2): a waiting task whose every check holds is its
+// owner's to close; with every owner gone (by stale-owner's rule, 9ahvgt:
+// closed over an hour ago, or silent for a day), the board's coordinator
+// is told instead, and nobody else. 44w1ev: wyvern's, all 5 checks
+// ticked, a day waiting.
+func TestBoardChecksHoldOwnerElseCoordinator(t *testing.T) {
+	now := time.Date(2026, 11, 18, 12, 0, 0, 0, time.UTC)
+	f := recall.BoardFinding{TaskID: "44w1ev", TaskState: "doing",
+		Problem: "every check holds, but doing/waiting on landing slot for 25 hours: 5 of 5 checks are ticked or struck and 3 of 3 children are done; wyvern: is it done?",
+		Fix:     "hug task done 44w1ev"}
+	in := func(self, coordinator string, ownerGone bool) recall.BoardInput {
+		return recall.BoardInput{
+			Tasks:       []recall.BoardTask{{ID: "44w1ev", State: "doing", Assignee: []string{"wyvern"}, Checks: 5, Open: 0}},
+			Coordinator: coordinator,
+			Findings:    func() []recall.BoardFinding { return []recall.BoardFinding{f} },
+			Self:        recall.BoardSelf{Name: self},
+			Gone: func(who string, at time.Time) (bool, bool) {
+				switch who {
+				case "wyvern":
+					return ownerGone, true
+				case "crab", "kestrel":
+					return false, true
+				}
+				return false, false
+			},
+		}
+	}
+	const gone, live = true, false
+	cases := []struct {
+		name, self, coordinator string
+		owner                   bool
+		want                    string // "" none, "owner", "coordinator"
+	}{
+		{"the owner", "wyvern", "crab", live, "owner"},
+		{"the owner, after a long absence", "wyvern", "crab", gone, "owner"},
+		{"a passer-by", "kestrel", "crab", gone, ""},
+		{"the coordinator, owner live", "crab", "crab", live, ""},
+		{"the coordinator, owner gone", "crab", "crab", gone, "coordinator"},
+		{"no coordinator on the board", "kestrel", "", gone, ""},
+	}
+	for _, c := range cases {
+		e := boardEngine(t)
+		line, kind := e.BoardCue(c.self, "back", "return", now, src(in(c.self, c.coordinator, c.owner)))
+		switch c.want {
+		case "":
+			if line != "" {
+				t.Errorf("%s: got %q, want no line", c.name, line)
+			}
+		case "owner":
+			// The owner's own done line says it already (mineAll); the lint
+			// line is the same fix.
+			if kind != "lint" && kind != "done" || !strings.Contains(line, "44w1ev") || strings.Contains(line, "coordinator") || !strings.HasSuffix(line, "hug task done 44w1ev") {
+				t.Errorf("%s: got %q (%s)", c.name, line, kind)
+			}
+		case "coordinator":
+			if kind != "lint" || !strings.Contains(line, "44w1ev: every check holds") || !strings.Contains(line, "Its owner wyvern has no live session, so it is yours as coordinator") || !strings.HasSuffix(line, "fix: hug task done 44w1ev") {
+				t.Errorf("%s: got %q (%s)", c.name, line, kind)
+			}
+		}
+	}
+	// An owner the harness does not know (a person) is never gone: no line
+	// to the coordinator on its task.
+	person := in("crab", "crab", gone)
+	person.Tasks[0].Assignee = []string{"jhf"}
+	if line, _ := boardEngine(t).BoardCue("crab", "back", "return", now, src(person)); line != "" {
+		t.Errorf("a person's task to the coordinator: %q", line)
+	}
+	// Said once: the next break within LintRepeat is quiet.
+	e := boardEngine(t)
+	if line, _ := e.BoardCue("crab", "back", "return", now, src(in("crab", "crab", gone))); line == "" {
+		t.Fatal("first break: no line")
+	}
+	if line, _ := e.BoardCue("crab", "back", "return", now.Add(7*time.Hour), src(in("crab", "crab", gone))); line != "" {
+		t.Errorf("said again: %q", line)
+	}
+}
+
 func TestBoardOffWhenNoSource(t *testing.T) {
 	e := boardEngine(t)
 	if line, _ := e.BoardCue("s", "go", "start", time.Now(), nil); line != "" {
