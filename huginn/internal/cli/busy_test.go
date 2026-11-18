@@ -8,8 +8,9 @@ import (
 
 // n2hq8p check 1 (CLI): the repro from 2026-11-17 13:10, a second
 // hug task take by the same agent while the first ticket is active, is
-// refused with exit 3, a line naming the active ticket and three fix:
-// lines; --json gives fix (the first) and fixes (all three).
+// refused with exit 3, a line naming the active ticket and four fix:
+// lines (the fourth, the detour, since 4tycwd); --json gives fix (the
+// first) and fixes (all four).
 func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	t.Parallel()
 	a := app(t)
@@ -21,7 +22,8 @@ func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	want := "not taking " + second + ": kestrel is on " + first + " (First): one ticket in doing at a time\n" +
 		"fix: hug task done " + first + "\n" +
 		"fix: hug task wait " + first + " \"on what\"\n" +
-		"fix: hug task set " + first + " --state todo && hug task note " + first + " \"why it goes back\"\n"
+		"fix: hug task set " + first + " --state todo && hug task note " + first + " \"why it goes back\"\n" +
+		"fix: hug task dep " + first + " --add " + second + " && hug task note " + first + " \"where I was\"\n"
 	if code != 3 || out != want {
 		t.Fatalf("exit %d, want 3 and\n%s\ngot\n%s", code, want, out)
 	}
@@ -30,7 +32,7 @@ func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	if e := json.Unmarshal([]byte(out), &r); e != nil || code != 3 {
 		t.Fatalf("exit %d: %v\n%s", code, e, out)
 	}
-	if fixes, _ := r["fixes"].([]any); len(fixes) != 3 || r["fix"] != "hug task done "+first || r["next"] != r["fix"] {
+	if fixes, _ := r["fixes"].([]any); len(fixes) != 4 || r["fix"] != "hug task done "+first || r["next"] != r["fix"] {
 		t.Fatalf("json: %s", out)
 	}
 	if f := taskFile(t, a, second); !strings.Contains(f, "state: todo") && !strings.Contains(f, `state: "todo"`) || strings.Contains(f, "kestrel") {

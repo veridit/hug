@@ -94,6 +94,9 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 				if fixes := cli.ErrorFixes(err); fixes != nil {
 					reply["fixes"] = fixes
 				}
+				if waiting := cli.ErrorWaiting(err); waiting != nil {
+					reply["waiting"] = waiting
+				}
 			}
 			b, err := json.Marshal(reply)
 			if err != nil {

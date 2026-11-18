@@ -6,7 +6,10 @@ import (
 	"testing"
 )
 
-func wantBusy(t *testing.T, e error, active string) *Error {
+// wantBusy checks the refusal naming active. taken is the task a take was
+// refused for (4tycwd: the detour to it is a fourth fix); "" for a resume,
+// which has no detour.
+func wantBusy(t *testing.T, e error, active, taken string) *Error {
 	t.Helper()
 	var te *Error
 	if !errors.As(e, &te) || te.Kind != "busy" {
@@ -17,11 +20,14 @@ func wantBusy(t *testing.T, e error, active string) *Error {
 		"hug task wait " + active + ` "on what"`,
 		"hug task set " + active + " --state todo && hug task note " + active + ` "why it goes back"`,
 	}
+	if taken != "" {
+		want = append(want, "hug task dep "+active+" --add "+taken+" && hug task note "+active+` "where I was"`)
+	}
 	if strings.Join(te.Fixes, "|") != strings.Join(want, "|") || te.Fix != want[0] {
 		t.Fatalf("fixes %q (fix %q), want %q", te.Fixes, te.Fix, want)
 	}
-	if !strings.Contains(te.Value, active) || strings.Count(te.Error(), "\nfix: ") != 3 {
-		t.Fatalf("refusal must name %s and print three fix: lines:\n%s", active, te.Error())
+	if !strings.Contains(te.Value, active) || strings.Count(te.Error(), "\nfix: ") != len(want) {
+		t.Fatalf("refusal must name %s and print %d fix: lines:\n%s", active, len(want), te.Error())
 	}
 	return te
 }
@@ -37,7 +43,7 @@ func TestSecondTakeWhileActiveIsRefused(t *testing.T) {
 		t.Fatal(e)
 	}
 	_, e := s.TakeAs(b, "kestrel", "claude-opus-5-5")
-	wantBusy(t, e, a)
+	wantBusy(t, e, a, b)
 	if tk, _ := load(t, s, b); tk.State != "todo" || len(tk.Assignee) != 0 {
 		t.Fatalf("refused task changed: %s %v", node(tk), tk.Assignee)
 	}
@@ -55,7 +61,7 @@ func TestSecondTakeWhileActiveIsRefused(t *testing.T) {
 		t.Fatal(e)
 	}
 	_, e = s.TakeAs(d, "Jørgen", "human")
-	wantBusy(t, e, c)
+	wantBusy(t, e, c, d)
 	// Taking a review (todo/review -> doing/review) is not work of one's
 	// own: it is allowed beside the active ticket.
 	r := stagedTask(t, s, "rrrrrr", "state: \"todo\"\nstage: \"review\"\nreview_since: \"2026-11-17T08:00\"")
@@ -96,7 +102,7 @@ func TestTakeAllowedWhenEarlierIsNotActive(t *testing.T) {
 			// Now b is active: resuming a waiting first one would make two.
 			if tc.name == "waiting" {
 				_, e := s.Resume(first)
-				wantBusy(t, e, b)
+				wantBusy(t, e, b, "")
 			}
 		})
 	}

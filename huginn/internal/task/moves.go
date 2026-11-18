@@ -323,13 +323,19 @@ func (s *Store) Resume(ref string) (Result, error) {
 	// Resuming makes it active again: one active ticket per agent (n2hq8p).
 	for _, who := range d.Task.Assignee {
 		if a, ok := Active(who, d.Task.ID, ts); ok {
-			return Result{}, busy(d.Task, who, a)
+			return Result{}, busy(d.Task, who, a, false)
 		}
 	}
+	// Once only (4tycwd): after the move the text is in ## History alone.
+	on := strings.Join(strings.Fields(d.Task.Fields["waiting_on"]), " ")
 	if e = applyMove(d, ts, move{state: "doing", clear: append(stageFields("doing", "waiting"), stageFields("doing", "asked")...), why: "resume"}); e != nil {
 		return Result{}, e
 	}
-	return s.finish(d, true)
+	r, e := s.finish(d, true)
+	if e == nil && on != "" {
+		r.Said = "was waiting on: " + on
+	}
+	return r, e
 }
 
 // Review asks who (a person's or agent's name, review_by, required) to

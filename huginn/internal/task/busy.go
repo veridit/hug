@@ -6,7 +6,10 @@ import "strings"
 // so a second take by the same name is refused while the first is active.
 // A task waiting (on CI, a reply, a landing turn), in review or depending on
 // another task is not work in hand and does not count. The refusal is the
-// fix: it names the active ticket and the three ways to free the taker.
+// fix: it names the active ticket and the ways to free the taker; a take
+// also offers the detour (4tycwd): the active ticket depends on the one
+// being taken, with a note of where it was, and comes back by itself when
+// that one is done.
 
 // Active is the first task other than except that name has in doing with
 // the stage active: the work name has in hand. ts is the board.
@@ -36,8 +39,20 @@ func BusyFixes(id string) []string {
 	}
 }
 
-// busy is the refusal of taking ref while name works on active.
-func busy(ref Task, name string, active Task) *Error {
+// DetourFix is the fourth way out of a refused take of ref (4tycwd): go
+// to ref as a detour; active waits on it as a dependency, so it is not
+// active work, and is active again when ref is done.
+func DetourFix(active, ref string) string {
+	return "hug task dep " + active + " --add " + ref + " && hug task note " + active + ` "where I was"`
+}
+
+// busy is the refusal of taking ref while name works on active. detour:
+// ref is a task to take (not one to resume), so the detour is a way out.
+func busy(ref Task, name string, active Task, detour bool) *Error {
+	fixes := BusyFixes(active.ID)
+	if detour {
+		fixes = append(fixes, DetourFix(active.ID, ref.ID))
+	}
 	return &Error{Kind: "busy", ID: ref.ID, Field: "doing", Value: name + " is on " + active.ID + " (" + active.Title + "): one ticket in doing at a time",
-		Fix: BusyFixes(active.ID)[0], Fixes: BusyFixes(active.ID)}
+		Fix: fixes[0], Fixes: fixes}
 }

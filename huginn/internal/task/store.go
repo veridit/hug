@@ -18,6 +18,9 @@ type Result struct {
 	Changed  bool     `json:"changed"`
 	Next     string   `json:"next"`
 	Warnings []string `json:"warnings,omitempty"`
+	// Said is one line the command says before next: (resume: what the
+	// task was waiting on, 4tycwd), not a warning.
+	Said string `json:"said,omitempty"`
 	// Guide: what to do now, at this state change (see Guide).
 	Guide   []string `json:"guide,omitempty"`
 	Renamed []string `json:"renamed,omitempty"`
@@ -552,7 +555,7 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	// goes on).
 	if status == "doing" && user != "" && d.Task.State != "doing" && d.Task.Stage != "review" {
 		if a, ok := Active(user, d.Task.ID, ts); ok {
-			return Result{}, busy(d.Task, user, a)
+			return Result{}, busy(d.Task, user, a, true)
 		}
 	}
 	var warnings []string
@@ -730,7 +733,17 @@ func Next(tasks []Task, f Filter) (Result, error) {
 		}
 		sort.SliceStable(ts, func(i, j int) bool { return ts[i].State == "doing" && ts[j].State != "doing" })
 	}
+	// My doing tasks in stage waiting are not work now (4tycwd, crab
+	// 17:57): hug wakes a wait (--until, its condition), resume ends it.
+	// With nothing else for me, they are listed, one line each.
+	var waits []string
 	for _, t := range ts {
+		if f.Mine != "" && t.State == "doing" && ownHolds(t, "waiting") {
+			if contains(t.Assignee, f.Mine) && InEpic(t, tasks, f.Epic) {
+				waits = append(waits, WaitingLine(t))
+			}
+			continue
+		}
 		if (t.State != "todo" && !(f.Mine != "" && t.State == "doing")) || Waiting(t, tasks) {
 			continue
 		}
@@ -750,7 +763,20 @@ func Next(tasks []Task, f Filter) (Result, error) {
 		}
 		return Result{Task: t, Next: hint(t)}, nil
 	}
+	if len(waits) > 0 {
+		return Result{}, &Error{Kind: "nothing-matches", Value: "nothing for " + f.Mine + " to work on now; waiting:", Waiting: waits, Fix: "hug task ls"}
+	}
 	return Result{}, &Error{Kind: "nothing-matches", Fix: "hug task ls"}
+}
+
+// WaitingLine is a waiting task in one line: "ID waiting on WHAT", and
+// " · until DATE" for a timed wait.
+func WaitingLine(t Task) string {
+	line := t.ID + " waiting on " + strings.Join(strings.Fields(t.Fields["waiting_on"]), " ")
+	if u := strings.TrimSpace(t.Fields["waiting_until"]); u != "" {
+		line += " · until " + u
+	}
+	return line
 }
 func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	oldPath := d.Task.Path
