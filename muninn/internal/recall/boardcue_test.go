@@ -287,6 +287,48 @@ func TestBoardMissingSectionOnlyToItsSession(t *testing.T) {
 	}
 }
 
+// 4vxqp4: a task the message names only as context (quoted, a dependency,
+// a task not to start) gets no missing-section line; named as the work, or
+// acted on, it does. Messages from the replay (hog, evergreen, maple).
+func TestBoardMissingSectionNotForAMention(t *testing.T) {
+	now := time.Date(2026, 11, 16, 10, 9, 34, 0, time.UTC)
+	section := func(id string) recall.BoardFinding {
+		return recall.BoardFinding{TaskID: id, TaskState: "todo", Problem: "missing section Purpose (why)", Fix: "hug task set " + id + " --purpose \"...\""}
+	}
+	in := func(as ...recall.BoardAction) recall.BoardInput {
+		return recall.BoardInput{
+			Tasks: []recall.BoardTask{{ID: "s6ff5k", State: "todo"}, {ID: "mv4vye", State: "doing", Assignee: []string{"hog"}},
+				{ID: "n8zmjw", State: "doing", Assignee: []string{"hibiscus"}}, {ID: "p39w4a", State: "todo"}},
+			Findings: func() []recall.BoardFinding {
+				return []recall.BoardFinding{section("s6ff5k"), section("n8zmjw"), section("p39w4a")}
+			},
+			Self:    recall.BoardSelf{Name: "hog"},
+			Actions: as,
+		}
+	}
+	cases := []struct {
+		name, msg string
+		as        []recall.BoardAction
+		want      string // task id the line names; "" for none
+	}{
+		{"quoted prompt", `Your one task is hug task mv4vye. Do not start any other task. Confirm prompts ("Confirm edit s6ff5k Title?") are bland.`, nil, ""},
+		{"quoted output", "Today: `hug task lint` prints `next: hug task take s6ff5k` (unrelated).", nil, ""},
+		{"forbidden", "Work on mv4vye. Do not start s6ff5k or any other task.", nil, ""},
+		{"dependency", "Read `hug task show p39w4a`. Don't take it: p39w4a depends on n8zmjw.", nil, "p39w4a"},
+		{"assigned", "Your ticket: s6ff5k. Read `hug task show s6ff5k`.", nil, "s6ff5k"},
+		{"quoted but acted on", `Fix the prompt "Confirm edit s6ff5k Title?".`, []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "note", ID: "s6ff5k"}}}}, "s6ff5k"},
+		{"read another's doing task", "back", []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "n8zmjw"}}}}, ""},
+		{"read an open todo", "back", []recall.BoardAction{{Hug: []recall.BoardHug{{Verb: "show", ID: "s6ff5k"}}}}, "s6ff5k"},
+	}
+	for _, c := range cases {
+		e := boardEngine(t)
+		line, _ := e.BoardCue("hog", c.msg, "start", now, src(in(c.as...)))
+		if c.want == "" && line != "" || c.want != "" && !strings.Contains(line, c.want+": missing section") {
+			t.Errorf("%s: got %q, want a line on %q", c.name, line, c.want)
+		}
+	}
+}
+
 // at3qep check 2: a question hug cannot settle reaches the ticket's owner
 // at its next break, and nobody else: kestrel took 0hkaa5, it landed, no
 // check is ticked.

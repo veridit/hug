@@ -205,7 +205,7 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 		// muninn/docs/BOARD4.md. Not kept.)
 		fs := in.Findings()
 		unrelated := brk != "start" && !ownHasFinding(fs, d.own)
-		if f, ok := e.pickFinding(fs, d.touched, unrelated, now); ok {
+		if f, ok := e.pickFinding(fs, d.touched, d.mention, unrelated, now); ok {
 			e.boardMark(session, "lint", now)
 			e.DB.Exec(`INSERT INTO board_lint(key, at_ns) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET at_ns=excluded.at_ns`, f.key(), now.UnixNano())
 			return fmt.Sprintf("Task board (%s): %s: %s. fix: %s", brk, f.TaskID, Truncate(oneLine(f.Problem), 160), f.Fix), "lint"
@@ -234,6 +234,12 @@ type detection struct {
 	named   []BoardTask // todo tasks named by the message, commands or commits
 	matched *BoardTask  // todo task whose title matches the work
 	touched map[string]bool
+	// mention holds touched tasks the session neither owns, acted on, nor
+	// was given as work: named only as context (quoted, a dependency, a
+	// task not to start) or another session's doing task it only read
+	// (4vxqp4). They count as touched for every finding but an ownerOnly
+	// one (a missing section, an at3qep question).
+	mention map[string]bool
 	own     map[string]bool // the session's own doing tasks (tpnd3n)
 	answers []BoardTask     // tasks with an unread answer for this session (3jtfw9)
 	asks    []BoardTask     // tasks with an open request routed to this session (hbgybn)
@@ -305,7 +311,7 @@ var taskRef = regexp.MustCompile(`\b[a-z0-9]{6}\b`)
 var stopOrder = regexp.MustCompile(`(?i)\bstop (?:now|immediately|all work|everything)\b|\bdo not (?:run any|run anything|edit any|edit anything|touch any)\b|\bdon'?t (?:run any|edit any|touch any)\b|\bend (?:your|the) session\b|\bstand down\b`)
 
 func (e *Engine) detect(session, msg string, in *BoardInput) detection {
-	d := detection{touched: map[string]bool{}, own: map[string]bool{}}
+	d := detection{touched: map[string]bool{}, own: map[string]bool{}, mention: map[string]bool{}}
 	byID := map[string]BoardTask{}
 	for _, t := range in.Tasks {
 		byID[t.ID] = t
@@ -345,10 +351,29 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 		offMain := self.Branch != "" && self.Branch != "main" && self.Branch != "master"
 		return offMain && t.Branch == self.Branch
 	}
+	// acted: tasks the session owns or acted on (took, checked, noted, set,
+	// edited ...). Reading another session's doing task with show is not
+	// acting on it (4vxqp4; replay: palmtree read hibiscus's n8zmjw and was
+	// handed its missing Purpose); reading an open todo still counts
+	// (nautilus read e4w9ya, judged right).
+	acted := map[string]bool{}
+	others := func(id string) bool {
+		t, ok := byID[id]
+		if !ok || t.State != "doing" || len(t.Assignee) == 0 {
+			return false
+		}
+		for _, a := range t.Assignee {
+			if self.Name != "" && strings.EqualFold(strings.TrimSpace(a), self.Name) {
+				return false
+			}
+		}
+		return true
+	}
 	for _, t := range in.Tasks {
 		if mine(t) {
 			d.hasMine = true
 			d.touched[t.ID] = true
+			acted[t.ID] = true
 			if t.State == "doing" {
 				d.own[t.ID] = true
 			}
@@ -423,6 +448,9 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 				continue
 			}
 			d.touched[h.ID] = true
+			if h.Verb != "show" || !others(h.ID) {
+				acted[h.ID] = true
+			}
 			// Ticking a check is doing the task. A note alone is not: a
 			// coordinator records design talk on todo tasks it is not working
 			// on (dev replay, BOARD4.md). A note counts with code edits in the
@@ -446,11 +474,19 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 			words = append(words, a.Subject)
 		}
 	}
+	plain := assigningRefs(msg)
 	for _, id := range taskRef.FindAllString(strings.ToLower(msg), -1) {
 		if _, ok := byID[id]; ok {
 			d.touched[id] = true
 		}
 		addNamed(id)
+	}
+	// A touched task the session neither owns, acted on, nor was given as
+	// work by the message is only mentioned (4vxqp4).
+	for id := range d.touched {
+		if !acted[id] && !plain[id] {
+			d.mention[id] = true
+		}
 	}
 	if d.edits {
 		for _, t := range in.Tasks {
@@ -590,7 +626,50 @@ func ownHasFinding(fs []BoardFinding, own map[string]bool) bool {
 	return false
 }
 
-func (e *Engine) pickFinding(fs []BoardFinding, touched map[string]bool, any bool, now time.Time) (BoardFinding, bool) {
+// quotedSpan is text the message quotes: a fenced block, backticks, or
+// double quotes within one line.
+var quotedSpan = regexp.MustCompile("(?s)```.*?```|`[^`\n]*`|\"[^\"\n]{0,300}\"|“[^”\n]{0,300}”")
+
+// bareRef is a quoted span that is only a task id or a hug command on one:
+// an instruction ("`hug task take abc123`", "Top task: `abc123`"), not a
+// quote of output or of a prompt.
+var bareRef = regexp.MustCompile(`^(?:task:)?[a-z0-9]{6}$|^hug task [a-z]+ (?:task:)?[a-z0-9]{6}\b`)
+
+// contextBefore ends right before a task id that the message names as a
+// dependency or as a task not to start.
+var contextBefore = regexp.MustCompile(`(?:\b(?:depends? on|builds? on|blocked by|waits? (?:on|for)|parent)\s*:?\s*(?:task:)?|\b(?:do not|don['’]?t|never)\s+(?:start|take|touch|work on|begin|pick up)\b[^.!?\n]{0,80})$`)
+
+// assigningRefs returns the task ids a message names at least once as
+// work, not only as context: outside quoted text (or quoted bare), and not
+// right after "depends on" or "do not start" (4vxqp4; replay: s6ff5k
+// reached hog and dromedary quoted as "Confirm edit s6ff5k Title?" in a
+// brief that forbade every other task, vk9td0 reached kitten and poodle
+// quoted as `next: hug task take vk9td0`, n8zmjw reached evergreen as
+// "p39w4a depends on n8zmjw").
+func assigningRefs(msg string) map[string]bool {
+	low := strings.ToLower(msg)
+	var spans [][]int
+	for _, s := range quotedSpan.FindAllStringIndex(low, -1) {
+		in := strings.TrimSpace(strings.Trim(low[s[0]:s[1]], "`\"“”"))
+		if !bareRef.MatchString(in) {
+			spans = append(spans, s)
+		}
+	}
+	out := map[string]bool{}
+	for _, m := range taskRef.FindAllStringIndex(low, -1) {
+		quoted := false
+		for _, s := range spans {
+			quoted = quoted || s[0] <= m[0] && m[1] <= s[1]
+		}
+		if quoted || contextBefore.MatchString(low[max(0, m[0]-120):m[0]]) {
+			continue
+		}
+		out[low[m[0]:m[1]]] = true
+	}
+	return out
+}
+
+func (e *Engine) pickFinding(fs []BoardFinding, touched, mention map[string]bool, any bool, now time.Time) (BoardFinding, bool) {
 	rank := func(f BoardFinding) int {
 		switch {
 		case touched[f.TaskID]:
@@ -604,7 +683,9 @@ func (e *Engine) pickFinding(fs []BoardFinding, touched map[string]bool, any boo
 	}
 	best, bi := 4, -1
 	for i, f := range fs {
-		if !runnable(f) {
+		// A missing section (any ownerOnly finding) is the task's own
+		// session's to fill: a task it only mentions is not that (4vxqp4).
+		if !runnable(f) || ownerOnly(f) && mention[f.TaskID] {
 			continue
 		}
 		r := rank(f)

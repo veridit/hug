@@ -200,6 +200,50 @@ dromedary, told "do not start any other task"; vk9td0 to kitten and poodle).
   c9h01e). So the 5 extra are not real findings a session missed: they
   are the same section findings reaching a session by a mention.
 
+## A task the message only mentions is not the session's (4vxqp4, 2026-11-18)
+
+Shipped: a missing Purpose or Principle reaches a session for a task it
+owns or acted on (took, checked, noted, set, edited; or mine()), or one its
+message names as the work. A task the message names only as context does
+not count: inside quoted text (backticks, double quotes, a fenced block;
+a quote that is only an id or `hug task VERB ID` still counts), right after
+"depends on" / "builds on" / "blocked by" / "waits on" / "parent", or in a
+"do not start / take / touch ..." clause. Reading another session's doing
+task with `hug task show` is reading, not acting; reading an open todo still
+counts. Every other finding keeps the old rule (any mention counts).
+
+Same six sets and windows as tpnd3n (session ids pinned from its arm),
+same judge (judge_board.py, DeepSeek Flash, blind to arm), verdicts reused
+from tpnd3n's cache and new lines judged once. Baseline is origin/main
+4e776695, which reproduces tpnd3n's arm line for line (only `--model` in 7
+crab take/work lines differs: the session file changed model since).
+
+| arm | lines | right | false | lint right / false |
+|---|---|---|---|---|
+| main 4e776695 | 115 | 101 | 12 | 45 / 9 |
+| context mentions | 114 | 102 | 9 | 46 / 6 |
+| + show of another's doing task is reading (shipped) | 115 | 104 | 8 | 48 / 5 |
+| + quoted hug commands are not calls (not shipped, 6fqhg9) | 114 | 105 | 7 | 49 / 4 |
+
+- Gone (5, all judged false): s6ff5k to hog and dromedary, vk9td0 to
+  kitten and poodle, n8zmjw to evergreen. Their breaks get another finding
+  instead: qawmnb's "not a dependency" (kitten, poodle: right), p39w4a to
+  evergreen (right). Rotation moves n8zmjw's Purpose to herb, whose brief
+  makes it the work (right), not palmtree, who only read it.
+- One false line is new: crab 2026-11-16 12:27 gets vk9td0's Principle
+  instead of its Purpose. vk9td0 counts as crab's because the hook reads
+  `hug task take vk9td0`, quoted in crab's own `hug task new --goal`, as a
+  take. The parser fix is 6fqhg9; measured here it gains 1 line on the six
+  sets but costs fresh hug (lint 3 -> 2, false 3 -> 4), so it is not shipped.
+- Fresh sessions keep their right lint lines: fresh 5 / 0, fresh2 7 / 1 ->
+  9 / 0, fresh hug (367 sessions after 2026-11-16 20:00) 3 / 0 -> 3 / 0 (the
+  same 3 lines).
+- The judge is not stable on these lines. The 12 lines that differ between
+  main and the shipped arm, rejudged twice from empty caches: main-only 1
+  right / 5 false, then 6 / 0; shipped-only 4 / 2, then 5 / 1. hog's s6ff5k
+  was "not this worker's task" once and "board lint is independent" the
+  other time. Either way the shipped arm has no fewer right lines.
+
 ## Latency
 
 The board read on every turn (activity + board, 40 runs, warm cache):
