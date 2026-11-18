@@ -4,7 +4,7 @@ title: "hug refuses a board worktree that belongs to another repo"
 state: todo
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["kestrel"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
