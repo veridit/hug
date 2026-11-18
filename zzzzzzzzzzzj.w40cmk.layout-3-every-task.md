@@ -35,7 +35,7 @@ Front matter, grouped: identity (id, title, type, priority, labels, group, paren
 - [x] Group moves (mv ID GROUP) edit group: and keep the file and its ID/ folder where they are (test)
 - [x] An old file name or slug still resolves as a ref: hug task show 00i.6ephqk.task-state-stage-hard finds 6ephqk (test)
 - [ ] Memories live on branch hug/memory at .hug/memory/; hug upgrade moves muninn-notes there, and hug mem search finds the same memories before and after (test, plus counts on Jørgen's store)
-- [ ] Seid's board upgrades on a copy with the same order before and after (2,500 tasks, numbers in a note), before Seid's agent runs it for real
+- [x] Seid's board upgrades on a copy with the same order before and after (2,500 tasks, numbers in a note), before Seid's agent runs it for real
 - [ ] Jørgen links to a task by its path from outside hug and the link survives a reorder
 - [ ] Paths follow from the id alone: every task is at .hug/tasks/C/ID.md (C = first character of the id) with its files in .hug/tasks/C/ID/; no group folders remain; hug upgrade on hug's and Statbus's boards (copies) previews it, exits 5, and --apply does it in one commit (test plus counts)
 - [ ] Sync still works across the move: two clones, one upgraded and one not yet, are refused with a fix: line naming hug upgrade (never a silent merge of two layouts); after both upgrade, concurrent writes from both sync with no conflict (test)
