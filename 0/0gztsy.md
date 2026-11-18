@@ -15,9 +15,6 @@ stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "t64v7d lands first (crab 00:53); 0gztsy WIP on nautilus/0gztsy at 0109717e"
-waiting_since: "2026-11-18T02:03"
-waiting_asked_by: "nautilus"
 asked_what: "after the release: open 6ephqk (or any task asked of you): does the question read clearly, once, on its check, with the cursor there?"
 asked_for: "jhf"
 asked_since: "2026-11-18T02:59"
@@ -71,3 +68,4 @@ shipped in v0.7.53 (4e475c8)
 - 2026-11-18T01:39 todo -> doing/active (take)
 - 2026-11-18T02:03 doing/active -> doing/waiting (wait)
 - 2026-11-18T02:59 doing/waiting -> doing/asked (ask)
+- 2026-11-18T12:56 doing/asked -> doing/asked (settle: one stage, asked); was waiting_asked_by: nautilus; waiting_on: t64v7d lands first (crab 00:53); 0gztsy WIP on nautilus/0gztsy at 0109717e; waiting_since: 2026-11-18T02:03
