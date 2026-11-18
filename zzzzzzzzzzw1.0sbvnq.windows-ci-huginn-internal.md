@@ -66,6 +66,7 @@ crab 01:28 local ruling: (1) then (2). Windows cli gets its own go test step (sa
 Landed 1c40426d (6f7e8698..1c40426d), crab's (1) then (2): Windows tests huginn/internal/cli in its own job test-windows-cli (same tests, no skips); background-sync test passes settle 100 ms (the burst test keeps 1.5 s); TestTUIWriteAndCLINoteAtOnce 10+10, was 30+30 (TUI turn removed: 10 of 10 fail at 5, 10 and 30; with it 10 passes 5 of 5). A second step in the same job was tried first (run 44208135806): job 15 min 21 s, worse, so a job. On ci/0sbvnq-5 (run 44211044823, all 6 jobs green): 'huginn/internal/cli 224.989s'; test (windows-latest) job 3 min 6 s (00:50:17-00:53:23), test-windows-cli job 7 min 25 s (00:50:17-00:57:42); main before, 44206328950: Windows job 11 min 20 s (00:15:39-00:26:59) with cli 407.041s inside. Waiting for 2 consecutive main runs.
 landed 1c40426 on main 2026-11-18: Windows tests huginn/internal/cli in its own job; sync tests settle 100 ms, the…
 shipped in v0.7.52 (7592dc8)
+landed 3c6be7e on main 2026-11-18: test(cli): setup tests use a 20-file backlog unless the size is the point; the…
 ## History
 - 2026-11-17T14:32 doing -> doing/waiting (wait)
 - 2026-11-17T14:46 doing/waiting -> doing/active (resume); was waiting_asked_by: wyvern; waiting_on: 3 main Windows runs with huginn/internal/cli under 300 s (landing run 44087396396: 299.686 s); waiting_since: 2026-11-17T14:32
