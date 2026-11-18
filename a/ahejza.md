@@ -63,3 +63,4 @@ check 6: Jørgen 19:58 local: 'I like these pickers. Keep it'
   > after the release: line 3 reads 'filter: none · sort: rank'. Press s for the sort picker (c is the marked column, the same as o; created moved to d) and f for the filter picker; 1-4 no longer filter (use :todo etc.). Does it read clearly?
   I like these pickers. Keep it
 - 2026-11-18T19:57 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-18T19:58 answer 1 acknowledged by crab
