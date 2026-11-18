@@ -34,8 +34,9 @@ func app(t *testing.T) *App {
 	// The App's own environment, never the process's: tests that use app run
 	// in parallel (0sbvnq), which a process-wide setenv rules out.
 	return &App{Cwd: dir, In: strings.NewReader(""), Out: &bytes.Buffer{}, Err: &bytes.Buffer{},
-		// No machine's real session list in tests (v3k6cp stale-owner).
-		Env: map[string]string{"HUG_USER": "tester", "HUG_MODEL": "test-model", "JCODE_SESSION_ID": "", "JCODE_HOME": filepath.Join(dir, ".no-jcode")}}
+		// No machine's real session list in tests (v3k6cp stale-owner), nor
+		// the jcode instances its ~/.zshrc names (9ahvgt).
+		Env: map[string]string{"HUG_USER": "tester", "HUG_MODEL": "test-model", "JCODE_SESSION_ID": "", "JCODE_HOME": filepath.Join(dir, ".no-jcode"), "HOME": filepath.Join(dir, ".no-home")}}
 }
 func execute(t *testing.T, a *App, args ...string) Reply {
 	t.Helper()

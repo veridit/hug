@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug task lint` stale-owner sees owners whose sessions are gone (9ahvgt). It used to say "no findings with code stale-owner" while 22 doing tasks on hug's board belonged to sessions jcode had reaped or closed hours earlier, because only a session file older than a day counted. Now a jcode session that says `"status":"Closed"` (ended, or reaped after 30 min idle) is gone an hour after its last write. The journal (`.journal.jsonl`) counts as a write. A name taken with `--as` by a session told "You are NAME" is matched to that session (`(kestrel was session calf)`). A name no session knows is gone once its task has been doing for a day. Sessions are read from `JCODE_HOME` and every jcode instance in the zsh registry, but only those that worked in this repository, since names repeat across instances. A person (`--model human`, or a hug.toml `[people]` name) is never judged. When a sessions folder exists but cannot be read, lint says so once with `fix: ls -ld DIR`.
+
 ## v0.7.64 - 2026-11-18
 
 - Recall hook board lines (6fqhg9, rzfrgp): a hug command quoted inside another command's argument (a `--goal`, a note, a quoted lint line) no longer counts as run, so quoting `hug task take ID` does not make ID yours; `sh -c '...'` and `$(...)` still count. The "this looks like ID" take line no longer names a task you only opened with `hug task show`. The board4 judge now states that a missing-section or owner question is right only on the agent's own task; two judgings agree on 134 of 145 lines (was 7 of 15 on the lines that flipped). Replayed under it: six sets false 9 -> 7, right 106 -> 107; fresh hug false 4 -> 3 (muninn/docs/BOARD4.md).
