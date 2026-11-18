@@ -30,7 +30,7 @@ Source ead1be4ca37a1042e64c4878d0afcdba7c921b3f, CI44277147694 all6 success incl
 ## Depends on
 
 ## Acceptance
-- [ ] Release changelog includes only layout commits since v0.7.60, released history byte-identical and no conflict markers
+- [x] Release changelog includes only layout commits since v0.7.60, released history byte-identical and no conflict markers
 - [ ] Exact tag release workflow succeeds before targeted brew upgrade and hug version verifies v0.7.61
 - [ ] Hug own-board preview is reviewed, board-only apply verified, machine configs/native bytes not migrated, Seid and Statbus agents notified
 
