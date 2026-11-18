@@ -38,5 +38,6 @@ Code: huginn/internal/task/owner.go:95 builds the finding; it reads ~/.jcode/ses
 ## Notes
 
 
+Diagnosis (iwazaru, from ~/.jcode/sessions and logs). (1) owner.go judges by mtime only, with a 24 h threshold. nautilus' newest file is 07:46 today and hatchling's 06:47, so neither is past 24 h. Yet both sessions are gone: the last journal line of each has meta status Closed, and jcode-2026-11-16.log:1492534 reads 'Reaped idle spawned swarm worker session_nautilus_1794905151412_33a1e4b1294b58f5 (idle > 1800s)'. hug never reads the status. Of the 75 journals, 53 end Closed and 22 end Active, and the 22 Active ones are the 11 live swarm workers plus others. (2) LivenessFrom reads only session_*.json, not the .journal.jsonl that is written later (nautilus json 07:07, journal 07:46). (3) kestrel has no session file in any home (global, brovs, GenderedGames, truth_tribe_and_treasure, seid, statbus). Session calf's title is 'You are kestrel, a worker on hug', so calf took bxqtkt --as kestrel, and OwnerFindings skips any name the session list does not know. 'engineer' (xfv9pw: my own take --as engineer) and 'crab-engineer' (4vxqp4, duckling) are the same shape.
 ## History
 - 2026-11-18T13:44 todo -> doing/active (take)
