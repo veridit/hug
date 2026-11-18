@@ -88,9 +88,12 @@ func (m model) idStops(t task.Task) []idStop {
 			out = append(out, idStop{where: stopParent, shown: target.ID, target: target})
 		}
 	}
-	for _, s := range m.idsIn(t, m.stageWords(t), map[string]bool{}) {
-		s.where = stopStage
-		out = append(out, s)
+	// The stage's line names ids; asked of you it is not drawn (0gztsy).
+	if _, mine := m.askedOf(t); !mine {
+		for _, s := range m.idsIn(t, m.stageWords(t), map[string]bool{}) {
+			s.where = stopStage
+			out = append(out, s)
+		}
 	}
 	for i, d := range task.DependencyDetails(t, m.all) {
 		if d.Missing {

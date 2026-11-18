@@ -34,9 +34,21 @@ func key(m model, k string) (model, tea.Cmd) {
 	if code, ok := codes[k]; ok {
 		msg = tea.KeyMsg{Type: code}
 	}
+	switch k {
+	case "alt+enter":
+		msg = tea.KeyMsg{Type: tea.KeyEnter, Alt: true}
+	case "ctrl+j":
+		msg = tea.KeyMsg{Type: tea.KeyCtrlJ}
+	}
 	next, cmd := m.Update(msg)
 	return next.(model), cmd
 }
+
+// pasteKey is text as a terminal pastes it: one bracketed-paste message.
+func pasteKey(s string) tea.KeyMsg {
+	return tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(s), Paste: true}
+}
+
 func press(m model, ks ...string) model {
 	for _, k := range ks {
 		m, _ = key(m, k)

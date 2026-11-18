@@ -1,0 +1,62 @@
+== aaaaaa at 80
+HUG TASKS · list › aaaaaa                                            ? 3 for you
+[doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus              
+created 2026-11-01 · updated 2026-11-01 · t                                     
+────────────────────────────────────────────────────────────────────────────────
+Status colors: rows and sections share one subtle scheme                        
+────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION                                                                     
+g                                                                               
+                                                                                
+PURPOSE                                                                         
+p                                                                               
+                                                                                
+PRINCIPLE                                                                       
+q                                                                               
+                                                                                
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
+  ☑ 1. a                                                                        
+> ? ☐ 2. b                                                                      
+         look at the state/stage rows on your board                             
+         └ nautilus · 3 min ago · answer                                        
+                                                                                
+no dependencies                                                                 
+                                                                                
+HISTORY                                                                         
+                                                                                
+• 2026-11-17T09:50 doing/active -> doing/asked (ask)                            
+                                                                                
+Task 1 of 7 · 100% · next · previous · Esc back                                 
+                                                                                
+j/k check · Space tick · h/l Tab next · answer · take · done · x drop · edit …  
+== aaaaaa at 140
+HUG TASKS · list › aaaaaa                                                                                                        ? 3 for you
+[doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus                                                                          
+created 2026-11-01 · updated 2026-11-01 · t                                                                                                 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Status colors: rows and sections share one subtle scheme                                                                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION                                                                                                                                 
+g                                                                                                                                           
+                                                                                                                                            
+PURPOSE                                                                                                                                     
+p                                                                                                                                           
+                                                                                                                                            
+PRINCIPLE                                                                                                                                   
+q                                                                                                                                           
+                                                                                                                                            
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                                                                
+  ☑ 1. a                                                                                                                                    
+> ? ☐ 2. b                                                                                                                                  
+         look at the state/stage rows on your board                                                                                         
+         └ nautilus · 3 min ago · answer                                                                                                    
+                                                                                                                                            
+no dependencies                                                                                                                             
+                                                                                                                                            
+HISTORY                                                                                                                                     
+                                                                                                                                            
+• 2026-11-17T09:50 doing/active -> doing/asked (ask)                                                                                        
+                                                                                                                                            
+Task 1 of 7 · 100% · next · previous · Esc back                                                                                             
+                                                                                                                                            
+j/k check · Space tick · - strike out · h/l Tab next · answer · take · done · x drop · edit · New · up · next-, previous task · J/K ½ page  

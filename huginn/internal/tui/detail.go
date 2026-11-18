@@ -6,6 +6,7 @@ import (
 	"github.com/veridit/hug/internal/sharefile"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/glamour"
@@ -137,6 +138,11 @@ func (m model) detailHeader(t task.Task) []string {
 		title = m.styles.focus.Render("▸ ") + m.styles.normal.Bold(true).Render(fit(oneLine(t.Title), m.width-2))
 	}
 	badges := []string{m.styles.status[m.boardState(t)].Bold(true).Render("[" + oneLine(m.boardState(t)) + "]")}
+	if _, mine := m.askedOf(t); mine {
+		// One word, no question text: the question shows once, in the
+		// details (0gztsy, crab 01:06).
+		badges = append(badges, m.styles.warning.Bold(true).Render("["+oneLine(m.taskStage(t))+"]"))
+	}
 	// An unset type or priority shows no badge, not "[]" (2026-11-16, user).
 	if v := oneLine(t.Type); v != "" {
 		badges = append(badges, m.styles.kind[t.Type].Render("["+v+"]"))
@@ -182,7 +188,10 @@ func (m model) detailHeader(t task.Task) []string {
 	// What it waits on, as its row's second line says it, with the
 	// person's long name here (89y0b7, Jørgen 15:33: rows the short name,
 	// the detail the long one).
-	if head, text, stamp := m.note(t); head != "" {
+	if _, mine := m.askedOf(t); mine {
+		// Asked of you: the stage is its badge; the question is in the
+		// details, once (0gztsy, crab 01:06).
+	} else if head, text, stamp := m.note(t); head != "" {
 		line := "└─ " + m.withLongName(t, head)
 		if text != "" {
 			line += " " + text
@@ -233,49 +242,118 @@ func (m model) detailHeader(t task.Task) []string {
 	return append(append(lines, m.questionLines(t)...), m.styles.dim.Render(strings.Repeat("─", m.width)), title)
 }
 
-// questionLines put the question a task asks you at the top of its detail
-// (3jtfw9): the stage, the question, who asked and since when, and the key
-// that answers it. An answer its asker has not read yet shows there too.
+// asked is the question t asks the viewer: what it asks, who asked,
+// when, and the check it is about (0 for none). ok is false when t asks
+// the viewer nothing.
+type asked struct {
+	stage, what, by, at string
+	check               int
+}
+
+func (m model) askedOf(t task.Task) (asked, bool) {
+	if !m.forYou(t) {
+		return asked{}, false
+	}
+	q := asked{stage: m.taskStage(t)}
+	switch q.stage {
+	case "design":
+		q.what, q.by, q.at = t.Fields["design_question"], t.Fields["design_asked_by"], t.Fields["design_since"]
+	case "waiting":
+		_, q.what = m.waitingFor(t)
+		q.by, q.at = t.Fields["waiting_asked_by"], t.Fields["waiting_since"]
+	case "asked":
+		q.what, q.by, q.at = t.Fields["asked_what"], t.Fields["asked_by"], t.Fields["asked_since"]
+		if n, err := strconv.Atoi(strings.TrimSpace(t.Fields["asked_check"])); err == nil && n >= 1 && n <= len(t.Acceptance) {
+			q.check = n
+		}
+	case "review":
+		q.what, q.by, q.at = "review it: approve, or say what to change", strings.Join(t.Assignee, ", "), t.Fields["review_since"]
+	}
+	return q, true
+}
+
+// questionLines are the header's line for an answer its asker has not
+// read yet. The question itself is in the details, once (0gztsy).
 func (m model) questionLines(t task.Task) []string {
 	var out []string
-	if m.forYou(t) {
-		g := m.taskStage(t)
-		q, asker, at := "", "", ""
-		switch g {
-		case "design":
-			q, asker, at = t.Fields["design_question"], t.Fields["design_asked_by"], t.Fields["design_since"]
-		case "waiting":
-			_, what := m.waitingFor(t)
-			q, asker, at = what, t.Fields["waiting_asked_by"], t.Fields["waiting_since"]
-		case "asked":
-			q, asker, at = t.Fields["asked_what"], t.Fields["asked_by"], t.Fields["asked_since"]
-		case "review":
-			q, asker, at = "review it: approve, or say what to change", strings.Join(t.Assignee, ", "), t.Fields["review_since"]
-		}
-		head := "? " + g + ": " + oneLine(q)
-		var by []string
-		if asker != "" {
-			by = append(by, "asked by "+oneLine(asker))
-		}
-		if s := strings.TrimPrefix(since(at), " · "); s != "" {
-			by = append(by, s+" ago")
-		}
-		out = append(out, m.styles.accent.Bold(true).Render(fit(head, m.width)))
-		if len(by) > 0 {
-			out = append(out, m.styles.dim.Render(fit("  "+strings.Join(by, " · "), m.width)))
-		}
-
-		if m.prompt == answerPrompt {
-			// Typed right under the question (Jørgen 11:45), not in the footer.
-			out = append(out, "  "+m.input.View())
-		} else {
-			out = append(out, fit(m.renderMarks("  "+mk("a")+"nswer", m.styles.dim), m.width))
-		}
-	}
 	if a := t.Answer; a != nil {
-		out = append(out, m.styles.accent.Render(fit(fmt.Sprintf("✓ %s answered %s: %s · unread by %s", oneLine(a.By), a.Stage, oneLine(a.Text), oneLine(a.For)), m.width)))
+		// Every line of the answer, verbatim (41hhgn check 8): the first
+		// after who answered, the rest under it.
+		lines := strings.Split(strings.TrimRight(a.Text, "\n"), "\n")
+		out = append(out, m.styles.accent.Render(fit(fmt.Sprintf("✓ %s answered %s: %s", oneLine(a.By), a.Stage, safe(lines[0])), m.width)))
+		for _, l := range lines[1:] {
+			out = append(out, m.styles.accent.Render(fit("  "+safe(l), m.width)))
+		}
+		out = append(out, m.styles.dim.Render(fit("  unread by "+oneLine(a.For), m.width)))
 	}
 	return out
+}
+
+// askedBy is the dim line under a question: who asked, how long ago, and
+// a to answer, or the open answer box. indent hangs it under the text.
+func (m model) askedBy(q asked, indent string) []string {
+	var by []string
+	if q.by != "" {
+		by = append(by, oneLine(q.by))
+	}
+	if s := strings.TrimPrefix(since(q.at), " · "); s != "" {
+		by = append(by, s+" ago")
+	}
+	if m.prompt == answerPrompt {
+		// Typed right under the question (Jørgen 11:45), not in the footer.
+		out := []string{}
+		if len(by) > 0 {
+			out = append(out, m.styles.dim.Render(fit(indent+"└ "+strings.Join(by, " · "), m.width)))
+		}
+		for _, l := range m.answerLines() {
+			out = append(out, indent+strings.TrimPrefix(l, answerIndent))
+		}
+		return out
+	}
+	line := indent + "└ "
+	if len(by) > 0 {
+		line += strings.Join(by, " · ") + " · "
+	}
+	return []string{fit(m.renderMarks(line+mk("a")+"nswer", m.styles.dim), m.width)}
+}
+
+// questionBlock is a question that names no check, at the top of the
+// details, drawn as a check row is (0gztsy, crab 01:06): "? " and the
+// question whole, wrapped, never cut; who asked under it. Focused, it
+// carries the > and the highlight a focused check has.
+func (m model) questionBlock(t task.Task) []string {
+	q, ok := m.askedOf(t)
+	if !ok || q.check > 0 {
+		return nil
+	}
+	focused := m.detailPane == focusQuestion
+	pointer := " "
+	if focused {
+		pointer = ">"
+	}
+	prefix := pointer + " ? "
+	indent := strings.Repeat(" ", len(prefix))
+	text := strings.TrimSpace(q.what)
+	if q.stage != "asked" {
+		text = q.stage + ": " + text
+	}
+	var lines []string
+	for i, para := range strings.Split(text, "\n") {
+		for j, l := range strings.Split(wrap(para, max(10, m.width-len(indent))), "\n") {
+			if i == 0 && j == 0 {
+				lines = append(lines, prefix+l)
+			} else {
+				lines = append(lines, indent+l)
+			}
+		}
+	}
+	label := strings.Join(lines, "\n")
+	if focused {
+		label = m.styles.selected.Render(label)
+	} else {
+		label = m.styles.warning.Render(label)
+	}
+	return append([]string{label}, m.askedBy(q, indent)...)
 }
 
 type detailSection struct{ name, text string }
@@ -354,6 +432,10 @@ const (
 	focusLinks // the task:ID references in the text (xxvm6t)
 	focusFiles // the files in the task's folder (zgr01t)
 	focusIDs   // a task id marked in the header, Children or Notes (4bwcgp)
+	// focusQuestion: the question a task asks you that names no check, at
+	// the top of the details (0gztsy). One that names a check is focused
+	// on that check.
+	focusQuestion
 )
 
 // startFocus is the focus a freshly opened task gets: its checks when it has
@@ -363,7 +445,21 @@ func (m *model) startFocus() {
 	m.acceptance, m.dependency, m.link, m.file, m.idAt = 0, 0, 0, 0, 0
 	m.glance, m.glanceHead, m.glanceBody = false, "", ""
 	m.detailPane = focusPage
-	if t, ok := m.selected(); ok && len(t.Acceptance) > 0 && m.askedPicture(t) == "" {
+	t, ok := m.selected()
+	if !ok {
+		return
+	}
+	// Where the reader's answer goes (0gztsy): the check the question is
+	// about, or the question itself.
+	if q, mine := m.askedOf(t); mine {
+		if q.check > 0 {
+			m.detailPane, m.acceptance = focusAcceptance, q.check-1
+		} else {
+			m.detailPane = focusQuestion
+		}
+		return
+	}
+	if len(t.Acceptance) > 0 && m.askedPicture(t) == "" {
 		m.detailPane = focusAcceptance
 	}
 }
@@ -391,6 +487,9 @@ func (m model) focusRing(t task.Task) []focusStop {
 	ids(stopParent)
 	ids(stopStage)
 	ring = append(ring, focusStop{focusPage, 0})
+	if q, mine := m.askedOf(t); mine && q.check == 0 {
+		ring = append(ring, focusStop{focusQuestion, 0})
+	}
 	if len(t.Acceptance) > 0 {
 		ring = append(ring, focusStop{focusAcceptance, 0})
 	}
@@ -489,6 +588,9 @@ func (m model) detailText(t task.Task) string {
 	// under the question in the header (5z4zt4): what --show named, else a
 	// task file the question names. Read here, when the page is built, not
 	// on every frame.
+	if block := m.questionBlock(t); len(block) > 0 && m.detail {
+		b.WriteString(strings.Join(block, "\n") + "\n\n")
+	}
 	if name := m.askedPicture(t); name != "" && m.detail {
 		b.WriteString(strings.Join(m.pictureLines(t, name), "\n") + "\n\n")
 	}
@@ -520,6 +622,7 @@ func (m model) detailText(t task.Task) string {
 		section(plain(name), m.markdown(text(strings.ToLower(name))), "")
 	}
 	var checks []string
+	q, mine := m.askedOf(t)
 	for i, a := range t.Acceptance {
 		box, pointer := "☐", " "
 		if a.Checked {
@@ -533,7 +636,13 @@ func (m model) detailText(t task.Task) string {
 		}
 		// Wrap to the room left after the prefix and hang continuation lines
 		// under the text, so each item reads as one block (2026-11-15).
-		prefix := fmt.Sprintf("%s %s %d. ", pointer, box, i+1)
+		mark := ""
+		if mine && q.check == i+1 {
+			// The check the question is about carries it (0gztsy): the
+			// same box, number and text as the list, ? before them.
+			mark = "? "
+		}
+		prefix := fmt.Sprintf("%s %s%s %d. ", pointer, mark, box, i+1)
 		indent := strings.Repeat(" ", lipgloss.Width(prefix))
 		text := oneLine(cleanMarkdown(a.Text))
 		if a.Struck {
@@ -564,6 +673,17 @@ func (m model) detailText(t task.Task) string {
 			checks = append(checks, m.styles.dim.Strikethrough(true).Render(label))
 		} else {
 			checks = append(checks, m.checkStyle(a.Checked).Render(label))
+		}
+		if mark != "" {
+			// The question once, under its check: what it asks, then who.
+			if w := strings.TrimSpace(q.what); w != "" {
+				for _, para := range strings.Split(w, "\n") {
+					for _, l := range strings.Split(wrap(para, max(10, m.width-len(indent))), "\n") {
+						checks = append(checks, m.styles.warning.Render(indent+l))
+					}
+				}
+			}
+			checks = append(checks, m.askedBy(q, indent)...)
 		}
 	}
 	section(m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks · - strikes out", m.detailPane == focusAcceptance), strings.Join(checks, "\n"), "no acceptance items yet")

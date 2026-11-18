@@ -18,6 +18,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	bkey "github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -198,6 +199,7 @@ type model struct {
 	filter                             task.Filter
 	input                              textinput.Model
 	columnHinted                       bool // H/L or o last: the footer says what o does, on rows (qtj177)
+	answerBox                          textarea.Model // the answer under a question: lines of its own (41hhgn)
 	viewport, helpViewport             viewport.Model
 	helpModel                          help.Model
 	completion                         int
@@ -463,7 +465,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
 	input.Cursor.Blink = false
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, closes: &closeLog{}, pictures: map[string]pictureMemo{}, panes: &paneMemo{forYou: -1},
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, pictures: map[string]pictureMemo{}, panes: &paneMemo{forYou: -1},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	if o.Initial != nil {
@@ -1034,6 +1036,7 @@ func (m *model) resize() {
 	m.width = max(1, m.width)
 	m.height = max(1, m.height)
 	m.input.Width = max(1, m.width-6)
+	m.fitAnswerBox()
 	m.viewport.Width = m.width
 	m.viewport.Height = m.bodyHeight()
 	m.helpViewport.Width = m.width
@@ -1110,6 +1113,8 @@ func (m *model) back() {
 	case m.prompt != "":
 		m.prompt = ""
 		m.input.Blur()
+		m.answerBox.Blur()
+		m.syncDetail() // a closed answer box gives its lines back
 	case m.detail && m.glance:
 		// Up from a file is Files, with that file marked (scrxak).
 		m.closeGlance()
@@ -1136,7 +1141,9 @@ func (m *model) back() {
 }
 func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Bubble Tea coalesces fast typing, including gg, into rune batches.
-	if event, ok := msg.(tea.KeyMsg); ok && event.Type == tea.KeyRunes && len(event.Runes) > 1 {
+	// A paste into a text field is text, whole: its line ends stay one
+	// each (41hhgn check 8), and no letter in it runs as a key.
+	if event, ok := msg.(tea.KeyMsg); ok && event.Type == tea.KeyRunes && len(event.Runes) > 1 && !(event.Paste && m.textInput() && !m.help) {
 		var cmds []tea.Cmd
 		for _, r := range event.Runes {
 			next, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{r}})
@@ -1424,6 +1431,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.openGlance()
 				} else if m.detailPane == focusAcceptance {
 					m.requestAction(k, "")
+				} else if m.detailPane == focusQuestion {
+					// A question names no check to tick: a answers it.
+					m.message = "a question has nothing to tick: a answers it"
 				} else if t, ok := m.selected(); ok && len(t.Acceptance) > 0 {
 					m.message = "Space ticks the check marked >: l focuses the checks"
 				} else {
@@ -1628,6 +1638,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
+	if m.prompt == answerPrompt {
+		return m.updateAnswer(msg)
+	}
 	if m.prompt == "sort" {
 		return m.updateSort(msg)
 	}
@@ -1691,17 +1704,6 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			m.strike(reason)
-			return m, nil
-		}
-		if m.prompt == answerPrompt {
-			text := strings.TrimSpace(m.input.Value())
-			m.prompt = ""
-			m.input.Blur()
-			if text == "" {
-				m.message = "not answered: the answer is empty (a again, then type it)"
-				return m, nil
-			}
-			m.answer(text)
 			return m, nil
 		}
 		if m.prompt == waitPrompt {

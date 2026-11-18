@@ -89,7 +89,7 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 			t.Fatalf("the detail read %v, want only rows.ans", *reads)
 		}
 		screen := ansi.Strip(m.View())
-		q := strings.Index(screen, "? asked: look at the IN PROGRESS rows")
+		q := strings.Index(screen, "> ? look at the IN PROGRESS rows") // in the details, focused (0gztsy)
 		p := strings.Index(screen, "▸ rows.ans")
 		if q < 0 || p < q || !strings.Contains(screen, "HUG TASKS · overview") || !strings.Contains(screen, `\x1b[2J`) {
 			t.Fatalf("at %d the picture is not under the question:\n%s", w, screen)
@@ -240,7 +240,7 @@ func TestScreenCaptureCopiesThenAsks(t *testing.T) {
 	before := ansi.Strip(m.View())
 
 	asked := press(m, "S")
-	if len(copied) != 1 || strings.Contains(copied[0], "\x1b") || !strings.Contains(copied[0], "? asked: look at the IN PROGRESS rows") {
+	if len(copied) != 1 || strings.Contains(copied[0], "\x1b") || !strings.Contains(copied[0], "? look at the IN PROGRESS rows") {
 		t.Fatalf("clipboard got %q", copied)
 	}
 	if first := strings.SplitN(copied[0], "\n", 2)[0]; !strings.HasPrefix(before, first) {
@@ -262,7 +262,7 @@ func TestScreenCaptureCopiesThenAsks(t *testing.T) {
 		t.Fatalf("footer: %q", done.message)
 	}
 	b, err := os.ReadFile(filepath.Join(done.store.Root, task.FolderOf(sel), "screen-1452.ans"))
-	if err != nil || !strings.Contains(string(b), "? asked: look at the IN PROGRESS rows") {
+	if err != nil || !strings.Contains(string(b), "? look at the IN PROGRESS rows") {
 		t.Fatalf("attached capture: %v\n%s", err, b)
 	}
 	// A second capture in the same minute gets its own name.

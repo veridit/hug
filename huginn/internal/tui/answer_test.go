@@ -2,8 +2,8 @@ package tui
 
 import (
 	"os"
-	"path/filepath"
 	"regexp"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -36,16 +36,22 @@ func TestAnswerInDetail(t *testing.T) {
 	if !m.detail {
 		t.Fatal("detail not open")
 	}
+	// The header and the page's first lines: the question is at the top
+	// of the details, once (0gztsy), the header holds its stage badge.
 	head := func(m model) string {
 		tk, _ := m.selected()
-		return ansi.Strip(strings.Join(m.detailHeader(tk), "\n"))
+		page := strings.Split(m.viewport.View(), "\n")
+		return ansi.Strip(strings.Join(append(m.detailHeader(tk), page[:min(5, len(page))]...), "\n"))
 	}
 	var got []string
 	asked := head(m)
-	for _, want := range []string{"? design: drop type from the rows, keep it, or show it only when not feature?", "asked by crab · 8 min ago", "  answer"} {
+	for _, want := range []string{"[design]", "> ? design: drop type from the rows, keep it, or show it only when not feature?", "└ crab · 8 min ago · answer"} {
 		if !strings.Contains(asked, want) {
-			t.Fatalf("header lacks %q:\n%s", want, asked)
+			t.Fatalf("detail lacks %q:\n%s", want, asked)
 		}
+	}
+	if m.detailPane != focusQuestion || strings.Contains(asked, "└─ question for you") {
+		t.Fatalf("not opened on the question (pane %d), or it shows twice:\n%s", m.detailPane, asked)
 	}
 	got = append(got, "== asked", asked)
 	// a on a task that asks someone else is refused.
@@ -66,7 +72,7 @@ func TestAnswerInDetail(t *testing.T) {
 		m = press(m, string(r))
 	}
 	typing := head(m)
-	if !strings.Contains(typing, "answer: drop it") || regexp.MustCompile(`(?m)^  answer\s*$`).MatchString(typing) {
+	if !strings.Contains(typing, "answer: drop it") || strings.Contains(typing, "· answer") {
 		t.Fatalf("input not under the question:\n%s", typing)
 	}
 	got = append(got, "== typing", typing)
@@ -85,7 +91,7 @@ func TestAnswerInDetail(t *testing.T) {
 		t.Fatalf("stage %q:\n%s", tk.Stage, b)
 	}
 	answered := head(m)
-	if strings.Contains(answered, "? design") || !strings.Contains(answered, "✓ jhf answered design: drop it · unread by crab") {
+	if strings.Contains(answered, "? design") || !regexp.MustCompile(`✓ jhf answered design: drop it\s*\n  unread by crab`).MatchString(answered) {
 		t.Fatalf("after:\n%s", answered)
 	}
 	got = append(got, "== answered", answered)

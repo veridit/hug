@@ -63,6 +63,8 @@ func (m model) barHints() []bkey.Binding {
 		hints = []bkey.Binding{hint("letter", "add / flip"), hint("⌫", "remove last"), hint("Enter", "apply"), hint("Esc", "keep order"), hint(m.helpKey(), "help")}
 	case m.prompt == "/":
 		hints = []bkey.Binding{hint("↑↓", "pick"), hint("Enter", "go to it"), hint("Tab", "keep as filter"), hint("Esc", "clear"), hint(m.helpKey(), "help")}
+	case m.prompt == answerPrompt:
+		hints = []bkey.Binding{hint("Enter", "send"), hint("Alt-Enter", "new line"), hint("Esc", "cancel"), hint(m.helpKey(), "help")}
 	case m.prompt != "":
 		hints = []bkey.Binding{hint("Enter", "submit"), hint("Esc", "cancel"), hint(m.helpKey(), "help")}
 	case m.detail:
@@ -131,6 +133,9 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		hints = append(hints, hint("j/k", "link"), hint("Enter", "follow"))
 	case focusIDs:
 		hints = append(hints, hint("j/k", "scroll"), hint("Enter", "open"))
+	case focusQuestion:
+		// a answers, named first: it is what the question is for (0gztsy).
+		hints = append(hints, hint("a", "answer"), hint("j/k", "scroll"))
 	case focusFiles:
 		hints = append(hints, hint("j/k", "file"), hint("Space", "show"), hint("Enter", "edit"))
 	default:
@@ -159,7 +164,7 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	// Every key that writes is named here, right after the focus's own
 	// keys so a narrow bar cuts navigation first (x1ra0t); each asks
 	// first, in a confirm line or a prompt, so nothing changes unseen.
-	if m.forYou(t) {
+	if m.forYou(t) && m.detailPane != focusQuestion {
 		hints = append(hints, hint("a", "answer")) // the question asks you (3jtfw9)
 	}
 	if m.detailPane != focusPage {

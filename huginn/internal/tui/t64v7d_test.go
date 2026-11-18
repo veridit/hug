@@ -45,20 +45,28 @@ func textInputs(t *testing.T) map[string]model {
 	return out
 }
 
+// field is what the open text input holds: the answer box or the line.
+func field(m model) string {
+	if m.prompt == answerPrompt {
+		return m.answerBox.Value()
+	}
+	return m.input.Value()
+}
+
 // t64v7d check 1: in each text input, typing "done by morning?" leaves
 // exactly that text in the field, and help stays closed (Jørgen
 // 2026-11-18 01:52: ? at the end of his question opened help).
 func TestQuestionMarkIsTextInEveryInput(t *testing.T) {
 	const typed = "done by morning?"
 	for name, m := range textInputs(t) {
-		before := m.input.Value()
+		before := field(m)
 		for _, r := range typed {
 			m = press(m, string(r))
 		}
 		if m.help {
 			t.Errorf("%s: ? opened help", name)
 		}
-		if got := m.input.Value(); got != before+typed {
+		if got := field(m); got != before+typed {
 			t.Errorf("%s: the field holds %q, want %q", name, got, before+typed)
 		}
 	}
@@ -70,7 +78,7 @@ func TestQuestionMarkIsTextInEveryInput(t *testing.T) {
 func TestF1IsHelpInATextInput(t *testing.T) {
 	for name, m := range textInputs(t) {
 		m = press(m, "d", "u", "e", "?")
-		typed := m.input.Value()
+		typed := field(m)
 		if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "F1 help") || strings.Contains(bar, "? help") {
 			t.Errorf("%s: the footer does not name F1 for help: %q", name, bar)
 		}
@@ -83,8 +91,8 @@ func TestF1IsHelpInATextInput(t *testing.T) {
 				t.Errorf("%s: the help does not name F1:\n%s", name, text)
 			}
 			r := press(h, back)
-			if r.help || r.prompt != m.prompt || r.input.Value() != typed {
-				t.Errorf("%s: %s after F1: help %v, prompt %q, field %q; want prompt %q, field %q", name, back, r.help, r.prompt, r.input.Value(), m.prompt, typed)
+			if r.help || r.prompt != m.prompt || field(r) != typed {
+				t.Errorf("%s: %s after F1: help %v, prompt %q, field %q; want prompt %q, field %q", name, back, r.help, r.prompt, field(r), m.prompt, typed)
 			}
 		}
 	}

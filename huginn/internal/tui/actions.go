@@ -357,7 +357,7 @@ func (m *model) answerKey() tea.Cmd {
 		return nil
 	}
 	m.confirmPath = t.Path
-	return m.openInput(answerPrompt, "")
+	return m.openAnswer()
 }
 
 // answer writes text as the TUI user's answer to the task opened with a.

@@ -1,0 +1,26 @@
+== cccccc at 80
+[doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus
+created 2026-11-01 · updated 2026-11-01 · t
+────────────────────────────────────────────────────────────────────────────────
+Warm cache under 50 ms                                                          
+> ? which colour should the ASKED title take on a light terminal, given that the
+    warning colour already marks lint findings and the rows there are long?     
+    And should it differ under NO_COLOR?                                        
+    └ nautilus · 3 min ago · answer                                             
+                                                                                
+DESCRIPTION                                                                     
+g                                                                               
+                                                                                
+== cccccc at 140
+[doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus
+created 2026-11-01 · updated 2026-11-01 · t
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Warm cache under 50 ms                                                                                                                      
+> ? which colour should the ASKED title take on a light terminal, given that the warning colour already marks lint findings and the rows    
+    there are long?                                                                                                                         
+    And should it differ under NO_COLOR?                                                                                                    
+    └ nautilus · 3 min ago · answer                                                                                                         
+                                                                                                                                            
+DESCRIPTION                                                                                                                                 
+g                                                                                                                                           
+                                                                                                                                            

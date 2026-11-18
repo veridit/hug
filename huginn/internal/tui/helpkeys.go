@@ -88,7 +88,11 @@ func (m model) contextHelp() helpSection {
 			row("Enter", "open it", "enter"), row("Esc", "back", "esc"),
 		}}
 	case "prompt":
-		return helpSection{"IN THIS PROMPT", []helpRow{row("Enter", "submit", "enter"), row("Esc", "cancel", "esc")}}
+		rows := []helpRow{row("Enter", "submit", "enter"), row("Esc", "cancel", "esc")}
+		if m.prompt == answerPrompt {
+			rows = []helpRow{row("Enter", "send the answer", "enter"), row("Alt-Enter ctrl-j", "a new line; a paste keeps its lines", "ctrl+j"), row("Esc", "cancel: nothing is written", "esc")}
+		}
+		return helpSection{"IN THIS PROMPT", rows}
 	case "file":
 		return helpSection{"IN THIS FILE", []helpRow{
 			row("j/k PgDn/PgUp", "scroll a long file"), row("n / p", "next / previous file", "n", "p"), row("Enter", "edit it", "enter"),
@@ -117,6 +121,8 @@ func (m model) taskHelp() helpSection {
 		rows = append(rows, row("j/k", "step through the files", "j", "k"), row("Space", "show the file", " "), row("Enter", "edit the file", "enter"))
 	case focusIDs:
 		rows = append(rows, row("Enter", "open the task id marked ▸", "enter"), row("j/k", "scroll the page", "j", "k"))
+	case focusQuestion:
+		rows = append(rows, row("j/k", "scroll the page", "j", "k"))
 	default:
 		rows = append(rows, row("j/k", "scroll the page", "j", "k"))
 	}
@@ -124,7 +130,7 @@ func (m model) taskHelp() helpSection {
 		rows = append(rows, row("h / l  Tab", "previous / next stop: each task id, the page, checks, links, files", "h", "l", "tab", "shift+tab"))
 	}
 	if m.forYou(t) {
-		rows = append(rows, row("a", "answer the question it asks you", "a"))
+		rows = append(rows, row("a", "answer the question it asks you: Enter sends, Alt-Enter a new line", "a"))
 	}
 	rows = append(rows,
 		row("J / K", "half a page down / up", "J", "K"),
