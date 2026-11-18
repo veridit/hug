@@ -34,7 +34,7 @@ Progress pie came with d8yx7y (v0.7.33). Count line colors: huginn/internal/tui 
 - [x] done rows show ● N in the done color, never N/N (golden)
 - [x] each section header and the status word use that status's color; the count line uses the same colors (golden, 140x40 color)
 - [x] no-color goldens still distinguish everything by text
-- [ ] Jørgen confirms the look on his board after release
+- [x] Jørgen confirms the look on his board after release
 - [ ] On zhvkmj itself (2 .ans captures), Tab or ]/[ from the top of the detail reaches the Files section, j/k picks a capture and Space shows it in the embedded viewer; a tmux test on a copy of hug's board drives exactly that and fails first if it cannot (Jørgen 2026-11-18 19:52: he could not put focus in Files)
 - [ ] Depends is not a problem colour: a task waiting on another task's checks reads in a calm colour of its own (not red, not amber), in the count line, the DEPENDS section heading and the row; red stays only for broken lint (TestOneColourPerMeaning updated, golden at 140 colour)
 
@@ -61,6 +61,7 @@ landed 6012b15e..28791dea (32e62173 rebased over the v0.7.53 CHANGELOG; code ide
 landed 28791de on main 2026-11-18: tui: one colour per meaning: amber only for what waits on you, red only for what…
 shipped in v0.7.54 (28791de)
 crab 19:54 local, request 1 (Jørgen 19:52): three points. (1) Files not reachable on this task: new check 5, reproduce on zhvkmj itself first. (2) zoom: that is 33v71x (+/- zoom, j/k scroll, o opens Preview), filed 19:48 from his 911j70 request. (3) red for depends reads like a problem, which it is not: new check 6, depends gets its own calm colour, red only for broken lint. That overrides crab's 02:52 ruling that grouped depends with problems.
+check 4: Jørgen 19:57 local: 'good enough for this ticket, but there will be follow-up tickets': still too much colour, depends must not be red (check 6), the selected row too intense (911j70).
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)
