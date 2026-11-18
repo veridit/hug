@@ -9,4 +9,4 @@ filter: none · sort: rank
 > LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                  
 reading the board: the first start builds the task cache: 1234 of 3630 files                        
                                                                                                     
-j/k move · Space mark · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit  
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit …    

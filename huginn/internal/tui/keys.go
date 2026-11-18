@@ -83,8 +83,10 @@ func (m model) barHints() []bkey.Binding {
 	case m.detail:
 		hints = m.detailHints(m.width < 100)
 	default:
-		// h/l and Tab are one key (e3sevr): the bar names them together.
-		hints = []bkey.Binding{hint("j/k", "move"), hint("Space", "mark"), hint("Enter", "open"), hint("h/l Tab", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order"), hint("r", "request")}
+		// h/l are the panes, as Tab and Shift-Tab are (e3sevr); the bar
+		// names h/l only, so 140 columns keep the version (rxr4z8, crab
+		// 21:26), and ? lists Tab.
+		hints = []bkey.Binding{hint("j/k", "move"), hint("Space", "mark"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order"), hint("r", "request")}
 	}
 	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" && !m.pendingV && !m.picking {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Space", "mark"), hint("Enter", "open"), hint("f", "find"), hint("#", "id"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
