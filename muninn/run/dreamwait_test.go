@@ -1,6 +1,7 @@
 package run
 
 import (
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
@@ -66,6 +67,17 @@ func lastTurn(t *testing.T, db *store.DB, at time.Time) {
 	if _, err := db.Exec(`INSERT INTO session_turns(session,last_ns,turns) VALUES('s',?,1) ON CONFLICT(session) DO UPDATE SET last_ns=excluded.last_ns`, at.UnixNano()); err != nil {
 		t.Fatal(err)
 	}
+}
+
+// statsDream is the "dream" line of hug mem stats.
+func statsDream(t *testing.T) string {
+	t.Helper()
+	out, errOut, code := runCLI(t, "", "stats")
+	var s struct{ Dream string }
+	if code != 0 || json.Unmarshal([]byte(out[:strings.LastIndex(out, "}")+1]), &s) != nil {
+		t.Fatalf("stats: %d %q %q", code, out, errOut)
+	}
+	return s.Dream
 }
 
 func hookLog(t *testing.T) string {
@@ -216,9 +228,8 @@ func TestDreamStatusNamesTheLastPass(t *testing.T) {
 	if !strings.HasPrefix(out, "Last pass: never") {
 		t.Fatalf("dry-run header: %q", out)
 	}
-	out, _, _ = runCLI(t, "", "stats")
-	if !strings.Contains(out, `"dream": "dream: never ran`) {
-		t.Fatalf("stats: %q", out)
+	if got := statsDream(t); !strings.HasPrefix(got, "dream: never ran") {
+		t.Fatalf("stats: %q", got)
 	}
 	db := dreamDB(t)
 	receipt := filepath.Join(config.DataDir(), "tidy", "apply-20261118T030000Z-1")
@@ -230,9 +241,9 @@ func TestDreamStatusNamesTheLastPass(t *testing.T) {
 	if !strings.Contains(out, want) || !strings.Contains(out, "Next pass: after ") {
 		t.Fatalf("status after a pass: %q", out)
 	}
-	out, _, _ = runCLI(t, "", "stats")
-	if !strings.Contains(out, want) {
-		t.Fatalf("stats after a pass: %q", out)
+	// Decoded, not matched as text: JSON escapes a Windows path's backslashes.
+	if got := statsDream(t); !strings.Contains(got, want) {
+		t.Fatalf("stats after a pass: %q", got)
 	}
 	// A failed pass is recorded too: the next try is a day away, and the
 	// line says it failed.
