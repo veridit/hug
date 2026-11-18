@@ -25,7 +25,6 @@ Selection is distinct from keyboard focus and acceptance checks. Preserve exact 
 User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task requests hbgybn work. Need a batch request over an arbitrary marked set, not the group field. Storage, agent delivery and partial-resolution presentation need design before implementation.
 
 ## Depends on
-- rxr4z8
 
 ## Acceptance
 - [ ] A board mock shows marking several tasks, selected count, and one request action for that exact set, reviewed by Jorgen.
