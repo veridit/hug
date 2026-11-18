@@ -58,6 +58,7 @@ nautilus: built per crab 02:52/03:01 on nautilus/zhvkmj, CI on ci/zhvkmj. Meanin
 file:colours-overview.ans (6580 bytes, sha256:27713b8f) after 28791dea: one colour per meaning, test board at 120x32, user jhf
 landed 6012b15e..28791dea (32e62173 rebased over the v0.7.53 CHANGELOG; code identical). CI 44221245136 on 32e62173: 6/6 success; tmux colour goldens did not drift. -race ./huginn/internal/tui ok 113.9s; tui suite ok 56.2s. TestOneColourPerMeaning passes; on main it failed with 15 lines (verbatim in the note above).
 landed 28791de on main 2026-11-18: tui: one colour per meaning: amber only for what waits on you, red only for what…
+shipped in v0.7.54 (28791de)
 ## History
 - 2026-11-17T14:30 doing -> doing/waiting (wait)
 - 2026-11-18T02:05 doing/waiting -> doing/asked (hug upgrade, 41hhgn: a question to a person is its own stage)

@@ -45,6 +45,7 @@ Jørgen 02:39 local: 'auto-reloading the MCP is immensely important, good catch,
 Landed 8dee4a86. Windows choice: exit cleanly between requests. Each request already read gets JSON-RPC error -32000 'hug was upgraded while this server ran: it stops now so the app starts the installed hug; run the call again', then exit 0, and the client restarts the server. No proxy (crab scope 02:40). Fails first: with main's StdioTransport path, TestMCPReloadsChangedBinary fails with 'reload_test.go:141: after the upgrade: version "0.0.1-old", err <nil>'. Mutants, 12 run, 11 killed: never-reload, no-drain (check 2: 'running request: version "", err context deadline exceeded'), no-replay, replay-reply-leaks, held-request-lost, inflight-never-clears, windows-no-answer, main. 'reload always' was not reached before the 600 s cap. 1 did not compile and was redone as a compiling variant, which was killed. Race on cmd/hug: ok 28.2s. Servers started before this release need one app restart.
 landed 8dee4a8 on main 2026-11-18: hug mcp: reload the installed hug between requests on the same connection…
 Mutant 'reload always' (ignore start identity) killed: 'reload_test.go:89: connect: context deadline exceeded' in TestMCPReloadsChangedBinary and TestMCPNoReloadWhenUnchanged. Now 12 of 12 killed.
+shipped in v0.7.54 (8dee4a8)
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
