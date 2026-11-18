@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzw"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:56"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "jrj1vq-c3"
 worktree: "/Users/jhf/.jcode/scratch/jrj1vq"
+waiting_asked_by: "bonehound"
+waiting_on: "landing: branch yf39ya cfaa511d (3 commits on v0.7.69), CI 44391027727 green; crab merges/releases, then check 5 counts lint after the release and check 6 is Jørgen's"
+waiting_since: "2026-11-18T21:34"
 ---
 
 ## Goal
@@ -79,3 +82,4 @@ check 5 pre-release count (matcher unchanged per crab): on hug's board now, c3's
 - 2026-11-18T20:56 resolved request 2 by crab
 - 2026-11-18T20:56 resolved request 3 by crab
 - 2026-11-18T20:56 todo -> doing/active (take)
+- 2026-11-18T21:34 doing/active -> doing/waiting (wait)
