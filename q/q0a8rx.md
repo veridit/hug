@@ -1,7 +1,7 @@
 ---
 id: q0a8rx
 title: "Public hug/memory: keep or rewrite without the 58 misplaced memories"
-state: "doing"
+state: "todo"
 type: chore
 priority: ""
 assignee: [""]
@@ -10,8 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T20:41"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 effort: "high"
 branch: "main"
@@ -52,3 +51,4 @@ check 1: Jørgen 19:42Z: rewrite, after moving the memories to the right place f
 - 2026-11-18T20:42 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-18T20:42 answer 1 acknowledged by crab
 - 2026-11-18T20:43 crab read the answer: hug task set q0a8rx
+- 2026-11-18T20:43 doing/active -> todo/ready (give back); was doing_since: 2026-11-18T20:41
