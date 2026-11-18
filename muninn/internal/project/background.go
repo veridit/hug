@@ -75,10 +75,7 @@ func nudge(dir string, stale bool) {
 		return
 	}
 	top, e := git(dir, "rev-parse", "--show-toplevel")
-	if e != nil || top == "" {
-		return
-	}
-	if remotes, e := git(top, "remote"); e != nil || strings.TrimSpace(remotes) == "" {
+	if e != nil || top == "" || !nudgeWanted(top) {
 		return
 	}
 	b, ok := background(top)
@@ -86,6 +83,17 @@ func nudge(dir string, stale bool) {
 		return
 	}
 	_ = b.Nudge(top, Spawn)
+}
+
+// nudgeWanted: a pass at top could do something. It needs a remote, and a
+// repository that shares its memories (34r1ft): in one that keeps them
+// local a pass could only refuse, so none is started.
+func nudgeWanted(top string) bool {
+	if remotes, e := git(top, "remote"); e != nil || strings.TrimSpace(remotes) == "" {
+		return false
+	}
+	share, e := shareSetting(top)
+	return e == nil && share
 }
 
 // Exclusive keeps background passes for the project at dir out while a

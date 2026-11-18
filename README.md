@@ -54,6 +54,12 @@ hug command finds its last fetch older than 5 s: another clone sees a change
 at its next command, at most about 7 s later. `hug task sync` and
 `hug mem sync` do it at once. Logs are under `.git/hug/sync/`.
 
+Project memories stay on this machine unless the repository opts in:
+`hug task memory share` commits `[memory] share = true` to `hug.toml` on
+`hug/tasks`, and every clone follows it. Without it, `hug mem sync` refuses
+and pushes nothing, so a public repository never publishes memories.
+`hug task memory local` goes back.
+
 ## Who made a commit
 
 Every commit names what made it in one trailer line: `Model: claude-opus-5-5`

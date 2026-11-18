@@ -81,3 +81,24 @@ func TestShareSettingDefaultsToLocal(t *testing.T) {
 		t.Fatalf("default setting: share=%v err=%v, want false", share, err)
 	}
 }
+
+// A repository that keeps memories local starts no background pass: a
+// pass could only refuse (34r1ft), so a remember there spawns nothing.
+func TestNudgeSpawnsNothingWhenRepoSaysLocal(t *testing.T) {
+	sharing(t, localDefault)
+	base := t.TempDir()
+	remote := filepath.Join(base, "remote.git")
+	os.MkdirAll(remote, 0o700)
+	branchGit(t, remote, "init", "--bare", "--initial-branch=main")
+	root := filepath.Join(base, "public")
+	os.MkdirAll(root, 0o700)
+	gitInit(t, root)
+	branchGit(t, root, "remote", "add", "origin", remote)
+	if nudgeWanted(root) {
+		t.Fatalf("nudgeWanted(%s) = true on a repo that keeps memories local", root)
+	}
+	sharing(t, func(string) (bool, error) { return true, nil })
+	if !nudgeWanted(root) {
+		t.Fatalf("nudgeWanted(%s) = false on a repo that shares", root)
+	}
+}
