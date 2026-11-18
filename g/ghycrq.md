@@ -1,15 +1,20 @@
 ---
 id: ghycrq
 title: "tmux test harness: server start and cleanup deadlines trip under load"
-state: todo
+state: "doing"
 type: bug
 priority: "medium"
-assignee: []
+assignee: ["tigress"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T00:52"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Evidence: /Users/jhf/.jcode/scratch/hfkt1n-ev/REPORT.md (campaign logs). Harness
 - [ ] fixed at the cause: TestTmuxReload and TestTmuxGolden pass -count=50 niced under the same hog with 0 harness failures
 
 ## Notes
+
+
+## History
+- 2026-11-19T00:52 todo -> doing/active (take)
