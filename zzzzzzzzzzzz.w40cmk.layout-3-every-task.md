@@ -34,3 +34,5 @@ Front matter, grouped: identity (id, title, type, priority, labels, group, paren
 - [ ] Jørgen links to a task by its path from outside hug and the link survives a reorder
 
 ## Notes
+
+Jørgen 01:24 local, on Statbus's tree on GitHub ('000000000001.37bryg.ladder-never….md' next to a separate '37bryg/' holding its attachment): 'assets OUTSIDE the dir?' Proposal (crab, pending his yes): one folder per task holding everything: .hug/tasks/37bryg/README.md is the task, its files sit beside it (37bryg/STATBUS-369-fresh-install-blocker.md). GitHub renders README.md under the folder listing, so github.com/<repo>/tree/hug/tasks/37bryg shows the task and its files on one page, and that URL never changes. Every task gets a folder, not only tasks with files.
