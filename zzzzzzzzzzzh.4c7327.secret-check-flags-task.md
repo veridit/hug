@@ -1,18 +1,17 @@
 ---
 id: 4c7327
 title: "Secret check flags 'task-900' in a file path as a credential (sk-900)"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T06:32"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T06:46"
 ---
 
 ## Goal
@@ -40,5 +39,7 @@ file:4c7327-failbefore.txt (605 bytes, sha256:63a053e5)
 Landed d544f777 on main. Fail-before transcript attached: TestAttachSkInsideAWordIsNoSecret fails on b1063988 with credential-shaped text near sk-900. Attachment sk- matching now requires the same preceding boundary already used by memory write-time check and CI check-secrets.sh. Added memory cases and a temporary-repo test invoking the actual CI secrets script: path passes, real key fails. Focused tests and repository secrets script pass. Race results: ok github.com/veridit/hug/huginn/internal/cli 119.304s; ok github.com/veridit/hug/muninn/internal/project 6.754s; ok github.com/veridit/hug/internal/repocheck 1.273s. Main ancestor and CHANGELOG marker checks passed before fast-forward push.
 landed d544f77 on main 2026-11-18: hug task attach: a key starts at a word boundary, so 'task-900-...' is no secret…
 Post-push CI 44245645620 completed success, all 6 jobs: secrets, test-windows-cli, test (windows-latest), test (ubuntu-latest), test (macos-latest), bench. Commit d544f777. Both acceptance checks hold.
+Reflection (open, 2026-11-18, hatchling): The false positive was only in attachment checking: memory and the CI script already required a preceding boundary. Matched attachment behavior to those existing rules instead of weakening credential detection. Added regression coverage for all three surfaces, including executing the real CI script on a temporary repository. Fail-before evidence, focused race tests, and all six post-push CI jobs passed.
 ## History
 - 2026-11-18T06:32 todo -> doing/active (take)
+- 2026-11-18T06:46 doing/active -> done (done); was doing_since: 2026-11-18T06:32
