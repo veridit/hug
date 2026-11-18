@@ -47,6 +47,7 @@ check 1: 49249f5f TestGlobCitationMatchingFilesIsFine: compare-80.png and compar
 check 2: TestGlobCitationMatchingNothingNamesThePattern: shot-*.png matching nothing -> one 'missing-file: .hug/tasks/G/ID/shot-*.png: no attached file matches (attach one, or mark the citation (lost))', fix 'hug task attach ID FILE' (no --name); plain gone.tsv still 'file not found'. Failed first: 'shot-: file not found ... --name shot-'
 check 3: Built 49249f5f, read-only on this board: 'hug task lint 911j70' old -> '9/911j70.md:0: broken [missing-file] .hug/tasks/9/911j70/compare-: file not found'; new -> 'no findings'. .hug/tasks git status 0 changes before and after. The one missing-file left on the board is ydwamb's own text quoting the cut 'compare-' form (line 30), a real non-glob citation.
 CI 44406523669 on 49249f5f: completed/success, 8/8 jobs success (secrets, bench, test macos/windows/ubuntu, test-windows-cli sync+rest, test-windows-cli-shards).
+landed 3c1b937 on main 2026-11-18: lint: a glob citation (compare-*.png) is a pattern matched against the task's…
 ## History
 - 2026-11-18T22:34 todo -> doing/active (take)
 - 2026-11-18T23:24 doing/active -> doing/waiting (wait)
