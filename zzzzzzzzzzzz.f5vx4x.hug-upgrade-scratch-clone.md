@@ -45,5 +45,18 @@ Shape approved by crab (04:04Z) before building:
 - Order: kestrel builds this after w40cmk check 1.
 
 
+Landed a13d7c74 on main.
+- Failing first on main 07183cf5: a copy of TestMachineFirstOnMain, a fake HOME with an old-hook jcode config plus 'hug upgrade --apply', fails with 'machinefirst_test.go:21: hug upgrade --apply changed this machine's config:'.
+- Now TestUpgradeTouchesMachineOnlyWithMachine, in a clone with a fake HOME (.jcode/config.toml with an old variable name) and a recording MemUpgrade, checks four runs:
+  - hug upgrade: exit 5 and prints
+    'this board (BOARD):' / '  layout: nothing to do' / '  tasks: would: 1 questions to a person moved ...'
+    'this machine (hook and MCP configs in ~/.jcode, ~/.claude, ~/.codex; the memory store):' / '  variables: would: variables renamed to HUG_* in CFG' / '  memory: would deliver ...'
+    'next: hug upgrade --apply' / 'then: hug upgrade --apply --machine  (this machine, once you have read it)' / 'fix: hug upgrade --apply'.
+  - hug upgrade --apply: moves the board, leaves the config byte-identical with no .bak and no 'mem upgrade --apply' call, and exits 5 ending 'next: hug upgrade --apply --machine' / 'fix: hug upgrade --apply --machine'.
+  - hug upgrade --machine: exit 2 with 'fix: hug upgrade --apply --machine'.
+  - hug upgrade --apply --machine: exit 0; the config is renamed, the .bak equals the old bytes, and the next plain upgrade exits 0 with no would:.
+- Mutants: 7 of 7 killed (machineDry=dry, vars use dry, mem uses dry, no exit 5 after apply, no then line, no headings, --machine alone allowed).
+- Two existing tests are rewritten, not deleted: TestUpgradeRenamesEnvInHugConfigs uses --apply --machine; TestUpgradeMemoryPartRunsMemUpgrade asserts that --apply alone leaves the memory part pending with fix --apply --machine.
+- Suites -short: all 12 ok. Race: cli 115.3s ok, cmd/hug 19.2s ok.
 ## History
 - 2026-11-18T05:18 todo -> doing/active (take)
