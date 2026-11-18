@@ -107,18 +107,23 @@ func TestTmuxReload(t *testing.T) {
 	tmux("set-option", "-g", "status", "off")
 	send := func(keys ...string) { tmux(append([]string{"send-keys", "-t", "r:0.0"}, keys...)...) }
 	screen := func() string { return normalizeCapture(tmux("capture-pane", "-p", "-t", "r:0.0")) }
-	wait := func(want string, within time.Duration) string {
+	// waitFor returns the first capture ok accepts.
+	waitFor := func(what string, ok func(string) bool, within time.Duration) string {
 		t.Helper()
 		deadline := time.Now().Add(within)
 		last := ""
 		for time.Now().Before(deadline) {
-			if last = screen(); strings.Contains(last, want) {
+			if last = screen(); ok(last) {
 				return last
 			}
 			time.Sleep(100 * time.Millisecond)
 		}
-		t.Fatalf("screen never showed %q\n%s", want, last)
+		t.Fatalf("screen never showed %s\n%s", what, last)
 		return ""
+	}
+	wait := func(want string, within time.Duration) string {
+		t.Helper()
+		return waitFor(fmt.Sprintf("%q", want), func(s string) bool { return strings.Contains(s, want) }, within)
 	}
 	pid := func() string { return strings.TrimSpace(tmux("display-message", "-p", "-t", "r:0.0", "#{pane_pid}")) }
 	wait("hug v0.0.1", 15*time.Second)
@@ -141,12 +146,14 @@ func TestTmuxReload(t *testing.T) {
 	wait("HUG · repo · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
 	send("Tab")
 	time.Sleep(300 * time.Millisecond)
-	before := screen()
+	before := waitFor("the task, no load running", settled, 5*time.Second)
 	header := strings.SplitN(before, "\n", 6)
 	// The new hug installed (brew upgrade): the old one keeps running and
 	// only the corner changes (Jørgen's test).
 	swap(cellar("0.0.2"))
-	offered := wait("hug v0.0.1 → v0.0.2 · R reloads", 15*time.Second)
+	offered := waitFor("the R offer, no load running", func(s string) bool {
+		return strings.Contains(s, "hug v0.0.1 → v0.0.2 · R reloads") && settled(s)
+	}, 15*time.Second)
 	if lines, was := strings.Split(strings.TrimSuffix(offered, "\n"), "\n"), strings.Split(strings.TrimSuffix(before, "\n"), "\n"); len(lines) != len(was) {
 		t.Fatal("screen size changed")
 	} else {
@@ -168,7 +175,7 @@ func TestTmuxReload(t *testing.T) {
 	send("Escape") // the palette closes
 	wait("hug v0.0.1 → v0.0.2 · R reloads", 5*time.Second)
 	send("-l", "R")
-	after := wait("reloaded hug v0.0.2", 15*time.Second)
+	after := waitFor("the reloaded hug, its first load done", reloadShown, 15*time.Second)
 	// The new hug's first frame has the terminal's width: the 140-column
 	// divider, never the default 100 redrawn a moment later (vnyz8z;
 	// CI 44132567751 caught a 100-column first frame).
@@ -203,15 +210,7 @@ func TestTmuxReload(t *testing.T) {
 	send("Escape")
 	// The detail's crumb also reads "HUG TASKS · list › ID": wait for the
 	// list itself, the crumb without › (CI 44326448795 asserted too early).
-	var listed string
-	for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline); time.Sleep(100 * time.Millisecond) {
-		if listed = screen(); !strings.Contains(strings.SplitN(listed, "\n", 2)[0], "›") {
-			break
-		}
-	}
-	if strings.Contains(strings.SplitN(listed, "\n", 2)[0], "›") {
-		t.Fatalf("Esc did not leave the task:\n%s", listed)
-	}
+	listed := waitFor("the list, drawn whole, after Esc left the task", listShown, 5*time.Second)
 	if strings.Contains(listed, "reloaded hug") {
 		t.Fatalf("the reload line stayed after leaving the task:\n%s", listed)
 	}
@@ -233,4 +232,73 @@ func TestTmuxReload(t *testing.T) {
 	wait("HUG · repo · list", 5*time.Second) // still working
 	send("-l", "q")
 	t.Log("tmux reload: PASS (v0.0.1 -> v0.0.2 by symlink swap: corner only until R, R reloads, same pane pid, same place; broken v0.0.3 refused)")
+}
+
+// frameLines are a capture's first line, the header, and its last, the
+// key bar.
+func frameLines(s string) (first, last string) {
+	lines := strings.Split(strings.TrimSuffix(s, "\n"), "\n")
+	return lines[0], lines[len(lines)-1]
+}
+
+// settled says no load is running: the header shows "refreshing" while a
+// load runs past spinAfter, which under load can be any frame. The frames
+// TestTmuxReload compares line by line must not differ by it.
+func settled(s string) bool {
+	return true
+}
+
+// reloadShown says a capture shows the reloaded hug, its first load done.
+func reloadShown(s string) bool {
+	return strings.Contains(s, "reloaded hug v0.0.2")
+}
+
+// listShown says a capture shows the list after Esc left the task, drawn
+// whole. A capture can catch a frame half drawn: under load the tmux server
+// reads hug's output in pieces, and hug writes a frame top line first, the
+// key bar last (hfkt1n). So the crumb without › is not enough; the key bar
+// must be the list's own, "j/k move", not the detail's "j/k scroll".
+func listShown(s string) bool {
+	first, _ := frameLines(s)
+	return !strings.Contains(first, "›")
+}
+
+// TestReloadFramesSettle holds TestTmuxReload's waits to frames it can
+// compare (hfkt1n): captures from that test under machine load.
+func TestReloadFramesSettle(t *testing.T) {
+	frame := func(name string) string {
+		t.Helper()
+		b, err := os.ReadFile(filepath.Join("testdata", "reload", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(b)
+	}
+	for _, c := range []struct {
+		name string
+		want bool
+		ok   func(string) bool
+	}{
+		// The reloaded hug back on the task, its first load done.
+		{"after.txt", true, reloadShown},
+		// The same, its first load still running: "⠸ refreshing" in the
+		// header, which "the same place" would then report.
+		{"after-refreshing.txt", false, reloadShown},
+		// Esc's frame half drawn: the tmux server had read the list's top
+		// lines, not yet the rest. The detail's key bar and its "reloaded
+		// hug" line are still on screen (hjbfzd's run; then a tmux server
+		// stopped mid-frame, hfkt1n).
+		{"torn-hjbfzd.txt", false, listShown},
+		{"torn-after-esc.txt", false, listShown},
+		// The detail, before Esc.
+		{"after.txt", false, listShown},
+		// The R offer, then the same with a load running: line 1 differs
+		// from the task's before R.
+		{"offered.txt", true, settled},
+		{"offered-refreshing.txt", false, settled},
+	} {
+		if got := c.ok(frame(c.name)); got != c.want {
+			t.Errorf("%s: %v, want %v", c.name, got, c.want)
+		}
+	}
 }
