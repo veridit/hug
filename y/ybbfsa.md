@@ -1,7 +1,7 @@
 ---
 id: ybbfsa
 title: "Three test flakes seen on 2026-11-18 stop recurring"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["duckling"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzl"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T15:56"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "CI 44353109208 on 4c1317a0 (flakes 1, 2, 4), and flake 3 on tigress's branch ybbfsa-f3; checks 1 and 2 tick when flake 3's cause and fix land"
-waiting_since: "2026-11-18T17:57"
-waiting_asked_by: "duckling"
+done_at: "2026-11-18T20:21"
 ---
 
 ## Goal
@@ -55,6 +51,8 @@ shipped in v0.7.68 (582afc2)
 Flake 3 (tigress): cause is git's detached auto maintenance repacking the test clone's object store while the test's own git reads and writes it. The commit's cache-tree check (cache-tree.c:451-460, odb_has_object RECHECK_PACKED) then misses a blob. It is closed by 6ecd08fc (0n4rnx, maintenance.auto=false for every git the cli test binary starts, plus quietRemote), which is on main in 8c26ec51. No new code. Fail-first on a 0b3c0e96 binary, with maintenance.geometric-repack.auto=-1 forcing a repack on every auto run, -count=12 -parallel=4: 2 FAIL, 'catchup_test.go:89: ... fatal: bad revision 6a569ee8ecdb7e18583348cfede7a026402eee4c^{tree}' and 'catchup_test.go:68: ... exec: WaitDelay expired before I/O complete'. Same amplifier on an 8c26ec51 binary: 9+8+34 = 51 PASS, 0 FAIL (f3probe/fix{a,b,c}.log). Unamplified on the old binary: 20 PASS 0 FAIL, so the original needs load. Plain-git probes (concurrent repack vs add/commit, clone plus detached maintenance, linked worktree board): 0 errors in 946 commits. hug runs no gc/prune/repack itself. CI 44363087479 on 8c26ec51: success. Report: ~/.jcode/scratch/ybbfsa-f3-report/REPORT.md
 check 1: flake 3 (tigress, ~/.jcode/scratch/ybbfsa-f3-report/REPORT.md): git detached auto maintenance repacks the test clone mid-read; forced repack on 0b3c0e96 binary: 2 FAIL 'fatal: bad revision ...^{tree}'. Flakes 1/2/4 named earlier.
 check 2: flake 3 fixed by 6ecd08fc (maintenance.auto=false; main 8c26ec51, CI 44363087479): same amplifier 51 PASS 0 FAIL at load 345-677, failed first on 0b3c0e96. Flakes 1/2/4 released in v0.7.68.
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T15:56 todo -> doing/active (take)
 - 2026-11-18T17:57 doing/active -> doing/waiting (wait)
+- 2026-11-18T20:21 doing/waiting -> done (done); was doing_since: 2026-11-18T15:56; waiting_asked_by: duckling; waiting_on: CI 44353109208 on 4c1317a0 (flakes 1, 2, 4), and flake 3 on tigress's branch ybbfsa-f3; checks 1 and 2 tick when flake 3's cause and fix land; waiting_since: 2026-11-18T17:57
