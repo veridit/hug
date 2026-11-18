@@ -59,6 +59,7 @@ file:screen-2048.ans (22856 bytes, sha256:8a9e2d1c) screen capture from hug tui
 
 
 check 2 evidence: task/deduce.go closeShipped after the shipped note (doing, active/waiting, every check settled, no open child, done refusal leaves it). History '(done, by release vX: every check holds)', done_release set, fix 'hug task set ID --state todo'. Tests cli/release_test.go TestReleaseClosesShippedTasks, TestReleaseCloseTwoClones (two clones deduce one tag: one done), both shown failing first. branch yf39ya cfaa511d (c2 4fce361f, c3 b476ead8, c4 cfaa511d); CI run 44391027727 all 8 jobs success; local niced go test ./huginn/... ./cmd/... 12 ok 0 FAIL
+check 3 evidence: task/afterrelease.go asks the first person check (AddressesPerson, the wait-refusal reading) via public Store.Ask, asker = coordinator; AfterAnswer is the one helper called from CLI check (MCP rides the same Execute) and TUI Space: tick asks the next person check or closes with History '(done after jhf ticked check N (release vX))'; a text answer closes nothing. No ask code edited. Tests cli TestShippedPersonCheckIsAsked, tui TestShippedAskedClosesOnTick + golden testdata/overview/shipped-asked.txt, mcp TestShippedAnswerClosesOverMCP; each fails with its call site removed. branch yf39ya cfaa511d (c2 4fce361f, c3 b476ead8, c4 cfaa511d); CI run 44391027727 all 8 jobs success; local niced go test ./huginn/... ./cmd/... 12 ok 0 FAIL
 ## History
 - 2026-11-18T20:48 request 1 by jhf
 - 2026-11-18T20:48 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
