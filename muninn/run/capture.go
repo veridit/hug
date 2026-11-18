@@ -159,6 +159,11 @@ func captureCmd() *cobra.Command {
 			return nil
 		}
 		err = run()
+		if hook {
+			// The daily dream pass runs on every machine that captures, not
+			// only under hug mem serve (h00cs2): start its waiter if due.
+			nudgeDream()
+		}
 		return err
 	}}
 	c.Flags().StringVar(&session, "session", "", "session identity (required)")

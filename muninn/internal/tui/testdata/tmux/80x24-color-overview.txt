@@ -15,9 +15,9 @@ Filters: none · f pick · 1 here · 2 client · 3 global · 4 all
 ┌ Told agents lately ──────────────────────────┐┌ Needs a look ────────────────┐
 │  11-09 12:30 crab       pka0js  Bake banana …││  1 look like duplicates      │
 │                                              ││  Run hug mem tidy scan       │
+│                                              ││  dream: never ran (runs by i…│
 │                                              ││                              │
-│                                              ││  Enter reviews · no automati…│
-│                                              ││                              │
+│                                              ││  Enter reviews               │
 │                                              ││                              │
 └──────────────────────────────────────────────┘└──────────────────────────────┘
 jcode@global · 6 visible memories

@@ -19,6 +19,9 @@ type IndexStats struct {
 	Embedder    string         `json:"embedder"`
 	DBPath      string         `json:"db_path"`
 	Binding     string         `json:"binding"`
+	// Dream is the last dream pass in one line, with its undo receipt, or
+	// "dream: never ran" (h00cs2: nothing writes silently).
+	Dream string `json:"dream"`
 }
 
 // Stats defaults to the same environment binding as every other surface.
@@ -31,7 +34,7 @@ func Stats(ctx context.Context, a *App, bindings ...Binding) (IndexStats, error)
 	if b.Err != nil {
 		return IndexStats{}, b.Err
 	}
-	s := IndexStats{ByKind: map[string]int{}, ByScope: map[string]int{}, Binding: b.Name}
+	s := IndexStats{ByKind: map[string]int{}, ByScope: map[string]int{}, Binding: b.Name, Dream: ReadDreamLast(a.DB).Line()}
 	b = b.Refresh(a)
 	where, args := b.SQL("u.scope", "u.source_id")
 	cte := `WITH visible AS (SELECT u.*, ` + b.ScopeExpr("u.scope", "u.source_id") + ` AS effective_scope FROM units u WHERE (` + where + `)

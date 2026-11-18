@@ -265,7 +265,9 @@ func (m model) overviewView(h int) string {
 	if m.snapshot.movePath == "" {
 		move = "Run hug mem tidy scan"
 	}
-	needs = append(needs, selectedLine(dupe, m.pane == 3 && m.selections[3] == 0, needsW-2), selectedLine(move, m.pane == 3 && m.selections[3] == 1, needsW-2), "", dim("  Enter reviews · no automatic changes"))
+	// The last dream pass names its undo receipt here (h00cs2): the one
+	// automatic change, never silent.
+	needs = append(needs, selectedLine(dupe, m.pane == 3 && m.selections[3] == 0, needsW-2), selectedLine(move, m.pane == 3 && m.selections[3] == 1, needsW-2), dim("  "+fit(m.snapshot.dream.Line(), needsW-4)), "", dim("  Enter reviews"))
 	if bottomH < 3 {
 		bottomH = 3
 		topH = max(3, h-bottomH)

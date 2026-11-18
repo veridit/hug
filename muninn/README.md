@@ -727,6 +727,16 @@ hook and interactive commands such as `search` keep full speed, because a
 person is waiting on them. Set `HUG_FULL_SPEED=1` to opt out, or set
 `GOMAXPROCS` to choose the parallelism yourself.
 
+The daily `dream` pass (retire near-identical duplicates with an undo receipt,
+queue the rest for agents) runs by itself on every machine that captures, with
+or without `hug mem serve`. When a pass is due (once a day), the capture hook
+starts a waiter. The waiter runs the pass once nobody has typed for 30 minutes
+and the 5-minute load is below 120, and gives up after 12 hours. A waiter that
+slept through an upgrade hands the pass to the hug installed now. Every pass
+leaves one line, naming its receipt, in `hug mem stats` (`"dream"`), in the
+TUI's *Needs a look* pane and in `hook.log`. `hug mem dream --status` shows the
+last pass and when the next one can run.
+
 ## Privacy and security
 
 Everything stays on your machine. The only network call goes to the embedding

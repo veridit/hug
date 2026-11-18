@@ -2,41 +2,46 @@ package daemon
 
 import (
 	"context"
-	"strconv"
 	"sync"
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/app"
 )
 
-// QuietFor is how long no session may have had a user turn before the daily
-// dream pass runs. Dreaming retires memories, so it waits for a lull.
-var QuietFor = 30 * time.Minute
-
-// DreamEvery is the minimum time between automatic dream passes.
-var DreamEvery = 20 * time.Hour
-
-// dreamWhenQuiet runs one dream pass when the last one is older than
-// DreamEvery and no harness session has been active for QuietFor.
+// dreamWhenQuiet runs one dream pass from hug mem serve's ticker when one is
+// due and the gate is open (away QuietFor, load below DreamLoadBelow): the
+// same rule and the same run lock as the waiter the capture hook starts
+// (h00cs2).
 func dreamWhenQuiet(ctx context.Context, a *app.App, mu *sync.Mutex, logf func(string, ...any)) {
-	now := time.Now()
-	var lastTurn int64
-	a.DB.QueryRow(`SELECT COALESCE(MAX(last_ns),0) FROM session_turns`).Scan(&lastTurn)
-	if lastTurn > 0 && now.Sub(time.Unix(0, lastTurn)) < QuietFor {
+	now := app.DreamClock()
+	if !app.DreamDue(a.DB, now) {
 		return
 	}
-	var last string
-	a.DB.QueryRow(`SELECT value FROM meta WHERE key='dream_last_ns'`).Scan(&last)
-	if ns, err := strconv.ParseInt(last, 10, 64); err == nil && now.Sub(time.Unix(0, ns)) < DreamEvery {
+	if ok, _ := app.DreamGate(a.DB, now); !ok {
 		return
 	}
-	mu.Lock()
-	defer mu.Unlock()
-	r, err := a.Dream(ctx, false)
-	a.DB.Exec(`INSERT INTO meta(key,value) VALUES('dream_last_ns',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, strconv.FormatInt(now.UnixNano(), 10))
+	release, err := app.DreamRun()
 	if err != nil {
 		logf("dream: %v", err)
 		return
 	}
-	logf("dream: retired %d, queued %d, open %d, undo %s", r.Retired, r.Queued, r.Open, r.Backup)
+	defer release()
+	if !app.DreamDue(a.DB, app.DreamClock()) {
+		return // a waiter ran it meanwhile
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	began := time.Now()
+	r, err := a.Dream(ctx, false)
+	if err != nil {
+		app.RecordDreamFailed(a.DB, app.DreamClock(), err) // not again every 5 minutes
+		logf("dream: %v", err)
+		return
+	}
+	last, err := app.RecordDream(a.DB, app.DreamClock(), "by hug mem serve", r)
+	if err != nil {
+		logf("dream: %v", err)
+		return
+	}
+	logf("%s (%s)", last.Line(), time.Since(began).Round(100*time.Millisecond))
 }

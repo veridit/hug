@@ -35,13 +35,14 @@ type snapshot struct {
 	dupePath, movePath string
 	hereLabel          string
 	labels             map[string]string // project scope -> folder name
+	dream              app.DreamLast     // the last dream pass (h00cs2)
 	err                error
 }
 
 func loadSnapshot(a *app.App, b app.Binding) snapshot {
 	b = b.Refresh(a)
 	labels := projectLabels(a)
-	s := snapshot{binding: b, err: b.Err, labels: labels}
+	s := snapshot{binding: b, err: b.Err, labels: labels, dream: app.ReadDreamLast(a.DB)}
 	if b.Err != nil {
 		return s
 	}
