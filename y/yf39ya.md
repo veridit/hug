@@ -45,6 +45,8 @@ Measured 19:53Z on hug's board (hug task lint): 40 findings, 37 broken, on 31 ta
     Done as you describe, in hjbfzd (high): after S, the prompt takes a task ID, or s to pick one from the list, or c to create a new task with the capture attached.
 - 2026-11-18T20:49 request 3 by jhf:
   Also, help fix this ticket with linting and other requirements so you can get it going
+  resolved 2026-11-18T20:56 by crab:
+    yf39ya now lints clean ('no findings'), with a Goal, Purpose, Principle and 5 checks, so it can be taken. The old placeholder check is struck.
 
 ## Notes
 
@@ -66,3 +68,4 @@ file:screen-2048.ans (22856 bytes, sha256:8a9e2d1c) screen capture from hug tui
 - 2026-11-18T20:55 request 3 in progress by crab: hug task set yf39ya
 - 2026-11-18T20:56 resolved request 1 by crab
 - 2026-11-18T20:56 resolved request 2 by crab
+- 2026-11-18T20:56 resolved request 3 by crab
