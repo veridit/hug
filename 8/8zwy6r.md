@@ -50,5 +50,6 @@ Shared ordinary resolver safety correction11c0df2e: two legacy-layout clones mus
 
 
 macaque 4504654a (branch 8zwy6r + ci/8zwy6r, on origin/main c84d3273). Finding: the shared semantic replay already on main (798d91c8 'Use shared semantic replay for ordinary task-board sync', kestrel's w40cmk work) makes ordinary sync merge same-task appends; no gitbranch change needed, so no overlap with tigress's fcf4fg. Check 1: TestSyncMergesBothSidesAppends/note_on_each_side (cli, plain fresh board, no layout upgrade): on a13d7c74 (kestrel's baseline) it fails 'sync in .../two: exit 1 / sync conflicts: h.88px62.shared-task.md (rebase aborted)'; on c84d3273 and 4504654a '--- PASS' (A, B, A sync all exit 0, each note once, A before B, HEADs equal).
+Check 2: same table test, PASS on 4504654a: 'a_different_check_ticked_on_each_side' (- [x] one, - [ ] two, - [x] three), 'an_answer_against_a_note' (ask, then A notes while B answers), 'a_request_on_each_side'. Each: 3 syncs exit 0, entries once in order, clones converge.
 ## History
 - 2026-11-18T16:57 todo -> doing/active (take)
