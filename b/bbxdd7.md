@@ -28,7 +28,7 @@ From mizaru's gmzd87 open questions 2 and 3 (2026-11-18). Inbox: <JCODE_HOME>/hu
 - gmzd87
 
 ## Acceptance
-- [ ] A request written with no live coordinator session shows 'not delivered', and the coordinator's next session start receives it once; a test fails first.
+- [x] A request written with no live coordinator session shows 'not delivered', and the coordinator's next session start receives it once; a test fails first.
 - [ ] The board cue does not name a request that was delivered (test).
 
 ## Notes
