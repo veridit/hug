@@ -35,3 +35,5 @@ Today: hug task ask sets one asked/asked_check/asked_show on the stage (41hhgn);
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+crab 20:30 local: queued; next free TUI/CLI worker after the windows-cli shard lands. Until then coordinators and workers ask one question per hug task ask (memory saved).
