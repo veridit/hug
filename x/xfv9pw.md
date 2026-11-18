@@ -39,5 +39,6 @@ No history exists today in find.go, palette.go or filters.go (no 'history' anywh
 ## Notes
 
 
+Failing-first on origin/main 4e776695 (branch xfv9pw, worktree ~/.jcode/scratch/xfv9pw): TestSearchHistoryUpDown 'history_test.go:19: Up in the empty / prompt: prompt "/" value "" query "", want the last search'; TestCommandHistoryUpDown 'history_test.go:68: Up in the empty : prompt: prompt ":" value "", want list'; TestFindRecallsSearches 'history_test.go:105: Up in an empty find: prompt "find" value "", 0 hits'; TestTUIHistorySurvivesReopen without the hooks.go wiring: 'tuihistory_test.go:63: history file: open .../.git/huginn/tui-history.json: no such file or directory'. All 4 pass with the change.
 ## History
 - 2026-11-18T12:47 todo -> doing/active (take)
