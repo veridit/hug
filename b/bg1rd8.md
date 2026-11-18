@@ -46,6 +46,7 @@ commit 59fdd2c on branch bg1rd8 (stacked on gpyqq9 d177829), ci/bg1rd8 run 44306
 CI green: run 44306358102 (59fdd2c, branch head): secrets, bench, test ubuntu/macos/windows, test-windows-cli all success.
 crab review 13:02Z: ChecksHoldFindings read (waiting only, every check settled, every child done/dropped, done would pass, not ask --after, wait >= IdleAfter). 2 h threshold accepted: parking a finished task briefly for CI or review is normal. Exact SHA 59fdd2c9 CI 44306358102 all 6 green. Lands right after gpyqq9 (it builds on StageSettles).
 Landed on main via 5a8b14da (stack bg1rd8 f7d607e4, qpp30y 3d74229a, 2k68eg 7fafab16, vk9td0 5a8b14da; CI 44328375780 exact SHA 6/6, ubuntu passed on rerun after an unrelated muninn/internal/project flake, see ybbfsa). Ships in the next release.
+landed f7d607e on main 2026-11-18: lint: a waiting task whose checks all hold is asked to finish (bg1rd8)
 ## History
 - 2026-11-18T13:22 todo -> doing/active (take)
 - 2026-11-18T13:42 doing/active -> doing/waiting (wait)

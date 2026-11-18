@@ -63,6 +63,7 @@ check 3: TestDreamStartsAtTheQuietStretch (waiter started Tue 08:00, away 1 h: t
 CI 44315701688 on ci/vk9td0 @ 4f0465fb: success, 6/6 (secrets, bench, test-windows-cli, test macos/windows/ubuntu). Branch vk9td0 is not merged; it is ready for a landing turn.
 crab review 13:53Z: accepted. The earlier histogram is in Jørgen's syncthing fork (internal/activityhist, patches 43 and 53); idea and thresholds reused, code not shared (different repo, different signal). Real histogram on a hook.log copy: 3,352 of his turns, longest quiet stretch Sun 01:00 for 6 h, each day has its own start. Exact SHA 4f0465fb CI 44315701688 6/6. Queued after 2k68eg. Check 4 or Jørgen's look: let him read hug mem dream --week after release.
 Landed on main via 5a8b14da (stack bg1rd8 f7d607e4, qpp30y 3d74229a, 2k68eg 7fafab16, vk9td0 5a8b14da; CI 44328375780 exact SHA 6/6, ubuntu passed on rerun after an unrelated muninn/internal/project flake, see ybbfsa). Ships in the next release.
+landed 5a8b14d on main 2026-11-18: hug mem: dream starts at the beginning of your quiet stretch (vk9td0)
 ## History
 - 2026-11-18T06:31 todo -> doing/active (take)
 - 2026-11-18T06:32 doing/active -> doing/waiting (wait)
