@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The view line is quiet, one cue per meaning (qh9ep1 check 9, 911j70; Jørgen: "something more subtle"). An underline marks only a key you can press, and colour tells the keys apart: `v` in the accent, `o l b !` in violet, none bold. The view you are in is told by bold alone on its word; the other words are dim and nothing has a background. After `v` the line no longer lights up as a whole: one underlined cursor blinks after `view:`, where the second key goes, the same cursor as the answer box's, and goes when the view is chosen or `v` is cancelled.
+
 ## v0.7.68 - 2026-11-18
 
 - Windows CLI tests start no `git maintenance` (0n4rnx). Every commit, fetch and push in the `huginn/internal/cli` tests ran `git maintenance run --auto`, which Windows git runs in the foreground: 31 in one catch-up test, 4 for one commit and one push. The test binary now sets `maintenance.auto=false` for itself and every git it starts, and the fixture remotes set it in their own config, since receive-pack does not read the environment. This changes tests only, not hug.

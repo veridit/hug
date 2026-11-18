@@ -32,34 +32,44 @@ func pickView(k string) (string, bool) {
 }
 
 // viewLine is the global band's first line: 'view: overview  list  board
-// !lint' with v and each view's letter marked, the current view in its
-// selection colour, then the state counts right-aligned after a dim │.
-// While v waits the whole line lights up. When the line is tight the
-// counts drop from the right first (dropped, done …), then the separator.
+// !lint', then the state counts right-aligned after a dim │. When the
+// line is tight the counts drop from the right first (dropped, done …),
+// then the separator.
+//
+// Its colours are stable (911j70, Jørgen 2026-11-18: the line must not
+// recolour as a whole on v): the two steps of the key trie in two tiers,
+// v the accent (step 1) and o l b ! violet (step 2); the view you are in
+// on the selection tint, the others dim. While v waits, v shows as
+// entered (the tint, as a typed key) and the one cursor (theme.cursor,
+// shared with the answer box, qpp30y) blinks in the slot after 'view:',
+// where the second key goes. Nothing else on the line changes.
 func (m model) viewLine(summary []string) string {
-	base := m.styles.dim
+	dim := m.styles.dim
+	v := m.styles.viewPrefixKey.Render("v")
+	slot := " "
 	if m.pendingV {
-		base = m.styles.accent // the line its prefix belongs to (qh9ep1 check 3)
-	}
-	key := m.styles.accent.Underline(true)
-	if m.pendingV {
-		key = m.styles.forYou.Bold(true).Underline(true)
+		v = m.styles.viewEntered.Render("v")
+		if !m.vCursor.Blink { // bubbles: Blink is the hidden phase
+			slot = m.styles.cursor.Render(" ")
+		}
 	}
 	parts := []string{}
-	for _, v := range views {
-		style := base
-		if v.name == m.view && !m.detail && !m.pendingV {
-			style = m.styles.selected
+	for _, view := range views {
+		style, key := dim, m.styles.viewKey
+		if view.name == m.view && !m.detail {
+			// The whole word on the tint, its letter keeping its colour.
+			style = m.styles.viewCurrent
+			key = key.Background(style.GetBackground())
 		}
 		label := ""
-		if i := strings.Index(v.name, v.key); i >= 0 {
-			label = style.Render(v.name[:i]) + key.Render(v.key) + style.Render(v.name[i+1:])
+		if i := strings.Index(view.name, view.key); i >= 0 {
+			label = style.Render(view.name[:i]) + key.Render(view.key) + style.Render(view.name[i+1:])
 		} else {
-			label = key.Render(v.key) + style.Render(v.name)
+			label = key.Render(view.key) + style.Render(view.name)
 		}
 		parts = append(parts, label)
 	}
-	left := key.Render("v") + base.Render("iew: ") + strings.Join(parts, base.Render("  "))
+	left := v + dim.Render("iew:") + slot + strings.Join(parts, dim.Render("  "))
 	sep := m.styles.dim.Render("│ ")
 	for n := len(summary); n > 0; n-- {
 		right := strings.Join(summary[:n], m.styles.dim.Render(" · "))
