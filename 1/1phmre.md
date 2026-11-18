@@ -33,7 +33,7 @@ Finding: w/w40cmk.md missing-task-ref '.hug/tasks/37bryg/README.md: no task 37br
 
 ## Acceptance
 - [x] Lint on w40cmk reports no missing-task-ref for the quoted Statbus path; a test with a quoted path in a note fails first on main.
-- [ ] A real task: link to a missing id is still reported, with a non-interactive fix (test).
+- [x] A real task: link to a missing id is still reported, with a non-interactive fix (test).
 
 ## Notes
 
