@@ -17,8 +17,8 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing: check 2 accepted path (0293fddb + docs 7ce45f3a on jrj1vq-c2, stacked on check 1 57c86e5a); crab stacks on e283bb0a. Check 3 waits for crab's go-ahead."
-waiting_since: "2026-11-18T19:40"
+waiting_on: "check 3 parked at stage 0: A1 moved 1.5% of development messages (\u003c 5% gate), no spend; checks 1+2 landing via crab (57c86e5a, 0293fddb, 7ce45f3a)"
+waiting_since: "2026-11-18T20:49"
 waiting_asked_by: "bonehound"
 ---
 
