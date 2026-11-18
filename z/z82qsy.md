@@ -40,5 +40,6 @@ Message comes from actions.go finish(): m.message = action + ' ' + ID, never cle
 ## Notes
 
 
+check 1: commit d24bfd34 on branch z82qsy. render.go draws the detail header's dim rule under the file header line too, and glanceChrome=3 keeps the screen height. TestFileViewerRuleUnderHeader opens 000001 by Enter on its row in overview, list and board (the breadcrumbs read 'HUG TASKS · overview › 000001', '... list ...', '... board ...'), then shows bench/README.md. It failed first at z82qsy_test.go:58 ('under the file header "Bench..." / "   ...", want the rule then the contents') and passes now. New golden testdata/detail/file-rule.txt. glance.txt and markdown-file.txt changed by +8 rule lines and -8 blank padding lines, nothing else.
 ## History
 - 2026-11-18T12:53 todo -> doing/active (take)
