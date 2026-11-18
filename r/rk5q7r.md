@@ -32,7 +32,7 @@ Parser: huginn/internal/task/reflect.go var quoted, the third alternative '([^']
 ## Depends on
 
 ## Acceptance
-- [ ] When an open reflection is older than 3 days the coordinator's board cue names the count and hug task reflections --by-instruction (test)
+- [x] When an open reflection is older than 3 days the coordinator's board cue names the count and hug task reflections --by-instruction (test)
 
 ## Notes
 
