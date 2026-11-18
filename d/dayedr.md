@@ -1,15 +1,20 @@
 ---
 id: dayedr
 title: "Release v0.7.65"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T16:48"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Tag v0.7.65 on the CHANGELOG commit, merge c84d3273 on main 18b6b86d. Contents: 
 - [ ] brew upgrade veridit/tap/hug installs it and hug version prints v0.7.65
 
 ## Notes
+
+
+## History
+- 2026-11-18T16:48 todo -> doing/active (take)
