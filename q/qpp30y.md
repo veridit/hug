@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzyh"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T13:34"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review; check 3 with puppy's grid, check 4 Jørgen"
+waiting_since: "2026-11-18T14:15"
+waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -45,3 +48,4 @@ check 2: theme.cursor = accent #00bfff/#006c9c, Underline+Bold (render.go), appl
 CI run 44308766736 on ci/qpp30y (aee5b13e) finished completed success, all 6 jobs. Check 3 was left to puppy's grid by crab's ruling, and the reuse plan is in the report. Check 4 needs Jørgen. Report: /Users/jhf/.jcode/scratch/qpp30y/REPORT.md
 ## History
 - 2026-11-18T13:34 todo -> doing/active (take)
+- 2026-11-18T14:15 doing/active -> doing/waiting (wait)
