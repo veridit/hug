@@ -1,15 +1,20 @@
 ---
 id: xfv9pw
 title: "Search and command prompts recall earlier entries with Up/Down"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["engineer"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzh"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T12:47"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ No history exists today in find.go, palette.go or filters.go (no 'history' anywh
 - [ ] History survives quitting and reopening hug tui on the same board, is per board, and is never written into .hug/tasks (test).
 
 ## Notes
+
+
+## History
+- 2026-11-18T12:47 todo -> doing/active (take)
