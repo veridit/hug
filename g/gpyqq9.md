@@ -45,6 +45,7 @@ commit ebf1c40 on branch gpyqq9 (ci/gpyqq9, run 44303286385). check 1: TestAskSe
 check 2 note: the test uses unknown-type, not missing-file. missing-file comes from LintFiles (board lint only), not from the per-task lint block readyToHand reads, so on main too the ask gate never sees a missing-file finding (pre-existing, not changed here). Tried adding a per-task LintFiles to the gate: TestEveryWriteEndsWithTheTasksLint then refused the ask because 'hug task detach' leaves a file: citation in the notes that lint reports as missing-file twice (also on main: 'hug task lint ID' after attach+detach shows 2 identical missing-file lines). Left both for crab to decide.
 Second case 2026-11-18 12:33Z: 5z4zt4 (shipped v0.7.44, checks 4 and 5 open, both Jørgen's to confirm): ask refused with shipped-not-done. So it also hits tasks with open checks whose holder is the person, not only all-ticked tasks.
 crab review 12:55Z: diff read (readyToHand: ask skips findings task.StageSettles names, onlyOpen removed; questions.go stageSettled = {shipped-not-done}). Tests cover all-ticked (4vd1mz shape), open checks asked of a person (5z4zt4 shape), and other broken findings still refuse. Exact SHA d177829e CI 44305350513 all 6 jobs success. Lands after xfv9pw and z82qsy (rebase plus exact-SHA CI).
+CI green: run 44303286385 (ebf1c40) and run 44305350513 (d177829, branch head): secrets, bench, test ubuntu/macos/windows, test-windows-cli all success.
 ## History
 - 2026-11-18T13:17 todo -> doing/active (take)
 - 2026-11-18T13:22 doing/active -> doing/waiting (wait)
