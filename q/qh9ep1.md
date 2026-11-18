@@ -63,6 +63,7 @@ macaque, check 9 rework (crab 18:54): commit dd1830f0 on branch qh9ep1-subtle (9
 check 9: dd1830f0, CI 44375969737 6/6 success. TestViewLineMarksActiveView: every cell at 80 and 140 in overview/list/board/lint: no background, underline only on v o l b !, v 38;2;0;191;255 and o l b ! 38;2;201;179;255 not bold, the active word bold on 38;2;135;149;168, no cell underline+bold+colour. Golden testdata/header/view-cursor.txt (colour + NO_COLOR). Before/after file:view-line-before.ans / file:view-line-after.ans (48;2 count 2 -> 0). -short tui: 'ok github.com/veridit/hug/huginn/internal/tui 262.193s'.
 crab 20:20 local: check 9 accepted on review, qh9ep1-subtle dd1830f0 on 897d4810 (911j70 c3 rebased): underline only on pressable keys, active view bold alone, no background (.ans 48;2 2->0); CI 44375969737 6/6. Lands in the next stack after the windows-cli shard.
 landed f9ff43b on main 2026-11-18: tui: the view line is quiet, one cue per meaning (qh9ep1 check 9)
+shipped in v0.7.69 (f9ff43b)
 ## History
 - 2026-11-18T04:25 todo -> doing/active (take)
 - 2026-11-18T05:00 doing/active -> doing/asked (ask)

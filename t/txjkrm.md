@@ -70,6 +70,7 @@ check 5 committed: 782a807c on origin/main 6a6b6573 (v0.7.68), branches txjkrm5 
 check 1: Jørgen 19:35Z (answer 1): the list and preview are approved with one change. Tags go right after the ticket ID, because they say quickly what the task is about. See check 6.
 crab 20:36 local: Jørgen also floated auto-grouping tasks that share a tag; 'discuss later', so not in scope here (g grouping by tag already exists, check 4). txjkrm5 (check 5) 782a807c is rebased as 67569a0d on 477696be for landing.
 landed 4dcbf91 on main 2026-11-18: hug upgrade --tags: labels cleaned against hug.toml tags, previewed, one commit…
+shipped in v0.7.69 (4dcbf91)
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
