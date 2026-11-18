@@ -34,7 +34,7 @@ In tpnd3n's arm 6 lines on message-only tasks were judged right (2 return, 4 sta
 
 ## Acceptance
 - [x] Replay (board4, blind judge): false lines on the 6 sets fall below tpnd3n's 12 and right lines stay at or above 101
-- [ ] Fresh sessions after the change keep their right lint lines
+- [x] Fresh sessions after the change keep their right lint lines
 
 ## Notes
 
