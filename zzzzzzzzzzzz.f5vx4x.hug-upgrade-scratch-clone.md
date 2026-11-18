@@ -29,3 +29,12 @@ Code: cmd/hug upgrade dispatch, muninn/run/upgrade.go (jcode hook migration), hu
 - [ ] The preview groups lines under 'this board:' and 'this machine:' (golden)
 
 ## Notes
+
+Shape approved by crab (04:04Z) before building:
+- hug upgrade previews under the headings 'this board (PATH):' and 'this machine (~/.jcode, ~/.claude, HUG_HOME):'.
+- hug upgrade --apply changes only the board. While machine work is pending it exits 5 (crab: 5 means 'upgrade has changes pending', so a script never reads a half upgrade as done) and ends with 'fix: hug upgrade --apply --machine'.
+- hug upgrade --apply --machine does the board and then the variables and memory parts, each with its backup as today.
+- --machine is valid only with --apply. hug mem upgrade is unchanged.
+- Test, failing first: a clone plus a fake HOME/JCODE_HOME with an old-hook jcode config. After --apply the config is byte-identical; after --apply --machine it is migrated and the .bak exists.
+- The two headings get a golden.
+- Order: kestrel builds this after w40cmk check 1.
