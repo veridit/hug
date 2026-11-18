@@ -8,11 +8,14 @@ assignee: ["hatchling"]
 labels: []
 created: 2026-11-18
 updated: 2026-11-18
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T02:56"
+waiting_on: "the release carrying f6b63256, then Jørgen's look at the Statbus LINT section (check 6)"
+waiting_since: "2026-11-18T03:30"
+waiting_asked_by: "hatchling"
 ---
 
 ## Goal
@@ -51,3 +54,4 @@ CI 44223058200 for f6b63256: success, all 7 jobs (secrets, bench, test ubuntu/wi
 - 2026-11-18T01:43 todo -> doing/active (take)
 - 2026-11-18T01:43 doing/active -> todo/ready (give back; was assignee: hatchling); was doing_since: 2026-11-18T01:43
 - 2026-11-18T02:56 todo/ready -> doing/active (take)
+- 2026-11-18T03:30 doing/active -> doing/waiting (wait)
