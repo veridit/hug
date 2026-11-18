@@ -1,15 +1,20 @@
 ---
 id: h8ys9s
 title: "Release v0.7.63: lint mentions, prompt history, framed file viewer"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T14:08"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -28,3 +33,7 @@ Exact-SHA all-job CI green; release.yml success before brew upgrade; no --machin
 - [ ] release.yml succeeds on the tag before targeted brew upgrade; hug version prints v0.7.63
 
 ## Notes
+
+
+## History
+- 2026-11-18T14:08 todo -> doing/active (take)
