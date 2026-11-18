@@ -60,6 +60,10 @@ Correction (supersedes my earlier note recording crab's waiting_check ruling): k
 
 
 landed 48b1151f..4b93356a (6 commits). CI 44218985753 on 4b93356a: 6/6 success. Local -race tui ok 120.0s, task ok 29.5s; go test ./huginn/... ./cmd/... no failures. Check 1: TestAskedCheckIsFocusedOnOpen (asked_test.go): aaaaaa asked of jhf --check 2 opens with focus on check 2 (detailPane focusAcceptance, acceptance 1), '> ? ☐ 2. b' then the question under it then '└ nautilus · 3 min ago · answer'; the question shows once on screen; Space asks to tick, a opens the answer; golden testdata/detail/asked-check.txt at 80 and 140. On the base (f993e4fb): 'at 80: focus pane 1 check 1, want the checks, check 2'. Check 2: TestAskedWithoutCheckIsOneBlock: a 2-line, 160-char question with no check is one block '> ? which colour …' at the top of the details, wrapped whole (no …), focused (focusQuestion); Space says 'a question has nothing to tick: a answers it'; bar leads with 'answer'; golden asked-block.txt. On the base: 'at 80: focus pane 1, want the question'. Check 3 struck, replaced by 5 (crab 01:06). Check 5: same tests assert the header holds only '[asked]' (no '└─', no question text); asked of someone else / waiting on a thing keep the context line (TestAskedSectionOnTop, stage_test). Goldens answer-100.txt and picture.txt updated.
+landed 4e475c8 on main 2026-11-18: tui: ASKED section first, for you, oldest first; empty sections are their title…
+landed 3435fc7 on main 2026-11-18: tui: gofmt (0gztsy)
+landed 1d260a6 on main 2026-11-18: CHANGELOG: ASKED, the question once, the answer textarea (0gztsy, 41hhgn)
+landed 4b93356 on main 2026-11-18: tui: tmux overview goldens with ASKED, from ubuntu CI run 44218017150 (0gztsy)
 ## History
 - 2026-11-18T01:39 todo -> doing/active (take)
 - 2026-11-18T02:03 doing/active -> doing/waiting (wait)

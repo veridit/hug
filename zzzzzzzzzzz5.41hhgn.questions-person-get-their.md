@@ -92,6 +92,9 @@ check 13 widened (crab 02:18) as 3b47f26: a request verb anywhere in the first c
 Fail first against 2c7ea8b's rule, 6 lines, e.g. 'askrule_test.go:45: readsAsQuestion("owner confirms time frames on Norway after the release (rc.02 shipped)") = false, want true'. 7 mutants each fail the table.
 hug clone at 8a18427b^: 6 moved, s6ff5k left waiting. Statbus copy: 'would: 4 questions to a person moved from waiting to asked (yq5tr6, ezp3h0, mtw92d, hmgadt)', 'would: 1 wait on a person left waiting ...: j2g6wd waiting_for jhf: "the hug release that stops linting done tasks (installed now: v0.7.50)"'.
 race: 'ok task 27.784s', 'ok cli 180.194s'.
+landed 4e475c8 on main 2026-11-18: tui: ASKED section first, for you, oldest first; empty sections are their title…
+landed 5c99d88 on main 2026-11-18: tui: tests for ASKED on top (41hhgn check 10), the question on its check and in…
+landed 1d260a6 on main 2026-11-18: CHANGELOG: ASKED, the question once, the answer textarea (0gztsy, 41hhgn)
 ## History
 - 2026-11-17T23:53 todo -> doing/active (take)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
