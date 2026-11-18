@@ -15,8 +15,8 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T21:27"
-waiting_on: "byj479 + hjbfzd on main, then rebase; Jørgen on check 7"
-waiting_since: "2026-11-18T22:45"
+waiting_on: "crab review; Jørgen on check 7"
+waiting_since: "2026-11-19T00:44"
 waiting_asked_by: "macaque"
 ---
 
