@@ -1,0 +1,11 @@
+== 27643306 (tn8bmn, held the stray line):
+--- FAIL: TestNoConflictMarkers (0.05s)
+    markers_test.go:70: CHANGELOG.md:14: leftover conflict marker "|||||||"
+        fix: resolve the conflict in CHANGELOG.md and delete line 14
+FAIL
+FAIL	github.com/veridit/hug/internal/repocheck	0.061s
+FAIL
+== main a13d7c74 (pass):
+--- PASS: TestNoConflictMarkers (0.07s)
+PASS
+ok  	github.com/veridit/hug/internal/repocheck	0.074s

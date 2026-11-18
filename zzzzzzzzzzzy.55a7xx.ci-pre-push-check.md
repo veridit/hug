@@ -36,5 +36,6 @@ A test under the repo root's test package that walks git ls-files. Exclude only 
 ## Notes
 
 
+file:55a7xx-failbefore.txt (416 bytes, sha256:315575f8)
 ## History
 - 2026-11-18T05:29 todo -> doing/active (take)
