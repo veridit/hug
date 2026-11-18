@@ -1393,6 +1393,16 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			}
 		}
 		r, e = s.s.CheckWith(f.args[0], n, evidence)
+		// A shipped task's answer by tick asks the next person check or
+		// closes it (yf39ya check 3): one helper for CLI, MCP and the TUI.
+		if e == nil && r.Answered {
+			if did, x := s.s.AfterAnswer(r.Task.ID, n, a.actor(f)); x == nil && did != "" {
+				if d, x := s.s.Get(r.Task.ID); x == nil {
+					r.Task = d.Task
+				}
+				r.Warnings = append(r.Warnings, "after the release: "+did)
+			}
+		}
 	case "strike":
 		if e = f.count(2); e != nil {
 			return nil, e

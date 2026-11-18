@@ -2,6 +2,7 @@ package task
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -194,6 +195,11 @@ func (s *Store) ApplyDeductions(ds []Deduction) ([]Deduction, error) {
 			if closed {
 				x.Marked += ", done (every check holds)"
 				x.Fix = "hug task set " + x.ID + " --state todo"
+			} else if q, ok, e := s.askAfterRelease(x.ID); e != nil {
+				return done, e
+			} else if ok {
+				x.Marked += ", asked " + q.For + " about check " + strconv.Itoa(q.Check)
+				x.Fix = "hug task resume " + x.ID
 			}
 		}
 		done = append(done, x)

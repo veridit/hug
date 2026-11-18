@@ -1,0 +1,62 @@
+== overview at 80
+HUG · overview   7/7 tasks · ! 0 broken · ? 2 for you                           
+view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
+filter: none · sort: rank                                                       
+> ASKED · for you  [2] · all feature · all high                                 
+> ◑ 1/2  aaaaaa   asked     Status colors: rows and sections …  nautilus        
+         └─ asked: check 2 · Jørgen confirms on his board after re…  since 09:50
+  ◑ 1/2  eeeeee   design    Tags listed per board               unassigned      
+                                                                                
+  IN PROGRESS · assigned to  [0] · None                                         
+  WAITING  [3] · all feature · all high · all nautilus                          
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                
+  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                              
+  ◑ 1/2  dddddd   depends   One set of variable names                           
+                                                                                
+  NEXT UP · rank order  [2] · all feature · all high                            
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                           
+  ◑ 1/2  gggggg   deferred  Answer a question in place                          
+                                                                                
+  RECENTLY DONE · last closed  [0] · None                                       
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+All tasks · : filters and commands · ! lint finding · ↳ epic                    
+                                                                                
+j/k move · Enter open · find · # id · / search · : cmd · ? help · quit          
+== overview at 140
+HUG · overview   7/7 tasks · ! 0 broken · ? 2 for you                                                                                       
+view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
+filter: none · sort: rank                                                                                                                   
+> ASKED · for you  [2] · all feature · all high                                                                                             
+> ◑ 1/2  aaaaaa   asked     Status colors: rows and sections share one subtle scheme                                        nautilus        
+         └─ asked: check 2 · Jørgen confirms on his board after release · crab                                                   since 09:50
+  ◑ 1/2  eeeeee   design    Tags listed per board                                                                           unassigned      
+                                                                                                                                            
+  IN PROGRESS · assigned to  [0] · None                                                                                                     
+  WAITING  [3] · all feature · all high · all nautilus                                                                                      
+  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                                                                            
+  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                                                                                          
+  ◑ 1/2  dddddd   depends   One set of variable names                                                                                       
+                                                                                                                                            
+  NEXT UP · rank order  [2] · all feature · all high                                                                                        
+  ◑ 1/2  ffffff   ready     Depend on a group or epic                                                                                       
+  ◑ 1/2  gggggg   deferred  Answer a question in place                                                                                      
+                                                                                                                                            
+  RECENTLY DONE · last closed  [0] · None                                                                                                   
+  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
+                                                                                                                                            
+j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                        
