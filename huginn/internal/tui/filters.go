@@ -10,13 +10,13 @@ import (
 
 type filterChip struct{ field, value string }
 
-var filterFields = []struct{ letter, name string }{{"s", "state"}, {"t", "type"}, {"p", "priority"}, {"g", "group"}, {"l", "label"}, {"a", "assignee"}, {"e", "epic"}}
+var filterFields = []struct{ letter, name string }{{"s", "state"}, {"t", "type"}, {"p", "priority"}, {"g", "group"}, {"l", "tag"}, {"a", "assignee"}, {"e", "epic"}}
 
 // filterHints say what each filter field picks, as the sort picker's
 // hints do (ahejza: both panels look alike).
 var filterHints = map[string]string{
 	"state": "todo, doing, depends, done, dropped", "type": "feature, bug, chore, spike, docs",
-	"priority": "critical, high, medium, low", "group": "a group, or (root)", "label": "one label",
+	"priority": "critical, high, medium, low", "group": "a group, or (root)", "tag": "one tag",
 	"assignee": "a person or agent, or (unassigned)", "epic": "an epic's children",
 }
 
@@ -39,7 +39,7 @@ func (m *model) writeFilter(name, value string) {
 		m.filter.Priority = value
 	case "group":
 		m.filter.Group = value
-	case "label":
+	case "tag": // the task field is still labels until hug upgrade renames it (txjkrm)
 		m.filter.Label = value
 	case "assignee":
 		m.filter.Mine = value
