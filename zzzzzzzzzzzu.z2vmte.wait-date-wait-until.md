@@ -30,7 +30,7 @@ Today: hug task dep --add 'when date YYYY-MM-DD' holds a todo task out of next, 
 ## Depends on
 
 ## Acceptance
-- [ ] wait --until DATE: WAITING with 'until DATE' before; on the first hug read after DATE it is doing/active and first in its owner's hug task next, with one History line (test with a fixed clock, fails first)
+- [x] wait --until DATE: WAITING with 'until DATE' before; on the first hug read after DATE it is doing/active and first in its owner's hug task next, with one History line (test with a fixed clock, fails first)
 - [ ] ask --after DATE: not in the person's ASKED before DATE; after it, in ASKED with the question verbatim and its check (test with a fixed clock)
 - [ ] 47sxn2 on hug's board becomes ask --to jhf --after 2026-11-24 and leaves Jørgen's ASKED today (done with hug commands)
 - [ ] Jørgen sees 47sxn2 come back into his ASKED on 2026-11-24 without anyone touching it
