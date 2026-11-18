@@ -9,10 +9,15 @@ labels: []
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T04:25"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_check: "6"
+asked_what: "after the release: line 2 now reads 'view: overview  list  board  !lint' with the counts at the right after │; press v (the line lights up, the footer lists o l b !), then o, l, b or ! to switch. Bare b, ! and i no longer switch views. Does it read clearly?"
+asked_for: "jhf"
+asked_since: "2026-11-18T05:00"
+asked_by: "nautilus"
 ---
 
 ## Goal
@@ -54,3 +59,4 @@ landed a90f4d44..03e783d0 (nautilus). CI run 44233304533 green on all 6 jobs (ub
 landed 03e783d on main 2026-11-18: tui: v is the view prefix (vo vl vb v!), the view line reads 'view: …' and…
 ## History
 - 2026-11-18T04:25 todo -> doing/active (take)
+- 2026-11-18T05:00 doing/active -> doing/asked (ask)
