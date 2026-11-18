@@ -68,3 +68,20 @@ func TestDiscoverJcodeSkipsMissingAndDedupes(t *testing.T) {
 		t.Fatal("InstanceForHome")
 	}
 }
+
+// h2yn55: a home with no .jcode (Claude Code or Codex only) has no global
+// instance; discovery returns none instead of panicking on out[1:].
+func TestDiscoverJcodeWithoutJcodeHome(t *testing.T) {
+	home := t.TempDir()
+	if got := DiscoverJcode(home, nil); len(got) != 0 {
+		t.Fatalf("DiscoverJcode with no ~/.jcode = %+v, want none", got)
+	}
+	// An extra home that exists is still found, alone.
+	extra := filepath.Join(t.TempDir(), "proj", ".jcode")
+	if err := os.MkdirAll(extra, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if got := DiscoverJcode(home, []string{extra}); len(got) != 1 || got[0].Home != extra {
+		t.Fatalf("DiscoverJcode with only an extra home = %+v, want it alone", got)
+	}
+}
