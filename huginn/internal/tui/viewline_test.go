@@ -42,8 +42,8 @@ func TestViewLineCarriesCounts(t *testing.T) {
 		}
 		golden = append(golden, "== "+strconv.Itoa(w), strings.Join(lines[:3], "\n"))
 	}
-	// The marks: v and each view letter carry their tier's key style (v
-	// step 1, o l b ! step 2; 911j70 rewrote the one shared key style).
+	// The marks: v and each view letter carry their step's key style (v
+	// step 1, o l b ! step 2; 911j70, qh9ep1 check 9).
 	m := manyModel(t)
 	m.width = 140
 	m.resize()
@@ -52,9 +52,6 @@ func TestViewLineCarriesCounts(t *testing.T) {
 		key := m.styles.viewKey
 		if k == "v" {
 			key = m.styles.viewPrefixKey
-		}
-		if k == "l" { // list is the view: its letter sits on the tint
-			key = key.Background(m.styles.viewCurrent.GetBackground())
 		}
 		if !strings.Contains(raw, key.Render(k)) {
 			t.Fatalf("%q is not marked on the view line: %q", k, raw)

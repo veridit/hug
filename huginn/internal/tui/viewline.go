@@ -36,31 +36,29 @@ func pickView(k string) (string, bool) {
 // line is tight the counts drop from the right first (dropped, done …),
 // then the separator.
 //
-// Its colours are stable (911j70, Jørgen 2026-11-18: the line must not
-// recolour as a whole on v): the two steps of the key trie in two tiers,
-// v the accent (step 1) and o l b ! violet (step 2); the view you are in
-// on the selection tint, the others dim. While v waits, v shows as
-// entered (the tint, as a typed key) and the one cursor (theme.cursor,
-// shared with the answer box, qpp30y) blinks in the slot after 'view:',
-// where the second key goes. Nothing else on the line changes.
+// One cue per meaning (qh9ep1 check 9, Jørgen 19:54: "the underscore
+// tells you it can be picked ... the colour tells you what you can pick";
+// "something more subtle"): v and o l b ! are underlined, the one mark of
+// a key you can press, and coloured by step of the key trie, v the accent
+// and o l b ! violet, none bold. The view you are in is told by bold alone
+// on its word; the line is dim and nothing has a background. The colours
+// are stable (911j70): v does not recolour the line. While v waits, the
+// one cursor (theme.cursor, shared with the answer box, qpp30y) blinks in
+// the slot after 'view:', where the second key goes; nothing else
+// changes.
 func (m model) viewLine(summary []string) string {
 	dim := m.styles.dim
-	v := m.styles.viewPrefixKey.Render("v")
 	slot := " "
-	if m.pendingV {
-		v = m.styles.viewEntered.Render("v")
-		if !m.vCursor.Blink { // bubbles: Blink is the hidden phase
-			slot = m.styles.cursor.Render(" ")
-		}
+	if m.pendingV && !m.vCursor.Blink { // bubbles: Blink is the hidden phase
+		slot = m.styles.cursor.Render(" ")
 	}
 	parts := []string{}
 	for _, view := range views {
-		style, key := dim, m.styles.viewKey
+		style := dim
 		if view.name == m.view && !m.detail {
-			// The whole word on the tint, its letter keeping its colour.
 			style = m.styles.viewCurrent
-			key = key.Background(style.GetBackground())
 		}
+		key := m.styles.viewKey
 		label := ""
 		if i := strings.Index(view.name, view.key); i >= 0 {
 			label = style.Render(view.name[:i]) + key.Render(view.key) + style.Render(view.name[i+1:])
@@ -69,7 +67,7 @@ func (m model) viewLine(summary []string) string {
 		}
 		parts = append(parts, label)
 	}
-	left := v + dim.Render("iew:") + slot + strings.Join(parts, dim.Render("  "))
+	left := m.styles.viewPrefixKey.Render("v") + dim.Render("iew:") + slot + strings.Join(parts, dim.Render("  "))
 	sep := m.styles.dim.Render("│ ")
 	for n := len(summary); n > 0; n-- {
 		right := strings.Join(summary[:n], m.styles.dim.Render(" · "))
