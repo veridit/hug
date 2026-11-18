@@ -1,0 +1,63 @@
+h00cs2 design proposal (hatchling, 2026-11-18)
+
+FACTS (live store, brew v0.7.54, 03:28Z)
+- dream_last_ns unset; 0 `hug mem serve`; no LaunchAgent: dream has never run.
+- dream --dry-run: retire 3 duplicates, 111 judgement items (a real pass
+  caps them at 10 vet + 10 agent-name + 20 ended = 40), 10.1 s, 377 MB.
+- hook.log, last 7 days: 54 quiet gaps >= 30 min, at least 3 every day.
+
+TRIGGER: the capture hook starts a detached "dream waiter"
+- turn_end / session_end (capture's hook, already detached by jcode) adds
+  one cheap check: dream_last_ns older than DreamEvery (20 h) and no waiter
+  queued (a lock-file try, like project.Nudge). If so it spawns
+  `hug mem dream --when-quiet` detached and returns. The hook's cost is one
+  meta read plus one lock try.
+- The waiter sleeps until QuietFor (30 min) has passed since the last
+  user turn (session_turns.last_ns), then re-checks. A new turn means it
+  sleeps again. It gives up after 12 h; the next turn_end starts another.
+- When quiet, it runs the pass niced (nice 19, GOMAXPROCS=2) under a dream
+  lock that serve's ticker also takes, so they never run twice. It sets
+  dream_last_ns and logs to hook.log.
+- serve keeps its ticker, now calling the same app.DreamIfDue.
+- Rejected: a LaunchAgent/systemd/Task Scheduler (three installers, and it
+  runs while nobody captures). Rejected: the recall hook (a person is at
+  the keyboard then, and 10 s is too slow for a hook).
+
+RETIRING STAYS PREVIEWABLE: unchanged. Only automatic-band duplicates
+retire, each pass writes an undo receipt, and judgement items go to agents
+at breaks (existing cue, at most once per session per 6 h).
+
+WHAT JØRGEN SEES
+
+  $ hug mem dream --dry-run
+  Last pass: never (dream runs by itself when you have been away 30 min;
+  next after your next turn ends)
+  Would retire 3 duplicate memories. Queued 111 new items for agents; 4 waiting.
+  next: hug mem tui
+
+  ...the next morning:
+
+  $ hug mem dream --status
+  Last pass: 2026-11-18 05:12 (7 h ago), by itself while quiet
+    retired 3 duplicates   undo: hug mem tidy undo dream-20261118T041207Z
+    queued 40 for agents   open 44
+  Next pass: after 2026-11-19 01:12, once you have been away 30 min
+
+  hook.log:
+  2026-11-18T05:12:31+01:00 dream: retired 3, queued 40, open 44, undo dream-20261118T041207Z (10.4s, waited 2h41m for quiet)
+
+  `hug mem stats` JSON also gains "dream_last": "2026-11-18T04:12:07Z"
+  (or "never").
+
+CHECKS
+1. Test: no serve, dream_last_ns 21 h old, last turn 31 min ago. The
+   waiter runs one pass and sets dream_last_ns. With a turn 5 min ago it
+   waits instead. Fails before: nothing outside serve calls dream.
+2. Test: `dream --status` and the dry-run header say "never" when unset,
+   and give the time and result when set.
+3. Live: after the release, dream_last_ns is set within a day, with no serve.
+
+FILES: daemon/dream.go (the due check moves to app.DreamIfDue, plus the
+lock), run/dream.go (--when-quiet, --status), run/capture.go (the due
+check and spawn in the hook path), app/stats.go (dream_last). There is no
+change to capture extraction.
