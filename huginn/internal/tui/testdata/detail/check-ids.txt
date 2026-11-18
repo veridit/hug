@@ -1,5 +1,5 @@
 == check id marked at 80
-HUG TASKS · list › MAINTA                                            ? 1 for you
+HUG · list › MAINTA                                                  ? 1 for you
 [doing]  [asked]  [feature]  group:root  assigned:wyvern · m                    
 created ########## · updated ########## · mainta                                
 ────────────────────────────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ Task 1 of 11 · 100% · next · previous · Esc back
                                                                                 
 j/k scroll · Enter open · h/l Tab next · answer · take · done · x drop · edit … 
 == check id marked at 140
-HUG TASKS · list › MAINTA                                                                                                        ? 1 for you
+HUG · list › MAINTA                                                                                                              ? 1 for you
 [doing]  [asked]  [feature]  group:root  assigned:wyvern · m                                                                                
 created ########## · updated ########## · mainta                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
