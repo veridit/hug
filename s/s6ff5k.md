@@ -85,6 +85,7 @@ file:real-report-h3.txt (636 bytes, sha256:d69c699a)
 file:spot-h3.txt (34818 bytes, sha256:72c39ce5)
 file:h3-wrong.txt (5287 bytes, sha256:0a6a19ca)
 file:real-spot.py.txt (1943 bytes, sha256:dbfe9f2d)
+retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): keep as is. Parked by crab's ruling (H3 failed part 2, no fourth arm), not by a date. bonehound is working Jørgen's requests 1 and 2 now; the next move on checks 2 and 3 waits for that report. Who: whoever crab assigns after bonehound; owner hatchling is no longer running. Requests left untouched.
 ## History
 - 2026-11-17T16:08 todo -> doing/active (take)
 - 2026-11-17T17:33 doing/active -> doing/waiting (wait)
