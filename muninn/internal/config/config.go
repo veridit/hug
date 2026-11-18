@@ -48,6 +48,10 @@ type Config struct {
 	// messages +0.39 relevant memories each [CI +0.25, +0.55] with no more
 	// irrelevant ones (-0.07 [-0.22, +0.10]); short messages unchanged.
 	BM25Scale float64 `json:"bm25_scale"`
+	// PassageMix > 0 scores a long memory's keyword match by its best
+	// ~600-byte passage mixed with the whole memory (c3hszg). Off (0) until
+	// measured on real messages (muninn/docs/RECALL4.md).
+	PassageMix float64 `json:"passage_mix"`
 	// SkipRecordsAbove: automatic recall leaves out "record" memories (what
 	// happened, a state at a time) for messages longer than this many bytes;
 	// 0 = never. Default 600. memory_search still finds them.

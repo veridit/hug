@@ -105,6 +105,11 @@ func variant(name string, o *search.Options, e *recall.Engine, t *recall.ToolReq
 			var f float64
 			fmt.Sscanf(part, "bm25x%g", &f)
 			o.BM25Scale = f
+		case strings.HasPrefix(part, "at"): // at1118: a label only, so a rerun of an arm on today's code gets its own output file
+		case strings.HasPrefix(part, "passage"): // passage65: best passage mixed 0.65 with the whole memory (c3hszg)
+			var f float64
+			fmt.Sscanf(part, "passage%g", &f)
+			o.PassageMix = f / 100
 		case part == "union": // top 20, no gates, no session dedupe: candidate pool for offline arms
 			o.Limit, o.MinScore = 20, 0
 			e.MinSemantic, e.MinSemanticFull, e.RelativeFloor = 0, 0, 0

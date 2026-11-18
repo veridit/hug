@@ -45,6 +45,12 @@ type Options struct {
 	// branch and project names) up and common words down, and normalises
 	// for memory length. 0 keeps the flat points.
 	BM25Scale float64
+	// PassageMix > 0 (with BM25Scale) scores a long memory's keyword match
+	// by its best passage too (c3hszg): (1-mix)*whole + mix*best, each on
+	// FTS5's BM25 scale. A passage is ~600 bytes of the body cut on
+	// paragraph breaks; a memory of one passage keeps its whole score. 0
+	// is off.
+	PassageMix float64
 }
 
 // DefaultOptions mirrors seid search.
@@ -81,7 +87,8 @@ type Searcher struct {
 
 type acc struct {
 	kw, comm, words int
-	bm              float64 // BM25 keyword score (Options.BM25Scale)
+	bm              float64  // BM25 keyword score (Options.BM25Scale)
+	df              []string // query words BM25 matched in this unit (PassageMix)
 }
 
 // QueryWords tokenises a query, dropping stopwords and 1-char tokens.
@@ -207,6 +214,11 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 	if o.BM25Scale > 0 {
 		if err := s.bm25(ctx, words, o, get); err != nil {
 			return nil, err
+		}
+		if o.PassageMix > 0 {
+			if err := s.bestPassage(ctx, words, o, scores); err != nil {
+				return nil, err
+			}
 		}
 	}
 	for _, w := range words {
@@ -687,6 +699,7 @@ func (s *Searcher) bm25(ctx context.Context, words []string, o Options, get func
 			a := get(id)
 			a.bm += v * o.BM25Scale
 			a.words++
+			a.df = append(a.df, w)
 		}
 		err = rows.Err()
 		rows.Close()
