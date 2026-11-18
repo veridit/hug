@@ -121,7 +121,11 @@ func DiscoverJcode(home string, extraHomes []string) []JcodeInstance {
 		name := filepath.Base(filepath.Dir(h))
 		add(JcodeInstance{Name: name, Root: filepath.Dir(h), Home: h})
 	}
-	sort.SliceStable(out[1:], func(a, b int) bool { return out[1+a].Name < out[1+b].Name })
+	// The global instance stays first; the others sort by name. With no
+	// ~/.jcode there may be none at all (h2yn55: out[1:] panicked).
+	if len(out) > 1 {
+		sort.SliceStable(out[1:], func(a, b int) bool { return out[1+a].Name < out[1+b].Name })
+	}
 	return out
 }
 
