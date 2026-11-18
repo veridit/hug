@@ -26,7 +26,7 @@ Memories reach the agent mid-turn when what it is doing (files touched, commands
 - [ ] ~~trigger uses CASE paths/tools from stored memory types and when-then fields, not only text similarity~~ (not relevant: crab 04:33Z: local anchor extraction counts until jrj1vq lands; replaced by check 5, hatchling, 2026-11-18)
 - [ ] hook: hug mem hook jcode-tool reads JCODE_HOOK_TOOL_NAME/TOUCHED_PATHS, prints at most 1-2 memories, under 200 ms p95, silent when nothing passes
 - [ ] ship only if judged-useful injections per 100 tool calls rises with irrelevant ones under a stated cap
-- [ ] trigger uses anchors from the memory text (paths, commands) and, once jrj1vq lands, its CASE fields; each memory at most once per session
+- [x] trigger uses anchors from the memory text (paths, commands) and, once jrj1vq lands, its CASE fields; each memory at most once per session
 
 ## Notes
 
