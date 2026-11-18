@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzt"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T22:11"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "0b724ec3 (ci/9vp9by-rebased) to land on main; all 3 checks ticked; close when landed"
+waiting_since: "2026-11-18T22:38"
+waiting_asked_by: "tigress"
 ---
 
 ## Goal
@@ -46,3 +49,4 @@ Branch 9vp9by / ci/9vp9by on main 8a45b0eb: 21b1ea39 (failing test), b6848d6e (f
 CI 44399475509 on b6848d6e: completed success, 9/9 jobs (ubuntu, windows, macos, both windows-cli shards, bench, secrets). All 3 checks ticked; not closing it myself (crab lands it).
 ## History
 - 2026-11-18T22:11 todo -> doing/active (take)
+- 2026-11-18T22:38 doing/active -> doing/waiting (wait)
