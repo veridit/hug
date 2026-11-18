@@ -152,3 +152,42 @@ func TestAskOnShippedTaskStillRefusesOtherBrokenFindings(t *testing.T) {
 		t.Fatalf("after the fix the ask is still refused: exit %d\n%s", code, out)
 	}
 }
+
+// gpyqq9, crab's second case (5z4zt4, 2026-11-18): shipped, checks 4 and 5
+// open, and both are the person's to confirm. Asking that person about an
+// open check settles shipped-not-done as asking "is it done?" does: the
+// ask goes through with --check 4 or without --check, the stage is asked,
+// and lint has no shipped-not-done.
+func TestAskAboutOpenChecksOfAShippedTask(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	args := []string{"new", "Shipped", "--goal", "G", "--purpose", "P", "--principle", "Q"}
+	for i := 1; i <= 5; i++ {
+		args = append(args, "--accept", "check")
+	}
+	for _, ask := range [][]string{
+		{"does check 4 hold?", "--to", "jhf", "--check", "4"},
+		{"do checks 4 and 5 hold?", "--to", "jhf"},
+	} {
+		id := execute(t, a, args...)["task"].(Reply)["id"].(string)
+		execute(t, a, "take", id, "--model", "test-model", "--as", "crab")
+		execute(t, a, "note", id, "shipped in v0.7.55 (5a4b3c2aaaa)")
+		for n := 1; n <= 3; n++ {
+			execute(t, a, "check", id, strconv.Itoa(n))
+		}
+		if _, out := runText(a, "show", id); !strings.Contains(out, "[shipped-not-done]") || !strings.Contains(out, "checks 4 and 5 are open") {
+			t.Fatalf("shipped with checks 4 and 5 open, want shipped-not-done:\n%s", out)
+		}
+		code, out := runText(a, append([]string{"ask", id}, append(ask, "--as", "crab")...)...)
+		if code != 0 || strings.Contains(out, "not ready to hand") {
+			t.Fatalf("ask %v on a shipped task with 2 open checks: exit %d, want 0\n%s", ask, code, out)
+		}
+		if tk := execute(t, a, "show", id, "--json")["task"].(Reply); tk["stage"] != "asked" {
+			t.Fatalf("ask %v: stage %v, want asked", ask, tk["stage"])
+		}
+		if _, out := runText(a, "lint", id); strings.Contains(out, "shipped-not-done") {
+			t.Fatalf("ask %v: lint still reports shipped-not-done:\n%s", ask, out)
+		}
+	}
+}
