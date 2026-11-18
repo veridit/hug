@@ -11,6 +11,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - TestTmuxReload no longer fails on a busy machine (hfkt1n). Under load the tmux server reads hug's frame in pieces, and the wait after Esc took the first capture whose top line was the list, with the detail's lower rows and its "reloaded hug" line still below it. It now waits for the list's own key bar too. The wait after R also waits until the reloaded hug's first load is done, so "refreshing" in the header no longer fails "the same place". TestReloadFramesSettle holds both waits to frames captured under load.
 
+- A withdrawn question reads as withdrawn: `hug task show` prints `withdrawn <at> (<why>)` under it, and the TUI detail draws it dim with its time; ASKED never counts it (nanvnt).
+
 ## v0.7.72 - 2026-11-18
 
 - The README leads with `hug`: one command, named for Old Norse *hugr* (mind), with Odin's ravens as mascots, Huginn for tasks and Muninn for memory (p277bp check 1). Its commands table lists only `hug` commands, adds `hug apps` and `hug upgrade`, and says memories sync on `hug/memory`.

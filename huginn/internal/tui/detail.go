@@ -1198,12 +1198,18 @@ func (m model) questionRecord(t task.Task) []string {
 		case q.Answer != nil:
 			head += " · answered"
 		case q.Withdrawn != nil:
-			head += " · withdrawn"
+			// nanvnt: withdrawn, when; its text dim too, so it never
+			// reads as a question still waiting.
+			head += " · withdrawn " + strings.Replace(q.Withdrawn.At, "T", " ", 1)
 		default:
 			head += " · open"
 		}
 		out = append(out, m.styles.dim.Render(head))
 		for _, l := range strings.Split(strings.TrimRight(q.Text, "\n"), "\n") {
+			if q.Answer == nil && q.Withdrawn != nil {
+				out = append(out, m.styles.dim.Render("   "+safe(l)))
+				continue
+			}
 			out = append(out, "   "+safe(l))
 		}
 		if a := q.Answer; a != nil {
