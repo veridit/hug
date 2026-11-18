@@ -261,6 +261,49 @@ func TestCatchUpStopsOnUnreadableFileAndRestores(t *testing.T) {
 	})
 }
 
+// Both clones moved the board on their own (each ran hug upgrade): B's
+// sync stops all the same, and its catch-up leaves its own move out and
+// replays the rest.
+func TestCatchUpWhenBothClonesMoved(t *testing.T) {
+	t.Parallel()
+	a, b, _ := clones(t)
+	boardA := filepath.Join(a.Cwd, TaskDir)
+	boardB := filepath.Join(b.Cwd, TaskDir)
+	offline(t, a, func() {
+		offline(t, b, func() {
+			ids := oldLayoutBoard(t, a)
+			git(t, boardA, "push", "-q", "origin", "HEAD:"+TaskBranch)
+			git(t, boardB, "pull", "-q", "--rebase", "origin", TaskBranch)
+			first := oldPath(t, boardB, ids[0])
+			oldWrite(t, boardB, "hug task note "+ids[0], func() { oldNote(t, boardB, first, "2026-11-18T06:01 B before its move") })
+			for _, c := range []*App{a, b} {
+				if code, out := runText(c, "upgrade", "--apply"); code != 0 && code != UpgradePending {
+					t.Fatalf("upgrade: exit %d\n%s", code, out)
+				}
+			}
+			execute(t, b, "note", ids[1], "B after its move")
+			execute(t, a, "sync")
+			_, err := b.Execute(context.Background(), []string{"sync"})
+			want := "sync stopped: this clone and the remote each moved the board from layout 2 to 3 on their own, and this clone's 3 unpushed commits include its own move; nothing was rebased, local commits are kept\nfix: hug upgrade"
+			if err == nil || err.Error() != want {
+				t.Fatalf("B's sync: %v\nwant:\n%s", err, want)
+			}
+			code, out := runText(b, "upgrade", "--apply")
+			t.Logf("B's upgrade --apply: exit %d\n%s", code, out)
+			if code != 0 || !strings.Contains(out, "hug upgrade: 4 tasks to C/ID.md, rank: and group: in the file (layout 3): not replayed (this clone's own layout move; the remote's stands)") {
+				t.Fatalf("exit %d\n%s", code, out)
+			}
+			if f := taskFile(t, b, ids[0]); !strings.Contains(f, "B before its move") {
+				t.Fatalf("%s:\n%s", ids[0], f)
+			}
+			if f := taskFile(t, b, ids[1]); !strings.Contains(f, "B after its move") {
+				t.Fatalf("%s:\n%s", ids[1], f)
+			}
+			execute(t, b, "sync")
+		})
+	})
+}
+
 // A clone with nothing unpushed is fast-forwarded across the move.
 func TestReadOnlyCloneFastForwardsAcrossLayoutMove(t *testing.T) {
 	t.Parallel()
