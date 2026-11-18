@@ -25,7 +25,6 @@ By design: the session-start hook drains the inbox for that coordinator name; on
 From mizaru's gmzd87 open questions 2 and 3 (2026-11-18). Inbox: <JCODE_HOME>/hug-inbox/<session>/; turn_start hook already runs hug's Acknowledge. Board cue: muninn/internal/recall/boardcue.go (duckling's area).
 
 ## Depends on
-- gmzd87
 
 ## Acceptance
 - [x] A request written with no live coordinator session shows 'not delivered', and the coordinator's next session start receives it once; a test fails first.
