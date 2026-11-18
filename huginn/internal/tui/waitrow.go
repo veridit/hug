@@ -295,7 +295,8 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 		return m.styles.selected.Render(fit(line, width))
 	}
 	// The head names the stage in its colour: amber and bold when it
-	// waits on you, the depends red, else dim (zhvkmj, crab 02:52).
+	// waits on you, the calm depends colour, else dim (zhvkmj, crab
+	// 02:52; check 6: depends is no problem, not red).
 	style := m.styles.dim
 	if m.stageOf(t) == "depends" {
 		style = m.styles.status["depends"]

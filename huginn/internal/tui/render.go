@@ -18,7 +18,7 @@ type theme struct {
 	normal, dim, accent, selected lipgloss.Style
 	// One colour per meaning (zhvkmj, crab 02:52): forYou (amber) is
 	// only what waits on the reader: asked of you, '? N for you', ASKED,
-	// a confirm. problem (the depends red) is only what is wrong: broken
+	// a confirm. problem (red) is only what is wrong: broken
 	// lint, its ! and LINT, a file that cannot be read. A wait on a thing
 	// and advice are dim.
 	forYou, problem lipgloss.Style
@@ -48,7 +48,11 @@ type theme struct {
 // is in header-spec.md 'Colours' (zhvkmj, crab 03:01).
 var (
 	forYouColour  = [2]string{"#ffb454", "#995200"} // waits on you
-	problemColour = [2]string{"#ff8585", "#ae2525"} // something is wrong: depends, broken lint
+	problemColour = [2]string{"#ff8585", "#ae2525"} // something is wrong: broken lint, a file that cannot be read
+	// dependsColour: a task waits on another's checks (zhvkmj check 6,
+	// Jørgen 19:52: depends "seems like dependencies is a problem, it
+	// isn't"): a calm indigo of its own, not red, not amber, not dim.
+	dependsColour = [2]string{"#6b6bd6", "#2e2e78"}
 	// stepTwoColour is the second key of a two-key trie, o l b ! after v
 	// (911j70, puppy's mock/grid).
 	stepTwoColour = [2]string{"#c9b3ff", "#6a3fb0"}
@@ -82,7 +86,7 @@ func newTheme() theme {
 	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)
 	t.columnCursor = t.selected.Underline(true)
 	for i, s := range []string{"todo", "doing", "done", "depends", "dropped"} {
-		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", "#ff8585", "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", "#ae2525", "#586474"}[i])
+		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", dependsColour[0], "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", dependsColour[1], "#586474"}[i])
 	}
 	// Types and priorities are no problem and wait on no one: none takes
 	// the problem red or the for-you amber, and no two types look alike
