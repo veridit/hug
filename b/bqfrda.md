@@ -1,15 +1,20 @@
 ---
 id: bqfrda
 title: "detach leaves a citation that lint reports as missing-file twice"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-18
 updated: 2026-11-18
+doing_since: "2026-11-18T14:03"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Seen on piglet's gpyqq9 branch tests and on main. Related: the ask gate sees onl
 - [ ] A genuinely missing cited file is reported exactly once (test).
 
 ## Notes
+
+
+## History
+- 2026-11-18T14:03 todo -> doing/active (take)
