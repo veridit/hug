@@ -851,6 +851,11 @@ func short(s string) string {
 	return s
 }
 
+// LogHook appends one line to the memory store's hook.log: how a hook
+// reports a problem without breaking the harness (cmd/hug's refusal of an
+// unknown variable uses it, a0p5kt).
+func LogHook(format string, args ...any) { logHook(format, args...) }
+
 func logHook(format string, args ...any) {
 	p := filepath.Join(config.DataDir(), "hook.log")
 	os.MkdirAll(filepath.Dir(p), 0o700)

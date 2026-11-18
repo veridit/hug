@@ -55,14 +55,19 @@ func TestUnknownHUGVariableRefused(t *testing.T) {
 	if _, err := os.Stat(store); !os.IsNotExist(err) {
 		t.Errorf("the refused command touched the store: %v", err)
 	}
-	// A hook stays harmless: it does nothing and exits 0.
+	// A hook stays harmless: it does nothing to the store, exits 0, and
+	// leaves one line in the hook log naming the variable and the fix.
 	capture(t, &os.Stderr, func() {
 		if got := run("hug", []string{"mem", "hook", "claude"}); got != 0 {
 			t.Errorf("hook exit %d, want 0", got)
 		}
 	})
-	if _, err := os.Stat(store); !os.IsNotExist(err) {
-		t.Errorf("the refused hook touched the store: %v", err)
+	log, err := os.ReadFile(filepath.Join(store, "data", "hook.log"))
+	if err != nil || !strings.Contains(string(log), "hug mem hook: refused, did nothing: not a hug variable: "+typo) || !strings.Contains(string(log), "fix: unset "+typo+"; export HUG_SYNC=off") {
+		t.Errorf("hook log: %v\n%s", err, log)
+	}
+	if entries, _ := os.ReadDir(filepath.Join(store, "data")); len(entries) != 1 {
+		t.Errorf("the refused hook wrote more than its log line: %v", entries)
 	}
 	// a0p5kt check 3: help still answers and lists every user-set
 	// variable, and no test one.

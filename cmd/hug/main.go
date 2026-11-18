@@ -71,6 +71,9 @@ func run(name string, args []string) int {
 	// harness is never broken (exit 2 blocks a Claude Code prompt).
 	if !helpOrVersion(args) && refuseUnknown(os.Stderr, nil, commandName(name, args)) {
 		if isHook(name, args) {
+			// Not silent: the hook log says which variable and the fix.
+			problem, fix := env.Refusal(env.Unknowns(nil))
+			muninn.LogHook("%s: refused, did nothing: %s; fix: %s", commandName(name, args), problem, fix)
 			return 0
 		}
 		return 2
