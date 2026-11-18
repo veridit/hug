@@ -43,6 +43,7 @@ Fix path: 34r1ft check 2 (iwazaru, guard in muninn/internal/project SyncBranch, 
 ## Notes
 
 
+bonehound: local backup written, nothing on the remote touched (no delete, no push). /Users/jhf/.jcode/scratch/wxsyc5/hug-memory-1abcc497.bundle: git bundle create of refs/remotes/origin/hug/memory after git fetch origin hug/memory; head 1abcc4979512cf17c030abfe87c3ca9ba78d5673, git rev-list --count = 46; 114821 bytes, sha256 fbde393e2c5a0c0acf1fae16f9dced4c541f7bf660c3b54330d675971d261a27. Verify (in a repo): 'The bundle records a complete history.' / 'The bundle uses this hash algorithm: sha1'. Test clone /Users/jhf/.jcode/scratch/wxsyc5/test-clone (remote removed): HEAD 1abcc497, 46 commits, wc -l memories.jsonl = 868. Restore: git fetch BUNDLE refs/remotes/origin/hug/memory:refs/heads/hug/memory.
 ## History
 - 2026-11-18T16:36 todo -> doing/active (take)
 - 2026-11-18T16:36 doing/active -> doing/asked (ask)
