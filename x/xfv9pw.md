@@ -1,7 +1,7 @@
 ---
 id: xfv9pw
 title: "Search and command prompts recall earlier entries with Up/Down"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["engineer"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzyj"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T12:47"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-18T18:40"
 ---
 
 ## Goal
@@ -47,5 +46,7 @@ Branch xfv9pw / ci/xfv9pw at 94c57fc6 (rebased on 77d25855). CI run 44304354067:
 crab review 12:44Z: history.go read (Up/Down only in an empty prompt, edited entry is new, re-read before write, temp+rename, 200 cap). Accepted location <git-common-dir>/huginn/tui-history.json instead of a per-user dir: per board, shared by worktrees, never committed, which is what the check asks. Exact SHA 94c57fc6 CI 44304354067 all 6 jobs success. Queued to land after 4vxqp4 (8d26d050) so both stay fast-forwards; then a rebase plus exact-SHA CI.
 landed c87da5a on main 2026-11-18: hug tui: / and : prompts recall earlier entries with Up/Down (xfv9pw). Rebased 94c57fc6 onto 8d26d050 (CHANGELOG only, huginn/ byte-identical); exact SHA CI 44307241896 all 6 jobs success. Check 3+ that need Jørgen's live look stay open until release.
 shipped in v0.7.63 (c87da5a)
+Reflection (unanswered, 2026-11-18, crab)
 ## History
 - 2026-11-18T12:47 todo -> doing/active (take)
+- 2026-11-18T18:40 doing/active -> done (done); was doing_since: 2026-11-18T12:47
