@@ -4,7 +4,7 @@ title: "Import is a one-time move: --cleanup retires the source, re-import is re
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["kestrel"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzz98"
