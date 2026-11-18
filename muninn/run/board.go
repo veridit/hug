@@ -29,7 +29,7 @@ func boardSource(ctx context.Context, on bool, cwd, name string, activity func(s
 		}
 		defer snap.Close()
 		in := &recall.BoardInput{Self: recall.BoardSelf{Name: name, Model: act.Model, Branch: snap.Place.Branch, Worktree: snap.Place.Worktree, Linked: snap.Place.Linked}}
-		in.Tasks = boardTasks(snap.Tasks)
+		in.Tasks = boardTasksFor(snap.Tasks, name)
 		in.Coordinator = snap.Coordinator
 		in.Actions = boardActions(act.Actions, snap.Place.Worktree)
 		if wantLint {
@@ -49,6 +49,27 @@ func boardTasks(ts []board.Task) []recall.BoardTask {
 	out := make([]recall.BoardTask, 0, len(ts))
 	for _, t := range ts {
 		out = append(out, BoardTask(t))
+	}
+	return out
+}
+
+// boardTasksFor is boardTasks as session name sees it: a request hug
+// already delivered to name (or name acknowledged) is not cued to it again
+// (bbxdd7); it is in that session's transcript. Another session (the
+// assignee the cue routes it to) still hears it.
+func boardTasksFor(ts []board.Task, name string) []recall.BoardTask {
+	out := boardTasks(ts)
+	if strings.TrimSpace(name) == "" {
+		return out
+	}
+	for i, t := range ts {
+		var keep []recall.BoardRequest
+		for j, r := range t.Requests {
+			if !board.DeliveredTo(r, name) {
+				keep = append(keep, out[i].Requests[j])
+			}
+		}
+		out[i].Requests = keep
 	}
 	return out
 }

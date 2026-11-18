@@ -73,3 +73,11 @@ func MCPInstructions(prefix string) string { return mcp.PrefixedInstructions(pre
 func Acknowledge(ctx context.Context, home, sid string) ([]string, error) {
 	return cli.Acknowledge(ctx, home, sid)
 }
+
+// DeliverPending is hug's hook at the start of jcode session sid's turn
+// (JCODE_HOME home): what could not reach the coordinator this session is
+// named after is handed to it now, once (bbxdd7). It returns what it
+// delivered, "ID request N" each.
+func DeliverPending(ctx context.Context, home, sid string, getenv func(string) string) ([]string, error) {
+	return cli.DeliverPending(ctx, home, sid, getenv)
+}

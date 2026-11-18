@@ -223,3 +223,15 @@ func (g repoGit) Diff(_ context.Context, a, b string) ([]cache.Change, error) {
 	}
 	return out, err
 }
+
+// DeliveredTo reports whether request r already reached the session named
+// name (bbxdd7): hug delivered it to name, or name acknowledged it. Such a
+// request is in that session's transcript, so the board cue does not name
+// it to that session again.
+func DeliveredTo(r task.Request, name string) bool {
+	name = strings.TrimSpace(name)
+	if name == "" || !strings.EqualFold(r.Receipt.To, name) {
+		return false
+	}
+	return r.Receipt.Delivered != "" || r.Receipt.State != task.ReceiptPending
+}

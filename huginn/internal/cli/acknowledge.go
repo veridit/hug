@@ -159,3 +159,105 @@ func transcriptHas(base string, items []harness.InboxItem, since time.Time) map[
 	}
 	return seen
 }
+
+// DeliverPending is the coordinator's next session picking up what could
+// not reach it (bbxdd7): hug's hook in jcode session sid (JCODE_HOME home)
+// at its turn's start. For each item waiting for the session's name
+// (home/hug-inbox/pending/NAME/), still pending and not delivered on its
+// task, it hands the item to this session through the daemon, as
+// Deliver does, and records "delivered to NAME (sid)" on the task: the
+// same inbox, so Acknowledge then marks it received from the transcript.
+// It runs under the board's turn and re-reads History there, so one item
+// is delivered once however many sessions or homes hold a copy. With
+// nothing waiting, it costs one ReadDir of a missing folder. getenv is the
+// hook's environment, for the daemon's socket.
+func DeliverPending(ctx context.Context, home, sid string, getenv func(string) string) (delivered []string, err error) {
+	name := harness.SessionName(sid)
+	if name == "" {
+		return nil, nil
+	}
+	items, files := harness.Pending(home, name)
+	for i, it := range items {
+		done, err := deliverPendingItem(ctx, home, sid, getenv, it)
+		if err != nil {
+			return delivered, err
+		}
+		if done != "" {
+			delivered = append(delivered, done)
+		}
+		// Delivered now, or already by another session: nothing is owed.
+		// Not delivered (the daemon refused): it stays for the next start.
+		if done != "" || !stillOwed(ctx, it) {
+			os.Remove(files[i])
+		}
+	}
+	return delivered, nil
+}
+
+// deliverPendingItem delivers one pending item to sid, under the board's
+// turn; "ID kind N" when it did, "" when nothing was owed or the daemon
+// did not take it.
+func deliverPendingItem(ctx context.Context, home, sid string, getenv func(string) string, it harness.InboxItem) (string, error) {
+	a := &App{Cwd: it.Board, In: strings.NewReader(""), Out: io.Discard, Err: io.Discard}
+	s, err := a.open(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer s.c.Close()
+	release := s.turn()
+	defer release()
+	s.s.Invalidate()
+	d, err := s.s.Get(it.Task)
+	if err != nil {
+		return "", nil // the task is gone: nothing to deliver
+	}
+	item := task.Item{Kind: it.Kind, N: it.N}
+	r, ok := d.ItemReceipt(item)
+	if !ok || r.State != task.ReceiptPending || r.Delivered != "" {
+		return "", nil
+	}
+	by, text := "", ""
+	var answer *task.Answer
+	switch it.Kind {
+	case "request":
+		for _, q := range d.Task.Requests {
+			if q.N == it.N {
+				by, text = q.By, q.Text
+			}
+		}
+	case "answer":
+		if answer = d.AnswerN(it.N); answer != nil {
+			by, text = answer.By, answer.Text
+		}
+	}
+	it.Token = newToken(d.Task.ID, item)
+	ss := harness.Session{ID: sid, Home: home}
+	took, _, err := harness.DeliverTo(ss, getenv, deliverMessage(it.Board, d.Task, item, by, text, answer, it.Token), it)
+	if err != nil || !took {
+		return "", err
+	}
+	if _, err = s.s.Delivered(d.Task.ID, item, it.To, sid, ""); err != nil {
+		return "", err
+	}
+	if err = s.commit("hug task " + item.Name() + " on " + d.Task.ID + " delivered to " + it.To + " at its session's start"); err != nil {
+		return "", err
+	}
+	return d.Task.ID + " " + item.Name(), nil
+}
+
+// stillOwed reports whether it is still pending and undelivered on its
+// task (a read outside the turn: only to drop a stale pending file).
+func stillOwed(ctx context.Context, it harness.InboxItem) bool {
+	a := &App{Cwd: it.Board, In: strings.NewReader(""), Out: io.Discard, Err: io.Discard}
+	s, err := a.open(ctx)
+	if err != nil {
+		return true
+	}
+	defer s.c.Close()
+	d, err := s.s.Get(it.Task)
+	if err != nil {
+		return false
+	}
+	r, ok := d.ItemReceipt(task.Item{Kind: it.Kind, N: it.N})
+	return ok && r.State == task.ReceiptPending && r.Delivered == ""
+}
