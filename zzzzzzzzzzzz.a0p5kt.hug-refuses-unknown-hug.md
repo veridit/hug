@@ -9,10 +9,13 @@ labels: []
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T03:41"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "main CI 44226874819 on 085a81ce"
+waiting_since: "2026-11-18T03:57"
+waiting_asked_by: "wyvern"
 ---
 
 ## Goal
@@ -40,3 +43,4 @@ Known today (git grep on main): HUG_HOME, HUG_SYNC, HUG_MODEL, HUG_USER, HUG_NO_
 Landed on main 085a81ce (unchecked until CI is green). Check 1: TestUnknownHUGVariableRefused (cmd/hug/env_test.go) runs hug mem forget abcd with HUG_NO_SYNC=1 (spelt in parts) and gets exit 2, the line 'hug mem forget: not a hug variable: HUG_NO_SYNC (nearest: HUG_SYNC)', 'fix: unset HUG_NO_SYNC; export HUG_SYNC=off', and HUG_HOME not created. On main the same test got: 'exit 1, want 2', stderr missing both lines, 'the refused command touched the store', 'the refused hook touched the store', 'hug help does not list HUG_HOME'. Check 2: TestEveryHUGNameIsKnown (internal/env/known_test.go) walks the repo (code, scripts, .github, docs; not CHANGELOG.md or testdata). Before the fix it failed on 5 lines: 4 HUG_NO_SYNC comments and capture-e2e.py's HUG_SYNTHETIC_MISSING_CREDENTIAL, which is renamed SYNTHETIC_MISSING_CREDENTIAL since it isn't a hug variable. Check 3: hug help ends with 'Environment (any other HUG_* variable is refused):' and 9 lines (HUG_HOME USER MODEL SYNC NO_EMBED FULL_SPEED CPUPROFILE BIN_DIR VERSION); the test asserts each user-set Known entry is listed and HUG_TEST_SETTLE is not. Hooks (mem hook, mem capture --hook) refuse silently with exit 0. -race: cmd/hug 21.3s, internal/env 4.8s, muninn/run 34.1s, all ok. Running processes carried one more unknown name, my own w40cmk bench's HUG_BENCH_GITLOG, now renamed BENCH_GITLOG.
 ## History
 - 2026-11-18T03:41 todo -> doing/active (take)
+- 2026-11-18T03:57 doing/active -> doing/waiting (wait)
