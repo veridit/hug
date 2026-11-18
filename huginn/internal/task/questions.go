@@ -15,6 +15,7 @@ import (
 //
 //	landed-unchecked  (a) a commit naming it reached main, no check settled
 //	shipped-not-done  (c) a release contains it, it is not done
+//	checks-all-hold   (f) waiting, every check and child done (ChecksHoldFindings)
 //	branch-gone       (e) doing, its branch merged or deleted (BranchFindings)
 //	todo-has-commit   (d) todo, but a commit naming it reached main
 //	doing-idle        (b) doing and active, nothing on it for IdleAfter
@@ -33,7 +34,7 @@ var (
 )
 
 // questionRank orders the question codes: lower asks first.
-var questionRank = map[string]int{"landed-unchecked": 0, "shipped-not-done": 1, "branch-gone": 2, "todo-has-commit": 3, "doing-idle": 4}
+var questionRank = map[string]int{"landed-unchecked": 0, "shipped-not-done": 1, "checks-all-hold": 2, "branch-gone": 3, "todo-has-commit": 4, "doing-idle": 5}
 
 // QuestionCode reports whether code is one of the question codes.
 func QuestionCode(code string) bool {
@@ -131,6 +132,68 @@ func IdleFindings(ts []Task, last map[string]time.Time, asked map[string]bool, n
 		out = append(out, Finding{Path: t.Path, Line: 1, Code: "doing-idle",
 			Problem: "doing, but nothing on it for " + hours(now.Sub(seen)) + ": no note, check or commit naming " + t.ID + " since " + seen.Format("2006-01-02 15:04") + " (task branch and main history); " + who + ": still on it?",
 			Fix:     "hug task note " + t.ID + ` "where it stands"`})
+	}
+	return out
+}
+
+// ChecksHoldFindings asks the owner of each doing/waiting task whose every
+// check holds (ticked or struck) and whose every child is done or dropped
+// whether it is done (f, bg1rd8; Jørgen on 44w1ev: all 5 checks and 3
+// children done, a day in waiting on a long-landed "landing slot", and
+// nothing told anyone). The wait says what the task waited on, not that
+// work is left, so a stale one hides a finished task. Only when hug task
+// done would go through (no open dependency or board condition), so the
+// fix is one hug takes. Not doing/active (the session's own board line
+// says close it, and the check that ticks the last item says so too), not
+// asked or review (a person decides), not a wait that asks a person later
+// (hug task ask --after), and not before the wait is IdleAfter old: parking
+// a finished task for a review or CI run is normal, a wait nobody ends is
+// not. A wait without a readable waiting_since counts as old.
+func ChecksHoldFindings(ts []Task, now time.Time) []Finding {
+	var kids map[string][]Task
+	var out []Finding
+	for _, t := range ts {
+		if t.State != "doing" || t.Stage != "waiting" || len(t.Acceptance) == 0 || strings.TrimSpace(t.Fields["waiting_ask_what"]) != "" {
+			continue
+		}
+		since, err := time.ParseInLocation("2006-01-02T15:04", strings.TrimSpace(t.Fields["waiting_since"]), time.Local)
+		if err == nil && now.Sub(since) < IdleAfter {
+			continue
+		}
+		holds := true
+		for _, a := range t.Acceptance {
+			holds = holds && a.Settled()
+		}
+		if !holds || len(Blocked(t, ts)) > 0 || len(Unmet(t, ts, true)) > 0 {
+			continue
+		}
+		if kids == nil {
+			kids = ChildIndex(ts)
+		}
+		children := kids[strings.ToLower(t.ID)]
+		for _, c := range children {
+			holds = holds && (c.State == "done" || c.State == "dropped")
+		}
+		if !holds {
+			continue
+		}
+		who := strings.Join(t.Assignee, ", ")
+		if who == "" {
+			who = "nobody"
+		}
+		waited := ""
+		if err == nil {
+			waited = " for " + hours(now.Sub(since))
+		}
+		n := itoa(len(t.Acceptance))
+		what := n + " of " + n + " checks are ticked or struck"
+		if len(children) > 0 {
+			c := itoa(len(children))
+			what += " and " + c + " of " + c + " children are done"
+		}
+		out = append(out, Finding{Path: t.Path, Line: 1, Code: "checks-all-hold",
+			Problem: "every check holds, but doing/waiting on " + oneLineFix(t.Fields["waiting_on"]) + waited + ": " + what + "; " + who + ": is it done?",
+			Fix:     "hug task done " + t.ID})
 	}
 	return out
 }

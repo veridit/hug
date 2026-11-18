@@ -6,6 +6,7 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- A waiting task with nothing left is asked to finish (bg1rd8). `hug task lint` reports `checks-all-hold` on a doing/waiting task whose every check is ticked or struck and whose every child is done, once the wait is over 2 hours old: "every check holds, but doing/waiting on landing slot for 25 hours: ...; wyvern: is it done?", fix `hug task done ID`. Before, a stale wait hid such a task (44w1ev sat a day). Not while an open dependency or board condition would refuse done, and not for `hug task ask --after` waits.
 - `hug task ask ID --to NAME` on a shipped task is no longer refused by the `shipped-not-done` finding that the ask settles (gpyqq9). A shipped task with every check ticked ("is it done?") can now be asked of its owner: the stage becomes asked and lint no longer reports it. Every other broken finding still holds the ask back, with its fix.
 - The TUI sort picker (`s`) names the default order (nch9d4): `r  rank` is a row, "board order, the default: moves work only in it", and `r` goes back to it at once from any sort, clearing every field. The picker shows the order in force (`now: priority ↓`, or `now: rank (board order)`) apart from the one being built (`new: type · updated ↓`, or `new: nothing picked yet, Enter or r gives rank`), so an empty draft no longer reads as `sort: rank` while the rows are sorted by priority.
 

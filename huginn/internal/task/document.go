@@ -60,6 +60,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"Acceptance requires", "no-acceptance"},
 	{"landed, but no check", "landed-unchecked"},
 	{"shipped, but ", "shipped-not-done"},
+	{"every check holds, but ", "checks-all-hold"},
 	{"todo, but commit ", "todo-has-commit"},
 	{"doing, but nothing on it", "doing-idle"},
 	{"case-insensitive filename collision", "filename-collision"},
