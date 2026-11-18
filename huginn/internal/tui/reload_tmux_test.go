@@ -158,13 +158,14 @@ func TestTmuxReload(t *testing.T) {
 	}
 	// R with the palette open is typed into the palette: no reload (check 2).
 	send("-l", ":")
-	wait("COMMAND PALETTE", 5*time.Second)
+	wait("GLOBAL", 5*time.Second) // the palette's global group (05r3pg)
 	send("-l", "R")
 	time.Sleep(1500 * time.Millisecond)
 	if s := screen(); strings.Contains(s, "reloaded hug") {
 		t.Fatalf("reloaded with the palette open:\n%s", s)
 	}
-	send("Escape")
+	send("Escape") // the typed R goes (05r3pg: Esc goes up a level)
+	send("Escape") // the palette closes
 	wait("hug v0.0.1 → v0.0.2 · R reloads", 5*time.Second)
 	send("-l", "R")
 	after := wait("reloaded hug v0.0.2", 15*time.Second)
