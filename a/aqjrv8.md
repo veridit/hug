@@ -37,6 +37,10 @@ MainCI44262023787 all6green; migration277 normalized responses identical. Worktr
 ## Acceptance
 - [ ] Tag/main pushed, release workflow success, installed hug version v0.7.59
 
+## Requests
+- 2026-11-18T12:19 request 1 by jhf:
+  Isn't this obsolete now?
+
 ## Notes
 
 
@@ -44,3 +48,4 @@ Release44264072826 failed before build/publish: TestSettledWaitsForSlowChild syn
 ## History
 - 2026-11-18T09:05 todo -> doing/active (take)
 - 2026-11-18T09:45 doing/active -> doing/waiting (wait)
+- 2026-11-18T12:19 request 1 by jhf
