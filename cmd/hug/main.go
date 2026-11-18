@@ -39,7 +39,6 @@ Usage:
   hug version
 
 Details: hug task help, hug mem --help.
-The commands huginn (= hug task) and muninn (= hug mem) work too.
 `
 
 func main() { os.Exit(run(filepath.Base(os.Args[0]), os.Args[1:])) }

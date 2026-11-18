@@ -1,5 +1,8 @@
 # huginn: design draft
 
+> A design record from 2026-11, before hug was one tool; commands are written
+> as typed now (`hug task ...`), and tasks live on `hug/tasks` at `.hug/tasks/`.
+
 Huginn is Odin's raven of thought. muninn remembers; huginn keeps you heading
 straight. A fast, crash-proof task tracker for people and agents, one markdown
 file per task, kept on its own git branch.
@@ -18,14 +21,14 @@ says so.
 - **D2 deps block by default** ("AI will often ignore warnings"). Configurable
   in `huginn.toml` as `deps = "block" | "warn"`. `take` and `done` refuse with
   exit code 3 and name the open deps.
-- **D3 `next` exists, with filters**: `huginn next --type bug`, `--label`,
+- **D3 `next` exists, with filters**: `hug task next --type bug`, `--label`,
   `--mine`. Adds a `type:` field: `feature | bug | chore | spike | docs`,
-  fixed list, each with a one-line description shown by `huginn types`.
+  fixed list, each with a one-line description shown by `hug task types`.
 - **D4 SUPERSEDED by D6** (one branch per tool). Original text: project
   memories move to a shared branch with tasks. Still true: main gets no
   memory or task commits.
 - **D5 TUI now, web UI later** for both tools. The web UI runs locally
-  (`huginn serve`, `muninn serve`) so it can be opened from vendor apps
+  (`hug mem serve` for memories; tasks have none yet) so it can be opened from vendor apps
   (Claude, ChatGPT/Codex, ...) to view and edit tasks and memories.
 - **Later, maybe**: a hosted service (small fee) to view, edit and sync without
   self-hosting. Its point: not being locked in to one company's tool. Separate
@@ -61,7 +64,7 @@ says so.
 ## Storage
 
 - Branch `huginn` (orphan), checked out as a worktree at `.huginn/` in the repo.
-- `huginn init` creates the branch (or fetches it), adds the worktree, and
+- `hug task init` creates the branch (or fetches it), adds the worktree, and
   writes `.huginn/` into `.git/info/exclude`, so main never sees it and no
   `.gitignore` edit is needed.
 - Layout inside the worktree (D7, user 15:48: folders are groups):
@@ -80,9 +83,9 @@ says so.
     (`id:`), which wins if a file name gets mangled; `lint` flags a mismatch.
   - The file system is the interface. Each of these is a plain rename that
     keeps the id, so nothing breaks:
-    - group: move the file to another folder (`huginn mv <id> <group>` or
+    - group: move the file to another folder (`hug task mv <id> <group>` or
       `git mv`, a file manager, an editor);
-    - priority: change the rank prefix (`huginn move <id> --before <id>`
+    - priority: change the rank prefix (`hug task move <id> --before <id>`
       writes a rank between the neighbours; a human can type `100.`, `150.`);
     - slug: rename it to anything, or let `huginn` follow the title.
   - Rank lives only in the file name, not in the frontmatter, so
@@ -92,7 +95,7 @@ says so.
     give one global order; a group view is the same order, filtered.
   - Done tasks stay where they are; status is a field, not a folder.
   - `huginn.toml` project config.
-- `huginn sync`: commit local changes, `pull --rebase`, push. Only the huginn
+- `hug task sync`: commit local changes, `pull --rebase`, push. Only the task
   branch. Conflicts are per file and rare because each task is its own file.
 - Memories live on their own `muninn` branch (D6).
 
@@ -153,7 +156,7 @@ the cache in the same step.
     to create tasks between syncs. 100 unsynced tasks against 10k known ones:
     100 x 10k / 1.07e9 = 0.09 %.
   - A clash that still happens is caught by `lint` (duplicate id) at sync and
-    fixed by `huginn reid <file>`.
+    fixed by a planned `reid <file>` command (not built; lint reports it).
 - Never changes. It is in the file name and the frontmatter; title, slug,
   folder and rank are all free to change around it.
 - **Every task has two names (D10, user 15:50): the id for machines, the
@@ -169,7 +172,7 @@ the cache in the same step.
   - Input accepts either: an id, a unique id prefix, or a unique slug. A slug
     is resolved to its id once, at the edge; an ambiguous slug lists the
     matching `slug  id` pairs and exits 2.
-- Short refs: any unique prefix works (`huginn show k7m`).
+- Short refs: any unique prefix works (`hug task show k7m`).
 - Imported ids (`STATBUS-093`) kept as `aliases:`, resolvable everywhere.
 
 ## Ordering
@@ -319,11 +322,11 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
   tests 2026-11-05: cheap models call `help` readily, 24/24, but invent
   commands when only given a pointer, and mangle anything they must
   hand-format):
-  1. **Self-guiding output.** `huginn` alone and `huginn help` print a
+  1. **Self-guiding output.** `hug task` alone and `hug task help` print a
      short command list with one example each (under 40 lines). Every
      command's text output ends with one `next:` line naming the likely
      follow-up command, filled in with the real id
-     (`next: huginn take k7m2qx`). `--json` carries it as `"next"`.
+     (`next: hug task take k7m2qx`). `--json` carries it as `"next"`.
   2. **Errors say the fix.** One line of what is wrong, then the exact
      command that fixes it. Unknown values (status, type, flag) exit 2,
      list the valid values and the closest match; no silent guessing.
@@ -356,12 +359,12 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
   between the neighbours (`A` vs `A0`, tied keys) or the key would pass 12
   chars, huginn re-keys the smallest contiguous window around the insertion
   point, as pure renames in the same commit, and reports the renamed ids.
-  `huginn rebalance` exists for humans; agents never need it.
+  `hug task rebalance` exists for humans; agents never need it.
 - **D16 (foreman 22:53) `next --mine`** = assigned to me, `doing` before
   `todo`, unblocked, then rank. Plain `next` stays untaken `todo` only.
 - **D17 (foreman 22:53, user rule "agents ignore warnings, so block")**
   `done` with unchecked acceptance blocks, exit 3, listing each item with
-  `huginn check <id> <n>`. `acceptance = "block" | "warn"` in huginn.toml.
+  `hug task check <id> <n>`. `acceptance = "block" | "warn"` in hug.toml.
   No `--force`. `drop` is always allowed.
 - **D18 (foreman 22:53)** the cache stores dep edges by canonical id;
   unresolvable refs stay as rows for lint, which reports that no task has
@@ -372,7 +375,7 @@ Free text, evidence, decisions. Any other `##` sections are kept as-is.
   lowercase ids), renames to the same file via a temp name, and lint flags
   names that differ only by case. Human-typed uppercase ranks still read.
 - **D20 (foreman 23:32)** the TUI takes an optional `Take` hook from the CLI
-  so `t` goes through the same push-lock as `huginn take`.
+  so `t` goes through the same push-lock as `hug task take`.
 - **D21 (user via foreman 23:37) import provenance is separate from aliases.**
   `origin: <system>:<source-id>` (for example `backlog:STATBUS-093`) matches
   muninn's origin shape. Re-import matches origin first, then legacy aliases

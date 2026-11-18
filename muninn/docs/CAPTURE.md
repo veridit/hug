@@ -1,6 +1,6 @@
 # Automatic capture (opt-in hooks)
 
-`muninn capture` extracts durable memories from conversation text. It is separate
+`hug mem capture` extracts durable memories from conversation text. It is separate
 from recall and from jcode's existing extractor. Do not disable an upstream
 extractor until a side-by-side comparison meets your capture-quality needs.
 No hook or live configuration is changed by `capture`.
@@ -11,7 +11,7 @@ Each chunk loads the native store once, applies all proposals to that snapshot,
 then atomically saves it once before committing the message checkpoint. Capture
 does not run a full reindex before extraction or after each candidate. Expensive
 embedding, neighbor and community work is deferred to the next recall hook,
-watcher or explicit `muninn index`. Until that refresh, `search`/`list` may show
+watcher or explicit `hug mem index`. Until that refresh, `search`/`list` may show
 the previous index. Superseded indexed rows are retired immediately so they
 cannot be recalled from a stale index. The native file is the source of truth.
 
@@ -48,7 +48,7 @@ against DeepSeek's official model list on 2026-11-05:
 <https://api-docs.deepseek.com/api/list-models/>. `deepseek-chat` is not silently
 assumed to be current. Provider/model selection is configurable.
 
-Add an `extract` object to muninn's `config.json`:
+Add an `extract` object to hug's `config.json`:
 
 ```json
 {
@@ -81,7 +81,7 @@ Remote endpoints require HTTPS. Redirects are refused. Only loopback permits
 plain HTTP.
 
 Remote capture sends user/assistant text plus the most relevant memories visible
-in the same Binding. Text matching muninn's existing credential patterns is
+in the same Binding. Text matching hug's existing credential patterns is
 withheld before sending. Tool blocks, background messages, system notices, and
 obvious inter-agent DMs are excluded. Credential-like **candidates** are also
 dropped before storage or dry-run output. Pattern matching is a safety net, not
@@ -112,24 +112,24 @@ before any provider call. Hook runs log `skipped=skip_dirs`.
 
 ```sh
 # Any harness can submit a text chunk and a stable session id.
-printf '%s\n' 'user: I prefer tabs in Go.' | muninn capture --session example
+printf '%s\n' 'user: I prefer tabs in Go.' | hug mem capture --session example
 
 # Read a jcode snapshot plus its append journal, read-only.
-muninn capture --harness jcode --session SESSION_ID --jcode-home /path/to/.jcode
+hug mem capture --harness jcode --session SESSION_ID --jcode-home /path/to/.jcode
 
 # Explain proposed writes without saving or advancing capture checkpoints.
-muninn capture --harness jcode --session SESSION_ID --dry-run
-muninn capture --harness jcode --session SESSION_ID --dry-run --json
+hug mem capture --harness jcode --session SESSION_ID --dry-run
+hug mem capture --harness jcode --session SESSION_ID --dry-run --json
 
 # Deliberately process history skipped when hooks first encountered an old session.
 # Completed chunks are checkpointed, so repeat this after a timeout to continue.
-muninn capture --harness jcode --session SESSION_ID --backfill
+hug mem capture --harness jcode --session SESSION_ID --backfill
 ```
 
 The default dry-run view is a category/trust/action/content table. JSON additionally
 reports prompt/completion/total tokens, provider latency, processed-message count,
 and rejected-candidate count. All costs are reported as tokens, not guessed bills.
-A dry run may create/update muninn's index, but never memories or capture progress.
+A dry run may create/update hug's index, but never memories or capture progress.
 Use a throwaway `HUG_HOME` for comparisons with no live DB changes.
 
 A jcode session uses **its persisted working directory** and its JCODE_HOME to
@@ -145,14 +145,14 @@ these commands to the existing `[hooks]` section of the intended jcode instance:
 
 ```toml
 [hooks]
-turn_end = "/absolute/path/to/muninn capture --hook"
-session_end = "/absolute/path/to/muninn capture --hook"
+turn_end = "/absolute/path/to/hug mem capture --hook"
+session_end = "/absolute/path/to/hug mem capture --hook"
 ```
 
 If a key already has a command, preserve it in an array rather than overwriting:
 
 ```toml
-turn_end = ["existing-notifier", "/absolute/path/to/muninn capture --hook"]
+turn_end = ["existing-notifier", "/absolute/path/to/hug mem capture --hook"]
 ```
 
 No shell `&` or extra daemon is required: jcode detaches observer processes. They
@@ -163,7 +163,7 @@ default). On first contact with an existing session, hooks retain only the last
 and record `backlog_skipped` in the audit. This avoids retrying years of history
 on every live turn. Skipped ids remain recoverable with manual `--backfill`.
 Session-end flushes the remainder regardless of cadence. Hook output
-contains only counts/status in muninn's `data/hook.log`, never memory text.
+contains only counts/status in hug's `data/hook.log`, never memory text.
 The complete capture invocation has a 45-second default budget, capped at 120
 seconds. Each provider chunk uses the remaining deadline with a persistence
 reserve, and completed earlier chunks survive a later timeout. Hook indexing
@@ -179,16 +179,16 @@ disable jcode's sidecar.
 
 Every capture invocation, including dry runs, skipped intervals and provider
 failures, appends a local audit record. `capture_runs` and `capture_actions` live
-in muninn's private SQLite index in the data directory, not in `memories.json`
+in hug's private SQLite index in the data directory, not in `memories.json`
 or any project export. SQLite makes append and retention pruning atomic across
 concurrent observers. The database and its WAL sidecars are private (0600 on
 Unix). Never add the data directory to git, backup sharing or project sync.
 
 ```sh
-muninn capture log --since 24h
-muninn capture log --session SESSION_ID --json
-muninn capture log 42                 # one run, including requests and actions
-muninn capture stats --since 168h
+hug mem capture log --since 24h
+hug mem capture log --session SESSION_ID --json
+hug mem capture log 42                 # one run, including requests and actions
+hug mem capture stats --since 168h
 ```
 
 Records include time, harness/session/instance, binding scope, trigger, dry-run
@@ -223,7 +223,7 @@ shipped SDD row format remains unchanged.
   `dedupe_cosine`. Without embeddings capture conservatively adds non-exact text.
   Do not lower the threshold to recall's much looser relevance threshold.
   The default 0.98 was calibrated on 2026-11-05 using the installed
-  `nomic-embed-text` and muninn's no-prefix recipe: 14 labelled challenge pairs
+  `nomic-embed-text` and hug's no-prefix recipe: 14 labelled challenge pairs
   (1 exact, 4 equivalent, 9 different/contradictory). Equivalent pairs ranged
   0.905622-0.995958. The most similar contradiction (always/never ask before
   deployment) scored 0.945438, making an initial 0.94 unsafe. At 0.98, 3/4
@@ -231,7 +231,7 @@ shipped SDD row format remains unchanged.
   precision-first calibration is not a universal guarantee for other models.
 * Explicit high-trust corrections take precedence over similarity. A superseded
   sid must resolve to an active memory visible and writable in the same Binding.
-  Native targets are retired, upstream targets suppressed only in muninn.
+  Native targets are retired, upstream targets suppressed only in hug's store.
 * Reinforcing native memories increases strength. Reinforcing read-only upstream
   memories records an event in `capture_reinforcements`, without modifying the
   upstream graph or creating a duplicate copy.

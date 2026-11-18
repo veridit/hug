@@ -46,16 +46,18 @@ A filtered matrix is only evidence for the selected scope, not the full D13 gate
 
 ## Observable contract for the CLI lane
 
-The design does not pin JSON keys. The initial adapter is deliberately explicit:
+The design does not pin JSON keys. The initial adapter is deliberately explicit.
+The harness runs `BINARY ls --json` and so on: pass `--binary` a program that
+takes `hug task`'s commands directly (the build's tasks part, under its part name).
 
-* `huginn ls --json`: `{"tasks":[{"id":"..."}, ...]}` or a bare array. This
+* `hug task ls --json`: `{"tasks":[{"id":"..."}, ...]}` or a bare array. This
   inventory must include all statuses, including done and dropped.
-* `huginn show ID --json`: a task object or `{"task":{...}}`. Task keys:
+* `hug task show ID --json`: a task object or `{"task":{...}}`. Task keys:
   `id`, `title`, `slug`, `status`, `type`, `priority`, `assignee` (array),
   `group` (empty string for root), `rank`, `goal`, `notes`, `dependencies`
   (array of ids), `acceptance` (array of `{text, checked}`). Extra fields and
   `next` hints are ignored, not rejected.
-* `huginn lint --json`: `{"findings":[]}` or a bare array. Nonempty findings
+* `hug task lint --json`: `{"findings":[]}` or a bare array. Nonempty findings
   fail every scenario. Failure to query or decode JSON is an infrastructure
   error, never a pass.
 

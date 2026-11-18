@@ -140,7 +140,7 @@ func installLike(install bool) *cobra.Command {
 	var homes []string
 	use, short := "install <claude|codex|jcode|all>", "Wire automatic recall into a harness (keeps a backup)"
 	if !install {
-		use, short = "uninstall <claude|codex|jcode|all>", "Remove muninn's hook from a harness"
+		use, short = "uninstall <claude|codex|jcode|all>", "Remove hug's memory hook from a harness"
 	}
 	c := &cobra.Command{Use: use, Short: short, Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
 		if bin == "" {
@@ -185,7 +185,7 @@ func installLike(install bool) *cobra.Command {
 		return nil
 	}}
 	c.Flags().BoolVar(&dry, "dry-run", false, "show what would change")
-	c.Flags().StringVar(&bin, "bin", "", "muninn binary path to put in the hook (default: this binary)")
+	c.Flags().StringVar(&bin, "bin", "", "binary path to put in the hook (default: this hug)")
 	c.Flags().BoolVar(&allInstances, "all-instances", false, "jcode: every instance (~/.jcode, ~/.zshrc JCODE_INSTANCES, config jcode_homes)")
 	c.Flags().StringSliceVar(&homes, "jcode-home", nil, "jcode: a specific JCODE_HOME (repeatable)")
 	return c
@@ -224,7 +224,7 @@ func installJcodeInstances(bin string, homes []string, all, install, dry bool) e
 
 func jcodeCmd() *cobra.Command {
 	c := &cobra.Command{Use: "jcode", Short: "jcode integration helpers"}
-	c.AddCommand(&cobra.Command{Use: "instances", Short: "List jcode instances muninn knows about", RunE: func(*cobra.Command, []string) error {
+	c.AddCommand(&cobra.Command{Use: "instances", Short: "List jcode instances hug mem knows about", RunE: func(*cobra.Command, []string) error {
 		return withApp(func(ctx context.Context, a *app.App) error {
 			counts := map[string]int{}
 			rows, err := a.DB.QueryContext(ctx, `SELECT scope, COUNT(*) FROM units WHERE active=1 AND scope LIKE 'jcode@%' GROUP BY scope`)

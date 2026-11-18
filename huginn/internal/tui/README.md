@@ -1,6 +1,6 @@
 # Terminal task browser
 
-`huginn tui` opens the overview: status counts, in-progress tasks with owners,
+`hug tui` opens the overview: status counts, in-progress tasks with owners,
 next tasks by global rank, dependency-blocked tasks and lint. Use `o`, `v`, `b`
 and `!`, or `:overview`, `:list`, `:board`, `:lint`, to change views.
 

@@ -63,6 +63,11 @@ func Main(args []string) int {
 		Example:       "  hug mem search \"banana mode\"\n  hug mem forget k7m2qx\n  hug mem remember \"The corrected fact\"",
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		// No completion command: its scripts complete the command name
+		// muninn (cobra takes it from Root().Name()), and users type hug
+		// (p277bp, crab 22:21). The hidden __complete command stays, so
+		// scripts installed before keep answering.
+		CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
 		// Background work must not spike the machine: it may take longer.
 		// The recall hook and interactive commands keep full speed because a
 		// user is waiting on them.

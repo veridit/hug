@@ -21,7 +21,7 @@ const mcpHelp = `hug mcp [--jcode-home DIR]: one MCP server over stdio with both
 Tools: memory_* (search, remember, forget, recall, related, dream, stats) and
 task_* (list, show, new, update, next, take, done, lint, sync, types).
 Tasks work on the git repository in the current directory. --jcode-home binds
-memory to one jcode instance, as muninn mcp --jcode-home does.
+memory to one jcode instance, as hug mem mcp --jcode-home does.
 If memory cannot open, the task tools are still served and the reason is
 logged to stderr.
 `
