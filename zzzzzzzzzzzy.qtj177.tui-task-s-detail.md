@@ -25,7 +25,7 @@ Seen at the bottom of the detail, between HISTORY and the footer ('j/k scroll ·
 ## Depends on
 
 ## Acceptance
-- [ ] No 'H/L column' or 'order by' text in a detail at 80 and 140, one task open and two stacked (golden; test fails first on main)
+- [x] No 'H/L column' or 'order by' text in a detail at 80 and 140, one task open and two stacked (golden; test fails first on main)
 - [ ] A test lists every hint and footer key per place (list, overview, board, detail, file viewer) and fails if a key shown there does nothing there
 - [ ] Jørgen sees no list hint in a task on his board after release
 
