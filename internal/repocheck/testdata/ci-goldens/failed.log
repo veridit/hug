@@ -1,0 +1,139 @@
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7412593Z     --- FAIL: TestTmuxGolden/80x24-no-color (4.43s)
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7413417Z         tmux_test.go:279: golden drift testdata/tmux/80x24-no-color/palette.txt
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7413810Z             GOT:
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7414232Z             HUG · repo · list   60/60 tasks · ! 2 broken · 5 advice
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7414862Z             view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7415316Z             filter: none · sort: rank
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7415798Z               ✓      ID       TAGS           TYPE    PRIORITY STAGE     TITLE
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7416452Z               ○ 2   ·000001   terminal comp… feature critical ready     compil… ⎘2 Feature …
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7417132Z               ◑ 1/2  000002   terminal comp… bug     critical active    compil… Bug task 02…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7417915Z             >        000003   terminal comp… feature medium   done      compil… Render comp…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7419093Z                      000004   terminal runt… spike   critical dropped   runtime Spike task …
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7420126Z               ○ 2    000005   terminal runt… docs    critical depends   runtime Docs task 0…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7421254Z               ◑ 1/2  000006   terminal runt… feature high     active    runtime Feature tas…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7422214Z               ● 2    000007   terminal docs  bug     high     done      docs Bug task 07: m…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7422971Z             ↓        000008   terminal docs  chore   high     dropped   docs Chore task 08:…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7423622Z             Rows 1–8 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7424262Z             ────────────────────────────────────────────────────────────────────────────────
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7424593Z             : type
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7424792Z             GLOBAL
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7425061Z             >     filter type bug      12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7425431Z                   filter type chore    11 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7425772Z                   filter type docs     12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7426113Z                   filter type feature  13 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7426457Z                   filter type spike    12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7426908Z             Palette · 5 choices · type to narrow · › opens a level
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7427211Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7427726Z             Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help       hug v0.0.0
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7428231Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7428434Z             WANT:
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7428847Z             HUG · repo · list   60/60 tasks · ! 2 broken · 5 advice
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7429452Z             view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7429886Z             filter: none · sort: rank
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7430318Z               ✓      ID       TYPE    PRIORITY STAGE     TITLE
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7430926Z               ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make …
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7431578Z               ◑ 1/2  000002   bug     critical active    compiler Bug task 02: make the ter…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7432180Z             >        000003   feature medium   done      compiler Render compiler-lang task…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7432906Z                      000004   spike   critical dropped   runtime Spike task 04: make the te…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7433541Z               ○ 2    000005   docs    critical depends   runtime Docs task 05: make the ter…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7434181Z               ◑ 1/2  000006   feature high     active    runtime Feature task 06: make the …
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7434813Z               ● 2    000007   bug     high     done      docs Bug task 07: make the termina…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7435431Z             ↓        000008   chore   high     dropped   docs Chore task 08: make the termi…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7436055Z             Rows 1–8 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7436677Z             ────────────────────────────────────────────────────────────────────────────────
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7436986Z             : type
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7437181Z             GLOBAL
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7437445Z             >     filter type bug      12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7437813Z                   filter type chore    11 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7438309Z                   filter type docs     12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7438672Z                   filter type feature  13 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7439014Z                   filter type spike    12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7439465Z             Palette · 5 choices · type to narrow · › opens a level
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7439752Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7440351Z             Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help       hug v0.0.0
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7548817Z     --- FAIL: TestTmuxGolden/140x40-no-color (4.35s)
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7549339Z         tmux_test.go:279: golden drift testdata/tmux/140x40-no-color/palette.txt
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7549687Z             GOT:
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7550113Z             HUG · repo · list   60/60 tasks · ! 2 broken · 5 advice
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7550970Z             view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7551501Z             filter: none · sort: rank
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7551993Z               ✓      ID       TAGS              TYPE    PRIORITY STAGE     TITLE
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7552986Z               ○ 2   ·000001   terminal compiler feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a de…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7554024Z               ◑ 1/2  000002   terminal compiler bug     critical active    compiler Bug task 02: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7554920Z             >        000003   terminal compiler feature medium   done      compiler Render compiler-lang task detail without storage markers
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7556132Z                      000004   terminal runtime  spike   critical dropped   runtime Spike task 04: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7557114Z               ○ 2    000005   terminal runtime  docs    critical depends   runtime Docs task 05: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7558180Z               ◑ 1/2  000006   terminal runtime  feature high     active    runtime Feature task 06: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7559576Z               ● 2    000007   terminal docs     bug     high     done      docs Bug task 07: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7560767Z                      000008   terminal docs     chore   high     dropped   docs Chore task 08: make the terminal workflow observable with a deliberatel…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7561768Z               ○ 2    000009   terminal docs     spike   high     ready     docs Spike task 09: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7562737Z               ◑ 1/2  000010   terminal compiler docs    high     active    compiler Docs task 10: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7563734Z               ● 2    000011   terminal compiler feature medium   done      compiler Feature task 11: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7564779Z                      000012   terminal compiler bug     medium   dropped   compiler Bug task 12: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7565743Z               ○ 2   !000013   terminal runtime  chore   medium   depends   runtime Chore task 13: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7566723Z               ◑ 1/2  000014   terminal runtime  spike   medium   active    runtime Spike task 14: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7567800Z               ● 2    000015   terminal runtime  docs    medium   done      runtime Docs task 15: make the terminal workflow observable with a deliberat…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7569041Z                      000016   terminal docs     feature low      dropped   docs Feature task 16: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7569980Z               ○ 2    000017   terminal docs     bug     low      ready     docs Bug task 17: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7570895Z               ◑ 1/2  000018   terminal docs     chore   low      active    docs Chore task 18: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7571797Z             ↓ ● 2    000019   terminal compiler spike   low      done      compiler Spike task 19: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7572549Z             Rows 1–19 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7573530Z             ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7574017Z             : type
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7574226Z             GLOBAL
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7574531Z             >     filter type bug                12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7574933Z                   filter type chore              11 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7575313Z                   filter type docs               12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7575693Z                   filter type feature            13 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7576105Z                   filter type spike              12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7576339Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7576513Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7576689Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7576856Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7577013Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7577403Z             Palette · 5 choices · type to narrow · › opens a level
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7577680Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7578611Z             Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                                                                   hug v0.0.0
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7579142Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7579324Z             WANT:
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7579722Z             HUG · repo · list   60/60 tasks · ! 2 broken · 5 advice
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7580556Z             view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7581084Z             filter: none · sort: rank
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7581504Z               ✓      ID       TYPE    PRIORITY STAGE     TITLE
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7582423Z               ○ 2   ·000001   feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long ti…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7583535Z               ◑ 1/2  000002   bug     critical active    compiler Bug task 02: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7584309Z             >        000003   feature medium   done      compiler Render compiler-lang task detail without storage markers
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7585213Z                      000004   spike   critical dropped   runtime Spike task 04: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7586064Z               ○ 2    000005   docs    critical depends   runtime Docs task 05: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7586907Z               ◑ 1/2  000006   feature high     active    runtime Feature task 06: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7587698Z               ● 2    000007   bug     high     done      docs Bug task 07: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7589015Z                      000008   chore   high     dropped   docs Chore task 08: make the terminal workflow observable with a deliberately long title that …
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7589932Z               ○ 2    000009   spike   high     ready     docs Spike task 09: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7590755Z               ◑ 1/2  000010   docs    high     active    compiler Docs task 10: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7591612Z               ● 2    000011   feature medium   done      compiler Feature task 11: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7592484Z                      000012   bug     medium   dropped   compiler Bug task 12: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7593301Z               ○ 2   !000013   chore   medium   depends   runtime Chore task 13: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7594123Z               ◑ 1/2  000014   spike   medium   active    runtime Spike task 14: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7595142Z               ● 2    000015   docs    medium   done      runtime Docs task 15: make the terminal workflow observable with a deliberately long title tha…
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7596078Z                      000016   feature low      dropped   docs Feature task 16: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7596848Z               ○ 2    000017   bug     low      ready     docs Bug task 17: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7597624Z               ◑ 1/2  000018   chore   low      active    docs Chore task 18: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7598509Z             ↓ ● 2    000019   spike   low      done      compiler Spike task 19: make the terminal workflow observable
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7599222Z             Rows 1–19 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7600196Z             ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7600863Z             : type
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7601057Z             GLOBAL
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7601347Z             >     filter type bug                12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7601742Z                   filter type chore              11 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7602136Z                   filter type docs               12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7602531Z                   filter type feature            13 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7602988Z                   filter type spike              12 tasks
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7603220Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7603401Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7603559Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7603722Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7603882Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7604268Z             Palette · 5 choices · type to narrow · › opens a level
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7604548Z             
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7605281Z             Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                                                                   hug v0.0.0
+test (ubuntu-latest)	Test	2026-11-18T21:45:35.7605694Z FAIL
