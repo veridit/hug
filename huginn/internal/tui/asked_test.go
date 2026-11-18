@@ -152,7 +152,7 @@ func TestAnswerBoxKeepsLines(t *testing.T) {
 		}
 	}
 	m = press(m, "enter")
-	if m.prompt != "" || !strings.HasPrefix(m.message, "answer ") {
+	if m.prompt != "" || !strings.HasPrefix(m.message, "answered ") {
 		t.Fatalf("Enter did not send: prompt %q message %q", m.prompt, m.message)
 	}
 	tk := mustSelected(t, m)

@@ -827,7 +827,10 @@ func (m model) View() string {
 		content = m.sortText()
 	case m.detail && m.glance:
 		if t, ok := m.selected(); ok {
-			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.styles.accent.Render(fit(m.glanceHead, m.width)) + "\n" + m.viewport.View()
+			// A rule under the file's own header line too (z82qsy), the
+			// detail header's rule: the contents start under it.
+			rule := m.styles.dim.Render(strings.Repeat("─", m.width))
+			content = strings.Join(m.detailHeader(t), "\n") + "\n" + rule + "\n" + m.styles.accent.Render(fit(m.glanceHead, m.width)) + "\n" + rule + "\n" + m.viewport.View()
 		}
 	case m.detail:
 		if t, ok := m.selected(); ok {

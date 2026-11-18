@@ -194,6 +194,9 @@ type model struct {
 	helpTyping                         bool   // typing a help search after "/"
 	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
+	// result is the message an action left and resultAt the place it was
+	// shown (z82qsy): moving to another task, file or view clears it.
+	result, resultAt                   string
 	confirm, confirmPath, pendingValue string
 	yanked                             string // y: the task id P and p paste (3xcesq)
 	hidden                             string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
@@ -382,6 +385,7 @@ func (m *model) applyKeeping(sn snapshot) {
 // close, once it has closed.
 func (m model) afterUpdate(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 	m.remember()
+	m.clearStaleResult()
 	if m.stale && !m.busy() && !m.loading {
 		cmd = tea.Batch(cmd, m.reload())
 	}
@@ -1060,7 +1064,7 @@ func (m *model) syncDetail() {
 		m.resizeGlanceMarkdown()
 		// The file stays as it was read: a refresh does not read it again.
 		if t, ok := m.selected(); ok {
-			m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-2)
+			m.viewport.Height = max(1, m.bodyHeight()-len(m.detailHeader(t))-glanceChrome)
 		}
 		return
 	}
