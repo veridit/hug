@@ -39,5 +39,6 @@ personq.go: subject regexp has a fixed verb list (approve|answer|confirm|...|tic
 ## Notes
 
 
+measurement (no code changed): old AddressesPerson vs proposed subject rule over every open check and waiting_on of open tasks; hug board copy b2cb4e3b (100 checks, 34 waits), Seid board copy 26f97c0be (3171 checks, 6 waits). hug checks: old 13 person, new 20 (+7, 0 lost); hug waits: old 0, new 1; Seid: 0 and 0 (its person 'jorgen' is called 'the King' there, not in [people]; with alias king added hypothetically, 2 checks gain: rkfa4j 1, spjvd6 1). Diff: /Users/jhf/.jcode/scratch/ebben8/diff.tsv; full: v1.tsv; harness: zz_measure_test.go, zz_cases_test.go.
 ## History
 - 2026-11-18T21:49 todo -> doing/active (take)
