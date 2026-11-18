@@ -4,7 +4,7 @@ title: "Detail: one place for what a task asks of you; open with focus on it"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["nautilus"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzkh"
