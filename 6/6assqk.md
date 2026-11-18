@@ -51,5 +51,6 @@ fresh human n=83 (6 sessions, under the 8-session bar): rel 0.28 -> 0.18, -0.10 
 fresh long n=64 (62): rel 0.38 -> 0.42, +0.05 [-0.25,+0.32]; irr 3.38 -> 1.62, -1.75 [-2.15,-1.32]; unjudged 0.89 (57 of 188 picks).
 Reading so far (not a verdict, 71 picks unjudged): against today's BM25 recall the rule is no clean win. On frozen it adds relevant short-message recall but also irrelevant (irr CI clear of 0 both strata). On fresh long it cuts noise hard, but rel is flat and 57 picks are unjudged. The 2026-11-15 offline numbers were against pre-BM25 recall.
 Bar fixed BEFORE judging (crab 16:31): the rule passes check 1's comparison only if irr does not rise on frozen human AND frozen long (upper 95% CI < 0) and rel is not worse on any split (lower CI not entirely below 0). Otherwise check 1 is parked with the full table. Fresh human (6 sessions, below the 8-session bar) is indicative only. Budget: at most 150 DeepSeek Flash calls via judge_real.py, same rubric, cached, blind to arm. Nothing ships.
+file:check1-table.md (2000 bytes, sha256:78be2c0b) check 1 table: rule60/64/68 vs shipped bm25x2, every pick judged blind (bonehound 2026-11-18)
 ## History
 - 2026-11-18T17:30 todo -> doing/active (take)
