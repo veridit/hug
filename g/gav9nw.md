@@ -18,7 +18,7 @@ aliases: ["design-personal-vs-shared-memories"]
 Decide how muninn tells personal memories from shared ones
 
 ## Purpose
-Jørgen asked, in an earlier crab session (memories 5zwpx7, 1c49sh), to revisit how muninn judges whether a memory is personal or not and to put it on the to-do list; it is open question 2 in docs/DESIGN.md (2026-11-11). It matters because only shared project memories may be pushed to a repo branch, while personal ones never go into a repo (hbzc5e), and he wants an in-between team-shared scope as well (873tqd).
+Jørgen 2026-11-05 17:00Z (crab session): 'how do you know that something is personal or not? How is that judged? We have to look at that later ... write into the to-dos' (memories 5zwpx7, 1c49sh). It is open question 2 in docs/DESIGN.md (2026-11-11). It matters because only shared project memories may be pushed to a repo branch, while personal ones never go into a repo (hbzc5e), and he wants an in-between team-shared scope as well (873tqd).
 
 ## Principle
 A design decision first, written in DESIGN.md, no code in this task. Start from the scopes that exist today (personal, global, project, client) and the rules already decided (below); do not reopen them unless the decision needs it. Jørgen makes the call; the task brings him options with their consequences.
