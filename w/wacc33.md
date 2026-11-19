@@ -42,6 +42,7 @@ check 2: 62889dc4 (branch wacc33): GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test 
 pgrep after full niced run on 62889dc4 (2026-11-19T20:58:12Z): `pgrep -fl 'tmux -D -L huginn'` -> empty output, exit 1. The first full run on 0dd8da47 also left none (empty, exit 1) but failed TestEveryHUGNameIsKnown (HUG_TEST_TMUX_CHILD not on env.Known), fixed in 62889dc4; CI 44612421566 on 0dd8da47 cancelled for that.
 CI 44615073708 on c1478721 (branch ci/wacc33): success, 8/8 jobs (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards). c1478721 = 62889dc4 + TestLabelOwner skips the signal-0 liveness check on Windows (CI 44613272670 on 62889dc4: windows 'tmuxtest_test.go:40: Label "huginn-golden-8488": owner 8488 is not this live process'; ubuntu and macos success). Fix commits: 0dd8da47, 62889dc4, c1478721 on wacc33, not merged to main.
 Reflection (open, 2026-11-19, bat): One gap: nothing in AGENTS.md says a new HUG_TEST_* variable must be added to internal/env Known (TestEveryHUGNameIsKnown). I found out from the full run. Otherwise the brief was clear.
+Landed on main 57fce63b (CI 44616634296 8/8 green on that exact SHA; restacked from c1478721 onto v0.7.85 with rebase-land.sh: CODE-DIFF IDENTICAL, CHANGELOG IDENTICAL). Test-only, so not released alone: it ships with the next user-facing release.
 ## History
 - 2026-11-19T21:05 todo -> doing/active (take)
 - 2026-11-19T22:12 doing/active -> done (done); was doing_since: 2026-11-19T21:05
