@@ -29,7 +29,7 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 
 ## Acceptance
 - [ ] ~~Jørgen approves a mock (CLI transcript plus TUI frames at 100x30) of a thread on a quoted sentence, a reply and a resolve~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
-- [ ] An outdated anchor (quoted text edited away) keeps its thread and shows it as outdated (test)
+- [ ] ~~An outdated anchor (quoted text edited away) keeps its thread and shows it as outdated (test)~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
 - [ ] Several questions in one call become separate threads, each answered on its own (test)
 - [ ] Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM
 
