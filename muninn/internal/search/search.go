@@ -141,8 +141,11 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		return rows.Err()
 	}
 	// Each distinct word and bigram is looked up once: concepts is a set, so
-	// a repeated word (a transcript repeats many) adds nothing.
+	// a repeated word (a transcript repeats many) adds nothing. Words longer
+	// than 5 match as `term LIKE '%w%'`, all of them in one read of concepts
+	// (likeConcepts) instead of one full-table scan per word.
 	looked := map[string]bool{}
+	var likes []string
 	for _, w := range words {
 		if looked[w] {
 			continue
@@ -151,10 +154,17 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		var err error
 		if len(w) <= 5 {
 			err = addConcepts(`SELECT id FROM concepts WHERE term=?`, w)
+		} else if p := "%" + w + "%"; len(p) <= likePatternLimit {
+			likes = append(likes, p)
 		} else {
-			err = addConcepts(`SELECT id FROM concepts WHERE term LIKE ?`, "%"+w+"%")
+			err = addConcepts(`SELECT id FROM concepts WHERE term LIKE ?`, p)
 		}
 		if err != nil {
+			return nil, err
+		}
+	}
+	if len(likes) > 0 {
+		if err := s.likeConcepts(ctx, likes, concepts); err != nil {
 			return nil, err
 		}
 	}
