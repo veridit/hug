@@ -1,15 +1,20 @@
 ---
 id: wacc33
 title: "TUI tests leave tmux servers running after they finish"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["bat"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzv"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T21:05"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Grep huginn/internal/tui for tmux -D -L huginn-golden / huginn-reload; check whe
 - [ ] After a full niced go test ./... no huginn-* tmux server remains (note with pgrep output)
 
 ## Notes
+
+
+## History
+- 2026-11-19T21:05 todo -> doing/active (take)
