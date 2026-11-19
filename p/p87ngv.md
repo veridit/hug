@@ -61,6 +61,8 @@ Syntax (Jørgen 09:31Z, console): Seid things. A mark is a thing, space-dot-Capi
     (from jhf's request 3, 09:09Z, and the console 09:11-09:31Z) Seid syntax, not CriticMarkup: a mark is a thing with its properties, .Request .by:jhf .msg:"Can you ...", not bare properties inline.
 - 2026-11-19T10:05 question 5 by crab to jhf:
   History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated entry quoting the original text, the exchange and the change made. Is that the right name and shape?
+  answered 2026-11-19T10:36 by jhf:
+    (console 09:35Z) history.sdd, Seid data (seid-lang design/SDD-Data-Format.md).
 
 ## Requests
 - 2026-11-19T10:05 request 1 by jhf:
@@ -123,3 +125,6 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:32 request 3 in progress by crab: hug task set p87ngv
 - 2026-11-19T10:32 resolved request 3 by crab
 - 2026-11-19T10:32 answer 4 acknowledged by crab
+- 2026-11-19T10:36 answered design (question 5), by jhf, for crab (todo/design -> todo/design):
+  > History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated entry quoting the original text, the exchange and the change made. Is that the right name and shape?
+  (console 09:35Z) history.sdd, Seid data (seid-lang design/SDD-Data-Format.md).
