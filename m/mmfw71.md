@@ -32,3 +32,5 @@ Leads: j2vwk0 R corner; the cache schema number (cache-25 vs current) as a cheap
 - [ ] Jørgen leaves hug tui open across a release and sees it move forward
 
 ## Notes
+
+crab 12:01Z evidence (vmmap per pid): 78631 (hug board, started 17 Nov 19:53) now maps Cellar/hug/0.7.81, so it did re-exec in place at some point after 10:00Z; v0.7.82 released 11:59Z not yet picked up. Other open TUIs: 16277 statbus 0.7.69 (since 18 Nov 18:08), 69660 sql_saga 0.7.68 (since 18 Nov 20:16), 49453 seid-lang 0.7.81. Leaked test process: 91146 'hug tui' v0.0.2 in /Users/jhf/.jcode/scratch/huginn-reload-4068778528/repo, started 19 Nov 02:14 (a reload test's fixture that outlived its test).
