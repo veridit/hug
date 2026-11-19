@@ -1,0 +1,97 @@
+66ex4y daily check 2026-11-19 (piglet, claude-opus-5-5, read 00:59-01:22 UTC, changes 01:26-01:27 UTC)
+
+Read: every cap_ capture created since the last check (2026-11-18T02:31Z) in the live store:
+562 rows, 559 active (3 already retired by their own session: eh6yxx ftcnwp 13913n, Seid 0h64xj).
+Yesterday's check read 57. Store: ~/Library/Application Support/muninn/memories.json, 14,293 memories at read (13,853 active).
+Live capture binary: brew hug v0.7.73 at read; brew moved to v0.7.74 at about 01:10Z during this check.
+
+By scope: hug project:rc-0ca4bf6be5d989c3 378, Seid project:rc-3557a74eab224a4c 67, client:brovs 61,
+client:brovs:rc-413063c7e561e95e 23, personal 15, client:ssb:rc-898d04734041ab10 8, jcode@seid 4,
+jcode@global 3, global 2, client:ssb 1.
+By hour (UTC, 2026-11-18): 02 13, 05 72, 06 92, 08 86, 09 10, 12 69, 13 9, 14 26, 15 8, 17 20, 19 11, 20 21, 21 91, 23 34.
+By session: nautilus 92 (06:46-06:49), calf 86 (08:44-08:47), bonehound 75 (21:24-21:27), hatchling 72 (05:48-05:50),
+orangutan 67, kikazaru 37, fox 28, sheep 28, puppy 16, shrimp 14, wyvern 10, sabertooth 9, others 28.
+Twins (cap_ + imp_ same text): 0 of 562. Same text within the day: 0. Near-duplicate pairs (word Jaccard >= 0.45, same scope): 4.
+
+Checked against sources:
+- hug origin/main (fetched 01:03Z): AGENTS.md, CHANGELOG.md, help.go, cli.go allowed flags, mcp/server.go,
+  task/moves.go, task/questions.go, task/reflect.go, cli/sync_test.go, tui/tmux_test.go, app/places.go, app/capture.go.
+- hug states (hug task states, v0.7.74).
+- git log -S for when each fix landed versus when the capture was made.
+- seid-lang .githooks/commit-msg (c64244e3a, 2026-11-18 20:43 +01:00), Brovs BusinessWeb ui/package.json (f38f5550).
+- muninn.db capture_runs and hook.log, read-only.
+
+Findings (each memory counted once):
+
+1. Wrong when captured: 7
+   - vk0gzj "The hug load guard pauses runs above load 16". loadGuard pauses above 5-minute load 120 (tmux_test.go:35);
+     no 16 on main. Right fact already held by qaa5kk, so nothing new stored.
+   - j8mfyc "In hug, `drop` means status back to todo, not a separate dropped state". hug task states: dropped is its own state (decided: never).
+   - 2v7q6f "hug has no clock injection". task.Now = time.Now (moves.go:22, since 65a71298 2026-11-17), set by 3 test files.
+   - rrqvm3 "Hug sync poll limit was reduced from 40 s to 17 s on macOS/Linux and 34 s on Windows". sync_test.go arrival(): 10 s, 40 s on Windows; no 17/34.
+   - nfh1qw "hug CHANGELOG entries have no blank line between items". Main has one blank line between entries.
+     Replaced by 30k8dd (--supersedes nfh1qw).
+   - fzspjd "Hug has no `hug task review` command". It exists since 77806c9f (2026-11-17 19:37 +01:00); captured 06:48Z the next day.
+   - he8nt8 "... migrated to the waiting_for field by Store.MoveWaitingFor". MoveWaitingFor is gone from main (0 matches); MoveToAsked replaced it, as 5 other captures of the same session say.
+
+2. Stale (true once, not now): 10
+   - xpjpjx, dxaw4h: AGENTS.md says HUGINN_UPDATE_GOLDEN. Main says HUG_UPDATE_GOLDEN since 38ecd7d7 (2026-11-17).
+   - sz1gvf "`hug task check ID N` takes no evidence argument (v0.7.61)", 92cdp4 "`hug task note` rejects `--as`". Both fixed in 18b6b86d (v0.7.65).
+   - n195nq "reflect.go `quoted` ... truncates instruction quotes at an apostrophe". Fixed: FirstQuote (reflect.go:50, 2k68eg).
+   - 0ncn36, 2t8g9r: "Installed hug v0.7.40 has no set --goal / wait". Installed is v0.7.74.
+   - 9vsfj6, 6y0yp8: Seid/repo captures stored twice. Fixed in 833eee13 (v0.7.49, 5sc5rw); 0 twins among today's 562.
+   - 1z7e3x (personal) "The live Seid capture binary is the brew build (v0.7.47 ...)". Now v0.7.74.
+
+3. Duplicates within today: 5 retired
+   - h535tw = tpp1n2 (tests run niced). Kept tpp1n2.
+   - sa4zzn and d5hgd3 = t1aj89 (questions for Jørgen go in Notes, then move on). Kept t1aj89.
+   - msgeg3 = adtvnr (CI runs only on main and ci/**). Kept adtvnr.
+   - d9afy7 = dpvcdm (worktree under $JCODE_SCRATCH_DIR). Kept dpvcdm.
+   The 4 near-duplicate pairs found by the word check are 3 of these groups (dpvcdm/d9afy7, d5hgd3/sa4zzn plus t1aj89/d5hgd3,
+   tpp1n2/h535tw); msgeg3/adtvnr was found by reading.
+
+4. Wrong place: 9 moved
+   - 9 of the 15 personal captures are hug working rules or hug facts (hatchling, nautilus, calf, puppy sessions in ~/Projects/hug).
+     Rescoped personal -> project:rc-0ca4bf6be5d989c3: dpvcdm wwqfa8 8z7757 ghtqen y4061x t4q0t0 8e91jw t2tp92 a0yarc.
+     (Backup: ~/Library/Application Support/muninn/tidy/rescope-20261119T012655Z-3457466500.)
+   - Left personal: nrd8m1 tg629m (the H3 experiment's load gate), zq3faj (Seid board count), 69q162 (background shell python lacks PIL).
+     They are about one run, not about the person; see 5.
+   - Why personal at all: wide_places is not set in config.json (off), and capturePlacement only returns personal when it is on.
+     Not explained by this read; it is a question for crab, not a fix (see B).
+
+5. Trivial or short-lived, kept: not counted one by one. Typical: ticket progress (Brovs-4871 waits for Sunday's sync,
+   8pd2cm; 44xvtn releases wait on spider's Jenkins fix), one-run facts (zq3faj 2522 files, t2tp92 grid-mock paths),
+   Seid open questions later answered (v14szg Q1, answered by 74grt9 the same minute).
+
+6. Stale but not changed, outside hug (observe-only repos):
+   - w4gb86 (Seid) "The Model commit trailer isn't live until mc40hy lands, so commits still need a Co-Authored-By line".
+     seid-lang c64244e3a (2026-11-18 20:43 +01:00) made commit-msg call hug's Model gate ("This replaces the Co-Authored-By check").
+     Seid is observe-only for me; for Seid's agent.
+   - 0deg2j (Brovs) "Proposed by the agent, not yet accepted: remove `--open` ...". Brovs f38f5550 (2026-11-18 15:57 +01:00) landed it.
+     Brovs memories are the owner's client work; left for that session.
+
+Changes (brew hug v0.7.73/v0.7.74, cwd /Users/jhf/.jcode/scratch/nrp268, HUG_USER=piglet, each with --reason "daily 66ex4y: ..."):
+  hug mem forget vk0gzj xpjpjx dxaw4h sz1gvf 92cdp4 n195nq j8mfyc 2v7q6f rrqvm3 nfh1qw 0ncn36 2t8g9r 9vsfj6 6y0yp8
+                 fzspjd he8nt8 h535tw sa4zzn d5hgd3 msgeg3 d9afy7 1z7e3x   (22 separate calls, each printed "forgot ID")
+  hug mem rescope --from rescope.txt (9 lines, all to project:rc-0ca4bf6be5d989c3) -> "rescoped 9 memories"
+  hug mem remember "hug CHANGELOG.md entries under ## Unreleased are separated by one blank line; a new entry goes at the end of Unreleased."
+    --project --type rule --supersedes nfh1qw -> first refused NOT STORED (cosine 0.907 to 22yvzm, which says where, not how separated);
+    stored with --new-reason as 30k8dd.
+  A second remember (loadGuard 120) printed no id; the store shows nothing new for it; qaa5kk already holds the fact. Not retried.
+Verified in memories.json after (01:27Z): the 22 forgotten are active=false (22/22); the 9 rescoped are in project:rc-0ca4bf6be5d989c3;
+30k8dd active in project:rc-0ca4bf6be5d989c3.
+
+Totals: 562 read; 7 wrong + 10 stale + 5 duplicates = 22 retired; 9 rescoped; 1 stored (30k8dd). 22 of 559 active = 3.9%.
+
+Observations for crab (no code changed):
+A. Capture refuses whole sessions. 515 hook.log lines "capture failed class=input" in this window. capture_runs gives the cause:
+   "capture message exceeds 8192 bytes, refusing silent loss" (capture.go:285). 5 sessions have captured nothing since:
+   crab_1793783281662 841 refusals from 2026-11-16 00:09 (last capture 2026-11-16T00:09), hibiscus 562 since 11-07,
+   rabbit 466 since 11-10, spider 262 since 11-12, sabertooth 46 since 11-07.
+   Filed as 8jcj3k. The coordinator's own rulings are the ones not captured.
+B. 15 captures landed in personal although wide_places is off; 9 of them were plainly hug's. Not traced to a code path in this check.
+C. Captures arrive in one burst per session, hours in (each of the 5 biggest sessions within one clock hour): 503 of 562 were created more than 2 h after their session started
+   (nautilus 92 at 22.0 h, calf 86 at 22.7 h, hatchling 72 at 21.0 h). So a capture can describe a state that changed during the session:
+   7 of the 10 stale ones were already fixed on main when captured: xpjpjx dxaw4h (38ecd7d7, 11-17 10:18Z),
+   9vsfj6 6y0yp8 (833eee13, 11-17 22:15Z), n195nq (afc0d238, 11-18 14:48Z), sz1gvf 92cdp4 (18b6b86d, 11-18 15:19Z);
+   captured 05:48Z-21:25Z on 11-18. fzspjd (wrong) likewise: review existed from 11-17 18:37Z.
