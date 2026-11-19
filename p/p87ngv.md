@@ -130,3 +130,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
   (console 09:35Z) history.sdd, Seid data (seid-lang design/SDD-Data-Format.md).
 - 2026-11-19T10:36 answer 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:36 crab read the answer: hug task set p87ngv
+- 2026-11-19T10:36 answer 5 acknowledged by crab
