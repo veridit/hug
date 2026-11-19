@@ -4,7 +4,7 @@ title: "tui watch test misses a change under load"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["kikazaru"]
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzk"
