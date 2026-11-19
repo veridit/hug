@@ -48,6 +48,7 @@ func TestSetSaysEachFieldItWrote(t *testing.T) {
 		"tags: + parser",
 		"parent: " + epic,
 		"state: doing -> todo",
+		"assignee: piglet -> (none)", // back to todo gives the task up: said too
 		"priority: ",
 		"type: ",
 	} {
@@ -55,8 +56,8 @@ func TestSetSaysEachFieldItWrote(t *testing.T) {
 			t.Fatalf("wrote lacks %q:\n%s", want, got)
 		}
 	}
-	if n := len(wroteOf(r)); n != 10 {
-		t.Fatalf("%d lines for 10 changed fields:\n%s", n, got)
+	if n := len(wroteOf(r)); n != 11 {
+		t.Fatalf("%d lines for 11 changed fields:\n%s", n, got)
 	}
 	// The same set again changes nothing and says so.
 	r = execute(t, a, "set", id, "--title", "New title")
