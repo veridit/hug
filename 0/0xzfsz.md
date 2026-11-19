@@ -1,15 +1,21 @@
 ---
 id: 0xzfsz
 title: "Release v0.7.76"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-19
 updated: 2026-11-19
+doing_with: "p277bp"
+doing_since: "2026-11-19T05:29"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +37,7 @@ main e98a12ac CI 44456503911 success 8/8.
 - [ ] hug version prints v0.7.76 after brew upgrade
 
 ## Notes
+
+
+## History
+- 2026-11-19T05:29 todo -> doing/active (take with p277bp)
