@@ -33,11 +33,12 @@ main 75cf6431 CI 44478091776 success 8/8.
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml for v0.7.79 succeeds (run id)
+- [x] release.yml for v0.7.79 succeeds (run id)
 - [ ] hug version prints v0.7.79 after brew upgrade
 
 ## Notes
 
 
+check 1: release.yml 44479244769 completed success
 ## History
 - 2026-11-19T08:29 todo -> doing/active (take with p277bp)
