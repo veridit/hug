@@ -49,6 +49,37 @@ python3 muninn/scripts/run_real.py baseline default   # needs recall3's frozen s
 python3 muninn/scripts/judge_real.py                  # blind judge + report.md
 ```
 
+Where the files live. `recall4` writes to the database it is given (it
+clears `injections` and may backfill anchors), so it refuses any `-db`
+outside `$JCODE_SCRATCH_DIR/recall4`: `panic: database must be under
+$JCODE_SCRATCH_DIR/recall4`. `run_real.py` reads the frozen snapshots
+read-only from `$JCODE_SCRATCH_DIR/recall3/baseline-{development,heldout}.db`
+and `recall3/replay.json`, copies each to
+`$JCODE_SCRATCH_DIR/recall4/real/db-<variant>-<split>.db` for one run and
+deletes the copy after. Query vectors are cached in `recall4/real/qvec`.
+
+A copy of the live store under `HUG_HOME` (for a dry run of dream, tidy or
+index) is not clean on its own. `muninn.db` records each source by absolute
+path, so the copied index still points at the live
+`~/Library/Application Support/muninn/memories.json` (macOS) and at the live
+jcode memory files. The first `hug mem index` with `HUG_HOME` set adds the
+copy's own `HUG_HOME/data/memories.json` as a second native source and keeps
+the live one, because that file still exists. Every native memory is then
+counted twice under one short id (2026-11-19: 14,293 rows in each, 14,293
+shared ids). Drop the live native source in the copy before indexing it:
+
+```sh
+H=$JCODE_SCRATCH_DIR/home && mkdir -p $H/data $H/config
+D="$HOME/Library/Application Support/muninn"
+sqlite3 "file:$D/muninn.db?mode=ro" ".backup $H/data/muninn.db"
+cp "$D/memories.json" $H/data/
+sqlite3 $H/data/muninn.db "PRAGMA foreign_keys=ON; DELETE FROM sources WHERE kind='native' AND path='$D/memories.json'"
+HUG_HOME=$H hug mem index   # native rows now come from $H/data/memories.json alone
+```
+
+The jcode sources stay: the copy reads the same jcode memory files, read
+only, as the live store does.
+
 ## Best-passage scoring on real memories (c3hszg, 2026-11-18): not shipped
 
 Best-passage scoring (branch `c3hszg`, d84ae1aa: option `passage_mix`, recall4
