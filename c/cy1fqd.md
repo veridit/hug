@@ -32,3 +32,5 @@ CI census 2026-11-19 (iwazaru, scratch/ci-census.md), ubuntu-latest -race: 44232
 - [ ] No timeout raised and no retry added
 
 ## Notes
+
+crab 01:06: stays todo. Confirm on main after bc217cb3 (hfkt1n) and ghycrq (tmux harness: server start and cleanup deadlines) land, before anyone works it; it may be ghycrq's.
