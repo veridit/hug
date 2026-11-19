@@ -48,6 +48,7 @@ check 2: crab 23:52 ruling: met for the reload path. Pre-fix 5/8 under 16 hogs; 
 landed 28de94c on main 2026-11-19: tui: failing test, TestTmuxReload's waits accept half-drawn and loading frames…
 landed bc217cb on main 2026-11-19: tui: TestTmuxReload compares only whole frames with no load running (hfkt1n)
 shipped in v0.7.73 (28de94c)
+crab: on main (ancestor of fac02994 verified): fix bc217cb3. Closed by the coordinator.
 ## History
 - 2026-11-18T22:38 todo -> doing/active (take)
 - 2026-11-19T00:52 doing/active -> doing/waiting (wait)
