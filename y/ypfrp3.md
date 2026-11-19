@@ -27,6 +27,8 @@ main 9073b532 (CI 44610132775 attempt 2, 8/8), CHANGELOG ccf8641f, merge 97d2de7
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml green and brew upgrade gives hug version 0.7.85 with links into the new Cellar
+- [x] release.yml green and brew upgrade gives hug version 0.7.85 with links into the new Cellar
 
 ## Notes
+
+check 1: release.yml 44613144851 success; brew upgrade: hug v0.7.85, hug/muninn/huginn -> Cellar/hug/0.7.85
