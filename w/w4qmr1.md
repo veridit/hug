@@ -7,7 +7,7 @@ priority: ""
 assignee: ["mizaru"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzv"
+rank: "zzzzzzzzzzzu"
 created: 2026-11-19
 updated: 2026-11-19
 parent: "d634kr"
