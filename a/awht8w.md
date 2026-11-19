@@ -34,12 +34,13 @@ iwazaru byj479 full niced run on fcd1adb1 (scratch/byj479-full.txt): '--- FAIL: 
 ## Acceptance
 - [x] Cause named in a note with a log line or reproduction
 - [ ] A test or amplified reproduction fails first, then passes -count=50 niced under load after the fix
-- [ ] No timeout raised and no retry added
+- [x] No timeout raised and no retry added
 
 ## Notes
 
 
 Cause: the test's 20 s wall clock, not the hook. Acknowledge sends on acked on every return path (nil, error, acked), so the only way to 'did not acknowledge' is a hook slower than 20 s. Its critical path after Notify is git processes: the request's own add+commit under the board turn, then the hook's open (rev-parse, remote, diff), Acknowledge's refresh (diff) and its add+commit: 7-8 git processes in a row. At load 95-500 a niced git process took up to 14 s (traced, full niced cli run at load 137-266: 'ZZGIT 14.069s git remote', 'ZZGIT 10.913s git diff', 47 commits mean 1.85 s max 7 s). No lock is held past its write: the turn waits traced at most 0.531 s; no deadlock, no lost send. Amplified reproduction on clean c186f78f: git on PATH replaced by 'sleep N; exec /usr/bin/git' (scratch/awht8w-ev/slowgit/git): N=5 passes (hook 30.9 s after delivery started, 20.7 s after the command returned), N=7: 'deliver_test.go:194: crab s hook did not acknowledge' / '--- FAIL: TestRequestReachesCoordinator (314.89s)'. Trace: scratch/awht8w-ev/slow-5.zz, pkg-full1.txt, loop-1.zz. The production hook is fire-and-forget (turn_start/post_tool_feedback): a slow ack only delays the receipt line.
 check 1: Cause: the test's 20 s wall clock. Acknowledge sends on acked on every return path, so 'did not acknowledge' means a hook slower than 20 s, not a lost or stuck one. Delivery to ack is ~8 git processes in a row; traced at load 137-500 one niced git took up to 14 s ('ZZGIT 14.069s git remote', 'ZZGIT 10.913s git diff'; commits mean 1.85 s max 7 s); the hook's board-turn wait was at most 0.531 s. Reproduced on clean c186f78f with every git started 7 s late (scratch/awht8w-ev/slowgit/git): 'deliver_test.go:194: crab's hook did not acknowledge' '--- FAIL: TestRequestReachesCoordinator (314.89s)'; at 5 s late it passes. Evidence: scratch/awht8w-ev/slow-clean-7.txt, slow-5.zz, pkg-full1.txt.
+check 3: 251fd2f0 removes the 20 s select from TestRequestReachesCoordinator and TestDeliveryInstructionsMatchCode and blocks on the hook's answer; no timeout constant raised or added (no time.After remains in either test), no retry, no skip; hug's own code unchanged (diff: deliver_test.go, delivery_instructions_test.go, CHANGELOG.md only).
 ## History
 - 2026-11-18T22:20 todo -> doing/active (take)
