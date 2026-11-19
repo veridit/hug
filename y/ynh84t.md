@@ -7,7 +7,7 @@ priority: ""
 assignee: ["duckling"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzo"
+rank: "zzzzzzzzzzzn"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "gem59b"

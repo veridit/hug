@@ -7,7 +7,7 @@ priority: ""
 assignee: ["macaque"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzz"
+rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T01:26"
