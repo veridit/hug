@@ -74,6 +74,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     (console 09:35Z) history.sdd, Seid data (seid-lang design/SDD-Data-Format.md).
 - 2026-11-19T11:28 question 6 by daisy to jhf (check 5, show MOCK.md):
   Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached.
+- 2026-11-19T11:29 question 7 by crab to jhf:
+  Seid today rejects bare names and times (.by:jhf is 'Unknown variable: jhf', .at:2026-11-19T09:40Z is 'unexpected token: :'), and even the Open-tier .Dog example from Seid-Data-Files.md. Keep the bare forms in marks and history.sdd and treat that as a request to Seid for word and time literals, or quote them (.by:"jhf")?
 
 ## Requests
 - 2026-11-19T10:05 request 1 by jhf:
@@ -159,3 +161,4 @@ crab 10:31Z, review of daisy's mock (files attached, sha in her notes): before.m
 - 2026-11-19T11:09 answer 6 acknowledged by crab
 - 2026-11-19T11:23 crab read the answer: hug task set p87ngv
 - 2026-11-19T11:28 doing/active -> doing/asked (ask)
+- 2026-11-19T11:29 asked question 7 of jhf, 2 open (doing/asked -> doing/asked)
