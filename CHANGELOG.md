@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.77 - 2026-11-19
+
 - hug mem capture: a hook starts an extraction call only when the time left
   covers it (a6xm8n). The margin is what this run has seen: the slowest
   search, the slowest call (at least 5 s; p99 of 5482 hook calls since
