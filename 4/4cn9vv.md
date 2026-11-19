@@ -1,7 +1,7 @@
 ---
 id: 4cn9vv
 title: "Release v0.7.80"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T11:10"
-doing_with: "p277bp"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T11:10"
 ---
 
 ## Goal
@@ -43,5 +41,7 @@ check 1: release.yml 44501832424 success; brew upgrade: hug version v0.7.80, hug
 
 
 check 1: release.yml 44501832424 success; brew upgrade: hug version v0.7.80, hug/muninn/huginn link into Cellar/hug/0.7.80
+Reflection (unanswered, 2026-11-19, crab)
 ## History
 - 2026-11-19T11:10 todo -> doing/active (take with p277bp)
+- 2026-11-19T11:10 doing/active -> done (done); was doing_since: 2026-11-19T11:10; doing_with: p277bp
