@@ -3,6 +3,7 @@ package tui
 import (
 	"context"
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,6 +11,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 
@@ -54,44 +56,67 @@ func normalizeCapture(s string) string {
 
 // A foreground server gives the test an exact process to wait for and clean up.
 // Clients never auto-start a replacement server during startup or shutdown.
+//
+// Both waits are on the server itself, never on a tmux client (ghycrq): on
+// a loaded machine starting a process can take seconds (under 16 CPU hogs
+// /bin/echo took up to 11.6 s), so a client run inside a deadline failed
+// servers that were fine. Ready is the server's socket taking a connection
+// from this process. Cleanup is SIGTERM, which is what tmux kill-server
+// does (cmd-kill-server.c: kill(getpid(), SIGTERM)), then the server's exit.
 func startTmuxServer(t *testing.T, socket string) func() {
 	t.Helper()
+	path, err := tmuxSocketPath(socket)
+	if err != nil {
+		t.Fatal(err)
+	}
 	server := exec.Command("tmux", "-D", "-L", socket, "-f", "/dev/null")
 	server.Stdout, server.Stderr = os.Stderr, os.Stderr
 	if err := server.Start(); err != nil {
 		t.Fatal(err)
 	}
+	done := make(chan error, 1)
+	go func() { done <- server.Wait() }()
+	// A wait past a minute says what it waits on, then goes on waiting: go
+	// test's -timeout ends a server that really hangs, with every stack.
+	slow := func(what string) *time.Timer {
+		return time.AfterFunc(time.Minute, func() { t.Logf("tmux server %d: still waiting for %s", server.Process.Pid, what) })
+	}
 	cleanup := func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		kill := exec.CommandContext(ctx, "tmux", "-N", "-L", socket, "kill-server")
-		killErr := kill.Run()
-		done := make(chan error, 1)
-		go func() { done <- server.Wait() }()
-		select {
-		case err := <-done:
-			if err != nil || killErr != nil {
-				t.Errorf("tmux server cleanup: command %v, process %v", killErr, err)
-			}
-		case <-time.After(3 * time.Second):
-			_ = server.Process.Kill()
-			<-done
-			t.Error("tmux server did not exit after explicit cleanup")
+		if err := server.Process.Signal(syscall.SIGTERM); err != nil {
+			t.Errorf("tmux server cleanup: %v", err)
+		}
+		defer slow("its exit after SIGTERM").Stop()
+		if err := <-done; err != nil {
+			t.Errorf("tmux server cleanup: process %v", err)
 		}
 	}
-	deadline := time.Now().Add(5 * time.Second)
-	for time.Now().Before(deadline) {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		err := exec.CommandContext(ctx, "tmux", "-N", "-L", socket, "show-options", "-s", "-v", "exit-empty").Run()
-		cancel()
-		if err == nil {
+	defer slow(path + " to take a connection").Stop()
+	for {
+		select {
+		case err := <-done:
+			t.Fatalf("foreground tmux server did not become ready: it exited (%v) before %s took a connection", err, path)
+		default:
+		}
+		if conn, err := net.Dial("unix", path); err == nil {
+			conn.Close()
 			return cleanup
 		}
 		time.Sleep(25 * time.Millisecond)
 	}
-	cleanup()
-	t.Fatal("foreground tmux server did not become ready")
-	return nil
+}
+
+// tmuxSocketPath is where tmux -L label puts its socket: the real path of
+// $TMUX_TMPDIR, else /tmp, then tmux-UID/label (tmux.c, make_label).
+func tmuxSocketPath(label string) (string, error) {
+	dir := os.Getenv("TMUX_TMPDIR")
+	if dir == "" {
+		dir = "/tmp"
+	}
+	dir, err := filepath.EvalSymlinks(dir)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, fmt.Sprintf("tmux-%d", os.Getuid()), label), nil
 }
 
 // TestTmuxGolden exercises the actual CLI binary, not a copied model renderer.
