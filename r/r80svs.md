@@ -1,15 +1,20 @@
 ---
 id: r80svs
 title: "View line: bold marks keys, underline marks state, colour marks the key step"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["rose"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T12:11"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Rest, list view: v o l b ! bold and coloured by step; 'list' underlined as a who
 - [ ] Jørgen looks at the line in hug tui after the release and can tell the active view and what v offers
 
 ## Notes
+
+
+## History
+- 2026-11-19T12:11 todo -> doing/active (take)
