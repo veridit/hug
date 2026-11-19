@@ -7,8 +7,10 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -18,10 +20,16 @@ import (
 // diff turns a task's status from open to done or dropped (set, edit). A
 // commit that only touches a task already closed does not count. The log is
 // read once per branch head, then only the commits since the last head.
+//
+// A reload does not wait on git (adqdfe): it draws with the times already
+// known, and readCloses asks git after it, off the UI thread. Starting a
+// process can take seconds on a loaded machine, and a board on screen does
+// not need the order of RECENTLY DONE to be current first.
 type closeLog struct {
-	mu   sync.Mutex
-	head string
-	at   map[string]int64 // lowercase id -> unix close time; never mutated once published
+	mu    sync.Mutex
+	head  string
+	at    map[string]int64                 // lowercase id -> unix close time; never mutated once published
+	known atomic.Pointer[map[string]int64] // at, readable while git runs
 }
 
 const (
@@ -31,7 +39,8 @@ const (
 
 var closeSubject = regexp.MustCompile(`^(?:hug task|huginn) (?:done|drop) (\S+)$`)
 
-func git(root string, args ...string) (string, error) {
+// git runs git in root; a test makes it slow to start (adqdfe).
+var git = func(root string, args ...string) (string, error) {
 	out, err := exec.Command("git", append([]string{"-C", root}, args...)...).Output()
 	return string(out), err
 }
@@ -74,7 +83,57 @@ func (c *closeLog) times(root string) map[string]int64 {
 		}
 	}
 	c.head, c.at = head, next
+	c.known.Store(&next)
 	return next
+}
+
+// latest is the close times as of the last read, without starting git.
+func (c *closeLog) latest() map[string]int64 {
+	if c == nil {
+		return nil
+	}
+	if at := c.known.Load(); at != nil {
+		return *at
+	}
+	return nil
+}
+
+// closesMsg says close times were read after a reload drew the board.
+type closesMsg struct{}
+
+// readCloses reads the close times at the current head, after a reload.
+func (m model) readCloses() tea.Cmd {
+	if m.closes == nil || m.store == nil {
+		return nil
+	}
+	closes, root := m.closes, m.store.Root
+	return func() tea.Msg {
+		closes.times(root)
+		return closesMsg{}
+	}
+}
+
+// applyCloses takes the newest close times read (an older read landing late
+// cannot undo a newer one): RECENTLY DONE is ordered again.
+func (m *model) applyCloses() {
+	at := m.closes.latest()
+	if sameCloses(m.closedAt, at) {
+		return
+	}
+	m.closedAt = at
+	m.visibleGen = nextVisibleGen() // the section's rows move (46ek1f)
+}
+
+func sameCloses(a, b map[string]int64) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for id, at := range a {
+		if b[id] != at {
+			return false
+		}
+	}
+	return true
 }
 
 // stateValue is the value of a "state: x" or "status: x" line.

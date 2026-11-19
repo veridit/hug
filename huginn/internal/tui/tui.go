@@ -527,6 +527,7 @@ func (m model) step(msg tea.Msg) (tea.Model, tea.Cmd) {
 		default:
 			m.applyKeeping(msg.sn)
 			m.refreshed = true
+			closes := m.readCloses()
 			if m.pickPane && msg.sn.err == nil {
 				m.pickPane = false
 				m.firstPane()
@@ -537,9 +538,13 @@ func (m model) step(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.message = ""
 				}
 				next, cmd := m.updateJump(tea.KeyMsg{Type: tea.KeyEnter})
-				return next.(model).afterUpdate(cmd)
+				return next.(model).afterUpdate(tea.Batch(cmd, closes))
 			}
+			return m.afterUpdate(closes)
 		}
+		return m.afterUpdate(nil)
+	case closesMsg:
+		m.applyCloses()
 		return m.afterUpdate(nil)
 	case editorMsg:
 		// The editor's own refresh reads everything that changed meanwhile.
@@ -609,6 +614,9 @@ func (m model) Init() tea.Cmd {
 	return tea.Batch(cmds...)
 }
 func (m *model) refresh(path string) {
+	// After the TUI's own write, which committed with git already: the
+	// close times are read here, not after (a reload's are, adqdfe).
+	m.closes.times(m.store.Root)
 	m.apply(loadSnapshot(m.store, m.loads, m.closes, m.opts.Lint), path)
 }
 
@@ -634,7 +642,9 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 		return snapshot{err: err}
 	}
 	task.Sort(ts)
-	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.times(s.Root), files: map[string][]string{}}
+	// The close times known so far: git is asked after the board is drawn
+	// (readCloses), so a load never waits on starting a process (adqdfe).
+	sn := snapshot{tasks: ts, docs: map[string]*task.Document{}, closedAt: closes.latest(), files: map[string][]string{}}
 	sn.people, _ = task.People(s.Root) // a broken hug.toml is lint's to report
 	sn.project, _ = task.ProjectName(s.Root)
 	if tl, e := task.Tags(s.Root); e == nil {
