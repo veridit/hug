@@ -936,6 +936,9 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	var r task.Result
 	// requested is the selection a request named (ec6z6j), for its commit.
 	var requested string
+	// setBefore is the task before a set, so the reply says what it wrote
+	// (zdgw60).
+	var setBefore *setSnapshot
 	switch cmd {
 	case "init":
 		if e = f.count(0); e != nil {
@@ -1501,6 +1504,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if v := f.get("state"); v != "" && !slices.Contains(task.StateList, v) {
 			return nil, task.Invalid("state", v, task.StateList)
 		}
+		// What the set wrote is said before lint advice (zdgw60).
+		if d, err := s.s.Get(f.args[0]); err == nil {
+			before := snapshotForSet(d)
+			setBefore = &before
+		}
 		for _, field := range fields {
 			if f.has(field) {
 				r, e = s.s.Set(f.args[0], field, f.get(field))
@@ -1641,6 +1649,11 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 	}
 	reply, e = resultJSON(r, s)
+	if e == nil && cmd == "set" && setBefore != nil {
+		if d, err := s.s.Get(r.Task.ID); err == nil {
+			reply["wrote"] = setWrote(*setBefore, snapshotForSet(d), d.Task.Acceptance)
+		}
+	}
 	// A person's request or answer goes to the board's coordinator now
 	// (gmzd87), after its commit, by the one function the TUI uses too.
 	// A tick by the person asked on the check the question is about is
@@ -2142,6 +2155,12 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		}
 		for _, m := range ms {
 			fmt.Fprintf(a.Out, "%s  %s\n", m.ID, strings.Join(m.Levels, " "))
+		}
+	}
+	// What a set wrote (zdgw60), before its lint advice.
+	if ws, ok := reply["wrote"].([]string); ok {
+		for _, w := range ws {
+			fmt.Fprintln(a.Out, w)
 		}
 	}
 	if l, ok := reply["lint"].(*TaskLint); ok {
