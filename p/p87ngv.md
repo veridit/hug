@@ -84,3 +84,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
   (from jhf's request 1, 09:05Z, written because he could not reach question 2 in hug tui) Both may resolve. It depends on what the request and the answer say: the person may accept or approve, or say they need something else; the agent decides by the ticket too. Use judgment, and either can initiate a resolve for clarity.
 - 2026-11-19T10:06 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:06 crab read the answer: hug task set p87ngv
+- 2026-11-19T10:06 request 1 acknowledged by crab
