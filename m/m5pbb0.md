@@ -32,12 +32,13 @@ Leads to check: the first question's answer moving focus (stage shows 'question 
 ## Depends on
 
 ## Acceptance
-- [ ] A failing test reproduces it on p87ngv's file as it was at 09:05Z
+- [x] A failing test reproduces it on p87ngv's file as it was at 09:05Z
 - [ ] After the fix every open question in that file has a reachable answer action in hug tui (golden at 100x30 and 160x45)
 - [ ] Jørgen answers a second question in hug tui after the release
 
 ## Notes
 
 
+check 1: TestOldAnswerLeavesEveryQuestionAnswerable (huginn/internal/tui/m5pbb0_test.go, commit c533de89) replays p87ngv as at hug/tasks bab152ff (10:05:26, after jhf's v0.7.69 TUI answered q1): without the fix both 100x30 and 160x45 fail 'm5pbb0_test.go:52: question 2 not answered (message "usage p87ngv: p87ngv asks nobody: its stage is not design, asked or review\nfix: hug task show p87ngv")'. Store test TestAnswerOpenQuestionWithoutMirror fails the same on todo and doing. Running TUI pid 78631 maps /opt/homebrew/Cellar/hug/0.7.69/bin/hug (vmmap), q2adr8 shipped in v0.7.70.
 ## History
 - 2026-11-19T10:06 todo -> doing/active (take)
