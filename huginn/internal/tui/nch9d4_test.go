@@ -21,7 +21,8 @@ func TestSortPickerRankRowRestoresBoardOrder(t *testing.T) {
 		t.Fatalf("setup: p t u did not sort: %v", sortedM.sort)
 	}
 	panel := ansi.Strip(press(sortedM, "s").View())
-	if !strings.Contains(panel, "  r  rank      board order, the default: moves work only in it") {
+	// The highlight starts on r, the first row (17w9r6): "> r  rank".
+	if !strings.Contains(panel, " r  rank      board order, the default: moves work only in it") {
 		t.Fatalf("the sort picker has no rank row:\n%s", panel)
 	}
 	for _, way := range [][]string{{"s", "r"}, {"s", "n", "a", "r"}} {

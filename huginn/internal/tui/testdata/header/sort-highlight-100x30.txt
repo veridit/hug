@@ -1,0 +1,31 @@
+== sort p, then j j at 100x30 truecolor
+\e[1;38;2;0;191;255mHUG · sort\e[0m\e[38;2;135;149;168m   60/60 tasks · ! 2 broken\e[0m\e[38;2;135;149;168m · 5 advice\e[0m                                                    
+\e[1;38;2;0;191;255mv\e[0m\e[38;2;135;149;168miew:\e[0m \e[38;2;135;149;168m\e[0m\e[1;38;2;201;179;255mo\e[0m\e[38;2;135;149;168mverview\e[0m\e[38;2;135;149;168m  \e[0m\e[1;4;38;2;201;179;255;4ml\e[0m\e[4;38;2;135;149;168;4mi\e[0m\e[4;38;2;135;149;168;4ms\e[0m\e[4;38;2;135;149;168;4mt\e[0m\e[38;2;135;149;168m  \e[0m\e[38;2;135;149;168m\e[0m\e[1;38;2;201;179;255mb\e[0m\e[38;2;135;149;168moard\e[0m\e[38;2;135;149;168m  \e[0m\e[1;38;2;201;179;255m!\e[0m\e[38;2;135;149;168mlint\e[0m             \e[38;2;135;149;168m│ \e[0m\e[38;2;117;191;255mtodo 8\e[0m\e[38;2;135;149;168m · \e[0m\e[38;2;0;191;255mdoing 15 (1 depends)\e[0m\e[38;2;135;149;168m · \e[0m\e[38;2;107;107;214mdepends 7\e[0m\e[38;2;135;149;168m · \e[0m\e[38;2;138;201;135mdone 15\e[0m
+\e[1;4;38;2;0;191;255;4mf\e[0m\e[38;2;135;149;168milter: \e[0m\e[38;2;135;149;168mnone\e[0m\e[38;2;135;149;168m · \e[0m\e[1;4;38;2;0;191;255;4ms\e[0m\e[38;2;135;149;168mort: rank\e[0m                                                                           
+\e[1;38;2;0;191;255mSORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back\e[0m   
+now: rank (board order)                                                                             
+\e[1mnew: \e[0m\e[1mpriority ↓\e[0m                                                                                     
+  r  rank      \e[38;2;135;149;168mboard order, the default: moves work only in it\e[0m                                      
+\e[38;2;135;149;168m  c  current column mark one with H/L first\e[0m                                                         
+  p  priority  \e[1m1 ↓\e[0m \e[38;2;135;149;168mcritical first\e[0m                                                                   
+  t  type      \e[38;2;135;149;168mfeature, bug, chore, spike, docs\e[0m                                                     
+\e[1;48;2;22;54;73m> s  state     todo, doing, depends, done, dropped\e[0m                                                  
+  u  updated   \e[38;2;135;149;168mnewest first\e[0m                                                                         
+  d  created   \e[38;2;135;149;168mdate created, newest first\e[0m                                                           
+  g  group     \e[38;2;135;149;168ma to z\e[0m                                                                               
+  a  assignee  \e[38;2;135;149;168ma to z, unassigned last\e[0m                                                              
+  n  title     \e[38;2;135;149;168ma to z\e[0m                                                                               
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+\e[38;2;135;149;168mAll tasks · : filters and commands\e[0m                                                                  
+                                                                                                    
+\e[1;38;2;0;191;255mj/k ↑↓\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mpick\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255mSpace\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168madd / flip\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255mEnter\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mapply\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255m⌫\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mremove last\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255mEsc\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mkeep order\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255m?\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mhelp\e[0m              

@@ -8,10 +8,10 @@ filter: none
   a  assignee  a person or agent, or (unassigned)
   e  epic      an epic's children
 --
-SORT · a letter adds a field (then by), again flips it · ⌫ last · Enter applies · Esc keeps the order
+SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back
 now: rank (board order)
 new: nothing picked yet, Enter or r gives rank
-  r  rank      board order, the default: moves work only in it
+> r  rank      board order, the default: moves work only in it
   c  current column mark one with H/L first
   p  priority  critical first
   t  type      feature, bug, chore, spike, docs

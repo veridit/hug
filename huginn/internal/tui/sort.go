@@ -3,9 +3,11 @@ package tui
 import (
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
@@ -97,7 +99,19 @@ const sortRefusal = "moving needs rank order: : sort rank"
 func (m *model) openSort() {
 	m.prompt = "sort"
 	m.sortDraft = nil
+	m.completion = 0 // the highlight starts on r, the first row, as filter's does (17w9r6)
+	m.sortMoved = false
 	m.input.Blur()
+}
+
+// sortRows are the picker's rows by their letters, in screen order: r,
+// c, then the fields. The highlight (m.completion) is an index into them.
+func sortRows() []string {
+	rows := []string{"r", "c"}
+	for _, f := range sortFields {
+		rows = append(rows, f.letter)
+	}
+	return rows
 }
 
 // currentColumn is the marked column's field, the one c in the picker
@@ -112,6 +126,32 @@ func (m model) currentColumn() (sortField, bool) {
 // updateSort handles a key while the builder is open.
 func (m model) updateSort(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
+	// The filter picker's keys (17w9r6, Jørgen 11:41Z): j/k, ↑↓ and
+	// ctrl-n/p move a highlight; Space on it is its letter, and so is
+	// Enter once j/k moved it there. Enter with nothing new picked
+	// applies, so a letter then Enter applies as before. A letter takes
+	// the highlight to its row.
+	rows := sortRows()
+	switch k {
+	case "j", "down", "ctrl+n":
+		m.completion = (m.completion + 1) % len(rows)
+		m.sortMoved = true
+		return m, nil
+	case "k", "up", "ctrl+p":
+		m.completion = (m.completion + len(rows) - 1) % len(rows)
+		m.sortMoved = true
+		return m, nil
+	case " ":
+		k = rows[min(m.completion, len(rows)-1)]
+	case "enter":
+		if m.sortMoved {
+			k = rows[min(m.completion, len(rows)-1)]
+		}
+	}
+	m.sortMoved = false
+	if i := slices.Index(rows, k); i >= 0 {
+		m.completion = i
+	}
 	if k == "r" {
 		// The default (nch9d4): every field goes, rows in rank order.
 		m.sortDraft = nil
@@ -131,10 +171,6 @@ func (m model) updateSort(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 	switch k {
-	case "enter":
-		m.applySort(m.sortDraft)
-		m.prompt = ""
-		return m, nil
 	case "backspace":
 		if n := len(m.sortDraft); n > 0 {
 			m.sortDraft = m.sortDraft[:n-1]
@@ -143,7 +179,13 @@ func (m model) updateSort(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 	f, ok := fieldByLetter(k)
 	if !ok {
-		m.message = "sort: a field letter, r rank, ⌫ removes the last, Enter applies, Esc keeps the order"
+		if k == "enter" {
+			// Enter with nothing new to pick applies the order.
+			m.applySort(m.sortDraft)
+			m.prompt = ""
+			return m, nil
+		}
+		m.message = "sort: a field letter, or j/k and Space; r rank, ⌫ removes the last, Enter applies, Esc keeps the order"
 		return m, nil
 	}
 	m.message = ""
@@ -305,27 +347,32 @@ func (m model) sortText() string {
 	if len(m.sortDraft) > 0 {
 		next = m.styles.normal.Bold(true).Render(sortLabel(m.sortDraft))
 	}
-	lines := []string{
-		m.styles.accent.Render("SORT · a letter adds a field (then by), again flips it · ⌫ last · Enter applies · Esc keeps the order"),
+	head := []string{
+		m.styles.accent.Render("SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back"),
 		"now: " + now,
 		m.styles.normal.Bold(true).Render("new: ") + next,
-		"  r  " + fit("rank", 10) + m.styles.dim.Render("board order, the default: moves work only in it"),
 	}
+	rows := []string{"  r  " + fit("rank", 10) + m.styles.dim.Render("board order, the default: moves work only in it")}
 	// With no column marked c cannot be picked: the whole row is dim
 	// (nch9d4, Jørgen 11:50Z), and c only says why.
 	current := m.styles.dim.Render("  c  current column mark one with H/L first")
 	if f, ok := m.currentColumn(); ok {
 		current = "  c  current column (" + f.name + ") " + m.styles.dim.Render("same as o")
 	}
-	lines = append(lines, current)
+	rows = append(rows, current)
 	for _, f := range sortFields {
-		line := "  " + f.letter + "  " + fit(f.name, 10) + m.styles.dim.Render(f.hint)
-		for _, k := range m.sortDraft {
+		// A field in the new order says where and which way, "1 ↓";
+		// the > is the highlight alone, as in the filter picker (17w9r6).
+		picked := ""
+		for i, k := range m.sortDraft {
 			if k.field == f.name {
-				line = m.styles.selected.Render(">" + line[1:])
+				picked = m.styles.normal.Bold(true).Render(strings.TrimSpace(strconv.Itoa(i+1)+" "+strings.TrimSpace(strings.TrimPrefix(sortLabel([]sortKey{k}), k.field)))) + " "
 			}
 		}
-		lines = append(lines, line)
+		rows = append(rows, "  "+f.letter+"  "+fit(f.name, 10)+picked+m.styles.dim.Render(f.hint))
 	}
-	return strings.Join(lines, "\n")
+	if at := m.completion; at >= 0 && at < len(rows) {
+		rows[at] = m.styles.selected.Render("> " + ansi.Strip(rows[at])[2:])
+	}
+	return strings.Join(append(head, rows...), "\n")
 }

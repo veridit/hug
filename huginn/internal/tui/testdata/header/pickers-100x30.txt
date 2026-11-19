@@ -1,0 +1,155 @@
+== filter at 100x30
+HUG · filter   60/60 tasks · ! 2 broken · 5 advice                                                  
+view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
+filter: none · sort: rank                                                                           
+FILTER · a letter picks a field · j/k and Enter · Esc back                                          
+filter: none                                                                                        
+> s  state     todo, doing, depends, done, dropped                                                  
+  t  type      feature, bug, chore, spike, docs                                                     
+  p  priority  critical, high, medium, low                                                          
+  g  group     a group, or (root)                                                                   
+  l  tag       one tag                                                                              
+  a  assignee  a person or agent, or (unassigned)                                                   
+  e  epic      an epic's children                                                                   
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+All tasks · : filters and commands                                                                  
+                                                                                                    
+j/k ↑↓ pick · Enter add chip · type narrow · Esc back · ? help                                      
+== sort at 100x30
+HUG · sort   60/60 tasks · ! 2 broken · 5 advice                                                    
+view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
+filter: none · sort: rank                                                                           
+SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back   
+now: rank (board order)                                                                             
+new: nothing picked yet, Enter or r gives rank                                                      
+> r  rank      board order, the default: moves work only in it                                      
+  c  current column mark one with H/L first                                                         
+  p  priority  critical first                                                                       
+  t  type      feature, bug, chore, spike, docs                                                     
+  s  state     todo, doing, depends, done, dropped                                                  
+  u  updated   newest first                                                                         
+  d  created   date created, newest first                                                           
+  g  group     a to z                                                                               
+  a  assignee  a to z, unassigned last                                                              
+  n  title     a to z                                                                               
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+All tasks · : filters and commands                                                                  
+                                                                                                    
+j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
+== sort p, then j j at 100x30
+HUG · sort   60/60 tasks · ! 2 broken · 5 advice                                                    
+view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
+filter: none · sort: rank                                                                           
+SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back   
+now: rank (board order)                                                                             
+new: priority ↓                                                                                     
+  r  rank      board order, the default: moves work only in it                                      
+  c  current column mark one with H/L first                                                         
+  p  priority  1 ↓ critical first                                                                   
+  t  type      feature, bug, chore, spike, docs                                                     
+> s  state     todo, doing, depends, done, dropped                                                  
+  u  updated   newest first                                                                         
+  d  created   date created, newest first                                                           
+  g  group     a to z                                                                               
+  a  assignee  a to z, unassigned last                                                              
+  n  title     a to z                                                                               
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+All tasks · : filters and commands                                                                  
+                                                                                                    
+j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
+== filter ? at 100x30
+HUG · help   60/60 tasks · ! 2 broken · 5 advice                                                    
+view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
+filter: none · sort: rank                                                                           
+IN THE FILTER PICKER                                                                                
+j/k ↑↓  pick                                                                                        
+Enter   add the chip                                                                                
+type    narrow the choices                                                                          
+Esc     back                                                                                        
+fields  s state, t type, p priority, g group, l tag, a assignee, e epic                             
+                                                                                                    
+EVERYWHERE                                                                                          
+?       this help, from anywhere; / finds in it                                                     
+ctrl-c  quit                                                                                        
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+All tasks · : filters and commands                                                                  
+                                                                                                    
+/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close                                
+== sort ? at 100x30
+HUG · help   60/60 tasks · ! 2 broken · 5 advice                                                    
+view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
+filter: none · sort: rank                                                                           
+IN THE SORT PICKER                                                                                  
+j/k ↑↓     pick                                                                                     
+Space      add the picked field, again flips it                                                     
+letter     add a field (then by), again flips it                                                    
+r          rank: the default board order, at once; clears every field                               
+c          the marked column, as o: again flips, then off                                           
+fields     p priority, t type, s state, u updated, d created, g group, a assignee, n title          
+Backspace  remove the last field                                                                    
+Enter      add the picked field after j/k, else apply the order                                     
+Esc        keep the order as it was                                                                 
+                                                                                                    
+EVERYWHERE                                                                                          
+?       this help, from anywhere; / finds in it                                                     
+ctrl-c  quit                                                                                        
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+All tasks · : filters and commands                                                                  
+                                                                                                    
+/ find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close                                

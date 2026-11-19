@@ -225,6 +225,7 @@ type model struct {
 	lastEdit        editorMsg                   // and the message it reports when it closes
 	memo            [2][maxSections]sectionMemo // overview and board: each section's scroll and row (h9zghj)
 	sort, sortDraft []sortKey                   // the order rows are in, and the one being built (mkzcqr)
+	sortMoved       bool                        // j/k moved the sort picker's highlight since the last pick: Enter picks it (17w9r6)
 	detailStack     []string
 	width, height   int
 	view            string

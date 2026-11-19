@@ -6,6 +6,17 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The sort picker in `hug tui` (s) moves like the filter picker (17w9r6,
+  Jørgen 2026-11-19 11:41Z). A highlight starts on the first row; j/k,
+  ↑↓ and ctrl-n/p move it. Space on a field adds it to the order, and
+  Space again flips it, as the field's letter does. After j/k, Enter does
+  the same, and Enter with nothing new picked applies the order. On r or
+  c, Space or Enter does what r and c do. Letters still pick at once and
+  move the highlight to their row, so a letter and then Enter applies as
+  before. A field in the new order shows its place and direction ("1 ↓")
+  instead of a `>`, so `>` marks only the highlight, as it does in filter.
+  The footer and ? help list j/k ↑↓ for both pickers.
+
 ## v0.7.82 - 2026-11-19
 
 - The view line in `hug tui` gives each cue one meaning (r80svs, Jørgen
