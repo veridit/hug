@@ -52,6 +52,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
   Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?
 - 2026-11-19T10:05 question 4 by crab to jhf:
   Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?
+- 2026-11-19T10:05 question 5 by crab to jhf:
+  History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated entry quoting the original text, the exchange and the change made. Is that the right name and shape?
 
 ## Notes
 
@@ -67,3 +69,4 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 - 2026-11-19T10:05 answer 1 acknowledged by crab
 - 2026-11-19T10:05 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:05 asked question 4 of jhf, 4 open (todo/ready -> todo/design)
+- 2026-11-19T10:05 asked question 5 of jhf, 5 open (todo/design -> todo/design)
