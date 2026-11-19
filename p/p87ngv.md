@@ -95,6 +95,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     I can't really see. It seems that you're telling me things that I can only see if it was an ANSI dump text file or screenshot or source, not a txt file. So you're speaking of things that are not visually available. As far as I can tell, I would love to answer this
 - 2026-11-19T12:34 question 11 by crab to jhf (check 5):
   With the questions now on the task, do you approve the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt)?
+- 2026-11-19T12:46 question 12 by seedling to jhf (show frame-1-100x30.ans):
+  Open marks are drawn as a dim line under the text they are about (↳ 1 request · jhf 09:40 · ...), with the marked words underlined and the raw .Request text hidden; frames 1-7 are attached in colour. Is that the look you want?
 
 ## Requests
 - 2026-11-19T10:05 request 1 by jhf:
@@ -224,3 +226,4 @@ file:frame-7-100x30.ans (1774 bytes, sha256:c50546fe) frame 7 in colour: after b
   I can't really see. It seems that you're telling me things that I can only see if it was an ANSI dump text file or screenshot or source, not a txt file. So you're speaking of things that are not visually available. As far as I can tell, I would love to answer this
 - 2026-11-19T12:43 answer 11 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T12:44 answer 11 acknowledged by crab
+- 2026-11-19T12:46 asked question 12 of jhf, 2 open (doing/asked -> doing/asked)
