@@ -1,7 +1,7 @@
 ---
 id: 8jcj3k
 title: "Capture stops for good on one message over 8192 bytes"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzp"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T02:30"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "CI 44438088626 on ci/8jcj3k (14d51bc1), then crab lands it; check 3 after release"
-waiting_since: "2026-11-19T02:36"
-waiting_asked_by: "piglet"
+done_at: "2026-11-19T06:50"
 ---
 
 ## Goal
@@ -50,6 +46,8 @@ landed fbe3a41 on main 2026-11-19: capture: a long message is cut into parts, ne
 shipped in v0.7.75 (4dabf89)
 crab: landed on main (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75. The open check waits on the live machine after brew upgrade.
 check 3: capture_runs 8476 (2026-11-19T05:37:55Z, turn_end, v0.7.77) for session crab_1793783281662: no error, processed 992, 65 actions, skipped 'remaining messages deferred to next hook (budget)'. Before: 841 refusals 11-16..11-19 (8jcj3k), then truncation 8449/8453/8459/8460 (nmn6wf), then budget 8467/8468/8470 (a6xm8n).
+Reflection (open, 2026-11-19, crab): Each fix uncovered the next failure on the same live session: refusal (8jcj3k), then truncation (nmn6wf), then the hook budget (a6xm8n). Only checking the live capture_runs after each release found them; the unit tests could not.
 ## History
 - 2026-11-19T02:30 todo -> doing/active (take)
 - 2026-11-19T02:36 doing/active -> doing/waiting (wait)
+- 2026-11-19T06:50 doing/waiting -> done (done); was doing_since: 2026-11-19T02:30; waiting_asked_by: piglet; waiting_on: CI 44438088626 on ci/8jcj3k (14d51bc1), then crab lands it; check 3 after release; waiting_since: 2026-11-19T02:36
