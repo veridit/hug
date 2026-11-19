@@ -65,6 +65,7 @@ retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone, j
 file:agentsection-proposal.md (3031 bytes, sha256:60579bed) Three additions to agentSection (G2b, G3 trimmed, G5) from the reflections triage; crab-reviewed 2026-11-19; for Jørgen
 instruction change traced to reflections: daa4c889 on main (built as a0939668; G2 h176dp/t64v7d/bejd89 and G7 gjmqhn/n2hq8p/t3fqaw/r5r8c1/55a7xx)
 landed daa4c88 on main 2026-11-19: AGENTS.md: write a superseding ruling on the earlier ticket; go vet after rebase…
+landed 2320b92 on main 2026-11-19: AGENTS.md: shell scripts run on macOS's bash 3.2 too (tb0dra)
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
