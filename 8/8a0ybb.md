@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
-design_question: "Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?"
-design_for: "jhf"
-design_since: "2026-11-19T12:24"
-design_asked_by: "crab"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -41,9 +37,14 @@ Code: huginn/internal/tui/detail.go (sections around 530-600 and 819-830, marked
 ## Questions
 - 2026-11-19T12:24 question 1 by crab to jhf:
   Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?
+  answered 2026-11-19T12:26 by jhf:
+    (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
 
 ## Notes
 
 
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
+- 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
+  > Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?
+  (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
