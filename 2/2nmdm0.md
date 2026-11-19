@@ -1,15 +1,21 @@
 ---
 id: 2nmdm0
 title: "rebase-land.sh misses a CHANGELOG entry cut by a conflict"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T05:01"
+doing_with: "p277bp"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +41,7 @@ Compare the source branch's added CHANGELOG lines (git diff FROM..SRC -- CHANGEL
 Cause was the script, not a conflict: rebase-land.sh line 14 extracted entries with grep '^\+- ', so a wrapped entry's indented continuation lines were dropped. Fixed in scratch/rebase-land.sh: entries are a '- ' line plus its '  ' continuation lines (awk), and after the cherry-picks every CHANGELOG line the branch added must be in the landed CHANGELOG verbatim, else 'CHANGELOG MISSING LINES:' and exit 3 without pushing.
 
 check 1: dry run (push replaced by echo) replaying 5mmqjk 8610a01a on 50fa8681: with the old grep extraction -> 'CHANGELOG MISSING LINES:' 'not pushed', exit 3; with the fix -> 'CHANGELOG IDENTICAL', exit 0
+
+
+## History
+- 2026-11-19T05:01 todo -> doing/active (take with p277bp)
