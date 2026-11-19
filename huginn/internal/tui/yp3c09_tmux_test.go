@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -65,6 +66,7 @@ func TestTmuxFileViewFillsToTheKeys(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	before = bytes.ReplaceAll(before, []byte("\r\n"), []byte("\n")) // LF, as on hug's board
 	card, err := os.ReadFile("testdata/p87ngv/five-questions.md")
 	if err != nil {
 		t.Fatal(err)
@@ -162,6 +164,12 @@ func TestTmuxFileViewFillsToTheKeys(t *testing.T) {
 				}
 				if bottom != h-2 {
 					t.Errorf("%s at %s: the bottom rule is on row %d, want %d, on the keys:\n%s", view, name, bottom+1, h-1, screen)
+				}
+				if view == "picture" {
+					// The keys name the system viewer, Preview on macOS
+					// (viewerName): the golden keeps the frame, not the OS.
+					lines[len(lines)-1] = "(the picture's keys, naming the system viewer)"
+					screen = strings.Join(lines, "\n") + "\n"
 				}
 				golden = append(golden, "== "+view, screen)
 			}
