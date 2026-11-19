@@ -47,6 +47,7 @@ CI 44399475509 on b6848d6e: completed success, 9/9 jobs (ubuntu, windows, macos,
 landed 5281611 on main 2026-11-18: project: failing test, the memory migration commit runs no repo hooks (9vp9by)
 landed 0b724ec on main 2026-11-18: project: the memory migration commit runs no repo hooks (9vp9by)
 shipped in v0.7.71 (5281611)
+crab: on main (ancestor of fac02994 verified): fix 0b724ec3. Closed by the coordinator.
 ## History
 - 2026-11-18T22:11 todo -> doing/active (take)
 - 2026-11-18T22:38 doing/active -> doing/waiting (wait)
