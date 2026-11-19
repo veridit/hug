@@ -1,15 +1,21 @@
 ---
 id: qxfqxh
 title: "Release v0.7.73"
-state: todo
+state: "doing"
 type: chore
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T01:20"
+stage: "active"
+model: "claude-opus-5-5"
+effort: "high"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +37,7 @@ CI 44425299288 8/8 on f17745ad. Content: rxr4z8 marks, hfkt1n reload test, nanvn
 - [ ] brew upgrade veridit/tap/hug; hug version prints v0.7.73
 
 ## Notes
+
+
+## History
+- 2026-11-19T01:20 todo -> doing/active (take)
