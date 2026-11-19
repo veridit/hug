@@ -1,7 +1,9 @@
 package tmuxtest
 
 import (
+	"os"
 	"reflect"
+	"runtime"
 	"testing"
 )
 
@@ -36,8 +38,13 @@ func TestOrphans(t *testing.T) {
 }
 
 func TestLabelOwner(t *testing.T) {
-	if l := Label("golden"); Owner(l) == 0 || !running(Owner(l)) {
-		t.Fatalf("Label %q: owner %d is not this live process", l, Owner(l))
+	l := Label("golden")
+	if Owner(l) != os.Getpid() {
+		t.Fatalf("Label %q: owner %d, want this process %d", l, Owner(l), os.Getpid())
+	}
+	// Windows has no signal 0 (and no tmux, so no sweep): liveness is Unix only.
+	if runtime.GOOS != "windows" && !running(Owner(l)) {
+		t.Fatalf("Label %q: owner %d is not running", l, Owner(l))
 	}
 	for _, l := range []string{"huginn-odd", "default", "huginn-x-1", "huginn-x-abc"} {
 		if Owner(l) != 0 {
