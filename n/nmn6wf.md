@@ -39,5 +39,6 @@ muninn/internal/app/capture.go:353-356 caps hook calls at max_tokens 1024; munin
 ## Notes
 
 
+crab 03:23Z, premise corrected from capture_runs (read-only): not stuck for good. 8449 (02:09Z) truncated at call 7 after 6 calls and 29 adds. 8453 (03:02Z) re-sent that chunk, which passed at 780 completion tokens (its known memories had changed), made 51 actions over 7 calls (780,608,437,615,566,717,1024 tokens), and truncated on a later chunk. 8456 (03:23Z) skipped: capture already running. Real cost: each truncation wastes a hook and delays the rest; the goal stands, but the 'stuck for good' wording in the purpose overstates it.
 ## History
 - 2026-11-19T04:01 todo -> doing/active (take)
