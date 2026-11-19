@@ -45,5 +45,8 @@ Run 8449 (live store, read-only): the 29 actions of calls 1-6 were APPLIED, not 
 check 1: TestCaptureTruncatedChunkRetriesAndMovesPast (commit e98a12ac; failed first at 01b6f80a: 'capture_truncated_test.go:123: run stopped at the truncated chunk: processed=1 err=extraction response truncated'). Now: 'CAPTURE truncated: overflow chunk max_tokens=[1024 2048], processed=3, partial reply not applied'. CI run 44456503911 on e98a12ac: success, all 8 jobs; 'ok github.com/veridit/hug/muninn/internal/app' on ubuntu, macos, windows.
 check 2: TestCaptureStillTruncatedIsRecordedAndDoesNotBlock + TestCaptureSessionEndDeferredChunkIsDrainedByALaterHook + TestCaptureDeferredStillTruncatedLeavesQueueKeepsBacklog (e98a12ac): 'CAPTURE still truncated: max_tokens=[1024 2048 4096], capture_runs truncated=1 deferred=["overflow"], later chunk applied, --backfill recovered it'; 'CAPTURE session_end deferred: hook max_tokens=[1024 2048], drained once at 4096, applied, queue empty'; 'CAPTURE deferred still truncated: 1 part(s) drained once each, queue empty, message kept in backlog, nothing partial applied'. CI run 44456503911: success.
 crab: reviewed and landed exact SHA e98a12ac (CI 44456503911 success 8/8; main had not moved) as main; released in v0.7.76. Check 3 waits on the live capture of crab_1793783281662 after brew upgrade.
+landed 01b6f80 on main 2026-11-19: capture: a hook call cut at max_tokens ends the whole hook: failing tests…
+landed e98a12a on main 2026-11-19: capture: a hook call cut at max_tokens is retried once at twice the cap (nmn6wf)
+shipped in v0.7.76 (01b6f80)
 ## History
 - 2026-11-19T04:01 todo -> doing/active (take)
