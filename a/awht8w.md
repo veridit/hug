@@ -7,7 +7,7 @@ priority: ""
 assignee: ["iwazaru"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzi"
+rank: "zzzzzzzzzzyn"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T22:20"
