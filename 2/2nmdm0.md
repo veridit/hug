@@ -31,3 +31,5 @@ Compare the source branch's added CHANGELOG lines (git diff FROM..SRC -- CHANGEL
 - [ ] the normal restack prints CHANGELOG IDENTICAL next to CODE-DIFF IDENTICAL
 
 ## Notes
+
+Cause was the script, not a conflict: rebase-land.sh line 14 extracted entries with grep '^\+- ', so a wrapped entry's indented continuation lines were dropped. Fixed in scratch/rebase-land.sh: entries are a '- ' line plus its '  ' continuation lines (awk), and after the cherry-picks every CHANGELOG line the branch added must be in the landed CHANGELOG verbatim, else 'CHANGELOG MISSING LINES:' and exit 3 without pushing.
