@@ -63,6 +63,7 @@ guppy (hatchling) 12:41: stays doing, waits on check 5 (a week of use since land
 
 retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone, journal last written 06:47): the wait is real and still holds. Check 5 needs a week of use since 6d88d74 landed on 2026-11-17, so it can next move on 2026-11-24. Who: a worker crab assigns that day; owner hatchling is no longer running. Material for check 5 today: hug task reflections lists 6 open reflections (6ephqk, kx2ndm, pbh9xq, h176dp, jmx10s, 44w1ev).
 file:agentsection-proposal.md (3031 bytes, sha256:60579bed) Three additions to agentSection (G2b, G3 trimmed, G5) from the reflections triage; crab-reviewed 2026-11-19; for Jørgen
+instruction change traced to reflections: daa4c889 on main (built as a0939668; G2 h176dp/t64v7d/bejd89 and G7 gjmqhn/n2hq8p/t3fqaw/r5r8c1/55a7xx)
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
