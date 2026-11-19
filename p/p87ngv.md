@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzl"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "asked"
-asked_by: "crab"
-asked_what: "Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?"
-asked_for: "jhf"
-asked_since: "2026-11-19T09:56"
+stage: "active"
 doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
@@ -51,6 +47,8 @@ Syntax (Jørgen 09:31-09:35Z, console): Seid things. A mark is a thing, space-do
 ## Questions
 - 2026-11-19T09:56 question 1 by crab to jhf:
   Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?
+  answered 2026-11-19T11:09 by jhf:
+    (jhf 09:05Z, request answer on this task) No threads in the ticket: the conversation moves to a separate history file; questions and requests may appear inline in the text as marks, and once resolved the ticket is changed and the dialogue goes to history.
 - 2026-11-19T09:56 question 2 by crab to jhf:
   Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?
   answered 2026-11-19T10:06 by jhf:
@@ -138,3 +136,6 @@ shipped in v0.7.80 (c533de8)
 - 2026-11-19T10:36 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:36 answer 5 acknowledged by crab
 - 2026-11-19T10:36 todo/design -> doing/asked (take, 1 open question(s) kept); was design_asked_by: crab; design_for: jhf; design_question: Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?; design_since: 2026-11-19T09:56
+- 2026-11-19T11:09 answered asked (question 1), by jhf, for crab (doing/asked -> doing/active):
+  > Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?
+  (jhf 09:05Z, request answer on this task) No threads in the ticket: the conversation moves to a separate history file; questions and requests may appear inline in the text as marks, and once resolved the ticket is changed and the dialogue goes to history.
