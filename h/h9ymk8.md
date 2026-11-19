@@ -30,3 +30,5 @@ AGENTS.md 'TUI goldens' line; git grep -n 'UPDATE_GOLDEN'.
 - [ ] git grep UPDATE_GOLDEN shows docs and code naming the same variable (note with output)
 
 ## Notes
+
+Add to AGENTS.md with this fix (bat's wacc33 reflection): a new HUG_* variable, test ones too, goes on internal/env Known, or TestEveryHUGNameIsKnown fails.
