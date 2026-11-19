@@ -34,7 +34,7 @@ muninn/run/surfaces.go:105 selfPath: 'writing .../hug into a hook would run hug 
 
 ## Acceptance
 - [x] hug mem install claude|codex|jcode writes a hook command that runs hug (hug mem hook ...), test
-- [ ] hug task install writes a jcode MCP entry named hug running hug, test
+- [x] hug task install writes a jcode MCP entry named hug running hug, test
 - [ ] hug upgrade (preview) lists each existing muninn/huginn hook and MCP entry it would move; --apply --machine moves them with backups, and the hooks still recall (test with a fake HOME)
 - [ ] On Jørgen's machine after the release, no harness config names muninn or huginn (grep in a note)
 
@@ -43,5 +43,6 @@ muninn/run/surfaces.go:105 selfPath: 'writing .../hug into a hook would run hug 
 
 INCIDENT 2026-11-19 00:32 (duckling): a ynh84t upgrade test run on WIP a24cb26c reached the real home and rewrote 7 live configs to the hug form, each with a FILE.bak-hug-upgrade: ~/.jcode/config.toml, ~/.claude/settings.json, and .jcode/config.toml of ~/Projects/Brovs, ~/Projects/GenderedGames, ~/Projects/truth_tribe_and_treasure, ~/ssb, ~/Veridit/src/seid-lang. Cause: hooks.go took the machine home from os.UserHomeDir() (a24cb26c hooks.go:533) and envFiles read the process's JCODE_HOME, not the App's; a test that runs upgrade --apply --machine with only a.Env[HOME] set reached the real files (moveNames itself honours dry: --apply without --machine does not write, now tested). Undo: each restored from its .bak-hug-upgrade at once; crab verified 7/7 cmp-equal to their backups, 0 'hug mem' lines. Stray backups: 7 deleted 2026-11-19 00:37 after cmp equal to the live file, per crab ruling 1; find ~ -maxdepth 6 -name '*.bak-hug-upgrade' outside scratch: 0. Prevention: a.homeDir()/a.getenv(JCODE_HOME); envFiles(home, jcodeHome) (TestUpgradeReadsJcodeHomeFromTheApp, fails on main 356fb240); internal/homeguard TestMain in cmd/hug, huginn/internal/cli, huginn/internal/harness, muninn/internal/harness, muninn/run: HOME, USERPROFILE, JCODE_HOME, XDG_CONFIG_HOME, CODEX_HOME to a temp dir, sha256 of the real harness configs plus every JCODE_INSTANCES config before and after, run fails naming changed files. Live sha guard over 11 files: 0 changed after each later run.
 check 1: c95fc32d, CI 44436073964 8/8: TestInstallWritesHugForms (muninn/internal/harness/hugforms_test.go) holds claude, codex and jcode writing '<hug> mem hook X', replacing the old muninn hook in place, uninstall removing either form
+check 2: c95fc32d, CI 44436073964 8/8: TestInstallThrowawayHomes (huginn/internal/cli/install_test.go) installs jcode --all-instances, hug on PATH, no huginn entry left; servers_test.go holds one hug entry, a foreign hug entry refused with a fix
 ## History
 - 2026-11-18T23:37 todo -> doing/active (take)
