@@ -33,7 +33,7 @@ Rest, list view: v o l b ! bold and coloured by step; 'list' underlined as a who
 
 ## Acceptance
 - [x] At rest the active view's whole word is underlined, no other word is, and keys are bold with no underline (golden 100x30 and 160x45)
-- [ ] After v, v has a steady underline and no fill, o l b ! underlines blink together on vCursor ticks, the active word's other letters keep a steady underline (test with two frames 0.53 s apart)
+- [x] After v, v has a steady underline and no fill, o l b ! underlines blink together on vCursor ticks, the active word's other letters keep a steady underline (test with two frames 0.53 s apart)
 - [ ] Colour: v in the accent, o l b ! in violet, in every state; NO_COLOR shows the same bold and underlines (golden)
 - [ ] Jørgen looks at the line in hug tui after the release and can tell the active view and what v offers
 
@@ -42,5 +42,6 @@ Rest, list view: v o l b ! bold and coloured by step; 'list' underlined as a who
 
 r80svs: failing tests first (r80svs_test.go, worktree 8889481d): TestViewLineRestUnderlinesActiveWord: '100 overview at rest: "v" at column 0 bold false, a key true'; TestViewLineAfterVBlinksTheChoices/100x30 and /160x45: 'after v, blink on: "v" at column 0 is filled: "\x1b[38;2;11;22;32;48;2;0;191;255mv"'; TestViewLineNoColorKeepsCues: 'NO_COLOR at rest: "v" at column 0 bold false, a key true'. Finding: termenv Ascii (NO_COLOR) drops every attribute, so the view line must write bold/underline itself under NO_COLOR.
 check 1: 686d0955 (branch r80svs): TestViewLineRestUnderlinesActiveWord checks every cell of the view line at rest at 100 and 160 in each view (whole active word underlined, key letter too, no other word, keys bold and not underlined, no fill); golden testdata/header/view-blink-{100x30,160x45}.txt idle cues row 'B     U_______  B     B      B'. Failed before the fix: '100 overview at rest: "v" at column 0 bold false, a key true'. Local niced go test ./...: 40 ok, 0 FAIL.
+check 2: 686d0955: TestViewLineAfterVBlinksTheChoices/100x30 and /160x45 take two frames one real vCursor tick apart (tick 500-900 ms, bubbles 530 ms): blink on cues 'U     U_______  U     U      U', blink off 'U     B_______  B     B      B' (v steady underline, no fill; o l b ! underlines blink together; 'verview' keeps its underline); after v l / v ! / Esc back to rest, new view underlined. Also TestViewKeysBlinkAfterV (frames differ only in o l b ! underlines), TestPickedVIsUnderlined. Failed before the fix: 'after v, blink on: "v" at column 0 is filled: "\x1b[38;2;11;22;32;48;2;0;191;255mv"'.
 ## History
 - 2026-11-19T12:11 todo -> doing/active (take)
