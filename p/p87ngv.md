@@ -48,6 +48,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
   Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?
 - 2026-11-19T09:56 question 2 by crab to jhf:
   Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?
+  answered 2026-11-19T10:06 by jhf:
+    (from jhf's request 1, 09:05Z, written because he could not reach question 2 in hug tui) Both may resolve. It depends on what the request and the answer say: the person may accept or approve, or say they need something else; the agent decides by the ticket too. Use judgment, and either can initiate a resolve for clarity.
 - 2026-11-19T09:56 question 3 by crab to jhf:
   Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?
 - 2026-11-19T10:05 question 4 by crab to jhf:
@@ -77,3 +79,6 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:05 asked question 5 of jhf, 5 open (todo/design -> todo/design)
 - 2026-11-19T10:05 request 1 by jhf
 - 2026-11-19T10:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-19T10:06 answered design (question 2), by jhf, for crab (todo/design -> todo/design):
+  > Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?
+  (from jhf's request 1, 09:05Z, written because he could not reach question 2 in hug tui) Both may resolve. It depends on what the request and the answer say: the person may accept or approve, or say they need something else; the agent decides by the ticket too. Use judgment, and either can initiate a resolve for clarity.
