@@ -1,7 +1,7 @@
 ---
 id: r80svs
 title: "View line: bold marks keys, underline marks state, colour marks the key step"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["rose"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzt"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T12:11"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T12:51"
 ---
 
 ## Goal
@@ -47,5 +46,7 @@ check 3: 686d0955: checkCues asserts v #00bfff and o l b ! #c9b3ff in every stat
 r80svs: goldens rewritten: 4 files (testdata/header/view-blink-100x30.txt, view-blink-160x45.txt, view-cursor.txt, testdata/colour/depends-140.txt), each diff reviewed: only the view line's SGR changed, plus new cue/colour rows and NO_COLOR frames in view-blink-*; screen text unchanged; tmux goldens (TestTmuxGolden, 4 subtests) unchanged and passing. capture prompt s/c keys keep their underlined, not bold look (capture.go no longer borrows viewPrefixKey as-is).
 r80svs: CI run 44516640510 on ci/r80svs, headSha 686d09555739b24e19ce3a87c4423935a06c74e1: conclusion success, 8/8 jobs success (secrets, bench, test macos/ubuntu/windows-latest, test-windows-cli rest/sync/shards). Branch r80svs pushed at the same SHA, not merged. Check 4 is Jørgen's, after release.
 crab 11:52Z: reviewed viewline.go (bold keys, colour by step, underline for state, cue() keeps bold/underline under NO_COLOR), render.go styles, 4 goldens. Main had not moved: fast-forwarded to 686d0955 (CI 44516640510 8/8 at that SHA). Release v0.7.82: CHANGELOG 2a3690b8, merge 67652429, release.yml 44518564332. Per 75mxf3 trial, check 4 moves to the v0.7.82 release ticket as an ask.
+Reflection (unanswered, 2026-11-19, crab)
 ## History
 - 2026-11-19T12:11 todo -> doing/active (take)
+- 2026-11-19T12:51 doing/active -> done (done); was doing_since: 2026-11-19T12:11
