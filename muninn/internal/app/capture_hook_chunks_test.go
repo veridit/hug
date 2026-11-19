@@ -62,6 +62,9 @@ func TestCaptureHookByteBoundFragmentsResume(t *testing.T) {
 	f.App.Cfg.Extract.Provider = "ollama"
 	f.App.Cfg.Extract.BaseURL = server.URL
 	f.App.Cfg.Extract.HookChunkBytes = 1024
+	// A 1 s call bound: the hook's budget gate (a6xm8n) then needs 3 s per
+	// chunk, so both chunks start within 4 s and the slow second call is cut.
+	f.App.Cfg.Extract.TimeoutSeconds = 1
 	o := captureOpts("hook-fragments")
 	o.Trigger = "session_end"
 	original := strings.Repeat("é", 1500) + "quartz-tail"

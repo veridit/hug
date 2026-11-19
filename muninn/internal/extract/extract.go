@@ -500,6 +500,11 @@ func Complete(ctx context.Context, c Config, system, input string) (Result, erro
 		Usage Usage `json:"usage"`
 	}
 	if err := json.NewDecoder(io.LimitReader(resp.Body, 2<<20)).Decode(&reply); err != nil {
+		// A deadline that cuts the body mid-read is a timeout, not a bad
+		// reply (a6xm8n: run 8468 was recorded as parse).
+		if ctx.Err() != nil {
+			return out, fmt.Errorf("extraction timeout or cancellation: %w", ctx.Err())
+		}
 		return out, errors.New("invalid extraction response (body redacted)")
 	}
 	out.Usage = reply.Usage

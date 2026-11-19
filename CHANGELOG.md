@@ -6,6 +6,17 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- hug mem capture: a hook starts an extraction call only when the time left
+  covers it (a6xm8n). The margin is what this run has seen: the slowest
+  search, the slowest call (at least 5 s; p99 of 5482 hook calls since
+  2026-11-12 was 4.7 s) and the slowest save, checked before a chunk and
+  again before its call. A run that runs out of time ends with skipped
+  `remaining messages deferred to next hook (budget)` and no error. Before, a
+  fixed 3 s check before the search let runs 8467 and 8468 start their last
+  call with about 4.5 s and 0.6 s left: it was cut, and runs with 83 and 88
+  applied actions were recorded as failed. A deadline that cuts a reply body
+  mid-read is now a timeout, not `invalid extraction response` (parse).
+
 ## v0.7.76 - 2026-11-19
 
 - hug mem capture: a hook call whose reply is cut at the hook's 1024-token

@@ -323,13 +323,30 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 	}
 	report.Split = splitCount(originals)
 	// Messages beyond the deadline stay pending for the next observer.
+	// A hook starts a chunk, and its paid call, only when the time left covers
+	// what this run has seen a chunk take (a6xm8n): the slowest search, call
+	// and planning-plus-apply so far, each with a floor. A fixed 3 s checked
+	// before the search, with a 2 s reserve after the call, let run 8467
+	// start its last call with 4.5 s left (2.5 s for the call) and run 8468,
+	// whose search then took over 2.4 s, with about 0.6 s left. The cut
+	// call failed both runs after 83 and 88 applied actions. The floor for a
+	// call is 5 s: of 5482 hook calls since 2026-11-12, p99 took 4.7 s
+	// (max 8.0 s).
+	callFloor := min(5*time.Second, a.Cfg.Extract.CallTimeout(), hookCallTimeout)
+	var slowSearch, slowCall, slowAfter time.Duration
+	callMargin := func() time.Duration { return max(callFloor, slowCall) }
+	afterMargin := func() time.Duration { return max(2*time.Second, slowAfter) }
+	covers := func(need time.Duration) bool {
+		deadline, ok := ctx.Deadline()
+		return !hook || !ok || time.Until(deadline) >= need
+	}
 	for start := 0; start < len(pending); {
-		if hook && report.Processed > 0 {
-			if deadline, ok := ctx.Deadline(); ok && time.Until(deadline) < 3*time.Second {
-				report.Skipped = "remaining messages deferred to next hook (budget)"
-				return report, nil
-			}
+		if !covers(slowSearch + callMargin() + afterMargin()) {
+			report.Skipped = captureBudgetSkip
+			return report, nil
 		}
+		auditMessages := len(audit.Messages)
+		var afterStart time.Time
 		var chunk strings.Builder
 		end := start
 		for end < len(pending) {
@@ -370,9 +387,16 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			}
 			planStart := time.Now()
 			hits, err := a.Searcher.Search(ctx, query, opts)
+			slowSearch = max(slowSearch, time.Since(planStart))
 			report.PlanMS += time.Since(planStart).Milliseconds()
 			if err != nil {
 				return report, err
+			}
+			// The search took its time: check again before the paid call.
+			if !covers(callMargin() + afterMargin()) {
+				audit.Messages = audit.Messages[:auditMessages]
+				report.Skipped = captureBudgetSkip
+				return report, nil
 			}
 			var known []extract.Known
 			knownBytes := 0
@@ -394,7 +418,10 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			providerCancel := func() {}
 			if deadline, ok := ctx.Deadline(); ok {
 				reserve := 2 * time.Second
-				if left := time.Until(deadline); left < 4*time.Second {
+				if hook {
+					reserve = afterMargin()
+				}
+				if left := time.Until(deadline); left < 2*reserve {
 					reserve = left / 4
 				}
 				providerCtx, providerCancel = context.WithDeadline(ctx, deadline.Add(-reserve))
@@ -406,7 +433,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 					callCfg.MaxTokens = 1024
 				}
 				callCfg.MaxTokens = max(128, callCfg.MaxTokens)
-				callTimeout = 20 * time.Second
+				callTimeout = hookCallTimeout
 			}
 			call := func(c extract.Config, timeout time.Duration) (extract.Result, error) {
 				callCtx, callCancel := providerCtx, func() {}
@@ -416,6 +443,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 				defer callCancel()
 				extractStart := time.Now()
 				r, err := extract.Run(callCtx, c, text, known, b.extractionPlacesFor(c.WidePlaces)...)
+				slowCall = max(slowCall, time.Since(extractStart))
 				report.ExtractMS += time.Since(extractStart).Milliseconds()
 				audit.Calls = append(audit.Calls, r)
 				return r, err
@@ -427,13 +455,16 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			// 8460), so waiting for the next hook does not help. Of 1905 audited
 			// hook calls 21 hit 1024 and none of the complete ones needed more
 			// than 19 lines, about 1400 tokens: 2048 holds them.
-			if errors.Is(err, extract.ErrTruncated) && hook {
+			// The retry at twice the room is not started when the time left
+			// cannot cover it: the chunk is deferred below as still cut.
+			if errors.Is(err, extract.ErrTruncated) && hook && covers(2*callMargin()+afterMargin()) {
 				addUsage(&report, result)
 				report.Retried++
 				callCfg.MaxTokens *= 2
 				result, err = call(callCfg, 2*callTimeout)
 			}
 			providerCancel()
+			afterStart = time.Now()
 			if errors.Is(err, extract.ErrTruncated) && (hook || o.Deferred) {
 				// Still cut: apply nothing from it, checkpoint the chunk so the
 				// messages after it go on, and keep it for DrainDeferred and
@@ -627,11 +658,21 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 				return report, err
 			}
 		}
+		if !afterStart.IsZero() {
+			slowAfter = max(slowAfter, time.Since(afterStart))
+		}
 		report.Processed += end - start
 		start = end
 	}
 	return report, nil
 }
+
+// hookCallTimeout bounds one hook extraction call.
+const hookCallTimeout = 20 * time.Second
+
+// captureBudgetSkip ends a hook run that stopped before a chunk it had no
+// time left to finish; the rest waits for the next hook.
+const captureBudgetSkip = "remaining messages deferred to next hook (budget)"
 
 func (b Binding) capturePlan(ctx context.Context, a *App, c extract.Candidate) (CaptureAction, error) {
 	b = b.Refresh(a)
