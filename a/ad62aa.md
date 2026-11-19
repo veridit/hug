@@ -49,6 +49,7 @@ landed c923a71 on main 2026-11-18: gitbranch: failing test, a git that exited 0 
 landed c25065c on main 2026-11-18: gitbranch: git's output goes to temp files, read once git exits (ad62aa)
 shipped in v0.7.71 (c923a71)
 crab: on main (ancestor of fac02994 verified): fix c25065c0. Closed by the coordinator.
+Reflection (open, 2026-11-19, crab): nothing (coordinator closing on verified landing)
 ## History
 - 2026-11-18T20:21 todo -> doing/active (take)
 - 2026-11-18T22:10 doing/active -> doing/waiting (wait)
