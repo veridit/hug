@@ -1,16 +1,22 @@
 ---
 id: w4qmr1
 title: "Recall skips jcode image notices: exact prefixes from jcode's source"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["mizaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
 parent: "d634kr"
+doing_since: "2026-11-19T02:24"
+doing_with: "p277bp"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +39,7 @@ Prefixes (jcode at /Users/jhf/Projects/jcode 28ac5e603, 2026-11-04) with verbati
 - [ ] PREREG with sha in a note before any paid call; new fresh set built after the rule is written (messages after the rule's commit, deduped by text against earlier sets, >= 8 sessions); shipped vs rule: irr/msg drops (upper 95% CI < 0) and rel/msg does not drop (CI includes 0), blind judge, 0 paid calls beyond the judge
 
 ## Notes
+
+
+## History
+- 2026-11-19T02:24 todo -> doing/active (take with p277bp)
