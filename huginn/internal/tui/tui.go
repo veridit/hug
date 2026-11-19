@@ -258,7 +258,7 @@ type model struct {
 	input                  textinput.Model
 	columnHinted           bool           // H/L or o last: the footer says what o does, on rows (qtj177)
 	answerBox              textarea.Model // the answer under a question: lines of its own (41hhgn)
-	vCursor                cursor.Model   // the one cursor while v waits, after 'view:' (911j70)
+	vCursor                cursor.Model   // the blink of o l b !'s underlines while v waits (a82j3n)
 	viewport, helpViewport viewport.Model
 	helpModel              help.Model
 	completion             int
@@ -1309,9 +1309,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	switch msg := msg.(type) {
 	case cursor.BlinkMsg:
-		// The answer or request box's cursor blinks (qpp30y), and the view
-		// cursor while v waits (911j70); nothing else on screen does. The
-		// two never show at once: v in a box is text.
+		// The answer or request box's cursor blinks (qpp30y), and the
+		// underlines of o l b ! while v waits (a82j3n); nothing else on
+		// screen does. The two never show at once: v in a box is text.
 		if m.pendingV {
 			var cmd tea.Cmd
 			m.vCursor, cmd = m.vCursor.Update(msg)
@@ -1471,7 +1471,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// else (Esc, an unknown key). No single key switches views.
 		if m.pendingV {
 			m.pendingV = false
-			m.vCursor.Blur() // the cursor goes with the prefix (911j70)
+			m.vCursor.Blur() // the blink goes with the prefix (a82j3n)
 			if view, ok := pickView(k); ok {
 				m.detail = false
 				m.setView(view)
@@ -1487,7 +1487,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k == "v" {
 			m.pendingV = true
 			m.message = viewPrefix()
-			return m, m.vCursor.Focus() // the cursor shows, then blinks
+			return m, m.vCursor.Focus() // the underlines show, then blink
 		}
 		// After an edit that broke the file, e goes straight back into the
 		// editor on that task: the notice is the question (rx74bp).

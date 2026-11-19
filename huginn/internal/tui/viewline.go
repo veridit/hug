@@ -52,15 +52,20 @@ func pickView(k string) (string, bool) {
 // a key you can press, and coloured by step of the key trie, v the accent
 // and o l b ! violet, none bold. The view you are in is told by bold alone
 // on its word; the line is dim and nothing has a background. The colours
-// are stable (911j70): v does not recolour the line. While v waits, the
-// one cursor (theme.cursor, shared with the answer box, qpp30y) blinks in
-// the slot after 'view:', where the second key goes; nothing else
-// changes.
+// are stable (911j70): v does not recolour the line. While v waits
+// (a82j3n, Jørgen 10:26Z, 10:27Z) the keys that can come next pulse: the
+// underlines of o l b ! blink together on vCursor's ticks (bubbles'
+// 530 ms), the letters keeping their violet; and v, picked, is drawn
+// solid, a filled accent cell, in both phases. There is no cursor cell
+// after 'view:'; the line's text and width do not change.
 func (m model) viewLine(summary []string) string {
 	dim := m.styles.dim
-	slot := " "
-	if m.pendingV && !m.vCursor.Blink { // bubbles: Blink is the hidden phase
-		slot = m.styles.cursor.Render(" ")
+	key, prefix := m.styles.viewKey, m.styles.viewPrefixKey
+	if m.pendingV {
+		prefix = m.styles.viewPicked
+		if m.vCursor.Blink { // bubbles: Blink is the hidden phase
+			key = key.Underline(false)
+		}
 	}
 	parts := []string{}
 	for _, view := range views {
@@ -68,7 +73,6 @@ func (m model) viewLine(summary []string) string {
 		if view.name == m.view && !m.detail {
 			style = m.styles.viewCurrent
 		}
-		key := m.styles.viewKey
 		label := ""
 		if i := strings.Index(view.name, view.key); i >= 0 {
 			label = style.Render(view.name[:i]) + key.Render(view.key) + style.Render(view.name[i+1:])
@@ -77,7 +81,7 @@ func (m model) viewLine(summary []string) string {
 		}
 		parts = append(parts, label)
 	}
-	left := m.styles.viewPrefixKey.Render("v") + dim.Render("iew:") + slot + strings.Join(parts, dim.Render("  "))
+	left := prefix.Render("v") + dim.Render("iew:") + " " + strings.Join(parts, dim.Render("  "))
 	sep := m.styles.dim.Render("│ ")
 	for n := len(summary); n > 0; n-- {
 		right := strings.Join(summary[:n], m.styles.dim.Render(" · "))

@@ -102,8 +102,9 @@ func TestViewPrefixPicksEveryView(t *testing.T) {
 
 // qh9ep1 check 3: after v alone the view line shows it waits and the
 // footer lists the choices; Esc or an unknown key cancels and changes
-// nothing. Since 911j70 only v and the cursor slot change
-// (TestViewLineMarksActiveView), not the whole line.
+// nothing. Since a82j3n only v (solid) and the underlines of o l b !
+// change (TestViewLineMarksActiveView, TestViewKeysBlinkAfterV), not the
+// whole line.
 func TestPendingViewPrefixShowsChoices(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
 	m := manyModel(t)

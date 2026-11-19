@@ -27,16 +27,17 @@ type theme struct {
 	focus, ask lipgloss.Style
 	// cursor is the one thing on screen that moves (qpp30y, puppy's
 	// mock/grid spec): where typing goes, an underlined bold accent that
-	// blinks at bubbles' 530 ms. The answer and request box use it; the
-	// pending view-key prefix is to reuse it.
+	// blinks at bubbles' 530 ms. The answer and request box use it.
 	cursor lipgloss.Style
 	// The view line, one cue per meaning (qh9ep1 check 9, Jørgen 19:54:
 	// "something more subtle"): viewPrefixKey is v, step 1 of the key
 	// trie, in the accent; viewKey the second step's letters, o l b !, in
 	// violet; both underlined, the one mark of a key you can press, and
 	// never bold. viewCurrent is the view you are in: bold alone, on the
-	// line's dim.
-	viewPrefixKey, viewKey, viewCurrent lipgloss.Style
+	// line's dim. viewPicked is v while it waits for its second key
+	// (a82j3n): picked, so solid, the accent as a filled cell, the one
+	// fill on the line, in the cursor's shape.
+	viewPrefixKey, viewKey, viewCurrent, viewPicked lipgloss.Style
 	// marked is the mark in a marked row's gutter, and only that (rxr4z8,
 	// crab 20:31: one cue, no tint).
 	marked lipgloss.Style
@@ -85,6 +86,7 @@ func newTheme() theme {
 	t.marked = color("#00bfff", "#006c9c").Faint(true) // dim accent, never red
 	t.viewKey = color(stepTwoColour[0], stepTwoColour[1]).Underline(true)
 	t.viewCurrent = t.dim.Bold(true)
+	t.viewPicked = base.Background(lipgloss.AdaptiveColor{Dark: "#00bfff", Light: "#006c9c"}).Foreground(lipgloss.AdaptiveColor{Dark: "#0b1620", Light: "#ffffff"})
 	// A quiet tint down the marked column, and underlined, so it shows
 	// without colour too (NO_COLOR); on the cursor row the row's tint, bold.
 	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)

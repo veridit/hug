@@ -6,6 +6,15 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- After `v` in `hug tui`, the keys you can press next pulse instead of a
+  second cursor (a82j3n, Jørgen 2026-11-19 10:26Z, 10:27Z). While `v`
+  waits, the underlines of o, l, b and ! blink together at the cursor's
+  530 ms, on the same ticks, the letters keeping their violet; there is
+  no cursor cell after `view:` any more; and `v` itself is drawn solid, a
+  filled accent cell, for as long as it waits. The second key or Esc
+  ends the blink and puts `v` back to its underlined accent. The answer
+  box cursor is unchanged. Goldens at 100x30 and 160x45 for both phases.
+
 ## v0.7.80 - 2026-11-19
 
 - A question left open with no stage to answer it by can be answered again

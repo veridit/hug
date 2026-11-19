@@ -35,9 +35,9 @@ func colourModel(t *testing.T, w int, view string) model {
 // view line. An underline marks only a key you can press; colour tells the
 // keys apart (v the accent, o l b ! violet) and none is bold; the view you
 // are in is told by bold alone on its word; nothing has a background; no
-// cell is underlined, bold and coloured at once. The cursor after v (the
-// slot at column 5) is theme.cursor, shared with the answer box. The key
-// colours are stable: after v only that slot changes.
+// cell is underlined, bold and coloured at once. Since a82j3n there is no
+// cursor after 'view:'; after v only v changes (solid, picked) while the
+// underlines are on, and the key colours are stable.
 func TestViewLineMarksActiveView(t *testing.T) {
 	const slot = len("view:") // the column after 'view:'
 	for _, w := range []int{80, 140} {
@@ -48,19 +48,15 @@ func TestViewLineMarksActiveView(t *testing.T) {
 			lit := pending.viewLine(pending.stateCounts())
 			text := ansi.Strip(idle)
 			end := strings.Index(text, "lint") + len("lint")
-			for col := 0; col < end; col++ {
-				if col == slot {
-					continue
-				}
+			for col := 1; col < end; col++ { // v at 0 is solid: TestPickedVIsSolid
 				if a, b := cellAt(idle, col), cellAt(lit, col); a != b {
 					t.Fatalf("at %d in %s v recoloured column %d:\nidle    %q\npending %q", w, v.name, col, a, b)
 				}
 			}
-			if _, on := cursorSlot(t, m); on {
-				t.Fatalf("at %d in %s the cursor shows before v", w, v.name)
-			}
-			if _, on := cursorSlot(t, pending); !on {
-				t.Fatalf("at %d in %s no cursor after v", w, v.name)
+			for _, s := range []model{m, pending} {
+				if cell, on := cursorSlot(t, s); on {
+					t.Fatalf("at %d in %s a cursor stands after 'view:': %q", w, v.name, cell)
+				}
 			}
 			active := strings.Index(text, v.name)
 			for col := 0; col < end; col++ {
@@ -224,49 +220,43 @@ func vBlinkTick(t *testing.T, m model) (model, tea.Msg) {
 	return m, msg
 }
 
-// 911j70 check 3: after v one underlined cursor (theme.cursor, shared
-// with the answer box, qpp30y) stands in the slot after 'view:' where
-// the second key goes, and blinks at 530 ms; it goes when the view is
-// chosen or v is cancelled, and stops blinking then.
+// 911j70 check 3, as a82j3n has it: after v the blink (vCursor, bubbles'
+// cursor at 530 ms, no timer of its own) drives the underlines of o l b !;
+// no cursor stands after 'view:' in either phase. Chosen or cancelled,
+// the blink stops (TestViewKeysSteadyAfterSecondKey has the look).
 func TestViewCursorBlinksAfterV(t *testing.T) {
 	m := colourModel(t, 140, "overview")
-	if _, on := cursorSlot(t, m); on {
-		t.Fatal("the cursor shows before v")
-	}
 	m, cmd := key(m, "v")
 	if cmd == nil {
-		t.Fatal("v returned no command: the cursor's blink never starts")
+		t.Fatal("v returned no command: the blink never starts")
 	}
 	if m.vCursor.Mode() != cursor.CursorBlink || m.vCursor.BlinkSpeed != 530*time.Millisecond {
-		t.Fatalf("view cursor mode %v speed %v, want blink at 530ms", m.vCursor.Mode(), m.vCursor.BlinkSpeed)
+		t.Fatalf("view blink mode %v speed %v, want blink at 530ms", m.vCursor.Mode(), m.vCursor.BlinkSpeed)
 	}
-	cell, on := cursorSlot(t, m)
-	if !on {
-		t.Fatalf("after v the slot after 'view:' is no underlined accent cursor: %q", cell)
+	underlined := func(m model) bool {
+		line := m.viewLine(m.stateCounts())
+		return sgrAt(line, strings.Index(ansi.Strip(line), "list")).underline
 	}
-	if strings.Contains(cell, "\x1b[7m") || strings.Contains(cell, ";7m") {
-		t.Fatalf("the cursor is a reversed block: %q", cell)
+	// One tick blinks the underlines off and asks for the next; the next
+	// brings them back. No phase draws a cursor after 'view:'.
+	if cell, on := cursorSlot(t, m); on || !underlined(m) {
+		t.Fatalf("after v: cursor %q, l underlined %v", cell, underlined(m))
 	}
-	// One tick blinks it off and asks for the next; the next on again.
 	m, tick := vBlinkTick(t, m)
 	next, again := m.Update(tick)
 	off := next.(model)
-	if _, on := cursorSlot(t, off); on || again == nil {
-		t.Fatalf("one blink tick left the cursor on (%v), or stopped blinking (%v)", on, again == nil)
+	if _, on := cursorSlot(t, off); on || underlined(off) || again == nil {
+		t.Fatalf("one tick: cursor %v, l underlined %v, stopped %v", on, underlined(off), again == nil)
 	}
 	off, tick = vBlinkTick(t, off)
 	next, again = off.Update(tick)
-	if _, on := cursorSlot(t, next.(model)); !on || again == nil {
-		t.Fatal("the second tick did not bring the cursor back")
+	if !underlined(next.(model)) || again == nil {
+		t.Fatal("the second tick did not bring the underlines back")
 	}
-	// Chosen or cancelled, the cursor is gone and its tick asks nothing.
 	for _, k := range []string{"o", "esc", "x"} {
 		done, tick := vBlinkTick(t, press(m, k))
-		if _, on := cursorSlot(t, done); on {
-			t.Fatalf("v %s left the cursor on the view line", k)
-		}
 		if _, c := done.Update(tick); c != nil {
-			t.Fatalf("after v %s the cursor keeps blinking", k)
+			t.Fatalf("after v %s the underlines keep blinking", k)
 		}
 	}
 	// The box's blink and the view cursor's do not cross: a tick of the
@@ -277,8 +267,8 @@ func TestViewCursorBlinksAfterV(t *testing.T) {
 }
 
 // 911j70 check 3 golden: the view line at 80 and 140 in the overview,
-// idle, after v (cursor on, then off one blink later) and after v l, as
-// text and with its codes visible.
+// idle, after v (underlines on, then off one blink later; a82j3n) and
+// after v l, as text and with its codes visible.
 func TestViewCursorGolden(t *testing.T) {
 	var golden []string
 	for _, w := range []int{80, 140} {
