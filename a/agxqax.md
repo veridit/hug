@@ -7,7 +7,7 @@ priority: ""
 assignee: ["bonehound"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzxf"
+rank: "zzzzzzzzzzuq"
 created: 2026-11-18
 updated: 2026-11-18
 model: "claude-opus-5-5"

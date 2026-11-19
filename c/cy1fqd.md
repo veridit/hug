@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzi"
+rank: "zzzzzzzzzzyh"
 created: 2026-11-19
 updated: 2026-11-19
 dropped_reason: "Not reproduced on main (crab 01:11, option a): 0 'screen never showed' in 26 completed ci.yml runs since hfkt1n (2026-11-18 23:00Z, 21 success, 5 failure: TestUpstreamDiff 44417801741, TestTagRowsGolden 44419243717, TestTmuxGolden palette drift 44428150586, TestCompletionInEachShell/fish 44430041895, macOS install tests 44431228949). No local run: TestTmuxReload's loadGuard holds above 5-minute load 120 and the load was 784 ('reload_tmux_test.go:36: load guard: paused before heavy work, 5-minute load 783.79 \u003e 120'). ghycrq does not cover it (only startTmuxServer). If it recurs, iwazaru's CI census catches it."
