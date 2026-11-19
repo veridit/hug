@@ -172,11 +172,13 @@ func cellAt(s string, col int) string {
 }
 
 // vBlinkTick is the blink message the view cursor waits for, taken from
-// its own blink command without waiting 530 ms, and m expecting it.
+// its own blink command without waiting, and m expecting it. At blink
+// speed 0 the command's deadline has passed when it is made: no timer
+// starts and no clock is waited on (6zhyq2).
 func vBlinkTick(t *testing.T, m model) (model, tea.Msg) {
 	t.Helper()
 	c := m.vCursor
-	c.BlinkSpeed = time.Millisecond
+	c.BlinkSpeed = 0
 	msg := c.BlinkCmd()()
 	if _, ok := msg.(cursor.BlinkMsg); !ok {
 		t.Fatalf("blink command gave %T", msg)

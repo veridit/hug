@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"time"
+	"testing/synctest"
 
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
@@ -128,26 +128,24 @@ func TestViewLineRestUnderlinesActiveWord(t *testing.T) {
 
 // r80svs check 2: after v, v keeps a steady underline and no fill; the
 // underlines of o l b ! blink together on vCursor's ticks (two frames one
-// real 530 ms tick apart); the active word's other letters keep a steady
-// underline. The second key or Esc brings the rest look back, the new view
-// underlined.
+// 530 ms tick apart, on a synctest bubble's clock: bubbleTick, 6zhyq2);
+// the active word's other letters keep a steady underline. The second key
+// or Esc brings the rest look back, the new view underlined.
 func TestViewLineAfterVBlinksTheChoices(t *testing.T) {
 	for _, size := range [][2]int{{100, 30}, {160, 45}} {
 		t.Run(fmt.Sprintf("%dx%d", size[0], size[1]), func(t *testing.T) {
-			m, cmd := pendingFrames(t, size[0], size[1])
-			on := m.viewLine(m.stateCounts())
-			checkCues(t, "after v, blink on", on, cueState{view: "overview", pending: true, shown: true}, true)
-			msg, took := realTick(t, cmd)
-			if took < 500*time.Millisecond || took > 900*time.Millisecond {
-				t.Fatalf("the blink tick came after %v, want about 530ms", took)
-			}
-			next, _ := m.Update(msg)
-			off := next.(model)
-			checkCues(t, "after v, blink off", off.viewLine(off.stateCounts()), cueState{view: "overview", pending: true}, true)
-			for k, view := range map[string]string{"l": "list", "!": "lint", "esc": "overview"} {
-				done := press(off, k)
-				checkCues(t, "after v "+k, done.viewLine(done.stateCounts()), cueState{view: view}, true)
-			}
+			synctest.Test(t, func(t *testing.T) {
+				m, cmd := pendingFrames(t, size[0], size[1])
+				on := m.viewLine(m.stateCounts())
+				checkCues(t, "after v, blink on", on, cueState{view: "overview", pending: true, shown: true}, true)
+				next, _ := m.Update(bubbleTick(t, cmd))
+				off := next.(model)
+				checkCues(t, "after v, blink off", off.viewLine(off.stateCounts()), cueState{view: "overview", pending: true}, true)
+				for k, view := range map[string]string{"l": "list", "!": "lint", "esc": "overview"} {
+					done := press(off, k)
+					checkCues(t, "after v "+k, done.viewLine(done.stateCounts()), cueState{view: view}, true)
+				}
+			})
 		})
 	}
 }

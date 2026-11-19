@@ -105,11 +105,12 @@ func TestBoxCursorBlinksUnderline(t *testing.T) {
 }
 
 // blinkTick is the blink message the box's cursor waits for, taken from
-// its own blink command without waiting 530 ms, and m expecting it.
+// its own blink command without waiting, and m expecting it (blink speed
+// 0: no timer, no clock; vBlinkTick, 6zhyq2).
 func blinkTick(t *testing.T, m model) (model, tea.Msg) {
 	t.Helper()
 	c := m.answerBox.Cursor
-	c.BlinkSpeed = time.Millisecond
+	c.BlinkSpeed = 0
 	msg := c.BlinkCmd()()
 	if _, ok := msg.(cursor.BlinkMsg); !ok {
 		t.Fatalf("blink command gave %T", msg)

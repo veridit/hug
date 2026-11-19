@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/charmbracelet/bubbles/cursor"
@@ -47,17 +48,23 @@ func pendingFrames(t *testing.T, w, h int) (model, tea.Cmd) {
 	return m, cmd
 }
 
-// realTick runs a blink command as the program would: it waits its
-// 530 ms and gives the message, and how long that took.
-func realTick(t *testing.T, cmd tea.Cmd) (tea.Msg, time.Duration) {
+// bubbleTick runs a blink command as the program would, but inside a
+// synctest bubble (6zhyq2): the bubble's clock moves only when every
+// goroutine in it waits, so the message comes after exactly 530 ms of
+// that clock and no wall clock is read. The real-time wait it replaces
+// started its stopwatch after the frame was drawn, while the timer had
+// started at v, and measured 497 ms on CI (44520969132).
+func bubbleTick(t *testing.T, cmd tea.Cmd) tea.Msg {
 	t.Helper()
 	start := time.Now()
 	msg := cmd()
-	took := time.Since(start)
+	if took := time.Since(start); took != 530*time.Millisecond {
+		t.Fatalf("the blink tick came after %v of the bubble's clock, want 530ms", took)
+	}
 	if _, ok := msg.(cursor.BlinkMsg); !ok {
 		t.Fatalf("blink command gave %T", msg)
 	}
-	return msg, took
+	return msg
 }
 
 // diffOnlyKeyUnderlines fails unless frames a and b are the same but for
@@ -100,32 +107,30 @@ func diffOnlyKeyUnderlines(t *testing.T, a, b string, wantA bool) {
 	}
 }
 
-// a82j3n check 1: two v-pending frames one real blink (about 0.53 s)
-// apart differ only in the underline of o, l, b and !; the next tick
-// brings them back.
+// a82j3n check 1: two v-pending frames one blink (530 ms) apart differ
+// only in the underline of o, l, b and !; the next tick brings them
+// back. The ticks are v's own blink commands, run on a synctest bubble's
+// clock (bubbleTick, 6zhyq2), so the test never waits on the wall clock.
 func TestViewKeysBlinkAfterV(t *testing.T) {
 	for _, size := range [][2]int{{100, 30}, {160, 45}} {
 		t.Run(fmt.Sprintf("%dx%d", size[0], size[1]), func(t *testing.T) {
-			m, cmd := pendingFrames(t, size[0], size[1])
-			on := m.View()
-			msg, took := realTick(t, cmd)
-			if took < 500*time.Millisecond || took > 900*time.Millisecond {
-				t.Fatalf("the blink tick came after %v, want about 530ms", took)
-			}
-			next, cmd := m.Update(msg)
-			m = next.(model)
-			if cmd == nil {
-				t.Fatal("one blink tick asked for no next one")
-			}
-			off := m.View()
-			diffOnlyKeyUnderlines(t, on, off, true)
-			msg, _ = realTick(t, cmd)
-			next, cmd = m.Update(msg)
-			m = next.(model)
-			if cmd == nil {
-				t.Fatal("the second tick asked for no next one")
-			}
-			diffOnlyKeyUnderlines(t, off, m.View(), false)
+			synctest.Test(t, func(t *testing.T) {
+				m, cmd := pendingFrames(t, size[0], size[1])
+				on := m.View()
+				next, cmd := m.Update(bubbleTick(t, cmd))
+				m = next.(model)
+				if cmd == nil {
+					t.Fatal("one blink tick asked for no next one")
+				}
+				off := m.View()
+				diffOnlyKeyUnderlines(t, on, off, true)
+				next, cmd = m.Update(bubbleTick(t, cmd))
+				m = next.(model)
+				if cmd == nil {
+					t.Fatal("the second tick asked for no next one")
+				}
+				diffOnlyKeyUnderlines(t, off, m.View(), false)
+			})
 		})
 	}
 }
