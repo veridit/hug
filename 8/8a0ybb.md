@@ -14,7 +14,7 @@ stage: "ready"
 ---
 
 ## Goal
-Opening a task that asks you something shows, under the title, a FOR YOU section with each open question; each names its target (a file, a section, a check, a line in a file) and Enter on it jumps straight there, a answers. The target file is shown only when you follow the link, never inlined at the top. Below that the ticket reads short to long: Purpose, Principle, Goal, Acceptance, then Details, Files, Notes, History as one-line folded sections until opened.
+An asked task opens on its question, which jumps to its target in one key, and reads short to long.
 
 ## Purpose
 Jørgen 2026-11-19 11:23Z (crab console, screenshot of p87ngv in hug tui v0.7.81): the page opened on MOCK.md inlined at the top (asked_show) with no question above it, so it looked like content from later in the ticket; the question was only found by scrolling; the long description came before purpose and principle ('where am I getting the value for the money'). 11:24Z (second screenshot, check 5 with its question and 'answer'): the question names MOCK.md but offers no way to jump to it; he had to press down many times to reach FILES and then the file.
@@ -23,7 +23,7 @@ Jørgen 2026-11-19 11:23Z (crab console, screenshot of p87ngv in hug tui v0.7.81
 The person is asked first, then oriented, then given detail. A question links, never inlines. Links use the mark syntax (p87ngv): .target:(.File .name:"MOCK.md"), .target:(.Section .name:"Acceptance" .item:5), .target:(.File .name:"tui-100x30.txt" .line:63); asked_show maps to .target:(.File ...). One jump key everywhere (Enter on a link). Folded sections show their one-line summary (FILES (6), NOTES (12), HISTORY (40)). Calm rules (qh9ep1 check 9).
 
 ## Relevant details
-Code: huginn/internal/tui/detail.go (sections around 530-600 and 819-830, markedBlock 1060-1100), picture.go:248 questionPictureOf (asked_show inline). jnaspy set Goal, Purpose, Principle first; this changes the order to Purpose, Principle, Goal and folds reference sections. Open for Jørgen (asked on this task): whether Goal stays as long as today or is cut to 1-2 sentences with the rest in Details. Mock first (frames at 100x30 and 160x45 of p87ngv as it is now), approved before build.
+Opening a task that asks you something shows, under the title, a FOR YOU section with each open question; each names its target (a file, a section, a check, a line in a file) and Enter on it jumps straight there, a answers. The target file is shown only when you follow the link, never inlined at the top. Below that the ticket reads short to long: Purpose, Principle, Goal, Acceptance, then Details, Files, Notes, History as one-line folded sections until opened. Code: huginn/internal/tui/detail.go (sections around 530-600 and 819-830, markedBlock 1060-1100), picture.go:248 questionPictureOf (asked_show inline). jnaspy set Goal, Purpose, Principle first; this changes the order to Purpose, Principle, Goal and folds reference sections. Open for Jørgen (asked on this task): whether Goal stays as long as today or is cut to 1-2 sentences with the rest in Details. Mock first (frames at 100x30 and 160x45 of p87ngv as it is now), approved before build.
 
 ## Depends on
 
@@ -49,3 +49,4 @@ Code: huginn/internal/tui/detail.go (sections around 530-600 and 819-830, marked
   > Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?
   (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
 - 2026-11-19T12:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-19T12:26 crab read the answer: hug task set 8a0ybb
