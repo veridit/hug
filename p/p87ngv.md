@@ -109,3 +109,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:06 request 2 acknowledged by crab
 - 2026-11-19T10:07 answer 3 acknowledged by crab
 - 2026-11-19T10:09 request 3 by jhf
+- 2026-11-19T10:09 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
