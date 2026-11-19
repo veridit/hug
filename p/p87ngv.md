@@ -76,3 +76,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:05 asked question 4 of jhf, 4 open (todo/ready -> todo/design)
 - 2026-11-19T10:05 asked question 5 of jhf, 5 open (todo/design -> todo/design)
 - 2026-11-19T10:05 request 1 by jhf
+- 2026-11-19T10:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
