@@ -42,6 +42,7 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 - [ ] An open mark shows in the person's ASKED or the assignee's requests and is delivered as today (gmzd87) (test)
 - [ ] The agent instructions say: lead with clarity in the ticket, act on or answer marks, post questions as marks, move the dialogue to the history file (fd0j4p wording)
 - [ ] Jørgen marks a sentence in hug tui, the assignee resolves it, and the ticket reads clearer without a DM
+- [ ] A mark that points into an attachment (NAME plus line or section) is shown beside that place in hug tui's file view, and resolving it records the pointer in the history (test)
 
 ## Questions
 - 2026-11-19T09:56 question 1 by crab to jhf:
