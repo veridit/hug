@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzs"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T00:45"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "adqdfe"
 worktree: "/Users/jhf/.jcode/scratch/adqdfe"
+waiting_since: "2026-11-19T01:24"
+waiting_asked_by: "macaque"
+waiting_on: "crab review"
 ---
 
 ## Goal
@@ -42,3 +45,4 @@ check 1: Reproduced: TestStarvedChangeBeforeWatch on 7f14e3e1 (STARVE=8 GOMAXPRO
 check 2: Fixed at the cause in 87691f85 (ci/adqdfe, on watchflake 02151406): loadSnapshot takes closeLog.latest() (no git); the loadedMsg batches readCloses (git off the UI thread) and closesMsg applies the newest times read; refresh (the TUI's own writes) still reads first. Same forced-load run (STARVE=8 GOMAXPROCS=4 nice -p=1 -count=1000, load ~500): 1000 PASS, 0 FAIL, 'ok  github.com/veridit/hug/huginn/internal/tui 469.955s' (adqdfe-starve-fixed.txt). Was 996/4 on 7f14e3e1. Git sleeping 6 s at start: TestChangeBeforeWatchIsUpIsSeen PASS (was FAIL). TestReloadDoesNotWaitOnGit passes (failed first). No timeout raised, no retry, no skip. CI 44427265935 success 8/8: ubuntu 'go test -race ./...' 'ok  github.com/veridit/hug/huginn/internal/tui 299.278s', macos 'ok ... tui 147.354s'.
 ## History
 - 2026-11-19T00:45 todo -> doing/active (take)
+- 2026-11-19T01:24 doing/active -> doing/waiting (wait)
