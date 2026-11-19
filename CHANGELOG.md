@@ -10,6 +10,12 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - The TUI's reload no longer waits on git (adqdfe). Every load asked git for the close times of RECENTLY DONE before it returned, so on a machine too loaded to start a process the board waited too: a change made elsewhere could take seconds to show, and TestChangeBeforeWatchIsUpIsSeen failed 4 in 1000 starved runs ('no reload after the watch came up'). The board now lands with the close times already known, and git is asked after it; RECENTLY DONE takes the new order when git answers. The TUI's own writes still read them at once.
 
+- `hug completion bash|zsh|fish` prints one completion script for hug: its
+  commands, hug task's commands, flags, types, states and open task ids (with
+  titles), and hug mem's commands and flags. The script asks `hug __complete`
+  on every TAB; it reads the task files and a read-only view of the cache and
+  never writes, syncs or locks (5mmqjk).
+
 ## v0.7.73 - 2026-11-19
 
 - `hug tui` marks tasks in lists (rxr4z8). In the overview, the list and the board, Space marks the task under the cursor and steps to the next row; Space again unmarks it, and Space on a grouped heading still folds. A marked row shows `◆` in its gutter, in dim accent, and nothing else on the row changes; the cursor on a marked row shows `⋗`. While tasks are marked the footer reads `N marked ·` the actions valid for every one of them `· Esc unmark` (narrower than 70 columns, `N marked · ? actions · Esc unmark`, and `?` lists them in words), and an overview section heading counts its marks. `d`, `x` and `w` act on every marked task after one confirm naming the count and the ids (`x` and `w` ask their reason once); each is its own write and commit, a refused task is named with its `fix:` line and stays marked, and the tasks that went through are unmarked. `t` takes the marked tasks after one confirm naming them: the first plainly, the rest with it (`hug task take B --with A`, byj479), one commit each; with a task that is not todo among several, it is not offered. `e` opens every marked task in one editor. `m` grabs the marked tasks as one block: they gather at the first marked row, `j/k` move the block, Enter writes it in order with one commit, Esc puts every row back. Esc unmarks all.

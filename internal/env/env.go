@@ -85,6 +85,7 @@ var Known = []Var{
 	{"HUG_TEST_FAKE_VERSION", Test, "", "the TUI reload test's fake version"},
 	{"HUG_TEST_MISSING_KEY", Test, "", "a credential variable a capture test leaves empty"},
 	{"HUG_TEST_FAKE_MCP", Test, "", "the stale-MCP test's fake hug mcp server (z77pem)"},
+	{"HUG_REQUIRE_SHELLS", Test, "1", "the completion test fails, not skips, when bash, zsh or fish is missing (5mmqjk)"},
 }
 
 // IsKnown reports whether name is on Known.

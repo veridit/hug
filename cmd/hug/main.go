@@ -15,6 +15,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	huginn "github.com/veridit/hug/huginn/run"
 	"github.com/veridit/hug/internal/env"
 	muninn "github.com/veridit/hug/muninn/run"
@@ -37,6 +39,9 @@ Usage:
                             if any); --apply does this board's, --apply --machine this
                             machine's too (hook and MCP configs, the memory store)
   hug version
+  hug completion bash|zsh|fish
+                            the shell completion script; source <(hug completion zsh)
+                            in ~/.zshrc (hug completion --help for bash and fish)
 
 Details: hug task help, hug mem --help.
 `
@@ -64,6 +69,18 @@ func memUpgrade(args []string) (int, string) {
 func init() { huginn.MemUpgrade = memUpgrade }
 
 func run(name string, args []string) int {
+	// Shell completion (5mmqjk) answers on every TAB, before anything else:
+	// never a refusal or a warning on the shell's line. Through the muninn
+	// link it stays hug mem's (scripts installed before keep answering).
+	if len(args) > 0 && (args[0] == cobra.ShellCompRequestCmd || args[0] == cobra.ShellCompNoDescRequestCmd) {
+		switch strings.TrimSuffix(name, ".exe") {
+		case "muninn":
+			return muninn.Main(args)
+		case "huginn":
+			return complete(append([]string{args[0], "task"}, args[1:]...))
+		}
+		return complete(args)
+	}
 	// Old huginn and muninn variables are not read (m1c28r): say so, once
 	// per command, on stderr (stdout may be JSON or a hook's reply).
 	warnStale(os.Stderr, nil)
@@ -100,6 +117,8 @@ func run(name string, args []string) int {
 		return runMCP(args[1:])
 	case "apps":
 		return runApps(args[1:])
+	case "completion":
+		return runCompletion(args[1:])
 	case "setup", "tui", "upgrade":
 		return huginn.Main(args)
 	case "version", "--version":

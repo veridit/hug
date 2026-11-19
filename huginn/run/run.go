@@ -81,3 +81,13 @@ func Acknowledge(ctx context.Context, home, sid string) ([]string, error) {
 func DeliverPending(ctx context.Context, home, sid string, getenv func(string) string) ([]string, error) {
 	return cli.DeliverPending(ctx, home, sid, getenv)
 }
+
+// Complete answers shell completion for hug task: words after "hug task",
+// the last the word being completed. It returns the words (a tab before a
+// description) and cobra's directive, and never writes (5mmqjk).
+func Complete(cwd string, words []string) ([]string, int) {
+	return cli.Complete(context.Background(), cwd, words)
+}
+
+// NoFileComp is the directive that offers only the words given.
+const NoFileComp = cli.NoFileComp
