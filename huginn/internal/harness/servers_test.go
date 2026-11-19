@@ -8,9 +8,13 @@ import (
 )
 
 func installTest(home string, install, dry bool) (InstallResult, error) {
-	return InstallJcodeHome(home, filepath.Join(os.TempDir(), "huginn"), install, dry)
+	return InstallJcodeHome(home, filepath.Join(os.TempDir(), "hug"), install, dry)
 }
 
+// ynh84t check 2: hug task install writes one MCP entry named hug running
+// `hug mcp --jcode-home HOME` in every jcode config shape, in place of the
+// huginn and muninn entries older installs wrote (the fixture holds a
+// muninn one), and uninstall takes them off. Other servers stay.
 func TestJcodeRealShapeAndLegacyMigration(t *testing.T) {
 	fixture, err := os.ReadFile("testdata/jcode-mcp.json")
 	if err != nil {
@@ -23,7 +27,6 @@ func TestJcodeRealShapeAndLegacyMigration(t *testing.T) {
 				path := filepath.Join(home, "mcp.json")
 				root := map[string]json.RawMessage{}
 				json.Unmarshal(fixture, &root)
-				original := root["servers"]
 				key := "servers"
 				switch mode {
 				case "alias":
@@ -46,7 +49,7 @@ func TestJcodeRealShapeAndLegacyMigration(t *testing.T) {
 				}
 				before, _ := json.Marshal(root)
 				os.WriteFile(path, before, 0o600)
-				bin := filepath.Join(home, "bin", "huginn")
+				bin := filepath.Join(home, "bin", "hug")
 				r, err := InstallJcodeHome(home, bin, install, false)
 				if err != nil || !r.Changed {
 					t.Fatal(r, err)
@@ -59,12 +62,11 @@ func TestJcodeRealShapeAndLegacyMigration(t *testing.T) {
 				}
 				var servers map[string]json.RawMessage
 				json.Unmarshal(root[key], &servers)
-				if mode != "empty" {
-					var old map[string]json.RawMessage
-					json.Unmarshal(original, &old)
-					if !equalJSON(old["muninn"], servers["muninn"]) {
-						t.Fatal("changed muninn", string(b))
-					}
+				if servers["huginn"] != nil || servers["muninn"] != nil {
+					t.Fatal("an old entry survived", string(b))
+				}
+				if mode == "mixed" && servers["other"] == nil {
+					t.Fatal("lost another server", string(b))
 				}
 				if install {
 					var entry struct {
@@ -72,12 +74,12 @@ func TestJcodeRealShapeAndLegacyMigration(t *testing.T) {
 						Args    []string          `json:"args"`
 						Env     map[string]string `json:"env"`
 					}
-					json.Unmarshal(servers["huginn"], &entry)
-					if entry.Command != bin || !filepath.IsAbs(entry.Command) || len(entry.Args) != 1 || entry.Args[0] != "mcp" || entry.Env == nil || len(entry.Env) != 0 {
+					json.Unmarshal(servers["hug"], &entry)
+					if entry.Command != bin || len(entry.Args) != 3 || entry.Args[0] != "mcp" || entry.Args[1] != "--jcode-home" || entry.Args[2] != home || entry.Env == nil || len(entry.Env) != 0 {
 						t.Fatal(string(b))
 					}
-				} else if servers["huginn"] != nil {
-					t.Fatal("uninstall left huginn", string(b))
+				} else if servers["hug"] != nil {
+					t.Fatal("uninstall left hug", string(b))
 				}
 				r, err = InstallJcodeHome(home, bin, install, false)
 				if err != nil || r.Changed {
@@ -91,7 +93,7 @@ func TestJcodeRealShapeAndLegacyMigration(t *testing.T) {
 func TestReinstallUpdatesOwnedExecutable(t *testing.T) {
 	home := t.TempDir()
 	for _, version := range []string{"v0.1.0", "v0.1.1"} {
-		bin := filepath.Join(home, version, "huginn")
+		bin := filepath.Join(home, version, "hug")
 		r, e := InstallJcodeHome(home, bin, true, false)
 		if e != nil || !r.Changed {
 			t.Fatal(r, e)
@@ -102,8 +104,22 @@ func TestReinstallUpdatesOwnedExecutable(t *testing.T) {
 func TestMixedConflictsAreNotClobbered(t *testing.T) {
 	root := map[string]json.RawMessage{"servers": json.RawMessage(`{"other":{"command":"a"}}`), "mcpServers": json.RawMessage(`{"other":{"command":"b"},"huginn":{"command":"huginn","args":["mcp"]}}`)}
 	for _, install := range []bool{true, false} {
-		if _, e := editServers(root, filepath.Join(os.TempDir(), "huginn"), install); e == nil {
+		if _, e := editServers(root, filepath.Join(os.TempDir(), "hug"), "/j", install); e == nil {
 			t.Fatal("conflict accepted")
 		}
+	}
+}
+
+// crab addition 2: a "hug" entry hug did not write is left alone.
+func TestForeignHugEntryIsLeftAlone(t *testing.T) {
+	home := t.TempDir()
+	path := filepath.Join(home, "mcp.json")
+	in := `{"servers":{"hug":{"command":"/elsewhere/hug-proxy","args":["serve"]},"huginn":{"command":"/b/huginn","args":["mcp"]}}}`
+	os.WriteFile(path, []byte(in), 0o600)
+	if _, err := installTest(home, true, false); err == nil {
+		t.Fatal("merged into another tool's hug entry")
+	}
+	if b, _ := os.ReadFile(path); string(b) != in {
+		t.Fatalf("changed:\n%s", b)
 	}
 }

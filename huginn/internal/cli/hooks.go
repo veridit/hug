@@ -15,6 +15,7 @@ import (
 	"github.com/veridit/hug/huginn/internal/importer"
 	"github.com/veridit/hug/huginn/internal/task"
 	"github.com/veridit/hug/huginn/internal/tui"
+	"github.com/veridit/hug/internal/hugconf"
 )
 
 // Import and TUI hooks are deliberately thin: their packages own their behavior.
@@ -277,9 +278,16 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	upgradeDiff := ""
 	pending, machinePending := false, false
 	part := func(name string, did []string) {
-		onMachine := name == "variables" || name == "memory"
-		// memory only names a command; it is never pending here.
-		if len(did) > 0 && name != "memory" {
+		onMachine := name == "variables" || name == "memory" || name == "names"
+		// memory only names a command; it is never pending here. A skipped
+		// file is a line for a person, not a change upgrade will make.
+		changes := 0
+		for _, d := range did {
+			if !strings.HasPrefix(d, "skipped ") {
+				changes++
+			}
+		}
+		if changes > 0 && name != "memory" {
 			if onMachine {
 				machinePending = machinePending || machineDry
 			} else {
@@ -530,12 +538,15 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 	// Variables (m1c28r): old names hug wrote into hook commands and its MCP
 	// server entries become HUG_ names, each changed file backed up.
 	var vars []string
-	if home, e := os.UserHomeDir(); e == nil {
-		files, e := renameEnv(envFiles(home), machineDry)
+	backedUp := map[string]bool{}
+	home, homeErr := a.homeDir()
+	if homeErr == nil {
+		files, e := renameEnv(envFiles(home, a.getenv("JCODE_HOME")), machineDry)
 		if e != nil {
 			return nil, &OperationError{Problem: "rename variables in " + strings.Join(files, ", ") + ": " + e.Error(), Fix: "hug upgrade"}
 		}
 		for _, f := range files {
+			backedUp[f] = !machineDry
 			if machineDry {
 				vars = append(vars, wouldMachine("variables renamed to HUG_* in "+f))
 			} else {
@@ -544,6 +555,35 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 		}
 	}
 	part("variables", vars)
+	// Names (ynh84t): hooks and MCP entries an older hug wrote under the
+	// muninn and huginn names run and name hug. In a preview the variables
+	// step changed nothing, so names reads the same files it would.
+	var names []string
+	if homeErr == nil {
+		moves, e := moveNames(nameFiles(home, a.getenv("JCODE_HOME")), hugconf.HugPath(), machineDry, backedUp)
+		if e != nil {
+			return nil, &OperationError{Problem: "move hook and MCP names: " + e.Error(), Fix: "hug upgrade"}
+		}
+		moved := false
+		for _, m := range moves {
+			switch {
+			case m.Foreign:
+				names = append(names, "skipped "+m.File+`: its "hug" MCP entry is not hug's, so the old one stays (fix: rename that entry, then hug upgrade --apply --machine)`)
+			case machineDry:
+				names = append(names, wouldMachine("hooks and MCP entries run hug in "+m.File))
+				moved = true
+			default:
+				names = append(names, "hooks and MCP entries run hug in "+m.File+" (backup "+filepath.Base(m.File)+".bak-hug-upgrade)")
+				moved = true
+			}
+		}
+		if moved {
+			// The old names are links to this hug: what is not moved, and a
+			// server still running under them, keeps working.
+			names = append(names, "the muninn and huginn links stay, so anything not moved keeps working; an MCP server started under the old name runs until reloaded (jcode: mcp action=reload server=hug; Claude, Codex: restart the app)")
+		}
+	}
+	part("names", names)
 	// Memory: a legacy .muninn/memories.jsonl moves off the code branch with
 	// its own command, which talks to the remote; upgrade names it.
 	var mem []string

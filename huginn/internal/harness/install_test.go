@@ -45,7 +45,7 @@ func TestInstallLifecycle(t *testing.T) {
 	}
 	var servers map[string]json.RawMessage
 	json.Unmarshal(root["mcpServers"], &servers)
-	if len(servers) != 2 || !bytes.Contains(servers["huginn"], []byte(`"mcp"`)) {
+	if len(servers) != 2 || !bytes.Contains(servers["hug"], []byte(`"mcp"`)) {
 		t.Fatal(string(installed))
 	}
 	r, err = installTest(home, true, false)
@@ -84,7 +84,7 @@ func TestInstallLifecycle(t *testing.T) {
 }
 
 func TestMalformedAndConflictingConfigs(t *testing.T) {
-	for _, input := range []string{"", "null", "[]", "{", `{"mcpServers":null}`, `{"mcpServers":[]}`, `{"mcpServers":{"huginn":{"command":"unrelated"}}}`} {
+	for _, input := range []string{"", "null", "[]", "{", `{"mcpServers":null}`, `{"mcpServers":[]}`, `{"mcpServers":{"hug":{"command":"unrelated"}}}`} {
 		t.Run(input, func(t *testing.T) {
 			home := t.TempDir()
 			path := filepath.Join(home, "mcp.json")

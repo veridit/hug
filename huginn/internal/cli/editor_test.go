@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/veridit/hug/internal/homeguard"
 )
 
 // The test binary doubles as $VISUAL for hug task edit: a shell script with
@@ -26,7 +28,8 @@ func TestMain(m *testing.M) {
 		os.Exit(fakeEdit(os.Args[len(os.Args)-1], from, os.Getenv(editTo)))
 	}
 	quietGit()
-	os.Exit(m.Run())
+	// No test reaches this machine's real harness configs (ynh84t).
+	os.Exit(homeguard.Run(m))
 }
 
 // quietGit turns off git's auto maintenance for every git this test binary

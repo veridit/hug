@@ -16,7 +16,7 @@ type InstallResult struct {
 	Changed bool   `json:"changed"`
 }
 
-// InstallJcodeHome changes only the huginn server. Backups are private, uniquely
+// InstallJcodeHome changes only hug's own MCP server entry. Backups are private, uniquely
 // named, and written before atomic replacement of an existing configuration.
 func InstallJcodeHome(home, bin string, install, dry bool) (InstallResult, error) {
 	path := filepath.Join(home, "mcp.json")
@@ -41,7 +41,7 @@ func InstallJcodeHome(home, bin string, install, dry bool) (InstallResult, error
 			return res, fmt.Errorf("%s must be a JSON object", path)
 		}
 	}
-	changed, err := editServers(root, bin, install)
+	changed, err := editServers(root, bin, home, install)
 	if err != nil {
 		return res, fmt.Errorf("%s: %w", path, err)
 	}
@@ -61,7 +61,7 @@ func InstallJcodeHome(home, bin string, install, dry bool) (InstallResult, error
 		return res, err
 	}
 	if exists {
-		f, err := os.CreateTemp(home, "mcp.json.huginn-bak-"+time.Now().UTC().Format("20060102T150405")+"-*")
+		f, err := os.CreateTemp(home, "mcp.json.hug-bak-"+time.Now().UTC().Format("20060102T150405")+"-*")
 		if err != nil {
 			return res, err
 		}
@@ -75,7 +75,7 @@ func InstallJcodeHome(home, bin string, install, dry bool) (InstallResult, error
 			return res, closeErr
 		}
 	}
-	f, err := os.CreateTemp(home, ".huginn-mcp-*")
+	f, err := os.CreateTemp(home, ".hug-mcp-*")
 	if err != nil {
 		return res, err
 	}

@@ -25,11 +25,12 @@ func TestUpgradeTouchesMachineOnlyWithMachine(t *testing.T) {
 	if e := os.MkdirAll(filepath.Dir(cfg), 0o755); e != nil {
 		t.Fatal(e)
 	}
-	old := "[hooks]\nturn_start = \"" + home + "=/m /opt/homebrew/bin/muninn hook jcode\"\n"
+	old := "[hooks]\nturn_start = \"" + home + "=/m " + hugBin(t, h) + "/muninn hook jcode\"\n"
 	if e := os.WriteFile(cfg, []byte(old), 0o644); e != nil {
 		t.Fatal(e)
 	}
 	a := app(t)
+	a.Env["HOME"], a.Env["JCODE_HOME"] = h, "" // this test's machine
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Look", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
 	execute(t, a, "take", id, "--as", "nautilus", "--model", "m")
@@ -80,7 +81,8 @@ func TestUpgradeTouchesMachineOnlyWithMachine(t *testing.T) {
 	}
 	for _, want := range []string{
 		"this board (" + shown + "):\n  layout: nothing to do\n  tasks: would: 1 questions to a person moved from waiting to asked (" + id + ")\n",
-		"this machine (hook and MCP configs in ~/.jcode, ~/.claude, ~/.codex; the memory store):\n  variables: would: variables renamed to HUG_* in " + cfg + "\n  memory: would deliver jcode[default] recall in a tool result\n",
+		"this machine (hook and MCP configs in ~/.jcode, ~/.claude, ~/.codex; the memory store):\n  variables: would: variables renamed to HUG_* in " + cfg + "\n  names: would: hooks and MCP entries run hug in " + cfg + "\n",
+		"  memory: would deliver jcode[default] recall in a tool result\n",
 		"next: hug upgrade --apply\nthen: hug upgrade --apply --machine  (this machine, once you have read it)\nfix: hug upgrade --apply\n",
 	} {
 		if !strings.Contains(out, want) {
@@ -114,7 +116,7 @@ func TestUpgradeTouchesMachineOnlyWithMachine(t *testing.T) {
 	if code != 0 || !strings.Contains(out, "  variables: variables renamed to HUG_* in "+cfg+" (backup config.toml.bak-hug-upgrade)\n") || !strings.Contains(out, "  memory: jcode[default] recall now arrives in a tool result\n") {
 		t.Fatalf("--apply --machine: exit %d\n%s", code, out)
 	}
-	if b, _ := os.ReadFile(cfg); !strings.Contains(string(b), "HUG_HOME=/m /opt/homebrew/bin/muninn hook jcode") {
+	if b, _ := os.ReadFile(cfg); !strings.Contains(string(b), "HUG_HOME=/m "+hugBin(t, h)+"/hug mem hook jcode") {
 		t.Fatalf("config after --machine:\n%s", b)
 	}
 	if b, _ := os.ReadFile(cfg + ".bak-hug-upgrade"); string(b) != old {

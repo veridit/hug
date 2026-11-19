@@ -33,11 +33,11 @@ func TestJcodeTakeoverRoundTrip(t *testing.T) {
 	}
 	raw, _ := os.ReadFile(filepath.Join(home, "mcp.json"))
 	json.Unmarshal(raw, &m)
-	if m.Servers["vikunja"]["url"] != "https://example.invalid/mcp" || m.Servers["muninn"]["command"] != "/bin/muninn" {
+	if m.Servers["vikunja"]["url"] != "https://example.invalid/mcp" || m.Servers["muninn"] != nil || m.Servers["hug"] == nil {
 		t.Fatalf("mcp.json: %s", raw)
 	}
 	// The instance is pinned in args, so MCP is scoped even without JCODE_HOME.
-	if args := fmt.Sprint(m.Servers["muninn"]["args"]); args != fmt.Sprintf("[mcp --jcode-home %s]", home) {
+	if args := fmt.Sprint(m.Servers["hug"]["args"]); args != fmt.Sprintf("[mcp --jcode-home %s]", home) {
 		t.Fatalf("mcp args = %s", args)
 	}
 	// Windows has no Unix permission bits (Go reports 0666 for every file).
@@ -52,7 +52,7 @@ func TestJcodeTakeoverRoundTrip(t *testing.T) {
 	}
 	b, _ = os.ReadFile(filepath.Join(home, "config.toml"))
 	raw, _ = os.ReadFile(filepath.Join(home, "mcp.json"))
-	if !strings.Contains(string(b), "memory = true") || !strings.Contains(string(b), `disabled = ["browser"]`) || strings.Contains(string(raw), "muninn") || !strings.Contains(string(raw), "vikunja") {
+	if !strings.Contains(string(b), "memory = true") || !strings.Contains(string(b), `disabled = ["browser"]`) || strings.Contains(string(raw), `"hug"`) || !strings.Contains(string(raw), "vikunja") {
 		t.Fatalf("uninstall did not restore:\n%s\n%s", b, raw)
 	}
 }

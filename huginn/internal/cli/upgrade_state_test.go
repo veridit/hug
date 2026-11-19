@@ -66,7 +66,7 @@ func TestUpgradeMigratesStateKey(t *testing.T) {
 	}
 
 	r = execute(t, a, "upgrade", "--apply")
-	if did = strings.Join(r["upgrade"].([]string), "; "); did != "layout: nothing to do; tasks: nothing to do; variables: nothing to do; memory: nothing to do" {
+	if did = strings.Join(r["upgrade"].([]string), "; "); did != "layout: nothing to do; tasks: nothing to do; variables: nothing to do; names: nothing to do; memory: nothing to do" {
 		t.Fatalf("second upgrade: %s", did)
 	}
 	if _, ok := r["diff"]; ok {

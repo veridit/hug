@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/veridit/hug/internal/hugconf"
 )
 
 // InstallResult describes what an installer did (or would do).
@@ -64,17 +66,18 @@ func writeAtomic(path string, data []byte) error {
 	return os.Rename(tmp, path)
 }
 
-// hookEntry is one {"hooks":[{type,command,timeout}]} group in a
-// Claude Code settings.json or a Codex hooks.json.
-func isMuninnGroup(g any) bool {
+// isMuninnGroup reports whether a {"hooks":[{type,command,timeout}]} group
+// in a Claude Code settings.json or a Codex hooks.json is hug's recall
+// hook for harness h, in either form (muninn hook h, hug mem hook h).
+func isMuninnGroup(g any, h string) bool {
 	m, ok := g.(map[string]any)
 	if !ok {
 		return false
 	}
 	hs, _ := m["hooks"].([]any)
-	for _, h := range hs {
-		if hm, ok := h.(map[string]any); ok {
-			if c, _ := hm["command"].(string); strings.Contains(c, "muninn") && strings.Contains(c, " hook ") {
+	for _, x := range hs {
+		if hm, ok := x.(map[string]any); ok {
+			if c, _ := hm["command"].(string); hugconf.IsRecallHook(c, h) {
 				return true
 			}
 		}
@@ -82,9 +85,9 @@ func isMuninnGroup(g any) bool {
 	return false
 }
 
-// editPromptHook adds (install) or removes (uninstall) muninn's
+// editPromptHook adds (install) or removes (uninstall) hug's
 // UserPromptSubmit group in a JSON hooks file, preserving everything else.
-func editPromptHook(path, command string, timeout int, install, dry bool) (InstallResult, error) {
+func editPromptHook(path, h, command string, timeout int, install, dry bool) (InstallResult, error) {
 	res := InstallResult{File: path}
 	root := map[string]any{}
 	if b, err := os.ReadFile(path); err == nil && len(bytes.TrimSpace(b)) > 0 {
@@ -102,7 +105,7 @@ func editPromptHook(path, command string, timeout int, install, dry bool) (Insta
 	var kept []any
 	found := false
 	for _, g := range groups {
-		if isMuninnGroup(g) {
+		if isMuninnGroup(g, h) {
 			found = true
 			continue
 		}
@@ -115,7 +118,7 @@ func editPromptHook(path, command string, timeout int, install, dry bool) (Insta
 	if install && found {
 		// Replace only if the command changed.
 		for _, g := range groups {
-			if isMuninnGroup(g) {
+			if isMuninnGroup(g, h) {
 				old, _ := json.Marshal(g)
 				nw, _ := json.Marshal(want)
 				if bytes.Equal(old, nw) {
@@ -146,19 +149,19 @@ func editPromptHook(path, command string, timeout int, install, dry bool) (Insta
 	return res, writeAtomic(path, out)
 }
 
-// InstallClaude wires `muninn hook claude` into ~/.claude/settings.json.
+// InstallClaude wires `hug mem hook claude` into ~/.claude/settings.json.
 func InstallClaude(bin string, install, dry bool) (InstallResult, error) {
 	home, _ := os.UserHomeDir()
-	r, err := editPromptHook(filepath.Join(home, ".claude", "settings.json"), shellQuote(bin)+" hook claude", 15, install, dry)
+	r, err := editPromptHook(filepath.Join(home, ".claude", "settings.json"), "claude", hugconf.HookCommand(bin, "claude"), 15, install, dry)
 	r.Harness = "claude"
 	return r, err
 }
 
-// InstallCodex wires `muninn hook codex` into ~/.codex/hooks.json. Codex
+// InstallCodex wires `hug mem hook codex` into ~/.codex/hooks.json. Codex
 // requires the user to trust a new hook before it runs.
 func InstallCodex(bin string, install, dry bool) (InstallResult, error) {
 	home, _ := os.UserHomeDir()
-	r, err := editPromptHook(filepath.Join(home, ".codex", "hooks.json"), shellQuote(bin)+" hook codex", 15, install, dry)
+	r, err := editPromptHook(filepath.Join(home, ".codex", "hooks.json"), "codex", hugconf.HookCommand(bin, "codex"), 15, install, dry)
 	r.Harness = "codex"
 	if install && r.Changed {
 		r.Note = "Codex runs new hooks only after you trust them: open Codex and approve it in /hooks."
@@ -166,7 +169,7 @@ func InstallCodex(bin string, install, dry bool) (InstallResult, error) {
 	return r, err
 }
 
-// InstallJcode wires `muninn hook jcode` into [hooks] turn_start,
+// InstallJcode wires `hug mem hook jcode` into [hooks] turn_start,
 // post_tool_feedback and turn_end of the global ~/.jcode/config.toml with a
 // minimal line edit that keeps other hooks.
 func InstallJcode(bin string, install, dry bool) (InstallResult, error) {
@@ -182,7 +185,7 @@ func InstallJcodeHome(jcodeHome, label, bin string, install, dry bool) (InstallR
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return res, err
 	}
-	cmd := bin + " hook jcode"
+	cmd := hugconf.HookCommand(bin, "jcode")
 	text, changed, err := editJcodeHooks(string(b), cmd, install)
 	if err != nil {
 		return res, err
@@ -225,34 +228,46 @@ func InstallJcodeHome(jcodeHome, label, bin string, install, dry bool) (InstallR
 	return res, nil
 }
 
-const jcodeMarker = "# muninn: automatic local memory recall"
+// jcodeMarker heads the recall hook lines hug adds to [hooks];
+// oldJcodeMarker is what hug wrote before ynh84t, still recognised.
+const (
+	jcodeMarker    = "# hug: automatic local memory recall"
+	oldJcodeMarker = "# mun" + "inn: automatic local memory recall"
+)
+
+func isMarker(l string) bool {
+	t := strings.TrimSpace(l)
+	return t == jcodeMarker || t == oldJcodeMarker
+}
 
 // JcodeRecallNeedsMigration reports whether the jcode config in jcodeHome
-// runs muninn's recall hook but not on every key that delivers it now
+// runs hug's recall hook but not on every key that delivers it now
 // (before hug 0.7.53 it ran on turn_start alone and typed the block into
-// the person's input box). bin is the muninn binary that config runs, so
-// the migration keeps it.
+// the person's input box). bin is what that config runs before the hook
+// words (a muninn link, or hug), so the migration keeps it.
 func JcodeRecallNeedsMigration(jcodeHome string) (bin string, stale bool) {
 	b, err := os.ReadFile(filepath.Join(jcodeHome, "config.toml"))
 	if err != nil {
 		return "", false
 	}
 	text := string(b)
+	cmd := ""
 	for _, key := range jcodeRecallKeys {
 		cmds, err := jcodeHookCommands(text, key)
 		if err != nil {
 			return "", false
 		}
 		for _, c := range cmds {
-			if isRecallHook(c) && bin == "" {
-				bin = strings.TrimSuffix(c, " hook jcode")
+			if isRecallHook(c) && cmd == "" {
+				cmd = c
 			}
 		}
 	}
-	if bin == "" {
+	if cmd == "" {
 		return "", false
 	}
-	_, changed, err := editJcodeHooks(text, bin+" hook jcode", true)
+	bin = hugconf.HookPrefix(cmd, "jcode")
+	_, changed, err := editJcodeHooks(text, cmd, true)
 	return bin, err == nil && changed
 }
 
@@ -279,14 +294,15 @@ func jcodeHookCommands(text, key string) ([]string, error) {
 	return nil, nil
 }
 
-// JcodeHookInstalled reports whether a jcode config.toml already runs muninn.
+// JcodeHookInstalled reports whether a jcode config.toml already runs hug's
+// recall hook (either form).
 func JcodeHookInstalled(jcodeHome string) bool {
 	b, err := os.ReadFile(filepath.Join(jcodeHome, "config.toml"))
 	if err != nil {
 		return false
 	}
-	// Removing muninn would change the file exactly when it is installed.
-	_, changed, err := editJcodeHooks(string(b), "muninn hook jcode", false)
+	// Removing the hook would change the file exactly when it is installed.
+	_, changed, err := editJcodeHooks(string(b), "", false)
 	return err == nil && changed
 }
 
@@ -310,10 +326,10 @@ func editJcodeHooks(text, cmd string, install bool) (string, bool, error) {
 	return text, changed, nil
 }
 
-// isRecallHook reports whether a hook command is muninn's recall hook (not,
-// say, "muninn capture --hook", which shares turn_end).
+// isRecallHook reports whether a hook command is hug's jcode recall hook
+// (not, say, "muninn capture --hook", which shares turn_end).
 func isRecallHook(e string) bool {
-	return strings.Contains(e, "muninn") && strings.HasSuffix(e, " hook jcode")
+	return hugconf.IsRecallHook(e, "jcode")
 }
 
 // editJcodeHook edits one key inside [hooks]. jcode accepts a string or an
@@ -382,15 +398,19 @@ func editJcodeHook(text, key, cmd string, install bool) (string, bool, error) {
 	switch {
 	case keyAt >= 0 && value == "":
 		lines = append(lines[:keyAt], lines[keyEnd+1:]...)
-		if keyAt > 0 && strings.TrimSpace(lines[keyAt-1]) == jcodeMarker && (keyAt >= len(lines) || !isRecallLine(lines[keyAt])) {
+		if keyAt > 0 && isMarker(lines[keyAt-1]) && (keyAt >= len(lines) || !isRecallLine(lines[keyAt])) {
 			lines = append(lines[:keyAt-1], lines[keyAt:]...)
 		}
 	case keyAt >= 0:
 		lines = append(lines[:keyAt], append([]string{line}, lines[keyEnd+1:]...)...)
+		if keyAt > 0 && strings.TrimSpace(lines[keyAt-1]) == oldJcodeMarker && isRecallLine(line) {
+			lines[keyAt-1] = jcodeMarker
+		}
 	case hooksAt >= 0:
-		// New keys go together under muninn's marker, right after [hooks].
+		// New keys go together under hug's marker, right after [hooks].
 		at := hooksAt + 1
-		if at < len(lines) && strings.TrimSpace(lines[at]) == jcodeMarker {
+		if at < len(lines) && isMarker(lines[at]) {
+			lines[at] = jcodeMarker
 			for at++; at < len(lines) && isRecallLine(lines[at]); at++ {
 			}
 			lines = append(lines[:at], append([]string{line}, lines[at:]...)...)

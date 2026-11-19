@@ -23,8 +23,9 @@ const UpgradePending = 5
 // harness and app configs hug installs into. Nothing else in those files
 // changes (a ~/.claude.json also holds the user's history).
 
-// envFiles are the configs hug installs into under home.
-func envFiles(home string) []string {
+// envFiles are the configs hug installs into under home, and in jcodeHome
+// (the App's JCODE_HOME) when set.
+func envFiles(home, jcodeHome string) []string {
 	files := []string{
 		filepath.Join(home, ".jcode", "config.toml"),
 		filepath.Join(home, ".jcode", "mcp.json"),
@@ -41,8 +42,8 @@ func envFiles(home string) []string {
 	default:
 		files = append(files, filepath.Join(home, ".config/Claude/claude_desktop_config.json"))
 	}
-	if h := os.Getenv("JCODE_HOME"); h != "" {
-		files = append(files, filepath.Join(h, "config.toml"), filepath.Join(h, "mcp.json"))
+	if jcodeHome != "" {
+		files = append(files, filepath.Join(jcodeHome, "config.toml"), filepath.Join(jcodeHome, "mcp.json"))
 	}
 	return files
 }

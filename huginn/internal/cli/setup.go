@@ -271,7 +271,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	gate, gateDetail, gateDo := gateStatus(ctx, cwd)
 	add("Model: trailer gate", gate, gateDetail, gateDo)
 
-	add("jcode MCP", jcodeDone, "jcode agents get the huginn tools", "hug task install jcode --all-instances")
+	add("jcode MCP", jcodeDone, "jcode agents get hug's task tools", "hug task install jcode --all-instances")
 
 	// Desktop and CLI apps (per user, not per repo): report the first one
 	// whose config exists but lacks a hug server.
