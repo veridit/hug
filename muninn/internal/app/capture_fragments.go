@@ -15,7 +15,10 @@ func captureFragments(messages []harness.CaptureMessage, seen map[string]bool, l
 	var out []harness.CaptureMessage
 	originals, last := map[string]string{}, map[string]string{}
 	for _, m := range messages {
-		size := max(4, limit-len(m.Role)-2)
+		// The transcript line is role + ": " + text + "\n" (capture.go); a
+		// part fills the limit with all three counted, or a full part is one
+		// byte over and the whole session's capture stops on it (8jcj3k).
+		size := max(4, limit-len(m.Role)-3)
 		// Mask credentials before splitting, so no fragment boundary can cut a
 		// token in half and slip it past the detector.
 		m.Text = project.MaskCredentials(m.Text)
@@ -44,4 +47,13 @@ func captureFragments(messages []harness.CaptureMessage, seen map[string]bool, l
 		}
 	}
 	return out, originals, last
+}
+
+// splitCount is how many messages captureFragments cut into parts.
+func splitCount(originals map[string]string) int {
+	cut := map[string]bool{}
+	for _, original := range originals {
+		cut[original] = true
+	}
+	return len(cut)
 }
