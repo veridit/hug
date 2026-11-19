@@ -1,7 +1,7 @@
 ---
 id: zdgw60
 title: "A set that wrote says what it wrote, before lint advice"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzv"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T01:16"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "zdgw60"
 worktree: "/Users/jhf/.jcode/scratch/zdgw60"
-waiting_asked_by: "piglet"
-waiting_on: "crab lands ci/zdgw60-rebased e75e1593 (on main bf170d46, CI running); then tick checks 1-3 with the main SHA"
-waiting_since: "2026-11-19T01:40"
+done_at: "2026-11-19T01:59"
 ---
 
 ## Goal
@@ -47,6 +43,8 @@ CI 44429491626 (1ca07644) success on all 8 jobs: secrets, bench, test ubuntu/mac
 check 1: On main as e75e1593 (tests 4edade75), code-identical to 1ca07644 (diff of huginn/ between them empty). TestSetSaysWhatItWroteBeforeLint failed first ('want added check 2: VALUE before the lint block'), passes: 'added check 2: VALUE' prints before 'lint: 1 finding'. CI 44429491626 success, all 8 jobs.
 check 2: On main as e75e1593. TestSetSaysEachFieldItWrote: 11 lines for 11 changed fields (title, state, type, priority, assignee, parent, tags, goal, purpose, principle, relevant details) and 'unchanged: ...' on a repeat; failed first ('wrote lacks title: Old title -> New title'). CI 44429491626 success.
 check 3: On main as e75e1593. MCP TestNewAndUpdateReturnFindingsAndOneFix: task_update set returns wrote ['title: ...','purpose: Why now','added check 2: D']; failed first ('update set wrote: <nil>'). CI 44429491626 success.
+Reflection (open, 2026-11-19, piglet): nothing misled: the reflection's own reproduction (set --accept then a lint fix) made the failing-first test directly; the only surprise was that --state todo also clears the assignee, which the reply now says.
 ## History
 - 2026-11-19T01:16 todo -> doing/active (take)
 - 2026-11-19T01:40 doing/active -> doing/waiting (wait)
+- 2026-11-19T01:59 doing/waiting -> done (done); was doing_since: 2026-11-19T01:16; waiting_asked_by: piglet; waiting_on: crab lands ci/zdgw60-rebased e75e1593 (on main bf170d46, CI running); then tick checks 1-3 with the main SHA; waiting_since: 2026-11-19T01:40
