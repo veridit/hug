@@ -1,0 +1,30 @@
+HUG · hug · list › w7tq3k › mark › question
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. [4;4mT[0m[4;4mo[0m[4;4md[0m[4;4ma[0m[4;4my[0m[4m [0m[4;4ma[0m[4m [0m[4;4mc[0m[4;4mh[0m[4;4me[0m[4;4mc[0m[4;4mk[0m[4m [0m[4;4ml[0m[4;4mi[0m[4;4mk[0m[4;4me[0m
+[4;4m'[0m[4;4mS[0m[4;4mh[0m[4;4mo[0m[4;4mu[0m[4;4ml[0m[4;4md[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mA[0m[4;4mS[0m[4;4mK[0m[4;4mE[0m[4;4mD[0m[4m [0m[4;4mr[0m[4;4mo[0m[4;4mw[0m[4m [0m[4;4ms[0m[4;4mh[0m[4;4mo[0m[4;4mw[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mc[0m[4;4mo[0m[4;4mu[0m[4;4mn[0m[4;4mt[0m[4;4m?[0m[4;4m'[0m[4m [0m[4;4ms[0m[4;4mi[0m[4;4mt[0m[4;4ms[0m[4m [0m[4;4ma[0m[4;4mm[0m[4;4mo[0m[4;4mn[0m[4;4mg[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mc[0m[4;4mh[0m[4;4me[0m[4;4mc[0m[4;4mk[0m[4;4ms[0m[4;4m,[0m[4m [0m[4;4mi[0m[4;4ms[0m[4m [0m[4;4me[0m[4;4ma[0m[4;4ms[0m[4;4my[0m[4m [0m[4;4mt[0m[4;4mo[0m[4m [0m[4;4mt[0m[4;4mi[0m[4;4mc[0m[4;4mk[0m[4m [0m[4;4mb[0m[4;4my[0m[4m [0m[4;4mm[0m[4;4mi[0m[4;4ms[0m[4;4mt[0m[4;4ma[0m[4;4mk[0m[4;4me[0m[4;4m,[0m[4m [0m[4;4ma[0m[4;4mn[0m[4;4md[0m
+[4;4mn[0m[4;4mo[0m[4;4mb[0m[4;4mo[0m[4;4md[0m[4;4my[0m[4m [0m[4;4mi[0m[4;4ms[0m[4m [0m[4;4ma[0m[4;4ms[0m[4;4mk[0m[4;4me[0m[4;4md[0m[4;4m,[0m[4m [0m[4;4ms[0m[4;4mo[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mq[0m[4;4mu[0m[4;4me[0m[4;4ms[0m[4;4mt[0m[4;4mi[0m[4;4mo[0m[4;4mn[0m[4m [0m[4;4mw[0m[4;4ma[0m[4;4mi[0m[4;4mt[0m[4;4ms[0m[4m [0m[4;4mf[0m[4;4mo[0m[4;4mr[0m[4m [0m[4;4ms[0m[4;4mo[0m[4;4mm[0m[4;4me[0m[4;4mo[0m[4;4mn[0m[4;4me[0m[4m [0m[4;4mt[0m[4;4mo[0m[4m [0m[4;4mn[0m[4;4mo[0m[4;4mt[0m[4;4mi[0m[4;4mc[0m[4;4me[0m[4m [0m[4;4mi[0m[4;4mt[0m[4m [0m[4;4ma[0m[4;4mn[0m[4;4md[0m[4m [0m[4;4mt[0m[4;4mu[0m[4;4mr[0m[4;4mn[0m[4m [0m[4;4mi[0m[4;4mt[0m[4m [0m[4;4mi[0m[4;4mn[0m[4;4mt[0m[4;4mo[0m[4m [0m[4;4ma[0m[4m [0m[4;4mh[0m[4;4mu[0m[4;4mg[0m[4m [0m[4;4mt[0m[4;4ma[0m[4;4ms[0m[4;4mk[0m[4m [0m[4;4ma[0m[4;4ms[0m[4;4mk[0m[4;4m,[0m
+[4;4mw[0m[4;4mh[0m[4;4mi[0m[4;4mc[0m[4;4mh[0m[4m [0m[4;4mi[0m[4;4mn[0m[4m [0m[4;4mp[0m[4;4mr[0m[4;4ma[0m[4;4mc[0m[4;4mt[0m[4;4mi[0m[4;4mc[0m[4;4me[0m[4m [0m[4;4mh[0m[4;4ma[0m[4;4mp[0m[4;4mp[0m[4;4me[0m[4;4mn[0m[4;4ms[0m[4m [0m[4;4ml[0m[4;4ma[0m[4;4mt[0m[4;4me[0m[4m [0m[4;4mo[0m[4;4mr[0m[4m [0m[4;4mn[0m[4;4me[0m[4;4mv[0m[4;4me[0m[4;4mr[0m[4;4m.[0m The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+[38;2;135;149;168m  ↳ 1 request · jhf 09:40 · Make it concise: say the harm in a few words.[0m
+
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+> ☐ 2. A check that starts with [1mShould, Can or Do[0m is a finding too (test)
+       question on check 2, the words "Should, Can or Do", to jhf:
+       English only, or also Norwegian (Skal, Kan, Bør)?▏
+[38;2;135;149;168m       writes: .Question .by:daisy .to:jhf .prev:.Item .on:"Should, Can or Do" .msg:"..."[0m
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+
+
+
+
+
+question to jhf · w7tq3k is asked until it is answered · one question per mark
+
+Enter writes the mark · Esc cancel · F1 help

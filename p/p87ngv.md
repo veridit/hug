@@ -129,6 +129,7 @@ file:frame-1-100x30.ans (4767 bytes, sha256:2d3a9252) frame 1 in colour: two ope
 file:frame-2-100x30.ans (4704 bytes, sha256:c973dafb) frame 2 in colour: ' jumps to mark 1: > pointer on its ↳ line, which lifts to default colour; ↳ 2 and its answer stay dim; underlines as frame 1
 file:frame-3-100x30.ans (1866 bytes, sha256:5665ea27) frame 3 in colour: mark mode (m): goal sentence 2 is bold as the selection; nothing else styled
 file:frame-4-100x30.ans (1782 bytes, sha256:7618ca11) frame 4 in colour: r on the selection: sentence stays bold, request typed under the goal, the writes: .Request ... line dim
+file:frame-5-100x30.ans (4480 bytes, sha256:4700a041) frame 5 in colour: ? on check 2: the span "Should, Can or Do" bold, mark 1's sentence underlined, ↳ 1 and the writes: .Question line dim
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
