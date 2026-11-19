@@ -180,3 +180,4 @@ crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Op
 - 2026-11-19T12:07 answer 8 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T12:07 crab read the answer: hug task note p87ngv "crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Open-data variant, not .sdd; Seid's Open t…"
 - 2026-11-19T12:08 answer 7 acknowledged by crab
+- 2026-11-19T12:08 answer 8 acknowledged by crab
