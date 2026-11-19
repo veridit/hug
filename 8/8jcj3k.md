@@ -1,15 +1,20 @@
 ---
 id: 8jcj3k
 title: "Capture stops for good on one message over 8192 bytes"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T02:30"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ muninn/internal/app/capture.go:285: if len(line) > chunkLimit, return 'capture m
 - [ ] on the live store, crab_1793783281662's capture_runs show a successful run after the fix ships (count in a note)
 
 ## Notes
+
+
+## History
+- 2026-11-19T02:30 todo -> doing/active (take)
