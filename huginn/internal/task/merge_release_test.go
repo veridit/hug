@@ -54,6 +54,11 @@ func TestMergeSameReleaseCloseInAnotherMinuteCountsOnce(t *testing.T) {
 	if !strings.Contains(string(got), "- 2026-11-18T23:43 doing/waiting -> done (") {
 		t.Fatalf("the board's line (23:43) is not the one kept:\n%s", got)
 	}
+	// done_at is the same close too: the board's minute, and no note
+	// that a value was overruled (nothing was).
+	if !strings.Contains(string(got), "done_at: \"2026-11-18T23:43\"\n") || strings.Contains(string(got), "set done_at") {
+		t.Fatalf("done_at of one release close kept as a conflict:\n%s", got)
+	}
 }
 
 // What counts once is the same transition by the same release: a close by

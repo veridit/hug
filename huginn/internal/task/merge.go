@@ -310,6 +310,14 @@ func equalText(x, y []string) bool {
 	return norm(x) == norm(y)
 }
 
+// sameRelease reports both sides closed by one release tag: done_release
+// set, and the same, on each.
+func sameRelease(o, t *mergeDoc) bool {
+	ov, ook := o.fm["done_release"]
+	tv, tok := t.fm["done_release"]
+	return ook && tok && equalText(ov, tv)
+}
+
 // mergeFrontMatter merges key by key in the board's order; a key only
 // ours added goes after the key it follows in ours. updated: is the later
 // of the two, never a kept value.
@@ -322,6 +330,12 @@ func mergeFrontMatter(b, o, t *mergeDoc, keep func(string, []string, []string, b
 			if scalar(strings.SplitN(strings.Join(ov, ""), ":", 2)[1]) > scalar(strings.SplitN(strings.Join(tv, ""), ":", 2)[1]) {
 				return ov, true
 			}
+			return tv, true
+		}
+		// One release close on two clones (j0zvee): each stamped done_at
+		// at its own minute. The same tag closed it on both, so it is one
+		// close: the board's minute, and nothing was overruled.
+		if k == "done_at" && ook && tok && !bok && sameRelease(o, t) {
 			return tv, true
 		}
 		v, present, c := pick3p(bv, ov, tv, bok, ook, tok)
@@ -472,6 +486,11 @@ func mergeAppend(h string, b, o, t []string, bok, ook, tok bool, keep func(strin
 	for _, lines := range [][]string{tb, ob} {
 		for _, entry := range blocks(h, lines) {
 			key := strings.TrimSpace(strings.ReplaceAll(strings.Join(entry, ""), "\r\n", "\n"))
+			if h == "History" {
+				if k, ok := releaseCloseKey(key); ok {
+					key = k
+				}
+			}
 			if key == "" || seen[key] {
 				continue
 			}
@@ -499,6 +518,30 @@ func mergeAppend(h string, b, o, t []string, bok, ook, tok bool, keep func(strin
 		out = append(out, entry...)
 	}
 	return append(out, tail...)
+}
+
+// releaseCloseKey is the merge key of a History line a release close wrote
+// (j0zvee): its transition and its reason, without the minute. Two clones
+// that deduce the same tag each close the task by it at their own minute;
+// that is one event, so the board's line is kept and the other dropped,
+// whatever minute either stamped. Any other line keeps its time in its
+// key: two resumes a minute apart on two clones are two events.
+func releaseCloseKey(entry string) (string, bool) {
+	line, _, _ := strings.Cut(entry, "\n")
+	m := entryTime.FindStringSubmatchIndex(line)
+	if m == nil {
+		return "", false
+	}
+	rest := strings.TrimSpace(line[m[1]:])
+	move, why, ok := strings.Cut(rest, " (")
+	if !ok || !strings.Contains(move, " -> ") {
+		return "", false
+	}
+	why, _, ok = strings.Cut(why, ")")
+	if !ok || !strings.HasPrefix(why, "done, by release ") {
+		return "", false
+	}
+	return "release close\x00" + move + "\x00" + why, true
 }
 
 // blocks splits appended lines into entries: a History or Depends on line
