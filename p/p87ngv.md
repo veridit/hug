@@ -1,6 +1,6 @@
 ---
 id: p87ngv
-title: "Threads anchored to quoted text in a task: comments, questions, requests"
+title: "Inline marks on a task's text; resolved dialogue moves to a history file"
 state: todo
 type: feature
 priority: ""
@@ -14,16 +14,16 @@ stage: "ready"
 ---
 
 ## Goal
-A person or an agent can attach a comment, question or request to an exact piece of a task's text (a sentence in the goal, check 3, a note). Each becomes a thread in the task file, answered and replied to in place from hug tui (a mark mode that selects text), the CLI and MCP. Agents can send several questions at once, each its own thread. The dialogue lives in the ticket, survives compaction and is specific to the text it is about.
+The ticket stays the crisp working document. A person or agent marks a piece of a task's text with a comment, question or request that sits inline in the text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in the ticket.
 
 ## Purpose
-Jørgen 2026-11-19 08:55Z (crab session): questions today look like acceptance criteria, attached to the task or a check. He wants to switch to a mark mode, select a piece of text and attach a comment or request to it, so the agent knows exactly what it is about; and to move multi-question dialogue out of chat into the ticket, where it stays relevant and survives compaction (08:54Z). Builds on q2adr8 (several questions, v0.7.70), hbgybn/ec6z6j (requests), gmzd87 (delivery to the coordinator), 3jtfw9 (answer in place).
+Jørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows exactly what it is about; questions today look like acceptance criteria. 09:05Z (answer 1 on this task): threads inside the ticket would bloat it, and the conversation must not become the thing. The ticket must stay crisp: clarity comes from boiling text down to its essence. The messy part goes to a separate, suitably named history file in the task's files (provenance, chat history) that grows by appending.
 
 ## Principle
-One primitive, the thread: an anchor, a kind (comment, question, request), entries with who and when, and open or resolved. Anchors quote text (field plus exact quote plus a little context), never line numbers, so edits do not break them; a quote that no longer matches shows the thread as outdated instead of losing it. Everything in the task file, verbatim. Calm TUI rules (qh9ep1 check 9): one cue per meaning, no background fills. Design first, mock before build; Jørgen rules on the open questions in this task.
+Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing markup convention for the sigil if one fits.
 
 ## Relevant details
-Sketch (crab 09:00Z). File: a ## Threads section, each thread headed with its number, kind, field and quote, entries below. CLI: hug task comment|ask|request ID --on FIELD --quote TEXT 'text'; ask --file reads several questions (one per block), each its own thread. MCP: task_update action thread. TUI: in the detail view, a mark key selects a span; c comments, r requests; a marker in the margin shows where threads sit; a key jumps between them; answering opens the input under the thread (3jtfw9). Delivery: as gmzd87, to the assignee or the coordinator. Open design questions are asked on this task one by one.
+Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 09:05Z). Replaces ## Questions and ## Requests over time (q2adr8, hbgybn): open marks show in ASKED / requests as those do now; delivery as gmzd87. History file name, format and sigil are open design questions on this task. Candidate sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.
 
 ## Depends on
 
@@ -53,3 +53,4 @@ Sketch (crab 09:00Z). File: a ## Threads section, each thread headed with its nu
   I think it's a real risk that the conversation becomes the thing and I think it should be moved out to maybe a separate document that will link in the files section that is historic, almost like provenance or just chat history. Otherwise, the ticket will become bloated. The ticket has to stay crisp and clear. So I think the questions and requests might need replacement, but they might appear in the text so you can actually see them, just like text. We have to choose the sigils or how to recognize them and act on them. And then, as they are resolved, the ticket is changed, and any history or chat history is put into another document outside of the ticket. If we try to scram everything into the ticket, I think it will be like if you make threads inside the ticket, it will become bloated. And especially when things are complex, you will have longer and more intense chats, which will bloat them even more. When what you need is clarity. And clarity is often to find the succinctness in things and boil it down to its essence, not adding more text. So the text is the tool to which we reach short clarity very often. That's why the messy part has to go out into a different file. But I think the working document is the ticket itself. That's where the replies come, it's picked up, and then the AI gets an instruction to lead with clarity in the ticket, answer requests, do them, post any questions, and then put all of the prehistory provenance into a suitably named asset that can grow with a penned
 - 2026-11-19T10:05 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:05 answer 1 acknowledged by crab
+- 2026-11-19T10:05 crab read the answer: hug task set p87ngv
