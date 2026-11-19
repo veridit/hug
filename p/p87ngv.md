@@ -181,3 +181,4 @@ crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Op
 - 2026-11-19T12:34 answered asked (question 6, check 5), by jhf, for daisy (doing/asked -> doing/active):
   > Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached.
   Well, you put the questions inside a file and the machinery doesn't pick that up. The questions will have to be inside this very task, wouldn't it?
+- 2026-11-19T12:34 answer 9 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
