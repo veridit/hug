@@ -1,7 +1,7 @@
 ---
 id: z9tn3v
 title: "Release v0.7.75"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T03:01"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T03:09"
 ---
 
 ## Goal
@@ -40,5 +39,7 @@ main fbe3a412 CI 44438198799 success 8/8. CHANGELOG commit 4591627d (restored th
 
 check 1: release.yml 44441121338 completed success
 check 2: brew upgrade veridit/tap/hug run on its own; hug version prints hug v0.7.75
+Reflection (open, 2026-11-19, crab): A rebase conflict had cut 5mmqjk's CHANGELOG entry to its first line, and only reading Unreleased before the cut caught it. rebase-land.sh's CODE-DIFF check excludes CHANGELOG, so a truncated entry passes it.
 ## History
 - 2026-11-19T03:01 todo -> doing/active (take)
+- 2026-11-19T03:09 doing/active -> done (done); was doing_since: 2026-11-19T03:01
