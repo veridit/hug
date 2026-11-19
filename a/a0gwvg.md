@@ -49,6 +49,7 @@ Landed on main as c53dae61 (crab), CI 44413400970 8/8.
 Reflection (applied, 2026-11-18, duckling): One gap: the scratch prototype assumed bash 4 (declare -A) and failed on macOS bash 3.2 ('declare: -A: invalid option'); AGENTS.md says nothing about which shell scripts/ targets. Also, the tool gate refused file writes into a runtime-computed path ($T/...), which pushed the real-run check into a git worktree: better, since gh needs a repo to resolve the run.
 landed c53dae6 on main 2026-11-18: scripts/ci-goldens.sh: rewrite drifted TUI goldens from a failed CI run (a0gwvg)
 shipped in v0.7.72 (c53dae6)
+Reflection 1 applied (tb0dra triage G14, crab 2026-11-19): AGENTS.md now says '- Shell scripts run on macOS's bash 3.2 too: no bash 4 features (declare -A, mapfile, ${x,,}).' (commit 0ba5e9e9, ci/g14, CI 44429351931). The tool-gate half is about the harness, not hug: dismissed.
 ## History
 - 2026-11-18T23:24 todo -> doing/active (take)
 - 2026-11-18T23:37 doing/active -> doing/waiting (wait)
