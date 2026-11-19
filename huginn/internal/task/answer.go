@@ -187,6 +187,13 @@ func AnswerFor(t Task, who string) bool {
 // question is what the stage t is in asks, the stage, and who asked: the
 // design question, the asked question, or the review. A wait asks nobody
 // (41hhgn): it ends with hug task resume.
+//
+// An open question in ## Questions asks too when its mirror is gone
+// (m5pbb0): a hug before q2adr8 (v0.7.69, left running in a TUI) answered
+// question 1 of p87ngv into History only and cleared design_*, so three
+// questions stayed open with no stage to answer them by, and every answer
+// was refused. The stage is the one an ask puts the task in (askStage);
+// answering one puts the mirror back on the oldest still open.
 func question(t Task) (stage, q, asker string) {
 	switch {
 	case t.State == "todo" && ownHolds(t, "design"):
@@ -196,6 +203,9 @@ func question(t Task) (stage, q, asker string) {
 	case ownHolds(t, "review"):
 		owner := strings.Join(t.Assignee, ", ")
 		return "review", "review by " + t.Fields["review_by"], owner
+	}
+	if open := OpenQuestions(t); len(open) > 0 && (t.State == "todo" || t.State == "doing") {
+		return askStage(t.State), open[0].Text, open[0].By
 	}
 	return "", "", ""
 }

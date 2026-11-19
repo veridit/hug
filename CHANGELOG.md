@@ -6,6 +6,20 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- A question left open with no stage to answer it by can be answered again
+  (m5pbb0). On 2026-11-19 Jørgen's `hug tui` was a v0.7.69 left running
+  since 2026-11-17, from before several questions per task (q2adr8,
+  v0.7.70). It answered question 1 of p87ngv into History only and
+  cleared `design_*`, so p87ngv went to ready with questions 1, 2 and 3
+  still open in `## Questions`. A current hug drew each with its own
+  `a answer`, but every answer was refused with "p87ngv asks nobody: its
+  stage is not design, asked or review". Now an open question asks
+  whatever the stage fields say: `hug task answer ID N`, the TUI's `a` and
+  MCP answer it, and the stage comes back as design (todo) or asked
+  (doing), on the oldest question still open. Tests replay p87ngv's file
+  as it was at 10:05:26 and at 10:05:47 (five questions), goldens at
+  100x30 and 160x45.
+
 ## v0.7.79 - 2026-11-19
 
 - hug mem: search matches query words against concepts in one read instead
