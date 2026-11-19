@@ -122,3 +122,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:32 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:32 request 3 in progress by crab: hug task set p87ngv
 - 2026-11-19T10:32 resolved request 3 by crab
+- 2026-11-19T10:32 answer 4 acknowledged by crab
