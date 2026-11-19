@@ -40,5 +40,6 @@ Triage: /Users/jhf/.jcode/scratch/reflections-triage.md G1. Related reflections 
 
 
 Branch zdgw60 / ci/zdgw60 at 1ca07644 on main 6bf6a928; tests-first c777466f failed: TestSetSaysWhatItWroteBeforeLint 'want added check 2: VALUE before the lint block' (reply was the task, '2. [ ] VALUE', lint, fix:, no wrote line), TestSetSaysEachFieldItWrote 'wrote lacks title: Old title -> New title', MCP TestNewAndUpdateReturnFindingsAndOneFix 'update set wrote: <nil>'. Fix: cli/setwrote.go (snapshot before/after set), reply['wrote'] printed before lint:, help and MCP description updated, CHANGELOG line. 6 mutants all fail (no added check; no title line; no unchanged line; wrote printed after lint; no tags line; no wrote in reply -> MCP). Local targeted: cli ok 170 s, mcp ok 154 s. CI 44429491626 running.
+CI 44429491626 (1ca07644) success on all 8 jobs: secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards. Checks stay open until it lands (ticks with the main SHA).
 ## History
 - 2026-11-19T01:16 todo -> doing/active (take)
