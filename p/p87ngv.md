@@ -10,11 +10,17 @@ group: ""
 rank: "zzzzzzzzzzzl"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
+stage: "asked"
 doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached."
+asked_for: "jhf"
+asked_since: "2026-11-19T11:28"
+asked_by: "daisy"
+asked_show: "MOCK.md"
+asked_check: "5"
 ---
 
 ## Goal
@@ -66,6 +72,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
   History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated entry quoting the original text, the exchange and the change made. Is that the right name and shape?
   answered 2026-11-19T10:36 by jhf:
     (console 09:35Z) history.sdd, Seid data (seid-lang design/SDD-Data-Format.md).
+- 2026-11-19T11:28 question 6 by daisy to jhf (check 5, show MOCK.md):
+  Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached.
 
 ## Requests
 - 2026-11-19T10:05 request 1 by jhf:
@@ -149,3 +157,4 @@ file:tui-100x30.txt (19912 bytes, sha256:416667f3) check 5 mock: 7 hug tui detai
 - 2026-11-19T11:09 answer 6 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T11:09 answer 6 acknowledged by crab
 - 2026-11-19T11:23 crab read the answer: hug task set p87ngv
+- 2026-11-19T11:28 doing/active -> doing/asked (ask)
