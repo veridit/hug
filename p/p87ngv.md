@@ -170,3 +170,4 @@ crab 10:31Z, review of daisy's mock (files attached, sha in her notes): before.m
 - 2026-11-19T12:07 answered asked (question 8), by jhf, for crab (doing/asked -> doing/asked):
   > Seid-Data-Files.md calls the self-describing tier without a schema Open (.sdo, suffix TBD) and keeps .sdd for Closed data with declared types. history.sdd is Open data. Keep the name history.sdd, or use another suffix?
   (console 11:07Z) Use a custom variant: the Open data format, .sdo, which hug defines itself, not .sdd. Jørgen needs to finish that part of Seid.
+- 2026-11-19T12:07 answer 7 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
