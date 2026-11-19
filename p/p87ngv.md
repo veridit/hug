@@ -128,3 +128,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:36 answered design (question 5), by jhf, for crab (todo/design -> todo/design):
   > History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated entry quoting the original text, the exchange and the change made. Is that the right name and shape?
   (console 09:35Z) history.sdd, Seid data (seid-lang design/SDD-Data-Format.md).
+- 2026-11-19T10:36 answer 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
