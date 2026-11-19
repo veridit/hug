@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/veridit/hug/huginn/internal/harness"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -35,14 +34,10 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 	a.JcodeHomes = []string{jc.home}
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Tags", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
-	waitAck := func() {
-		t.Helper()
-		select {
-		case <-acked:
-		case <-time.After(20 * time.Second):
-			t.Fatal("no acknowledgement")
-		}
-	}
+	// Each wait follows a receipt that says delivered, and the hook answers
+	// on every path: wait for it, not for a clock (awht8w, as in
+	// TestRequestReachesCoordinator).
+	waitAck := func() { <-acked }
 	// Each claim: a phrase DeliveryFlow must contain, and the check that
 	// the code does it. They run in order on one board.
 	claims := []struct {

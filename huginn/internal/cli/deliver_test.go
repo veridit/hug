@@ -185,13 +185,13 @@ func TestRequestReachesCoordinator(t *testing.T) {
 			t.Fatalf("message to %s lacks %q:\n%s", sid, want, msg)
 		}
 	}
-	select {
-	case got := <-acked:
-		if len(got) != 1 || got[0] != id+" request 2" {
-			t.Fatalf("acknowledged %v", got)
-		}
-	case <-time.After(20 * time.Second):
-		t.Fatal("crab's hook did not acknowledge")
+	// The hook answers on every path (an error too), so wait for it, not
+	// for a clock (awht8w): at load 95-500 a niced git took up to 14 s to
+	// start and finish, and the delivery and the ack are eight git
+	// processes, so a 20 s budget failed a hook that was only slow. A hook
+	// that never answers stops at go test -timeout, with its stack.
+	if got := <-acked; len(got) != 1 || got[0] != id+" request 2" {
+		t.Fatalf("acknowledged %v", got)
 	}
 	if _, out := runText(a, "requests", id); !strings.Contains(out, "request 2 by jhf") || !strings.Contains(out, "  receipt: acknowledged by crab\n") {
 		t.Fatalf("requests after the ack:\n%s", out)
