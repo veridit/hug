@@ -1,15 +1,20 @@
 ---
 id: j0zvee
 title: "Two clones closing one release write the release line twice"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["iwazaru"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T02:06"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "awht8w"
+worktree: "/Users/jhf/.jcode/scratch/awht8w"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ CI census 2026-11-19 (iwazaru, scratch/ci-census.md). 2 hits on 2 different base
 - [ ] No timeout raised and no retry added
 
 ## Notes
+
+
+## History
+- 2026-11-19T02:06 todo -> doing/active (take)
