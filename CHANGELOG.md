@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.84 - 2026-11-19
+
 - The file view in `hug tui` fills to the keys (yp3c09, Jørgen 2026-11-19
   11:30Z on p87ngv's before.md). Two empty rows sat between the file's
   bottom rule and the key bar while the file went on below: the message
