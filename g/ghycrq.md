@@ -47,6 +47,7 @@ landed bfe4b2c on main 2026-11-19: tui: failing test, the tmux harness fails a w
 landed cd8b87f on main 2026-11-19: tui: the tmux harness waits on its server, not on tmux clients (ghycrq)
 shipped in v0.7.75 (bfe4b2c)
 crab: landed on main as cd8b87ff (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75.
+Reflection (open, 2026-11-19, crab): nothing (coordinator closing on landed CI evidence)
 ## History
 - 2026-11-19T00:52 todo -> doing/active (take)
 - 2026-11-19T02:23 doing/active -> doing/waiting (wait)
