@@ -11,13 +11,14 @@ rank: "zzzzzzzzzzw3"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "fresh captures after 2026-11-19 for the (a)+(b) attempt"
-waiting_since: "2026-11-18T22:24"
-waiting_asked_by: "bonehound"
+asked_what: "Memory placement attempt 2 failed its bar: of 295 memories that would be pushed to the shared repo, 36 should not be (24 are team working rules written as if they only apply to this repo). Shall I pre-register a third approach on new data, or drop this check and keep what already ships (personal and other-project memories held back by the sync gate)?"
+asked_for: "jhf"
+asked_since: "2026-11-19T15:23"
+asked_by: "crab"
 ---
 
 ## Goal
@@ -39,6 +40,10 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
 - [x] A+: the extractor's place field accepts personal, project:<other>, client:<name>; a captured personal memory is never in memories.jsonl (test with a recorded extraction)
 - [ ] On fresh captures (not the 868 used to choose), A+ and B leak at most 1 in 200 pushed, judged blind; withheld rate reported with its interval
 - [x] hug mem sync prints how many were held, by reason, and how to release one (fix: line)
+
+## Questions
+- 2026-11-19T15:23 question 1 by crab to jhf:
+  Memory placement attempt 2 failed its bar: of 295 memories that would be pushed to the shared repo, 36 should not be (24 are team working rules written as if they only apply to this repo). Shall I pre-register a third approach on new data, or drop this check and keep what already ships (personal and other-project memories held back by the sync gate)?
 
 ## Notes
 
@@ -69,3 +74,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-18T21:36 todo -> doing/active (take)
 - 2026-11-18T22:24 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)
+- 2026-11-19T15:23 doing/waiting -> doing/asked (ask); was waiting_asked_by: bonehound; waiting_on: fresh captures after 2026-11-19 for the (a)+(b) attempt; waiting_since: 2026-11-18T22:24
