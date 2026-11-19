@@ -6,6 +6,17 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Tests leave no tmux server running (wacc33, crab 2026-11-19 12:01Z:
+  three huginn-golden/reload servers, parent launchd, alive for days). A
+  test's tmux server now dies with the test however it ends: pass,
+  t.Fatal, a panic in a subtest, go test -timeout, or SIGKILL of the test
+  process. A watchdog shell holds the server and SIGTERMs it when a pipe
+  only the test process writes closes; cleanup is also a t.Cleanup, and
+  it fails the test if the server still runs. Every test server is named
+  huginn-NAME-PID (the muninn terminal goldens too), and each tui test
+  run first reaps any huginn-* server whose test process is gone or
+  whose parent is launchd. No other tmux server is touched.
+
 ## v0.7.84 - 2026-11-19
 
 - The file view in `hug tui` fills to the keys (yp3c09, Jørgen 2026-11-19

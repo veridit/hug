@@ -2,13 +2,14 @@ package tui
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // zhvkmj check 5 in a real terminal: the hug binary in tmux, on a copy of
@@ -73,7 +74,7 @@ func TestTmuxZhvkmjFilesOnItself(t *testing.T) {
 	run("git", "-C", tasks, "add", "-A")
 	run("git", "-C", tasks, "commit", "-q", "-m", "zhvkmj from hug's board")
 
-	socket := fmt.Sprintf("hug-zhvkmj-%d", os.Getpid())
+	socket := tmuxtest.Label("zhvkmj")
 	defer startTmuxServer(t, socket)()
 	tmux := func(args ...string) string {
 		t.Helper()

@@ -11,12 +11,13 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"syscall"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/veridit/hug/huginn/internal/tui/testfixture"
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 func loadGuard(t *testing.T) {
@@ -63,14 +64,42 @@ func normalizeCapture(s string) string {
 // servers that were fine. Ready is the server's socket taking a connection
 // from this process. Cleanup is SIGTERM, which is what tmux kill-server
 // does (cmd-kill-server.c: kill(getpid(), SIGTERM)), then the server's exit.
+//
+// The server dies with the test, however the test ends (wacc33: crab
+// found three huginn-golden/reload servers, parent launchd, alive for
+// days). The returned cleanup is also a t.Cleanup, so t.Fatal and a panic
+// in a subtest (which skips the parent's defers) stop it. A watchdog shell
+// holds the server: it reads a pipe only this process writes, and when
+// that pipe closes (cleanup, or this process ended by go test -timeout,
+// SIGKILL or a cancelled job) it SIGTERMs the server. A server left anyway
+// is reaped by the next run (TestMain, tmuxtest.Reap). Every label starts
+// with tmuxtest.Prefix.
 func startTmuxServer(t *testing.T, socket string) func() {
 	t.Helper()
+	if !strings.HasPrefix(socket, tmuxtest.Prefix) {
+		t.Fatalf("tmux socket %q: a test server's label starts with %q, so the next run can reap it", socket, tmuxtest.Prefix)
+	}
 	path, err := tmuxSocketPath(socket)
 	if err != nil {
 		t.Fatal(err)
 	}
-	server := exec.Command("tmux", "-D", "-L", socket, "-f", "/dev/null")
+	// The test process holds the only write end of sh's stdin. sh starts the
+	// server and a reader on a copy of that stdin (an asynchronous list
+	// would read /dev/null), then waits on the server. The reader gets end
+	// of input when cleanup closes the pipe or this process dies, however it
+	// dies, and then SIGTERMs the server.
+	server := exec.Command("/bin/sh", "-c", `exec 3<&0
+tmux -D -L "$1" -f /dev/null </dev/null 3<&- & s=$!
+(read _ || :; kill $s 2>/dev/null) <&3 3<&- >/dev/null 2>&1 &
+exec 3<&-
+wait $s; st=$?
+[ $st -eq 143 ] && exit 0 # 128+SIGTERM: our own cleanup
+exit $st`, "sh", socket)
 	server.Stdout, server.Stderr = os.Stderr, os.Stderr
+	lifeline, err := server.StdinPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := server.Start(); err != nil {
 		t.Fatal(err)
 	}
@@ -79,17 +108,28 @@ func startTmuxServer(t *testing.T, socket string) func() {
 	// A wait past a minute says what it waits on, then goes on waiting: go
 	// test's -timeout ends a server that really hangs, with every stack.
 	slow := func(what string) *time.Timer {
-		return time.AfterFunc(time.Minute, func() { t.Logf("tmux server %d: still waiting for %s", server.Process.Pid, what) })
+		return time.AfterFunc(time.Minute, func() { t.Logf("tmux server %s: still waiting for %s", socket, what) })
 	}
+	var once sync.Once
 	cleanup := func() {
-		if err := server.Process.Signal(syscall.SIGTERM); err != nil {
-			t.Errorf("tmux server cleanup: %v", err)
-		}
-		defer slow("its exit after SIGTERM").Stop()
-		if err := <-done; err != nil {
-			t.Errorf("tmux server cleanup: process %v", err)
-		}
+		once.Do(func() {
+			lifeline.Close()
+			defer slow("its exit after SIGTERM").Stop()
+			if err := <-done; err != nil {
+				t.Errorf("tmux server cleanup: process %v", err)
+			}
+			procs, err := tmuxtest.Servers()
+			if err != nil {
+				t.Errorf("tmux server cleanup: %v", err)
+			}
+			for _, p := range procs {
+				if p.Label == socket {
+					t.Errorf("tmux server cleanup: server %d (-L %s) still runs", p.PID, socket)
+				}
+			}
+		})
 	}
+	t.Cleanup(cleanup)
 	defer slow(path + " to take a connection").Stop()
 	for {
 		select {
@@ -140,7 +180,7 @@ func TestTmuxGolden(t *testing.T) {
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build: %v\n%s", err, out)
 	}
-	socket := fmt.Sprintf("huginn-golden-%d", os.Getpid())
+	socket := tmuxtest.Label("golden")
 	cleanupServer := startTmuxServer(t, socket)
 	defer cleanupServer()
 	tmux := func(t *testing.T, args ...string) string {

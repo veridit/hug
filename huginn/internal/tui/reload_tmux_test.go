@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/huginn/internal/tui/testfixture"
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // TestTmuxReload is j2vwk0 end to end with the real binary, Jørgen's test:
@@ -82,7 +83,7 @@ func TestTmuxReload(t *testing.T) {
 	if err := testfixture.Seed(filepath.Join(repo, ".hug", "tasks")); err != nil {
 		t.Fatal(err)
 	}
-	socket := fmt.Sprintf("huginn-reload-%d", os.Getpid())
+	socket := tmuxtest.Label("reload")
 	defer startTmuxServer(t, socket)()
 	tmux := func(args ...string) string {
 		t.Helper()

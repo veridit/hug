@@ -35,13 +35,26 @@ def command(*args, **kwargs):
                           stderr=subprocess.PIPE, timeout=timeout, **kwargs).stdout
 
 
+# The server dies with this process, however it ends (wacc33): sh holds it
+# and kills it when the pipe only this process writes closes (exit, SIGKILL,
+# a cancelled CI job). The label ends in this pid and starts with huginn-,
+# so the next Go test run reaps a server left anyway (internal/tmuxtest).
+LIFELINE = """exec 3<&0
+tmux -D -L "$1" -f /dev/null </dev/null 3<&- & s=$!
+(read _ || :; kill $s 2>/dev/null) <&3 3<&- >/dev/null 2>&1 &
+exec 3<&-
+wait $s; st=$?
+[ $st -eq 143 ] && exit 0
+exit $st"""
+
+
 @contextmanager
 def private_server():
     """Keep a known foreground PID, even when a server command blocks in the OS."""
     global TMUX_SOCKET
-    TMUX_SOCKET = "muninn-tui-" + uuid.uuid4().hex[:12]
+    TMUX_SOCKET = f"huginn-muninn-tui-{os.getpid()}"
     socket = Path(os.environ.get("TMUX_TMPDIR", "/tmp")) / f"tmux-{os.getuid()}" / TMUX_SOCKET
-    server = subprocess.Popen(["tmux", "-D", "-L", TMUX_SOCKET, "-f", "/dev/null"],
+    server = subprocess.Popen(["/bin/sh", "-c", LIFELINE, "sh", TMUX_SOCKET], stdin=subprocess.PIPE,
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         deadline = time.monotonic() + 30
@@ -55,6 +68,7 @@ def private_server():
             command("tmux", "kill-server", timeout=3)
         except (subprocess.SubprocessError, OSError):
             pass
+        server.stdin.close()
         if server.poll() is None:
             server.terminate()
             try:

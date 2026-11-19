@@ -3,13 +3,14 @@ package tui
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // TestTmuxAutoRefresh runs the real binary in tmux: another process runs
@@ -65,7 +66,7 @@ func TestTmuxAutoRefresh(t *testing.T) {
 		}
 		ids[title] = r.Task.ID
 	}
-	socket := fmt.Sprintf("hug-refresh-%d", os.Getpid())
+	socket := tmuxtest.Label("refresh")
 	cleanupServer := startTmuxServer(t, socket)
 	defer cleanupServer()
 	tmux := func(args ...string) string {

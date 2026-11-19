@@ -1,12 +1,13 @@
 package tui
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"testing"
+
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // TestTmuxServerSlowStarts holds the tmux harness to a machine where
@@ -31,6 +32,6 @@ func TestTmuxServerSlowStarts(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
-	cleanup := startTmuxServer(t, fmt.Sprintf("hug-slowstart-%d", os.Getpid()))
+	cleanup := startTmuxServer(t, tmuxtest.Label("slowstart"))
 	cleanup()
 }

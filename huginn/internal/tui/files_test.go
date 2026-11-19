@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
 	"github.com/charmbracelet/x/ansi"
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // The test binary doubles as $VISUAL (as in huginn/internal/cli, 4emme8):
@@ -26,6 +28,14 @@ func TestMain(m *testing.M) {
 	openerOS = "darwin"
 	if text, ok := os.LookupEnv(tuiEdit); ok && len(os.Args) > 1 {
 		os.Exit(fakeAppend(os.Args[len(os.Args)-1], text))
+	}
+	// A tmux server left by a test run that died (wacc33) ends here.
+	if runtime.GOOS != "windows" {
+		if reaped, err := tmuxtest.Reap(); err != nil {
+			fmt.Fprintln(os.Stderr, "tmux orphan sweep:", err)
+		} else if len(reaped) > 0 {
+			fmt.Fprintf(os.Stderr, "tmux orphan sweep: SIGTERM to %v\n", reaped)
+		}
 	}
 	os.Exit(m.Run())
 }
