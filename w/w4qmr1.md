@@ -4,7 +4,7 @@ title: "Recall skips jcode image notices: exact prefixes from jcode's source"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["mizaru"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzt"
@@ -47,3 +47,4 @@ Crab 01:38: stays OFF main until check 3 passes; ci/w4qmr1 frozen at 163321cb. F
 Daily count runbook (crab runs it from 2026-11-20; mizaru's wake cancelled). Command: nice -n 19 python3 /Users/jhf/.jcode/scratch/w4qmr1/count_notices.py. It is read-only and takes ~25 s. It prints one line: '<UTC now> since 2026-11-19T00:00Z: top-level N notices in S sessions; child C in K; deduped away D; ready=<bool>'. Note it with: hug task note w4qmr1 "daily count: <line>". ready=True means N >= 40 and S >= 8. Then freeze /Users/jhf/.jcode/scratch/w4qmr1/PREREG-DRAFT.md as PREREG.md (shasum -a 256), note the sha, and run it: A0 = 163321cb^, A1 = 163321cb on ci/w4qmr1, store copy niced, concurrency 2, judge cap 40. Accepted draft sha: 235489860758b07e4e5ccf9201c3669fdf942adb467a71a3f3db6adf52301dee.
 ## History
 - 2026-11-19T02:24 todo -> doing/active (take with p277bp)
+- 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)

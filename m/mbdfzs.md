@@ -4,7 +4,7 @@ title: "hug mcp serves with the installed hug, never an old binary"
 state: "doing"
 type: bug
 priority: "urgent"
-assignee: ["mizaru"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzr8"
@@ -55,3 +55,4 @@ shipped in v0.7.71 (056033a)
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)

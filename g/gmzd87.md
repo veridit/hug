@@ -4,7 +4,7 @@ title: "Requests reach the board coordinator by design"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["mizaru"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzwk"
@@ -68,3 +68,4 @@ shipped in v0.7.64 (872a2a4)
 ## History
 - 2026-11-18T12:34 todo -> doing/active (take)
 - 2026-11-18T15:11 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)

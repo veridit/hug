@@ -4,7 +4,7 @@ title: "hug names running MCP servers too old to reload themselves"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["mizaru"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxr"
@@ -54,3 +54,4 @@ shipped in v0.7.71 (24e329e)
 ## History
 - 2026-11-18T18:23 todo -> doing/active (take)
 - 2026-11-18T20:44 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)
