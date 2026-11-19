@@ -204,3 +204,4 @@ crab 11:35Z: Jørgen 11:34Z (answer 9): questions inside an attached file are in
 - 2026-11-19T12:36 answered asked (question 9), by jhf, for crab (doing/asked -> doing/asked):
   > Keys in the detail view: m enters mark mode, ' and " jump to the next and previous mark, c ? r add a comment, question or request, R resolves. m is grab in the list view; is that clash fine, since the detail is a different screen?
   (console 11:35Z) We'll try the jump keys; not sure. Jørgen will review the whole key setup later, inspired by Helix and key tries.
+- 2026-11-19T12:36 answer 10 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
