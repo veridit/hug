@@ -10,17 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzk"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "asked"
+stage: "active"
 doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached."
-asked_for: "jhf"
-asked_since: "2026-11-19T11:28"
-asked_by: "daisy"
-asked_show: "MOCK.md"
-asked_check: "5"
 ---
 
 ## Goal
@@ -74,6 +68,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     (console 09:35Z) history.sdd, Seid data (seid-lang design/SDD-Data-Format.md).
 - 2026-11-19T11:28 question 6 by daisy to jhf (check 5, show MOCK.md):
   Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached.
+  answered 2026-11-19T12:34 by jhf:
+    Well, you put the questions inside a file and the machinery doesn't pick that up. The questions will have to be inside this very task, wouldn't it?
 - 2026-11-19T11:29 question 7 by crab to jhf:
   Seid today rejects bare names and times (.by:jhf is 'Unknown variable: jhf', .at:2026-11-19T09:40Z is 'unexpected token: :'), and even the Open-tier .Dog example from Seid-Data-Files.md. Keep the bare forms in marks and history.sdd and treat that as a request to Seid for word and time literals, or quote them (.by:"jhf")?
   answered 2026-11-19T12:07 by jhf:
@@ -182,3 +178,6 @@ crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Op
 - 2026-11-19T12:08 answer 7 acknowledged by crab
 - 2026-11-19T12:08 answer 8 acknowledged by crab
 - 2026-11-19T12:30 handed to crab: daisy's session ended (closed 2026-11-19 11:29)
+- 2026-11-19T12:34 answered asked (question 6, check 5), by jhf, for daisy (doing/asked -> doing/active):
+  > Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached.
+  Well, you put the questions inside a file and the machinery doesn't pick that up. The questions will have to be inside this very task, wouldn't it?
