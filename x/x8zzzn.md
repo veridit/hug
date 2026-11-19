@@ -41,5 +41,15 @@ Step 1 (evidence, no code): from capture/hook logs and injections, count for the
 
 
 check 1: Step 1 in /Users/jhf/.jcode/scratch/x8zzzn/STEP1.md: since park went live 2026-11-18T03:53Z, 543 parked, 504 delivered, 18 dropped at turn_end (no tool), 13 dropped stale, 8 unresolved; mid-turn soft interrupts never run turn_start recall (jcode 446302f1b fires it only at turn_execution.rs:66/215/240; park era 103 of 104 mid-turn soft interrupts and 19 of 19 point-B ones have no recall line)
+Step 1 table (palmtree, hook.log + journals + jcode server logs, UTC days; full report /Users/jhf/.jcode/scratch/x8zzzn/STEP1.md):
+day | turn_start runs | parked | delivered | dropped turn_end (no tool) | dropped stale | unresolved | old transcript sent/failed/turn-ended | no block (no hits/harness notice/own injection)
+11-16 | 931 | 0 | 0 | 0 | 0 | 0 | 225/95/55 | 556 (338/147/71)
+11-17 | 678 | 0 | 0 | 0 | 0 | 0 | 181/56/18 | 423 (289/99/35)
+11-18 | 1038 | 436 | 404 | 17 | 9 | 6 | 33/9/0 before 03:53Z | 560 (420/140/0)
+11-19 to 14:15Z | 229 | 107 | 100 | 1 | 4 | 2 | 0 | 122 (63/59/0)
+Parked includes 65 cue-only blocks (hits=0). Journal check of 498 parks: 444 delivered with the marker in a tool result, 15 delivered lines without it (11 tool=mcp), 0 marker without a delivered line. 8 of 13 stale drops: a soft interrupt became the latest typed message before the first tool result (harness.go Current()). Unresolved: 6 parked before the 03:53Z config rewrite, 2 still on disk (pawprint, turtle: system turns, 0 tools, no turn_end line).
+Per harness: all 1876 injections since 11-16 are jcode; 0 claude/codex hook.log lines (last claude injection 2026-11-14). Per instance (11-18/19): global 314 parked/290 delivered/9 no-tool/7 stale/8 unresolved; brovs 116/110/2/4/0; seid 61/59/1/1/0; statbus 52/45/6/1/0.
+Mid-turn: soft interrupts are added by inject_soft_interrupts (interrupts.rs:347, points B/C/D) and never call fire_turn_start_hook. Park era: mid-turn soft interrupts 1 recall line / 103 none; point-B soft interrupts 0/19; typed turn inputs 880/1.
+Gaps: injections is written at recall time, so it cannot tell delivered from dropped (would need delivered_at); Park overwrites are not logged; soft interrupts are joined by timestamp, because jcode logs no message id at INJECT_COMMIT; hook timeouts carry no session id.
 ## History
 - 2026-11-19T15:02 todo -> doing/active (take)
