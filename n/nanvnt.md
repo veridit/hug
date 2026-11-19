@@ -34,7 +34,7 @@ huginn/internal/cli/askquestions.go questionText renders q.Answer and has no q.W
 ## Acceptance
 - [x] hug task show prints a withdrawn question with 'withdrawn <at> (<why>)' and no reading as open (test, failing first)
 - [x] the TUI detail draws a withdrawn question dim, head and text, with 'withdrawn <at>' (test or golden, failing first)
-- [ ] ASKED neither lists nor counts a withdrawn question, also when the task holds a second open one (test)
+- [x] ASKED neither lists nor counts a withdrawn question, also when the task holds a second open one (test)
 
 ## Notes
 
@@ -45,5 +45,6 @@ landed f17745a on main 2026-11-19: hug task show and the TUI mark a withdrawn qu
 shipped in v0.7.73 (e8eca02)
 check 1: Shipped in v0.7.73 (f17745ad on main; tests-first e8eca029). TestShowMarksWithdrawnQuestion failed first ('question 1 is withdrawn but show does not say so'), passes after; show prints '  withdrawn <at> (<why>)'. CI 44420635338 success on all 8 jobs (0d494b92, same tree).
 check 2: Shipped in v0.7.73 (f17745ad). TestWithdrawnQuestionDrawnDim failed first ('question 1 not marked withdrawn with its time'); head now '· withdrawn 2026-11-17 09:50', text lines rendered with styles.dim. Mutants: no time / not dim both fail. No golden held '· withdrawn'. CI 44420635338 success.
+check 3: Shipped in v0.7.73 (f17745ad). TestAskedSkipsWithdrawnQuestion: one withdrawn + one open counts once (ASKED [3]); a task whose only question is withdrawn leaves ASKED (count 3 -> 2). Passed before the fix (ASKED uses OpenQuestions), so it pins; mutant Open() counting withdrawn fails it. CI 44420635338 success.
 ## History
 - 2026-11-18T23:34 todo -> doing/active (take)
