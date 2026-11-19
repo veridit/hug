@@ -56,6 +56,7 @@ rule64 (as specified): frozen human rel +0.47 [+0.30,+0.61] irr +0.36 [+0.06,+0.
 rule60: frozen irr +0.82 / +0.71, both CI above 0. rule68: frozen irr +0.03 [-0.18,+0.34] / +0.35 [-0.04,+0.72], not below 0; fresh human rel -0.16 [-0.27,-0.01] (indicative).
 Verdict: FAIL at all three thresholds. No arm keeps frozen irr from rising, and at 0.64 and 0.60 it rises with the CI clear of 0. The 2026-11-15 gain was against pre-BM25 recall; BM25 v0.7.2 took most of it. What remains: the rule halves fresh-long noise (irr -0.88 to -1.30, CI clear) with rel flat. That is a long-message noise lead (compare jrj1vq's kind rule, long irr -1.98), not this rule. Scripts: $JCODE_SCRATCH_DIR/6assqk/{coverage,arms,table}.py; arms written as recall4/real/rule{60,64,68}-*.jsonl. Nothing shipped.
 bonehound gives 6assqk back: check 1 parked with the table above (fails the bar at 0.60/0.64/0.68). Checks 2-4 are not started; the learned veto (check 2) has no production label source yet (memory bgqxqj, s6ff5k).
+The fresh-long noise lead (irr -0.88 to -1.30, rel flat) is filed as its own design task nfe0h2 (not a child of this one), with jrj1vq's kind rule (long irr -1.98 [-2.44,-1.50]) as the second piece of evidence. Check 1 stays parked; no rerun (crab 01:02).
 ## History
 - 2026-11-18T17:30 todo -> doing/active (take)
 - 2026-11-18T17:35 doing/active -> todo/ready (give back; was assignee: bonehound); was doing_since: 2026-11-18T17:30
