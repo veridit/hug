@@ -33,11 +33,12 @@ Grep huginn/internal/tui for tmux -D -L huginn-golden / huginn-reload; check whe
 
 ## Acceptance
 - [x] A test that fails or times out mid-run leaves no tmux server (test that runs a failing child and checks pgrep)
-- [ ] After a full niced go test ./... no huginn-* tmux server remains (note with pgrep output)
+- [x] After a full niced go test ./... no huginn-* tmux server remains (note with pgrep output)
 
 ## Notes
 
 
 check 1: fix 0dd8da47 on branch wacc33: TestTmuxServerGoneWhenTestEnds (huginn/internal/tui/tmuxorphan_test.go) runs a child test that starts a server via startTmuxServer and ends by t.Fatal, subtest panic, -test.timeout=15s, SIGKILL. On origin/main 3c81735d: '--- FAIL: TestTmuxServerGoneWhenTestEnds/panic (10.38s) tmuxorphan_test.go:185: panic: tmux server 19447 (-L huginn-wacc33-19446) still runs 10s after its test process ended (exit status 2)', same for kill (signal: killed) and timeout (exit status 2); fatal passed. After fix: PASS fatal 0.49s, kill 0.38s, panic 0.47s, timeout 15.29s; TestTmuxOrphanReaped PASS (next run SIGTERMs a huginn-* server whose owner pid is gone). Fix: watchdog sh holds the server and kills it when the test's stdin pipe closes; cleanup is t.Cleanup too; TestMain reaps orphans (internal/tmuxtest).
+check 2: 62889dc4 (branch wacc33): GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test -count=1 ./... exit=0 at 2026-11-19T20:58:12Z, huginn/internal/tui ok 154.079s, muninn/internal/tui ok 19.251s, internal/tmuxtest ok. Then pgrep -fl 'tmux -D -L huginn' printed nothing, exit=1 (log: $JCODE_SCRATCH_DIR/wacc33/fullrun2.txt).
 ## History
 - 2026-11-19T21:05 todo -> doing/active (take)
