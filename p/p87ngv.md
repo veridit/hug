@@ -10,7 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "ready"
+stage: "design"
+design_since: "2026-11-19T09:56"
+design_asked_by: "crab"
+design_question: "Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?"
+design_for: "jhf"
 ---
 
 ## Goal
@@ -46,6 +50,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
   Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?
 - 2026-11-19T09:56 question 3 by crab to jhf:
   Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?
+- 2026-11-19T10:05 question 4 by crab to jhf:
+  Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?
 
 ## Notes
 
@@ -60,3 +66,4 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 - 2026-11-19T10:05 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:05 answer 1 acknowledged by crab
 - 2026-11-19T10:05 crab read the answer: hug task set p87ngv
+- 2026-11-19T10:05 asked question 4 of jhf, 4 open (todo/ready -> todo/design)
