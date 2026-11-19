@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.78 - 2026-11-19
+
 - hug mem rescope records each move in the fix trail (j13xs0): one
   memory_fixes row per memory, with its old and new scope, the time, and
   how (single, or batch for `--from`). A dry run records nothing.
