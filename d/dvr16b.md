@@ -1,15 +1,21 @@
 ---
 id: dvr16b
 title: "Release v0.7.77"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T06:37"
+doing_with: "p277bp"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +37,7 @@ main c2b0bbe5 CI 44464516250 success 8/8. CHANGELOG 020b9592, merge 1ce66c8a, re
 - [ ] hug version prints v0.7.77 after brew upgrade
 
 ## Notes
+
+
+## History
+- 2026-11-19T06:37 todo -> doing/active (take with p277bp)
