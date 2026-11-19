@@ -1,0 +1,291 @@
+====================================================================================================
+FRAME 1 · detail of w7tq3k, two open marks drawn calmly (the file is before.md)
+====================================================================================================
+HUG · hug · list › w7tq3k
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and
+nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,
+which in practice happens late or never. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+  ↳ 1 request · jhf 09:40 · Make it concise: say the harm in a few words.
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+ACCEPTANCE
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+  ☐ 2. A check that starts with Should, Can or Do is a finding too (test)
+       ↳ 2 question · daisy → jhf 09:52 · English only, or also Norwegian (Skal, Kan, Bør)?
+           answer · jhf 10:04 · English only, so "Should" counts and "Skal" does not, nor "Bør"
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+
+
+Task 1 of 12 · 0% · 2 open marks · ' next mark · n next · p previous · Esc back
+
+j/k check · Space tick · ' mark · m mark text · a answer · r request · e edit · / find · ? help …
+----------------------------------------------------------------------------------------------------
+styles (row N counts from the frame's first line; no colour named means the default text
+colour; nothing has a background):
+  underline: the text mark 1 is about, the goal's sentence 2: rows 8-11, from 8:80 to 11:40
+  underline: the words mark 2 is about (.on): row 21, cols 33-49
+  dim: every ↳ line (the marks), rows 13, 22 and 23
+  the mark text itself (.Request .by:jhf ...) is not drawn: the ↳ line says it in words
+  rule: one cue per meaning. underline = 'a mark is about this'; dim ↳ = 'an open mark';
+  the kind is a word (request, question, comment), never a colour; > stays the only cursor.
+
+====================================================================================================
+FRAME 2 · ' (the jump key) puts the cursor on mark 1; ' again goes to mark 2, then wraps
+====================================================================================================
+HUG · hug · list › w7tq3k
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and
+nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,
+which in practice happens late or never. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+> ↳ 1 request · jhf 09:40 · Make it concise: say the harm in a few words.
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+ACCEPTANCE
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+  ☐ 2. A check that starts with Should, Can or Do is a finding too (test)
+       ↳ 2 question · daisy → jhf 09:52 · English only, or also Norwegian (Skal, Kan, Bør)?
+           answer · jhf 10:04 · English only, so "Should" counts and "Skal" does not, nor "Bør"
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+
+
+mark 1 of 2 · request by jhf on goal sentence 2 · ' next · " previous · Esc back
+
+' next mark · " previous · R resolve · e edit · ? help · q quit
+----------------------------------------------------------------------------------------------------
+styles (row N counts from the frame's first line; no colour named means the default text
+colour; nothing has a background):
+  underline: as frame 1
+  dim: the ↳ lines, except the one under the cursor: row 13 is in the default text colour
+  the page scrolls so the marked text and its ↳ line are both on screen
+  rule: the cursor on a mark is the > pointer and the dim lifting, nothing else.
+
+====================================================================================================
+FRAME 3 · m enters mark mode; the sentence under the cursor is selected (no marks yet: 09:39Z)
+====================================================================================================
+HUG · hug · list › w7tq3k › mark
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and
+nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,
+which in practice happens late or never. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+PRINCIPLE
+Lint finds, it never rewrites a check. One finding per check, with one fix: line.
+
+ACCEPTANCE
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+
+
+
+
+
+mark mode · unit: sentence · goal sentence 2 of 3 · h/l previous / next · Tab unit · H/L span
+
+c comment · ? question · r request · h/l move · Tab sentence→word→paragraph→item · Esc cancel
+----------------------------------------------------------------------------------------------------
+styles (row N counts from the frame's first line; no colour named means the default text
+colour; nothing has a background):
+  bold: the selection, the goal's sentence 2: rows 8-11, from 8:80 to 11:40
+  the crumb ends › mark while the mode is on; F1 is help here, since ? asks a question
+  rule: bold = 'selected now', only in mark mode. Nothing else on the page is bold while it is on.
+  Tab steps the unit (.prev:.Sentence → .Word → .Paragraph → .Item); H/L grow or shrink a free
+  span by a word, which makes the mark an .on:"..." span inside the unit.
+
+====================================================================================================
+FRAME 4 · r on the selection: the request is typed under the goal, where it will sit (09:40Z)
+====================================================================================================
+HUG · hug · list › w7tq3k › mark › request
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and
+nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,
+which in practice happens late or never. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+  request on goal sentence 2:
+  Make it concise: say the harm in a few words.▏
+  writes: .Request .by:jhf .prev:.Sentence .msg:"Make it concise: say the harm in a few words."
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+
+
+
+
+
+
+
+request to daisy (assignee) · delivered as requests are today
+
+Enter writes the mark · Esc cancel · F1 help
+----------------------------------------------------------------------------------------------------
+styles (row N counts from the frame's first line; no colour named means the default text
+colour; nothing has a background):
+  bold: the selection stays bold while typing: rows 8-11, from 8:80 to 11:40
+  dim: row 15, the exact text the mark will add to the file
+  ▏ is the text cursor
+  rule: the input opens where the ↳ line will appear, so the reader sees the outcome before Enter.
+  after Enter the page is frame 1's goal: the bold goes, the underline and ↳ 1 come.
+
+====================================================================================================
+FRAME 5 · on check 2: m, Tab to item, H/L narrow to a span, then ? (daisy's screen, 09:52Z)
+====================================================================================================
+HUG · hug · list › w7tq3k › mark › question
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and
+nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,
+which in practice happens late or never. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+  ↳ 1 request · jhf 09:40 · Make it concise: say the harm in a few words.
+
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+> ☐ 2. A check that starts with Should, Can or Do is a finding too (test)
+       question on check 2, the words "Should, Can or Do", to jhf:
+       English only, or also Norwegian (Skal, Kan, Bør)?▏
+       writes: .Question .by:daisy .to:jhf .prev:.Item .on:"Should, Can or Do" .msg:"..."
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+
+
+
+
+
+question to jhf · w7tq3k is asked until it is answered · one question per mark
+
+Enter writes the mark · Esc cancel · F1 help
+----------------------------------------------------------------------------------------------------
+styles (row N counts from the frame's first line; no colour named means the default text
+colour; nothing has a background):
+  bold: the span "Should, Can or Do": row 17, cols 33-49
+  underline: mark 1's sentence, as frame 1; dim: ↳ 1 and the writes: line (row 20)
+  rule: a span is bold words inside an item; the mark records .prev:.Item plus .on:"...".
+  c would make a comment the same way (no one is asked, nothing waits); the footer of frame 3
+  lists c ? r together.
+
+====================================================================================================
+FRAME 6 · Jørgen opens w7tq3k from ASKED: the cursor is on the question; a answers under it (10:04Z)
+====================================================================================================
+HUG · hug · list › w7tq3k › answer
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+└─ asked you: mark 2 on check 2 · since 09:52 · by daisy
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and
+nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,
+which in practice happens late or never. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+  ↳ 1 request · jhf 09:40 · Make it concise: say the harm in a few words.
+
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · a answers
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+  ☐ 2. A check that starts with Should, Can or Do is a finding too (test)
+>      ↳ 2 question · daisy → you 09:52 · English only, or also Norwegian (Skal, Kan, Bør)?
+           answer:
+           English only, so "Should" counts and "Skal" does not, nor "Bør"▏
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+
+
+
+
+answer to daisy · written as .Answer under her question · the ticket text is not changed
+
+Enter sends · Esc cancel · F1 help
+----------------------------------------------------------------------------------------------------
+styles (row N counts from the frame's first line; no colour named means the default text
+colour; nothing has a background):
+  underline: "Should, Can or Do" in check 2: row 18, cols 33-49; mark 1's sentence as frame 1
+  default colour (not dim): row 19, the mark under the cursor; dim: ↳ 1
+  ▏ is the text cursor
+  rule: the answer goes in the thread under the mark, never into the check's text; the asker
+  (daisy) rewrites the check when she resolves. As 0gztsy: the detail opens with focus on it.
+
+====================================================================================================
+FRAME 7 · after daisy resolves both (10:14Z): clean prose, no marks; the dialogue is in history.sdd
+====================================================================================================
+HUG · hug · list › w7tq3k
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Such a check is easy
+to tick by mistake, and nobody is asked. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+ACCEPTANCE
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+  ☐ 2. A check that starts with Should, Can or Do (English only) is a finding too (test)
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+FILES (1)
+  ⎘ history.sdd  1.1 KB  resolved marks: who asked what, and what changed
+
+
+
+
+
+Task 1 of 12 · 0% · no open marks · n next · p previous · Esc back
+
+j/k check · Space tick · E files · m mark text · r request · e edit · / find · ? help · q quit
+----------------------------------------------------------------------------------------------------
+styles (row N counts from the frame's first line; no colour named means the default text
+colour; nothing has a background):
+  nothing underlined, nothing dim beyond today's look; the page is after.md
+  rule: a resolved mark leaves no trace in the ticket view; FILES lists history.sdd, and Space on
+  it shows the .Resolved records (the file view is check 11's business, not drawn here).

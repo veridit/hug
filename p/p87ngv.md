@@ -92,6 +92,7 @@ file:before.md (1855 bytes, sha256:c2031608) check 5 mock: task w7tq3k with 2 op
 file:after.md (1628 bytes, sha256:1372e3b6) check 5 mock: the same task after both resolves, no marks
 file:history.sdd (1289 bytes, sha256:48c59c79) check 5 mock: history.sdd after the resolves (.Resolved .at .was .now .marks: seq ... end; one triple-quoted .msg)
 file:cli.txt (10324 bytes, sha256:5d6f5c4a) check 5 mock: proposed CLI transcript (mark with --on, answer, resolve, several questions in one call; every error ends with fix:)
+file:tui-100x30.txt (19912 bytes, sha256:416667f3) check 5 mock: 7 hug tui detail frames at 100x30 (calm marks, jump, mark mode, c/?/r, answer under a mark, after)
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
