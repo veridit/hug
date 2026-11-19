@@ -1,15 +1,20 @@
 ---
 id: b5jks7
 title: "Capture planning takes most of the hook budget"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["sunflower"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T07:00"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ plan_ms = per-chunk Searcher.Search + capturePlan per candidate (muninn/internal
 - [ ] after a change, plan_ms per applied action on live turn_end hooks falls, with before/after medians over at least 20 runs each
 
 ## Notes
+
+
+## History
+- 2026-11-19T07:00 todo -> doing/active (take)
