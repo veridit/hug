@@ -4,7 +4,7 @@ title: "hug tui: a later open question on a task cannot be reached to answer"
 state: "doing"
 type: bug
 priority: ""
-assignee: ["blossom"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzs"
@@ -45,3 +45,4 @@ Fix on branch m5pbb0 (c533de89 tests, 42b71005 fix, dd6e5cf9 CRLF test), CI 4450
 crab 10:02Z: reviewed (answer.go question() fallback on OpenQuestions, askStage; tests c533de89 fail first; goldens 100x30/160x45). Main had not moved since branch: fast-forwarded main to dd6e5cf9 (CI 44500113493 8/8 at that exact SHA). Released v0.7.80 (CHANGELOG b2c9d5e4, merge 41dc277d). Check 3 is Jørgen's: restart hug tui (pid 78631 was v0.7.69), answer a second question.
 ## History
 - 2026-11-19T10:06 todo -> doing/active (take)
+- 2026-11-19T12:08 handed to crab: blossom's session ended (closed 2026-11-19 11:02)
