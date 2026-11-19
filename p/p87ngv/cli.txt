@@ -1,0 +1,179 @@
+hug task: inline marks, proposed commands (mock for p87ngv check 5; nothing here is built)
+Task in the mock: w7tq3k "Lint warns when an acceptance check reads like a question"
+(before.md is the file after step 3; after.md is the file after step 6.)
+Lines starting with # say who types and when. Errors go to stderr and end with a fix: line.
+
+=== 1. Jørgen marks a sentence in the goal with a request (09:40Z) =========================
+
+# jhf, 09:40Z
+$ hug task request w7tq3k --on "Today a check like" "Make it concise: say the harm in a few words."
+mark 1 on w7tq3k: request by jhf on goal sentence 2
+  Today a check like 'Should the ASKED row show the count?' sits among the checks, is easy to
+  tick by mistake, and nobody is asked, so the question waits for someone to notice it and turn
+  it into a hug task ask, which in practice happens late or never.
+written after it: .Request .by:jhf .at:2026-11-19T09:40Z .prev:.Sentence .msg:"Make it concise: say the harm in a few words."
+delivered to daisy (assignee), as requests are today (gmzd87)
+next: hug task show w7tq3k
+
+  --on WORDS finds the place; the mark is written after the sentence that holds WORDS and anchors
+  to it as .prev:.Sentence, with no quote kept (a quote goes stale when the text changes).
+  --unit word|sentence|paragraph|item picks another unit; sentence is the default.
+
+# the same, with words that are not in the task
+$ hug task request w7tq3k --on "Today a chek like" "Make it concise."
+not-found: "Today a chek like" is not in w7tq3k's text; closest: "Today a check like" (goal, sentence 2)
+fix: hug task request w7tq3k --on "Today a check like" "Make it concise."
+
+# words that occur in more than one place
+$ hug task request w7tq3k --on "hug task ask" "Name the flag too."
+ambiguous: "hug task ask" occurs 3 times in w7tq3k: goal sentence 2, goal sentence 3, check 1
+fix: hug task request w7tq3k --on "hug task ask" --field check:1 "Name the flag too."
+
+=== 2. daisy asks Jørgen a question on a span of check 2 (09:52Z) =========================
+
+# daisy (the assignee), 09:52Z
+$ hug task ask w7tq3k --to jhf --on "Should, Can or Do" --span "English only, or also Norwegian (Skal, Kan, Bør)?"
+mark 2 on w7tq3k: question by daisy to jhf on check 2, the words "Should, Can or Do"
+written after it: .Question .by:daisy .to:jhf .at:2026-11-19T09:52Z .prev:.Item .on:"Should, Can or Do" .msg:"English only, or also Norwegian (Skal, Kan, Bør)?"
+w7tq3k is asked: in jhf's ASKED until mark 2 is answered
+next: hug task next
+
+  On a check the unit is the item (.prev:.Item). --span keeps the words as .on:"..." because the
+  question is about those words, not the whole check. This is the only mock use of .on.
+
+# a ticked check is refused, as hug task ask --check refuses it today
+$ hug task ask w7tq3k --to jhf --on "ends in '?'" "Also a trailing '?!' ?"
+ticked: check 1 of w7tq3k is ticked (the tick is its answer); ask on the goal or a new check instead
+fix: hug task ask w7tq3k --to jhf --on "flags an acceptance check" "Also a trailing '?!' ?"
+
+=== 3. show lists the open marks (10:00Z) ==================================================
+
+$ hug task show w7tq3k
+lint-question-check  Lint warns when an acceptance check reads like a question  w7tq3k  doing
+stage: asked jhf: mark 2 (English only, or also Norwegian (Skal, Kan, Bør)?) since 2026-11-19 09:52
+taken by: daisy · claude-opus-5-5 · main
+open marks (2):
+  1. request by jhf, 09:40Z, on goal sentence 2: Make it concise: say the harm in a few words.
+  2. question by daisy to jhf, 09:52Z, on check 2 "Should, Can or Do": English only, or also
+     Norwegian (Skal, Kan, Bør)?
+goal: hug task lint flags an acceptance check that is really a question to a person. Today a ...
+  ...
+next: hug task resolve w7tq3k 1 --now "..." "what changed"
+
+=== 4. Jørgen answers the question (10:04Z) ================================================
+
+# jhf, 10:04Z
+$ hug task answer w7tq3k 2 - <<'EOF'
+English only, so "Should" counts and "Skal" does not, nor "Bør"
+EOF
+mark 2 on w7tq3k: answered by jhf
+written after the question: .Answer .by:jhf .at:2026-11-19T10:04Z .msg:"""English only, so "Should" counts and "Skal" does not, nor "Bør""""
+  (the text holds quotes, so hug writes it triple-quoted; plain text goes in "...")
+delivered to daisy (the asker)
+w7tq3k: no open questions; daisy is active again
+next: hug task next
+
+# answering a request is refused: a request is resolved by changing the ticket
+$ hug task answer w7tq3k 1 "ok"
+not-a-question: mark 1 of w7tq3k is a request by jhf; a request is resolved, not answered
+fix: hug task resolve w7tq3k 1 --now "the clearer sentence" "what changed"
+
+=== 5. daisy resolves the request: rewrites the sentence, the mark goes (10:12Z) ===========
+
+# daisy, 10:12Z
+$ hug task resolve w7tq3k 1 --now "Such a check is easy to tick by mistake, and nobody is asked." "Cut sentence 2 to the harm: ticked by mistake, nobody asked."
+mark 1 on w7tq3k resolved by daisy
+goal sentence 2:
+  - Today a check like 'Should the ASKED row show the count?' sits among the checks, is easy to
+  -   tick by mistake, and nobody is asked, so the question waits for someone to notice it and turn
+  -   it into a hug task ask, which in practice happens late or never.
+  + Such a check is easy to tick by mistake, and nobody is asked.
+removed from the ticket: the mark (.Request by jhf)
+appended to history.sdd: .Resolved .at:"2026-11-19T10:12Z" .by:"daisy" .field:"Goal" (1 mark)
+delivered to jhf: request resolved, with the account
+next: hug task resolve w7tq3k 2 --now "..." "what changed"
+
+  Marks carry no id in the text, so a number is a place in the text. Here mark 2 keeps its number;
+  if numbers follow the text at each moment, it is now mark 1 (open question 3 in MOCK.md).
+
+# a resolve must say what the text becomes, or keep it on purpose
+$ hug task resolve w7tq3k 2 "English only."
+no-change: resolving mark 2 needs the item's new text, or --keep to leave it as it is
+fix: hug task resolve w7tq3k 2 --now "A check that starts with Should, Can or Do (English only) is a finding too (test)" "English only."
+
+=== 6. daisy resolves the answered question into check 2 (10:14Z) ==========================
+
+# daisy, 10:14Z
+$ hug task resolve w7tq3k 2 --now "A check that starts with Should, Can or Do (English only) is a finding too (test)" - <<'EOF'
+Jørgen: English only.
+Check 2 now says "(English only)"; "Skal" and "Bør" are not findings.
+EOF
+mark 2 on w7tq3k resolved by daisy
+check 2:
+  - A check that starts with Should, Can or Do is a finding too (test)
+  + A check that starts with Should, Can or Do (English only) is a finding too (test)
+removed from the ticket: the mark (.Question by daisy, .Answer by jhf)
+appended to history.sdd: .Resolved .at:"2026-11-19T10:14Z" .by:"daisy" .field:"Acceptance" .check:2 (2 marks)
+w7tq3k: no open marks
+next: hug task check w7tq3k 1
+
+$ hug task history w7tq3k
+history.sdd of w7tq3k (2 resolved):
+  10:12Z  goal sentence 2   request by jhf: Make it concise: say the harm in a few words.
+          now: Such a check is easy to tick by mistake, and nobody is asked.
+  10:14Z  check 2           question by daisy: English only, or also Norwegian (Skal, Kan, Bør)?
+                            answer by jhf: English only, so "Should" counts and "Skal" does
+                            not, nor "Bør"
+          now: A check that starts with Should, Can or Do (English only) is a finding too (test)
+next: hug task show w7tq3k
+
+=== 7. Several questions in one call (later, 11:20Z) =======================================
+
+# daisy asks two things at once; each --on takes the question after it, and each becomes its own mark
+$ hug task ask w7tq3k --to jhf \
+    --on "check-is-question" "Is check-is-question a good code name, or question-as-check?" \
+    --on "ends in '?'" "Should a '?' inside quotes at the end count?"
+mark 1 on w7tq3k: question by daisy to jhf on check 3 (the item)
+mark 2 on w7tq3k: question by daisy to jhf on check 1 (the item)
+written after check 3: .Question .by:daisy .to:jhf .at:2026-11-19T11:20Z .prev:.Item .msg:"Is check-is-question a good code name, or question-as-check?"
+written after check 1: .Question .by:daisy .to:jhf .at:2026-11-19T11:20Z .prev:.Item .msg:"Should a '?' inside quotes at the end count?"
+w7tq3k is asked: in jhf's ASKED until marks 1 and 2 are answered, each on its own
+next: hug task next
+
+  Numbers follow the order in the text, so check 1's mark is 1 even though it was asked second
+  (open question 3 in MOCK.md).
+
+# the same from stdin: one mark per line, in mark syntax
+$ hug task ask w7tq3k --to jhf - <<'EOF'
+.Question .on:"check-is-question" .msg:"Is check-is-question a good code name, or question-as-check?"
+.Question .on:"ends in '?'" .msg:"Should a '?' inside quotes at the end count?"
+EOF
+(same output as above)
+
+# a numbered list inside one question is still refused (q2adr8)
+$ hug task ask w7tq3k --to jhf --on "check-is-question" "1. Is the name right? 2. Should it be a warning?"
+one-question: the question holds a numbered list (2 questions); each needs its own mark
+fix: hug task ask w7tq3k --to jhf --on "check-is-question" "Is the name right?" --on "check-is-question" "Should it be a warning?"
+
+# Jørgen answers them one by one
+$ hug task answer w7tq3k 2 "No: only a '?' at the very end."
+mark 2 on w7tq3k: answered by jhf (1 question still open: mark 1)
+next: hug task answer w7tq3k 1 "..."
+
+=== 8. A mark written by hand (editor, grep, another agent) is checked by lint ==============
+
+# someone typed .Reqest in an editor
+$ hug task lint w7tq3k
+w7tq3k line 20: .Reqest in the goal looks like a mark but is no mark kind (.Comment .Question .Request .Answer)
+fix: hug task set w7tq3k --goal "<the goal, with .Reqest spelled .Request>"
+
+=== 9. A mark that points into an attachment ===============================================
+
+$ hug task comment w7tq3k --in "mock-100x30.txt#12" "This footer drops the jump key."
+mark 1 on w7tq3k: comment by jhf on mock-100x30.txt line 12 (the attachment is not edited)
+written at the end of ## Notes: .Comment .by:jhf .at:2026-11-19T11:40Z .in:"mock-100x30.txt#12" .msg:"This footer drops the jump key."
+next: hug task show w7tq3k
+
+$ hug task comment w7tq3k --in "mock-100x30.txt#99" "x"
+not-found: mock-100x30.txt has 30 lines, no line 99
+fix: hug task comment w7tq3k --in "mock-100x30.txt#30" "x"
