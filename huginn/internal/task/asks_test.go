@@ -80,3 +80,61 @@ func TestMergeQuestionsRenumbersOursAfterBoards(t *testing.T) {
 		t.Fatalf("parsed: %+v", qs)
 	}
 }
+
+// m5pbb0: a task whose questions stay open in ## Questions after their
+// mirror is gone (a pre-q2adr8 hug answered question 1 into History and
+// cleared design_*/asked_*, p87ngv 2026-11-19) still takes an answer to
+// each: answer ID N answers N, and the mirror comes back on the oldest
+// still open, so the stage again says who is asked. Todo (design) and
+// doing (asked) alike.
+func TestAnswerOpenQuestionWithoutMirror(t *testing.T) {
+	for _, state := range []string{"todo", "doing"} {
+		t.Run(state, func(t *testing.T) {
+			s, id := answerStore(t)
+			if state == "doing" {
+				if _, e := s.TakeAs(id, "nautilus", "claude-opus-5-5"); e != nil {
+					t.Fatal(e)
+				}
+			}
+			for _, q := range []string{"first?", "second?", "third?"} {
+				if _, e := s.Ask(id, Question{What: q, For: "jhf"}, "crab"); e != nil {
+					t.Fatal(e)
+				}
+			}
+			// What v0.7.69 left: the stage's fields gone, all three open.
+			d, _, e := s.load(id)
+			if e != nil {
+				t.Fatal(e)
+			}
+			for _, k := range []string{"design_question", "design_for", "design_since", "design_asked_by", "asked_what", "asked_for", "asked_since", "asked_by"} {
+				if e := d.RemoveField(k); e != nil {
+					t.Fatal(e)
+				}
+			}
+			if e := d.SetField("stage", map[string]string{"todo": "ready", "doing": "active"}[state]); e != nil {
+				t.Fatal(e)
+			}
+			if _, e := s.finish(d, true); e != nil {
+				t.Fatal(e)
+			}
+			if tk, _ := readTask(t, s, id); len(OpenQuestions(tk)) != 3 || ownHolds(tk, askStage(state)) {
+				t.Fatalf("fixture: %d open, fields %v", len(OpenQuestions(tk)), tk.Fields)
+			}
+			if _, e := s.AnswerQuestion(id, 2, "two", "jhf"); e != nil {
+				t.Fatalf("answer 2: %v", e)
+			}
+			tk, raw := readTask(t, s, id)
+			if !strings.Contains(raw, "  second?\n  answered ") || len(OpenQuestions(tk)) != 2 {
+				t.Fatalf("question 2 not answered:\n%s", raw)
+			}
+			what := map[string]string{"todo": "design_question", "doing": "asked_what"}[state]
+			if tk.Fields[what] != "first?" || tk.Stage != askStage(state) {
+				t.Fatalf("mirror not back on question 1 (stage %q, %s %q):\n%s", tk.Stage, what, tk.Fields[what], raw)
+			}
+			// A bare answer still needs the number while several are open.
+			if _, e := s.Answer(id, "bare", "jhf"); e == nil || !strings.Contains(e.Error(), "say which one") {
+				t.Fatalf("bare answer with 2 open: %v", e)
+			}
+		})
+	}
+}

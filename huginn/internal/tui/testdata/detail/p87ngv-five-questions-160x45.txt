@@ -1,0 +1,138 @@
+== opened
+HUG · list › p87ngv                                                                                                                                  ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                                                                             
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+> ? Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside  
+    them?                                                                                                                                                       
+    └ question 1 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?                                                         
+    └ question 2 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?                                               
+    └ question 3 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a     
+    request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?                                                                             
+    └ question 4 · crab · 1 min ago · answer                                                                                                                    
+                                                                                                                                                                
+  ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated 
+    entry quoting the original text, the exchange and the change made. Is that the right name and shape?                                                        
+    └ question 5 · crab · 1 min ago · answer                                                                                                                    
+                                                                                                                                                                
+DESCRIPTION                                                                                                                                                     
+The ticket stays the crisp working document. A person or agent marks a piece of a task's text with a comment, question or request that sits inline in the       
+text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified    
+result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in   
+the ticket.                                                                                                                                                     
+                                                                                                                                                                
+PURPOSE                                                                                                                                                         
+Jørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows exactly what it is about; questions today look like           
+acceptance                                                                                                                                                      
+criteria. 09:05Z (answer 1 on this task): threads inside the ticket would bloat it, and the conversation must not become the thing. The ticket must stay        
+crisp: clarity comes from boiling text down to its essence. The messy part goes to a separate, suitably named history file in the task's files (provenance,     
+chat history) that grows by appending.                                                                                                                          
+                                                                                                                                                                
+PRINCIPLE                                                                                                                                                       
+Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are   
+plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The      
+agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing       
+markup convention for the sigil if one fits.                                                                                                                    
+Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
+                                                                                                                                                                
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+== question 2 focused
+HUG · list › p87ngv                                                                                                                                  ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                                                                             
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ? Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside  
+    them?                                                                                                                                                       
+    └ question 1 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+> ? Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?                                                         
+    └ question 2 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?                                               
+    └ question 3 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a     
+    request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?                                                                             
+    └ question 4 · crab · 1 min ago · answer                                                                                                                    
+                                                                                                                                                                
+  ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated 
+    entry quoting the original text, the exchange and the change made. Is that the right name and shape?                                                        
+    └ question 5 · crab · 1 min ago · answer                                                                                                                    
+                                                                                                                                                                
+DESCRIPTION                                                                                                                                                     
+The ticket stays the crisp working document. A person or agent marks a piece of a task's text with a comment, question or request that sits inline in the       
+text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified    
+result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in   
+the ticket.                                                                                                                                                     
+                                                                                                                                                                
+PURPOSE                                                                                                                                                         
+Jørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows exactly what it is about; questions today look like           
+acceptance                                                                                                                                                      
+criteria. 09:05Z (answer 1 on this task): threads inside the ticket would bloat it, and the conversation must not become the thing. The ticket must stay        
+crisp: clarity comes from boiling text down to its essence. The messy part goes to a separate, suitably named history file in the task's files (provenance,     
+chat history) that grows by appending.                                                                                                                          
+                                                                                                                                                                
+PRINCIPLE                                                                                                                                                       
+Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are   
+plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The      
+agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing       
+markup convention for the sigil if one fits.                                                                                                                    
+Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
+                                                                                                                                                                
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+== question 5 focused
+HUG · list › p87ngv                                                                                                                                  ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                                                                             
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ? Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside  
+    them?                                                                                                                                                       
+    └ question 1 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?                                                         
+    └ question 2 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?                                               
+    └ question 3 · crab · 10 min ago · answer                                                                                                                   
+                                                                                                                                                                
+  ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a     
+    request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?                                                                             
+    └ question 4 · crab · 1 min ago · answer                                                                                                                    
+                                                                                                                                                                
+> ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated 
+    entry quoting the original text, the exchange and the change made. Is that the right name and shape?                                                        
+    └ question 5 · crab · 1 min ago · answer                                                                                                                    
+                                                                                                                                                                
+DESCRIPTION                                                                                                                                                     
+The ticket stays the crisp working document. A person or agent marks a piece of a task's text with a comment, question or request that sits inline in the       
+text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified    
+result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in   
+the ticket.                                                                                                                                                     
+                                                                                                                                                                
+PURPOSE                                                                                                                                                         
+Jørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows exactly what it is about; questions today look like           
+acceptance                                                                                                                                                      
+criteria. 09:05Z (answer 1 on this task): threads inside the ticket would bloat it, and the conversation must not become the thing. The ticket must stay        
+crisp: clarity comes from boiling text down to its essence. The messy part goes to a separate, suitably named history file in the task's files (provenance,     
+chat history) that grows by appending.                                                                                                                          
+                                                                                                                                                                
+PRINCIPLE                                                                                                                                                       
+Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are   
+plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The      
+agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing       
+markup convention for the sigil if one fits.                                                                                                                    
+Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
+                                                                                                                                                                
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
