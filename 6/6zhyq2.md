@@ -1,15 +1,20 @@
 ---
 id: 6zhyq2
 title: "TestViewKeysBlinkAfterV flakes on CI timing (497 ms vs 530 ms)"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["bird"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzv"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-20T00:04"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ huginn/internal/tui/a82j3n_test.go, r80svs_test.go: find any time.Sleep or real 
 - [ ] TestBackgroundSyncSameTaskAppendsConvergeAfterUpgrade failure on Windows is reproduced or explained in a note
 
 ## Notes
+
+
+## History
+- 2026-11-20T00:04 todo -> doing/active (take)
