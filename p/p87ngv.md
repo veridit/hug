@@ -101,6 +101,7 @@ file:after.md (1628 bytes, sha256:1372e3b6) check 5 mock: the same task after bo
 file:history.sdd (1289 bytes, sha256:48c59c79) check 5 mock: history.sdd after the resolves (.Resolved .at .was .now .marks: seq ... end; one triple-quoted .msg)
 file:cli.txt (10324 bytes, sha256:5d6f5c4a) check 5 mock: proposed CLI transcript (mark with --on, answer, resolve, several questions in one call; every error ends with fix:)
 file:tui-100x30.txt (19912 bytes, sha256:416667f3) check 5 mock: 7 hug tui detail frames at 100x30 (calm marks, jump, mark mode, c/?/r, answer under a mark, after)
+crab 10:31Z, review of daisy's mock (files attached, sha in her notes): before.md/after.md/history.sdd read in full; the rules 1-8 in MOCK.md match the details; frames 1-3 checked. Rulings on MOCK.md open questions that are mine: 3 numbers are display only, in text order, renumbered on each draw (a mark has no id in the text); 4 CLI flags mirror the properties: --on is the span (.on), the unit finder becomes --near WORDS; 6 keep .by .field .check .msg in .Resolved; 7 resolve requires --now TEXT or --keep; 8 an .in: mark sits at the end of ## Notes; 9 hug writes verbatim, no escaping (viewers may render or curl; the file is the truth; triple quotes for hard text). Keys (5) are part of check 5's approval. Questions 1 and 2 (Seid literals, suffix) asked of Jørgen.
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
