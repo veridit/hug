@@ -52,6 +52,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
     (from jhf's request 1, 09:05Z, written because he could not reach question 2 in hug tui) Both may resolve. It depends on what the request and the answer say: the person may accept or approve, or say they need something else; the agent decides by the ticket too. Use judgment, and either can initiate a resolve for clarity.
 - 2026-11-19T09:56 question 3 by crab to jhf:
   Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?
+  answered 2026-11-19T10:06 by jhf:
+    (from jhf's request 2, 09:06Z) Marks can anchor to anything in the ticket's markdown, and also to pieces of attachments, by a pointer such as 'in attachment NAME, line N' or 'section S'. The dialogue stays out of the ticket, possibly one history per thing discussed.
 - 2026-11-19T10:05 question 4 by crab to jhf:
   Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?
 - 2026-11-19T10:05 question 5 by crab to jhf:
@@ -93,3 +95,6 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:06 answer 2 acknowledged by crab
 - 2026-11-19T10:06 request 2 by jhf
 - 2026-11-19T10:06 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-19T10:06 answered design (question 3), by jhf, for crab (todo/design -> todo/design):
+  > Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?
+  (from jhf's request 2, 09:06Z) Marks can anchor to anything in the ticket's markdown, and also to pieces of attachments, by a pointer such as 'in attachment NAME, line N' or 'section S'. The dialogue stays out of the ticket, possibly one history per thing discussed.
