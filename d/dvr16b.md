@@ -13,9 +13,12 @@ updated: 2026-11-19
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+stage: "waiting"
 doing_since: "2026-11-19T13:42"
 doing_with: "p277bp"
+waiting_on: "crab: a6xm8n day-later count at 2026-11-20 05:45Z"
+waiting_since: "2026-11-19T13:42"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -47,3 +50,4 @@ check 2: brew upgrade run on its own; hug version prints hug v0.7.77; bin links 
 - 2026-11-19T06:37 doing/active -> done (done); was doing_since: 2026-11-19T06:37; doing_with: p277bp
 - 2026-11-19T13:42 done -> todo/ready (reopen); was done_at: 2026-11-19T06:37
 - 2026-11-19T13:42 todo/ready -> doing/active (take with p277bp)
+- 2026-11-19T13:42 doing/active -> doing/waiting (wait)
