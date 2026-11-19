@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // yp3c09 in a real terminal: the hug binary in tmux at 100x30 and 160x45,
@@ -82,7 +84,7 @@ func TestTmuxFileViewFillsToTheKeys(t *testing.T) {
 	run("git", "-C", tasks, "add", "-A")
 	run("git", "-C", tasks, "commit", "-q", "-m", "p87ngv with files")
 
-	socket := fmt.Sprintf("hug-yp3c09-%d", os.Getpid())
+	socket := tmuxtest.Label("yp3c09")
 	defer startTmuxServer(t, socket)()
 	tmux := func(args ...string) string {
 		t.Helper()

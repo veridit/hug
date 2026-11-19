@@ -2,13 +2,14 @@ package tui
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // 6ephqk check 6 (tmux, the real binary in a real git repo): t on a todo
@@ -67,7 +68,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	run("git", "-C", tasks, "add", "-A")
 	run("git", "-C", tasks, "commit", "-q", "-m", "fixture tasks")
 
-	socket := fmt.Sprintf("hug-review-%d", os.Getpid())
+	socket := tmuxtest.Label("review")
 	defer startTmuxServer(t, socket)()
 	tmux := func(args ...string) string {
 		t.Helper()

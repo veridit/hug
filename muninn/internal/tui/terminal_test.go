@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/tmuxtest"
 )
 
 // TestTerminalGoldens drives the real binary, not Model.View or a mock terminal.
@@ -27,6 +29,12 @@ func TestTerminalGoldens(t *testing.T) {
 		t.Fatal(err)
 	}
 	binary := filepath.Join(t.TempDir(), "muninn")
+	// A tmux server left by a run that died ends here (wacc33).
+	if reaped, err := tmuxtest.Reap(); err != nil {
+		t.Logf("tmux orphan sweep: %v", err)
+	} else if len(reaped) > 0 {
+		t.Logf("tmux orphan sweep: SIGTERM to %v", reaped)
+	}
 	// Respect the shared machine's five-minute load ceiling before the nested
 	// build. On non-macOS platforms sysctl is absent and the outer test runner's
 	// bounded parallelism is still retained.

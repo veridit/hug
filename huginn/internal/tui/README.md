@@ -95,7 +95,10 @@ when tmux is installed. `-short` skips only the tmux acceptance. Goldens live in
 `testdata/tmux/`: 60 deterministic synthetic tasks, ten screens at 80x24 and
 140x40, both colour and NO_COLOR. `capture-pane -e` additionally asserts colour
 presence/absence. Every started session uses an isolated tmux socket and is
-cleaned up, and the real CLI must exit zero.
+cleaned up, and the real CLI must exit zero. A test's tmux server
+(`startTmuxServer`, label `tmuxtest.Label(name)` = `huginn-NAME-PID`) dies
+with the test however it ends: pass, `t.Fatal`, panic, `-timeout` or
+SIGKILL. A server left anyway is reaped by the next run's `TestMain`.
 
 ```sh
 nice -n 19 env GOMAXPROCS=2 GOFLAGS=-p=2 go test ./internal/tui
