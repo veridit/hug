@@ -46,6 +46,7 @@ check 2: Fixed harness (fix.test from 2f7a91f8, guard bypassed), niced, one go t
 landed bfe4b2c on main 2026-11-19: tui: failing test, the tmux harness fails a working server when processes start…
 landed cd8b87f on main 2026-11-19: tui: the tmux harness waits on its server, not on tmux clients (ghycrq)
 shipped in v0.7.75 (bfe4b2c)
+crab: landed on main as cd8b87ff (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75.
 ## History
 - 2026-11-19T00:52 todo -> doing/active (take)
 - 2026-11-19T02:23 doing/active -> doing/waiting (wait)
