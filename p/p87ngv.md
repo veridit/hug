@@ -15,10 +15,11 @@ doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Open marks are drawn as a dim line under the text they are about: '↳ 1 request · jhf 09:40 · Make it concise' (tui-100x30.txt frame 1), the raw .Request text hidden. Is that the look you want?"
+asked_what: "With the questions now on the task, do you approve the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt)?"
 asked_for: "jhf"
 asked_since: "2026-11-19T12:34"
 asked_by: "crab"
+asked_check: "5"
 ---
 
 ## Goal
@@ -90,6 +91,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     (console 11:35Z) We'll try the jump keys; not sure. Jørgen will review the whole key setup later, inspired by Helix and key tries.
 - 2026-11-19T12:34 question 10 by crab to jhf:
   Open marks are drawn as a dim line under the text they are about: '↳ 1 request · jhf 09:40 · Make it concise' (tui-100x30.txt frame 1), the raw .Request text hidden. Is that the look you want?
+  answered 2026-11-19T12:43 by jhf:
+    I can't really see. It seems that you're telling me things that I can only see if it was an ANSI dump text file or screenshot or source, not a txt file. So you're speaking of things that are not visually available. As far as I can tell, I would love to answer this
 - 2026-11-19T12:34 question 11 by crab to jhf (check 5):
   With the questions now on the task, do you approve the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt)?
 
@@ -209,3 +212,6 @@ crab 11:35Z: Jørgen 11:34Z (answer 9): questions inside an attached file are in
 - 2026-11-19T12:36 answer 10 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T12:36 answer 10 acknowledged by crab
 - 2026-11-19T12:37 crab read the answer: hug task set p87ngv
+- 2026-11-19T12:43 answered asked (question 10), by jhf, for crab (doing/asked -> doing/asked):
+  > Open marks are drawn as a dim line under the text they are about: '↳ 1 request · jhf 09:40 · Make it concise' (tui-100x30.txt frame 1), the raw .Request text hidden. Is that the look you want?
+  I can't really see. It seems that you're telling me things that I can only see if it was an ANSI dump text file or screenshot or source, not a txt file. So you're speaking of things that are not visually available. As far as I can tell, I would love to answer this
