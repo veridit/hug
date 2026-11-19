@@ -3,14 +3,13 @@ package cli
 import (
 	"strings"
 	"testing"
-	"time"
 )
 
 // sfa8w4 checks 1-3 through the CLI: strike writes the decision, show
 // prints [-] with it, --jsonl carries the state, done accepts ticked or
 // struck, --undo restores.
 func TestStrikeThroughCLI(t *testing.T) {
-	t.Parallel()
+	today := pinClock(t, lastTick) // the strike's date is the board clock's (jsyksd)
 	a := app(t)
 	execute(t, a, "init")
 	id := execute(t, a, "new", "Strike CLI", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "holds", "--accept", "no longer applies")["task"].(Reply)["id"].(string)
@@ -18,7 +17,6 @@ func TestStrikeThroughCLI(t *testing.T) {
 		t.Fatalf("no reason: %d\n%s", code, out)
 	}
 	execute(t, a, "strike", id, "2", "--reason", "the API changed", "--as", "kestrel")
-	today := time.Now().Format("2006-01-02")
 	if f := taskFile(t, a, id); !strings.Contains(f, "\n- [ ] ~~no longer applies~~ (not relevant: the API changed, kestrel, "+today+")\n") {
 		t.Fatalf("file:\n%s", f)
 	}

@@ -1257,7 +1257,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 					who = strings.Join(r.Task.Assignee, ", ")
 				}
 				var rr task.Result
-				if rr, e = s.s.SetReflection(r.Task.ID, f.get("reflect"), who, time.Now()); e == nil && rr.Changed {
+				if rr, e = s.s.SetReflection(r.Task.ID, f.get("reflect"), who, task.Now()); e == nil && rr.Changed {
 					r = rr
 				}
 			}

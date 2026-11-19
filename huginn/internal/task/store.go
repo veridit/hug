@@ -440,7 +440,7 @@ func (s *Store) Strike(ref string, n int, reason, who string, undo bool) (Result
 	if undo {
 		e = d.Unstrike(n)
 	} else {
-		e = d.Strike(n, reason, who, time.Now().Format("2006-01-02"))
+		e = d.Strike(n, reason, who, Now().Format("2006-01-02"))
 	}
 	if e != nil {
 		return Result{}, e
