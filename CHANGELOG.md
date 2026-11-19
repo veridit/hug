@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.82 - 2026-11-19
+
 - The view line in `hug tui` gives each cue one meaning (r80svs, Jørgen
   2026-11-19 11:09Z, 11:11Z). Bold marks a key you can press: v, o, l, b
   and !. Colour marks the step of the key sequence, v in the accent and
