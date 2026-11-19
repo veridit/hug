@@ -33,7 +33,7 @@ Step 1 (evidence, no code): from capture/hook logs and injections, count for the
 
 ## Acceptance
 - [x] Step 1 counts in a note: recall blocks parked vs delivered vs dropped per turn for 3 days, and whether mid-turn pasted messages get recall
-- [ ] Prototype behind a config switch delivers the block into the dialogue on jcode in the same turn, idle sessions never woken for a memory alone (test)
+- [x] Prototype behind a config switch delivers the block into the dialogue on jcode in the same turn, idle sessions never woken for a memory alone (test)
 - [ ] Per-harness table of push availability in a note, with sources
 - [ ] Jørgen runs with the switch on for a day and decides whether it replaces the old path
 
@@ -53,5 +53,6 @@ Mid-turn: soft interrupts are added by inject_soft_interrupts (interrupts.rs:347
 Gaps: injections is written at recall time, so it cannot tell delivered from dropped (would need delivered_at); Park overwrites are not logged; soft interrupts are joined by timestamp, because jcode logs no message id at INJECT_COMMIT; hook timeouts carry no session id.
 crab 14:31Z, review of step 1 (palmtree, STEP1.md): spot-checked hook.log for 11-19 (local +01:00 stamps): 107 'delivered' lines, matching the table. Reading: on the park path (since 11-18 03:53Z) most blocks are delivered (404/436, 100/107); dropped for lack of a tool call is small (17, 1). The real loss is mid-turn: a message pasted into a running turn gets no recall at all (103/104 after a tool call, 19/19 after an answer; jcode fires turn_start only at turn start, interrupts.rs:347 inject_soft_interrupts never calls it), and 8 of 13 stale drops come from a paste overtaking the parked turn. So step 2 targets pasted messages: recall each soft-interrupted message and deliver its block into the same turn. That needs jcode to tell muninn about injected messages (a hook on soft interrupt, or turn_start-like event with the message id) — a jcode change, filed to the maintainer; until then hug can only recall on the next tool call by reading the journal for messages newer than the parked one. Logging gaps 1-5 (delivered_at in injections, park overwrite line, session id on timeouts) are cheap and go into step 2.
 check 1: STEP1.md (palmtree): parked/delivered/dropped per day; mid-turn pastes get no recall (103/104, 19/19); crab spot-check 107 delivered on 11-19 matches
+check 2: fix 9073b532 (tests first 26ce3295) on branch x8zzzn, ci/x8zzzn; CI run 44610132775 attempt 2 success on 9073b532, 8/8 jobs (attempt 1 ubuntu: unrelated bubbles data race in huginn/internal/cli, filed 5xaxd6). recall.jcode_midturn (default off): post_tool_feedback recalls messages typed into the running turn (jcode model_usage_turn_id), parked block kept and printed first; nothing printed outside tool results. TestJcodeMidturnRecallIsByteIdentical: 'byte-identical: 902 bytes through both paths'. injections.delivered_ns + migration, hook.log replaced/midturn/missed lines, session+event on hook errors. Report /Users/jhf/.jcode/scratch/x8zzzn/REPORT2.md
 ## History
 - 2026-11-19T15:02 todo -> doing/active (take)
