@@ -58,6 +58,7 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 ## Notes
 
 
+crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were framed around threads; 1 is answered (no threads in the ticket, dialogue to a history file). Question 3 (anchor to an attached file) still stands in the new model. New questions 4 (sigil) and 5 (history file).
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
