@@ -4,7 +4,7 @@ title: "Prototype: recall memories delivered into the dialogue by harness notify
 state: "doing"
 type: spike
 priority: ""
-assignee: ["palmtree"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzg"
