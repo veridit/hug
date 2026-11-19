@@ -33,6 +33,7 @@ main c2b0bbe5 CI 44464516250 success 8/8. CHANGELOG 020b9592, merge 1ce66c8a, re
 ## Acceptance
 - [x] release.yml for v0.7.77 succeeds (run id)
 - [x] hug version prints v0.7.77 after brew upgrade
+- [ ] crab: capture_runs on the live store shows no 'context deadline exceeded' on turn_end hooks for a day after 2026-11-19T05:37:40Z (a6xm8n; count in a note, scheduled 2026-11-20 05:45Z)
 
 ## Notes
 
