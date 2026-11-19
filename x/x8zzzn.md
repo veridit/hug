@@ -1,15 +1,20 @@
 ---
 id: x8zzzn
 title: "Prototype: recall memories delivered into the dialogue by harness notify"
-state: todo
+state: "doing"
 type: spike
 priority: ""
-assignee: []
+assignee: ["palmtree"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzg"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T15:02"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -33,3 +38,7 @@ Step 1 (evidence, no code): from capture/hook logs and injections, count for the
 - [ ] Jørgen runs with the switch on for a day and decides whether it replaces the old path
 
 ## Notes
+
+
+## History
+- 2026-11-19T15:02 todo -> doing/active (take)
