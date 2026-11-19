@@ -38,5 +38,6 @@ plan_ms = per-chunk Searcher.Search + capturePlan per candidate (muninn/internal
 ## Notes
 
 
+Phase 1 measured (replay of capture_runs 8476 on a RECALL4-recipe HUG_HOME copy rolled back to 8476's start, origin/main 1ce66c8a, no paid calls; report /Users/jhf/.jcode/scratch/b5jks7/REPORT.md). Replay plan 115,295 ms (recorded 103,958) = chunk Searcher.Search 62,908 ms (14 x, mean 4,493) + per-candidate plan 52,386 ms (65 x, mean 806: writes.exact 0.2 ms, binding.refresh 17.9 ms x68, memoryMatches exact-body SQL 272 ms, memoryMatches Search 515 ms). Biggest single cost: concepts 'term LIKE %w%' full scan, 3,654 calls x ~14.6 ms = 53.2 s (46%); 1,168 of those (17.1 s) repeat a word already looked up. ollama embeds 79 calls = 4.3 s (3.7%). Exact-body SQL 17.7 s (15%, SCAN units). Proposal (not done): one in-memory LIKE-equivalent pass over deduped words (measured 1.7 s vs 52.8 s on the same 79 queries; '_' wildcard semantics must be kept: 4/79 queries differ with plain Contains). Est. plan 115 s -> ~64-67 s.
 ## History
 - 2026-11-19T07:00 todo -> doing/active (take)
