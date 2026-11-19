@@ -37,7 +37,7 @@ Triage: /Users/jhf/.jcode/scratch/reflections-triage.md G1. Related reflections 
 ## Acceptance
 - [x] set --accept X on a task with a lint finding prints 'added check N: X' before the lint: block (test, failing first, from the reproduction)
 - [x] each other field set changes gets its own line (title, goal, purpose, principle, details, tag, parent, state) (test)
-- [ ] MCP task_update set's reply says the same (test)
+- [x] MCP task_update set's reply says the same (test)
 
 ## Notes
 
@@ -46,6 +46,7 @@ Branch zdgw60 / ci/zdgw60 at 1ca07644 on main 6bf6a928; tests-first c777466f fai
 CI 44429491626 (1ca07644) success on all 8 jobs: secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards. Checks stay open until it lands (ticks with the main SHA).
 check 1: On main as e75e1593 (tests 4edade75), code-identical to 1ca07644 (diff of huginn/ between them empty). TestSetSaysWhatItWroteBeforeLint failed first ('want added check 2: VALUE before the lint block'), passes: 'added check 2: VALUE' prints before 'lint: 1 finding'. CI 44429491626 success, all 8 jobs.
 check 2: On main as e75e1593. TestSetSaysEachFieldItWrote: 11 lines for 11 changed fields (title, state, type, priority, assignee, parent, tags, goal, purpose, principle, relevant details) and 'unchanged: ...' on a repeat; failed first ('wrote lacks title: Old title -> New title'). CI 44429491626 success.
+check 3: On main as e75e1593. MCP TestNewAndUpdateReturnFindingsAndOneFix: task_update set returns wrote ['title: ...','purpose: Why now','added check 2: D']; failed first ('update set wrote: <nil>'). CI 44429491626 success.
 ## History
 - 2026-11-19T01:16 todo -> doing/active (take)
 - 2026-11-19T01:40 doing/active -> doing/waiting (wait)
