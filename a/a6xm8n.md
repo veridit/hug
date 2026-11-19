@@ -1,7 +1,7 @@
 ---
 id: a6xm8n
 title: "Hook budget cuts a call mid-flight and logs the run as failed"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzz5"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T05:55"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "dvr16b"
+done_at: "2026-11-19T13:42"
 ---
 
 ## Goal
@@ -48,6 +47,8 @@ landed c1832e8 on main 2026-11-19: muninn capture: failing tests for a hook call
 landed c2b0bbe on main 2026-11-19: muninn capture: a hook starts a call only when the time left covers it; a…
 shipped in v0.7.77 (c1832e8)
 crab 05:50Z: first run on v0.7.77, capture_runs 8476 (05:37:55Z): no error, processed 992, 65 actions, ended skipped 'deferred to next hook (budget)' as designed (extract 47.9 s, plan 104.0 s). Check 2 needs a day: recount turn_end 'deadline exceeded' after 2026-11-20T05:37Z.
+Reflection (unanswered, 2026-11-19, crab)
 ## History
 - 2026-11-19T05:55 todo -> doing/active (take)
 - 2026-11-19T08:01 handed to crab: cactus's session ended (closed 2026-11-19 06:30)
+- 2026-11-19T13:42 doing/active -> done (done); was doing_since: 2026-11-19T05:55
