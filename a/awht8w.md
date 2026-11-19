@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzi"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T22:20"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "byj479"
 worktree: "/Users/jhf/.jcode/scratch/byj479"
+waiting_on: "ci/awht8w-rebased b3b18675 lands on main (crab accepted 00:42); close when landed"
+waiting_since: "2026-11-19T01:42"
+waiting_asked_by: "iwazaru"
 ---
 
 ## Goal
@@ -46,3 +49,4 @@ check 2: Fail first on clean c186f78f with every git started 7 s late (git on PA
 Ready: awht8w = ci/awht8w at d487f583 on main 6bf6a928; CI 44429609615 completed success 8/8. Report: ~/.jcode/scratch/awht8w-REPORT.md. Earlier CI 44428150586 on 251fd2f0 (c186f78f base) failed only TestTmuxGolden palette drift (ubuntu), not in this diff; gone after rebase.
 ## History
 - 2026-11-18T22:20 todo -> doing/active (take)
+- 2026-11-19T01:42 doing/active -> doing/waiting (wait)
