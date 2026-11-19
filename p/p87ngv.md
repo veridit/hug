@@ -98,3 +98,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:06 answered design (question 3), by jhf, for crab (todo/design -> todo/design):
   > Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a line in it)?
   (from jhf's request 2, 09:06Z) Marks can anchor to anything in the ticket's markdown, and also to pieces of attachments, by a pointer such as 'in attachment NAME, line N' or 'section S'. The dialogue stays out of the ticket, possibly one history per thing discussed.
+- 2026-11-19T10:06 answer 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
