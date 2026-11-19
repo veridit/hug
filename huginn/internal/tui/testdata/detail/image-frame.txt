@@ -19,9 +19,9 @@ image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it
                                                                                 
                                                                                 
                                                                                 
+                                                                                
+                                                                                
 ────────────────────────────────────────────────────────────────────────────────
-                                                                                
-                                                                                
 open in Preview · next-, previous file · u/Esc files · ? help · quit            
 == board.png, no image protocol, at 140
 HUG · list › 000002 › compiler/000002/board.png · 67 B · 1 of 3                                                                  ? 1 for you
@@ -44,7 +44,7 @@ image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
+                                                                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-                                                                                                                                            
-                                                                                                                                            
 open in Preview · next-, previous file · u/Esc files · ? help · quit                                                                        

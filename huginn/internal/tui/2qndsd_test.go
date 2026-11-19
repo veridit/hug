@@ -37,7 +37,8 @@ func showFile(t *testing.T, m model, name string) model {
 
 // frameOf checks the file frame (z82qsy check 4) on a screen and returns
 // its body rows: crumb, the note when there is one, a rule, the body, a
-// rule, then the message line, the input line and the keys.
+// rule, then the message line and the input line when they say something
+// (yp3c09), and the keys.
 func frameOf(t *testing.T, m model, screen, crumb, note string) []string {
 	t.Helper()
 	lines := strings.Split(screen, "\n")
@@ -53,7 +54,8 @@ func frameOf(t *testing.T, m model, screen, crumb, note string) []string {
 		}
 		top = 2
 	}
-	bottom := len(lines) - 4
+	foot, _ := m.footRows()
+	bottom := len(lines) - 2 - len(foot)
 	if lines[top] != rule || lines[bottom] != rule || len(lines) != m.height {
 		t.Fatalf("not framed (rules at %d and %d, %d lines):\n%s", top, bottom, len(lines), screen)
 	}
@@ -91,8 +93,8 @@ func TestImageDrawnInTheFrameRows(t *testing.T) {
 		env        map[string]string
 		start, end string
 	}{
-		{map[string]string{"TERM_PROGRAM": "iTerm.app"}, "\x1b]1337;File=name=Ym9hcmQucG5n;size=67;inline=1;width=100;height=17;preserveAspectRatio=1:", "\a"},
-		{map[string]string{"TERM": "xterm-kitty"}, "\x1b_Ga=T,f=100,C=1,r=17,m=0;", "\x1b\\"},
+		{map[string]string{"TERM_PROGRAM": "iTerm.app"}, "\x1b]1337;File=name=Ym9hcmQucG5n;size=67;inline=1;width=100;height=19;preserveAspectRatio=1:", "\a"},
+		{map[string]string{"TERM": "xterm-kitty"}, "\x1b_Ga=T,f=100,C=1,r=19,m=0;", "\x1b\\"},
 		{map[string]string{"TERM_PROGRAM": "iTerm.app", "TMUX": "/tmp/tmux-1/default,1,0"}, "\x1bPtmux;\x1b\x1b]1337;File=", "\x1b\\"},
 	} {
 		m := imageViewer(t, 100, 24, c.env)

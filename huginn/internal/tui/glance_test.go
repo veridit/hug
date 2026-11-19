@@ -132,7 +132,7 @@ func TestGlanceShowsFile(t *testing.T) {
 // scrxak check 2: n/p step files and stop at the ends with a note; j/k and
 // PgDn/PgUp scroll.
 func TestGlanceStepsAndScrolls(t *testing.T) {
-	m, _ := glanceModel(t, 80, 9) // the frame shows 3 of escapes.log's 5 lines (z82qsy: the file gets the whole body)
+	m, _ := glanceModel(t, 80, 7) // the frame shows 3 of escapes.log's 5 lines (z82qsy: the file gets the whole body; yp3c09: and the blank message and input rows)
 	m = toFiles(t, openTask(t, m, "000001"))
 	m = press(m, " ", "p")
 	if m.file != 0 || !strings.Contains(m.message, "first file: 1 of 5") {

@@ -468,6 +468,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	next, cmd := m.step(msg)
 	if n, ok := next.(model); ok {
 		n.clearStaleMessage(before)
+		if n.detail && n.glance {
+			n.fitGlance() // the file has the rows no message takes (yp3c09)
+		}
 		if n.viewHeight() != height && n.detail && !n.glance {
 			// The page is as tall as the palette leaves it (05r3pg): it
 			// shrinks when the palette opens or grows, and grows back

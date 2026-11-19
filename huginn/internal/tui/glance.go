@@ -174,13 +174,32 @@ func (m *model) closeGlance() {
 
 // glanceHeight is how many lines the shown file gets (z82qsy check 4):
 // the body less the note line (when the file has a note) and the two rules
-// that frame it. The crumb above is the task screen's one head line.
+// that frame it, plus the message and input lines while they are blank
+// (yp3c09). The crumb above is the task screen's one head line.
 func (m model) glanceHeight() int {
 	chrome := 2
 	if m.glanceNote() != "" {
 		chrome++
 	}
-	return max(1, m.bodyHeight()-chrome)
+	_, spare := m.footRows()
+	return max(1, m.bodyHeight()+spare-chrome)
+}
+
+// fitGlance makes the file as tall as the rows it has now: a message
+// coming takes a row from it, its going gives the row back (yp3c09).
+// Scrolled to the end, it stays at the end.
+func (m *model) fitGlance() {
+	h := m.glanceHeight()
+	if !m.glance || m.viewport.Height == h {
+		return
+	}
+	end := m.viewport.AtBottom() && m.viewport.YOffset > 0
+	m.viewport.Height = h
+	if end {
+		m.viewport.GotoBottom()
+		return
+	}
+	m.viewport.SetYOffset(m.viewport.YOffset)
 }
 
 // glanceNote is what the task's notes say about the shown file when it

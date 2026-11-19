@@ -1026,15 +1026,18 @@ func (m model) frameView() string {
 		// A shown file is all the screen holds (z82qsy check 4, Jørgen's
 		// 5z4zt4 request 2): the crumb names it on top, its attachment note
 		// under that, then a rule; the file; a rule; then the message line
-		// and the keys. A screenshot's own lines read as inside the frame.
+		// when there is a message, and the keys (yp3c09). A screenshot's
+		// own lines read as inside the frame.
 		rule := m.styles.dim.Render(strings.Repeat("─", m.width))
 		var top []string
 		if note := m.glanceNote(); note != "" {
 			top = append(top, m.styles.dim.Render(fit(note, m.width)))
 		}
 		top = append(top, rule)
-		body := strings.Split(m.viewport.View(), "\n")
-		for len(body) < m.viewport.Height {
+		view := m.viewport
+		view.Height = m.glanceHeight() // the rows as drawn now (yp3c09)
+		body := strings.Split(view.View(), "\n")
+		for len(body) < view.Height {
 			body = append(body, "")
 		}
 		content = strings.Join(append(append(top, body...), rule), "\n")
@@ -1056,11 +1059,13 @@ func (m model) frameView() string {
 		lines = []string{m.breadcrumb()} // the global band goes in a task
 	}
 	body := strings.Split(content, "\n")
+	foot, spare := m.footRows()
+	rows := m.bodyHeight() + spare
 	// The palette takes the bottom rows of the body; what it acts on
 	// stays drawn above it (05r3pg check 1).
 	if m.prompt == ":" && !m.help {
 		n := m.paletteHeight()
-		keep := max(0, m.bodyHeight()-n)
+		keep := max(0, rows-n)
 		if len(body) > keep {
 			body = body[:keep]
 		}
@@ -1069,13 +1074,56 @@ func (m model) frameView() string {
 		}
 		body = append(body, m.paletteLines(n)...)
 	}
-	for n := 0; n < m.bodyHeight(); n++ {
+	for n := 0; n < rows; n++ {
 		line := ""
 		if n < len(body) {
 			line = body[n]
 		}
 		lines = append(lines, line)
 	}
+	lines = append(append(lines, foot...), m.keyBar())
+	// Final cell-aware boundary also protects malformed fields, Unicode, and tiny resizes.
+	if len(lines) > m.height {
+		lines = lines[:m.height]
+		lines[len(lines)-1] = m.keyBar()
+	}
+	for i, line := range lines {
+		lines[i] = fit(line, m.width)
+	}
+	return strings.Join(lines, "\n")
+}
+
+// fileFrame says whether the screen is the file view's frame (z82qsy):
+// a file shown, no help or list prompt over it.
+func (m model) fileFrame() bool {
+	return m.detail && m.glance && !m.help && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort"
+}
+
+// footRows are the lines between the body and the key bar, and how many
+// rows the body gets over bodyHeight. Everywhere else that is the message
+// line and the input line, blank or not. Under the file frame only the
+// ones that say something are drawn, and a blank one is a row more of the
+// file (yp3c09, Jørgen 2026-11-19: two empty rows above the keys while
+// the file went on below).
+func (m model) footRows() (foot []string, spare int) {
+	footer, input := m.footLines()
+	if !m.fileFrame() {
+		return []string{footer, input}, 0
+	}
+	for _, l := range []string{footer, input} {
+		if strings.TrimSpace(ansi.Strip(l)) == "" {
+			spare++
+			continue
+		}
+		foot = append(foot, l)
+	}
+	return foot, spare
+}
+
+// footLines are the message line (the footer: a message, else what the
+// screen is) and the input line (a fix:, a prompt or a confirm) under
+// the body.
+func (m model) footLines() (footerLine, inputLine string) {
 	footer := m.message
 	if footer == "" && m.columnHinted && !m.detail && !m.help && m.prompt == "" && m.confirm == "" {
 		footer = m.columnHint() // rows only: a task has no column (qtj177)
@@ -1128,8 +1176,7 @@ func (m model) frameView() string {
 			footer = pickFooter() // hjbfzd: Enter attaches the screen
 		}
 	}
-	lines = append(lines, m.renderMarks(oneLine(footer), m.styles.dim))
-	inputLine := ""
+	footerLine = m.renderMarks(oneLine(footer), m.styles.dim)
 	if len(messageLines) > 1 {
 		for _, line := range messageLines[1:] {
 			if strings.HasPrefix(line, "fix: ") {
@@ -1139,7 +1186,7 @@ func (m model) frameView() string {
 		}
 	}
 	if notice, bar, ok := m.editNoticeLines(); ok && m.confirm == "" && m.prompt == "" && !m.help && m.message == "" {
-		lines[len(lines)-1] = notice
+		footerLine = notice
 		inputLine = bar
 	}
 	if m.confirm != "" {
@@ -1149,16 +1196,7 @@ func (m model) frameView() string {
 	} else if m.prompt != "" && m.prompt != ":" && m.prompt != "#" && m.prompt != "filter" && m.prompt != "sort" && !m.boxPrompt() {
 		inputLine = m.input.View()
 	}
-	lines = append(lines, inputLine, m.keyBar())
-	// Final cell-aware boundary also protects malformed fields, Unicode, and tiny resizes.
-	if len(lines) > m.height {
-		lines = lines[:m.height]
-		lines[len(lines)-1] = m.keyBar()
-	}
-	for i, line := range lines {
-		lines[i] = fit(line, m.width)
-	}
-	return strings.Join(lines, "\n")
+	return footerLine, inputLine
 }
 
 // editNoticeLines are the two lines shown after an edit that left the task

@@ -96,10 +96,13 @@ func (m *model) zoomTo(z int) {
 	img, was := m.glanceImage, m.picView()
 	cx, cy := was.x+was.w/2, was.y+was.h/2
 	m.picZoom = max(0, min(z, len(zoomSteps)-1))
+	// The zoom's message takes its row first (yp3c09), so the crop is
+	// centred in the rows it is drawn in.
+	m.message = m.zoomSays()
+	m.fitGlance()
 	next := picCrop(img.w, img.h, m.width, m.viewport.Height, m.picZoom, 0, 0)
 	v := picCrop(img.w, img.h, m.width, m.viewport.Height, m.picZoom, cx-next.w/2, cy-next.h/2)
 	m.picX, m.picY = v.x, v.y
-	m.message = m.zoomSays()
 }
 
 // zoomSays names the zoom, and the keys from it.
