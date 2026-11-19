@@ -1,15 +1,20 @@
 ---
 id: jsyksd
 title: "TestDoneWithoutAnswerIsCounted fails when a run crosses midnight"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["macaque"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T01:26"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Fix: cli.go:1257 time.Now() -> task.Now(); the test sets task.Now to a fixed 23:
 - [ ] CI green on all jobs with the fix
 
 ## Notes
+
+
+## History
+- 2026-11-19T01:26 todo -> doing/active (take)
