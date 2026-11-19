@@ -4,7 +4,7 @@ title: "Capture stuck when one hook call's output hits 1024 tokens"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["mushroom"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
@@ -52,3 +52,4 @@ crab 04:39Z, first run on v0.7.76: capture_runs 8467 (04:29:17Z, turn_end) proce
 crab 04:55Z: the fix works live. 8468 retried a cut call at 2048 (call 5: 1024/1024 at max 1024, then 1104 at max 2048) and went on past it, 855 msgs, 88 actions; capture_deferred is empty. Check 3 still waits for an error-free run: 8467 and 8468 both ended on the hook time budget (a6xm8n), not on truncation.
 ## History
 - 2026-11-19T04:01 todo -> doing/active (take)
+- 2026-11-19T06:29 handed to crab: mushroom's session ended (closed 2026-11-19 05:22)
