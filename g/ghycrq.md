@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzh"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T00:52"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "landing: crab restacks ci/ghycrq 2f7a91f8 after z25pb2 (fac02994) lands"
+waiting_since: "2026-11-19T02:23"
+waiting_asked_by: "tigress"
 ---
 
 ## Goal
@@ -45,3 +48,4 @@ Fix on ci/ghycrq 2f7a91f8 (7e08da57 failing test, 2f7a91f8 fix + CHANGELOG) on o
 check 2: Fixed harness (fix.test from 2f7a91f8, guard bypassed), niced, one go test process at a time, 60 runs in total: 0 FAIL, 0 harness lines (grep for 'did not become ready|did not exit after|tmux server cleanup|still waiting'). ghycrq-ev/c2-1.log: TestTmuxReload 10, TestTmuxGolden 10. c2-2.log: Reload 10, Golden 10. Both under 16 spinners at nice 0, load '{ 863,88 693,28 530,72 }' and '{ 706,28 746,99 688,38 }'; the hog was then stopped on crab's limit. w-1.log: Reload 10, Golden 10, under 8 spinners at nice 19, at most 15 min, load '{ 650,50 673,23 674,37 }'. Totals: TestTmuxReload 30, TestTmuxGolden 30. Before the fix, the harness alone under the hog failed 5 of 467 cycles (loop2.log). pgrep shows no ghycrq process left. CI 44431241435 on ci/ghycrq 2f7a91f8: success, 9 of 9 jobs.
 ## History
 - 2026-11-19T00:52 todo -> doing/active (take)
+- 2026-11-19T02:23 doing/active -> doing/waiting (wait)
