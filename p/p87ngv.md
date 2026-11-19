@@ -62,6 +62,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
   And now I can't get the second question here. I think your question number two both may resolve a thread. It depends on what the request says and the answer says. So the person, human who's doing this, will maybe say, ah, that's good. I accept or I approve. And it will say, no, I need something else. And you have to decide by the ticket. And I think the same by the agent. So we have to use judgment here. And both can initiate for clarity.
   resolved 2026-11-19T10:06 by crab:
     Question 2 answered from this request (answer 2, his words); principle now says either side may resolve a mark, by judgment against the ticket, and either can initiate. Bug filed: question 2 could not be reached in hug tui.
+- 2026-11-19T10:06 request 2 by jhf:
+  And for your question number three to an attached file? I think threads can anchor to anything in the markdown of the ticket, and the threads should stay out as I said again. Maybe they can be separate threads per separate thing, but they're not part of the ticket you can specify pieces of attachments and discuss them as well, yes. But you have to then use some pointers to always say inside attachment so-and-so line or section so-and-so
 
 ## Notes
 
@@ -89,3 +91,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:06 request 1 acknowledged by crab
 - 2026-11-19T10:06 resolved request 1 by crab
 - 2026-11-19T10:06 answer 2 acknowledged by crab
+- 2026-11-19T10:06 request 2 by jhf
