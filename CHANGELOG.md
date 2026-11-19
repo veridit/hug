@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.83 - 2026-11-19
+
 - The sort picker in `hug tui` (s) moves like the filter picker (17w9r6,
   Jørgen 2026-11-19 11:41Z). A highlight starts on the first row; j/k,
   ↑↓ and ctrl-n/p move it. Space on a field adds it to the order, and
