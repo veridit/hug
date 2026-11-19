@@ -48,6 +48,7 @@ Rebased onto d5c66a1f, as crab asked. Commits: f7903264 (failing test), e6e3c36b
 landed c923a71 on main 2026-11-18: gitbranch: failing test, a git that exited 0 is its answer though its output is…
 landed c25065c on main 2026-11-18: gitbranch: git's output goes to temp files, read once git exits (ad62aa)
 shipped in v0.7.71 (c923a71)
+crab: on main (ancestor of fac02994 verified): fix c25065c0. Closed by the coordinator.
 ## History
 - 2026-11-18T20:21 todo -> doing/active (take)
 - 2026-11-18T22:10 doing/active -> doing/waiting (wait)
