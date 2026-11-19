@@ -1,7 +1,7 @@
 ---
 id: m5pbb0
 title: "hug tui: a later open question on a task cannot be reached to answer"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzn"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T10:06"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "4cn9vv"
+done_at: "2026-11-19T12:21"
 ---
 
 ## Goal
@@ -44,6 +43,8 @@ check 1: TestOldAnswerLeavesEveryQuestionAnswerable (huginn/internal/tui/m5pbb0_
 check 2: With fix 42b71005 (+dd6e5cf9): TestOldAnswerLeavesEveryQuestionAnswerable (p87ngv@bab152ff, 3 open) and TestFiveQuestionsEachReachable (p87ngv@19977d7d, 5 open) pass at 100x30 and 160x45: answerActions == open count, Tab reaches each block, a on question 2 writes '  answered 2026-11-19T10:06 by jhf:' under it alone. Goldens testdata/detail/p87ngv-{old-answer,five-questions}-{100x30,160x45}.txt. Local go test ./... exit 0 (40 ok). CI run 44500113493 on ci/m5pbb0 success (ubuntu, macos, windows).
 Fix on branch m5pbb0 (c533de89 tests, 42b71005 fix, dd6e5cf9 CRLF test), CI 44500113493 green. Not merged/released. Jørgen's TUI pid 78631 is v0.7.69 (vmmap); restart it. Report /Users/jhf/.jcode/scratch/m5pbb0/REPORT.md
 crab 10:02Z: reviewed (answer.go question() fallback on OpenQuestions, askStage; tests c533de89 fail first; goldens 100x30/160x45). Main had not moved since branch: fast-forwarded main to dd6e5cf9 (CI 44500113493 8/8 at that exact SHA). Released v0.7.80 (CHANGELOG b2c9d5e4, merge 41dc277d). Check 3 is Jørgen's: restart hug tui (pid 78631 was v0.7.69), answer a second question.
+Reflection (unanswered, 2026-11-19, crab)
 ## History
 - 2026-11-19T10:06 todo -> doing/active (take)
 - 2026-11-19T12:08 handed to crab: blossom's session ended (closed 2026-11-19 11:02)
+- 2026-11-19T12:21 doing/active -> done (done); was doing_since: 2026-11-19T10:06
