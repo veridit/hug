@@ -31,3 +31,5 @@ muninn/internal/app/capture.go: the loop checks 'time.Until(deadline) < 3*time.S
 - [ ] capture_runs on the live store shows no 'context deadline exceeded' on turn_end hooks for a day after release (count in a note)
 
 ## Notes
+
+crab 04:55Z, second instance: capture_runs 8468 (04:39:46Z) processed 855 msgs, 88 actions over 13 calls, then call 13 got 0 completion tokens in 417 ms and the run was recorded 'invalid extraction response (body redacted)' (error_class parse): the deadline cut the response body mid-read, so a budget cut shows up as a parse error too. Both 8467 and 8468 used extract_ms ~50 s + plan_ms ~112 s; the per-chunk check at capture.go (3 s left) and the provider reserve (2 s, capture.go:396-400) do not cover a 2-6 s call. Acceptance should also cover: a call cancelled by the hook budget is never reported as a parse error.
