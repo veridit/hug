@@ -34,7 +34,7 @@ Compare the source branch's added CHANGELOG lines (git diff FROM..SRC -- CHANGEL
 
 ## Acceptance
 - [x] a test or dry run: a rebase that drops a line of an added CHANGELOG entry makes rebase-land.sh exit non-zero naming the missing line
-- [ ] the normal restack prints CHANGELOG IDENTICAL next to CODE-DIFF IDENTICAL
+- [x] the normal restack prints CHANGELOG IDENTICAL next to CODE-DIFF IDENTICAL
 
 ## Notes
 
@@ -43,5 +43,6 @@ Cause was the script, not a conflict: rebase-land.sh line 14 extracted entries w
 check 1: dry run (push replaced by echo) replaying 5mmqjk 8610a01a on 50fa8681: with the old grep extraction -> 'CHANGELOG MISSING LINES:' 'not pushed', exit 3; with the fix -> 'CHANGELOG IDENTICAL', exit 0
 
 
+check 2: real landing of nmn6wf e98a12ac at 04:21Z printed 'CODE-DIFF IDENTICAL' / 'released lines removed: 0' / 'CHANGELOG IDENTICAL' / 'pushed ci/nmn6wf-rebased dceb95a0'
 ## History
 - 2026-11-19T05:01 todo -> doing/active (take with p277bp)
