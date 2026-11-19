@@ -266,8 +266,11 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			chunkLimit = 8192
 		}
 		chunkLimit = max(1024, min(chunkLimit, 48<<10))
-		pending, originals, lastFragments = captureFragments(pending, seen, chunkLimit)
 	}
+	// Every path cuts a message longer than one call into parts, in order
+	// (8jcj3k): refusing it stopped the session's capture for good.
+	pending, originals, lastFragments = captureFragments(pending, seen, chunkLimit)
+	report.Split = splitCount(originals)
 	// Messages beyond the deadline stay pending for the next observer.
 	for start := 0; start < len(pending); {
 		if hook && report.Processed > 0 {
@@ -286,7 +289,8 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 				break
 			}
 			if len(line) > chunkLimit {
-				return report, fmt.Errorf("capture message exceeds %d bytes, refusing silent loss", chunkLimit)
+				// captureFragments sizes every part to fit, so this is a bug.
+				return report, fmt.Errorf("capture message part exceeds %d bytes, refusing silent loss", chunkLimit)
 			}
 			audit.Messages = append(audit.Messages, AuditMessage{ID: m.ID, OriginalID: originals[m.ID], Role: m.Role, Hash: captureHash(m.Text), Text: t})
 			if t != "" {
