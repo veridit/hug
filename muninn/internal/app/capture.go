@@ -42,6 +42,9 @@ type CaptureReport struct {
 	Rejected        int             `json:"rejected"`
 	RejectedTrivial int             `json:"rejected_trivial"`
 	Skipped         string          `json:"skipped,omitempty"`
+	// Split counts messages longer than one call's limit that were cut into
+	// parts (8jcj3k); each part is in the run's messages with original_id.
+	Split int `json:"split,omitempty"`
 }
 
 type CaptureTimings struct {
