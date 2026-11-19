@@ -33,11 +33,12 @@ CI 44425299288 8/8 on f17745ad. Content: rxr4z8 marks, hfkt1n reload test, nanvn
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml run for v0.7.73 succeeds
+- [x] release.yml run for v0.7.73 succeeds
 - [ ] brew upgrade veridit/tap/hug; hug version prints v0.7.73
 
 ## Notes
 
 
+check 1: release.yml 44426761530 completed success
 ## History
 - 2026-11-19T01:20 todo -> doing/active (take)
