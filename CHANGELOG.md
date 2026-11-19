@@ -6,6 +6,12 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The view line's blink tests no longer wait on the wall clock (6zhyq2,
+  CI 44520969132: a blink measured 497 ms against 530 ms). The two tests
+  that ran bubbles' real 530 ms timer now run it in a testing/synctest
+  bubble, whose clock moves only when the test waits, and check the
+  exact 530 ms; the tick helpers take their message with no timer.
+
 - Tests leave no tmux server running (wacc33, crab 2026-11-19 12:01Z:
   three huginn-golden/reload servers, parent launchd, alive for days). A
   test's tmux server now dies with the test however it ends: pass,
