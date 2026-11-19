@@ -69,6 +69,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
   And for your question number three to an attached file? I think threads can anchor to anything in the markdown of the ticket, and the threads should stay out as I said again. Maybe they can be separate threads per separate thing, but they're not part of the ticket you can specify pieces of attachments and discuss them as well, yes. But you have to then use some pointers to always say inside attachment so-and-so line or section so-and-so
   resolved 2026-11-19T10:06 by crab:
     Question 3 answered from this request (answer 3). Principle: marks anchor to anything in the ticket's markdown or point into an attachment by name plus line/section; dialogue stays out of the ticket, history may be split per thing. Check 11 added for attachment pointers.
+- 2026-11-19T10:09 request 3 by jhf:
+  Critic markup. Well, why not? It looks sensible enough. We can try that unless you have a better suggestion. If we're not going to use critic markup, my suggestion is to use something from my own play language Seid Because it is very easy to because it leads with a space and a period and then no space and data, which is unlike anything humans use because we always end with period and space. So you can know at any point that now you're going into data land, but it's a bit weird, maybe? .key:value .Oject1 .prop1:1 .prop2:2 .Object2 .prop1:"a" .prop2:True but on it's own it's not text confusable. Let's discuss in the console.
 
 ## Notes
 
@@ -106,3 +108,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:06 resolved request 2 by crab
 - 2026-11-19T10:06 request 2 acknowledged by crab
 - 2026-11-19T10:07 answer 3 acknowledged by crab
+- 2026-11-19T10:09 request 3 by jhf
