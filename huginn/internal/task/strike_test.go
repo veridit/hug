@@ -10,6 +10,9 @@ import (
 // Markdown; done counts struck checks as settled and still refuses an open
 // one with a fix line; older files parse unchanged.
 func TestStrikeOutCheck(t *testing.T) {
+	old := Now
+	Now = func() time.Time { return time.Date(2026, 1, 31, 23, 59, 59, 900_000_000, time.Local) } // the strike is dated by the board clock (jsyksd)
+	t.Cleanup(func() { Now = old })
 	s := &Store{Root: t.TempDir()}
 	r, e := s.New(NewOptions{Title: "Strike me", Goal: "G", Acceptance: []string{"first holds", "second, no longer", "third"}, Type: "chore"})
 	if e != nil {
@@ -23,7 +26,7 @@ func TestStrikeOutCheck(t *testing.T) {
 		t.Fatal(e)
 	}
 	d, _ := s.Get(id)
-	today := time.Now().Format("2006-01-02")
+	today := Now().Format("2006-01-02")
 	line := "- [ ] ~~second, no longer~~ (not relevant: replaced by check 3, see note, kestrel, " + today + ")\n"
 	if !strings.Contains(string(d.Bytes()), "\n"+line) {
 		t.Fatalf("file:\n%s", d.Bytes())

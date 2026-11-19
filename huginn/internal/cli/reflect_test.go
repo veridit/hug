@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/veridit/hug/huginn/internal/task"
 )
@@ -12,7 +11,7 @@ import (
 // tb0dra: done asks one question; --reflect stores the answer as a
 // Reflection note; reflections lists open ones; resolve closes one.
 func TestDoneReflectAndReflections(t *testing.T) {
-	t.Parallel()
+	today := pinClock(t, lastTick) // the note's date is the board clock's (jsyksd)
 	a, id := takeFixture(t)
 	execute(t, a, "take", id, "--as", "poodle", "--model", "claude-opus-5-5")
 	// A blocked done stores nothing.
@@ -35,7 +34,6 @@ func TestDoneReflectAndReflections(t *testing.T) {
 	if code != 0 || strings.Contains(out, "now: reflect:") {
 		t.Fatalf("done --reflect: exit %d\n%s", code, out)
 	}
-	today := time.Now().Format("2006-01-02")
 	if f := taskFile(t, a, id); !strings.Contains(f, "Reflection (open, "+today+", poodle): "+text) {
 		t.Fatalf("task file:\n%s", f)
 	}
@@ -147,11 +145,13 @@ func TestReflectionsByInstruction(t *testing.T) {
 
 // 2k68eg check 3: a done with no answer leaves one unanswered line, so the
 // answer rate shows; a later answer replaces it, "nothing" removes it.
+// The line is dated by the board clock, pinned a tenth of a second before
+// midnight: CI 44424953831 dated it after midnight and compared it with a
+// day read before (jsyksd).
 func TestDoneWithoutAnswerIsCounted(t *testing.T) {
-	t.Parallel()
+	today := pinClock(t, lastTick)
 	a := app(t)
 	a.Env["HUG_USER"], a.Env["HUG_MODEL"] = "", ""
-	today := time.Now().Format("2006-01-02")
 	plain := doneWith(t, a, "rabbit")
 	if f := taskFile(t, a, plain); strings.Count(f, "Reflection (unanswered, "+today+", rabbit)") != 1 {
 		t.Fatalf("plain done:\n%s", f)

@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/veridit/hug/huginn/internal/cache"
 	"github.com/veridit/hug/huginn/internal/task"
@@ -62,7 +61,7 @@ func expectCode(t *testing.T, a *App, want int, args ...string) {
 	}
 }
 func TestLifecycleJSONContract(t *testing.T) {
-	t.Parallel()
+	today := pinClock(t, lastTick) // the done's note is dated by the board clock (jsyksd)
 	a := app(t)
 	execute(t, a, "init")
 	expectCode(t, a, 4, "next")
@@ -97,7 +96,7 @@ func TestLifecycleJSONContract(t *testing.T) {
 	r = execute(t, a, "show", id)
 	task := r["task"].(Reply)
 	// The plain done left one unanswered line (2k68eg); the repeat no second.
-	if task["notes"] != "Evidence here\nReflection (unanswered, "+time.Now().Format("2006-01-02")+", tester)" {
+	if task["notes"] != "Evidence here\nReflection (unanswered, "+today+", tester)" {
 		t.Fatal(task)
 	}
 	r = execute(t, a, "show", form)
