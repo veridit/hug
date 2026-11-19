@@ -33,11 +33,12 @@ Stack at the failure (file:/Users/jhf/.jcode/scratch/mq5ger-probes/reload-stuck-
 
 ## Acceptance
 - [x] the failure reproduced under forced load with the verbatim line, and its cause named with file:line
-- [ ] fixed at the cause: 0 failures in the same forced-load run, no timeout raised, no retry, no skip
+- [x] fixed at the cause: 0 failures in the same forced-load run, no timeout raised, no retry, no skip
 
 ## Notes
 
 
 check 1: Reproduced: TestStarvedChangeBeforeWatch on 7f14e3e1 (STARVE=8 GOMAXPROCS=4, 1000): 4 FAIL, each 'taskdirs_test.go:109: no reload after the watch came up' at 5.21-5.82 s (mq5ger-starve-final-raw.txt). Deterministic: git that sleeps 6 s at start (PATH shim) on origin/main 356fb240: '--- FAIL: TestChangeBeforeWatchIsUpIsSeen (23.14s) taskdirs_test.go:109: no reload after the watch came up'. Fail-first unit: TestReloadDoesNotWaitOnGit (git behind a gate): 'adqdfe_test.go:59: the reload waited on git: no board while git could not start'. Cause: loadSnapshot calls closeLog.times before returning (huginn/internal/tui/tui.go:628), which forks git rev-parse and git log (closed.go:35, :46); the stack mq5ger-stacks-final.txt:2291-2297 has the reload goroutine in os/exec under closeLog.times.
+check 2: Fixed at the cause in 87691f85 (ci/adqdfe, on watchflake 02151406): loadSnapshot takes closeLog.latest() (no git); the loadedMsg batches readCloses (git off the UI thread) and closesMsg applies the newest times read; refresh (the TUI's own writes) still reads first. Same forced-load run (STARVE=8 GOMAXPROCS=4 nice -p=1 -count=1000, load ~500): 1000 PASS, 0 FAIL, 'ok  github.com/veridit/hug/huginn/internal/tui 469.955s' (adqdfe-starve-fixed.txt). Was 996/4 on 7f14e3e1. Git sleeping 6 s at start: TestChangeBeforeWatchIsUpIsSeen PASS (was FAIL). TestReloadDoesNotWaitOnGit passes (failed first). No timeout raised, no retry, no skip. CI 44427265935 success 8/8: ubuntu 'go test -race ./...' 'ok  github.com/veridit/hug/huginn/internal/tui 299.278s', macos 'ok ... tui 147.354s'.
 ## History
 - 2026-11-19T00:45 todo -> doing/active (take)
