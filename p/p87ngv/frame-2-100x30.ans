@@ -1,0 +1,30 @@
+HUG · hug · list › w7tq3k
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. [4;4mT[0m[4;4mo[0m[4;4md[0m[4;4ma[0m[4;4my[0m[4m [0m[4;4ma[0m[4m [0m[4;4mc[0m[4;4mh[0m[4;4me[0m[4;4mc[0m[4;4mk[0m[4m [0m[4;4ml[0m[4;4mi[0m[4;4mk[0m[4;4me[0m
+[4;4m'[0m[4;4mS[0m[4;4mh[0m[4;4mo[0m[4;4mu[0m[4;4ml[0m[4;4md[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mA[0m[4;4mS[0m[4;4mK[0m[4;4mE[0m[4;4mD[0m[4m [0m[4;4mr[0m[4;4mo[0m[4;4mw[0m[4m [0m[4;4ms[0m[4;4mh[0m[4;4mo[0m[4;4mw[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mc[0m[4;4mo[0m[4;4mu[0m[4;4mn[0m[4;4mt[0m[4;4m?[0m[4;4m'[0m[4m [0m[4;4ms[0m[4;4mi[0m[4;4mt[0m[4;4ms[0m[4m [0m[4;4ma[0m[4;4mm[0m[4;4mo[0m[4;4mn[0m[4;4mg[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mc[0m[4;4mh[0m[4;4me[0m[4;4mc[0m[4;4mk[0m[4;4ms[0m[4;4m,[0m[4m [0m[4;4mi[0m[4;4ms[0m[4m [0m[4;4me[0m[4;4ma[0m[4;4ms[0m[4;4my[0m[4m [0m[4;4mt[0m[4;4mo[0m[4m [0m[4;4mt[0m[4;4mi[0m[4;4mc[0m[4;4mk[0m[4m [0m[4;4mb[0m[4;4my[0m[4m [0m[4;4mm[0m[4;4mi[0m[4;4ms[0m[4;4mt[0m[4;4ma[0m[4;4mk[0m[4;4me[0m[4;4m,[0m[4m [0m[4;4ma[0m[4;4mn[0m[4;4md[0m
+[4;4mn[0m[4;4mo[0m[4;4mb[0m[4;4mo[0m[4;4md[0m[4;4my[0m[4m [0m[4;4mi[0m[4;4ms[0m[4m [0m[4;4ma[0m[4;4ms[0m[4;4mk[0m[4;4me[0m[4;4md[0m[4;4m,[0m[4m [0m[4;4ms[0m[4;4mo[0m[4m [0m[4;4mt[0m[4;4mh[0m[4;4me[0m[4m [0m[4;4mq[0m[4;4mu[0m[4;4me[0m[4;4ms[0m[4;4mt[0m[4;4mi[0m[4;4mo[0m[4;4mn[0m[4m [0m[4;4mw[0m[4;4ma[0m[4;4mi[0m[4;4mt[0m[4;4ms[0m[4m [0m[4;4mf[0m[4;4mo[0m[4;4mr[0m[4m [0m[4;4ms[0m[4;4mo[0m[4;4mm[0m[4;4me[0m[4;4mo[0m[4;4mn[0m[4;4me[0m[4m [0m[4;4mt[0m[4;4mo[0m[4m [0m[4;4mn[0m[4;4mo[0m[4;4mt[0m[4;4mi[0m[4;4mc[0m[4;4me[0m[4m [0m[4;4mi[0m[4;4mt[0m[4m [0m[4;4ma[0m[4;4mn[0m[4;4md[0m[4m [0m[4;4mt[0m[4;4mu[0m[4;4mr[0m[4;4mn[0m[4m [0m[4;4mi[0m[4;4mt[0m[4m [0m[4;4mi[0m[4;4mn[0m[4;4mt[0m[4;4mo[0m[4m [0m[4;4ma[0m[4m [0m[4;4mh[0m[4;4mu[0m[4;4mg[0m[4m [0m[4;4mt[0m[4;4ma[0m[4;4ms[0m[4;4mk[0m[4m [0m[4;4ma[0m[4;4ms[0m[4;4mk[0m[4;4m,[0m
+[4;4mw[0m[4;4mh[0m[4;4mi[0m[4;4mc[0m[4;4mh[0m[4m [0m[4;4mi[0m[4;4mn[0m[4m [0m[4;4mp[0m[4;4mr[0m[4;4ma[0m[4;4mc[0m[4;4mt[0m[4;4mi[0m[4;4mc[0m[4;4me[0m[4m [0m[4;4mh[0m[4;4ma[0m[4;4mp[0m[4;4mp[0m[4;4me[0m[4;4mn[0m[4;4ms[0m[4m [0m[4;4ml[0m[4;4ma[0m[4;4mt[0m[4;4me[0m[4m [0m[4;4mo[0m[4;4mr[0m[4m [0m[4;4mn[0m[4;4me[0m[4;4mv[0m[4;4me[0m[4;4mr[0m[4;4m.[0m The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+> ↳ 1 request · jhf 09:40 · Make it concise: say the harm in a few words.
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+ACCEPTANCE
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+  ☐ 2. A check that starts with [4;4mS[0m[4;4mh[0m[4;4mo[0m[4;4mu[0m[4;4ml[0m[4;4md[0m[4;4m,[0m[4m [0m[4;4mC[0m[4;4ma[0m[4;4mn[0m[4m [0m[4;4mo[0m[4;4mr[0m[4m [0m[4;4mD[0m[4;4mo[0m is a finding too (test)
+[38;2;135;149;168m       ↳ 2 question · daisy → jhf 09:52 · English only, or also Norwegian (Skal, Kan, Bør)?[0m
+[38;2;135;149;168m           answer · jhf 10:04 · English only, so "Should" counts and "Skal" does not, nor "Bør"[0m
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+
+
+mark 1 of 2 · request by jhf on goal sentence 2 · ' next · " previous · Esc back
+
+' next mark · " previous · R resolve · e edit · ? help · q quit

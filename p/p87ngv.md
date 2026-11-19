@@ -126,6 +126,7 @@ crab 10:31Z, review of daisy's mock (files attached, sha in her notes): before.m
 crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Open-data variant, not .sdd; Seid's Open tier is unfinished and Jørgen will finish it. Until then hug's .sdo grammar is the one in these details (bare words and times, triple quotes, the ending rule). Answer 7 recorded as my reading of the same statement; Jørgen can correct it. Check 5 (mock approval) stays his.
 crab 11:35Z: Jørgen 11:34Z (answer 9): questions inside an attached file are invisible to hug; they belong on the task. MOCK.md's 9: 1-2 answered (answers 7, 8: .sdo), 3, 4, 6-9 ruled by crab and now in Relevant details, 5 (keys) asked as its own question, plus one on the mark look. Rule for workers: never put open questions in an attachment; ask each on the task.
 file:frame-1-100x30.ans (4767 bytes, sha256:2d3a9252) frame 1 in colour: two open marks drawn calmly: goal sentence 2 and "Should, Can or Do" underlined, the ↳ mark lines (rows 13, 22, 23) dim grey #8795a8
+file:frame-2-100x30.ans (4704 bytes, sha256:c973dafb) frame 2 in colour: ' jumps to mark 1: > pointer on its ↳ line, which lifts to default colour; ↳ 2 and its answer stay dim; underlines as frame 1
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
