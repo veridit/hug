@@ -10,7 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "ready"
+stage: "design"
+design_question: "Do these three lines read right for the hug section of AGENTS.md?\n- The hug board is the record of work. Do not copy it into a harness todo list.\n- A reminder to finish is not a blocker. Mark a task waiting only with who must do what: hug task wait ID \"jhf: picks the column order\".\n- Put questions and discussion for a person on the task (hug task ask ID --to NAME, one question each), not only in chat."
+design_for: "jhf"
+design_since: "2026-11-19T10:00"
+design_asked_by: "crab"
 ---
 
 ## Goal
@@ -38,6 +42,13 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
   - The hug board is the record of work. Do not copy it into a harness todo list.
   - A reminder to finish is not a blocker. Mark a task waiting only with who must do what: hug task wait ID "jhf: picks the column order".
   - Put questions and discussion for a person on the task (hug task ask ID --to NAME, one question each), not only in chat.
+- 2026-11-19T10:02 question 2 by crab to jhf:
+  Redrafted to say what to do. Does this read right?
+  - The hug board is the record of work. Each task holds its details, status and dependencies; read the board to see what depends on what, what to pick up next, and how to resume after a break or a compaction.
+  - Your harness todo list organizes you around the board: what you are delegating, what to pick up again, which task to update, check or close next. Keep it to what you can act on now; the details stay in the tasks.
+  - When you coordinate several agents, use todos to stay focused on who is doing what, and follow their progress on their tasks.
+  - A task waits on someone named doing something: hug task wait ID "jhf: picks the column order".
+  - Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction.
 
 ## Notes
 
@@ -54,3 +65,4 @@ crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not 
 - 2026-11-19T10:02 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:02 answer 1 acknowledged by crab
 - 2026-11-19T10:02 crab read the answer: hug task note fd0j4p "crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not to do. The board is the record of work (…"
+- 2026-11-19T10:02 asked question 2 of jhf, 2 open (todo/ready -> todo/design)
