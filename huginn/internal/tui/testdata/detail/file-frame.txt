@@ -19,9 +19,9 @@ row two
                                                                                 
                                                                                 
                                                                                 
+                                                                                
+                                                                                
 ────────────────────────────────────────────────────────────────────────────────
-                                                                                
-                                                                                
 next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
 == notes.md at 80
 HUG · list › 000001 › compiler/000001/notes.md · 45 B · 6 of 7                  
@@ -44,9 +44,9 @@ A paragraph about the mock.
                                                                                 
                                                                                 
                                                                                 
+                                                                                
+                                                                                
 ────────────────────────────────────────────────────────────────────────────────
-                                                                                
-                                                                                
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == screen.ans at 140
 HUG · list › 000001 › compiler/000001/screen.ans · 80 B · 7 of 7                                                                            
@@ -69,9 +69,9 @@ row two
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
+                                                                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-                                                                                                                                            
-                                                                                                                                            
 next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    
 == notes.md at 140
 HUG · list › 000001 › compiler/000001/notes.md · 45 B · 6 of 7                                                                              
@@ -94,7 +94,7 @@ A paragraph about the mock.
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
+                                                                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-                                                                                                                                            
-                                                                                                                                            
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                     

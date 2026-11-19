@@ -175,10 +175,10 @@ func TestFileViewerFramesOnlyTheFile(t *testing.T) {
 			if trim(1) != want.note || lines[2] != rule || trim(3) != want.first {
 				t.Fatalf("at %d %s: top reads %q / %q / %q, want the note, a rule, then the file\n%s", w, want.name, trim(1), lines[2], trim(3), screen)
 			}
-			// Under the frame: the message line, the input line (a fix: or a
-			// prompt), the keys.
-			if lines[len(lines)-4] != rule {
-				t.Fatalf("at %d %s: no rule above the message line and keys:\n%s", w, want.name, screen)
+			// Under the frame: the keys, with no blank row between (yp3c09);
+			// a message or an input line would sit between when there is one.
+			if lines[len(lines)-2] != rule {
+				t.Fatalf("at %d %s: no rule right above the keys:\n%s", w, want.name, screen)
 			}
 			for _, gone := range []string{"[todo]", "created 2026", "⚠ line", "Feature task 01", "File · "} {
 				if strings.Contains(screen, gone) {

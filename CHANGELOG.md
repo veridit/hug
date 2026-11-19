@@ -6,6 +6,15 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The file view in `hug tui` fills to the keys (yp3c09, Jørgen 2026-11-19
+  11:30Z on p87ngv's before.md). Two empty rows sat between the file's
+  bottom rule and the key bar while the file went on below: the message
+  line and the input line, drawn blank under every file. Now a file, its
+  raw source (M) and a picture get those rows while nothing is in them;
+  a message ("first file: 1 of 3", an error) still gets its line above
+  the keys and the file gives that one row back while it shows.
+  Goldens at 100x30 and 160x45, in a real terminal too.
+
 ## v0.7.81 - 2026-11-19
 
 - After `v` in `hug tui`, the keys you can press next pulse instead of a

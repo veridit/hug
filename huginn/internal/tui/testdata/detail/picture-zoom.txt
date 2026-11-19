@@ -56,9 +56,9 @@ comparison sheet
                                                                                 
                                                                                 
                                                                                 
+                                                                                
 ────────────────────────────────────────────────────────────────────────────────
 zoom 200%: h/j/k/l scroll, 0 fits                                               
-                                                                                
 +/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file …    
 == picture, fitted at 100
 +/- zoom · open in Preview · next-, previous file · u/Esc files · ? help · quit
@@ -118,9 +118,9 @@ comparison sheet
                                                                                                     
                                                                                                     
                                                                                                     
+                                                                                                    
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 zoom 200%: h/j/k/l scroll, 0 fits                                                                   
-                                                                                                    
 +/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file · u/Esc files · ? help … 
 == picture, fitted at 140
 +/- zoom · open in Preview · next-, previous file · u/Esc files · ? help · quit
@@ -180,7 +180,7 @@ comparison sheet
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 zoom 200%: h/j/k/l scroll, 0 fits                                                                                                           
-                                                                                                                                            
 +/- zoom · h/j/k/l scroll · 0 fit · open in Preview · next-, previous file · u/Esc files · ? help · quit                                    

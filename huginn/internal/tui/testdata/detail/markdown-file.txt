@@ -27,9 +27,9 @@ Find the needle here, and another needle here.
                                                                                 
                                                                                 
                                                                                 
+                                                                                
+                                                                                
 ────────────────────────────────────────────────────────────────────────────────
-                                                                                
-                                                                                
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help
 == raw at 80
 HUG · list › 000001 › compiler/000001/bench/README.md · 274 B · 1 of 5          
@@ -60,9 +60,9 @@ Find the needle here, and another needle here.
                                                                                 
                                                                                 
                                                                                 
+                                                                                
+                                                                                
 ────────────────────────────────────────────────────────────────────────────────
-                                                                                
-                                                                                
 M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help  
 == formatted at 140
 HUG · list › 000001 › compiler/000001/bench/README.md · 274 B · 1 of 5                                                                      
@@ -93,9 +93,9 @@ Find the needle here, and another needle here.
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
+                                                                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-                                                                                                                                            
-                                                                                                                                            
 M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                     
 == raw at 140
 HUG · list › 000001 › compiler/000001/bench/README.md · 274 B · 1 of 5                                                                      
@@ -126,7 +126,7 @@ Find the needle here, and another needle here.
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
+                                                                                                                                            
+                                                                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-                                                                                                                                            
-                                                                                                                                            
 M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                       

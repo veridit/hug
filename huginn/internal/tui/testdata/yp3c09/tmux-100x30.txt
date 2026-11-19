@@ -1,0 +1,127 @@
+== markdown
+HUG · repo · list › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                       ? 1 for you
+────────────────────────────────────────────────────────────────────────────────────────────────────
+
+--------
+
+id: w7tq3k
+title: "Lint warns when an acceptance check reads like a question"
+state: "doing"
+type: feature
+priority: "medium"
+assignee: ["daisy"]
+labels: []
+group: ""
+rank: "zzzzzzzzzzzm"
+created: 2026-11-19
+updated: 2026-11-19
+doing_since: "2026-11-19T09:20"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
+
+Goal
+
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and
+nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,
+which in practice happens late or never. .Request .by:jhf .at:2026-11-19T09:40Z .prev:.Sentence
+.msg:"Make it concise: say the harm in a few words." The finding names the check, and its fix:
+────────────────────────────────────────────────────────────────────────────────────────────────────
+j/k scroll · M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit
+
+== source
+HUG · repo · list › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                       ? 1 for you
+────────────────────────────────────────────────────────────────────────────────────────────────────
+---
+id: w7tq3k
+title: "Lint warns when an acceptance check reads like a question"
+state: "doing"
+type: feature
+priority: "medium"
+assignee: ["daisy"]
+labels: []
+group: ""
+rank: "zzzzzzzzzzzm"
+created: 2026-11-19
+updated: 2026-11-19
+doing_since: "2026-11-19T09:20"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
+---
+
+## Goal
+hug task lint flags an acceptance check that is really a question to a person. Today a check like
+'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and nobody
+is asked, so the question waits for someone to notice it and turn it into a hug task ask, which in
+practice happens late or never. .Request .by:jhf .at:2026-11-19T09:40Z .prev:.Sentence .msg:"Make it
+concise: say the harm in a few words." The finding names the check, and its fix: line runs hug task
+ask with the check's text.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+j/k scroll · M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit
+
+== text
+HUG · repo · list › p87ngv › p/p87ngv/long.txt · 1.1 KiB · 2 of 3                        ? 1 for you
+────────────────────────────────────────────────────────────────────────────────────────────────────
+line 1 of 80
+line 2 of 80
+line 3 of 80
+line 4 of 80
+line 5 of 80
+line 6 of 80
+line 7 of 80
+line 8 of 80
+line 9 of 80
+line 10 of 80
+line 11 of 80
+line 12 of 80
+line 13 of 80
+line 14 of 80
+line 15 of 80
+line 16 of 80
+line 17 of 80
+line 18 of 80
+line 19 of 80
+line 20 of 80
+line 21 of 80
+line 22 of 80
+line 23 of 80
+line 24 of 80
+line 25 of 80
+line 26 of 80
+────────────────────────────────────────────────────────────────────────────────────────────────────
+j/k scroll · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        hug dev
+
+== picture
+HUG · repo · list › p87ngv › p/p87ngv/shot.png · 67 B · 3 of 3                           ? 1 for you
+────────────────────────────────────────────────────────────────────────────────────────────────────
+image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+open in Preview · next-, previous file · u/Esc files · ? help · quit                         hug dev

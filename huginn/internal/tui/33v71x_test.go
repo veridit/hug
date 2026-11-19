@@ -174,8 +174,11 @@ func TestPictureZoomAndScrollKeys(t *testing.T) {
 		t.Fatalf("- at fit: zoom %d, %q", got.picZoom, got.message)
 	}
 	z := press(m, "+", "+")
+	// The crop is centred in the rows it is drawn in: the zoom's message
+	// takes one of the frame's rows (yp3c09).
+	rows = z.viewport.Height
 	want := picCrop(400, 200, 100, rows, 2, 200-picCrop(400, 200, 100, rows, 2, 0, 0).w/2, 0)
-	if v := z.picView(); z.picZoom != 2 || v.w != want.w || v.x != (400-v.w)/2 || v.y != (200-v.h)/2 {
+	if v := z.picView(); z.picZoom != 2 || v.w != want.w || v.x+v.w/2 != 200 || v.y+v.h/2 != 100 {
 		t.Fatalf("+ + : zoom %d view %+v, want centred %dx%d", z.picZoom, v, want.w, want.h)
 	}
 	if crumb := ansi.Strip(strings.Split(z.View(), "\n")[0]); !strings.Contains(crumb, "zoom 200%") {
@@ -211,7 +214,9 @@ func TestPictureZoomAndScrollKeys(t *testing.T) {
 	if back := press(z, "-"); back.picZoom != 1 {
 		t.Fatalf("- from 200%%: zoom %d", back.picZoom)
 	}
-	if fit := press(edge, "0"); fit.picZoom != 0 || fit.picView() != m.picView() {
+	// 0 fits the whole picture again, in the rows left beside its message
+	// (yp3c09: the message takes a row).
+	if fit := press(edge, "0"); fit.picZoom != 0 || fit.picView() != picCrop(400, 200, 100, fit.viewport.Height, 0, 0, 0) || fit.picView().w != 400 || fit.picView().h != 200 {
 		t.Fatalf("0: zoom %d view %+v", fit.picZoom, fit.picView())
 	}
 	if eq := press(m, "="); eq.picZoom != 1 {
