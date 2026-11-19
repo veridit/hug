@@ -33,12 +33,13 @@ muninn/internal/app/capture.go:285: if len(line) > chunkLimit, return 'capture m
 
 ## Acceptance
 - [x] a session with a 20,000-byte message is captured on the next hook: turns after it produce memories and the high-water mark moves past it (test)
-- [ ] the long message's text reaches the extractor in parts, each under the limit, with nothing dropped (test)
+- [x] the long message's text reaches the extractor in parts, each under the limit, with nothing dropped (test)
 - [ ] on the live store, crab_1793783281662's capture_runs show a successful run after the fix ships (count in a note)
 
 ## Notes
 
 
 check 1: TestCaptureLongMessageIsSplitNotRefused (f56abe6a) fails on main fac02994 for 20000 bytes turn_end, 3x8192 session_end, 60000 manual: 'capture message exceeds 8192 bytes, refusing silent loss'; passes with fix 14d51bc1: before/long/after all in capture_seen, a second run replays nothing
+check 2: same test: every call's transcript <= limit, the assistant parts rebuild the exact original text, the after-turn reaches the extractor in order; capture_runs holds >= ceil(size/limit) parts with original_id=long and report.split=1. 4 mutants fail it: size -2 (one byte over), fragment on hooks only, no Split, Split counts parts. go test ./muninn/internal/app ok 20.482s; go vet ./muninn/... clean
 ## History
 - 2026-11-19T02:30 todo -> doing/active (take)
