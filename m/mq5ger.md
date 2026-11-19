@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzk"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T22:22"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "kikazaru/watchflake"
 worktree: "/Users/jhf/.jcode/scratch/watchflake"
+waiting_on: "crab: check 4 on stack CI of 6bf6a928"
+waiting_since: "2026-11-19T01:24"
+waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -49,3 +52,4 @@ check 3: 0 double-close failures; the 4 remaining are adqdfe. Final starve on 7f
 CI 44426076160 on 02151406 (ci/watchflake): success 8/8 (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest, shards); ubuntu 'ok  github.com/veridit/hug/internal/fsnotify 1.942s' (was TestUpstreamDiff FAIL on 44417801741). Check 4's local non-short tui suite is still open (kikazaru's run was killed at 561 s by the tool cap).
 ## History
 - 2026-11-18T22:22 todo -> doing/active (take)
+- 2026-11-19T01:24 doing/active -> doing/waiting (wait)
