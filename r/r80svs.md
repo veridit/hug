@@ -35,7 +35,7 @@ Rest, list view: v o l b ! bold and coloured by step; 'list' underlined as a who
 - [x] At rest the active view's whole word is underlined, no other word is, and keys are bold with no underline (golden 100x30 and 160x45)
 - [x] After v, v has a steady underline and no fill, o l b ! underlines blink together on vCursor ticks, the active word's other letters keep a steady underline (test with two frames 0.53 s apart)
 - [x] Colour: v in the accent, o l b ! in violet, in every state; NO_COLOR shows the same bold and underlines (golden)
-- [ ] Jørgen looks at the line in hug tui after the release and can tell the active view and what v offers
+- [ ] ~~Jørgen looks at the line in hug tui after the release and can tell the active view and what v offers~~ (not relevant: moved to its release ticket (v0.7.82) as an ask, per 75mxf3 trial, crab, 2026-11-19)
 
 ## Notes
 
