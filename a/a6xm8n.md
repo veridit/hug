@@ -43,5 +43,8 @@ crab 04:55Z, second instance: capture_runs 8468 (04:39:46Z) processed 855 msgs, 
 cactus: fail-first c1832e85, fix c2b0bbe5 on 1a49540d; pushed a6xm8n and ci/a6xm8n, CI run 44464516250. plan_ms (~112-116 s) is inside the run budget (RunTimeout = 4 x 45 s = 180 s; extract 48-52 s + plan 112-116 s + apply 12 s = 176 s in 8467/8468); it is summed per-candidate capturePlan (memoryMatches) and per-chunk search. The gate now measures the per-chunk search (slowSearch) and per-chunk planning+save (slowAfter) and needs both before a chunk.
 check 1: TestCaptureHookDefersWhenBudgetCannotCoverCall (muninn/internal/app/capture_budget_test.go): 5 s extractor, 4 s hook deadline: skipped 'remaining messages deferred to next hook (budget)', err nil, 0 calls started, audit error empty; on 1a49540d it failed with 'extraction timeout or cancellation: context deadline exceeded' after 5.05 s (fail-first c1832e85). Mid-body cut: TestCaptureBudgetCutMidBodyIsTimeoutNotParse + extract TestDeadlineMidBodyIsTimeout give class timeout (was parse). Fix c2b0bbe5; CI run 44464516250 success on ubuntu, macos, windows, bench, windows-cli.
 crab: reviewed and landed exact SHA c2b0bbe5 (CI 44464516250 success 8/8; main had not moved) as main; released in v0.7.77. Check 2 counts deadline errors on turn_end hooks for a day after release.
+landed c1832e8 on main 2026-11-19: muninn capture: failing tests for a hook call the budget cannot cover and a…
+landed c2b0bbe on main 2026-11-19: muninn capture: a hook starts a call only when the time left covers it; a…
+shipped in v0.7.77 (c1832e8)
 ## History
 - 2026-11-19T05:55 todo -> doing/active (take)
