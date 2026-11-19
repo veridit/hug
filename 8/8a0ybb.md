@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
+design_question: "Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?"
+design_for: "jhf"
+design_since: "2026-11-19T12:24"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -33,4 +38,12 @@ Code: huginn/internal/tui/detail.go (sections around 530-600 and 819-830, marked
 - [ ] Details, Files, Notes and History are folded to one line until opened; Purpose, Principle, Goal, Acceptance show in that order (golden 100x30 and 160x45)
 - [ ] Jørgen opens an asked task in hug tui and reaches the thing he is asked about in one key
 
+## Questions
+- 2026-11-19T12:24 question 1 by crab to jhf:
+  Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?
+
 ## Notes
+
+
+## History
+- 2026-11-19T12:24 todo -> todo/design (ask)
