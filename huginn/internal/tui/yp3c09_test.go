@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
@@ -26,6 +27,8 @@ func fileViewBoard(t *testing.T, w, h int, env map[string]string) model {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// The file as on hug's board, LF, whatever git checked out (Windows: CRLF).
+	before = bytes.ReplaceAll(before, []byte("\r\n"), []byte("\n"))
 	long := ""
 	for i := 1; i <= 80; i++ {
 		long += fmt.Sprintf("line %d of 80\n", i)

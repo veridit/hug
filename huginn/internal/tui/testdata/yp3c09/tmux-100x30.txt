@@ -124,4 +124,4 @@ image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it
 
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────
-open in Preview · next-, previous file · u/Esc files · ? help · quit                         hug dev
+(the picture's keys, naming the system viewer)
