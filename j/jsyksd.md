@@ -39,5 +39,6 @@ Fix: cli.go:1257 time.Now() -> task.Now(); the test sets task.Now to a fixed 23:
 ## Notes
 
 
+Fail first (/Users/jhf/.jcode/scratch/jsyksd-failfirst.txt), clock pinned at 2026-01-31 23:59:59.9 before the fix: '--- FAIL: TestDoneWithoutAnswerIsCounted (1.06s) reflect_test.go:157: plain done: ... Reflection (unanswered, 2026-11-19, rabbit)'; also TestDoneReflectAndReflections (reflect_test.go:38), TestLifecycleJSONContract (cli_test.go:100), TestStrikeThroughCLI (strike_test.go:21), TestStrikeOutCheck (task strike_test.go:32). After (jsyksd-after.txt): all 5 '--- PASS'. Grep of time.Now() in cli and task *_test.go: the 5 date comparisons (reflect_test.go:38,154, strike_test.go:21, cli_test.go:100, task/strike_test.go:26) all now read the pinned clock; the rest are durations/mtimes (sync_test, setupbacklog_test, scale_test, deliver_test, bench_scale_test), not dates. Not changed: Store.New's created/updated still use time.Now (no test compares them; moving them would shift TUI fixtures).
 ## History
 - 2026-11-19T01:26 todo -> doing/active (take)
