@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.79 - 2026-11-19
+
 - hug mem: search matches query words against concepts in one read instead
   of one full-table `LIKE` scan per word, and looks up a repeated word once
   (b5jks7). Capture planning spent most of a hook's time there: replaying
