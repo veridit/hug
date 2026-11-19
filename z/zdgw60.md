@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzw"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T01:16"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "zdgw60"
 worktree: "/Users/jhf/.jcode/scratch/zdgw60"
+waiting_asked_by: "piglet"
+waiting_on: "crab lands ci/zdgw60-rebased e75e1593 (on main bf170d46, CI running); then tick checks 1-3 with the main SHA"
+waiting_since: "2026-11-19T01:40"
 ---
 
 ## Goal
@@ -43,3 +46,4 @@ Branch zdgw60 / ci/zdgw60 at 1ca07644 on main 6bf6a928; tests-first c777466f fai
 CI 44429491626 (1ca07644) success on all 8 jobs: secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards. Checks stay open until it lands (ticks with the main SHA).
 ## History
 - 2026-11-19T01:16 todo -> doing/active (take)
+- 2026-11-19T01:40 doing/active -> doing/waiting (wait)
