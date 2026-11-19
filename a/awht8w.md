@@ -46,6 +46,7 @@ check 2: Fail first on clean c186f78f with every git started 7 s late (git on PA
 Ready: awht8w = ci/awht8w at d487f583 on main 6bf6a928; CI 44429609615 completed success 8/8. Report: ~/.jcode/scratch/awht8w-REPORT.md. Earlier CI 44428150586 on 251fd2f0 (c186f78f base) failed only TestTmuxGolden palette drift (ubuntu), not in this diff; gone after rebase.
 landed b3b1867 on main 2026-11-19: cli tests: wait on the coordinator's hook, not a 20 s clock (awht8w)
 shipped in v0.7.74 (b3b1867)
+Reflection (open, 2026-11-19, iwazaru): The 20 s wait looked like a delivery bug; tracing the hook phase by phase showed it was only slow, and a git that starts late reproduced it deterministically.
 ## History
 - 2026-11-18T22:20 todo -> doing/active (take)
 - 2026-11-19T01:42 doing/active -> doing/waiting (wait)
