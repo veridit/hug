@@ -10,11 +10,15 @@ group: ""
 rank: "zzzzzzzzzzzk"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
+stage: "asked"
 doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "Keys in the detail view: m enters mark mode, ' and \" jump to the next and previous mark, c ? r add a comment, question or request, R resolves. m is grab in the list view; is that clash fine, since the detail is a different screen?"
+asked_for: "jhf"
+asked_since: "2026-11-19T12:34"
+asked_by: "crab"
 ---
 
 ## Goal
@@ -78,6 +82,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
   Seid-Data-Files.md calls the self-describing tier without a schema Open (.sdo, suffix TBD) and keeps .sdd for Closed data with declared types. history.sdd is Open data. Keep the name history.sdd, or use another suffix?
   answered 2026-11-19T12:07 by jhf:
     (console 11:07Z) Use a custom variant: the Open data format, .sdo, which hug defines itself, not .sdd. Jørgen needs to finish that part of Seid.
+- 2026-11-19T12:34 question 9 by crab to jhf:
+  Keys in the detail view: m enters mark mode, ' and " jump to the next and previous mark, c ? r add a comment, question or request, R resolves. m is grab in the list view; is that clash fine, since the detail is a different screen?
 
 ## Requests
 - 2026-11-19T10:05 request 1 by jhf:
@@ -185,3 +191,4 @@ crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Op
 - 2026-11-19T12:34 answer 9 acknowledged by crab
 - 2026-11-19T12:34 answer 7 in progress by crab: hug task set p87ngv
 - 2026-11-19T12:34 answer 9 in progress by crab: hug task set p87ngv
+- 2026-11-19T12:34 doing/active -> doing/asked (ask)
