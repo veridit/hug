@@ -76,6 +76,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
   Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached.
 - 2026-11-19T11:29 question 7 by crab to jhf:
   Seid today rejects bare names and times (.by:jhf is 'Unknown variable: jhf', .at:2026-11-19T09:40Z is 'unexpected token: :'), and even the Open-tier .Dog example from Seid-Data-Files.md. Keep the bare forms in marks and history.sdd and treat that as a request to Seid for word and time literals, or quote them (.by:"jhf")?
+  answered 2026-11-19T12:07 by jhf:
+    (console 11:07Z, crab's reading) Covered by the same answer: hug defines its own .sdo variant, so bare names and times are hug's rule in that variant until Seid's Open tier settles them.
 - 2026-11-19T11:29 question 8 by crab to jhf:
   Seid-Data-Files.md calls the self-describing tier without a schema Open (.sdo, suffix TBD) and keeps .sdd for Closed data with declared types. history.sdd is Open data. Keep the name history.sdd, or use another suffix?
   answered 2026-11-19T12:07 by jhf:
@@ -171,3 +173,6 @@ crab 10:31Z, review of daisy's mock (files attached, sha in her notes): before.m
   > Seid-Data-Files.md calls the self-describing tier without a schema Open (.sdo, suffix TBD) and keeps .sdd for Closed data with declared types. history.sdd is Open data. Keep the name history.sdd, or use another suffix?
   (console 11:07Z) Use a custom variant: the Open data format, .sdo, which hug defines itself, not .sdd. Jørgen needs to finish that part of Seid.
 - 2026-11-19T12:07 answer 7 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-19T12:07 answered asked (question 7), by jhf, for crab (doing/asked -> doing/asked):
+  > Seid today rejects bare names and times (.by:jhf is 'Unknown variable: jhf', .at:2026-11-19T09:40Z is 'unexpected token: :'), and even the Open-tier .Dog example from Seid-Data-Files.md. Keep the bare forms in marks and history.sdd and treat that as a request to Seid for word and time literals, or quote them (.by:"jhf")?
+  (console 11:07Z, crab's reading) Covered by the same answer: hug defines its own .sdo variant, so bare names and times are hug's rule in that variant until Seid's Open tier settles them.
