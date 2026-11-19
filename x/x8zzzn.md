@@ -32,7 +32,7 @@ Step 1 (evidence, no code): from capture/hook logs and injections, count for the
 ## Depends on
 
 ## Acceptance
-- [ ] Step 1 counts in a note: recall blocks parked vs delivered vs dropped per turn for 3 days, and whether mid-turn pasted messages get recall
+- [x] Step 1 counts in a note: recall blocks parked vs delivered vs dropped per turn for 3 days, and whether mid-turn pasted messages get recall
 - [ ] Prototype behind a config switch delivers the block into the dialogue on jcode in the same turn, idle sessions never woken for a memory alone (test)
 - [ ] Per-harness table of push availability in a note, with sources
 - [ ] Jørgen runs with the switch on for a day and decides whether it replaces the old path
@@ -40,5 +40,6 @@ Step 1 (evidence, no code): from capture/hook logs and injections, count for the
 ## Notes
 
 
+check 1: Step 1 in /Users/jhf/.jcode/scratch/x8zzzn/STEP1.md: since park went live 2026-11-18T03:53Z, 543 parked, 504 delivered, 18 dropped at turn_end (no tool), 13 dropped stale, 8 unresolved; mid-turn soft interrupts never run turn_start recall (jcode 446302f1b fires it only at turn_execution.rs:66/215/240; park era 103 of 104 mid-turn soft interrupts and 19 of 19 point-B ones have no recall line)
 ## History
 - 2026-11-19T15:02 todo -> doing/active (take)
