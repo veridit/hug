@@ -47,6 +47,7 @@ func TestOldAnswerLeavesEveryQuestionAnswerable(t *testing.T) {
 			golden = append(golden, "== typing under question 2", ansi.Strip(m.View()))
 			m = press(m, "enter")
 			b, _ := os.ReadFile(filepath.Join(m.store.Root, "p", "p87ngv.md"))
+			b = []byte(strings.ReplaceAll(string(b), "\r\n", "\n")) // a Windows checkout of the fixture
 			tk = mustSelected(t, m)
 			if open := task.OpenQuestions(tk); len(open) != 2 || open[0].N != 1 || open[1].N != 3 || !strings.Contains(string(b), "  Who may resolve a thread: only the person who opened it, or also the agent once it has acted on it?\n  answered 2026-11-19T10:06 by jhf:\n    both may resolve\n") {
 				t.Fatalf("question 2 not answered (message %q):\n%s", m.message, b)
