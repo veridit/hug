@@ -1,15 +1,20 @@
 ---
 id: qccpka
 title: "Captures land in personal scope while extract.wide_places is off"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T02:37"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Sessions (origin capture:jcode:...): hatchling_1794905151586 5 (05:48-05:50Z), n
 - [ ] with wide_places off, a capture whose extractor says personal or other lands in here, never personal (test that fails on today's main if the path is real)
 
 ## Notes
+
+
+## History
+- 2026-11-19T02:37 todo -> doing/active (take)
