@@ -33,7 +33,7 @@ plan_ms = per-chunk Searcher.Search + capturePlan per candidate (muninn/internal
 
 ## Acceptance
 - [x] a note splits plan_ms of a real hook run into search time and per-candidate plan time, with counts
-- [ ] after a change, plan_ms per applied action on live turn_end hooks falls, with before/after medians over at least 20 runs each
+- [ ] ~~after a change, plan_ms per applied action on live turn_end hooks falls, with before/after medians over at least 20 runs each~~ (not relevant: unattainable as written: the before window (v0.7.77/78, 05:37:40Z-07:29:19Z) closed with 7 runs < 20; after n=22. Indicative only: plan_ms/action median 1419 -> 834. Check 1's replay measurement stands, crab, 2026-11-19)
 
 ## Notes
 
