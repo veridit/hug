@@ -57,6 +57,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
     (from jhf's request 2, 09:06Z) Marks can anchor to anything in the ticket's markdown, and also to pieces of attachments, by a pointer such as 'in attachment NAME, line N' or 'section S'. The dialogue stays out of the ticket, possibly one history per thing discussed.
 - 2026-11-19T10:05 question 4 by crab to jhf:
   Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?
+  answered 2026-11-19T10:32 by jhf:
+    (from jhf's request 3, 09:09Z, and the console 09:11-09:31Z) Seid syntax, not CriticMarkup: a mark is a thing with its properties, .Request .by:jhf .msg:"Can you ...", not bare properties inline.
 - 2026-11-19T10:05 question 5 by crab to jhf:
   History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated entry quoting the original text, the exchange and the change made. Is that the right name and shape?
 
@@ -111,3 +113,6 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:09 request 3 by jhf
 - 2026-11-19T10:09 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:09 request 3 acknowledged by crab
+- 2026-11-19T10:32 answered design (question 4), by jhf, for crab (todo/design -> todo/design):
+  > Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request: shorten<<}? Or do you want a hug-specific sigil?
+  (from jhf's request 3, 09:09Z, and the console 09:11-09:31Z) Seid syntax, not CriticMarkup: a mark is a thing with its properties, .Request .by:jhf .msg:"Can you ...", not bare properties inline.
