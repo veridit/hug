@@ -1,15 +1,20 @@
 ---
 id: zdgw60
 title: "A set that wrote says what it wrote, before lint advice"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["piglet"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T01:16"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "zdgw60"
+worktree: "/Users/jhf/.jcode/scratch/zdgw60"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Triage: /Users/jhf/.jcode/scratch/reflections-triage.md G1. Related reflections 
 - [ ] MCP task_update set's reply says the same (test)
 
 ## Notes
+
+
+## History
+- 2026-11-19T01:16 todo -> doing/active (take)
