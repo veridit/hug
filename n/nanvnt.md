@@ -32,7 +32,7 @@ huginn/internal/cli/askquestions.go questionText renders q.Answer and has no q.W
 ## Depends on
 
 ## Acceptance
-- [ ] hug task show prints a withdrawn question with 'withdrawn <at> (<why>)' and no reading as open (test, failing first)
+- [x] hug task show prints a withdrawn question with 'withdrawn <at> (<why>)' and no reading as open (test, failing first)
 - [ ] the TUI detail draws a withdrawn question dim, head and text, with 'withdrawn <at>' (test or golden, failing first)
 - [ ] ASKED neither lists nor counts a withdrawn question, also when the task holds a second open one (test)
 
@@ -43,5 +43,6 @@ Branch nanvnt / ci/nanvnt at 0d494b92 on main 356fb240 (tests cedc3248 failed fi
 landed e8eca02 on main 2026-11-19: test: a withdrawn question reads as withdrawn (nanvnt, failing)
 landed f17745a on main 2026-11-19: hug task show and the TUI mark a withdrawn question (nanvnt)
 shipped in v0.7.73 (e8eca02)
+check 1: Shipped in v0.7.73 (f17745ad on main; tests-first e8eca029). TestShowMarksWithdrawnQuestion failed first ('question 1 is withdrawn but show does not say so'), passes after; show prints '  withdrawn <at> (<why>)'. CI 44420635338 success on all 8 jobs (0d494b92, same tree).
 ## History
 - 2026-11-18T23:34 todo -> doing/active (take)
