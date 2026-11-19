@@ -42,5 +42,6 @@ check 1: release.yml 44501832424 success; brew upgrade: hug version 0.7.80, link
 check 1: release.yml 44501832424 success; brew upgrade: hug version v0.7.80, hug/muninn/huginn link into Cellar/hug/0.7.80
 
 
+check 1: release.yml 44501832424 success; brew upgrade: hug version v0.7.80, hug/muninn/huginn link into Cellar/hug/0.7.80
 ## History
 - 2026-11-19T11:10 todo -> doing/active (take with p277bp)
