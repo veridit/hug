@@ -1,15 +1,20 @@
 ---
 id: z9tn3v
 title: "Release v0.7.75"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T03:01"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ main fbe3a412 CI 44438198799 success 8/8. CHANGELOG commit 4591627d (restored th
 - [ ] hug version prints v0.7.75 after brew upgrade
 
 ## Notes
+
+
+## History
+- 2026-11-19T03:01 todo -> doing/active (take)
