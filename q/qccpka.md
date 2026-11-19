@@ -1,7 +1,7 @@
 ---
 id: qccpka
 title: "Captures land in personal scope while extract.wide_places is off"
-state: "doing"
+state: "dropped"
 type: feature
 priority: ""
 assignee: ["piglet"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T02:37"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab: trace reported; undo of 9 moves and drop/reword of qccpka are his call"
-waiting_since: "2026-11-19T02:40"
-waiting_asked_by: "piglet"
+dropped_reason: "not a defect: the scope came from q0a8rx ruling B, correct under hpqt99 1B; trace in scratch/qccpka-TRACE.md; side finding filed as j13xs0"
+dropped_at: "2026-11-19T02:41"
 ---
 
 ## Goal
@@ -47,3 +44,4 @@ crab 01:41Z: ruled. Not a bug: the 15 reached personal by q0a8rx ruling B (batch
 ## History
 - 2026-11-19T02:37 todo -> doing/active (take)
 - 2026-11-19T02:40 doing/active -> doing/waiting (wait)
+- 2026-11-19T02:41 doing/waiting -> dropped (drop); was doing_since: 2026-11-19T02:37; waiting_asked_by: piglet; waiting_on: crab: trace reported; undo of 9 moves and drop/reword of qccpka are his call; waiting_since: 2026-11-19T02:40
