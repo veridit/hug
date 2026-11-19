@@ -42,6 +42,7 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
 ## Notes
 
 
+crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not to do. The board is the record of work (details, status, dependencies in the tasks); the harness todo list is for organizing yourself around it: delegating, picking up again, updating and closing tickets, coordinating agents. Keep todos to what you can act on now. Redrafted as question 2.
 ## History
 - 2026-11-19T10:00 todo -> todo/design (ask)
 - 2026-11-19T10:02 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -52,3 +53,4 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
   No, this doesn't read right at all. This it tells you what not to do. It should rather be a general, the hugboard is the record of work. Your harness to-do list is to organize yourself in managing this work, delegating it, picking it up again, checking the updating the status of the ticket, closing it, and so forth. The dependencies between the tickets are in the tickets themselves. So you should not have more to-dos than what you can actually do where all the details are in the tasks and using the task system to figure out what depends on what, how to resolve it, to pick up speed again and everything. But use your to-dos to stay focused when you're delegating and having multiple agents working on things, coordinating things
 - 2026-11-19T10:02 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:02 answer 1 acknowledged by crab
+- 2026-11-19T10:02 crab read the answer: hug task note fd0j4p "crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not to do. The board is the record of work (…"
