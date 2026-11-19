@@ -33,10 +33,11 @@ main 6a61e78a (CI 44507463246 8/8), CHANGELOG 3358d5b9, merge 8889481d, release.
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml green and brew upgrade gives hug version 0.7.81 with links into the new Cellar
+- [x] release.yml green and brew upgrade gives hug version 0.7.81 with links into the new Cellar
 
 ## Notes
 
 
+check 1: release.yml 44509048005 success; brew upgrade: hug v0.7.81, hug/muninn/huginn -> Cellar/hug/0.7.81
 ## History
 - 2026-11-19T11:54 todo -> doing/active (take with p277bp)
