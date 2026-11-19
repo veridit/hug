@@ -38,7 +38,7 @@ Test: huginn/internal/tui/taskdirs_test.go:83 (np2kk2 check 2). The CI failure i
 - [x] a test or harness shows the failure first under forced starvation on origin/main, with the verbatim failure line
 - [x] the cause is named with file:line evidence
 - [x] the fix passes the same starvation run 0 failures in N runs, with no timeout raised, no retry and no skip
-- [ ] full tui suite green locally (non-short) and CI green
+- [x] full tui suite green locally (non-short) and CI green
 
 ## Notes
 
@@ -55,6 +55,7 @@ landed 0558a34 on main 2026-11-19: fsnotify kqueue: Close waits for the reader t
 landed c09d5eb on main 2026-11-19: internal/fsnotify: remove's inner call no longer re-takes opMu; reproducible…
 landed 6bf6a92 on main 2026-11-19: internal/fsnotify: TestUpstreamDiff compares code, not diff's hunk layout…
 shipped in v0.7.74 (e0c211b)
+check 4: CI 44432047573 on a592a117 (main, v0.7.74, includes mq5ger) success: the non-short go test ./... on ubuntu (-race), macOS and Windows covers the full tui suite. No local full-suite run: load 500-800, and the load rules forbid full-module local runs.
 ## History
 - 2026-11-18T22:22 todo -> doing/active (take)
 - 2026-11-19T01:24 doing/active -> doing/waiting (wait)
