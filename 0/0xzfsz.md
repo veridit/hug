@@ -34,11 +34,12 @@ main e98a12ac CI 44456503911 success 8/8.
 
 ## Acceptance
 - [x] release.yml for v0.7.76 succeeds (run id)
-- [ ] hug version prints v0.7.76 after brew upgrade
+- [x] hug version prints v0.7.76 after brew upgrade
 
 ## Notes
 
 
 check 1: release.yml 44457808705 completed success
+check 2: brew upgrade run on its own; hug version prints hug v0.7.76; bin links point at Cellar/hug/0.7.76
 ## History
 - 2026-11-19T05:29 todo -> doing/active (take with p277bp)
