@@ -34,7 +34,7 @@ Prefixes (jcode at /Users/jhf/Projects/jcode 28ac5e603, 2026-11-04) with verbati
 ## Depends on
 
 ## Acceptance
-- [ ] harnessNotices lists exactly the cited prefixes; a unit test per prefix (the jcode string with a sample payload is skipped as 'harness notice') and near-miss tests that still recall: '[image 1] what is this?', '[transcription] the screenshot looks wrong', '[Older screenshot] see above'
+- [x] harnessNotices lists exactly the cited prefixes; a unit test per prefix (the jcode string with a sample payload is skipped as 'harness notice') and near-miss tests that still recall: '[image 1] what is this?', '[transcription] the screenshot looks wrong', '[Older screenshot] see above'
 - [ ] recall4/build_fresh.py NOTICE filter includes the same prefixes (later fresh sets exclude them); ta306h's set unchanged
 - [ ] PREREG with sha in a note before any paid call; new fresh set built after the rule is written (messages after the rule's commit, deduped by text against earlier sets, >= 8 sessions); shipped vs rule: irr/msg drops (upper 95% CI < 0) and rel/msg does not drop (CI includes 0), blind judge, 0 paid calls beyond the judge
 
