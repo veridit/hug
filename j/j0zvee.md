@@ -46,6 +46,7 @@ Ready: j0zvee = ci/j0zvee at f132d053 on main 50fa8681 (failing tests 763979f2).
 landed c05a812 on main 2026-11-19: task, cli: failing tests, the same release close in two minutes merges into two…
 landed 38f0eda on main 2026-11-19: task: one release close on two clones merges into one History line (j0zvee)
 shipped in v0.7.75 (c05a812)
+crab: landed on main as 38f0eda2 (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75.
 ## History
 - 2026-11-19T02:06 todo -> doing/active (take)
 - 2026-11-19T03:00 doing/active -> done (done, by release v0.7.75: every check holds); was doing_since: 2026-11-19T02:06
