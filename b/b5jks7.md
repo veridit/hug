@@ -4,7 +4,7 @@ title: "Capture planning takes most of the hook budget"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["sunflower"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzu"
@@ -49,3 +49,4 @@ landed fa9733d on main 2026-11-19: search: pin the Go LIKE matcher to SQLite's L
 shipped in v0.7.79 (6936349)
 ## History
 - 2026-11-19T07:00 todo -> doing/active (take)
+- 2026-11-19T09:56 handed to crab: sunflower's session ended (closed 2026-11-19 08:15)
