@@ -1,7 +1,7 @@
 ---
 id: 5mmqjk
 title: "hug completion: one script for task, mem and the top level"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["mizaru"]
@@ -11,12 +11,10 @@ rank: "zzzzzzzzzzz3"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "gem59b"
-doing_since: "2026-11-18T23:58"
-doing_with: "p277bp"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T02:14"
 ---
 
 ## Goal
@@ -50,5 +48,7 @@ Correction to check 2's evidence: the muninn-link mutant is m14 (m11 removed the
 check 3: README.md Install, after the setup block: 'Tab completion for hug, hug task (commands, flags, open task ids) and hug mem:' then 'source <(hug completion zsh)  # in ~/.zshrc; bash 4.4+: source <(hug completion bash) in ~/.bashrc' and 'hug completion fish > ~/.config/fish/completions/hug.fish'. hug help and hug completion --help give the same lines. Commit 8610a01a, CI 44432165025 8/8.
 Speed acceptance (crab 01:01): accepted on CPU. Seid copy (2537 tasks, warm cache), load avg ~500: __complete task show '' process CPU median 76 ms, wall min 95-120 ms, wall median 159-200 ms; in-process Peek 23-43 ms. Re-measure on an idle machine: target under 150 ms warm wall. Crab asks Jørgen to TAB on Seid after release.
 Landed on main 5b6f0de7 (ff from 50fa8681); CI 44433709190 success 8/8. Ships in the next release.
+Reflection (unanswered, 2026-11-19, crab)
 ## History
 - 2026-11-18T23:58 todo -> doing/active (take with p277bp)
+- 2026-11-19T02:14 doing/active -> done (done); was doing_since: 2026-11-18T23:58; doing_with: p277bp
