@@ -34,7 +34,7 @@ Fix: cli.go:1257 time.Now() -> task.Now(); the test sets task.Now to a fixed 23:
 ## Acceptance
 - [x] under a fake task.Now of 2026-01-31 23:59:59 the test fails before the fix (note dated the wall clock) and passes after (test, failing first)
 - [x] every reflection test that compares a date reads it from the pinned clock; grep shows no time.Now() date in reflect_test.go
-- [ ] CI green on all jobs with the fix
+- [x] CI green on all jobs with the fix
 
 ## Notes
 
@@ -42,5 +42,6 @@ Fix: cli.go:1257 time.Now() -> task.Now(); the test sets task.Now to a fixed 23:
 Fail first (/Users/jhf/.jcode/scratch/jsyksd-failfirst.txt), clock pinned at 2026-01-31 23:59:59.9 before the fix: '--- FAIL: TestDoneWithoutAnswerIsCounted (1.06s) reflect_test.go:157: plain done: ... Reflection (unanswered, 2026-11-19, rabbit)'; also TestDoneReflectAndReflections (reflect_test.go:38), TestLifecycleJSONContract (cli_test.go:100), TestStrikeThroughCLI (strike_test.go:21), TestStrikeOutCheck (task strike_test.go:32). After (jsyksd-after.txt): all 5 '--- PASS'. Grep of time.Now() in cli and task *_test.go: the 5 date comparisons (reflect_test.go:38,154, strike_test.go:21, cli_test.go:100, task/strike_test.go:26) all now read the pinned clock; the rest are durations/mtimes (sync_test, setupbacklog_test, scale_test, deliver_test, bench_scale_test), not dates. Not changed: Store.New's created/updated still use time.Now (no test compares them; moving them would shift TUI fixtures).
 check 1: Under a fake task.Now of 2026-01-31 23:59:59.9 (pinClock, cli/clock_test.go) TestDoneWithoutAnswerIsCounted failed before the fix: 'reflect_test.go:157: plain done: ... Reflection (unanswered, 2026-11-19, rabbit)' (jsyksd-failfirst.txt); after cli.go:1257 time.Now() -> task.Now(): '--- PASS: TestDoneWithoutAnswerIsCounted (3.76s)' (jsyksd-after.txt). No sleep. 59f7d3d5.
 check 2: Every date comparison under huginn/internal/cli and task tests reads the pinned clock: reflect_test.go (both tests), cli_test.go TestLifecycleJSONContract, strike_test.go TestStrikeThroughCLI, task/strike_test.go TestStrikeOutCheck (Store.Strike now dates with task.Now); all 5 failed first, all 5 pass. grep 'time.Now().Format("2006-01-02")' in cli/task *_test.go: 0 lines. Remaining time.Now() in those tests are durations or mtimes, not dates. Local: 'ok  github.com/veridit/hug/huginn/internal/task 13.591s', 'ok  github.com/veridit/hug/huginn/internal/cli 285.890s' (-short).
+check 3: CI 44430077651 on 59f7d3d5 (ci/jsyksd): success 8/8 (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest, shards).
 ## History
 - 2026-11-19T01:26 todo -> doing/active (take)
