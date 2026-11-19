@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzw"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T02:30"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "CI 44438088626 on ci/8jcj3k (14d51bc1), then crab lands it; check 3 after release"
+waiting_since: "2026-11-19T02:36"
+waiting_asked_by: "piglet"
 ---
 
 ## Goal
@@ -44,3 +47,4 @@ check 2: same test: every call's transcript <= limit, the assistant parts rebuil
 piglet: 14d51bc1 (fix) on f56abe6a (failing test), base fac02994, pushed to 8jcj3k and ci/8jcj3k, CI 44438088626. Root causes: (1) hook fragments sized limit-len(role)-2 but the transcript line is role+': '+text+'\n', so a full ASCII part is one byte over the limit (the old test used é, whose rune cut hid it); (2) manual/backfill runs never fragmented. Check 3 waits for the release; live high-water untouched.
 ## History
 - 2026-11-19T02:30 todo -> doing/active (take)
+- 2026-11-19T02:36 doing/active -> doing/waiting (wait)
