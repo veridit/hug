@@ -57,6 +57,7 @@ piglet 23:18 local, PREREG2 (sha256 38758e19...) frozen code and step 1. Code: b
 landed d142216 on main 2026-11-18: hug mem sync: a placement gate keeps a memory naming a home folder, another…
 landed 6b5d7a1 on main 2026-11-18: hug mem capture: extract.wide_places (off) places a memory personal or about…
 shipped in v0.7.71 (d142216)
+hibiscus 08:09Z, PREREG2 (sha256 38758e19) step 2 NOT STARTED: official start count with the harness chunking (attempt 1 c3items, since 2026-11-19T00:00Z, seed 1121, built on c8c9335e, CI 44408727005 8/8) = 41 chunks in 11 hug sessions (crab 20, mizaru/piglet/sunflower 3, cactus/clover/iwazaru/macaque/mushroom 2, duckling/microbe 1; 560 post-00:00Z messages), below the floor of 60. 0 paid calls, terms not read. Also: harness/capture4c3 is the aa708f00 build without the (b) sentence; step 2 must rebuild it on c8c9335e. Report: /Users/jhf/.jcode/scratch/rnpdnm-step2/REPORT2.md
 ## History
 - 2026-11-18T21:36 todo -> doing/active (take)
 - 2026-11-18T22:24 doing/active -> doing/waiting (wait)
