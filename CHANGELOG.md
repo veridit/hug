@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.76 - 2026-11-19
+
 - hug mem capture: a hook call whose reply is cut at the hook's 1024-token
   cap is sent once more at 2048, and a truncated reply is never applied
   (nmn6wf). Before, it ended the whole hook, and the next hook re-sent the
