@@ -76,6 +76,8 @@ type Config struct {
 	// call, at most 2, each once per session (n7jbmx). Unset means off until
 	// the blind measurement on fresh calls passes its bar.
 	ToolRecall *bool `json:"tool_recall,omitempty"`
+	// Recall holds the recall delivery switches ("recall": {...}).
+	Recall RecallSwitches `json:"recall,omitempty"`
 	// SyncGate is the placement gate at hug mem sync (rnpdnm B). It is
 	// local only: config.json is never in a repository, and the terms name
 	// clients and people. Absent, sync seeds it once from the local store.
@@ -98,6 +100,21 @@ func (c Config) BoardNudges() bool { return c.NudgeBoard == nil || *c.NudgeBoard
 
 // ToolRecalls reports whether tool-call recall is on (tool_recall, default off).
 func (c Config) ToolRecalls() bool { return c.ToolRecall != nil && *c.ToolRecall }
+
+// RecallSwitches are prototypes of how recall reaches the agent. They change
+// when a block arrives, never what is recalled.
+type RecallSwitches struct {
+	// JcodeMidturn (x8zzzn): jcode's post_tool_feedback hook also recalls
+	// each message the person typed into the running turn (a soft
+	// interrupt, which runs no turn_start) and puts its block in that tool
+	// result; such a message no longer makes the turn's parked block stale.
+	// Unset means off until a day of use decides.
+	JcodeMidturn *bool `json:"jcode_midturn,omitempty"`
+}
+
+// JcodeMidturn reports whether mid-turn recall is on (recall.jcode_midturn,
+// default off).
+func (c Config) JcodeMidturn() bool { return c.Recall.JcodeMidturn != nil && *c.Recall.JcodeMidturn }
 
 // Defaults returns the built-in configuration.
 func Defaults() Config {

@@ -19,6 +19,8 @@ type jcodeTurns struct {
 	t                *testing.T
 	home, sid, stamp string
 	lines            []string
+	// turn is the message that started the running turn (jcodemidturn_test).
+	turn string
 }
 
 func newJcodeTurns(t *testing.T, f *scopetest.Fixture) *jcodeTurns {
