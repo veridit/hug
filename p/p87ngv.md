@@ -15,7 +15,7 @@ doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Keys in the detail view: m enters mark mode, ' and \" jump to the next and previous mark, c ? r add a comment, question or request, R resolves. m is grab in the list view; is that clash fine, since the detail is a different screen?"
+asked_what: "Open marks are drawn as a dim line under the text they are about: '↳ 1 request · jhf 09:40 · Make it concise' (tui-100x30.txt frame 1), the raw .Request text hidden. Is that the look you want?"
 asked_for: "jhf"
 asked_since: "2026-11-19T12:34"
 asked_by: "crab"
@@ -84,6 +84,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     (console 11:07Z) Use a custom variant: the Open data format, .sdo, which hug defines itself, not .sdd. Jørgen needs to finish that part of Seid.
 - 2026-11-19T12:34 question 9 by crab to jhf:
   Keys in the detail view: m enters mark mode, ' and " jump to the next and previous mark, c ? r add a comment, question or request, R resolves. m is grab in the list view; is that clash fine, since the detail is a different screen?
+  answered 2026-11-19T12:36 by jhf:
+    (console 11:35Z) We'll try the jump keys; not sure. Jørgen will review the whole key setup later, inspired by Helix and key tries.
 - 2026-11-19T12:34 question 10 by crab to jhf:
   Open marks are drawn as a dim line under the text they are about: '↳ 1 request · jhf 09:40 · Make it concise' (tui-100x30.txt frame 1), the raw .Request text hidden. Is that the look you want?
 - 2026-11-19T12:34 question 11 by crab to jhf (check 5):
@@ -199,3 +201,6 @@ crab 11:35Z: Jørgen 11:34Z (answer 9): questions inside an attached file are in
 - 2026-11-19T12:34 doing/active -> doing/asked (ask)
 - 2026-11-19T12:34 asked question 10 of jhf, 2 open (doing/asked -> doing/asked)
 - 2026-11-19T12:34 asked question 11 of jhf, 3 open (doing/asked -> doing/asked)
+- 2026-11-19T12:36 answered asked (question 9), by jhf, for crab (doing/asked -> doing/asked):
+  > Keys in the detail view: m enters mark mode, ' and " jump to the next and previous mark, c ? r add a comment, question or request, R resolves. m is grab in the list view; is that clash fine, since the detail is a different screen?
+  (console 11:35Z) We'll try the jump keys; not sure. Jørgen will review the whole key setup later, inspired by Helix and key tries.
