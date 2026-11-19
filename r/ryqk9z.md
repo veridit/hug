@@ -31,3 +31,5 @@ CI census 2026-11-19 (iwazaru, scratch/ci-census.md). Runs: 44386677307 44379205
 - [ ] No run in the following 48 h fails only because a macOS job was never picked up
 
 ## Notes
+
+Evidence for the person's call (crab takes it to Jørgen). 18 runs: 2026-11-18 44386677307 44379205716 44370619880 44368819470 44368801244 44360178493 44353109208 44325825385 44309649380 44309549053; 2026-11-17 44156212255 44151035876 44135891625 44132278678 44129616831 44127545147 44124111415 44123636231. Annotations (check-run annotations of test (macos-latest)): 44386677307: 'The job was not acquired by Runner of type hosted even after multiple attempts' and 'Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.'; 44156212255: 'The job was not acquired by Runner of type hosted even after multiple attempts'; 44353109208: 'The job was not acquired by Runner of type hosted even after multiple attempts'. Raw: scratch/ci-census/macos-cancel.txt, macos-annotation.txt.
