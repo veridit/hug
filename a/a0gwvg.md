@@ -46,7 +46,7 @@ check 2: TestCIGoldensRebuildsDriftedGoldens (internal/repocheck): --log testdat
 check 3: Same test: one byte changed in the 140x40 golden (GLOBAL->GLOBAl) -> exit non-zero, 'ci-goldens: wrote nothing' and a 'fix:' line, 80x24 golden left as it was; an empty log -> "no 'golden drift' block" + fix: line.
 CI 44411972128 on 917a3a28: completed/success, 8/8 jobs.
 Landed on main as c53dae61 (crab), CI 44413400970 8/8.
-Reflection (open, 2026-11-18, duckling): One gap: the scratch prototype assumed bash 4 (declare -A) and failed on macOS bash 3.2 ('declare: -A: invalid option'); AGENTS.md says nothing about which shell scripts/ targets. Also, the tool gate refused file writes into a runtime-computed path ($T/...), which pushed the real-run check into a git worktree: better, since gh needs a repo to resolve the run.
+Reflection (applied, 2026-11-18, duckling): One gap: the scratch prototype assumed bash 4 (declare -A) and failed on macOS bash 3.2 ('declare: -A: invalid option'); AGENTS.md says nothing about which shell scripts/ targets. Also, the tool gate refused file writes into a runtime-computed path ($T/...), which pushed the real-run check into a git worktree: better, since gh needs a repo to resolve the run.
 landed c53dae6 on main 2026-11-18: scripts/ci-goldens.sh: rewrite drifted TUI goldens from a failed CI run (a0gwvg)
 shipped in v0.7.72 (c53dae6)
 ## History
