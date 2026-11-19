@@ -41,5 +41,6 @@ Prefixes (jcode at /Users/jhf/Projects/jcode 28ac5e603, 2026-11-04) with verbati
 ## Notes
 
 
+Code half: commit 163321cb on ci/w4qmr1 (run 44436965382, pending). 6 prefixes in harnessNotices (recall.go:110-117) with jcode 28ac5e603 file:line and transcript counts. muninn/scripts/build_fresh.py NOTICE has the same 6, held by TestBuildFreshFiltersEveryHarnessNotice (fails without the script change: 6 'NOTICE lacks' errors). TestRecallSkipsJcodeImageNotices failed first (6/6 recalled) and pins 4 near misses that must still recall, including a notice quoted mid-message. Mutants 7/7 killed (each prefix dropped: m0-m5; HasPrefix to Contains: m6): /Users/jhf/.jcode/scratch/w4qmr1/mut/results.txt. Measurement PREREG draft: /Users/jhf/.jcode/scratch/w4qmr1/PREREG-DRAFT.md (no set built; needs messages after 163321cb).
 ## History
 - 2026-11-19T02:24 todo -> doing/active (take with p277bp)
