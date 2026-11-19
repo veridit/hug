@@ -32,6 +32,12 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 - [ ] ~~An outdated anchor (quoted text edited away) keeps its thread and shows it as outdated (test)~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
 - [ ] ~~Several questions in one call become separate threads, each answered on its own (test)~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
 - [ ] ~~Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
+- [ ] Jørgen approves a mock (task file before and after, CLI transcript, TUI frames at 100x30): a sentence marked with a request, the agent's change, the mark gone from the ticket and the exchange in the history file
+- [ ] Resolving a mark rewrites or keeps the marked text, removes the mark, and appends mark, replies, who and when to the history file; the ticket holds no dialogue afterwards (test)
+- [ ] Several questions in one call become separate inline marks, each answered on its own (test)
+- [ ] An open mark shows in the person's ASKED or the assignee's requests and is delivered as today (gmzd87) (test)
+- [ ] The agent instructions say: lead with clarity in the ticket, act on or answer marks, post questions as marks, move the dialogue to the history file (fd0j4p wording)
+- [ ] Jørgen marks a sentence in hug tui, the assignee resolves it, and the ticket reads clearer without a DM
 
 ## Questions
 - 2026-11-19T09:56 question 1 by crab to jhf:
