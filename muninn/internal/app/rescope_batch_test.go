@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/scopetest"
@@ -68,6 +69,26 @@ func TestRescopeBatchMovesAllOrNothing(t *testing.T) {
 	f.App.DB.QueryRow(`SELECT COUNT(*) FROM capture_lock`).Scan(&held)
 	if held != 0 {
 		t.Fatal("batch left capture held off")
+	}
+	// j13xs0: the refused and dry batches above recorded nothing; the real
+	// one left one trail row per memory, with where it moved from and to.
+	fs, err := app.Fixes(ctx, f.App, time.Time{})
+	if err != nil || len(fs) != 2 {
+		t.Fatalf("fix trail after one batch of 2: %+v %v", fs, err)
+	}
+	from := map[string]string{shared.SID: shared.Scope, jg.SID: jg.Scope}
+	for _, x := range fs {
+		if x.Action != "rescope" || x.Mode != "batch" || x.OldScope != from[x.SID] || x.NewScope != target || x.At.IsZero() {
+			t.Fatalf("trail row %+v", x)
+		}
+	}
+	// The single form leaves one row too.
+	named := f.Units["Named"]
+	if _, err := global.Rescope(ctx, f.App, named.SID, target, false); err != nil {
+		t.Fatal(err)
+	}
+	if fs, _ = app.Fixes(ctx, f.App, time.Time{}); len(fs) != 3 || fs[2].SID != named.SID || fs[2].Mode != "single" || fs[2].OldScope != named.Scope || fs[2].NewScope != target {
+		t.Fatalf("single rescope trail: %+v", fs)
 	}
 	scopetest.Pass(t, "rescope.batch", "global")
 }

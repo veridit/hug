@@ -19,11 +19,13 @@ func (b Binding) Rescope(ctx context.Context, a *App, ref, target string, crossC
 		return "", err
 	}
 	defer release()
-	return b.rescope(ctx, a, ref, target, crossClient, true)
+	return b.rescope(ctx, a, ref, target, crossClient, true, "single")
 }
 
 // rescope lets the owner-only tidy batch defer indexing until all moves finish.
-func (b Binding) rescope(ctx context.Context, a *App, ref, target string, crossClient, reindex bool) (string, error) {
+// A non-empty mode records the move in the fix trail (j13xs0) once the
+// file holds it; tidy passes "" and keeps its own backup.
+func (b Binding) rescope(ctx context.Context, a *App, ref, target string, crossClient, reindex bool, mode string) (string, error) {
 	b = b.Refresh(a)
 	if b.Err != nil {
 		return "", b.Err
@@ -69,6 +71,9 @@ func (b Binding) rescope(ctx context.Context, a *App, ref, target string, crossC
 	}
 	if !found {
 		return "", fmt.Errorf("no visible memory")
+	}
+	if mode != "" {
+		recordFixes(ctx, a, "rescope", []fixTarget{rescopeTarget(u, target, mode)})
 	}
 	if reindex {
 		if _, err := a.Reindex(ctx); err != nil {

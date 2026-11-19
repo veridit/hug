@@ -89,13 +89,16 @@ CREATE TABLE IF NOT EXISTS holds_ended (sid TEXT PRIMARY KEY, holds TEXT NOT NUL
 -- Memory fixes (rjk44w): one row per forget, and per remember that names
 -- an old memory (reinforce, supersedes), with who, whether recall showed
 -- it to that session first, and an optional reason. Recall never reads it.
+-- A rescope (j13xs0) also fills old_scope, new_scope and mode (single|batch).
 CREATE TABLE IF NOT EXISTS memory_fixes (
   at_ns INTEGER NOT NULL, action TEXT NOT NULL, sid TEXT NOT NULL,
   new_sid TEXT NOT NULL DEFAULT '', session TEXT NOT NULL DEFAULT '',
   harness TEXT NOT NULL DEFAULT '', instance TEXT NOT NULL DEFAULT '',
   surface TEXT NOT NULL DEFAULT '', reason TEXT NOT NULL DEFAULT '',
   shown INTEGER NOT NULL DEFAULT 0, shown_ago_ns INTEGER NOT NULL DEFAULT 0,
-  content_hash TEXT NOT NULL DEFAULT '');
+  content_hash TEXT NOT NULL DEFAULT '',
+  old_scope TEXT NOT NULL DEFAULT '', new_scope TEXT NOT NULL DEFAULT '',
+  mode TEXT NOT NULL DEFAULT '');
 CREATE INDEX IF NOT EXISTS memory_fixes_at ON memory_fixes(at_ns);
 CREATE INDEX IF NOT EXISTS memory_fixes_sid ON memory_fixes(sid, at_ns);
 CREATE TABLE IF NOT EXISTS capture_bindings (session TEXT PRIMARY KEY, scope TEXT NOT NULL);
@@ -340,6 +343,13 @@ func Open(path string) (*DB, error) {
 		db.Close()
 		return nil, err
 	}
+	// Rescope rows in the fix trail (j13xs0): where a memory moved from and to.
+	for _, col := range []string{"old_scope", "new_scope", "mode"} {
+		if err := returnDB.addColumn("memory_fixes", col); err != nil {
+			db.Close()
+			return nil, err
+		}
+	}
 	if err := returnDB.migrateShortIDs(); err != nil {
 		db.Close()
 		return nil, fmt.Errorf("short ids: %w", err)
@@ -553,8 +563,12 @@ func (d *DB) migrateMemoryType() error { return d.addUnitColumn("mtype") }
 // database created before it lacks it (mtype 2026-11-15, holds 2026-11-16,
 // mtrigger 2026-11-18).
 // Idempotent and safe against a concurrent opener.
-func (d *DB) addUnitColumn(col string) error {
-	rows, err := d.Query(`PRAGMA table_info(units)`)
+func (d *DB) addUnitColumn(col string) error { return d.addColumn("units", col) }
+
+// addColumn adds a text column (NOT NULL, default empty) to table when a
+// database created before it lacks it. table and col are constants.
+func (d *DB) addColumn(table, col string) error {
+	rows, err := d.Query(`PRAGMA table_info(` + table + `)`)
 	if err != nil {
 		return err
 	}
@@ -573,7 +587,7 @@ func (d *DB) addUnitColumn(col string) error {
 	if has {
 		return nil
 	}
-	_, err = d.Exec(`ALTER TABLE units ADD COLUMN ` + col + ` TEXT NOT NULL DEFAULT ''`)
+	_, err = d.Exec(`ALTER TABLE ` + table + ` ADD COLUMN ` + col + ` TEXT NOT NULL DEFAULT ''`)
 	if err != nil && strings.Contains(err.Error(), "duplicate column") {
 		return nil // another process added it first
 	}

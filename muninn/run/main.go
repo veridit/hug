@@ -468,6 +468,8 @@ func rescopeCmd() *cobra.Command {
 		}, RunE: func(_ *cobra.Command, args []string) error {
 			return withApp(func(ctx context.Context, a *app.App) error {
 				cwd, _ := os.Getwd()
+				// Who moved what lands in the fix trail (j13xs0).
+				ctx = app.WithFix(ctx, a.HarnessFix("cli", ""))
 				if from != "" {
 					items, err := readRescopeItems(from)
 					if err != nil {
@@ -721,7 +723,7 @@ func statsCmd() *cobra.Command {
 			return nil
 		})
 	}}
-	c.Flags().BoolVar(&fixes, "fixes", false, "the memory fix trail: recall blocks, forgets, reinforces and supersedes per UTC day, whether recall showed the memory first, undone forgets, and the last 20 fixes")
+	c.Flags().BoolVar(&fixes, "fixes", false, "the memory fix trail: recall blocks, forgets, reinforces, supersedes and rescopes per UTC day, whether recall showed the memory first, undone forgets, and the last 20 fixes")
 	c.Flags().StringVar(&since, "since", "", "with --fixes: from this UTC day (YYYY-MM-DD)")
 	c.Flags().BoolVar(&asJSON, "json", false, "with --fixes: JSON output")
 	view.flags(c)

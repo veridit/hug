@@ -12,10 +12,12 @@ import (
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/harness"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
-// Memory fixes (rjk44w): every forget, and every remember that names an old
-// memory (reinforce, supersedes), leaves one row in memory_fixes, so we can
+// Memory fixes (rjk44w): every forget, every remember that names an old
+// memory (reinforce, supersedes), and every rescope (j13xs0: one memory, or
+// each memory of a --from batch) leaves one row in memory_fixes, so we can
 // learn whether agents act on what recall shows them and whether a forget
 // was later undone. Local and free: no model call, nothing recall reads.
 // Recording never blocks the write it describes: its errors are dropped.
@@ -23,7 +25,7 @@ import (
 // Fix is one row of the trail.
 type Fix struct {
 	At       time.Time `json:"at"`
-	Action   string    `json:"action"` // forget | reinforce | supersede
+	Action   string    `json:"action"` // forget | reinforce | supersede | rescope
 	SID      string    `json:"sid"`    // the memory fixed
 	NewSID   string    `json:"new_sid,omitempty"`
 	Session  string    `json:"session,omitempty"` // harness:session, first one given
@@ -36,6 +38,11 @@ type Fix struct {
 	Shown       bool          `json:"shown"`
 	ShownAgo    time.Duration `json:"shown_ago_ns,omitempty"`
 	ContentHash string        `json:"content_hash,omitempty"`
+	// A rescope: the scope the memory left and the one it moved to, and
+	// how (single: one memory, batch: hug mem rescope --from).
+	OldScope string `json:"old_scope,omitempty"`
+	NewScope string `json:"new_scope,omitempty"`
+	Mode     string `json:"mode,omitempty"`
 }
 
 // FixContext is who is fixing, carried on the context from the surface (CLI
@@ -103,7 +110,7 @@ func recordFixes(ctx context.Context, a *App, action string, units []fixTarget) 
 		harness = session[:strings.IndexByte(session, ':')]
 	}
 	for _, u := range units {
-		f := Fix{At: now, Action: action, SID: u.sid, NewSID: u.newSID, Session: session, Harness: harness, Instance: fc.Instance, Surface: fc.Surface, Reason: strings.TrimSpace(fc.Reason), ContentHash: u.hash}
+		f := Fix{At: now, Action: action, SID: u.sid, NewSID: u.newSID, Session: session, Harness: harness, Instance: fc.Instance, Surface: fc.Surface, Reason: strings.TrimSpace(fc.Reason), ContentHash: u.hash, OldScope: u.oldScope, NewScope: u.newScope, Mode: u.mode}
 		if at, ok := a.lastShown(u.ids, fc.Sessions); ok {
 			f.Shown = true
 			if ago := now.Sub(at); ago > 0 {
@@ -117,8 +124,15 @@ func recordFixes(ctx context.Context, a *App, action string, units []fixTarget) 
 // fixTarget is one memory a fix names: its sid, every unit row it has (a
 // memory may have twins across sources), and its content hash.
 type fixTarget struct {
-	sid, newSID, hash string
-	ids               []int64
+	sid, newSID, hash        string
+	ids                      []int64
+	oldScope, newScope, mode string // rescope only
+}
+
+// rescopeTarget is the trail target for a rescope of u to scope. Only u's
+// own row is looked up for "shown": a batch may name thousands.
+func rescopeTarget(u store.Unit, scope, mode string) fixTarget {
+	return fixTarget{sid: u.SID, hash: u.ContentHash, ids: []int64{u.ID}, oldScope: u.Scope, newScope: scope, mode: mode}
 }
 
 // lastShown is when recall last showed any of ids to one of sessions.
@@ -150,14 +164,14 @@ func RecordFix(ctx context.Context, a *App, f Fix) error {
 	if f.Shown {
 		shown = 1
 	}
-	_, err := a.DB.ExecContext(ctx, `INSERT INTO memory_fixes(at_ns,action,sid,new_sid,session,harness,instance,surface,reason,shown,shown_ago_ns,content_hash) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
-		f.At.UnixNano(), f.Action, f.SID, f.NewSID, f.Session, f.Harness, f.Instance, f.Surface, f.Reason, shown, int64(f.ShownAgo), f.ContentHash)
+	_, err := a.DB.ExecContext(ctx, `INSERT INTO memory_fixes(at_ns,action,sid,new_sid,session,harness,instance,surface,reason,shown,shown_ago_ns,content_hash,old_scope,new_scope,mode) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+		f.At.UnixNano(), f.Action, f.SID, f.NewSID, f.Session, f.Harness, f.Instance, f.Surface, f.Reason, shown, int64(f.ShownAgo), f.ContentHash, f.OldScope, f.NewScope, f.Mode)
 	return err
 }
 
 // Fixes lists trail rows at or after since, oldest first.
 func Fixes(ctx context.Context, a *App, since time.Time) ([]Fix, error) {
-	rows, err := a.DB.QueryContext(ctx, `SELECT at_ns,action,sid,new_sid,session,harness,instance,surface,reason,shown,shown_ago_ns,content_hash FROM memory_fixes WHERE at_ns>=? ORDER BY at_ns, rowid`, since.UnixNano())
+	rows, err := a.DB.QueryContext(ctx, `SELECT at_ns,action,sid,new_sid,session,harness,instance,surface,reason,shown,shown_ago_ns,content_hash,old_scope,new_scope,mode FROM memory_fixes WHERE at_ns>=? ORDER BY at_ns, rowid`, since.UnixNano())
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +181,7 @@ func Fixes(ctx context.Context, a *App, since time.Time) ([]Fix, error) {
 		var f Fix
 		var at, ago int64
 		var shown int
-		if err := rows.Scan(&at, &f.Action, &f.SID, &f.NewSID, &f.Session, &f.Harness, &f.Instance, &f.Surface, &f.Reason, &shown, &ago, &f.ContentHash); err != nil {
+		if err := rows.Scan(&at, &f.Action, &f.SID, &f.NewSID, &f.Session, &f.Harness, &f.Instance, &f.Surface, &f.Reason, &shown, &ago, &f.ContentHash, &f.OldScope, &f.NewScope, &f.Mode); err != nil {
 			return nil, err
 		}
 		f.At, f.Shown, f.ShownAgo = time.Unix(0, at).UTC(), shown == 1, time.Duration(ago)
@@ -191,6 +205,7 @@ type FixDay struct {
 	Reinforces int    `json:"reinforce"`
 	Supersedes int    `json:"supersede"`
 	Undone     int    `json:"undone"`
+	Rescopes   int    `json:"rescope"`
 }
 
 // FixInstance is the fixes per jcode instance ("" when unknown).
@@ -262,6 +277,8 @@ func SummarizeFixes(ctx context.Context, a *App, since time.Time) (FixSummary, e
 			d.Reinforces++
 		case "supersede":
 			d.Supersedes++
+		case "rescope":
+			d.Rescopes++
 		}
 		if inst[f.Instance] == nil {
 			inst[f.Instance] = &FixInstance{Instance: f.Instance}
@@ -292,10 +309,10 @@ func SummarizeFixes(ctx context.Context, a *App, since time.Time) (FixSummary, e
 }
 
 // undone: a later reinforce or supersede names the forgotten memory within
-// UndoWindow.
+// UndoWindow. A rescope moves a memory; it does not bring one back.
 func undone(f Fix, all []Fix) bool {
 	for _, g := range all {
-		if g.SID == f.SID && g.Action != "forget" && g.At.After(f.At) && g.At.Sub(f.At) <= UndoWindow {
+		if g.SID == f.SID && (g.Action == "reinforce" || g.Action == "supersede") && g.At.After(f.At) && g.At.Sub(f.At) <= UndoWindow {
 			return true
 		}
 	}
@@ -315,9 +332,9 @@ func FixReport(s FixSummary) string {
 		return b.String()
 	}
 	w := tabwriter.NewWriter(&b, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "day\tblocks\tfixes\tof-shown\tnot-shown\tforget\treinforce\tsupersede\tundone")
+	fmt.Fprintln(w, "day\tblocks\tfixes\tof-shown\tnot-shown\tforget\treinforce\tsupersede\tundone\trescope")
 	for _, d := range s.Days {
-		fmt.Fprintf(w, "%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", d.Day, d.Blocks, d.Fixes, d.OfShown, d.NotShown, d.Forgets, d.Reinforces, d.Supersedes, d.Undone)
+		fmt.Fprintf(w, "%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", d.Day, d.Blocks, d.Fixes, d.OfShown, d.NotShown, d.Forgets, d.Reinforces, d.Supersedes, d.Undone, d.Rescopes)
 	}
 	w.Flush()
 	if len(s.Instances) > 0 {
@@ -341,6 +358,12 @@ func FixReport(s FixSummary) string {
 			line := fmt.Sprintf("  %s %s %s", f.At.UTC().Format("2006-01-02 15:04"), f.Action, f.SID)
 			if f.NewSID != "" {
 				line += " -> " + f.NewSID
+			}
+			if f.Action == "rescope" {
+				line += " " + f.OldScope + " -> " + f.NewScope
+				if f.Mode != "" {
+					line += " (" + f.Mode + ")"
+				}
 			}
 			line += " " + shown
 			for _, part := range []struct{ k, v string }{{"via", f.Surface}, {"instance", f.Instance}, {"session", f.Session}} {

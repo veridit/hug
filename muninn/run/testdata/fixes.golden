@@ -1,9 +1,10 @@
 memory fixes (UTC days)
-day         blocks  fixes  of-shown  not-shown  forget  reinforce  supersede  undone
-2026-11-16  41      3      2         1          2       1          0          1
-2026-11-17  37      1      0         1          0       0          1          0
-by instance: global 3 (2 of shown) seid 1 (0 of shown)
+day         blocks  fixes  of-shown  not-shown  forget  reinforce  supersede  undone  rescope
+2026-11-16  41      3      2         1          2       1          0          1       0
+2026-11-17  37      2      0         2          0       0          1          0       1
+by instance: global 3 (2 of shown) seid 2 (0 of shown)
 recent:
   2026-11-16 09:00 forget k7m2qx shown 3m before via mcp instance global session jcode:session_crab_1_a
     reason: the reboot happened
   2026-11-17 10:00 supersede 3nfhgr -> 9xybgp not shown via cli instance seid
+  2026-11-17 11:00 rescope p4w8zd global -> project:seid-lang (batch) not shown via cli instance seid

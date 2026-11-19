@@ -234,7 +234,7 @@ func (a *App) ApplyTidy(ctx context.Context, p tidy.Plan, only string, dry bool)
 		ref := m.unit.SID
 		upstream := ""
 		if m.kind == "native" {
-			_, err = binding.rescope(ctx, a, m.unit.SID, m.entry.Target, true, false)
+			_, err = binding.rescope(ctx, a, m.unit.SID, m.entry.Target, true, false, "")
 		} else {
 			origin := "tidy:" + m.unit.Origin
 			_, err = ingest.MergeImport(NativePath(), []ingest.Imported{{ExactText: true, Origin: origin, Title: m.unit.Title, Content: m.unit.Body, Category: m.unit.Category, Tags: m.unit.Tags, Scope: m.entry.Target, Active: true, Created: m.unit.Updated, Updated: m.unit.Updated}}, false)

@@ -58,7 +58,7 @@ func TestCLIFixTrailAndStats(t *testing.T) {
 	}
 	// Text form: a header, one row per day, then the recent fixes.
 	out, _, code = runCLI(t, "", "stats", "--fixes")
-	for _, want := range []string{"day         blocks  fixes  of-shown  not-shown  forget  reinforce  supersede  undone", today + " ", "forget " + ids[0] + " shown 1m", "reason: superseded by the 2026 policy", "supersede " + ids[1] + " -> "} {
+	for _, want := range []string{"day         blocks  fixes  of-shown  not-shown  forget  reinforce  supersede  undone  rescope", today + " ", "forget " + ids[0] + " shown 1m", "reason: superseded by the 2026 policy", "supersede " + ids[1] + " -> "} {
 		if code != 0 || !strings.Contains(out, want) {
 			t.Fatalf("text lacks %q:\n%s", want, out)
 		}
@@ -82,12 +82,13 @@ func TestFixReportGolden(t *testing.T) {
 	s := app.FixSummary{
 		Days: []app.FixDay{
 			{Day: "2026-11-16", Blocks: 41, Fixes: 3, OfShown: 2, NotShown: 1, Forgets: 2, Reinforces: 1, Undone: 1},
-			{Day: "2026-11-17", Blocks: 37, Fixes: 1, OfShown: 0, NotShown: 1, Supersedes: 1},
+			{Day: "2026-11-17", Blocks: 37, Fixes: 2, OfShown: 0, NotShown: 2, Supersedes: 1, Rescopes: 1},
 		},
-		Instances: []app.FixInstance{{Instance: "global", Fixes: 3, OfShown: 2}, {Instance: "seid", Fixes: 1}},
+		Instances: []app.FixInstance{{Instance: "global", Fixes: 3, OfShown: 2}, {Instance: "seid", Fixes: 2}},
 		Recent: []app.Fix{
 			{At: day, Action: "forget", SID: "k7m2qx", Session: "jcode:session_crab_1_a", Instance: "global", Surface: "mcp", Shown: true, ShownAgo: 3 * time.Minute, Reason: "the reboot happened"},
 			{At: day.Add(25 * time.Hour), Action: "supersede", SID: "3nfhgr", NewSID: "9xybgp", Surface: "cli", Instance: "seid"},
+			{At: day.Add(26 * time.Hour), Action: "rescope", SID: "p4w8zd", OldScope: "global", NewScope: "project:seid-lang", Mode: "batch", Surface: "cli", Instance: "seid"},
 		},
 	}
 	got := app.FixReport(s)

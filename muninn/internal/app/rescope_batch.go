@@ -11,6 +11,7 @@ import (
 
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/ingest"
+	"github.com/veridit/hug/muninn/internal/store"
 )
 
 // RescopeItem is one requested move in a batch.
@@ -49,6 +50,7 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 		item RescopeItem
 		key  string
 		sid  string
+		unit store.Unit // as it was before the batch, for the fix trail
 	}
 	byPath := map[string][]move{}
 	var problems []error
@@ -93,7 +95,7 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 			problems = append(problems, fmt.Errorf("%s: rescope requires an owned native memory; import the upstream memory first", line))
 			continue
 		}
-		byPath[path] = append(byPath[path], move{it, u.Key, u.SID})
+		byPath[path] = append(byPath[path], move{it, u.Key, u.SID, u})
 	}
 	if len(problems) > 0 {
 		return result, fmt.Errorf("nothing moved, %d of %d items failed checks:\n%w", len(problems), len(items), errors.Join(problems...))
@@ -115,6 +117,7 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 		}
 	}()
 	loaded := map[string][]ingest.NativeMemory{}
+	var trail []fixTarget
 	for path, moves := range byPath {
 		if !dry {
 			l := &ingest.NativeLock{Path: path}
@@ -140,6 +143,7 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 			mems[i].Scope = mv.item.Target
 			mems[i].Updated = now
 			result.Moved = append(result.Moved, RescopeItem{mv.sid, mv.item.Target})
+			trail = append(trail, rescopeTarget(mv.unit, mv.item.Target, "batch"))
 		}
 		loaded[path] = mems
 	}
@@ -175,6 +179,9 @@ func (b Binding) RescopeBatch(ctx context.Context, a *App, items []RescopeItem, 
 			return result, err
 		}
 	}
+	// The trail (j13xs0): one row per memory moved, once every file holds
+	// the moves. A dry run returned above and records nothing.
+	recordFixes(ctx, a, "rescope", trail)
 	for _, l := range locks {
 		l.Release()
 	}

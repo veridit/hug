@@ -361,7 +361,7 @@ func (m model) executeAction() tea.Cmd {
 			r, err := b.Forget(app.WithFix(context.Background(), app.FixContext{Surface: "tui"}), a, u.SID)
 			return actionMsg{note: r.Message, err: err}
 		case "m":
-			id, err := b.Rescope(context.Background(), a, u.SID, p.target, false)
+			id, err := b.Rescope(app.WithFix(context.Background(), app.FixContext{Surface: "tui"}), a, u.SID, p.target, false)
 			return actionMsg{note: "Moved " + id + " to " + p.target, err: err}
 		case "e":
 			next, backup, err := b.Correct(context.Background(), a, u.SID, p.text)
