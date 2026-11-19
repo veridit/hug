@@ -749,8 +749,14 @@ func hookCmd() *cobra.Command {
 	c := &cobra.Command{Use: "hook <claude|codex|jcode>", Short: "Run as a harness hook (reads the harness payload)", Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			// A hook must never break the harness: errors are logged, exit 0.
+			// A jcode line names the session and event, so a timeout can be
+			// tied to a turn (x8zzzn).
 			if err := runHook(args[0], budget); err != nil {
-				logHook("%s: %v", args[0], err)
+				if sid := os.Getenv("JCODE_HOOK_SESSION_ID"); args[0] == "jcode" && sid != "" {
+					logHook("jcode %s %s: %v", short(sid), os.Getenv("JCODE_HOOK_EVENT"), err)
+				} else {
+					logHook("%s: %v", args[0], err)
+				}
 			}
 			return nil
 		}}
@@ -805,7 +811,7 @@ func runHook(name string, budget time.Duration) error {
 		}
 		switch os.Getenv("JCODE_HOOK_EVENT") {
 		case "post_tool_feedback":
-			if err := deliverParked(parks, sessions, sid); err != nil {
+			if err := deliverParked(ctx, jh, parks, sessions, sid); err != nil {
 				return err
 			}
 			return toolRecallHook(ctx, jh, sid)
@@ -813,7 +819,18 @@ func runHook(name string, budget time.Duration) error {
 			// What no tool call took is dropped: it was for this turn only.
 			if harness.HasPark(parks, sid) {
 				if p, ok, _ := harness.Claim(parks, sid); ok {
-					logHook("jcode %s: dropped=no-tool-call turn=%s", short(sid), p.Turn)
+					if p.Block != "" {
+						logHook("jcode %s: dropped=no-tool-call turn=%s", short(sid), p.Turn)
+					}
+					if p.Midturn {
+						// Typed after the turn's last tool call: no tool
+						// result carried its recall. Counted, never pushed.
+						if tail, err := harness.ReadJcodeTail(sessions, sid, p.Offset); err == nil && tail.NewTurn(p.Turn) == "" {
+							if n := len(tail.Pasted(p.Turn)); n > 0 {
+								logHook("jcode %s: midturn turn=%s missed=%d", short(sid), p.Turn, n)
+							}
+						}
+					}
 				}
 			}
 			return nil
@@ -828,40 +845,72 @@ func runHook(name string, budget time.Duration) error {
 			return err
 		}
 		defer a.Close()
-		inst := harness.InstanceForHome(a.JcodeInstances(), jh)
-		binding := a.Bound(jh, os.Getenv("JCODE_HOOK_CWD"))
-		if binding.Err != nil {
-			return binding.Err
-		}
-		cwd := os.Getenv("JCODE_HOOK_CWD")
-		bs := boardSource(ctx, a.Cfg.BoardNudges(), cwd, sessionName(sid), jh, func(since time.Time) harness.Activity {
-			act, _ := harness.JcodeActivity(sessions, sid, since)
-			return act
-		})
-		resp, err := hookRecallWith(ctx, a, name, sid, msg, binding, bs)
-		if resp.BoardKind != "" {
-			logHook("jcode[%s] %s: board=%s", inst.Name, short(sid), resp.BoardKind)
-		}
-		// A hug mcp server too old to reload itself (z77pem): checked once
-		// per session, said with this turn's block at the first tool result,
-		// only for the server of this session's jcode home.
-		if err == nil {
-			resp.Block = withStaleMCP(staleMCPOnce(ctx, sid, jh), resp.Block)
+		resp, inst, err := jcodeRecall(ctx, a, jh, sid, msg)
+		// Mid-turn recall (x8zzzn): the park is the turn's anchor even with
+		// no block, so the turn's tool calls can find what is typed into it.
+		p := harness.Parked{Turn: turn.ID, Block: resp.Block}
+		if err == nil && a.Cfg.JcodeMidturn() {
+			if jt, end, ok := harness.JcodeTurnOf(sessions, sid, turn.ID); ok {
+				p.Turn, p.Midturn, p.Offset = jt, true, end
+			}
 		}
 		if err != nil || resp.Block == "" {
 			logHook("jcode[%s] %s: msg=%q hits=0 skipped=%q elapsed=%s", inst.Name, short(sid), recall.Truncate(msg, 60), resp.Skipped, resp.Elapsed)
-			return err
+			if err != nil || !p.Midturn {
+				return err
+			}
+			return parkLogged(parks, sid, p)
+		}
+		for _, h := range resp.Hits {
+			p.Units = append(p.Units, h.UnitID)
 		}
 		// The block waits for this turn's first tool result (z9q42h): it
 		// never goes into the person's input box, where jcode transcript
 		// put it while he typed.
-		err = harness.Park(parks, sid, harness.Parked{Turn: turn.ID, Block: resp.Block})
+		err = parkLogged(parks, sid, p)
 		logHook("jcode[%s] %s: msg=%q hits=%d elapsed=%s parked turn=%s err=%v", inst.Name, short(sid), recall.Truncate(msg, 60),
 			len(resp.Hits), resp.Elapsed, turn.ID, err)
 		return err
 	default:
 		return fmt.Errorf("unknown harness %q (claude, codex, jcode)", name)
 	}
+}
+
+// jcodeRecall recalls for one message of jcode session sid: the turn's first
+// message at turn_start, or one typed into the turn (mid-turn). Both take
+// this one path, so what is recalled does not depend on when it arrives.
+func jcodeRecall(ctx context.Context, a *app.App, jh, sid, msg string) (recall.Response, harness.JcodeInstance, error) {
+	sessions := filepath.Join(jh, "sessions")
+	inst := harness.InstanceForHome(a.JcodeInstances(), jh)
+	binding := a.Bound(jh, os.Getenv("JCODE_HOOK_CWD"))
+	if binding.Err != nil {
+		return recall.Response{}, inst, binding.Err
+	}
+	cwd := os.Getenv("JCODE_HOOK_CWD")
+	bs := boardSource(ctx, a.Cfg.BoardNudges(), cwd, sessionName(sid), jh, func(since time.Time) harness.Activity {
+		act, _ := harness.JcodeActivity(sessions, sid, since)
+		return act
+	})
+	resp, err := hookRecallWith(ctx, a, "jcode", sid, msg, binding, bs)
+	if resp.BoardKind != "" {
+		logHook("jcode[%s] %s: board=%s", inst.Name, short(sid), resp.BoardKind)
+	}
+	// A hug mcp server too old to reload itself (z77pem): checked once
+	// per session, said with the session's first block at a tool result,
+	// only for the server of this session's jcode home.
+	if err == nil {
+		resp.Block = withStaleMCP(staleMCPOnce(ctx, sid, jh), resp.Block)
+	}
+	return resp, inst, err
+}
+
+// parkLogged parks p, saying so in hook.log when it replaces a block no tool
+// call or turn_end took (step 1 could not tell those from lost ones).
+func parkLogged(parks, sid string, p harness.Parked) error {
+	if old, ok := harness.Peek(parks, sid); ok && old.Block != "" {
+		logHook("jcode %s: replaced parked=%s by=%s", short(sid), old.Turn, p.Turn)
+	}
+	return harness.Park(parks, sid, p)
 }
 
 // deliverPendingHook hands session sid what waited for its name (bbxdd7).
@@ -898,7 +947,13 @@ var feedbackProbe func(what string)
 // parked recall block, which jcode appends to the tool result. With nothing
 // parked, the cost is one stat. A block parked for another turn (the person
 // has typed again, or the turn answered) is dropped, never shown.
-func deliverParked(parks, sessions, sid string) error {
+//
+// A mid-turn park (recall.jcode_midturn, x8zzzn) judges the turn by jcode's
+// own turn id instead: a message typed into the running turn does not make
+// the block stale. The tool result carries the parked block first, then the
+// recall of each message typed into the turn since the last read; the park
+// is put back, emptied, for the turn's later tool calls.
+func deliverParked(ctx context.Context, jh, parks, sessions, sid string) error {
 	if !harness.HasPark(parks, sid) {
 		return nil
 	}
@@ -909,13 +964,93 @@ func deliverParked(parks, sessions, sid string) error {
 	if err != nil || !ok {
 		return err
 	}
+	if p.Midturn {
+		return deliverMidturn(ctx, jh, parks, sessions, sid, p)
+	}
 	turn, err := harness.ReadJcodeTurn(sessions, sid)
 	if err != nil || !turn.Current(p.Turn) {
 		logHook("jcode %s: dropped=stale parked=%s current=%s ended=%v err=%v", short(sid), p.Turn, turn.ID, turn.Ended, err)
 		return nil
 	}
+	printParked(sid, p)
+	return nil
+}
+
+// printParked prints p's block into the tool result and marks its memories
+// delivered.
+func printParked(sid string, p harness.Parked) {
 	fmt.Fprintln(os.Stdout, p.Block)
 	logHook("jcode %s: delivered turn=%s tool=%s", short(sid), p.Turn, os.Getenv("JCODE_HOOK_TOOL_NAME"))
+	if len(p.Units) == 0 {
+		return
+	}
+	a, err := app.OpenAudit()
+	if err != nil {
+		logHook("jcode %s: delivered_ns: %v", short(sid), err)
+		return
+	}
+	defer a.Close()
+	if err := a.DB.MarkDelivered("jcode:"+sid, p.Units, time.Now()); err != nil {
+		logHook("jcode %s: delivered_ns: %v", short(sid), err)
+	}
+}
+
+// deliverMidturn is deliverParked for a mid-turn park.
+func deliverMidturn(ctx context.Context, jh, parks, sessions, sid string, p harness.Parked) error {
+	tail, err := harness.ReadJcodeTail(sessions, sid, p.Offset)
+	if err != nil {
+		if p.Block != "" {
+			logHook("jcode %s: dropped=stale parked=%s current= ended=false err=%v", short(sid), p.Turn, err)
+		}
+		return nil
+	}
+	if nt := tail.NewTurn(p.Turn); nt != "" {
+		// A newer turn began: what was parked, and what was typed into the
+		// old turn, belongs to the past. The new turn parks its own.
+		if p.Block != "" {
+			logHook("jcode %s: dropped=stale parked=%s current=%s ended=true err=<nil>", short(sid), p.Turn, nt)
+		}
+		return nil
+	}
+	if p.Block != "" {
+		printParked(sid, p)
+	}
+	if pasted := tail.Pasted(p.Turn); len(pasted) > 0 {
+		if err := recallPasted(ctx, jh, sid, p.Turn, pasted); err != nil {
+			logHook("jcode %s: midturn turn=%s err=%v", short(sid), p.Turn, err)
+		}
+	}
+	// Put back, emptied, unless a newer turn_start parked meanwhile.
+	_, err = harness.ParkIfAbsent(parks, sid, harness.Parked{Turn: p.Turn, Midturn: true, Offset: tail.End})
+	return err
+}
+
+// recallPasted recalls each message typed into turn and prints its block
+// into this tool result, as turn_start does for the turn's first message.
+func recallPasted(ctx context.Context, jh, sid, turn string, pasted []harness.JcodeMsg) error {
+	a, err := app.Open(ctx)
+	if err != nil {
+		return err
+	}
+	defer a.Close()
+	for _, m := range pasted {
+		resp, inst, err := jcodeRecall(ctx, a, jh, sid, m.Text)
+		if err != nil {
+			return err
+		}
+		if resp.Block != "" {
+			fmt.Fprintln(os.Stdout, resp.Block)
+			var units []int64
+			for _, h := range resp.Hits {
+				units = append(units, h.UnitID)
+			}
+			if err := a.DB.MarkDelivered("jcode:"+sid, units, time.Now()); err != nil {
+				logHook("jcode %s: delivered_ns: %v", short(sid), err)
+			}
+		}
+		logHook("jcode[%s] %s: midturn turn=%s msg=%s hits=%d elapsed=%s skipped=%q tool=%s", inst.Name, short(sid), turn, m.ID,
+			len(resp.Hits), resp.Elapsed, resp.Skipped, os.Getenv("JCODE_HOOK_TOOL_NAME"))
+	}
 	return nil
 }
 

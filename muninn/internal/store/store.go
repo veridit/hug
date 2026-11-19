@@ -246,10 +246,13 @@ CREATE TABLE IF NOT EXISTS unit_anchors (
   unit_id INTEGER NOT NULL, anchor TEXT NOT NULL, PRIMARY KEY (unit_id, anchor)
 ) WITHOUT ROWID;
 CREATE INDEX IF NOT EXISTS unit_anchors_anchor ON unit_anchors(anchor, unit_id);
--- Recall injections, for per-session dedupe and the web/TUI log.
+-- Recall injections, for per-session dedupe and the web/TUI log. at_ns is
+-- when recall chose the memory; delivered_ns when hug handed it to the agent
+-- (jcode: the tool result that carried its block, x8zzzn), 0 until then and
+-- for a block dropped with no tool call.
 CREATE TABLE IF NOT EXISTS injections (
   session TEXT NOT NULL, unit_id INTEGER NOT NULL, content_hash TEXT NOT NULL,
-  harness TEXT NOT NULL, at_ns INTEGER NOT NULL,
+  harness TEXT NOT NULL, at_ns INTEGER NOT NULL, delivered_ns INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (session, content_hash)
 );
 `
@@ -349,6 +352,11 @@ func Open(path string) (*DB, error) {
 			db.Close()
 			return nil, err
 		}
+	}
+	// When a recalled memory reached the agent (x8zzzn).
+	if err := returnDB.addIntColumn("injections", "delivered_ns"); err != nil {
+		db.Close()
+		return nil, err
 	}
 	if err := returnDB.migrateShortIDs(); err != nil {
 		db.Close()
@@ -568,6 +576,15 @@ func (d *DB) addUnitColumn(col string) error { return d.addColumn("units", col) 
 // addColumn adds a text column (NOT NULL, default empty) to table when a
 // database created before it lacks it. table and col are constants.
 func (d *DB) addColumn(table, col string) error {
+	return d.addTypedColumn(table, col, `TEXT NOT NULL DEFAULT ''`)
+}
+
+// addIntColumn adds an integer column (NOT NULL, default 0), as addColumn.
+func (d *DB) addIntColumn(table, col string) error {
+	return d.addTypedColumn(table, col, `INTEGER NOT NULL DEFAULT 0`)
+}
+
+func (d *DB) addTypedColumn(table, col, decl string) error {
 	rows, err := d.Query(`PRAGMA table_info(` + table + `)`)
 	if err != nil {
 		return err
@@ -587,9 +604,20 @@ func (d *DB) addColumn(table, col string) error {
 	if has {
 		return nil
 	}
-	_, err = d.Exec(`ALTER TABLE ` + table + ` ADD COLUMN ` + col + ` TEXT NOT NULL DEFAULT ''`)
+	_, err = d.Exec(`ALTER TABLE ` + table + ` ADD COLUMN ` + col + ` ` + decl)
 	if err != nil && strings.Contains(err.Error(), "duplicate column") {
 		return nil // another process added it first
 	}
 	return err
+}
+
+// MarkDelivered records that the memories units, recalled for session, have
+// reached the agent at time at. Only the first delivery counts.
+func (d *DB) MarkDelivered(session string, units []int64, at time.Time) error {
+	for _, u := range units {
+		if _, err := d.Exec(`UPDATE injections SET delivered_ns=? WHERE session=? AND unit_id=? AND delivered_ns=0`, at.UnixNano(), session, u); err != nil {
+			return err
+		}
+	}
+	return nil
 }

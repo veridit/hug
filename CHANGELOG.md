@@ -6,6 +6,28 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- Mid-turn recall on jcode, off by default (x8zzzn). A message typed into a
+  running jcode turn (a soft interrupt) ran no recall: since 2026-11-18
+  03:53Z, 122 of 123 such messages had no recall line. When such a message came before the
+  turn's first tool result, it also made the turn's parked block "stale",
+  and the block was dropped (8 of 13 stale drops). With
+  `"recall": {"jcode_midturn": true}` in config.json, the next tool result
+  recalls each such message and carries its block, after the turn's parked
+  block, which is no longer dropped. The turn is jcode's own turn id
+  (`model_usage_turn_id` in the session journal), so a new turn still drops
+  the old turn's block. What is recalled does not change: a test shows the
+  same message gives byte-identical output through both paths. Nothing is
+  printed outside a tool result, so an idle session is never woken for a
+  memory, and recall stays local, with no model calls.
+- Delivery logging for jcode recall (x8zzzn). `injections.delivered_ns`
+  records when each recalled memory reached the agent: 0 until then, and 0
+  for a block dropped with no tool call. Older stores get the column on
+  open. hook.log now says `replaced parked=X by=Y` when a park is
+  overwritten, `midturn turn=X msg=Y` for each mid-turn recall, and
+  `midturn turn=X missed=N` at turn_end for messages typed after the last
+  tool call. Hook errors, timeouts among them, now name the session and
+  event (`jcode session_… turn_start: context deadline exceeded`).
+
 ## v0.7.84 - 2026-11-19
 
 - The file view in `hug tui` fills to the keys (yp3c09, Jørgen 2026-11-19

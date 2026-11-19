@@ -96,7 +96,7 @@ def fixture(root, binary):
     command("nice", "-n", "19", binary, "index", env=env, cwd=project)
     db = sqlite3.connect(muninn / "data" / "muninn.db")
     unit, content_hash = db.execute("SELECT id,content_hash FROM units WHERE key='fixture_banana'").fetchone()
-    db.execute("INSERT INTO injections VALUES(?,?,?,?,?)", ("crab", unit, content_hash, "jcode", 1794227400000000000))
+    db.execute("INSERT INTO injections(session,unit_id,content_hash,harness,at_ns) VALUES(?,?,?,?,?)", ("crab", unit, content_hash, "jcode", 1794227400000000000))
     ids = dict(db.execute("SELECT key,sid FROM units"))
     db.commit()
     db.close()
