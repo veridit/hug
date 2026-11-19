@@ -46,5 +46,6 @@ crab: reviewed and landed exact SHA c2b0bbe5 (CI 44464516250 success 8/8; main h
 landed c1832e8 on main 2026-11-19: muninn capture: failing tests for a hook call the budget cannot cover and a…
 landed c2b0bbe on main 2026-11-19: muninn capture: a hook starts a call only when the time left covers it; a…
 shipped in v0.7.77 (c1832e8)
+crab 05:50Z: first run on v0.7.77, capture_runs 8476 (05:37:55Z): no error, processed 992, 65 actions, ended skipped 'deferred to next hook (budget)' as designed (extract 47.9 s, plan 104.0 s). Check 2 needs a day: recount turn_end 'deadline exceeded' after 2026-11-20T05:37Z.
 ## History
 - 2026-11-19T05:55 todo -> doing/active (take)
