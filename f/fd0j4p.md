@@ -27,7 +27,7 @@ Jørgen 2026-11-19 08:39Z (crab session): consider whether the todo-reminder pus
 Short, imperative lines in the existing hug section; no new section. Each rule names the command to use (hug task ask, hug task wait, hug task note). A test pins the wording, as q2adr8 check 5 does.
 
 ## Relevant details
-Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli setup template) and this repo's AGENTS.md; help for ask and wait. Related: q2adr8 (one question per ask), p87ngv (threads), memories 7jj34g/2sgrc1, jcode maintainer report sent 2026-11-19 08:30Z.
+Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli setup template) and this repo's AGENTS.md; help for ask and wait. Related: q2adr8 (one question per ask), p87ngv (threads), memories 7jj34g/2sgrc1, jcode maintainer report sent 2026-11-19 08:30Z. Also (Jørgen 11:34Z on p87ngv): open questions go on the task as asks, never inside an attached file, where the machinery cannot see them.
 
 ## Depends on
 
