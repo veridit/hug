@@ -1,15 +1,20 @@
 ---
 id: m5pbb0
 title: "hug tui: a later open question on a task cannot be reached to answer"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["blossom"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T10:06"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Leads to check: the first question's answer moving focus (stage shows 'question 
 - [ ] Jørgen answers a second question in hug tui after the release
 
 ## Notes
+
+
+## History
+- 2026-11-19T10:06 todo -> doing/active (take)
