@@ -32,6 +32,7 @@ compatibility links only. Never tell a user to type them.
   runs them in the `bench` job (ubuntu, no -race):
   `HUG_BENCH=1 go test -run Bench ./...`. A bound that proves a timeout or
   a non-wait (a hanging remote gives up) stays a normal test.
+- A flake under load: reproduce with STARVE=N (huginn/internal/tui/starve_test.go) before fixing.
 - Messages, fixes and help must name `hug task ...` / `hug mem ...`, and every
   error ends with a `fix:` line an agent can run.
 - A ruling that reverses or narrows an earlier one is written on the earlier
