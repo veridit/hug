@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.74 - 2026-11-19
+
 - On macOS, closing a file watch no longer closes a file it does not own (mq5ger). fsnotify v1.10.1's kqueue backend closed each watched file's descriptor twice when the file was deleted while the watch closed: once on the delete event, once on close. The second close hit whatever had taken that descriptor number in between, so another file hug held open lost its descriptor. On CI this showed as a test's temp-folder clean-up failing with `unlinkat ...: bad file descriptor` (run 44384875316). hug now carries fsnotify v1.10.1 in `internal/fsnotify`, with the upstream fix (fsnotify PR 789, not yet released) applied: the event reader releases the watches on its way out, and close waits for it. `TestCloseWhileFilesGoClosesNothingElse` fails first on v1.10.1 (2 of 3 runs of 300 rounds lost a held file's descriptor) and passes 10 of 10 with the fix. The copy's whole diff from v1.10.1 (four import lines, PR 789, and one call PR 789's lock needs on v1.10.1, `TestRemoveWatchedDirReturns`) is in `internal/fsnotify/upstream.patch`, held by `TestUpstreamDiff`. Linux and Windows are unchanged.
 
 - The TUI's reload no longer waits on git (adqdfe). Every load asked git for the close times of RECENTLY DONE before it returned, so on a machine too loaded to start a process the board waited too: a change made elsewhere could take seconds to show, and TestChangeBeforeWatchIsUpIsSeen failed 4 in 1000 starved runs ('no reload after the watch came up'). The board now lands with the close times already known, and git is asked after it; RECENTLY DONE takes the new order when git answers. The TUI's own writes still read them at once.
