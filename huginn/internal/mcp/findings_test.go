@@ -89,4 +89,13 @@ func TestNewAndUpdateReturnFindingsAndOneFix(t *testing.T) {
 	if p := m["task"].(map[string]any)["purpose"]; p != "Why now" {
 		t.Fatalf("purpose %v", m["task"])
 	}
+	// zdgw60 check 3: task_update set says what it wrote, as the CLI does.
+	w, _ := m["wrote"].([]any)
+	var wrote []string
+	for _, x := range w {
+		wrote = append(wrote, x.(string))
+	}
+	if got := strings.Join(wrote, "\n"); !strings.Contains(got, "title: ") || !strings.Contains(got, "purpose: Why now") || !strings.Contains(got, "added check 2: D") || len(wrote) != 3 {
+		t.Fatalf("update set wrote: %v", m["wrote"])
+	}
 }
