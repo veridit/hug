@@ -1,0 +1,260 @@
+package tui
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/charmbracelet/bubbles/cursor"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/x/ansi"
+	"github.com/muesli/termenv"
+)
+
+// a82j3n (Jørgen 2026-11-19 10:26Z, 10:27Z): while v waits for its second
+// key, the underlines of the keys that can come next, o l b !, blink
+// together at the cursor's 530 ms; there is no cursor cell after 'view:'
+// any more, and v itself is drawn solid (a filled accent cell) for as
+// long as it waits: it is picked and changes the state.
+
+// keyColumns are the columns of o l b ! on the view line's text.
+func keyColumns(t *testing.T, text string) map[int]bool {
+	t.Helper()
+	cols := map[int]bool{}
+	for col := range text {
+		if col < len(text) && keyAt(text, col) {
+			cols[col] = true
+		}
+	}
+	if len(cols) != len(views) {
+		t.Fatalf("found %d key columns on %q, want %d", len(cols), text, len(views))
+	}
+	return cols
+}
+
+// pendingFrames is a colour model w x h after v, its blink command, and
+// the frame it draws.
+func pendingFrames(t *testing.T, w, h int) (model, tea.Cmd) {
+	t.Helper()
+	m := colourModel(t, w, "overview")
+	m.height = h
+	m.resize()
+	m, cmd := key(m, "v")
+	if cmd == nil {
+		t.Fatal("v returned no command: the blink never starts")
+	}
+	return m, cmd
+}
+
+// realTick runs a blink command as the program would: it waits its
+// 530 ms and gives the message, and how long that took.
+func realTick(t *testing.T, cmd tea.Cmd) (tea.Msg, time.Duration) {
+	t.Helper()
+	start := time.Now()
+	msg := cmd()
+	took := time.Since(start)
+	if _, ok := msg.(cursor.BlinkMsg); !ok {
+		t.Fatalf("blink command gave %T", msg)
+	}
+	return msg, took
+}
+
+// diffOnlyKeyUnderlines fails unless frames a and b are the same but for
+// the underline of o l b ! on the view line, underlined in a as wantA says.
+func diffOnlyKeyUnderlines(t *testing.T, a, b string, wantA bool) {
+	t.Helper()
+	la, lb := strings.Split(a, "\n"), strings.Split(b, "\n")
+	if len(la) != len(lb) {
+		t.Fatalf("frames have %d and %d lines", len(la), len(lb))
+	}
+	changed := 0
+	for i := range la {
+		if la[i] == lb[i] {
+			continue
+		}
+		text := ansi.Strip(la[i])
+		if !strings.HasPrefix(text, "view: ") || text != ansi.Strip(lb[i]) {
+			t.Fatalf("line %d changed and is not the view line's underlines:\nA %q\nB %q", i, la[i], lb[i])
+		}
+		keys := keyColumns(t, text)
+		for col := 0; col < len([]rune(text)); col++ {
+			ca, cb := sgrAt(la[i], col), sgrAt(lb[i], col)
+			if !keys[col] {
+				if ca != cb {
+					t.Fatalf("view line column %d (%q) changed: %+v -> %+v", col, string([]rune(text)[col]), ca, cb)
+				}
+				continue
+			}
+			if ca.fg != cb.fg || ca.bold != cb.bold || ca.bg != cb.bg {
+				t.Fatalf("key %q changed more than its underline: %+v -> %+v", string([]rune(text)[col]), ca, cb)
+			}
+			if ca.underline != wantA || cb.underline == wantA {
+				t.Fatalf("key %q underline %v -> %v, want %v -> %v", string([]rune(text)[col]), ca.underline, cb.underline, wantA, !wantA)
+			}
+			changed++
+		}
+	}
+	if changed != len(views) {
+		t.Fatalf("%d key underlines changed between the frames, want %d (o l b !)", changed, len(views))
+	}
+}
+
+// a82j3n check 1: two v-pending frames one real blink (about 0.53 s)
+// apart differ only in the underline of o, l, b and !; the next tick
+// brings them back.
+func TestViewKeysBlinkAfterV(t *testing.T) {
+	for _, size := range [][2]int{{100, 30}, {160, 45}} {
+		t.Run(fmt.Sprintf("%dx%d", size[0], size[1]), func(t *testing.T) {
+			m, cmd := pendingFrames(t, size[0], size[1])
+			on := m.View()
+			msg, took := realTick(t, cmd)
+			if took < 500*time.Millisecond || took > 900*time.Millisecond {
+				t.Fatalf("the blink tick came after %v, want about 530ms", took)
+			}
+			next, cmd := m.Update(msg)
+			m = next.(model)
+			if cmd == nil {
+				t.Fatal("one blink tick asked for no next one")
+			}
+			off := m.View()
+			diffOnlyKeyUnderlines(t, on, off, true)
+			msg, _ = realTick(t, cmd)
+			next, cmd = m.Update(msg)
+			m = next.(model)
+			if cmd == nil {
+				t.Fatal("the second tick asked for no next one")
+			}
+			diffOnlyKeyUnderlines(t, off, m.View(), false)
+		})
+	}
+}
+
+// a82j3n check 2: no cursor cell after 'view:' in either phase: the cell
+// at column 5 is a bare space; the line's text and width are the same
+// idle and after v.
+func TestNoCursorCellAfterView(t *testing.T) {
+	for _, w := range []int{100, 160} {
+		m := colourModel(t, w, "overview")
+		idle := m.viewLine(m.stateCounts())
+		pending, cmd := pendingFrames(t, w, 30)
+		blinked := pending
+		vm, tick := vBlinkTick(t, pending)
+		next, _ := vm.Update(tick)
+		blinked = next.(model)
+		_ = cmd
+		for _, s := range []struct {
+			name string
+			m    model
+		}{{"blink on", pending}, {"blink off", blinked}} {
+			line := s.m.viewLine(s.m.stateCounts())
+			if c := sgrAt(line, len("view:")); c != (cell{}) || ansi.Strip(cellAt(line, len("view:"))) != " " {
+				t.Fatalf("at %d after v (%s) the cell after 'view:' is drawn: %q", w, s.name, cellAt(line, len("view:")))
+			}
+			if ansi.Strip(line) != ansi.Strip(idle) || ansi.StringWidth(line) != ansi.StringWidth(idle) {
+				t.Fatalf("at %d v changed the line's text or width (%s):\nidle    %q\npending %q", w, s.name, ansi.Strip(idle), ansi.Strip(line))
+			}
+		}
+	}
+}
+
+// pickedV says whether v (column 0) is drawn solid: a filled accent cell,
+// not underlined; steady is the normal look, underlined accent, no fill.
+func pickedV(line string) (picked, steady bool) {
+	c := sgrAt(line, 0)
+	fill := strings.Contains(cellAt(line, 0), "48;2;0;191;255")
+	return fill && c.bg && !c.underline && !c.bold, !c.bg && c.underline && c.fg == sgrColour("#00bfff") && !c.bold
+}
+
+// a82j3n check 3: after the second key or Esc the underlines are steady
+// again, v is back to its look, and the last tick asks for no further one.
+func TestViewKeysSteadyAfterSecondKey(t *testing.T) {
+	m, _ := pendingFrames(t, 140, 40)
+	// Leave it in the off phase so a stale phase would show.
+	vm, tick := vBlinkTick(t, m)
+	next, _ := vm.Update(tick)
+	off := next.(model)
+	for _, k := range []string{"o", "l", "b", "!", "esc", "x"} {
+		done, tick := vBlinkTick(t, press(off, k))
+		for range 3 { // the tick in flight, and any after it
+			next, c := done.Update(tick)
+			done = next.(model)
+			if c != nil {
+				t.Fatalf("after v %s the blink keeps ticking", k)
+			}
+		}
+		line := done.viewLine(done.stateCounts())
+		text := ansi.Strip(line)
+		for col := range keyColumns(t, text) {
+			if c := sgrAt(line, col); !c.underline || c.fg != sgrColour(stepTwoColour[0]) {
+				t.Fatalf("after v %s key %q is not steady underlined violet: %q", k, string(text[col]), cellAt(line, col))
+			}
+		}
+		if _, steady := pickedV(line); !steady {
+			t.Fatalf("after v %s v is not back to underlined accent: %q", k, cellAt(line, 0))
+		}
+	}
+}
+
+// a82j3n check 5: while v waits v is solid in both phases; after the
+// second key or Esc it is underlined accent again; idle it never was solid.
+func TestPickedVIsSolid(t *testing.T) {
+	m := colourModel(t, 140, "overview")
+	if picked, steady := pickedV(m.viewLine(m.stateCounts())); picked || !steady {
+		t.Fatalf("idle v is solid %v, steady %v: %q", picked, steady, cellAt(m.viewLine(m.stateCounts()), 0))
+	}
+	pending, _ := pendingFrames(t, 140, 40)
+	vm, tick := vBlinkTick(t, pending)
+	next, _ := vm.Update(tick)
+	blinked := next.(model)
+	for _, s := range []struct {
+		name string
+		m    model
+	}{{"blink on", pending}, {"blink off", blinked}} {
+		line := s.m.viewLine(s.m.stateCounts())
+		if picked, _ := pickedV(line); !picked {
+			t.Fatalf("after v (%s) v is not a filled accent cell: %q", s.name, cellAt(line, 0))
+		}
+	}
+	for _, k := range []string{"l", "esc"} {
+		done := press(blinked, k)
+		if _, steady := pickedV(done.viewLine(done.stateCounts())); !steady {
+			t.Fatalf("after v %s v is not underlined accent: %q", k, cellAt(done.viewLine(done.stateCounts()), 0))
+		}
+	}
+}
+
+// a82j3n goldens at 100x30 and 160x45: the whole screen idle, after v in
+// both blink phases and after v l, as text, and each frame's view line
+// with its codes visible.
+func TestViewBlinkGolden(t *testing.T) {
+	for _, size := range [][2]int{{100, 30}, {160, 45}} {
+		name := fmt.Sprintf("%dx%d", size[0], size[1])
+		t.Run(name, func(t *testing.T) {
+			m := colourModel(t, size[0], "overview")
+			m.height = size[1]
+			m.resize()
+			pending := press(m, "v")
+			vm, tick := vBlinkTick(t, pending)
+			next, _ := vm.Update(tick)
+			blinked := next.(model)
+			chosen := press(blinked, "l")
+			escaped := press(blinked, "esc")
+			var golden []string
+			for _, s := range []struct {
+				name string
+				m    model
+			}{{"idle", m}, {"after v, blink on", pending}, {"after v, blink off", blinked}, {"after v l", chosen}, {"after v Esc", escaped}} {
+				line := s.m.viewLine(s.m.stateCounts())
+				golden = append(golden, "== "+s.name, "view line: "+strconv.Quote(line), ansi.Strip(s.m.View()))
+			}
+			plain := m
+			plain.styles = newTheme()
+			plain.styles.renderer.SetColorProfile(termenv.Ascii)
+			plainV := press(plain, "v")
+			golden = append(golden, "== NO_COLOR after v", "view line: "+strconv.Quote(plainV.viewLine(plainV.stateCounts())))
+			goldenFile(t, "testdata/header/view-blink-"+name+".txt", strings.Join(golden, "\n")+"\n")
+		})
+	}
+}
