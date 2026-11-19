@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
+design_question: "Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?"
+design_for: "jhf"
+design_since: "2026-11-19T09:56"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -32,4 +37,12 @@ Sketch (crab 09:00Z). File: a ## Threads section, each thread headed with its nu
 - [ ] Several questions in one call become separate threads, each answered on its own (test)
 - [ ] Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM
 
+## Questions
+- 2026-11-19T09:56 question 1 by crab to jhf:
+  Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?
+
 ## Notes
+
+
+## History
+- 2026-11-19T09:56 todo -> todo/design (ask)
