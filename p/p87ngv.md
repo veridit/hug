@@ -55,6 +55,10 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 - 2026-11-19T10:05 question 5 by crab to jhf:
   History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md), linked from the ticket, with each resolved mark as a dated entry quoting the original text, the exchange and the change made. Is that the right name and shape?
 
+## Requests
+- 2026-11-19T10:05 request 1 by jhf:
+  And now I can't get the second question here. I think your question number two both may resolve a thread. It depends on what the request says and the answer says. So the person, human who's doing this, will maybe say, ah, that's good. I accept or I approve. And it will say, no, I need something else. And you have to decide by the ticket. And I think the same by the agent. So we have to use judgment here. And both can initiate for clarity.
+
 ## Notes
 
 
@@ -71,3 +75,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:05 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:05 asked question 4 of jhf, 4 open (todo/ready -> todo/design)
 - 2026-11-19T10:05 asked question 5 of jhf, 5 open (todo/design -> todo/design)
+- 2026-11-19T10:05 request 1 by jhf
