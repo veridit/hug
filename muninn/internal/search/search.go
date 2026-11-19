@@ -140,7 +140,14 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 		}
 		return rows.Err()
 	}
+	// Each distinct word and bigram is looked up once: concepts is a set, so
+	// a repeated word (a transcript repeats many) adds nothing.
+	looked := map[string]bool{}
 	for _, w := range words {
+		if looked[w] {
+			continue
+		}
+		looked[w] = true
 		var err error
 		if len(w) <= 5 {
 			err = addConcepts(`SELECT id FROM concepts WHERE term=?`, w)
@@ -151,7 +158,12 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 			return nil, err
 		}
 	}
+	lookedBigram := map[string]bool{}
 	for _, b := range bigrams(words) {
+		if lookedBigram[b] {
+			continue
+		}
+		lookedBigram[b] = true
 		if err := addConcepts(`SELECT id FROM concepts WHERE term=?`, b); err != nil {
 			return nil, err
 		}
