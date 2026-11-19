@@ -48,6 +48,7 @@ piglet: 14d51bc1 (fix) on f56abe6a (failing test), base fac02994, pushed to 8jcj
 landed 4dabf89 on main 2026-11-19: capture: a message over the chunk limit is refused for good: failing test…
 landed fbe3a41 on main 2026-11-19: capture: a long message is cut into parts, never refused (8jcj3k)
 shipped in v0.7.75 (4dabf89)
+crab: landed on main (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75. The open check waits on the live machine after brew upgrade.
 ## History
 - 2026-11-19T02:30 todo -> doing/active (take)
 - 2026-11-19T02:36 doing/active -> doing/waiting (wait)
