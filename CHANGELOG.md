@@ -6,11 +6,13 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.85 - 2026-11-19
+
 - Mid-turn recall on jcode, off by default (x8zzzn). A message typed into a
   running jcode turn (a soft interrupt) ran no recall: since 2026-11-18
-  03:53Z, 122 of 123 such messages had no recall line. When such a message came before the
-  turn's first tool result, it also made the turn's parked block "stale",
-  and the block was dropped (8 of 13 stale drops). With
+  03:53Z, 122 of 123 such messages had no recall line. When such a message
+  came before the turn's first tool result, it also made the turn's parked
+  block "stale", and the block was dropped (8 of 13 stale drops). With
   `"recall": {"jcode_midturn": true}` in config.json, the next tool result
   recalls each such message and carries its block, after the turn's parked
   block, which is no longer dropped. The turn is jcode's own turn id
