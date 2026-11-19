@@ -48,5 +48,6 @@ crab: reviewed and landed exact SHA e98a12ac (CI 44456503911 success 8/8; main h
 landed 01b6f80 on main 2026-11-19: capture: a hook call cut at max_tokens ends the whole hook: failing tests…
 landed e98a12a on main 2026-11-19: capture: a hook call cut at max_tokens is retried once at twice the cap (nmn6wf)
 shipped in v0.7.76 (01b6f80)
+crab 04:39Z, first run on v0.7.76: capture_runs 8467 (04:29:17Z, turn_end) processed 760 messages in 14 calls with 83 actions, none truncated (max completion 783 of 1024), so it is past the chunk that stuck 8453/8459/8460. It ended 'extraction timeout or cancellation: context deadline exceeded': call 14 was cut by the hook's time budget (0 completion tokens), not by max_tokens. Check 3 needs a row with no error, so I'll check the next hook.
 ## History
 - 2026-11-19T04:01 todo -> doing/active (take)
