@@ -32,11 +32,12 @@ main fbe3a412 CI 44438198799 success 8/8. CHANGELOG commit 4591627d (restored th
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml for v0.7.75 succeeds (run id)
+- [x] release.yml for v0.7.75 succeeds (run id)
 - [ ] hug version prints v0.7.75 after brew upgrade
 
 ## Notes
 
 
+check 1: release.yml 44441121338 completed success
 ## History
 - 2026-11-19T03:01 todo -> doing/active (take)
