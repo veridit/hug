@@ -33,11 +33,12 @@ main c2b0bbe5 CI 44464516250 success 8/8. CHANGELOG 020b9592, merge 1ce66c8a, re
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml for v0.7.77 succeeds (run id)
+- [x] release.yml for v0.7.77 succeeds (run id)
 - [ ] hug version prints v0.7.77 after brew upgrade
 
 ## Notes
 
 
+check 1: release.yml 44465643587 completed success
 ## History
 - 2026-11-19T06:37 todo -> doing/active (take with p277bp)
