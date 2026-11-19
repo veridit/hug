@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzx"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T02:37"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab: trace reported; undo of 9 moves and drop/reword of qccpka are his call"
+waiting_since: "2026-11-19T02:40"
+waiting_asked_by: "piglet"
 ---
 
 ## Goal
@@ -42,3 +45,4 @@ file:qccpka-TRACE.md (7366 bytes, sha256:48c9877b)
 trace (piglet, read-only): not a capture path. All 15 were captured into project:rc-0ca4bf6be5d989c3 (e.g. dpvcdm: capture_actions run 7460 pos 1, place here, capture.go:437 via places.go:160 with wide off) and moved to personal by q0a8rx's batch rescope at 2026-11-18T19:49:51Z (moves.tsv, crab ruling B; backup tidy/rescope-20261118T194951Z-4179401420 shows them in project just before). The one personal capture_actions row (run 8355 pos 15) is a reinforce taking dpvcdm's existing scope (capture.go:438-446). Consequence: my 66ex4y rescope at 01:26:55Z undid 9 deliberate q0a8rx moves (dpvcdm wwqfa8 8z7757 ghtqen y4061x t4q0t0 8e91jw t2tp92 a0yarc); undo is crab's call. No code bug, so check 2 has nothing to pin. File: qccpka-TRACE.md
 ## History
 - 2026-11-19T02:37 todo -> doing/active (take)
+- 2026-11-19T02:40 doing/active -> doing/waiting (wait)
