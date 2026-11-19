@@ -1,7 +1,7 @@
 ---
 id: cy1fqd
 title: "TestTmuxReload: 5 s screen waits miss a slow first frame in CI"
-state: todo
+state: "dropped"
 type: feature
 priority: ""
 assignee: []
@@ -10,6 +10,8 @@ group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-19
 updated: 2026-11-19
+dropped_reason: "Not reproduced on main (crab 01:11, option a): 0 'screen never showed' in 26 completed ci.yml runs since hfkt1n (2026-11-18 23:00Z, 21 success, 5 failure: TestUpstreamDiff 44417801741, TestTagRowsGolden 44419243717, TestTmuxGolden palette drift 44428150586, TestCompletionInEachShell/fish 44430041895, macOS install tests 44431228949). No local run: TestTmuxReload's loadGuard holds above 5-minute load 120 and the load was 784 ('reload_tmux_test.go:36: load guard: paused before heavy work, 5-minute load 783.79 \u003e 120'). ghycrq does not cover it (only startTmuxServer). If it recurs, iwazaru's CI census catches it."
+dropped_at: "2026-11-19T02:12"
 ---
 
 ## Goal
@@ -36,3 +38,7 @@ CI census 2026-11-19 (iwazaru, scratch/ci-census.md), ubuntu-latest -race: 44232
 crab 01:06: stays todo. Confirm on main after bc217cb3 (hfkt1n) and ghycrq (tmux harness: server start and cleanup deadlines) land, before anyone works it; it may be ghycrq's.
 
 macaque 01:09, before any fix (crab's steps). (1) ghycrq (ci/ghycrq 2f7a91f8, tigress) read: its diff touches only startTmuxServer (ready = the server's socket takes a connection; cleanup = SIGTERM + wait) and adds TestTmuxServerSlowStarts. TestTmuxReload's waitFor (reload_tmux_test.go:111, 5 s / 15 s deadlines on capture-pane) is unchanged by it: ghycrq does not cover cy1fqd. (2) Main 50fa8681 (has hfkt1n bc217cb3, adqdfe bf170d46). CI census since 2026-11-18T23:00Z: 26 completed ci.yml runs, 21 success, 5 failure, 0 'screen never showed' (failures: 44431228949 TestInstallThrowawayHomes etc. macOS, 44430041895 TestCompletionInEachShell/fish, 44428150586 TestTmuxGolden 'golden drift .../palette.txt', 44419243717 TestTagRowsGolden, 44417801741 TestUpstreamDiff). Local repro not run: TestTmuxReload calls loadGuard (tmux_test.go:20, holds while the 5-minute load > 120) and the load is 784 ('reload_tmux_test.go:36: load guard: paused before heavy work, 5-minute load 783.79 > 120'); a 200-run would only wait, so I stopped it. STARVE (starve_test.go) amplifies a test in-process; TestTmuxReload's waits are on a separate hug process under tmux, so STARVE in the test process does not slow the TUI being waited on.
+
+
+## History
+- 2026-11-19T02:12 todo -> dropped (drop)
