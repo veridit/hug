@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+design_question: "Do these three lines read right for the hug section of AGENTS.md?\n- The hug board is the record of work. Do not copy it into a harness todo list.\n- A reminder to finish is not a blocker. Mark a task waiting only with who must do what: hug task wait ID \"jhf: picks the column order\".\n- Put questions and discussion for a person on the task (hug task ask ID --to NAME, one question each), not only in chat."
+design_for: "jhf"
+design_since: "2026-11-19T10:00"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -31,4 +36,15 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
 - [ ] hug task setup writes them, and a test fails if any of the three rules is missing
 - [ ] help ask and help wait say a reminder is not a blocker and blocked names who must do what (test)
 
+## Questions
+- 2026-11-19T10:00 question 1 by crab to jhf:
+  Do these three lines read right for the hug section of AGENTS.md?
+  - The hug board is the record of work. Do not copy it into a harness todo list.
+  - A reminder to finish is not a blocker. Mark a task waiting only with who must do what: hug task wait ID "jhf: picks the column order".
+  - Put questions and discussion for a person on the task (hug task ask ID --to NAME, one question each), not only in chat.
+
 ## Notes
+
+
+## History
+- 2026-11-19T10:00 todo -> todo/design (ask)
