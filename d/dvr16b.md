@@ -1,7 +1,7 @@
 ---
 id: dvr16b
 title: "Release v0.7.77"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T06:37"
-doing_with: "p277bp"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T06:37"
 ---
 
 ## Goal
@@ -43,3 +41,4 @@ check 1: release.yml 44465643587 completed success
 check 2: brew upgrade run on its own; hug version prints hug v0.7.77; bin links point at Cellar/hug/0.7.77
 ## History
 - 2026-11-19T06:37 todo -> doing/active (take with p277bp)
+- 2026-11-19T06:37 doing/active -> done (done); was doing_since: 2026-11-19T06:37; doing_with: p277bp
