@@ -4,7 +4,7 @@ title: "In lists, Space marks tasks and the footer offers actions for the marked
 state: "doing"
 type: feature
 priority: ""
-assignee: ["macaque"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzm8"
@@ -100,3 +100,4 @@ shipped in v0.7.73 (4b49e10)
 - 2026-11-18T21:27 todo/ready -> doing/active (take)
 - 2026-11-18T21:30 doing/active -> doing/asked (ask)
 - 2026-11-18T22:45 doing/asked -> doing/waiting (wait); was asked_by: macaque; asked_check: 7; asked_for: jhf; asked_show: cursor-on-mark.md; asked_since: 2026-11-18T21:30; asked_what: When the cursor is on a marked row, which sign should it show: A ⋗ or B ▸? The file draws both in your terminal.
+- 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)

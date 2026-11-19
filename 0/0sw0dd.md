@@ -4,7 +4,7 @@ title: "TUI navigation, search and sort"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["iwazaru"]
+assignee: ["crab"]
 labels: ["needs-discussion"]
 group: ""
 rank: "zzzzzzh"
@@ -75,3 +75,4 @@ shipped in v0.7.67 (5050b97)
 ## History
 - 2026-11-18T16:37 todo -> doing/active (take)
 - 2026-11-18T20:43 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:01 handed to crab: iwazaru's session ended (closed 2026-11-19 02:27)

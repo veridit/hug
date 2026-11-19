@@ -4,7 +4,7 @@ title: "Answer box shows at once, with the only moving cursor on screen"
 state: "doing"
 type: bug
 priority: ""
-assignee: ["macaque"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzwm"
@@ -55,3 +55,4 @@ crab 20:20 local: check 3 was ticked on 89e280c9; that lands as 897d4810 + dd183
 ## History
 - 2026-11-18T13:34 todo -> doing/active (take)
 - 2026-11-18T14:15 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)

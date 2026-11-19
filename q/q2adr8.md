@@ -4,7 +4,7 @@ title: "Ask several questions at once, each answered on its own"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["iwazaru"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxx"
@@ -66,3 +66,4 @@ shipped in v0.7.70 (854286b)
 ## History
 - 2026-11-18T20:43 todo -> doing/active (take)
 - 2026-11-18T21:39 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:01 handed to crab: iwazaru's session ended (closed 2026-11-19 02:27)

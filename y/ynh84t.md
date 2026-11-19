@@ -4,7 +4,7 @@ title: "hug mem install writes 'muninn hook'; task install names the MCP entry h
 state: "doing"
 type: feature
 priority: ""
-assignee: ["duckling"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz1"
@@ -51,3 +51,4 @@ shipped in v0.7.75 (cda4d23)
 crab: landed on main (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75. The open check waits on the live machine after brew upgrade.
 ## History
 - 2026-11-18T23:37 todo -> doing/active (take)
+- 2026-11-19T04:01 handed to crab: duckling's session ended (closed 2026-11-19 02:31)

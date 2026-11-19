@@ -4,7 +4,7 @@ title: "Questions to a person get their own doing stage, 'asked'"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["iwazaru"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzmh"
@@ -110,3 +110,4 @@ shipped in v0.7.70 (08ab507)
 - 2026-11-18T00:45 doing/active -> doing/waiting (wait)
 - 2026-11-18T00:45 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: parked a minute while kestrel closes d2n0h7 (crab 00:44); resumed next; waiting_since: 2026-11-18T00:45
 - 2026-11-18T00:56 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:01 handed to crab: iwazaru's session ended (closed 2026-11-19 02:27)

@@ -4,7 +4,7 @@ title: "Detail: a calm ACCEPTANCE heading; only the cursor marks the question"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["macaque"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxh"
@@ -53,3 +53,4 @@ shipped in v0.7.66 (3517e62)
 ## History
 - 2026-11-18T16:25 todo -> doing/active (take)
 - 2026-11-18T16:56 doing/active -> doing/waiting (wait)
+- 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)

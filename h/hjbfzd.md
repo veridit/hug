@@ -4,7 +4,7 @@ title: "Screen capture: attach to a chosen task, pick one, or create a new task"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["duckling"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzy8"
@@ -63,3 +63,4 @@ shipped in v0.7.71 (69b5ceb)
 - 2026-11-18T21:16 todo -> doing/active (take)
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 doing/waiting -> doing/asked (ask); was waiting_asked_by: duckling; waiting_on: crab lands ci/hjbfzd-rebased 69b5cebc with the stack, then a release; check 5 is Jørgen's confirmation after release; waiting_since: 2026-11-18T22:34
+- 2026-11-19T04:01 handed to crab: duckling's session ended (closed 2026-11-19 02:31)
