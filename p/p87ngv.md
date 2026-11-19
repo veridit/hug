@@ -104,3 +104,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:06 answer 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:06 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:06 resolved request 2 by crab
+- 2026-11-19T10:06 request 2 acknowledged by crab
