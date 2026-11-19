@@ -32,3 +32,5 @@ main dd6e5cf9 (CI 44500113493 8/8), CHANGELOG b2c9d5e4, merge 41dc277d, release.
 ## Notes
 
 check 1: release.yml 44501832424 success; brew upgrade: hug version 0.7.80, links into Cellar/hug/0.7.80
+
+check 1: release.yml 44501832424 success; brew upgrade: hug version v0.7.80, hug/muninn/huginn link into Cellar/hug/0.7.80
