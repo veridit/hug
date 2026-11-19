@@ -73,6 +73,8 @@ Syntax (Jørgen 09:31Z, console): Seid things. A mark is a thing, space-dot-Capi
     Question 3 answered from this request (answer 3). Principle: marks anchor to anything in the ticket's markdown or point into an attachment by name plus line/section; dialogue stays out of the ticket, history may be split per thing. Check 11 added for attachment pointers.
 - 2026-11-19T10:09 request 3 by jhf:
   Critic markup. Well, why not? It looks sensible enough. We can try that unless you have a better suggestion. If we're not going to use critic markup, my suggestion is to use something from my own play language Seid Because it is very easy to because it leads with a space and a period and then no space and data, which is unlike anything humans use because we always end with period and space. So you can know at any point that now you're going into data land, but it's a bit weird, maybe? .key:value .Oject1 .prop1:1 .prop2:2 .Object2 .prop1:"a" .prop2:True but on it's own it's not text confusable. Let's discuss in the console.
+  resolved 2026-11-19T10:32 by crab:
+    Answer 4 recorded from this request and the console: Seid things (.Request .by:jhf .msg:"..."), kinds Comment/Question/Request, properties by/msg/on/in; details rewritten with the syntax, the board collision scan, and CriticMarkup set aside.
 
 ## Notes
 
@@ -119,3 +121,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:32 answer 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:32 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:32 request 3 in progress by crab: hug task set p87ngv
+- 2026-11-19T10:32 resolved request 3 by crab
