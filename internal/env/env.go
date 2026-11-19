@@ -83,6 +83,7 @@ var Known = []Var{
 	{"HUG_TEST_EDIT_TO", Test, "", "the editor test's replacement"},
 	{"HUG_TEST_TUI_EDIT", Test, "", "the TUI editor test's text to append"},
 	{"HUG_TEST_FAKE_VERSION", Test, "", "the TUI reload test's fake version"},
+	{"HUG_TEST_TMUX_CHILD", Test, "", "how the tmux cleanup test's child test ends (wacc33)"},
 	{"HUG_TEST_MISSING_KEY", Test, "", "a credential variable a capture test leaves empty"},
 	{"HUG_TEST_FAKE_MCP", Test, "", "the stale-MCP test's fake hug mcp server (z77pem)"},
 	{"HUG_REQUIRE_SHELLS", Test, "1", "the completion test fails, not skips, when bash, zsh or fish is missing (5mmqjk)"},
