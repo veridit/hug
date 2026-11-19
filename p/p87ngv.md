@@ -87,6 +87,7 @@ and on a second line""". The opener is """ and the closer is the first """ not f
 crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were framed around threads; 1 is answered (no threads in the ticket, dialogue to a history file). Question 3 (anchor to an attached file) still stands in the new model. New questions 4 (sigil) and 5 (history file).
 landed c533de8 on main 2026-11-19: m5pbb0: failing tests: open questions with no mirror cannot be answered (p87ngv…
 shipped in v0.7.80 (c533de8)
+file:MOCK.md (6102 bytes, sha256:99d00fc3) check 5 mock: rules per frame, syntax rules, 9 open questions
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
