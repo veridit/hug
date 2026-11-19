@@ -67,6 +67,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
     Question 2 answered from this request (answer 2, his words); principle now says either side may resolve a mark, by judgment against the ticket, and either can initiate. Bug filed: question 2 could not be reached in hug tui.
 - 2026-11-19T10:06 request 2 by jhf:
   And for your question number three to an attached file? I think threads can anchor to anything in the markdown of the ticket, and the threads should stay out as I said again. Maybe they can be separate threads per separate thing, but they're not part of the ticket you can specify pieces of attachments and discuss them as well, yes. But you have to then use some pointers to always say inside attachment so-and-so line or section so-and-so
+  resolved 2026-11-19T10:06 by crab:
+    Question 3 answered from this request (answer 3). Principle: marks anchor to anything in the ticket's markdown or point into an attachment by name plus line/section; dialogue stays out of the ticket, history may be split per thing. Check 11 added for attachment pointers.
 
 ## Notes
 
@@ -101,3 +103,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
   (from jhf's request 2, 09:06Z) Marks can anchor to anything in the ticket's markdown, and also to pieces of attachments, by a pointer such as 'in attachment NAME, line N' or 'section S'. The dialogue stays out of the ticket, possibly one history per thing discussed.
 - 2026-11-19T10:06 answer 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:06 crab read the answer: hug task set p87ngv
+- 2026-11-19T10:06 resolved request 2 by crab
