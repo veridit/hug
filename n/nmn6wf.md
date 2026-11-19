@@ -1,15 +1,20 @@
 ---
 id: nmn6wf
 title: "Capture stuck when one hook call's output hits 1024 tokens"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["mushroom"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
+doing_since: "2026-11-19T04:01"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ muninn/internal/app/capture.go:353-356 caps hook calls at max_tokens 1024; munin
 - [ ] on the live store after release, crab_1793783281662 has a capture_runs row with no error (count in a note)
 
 ## Notes
+
+
+## History
+- 2026-11-19T04:01 todo -> doing/active (take)
