@@ -49,5 +49,6 @@ landed 01b6f80 on main 2026-11-19: capture: a hook call cut at max_tokens ends t
 landed e98a12a on main 2026-11-19: capture: a hook call cut at max_tokens is retried once at twice the cap (nmn6wf)
 shipped in v0.7.76 (01b6f80)
 crab 04:39Z, first run on v0.7.76: capture_runs 8467 (04:29:17Z, turn_end) processed 760 messages in 14 calls with 83 actions, none truncated (max completion 783 of 1024), so it is past the chunk that stuck 8453/8459/8460. It ended 'extraction timeout or cancellation: context deadline exceeded': call 14 was cut by the hook's time budget (0 completion tokens), not by max_tokens. Check 3 needs a row with no error, so I'll check the next hook.
+crab 04:55Z: the fix works live. 8468 retried a cut call at 2048 (call 5: 1024/1024 at max 1024, then 1104 at max 2048) and went on past it, 855 msgs, 88 actions; capture_deferred is empty. Check 3 still waits for an error-free run: 8467 and 8468 both ended on the hook time budget (a6xm8n), not on truncation.
 ## History
 - 2026-11-19T04:01 todo -> doing/active (take)
