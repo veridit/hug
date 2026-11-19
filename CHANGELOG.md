@@ -6,6 +6,15 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- hug mem: search matches query words against concepts in one read instead
+  of one full-table `LIKE` scan per word, and looks up a repeated word once
+  (b5jks7). Capture planning spent most of a hook's time there: replaying
+  capture run 8476 (14 chunks, 65 candidates) on a copy of the live store,
+  planning took 115.8 s before and 66.3 s after (chunk search 63.8 -> 20.3
+  s, per candidate 800 -> 707 ms). The Go matcher is SQLite's LIKE ('_' is
+  a wildcard, ASCII-only case folding); search and recall output are
+  byte-identical on those 79 searches and on the 277 recall4 messages.
+
 ## v0.7.77 - 2026-11-19
 
 - hug mem capture: a hook starts an extraction call only when the time left
