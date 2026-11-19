@@ -43,6 +43,9 @@ pgrep after full niced run on 62889dc4 (2026-11-19T20:58:12Z): `pgrep -fl 'tmux 
 CI 44615073708 on c1478721 (branch ci/wacc33): success, 8/8 jobs (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards). c1478721 = 62889dc4 + TestLabelOwner skips the signal-0 liveness check on Windows (CI 44613272670 on 62889dc4: windows 'tmuxtest_test.go:40: Label "huginn-golden-8488": owner 8488 is not this live process'; ubuntu and macos success). Fix commits: 0dd8da47, 62889dc4, c1478721 on wacc33, not merged to main.
 Reflection (open, 2026-11-19, bat): One gap: nothing in AGENTS.md says a new HUG_TEST_* variable must be added to internal/env Known (TestEveryHUGNameIsKnown). I found out from the full run. Otherwise the brief was clear.
 Landed on main 57fce63b (CI 44616634296 8/8 green on that exact SHA; restacked from c1478721 onto v0.7.85 with rebase-land.sh: CODE-DIFF IDENTICAL, CHANGELOG IDENTICAL). Test-only, so not released alone: it ships with the next user-facing release.
+landed 85f5a52 on main 2026-11-19: tests: a tmux server dies with its test, pass, fail, panic, timeout or kill; the…
+landed d45043b on main 2026-11-19: env: HUG_TEST_TMUX_CHILD is a known test variable (wacc33)
+landed 57fce63 on main 2026-11-19: tmuxtest: TestLabelOwner checks liveness only off Windows, which has no signal 0…
 ## History
 - 2026-11-19T21:05 todo -> doing/active (take)
 - 2026-11-19T22:12 doing/active -> done (done); was doing_since: 2026-11-19T21:05
