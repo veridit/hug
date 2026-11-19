@@ -216,3 +216,4 @@ crab 11:35Z: Jørgen 11:34Z (answer 9): questions inside an attached file are in
   > Open marks are drawn as a dim line under the text they are about: '↳ 1 request · jhf 09:40 · Make it concise' (tui-100x30.txt frame 1), the raw .Request text hidden. Is that the look you want?
   I can't really see. It seems that you're telling me things that I can only see if it was an ANSI dump text file or screenshot or source, not a txt file. So you're speaking of things that are not visually available. As far as I can tell, I would love to answer this
 - 2026-11-19T12:43 answer 11 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-19T12:44 answer 11 acknowledged by crab
