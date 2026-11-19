@@ -40,5 +40,6 @@ muninn/internal/app/capture.go: the loop checks 'time.Until(deadline) < 3*time.S
 crab 04:55Z, second instance: capture_runs 8468 (04:39:46Z) processed 855 msgs, 88 actions over 13 calls, then call 13 got 0 completion tokens in 417 ms and the run was recorded 'invalid extraction response (body redacted)' (error_class parse): the deadline cut the response body mid-read, so a budget cut shows up as a parse error too. Both 8467 and 8468 used extract_ms ~50 s + plan_ms ~112 s; the per-chunk check at capture.go (3 s left) and the provider reserve (2 s, capture.go:396-400) do not cover a 2-6 s call. Acceptance should also cover: a call cancelled by the hook budget is never reported as a parse error.
 
 
+cactus: fail-first c1832e85, fix c2b0bbe5 on 1a49540d; pushed a6xm8n and ci/a6xm8n, CI run 44464516250. plan_ms (~112-116 s) is inside the run budget (RunTimeout = 4 x 45 s = 180 s; extract 48-52 s + plan 112-116 s + apply 12 s = 176 s in 8467/8468); it is summed per-candidate capturePlan (memoryMatches) and per-chunk search. The gate now measures the per-chunk search (slowSearch) and per-chunk planning+save (slowAfter) and needs both before a chunk.
 ## History
 - 2026-11-19T05:55 todo -> doing/active (take)
