@@ -139,3 +139,4 @@ shipped in v0.7.80 (c533de8)
 - 2026-11-19T11:09 answered asked (question 1), by jhf, for crab (doing/asked -> doing/active):
   > Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?
   (jhf 09:05Z, request answer on this task) No threads in the ticket: the conversation moves to a separate history file; questions and requests may appear inline in the text as marks, and once resolved the ticket is changed and the dialogue goes to history.
+- 2026-11-19T11:09 answer 6 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
