@@ -29,15 +29,20 @@ type theme struct {
 	// mock/grid spec): where typing goes, an underlined bold accent that
 	// blinks at bubbles' 530 ms. The answer and request box use it.
 	cursor lipgloss.Style
-	// The view line, one cue per meaning (qh9ep1 check 9, Jørgen 19:54:
-	// "something more subtle"): viewPrefixKey is v, step 1 of the key
-	// trie, in the accent; viewKey the second step's letters, o l b !, in
-	// violet; both underlined, the one mark of a key you can press, and
-	// never bold. viewCurrent is the view you are in: bold alone, on the
-	// line's dim. viewPicked is v while it waits for its second key
-	// (a82j3n): picked, so solid, the accent as a filled cell, the one
-	// fill on the line, in the cursor's shape.
+	// The view line, one cue per meaning (r80svs, Jørgen 2026-11-19
+	// 11:09Z, 11:11Z): bold is a key you can press, colour the step of
+	// the key sequence, underline the state. viewPrefixKey is v, step 1,
+	// bold in the accent; viewKey the second step's letters, o l b !,
+	// bold in violet. viewCurrent is the view you are in: its whole word
+	// underlined on the line's dim (its key letter too, viewKey
+	// underlined). viewPicked is v while it waits for its second key: the
+	// key you picked, a steady underline under it, no fill.
 	viewPrefixKey, viewKey, viewCurrent, viewPicked lipgloss.Style
+	// noColor is NO_COLOR at start: colour is off, and the view line
+	// still writes its bold and underlines (r80svs check 3; NO_COLOR asks
+	// for no colour, not no attributes). A renderer without colour for
+	// another reason (no terminal) stays plain text.
+	noColor bool
 	// marked is the mark in a marked row's gutter, and only that (rxr4z8,
 	// crab 20:31: one cue, no tint).
 	marked lipgloss.Style
@@ -68,7 +73,8 @@ var (
 
 func newTheme() theme {
 	r := lipgloss.NewRenderer(os.Stdout)
-	if os.Getenv("NO_COLOR") != "" {
+	noColor := os.Getenv("NO_COLOR") != ""
+	if noColor {
 		r.SetColorProfile(termenv.Ascii)
 	}
 	base := r.NewStyle()
@@ -82,11 +88,12 @@ func newTheme() theme {
 		status: map[string]lipgloss.Style{}, kind: map[string]lipgloss.Style{}, priority: map[string]lipgloss.Style{}}
 	t.progress = progressStyle(color)
 	t.cursor = color("#00bfff", "#006c9c").Underline(true).Bold(true)
-	t.viewPrefixKey = color("#00bfff", "#006c9c").Underline(true)
+	t.viewPrefixKey = color("#00bfff", "#006c9c").Bold(true)
 	t.marked = color("#00bfff", "#006c9c").Faint(true) // dim accent, never red
-	t.viewKey = color(stepTwoColour[0], stepTwoColour[1]).Underline(true)
-	t.viewCurrent = t.dim.Bold(true)
-	t.viewPicked = base.Background(lipgloss.AdaptiveColor{Dark: "#00bfff", Light: "#006c9c"}).Foreground(lipgloss.AdaptiveColor{Dark: "#0b1620", Light: "#ffffff"})
+	t.viewKey = color(stepTwoColour[0], stepTwoColour[1]).Bold(true)
+	t.viewCurrent = t.dim.Underline(true)
+	t.viewPicked = t.viewPrefixKey.Underline(true)
+	t.noColor = noColor
 	// A quiet tint down the marked column, and underlined, so it shows
 	// without colour too (NO_COLOR); on the cursor row the row's tint, bold.
 	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)

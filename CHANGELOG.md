@@ -6,6 +6,19 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The view line in `hug tui` gives each cue one meaning (r80svs, Jørgen
+  2026-11-19 11:09Z, 11:11Z). Bold marks a key you can press: v, o, l, b
+  and !. Colour marks the step of the key sequence, v in the accent and
+  o l b ! in violet, so you can see that v opens the others. Underline
+  marks state: the view you are in has its whole word underlined, its key
+  letter too (until now it was bold, and hard to tell apart); after `v`,
+  `v` keeps a steady underline (instead of v0.7.81's filled cell) and the
+  underlines of o l b ! blink together on the same 530 ms ticks, while
+  the active word's other letters keep theirs. The second key or Esc
+  brings the line to rest, the new view underlined. With `NO_COLOR` the
+  bold and underlines are still drawn, without colour. Nothing on the line
+  is filled any more.
+
 ## v0.7.81 - 2026-11-19
 
 - After `v` in `hug tui`, the keys you can press next pulse instead of a

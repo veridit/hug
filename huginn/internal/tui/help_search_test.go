@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/charmbracelet/x/ansi"
 	"github.com/veridit/hug/huginn/internal/editor"
 )
 
@@ -46,7 +47,7 @@ func TestTabsMarkShortcutWithoutExtraWidth(t *testing.T) {
 	m.styles = newTheme()
 	m.resize()
 	m = press(m, "v", "o")
-	v := m.View()
+	v := ansi.Strip(m.View()) // NO_COLOR keeps the view line's bold and underlines (r80svs)
 	if !strings.Contains(v, "view: overview  list  board  !lint") {
 		t.Fatal("the view line must read view: overview  list  board  !lint (qh9ep1)\n", v)
 	}

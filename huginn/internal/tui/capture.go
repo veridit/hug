@@ -205,9 +205,10 @@ func (m model) captureLine() string {
 	if keys == "" {
 		return out
 	}
-	// The key letters as on the view line (qh9ep1 check 9): underlined in
-	// the accent, not bold; one cue per meaning.
-	dim, key := m.styles.dim, m.styles.viewPrefixKey
+	// The key letters underlined in the accent, not bold; one cue per
+	// meaning (qh9ep1 check 9). The view line's v is bold since r80svs;
+	// this prompt keeps its look.
+	dim, key := m.styles.dim, m.styles.viewPrefixKey.UnsetBold().Underline(true)
 	return out + dim.Render(" · ") + key.Render("s") + dim.Render("elect · ") + key.Render("c") + dim.Render("reate")
 }
 

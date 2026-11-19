@@ -30,16 +30,14 @@ func colourModel(t *testing.T, w int, view string) model {
 	return m
 }
 
-// qh9ep1 check 9 (Jørgen 19:54: "too intense and over the top ...
-// something more subtle"), 911j70 check 3: one cue per meaning on the
-// view line. An underline marks only a key you can press; colour tells the
-// keys apart (v the accent, o l b ! violet) and none is bold; the view you
-// are in is told by bold alone on its word; nothing has a background; no
-// cell is underlined, bold and coloured at once. Since a82j3n there is no
-// cursor after 'view:'; after v only v changes (solid, picked) while the
-// underlines are on, and the key colours are stable.
+// qh9ep1 check 9, 911j70 check 3, as r80svs has it (Jørgen 2026-11-19
+// 11:09Z, 11:11Z): one cue per meaning on the view line. Bold is a key you
+// can press, colour the step (v the accent, o l b ! violet), underline the
+// state: the active view's whole word at rest; after v, v steady and o l
+// b ! blinking (checkCues has the cells). Nothing has a background, the
+// colours are stable (v recolours no cell), and there is no cursor after
+// 'view:' (a82j3n).
 func TestViewLineMarksActiveView(t *testing.T) {
-	const slot = len("view:") // the column after 'view:'
 	for _, w := range []int{80, 140} {
 		for _, v := range views {
 			m := colourModel(t, w, v.name)
@@ -48,9 +46,9 @@ func TestViewLineMarksActiveView(t *testing.T) {
 			lit := pending.viewLine(pending.stateCounts())
 			text := ansi.Strip(idle)
 			end := strings.Index(text, "lint") + len("lint")
-			for col := 1; col < end; col++ { // v at 0 is solid: TestPickedVIsSolid
-				if a, b := cellAt(idle, col), cellAt(lit, col); a != b {
-					t.Fatalf("at %d in %s v recoloured column %d:\nidle    %q\npending %q", w, v.name, col, a, b)
+			for col := 0; col < end; col++ {
+				if a, b := sgrAt(idle, col), sgrAt(lit, col); a.fg != b.fg || a.bg != b.bg || a.bold != b.bold {
+					t.Fatalf("at %d in %s v recoloured column %d:\nidle    %q\npending %q", w, v.name, col, cellAt(idle, col), cellAt(lit, col))
 				}
 			}
 			for _, s := range []model{m, pending} {
@@ -58,41 +56,9 @@ func TestViewLineMarksActiveView(t *testing.T) {
 					t.Fatalf("at %d in %s a cursor stands after 'view:': %q", w, v.name, cell)
 				}
 			}
-			active := strings.Index(text, v.name)
-			for col := 0; col < end; col++ {
-				if col == slot || text[col] == ' ' {
-					continue
-				}
-				c := sgrAt(idle, col)
-				ch := string(text[col])
-				if c.bg {
-					t.Fatalf("at %d in %s %q at column %d has a background: %q", w, v.name, ch, col, cellAt(idle, col))
-				}
-				if c.underline && c.bold && c.fg != "" {
-					t.Fatalf("at %d in %s %q at column %d is underlined, bold and coloured: %q", w, v.name, ch, col, cellAt(idle, col))
-				}
-				key := col == 0 || keyAt(text, col)
-				if c.underline != key {
-					t.Fatalf("at %d in %s %q at column %d: underlined %v, a key %v: %q", w, v.name, ch, col, c.underline, key, cellAt(idle, col))
-				}
-				if key {
-					want := sgrColour(stepTwoColour[0])
-					if col == 0 {
-						want = sgrColour("#00bfff")
-					}
-					if c.fg != want || c.bold {
-						t.Fatalf("at %d in %s key %q: colour %q bold %v, want %q not bold", w, v.name, ch, c.fg, c.bold, want)
-					}
-					continue
-				}
-				inActive := col >= active && col < active+len(v.name)
-				if c.bold != inActive {
-					t.Fatalf("at %d in %s %q at column %d: bold %v, in the active word %v", w, v.name, ch, col, c.bold, inActive)
-				}
-				if c.fg != sgrColour("#8795a8") {
-					t.Fatalf("at %d in %s %q at column %d is %q, not the dim of the line: bold alone tells the view", w, v.name, ch, col, c.fg)
-				}
-			}
+			where := fmt.Sprintf("at %d in %s", w, v.name)
+			checkCues(t, where+" idle", idle, cueState{view: v.name}, true)
+			checkCues(t, where+" after v", lit, cueState{view: v.name, pending: true, shown: true}, true)
 		}
 	}
 }
@@ -286,11 +252,10 @@ func TestViewCursorGolden(t *testing.T) {
 			line := s.m.viewLine(s.m.stateCounts())
 			golden = append(golden, s.name+": "+ansi.Strip(line), "  "+strconv.Quote(line))
 		}
-		// NO_COLOR: the renderer writes no attribute at all; the line is
-		// its text, the same before and after v.
+		// NO_COLOR: no colour; the bold and underlines stay (r80svs).
+		t.Setenv("NO_COLOR", "1")
 		plain := m
 		plain.styles = newTheme()
-		plain.styles.renderer.SetColorProfile(termenv.Ascii)
 		plainV := press(plain, "v")
 		for _, s := range []struct {
 			name string

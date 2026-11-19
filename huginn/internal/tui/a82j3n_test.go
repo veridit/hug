@@ -10,14 +10,13 @@ import (
 	"github.com/charmbracelet/bubbles/cursor"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/muesli/termenv"
 )
 
 // a82j3n (Jørgen 2026-11-19 10:26Z, 10:27Z): while v waits for its second
 // key, the underlines of the keys that can come next, o l b !, blink
 // together at the cursor's 530 ms; there is no cursor cell after 'view:'
-// any more, and v itself is drawn solid (a filled accent cell) for as
-// long as it waits: it is picked and changes the state.
+// any more. v itself, picked, was drawn solid (a filled accent cell);
+// r80svs replaced that with a steady underline under v, no fill.
 
 // keyColumns are the columns of o l b ! on the view line's text.
 func keyColumns(t *testing.T, text string) map[int]bool {
@@ -159,23 +158,25 @@ func TestNoCursorCellAfterView(t *testing.T) {
 	}
 }
 
-// pickedV says whether v (column 0) is drawn solid: a filled accent cell,
-// not underlined; steady is the normal look, underlined accent, no fill.
+// pickedV says whether v (column 0) is drawn picked: bold accent with a
+// steady underline and no fill (r80svs); steady is its look at rest, bold
+// accent, no underline, no fill.
 func pickedV(line string) (picked, steady bool) {
 	c := sgrAt(line, 0)
-	fill := strings.Contains(cellAt(line, 0), "48;2;0;191;255")
-	return fill && c.bg && !c.underline && !c.bold, !c.bg && c.underline && c.fg == sgrColour("#00bfff") && !c.bold
+	accent := c.fg == sgrColour("#00bfff") && c.bold && !c.bg
+	return accent && c.underline, accent && !c.underline
 }
 
-// a82j3n check 3: after the second key or Esc the underlines are steady
-// again, v is back to its look, and the last tick asks for no further one.
+// a82j3n check 3, as r80svs has it: after the second key or Esc the line
+// is at rest again, the view you are in underlined as a word, v back to
+// its look, and the last tick asks for no further one.
 func TestViewKeysSteadyAfterSecondKey(t *testing.T) {
 	m, _ := pendingFrames(t, 140, 40)
 	// Leave it in the off phase so a stale phase would show.
 	vm, tick := vBlinkTick(t, m)
 	next, _ := vm.Update(tick)
 	off := next.(model)
-	for _, k := range []string{"o", "l", "b", "!", "esc", "x"} {
+	for k, view := range map[string]string{"o": "overview", "l": "list", "b": "board", "!": "lint", "esc": "overview", "x": "overview"} {
 		done, tick := vBlinkTick(t, press(off, k))
 		for range 3 { // the tick in flight, and any after it
 			next, c := done.Update(tick)
@@ -185,24 +186,20 @@ func TestViewKeysSteadyAfterSecondKey(t *testing.T) {
 			}
 		}
 		line := done.viewLine(done.stateCounts())
-		text := ansi.Strip(line)
-		for col := range keyColumns(t, text) {
-			if c := sgrAt(line, col); !c.underline || c.fg != sgrColour(stepTwoColour[0]) {
-				t.Fatalf("after v %s key %q is not steady underlined violet: %q", k, string(text[col]), cellAt(line, col))
-			}
-		}
+		checkCues(t, "after v "+k, line, cueState{view: view}, true)
 		if _, steady := pickedV(line); !steady {
-			t.Fatalf("after v %s v is not back to underlined accent: %q", k, cellAt(line, 0))
+			t.Fatalf("after v %s v is not back to bold accent: %q", k, cellAt(line, 0))
 		}
 	}
 }
 
-// a82j3n check 5: while v waits v is solid in both phases; after the
-// second key or Esc it is underlined accent again; idle it never was solid.
-func TestPickedVIsSolid(t *testing.T) {
+// r80svs check 2 (replaces a82j3n's solid v): while v waits v keeps a
+// steady underline, no fill, in both phases; after the second key or Esc
+// it is bold accent alone again; at rest it never was underlined.
+func TestPickedVIsUnderlined(t *testing.T) {
 	m := colourModel(t, 140, "overview")
 	if picked, steady := pickedV(m.viewLine(m.stateCounts())); picked || !steady {
-		t.Fatalf("idle v is solid %v, steady %v: %q", picked, steady, cellAt(m.viewLine(m.stateCounts()), 0))
+		t.Fatalf("idle v is picked %v, steady %v: %q", picked, steady, cellAt(m.viewLine(m.stateCounts()), 0))
 	}
 	pending, _ := pendingFrames(t, 140, 40)
 	vm, tick := vBlinkTick(t, pending)
@@ -214,20 +211,22 @@ func TestPickedVIsSolid(t *testing.T) {
 	}{{"blink on", pending}, {"blink off", blinked}} {
 		line := s.m.viewLine(s.m.stateCounts())
 		if picked, _ := pickedV(line); !picked {
-			t.Fatalf("after v (%s) v is not a filled accent cell: %q", s.name, cellAt(line, 0))
+			t.Fatalf("after v (%s) v is not bold accent with a steady underline: %q", s.name, cellAt(line, 0))
 		}
 	}
 	for _, k := range []string{"l", "esc"} {
 		done := press(blinked, k)
 		if _, steady := pickedV(done.viewLine(done.stateCounts())); !steady {
-			t.Fatalf("after v %s v is not underlined accent: %q", k, cellAt(done.viewLine(done.stateCounts()), 0))
+			t.Fatalf("after v %s v is not bold accent alone: %q", k, cellAt(done.viewLine(done.stateCounts()), 0))
 		}
 	}
 }
 
-// a82j3n goldens at 100x30 and 160x45: the whole screen idle, after v in
-// both blink phases and after v l, as text, and each frame's view line
-// with its codes visible.
+// a82j3n goldens at 100x30 and 160x45, with r80svs's cues: the whole
+// screen idle, after v in both blink phases, after v l and v Esc, as
+// text, and each frame's view line with its codes visible and a row of
+// its cues (cueRow: B bold, _ underlined, U both; a accent, v violet,
+// . dim); then the line under NO_COLOR.
 func TestViewBlinkGolden(t *testing.T) {
 	for _, size := range [][2]int{{100, 30}, {160, 45}} {
 		name := fmt.Sprintf("%dx%d", size[0], size[1])
@@ -247,13 +246,26 @@ func TestViewBlinkGolden(t *testing.T) {
 				m    model
 			}{{"idle", m}, {"after v, blink on", pending}, {"after v, blink off", blinked}, {"after v l", chosen}, {"after v Esc", escaped}} {
 				line := s.m.viewLine(s.m.stateCounts())
-				golden = append(golden, "== "+s.name, "view line: "+strconv.Quote(line), ansi.Strip(s.m.View()))
+				cues, colours := cueRow(line)
+				golden = append(golden, "== "+s.name, "view line: "+strconv.Quote(line), "  text:    "+ansi.Strip(line), "  cues:    "+cues, "  colours: "+colours, ansi.Strip(s.m.View()))
 			}
+			// NO_COLOR (r80svs check 3): the same bold and underlines, no
+			// colour, at rest and in both blink phases.
+			t.Setenv("NO_COLOR", "1")
 			plain := m
 			plain.styles = newTheme()
-			plain.styles.renderer.SetColorProfile(termenv.Ascii)
 			plainV := press(plain, "v")
-			golden = append(golden, "== NO_COLOR after v", "view line: "+strconv.Quote(plainV.viewLine(plainV.stateCounts())))
+			pv, tick := vBlinkTick(t, plainV)
+			next, _ = pv.Update(tick)
+			plainOff := next.(model)
+			for _, s := range []struct {
+				name string
+				m    model
+			}{{"NO_COLOR idle", plain}, {"NO_COLOR after v, blink on", plainV}, {"NO_COLOR after v, blink off", plainOff}} {
+				line := s.m.viewLine(s.m.stateCounts())
+				cues, colours := cueRow(line)
+				golden = append(golden, "== "+s.name, "view line: "+strconv.Quote(line), "  text:    "+ansi.Strip(line), "  cues:    "+cues, "  colours: "+colours)
+			}
 			goldenFile(t, "testdata/header/view-blink-"+name+".txt", strings.Join(golden, "\n")+"\n")
 		})
 	}
