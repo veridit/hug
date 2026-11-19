@@ -1,20 +1,24 @@
 ---
 id: p87ngv
 title: "Inline marks on a task's text; resolved dialogue moves to a history file"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["daisy"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "design"
-design_since: "2026-11-19T09:56"
-design_asked_by: "crab"
-design_question: "Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?"
-design_for: "jhf"
+stage: "asked"
+asked_by: "crab"
+asked_what: "Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?"
+asked_for: "jhf"
+asked_since: "2026-11-19T09:56"
+doing_since: "2026-11-19T10:36"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -131,3 +135,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:36 answer 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:36 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:36 answer 5 acknowledged by crab
+- 2026-11-19T10:36 todo/design -> doing/asked (take, 1 open question(s) kept); was design_asked_by: crab; design_for: jhf; design_question: Should questions and requests both become threads, so the ## Questions and ## Requests sections are replaced (old ones migrated), or do threads sit beside them?; design_since: 2026-11-19T09:56
