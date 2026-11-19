@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzzz"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T01:26"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "crab review"
+waiting_since: "2026-11-19T01:48"
+waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -45,3 +48,4 @@ check 2: Every date comparison under huginn/internal/cli and task tests reads th
 check 3: CI 44430077651 on 59f7d3d5 (ci/jsyksd): success 8/8 (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest, shards).
 ## History
 - 2026-11-19T01:26 todo -> doing/active (take)
+- 2026-11-19T01:48 doing/active -> doing/waiting (wait)
