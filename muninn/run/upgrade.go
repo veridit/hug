@@ -11,6 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/veridit/hug/internal/hugconf"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/harness"
 	"github.com/veridit/hug/muninn/internal/index"
@@ -190,7 +191,7 @@ func migrateJcodeHooks(out io.Writer, apply bool) (int, error) {
 		n++
 		file := filepath.Join(inst.Home, "config.toml")
 		if !apply {
-			fmt.Fprintf(out, "memory: would deliver jcode[%s] recall in a tool result, not the input box: %s runs %s on turn_start, post_tool_feedback and turn_end\n", inst.Name, file, bin+" hook jcode")
+			fmt.Fprintf(out, "memory: would deliver jcode[%s] recall in a tool result, not the input box: %s runs %s on turn_start, post_tool_feedback and turn_end\n", inst.Name, file, hugconf.HookCommand(bin, "jcode"))
 			continue
 		}
 		r, err := harness.InstallJcodeHome(inst.Home, "jcode["+inst.Name+"]", bin, true, false)

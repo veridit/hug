@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/veridit/hug/internal/hugconf"
 )
 
 // jcode has its own memory system (extraction sidecar, recall, and a
@@ -109,8 +111,10 @@ func editJcodeMemoryTakeover(text string, install bool) (string, bool, error) {
 	return text, changed, nil
 }
 
-// editJcodeMCP adds (or removes) the muninn MCP server in a jcode mcp.json,
-// keeping every other server and field untouched.
+// editJcodeMCP adds (or removes) hug's MCP server in a jcode mcp.json: one
+// entry named hug running `hug mcp --jcode-home H`, in place of the muninn
+// or huginn entries older installs wrote. Every other server and field
+// stays untouched.
 func editJcodeMCP(raw []byte, bin, jcodeHome string, install bool) ([]byte, bool, error) {
 	doc := map[string]json.RawMessage{}
 	if len(strings.TrimSpace(string(raw))) > 0 {
@@ -118,37 +122,18 @@ func editJcodeMCP(raw []byte, bin, jcodeHome string, install bool) ([]byte, bool
 			return raw, false, fmt.Errorf("cannot parse mcp.json: %w", err)
 		}
 	}
-	servers := map[string]json.RawMessage{}
-	if s, ok := doc["servers"]; ok {
-		if err := json.Unmarshal(s, &servers); err != nil {
-			return raw, false, fmt.Errorf("cannot parse mcp.json servers: %w", err)
-		}
-	}
 	// --jcode-home pins the instance, so the MCP server is scoped like the
 	// hook even if jcode does not pass JCODE_HOME to MCP children.
-	args := []string{"mcp"}
-	if jcodeHome != "" {
-		args = append(args, "--jcode-home", jcodeHome)
+	changed, err := hugconf.EditServers(doc, hugconf.MCPEntry(hugconf.MCPCommand(bin), jcodeHome), install)
+	if errors.Is(err, hugconf.ErrForeign) {
+		return raw, false, nil // a "hug" server someone set up serves the tools already
 	}
-	want, _ := json.Marshal(map[string]any{"command": bin, "args": args, "env": map[string]string{}})
-	cur, has := servers["muninn"]
-	if _, hug := servers["hug"]; hug && install && !has {
-		// hug mcp already serves the memory tools; a second server would
-		// duplicate every memory_* tool.
+	if err != nil {
+		return raw, false, fmt.Errorf("mcp.json: %w", err)
+	}
+	if !changed {
 		return raw, false, nil
 	}
-	switch {
-	case install && has && jsonEqual(cur, want):
-		return raw, false, nil
-	case install:
-		servers["muninn"] = want
-	case !has:
-		return raw, false, nil
-	default:
-		delete(servers, "muninn")
-	}
-	s, _ := json.Marshal(servers)
-	doc["servers"] = s
 	out, err := json.MarshalIndent(doc, "", "  ")
 	return append(out, '\n'), true, err
 }
@@ -185,9 +170,9 @@ func takeOverJcodeMemory(jcodeHome, bin string, install, dry bool) ([]string, er
 			}
 		}
 		if install {
-			notes = append(notes, "muninn MCP server added to mcp.json")
+			notes = append(notes, "hug MCP server set in mcp.json")
 		} else {
-			notes = append(notes, "muninn MCP server removed from mcp.json")
+			notes = append(notes, "hug MCP server removed from mcp.json")
 		}
 	}
 	return notes, nil

@@ -3,11 +3,10 @@ package cli
 import (
 	"context"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/veridit/hug/huginn/internal/harness"
+	"github.com/veridit/hug/internal/hugconf"
 )
 
 func (a *App) runInstall(cmd string, f flags) (Reply, error) {
@@ -59,20 +58,9 @@ func (a *App) runInstall(cmd string, f flags) (Reply, error) {
 		}
 		homes = []string{h}
 	}
-	bin, err := os.Executable()
-	if err != nil {
-		return nil, err
-	}
-	// From the hug binary, write the huginn name (a link next to hug) so the
-	// MCP config runs "huginn mcp" (task tools only), not "hug mcp".
-	if base := strings.TrimSuffix(filepath.Base(bin), ".exe"); base != "huginn" {
-		sib := filepath.Join(filepath.Dir(bin), "huginn"+filepath.Ext(bin))
-		if _, e := os.Stat(sib); e == nil {
-			bin = sib
-		} else if lp, e := exec.LookPath("huginn"); e == nil {
-			bin = lp
-		}
-	}
+	// The MCP entry runs hug (ynh84t): hug mcp serves the task tools as
+	// task_* next to memory, the same entry hug mem install writes.
+	bin := hugconf.HugPath()
 	// Preflight every instance before modifying any of them.
 	for _, h := range homes {
 		if _, err := harness.InstallJcodeHome(h, bin, cmd == "install", true); err != nil {

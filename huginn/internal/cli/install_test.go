@@ -5,6 +5,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -14,6 +15,13 @@ func TestInstallThrowawayHomes(t *testing.T) {
 	t.Setenv("HOME", home)
 	t.Setenv("USERPROFILE", home)
 	t.Setenv("JCODE_HOME", "")
+	// The entry runs the hug on PATH, as on a user's machine; this test
+	// binary is not hug (ynh84t: CI has no hug installed).
+	bin := hugBin(t, home)
+	if runtime.GOOS == "windows" {
+		os.WriteFile(bin+"/hug.exe", nil, 0o755)
+	}
+	t.Setenv("PATH", filepath.FromSlash(bin)+string(os.PathListSeparator)+os.Getenv("PATH"))
 	other := filepath.Join(home, "instance")
 	os.MkdirAll(filepath.Join(other, ".jcode"), 0o700)
 	os.MkdirAll(filepath.Join(home, ".jcode"), 0o700)

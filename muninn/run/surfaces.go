@@ -3,12 +3,9 @@ package run
 import (
 	"context"
 	"fmt"
-	"github.com/veridit/hug/internal/env"
 	"io"
 	"os"
-	"os/exec"
 	"os/signal"
-	"path/filepath"
 	"strings"
 	"sync"
 	"syscall"
@@ -16,6 +13,8 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 
+	"github.com/veridit/hug/internal/env"
+	"github.com/veridit/hug/internal/hugconf"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/config"
 	"github.com/veridit/hug/muninn/internal/daemon"
@@ -101,32 +100,10 @@ func tuiCmd() *cobra.Command {
 	return c
 }
 
-// selfPath is the command hooks and MCP configs should run: this binary under
-// the name muninn. In the hug release, muninn is a link next to hug; writing
-// .../hug into a hook would run "hug hook jcode", which hug does not know.
-func selfPath() string {
-	p, err := os.Executable()
-	if err != nil {
-		return "muninn"
-	}
-	// Keep the path as invoked: resolving links would write a versioned
-	// Homebrew Cellar path into hooks, which breaks on the next upgrade.
-	if _, err := os.Stat(p); err != nil {
-		if r, err := filepath.EvalSymlinks(p); err == nil {
-			p = r
-		}
-	}
-	if base := strings.TrimSuffix(filepath.Base(p), ".exe"); base != "muninn" {
-		sib := filepath.Join(filepath.Dir(p), "muninn"+filepath.Ext(p))
-		if _, err := os.Stat(sib); err == nil {
-			return sib
-		}
-		if lp, err := exec.LookPath("muninn"); err == nil {
-			return lp
-		}
-	}
-	return p
-}
+// selfPath is the hug hooks and MCP configs should run (ynh84t): the hug
+// next to this program as invoked, so a Homebrew link stays a link and
+// never becomes a versioned Cellar path. Hooks run `hug mem hook X`.
+func selfPath() string { return hugconf.HugPath() }
 
 var installers = map[string]func(bin string, install, dry bool) (harness.InstallResult, error){
 	"claude": harness.InstallClaude,
@@ -185,7 +162,7 @@ func installLike(install bool) *cobra.Command {
 		return nil
 	}}
 	c.Flags().BoolVar(&dry, "dry-run", false, "show what would change")
-	c.Flags().StringVar(&bin, "bin", "", "binary path to put in the hook (default: this hug)")
+	c.Flags().StringVar(&bin, "bin", "", "hug binary path to put in the hook (default: this hug)")
 	c.Flags().BoolVar(&allInstances, "all-instances", false, "jcode: every instance (~/.jcode, ~/.zshrc JCODE_INSTANCES, config jcode_homes)")
 	c.Flags().StringSliceVar(&homes, "jcode-home", nil, "jcode: a specific JCODE_HOME (repeatable)")
 	return c
