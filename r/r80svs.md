@@ -40,5 +40,6 @@ Rest, list view: v o l b ! bold and coloured by step; 'list' underlined as a who
 ## Notes
 
 
+r80svs: failing tests first (r80svs_test.go, worktree 8889481d): TestViewLineRestUnderlinesActiveWord: '100 overview at rest: "v" at column 0 bold false, a key true'; TestViewLineAfterVBlinksTheChoices/100x30 and /160x45: 'after v, blink on: "v" at column 0 is filled: "\x1b[38;2;11;22;32;48;2;0;191;255mv"'; TestViewLineNoColorKeepsCues: 'NO_COLOR at rest: "v" at column 0 bold false, a key true'. Finding: termenv Ascii (NO_COLOR) drops every attribute, so the view line must write bold/underline itself under NO_COLOR.
 ## History
 - 2026-11-19T12:11 todo -> doing/active (take)
