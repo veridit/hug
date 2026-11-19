@@ -37,7 +37,7 @@ muninn/internal/app/capture.go:285: if len(line) > chunkLimit, return 'capture m
 ## Acceptance
 - [x] a session with a 20,000-byte message is captured on the next hook: turns after it produce memories and the high-water mark moves past it (test)
 - [x] the long message's text reaches the extractor in parts, each under the limit, with nothing dropped (test)
-- [ ] on the live store, crab_1793783281662's capture_runs show a successful run after the fix ships (count in a note)
+- [x] on the live store, crab_1793783281662's capture_runs show a successful run after the fix ships (count in a note)
 
 ## Notes
 
@@ -49,6 +49,7 @@ landed 4dabf89 on main 2026-11-19: capture: a message over the chunk limit is re
 landed fbe3a41 on main 2026-11-19: capture: a long message is cut into parts, never refused (8jcj3k)
 shipped in v0.7.75 (4dabf89)
 crab: landed on main (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75. The open check waits on the live machine after brew upgrade.
+check 3: capture_runs 8476 (2026-11-19T05:37:55Z, turn_end, v0.7.77) for session crab_1793783281662: no error, processed 992, 65 actions, skipped 'remaining messages deferred to next hook (budget)'. Before: 841 refusals 11-16..11-19 (8jcj3k), then truncation 8449/8453/8459/8460 (nmn6wf), then budget 8467/8468/8470 (a6xm8n).
 ## History
 - 2026-11-19T02:30 todo -> doing/active (take)
 - 2026-11-19T02:36 doing/active -> doing/waiting (wait)
