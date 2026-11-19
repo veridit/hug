@@ -32,12 +32,13 @@ Evidence: /Users/jhf/.jcode/scratch/hfkt1n-ev/REPORT.md (campaign logs). Harness
 ## Depends on
 
 ## Acceptance
-- [ ] both failures reproduced under a CPU hog with their verbatim lines and the cause named with file:line
+- [x] both failures reproduced under a CPU hog with their verbatim lines and the cause named with file:line
 - [ ] fixed at the cause: TestTmuxReload and TestTmuxGolden pass -count=50 niced under the same hog with 0 harness failures
 
 ## Notes
 
 
 Cause (tigress, 2026-11-19): startTmuxServer times tmux CLIENT processes, and under load starting any process can take seconds. Readiness (tmux_test.go:82-91 on main 356fb240) runs 'tmux show-options' with a 1 s context (:84) inside a 5 s deadline (:82). Cleanup runs 'tmux kill-server' with a 5 s context (:65) and then gives the server 3 s to exit (:76). If the kill-server client is killed at 5 s, the server never gets SIGTERM, and the 3 s wait fails with 'tmux server did not exit after explicit cleanup' (:79). Measured under 16 hogs (spawn1.log, 251 runs each): /usr/bin/true max 5.142s (17 over 1 s), /bin/echo max 11.561s, tmux -V max 9.731s, tmux show-options max 4.949s. A process already running (gap meter, nice 19, 240 s) never woke more than 174ms late: what is slow is starting a new process, not the server or the CPU. Harness-only probe, 467 start/cleanup cycles with a busy pane (loop2.log): 4x readiness past 5 s ('ready-after=6.5s last-attempt=6.468s attempts=1'), 1x 'kill-server=8.613s ... exit-after=0s orig=KILL-CLIENT-TIMEOUT'. Each one is the old deadline failing on a server that was fine: it answered, and it exited 0s after its kill-server finally ran. tmux's kill-server is kill(getpid(), SIGTERM) (cmd-kill-server.c:58), and server_signal treats SIGTERM the same way (server.c:438). So cleanup can signal the server process directly, and readiness can connect to its socket from the test process: neither needs a new process.
+check 1: Both reproduced under 16 hogs, harness-only probe, 467 cycles (ghycrq-ev/loop2.log): 4x readiness past 5 s, e.g. 'PROBE start ready-after=6.5s last-attempt=6.468s attempts=1 ... orig=START-DEADLINE' (= 'did not become ready', tmux_test.go:93 via the 1 s client context at :84 and the 5 s deadline at :82); 1x 'PROBE cleanup kill-server=8.613s err=<nil> out="" exit-after=0s exit=<nil> orig=KILL-CLIENT-TIMEOUT' (= 'did not exit after explicit cleanup', :79: the 5 s context at :65 kills the kill-server client before it signals). Cause: the deadlines time tmux client process starts; under the hog /bin/echo took up to 11.561s and tmux -V up to 9.731s (spawn1.log), while a running process woke at most 174ms late (gap-loop2.log).
 ## History
 - 2026-11-19T00:52 todo -> doing/active (take)
