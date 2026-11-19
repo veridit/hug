@@ -6,6 +6,17 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- hug mem capture: a hook call whose reply is cut at the hook's 1024-token
+  cap is sent once more at 2048, and a truncated reply is never applied
+  (nmn6wf). Before, it ended the whole hook, and the next hook re-sent the
+  same chunk, which at temperature 0 was cut again while its input stayed
+  the same (crab_1793783281662: runs 8453, 8459, 8460). A chunk still cut is
+  recorded in capture_runs (`truncated`, `deferred`), the run goes on past
+  it, and a later hook of any session sends it again at the full cap, so the
+  last chunk of a session_end is not lost; it also stays in the backlog for
+  `hug mem capture --backfill`. Of 1905 audited hook calls, 21 (1.1%) hit
+  1024.
+
 ## v0.7.75 - 2026-11-19
 
 - `hug completion bash|zsh|fish` prints one completion script for hug: its

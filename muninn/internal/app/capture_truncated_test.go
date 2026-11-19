@@ -160,8 +160,8 @@ func TestCaptureStillTruncatedIsRecordedAndDoesNotBlock(t *testing.T) {
 	if !saved["Quartz omega deployments need a durable checklist."] {
 		t.Fatal("a later chunk was blocked by the truncated one")
 	}
-	if seenCount(t, f, "capture_seen", "overflow") != 1 || seenCount(t, f, "capture_backlog", "overflow") != 1 {
-		t.Fatal("still-truncated chunk not checkpointed and kept for --backfill")
+	if seenCount(t, f, "capture_seen", "overflow") != 1 || seenCount(t, f, "capture_backlog", "overflow") != 1 || seenCount(t, f, "capture_deferred", "overflow") != 1 {
+		t.Fatal("still-truncated chunk not checkpointed and kept for the drain and --backfill")
 	}
 	var truncated int
 	var deferred, runErr string
@@ -186,8 +186,81 @@ func TestCaptureStillTruncatedIsRecordedAndDoesNotBlock(t *testing.T) {
 	if _, err := b.Capture(context.Background(), f.App, o); err != nil {
 		t.Fatal(err)
 	}
-	if !savedContents(t)["Quartz overflow deployments need a durable checklist."] || seenCount(t, f, "capture_backlog", "overflow") != 0 {
+	if !savedContents(t)["Quartz overflow deployments need a durable checklist."] || seenCount(t, f, "capture_backlog", "overflow") != 0 || seenCount(t, f, "capture_deferred", "overflow") != 0 {
 		t.Fatal("--backfill did not recover the deferred chunk")
 	}
 	t.Logf("CAPTURE still truncated: max_tokens=%v, capture_runs truncated=%d deferred=%s, later chunk applied, --backfill recovered it", l.overflow, truncated, deferred)
+}
+
+// crab's point (1) on nmn6wf: a session's last hook (session_end) has no
+// next hook of its own, so a chunk it defers must be drained by a later
+// hook of any session: DrainDeferred, at the full cap, once.
+func TestCaptureSessionEndDeferredChunkIsDrainedByALaterHook(t *testing.T) {
+	f := scopetest.New(t)
+	b := f.Bind(t, "alpha")
+	l := &truncatingLLM{limit: 2048}
+	l.serve(t, f)
+	o := truncatedOpts("ended")
+	if r, err := b.Capture(context.Background(), f.App, o); err != nil || r.Truncated != 1 {
+		t.Fatalf("session_end run=%+v err=%v", r, err)
+	}
+	if savedContents(t)["Quartz overflow deployments need a durable checklist."] {
+		t.Fatal("overflow chunk applied before the drain")
+	}
+	reads := 0
+	read := func(harnessName, home, session string) (string, []harness.CaptureMessage, error) {
+		reads++
+		if harnessName != o.Harness || home != o.Home || session != o.Session {
+			t.Fatalf("drain read %s %s %s", harnessName, home, session)
+		}
+		return f.Cwd, o.Messages, nil
+	}
+	before := len(l.overflow)
+	r, drained, err := f.App.DrainDeferred(context.Background(), read)
+	if err != nil || !drained || r.Processed != 1 || reads != 1 {
+		t.Fatalf("drain=%+v drained=%v reads=%d err=%v", r, drained, reads, err)
+	}
+	if len(l.overflow) != before+1 || l.overflow[len(l.overflow)-1] != extract.Defaults().MaxTokens {
+		t.Fatalf("drain sent max_tokens=%v, want one call at the full cap", l.overflow[before:])
+	}
+	if !savedContents(t)["Quartz overflow deployments need a durable checklist."] || seenCount(t, f, "capture_deferred", "overflow") != 0 || seenCount(t, f, "capture_backlog", "overflow") != 0 {
+		t.Fatal("drained chunk not applied or still queued")
+	}
+	if _, drained, err := f.App.DrainDeferred(context.Background(), read); drained || err != nil || reads != 1 {
+		t.Fatalf("empty queue drained=%v err=%v reads=%d", drained, err, reads)
+	}
+	t.Logf("CAPTURE session_end deferred: hook max_tokens=%v, drained once at %d, applied, queue empty", l.overflow[:before], l.overflow[before])
+}
+
+// A chunk the drain still cannot finish leaves capture_deferred (no endless
+// paid retries) and stays in capture_backlog for --backfill; a split
+// message's part is drained by its fragment id.
+func TestCaptureDeferredStillTruncatedLeavesQueueKeepsBacklog(t *testing.T) {
+	f := scopetest.New(t)
+	b := f.Bind(t, "alpha")
+	l := &truncatingLLM{limit: 1 << 20}
+	l.serve(t, f)
+	o := truncatedOpts("ended-long")
+	o.Messages[1].Text = "quartz-overflow " + strings.Repeat("Long deployment detail. ", 80)
+	r, err := b.Capture(context.Background(), f.App, o)
+	if err != nil || r.Truncated == 0 || r.Split != 1 {
+		t.Fatalf("hook run=%+v err=%v", r, err)
+	}
+	var parts int
+	f.App.DB.QueryRow(`SELECT count(*) FROM capture_deferred WHERE original='overflow'`).Scan(&parts)
+	if parts == 0 || seenCount(t, f, "capture_backlog", "overflow") != 1 {
+		t.Fatalf("deferred parts=%d, original not backlogged", parts)
+	}
+	read := func(string, string, string) (string, []harness.CaptureMessage, error) { return f.Cwd, o.Messages, nil }
+	before := len(l.overflow)
+	d, drained, err := f.App.DrainDeferred(context.Background(), read)
+	if err != nil || !drained || d.Truncated != parts || len(l.overflow)-before != parts {
+		t.Fatalf("drain=%+v calls=%d parts=%d err=%v", d, len(l.overflow)-before, parts, err)
+	}
+	var left int
+	f.App.DB.QueryRow(`SELECT count(*) FROM capture_deferred`).Scan(&left)
+	if left != 0 || seenCount(t, f, "capture_backlog", "overflow") != 1 || savedContents(t)[partialMemory] {
+		t.Fatalf("still-truncated drain: deferred left=%d, backlog kept=%d", left, seenCount(t, f, "capture_backlog", "overflow"))
+	}
+	t.Logf("CAPTURE deferred still truncated: %d part(s) drained once each, queue empty, message kept in backlog, nothing partial applied", parts)
 }
