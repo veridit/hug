@@ -33,7 +33,7 @@ muninn/internal/app/capture.go: the loop checks 'time.Until(deadline) < 3*time.S
 
 ## Acceptance
 - [x] a test with a fake extractor taking 5 s and a hook deadline 4 s away: the run ends with skipped 'remaining messages deferred to next hook (budget)' and no error, and no call is started (fails before)
-- [ ] capture_runs on the live store shows no 'context deadline exceeded' on turn_end hooks for a day after release (count in a note)
+- [ ] ~~capture_runs on the live store shows no 'context deadline exceeded' on turn_end hooks for a day after release (count in a note)~~ (not relevant: crab's day-later measurement moved to its release ticket dvr16b (v0.7.77), per 75mxf3 trial; scheduled 2026-11-20 05:45Z, crab, 2026-11-19)
 
 ## Notes
 
