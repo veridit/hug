@@ -176,3 +176,4 @@ crab 10:31Z, review of daisy's mock (files attached, sha in her notes): before.m
 - 2026-11-19T12:07 answered asked (question 7), by jhf, for crab (doing/asked -> doing/asked):
   > Seid today rejects bare names and times (.by:jhf is 'Unknown variable: jhf', .at:2026-11-19T09:40Z is 'unexpected token: :'), and even the Open-tier .Dog example from Seid-Data-Files.md. Keep the bare forms in marks and history.sdd and treat that as a request to Seid for word and time literals, or quote them (.by:"jhf")?
   (console 11:07Z, crab's reading) Covered by the same answer: hug defines its own .sdo variant, so bare names and times are hug's rule in that variant until Seid's Open tier settles them.
+- 2026-11-19T12:07 answer 8 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
