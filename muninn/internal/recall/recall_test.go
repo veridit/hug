@@ -104,6 +104,40 @@ func TestRecallSkipsHarnessNotices(t *testing.T) {
 	}
 }
 
+// jcode sends its own image notices in the user role (w4qmr1): on the
+// 2026-11-16..18 fresh set, 33 of 240 short messages were these, and
+// recall gave them 1 relevant and 24 irrelevant memories. Each prefix is
+// jcode's string verbatim (source cited in harnessNotices); anything else
+// that merely starts with '[' is a person and still recalls.
+func TestRecallSkipsJcodeImageNotices(t *testing.T) {
+	db := setup(t)
+	e := engine(db, failing{})
+	ctx := context.Background()
+	for _, msg := range []string{
+		"[Older tool screenshot omitted from history to bound transcript size: media_type=image/png, original_base64_chars=6412. Rely on adjacent tool text, or take a new screenshot if visual details are needed.] banana mode",
+		"[Attached image associated with the preceding tool result: /tmp/banana-mode.png] banana mode",
+		"[Image omitted during request-size recovery: media_type=image/png, original_base64_chars=9. The request body exceeded the provider size limit; older images were dropped.] banana mode",
+		"[Image omitted during emergency context recovery: media_type=image/png, original_base64_chars=9.] banana mode",
+		"[Image omitted: the provider rejected an image in this conversation (media_type=image/png). Re-open or re-screenshot it.] banana mode",
+		"[Image omitted: this provider/model does not support image input; media_type=image/png] banana mode",
+	} {
+		if r, _ := e.Recall(ctx, recall.Request{Message: msg}); r.Block != "" || r.Skipped != "harness notice" {
+			t.Errorf("jcode image notice recalled: %q -> %+v", msg, r)
+		}
+	}
+	for _, msg := range []string{
+		"[image 1] what is banana mode doing here?",
+		"[transcription] the banana mode screenshot looks wrong",
+		"[Older screenshot] see above: banana mode",
+		// A person quoting a notice is still a person: only a leading notice is skipped.
+		"why does banana mode print [Attached image associated with the preceding tool result: /tmp/x.png]?",
+	} {
+		if r, _ := e.Recall(ctx, recall.Request{Message: msg}); r.Block == "" || r.Skipped != "" {
+			t.Errorf("a person's message must still recall: %q -> %+v", msg, r)
+		}
+	}
+}
+
 func TestTruncateRuneSafe(t *testing.T) {
 	s := strings.Repeat("ø", 10) // 2 bytes each
 	if got := recall.Truncate(s, 5); got != "øø" {

@@ -16,7 +16,15 @@ CUT = datetime.datetime.fromisoformat("2026-11-06T10:13:13.988164+00:00")
 homes = json.loads((S / "recall3" / "homes.json").read_text())
 per = int(sys.argv[sys.argv.index("--per-session") + 1]) if "--per-session" in sys.argv else 4
 per_human = 25  # typed messages are scarce; long ones are capped harder
-NOTICE = ("**Background task**", "🐝 **Swarm await", "[Scheduled task]", "[auto] ", "<system-reminder>")
+NOTICE = ("**Background task**", "🐝 **Swarm await", "[Scheduled task]", "[auto] ", "<system-reminder>",
+          # jcode's image notices in the user role, the same exact prefixes as
+          # recall's harnessNotices (w4qmr1): not typed by a person.
+          "[Older tool screenshot omitted from history to bound transcript size: ",
+          "[Attached image associated with the preceding tool result: ",
+          "[Image omitted during request-size recovery: ",
+          "[Image omitted during emergency context recovery: ",
+          "[Image omitted: the provider rejected an image in this conversation ",
+          "[Image omitted: this provider/model does not support image input; ")
 MACHINE = ("DM from", "Cross-swarm DM", "You are the engineer", "You are a worker", "You are an engineer", "You are a mechanic", "[transcription]")
 
 def ts(s):

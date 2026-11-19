@@ -107,6 +107,14 @@ func IsOwnOutput(text string) bool {
 var harnessNotices = []string{
 	"**Background task**", "🐝 **Swarm await", "[Scheduled task]", "[auto] ",
 	"<system-reminder>",
+	// jcode's image notices, sent in the user role (w4qmr1). Exact strings
+	// from jcode 28ac5e603; counts are user messages in six jcode homes.
+	"[Older tool screenshot omitted from history to bound transcript size: ", // jcode-compaction-core/src/lib.rs:882; 1286
+	"[Attached image associated with the preceding tool result: ",            // jcode-app-core/src/agent/tools.rs:117; 344
+	"[Image omitted during request-size recovery: ",                          // jcode-compaction-core/src/lib.rs:802; 10
+	"[Image omitted during emergency context recovery: ",                     // jcode-compaction-core/src/lib.rs:655; 0
+	"[Image omitted: the provider rejected an image in this conversation ",   // jcode-compaction-core/src/lib.rs:705; 0
+	"[Image omitted: this provider/model does not support image input; ",     // jcode-base/src/provider/image_clamp.rs:110; 0
 }
 
 // IsHarnessNotice reports whether msg is a harness-generated notice.
