@@ -50,3 +50,4 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
   (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
 - 2026-11-19T12:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T12:26 crab read the answer: hug task set 8a0ybb
+- 2026-11-19T12:26 answer 1 acknowledged by crab
