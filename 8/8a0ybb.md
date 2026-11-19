@@ -48,3 +48,4 @@ Code: huginn/internal/tui/detail.go (sections around 530-600 and 819-830, marked
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
   > Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?
   (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
+- 2026-11-19T12:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
