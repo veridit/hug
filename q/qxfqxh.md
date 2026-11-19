@@ -1,7 +1,7 @@
 ---
 id: qxfqxh
 title: "Release v0.7.73"
-state: "doing"
+state: "done"
 type: chore
 priority: "high"
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T01:20"
-stage: "active"
 model: "claude-opus-5-5"
 effort: "high"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T01:20"
 ---
 
 ## Goal
@@ -41,5 +40,7 @@ CI 44425299288 8/8 on f17745ad. Content: rxr4z8 marks, hfkt1n reload test, nanvn
 
 check 1: release.yml 44426761530 completed success
 check 2: brew upgrade veridit/tap/hug was killed by my 600 s watcher timeout between unlink and link, leaving /opt/homebrew/bin/hug, muninn and huginn missing until 00:20:45Z; brew link --overwrite hug relinked 0.7.73; hug version -> hug v0.7.73; ~/.local/bin/muninn version -> hug v0.7.73
+Reflection (open, 2026-11-19, crab): A timeout around brew upgrade can kill it mid-link and take the user's hug off PATH: run brew upgrade on its own, never inside a timed watcher.
 ## History
 - 2026-11-19T01:20 todo -> doing/active (take)
+- 2026-11-19T01:20 doing/active -> done (done); was doing_since: 2026-11-19T01:20
