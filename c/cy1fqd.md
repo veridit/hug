@@ -16,7 +16,7 @@ updated: 2026-11-19
 TestTmuxReload waits for the screen it wants on a loaded CI runner: its waitFor calls (reload_tmux_test.go, 'screen never showed ...') wait on the TUI reaching that screen, not on a 5 s clock, the same way hfkt1n fixed the half-drawn frame and adqdfe the reload's git
 
 ## Purpose
-Four ubuntu CI runs on four branches failed this way in 26 h after hfkt1n; each costs a rerun, and none was a broken screen
+Four ubuntu CI runs on four branches failed this way on 2026-11-18 (03:41-21:15 UTC); none was a broken screen, each cost a rerun. All four came before hfkt1n landed (bc217cb3, 23:00), which fixed half-drawn and loading frames, not a screen that has not arrived in 5 s: first confirm it still happens on main after bc217cb3
 
 ## Principle
 Cause first, fail-first under forced starvation; no timeout raised, no retry; check ghycrq (tmux harness deadlines) does not already cover it before starting
