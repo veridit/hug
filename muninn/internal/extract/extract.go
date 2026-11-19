@@ -395,6 +395,10 @@ func cleanPlaceName(s string) string {
 	return s
 }
 
+// ErrTruncated means the reply hit max_tokens (finish_reason length): Raw and
+// Usage are kept for the audit, no candidates are parsed.
+var ErrTruncated = errors.New("extraction response truncated")
+
 // Run makes a bounded non-streaming request. Ollama uses its OpenAI-compatible
 // /v1 endpoint, with no API key. Redirects are forbidden to avoid key leakage.
 func Run(ctx context.Context, c Config, transcript string, known []Known, places ...Place) (Result, error) {
@@ -503,9 +507,9 @@ func Complete(ctx context.Context, c Config, system, input string) (Result, erro
 		return out, errors.New("extraction response has no choices")
 	}
 	out.Raw = reply.Choices[0].Message.Content
-	// Truncated responses may hide durable facts: retry later, never advance HWM.
+	// Truncated responses may hide durable facts: never apply them as complete.
 	if reply.Choices[0].FinishReason == "length" {
-		return out, errors.New("extraction response truncated")
+		return out, ErrTruncated
 	}
 	out.LatencyMS = time.Since(start).Milliseconds()
 	return out, nil

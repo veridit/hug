@@ -21,6 +21,9 @@ type CaptureOptions struct {
 	Trigger                    string
 	Messages                   []harness.CaptureMessage
 	DryRun, Periodic, Backfill bool
+	// Deferred sends only this session's capture_deferred chunks, at the full
+	// cap: hook replies still truncated after the retry (DrainDeferred).
+	Deferred bool
 }
 type CaptureAction struct {
 	extract.Candidate
@@ -45,6 +48,14 @@ type CaptureReport struct {
 	// Split counts messages longer than one call's limit that were cut into
 	// parts (8jcj3k); each part is in the run's messages with original_id.
 	Split int `json:"split,omitempty"`
+	// Retried counts chunks whose reply hit max_tokens and were sent once
+	// more at twice the cap (nmn6wf). Truncated counts those still cut after
+	// that retry: none of their reply is applied, their message ids are in
+	// Deferred and in capture_deferred, and a later hook drains them
+	// (DrainDeferred) or `hug mem capture --backfill` does.
+	Retried   int      `json:"retried,omitempty"`
+	Truncated int      `json:"truncated,omitempty"`
+	Deferred  []string `json:"deferred,omitempty"`
 }
 
 type CaptureTimings struct {
@@ -179,6 +190,30 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 			return report, err
 		}
 	}
+	wanted := map[string]bool{}
+	if o.Deferred {
+		// A deferred part's message may be seen as a whole already: unsee
+		// both so the part is cut again, then send the deferred ids only.
+		rows, err := a.DB.QueryContext(ctx, `SELECT message, original FROM capture_deferred WHERE session=?`, session)
+		if err != nil {
+			return report, err
+		}
+		for rows.Next() {
+			var id, original string
+			if err := rows.Scan(&id, &original); err != nil {
+				rows.Close()
+				return report, err
+			}
+			wanted[id] = true
+			delete(seen, id)
+			delete(seen, original)
+		}
+		err = rows.Err()
+		rows.Close()
+		if err != nil {
+			return report, err
+		}
+	}
 	var pending []harness.CaptureMessage
 	turns := 0
 	for _, m := range o.Messages {
@@ -260,7 +295,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 	hook := o.Trigger == "turn_end" || o.Trigger == "session_end"
 	chunkLimit := 48 << 10
 	originals, lastFragments := map[string]string{}, map[string]string{}
-	if hook {
+	if hook || o.Deferred {
 		chunkLimit = a.Cfg.Extract.HookChunkBytes
 		if chunkLimit <= 0 {
 			chunkLimit = 8192
@@ -270,6 +305,22 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 	// Every path cuts a message longer than one call into parts, in order
 	// (8jcj3k): refusing it stopped the session's capture for good.
 	pending, originals, lastFragments = captureFragments(pending, seen, chunkLimit)
+	if o.Deferred {
+		// A drain sends the deferred chunks only, cut as the hook cut them
+		// (same limit, so the same fragment ids).
+		keep := pending[:0]
+		for _, m := range pending {
+			if wanted[m.ID] {
+				keep = append(keep, m)
+			}
+		}
+		pending = keep
+	}
+	if len(pending) == 0 {
+		// Only parts already captured or deferred remain.
+		report.Skipped = "no new messages"
+		return report, nil
+	}
 	report.Split = splitCount(originals)
 	// Messages beyond the deadline stay pending for the next observer.
 	for start := 0; start < len(pending); {
@@ -300,6 +351,7 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 		}
 		text := chunk.String()
 		var result extract.Result
+		truncated := false
 		knownByContent := map[string]string{}
 		if strings.TrimSpace(text) != "" {
 			opts := a.RecallOptions()
@@ -348,38 +400,67 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 				providerCtx, providerCancel = context.WithDeadline(ctx, deadline.Add(-reserve))
 			}
 			callCfg := a.Cfg.Extract
-			callCancel := func() {}
+			callTimeout := time.Duration(0)
 			if hook {
 				if callCfg.MaxTokens <= 0 || callCfg.MaxTokens > 1024 {
 					callCfg.MaxTokens = 1024
 				}
 				callCfg.MaxTokens = max(128, callCfg.MaxTokens)
-				providerCtx, callCancel = context.WithTimeout(providerCtx, 20*time.Second)
+				callTimeout = 20 * time.Second
 			}
-			extractStart := time.Now()
-			result, err = extract.Run(providerCtx, callCfg, text, known, b.extractionPlacesFor(callCfg.WidePlaces)...)
-			report.ExtractMS += time.Since(extractStart).Milliseconds()
-			callCancel()
+			call := func(c extract.Config, timeout time.Duration) (extract.Result, error) {
+				callCtx, callCancel := providerCtx, func() {}
+				if timeout > 0 {
+					callCtx, callCancel = context.WithTimeout(providerCtx, timeout)
+				}
+				defer callCancel()
+				extractStart := time.Now()
+				r, err := extract.Run(callCtx, c, text, known, b.extractionPlacesFor(c.WidePlaces)...)
+				report.ExtractMS += time.Since(extractStart).Milliseconds()
+				audit.Calls = append(audit.Calls, r)
+				return r, err
+			}
+			result, err = call(callCfg, callTimeout)
+			// A hook reply cut at max_tokens is sent once more with twice the
+			// room, never applied as it is (nmn6wf). At temperature 0 the same
+			// input is cut the same way on every later hook (runs 8453, 8459,
+			// 8460), so waiting for the next hook does not help. Of 1905 audited
+			// hook calls 21 hit 1024 and none of the complete ones needed more
+			// than 19 lines, about 1400 tokens: 2048 holds them.
+			if errors.Is(err, extract.ErrTruncated) && hook {
+				addUsage(&report, result)
+				report.Retried++
+				callCfg.MaxTokens *= 2
+				result, err = call(callCfg, 2*callTimeout)
+			}
 			providerCancel()
+			if errors.Is(err, extract.ErrTruncated) && (hook || o.Deferred) {
+				// Still cut: apply nothing from it, checkpoint the chunk so the
+				// messages after it go on, and keep it for DrainDeferred and
+				// --backfill. Recorded in capture_runs as truncated/deferred.
+				addUsage(&report, result)
+				report.Truncated++
+				for _, m := range pending[start:end] {
+					report.Deferred = append(report.Deferred, m.ID)
+				}
+				truncated = true
+				result, err = extract.Result{}, nil
+			}
 			// A candidate naming a swarm agent is rejected (ez50rb check 3):
 			// the name stops meaning anything within hours. Deterministic, no
 			// model call; measured on replayed transcripts (CHANGELOG).
 			if err == nil {
 				result = a.rejectAgentNames(result, text)
+				if !truncated {
+					audit.Calls[len(audit.Calls)-1] = result
+				}
 			}
-			audit.Calls = append(audit.Calls, result)
 			if err != nil {
-				report.Usage.PromptTokens += result.Usage.PromptTokens
-				report.Usage.CompletionTokens += result.Usage.CompletionTokens
-				report.Usage.TotalTokens += result.Usage.TotalTokens
-				report.LatencyMS += result.LatencyMS
+				addUsage(&report, result)
 				return report, err
 			}
 		}
-		report.Usage.PromptTokens += result.Usage.PromptTokens
-		report.Usage.CompletionTokens += result.Usage.CompletionTokens
-		report.Usage.TotalTokens += result.Usage.TotalTokens
-		report.LatencyMS += result.LatencyMS
+		addUsage(&report, result)
 		report.Rejected += result.Rejected
 		for _, rejection := range result.Rejections {
 			if strings.HasPrefix(rejection.Reason, "trivial:") {
@@ -483,11 +564,48 @@ func (b Binding) Capture(ctx context.Context, a *App, o CaptureOptions) (report 
 				if _, err = tx.ExecContext(ctx, `INSERT OR IGNORE INTO capture_seen(session,message) VALUES(?,?)`, session, m.ID); err != nil {
 					break
 				}
+				if truncated {
+					// Seen, so later chunks and hooks go on. From a hook it waits
+					// in capture_deferred for a later hook to drain at the full
+					// cap (DrainDeferred); its message is also in the backlog for
+					// `hug mem capture --backfill`.
+					if original := lastFragments[m.ID]; original != "" {
+						// Its last part: the message is seen as a whole, so a
+						// hook stops cutting it again.
+						if _, err = tx.ExecContext(ctx, `INSERT OR IGNORE INTO capture_seen(session,message) VALUES(?,?)`, session, original); err != nil {
+							break
+						}
+					}
+					for _, id := range []string{m.ID, originals[m.ID]} {
+						if id == "" {
+							continue
+						}
+						if _, err = tx.ExecContext(ctx, `INSERT OR IGNORE INTO capture_backlog(session,message) VALUES(?,?)`, session, id); err != nil {
+							break
+						}
+					}
+					if err != nil {
+						break
+					}
+					if hook {
+						if _, err = tx.ExecContext(ctx, `INSERT OR IGNORE INTO capture_deferred(session,message,original,harness,home,harness_session,at_ns) VALUES(?,?,?,?,?,?,?)`, session, m.ID, originals[m.ID], o.Harness, o.Home, o.Session, time.Now().UnixNano()); err != nil {
+							break
+						}
+					} else if _, err = tx.ExecContext(ctx, `DELETE FROM capture_deferred WHERE session=? AND message=?`, session, m.ID); err != nil {
+						break
+					}
+					continue
+				}
+				if _, err = tx.ExecContext(ctx, `DELETE FROM capture_deferred WHERE session=? AND (message=? OR original=?)`, session, m.ID, m.ID); err != nil {
+					break
+				}
 				if original := lastFragments[m.ID]; original != "" {
 					if _, err = tx.ExecContext(ctx, `INSERT OR IGNORE INTO capture_seen(session,message) VALUES(?,?)`, session, original); err != nil {
 						break
 					}
-					if _, err = tx.ExecContext(ctx, `DELETE FROM capture_backlog WHERE session=? AND message=?`, session, original); err != nil {
+					// Kept in the backlog while an earlier part of it waits in
+					// capture_deferred, so --backfill can still recover it.
+					if _, err = tx.ExecContext(ctx, `DELETE FROM capture_backlog WHERE session=? AND message=? AND NOT EXISTS (SELECT 1 FROM capture_deferred WHERE session=? AND original=?)`, session, original, session, original); err != nil {
 						break
 					}
 				}
@@ -593,4 +711,12 @@ func (a *App) captureExec(ctx context.Context, query string, args ...any) (sql.R
 	}
 	defer release()
 	return a.DB.ExecContext(ctx, query, args...)
+}
+
+// addUsage counts one provider call, applied or not, in the run's cost.
+func addUsage(report *CaptureReport, r extract.Result) {
+	report.Usage.PromptTokens += r.Usage.PromptTokens
+	report.Usage.CompletionTokens += r.Usage.CompletionTokens
+	report.Usage.TotalTokens += r.Usage.TotalTokens
+	report.LatencyMS += r.LatencyMS
 }

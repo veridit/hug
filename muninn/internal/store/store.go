@@ -79,6 +79,10 @@ func oldHugView(db *sql.DB) error {
 
 const schema = `
 CREATE TABLE IF NOT EXISTS capture_backlog (session TEXT NOT NULL, message TEXT NOT NULL, PRIMARY KEY(session,message));
+-- A hook chunk whose reply was still cut at max_tokens after the retry
+-- (nmn6wf): seen, so capture goes on, and drained by a later hook at the
+-- full cap. harness/home/harness_session say which transcript to read.
+CREATE TABLE IF NOT EXISTS capture_deferred (session TEXT NOT NULL, message TEXT NOT NULL, original TEXT NOT NULL DEFAULT '', harness TEXT NOT NULL, home TEXT NOT NULL, harness_session TEXT NOT NULL, at_ns INTEGER NOT NULL, PRIMARY KEY(session,message));
 -- Memories whose stated condition (units.holds) has ended: recall skips
 -- them, a dream item asks an agent to retire or keep them (ez50rb).
 CREATE TABLE IF NOT EXISTS holds_ended (sid TEXT PRIMARY KEY, holds TEXT NOT NULL, reason TEXT NOT NULL, at_ns INTEGER NOT NULL);

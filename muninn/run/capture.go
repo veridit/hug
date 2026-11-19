@@ -138,7 +138,22 @@ func captureCmd() *cobra.Command {
 				return err
 			}
 			if hook {
-				return captureLog(fmt.Sprintf("processed=%d backlog_skipped=%d proposals=%d rejected=%d tokens=%d latency_ms=%d skipped=%s", r.Processed, r.BacklogSkipped, len(r.Actions), r.Rejected, r.Usage.TotalTokens, r.LatencyMS, r.Skipped))
+				line := fmt.Sprintf("processed=%d backlog_skipped=%d proposals=%d rejected=%d tokens=%d latency_ms=%d retried=%d truncated=%d skipped=%s", r.Processed, r.BacklogSkipped, len(r.Actions), r.Rejected, r.Usage.TotalTokens, r.LatencyMS, r.Retried, r.Truncated, r.Skipped)
+				if err := captureLog(line); err != nil {
+					return err
+				}
+				// A chunk still truncated after the hook's retry waits in
+				// capture_deferred (nmn6wf). Any later hook, of any session,
+				// sends one session's deferred chunks again at the full cap,
+				// so a session_end chunk is not left to a hook that never comes.
+				d, drained, err := a.DrainDeferred(ctx, app.ReadDeferred)
+				if !drained {
+					return err
+				}
+				if err != nil {
+					return captureLog("deferred drain failed class=" + extract.FailureClass(err) + ", chunk kept for hug mem capture --backfill")
+				}
+				return captureLog(fmt.Sprintf("deferred processed=%d proposals=%d tokens=%d truncated=%d", d.Processed, len(d.Actions), d.Usage.TotalTokens, d.Truncated))
 			}
 			if asJSON {
 				return json.NewEncoder(cmd.OutOrStdout()).Encode(r)
