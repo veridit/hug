@@ -7,7 +7,7 @@ priority: ""
 assignee: ["sunflower"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzw"
+rank: "zzzzzzzzzzzu"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T07:00"
