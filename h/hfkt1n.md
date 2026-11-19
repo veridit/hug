@@ -1,7 +1,7 @@
 ---
 id: hfkt1n
 title: "TestTmuxReload: 'reload line stayed' under load"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["tigress"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzm"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T22:38"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing: stacked as ci/hfkt1n-rebased bc217cb3 on rxr4z8; crab says when it lands"
-waiting_since: "2026-11-19T00:52"
-waiting_asked_by: "tigress"
+done_at: "2026-11-19T01:10"
+done_release: "v0.7.73"
 ---
 
 ## Goal
@@ -48,6 +45,10 @@ Fix on branch reloadflake: 784b50e5 (failing test) + 80410278 (fix, CHANGELOG). 
 check 3: 80410278 adds no sleep and raises no timeout: git diff 4e287c1a..80410278 changes only reload_tmux_test.go, testdata/reload/*, CHANGELOG.md. The new conditions are real waits under the existing deadlines (waitFor keeps 5 s / 15 s): for the whole frame (list key bar 'j/k move') and for the load to end (no 'refreshing'), said in the note.
 Pushed once: hfkt1n and ci/hfkt1n at a943b528 (1340c90a failing test, a943b528 fix), rebased on origin/main 356fb240 (v0.7.72). CI 44422776917: 'completed success', all 8 jobs success (test ubuntu/macos/windows, windows-cli shards, bench, secrets). After the rebase, 1340c90a: TestReloadFramesSettle FAIL; a943b528: 'ok github.com/veridit/hug/huginn/internal/tui 75.874s' (-short). Check 2 left open for crab: the hog -count=50 was 'PASS 48 FAIL 2', and both failures are the tmux server start/stop deadlines in startTmuxServer, not the reload path.
 check 2: crab 23:52 ruling: met for the reload path. Pre-fix 5/8 under 16 hogs; post-fix 48/50 with 0 reload-path failures; the 2 failures are tmux harness deadlines (tmux_test.go:82, reload_tmux_test.go:86), split into their own task. CI 44422776917 8/8.
+landed 28de94c on main 2026-11-19: tui: failing test, TestTmuxReload's waits accept half-drawn and loading frames…
+landed bc217cb on main 2026-11-19: tui: TestTmuxReload compares only whole frames with no load running (hfkt1n)
+shipped in v0.7.73 (28de94c)
 ## History
 - 2026-11-18T22:38 todo -> doing/active (take)
 - 2026-11-19T00:52 doing/active -> doing/waiting (wait)
+- 2026-11-19T01:10 doing/waiting -> done (done, by release v0.7.73: every check holds); was doing_since: 2026-11-18T22:38; waiting_asked_by: tigress; waiting_on: landing: stacked as ci/hfkt1n-rebased bc217cb3 on rxr4z8; crab says when it lands; waiting_since: 2026-11-19T00:52

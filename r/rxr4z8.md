@@ -79,6 +79,13 @@ check 9: TestDoneMarkedOneRefused: after d, only the refused task stays marked (
 f385c3a0, CI 44402446974 success 8/8. Report /Users/jhf/.jcode/scratch/rxr4z8/REPORT.md. Next: rebase after hjbfzd + byj479 land (t on N marked: Take + TakeWith; drop captureKey confirm case).
 Rebased on main 4e287c1a (hjbfzd + byj479 in): 33616641, CI 44421843248 success 8/8. t on several marked: one confirm 'Take 2 tasks: A, B, B with A', then Take(A) + TakeWith(B, A, me), one commit each ('hug task take B --with A'); if A is refused the rest are not taken and all stay marked. Fail-first: TestTakeMarked 'footer with 2 todo marked does not offer take: "2 marked · move · x drop · edit · Esc unmark"'. New TestTakeMarkedFirstRefused. captureKey confirm case dropped (hjbfzd removed it). Local: go test -short ./huginn/internal/tui/ ok 71.214s (load ~230 held the tmux tests; the two 140x40 tmux help goldens are CI 44419243717's capture, diff = the Space row only).
 check 3: Updated on 33616641 for byj479: TestTakeMarked takes 2 marked todo with one confirm naming them, A taken, B doing_with A, 2 commits, 'took 2 of 2'; TestTakeMarkedFirstRefused: A refused busy, B 'not taken: A was not', both stay marked, fix: hug task done F. d/x/w as before (TestDoneMarkedOneRefused, TestDropMarked, TestWaitMarked). CI 44421843248 8/8.
+landed 4b49e10 on main 2026-11-19: tui: Space marks tasks in lists; the footer acts on the marked (rxr4z8)
+landed 1614eb4 on main 2026-11-19: tui: goldens for Space mark on main's palette and asked screens (rxr4z8)
+landed da04490 on main 2026-11-19: tui: the list key bar says h/l pane, so 140 columns keep the version (rxr4z8)
+landed 0e577a0 on main 2026-11-19: tui: t on several marked takes the first and the rest with it (rxr4z8, byj479)
+landed f7235d4 on main 2026-11-19: tui: marked and help goldens on main's TAGS column (rxr4z8)
+landed 9b56535 on main 2026-11-19: tui: tags, taken-with and 140 tmux help goldens with Space mark (rxr4z8)
+shipped in v0.7.73 (4b49e10)
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
