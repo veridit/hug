@@ -1,7 +1,7 @@
 ---
 id: mq5ger
 title: "tui watch test misses a change under load"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["macaque"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzyq"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T22:22"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "kikazaru/watchflake"
 worktree: "/Users/jhf/.jcode/scratch/watchflake"
-waiting_on: "crab: check 4 on stack CI of 6bf6a928"
-waiting_since: "2026-11-19T01:24"
-waiting_asked_by: "macaque"
+done_at: "2026-11-19T02:15"
 ---
 
 ## Goal
@@ -56,6 +52,8 @@ landed c09d5eb on main 2026-11-19: internal/fsnotify: remove's inner call no lon
 landed 6bf6a92 on main 2026-11-19: internal/fsnotify: TestUpstreamDiff compares code, not diff's hunk layout…
 shipped in v0.7.74 (e0c211b)
 check 4: CI 44432047573 on a592a117 (main, v0.7.74, includes mq5ger) success: the non-short go test ./... on ubuntu (-race), macOS and Windows covers the full tui suite. No local full-suite run: load 500-800, and the load rules forbid full-module local runs.
+Reflection (open, 2026-11-19, crab): kikazaru's session was reaped mid-task. The handover note in the task (branch, CI, starve file) let macaque finish it with no lost work. Nothing misled.
 ## History
 - 2026-11-18T22:22 todo -> doing/active (take)
 - 2026-11-19T01:24 doing/active -> doing/waiting (wait)
+- 2026-11-19T02:15 doing/waiting -> done (done); was doing_since: 2026-11-18T22:22; waiting_asked_by: macaque; waiting_on: crab: check 4 on stack CI of 6bf6a928; waiting_since: 2026-11-19T01:24
