@@ -1,0 +1,30 @@
+HUG · hug · list › w7tq3k
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. Such a check is easy
+to tick by mistake, and nobody is asked. The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+ACCEPTANCE
+  ☐ 1. A check that ends in '?' is a lint finding, with a fix: line that runs hug task ask (test)
+  ☐ 2. A check that starts with Should, Can or Do (English only) is a finding too (test)
+  ☐ 3. hug task lint --json gives the finding the code check-is-question (test)
+
+FILES (1)
+  ⎘ history.sdd  1.1 KB  resolved marks: who asked what, and what changed
+
+
+
+
+
+Task 1 of 12 · 0% · no open marks · n next · p previous · Esc back
+
+j/k check · Space tick · E files · m mark text · r request · e edit · / find · ? help · q quit
