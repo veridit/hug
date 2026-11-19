@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.81 - 2026-11-19
+
 - After `v` in `hug tui`, the keys you can press next pulse instead of a
   second cursor (a82j3n, Jørgen 2026-11-19 10:26Z, 10:27Z). While `v`
   waits, the underlines of o, l, b and ! blink together at the cursor's
