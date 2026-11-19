@@ -33,7 +33,7 @@ CI census 2026-11-19 (iwazaru, scratch/ci-census.md). 2 hits on 2 different base
 
 ## Acceptance
 - [x] Cause named in a note with the History of a failing run or a reproduction
-- [ ] A test fails first, then TestReleaseCloseTwoClones passes -count=20 niced under load
+- [x] A test fails first, then TestReleaseCloseTwoClones passes -count=20 niced under load
 - [x] No timeout raised and no retry added
 
 ## Notes
@@ -41,5 +41,6 @@ CI census 2026-11-19 (iwazaru, scratch/ci-census.md). 2 hits on 2 different base
 
 check 1: Cause: History merges entries by exact text (merge.go mergeAppend 'seen[key]'). Two clones deducing the same tag offline each run closeShipped at their own minute, so the two 'doing/waiting -> done (done, by release v0.1.1: every check holds)' lines differ in the minute only and both stay; done_at differs by that minute too and was noted as a conflict ('kestrel set done_at 2026-11-18T23:44 ... kept 2026-11-18T23:43'). Deterministic reproduction, no load: TestReleaseCloseTwoClonesInTwoMinutes (board clock pinned, A deduces at 12:01, B at 12:02, background off) on main 50fa8681: 'release_minutes_test.go:54: .../one: 2 release lines' with History '- 2026-01-31T12:01 doing/waiting -> done (done, by release v0.1.1 ...' and '- 2026-01-31T12:02 ...'; unit TestMergeSameReleaseCloseInAnotherMinuteCountsOnce: 'merge_release_test.go:52: 2 release lines, want 1'. Failing commit 763979f2.
 check 3: Fix f132d053 changes merge keys only (merge.go: releaseCloseKey, sameRelease); no timeout, sleep, retry or skip added; the tests pin the clock instead of waiting on it.
+check 2: Fails first on main 50fa8681 (763979f2): 'release_minutes_test.go:54: .../one: 2 release lines' and 'merge_release_test.go:52: 2 release lines, want 1' (and :60 'done_at of one release close kept as a conflict'). After fix f132d053: TestReleaseCloseTwoClonesInTwoMinutes + TestReleaseCloseTwoClones -count=20 niced (GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19) at load 609-762: 'ok  	github.com/veridit/hug/huginn/internal/cli	469.757s' (scratch/j0zvee-count20.txt); task package 'ok  github.com/veridit/hug/huginn/internal/task 11.899s'. CI 44435621514 on f132d053: completed success.
 ## History
 - 2026-11-19T02:06 todo -> doing/active (take)
