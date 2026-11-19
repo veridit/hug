@@ -6,7 +6,13 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.75 - 2026-11-19
+
 - `hug completion bash|zsh|fish` prints one completion script for hug: its
+  commands, hug task's commands, flags, types, states and open task ids (with
+  titles), and hug mem's commands and flags. The script asks `hug __complete`
+  on every TAB; it reads the task files and a read-only view of the cache and
+  never writes, syncs or locks (5mmqjk).
 
 - `hug task new` dates `created` and `updated` by the board clock, as `done_at`, reflections and strikes are (z25pb2): one clock for every date hug writes. A test pins it at 23:59:59.9 on 2026-01-31 and finds that date in both fields (it found the wall clock's before). The TUI's find golden showed the wall-clock date masked as `YYYY-MM-DD`; its board now pins the clock and the golden shows `created 2026-01-31 · updated 2026-01-31`.
 
