@@ -39,5 +39,6 @@ iwazaru byj479 full niced run on fcd1adb1 (scratch/byj479-full.txt): '--- FAIL: 
 ## Notes
 
 
+Cause: the test's 20 s wall clock, not the hook. Acknowledge sends on acked on every return path (nil, error, acked), so the only way to 'did not acknowledge' is a hook slower than 20 s. Its critical path after Notify is git processes: the request's own add+commit under the board turn, then the hook's open (rev-parse, remote, diff), Acknowledge's refresh (diff) and its add+commit: 7-8 git processes in a row. At load 95-500 a niced git process took up to 14 s (traced, full niced cli run at load 137-266: 'ZZGIT 14.069s git remote', 'ZZGIT 10.913s git diff', 47 commits mean 1.85 s max 7 s). No lock is held past its write: the turn waits traced at most 0.531 s; no deadlock, no lost send. Amplified reproduction on clean c186f78f: git on PATH replaced by 'sleep N; exec /usr/bin/git' (scratch/awht8w-ev/slowgit/git): N=5 passes (hook 30.9 s after delivery started, 20.7 s after the command returned), N=7: 'deliver_test.go:194: crab s hook did not acknowledge' / '--- FAIL: TestRequestReachesCoordinator (314.89s)'. Trace: scratch/awht8w-ev/slow-5.zz, pkg-full1.txt, loop-1.zz. The production hook is fire-and-forget (turn_start/post_tool_feedback): a slow ack only delays the receipt line.
 ## History
 - 2026-11-18T22:20 todo -> doing/active (take)
