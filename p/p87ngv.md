@@ -179,3 +179,4 @@ crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Op
   (console 11:07Z, crab's reading) Covered by the same answer: hug defines its own .sdo variant, so bare names and times are hug's rule in that variant until Seid's Open tier settles them.
 - 2026-11-19T12:07 answer 8 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T12:07 crab read the answer: hug task note p87ngv "crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Open-data variant, not .sdd; Seid's Open t…"
+- 2026-11-19T12:08 answer 7 acknowledged by crab
