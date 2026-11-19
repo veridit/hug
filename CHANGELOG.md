@@ -8,6 +8,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 - `hug completion bash|zsh|fish` prints one completion script for hug: its
 
+- `hug task new` dates `created` and `updated` by the board clock, as `done_at`, reflections and strikes are (z25pb2): one clock for every date hug writes. A test pins it at 23:59:59.9 on 2026-01-31 and finds that date in both fields (it found the wall clock's before). The TUI's find golden showed the wall-clock date masked as `YYYY-MM-DD`; its board now pins the clock and the golden shows `created 2026-01-31 · updated 2026-01-31`.
+
 ## v0.7.74 - 2026-11-19
 
 - On macOS, closing a file watch no longer closes a file it does not own (mq5ger). fsnotify v1.10.1's kqueue backend closed each watched file's descriptor twice when the file was deleted while the watch closed: once on the delete event, once on close. The second close hit whatever had taken that descriptor number in between, so another file hug held open lost its descriptor. On CI this showed as a test's temp-folder clean-up failing with `unlinkat ...: bad file descriptor` (run 44384875316). hug now carries fsnotify v1.10.1 in `internal/fsnotify`, with the upstream fix (fsnotify PR 789, not yet released) applied: the event reader releases the watches on its way out, and close waits for it. `TestCloseWhileFilesGoClosesNothingElse` fails first on v1.10.1 (2 of 3 runs of 300 rounds lost a held file's descriptor) and passes 10 of 10 with the fix. The copy's whole diff from v1.10.1 (four import lines, PR 789, and one call PR 789's lock needs on v1.10.1, `TestRemoveWatchedDirReturns`) is in `internal/fsnotify/upstream.patch`, held by `TestUpstreamDiff`. Linux and Windows are unchanged.

@@ -10,7 +10,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Result struct {
@@ -324,7 +323,7 @@ func (s *Store) New(o NewOptions) (Result, error) {
 	// group and rank in the front matter.
 	path := PathFor(i)
 	q := func(s string) string { b, _ := json.Marshal(s); return string(b) }
-	today := time.Now().Format("2006-01-02")
+	today := Now().Format("2006-01-02") // the board clock, as done_at (z25pb2)
 	body := "---\nid: " + i + "\ntitle: " + q(o.Title) + "\nstate: todo\ntype: " + o.Type + "\npriority: " + q(o.Priority) + "\nassignee: []\nlabels: "
 	labels := []string{}
 	for _, l := range o.Labels {

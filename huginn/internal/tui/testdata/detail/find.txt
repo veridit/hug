@@ -1,6 +1,6 @@
 HUG · list › TASKID                                                             
 [todo]  [feature]  group:root  unassigned                                       
-created YYYY-MM-DD · updated YYYY-MM-DD · rows-board                            
+created 2026-01-31 · updated 2026-01-31 · rows-board                            
 ────────────────────────────────────────────────────────────────────────────────
 Rows on the board                                                               
 ────────────────────────────────────────────────────────────────────────────────

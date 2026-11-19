@@ -18,6 +18,11 @@ import (
 func findBoard(t *testing.T) (model, string) {
 	t.Helper()
 	t.Setenv("NO_COLOR", "1")
+	// The board clock dates the tasks (z25pb2): pinned, so the page's
+	// created and updated are the same on every run.
+	oldNow := task.Now
+	task.Now = func() time.Time { return time.Date(2026, 1, 31, 23, 59, 59, 900_000_000, time.Local) }
+	t.Cleanup(func() { task.Now = oldNow })
 	s := &task.Store{Root: t.TempDir()}
 	r, err := s.New(task.NewOptions{Title: "Rows on the board", Goal: "G", Purpose: "P", Principle: "Q", Acceptance: []string{"The row layout keeps its columns"}})
 	if err != nil {
@@ -83,7 +88,6 @@ func TestFindInTaskTintsEveryMatch(t *testing.T) {
 			t.Fatalf("piece %d %q is not tinted:\n%q", i, piece, page)
 		}
 	}
-	screen = strings.ReplaceAll(screen, time.Now().Format("2006-01-02"), "YYYY-MM-DD")
 	goldenFile(t, "testdata/detail/find.txt", strings.ReplaceAll(screen, id, "TASKID")+"\n")
 }
 
