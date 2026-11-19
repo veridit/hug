@@ -19,9 +19,11 @@ when hug is built as a dependency or with `go install module@version`.
 
 ## What differs from v1.10.1
 
-`upstream-diff.sh` prints the whole diff from the module cache's v1.10.1;
-`upstream-diff.sh --check` fails unless it equals `upstream.patch`, the reviewed
-diff. It holds only:
+`upstream-diff.sh` prints the whole diff from the module cache's v1.10.1.
+`upstream-diff.sh --check` applies `upstream.patch`, the reviewed diff, to a
+fresh v1.10.1 tree and fails unless the result is this copy byte for byte: it
+holds the code, not the diff's hunk layout, which GNU and BSD diff lay out
+differently (CI 44417801741). The patch holds only:
 
 1. **Imports**: the four `github.com/fsnotify/fsnotify/internal` imports
    (`backend_fen.go`, `backend_inotify.go`, `backend_kqueue.go`,
