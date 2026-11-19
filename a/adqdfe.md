@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "adqdfe"
 worktree: "/Users/jhf/.jcode/scratch/adqdfe"
 done_at: "2026-11-19T01:33"
+done_release: "v0.7.74"
 ---
 
 ## Goal
@@ -41,6 +42,7 @@ check 1: Reproduced: TestStarvedChangeBeforeWatch on 7f14e3e1 (STARVE=8 GOMAXPRO
 check 2: Fixed at the cause in 87691f85 (ci/adqdfe, on watchflake 02151406): loadSnapshot takes closeLog.latest() (no git); the loadedMsg batches readCloses (git off the UI thread) and closesMsg applies the newest times read; refresh (the TUI's own writes) still reads first. Same forced-load run (STARVE=8 GOMAXPROCS=4 nice -p=1 -count=1000, load ~500): 1000 PASS, 0 FAIL, 'ok  github.com/veridit/hug/huginn/internal/tui 469.955s' (adqdfe-starve-fixed.txt). Was 996/4 on 7f14e3e1. Git sleeping 6 s at start: TestChangeBeforeWatchIsUpIsSeen PASS (was FAIL). TestReloadDoesNotWaitOnGit passes (failed first). No timeout raised, no retry, no skip. CI 44427265935 success 8/8: ubuntu 'go test -race ./...' 'ok  github.com/veridit/hug/huginn/internal/tui 299.278s', macos 'ok ... tui 147.354s'.
 Reflection (open, 2026-11-19, macaque): The handover said 'Reproduce it first with kikazaru's probe', which held; the gap was that the stack file named the cause but the 4 in 1000 rate made fail-first slow, so a PATH git that sleeps 6 s and a gated git seam made it deterministic.
 landed bf170d4 on main 2026-11-19: tui: a reload does not wait on git for close times (adqdfe)
+shipped in v0.7.74 (bf170d4)
 ## History
 - 2026-11-19T00:45 todo -> doing/active (take)
 - 2026-11-19T01:24 doing/active -> doing/waiting (wait)

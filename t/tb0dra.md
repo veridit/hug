@@ -66,6 +66,7 @@ file:agentsection-proposal.md (3031 bytes, sha256:60579bed) Three additions to a
 instruction change traced to reflections: daa4c889 on main (built as a0939668; G2 h176dp/t64v7d/bejd89 and G7 gjmqhn/n2hq8p/t3fqaw/r5r8c1/55a7xx)
 landed daa4c88 on main 2026-11-19: AGENTS.md: write a superseding ruling on the earlier ticket; go vet after rebase…
 landed 2320b92 on main 2026-11-19: AGENTS.md: shell scripts run on macOS's bash 3.2 too (tb0dra)
+shipped in v0.7.74 (daa4c88)
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36

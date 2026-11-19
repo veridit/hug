@@ -1,7 +1,7 @@
 ---
 id: awht8w
 title: "deliver test: hook ack misses under load"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["iwazaru"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzyn"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T22:20"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "byj479"
 worktree: "/Users/jhf/.jcode/scratch/byj479"
-waiting_on: "ci/awht8w-rebased b3b18675 lands on main (crab accepted 00:42); close when landed"
-waiting_since: "2026-11-19T01:42"
-waiting_asked_by: "iwazaru"
+done_at: "2026-11-19T02:01"
+done_release: "v0.7.74"
 ---
 
 ## Goal
@@ -48,6 +45,8 @@ check 3: 251fd2f0 removes the 20 s select from TestRequestReachesCoordinator and
 check 2: Fail first on clean c186f78f with every git started 7 s late (git on PATH = 'sleep 7; exec /usr/bin/git', scratch/awht8w-ev/slowgit/git), niced GOMAXPROCS=2 at load 510: '    deliver_test.go:194: crab's hook did not acknowledge' '--- FAIL: TestRequestReachesCoordinator (314.89s)' (slow-clean-7.txt). Same amplifier after fix 251fd2f0, load 468-488: '--- PASS: TestRequestReachesCoordinator (499.93s)' (slow-fixed-7.txt). -count=50 niced (GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19) of TestRequestReachesCoordinator and TestDeliveryInstructionsMatchCode under load 405-492: 'ok  	github.com/veridit/hug/huginn/internal/cli	1130.241s' (count50.txt). Rebased onto main 6bf6a928 as d487f583 (no conflict, test files unchanged by the rebase).
 Ready: awht8w = ci/awht8w at d487f583 on main 6bf6a928; CI 44429609615 completed success 8/8. Report: ~/.jcode/scratch/awht8w-REPORT.md. Earlier CI 44428150586 on 251fd2f0 (c186f78f base) failed only TestTmuxGolden palette drift (ubuntu), not in this diff; gone after rebase.
 landed b3b1867 on main 2026-11-19: cli tests: wait on the coordinator's hook, not a 20 s clock (awht8w)
+shipped in v0.7.74 (b3b1867)
 ## History
 - 2026-11-18T22:20 todo -> doing/active (take)
 - 2026-11-19T01:42 doing/active -> doing/waiting (wait)
+- 2026-11-19T02:01 doing/waiting -> done (done, by release v0.7.74: every check holds); was doing_since: 2026-11-18T22:20; waiting_asked_by: iwazaru; waiting_on: ci/awht8w-rebased b3b18675 lands on main (crab accepted 00:42); close when landed; waiting_since: 2026-11-19T01:42

@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "zdgw60"
 worktree: "/Users/jhf/.jcode/scratch/zdgw60"
 done_at: "2026-11-19T01:59"
+done_release: "v0.7.74"
 ---
 
 ## Goal
@@ -46,6 +47,7 @@ check 3: On main as e75e1593. MCP TestNewAndUpdateReturnFindingsAndOneFix: task_
 Reflection (open, 2026-11-19, piglet): nothing misled: the reflection's own reproduction (set --accept then a lint fix) made the failing-first test directly; the only surprise was that --state todo also clears the assignee, which the reply now says.
 landed 4edade7 on main 2026-11-19: test: a set says what it wrote before lint advice (zdgw60, failing)
 landed e75e159 on main 2026-11-19: hug task set says what it wrote before lint advice (zdgw60)
+shipped in v0.7.74 (4edade7)
 ## History
 - 2026-11-19T01:16 todo -> doing/active (take)
 - 2026-11-19T01:40 doing/active -> doing/waiting (wait)
