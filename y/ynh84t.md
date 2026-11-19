@@ -48,5 +48,6 @@ check 3: c95fc32d, CI 44436073964 8/8: TestUpgradeMovesOldNamesToHug (preview, -
 crab: stacked as ci/ynh84t-rebased cda4d231 at the top of the v0.7.75 stack (CODE-DIFF IDENTICAL). For Jørgen, check 4: after v0.7.75, run '/opt/homebrew/bin/hug upgrade --apply --machine' (the full path), so the hooks point at the stable brew link, not the Cellar path. ~/.local/bin/muninn has no hug beside it.
 landed cda4d23 on main 2026-11-19: Name hook and MCP entries hug; guard tests from the real home (ynh84t)
 shipped in v0.7.75 (cda4d23)
+crab: landed on main (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75. The open check waits on the live machine after brew upgrade.
 ## History
 - 2026-11-18T23:37 todo -> doing/active (take)
