@@ -1,0 +1,30 @@
+HUG · hug · list › w7tq3k › mark › request
+[doing]  [feature]  [medium]  group:root  assigned:daisy · claude-opus-5-5 · main
+created 2026-11-19 · updated 2026-11-19 · lint-question-check
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Lint warns when an acceptance check reads like a question
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION
+hug task lint flags an acceptance check that is really a question to a person. [1mToday a check like[0m
+[1m'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and[0m
+[1mnobody is asked, so the question waits for someone to notice it and turn it into a hug task ask,[0m
+[1mwhich in practice happens late or never.[0m The finding names the check, and its fix: line runs hug
+task ask with the check's text.
+  request on goal sentence 2:
+  Make it concise: say the harm in a few words.▏
+[38;2;135;149;168m  writes: .Request .by:jhf .prev:.Sentence .msg:"Make it concise: say the harm in a few words."[0m
+
+PURPOSE
+Jørgen 2026-11-19 08:55Z: questions today look like acceptance criteria. A question belongs
+where a person is asked and answers it.
+
+
+
+
+
+
+
+
+request to daisy (assignee) · delivered as requests are today
+
+Enter writes the mark · Esc cancel · F1 help
