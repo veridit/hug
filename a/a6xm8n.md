@@ -32,7 +32,7 @@ muninn/internal/app/capture.go: the loop checks 'time.Until(deadline) < 3*time.S
 ## Depends on
 
 ## Acceptance
-- [ ] a test with a fake extractor taking 5 s and a hook deadline 4 s away: the run ends with skipped 'remaining messages deferred to next hook (budget)' and no error, and no call is started (fails before)
+- [x] a test with a fake extractor taking 5 s and a hook deadline 4 s away: the run ends with skipped 'remaining messages deferred to next hook (budget)' and no error, and no call is started (fails before)
 - [ ] capture_runs on the live store shows no 'context deadline exceeded' on turn_end hooks for a day after release (count in a note)
 
 ## Notes
@@ -41,5 +41,6 @@ crab 04:55Z, second instance: capture_runs 8468 (04:39:46Z) processed 855 msgs, 
 
 
 cactus: fail-first c1832e85, fix c2b0bbe5 on 1a49540d; pushed a6xm8n and ci/a6xm8n, CI run 44464516250. plan_ms (~112-116 s) is inside the run budget (RunTimeout = 4 x 45 s = 180 s; extract 48-52 s + plan 112-116 s + apply 12 s = 176 s in 8467/8468); it is summed per-candidate capturePlan (memoryMatches) and per-chunk search. The gate now measures the per-chunk search (slowSearch) and per-chunk planning+save (slowAfter) and needs both before a chunk.
+check 1: TestCaptureHookDefersWhenBudgetCannotCoverCall (muninn/internal/app/capture_budget_test.go): 5 s extractor, 4 s hook deadline: skipped 'remaining messages deferred to next hook (budget)', err nil, 0 calls started, audit error empty; on 1a49540d it failed with 'extraction timeout or cancellation: context deadline exceeded' after 5.05 s (fail-first c1832e85). Mid-body cut: TestCaptureBudgetCutMidBodyIsTimeoutNotParse + extract TestDeadlineMidBodyIsTimeout give class timeout (was parse). Fix c2b0bbe5; CI run 44464516250 success on ubuntu, macos, windows, bench, windows-cli.
 ## History
 - 2026-11-19T05:55 todo -> doing/active (take)
