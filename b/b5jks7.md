@@ -1,7 +1,7 @@
 ---
 id: b5jks7
 title: "Capture planning takes most of the hook budget"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzz7"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T07:00"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-19T20:30"
 ---
 
 ## Goal
@@ -48,6 +47,8 @@ landed c79c22f on main 2026-11-19: search: match long query words against concep
 landed fa9733d on main 2026-11-19: search: pin the Go LIKE matcher to SQLite's LIKE (b5jks7)
 shipped in v0.7.79 (6936349)
 crab 19:30Z, check 2 measured (read-only, live store, trigger turn_end, report.actions > 0; v0.7.79 brew at 07:29:19Z per gn7tsm): before 05:37:40Z-07:29:19Z n=7, median plan_ms 102210, median plan_ms/action 1419; after n=22, median plan_ms 80420, median plan_ms/action 834. 184 of 213 turn_end rows had no actions. The bar (>= 20 runs each side) cannot be met: the before window is fixed and closed with 7 runs, and earlier runs are v0.7.76 or older with a6xm8n's different budget checks, so widening it would confound. The direction agrees with check 1's replay (115.8 s -> 66.3 s, byte-identical output) but n=7 is too few to claim it live.
+Reflection (unanswered, 2026-11-19, crab)
 ## History
 - 2026-11-19T07:00 todo -> doing/active (take)
 - 2026-11-19T09:56 handed to crab: sunflower's session ended (closed 2026-11-19 08:15)
+- 2026-11-19T20:30 doing/active -> done (done); was doing_since: 2026-11-19T07:00
