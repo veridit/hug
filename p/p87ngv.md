@@ -4,7 +4,7 @@ title: "Inline marks on a task's text; resolved dialogue moves to a history file
 state: "doing"
 type: feature
 priority: ""
-assignee: ["daisy"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzk"
@@ -181,3 +181,4 @@ crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Op
 - 2026-11-19T12:07 crab read the answer: hug task note p87ngv "crab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Open-data variant, not .sdd; Seid's Open t…"
 - 2026-11-19T12:08 answer 7 acknowledged by crab
 - 2026-11-19T12:08 answer 8 acknowledged by crab
+- 2026-11-19T12:30 handed to crab: daisy's session ended (closed 2026-11-19 11:29)
