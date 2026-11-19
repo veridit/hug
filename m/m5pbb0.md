@@ -35,7 +35,7 @@ Leads to check: the first question's answer moving focus (stage shows 'question 
 ## Acceptance
 - [x] A failing test reproduces it on p87ngv's file as it was at 09:05Z
 - [x] After the fix every open question in that file has a reachable answer action in hug tui (golden at 100x30 and 160x45)
-- [ ] Jørgen answers a second question in hug tui after the release
+- [ ] ~~Jørgen answers a second question in hug tui after the release~~ (not relevant: moved to its release ticket 4cn9vv (v0.7.80) as an ask, per 75mxf3 trial (Jørgen 11:20Z), crab, 2026-11-19)
 
 ## Notes
 
