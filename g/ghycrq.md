@@ -1,7 +1,7 @@
 ---
 id: ghycrq
 title: "tmux test harness: server start and cleanup deadlines trip under load"
-state: "doing"
+state: "done"
 type: bug
 priority: "medium"
 assignee: ["tigress"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzh"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T00:52"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "landing: crab restacks ci/ghycrq 2f7a91f8 after z25pb2 (fac02994) lands"
-waiting_since: "2026-11-19T02:23"
-waiting_asked_by: "tigress"
+done_at: "2026-11-19T03:00"
+done_release: "v0.7.75"
 ---
 
 ## Goal
@@ -46,6 +43,10 @@ check 1: Both reproduced under 16 hogs, harness-only probe, 467 cycles (ghycrq-e
 crab 00:39: tigress's session ended (status failed) mid-fix. Her uncommitted harness change (tmux_test.go +48/-23, new tmuxserver_test.go failing-first test) is saved as branch wip/ghycrq 57c2f0cb on 356fb240, untested. Evidence in /Users/jhf/.jcode/scratch/ghycrq-ev (spawn1.log, loop2.log). Next owner continues from it.
 Fix on ci/ghycrq 2f7a91f8 (7e08da57 failing test, 2f7a91f8 fix + CHANGELOG) on origin/main bf170d46. TestTmuxServerSlowStarts (tmux on PATH that sleeps 6 s before exec): on main's harness 'tmux_test.go:79: tmux server did not exit after explicit cleanup' + 'tmuxserver_test.go:34: foreground tmux server did not become ready' (ghycrq-ev/ff-main.log); with fix '--- PASS: TestTmuxServerSlowStarts (6.05s)' (ff-fix.log). Mutation: a kill-server client back in cleanup -> 'panic: test timed out after 2m0s' (mut-cleanup.log; server never gets SIGTERM). Fix: readiness = net.Dial on the server socket from the test; cleanup = SIGTERM to the server (what kill-server does) then Wait. No deadline added; go test -timeout ends a real hang. CI 44431241435 queued. Hog campaign for check 2 running: ghycrq-ev/c2-sum.txt.
 check 2: Fixed harness (fix.test from 2f7a91f8, guard bypassed), niced, one go test process at a time, 60 runs in total: 0 FAIL, 0 harness lines (grep for 'did not become ready|did not exit after|tmux server cleanup|still waiting'). ghycrq-ev/c2-1.log: TestTmuxReload 10, TestTmuxGolden 10. c2-2.log: Reload 10, Golden 10. Both under 16 spinners at nice 0, load '{ 863,88 693,28 530,72 }' and '{ 706,28 746,99 688,38 }'; the hog was then stopped on crab's limit. w-1.log: Reload 10, Golden 10, under 8 spinners at nice 19, at most 15 min, load '{ 650,50 673,23 674,37 }'. Totals: TestTmuxReload 30, TestTmuxGolden 30. Before the fix, the harness alone under the hog failed 5 of 467 cycles (loop2.log). pgrep shows no ghycrq process left. CI 44431241435 on ci/ghycrq 2f7a91f8: success, 9 of 9 jobs.
+landed bfe4b2c on main 2026-11-19: tui: failing test, the tmux harness fails a working server when processes start…
+landed cd8b87f on main 2026-11-19: tui: the tmux harness waits on its server, not on tmux clients (ghycrq)
+shipped in v0.7.75 (bfe4b2c)
 ## History
 - 2026-11-19T00:52 todo -> doing/active (take)
 - 2026-11-19T02:23 doing/active -> doing/waiting (wait)
+- 2026-11-19T03:00 doing/waiting -> done (done, by release v0.7.75: every check holds); was doing_since: 2026-11-19T00:52; waiting_asked_by: tigress; waiting_on: landing: crab restacks ci/ghycrq 2f7a91f8 after z25pb2 (fac02994) lands; waiting_since: 2026-11-19T02:23

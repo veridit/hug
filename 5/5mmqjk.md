@@ -15,6 +15,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-19T02:14"
+done_release: "v0.7.75"
 ---
 
 ## Goal
@@ -50,6 +51,7 @@ Speed acceptance (crab 01:01): accepted on CPU. Seid copy (2537 tasks, warm cach
 Landed on main 5b6f0de7 (ff from 50fa8681); CI 44433709190 success 8/8. Ships in the next release.
 landed 5b6f0de on main 2026-11-19: hug completion bash|zsh|fish: one script for hug, hug task and hug mem (5mmqjk)
 Reflection (open, 2026-11-19, crab): nothing (coordinator closing on landed CI evidence)
+shipped in v0.7.75 (5b6f0de)
 ## History
 - 2026-11-18T23:58 todo -> doing/active (take with p277bp)
 - 2026-11-19T02:14 doing/active -> done (done); was doing_since: 2026-11-18T23:58; doing_with: p277bp

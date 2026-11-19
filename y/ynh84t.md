@@ -46,5 +46,7 @@ check 1: c95fc32d, CI 44436073964 8/8: TestInstallWritesHugForms (muninn/interna
 check 2: c95fc32d, CI 44436073964 8/8: TestInstallThrowawayHomes (huginn/internal/cli/install_test.go) installs jcode --all-instances, hug on PATH, no huginn entry left; servers_test.go holds one hug entry, a foreign hug entry refused with a fix
 check 3: c95fc32d, CI 44436073964 8/8: TestUpgradeMovesOldNamesToHug (preview, --apply alone writes nothing exit 5, --apply --machine moves with one backup per file, second run nothing to do, foreign hug skipped). Real check on temp HOME with copies of ~/.jcode/config.toml, ~/.claude/settings.json, ~/.claude.json, Brovs .jcode/{config.toml,mcp.json}: preview exit 5 names 3 files, --apply exit 5 writes 0, --apply --machine exit 0 moves 3 with 3 backups, second run 'names: nothing to do'. Moved claude hook run as written returned the remembered marker (1 hit). Live sha guard 11/11 unchanged. Files: scratch/ynh84t-real2/{preview,apply,second}.txt, hook-out.txt
 crab: stacked as ci/ynh84t-rebased cda4d231 at the top of the v0.7.75 stack (CODE-DIFF IDENTICAL). For Jørgen, check 4: after v0.7.75, run '/opt/homebrew/bin/hug upgrade --apply --machine' (the full path), so the hooks point at the stable brew link, not the Cellar path. ~/.local/bin/muninn has no hug beside it.
+landed cda4d23 on main 2026-11-19: Name hook and MCP entries hug; guard tests from the real home (ynh84t)
+shipped in v0.7.75 (cda4d23)
 ## History
 - 2026-11-18T23:37 todo -> doing/active (take)

@@ -1,7 +1,7 @@
 ---
 id: j0zvee
 title: "Two clones closing one release write the release line twice"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["iwazaru"]
@@ -10,11 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzr"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-19T02:06"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "awht8w"
 worktree: "/Users/jhf/.jcode/scratch/awht8w"
+done_at: "2026-11-19T03:00"
+done_release: "v0.7.75"
 ---
 
 ## Goal
@@ -43,5 +43,9 @@ check 1: Cause: History merges entries by exact text (merge.go mergeAppend 'seen
 check 3: Fix f132d053 changes merge keys only (merge.go: releaseCloseKey, sameRelease); no timeout, sleep, retry or skip added; the tests pin the clock instead of waiting on it.
 check 2: Fails first on main 50fa8681 (763979f2): 'release_minutes_test.go:54: .../one: 2 release lines' and 'merge_release_test.go:52: 2 release lines, want 1' (and :60 'done_at of one release close kept as a conflict'). After fix f132d053: TestReleaseCloseTwoClonesInTwoMinutes + TestReleaseCloseTwoClones -count=20 niced (GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19) at load 609-762: 'ok  	github.com/veridit/hug/huginn/internal/cli	469.757s' (scratch/j0zvee-count20.txt); task package 'ok  github.com/veridit/hug/huginn/internal/task 11.899s'. CI 44435621514 on f132d053: completed success.
 Ready: j0zvee = ci/j0zvee at f132d053 on main 50fa8681 (failing tests 763979f2). CI 44435621514 completed success. Report: ~/.jcode/scratch/j0zvee-REPORT.md.
+landed c05a812 on main 2026-11-19: task, cli: failing tests, the same release close in two minutes merges into two…
+landed 38f0eda on main 2026-11-19: task: one release close on two clones merges into one History line (j0zvee)
+shipped in v0.7.75 (c05a812)
 ## History
 - 2026-11-19T02:06 todo -> doing/active (take)
+- 2026-11-19T03:00 doing/active -> done (done, by release v0.7.75: every check holds); was doing_since: 2026-11-19T02:06

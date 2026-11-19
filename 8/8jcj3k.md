@@ -45,6 +45,9 @@ muninn/internal/app/capture.go:285: if len(line) > chunkLimit, return 'capture m
 check 1: TestCaptureLongMessageIsSplitNotRefused (f56abe6a) fails on main fac02994 for 20000 bytes turn_end, 3x8192 session_end, 60000 manual: 'capture message exceeds 8192 bytes, refusing silent loss'; passes with fix 14d51bc1: before/long/after all in capture_seen, a second run replays nothing
 check 2: same test: every call's transcript <= limit, the assistant parts rebuild the exact original text, the after-turn reaches the extractor in order; capture_runs holds >= ceil(size/limit) parts with original_id=long and report.split=1. 4 mutants fail it: size -2 (one byte over), fragment on hooks only, no Split, Split counts parts. go test ./muninn/internal/app ok 20.482s; go vet ./muninn/... clean
 piglet: 14d51bc1 (fix) on f56abe6a (failing test), base fac02994, pushed to 8jcj3k and ci/8jcj3k, CI 44438088626. Root causes: (1) hook fragments sized limit-len(role)-2 but the transcript line is role+': '+text+'\n', so a full ASCII part is one byte over the limit (the old test used é, whose rune cut hid it); (2) manual/backfill runs never fragmented. Check 3 waits for the release; live high-water untouched.
+landed 4dabf89 on main 2026-11-19: capture: a message over the chunk limit is refused for good: failing test…
+landed fbe3a41 on main 2026-11-19: capture: a long message is cut into parts, never refused (8jcj3k)
+shipped in v0.7.75 (4dabf89)
 ## History
 - 2026-11-19T02:30 todo -> doing/active (take)
 - 2026-11-19T02:36 doing/active -> doing/waiting (wait)
