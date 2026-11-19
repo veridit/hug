@@ -60,6 +60,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 ## Requests
 - 2026-11-19T10:05 request 1 by jhf:
   And now I can't get the second question here. I think your question number two both may resolve a thread. It depends on what the request says and the answer says. So the person, human who's doing this, will maybe say, ah, that's good. I accept or I approve. And it will say, no, I need something else. And you have to decide by the ticket. And I think the same by the agent. So we have to use judgment here. And both can initiate for clarity.
+  resolved 2026-11-19T10:06 by crab:
+    Question 2 answered from this request (answer 2, his words); principle now says either side may resolve a mark, by judgment against the ticket, and either can initiate. Bug filed: question 2 could not be reached in hug tui.
 
 ## Notes
 
@@ -85,3 +87,4 @@ crab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were 
 - 2026-11-19T10:06 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T10:06 crab read the answer: hug task set p87ngv
 - 2026-11-19T10:06 request 1 acknowledged by crab
+- 2026-11-19T10:06 resolved request 1 by crab
