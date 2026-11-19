@@ -33,11 +33,12 @@ main e98a12ac CI 44456503911 success 8/8.
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml for v0.7.76 succeeds (run id)
+- [x] release.yml for v0.7.76 succeeds (run id)
 - [ ] hug version prints v0.7.76 after brew upgrade
 
 ## Notes
 
 
+check 1: release.yml 44457808705 completed success
 ## History
 - 2026-11-19T05:29 todo -> doing/active (take with p277bp)
