@@ -1,0 +1,17 @@
+-- history.sdd of w7tq3k: resolved marks, oldest first, append-only.
+.Resolved .at:2026-11-19T10:12Z .by:daisy .field:"Goal"
+  .was:"Today a check like 'Should the ASKED row show the count?' sits among the checks, is easy to tick by mistake, and nobody is asked, so the question waits for someone to notice it and turn it into a hug task ask, which in practice happens late or never."
+  .now:"Such a check is easy to tick by mistake, and nobody is asked."
+  .msg:"Cut sentence 2 to the harm: ticked by mistake, nobody asked."
+  .marks: seq
+    .Request .by:jhf .at:2026-11-19T09:40Z .prev:.Sentence .msg:"Make it concise: say the harm in a few words."
+  end
+.Resolved .at:2026-11-19T10:14Z .by:daisy .field:"Acceptance" .check:2
+  .was:"A check that starts with Should, Can or Do is a finding too (test)"
+  .now:"A check that starts with Should, Can or Do (English only) is a finding too (test)"
+  .msg:"""Jørgen: English only.
+Check 2 now says "(English only)"; "Skal" and "Bør" are not findings."""
+  .marks: seq
+    .Question .by:daisy .to:jhf .at:2026-11-19T09:52Z .prev:.Item .on:"Should, Can or Do" .msg:"English only, or also Norwegian (Skal, Kan, Bør)?"
+    .Answer .by:jhf .at:2026-11-19T10:04Z .msg:"""English only, so "Should" counts and "Skal" does not, nor "Bør""""
+  end

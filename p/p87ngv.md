@@ -90,6 +90,7 @@ shipped in v0.7.80 (c533de8)
 file:MOCK.md (6102 bytes, sha256:99d00fc3) check 5 mock: rules per frame, syntax rules, 9 open questions
 file:before.md (1855 bytes, sha256:c2031608) check 5 mock: task w7tq3k with 2 open marks (.Request .prev:.Sentence on the goal; .Question .on + .Answer on check 2)
 file:after.md (1628 bytes, sha256:1372e3b6) check 5 mock: the same task after both resolves, no marks
+file:history.sdd (1289 bytes, sha256:48c59c79) check 5 mock: history.sdd after the resolves (.Resolved .at .was .now .marks: seq ... end; one triple-quoted .msg)
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
