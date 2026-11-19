@@ -27,7 +27,7 @@ func TestNoHelpNamesTheOldCommands(t *testing.T) {
 		return out + errOut
 	}
 	texts := map[string]string{}
-	for _, args := range [][]string{{"help"}, {"mcp", "--help"}, {"apps", "--help"}, {"task", "help"}} {
+	for _, args := range [][]string{{"help"}, {"mcp", "--help"}, {"apps", "--help"}, {"completion", "--help"}, {"task", "help"}} {
 		texts["hug "+strings.Join(args, " ")] = help(args...)
 	}
 	// hug task: every command hug task help lists.

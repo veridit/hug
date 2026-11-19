@@ -30,6 +30,11 @@ jobs:
           go-version-file: go.mod
       - name: Vet
         run: go vet ./...
+      - name: Shells for the completion test
+        # bash is there; zsh and fish make TestCompletionInEachShell run
+        # all three, never skip (5mmqjk).
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install -y --no-install-recommends zsh fish
       - name: Test
         # The race detector runs once, on ubuntu (fastest); macOS and Windows
         # run plain tests for platform behaviour. -race made windows ~14 min.
@@ -46,6 +51,7 @@ jobs:
           fi
         env:
           CGO_ENABLED: "1"
+          HUG_REQUIRE_SHELLS: ${{ matrix.os == 'ubuntu-latest' && '1' || '' }}
       - name: Build hug (pure Go)
         run: go build ./cmd/hug
         env:

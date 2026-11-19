@@ -31,6 +31,13 @@ hug task init                 # task branch for this repository
 brew services start hug       # optional: memory watcher + web UI on http://127.0.0.1:7431
 ```
 
+Tab completion for hug, hug task (commands, flags, open task ids) and hug mem:
+
+```sh
+source <(hug completion zsh)  # in ~/.zshrc; bash 4.4+: source <(hug completion bash) in ~/.bashrc
+hug completion fish > ~/.config/fish/completions/hug.fish
+```
+
 ## Commands
 
 | Command | What it does |
