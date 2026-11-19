@@ -34,11 +34,12 @@ main c2b0bbe5 CI 44464516250 success 8/8. CHANGELOG 020b9592, merge 1ce66c8a, re
 
 ## Acceptance
 - [x] release.yml for v0.7.77 succeeds (run id)
-- [ ] hug version prints v0.7.77 after brew upgrade
+- [x] hug version prints v0.7.77 after brew upgrade
 
 ## Notes
 
 
 check 1: release.yml 44465643587 completed success
+check 2: brew upgrade run on its own; hug version prints hug v0.7.77; bin links point at Cellar/hug/0.7.77
 ## History
 - 2026-11-19T06:37 todo -> doing/active (take with p277bp)
