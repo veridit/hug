@@ -46,3 +46,4 @@ check 1: release.yml 44613144851 success; brew upgrade: hug v0.7.85, hug/muninn/
 - 2026-11-20T11:21 answered design, by jhf, for crab (todo/design -> todo/ready):
   > x8zzzn: shall I switch mid-turn recall on in your config now ('recall': {'jcode_midturn': true}), so messages you type while I'm working get their memories, and you decide after a day whether it replaces the old path?
   Yes, clearly. I wanted to activate it right now. You want to make it staggered, but fine, make a follow-up ticket then.
+- 2026-11-20T11:21 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
