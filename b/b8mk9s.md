@@ -39,10 +39,13 @@ WHAT WOULD CHANGE
 - Retiring moves the file to memory/_retired/<id>.md instead of setting a flag.
 - muninn.db stays the search index, rebuilt from the files.
 
-WHY
-- You can open, read and edit a memory in any editor, like a task.
-- git merges two machines' new memories cleanly (different files), and a diff shows exactly which memory changed.
-- Same shape as tasks (one file per thing), which is the 2026-11-11 decision: one tool, files as the truth.
+WHY (Jørgen 2026-11-20 12:39Z: hand editing is not the point; it has to be a technical gain)
+Measured facts, not hopes:
+- Local writes: today every remember, forget or dedupe rewrites the whole 18.6 MB memories.json (SaveNative: marshal all 18,078, write a temp file, rename), under one lock that every session waits on. One file per memory writes a few hundred bytes. This is the real local gain: smaller writes and less waiting, which grows with the store.
+- Shared branch merges: no gain. The shared memories.jsonl is already one line per memory, so git merges it line by line and two machines adding memories rarely conflict.
+- Hand editing: not a reason (Jørgen).
+Against it: 18,078 files is slow for git and for the file system (a status, a checkout, Spotlight), and it is a large one-time migration that touches every write path.
+A cheaper way to the same local gain: keep one file, but make it append-only JSON Lines (each write appends one line; a compaction in dream rewrites it now and then). Same small writes, no 18,000 files.
 
 CONSEQUENCES
 - 18,078 small files instead of one: a one-time migration, with a dry-run and a backup first.
@@ -94,3 +97,4 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T13:39 request 2 by jhf
 - 2026-11-20T13:39 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:39 request 2 acknowledged by crab
+- 2026-11-20T13:39 request 2 in progress by crab: hug task set b8mk9s
