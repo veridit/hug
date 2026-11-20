@@ -10,12 +10,15 @@ group: ""
 rank: "zzzzzzzzzzzc"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
+stage: "waiting"
 doing_since: "2026-11-20T11:23"
 doing_with: "p87ngv"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "x8zzzn check 3 (per-harness push table), its last open child"
+waiting_since: "2026-11-20T11:23"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -56,3 +59,4 @@ Jørgen 2026-11-20 10:22Z (answer 1): 'Yes, clearly. I wanted to activate it rig
 - 2026-11-20T11:22 answer 1 acknowledged by crab
 - 2026-11-20T11:22 crab read the answer: hug task note ypfrp3 "Jørgen 2026-11-20 10:22Z (answer 1): 'Yes, clearly. I wanted to activate it right now...make a follow-up ticket then.' …"
 - 2026-11-20T11:23 todo/ready -> doing/active (take with p87ngv)
+- 2026-11-20T11:23 doing/active -> doing/waiting (wait)
