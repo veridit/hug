@@ -23,7 +23,7 @@ asked_check: "5"
 ---
 
 ## Goal
-After S captures the screen in hug tui, the prompt offers where it goes: type a task ID (completion), s to pick a task from the list, or c to create a new task with the capture attached; Enter attaches, Esc cancels. Today the capture only attaches to the focused task.
+After S captures the screen in hug tui, the person picks the task it attaches to or creates a new one.
 
 ## Purpose
 Jørgen 2026-11-18 (yf39ya requests 1-2): 'when I take a screenshot, it would be nice if I could also attach it to ... ticket so-and-so or S for select or C for create. And if I press select, I can go pick one. And if I put create, I can create a new one.'
@@ -32,6 +32,8 @@ Jørgen 2026-11-18 (yf39ya requests 1-2): 'when I take a screenshot, it would be
 One keystroke per choice, shown in the prompt. Selecting a task reuses the list's own navigation; creating one asks only for a title, and lint's missing sections are filled later through the ticket. The capture is never lost: Esc says 'not attached' and keeps nothing on disk.
 
 ## Relevant details
+After S captures the screen in hug tui, the prompt offers where it goes: type a task ID (completion), s to pick a task from the list, or c to create a new task with the capture attached; Enter attaches, Esc cancels. Today the capture only attaches to the focused task.
+
 Capture today: S takes the frame (tui.go captured, picture.go attachCapture, render.go:1029 'Attach this screen to ID as NAME'). Attach via store.Attach. Pairs with 5z4zt4 (attach screenshots) and q2adr8 (one question per ask). The prompt follows the calm-TUI rules: underline marks the key letter, no background fills.
 
 ## Depends on
