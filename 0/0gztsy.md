@@ -1,7 +1,7 @@
 ---
 id: 0gztsy
 title: "Detail: one place for what a task asks of you; open with focus on it"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzkh"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T01:39"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-20T11:28"
 ---
 
 ## Goal
@@ -82,6 +81,7 @@ crab 15:00 local: Jørgen's answer on check 4 (14:58) = focus right, styling too
 crab 15:01 local: Jørgen's answer on check 4 (14:58): focus right, styling too loud (the ACCEPTANCE heading competes; the question is bold + background + colour). Filed as kg07bt (calm heading, cursor-only emphasis); check 4 stays open until kg07bt ships and he confirms there.
 crab 2026-11-20 08:26Z: removed the kg07bt dependency (kg07bt shipped in v0.7.66; its last check is now asked of jhf, so it no longer blocks); this task's own check 4 asked.
 check 4: Jørgen 2026-11-20 10:28Z (request 1): 'I think the current view is okay. And I did jump into the question, so this is better.'
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T01:39 todo -> doing/active (take)
 - 2026-11-18T02:03 doing/active -> doing/waiting (wait)
@@ -99,3 +99,4 @@ check 4: Jørgen 2026-11-20 10:28Z (request 1): 'I think the current view is oka
 - 2026-11-20T11:28 answered asked (check 4), by crab, for crab (doing/asked -> doing/active):
   > A task asked of you opens with focus on its question, shown once. Open 6ephqk (or any task in your ASKED): does it read clearly? Your 08:20Z note on 911j70 (the picture line gets no focus and no jump) is filed on 8a0ybb check 7.
   Jørgen in request 1 (2026-11-20 10:28Z): 'I think the current view is okay. And I did jump into the question, so this is better.'
+- 2026-11-20T11:28 doing/active -> done (done); was doing_since: 2026-11-18T01:39
