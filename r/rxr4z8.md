@@ -57,6 +57,8 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 ## Requests
 - 2026-11-20T11:39 request 1 by jhf:
   So again, I open this ticket. It doesn't scroll down to the question I'm going to answer. It shows some inline file. I don't know why that doesn't make no sense. And the response here is cursor carrying a mark. That's what I want. So you can close that, or you can take that feedback from this ticket. And hopefully, it's the third time I'm reporting the same thing about opening tickets that don't show the question. So it's probably in progress already. I'm just reporting it again as far as long as I see it
+  resolved 2026-11-20T11:39 by crab:
+    Kept ⋗, the cursor carrying a mark, as you want (check 7 ticked), and closed the task as you said (check 6). The question-not-in-view problem is being fixed: cricket's branch qcq3tm opens an asked task on its question with its file as a link line instead of drawn on top; it is in review now and ships in the next release.
 
 ## Notes
 
@@ -123,3 +125,4 @@ check 6: Jørgen 2026-11-20 10:39Z (request 1): 'So you can close that'.
 - 2026-11-20T11:39 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:39 request 1 acknowledged by crab
 - 2026-11-20T11:39 request 1 in progress by crab: hug task check rxr4z8 7 "Jørgen 2026-11-20 10:39Z (request 1): 'the response here is cursor carrying a mark. That's what I want.' ⋗ stays."
+- 2026-11-20T11:39 resolved request 1 by crab
