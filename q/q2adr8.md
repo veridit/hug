@@ -11,13 +11,15 @@ rank: "zzzzzzzzzzw1"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:43"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "v0.7.70 release, then Jørgen confirms on his board (check 6); accepted by crab at 335a39a5, stacked as ci/q2adr8-rebased d5c66a1f"
-waiting_since: "2026-11-18T21:39"
-waiting_asked_by: "iwazaru"
+asked_what: "Several questions on one task are now asked and answered each on its own. On your board, does that work for you?"
+asked_for: "jhf"
+asked_since: "2026-11-20T09:26"
+asked_by: "crab"
+asked_check: "6"
 ---
 
 ## Goal
@@ -44,6 +46,10 @@ Today: hug task ask sets one asked/asked_check/asked_show on the stage (41hhgn);
 - [x] The ask/answer help and the agent instructions say: one question per ask
 - [ ] Jørgen confirms on his board after release
 
+## Questions
+- 2026-11-20T09:26 question 1 by crab to jhf (check 6):
+  Several questions on one task are now asked and answered each on its own. On your board, does that work for you?
+
 ## Notes
 
 crab 20:30 local: queued; next free TUI/CLI worker after the windows-cli shard lands. Until then coordinators and workers ask one question per hug task ask (memory saved).
@@ -69,3 +75,4 @@ shipped in v0.7.70 (854286b)
 - 2026-11-18T20:43 todo -> doing/active (take)
 - 2026-11-18T21:39 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:01 handed to crab: iwazaru's session ended (closed 2026-11-19 02:27)
+- 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: iwazaru; waiting_on: v0.7.70 release, then Jørgen confirms on his board (check 6); accepted by crab at 335a39a5, stacked as ci/q2adr8-rebased d5c66a1f; waiting_since: 2026-11-18T21:39
