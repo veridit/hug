@@ -1,16 +1,20 @@
 ---
 id: mxj0zn
 title: "Release v0.7.90"
-state: todo
+state: "doing"
 type: chore
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzr"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-20T13:35"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -58,3 +62,4 @@ Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improveme
 - 2026-11-20T13:35 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:35 answer 1 acknowledged by crab
 - 2026-11-20T13:35 crab read the answer: hug task note mxj0zn "Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improvements after this.'"
+- 2026-11-20T13:35 todo/ready -> doing/active (take)
