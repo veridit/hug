@@ -64,6 +64,8 @@ Former Principle: A design decision first, written down, no code in this task. K
   The purpose for this ticket is also not clear enough. This is too wordy, quoting me. So you can write all those lengthy things in some notes or some details somewhere on the bottom, but try to lead with clarity
   resolved 2026-11-20T09:56 by crab:
     The top now leads with clarity, one sentence each. Goal: you decide which client owns an imported memory, and whether jcode memories are imported once or read live. Purpose: imported memories can land in the wrong client's scope, and jcode memories live in two places, so forget and sync have no single source of truth. Principle: decide first, build later; imports and sync never cross a client boundary. The quotes and history moved word for word to the end of Details.
+- 2026-11-20T09:57 request 3 by jhf:
+  This ticket should truly write things in the ticket in the details and have maybe the questions with each relevant piece and it is too verbal. It has to be succinct to the point saying for this do that we can choose between so-and-so with these trade-offs and then the questions are inside the ticket not buried inside the document. I can't answer them. I have to do requests to talk about things that are so I can't respond where it happens
 
 ## Notes
 
@@ -89,3 +91,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:56 request 2 acknowledged by crab
 - 2026-11-20T09:56 request 2 in progress by crab: hug task set hpqt99
 - 2026-11-20T09:56 resolved request 2 by crab
+- 2026-11-20T09:57 request 3 by jhf
