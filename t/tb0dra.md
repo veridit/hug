@@ -69,6 +69,7 @@ instruction change traced to reflections: daa4c889 on main (built as a0939668; G
 landed daa4c88 on main 2026-11-19: AGENTS.md: write a superseding ruling on the earlier ticket; go vet after rebase…
 landed 2320b92 on main 2026-11-19: AGENTS.md: shell scripts run on macOS's bash 3.2 too (tb0dra)
 shipped in v0.7.74 (daa4c88)
+file:screen-1057.ans (6373 bytes, sha256:0fd93a69) screen capture from hug tui
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
