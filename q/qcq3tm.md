@@ -60,6 +60,10 @@ file:after-p87ngv-a-100x30.ans (3668 bytes, sha256:cd9adebd) qcq3tm 15667952, p8
 check 1: TestTmuxAskedTaskOpensOnItsQuestion (huginn/internal/tui/qcq3tm_tmux_test.go, tb0dra and hjbfzd copies at 100x30). On origin/main 4b1a5781: 'tb0dra opens on its question (check 1), its file not drawn above the page (check 2): never showed ["> ? ☐ 5. after a week of use" ...]'. On qcq3tm a5fc5208: '--- PASS: TestTmuxAskedTaskOpensOnItsQuestion (3.10s)'. CI 44721913557 green (8/8 jobs) on a5fc5208. Captures before/after-tb0dra-100x30.ans, before/after-hjbfzd-100x30.ans.
 check 2: Same test: no file drawn above the page, '→ agentsection-proposal.md · Enter shows' under the question, Enter shows it in the file frame ('u/Esc question' in the keys), Esc back to the question; hjbfzd check 6 the same with capture-wording-100x30.ans. Fail first on origin/main 4b1a5781 (line quoted on check 1); '--- PASS' on a5fc5208; CI 44721913557 green. Unit: TestQuestionShowsItsPicture, TestQuestionPictureIsFramed PASS (goldens detail/picture.txt, picture-framed.txt reviewed). Space in FILES unchanged (TestTmuxZhvkmjFilesOnItself PASS).
 check 4: TestTmuxAnswerBoxOpensInView on a p87ngv copy (hug/tasks 069928d0: old asked_* fields, question 11 on check 5, question 12 in a block). On origin/main 4b1a5781: 'p87ngv a opens the answer box in view (check 4): never showed ["? ☐ 5. Jørgen approves a mock" "answer:"]', with the keys line 'Enter send · Alt-Enter new line · Esc cancel' (box open, out of view). On a5fc5208: '--- PASS: TestTmuxAnswerBoxOpensInView (2.81s)', 'answer: typed by qcq3tm' on screen. CI 44721913557 green. Captures before/after-p87ngv-a-100x30.ans.
+landed 48e3517 on main 2026-11-20: hug tui: an asked task opens on its question; its file is a link line, Enter…
+landed 1566795 on main 2026-11-20: hug tui: Esc from a file a question's link showed is named 'question' in the…
+landed a5fc520 on main 2026-11-20: tui tests: capture knob QCQ3TM_CAPTURES (no HUG_ name); picture golden names Esc…
+shipped in v0.7.89 (48e3517)
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
 - 2026-11-20T11:54 doing/active -> doing/asked (ask)
