@@ -72,6 +72,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
     Agreed: no FOR YOU block. Opening an asked task scrolls to the question, and a file it names is a link on it (Enter shows it, Esc returns). That part is qcq3tm, high, being built now (its checks 1-2). Here: old mock check 1 and the FOR YOU order check 6 are struck, the FOR YOU questions 2 and 3 are closed with your answer, and the order check is rewritten without FOR YOU (check 11).
 - 2026-11-20T11:25 request 2 by jhf:
   And we're working on a much more intricate system of inline things where we use the new syntax and everything. It's another ticket. So wouldn't that kind of replace this let's write something special in the header, but we can jump down to the things and then you can interact with them where you're at. So this is kind of moot at that point, being taken over by the other task?
+  resolved 2026-11-20T11:26 by crab:
+    Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline marks, so this task's jump check (2) and its land-on-the-question checks (5, 7, 10) are struck and point there or to qcq3tm (the landing fix shipping now). What p87ngv does not cover stays here, now medium priority: the section order (Purpose, Principle, Goal, Acceptance, short sections, then long ones folded, check 11) and the ↑/↓ scroll markers (check 9). Title and Goal say just that. Check 12 is your look at frames of it.
 
 ## Notes
 
@@ -127,3 +129,4 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
   > Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it).
   Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled out in request 1 (2026-11-20 10:24Z). A new mock without it is check 10.
 - 2026-11-20T11:26 resolved request 1 by crab
+- 2026-11-20T11:26 resolved request 2 by crab
