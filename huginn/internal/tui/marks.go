@@ -37,6 +37,9 @@ var markedActions = []struct{ key, word, help string }{
 	{"x", "drop", "drop every marked task, with one reason"},
 	{"w", "wait", "park every marked task on what it waits on"},
 	{"e", "edit", "edit every marked task in the editor"},
+	// One request for exactly the marked set (ec6z6j check 5, Jørgen
+	// 2026-11-20: option A, the box at the bottom of the list).
+	{"r", "request", "write one request for the marked tasks, the box under the list"},
 }
 
 func (m model) isMarked(id string) bool { return contains(m.marks, id) }
@@ -226,6 +229,8 @@ func (m *model) markedKey(k string) tea.Cmd {
 		return nil
 	case "t":
 		return m.takeMarked(ids)
+	case "r":
+		return m.requestMarked(ids)
 	}
 	m.bulk = ids
 	switch k {

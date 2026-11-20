@@ -136,9 +136,12 @@ func (m model) updateAnswer(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.syncDetail()
 		switch {
 		case text == "" && prompt == requestPrompt:
+			m.requestIDs = nil // the marks stay (ec6z6j check 5)
 			m.message = "no request sent: it is empty (r again, then write what you want changed)"
 		case text == "":
 			m.message = "not answered: the answer is empty (a again, then type it)"
+		case prompt == requestPrompt && len(m.requestIDs) > 0:
+			m.sendMarkedRequest(text) // one request for the marked (ec6z6j check 5)
 		case prompt == requestPrompt:
 			m.request(text)
 		default:
@@ -159,7 +162,7 @@ func (m model) updateAnswer(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	m.answerBox, cmd = m.answerBox.Update(msg)
 	m.fitAnswerBox()
 	m.syncDetail() // the box sits in the page: its height moves what follows
-	if m.prompt == requestPrompt {
+	if m.prompt == requestPrompt && m.detail {
 		m.revealRequestBox()
 	}
 	if m.prompt == answerPrompt {
@@ -222,6 +225,7 @@ func (m model) requestCount(t task.Task) string {
 func (m model) requestLines(t task.Task) []string {
 	var out []string
 	for _, r := range t.Requests {
+		r = m.shownRequest(r) // a link draws its home's text (ec6z6j check 4)
 		head := fmt.Sprintf("%d. %s", r.N, oneLine(r.By))
 		if s := strings.TrimPrefix(since(r.At), " · "); s != "" {
 			head += " · " + s + " ago"
@@ -232,9 +236,16 @@ func (m model) requestLines(t task.Task) []string {
 		if r.Resolved != nil {
 			state = m.styles.status["done"].Render("resolved")
 		}
-		out = append(out, m.styles.dim.Render(head+" · ")+state)
+		line := m.styles.dim.Render(head+" · ") + state
+		if home := requestHome(r); home != "" {
+			line += m.styles.dim.Render(" · " + home) // where it lives (ec6z6j check 4)
+		}
+		out = append(out, line)
 		for _, l := range strings.Split(strings.TrimRight(r.Text, "\n"), "\n") {
 			out = append(out, "   "+safe(l))
+		}
+		if tg := requestTargets(r); tg != "" {
+			out = append(out, m.styles.dim.Render("   "+safe(tg))) // each target, pending or resolved
 		}
 		if a := r.Resolved; a != nil {
 			lines := strings.Split(strings.TrimRight(a.Text, "\n"), "\n")

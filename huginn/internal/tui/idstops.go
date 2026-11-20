@@ -218,7 +218,7 @@ func (m model) idStops(t task.Task) []idStop {
 		}
 	}
 	for i, r := range t.Requests {
-		add(stopRequest, i, r.Text, true)
+		add(stopRequest, i, requestStopText(m.shownRequest(r)), true) // a link's home and the targets too (ec6z6j)
 		if r.Resolved != nil {
 			add(stopResolved, i, r.Resolved.Text, true)
 		}

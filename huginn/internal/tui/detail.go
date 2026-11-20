@@ -1038,8 +1038,20 @@ func (m model) markRequests(t task.Task, lines []string, markAt func(string, int
 		at += n
 	}
 	for i, r := range t.Requests {
-		at++ // who and when
-		markIn(len(strings.Split(strings.TrimRight(r.Text, "\n"), "\n")), markAt(stopRequest, i))
+		r = m.shownRequest(r)
+		// One stop list per request, as requestStopText reads it: a
+		// link's head (its home's id, ec6z6j check 4), the text, the
+		// targets line. A plain request's head names no task.
+		n := len(strings.Split(strings.TrimRight(r.Text, "\n"), "\n"))
+		if r.Home != nil {
+			n++
+		} else {
+			at++ // who and when
+		}
+		if r.Targets != nil {
+			n++
+		}
+		markIn(n, markAt(stopRequest, i))
 		if a := r.Resolved; a != nil {
 			markIn(len(strings.Split(strings.TrimRight(a.Text, "\n"), "\n")), markAt(stopResolved, i))
 		}

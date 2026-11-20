@@ -6,6 +6,20 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- hug tui sends one request for the marked tasks (ec6z6j). With tasks
+  marked by Space in any list (LINT too), the footer offers `r request`;
+  r opens the request box at the bottom of the list under
+  `▸ REQUEST FOR 3 MARKED · a b c`, so the marked rows stay in view while
+  you write. Enter writes one request for exactly that set, as
+  `hug task request a,b,c` does: the text once on the first, a link on
+  each other, one commit, one delivery. Esc writes nothing and keeps the
+  marks. With nothing marked, r is a request on the row's task as before.
+- A request for several tasks reads in each task's page as it does in
+  `hug task show`: the text, then `targets: a pending, b resolved, c
+  pending`. Another target's page (a link) shows the same text and
+  targets and where it lives, `request 1 on a`; that id is a Tab stop,
+  Enter opens it.
+
 ## v0.7.90 - 2026-11-20
 
 - hug tui lists read as a calm spreadsheet (911j70): columns ID TITLE

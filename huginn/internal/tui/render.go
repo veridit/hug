@@ -149,7 +149,7 @@ func fit(s string, width int) string {
 func wrap(s string, width int) string {
 	return ansi.Hardwrap(ansi.Wrap(strings.ReplaceAll(s, "\t", "    "), max(1, width), ""), max(1, width), false)
 }
-func (m model) bodyHeight() int { return max(1, m.height-3-m.headLines()) }
+func (m model) bodyHeight() int { return max(1, m.height-3-m.headLines()-m.markedBoxExtra()) }
 
 // viewHeight is the body the view has to itself: all of it, or what the
 // palette leaves above it (05r3pg), so the row it acts on stays in sight.
@@ -1150,6 +1150,16 @@ func (m model) fileFrame() bool {
 // file (yp3c09, Jørgen 2026-11-19: two empty rows above the keys while
 // the file went on below).
 func (m model) footRows() (foot []string, spare int) {
+	if m.markedBox() {
+		// The box for the marked under the list (ec6z6j check 5), then
+		// the message line.
+		msg := ""
+		if m.message != "" {
+			first, _, _ := strings.Cut(m.message, "\n")
+			msg = m.renderMarks(oneLine(first), m.styles.dim)
+		}
+		return append(m.markedBoxLines(), msg), 0
+	}
 	footer, input := m.footLines()
 	if !m.fileFrame() {
 		return []string{footer, input}, 0

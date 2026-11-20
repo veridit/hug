@@ -1,0 +1,75 @@
+== home aaaaaa at 80x24
+HUG · list › aaaaaa                                                             
+[todo]  [feature]  group:root  unassigned                                       
+created 2026-11-20 · updated 2026-11-20 · docs-page                             
+⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
+  fix: hug task set aaaaaa --principle "..."                                    
+────────────────────────────────────────────────────────────────────────────────
+Docs page                                                                       
+────────────────────────────────────────────────────────────────────────────────
+> ☐ 1. C                                                                        
+                                                                                
+no dependencies                                                                 
+                                                                                
+REQUESTS                                                                        
+1. jhf · 4 min ago · pending, not sent                                          
+   Each of these lacks a purpose: write one from the goal.                      
+   targets: aaaaaa pending, bbbbbb resolved, cccccc pending                     
+                                                                                
+HISTORY                                                                         
+                                                                                
+• 2026-11-20T16:12 request 1 by jhf (for aaaaaa, bbbbbb, cccccc)                
+• 2026-11-20T16:12 request 1 target bbbbbb resolved by crab                     
+Task 1 of 4 · 100% · next · previous · Esc back                                 
+                                                                                
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
+== link bbbbbb (resolved) at 80x24
+HUG · list › bbbbbb                                                             
+[todo]  [feature]  group:root  unassigned                                       
+created 2026-11-20 · updated 2026-11-20 · spike-fit                             
+⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
+  fix: hug task set bbbbbb --principle "..."                                    
+────────────────────────────────────────────────────────────────────────────────
+Spike fit                                                                       
+────────────────────────────────────────────────────────────────────────────────
+                                                                                
+no dependencies                                                                 
+                                                                                
+REQUESTS                                                                        
+1. jhf · 4 min ago · resolved · request 1 on aaaaaa                             
+   Each of these lacks a purpose: write one from the goal.                      
+   targets: aaaaaa pending, bbbbbb resolved, cccccc pending                     
+   └ crab: added a purpose                                                      
+                                                                                
+HISTORY                                                                         
+                                                                                
+• 2026-11-20T16:12 request 1 by jhf (see aaaaaa request 1)                      
+• 2026-11-20T16:12 resolved request 1 by crab                                   
+Task 2 of 4 · 100% · next · previous · Esc back                                 
+                                                                                
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
+== link cccccc (pending) at 80x24
+HUG · list › cccccc                                                             
+[todo]  [feature]  group:root  unassigned                                       
+created 2026-11-20 · updated 2026-11-20 · feature-quiet                         
+⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
+  fix: hug task set cccccc --principle "..."                                    
+────────────────────────────────────────────────────────────────────────────────
+Feature quiet                                                                   
+────────────────────────────────────────────────────────────────────────────────
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
+> ☐ 1. C                                                                        
+                                                                                
+no dependencies                                                                 
+                                                                                
+REQUESTS                                                                        
+1. jhf · 4 min ago · pending, not sent · request 1 on aaaaaa                    
+   Each of these lacks a purpose: write one from the goal.                      
+   targets: aaaaaa pending, bbbbbb resolved, cccccc pending                     
+                                                                                
+HISTORY                                                                         
+                                                                                
+• 2026-11-20T16:12 request 1 by jhf (see aaaaaa request 1)                      
+Task 3 of 4 · 100% · next · previous · Esc back                                 
+                                                                                
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      

@@ -250,7 +250,10 @@ type model struct {
 	marks []string
 	// bulk is the marked ids a confirm acts on (rxr4z8), fixed when it
 	// was asked.
-	bulk                   []string
+	bulk []string
+	// requestIDs are the marked ids the open request box writes one
+	// request for (ec6z6j check 5), fixed when r opened it.
+	requestIDs             []string
 	hidden                 string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
 	grab                   grabState
 	find                   findState // / in a task or a file: matches in its text (4s3g5q)
@@ -1274,6 +1277,7 @@ func (m *model) back() {
 		m.message = ""
 	case m.prompt != "":
 		m.prompt = ""
+		m.requestIDs = nil // the marks stay (ec6z6j check 5)
 		m.input.Blur()
 		m.answerBox.Blur()
 		m.syncDetail() // a closed answer box gives its lines back
@@ -1883,6 +1887,8 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// N, not n: n and p step like j and k, and to the next task
 			// inside one (2026-11-16, user).
 			return m, m.openInput("new title", "")
+		case k == "r" && len(m.marks) > 0:
+			return m, m.markedKey(k) // one request for the marked (ec6z6j check 5)
 		case k == "r":
 			return m, m.requestKey() // a request on the selected task (hbgybn)
 		case k == " ":
