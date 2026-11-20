@@ -38,7 +38,7 @@ Builds on tzc9hb (the loop in the AGENTS.md section) and x325pp (nudges only bet
 - [x] MCP task_done accepts reflection and its description asks the question (test)
 - [x] hug task reflections lists open reflections with ticket, instruction quoted and date; resolve marks one applied or dismissed (test)
 - [x] the hug setup AGENTS.md section tells agents to answer the question honestly, including 'nothing'
-- [ ] after a week of use, one instruction change in this repo traced to a reflection (link in Notes)
+- [x] after a week of use, one instruction change in this repo traced to a reflection (link in Notes)
 
 ## Questions
 - 2026-11-19T00:58 question 1 by piglet to jhf (check 5, show agentsection-proposal.md):
@@ -67,6 +67,7 @@ landed 2320b92 on main 2026-11-19: AGENTS.md: shell scripts run on macOS's bash 
 shipped in v0.7.74 (daa4c88)
 file:screen-1057.ans (6373 bytes, sha256:0fd93a69) screen capture from hug tui
 file:screen-1057-2.ans (24091 bytes, sha256:39c4a77d) screen capture from hug tui
+check 5: x
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
@@ -75,3 +76,4 @@ file:screen-1057-2.ans (24091 bytes, sha256:39c4a77d) screen capture from hug tu
   Yes, I approved this ticket. I also added two more screenshots showing how and I've done this several times so I hope that there's a ticket incoming the question is not visible when I open and how the file is shown inline instead of scrolling down to the file revealing both the question and the file. Either that should be appended to the existing ticket someone is working on, or it should be given higher priority if it is in the next upcoming, and this ticket is of course closed.
 - 2026-11-20T10:58 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T10:58 answer 1 acknowledged by crab
+- 2026-11-20T10:59 answer 1 in progress by crab: hug task check tb0dra 5 x
