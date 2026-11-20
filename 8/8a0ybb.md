@@ -51,6 +51,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 - [ ] ~~Opening an asked task focuses its question; the picture line under it (asked_show) is a link: Enter shows the file, Esc returns to the question, a answers from either (tmux test on 911j70's board copy)~~ (not relevant: moved to qcq3tm checks 1-2 (land on the question, the file a link on it), crab, 2026-11-20)
 - [ ] ~~Opening a task asked of you scrolls to its first open question, wherever it is on the page; nothing is drawn above the page for it, and the --show file is a link on the question, never inlined (tmux test on hjbfzd's board copy)~~ (not relevant: moved to qcq3tm (high), which ships ahead of the FOR YOU decision, crab, 2026-11-20)
 - [ ] The detail page shows ↑ in a top corner when there is more above and ↓ in a bottom corner when there is more below, as the overview marks more rows (golden 100x30 scrolled mid-page)
+- [ ] Jørgen approves frames (ANSI at 100x30) of 8a0ybb's own detail: opened scrolled to its question with the file as a link, and the order Purpose, Principle, Goal, Acceptance, short sections, then long sections folded
+- [ ] No DESCRIPTION heading and no FOR YOU block; order is Purpose, Principle, Goal, Acceptance, short sections (Files, Depends on, Parent/children, requests), then Relevant details, Notes, History; long sections fold to one line until opened (golden 100x30 and 160x45)
 
 ## Questions
 - 2026-11-19T12:24 question 1 by crab to jhf:
