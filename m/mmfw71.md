@@ -13,7 +13,7 @@ updated: 2026-11-19
 ---
 
 ## Goal
-A hug tui left open across a brew upgrade notices the new binary and offers or does a reload, so a person never works for days on an old version.
+A hug tui left open across a brew upgrade notices the new binary and reloads, so nobody works on an old version.
 
 ## Purpose
 m5pbb0 (2026-11-19, blossom): Jørgen's hug tui pid 78631 ran v0.7.69 from 2026-11-17 19:53 through ten releases; it wrote p87ngv in a pre-q2adr8 shape and hid questions 2-5. The R corner reload (j2vwk0) did not bring it forward. Evidence: vmmap 78631 maps /opt/homebrew/Cellar/hug/0.7.69/bin/hug; cache-25.db held open.
@@ -22,6 +22,8 @@ m5pbb0 (2026-11-19, blossom): Jørgen's hug tui pid 78631 ran v0.7.69 from 2026-
 Reproduce first: start hug tui from one Cellar version, brew upgrade, observe. Never write task files with an older format than the board's: an old binary seeing a newer board should refuse writes with a fix: line.
 
 ## Relevant details
+A hug tui left open across a brew upgrade notices the new binary and offers or does a reload, so a person never works for days on an old version.
+
 Leads: j2vwk0 R corner; the cache schema number (cache-25 vs current) as a cheap version signal; executable path vs /opt/homebrew/bin/hug symlink target.
 
 ## Depends on
