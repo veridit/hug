@@ -261,3 +261,4 @@ check 5: Jørgen 2026-11-20 11:16 local (question 11): 'Yes', approves the mock 
   > Open marks are drawn as a dim line under the text they are about (↳ 1 request · jhf 09:40 · ...), with the marked words underlined and the raw .Request text hidden; frames 1-7 are attached in colour. Is that the look you want?
   Yes, now I can suddenly answer this. Awesome. Approved.
 - 2026-11-20T11:16 answer 13 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:16 answer 13 acknowledged by crab
