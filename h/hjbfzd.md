@@ -49,6 +49,8 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 ## Questions
 - 2026-11-18T23:24 question 1 by crab to jhf (check 5):
   Jørgen confirms on his board after release
+- 2026-11-20T09:44 question 2 by crab to jhf (check 6, show capture-wording-100x30.ans):
+  Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? (All three steps are in capture-wording.md.)
 
 ## Requests
 - 2026-11-20T09:43 request 1 by jhf:
@@ -81,3 +83,4 @@ file:capture-wording-100x30.ans (2801 bytes, sha256:54dc7b78)
 - 2026-11-20T09:43 request 1 acknowledged by crab
 - 2026-11-20T09:44 request 1 in progress by crab: hug task attach hjbfzd /Users/jhf/.jcode/scratch/hjbfzd-wording/capture-wording.md
 - 2026-11-20T09:44 resolved request 1 by crab
+- 2026-11-20T09:44 asked question 2 of jhf, 2 open (doing/asked -> doing/asked)
