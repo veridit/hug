@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168mlist › [1m[38;2;0;191;255mp87ngv[0m                                                               [1m[38;2;255;179;84m? 3 for you
+[38;2;0;191;255m[doing][0m  [1m[38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:crab · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-19 · updated 2026-11-19 · inline-marks-task-s[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mInline marks on a task's text; resolved dialogue moves to a history file
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255m▸ ACCEPTANCE[0m[38;2;135;149;168m · j/k or [ ] step · Space ticks · - strikes out
+[9m  ☒ 1. Jørgen approves a mock (CLI transcript plus TUI frames at 100x30) of a thread on a quoted[0m
+[9m[38;2;135;149;168m       sentence, a reply and a resolve (not relevant: threads in the ticket rejected by Jørgen[0m
+[9m[38;2;135;149;168m       09:05Z; replaced by inline-mark checks, crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 2. An outdated anchor (quoted text edited away) keeps its thread and shows it as outdated (test)
+       (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark[0m
+[9m[38;2;135;149;168m       checks, crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 3. Several questions in one call become separate threads, each answered on its own (test) (not[0m
+[9m[38;2;135;149;168m       relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks,[0m
+[9m[38;2;135;149;168m       crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 4. Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM (not[0m
+[9m[38;2;135;149;168m       relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks,[0m
+[9m[38;2;135;149;168m       crab, 2026-11-19)[0m
+[1;4m[38;2;0;191;255m>[0m ? ☐ 5. Jørgen approves a mock (task file before and after, CLI transcript, TUI frames at 100x30):
+         a sentence marked with a request, the agent's change, the mark gone from the ticket and the
+         exchange in the history file
+[38;2;255;179;84m         With the questions now on the task, do you approve the mock (before.md, after.md,[39m
+[38;2;255;179;84m         history.sdo-to-be, cli.txt, tui-100x30.txt)?[39m
+[38;2;135;149;168m         → before.md · Enter shows
+         └ question 11 · crab · 23 h ago
+[39m         [1m[38;2;0;191;255manswer:[0m typed by qcq3tm[4m[38;2;0;191;255m [0m
+[38;2;135;149;168mTask 4 of 4 · 22% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back[39m
+
+[1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m send · [1m[38;2;0;191;255mAlt-Enter[0m[38;2;135;149;168m new line · [1m[38;2;0;191;255mEsc[0m[38;2;135;149;168m cancel · [1m[38;2;0;191;255mF1[0m[38;2;135;149;168m help[39m                                       [38;2;135;149;168mhug dev
