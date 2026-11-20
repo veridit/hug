@@ -1,7 +1,7 @@
 ---
 id: xekn3z
 title: "Release v0.7.88"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzo"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "active"
-doing_since: "2026-11-20T10:45"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-20T11:44"
 ---
 
 ## Goal
@@ -47,6 +46,7 @@ check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/
 
 check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/huginn -> ../Cellar/hug/0.7.88/bin/*
 Jørgen 2026-11-20 10:43Z (answer 1): 'I think it does. It would have been simpler if you took some screenshots and added them to the files list of this one so I can just look at what you meant.' Lesson (crab): every release ask attaches ANSI frames (before and after) of what it asks about to the release ticket.
+Reflection (open, 2026-11-20, crab): My ask described a screen in words; a frame of it attached to the ticket would have let Jørgen answer at a glance.
 ## History
 - 2026-11-20T10:45 todo -> todo/design (ask)
 - 2026-11-20T10:45 todo/design -> doing/asked (take, 1 open question(s) kept); was design_asked_by: crab; design_for: jhf; design_question: 72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.); design_since: 2026-11-20T10:45
@@ -56,3 +56,4 @@ Jørgen 2026-11-20 10:43Z (answer 1): 'I think it does. It would have been simpl
 - 2026-11-20T11:42 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:43 answer 1 acknowledged by crab
 - 2026-11-20T11:44 crab read the answer: hug task note xekn3z "Jørgen 2026-11-20 10:43Z (answer 1): 'I think it does. It would have been simpler if you took some screenshots and adde…"
+- 2026-11-20T11:44 doing/active -> done (done); was doing_since: 2026-11-20T10:45
