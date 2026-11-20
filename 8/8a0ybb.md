@@ -61,6 +61,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 ## Requests
 - 2026-11-20T11:24 request 1 by jhf:
   So look at the screenshot We scroll down to the question, but we're showing the file in line that doesn't make any sense, right? So we should have scrolled to the question and the file would be then in display or linked to from the question So you have to clean this up and take it all the way and if we can't like we can always scroll to the question can't we in this case wouldn't that be the thing to do
+- 2026-11-20T11:25 request 2 by jhf:
+  And we're working on a much more intricate system of inline things where we use the new syntax and everything. It's another ticket. So wouldn't that kind of replace this let's write something special in the header, but we can jump down to the things and then you can interact with them where you're at. So this is kind of moot at that point, being taken over by the other task?
 
 ## Notes
 
@@ -106,3 +108,4 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 - 2026-11-20T11:24 request 1 by jhf
 - 2026-11-20T11:24 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:24 request 1 acknowledged by crab
+- 2026-11-20T11:25 request 2 by jhf
