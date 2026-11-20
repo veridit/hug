@@ -127,27 +127,76 @@ func settled(t *testing.T, a *App) {
 	if e != nil {
 		return
 	}
-	deadline := time.Now().Add(30 * time.Second)
-	for time.Now().Before(deadline) {
+	if why := settleWait(bg, settleStall, settleCap); why != "" {
+		syncTimeoutFailure(t, bg, why)
+	}
+}
+
+// settleStall is how long a pass may go without progress, settleCap how
+// long settled waits in all (6zhyq2). A pass that stops is a stall after
+// 30 s, as before. A pass that keeps going is waited for: on a slow
+// Windows runner (CI 44522707343 attempt 1, sync tests 2 to 8 times their
+// usual time) the pass after an upgrade started its last git 0.35 s
+// before the old 30 s deadline, and failed as "still running".
+const (
+	settleStall = 30 * time.Second
+	settleCap   = 3 * time.Minute
+)
+
+// settleWait waits for bg to be idle and says why it gave up, or "" when
+// it is idle: stall without progress, or cap in all. Progress is the pass
+// log and the child's git trace (one trace2 file per git process, events
+// appended as it runs) growing.
+func settleWait(bg gitbranch.Background, stall, cap time.Duration) string {
+	start := time.Now()
+	last, since := settleProgress(bg), start
+	for {
 		if !bg.Busy() && !bg.Pending() {
-			return
+			return ""
+		}
+		if time.Since(since) >= stall {
+			return fmt.Sprintf("no progress for %v (%v in all)", stall, time.Since(start).Round(time.Second))
+		}
+		if time.Since(start) >= cap {
+			return fmt.Sprintf("still going after %v", cap)
 		}
 		time.Sleep(50 * time.Millisecond)
+		if p := settleProgress(bg); p != last {
+			last, since = p, time.Now()
+		}
 	}
-	syncTimeoutFailure(t, bg)
+}
+
+// settleProgress is the size of bg's pass log and of every file in its
+// trace2 folder, and how many there are.
+func settleProgress(bg gitbranch.Background) string {
+	size := func(p string) int64 {
+		if st, e := os.Stat(p); e == nil {
+			return st.Size()
+		}
+		return -1
+	}
+	p := fmt.Sprint(size(bg.Log()))
+	dir := traceDirOf(bg.Log())
+	ents, _ := os.ReadDir(dir)
+	var n int64
+	for _, e := range ents {
+		n += size(filepath.Join(dir, e.Name()))
+	}
+	return fmt.Sprintf("%s %d %d", p, len(ents), n)
 }
 
 // syncTimeoutFailure reads the phase file before Fatalf triggers TempDir
 // cleanup. Keep this path shared with the subprocess regression test: Go
 // prints failed test output without -v, so ordinary CI retains the phases.
-func syncTimeoutFailure(t *testing.T, bg gitbranch.Background) {
+func syncTimeoutFailure(t *testing.T, bg gitbranch.Background, why string) {
 	t.Helper()
 	log, err := os.ReadFile(bg.Log())
 	if err != nil {
 		log = []byte(fmt.Sprintf("reading phase log: %v", err))
 	}
 	log = append(log, "\n"+unfinishedGit(traceDirOf(bg.Log()))+liveProcesses()...)
-	t.Fatalf("background pass still running after 30 s: queued %v, busy %v, pending %v, turn held %v, run held %v (log %s):\n%s", bg.Queued(), bg.Busy(), bg.Pending(), bg.TurnHeld(), bg.RunHeld(), bg.Log(), log)
+	t.Fatalf("background pass still running, "+why+": queued %v, busy %v, pending %v, turn held %v, run held %v (log %s):\n%s", bg.Queued(), bg.Busy(), bg.Pending(), bg.TurnHeld(), bg.RunHeld(), bg.Log(), log)
 }
 
 // arrival is how long a change may take to reach the other clone: 10 s,

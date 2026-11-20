@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/veridit/hug/huginn/gitbranch"
@@ -34,7 +35,61 @@ func TestSyncTimeoutFailureHelper(t *testing.T) {
 	if err := os.WriteFile(receipt, []byte(common), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	syncTimeoutFailure(t, bg)
+	syncTimeoutFailure(t, bg, "fixture")
+}
+
+// 6zhyq2: settled waits for a pass that keeps going, however long it
+// takes under its cap, and fails one that stops. A pass holds the run
+// lock three stall windows long: logging a phase every 100 ms it is
+// waited for; silent, settled gives up after one stall window; logging
+// past the cap, it gives up at the cap. (CI 44522707343 attempt 1 failed
+// a pass that was still starting git, at a fixed 30 s.) On a synctest
+// bubble's clock: the stall windows are settled's own 30 s, and no wall
+// clock is read.
+func TestSettleWaitsOnProgressNotAClock(t *testing.T) {
+	t.Parallel()
+	for _, c := range []struct {
+		name    string
+		logging bool
+		cap     time.Duration
+		want    string
+		took    time.Duration
+	}{
+		{"progressing", true, settleCap, "", 3 * settleStall},
+		{"silent", false, settleCap, "no progress for 30s (30s in all)", settleStall},
+		{"capped", true, 2 * settleStall, "still going after 1m0s", 2 * settleStall},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			t.Parallel()
+			synctest.Test(t, func(t *testing.T) {
+				bg := gitbranch.BackgroundAt(t.TempDir(), "hug/tasks")
+				release, err := bg.Exclusive()
+				if err != nil {
+					t.Fatal(err)
+				}
+				done := make(chan struct{})
+				go func() {
+					defer close(done)
+					defer release()
+					for end := time.Now().Add(3 * settleStall); time.Now().Before(end); time.Sleep(100 * time.Millisecond) {
+						if c.logging {
+							bg.LogPhase("still integrating")
+						}
+					}
+				}()
+				start := time.Now()
+				got := settleWait(bg, settleStall, c.cap)
+				took := time.Since(start)
+				<-done
+				if got != c.want {
+					t.Fatalf("settleWait = %q after %v, want %q", got, took, c.want)
+				}
+				if took < c.took || took > c.took+time.Second {
+					t.Fatalf("settleWait returned %q after %v, want about %v", got, took, c.took)
+				}
+			})
+		})
+	}
 }
 
 // 6ep7y2: ordinary go test (without -v) prints a real Fatalf's phase log
@@ -58,7 +113,7 @@ func TestSyncTimeoutFailureRetainsPhases(t *testing.T) {
 	}
 	for _, want := range []string{
 		"--- FAIL: TestSyncTimeoutFailureHelper",
-		"background pass still running after 30 s:",
+		"background pass still running, fixture:",
 		"queued false, busy true, pending false, turn held false, run held true",
 		timeoutReportPhase,
 		"pid ",
