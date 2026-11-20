@@ -11,11 +11,14 @@ rank: "zzzzzzzzzzyc"
 created: 2026-11-19
 updated: 2026-11-19
 doing_since: "2026-11-19T15:02"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "ypfrp3"
+waiting_on: "a worker for check 3 (per-harness push table); queued after 72n8m4 and 0m8tsb"
+waiting_since: "2026-11-20T09:25"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -62,3 +65,4 @@ landed 9073b53 on main 2026-11-19: muninn: jcode mid-turn recall behind recall.j
 shipped in v0.7.85 (9073b53)
 ## History
 - 2026-11-19T15:02 todo -> doing/active (take)
+- 2026-11-20T09:25 doing/active -> doing/waiting (wait)
