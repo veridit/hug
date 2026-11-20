@@ -1,7 +1,6 @@
 package task
 
 import (
-	"bytes"
 	"reflect"
 	"strings"
 	"testing"
@@ -26,14 +25,6 @@ func fileRefsPlain(doc []byte, self string) []Ref {
 			continue
 		}
 		out = append(out, Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name})
-	}
-	for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
-		name, ok := citedName(string(doc[m[4]:m[5]]))
-		if !ok || lostAfter(doc, m[4]+len(name)) {
-			continue
-		}
-		start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
-		out = append(out, Ref{Task: string(doc[m[2]:m[3]]), Name: name, Raw: string(doc[start : m[4]+len(name)])})
 	}
 	return out
 }

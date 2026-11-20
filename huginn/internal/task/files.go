@@ -283,20 +283,22 @@ func (s *Store) Detach(ref, name string) (Result, error) {
 	return s.finish(d, true)
 }
 
-// Reference forms in notes and sections:
+// Reference forms in notes and sections, the links lint checks:
 //
 //	file:NAME            a file of this task
 //	task:REF/NAME        a file of another task (REF = id, prefix or alias)
-//	.hug/tasks/ID/NAME   a file of task ID, cited by its path (cvbpdy)
 //
-// A reference followed by " (lost)" names a file known to be gone and is
+// A path such as .hug/tasks/ID/NAME is text, not a link (7j706s): prose
+// quotes it, often a name proposed and never made. Only live text links:
+// a reference in record text (## History, an answered or withdrawn
+// question, a resolved request; see recordSpans) is not checked. A
+// reference followed by " (lost)" names a file known to be gone and is
 // not checked (cvbpdy). The last part of NAME may be a shell glob (* ? and
-// [...]), as in "open .hug/tasks/9/911j70/compare-*.png": the pattern is
-// matched against the task's files (ydwamb).
+// [...]), as in "file:compare-*.png": the pattern is matched against the
+// task's files (ydwamb).
 var (
 	fileRef = regexp.MustCompile(`(?:^|[\s(\[])file:([A-Za-z0-9_.+,=@/*?\[\]-]*[A-Za-z0-9_+=@*?\]-])`)
 	taskRef = regexp.MustCompile(`(?:^|[\s(\[])task:([A-Za-z0-9.@_-]+)/([A-Za-z0-9_.+,=@/*?\[\]-]*[A-Za-z0-9_+=@*?\]-])`)
-	pathRef = regexp.MustCompile(`(?:^|[\s(\[` + "`" + `"'])\.hug/tasks/(?:[A-Za-z0-9._-]+/)*?([a-z0-9]{6})/([A-Za-z0-9_.+,=@/*?\[\]-]*[A-Za-z0-9_+=@*?\]-])`)
 )
 
 // globChars are the shell glob characters a citation's last part may hold.
@@ -430,24 +432,13 @@ func FileRefs(doc []byte, self string) []Ref {
 			all = append(all, at{Ref{Task: ref, Name: name, Raw: "task:" + ref + "/" + name}, m[2]})
 		}
 	}
-	if bytes.Contains(doc, []byte(".hug/tasks/")) {
-		for _, m := range pathRef.FindAllSubmatchIndex(doc, -1) {
-			start := bytes.Index(doc[m[0]:m[1]], []byte(".hug/tasks/")) + m[0]
-			name, ok := citedName(string(doc[m[4]:m[5]]))
-			if !ok {
-				continue
-			}
-			end := m[4] + len(name)
-			if lostAfter(doc, end) {
-				lost[string(doc[start:end])] = true
-				continue
-			}
-			all = append(all, at{Ref{Task: string(doc[m[2]:m[3]]), Name: name, Raw: string(doc[start:end])}, start})
-		}
-	}
 	var out []Ref
+	var record [][2]int
+	if len(all) > 0 {
+		record = recordSpans(doc)
+	}
 	for _, a := range all {
-		if p, ok := gone[a.ref.Name]; (ok && a.ref.Task == self && a.pos < p) || lost[a.ref.Raw] {
+		if p, ok := gone[a.ref.Name]; (ok && a.ref.Task == self && a.pos < p) || lost[a.ref.Raw] || inSpans(record, a.pos) {
 			continue
 		}
 		out = append(out, a.ref)
@@ -581,13 +572,6 @@ func (s *Store) LintFiles(forbid []string) ([]Finding, error) {
 			if ref.Task != t.ID {
 				o, e := Resolve(ts, ref.Task)
 				if e != nil {
-					// A .hug/tasks/ID/NAME path of an id no task here has
-					// is quoted from another board (1phmre: w40cmk quotes
-					// Statbus's .hug/tasks/37bryg/README.md), not a link.
-					// Only task:REF/NAME is a link to a task.
-					if strings.HasPrefix(ref.Raw, ".hug/tasks/") {
-						continue
-					}
 					out = append(out, Finding{Path: t.Path, Line: 0, Problem: ref.Raw + ": no task " + ref.Task + " (fix the id, or mark the link" + Lost + ")", Fix: "hug task note " + t.ID + " " + strconv.Quote(ref.Raw+Lost)})
 					continue
 				}

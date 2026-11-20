@@ -294,8 +294,8 @@ type Texts struct {
 	Notes  string
 	// Description maps each of DescriptionSections to its trimmed body.
 	Description map[string]string
-	// Refs are the file:NAME and task:REF/NAME references in the file
-	// (FileRefs), so lint need not read every task file to check them.
+	// Refs are the file:NAME and task:REF/NAME links in the file's live
+	// text (FileRefs), so lint need not read every task file to check them.
 	Refs []Ref
 }
 type Document struct {

@@ -129,15 +129,16 @@ func TestForbidCiteNamesPathAndLine(t *testing.T) {
 	}
 }
 
-// TestTaskPathCitationMustExist (cvbpdy check 2): a cited
-// .hug/tasks/<id>/NAME path that does not exist is missing-file; an existing
-// one and one marked " (lost)" are not.
+// TestTaskPathCitationMustExist (cvbpdy check 2, narrowed by 7j706s): a
+// file: link that does not exist is missing-file; an existing one and one
+// marked " (lost)" are not. A .hug/tasks/<id>/NAME path is quoted text, not
+// a link: no finding, whether or not the file is there.
 func TestTaskPathCitationMustExist(t *testing.T) {
 	s, id := newStore(t)
 	if _, _, err := s.Attach(id, "report.md", []byte("ok\n"), "", false); err != nil {
 		t.Fatal(err)
 	}
-	s.Note(id, "see .hug/tasks/"+id+"/report.md and `.hug/tasks/"+id+"/missing.tsv`, also .hug/tasks/"+id+"/old.tsv (lost)")
+	s.Note(id, "see file:report.md and (file:missing.tsv), also file:old.tsv (lost); quoted: `.hug/tasks/"+id+"/quoted.tsv`")
 	fs, err := s.LintFiles(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -148,7 +149,7 @@ func TestTaskPathCitationMustExist(t *testing.T) {
 			missing = append(missing, f.Problem+" | fix: "+f.FixLine())
 		}
 	}
-	if len(missing) != 1 || !strings.Contains(missing[0], ".hug/tasks/"+id+"/missing.tsv: file not found") || !strings.Contains(missing[0], "hug task attach "+id+" FILE --name missing.tsv") {
+	if len(missing) != 1 || !strings.HasPrefix(missing[0], "file:missing.tsv: file not found") || !strings.Contains(missing[0], "hug task attach "+id+" FILE --name missing.tsv") {
 		t.Errorf("missing-file findings: %q; want exactly missing.tsv with an attach fix", missing)
 	}
 }
@@ -240,13 +241,13 @@ func taskPath(t *testing.T, s *Store, id string) string {
 
 // TestQuotedPathOfAnotherBoardIsNoLink (1phmre check 1; w40cmk's note
 // quotes Statbus's '.hug/tasks/37bryg/README.md' from a design talk): a
-// .hug/tasks/ID/NAME path whose id is no task on this board is quoted
-// history from another board, not a link: no missing-task-ref, no
-// missing-file. A path of a task on this board is still checked.
+// .hug/tasks/ID/NAME path is quoted text, not a link: no missing-task-ref,
+// no missing-file, for another board's id or ours (7j706s). A file: link of
+// ours is still checked.
 func TestQuotedPathOfAnotherBoardIsNoLink(t *testing.T) {
 	s, id := newStore(t)
 	s.Note(id, "Proposal (crab): one folder per task: .hug/tasks/37bryg/README.md is the task, 'its files sit beside it (.hug/tasks/37bryg/STATBUS-369.md)'")
-	s.Note(id, "and ours: .hug/tasks/"+id+"/gone.tsv")
+	s.Note(id, "and ours: .hug/tasks/"+id+"/quoted.tsv, file:gone.tsv")
 	fs, err := s.LintFiles(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -255,7 +256,7 @@ func TestQuotedPathOfAnotherBoardIsNoLink(t *testing.T) {
 	for _, f := range fs {
 		got = append(got, FindingCode(f.Problem)+": "+f.Problem)
 	}
-	if len(got) != 1 || !strings.HasPrefix(got[0], "missing-file: .hug/tasks/"+id+"/gone.tsv: file not found") {
+	if len(got) != 1 || !strings.HasPrefix(got[0], "missing-file: file:gone.tsv: file not found") {
 		t.Fatalf("quoted Statbus paths and one missing file of ours: want only the missing-file, got %q", got)
 	}
 }
@@ -328,7 +329,7 @@ func TestGlobCitationMatchingNothingNamesThePattern(t *testing.T) {
 		t.Fatal(err)
 	}
 	folder := FolderOf(tk.Task)
-	s.Note(id, "see .hug/tasks/"+folder+"/shot-*.png and .hug/tasks/"+folder+"/gone.tsv")
+	s.Note(id, "see file:shot-*.png and task:"+id+"/gone.tsv; quoted, no link: .hug/tasks/"+folder+"/other-*.png")
 	fs, err := s.LintFiles(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -346,7 +347,7 @@ func TestGlobCitationMatchingNothingNamesThePattern(t *testing.T) {
 			glob = g
 		}
 	}
-	if !strings.HasPrefix(glob, "missing-file: .hug/tasks/"+folder+"/shot-*.png: no attached file matches") {
+	if !strings.HasPrefix(glob, "missing-file: file:shot-*.png: no attached file matches") {
 		t.Fatalf("the pattern finding: %q", glob)
 	}
 	if strings.Contains(glob, "--name shot-") || strings.Contains(glob, "--name shot-*") {
@@ -355,7 +356,7 @@ func TestGlobCitationMatchingNothingNamesThePattern(t *testing.T) {
 	if !strings.Contains(glob, "fix: hug task attach "+id+" FILE") {
 		t.Fatalf("the fix is not an attach: %q", glob)
 	}
-	if !slicesContains(got, "missing-file: .hug/tasks/"+folder+"/gone.tsv: file not found") {
+	if !slicesContains(got, "missing-file: task:"+id+"/gone.tsv: file not found") {
 		t.Fatalf("a plain missing file is no longer found: %q", got)
 	}
 }

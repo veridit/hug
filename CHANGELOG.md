@@ -6,6 +6,12 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug task lint` checks only live file links (7j706s): `file:NAME` and
+  `task:REF/NAME` outside the record. A path quoted in prose
+  (`.hug/tasks/ID/NAME`), in ## History, in an answered or withdrawn
+  question or in a resolved request is text, not a link, and raises no
+  missing-file. A dangling `file:` link in a live section is still broken.
+
 ## v0.7.88 - 2026-11-20
 
 - `hug task done` refuses a task with a question still open to someone
