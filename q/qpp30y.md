@@ -1,7 +1,7 @@
 ---
 id: qpp30y
 title: "Answer box shows at once, with the only moving cursor on screen"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["crab"]
@@ -10,16 +10,11 @@ group: ""
 rank: "zzzzzzzzzzt1"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T13:34"
-stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Answer a question in hug tui: does the answer box appear at once, and do the box and its cursor read clearly?"
-asked_for: "jhf"
-asked_since: "2026-11-20T09:26"
-asked_by: "crab"
-asked_check: "4"
+done_at: "2026-11-20T11:32"
+done_release: "v0.7.65"
 ---
 
 ## Goal
@@ -42,11 +37,13 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 - [x] Pressing a or r draws the box with its label and cursor in the same frame, before any keystroke; a test fails first on main.
 - [x] The cursor in the answer and request box is an underline that blinks (or pulses), and no other element on the screen animates (test of the cursor mode plus golden).
 - [x] The pending view-key prefix uses the same underline cursor style.
-- [ ] Jørgen answers a question in hug tui and says the box and cursor read clearly.
+- [x] Jørgen answers a question in hug tui and says the box and cursor read clearly.
 
 ## Questions
 - 2026-11-20T09:26 question 1 by crab to jhf (check 4):
   Answer a question in hug tui: does the answer box appear at once, and do the box and its cursor read clearly?
+  answered 2026-11-20T11:32 by jhf:
+    answered by ticking check 4
 
 ## Requests
 - 2026-11-20T11:32 request 1 by jhf:
@@ -73,3 +70,7 @@ file:screen-1130.ans (21282 bytes, sha256:af44cf4b) screen capture from hug tui
 - 2026-11-20T11:32 request 1 by jhf
 - 2026-11-20T11:32 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:32 request 1 acknowledged by crab
+- 2026-11-20T11:32 answered asked (check 4), by jhf, for crab (doing/asked -> doing/active):
+  > Answer a question in hug tui: does the answer box appear at once, and do the box and its cursor read clearly?
+  answered by ticking check 4
+- 2026-11-20T11:32 doing/active -> done (done after jhf ticked check 4 (release v0.7.65)); was doing_since: 2026-11-18T13:34
