@@ -30,3 +30,5 @@ Found on branch 5vehza (2026-11-20 19:52 local): new task, hug task ask ID --to 
 - [ ] A test runs the repro and gets either the design question answered or exit 2 with a fix: line, no panic (fails first on main with the panic)
 
 ## Notes
+
+crab 2026-11-20 18:53Z design call: answer the design question (q=0). A bare answer answers what the stage shows as waiting; with no open numbered question and a pending design question, that is the design question. Refuse only when nothing is open: exit 2, 'no open question on ID', fix: hug task show ID. Several open numbered questions: today's rule stays. Built by dove on branch 5vehza as a second commit.
