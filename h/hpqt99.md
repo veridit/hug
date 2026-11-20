@@ -90,6 +90,8 @@ Former Principle: A design decision first, written down, no code in this task. K
     The top now leads with clarity, one sentence each. Goal: you decide which client owns an imported memory, and whether jcode memories are imported once or read live. Purpose: imported memories can land in the wrong client's scope, and jcode memories live in two places, so forget and sync have no single source of truth. Principle: decide first, build later; imports and sync never cross a client boundary. The quotes and history moved word for word to the end of Details.
 - 2026-11-20T09:57 request 3 by jhf:
   This ticket should truly write things in the ticket in the details and have maybe the questions with each relevant piece and it is too verbal. It has to be succinct to the point saying for this do that we can choose between so-and-so with these trade-offs and then the questions are inside the ticket not buried inside the document. I can't answer them. I have to do requests to talk about things that are so I can't respond where it happens
+  resolved 2026-11-20T09:57 by crab:
+    The ticket now carries the decision itself. Details opens with Decision 1 (1A/1B/1C) and Decision 2 (2A/2B/2C), one line per option with cost and risk, recommendations marked, then three lines of facts; design.md in Files keeps the full evidence. The old single check 'decision in DESIGN.md' is split: check 2 is Decision 1, check 3 is Decision 2, each with its own question on the ticket, so you answer each where it sits (a on the check). Check 4 writes the decision into docs/DESIGN.md and files the build.
 
 ## Notes
 
@@ -122,3 +124,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:57 doing/asked -> doing/active (resume); was asked_by: crab; asked_check: 1; asked_for: jhf; asked_since: 2026-11-20T09:56; asked_what: Imported data (design.md in Files, Space shows it): do you approve 1B-amended plus 2B? 1B-amended: an import keeps the scope the source states (engram personal stays personal) and places by the folder it was written in only when the source states none. 2B: import each jcode instance's memories once, then stop reading jcode files live. The alternatives are 1A (as today, the owner rescopes by hand) and 2A (keep reading jcode files live). I recommend 1B-amended plus 2B.
 - 2026-11-20T09:57 doing/active -> doing/asked (ask)
 - 2026-11-20T09:57 asked question 5 of jhf, 2 open (doing/asked -> doing/asked)
+- 2026-11-20T09:57 resolved request 3 by crab
