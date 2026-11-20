@@ -140,10 +140,11 @@ func TestActionInPlaceStepsFromTheTask(t *testing.T) {
 	}
 }
 
-// 24403z check 4: after an action from the TUI moves the task to another
-// section, the message line reads '<ID> moved to <SECTION>' in the plain
-// message style until the next key: answer and tick (ASKED to NEXT UP),
-// take (NEXT UP to IN PROGRESS).
+// 24403z check 8 (was 4): after an action from the TUI moves the task to
+// another section, the message line reads '<ID> moved to <SECTION>' in the
+// plain message style, as any result line (z82qsy check 2): it stays while
+// you stay on the task (j), and goes when you open another. Answer and
+// tick (ASKED to NEXT UP), take (NEXT UP to IN PROGRESS).
 func TestActionSaysWhereTheTaskMoved(t *testing.T) {
 	for _, c := range []struct {
 		name  string
@@ -176,8 +177,11 @@ func TestActionSaysWhereTheTaskMoved(t *testing.T) {
 			if !strings.Contains(ansi.Strip(m.View()), c.want) {
 				t.Fatalf("not on the screen:\n%s", ansi.Strip(m.View()))
 			}
-			if m = press(m, "J"); m.message != "" {
-				t.Fatalf("the next key kept %q", m.message)
+			if m = press(m, "j"); m.message != c.want {
+				t.Fatalf("j on the same task: %q, want %q kept", m.message, c.want)
+			}
+			if m = press(m, "n"); strings.Contains(m.message, c.want) || strings.Contains(ansi.Strip(m.View()), c.want) {
+				t.Fatalf("another task kept %q", m.message)
 			}
 		})
 	}
@@ -224,4 +228,24 @@ func TestBreadcrumbNamesThePane(t *testing.T) {
 		golden = append(golden, "== "+c.name+" 100x30", screen)
 	}
 	goldenFile(t, "testdata/24403z/breadcrumb-100x30.txt", strings.Join(golden, "\n")+"\n")
+}
+
+// 24403z check 6, option A built as the default: after the open task
+// leaves the pane, its breadcrumb keeps the trail you came from and says
+// where the task is now after its id; a followed task does not.
+func TestBreadcrumbSaysWhereTheTaskIsNow(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	m := slotBoard(t, true, 0)
+	m = press(m, "j", "enter")
+	crumb := func() string { first, _, _ := strings.Cut(ansi.Strip(m.View()), "\n"); return first }
+	if strings.Contains(crumb(), "now") {
+		t.Fatalf("before it moves: %q", crumb())
+	}
+	m = press(m, "a", "o", "k", "enter")
+	if want := "HUG · overview › ASKED › bbbbbb · now NEXT UP"; !strings.HasPrefix(crumb(), want) {
+		t.Fatalf("after it moved: %q, want %q first", crumb(), want)
+	}
+	if m = press(m, "n"); strings.Contains(crumb(), "now") || openedID(m) != "cccccc" {
+		t.Fatalf("n to a task still in ASKED: %q", crumb())
+	}
 }

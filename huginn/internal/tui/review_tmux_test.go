@@ -109,7 +109,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	send("t")
 	wait("Take aaaaaa for review as Jørgen?")
 	send("Enter")
-	screen := wait("took aaaaaa")
+	screen := wait("aaaaaa moved to ASKED") // taken for review by you: out of NEXT UP (24403z)
 	file := func(id string) string {
 		matches, _ := filepath.Glob(filepath.Join(tasks, "*"+id+"*.md"))
 		// Layout 3 (w40cmk): C/ID.md.
@@ -142,7 +142,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	send("t")
 	wait("Give back bbbbbb to todo (ready)?")
 	send("Enter")
-	wait("gave back bbbbbb")
+	wait("bbbbbb moved to NEXT UP") // given back: out of IN PROGRESS (24403z)
 	b := file("bbbbbb")
 	for _, want := range []string{"state: \"todo\"", "stage: \"ready\"", "doing/active -> todo/ready (give back; was assignee: Jørgen)"} {
 		if !strings.Contains(b, want) {

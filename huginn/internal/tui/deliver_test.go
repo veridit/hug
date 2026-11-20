@@ -95,7 +95,9 @@ func TestTickAnswerDelivers(t *testing.T) {
 	if len(calls) != 1 || calls[0] != "aaaaaa answer jhf" {
 		t.Fatalf("delivered %q (message %q)", calls, m.message)
 	}
-	if !strings.Contains(m.message, "answered aaaaaa by ticking check 2: pending, delivered to crab") {
+	// The tick moved it out of ASKED: where it went, then the receipt
+	// after " · " (24403z, crab 2026-11-20 20:07Z).
+	if m.message != "aaaaaa moved to IN PROGRESS · pending, delivered to crab (session_crab_1_ab)" {
 		t.Fatalf("message %q", m.message)
 	}
 	tk := mustSelected(t, m)

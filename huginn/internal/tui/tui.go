@@ -256,7 +256,7 @@ type model struct {
 	requestIDs             []string
 	hidden                 string   // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
 	slot                   *slotGap // where the open task stood in its pane before it left it (24403z)
-	movedTo                string   // "<ID> moved to <SECTION>", said by the last write until the next key (24403z)
+	movedTo                string   // "<ID> moved to <SECTION>", the last write's note, which a receipt follows (24403z)
 	grab                   grabState
 	find                   findState // / in a task or a file: matches in its text (4s3g5q)
 	filter                 task.Filter
@@ -1384,14 +1384,6 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.KeyMsg:
 		k := msg.String()
-		// Where the last write moved the task is said until the next
-		// key (24403z check 4).
-		if m.movedTo != "" {
-			if strings.HasPrefix(m.message, m.movedTo) {
-				m.message = ""
-			}
-			m.movedTo = ""
-		}
 		if k == "ctrl+c" {
 			return m, tea.Quit
 		}

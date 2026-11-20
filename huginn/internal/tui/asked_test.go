@@ -152,7 +152,7 @@ func TestAnswerBoxKeepsLines(t *testing.T) {
 		}
 	}
 	m = press(m, "enter")
-	if m.prompt != "" || !strings.HasPrefix(m.message, "answered ") {
+	if m.prompt != "" || m.message != "cccccc moved to IN PROGRESS" { // answered: out of ASKED (24403z)
 		t.Fatalf("Enter did not send: prompt %q message %q", m.prompt, m.message)
 	}
 	tk := mustSelected(t, m)

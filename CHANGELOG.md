@@ -4,6 +4,28 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- In hug tui, an action that moves the open task out of the pane you
+  opened it from (an answer or tick in ASKED, a take, done, wait or drop)
+  no longer moves you (24403z). The page stays on the task, and the pane
+  keeps its place: n opens the task that came after it there, p the one
+  before, and Esc lands on that neighbour. Before, the cursor fell to the
+  pane's first row, so n opened the second task. When the task was the
+  last, n says `ID was the last in ASKED; nothing after it` and stays
+  (p: `... was the first ...; nothing before it`).
+- The bottom message line says where the task went, `ID moved to NEXT UP`
+  (on the board, the column: `ID moved to DOING`), in place of `answered
+  ID` or `took ID`. Like any result line it stays while you stay on the
+  task and goes when you open another. In a filtered list whose filter no
+  longer shows the task: `ID moved to IN PROGRESS (outside this filter)`.
+  A delivery receipt follows after ` · `.
+- A task's breadcrumb names the pane it was opened from:
+  `HUG · overview › ASKED › fd0j4p`, `board › TODO › …`,
+  `list › /state:todo › …` (not while a file is shown, which takes the
+  room). After the task moves, `· now WAITING` follows its id, in that
+  section's colour (check 6's pick may change this).
+
 ## v0.7.92 - 2026-11-20
 
 - `hug task answer ID N` on a withdrawn question no longer panics

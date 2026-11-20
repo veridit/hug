@@ -48,7 +48,9 @@ func TestShippedAskedClosesOnTick(t *testing.T) {
 	m = openTask(t, m, "aaaaaa")
 	m = press(m, " ")
 	m = press(m, "enter")
-	if !strings.Contains(m.message, "answered aaaaaa by ticking check 2; after the release: done") {
+	// Closed by the release: where it went, then what the release did
+	// (24403z, crab 2026-11-20 20:07Z).
+	if m.message != "aaaaaa moved to RECENTLY DONE · after the release: done" {
 		t.Fatalf("message %q", m.message)
 	}
 	d, err := m.store.Get("aaaaaa")

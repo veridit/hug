@@ -110,8 +110,15 @@ func TestActionResultIsPastTense(t *testing.T) {
 	}
 	m, _ := glanceModel(t, 80, 24)
 	m = openTask(t, m, "000001")
-	if got := press(m, "t", "enter"); got.message != "took 000001" {
-		t.Fatalf("t Enter: %q, want %q", got.message, "took 000001")
+	// A take that moves the task says where it went (24403z, crab
+	// 2026-11-20 21:22Z); a tick that moves nothing says what was done.
+	if got := press(m, "t", "enter"); got.message != "000001 moved to IN PROGRESS" {
+		t.Fatalf("t Enter: %q, want %q", got.message, "000001 moved to IN PROGRESS")
+	}
+	m, _ = glanceModel(t, 80, 24) // a board where 000001 is not taken
+	m = openTask(t, m, "000001")
+	if got := press(m, " ", "enter"); got.message != "checked 000001" {
+		t.Fatalf("Space Enter on check 1: %q, want %q", got.message, "checked 000001")
 	}
 }
 
