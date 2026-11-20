@@ -43,6 +43,8 @@ Today: hug task dep --add 'when date YYYY-MM-DD' holds a todo task out of next, 
 ## Requests
 - 2026-11-20T13:05 request 1 by jhf:
   So I love this ticket. It will come back to my ask queue on a date. My problem is why can't I see in the heading what date we're waiting for? So waiting on check 3, grab. Now crab converts. Check 4, Jrgen sees it in asked, but the wait date wait until shouldn't that show the date? And shouldn't it just be wait until and the date? Or you prefer the wait date and then wait until for clarity or wait until date. Wouldn't that be better and then show the date?
+  resolved 2026-11-20T13:05 by crab:
+    Agreed: a wait for a date should say 'until' and the date first. Two changes. (1) This ticket itself waited without a date, only words naming 2026-11-24; it now waits until 2026-11-24 on 'Jørgen sees 47sxn2 back in his ASKED', so its heading shows the date. (2) New check 5: every dated wait's line leads with the date, 'waiting until 2026-11-24 · on WHAT · since 11-18', without today's doubled 'on the date 2026-11-24 ... until 2026-11-24', in hug tui's header, the list's stage cell and hug task show.
 
 ## Notes
 
@@ -66,3 +68,4 @@ file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 - 2026-11-20T13:05 request 1 acknowledged by crab
 - 2026-11-20T13:05 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: check 3: crab converts 47sxn2 after the release with 88a6ac89; check 4: Jørgen sees it in ASKED on 2026-11-24; waiting_since: 2026-11-18T04:23
 - 2026-11-20T13:05 request 1 in progress by crab: hug task resume z2vmte
+- 2026-11-20T13:05 resolved request 1 by crab
