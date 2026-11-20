@@ -1,7 +1,7 @@
 ---
 id: txjkrm
 title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned up"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -13,9 +13,7 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
-doing_since: "2026-11-20T09:28"
-doing_with: "911j70"
+done_at: "2026-11-20T10:55"
 ---
 
 ## Goal
@@ -88,6 +86,7 @@ landed 3f5e89d on main 2026-11-18: gofmt tagrow_test.go (txjkrm)
 landed 4d7eec2 on main 2026-11-18: tui: tmux palette goldens with tags column (txjkrm x 05r3pg)
 shipped in v0.7.71 (3ce9119)
 kikazaru 22:37Z: shipped in v0.7.71 (3ce9119a, 3f5e89d9, 4d7eec2d). The owed question for Jørgen ('Seid's overview with tags right after the ID, as you asked: does it read right?', --show seid-overview-tags-row.txt) was not asked: hug task ask refuses a done task ('done -> doing/asked is not a move a command makes'); reopening is crab's call.
+Reflection (open, 2026-11-20, crab): kikazaru's question was overtaken by Jørgen's 911j70 ruling; he answered it and asked to close.
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
@@ -109,3 +108,4 @@ kikazaru 22:37Z: shipped in v0.7.71 (3ce9119a, 3f5e89d9, 4d7eec2d). The owed que
   > Seid's overview with tags right after the ID, as you asked: does it read right?
   I think this has been replaced by my next ruling that the tags should be at the start of the title and I think we just have to look at the design how we can visually see the tags when they're beginning the title such as by and I wonder if they should be a separate column or it should be tag and title with respect to sorting I think that's the only question but a visual I think showing them at the beginning with some kind of very subtle separator makes it very easy to see what this is about and then the details in the title. As such, I think this task should close and there will be other follow-up tasks to adjust this further, and that the question was asked before my new changes landed
 - 2026-11-20T10:55 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T10:55 doing/active -> done (done); was doing_since: 2026-11-20T09:28; doing_with: 911j70
