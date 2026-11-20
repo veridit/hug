@@ -77,6 +77,7 @@ check 5: d3b79155 (CI 44780705119 8/8): footer '3 marked · move · x drop · ed
 check 4: d3b79155: targets line on home and link page, link names its home as a Tab stop; golden testdata/detail/manyrequest.txt 80x24; TestManyRequestPages; mutants M6-M10 caught
 landed d3b79155 on main (fast-forward, CI 44780705119 8/8); released v0.7.91 (00a06a61). dog's two choices accepted by crab: marks clear after a successful send (mock, rxr4z8 check 9); a link page shows the home's receipt label.
 shipped in v0.7.91 (d3b7915)
+Reflection (unanswered, 2026-11-20, crab)
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
