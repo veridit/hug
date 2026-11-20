@@ -11,6 +11,10 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   (REASON)` and `fix: hug task ask ID --to NAME "..."` to ask it again.
   Over MCP, `task_update` action answer gives the same refusal as a tool
   error; before, the panic killed the `hug mcp` server.
+- A bare `hug task answer ID TEXT` answers the design question when the
+  task's numbered questions are all answered (khwzpt); it panicked with
+  `index out of range`. With nothing open it exits 2 with `no open
+  question on ID` and `fix: hug task show ID`.
 
 ## v0.7.91 - 2026-11-20
 

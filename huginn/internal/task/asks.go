@@ -305,6 +305,10 @@ func pickQuestion(t Task, n int, text string) (AskedQuestion, error) {
 		if len(open) == 1 {
 			return open[0], nil
 		}
+		// khwzpt: openNs[0] below panicked with none open.
+		if len(open) == 0 {
+			return AskedQuestion{}, usageErr(t.ID, "no open question on "+t.ID, "hug task show "+t.ID)
+		}
 		return AskedQuestion{}, usageErr(t.ID, fmt.Sprintf("%d questions are open on %s (%s): say which one this answers", len(open), t.ID, strings.Join(openNs, ", ")),
 			"hug task answer "+t.ID+" "+openNs[0]+" "+strconv.Quote(oneLineFix(text)))
 	}

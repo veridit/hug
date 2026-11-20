@@ -62,3 +62,29 @@ func TestAnswerWithdrawnQuestionRefused(t *testing.T) {
 		t.Fatalf("answer 2: exit %d\n%s", code, out)
 	}
 }
+
+// khwzpt check 1 (crab 2026-11-20: answer it, q=0): a bare hug task answer
+// on a task whose numbered questions are all closed and whose design
+// question is pending answers the design question, as on a task with no
+// numbered questions; it panicked on openNs[0] in pickQuestion. With
+// nothing open at all it is refused: exit 2, "no open question on ID".
+func TestAnswerDesignAfterNumberedQuestion(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Imported data", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a")["task"].(Reply)["id"].(string)
+	execute(t, a, "ask", id, "--to", "jhf", "first?", "--as", "piglet")
+	execute(t, a, "answer", id, "yes", "--as", "jhf")
+	execute(t, a, "design", id, "second design?", "--for", "jhf")
+	if code, out := runText(a, "answer", id, "ok, do that", "--as", "jhf"); code != 0 {
+		t.Fatalf("answer to the design question: exit %d\n%s", code, out)
+	}
+	f := taskFile(t, a, id)
+	if !strings.Contains(f, "answered design, by jhf") || !strings.Contains(f, "  > second design?\n  ok, do that\n") || strings.Contains(f, "\ndesign_question:") {
+		t.Fatalf("design question not answered:\n%s", f)
+	}
+	code, out := runText(a, "answer", id, "again", "--as", "jhf")
+	if code != 2 || !strings.Contains(out, "no open question on "+id) || !strings.HasSuffix(out, "fix: hug task show "+id+"\n") {
+		t.Fatalf("exit %d, want 2, no open question and fix: hug task show:\n%s", code, out)
+	}
+}

@@ -231,7 +231,7 @@ func (s *Store) AnswerQuestion(ref string, n int, text, by string) (Result, erro
 		if d.Task.State == "doing" && ownHolds(d.Task, "waiting") {
 			fix = "hug task resume " + d.Task.ID
 		}
-		return Result{}, usageErr(d.Task.ID, d.Task.ID+" asks nobody: its stage is not design, asked or review", fix)
+		return Result{}, usageErr(d.Task.ID, d.Task.ID+" asks nobody: no open question on "+d.Task.ID+", its stage is not design, asked or review", fix)
 	}
 	if text == "" {
 		return Result{}, usageErr(d.Task.ID, "answer needs the answer", "hug task answer "+d.Task.ID+` "the answer"`)
@@ -241,8 +241,11 @@ func (s *Store) AnswerQuestion(ref string, n int, text, by string) (Result, erro
 	}
 	q := 0
 	// A todo task asked without taking it (yphbra) numbers its questions
-	// as a doing one does.
-	if (stage == "asked" || stage == "design") && len(d.Task.Questions) > 0 {
+	// as a doing one does. A bare answer with no numbered question open
+	// answers the stage's own question (khwzpt, crab: a design question
+	// asked after the numbered ones were answered), as on a task with none.
+	bare := n == 0 && len(OpenQuestions(d.Task)) == 0
+	if (stage == "asked" || stage == "design") && len(d.Task.Questions) > 0 && !bare {
 		picked, e := pickQuestion(d.Task, n, text)
 		if e != nil {
 			return Result{}, e
