@@ -55,6 +55,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
     (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
 - 2026-11-20T02:20 question 2 by bug to jhf (check 1, show a-opens-100x30.png):
   Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it).
+- 2026-11-20T09:52 question 3 by crab to jhf (check 1):
+  Your 08:51Z idea (on hjbfzd) differs from the mock in question 2: the mock opens on a FOR YOU block at the top that lists your questions as links; yours opens the page scrolled to the question where it sits in Acceptance, nothing added on top, with ↑/↓ corner markers showing there is more. Which do you want: scroll-to-question (I will drop FOR YOU from the mock), or the FOR YOU block?
 
 ## Notes
 
@@ -94,3 +96,4 @@ Jørgen 2026-11-20 08:51Z, on hjbfzd in v0.7.87 (two screenshots in crab console
 - 2026-11-20T01:15 todo/ready -> doing/active (take)
 - 2026-11-20T02:20 doing/active -> doing/asked (ask)
 - 2026-11-20T03:22 handed to crab: bug's session ended (closed 2026-11-20 02:20)
+- 2026-11-20T09:52 asked question 3 of jhf, 2 open (doing/asked -> doing/asked)
