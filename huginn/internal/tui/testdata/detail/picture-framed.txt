@@ -12,36 +12,8 @@ Bug task 02: make the terminal workflow observable
     └ question 1 · alice · 10 min ago · answer                                  
                                                                                 
   ? do the colours read as one scheme?                                          
+    → colours-overview.ans · Enter shows                                        
     └ question 2 · alice · 10 min ago · answer                                  
-                                                                                
-  ▸ colours-overview.ans · 2.3 KiB · capture, as it was taken                   
-────────────────────────────────────────────────────────────────────────────────
-HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 2 for you                     
-[overview]   list    board    !lint                                             
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0           
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                      
-  ◑ 1/2  row00   feature high     asked     A task on the captured board        
-  ◑ 1/2  row01   feature high     asked     A task on the captured board        
-  ◑ 1/2  row02   feature high     asked     A task on the captured board        
-  ◑ 1/2  row03   feature high     asked     A task on the captured board        
-  ◑ 1/2  row04   feature high     asked     A task on the captured board        
-  ◑ 1/2  row05   feature high     asked     A task on the captured board        
-  ◑ 1/2  row06   feature high     asked     A task on the captured board        
-  ◑ 1/2  row07   feature high     asked     A task on the captured board        
-  ◑ 1/2  row08   feature high     asked     A task on the captured board        
-  ◑ 1/2  row09   feature high     asked     A task on the captured board        
-  ◑ 1/2  row10   feature high     asked     A task on the captured board        
-  ◑ 1/2  row11   feature high     asked     A task on the captured board        
-  ◑ 1/2  row12   feature high     asked     A task on the captured board        
-  ◑ 1/2  row13   feature high     asked     A task on the captured board        
-  ◑ 1/2  row14   feature high     asked     A task on the captured board        
-  ◑ 1/2  row15   feature high     asked     A task on the captured board        
-  ◑ 1/2  row16   feature high     asked     A task on the captured board        
-                                                                                
-All tasks · : filters and commands · ! lint finding · ↳ epic                    
-                                                                                
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help  
-────────────────────────────────────────────────────────────────────────────────
                                                                                 
 DESCRIPTION                                                                     
 Deliver compiler-lang support with huginn and readable evidence.                
@@ -56,7 +28,35 @@ fmt.Println("synthetic acceptance")
 PURPOSE                                                                         
 Synthetic.                                                                      
                                                                                 
-Task 2 of 60 · 0% · next · previous · Esc back                                  
+PRINCIPLE                                                                       
+Synthetic.                                                                      
+                                                                                
+ACCEPTANCE                                                                      
+  ☑ 1. First acceptance check                                                   
+  ☐ 2. Second acceptance check                                                  
+                                                                                
+no dependencies                                                                 
+                                                                                
+FILES (3)                                                                       
+  ⎘ colours-overview.ans  2.3 KiB                                               
+  ⎘ rows.ans  102 B                                                             
+  ⎘ shot.png  67 B                                                              
+                                                                                
+NOTES                                                                           
+Evidence: integration tests are synthetic.                                      
+                                                                                
+file:rows.ans (102 bytes, sha256:9c947110) file:shot.png (67 bytes,             
+sha256:d0afbaf7) file:colours-overview.ans (2319 bytes, sha256:8668f233)        
+                                                                                
+HISTORY                                                                         
+2026-11-10: created by the terminal acceptance fixture.                         
+                                                                                
+• 2026-11-17T14:42 doing -> doing/asked (ask)                                   
+• 2026-11-17T14:42 asked question 2 of jhf, 2 open (doing/asked ->              
+doing/asked)                                                                    
+                                                                                
+                                                                                
+Task 2 of 60 · 100% · next · previous · Esc back                                
                                                                                 
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · up · request 
 == 000002 asked_show colours-overview.ans at 140
@@ -72,36 +72,8 @@ Bug task 02: make the terminal workflow observable
     └ question 1 · alice · 10 min ago · answer                                                                                              
                                                                                                                                             
   ? do the colours read as one scheme?                                                                                                      
+    → colours-overview.ans · Enter shows                                                                                                    
     └ question 2 · alice · 10 min ago · answer                                                                                              
-                                                                                                                                            
-  ▸ colours-overview.ans · 2.3 KiB · capture, as it was taken                                                                               
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-HUG TASKS · overview   7/7 tasks · ! 0 broken · ? 2 for you                                                                                 
-[overview]   list    board    !lint                                                                                                         
-todo 3  ·  doing 4 (1 depends)  ·  depends 0  ·  done 0  ·  dropped 0                                                                       
-No filters · f picker · 1 todo  2 doing  3 done  4 depends                                                                                  
-  ◑ 1/2  row00   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row01   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row02   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row03   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row04   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row05   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row06   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row07   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row08   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row09   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row10   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row11   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row12   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row13   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row14   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row15   feature high     asked     A task on the captured board                                                                    
-  ◑ 1/2  row16   feature high     asked     A task on the captured board                                                                    
-                                                                                                                                            
-All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
-                                                                                                                                            
-j/k move · Enter open · h/l Tab pane · filter · # id · / find · : cmd · ? help                                                              
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
                                                                                                                                             
 DESCRIPTION                                                                                                                                 
 Deliver compiler-lang support with huginn and readable evidence.                                                                            
@@ -117,6 +89,34 @@ PURPOSE
 Synthetic.                                                                                                                                  
                                                                                                                                             
 PRINCIPLE                                                                                                                                   
-Task 2 of 60 · 0% · next · previous · Esc back                                                                                              
+Synthetic.                                                                                                                                  
+                                                                                                                                            
+ACCEPTANCE                                                                                                                                  
+  ☑ 1. First acceptance check                                                                                                               
+  ☐ 2. Second acceptance check                                                                                                              
+                                                                                                                                            
+no dependencies                                                                                                                             
+                                                                                                                                            
+FILES (3)                                                                                                                                   
+  ⎘ colours-overview.ans  2.3 KiB                                                                                                           
+  ⎘ rows.ans  102 B                                                                                                                         
+  ⎘ shot.png  67 B                                                                                                                          
+                                                                                                                                            
+NOTES                                                                                                                                       
+Evidence: integration tests are synthetic.                                                                                                  
+                                                                                                                                            
+file:rows.ans (102 bytes, sha256:9c947110) file:shot.png (67 bytes, sha256:d0afbaf7) file:colours-overview.ans (2319 bytes,                 
+sha256:8668f233)                                                                                                                            
+                                                                                                                                            
+HISTORY                                                                                                                                     
+2026-11-10: created by the terminal acceptance fixture.                                                                                     
+                                                                                                                                            
+• 2026-11-17T14:42 doing -> doing/asked (ask)                                                                                               
+• 2026-11-17T14:42 asked question 2 of jhf, 2 open (doing/asked -> doing/asked)                                                             
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+Task 2 of 60 · 100% · next · previous · Esc back                                                                                            
                                                                                                                                             
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find · next-, previous task 

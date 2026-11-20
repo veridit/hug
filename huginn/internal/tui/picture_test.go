@@ -35,8 +35,12 @@ func pictureModel(t *testing.T, w, h int, env map[string]string, show string) (m
 	now = func() time.Time { return time.Date(2026, 11, 17, 14, 52, 0, 0, time.Local) }
 	t.Cleanup(func() { task.Now, now = oldTask, oldTUI })
 	s := &task.Store{Root: root}
-	for name, body := range map[string][]byte{"rows.ans": []byte(captureAns), "shot.png": png1} {
-		if _, _, err := s.Attach("000002", name, body, "", false); err != nil {
+	// In a fixed order: NOTES lists the attach lines as written.
+	for _, f := range []struct {
+		name string
+		body []byte
+	}{{"rows.ans", []byte(captureAns)}, {"shot.png", png1}} {
+		if _, _, err := s.Attach("000002", f.name, f.body, "", false); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -72,10 +76,12 @@ func TestImagesAreTaskFiles(t *testing.T) {
 	}
 }
 
-// 5z4zt4 checks 2 and 3: the picture a wait names (--show) shows right
-// under the question, the .ans with its colours and nothing else of its
-// escapes; the list reads no file, the detail reads only that capture and
-// never the image (goldens at 80 and 140).
+// 5z4zt4 checks 2 and 3, as qcq3tm changed them: the file a question names
+// (--show) is one link line under the question, never drawn on the page
+// (Jørgen: drawn above the page it hid the question). The list and the
+// page read no file; Enter on the question shows it in the file frame, an
+// .ans with its colours and nothing else of its escapes, and Esc goes back
+// to the question (goldens at 80 and 140).
 func TestQuestionShowsItsPicture(t *testing.T) {
 	var got []string
 	for _, w := range []int{80, 140} {
@@ -85,14 +91,14 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 			t.Fatalf("the list read files: %v", *reads)
 		}
 		m = openTask(t, m, "000002")
-		if len(*reads) != 1 || !strings.HasSuffix((*reads)[0], "/000002/rows.ans") {
-			t.Fatalf("the detail read %v, want only rows.ans", *reads)
+		if len(*reads) != 0 {
+			t.Fatalf("the page read %v, want no file until Enter", *reads)
 		}
 		screen := ansi.Strip(m.View())
 		q := strings.Index(screen, "> ? look at the IN PROGRESS rows") // in the details, focused (0gztsy)
-		p := strings.Index(screen, "▸ rows.ans")
-		if q < 0 || p < q || !strings.Contains(screen, "HUG TASKS · overview") || !strings.Contains(screen, `\x1b[2J`) {
-			t.Fatalf("at %d the picture is not under the question:\n%s", w, screen)
+		l := strings.Index(screen, "→ rows.ans · Enter shows")
+		if q < 0 || l < q || strings.Contains(screen, "HUG TASKS · overview") {
+			t.Fatalf("at %d the question has no link line, or the file is drawn:\n%s", w, screen)
 		}
 		for _, line := range strings.Split(m.View(), "\n") {
 			if n := ansi.StringWidth(line); n > w {
@@ -100,6 +106,16 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 			}
 		}
 		got = append(got, "== 000002 at "+strconv.Itoa(w), screen)
+		f := press(m, "enter")
+		file := ansi.Strip(f.View())
+		if !f.glance || len(*reads) != 1 || !strings.HasSuffix((*reads)[0], "/000002/rows.ans") || !strings.Contains(file, "HUG TASKS · overview") || !strings.Contains(file, `\x1b[2J`) {
+			t.Fatalf("at %d Enter did not show rows.ans (reads %v):\n%s", w, *reads, file)
+		}
+		got = append(got, "== 000002 Enter at "+strconv.Itoa(w), file)
+		back := press(f, "esc")
+		if back.glance || back.detailPane != focusQuestion || !strings.Contains(ansi.Strip(back.View()), "> ? look at the IN PROGRESS rows") {
+			t.Fatalf("at %d Esc did not go back to the question:\n%s", w, ansi.Strip(back.View()))
+		}
 	}
 	text := strings.Join(got, "\n") + "\n"
 	path := filepath.Join("testdata", "detail", "picture.txt")
@@ -116,8 +132,8 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 		t.Fatalf("picture differs from %s:\n%s", path, text)
 	}
 
-	// Without --show, a task file the question names is its picture; an
-	// image is one line, never read.
+	// Without --show, a task file the question names is its link; an
+	// image too, never read until shown.
 	m, reads := pictureModel(t, 100, 30, nil, "")
 	if _, err := m.store.Ask("000002", task.Question{What: "compare shot.png with the rows", For: "jhf"}, "alice"); err != nil {
 		t.Fatal(err)
@@ -125,14 +141,14 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 	m.refresh("")
 	m = openTask(t, m, "000002")
 	screen := ansi.Strip(m.View())
-	if !strings.Contains(screen, "▸ shot.png · image 67 B · this terminal draws no images: Enter in FILES opens it") || len(*reads) != 0 {
-		t.Fatalf("image under the question, reads %v:\n%s", *reads, screen)
+	if !strings.Contains(screen, "→ shot.png · Enter shows") || len(*reads) != 0 {
+		t.Fatalf("image link under the question, reads %v:\n%s", *reads, screen)
 	}
 	// --show must name a task file.
 	if _, err := m.store.Ask("000002", task.Question{What: "look", For: "jhf", Show: "nope.ans"}, "alice"); err == nil || !strings.Contains(err.Error(), "hug task attach 000002 FILE --name nope.ans") {
 		t.Fatalf("--show of a missing file: %v", err)
 	}
-	// A review asked with --show (6w0gve) draws its file under the review
+	// A review asked with --show (6w0gve) links its file under the review
 	// question for the reviewer. 000006 is doing and not waiting.
 	if _, _, err := m.store.Attach("000006", "rows.ans", []byte(captureAns), "", false); err != nil {
 		t.Fatal(err)
@@ -143,9 +159,9 @@ func TestQuestionShowsItsPicture(t *testing.T) {
 	m.refresh("")
 	m = openTask(t, m, "000006")
 	screen = ansi.Strip(m.View())
-	q, p := strings.Index(screen, "? review: review it"), strings.Index(screen, "▸ rows.ans")
-	if q < 0 || p < q {
-		t.Fatalf("the review picture is not under the review question:\n%s", screen)
+	q, p := strings.Index(screen, "? review: review it"), strings.Index(screen, "→ rows.ans · Enter shows")
+	if q < 0 || p < q || strings.Contains(screen, "HUG TASKS · overview") {
+		t.Fatalf("the review file is not a link under the review question:\n%s", screen)
 	}
 }
 

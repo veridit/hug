@@ -111,8 +111,8 @@ func TestTmuxZhvkmjFilesOnItself(t *testing.T) {
 	send("#zhvkmj")
 	wait("JUMP TO ID")
 	send("Enter")
-	wait("capture, as it was taken")
-	send("g") // the top of the detail
+	wait("→ colours-overview.ans · Enter shows") // the question's link line (qcq3tm)
+	send("g")                                    // the top of the detail
 	// Tab: the checks (the question is on check 4), then Files.
 	for i := 0; i < 6; i++ {
 		send("Tab")

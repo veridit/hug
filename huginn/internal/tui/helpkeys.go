@@ -167,6 +167,10 @@ func (m model) taskHelp() helpSection {
 	default:
 		rows = append(rows, row("j/k", "scroll the page", "j", "k"))
 	}
+	if q, ok := m.focusedQuestion(t); ok && q.file != "" {
+		// The question's link line (qcq3tm).
+		rows = append(rows, row("Enter", "show "+oneLine(q.file)+", the file the question names; Esc comes back", "enter"))
+	}
 	if len(m.focusRing(t)) > 1 {
 		rows = append(rows, row("h / l  Tab", "previous / next stop: each task id, the page, checks, links, files", "h", "l", "tab", "shift+tab"))
 	}

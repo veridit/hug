@@ -9,14 +9,8 @@ created 2026-11-01 · updated 2026-11-10 · bug-item-02-make
 Bug task 02: make the terminal workflow observable                              
 ────────────────────────────────────────────────────────────────────────────────
 > ? look at the IN PROGRESS rows                                                
+    → rows.ans · Enter shows                                                    
     └ alice · 10 min ago · answer                                               
-                                                                                
-  ▸ rows.ans · 102 B · capture, as it was taken                                 
-────────────────────────────────────────────────────────────────────────────────
-HUG TASKS · overview                                                            
-IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                           
-plain line                                                                      
-────────────────────────────────────────────────────────────────────────────────
                                                                                 
 DESCRIPTION                                                                     
 Deliver compiler-lang support with huginn and readable evidence.                
@@ -26,9 +20,46 @@ Deliver compiler-lang support with huginn and readable evidence.
                                                                                 
 Verification                                                                    
                                                                                 
+fmt.Println("synthetic acceptance")                                             
+                                                                                
+PURPOSE                                                                         
+Synthetic.                                                                      
+                                                                                
+PRINCIPLE                                                                       
 Task 2 of 60 · 0% · next · previous · Esc back                                  
                                                                                 
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · up · request 
+== 000002 Enter at 80
+HUG · list › 000002 › compiler/000002/rows.ans · 102 B · 1 of 2      ? 1 for you
+────────────────────────────────────────────────────────────────────────────────
+HUG TASKS · overview                                                            
+IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                           
+plain line                                                                      
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+────────────────────────────────────────────────────────────────────────────────
+next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
 == 000002 at 140
 HUG · list › 000002                                                                                                              ? 1 for you
 [doing]  [asked]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-000002                                                  
@@ -39,14 +70,8 @@ created 2026-11-01 · updated 2026-11-10 · bug-item-02-make
 Bug task 02: make the terminal workflow observable                                                                                          
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 > ? look at the IN PROGRESS rows                                                                                                            
+    → rows.ans · Enter shows                                                                                                                
     └ alice · 10 min ago · answer                                                                                                           
-                                                                                                                                            
-  ▸ rows.ans · 102 B · capture, as it was taken                                                                                             
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-HUG TASKS · overview                                                                                                                        
-IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                                                                                       
-plain line                                                                                                                                  
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
                                                                                                                                             
 DESCRIPTION                                                                                                                                 
 Deliver compiler-lang support with huginn and readable evidence.                                                                            
@@ -57,6 +82,43 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                                                                                
                                                                                                                                             
 fmt.Println("synthetic acceptance")                                                                                                         
+                                                                                                                                            
+PURPOSE                                                                                                                                     
+Synthetic.                                                                                                                                  
+                                                                                                                                            
+PRINCIPLE                                                                                                                                   
+Synthetic.                                                                                                                                  
 Task 2 of 60 · 0% · next · previous · Esc back                                                                                              
                                                                                                                                             
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find · next-, previous task 
+== 000002 Enter at 140
+HUG · list › 000002 › compiler/000002/rows.ans · 102 B · 1 of 2                                                                  ? 1 for you
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+HUG TASKS · overview                                                                                                                        
+IN PROGRESS rows\x1b[2J\x1b]0;pwned\a                                                                                                       
+plain line                                                                                                                                  
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    

@@ -6,6 +6,14 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- hug tui opens a task that asks you something on the question itself
+  (qcq3tm), scrolled into view and focused, under its check or in its
+  own block. A file the question names (--show) is no longer drawn above
+  the page: one dim line under the question names it, `→ NAME · Enter
+  shows`; Enter shows it in the file frame and Esc goes back to the
+  question. `a` always opens the answer box in view, under the question
+  it answers, even when that question is far down the page (p87ngv).
+
 - `hug task lint` checks only live file links (7j706s): `file:NAME` and
   `task:REF/NAME` outside the record. A path quoted in prose
   (`.hug/tasks/ID/NAME`), in ## History, in an answered or withdrawn

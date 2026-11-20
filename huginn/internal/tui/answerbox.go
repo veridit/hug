@@ -162,6 +162,9 @@ func (m model) updateAnswer(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if m.prompt == requestPrompt {
 		m.revealRequestBox()
 	}
+	if m.prompt == answerPrompt {
+		m.revealAnswerBox() // a growing box stays in view
+	}
 	return m, cmd
 }
 
@@ -245,6 +248,20 @@ func (m model) requestLines(t task.Task) []string {
 		out = append(out, m.answerLines()...)
 	}
 	return out
+}
+
+// revealAnswerBox scrolls the page so the question the open answer box
+// answers shows with the box under it, the box's last line (where the
+// cursor is) always (qcq3tm check 4).
+func (m *model) revealAnswerBox() {
+	m.showMarked()
+	_, e, ok := m.markedBlock()
+	if !ok {
+		return
+	}
+	if e >= m.viewport.YOffset+m.viewport.Height {
+		m.viewport.SetYOffset(max(0, e-m.viewport.Height+1))
+	}
 }
 
 // revealRequestBox scrolls the page so the open request box shows.

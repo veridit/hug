@@ -159,17 +159,58 @@ func (m *model) stepGlance(step int) {
 	m.showGlance()
 }
 
-// closeGlance goes back to Files with the file last shown marked.
+// closeGlance goes back to Files with the file last shown marked, or to
+// the question whose link line showed it (qcq3tm), where it was on the
+// page.
 func (m *model) closeGlance() {
+	back := m.glanceReturn
+	m.glanceReturn = nil
 	m.glance = false
 	m.glanceImage = nil
 	m.picZoom, m.picX, m.picY = 0, 0, 0
 	m.glanceHead, m.glanceBody = "", ""
 	m.glanceMD = glanceMarkdown{}
 	m.find = findState{}
+	if back != nil {
+		m.detailPane, m.acceptance, m.question = back.pane, back.acceptance, back.question
+		m.syncDetail()
+		m.viewport.SetYOffset(back.offset)
+		m.showMarked()
+		return
+	}
 	m.detailPane = focusFiles
 	m.syncDetail()
 	m.revealAcceptance()
+}
+
+// glanceReturn is the question a file was shown from: its focus and the
+// page's scroll.
+type glanceReturn struct {
+	pane, acceptance, question, offset int
+}
+
+// showQuestionFile shows, in the file frame, the file the focused
+// question names (its link line, qcq3tm). false when the focus is on no
+// question with a file.
+func (m *model) showQuestionFile() bool {
+	t, ok := m.selected()
+	if !ok {
+		return false
+	}
+	q, ok := m.focusedQuestion(t)
+	if !ok || q.file == "" {
+		return false
+	}
+	for i, f := range m.filesOf(t) {
+		if f == q.file {
+			m.glanceReturn = &glanceReturn{pane: m.detailPane, acceptance: m.acceptance, question: m.question, offset: m.viewport.YOffset}
+			m.file = i
+			m.glance = true
+			m.showGlance()
+			return true
+		}
+	}
+	return false
 }
 
 // glanceHeight is how many lines the shown file gets (z82qsy check 4):

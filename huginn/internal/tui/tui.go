@@ -199,6 +199,9 @@ type model struct {
 	imageWasDrawn          *glanceImage // what the last frame drew: eraseImage
 	viewWasDrawn           picView      // and the crop of it (33v71x)
 	glanceGen              uint64
+	// glanceReturn is where Esc goes from a file Enter showed from a
+	// question's link line (qcq3tm): back to that question, not Files.
+	glanceReturn *glanceReturn
 	// picZoom is the zoom step of the picture shown (33v71x), picX, picY
 	// the corner of its crop, in pixels; 0, 0, 0 is fit.
 	picZoom, picX, picY int
@@ -209,13 +212,10 @@ type model struct {
 	// pickFrom is where S was pressed, to come back to. captureStamp is
 	// the HHMM the capture was taken at; captureTyped says the reader has
 	// typed in its prompt, so s and c are text.
-	picking      bool
-	pickFrom     pickReturn
-	captureStamp string
-	captureTyped bool
-	// pictures keeps each question picture as last read, by file, width
-	// and mtime, so a redraw does not read it again (5z4zt4).
-	pictures        map[string]pictureMemo
+	picking         bool
+	pickFrom        pickReturn
+	captureStamp    string
+	captureTyped    bool
 	hist            *promptHistory              // / and : history (xfv9pw, history.go)
 	files           map[string][]string         // task path -> its file names (zgr01t)
 	people          []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
@@ -566,7 +566,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
 	input.Cursor.SetMode(cursor.CursorStatic) // only the box cursor moves (qpp30y)
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, pictures: map[string]pictureMemo{}, panes: &paneMemo{forYou: -1},
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, panes: &paneMemo{forYou: -1},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	styleAnswerCursor(&m.answerBox, m.styles.cursor)
 	m.vCursor = cursor.New() // blinks at bubbles' 530 ms, as the box's
@@ -1280,7 +1280,8 @@ func (m *model) back() {
 		m.answerBox.Blur()
 		m.syncDetail() // a closed answer box gives its lines back
 	case m.detail && m.glance:
-		// Up from a file is Files, with that file marked (scrxak).
+		// Up from a file is Files, with that file marked (scrxak), or
+		// the question whose link showed it (qcq3tm).
 		m.closeGlance()
 	case m.detail && len(m.detailStack) > 0:
 		m.detailPath = m.detailStack[len(m.detailStack)-1]
@@ -1637,6 +1638,11 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.syncDetail()
 				m.revealAcceptance()
 			case "enter":
+				// On a question that names a file, Enter shows the file in
+				// the file frame; Esc comes back to the question (qcq3tm).
+				if m.showQuestionFile() {
+					break
+				}
 				switch m.detailPane {
 				case focusDeps:
 					m.followDependency()

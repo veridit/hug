@@ -86,10 +86,11 @@ func overviewCapture() string {
 
 // tz9z14 check 2 (Jørgen 15:19, zhvkmj's detail: the overview legend
 // under the header and ~8 blank rows above DESCRIPTION). Not a leak: it
-// is the capture the question shows (asked_show, 5z4zt4), drawn as it was
-// taken, so it read as the live screen. Inline it now sits between dim
-// rules with a dim label, and runs of blank rows fold to one; Space in
-// FILES still shows it exactly as taken.
+// was the capture the question shows (asked_show, 5z4zt4), drawn inline
+// as it was taken, so it read as the live screen. Since qcq3tm the page
+// draws no capture at all: the question carries a link line, and the
+// legend never shows on the page. Space in FILES still shows it exactly
+// as taken.
 func TestQuestionPictureIsFramed(t *testing.T) {
 	var golden []string
 	for _, w := range []int{80, 140} {
@@ -107,34 +108,8 @@ func TestQuestionPictureIsFramed(t *testing.T) {
 		m.setView("list")
 		m = openTask(t, m, "000002")
 		screen := ansi.Strip(m.View())
-		lines := strings.Split(screen, "\n")
-		rule := strings.Repeat("─", w)
-		label, top, bottom, desc := -1, -1, -1, -1
-		for i, l := range lines {
-			switch {
-			case label < 0 && strings.Contains(l, "colours-overview.ans") && strings.Contains(l, "capture, as it was taken"):
-				label = i
-			case label >= 0 && top < 0 && l == rule:
-				top = i
-			case top >= 0 && bottom < 0 && l == rule:
-				bottom = i
-			case strings.TrimSpace(l) == "DESCRIPTION" && desc < 0:
-				desc = i
-			}
-		}
-		if label < 0 || top != label+1 || bottom < 0 || desc < bottom {
-			t.Fatalf("at %d the capture is not framed (label %d, rules %d %d, DESCRIPTION %d):\n%s", w, label, top, bottom, desc, screen)
-		}
-		blank := 0
-		for _, l := range lines[top+1 : bottom] {
-			if strings.TrimSpace(l) == "" {
-				blank++
-				if blank > 1 {
-					t.Fatalf("at %d a run of blank capture rows stays:\n%s", w, screen)
-				}
-			} else {
-				blank = 0
-			}
+		if !strings.Contains(screen, "→ colours-overview.ans · Enter shows") || strings.Contains(screen, "capture, as it was taken") || strings.Contains(screen, "row05") {
+			t.Fatalf("at %d the capture is drawn on the page, or its link is missing:\n%s", w, screen)
 		}
 		golden = append(golden, fmt.Sprintf("== 000002 asked_show colours-overview.ans at %d", w), screen)
 

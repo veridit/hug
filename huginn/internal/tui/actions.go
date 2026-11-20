@@ -422,7 +422,14 @@ func (m *model) answerKey() tea.Cmd {
 		}
 	}
 	m.answerN = q.n
-	return m.openAnswer()
+	// The box opens under the question it answers, which may be far
+	// down the page (qcq3tm check 4, p87ngv: a opened it out of view and
+	// seemed to do nothing): the focus goes to that question and the page
+	// scrolls so the box shows.
+	m.focusOn(t, q)
+	cmd := m.openAnswer()
+	m.revealAnswerBox()
+	return cmd
 }
 
 // answer writes text as the TUI user's answer to the task opened with a.

@@ -300,6 +300,10 @@ type asked struct {
 	// several: the task asks the viewer more than one, so each says its
 	// number.
 	several bool
+	// file is the task file the question asks you to look at (--show,
+	// else one its text names), "" for none. It is a link line under the
+	// question; Enter shows it in the file frame (qcq3tm).
+	file string
 }
 
 // askedOf is the first question t asks the viewer, the oldest.
@@ -326,7 +330,7 @@ func (m model) askedAll(t task.Task) []asked {
 			if !m.isMe(q.To) {
 				continue
 			}
-			a := asked{stage: g, what: q.Text, by: q.By, at: q.At, n: q.N}
+			a := asked{stage: g, what: q.Text, by: q.By, at: q.At, n: q.N, file: m.questionPictureOf(t, q.Show, q.Text)}
 			if n := q.Check; n >= 1 && n <= len(t.Acceptance) && !t.Acceptance[n-1].Checked {
 				a.check = n
 			}
@@ -382,6 +386,11 @@ func (m model) stageQuestion(t task.Task) (asked, bool) {
 	case "review":
 		q.what, q.by, q.at = "review it: approve, or say what to change", strings.Join(t.Assignee, ", "), t.Fields["review_since"]
 	}
+	if q.stage == "review" {
+		q.file = m.questionPicture(t, q.stage, "")
+	} else {
+		q.file = m.questionPicture(t, q.stage, q.what)
+	}
 	return q, true
 }
 
@@ -408,6 +417,16 @@ func (m model) questionLines(t task.Task) []string {
 		out = append(out, m.styles.dim.Render(fit("  unread by "+oneLine(a.For), m.width)))
 	}
 	return out
+}
+
+// fileLink is the dim line under a question that names its file
+// (qcq3tm, Jørgen: "the file as a link"): never the file drawn on the
+// page; Enter on the question shows it in the file frame.
+func (m model) fileLink(q asked, indent string) []string {
+	if q.file == "" {
+		return nil
+	}
+	return []string{m.styles.dim.Render(fit(indent+"→ "+oneLine(q.file)+" · Enter shows", m.width))}
 }
 
 // askedBy is the dim line under a question: who asked, how long ago, and
@@ -480,7 +499,7 @@ func (m model) questionBlock(t task.Task) []string {
 		} else {
 			label = m.styleMarked(label, w, m.styles.forYou)
 		}
-		out = append(append(out, label), m.askedBy(q, indent)...)
+		out = append(append(append(out, label), m.fileLink(q, indent)...), m.askedBy(q, indent)...)
 	}
 	return out
 }
@@ -617,12 +636,13 @@ const (
 	focusQuestion
 )
 
-// startFocus is the focus a freshly opened task gets: its checks when it has
-// any, otherwise the page. A question to you with a picture opens on the
-// page, so the picture under the question is what you see (5z4zt4).
+// startFocus is the focus a freshly opened task gets: the question it
+// asks you, on its check or its own block, whatever file it names
+// (qcq3tm); else its checks when it has any, otherwise the page.
 func (m *model) startFocus() {
 	m.acceptance, m.dependency, m.link, m.file, m.idAt = 0, 0, 0, 0, 0
 	m.glance, m.glanceHead, m.glanceBody = false, "", ""
+	m.glanceReturn = nil
 	m.find = findState{} // a find is the page's: a new page starts without (4s3g5q)
 	m.detailPane = focusPage
 	t, ok := m.selected()
@@ -632,21 +652,41 @@ func (m *model) startFocus() {
 	// Where the reader's answer goes (0gztsy): the check the question is
 	// about, or the question itself.
 	if q, mine := m.askedOf(t); mine {
-		if q.check > 0 {
-			m.detailPane, m.acceptance = focusAcceptance, q.check-1
-		} else {
-			m.detailPane, m.question = focusQuestion, 0
-			for k, b := range m.blockQuestions(t) {
-				if b.n == q.n {
-					m.question = k
-				}
-			}
-		}
+		m.focusOn(t, q)
 		return
 	}
-	if len(t.Acceptance) > 0 && m.askedPicture(t) == "" {
+	if len(t.Acceptance) > 0 {
 		m.detailPane = focusAcceptance
 	}
+}
+
+// focusOn puts the focus on question q: on the check it is about, else
+// on its own block.
+func (m *model) focusOn(t task.Task, q asked) {
+	if q.check > 0 {
+		m.detailPane, m.acceptance = focusAcceptance, q.check-1
+		return
+	}
+	m.detailPane, m.question = focusQuestion, 0
+	for k, b := range m.blockQuestions(t) {
+		if b.n == q.n {
+			m.question = k
+		}
+	}
+}
+
+// focusedQuestion is the question asked of you where the focus is: the
+// focused block, or the focused check's question.
+func (m model) focusedQuestion(t task.Task) (asked, bool) {
+	switch m.detailPane {
+	case focusQuestion:
+		if bs := m.blockQuestions(t); m.question >= 0 && m.question < len(bs) {
+			return bs[m.question], true
+		}
+	case focusAcceptance:
+		return m.checkQuestion(t, m.acceptance+1)
+	}
+	return asked{}, false
 }
 
 // focusStop is one place the detail's focus ring stops: a pane, and for
@@ -788,15 +828,11 @@ func (m model) sectionHeading(title, hint string, focused bool) string {
 func (m model) detailText(t task.Task) string {
 	sections := m.sections(t)
 	var b strings.Builder
-	// The picture the question asks you to look at opens the page, right
-	// under the question in the header (5z4zt4): what --show named, else a
-	// task file the question names. Read here, when the page is built, not
-	// on every frame.
+	// The questions that name no check open the details. A file a
+	// question asks you to look at is a link line under it, never drawn
+	// on the page (qcq3tm: drawn above the page it hid the question).
 	if block := m.questionBlock(t); len(block) > 0 && m.detail {
 		b.WriteString(strings.Join(block, "\n") + "\n\n")
-	}
-	if name := m.askedPicture(t); name != "" && m.detail {
-		b.WriteString(strings.Join(m.pictureLines(t, name), "\n") + "\n\n")
 	}
 	section := func(heading, body, empty string) {
 		if strings.TrimSpace(body) == "" {
@@ -879,7 +915,7 @@ func (m model) detailText(t task.Task) string {
 					}
 				}
 			}
-			checks = append(checks, m.askedBy(q, indent)...)
+			checks = append(append(checks, m.fileLink(q, indent)...), m.askedBy(q, indent)...)
 		}
 	}
 	section(m.sectionHeading("Acceptance", "j/k or [ ] step · Space ticks · - strikes out", m.detailPane == focusAcceptance), strings.Join(checks, "\n"), "no acceptance items yet")
@@ -1011,15 +1047,11 @@ func (m model) markRequests(t task.Task, lines []string, markAt func(string, int
 }
 
 // openTop shows a just-opened task from the top, scrolled only as far as
-// needed to keep the focused check in view: the header can grow (a finding
+// needed to keep the focus in view: the question it asks you, wherever it
+// sits (qcq3tm), or the focused check. The header can grow (a finding
 // and its fix take two lines, rx74bp) and must not hide the focus.
 func (m *model) openTop() {
 	m.viewport.GotoTop()
-	// A question asked with a picture opens with that picture (zhvkmj):
-	// the page starts at it, and j reaches the check it is about.
-	if t, ok := m.selected(); ok && m.askedPicture(t) != "" {
-		return
-	}
 	// The whole focused check, its question and all (ykta5g check 4),
 	// scrolled no further than that: the header can grow (a finding and
 	// its fix take two lines, rx74bp) and must not hide the focus.
@@ -1075,10 +1107,10 @@ func (m model) markedBlock() (int, int, bool) {
 		id = true
 	}
 	lines := strings.Split(ansi.Strip(m.detailText(t)), "\n")
-	// The > is looked for under the focused section's ▸ heading: a capture
-	// the page shows above it (asked_show, an overview with its own "> "
-	// rows) is not the focus (zhvkmj check 5: Files had the focus, the page
-	// scrolled to the capture's rows, and Files was never in sight).
+	// The > is looked for under the focused section's ▸ heading: text
+	// above it with its own "> " rows is not the focus (zhvkmj check 5:
+	// Files had the focus, the page scrolled to a capture's rows, and
+	// Files was never in sight).
 	from := 0
 	if heading := m.focusedHeading(); heading != "" {
 		for i, line := range lines {
