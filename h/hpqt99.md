@@ -138,6 +138,8 @@ Former Principle: A design decision first, written down, no code in this task. K
     Checked engram's own database: it has two fields, scope (only 'project' or 'personal') and project (a name like seid-lang). No global, no client, and nothing that says shared or private: of 3,703 memories, 3,692 are 'project' and 11 'personal', all naming a project. So yes, your two axes are right, but engram only fills one of them: 'about which project' (plus personal). Whether something is shared is a separate switch per repo in hug (rnpdnm), and engram has nothing to say about it. Added at the top of Details with the mapping that follows (personal stays personal; project goes to that project, or its client if under a client folder; sharing stays off), which is option 1B.
 - 2026-11-20T13:43 request 8 by jhf:
   For Q2 - what about import and remove, then export to get it back+
+  resolved 2026-11-20T13:44 by crab:
+    Added as option 2D at the top of Details: import --apply copies jcode's memories into hug and moves jcode's files to an archive folder, so only one copy is live; hug mem export jcode writes them back in jcode's format if you need them again. Compared with 2B it also removes the files, so nothing is read twice; the archive keeps them until you delete it. About 3 days. Question 5 is withdrawn and question 7 asks Decision 2 again with 2D. I also closed old questions 1-3, which the split questions had replaced.
 
 ## Notes
 
@@ -200,3 +202,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
   > Decision 2, jcode memories: 2A keep reading jcode files live, 2B import each instance once and stop reading live (recommended, ~2 days, gated by an exact dry-run match), or 2C import a row only when it is touched (~2 days)? Trade-offs are under Decision 2 in Details.
   Withdrawn by crab 2026-11-20: Decision 2 gained option 2D (request 8); question 7 asks again with it.
 - 2026-11-20T13:44 asked question 7 of jhf, 3 open (doing/asked -> doing/asked)
+- 2026-11-20T13:44 resolved request 8 by crab
