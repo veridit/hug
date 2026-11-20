@@ -21,7 +21,7 @@ waiting_asked_by: "crab"
 ---
 
 ## Goal
-Each task lives at .hug/tasks/ID.md for its whole life, so a path or URL to it never breaks (e.g. github.com/veridit/hug/blob/hug/tasks/6ephqk.md) and git log -- ID.md is its full history. The rank prefix, the slug and the group folder leave the file name: rank and group become front-matter fields. A move edits the moved task's rank: line; it never renames. The task's own folder stays .hug/tasks/ID/. Memories move to the matching branch name: muninn-notes becomes hug/memory (9taa9d check 2). hug upgrade migrates both, preview first.
+Every task file is .hug/tasks/ID.md for its whole life, with rank and group in the file, so links never break.
 
 ## Purpose
 Jørgen 2026-11-18 01:16-01:21 local: 'we're encoding multiple things into the file name, so if you change priority or something you get a new file name and you can't link to a persistent ticket'; 'a fixed link for each ticket you can link to from anywhere'; another agent was surprised a file name could change. Measured on hug's board, last 7 days: 172 board commits renamed files, 467 renames in all, every one a rank change (rank re-spacing renames whole windows). 01:19, seeing branches hug/tasks and muninn-notes: 'we didn't go hug/ all the way?!'
@@ -30,6 +30,8 @@ Jørgen 2026-11-18 01:16-01:21 local: 'we're encoding multiple things into the f
 A task's name is its id, nothing else. Task files are the truth: no index file, no marker files (an order file would conflict between concurrent movers). A reorder is not an update: it changes rank: only, and leaves updated: as it was (Jørgen 01:21). No backward compatibility: hug upgrade moves every board in one commit per step, previews by default, and an older hug refuses to write (dx9vw2's layout guard, layout = 3).
 
 ## Relevant details
+Each task lives at .hug/tasks/ID.md for its whole life, so a path or URL to it never breaks (e.g. github.com/veridit/hug/blob/hug/tasks/6ephqk.md) and git log -- ID.md is its full history. The rank prefix, the slug and the group folder leave the file name: rank and group become front-matter fields. A move edits the moved task's rank: line; it never renames. The task's own folder stays .hug/tasks/ID/. Memories move to the matching branch name: muninn-notes becomes hug/memory (9taa9d check 2). hug upgrade migrates both, preview first.
+
 Front matter, grouped: identity (id, title, type, priority, labels, group, parent, rank), state (state, stage, and the stage's object e.g. asked: {what, for, check, since, by} per 41hhgn), who and how (assignee, model, branch, worktree), time (created, updated, done_at, done_release). rank keeps today's string keys and re-spacing (ordering.go rankPlan), now as field edits; rebalance edits many files' rank: lines, never names. Order on read comes from the cache (one parse per file already). Group folders (later/, design/) become group: values. Slugs and old file names stay resolvable as refs (ids, prefixes, aliases already work), so old links in notes still find the task. Memory branch: hug/memory with .hug/memory/; muninn-notes is moved by hug upgrade and deleted after. Owner: wyvern (store, cache, sync) with kestrel (upgrade, import); hatchling for the memory branch. Seid and Statbus run their own hug upgrade.
 
 ## Depends on
