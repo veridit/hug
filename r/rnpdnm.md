@@ -127,3 +127,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-20T11:26 doing/active -> doing/asked (ask)
 - 2026-11-20T11:26 resolved request 1 by crab
 - 2026-11-20T12:54 request 2 by jhf
+- 2026-11-20T12:54 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
