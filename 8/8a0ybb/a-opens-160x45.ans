@@ -1,0 +1,45 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168mlist › [1m[38;2;0;191;255mp87ngv[0m                                                                                                                          [1m[38;2;255;179;84m? 15 for you
+[38;2;0;191;255m[doing][0m  [1m[38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:daisy · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-19 · updated 2026-11-19 · inline-marks-task-s[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mInline marks on a task's text; resolved dialogue moves to a history file
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255mFOR YOU[0m
+[1;4m[38;2;0;191;255m>[0m[38;2;255;179;84m ? Do you approve the mock? MOCK.md lists the rules per frame and 9 open questions; before.md, after.md, history.sdd, cli.txt and tui-100x30.txt are attached.[39m
+    [1m[38;2;0;191;255m→ MOCK.md[0m[38;2;135;149;168m  file · about check 5[39m
+[38;2;135;149;168m    └ daisy · 55 min ago · Enter opens · [1;4m[38;2;0;191;255ma[0m[38;2;135;149;168mnswer[39m
+
+[1m[38;2;0;191;255mPURPOSE[0m
+[38;5;252mJørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows exactly what it is about; questions today look like         [39m
+[38;5;252macceptance                                                                                                                                                    [39m
+[38;5;252mcriteria. 09:05Z (answer 1 on this task): threads inside the ticket would bloat it, and the conversation must not become the thing. The ticket must stay      [39m
+[38;5;252mcrisp: clarity comes from boiling text down to its essence. The messy part goes to a separate, suitably named history file in the task's files (provenance,   [39m
+[38;5;252mchat history) that grows by appending.                                                                                                                        [39m
+
+[1m[38;2;0;191;255mPRINCIPLE[0m
+[38;5;252mTicket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are [39m
+[38;5;252mplain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The    [39m
+[38;5;252magent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing     [39m
+[38;5;252mmarkup convention for the sigil if one fits. Either side may resolve a mark (Jørgen 09:05Z): the person accepts, approves or asks for something else; the     [39m
+[38;5;252magent judges by the ticket whether the mark is answered. Both use judgment, and either can initiate a resolve for clarity. Anchors (Jørgen 09:06Z): a mark may[39m
+[38;5;252msit on anything in the ticket's markdown, or point into an attachment by name plus line or section ('in mock-100x30.txt, line 12'); the attachment itself is  [39m
+[38;5;252mnot edited. Dialogue never enters the ticket; the history may be split per thing discussed.                                                                   [39m
+
+[1m[38;2;0;191;255mGOAL[0m
+[38;5;252mThe ticket stays the crisp working document. A person or agent marks a piece of a task's text with a comment, question or request that sits inline in the     [39m
+[38;5;252mtext, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified  [39m
+[38;5;252mresult and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in [39m
+[38;5;252mthe ticket.                                                                                                                                                   [39m
+
+[1m[38;2;0;191;255mACCEPTANCE[0m
+[9m[38;2;135;149;168m  ☒ 1. Jørgen approves a mock (CLI transcript plus TUI frames at 100x30) of a thread on a quoted sentence, a reply and a resolve (not relevant: threads in the[0m
+[9m[38;2;135;149;168m       ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 2. An outdated anchor (quoted text edited away) keeps its thread and shows it as outdated (test) (not relevant: threads in the ticket rejected by Jørgen[0m
+[9m[38;2;135;149;168m       09:05Z; replaced by inline-mark checks, crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 3. Several questions in one call become separate threads, each answered on its own (test) (not relevant: threads in the ticket rejected by Jørgen 09:05Z;[0m
+[9m[38;2;135;149;168m       replaced by inline-mark checks, crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 4. Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM (not relevant: threads in the ticket rejected by Jørgen 09:05Z;[0m
+[9m[38;2;135;149;168m       replaced by inline-mark checks, crab, 2026-11-19)[0m
+[38;2;135;149;168mTask 263 of 273 · 0% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back[39m
+
+[1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m open link · [1;4m[38;2;0;191;255ma[0m[38;2;135;149;168mnswer · [1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m scroll · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mS[0m[38;2;135;149;168mcreen · [1;4m[38;2;0;191;255mE[0m[38;2;135;149;168mdit files · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp · [1;4m[38;2;0;191;255mr[0m[38;2;135;149;168mequest · [1m[38;2;0;191;255m/[0m[38;2;135;149;168m find · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext-, [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious task[39m [38;2;135;149;168m…[39m

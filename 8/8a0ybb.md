@@ -48,6 +48,10 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 ## Notes
 
 
+file:a-opens-100x30.ans (3882 bytes, sha256:11cf6864) mock (a) p87ngv as it opens for jhf (board 4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype mock/8a0ybb f6641b2f
+file:a-opens-160x45.ans (7263 bytes, sha256:662c339f) mock (a) p87ngv as it opens for jhf (board 4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype mock/8a0ybb f6641b2f
+file:a-opens-100x30.png (94733 bytes, sha256:ee14d316) mock (a) p87ngv as it opens for jhf (board 4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype mock/8a0ybb f6641b2f
+file:a-opens-160x45.png (164808 bytes, sha256:c33314f4) mock (a) p87ngv as it opens for jhf (board 4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype mock/8a0ybb f6641b2f
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
