@@ -57,6 +57,7 @@ Jørgen 2026-11-20 10:12Z (p87ngv request 4): p87ngv's questions name several fi
 
 file:sample-notes.md (244 bytes, sha256:76521eb4) sample files: this task's own links point at them, so Jørgen can try it here
 file:sample.txt (50 bytes, sha256:2df59eb0) sample files: this task's own links point at them, so Jørgen can try it here
+Jørgen 2026-11-20 11:51Z (answer 1): 'Let's try that and make sure you put it into this file as well so that when I review this task again when it is resolved I can use the task itself to check it.' Done: sample-notes.md and sample.txt attached, TRY IT HERE added at the top of Details, checks 6-7 added.
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
