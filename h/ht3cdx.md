@@ -35,6 +35,7 @@ Jørgen 2026-11-20 10:18Z (request 1, screenshots screen-1117.ans before, screen
 
 ## Acceptance
 - [ ] Verify Filter and sort change the view
+- [ ] In the overview and on the board, the filter picker's Enter and ': todo' / ': state X' apply the filter and leave the view unchanged (tmux test, fails on main first)
 
 ## Requests
 - 2026-11-20T11:18 request 1 by jhf:
