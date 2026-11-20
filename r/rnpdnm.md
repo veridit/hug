@@ -38,7 +38,7 @@ WHERE MEMORIES ARE, PHYSICALLY
 3. Sharing is off in every repo today. hug's own hug/memory branch still holds 827 old lines from before it was switched off (last push 2026-11-18); nothing has been added since.
 
 WHAT 'HELD' MEANS
-When sharing is on, sync checks each project memory before writing it to the branch. A memory that names a home folder (/Users/...), another project or client, or you, or states a personal preference, is not written to the branch. It stays in your local store and is still recalled here; only the push skips it. That is all 'held' means.
+When sharing is on, hug mem sync checks each memory before copying it from muninn.db to memories.jsonl. One that names a home folder (/Users/...), another project or client, or you, or states a personal preference, is not copied. It stays only in muninn.db on your Mac and is still recalled there. That is all 'held' means.
 
 THE PROBLEM
 The check misses some. Of new project memories, about 3 in 100 that would be pushed should not be (8 of 254, by hand). Most are working rules for agents ('poll CI with a timeout') stored as this project's when they belong in global memory. If sharing were on, those would be pushed to the repo.
