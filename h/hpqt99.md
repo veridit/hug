@@ -32,6 +32,22 @@ Imported memories can land in the wrong client's scope, and jcode memories live 
 Decide first, build later; imports and sync never cross a client boundary.
 
 ## Relevant details
+Decision 1: which client owns an imported memory.
+- 1A Keep today: the owner rescopes by hand. Cost none. Risk: engram project notes written in a client folder are visible to every session until someone notices.
+- 1B Recommended. Keep the scope the source states (engram personal stays personal); when it states none, place by the folder it was written in, client included. Cost about 1 day. Risk: a folder that became a client later narrows old notes; fails closed, rescope undoes it.
+- 1C Hold for review: client-folder rows go to a scope nobody recalls until the owner places them. Cost about 2 days plus a review screen. Risk: unseen memories and one more chore for the owner.
+
+Decision 2: jcode memories imported once, or read live.
+- 2A Keep reading live. Cost none. Risk: two sources of truth for good; forget is a suppression list; muninn depends on jcode file format.
+- 2B Recommended. Import each instance once (dry-run must match the live index exactly), then stop reading it live; files stay on disk, setup can switch live reading back on. Cost about 2 days. Risk: scope mapping is the one place a client row could leak; the zero-difference dry-run is the gate.
+- 2C Import on touch (copy a row when edited, forgotten or synced). Cost about 2 days across every write path. Risk: two sources of truth for an unknown time.
+
+Facts (2026-11-18, read-only): 17,089 memories are read live from 128 jcode files frozen since 2026-11-05 (jcode memory is off in all 6 instances); 8,758 of them sit under a client root. Engram: 3,703 observations, 1,526 written under a client root, all but one already in a client scope. Full evidence: design.md in Files.
+
+After the decision, only the decision goes into docs/DESIGN.md.
+
+
+Earlier text:
 The design proposal is attached as design.md (moved out of docs/DESIGN.md on branch hpqt99 at 32ed02dd; it never reached main). Once Jørgen decides, the decision, not the proposal, goes into docs/DESIGN.md.
 
 Today: hug setup turns jcode's own memory off per instance and routes saves to muninn's MCP, while jcode's existing memory files stay and are indexed read-only (muninn/internal/harness/jcode_takeover.go). A jcode memory both read live and imported shares one short id; recall shows it once and forget removes both (1tz1yn). Only admin 'rescope <id> --to <scope> --cross-client' moves memories across client boundaries.
@@ -94,3 +110,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:57 request 3 by jhf
 - 2026-11-20T09:57 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T09:57 request 3 acknowledged by crab
+- 2026-11-20T09:57 request 3 in progress by crab: hug task set hpqt99
