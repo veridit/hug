@@ -1,0 +1,24 @@
+  ASKED · for you  [0] · None                                                                       
+  IN PROGRESS · assigned to  [0] · None                                                             
+  WAITING  [0] · None                                                                               
+> NEXT UP · rank order  [31] · 1–14 shown · all feature                                             
+> ○ 1   ·######            ready     Advice 01                                                      
+  ○ 1   ·######            ready     Advice 02                                                      
+  ○ 1   ·######            ready     Advice 03                                                      
+  ○ 1   ·######            ready     Advice 04                                                      
+  ○ 1   ·######            ready     Advice 05                                                      
+  ○ 1   ·######            ready     Advice 06                                                      
+  ○ 1   ·######            ready     Advice 07                                                      
+  ○ 1   ·######            ready     Advice 08                                                      
+  ○ 1   ·######            ready     Advice 09                                                      
+  ○ 1   ·######            ready     Advice 10                                                      
+  ○ 1   ·######            ready     Advice 11                                                      
+  ○ 1   ·######            ready     Advice 12                                                      
+  ○ 1   ·######            ready     Advice 13                                                      
+↓ ○ 1   ·######            ready     Advice 14                                                      
+
+  RECENTLY DONE · last closed  [0] · None                                                           
+  LINT · tasks needing attention  [31] · 1 broken · 30 advice · 1–3 shown · all feature             
+  ○ 1   !######            depends   Broken last                                                    
+  ○ 1   ·######            ready     Advice 01                                                      
+↓ ○ 1   ·######            ready     Advice 02                                                      

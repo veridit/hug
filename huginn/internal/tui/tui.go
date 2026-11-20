@@ -994,6 +994,14 @@ func (m model) scanPane(p int) []int {
 			return askedSince(m.visible[out[a]]) < askedSince(m.visible[out[b]])
 		})
 	}
+	if m.view == "overview" && p == sectionLint || m.view == "lint" {
+		// What is wrong comes first (z6cb03): broken tasks before advice,
+		// rank (or the chosen order) within each, as hug task lint lists
+		// them. A section cut to its rows keeps the broken ones in view.
+		sort.SliceStable(out, func(a, b int) bool {
+			return m.broken[m.visible[out[a]].Path] && !m.broken[m.visible[out[b]].Path]
+		})
+	}
 	return out
 }
 func (m model) indices() []int { return m.paneIndices(m.pane) }
