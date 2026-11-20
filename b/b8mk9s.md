@@ -61,6 +61,8 @@ Promoted from item 3 of task:9taa9d.
 
 ## Acceptance
 - [ ] memories stored one Markdown file per memory, retire = move to _retired/
+- [ ] Jørgen decides: one file per memory, or keep memories.json
+- [ ] If one file per memory: Jørgen sets how many days a retired file is kept before hug mem dream deletes it (30 proposed)
 
 ## Requests
 - 2026-11-20T13:11 request 1 by jhf:
