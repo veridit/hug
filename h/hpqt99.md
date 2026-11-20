@@ -76,6 +76,8 @@ Former Principle: A design decision first, written down, no code in this task. K
   withdrawn 2026-11-20T09:57 (doing/asked -> doing/active)
 - 2026-11-20T09:57 question 4 by crab to jhf (check 2):
   Decision 1, which client owns an imported memory: 1A keep today (you rescope by hand), 1B keep the scope the source states and otherwise place by the folder it was written in (recommended, ~1 day), or 1C hold client-folder rows for your review (~2 days)? Trade-offs are under Decision 1 in Details.
+- 2026-11-20T09:57 question 5 by crab to jhf (check 3):
+  Decision 2, jcode memories: 2A keep reading jcode files live, 2B import each instance once and stop reading live (recommended, ~2 days, gated by an exact dry-run match), or 2C import a row only when it is touched (~2 days)? Trade-offs are under Decision 2 in Details.
 
 ## Requests
 - 2026-11-20T09:55 request 1 by jhf:
@@ -119,3 +121,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:57 request 3 in progress by crab: hug task set hpqt99
 - 2026-11-20T09:57 doing/asked -> doing/active (resume); was asked_by: crab; asked_check: 1; asked_for: jhf; asked_since: 2026-11-20T09:56; asked_what: Imported data (design.md in Files, Space shows it): do you approve 1B-amended plus 2B? 1B-amended: an import keeps the scope the source states (engram personal stays personal) and places by the folder it was written in only when the source states none. 2B: import each jcode instance's memories once, then stop reading jcode files live. The alternatives are 1A (as today, the owner rescopes by hand) and 2A (keep reading jcode files live). I recommend 1B-amended plus 2B.
 - 2026-11-20T09:57 doing/active -> doing/asked (ask)
+- 2026-11-20T09:57 asked question 5 of jhf, 2 open (doing/asked -> doing/asked)
