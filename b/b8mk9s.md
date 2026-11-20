@@ -80,6 +80,8 @@ Promoted from item 3 of task:9taa9d.
     Rewritten from scratch. Details now have four plain parts: TODAY (one 18.6 MB memories.json on your Mac with 18,078 memories, 491 of them retired and never cleaned up; muninn.db is only the search index), WHAT WOULD CHANGE (one Markdown file per memory, retire = move to _retired/), WHY (edit like a task, clean git merges, same shape as tasks) and CONSEQUENCES (a large one-time migration, every write path changes, and an automatic cleanup: dream deletes retired files after 30 days, a setting). Purpose is one sentence. Title and Goal now say it is a decision. Question 2 asks: do it, or keep one file?
 - 2026-11-20T13:39 request 2 by jhf:
   So git merge that is the true benefit right Because the JSON-L is pretty efficient today isn't it? I don't think having editing memories manually is that important. It's also easy to edit a huge file and just open and search in it. So it has to be another technical advantage that you see
+  resolved 2026-11-20T13:39 by crab:
+    You are right: merging is not the gain. The shared branch file is already one line per memory, so git merges it fine today, and hand editing is not a reason. WHY is rewritten with the one real gain: today every remember or forget rewrites the whole 18.6 MB memories.json under a lock all sessions wait on; small per-memory writes fix that. CONSEQUENCES list what speaks against 18,078 files (git and file-system cost, a large migration). And there is a cheaper way to the same gain: keep one file but make it append-only JSON Lines, compacted by dream. Question 2 now asks: keep as is, append-only JSON Lines, or one file per memory.
 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 2):
@@ -107,3 +109,4 @@ Promoted from item 3 of task:9taa9d.
   > Store each memory as its own Markdown file (editable, merges cleanly; a large one-time change of 18,078 files), or keep today's single memories.json? TODAY / WHAT WOULD CHANGE / WHY / CONSEQUENCES are in Details.
   Withdrawn by crab 2026-11-20: the WHY was rewritten after Jørgen's request 2; question 2 asks the three-way choice.
 - 2026-11-20T13:39 todo/ready -> todo/design (ask)
+- 2026-11-20T13:39 resolved request 2 by crab
