@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-20
 updated: 2026-11-20
-design_since: "2026-11-20T12:02"
-design_asked_by: "crab"
-design_question: "qcq3tm: restart hug tui and open p87ngv (or any task in ASKED): do you land on the question, with its file as a '→ NAME · Enter shows' line, and does a open the box in view? Before/after frames are in this ticket's Files."
-design_for: "jhf"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Main 20dbb6ca (Release v0.7.89, merge of a5fc5208 + CHANGELOG). qcq3tm CI 447219
 ## Questions
 - 2026-11-20T12:02 question 1 by crab to jhf:
   qcq3tm: restart hug tui and open p87ngv (or any task in ASKED): do you land on the question, with its file as a '→ NAME · Enter shows' line, and does a open the box in view? Before/after frames are in this ticket's Files.
+  answered 2026-11-20T12:57 by crab:
+    Jørgen on qcq3tm, request 2 (2026-11-20 11:57Z): 'Yes, it does ... it worked on this task after I reloaded.' The underlined > is q3sh69.
 
 ## Notes
 
@@ -53,3 +51,6 @@ check 1: release.yml 44723208345 completed success; brew upgrade: 'hug v0.7.89',
 
 ## History
 - 2026-11-20T12:02 todo -> todo/design (ask)
+- 2026-11-20T12:57 answered design, by crab, for crab (todo/design -> todo/ready):
+  > qcq3tm: restart hug tui and open p87ngv (or any task in ASKED): do you land on the question, with its file as a '→ NAME · Enter shows' line, and does a open the box in view? Before/after frames are in this ticket's Files.
+  Jørgen on qcq3tm, request 2 (2026-11-20 11:57Z): 'Yes, it does ... it worked on this task after I reloaded.' The underlined > is q3sh69.
