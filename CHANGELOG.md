@@ -16,6 +16,14 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   running at 30 s; on a slow runner one was still starting git then. It
   now fails a pass with no new log line or git event for 30 s, or after
   3 minutes in all, and says which.
+- `TestBackgroundSyncOfflineCatchesUp` checks that a note never waits on
+  a hanging remote by order, not by time (4gj7z6, Windows CI
+  44638912154: a correct note took 2.749 s against 418 ms without
+  background sync). The remote now hangs until the test releases it,
+  which it does only after the note has returned. A note that calls the
+  remote itself fails (the hang marks a call from outside the background
+  pass), and one that waits for the pass never returns and fails with
+  the pass log before go test's -timeout.
 
 - Tests leave no tmux server running (wacc33, crab 2026-11-19 12:01Z:
   three huginn-golden/reload servers, parent launchd, alive for days). A
