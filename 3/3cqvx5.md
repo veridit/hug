@@ -54,3 +54,4 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 - 2026-11-20T12:55 answered asked (check 1), by jhf, for crab (doing/asked -> doing/active):
   > Default coordinator when none is named, or the named one is gone: the only live agent session on the board, else the first live one to touch it, handing over when it ends; a name you set still wins. Is that the rule you want?
   Yes, but when you when you deduce, you can just ask. We're giving this to you received this because you were perceived to be the coordinating task interacting with a human at a console. If you are not and instruction to fix the first time you see an agent who you have deduced
+- 2026-11-20T12:55 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
