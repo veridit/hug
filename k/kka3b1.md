@@ -47,5 +47,6 @@ file:after-lint-3marked-marked.ans (5796 bytes, sha256:41c28c0b) after: footer o
 file:after-lint-3marked-r.ans (5076 bytes, sha256:a6ca6dea) after: r opened the box under the list, marked rows in view
 
 
+shipped: tag v0.7.91 (00a06a61), release.yml 44782605940 success, brew upgrade -> ../Cellar/hug/0.7.91/bin/hug, hug v0.7.91
 ## History
 - 2026-11-20T18:22 todo -> todo/design (ask)
