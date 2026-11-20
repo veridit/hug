@@ -93,3 +93,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:56 resolved request 2 by crab
 - 2026-11-20T09:57 request 3 by jhf
 - 2026-11-20T09:57 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T09:57 request 3 acknowledged by crab
