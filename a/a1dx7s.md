@@ -10,6 +10,11 @@ group: ""
 rank: "yq"
 created: 2026-11-16
 updated: 2026-11-16
+design_question: "Please open seid-instruction.md in this task's Files, copy it to the seid-lang agent, and tick this check when it has reported back here."
+design_for: "jhf"
+design_since: "2026-11-20T13:12"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -38,6 +43,10 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 - 2026-11-20T13:11 request 2 by jhf:
   And when you do, you can ask me a question to open up and give it to the other agent and I can check it off when it is done, so it happens to come into my queue
 
+## Questions
+- 2026-11-20T13:12 question 1 by crab to jhf (check 4):
+  Please open seid-instruction.md in this task's Files, copy it to the seid-lang agent, and tick this check when it has reported back here.
+
 ## Notes
 
 
@@ -51,3 +60,4 @@ file:seid-instruction.md (2100 bytes, sha256:f0f90052) instruction to copy to th
 - 2026-11-20T13:12 request 2 acknowledged by crab
 - 2026-11-20T13:12 request 1 in progress by crab: hug task attach a1dx7s /Users/jhf/.jcode/scratch/a1dx7s/seid-instruction.md
 - 2026-11-20T13:12 request 2 in progress by crab: hug task attach a1dx7s /Users/jhf/.jcode/scratch/a1dx7s/seid-instruction.md
+- 2026-11-20T13:12 todo -> todo/design (ask)
