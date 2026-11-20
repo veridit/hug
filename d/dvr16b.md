@@ -38,13 +38,14 @@ main c2b0bbe5 CI 44464516250 success 8/8. CHANGELOG 020b9592, merge 1ce66c8a, re
 ## Acceptance
 - [x] release.yml for v0.7.77 succeeds (run id)
 - [x] hug version prints v0.7.77 after brew upgrade
-- [ ] crab: capture_runs on the live store shows no 'context deadline exceeded' on turn_end hooks for a day after 2026-11-19T05:37:40Z (a6xm8n; count in a note, scheduled 2026-11-20 05:45Z)
+- [x] crab: capture_runs on the live store shows no 'context deadline exceeded' on turn_end hooks for a day after 2026-11-19T05:37:40Z (a6xm8n; count in a note, scheduled 2026-11-20 05:45Z)
 
 ## Notes
 
 
 check 1: release.yml 44465643587 completed success
 check 2: brew upgrade run on its own; hug version prints hug v0.7.77; bin links point at Cellar/hug/0.7.77
+check 3: Read-only count at 2026-11-20T05:45Z on the live store, capture_runs with trigger turn_end since 2026-11-19T05:37:40Z (v0.7.77 installed): OK 364, 'extraction HTTP request failed (details redacted)' 2 (06:01:07Z and 14:01:02Z), 0 'deadline exceeded', 0 'invalid extraction response'. The last turn_end deadline was 2026-11-19 05:31:13Z, 6.5 minutes before v0.7.77; 6 in the 2 h before it. The 2 HTTP failures are network errors, a different class from a6xm8n.
 ## History
 - 2026-11-19T06:37 todo -> doing/active (take with p277bp)
 - 2026-11-19T06:37 doing/active -> done (done); was doing_since: 2026-11-19T06:37; doing_with: p277bp
