@@ -64,6 +64,7 @@ landed 48e3517 on main 2026-11-20: hug tui: an asked task opens on its question;
 landed 1566795 on main 2026-11-20: hug tui: Esc from a file a question's link showed is named 'question' in the…
 landed a5fc520 on main 2026-11-20: tui tests: capture knob QCQ3TM_CAPTURES (no HUG_ name); picture golden names Esc…
 shipped in v0.7.89 (48e3517)
+crab 2026-11-20 10:54Z: reviewed (actions.go answerKey focusOn+revealAnswerBox; detail.go link line replaces drawn picture, startFocus/openTop no longer special-case pictures; glance.go return to question; picture.go dead code removed), landed a5fc5208 on main as a fast-forward (CI 44721913557 8/8 on that SHA), released in v0.7.89 (20dbb6ca). Release ticket fzd0jj.
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
 - 2026-11-20T11:54 doing/active -> doing/asked (ask)
