@@ -33,6 +33,8 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
 - [x] Jørgen approves the exact added lines (quoted in a note)
 - [ ] hug task setup writes them, and a test fails if any of the three rules is missing
 - [ ] help ask and help wait say a reminder is not a blocker and blocked names who must do what (test)
+- [ ] hug task ask ID with no --to, or with an empty or unknown name, lists everyone who can answer (people from hug.toml with their aliases, and agents working on the board), each with the exact command to ask them; the same for task_update ask over MCP (test)
+- [ ] Every command that takes a person or a task (ask --to, dep --add, take --with, set --assignee, --parent) lists the valid choices when the value is missing or unknown, with a runnable fix line per choice (test per command)
 
 ## Questions
 - 2026-11-19T10:00 question 1 by crab to jhf:
@@ -103,3 +105,4 @@ check 1: Approved by Jørgen 10:05Z (answer 3) with his nitpick applied to line 
 - 2026-11-20T11:05 request 1 by jhf
 - 2026-11-20T11:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:05 request 1 acknowledged by crab
+- 2026-11-20T11:05 request 1 in progress by crab: hug task set fd0j4p
