@@ -56,6 +56,10 @@ file:a2-scrolled-100x30.ans (3798 bytes, sha256:89006ecc) mock (a2) the same pag
 file:a2-scrolled-160x45.ans (6494 bytes, sha256:682f1e6a) mock (a2) the same page scrolled with J: Goal, Acceptance with ? on check 5, Files, long sections folded to one line
 file:a2-scrolled-100x30.png (102795 bytes, sha256:a0411347) mock (a2) the same page scrolled with J: Goal, Acceptance with ? on check 5, Files, long sections folded to one line
 file:a2-scrolled-160x45.png (174955 bytes, sha256:dc874cf8) mock (a2) the same page scrolled with J: Goal, Acceptance with ? on check 5, Files, long sections folded to one line
+file:b-link-mock-md-100x30.ans (6171 bytes, sha256:f894ff5f) mock (b) Enter on the FOR YOU link: MOCK.md in the file frame; u/Esc goes back to the question
+file:b-link-mock-md-160x45.ans (11954 bytes, sha256:1cd13d03) mock (b) Enter on the FOR YOU link: MOCK.md in the file frame; u/Esc goes back to the question
+file:b-link-mock-md-100x30.png (117989 bytes, sha256:b57efac6) mock (b) Enter on the FOR YOU link: MOCK.md in the file frame; u/Esc goes back to the question
+file:b-link-mock-md-160x45.png (202510 bytes, sha256:04647f96) mock (b) Enter on the FOR YOU link: MOCK.md in the file frame; u/Esc goes back to the question
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
