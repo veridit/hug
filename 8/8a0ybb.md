@@ -47,6 +47,7 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 - [ ] The detail page shows ↑ in a top corner when there is more above and ↓ in a bottom corner when there is more below, as the overview marks more rows (golden 100x30 scrolled mid-page)
 - [ ] ~~Jørgen approves frames (ANSI at 100x30) of 8a0ybb's own detail: opened scrolled to its question with the file as a link, and the order Purpose, Principle, Goal, Acceptance, short sections, then long sections folded~~ (not relevant: the question landing is qcq3tm's; replaced by check 12, the order only, crab, 2026-11-20)
 - [ ] No DESCRIPTION heading and no FOR YOU block; order is Purpose, Principle, Goal, Acceptance, short sections (Files, Depends on, Parent/children, requests), then Relevant details, Notes, History; long sections fold to one line until opened (golden 100x30 and 160x45)
+- [ ] Jørgen approves frames (ANSI at 100x30) of this task's page in the new order, the long sections folded, ↑/↓ markers shown
 
 ## Questions
 - 2026-11-19T12:24 question 1 by crab to jhf:
