@@ -64,6 +64,10 @@ file:c0-notes-focused-100x30.ans (3513 bytes, sha256:8130cbc2) mock (c0) Shift-T
 file:c0-notes-focused-160x45.ans (6495 bytes, sha256:4f650097) mock (c0) Shift-Tab to NOTES (11): the folded line focused, Enter opens
 file:c0-notes-focused-100x30.png (98992 bytes, sha256:b6879ef5) mock (c0) Shift-Tab to NOTES (11): the folded line focused, Enter opens
 file:c0-notes-focused-160x45.png (175124 bytes, sha256:5557cb05) mock (c0) Shift-Tab to NOTES (11): the folded line focused, Enter opens
+file:c-notes-open-100x30.ans (4327 bytes, sha256:d50f49f2) mock (c) Enter on NOTES: unfolded, one entry per paragraph, page starts at its heading
+file:c-notes-open-160x45.ans (8941 bytes, sha256:b32c1b8f) mock (c) Enter on NOTES: unfolded, one entry per paragraph, page starts at its heading
+file:c-notes-open-100x30.png (88078 bytes, sha256:c3749eb1) mock (c) Enter on NOTES: unfolded, one entry per paragraph, page starts at its heading
+file:c-notes-open-160x45.png (148629 bytes, sha256:2f20fecc) mock (c) Enter on NOTES: unfolded, one entry per paragraph, page starts at its heading
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):

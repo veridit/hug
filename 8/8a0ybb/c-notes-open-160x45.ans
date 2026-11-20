@@ -1,0 +1,45 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168mlist › [1m[38;2;0;191;255mp87ngv[0m                                                                                                                          [1m[38;2;255;179;84m? 15 for you
+[38;2;0;191;255m[doing][0m  [1m[38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:daisy · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-19 · updated 2026-11-19 · inline-marks-task-s[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mInline marks on a task's text; resolved dialogue moves to a history file
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255m▸ NOTES (11)[0m[38;2;135;149;168m · Enter folds
+[38;5;252mcrab 09:06Z: reshaped after Jørgen's answer 1 (09:05Z). Questions 1 and 3 were framed around threads; 1 is answered (no threads in the ticket, dialogue to a  [39m
+[38;5;252mhistory file). Question 3 (anchor to an attached file) still stands in the new model. New questions 4 (sigil) and 5 (history file).                           [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mlanded c533de8 on main 2026-11-19: m5pbb0: failing tests: open questions with no mirror cannot be answered (p87ngv…                                           [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mshipped in v0.7.80 (c533de8)                                                                                                                                  [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mfile:MOCK.md (6102 bytes, sha256:99d00fc3) check 5 mock: rules per frame, syntax rules, 9 open questions                                                      [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mfile:before.md (1855 bytes, sha256:c2031608) check 5 mock: task w7tq3k with 2 open marks (.Request .prev:.Sentence on the goal; .Question .on + .Answer on    [39m
+[38;5;252mcheck 2)                                                                                                                                                      [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mfile:after.md (1628 bytes, sha256:1372e3b6) check 5 mock: the same task after both resolves, no marks                                                         [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mfile:history.sdd (1289 bytes, sha256:48c59c79) check 5 mock: history.sdd after the resolves (.Resolved .at .was .now .marks: seq ... end; one triple-quoted   [39m
+[38;5;252m.msg)                                                                                                                                                         [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mfile:cli.txt (10324 bytes, sha256:5d6f5c4a) check 5 mock: proposed CLI transcript (mark with --on, answer, resolve, several questions in one call; every error[39m
+[38;5;252mends with fix:)                                                                                                                                               [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mfile:tui-100x30.txt (19912 bytes, sha256:416667f3) check 5 mock: 7 hug tui detail frames at 100x30 (calm marks, jump, mark mode, c/?/r, answer under a mark,  [39m
+[38;5;252mafter)                                                                                                                                                        [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mcrab 10:31Z, review of daisy's mock (files attached, sha in her notes): before.md/after.md/history.sdd read in full; the rules 1-8 in MOCK.md match the       [39m
+[38;5;252mdetails; frames 1-3 checked. Rulings on MOCK.md open questions that are mine: 3 numbers are display only, in text order, renumbered on each draw (a mark has  [39m
+[38;5;252mno                                                                                                                                                            [39m
+[38;5;252mid in the text); 4 CLI flags mirror the properties: --on is the span (.on), the unit finder becomes --near WORDS; 6 keep .by .field .check .msg in .Resolved; [39m
+[38;5;252m7                                                                                                                                                             [39m
+[38;5;252mresolve requires --now TEXT or --keep; 8 an .in: mark sits at the end of ## Notes; 9 hug writes verbatim, no escaping (viewers may render or curl; the file is[39m
+[38;5;252mthe                                                                                                                                                           [39m
+[38;5;252mtruth; triple quotes for hard text). Keys (5) are part of check 5's approval. Questions 1 and 2 (Seid literals, suffix) asked of Jørgen.                      [39m
+[38;5;252m                                                                                                                                                              [39m
+[38;5;252mcrab 11:08Z: Jørgen 11:07Z (console): history file is history.sdo, hug's own Open-data variant, not .sdd; Seid's Open tier is unfinished and Jørgen will      [39m
+[38;5;252mfinish                                                                                                                                                        [39m
+[38;5;252mit. Until then hug's .sdo grammar is the one in these details (bare words and times, triple quotes, the ending rule). Answer 7 recorded as my reading of the  [39m
+[38;2;135;149;168mTask 263 of 273 · 95% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back[39m
+
+[1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m open/fold · [1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m scroll · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255ma[0m[38;2;135;149;168mnswer · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mS[0m[38;2;135;149;168mcreen · [1;4m[38;2;0;191;255mE[0m[38;2;135;149;168mdit files · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp · [1;4m[38;2;0;191;255mr[0m[38;2;135;149;168mequest · [1m[38;2;0;191;255m/[0m[38;2;135;149;168m find · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext-, [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious task[39m [38;2;135;149;168m…[39m
