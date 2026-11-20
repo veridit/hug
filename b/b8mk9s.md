@@ -34,4 +34,12 @@ Promoted from item 3 of task:9taa9d.
 ## Acceptance
 - [ ] memories stored one Markdown file per memory, retire = move to _retired/
 
+## Requests
+- 2026-11-20T13:11 request 1 by jhf:
+  I don't understand the technical consequences of this task. And if we move things to retired, then we should later have a plan to clean it up automatically, right? After some default number of days. And I don't know. So it just says, we're going to do this. It doesn't what do we have today? What are we changing? Why are we making that change? And what are the consequences? This has to be more clear. The purpose is too long.
+
 ## Notes
+
+
+## History
+- 2026-11-20T13:11 request 1 by jhf
