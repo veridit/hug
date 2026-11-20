@@ -3,7 +3,7 @@ id: 8a0ybb
 title: "Detail view: the question first, links that jump, short sections before long"
 state: "doing"
 type: feature
-priority: ""
+priority: "high"
 assignee: ["crab"]
 labels: []
 group: ""
