@@ -1,16 +1,20 @@
 ---
 id: 8a0ybb
 title: "Detail view: the question first, links that jump, short sections before long"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["bug"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzm"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-20T01:15"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -52,3 +56,4 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 - 2026-11-19T12:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-19T12:26 crab read the answer: hug task set 8a0ybb
 - 2026-11-19T12:26 answer 1 acknowledged by crab
+- 2026-11-20T01:15 todo/ready -> doing/active (take)
