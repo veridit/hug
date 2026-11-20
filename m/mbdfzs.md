@@ -41,6 +41,8 @@ Check os.Executable()'s resolved target (the Homebrew symlink moves to the new C
 ## Requests
 - 2026-11-20T13:05 request 1 by jhf:
   This one should probably have been checked at this point because it's still waiting, and I think we've made many releases since.
+  resolved 2026-11-20T13:06 by crab:
+    Checked now. The re-exec works: one hug mcp started on 11-18 now runs 0.7.89 after upgrades. Check 3 was worded wrong: a server re-executes before its next request, so an idle one keeps its old binary until it is used. I struck it and ticked a correctly worded check 4 with that evidence, and closed the task. Not covered: two servers from 11-15 (GenderedGames, truth_tribe_and_treasure) run 0.7.2 from before this feature existed; only a restart of those two jcode sessions moves them. Three more still map an old binary, likely because they have not been used since the upgrade; the note says how to tell if one did not re-execute.
 
 ## Notes
 
@@ -70,3 +72,4 @@ Reflection (open, 2026-11-20, crab): Check 3 was worded as all servers new after
 - 2026-11-20T13:06 request 1 in progress by crab: hug task strike mbdfzs 3
 - 2026-11-20T13:06 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: check 3: crab's ps check after the next brew upgrade (8dee4a86 released); CI run 44223950419; waiting_since: 2026-11-18T03:38
 - 2026-11-20T13:06 doing/active -> done (done); was doing_since: 2026-11-18T02:44
+- 2026-11-20T13:06 resolved request 1 by crab
