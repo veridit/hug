@@ -12,10 +12,14 @@ created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-20T11:23"
 doing_with: "p87ngv"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "crab"
+waiting_until: "2026-11-21"
+waiting_on: "a day of mid-turn recall on (switched 2026-11-20 10:22Z)"
+waiting_since: "2026-11-20T11:23"
 ---
 
 ## Goal
@@ -41,3 +45,4 @@ Switched on 2026-11-20 10:22Z: recall.jcode_midturn true in /Users/jhf/Library/A
 
 ## History
 - 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
+- 2026-11-20T11:23 doing/active -> doing/waiting (wait until 2026-11-21)
