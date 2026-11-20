@@ -43,6 +43,10 @@ Side finding, not fixed here (outside this ticket): first CI on ci/6zhyq2, run 4
 CI green: run 44642751056 on ci/6zhyq2 at 597a0b24d3f0aa50493c2129e21f8700b5219f46 (= branch 6zhyq2 tip, on origin/main 57fce63b). Conclusion success, all 8 jobs success: secrets, bench, test (ubuntu/macos/windows-latest), test-windows-cli (sync), test-windows-cli (rest), test-windows-cli-shards. Superseded run 44638912154 (c7f69d12) had already completed (failure, TestBackgroundSyncOfflineCatchesUp, see side note); nothing to cancel.
 Landed on main 597a0b24 by fast-forward (CI 44642751056 8/8 green on that exact SHA). Reviewed settledWait: fails at 30 s without progress or 3 min in all, so a hang still fails; no retry. Test-only, so it ships with the next user-facing release.
 Reflection (open, 2026-11-20, crab): Nothing misled me; bird's report was grounded and complete.
+landed 3342fe7 on main 2026-11-20: tui: blink tests run v's blink on a synctest clock, no wall-clock waits (6zhyq2)
+landed c7f69d1 on main 2026-11-20: changelog: blink tests on a synctest clock (6zhyq2)
+landed 4ebd782 on main 2026-11-20: cli tests: settled fails a sync pass that stops, not one still running at 30 s…
+landed 597a0b2 on main 2026-11-20: changelog: settled waits on progress (6zhyq2)
 ## History
 - 2026-11-20T00:04 todo -> doing/active (take)
 - 2026-11-20T01:15 doing/active -> done (done); was doing_since: 2026-11-20T00:04
