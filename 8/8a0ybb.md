@@ -10,17 +10,11 @@ group: ""
 rank: "zzzzzzzzzzyv"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "asked"
+stage: "active"
 doing_since: "2026-11-20T01:15"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it)."
-asked_for: "jhf"
-asked_since: "2026-11-20T02:20"
-asked_by: "bug"
-asked_check: "1"
-asked_show: "a-opens-100x30.png"
 ---
 
 ## Goal
@@ -61,6 +55,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
     (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
 - 2026-11-20T02:20 question 2 by bug to jhf (check 1, show a-opens-100x30.png):
   Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it).
+  answered 2026-11-20T11:25 by crab:
+    Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled out in request 1 (2026-11-20 10:24Z). A new mock without it is check 10.
 - 2026-11-20T09:52 question 3 by crab to jhf (check 1):
   Your 08:51Z idea (on hjbfzd) differs from the mock in question 2: the mock opens on a FOR YOU block at the top that lists your questions as links; yours opens the page scrolled to the question where it sits in Acceptance, nothing added on top, with ↑/↓ corner markers showing there is more. Which do you want: scroll-to-question (I will drop FOR YOU from the mock), or the FOR YOU block?
   answered 2026-11-20T11:25 by crab:
@@ -122,3 +118,6 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 - 2026-11-20T11:25 answered asked (question 3, check 1), by crab, for crab (doing/asked -> doing/asked):
   > Your 08:51Z idea (on hjbfzd) differs from the mock in question 2: the mock opens on a FOR YOU block at the top that lists your questions as links; yours opens the page scrolled to the question where it sits in Acceptance, nothing added on top, with ↑/↓ corner markers showing there is more. Which do you want: scroll-to-question (I will drop FOR YOU from the mock), or the FOR YOU block?
   Jørgen answered this in request 1 (2026-11-20 10:24Z): scroll to the question; no FOR YOU block. 'we can always scroll to the question ... wouldn't that be the thing to do'.
+- 2026-11-20T11:25 answered asked (question 2, check 1), by crab, for bug (doing/asked -> doing/active):
+  > Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it).
+  Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled out in request 1 (2026-11-20 10:24Z). A new mock without it is check 10.
