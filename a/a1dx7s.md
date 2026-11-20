@@ -40,6 +40,8 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 ## Requests
 - 2026-11-20T13:08 request 1 by jhf:
   Can you give me a file with an instruction to the other agent in this ticket so I can copy it and give it to that one?
+  resolved 2026-11-20T13:12 by crab:
+    Attached seid-instruction.md: a copyable instruction for the seid-lang agent, four steps (restore parents, fix the 13 too-deep parents, import evidence files, report back here), with what not to do. Every step was tried first on a throwaway copy of seid-lang: 282 parents came back. Goal, Purpose and Principle are shortened.
 - 2026-11-20T13:11 request 2 by jhf:
   And when you do, you can ask me a question to open up and give it to the other agent and I can check it off when it is done, so it happens to come into my queue
 
@@ -61,3 +63,4 @@ file:seid-instruction.md (2100 bytes, sha256:f0f90052) instruction to copy to th
 - 2026-11-20T13:12 request 1 in progress by crab: hug task attach a1dx7s /Users/jhf/.jcode/scratch/a1dx7s/seid-instruction.md
 - 2026-11-20T13:12 request 2 in progress by crab: hug task attach a1dx7s /Users/jhf/.jcode/scratch/a1dx7s/seid-instruction.md
 - 2026-11-20T13:12 todo -> todo/design (ask)
+- 2026-11-20T13:12 resolved request 1 by crab
