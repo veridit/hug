@@ -73,8 +73,10 @@ func TestReleaseClosesShippedTasks(t *testing.T) {
 		t.Fatalf("todo task moved: %s", s.State)
 	}
 	// Nothing silenced: the open task keeps its question (landed-unchecked
-	// ranks first while none of its checks is ticked), the todo and the
-	// refused one keep shipped-not-done, the closed one has none.
+	// ranks first while none of its checks is ticked), the todo keeps
+	// shipped-not-done, the closed one has none. The refused one is in
+	// depends: its open dependency says why, and the release step runs
+	// when it is done (yf39ya check 9).
 	r := execute(t, a, "lint")
 	got := map[string]string{}
 	for _, f := range r["findings"].([]task.Finding) {
@@ -83,7 +85,7 @@ func TestReleaseClosesShippedTasks(t *testing.T) {
 			got[id] = c
 		}
 	}
-	if got[open] == "" || got[todo] != "shipped-not-done" || got[dep] != "shipped-not-done" || got[held] != "" {
+	if got[open] == "" || got[todo] != "shipped-not-done" || got[dep] != "" || got[held] != "" {
 		t.Fatalf("question findings %v (open %s todo %s dep %s held %s)", got, open, todo, dep, held)
 	}
 	// Again: nothing new, nothing written twice.

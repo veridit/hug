@@ -37,7 +37,8 @@ func releaseBoard(t *testing.T) (a *App, person, agent string) {
 // yf39ya check 3: after the release, a shipped task whose only open checks
 // are a person's is asked of that person (check 3 first, one at a time),
 // shows in their ASKED and raises no shipped-not-done; one with an agent's
-// open check keeps its finding. Their tick of check 3 asks check 4; their
+// open check is handed to its owner as active work (yf39ya check 8,
+// TestReleaseHandsAgentCheckToOwner), no finding either. Their tick of check 3 asks check 4; their
 // tick of check 4 closes it, with the release in History. A text answer
 // closes nothing.
 func TestShippedPersonCheckIsAsked(t *testing.T) {
@@ -59,7 +60,7 @@ func TestShippedPersonCheckIsAsked(t *testing.T) {
 			codes[id] = c
 		}
 	}
-	if codes[person] != "" || codes[agent] != "shipped-not-done" {
+	if codes[person] != "" || codes[agent] != "" {
 		t.Fatalf("question findings %v (person %s agent %s)", codes, person, agent)
 	}
 	// A text answer: nothing closes, nothing re-asked.

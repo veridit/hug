@@ -145,7 +145,7 @@ func (m *model) executeAction() tea.Cmd {
 			// The person asked ticking the asked check answered it
 			// (qsqhpe): it goes to the coordinator as a typed answer.
 			if err == nil && r.Answered {
-				did, _ := m.store.AfterAnswer(t.ID, n, m.me())
+				did, _ := m.store.AfterTick(t.ID, n, m.me(), true)
 				m.finish(r, err, action)
 				m.message = "answered " + r.Task.ID + " by ticking check " + strconv.Itoa(n)
 				if did != "" {
@@ -153,6 +153,15 @@ func (m *model) executeAction() tea.Cmd {
 				}
 				m.deliver(r, err, "answer", m.me())
 				return nil
+			}
+			// The owner's tick of the check a release handed on (yf39ya
+			// check 8) asks the next person check or closes the task.
+			if err == nil && r.Changed {
+				if did, _ := m.store.AfterTick(t.ID, n, m.me(), false); did != "" {
+					m.finish(r, err, action)
+					m.message = "checked " + r.Task.ID + " " + strconv.Itoa(n) + "; after the release: " + did
+					return nil
+				}
 			}
 		} else {
 			d, e := m.store.Get(t.ID)

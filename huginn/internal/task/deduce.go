@@ -2,7 +2,6 @@ package task
 
 import (
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -187,19 +186,16 @@ func (s *Store) ApplyDeductions(ds []Deduction) ([]Deduction, error) {
 			return done, e
 		}
 		if tag, ok := strings.CutPrefix(x.Marked, "shipped in "); ok {
-			closed, e := s.closeShipped(x.ID, tag)
+			// Close it, ask the person, or hand the open check to its
+			// owner (yf39ya checks 2, 3 and 8).
+			did, fix, e := s.afterShipped(x.ID, tag)
 			if e != nil {
 				return done, e
 			}
-			x.Closed = closed
-			if closed {
-				x.Marked += ", done (every check holds)"
-				x.Fix = "hug task set " + x.ID + " --state todo"
-			} else if q, ok, e := s.askAfterRelease(x.ID); e != nil {
-				return done, e
-			} else if ok {
-				x.Marked += ", asked " + q.For + " about check " + strconv.Itoa(q.Check)
-				x.Fix = "hug task resume " + x.ID
+			x.Closed = strings.HasPrefix(did, "done")
+			if did != "" {
+				x.Marked += ", " + did
+				x.Fix = fix
 			}
 		}
 		done = append(done, x)

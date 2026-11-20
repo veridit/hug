@@ -78,6 +78,11 @@ func noteQuestion(t Task, notes string) *Finding {
 		// open to a person on a todo task (yf39ya check 7: txjkrm, todo
 		// with jhf's question open since 11-18, stayed shipped-not-done).
 		return nil
+	case shipped != nil && t.State == "doing" && (t.Stage == "depends" || handedOn(notes, newestShipped(notes))):
+		// What holds it says why (yf39ya checks 8 and 9): an open
+		// dependency (0gztsy on kg07bt), or the release handed its open
+		// check to its owner as active work (x8zzzn, ynh84t).
+		return nil
 	case shipped != nil && len(open) > 0:
 		// A fix hug takes (wdkqzx, Jørgen 23:48): done refuses open
 		// checks, so the question is the first open one.

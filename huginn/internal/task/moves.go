@@ -684,6 +684,18 @@ func (s *Store) cascade(id string) ([]string, error) {
 			return touched, e
 		}
 		touched = append(touched, fmt.Sprintf("%s %s", t.ID, d.Task.Stage))
+		// Its dependency held it after a release (yf39ya check 9: 0gztsy
+		// on kg07bt): now that it holds, the release step runs: close,
+		// ask the person, or hand the open check to its owner.
+		if tag := releaseOf(d); tag != "" && t.Stage == "depends" && d.Task.Stage != "depends" {
+			did, _, e := s.afterShipped(t.ID, tag)
+			if e != nil {
+				return touched, e
+			}
+			if did != "" {
+				touched[len(touched)-1] += ", after " + tag + ": " + did
+			}
+		}
 	}
 	return touched, nil
 }
