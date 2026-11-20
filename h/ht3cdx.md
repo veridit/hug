@@ -34,7 +34,7 @@ Jørgen 2026-11-20 10:18Z (request 1, screenshots screen-1117.ans before, screen
 ## Depends on
 
 ## Acceptance
-- [ ] Verify Filter and sort change the view
+- [ ] ~~Verify Filter and sort change the view~~ (not relevant: replaced by checks 2-6, crab, 2026-11-20)
 - [ ] In the overview and on the board, the filter picker's Enter and ': todo' / ': state X' apply the filter and leave the view unchanged (tmux test, fails on main first)
 - [ ] In the overview and on the board, a sort from the s picker leaves the view unchanged (tmux test)
 - [ ] Creating a task with S from the overview opens it over the overview, and Esc returns to the overview with the new task selected (tmux test, fails on main first)
