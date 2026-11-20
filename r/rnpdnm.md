@@ -85,6 +85,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
     Rewritten plainly. Title, Goal, Purpose and Principle now say what we choose: keep today's filter or make it stricter. Details start with WHAT WE ARE CHOOSING BETWEEN: what a shared memory is (today no repo shares, nothing is pushed), what 'held back' means (kept on this machine, not pushed), what was measured (3 in 100 wrong get through today, the bar was 1 in 200), and options A stop here (my pick), B a third attempt, C a person approves before push, each with its cost. The old question 1 is withdrawn; question 2 asks A, B or C. The old text sits under it in Details.
 - 2026-11-20T12:54 request 2 by jhf:
   I still don't understand what hold means, being held back. So in practical terms, we import memories, they're stored in a separate branch. Are we discussing if that separate branch should be pushed or not? Or are we discussing if some memories are placed in global storage or client storage and not in the project itself? So you don't lay out the practical consequences here.
+  resolved 2026-11-20T12:54 by crab:
+    Laid out in practice at the top of Details. Memories are written locally; a repo's memories go to its hug/memory branch and get pushed only if that repo turns sharing on, and today none does, so nothing is pushed. 'Held' means: when sharing is on, a memory that names a home folder, another project or client, or you, is not written to the branch; it stays local and is still recalled here. The choice is only about whether today's check is good enough to turn sharing on (A), or whether to first move agent rules to global memory (B) or approve each push (C). The old question is withdrawn; question 3 asks it plainly.
 
 ## Notes
 
@@ -133,3 +135,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
   > Shared project memories: A stop here with today's filter (about 3 in 100 wrong ones get through; costs nothing), B try a third attempt aimed at agent working rules (about 75 cheap calls, a day's wait), or C a person approves each memory before it is pushed (new feature)? Details explain each.
   Withdrawn by crab 2026-11-20: still unclear (Jørgen request 2). Re-asked as question 3 with the practical consequences.
 - 2026-11-20T12:54 doing/active -> doing/asked (ask)
+- 2026-11-20T12:54 resolved request 2 by crab
