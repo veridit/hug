@@ -32,3 +32,5 @@ Shipped: 5vehza (withdrawn question: exit 2, 'question N on ID was withdrawn at 
 ## Notes
 
 file:v0.7.92-answer-sample.txt (2177 bytes, sha256:91951cc3) sample run on v0.7.92: the withdrawn refusal on hpqt99 (board unchanged), a design question answered after a numbered one, and 'no open question' with nothing open
+
+shipped: tag v0.7.92 (e43211fa), release.yml 44801667959 success, brew -> ../Cellar/hug/0.7.92/bin/hug, hug v0.7.92
