@@ -54,6 +54,8 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
     Superseded by your request 2: the screenshot was taken in a hug tui still running v0.7.88 (its footer reads 'hug v0.7.88 → v0.7.89'), so the file was still drawn on top; after you reloaded, it opened on the question.
 - 2026-11-20T12:57 request 2 by jhf:
   Yes, it does. Except that there's an underscore under the greater than. It looks like I can select it. It isn't a shortcut. It should have been pulsing, just like an underscore. And it worked on this task after I reloaded. Maybe that supersedes the previous request. Thank you.
+  resolved 2026-11-20T12:57 by crab:
+    Check 3 ticked with your words. The underlined > that looks like a key is q3sh69 (high): the > loses its underline and blinks like a cursor, in lists and in a task's page, and is still while you type in a box. It is first in the TUI queue with 24403z.
 
 ## Notes
 
@@ -86,3 +88,4 @@ check 3: Jørgen 2026-11-20 11:57Z (request 2): 'Yes, it does ... it worked on t
 - 2026-11-20T12:57 request 2 by jhf
 - 2026-11-20T12:57 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:57 resolved request 1 by crab
+- 2026-11-20T12:57 resolved request 2 by crab
