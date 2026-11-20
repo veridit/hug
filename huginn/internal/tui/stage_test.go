@@ -101,15 +101,16 @@ func TestRowsShowStage(t *testing.T) {
 		// IN PROGRESS holds one task, so it keeps its columns; WAITING and
 		// NEXT UP share type and priority, said once in the heading
 		// (1bbe96).
-		`aaaaaa   feature high     active    Status colors: rows and sections share one subtle scheme`,
-		`bbbbbb   review    Release, then hug setup in seid-lang`,
-		`cccccc   waiting   Warm cache under 50 ms`,
-		`dddddd   depends   One set of variable names`,
-		`eeeeee   design    Tags listed per board`,
-		`ffffff   ready     Depend on a group or epic`,
-		`gggggg   deferred  Answer a question in place`,
+		// 911j70: ID TITLE STAGE ✓ TYPE PRIORITY OWNER.
+		`aaaaaa   Status colors: rows and sections share one subtle scheme +active    ◑ 1/2 feature high`,
+		`bbbbbb   Release, then hug setup in seid-lang +review `,
+		`cccccc   Warm cache under 50 ms +waiting `,
+		`dddddd   One set of variable names +depends `,
+		`eeeeee   Tags listed per board +design `,
+		`ffffff   Depend on a group or epic +ready `,
+		`gggggg   Answer a question in place +deferred `,
 	} {
-		if !strings.Contains(view, want) {
+		if !regexp.MustCompile(want).MatchString(view) {
 			t.Errorf("overview lacks %q", want)
 		}
 	}
@@ -220,7 +221,7 @@ func TestWaitingOnYou(t *testing.T) {
 	if !strings.Contains(view, "? 1 for you") || !strings.HasPrefix(rows[0], "ASKED · for you  [1]") || strings.Count(section(view, "ASKED"), "feature") != 1 {
 		t.Fatalf("header lacks ? 1 for you, or ASKED is not 'ASKED · for you  [1]' with one row:\n%s", view)
 	}
-	if !strings.Contains(rows[1], "eeeeee   feature high     design    Tags listed per board") || len(marked.FindAllString(view, -1)) != 0 {
+	if !regexp.MustCompile(`eeeeee   Tags listed per board +design +◑ 1/2 feature high`).MatchString(rows[1]) || len(marked.FindAllString(view, -1)) != 0 { // 911j70: order B
 		t.Fatalf("the design question for jhf is not in ASKED, or a row still carries ?:\n%s", view)
 	}
 	if strings.Contains(section(view, "NEXT UP"), "eeeeee") || strings.Contains(section(view, "WAITING"), "eeeeee") {
@@ -234,7 +235,7 @@ func TestWaitingOnYou(t *testing.T) {
 	m.refresh("")
 	view = ansi.Strip(viewAt(m, "overview", 140))
 	rows = strings.Split(section(view, "ASKED"), "\n")
-	if !strings.Contains(view, "? 1 for you") || !strings.Contains(rows[1], "bbbbbb   feature high     review    Release, then hug setup") || len(marked.FindAllString(view, -1)) != 0 {
+	if !strings.Contains(view, "? 1 for you") || !regexp.MustCompile(`bbbbbb   Release, then hug setup in seid-lang +review +◑ 1/2 feature high`).MatchString(rows[1]) || len(marked.FindAllString(view, -1)) != 0 {
 		t.Fatalf("Jørgen's review is not in ASKED, or a row still carries ?:\n%s", view)
 	}
 	focused := focusAt(t, m, 140, "bbbbbb")
@@ -261,7 +262,7 @@ func TestWaitingOnYou(t *testing.T) {
 	m.refresh("")
 	view = ansi.Strip(viewAt(m, "overview", 140))
 	rows = strings.Split(section(view, "ASKED"), "\n")
-	if !strings.Contains(view, "? 1 for you") || !strings.Contains(rows[1], "cccccc   feature high     asked     Warm cache under 50 ms") {
+	if !strings.Contains(view, "? 1 for you") || !regexp.MustCompile(`cccccc   Warm cache under 50 ms +asked +◑ 1/2 feature high`).MatchString(rows[1]) {
 		t.Fatalf("carol's question is not in ASKED:\n%s", view)
 	}
 	if focused := focusAt(t, m, 140, "cccccc"); !regexp.MustCompile(`(?m)^> .*cccccc.*\n\s+└─ asked: approve the look · nautilus\s+since \d\d:\d\d`).MatchString(focused) {

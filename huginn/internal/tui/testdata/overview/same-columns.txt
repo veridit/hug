@@ -1,36 +1,36 @@
 == 80
   ASKED · for you  [0] · None                                                   
 > IN PROGRESS · assigned to  [13] · all active · all feature                    
-> ○ 1    id····   high     Task 1 of the section                ann             
-  ○ 1    id····   low      Task 2 of the section                bob             
-  ○ 1    id····   medium   Task 3 of the section                ann             
-  ○ 1    id····   medium   Task 4 of the section                bob             
-  ○ 1    id····   medium   Task 5 of the section                ann             
-  ○ 1    id····   medium   Task 6 of the section                bob             
-  ○ 1    id····   medium   Task 7 of the section                ann             
-  ○ 1    id····   medium   Task 8 of the section                bob             
-  ○ 1    id····   medium   Task 9 of the section                ann             
-  ○ 1    id····   medium   Task 10 of the section               bob             
-  ○ 1    id····   medium   Task 11 of the section               ann             
-  ○ 1    id····   medium   Task 12 of the section               bob             
-  ○ 1    id····   medium   Task 13 of the section               ann             
+>  id····   Task 1 of the section              ○ 1   high       ann             
+   id····   Task 2 of the section              ○ 1   low        bob             
+   id····   Task 3 of the section              ○ 1   medium     ann             
+   id····   Task 4 of the section              ○ 1   medium     bob             
+   id····   Task 5 of the section              ○ 1   medium     ann             
+   id····   Task 6 of the section              ○ 1   medium     bob             
+   id····   Task 7 of the section              ○ 1   medium     ann             
+   id····   Task 8 of the section              ○ 1   medium     bob             
+   id····   Task 9 of the section              ○ 1   medium     ann             
+   id····   Task 10 of the section             ○ 1   medium     bob             
+   id····   Task 11 of the section             ○ 1   medium     ann             
+   id····   Task 12 of the section             ○ 1   medium     bob             
+   id····   Task 13 of the section             ○ 1   medium     ann             
                                                                                 
   WAITING  [0] · None                                                           
 == 140
   ASKED · for you  [0] · None                                                                                                               
 > IN PROGRESS · assigned to  [13] · all active · all feature                                                                                
-> ○ 1    id····   high     Task 1 of the section                                                                            ann             
-  ○ 1    id····   low      Task 2 of the section                                                                            bob             
-  ○ 1    id····   medium   Task 3 of the section                                                                            ann             
-  ○ 1    id····   medium   Task 4 of the section                                                                            bob             
-  ○ 1    id····   medium   Task 5 of the section                                                                            ann             
-  ○ 1    id····   medium   Task 6 of the section                                                                            bob             
-  ○ 1    id····   medium   Task 7 of the section                                                                            ann             
-  ○ 1    id····   medium   Task 8 of the section                                                                            bob             
-  ○ 1    id····   medium   Task 9 of the section                                                                            ann             
-  ○ 1    id····   medium   Task 10 of the section                                                                           bob             
-  ○ 1    id····   medium   Task 11 of the section                                                                           ann             
-  ○ 1    id····   medium   Task 12 of the section                                                                           bob             
-  ○ 1    id····   medium   Task 13 of the section                                                                           ann             
+>  id····   Task 1 of the section                                                                          ○ 1   high       ann             
+   id····   Task 2 of the section                                                                          ○ 1   low        bob             
+   id····   Task 3 of the section                                                                          ○ 1   medium     ann             
+   id····   Task 4 of the section                                                                          ○ 1   medium     bob             
+   id····   Task 5 of the section                                                                          ○ 1   medium     ann             
+   id····   Task 6 of the section                                                                          ○ 1   medium     bob             
+   id····   Task 7 of the section                                                                          ○ 1   medium     ann             
+   id····   Task 8 of the section                                                                          ○ 1   medium     bob             
+   id····   Task 9 of the section                                                                          ○ 1   medium     ann             
+   id····   Task 10 of the section                                                                         ○ 1   medium     bob             
+   id····   Task 11 of the section                                                                         ○ 1   medium     ann             
+   id····   Task 12 of the section                                                                         ○ 1   medium     bob             
+   id····   Task 13 of the section                                                                         ○ 1   medium     ann             
                                                                                                                                             
   WAITING  [0] · None                                                                                                                       

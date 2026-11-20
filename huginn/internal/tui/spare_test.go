@@ -39,7 +39,7 @@ func spareBoard(t *testing.T, doing, todo int) model {
 	return m
 }
 
-var taskID = regexp.MustCompile(`(?m)^([>↑↓ ] (?:[○◔◑◕●] \d+(?:/\d+)? +)?)[0-9a-z]{6}\b`)
+var taskID = regexp.MustCompile(`(?m)^([>↑↓ ] [ ·!])[0-9a-z]{6}\b`) // the id leads the row (911j70)
 
 // rowBudget is the overview's lines for rows: the body less a title and
 // a blank per section with rows, a title alone per empty one (41hhgn).

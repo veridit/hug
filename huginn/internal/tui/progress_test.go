@@ -66,8 +66,8 @@ func TestProgressColours(t *testing.T) {
 }
 
 // d8yx7y check 1 at model level (the goldens show it on screen): each row
-// of a task with checks has its glyph and N/M right before the id, in
-// overview, list and board.
+// of a task with checks has its glyph and N/M in its ✓ cell, after the
+// title and the stage (911j70, order B), in overview, list and board.
 func TestRowsShowProgress(t *testing.T) {
 	m := manyModel(t)
 	m.width, m.height = 140, 40
@@ -80,10 +80,17 @@ func TestRowsShowProgress(t *testing.T) {
 			if progressText(tk) == "" || !strings.Contains(text, tk.ID) {
 				continue
 			}
-			// The lint mark's cell stands between the pie and the id (e3sevr).
-			cell := fit(progressText(tk), m.progressWidth()-1) + " " + m.lintMark(tk.Path) + tk.ID
-			if !strings.Contains(text, cell) {
-				t.Fatalf("%s: %q not on screen:\n%s", view, cell, text)
+			// The lint mark's cell stands right before the id (e3sevr);
+			// the pie later on the same row (911j70).
+			row := ""
+			for _, line := range strings.Split(text, "\n") {
+				if strings.Contains(line, m.lintMark(tk.Path)+tk.ID) {
+					row = line[strings.Index(line, m.lintMark(tk.Path)+tk.ID):]
+					break
+				}
+			}
+			if cell := progressText(tk); !strings.Contains(row, " "+cell+" ") {
+				t.Fatalf("%s: %q not on %s's row:\n%s", view, cell, tk.ID, text)
 			}
 			seen++
 		}

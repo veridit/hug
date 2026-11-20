@@ -272,13 +272,10 @@ func (m model) headText(r, p, width int, selected bool) string {
 	}
 	pointer := " "
 	if selected {
-		pointer = ">"
+		pointer = m.styles.rowCursor.Render(">") // the cursor's sign, no bar (911j70)
 	}
 	count := fmt.Sprintf("  [%d]", h.count)
 	label := ansi.Truncate(oneLine(m.headLabel(h.value)), max(0, width-2-2-len(count)), "…")
-	if selected {
-		return m.styles.selected.Render(fit(pointer+" "+arrow+" "+label+count, width))
-	}
 	return fit(pointer+" "+m.styles.dim.Render(arrow)+" "+m.styles.normal.Bold(true).Render(label)+m.styles.dim.Render(count), width)
 }
 

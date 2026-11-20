@@ -1,9 +1,9 @@
 HUG · repo · list   2/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint                                                       │ todo 2 · doing 0 · depends 0 · done 0 · dropped 0
 filter: [state:todo ×] [type:feature ×] [/ task] ⌫ last · F clear · sort: rank
-  ✓      ID       TAGS              TITLE                                                           · all ready · all feature · all critical
-> ○ 2   ·000041   terminal runtime  runtime Feature task 41: make the terminal workflow observable
-  ○ 2   ·000001   terminal compiler compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title that …
+   ID       TITLE                                                                            ✓      · all ready · all feature · all critical
+> ·000041   terminal runtime · runtime Feature task 41: make the terminal workflow observable                                         ○ 2
+  ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long title th… ○ 2
 Rows 1–2 of 2 · ! lint finding · ↳ epic · depends = a dependency is not done
 
 

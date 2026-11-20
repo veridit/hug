@@ -172,7 +172,6 @@ type model struct {
 	visibleGen      int               // bumped on every write of visible (46ek1f)
 	panes           *paneMemo         // paneIndices by visibleGen and view (46ek1f)
 	progressCols    int               // progressWidth, per load (46ek1f)
-	tagCols         int               // tagWidth, per load (txjkrm)
 	epics           map[string]bool   // lowercase ids of tasks with children
 	epicOf          map[string]string // task path -> its epic's id, per load (kx2ndm)
 	epicTitle       map[string]string // lowercase epic id -> its title (kx2ndm)
@@ -752,7 +751,6 @@ func (m *model) apply(sn snapshot, path string) {
 	}
 	m.computeStages()
 	m.progressCols = progressWidthOf(ts)
-	m.tagCols = m.tagWidthOf(ts) // after tagOrder: the listed order is the row's (txjkrm)
 	for _, f := range m.findings {
 		m.linted[f.Path] = true
 		if f.Severity() == task.Broken {

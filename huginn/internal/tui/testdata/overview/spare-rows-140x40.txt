@@ -1,34 +1,34 @@
   ASKED · for you  [0] · None                                                                                                               
 > IN PROGRESS · assigned to  [2] · all active · all feature · all ann                                                                       
-> ○ 1    ######            Task 01                                                                                                          
-  ○ 1    ######            Task 02                                                                                                          
+>  ######   Task 01                                                                                                          ○ 1            
+   ######   Task 02                                                                                                          ○ 1            
 
   WAITING  [0] · None                                                                                                                       
   NEXT UP · rank order  [32] · 1–24 shown · all ready · all feature                                                                         
-  ○ 1    ######            Task 03                                                                                                          
-  ○ 1    ######            Task 04                                                                                                          
-  ○ 1    ######            Task 05                                                                                                          
-  ○ 1    ######            Task 06                                                                                                          
-  ○ 1    ######            Task 07                                                                                                          
-  ○ 1    ######            Task 08                                                                                                          
-  ○ 1    ######            Task 09                                                                                                          
-  ○ 1    ######            Task 10                                                                                                          
-  ○ 1    ######            Task 11                                                                                                          
-  ○ 1    ######            Task 12                                                                                                          
-  ○ 1    ######            Task 13                                                                                                          
-  ○ 1    ######            Task 14                                                                                                          
-  ○ 1    ######            Task 15                                                                                                          
-  ○ 1    ######            Task 16                                                                                                          
-  ○ 1    ######            Task 17                                                                                                          
-  ○ 1    ######            Task 18                                                                                                          
-  ○ 1    ######            Task 19                                                                                                          
-  ○ 1    ######            Task 20                                                                                                          
-  ○ 1    ######            Task 21                                                                                                          
-  ○ 1    ######            Task 22                                                                                                          
-  ○ 1    ######            Task 23                                                                                                          
-  ○ 1    ######            Task 24                                                                                                          
-  ○ 1    ######            Task 25                                                                                                          
-↓ ○ 1    ######            Task 26                                                                                                          
+   ######   Task 03                                                                                                          ○ 1            
+   ######   Task 04                                                                                                          ○ 1            
+   ######   Task 05                                                                                                          ○ 1            
+   ######   Task 06                                                                                                          ○ 1            
+   ######   Task 07                                                                                                          ○ 1            
+   ######   Task 08                                                                                                          ○ 1            
+   ######   Task 09                                                                                                          ○ 1            
+   ######   Task 10                                                                                                          ○ 1            
+   ######   Task 11                                                                                                          ○ 1            
+   ######   Task 12                                                                                                          ○ 1            
+   ######   Task 13                                                                                                          ○ 1            
+   ######   Task 14                                                                                                          ○ 1            
+   ######   Task 15                                                                                                          ○ 1            
+   ######   Task 16                                                                                                          ○ 1            
+   ######   Task 17                                                                                                          ○ 1            
+   ######   Task 18                                                                                                          ○ 1            
+   ######   Task 19                                                                                                          ○ 1            
+   ######   Task 20                                                                                                          ○ 1            
+   ######   Task 21                                                                                                          ○ 1            
+   ######   Task 22                                                                                                          ○ 1            
+   ######   Task 23                                                                                                          ○ 1            
+   ######   Task 24                                                                                                          ○ 1            
+   ######   Task 25                                                                                                          ○ 1            
+↓  ######   Task 26                                                                                                          ○ 1            
 
   RECENTLY DONE · last closed  [0] · None                                                                                                   
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          

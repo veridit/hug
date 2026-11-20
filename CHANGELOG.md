@@ -6,6 +6,14 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- hug tui lists read as a calm spreadsheet (911j70): columns ID TITLE
+  STAGE ✓ TYPE PRIORITY OWNER in overview, list and board. Tags are a dim
+  prefix of the title (`design · Design: imported data pass`), not a
+  column. No row bar and no column band: the cursor row's id and the
+  marked column's heading take the one selection tint, and a `>` stands
+  before the current cell, with no underline (underline stays the view
+  line's mark of the active view).
+
 ## v0.7.89 - 2026-11-20
 
 - hug tui opens a task that asks you something on the question itself

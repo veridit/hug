@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 
@@ -60,7 +61,7 @@ func TestBoardRowsAreCompactWithLegend(t *testing.T) {
 	m.setView("board")
 	text := ansi.Strip(m.boardText())
 	ts, _ := s.Tasks()
-	if !strings.Contains(text, ts[0].ID+"   S H A reasonably") {
+	if !regexp.MustCompile(ts[0].ID + `   A reasonably l… ○ 1   S H`).MatchString(text) { // 911j70: ID TITLE ✓ T P
 		t.Fatalf("row not compact:\n%s", text)
 	}
 	if !strings.Contains(text, "S spike") || !strings.Contains(text, "H high") {

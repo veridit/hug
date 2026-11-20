@@ -158,7 +158,7 @@ func TestSortCIsTheMarkedColumn(t *testing.T) {
 	if got := press(m, "s", "c"); got.prompt != "sort" || !strings.Contains(got.message, "mark one with H/L") {
 		t.Fatalf("sc with no column: prompt %q message %q", got.prompt, got.message)
 	}
-	m = press(m, "L", "L", "L") // id, type, priority
+	m = press(m, "L", "L", "L") // id, title, stage (911j70)
 	col, ok := m.currentColumn()
 	if !ok {
 		t.Fatal("H/L marked no column")

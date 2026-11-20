@@ -217,7 +217,7 @@ func TestEmptyFocusedSectionHasNoColumnHeader(t *testing.T) {
 	m.setView("overview")
 	m.column = 3 // a marked column draws the focused section's header
 	m.pane = sectionWaiting
-	header := regexp.MustCompile(`(?m)^\s+✓\s+ID\s`)
+	header := regexp.MustCompile(`(?m)^\s+ID\s+TITLE\s`) // 911j70: the id leads
 	if screen := ansi.Strip(m.View()); !header.MatchString(screen) {
 		t.Fatalf("WAITING has rows and a marked column, yet no header:\n%s", screen)
 	}

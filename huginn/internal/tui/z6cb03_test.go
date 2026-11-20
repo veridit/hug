@@ -55,7 +55,7 @@ func lintBoard(t *testing.T, advice int) (model, task.Task) {
 
 // lintRowID is a row's id after its progress and lint mark: random per
 // run, so the golden holds ###### in its place.
-var lintRowID = regexp.MustCompile(`(?m)^([>↑↓ ] [○◔◑◕●] \d+(?:/\d+)? +[·!]?)[0-9a-z]{6}\b`)
+var lintRowID = regexp.MustCompile(`(?m)^([>↑↓ ] [·!])[0-9a-z]{6}\b`) // the id leads the row (911j70)
 
 // z6cb03 check 1: 30 advice findings and 1 broken: the broken row is the
 // first in LINT at 100x30, focused or not (golden).

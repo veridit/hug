@@ -1,0 +1,138 @@
+== list
+HUG · list   5/5 tasks · ! 0 broken · 10 advice                                                                                                                 
+view: overview  list  board  !lint                                                                           │ todo 4 · doing 0 · depends 1 · done 0 · dropped 0
+filter: none · sort: rank                                                                                                                                       
+   ID       TITLE                                                                                                              STAGE     ✓     TYPE    PRIORITY 
+> ·eeeeee   Bare                                                                                                               ready     ○ 1   chore   low      
+  ·aaaaaa   parser · Lex the input                                                                                             ready     ○ 1   bug     high     
+  ·bbbbbb   parser compiler · Both areas                                                                                       ready     ○ 1   feature high     
+  ·cccccc   compiler codegen runt… · Long tags                                                                                 ready     ○ 1   feature medium   
+  ·dddddd   zzz · Odd one                                                                                                      depends   ○ 1   feature high     
+Rows 1–5 of 5 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                                    
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+All tasks · : filters and commands                                                                                                                              
+                                                                                                                                                                
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                   
+== overview
+HUG · overview   5/5 tasks · ! 0 broken · 10 advice                                                                                                             
+view: overview  list  board  !lint                                                                           │ todo 4 · doing 0 · depends 1 · done 0 · dropped 0
+filter: none · sort: rank                                                                                                                                       
+  ASKED · for you  [0] · None                                                                                                                                   
+  IN PROGRESS · assigned to  [0] · None                                                                                                                         
+  WAITING  [0] · None                                                                                                                                           
+> NEXT UP · rank order  [5]                                                                                                                                     
+> ·eeeeee   Bare                                                                                                               ready     ○ 1   chore   low      
+  ·aaaaaa   parser · Lex the input                                                                                             ready     ○ 1   bug     high     
+  ·bbbbbb   parser compiler · Both areas                                                                                       ready     ○ 1   feature high     
+  ·cccccc   compiler codegen runt… · Long tags                                                                                 ready     ○ 1   feature medium   
+  ·dddddd   zzz · Odd one                                                                                                      depends   ○ 1   feature high     
+                                                                                                                                                                
+  RECENTLY DONE · last closed  [0] · None                                                                                                                       
+  LINT · tasks needing attention  [5] · 0 broken · 10 advice                                                                                                    
+  ·eeeeee   Bare                                                                                                               ready     ○ 1   chore   low      
+  ·aaaaaa   parser · Lex the input                                                                                             ready     ○ 1   bug     high     
+  ·bbbbbb   parser compiler · Both areas                                                                                       ready     ○ 1   feature high     
+  ·cccccc   compiler codegen runt… · Long tags                                                                                 ready     ○ 1   feature medium   
+  ·dddddd   zzz · Odd one                                                                                                      depends   ○ 1   feature high     
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                                    
+                                                                                                                                                                
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                   
+== board
+HUG · board   5/5 tasks · ! 0 broken · 10 advice                                                                                                                
+view: overview  list  board  !lint                                                                           │ todo 4 · doing 0 · depends 1 · done 0 · dropped 0
+filter: none · sort: rank                                                                                                                                       
+> TODO [4]                                DOING [0] · None                        DEPENDS [1]                             DONE [0] · None                       
+   ID       TITLE           ✓     T P                                              ID       TITLE           ✓     T P                                           
+> ·eeeeee   Bare            ○ 1   C L                                             ·dddddd   Odd one         ○ 1   F H                                           
+  ·aaaaaa   Lex the input   ○ 1   B H                                                                                                                           
+  ·bbbbbb   Both areas      ○ 1   F H                                                                                                                           
+  ·cccccc   Long tags       ○ 1   F M                                                                                                                           
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low                                                                       
+Columns 1–4 of 5 · h/l reveals other columns                                                                                                                    
+All tasks · : filters and commands                                                                                                                              
+                                                                                                                                                                
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                   

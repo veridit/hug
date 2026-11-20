@@ -1,8 +1,8 @@
 HUG · list   1/2 tasks · ! 0 broken                                                                                     
 view: overview  list  board  !lint                                   │ todo 1 · doing 0 · depends 0 · done 0 · dropped 0
 filter: [/ statbus-402] ⌫ last · F clear · sort: rank                                                                   
-  ✓      ID       TYPE    PRIORITY STAGE     TITLE                                                                      
-> ○ 1    ######   feature          ready     Statbus import · STATBUS-402                                               
+   ID       TITLE                                                                      STAGE     ✓     TYPE    PRIORITY 
+>  ######   Statbus import · STATBUS-402                                               ready     ○ 1   feature          
 Rows 1–1 of 1 · ! lint finding · ↳ epic · depends = a dependency is not done                                            
                                                                                                                         
                                                                                                                         

@@ -528,8 +528,10 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 		}
 	}
 	m.setView("overview")
-	if header := strings.Split(m.overviewText(), "\n")[m.pane]; !strings.Contains(header, "48;2;") { // under ASKED's one empty line
-		t.Fatal("selected overview pane lacks a background highlight", header)
+	// The focused section's title says so with its > and its bold
+	// colour, never a background bar (911j70: one tint, on the row header).
+	if header := strings.Split(m.overviewText(), "\n")[m.pane]; strings.Contains(header, "48;2;") || !strings.HasPrefix(ansi.Strip(header), "> ") {
+		t.Fatal("selected overview pane has a background bar, or no >", header)
 	}
 	darkAccent := m.styles.accent.Render("badge")
 	m.styles.renderer.SetHasDarkBackground(false)
