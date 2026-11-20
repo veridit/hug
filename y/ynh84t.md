@@ -19,7 +19,7 @@ worktree: "/Users/jhf/.jcode/scratch/ynh84t"
 ---
 
 ## Goal
-Hooks and MCP entries that hug writes into users' harness configs run and name hug: hug mem install writes 'hug mem hook claude|codex|jcode' (not '<path>/muninn hook ...'), hug task install names its jcode MCP entry hug (not huginn), and hug upgrade --apply --machine moves existing configs over with a preview.
+Hooks and MCP entries hug writes into harness configs run and name hug, and hug upgrade moves existing ones over.
 
 ## Purpose
 p277bp check 2 (crab 22:19): users type only hug, but a user who opens ~/.claude/settings.json, ~/.codex/hooks.json, a jcode config or mcp.json sees muninn and huginn, written by hug itself. Found in the p277bp check 2 sweep.
@@ -28,6 +28,8 @@ p277bp check 2 (crab 22:19): users type only hug, but a user who opens ~/.claude
 Behaviour that edits users' configs needs an upgrade path: preview first, --apply --machine moves them, backups kept, old commands keep working as compatibility links. No alias added; nothing is changed without the upgrade preview.
 
 ## Relevant details
+Hooks and MCP entries that hug writes into users' harness configs run and name hug: hug mem install writes 'hug mem hook claude|codex|jcode' (not '<path>/muninn hook ...'), hug task install names its jcode MCP entry hug (not huginn), and hug upgrade --apply --machine moves existing configs over with a preview.
+
 muninn/run/surfaces.go:105 selfPath: 'writing .../hug into a hook would run hug hook jcode, which hug does not know' (so hook commands are <dir>/muninn hook X). muninn/internal/harness/install.go:149-185 InstallClaude/Codex/Jcode use bin+' hook claude|codex|jcode'. huginn/internal/cli/install.go:67 'MCP config runs huginn mcp (task tools only), not hug mcp'; hug task help install: 'Adds huginn -> hug task mcp to Jcode mcp.json'. huginn/internal/cli/upgrade_env.go ours()/renameJSON/renameTOML already recognise hug|muninn|huginn commands, a place to hang the move. Evidence: /Users/jhf/.jcode/scratch/p277bp-check2.md.
 
 ## Depends on
