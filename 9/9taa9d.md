@@ -39,6 +39,8 @@ Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 task
   I think the principle here is that we always are consistent. So when we decide that, okay, we're going to go into make hug the thing, we have to run a clean cone chip and do everything, and so that is the principle. And the goal is a unified, easy-to-navigate, non-confusing CLI and system
   resolved 2026-11-18T12:20 by crab:
     Principle set to: consistency through a clean sweep, everything changes at once, no mix of old and new names. Goal now leads with 'a unified, easy-to-navigate, non-confusing CLI and system', then the concrete one-binary layout. Read 'clean cone chip' as 'clean sweep'; correct me if you meant something else.
+- 2026-11-20T13:08 request 2 by jhf:
+  This one could probably go pretty soon. It's just cleanup work, doesn't require anything from me, right?
 
 ## Notes
 
@@ -55,3 +57,4 @@ crab 17:29 local, from bonehound: the move to hug/memory is already on main (c16
 ## History
 - 2026-11-18T12:00 request 1 by jhf
 - 2026-11-18T12:20 resolved request 1 by crab
+- 2026-11-20T13:08 request 2 by jhf
