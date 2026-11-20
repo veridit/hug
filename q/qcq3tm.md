@@ -4,7 +4,7 @@ title: "Opening an asked task scrolls to its question; nothing inlined on top"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["cricket"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzq"
@@ -68,3 +68,4 @@ crab 2026-11-20 10:54Z: reviewed (actions.go answerKey focusOn+revealAnswerBox; 
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
 - 2026-11-20T11:54 doing/active -> doing/asked (ask)
+- 2026-11-20T12:55 handed to crab: cricket's session ended (closed 2026-11-20 11:55)
