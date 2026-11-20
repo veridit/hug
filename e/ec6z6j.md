@@ -15,6 +15,7 @@ branch: "ykta5g"
 worktree: "/Users/jhf/.jcode/scratch/ykta5g"
 done_at: "2026-11-20T18:22"
 done_release: "v0.7.91"
+parent: "kka3b1"
 ---
 
 ## Goal
