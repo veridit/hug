@@ -94,6 +94,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
   I don't know what the local store is, you have to be concrete. So what are the stores? Where are they physically and how would this work? How like short, succinct, grounded.
   resolved 2026-11-20T12:59 by crab:
     Details now start with WHERE MEMORIES ARE, PHYSICALLY: (1) one database on your Mac, ~/Library/Application Support/muninn/muninn.db, holding every memory, never leaving the machine; (2) only for a repo that shares: memories.jsonl on that repo's hug/memory branch (checked out at .hug/memory/), copied from the database and pushed by hug mem sync; (3) sharing is off everywhere today; hug's own branch holds 827 old lines, unchanged since 11-18. 'Local store' now reads as the database file, and 'held' as: stays only in that file, not copied to the branch.
+- 2026-11-20T13:30 request 5 by jhf:
+  What does it mean to put agent rules into memory? And why do we have something called noon in still? Shouldn't we rename everything consistently to be hug memory? And now I understand. So we have some memories that live in our local database and we have some memories that live in the branch that is shared. And the split is what is local database only memories and what is project memories shared in a branch. And that's what we're discussing. Finally, it became clear to me. And as such, I don't understand clearly what I can choose between yet. Try to improve it yet again and make it even more clear, concretely, what we're choosing between.
 
 ## Notes
 
@@ -153,3 +155,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T12:59 request 4 acknowledged by crab
 - 2026-11-20T12:59 request 4 in progress by crab: hug task set rnpdnm
 - 2026-11-20T12:59 resolved request 4 by crab
+- 2026-11-20T13:30 request 5 by jhf
