@@ -38,7 +38,7 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 ## Acceptance
 - [x] The ACCEPTANCE heading has no background colour and the same weight as the other detail section headings (golden + style assertion).
 - [x] The focused asked check renders with no background fill and no bold; the cursor alone marks it (test asserts the SGR codes on that row).
-- [ ] Jørgen opens a task asked of him and says it is calm and the cursor is where his answer goes.
+- [ ] ~~Jørgen opens a task asked of him and says it is calm and the cursor is where his answer goes.~~ (not relevant: replaced by check 6: Jørgen saw the static underlined > and asked for a pulsing one (request 1, 2026-11-20), crab, 2026-11-20)
 - [ ] The focused row's > has no underline and blinks or pulses in the accent at 530 ms; with the answer box open the > is still and only the box cursor moves (test on the SGR codes per tick, golden)
 - [ ] In a task's page, > and End go to the bottom and < and Home to the top, also while a check is focused (tmux test)
 - [ ] Jørgen opens a task asked of him and the pulsing > draws his eye to the question
