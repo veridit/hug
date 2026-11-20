@@ -43,7 +43,7 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 - [x] s opens the task list in pick mode; Enter on a row attaches the capture to that task and returns (key test)
 - [x] c asks for a title, creates the task with the capture attached, and opens it (key test; the new task has the file in Files)
 - [x] Golden of the prompt at 80 and 140 columns
-- [ ] Jørgen confirms on his board after release
+- [x] Jørgen confirms on his board after release
 - [ ] The prompt reads 'Screen capture: attach to ID · select · create' (s and c underlined), the offered task's title on the keys line; after c 'Screen capture: new task, title:'; after s 'Screen capture: select the task' (golden at 80 and 140, per capture-wording.md once Jørgen approves)
 
 ## Questions
@@ -57,6 +57,8 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
   Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? Today vs proposed, in the real theme: capture-wording-100x30.ans in Files (Space shows it); all three steps are in capture-wording.md.
 - 2026-11-20T09:51 question 4 by crab to jhf (check 5):
   The capture prompt shipped in v0.7.70: on your board, does S then attach, select or create work for you (the wording itself is question 2)?
+  answered 2026-11-20T11:35 by jhf:
+    answered by ticking check 5
 
 ## Requests
 - 2026-11-20T09:43 request 1 by jhf:
@@ -102,3 +104,6 @@ file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 - 2026-11-20T09:52 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T09:52 request 2 acknowledged by crab
 - 2026-11-20T09:53 resolved request 2 by crab
+- 2026-11-20T11:35 answered asked (question 4, check 5), by jhf, for crab (doing/asked -> doing/asked):
+  > The capture prompt shipped in v0.7.70: on your board, does S then attach, select or create work for you (the wording itself is question 2)?
+  answered by ticking check 5
