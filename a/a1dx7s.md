@@ -63,6 +63,7 @@ check 1: crab 2026-11-20 12:47Z: seid-lang hug task ls --json: 282 tasks with a 
 crab 12:47Z: step 2 in progress: parent-too-deep still shows findings (was 13 on the copy); step 3 not run (setup: 4738 evidence files to copy); coordinator and AGENTS.md steps (B, C) not done yet.
 check 2: crab 2026-11-20 13:48Z: in seid-lang, hug task lint --code parent-too-deep prints 0 broken findings (13 on the test copy before the fixes). Also: seid's coordinator is now orangutan (hug task setup '[x] coordinator').
 crab 13:48Z: still open on seid: evidence import (setup: 4738 files to copy) and AGENTS.md update.
+crab 2026-11-20 15:57Z: orangutan's NO on step 3 is right. Verified read-only: 4,741 files in .backlog/evidence and 4,741 already under .hug/tasks/*/ID/backlog-evidence/ (1,814 commits, 2026-11-16 22:14). Check 3 struck; the miscount is hug's bug h8ymea. Left on seid: the AGENTS.md update (step C).
 ## History
 - 2026-11-20T13:08 request 1 by jhf
 - 2026-11-20T13:08 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
