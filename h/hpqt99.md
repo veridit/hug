@@ -104,6 +104,7 @@ Design pushed: 9c8fb6a1 on hpqt99 + ci/hpqt99 (docs/DESIGN.md, 'Imported data').
 Amended before answer (crab review): 1B now keeps a scope the source states (engram personal stays personal/global, never narrowed by directory); directory placement only when the source states no place (engram project, jcode project files). 2kb574 is NOT a leak: Jørgen's writing rule ('lead with the positive'), engram personal, injected into 6 sessions, stays global. Counts of the 1,526 client-root engram rows: 1,525 project (all already in client scope: ssb 903, frogs 341, brovs 282; 1B-amended leaves them), 1 personal (2kb574; 1B-amended keeps global). All engram: 11 personal, 3,692 project. Commit: see hpqt99 branch head.
 file:design.md (7506 bytes, sha256:2480b561)
 file:screen-1140.ans (53232 bytes, sha256:7c1b06a7) screen capture from hug tui
+file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tui
 ## History
 - 2026-11-18T23:18 todo -> doing/active (take)
 - 2026-11-18T23:30 doing/active -> doing/asked (ask)
