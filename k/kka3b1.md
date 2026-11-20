@@ -32,3 +32,5 @@ Shipped: ec6z6j checks 4 and 5 (d3b79155, CI 44780705119 8/8). Try it: brew upgr
 ## Notes
 
 file:before-lint-3marked-marked.ans (5739 bytes, sha256:231e255d) before (v0.7.90): 3 rows marked, no request in the footer
+
+file:after-lint-3marked-marked.ans (5796 bytes, sha256:41c28c0b) after: footer offers request
