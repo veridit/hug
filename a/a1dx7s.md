@@ -62,6 +62,7 @@ crab 2026-11-20 12:26Z: Jørgen ticked check 4 (handed the file over). seid-lang
 check 1: crab 2026-11-20 12:47Z: seid-lang hug task ls --json: 282 tasks with a parent (was 0 at 12:26Z); hug task setup: 'import backlog-md: 0 to add, 0 to update, 2494 in sync', remembered 12:37:54Z.
 crab 12:47Z: step 2 in progress: parent-too-deep still shows findings (was 13 on the copy); step 3 not run (setup: 4738 evidence files to copy); coordinator and AGENTS.md steps (B, C) not done yet.
 check 2: crab 2026-11-20 13:48Z: in seid-lang, hug task lint --code parent-too-deep prints 0 broken findings (13 on the test copy before the fixes). Also: seid's coordinator is now orangutan (hug task setup '[x] coordinator').
+crab 13:48Z: still open on seid: evidence import (setup: 4738 files to copy) and AGENTS.md update.
 ## History
 - 2026-11-20T13:08 request 1 by jhf
 - 2026-11-20T13:08 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
