@@ -10,11 +10,17 @@ group: ""
 rank: "zzzzzzzzzzzm"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
+stage: "asked"
 doing_since: "2026-11-20T01:15"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it)."
+asked_for: "jhf"
+asked_since: "2026-11-20T02:20"
+asked_by: "bug"
+asked_check: "1"
+asked_show: "a-opens-100x30.png"
 ---
 
 ## Goal
@@ -44,6 +50,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
   Should the Goal stay as long as today, or be cut to one or two sentences with the rest moved to Details?
   answered 2026-11-19T12:26 by jhf:
     (console 11:26Z) Yes, the Goal should be shorter, not long. It is wrong today: AI tends to bloat, and that loses focus. We have to fight for focus.
+- 2026-11-20T02:20 question 2 by bug to jhf (check 1, show a-opens-100x30.png):
+  Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it).
 
 ## Notes
 
@@ -77,3 +85,4 @@ file:c-notes-open-160x45.png (148629 bytes, sha256:2f20fecc) mock (c) Enter on N
 - 2026-11-19T12:26 crab read the answer: hug task set 8a0ybb
 - 2026-11-19T12:26 answer 1 acknowledged by crab
 - 2026-11-20T01:15 todo/ready -> doing/active (take)
+- 2026-11-20T02:20 doing/active -> doing/asked (ask)
