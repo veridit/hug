@@ -48,6 +48,10 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 - 2026-11-20T09:26 question 1 by crab to jhf (check 4):
   Answer a question in hug tui: does the answer box appear at once, and do the box and its cursor read clearly?
 
+## Requests
+- 2026-11-20T11:32 request 1 by jhf:
+  Yes, it does show, but then I suddenly realized two things. One, I think there should be a small arrow pointing up on the long line on the left part of the below the subject. And two, I think there should be a line on the bottom of the screen where the ticket ends. And I think there it should be an arrow as well pointing down on that line. And that line should separate from what is below. And I think that line actually should be the one line that starts with an arrow down, a piece of line, and then any inline status for this thing I'm in now. And then the next line is the global line. Because right now you can see that there is this extra space. I think this whole line makes sense there to separate from the global part, the global footer. This will be in addition to other things I specified before
+
 ## Notes
 
 
@@ -66,3 +70,4 @@ file:screen-1130.ans (21282 bytes, sha256:af44cf4b) screen capture from hug tui
 - 2026-11-18T14:15 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)
 - 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: macaque; waiting_on: crab review; check 3 with puppy's grid, check 4 Jørgen; waiting_since: 2026-11-18T14:15
+- 2026-11-20T11:32 request 1 by jhf
