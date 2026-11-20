@@ -92,6 +92,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
     Thanks, noted where it belongs: the missing up/down arrows are 4ddcwa (↑ on the rule under the title when you can scroll up, a bottom rule with ↓ and the page status). Raised to high so it comes soon. Nothing changed on rnpdnm itself; its question 3 (A, B or C) still stands.
 - 2026-11-20T12:59 request 4 by jhf:
   I don't know what the local store is, you have to be concrete. So what are the stores? Where are they physically and how would this work? How like short, succinct, grounded.
+  resolved 2026-11-20T12:59 by crab:
+    Details now start with WHERE MEMORIES ARE, PHYSICALLY: (1) one database on your Mac, ~/Library/Application Support/muninn/muninn.db, holding every memory, never leaving the machine; (2) only for a repo that shares: memories.jsonl on that repo's hug/memory branch (checked out at .hug/memory/), copied from the database and pushed by hug mem sync; (3) sharing is off everywhere today; hug's own branch holds 827 old lines, unchanged since 11-18. 'Local store' now reads as the database file, and 'held' as: stays only in that file, not copied to the branch.
 
 ## Notes
 
@@ -150,3 +152,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T12:59 request 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:59 request 4 acknowledged by crab
 - 2026-11-20T12:59 request 4 in progress by crab: hug task set rnpdnm
+- 2026-11-20T12:59 resolved request 4 by crab
