@@ -70,6 +70,7 @@ landed a5fc520 on main 2026-11-20: tui tests: capture knob QCQ3TM_CAPTURES (no H
 shipped in v0.7.89 (48e3517)
 crab 2026-11-20 10:54Z: reviewed (actions.go answerKey focusOn+revealAnswerBox; detail.go link line replaces drawn picture, startFocus/openTop no longer special-case pictures; glance.go return to question; picture.go dead code removed), landed a5fc5208 on main as a fast-forward (CI 44721913557 8/8 on that SHA), released in v0.7.89 (20dbb6ca). Release ticket fzd0jj.
 file:screen-1255.ans (9067 bytes, sha256:d8f4a13a) screen capture from hug tui
+file:screen-1256.ans (11972 bytes, sha256:cb2a9d3f) screen capture from hug tui
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
 - 2026-11-20T11:54 doing/active -> doing/asked (ask)
