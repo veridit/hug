@@ -44,6 +44,7 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 - [ ] ~~Details, Files, Notes and History are folded to one line until opened; Purpose, Principle, Goal, Acceptance show in that order (golden 100x30 and 160x45)~~ (not relevant: order revised by Jørgen 11:31Z: Description heading goes, Details after Files and other short sections; replaced by check 6, crab, 2026-11-19)
 - [ ] Jørgen opens an asked task in hug tui and reaches the thing he is asked about in one key
 - [ ] No DESCRIPTION heading; order is FOR YOU, Purpose, Principle, Goal, Acceptance, short sections (Files, Depends on, Parent/children, requests), then Relevant details, Notes, History; long sections fold to one line until opened (golden 100x30 and 160x45)
+- [ ] Opening an asked task focuses its question; the picture line under it (asked_show) is a link: Enter shows the file, Esc returns to the question, a answers from either (tmux test on 911j70's board copy)
 
 ## Questions
 - 2026-11-19T12:24 question 1 by crab to jhf:
