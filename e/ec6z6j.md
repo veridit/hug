@@ -67,6 +67,7 @@ crab 21:53 local: reassigned to piglet (mizaru's hold was stale from the morning
 
 piglet 21:53 local: take refused 'ec6z6j is blocked by rxr4z8'. To ask check 1's question I removed the dep, took, asked, and re-added it (dep rxr4z8 back on, as before). The building still waits on rxr4z8; only the mock and question are done. Question text in /Users/jhf/.jcode/scratch/ec6z6j-mock/question.txt.
 check 1: Jørgen 2026-11-20 08:31Z (answer 1): 'Clearly, a': option A, the request box opens at the bottom of the list so the marked rows stay in view while he writes.
+crab 2026-11-20 08:32Z: Jørgen chose A (box at the bottom of the list). Check 6 added for building it. Removed the dependency on rxr4z8: Space marking shipped (4b49e102 on main), and rxr4z8's open checks are only Jørgen's (6 confirm, 7 sign choice, now asked), so they don't block this build.
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
