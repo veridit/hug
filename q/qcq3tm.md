@@ -11,10 +11,15 @@ rank: "zzzzzzzzzzzq"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-20T10:59"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "Does opening a task that asks you something now land on the question, with its file as a link line (Enter shows the file, Esc comes back)? Before and after captures at 100x30 are in this task's Files: before-tb0dra-100x30.ans / after-tb0dra-100x30.ans, before-hjbfzd-100x30.ans / after-hjbfzd-100x30.ans and after-hjbfzd-check6-link-100x30.ans. For a on p87ngv: before-p87ngv-a-100x30.ans / after-p87ngv-a-100x30.ans. Built on branch qcq3tm (a5fc5208, CI green); it reaches your board with the next release."
+asked_for: "jhf"
+asked_since: "2026-11-20T11:54"
+asked_by: "cricket"
+asked_check: "3"
 ---
 
 ## Goal
@@ -37,6 +42,10 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
 - [ ] Jørgen opens tb0dra-like asked tasks after the release and lands on the question
 - [x] On p87ngv's board copy (doing/asked, old asked_* stage fields plus ## Questions 11 and 12), pressing a opens the answer box in view under the question it answers, with the cursor in it; typing shows text (tmux test; Jørgen 2026-11-20 10:13Z: a did nothing visible on p87ngv)
 
+## Questions
+- 2026-11-20T11:54 question 1 by cricket to jhf (check 3):
+  Does opening a task that asks you something now land on the question, with its file as a link line (Enter shows the file, Esc comes back)? Before and after captures at 100x30 are in this task's Files: before-tb0dra-100x30.ans / after-tb0dra-100x30.ans, before-hjbfzd-100x30.ans / after-hjbfzd-100x30.ans and after-hjbfzd-check6-link-100x30.ans. For a on p87ngv: before-p87ngv-a-100x30.ans / after-p87ngv-a-100x30.ans. Built on branch qcq3tm (a5fc5208, CI green); it reaches your board with the next release.
+
 ## Notes
 
 
@@ -52,3 +61,4 @@ check 2: Same test: no file drawn above the page, '→ agentsection-proposal.md 
 check 4: TestTmuxAnswerBoxOpensInView on a p87ngv copy (hug/tasks 069928d0: old asked_* fields, question 11 on check 5, question 12 in a block). On origin/main 4b1a5781: 'p87ngv a opens the answer box in view (check 4): never showed ["? ☐ 5. Jørgen approves a mock" "answer:"]', with the keys line 'Enter send · Alt-Enter new line · Esc cancel' (box open, out of view). On a5fc5208: '--- PASS: TestTmuxAnswerBoxOpensInView (2.81s)', 'answer: typed by qcq3tm' on screen. CI 44721913557 green. Captures before/after-p87ngv-a-100x30.ans.
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
+- 2026-11-20T11:54 doing/active -> doing/asked (ask)
