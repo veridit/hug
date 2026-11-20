@@ -15,11 +15,11 @@ doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "With the questions now on the task, do you approve the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt)?"
+asked_what: "Open marks are drawn as a dim line under the text they are about (↳ 1 request · jhf 09:40 · ...), with the marked words underlined and the raw .Request text hidden; frames 1-7 are attached in colour. Is that the look you want?"
 asked_for: "jhf"
-asked_since: "2026-11-19T12:34"
-asked_by: "crab"
-asked_check: "5"
+asked_since: "2026-11-19T12:46"
+asked_by: "seedling"
+asked_show: "frame-1-100x30.ans"
 ---
 
 ## Goal
@@ -100,6 +100,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     I can't really see. It seems that you're telling me things that I can only see if it was an ANSI dump text file or screenshot or source, not a txt file. So you're speaking of things that are not visually available. As far as I can tell, I would love to answer this
 - 2026-11-19T12:34 question 11 by crab to jhf (check 5):
   With the questions now on the task, do you approve the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt)?
+  answered 2026-11-20T11:16 by jhf:
+    Yes
 - 2026-11-19T12:46 question 12 by seedling to jhf (show frame-1-100x30.ans):
   Open marks are drawn as a dim line under the text they are about (↳ 1 request · jhf 09:40 · ...), with the marked words underlined and the raw .Request text hidden; frames 1-7 are attached in colour. Is that the look you want?
 
@@ -251,3 +253,6 @@ file:screen-1113.ans (5351 bytes, sha256:f9547c1d) screen capture from hug tui
 - 2026-11-20T11:13 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:13 request 5 acknowledged by crab
 - 2026-11-20T11:14 resolved request 5 by crab
+- 2026-11-20T11:16 answered asked (question 11, check 5), by jhf, for crab (doing/asked -> doing/asked):
+  > With the questions now on the task, do you approve the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt)?
+  Yes
