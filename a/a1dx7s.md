@@ -31,4 +31,12 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 - [ ] lint --code parent-too-deep is empty
 - [ ] evidence files imported as task files
 
+## Requests
+- 2026-11-20T13:08 request 1 by jhf:
+  Can you give me a file with an instruction to the other agent in this ticket so I can copy it and give it to that one?
+
 ## Notes
+
+
+## History
+- 2026-11-20T13:08 request 1 by jhf
