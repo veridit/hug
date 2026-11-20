@@ -41,6 +41,8 @@ Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 task
     Principle set to: consistency through a clean sweep, everything changes at once, no mix of old and new names. Goal now leads with 'a unified, easy-to-navigate, non-confusing CLI and system', then the concrete one-binary layout. Read 'clean cone chip' as 'clean sweep'; correct me if you meant something else.
 - 2026-11-20T13:08 request 2 by jhf:
   This one could probably go pretty soon. It's just cleanup work, doesn't require anything from me, right?
+  resolved 2026-11-20T13:12 by crab:
+    Yes, mostly cleanup, and most of it is done. Check 2 is ticked: hug and seid-lang have only hug/tasks and hug/memory left, with no huginn or muninn-notes branch. The last item, storing each memory as its own file, is a real design change, not cleanup, so it became its own task, b8mk9s, which asks you one question: do it, or keep one file. This epic closes when b8mk9s does.
 
 ## Notes
 
@@ -62,3 +64,4 @@ check 2: crab 2026-11-20 12:08Z: git ls-remote origin on veridit/hug and seid-la
 - 2026-11-20T13:08 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:08 request 2 acknowledged by crab
 - 2026-11-20T13:08 request 2 in progress by crab: hug task check 9taa9d 2 "crab 2026-11-20 12:08Z: git ls-remote origin on veridit/hug and seid-lang: only hug/tasks and hug/memory; no huginn, mu…"
+- 2026-11-20T13:12 resolved request 2 by crab
