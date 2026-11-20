@@ -54,7 +54,7 @@ Original Purpose (Jørgen 2026-11-17 23:27 local, on 6ephqk): Jørgen 2026-11-17
 - [x] a task whose wait names check N opens with focus on check N, which shows the ? marker and the same text as the list; no separate question block (test + golden)
 - [x] a wait that names no check shows one question block styled like an acceptance row, focused on open; Space/a act on it (test)
 - [ ] ~~the detail of a task waiting on you shows the wait once in the header and no lint line for it (golden at 80 and 140)~~ (not relevant: replaced by check 5: header-spec says the question is not in the header (crab 01:06 ruling), nautilus, 2026-11-18)
-- [ ] Jørgen opens 6ephqk and says it reads clearly
+- [x] Jørgen opens 6ephqk and says it reads clearly
 - [x] a task asked of you shows the question once: the context has only a one-word stage badge ([asked], [design], [review]) and no stage line; with a check, the question sits under that check; without, one block at the top of the details, whole and wrapped, never cut; asked of someone else or waiting on a thing, the context line stays (crab 01:06; golden at 80 and 140)
 
 ## Questions
@@ -82,6 +82,7 @@ file:screen-1457.ans (24745 bytes, sha256:f97b075e) screen capture from hug tui
 crab 15:00 local: Jørgen's answer on check 4 (14:58) = focus right, styling too loud (ACCEPTANCE heading competes; question bold+background+colour). Filed as ; check 4 stays open until  ships and he confirms there.
 crab 15:01 local: Jørgen's answer on check 4 (14:58): focus right, styling too loud (the ACCEPTANCE heading competes; the question is bold + background + colour). Filed as kg07bt (calm heading, cursor-only emphasis); check 4 stays open until kg07bt ships and he confirms there.
 crab 2026-11-20 08:26Z: removed the kg07bt dependency (kg07bt shipped in v0.7.66; its last check is now asked of jhf, so it no longer blocks); this task's own check 4 asked.
+check 4: Jørgen 2026-11-20 10:28Z (request 1): 'I think the current view is okay. And I did jump into the question, so this is better.'
 ## History
 - 2026-11-18T01:39 todo -> doing/active (take)
 - 2026-11-18T02:03 doing/active -> doing/waiting (wait)
