@@ -257,3 +257,4 @@ file:screen-1113.ans (5351 bytes, sha256:f9547c1d) screen capture from hug tui
   > With the questions now on the task, do you approve the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt)?
   Yes
 - 2026-11-20T11:16 answer 12 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:16 answer 12 acknowledged by crab
