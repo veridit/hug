@@ -71,3 +71,4 @@ file:screen-1130.ans (21282 bytes, sha256:af44cf4b) screen capture from hug tui
 - 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)
 - 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: macaque; waiting_on: crab review; check 3 with puppy's grid, check 4 Jørgen; waiting_since: 2026-11-18T14:15
 - 2026-11-20T11:32 request 1 by jhf
+- 2026-11-20T11:32 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
