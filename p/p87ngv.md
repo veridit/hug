@@ -10,16 +10,11 @@ group: ""
 rank: "zzzzzzzzzzy5"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "asked"
+stage: "active"
 doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Open marks are drawn as a dim line under the text they are about (↳ 1 request · jhf 09:40 · ...), with the marked words underlined and the raw .Request text hidden; frames 1-7 are attached in colour. Is that the look you want?"
-asked_for: "jhf"
-asked_since: "2026-11-19T12:46"
-asked_by: "seedling"
-asked_show: "frame-1-100x30.ans"
 ---
 
 ## Goal
@@ -104,6 +99,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     Yes
 - 2026-11-19T12:46 question 12 by seedling to jhf (show frame-1-100x30.ans):
   Open marks are drawn as a dim line under the text they are about (↳ 1 request · jhf 09:40 · ...), with the marked words underlined and the raw .Request text hidden; frames 1-7 are attached in colour. Is that the look you want?
+  answered 2026-11-20T11:16 by jhf:
+    Yes, now I can suddenly answer this. Awesome. Approved.
 
 ## Requests
 - 2026-11-19T10:05 request 1 by jhf:
@@ -260,3 +257,6 @@ check 5: Jørgen 2026-11-20 11:16 local (question 11): 'Yes', approves the mock 
 - 2026-11-20T11:16 answer 12 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:16 answer 12 acknowledged by crab
 - 2026-11-20T11:16 crab read the answer: hug task check p87ngv 5 "Jørgen 2026-11-20 11:16 local (question 11): 'Yes', approves the mock (before.md, after.md, history.sdo-to-be, cli.txt,…"
+- 2026-11-20T11:16 answered asked (question 12), by jhf, for seedling (doing/asked -> doing/active):
+  > Open marks are drawn as a dim line under the text they are about (↳ 1 request · jhf 09:40 · ...), with the marked words underlined and the raw .Request text hidden; frames 1-7 are attached in colour. Is that the look you want?
+  Yes, now I can suddenly answer this. Awesome. Approved.
