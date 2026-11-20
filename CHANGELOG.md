@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.87 - 2026-11-20
+
 - hug tui lists broken tasks before advice (z6cb03): the overview's LINT
   section and the lint view put every task with a broken finding first,
   rank order within each, as `hug task lint` does. On a board with many
