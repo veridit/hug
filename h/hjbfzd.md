@@ -1,7 +1,7 @@
 ---
 id: hjbfzd
 title: "Screen capture: attach to a chosen task, pick one, or create a new task"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzwc"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T21:16"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "hjbfzd"
 worktree: "/Users/jhf/.jcode/scratch/hjbfzd"
+done_at: "2026-11-20T11:37"
 ---
 
 ## Goal
@@ -85,6 +84,7 @@ file:capture-wording-100x30.ans (2801 bytes, sha256:54dc7b78)
 file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 file:screen-1136.ans (17604 bytes, sha256:16d2046a) screen capture from hug tui
 Jørgen 2026-11-20 10:37Z (question 3): 'The current implementation is good and I like it and it's even more succinct than we outlined in this ticket so this ticket is done.' His note that opening an asked task shows the file on top instead of scrolling to the question is qcq3tm (high, cricket building it now, checks 1-2).
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)
@@ -115,3 +115,4 @@ Jørgen 2026-11-20 10:37Z (question 3): 'The current implementation is good and 
 - 2026-11-20T11:37 answer 2 acknowledged by crab
 - 2026-11-20T11:37 crab read the answer: hug task strike hjbfzd 6
 - 2026-11-20T11:37 answer 1 in progress by crab: hug task strike hjbfzd 6
+- 2026-11-20T11:37 doing/active -> done (done); was doing_since: 2026-11-18T21:16
