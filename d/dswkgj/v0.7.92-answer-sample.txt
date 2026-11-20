@@ -1,0 +1,48 @@
+# v0.7.92 sample run on a throwaway board (hug v0.7.92)
+
+
+## 5vehza on the real board: hpqt99 question 1 was withdrawn on 11-18 (v0.7.91: panic, asks.go:317)
+$ hug task answer hpqt99 1 test --as crab
+usage hpqt99: question 1 on hpqt99 was withdrawn at 2026-11-18 23:32 (doing/asked -> doing/active)
+fix: hug task ask hpqt99 --to jhf --check 1 "Imported data (docs/DESIGN.md, 'Imported data', branch hpqt99 9c8fb6a1). Recommend both: (1B) an import places a memory by the folder it was written in, so a memory written under a client folder lands in that client's scope (narrowing only; one leak today: 2kb574, written in ~/Projects/frogs, sits in global). (2B) import each jcode instance's memories once (17,089 rows; jcode files frozen since 2026-11-05), gated by a dry-run whose per-scope counts must match the live read, then stop reading jcode files live. Approve 1B+2B, or name another option (1A/1C, 2A/2C)?"
+(exit 2)
+
+## khwzpt: a bare answer when only the design question is open (v0.7.91: panic, asks.go:309)
+$ hug task ask d5wvap --to jhf First question? --as crab
+design-sample  Design sample  d5wvap  todo
+stage: question for jhf: First question? since 2026-11-20 20:30
+question 1 to jhf: First question?
+(exit 0)
+
+$ hug task answer d5wvap 1 yes --as jhf
+design-sample  Design sample  d5wvap  todo
+stage: ready
+answer for crab: jhf answered on d5wvap: yes (design: First question?)
+question 1 to jhf: First question?
+  answered by jhf, 2026-11-20 20:30:
+    yes
+(exit 0)
+
+$ hug task design d5wvap Design: A or B? --for jhf
+design-sample  Design sample  d5wvap  todo
+stage: question for jhf: Design: A or B? since 2026-11-20 20:30
+question 1 to jhf: First question?
+  answered by jhf, 2026-11-20 20:30:
+    yes
+(exit 0)
+
+$ hug task answer d5wvap A --as jhf
+design-sample  Design sample  d5wvap  todo
+stage: ready
+answer for crab: jhf answered on d5wvap: A (design: Design: A or B?)
+question 1 to jhf: First question?
+  answered by jhf, 2026-11-20 20:30:
+    yes
+(exit 0)
+
+## nothing open
+$ hug task answer d5wvap again --as jhf
+usage d5wvap: d5wvap asks nobody: no open question on d5wvap, its stage is not design, asked or review
+fix: hug task show d5wvap
+(exit 2)
+
