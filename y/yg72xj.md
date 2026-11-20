@@ -53,3 +53,4 @@ Reflection (unanswered, 2026-11-19, crab)
   > a82j3n: in hug tui (v0.7.81 or later), press v. Is v solid and do the underlines of o, l, b and ! pulse? (r80svs will replace the solid v with a steady underline next.)
   Yes, this interaction was nice and subtle. When you tone down things, the important things get more focus. I like it.
 - 2026-11-20T11:07 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:07 answer 1 acknowledged by crab
