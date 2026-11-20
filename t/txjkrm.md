@@ -1,7 +1,7 @@
 ---
 id: txjkrm
 title: "Tags: listed per board in hug.toml, shown on rows, Seid's labels cleaned up"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -11,14 +11,17 @@ rank: "zzzzzzzzzz38"
 created: 2026-11-17
 updated: 2026-11-17
 model: "claude-opus-5-5"
-branch: "txjkrm"
-worktree: "/Users/jhf/.jcode/scratch/txjkrm"
-stage: "design"
-design_show: "seid-overview-tags-row.txt"
-design_question: "Seid's overview with tags right after the ID, as you asked: does it read right?"
-design_for: "jhf"
-design_since: "2026-11-18T23:38"
-design_asked_by: "kikazaru"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
+stage: "asked"
+asked_show: "seid-overview-tags-row.txt"
+asked_what: "Seid's overview with tags right after the ID, as you asked: does it read right?"
+asked_for: "jhf"
+doing_since: "2026-11-20T09:28"
+doing_with: "911j70"
+asked_since: "2026-11-18T23:38"
+asked_by: "kikazaru"
+asked_check: "7"
 ---
 
 ## Goal
@@ -105,3 +108,4 @@ kikazaru 22:37Z: shipped in v0.7.71 (3ce9119a, 3f5e89d9, 4d7eec2d). The owed que
 - 2026-11-18T23:24 doing/waiting -> done (done, by release v0.7.71: every check holds); was doing_since: 2026-11-18T15:45; waiting_asked_by: kikazaru; waiting_on: crab landing ci/txjkrm6-rebased 3f5e89d9 and a release; then ask Jørgen the check-6 question with --show (crab 21:09); waiting_since: 2026-11-18T22:21
 - 2026-11-18T23:38 done -> todo/ready (reopen); was done_at: 2026-11-18T23:24; done_release: v0.7.71
 - 2026-11-18T23:38 todo/ready -> todo/design (ask)
+- 2026-11-20T09:28 todo/design -> doing/asked (take with 911j70, 1 open question(s) kept); was design_asked_by: kikazaru; design_for: jhf; design_question: Seid's overview with tags right after the ID, as you asked: does it read right?; design_show: seid-overview-tags-row.txt; design_since: 2026-11-18T23:38
