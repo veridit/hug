@@ -70,3 +70,4 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
 - 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: macaque; waiting_on: crab review; waiting_since: 2026-11-18T16:56
 - 2026-11-20T11:33 request 1 by jhf
 - 2026-11-20T11:33 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:33 request 1 acknowledged by crab
