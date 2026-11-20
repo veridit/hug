@@ -58,6 +58,7 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
 
 
 crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not to do. The board is the record of work (details, status, dependencies in the tasks); the harness todo list is for organizing yourself around it: delegating, picking up again, updating and closing tickets, coordinating agents. Keep todos to what you can act on now. Redrafted as question 2.
+Jørgen 2026-11-20 10:04Z (answer to question 1): 'Clearly no' to the first draft: hug task wait ID "jhf: picks the column order" parses the person out of the line; he wants the person and the message given separately, declaratively. crab: correct, and the example was also wrong: wait refuses a text opening with a person's name (agxqax) and points to ask. The declarative form exists: hug task ask ID --to jhf "..." for a person; hug task wait ID "on what" only for things (CI, a release, a date); hug task dep ID --add OTHER for another task. Question 2's redraft repeats the bad line, so it is withdrawn and asked again.
 ## History
 - 2026-11-19T10:00 todo -> todo/design (ask)
 - 2026-11-19T10:02 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -78,3 +79,4 @@ crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not 
   Clearly no. I'm confused and hug task weight ID and then you do parsing of the line Shouldn't you just specify the person and the message separately be declarative?
 - 2026-11-20T11:04 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:04 answer 2 acknowledged by crab
+- 2026-11-20T11:04 crab read the answer: hug task note fd0j4p "Jørgen 2026-11-20 10:04Z (answer to question 1): 'Clearly no' to the first draft: hug task wait ID \"jhf: picks the colu…"
