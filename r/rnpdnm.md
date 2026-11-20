@@ -84,6 +84,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
   I don't understand the question of this ticket. It is confusing what is the third approach, what you mean pre-register, what you mean holding back. Try to be grounded and speak plainly. What are we choosing between? So simplify the things. Also, the description, the purpose is not clear. And what does it mean to be held back? Clarity and groundedness, please. I will try again once you've made this ticket practical.
   resolved 2026-11-20T11:26 by crab:
     Rewritten plainly. Title, Goal, Purpose and Principle now say what we choose: keep today's filter or make it stricter. Details start with WHAT WE ARE CHOOSING BETWEEN: what a shared memory is (today no repo shares, nothing is pushed), what 'held back' means (kept on this machine, not pushed), what was measured (3 in 100 wrong get through today, the bar was 1 in 200), and options A stop here (my pick), B a third attempt, C a person approves before push, each with its cost. The old question 1 is withdrawn; question 2 asks A, B or C. The old text sits under it in Details.
+- 2026-11-20T12:54 request 2 by jhf:
+  I still don't understand what hold means, being held back. So in practical terms, we import memories, they're stored in a separate branch. Are we discussing if that separate branch should be pushed or not? Or are we discussing if some memories are placed in global storage or client storage and not in the project itself? So you don't lay out the practical consequences here.
 
 ## Notes
 
@@ -124,3 +126,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
   Withdrawn by crab 2026-11-20: unclear (Jørgen request 1). Re-asked plainly as question 2 with options A, B and C in Details.
 - 2026-11-20T11:26 doing/active -> doing/asked (ask)
 - 2026-11-20T11:26 resolved request 1 by crab
+- 2026-11-20T12:54 request 2 by jhf
