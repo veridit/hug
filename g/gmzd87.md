@@ -78,3 +78,4 @@ shipped in v0.7.64 (872a2a4)
 - 2026-11-20T11:30 answered asked (check 4), by jhf, for crab (doing/asked -> doing/active):
   > Write a request on any hug task in hug tui (r): does the coordinator report receiving it without you prompting it?
   It works. The only thing is that they have to register. I am the coordinator, but shouldn't we implicitly do that if there's only one task active or only one agent active? And can we deduce this in the common case so that the first task that interacts is set as active as long as it's active. And if you want to override, you override. Rather than you have to do the setup and you have to pick the task because the agent can change, you restart the harness, something happens. So can we do something sensible by default here? But it works. So this one is closed.
+- 2026-11-20T11:30 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
