@@ -33,7 +33,7 @@ User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task request
 
 - rxr4z8
 ## Acceptance
-- [ ] A board mock shows marking several tasks, selected count, and one request action for that exact set, reviewed by Jorgen.
+- [x] A board mock shows marking several tasks, selected count, and one request action for that exact set, reviewed by Jorgen.
 - [x] Submitting one request preserves its exact text and selected IDs, visible to the agent without asking the user to repeat it per task.
 - [x] User can see pending versus handled targets without a partial fix silently closing the whole request.
 - [ ] the home page of a request for several tasks shows a targets line, and a link page shows the request text and points to its home (golden at 80x24)
@@ -66,6 +66,7 @@ crab 21:53 local: reassigned to piglet (mizaru's hold was stale from the morning
 
 
 piglet 21:53 local: take refused 'ec6z6j is blocked by rxr4z8'. To ask check 1's question I removed the dep, took, asked, and re-added it (dep rxr4z8 back on, as before). The building still waits on rxr4z8; only the mock and question are done. Question text in /Users/jhf/.jcode/scratch/ec6z6j-mock/question.txt.
+check 1: Jørgen 2026-11-20 08:31Z (answer 1): 'Clearly, a': option A, the request box opens at the bottom of the list so the marked rows stay in view while he writes.
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
@@ -75,3 +76,4 @@ piglet 21:53 local: take refused 'ec6z6j is blocked by rxr4z8'. To ask check 1's
   Clearly, a
 - 2026-11-20T09:31 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T09:31 answer 1 acknowledged by crab
+- 2026-11-20T09:32 answer 1 in progress by crab: hug task check ec6z6j 1 "Jørgen 2026-11-20 08:31Z (answer 1): 'Clearly, a': option A, the request box opens at the bottom of the list so the mar…"
