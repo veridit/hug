@@ -55,6 +55,7 @@ Landed 88a6ac89.
 landed 88a6ac8 on main 2026-11-18: hug task wait --until DATE and ask --after DATE: hug wakes the task on the first…
 shipped in v0.7.55 (88a6ac8)
 check 3 (crab, 05:08 local, v0.7.55): hug task ask 47sxn2 --to jhf --after 2026-11-24 --check 2 '...' -> 'stage: waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'. 47sxn2 left Jørgen's ASKED.
+file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
 - 2026-11-18T04:23 doing/active -> doing/waiting (wait)
