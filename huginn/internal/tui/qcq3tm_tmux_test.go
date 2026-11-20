@@ -56,8 +56,8 @@ func newAskedTmux(t *testing.T, name string) *askedTmux {
 		}
 	}
 	env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=jhf", "HUG_MODEL=", "HUG_SYNC=off", "NO_COLOR=1", "TERM=xterm-256color", "GOMAXPROCS=2"}
-	if colour := os.Getenv("HUG_QCQ3TM_COLOUR"); colour != "" {
-		// Captures for Jørgen (qcq3tm): the real theme, saved by the test.
+	if os.Getenv("HUG_QCQ3TM_CAPTURES") != "" {
+		// Captures for Jørgen (qcq3tm): in the real theme's colours.
 		env = append(env[:len(env)-3], "TERM=xterm-256color", "COLORTERM=truecolor", "GOMAXPROCS=2")
 	}
 	run := func(name string, args ...string) {
@@ -154,6 +154,7 @@ func (a *askedTmux) open(id, title string) {
 	a.send("Enter")
 	a.wait("open "+id, []string{title})
 	time.Sleep(300 * time.Millisecond) // the first frame of the page settles
+	a.save(id + " as it opens")
 }
 
 // qcq3tm checks 1 and 2: opening tb0dra and hjbfzd lands on the question
@@ -168,7 +169,7 @@ func TestTmuxAskedTaskOpensOnItsQuestion(t *testing.T) {
 	inline := []string{"▸ agentsection-proposal.md", "# Three additions to the"}
 	a.wait("tb0dra opens on its question (check 1), its file not drawn above the page (check 2)", tb0dra, inline...)
 	a.send("Enter")
-	a.wait("tb0dra Enter shows the file in the file frame (check 2)", []string{"tb0dra › t/tb0dra/agentsection-proposal.md", "agentsection-proposal.md · 3.0 KiB · 1 of 1"})
+	a.wait("tb0dra Enter shows the file in the file frame (check 2)", []string{"tb0dra › t/tb0dra/agentsection-proposal.md", "agentsection-proposal.md · 3.0 KiB · 1 of 1", "Esc question"})
 	a.send("Escape")
 	a.wait("tb0dra Esc goes back to the question (check 2)", tb0dra, inline...)
 	a.send("Escape")

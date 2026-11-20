@@ -136,6 +136,12 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		return append(hints, hint("Esc", "clear"), hint("?", "help"), hint("q", "quit"))
 	}
 	if m.glance {
+		// Esc goes back where the file was shown from: Files, or the
+		// question whose link showed it (qcq3tm).
+		up := "files"
+		if m.glanceReturn != nil {
+			up = "question"
+		}
 		if m.glancePicture() {
 			// A picture (33v71x): zoom while the terminal draws it, scroll
 			// and fit once zoomed, open it in the viewer always.
@@ -146,10 +152,10 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 					hints = append(hints, hint("h/j/k/l", "scroll"), hint("0", "fit"))
 				}
 			}
-			return append(hints, hint("o", "open in "+viewerName()), hint("n", "next file"), hint("p", "previous file"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit"))
+			return append(hints, hint("o", "open in "+viewerName()), hint("n", "next file"), hint("p", "previous file"), hint("u/Esc", up), hint("?", "help"), hint("q", "quit"))
 		}
 		// n and p spelled out (scrxak, Jørgen 00:08: nobody guesses n/p).
-		hints := []bkey.Binding{hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("/", "find"), hint("u/Esc", "files"), hint("?", "help"), hint("q", "quit")}
+		hints := []bkey.Binding{hint("n", "next file"), hint("p", "previous file"), hint("Enter", "edit"), hint("/", "find"), hint("u/Esc", up), hint("?", "help"), hint("q", "quit")}
 		if m.glanceMD.eligible {
 			hints = append([]bkey.Binding{m.markdownHint()}, hints...)
 		}
