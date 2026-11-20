@@ -1,7 +1,7 @@
 ---
 id: bxcsmk
 title: "Blinking \u003e for the currently focused row"
-state: todo
+state: "dropped"
 type: feature
 priority: ""
 assignee: []
@@ -10,6 +10,8 @@ group: ""
 rank: "00d"
 created: 2026-11-20
 updated: 2026-11-20
+dropped_at: "2026-11-20T13:10"
+dropped_reason: "duplicate of q3sh69"
 ---
 
 ## Goal
@@ -37,3 +39,4 @@ Dropped as a duplicate of q3sh69 (crab 2026-11-20 12:10Z).
 - 2026-11-20T13:10 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:10 request 1 acknowledged by crab
 - 2026-11-20T13:10 resolved request 1 by crab
+- 2026-11-20T13:10 todo -> dropped (drop)
