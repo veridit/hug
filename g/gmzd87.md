@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzsx"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T12:34"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_by: "crab"
-asked_check: "4"
-asked_what: "Write a request on any hug task in hug tui (r): does the coordinator report receiving it without you prompting it?"
-asked_for: "jhf"
-asked_since: "2026-11-20T09:26"
 ---
 
 ## Goal
@@ -47,6 +42,8 @@ Split from ec6z6j (multi-task requests, which still waits on row marking rxr4z8)
 ## Questions
 - 2026-11-20T09:26 question 1 by crab to jhf (check 4):
   Write a request on any hug task in hug tui (r): does the coordinator report receiving it without you prompting it?
+  answered 2026-11-20T11:30 by jhf:
+    It works. The only thing is that they have to register. I am the coordinator, but shouldn't we implicitly do that if there's only one task active or only one agent active? And can we deduce this in the common case so that the first task that interacts is set as active as long as it's active. And if you want to override, you override. Rather than you have to do the setup and you have to pick the task because the agent can change, you restart the harness, something happens. So can we do something sensible by default here? But it works. So this one is closed.
 
 ## Notes
 
@@ -78,3 +75,6 @@ shipped in v0.7.64 (872a2a4)
 - 2026-11-18T15:11 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)
 - 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: mizaru; waiting_on: crab lands 4e70099c (ci/gmzd87-rebased), then release, then Jørgen's check 4 in hug tui; waiting_since: 2026-11-18T15:11
+- 2026-11-20T11:30 answered asked (check 4), by jhf, for crab (doing/asked -> doing/active):
+  > Write a request on any hug task in hug tui (r): does the coordinator report receiving it without you prompting it?
+  It works. The only thing is that they have to register. I am the coordinator, but shouldn't we implicitly do that if there's only one task active or only one agent active? And can we deduce this in the common case so that the first task that interacts is set as active as long as it's active. And if you want to override, you override. Rather than you have to do the setup and you have to pick the task because the agent can change, you restart the harness, something happens. So can we do something sensible by default here? But it works. So this one is closed.
