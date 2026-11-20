@@ -37,6 +37,7 @@ User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task request
 - [x] Submitting one request preserves its exact text and selected IDs, visible to the agent without asking the user to repeat it per task.
 - [x] User can see pending versus handled targets without a partial fix silently closing the whole request.
 - [ ] the home page of a request for several tasks shows a targets line, and a link page shows the request text and points to its home (golden at 80x24)
+- [ ] With tasks marked, r opens the request box at the bottom of the list with the marked rows still in view; submitting sends one request for exactly the marked set (Jørgen 2026-11-20: option A) (tmux test)
 
 ## Notes
 
