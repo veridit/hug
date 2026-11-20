@@ -30,9 +30,13 @@ An asked task opens on its question, which jumps to its target in one key, and r
 Jørgen 2026-11-19 11:23Z (crab console, screenshot of p87ngv in hug tui v0.7.81): the page opened on MOCK.md inlined at the top (asked_show) with no question above it, so it looked like content from later in the ticket; the question was only found by scrolling; the long description came before purpose and principle ('where am I getting the value for the money'). 11:24Z (second screenshot, check 5 with its question and 'answer'): the question names MOCK.md but offers no way to jump to it; he had to press down many times to reach FILES and then the file.
 
 ## Principle
-The person is asked first, then oriented, then given detail. A question links, never inlines. Links use the mark syntax (p87ngv): .target:(.File .name:"MOCK.md"), .target:(.Section .name:"Acceptance" .item:5), .target:(.File .name:"tui-100x30.txt" .line:63); asked_show maps to .target:(.File ...). One jump key everywhere (Enter on a link). Folded sections show their one-line summary (FILES (6), NOTES (12), HISTORY (40)). Calm rules (qh9ep1 check 9).
+You land on your question, a file it names is a link on it, and the page reads short to long.
 
 ## Relevant details
+Decision (Jørgen 2026-11-20 10:24Z, request 1, screenshot screen-1123.ans): no FOR YOU block. Opening an asked task scrolls to the question; a file the question names is a link on it (Enter shows it, Esc returns), never drawn at the top of the page. His words: 'We scroll down to the question, but we're showing the file in line that doesn't make any sense ... we should have scrolled to the question and the file would be then in display or linked to from the question ... we can always scroll to the question'. The landing and the link are built in qcq3tm (high, in progress); this task keeps the section order, the jump from a target, and the scroll markers.
+
+Previous Principle: The person is asked first, then oriented, then given detail. A question links, never inlines. Links use the mark syntax (p87ngv): .target:(.File .name:"MOCK.md"), .target:(.Section .name:"Acceptance" .item:5), .target:(.File .name:"tui-100x30.txt" .line:63); asked_show maps to .target:(.File ...). One jump key everywhere (Enter on a link). Folded sections show their one-line summary (FILES (6), NOTES (12), HISTORY (40)). Calm rules (qh9ep1 check 9).
+
 Opening a task that asks you something shows, under the title, a FOR YOU section with each open question; each names its target (a file, a section, a check, a line in a file) and Enter on it jumps straight there, a answers. The target file is shown only when you follow the link, never inlined at the top. Below that the ticket reads short to long: Purpose, Principle, Goal, Acceptance, then Details, Files, Notes, History as one-line folded sections until opened. Code: huginn/internal/tui/detail.go (sections around 530-600 and 819-830, markedBlock 1060-1100), picture.go:248 questionPictureOf (asked_show inline). jnaspy set Goal, Purpose, Principle first; this changes the order to Purpose, Principle, Goal and folds reference sections. Open for Jørgen (asked on this task): whether Goal stays as long as today or is cut to 1-2 sentences with the rest in Details. Mock first (frames at 100x30 and 160x45 of p87ngv as it is now), approved before build. Order (Jørgen 11:31Z): the DESCRIPTION heading goes; the sections are FOR YOU, Purpose, Principle, Goal, Acceptance, then the short sections (Files, Depends on, Parent and children, open requests), then the long ones: Relevant details, Notes, History.
 
 ## Depends on
@@ -110,3 +114,4 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 - 2026-11-20T11:24 request 1 acknowledged by crab
 - 2026-11-20T11:25 request 2 by jhf
 - 2026-11-20T11:25 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:25 request 1 in progress by crab: hug task set 8a0ybb
