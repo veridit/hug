@@ -48,6 +48,7 @@ r80svs: goldens rewritten: 4 files (testdata/header/view-blink-100x30.txt, view-
 r80svs: CI run 44516640510 on ci/r80svs, headSha 686d09555739b24e19ce3a87c4423935a06c74e1: conclusion success, 8/8 jobs success (secrets, bench, test macos/ubuntu/windows-latest, test-windows-cli rest/sync/shards). Branch r80svs pushed at the same SHA, not merged. Check 4 is Jørgen's, after release.
 crab 11:52Z: reviewed viewline.go (bold keys, colour by step, underline for state, cue() keeps bold/underline under NO_COLOR), render.go styles, 4 goldens. Main had not moved: fast-forwarded to 686d0955 (CI 44516640510 8/8 at that SHA). Release v0.7.82: CHANGELOG 2a3690b8, merge 67652429, release.yml 44518564332. Per 75mxf3 trial, check 4 moves to the v0.7.82 release ticket as an ask.
 Reflection (unanswered, 2026-11-19, crab)
+Jørgen approved the view line on release ticket 5zs05h, 2026-11-20 10:19Z: 'Yes, this looks okay. Approved.'
 ## History
 - 2026-11-19T12:11 todo -> doing/active (take)
 - 2026-11-19T12:51 doing/active -> done (done); was doing_since: 2026-11-19T12:11
