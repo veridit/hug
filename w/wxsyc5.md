@@ -1,7 +1,7 @@
 ---
 id: wxsyc5
 title: "Stop pushing hug's own memories to the public repo"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["crab"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzq"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T16:36"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_asked_by: "crab"
-waiting_on: "check 2: after the 34r1ft release, ls-remote before/after a hug mem remember"
-waiting_since: "2026-11-18T18:48"
+done_at: "2026-11-20T13:04"
 ---
 
 ## Goal
@@ -49,6 +45,7 @@ check 1: Jørgen 18:19: keep the branch, provided memories are placed right (per
 landed cee68ee on main 2026-11-18: upgrade: the memory layout rename stays local unless the repo shares memories…
 shipped in v0.7.70 (cee68ee)
 check 2: crab 2026-11-20 12:04Z: hug mem remember ran in hug's repo at 10:28Z and 10:44Z today (v0.7.89/90 era, after the 34r1ft release); git ls-remote origin refs/heads/hug/memory = a9ba43773dd7 before and after, the 2026-11-18 20:30 commit; origin/hug/memory did not move.
+Reflection (open, 2026-11-20, crab): Its last check waited two days on a check I could run myself any time.
 ## History
 - 2026-11-18T16:36 todo -> doing/active (take)
 - 2026-11-18T16:36 doing/active -> doing/asked (ask)
@@ -57,3 +54,4 @@ check 2: crab 2026-11-20 12:04Z: hug mem remember ran in hug's repo at 10:28Z an
   I think we have to discuss this because truly other repositories are also public, and as long as there are no secrets and the system is working, it's sensible to have it with the repository, isn't it? As long as the classification between personal things and repository things stay, like if like the discussion is really, are we able to properly place things? And does the agent that puts the memory there do the proper judgment call. If it does, then it's okay
 - 2026-11-18T18:24 crab read the answer: hug task note wxsyc5 "crab 18:25 local, on Jørgen's answer (keep, if the agent places memories right): measured on the branch head 1abcc497, …"
 - 2026-11-18T18:48 doing/active -> doing/waiting (wait)
+- 2026-11-20T13:04 doing/waiting -> done (done); was doing_since: 2026-11-18T16:36; waiting_asked_by: crab; waiting_on: check 2: after the 34r1ft release, ls-remote before/after a hug mem remember; waiting_since: 2026-11-18T18:48
