@@ -82,3 +82,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)
 - 2026-11-19T15:23 doing/waiting -> doing/asked (ask); was waiting_asked_by: bonehound; waiting_on: fresh captures after 2026-11-19 for the (a)+(b) attempt; waiting_since: 2026-11-18T22:24
 - 2026-11-20T11:21 request 1 by jhf
+- 2026-11-20T11:21 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
