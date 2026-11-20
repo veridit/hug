@@ -108,6 +108,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
     Details now start with WHERE MEMORIES ARE, PHYSICALLY: (1) one database on your Mac, ~/Library/Application Support/muninn/muninn.db, holding every memory, never leaving the machine; (2) only for a repo that shares: memories.jsonl on that repo's hug/memory branch (checked out at .hug/memory/), copied from the database and pushed by hug mem sync; (3) sharing is off everywhere today; hug's own branch holds 827 old lines, unchanged since 11-18. 'Local store' now reads as the database file, and 'held' as: stays only in that file, not copied to the branch.
 - 2026-11-20T13:30 request 5 by jhf:
   What does it mean to put agent rules into memory? And why do we have something called noon in still? Shouldn't we rename everything consistently to be hug memory? And now I understand. So we have some memories that live in our local database and we have some memories that live in the branch that is shared. And the split is what is local database only memories and what is project memories shared in a branch. And that's what we're discussing. Finally, it became clear to me. And as such, I don't understand clearly what I can choose between yet. Try to improve it yet again and make it even more clear, concretely, what we're choosing between.
+  resolved 2026-11-20T13:31 by crab:
+    Rewritten around your words. Details open with THE SPLIT: local-only memories in the database on your Mac, and a project's memories copied to its shared branch, only when that repo shares (none does today). WHAT GOES WRONG lists the 8 memories that crossed in our test, verbatim, and explains 'agent rules': 7 of the 8 are rules for how our agents work (who runs done, which tool, time limits), true on every project, so they belong in global memory, which stays local and is recalled everywhere. THE CHOICE gives A, B and C in terms of what you do and what it costs, with my pick (A now, B later if wanted). Question 4 asks it. Renaming muninn to hug everywhere you see it is a new task, y5vjc9.
 
 ## Notes
 
@@ -175,3 +177,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
   > Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?
   Withdrawn by crab 2026-11-20: rewritten again (request 5); question 4 asks the concrete choice.
 - 2026-11-20T13:31 doing/active -> doing/asked (ask)
+- 2026-11-20T13:31 resolved request 5 by crab
