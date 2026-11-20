@@ -1,17 +1,16 @@
 ---
 id: 8a0ybb
 title: "Detail view: short sections before long, folded long sections, scroll markers"
-state: "doing"
+state: "todo"
 type: feature
 priority: "medium"
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "zzzzzzzzzzwh"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
-doing_since: "2026-11-20T01:15"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -134,3 +133,4 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 - 2026-11-20T11:26 resolved request 1 by crab
 - 2026-11-20T11:26 resolved request 2 by crab
 - 2026-11-20T11:26 request 2 acknowledged by crab
+- 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T01:15
