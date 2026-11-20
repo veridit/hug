@@ -68,6 +68,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 ## Requests
 - 2026-11-20T11:24 request 1 by jhf:
   So look at the screenshot We scroll down to the question, but we're showing the file in line that doesn't make any sense, right? So we should have scrolled to the question and the file would be then in display or linked to from the question So you have to clean this up and take it all the way and if we can't like we can always scroll to the question can't we in this case wouldn't that be the thing to do
+  resolved 2026-11-20T11:26 by crab:
+    Agreed: no FOR YOU block. Opening an asked task scrolls to the question, and a file it names is a link on it (Enter shows it, Esc returns). That part is qcq3tm, high, being built now (its checks 1-2). Here: old mock check 1 and the FOR YOU order check 6 are struck, the FOR YOU questions 2 and 3 are closed with your answer, and the order check is rewritten without FOR YOU (check 11).
 - 2026-11-20T11:25 request 2 by jhf:
   And we're working on a much more intricate system of inline things where we use the new syntax and everything. It's another ticket. So wouldn't that kind of replace this let's write something special in the header, but we can jump down to the things and then you can interact with them where you're at. So this is kind of moot at that point, being taken over by the other task?
 
@@ -124,3 +126,4 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 - 2026-11-20T11:25 answered asked (question 2, check 1), by crab, for bug (doing/asked -> doing/active):
   > Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it).
   Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled out in request 1 (2026-11-20 10:24Z). A new mock without it is check 10.
+- 2026-11-20T11:26 resolved request 1 by crab
