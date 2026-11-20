@@ -45,5 +45,6 @@ file:after-tb0dra-100x30.ans (3927 bytes, sha256:4c747c53) qcq3tm 15667952, tb0d
 file:before-hjbfzd-100x30.ans (5337 bytes, sha256:45b53014) origin/main 4b1a5781, hjbfzd as opened: capture-wording-100x30.ans drawn above the page
 file:after-hjbfzd-100x30.ans (4057 bytes, sha256:0d34d38d) qcq3tm 15667952, hjbfzd as opened: lands on check 5's question 1
 file:after-hjbfzd-check6-link-100x30.ans (3954 bytes, sha256:e68b3d18) qcq3tm 15667952, hjbfzd after j: check 6's question with its link line to capture-wording-100x30.ans
+file:before-p87ngv-a-100x30.ans (2483 bytes, sha256:ffee7bf7) origin/main 4b1a5781, p87ngv after a and typing: the box is open (keys line) but out of view
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
