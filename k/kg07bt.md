@@ -47,6 +47,10 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 - 2026-11-20T09:26 question 1 by crab to jhf (check 3):
   v0.7.66 made the ACCEPTANCE heading calm and the cursor the only mark on the focused question. Open a task that asks you something: is it calm, and is the cursor where your answer goes?
 
+## Requests
+- 2026-11-20T11:33 request 1 by jhf:
+  Look at this line. The cursor marks the question. Well, right now, the cursor underlines the greater than that looks like I can utilize a shortcut, which I can't because it will jump up and down. I hope it goes to top and bottom, which it should in this view. So we have to do something else. I think there has to be the greater than pulsating like it is a cursor, which brings me to focus there.
+
 ## Notes
 
 
@@ -64,3 +68,4 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
 - 2026-11-18T16:56 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)
 - 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: macaque; waiting_on: crab review; waiting_since: 2026-11-18T16:56
+- 2026-11-20T11:33 request 1 by jhf
