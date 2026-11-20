@@ -63,3 +63,4 @@ Amended before answer (crab review): 1B now keeps a scope the source states (eng
 - 2026-11-20T02:45 handed to crab: piglet's session went silent (last seen 2026-11-19 02:41)
 - 2026-11-20T09:55 request 1 by jhf
 - 2026-11-20T09:55 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T09:55 request 1 acknowledged by crab
