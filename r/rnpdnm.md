@@ -11,10 +11,15 @@ rank: "zzzzzzzzzzw3"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?"
+asked_for: "jhf"
+asked_since: "2026-11-20T12:54"
+asked_by: "crab"
+asked_check: "3"
 ---
 
 ## Goal
@@ -70,6 +75,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
   Shared project memories: A stop here with today's filter (about 3 in 100 wrong ones get through; costs nothing), B try a third attempt aimed at agent working rules (about 75 cheap calls, a day's wait), or C a person approves each memory before it is pushed (new feature)? Details explain each.
   answered 2026-11-20T12:54 by crab:
     Withdrawn by crab 2026-11-20: still unclear (Jørgen request 2). Re-asked as question 3 with the practical consequences.
+- 2026-11-20T12:54 question 3 by crab to jhf (check 3):
+  Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?
 
 ## Requests
 - 2026-11-20T11:21 request 1 by jhf:
@@ -125,3 +132,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-20T12:54 answered asked (question 2, check 3), by crab, for crab (doing/asked -> doing/active):
   > Shared project memories: A stop here with today's filter (about 3 in 100 wrong ones get through; costs nothing), B try a third attempt aimed at agent working rules (about 75 cheap calls, a day's wait), or C a person approves each memory before it is pushed (new feature)? Details explain each.
   Withdrawn by crab 2026-11-20: still unclear (Jørgen request 2). Re-asked as question 3 with the practical consequences.
+- 2026-11-20T12:54 doing/active -> doing/asked (ask)
