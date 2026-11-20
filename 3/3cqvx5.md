@@ -1,18 +1,16 @@
 ---
 id: 3cqvx5
 title: "Board coordinator by default: the live agent session, no setup"
-state: "doing"
+state: "todo"
 type: feature
 priority: "medium"
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "zzzzzzzzzzzc"
 created: 2026-11-20
 updated: 2026-11-20
-doing_with: "p87ngv"
-doing_since: "2026-11-20T11:30"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -61,3 +59,4 @@ check 1: Jørgen 2026-11-20 11:55Z: 'Yes', with the addition below (check 6).
 - 2026-11-20T12:55 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:55 answer 1 acknowledged by crab
 - 2026-11-20T12:55 crab read the answer: hug task check 3cqvx5 1 "Jørgen 2026-11-20 11:55Z: 'Yes', with the addition below (check 6)."
+- 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T11:30; doing_with: p87ngv
