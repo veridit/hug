@@ -1,7 +1,7 @@
 ---
 id: ddpxs8
 title: "Release v0.7.86"
-state: "todo"
+state: "doing"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -13,7 +13,9 @@ updated: 2026-11-20
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "ready"
+stage: "active"
+doing_with: "p87ngv"
+doing_since: "2026-11-20T11:27"
 ---
 
 ## Goal
@@ -70,3 +72,4 @@ Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they do' (shorter Goals read better,
 - 2026-11-20T11:27 resolved request 1 by crab
 - 2026-11-20T11:27 crab read the answer: hug task resolve ddpxs8 1 "Agreed: no Description. What hug tui heads DESCRIPTION is the Goal under the wrong name, so it overlaps. A ticket becom…"
 - 2026-11-20T11:27 answer 1 acknowledged by crab
+- 2026-11-20T11:27 todo/ready -> doing/active (take with p87ngv)
