@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.93 - 2026-11-20
 
 - In hug tui, an action that moves the open task out of the pane you
   opened it from (an answer or tick in ASKED, a take, done, wait or drop)
