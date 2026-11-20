@@ -33,7 +33,7 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen agrees with the rule in Details (or corrects it)
+- [x] Jørgen agrees with the rule in Details (or corrects it)
 - [ ] With no coordinator set and one live agent session on the board, a request on an unowned task reaches that session (test)
 - [ ] With several live sessions, the first live one to touch the board receives it; when it ends, the next live one does (test)
 - [ ] A named coordinator wins while live; a named one that is gone falls back to the rule, and hug task coordinator says who and why (test)
@@ -48,6 +48,7 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 ## Notes
 
 
+check 1: Jørgen 2026-11-20 11:55Z: 'Yes', with the addition below (check 6).
 ## History
 - 2026-11-20T11:30 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:31 doing/active -> doing/asked (ask)
@@ -56,3 +57,4 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
   Yes, but when you when you deduce, you can just ask. We're giving this to you received this because you were perceived to be the coordinating task interacting with a human at a console. If you are not and instruction to fix the first time you see an agent who you have deduced
 - 2026-11-20T12:55 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:55 answer 1 acknowledged by crab
+- 2026-11-20T12:55 crab read the answer: hug task check 3cqvx5 1 "Jørgen 2026-11-20 11:55Z: 'Yes', with the addition below (check 6)."
