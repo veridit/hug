@@ -63,3 +63,4 @@ Reflection (unanswered, 2026-11-20, crab)
 - 2026-11-20T11:27 answered design (question 2), by jhf, for crab (todo/design -> todo/ready):
   > 0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?
   Yes, they do
+- 2026-11-20T11:27 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
