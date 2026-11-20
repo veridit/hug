@@ -51,3 +51,4 @@ check 1: release.yml 44678753259 success; brew upgrade: hug v0.7.87, hug/muninn/
 - 2026-11-20T11:26 answered asked, by jhf, for crab (doing/asked -> doing/active):
   > z6cb03: on statbus or sql_saga, where v0.7.86 added many long-Goal advice rows, open hug tui (restart it first: your TUIs there run 0.7.69 and 0.7.68). Are the broken tasks at the top of LINT, in view?
   Yes, they are
+- 2026-11-20T11:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
