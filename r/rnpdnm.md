@@ -11,10 +11,15 @@ rank: "zzzzzzzzzzr1"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_for: "jhf"
+asked_since: "2026-11-20T13:31"
+asked_by: "crab"
+asked_check: "3"
+asked_what: "For a repo where you turn sharing on: A you read what would be pushed once and strike rules like the 8 examples by hand (nothing to build), B hug files agent rules as global so they never reach the branch (about 75 calls, a day), or C you approve every memory before it is pushed (new feature)?"
 ---
 
 ## Goal
@@ -81,6 +86,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
   Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?
   answered 2026-11-20T13:31 by crab:
     Withdrawn by crab 2026-11-20: rewritten again (request 5); question 4 asks the concrete choice.
+- 2026-11-20T13:31 question 4 by crab to jhf (check 3):
+  For a repo where you turn sharing on: A you read what would be pushed once and strike rules like the 8 examples by hand (nothing to build), B hug files agent rules as global so they never reach the branch (about 75 calls, a day), or C you approve every memory before it is pushed (new feature)?
 
 ## Requests
 - 2026-11-20T11:21 request 1 by jhf:
@@ -167,3 +174,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T13:31 answered asked (question 3, check 3), by crab, for crab (doing/asked -> doing/active):
   > Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?
   Withdrawn by crab 2026-11-20: rewritten again (request 5); question 4 asks the concrete choice.
+- 2026-11-20T13:31 doing/active -> doing/asked (ask)
