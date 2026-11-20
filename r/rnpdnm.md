@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzw3"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_check: "3"
-asked_what: "Shared project memories: A stop here with today's filter (about 3 in 100 wrong ones get through; costs nothing), B try a third attempt aimed at agent working rules (about 75 cheap calls, a day's wait), or C a person approves each memory before it is pushed (new feature)? Details explain each."
-asked_for: "jhf"
-asked_since: "2026-11-20T11:26"
-asked_by: "crab"
 ---
 
 ## Goal
@@ -73,6 +68,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
     Withdrawn by crab 2026-11-20: unclear (Jørgen request 1). Re-asked plainly as question 2 with options A, B and C in Details.
 - 2026-11-20T11:26 question 2 by crab to jhf (check 3):
   Shared project memories: A stop here with today's filter (about 3 in 100 wrong ones get through; costs nothing), B try a third attempt aimed at agent working rules (about 75 cheap calls, a day's wait), or C a person approves each memory before it is pushed (new feature)? Details explain each.
+  answered 2026-11-20T12:54 by crab:
+    Withdrawn by crab 2026-11-20: still unclear (Jørgen request 2). Re-asked as question 3 with the practical consequences.
 
 ## Requests
 - 2026-11-20T11:21 request 1 by jhf:
@@ -125,3 +122,6 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-20T12:54 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:54 request 2 acknowledged by crab
 - 2026-11-20T12:54 request 2 in progress by crab: hug task set rnpdnm
+- 2026-11-20T12:54 answered asked (question 2, check 3), by crab, for crab (doing/asked -> doing/active):
+  > Shared project memories: A stop here with today's filter (about 3 in 100 wrong ones get through; costs nothing), B try a third attempt aimed at agent working rules (about 75 cheap calls, a day's wait), or C a person approves each memory before it is pushed (new feature)? Details explain each.
+  Withdrawn by crab 2026-11-20: still unclear (Jørgen request 2). Re-asked as question 3 with the practical consequences.
