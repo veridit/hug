@@ -49,6 +49,7 @@ file:911j70b-overview-100x30.ans (5264 bytes, sha256:a0439db3) before | after sh
 check 1: release.yml 44731952347 completed success; brew upgrade: 'hug v0.7.90', which hug -> ../Cellar/hug/0.7.90/bin/hug
 
 
+Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improvements after this.'
 ## History
 - 2026-11-20T13:07 todo -> todo/design (ask)
 - 2026-11-20T13:35 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -56,3 +57,4 @@ check 1: release.yml 44731952347 completed success; brew upgrade: 'hug v0.7.90',
   This is approved. I'm doing new improvements after this.
 - 2026-11-20T13:35 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:35 answer 1 acknowledged by crab
+- 2026-11-20T13:35 crab read the answer: hug task note mxj0zn "Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improvements after this.'"
