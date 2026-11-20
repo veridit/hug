@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.86 - 2026-11-20
+
 - The Goal is one sentence of at most 140 characters; detail goes in
   Details (0pr03h). `hug task new` and `hug task set` (and MCP
   `task_new`, `task_update` set) refuse a longer Goal with `fix: hug task
@@ -32,7 +34,6 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   remote itself fails (the hang marks a call from outside the background
   pass), and one that waits for the pass never returns and fails with
   the pass log before go test's -timeout.
-
 - Tests leave no tmux server running (wacc33, crab 2026-11-19 12:01Z:
   three huginn-golden/reload servers, parent launchd, alive for days). A
   test's tmux server now dies with the test however it ends: pass,
