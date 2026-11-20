@@ -4,6 +4,14 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- `hug task answer ID N` on a withdrawn question no longer panics
+  (5vehza). It exits 2 with `question N on ID was withdrawn at AT
+  (REASON)` and `fix: hug task ask ID --to NAME "..."` to ask it again.
+  Over MCP, `task_update` action answer gives the same refusal as a tool
+  error; before, the panic killed the `hug mcp` server.
+
 ## v0.7.91 - 2026-11-20
 
 - hug tui sends one request for the marked tasks (ec6z6j). With tasks

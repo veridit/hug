@@ -313,8 +313,13 @@ func pickQuestion(t Task, n int, text string) (AskedQuestion, error) {
 		if q.N != n {
 			continue
 		}
-		if !q.Open() {
+		switch {
+		case q.Answer != nil:
 			return AskedQuestion{}, usageErr(t.ID, "question "+strconv.Itoa(n)+" on "+t.ID+" is already answered, by "+q.Answer.By+" at "+q.Answer.At, "hug task show "+t.ID)
+		case q.Withdrawn != nil:
+			// 5vehza: a withdrawn question has no answer to read (it
+			// panicked here); it waits for nothing, so ask it again.
+			return AskedQuestion{}, usageErr(t.ID, "question "+strconv.Itoa(n)+" on "+t.ID+" was withdrawn at "+strings.Replace(q.Withdrawn.At, "T", " ", 1)+" ("+q.Withdrawn.Text+")", PersonWait{For: q.To, What: q.Text, Check: q.Check}.AskCommand(t.ID))
 		}
 		return q, nil
 	}
