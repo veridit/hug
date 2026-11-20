@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzkh"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T01:39"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "A task asked of you opens with focus on its question, shown once. Open 6ephqk (or any task in your ASKED): does it read clearly? Your 08:20Z note on 911j70 (the picture line gets no focus and no jump) is filed on 8a0ybb check 7."
-asked_for: "jhf"
-asked_since: "2026-11-20T09:26"
-asked_by: "crab"
-asked_check: "4"
 ---
 
 ## Goal
@@ -60,6 +55,8 @@ Original Purpose (Jørgen 2026-11-17 23:27 local, on 6ephqk): Jørgen 2026-11-17
 ## Questions
 - 2026-11-20T09:26 question 1 by crab to jhf (check 4):
   A task asked of you opens with focus on its question, shown once. Open 6ephqk (or any task in your ASKED): does it read clearly? Your 08:20Z note on 911j70 (the picture line gets no focus and no jump) is filed on 8a0ybb check 7.
+  answered 2026-11-20T11:28 by crab:
+    Jørgen in request 1 (2026-11-20 10:28Z): 'I think the current view is okay. And I did jump into the question, so this is better.'
 
 ## Requests
 - 2026-11-20T11:28 request 1 by jhf:
@@ -99,3 +96,6 @@ check 4: Jørgen 2026-11-20 10:28Z (request 1): 'I think the current view is oka
 - 2026-11-20T11:28 request 1 acknowledged by crab
 - 2026-11-20T11:28 request 1 in progress by crab: hug task set 0gztsy
 - 2026-11-20T11:28 resolved request 1 by crab
+- 2026-11-20T11:28 answered asked (check 4), by crab, for crab (doing/asked -> doing/active):
+  > A task asked of you opens with focus on its question, shown once. Open 6ephqk (or any task in your ASKED): does it read clearly? Your 08:20Z note on 911j70 (the picture line gets no focus and no jump) is filed on 8a0ybb check 7.
+  Jørgen in request 1 (2026-11-20 10:28Z): 'I think the current view is okay. And I did jump into the question, so this is better.'
