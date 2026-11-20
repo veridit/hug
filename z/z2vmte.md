@@ -11,13 +11,10 @@ rank: "zzzzzzzzzzlh"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T03:38"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 3: crab converts 47sxn2 after the release with 88a6ac89; check 4: Jørgen sees it in ASKED on 2026-11-24"
-waiting_since: "2026-11-18T04:23"
-waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -66,3 +63,5 @@ file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 - 2026-11-20T13:05 request 1 by jhf
 - 2026-11-20T13:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:05 request 1 acknowledged by crab
+- 2026-11-20T13:05 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: check 3: crab converts 47sxn2 after the release with 88a6ac89; check 4: Jørgen sees it in ASKED on 2026-11-24; waiting_since: 2026-11-18T04:23
+- 2026-11-20T13:05 request 1 in progress by crab: hug task resume z2vmte
