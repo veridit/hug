@@ -27,6 +27,8 @@ The value of a ticket should be on screen first; long reference text should not 
 You land on your question, a file it names is a link on it, and the page reads short to long.
 
 ## Relevant details
+Scope (crab, 2026-11-20, after Jørgen's requests 1 and 2): this task keeps only the section order, folding the long sections, and the ↑/↓ scroll markers. Landing on a question with its file as a link is qcq3tm (high, being built). Questions and requests drawn inline where they point, jumped to and answered in place, are p87ngv (inline marks), which replaces any FOR YOU header.
+
 Decision (Jørgen 2026-11-20 10:24Z, request 1, screenshot screen-1123.ans): no FOR YOU block. Opening an asked task scrolls to the question; a file the question names is a link on it (Enter shows it, Esc returns), never drawn at the top of the page. His words: 'We scroll down to the question, but we're showing the file in line that doesn't make any sense ... we should have scrolled to the question and the file would be then in display or linked to from the question ... we can always scroll to the question'. The landing and the link are built in qcq3tm (high, in progress); this task keeps the section order, the jump from a target, and the scroll markers.
 
 Previous Principle: The person is asked first, then oriented, then given detail. A question links, never inlines. Links use the mark syntax (p87ngv): .target:(.File .name:"MOCK.md"), .target:(.Section .name:"Acceptance" .item:5), .target:(.File .name:"tui-100x30.txt" .line:63); asked_show maps to .target:(.File ...). One jump key everywhere (Enter on a link). Folded sections show their one-line summary (FILES (6), NOTES (12), HISTORY (40)). Calm rules (qh9ep1 check 9).
