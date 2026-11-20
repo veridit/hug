@@ -139,6 +139,7 @@ file:frame-4-100x30.ans (1782 bytes, sha256:7618ca11) frame 4 in colour: r on th
 file:frame-5-100x30.ans (4480 bytes, sha256:4700a041) frame 5 in colour: ? on check 2: the span "Should, Can or Do" bold, mark 1's sentence underlined, ↳ 1 and the writes: .Question line dim
 file:frame-6-100x30.ans (4639 bytes, sha256:1752a10a) frame 6 in colour: Jørgen answers from ASKED: "Should, Can or Do" and mark 1's sentence underlined, ↳ 2 under the cursor in default colour, ↳ 1 dim
 file:frame-7-100x30.ans (1774 bytes, sha256:c50546fe) frame 7 in colour: after both resolves: plain text, no underline, no dim mark lines, history.sdd listed in FILES
+file:screen-1110.ans (19140 bytes, sha256:9ce1da68) screen capture from hug tui
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
