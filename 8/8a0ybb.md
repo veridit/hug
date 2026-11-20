@@ -60,6 +60,10 @@ file:b-link-mock-md-100x30.ans (6171 bytes, sha256:f894ff5f) mock (b) Enter on t
 file:b-link-mock-md-160x45.ans (11954 bytes, sha256:1cd13d03) mock (b) Enter on the FOR YOU link: MOCK.md in the file frame; u/Esc goes back to the question
 file:b-link-mock-md-100x30.png (117989 bytes, sha256:b57efac6) mock (b) Enter on the FOR YOU link: MOCK.md in the file frame; u/Esc goes back to the question
 file:b-link-mock-md-160x45.png (202510 bytes, sha256:04647f96) mock (b) Enter on the FOR YOU link: MOCK.md in the file frame; u/Esc goes back to the question
+file:c0-notes-focused-100x30.ans (3513 bytes, sha256:8130cbc2) mock (c0) Shift-Tab to NOTES (11): the folded line focused, Enter opens
+file:c0-notes-focused-160x45.ans (6495 bytes, sha256:4f650097) mock (c0) Shift-Tab to NOTES (11): the folded line focused, Enter opens
+file:c0-notes-focused-100x30.png (98992 bytes, sha256:b6879ef5) mock (c0) Shift-Tab to NOTES (11): the folded line focused, Enter opens
+file:c0-notes-focused-160x45.png (175124 bytes, sha256:5557cb05) mock (c0) Shift-Tab to NOTES (11): the folded line focused, Enter opens
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):

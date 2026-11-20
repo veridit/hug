@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168mlist › [1m[38;2;0;191;255mp87ngv[0m                                                              [1m[38;2;255;179;84m? 15 for you
+[38;2;0;191;255m[doing][0m  [1m[38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:daisy · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-19 · updated 2026-11-19 · inline-marks-task-s[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mInline marks on a task's text; resolved dialogue moves to a history file
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[39m       (gmzd87) (test)
+  ☐ 9. The agent instructions say: lead with clarity in the ticket, act on or answer marks, post
+       questions as marks, move the dialogue to the history file (fd0j4p wording)
+  ☐ 10. Jørgen marks a sentence in hug tui, the assignee resolves it, and the ticket reads clearer
+        without a DM
+  ☐ 11. A mark that points into an attachment (NAME plus line or section) is shown beside that place
+        in hug tui's file view, and resolving it records the pointer in the history (test)
+
+[1m[38;2;0;191;255mFILES (6)[0m
+  ⎘ MOCK.md[38;2;135;149;168m  6.0 KiB[39m
+  ⎘ after.md[38;2;135;149;168m  1.6 KiB[39m
+  ⎘ before.md[38;2;135;149;168m  1.8 KiB[39m
+  ⎘ cli.txt[38;2;135;149;168m  10.1 KiB[39m
+  ⎘ history.sdd[38;2;135;149;168m  1.3 KiB[39m
+  ⎘ tui-100x30.txt[38;2;135;149;168m  19.4 KiB[39m
+
+[1m[38;2;0;191;255m› RELEVANT DETAILS (477 words)[0m[38;2;135;149;168m · Syntax (Jørgen 09:31-09:35Z, console): Seid things. A mark is a th…
+[1m[38;2;0;191;255m› QUESTIONS (7 answered)[0m[38;2;135;149;168m · last: 8. Seid-Data-Files.md calls the self-describing tier without a sch…
+[1m[38;2;0;191;255m› REQUESTS (3 resolved)[0m[38;2;135;149;168m · last: 3. Critic markup. Well, why not? It looks sensible enough. We can t…
+[1m[38;2;0;191;255m▸ NOTES (11)[0m[38;2;135;149;168m · Enter opens · last: crab 11:08Z: Jørgen 11:07Z (console): history file is history.sd…
+[1m[38;2;0;191;255m› HISTORY (53)[0m[38;2;135;149;168m · last: 2026-11-19T12:08 answer 8 acknowledged by crab
+Task 263 of 273 · 100% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back[39m
+
+[1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m open/fold · [1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m scroll · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255ma[0m[38;2;135;149;168mnswer · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew[39m [38;2;135;149;168m…[39m   [38;2;135;149;168mhug dev
