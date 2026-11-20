@@ -121,3 +121,4 @@ shipped in v0.7.70 (08ab507)
   > Questions to a person now have their own stage, asked. On your board, does ASKED show what is asked of you, apart from what merely waits?
   answered by ticking check 7
 - 2026-11-20T11:29 doing/active -> done (done after jhf ticked check 7 (release v0.7.70)); was doing_since: 2026-11-17T23:53
+- 2026-11-20T11:29 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
