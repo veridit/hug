@@ -21,7 +21,7 @@ waiting_asked_by: "mizaru"
 ---
 
 ## Goal
-A request a person writes on any task reaches the board coordinator (hug.toml [board] coordinator) through hug itself, even when that session is idle, and its receipt is visible: pending, acknowledged, in progress, answered.
+A request on any task reaches the board coordinator through hug, even when it is idle, with a visible receipt.
 
 ## Purpose
 Jørgen's requests sat unseen until the coordinator happened to run a hug command; the coordinator then improvised a poller. Delivery must be designed in, not improvised by an agent.
@@ -30,6 +30,8 @@ Jørgen's requests sat unseen until the coordinator happened to run a hug comman
 By design, not by doctrine: hug delivers, and the instructions hug writes (setup's AGENTS.md block, MCP tool descriptions, hook messages) describe exactly what the code does, kept in step by a test. Saved is not received: acknowledged only on the coordinator's actual receipt. No per-agent pollers.
 
 ## Relevant details
+A request a person writes on any task reaches the board coordinator (hug.toml [board] coordinator) through hug itself, even when that session is idle, and its receipt is visible: pending, acknowledged, in progress, answered.
+
 Split from ec6z6j (multi-task requests, which still waits on row marking rxr4z8); this covers delivery of single requests and the shared inbox it builds on. Today: requests surface only as a board cue on the next hug command by any agent (muninn/internal/recall/boardcue.go). Coordinator wake path to investigate: jcode hooks, harness install code (muninn/internal/harness), swarm/DM delivery.
 
 ## Depends on
