@@ -95,6 +95,7 @@ landed 0e577a0 on main 2026-11-19: tui: t on several marked takes the first and 
 landed f7235d4 on main 2026-11-19: tui: marked and help goldens on main's TAGS column (rxr4z8)
 landed 9b56535 on main 2026-11-19: tui: tags, taken-with and 140 tmux help goldens with Space mark (rxr4z8)
 shipped in v0.7.73 (4b49e10)
+file:screen-1138.ans (6901 bytes, sha256:8f2b42e1) screen capture from hug tui
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)

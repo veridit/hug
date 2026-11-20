@@ -1,0 +1,47 @@
+[1;38;2;0;191;255mHUG · hug ·[0m [38;2;135;149;168moverview[0m[38;2;135;149;168m › [0m[1;38;2;0;191;255mrxr4z8[0m                                                                                                                                           [1;38;2;255;179;84m? 10 for you[0m
+[1;38;2;0;191;255m[doing][0m  [1;38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][0m  [38;2;135;149;168mgroup:root[0m  [1;38;2;0;191;255massigned:crab · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-17 · updated 2026-11-17 · lists-space-marks-tasks[0m
+[1;38;2;0;191;255m✓ jhf answered asked: 1. If you ask three questions, I should have three questions to answer in the ticket. This makes no sense. Let's structure this better. Make a new ticket if …[0m
+[38;2;135;149;168m  unread by nautilus[0m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[0m
+[1mIn lists, Space marks tasks and the footer offers actions for the marked ones[0m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;38;2;0;191;255m  ▸ cursor-on-mark.md · 1.4 KiB[0m
+  # rxr4z8 check 7: the sign for a marked row under the cursor
+
+  macaque, 2026-11-18. In the list, `◆` marks a row and `>` is the cursor.
+  When the cursor is on a marked row, the row needs one sign that says both.
+  Below are the same four rows drawn twice: once with `⋗` and once with `▸`.
+  In each one the cursor is on 000005, which is marked.
+
+  ## A: ⋗ (greater-than with a dot: the cursor carrying a mark)
+
+  ```
+  > NEXT UP · rank order  [15] · 1–4 shown · 3 marked
+  ◆ ○ 2    000001   feature critical ready     compiler Feature task 01: make …
+  ⋗ ○ 2    000005   docs    critical depends   runtime Docs task 05: make the ter…
+  ◆ ○ 2    000009   spike   high     ready     docs Spike task 09: make the termi…
+    ◑ 1/2  a1b2c3   feature high     ready     Launch (epic)
+  ```
+
+  ## B: ▸ (a filled pointer)
+
+  ```
+  > NEXT UP · rank order  [15] · 1–4 shown · 3 marked
+  ◆ ○ 2    000001   feature critical ready     compiler Feature task 01: make …
+  ▸ ○ 2    000005   docs    critical depends   runtime Docs task 05: make the ter…
+  ◆ ○ 2    000009   spike   high     ready     docs Spike task 09: make the termi…
+    ◑ 1/2  a1b2c3   feature high     ready     Launch (epic)
+  ```
+
+  For comparison, the cursor on a row that is not marked keeps `>`:
+
+  ```
+[38;2;135;149;168m  … 3 more lines: Space in FILES shows all[0m
+
+[1;38;2;0;191;255mDESCRIPTION[0m
+[38;5;252m[0m[38;5;252m[0m[38;5;252mIn lists, Space marks tasks and the footer offers actions that apply to every marked[0m[38;5;252m task.[0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m [0m[38;5;252m[0m
+
+[38;2;135;149;168mTask 3 of 10 · 0% · [0m[1;4;38;2;0;191;255;4mn[0m[38;2;135;149;168mext · [0m[1;4;38;2;0;191;255;4mp[0m[38;2;135;149;168mrevious · Esc back[0m
+
+[1;38;2;0;191;255mj/k[0m[38;2;135;149;168m [0m[38;2;135;149;168mcheck[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mSpace[0m[38;2;135;149;168m [0m[38;2;135;149;168mtick[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255m-[0m[38;2;135;149;168m [0m[38;2;135;149;168mstrike out[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m [0m[38;2;135;149;168mnext[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4ma[0m[38;2;135;149;168mnswer[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mt[0m[38;2;135;149;168make[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4md[0m[38;2;135;149;168mone[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mx[0m[38;2;135;149;168m [0m[38;2;135;149;168mdrop[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4me[0m[38;2;135;149;168mdit[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mN[0m[38;2;135;149;168mew[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mS[0m[38;2;135;149;168mcreen[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mE[0m[38;2;135;149;168mdit files[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mu[0m[38;2;135;149;168mp[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mr[0m[38;2;135;149;168mequest[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255m/[0m[38;2;135;149;168m [0m[38;2;135;149;168mfind[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mn[0m[38;2;135;149;168mext-[0m[38;2;135;149;168m, [0m[1;4;38;2;0;191;255;4mp[0m[38;2;135;149;168mrevious task[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mJ/K[0m[38;2;135;149;168m [0m[38;2;135;149;168m½ page[0m
