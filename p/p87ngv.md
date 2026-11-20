@@ -44,7 +44,7 @@ and on a second line""". The opener is """ and the closer is the first """ not f
 - [ ] ~~An outdated anchor (quoted text edited away) keeps its thread and shows it as outdated (test)~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
 - [ ] ~~Several questions in one call become separate threads, each answered on its own (test)~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
 - [ ] ~~Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM~~ (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)
-- [ ] Jørgen approves a mock (task file before and after, CLI transcript, TUI frames at 100x30): a sentence marked with a request, the agent's change, the mark gone from the ticket and the exchange in the history file
+- [x] Jørgen approves a mock (task file before and after, CLI transcript, TUI frames at 100x30): a sentence marked with a request, the agent's change, the mark gone from the ticket and the exchange in the history file
 - [ ] Resolving a mark rewrites or keeps the marked text, removes the mark, and appends mark, replies, who and when to the history file; the ticket holds no dialogue afterwards (test)
 - [ ] Several questions in one call become separate inline marks, each answered on its own (test)
 - [ ] An open mark shows in the person's ASKED or the assignee's requests and is delivered as today (gmzd87) (test)
@@ -151,6 +151,7 @@ file:frame-6-100x30.ans (4639 bytes, sha256:1752a10a) frame 6 in colour: Jørgen
 file:frame-7-100x30.ans (1774 bytes, sha256:c50546fe) frame 7 in colour: after both resolves: plain text, no underline, no dim mark lines, history.sdd listed in FILES
 file:screen-1110.ans (19140 bytes, sha256:9ce1da68) screen capture from hug tui
 file:screen-1113.ans (5351 bytes, sha256:f9547c1d) screen capture from hug tui
+check 5: Jørgen 2026-11-20 11:16 local (question 11): 'Yes', approves the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt) with the questions now on the task.
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
@@ -258,3 +259,4 @@ file:screen-1113.ans (5351 bytes, sha256:f9547c1d) screen capture from hug tui
   Yes
 - 2026-11-20T11:16 answer 12 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:16 answer 12 acknowledged by crab
+- 2026-11-20T11:16 crab read the answer: hug task check p87ngv 5 "Jørgen 2026-11-20 11:16 local (question 11): 'Yes', approves the mock (before.md, after.md, history.sdo-to-be, cli.txt,…"
