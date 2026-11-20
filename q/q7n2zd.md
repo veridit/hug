@@ -33,7 +33,7 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen picks the key
+- [x] Jørgen picks the key
 - [ ] Inside a task the key attaches a clipboard image as PNG and clipboard text as .txt (.ans with colour), with the attach note, and FILES shows it at once (tmux test with a fake clipboard)
 - [ ] In a list the key asks attach to ID · select · create, as S does, and Esc attaches nothing (tmux test)
 - [ ] An empty clipboard, no clipboard tool or an SSH session gives a message with a fix: line, nothing attached (test)
@@ -48,6 +48,7 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
 ## Notes
 
 
+check 1: Jørgen 2026-11-20 11:52Z (answer 1): 'Yes, let's try uppercase V'. Key: V (provisional until bfxq93).
 ## History
 - 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:23 doing/active -> doing/asked (ask)
@@ -56,3 +57,4 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
   Yes, let's try uppercase V
 - 2026-11-20T12:52 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:52 answer 1 acknowledged by crab
+- 2026-11-20T12:52 crab read the answer: hug task check q7n2zd 1 "Jørgen 2026-11-20 11:52Z (answer 1): 'Yes, let's try uppercase V'. Key: V (provisional until bfxq93)."
