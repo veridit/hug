@@ -11,10 +11,15 @@ rank: "zzzzzzzzzzkh"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T01:39"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_what: "A task asked of you opens with focus on its question, shown once. Open 6ephqk (or any task in your ASKED): does it read clearly? Your 08:20Z note on 911j70 (the picture line gets no focus and no jump) is filed on 8a0ybb check 7."
+asked_for: "jhf"
+asked_since: "2026-11-20T09:26"
+asked_by: "crab"
+asked_check: "4"
 ---
 
 ## Goal
@@ -48,6 +53,10 @@ Mock, 6ephqk opened:
 - [ ] Jørgen opens 6ephqk and says it reads clearly
 - [x] a task asked of you shows the question once: the context has only a one-word stage badge ([asked], [design], [review]) and no stage line; with a check, the question sits under that check; without, one block at the top of the details, whole and wrapped, never cut; asked of someone else or waiting on a thing, the context line stays (crab 01:06; golden at 80 and 140)
 
+## Questions
+- 2026-11-20T09:26 question 1 by crab to jhf (check 4):
+  A task asked of you opens with focus on its question, shown once. Open 6ephqk (or any task in your ASKED): does it read clearly? Your 08:20Z note on 911j70 (the picture line gets no focus and no jump) is filed on 8a0ybb check 7.
+
 ## Notes
 
 crab 2026-11-17 23:28 ruling on how a wait names its check: field waiting_check: N set by hug task wait --check N (refuses a bad N with a fix line; MCP task_update gets check). No read-time fallback (no backward compatibility): hug upgrade's task part moves an exact leading 'check N:' with a real N into waiting_check (preview, then --apply, like waiting_for). The TUI reads only the field. hug task wait prints a hint when the reason starts with 'check N' and no --check. After release: run hug upgrade on hug's own board, preview first (14 of 23 waits start 'check N').
@@ -72,3 +81,4 @@ crab 15:01 local: Jørgen's answer on check 4 (14:58): focus right, styling too 
 - 2026-11-18T14:58 answered asked (check 4), by jhf, for nautilus (doing/asked -> doing/active):
   > after the release: open 6ephqk (or any task asked of you): does the question read clearly, once, on its check, with the cursor there?
   So while the focus was correct it says Jrgens Jrgen opens and says it reads clearly There is too much visual noise on the page specifically the acceptance heading is too drawing too much attention so that it competes with the line that is showing below So I think the acceptance heading has to be maybe bold or something but not the background color so it has to be slightly less dominant and I think the current full color of the question while sensible should rather Yeah, let's try that one because it's both bold and background and strongly colored so it's like too much so I'm wondering if it should be toned down and have something interact like a like the glowing markers like this is where you're at that's the one place you're at rather than trying to do the visual competition
+- 2026-11-20T09:26 doing/active -> doing/asked (ask)
