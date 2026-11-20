@@ -1,7 +1,7 @@
 ---
 id: ddpxs8
 title: "Release v0.7.86"
-state: "done"
+state: "todo"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -13,7 +13,7 @@ updated: 2026-11-20
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-done_at: "2026-11-20T06:06"
+stage: "ready"
 ---
 
 ## Goal
@@ -47,3 +47,4 @@ Reflection (unanswered, 2026-11-20, crab)
 - 2026-11-20T05:41 todo -> doing/active (take with p277bp)
 - 2026-11-20T05:41 doing/active -> doing/asked (ask)
 - 2026-11-20T06:06 doing/asked -> done (done); was asked_by: crab; asked_for: jhf; asked_since: 2026-11-20T05:41; asked_what: 0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?; doing_since: 2026-11-20T05:41; doing_with: p277bp
+- 2026-11-20T06:06 done -> todo/ready (reopen); was done_at: 2026-11-20T06:06
