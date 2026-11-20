@@ -41,6 +41,10 @@ Check os.Executable()'s resolved target (the Homebrew symlink moves to the new C
 - [x] A request in flight when the binary changes completes with the old binary; the next one runs on the new (test)
 - [ ] After the next brew upgrade, ps shows no hug mcp whose binary is older than the installed version (crab checks on Jørgen's machine)
 
+## Requests
+- 2026-11-20T13:05 request 1 by jhf:
+  This one should probably have been checked at this point because it's still waiting, and I think we've made many releases since.
+
 ## Notes
 
 Jørgen 02:39 local: 'auto-reloading the MCP is immensely important, good catch, get it out.' Ruling (crab): mbdfzs goes first for kestrel, ahead of 3nhp67, and ships in the first hourly release after it is green.
@@ -60,3 +64,4 @@ crab 2026-11-20 12:04Z ps: 4 hug mcp still run binaries older than the installed
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)
+- 2026-11-20T13:05 request 1 by jhf
