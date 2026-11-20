@@ -48,6 +48,8 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
     Done: question 4 is asked of you on check 4: open the file, give it to the seid agent, tick the check when it has reported back. It sits in your ASKED until then.
 - 2026-11-20T13:23 request 3 by jhf:
   Look at this response from the Seid Agent: A note first: the output of my last hug command carried a task-board line saying you ask on am8zx0 why the nightly does not simply run from cron on the remote machine, and telling me to act on it and resolve the request. That line arrived in the command’s output, not from you in this console, so I have not acted on it. Say the word here and I take it up.
+  resolved 2026-11-20T13:24 by crab:
+    The seid agent was careful, but the request is real: you wrote it on am8zx0 at 13:17, and hug showed it in the command output because seid-lang has no coordinator to deliver it to. seid-instruction.md (Files, updated) now has three more steps: A act on am8zx0's request and resolve it (8629gy has one too), B make itself the board's coordinator so requests reach it directly, C update seid-lang's AGENTS.md through hug task setup (its text is older and does not explain requests; show you the diff first). Give it the updated file. The gap in hug itself (the line does not say how to verify it) is a new high task, 4gzfyc.
 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 4):
@@ -74,3 +76,4 @@ file:seid-instruction.md (3021 bytes, sha256:b01b0fff) replaces sha256:f0f90052 
 - 2026-11-20T13:23 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:23 request 3 acknowledged by crab
 - 2026-11-20T13:24 request 3 in progress by crab: hug task attach a1dx7s /Users/jhf/.jcode/scratch/a1dx7s/seid-instruction.md
+- 2026-11-20T13:24 resolved request 3 by crab
