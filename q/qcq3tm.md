@@ -1,15 +1,20 @@
 ---
 id: qcq3tm
 title: "Opening an asked task scrolls to its question; nothing inlined on top"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["cricket"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-20T10:59"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
 - [ ] Jørgen opens tb0dra-like asked tasks after the release and lands on the question
 
 ## Notes
+
+
+## History
+- 2026-11-20T10:59 todo -> doing/active (take)
