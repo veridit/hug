@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzc"
 created: 2026-11-19
 updated: 2026-11-19
-design_asked_by: "crab"
-design_question: "x8zzzn: shall I switch mid-turn recall on in your config now ('recall': {'jcode_midturn': true}), so messages you type while I'm working get their memories, and you decide after a day whether it replaces the old path?"
-design_for: "jhf"
-design_since: "2026-11-19T22:00"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ main 9073b532 (CI 44610132775 attempt 2, 8/8), CHANGELOG ccf8641f, merge 97d2de7
 ## Questions
 - 2026-11-19T22:00 question 1 by crab to jhf:
   x8zzzn: shall I switch mid-turn recall on in your config now ('recall': {'jcode_midturn': true}), so messages you type while I'm working get their memories, and you decide after a day whether it replaces the old path?
+  answered 2026-11-20T11:21 by jhf:
+    Yes, clearly. I wanted to activate it right now. You want to make it staggered, but fine, make a follow-up ticket then.
 
 ## Notes
 
@@ -45,3 +43,6 @@ check 1: release.yml 44613144851 success; brew upgrade: hug v0.7.85, hug/muninn/
 
 ## History
 - 2026-11-19T22:00 todo -> todo/design (ask)
+- 2026-11-20T11:21 answered design, by jhf, for crab (todo/design -> todo/ready):
+  > x8zzzn: shall I switch mid-turn recall on in your config now ('recall': {'jcode_midturn': true}), so messages you type while I'm working get their memories, and you decide after a day whether it replaces the old path?
+  Yes, clearly. I wanted to activate it right now. You want to make it staggered, but fine, make a follow-up ticket then.
