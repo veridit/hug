@@ -39,7 +39,7 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 - [x] c asks for a title, creates the task with the capture attached, and opens it (key test; the new task has the file in Files)
 - [x] Golden of the prompt at 80 and 140 columns
 - [x] Jørgen confirms on his board after release
-- [ ] The prompt reads 'Screen capture: attach to ID · select · create' (s and c underlined), the offered task's title on the keys line; after c 'Screen capture: new task, title:'; after s 'Screen capture: select the task' (golden at 80 and 140, per capture-wording.md once Jørgen approves)
+- [ ] ~~The prompt reads 'Screen capture: attach to ID · select · create' (s and c underlined), the offered task's title on the keys line; after c 'Screen capture: new task, title:'; after s 'Screen capture: select the task' (golden at 80 and 140, per capture-wording.md once Jørgen approves)~~ (not relevant: Jørgen 2026-11-20 10:37Z: the current wording is good, even more succinct than proposed; keep it, crab, 2026-11-20)
 
 ## Questions
 - 2026-11-18T23:24 question 1 by crab to jhf (check 5):
@@ -112,3 +112,5 @@ file:screen-1136.ans (17604 bytes, sha256:16d2046a) screen capture from hug tui
   The current implementation is good and I like it and it's even more succinct than we outlined in this ticket so this ticket is done. However, in the extra added screenshot I noticed that when I open this ticket I don't scroll down to the question it instead opens it shows a referenced file on top and doesn't scroll to the question so I've reported this multiple times so hopefully a recent release will soon fix this if this is in progress discard that from this answer and just mark it as done
 - 2026-11-20T11:37 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:37 answer 2 acknowledged by crab
+- 2026-11-20T11:37 crab read the answer: hug task strike hjbfzd 6
+- 2026-11-20T11:37 answer 1 in progress by crab: hug task strike hjbfzd 6
