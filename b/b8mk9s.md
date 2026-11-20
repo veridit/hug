@@ -11,7 +11,11 @@ rank: "5"
 created: 2026-11-20
 updated: 2026-11-20
 parent: "9taa9d"
-stage: "ready"
+stage: "design"
+design_for: "jhf"
+design_since: "2026-11-20T17:08"
+design_asked_by: "crab"
+design_question: "Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typically (busiest 2.1 MB); 15% of memories change on a later day. My pick is E: a today folder with one small file per memory, rolled by dream into one JSON Lines file per day. Pick A to F?"
 ---
 
 ## Goal
@@ -92,6 +96,8 @@ Promoted from item 3 of task:9taa9d.
   The real gain is smaller local writes (today each remember rewrites the whole 18.6 MB file); git merges are already line-based. Keep memories.json, make it append-only JSON Lines (same gain, one file), or one file per memory (same gain, 18,078 files)?
   answered 2026-11-20T17:08 by crab:
     Withdrawn by crab 2026-11-20: Jørgen's requests 3 and 4 added dated layouts; question 3 asks A to F.
+- 2026-11-20T17:08 question 3 by crab to jhf (check 5):
+  Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typically (busiest 2.1 MB); 15% of memories change on a later day. My pick is E: a today folder with one small file per memory, rolled by dream into one JSON Lines file per day. Pick A to F?
 
 ## Notes
 
@@ -123,3 +129,4 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T17:08 answered design (question 2, check 4), by crab, for crab (todo/design -> todo/ready):
   > The real gain is smaller local writes (today each remember rewrites the whole 18.6 MB file); git merges are already line-based. Keep memories.json, make it append-only JSON Lines (same gain, one file), or one file per memory (same gain, 18,078 files)?
   Withdrawn by crab 2026-11-20: Jørgen's requests 3 and 4 added dated layouts; question 3 asks A to F.
+- 2026-11-20T17:08 todo/ready -> todo/design (ask)
