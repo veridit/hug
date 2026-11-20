@@ -128,3 +128,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:57 asked question 5 of jhf, 2 open (doing/asked -> doing/asked)
 - 2026-11-20T09:57 resolved request 3 by crab
 - 2026-11-20T11:40 request 4 by jhf
+- 2026-11-20T11:40 request 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
