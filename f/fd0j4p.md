@@ -52,6 +52,10 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
   answered 2026-11-20T11:05 by jhf:
     This was clear and sensible apart from my previous nitpick about declarative person and message separate instead of parsing a text
 
+## Requests
+- 2026-11-20T11:05 request 1 by jhf:
+  And when it comes to a separate person listing, it of course has to be something that if you provide nothing, it lists the available options. So it has to be interactive and explorative for AI agents, right?
+
 ## Notes
 
 
@@ -96,3 +100,4 @@ check 1: Approved by Jørgen 10:05Z (answer 3) with his nitpick applied to line 
 - 2026-11-20T11:05 answer 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:05 crab read the answer: hug task note fd0j4p "Approved lines (Jørgen 2026-11-20 10:05Z, answer 3: 'clear and sensible apart from my previous nitpick about declarativ…"
 - 2026-11-20T11:05 answer 3 acknowledged by crab
+- 2026-11-20T11:05 request 1 by jhf
