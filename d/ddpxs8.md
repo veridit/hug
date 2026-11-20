@@ -68,3 +68,4 @@ Reflection (unanswered, 2026-11-20, crab)
 - 2026-11-20T11:27 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:27 resolved request 1 by crab
 - 2026-11-20T11:27 crab read the answer: hug task resolve ddpxs8 1 "Agreed: no Description. What hug tui heads DESCRIPTION is the Goal under the wrong name, so it overlaps. A ticket becom…"
+- 2026-11-20T11:27 answer 1 acknowledged by crab
