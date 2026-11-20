@@ -11,11 +11,7 @@ rank: "5"
 created: 2026-11-20
 updated: 2026-11-20
 parent: "9taa9d"
-stage: "design"
-design_question: "The real gain is smaller local writes (today each remember rewrites the whole 18.6 MB file); git merges are already line-based. Keep memories.json, make it append-only JSON Lines (same gain, one file), or one file per memory (same gain, 18,078 files)?"
-design_for: "jhf"
-design_since: "2026-11-20T13:39"
-design_asked_by: "crab"
+stage: "ready"
 ---
 
 ## Goal
@@ -94,6 +90,8 @@ Promoted from item 3 of task:9taa9d.
     Withdrawn by crab 2026-11-20: the WHY was rewritten after Jørgen's request 2; question 2 asks the three-way choice.
 - 2026-11-20T13:39 question 2 by crab to jhf (check 4):
   The real gain is smaller local writes (today each remember rewrites the whole 18.6 MB file); git merges are already line-based. Keep memories.json, make it append-only JSON Lines (same gain, one file), or one file per memory (same gain, 18,078 files)?
+  answered 2026-11-20T17:08 by crab:
+    Withdrawn by crab 2026-11-20: Jørgen's requests 3 and 4 added dated layouts; question 3 asks A to F.
 
 ## Notes
 
@@ -122,3 +120,6 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T17:07 request 4 acknowledged by crab
 - 2026-11-20T17:08 request 3 in progress by crab: hug task set b8mk9s
 - 2026-11-20T17:08 request 4 in progress by crab: hug task set b8mk9s
+- 2026-11-20T17:08 answered design (question 2, check 4), by crab, for crab (todo/design -> todo/ready):
+  > The real gain is smaller local writes (today each remember rewrites the whole 18.6 MB file); git merges are already line-based. Keep memories.json, make it append-only JSON Lines (same gain, one file), or one file per memory (same gain, 18,078 files)?
+  Withdrawn by crab 2026-11-20: Jørgen's requests 3 and 4 added dated layouts; question 3 asks A to F.
