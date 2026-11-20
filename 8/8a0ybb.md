@@ -37,7 +37,7 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 
 ## Acceptance
 - [ ] ~~Jørgen approves a mock of p87ngv's detail with FOR YOU first, the link, and the short-to-long order (frames attached)~~ (not relevant: the FOR YOU mock is replaced: Jørgen chose scroll-to-question, no FOR YOU block (request 1, 2026-11-20); new mock is check 10, crab, 2026-11-20)
-- [ ] Enter on a question's target opens that file in the file frame, or scrolls to that section or check, in one key (test per target kind)
+- [ ] ~~Enter on a question's target opens that file in the file frame, or scrolls to that section or check, in one key (test per target kind)~~ (not relevant: taken over by p87ngv: marks point into files and sections, and you act on them where they are (Jørgen request 2, 2026-11-20), crab, 2026-11-20)
 - [ ] ~~A task with asked_show no longer inlines the file above the question; the question shows its target as a link (golden)~~ (not relevant: moved to qcq3tm (high), which ships ahead of the FOR YOU decision, crab, 2026-11-20)
 - [ ] ~~Details, Files, Notes and History are folded to one line until opened; Purpose, Principle, Goal, Acceptance show in that order (golden 100x30 and 160x45)~~ (not relevant: order revised by Jørgen 11:31Z: Description heading goes, Details after Files and other short sections; replaced by check 6, crab, 2026-11-19)
 - [ ] Jørgen opens an asked task in hug tui and reaches the thing he is asked about in one key
