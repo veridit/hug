@@ -71,10 +71,12 @@ func noteQuestion(t Task, notes string) *Finding {
 		return &Finding{Path: t.Path, Line: 1, Code: "landed-unchecked",
 			Problem: "landed, but no check is ticked: commit " + landed[1][:7] + " naming " + t.ID + " reached " + landed[2] + " (its note says so) and 0 of " + itoa(len(t.Acceptance)) + " checks are ticked or struck; " + who + ": which checks hold?",
 			Fix:     "hug task check " + t.ID + " 1"}
-	case shipped != nil && stageSaysWhy(t):
+	case shipped != nil && (stageSaysWhy(t) || HasOpenQuestion(t)):
 		// The stage already says why it is not done (kestrel's ggydj2
 		// finding, crab 00:49): waiting, asked, review. No question, so
-		// asking settles it (stageSettled, gpyqq9).
+		// asking settles it (stageSettled, gpyqq9). So does a question
+		// open to a person on a todo task (yf39ya check 7: txjkrm, todo
+		// with jhf's question open since 11-18, stayed shipped-not-done).
 		return nil
 	case shipped != nil && len(open) > 0:
 		// A fix hug takes (wdkqzx, Jørgen 23:48): done refuses open

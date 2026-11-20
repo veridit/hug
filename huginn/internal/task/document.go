@@ -594,18 +594,19 @@ func Parse(path string, data []byte) *Document {
 	if Pattern(d.Task) {
 		d.Findings = append(d.Findings, BacklogFindings(d)...)
 	}
-	// A question only the owner can settle, from the ticket's own notes
-	// (at3qep): landed with no check ticked, shipped but open, todo with a
-	// commit on main.
-	if q := noteQuestion(d.Task, notesText(data)); q != nil {
-		d.Findings = append(d.Findings, *q)
-	}
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
 	d.Task.Answer, d.Task.Outcome = readAnswers(d.historyLines())
 	d.Task.Woken = woken(d.historyLines())
 	d.Findings = append(d.Findings, untilFindings(d.Task)...)
 	d.Task.Requests = parseRequests(d.requestLines())
 	d.Task.Questions = parseQuestions(d.questionLines())
+	// A question only the owner can settle, from the ticket's own notes
+	// (at3qep): landed with no check ticked, shipped but open, todo with a
+	// commit on main. After the questions are read: one open to a person
+	// says why the task is not done (yf39ya check 7).
+	if q := noteQuestion(d.Task, notesText(data)); q != nil {
+		d.Findings = append(d.Findings, *q)
+	}
 	readTargets(&d.Task, d.historyLines())
 	d.Task.AnswerCount = answerCount(d.historyLines())
 	readReceipts(&d.Task, d.historyLines())
