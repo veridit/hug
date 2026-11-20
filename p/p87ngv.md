@@ -120,6 +120,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
   If you look in the screenshot, there are multiple files mentioned in the questions. In the question, but I can't navigate to those files and show them from inline. The question I have to remember the files, jump to the file section, and look at each one of them. So it would have been better if I could just work on things in line. So when you reference something, you can view it in line or you can jump to it or jump back again. So I think we have to work on how this works. Is jumping something you do? How do we do it? Is it J for jump, G for go? Is it just enter or space? So, how can we do this? And also, I see the interaction is not clear now. How to scroll up and down interacts with where the last focus was, and so there are left and right, J, no, H and L, that jumps between things that are that can have focus, and there is J and K going up and down, and shift J and Shift K jumping up and down pages, and the interaction isn't good now because I can jump down and then I press L, and suddenly it jumps back up to where it previously had focused. So, I think we have to improve this. Also, when I use J or shift J to go down, suddenly I happen to come inside the question section and I jumped on one by one question. And I think as I jump down, it should highlight things that, or it should show subtly things that I can go into. And if I press the L or H, I will jump into the one on the screen. If nothing on the screen, I could jump to another one. Something like that makes sense. It's a new ticket, but I discovered it looking at this ticket
   resolved 2026-11-20T11:12 by crab:
     Filed as two tasks. zbdbtm (file links) now also covers files named in plain text inside a question, check or note: they become links you can show in line or open, and Esc returns. It asks you which keys (proposal: Space shows in line, Enter opens, as in FILES today). zq6pwa is new: in a task's page, h/l focus what is in view, not the old focus off screen; j/k scroll through Questions instead of stepping one by one; focusable items get a subtle gutter marker as they scroll into view.
+- 2026-11-20T11:13 request 5 by jhf:
+  When I press A to answer on this specific ticket, nothing happens and I don't seem to be able to enter any text or anything. I don't know what's going on.
 
 ## Notes
 
@@ -243,3 +245,4 @@ file:screen-1113.ans (5351 bytes, sha256:f9547c1d) screen capture from hug tui
 - 2026-11-20T11:12 request 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:12 request 4 acknowledged by crab
 - 2026-11-20T11:12 resolved request 4 by crab
+- 2026-11-20T11:13 request 5 by jhf
