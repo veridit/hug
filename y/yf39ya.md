@@ -41,7 +41,7 @@ Measured 19:53Z on hug's board (hug task lint): 40 findings, 37 broken, on 31 ta
 - [x] A release names the tasks it contains; each whose checks all hold is closed by the release step (hug command the coordinator runs, or hug upgrade/release hook), with the version in History (test)
 - [x] A shipped task whose only open check is the person's after-release confirmation shows as asked of that person (ASKED for them), not as a broken lint finding (test + golden)
 - [x] When a worker's session ends, its doing tasks go back to the board coordinator with a note, so stale-owner fires only when there is no coordinator either (test)
-- [ ] On hug's board after the next release, hug task lint shows no checks-all-hold, shipped-not-done or stale-owner that the above should have prevented (count in a note)
+- [x] On hug's board after the next release, hug task lint shows no checks-all-hold, shipped-not-done or stale-owner that the above should have prevented (count in a note)
 - [ ] Jørgen confirms the lint view stays clean after a release
 - [x] A task with an open question to a person never shows shipped-not-done (txjkrm 2026-11-20: todo, question 1 to jhf open since 11-18, still broken) (test)
 - [x] The release step asks or hands over every shipped task whose open check is not a person's: the coordinator's own checks (x8zzzn c3, ynh84t c4 on 11-20) become its active work, never a broken finding (test)
@@ -82,6 +82,7 @@ Landed on main 1e4a3386 by fast-forward (CI 44710823480 8/8 green on that exact 
 landed 2a2b383 on main 2026-11-20: Lint: a shipped task with a question open to a person is not shipped-not-done…
 landed 4c775b4 on main 2026-11-20: Release step hands an agent's open check to its owner; a dependent is asked when…
 shipped in v0.7.88 (2a2b383)
+check 5: crab 2026-11-20 09:44Z, hug v0.7.88 installed (brew: links into Cellar/hug/0.7.88), on hug's board: hug task lint -> '2 findings (2 broken) on 2 tasks, in 1 code: 2 broken missing-file' (p87ngv, 7j706s: the quoted-path false positive filed as 7j706s). 0 checks-all-hold, 0 shipped-not-done, 0 stale-owner.
 ## History
 - 2026-11-18T20:48 request 1 by jhf
 - 2026-11-18T20:48 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
