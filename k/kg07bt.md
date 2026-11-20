@@ -1,7 +1,7 @@
 ---
 id: kg07bt
 title: "Detail: a calm ACCEPTANCE heading; only the cursor marks the question"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzuv"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T16:25"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-20T11:34"
 ---
 
 ## Goal
@@ -71,6 +70,7 @@ landed 3517e62 on main 2026-11-18: tui: a calm focused heading and asked row; th
 landed 4778ebf on main 2026-11-18: tui: the focused row's > is theme.cursor, the answer box's cursor (kg07bt)
 shipped in v0.7.66 (3517e62)
 file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T16:25 todo -> doing/active (take)
 - 2026-11-18T16:56 doing/active -> doing/waiting (wait)
@@ -92,3 +92,4 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
 - 2026-11-20T11:34 request 2 acknowledged by crab
 - 2026-11-20T11:34 request 2 in progress by crab: hug task strike kg07bt 4
 - 2026-11-20T11:34 resolved request 2 by crab
+- 2026-11-20T11:34 doing/active -> done (done); was doing_since: 2026-11-18T16:25
