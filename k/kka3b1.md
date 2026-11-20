@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzw"
+rank: "zzzzzzzzzzzv"
 created: 2026-11-20
 updated: 2026-11-20
 design_question: "v0.7.91: with rows marked, r opens one request box under the list and Enter sends it for exactly those rows (frames attached; try it on your 4 LINT rows). Is that what you wanted?"
