@@ -126,6 +126,8 @@ Former Principle: A design decision first, written down, no code in this task. K
   For question number one, does engram Separate different memories, like it's a private memory or it's a public memory, or if it's a project memory, or a global memory, maybe that's the axis? I.e. project private vs. shared  and project vs global|client?
   resolved 2026-11-20T13:41 by crab:
     Checked engram's own database: it has two fields, scope (only 'project' or 'personal') and project (a name like seid-lang). No global, no client, and nothing that says shared or private: of 3,703 memories, 3,692 are 'project' and 11 'personal', all naming a project. So yes, your two axes are right, but engram only fills one of them: 'about which project' (plus personal). Whether something is shared is a separate switch per repo in hug (rnpdnm), and engram has nothing to say about it. Added at the top of Details with the mapping that follows (personal stays personal; project goes to that project, or its client if under a client folder; sharing stays off), which is option 1B.
+- 2026-11-20T13:43 request 8 by jhf:
+  For Q2 - what about import and remove, then export to get it back+
 
 ## Notes
 
@@ -180,3 +182,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T13:41 request 7 acknowledged by crab
 - 2026-11-20T13:41 request 7 in progress by crab: hug task set hpqt99
 - 2026-11-20T13:41 resolved request 7 by crab
+- 2026-11-20T13:43 request 8 by jhf
