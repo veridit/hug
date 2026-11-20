@@ -28,6 +28,8 @@ Today (v0.7.90, huginn/internal/tui/columns.go moveColumn): the first H or L mar
 
 ## Acceptance
 - [ ] ~~Verify Ability to select no column~~ (not relevant: replaced by checks 2-3, crab, 2026-11-20)
+- [ ] In overview, list and board, L from the last shown column and H from the first land on no column (marker gone, as at open); the next press goes on to the first or last (key test, fails on main first)
+- [ ] Jørgen steps past both ends with H and L and lands on no column
 
 ## Requests
 - 2026-11-20T13:07 request 1 by jhf:
