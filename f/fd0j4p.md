@@ -86,3 +86,4 @@ Jørgen 2026-11-20 10:04Z (answer to question 1): 'Clearly no' to the first draf
   > - A task waits on someone named doing something: hug task wait ID "jhf: picks the column order".
   > - Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction.
   This was clear and sensible apart from my previous nitpick about declarative person and message separate instead of parsing a text
+- 2026-11-20T11:05 answer 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
