@@ -126,6 +126,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
   When I press A to answer on this specific ticket, nothing happens and I don't seem to be able to enter any text or anything. I don't know what's going on.
   resolved 2026-11-20T11:14 by crab:
     Not fixed yet; filed as check 4 on qcq3tm (high, a worker is on it now). What I found in the code (v0.7.88): a does open the answer box, but it is drawn under the question it answers, and on p87ngv that question sits far down the page (check 5's question 11, or question 12 in ## Questions), so the box most likely opened out of view and your keys went into it unseen. qcq3tm already makes an asked task open on its question; check 4 adds that a always opens the box in view with the cursor in it, tested on a copy of this very task. Until it ships: after a, scroll down (J) to the question; the box is there. Esc closes it without sending.
+- 2026-11-20T11:42 request 6 by jhf:
+  Look at what this looks like when I open this ticket. It's utterly garbled. I don't have any overview. There's linting errors Maybe I have to discuss this in the console. How can this be open and clear when I open it?
 
 ## Notes
 
@@ -268,3 +270,4 @@ file:screen-1142.ans (18263 bytes, sha256:5a68a0da) screen capture from hug tui
 - 2026-11-20T11:16 answer 13 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:16 answer 13 acknowledged by crab
 - 2026-11-20T11:17 answer 13 in progress by crab: hug task note p87ngv "Jørgen 2026-11-20 10:16Z (answer 13 to question 12): 'Yes, now I can suddenly answer this. Awesome. Approved.' The open…"
+- 2026-11-20T11:42 request 6 by jhf
