@@ -94,6 +94,8 @@ Former Principle: A design decision first, written down, no code in this task. K
     The ticket now carries the decision itself. Details opens with Decision 1 (1A/1B/1C) and Decision 2 (2A/2B/2C), one line per option with cost and risk, recommendations marked, then three lines of facts; design.md in Files keeps the full evidence. The old single check 'decision in DESIGN.md' is split: check 2 is Decision 1, check 3 is Decision 2, each with its own question on the ticket, so you answer each where it sits (a on the check). Check 4 writes the decision into docs/DESIGN.md and files the build.
 - 2026-11-20T11:40 request 4 by jhf:
   So this ticket would have been so much better if we had the inline editing system because now you list something one place, you ask questions another place and things are kind of disconnected, don't you think?
+  resolved 2026-11-20T11:40 by crab:
+    Yes, agreed: options in Details and the questions under checks 2 and 3 are disconnected. That is what p87ngv (inline marks) fixes, and the look and mock are both approved now. This ticket becomes its first real use: p87ngv check 17 rewrites hpqt99 with each question marked on its Decision's options and answered there. If you want to decide before that ships, questions 4 and 5 (under checks 2 and 3) restate the options in full, so each can be answered on its own.
 
 ## Notes
 
@@ -131,3 +133,4 @@ file:screen-1140.ans (53232 bytes, sha256:7c1b06a7) screen capture from hug tui
 - 2026-11-20T11:40 request 4 by jhf
 - 2026-11-20T11:40 request 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:40 request 4 acknowledged by crab
+- 2026-11-20T11:40 resolved request 4 by crab
