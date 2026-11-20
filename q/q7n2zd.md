@@ -7,7 +7,7 @@ priority: "medium"
 assignee: ["crab"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzv"
+rank: "zzzzzzzzzzzu"
 created: 2026-11-20
 updated: 2026-11-20
 doing_with: "p87ngv"
