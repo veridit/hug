@@ -23,6 +23,14 @@ Jørgen 2026-11-20 08:55Z (hpqt99 request 1): hpqt99 pointed at docs/DESIGN.md s
 A reference is a link: the reader follows it in place and comes back with Esc. Task-specific documents are attachments; repo docs are linked, never copied.
 
 ## Relevant details
+Keys (Jørgen 2026-11-20 11:51Z): Space shows a named file in line under the line that names it; Enter opens it in the file frame; Esc returns. Same as Space and Enter in FILES today. No separate g key.
+
+TRY IT HERE (Jørgen: 'put it into this file as well so that when I review this task again ... I can use the task itself to check it'):
+- A plain-text name: open sample.txt from here.
+- An attachment link: file:sample-notes.md
+- A section in it: sample-notes.md#Section two
+- A repo file with a section: docs/DESIGN.md#Personal vs shared memories
+
 Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an attachment, .target:(.File .path:"docs/DESIGN.md" .section:"Imported data") for a repo file, optionally .ref:"BRANCH". The detail's anchor stepping (Tab, the id stops of 0ga6m0) stops on each link; Enter opens it in the file frame scrolled to the section; Esc returns to the link. 8a0ybb covers a question's own target; this covers every file named anywhere in the task. Agent side (fd0j4p): instructions say a document for one task is attached to it.
 
 ## Depends on
