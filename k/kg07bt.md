@@ -18,7 +18,7 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-In a task's page, the focused row is marked by a pulsing > with no underline, the one moving thing on screen.
+In a task's page the ACCEPTANCE heading is quiet and only the cursor marks the focused question.
 
 ## Purpose
 Jørgen 2026-11-18 14:58 local, answering 0gztsy check 4: the focus was correct, but there is too much visual noise. The ACCEPTANCE heading draws so much attention that it competes with the question line below it, and the question is bold, background-filled and strongly coloured at once. He wants it toned down, with the glowing cursor marking the one place you are, not a visual competition.
