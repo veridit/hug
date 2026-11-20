@@ -57,6 +57,12 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
 
 crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not to do. The board is the record of work (details, status, dependencies in the tasks); the harness todo list is for organizing yourself around it: delegating, picking up again, updating and closing tickets, coordinating agents. Keep todos to what you can act on now. Redrafted as question 2.
 Jørgen 2026-11-20 10:04Z (answer to question 1): 'Clearly no' to the first draft: hug task wait ID "jhf: picks the column order" parses the person out of the line; he wants the person and the message given separately, declaratively. crab: correct, and the example was also wrong: wait refuses a text opening with a person's name (agxqax) and points to ask. The declarative form exists: hug task ask ID --to jhf "..." for a person; hug task wait ID "on what" only for things (CI, a release, a date); hug task dep ID --add OTHER for another task. Question 2's redraft repeats the bad line, so it is withdrawn and asked again.
+Approved lines (Jørgen 2026-11-20 10:05Z, answer 3: 'clear and sensible apart from my previous nitpick about declarative person and message separate instead of parsing a text'). Line 4 rewritten to his nitpick with commands that already take the person and the message separately; the other four are his approved text word for word:
+- The hug board is the record of work. Each task holds its details, status and dependencies; read the board to see what depends on what, what to pick up next, and how to resume after a break or a compaction.
+- Your harness todo list organizes you around the board: what you are delegating, what to pick up again, which task to update, check or close next. Keep it to what you can act on now; the details stay in the tasks.
+- When you coordinate several agents, use todos to stay focused on who is doing what, and follow their progress on their tasks.
+- When a task waits, say on what: on a person, ask them (hug task ask ID --to NAME "question"); on another task, hug task dep ID --add OTHER; on a thing such as CI, a release or a date, hug task wait ID "what" (or --until DATE).
+- Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction.
 ## History
 - 2026-11-19T10:00 todo -> todo/design (ask)
 - 2026-11-19T10:02 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -87,3 +93,4 @@ Jørgen 2026-11-20 10:04Z (answer to question 1): 'Clearly no' to the first draf
   > - Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction.
   This was clear and sensible apart from my previous nitpick about declarative person and message separate instead of parsing a text
 - 2026-11-20T11:05 answer 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:05 crab read the answer: hug task note fd0j4p "Approved lines (Jørgen 2026-11-20 10:05Z, answer 3: 'clear and sensible apart from my previous nitpick about declarativ…"
