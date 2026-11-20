@@ -13,7 +13,11 @@ updated: 2026-11-20
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "ready"
+stage: "design"
+design_question: "0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?"
+design_for: "jhf"
+design_since: "2026-11-20T06:06"
+design_asked_by: "crab"
 ---
 
 ## Goal
@@ -37,6 +41,8 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 - 2026-11-20T05:41 question 1 by crab to jhf:
   0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?
   withdrawn 2026-11-20T06:06 (doing/asked -> done)
+- 2026-11-20T06:06 question 2 by crab to jhf:
+  0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?
 
 ## Notes
 
@@ -48,3 +54,4 @@ Reflection (unanswered, 2026-11-20, crab)
 - 2026-11-20T05:41 doing/active -> doing/asked (ask)
 - 2026-11-20T06:06 doing/asked -> done (done); was asked_by: crab; asked_for: jhf; asked_since: 2026-11-20T05:41; asked_what: 0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?; doing_since: 2026-11-20T05:41; doing_with: p277bp
 - 2026-11-20T06:06 done -> todo/ready (reopen); was done_at: 2026-11-20T06:06
+- 2026-11-20T06:06 todo/ready -> todo/design (ask)
