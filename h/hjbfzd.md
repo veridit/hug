@@ -66,6 +66,7 @@ CI 44400498760 on f68a9a5d: success, all 8 jobs. ubuntu -race huginn/internal/tu
 landed 69b5ceb on main 2026-11-18: tui: S asks where the screen goes: a task id, s select, c create (hjbfzd)
 shipped in v0.7.71 (69b5ceb)
 file:screen-0939.ans (12730 bytes, sha256:f8b1deb2) screen capture from hug tui
+file:capture-wording.md (1806 bytes, sha256:89289ad8)
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)
@@ -74,3 +75,4 @@ file:screen-0939.ans (12730 bytes, sha256:f8b1deb2) screen capture from hug tui
 - 2026-11-20T09:43 request 1 by jhf
 - 2026-11-20T09:43 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T09:43 request 1 acknowledged by crab
+- 2026-11-20T09:44 request 1 in progress by crab: hug task attach hjbfzd /Users/jhf/.jcode/scratch/hjbfzd-wording/capture-wording.md
