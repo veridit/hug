@@ -63,6 +63,8 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
   So I tried this and I could attach it to this ticket. You should find it, but the wording isn't good. It says attach to, and then it says screen capture, and then it has a long text, and then you can create select or create. But it should be screen capture colon attached to the pre-filled task or select or create new or create, just do not even need new. Can you make a suggestion and put it as an attachment to this task?
   resolved 2026-11-20T09:44 by crab:
     Proposal attached: capture-wording.md (the exact strings for all three steps) and capture-wording-100x30.ans (today vs proposed in the real theme). Main line: 'Screen capture: attach to 000002 · select · create'; the long title moves to the keys line; 'new' is dropped from create. Added check 6 to build it; asked you to approve the wording.
+- 2026-11-20T09:52 request 2 by jhf:
+  When I look at these files, some are new and some are old. It would be nice to know when they were captured because then I can see, ah, that's the old one. Ah, this is the new one. Now there's just like we have capture wording, we have screen so-and-so, screen so-and-such. But we already know the creation dates of these things or the update, the M time maybe.
 
 ## Notes
 
@@ -94,3 +96,4 @@ file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 - 2026-11-20T09:51 doing/asked -> doing/active (resume); was asked_by: crab; asked_check: 5; asked_for: jhf; asked_since: 2026-11-18T23:24; asked_what: Jørgen confirms on his board after release
 - 2026-11-20T09:51 doing/active -> doing/asked (ask)
 - 2026-11-20T09:51 asked question 4 of jhf, 2 open (doing/asked -> doing/asked)
+- 2026-11-20T09:52 request 2 by jhf
