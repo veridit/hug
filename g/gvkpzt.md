@@ -54,3 +54,4 @@ Reflection (open, 2026-11-20, crab): Nothing misled me.
 - 2026-11-20T11:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:27 crab read the answer: hug task note gvkpzt "Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they are' (z6cb03: broken tasks at the top of LINT, in view)."
 - 2026-11-20T11:27 doing/active -> done (done); was doing_since: 2026-11-20T06:14; doing_with: p277bp
+- 2026-11-20T11:27 answer 1 acknowledged by crab
