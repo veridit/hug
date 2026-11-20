@@ -65,6 +65,8 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
     Proposal attached: capture-wording.md (the exact strings for all three steps) and capture-wording-100x30.ans (today vs proposed in the real theme). Main line: 'Screen capture: attach to 000002 · select · create'; the long title moves to the keys line; 'new' is dropped from create. Added check 6 to build it; asked you to approve the wording.
 - 2026-11-20T09:52 request 2 by jhf:
   When I look at these files, some are new and some are old. It would be nice to know when they were captured because then I can see, ah, that's the old one. Ah, this is the new one. Now there's just like we have capture wording, we have screen so-and-so, screen so-and-such. But we already know the creation dates of these things or the update, the M time maybe.
+  resolved 2026-11-20T09:53 by crab:
+    Filed as its own task, 65kjn8 'FILES shows when each file was attached': each row in FILES gets a dim age after its size (e.g. '12.4 KiB · 10 min ago'), taken from when hug committed the file, not its mtime, which a clone or sync rewrites. It applies to every task's files, not only captures.
 
 ## Notes
 
@@ -99,3 +101,4 @@ file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 - 2026-11-20T09:52 request 2 by jhf
 - 2026-11-20T09:52 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T09:52 request 2 acknowledged by crab
+- 2026-11-20T09:53 resolved request 2 by crab
