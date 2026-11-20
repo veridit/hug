@@ -98,6 +98,8 @@ Former Principle: A design decision first, written down, no code in this task. K
     Yes, agreed: options in Details and the questions under checks 2 and 3 are disconnected. That is what p87ngv (inline marks) fixes, and the look and mock are both approved now. This ticket becomes its first real use: p87ngv check 17 rewrites hpqt99 with each question marked on its Decision's options and answered there. If you want to decide before that ships, questions 4 and 5 (under checks 2 and 3) restate the options in full, so each can be answered on its own.
 - 2026-11-20T11:41 request 5 by jhf:
   I attach two screenshots where you see all the listings and options A1, A2, A, B, and so on. And then below you see the questions which are so they're disconnected. And when there are multiple options, why wouldn't we just render them inline so I can go and pick the options like it's A, B, C, or other or something? I mean, we're doing a pretty nice interaction system that's in the works now, I think
+  resolved 2026-11-20T11:41 by crab:
+    Yes. Added to p87ngv, the inline-marks task: check 18 lets a question carry its options (1A, 1B, 1C), drawn as choices right under the options text in this ticket, so you move with j/k and pick with Space, or choose 'other' to write your own answer. The pick is recorded as the answer. Check 19 is your look at frames of hpqt99's Decision 1 drawn that way before it is built. Your two screenshots stay attached here as the before picture.
 
 ## Notes
 
@@ -140,3 +142,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T11:41 request 5 by jhf
 - 2026-11-20T11:41 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:41 request 5 acknowledged by crab
+- 2026-11-20T11:41 resolved request 5 by crab
