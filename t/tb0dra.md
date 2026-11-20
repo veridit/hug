@@ -23,7 +23,7 @@ asked_show: "agentsection-proposal.md"
 ---
 
 ## Goal
-Reflection is part of the loop. When an agent closes a ticket, hug task done asks it one question: did the instructions (AGENTS.md section, tool descriptions, hug messages) guide you well, or did one mislead you or leave a gap? The answer is stored with the ticket as a Reflection note naming the exact instruction. hug task reflections collects open ones across the board, and a coordinator or Jørgen turns them into an instruction change (shown as a diff) or dismisses them.
+Agents reflect at done on whether the instructions guided them, and each reflection becomes an instruction change or is dismissed.
 
 ## Purpose
 Jørgen 2026-11-16: 'you have to be mindful of the instructions, if they're good, if they're guiding you and the agents. We have to observe ourselves and adjust. Some reflection should be built into us.' Today's evidence: the todo misuse (tzc9hb), the main-push collisions that needed hand-off DMs, and the check in 44w1ev that contradicted a later ruling were all instruction gaps found only by chance.
@@ -32,6 +32,8 @@ Jørgen 2026-11-16: 'you have to be mindful of the instructions, if they're good
 One short question at done, never a form. Empty answers are allowed (nothing to report). A reflection names the instruction text it is about and what happened, with evidence; no vague 'could be better'. Agents propose; changes to installed instructions are reviewed by a human before hug setup ships them. Harness-neutral wording.
 
 ## Relevant details
+Reflection is part of the loop. When an agent closes a ticket, hug task done asks it one question: did the instructions (AGENTS.md section, tool descriptions, hug messages) guide you well, or did one mislead you or leave a gap? The answer is stored with the ticket as a Reflection note naming the exact instruction. hug task reflections collects open ones across the board, and a coordinator or Jørgen turns them into an instruction change (shown as a diff) or dismisses them.
+
 Builds on tzc9hb (the loop in the AGENTS.md section) and x325pp (nudges only between tasks). done already prints a next line; the question goes there, and MCP task_done accepts an optional reflection field.
 
 ## Depends on
