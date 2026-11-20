@@ -1,11 +1,11 @@
-HUG · repo · overview   60/60 tasks · ! 2 broken · 5 advice
+HUG · repo · overview   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank
   ASKED · for you  [0] · None
 > IN PROGRESS · assigned to  [14] · 1–3 shown · all active
-> ◑ 1/2  000002   termina… bug     critical compil… Bug task 02…  alice · feat/…
-  ◑ 1/2  000006   termina… feature high     runtime Feature tas…  bob
-↓ ◑ 1/2  000010   termina… docs    high     compil… Docs task 1…  bob
+> ◑ 1/2 ·000002   termina… bug     critical compil… Bug task 02…  alice · feat/…
+  ◑ 1/2 ·000006   termina… feature high     runtime Feature tas…  bob
+↓ ◑ 1/2 ·000010   termina… docs    high     compil… Docs task 1…  bob
 
   WAITING  [1]
   ◑ 1/2 !000026   termina… high     depends   docs Feature task 26: m…  carol ·…
@@ -16,9 +16,9 @@ filter: none · sort: rank
   RECENTLY DONE · last closed  [30] · 1–1 shown
 ↓        000003   terminal comp… feature medium   done      compil… Render comp…
 
-  LINT · tasks needing attention  [7] · 2 broken · 5 advice · 1–2 shown
+  LINT · tasks needing attention  [30] · 2 broken · 35 advice · 1–2 shown
   ○ 2   ·000001   terminal comp… feature critical ready     compil… ⎘2 Feature …
-↓ ○ 2   !000013   terminal runt… chore   medium   depends   runtime Chore task …
+↓ ◑ 1/2 ·000002   terminal comp… bug     critical active    compil… Bug task 02…
 All tasks · : filters and commands · ! lint finding · ↳ epic
 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …

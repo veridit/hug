@@ -6,6 +6,14 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- The Goal is one sentence of at most 140 characters; detail goes in
+  Details (0pr03h). `hug task new` and `hug task set` (and MCP
+  `task_new`, `task_update` set) refuse a longer Goal with `fix: hug task
+  set ID --goal "one sentence" --details "..."`. `hug task lint` warns
+  on one already on disk (`goal-too-long`, advice) and never rewrites it.
+  A sentence ends at `.`, `!` or `?` followed by a capital, or at a
+  blank line; `e.g.`, `v0.7.85`, file names, initials and ids never
+  split one. Promote puts "Promoted from item N" in Relevant details.
 - The view line's blink tests no longer wait on the wall clock (6zhyq2,
   CI 44520969132: a blink measured 497 ms against 530 ms). The two tests
   that ran bubbles' real 530 ms timer now run it in a testing/synctest

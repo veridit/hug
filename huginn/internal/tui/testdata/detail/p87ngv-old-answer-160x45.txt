@@ -2,6 +2,8 @@
 HUG · list › p87ngv                                                                                                                                  ? 1 for you
 [todo]  [ready]  [feature]  group:root  unassigned                                                                                                              
 created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                                     
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                                                                                
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Inline marks on a task's text; resolved dialogue moves to a history file                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -39,8 +41,6 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 marks show in ASKED / requests as those do now; delivery as gmzd87. History file name, format and sigil are open design questions on this task. Candidate       
 sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c      
 comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.                                                
-                                                                                                                                                                
-ACCEPTANCE                                                                                                                                                      
 Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
                                                                                                                                                                 
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
@@ -48,6 +48,8 @@ answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New ·
 HUG · list › p87ngv                                                                                                                                  ? 1 for you
 [todo]  [ready]  [feature]  group:root  unassigned                                                                                                              
 created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                                     
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                                                                                
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Inline marks on a task's text; resolved dialogue moves to a history file                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -85,8 +87,6 @@ RELEVANT DETAILS
 Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 09:05Z). Replaces ## Questions and ## Requests over time (q2adr8, hbgybn): open  
 marks show in ASKED / requests as those do now; delivery as gmzd87. History file name, format and sigil are open design questions on this task. Candidate       
 sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c      
-comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.                                                
-                                                                                                                                                                
 Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
                                                                                                                                                                 
 Enter send · Alt-Enter new line · Esc cancel · F1 help                                                                                                          
@@ -94,6 +94,8 @@ Enter send · Alt-Enter new line · Esc cancel · F1 help
 HUG · list › p87ngv                                                                                                                                  ? 1 for you
 [todo]  [design]  [feature]  group:root  unassigned                                                                                                             
 created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                                     
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                                                                                
 ✓ jhf answered question 2: both may resolve                                                                                                                     
   unread by crab                                                                                                                                                
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -131,8 +133,6 @@ marks show in ASKED / requests as those do now; delivery as gmzd87. History file
 sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c      
 comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.                                                
                                                                                                                                                                 
-ACCEPTANCE                                                                                                                                                      
-  ☐ 1. Jørgen approves a mock (CLI transcript plus TUI frames at 100x30) of a thread on a quoted sentence, a reply and a resolve                                
 answered p87ngv                                                                                                                                                 
                                                                                                                                                                 
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  

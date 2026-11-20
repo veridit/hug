@@ -75,8 +75,8 @@ finish the task and run hug task next: an empty todo list means take the next
 task, not blocked.
 New work: hug task new "short title" --goal "..." --purpose "..." --principle "..." --details "..." --accept "observable check".
 Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
-and do not do), Relevant details, then Acceptance. Titles stay under 80
-characters; detail goes in the Goal.
+and do not do), Relevant details, then Acceptance. The Goal is one sentence of
+at most 140 characters; detail goes in Details. Titles stay under 80 characters.
 Epics: hug task set ID --parent EPIC; hug task promote ID N turns item N into
 its own task. hug task ls --epic EPIC shows an epic and its children.
 MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take (model

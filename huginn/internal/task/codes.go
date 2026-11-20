@@ -66,6 +66,7 @@ var Codes = []CodeInfo{
 	{"self-parent", "a task is its own parent", Broken},
 	{"parent-too-deep", "the parent has a parent itself", Broken},
 	{"long-title", "the title is longer than 80 characters", Advice},
+	{"goal-too-long", "the Goal is more than one sentence or longer than 140 characters", Advice},
 	{"forbidden-citation", "cites a folder that gets deleted", Broken},
 	{"file-symlink", "a task file is a symlink", Broken},
 	{"duplicate-origin", "two tasks were imported from one source", Broken},

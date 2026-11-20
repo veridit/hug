@@ -98,4 +98,14 @@ func TestNewAndUpdateReturnFindingsAndOneFix(t *testing.T) {
 	if got := strings.Join(wrote, "\n"); !strings.Contains(got, "title: ") || !strings.Contains(got, "purpose: Why now") || !strings.Contains(got, "added check 2: D") || len(wrote) != 3 {
 		t.Fatalf("update set wrote: %v", m["wrote"])
 	}
+	// 0pr03h check 1: task_new and task_update set refuse a Goal of more
+	// than one sentence or 140 characters, with the same fix as the CLI.
+	failed, m = call("new", map[string]any{"title": "Two", "goal": "It works. Then it ships.", "purpose": "P", "principle": "Q", "accept": []string{"C"}})
+	if fs, _ := m["findings"].([]any); !failed || len(fs) != 1 || fs[0].(map[string]any)["code"] != "goal-too-long" || m["fix"] != `hug task new "Two" --goal "one sentence" --purpose "P" --principle "Q" --details "..." --accept "C"` {
+		t.Fatalf("new long goal: %v", m)
+	}
+	failed, m = call("update", map[string]any{"id": id, "action": "set", "goal": strings.Repeat("x", 141)})
+	if !failed || m["fix"] != "hug task set "+id+` --goal "one sentence" --details "..."` {
+		t.Fatalf("update long goal: %v", m)
+	}
 }

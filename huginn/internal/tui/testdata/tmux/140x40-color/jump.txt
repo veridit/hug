@@ -1,4 +1,4 @@
-HUG · repo · jump   60/60 tasks · ! 2 broken · 5 advice
+HUG · repo · jump   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank
 JUMP TO ID · prefixes and TASK-number aliases

@@ -1,5 +1,5 @@
 == filter at 100x30
-HUG · filter   60/60 tasks · ! 2 broken · 5 advice                                                  
+HUG · filter   60/60 tasks · ! 2 broken · 35 advice                                                 
 view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
 filter: none · sort: rank                                                                           
 FILTER · a letter picks a field · j/k and Enter · Esc back                                          
@@ -30,7 +30,7 @@ All tasks · : filters and commands
                                                                                                     
 j/k ↑↓ pick · Enter add chip · type narrow · Esc back · ? help                                      
 == sort at 100x30
-HUG · sort   60/60 tasks · ! 2 broken · 5 advice                                                    
+HUG · sort   60/60 tasks · ! 2 broken · 35 advice                                                   
 view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
 filter: none · sort: rank                                                                           
 SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back   
@@ -61,7 +61,7 @@ All tasks · : filters and commands
                                                                                                     
 j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
 == sort p, then j j at 100x30
-HUG · sort   60/60 tasks · ! 2 broken · 5 advice                                                    
+HUG · sort   60/60 tasks · ! 2 broken · 35 advice                                                   
 view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
 filter: none · sort: rank                                                                           
 SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back   
@@ -92,7 +92,7 @@ All tasks · : filters and commands
                                                                                                     
 j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
 == filter ? at 100x30
-HUG · help   60/60 tasks · ! 2 broken · 5 advice                                                    
+HUG · help   60/60 tasks · ! 2 broken · 35 advice                                                   
 view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
 filter: none · sort: rank                                                                           
 IN THE FILTER PICKER                                                                                
@@ -123,7 +123,7 @@ All tasks · : filters and commands
                                                                                                     
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close                                
 == sort ? at 100x30
-HUG · help   60/60 tasks · ! 2 broken · 5 advice                                                    
+HUG · help   60/60 tasks · ! 2 broken · 35 advice                                                   
 view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
 filter: none · sort: rank                                                                           
 IN THE SORT PICKER                                                                                  

@@ -83,7 +83,7 @@ func TestPromoteChildLintsClean(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	for sec, want := range map[string]string{"Purpose": "Why we do it.", "Principle": "What we do and do not do.\n\nSecond paragraph.", "Relevant details": "Where to look."} {
+	for sec, want := range map[string]string{"Purpose": "Why we do it.", "Principle": "What we do and do not do.\n\nSecond paragraph.", "Relevant details": "Where to look.\n\nPromoted from item 2 of task:" + r.Task.ID + ".", "Goal": "second"} {
 		if got := d.sectionText(sec); got != want {
 			t.Errorf("%s: %q, want %q", sec, got, want)
 		}

@@ -1,8 +1,8 @@
 HUG · repo · list › 000001
 [todo]  [feature]  [critical]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
-⚠ line 1: title is 134 characters (max 80): move detail into the Goal
-  fix: hug task set 000001 --title "..."
+⚠ line 1: Goal is 247 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details (+1 more findin…
+  fix: hug task set 000001 --goal "one sentence" --details "..."
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -98,6 +98,13 @@ func (s *Store) SetText(ref string, sections map[string]string, accept []string)
 			return Result{}, &Error{Kind: "empty-acceptance", ID: d.Task.ID, Fix: "hug task set " + d.Task.ID + " --accept \"observable check\""}
 		}
 	}
+	// A new Goal is one sentence of at most 140 characters (0pr03h); a
+	// Goal already on disk is read as it is, and lint warns on it.
+	if v, ok := sections["Goal"]; ok {
+		if p, bad := GoalProblem(v); bad {
+			return Result{}, &Error{Kind: "goal-too-long", ID: d.Task.ID, Value: p.Text, Problems: []Problem{p}, Fix: "hug task set " + d.Task.ID + " " + goalFlag}
+		}
+	}
 	before := string(d.Bytes())
 	for _, name := range append(append([]string{}, "Goal"), DescriptionSections...) {
 		if v, ok := sections[name]; ok {

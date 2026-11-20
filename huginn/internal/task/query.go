@@ -349,6 +349,11 @@ func Lint(docs []*Document) []Finding {
 			}
 			out = append(out, Finding{Path: t.Path, Line: 1, Problem: p.Text, Fix: "hug task set " + t.ID + " " + p.Flag})
 		}
+		// A Goal over one sentence or 140 characters (0pr03h): a warning
+		// with the fix; lint never rewrites it.
+		if p, ok := GoalProblem(t.Goal); ok {
+			out = append(out, Finding{Path: t.Path, Line: 1, Problem: p.Text, Fix: "hug task set " + t.ID + " " + p.Flag})
+		}
 	}
 	sort.Slice(out, func(i, j int) bool {
 		if out[i].Path != out[j].Path {

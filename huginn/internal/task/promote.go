@@ -46,9 +46,12 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 		// Promoting from an epic: the new task is that epic's child.
 		parent = src.ID
 	}
+	// The Goal is the item, one sentence (0pr03h); where it came from goes
+	// to Relevant details, after the source's own.
+	details := strings.TrimSpace(d.sectionText("Relevant details") + "\n\nPromoted from item " + fmt.Sprint(n) + " of task:" + src.ID + ".")
 	r, e := s.New(NewOptions{
 		Title:      title,
-		Goal:       text + "\n\nPromoted from item " + fmt.Sprint(n) + " of task:" + src.ID + ".",
+		Goal:       text,
 		Acceptance: []string{text},
 		Group:      src.Group,
 		Type:       src.Type,
@@ -58,7 +61,7 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 		// it starts complete and lints clean (heype5).
 		Purpose:   d.sectionText("Purpose"),
 		Principle: d.sectionText("Principle"),
-		Details:   d.sectionText("Relevant details"),
+		Details:   details,
 	})
 	if e != nil {
 		return Result{}, e

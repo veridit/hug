@@ -28,6 +28,8 @@ func DescriptionProblems(title, goal string, hasPurpose, hasPrinciple bool, acce
 	}
 	if strings.TrimSpace(goal) == "" {
 		out = append(out, Problem{"missing-goal", "missing Goal", `--goal "..."`})
+	} else if p, ok := GoalProblem(goal); ok {
+		out = append(out, p)
 	}
 	if !hasPurpose {
 		out = append(out, Problem{"missing-section", "missing section Purpose (why)", `--purpose "..."`})
@@ -59,11 +61,11 @@ func newProblems(o NewOptions) error {
 	}
 	ps := DescriptionProblems(o.Title, o.Goal, !o.Pattern || strings.TrimSpace(o.Purpose) != "", !o.Pattern || strings.TrimSpace(o.Principle) != "", filled)
 	if !o.Pattern {
-		// The TUI's one-line add and promote keep any title; lint names a
-		// long one with its fix.
+		// The TUI's one-line add and promote keep any title and Goal; lint
+		// names a long one with its fix.
 		kept := ps[:0]
 		for _, p := range ps {
-			if p.Code != "long-title" {
+			if p.Code != "long-title" && p.Code != "goal-too-long" {
 				kept = append(kept, p)
 			}
 		}
@@ -83,8 +85,14 @@ func newProblems(o NewOptions) error {
 		title = `"short title"`
 	}
 	fix := "hug task new " + title
+	longGoal := hasCode(ps, "goal-too-long")
 	for _, part := range []struct{ flag, value string }{{"--goal", o.Goal}, {"--purpose", o.Purpose}, {"--principle", o.Principle}, {"--details", o.Details}} {
-		if strings.TrimSpace(part.value) != "" {
+		if longGoal && part.flag == "--goal" {
+			// One sentence here, the rest of it into Details.
+			fix += ` --goal "one sentence"`
+		} else if longGoal && part.flag == "--details" {
+			fix += ` --details "..."`
+		} else if strings.TrimSpace(part.value) != "" {
 			fix += " " + part.flag + " " + q(part.value)
 		} else if part.flag != "--details" && (o.Pattern || part.flag == "--goal") {
 			fix += " " + part.flag + ` "..."`

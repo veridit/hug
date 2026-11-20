@@ -74,6 +74,7 @@ var findingCodes = []struct{ prefix, code string }{
 	{"task is its own parent", "self-parent"},
 	{"parent ", "parent-too-deep"},
 	{"title is ", "long-title"},
+	{"Goal is ", "goal-too-long"},
 	{"cites ", "forbidden-citation"},
 	{"task file is a symlink", "file-symlink"},
 	{"duplicate origin", "duplicate-origin"},

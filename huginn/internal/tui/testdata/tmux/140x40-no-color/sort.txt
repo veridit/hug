@@ -1,35 +1,35 @@
-HUG · repo · list   60/60 tasks · ! 2 broken · 5 advice
+HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: priority ↓ · type
   ✓      ID       TAGS              TYPE    PRIORITY STAGE     TITLE
   ○ 2   ·000001   terminal compiler feature critical ready     compiler ⎘2 Feature task 01: make the terminal workflow observable with a de…
-  ○ 2    000021   terminal compiler feature critical depends   compiler Feature task 21: make the terminal workflow observable
-> ○ 2    000041   terminal runtime  feature critical ready     runtime Feature task 41: make the terminal workflow observable
-  ◑ 1/2  000002   terminal compiler bug     critical active    compiler Bug task 02: make the terminal workflow observable
+  ○ 2   ·000021   terminal compiler feature critical depends   compiler Feature task 21: make the terminal workflow observable
+> ○ 2   ·000041   terminal runtime  feature critical ready     runtime Feature task 41: make the terminal workflow observable
+  ◑ 1/2 ·000002   terminal compiler bug     critical active    compiler Bug task 02: make the terminal workflow observable
   ◑ 1/2 ·000022   terminal runtime  bug     critical active    runtime Bug task 22: make the terminal workflow observable with a deliberate…
-  ◑ 1/2  000042   terminal runtime  bug     critical active    runtime Bug task 42: make the terminal workflow observable
+  ◑ 1/2 ·000042   terminal runtime  bug     critical active    runtime Bug task 42: make the terminal workflow observable
   ● 2    000023   terminal runtime  chore   critical done      runtime Chore task 23: make the terminal workflow observable
   ● 2    000043   terminal docs     chore   critical done      docs Chore task 43: make the terminal workflow observable with a deliberatel…
          000004   terminal runtime  spike   critical dropped   runtime Spike task 04: make the terminal workflow observable
          000024   terminal runtime  spike   critical dropped   runtime Spike task 24: make the terminal workflow observable
          000044   terminal docs     spike   critical dropped   docs Spike task 44: make the terminal workflow observable
-  ○ 2    000005   terminal runtime  docs    critical depends   runtime Docs task 05: make the terminal workflow observable
-  ○ 2    000025   terminal docs     docs    critical ready     docs Docs task 25: make the terminal workflow observable
-  ○ 2    000045   terminal docs     docs    critical depends   docs Docs task 45: make the terminal workflow observable
-  ◑ 1/2  000006   terminal runtime  feature high     active    runtime Feature task 06: make the terminal workflow observable
+  ○ 2   ·000005   terminal runtime  docs    critical depends   runtime Docs task 05: make the terminal workflow observable
+  ○ 2   ·000025   terminal docs     docs    critical ready     docs Docs task 25: make the terminal workflow observable
+  ○ 2   ·000045   terminal docs     docs    critical depends   docs Docs task 45: make the terminal workflow observable
+  ◑ 1/2 ·000006   terminal runtime  feature high     active    runtime Feature task 06: make the terminal workflow observable
   ◑ 1/2 !000026   terminal docs     feature high     depends   docs Feature task 26: make the terminal workflow observable
-  ◑ 1/2  000046   terminal compiler feature high     active    compiler Feature task 46: make the terminal workflow observable
+  ◑ 1/2 ·000046   terminal compiler feature high     active    compiler Feature task 46: make the terminal workflow observable
   ● 2    000007   terminal docs     bug     high     done      docs Bug task 07: make the terminal workflow observable
   ● 2    000027   terminal docs     bug     high     done      docs Bug task 27: make the terminal workflow observable
   ● 2    000047   terminal compiler bug     high     done      compiler Bug task 47: make the terminal workflow observable
          000008   terminal docs     chore   high     dropped   docs Chore task 08: make the terminal workflow observable with a deliberatel…
          000028   terminal compiler chore   high     dropped   compiler Chore task 28: make the terminal workflow observable
          000048   terminal compiler chore   high     dropped   compiler Chore task 48: make the terminal workflow observable
-  ○ 2    000009   terminal docs     spike   high     ready     docs Spike task 09: make the terminal workflow observable
+  ○ 2   ·000009   terminal docs     spike   high     ready     docs Spike task 09: make the terminal workflow observable
   ○ 2   ·000029   terminal compiler spike   high     depends   compiler Spike task 29: make the terminal workflow observable with a deliber…
-  ○ 2    000049   terminal runtime  spike   high     ready     runtime Spike task 49: make the terminal workflow observable
-  ◑ 1/2  000010   terminal compiler docs    high     active    compiler Docs task 10: make the terminal workflow observable
-  ◑ 1/2  000030   terminal compiler docs    high     active    compiler Docs task 30: make the terminal workflow observable
+  ○ 2   ·000049   terminal runtime  spike   high     ready     runtime Spike task 49: make the terminal workflow observable
+  ◑ 1/2 ·000010   terminal compiler docs    high     active    compiler Docs task 10: make the terminal workflow observable
+  ◑ 1/2 ·000030   terminal compiler docs    high     active    compiler Docs task 30: make the terminal workflow observable
   ◑ 1/2 ·000050   terminal runtime  docs    high     active    runtime Docs task 50: make the terminal workflow observable with a deliberat…
          000003   terminal compiler feature medium   done      compiler Render compiler-lang task detail without storage markers
   ● 2    000011   terminal compiler feature medium   done      compiler Feature task 11: make the terminal workflow observable

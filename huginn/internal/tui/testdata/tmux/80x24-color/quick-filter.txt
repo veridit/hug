@@ -1,4 +1,4 @@
-HUG · repo · filter   8/60 tasks · ! 2 broken · 5 advice
+HUG · repo · filter   8/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint       │ todo 8 · doing 0 · depends 0 · done 0
 filter: [state:todo ×] ⌫ last · F clear · sort: rank
 FILTER · type · counts include your other filters
