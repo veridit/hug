@@ -122,6 +122,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
     Rewritten around your words. Details open with THE SPLIT: local-only memories in the database on your Mac, and a project's memories copied to its shared branch, only when that repo shares (none does today). WHAT GOES WRONG lists the 8 memories that crossed in our test, verbatim, and explains 'agent rules': 7 of the 8 are rules for how our agents work (who runs done, which tool, time limits), true on every project, so they belong in global memory, which stays local and is recalled everywhere. THE CHOICE gives A, B and C in terms of what you do and what it costs, with my pick (A now, B later if wanted). Question 4 asks it. Renaming muninn to hug everywhere you see it is a new task, y5vjc9.
 - 2026-11-20T17:03 request 6 by jhf:
   So for each of those eight memories listed in the ticket, let's discuss if they should be memories or not. Do we have an appropriate qualifier for creating memories when we do it and when the agent does it? Let's look at how engram instructs too, and how jcode does it internally, they have some compaction and memory algorithm running. Lets look at how others did this.
+  resolved 2026-11-20T17:04 by crab:
+    Went through the 8 one by one (memory-qualifiers.md in Files, summary at the top of Details): 5 should never have been memories (swarm role rules naming crab, one-assignment coordination, a rule the agent's instructions already state, the installed version), and the 3 that should be are global, not this project's. Compared hug's capture prompt and remember tool with jcode's extractor (it excludes what the system prompt already says), engram (the agent saves by hand, with a judge step) and mem0 (few-shot examples): hug lacks four things, listed. That gives option D: tighten what hug writes, measured on fresh captures; it fixes the local database too. Question 5 asks D, D then A, or A/B/C.
 
 ## Notes
 
@@ -199,3 +201,4 @@ file:memory-qualifiers.md (4546 bytes, sha256:a5e8de9b) request 6: the 8 judged 
   > For a repo where you turn sharing on: A you read what would be pushed once and strike rules like the 8 examples by hand (nothing to build), B hug files agent rules as global so they never reach the branch (about 75 calls, a day), or C you approve every memory before it is pushed (new feature)?
   Withdrawn by crab 2026-11-20: request 6 showed most leaks should never be memories; question 5 adds option D.
 - 2026-11-20T17:04 doing/active -> doing/asked (ask)
+- 2026-11-20T17:04 resolved request 6 by crab
