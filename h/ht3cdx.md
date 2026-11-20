@@ -44,6 +44,8 @@ Jørgen 2026-11-20 10:18Z (request 1, screenshots screen-1117.ans before, screen
 ## Requests
 - 2026-11-20T11:18 request 1 by jhf:
   And as you see from the screenshots, the first is before I create this ticket, and then after I created this ticket, I suddenly is in the list view. I think I should just keep the view I'm in. The same thing happens if I apply filter or if I apply sort, and now apparently if I create a ticket.
+  resolved 2026-11-20T11:18 by crab:
+    Turned into a high-priority bug. Title, Goal, Purpose and Principle now say: filter, sort and creating a task keep the view you are in; only choosing a view changes it. Details list the 3 places on main that force the list view (filter picker Enter, the : filter commands, and openTask, which S-create, # and goto use). Checks 2-5 are tmux tests that must fail on main first (filter, sort, create, jump); check 6 is yours to try after release. Your screenshots stay attached as before/after.
 
 ## Notes
 
@@ -57,3 +59,4 @@ file:screen-1117-2.ans (29394 bytes, sha256:a5354c13) screen capture from hug tu
 - 2026-11-20T11:18 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:18 request 1 acknowledged by crab
 - 2026-11-20T11:18 request 1 in progress by crab: hug task set ht3cdx
+- 2026-11-20T11:18 resolved request 1 by crab
