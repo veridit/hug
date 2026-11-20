@@ -54,6 +54,7 @@ crab 18:19 local, check 3 FAILS on Jørgen's machine with v0.7.66 installed: hug
 check 3: commit 09462c2e (branch mbdfzs3, on origin/main 939636ff). CI 44388310353 attempt 2: all jobs success (ubuntu, windows, macos, windows-cli rest+sync+shards, bench, secrets). Attempt 1 macOS job was cancelled with 0 steps after sitting queued 22 minutes with no runner; the rerun passed 20:42-20:47Z. Tests failed first: TestOldHugIsToldToRestart. 5 of 5 mutants killed (mbdfzs3/mut/mutants.txt). Live v0.7.2 evidence: scratch mbdfzs3/live-*.txt.
 landed 056033a on main 2026-11-18: An old hug mcp server's failed memory write names its fix: restart it (mbdfzs…
 shipped in v0.7.71 (056033a)
+crab 2026-11-20 08:21Z, ps + lsof on Jørgen's machine (installed hug v0.7.87): 6 hug mcp processes. 2 still run Cellar/hug/0.7.2 (pids 56816 and 65214, started 15 Nov, --jcode-home truth_tribe_and_treasure and GenderedGames); 1 runs 0.7.87 (96239); 3 show a deleted binary path '/hug' (1402, 8265, 71259: their Cellar folder was removed by brew cleanup, so they run an old version). The fix (8dee4a86) shipped in v0.7.54; servers started before v0.7.54 cannot re-exec themselves, which is z77pem's case. Check 3 does not hold yet: those jcode instances must restart their MCP servers.
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
