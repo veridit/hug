@@ -1,6 +1,6 @@
 ---
 id: rnpdnm
-title: "Shared project memories: is today's filter good enough to turn sharing on?"
+title: "Shared project memories: what may go from the local database to the shared branch"
 state: "doing"
 type: feature
 priority: "high"
@@ -23,30 +23,38 @@ asked_check: "3"
 ---
 
 ## Goal
-Jørgen decides whether a repo may turn on memory sharing with today's filter, or whether we first make the filter stricter.
+Jørgen picks how hug decides which of a project's memories may be copied to its shared branch, before any repo turns sharing on.
 
 ## Purpose
-A repo that shares memories shows them to everyone who clones it, so wrong ones must stay on this machine.
+Once a memory is pushed to a shared branch it cannot be taken back, so a wrong one is a lasting mistake.
 
 ## Principle
 Choose from what was measured; change nothing for any repo until Jørgen picks.
 
 ## Relevant details
-WHERE MEMORIES ARE, PHYSICALLY
-1. On your Mac: one database file, ~/Library/Application Support/muninn/muninn.db (805 MB). Every memory from every project lives there. hug writes to it after sessions and recalls from it. It never leaves the machine.
-2. In a repo, only if that repo shares: one file, memories.jsonl, on the repo's hug/memory branch, checked out at .hug/memory/. hug mem sync copies the project's memories from muninn.db into it and pushes the branch to GitHub, so anyone who clones gets them.
-3. Sharing is off in every repo today. hug's own hug/memory branch still holds 827 old lines from before it was switched off (last push 2026-11-18); nothing has been added since.
+THE SPLIT (as Jørgen put it, 2026-11-20)
+- Local only: memories in the database on your Mac (~/Library/Application Support/muninn/muninn.db; the name muninn is being renamed to hug in y5vjc9). Every memory starts here.
+- Shared: a project's memories copied to its hug/memory branch and pushed, so everyone who clones the repo gets them. Only when that repo turns sharing on; none has today.
+The question is which project memories may cross from local to shared.
 
-WHAT 'HELD' MEANS
-When sharing is on, hug mem sync checks each memory before copying it from muninn.db to memories.jsonl. One that names a home folder (/Users/...), another project or client, or you, or states a personal preference, is not copied. It stays only in muninn.db on your Mac and is still recalled there. That is all 'held' means.
+WHAT GOES WRONG TODAY
+hug already keeps back a memory that names a home folder, another project or client, or you. But when we tried it on 254 new project memories, 8 still crossed that should not have (3 in 100). The 8, verbatim:
+1. crab runs 'hug task done' himself; agents should not run it.
+2. Use absolute paths when applying patches; relative-path patches aimed at the root checkout fail.
+3. Crab approves pushes for this investigation; a limited number of pushes were granted.
+4. Crab's limit for task proposals is 15 lines.
+5. Background jobs in this environment are capped at 600 s, so long runs are polled in 9-minute intervals.
+6. In this TUI project, use the edit tool for file edits rather than perl one-liners.
+7. The hug CLI installed on this machine is v0.7.64.
+8. In this repo, the git stash list is shared across all worktrees; use a separate branch instead of a stash.
+Seven of them (1-6, 8) are 'agent rules': how our agents should work (who runs done, which tool to use, time limits). They are true for us on every project, not facts about this code, and they name our setup (crab, this machine). Number 7 is about your machine.
+Where they should go: global memory, which is local only and recalled in all your projects. So 'put agent rules in global memory' means: when hug writes a memory like these, it files it under global instead of under this project, so it never reaches the shared branch.
 
-THE PROBLEM
-The check misses some. Of new project memories, about 3 in 100 that would be pushed should not be (8 of 254, by hand). Most are working rules for agents ('poll CI with a timeout') stored as this project's when they belong in global memory. If sharing were on, those would be pushed to the repo.
-
-WHAT WE ARE CHOOSING (only matters for a repo where you turn sharing on)
-- A, stop here: keep today's check. Before turning sharing on for a repo, run hug mem sync --dry-run and read what would be pushed. Costs nothing.
-- B, try again: teach the writer to put agent working rules in global memory, then measure again. About 75 cheap model calls and a day of new sessions; two attempts like this failed. Side effect: those rules would also be recalled in your other projects, where they belong.
-- C, approve each one: nothing is pushed until you approve it in a list in hug tui. Catches everything, but you review every memory, and it is a new feature to build.
+THE CHOICE, for a repo where you turn sharing on
+- A, you read before sharing: keep today's check. When you turn sharing on, hug first shows every memory it would push (hug mem sync --dry-run); you strike the ones like 1-8 by hand once. After that, new ones cross on their own with about 3 in 100 like these. Costs nothing to build.
+- B, hug files agent rules as global: change how hug writes memories so rules like 1-8 go to global, then measure again on new sessions. Cost: about 75 cheap model calls and a day; two earlier tries at this missed. Gain: fewer wrong ones cross, and these rules also reach your other projects, where they apply.
+- C, you approve every push: nothing crosses until you approve it in a list in hug tui. Nothing wrong crosses, but every new project memory waits for you, and the list is a new feature to build.
+My pick: A now (sharing is off everywhere, so nothing is at risk), and B later as its own task if you want agent rules to reach all projects anyway.
 
 Attempt reports: /Users/jhf/.jcode/scratch/rnpdnm-c3/REPORT.md and /Users/jhf/.jcode/scratch/rnpdnm-step2/REPORT-STEP2.md.
 
@@ -158,3 +166,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T13:30 request 5 by jhf
 - 2026-11-20T13:30 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:30 request 5 acknowledged by crab
+- 2026-11-20T13:31 request 5 in progress by crab: hug task set rnpdnm
