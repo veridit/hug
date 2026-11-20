@@ -100,6 +100,8 @@ Former Principle: A design decision first, written down, no code in this task. K
   I attach two screenshots where you see all the listings and options A1, A2, A, B, and so on. And then below you see the questions which are so they're disconnected. And when there are multiple options, why wouldn't we just render them inline so I can go and pick the options like it's A, B, C, or other or something? I mean, we're doing a pretty nice interaction system that's in the works now, I think
   resolved 2026-11-20T11:41 by crab:
     Yes. Added to p87ngv, the inline-marks task: check 18 lets a question carry its options (1A, 1B, 1C), drawn as choices right under the options text in this ticket, so you move with j/k and pick with Space, or choose 'other' to write your own answer. The pick is recorded as the answer. Check 19 is your look at frames of hpqt99's Decision 1 drawn that way before it is built. Your two screenshots stay attached here as the before picture.
+- 2026-11-20T13:01 request 6 by jhf:
+  I would love for this task to have the inline questions. It would be so much better. But I also wonder if we should have an import and export rather than synchronize. So you can synchronize and that's a nice design, but then where does it live? Then we have to flag it as synchronized and then update accordingly, meaning that the other one is the source. I think synchronize seems to imply it goes both ways. I think we're actually doing an import and we should suggest to do a cleanup so you don't have to do the import again and lose the states. And we would need to store a state of what we imported so that we don't import and change back to the previous states, the old states from the import. So we suggest to clean up. I think import and then it says I would like to do import as a preview and when you import apply you remove it from where you read it and then you can have an export which is a preview and if you export apply then you remove it maybe that's the way to do it but export apply would be to remove it from ourselves that's weird I'm not sure if that makes sense for us to do but it would be an export with everything we have is available in the other system as well if you're going to switch away from our system which is fair enough let's discuss this possibly
 
 ## Notes
 
@@ -143,3 +145,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T11:41 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:41 request 5 acknowledged by crab
 - 2026-11-20T11:41 resolved request 5 by crab
+- 2026-11-20T13:01 request 6 by jhf
