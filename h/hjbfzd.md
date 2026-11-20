@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzwc"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:16"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "hjbfzd"
 worktree: "/Users/jhf/.jcode/scratch/hjbfzd"
-asked_what: "Jørgen confirms on his board after release"
-asked_for: "jhf"
-asked_since: "2026-11-18T23:24"
-asked_by: "crab"
-asked_check: "5"
 ---
 
 ## Goal
@@ -49,8 +44,10 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 ## Questions
 - 2026-11-18T23:24 question 1 by crab to jhf (check 5):
   Jørgen confirms on his board after release
+  withdrawn 2026-11-20T09:51 (doing/asked -> doing/active)
 - 2026-11-20T09:44 question 2 by crab to jhf (check 6, show capture-wording-100x30.ans):
   Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? (All three steps are in capture-wording.md.)
+  withdrawn 2026-11-20T09:51 (doing/asked -> doing/active)
 
 ## Requests
 - 2026-11-20T09:43 request 1 by jhf:
@@ -84,3 +81,4 @@ file:capture-wording-100x30.ans (2801 bytes, sha256:54dc7b78)
 - 2026-11-20T09:44 request 1 in progress by crab: hug task attach hjbfzd /Users/jhf/.jcode/scratch/hjbfzd-wording/capture-wording.md
 - 2026-11-20T09:44 resolved request 1 by crab
 - 2026-11-20T09:44 asked question 2 of jhf, 2 open (doing/asked -> doing/asked)
+- 2026-11-20T09:51 doing/asked -> doing/active (resume); was asked_by: crab; asked_check: 5; asked_for: jhf; asked_since: 2026-11-18T23:24; asked_what: Jørgen confirms on his board after release
