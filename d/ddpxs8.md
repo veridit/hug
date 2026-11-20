@@ -44,6 +44,10 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 - 2026-11-20T06:06 question 2 by crab to jhf:
   0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?
 
+## Requests
+- 2026-11-20T11:26 request 1 by jhf:
+  Well now we have purpose principle relevant details, but I think description should go below the others, right? I'm not sure if we should have description anymore It overlaps, doesn't it? Or it should be just details instead of relevant details or should description be there. I think description is when you have title and description, but now we have title or subject and then we have purpose-principle details. Maybe that's enough.
+
 ## Notes
 
 
@@ -55,3 +59,4 @@ Reflection (unanswered, 2026-11-20, crab)
 - 2026-11-20T06:06 doing/asked -> done (done); was asked_by: crab; asked_for: jhf; asked_since: 2026-11-20T05:41; asked_what: 0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?; doing_since: 2026-11-20T05:41; doing_with: p277bp
 - 2026-11-20T06:06 done -> todo/ready (reopen); was done_at: 2026-11-20T06:06
 - 2026-11-20T06:06 todo/ready -> todo/design (ask)
+- 2026-11-20T11:26 request 1 by jhf
