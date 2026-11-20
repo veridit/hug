@@ -10,7 +10,7 @@ group: ""
 rank: "yq"
 created: 2026-11-16
 updated: 2026-11-16
-stage: "ready"
+stage: "depends"
 ---
 
 ## Goal
@@ -27,6 +27,7 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 
 ## Depends on
 
+- h8ymea
 ## Acceptance
 - [x] import backlog rerun in seid-lang; hug task ls --jsonl shows about 280 tasks with a parent
 - [x] lint --code parent-too-deep is empty
