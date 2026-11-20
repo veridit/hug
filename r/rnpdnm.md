@@ -11,14 +11,10 @@ rank: "zzzzzzzzzzw3"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Memory placement attempt 2 failed its bar: of 295 memories that would be pushed to the shared repo, 36 should not be (24 are team working rules written as if they only apply to this repo). Shall I pre-register a third approach on new data, or drop this check and keep what already ships (personal and other-project memories held back by the sync gate)?"
-asked_for: "jhf"
-asked_since: "2026-11-19T15:23"
-asked_by: "crab"
 ---
 
 ## Goal
@@ -73,6 +69,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
 ## Questions
 - 2026-11-19T15:23 question 1 by crab to jhf:
   Memory placement attempt 2 failed its bar: of 295 memories that would be pushed to the shared repo, 36 should not be (24 are team working rules written as if they only apply to this repo). Shall I pre-register a third approach on new data, or drop this check and keep what already ships (personal and other-project memories held back by the sync gate)?
+  answered 2026-11-20T11:26 by crab:
+    Withdrawn by crab 2026-11-20: unclear (Jørgen request 1). Re-asked plainly as question 2 with options A, B and C in Details.
 
 ## Requests
 - 2026-11-20T11:21 request 1 by jhf:
@@ -112,3 +110,6 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-20T11:21 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:21 request 1 acknowledged by crab
 - 2026-11-20T11:26 request 1 in progress by crab: hug task set rnpdnm
+- 2026-11-20T11:26 answered asked, by crab, for crab (doing/asked -> doing/active):
+  > Memory placement attempt 2 failed its bar: of 295 memories that would be pushed to the shared repo, 36 should not be (24 are team working rules written as if they only apply to this repo). Shall I pre-register a third approach on new data, or drop this check and keep what already ships (personal and other-project memories held back by the sync gate)?
+  Withdrawn by crab 2026-11-20: unclear (Jørgen request 1). Re-asked plainly as question 2 with options A, B and C in Details.
