@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzr"
 created: 2026-11-20
 updated: 2026-11-20
-design_asked_by: "crab"
-design_question: "911j70: restart hug tui. Do overview, list and board read as the calm spreadsheet you approved (ID TITLE STAGE ✓ TYPE PRIORITY OWNER, tags before the title, \u003e before the current cell)? Before | after sheets are in this ticket's Files."
-design_for: "jhf"
-design_since: "2026-11-20T13:07"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Main 5eeadcea (Release v0.7.90) on cc338eb8 (911j70b rebased onto v0.7.89 by reb
 ## Questions
 - 2026-11-20T13:07 question 1 by crab to jhf:
   911j70: restart hug tui. Do overview, list and board read as the calm spreadsheet you approved (ID TITLE STAGE ✓ TYPE PRIORITY OWNER, tags before the title, > before the current cell)? Before | after sheets are in this ticket's Files.
+  answered 2026-11-20T13:35 by jhf:
+    This is approved. I'm doing new improvements after this.
 
 ## Notes
 
@@ -53,3 +51,6 @@ check 1: release.yml 44731952347 completed success; brew upgrade: 'hug v0.7.90',
 
 ## History
 - 2026-11-20T13:07 todo -> todo/design (ask)
+- 2026-11-20T13:35 answered design, by jhf, for crab (todo/design -> todo/ready):
+  > 911j70: restart hug tui. Do overview, list and board read as the calm spreadsheet you approved (ID TITLE STAGE ✓ TYPE PRIORITY OWNER, tags before the title, > before the current cell)? Before | after sheets are in this ticket's Files.
+  This is approved. I'm doing new improvements after this.
