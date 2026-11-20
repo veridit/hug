@@ -11,11 +11,7 @@ rank: "5"
 created: 2026-11-20
 updated: 2026-11-20
 parent: "9taa9d"
-design_for: "jhf"
-design_since: "2026-11-20T13:12"
-design_asked_by: "crab"
-design_question: "Store each memory as its own Markdown file (editable, merges cleanly; a large one-time change of 18,078 files), or keep today's single memories.json? TODAY / WHAT WOULD CHANGE / WHY / CONSEQUENCES are in Details."
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -83,6 +79,8 @@ Promoted from item 3 of task:9taa9d.
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 2):
   Store each memory as its own Markdown file (editable, merges cleanly; a large one-time change of 18,078 files), or keep today's single memories.json? TODAY / WHAT WOULD CHANGE / WHY / CONSEQUENCES are in Details.
+  answered 2026-11-20T13:39 by crab:
+    Withdrawn by crab 2026-11-20: the WHY was rewritten after Jørgen's request 2; question 2 asks the three-way choice.
 
 ## Notes
 
@@ -98,3 +96,6 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T13:39 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:39 request 2 acknowledged by crab
 - 2026-11-20T13:39 request 2 in progress by crab: hug task set b8mk9s
+- 2026-11-20T13:39 answered design (check 2), by crab, for crab (todo/design -> todo/ready):
+  > Store each memory as its own Markdown file (editable, merges cleanly; a large one-time change of 18,078 files), or keep today's single memories.json? TODAY / WHAT WOULD CHANGE / WHY / CONSEQUENCES are in Details.
+  Withdrawn by crab 2026-11-20: the WHY was rewritten after Jørgen's request 2; question 2 asks the three-way choice.
