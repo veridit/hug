@@ -27,7 +27,7 @@ Main 20dbb6ca (Release v0.7.89, merge of a5fc5208 + CHANGELOG). qcq3tm CI 447219
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml green and brew upgrade gives hug version 0.7.89 with links into the new Cellar
+- [x] release.yml green and brew upgrade gives hug version 0.7.89 with links into the new Cellar
 
 ## Notes
 
@@ -38,3 +38,5 @@ file:after-tb0dra-100x30.ans (3927 bytes, sha256:4c747c53) 100x30 frames from qc
 file:before-p87ngv-a-100x30.ans (2483 bytes, sha256:ffee7bf7) 100x30 frames from qcq3tm: before = v0.7.88 code (4b1a5781), after = v0.7.89
 
 file:after-p87ngv-a-100x30.ans (3668 bytes, sha256:cd9adebd) 100x30 frames from qcq3tm: before = v0.7.88 code (4b1a5781), after = v0.7.89
+
+check 1: release.yml 44723208345 completed success; brew upgrade: 'hug v0.7.89', which hug -> ../Cellar/hug/0.7.89/bin/hug
