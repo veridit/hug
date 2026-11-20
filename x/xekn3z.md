@@ -10,12 +10,8 @@ group: ""
 rank: "zzzzzzzzzzzo"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "asked"
-asked_for: "jhf"
-asked_since: "2026-11-20T10:45"
-asked_by: "crab"
+stage: "active"
 doing_since: "2026-11-20T10:45"
-asked_what: "72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.)"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -41,6 +37,8 @@ main 1e4a3386 (CI 44710823480, 8/8), CHANGELOG 79a9ae52, merge 489684a6, release
 ## Questions
 - 2026-11-20T10:45 question 1 by crab to jhf:
   72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.)
+  answered 2026-11-20T11:42 by jhf:
+    I think it does. It would have been simpler if you took some screenshots and added them to the files list of this one so I can just look at what you meant
 
 ## Notes
 
@@ -51,3 +49,6 @@ check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/
 ## History
 - 2026-11-20T10:45 todo -> todo/design (ask)
 - 2026-11-20T10:45 todo/design -> doing/asked (take, 1 open question(s) kept); was design_asked_by: crab; design_for: jhf; design_question: 72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.); design_since: 2026-11-20T10:45
+- 2026-11-20T11:42 answered asked, by jhf, for crab (doing/asked -> doing/active):
+  > 72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.)
+  I think it does. It would have been simpler if you took some screenshots and added them to the files list of this one so I can just look at what you meant
