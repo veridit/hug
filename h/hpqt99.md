@@ -92,6 +92,8 @@ Former Principle: A design decision first, written down, no code in this task. K
   This ticket should truly write things in the ticket in the details and have maybe the questions with each relevant piece and it is too verbal. It has to be succinct to the point saying for this do that we can choose between so-and-so with these trade-offs and then the questions are inside the ticket not buried inside the document. I can't answer them. I have to do requests to talk about things that are so I can't respond where it happens
   resolved 2026-11-20T09:57 by crab:
     The ticket now carries the decision itself. Details opens with Decision 1 (1A/1B/1C) and Decision 2 (2A/2B/2C), one line per option with cost and risk, recommendations marked, then three lines of facts; design.md in Files keeps the full evidence. The old single check 'decision in DESIGN.md' is split: check 2 is Decision 1, check 3 is Decision 2, each with its own question on the ticket, so you answer each where it sits (a on the check). Check 4 writes the decision into docs/DESIGN.md and files the build.
+- 2026-11-20T11:40 request 4 by jhf:
+  So this ticket would have been so much better if we had the inline editing system because now you list something one place, you ask questions another place and things are kind of disconnected, don't you think?
 
 ## Notes
 
@@ -125,3 +127,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:57 doing/active -> doing/asked (ask)
 - 2026-11-20T09:57 asked question 5 of jhf, 2 open (doing/asked -> doing/asked)
 - 2026-11-20T09:57 resolved request 3 by crab
+- 2026-11-20T11:40 request 4 by jhf
