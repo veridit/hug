@@ -1,16 +1,21 @@
 ---
 id: ypfrp3
 title: "Release v0.7.85"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzc"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-20T11:23"
+doing_with: "p87ngv"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -50,3 +55,4 @@ Jørgen 2026-11-20 10:22Z (answer 1): 'Yes, clearly. I wanted to activate it rig
 - 2026-11-20T11:21 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:22 answer 1 acknowledged by crab
 - 2026-11-20T11:22 crab read the answer: hug task note ypfrp3 "Jørgen 2026-11-20 10:22Z (answer 1): 'Yes, clearly. I wanted to activate it right now...make a follow-up ticket then.' …"
+- 2026-11-20T11:23 todo/ready -> doing/active (take with p87ngv)
