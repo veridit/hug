@@ -89,3 +89,4 @@ check 3: Jørgen 2026-11-20 11:57Z (request 2): 'Yes, it does ... it worked on t
 - 2026-11-20T12:57 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:57 resolved request 1 by crab
 - 2026-11-20T12:57 resolved request 2 by crab
+- 2026-11-20T12:57 request 2 acknowledged by crab
