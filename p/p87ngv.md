@@ -51,6 +51,7 @@ and on a second line""". The opener is """ and the closer is the first """ not f
 - [ ] After an edit from hug tui (task file or an attachment), a commit that adds lines is delivered to the assignee or coordinator with task, file and commit; a no-change edit delivers nothing (test with an injected deliverer)
 - [ ] A new open mark written outside hug (any editor) is delivered on the next hug sync, once (test)
 - [ ] Loose text a person adds anywhere (task file or attachment) reaches the agent as a diff; the agent turns each added comment into a structured mark at the place it was written, with .by set to the person, and removes the loose text in the same commit (test on a fixture edit; agent instructions say so)
+- [ ] hpqt99 is rewritten with marks: each of Decision 1 and 2 in Details carries its question as a mark on the options, answered there, with no separate Questions entry; Jørgen reads it and finds options and question in one place (Jørgen 2026-11-20 on hpqt99: 'you list something one place, you ask questions another place')
 
 ## Questions
 - 2026-11-19T09:56 question 1 by crab to jhf:
