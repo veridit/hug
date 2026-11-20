@@ -10,6 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-20
 updated: 2026-11-20
+parent: "9taa9d"
 ---
 
 ## Goal
