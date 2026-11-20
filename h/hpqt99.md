@@ -139,3 +139,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T11:40 resolved request 4 by crab
 - 2026-11-20T11:41 request 5 by jhf
 - 2026-11-20T11:41 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:41 request 5 acknowledged by crab
