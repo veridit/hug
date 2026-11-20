@@ -73,3 +73,4 @@ file:screen-0939.ans (12730 bytes, sha256:f8b1deb2) screen capture from hug tui
 - 2026-11-19T04:01 handed to crab: duckling's session ended (closed 2026-11-19 02:31)
 - 2026-11-20T09:43 request 1 by jhf
 - 2026-11-20T09:43 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T09:43 request 1 acknowledged by crab
