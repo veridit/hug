@@ -19,7 +19,7 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-Recall shows more of the relevant memories search already finds, and stops showing a memory in situations like those where it was judged irrelevant before, all local and free
+Recall shows more of the relevant memories search finds and learns when not to show one, all local and free.
 
 ## Purpose
 Jørgen 2026-11-15 (crab session) asked what the LLM filter's big relevance gain consisted of, said recall 'should be local and free' (10:27Z), and asked for 'if x then y' patterns matched by BM25 or similarity (12:36Z). crab's analysis (10:39Z): the gain is almost entirely memories search already finds but today's gates throw away; on short messages the top 20 candidates hold 2.48 relevant memories and recall shows 0.67, and two thirds of the LLM's useful picks sat at ranks 6 to 20. So the problem is choosing, not finding, and this task tries to choose locally.
@@ -28,6 +28,8 @@ Jørgen 2026-11-15 (crab session) asked what the LLM filter's big relevance gain
 Local and free at recall time: no model call per message (AGENTS.md; Jørgen 2026-11-15 10:27Z). Labels for the learned veto come only from earlier judgments, never from the message being scored, so nothing leaks. Ship only under the recall rule: CI-clear gain on the 277 frozen and 147 fresh real messages, judged blind (check 3). A veto only skips a memory in a situation; it never deletes it (as s6ff5k: an off-topic signal never deletes).
 
 ## Relevant details
+Recall shows more of the relevant memories search already finds, and stops showing a memory in situations like those where it was judged irrelevant before, all local and free
+
 Offline 2026-11-15 (notes): the rule adds relevant memories but also noise on long messages (irr +0.30 [-0.01,+0.60]); the learned veto cuts long noise (-0.50 [-0.71,-0.35]) and barely acts on short ones (19% of candidates have history). Labels in production do not exist yet: memory_feedback, forgets and dream vetting give no relevance signal today (memory bgqxqj), and agents essentially never call memory_forget after recall (s6ff5k: 0 of 454 sessions). Warning from s6ff5k check 2 (2026-11-17, offtopic_sim.py): with perfect oracle feedback, per-memory similar-message suppression still cost relevant recall at every threshold, because a memory off-topic for one message is often on-topic for a similar one. Sibling jrj1vq measured the kind rule (kind != record) on the fresh set: long irr -1.98 [-2.44,-1.50]. Script muninn/scripts/learned.py.
 
 ## Depends on
