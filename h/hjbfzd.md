@@ -107,3 +107,4 @@ file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 - 2026-11-20T11:35 answered asked (question 4, check 5), by jhf, for crab (doing/asked -> doing/asked):
   > The capture prompt shipped in v0.7.70: on your board, does S then attach, select or create work for you (the wording itself is question 2)?
   answered by ticking check 5
+- 2026-11-20T11:35 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
