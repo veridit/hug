@@ -73,6 +73,7 @@ shipped in v0.7.53 (4e475c8)
 file:screen-1457.ans (24745 bytes, sha256:f97b075e) screen capture from hug tui
 crab 15:00 local: Jørgen's answer on check 4 (14:58) = focus right, styling too loud (ACCEPTANCE heading competes; question bold+background+colour). Filed as ; check 4 stays open until  ships and he confirms there.
 crab 15:01 local: Jørgen's answer on check 4 (14:58): focus right, styling too loud (the ACCEPTANCE heading competes; the question is bold + background + colour). Filed as kg07bt (calm heading, cursor-only emphasis); check 4 stays open until kg07bt ships and he confirms there.
+crab 2026-11-20 08:26Z: removed the kg07bt dependency (kg07bt shipped in v0.7.66; its last check is now asked of jhf, so it no longer blocks); this task's own check 4 asked.
 ## History
 - 2026-11-18T01:39 todo -> doing/active (take)
 - 2026-11-18T02:03 doing/active -> doing/waiting (wait)
