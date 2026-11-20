@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-20
 updated: 2026-11-20
+design_question: "v0.7.92: answering a withdrawn question now says when and why it was withdrawn and gives the command to ask again; a bare answer after the numbered questions answers the design question. Sample run attached. Do the two refusals read well?"
+design_for: "jhf"
+design_since: "2026-11-20T20:31"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -29,8 +34,16 @@ Shipped: 5vehza (withdrawn question: exit 2, 'question N on ID was withdrawn at 
 ## Acceptance
 - [ ] Jørgen confirms the two refusals read well
 
+## Questions
+- 2026-11-20T20:31 question 1 by crab to jhf (check 1):
+  v0.7.92: answering a withdrawn question now says when and why it was withdrawn and gives the command to ask again; a bare answer after the numbered questions answers the design question. Sample run attached. Do the two refusals read well?
+
 ## Notes
 
 file:v0.7.92-answer-sample.txt (2177 bytes, sha256:91951cc3) sample run on v0.7.92: the withdrawn refusal on hpqt99 (board unchanged), a design question answered after a numbered one, and 'no open question' with nothing open
 
 shipped: tag v0.7.92 (e43211fa), release.yml 44801667959 success, brew -> ../Cellar/hug/0.7.92/bin/hug, hug v0.7.92
+
+
+## History
+- 2026-11-20T20:31 todo -> todo/design (ask)
