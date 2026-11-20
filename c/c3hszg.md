@@ -4,7 +4,7 @@ title: "Recall: user-weighted BM25F and best-passage scoring in muninn search"
 state: "doing"
 type: spike
 priority: ""
-assignee: ["piglet"]
+assignee: ["crab"]
 labels: ["recall"]
 created: 2026-11-13
 updated: 2026-11-13
@@ -59,3 +59,4 @@ shipped in v0.7.68 (8c26ec5)
 ## History
 - 2026-11-18T17:19 todo -> doing/active (take)
 - 2026-11-18T18:34 doing/active -> doing/waiting (wait)
+- 2026-11-20T02:45 handed to crab: piglet's session went silent (last seen 2026-11-19 02:41)

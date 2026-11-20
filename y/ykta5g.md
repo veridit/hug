@@ -4,7 +4,7 @@ title: "In a task, k after j scrolled past the last check jumps to the top"
 state: "doing"
 type: bug
 priority: "high"
-assignee: ["piglet"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzvv"
@@ -60,3 +60,4 @@ shipped in v0.7.71 (c0ac0d5)
 - 2026-11-18T20:00 todo -> doing/active (take)
 - 2026-11-18T21:02 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 doing/waiting -> doing/asked (ask); was waiting_asked_by: piglet; waiting_on: CI run 44386677307; waiting_since: 2026-11-18T21:02
+- 2026-11-20T02:45 handed to crab: piglet's session went silent (last seen 2026-11-19 02:41)

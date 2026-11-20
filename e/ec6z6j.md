@@ -4,7 +4,7 @@ title: "Send one request for a selection of tasks"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["piglet"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzsw"
@@ -75,3 +75,4 @@ piglet 21:53 local: take refused 'ec6z6j is blocked by rxr4z8'. To ask check 1's
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
+- 2026-11-20T02:45 handed to crab: piglet's session went silent (last seen 2026-11-19 02:41)
