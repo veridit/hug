@@ -18,7 +18,7 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-A task's detail shows what it waits on you for once, not three times. The header keeps one stage line ('└─ waiting on you: ... since ...'). The separate '? waiting:' question block goes when the wait names a check: that check in the acceptance list carries the question marker instead, looks exactly as it does in the list (same box, number, text), and the detail opens with focus on it, so Space ticks it and 'a' answers. A wait that names no check keeps one question block, styled like an acceptance row, and gets focus on open. The lint line for a person-wait is gone via wdkqzx.
+A task's detail shows what it asks of you in one place and opens with focus on it.
 
 ## Purpose
 Jørgen 2026-11-17 23:27 local, on 6ephqk's detail: the waiting line, a '⚠ line 1: shipped, but doing ... fix: hug task done 6ephqk' lint line, and a '? waiting: check 9: look at the state/stage rows ... asked by nautilus · 3 h ago · a answer' block all say the same thing at the top, and overlap with '□ 9. Jørgen confirms the look on his board after release' further down. 'This is crowded ... would be better served with that in focus when I open, or this can be structured better and receive focus to jump down ... check 9 should look the same both places.'
@@ -27,6 +27,8 @@ Jørgen 2026-11-17 23:27 local, on 6ephqk's detail: the waiting line, a '⚠ lin
 One fact, one place; the cursor starts where the reader's answer goes. No new key: Space and a already act on a focused check. Nothing writes on open.
 
 ## Relevant details
+A task's detail shows what it waits on you for once, not three times. The header keeps one stage line ('└─ waiting on you: ... since ...'). The separate '? waiting:' question block goes when the wait names a check: that check in the acceptance list carries the question marker instead, looks exactly as it does in the list (same box, number, text), and the detail opens with focus on it, so Space ticks it and 'a' answers. A wait that names no check keeps one question block, styled like an acceptance row, and gets focus on open. The lint line for a person-wait is gone via wdkqzx.
+
 Mock, 6ephqk opened:
   Task state and stage: a hard-coded tree replaces status
   [doing] [feature] 6ephqk  group:root  assigned:nautilus · claude-opus-5-5/high · main
