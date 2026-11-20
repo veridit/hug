@@ -58,6 +58,10 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 - 2026-11-20T09:52 question 3 by crab to jhf (check 1):
   Your 08:51Z idea (on hjbfzd) differs from the mock in question 2: the mock opens on a FOR YOU block at the top that lists your questions as links; yours opens the page scrolled to the question where it sits in Acceptance, nothing added on top, with ↑/↓ corner markers showing there is more. Which do you want: scroll-to-question (I will drop FOR YOU from the mock), or the FOR YOU block?
 
+## Requests
+- 2026-11-20T11:24 request 1 by jhf:
+  So look at the screenshot We scroll down to the question, but we're showing the file in line that doesn't make any sense, right? So we should have scrolled to the question and the file would be then in display or linked to from the question So you have to clean this up and take it all the way and if we can't like we can always scroll to the question can't we in this case wouldn't that be the thing to do
+
 ## Notes
 
 
@@ -99,3 +103,4 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 - 2026-11-20T02:20 doing/active -> doing/asked (ask)
 - 2026-11-20T03:22 handed to crab: bug's session ended (closed 2026-11-20 02:20)
 - 2026-11-20T09:52 asked question 3 of jhf, 2 open (doing/asked -> doing/asked)
+- 2026-11-20T11:24 request 1 by jhf
