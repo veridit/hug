@@ -130,3 +130,4 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
   Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled out in request 1 (2026-11-20 10:24Z). A new mock without it is check 10.
 - 2026-11-20T11:26 resolved request 1 by crab
 - 2026-11-20T11:26 resolved request 2 by crab
+- 2026-11-20T11:26 request 2 acknowledged by crab
