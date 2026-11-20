@@ -72,6 +72,8 @@ Promoted from item 3 of task:9taa9d.
 ## Requests
 - 2026-11-20T13:11 request 1 by jhf:
   I don't understand the technical consequences of this task. And if we move things to retired, then we should later have a plan to clean it up automatically, right? After some default number of days. And I don't know. So it just says, we're going to do this. It doesn't what do we have today? What are we changing? Why are we making that change? And what are the consequences? This has to be more clear. The purpose is too long.
+  resolved 2026-11-20T13:12 by crab:
+    Rewritten from scratch. Details now have four plain parts: TODAY (one 18.6 MB memories.json on your Mac with 18,078 memories, 491 of them retired and never cleaned up; muninn.db is only the search index), WHAT WOULD CHANGE (one Markdown file per memory, retire = move to _retired/), WHY (edit like a task, clean git merges, same shape as tasks) and CONSEQUENCES (a large one-time migration, every write path changes, and an automatic cleanup: dream deletes retired files after 30 days, a setting). Purpose is one sentence. Title and Goal now say it is a decision. Question 2 asks: do it, or keep one file?
 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 2):
@@ -86,3 +88,4 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T13:11 request 1 acknowledged by crab
 - 2026-11-20T13:12 request 1 in progress by crab: hug task set b8mk9s
 - 2026-11-20T13:12 todo -> todo/design (ask)
+- 2026-11-20T13:12 resolved request 1 by crab
