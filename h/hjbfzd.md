@@ -55,6 +55,8 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
   withdrawn 2026-11-20T09:51 (doing/asked -> doing/active)
 - 2026-11-20T09:51 question 3 by crab to jhf (check 6):
   Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? Today vs proposed, in the real theme: capture-wording-100x30.ans in Files (Space shows it); all three steps are in capture-wording.md.
+- 2026-11-20T09:51 question 4 by crab to jhf (check 5):
+  The capture prompt shipped in v0.7.70: on your board, does S then attach, select or create work for you (the wording itself is question 2)?
 
 ## Requests
 - 2026-11-20T09:43 request 1 by jhf:
@@ -90,3 +92,4 @@ file:capture-wording-100x30.ans (2801 bytes, sha256:54dc7b78)
 - 2026-11-20T09:44 asked question 2 of jhf, 2 open (doing/asked -> doing/asked)
 - 2026-11-20T09:51 doing/asked -> doing/active (resume); was asked_by: crab; asked_check: 5; asked_for: jhf; asked_since: 2026-11-18T23:24; asked_what: Jørgen confirms on his board after release
 - 2026-11-20T09:51 doing/active -> doing/asked (ask)
+- 2026-11-20T09:51 asked question 4 of jhf, 2 open (doing/asked -> doing/asked)
