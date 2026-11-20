@@ -13,11 +13,7 @@ updated: 2026-11-19
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "design"
-design_for: "jhf"
-design_since: "2026-11-19T12:21"
-design_asked_by: "crab"
-design_question: "m5pbb0: in hug tui (v0.7.80 or later), on a task with several open questions, can you reach and answer the second one?"
+stage: "ready"
 ---
 
 ## Goal
@@ -40,6 +36,8 @@ main dd6e5cf9 (CI 44500113493 8/8), CHANGELOG b2c9d5e4, merge 41dc277d, release.
 ## Questions
 - 2026-11-19T12:21 question 1 by crab to jhf:
   m5pbb0: in hug tui (v0.7.80 or later), on a task with several open questions, can you reach and answer the second one?
+  answered 2026-11-20T11:06 by jhf:
+    Yes, I've done it. It worked. Nice. The only thing I wonder about is where are the questions? Because when I view the file, I can't see the questions in the markdown. But so where are the physically? You can just answer that in the console and you can close this ticket.
 
 ## Notes
 
@@ -55,3 +53,6 @@ Reflection (unanswered, 2026-11-19, crab)
 - 2026-11-19T11:10 doing/active -> done (done); was doing_since: 2026-11-19T11:10; doing_with: p277bp
 - 2026-11-19T12:21 done -> todo/ready (reopen); was done_at: 2026-11-19T11:10
 - 2026-11-19T12:21 todo/ready -> todo/design (ask)
+- 2026-11-20T11:06 answered design, by jhf, for crab (todo/design -> todo/ready):
+  > m5pbb0: in hug tui (v0.7.80 or later), on a task with several open questions, can you reach and answer the second one?
+  Yes, I've done it. It worked. Nice. The only thing I wonder about is where are the questions? Because when I view the file, I can't see the questions in the markdown. But so where are the physically? You can just answer that in the console and you can close this ticket.
