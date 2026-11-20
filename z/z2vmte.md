@@ -42,6 +42,10 @@ Today: hug task dep --add 'when date YYYY-MM-DD' holds a todo task out of next, 
 - [x] 47sxn2 on hug's board becomes ask --to jhf --after 2026-11-24 and leaves Jørgen's ASKED today (done with hug commands)
 - [ ] Jørgen sees 47sxn2 come back into his ASKED on 2026-11-24 without anyone touching it
 
+## Requests
+- 2026-11-20T13:05 request 1 by jhf:
+  So I love this ticket. It will come back to my ask queue on a date. My problem is why can't I see in the heading what date we're waiting for? So waiting on check 3, grab. Now crab converts. Check 4, Jrgen sees it in asked, but the wait date wait until shouldn't that show the date? And shouldn't it just be wait until and the date? Or you prefer the wait date and then wait until for clarity or wait until date. Wouldn't that be better and then show the date?
+
 ## Notes
 
 
@@ -59,3 +63,4 @@ file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
 - 2026-11-18T04:23 doing/active -> doing/waiting (wait)
+- 2026-11-20T13:05 request 1 by jhf
