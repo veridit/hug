@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzsw"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:53"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ykta5g"
 worktree: "/Users/jhf/.jcode/scratch/ykta5g"
+waiting_asked_by: "crab"
+waiting_on: "a worker for checks 4 and 6 (TUI; after cow's 911j70 lane, which is in the same list code)"
+waiting_since: "2026-11-20T09:32"
 ---
 
 ## Goal
@@ -78,3 +81,4 @@ crab 2026-11-20 08:32Z: Jørgen chose A (box at the bottom of the list). Check 6
 - 2026-11-20T09:31 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T09:31 answer 1 acknowledged by crab
 - 2026-11-20T09:32 answer 1 in progress by crab: hug task check ec6z6j 1 "Jørgen 2026-11-20 08:31Z (answer 1): 'Clearly, a': option A, the request box opens at the bottom of the list so the mar…"
+- 2026-11-20T09:32 doing/active -> doing/waiting (wait)
