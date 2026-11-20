@@ -12,15 +12,10 @@ created: 2026-11-20
 updated: 2026-11-20
 doing_with: "p87ngv"
 doing_since: "2026-11-20T11:30"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_by: "crab"
-asked_check: "1"
-asked_what: "Default coordinator when none is named, or the named one is gone: the only live agent session on the board, else the first live one to touch it, handing over when it ends; a name you set still wins. Is that the rule you want?"
-asked_for: "jhf"
-asked_since: "2026-11-20T11:31"
 ---
 
 ## Goal
@@ -47,6 +42,8 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 ## Questions
 - 2026-11-20T11:31 question 1 by crab to jhf (check 1):
   Default coordinator when none is named, or the named one is gone: the only live agent session on the board, else the first live one to touch it, handing over when it ends; a name you set still wins. Is that the rule you want?
+  answered 2026-11-20T12:55 by jhf:
+    Yes, but when you when you deduce, you can just ask. We're giving this to you received this because you were perceived to be the coordinating task interacting with a human at a console. If you are not and instruction to fix the first time you see an agent who you have deduced
 
 ## Notes
 
@@ -54,3 +51,6 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 ## History
 - 2026-11-20T11:30 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:31 doing/active -> doing/asked (ask)
+- 2026-11-20T12:55 answered asked (check 1), by jhf, for crab (doing/asked -> doing/active):
+  > Default coordinator when none is named, or the named one is gone: the only live agent session on the board, else the first live one to touch it, handing over when it ends; a name you set still wins. Is that the rule you want?
+  Yes, but when you when you deduce, you can just ask. We're giving this to you received this because you were perceived to be the coordinating task interacting with a human at a console. If you are not and instruction to fix the first time you see an agent who you have deduced
