@@ -60,3 +60,4 @@ Reflection (unanswered, 2026-11-20, crab)
 - 2026-11-20T06:06 done -> todo/ready (reopen); was done_at: 2026-11-20T06:06
 - 2026-11-20T06:06 todo/ready -> todo/design (ask)
 - 2026-11-20T11:26 request 1 by jhf
+- 2026-11-20T11:26 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
