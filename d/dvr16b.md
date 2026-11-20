@@ -1,7 +1,7 @@
 ---
 id: dvr16b
 title: "Release v0.7.77"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -13,12 +13,7 @@ updated: 2026-11-19
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "waiting"
-doing_since: "2026-11-19T13:42"
-doing_with: "p277bp"
-waiting_on: "crab: a6xm8n day-later count at 2026-11-20 05:45Z"
-waiting_since: "2026-11-19T13:42"
-waiting_asked_by: "crab"
+done_at: "2026-11-20T06:45"
 ---
 
 ## Goal
@@ -46,9 +41,11 @@ main c2b0bbe5 CI 44464516250 success 8/8. CHANGELOG 020b9592, merge 1ce66c8a, re
 check 1: release.yml 44465643587 completed success
 check 2: brew upgrade run on its own; hug version prints hug v0.7.77; bin links point at Cellar/hug/0.7.77
 check 3: Read-only count at 2026-11-20T05:45Z on the live store, capture_runs with trigger turn_end since 2026-11-19T05:37:40Z (v0.7.77 installed): OK 364, 'extraction HTTP request failed (details redacted)' 2 (06:01:07Z and 14:01:02Z), 0 'deadline exceeded', 0 'invalid extraction response'. The last turn_end deadline was 2026-11-19 05:31:13Z, 6.5 minutes before v0.7.77; 6 in the 2 h before it. The 2 HTTP failures are network errors, a different class from a6xm8n.
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-19T06:37 todo -> doing/active (take with p277bp)
 - 2026-11-19T06:37 doing/active -> done (done); was doing_since: 2026-11-19T06:37; doing_with: p277bp
 - 2026-11-19T13:42 done -> todo/ready (reopen); was done_at: 2026-11-19T06:37
 - 2026-11-19T13:42 todo/ready -> doing/active (take with p277bp)
 - 2026-11-19T13:42 doing/active -> doing/waiting (wait)
+- 2026-11-20T06:45 doing/waiting -> done (done); was doing_since: 2026-11-19T13:42; doing_with: p277bp; waiting_asked_by: crab; waiting_on: crab: a6xm8n day-later count at 2026-11-20 05:45Z; waiting_since: 2026-11-19T13:42
