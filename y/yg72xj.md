@@ -1,7 +1,7 @@
 ---
 id: yg72xj
 title: "Release v0.7.81"
-state: "todo"
+state: "doing"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -13,7 +13,8 @@ updated: 2026-11-19
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-20T11:07"
 ---
 
 ## Goal
@@ -54,3 +55,5 @@ Reflection (unanswered, 2026-11-19, crab)
   Yes, this interaction was nice and subtle. When you tone down things, the important things get more focus. I like it.
 - 2026-11-20T11:07 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:07 answer 1 acknowledged by crab
+- 2026-11-20T11:07 todo/ready -> doing/active (take)
+- 2026-11-20T11:07 crab read the answer: hug task take yg72xj
