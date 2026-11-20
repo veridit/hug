@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-19T22:12"
+done_release: "v0.7.86"
 ---
 
 ## Goal
@@ -47,6 +48,7 @@ landed 85f5a52 on main 2026-11-19: tests: a tmux server dies with its test, pass
 landed d45043b on main 2026-11-19: env: HUG_TEST_TMUX_CHILD is a known test variable (wacc33)
 landed 57fce63 on main 2026-11-19: tmuxtest: TestLabelOwner checks liveness only off Windows, which has no signal 0…
 Reflection (open, 2026-11-19, crab): The rebase-land.sh dry-run flag is not a dry run: my second call with --dry-run pushed again and started a duplicate CI run (cancelled 44616588443; trees identical, so 57fce63b landed). Otherwise nothing.
+shipped in v0.7.86 (85f5a52)
 ## History
 - 2026-11-19T21:05 todo -> doing/active (take)
 - 2026-11-19T22:12 doing/active -> done (done); was doing_since: 2026-11-19T21:05

@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-20T01:15"
+done_release: "v0.7.86"
 ---
 
 ## Goal
@@ -47,6 +48,7 @@ landed 3342fe7 on main 2026-11-20: tui: blink tests run v's blink on a synctest 
 landed c7f69d1 on main 2026-11-20: changelog: blink tests on a synctest clock (6zhyq2)
 landed 4ebd782 on main 2026-11-20: cli tests: settled fails a sync pass that stops, not one still running at 30 s…
 landed 597a0b2 on main 2026-11-20: changelog: settled waits on progress (6zhyq2)
+shipped in v0.7.86 (3342fe7)
 ## History
 - 2026-11-20T00:04 todo -> doing/active (take)
 - 2026-11-20T01:15 doing/active -> done (done); was doing_since: 2026-11-20T00:04
