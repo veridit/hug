@@ -11,7 +11,7 @@ rank: "zzzzzzzzzzkh"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-18T01:39"
-stage: "depends"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -41,7 +41,6 @@ Mock, 6ephqk opened:
 
 ## Depends on
 
-- kg07bt
 ## Acceptance
 - [x] a task whose wait names check N opens with focus on check N, which shows the ? marker and the same text as the list; no separate question block (test + golden)
 - [x] a wait that names no check shows one question block styled like an acceptance row, focused on open; Space/a act on it (test)
