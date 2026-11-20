@@ -32,6 +32,12 @@ Once a memory is pushed to a shared branch it cannot be taken back, so a wrong o
 Choose from what was measured; change nothing for any repo until Jørgen picks.
 
 ## Relevant details
+SHOULD THE 8 BE MEMORIES AT ALL? (request 6; full table and sources in memory-qualifiers.md, Files)
+- 5 of 8 should not exist: 1 and 4 are rules for one swarm's roles (crab), 3 is one-assignment coordination, 6 is already in the agent's instructions, 7 is the installed version. hug's capture prompt already excludes 3 and 7; the model ignored it.
+- 3 of 8 should exist, as global: 2 (absolute patch paths), 5 (600 s job cap), 8 (git stash shared across worktrees).
+- So the problem is mostly what gets written, not where it goes. Compared with jcode (excludes what the system prompt already says; 'useful weeks from now on a different topic'), engram (the agent saves by hand, a judge step for conflicts) and mem0 (few-shot examples of input that yields nothing), hug's prompt lacks: a rule that how-the-agent-works rules are instructions, not memories; dropping memories that name an agent or session; few-shot examples (these 8); a cheap check after extraction for words like 'installed' or 'this investigation'.
+- That suggests a fourth option, D: tighten what hug writes in the first place, measured on fresh captures. It helps whether or not sharing is ever turned on, because these memories are also wrong in the local database.
+
 THE SPLIT (as Jørgen put it, 2026-11-20)
 - Local only: memories in the database on your Mac (~/Library/Application Support/muninn/muninn.db; the name muninn is being renamed to hug in y5vjc9). Every memory starts here.
 - Shared: a project's memories copied to its hug/memory branch and pushed, so everyone who clones the repo gets them. Only when that repo turns sharing on; none has today.
