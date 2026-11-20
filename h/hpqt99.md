@@ -54,7 +54,7 @@ Former Principle: A design decision first, written down, no code in this task. K
 ## Depends on
 
 ## Acceptance
-- [ ] decision in DESIGN.md
+- [ ] ~~decision in DESIGN.md~~ (not relevant: split into checks 2 and 3, one decision each, asked on the ticket (Jørgen request 3, 2026-11-20), crab, 2026-11-20)
 - [ ] Decision 1 (client of an imported memory): Jørgen picks 1A, 1B or 1C
 - [ ] Decision 2 (jcode memories): Jørgen picks 2A, 2B or 2C
 - [ ] The decision is written in docs/DESIGN.md and the build tasks are filed
