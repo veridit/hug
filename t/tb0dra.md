@@ -13,13 +13,7 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "asked"
-asked_what: "Approve these three additions to the AGENTS.md section hug setup writes into every repo?"
-asked_for: "jhf"
-asked_since: "2026-11-19T00:58"
-asked_by: "piglet"
-asked_check: "5"
-asked_show: "agentsection-proposal.md"
+stage: "active"
 ---
 
 ## Goal
@@ -49,6 +43,8 @@ Builds on tzc9hb (the loop in the AGENTS.md section) and x325pp (nudges only bet
 ## Questions
 - 2026-11-19T00:58 question 1 by piglet to jhf (check 5, show agentsection-proposal.md):
   Approve these three additions to the AGENTS.md section hug setup writes into every repo?
+  answered 2026-11-20T10:58 by jhf:
+    Yes, I approved this ticket. I also added two more screenshots showing how and I've done this several times so I hope that there's a ticket incoming the question is not visible when I open and how the file is shown inline instead of scrolling down to the file revealing both the question and the file. Either that should be appended to the existing ticket someone is working on, or it should be given higher priority if it is in the next upcoming, and this ticket is of course closed.
 
 ## Notes
 
@@ -74,3 +70,6 @@ file:screen-1057-2.ans (24091 bytes, sha256:39c4a77d) screen capture from hug tu
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
+- 2026-11-20T10:58 answered asked (check 5), by jhf, for piglet (doing/asked -> doing/active):
+  > Approve these three additions to the AGENTS.md section hug setup writes into every repo?
+  Yes, I approved this ticket. I also added two more screenshots showing how and I've done this several times so I hope that there's a ticket incoming the question is not visible when I open and how the file is shown inline instead of scrolling down to the file revealing both the question and the file. Either that should be appended to the existing ticket someone is working on, or it should be given higher priority if it is in the next upcoming, and this ticket is of course closed.
