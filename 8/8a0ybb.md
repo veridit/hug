@@ -63,6 +63,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
   Is this mock of p87ngv's detail approved? Frames at 100x30 and 160x45, .ans and .png each: a-opens (FOR YOU first, its link → MOCK.md, then Purpose, Principle), a2-scrolled (Goal, Acceptance with ? on check 5, Files, the long sections folded to one line each), b-link-mock-md (Enter on the link: MOCK.md in the file frame, Esc back to the question), c0-notes-focused and c-notes-open (Enter on NOTES (11) unfolds it).
 - 2026-11-20T09:52 question 3 by crab to jhf (check 1):
   Your 08:51Z idea (on hjbfzd) differs from the mock in question 2: the mock opens on a FOR YOU block at the top that lists your questions as links; yours opens the page scrolled to the question where it sits in Acceptance, nothing added on top, with ↑/↓ corner markers showing there is more. Which do you want: scroll-to-question (I will drop FOR YOU from the mock), or the FOR YOU block?
+  answered 2026-11-20T11:25 by crab:
+    Jørgen answered this in request 1 (2026-11-20 10:24Z): scroll to the question; no FOR YOU block. 'we can always scroll to the question ... wouldn't that be the thing to do'.
 
 ## Requests
 - 2026-11-20T11:24 request 1 by jhf:
@@ -117,3 +119,6 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 - 2026-11-20T11:25 request 2 by jhf
 - 2026-11-20T11:25 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:25 request 1 in progress by crab: hug task set 8a0ybb
+- 2026-11-20T11:25 answered asked (question 3, check 1), by crab, for crab (doing/asked -> doing/asked):
+  > Your 08:51Z idea (on hjbfzd) differs from the mock in question 2: the mock opens on a FOR YOU block at the top that lists your questions as links; yours opens the page scrolled to the question where it sits in Acceptance, nothing added on top, with ↑/↓ corner markers showing there is more. Which do you want: scroll-to-question (I will drop FOR YOU from the mock), or the FOR YOU block?
+  Jørgen answered this in request 1 (2026-11-20 10:24Z): scroll to the question; no FOR YOU block. 'we can always scroll to the question ... wouldn't that be the thing to do'.
