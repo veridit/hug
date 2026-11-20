@@ -72,6 +72,7 @@ landed 3686f17 on main 2026-11-18: tui: header 'HUG · <project>', field terms i
 landed 31499b8 on main 2026-11-18: tui: / search takes tag: beside label: (0sw0dd, for txjkrm)
 landed 8ee3737 on main 2026-11-18: tui goldens: check-ids and picture-framed say 'HUG · list' (0sw0dd header, after…
 shipped in v0.7.67 (5050b97)
+crab 2026-11-20 12:04Z: the wait is over: 911j70 (view line, check 3) shipped in v0.7.90. Check 1 is now Jørgen's look on release ticket mxj0zn.
 ## History
 - 2026-11-18T16:37 todo -> doing/active (take)
 - 2026-11-18T20:43 doing/active -> doing/waiting (wait)
