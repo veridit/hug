@@ -53,6 +53,7 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 
 check 1: release.yml 44675088441 success; brew upgrade: hug v0.7.86, hug/muninn/huginn -> ../Cellar/hug/0.7.86/bin/*
 Reflection (unanswered, 2026-11-20, crab)
+Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they do' (shorter Goals read better, nothing missing). Request 1 (no Description heading, 'Details') went to 8a0ybb check 13.
 ## History
 - 2026-11-20T05:41 todo -> doing/active (take with p277bp)
 - 2026-11-20T05:41 doing/active -> doing/asked (ask)
