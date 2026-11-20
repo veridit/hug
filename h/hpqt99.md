@@ -76,3 +76,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:56 doing/asked -> doing/active (resume); was asked_by: piglet; asked_check: 1; asked_for: jhf; asked_since: 2026-11-18T23:32; asked_what: Imported data, see docs/DESIGN.md section 'Imported data' (branch hpqt99, 32ed02dd): do you approve 1B-amended plus 2B? 1B-amended: an import keeps the scope the source states (engram personal stays personal) and places by the folder it was written in only when the source states none. 2B: import each jcode instance's memories once, then stop reading jcode files live. The alternatives are 1A (as today, the owner rescopes by hand) and 2A (keep reading jcode files live). I recommend 1B-amended plus 2B.
 - 2026-11-20T09:56 doing/active -> doing/asked (ask)
 - 2026-11-20T09:56 request 2 by jhf
+- 2026-11-20T09:56 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
