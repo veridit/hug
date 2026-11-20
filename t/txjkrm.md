@@ -13,15 +13,9 @@ updated: 2026-11-17
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "asked"
-asked_show: "seid-overview-tags-row.txt"
-asked_what: "Seid's overview with tags right after the ID, as you asked: does it read right?"
-asked_for: "jhf"
+stage: "active"
 doing_since: "2026-11-20T09:28"
 doing_with: "911j70"
-asked_since: "2026-11-18T23:38"
-asked_by: "kikazaru"
-asked_check: "7"
 ---
 
 ## Goal
@@ -52,6 +46,8 @@ Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate
 ## Questions
 - 2026-11-18T23:38 question 1 by kikazaru to jhf (check 7, show seid-overview-tags-row.txt):
   Seid's overview with tags right after the ID, as you asked: does it read right?
+  answered 2026-11-20T10:55 by jhf:
+    I think this has been replaced by my next ruling that the tags should be at the start of the title and I think we just have to look at the design how we can visually see the tags when they're beginning the title such as by and I wonder if they should be a separate column or it should be tag and title with respect to sorting I think that's the only question but a visual I think showing them at the beginning with some kind of very subtle separator makes it very easy to see what this is about and then the details in the title. As such, I think this task should close and there will be other follow-up tasks to adjust this further, and that the question was asked before my new changes landed
 
 ## Notes
 
@@ -109,3 +105,6 @@ kikazaru 22:37Z: shipped in v0.7.71 (3ce9119a, 3f5e89d9, 4d7eec2d). The owed que
 - 2026-11-18T23:38 done -> todo/ready (reopen); was done_at: 2026-11-18T23:24; done_release: v0.7.71
 - 2026-11-18T23:38 todo/ready -> todo/design (ask)
 - 2026-11-20T09:28 todo/design -> doing/asked (take with 911j70, 1 open question(s) kept); was design_asked_by: kikazaru; design_for: jhf; design_question: Seid's overview with tags right after the ID, as you asked: does it read right?; design_show: seid-overview-tags-row.txt; design_since: 2026-11-18T23:38
+- 2026-11-20T10:55 answered asked (check 7), by jhf, for kikazaru (doing/asked -> doing/active):
+  > Seid's overview with tags right after the ID, as you asked: does it read right?
+  I think this has been replaced by my next ruling that the tags should be at the start of the title and I think we just have to look at the design how we can visually see the tags when they're beginning the title such as by and I wonder if they should be a separate column or it should be tag and title with respect to sorting I think that's the only question but a visual I think showing them at the beginning with some kind of very subtle separator makes it very easy to see what this is about and then the details in the title. As such, I think this task should close and there will be other follow-up tasks to adjust this further, and that the question was asked before my new changes landed
