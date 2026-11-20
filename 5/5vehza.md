@@ -44,6 +44,7 @@ check 1: TestAnswerWithdrawnQuestionRefused (huginn/internal/cli/askwithdrawn_te
 check 2: q.Answer reads listed in the note, file:line each: all 13 non-test reads in task/cli/tui are nil-compares or guarded by an Answer != nil check; mcp has none (it goes through AnswerQuestion). The only unguarded one, asks.go:317 (the '!q.Open()' branch), is now 'case q.Answer != nil' in ea218b3d.
 landed ea218b3 on main 2026-11-20: hug task answer refuses a withdrawn question instead of panicking (5vehza)
 shipped in v0.7.92 (ea218b3)
+Reflection (open, 2026-11-20, crab): nothing: the task named the line and the fix
 ## History
 - 2026-11-20T19:50 todo -> doing/active (take)
 - 2026-11-20T20:23 doing/active -> done (done, by release v0.7.92: every check holds); was doing_since: 2026-11-20T19:50
