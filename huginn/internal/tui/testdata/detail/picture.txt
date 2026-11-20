@@ -59,7 +59,7 @@ plain line
                                                                                 
                                                                                 
 ────────────────────────────────────────────────────────────────────────────────
-next-, previous file · Enter edit · / find · u/Esc files · ? help · quit        
+next-, previous file · Enter edit · / find · u/Esc question · ? help · quit     
 == 000002 at 140
 HUG · list › 000002                                                                                                              ? 1 for you
 [doing]  [asked]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-000002                                                  
@@ -121,4 +121,4 @@ plain line
                                                                                                                                             
                                                                                                                                             
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    
+next-, previous file · Enter edit · / find · u/Esc question · ? help · quit                                                                 

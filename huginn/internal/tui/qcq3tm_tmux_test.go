@@ -56,7 +56,7 @@ func newAskedTmux(t *testing.T, name string) *askedTmux {
 		}
 	}
 	env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=jhf", "HUG_MODEL=", "HUG_SYNC=off", "NO_COLOR=1", "TERM=xterm-256color", "GOMAXPROCS=2"}
-	if os.Getenv("HUG_QCQ3TM_CAPTURES") != "" {
+	if os.Getenv("QCQ3TM_CAPTURES") != "" {
 		// Captures for Jørgen (qcq3tm): in the real theme's colours.
 		env = append(env[:len(env)-3], "TERM=xterm-256color", "COLORTERM=truecolor", "GOMAXPROCS=2")
 	}
@@ -129,9 +129,9 @@ func (a *askedTmux) wait(what string, want []string, gone ...string) string {
 }
 
 // save keeps the screen with its colours as an .ans in
-// $HUG_QCQ3TM_CAPTURES, when set: the captures attached to qcq3tm.
+// $QCQ3TM_CAPTURES, when set: the captures attached to qcq3tm.
 func (a *askedTmux) save(what string) {
-	dir := os.Getenv("HUG_QCQ3TM_CAPTURES")
+	dir := os.Getenv("QCQ3TM_CAPTURES")
 	if dir == "" {
 		return
 	}
