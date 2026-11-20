@@ -53,6 +53,8 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 ## Requests
 - 2026-11-20T09:43 request 1 by jhf:
   So I tried this and I could attach it to this ticket. You should find it, but the wording isn't good. It says attach to, and then it says screen capture, and then it has a long text, and then you can create select or create. But it should be screen capture colon attached to the pre-filled task or select or create new or create, just do not even need new. Can you make a suggestion and put it as an attachment to this task?
+  resolved 2026-11-20T09:44 by crab:
+    Proposal attached: capture-wording.md (the exact strings for all three steps) and capture-wording-100x30.ans (today vs proposed in the real theme). Main line: 'Screen capture: attach to 000002 · select · create'; the long title moves to the keys line; 'new' is dropped from create. Added check 6 to build it; asked you to approve the wording.
 
 ## Notes
 
@@ -78,3 +80,4 @@ file:capture-wording-100x30.ans (2801 bytes, sha256:54dc7b78)
 - 2026-11-20T09:43 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T09:43 request 1 acknowledged by crab
 - 2026-11-20T09:44 request 1 in progress by crab: hug task attach hjbfzd /Users/jhf/.jcode/scratch/hjbfzd-wording/capture-wording.md
+- 2026-11-20T09:44 resolved request 1 by crab
