@@ -1,15 +1,21 @@
 ---
 id: q7n2zd
 title: "Paste the clipboard into a task as an attachment"
-state: todo
+state: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-20
 updated: 2026-11-20
+doing_with: "p87ngv"
+doing_since: "2026-11-20T11:23"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -34,3 +40,7 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
 - [ ] Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
 
 ## Notes
+
+
+## History
+- 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
