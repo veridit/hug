@@ -52,6 +52,8 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 ## Requests
 - 2026-11-20T11:33 request 1 by jhf:
   Look at this line. The cursor marks the question. Well, right now, the cursor underlines the greater than that looks like I can utilize a shortcut, which I can't because it will jump up and down. I hope it goes to top and bottom, which it should in this view. So we have to do something else. I think there has to be the greater than pulsating like it is a cursor, which brings me to focus there.
+  resolved 2026-11-20T11:33 by crab:
+    Changed the Goal: the focused row is marked by a > that pulses like a cursor, with no underline, so it no longer reads as a key. Check 4 builds it (only one thing moves: while the answer box is open its cursor moves and the > stays still). Check 5 makes sure > and < go to the bottom and top of the page in this view, as you expect. Check 6 is your look after release; old check 3 is struck. Queued in the TUI lane after cricket (qcq3tm).
 - 2026-11-20T11:33 request 2 by jhf:
   Or you can continue working on the ticket, feel free. But I think this one has shipped
 
@@ -83,3 +85,4 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
 - 2026-11-20T11:33 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:33 crab read the answer: hug task set kg07bt
 - 2026-11-20T11:33 request 1 in progress by crab: hug task set kg07bt
+- 2026-11-20T11:33 resolved request 1 by crab
