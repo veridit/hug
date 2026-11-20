@@ -43,6 +43,9 @@ Measured 19:53Z on hug's board (hug task lint): 40 findings, 37 broken, on 31 ta
 - [x] When a worker's session ends, its doing tasks go back to the board coordinator with a note, so stale-owner fires only when there is no coordinator either (test)
 - [ ] On hug's board after the next release, hug task lint shows no checks-all-hold, shipped-not-done or stale-owner that the above should have prevented (count in a note)
 - [ ] Jørgen confirms the lint view stays clean after a release
+- [ ] A task with an open question to a person never shows shipped-not-done (txjkrm 2026-11-20: todo, question 1 to jhf open since 11-18, still broken) (test)
+- [ ] The release step asks or hands over every shipped task whose open check is not a person's: the coordinator's own checks (x8zzzn c3, ynh84t c4 on 11-20) become its active work, never a broken finding (test)
+- [ ] A task in depends whose dependency is done or shipped is not shipped-not-done; its person check is asked once the dependency holds (0gztsy on kg07bt, 2026-11-20) (test)
 
 ## Requests
 - 2026-11-18T20:48 request 1 by jhf:
