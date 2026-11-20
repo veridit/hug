@@ -93,3 +93,4 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T13:12 resolved request 1 by crab
 - 2026-11-20T13:39 request 2 by jhf
 - 2026-11-20T13:39 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T13:39 request 2 acknowledged by crab
