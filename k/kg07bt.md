@@ -47,6 +47,8 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 ## Requests
 - 2026-11-20T11:33 request 1 by jhf:
   Look at this line. The cursor marks the question. Well, right now, the cursor underlines the greater than that looks like I can utilize a shortcut, which I can't because it will jump up and down. I hope it goes to top and bottom, which it should in this view. So we have to do something else. I think there has to be the greater than pulsating like it is a cursor, which brings me to focus there.
+- 2026-11-20T11:33 request 2 by jhf:
+  Or you can continue working on the ticket, feel free. But I think this one has shipped
 
 ## Notes
 
@@ -72,3 +74,4 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
   > v0.7.66 made the ACCEPTANCE heading calm and the cursor the only mark on the focused question. Open a task that asks you something: is it calm, and is the cursor where your answer goes?
   So this ticket is accepted and my feedback that you got from this ticket can be new tickets.
 - 2026-11-20T11:33 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:33 request 2 by jhf
