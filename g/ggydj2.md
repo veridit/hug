@@ -21,7 +21,7 @@ waiting_asked_by: "kestrel"
 ---
 
 ## Goal
-After hug task import backlog DIR, hug task import backlog DIR --cleanup ends the move: it removes DIR with git rm in one commit (git history keeps it), records the import in hug.toml (source, commit, date), and from then on a new import of that source is refused with a fix: line naming the commit where the old copy lives. hug setup stops offering the import once it is recorded, and flags a leftover DIR with the --cleanup fix line.
+An import is a one-time move: --cleanup retires the source directory and a second import of it is refused.
 
 ## Purpose
 Jørgen 2026-11-17 14:45: after an import the backlog stays, and running the import again once people work in hug causes trouble. Seen today: hug setup in seid-lang still lists 'import backlog-md: 282 to update' and offers the import again although Seid has worked in hug for days; Statbus removed its .backlog by hand 21 hours ago. 14:46 ruling: the flag is --cleanup, and it removes the folder with git rm, because that is what cleanup implies.
@@ -30,6 +30,8 @@ Jørgen 2026-11-17 14:45: after an import the backlog stays, and running the imp
 One source of truth: once tasks live in hug, the old system is history, not a second copy. Nothing is lost: git rm keeps it in history, and the refusal names the commit. Cleanup is an explicit step after the import, never automatic.
 
 ## Relevant details
+After hug task import backlog DIR, hug task import backlog DIR --cleanup ends the move: it removes DIR with git rm in one commit (git history keeps it), records the import in hug.toml (source, commit, date), and from then on a new import of that source is refused with a fix: line naming the commit where the old copy lives. hug setup stops offering the import once it is recorded, and flags a leftover DIR with the --cleanup fix line.
+
 Today: huginn/internal/cli/setup.go:82-101 offers 'hug task import backlog .backlog --dry-run && hug task import backlog .backlog' whenever .backlog/ or backlog/ exists. Seid: ~/Veridit/src/seid-lang/.backlog (last changed 67753633a, 2 days ago). Statbus: .backlog removed in cbd4834e2. import github does the same through bxqtkt's intake (close the issue with a link). Open questions for Jørgen are noted on the ticket.
 
 ## Depends on
