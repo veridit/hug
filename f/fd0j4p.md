@@ -18,7 +18,7 @@ design_asked_by: "crab"
 ---
 
 ## Goal
-The hug section in AGENTS.md and the help that agents read say: (1) the hug board is the source of truth, harness todo lists do not copy it; (2) a reminder to finish is never a reason to mark something blocked, and blocked names who must do what; (3) questions and discussion for a person go in a task (one ask each, or an anchored thread once p87ngv ships), never only in chat.
+Agent instructions say the board is the truth, blocked names who must act, and questions for a person go in tasks.
 
 ## Purpose
 Jørgen 2026-11-19 08:39Z (crab session): consider whether the todo-reminder push should change hug's instructions for AIs. crab had answered jcode's 'incomplete todos' reminder by marking items externally blocked (memory 2sgrc1), and asked a design question in chat rather than on a task. 08:54Z: dialogue should move from the chat into the ticket so it stays relevant and survives compaction.
@@ -27,6 +27,8 @@ Jørgen 2026-11-19 08:39Z (crab session): consider whether the todo-reminder pus
 Short, imperative lines in the existing hug section; no new section. Each rule names the command to use (hug task ask, hug task wait, hug task note). A test pins the wording, as q2adr8 check 5 does.
 
 ## Relevant details
+The hug section in AGENTS.md and the help that agents read say: (1) the hug board is the source of truth, harness todo lists do not copy it; (2) a reminder to finish is never a reason to mark something blocked, and blocked names who must do what; (3) questions and discussion for a person go in a task (one ask each, or an anchored thread once p87ngv ships), never only in chat.
+
 Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli setup template) and this repo's AGENTS.md; help for ask and wait. Related: q2adr8 (one question per ask), p87ngv (threads), memories 7jj34g/2sgrc1, jcode maintainer report sent 2026-11-19 08:30Z. Also (Jørgen 11:34Z on p87ngv): open questions go on the task as asks, never inside an attached file, where the machinery cannot see them.
 
 ## Depends on
