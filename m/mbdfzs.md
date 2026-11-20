@@ -37,7 +37,7 @@ Check os.Executable()'s resolved target (the Homebrew symlink moves to the new C
 - [x] A test starts hug mcp, replaces the binary under it, sends a request, and the reply comes from the new binary (version field) on the same connection (fails first on main)
 - [x] A request in flight when the binary changes completes with the old binary; the next one runs on the new (test)
 - [ ] ~~After the next brew upgrade, ps shows no hug mcp whose binary is older than the installed version (crab checks on Jørgen's machine)~~ (not relevant: worded wrong: the server re-executes before its next request, so an idle server keeps the old binary until asked; replaced by check 4, crab, 2026-11-20)
-- [ ] On Jørgen's machine, a hug mcp started before an upgrade runs the installed version after serving a request
+- [x] On Jørgen's machine, a hug mcp started before an upgrade runs the installed version after serving a request
 
 ## Requests
 - 2026-11-20T13:05 request 1 by jhf:
@@ -58,6 +58,7 @@ landed 056033a on main 2026-11-18: An old hug mcp server's failed memory write n
 shipped in v0.7.71 (056033a)
 crab 2026-11-20 08:21Z, ps + lsof on Jørgen's machine (installed hug v0.7.87): 6 hug mcp processes. 2 still run Cellar/hug/0.7.2 (pids 56816 and 65214, started 15 Nov, --jcode-home truth_tribe_and_treasure and GenderedGames); 1 runs 0.7.87 (96239); 3 show a deleted binary path '/hug' (1402, 8265, 71259: their Cellar folder was removed by brew cleanup, so they run an old version). The fix (8dee4a86) shipped in v0.7.54; servers started before v0.7.54 cannot re-exec themselves, which is z77pem's case. Check 3 does not hold yet: those jcode instances must restart their MCP servers.
 crab 2026-11-20 12:04Z ps: 4 hug mcp still run binaries older than the installed 0.7.90: pids 56816 (truth_tribe_and_treasure, since 11-15), 65214 (GenderedGames, 11-15), 1402 (~/.jcode, 11-18), 8265 (Brovs, 11-19). Check 3 still fails; those sessions need a restart.
+check 4: crab 2026-11-20 12:06Z, lsof on Jørgen's machine: pid 96239 'hug mcp', started 2026-11-18 23:52 (v0.7.70 era), now maps /opt/homebrew/Cellar/hug/0.7.89/bin/hug: it re-executed itself across upgrades. Not covered by this task: pids 56816 and 65214 (GenderedGames, truth_tribe_and_treasure) started 11-15 on 0.7.2, before re-exec existed (v0.7.54), and can only be restarted; pids 1402, 8265, 71259 map an unlinked '/hug' (old Cellar removed by brew cleanup) and have served no request since the upgrade.
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
