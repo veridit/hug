@@ -47,6 +47,7 @@ main 1e4a3386 (CI 44710823480, 8/8), CHANGELOG 79a9ae52, merge 489684a6, release
 check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/huginn -> ../Cellar/hug/0.7.88/bin/*
 
 
+check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/huginn -> ../Cellar/hug/0.7.88/bin/*
 ## History
 - 2026-11-20T10:45 todo -> todo/design (ask)
 - 2026-11-20T10:45 todo/design -> doing/asked (take, 1 open question(s) kept); was design_asked_by: crab; design_for: jhf; design_question: 72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.); design_since: 2026-11-20T10:45
