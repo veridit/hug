@@ -57,6 +57,9 @@ type BoardTask struct {
 	// Outcome is what the asker did first after the newest answer (41hhgn
 	// check 11); nil before it acts.
 	Outcome *BoardOutcome
+	// Asked: a question on the task is open to someone (72n8m4). hug task
+	// done refuses it, so the done line is not offered.
+	Asked bool
 }
 
 // BoardOutcome is an answer's outcome: Stage and By of the answer, For the
@@ -446,7 +449,9 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 			if t.State == "doing" {
 				d.own[t.ID] = true
 			}
-			if t.Checks > 0 && t.Open == 0 {
+			// Not while a question on it is open (72n8m4: the cue offered
+			// done on ddpxs8, 4cn9vv and gvkpzt as they waited on jhf).
+			if t.Checks > 0 && t.Open == 0 && !t.Asked {
 				d.mineAll = append(d.mineAll, t)
 			}
 		}

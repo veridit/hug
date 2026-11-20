@@ -104,7 +104,7 @@ func boardTasksFor(ts []board.Task, name string) []recall.BoardTask {
 // BoardTask is the recall view of one board task, its unread answer
 // included (3jtfw9).
 func BoardTask(t board.Task) recall.BoardTask {
-	bt := recall.BoardTask{ID: t.ID, Title: t.Title, State: t.State, Assignee: t.Assignee, Branch: t.Branch, Worktree: t.Worktree, Checks: t.Checks, Open: t.Open}
+	bt := recall.BoardTask{ID: t.ID, Title: t.Title, State: t.State, Assignee: t.Assignee, Branch: t.Branch, Worktree: t.Worktree, Checks: t.Checks, Open: t.Open, Asked: t.Asked}
 	if a := t.Answer; a != nil {
 		bt.Answer = &recall.BoardAnswer{Stage: a.Stage, Question: a.Question, Text: a.Text, By: a.By, For: a.For, At: a.At}
 	}
