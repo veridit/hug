@@ -1,9 +1,9 @@
 ---
 id: 8a0ybb
-title: "Detail view: the question first, links that jump, short sections before long"
+title: "Detail view: short sections before long, folded long sections, scroll markers"
 state: "doing"
 type: feature
-priority: "high"
+priority: "medium"
 assignee: ["crab"]
 labels: []
 group: ""
@@ -18,10 +18,10 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-An asked task opens on its question, which jumps to its target in one key, and reads short to long.
+A task's page reads Purpose, Principle, Goal, Acceptance, then short sections, then long ones folded, with ↑/↓ when more is off screen.
 
 ## Purpose
-Jørgen 2026-11-19 11:23Z (crab console, screenshot of p87ngv in hug tui v0.7.81): the page opened on MOCK.md inlined at the top (asked_show) with no question above it, so it looked like content from later in the ticket; the question was only found by scrolling; the long description came before purpose and principle ('where am I getting the value for the money'). 11:24Z (second screenshot, check 5 with its question and 'answer'): the question names MOCK.md but offers no way to jump to it; he had to press down many times to reach FILES and then the file.
+The value of a ticket should be on screen first; long reference text should not push it away.
 
 ## Principle
 You land on your question, a file it names is a link on it, and the page reads short to long.
