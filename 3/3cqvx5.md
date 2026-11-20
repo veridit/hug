@@ -50,6 +50,7 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 
 
 check 1: Jørgen 2026-11-20 11:55Z: 'Yes', with the addition below (check 6).
+crab 2026-11-20 12:04Z: back to todo. It sat in doing under crab with nobody building it; it is queued for a worker (machine load over 10). Found in the 47sxn2 request-1 check.
 ## History
 - 2026-11-20T11:30 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:31 doing/active -> doing/asked (ask)
