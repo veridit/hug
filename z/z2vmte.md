@@ -16,7 +16,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 waiting_until: "2026-11-24"
-waiting_on: "the date 2026-11-24, when 47sxn2 returns to ASKED (check 4)"
+waiting_on: "47sxn2 returns to ASKED (check 4)"
 waiting_since: "2026-11-20T13:05"
 waiting_asked_by: "crab"
 ---
