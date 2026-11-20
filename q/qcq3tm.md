@@ -41,5 +41,6 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
 
 
 file:before-tb0dra-100x30.ans (2975 bytes, sha256:d2e372aa) origin/main 4b1a5781, tb0dra as opened: agentsection-proposal.md drawn above the page, the question off screen
+file:after-tb0dra-100x30.ans (3927 bytes, sha256:4c747c53) qcq3tm 15667952, tb0dra as opened: lands on check 5's question, file as link line
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)

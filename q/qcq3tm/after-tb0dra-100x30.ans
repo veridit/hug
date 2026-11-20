@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168mlist › [1m[38;2;0;191;255mtb0dra[0m                                                               [1m[38;2;255;179;84m? 3 for you
+[38;2;0;191;255m[doing][0m  [1m[38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:crab · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-16 · updated 2026-11-16 · agents-reflect-instructions[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mAgents reflect on the instructions and propose fixes
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[38;5;252mone mislead you or leave a gap? The answer is stored with the ticket as a Reflection note naming  [39m
+[38;5;252mthe exact instruction. hug task reflections collects open ones across the board, and a coordinator[39m
+[38;5;252mor Jørgen turns them into an instruction change (shown as a diff) or dismisses them.              [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252mBuilds on tzc9hb (the loop in the AGENTS.md section) and x325pp (nudges only between tasks). done [39m
+[38;5;252malready prints a next line; the question goes there, and MCP task_done accepts an optional        [39m
+[38;5;252mreflection field.                                                                                 [39m
+
+[1m[38;2;0;191;255m▸ ACCEPTANCE[0m[38;2;135;149;168m · j/k or [ ] step · Space ticks · - strikes out
+[38;2;138;201;135m  ☑ 1. hug task done ID --reflect TEXT stores a Reflection note on the ticket; plain done prints the
+       one-line question (test)[39m
+[38;2;138;201;135m  ☑ 2. MCP task_done accepts reflection and its description asks the question (test)[39m
+[38;2;138;201;135m  ☑ 3. hug task reflections lists open reflections with ticket, instruction quoted and date; resolve
+       marks one applied or dismissed (test)[39m
+[38;2;138;201;135m  ☑ 4. the hug setup AGENTS.md section tells agents to answer the question honestly, including[39m
+[38;2;138;201;135m       'nothing'[39m
+[1;4m[38;2;0;191;255m>[0m ? ☐ 5. after a week of use, one instruction change in this repo traced to a reflection (link in
+         Notes)
+[38;2;255;179;84m         Approve these three additions to the AGENTS.md section hug setup writes into every repo?[39m
+[38;2;135;149;168m         → agentsection-proposal.md · Enter shows
+         └ piglet · 34 h ago · [1;4m[38;2;0;191;255ma[0m[38;2;135;149;168mnswer[39m
+[38;2;135;149;168mTask 2 of 4 · 27% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back[39m
+
+[1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m check · [1m[38;2;0;191;255mSpace[0m[38;2;135;149;168m tick · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255ma[0m[38;2;135;149;168mnswer · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mE[0m[38;2;135;149;168mdit files · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp
