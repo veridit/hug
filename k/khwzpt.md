@@ -1,15 +1,21 @@
 ---
 id: khwzpt
 title: "hug task answer panics when the stage's question is not numbered"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["dove"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-20T19:58"
+doing_with: "5vehza"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +38,7 @@ Found on branch 5vehza (2026-11-20 19:52 local): new task, hug task ask ID --to 
 ## Notes
 
 crab 2026-11-20 18:53Z design call: answer the design question (q=0). A bare answer answers what the stage shows as waiting; with no open numbered question and a pending design question, that is the design question. Refuse only when nothing is open: exit 2, 'no open question on ID', fix: hug task show ID. Several open numbered questions: today's rule stays. Built by dove on branch 5vehza as a second commit.
+
+
+## History
+- 2026-11-20T19:58 todo -> doing/active (take with 5vehza)
