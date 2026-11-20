@@ -40,7 +40,7 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 ## Acceptance
 - [ ] Jørgen approves a mock of p87ngv's detail with FOR YOU first, the link, and the short-to-long order (frames attached)
 - [ ] Enter on a question's target opens that file in the file frame, or scrolls to that section or check, in one key (test per target kind)
-- [ ] A task with asked_show no longer inlines the file above the question; the question shows its target as a link (golden)
+- [ ] ~~A task with asked_show no longer inlines the file above the question; the question shows its target as a link (golden)~~ (not relevant: moved to qcq3tm (high), which ships ahead of the FOR YOU decision, crab, 2026-11-20)
 - [ ] ~~Details, Files, Notes and History are folded to one line until opened; Purpose, Principle, Goal, Acceptance show in that order (golden 100x30 and 160x45)~~ (not relevant: order revised by Jørgen 11:31Z: Description heading goes, Details after Files and other short sections; replaced by check 6, crab, 2026-11-19)
 - [ ] Jørgen opens an asked task in hug tui and reaches the thing he is asked about in one key
 - [ ] No DESCRIPTION heading; order is FOR YOU, Purpose, Principle, Goal, Acceptance, short sections (Files, Depends on, Parent/children, requests), then Relevant details, Notes, History; long sections fold to one line until opened (golden 100x30 and 160x45)
