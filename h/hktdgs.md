@@ -34,6 +34,8 @@ Today (v0.7.90, huginn/internal/tui/columns.go moveColumn): the first H or L mar
 ## Requests
 - 2026-11-20T13:07 request 1 by jhf:
   When I try to select different columns for sorting, I would like to have a zero state. Like I can, if I go left of the leftmost column, I would be no column selected rather than wrap around. So it should be an intermediate step between the last and the first. So when you wrap around, you step into no column selected territory where I started.
+  resolved 2026-11-20T13:10 by crab:
+    Turned into a task: H/L get a 'no column' stop between the last and the first column, exactly as the view opens, instead of wrapping straight round. Check 2 is a key test in overview, list and board that must fail on today's code first; check 3 is your try after release. Queued in the TUI lane.
 
 ## Notes
 
@@ -45,3 +47,4 @@ file:screen-1307.ans (26090 bytes, sha256:9f2a756e) screen capture from hug tui
 - 2026-11-20T13:07 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:07 request 1 acknowledged by crab
 - 2026-11-20T13:10 request 1 in progress by crab: hug task set hktdgs
+- 2026-11-20T13:10 resolved request 1 by crab
