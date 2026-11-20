@@ -65,7 +65,7 @@ Promoted from item 3 of task:9taa9d.
 ## Depends on
 
 ## Acceptance
-- [ ] memories stored one Markdown file per memory, retire = move to _retired/
+- [ ] ~~memories stored one Markdown file per memory, retire = move to _retired/~~ (not relevant: the old one-line placeholder; replaced by checks 2-3 (decision) and the build checks filed after it, crab, 2026-11-20)
 - [ ] Jørgen decides: one file per memory, or keep memories.json
 - [ ] If one file per memory: Jørgen sets how many days a retired file is kept before hug mem dream deletes it (30 proposed)
 
