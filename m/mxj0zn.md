@@ -54,3 +54,4 @@ check 1: release.yml 44731952347 completed success; brew upgrade: 'hug v0.7.90',
 - 2026-11-20T13:35 answered design, by jhf, for crab (todo/design -> todo/ready):
   > 911j70: restart hug tui. Do overview, list and board read as the calm spreadsheet you approved (ID TITLE STAGE ✓ TYPE PRIORITY OWNER, tags before the title, > before the current cell)? Before | after sheets are in this ticket's Files.
   This is approved. I'm doing new improvements after this.
+- 2026-11-20T13:35 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
