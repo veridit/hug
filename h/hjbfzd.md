@@ -44,6 +44,7 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 - [x] c asks for a title, creates the task with the capture attached, and opens it (key test; the new task has the file in Files)
 - [x] Golden of the prompt at 80 and 140 columns
 - [ ] Jørgen confirms on his board after release
+- [ ] The prompt reads 'Screen capture: attach to ID · select · create' (s and c underlined), the offered task's title on the keys line; after c 'Screen capture: new task, title:'; after s 'Screen capture: select the task' (golden at 80 and 140, per capture-wording.md once Jørgen approves)
 
 ## Questions
 - 2026-11-18T23:24 question 1 by crab to jhf (check 5):
