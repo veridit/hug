@@ -36,6 +36,8 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
 ## Requests
 - 2026-11-20T13:34 request 1 by jhf:
   This also means there has to be a way to select a filter and then inverse it with an exclamation mark or something. Or put the exclamation mark first, and then you get a selection of the filter. So you can select not something, and that this is the default filter when you open up the list view
+  resolved 2026-11-20T13:35 by crab:
+    Turned into a task: filters get a 'not', written with ! (': state !done', or ! in the f picker before or after choosing a value), shown on the filter line, and the CLI takes the same. The list view then opens with 'filter: state !done', so done tasks stay out until you clear it with Esc. Checks 2-4 are tests (the default one a tmux test), check 5 your look after release.
 
 ## Notes
 
@@ -47,3 +49,4 @@ file:screen-1334.ans (15300 bytes, sha256:a5fc83a1) screen capture from hug tui
 - 2026-11-20T13:34 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:34 request 1 acknowledged by crab
 - 2026-11-20T13:35 request 1 in progress by crab: hug task set 7zg9mf
+- 2026-11-20T13:35 resolved request 1 by crab
