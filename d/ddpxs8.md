@@ -45,6 +45,8 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 ## Requests
 - 2026-11-20T11:26 request 1 by jhf:
   Well now we have purpose principle relevant details, but I think description should go below the others, right? I'm not sure if we should have description anymore It overlaps, doesn't it? Or it should be just details instead of relevant details or should description be there. I think description is when you have title and description, but now we have title or subject and then we have purpose-principle details. Maybe that's enough.
+  resolved 2026-11-20T11:27 by crab:
+    Agreed: no Description. What hug tui heads DESCRIPTION is the Goal under the wrong name, so it overlaps. A ticket becomes Title, then Purpose, Principle, Goal, Acceptance and Details, and 'Relevant details' is shortened to 'Details'. Added as check 13 on 8a0ybb, which already reorders the page this way (check 11), with your words in its Details. Old task files keep reading.
 
 ## Notes
 
@@ -64,3 +66,5 @@ Reflection (unanswered, 2026-11-20, crab)
   > 0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?
   Yes, they do
 - 2026-11-20T11:27 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:27 resolved request 1 by crab
+- 2026-11-20T11:27 crab read the answer: hug task resolve ddpxs8 1 "Agreed: no Description. What hug tui heads DESCRIPTION is the Goal under the wrong name, so it overlaps. A ticket becom…"
