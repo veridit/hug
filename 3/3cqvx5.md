@@ -12,10 +12,15 @@ created: 2026-11-20
 updated: 2026-11-20
 doing_with: "p87ngv"
 doing_since: "2026-11-20T11:30"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_by: "crab"
+asked_check: "1"
+asked_what: "Default coordinator when none is named, or the named one is gone: the only live agent session on the board, else the first live one to touch it, handing over when it ends; a name you set still wins. Is that the rule you want?"
+asked_for: "jhf"
+asked_since: "2026-11-20T11:31"
 ---
 
 ## Goal
@@ -39,8 +44,13 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 - [ ] A named coordinator wins while live; a named one that is gone falls back to the rule, and hug task coordinator says who and why (test)
 - [ ] Jørgen restarts his coordinator's harness, writes a request, and it arrives with no setup
 
+## Questions
+- 2026-11-20T11:31 question 1 by crab to jhf (check 1):
+  Default coordinator when none is named, or the named one is gone: the only live agent session on the board, else the first live one to touch it, handing over when it ends; a name you set still wins. Is that the rule you want?
+
 ## Notes
 
 
 ## History
 - 2026-11-20T11:30 todo -> doing/active (take with p87ngv)
+- 2026-11-20T11:31 doing/active -> doing/asked (ask)
