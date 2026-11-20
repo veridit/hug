@@ -48,6 +48,8 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 ## Requests
 - 2026-11-20T11:32 request 1 by jhf:
   Yes, it does show, but then I suddenly realized two things. One, I think there should be a small arrow pointing up on the long line on the left part of the below the subject. And two, I think there should be a line on the bottom of the screen where the ticket ends. And I think there it should be an arrow as well pointing down on that line. And that line should separate from what is below. And I think that line actually should be the one line that starts with an arrow down, a piece of line, and then any inline status for this thing I'm in now. And then the next line is the global line. Because right now you can see that there is this extra space. I think this whole line makes sense there to separate from the global part, the global footer. This will be in addition to other things I specified before
+  resolved 2026-11-20T11:32 by crab:
+    Filed as 4ddcwa (Detail page frame): the rule under the title gets a small ↑ at its left when you have scrolled down; a new bottom rule sits right above the global keys, starting with ↓ when more is below, then the page's own status ('Task 3 of 14 · ... · Esc back'), so the blank line goes. Checks: your look at frames first, two goldens, your try after release. It replaces 8a0ybb's corner markers (check 9 struck). qpp30y itself is done: you ticked check 4.
 
 ## Notes
 
@@ -76,3 +78,5 @@ file:screen-1130.ans (21282 bytes, sha256:af44cf4b) screen capture from hug tui
 - 2026-11-20T11:32 doing/active -> done (done after jhf ticked check 4 (release v0.7.65)); was doing_since: 2026-11-18T13:34
 - 2026-11-20T11:32 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:32 answer 1 acknowledged by crab
+- 2026-11-20T11:32 resolved request 1 by crab
+- 2026-11-20T11:32 crab read the answer: hug task resolve qpp30y 1 "Filed as 4ddcwa (Detail page frame): the rule under the title gets a small ↑ at its left when you have scrolled down; a…"
