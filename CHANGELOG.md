@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.91 - 2026-11-20
 
 - hug tui sends one request for the marked tasks (ec6z6j). With tasks
   marked by Space in any list (LINT too), the footer offers `r request`;
