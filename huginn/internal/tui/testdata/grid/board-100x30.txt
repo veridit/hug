@@ -1,0 +1,30 @@
+HUG · board   60/60 tasks · ! 2 broken · 35 advice                                                  
+view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
+filter: none · sort: rank                                                                           
+  TODO [8]                                         > DOING [15]                                     
+   ID       TITLE                      ✓     T P      ID       TITLE                      ✓     T P 
+  ·000001   terminal c… · ⎘2 Feature … ○ 2   F C     ·000002   terminal c… · Bug task 02… ◑ 1/2 B C 
+  ·000009   terminal d… · Spike task … ○ 2   S H     ·000006   terminal r… · Feature tas… ◑ 1/2 F H 
+  ·000017   terminal d… · Bug task 17… ○ 2   B L     ·000010   terminal c… · Docs task 1… ◑ 1/2 D H 
+  ·000025   terminal d… · Docs task 2… ○ 2   D C     ·000014   terminal r… · Spike task … ◑ 1/2 S>M 
+  ·000033   terminal r… · Chore task … ○ 2   C M     ·000018   terminal d… · Chore task … ◑ 1/2 C L 
+  ·000041   terminal r… · Feature tas… ○ 2   F C     ·000022   terminal r… · Bug task 22… ◑ 1/2 B C 
+  ·000049   terminal r… · Spike task … ○ 2   S H     !000026   terminal d… · Feature tas… ◑ 1/2 F H 
+  ·000057   terminal c… · Bug task 57… ○ 2   B L     ·000030   terminal c… · Docs task 3… ◑ 1/2 D H 
+                                                     ·000034   terminal d… · Spike task … ◑ 1/2 S M 
+                                                     ·000038   terminal c… · Chore task … ◑ 1/2 C L 
+                                                     ·000042   terminal r… · Bug task 42… ◑ 1/2 B C 
+                                                     ·000046   terminal c… · Feature tas… ◑ 1/2 F H 
+                                                     ·000050   terminal r… · Docs task 5… ◑ 1/2 D H 
+                                                     ·000054   terminal d… · Spike task … ◑ 1/2 S M 
+                                                     ·000058   terminal r… · Chore task … ◑ 1/2 C L 
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low           
+Columns 1–2 of 5 · h/l reveals other columns                                                        
+H/L column · order by priority (▲)                                                                  
+                                                                                                    
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit …    

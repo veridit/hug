@@ -279,7 +279,7 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 	if head == "" {
 		return ""
 	}
-	indent := 3 + m.progressWidth() // pointer, space, pie, lint mark (e3sevr)
+	indent := rowHead // under the id, the row header (911j70)
 	if width < 40 {
 		indent = 2
 	}
@@ -295,10 +295,8 @@ func (m model) noteRow(t task.Task, width int, selected bool) string {
 		right = ""
 	}
 	left = ansi.Truncate(left, room, "…")
-	line := left + strings.Repeat(" ", max(0, width-lipgloss.Width(left)-lipgloss.Width(right))) + right
-	if selected {
-		return m.styles.selected.Render(fit(line, width))
-	}
+	// No bar under the cursor row (911j70): the note reads in its own
+	// colours, as the row above it does (selected is kept for callers).
 	// The head names the stage in its colour: amber and bold when it
 	// waits on you, the calm depends colour, else dim (zhvkmj, crab
 	// 02:52; check 6: depends is no problem, not red).

@@ -187,7 +187,7 @@ func TestNarrowRowsDropColumnsInOrder(t *testing.T) {
 			t.Fatalf("at 60 the id %s is gone:\n%s", v.ID, screen)
 		}
 	}
-	if !strings.Contains(screen, "○ 12 ") || !strings.Contains(screen, "A very long title th…") {
+	if !strings.Contains(screen, "○ 12 ") || !strings.Contains(screen, "A very long title t…") {
 		t.Fatalf("at 60 the pie or the cut title is gone:\n%s", screen)
 	}
 }

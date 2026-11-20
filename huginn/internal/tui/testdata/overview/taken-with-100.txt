@@ -4,17 +4,17 @@ view: overview  list  board  !lint   │ todo 2 · doing 5 (1 depends) · depend
 filter: none · sort: rank                                                                           
   ASKED · for you  [0] · None                                                                       
 > IN PROGRESS · assigned to  [2] · all active · all feature · all high · all nautilus               
-> ◑ 1/2  aaaaaa   Status colors: rows and sections share one subtle scheme                          
-  ◑ 1/2  ffffff   Depend on a group or epic · with aaaaaa                                           
+>  aaaaaa   Status colors: rows and sections share one subtle scheme                          ◑ 1/2 
+   ffffff   Depend on a group or epic · with aaaaaa                                           ◑ 1/2 
                                                                                                     
   WAITING  [4] · all feature · all high                                                             
-  ◑ 1/2  bbbbbb   review    Release, then hug setup in seid-lang                    nautilus        
-  ◑ 1/2  cccccc   waiting   Warm cache under 50 ms                                  nautilus        
-  ◑ 1/2  dddddd   depends   One set of variable names                               nautilus        
-  ◑ 1/2  eeeeee   design    Tags listed per board                                   unassigned      
+   bbbbbb   Release, then hug setup in seid-lang                  review    ◑ 1/2   nautilus        
+   cccccc   Warm cache under 50 ms                                waiting   ◑ 1/2   nautilus        
+   dddddd   One set of variable names                             depends   ◑ 1/2   nautilus        
+   eeeeee   Tags listed per board                                 design    ◑ 1/2   unassigned      
                                                                                                     
   NEXT UP · rank order  [1]                                                                         
-  ◑ 1/2  gggggg   feature high     deferred  Answer a question in place                             
+   gggggg   Answer a question in place                             deferred  ◑ 1/2 feature high     
                                                                                                     
   RECENTLY DONE · last closed  [0] · None                                                           
   LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                  

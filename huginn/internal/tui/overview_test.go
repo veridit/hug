@@ -100,16 +100,16 @@ func TestOverviewOneSectionPerTask(t *testing.T) {
 	// row under the cursor says on what (tje4sx).
 	view := ansi.Strip(m.overviewText())
 	waits := view[strings.Index(view, "WAITING"):strings.Index(view, "NEXT UP")]
-	if !regexp.MustCompile(bravo + `\s.*depends\s+Bravo`).MatchString(waits) {
+	if !regexp.MustCompile(bravo + `\s+Bravo\s+depends`).MatchString(waits) { // 911j70: ID TITLE STAGE
 		t.Fatalf("Bravo not drawn depends in WAITING:\n%s", waits)
 	}
 	nextUp := view[strings.Index(view, "NEXT UP"):strings.Index(view, "RECENTLY DONE")]
-	if !regexp.MustCompile(charlie + `\s.*depends\s+Charlie`).MatchString(nextUp) {
+	if !regexp.MustCompile(charlie + `\s+Charlie\s+depends`).MatchString(nextUp) {
 		t.Fatalf("Charlie not drawn depends in NEXT UP:\n%s", nextUp)
 	}
 	m.pane = sectionNext
 	m = selectRow(t, m, charlie)
-	if focused := ansi.Strip(m.overviewText()); !regexp.MustCompile(charlie + `\s.*depends\s+Charlie.*\n\s+└─ depends on \w+  ▱ 0/1`).MatchString(focused) {
+	if focused := ansi.Strip(m.overviewText()); !regexp.MustCompile(charlie + `\s+Charlie\s+depends.*\n\s+└─ depends on \w+  ▱ 0/1`).MatchString(focused) {
 		t.Fatalf("Charlie, focused, does not say what it depends on:\n%s", focused)
 	}
 	if strings.Count(view, bravo) != 1 {

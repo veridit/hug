@@ -85,6 +85,23 @@ func (m model) progress(t task.Task) string {
 	return style.Render(fit(progressText(t), width-1)) + " "
 }
 
+// progressCell is progress without the space after it: the ✓ cell of a
+// row, width wide.
+func (m model) progressCell(t task.Task, width int) string {
+	done, total := checkCount(t)
+	if total == 0 || t.State == "dropped" {
+		return fit("", width)
+	}
+	style := m.styles.dim
+	switch {
+	case t.State == "done" || done >= total:
+		style = m.styles.status["done"]
+	case done > 0:
+		style = m.styles.progress
+	}
+	return style.Render(fit(progressText(t), width))
+}
+
 // progressText is the text of t's progress cell: "● 5" done, "○ 3" none
 // ticked, "◑ 2/4" partly ticked (zhvkmj).
 func progressText(t task.Task) string {

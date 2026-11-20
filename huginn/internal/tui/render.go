@@ -48,9 +48,17 @@ type theme struct {
 	marked lipgloss.Style
 	// column tints the column the cursor marks (e3sevr); columnCursor is
 	// that column's cell on the cursor row.
-	column, columnCursor   lipgloss.Style
-	progress               lipgloss.Style // a task partly ticked (d8yx7y)
-	status, kind, priority map[string]lipgloss.Style
+	column, columnCursor lipgloss.Style
+	// The lists as a spreadsheet (911j70, order B): idCell is a row's
+	// header, the id, normal weight in the accent; rowHeader the cursor
+	// row's id, on the selection tint; colHead a column heading, dim;
+	// colHeadSelected the marked column's heading, on the same tint;
+	// rowCursor the > before the current cell, the sign of qpp30y/kg07bt
+	// in the accent, never underlined (an underline is the view line's
+	// active view); owner the owner cell.
+	idCell, rowHeader, colHead, colHeadSelected, rowCursor, owner lipgloss.Style
+	progress                                                      lipgloss.Style // a task partly ticked (d8yx7y)
+	status, kind, priority                                        map[string]lipgloss.Style
 }
 
 // The colours of the theme, dark then light, one meaning each: the table
@@ -98,6 +106,16 @@ func newTheme() theme {
 	// without colour too (NO_COLOR); on the cursor row the row's tint, bold.
 	t.column = base.Background(lipgloss.AdaptiveColor{Dark: "#1c2a36", Light: "#eef4f8"}).Underline(true)
 	t.columnCursor = t.selected.Underline(true)
+	// One selection tint, in two places only: the cursor row's id and the
+	// marked column's heading (911j70). The current cell has the > alone.
+	selTint := lipgloss.AdaptiveColor{Dark: "#2b5a78", Light: "#bfe3f5"}
+	selText := lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#0b1620"}
+	t.idCell = color("#00bfff", "#006c9c")
+	t.rowHeader = base.Background(selTint).Foreground(selText)
+	t.colHead = t.dim
+	t.colHeadSelected = base.Background(selTint).Foreground(selText)
+	t.rowCursor = color("#00bfff", "#006c9c").Bold(true)
+	t.owner = color("#9fb3c8", "#3d4a5a")
 	for i, s := range []string{"todo", "doing", "done", "depends", "dropped"} {
 		t.status[s] = color([]string{"#75bfff", "#00bfff", "#8ac987", dependsColour[0], "#8795a8"}[i], []string{"#215da1", "#006c9c", "#31732c", dependsColour[1], "#586474"}[i])
 	}
@@ -235,48 +253,130 @@ func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark 
 }
 
 // taskRowCols draws t in the cells c, width wide: one line, never more
-// (102bc0).
+// (102bc0). The row is a spreadsheet row (911j70, order B, Jørgen
+// 2026-11-20 08:26Z): ID TITLE STAGE ✓ TYPE PRIORITY OWNER, every cell in
+// its own colour, normal weight, on the plain background. The cursor row
+// has no bar: its id, the row header, takes the selection tint, and the >
+// stands right before the current cell, the marked column's, or in the
+// gutter before the id when no column is marked. Nothing is underlined:
+// an underline is the view line's mark of the active view.
 func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark string, c rowCols) string {
 	// Gutter: the pointer, the grab or yank mark, or a scroll arrow, and
 	// nothing else (e3sevr, Jørgen 23:43: ? collided with ↓). The lint
 	// mark ! has a cell of its own right before the id, so ids line up
-	// whether a row has it or not: "↓ ◐ 3/4 !89y0b7".
+	// whether a row has it or not: "↓ !89y0b7".
+	cur := -1
+	if selected {
+		cur = m.cursorColumn(compact, c)
+	}
 	pointer := " "
 	marked := m.isMarked(t.ID) // rxr4z8: the gutter only, nothing else on the row
-	if selected {
-		pointer = ">"
-		if m.grab.active && (t.Path == m.grab.path || contains(m.grab.block, t.Path)) {
-			pointer = "≡" // grabbed: it moves with j/k (3xcesq)
-		} else if marked {
-			pointer = cursorOnMark // the cursor on a marked row: one sign (check 7)
-		}
-	} else if m.grab.active && contains(m.grab.block, t.Path) {
+	switch {
+	case selected && m.grab.active && (t.Path == m.grab.path || contains(m.grab.block, t.Path)):
+		pointer = "≡" // grabbed: it moves with j/k (3xcesq)
+	case selected && cur < 0 && marked:
+		pointer = m.styles.rowCursor.Render(cursorOnMark) // the cursor on a marked row: one sign (check 7)
+	case selected && cur < 0:
+		pointer = m.styles.rowCursor.Render(">")
+	case m.grab.active && contains(m.grab.block, t.Path):
 		pointer = m.styles.marked.Render("≡") // the rest of a grabbed block
-	} else if m.yanked != "" && t.ID == m.yanked {
+	case m.yanked != "" && t.ID == m.yanked:
 		pointer = m.styles.accent.Render("y") // yanked: P/p paste it
-	} else if marked {
+	case marked:
 		pointer = m.styles.marked.Render(markSign)
-	} else if mark != "" {
+	case mark != "":
 		pointer = m.styles.dim.Render(mark)
 	}
-	// Acceptance progress before the id: "◑ 2/4 8bsx4y" (d8yx7y).
-	head := pointer + " " + m.progress(t) + m.marker(t.Path) + m.styles.accent.Render(fit(oneLine(t.ID), 8)) + " " // bare, in its colour (xxvm6t)
-	pw := m.progressWidth()
-	row := head
-	if c.tags > 0 {
-		// Tags right after the id, dim, cut to the cell (txjkrm check 6).
-		row += m.styles.dim.Render(fit(m.tagText(t), c.tags)) + " "
+	closed := t.State == "done" || t.State == "dropped"
+	// soft is a cell's style: dim on a closed task, whose id, stage and
+	// pie keep their colours (zhvkmj: the one scheme of the count line).
+	soft := func(style lipgloss.Style) lipgloss.Style {
+		if closed {
+			return m.styles.dim
+		}
+		return style
+	}
+	id := fit(oneLine(t.ID), idCell-1)
+	if selected {
+		// The row header: the id, tinted, as a spreadsheet marks the
+		// selected row's header (911j70); its padding stays plain.
+		bare := strings.TrimRight(id, " ")
+		id = m.styles.rowHeader.Render(bare) + strings.Repeat(" ", len(id)-len(bare))
+	} else {
+		id = m.styles.idCell.Render(id)
+	}
+	cells := map[int]string{0: id, 1: m.titleCell(t, c.title-1, soft)}
+	// The stage's reason replaces the title (6ephqk check 5); the word is
+	// the STAGE cell, or for a closed task its state.
+	word, _ := m.rowStage(t)
+	if word == "" {
+		word = t.State // done and dropped have no stage: the list shows the state
+	}
+	if c.status && !compact {
+		if closed {
+			cells[2] = styled(m.styles.status, t.State, stageCell-1)
+		} else {
+			cells[2] = m.stageWord(t, word, stageCell-1)
+		}
+	}
+	if c.checks {
+		cells[3] = m.progressCell(t, m.progressWidth()-1)
+	}
+	if compact {
+		// Board columns are narrow: type and priority are one coloured
+		// letter each, spelled out in the legend under the board.
+		if c.kind {
+			cells[4] = soft(m.styles.kind[t.Type]).Render(letter(t.Type))
+		}
+		if c.priority {
+			cells[5] = soft(m.styles.priority[t.Priority]).Render(letter(t.Priority))
+		}
+	} else {
+		if c.kind {
+			cells[4] = soft(m.styles.kind[t.Type]).Render(fit(oneLine(t.Type), kindCell-1))
+		}
+		if c.priority {
+			cells[5] = soft(m.styles.priority[t.Priority]).Render(fit(oneLine(t.Priority), priorityCell-1))
+		}
+	}
+	if c.owner > 0 {
+		cells[6] = soft(m.styles.owner).Render(fit(m.rowOwner(t), c.owner))
+	}
+	row := pointer + " " + m.marker(t.Path)
+	for _, g := range m.rowCells(compact, c) {
+		gap := g.at - lipgloss.Width(row)
+		if gap > 0 && g.col == cur {
+			row += strings.Repeat(" ", gap-1) + m.styles.rowCursor.Render(">")
+		} else {
+			row += strings.Repeat(" ", max(0, gap))
+		}
+		row += cells[g.col]
+	}
+	return fit(row, width)
+}
+
+// titleCell is t's TITLE cell, width wide: its tags, dim, as a prefix
+// ("design · Design: imported data pass", 911j70 check 5), then where it
+// belongs and its text. The text is what is cut (check 5); the tags only
+// at tagMax cells, or where the text would keep less than titleMinCompact
+// (a narrow board column).
+func (m model) titleCell(t task.Task, width int, soft func(lipgloss.Style) lipgloss.Style) string {
+	if width <= 0 {
+		return ""
+	}
+	prefix := ""
+	if tags := m.tagText(t); tags != "" {
+		if room := min(tagMax, width-titleMinCompact-3); room >= 4 {
+			prefix = m.styles.dim.Render(ansi.Truncate(tags, room, "…") + " · ")
+		}
 	}
 	// The text: the stage's reason in place of the title, or the title
 	// (6ephqk check 5). A task with files: ⎘ and the count before it
 	// (zgr01t).
-	word, text := m.rowStage(t)
-	if word == "" {
-		word = t.State // done and dropped have no stage: the list shows the state
-	}
-	title := oneLine(t.Title)
+	_, text := m.rowStage(t)
+	title := soft(m.styles.normal).Render(oneLine(t.Title))
 	if text != "" {
-		title = text
+		title = soft(m.styles.normal).Render(text)
 	}
 	// Taken with the owner's active task (byj479): said on its row, so
 	// two in IN PROGRESS read as one piece of work, never a slip.
@@ -284,7 +384,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 		title += m.styles.dim.Render(" · with " + oneLine(w))
 	}
 	if mark := m.requestCount(t); mark != "" {
-		title = m.styles.accent.Render(mark) + title // an open request: an agent's to act on (hbgybn)
+		title = soft(m.styles.accent).Render(mark) + title // an open request: an agent's to act on (hbgybn)
 	}
 	if mark := m.fileCount(t); mark != "" {
 		title = m.styles.dim.Render(mark) + title
@@ -293,8 +393,9 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	// "later·↳gem59b Launch posts". Before, so a long title cannot push
 	// them out; at most 24 cells, and the text keeps titleMinCompact (a
 	// board column is narrow).
+	rest := width - lipgloss.Width(prefix)
 	if where := m.placeCell(t); where != "" {
-		if room := min(24, c.title-titleMinCompact-1); room >= 4 {
+		if room := min(24, rest-titleMinCompact-1); room >= 4 {
 			title = m.styles.dim.Render(ansi.Truncate(where, room, "…")) + " " + title
 		}
 	}
@@ -305,45 +406,16 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 			title += m.styles.dim.Render(" · " + alias)
 		}
 	}
-	if compact {
-		// Board columns are narrow: type and priority are one coloured
-		// letter each, spelled out in the legend under the board.
-		if c.kind {
-			row += initial(m.styles.kind, t.Type) + " "
-		}
-		if c.priority {
-			row += initial(m.styles.priority, t.Priority) + " "
-		}
-	} else {
-		if c.kind {
-			row += styled(m.styles.kind, t.Type, kindCell-1) + " "
-		}
-		if c.priority {
-			row += styled(m.styles.priority, t.Priority, priorityCell-1) + " "
-		}
-		if c.status {
-			row += m.stageWord(t, word, stageCell-1) + " "
-		}
+	return prefix + fit(title, rest)
+}
+
+// letter is a board cell's one letter for value, upper case.
+func letter(value string) string {
+	v := oneLine(value)
+	if v == "" {
+		return " "
 	}
-	row += fit(title, max(0, c.title))
-	row = fit(row, width)
-	if t.State == "done" || t.State == "dropped" {
-		// A closed task is dim after its id: its state word keeps its
-		// colour, the one scheme of the count line (zhvkmj).
-		from := 3 + pw + idCell
-		row = head + m.styles.dim.Render(ansi.Strip(ansi.Cut(row, from, width)))
-		if c.status && !compact {
-			at := from + on(c.tags > 0, c.tags+1) + on(c.kind, kindCell) + on(c.priority, priorityCell)
-			row = ansi.Cut(row, 0, at) + styled(m.styles.status, t.State, stageCell-1) + " " + ansi.Cut(row, at+stageCell, width)
-		}
-	}
-	if selected {
-		// Inner cells end with a full reset, which would cut the tint after
-		// the first coloured cell; render the row as plain text in one style
-		// so the highlight runs the whole width (2026-11-16, user).
-		row = m.styles.selected.Render(ansi.Strip(row))
-	}
-	return m.markColumn(row, width, compact, c, selected)
+	return strings.ToUpper(v[:1])
 }
 
 // initial is the value's first letter, upper case, in the value's colour.
@@ -388,35 +460,20 @@ func (m model) columns(width int, compact bool) string {
 	return m.columnsOwner(width, compact, m.rowLayout(width, compact, 0, 0))
 }
 
-// columnsOwner is the column header for rows laid out as c: each cell as
-// headerCell draws it, so the column the cursor marks is underlined and the
-// column the rows are ordered by carries ▲ or ▼ (bejd89).
+// columnsOwner is the column header for rows laid out as c: each heading
+// over its cell (rowCells), upper case and dim; the marked column's on the
+// selection tint (911j70), and the column the rows are ordered by with ▲
+// or ▼ (bejd89).
 func (m model) columnsOwner(width int, compact bool, c rowCols) string {
-	s := "  " + m.headerCell(0, "✓", m.progressWidth()) + " " + m.headerCell(1, "ID", idCell-1) + " "
-	if c.tags > 0 {
-		s += m.headerCell(2, "TAGS", c.tags) + " "
-	}
-	if compact {
-		if c.kind {
-			s += m.headerCell(3, "T", 1) + " "
+	marked := m.markedColumn()
+	s := strings.Repeat(" ", rowHead)
+	for _, g := range m.rowCells(compact, c) {
+		label := strings.ToUpper(gridColumns[g.col].label)
+		if compact && (g.col == 4 || g.col == 5) {
+			label = label[:1] // T and P, spelled out in the legend
 		}
-		if c.priority {
-			s += m.headerCell(4, "P", 1) + " "
-		}
-	} else {
-		if c.kind {
-			s += m.headerCell(3, "TYPE", kindCell-1) + " "
-		}
-		if c.priority {
-			s += m.headerCell(4, "PRIORITY", priorityCell-1) + " "
-		}
-		if c.status {
-			s += m.headerCell(5, "STAGE", stageCell-1) + " "
-		}
-	}
-	s += m.headerCell(6, "TITLE", max(0, c.title))
-	if c.owner > 0 {
-		s += strings.Repeat(" ", ownerGap) + m.headerCell(7, "OWNER", c.owner)
+		s += strings.Repeat(" ", max(0, g.at-lipgloss.Width(s)))
+		s += m.headerCell(g.col, label, g.width, g.col == marked)
 	}
 	return fit(s, width)
 }
@@ -529,10 +586,7 @@ func (m model) overviewText() string {
 			label = m.sectionStyle(p).Render(label) + tail + m.sectionStyle(p).Render(strings.Repeat(" ", max(0, m.width-lipgloss.Width(label)-lipgloss.Width(tail))))
 			label = fit(label, m.width)
 		}
-		if p == m.pane {
-			label = m.styles.selected.Render(label)
-		}
-		lines = append(lines, label)
+		lines = append(lines, label) // focus: its > and its bold colour, no bar (911j70)
 		// IN PROGRESS and WAITING rows share one layout with the owner cell
 		// (102bc0, tje4sx), without the columns the section shares.
 		doing := m.sectionLayout(p)
@@ -547,21 +601,9 @@ func (m model) overviewText() string {
 			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
-			if ownerSection(p) && doing.owner > 0 {
-				// Owners get a reserved column, never lost behind a long
-				// title. On the selected row the highlight runs through it,
-				// so the owner reads as part of that row.
-				ownerCell := fit(m.rowOwner(t), doing.owner)
-				if sel {
-					ownerCell = m.styles.selected.Render("  " + ownerCell)
-				} else {
-					ownerCell = "  " + m.styles.accent.Render(ownerCell)
-				}
-				rest := max(0, m.width-doing.owner-ownerGap)
-				lines = append(lines, fit(m.taskRowCols(t, rest, sel, false, mark, doing)+ownerCell, m.width))
-			} else {
-				lines = append(lines, m.taskRowCols(t, m.width, sel, false, mark, doing))
-			}
+			// Owners get a reserved column, the last, never lost behind a
+			// long title (x1t1t1).
+			lines = append(lines, m.taskRowCols(t, m.width, sel, false, mark, doing))
 			if sel {
 				if note := m.noteRow(t, m.width, true); note != "" {
 					lines = append(lines, note) // what it waits on, under the selected row (89y0b7, tje4sx)
@@ -783,11 +825,13 @@ func (m model) boardText() string {
 		if len(indices) == 0 {
 			label += " · None" // one line, as in the overview (h9zghj)
 		}
-		label = m.styles.status[boardStates[p]].Bold(true).Render(fit(label, width))
-		if p == m.pane {
-			label = m.styles.selected.Render(label)
-		}
+		label = m.styles.status[boardStates[p]].Bold(true).Render(fit(label, width)) // focus: its >, no bar (911j70)
 		heading := m.columns(width, true)
+		if p != m.pane {
+			unmarked := m
+			unmarked.column = -1 // only the focused column's heading shows the marked column
+			heading = unmarked.columns(width, true)
+		}
 		if len(indices) == 0 {
 			heading = fit("", width)
 		}

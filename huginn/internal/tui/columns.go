@@ -13,7 +13,8 @@ import (
 // another column replaces the order. The sort builder (: sort) stays for
 // orders of more than one field. h/l, and Tab/Shift-Tab, move between
 // sections. The mark is drawn in the rows: > before the column's cell on
-// the cursor row, and the column tinted down the section.
+// the cursor row (911j70: no band down the column, no underline), and the
+// column's heading on the selection tint.
 
 // column is one header cell the cursor can mark: its label, the sort
 // field it orders by, and whether a row layout shows it.
@@ -22,17 +23,18 @@ type column struct {
 	shown        func(c rowCols) bool
 }
 
-// gridColumns are the columns rows show, left to right: the pie (checks
-// done), id, tags (txjkrm), type, priority, stage, title, and in IN
-// PROGRESS the owner. A column the width dropped is skipped by the cursor.
+// gridColumns are the columns rows show, left to right, as a spreadsheet
+// (911j70, order B, Jørgen 2026-11-20 08:26Z): the id, the row header;
+// the title, with the tags as its dim prefix; the stage; the pie (checks
+// done); type; priority; and in the overview's owner sections the owner.
+// A column the width dropped is skipped by the cursor.
 var gridColumns = []column{
-	{"✓", "checks", func(rowCols) bool { return true }},
 	{"id", "id", func(rowCols) bool { return true }},
-	{"tags", "tags", func(c rowCols) bool { return c.tags > 0 }},
+	{"title", "title", func(rowCols) bool { return true }},
+	{"stage", "stage", func(c rowCols) bool { return c.status }},
+	{"✓", "checks", func(c rowCols) bool { return c.checks }},
 	{"type", "type", func(c rowCols) bool { return c.kind }},
 	{"priority", "priority", func(c rowCols) bool { return c.priority }},
-	{"stage", "stage", func(c rowCols) bool { return c.status }},
-	{"title", "title", func(rowCols) bool { return true }},
 	{"owner", "assignee", func(c rowCols) bool { return c.owner > 0 }},
 }
 
@@ -165,11 +167,11 @@ func (m model) arrow(field string) string {
 }
 
 // headerCell is one column's header, width cells wide: its label and the
-// order arrow, ▲ or ▼, when the rows are ordered by it. The header names
-// the columns only (e3sevr, Jørgen 23:20): the column cursor is drawn in
-// the rows (markColumn). A label that does not fit beside the arrow gives
+// order arrow, ▲ or ▼, when the rows are ordered by it. The marked
+// column's heading is on the selection tint, its text only (911j70); the
+// > is drawn in the rows. A label that does not fit beside the arrow gives
 // way to it: the arrow says more than the label's last letters.
-func (m model) headerCell(i int, label string, width int) string {
+func (m model) headerCell(i int, label string, width int, marked bool) string {
 	arrow := strings.TrimSpace(m.arrow(gridColumns[i].field))
 	if arrow != "" {
 		arrow = " " + arrow
@@ -181,7 +183,12 @@ func (m model) headerCell(i int, label string, width int) string {
 	} else if lipgloss.Width(text) > room {
 		text = ansi.Truncate(text, room, "")
 	}
-	return m.styles.dim.Render(fit(text+arrow, width))
+	cell := fit(text+arrow, width)
+	if !marked {
+		return m.styles.colHead.Render(cell)
+	}
+	bare := strings.TrimRight(cell, " ")
+	return m.styles.colHeadSelected.Render(bare) + strings.Repeat(" ", width-lipgloss.Width(bare))
 }
 
 // overviewHeading says whether the overview shows a column header under
@@ -195,64 +202,48 @@ func (m model) overviewHeading() bool {
 	return m.column >= 0 || ordered
 }
 
-// colSpan is where column i's cell stands in a row laid out as c: its
-// first cell and its width (the space after it not counted); ok is false
-// when the layout does not show it. Every row and the header put their
-// cells here (rowLayout), so the marker lands on the cell it names.
-func (m model) colSpan(i int, compact bool, c rowCols) (from, width int, ok bool) {
+// gridCell is one cell of a row: its column (an index into gridColumns),
+// where its text starts and how wide the text is, the space after it not
+// counted.
+type gridCell struct{ col, at, width int }
+
+// rowCells are the cells of a row laid out as c, left to right in
+// gridColumns' order. Every row and its header put their cells here, so
+// the > lands before the cell it names and the headings stand over their
+// cells.
+func (m model) rowCells(compact bool, c rowCols) []gridCell {
 	at := rowHead
-	type cell struct {
-		w     int
-		shown bool
+	var out []gridCell
+	add := func(col, width, step int) {
+		if width > 0 {
+			out = append(out, gridCell{col, at, width})
+			at += step
+		}
 	}
-	cells := []cell{{m.progressWidth(), true}, {idCell, true}, {c.tags + 1, c.tags > 0}}
+	kind, priority := kindCell, priorityCell
 	if compact {
-		cells = append(cells, cell{letterCell, c.kind}, cell{letterCell, c.priority}, cell{0, false})
-	} else {
-		cells = append(cells, cell{kindCell, c.kind}, cell{priorityCell, c.priority}, cell{stageCell, c.status})
+		kind, priority = letterCell, letterCell
 	}
-	cells = append(cells, cell{c.title, true}, cell{c.owner + ownerGap, c.owner > 0})
-	for k, x := range cells {
-		if k == i {
-			if !x.shown || x.w <= 0 {
-				return 0, 0, false
-			}
-			if k == len(cells)-1 {
-				return at + ownerGap, c.owner, true // the owner cell, after its gap
-			}
-			return at, max(1, x.w-1), true
-		}
-		if x.shown {
-			at += x.w
-		}
+	add(0, idCell-1, idCell)
+	add(1, c.title-1, c.title)
+	add(2, on(c.status, stageCell-1), stageCell)
+	add(3, on(c.checks, m.progressWidth()-1), m.progressWidth())
+	add(4, on(c.kind, kind-1), kind)
+	add(5, on(c.priority, priority-1), priority)
+	if c.owner > 0 {
+		at += ownerGap
+		add(6, c.owner, c.owner)
 	}
-	return 0, 0, false
+	return out
 }
 
-// markColumn draws the column cursor into a row (e3sevr, Jørgen 23:20): on
-// the cursor row a > stands in the space just before the marked column's
-// cell, and the cell is highlighted on every row of the section, so the
-// row's > sigil, the in-row > and the column tint together show where the
-// cursor is. Without a marked column the row is as it was.
-func (m model) markColumn(row string, width int, compact bool, c rowCols, selected bool) string {
-	col := m.column
-	if !compact {
-		col = m.markedColumn()
+// cursorColumn is the column the > stands before on the cursor row of a
+// row laid out as c: the marked column, or -1 when none is marked or the
+// row does not draw it; then the > stays in the gutter, before the id.
+func (m model) cursorColumn(compact bool, c rowCols) int {
+	col := m.markedColumn() // the board's columnLayout is its compact one
+	if col <= 0 || col >= len(gridColumns) || !gridColumns[col].shown(c) {
+		return -1 // the id is the row header: its > is the gutter's
 	}
-	if col < 0 || col >= len(gridColumns) {
-		return row
-	}
-	from, w, ok := m.colSpan(col, compact, c)
-	if !ok || from+w > width {
-		return row
-	}
-	cell := ansi.Strip(ansi.Cut(row, from, from+w))
-	before, after := ansi.Cut(row, 0, from-1), ansi.Cut(row, from+w, width)
-	gap := ansi.Cut(row, from-1, from)
-	style := m.styles.column
-	if selected {
-		gap = m.styles.selected.Render(">")
-		style = m.styles.columnCursor
-	}
-	return before + gap + style.Render(cell) + after
+	return col
 }

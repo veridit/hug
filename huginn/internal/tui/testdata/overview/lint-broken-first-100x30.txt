@@ -2,23 +2,23 @@
   IN PROGRESS · assigned to  [0] · None                                                             
   WAITING  [0] · None                                                                               
 > NEXT UP · rank order  [31] · 1–14 shown · all feature                                             
-> ○ 1   ·######            ready     Advice 01                                                      
-  ○ 1   ·######            ready     Advice 02                                                      
-  ○ 1   ·######            ready     Advice 03                                                      
-  ○ 1   ·######            ready     Advice 04                                                      
-  ○ 1   ·######            ready     Advice 05                                                      
-  ○ 1   ·######            ready     Advice 06                                                      
-  ○ 1   ·######            ready     Advice 07                                                      
-  ○ 1   ·######            ready     Advice 08                                                      
-  ○ 1   ·######            ready     Advice 09                                                      
-  ○ 1   ·######            ready     Advice 10                                                      
-  ○ 1   ·######            ready     Advice 11                                                      
-  ○ 1   ·######            ready     Advice 12                                                      
-  ○ 1   ·######            ready     Advice 13                                                      
-↓ ○ 1   ·######            ready     Advice 14                                                      
+> ·######   Advice 01                                                      ready     ○ 1            
+  ·######   Advice 02                                                      ready     ○ 1            
+  ·######   Advice 03                                                      ready     ○ 1            
+  ·######   Advice 04                                                      ready     ○ 1            
+  ·######   Advice 05                                                      ready     ○ 1            
+  ·######   Advice 06                                                      ready     ○ 1            
+  ·######   Advice 07                                                      ready     ○ 1            
+  ·######   Advice 08                                                      ready     ○ 1            
+  ·######   Advice 09                                                      ready     ○ 1            
+  ·######   Advice 10                                                      ready     ○ 1            
+  ·######   Advice 11                                                      ready     ○ 1            
+  ·######   Advice 12                                                      ready     ○ 1            
+  ·######   Advice 13                                                      ready     ○ 1            
+↓ ·######   Advice 14                                                      ready     ○ 1            
 
   RECENTLY DONE · last closed  [0] · None                                                           
   LINT · tasks needing attention  [31] · 1 broken · 30 advice · 1–3 shown · all feature             
-  ○ 1   !######            depends   Broken last                                                    
-  ○ 1   ·######            ready     Advice 01                                                      
-↓ ○ 1   ·######            ready     Advice 02                                                      
+  !######   Broken last                                                    depends   ○ 1            
+  ·######   Advice 01                                                      ready     ○ 1            
+↓ ·######   Advice 02                                                      ready     ○ 1            

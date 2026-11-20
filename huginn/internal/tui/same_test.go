@@ -202,8 +202,8 @@ func TestMarkerSkipsSharedColumns(t *testing.T) {
 		t.Fatalf("L never reached PRIORITY: %v", marked)
 	}
 	// A marker left on TYPE (from a section that drew it) orders by the
-	// next drawn column, priority, never type.
-	m.column = 2 // type
+	// next drawn column, priority, never type (911j70: ✓ type priority).
+	m.column = 4 // type
 	if got := gridColumns[m.markedColumn()].field; got != "priority" {
 		t.Fatalf("a marker on hidden TYPE stands on %s", got)
 	}

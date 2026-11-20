@@ -27,9 +27,9 @@ Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help
 HUG · list   2/2 tasks · ! 0 broken · 4 advice                                  
 view: overview  list  board  !lint       │ todo 2 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
-  ✓      ID       PRIORITY TITLE                       · all ready · all feature
-  ○ 2   ·ALPHA_            Alpha                                                
-> ○ 2   ·BETA__            Beta                                                 
+   ID       TITLE                      ✓     PRIORITY  · all ready · all feature
+  ·ALPHA_   Alpha                                                ○ 2            
+> ·BETA__   Beta                                                 ○ 2            
 Rows 1–2 of 2 · ! lint finding · ↳ epic · depends = a dependency is not done    
                                                                                 
                                                                                 
@@ -93,9 +93,9 @@ Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help
 HUG · list   2/2 tasks · ! 0 broken · 4 advice                                                                                              
 view: overview  list  board  !lint                                                       │ todo 2 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-  ✓      ID       PRIORITY TITLE                                                                                   · all ready · all feature
-  ○ 2   ·ALPHA_            Alpha                                                                                                            
-> ○ 2   ·BETA__            Beta                                                                                                             
+   ID       TITLE                                                                                  ✓     PRIORITY  · all ready · all feature
+  ·ALPHA_   Alpha                                                                                                            ○ 2            
+> ·BETA__   Beta                                                                                                             ○ 2            
 Rows 1–2 of 2 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                
                                                                                                                                             
                                                                                                                                             
