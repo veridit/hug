@@ -1,15 +1,21 @@
 ---
 id: h9ymk8
 title: "AGENTS.md names HUGINN_UPDATE_GOLDEN; the tests read HUG_UPDATE_GOLDEN"
-state: todo
+state: "doing"
 type: docs
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzh"
 created: 2026-11-19
 updated: 2026-11-19
+doing_with: "p277bp"
+doing_since: "2026-11-20T04:24"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +38,7 @@ AGENTS.md 'TUI goldens' line; git grep -n 'UPDATE_GOLDEN'.
 ## Notes
 
 Add to AGENTS.md with this fix (bat's wacc33 reflection): a new HUG_* variable, test ones too, goes on internal/env Known, or TestEveryHUGNameIsKnown fails.
+
+
+## History
+- 2026-11-20T04:24 todo -> doing/active (take with p277bp)
