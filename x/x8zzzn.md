@@ -41,7 +41,7 @@ Step 1 (evidence, no code): from capture/hook logs and injections, count for the
 - [x] Step 1 counts in a note: recall blocks parked vs delivered vs dropped per turn for 3 days, and whether mid-turn pasted messages get recall
 - [x] Prototype behind a config switch delivers the block into the dialogue on jcode in the same turn, idle sessions never woken for a memory alone (test)
 - [ ] Per-harness table of push availability in a note, with sources
-- [ ] ~~Jørgen runs with the switch on for a day and decides whether it replaces the old path~~ (not relevant: moved to its release ticket ypfrp3 (v0.7.85) as an ask, per 75mxf3 trial, crab, 2026-11-19)
+- [ ] ~~Jørgen runs with the switch on for a day and decides whether it replaces the old path~~ (not relevant: Jørgen switched it on 2026-11-20; the day-later decision is bpvevz, crab, 2026-11-20)
 
 ## Notes
 
