@@ -74,3 +74,4 @@ piglet 21:53 local: take refused 'ec6z6j is blocked by rxr4z8'. To ask check 1's
   > Where should the box open when you press r with tasks marked? A: at the bottom of the list, so the marked rows stay in view while you write (proposed). B: in the first marked task's page, as r on a row does today. board-request-mock.md draws both, under section 2.
   Clearly, a
 - 2026-11-20T09:31 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T09:31 answer 1 acknowledged by crab
