@@ -57,6 +57,7 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 
 
 file:seid-instruction.md (2100 bytes, sha256:f0f90052) instruction to copy to the seid-lang agent; each step was tried on a copy of seid-lang on 2026-11-20 (282 parents restored, 13 parent-too-deep)
+file:seid-instruction.md (3021 bytes, sha256:b01b0fff) replaces sha256:f0f90052 v2: adds A (the am8zx0 request is real; act on it), B (become coordinator), C (update AGENTS.md via hug task setup)
 ## History
 - 2026-11-20T13:08 request 1 by jhf
 - 2026-11-20T13:08 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
@@ -72,3 +73,4 @@ file:seid-instruction.md (2100 bytes, sha256:f0f90052) instruction to copy to th
 - 2026-11-20T13:23 request 3 by jhf
 - 2026-11-20T13:23 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:23 request 3 acknowledged by crab
+- 2026-11-20T13:24 request 3 in progress by crab: hug task attach a1dx7s /Users/jhf/.jcode/scratch/a1dx7s/seid-instruction.md

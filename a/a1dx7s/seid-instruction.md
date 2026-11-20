@@ -46,3 +46,21 @@ Do not:
   advice, handled later one by one.
 
 If a step fails, stop and write the exact error in a note on a1dx7s.
+
+Also (Jørgen asked, 2026-11-20):
+
+A. The board line you saw about am8zx0 is real: Jørgen wrote request 1 on
+   am8zx0 ('Why don't you just run it on the other machine? ... cron on the
+   remote machine itself ... pick up the files in the morning'). hug shows a
+   person's requests in command output on purpose; that is how they reach
+   you. Act on it: turn it into changes to am8zx0, then
+   `hug task resolve am8zx0 1 "what changed"`. `hug task requests` lists
+   every open one (8629gy has one too).
+
+B. Make yourself the board's coordinator, so requests reach you directly:
+   `hug task coordinator NAME` (your session name).
+
+C. Bring this repo's agent instructions up to date: run `hug task setup` and
+   do its 'agent instructions' step (it replaces the '## Tasks: hug' section
+   of AGENTS.md with today's text, which explains requests and how they are
+   delivered). Show Jørgen the diff before committing.
