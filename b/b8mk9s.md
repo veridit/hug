@@ -1,6 +1,6 @@
 ---
 id: b8mk9s
-title: "Design: store each memory as its own file instead of one big JSON file"
+title: "Design: how hug stores memories on disk (one file, per day, per memory)"
 state: todo
 type: feature
 priority: "high"
@@ -19,43 +19,41 @@ design_asked_by: "crab"
 ---
 
 ## Goal
-Jørgen decides whether hug keeps memories in one JSON file or one Markdown file per memory, and how retired ones are cleaned up.
+Jørgen picks how hug stores memories on disk, from one big file to dated JSON Lines files, and how retired ones are cleaned up.
 
 ## Purpose
-Memories you can open, edit and diff like task files, with git merging them cleanly.
+Each remember should write a few hundred bytes, not rewrite an 18.6 MB file.
 
 ## Principle
 Decide on the consequences first; nothing is built until Jørgen picks.
 
 ## Relevant details
 TODAY
-- All memories are one file on your Mac: ~/Library/Application Support/muninn/memories.json (18.6 MB, 18,078 memories: 17,587 active, 491 retired). muninn.db (805 MB) is a search index built from it.
-- To read or fix one memory you use hug mem search / forget; the file is not meant for hand editing.
-- Retiring a memory (forget, dedupe) sets active: false in that same file. Retired ones stay forever; nothing cleans them up.
-- A shared repo gets one memories.jsonl on its hug/memory branch: one line per memory, so two machines adding memories conflict on the same file.
+- All memories are one file on your Mac: ~/Library/Application Support/muninn/memories.json (18.6 MB, 18,615 memories on 2026-11-20). muninn.db (805 MB) is the search index built from it.
+- Every remember, forget, dedupe, rescope or import rewrites the whole file (SaveNative: write all 18,615, temp file, rename), under one lock every session waits on. 7 code paths call it (ingest/native.go, importer.go, lock.go, twins.go, app/correction.go, rescope_batch.go, tidy_duplicates.go).
+- Retiring sets active: false in the same file. Nothing ever deletes retired memories.
+- Memories change after the day they were made: 2,825 of 18,615 (15%) were updated on a later day (strength, retire, rescope). Any dated layout has to handle that.
+- Spread over time: 141 days with memories since 2026-06-03. A day holds a median of 38 KB (busiest 2.1 MB, 2026-11-19); a week a median of 351 KB (busiest 3.9 MB).
+- The shared hug/memory branch is separate: one memories.jsonl, one line per memory sorted by id (255 KB in this repo). git merges it line by line already. Out of scope here.
 
-WHAT WOULD CHANGE
-- Each memory becomes one Markdown file, e.g. memory/<id>.md, with its fields at the top and its text below, like a task file.
-- Retiring moves the file to memory/_retired/<id>.md instead of setting a flag.
-- muninn.db stays the search index, rebuilt from the files.
+THE OPTIONS (all keep muninn.db as the search index, rebuilt from the files)
+A. Keep memories.json as is. No work; every write stays 18.6 MB and growing.
+B. One append-only JSON Lines file. Each write appends one line; dream rewrites (compacts) it now and then. Small writes, but compaction still rewrites everything.
+C. One file per memory (memory/<id>.md). Small writes; 18,615 files, slow for git, Spotlight and backups; the largest migration.
+D. One JSON Lines file per day (memory/2026/11/2026-11-20.jsonl, by the day a memory was made). 141 files. A new memory rewrites only today's file (median 38 KB). A change to an old memory rewrites its day's file (up to 2.1 MB), 9x smaller than today.
+E. (Jørgen, request 4) A today folder with one small file per memory (memory/today/<id>.json); dream rolls each finished day into its dated JSON Lines file as in D. A change to an old memory is written into today as a newer copy (same id, later 'updated' wins) and folded into its day file by dream. So every write is a few hundred bytes in today/, and cleaning up the current day is deleting files. Cost: dream does more (fold changes, delete old retired lines), and reading must merge today/ over the day files.
+F. As E but by week: a current-week folder, past weeks as one JSON Lines file each (24 files, median 351 KB, busiest 3.9 MB). Fewer files, larger rewrites when dream folds changes in.
 
-WHY (Jørgen 2026-11-20 12:39Z: hand editing is not the point; it has to be a technical gain)
-Measured facts, not hopes:
-- Local writes: today every remember, forget or dedupe rewrites the whole 18.6 MB memories.json (SaveNative: marshal all 18,078, write a temp file, rename), under one lock that every session waits on. One file per memory writes a few hundred bytes. This is the real local gain: smaller writes and less waiting, which grows with the store.
-- Shared branch merges: no gain. The shared memories.jsonl is already one line per memory, so git merges it line by line and two machines adding memories rarely conflict.
-- Hand editing: not a reason (Jørgen).
-Against it: 18,078 files is slow for git and for the file system (a status, a checkout, Spotlight), and it is a large one-time migration that touches every write path.
-A cheaper way to the same local gain: keep one file, but make it append-only JSON Lines (each write appends one line; a compaction in dream rewrites it now and then). Same small writes, no 18,000 files.
+CLEANING UP RETIRED MEMORIES (any option)
+- dream deletes retired memories older than N days (30 proposed, a setting). In D, E and F it only rewrites the day or week files that hold them.
 
-CONSEQUENCES
-- 18,078 small files instead of one: a one-time migration, with a dry-run and a backup first.
-- Writing gets a little slower (one file per write); search stays the same (the index).
-- Every code path that reads or writes memories.json changes: capture, forget, dedupe, rescope, import, sync. This is a large change.
-- Retired files pile up. Proposal: hug mem dream deletes files in _retired/ older than 30 days (a setting); git history keeps them if the folder is on a branch.
+CRAB'S READING
+- E gives the smallest writes with few files, and keeps today (the part that changes most) easy to tidy. D is the simplest step from today's code. Day files over week files: median 38 KB versus 351 KB.
+- Both D and E keep one rule from today: a memory's id never changes, so the shared branch and imports keep working.
 
 OPEN FOR JØRGEN
-- Do it, or keep one file?
-- If yes: retired files deleted after how many days (30 proposed)?
+- Pick A to F (question on check 5).
+- How many days a retired memory is kept (check 6).
 
 Previous Purpose: Jørgen 2026-11-18 (request 1 on this task): the goal is a unified, easy-to-navigate, non-confusing CLI and system. The decision behind it is his of 2026-11-11 (memory j9jdkh, docs/DESIGN.md): one tool named hug for memory, tasks and messages, files on branches as the truth, and memory file-oriented too (one Markdown file per memory) so humans can edit it and git merges stay clean.
 Previous Principle: Consistency through a clean sweep: once we decide hug is the thing, we change everything at once (commands, help, messages, docs, branches, folders, tests, every project's setup), never a mix of old and new names left behind.
@@ -72,6 +70,8 @@ Promoted from item 3 of task:9taa9d.
 - [ ] ~~Jørgen decides: one file per memory, or keep memories.json~~ (not relevant: replaced by check 4, which adds append-only JSON Lines as a third option, crab, 2026-11-20)
 - [ ] If one file per memory: Jørgen sets how many days a retired file is kept before hug mem dream deletes it (30 proposed)
 - [ ] Jørgen picks: keep memories.json as is, make it append-only JSON Lines, or one file per memory
+- [ ] Jørgen picks a storage layout: A (as is), B (one append-only file), C (file per memory), D (file per day), E (today folder, then day files) or F (as E, by week)
+- [ ] Jørgen sets how many days a retired memory is kept before hug mem dream deletes it (30 proposed)
 
 ## Requests
 - 2026-11-20T13:11 request 1 by jhf:
@@ -120,3 +120,5 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T17:06 request 4 by jhf
 - 2026-11-20T17:06 request 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T17:07 request 4 acknowledged by crab
+- 2026-11-20T17:08 request 3 in progress by crab: hug task set b8mk9s
+- 2026-11-20T17:08 request 4 in progress by crab: hug task set b8mk9s
