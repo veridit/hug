@@ -27,7 +27,7 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
 ## Depends on
 
 ## Acceptance
-- [ ] Verify Default filter not done for list
+- [ ] ~~Verify Default filter not done for list~~ (not relevant: replaced by checks 2-5, crab, 2026-11-20)
 
 ## Requests
 - 2026-11-20T13:34 request 1 by jhf:
