@@ -54,6 +54,10 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 - 2026-11-20T09:32 question 1 by crab to jhf (check 7, show cursor-on-mark.md):
   A marked row that also has the cursor shows one sign. Built with ⋗ (cursor carrying a mark); the alternative is ▸. Mark a row with Space and move onto it in hug tui: is ⋗ right, or do you want ▸?
 
+## Requests
+- 2026-11-20T11:39 request 1 by jhf:
+  So again, I open this ticket. It doesn't scroll down to the question I'm going to answer. It shows some inline file. I don't know why that doesn't make no sense. And the response here is cursor carrying a mark. That's what I want. So you can close that, or you can take that feedback from this ticket. And hopefully, it's the third time I'm reporting the same thing about opening tickets that don't show the question. So it's probably in progress already. I'm just reporting it again as far as long as I see it
+
 ## Notes
 
 nautilus 23:44, footer mock for Jørgen (not built yet; queued after e3sevr, 0gztsy, qh9ep1, ahejza). 80 columns, 3 marked in NEXT UP, one of them an epic (d not offered: an epic finishes through its children):
@@ -113,3 +117,4 @@ file:screen-1138.ans (6901 bytes, sha256:8f2b42e1) screen capture from hug tui
 - 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)
 - 2026-11-20T09:32 doing/waiting -> doing/active (resume); was waiting_asked_by: macaque; waiting_on: crab review; Jørgen on check 7; waiting_since: 2026-11-19T00:44
 - 2026-11-20T09:32 doing/active -> doing/asked (ask)
+- 2026-11-20T11:39 request 1 by jhf
