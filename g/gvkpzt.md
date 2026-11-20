@@ -45,6 +45,7 @@ main 51e36090 (CI 44677696260, 8/8), CHANGELOG 57113899, merge 6fa18387, release
 
 
 check 1: release.yml 44678753259 success; brew upgrade: hug v0.7.87, hug/muninn/huginn -> ../Cellar/hug/0.7.87/bin/*
+Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they are' (z6cb03: broken tasks at the top of LINT, in view).
 ## History
 - 2026-11-20T06:14 todo -> doing/active (take with p277bp)
 - 2026-11-20T06:14 doing/active -> doing/asked (ask)
@@ -52,3 +53,4 @@ check 1: release.yml 44678753259 success; brew upgrade: hug v0.7.87, hug/muninn/
   > z6cb03: on statbus or sql_saga, where v0.7.86 added many long-Goal advice rows, open hug tui (restart it first: your TUIs there run 0.7.69 and 0.7.68). Are the broken tasks at the top of LINT, in view?
   Yes, they are
 - 2026-11-20T11:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:27 crab read the answer: hug task note gvkpzt "Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they are' (z6cb03: broken tasks at the top of LINT, in view)."
