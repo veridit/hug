@@ -11,16 +11,10 @@ rank: "zzzzzzzzzzsw"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:53"
-stage: "asked"
+stage: "depends"
 model: "claude-opus-5-5"
 branch: "ykta5g"
 worktree: "/Users/jhf/.jcode/scratch/ykta5g"
-asked_show: "board-request-mock.md"
-asked_what: "Where should the box open when you press r with tasks marked? A: at the bottom of the list, so the marked rows stay in view while you write (proposed). B: in the first marked task's page, as r on a row does today. board-request-mock.md draws both, under section 2."
-asked_for: "jhf"
-asked_since: "2026-11-18T21:53"
-asked_by: "piglet"
-asked_check: "1"
 ---
 
 ## Goal
@@ -76,3 +70,6 @@ piglet 21:53 local: take refused 'ec6z6j is blocked by rxr4z8'. To ask check 1's
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
 - 2026-11-20T02:45 handed to crab: piglet's session went silent (last seen 2026-11-19 02:41)
+- 2026-11-20T09:31 answered asked (check 1), by jhf, for piglet (doing/asked -> doing/depends):
+  > Where should the box open when you press r with tasks marked? A: at the bottom of the list, so the marked rows stay in view while you write (proposed). B: in the first marked task's page, as r on a row does today. board-request-mock.md draws both, under section 2.
+  Clearly, a
