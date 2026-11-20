@@ -1,7 +1,7 @@
 ---
 id: qcq3tm
 title: "Opening an asked task scrolls to its question; nothing inlined on top"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzq"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-20T10:59"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "fzd0jj"
+done_at: "2026-11-20T12:57"
 ---
 
 ## Goal
@@ -75,6 +74,7 @@ crab 2026-11-20 10:54Z: reviewed (actions.go answerKey focusOn+revealAnswerBox; 
 file:screen-1255.ans (9067 bytes, sha256:d8f4a13a) screen capture from hug tui
 file:screen-1256.ans (11972 bytes, sha256:cb2a9d3f) screen capture from hug tui
 check 3: Jørgen 2026-11-20 11:57Z (request 2): 'Yes, it does ... it worked on this task after I reloaded.'
+Reflection (open, 2026-11-20, crab): His first screenshot came from a TUI still on the old release; the footer's 'v0.7.88 → v0.7.89' told me so, and I should check that first.
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
 - 2026-11-20T11:54 doing/active -> doing/asked (ask)
@@ -90,3 +90,4 @@ check 3: Jørgen 2026-11-20 11:57Z (request 2): 'Yes, it does ... it worked on t
 - 2026-11-20T12:57 answered asked (check 3), by crab, for cricket (doing/asked -> doing/active):
   > Does opening a task that asks you something now land on the question, with its file as a link line (Enter shows the file, Esc comes back)? Before and after captures at 100x30 are in this task's Files: before-tb0dra-100x30.ans / after-tb0dra-100x30.ans, before-hjbfzd-100x30.ans / after-hjbfzd-100x30.ans and after-hjbfzd-check6-link-100x30.ans. For a on p87ngv: before-p87ngv-a-100x30.ans / after-p87ngv-a-100x30.ans. Built on branch qcq3tm (a5fc5208, CI green); it reaches your board with the next release.
   Jørgen in request 2 (2026-11-20 11:57Z): 'Yes, it does ... it worked on this task after I reloaded.'
+- 2026-11-20T12:57 doing/active -> done (done); was doing_since: 2026-11-20T10:59
