@@ -82,6 +82,8 @@ Promoted from item 3 of task:9taa9d.
   So git merge that is the true benefit right Because the JSON-L is pretty efficient today isn't it? I don't think having editing memories manually is that important. It's also easy to edit a huge file and just open and search in it. So it has to be another technical advantage that you see
   resolved 2026-11-20T13:39 by crab:
     You are right: merging is not the gain. The shared branch file is already one line per memory, so git merges it fine today, and hand editing is not a reason. WHY is rewritten with the one real gain: today every remember or forget rewrites the whole 18.6 MB memories.json under a lock all sessions wait on; small per-memory writes fix that. CONSEQUENCES list what speaks against 18,078 files (git and file-system cost, a large migration). And there is a cheaper way to the same gain: keep one file but make it append-only JSON Lines, compacted by dream. Question 2 now asks: keep as is, append-only JSON Lines, or one file per memory.
+- 2026-11-20T17:05 request 3 by jhf:
+  Did we consider alternatives here such as date folders and then or per date files with each containing JSON lines something like that?
 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 2):
@@ -110,3 +112,4 @@ Promoted from item 3 of task:9taa9d.
   Withdrawn by crab 2026-11-20: the WHY was rewritten after Jørgen's request 2; question 2 asks the three-way choice.
 - 2026-11-20T13:39 todo/ready -> todo/design (ask)
 - 2026-11-20T13:39 resolved request 2 by crab
+- 2026-11-20T17:05 request 3 by jhf
