@@ -57,6 +57,8 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
 ## Requests
 - 2026-11-20T11:05 request 1 by jhf:
   And when it comes to a separate person listing, it of course has to be something that if you provide nothing, it lists the available options. So it has to be interactive and explorative for AI agents, right?
+  resolved 2026-11-20T11:05 by crab:
+    Added checks 4 and 5. Today ask with no --to only says 'ask needs who must answer: --to NAME', and an unknown name lists just the people from hug.toml (jhf), not the agents on the board. Check 4: ask with no, empty or unknown --to lists everyone who can answer, people and working agents, each with the exact command to run, over the CLI and MCP. Check 5: the same explorative rule for every argument that names a person or a task (dep --add, take --with, set --assignee, --parent).
 
 ## Notes
 
@@ -106,3 +108,4 @@ check 1: Approved by Jørgen 10:05Z (answer 3) with his nitpick applied to line 
 - 2026-11-20T11:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:05 request 1 acknowledged by crab
 - 2026-11-20T11:05 request 1 in progress by crab: hug task set fd0j4p
+- 2026-11-20T11:05 resolved request 1 by crab
