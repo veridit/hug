@@ -89,3 +89,4 @@ crab 2026-11-20 08:26Z: removed the kg07bt dependency (kg07bt shipped in v0.7.66
 - 2026-11-20T09:26 doing/active -> doing/asked (ask)
 - 2026-11-20T11:28 request 1 by jhf
 - 2026-11-20T11:28 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:28 request 1 acknowledged by crab
