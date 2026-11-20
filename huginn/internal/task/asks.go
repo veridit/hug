@@ -145,6 +145,47 @@ func OpenQuestions(t Task) []AskedQuestion {
 	return out
 }
 
+// HasOpenQuestion reports whether t waits on a question to someone: an
+// open question in ## Questions, or the asked stage of a task asked before
+// q2adr8 (asked_* set, no section).
+func HasOpenQuestion(t Task) bool {
+	if t.State != "todo" && t.State != "doing" {
+		return false
+	}
+	if len(OpenQuestions(t)) > 0 {
+		return true
+	}
+	_, ok := legacyQuestion(t)
+	return ok
+}
+
+// openQuestionRefusal is done's refusal of t while a question on it is
+// open (72n8m4): the answer is still owed, and done would withdraw it as
+// a side effect. The fix withdraws it on purpose (hug task resume).
+func openQuestionRefusal(t Task) error {
+	if !HasOpenQuestion(t) {
+		return nil
+	}
+	q, _ := legacyQuestion(t)
+	if open := OpenQuestions(t); len(open) > 0 {
+		q = open[0]
+	}
+	which := "a question"
+	if q.N > 0 && len(t.Questions) > 0 {
+		which = "question " + strconv.Itoa(q.N)
+	}
+	if n := len(OpenQuestions(t)); n > 1 {
+		which += " and " + strconv.Itoa(n-1) + " more"
+	}
+	to := strings.TrimSpace(q.To)
+	if to == "" {
+		to = "someone"
+	}
+	return &Error{Kind: "open-question", ID: t.ID,
+		Value: t.ID + " has " + which + " open to " + to + " (" + strconv.Quote(oneLineFix(q.Text)) + "): done waits for the answer; to close it without one, withdraw the question first",
+		Fix:   "hug task resume " + t.ID}
+}
+
 // nextQuestion is the number d's next question gets: never a reused one.
 func nextQuestion(d *Document) int {
 	n := 1

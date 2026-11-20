@@ -77,7 +77,7 @@ func (e *Error) Error() string {
 }
 func (e *Error) ExitCode() int {
 	switch e.Kind {
-	case "blocked", "unchecked-acceptance", "busy":
+	case "blocked", "unchecked-acceptance", "busy", "open-question":
 		return 3
 	case "nothing-matches":
 		return 4

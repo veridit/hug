@@ -224,6 +224,11 @@ func hint(t Task) string {
 				return fmt.Sprintf("hug task check %s %d", t.ID, n+1)
 			}
 		}
+		// Every check holds but a question is open (72n8m4): done would
+		// refuse, so the next thing is other work while the answer comes.
+		if HasOpenQuestion(t) {
+			return "hug task next"
+		}
 		return "hug task done " + t.ID
 	default:
 		return "hug task next"
@@ -545,6 +550,14 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 			fix = "hug task take " + d.Task.ID + " --model MODEL"
 		}
 		return Result{}, refuse(d.Task, status, fix)
+	}
+	// A question to a person is work still open (72n8m4, crab 2026-11-20:
+	// done on ddpxs8 withdrew jhf's question as a side effect, "doing/asked
+	// -> done"). done waits for the answer; withdrawing it is its own act.
+	if status == "done" && d.Task.State != "done" {
+		if e := openQuestionRefusal(d.Task); e != nil {
+			return Result{}, e
+		}
 	}
 	if status == "dropped" && d.Task.State != "dropped" && strings.TrimSpace(reason) == "" {
 		return Result{}, usageErr(d.Task.ID, "drop needs a reason", "hug task drop "+d.Task.ID+` "duplicate of OTHER"`)
