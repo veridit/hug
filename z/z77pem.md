@@ -21,7 +21,7 @@ waiting_asked_by: "mizaru"
 ---
 
 ## Goal
-Any hug run that talks to an agent (hook, mcp, mem/task write) notices a hug mcp process on this machine running a binary older than v0.7.54 (no reload) or a removed Cellar path, and says once per session which pids and how to restart them, with a fix: line
+Any hug run that talks to an agent names hug mcp servers too old to reload themselves, once per session, with a fix.
 
 ## Purpose
 Statbus 2026-11-18: memory_remember failed twice with 'cannot modify graph_state because it is a view' from pid 3175, hug 0.7.2 started 15 Nov; the agent could not tell why. ps shows 6 such servers (0.7.2, 0.7.14, 0.7.43, 0.7.52); mbdfzs reload only helps servers started on v0.7.54+
@@ -30,6 +30,8 @@ Statbus 2026-11-18: memory_remember failed twice with 'cannot modify graph_state
 Say it, never kill another app's process; one line, once per session; the fix names the client's own restart (jcode mcp reload hug / restart the app)
 
 ## Relevant details
+Any hug run that talks to an agent (hook, mcp, mem/task write) notices a hug mcp process on this machine running a binary older than v0.7.54 (no reload) or a removed Cellar path, and says once per session which pids and how to restart them, with a fix: line
+
 Detect via ps + the executable path (Cellar version or deleted file). macOS/Linux first; Windows prints nothing. Also: an old writer hitting the graph_state view gets SQLite's bare error; that cannot change in old binaries, so the message must come from the new hug side.
 
 ## Depends on
