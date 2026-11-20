@@ -10,11 +10,7 @@ group: ""
 rank: "yq"
 created: 2026-11-16
 updated: 2026-11-16
-design_question: "Please open seid-instruction.md in this task's Files, copy it to the seid-lang agent, and tick this check when it has reported back here."
-design_for: "jhf"
-design_since: "2026-11-20T13:12"
-design_asked_by: "crab"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -35,7 +31,7 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 - [ ] import backlog rerun in seid-lang; hug task ls --jsonl shows about 280 tasks with a parent
 - [ ] lint --code parent-too-deep is empty
 - [ ] evidence files imported as task files
-- [ ] Jørgen gives seid-instruction.md (Files) to the seid-lang agent and ticks this when it has reported back
+- [x] Jørgen gives seid-instruction.md (Files) to the seid-lang agent and ticks this when it has reported back
 
 ## Requests
 - 2026-11-20T13:08 request 1 by jhf:
@@ -54,6 +50,8 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 4):
   Please open seid-instruction.md in this task's Files, copy it to the seid-lang agent, and tick this check when it has reported back here.
+  answered 2026-11-20T13:26 by jhf:
+    answered by ticking check 4
 
 ## Notes
 
@@ -77,3 +75,6 @@ file:seid-instruction.md (3021 bytes, sha256:b01b0fff) replaces sha256:f0f90052 
 - 2026-11-20T13:23 request 3 acknowledged by crab
 - 2026-11-20T13:24 request 3 in progress by crab: hug task attach a1dx7s /Users/jhf/.jcode/scratch/a1dx7s/seid-instruction.md
 - 2026-11-20T13:24 resolved request 3 by crab
+- 2026-11-20T13:26 answered design (check 4), by jhf, for crab (todo/design -> todo/ready):
+  > Please open seid-instruction.md in this task's Files, copy it to the seid-lang agent, and tick this check when it has reported back here.
+  answered by ticking check 4
