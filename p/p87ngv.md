@@ -122,6 +122,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
     Filed as two tasks. zbdbtm (file links) now also covers files named in plain text inside a question, check or note: they become links you can show in line or open, and Esc returns. It asks you which keys (proposal: Space shows in line, Enter opens, as in FILES today). zq6pwa is new: in a task's page, h/l focus what is in view, not the old focus off screen; j/k scroll through Questions instead of stepping one by one; focusable items get a subtle gutter marker as they scroll into view.
 - 2026-11-20T11:13 request 5 by jhf:
   When I press A to answer on this specific ticket, nothing happens and I don't seem to be able to enter any text or anything. I don't know what's going on.
+  resolved 2026-11-20T11:14 by crab:
+    Not fixed yet; filed as check 4 on qcq3tm (high, a worker is on it now). What I found in the code (v0.7.88): a does open the answer box, but it is drawn under the question it answers, and on p87ngv that question sits far down the page (check 5's question 11, or question 12 in ## Questions), so the box most likely opened out of view and your keys went into it unseen. qcq3tm already makes an asked task open on its question; check 4 adds that a always opens the box in view with the cursor in it, tested on a copy of this very task. Until it ships: after a, scroll down (J) to the question; the box is there. Esc closes it without sending.
 
 ## Notes
 
@@ -248,3 +250,4 @@ file:screen-1113.ans (5351 bytes, sha256:f9547c1d) screen capture from hug tui
 - 2026-11-20T11:13 request 5 by jhf
 - 2026-11-20T11:13 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:13 request 5 acknowledged by crab
+- 2026-11-20T11:14 resolved request 5 by crab
