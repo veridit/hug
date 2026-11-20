@@ -21,7 +21,7 @@ waiting_asked_by: "macaque"
 ---
 
 ## Goal
-Pressing a (answer) or r (request) draws the empty box under the question immediately, with a blinking underline cursor where the text goes; that cursor is the only motion on the otherwise calm screen.
+Pressing a or r draws the answer box at once, with a blinking cursor as the only motion on screen.
 
 ## Purpose
 Jørgen 2026-11-18: pressing a changed the footer to 'Enter send' but drew no box; it appeared only after the first keystroke, so nothing showed where to type.
@@ -30,6 +30,8 @@ Jørgen 2026-11-18: pressing a changed the footer to 'Enter send' but drew no bo
 One consistent 'you are here' indicator: an underline-style cursor that blinks or pulses gently, shared with the pending view-key prefix (v then o/l/b/!). Nothing else on the screen moves or flashes.
 
 ## Relevant details
+Pressing a (answer) or r (request) draws the empty box under the question immediately, with a blinking underline cursor where the text goes; that cursor is the only motion on the otherwise calm screen.
+
 Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, but never calls m.syncDetail(), so the detail page is not re-rendered with the box; updateAnswer() calls syncDetail() on each key, which is why it appears after typing. Cursor is set static at answerbox.go:30 (cursor.CursorStatic), drawn as a block. Stale 'request qtj177' under the page is z82qsy.
 
 ## Depends on
