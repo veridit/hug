@@ -1,7 +1,7 @@
 ---
 id: ynh84t
 title: "hug mem install writes 'muninn hook'; task install names the MCP entry huginn"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -11,11 +11,10 @@ rank: "zzzzzzzzzzx5"
 created: 2026-11-18
 updated: 2026-11-18
 parent: "gem59b"
-doing_since: "2026-11-18T23:37"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "ynh84t"
 worktree: "/Users/jhf/.jcode/scratch/ynh84t"
+done_at: "2026-11-20T09:22"
 ---
 
 ## Goal
@@ -52,6 +51,8 @@ landed cda4d23 on main 2026-11-19: Name hook and MCP entries hug; guard tests fr
 shipped in v0.7.75 (cda4d23)
 crab: landed on main (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75. The open check waits on the live machine after brew upgrade.
 check 4: crab 2026-11-20 08:21Z on Jørgen's machine (hug v0.7.87): grep -cw 'muninn|huginn' gives 0 in ~/.claude/settings.json, ~/.claude.json, ~/.claude/settings.local.json, ~/.codex/config.toml, ~/.jcode/config.toml, ~/.config/opencode/opencode.json, ~/.gemini/settings.json. Project jcode configs (Brovs, GenderedGames, truth_tribe_and_treasure) name muninn only in a comment line '# muninn capture (2026-11-06, ...)'; every hook command there is /opt/homebrew/bin/hug mem ...
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T23:37 todo -> doing/active (take)
 - 2026-11-19T04:01 handed to crab: duckling's session ended (closed 2026-11-19 02:31)
+- 2026-11-20T09:22 doing/active -> done (done); was doing_since: 2026-11-18T23:37
