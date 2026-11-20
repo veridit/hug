@@ -56,6 +56,8 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
     Changed the Goal: the focused row is marked by a > that pulses like a cursor, with no underline, so it no longer reads as a key. Check 4 builds it (only one thing moves: while the answer box is open its cursor moves and the > stays still). Check 5 makes sure > and < go to the bottom and top of the page in this view, as you expect. Check 6 is your look after release; old check 3 is struck. Queued in the TUI lane after cricket (qcq3tm).
 - 2026-11-20T11:33 request 2 by jhf:
   Or you can continue working on the ticket, feel free. But I think this one has shipped
+  resolved 2026-11-20T11:34 by crab:
+    Closed as shipped (v0.7.66), as you said. Your pulsing-> feedback is its own task, q3sh69 (pulsing > with no underline; > and < go to bottom and top; your look after release); checks 4-6 here are struck and point there, and the Goal is back to what shipped.
 
 ## Notes
 
@@ -89,3 +91,4 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
 - 2026-11-20T11:34 answer 1 acknowledged by crab
 - 2026-11-20T11:34 request 2 acknowledged by crab
 - 2026-11-20T11:34 request 2 in progress by crab: hug task strike kg07bt 4
+- 2026-11-20T11:34 resolved request 2 by crab
