@@ -52,6 +52,8 @@ and on a second line""". The opener is """ and the closer is the first """ not f
 - [ ] A new open mark written outside hug (any editor) is delivered on the next hug sync, once (test)
 - [ ] Loose text a person adds anywhere (task file or attachment) reaches the agent as a diff; the agent turns each added comment into a structured mark at the place it was written, with .by set to the person, and removes the loose text in the same commit (test on a fixture edit; agent instructions say so)
 - [ ] hpqt99 is rewritten with marks: each of Decision 1 and 2 in Details carries its question as a mark on the options, answered there, with no separate Questions entry; Jørgen reads it and finds options and question in one place (Jørgen 2026-11-20 on hpqt99: 'you list something one place, you ask questions another place')
+- [ ] A question mark can carry its options: .Question .msg:"..." .options: seq (.Option .key:"1A" .msg:"...") ... end; hug tui draws them as rows under the marked text with a ( ) radio each plus 'other', j/k move, Space or Enter picks, other opens the answer box; the pick is written as the .Answer (golden of hpqt99 Decision 1, tmux test of a pick)
+- [ ] Jørgen approves frames (ANSI 100x30) of hpqt99's Decision 1 with its options drawn inline as choices, before the option rows are built
 
 ## Questions
 - 2026-11-19T09:56 question 1 by crab to jhf:
