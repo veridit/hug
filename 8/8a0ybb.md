@@ -52,6 +52,10 @@ file:a-opens-100x30.ans (3882 bytes, sha256:11cf6864) mock (a) p87ngv as it open
 file:a-opens-160x45.ans (7263 bytes, sha256:662c339f) mock (a) p87ngv as it opens for jhf (board 4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype mock/8a0ybb f6641b2f
 file:a-opens-100x30.png (94733 bytes, sha256:ee14d316) mock (a) p87ngv as it opens for jhf (board 4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype mock/8a0ybb f6641b2f
 file:a-opens-160x45.png (164808 bytes, sha256:c33314f4) mock (a) p87ngv as it opens for jhf (board 4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype mock/8a0ybb f6641b2f
+file:a2-scrolled-100x30.ans (3798 bytes, sha256:89006ecc) mock (a2) the same page scrolled with J: Goal, Acceptance with ? on check 5, Files, long sections folded to one line
+file:a2-scrolled-160x45.ans (6494 bytes, sha256:682f1e6a) mock (a2) the same page scrolled with J: Goal, Acceptance with ? on check 5, Files, long sections folded to one line
+file:a2-scrolled-100x30.png (102795 bytes, sha256:a0411347) mock (a2) the same page scrolled with J: Goal, Acceptance with ? on check 5, Files, long sections folded to one line
+file:a2-scrolled-160x45.png (174955 bytes, sha256:dc874cf8) mock (a2) the same page scrolled with J: Goal, Acceptance with ? on check 5, Files, long sections folded to one line
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):

@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168mlist › [1m[38;2;0;191;255mp87ngv[0m                                                              [1m[38;2;255;179;84m? 15 for you
+[38;2;0;191;255m[doing][0m  [1m[38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:daisy · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-19 · updated 2026-11-19 · inline-marks-task-s[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mInline marks on a task's text; resolved dialogue moves to a history file
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[9m       (not relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark[0m
+[9m[38;2;135;149;168m       checks, crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 3. Several questions in one call become separate threads, each answered on its own (test) (not[0m
+[9m[38;2;135;149;168m       relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks,[0m
+[9m[38;2;135;149;168m       crab, 2026-11-19)[0m
+[9m[38;2;135;149;168m  ☒ 4. Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM (not[0m
+[9m[38;2;135;149;168m       relevant: threads in the ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks,[0m
+[9m[38;2;135;149;168m       crab, 2026-11-19)[0m
+  ? ☐ 5. Jørgen approves a mock (task file before and after, CLI transcript, TUI frames at 100x30):
+         a sentence marked with a request, the agent's change, the mark gone from the ticket and the
+         exchange in the history file
+  ☐ 6. Resolving a mark rewrites or keeps the marked text, removes the mark, and appends mark,
+       replies, who and when to the history file; the ticket holds no dialogue afterwards (test)
+  ☐ 7. Several questions in one call become separate inline marks, each answered on its own (test)
+  ☐ 8. An open mark shows in the person's ASKED or the assignee's requests and is delivered as today
+       (gmzd87) (test)
+  ☐ 9. The agent instructions say: lead with clarity in the ticket, act on or answer marks, post
+       questions as marks, move the dialogue to the history file (fd0j4p wording)
+  ☐ 10. Jørgen marks a sentence in hug tui, the assignee resolves it, and the ticket reads clearer
+        without a DM
+  ☐ 11. A mark that points into an attachment (NAME plus line or section) is shown beside that place
+[38;2;135;149;168mTask 263 of 273 · 73% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back[39m
+
+[1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m open link · [1;4m[38;2;0;191;255ma[0m[38;2;135;149;168mnswer · [1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m scroll · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew[39m [38;2;135;149;168m…[39m   [38;2;135;149;168mhug dev
