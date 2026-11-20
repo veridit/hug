@@ -13,10 +13,14 @@ updated: 2026-11-19
 parent: "d634kr"
 doing_since: "2026-11-19T02:24"
 doing_with: "p277bp"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_asked_by: "crab"
+waiting_until: "2026-11-26"
+waiting_on: "fresh notice data: daily count at 01:45Z needs \u003e= 40 notices from \u003e= 8 sessions (1 in 1 on 11-20); on 11-26 crab asks jhf about the floor"
+waiting_since: "2026-11-20T09:24"
 ---
 
 ## Goal
@@ -51,3 +55,4 @@ Daily count 2026-11-20T01:45Z (window since 2026-11-19T00:00Z, deduped per PRERE
 ## History
 - 2026-11-19T02:24 todo -> doing/active (take with p277bp)
 - 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)
+- 2026-11-20T09:24 doing/active -> doing/waiting (wait until 2026-11-26)
