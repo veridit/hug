@@ -16,6 +16,7 @@ stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+parent: "dswkgj"
 ---
 
 ## Goal
