@@ -33,7 +33,7 @@ huginn/internal/tui/a82j3n_test.go, r80svs_test.go: find any time.Sleep or real 
 
 ## Acceptance
 - [x] The blink tests use no wall-clock waits (grep in a note) and pass 50 runs in a row niced (-count=50)
-- [ ] TestBackgroundSyncSameTaskAppendsConvergeAfterUpgrade failure on Windows is reproduced or explained in a note
+- [x] TestBackgroundSyncSameTaskAppendsConvergeAfterUpgrade failure on Windows is reproduced or explained in a note
 
 ## Notes
 
