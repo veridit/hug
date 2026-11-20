@@ -149,6 +149,7 @@ file:frame-7-100x30.ans (1774 bytes, sha256:c50546fe) frame 7 in colour: after b
 file:screen-1110.ans (19140 bytes, sha256:9ce1da68) screen capture from hug tui
 file:screen-1113.ans (5351 bytes, sha256:f9547c1d) screen capture from hug tui
 check 5: Jørgen 2026-11-20 11:16 local (question 11): 'Yes', approves the mock (before.md, after.md, history.sdo-to-be, cli.txt, tui-100x30.txt) with the questions now on the task.
+Jørgen 2026-11-20 10:16Z (answer 13 to question 12): 'Yes, now I can suddenly answer this. Awesome. Approved.' The open-mark look is approved: a dim '↳ 1 request · jhf 09:40 · ...' line under the text, the marked words underlined, the raw .Request text hidden (frames 1-7). With check 5 approved at 10:16Z, nothing on this task waits on Jørgen; build order (crab): A core in huginn/internal/task: scanner + tests (13), lint (12), resolve to history.sdo (6), several questions as marks (7); then B delivery (8, 14, 15, 16) and C TUI drawing + file-view marks (10, 11); D instructions (9) rides with fd0j4p/sf2f67. Lane A starts when crocodile's 7j706s (same lint code) lands.
 ## History
 - 2026-11-19T09:56 todo -> todo/design (ask)
 - 2026-11-19T09:56 asked question 2 of jhf, 2 open (todo/design -> todo/design)
@@ -262,3 +263,4 @@ check 5: Jørgen 2026-11-20 11:16 local (question 11): 'Yes', approves the mock 
   Yes, now I can suddenly answer this. Awesome. Approved.
 - 2026-11-20T11:16 answer 13 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:16 answer 13 acknowledged by crab
+- 2026-11-20T11:17 answer 13 in progress by crab: hug task note p87ngv "Jørgen 2026-11-20 10:16Z (answer 13 to question 12): 'Yes, now I can suddenly answer this. Awesome. Approved.' The open…"
