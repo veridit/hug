@@ -25,6 +25,8 @@ compatibility links only. Never tell a user to type them.
 - TUI goldens: `HUG_UPDATE_GOLDEN=1 go test -run TestTmuxGolden ./huginn/internal/tui/`,
   then review the diff before committing.
   Under load, take the GOT screens from a failed CI run: `scripts/ci-goldens.sh RUNID`.
+- A new `HUG_*` variable, test ones too, goes on the Known list in
+  `internal/env/env.go`; TestEveryHUGNameIsKnown fails otherwise.
 - Shell scripts run on macOS's bash 3.2 too: no bash 4 features (`declare -A`, `mapfile`, `${x,,}`).
 - A test that fails when code gets slower is a benchmark, not a test: name it
   `Test...Bench...`, skip it unless `HUG_BENCH=1`, and compare the new path
