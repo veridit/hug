@@ -88,3 +88,4 @@ Approved follow-on ec6z6j: single and multi-task feedback should converge on one
   > Write a real request on a hug task after this release: does the agent turn it into ticket changes you agree with?
   answered by ticking check 6
 - 2026-11-20T11:29 doing/active -> done (done after jhf ticked check 6 (release v0.7.55)); was doing_since: 2026-11-18T00:57
+- 2026-11-20T11:29 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
