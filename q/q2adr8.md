@@ -21,7 +21,7 @@ waiting_asked_by: "iwazaru"
 ---
 
 ## Goal
-An agent with several open questions on a task asks each separately, and the person answers each in its own place (CLI, MCP, hug tui) without one answer covering all of them. The task stays asked until every question is answered.
+Several questions on a task are asked and answered each on its own, and the task stays asked until all are answered.
 
 ## Purpose
 Jørgen 2026-11-18 19:27Z on rxr4z8: 'If you ask three questions, I should have three questions to answer in the ticket. This makes no sense. Let's structure this better.' nautilus put three questions into one ask, and Jørgen had to answer all three in one text.
@@ -30,6 +30,8 @@ Jørgen 2026-11-18 19:27Z on rxr4z8: 'If you ask three questions, I should have 
 One question, one answer. Agents are taught to ask one thing per question. A numbered list inside one ask is either split or refused with a fix: line. Answers stay verbatim in History, each beside its question. Delivery to the coordinator stays one line per answer.
 
 ## Relevant details
+An agent with several open questions on a task asks each separately, and the person answers each in its own place (CLI, MCP, hug tui) without one answer covering all of them. The task stays asked until every question is answered.
+
 Today: hug task ask sets one asked/asked_check/asked_show on the stage (41hhgn); hug task answer answers 'the question the stage asks'. Look at: repeated hug task ask adding questions (asked 1..N), hug task answer ID N, the TUI ASKED row showing 'N questions', the help text for ask/answer and the agent instructions (DeliveryFlow) saying one question per ask. Consider a lint/ask warning when the question text holds '(1)' '(2)' or '1.' '2.' lines.
 
 ## Depends on
