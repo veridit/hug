@@ -11,13 +11,10 @@ rank: "zzzzzzzzzzw8"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T20:56"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "jrj1vq-c3"
 worktree: "/Users/jhf/.jcode/scratch/jrj1vq"
-waiting_asked_by: "bonehound"
-waiting_on: "landing: branch yf39ya cfaa511d (3 commits on v0.7.69), CI 44391027727 green; crab merges/releases, then check 5 counts lint after the release and check 6 is Jørgen's"
-waiting_since: "2026-11-18T21:34"
 parent: "xekn3z"
 ---
 
@@ -103,3 +100,4 @@ check 5: crab 2026-11-20 09:44Z, hug v0.7.88 installed (brew: links into Cellar/
 - 2026-11-18T20:56 todo -> doing/active (take)
 - 2026-11-18T21:34 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)
+- 2026-11-20T10:45 doing/waiting -> doing/active (resume); was waiting_asked_by: bonehound; waiting_on: landing: branch yf39ya cfaa511d (3 commits on v0.7.69), CI 44391027727 green; crab merges/releases, then check 5 counts lint after the release and check 6 is Jørgen's; waiting_since: 2026-11-18T21:34
