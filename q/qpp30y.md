@@ -11,13 +11,15 @@ rank: "zzzzzzzzzzt1"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T13:34"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab review; check 3 with puppy's grid, check 4 Jørgen"
-waiting_since: "2026-11-18T14:15"
-waiting_asked_by: "macaque"
+asked_what: "Answer a question in hug tui: does the answer box appear at once, and do the box and its cursor read clearly?"
+asked_for: "jhf"
+asked_since: "2026-11-20T09:26"
+asked_by: "crab"
+asked_check: "4"
 ---
 
 ## Goal
@@ -42,6 +44,10 @@ Cause: answerbox.go openBox() sets m.prompt, resets and focuses the textarea, bu
 - [x] The pending view-key prefix uses the same underline cursor style.
 - [ ] Jørgen answers a question in hug tui and says the box and cursor read clearly.
 
+## Questions
+- 2026-11-20T09:26 question 1 by crab to jhf (check 4):
+  Answer a question in hug tui: does the answer box appear at once, and do the box and its cursor read clearly?
+
 ## Notes
 
 
@@ -58,3 +64,4 @@ crab 20:20 local: check 3 was ticked on 89e280c9; that lands as 897d4810 + dd183
 - 2026-11-18T13:34 todo -> doing/active (take)
 - 2026-11-18T14:15 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)
+- 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: macaque; waiting_on: crab review; check 3 with puppy's grid, check 4 Jørgen; waiting_since: 2026-11-18T14:15
