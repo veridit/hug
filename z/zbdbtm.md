@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzn"
 created: 2026-11-20
 updated: 2026-11-20
-design_since: "2026-11-20T11:12"
-design_asked_by: "crab"
-design_question: "For a file named in a task's text (e.g. MOCK.md in p87ngv's question): Space shows it in line under that line, Enter opens it in the file frame, Esc returns, matching Space and Enter in FILES today. Is that the right pair, or do you want a separate jump key (g)?"
-design_for: "jhf"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -41,6 +37,8 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
 ## Questions
 - 2026-11-20T11:12 question 1 by crab to jhf:
   For a file named in a task's text (e.g. MOCK.md in p87ngv's question): Space shows it in line under that line, Enter opens it in the file frame, Esc returns, matching Space and Enter in FILES today. Is that the right pair, or do you want a separate jump key (g)?
+  answered 2026-11-20T12:51 by jhf:
+    Let's try that and make sure you put it into this file as well so that when I review this task again when it is resolved I can use the task itself to check it
 
 ## Notes
 
@@ -49,3 +47,6 @@ Jørgen 2026-11-20 10:12Z (p87ngv request 4): p87ngv's questions name several fi
 
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
+- 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
+  > For a file named in a task's text (e.g. MOCK.md in p87ngv's question): Space shows it in line under that line, Enter opens it in the file frame, Esc returns, matching Space and Enter in FILES today. Is that the right pair, or do you want a separate jump key (g)?
+  Let's try that and make sure you put it into this file as well so that when I review this task again when it is resolved I can use the task itself to check it
