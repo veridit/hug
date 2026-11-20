@@ -51,3 +51,4 @@ Jørgen 2026-11-20 10:12Z (p87ngv request 4): p87ngv's questions name several fi
   > For a file named in a task's text (e.g. MOCK.md in p87ngv's question): Space shows it in line under that line, Enter opens it in the file frame, Esc returns, matching Space and Enter in FILES today. Is that the right pair, or do you want a separate jump key (g)?
   Let's try that and make sure you put it into this file as well so that when I review this task again when it is resolved I can use the task itself to check it
 - 2026-11-20T12:51 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T12:51 answer 1 acknowledged by crab
