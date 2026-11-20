@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.88 - 2026-11-20
+
 - `hug task done` refuses a task with a question still open to someone
   (72n8m4): exit 3, `fix: hug task resume ID` withdraws it on purpose.
   The board cue no longer offers done for such a task.
