@@ -1,15 +1,21 @@
 ---
 id: ddpxs8
 title: "Release v0.7.86"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-20T05:41"
+doing_with: "p277bp"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +36,7 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 - [ ] release.yml green and brew upgrade gives hug version 0.7.86 with links into the new Cellar
 
 ## Notes
+
+
+## History
+- 2026-11-20T05:41 todo -> doing/active (take with p277bp)
