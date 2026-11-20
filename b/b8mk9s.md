@@ -68,7 +68,7 @@ Promoted from item 3 of task:9taa9d.
 ## Acceptance
 - [ ] ~~memories stored one Markdown file per memory, retire = move to _retired/~~ (not relevant: the old one-line placeholder; replaced by checks 2-3 (decision) and the build checks filed after it, crab, 2026-11-20)
 - [ ] ~~Jørgen decides: one file per memory, or keep memories.json~~ (not relevant: replaced by check 4, which adds append-only JSON Lines as a third option, crab, 2026-11-20)
-- [ ] If one file per memory: Jørgen sets how many days a retired file is kept before hug mem dream deletes it (30 proposed)
+- [ ] ~~If one file per memory: Jørgen sets how many days a retired file is kept before hug mem dream deletes it (30 proposed)~~ (not relevant: replaced by check 6, which applies to every layout, not only one file per memory, crab, 2026-11-20)
 - [ ] Jørgen picks: keep memories.json as is, make it append-only JSON Lines, or one file per memory
 - [ ] Jørgen picks a storage layout: A (as is), B (one append-only file), C (file per memory), D (file per day), E (today folder, then day files) or F (as E, by week)
 - [ ] Jørgen sets how many days a retired memory is kept before hug mem dream deletes it (30 proposed)
