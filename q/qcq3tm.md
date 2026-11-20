@@ -35,6 +35,7 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
 - [ ] Opening a task with an open question to you scrolls so the question is in view and focused, wherever it sits on the page (tmux test, a question below the fold)
 - [ ] A question with --show draws no file above the page; the question shows the file as a link line, Enter opens it in the file frame, Esc returns to the question (tmux test)
 - [ ] Jørgen opens tb0dra-like asked tasks after the release and lands on the question
+- [ ] On p87ngv's board copy (doing/asked, old asked_* stage fields plus ## Questions 11 and 12), pressing a opens the answer box in view under the question it answers, with the cursor in it; typing shows text (tmux test; Jørgen 2026-11-20 10:13Z: a did nothing visible on p87ngv)
 
 ## Notes
 
