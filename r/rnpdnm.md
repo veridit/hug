@@ -1,6 +1,6 @@
 ---
 id: rnpdnm
-title: "Shared project memories: what may go from the local database to the shared branch"
+title: "Shared project memories: which may go from the local database to the branch"
 state: "doing"
 type: feature
 priority: "high"
