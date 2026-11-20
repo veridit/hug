@@ -79,6 +79,7 @@ shipped in v0.7.71 (69b5ceb)
 file:screen-0939.ans (12730 bytes, sha256:f8b1deb2) screen capture from hug tui
 file:capture-wording.md (1806 bytes, sha256:89289ad8)
 file:capture-wording-100x30.ans (2801 bytes, sha256:54dc7b78)
+file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)

@@ -1,0 +1,47 @@
+[1;38;2;0;191;255mHUG · hug ·[0m [38;2;135;149;168moverview[0m[38;2;135;149;168m › [0m[1;38;2;0;191;255mhjbfzd[0m                                                                                                                                           [1;38;2;255;179;84m? 30 for you[0m
+[1;38;2;0;191;255m[doing][0m  [1;38;2;255;179;84m[asked][0m  [38;2;188;157;255m[feature][0m  [38;2;216;204;133m[high][0m  [38;2;135;149;168mgroup:root[0m  [1;38;2;0;191;255massigned:crab · claude-opus-5-5 · hjbfzd[0m
+[38;2;135;149;168mcreated 2026-11-18 · updated 2026-11-18 · screen-capture-attach-chosen[0m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[0m
+[1mScreen capture: attach to a chosen task, pick one, or create a new task[0m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[0m
+
+[1;38;2;0;191;255mACCEPTANCE[0m
+[38;2;138;201;135m  ☑ 1. After S, the prompt reads e.g. 'Attach this screen to: ID_ · s select · c create · Esc' and typing a task ID (prefix completes) then Enter attaches it there (key test)[0m
+[38;2;138;201;135m  ☑ 2. s opens the task list in pick mode; Enter on a row attaches the capture to that task and returns (key test)[0m
+[38;2;138;201;135m  ☑ 3. c asks for a title, creates the task with the capture attached, and opens it (key test; the new task has the file in Files)[0m
+[38;2;138;201;135m  ☑ 4. Golden of the prompt at 80 and 140 columns[0m
+  ? ☐ 5. Jørgen confirms on his board after release
+[38;2;255;179;84m         The capture prompt shipped in v0.7.70: on your board, does S then attach, select or create work for you (the wording itself is question 2)?[0m
+[38;2;135;149;168m         └ question 4 · crab · 1 min ago · [0m[1;4;38;2;0;191;255;4ma[0m[38;2;135;149;168mnswer[0m
+  ? ☐ 6. The prompt reads 'Screen capture: attach to ID · select · create' (s and c underlined), the offered task's title on the keys line; after c 'Screen capture: new task,
+         title:'; after s 'Screen capture: select the task' (golden at 80 and 140, per capture-wording.md once Jørgen approves)
+[38;2;255;179;84m         Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? Today vs proposed, in the real theme:[0m
+[38;2;255;179;84m         capture-wording-100x30.ans in Files (Space shows it); all three steps are in capture-wording.md.[0m
+[38;2;135;149;168m         └ question 3 · crab · 1 min ago · [0m[1;4;38;2;0;191;255;4ma[0m[38;2;135;149;168mnswer[0m
+
+[38;2;135;149;168mno dependencies[0m
+
+[1;38;2;0;191;255m▸ FILES (3)[0m[38;2;135;149;168m · j/k or [ ] step · Space shows · Enter edits · E folder[0m
+[1;48;2;22;54;73m> ⎘ capture-wording-100x30.ans[0m
+  ⎘ capture-wording.md[38;2;135;149;168m  1.8 KiB[0m
+  ⎘ screen-0939.ans[38;2;135;149;168m  12.4 KiB[0m
+
+[1;38;2;0;191;255mREQUESTS[0m
+[38;2;135;149;168m1. jhf · 9 min ago · [0m[38;2;138;201;135mresolved[0m
+   So I tried this and I could attach it to this ticket. You should find it, but the wording isn't good. It says attach to, and then it says screen capture, and then it has a long
+text, and then you can create select or create. But it should be screen capture colon attached to the pre-filled task or select or create new or create, just do not even need new.
+Can you make a suggestion and put it as an attachment to this task?
+[38;2;138;201;135m   └ crab: Proposal attached: capture-wording.md (the exact strings for all three steps) and capture-wording-100x30.ans (today vs proposed in the real theme). Main line: 'Screen[m
+[38;2;138;201;135mcapture: attach to 000002 · select · create'; the long title moves to the keys line; 'new' is dropped from create. Added check 6 to build it; asked you to approve the wording.[0m
+
+[1;38;2;0;191;255mQUESTIONS[0m
+[38;2;135;149;168m1. crab → you · check 5 · 34 h ago · withdrawn 2026-11-20 09:51[0m
+[38;2;135;149;168m   Jørgen confirms on his board after release[0m
+[38;2;135;149;168m2. crab → you · check 6 · 8 min ago · withdrawn 2026-11-20 09:51[0m
+[38;2;135;149;168m   Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? (All three steps are in capture-wording.md.)[0m
+
+[1;38;2;0;191;255mNOTES[0m
+[38;5;252m[0m[38;5;252m[0m[38;5;252mDesign (duckling, before code). S copies as today, then opens the where-prompt in the input line (no confirm, no background fill): 'screen copied (N lines) · Attach this screen[38;5;252m [0m[38;5;252m [0m[0m
+[38;2;135;149;168mTask 30 of 30 · 47% · [0m[1;4;38;2;0;191;255;4mn[0m[38;2;135;149;168mext · [0m[1;4;38;2;0;191;255;4mp[0m[38;2;135;149;168mrevious · Esc back[0m
+
+[1;38;2;0;191;255mj/k[0m[38;2;135;149;168m [0m[38;2;135;149;168mfile[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mSpace[0m[38;2;135;149;168m [0m[38;2;135;149;168mshow[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mEnter[0m[38;2;135;149;168m [0m[38;2;135;149;168medit[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m [0m[38;2;135;149;168mnext[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4ma[0m[38;2;135;149;168mnswer[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mt[0m[38;2;135;149;168make[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4md[0m[38;2;135;149;168mone[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255mx[0m[38;2;135;149;168m [0m[38;2;135;149;168mdrop[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4me[0m[38;2;135;149;168mdit[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mN[0m[38;2;135;149;168mew[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mS[0m[38;2;135;149;168mcreen[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mE[0m[38;2;135;149;168mdit files[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mu[0m[38;2;135;149;168mp[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4mr[0m[38;2;135;149;168mequest[0m[38;2;135;149;168m · [0m[1;38;2;0;191;255m/[0m[38;2;135;149;168m [0m[38;2;135;149;168mfind[0m[38;2;135;149;168m · [0m[1;4;38;2;0;191;255;4m…[0m[38;2;135;149;168m[0m[38;2;135;149;168m[0m[1;4;38;2;0;191;255;4m[0m[38;2;135;149;168m[0m[38;2;135;149;168m[0m[1;38;2;0;191;255m[0m[38;2;135;149;168m[0m[38;2;135;149;168m[0m[38;2;135;149;168m[0m   [1;38;2;0;191;255mhug v0.7.82 → v0.7.87 · R reloads[0m
