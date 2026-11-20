@@ -28,6 +28,8 @@ Naming a coordinator by hand breaks when the agent changes or the harness restar
 Deduce it in the common case, say who it is, and let hug task coordinator NAME override.
 
 ## Relevant details
+Rule approved (Jørgen 2026-11-20 11:55Z), with one addition: the first delivery to a deduced coordinator says why it got it and how to decline. His words: 'when you deduce, you can just ask. We're giving this to you ... because you were perceived to be the coordinating task interacting with a human at a console. If you are not, an instruction to fix, the first time you see an agent who you have deduced.' Prefer, among live sessions, one that a person is talking to at a console.
+
 Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset or names no live session, the coordinator is the live agent session on this board: the only one if there is one, else the one that touched the board first and is still live. It stays coordinator while it lives; when it ends, the next live one takes over. hug task coordinator (no name) shows who it is and why (named, the only live agent, or first live). An explicit name still wins while that session lives. Today: [board] coordinator = "crab" in .hug/tasks/hug.toml; with --clear every session hears an unowned request once. Code: huginn delivery of requests (gmzd87, hbgybn). Jørgen 2026-11-20 10:30Z on gmzd87: 'they have to register. I am the coordinator, but shouldn't we implicitly do that if there's only one task active or only one agent active? And can we deduce this in the common case so that the first task that interacts is set as active as long as it's active. And if you want to override, you override. Rather than you have to do the setup and you have to pick the task because the agent can change, you restart the harness, something happens. So can we do something sensible by default here?'
 
 ## Depends on
@@ -38,6 +40,7 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 - [ ] With several live sessions, the first live one to touch the board receives it; when it ends, the next live one does (test)
 - [ ] A named coordinator wins while live; a named one that is gone falls back to the rule, and hug task coordinator says who and why (test)
 - [ ] Jørgen restarts his coordinator's harness, writes a request, and it arrives with no setup
+- [ ] The first request delivered to a deduced coordinator starts with one line: it got this because it was taken as the board's coordinator (the live session talking to a person), and if it is not, fix: hug task coordinator NAME (or --clear); later deliveries skip the line until the coordinator changes (test)
 
 ## Questions
 - 2026-11-20T11:31 question 1 by crab to jhf (check 1):
