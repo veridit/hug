@@ -1,7 +1,7 @@
 ---
 id: yg72xj
 title: "Release v0.7.81"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -13,8 +13,7 @@ updated: 2026-11-19
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
-doing_since: "2026-11-20T11:07"
+done_at: "2026-11-20T11:07"
 ---
 
 ## Goal
@@ -44,7 +43,7 @@ main 6a61e78a (CI 44507463246 8/8), CHANGELOG 3358d5b9, merge 8889481d, release.
 
 
 check 1: release.yml 44509048005 success; brew upgrade: hug v0.7.81, hug/muninn/huginn -> Cellar/hug/0.7.81
-Reflection (unanswered, 2026-11-19, crab)
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-19T11:54 todo -> doing/active (take with p277bp)
 - 2026-11-19T11:54 doing/active -> done (done); was doing_since: 2026-11-19T11:54; doing_with: p277bp
@@ -57,3 +56,4 @@ Reflection (unanswered, 2026-11-19, crab)
 - 2026-11-20T11:07 answer 1 acknowledged by crab
 - 2026-11-20T11:07 todo/ready -> doing/active (take)
 - 2026-11-20T11:07 crab read the answer: hug task take yg72xj
+- 2026-11-20T11:07 doing/active -> done (done); was doing_since: 2026-11-20T11:07
