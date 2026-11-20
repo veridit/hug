@@ -3,7 +3,7 @@ id: qcq3tm
 title: "Opening an asked task scrolls to its question; nothing inlined on top"
 state: todo
 type: feature
-priority: ""
+priority: "high"
 assignee: []
 labels: []
 group: ""
