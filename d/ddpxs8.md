@@ -1,7 +1,7 @@
 ---
 id: ddpxs8
 title: "Release v0.7.86"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -13,9 +13,7 @@ updated: 2026-11-20
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
-doing_with: "p87ngv"
-doing_since: "2026-11-20T11:27"
+done_at: "2026-11-20T11:27"
 ---
 
 ## Goal
@@ -54,8 +52,8 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 
 
 check 1: release.yml 44675088441 success; brew upgrade: hug v0.7.86, hug/muninn/huginn -> ../Cellar/hug/0.7.86/bin/*
-Reflection (unanswered, 2026-11-20, crab)
 Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they do' (shorter Goals read better, nothing missing). Request 1 (no Description heading, 'Details') went to 8a0ybb check 13.
+Reflection (open, 2026-11-20, crab): I asked the same question twice; check open questions before asking.
 ## History
 - 2026-11-20T05:41 todo -> doing/active (take with p277bp)
 - 2026-11-20T05:41 doing/active -> doing/asked (ask)
@@ -73,3 +71,4 @@ Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they do' (shorter Goals read better,
 - 2026-11-20T11:27 crab read the answer: hug task resolve ddpxs8 1 "Agreed: no Description. What hug tui heads DESCRIPTION is the Goal under the wrong name, so it overlaps. A ticket becom…"
 - 2026-11-20T11:27 answer 1 acknowledged by crab
 - 2026-11-20T11:27 todo/ready -> doing/active (take with p87ngv)
+- 2026-11-20T11:27 doing/active -> done (done); was doing_since: 2026-11-20T11:27; doing_with: p87ngv
