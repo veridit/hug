@@ -1,7 +1,7 @@
 ---
 id: mxj0zn
 title: "Release v0.7.90"
-state: "doing"
+state: "done"
 type: chore
 priority: "high"
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzr"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "active"
-doing_since: "2026-11-20T13:35"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-20T13:35"
 ---
 
 ## Goal
@@ -54,6 +53,7 @@ check 1: release.yml 44731952347 completed success; brew upgrade: 'hug v0.7.90',
 
 
 Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improvements after this.'
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-20T13:07 todo -> todo/design (ask)
 - 2026-11-20T13:35 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -63,3 +63,4 @@ Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improveme
 - 2026-11-20T13:35 answer 1 acknowledged by crab
 - 2026-11-20T13:35 crab read the answer: hug task note mxj0zn "Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improvements after this.'"
 - 2026-11-20T13:35 todo/ready -> doing/active (take)
+- 2026-11-20T13:35 doing/active -> done (done); was doing_since: 2026-11-20T13:35
