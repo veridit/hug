@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.92 - 2026-11-20
 
 - `hug task answer ID N` on a withdrawn question no longer panics
   (5vehza). It exits 2 with `question N on ID was withdrawn at AT
