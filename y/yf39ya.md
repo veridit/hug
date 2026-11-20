@@ -4,7 +4,7 @@ title: "Shipped work leaves the board clean, not a pile of lint"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["crab"]
+assignee: ["chipmunk"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzw8"
