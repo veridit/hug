@@ -1,6 +1,6 @@
 ---
 id: rnpdnm
-title: "Memory placement: extractor places personal/other projects, sync gate rule"
+title: "Shared project memories: keep today's filter or try a third one"
 state: "doing"
 type: feature
 priority: "high"
@@ -22,16 +22,43 @@ asked_by: "crab"
 ---
 
 ## Goal
-A sharing repo pushes only memories that pass both the extractor's placement and a local, model-free sync gate.
+Jørgen chooses whether to stop here with today's filter on shared memories or pay for a third attempt to make it stricter.
 
 ## Purpose
-On hug's 868 public memories, 58 (6.7%) should not have been pushed. A+ and B together leaked 0 of 699 in the measurement (gav9nw OPTIONS.md), with 13.7% held back. A pushed memory can't be taken back, so a held one is the cheap mistake.
+A repo that shares memories shows them to everyone who clones it, so wrong ones must stay on this machine.
 
 ## Principle
-Pushed only when both say push. B also covers memories written before it. A held line is released by rescope or a local exception, never by loosening the default. Confirm on fresh captures before any repo opts in (34r1ft).
+Choose from what was measured; change nothing for any repo until Jørgen picks.
 
 ## Relevant details
-A sharing repo pushes only memories both A+ and B pass (gav9nw, Jørgen 19:40Z). A+: the capture extractor places a memory as personal, project:<other> or client:<name> in its existing call (no extra paid call), from the catalog hug mem tidy place builds. B: a local, model-free gate at sync, beside LooksSecret (sync.go), holds any line that names a home path, another known project or client, the person, or is a preference/correction. Its term list lives in local config, never in the repo.
+WHAT WE ARE CHOOSING BETWEEN
+
+Background, in plain terms:
+- A memory is a short note hug writes after a session, such as 'run tests with nice -n 19'.
+- A repo can opt in to sharing: its memories are then pushed to a branch in the repo, and everyone who clones it sees them. Today no repo opts in (no hug.toml has [memory] share), so nothing is pushed anywhere.
+- When a repo does opt in, a filter runs before the push. It keeps on this machine (does not push) any memory that names a home folder (/Users/...), another project or client, the person, or states a personal preference. This shipped in v0.7.71.
+- Wrong memories still get through. Measured on new sessions, by hand and blind: about 3 in 100 with today's filter (8 of 254), and 12 in 100 with attempt 2 (36 of 295). The bar we set was 1 in 200.
+- Most of what gets through (24 of the 36) are working rules for agents, written while in this repo but meant for every repo. Example: 'agents should poll CI with a timeout'. They belong in global memory, not in the repo.
+
+Option A, stop here (my pick):
+- Keep today's filter, close this task, and drop check 3.
+- A repo that opts in later accepts that a few memories in 100 are misplaced. Before opting a repo in, someone reads what would be pushed with hug mem sync --dry-run.
+- Costs nothing.
+
+Option B, try a third attempt:
+- Teach the extractor to put working rules for agents in global memory, and add that kind of rule to the filter.
+- Measure again on new sessions: about 75 cheap model calls, a day of new sessions first, and a hand count. Two attempts like this failed before.
+
+Option C, review before push:
+- Nothing is pushed until a person approves it, in a list in hug tui.
+- Every wrong one is caught, but a person must review every memory, and that is a new feature to build.
+
+Attempt reports: /Users/jhf/.jcode/scratch/rnpdnm-c3/REPORT.md and /Users/jhf/.jcode/scratch/rnpdnm-step2/REPORT-STEP2.md.
+
+Previous Goal: A sharing repo pushes only memories that pass both the extractor's placement and a local, model-free sync gate.
+Previous Purpose: On hug's 868 public memories, 58 (6.7%) should not have been pushed. A+ and B together leaked 0 of 699 in the measurement (gav9nw OPTIONS.md), with 13.7% held back. A pushed memory can't be taken back, so a held one is the cheap mistake.
+Previous Principle: Pushed only when both say push. B also covers memories written before it. A held line is released by rescope or a local exception, never by loosening the default. Confirm on fresh captures before any repo opts in (34r1ft).
+Previous Details: A sharing repo pushes only memories both A+ and B pass (gav9nw, Jørgen 19:40Z). A+: the capture extractor places a memory as personal, project:<other> or client:<name> in its existing call (no extra paid call), from the catalog hug mem tidy place builds. B: a local, model-free gate at sync, beside LooksSecret (sync.go), holds any line that names a home path, another known project or client, the person, or is a preference/correction. Its term list lives in local config, never in the repo.
 
 OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alongside). The A+ row was estimated by a labeler, not measured on the extractor itself. Term list: local config (hug's global config), seeded from the place catalog plus the person's names from [people]. hug mem sync reports how many it held and why, one line per reason.
 
@@ -84,3 +111,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-20T11:21 request 1 by jhf
 - 2026-11-20T11:21 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:21 request 1 acknowledged by crab
+- 2026-11-20T11:26 request 1 in progress by crab: hug task set rnpdnm
