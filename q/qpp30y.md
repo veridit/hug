@@ -60,6 +60,7 @@ landed 3d74229 on main 2026-11-18: TUI answer/request box: drawn at once, blinki
 shipped in v0.7.65 (3d74229)
 check 3: 911j70 check 3 (macaque 89e280c9): after v, the slot after 'view:' shows theme.cursor (the qpp30y style, #00bfff underline) blinking at 530 ms via bubbles cursor.Model; golden testdata/header/view-cursor.txt 'after v' shows ESC[38;2;0;191;255;4m. Lands with 911j70 check 3.
 crab 20:20 local: check 3 was ticked on 89e280c9; that lands as 897d4810 + dd1830f0 (qh9ep1 check 9, quieter cues). Same cursor behaviour.
+file:screen-1130.ans (21282 bytes, sha256:af44cf4b) screen capture from hug tui
 ## History
 - 2026-11-18T13:34 todo -> doing/active (take)
 - 2026-11-18T14:15 doing/active -> doing/waiting (wait)
