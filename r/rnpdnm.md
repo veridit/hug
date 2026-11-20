@@ -91,6 +91,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
   As you see in the screenshot for this, it does scroll down. I don't notice that I can scroll up again because I don't have the arrows that I discussed in the previous task where there is a line and an arrow if I can go up and an arrow if I can go down. But I'm guessing that is coming in a later task. So hopefully I can view that. Now let me look at the task again. So this, I just used this task to give you a screenshot to give you that feedback
   resolved 2026-11-20T12:58 by crab:
     Thanks, noted where it belongs: the missing up/down arrows are 4ddcwa (↑ on the rule under the title when you can scroll up, a bottom rule with ↓ and the page status). Raised to high so it comes soon. Nothing changed on rnpdnm itself; its question 3 (A, B or C) still stands.
+- 2026-11-20T12:59 request 4 by jhf:
+  I don't know what the local store is, you have to be concrete. So what are the stores? Where are they physically and how would this work? How like short, succinct, grounded.
 
 ## Notes
 
@@ -145,3 +147,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T12:58 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:58 resolved request 3 by crab
 - 2026-11-20T12:58 request 3 acknowledged by crab
+- 2026-11-20T12:59 request 4 by jhf
