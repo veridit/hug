@@ -59,3 +59,4 @@ crab 17:29 local, from bonehound: the move to hug/memory is already on main (c16
 - 2026-11-18T12:20 resolved request 1 by crab
 - 2026-11-20T13:08 request 2 by jhf
 - 2026-11-20T13:08 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T13:08 request 2 acknowledged by crab
