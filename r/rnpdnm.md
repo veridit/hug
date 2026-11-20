@@ -47,6 +47,10 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
 - 2026-11-19T15:23 question 1 by crab to jhf:
   Memory placement attempt 2 failed its bar: of 295 memories that would be pushed to the shared repo, 36 should not be (24 are team working rules written as if they only apply to this repo). Shall I pre-register a third approach on new data, or drop this check and keep what already ships (personal and other-project memories held back by the sync gate)?
 
+## Requests
+- 2026-11-20T11:21 request 1 by jhf:
+  I don't understand the question of this ticket. It is confusing what is the third approach, what you mean pre-register, what you mean holding back. Try to be grounded and speak plainly. What are we choosing between? So simplify the things. Also, the description, the purpose is not clear. And what does it mean to be held back? Clarity and groundedness, please. I will try again once you've made this ticket practical.
+
 ## Notes
 
 crab 21:36 local: dependency on gav9nw removed. The decision is written (8a1b0c05, DESIGN.md 'Personal vs shared memories', CI 44386929067 green) and accepted; it lands in the next stack.
@@ -77,3 +81,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-18T22:24 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)
 - 2026-11-19T15:23 doing/waiting -> doing/asked (ask); was waiting_asked_by: bonehound; waiting_on: fresh captures after 2026-11-19 for the (a)+(b) attempt; waiting_since: 2026-11-18T22:24
+- 2026-11-20T11:21 request 1 by jhf
