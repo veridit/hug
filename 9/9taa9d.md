@@ -31,7 +31,7 @@ Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 task
 
 ## Acceptance
 - [x] hug setup, hug task ..., hug memory ... work; one MCP server
-- [ ] branches hug/tasks and hug/memories; huginn branch migrated in muninn, huginn, seid-lang
+- [x] branches hug/tasks and hug/memories; huginn branch migrated in muninn, huginn, seid-lang
 - [ ] memories stored one Markdown file per memory, retire = move to _retired/
 
 ## Requests
@@ -54,9 +54,11 @@ Status 2026-11-16: item 2 half done: tasks moved to branch hug/tasks at .hug/tas
 
 
 crab 17:29 local, from bonehound: the move to hug/memory is already on main (c16b7fd6, v0.7.61; hug, statbus, seid-lang moved). But gitbranch.Upgrade (gitbranch.go:1139) pushes hug/memory and deletes muninn-notes on the remote with no share check: a likely route for veridit/hug's public 868 memories (wxsyc5). Fix goes with 34r1ft: the upgrade renames locally only unless the repo opts in.
+check 2: crab 2026-11-20 12:08Z: git ls-remote origin on veridit/hug and seid-lang: only hug/tasks and hug/memory; no huginn, muninn-notes or muninn branch. Code: internal/layout/memory.go MemoryBranch = "hug/memory"; muninn-notes is kept only as OldMemoryBranch for the upgrade path and the commit-msg exemption. Branch name is 'memory' (Jørgen 11-16), not 'memories' as the check text says.
 ## History
 - 2026-11-18T12:00 request 1 by jhf
 - 2026-11-18T12:20 resolved request 1 by crab
 - 2026-11-20T13:08 request 2 by jhf
 - 2026-11-20T13:08 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:08 request 2 acknowledged by crab
+- 2026-11-20T13:08 request 2 in progress by crab: hug task check 9taa9d 2 "crab 2026-11-20 12:08Z: git ls-remote origin on veridit/hug and seid-lang: only hug/tasks and hug/memory; no huginn, mu…"
