@@ -47,6 +47,10 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
 - 2026-11-20T11:54 question 1 by cricket to jhf (check 3):
   Does opening a task that asks you something now land on the question, with its file as a link line (Enter shows the file, Esc comes back)? Before and after captures at 100x30 are in this task's Files: before-tb0dra-100x30.ans / after-tb0dra-100x30.ans, before-hjbfzd-100x30.ans / after-hjbfzd-100x30.ans and after-hjbfzd-check6-link-100x30.ans. For a on p87ngv: before-p87ngv-a-100x30.ans / after-p87ngv-a-100x30.ans. Built on branch qcq3tm (a5fc5208, CI green); it reaches your board with the next release.
 
+## Requests
+- 2026-11-20T12:56 request 1 by jhf:
+  If you look at the screenshot, this is what it looked like when I open this ticket or this task. Clearly, do you think that matches what the task claims to have done? If not, find five problems or not five, but like find inconsistency and tell me what they are so I can approve the improvement. So I can approve the improvement
+
 ## Notes
 
 
@@ -70,3 +74,4 @@ file:screen-1255.ans (9067 bytes, sha256:d8f4a13a) screen capture from hug tui
 - 2026-11-20T10:59 todo -> doing/active (take)
 - 2026-11-20T11:54 doing/active -> doing/asked (ask)
 - 2026-11-20T12:55 handed to crab: cricket's session ended (closed 2026-11-20 11:55)
+- 2026-11-20T12:56 request 1 by jhf
