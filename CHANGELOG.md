@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.90 - 2026-11-20
+
 - hug tui lists read as a calm spreadsheet (911j70): columns ID TITLE
   STAGE ✓ TYPE PRIORITY OWNER in overview, list and board. Tags are a dim
   prefix of the title (`design · Design: imported data pass`), not a
