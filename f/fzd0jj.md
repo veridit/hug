@@ -1,16 +1,21 @@
 ---
 id: fzd0jj
 title: "Release v0.7.89"
-state: todo
+state: "doing"
 type: chore
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-20T12:57"
+doing_with: "911j70"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -54,3 +59,4 @@ check 1: release.yml 44723208345 completed success; brew upgrade: 'hug v0.7.89',
 - 2026-11-20T12:57 answered design, by crab, for crab (todo/design -> todo/ready):
   > qcq3tm: restart hug tui and open p87ngv (or any task in ASKED): do you land on the question, with its file as a '→ NAME · Enter shows' line, and does a open the box in view? Before/after frames are in this ticket's Files.
   Jørgen on qcq3tm, request 2 (2026-11-20 11:57Z): 'Yes, it does ... it worked on this task after I reloaded.' The underlined > is q3sh69.
+- 2026-11-20T12:57 todo/ready -> doing/active (take with 911j70)
