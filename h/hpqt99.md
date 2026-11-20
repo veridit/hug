@@ -32,6 +32,12 @@ Imported memories can land in the wrong client's scope, and jcode memories live 
 Decide first, build later; imports and sync never cross a client boundary.
 
 ## Relevant details
+Decision 2, option 2D (Jørgen 2026-11-20 12:43Z, request 8: 'import and remove, then export to get it back'):
+- hug mem import jcode --apply copies every jcode memory into hug, then moves jcode's memory files out of jcode (to an archive folder, ~/.jcode/memory.imported-DATE/), so only one copy is live.
+- hug mem export jcode writes hug's memories back in jcode's format, if you ever turn jcode's own memory on again or move away from hug.
+- Today jcode's memory files are small: ~/.jcode/memory is 1.6 MB, frozen since 2026-11-05 (jcode's own memory is off in all 6 instances).
+- Compared with 2B (import once, keep the files, stop reading them): 2D also removes them, so nothing can be read twice by mistake; the archive folder keeps them until you delete it, and export is the way back. Cost: about 2 days for import plus remove, about 1 more day for export.
+
 Engram's axes, read from ~/.engram/engram.db (read-only, 2026-11-20 12:41Z), for Decision 1 (Jørgen request 7: 'does engram separate private vs public, project vs global?'):
 - Engram has two fields: scope, either 'project' or 'personal', and project, a name such as seid-lang, statbus, frogs. It has no global, no client, and no shared-vs-private flag.
 - In practice: 3,692 of 3,703 live observations are scope 'project', 11 are 'personal'; every one names a project (seid-lang 1,827, statbus 903, frogs 342, devops 269, ...).
@@ -185,3 +191,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T13:43 request 8 by jhf
 - 2026-11-20T13:43 request 8 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:43 request 8 acknowledged by crab
+- 2026-11-20T13:44 request 8 in progress by crab: hug task set hpqt99
