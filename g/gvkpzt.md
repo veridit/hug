@@ -1,7 +1,7 @@
 ---
 id: gvkpzt
 title: "Release v0.7.87"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzj"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-20T06:14"
-doing_with: "p277bp"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-20T11:27"
 ---
 
 ## Goal
@@ -46,6 +44,7 @@ main 51e36090 (CI 44677696260, 8/8), CHANGELOG 57113899, merge 6fa18387, release
 
 check 1: release.yml 44678753259 success; brew upgrade: hug v0.7.87, hug/muninn/huginn -> ../Cellar/hug/0.7.87/bin/*
 Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they are' (z6cb03: broken tasks at the top of LINT, in view).
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-20T06:14 todo -> doing/active (take with p277bp)
 - 2026-11-20T06:14 doing/active -> doing/asked (ask)
@@ -54,3 +53,4 @@ Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they are' (z6cb03: broken tasks at t
   Yes, they are
 - 2026-11-20T11:26 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:27 crab read the answer: hug task note gvkpzt "Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they are' (z6cb03: broken tasks at the top of LINT, in view)."
+- 2026-11-20T11:27 doing/active -> done (done); was doing_since: 2026-11-20T06:14; doing_with: p277bp
