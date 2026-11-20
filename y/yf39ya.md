@@ -74,6 +74,7 @@ landed 2dd99bb on main 2026-11-18: hug task: a release closes the shipped tasks 
 landed 8fafd8f on main 2026-11-18: hug task: a shipped task's after-release person check is asked, and their tick…
 landed 0155445 on main 2026-11-18: hug task: sync and the background pass hand a gone worker's tasks to the…
 shipped in v0.7.70 (2dd99bb)
+crab 2026-11-20 08:26Z, Jørgen 08:16Z screenshot (v0.7.87): '! 5 broken', shipped-not-done on 0gztsy, p277bp, txjkrm, x8zzzn, ynh84t, doing-idle on w4qmr1, missing-file on p87ngv. Check 5 fails. Causes by task: txjkrm todo with an open question to jhf still flagged (askAfterRelease only looks at doing active/waiting); 0gztsy in depends on kg07bt (shipped, waiting on 'crab review'); x8zzzn and ynh84t had a crab-owned check open after release, which nothing asked (crab released anyway); p277bp hid a pick for jhf in a label 'waiting-on-user'. Fixed by hand 08:22-08:25Z: ynh84t check 4 run and closed, x8zzzn waiting, w4qmr1 waiting until 11-26, p277bp asked. Checks 7-9 added for the flow gaps.
 ## History
 - 2026-11-18T20:48 request 1 by jhf
 - 2026-11-18T20:48 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
