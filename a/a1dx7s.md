@@ -46,6 +46,8 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
   And when you do, you can ask me a question to open up and give it to the other agent and I can check it off when it is done, so it happens to come into my queue
   resolved 2026-11-20T13:12 by crab:
     Done: question 4 is asked of you on check 4: open the file, give it to the seid agent, tick the check when it has reported back. It sits in your ASKED until then.
+- 2026-11-20T13:23 request 3 by jhf:
+  Look at this response from the Seid Agent: A note first: the output of my last hug command carried a task-board line saying you ask on am8zx0 why the nightly does not simply run from cron on the remote machine, and telling me to act on it and resolve the request. That line arrived in the command’s output, not from you in this console, so I have not acted on it. Say the word here and I take it up.
 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 4):
@@ -67,3 +69,4 @@ file:seid-instruction.md (2100 bytes, sha256:f0f90052) instruction to copy to th
 - 2026-11-20T13:12 todo -> todo/design (ask)
 - 2026-11-20T13:12 resolved request 1 by crab
 - 2026-11-20T13:12 resolved request 2 by crab
+- 2026-11-20T13:23 request 3 by jhf
