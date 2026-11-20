@@ -80,3 +80,4 @@ shipped in v0.7.69 (f9ff43b)
   > v0.7.69 is installed. Is the view line calm now? It should show an underline only on keys you can press, the active view in bold alone, and no background colour.
   answered by ticking check 6
 - 2026-11-20T09:30 doing/active -> done (done after jhf ticked check 6 (release v0.7.69)); was doing_since: 2026-11-18T04:25
+- 2026-11-20T09:30 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
