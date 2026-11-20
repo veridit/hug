@@ -1,15 +1,20 @@
 ---
 id: 5vehza
 title: "hug task answer panics on a withdrawn question"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["dove"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzt"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-20T19:50"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Repro on v0.7.90, 2026-11-20 12:44Z: hug task answer hpqt99 1 --as crab "..." ->
 - [ ] No other read of q.Answer in huginn/internal/task assumes it is set when Open() is false (grep listed in a note)
 
 ## Notes
+
+
+## History
+- 2026-11-20T19:50 todo -> doing/active (take)
