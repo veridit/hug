@@ -33,10 +33,11 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml green and brew upgrade gives hug version 0.7.86 with links into the new Cellar
+- [x] release.yml green and brew upgrade gives hug version 0.7.86 with links into the new Cellar
 
 ## Notes
 
 
+check 1: release.yml 44675088441 success; brew upgrade: hug v0.7.86, hug/muninn/huginn -> ../Cellar/hug/0.7.86/bin/*
 ## History
 - 2026-11-20T05:41 todo -> doing/active (take with p277bp)
