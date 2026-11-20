@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzy8"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "design"
-design_question: "Redrafted to say what to do. Does this read right?\n- The hug board is the record of work. Each task holds its details, status and dependencies; read the board to see what depends on what, what to pick up next, and how to resume after a break or a compaction.\n- Your harness todo list organizes you around the board: what you are delegating, what to pick up again, which task to update, check or close next. Keep it to what you can act on now; the details stay in the tasks.\n- When you coordinate several agents, use todos to stay focused on who is doing what, and follow their progress on their tasks.\n- A task waits on someone named doing something: hug task wait ID \"jhf: picks the column order\".\n- Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction."
-design_for: "jhf"
-design_since: "2026-11-19T10:02"
-design_asked_by: "crab"
+stage: "ready"
 ---
 
 ## Goal
@@ -53,6 +49,8 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
   - When you coordinate several agents, use todos to stay focused on who is doing what, and follow their progress on their tasks.
   - A task waits on someone named doing something: hug task wait ID "jhf: picks the column order".
   - Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction.
+  answered 2026-11-20T11:05 by jhf:
+    This was clear and sensible apart from my previous nitpick about declarative person and message separate instead of parsing a text
 
 ## Notes
 
@@ -80,3 +78,11 @@ Jørgen 2026-11-20 10:04Z (answer to question 1): 'Clearly no' to the first draf
 - 2026-11-20T11:04 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:04 answer 2 acknowledged by crab
 - 2026-11-20T11:04 crab read the answer: hug task note fd0j4p "Jørgen 2026-11-20 10:04Z (answer to question 1): 'Clearly no' to the first draft: hug task wait ID \"jhf: picks the colu…"
+- 2026-11-20T11:05 answered design (question 2), by jhf, for crab (todo/design -> todo/ready):
+  > Redrafted to say what to do. Does this read right?
+  > - The hug board is the record of work. Each task holds its details, status and dependencies; read the board to see what depends on what, what to pick up next, and how to resume after a break or a compaction.
+  > - Your harness todo list organizes you around the board: what you are delegating, what to pick up again, which task to update, check or close next. Keep it to what you can act on now; the details stay in the tasks.
+  > - When you coordinate several agents, use todos to stay focused on who is doing what, and follow their progress on their tasks.
+  > - A task waits on someone named doing something: hug task wait ID "jhf: picks the column order".
+  > - Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction.
+  This was clear and sensible apart from my previous nitpick about declarative person and message separate instead of parsing a text
