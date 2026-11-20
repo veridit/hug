@@ -38,6 +38,7 @@ Today: hug task dep --add 'when date YYYY-MM-DD' holds a todo task out of next, 
 - [x] ask --after DATE: not in the person's ASKED before DATE; after it, in ASKED with the question verbatim and its check (test with a fixed clock)
 - [x] 47sxn2 on hug's board becomes ask --to jhf --after 2026-11-24 and leaves Jørgen's ASKED today (done with hug commands)
 - [ ] Jørgen sees 47sxn2 come back into his ASKED on 2026-11-24 without anyone touching it
+- [ ] A waiting task's stage line leads with the date: 'waiting until 2026-11-24 · on WHAT · since 11-18', with no second 'until' and no 'on the date' wording; the same in hug tui's header, its list row stage cell ('until 11-24') and hug task show (golden, test)
 
 ## Requests
 - 2026-11-20T13:05 request 1 by jhf:
