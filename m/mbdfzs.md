@@ -11,13 +11,10 @@ rank: "zzzzzzzzzzll"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T02:44"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "check 3: crab's ps check after the next brew upgrade (8dee4a86 released); CI run 44223950419"
-waiting_since: "2026-11-18T03:38"
-waiting_asked_by: "kestrel"
 ---
 
 ## Goal
@@ -69,3 +66,4 @@ crab 2026-11-20 12:04Z ps: 4 hug mcp still run binaries older than the installed
 - 2026-11-20T13:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:05 request 1 acknowledged by crab
 - 2026-11-20T13:06 request 1 in progress by crab: hug task strike mbdfzs 3
+- 2026-11-20T13:06 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: check 3: crab's ps check after the next brew upgrade (8dee4a86 released); CI run 44223950419; waiting_since: 2026-11-18T03:38
