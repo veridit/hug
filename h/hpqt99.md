@@ -104,6 +104,8 @@ Former Principle: A design decision first, written down, no code in this task. K
     Withdrawn by crab 2026-11-20: Decision 2 gained option 2D (request 8); question 7 asks again with it.
 - 2026-11-20T13:02 question 6 by crab to jhf (check 5):
   Import and export (Decision 3 in Details): import previews by default, --apply imports, records what came in so old states never return, and offers to archive the source; export writes everything out for moving away and never deletes from hug; sync is kept only for the repo branch. Is that the shape you want?
+- 2026-11-20T13:44 question 7 by crab to jhf (check 3):
+  Decision 2, jcode memories: 2A keep reading jcode's files live, 2B import once and stop reading them (files stay), or 2D import, move jcode's files to an archive, and add hug mem export jcode to get them back (your proposal, about 3 days)?
 
 ## Requests
 - 2026-11-20T09:55 request 1 by jhf:
@@ -197,3 +199,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T13:44 answered asked (question 5, check 3), by crab, for crab (doing/asked -> doing/asked):
   > Decision 2, jcode memories: 2A keep reading jcode files live, 2B import each instance once and stop reading live (recommended, ~2 days, gated by an exact dry-run match), or 2C import a row only when it is touched (~2 days)? Trade-offs are under Decision 2 in Details.
   Withdrawn by crab 2026-11-20: Decision 2 gained option 2D (request 8); question 7 asks again with it.
+- 2026-11-20T13:44 asked question 7 of jhf, 3 open (doing/asked -> doing/asked)
