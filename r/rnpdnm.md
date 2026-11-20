@@ -87,6 +87,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
   I still don't understand what hold means, being held back. So in practical terms, we import memories, they're stored in a separate branch. Are we discussing if that separate branch should be pushed or not? Or are we discussing if some memories are placed in global storage or client storage and not in the project itself? So you don't lay out the practical consequences here.
   resolved 2026-11-20T12:54 by crab:
     Laid out in practice at the top of Details. Memories are written locally; a repo's memories go to its hug/memory branch and get pushed only if that repo turns sharing on, and today none does, so nothing is pushed. 'Held' means: when sharing is on, a memory that names a home folder, another project or client, or you, is not written to the branch; it stays local and is still recalled here. The choice is only about whether today's check is good enough to turn sharing on (A), or whether to first move agent rules to global memory (B) or approve each push (C). The old question is withdrawn; question 3 asks it plainly.
+- 2026-11-20T12:58 request 3 by jhf:
+  As you see in the screenshot for this, it does scroll down. I don't notice that I can scroll up again because I don't have the arrows that I discussed in the previous task where there is a line and an arrow if I can go up and an arrow if I can go down. But I'm guessing that is coming in a later task. So hopefully I can view that. Now let me look at the task again. So this, I just used this task to give you a screenshot to give you that feedback
 
 ## Notes
 
@@ -137,3 +139,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
   Withdrawn by crab 2026-11-20: still unclear (Jørgen request 2). Re-asked as question 3 with the practical consequences.
 - 2026-11-20T12:54 doing/active -> doing/asked (ask)
 - 2026-11-20T12:54 resolved request 2 by crab
+- 2026-11-20T12:58 request 3 by jhf
