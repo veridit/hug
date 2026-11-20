@@ -22,7 +22,7 @@ design_asked_by: "kikazaru"
 ---
 
 ## Goal
-Labels become tags: each board lists its tags in hug.toml, every task's tags show dimmed on its row before the title (compiler parser  Compile-time bounds…), lint holds every task to the list, and hug upgrade cleans an existing board (merges spelling variants, moves labels that duplicate type, stage or priority into those fields, drops one-off tags) after showing the diff.
+Each board lists its tags in hug.toml, rows show them, lint holds tasks to the list and hug upgrade cleans old labels.
 
 ## Purpose
 Jørgen 2026-11-17 10:24-10:27: backlog's board on Seid shows [Compiler][Parser] on each row and hug's does not, so the area is lost at a glance. State and stage are hard-coded because they carry semantics; tags are the per-project freedom to organise and see where work belongs, and listing them gives the consistency people and AI need. Measured on Seid (2,516 tasks): 891 distinct labels, 420 used once, variants like perf/performance, backend-c/c-backend, compiler/Compiler, test/tests/testing, and labels that are not tags (bug 467 = type, design 244 = stage, task-632 = a reference, low-pri = priority).
@@ -31,6 +31,8 @@ Jørgen 2026-11-17 10:24-10:27: backlog's board on Seid shows [Compiler][Parser]
 Tags carry no meaning to hug: display, filter, group only. The list in hug.toml is the truth; a tag not on it is a lint finding with the fix (add it to the list, or hug task set ID --tag). No backward compatibility: the field is tags, hug upgrade renames labels. The cleanup never writes before Jørgen approves the diff. Subtle on rows; tags are cut after the title, before the owner (102bc0 order).
 
 ## Relevant details
+Labels become tags: each board lists its tags in hug.toml, every task's tags show dimmed on its row before the title (compiler parser  Compile-time bounds…), lint holds every task to the list, and hug upgrade cleans an existing board (merges spelling variants, moves labels that duplicate type, stage or priority into those fields, drops one-off tags) after showing the diff.
+
 Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate with the grep in the notes). Seid board: ~/Veridit/src/seid-lang/.hug/tasks. Related: 6ephqk (state and stage, which absorbs design/king-ruled), kx2ndm (g groups; by tag is a candidate view), 102bc0 (row layout). Preview first: a mock of the overview with tags, from real Seid tasks, for Jørgen's look before building.
 
 ## Depends on
