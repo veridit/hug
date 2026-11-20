@@ -33,12 +33,13 @@ Found on branch 5vehza (2026-11-20 19:52 local): new task, hug task ask ID --to 
 ## Depends on
 
 ## Acceptance
-- [ ] A test runs the repro and gets either the design question answered or exit 2 with a fix: line, no panic (fails first on main with the panic)
+- [x] A test runs the repro and gets either the design question answered or exit 2 with a fix: line, no panic (fails first on main with the panic)
 
 ## Notes
 
 crab 2026-11-20 18:53Z design call: answer the design question (q=0). A bare answer answers what the stage shows as waiting; with no open numbered question and a pending design question, that is the design question. Refuse only when nothing is open: exit 2, 'no open question on ID', fix: hug task show ID. Several open numbered questions: today's rule stays. Built by dove on branch 5vehza as a second commit.
 
 
+check 1: TestAnswerDesignAfterNumberedQuestion (huginn/internal/cli/askwithdrawn_test.go:72). On ea218b3d (before the fix) it failed with 'panic: runtime error: index out of range [0] with length 0' at huginn/internal/task/asks.go:309 (pickQuestion). Fix 13ce8145 (crab's ruling, q=0): a bare answer with no open numbered question answers the design question ('answered design, by jhf'); with nothing open it exits 2, 'no open question on ID', fix: hug task show ID. Mutants (answer.go restored, shasum 062c3fad before and after): bare := n == 0 && false -> fails at :80 exit 2; refusal without 'no open question on' -> fails at :88. CI run 44799862741 on 13ce8145da04e1eeeb9fc002145e26741335bc7c: all 8 jobs success.
 ## History
 - 2026-11-20T19:58 todo -> doing/active (take with 5vehza)
