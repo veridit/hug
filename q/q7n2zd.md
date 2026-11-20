@@ -55,3 +55,4 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
   > Which key pastes the clipboard into a task: V (free today, next to S for screen), A (free, 'attach'), or another you prefer?
   Yes, let's try uppercase V
 - 2026-11-20T12:52 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T12:52 answer 1 acknowledged by crab
