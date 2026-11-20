@@ -21,7 +21,7 @@ waiting_asked_by: "kestrel"
 ---
 
 ## Goal
-A running hug mcp server serves every request with the hug that is installed now: when the binary on disk changes, it re-executes itself between requests, keeping its stdio connection, so no write comes from an older version.
+A running hug mcp server serves every request with the hug installed now, re-executing itself when the binary changes.
 
 ## Purpose
 kestrel 2026-11-18 (3nhp67): commit 5408358f on hug/tasks was written by an older hug's resume rule. ps at 02:32 local shows 8 hug mcp servers started 15-17 Nov (pids 3175, 9014, 13638, 15206, 56816, 65214, 77273), each still running the binary it started from while brew has installed v0.7.52. An old writer undoes new rules (stage fields, lint at write) and, after w40cmk, would write the old layout into a migrated board.
@@ -30,6 +30,8 @@ kestrel 2026-11-18 (3nhp67): commit 5408358f on hug/tasks was written by an olde
 One hug writes a board at a time: the installed one. The re-exec happens between requests, never mid-write, and the client sees no disconnect. No version negotiation or compatibility layer (hug upgrade migrates).
 
 ## Relevant details
+A running hug mcp server serves every request with the hug that is installed now: when the binary on disk changes, it re-executes itself between requests, keeping its stdio connection, so no write comes from an older version.
+
 Check os.Executable()'s resolved target (the Homebrew symlink moves to the new Cellar path) or its inode/mtime before each request; on change, finish the reply, then syscall.Exec the new binary with the same args and fds. Windows has no exec: there, spawn the new server and proxy, or exit and let the client restart; pick one and say which on the ticket. Must land before w40cmk.
 
 ## Depends on
