@@ -110,6 +110,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
   What does it mean to put agent rules into memory? And why do we have something called noon in still? Shouldn't we rename everything consistently to be hug memory? And now I understand. So we have some memories that live in our local database and we have some memories that live in the branch that is shared. And the split is what is local database only memories and what is project memories shared in a branch. And that's what we're discussing. Finally, it became clear to me. And as such, I don't understand clearly what I can choose between yet. Try to improve it yet again and make it even more clear, concretely, what we're choosing between.
   resolved 2026-11-20T13:31 by crab:
     Rewritten around your words. Details open with THE SPLIT: local-only memories in the database on your Mac, and a project's memories copied to its shared branch, only when that repo shares (none does today). WHAT GOES WRONG lists the 8 memories that crossed in our test, verbatim, and explains 'agent rules': 7 of the 8 are rules for how our agents work (who runs done, which tool, time limits), true on every project, so they belong in global memory, which stays local and is recalled everywhere. THE CHOICE gives A, B and C in terms of what you do and what it costs, with my pick (A now, B later if wanted). Question 4 asks it. Renaming muninn to hug everywhere you see it is a new task, y5vjc9.
+- 2026-11-20T17:03 request 6 by jhf:
+  So for each of those eight memories listed in the ticket, let's discuss if they should be memories or not. Do we have an appropriate qualifier for creating memories when we do it and when the agent does it? Let's look at how engram instructs too, and how jcode does it internally, they have some compaction and memory algorithm running. Lets look at how others did this.
 
 ## Notes
 
@@ -178,3 +180,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
   Withdrawn by crab 2026-11-20: rewritten again (request 5); question 4 asks the concrete choice.
 - 2026-11-20T13:31 doing/active -> doing/asked (ask)
 - 2026-11-20T13:31 resolved request 5 by crab
+- 2026-11-20T17:03 request 6 by jhf
