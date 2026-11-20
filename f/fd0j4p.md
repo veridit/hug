@@ -30,7 +30,7 @@ Files: the AGENTS.md section that hug task setup writes (huginn/internal/cli set
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen approves the exact added lines (quoted in a note)
+- [x] Jørgen approves the exact added lines (quoted in a note)
 - [ ] hug task setup writes them, and a test fails if any of the three rules is missing
 - [ ] help ask and help wait say a reminder is not a blocker and blocked names who must do what (test)
 
@@ -63,6 +63,7 @@ Approved lines (Jørgen 2026-11-20 10:05Z, answer 3: 'clear and sensible apart f
 - When you coordinate several agents, use todos to stay focused on who is doing what, and follow their progress on their tasks.
 - When a task waits, say on what: on a person, ask them (hug task ask ID --to NAME "question"); on another task, hug task dep ID --add OTHER; on a thing such as CI, a release or a date, hug task wait ID "what" (or --until DATE).
 - Ask a person on the task, one question each (hug task ask ID --to NAME), so the dialogue stays with the work and survives compaction.
+check 1: Approved by Jørgen 10:05Z (answer 3) with his nitpick applied to line 4 (person and message separate: ask --to NAME, dep --add, wait only for things); exact five lines in the note above.
 ## History
 - 2026-11-19T10:00 todo -> todo/design (ask)
 - 2026-11-19T10:02 answered design, by jhf, for crab (todo/design -> todo/ready):
