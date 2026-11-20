@@ -10,11 +10,14 @@ group: ""
 rank: "zzzzzzzzzzy5"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
+stage: "waiting"
 doing_since: "2026-11-19T10:36"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "a worker for build lane A; starts when the machine load is under 10"
+waiting_since: "2026-11-20T11:43"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -280,3 +283,4 @@ file:design.md (8185 bytes, sha256:cc3307db) full design text, rulings and synta
 - 2026-11-20T11:42 request 6 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:42 request 6 acknowledged by crab
 - 2026-11-20T11:43 request 6 in progress by crab: hug task attach p87ngv /Users/jhf/.jcode/scratch/p87/design.md
+- 2026-11-20T11:43 doing/active -> doing/waiting (wait)
