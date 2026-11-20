@@ -37,7 +37,7 @@ Split from ec6z6j (multi-task requests, which still waits on row marking rxr4z8)
 - [x] A request written while the coordinator session is idle reaches it without any agent-side poller, shown by an end-to-end test or recorded live run (session ids, timestamps).
 - [x] Each request shows its receipt state (pending, acknowledged, in progress, answered) in hug task requests and the TUI, and acknowledged is set only by the coordinator's actual receipt (test).
 - [x] The instructions hug installs (AGENTS.md block from hug setup, MCP tool descriptions, hook text) describe this delivery flow, and a test fails when the instruction text and the behaviour disagree.
-- [ ] Jørgen writes a request in hug tui and the coordinator reports receiving it, unprompted.
+- [x] Jørgen writes a request in hug tui and the coordinator reports receiving it, unprompted.
 
 ## Questions
 - 2026-11-20T09:26 question 1 by crab to jhf (check 4):
@@ -70,6 +70,7 @@ crab review 13:57Z: accepted. Read: harness/deliver.go (notify over the jcode da
 Landed on main 4e70099c (CI 44321337759, exact SHA, 6/6; code identical to mizaru's 19a5fc77). Ships in the next release; check 4 (Jørgen writes a request in hug tui) after that.
 landed 872a2a4 on main 2026-11-18: Requests and answers reach the board coordinator by design (gmzd87)
 shipped in v0.7.64 (872a2a4)
+check 4: Jørgen 2026-11-20 10:30Z: 'It works ... So this one is closed.' His default-coordinator idea is filed as a new task.
 ## History
 - 2026-11-18T12:34 todo -> doing/active (take)
 - 2026-11-18T15:11 doing/active -> doing/waiting (wait)
@@ -80,3 +81,4 @@ shipped in v0.7.64 (872a2a4)
   It works. The only thing is that they have to register. I am the coordinator, but shouldn't we implicitly do that if there's only one task active or only one agent active? And can we deduce this in the common case so that the first task that interacts is set as active as long as it's active. And if you want to override, you override. Rather than you have to do the setup and you have to pick the task because the agent can change, you restart the harness, something happens. So can we do something sensible by default here? But it works. So this one is closed.
 - 2026-11-20T11:30 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:30 answer 1 acknowledged by crab
+- 2026-11-20T11:30 crab read the answer: hug task check gmzd87 4 "Jørgen 2026-11-20 10:30Z: 'It works ... So this one is closed.' His default-coordinator idea is filed as a new task."
