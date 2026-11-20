@@ -32,6 +32,12 @@ Imported memories can land in the wrong client's scope, and jcode memories live 
 Decide first, build later; imports and sync never cross a client boundary.
 
 ## Relevant details
+Engram's axes, read from ~/.engram/engram.db (read-only, 2026-11-20 12:41Z), for Decision 1 (Jørgen request 7: 'does engram separate private vs public, project vs global?'):
+- Engram has two fields: scope, either 'project' or 'personal', and project, a name such as seid-lang, statbus, frogs. It has no global, no client, and no shared-vs-private flag.
+- In practice: 3,692 of 3,703 live observations are scope 'project', 11 are 'personal'; every one names a project (seid-lang 1,827, statbus 903, frogs 342, devops 269, ...).
+- So engram's 'project' means 'about this project', not 'share it'. Nothing in engram says a memory is public.
+hug's axes for comparison: where it is recalled (global, client:NAME, a project, personal) and, separately, whether a project's memories are shared on its branch (the repo's [memory] share switch, rnpdnm). Mapping on import: engram personal -> hug personal; engram project + name -> that hug project, client if the project sits under a client folder; shared stays off until the repo turns it on. That is option 1B.
+
 Decision 3 (Jørgen 2026-11-20 12:02Z, request 6): call it import and export, never sync, and make import one-way and final.
 Today: hug mem import jcode|engram copies memories in (with --dry-run), keeps each one's origin, and running it again only adds what is new. Nothing marks the source as done, and jcode's files are also read live (Decision 2), so two copies can drift.
 Proposal:
@@ -170,3 +176,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T13:41 request 7 by jhf
 - 2026-11-20T13:41 request 7 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:41 request 7 acknowledged by crab
+- 2026-11-20T13:41 request 7 in progress by crab: hug task set hpqt99
