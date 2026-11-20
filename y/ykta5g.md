@@ -65,3 +65,4 @@ shipped in v0.7.71 (c0ac0d5)
   answered by ticking check 3
 - 2026-11-20T09:38 doing/active -> done (done after jhf ticked check 3 (release v0.7.71)); was doing_since: 2026-11-18T20:00
 - 2026-11-20T09:38 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T09:38 answer 1 acknowledged by crab
