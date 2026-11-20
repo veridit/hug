@@ -88,6 +88,8 @@ Promoted from item 3 of task:9taa9d.
     Yes, now considered. Details list six layouts, measured on your memories.json: D is one JSON Lines file per day (141 files, a median day 38 KB, busiest 2.1 MB), so a new memory rewrites only today's file. Details also note what any dated layout must handle: 2,825 memories (15%) change on a later day. Question 3 asks you to pick.
 - 2026-11-20T17:06 request 4 by jhf:
   or keeping one today folder with one file per memory and then as we aggregate it goes into a dated JSON line file for that day. Yes, dreaming and removing old things becomes slower. Writing and cleaning up the current day becomes faster. That's also an option or current week and past weeks is also an option.
+  resolved 2026-11-20T17:08 by crab:
+    Added as option E (today folder with one small file per memory; dream rolls finished days into a dated JSON Lines file, and changes to old memories wait in today as newer copies until dream folds them in) and F (the same by week: 24 files, median 351 KB, busiest 3.9 MB). Title, Goal and Purpose now name the real gain: small writes. Check 5 is the A-F pick, check 6 the retired-days setting for any layout. My pick is E (question 3).
 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 2):
@@ -133,3 +135,4 @@ Promoted from item 3 of task:9taa9d.
   Withdrawn by crab 2026-11-20: Jørgen's requests 3 and 4 added dated layouts; question 3 asks A to F.
 - 2026-11-20T17:08 todo/ready -> todo/design (ask)
 - 2026-11-20T17:08 resolved request 3 by crab
+- 2026-11-20T17:08 resolved request 4 by crab
