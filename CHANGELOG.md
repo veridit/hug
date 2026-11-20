@@ -11,6 +11,11 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   that ran bubbles' real 530 ms timer now run it in a testing/synctest
   bubble, whose clock moves only when the test waits, and check the
   exact 530 ms; the tick helpers take their message with no timer.
+- Sync tests wait for a background pass while it makes progress (6zhyq2,
+  Windows CI 44522707343 attempt 1). settled failed any pass still
+  running at 30 s; on a slow runner one was still starting git then. It
+  now fails a pass with no new log line or git event for 30 s, or after
+  3 minutes in all, and says which.
 
 - Tests leave no tmux server running (wacc33, crab 2026-11-19 12:01Z:
   three huginn-golden/reload servers, parent launchd, alive for days). A
