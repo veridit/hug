@@ -15,6 +15,7 @@ branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-20T01:15"
 done_release: "v0.7.86"
+parent: "ddpxs8"
 ---
 
 ## Goal
