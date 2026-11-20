@@ -140,3 +140,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T12:54 doing/active -> doing/asked (ask)
 - 2026-11-20T12:54 resolved request 2 by crab
 - 2026-11-20T12:58 request 3 by jhf
+- 2026-11-20T12:58 request 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
