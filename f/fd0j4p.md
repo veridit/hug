@@ -76,3 +76,4 @@ crab 09:03Z: Jørgen's answer 1 ruled the wording: say what to do, not what not 
   > - A reminder to finish is not a blocker. Mark a task waiting only with who must do what: hug task wait ID "jhf: picks the column order".
   > - Put questions and discussion for a person on the task (hug task ask ID --to NAME, one question each), not only in chat.
   Clearly no. I'm confused and hug task weight ID and then you do parsing of the line Shouldn't you just specify the person and the message separately be declarative?
+- 2026-11-20T11:04 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
