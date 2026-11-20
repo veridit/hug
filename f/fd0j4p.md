@@ -95,3 +95,4 @@ check 1: Approved by Jørgen 10:05Z (answer 3) with his nitpick applied to line 
   This was clear and sensible apart from my previous nitpick about declarative person and message separate instead of parsing a text
 - 2026-11-20T11:05 answer 3 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:05 crab read the answer: hug task note fd0j4p "Approved lines (Jørgen 2026-11-20 10:05Z, answer 3: 'clear and sensible apart from my previous nitpick about declarativ…"
+- 2026-11-20T11:05 answer 3 acknowledged by crab
