@@ -43,7 +43,7 @@ Measured 19:53Z on hug's board (hug task lint): 40 findings, 37 broken, on 31 ta
 - [x] When a worker's session ends, its doing tasks go back to the board coordinator with a note, so stale-owner fires only when there is no coordinator either (test)
 - [ ] On hug's board after the next release, hug task lint shows no checks-all-hold, shipped-not-done or stale-owner that the above should have prevented (count in a note)
 - [ ] Jørgen confirms the lint view stays clean after a release
-- [ ] A task with an open question to a person never shows shipped-not-done (txjkrm 2026-11-20: todo, question 1 to jhf open since 11-18, still broken) (test)
+- [x] A task with an open question to a person never shows shipped-not-done (txjkrm 2026-11-20: todo, question 1 to jhf open since 11-18, still broken) (test)
 - [ ] The release step asks or hands over every shipped task whose open check is not a person's: the coordinator's own checks (x8zzzn c3, ynh84t c4 on 11-20) become its active work, never a broken finding (test)
 - [ ] A task in depends whose dependency is done or shipped is not shipped-not-done; its person check is asked once the dependency holds (0gztsy on kg07bt, 2026-11-20) (test)
 
@@ -75,6 +75,7 @@ landed 8fafd8f on main 2026-11-18: hug task: a shipped task's after-release pers
 landed 0155445 on main 2026-11-18: hug task: sync and the background pass hand a gone worker's tasks to the…
 shipped in v0.7.70 (2dd99bb)
 crab 2026-11-20 08:26Z, Jørgen 08:16Z screenshot (v0.7.87): '! 5 broken', shipped-not-done on 0gztsy, p277bp, txjkrm, x8zzzn, ynh84t, doing-idle on w4qmr1, missing-file on p87ngv. Check 5 fails. Causes by task: txjkrm todo with an open question to jhf still flagged (askAfterRelease only looks at doing active/waiting); 0gztsy in depends on kg07bt (shipped, waiting on 'crab review'); x8zzzn and ynh84t had a crab-owned check open after release, which nothing asked (crab released anyway); p277bp hid a pick for jhf in a label 'waiting-on-user'. Fixed by hand 08:22-08:25Z: ynh84t check 4 run and closed, x8zzzn waiting, w4qmr1 waiting until 11-26, p277bp asked. Checks 7-9 added for the flow gaps.
+check 7: branch 72n8m4 2a2b383d (tip 1e4a3386): document.go parses ## Questions before noteQuestion, and noteQuestion is quiet while HasOpenQuestion (todo or doing); cache SchemaVersion 29. Test cli/shippedasked_test.go TestShippedWithOpenQuestionIsNotBroken (todo, shipped, asked of jhf: no finding; answered: shipped-not-done is back): failing first on 6fa18387 'shippedasked_test.go:48: m1drs8 has a question open to jhf, but lint says shipped-not-done:'; now ok. Board copy at hug/tasks 1c825160 (Jørgen's 08:16Z board): hug task lint at 6fa18387 shipped-not-done 5 (0gztsy p277bp txjkrm x8zzzn ynh84t), at 1e4a3386 3 (p277bp x8zzzn ynh84t). CI run 44710823480 on 1e4a3386: success, 8/8 jobs.
 ## History
 - 2026-11-18T20:48 request 1 by jhf
 - 2026-11-18T20:48 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
