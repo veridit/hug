@@ -1,7 +1,7 @@
 ---
 id: yf39ya
 title: "Shipped work leaves the board clean, not a pile of lint"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzw8"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T20:56"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "jrj1vq-c3"
 worktree: "/Users/jhf/.jcode/scratch/jrj1vq"
 parent: "xekn3z"
+done_at: "2026-11-20T10:45"
 ---
 
 ## Goal
@@ -81,6 +80,7 @@ landed 2a2b383 on main 2026-11-20: Lint: a shipped task with a question open to 
 landed 4c775b4 on main 2026-11-20: Release step hands an agent's open check to its owner; a dependent is asked when…
 shipped in v0.7.88 (2a2b383)
 check 5: crab 2026-11-20 09:44Z, hug v0.7.88 installed (brew: links into Cellar/hug/0.7.88), on hug's board: hug task lint -> '2 findings (2 broken) on 2 tasks, in 1 code: 2 broken missing-file' (p87ngv, 7j706s: the quoted-path false positive filed as 7j706s). 0 checks-all-hold, 0 shipped-not-done, 0 stale-owner.
+Reflection (open, 2026-11-20, crab): My own release flow left this task 'waiting on landing' for two days after it shipped; the fix (check 8) now hands such checks back as active work.
 ## History
 - 2026-11-18T20:48 request 1 by jhf
 - 2026-11-18T20:48 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
@@ -101,3 +101,4 @@ check 5: crab 2026-11-20 09:44Z, hug v0.7.88 installed (brew: links into Cellar/
 - 2026-11-18T21:34 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 handed to crab: bonehound's session ended (closed 2026-11-18 22:24)
 - 2026-11-20T10:45 doing/waiting -> doing/active (resume); was waiting_asked_by: bonehound; waiting_on: landing: branch yf39ya cfaa511d (3 commits on v0.7.69), CI 44391027727 green; crab merges/releases, then check 5 counts lint after the release and check 6 is Jørgen's; waiting_since: 2026-11-18T21:34
+- 2026-11-20T10:45 doing/active -> done (done); was doing_since: 2026-11-18T20:56
