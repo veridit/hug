@@ -64,6 +64,8 @@ Original Purpose (Jørgen 2026-11-17 23:27 local, on 6ephqk): Jørgen 2026-11-17
 ## Requests
 - 2026-11-20T11:28 request 1 by jhf:
   This ticket seems to not have the goal and have a long description, which I talked about before. It doesn't make sense. The only question is that if I scroll down, should the goal or purpose jump into the subject so that I see what this is all about? I don't think so. I think the current view is okay. And I did jump into the question, so this is better.
+  resolved 2026-11-20T11:28 by crab:
+    Purpose and Principle are now one short sentence each; the long 2026-11-17 quote moved to the bottom of Details. Your verdict is recorded: the view is okay and it opened on the question, so check 4 is ticked and the task is closed. The Goal or Purpose does not follow you as you scroll. The DESCRIPTION heading going away is check 13 on 8a0ybb.
 
 ## Notes
 
@@ -96,3 +98,4 @@ check 4: Jørgen 2026-11-20 10:28Z (request 1): 'I think the current view is oka
 - 2026-11-20T11:28 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:28 request 1 acknowledged by crab
 - 2026-11-20T11:28 request 1 in progress by crab: hug task set 0gztsy
+- 2026-11-20T11:28 resolved request 1 by crab
