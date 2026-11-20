@@ -23,3 +23,5 @@ Filter and sort change the view
 ## Notes
 
 file:screen-1117.ans (12719 bytes, sha256:b3ce9a88) screen capture from hug tui
+
+file:screen-1117-2.ans (29394 bytes, sha256:a5354c13) screen capture from hug tui
