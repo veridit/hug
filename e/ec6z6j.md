@@ -38,7 +38,7 @@ User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task request
 - [x] A board mock shows marking several tasks, selected count, and one request action for that exact set, reviewed by Jorgen.
 - [x] Submitting one request preserves its exact text and selected IDs, visible to the agent without asking the user to repeat it per task.
 - [x] User can see pending versus handled targets without a partial fix silently closing the whole request.
-- [ ] the home page of a request for several tasks shows a targets line, and a link page shows the request text and points to its home (golden at 80x24)
+- [x] the home page of a request for several tasks shows a targets line, and a link page shows the request text and points to its home (golden at 80x24)
 - [x] With tasks marked, r opens the request box at the bottom of the list with the marked rows still in view; submitting sends one request for exactly the marked set (Jørgen 2026-11-20: option A) (tmux test)
 
 ## Notes
@@ -76,6 +76,7 @@ file:after-lint-3marked-r.ans (5076 bytes, sha256:a6ca6dea) dog (claude-opus-5-5
 dog (claude-opus-5-5/high) built checks 5 and 4 on branch ec6z6j-r, SHA d3b79155 on origin/main 5eeadcea (v0.7.90); CI on ci/ec6z6j-r run 44780705119. Check 5: r with marks opens the box at the bottom of the list under '▸ REQUEST FOR N MARKED · ids', Enter = one RequestFor for exactly the marked set, one commit 'hug task request a,b,c', one delivery, marks cleared; Esc / empty Enter write nothing and keep marks; footer offers r request; no marks = old r. Check 4: home and link pages show 'targets: a pending, b resolved, c pending'; a link shows the home's text and 'request N on HOME' (a Tab stop, Enter opens home); golden testdata/detail/manyrequest.txt at 80x24. Failing first: markedrequest_test.go:40 (footer lacks request), ec6z6j_tmux_test.go:139 (real binary, LINT), manyrequest_test.go:53 (no targets line). 10 mutants all killed, files restored identical (frames/mutants.txt). Frames: /Users/jhf/.jcode/scratch/ec6z6j-r/frames/{before,after}-lint-3marked-{marked,r}.ans. Blink: 6 captures 0.3 s apart, only the box's underscore changes, every other row identical. Suite niced -count=1: vet-ok, 41 ok, 0 FAIL.
 dog: CI run 44780705119 on d3b79155 (branch ci/ec6z6j-r, same SHA as ec6z6j-r): 8/8 success: secrets, bench, test macos/ubuntu/windows, test-windows-cli sync/rest, shards. Checks 4 and 5 left unticked for crab to tick on landing.
 check 5: d3b79155 (CI 44780705119 8/8): footer '3 marked · move · x drop · edit · request · Esc unmark'; r opens '▸ REQUEST FOR 3 MARKED · …' under the list; TestTmuxMarkedRequest ec6z6j_tmux_test.go, TestMarkedRequestBox; mutants M1-M5 caught
+check 4: d3b79155: targets line on home and link page, link names its home as a Tab stop; golden testdata/detail/manyrequest.txt 80x24; TestManyRequestPages; mutants M6-M10 caught
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
