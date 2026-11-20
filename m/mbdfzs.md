@@ -65,3 +65,4 @@ crab 2026-11-20 12:04Z ps: 4 hug mcp still run binaries older than the installed
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)
 - 2026-11-20T13:05 request 1 by jhf
+- 2026-11-20T13:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
