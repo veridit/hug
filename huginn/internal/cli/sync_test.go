@@ -318,50 +318,75 @@ func TestBackgroundSyncOfflineCatchesUp(t *testing.T) {
 	a, _, bare := clones(t)
 	id := execute(t, a, "new", "Offline", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C")["task"].(Reply)["id"].(string)
 	settled(t, a)
-	// The remote hangs until the test releases it (at most 10 s): a note
-	// that waited on the network would take that long. (A missing remote
-	// fails at once, so it could not show a wait.) The release, not a
-	// clock, ends each hang, so the passes after the timing check finish
-	// at once: a fixed 5 s hang per network call cost this test 16 s of
-	// settled on its own (0n4rnx).
-	release := filepath.ToSlash(filepath.Join(t.TempDir(), "release"))
+	// The remote hangs until the test releases it, and the test releases
+	// it only once the note has returned (4gj7z6). The order is the check,
+	// not the note's time, which a slow runner stretches: Windows CI
+	// 44638912154 failed a correct note at 2.749 s against 418 ms without
+	// background sync. (A missing remote fails at once, so it could not
+	// show a wait.) A call to the remote from this process, not the
+	// background pass (whose environment alone has childSettle), leaves
+	// "foreground": hug's own network deadline would end that wait, so
+	// the call, not the wait, is what fails. A note that waits for the
+	// pass instead never returns, and fails before go test's -timeout. A
+	// hang gives up after about 15 minutes, so none outlives a killed test
+	// binary for long, and leaves "expired".
+	hang := filepath.ToSlash(t.TempDir())
+	release, foreground, expired := hang+"/release", hang+"/foreground", hang+"/expired"
+	t.Cleanup(func() { _ = os.WriteFile(filepath.FromSlash(release), nil, 0o644) })
 	git(t, a.Cwd, "remote", "set-url", "origin", "ssh://hang.invalid/remote.git")
-	git(t, a.Cwd, "config", "core.sshCommand", "i=0; while [ ! -e '"+release+"' ] && [ $i -lt 100 ]; do sleep 0.1; i=$((i+1)); done; false")
-	var baseline time.Duration
-	offline(t, a, func() {
-		start := time.Now()
-		execute(t, a, "note", id, "baseline, no background sync")
-		baseline = time.Since(start)
-	})
-	start := time.Now()
-	execute(t, a, "note", id, "while offline")
-	offline := time.Since(start)
-	t.Logf("note with the remote hanging %v, without background sync %v", offline.Round(time.Millisecond), baseline.Round(time.Millisecond))
-	// Starting the syncer is a process start (slow under -race and on the
-	// Windows runner, ~1.9 s a note there); waiting on the remote is 5 s.
-	if offline > baseline+max(2*time.Second, baseline) {
-		t.Fatalf("note took %v with the remote hanging, %v without background sync: it waited on the network; log:\n%s", offline, baseline, syncLogOf(t, a))
+	git(t, a.Cwd, "config", "core.sshCommand", "[ -n \"$"+childSettle+"\" ] || : > '"+foreground+"'; i=0; while [ ! -e '"+release+"' ] && [ $i -lt 9000 ]; do sleep 0.1; i=$((i+1)); done; [ $i -lt 9000 ] || : > '"+expired+"'; false")
+	returned := make(chan error, 1)
+	go func() {
+		_, e := a.Execute(context.Background(), []string{"note", id, "while offline"})
+		returned <- e
+	}()
+	select {
+	case e := <-returned:
+		if e != nil {
+			t.Fatalf("note with the remote hanging: %v", e)
+		}
+		for _, f := range []string{foreground, expired} {
+			if _, e := os.Stat(filepath.FromSlash(f)); e == nil {
+				t.Fatalf("note waited on the hanging remote (%s); log:\n%s", filepath.Base(f), syncLogOf(t, a))
+			}
+		}
+	case <-beforeDeadline(t):
+		// Only a note that waits on the remote gets here, and go test's
+		// -timeout would kill the binary next, without the log.
+		t.Fatalf("note did not return while the remote hung: it waits on the network; log:\n%s", syncLogOf(t, a))
 	}
 	// The remote now fails at once, still unreachable: the pass ends
-	// with the 2 notes unpushed.
+	// with the note unpushed.
 	if e := os.WriteFile(filepath.FromSlash(release), nil, 0o644); e != nil {
 		t.Fatal(e)
 	}
 	settled(t, a)
 	code, out := runText(a, "ls")
-	if code != 0 || !strings.Contains(out, "sync: 2 unpushed: ") || !strings.Contains(out, "\nfix: hug task sync\n") {
+	if code != 0 || !strings.Contains(out, "sync: 1 unpushed: ") || !strings.Contains(out, "\nfix: hug task sync\n") {
 		t.Fatalf("ls offline: %d\n%s", code, out)
 	}
 	git(t, a.Cwd, "remote", "set-url", "origin", bare)
 	git(t, a.Cwd, "config", "--unset", "core.sshCommand")
 	execute(t, a, "note", id, "back online")
 	settled(t, a)
-	if got := git(t, bare, "log", "-3", "--format=%s", TaskBranch); strings.Count(got, "note "+id) != 3 {
+	if got := git(t, bare, "log", "-2", "--format=%s", TaskBranch); strings.Count(got, "note "+id) != 2 {
 		t.Fatalf("remote after reconnect:\n%s", got)
 	}
 	if code, out := runText(a, "ls"); code != 0 || strings.Contains(out, "unpushed") {
 		t.Fatalf("ls still reports unpushed after catching up: %d\n%s", code, out)
 	}
+}
+
+// beforeDeadline fires shortly before go test's -timeout ends the binary,
+// so a test stuck in a wait can fail with its own report first; never
+// without a -timeout. It bounds a wait that must never end, never a
+// duration a slow runner can stretch.
+func beforeDeadline(t *testing.T) <-chan time.Time {
+	deadline, ok := t.Deadline()
+	if !ok {
+		return nil
+	}
+	return time.After(time.Until(deadline) * 9 / 10)
 }
 
 // Competing titles keep the board's value and preserve the local value in a
