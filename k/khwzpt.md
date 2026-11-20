@@ -41,5 +41,6 @@ crab 2026-11-20 18:53Z design call: answer the design question (q=0). A bare ans
 
 
 check 1: TestAnswerDesignAfterNumberedQuestion (huginn/internal/cli/askwithdrawn_test.go:72). On ea218b3d (before the fix) it failed with 'panic: runtime error: index out of range [0] with length 0' at huginn/internal/task/asks.go:309 (pickQuestion). Fix 13ce8145 (crab's ruling, q=0): a bare answer with no open numbered question answers the design question ('answered design, by jhf'); with nothing open it exits 2, 'no open question on ID', fix: hug task show ID. Mutants (answer.go restored, shasum 062c3fad before and after): bare := n == 0 && false -> fails at :80 exit 2; refusal without 'no open question on' -> fails at :88. CI run 44799862741 on 13ce8145da04e1eeeb9fc002145e26741335bc7c: all 8 jobs success.
+Correction to check 1 evidence: TestAnswerDesignAfterNumberedQuestion is at huginn/internal/cli/askwithdrawn_test.go:71, not :72.
 ## History
 - 2026-11-20T19:58 todo -> doing/active (take with 5vehza)
