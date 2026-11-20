@@ -30,3 +30,5 @@ Shipped: ec6z6j checks 4 and 5 (d3b79155, CI 44780705119 8/8). Try it: brew upgr
 - [ ] Jørgen confirms r on marked rows works as he wanted
 
 ## Notes
+
+file:before-lint-3marked-marked.ans (5739 bytes, sha256:231e255d) before (v0.7.90): 3 rows marked, no request in the footer
