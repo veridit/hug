@@ -17,9 +17,9 @@ stage: "waiting"
 model: "claude-opus-5-5"
 branch: "c3hszg"
 worktree: "/Users/jhf/.jcode/scratch/c3hszg"
-waiting_on: "crab review: best-passage measured, no gain, parked; user weighting waits for captured source"
-waiting_since: "2026-11-18T18:34"
-waiting_asked_by: "piglet"
+waiting_on: "memories with a captured source (user weighting cannot be measured until then; best-passage ruled out 11-18 18:35 local, doc landed v0.7.68)"
+waiting_since: "2026-11-20T04:25"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
