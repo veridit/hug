@@ -3,7 +3,7 @@ id: 4ddcwa
 title: "Detail page frame: ↑ on the top rule, a bottom rule with ↓ and the page status"
 state: todo
 type: feature
-priority: "medium"
+priority: "high"
 assignee: []
 labels: []
 group: ""
