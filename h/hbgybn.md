@@ -1,7 +1,7 @@
 ---
 id: hbgybn
 title: "Requests: a person writes a request in a task, an agent turns it into edits"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,16 +10,11 @@ group: ""
 rank: "zzzzzzzzzzn"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T00:57"
-stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Write a real request on a hug task after this release: does the agent turn it into ticket changes you agree with?"
-asked_for: "jhf"
-asked_since: "2026-11-20T09:26"
-asked_by: "crab"
-asked_check: "6"
+done_at: "2026-11-20T11:29"
+done_release: "v0.7.55"
 ---
 
 ## Goal
@@ -44,11 +39,13 @@ Not the asked stage: that blocks the task on a person; a request is an open item
 - [x] The assignee's session gets one recall line naming the task, the request text and the resolve command, on its next turn; a task with no assignee routes to the coordinator (harness test)
 - [x] In the TUI, R in a detail opens a multi-line box (Enter sends, Alt-Enter adds a line); the row shows 'req 1' while open, and the detail shows each request with its account once resolved (golden)
 - [x] MCP task_update request and resolve behave like the CLI (test)
-- [ ] Jørgen writes a real request on hug's board after release and an agent resolves it into ticket changes he agrees with
+- [x] Jørgen writes a real request on hug's board after release and an agent resolves it into ticket changes he agrees with
 
 ## Questions
 - 2026-11-20T09:26 question 1 by crab to jhf (check 6):
   Write a real request on a hug task after this release: does the agent turn it into ticket changes you agree with?
+  answered 2026-11-20T11:29 by jhf:
+    answered by ticking check 6
 
 ## Notes
 
@@ -87,3 +84,7 @@ Approved follow-on ec6z6j: single and multi-task feedback should converge on one
 - 2026-11-18T00:57 todo -> doing/active (take)
 - 2026-11-18T01:17 doing/active -> doing/waiting (wait)
 - 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: kestrel; waiting_on: check 4: nautilus's TUI R box on top of 8737541; 6: Jørgen after the release; waiting_since: 2026-11-18T01:17
+- 2026-11-20T11:29 answered asked (check 6), by jhf, for crab (doing/asked -> doing/active):
+  > Write a real request on a hug task after this release: does the agent turn it into ticket changes you agree with?
+  answered by ticking check 6
+- 2026-11-20T11:29 doing/active -> done (done after jhf ticked check 6 (release v0.7.55)); was doing_since: 2026-11-18T00:57
