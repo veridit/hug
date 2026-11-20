@@ -53,6 +53,7 @@ CI fixes after 3197d0b8 went red: HUG_TEST_FAKE_MCP added to env.Known (Test kin
 crab 20:44 local: 67d46348 accepted on review (CI 44377886910 6/6 incl. macOS rerun; Windows failure was the test's string-built JSON, now json.Marshal; scan gated to darwin/linux, mutant m9 killed). Stacks after 9163f102.
 landed 24e329e on main 2026-11-18: hug names an MCP server too old to reload itself, to its own session (z77pem)
 shipped in v0.7.71 (24e329e)
+crab 2026-11-20 12:04Z: shipped in v0.7.71; check 2 waits on Jørgen's machine: 4 old hug mcp servers still run (see mbdfzs), so the stale-server line should show there now.
 ## History
 - 2026-11-18T18:23 todo -> doing/active (take)
 - 2026-11-18T20:44 doing/active -> doing/waiting (wait)
