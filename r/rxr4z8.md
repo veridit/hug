@@ -45,7 +45,7 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 - [x] t, d, x and w act on every marked task after one confirm naming the count, and a refused task is named with its fix: line while the others go ahead (key test with 3 marked, one refused)
 - [x] m grabs the marked tasks as one block; J/K and the drop move them together and keep their order (key test)
 - [x] Inside a task Space still ticks the focused check (existing tests stay green)
-- [ ] Jørgen confirms on his board after release
+- [x] Jørgen confirms on his board after release
 - [x] Jørgen 19:27Z (answer 1): a marked row that also has the cursor shows one combined sign, not > or ◆ alone. Proposed ⋗ (U+22D7, greater-than with dot: the cursor carrying a mark; single width); the alternative ▸ (U+25B8). The mock shows both rows side by side and asks this one question
 - [x] Jørgen 19:27Z: the narrow footer (under 70 columns) never shows bare letters: it reads e.g. '3 marked · ? actions · Esc unmark', and ? lists the actions with their words (key test at 60 columns)
 - [x] Jørgen 19:27Z: after an action, the tasks that went through are unmarked and the refused ones stay marked (key test, extends check 3)
@@ -101,6 +101,7 @@ landed 9b56535 on main 2026-11-19: tui: tags, taken-with and 140 tmux help golde
 shipped in v0.7.73 (4b49e10)
 file:screen-1138.ans (6901 bytes, sha256:8f2b42e1) screen capture from hug tui
 check 7: Jørgen 2026-11-20 10:39Z (request 1): 'the response here is cursor carrying a mark. That's what I want.' ⋗ stays.
+check 6: Jørgen 2026-11-20 10:39Z (request 1): 'So you can close that'.
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
