@@ -46,7 +46,7 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 - [x] m grabs the marked tasks as one block; J/K and the drop move them together and keep their order (key test)
 - [x] Inside a task Space still ticks the focused check (existing tests stay green)
 - [ ] Jørgen confirms on his board after release
-- [ ] Jørgen 19:27Z (answer 1): a marked row that also has the cursor shows one combined sign, not > or ◆ alone. Proposed ⋗ (U+22D7, greater-than with dot: the cursor carrying a mark; single width); the alternative ▸ (U+25B8). The mock shows both rows side by side and asks this one question
+- [x] Jørgen 19:27Z (answer 1): a marked row that also has the cursor shows one combined sign, not > or ◆ alone. Proposed ⋗ (U+22D7, greater-than with dot: the cursor carrying a mark; single width); the alternative ▸ (U+25B8). The mock shows both rows side by side and asks this one question
 - [x] Jørgen 19:27Z: the narrow footer (under 70 columns) never shows bare letters: it reads e.g. '3 marked · ? actions · Esc unmark', and ? lists the actions with their words (key test at 60 columns)
 - [x] Jørgen 19:27Z: after an action, the tasks that went through are unmarked and the refused ones stay marked (key test, extends check 3)
 
@@ -100,6 +100,7 @@ landed f7235d4 on main 2026-11-19: tui: marked and help goldens on main's TAGS c
 landed 9b56535 on main 2026-11-19: tui: tags, taken-with and 140 tmux help goldens with Space mark (rxr4z8)
 shipped in v0.7.73 (4b49e10)
 file:screen-1138.ans (6901 bytes, sha256:8f2b42e1) screen capture from hug tui
+check 7: Jørgen 2026-11-20 10:39Z (request 1): 'the response here is cursor carrying a mark. That's what I want.' ⋗ stays.
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
@@ -120,3 +121,4 @@ file:screen-1138.ans (6901 bytes, sha256:8f2b42e1) screen capture from hug tui
 - 2026-11-20T11:39 request 1 by jhf
 - 2026-11-20T11:39 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:39 request 1 acknowledged by crab
+- 2026-11-20T11:39 request 1 in progress by crab: hug task check rxr4z8 7 "Jørgen 2026-11-20 10:39Z (request 1): 'the response here is cursor carrying a mark. That's what I want.' ⋗ stays."
