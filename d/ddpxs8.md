@@ -12,10 +12,14 @@ created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-20T05:41"
 doing_with: "p277bp"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_by: "crab"
+asked_what: "0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?"
+asked_for: "jhf"
+asked_since: "2026-11-20T05:41"
 ---
 
 ## Goal
@@ -35,9 +39,14 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 ## Acceptance
 - [x] release.yml green and brew upgrade gives hug version 0.7.86 with links into the new Cellar
 
+## Questions
+- 2026-11-20T05:41 question 1 by crab to jhf:
+  0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?
+
 ## Notes
 
 
 check 1: release.yml 44675088441 success; brew upgrade: hug v0.7.86, hug/muninn/huginn -> ../Cellar/hug/0.7.86/bin/*
 ## History
 - 2026-11-20T05:41 todo -> doing/active (take with p277bp)
+- 2026-11-20T05:41 doing/active -> doing/asked (ask)
