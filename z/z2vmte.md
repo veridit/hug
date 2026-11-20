@@ -64,3 +64,4 @@ file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 - 2026-11-18T03:38 todo -> doing/active (take)
 - 2026-11-18T04:23 doing/active -> doing/waiting (wait)
 - 2026-11-20T13:05 request 1 by jhf
+- 2026-11-20T13:05 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
