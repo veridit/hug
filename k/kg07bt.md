@@ -11,13 +11,15 @@ rank: "zzzzzzzzzzuv"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T16:25"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "crab review"
-waiting_since: "2026-11-18T16:56"
-waiting_asked_by: "macaque"
+asked_what: "v0.7.66 made the ACCEPTANCE heading calm and the cursor the only mark on the focused question. Open a task that asks you something: is it calm, and is the cursor where your answer goes?"
+asked_for: "jhf"
+asked_since: "2026-11-20T09:26"
+asked_by: "crab"
+asked_check: "3"
 ---
 
 ## Goal
@@ -41,6 +43,10 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 - [x] The focused asked check renders with no background fill and no bold; the cursor alone marks it (test asserts the SGR codes on that row).
 - [ ] Jørgen opens a task asked of him and says it is calm and the cursor is where his answer goes.
 
+## Questions
+- 2026-11-20T09:26 question 1 by crab to jhf (check 3):
+  v0.7.66 made the ACCEPTANCE heading calm and the cursor the only mark on the focused question. Open a task that asks you something: is it calm, and is the cursor where your answer goes?
+
 ## Notes
 
 
@@ -56,3 +62,4 @@ shipped in v0.7.66 (3517e62)
 - 2026-11-18T16:25 todo -> doing/active (take)
 - 2026-11-18T16:56 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)
+- 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: macaque; waiting_on: crab review; waiting_since: 2026-11-18T16:56
