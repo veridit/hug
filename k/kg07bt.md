@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzuv"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T16:25"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "v0.7.66 made the ACCEPTANCE heading calm and the cursor the only mark on the focused question. Open a task that asks you something: is it calm, and is the cursor where your answer goes?"
-asked_for: "jhf"
-asked_since: "2026-11-20T09:26"
-asked_by: "crab"
-asked_check: "3"
 ---
 
 ## Goal
@@ -46,6 +41,8 @@ Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering 
 ## Questions
 - 2026-11-20T09:26 question 1 by crab to jhf (check 3):
   v0.7.66 made the ACCEPTANCE heading calm and the cursor the only mark on the focused question. Open a task that asks you something: is it calm, and is the cursor where your answer goes?
+  answered 2026-11-20T11:33 by jhf:
+    So this ticket is accepted and my feedback that you got from this ticket can be new tickets.
 
 ## Requests
 - 2026-11-20T11:33 request 1 by jhf:
@@ -71,3 +68,6 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
 - 2026-11-20T11:33 request 1 by jhf
 - 2026-11-20T11:33 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:33 request 1 acknowledged by crab
+- 2026-11-20T11:33 answered asked (check 3), by jhf, for crab (doing/asked -> doing/active):
+  > v0.7.66 made the ACCEPTANCE heading calm and the cursor the only mark on the focused question. Open a task that asks you something: is it calm, and is the cursor where your answer goes?
+  So this ticket is accepted and my feedback that you got from this ticket can be new tickets.
