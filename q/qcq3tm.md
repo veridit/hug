@@ -50,6 +50,8 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
 ## Requests
 - 2026-11-20T12:56 request 1 by jhf:
   If you look at the screenshot, this is what it looked like when I open this ticket or this task. Clearly, do you think that matches what the task claims to have done? If not, find five problems or not five, but like find inconsistency and tell me what they are so I can approve the improvement. So I can approve the improvement
+- 2026-11-20T12:57 request 2 by jhf:
+  Yes, it does. Except that there's an underscore under the greater than. It looks like I can select it. It isn't a shortcut. It should have been pulsing, just like an underscore. And it worked on this task after I reloaded. Maybe that supersedes the previous request. Thank you.
 
 ## Notes
 
@@ -78,3 +80,4 @@ file:screen-1256.ans (11972 bytes, sha256:cb2a9d3f) screen capture from hug tui
 - 2026-11-20T12:56 request 1 by jhf
 - 2026-11-20T12:56 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:56 request 1 acknowledged by crab
+- 2026-11-20T12:57 request 2 by jhf
