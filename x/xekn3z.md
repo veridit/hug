@@ -1,20 +1,24 @@
 ---
 id: xekn3z
 title: "Release v0.7.88"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-20
 updated: 2026-11-20
-design_question: "72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.)"
-design_for: "jhf"
-design_since: "2026-11-20T10:45"
-design_asked_by: "crab"
-stage: "design"
+stage: "asked"
+asked_for: "jhf"
+asked_since: "2026-11-20T10:45"
+asked_by: "crab"
+doing_since: "2026-11-20T10:45"
+asked_what: "72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.)"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -45,3 +49,4 @@ check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/
 
 ## History
 - 2026-11-20T10:45 todo -> todo/design (ask)
+- 2026-11-20T10:45 todo/design -> doing/asked (take, 1 open question(s) kept); was design_asked_by: crab; design_for: jhf; design_question: 72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.); design_since: 2026-11-20T10:45
