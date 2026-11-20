@@ -33,6 +33,7 @@ func slotBoard(t *testing.T, ask bool, check int) model {
 			}
 		}
 	}
+	s.Actor = "jhf" // as hug tui sets it (cli/hooks.go)
 	m := newModel(s, Options{User: "jhf"})
 	m.width, m.height = 100, 30
 	m.resize()
@@ -73,8 +74,9 @@ func TestActionKeepsTheSlot(t *testing.T) {
 		where string
 	}{
 		{"overview ASKED, answer", true, nil, []string{"a", "o", "k", "enter"}, "ASKED"},
-		{"list filtered, take", false, []string{"v", "l", "/", "state:todo", "tab"}, []string{"t", "enter"}, "the list (filtered)"},
-		{"board TODO, take", false, []string{"v", "b"}, []string{"t", "enter"}, "the TODO column"},
+		// Drop, not take: one ticket in doing at a time (n2hq8p).
+		{"list filtered, drop", false, []string{"v", "l", "/", "state:todo", "tab"}, []string{"x", "d", "u", "p", "enter", "enter"}, "the list (filtered)"},
+		{"board TODO, drop", false, []string{"v", "b"}, []string{"x", "d", "u", "p", "enter", "enter"}, "the TODO column"},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			m := slotBoard(t, c.ask, 0)

@@ -1,0 +1,93 @@
+== overview 100x30
+HUG · overview › ASKED › bbbbbb                                                          ? 5 for you
+[todo]  [design]  [feature]  [high]  group:root  unassigned                                         
+created 2026-11-01 · updated 2026-11-01 · t                                                         
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Bravo task                                                                                          
+────────────────────────────────────────────────────────────────────────────────────────────────────
+> ? pick one?                                                                                       
+    └ crab · 3 min ago · answer                                                                     
+                                                                                                    
+DESCRIPTION                                                                                         
+g                                                                                                   
+                                                                                                    
+PURPOSE                                                                                             
+p                                                                                                   
+                                                                                                    
+PRINCIPLE                                                                                           
+q                                                                                                   
+                                                                                                    
+ACCEPTANCE                                                                                          
+  ☐ 1. one                                                                                          
+  ☐ 2. two                                                                                          
+                                                                                                    
+no dependencies                                                                                     
+                                                                                                    
+HISTORY                                                                                             
+                                                                                                    
+• 2026-11-20T09:50 todo -> todo/design (ask)                                                        
+Task 2 of 5 · 100% · next · previous · Esc back                                                     
+                                                                                                    
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
+== list 100x30
+HUG · list › /state:todo › bbbbbb                                                                   
+[todo]  [feature]  [high]  group:root  unassigned                                                   
+created 2026-11-01 · updated 2026-11-01 · t                                                         
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Bravo task                                                                                          
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION                                                                                         
+g                                                                                                   
+                                                                                                    
+PURPOSE                                                                                             
+p                                                                                                   
+                                                                                                    
+PRINCIPLE                                                                                           
+q                                                                                                   
+                                                                                                    
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
+> ☐ 1. one                                                                                          
+  ☐ 2. two                                                                                          
+                                                                                                    
+no dependencies                                                                                     
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+Task 2 of 5 · 100% · next · previous · Esc back                                                     
+                                                                                                    
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · New · up · request · / find … 
+== board 100x30
+HUG · board › TODO › bbbbbb                                                                         
+[todo]  [feature]  [high]  group:root  unassigned                                                   
+created 2026-11-01 · updated 2026-11-01 · t                                                         
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Bravo task                                                                                          
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION                                                                                         
+g                                                                                                   
+                                                                                                    
+PURPOSE                                                                                             
+p                                                                                                   
+                                                                                                    
+PRINCIPLE                                                                                           
+q                                                                                                   
+                                                                                                    
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
+> ☐ 1. one                                                                                          
+  ☐ 2. two                                                                                          
+                                                                                                    
+no dependencies                                                                                     
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+Task 2 of 5 · 100% · next · previous · Esc back                                                     
+                                                                                                    
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · New · up · request · / find … 

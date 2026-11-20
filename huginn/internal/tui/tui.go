@@ -254,7 +254,9 @@ type model struct {
 	// requestIDs are the marked ids the open request box writes one
 	// request for (ec6z6j check 5), fixed when r opened it.
 	requestIDs             []string
-	hidden                 string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
+	hidden                 string   // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
+	slot                   *slotGap // where the open task stood in its pane before it left it (24403z)
+	movedTo                string   // "<ID> moved to <SECTION>", said by the last write until the next key (24403z)
 	grab                   grabState
 	find                   findState // / in a task or a file: matches in its text (4s3g5q)
 	filter                 task.Filter
@@ -709,6 +711,7 @@ func loadSnapshot(s *task.Store, loads *loadCounter, closes *closeLog, lint func
 // apply shows a snapshot, keeping the task at path selected.
 func (m *model) apply(sn snapshot, path string) {
 	m.gen++
+	slotID, slotRows, slotAt := m.slotBefore(sn) // read before the rows are replaced (24403z)
 	if sn.err != nil {
 		m.message = sn.err.Error()
 		return
@@ -768,6 +771,7 @@ func (m *model) apply(sn snapshot, path string) {
 		}
 	}
 	m.clamp()
+	m.keepSlot(slotID, slotRows, slotAt)
 	m.syncDetail()
 }
 func (m *model) applyFilter() {
@@ -966,20 +970,7 @@ func (m model) scanPane(p int) []int {
 		match := true
 		switch m.view {
 		case "overview":
-			switch p {
-			case sectionAsked:
-				match = m.forYou(t)
-			case sectionDoing:
-				match = t.State == "doing" && !m.waits(t) && !m.forYou(t)
-			case sectionWaiting:
-				match = m.waits(t) && !m.forYou(t)
-			case sectionNext:
-				// Unassigned todo, never an epic (it finishes through its
-				// children); one that depends shows its stage (Jørgen 11:43).
-				match = t.State == "todo" && !m.waits(t) && !m.forYou(t) && !m.epics[strings.ToLower(t.ID)] && len(t.Assignee) == 0
-			case sectionLint:
-				match = m.linted[t.Path]
-			}
+			match = m.inSection(t, p) // one rule for the rows and placeName (24403z)
 		case "board":
 			match = m.place(t) == boardStates[p]
 		case "lint":
@@ -1089,6 +1080,9 @@ func (m *model) setView(view string) {
 // stepTask moves the open detail to the next or previous task in the pane it
 // was opened from. It stops at either end.
 func (m *model) stepTask(step int) {
+	if m.stepFromGap(step) {
+		return // the open task left the pane: from its slot (24403z)
+	}
 	m.detailStack = nil
 	m.detailPath = ""
 	before := m.cursor
@@ -1291,6 +1285,14 @@ func (m *model) back() {
 		m.startFocus()
 		m.syncDetail()
 		m.openTop()
+	case m.detail && m.gap() != nil:
+		// The open task left the pane: back on the row after its slot,
+		// in the pane the reader came from (24403z), not in its new one.
+		m.slot = nil
+		m.detail = false
+		m.find = findState{}
+		m.detailPath = ""
+		m.clamp()
 	case m.detail:
 		t, ok := m.taskAt(m.detailPath)
 		m.detail = false
@@ -1382,6 +1384,14 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.KeyMsg:
 		k := msg.String()
+		// Where the last write moved the task is said until the next
+		// key (24403z check 4).
+		if m.movedTo != "" {
+			if strings.HasPrefix(m.message, m.movedTo) {
+				m.message = ""
+			}
+			m.movedTo = ""
+		}
 		if k == "ctrl+c" {
 			return m, tea.Quit
 		}

@@ -16,7 +16,7 @@ import (
 // 24403z checks 1 and 7 in a real terminal: the hug binary in tmux at
 // 100x30, five tasks Alpha..Echo (aaaaaa..eeeeee) in one pane. An action
 // on the open task that moves it out of the pane (an answer in ASKED, a
-// take in a filtered list and in the board's TODO column) leaves the
+// drop in a filtered list and in the board's TODO column) leaves the
 // reader where they were: n opens the task after it, p the one before,
 // Esc lands on that neighbour, and n after the last says so and stays.
 // On main the cursor fell to the pane's first row after the reload
@@ -62,8 +62,9 @@ func TestTmuxActionKeepsTheSlot(t *testing.T) {
 	}
 	for _, p := range []pane{
 		{name: "overview", ask: true, act: []string{"a", "ok", "Enter"}, where: "ASKED", gone: "NEXT UP"},
-		{name: "list", open: "vl", setup: []string{"/", "state:todo", "Tab"}, act: []string{"t", "Enter"}, where: "the list (filtered)", gone: "IN PROGRESS (outside this filter)"},
-		{name: "board", open: "vb", act: []string{"t", "Enter"}, where: "the TODO column", gone: "DOING"},
+		// Drop, not take: one ticket in doing at a time (n2hq8p).
+		{name: "list", open: "vl", setup: []string{"/", "state:todo", "Tab"}, act: []string{"x", "dup", "Enter", "Enter"}, where: "the list (filtered)", gone: "RECENTLY DONE (outside this filter)"},
+		{name: "board", open: "vb", act: []string{"x", "dup", "Enter", "Enter"}, where: "the TODO column", gone: "DROPPED"},
 	} {
 		t.Run(p.name, func(t *testing.T) {
 			repo := slotRepo(t, filepath.Join(root, p.name), binary, p.ask)
@@ -112,8 +113,8 @@ func TestTmuxActionKeepsTheSlot(t *testing.T) {
 				t.Helper()
 				send(p.act...)
 				// Written once the bottom line names it, as main said it
-				// ("answered ID", "took ID") or as check 4 says it.
-				wait("answered "+id, "took "+id, id+" moved to "+p.gone)
+				// ("answered ID", "dropped ID") or as check 4 says it.
+				wait("answered "+id, "dropped "+id, id+" moved to "+p.gone)
 			}
 			wait("HUG · repo")
 			if p.open != "" {

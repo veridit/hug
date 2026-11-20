@@ -147,10 +147,11 @@ func (m *model) executeAction() tea.Cmd {
 			if err == nil && r.Answered {
 				did, _ := m.store.AfterTick(t.ID, n, m.me(), true)
 				m.finish(r, err, action)
-				m.message = "answered " + r.Task.ID + " by ticking check " + strconv.Itoa(n)
+				extra := ""
 				if did != "" {
-					m.message += "; after the release: " + did
+					extra = "after the release: " + did
 				}
+				m.message = m.movedOr("answered "+r.Task.ID+" by ticking check "+strconv.Itoa(n), extra)
 				m.deliver(r, err, "answer", m.me())
 				return nil
 			}
@@ -159,7 +160,7 @@ func (m *model) executeAction() tea.Cmd {
 			if err == nil && r.Changed {
 				if did, _ := m.store.AfterTick(t.ID, n, m.me(), false); did != "" {
 					m.finish(r, err, action)
-					m.message = "checked " + r.Task.ID + " " + strconv.Itoa(n) + "; after the release: " + did
+					m.message = m.movedOr("checked "+r.Task.ID+" "+strconv.Itoa(n), "after the release: "+did)
 					return nil
 				}
 			}
@@ -245,6 +246,10 @@ func (m model) noticeTask() (task.Task, []task.Finding, bool) {
 	return task.Task{}, nil, false
 }
 func (m *model) finish(r task.Result, err error, action string) {
+	// Its place before the write, while the board shown is the old one
+	// (24403z check 4).
+	before := m.placeBefore(r.Task.ID)
+	m.movedTo = ""
 	if err != nil {
 		path := ""
 		if t, ok := m.selected(); ok {
@@ -267,6 +272,19 @@ func (m *model) finish(r task.Result, err error, action string) {
 		m.detailPath = r.Task.Path
 	}
 	m.refresh(r.Task.Path)
+	if m.movedTo = m.movedNote(r.Task.ID, before); m.movedTo != "" {
+		// Where it went, in place of what was done (crab 20:07Z): the
+		// warnings and a failed commit stay on the lines after it.
+		_, rest, _ := strings.Cut(m.message, "\n")
+		if rest != "" {
+			rest = "\n" + rest
+		}
+		if strings.HasPrefix(m.message, pastTense(action)+" "+r.Task.ID) {
+			m.message = m.movedTo + rest
+		} else {
+			m.movedTo = "" // a failed commit says so instead
+		}
+	}
 }
 
 // messagePlace names the screen: the view, the open task and the file
@@ -471,6 +489,9 @@ func (m *model) deliver(r task.Result, err error, kind, by string) {
 	switch {
 	case e != nil:
 		m.message = e.Error()
+	case receipt != "" && m.movedTo != "" && strings.HasPrefix(m.message, m.movedTo):
+		// The receipt after the moved note (crab 20:07Z).
+		m.message = m.movedTo + " · " + receipt + strings.TrimPrefix(m.message, m.movedTo)
 	case receipt != "":
 		m.message += ": " + receipt
 	}

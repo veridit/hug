@@ -1368,7 +1368,12 @@ func (m model) detailTrail() string {
 	}
 	// The view and the tasks followed to get here, dim, then this task's
 	// id in its colour as the last crumb (header-spec.md, Jørgen 00:02).
+	// The pane it was opened from follows the view (24403z check 5): the
+	// section, the column or the filter that n, p and Esc follow.
 	parts := []string{m.styles.dim.Render(m.view)}
+	if pane := m.paneCrumb(); pane != "" {
+		parts = append(parts, m.styles.dim.Render(oneLine(pane)))
+	}
 	for _, path := range m.detailStack {
 		for _, v := range m.all {
 			if v.Path == path {
@@ -1376,7 +1381,7 @@ func (m model) detailTrail() string {
 			}
 		}
 	}
-	parts = append(parts, m.styles.accent.Render(oneLine(t.ID)))
+	parts = append(parts, m.styles.accent.Render(oneLine(t.ID))+m.nowCrumb(t))
 	if m.detail && m.glance && m.glanceHead != "" {
 		// A shown file is the last crumb: path · size · n of m (z82qsy),
 		// and a zoomed picture's zoom (33v71x).
