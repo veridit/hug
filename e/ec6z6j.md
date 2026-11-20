@@ -77,6 +77,7 @@ dog (claude-opus-5-5/high) built checks 5 and 4 on branch ec6z6j-r, SHA d3b79155
 dog: CI run 44780705119 on d3b79155 (branch ci/ec6z6j-r, same SHA as ec6z6j-r): 8/8 success: secrets, bench, test macos/ubuntu/windows, test-windows-cli sync/rest, shards. Checks 4 and 5 left unticked for crab to tick on landing.
 check 5: d3b79155 (CI 44780705119 8/8): footer '3 marked · move · x drop · edit · request · Esc unmark'; r opens '▸ REQUEST FOR 3 MARKED · …' under the list; TestTmuxMarkedRequest ec6z6j_tmux_test.go, TestMarkedRequestBox; mutants M1-M5 caught
 check 4: d3b79155: targets line on home and link page, link names its home as a Tab stop; golden testdata/detail/manyrequest.txt 80x24; TestManyRequestPages; mutants M6-M10 caught
+landed d3b79155 on main (fast-forward, CI 44780705119 8/8); released v0.7.91 (00a06a61). dog's two choices accepted by crab: marks clear after a successful send (mock, rxr4z8 check 9); a link page shows the home's receipt label.
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
