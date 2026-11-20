@@ -62,6 +62,8 @@ Former Principle: A design decision first, written down, no code in this task. K
     (3) Done on this ticket: the proposal is attached as design.md (Files, Space shows it), taken from branch hpqt99 32ed02dd; it never reached main's docs. Details now point to the attachment and say only the decision goes into docs/DESIGN.md. The question is re-asked naming design.md. (1) and (2) are filed as zbdbtm: any file a task names opens from the task in the embedded viewer at its section, Tab stops on every file link, Esc returns; and AGENTS.md tells agents to attach per-task documents.
 - 2026-11-20T09:56 request 2 by jhf:
   The purpose for this ticket is also not clear enough. This is too wordy, quoting me. So you can write all those lengthy things in some notes or some details somewhere on the bottom, but try to lead with clarity
+  resolved 2026-11-20T09:56 by crab:
+    The top now leads with clarity, one sentence each. Goal: you decide which client owns an imported memory, and whether jcode memories are imported once or read live. Purpose: imported memories can land in the wrong client's scope, and jcode memories live in two places, so forget and sync have no single source of truth. Principle: decide first, build later; imports and sync never cross a client boundary. The quotes and history moved word for word to the end of Details.
 
 ## Notes
 
@@ -86,3 +88,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:56 resolved request 1 by crab
 - 2026-11-20T09:56 request 2 acknowledged by crab
 - 2026-11-20T09:56 request 2 in progress by crab: hug task set hpqt99
+- 2026-11-20T09:56 resolved request 2 by crab
