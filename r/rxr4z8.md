@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzm8"
 created: 2026-11-17
 updated: 2026-11-17
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T21:27"
-waiting_on: "crab review; Jørgen on check 7"
-waiting_since: "2026-11-19T00:44"
-waiting_asked_by: "macaque"
 ---
 
 ## Goal
@@ -103,3 +100,4 @@ shipped in v0.7.73 (4b49e10)
 - 2026-11-18T21:30 doing/active -> doing/asked (ask)
 - 2026-11-18T22:45 doing/asked -> doing/waiting (wait); was asked_by: macaque; asked_check: 7; asked_for: jhf; asked_show: cursor-on-mark.md; asked_since: 2026-11-18T21:30; asked_what: When the cursor is on a marked row, which sign should it show: A ⋗ or B ▸? The file draws both in your terminal.
 - 2026-11-19T04:01 handed to crab: macaque's session ended (closed 2026-11-19 02:14)
+- 2026-11-20T09:32 doing/waiting -> doing/active (resume); was waiting_asked_by: macaque; waiting_on: crab review; Jørgen on check 7; waiting_since: 2026-11-19T00:44
