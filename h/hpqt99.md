@@ -124,6 +124,8 @@ Former Principle: A design decision first, written down, no code in this task. K
     Added Decision 3 at the top of Details: import and export instead of sync. Import previews by default; --apply imports, records each imported origin with its date so a later import never restores an old state, and offers to clean up the source (jcode: stop reading live and archive its files). Export writes everything out in the other system's format, preview by default, and never deletes from hug, so it fits leaving hug. 'sync' stays only for the repo's hug/memory branch, which really goes both ways. This also settles Decision 2 as 2B plus cleanup. New check 5 asks if that is the shape you want. The inline-question version of this ticket is p87ngv check 17.
 - 2026-11-20T13:41 request 7 by jhf:
   For question number one, does engram Separate different memories, like it's a private memory or it's a public memory, or if it's a project memory, or a global memory, maybe that's the axis? I.e. project private vs. shared  and project vs global|client?
+  resolved 2026-11-20T13:41 by crab:
+    Checked engram's own database: it has two fields, scope (only 'project' or 'personal') and project (a name like seid-lang). No global, no client, and nothing that says shared or private: of 3,703 memories, 3,692 are 'project' and 11 'personal', all naming a project. So yes, your two axes are right, but engram only fills one of them: 'about which project' (plus personal). Whether something is shared is a separate switch per repo in hug (rnpdnm), and engram has nothing to say about it. Added at the top of Details with the mapping that follows (personal stays personal; project goes to that project, or its client if under a client folder; sharing stays off), which is option 1B.
 
 ## Notes
 
@@ -177,3 +179,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T13:41 request 7 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:41 request 7 acknowledged by crab
 - 2026-11-20T13:41 request 7 in progress by crab: hug task set hpqt99
+- 2026-11-20T13:41 resolved request 7 by crab
