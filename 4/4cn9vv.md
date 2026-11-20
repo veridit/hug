@@ -1,7 +1,7 @@
 ---
 id: 4cn9vv
 title: "Release v0.7.80"
-state: "todo"
+state: "doing"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -13,7 +13,8 @@ updated: 2026-11-19
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-20T11:06"
 ---
 
 ## Goal
@@ -58,3 +59,5 @@ Reflection (unanswered, 2026-11-19, crab)
   Yes, I've done it. It worked. Nice. The only thing I wonder about is where are the questions? Because when I view the file, I can't see the questions in the markdown. But so where are the physically? You can just answer that in the console and you can close this ticket.
 - 2026-11-20T11:06 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:06 answer 1 acknowledged by crab
+- 2026-11-20T11:06 todo/ready -> doing/active (take)
+- 2026-11-20T11:06 crab read the answer: hug task take 4cn9vv
