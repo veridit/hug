@@ -1,6 +1,6 @@
 ---
 id: rnpdnm
-title: "Shared project memories: keep today's filter or try a third one"
+title: "Shared project memories: is today's filter good enough to turn sharing on?"
 state: "doing"
 type: feature
 priority: "high"
@@ -23,7 +23,7 @@ asked_by: "crab"
 ---
 
 ## Goal
-Jørgen chooses whether to stop here with today's filter on shared memories or pay for a third attempt to make it stricter.
+Jørgen decides whether a repo may turn on memory sharing with today's filter, or whether we first make the filter stricter.
 
 ## Purpose
 A repo that shares memories shows them to everyone who clones it, so wrong ones must stay on this machine.
@@ -32,27 +32,22 @@ A repo that shares memories shows them to everyone who clones it, so wrong ones 
 Choose from what was measured; change nothing for any repo until Jørgen picks.
 
 ## Relevant details
-WHAT WE ARE CHOOSING BETWEEN
+WHAT HAPPENS TODAY, IN PRACTICE
+1. After a session, hug writes memories into your local store on this machine (muninn.db). Each has a place: personal, global, a client, or this project.
+2. The memories of this project are recalled in this project's sessions. That is all local; nothing leaves the machine.
+3. Sharing is a per-repo switch, off by default: [memory] share = true in hug.toml. Only when it is on does hug mem sync write the project's memories into memories.jsonl on the repo's hug/memory branch and push it, so everyone who clones the repo gets them.
+4. Today no repo has it on. Nothing is written to or pushed on any branch.
 
-Background, in plain terms:
-- A memory is a short note hug writes after a session, such as 'run tests with nice -n 19'.
-- A repo can opt in to sharing: its memories are then pushed to a branch in the repo, and everyone who clones it sees them. Today no repo opts in (no hug.toml has [memory] share), so nothing is pushed anywhere.
-- When a repo does opt in, a filter runs before the push. It keeps on this machine (does not push) any memory that names a home folder (/Users/...), another project or client, the person, or states a personal preference. This shipped in v0.7.71.
-- Wrong memories still get through. Measured on new sessions, by hand and blind: about 3 in 100 with today's filter (8 of 254), and 12 in 100 with attempt 2 (36 of 295). The bar we set was 1 in 200.
-- Most of what gets through (24 of the 36) are working rules for agents, written while in this repo but meant for every repo. Example: 'agents should poll CI with a timeout'. They belong in global memory, not in the repo.
+WHAT 'HELD' MEANS
+When sharing is on, sync checks each project memory before writing it to the branch. A memory that names a home folder (/Users/...), another project or client, or you, or states a personal preference, is not written to the branch. It stays in your local store and is still recalled here; only the push skips it. That is all 'held' means.
 
-Option A, stop here (my pick):
-- Keep today's filter, close this task, and drop check 3.
-- A repo that opts in later accepts that a few memories in 100 are misplaced. Before opting a repo in, someone reads what would be pushed with hug mem sync --dry-run.
-- Costs nothing.
+THE PROBLEM
+The check misses some. Of new project memories, about 3 in 100 that would be pushed should not be (8 of 254, by hand). Most are working rules for agents ('poll CI with a timeout') stored as this project's when they belong in global memory. If sharing were on, those would be pushed to the repo.
 
-Option B, try a third attempt:
-- Teach the extractor to put working rules for agents in global memory, and add that kind of rule to the filter.
-- Measure again on new sessions: about 75 cheap model calls, a day of new sessions first, and a hand count. Two attempts like this failed before.
-
-Option C, review before push:
-- Nothing is pushed until a person approves it, in a list in hug tui.
-- Every wrong one is caught, but a person must review every memory, and that is a new feature to build.
+WHAT WE ARE CHOOSING (only matters for a repo where you turn sharing on)
+- A, stop here: keep today's check. Before turning sharing on for a repo, run hug mem sync --dry-run and read what would be pushed. Costs nothing.
+- B, try again: teach the writer to put agent working rules in global memory, then measure again. About 75 cheap model calls and a day of new sessions; two attempts like this failed. Side effect: those rules would also be recalled in your other projects, where they belong.
+- C, approve each one: nothing is pushed until you approve it in a list in hug tui. Catches everything, but you review every memory, and it is a new feature to build.
 
 Attempt reports: /Users/jhf/.jcode/scratch/rnpdnm-c3/REPORT.md and /Users/jhf/.jcode/scratch/rnpdnm-step2/REPORT-STEP2.md.
 
@@ -129,3 +124,4 @@ crab 14:23Z ruling on step 2: FAIL accepted, by PREREG2's own bar (sha 38758e19 
 - 2026-11-20T12:54 request 2 by jhf
 - 2026-11-20T12:54 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:54 request 2 acknowledged by crab
+- 2026-11-20T12:54 request 2 in progress by crab: hug task set rnpdnm
