@@ -39,6 +39,7 @@ Jørgen 2026-11-20 10:18Z (request 1, screenshots screen-1117.ans before, screen
 - [ ] In the overview and on the board, a sort from the s picker leaves the view unchanged (tmux test)
 - [ ] Creating a task with S from the overview opens it over the overview, and Esc returns to the overview with the new task selected (tmux test, fails on main first)
 - [ ] # jump and ': goto ID' open the task over the current view, and Esc returns to that view (tmux test)
+- [ ] Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time
 
 ## Requests
 - 2026-11-20T11:18 request 1 by jhf:
