@@ -1,15 +1,21 @@
 ---
 id: 3cqvx5
 title: "Board coordinator by default: the live agent session, no setup"
-state: todo
+state: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-20
 updated: 2026-11-20
+doing_with: "p87ngv"
+doing_since: "2026-11-20T11:30"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -34,3 +40,7 @@ Proposed rule (crab, to confirm in check 1): when [board] coordinator is unset o
 - [ ] Jørgen restarts his coordinator's harness, writes a request, and it arrives with no setup
 
 ## Notes
+
+
+## History
+- 2026-11-20T11:30 todo -> doing/active (take with p87ngv)
