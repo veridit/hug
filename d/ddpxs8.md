@@ -1,7 +1,7 @@
 ---
 id: ddpxs8
 title: "Release v0.7.86"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,16 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-20T05:41"
-doing_with: "p277bp"
-stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_by: "crab"
-asked_what: "0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?"
-asked_for: "jhf"
-asked_since: "2026-11-20T05:41"
+done_at: "2026-11-20T06:06"
 ---
 
 ## Goal
@@ -42,11 +36,14 @@ main 00dfa4cf (CI 44673649756, 8/8), CHANGELOG 2d1cdbd6, merge a09e9d63, release
 ## Questions
 - 2026-11-20T05:41 question 1 by crab to jhf:
   0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?
+  withdrawn 2026-11-20T06:06 (doing/asked -> done)
 
 ## Notes
 
 
 check 1: release.yml 44675088441 success; brew upgrade: hug v0.7.86, hug/muninn/huginn -> ../Cellar/hug/0.7.86/bin/*
+Reflection (unanswered, 2026-11-20, crab)
 ## History
 - 2026-11-20T05:41 todo -> doing/active (take with p277bp)
 - 2026-11-20T05:41 doing/active -> doing/asked (ask)
+- 2026-11-20T06:06 doing/asked -> done (done); was asked_by: crab; asked_for: jhf; asked_since: 2026-11-20T05:41; asked_what: 0pr03h: every open hug task now has a one-sentence Goal (47 rewritten, the old text moved to the top of Details). Open a few in hug tui: does the shorter Goal read better, and is anything you need missing from it?; doing_since: 2026-11-20T05:41; doing_with: p277bp
