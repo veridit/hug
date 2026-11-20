@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzr1"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:36"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?"
-asked_for: "jhf"
-asked_since: "2026-11-20T12:54"
-asked_by: "crab"
-asked_check: "3"
 ---
 
 ## Goal
@@ -84,6 +79,8 @@ OPTIONS: /Users/jhf/.jcode/scratch/gav9nw/OPTIONS.md (scripts, labels, logs alon
     Withdrawn by crab 2026-11-20: still unclear (Jørgen request 2). Re-asked as question 3 with the practical consequences.
 - 2026-11-20T12:54 question 3 by crab to jhf (check 3):
   Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?
+  answered 2026-11-20T13:31 by crab:
+    Withdrawn by crab 2026-11-20: rewritten again (request 5); question 4 asks the concrete choice.
 
 ## Requests
 - 2026-11-20T11:21 request 1 by jhf:
@@ -167,3 +164,6 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T13:30 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:30 request 5 acknowledged by crab
 - 2026-11-20T13:31 request 5 in progress by crab: hug task set rnpdnm
+- 2026-11-20T13:31 answered asked (question 3, check 3), by crab, for crab (doing/asked -> doing/active):
+  > Sharing is off for every repo today, so nothing is pushed. Before you turn it on for one: A keep today's check and read the dry-run first, B first teach the writer to put agent rules in global memory (about 75 calls, a day), or C approve each memory before it is pushed?
+  Withdrawn by crab 2026-11-20: rewritten again (request 5); question 4 asks the concrete choice.
