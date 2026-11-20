@@ -61,6 +61,7 @@ check 4: testdata/detail/capture-prompt.txt: offered, typed, title and picking a
 CI 44400498760 on f68a9a5d: success, all 8 jobs. ubuntu -race huginn/internal/tui: 290.273s. Checks 1-4 ticked; check 5 (Jørgen confirms on his board after release) open.
 landed 69b5ceb on main 2026-11-18: tui: S asks where the screen goes: a task id, s select, c create (hjbfzd)
 shipped in v0.7.71 (69b5ceb)
+file:screen-0939.ans (12730 bytes, sha256:f8b1deb2) screen capture from hug tui
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)
