@@ -1,15 +1,21 @@
 ---
 id: gvkpzt
 title: "Release v0.7.87"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-20T06:14"
+doing_with: "p277bp"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +36,7 @@ main 51e36090 (CI 44677696260, 8/8), CHANGELOG 57113899, merge 6fa18387, release
 - [ ] release.yml green and brew upgrade gives hug version 0.7.87 with links into the new Cellar
 
 ## Notes
+
+
+## History
+- 2026-11-20T06:14 todo -> doing/active (take with p277bp)
