@@ -49,6 +49,10 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
 - 2026-11-18T23:24 question 1 by crab to jhf (check 5):
   Jørgen confirms on his board after release
 
+## Requests
+- 2026-11-20T09:43 request 1 by jhf:
+  So I tried this and I could attach it to this ticket. You should find it, but the wording isn't good. It says attach to, and then it says screen capture, and then it has a long text, and then you can create select or create. But it should be screen capture colon attached to the pre-filled task or select or create new or create, just do not even need new. Can you make a suggestion and put it as an attachment to this task?
+
 ## Notes
 
 
@@ -67,3 +71,4 @@ file:screen-0939.ans (12730 bytes, sha256:f8b1deb2) screen capture from hug tui
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 doing/waiting -> doing/asked (ask); was waiting_asked_by: duckling; waiting_on: crab lands ci/hjbfzd-rebased 69b5cebc with the stack, then a release; check 5 is Jørgen's confirmation after release; waiting_since: 2026-11-18T22:34
 - 2026-11-19T04:01 handed to crab: duckling's session ended (closed 2026-11-19 02:31)
+- 2026-11-20T09:43 request 1 by jhf
