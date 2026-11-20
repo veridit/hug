@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzwc"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:16"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "hjbfzd"
 worktree: "/Users/jhf/.jcode/scratch/hjbfzd"
-asked_since: "2026-11-20T09:51"
-asked_by: "crab"
-asked_check: "6"
-asked_what: "Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? Today vs proposed, in the real theme: capture-wording-100x30.ans in Files (Space shows it); all three steps are in capture-wording.md."
-asked_for: "jhf"
 ---
 
 ## Goal
@@ -55,6 +50,8 @@ Capture today: S takes the frame (tui.go captured, picture.go attachCapture, ren
   withdrawn 2026-11-20T09:51 (doing/asked -> doing/active)
 - 2026-11-20T09:51 question 3 by crab to jhf (check 6):
   Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? Today vs proposed, in the real theme: capture-wording-100x30.ans in Files (Space shows it); all three steps are in capture-wording.md.
+  answered 2026-11-20T11:37 by jhf:
+    The current implementation is good and I like it and it's even more succinct than we outlined in this ticket so this ticket is done. However, in the extra added screenshot I noticed that when I open this ticket I don't scroll down to the question it instead opens it shows a referenced file on top and doesn't scroll to the question so I've reported this multiple times so hopefully a recent release will soon fix this if this is in progress discard that from this answer and just mark it as done
 - 2026-11-20T09:51 question 4 by crab to jhf (check 5):
   The capture prompt shipped in v0.7.70: on your board, does S then attach, select or create work for you (the wording itself is question 2)?
   answered 2026-11-20T11:35 by jhf:
@@ -110,3 +107,6 @@ file:screen-1136.ans (17604 bytes, sha256:16d2046a) screen capture from hug tui
   answered by ticking check 5
 - 2026-11-20T11:35 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:35 answer 1 acknowledged by crab
+- 2026-11-20T11:37 answered asked (question 3, check 6), by jhf, for crab (doing/asked -> doing/active):
+  > Is this wording right: 'Screen capture: attach to 000002 · select · create', with the task's title moved to the keys line below? Today vs proposed, in the real theme: capture-wording-100x30.ans in Files (Space shows it); all three steps are in capture-wording.md.
+  The current implementation is good and I like it and it's even more succinct than we outlined in this ticket so this ticket is done. However, in the extra added screenshot I noticed that when I open this ticket I don't scroll down to the question it instead opens it shows a referenced file on top and doesn't scroll to the question so I've reported this multiple times so hopefully a recent release will soon fix this if this is in progress discard that from this answer and just mark it as done
