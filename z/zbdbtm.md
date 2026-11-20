@@ -45,6 +45,8 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
 Jørgen 2026-11-20 10:12Z (p87ngv request 4): p87ngv's questions name several files (MOCK.md, before.md, after.md, history.sdd, cli.txt, tui-100x30.txt); he has to remember them, go to FILES and open each. Wanted: a file named in a question (or anywhere in the text) can be viewed in line, or jumped to, and jumped back from. Open for him: which key jumps (Enter, Space, g, or another)? Keys provisional until bfxq93.
 
 
+file:sample-notes.md (244 bytes, sha256:76521eb4) sample files: this task's own links point at them, so Jørgen can try it here
+file:sample.txt (50 bytes, sha256:2df59eb0) sample files: this task's own links point at them, so Jørgen can try it here
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -52,3 +54,4 @@ Jørgen 2026-11-20 10:12Z (p87ngv request 4): p87ngv's questions name several fi
   Let's try that and make sure you put it into this file as well so that when I review this task again when it is resolved I can use the task itself to check it
 - 2026-11-20T12:51 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:51 answer 1 acknowledged by crab
+- 2026-11-20T12:51 crab read the answer: hug task attach zbdbtm /Users/jhf/.jcode/scratch/zb/sample-notes.md /Users/jhf/.jcode/scratch/zb/sample.txt
