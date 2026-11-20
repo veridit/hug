@@ -7,7 +7,7 @@ priority: ""
 assignee: ["dove"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzy"
+rank: "zzzzzzzzzzzx"
 created: 2026-11-20
 updated: 2026-11-20
 model: "claude-opus-5-5"
