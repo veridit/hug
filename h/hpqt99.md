@@ -96,6 +96,8 @@ Former Principle: A design decision first, written down, no code in this task. K
   So this ticket would have been so much better if we had the inline editing system because now you list something one place, you ask questions another place and things are kind of disconnected, don't you think?
   resolved 2026-11-20T11:40 by crab:
     Yes, agreed: options in Details and the questions under checks 2 and 3 are disconnected. That is what p87ngv (inline marks) fixes, and the look and mock are both approved now. This ticket becomes its first real use: p87ngv check 17 rewrites hpqt99 with each question marked on its Decision's options and answered there. If you want to decide before that ships, questions 4 and 5 (under checks 2 and 3) restate the options in full, so each can be answered on its own.
+- 2026-11-20T11:41 request 5 by jhf:
+  I attach two screenshots where you see all the listings and options A1, A2, A, B, and so on. And then below you see the questions which are so they're disconnected. And when there are multiple options, why wouldn't we just render them inline so I can go and pick the options like it's A, B, C, or other or something? I mean, we're doing a pretty nice interaction system that's in the works now, I think
 
 ## Notes
 
@@ -135,3 +137,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T11:40 request 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:40 request 4 acknowledged by crab
 - 2026-11-20T11:40 resolved request 4 by crab
+- 2026-11-20T11:41 request 5 by jhf
