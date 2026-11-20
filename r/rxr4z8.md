@@ -10,17 +10,11 @@ group: ""
 rank: "zzzzzzzzzzm8"
 created: 2026-11-17
 updated: 2026-11-17
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-18T21:27"
-asked_check: "7"
-asked_show: "cursor-on-mark.md"
-asked_what: "A marked row that also has the cursor shows one sign. Built with ⋗ (cursor carrying a mark); the alternative is ▸. Mark a row with Space and move onto it in hug tui: is ⋗ right, or do you want ▸?"
-asked_for: "jhf"
-asked_since: "2026-11-20T09:32"
-asked_by: "crab"
 ---
 
 ## Goal
@@ -53,6 +47,8 @@ Today: Space in a list prints 'Space ticks a check inside the task: Enter opens 
 ## Questions
 - 2026-11-20T09:32 question 1 by crab to jhf (check 7, show cursor-on-mark.md):
   A marked row that also has the cursor shows one sign. Built with ⋗ (cursor carrying a mark); the alternative is ▸. Mark a row with Space and move onto it in hug tui: is ⋗ right, or do you want ▸?
+  answered 2026-11-20T11:39 by crab:
+    Jørgen in request 1 (2026-11-20 10:39Z): '⋗ ... cursor carrying a mark. That's what I want.'
 
 ## Requests
 - 2026-11-20T11:39 request 1 by jhf:
@@ -126,3 +122,6 @@ check 6: Jørgen 2026-11-20 10:39Z (request 1): 'So you can close that'.
 - 2026-11-20T11:39 request 1 acknowledged by crab
 - 2026-11-20T11:39 request 1 in progress by crab: hug task check rxr4z8 7 "Jørgen 2026-11-20 10:39Z (request 1): 'the response here is cursor carrying a mark. That's what I want.' ⋗ stays."
 - 2026-11-20T11:39 resolved request 1 by crab
+- 2026-11-20T11:39 answered asked (check 7), by crab, for crab (doing/asked -> doing/active):
+  > A marked row that also has the cursor shows one sign. Built with ⋗ (cursor carrying a mark); the alternative is ▸. Mark a row with Space and move onto it in hug tui: is ⋗ right, or do you want ▸?
+  Jørgen in request 1 (2026-11-20 10:39Z): '⋗ ... cursor carrying a mark. That's what I want.'
