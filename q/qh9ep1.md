@@ -1,7 +1,7 @@
 ---
 id: qh9ep1
 title: "Key prefixes: v picks the view (vo vl vb v!), a pending prefix shows its choices"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,16 +10,11 @@ group: ""
 rank: "zzzzzzzzzzlh"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-18T04:25"
-stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "v0.7.69 is installed. Is the view line calm now? It should show an underline only on keys you can press, the active view in bold alone, and no background colour."
-asked_for: "jhf"
-asked_since: "2026-11-18T21:07"
-asked_by: "crab"
-asked_check: "6"
+done_at: "2026-11-20T09:30"
+done_release: "v0.7.69"
 ---
 
 ## Goal
@@ -44,7 +39,7 @@ Today: the tab line underlines o, l, b and ! as single keys. After: line 2 is 'v
 - [x] After v alone the view line is highlighted and the footer reads 'v: o overview · l list · b board · ! lint · Esc cancel'; Esc or an unknown key cancels and changes nothing (key test, golden)
 - [ ] ~~g uses the same prefix mechanism: gg top, the grouping key from kx2ndm, footer shows the choices while pending (key test)~~ (not relevant: Jørgen 23:38 local: gg and G dropped, so g is no prefix (it groups rows, kx2ndm); v is the only prefix, and check 8 covers the gg/G removal, nautilus, 2026-11-18)
 - [x] Context help (?) lists prefix keys as two-key rows and its search finds them by either key or name (help test)
-- [ ] Jørgen confirms on his board after release
+- [x] Jørgen confirms on his board after release
 - [x] The state counts sit on the view line, right aligned after a dim separator, and the old counts line is gone (golden at 80 and 140; at 80 counts drop from the right first)
 - [x] gg and G are gone (keys, hints, help); < Home go to top and > End to bottom as before (key test)
 - [x] The view line is subtle, one cue per meaning (Jørgen 19:54 on check 6): an underline only marks a letter you can press, colour marks the keys (v, then o l b !), the active view is told by bold OR colour alone on its word, and nothing has a background fill; no letter carries underline+bold+colour together (golden at 80 and 140, colour)
@@ -81,3 +76,7 @@ shipped in v0.7.69 (f9ff43b)
 - 2026-11-18T19:54 answer 1 acknowledged by crab
 - 2026-11-18T19:54 answer 1 in progress by crab: hug task set qh9ep1
 - 2026-11-18T21:07 doing/active -> doing/asked (ask)
+- 2026-11-20T09:30 answered asked (check 6), by jhf, for crab (doing/asked -> doing/active):
+  > v0.7.69 is installed. Is the view line calm now? It should show an underline only on keys you can press, the active view in bold alone, and no background colour.
+  answered by ticking check 6
+- 2026-11-20T09:30 doing/active -> done (done after jhf ticked check 6 (release v0.7.69)); was doing_since: 2026-11-18T04:25
