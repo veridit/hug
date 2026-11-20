@@ -1,7 +1,7 @@
 ---
 id: tb0dra
 title: "Agents reflect on the instructions and propose fixes"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -13,7 +13,7 @@ updated: 2026-11-16
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-stage: "active"
+done_at: "2026-11-20T10:59"
 ---
 
 ## Goal
@@ -69,6 +69,7 @@ file:screen-1057.ans (6373 bytes, sha256:0fd93a69) screen capture from hug tui
 file:screen-1057-2.ans (24091 bytes, sha256:39c4a77d) screen capture from hug tui
 check 5: x
 check 5 (correcting crab's stray 'x' evidence, 09:59Z): holds by daa4c889 on main (shipped v0.7.74): 'write a superseding ruling on the earlier ticket; go vet after rebase', traced to reflections h176dp/t64v7d/bejd89 and gjmqhn/n2hq8p/t3fqaw/r5r8c1/55a7xx (note above). Jørgen 2026-11-20 09:58Z approved the three agentSection additions (agentsection-proposal.md); they are built under b-task filed today.
+Reflection (open, 2026-11-20, crab): My stray 'hug task check tb0dra 5 x' ticked a check with evidence 'x'; corrected in a note. check should refuse a one-character evidence string.
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
@@ -78,3 +79,4 @@ check 5 (correcting crab's stray 'x' evidence, 09:59Z): holds by daa4c889 on mai
 - 2026-11-20T10:58 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T10:58 answer 1 acknowledged by crab
 - 2026-11-20T10:59 answer 1 in progress by crab: hug task check tb0dra 5 x
+- 2026-11-20T10:59 doing/active -> done (done)
