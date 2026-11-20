@@ -30,7 +30,7 @@ Commands for the seid agent (hug >= 0.7.7): 1) hug task import backlog .backlog 
 ## Acceptance
 - [x] import backlog rerun in seid-lang; hug task ls --jsonl shows about 280 tasks with a parent
 - [x] lint --code parent-too-deep is empty
-- [ ] evidence files imported as task files
+- [ ] ~~evidence files imported as task files~~ (not relevant: the evidence is already on seid's board (4,741 files under backlog-evidence/, attached 2026-11-16); running import files would copy it twice. What is left (rewriting 373 old citations) is hug's bug, filed as a new task, crab, 2026-11-20)
 - [x] Jørgen gives seid-instruction.md (Files) to the seid-lang agent and ticks this when it has reported back
 
 ## Requests
