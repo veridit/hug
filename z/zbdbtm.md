@@ -31,6 +31,7 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
 - [ ] Enter on a link to a repo file with a section (e.g. docs/DESIGN.md#Imported data) opens it scrolled to that heading, from the board's worktree or the named branch (test)
 - [ ] Tab and Shift+Tab stop on every file link in the detail (test)
 - [ ] AGENTS.md and the setup template say: a document for one task is attached to that task; only decisions go into repo docs (test pins the wording)
+- [ ] A file named in plain text inside a question, check or note (e.g. 'MOCK.md', 'tui-100x30.txt') is recognised when the task has that file, and works as a link: one key shows it in line under the line that names it, another opens it in the file frame, Esc returns (tmux test on p87ngv's board copy)
 
 ## Notes
 
