@@ -27,7 +27,7 @@ Today (v0.7.90, huginn/internal/tui/columns.go moveColumn): the first H or L mar
 ## Depends on
 
 ## Acceptance
-- [ ] Verify Ability to select no column
+- [ ] ~~Verify Ability to select no column~~ (not relevant: replaced by checks 2-3, crab, 2026-11-20)
 
 ## Requests
 - 2026-11-20T13:07 request 1 by jhf:
