@@ -97,3 +97,4 @@ file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 - 2026-11-20T09:51 doing/active -> doing/asked (ask)
 - 2026-11-20T09:51 asked question 4 of jhf, 2 open (doing/asked -> doing/asked)
 - 2026-11-20T09:52 request 2 by jhf
+- 2026-11-20T09:52 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
