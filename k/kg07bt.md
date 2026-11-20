@@ -18,7 +18,7 @@ worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-In a task's detail the ACCEPTANCE heading is quiet and only the blinking cursor marks the focused question.
+In a task's page, the focused row is marked by a pulsing > with no underline, the one moving thing on screen.
 
 ## Purpose
 Jørgen 2026-11-18 14:58 local, answering 0gztsy check 4: the focus was correct, but there is too much visual noise. The ACCEPTANCE heading draws so much attention that it competes with the question line below it, and the question is bold, background-filled and strongly coloured at once. He wants it toned down, with the glowing cursor marking the one place you are, not a visual competition.
@@ -76,3 +76,5 @@ file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
 - 2026-11-20T11:33 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:33 request 2 by jhf
 - 2026-11-20T11:33 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T11:33 crab read the answer: hug task set kg07bt
+- 2026-11-20T11:33 request 1 in progress by crab: hug task set kg07bt
