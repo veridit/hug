@@ -68,6 +68,7 @@ shipped in v0.7.74 (daa4c88)
 file:screen-1057.ans (6373 bytes, sha256:0fd93a69) screen capture from hug tui
 file:screen-1057-2.ans (24091 bytes, sha256:39c4a77d) screen capture from hug tui
 check 5: x
+check 5 (correcting crab's stray 'x' evidence, 09:59Z): holds by daa4c889 on main (shipped v0.7.74): 'write a superseding ruling on the earlier ticket; go vet after rebase', traced to reflections h176dp/t64v7d/bejd89 and gjmqhn/n2hq8p/t3fqaw/r5r8c1/55a7xx (note above). Jørgen 2026-11-20 09:58Z approved the three agentSection additions (agentsection-proposal.md); they are built under b-task filed today.
 ## History
 - 2026-11-17T14:36 doing -> doing/waiting (wait)
 - 2026-11-19T00:58 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: a week of use, look again 2026-11-24; waiting_since: 2026-11-17T14:36
