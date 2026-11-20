@@ -21,7 +21,7 @@ waiting_asked_by: "macaque"
 ---
 
 ## Goal
-In a task's detail the ACCEPTANCE heading is quiet (no background fill; at most bold or dim, like the other section headings), and the focused asked check / question is not bold plus background plus strong colour at once: it reads as a normal row, and the one blinking underline cursor (accent #00bfff/#006c9c, 530 ms) is the only thing that says 'you are here'.
+In a task's detail the ACCEPTANCE heading is quiet and only the blinking cursor marks the focused question.
 
 ## Purpose
 Jørgen 2026-11-18 14:58 local, answering 0gztsy check 4: the focus was correct, but there is too much visual noise. The ACCEPTANCE heading draws so much attention that it competes with the question line below it, and the question is bold, background-filled and strongly coloured at once. He wants it toned down, with the glowing cursor marking the one place you are, not a visual competition.
@@ -30,6 +30,8 @@ Jørgen 2026-11-18 14:58 local, answering 0gztsy check 4: the focus was correct,
 One motion and one emphasis on screen: the cursor. No bold everywhere, no background fills for emphasis. Stable key-hierarchy colours. Do not change what has focus or which keys act, only how it looks.
 
 ## Relevant details
+In a task's detail the ACCEPTANCE heading is quiet (no background fill; at most bold or dim, like the other section headings), and the focused asked check / question is not bold plus background plus strong colour at once: it reads as a normal row, and the one blinking underline cursor (accent #00bfff/#006c9c, 530 ms) is the only thing that says 'you are here'.
+
 Code: huginn/internal/tui detail.go, stage.go, render.go (asked-check rendering from 41hhgn/0gztsy). Goldens: testdata/detail/asked-check.txt, asked-block.txt at 80 and 140; update with HUGINN_UPDATE_GOLDEN=1 and show the before/after rows in the report. kikazaru is in detail.go for 0ga6m0: take this after 0ga6m0, on top of it.
 
 ## Depends on
