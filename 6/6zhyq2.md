@@ -1,7 +1,7 @@
 ---
 id: 6zhyq2
 title: "TestViewKeysBlinkAfterV flakes on CI timing (497 ms vs 530 ms)"
-state: "doing"
+state: "done"
 type: bug
 priority: ""
 assignee: ["bird"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzv"
 created: 2026-11-19
 updated: 2026-11-19
-doing_since: "2026-11-20T00:04"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-20T01:15"
 ---
 
 ## Goal
@@ -43,5 +42,7 @@ Check 2: EXPLAINED and fixed (commit 4ebd782a). Cause: a slow Windows runner, no
 Side finding, not fixed here (outside this ticket): first CI on ci/6zhyq2, run 44638912154 at c7f69d12 (tui tests and CHANGELOG only), failed test-windows-cli (sync) on another wall-clock bound: 'sync_test.go:294: note took 2.749082s with the remote hanging, 417.7603ms without background sync: it waited on the network', '--- FAIL: TestBackgroundSyncOfflineCatchesUp (40.92s)'. The bound is baseline+max(2s, baseline). The same 0.35-s-type slow-runner margin. Candidate for its own ticket.
 CI green: run 44642751056 on ci/6zhyq2 at 597a0b24d3f0aa50493c2129e21f8700b5219f46 (= branch 6zhyq2 tip, on origin/main 57fce63b). Conclusion success, all 8 jobs success: secrets, bench, test (ubuntu/macos/windows-latest), test-windows-cli (sync), test-windows-cli (rest), test-windows-cli-shards. Superseded run 44638912154 (c7f69d12) had already completed (failure, TestBackgroundSyncOfflineCatchesUp, see side note); nothing to cancel.
 Landed on main 597a0b24 by fast-forward (CI 44642751056 8/8 green on that exact SHA). Reviewed settledWait: fails at 30 s without progress or 3 min in all, so a hang still fails; no retry. Test-only, so it ships with the next user-facing release.
+Reflection (open, 2026-11-20, crab): Nothing misled me; bird's report was grounded and complete.
 ## History
 - 2026-11-20T00:04 todo -> doing/active (take)
+- 2026-11-20T01:15 doing/active -> done (done); was doing_since: 2026-11-20T00:04
