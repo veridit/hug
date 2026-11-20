@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzzq"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-20T10:59"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Does opening a task that asks you something now land on the question, with its file as a link line (Enter shows the file, Esc comes back)? Before and after captures at 100x30 are in this task's Files: before-tb0dra-100x30.ans / after-tb0dra-100x30.ans, before-hjbfzd-100x30.ans / after-hjbfzd-100x30.ans and after-hjbfzd-check6-link-100x30.ans. For a on p87ngv: before-p87ngv-a-100x30.ans / after-p87ngv-a-100x30.ans. Built on branch qcq3tm (a5fc5208, CI green); it reaches your board with the next release."
-asked_for: "jhf"
-asked_since: "2026-11-20T11:54"
-asked_by: "cricket"
-asked_check: "3"
 parent: "fzd0jj"
 ---
 
@@ -46,6 +41,8 @@ Split from 8a0ybb checks 3 and 8 so it ships before the FOR YOU layout decision 
 ## Questions
 - 2026-11-20T11:54 question 1 by cricket to jhf (check 3):
   Does opening a task that asks you something now land on the question, with its file as a link line (Enter shows the file, Esc comes back)? Before and after captures at 100x30 are in this task's Files: before-tb0dra-100x30.ans / after-tb0dra-100x30.ans, before-hjbfzd-100x30.ans / after-hjbfzd-100x30.ans and after-hjbfzd-check6-link-100x30.ans. For a on p87ngv: before-p87ngv-a-100x30.ans / after-p87ngv-a-100x30.ans. Built on branch qcq3tm (a5fc5208, CI green); it reaches your board with the next release.
+  answered 2026-11-20T12:57 by crab:
+    Jørgen in request 2 (2026-11-20 11:57Z): 'Yes, it does ... it worked on this task after I reloaded.'
 
 ## Requests
 - 2026-11-20T12:56 request 1 by jhf:
@@ -90,3 +87,6 @@ check 3: Jørgen 2026-11-20 11:57Z (request 2): 'Yes, it does ... it worked on t
 - 2026-11-20T12:57 resolved request 1 by crab
 - 2026-11-20T12:57 resolved request 2 by crab
 - 2026-11-20T12:57 request 2 acknowledged by crab
+- 2026-11-20T12:57 answered asked (check 3), by crab, for cricket (doing/asked -> doing/active):
+  > Does opening a task that asks you something now land on the question, with its file as a link line (Enter shows the file, Esc comes back)? Before and after captures at 100x30 are in this task's Files: before-tb0dra-100x30.ans / after-tb0dra-100x30.ans, before-hjbfzd-100x30.ans / after-hjbfzd-100x30.ans and after-hjbfzd-check6-link-100x30.ans. For a on p87ngv: before-p87ngv-a-100x30.ans / after-p87ngv-a-100x30.ans. Built on branch qcq3tm (a5fc5208, CI green); it reaches your board with the next release.
+  Jørgen in request 2 (2026-11-20 11:57Z): 'Yes, it does ... it worked on this task after I reloaded.'
