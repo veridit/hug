@@ -7,7 +7,7 @@ priority: ""
 assignee: ["engineer"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzt5"
+rank: "zzzzzzzzzznj"
 created: 2026-11-18
 updated: 2026-11-18
 model: "claude-opus-5-5"

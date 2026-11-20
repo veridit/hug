@@ -7,7 +7,7 @@ priority: ""
 assignee: ["crab"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzst"
+rank: "zzzzzzzzzzn"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T10:46"

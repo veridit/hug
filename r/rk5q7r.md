@@ -7,7 +7,7 @@ priority: ""
 assignee: ["duckling"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzu"
+rank: "zzzzzzzzzzoh"
 created: 2026-11-18
 updated: 2026-11-18
 model: "claude-opus-5-5"

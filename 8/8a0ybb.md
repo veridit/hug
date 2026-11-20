@@ -7,7 +7,7 @@ priority: "medium"
 assignee: ["crab"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzyv"
+rank: "zzzzzzzzzzwh"
 created: 2026-11-19
 updated: 2026-11-19
 stage: "active"
