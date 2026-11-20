@@ -32,6 +32,15 @@ Imported memories can land in the wrong client's scope, and jcode memories live 
 Decide first, build later; imports and sync never cross a client boundary.
 
 ## Relevant details
+Decision 3 (Jørgen 2026-11-20 12:02Z, request 6): call it import and export, never sync, and make import one-way and final.
+Today: hug mem import jcode|engram copies memories in (with --dry-run), keeps each one's origin, and running it again only adds what is new. Nothing marks the source as done, and jcode's files are also read live (Decision 2), so two copies can drift.
+Proposal:
+- hug mem import SOURCE shows a preview by default: how many new, how many already imported, by scope.
+- import --apply imports, records each imported origin with its date (so a later import never brings back an old state), then offers to clean up the source: for jcode, switch off live reading and move its memory files to an archive folder; for engram, leave its database alone and record it as imported.
+- hug mem export TARGET writes everything hug holds in that system's format, for someone moving away; a preview by default, --apply writes it. Export never deletes from hug.
+- sync stays the name only for the repo's hug/memory branch (Personal vs shared, rnpdnm), which really goes both ways.
+This answers Decision 2 as 2B with a cleanup step: import once, then stop reading live.
+
 Decision 1: which client owns an imported memory.
 - 1A Keep today: the owner rescopes by hand. Cost none. Risk: engram project notes written in a client folder are visible to every session until someone notices.
 - 1B Recommended. Keep the scope the source states (engram personal stays personal); when it states none, place by the folder it was written in, client included. Cost about 1 day. Risk: a folder that became a client later narrows old notes; fails closed, rescope undoes it.
@@ -148,3 +157,4 @@ file:screen-1140-2.ans (47336 bytes, sha256:19bfc305) screen capture from hug tu
 - 2026-11-20T13:01 request 6 by jhf
 - 2026-11-20T13:01 request 6 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T13:01 request 6 acknowledged by crab
+- 2026-11-20T13:02 request 6 in progress by crab: hug task set hpqt99
