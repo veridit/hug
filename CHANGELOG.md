@@ -6,6 +6,8 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+## v0.7.89 - 2026-11-20
+
 - hug tui opens a task that asks you something on the question itself
   (qcq3tm), scrolled into view and focused, under its check or in its
   own block. A file the question names (--show) is no longer drawn above
