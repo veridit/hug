@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzr"
 created: 2026-11-20
 updated: 2026-11-20
+design_since: "2026-11-20T11:12"
+design_asked_by: "crab"
+design_question: "For a file named in a task's text (e.g. MOCK.md in p87ngv's question): Space shows it in line under that line, Enter opens it in the file frame, Esc returns, matching Space and Enter in FILES today. Is that the right pair, or do you want a separate jump key (g)?"
+design_for: "jhf"
+stage: "design"
 ---
 
 ## Goal
@@ -33,6 +38,14 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
 - [ ] AGENTS.md and the setup template say: a document for one task is attached to that task; only decisions go into repo docs (test pins the wording)
 - [ ] A file named in plain text inside a question, check or note (e.g. 'MOCK.md', 'tui-100x30.txt') is recognised when the task has that file, and works as a link: one key shows it in line under the line that names it, another opens it in the file frame, Esc returns (tmux test on p87ngv's board copy)
 
+## Questions
+- 2026-11-20T11:12 question 1 by crab to jhf:
+  For a file named in a task's text (e.g. MOCK.md in p87ngv's question): Space shows it in line under that line, Enter opens it in the file frame, Esc returns, matching Space and Enter in FILES today. Is that the right pair, or do you want a separate jump key (g)?
+
 ## Notes
 
 Jørgen 2026-11-20 10:12Z (p87ngv request 4): p87ngv's questions name several files (MOCK.md, before.md, after.md, history.sdd, cli.txt, tui-100x30.txt); he has to remember them, go to FILES and open each. Wanted: a file named in a question (or anywhere in the text) can be viewed in line, or jumped to, and jumped back from. Open for him: which key jumps (Enter, Space, g, or another)? Keys provisional until bfxq93.
+
+
+## History
+- 2026-11-20T11:12 todo -> todo/design (ask)
