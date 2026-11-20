@@ -28,6 +28,8 @@ Jørgen copies screenshots and text elsewhere and wants them on a ticket without
 Reuse the S flow: inside a task it attaches there; in a list it asks: attach to ID · select · create.
 
 ## Relevant details
+Key: V (Jørgen 2026-11-20 11:52Z), next to S for screen; shown in the keys line and ? help. Provisional until the key review (bfxq93).
+
 How it reads the clipboard: an image cannot come through the terminal (Cmd+V sends text only), so the key reads the system clipboard itself: macOS via osascript (PNG from «class PNGf»), Linux via wl-paste or xclip; text via pbpaste/wl-paste/xclip. Image -> paste-HHMM.png; text with ANSI colour -> .ans; other text -> .txt. Stored with the same hug task attach path (name, size, sha256 note, secret check). Over SSH or with no clipboard tool, the message says so with a fix: line (hug task attach ID FILE). Also: a Cmd+V (bracketed paste) inside a task with no box open could offer to attach the pasted text. Key: P and p already paste a yanked task (3xcesq); keys stay provisional until bfxq93. Related: 5z4zt4 (attachments shown inline), hjbfzd (S capture wording), 65kjn8 (when files were attached). Jørgen 2026-11-20 10:23Z: 'is there a way to paste a screen? ... I can go into a ticket or I can press a paste key that takes ... whatever is in the current paste buffer and attach it to something a bit like the screenshot'.
 
 ## Depends on
