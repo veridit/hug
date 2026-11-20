@@ -1,7 +1,7 @@
 ---
 id: ec6z6j
 title: "Send one request for a selection of tasks"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,14 +10,11 @@ group: ""
 rank: "zzzzzzzzzzn3"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T21:53"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ykta5g"
 worktree: "/Users/jhf/.jcode/scratch/ykta5g"
-waiting_asked_by: "crab"
-waiting_on: "a worker for checks 4 and 6 (TUI; after cow's 911j70 lane, which is in the same list code)"
-waiting_since: "2026-11-20T09:32"
+done_at: "2026-11-20T18:22"
+done_release: "v0.7.91"
 ---
 
 ## Goal
@@ -78,6 +75,7 @@ dog: CI run 44780705119 on d3b79155 (branch ci/ec6z6j-r, same SHA as ec6z6j-r): 
 check 5: d3b79155 (CI 44780705119 8/8): footer '3 marked · move · x drop · edit · request · Esc unmark'; r opens '▸ REQUEST FOR 3 MARKED · …' under the list; TestTmuxMarkedRequest ec6z6j_tmux_test.go, TestMarkedRequestBox; mutants M1-M5 caught
 check 4: d3b79155: targets line on home and link page, link names its home as a Tab stop; golden testdata/detail/manyrequest.txt 80x24; TestManyRequestPages; mutants M6-M10 caught
 landed d3b79155 on main (fast-forward, CI 44780705119 8/8); released v0.7.91 (00a06a61). dog's two choices accepted by crab: marks clear after a successful send (mock, rxr4z8 check 9); a link page shows the home's receipt label.
+shipped in v0.7.91 (d3b7915)
 ## History
 - 2026-11-18T21:53 todo -> doing/active (take)
 - 2026-11-18T21:53 doing/active -> doing/asked (ask)
@@ -89,3 +87,4 @@ landed d3b79155 on main (fast-forward, CI 44780705119 8/8); released v0.7.91 (00
 - 2026-11-20T09:31 answer 1 acknowledged by crab
 - 2026-11-20T09:32 answer 1 in progress by crab: hug task check ec6z6j 1 "Jørgen 2026-11-20 08:31Z (answer 1): 'Clearly, a': option A, the request box opens at the bottom of the list so the mar…"
 - 2026-11-20T09:32 doing/active -> doing/waiting (wait)
+- 2026-11-20T18:22 doing/waiting -> done (done, by release v0.7.91: every check holds); was doing_since: 2026-11-18T21:53; waiting_asked_by: crab; waiting_on: a worker for checks 4 and 6 (TUI; after cow's 911j70 lane, which is in the same list code); waiting_since: 2026-11-20T09:32
