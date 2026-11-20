@@ -11,7 +11,7 @@ rank: "zzzzzzzzzzsw"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T21:53"
-stage: "depends"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "ykta5g"
 worktree: "/Users/jhf/.jcode/scratch/ykta5g"
@@ -31,7 +31,6 @@ User feedback 2026-11-18: marking task rxr4z8 is unfinished; single-task request
 
 ## Depends on
 
-- rxr4z8
 ## Acceptance
 - [x] A board mock shows marking several tasks, selected count, and one request action for that exact set, reviewed by Jorgen.
 - [x] Submitting one request preserves its exact text and selected IDs, visible to the agent without asking the user to repeat it per task.
