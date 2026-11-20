@@ -6,6 +6,16 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 
 ## Unreleased
 
+- `hug task done` refuses a task with a question still open to someone
+  (72n8m4): exit 3, `fix: hug task resume ID` withdraws it on purpose.
+  The board cue no longer offers done for such a task.
+- After a release nothing is left as shipped-not-done that the flow can
+  settle (yf39ya): a todo task with an open question is quiet; a shipped
+  task whose open check is not a person's is handed to its owner as
+  active work (a "handed on after vX" note), and the owner's tick asks
+  the person check or closes it; a shipped task waiting on a dependency
+  is quiet, and its person check is asked when the dependency is done.
+
 ## v0.7.87 - 2026-11-20
 
 - hug tui lists broken tasks before advice (z6cb03): the overview's LINT
