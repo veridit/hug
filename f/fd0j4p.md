@@ -14,7 +14,7 @@ stage: "ready"
 ---
 
 ## Goal
-Agent instructions say the board is the truth, blocked names who must act, and questions for a person go in tasks.
+The hug section of AGENTS.md says the board is the record of work, and waits and questions name who or what declaratively.
 
 ## Purpose
 Jørgen 2026-11-19 08:39Z (crab session): consider whether the todo-reminder push should change hug's instructions for AIs. crab had answered jcode's 'incomplete todos' reminder by marking items externally blocked (memory 2sgrc1), and asked a design question in chat rather than on a task. 08:54Z: dialogue should move from the chat into the ticket so it stays relevant and survives compaction.
