@@ -54,6 +54,8 @@ Today: hug setup turns jcode's own memory off per instance and routes saves to m
 ## Requests
 - 2026-11-20T09:55 request 1 by jhf:
   So here you're referencing a file design.md which happens to have the details for this very task inside the file that is now part of our documentation, which makes no sense. It should have been an attachment to this ticket and I can't navigate to this design file from the ticket. So I'm going to break up my whole work life to go to another editor, open it, load the file and so on. So I think we have to one be able to reference files and open them from the ticket with the embedded viewer and two be able to navigate to them when I jump to different anchors and three it this specific document should have been attached to this ticket not be part of general documentation and then I can look at this ticket again
+  resolved 2026-11-20T09:56 by crab:
+    (3) Done on this ticket: the proposal is attached as design.md (Files, Space shows it), taken from branch hpqt99 32ed02dd; it never reached main's docs. Details now point to the attachment and say only the decision goes into docs/DESIGN.md. The question is re-asked naming design.md. (1) and (2) are filed as zbdbtm: any file a task names opens from the task in the embedded viewer at its section, Tab stops on every file link, Esc returns; and AGENTS.md tells agents to attach per-task documents.
 - 2026-11-20T09:56 request 2 by jhf:
   The purpose for this ticket is also not clear enough. This is too wordy, quoting me. So you can write all those lengthy things in some notes or some details somewhere on the bottom, but try to lead with clarity
 
@@ -77,3 +79,4 @@ file:design.md (7506 bytes, sha256:2480b561)
 - 2026-11-20T09:56 doing/active -> doing/asked (ask)
 - 2026-11-20T09:56 request 2 by jhf
 - 2026-11-20T09:56 request 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-20T09:56 resolved request 1 by crab
