@@ -120,6 +120,22 @@ func TestActionKeepsTheSlot(t *testing.T) {
 	}
 }
 
+// Esc right after the action lands on the task after the slot, in the
+// middle of the pane; a reload while the gap stands (the watcher reads
+// the board again after the commit) keeps it, so n still opens Delta.
+func TestActionGapSurvivesReload(t *testing.T) {
+	m := slotBoard(t, true, 0)
+	m = press(m, "j", "j", "enter", "a", "o", "k", "enter")
+	if got := rowID(press(m, "esc")); got != "dddddd" {
+		t.Fatalf("Esc after Charlie moved landed on %q, want dddddd", got)
+	}
+	m.refresh(m.detailPath) // the watcher's reload
+	m.refresh(m.detailPath)
+	if m = press(m, "n"); openedID(m) != "dddddd" {
+		t.Fatalf("n after two reloads opened %q, want dddddd", openedID(m))
+	}
+}
+
 // A task that stays in its pane after an action keeps n and p as they
 // were: from its own row (no gap is made).
 func TestActionInPlaceStepsFromTheTask(t *testing.T) {
@@ -156,14 +172,19 @@ func TestActionSaysWhereTheTaskMoved(t *testing.T) {
 		{"answer", true, 0, []string{"a", "o", "k", "enter"}, "bbbbbb moved to NEXT UP"},
 		{"tick", true, 1, []string{" ", "enter"}, "bbbbbb moved to NEXT UP"},
 		{"take", false, 0, []string{"t", "enter"}, "bbbbbb moved to IN PROGRESS"},
+		// On the board the place is the column (crab 20:07Z, ruling 2).
+		{"take on the board", false, 0, []string{"t", "enter"}, "bbbbbb moved to DOING"},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			m := slotBoard(t, c.ask, c.check)
+			if c.name == "take on the board" {
+				m = press(m, "v", "b")
+			}
 			m = press(m, "j", "enter")
 			if openedID(m) != "bbbbbb" {
 				t.Fatalf("open %q", openedID(m))
 			}
-			if c.name == "take" {
+			if strings.HasPrefix(c.name, "take") {
 				m.detailPane = focusPage // t on the page takes the task
 			}
 			m = press(m, c.keys...)
