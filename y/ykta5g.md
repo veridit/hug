@@ -1,7 +1,7 @@
 ---
 id: ykta5g
 title: "In a task, k after j scrolled past the last check jumps to the top"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["crab"]
@@ -10,16 +10,11 @@ group: ""
 rank: "zzzzzzzzzzvv"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T20:00"
-stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Jørgen confirms j/k in a task feel symmetric after release"
-asked_for: "jhf"
-asked_since: "2026-11-18T23:24"
-asked_by: "crab"
-asked_check: "3"
+done_at: "2026-11-20T09:38"
+done_release: "v0.7.71"
 ---
 
 ## Goal
@@ -41,12 +36,14 @@ huginn/internal/tui/tui.go:1608 (case j/down/k/up in the detail): moving the sel
 ## Acceptance
 - [x] A key test: in a task whose checks end above the bottom of a 24-row screen, j until the page scrolls N lines past the last check, then k N times scrolls back up one line each with the last check still marked, and the next k marks the previous check with no jump (fails first on main)
 - [x] The same holds for dependencies, links and files lists (table test over the four panes)
-- [ ] Jørgen confirms j/k in a task feel symmetric after release
+- [x] Jørgen confirms j/k in a task feel symmetric after release
 - [x] Jørgen 19:37Z (gav9nw request 1): when a check gets focus (on open, or by j/k), the whole check shows, question and all, not only its first line; a check taller than the screen shows from its first line. Key test on a task asked with a long multi-line question at 100x24 (e.g. gav9nw)
 
 ## Questions
 - 2026-11-18T23:24 question 1 by crab to jhf (check 3):
   Jørgen confirms j/k in a task feel symmetric after release
+  answered 2026-11-20T09:38 by jhf:
+    answered by ticking check 3
 
 ## Notes
 
@@ -63,3 +60,7 @@ shipped in v0.7.71 (c0ac0d5)
 - 2026-11-18T21:02 doing/active -> doing/waiting (wait)
 - 2026-11-18T23:24 doing/waiting -> doing/asked (ask); was waiting_asked_by: piglet; waiting_on: CI run 44386677307; waiting_since: 2026-11-18T21:02
 - 2026-11-20T02:45 handed to crab: piglet's session went silent (last seen 2026-11-19 02:41)
+- 2026-11-20T09:38 answered asked (check 3), by jhf, for crab (doing/asked -> doing/active):
+  > Jørgen confirms j/k in a task feel symmetric after release
+  answered by ticking check 3
+- 2026-11-20T09:38 doing/active -> done (done after jhf ticked check 3 (release v0.7.71)); was doing_since: 2026-11-18T20:00
