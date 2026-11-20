@@ -136,6 +136,8 @@ Build lanes (crab): A core: scanner and tests, lint, resolve to history, several
     Not fixed yet; filed as check 4 on qcq3tm (high, a worker is on it now). What I found in the code (v0.7.88): a does open the answer box, but it is drawn under the question it answers, and on p87ngv that question sits far down the page (check 5's question 11, or question 12 in ## Questions), so the box most likely opened out of view and your keys went into it unseen. qcq3tm already makes an asked task open on its question; check 4 adds that a always opens the box in view with the cursor in it, tested on a copy of this very task. Until it ships: after a, scroll down (J) to the question; the box is there. Esc closes it without sending.
 - 2026-11-20T11:42 request 6 by jhf:
   Look at what this looks like when I open this ticket. It's utterly garbled. I don't have any overview. There's linting errors Maybe I have to discuss this in the console. How can this be open and clear when I open it?
+  resolved 2026-11-20T11:44 by crab:
+    Made it short. Purpose and Principle are one sentence each; Details now open with the state (approved, nothing built yet) and four plain bullets on what a mark is, how it looks, how it resolves, and choices. The long design text, every ruling and the syntax moved to design.md in Files. The two lint lines: 'shipped, but doing' is gone (the task now says it waits for a build worker); the missing-file line is a false finding that 7j706s fixes; it landed on main today and goes away with the next release (with qcq3tm, which opens a task on its question).
 
 ## Notes
 
@@ -284,3 +286,4 @@ file:design.md (8185 bytes, sha256:cc3307db) full design text, rulings and synta
 - 2026-11-20T11:42 request 6 acknowledged by crab
 - 2026-11-20T11:43 request 6 in progress by crab: hug task attach p87ngv /Users/jhf/.jcode/scratch/p87/design.md
 - 2026-11-20T11:43 doing/active -> doing/waiting (wait)
+- 2026-11-20T11:44 resolved request 6 by crab
