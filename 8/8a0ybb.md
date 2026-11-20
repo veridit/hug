@@ -4,7 +4,7 @@ title: "Detail view: the question first, links that jump, short sections before 
 state: "doing"
 type: feature
 priority: ""
-assignee: ["bug"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzm"
@@ -88,3 +88,4 @@ crab 01:21Z: reviewed the mock: 20 frames (5 views x 100x30/160x45, .ans + .png)
 - 2026-11-19T12:26 answer 1 acknowledged by crab
 - 2026-11-20T01:15 todo/ready -> doing/active (take)
 - 2026-11-20T02:20 doing/active -> doing/asked (ask)
+- 2026-11-20T03:22 handed to crab: bug's session ended (closed 2026-11-20 02:20)
