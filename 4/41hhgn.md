@@ -11,13 +11,15 @@ rank: "zzzzzzzzzzmh"
 created: 2026-11-17
 updated: 2026-11-17
 doing_since: "2026-11-17T23:53"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "checks 5, 8 (TUI textarea) and 10: nautilus's 0gztsy on top of 7defaf1; 7: Jørgen after the release; 11: harness cue, owner per crab"
-waiting_since: "2026-11-18T00:56"
-waiting_asked_by: "kestrel"
+asked_check: "7"
+asked_what: "Questions to a person now have their own stage, asked. On your board, does ASKED show what is asked of you, apart from what merely waits?"
+asked_for: "jhf"
+asked_since: "2026-11-20T09:26"
+asked_by: "crab"
 ---
 
 ## Goal
@@ -50,6 +52,10 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [x] After a person answers, the asker's next write on that task shows under the answer as its outcome, and the coordinator gets one cue line naming the task and what was done (harness test)
 - [x] show --json and MCP task_show give the current stage's fields as an object named after the stage next to 'stage' (asked: what, for, check, since, by), and the fields map no longer repeats them (test on a waiting and an asked task)
 - [x] hug upgrade moves a wait on a person to asked only when it reads as a question (has a '?', or names a check N); any other wait (a park such as s6ff5k's 'parked per crab ruling, no fourth arm') stays waiting, and the preview lists the waits it leaves, each with its id and text (test, plus the preview on a board clone)
+
+## Questions
+- 2026-11-20T09:26 question 1 by crab to jhf (check 7):
+  Questions to a person now have their own stage, asked. On your board, does ASKED show what is asked of you, apart from what merely waits?
 
 ## Notes
 
@@ -113,3 +119,4 @@ shipped in v0.7.70 (08ab507)
 - 2026-11-18T00:45 doing/waiting -> doing/active (resume); was waiting_asked_by: kestrel; waiting_on: parked a minute while kestrel closes d2n0h7 (crab 00:44); resumed next; waiting_since: 2026-11-18T00:45
 - 2026-11-18T00:56 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:01 handed to crab: iwazaru's session ended (closed 2026-11-19 02:27)
+- 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: kestrel; waiting_on: checks 5, 8 (TUI textarea) and 10: nautilus's 0gztsy on top of 7defaf1; 7: Jørgen after the release; 11: harness cue, owner per crab; waiting_since: 2026-11-18T00:56
