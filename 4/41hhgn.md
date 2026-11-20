@@ -1,7 +1,7 @@
 ---
 id: 41hhgn
 title: "Questions to a person get their own doing stage, 'asked'"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,16 +10,11 @@ group: ""
 rank: "zzzzzzzzzzmh"
 created: 2026-11-17
 updated: 2026-11-17
-doing_since: "2026-11-17T23:53"
-stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_check: "7"
-asked_what: "Questions to a person now have their own stage, asked. On your board, does ASKED show what is asked of you, apart from what merely waits?"
-asked_for: "jhf"
-asked_since: "2026-11-20T09:26"
-asked_by: "crab"
+done_at: "2026-11-20T11:29"
+done_release: "v0.7.70"
 ---
 
 ## Goal
@@ -45,7 +40,7 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 - [x] hug upgrade previews, and --apply moves each doing/waiting with waiting_for into doing/question, a leading 'check N:' (real N) into question_check; on hug's own board the preview lists the tasks and the apply leaves 0 waiting_for fields (test, plus the board numbers in a note)
 - [x] The TUI shows no '?' glyph; a question row's stage cell reads 'question' and questions for the viewer sort first (golden)
 - [x] MCP task_update action ask behaves like the CLI (test)
-- [ ] Jørgen confirms on his board after release
+- [x] Jørgen confirms on his board after release
 - [x] A multi-line answer survives every path: TUI (Alt-Enter adds a line, a paste keeps its lines, Enter sends), 'hug task answer ID -' from stdin, and MCP; History holds it as an indented block, and show, the detail and the asker's notice print every line verbatim (test with a 3-line answer holding a quote and a colon)
 - [ ] ~~The overview has an ASKED section at the top ('ASKED · for you [N]', oldest first) holding the tasks asked of the viewer; WAITING holds only waits with no person and questions asked of others; the header's '? N for you' equals the ASKED count (golden on hug's board shape: 16 asked, 2 waiting)~~ (not relevant: Jørgen 00:13: rows show the title, the focused row adds the question (next check), crab, 2026-11-18)
 - [x] The overview has an ASKED section at the top ('ASKED · for you [N]', oldest first) holding the tasks asked of the viewer; each row shows its title, and only the focused row adds a second line '└ asked: check N · <question>'; WAITING holds only waits with no person and questions asked of others; the header's '? N for you' equals the ASKED count (golden on hug's board shape)
@@ -56,6 +51,8 @@ Today: states.go doing/waiting carries waiting_on, waiting_for, waiting_since, w
 ## Questions
 - 2026-11-20T09:26 question 1 by crab to jhf (check 7):
   Questions to a person now have their own stage, asked. On your board, does ASKED show what is asked of you, apart from what merely waits?
+  answered 2026-11-20T11:29 by jhf:
+    answered by ticking check 7
 
 ## Notes
 
@@ -120,3 +117,7 @@ shipped in v0.7.70 (08ab507)
 - 2026-11-18T00:56 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:01 handed to crab: iwazaru's session ended (closed 2026-11-19 02:27)
 - 2026-11-20T09:26 doing/waiting -> doing/asked (ask); was waiting_asked_by: kestrel; waiting_on: checks 5, 8 (TUI textarea) and 10: nautilus's 0gztsy on top of 7defaf1; 7: Jørgen after the release; 11: harness cue, owner per crab; waiting_since: 2026-11-18T00:56
+- 2026-11-20T11:29 answered asked (check 7), by jhf, for crab (doing/asked -> doing/active):
+  > Questions to a person now have their own stage, asked. On your board, does ASKED show what is asked of you, apart from what merely waits?
+  answered by ticking check 7
+- 2026-11-20T11:29 doing/active -> done (done after jhf ticked check 7 (release v0.7.70)); was doing_since: 2026-11-17T23:53
