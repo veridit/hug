@@ -84,6 +84,8 @@ Promoted from item 3 of task:9taa9d.
     You are right: merging is not the gain. The shared branch file is already one line per memory, so git merges it fine today, and hand editing is not a reason. WHY is rewritten with the one real gain: today every remember or forget rewrites the whole 18.6 MB memories.json under a lock all sessions wait on; small per-memory writes fix that. CONSEQUENCES list what speaks against 18,078 files (git and file-system cost, a large migration). And there is a cheaper way to the same gain: keep one file but make it append-only JSON Lines, compacted by dream. Question 2 now asks: keep as is, append-only JSON Lines, or one file per memory.
 - 2026-11-20T17:05 request 3 by jhf:
   Did we consider alternatives here such as date folders and then or per date files with each containing JSON lines something like that?
+  resolved 2026-11-20T17:08 by crab:
+    Yes, now considered. Details list six layouts, measured on your memories.json: D is one JSON Lines file per day (141 files, a median day 38 KB, busiest 2.1 MB), so a new memory rewrites only today's file. Details also note what any dated layout must handle: 2,825 memories (15%) change on a later day. Question 3 asks you to pick.
 - 2026-11-20T17:06 request 4 by jhf:
   or keeping one today folder with one file per memory and then as we aggregate it goes into a dated JSON line file for that day. Yes, dreaming and removing old things becomes slower. Writing and cleaning up the current day becomes faster. That's also an option or current week and past weeks is also an option.
 
@@ -130,3 +132,4 @@ Promoted from item 3 of task:9taa9d.
   > The real gain is smaller local writes (today each remember rewrites the whole 18.6 MB file); git merges are already line-based. Keep memories.json, make it append-only JSON Lines (same gain, one file), or one file per memory (same gain, 18,078 files)?
   Withdrawn by crab 2026-11-20: Jørgen's requests 3 and 4 added dated layouts; question 3 asks A to F.
 - 2026-11-20T17:08 todo/ready -> todo/design (ask)
+- 2026-11-20T17:08 resolved request 3 by crab
