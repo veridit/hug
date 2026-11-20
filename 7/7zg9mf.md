@@ -28,6 +28,10 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
 
 ## Acceptance
 - [ ] ~~Verify Default filter not done for list~~ (not relevant: replaced by checks 2-5, crab, 2026-11-20)
+- [ ] ': state !done' and ': type !bug' keep every task but those; the filter line shows the !; CLI hug task ls --state '!done' does the same (tests)
+- [ ] In the f picker, ! flips the highlighted value to its negation, before or after picking (key test)
+- [ ] The list view opens with 'filter: state !done', and Esc clears it to 'filter: none' (tmux test)
+- [ ] Jørgen opens the list after release and sees only open work, and can flip a filter with !
 
 ## Requests
 - 2026-11-20T13:34 request 1 by jhf:
