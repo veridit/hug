@@ -1,7 +1,7 @@
 ---
 id: gmzd87
 title: "Requests reach the board coordinator by design"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzsx"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T12:34"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-20T11:30"
 ---
 
 ## Goal
@@ -71,6 +70,7 @@ Landed on main 4e70099c (CI 44321337759, exact SHA, 6/6; code identical to mizar
 landed 872a2a4 on main 2026-11-18: Requests and answers reach the board coordinator by design (gmzd87)
 shipped in v0.7.64 (872a2a4)
 check 4: Jørgen 2026-11-20 10:30Z: 'It works ... So this one is closed.' His default-coordinator idea is filed as a new task.
+Reflection (open, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T12:34 todo -> doing/active (take)
 - 2026-11-18T15:11 doing/active -> doing/waiting (wait)
@@ -82,3 +82,4 @@ check 4: Jørgen 2026-11-20 10:30Z: 'It works ... So this one is closed.' His de
 - 2026-11-20T11:30 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T11:30 answer 1 acknowledged by crab
 - 2026-11-20T11:30 crab read the answer: hug task check gmzd87 4 "Jørgen 2026-11-20 10:30Z: 'It works ... So this one is closed.' His default-coordinator idea is filed as a new task."
+- 2026-11-20T11:30 doing/active -> done (done); was doing_since: 2026-11-18T12:34
