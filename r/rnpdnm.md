@@ -32,11 +32,10 @@ A repo that shares memories shows them to everyone who clones it, so wrong ones 
 Choose from what was measured; change nothing for any repo until Jørgen picks.
 
 ## Relevant details
-WHAT HAPPENS TODAY, IN PRACTICE
-1. After a session, hug writes memories into your local store on this machine (muninn.db). Each has a place: personal, global, a client, or this project.
-2. The memories of this project are recalled in this project's sessions. That is all local; nothing leaves the machine.
-3. Sharing is a per-repo switch, off by default: [memory] share = true in hug.toml. Only when it is on does hug mem sync write the project's memories into memories.jsonl on the repo's hug/memory branch and push it, so everyone who clones the repo gets them.
-4. Today no repo has it on. Nothing is written to or pushed on any branch.
+WHERE MEMORIES ARE, PHYSICALLY
+1. On your Mac: one database file, ~/Library/Application Support/muninn/muninn.db (805 MB). Every memory from every project lives there. hug writes to it after sessions and recalls from it. It never leaves the machine.
+2. In a repo, only if that repo shares: one file, memories.jsonl, on the repo's hug/memory branch, checked out at .hug/memory/. hug mem sync copies the project's memories from muninn.db into it and pushes the branch to GitHub, so anyone who clones gets them.
+3. Sharing is off in every repo today. hug's own hug/memory branch still holds 827 old lines from before it was switched off (last push 2026-11-18); nothing has been added since.
 
 WHAT 'HELD' MEANS
 When sharing is on, sync checks each project memory before writing it to the branch. A memory that names a home folder (/Users/...), another project or client, or you, or states a personal preference, is not written to the branch. It stays in your local store and is still recalled here; only the push skips it. That is all 'held' means.
@@ -150,3 +149,4 @@ file:screen-1258.ans (40181 bytes, sha256:67505c40) screen capture from hug tui
 - 2026-11-20T12:59 request 4 by jhf
 - 2026-11-20T12:59 request 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:59 request 4 acknowledged by crab
+- 2026-11-20T12:59 request 4 in progress by crab: hug task set rnpdnm
