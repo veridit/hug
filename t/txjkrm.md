@@ -44,7 +44,7 @@ Data: Seid label counts in /Users/jhf/.jcode/scratch/seid-labels.txt (regenerate
 - [x] filter tag:compiler and g grouping by tag work (test)
 - [x] hug upgrade --tags on Seid proposes the merges, field moves and drops as a diff with counts, writes nothing until approved; after approval lint is clean of tag findings
 - [x] Jørgen 19:35Z: tags sit right after the task ID (pie, id, tags, type, priority, stage, text), dim, at most 22 columns; this supersedes 'before the title' in check 3 (goldens at 80 and 140)
-- [ ] Jørgen confirms Seid's overview with tags right after the ID reads right (file seid-overview-tags-row.txt)
+- [ ] ~~Jørgen confirms Seid's overview with tags right after the ID reads right (file seid-overview-tags-row.txt)~~ (not relevant: superseded by Jørgen's 911j70 answer 1 (2026-11-20 08:26Z): tags become a prefix of the title, not a slot right after the ID; built and confirmed under 911j70 check 5, crab, 2026-11-20)
 
 ## Questions
 - 2026-11-18T23:38 question 1 by kikazaru to jhf (check 7, show seid-overview-tags-row.txt):
