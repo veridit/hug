@@ -73,3 +73,4 @@ file:screen-1057-2.ans (24091 bytes, sha256:39c4a77d) screen capture from hug tu
 - 2026-11-20T10:58 answered asked (check 5), by jhf, for piglet (doing/asked -> doing/active):
   > Approve these three additions to the AGENTS.md section hug setup writes into every repo?
   Yes, I approved this ticket. I also added two more screenshots showing how and I've done this several times so I hope that there's a ticket incoming the question is not visible when I open and how the file is shown inline instead of scrolling down to the file revealing both the question and the file. Either that should be appended to the existing ticket someone is working on, or it should be given higher priority if it is in the next upcoming, and this ticket is of course closed.
+- 2026-11-20T10:58 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
