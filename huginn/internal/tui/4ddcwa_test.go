@@ -178,6 +178,22 @@ func TestPageFrameMessageReplacesOnlyTheStatus(t *testing.T) {
 	}
 }
 
+// 4ddcwa check 3: the page is as tall as its frame from the first frame
+// a resize draws, before any key: syncDetail sizes it between the rules,
+// the two rows of the old status line and its blank line given to it.
+func TestPageFrameHeightAfterResize(t *testing.T) {
+	m := p87ngvBoard(t, "testdata/p87ngv/five-questions.md", 100, 30)
+	for _, size := range [][2]int{{160, 45}, {100, 30}} {
+		m.width, m.height = size[0], size[1]
+		m.resize() // no Update: the page height is syncDetail's alone
+		// The crumb, the top rule, the bottom rule and the keys.
+		if want := m.height - len(m.detailHeader(mustSelected(t, m))) - 4; m.viewport.Height != want {
+			t.Fatalf("%dx%d: the page has %d rows after a resize, want %d", size[0], size[1], m.viewport.Height, want)
+		}
+		framedPage(t, fmt.Sprintf("%dx%d resized", size[0], size[1]), m, 0)
+	}
+}
+
 // 4ddcwa with q3sh69: a frame line is not a focus sign and never pulses.
 // The > of the focused question dims in the pulse's off phase; the two
 // rules, arrows and status are the same bytes in both phases.
