@@ -62,6 +62,7 @@ file:frame-1-top-100x30.ans (4089 bytes, sha256:5265319c) 4ddcwa check 1, 100x30
 file:frame-2-mid-100x30.ans (3698 bytes, sha256:77c3628f) 4ddcwa check 1, 100x30, qpp30y scrolled mid-page (J J): ↑ on the top rule, ↓ on the bottom rule
 file:frame-3-end-100x30.ans (4447 bytes, sha256:d479a93f) 4ddcwa check 1, 100x30, qpp30y at the end (>): ↑ on the top rule, no ↓: '─── Task 1 of 2 · 100% …'
 file:frame-4-mid-message-100x30.ans (3897 bytes, sha256:c8601952) 4ddcwa check 1, 100x30, a long task mid-page after t Enter: the message '• prtwm2 moved to IN PROGRESS' takes the status's place on the bottom rule, the ↓ stays (xt0qvf option A for the task page)
+file:frame-1-top-100x30.ans (3953 bytes, sha256:9943caff) replaces sha256:5265319c 4ddcwa check 1, 100x30, qpp30y at the true top (opened, then <): no ↑ on the top rule, DESCRIPTION and PURPOSE in view, bottom rule '↓── Task 1 of 2 · 0% …' right on the keys (recaptured 17:49Z: the first capture was the opened page, which focus had scrolled 1 line)
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
 - 2026-11-21T18:44 doing/active -> doing/asked (ask)

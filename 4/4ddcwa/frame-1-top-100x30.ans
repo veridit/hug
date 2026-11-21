@@ -3,7 +3,11 @@
 [38;2;135;149;168mcreated 2026-11-18 · updated 2026-11-18 · answer-box-shows-once[39m
 [38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
 [1m[39mAnswer box shows at once, with the only moving cursor on screen
-[0m[38;2;135;149;168m↑───────────────────────────────────────────────────────────────────────────────────────────────────
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255mDESCRIPTION[0m
+[38;5;252mPressing a or r draws the answer box at once, with a blinking cursor as the only motion on screen.[39m
+
+[1m[38;2;0;191;255mPURPOSE[0m
 [38;5;252mJørgen 2026-11-18: pressing a changed the footer to 'Enter send' but drew no box; it appeared only[39m
 [38;5;252mafter the first keystroke, so nothing showed where to type.                                       [39m
 
@@ -22,9 +26,5 @@
 [38;5;252msyncDetail() on each key, which is why it appears after typing. Cursor is set static at           [39m
 [38;5;252manswerbox.go:30 (cursor.CursorStatic), drawn as a block. Stale 'request qtj177' under the page is [39m
 [38;5;252mz82qsy.                                                                                           [39m
-
-[1m[38;2;0;191;255m▸ ACCEPTANCE[0m[38;2;135;149;168m · j/k or [ ] step · Space ticks · - strikes out
-[1m[38;2;0;191;255m>[39m[48;2;22;54;73m ☑ 1. Pressing a or r draws the box with its label and cursor in the same frame, before any[0m
-[1m[48;2;22;54;73m       keystroke; a test fails first on main.[0m
-[38;2;135;149;168m↓── Task 1 of 2 · 4% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ──────────────────────────────────────────────────
+[38;2;135;149;168m↓── Task 1 of 2 · 0% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ──────────────────────────────────────────────────
 [1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m check · [1m[38;2;0;191;255mSpace[0m[38;2;135;149;168m tick · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mE[0m[38;2;135;149;168mdit files · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp[39m [38;2;135;149;168m…[39m
