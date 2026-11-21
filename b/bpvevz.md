@@ -12,13 +12,10 @@ created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-20T11:23"
 doing_with: "p87ngv"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_since: "2026-11-21T02:55"
-waiting_asked_by: "crab"
-waiting_on: "until 2026-11-21 10:22Z: a full day of mid-turn recall, then the count (check 1)"
 ---
 
 ## Goal
@@ -47,3 +44,4 @@ Switched on 2026-11-20 10:22Z: recall.jcode_midturn true in /Users/jhf/Library/A
 - 2026-11-20T11:23 doing/active -> doing/waiting (wait until 2026-11-21)
 - 2026-11-21T00:54 doing/waiting -> doing/active (woke: the date 2026-11-21 has come); was waiting_asked_by: crab; waiting_on: a day of mid-turn recall on (switched 2026-11-20 10:22Z); waiting_since: 2026-11-20T11:23; waiting_until: 2026-11-21
 - 2026-11-21T02:55 doing/active -> doing/waiting (wait)
+- 2026-11-21T11:28 doing/waiting -> doing/active (resume); was waiting_asked_by: crab; waiting_on: until 2026-11-21 10:22Z: a full day of mid-turn recall, then the count (check 1); waiting_since: 2026-11-21T02:55
