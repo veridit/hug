@@ -12,14 +12,16 @@ parent: "d634kr"
 group: ""
 rank: "zzzzzs"
 doing_since: "2026-11-18T05:32"
-stage: "waiting"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_on: "fresh held-out tool calls of 2026-11-19 and 11-20 (complete after 2026-11-21T00:00Z): build 150 with muninn/scripts/build_tool_set.py --from 2026-11-19 --to 2026-11-21 --n 150 --seed 1121 --first-id 400000, replay shipped and default with -asof on a fresh store copy, judge with judge_tool_set.py, decide check 4 against the bar; arm frozen in recall.ToolRequest.Shipped()"
-waiting_since: "2026-11-18T06:24"
-waiting_asked_by: "hatchling"
 aliases: ["recall-on-the-agent-s-tool"]
+asked_what: "Tool-call recall passed every quality bar on fresh Nov 19-20 data (useful 22 per 100 calls, noise 5, 80% precise; report attached). The last gate is timing the hook on your live memory store while the Mac is above load 100. That run writes a few 'shown once' rows into the live muninn.db under test session names. May I run it the next time load passes 100?"
+asked_for: "jhf"
+asked_since: "2026-11-21T01:37"
+asked_by: "crab"
+asked_check: "4"
 ---
 
 ## Goal
@@ -52,6 +54,10 @@ Plan for check 4 (the only open check): (1) after 2026-11-21T00:00Z, build 150 c
   resolved 2026-11-18T13:22 by retriever:
     Purpose now says why (your 2026-11-15 10:28Z ask to match what the agent is doing, with a stricter bar; post_tool_feedback is the only mid-turn hook; message recall on tool calls was net noise, 30 useful vs 49 noise per 100). Goal now also says when it is done (a fresh held-out test decides whether tool-call recall is turned on). Principle: exact anchors not similarity, rule/fact/preference only, at most 2 per call and once per session, local and free, off by default until a bar written before the run passes on frozen-arm fresh data. Relevant details: what is built (v0.7.57, b106398), dev numbers, the bar, and a 5-step plan for check 4 starting after 2026-11-21T00:00Z. Lint: no findings.
 
+## Questions
+- 2026-11-21T01:37 question 1 by crab to jhf (check 4):
+  Tool-call recall passed every quality bar on fresh Nov 19-20 data (useful 22 per 100 calls, noise 5, 80% precise; report attached). The last gate is timing the hook on your live memory store while the Mac is above load 100. That run writes a few 'shown once' rows into the live muninn.db under test session names. May I run it the next time load passes 100?
+
 ## Notes
 
 Item 1 done (2026-11-16): offline set real/tool (66 tool calls, 7 sessions) replayed through recall4 on the typed snapshot, judged blind with the strict rubric (judge_tool.py, DeepSeek Flash). default: 30.3 useful and 48.5 noise per 100 calls, 44% of calls get an injection. union (all candidates): 259 useful vs 1741 noise per 100. Conclusion: message recall reused for tool calls is net noise (precision ~38%); the hook must not ship on the default gate. Next (item 2): a trigger keyed on CASE paths/commands from rule-type memories and when-then fields, then rejudge; ship cap proposal: noise <= 10 per 100 calls.
@@ -80,3 +86,4 @@ crab 2026-11-21 00:37Z, fresh held-out run per hatchling's protocol (150 calls 1
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
 - 2026-11-18T12:24 request 1 by jhf
 - 2026-11-18T13:22 resolved request 1 by retriever
+- 2026-11-21T01:37 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: fresh held-out tool calls of 2026-11-19 and 11-20 (complete after 2026-11-21T00:00Z): build 150 with muninn/scripts/build_tool_set.py --from 2026-11-19 --to 2026-11-21 --n 150 --seed 1121 --first-id 400000, replay shipped and default with -asof on a fresh store copy, judge with judge_tool_set.py, decide check 4 against the bar; arm frozen in recall.ToolRequest.Shipped(); waiting_since: 2026-11-18T06:24
