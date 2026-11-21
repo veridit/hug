@@ -11,10 +11,15 @@ rank: "zzzzzzzzzzz7"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-21T17:35"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_since: "2026-11-21T18:44"
+asked_by: "ladybug"
+asked_check: "1"
+asked_what: "Open the four attached frames at 100x30 (top, mid-page, end, and mid-page with a message): do the ↑ on the rule under the title, the bottom rule '↓── Task 1 of 2 · 29% · next · previous · Esc back ───' right on the keys, and a message like '• prtwm2 moved to IN PROGRESS' taking the status's place on that rule (↓ kept) read right? Your answer also settles xt0qvf's layout for the task page."
+asked_for: "jhf"
 ---
 
 ## Goal
@@ -46,6 +51,10 @@ Replaces 8a0ybb check 9 (↑/↓ in the corners). Related: xt0qvf (where the sta
 - [ ] A bottom rule sits right above the global keys, starts with ↓ when more is below, and carries the page status; no blank line between page, rule and keys (golden 100x30 and 160x45)
 - [ ] Jørgen opens a long task after release and sees where it ends and that there is more
 
+## Questions
+- 2026-11-21T18:44 question 1 by ladybug to jhf (check 1):
+  Open the four attached frames at 100x30 (top, mid-page, end, and mid-page with a message): do the ↑ on the rule under the title, the bottom rule '↓── Task 1 of 2 · 29% · next · previous · Esc back ───' right on the keys, and a message like '• prtwm2 moved to IN PROGRESS' taking the status's place on that rule (↓ kept) read right? Your answer also settles xt0qvf's layout for the task page.
+
 ## Notes
 
 
@@ -55,3 +64,4 @@ file:frame-3-end-100x30.ans (4447 bytes, sha256:d479a93f) 4ddcwa check 1, 100x30
 file:frame-4-mid-message-100x30.ans (3897 bytes, sha256:c8601952) 4ddcwa check 1, 100x30, a long task mid-page after t Enter: the message '• prtwm2 moved to IN PROGRESS' takes the status's place on the bottom rule, the ↓ stays (xt0qvf option A for the task page)
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
+- 2026-11-21T18:44 doing/active -> doing/asked (ask)
