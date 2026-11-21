@@ -32,3 +32,5 @@ Shipped: 5cjy88 (c05fb8d5 + 6ed006ff, CI 44894781379 8/8). Try it: brew upgrade 
 ## Notes
 
 file:1-typing-k5q120.ansi (2602 bytes, sha256:52530af6) before (v0.7.93): typing k5q120 selects hm2dne
+
+file:after-1-typing-k5q120.ansi (2481 bytes, sha256:8802fad2) after: 1-typing-k5q120
