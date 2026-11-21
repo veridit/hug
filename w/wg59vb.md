@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-21
 updated: 2026-11-21
+design_question: "v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?"
+design_for: "jhf"
+design_since: "2026-11-21T19:23"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -29,4 +34,12 @@ Shipped: 4ddcwa checks 2 and 3 (goldens 100x30 and 160x45, 10 mutants caught). T
 ## Acceptance
 - [ ] Jørgen opens a long task in v0.7.98 and says the frame reads right, or what to change
 
+## Questions
+- 2026-11-21T19:23 question 1 by crab to jhf (check 1):
+  v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?
+
 ## Notes
+
+
+## History
+- 2026-11-21T19:23 todo -> todo/design (ask)
