@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.97 - 2026-11-21
 
 - hug tui: a filter, a sort and a new task keep the view you are in
   (ht3cdx, Jørgen 2026-11-20: "I think I should just keep the view I'm
