@@ -233,6 +233,13 @@ func TestSearchEnterShowsResults(t *testing.T) {
 	if !m.detail || selID(m) != target {
 		t.Fatalf("J Enter: detail %v selected %s, want %s open", m.detail, selID(m), target)
 	}
+	// In the task n and p step every match too, across sections.
+	if m = press(m, "p"); selID(m) != order[2] || !m.detail {
+		t.Fatalf("p in the task opened %s, want the match before: %s", selID(m), order[2])
+	}
+	if m = press(m, "n"); selID(m) != target {
+		t.Fatalf("n in the task opened %s, want %s", selID(m), target)
+	}
 	m = press(m, "esc")
 	if m.detail || m.query != target || selID(m) != target || !strings.Contains(ansi.Strip(m.View()), "found: / "+target) {
 		t.Fatalf("Esc from the task: detail %v query %q selected %s; want the results again", m.detail, m.query, selID(m))
