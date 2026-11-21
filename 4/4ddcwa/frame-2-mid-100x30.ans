@@ -4,6 +4,10 @@
 [38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
 [1m[39mAnswer box shows at once, with the only moving cursor on screen
 [0m[38;2;135;149;168m↑───────────────────────────────────────────────────────────────────────────────────────────────────
+[39m
+[1m[38;2;0;191;255m▸ ACCEPTANCE[0m[38;2;135;149;168m · j/k or [ ] step · Space ticks · - strikes out
+[1m[38;2;0;191;255m>[39m[48;2;22;54;73m ☑ 1. Pressing a or r draws the box with its label and cursor in the same frame, before any[0m
+[1m[48;2;22;54;73m       keystroke; a test fails first on main.[0m
 [38;2;138;201;135m  ☑ 2. The cursor in the answer and request box is an underline that blinks (or pulses), and no[39m
 [38;2;138;201;135m       other element on the screen animates (test of the cursor mode plus golden).[39m
 [38;2;138;201;135m  ☑ 3. The pending view-key prefix uses the same underline cursor style.[39m
@@ -22,9 +26,5 @@ should be a line on the bottom of the screen where the ticket ends. And I think 
 an arrow as well pointing down on that line. And that line should separate from what is below. And I
 think that line actually should be the one line that starts with an arrow down, a piece of line, and
 then any inline status for this thing I'm in now. And then the next line is the global line. Because
-right now you can see that there is this extra space. I think this whole line makes sense there to
-separate from the global part, the global footer. This will be in addition to other things I
-specified before
-[38;2;138;201;135m   └ crab: Filed as 4ddcwa (Detail page frame): the rule under the title gets a small ↑ at its left[39m
-[38;2;135;149;168m↓── Task 1 of 2 · 29% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ─────────────────────────────────────────────────
+[38;2;135;149;168m↓── Task 1 of 2 · 25% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ─────────────────────────────────────────────────
 [1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m check · [1m[38;2;0;191;255mSpace[0m[38;2;135;149;168m tick · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mE[0m[38;2;135;149;168mdit files · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp[39m [38;2;135;149;168m…[39m
