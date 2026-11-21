@@ -49,5 +49,6 @@ Replaces 8a0ybb check 9 (↑/↓ in the corners). Related: xt0qvf (where the sta
 ## Notes
 
 
+file:frame-1-top-100x30.ans (4089 bytes, sha256:5265319c) 4ddcwa check 1, 100x30, qpp30y opened at the top: plain top rule, bottom rule '↓── Task 1 of 2 · 4% …' right on the keys
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
