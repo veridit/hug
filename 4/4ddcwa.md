@@ -72,6 +72,7 @@ check 2: TestPageFrameArrowsAndStatus (4ddcwa_test.go:62): ↑ on the top rule e
 check 3: TestPageFrameArrowsAndStatus + ShortTask + HeightAfterResize + MessageReplacesOnlyTheStatus: bottom rule on the keys, ↓ exactly while !AtBottom, page status on it, no blank line, page = height - header - 4 rows; goldens page-frame-{100x30,160x45}.txt, message-mid-page-{100x30,160x45}.txt; a19cd1d4, CI 44933305676 8/8 success
 landed 6e44eb3 on main 2026-11-21: tui: a task's page sits between two rules: ↑ on the rule under the title when…
 shipped in v0.7.98 (6e44eb3)
+crab 18:23Z: shipped in v0.7.98 (main 8611f2b6, brew-verified). Release ticket wg59vb. Check 1 (frames) still waits on Jørgen; if he asks for a change, it goes in a follow-up release.
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
 - 2026-11-21T18:44 doing/active -> doing/asked (ask)
