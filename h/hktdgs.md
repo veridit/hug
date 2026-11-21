@@ -47,6 +47,7 @@ Today (v0.7.90, huginn/internal/tui/columns.go moveColumn): the first H or L mar
 file:screen-1307.ans (26090 bytes, sha256:9f2a756e) screen capture from hug tui
 
 
+file:hktdgs-board-no-column-100x30.ans (7405 bytes, sha256:2b367130) Board at 100x30 (built binary at 1d864738, tmux capture-pane -e, seeded fixture): after 6 L from opening (id title checks type priority, then past priority) the column marker is gone, rows 1-27 byte-identical with ANSI to the board as it opened, footer 'H/L pick a column, then o orders by it'. One more L marks id again.
 ## History
 - 2026-11-20T13:07 request 1 by jhf
 - 2026-11-20T13:07 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
