@@ -11,11 +11,16 @@ rank: "zzzzzzzzzzz1"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-21T15:34"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "r17z6z"
+asked_for: "jhf"
+asked_since: "2026-11-21T16:49"
+asked_by: "crab"
+asked_check: "6"
+asked_what: "Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time"
 ---
 
 ## Goal
@@ -53,6 +58,10 @@ Jørgen 2026-11-20 10:18Z (request 1, screenshots screen-1117.ans before, screen
   resolved 2026-11-20T11:18 by crab:
     Turned into a high-priority bug. Title, Goal, Purpose and Principle now say: filter, sort and creating a task keep the view you are in; only choosing a view changes it. Details list the 3 places on main that force the list view (filter picker Enter, the : filter commands, and openTask, which S-create, # and goto use). Checks 2-5 are tmux tests that must fail on main first (filter, sort, create, jump); check 6 is yours to try after release. Your screenshots stay attached as before/after.
 
+## Questions
+- 2026-11-21T16:49 question 1 by crab to jhf (check 6):
+  Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time
+
 ## Notes
 
 file:screen-1117.ans (12719 bytes, sha256:b3ce9a88) screen capture from hug tui
@@ -67,6 +76,8 @@ check 2: TestTmuxActionsKeepTheView/{overview,board}/2_filter (ht3cdx_tmux_test.
 check 3: TestTmuxActionsKeepTheView/{overview,board}/3_sort (ht3cdx_tmux_test.go:157-162): s p Enter, then s r, keep the view. Passed on v0.7.96 too: the s picker never switched view (repro in a note). Pass on branch ht3cdx 556473cc, CI 44920278685 success (all 8 jobs)
 check 4: TestTmuxActionsKeepTheView/{overview,board}/4_create (ht3cdx_tmux_test.go:163-183). On v0.7.96: 'overview: S c did not open b0jarh over the overview (want "HUG · repo · overview › NEXT UP › b0jarh"): HUG · repo · list › b0jarh'. Pass on branch ht3cdx 556473cc, CI 44920278685 success (all 8 jobs). Frames frames/after-create-2-esc.ans attached
 check 5: TestTmuxActionsKeepTheView/{overview,board}/5_jump (ht3cdx_tmux_test.go:184-197) and TestJumpToHiddenTaskKeepsTheView (ht3cdx_test.go:36). On v0.7.96: 'overview: # dddddd did not open dddddd over the overview (want "HUG · repo · overview › NEXT UP › dddddd"): HUG · repo · list › dddddd'. Pass on branch ht3cdx 556473cc, CI 44920278685 success (all 8 jobs)
+landed 556473c on main 2026-11-21: tui: a filter, a sort and a new task keep the view you are in; S c, # and goto…
+shipped in v0.7.97 (556473c)
 ## History
 - 2026-11-20T11:18 request 1 by jhf
 - 2026-11-20T11:18 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
@@ -74,3 +85,4 @@ check 5: TestTmuxActionsKeepTheView/{overview,board}/5_jump (ht3cdx_tmux_test.go
 - 2026-11-20T11:18 request 1 in progress by crab: hug task set ht3cdx
 - 2026-11-20T11:18 resolved request 1 by crab
 - 2026-11-21T15:34 todo -> doing/active (take)
+- 2026-11-21T16:49 doing/active -> doing/asked (ask)
