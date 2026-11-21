@@ -53,5 +53,6 @@ file:answer-box-on.ansi (2982 bytes, sha256:00aa32c7) answer-box-on
 file:answer-box-off.ansi (2955 bytes, sha256:1e53ab94) answer-box-off
 
 
+shipped: tag v0.7.95 (c4389611); release.yml 44907060648 attempt 1 failed on TestSettleWaitsOnProgressNotAClock/progressing ('settleWait returned "" after 1m32.6s, want about 1m30s', unrelated to q3sh69, same failure on ci/qcq3tm 44720742380; filed 3qa9bt), attempt 2 success; brew -> ../Cellar/hug/0.7.95/bin/hug, hug v0.7.95
 ## History
 - 2026-11-21T14:05 todo -> todo/design (ask)
