@@ -38,3 +38,5 @@ file:list-off.ansi (2840 bytes, sha256:f9ba6605) list-off
 file:page-on.ansi (3481 bytes, sha256:198832ad) page-on
 
 file:page-off.ansi (3480 bytes, sha256:f5354fd1) page-off
+
+file:answer-box-on.ansi (2982 bytes, sha256:00aa32c7) answer-box-on
