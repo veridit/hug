@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-21
 updated: 2026-11-21
+design_since: "2026-11-21T11:43"
+design_asked_by: "crab"
+design_question: "v0.7.94: on statbus, / k5q120 now selects k5q120 in LINT; Enter shows the results and j/k walk every match; Esc returns to all tasks with k5q120 selected; Tab still keeps it as a filter. One change: Esc no longer clears filter chips (F clears all, ⌫ the last). Does search work the way you wanted, and is Esc keeping chips right?"
+design_for: "jhf"
+stage: "design"
 ---
 
 ## Goal
@@ -29,6 +34,10 @@ Shipped: 5cjy88 (c05fb8d5 + 6ed006ff, CI 44894781379 8/8). Try it: brew upgrade 
 ## Acceptance
 - [ ] Jørgen confirms the search flow and the Esc-keeps-chips change
 
+## Questions
+- 2026-11-21T11:43 question 1 by crab to jhf (check 1):
+  v0.7.94: on statbus, / k5q120 now selects k5q120 in LINT; Enter shows the results and j/k walk every match; Esc returns to all tasks with k5q120 selected; Tab still keeps it as a filter. One change: Esc no longer clears filter chips (F clears all, ⌫ the last). Does search work the way you wanted, and is Esc keeping chips right?
+
 ## Notes
 
 file:1-typing-k5q120.ansi (2602 bytes, sha256:52530af6) before (v0.7.93): typing k5q120 selects hm2dne
@@ -38,3 +47,7 @@ file:after-1-typing-k5q120.ansi (2481 bytes, sha256:8802fad2) after: 1-typing-k5
 file:after-2-enter-results.ansi (2546 bytes, sha256:e4a0d203) after: 2-enter-results
 
 file:after-3-esc-after-enter.ansi (3494 bytes, sha256:1310d9fe) after: 3-esc-after-enter
+
+
+## History
+- 2026-11-21T11:43 todo -> todo/design (ask)
