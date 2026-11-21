@@ -1,7 +1,7 @@
 ---
 id: 3qa9bt
 title: "TestSettleWaitsOnProgressNotAClock/progressing overshoots on CI"
-state: "doing"
+state: "done"
 type: bug
 priority: "high"
 assignee: ["giraffe"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-21
 updated: 2026-11-21
-doing_since: "2026-11-21T14:18"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "f6904h"
+done_at: "2026-11-21T15:24"
 ---
 
 ## Goal
@@ -43,5 +42,7 @@ Cause (giraffe, claude-opus-5-5): internal/flock/flock.go:28 and :46: release is
 check 1: origin/main c4389611, darwin/arm64 go1.26.11: the spec stress run (-count=500, GOMAXPROCS=2 nice 19) passes alone (ok 108.8s; nothing in that process forks). With a parallel neighbour test that holds 256 MB of heap and runs git --version on 6 goroutines (as the package's git tests do on CI), -count=150: 7 failures plain, 3 with -race, verbatim e.g. 'sync_timeout_output_test.go:88: settleWait returned "" after 1m33.05s, want about 1m30s' and '... after 1m31.1s ...'. Direct probe: 1218 of 2000 releases still seen held by Busy() under fork load. Cause in the note: internal/flock/flock.go release was f.Close() only.
 check 2: Fix 389544a740ac14e2a979647acf60c2903a10c268 on 3qa9bt and ci/3qa9bt. Spec stress run (-count=500, GOMAXPROCS=2 nice 19): 500 '--- PASS: TestSettleWaitsOnProgressNotAClock', ok 109.3s. Forking-neighbour repro that failed 7 plain and 3 -race on main: -count=150 ok both (227.3s, 247.1s). Full go test ./... niced: ok. CI run 44912084495 attempt 1 and attempt 2: success on all 8 jobs (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards). Mutant (release by Close only): TestReleaseFreesLockACopiedDescriptorShares fails both subtests.
 Branch 3qa9bt, SHA 389544a7, CI 44912084495 green x2. Ready for crab to land.
+Reflection (open, 2026-11-21, crab): nothing: the task named the failing line and asked for the cause before the fix
 ## History
 - 2026-11-21T14:18 todo -> doing/active (take)
+- 2026-11-21T15:24 doing/active -> done (done); was doing_since: 2026-11-21T14:18
