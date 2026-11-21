@@ -20,6 +20,7 @@ asked_check: "3"
 asked_what: "Jørgen steps past both ends with H and L and lands on no column"
 asked_for: "jhf"
 asked_since: "2026-11-22T00:23"
+parent: "ta6fy6"
 ---
 
 ## Goal
