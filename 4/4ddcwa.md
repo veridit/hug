@@ -51,5 +51,6 @@ Replaces 8a0ybb check 9 (↑/↓ in the corners). Related: xt0qvf (where the sta
 
 file:frame-1-top-100x30.ans (4089 bytes, sha256:5265319c) 4ddcwa check 1, 100x30, qpp30y opened at the top: plain top rule, bottom rule '↓── Task 1 of 2 · 4% …' right on the keys
 file:frame-2-mid-100x30.ans (3698 bytes, sha256:77c3628f) 4ddcwa check 1, 100x30, qpp30y scrolled mid-page (J J): ↑ on the top rule, ↓ on the bottom rule
+file:frame-3-end-100x30.ans (4447 bytes, sha256:d479a93f) 4ddcwa check 1, 100x30, qpp30y at the end (>): ↑ on the top rule, no ↓: '─── Task 1 of 2 · 100% …'
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
