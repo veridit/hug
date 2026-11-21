@@ -1,15 +1,20 @@
 ---
 id: hktdgs
 title: "H/L column marker: a 'no column' step between last and first"
-state: todo
+state: "doing"
 type: "feature"
 priority: "medium"
-assignee: []
+assignee: ["hktdgs-engineer"]
 labels: []
 group: ""
 rank: "008"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-21T23:56"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -48,3 +53,4 @@ file:screen-1307.ans (26090 bytes, sha256:9f2a756e) screen capture from hug tui
 - 2026-11-20T13:07 request 1 acknowledged by crab
 - 2026-11-20T13:10 request 1 in progress by crab: hug task set hktdgs
 - 2026-11-20T13:10 resolved request 1 by crab
+- 2026-11-21T23:56 todo -> doing/active (take)
