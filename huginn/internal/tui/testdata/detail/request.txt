@@ -8,8 +8,8 @@ no dependencies
                                                                                 
                                                                                 
                                                                                 
-Task 6 of 7 · 100% · next · previous · Esc back                                 
                                                                                 
+─── Task 6 of 7 · 100% · next · previous · Esc back ────────────────────────────
 Enter send · Alt-Enter new line · Esc cancel · F1 help                          
 == resolved at 80
 REQUESTS
@@ -28,8 +28,8 @@ no dependencies
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-Task 6 of 7 · 100% · next · previous · Esc back                                                                                             
                                                                                                                                             
+─── Task 6 of 7 · 100% · next · previous · Esc back ────────────────────────────────────────────────────────────────────────────────────────
 Enter send · Alt-Enter new line · Esc cancel · F1 help                                                                                      
 == resolved at 140
 REQUESTS

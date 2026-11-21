@@ -26,8 +26,8 @@ PURPOSE
 Synthetic.                                                                      
                                                                                 
 PRINCIPLE                                                                       
-Task 2 of 60 · 0% · next · previous · Esc back                                  
-                                                                                
+Synthetic.                                                                      
+↓── Task 2 of 60 · 0% · next · previous · Esc back ─────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · up · request 
 == 000002 Enter at 80
 HUG · list › 000002 › compiler/000002/rows.ans · 102 B · 1 of 2      ? 1 for you
@@ -88,8 +88,8 @@ Synthetic.
                                                                                                                                             
 PRINCIPLE                                                                                                                                   
 Synthetic.                                                                                                                                  
-Task 2 of 60 · 0% · next · previous · Esc back                                                                                              
                                                                                                                                             
+↓── Task 2 of 60 · 0% · next · previous · Esc back ─────────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find · next-, previous task 
 == 000002 Enter at 140
 HUG · list › 000002 › compiler/000002/rows.ans · 102 B · 1 of 2                                                                  ? 1 for you

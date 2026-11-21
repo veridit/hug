@@ -1,8 +1,8 @@
 == two stacked at 80
-Detail · 100% · Esc back                                                        
                                                                                 
+─── Detail · 100% · Esc back ───────────────────────────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
 == two stacked at 140
-Detail · 100% · Esc back                                                                                                                    
                                                                                                                                             
+─── Detail · 100% · Esc back ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
 j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find …                 

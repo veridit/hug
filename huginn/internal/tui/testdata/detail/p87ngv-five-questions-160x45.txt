@@ -41,8 +41,8 @@ chat history) that grows by appending.
 PRINCIPLE                                                                                                                                                       
 Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are   
 plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The      
-Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
-                                                                                                                                                                
+agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing       
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
 == question 2 focused
 HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
@@ -87,8 +87,8 @@ chat history) that grows by appending.
 PRINCIPLE                                                                                                                                                       
 Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are   
 plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The      
-Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
-                                                                                                                                                                
+agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing       
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
 == question 5 focused
 HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
@@ -133,6 +133,6 @@ chat history) that grows by appending.
 PRINCIPLE                                                                                                                                                       
 Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are   
 plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The      
-Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
-                                                                                                                                                                
+agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing       
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  

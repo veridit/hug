@@ -4,6 +4,22 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: a task's page sits between two rules (4ddcwa, Jørgen
+  2026-11-20: "a line on the bottom of the screen where the ticket
+  ends").
+  - The rule under the title starts with `↑` while the page is
+    scrolled down.
+  - A bottom rule sits right on the keys: `↓── ` (the `↓` only while
+    more is below), the page's status (`Task 3 of 14 · 0% · next ·
+    previous · Esc back`), then the rule to the edge. It replaces the
+    status line and the blank line under it, so the page gets two rows.
+  - A message (`ID moved to X`, a find's `match 1 of 3`) takes the
+    status's place on that rule after a dim `•`, and the `↓` stays. A
+    confirm, a prompt or a `fix:` line takes its own line above the rule
+    while it shows. The lists' message line is unchanged (xt0qvf).
+
 ## v0.7.97 - 2026-11-21
 
 - hug tui: a filter, a sort and a new task keep the view you are in

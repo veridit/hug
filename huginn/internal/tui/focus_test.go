@@ -438,6 +438,14 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 		}
 		lines := strings.Split(m.View(), "\n")
 		line := lines[len(lines)-2]
+		if m.pageFramed() {
+			// In a task the confirm sits on the page's bottom rule, which
+			// stays on the keys (4ddcwa).
+			if rule := ansi.Strip(line); !strings.HasPrefix(rule, "↓── ") && !strings.HasPrefix(rule, "─── ") {
+				t.Fatalf("%q: the confirm is not right above the bottom rule: %q", k, rule)
+			}
+			line = lines[len(lines)-3]
+		}
 		plain := strings.TrimRight(ansi.Strip(line), " ")
 		if !strings.HasPrefix(plain, "▶ ") || !strings.HasSuffix(plain, "? Enter yes · Esc no") {
 			t.Fatalf("%q: not a marked question: %q", k, plain)
@@ -484,7 +492,11 @@ func TestFocusConfirmPromptsStandOut(t *testing.T) {
 	m.resize()
 	m = press(m, "t")
 	lines := strings.Split(ansi.Strip(m.View()), "\n")
-	if got := strings.TrimRight(lines[len(lines)-2], " "); !strings.HasSuffix(got, "? Enter yes · Esc no") || !strings.Contains(got, "…") {
+	confirmRow := len(lines) - 2
+	if m.pageFramed() {
+		confirmRow-- // over the page's bottom rule (4ddcwa)
+	}
+	if got := strings.TrimRight(lines[confirmRow], " "); !strings.HasSuffix(got, "? Enter yes · Esc no") || !strings.Contains(got, "…") {
 		t.Fatalf("narrow confirm lost its question: %q", got)
 	}
 }

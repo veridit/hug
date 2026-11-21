@@ -1,0 +1,30 @@
+HUG · overview › ASKED › p87ngv                                                          ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                 
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                       
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters…
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                            
+↑───────────────────────────────────────────────────────────────────────────────────────────────────
+    └ question 3 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked       
+    text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request:    
+    shorten<<}? Or do you want a hug-specific sigil?                                                
+    └ question 4 · crab · 1 min ago · answer                                                        
+                                                                                                    
+  ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md),
+    linked from the ticket, with each resolved mark as a dated entry quoting the original text, the 
+    exchange and the change made. Is that the right name and shape?                                 
+    └ question 5 · crab · 1 min ago · answer                                                        
+                                                                                                    
+DESCRIPTION                                                                                         
+The ticket stays the crisp working document. A person or agent marks a piece of a task's text with  
+a comment, question or request that sits inline in the text, visible as text, with a recognizable   
+sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text    
+to the clarified result and removing the mark. The dialogue that led there (the mark, replies, who  
+and when) is appended to a history file attached to the task, never kept in the ticket.             
+                                                                                                    
+PURPOSE                                                                                             
+↓── • p87ngv moved to IN PROGRESS ──────────────────────────────────────────────────────────────────
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    

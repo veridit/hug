@@ -1,0 +1,45 @@
+HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                                                                             
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                                     
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                                                                                
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                                                                                        
+↑───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                                                                
+DESCRIPTION                                                                                                                                                     
+The ticket stays the crisp working document. A person or agent marks a piece of a task's text with a comment, question or request that sits inline in the       
+text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified    
+result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in   
+the ticket.                                                                                                                                                     
+                                                                                                                                                                
+PURPOSE                                                                                                                                                         
+Jørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows exactly what it is about; questions today look like           
+acceptance                                                                                                                                                      
+criteria. 09:05Z (answer 1 on this task): threads inside the ticket would bloat it, and the conversation must not become the thing. The ticket must stay        
+crisp: clarity comes from boiling text down to its essence. The messy part goes to a separate, suitably named history file in the task's files (provenance,     
+chat history) that grows by appending.                                                                                                                          
+                                                                                                                                                                
+PRINCIPLE                                                                                                                                                       
+Ticket = working document, short and current. History = append-only provenance file, linked from the ticket, never needed to understand the ticket. Marks are   
+plain text in the field they are about, so git, grep, any editor and any agent see them. Resolving a mark means changing the ticket, not adding to it. The      
+agent instruction: lead with clarity in the ticket, answer and act on marks, post new questions as marks, move the dialogue to history. Reuse an existing       
+markup convention for the sigil if one fits.                                                                                                                    
+                                                                                                                                                                
+RELEVANT DETAILS                                                                                                                                                
+Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 09:05Z). Replaces ## Questions and ## Requests over time (q2adr8, hbgybn): open  
+marks show in ASKED / requests as those do now; delivery as gmzd87. History file name, format and sigil are open design questions on this task. Candidate       
+sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c      
+comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.                                                
+                                                                                                                                                                
+ACCEPTANCE                                                                                                                                                      
+  ☒ 1. Jørgen approves a mock (CLI transcript plus TUI frames at 100x30) of a thread on a quoted sentence, a reply and a resolve (not relevant: threads in the  
+       ticket rejected by Jørgen 09:05Z; replaced by inline-mark checks, crab, 2026-11-19)                                                                      
+  ☒ 2. An outdated anchor (quoted text edited away) keeps its thread and shows it as outdated (test) (not relevant: threads in the ticket rejected by Jørgen    
+       09:05Z; replaced by inline-mark checks, crab, 2026-11-19)                                                                                                
+  ☒ 3. Several questions in one call become separate threads, each answered on its own (test) (not relevant: threads in the ticket rejected by Jørgen 09:05Z;   
+       replaced by inline-mark checks, crab, 2026-11-19)                                                                                                        
+  ☒ 4. Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM (not relevant: threads in the ticket rejected by Jørgen 09:05Z;  
+       replaced by inline-mark checks, crab, 2026-11-19)                                                                                                        
+↓── • p87ngv moved to IN PROGRESS ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  

@@ -495,6 +495,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				n.revealAcceptance()
 			}
 		}
+		if n.detail && !n.glance {
+			n.fitPage() // a prompt or confirm takes a row from the page (4ddcwa)
+		}
 		return n, cmd
 	}
 	return next, cmd
@@ -1224,7 +1227,7 @@ func (m *model) syncDetail() {
 	if t, ok := m.selected(); ok {
 		// viewHeight: the palette takes the bottom rows (05r3pg), the page
 		// above is shorter, so the check it acts on stays in sight.
-		m.viewport.Height = max(1, m.viewHeight()-len(m.detailHeader(t))-1)
+		m.viewport.Height = m.pageHeight(t) // between the page's rules (4ddcwa)
 		m.viewport.SetContent(m.detailText(t))
 		if m.find.text != "" {
 			m.refind() // the page drawn again keeps its matches (4s3g5q)

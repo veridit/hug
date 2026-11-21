@@ -26,8 +26,8 @@ sigil. The agent picks marks up, acts or answers, and resolves each by rewriting
 to the clarified result and removing the mark. The dialogue that led there (the mark, replies, who  
 and when) is appended to a history file attached to the task, never kept in the ticket.             
                                                                                                     
-Task 1 of 1 · 0% · next · previous · Esc back                                                       
-                                                                                                    
+PURPOSE                                                                                             
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
 == typing under question 2
 HUG · overview › ASKED › p87ngv                                                          ? 1 for you
@@ -57,8 +57,8 @@ a comment, question or request that sits inline in the text, visible as text, wi
 sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text    
 to the clarified result and removing the mark. The dialogue that led there (the mark, replies, who  
 and when) is appended to a history file attached to the task, never kept in the ticket.             
-Task 1 of 1 · 0% · next · previous · Esc back                                                       
                                                                                                     
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
 Enter send · Alt-Enter new line · Esc cancel · F1 help                                              
 == question 2 answered
 HUG · overview › ASKED › p87ngv                                                          ? 1 for you
@@ -88,6 +88,6 @@ and when) is appended to a history file attached to the task, never kept in the 
                                                                                                     
 PURPOSE                                                                                             
 Jørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows   
-answered p87ngv                                                                                     
-                                                                                                    
+exactly what it is about; questions today look like acceptance criteria. 09:05Z (answer 1 on this   
+↓── • answered p87ngv ──────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    

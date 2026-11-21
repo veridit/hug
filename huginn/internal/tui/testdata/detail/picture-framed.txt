@@ -56,8 +56,8 @@ HISTORY
 doing/asked)                                                                    
                                                                                 
                                                                                 
-Task 2 of 60 · 100% · next · previous · Esc back                                
                                                                                 
+─── Task 2 of 60 · 100% · next · previous · Esc back ───────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · up · request 
 == 000002 asked_show colours-overview.ans at 140
 HUG · list › 000002                                                                                                              ? 1 for you
@@ -117,6 +117,6 @@ HISTORY
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-Task 2 of 60 · 100% · next · previous · Esc back                                                                                            
                                                                                                                                             
+─── Task 2 of 60 · 100% · next · previous · Esc back ───────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find · next-, previous task 

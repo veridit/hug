@@ -193,10 +193,11 @@ func TestTmuxReload(t *testing.T) {
 		t.Fatalf("a second TUI started: pane pid %s, was %s", got, started)
 	}
 	// Same task, same focus, same filters and sort (check 1); only the
-	// footer and the version in the key bar differ (check 4).
+	// footer and the version in the key bar differ (check 4). In a task the
+	// footer is the bottom rule's status, right on the keys (4ddcwa).
 	norm := func(s string) string {
 		lines := strings.Split(strings.TrimSuffix(s, "\n"), "\n")
-		lines[len(lines)-3] = ""
+		lines[len(lines)-2] = ""
 		return strings.ReplaceAll(strings.Join(lines, "\n"), "hug v0.0.2", "hug v0.0.1")
 	}
 	if norm(after) != norm(before) {

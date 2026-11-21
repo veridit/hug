@@ -26,8 +26,8 @@ Inline marks on a task's text; resolved dialogue moves to a history file
                                                                                                     
   ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md),
     linked from the ticket, with each resolved mark as a dated entry quoting the original text, the 
-Task 1 of 1 · 0% · next · previous · Esc back                                                       
-                                                                                                    
+    exchange and the change made. Is that the right name and shape?                                 
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
 == question 2 focused
 HUG · overview › ASKED › p87ngv                                                          ? 1 for you
@@ -57,8 +57,8 @@ Inline marks on a task's text; resolved dialogue moves to a history file
                                                                                                     
   ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md),
     linked from the ticket, with each resolved mark as a dated entry quoting the original text, the 
-Task 1 of 1 · 0% · next · previous · Esc back                                                       
-                                                                                                    
+    exchange and the change made. Is that the right name and shape?                                 
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
 == question 5 focused
 HUG · overview › ASKED › p87ngv                                                          ? 1 for you
@@ -68,7 +68,8 @@ created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s
   fix: hug task set p87ngv --goal "one sentence" --details "..."                                    
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Inline marks on a task's text; resolved dialogue moves to a history file                            
-────────────────────────────────────────────────────────────────────────────────────────────────────
+↑───────────────────────────────────────────────────────────────────────────────────────────────────
+    line in it)?                                                                                    
     └ question 3 · crab · 10 min ago · answer                                                       
                                                                                                     
   ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked       
@@ -88,6 +89,5 @@ sigil. The agent picks marks up, acts or answers, and resolves each by rewriting
 to the clarified result and removing the mark. The dialogue that led there (the mark, replies, who  
 and when) is appended to a history file attached to the task, never kept in the ticket.             
                                                                                                     
-Task 1 of 1 · 10% · next · previous · Esc back                                                      
-                                                                                                    
+↓── Task 1 of 1 · 9% · next · previous · Esc back ──────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    

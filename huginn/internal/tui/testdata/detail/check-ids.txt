@@ -56,8 +56,8 @@ HISTORY
                                                                                 
                                                                                 
                                                                                 
-Task 1 of 1 · 100% · next · previous · Esc back                                 
                                                                                 
+─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────
 j/k scroll · Enter open · h/l Tab next · answer · take · done · x drop · edit … 
 == check id marked at 140
 HUG · overview › ASKED › MAINTA                                                                                                  ? 1 for you
@@ -117,6 +117,6 @@ HISTORY
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-Task 1 of 1 · 100% · next · previous · Esc back                                                                                             
                                                                                                                                             
+─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────────────────────────────────────────────────────────────────
 j/k scroll · Enter open · h/l Tab next · answer · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task 

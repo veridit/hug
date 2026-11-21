@@ -1098,7 +1098,7 @@ func (m model) frameView() string {
 		content = strings.Join(append(append(top, body...), rule), "\n")
 	case m.detail:
 		if t, ok := m.selected(); ok {
-			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.pulsePage(m.viewport.View())
+			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.pageTopRule() + "\n" + m.pulsePage(m.viewport.View())
 		}
 	case m.view == "overview":
 		content = m.overviewText()
@@ -1172,6 +1172,9 @@ func (m model) footRows() (foot []string, spare int) {
 		return append(m.markedBoxLines(), msg), 0
 	}
 	footer, input := m.footLines()
+	if m.pageFramed() {
+		return m.pageFoot(footer, input)
+	}
 	if !m.fileFrame() {
 		return []string{footer, input}, 0
 	}
@@ -1228,10 +1231,7 @@ func (m model) footLines() (footerLine, inputLine string) {
 			footer += " · ! lint finding · ↳ epic"
 		}
 		if m.detail {
-			footer = fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
-			if pos := m.detailPosition(); pos != "" {
-				footer = fmt.Sprintf("Task %s · %.0f%% · %sext · %srevious · Esc back", pos, m.viewport.ScrollPercent()*100, mk("n"), mk("p"))
-			}
+			footer = m.pageStatus()
 			if m.glance {
 				// The file view's keys are on the bar under it; this line
 				// is only for a message (z82qsy check 4).
@@ -1263,7 +1263,7 @@ func (m model) footLines() (footerLine, inputLine string) {
 			}
 		}
 	}
-	if notice, bar, ok := m.editNoticeLines(); ok && m.confirm == "" && m.prompt == "" && !m.help && m.message == "" {
+	if notice, bar, ok := m.editNoticeLines(); ok && m.noticeShown() {
 		footerLine = notice
 		inputLine = bar
 	}
@@ -1275,6 +1275,121 @@ func (m model) footLines() (footerLine, inputLine string) {
 		inputLine = m.input.View()
 	}
 	return footerLine, inputLine
+}
+
+// noticeShown says the edit notice takes the message and input lines: no
+// confirm, prompt, help or message over it.
+func (m model) noticeShown() bool {
+	return m.confirm == "" && m.prompt == "" && !m.help && m.message == ""
+}
+
+// pageStatus is the open task's own status: where it is in its pane, how
+// far the page is read, and the keys that leave it.
+func (m model) pageStatus() string {
+	if pos := m.detailPosition(); pos != "" {
+		return fmt.Sprintf("Task %s · %.0f%% · %sext · %srevious · Esc back", pos, m.viewport.ScrollPercent()*100, mk("n"), mk("p"))
+	}
+	return fmt.Sprintf("Detail · %.0f%% · Esc back", m.viewport.ScrollPercent()*100)
+}
+
+// The page frame (4ddcwa, Jørgen 2026-11-20 11:32Z on qpp30y): a task's
+// page sits between two rules. The rule under the title starts with ↑
+// when the page is scrolled down. The bottom rule sits right on the
+// global keys: '↓── ' (the ↓ only when more is below), the page's
+// status, then the rule to the edge; it replaces the status line and the
+// blank line under it. A message takes the status's place on the rule,
+// marked as a status by a dim '•' (xt0qvf option A, for the task page);
+// the ↓ stays. A prompt, a confirm or a fix: line takes its own line
+// above the rule while it shows, and the edit notice its two. The arrows
+// are dim, as the list's scroll arrows: they are not a focus sign and
+// never pulse (q3sh69).
+
+// messageSign marks a message on the bottom rule as a status (xt0qvf).
+const messageSign = "• "
+
+// pageFramed says the screen is a task's page in its frame: a task open,
+// no file shown, no help, picker or palette over it.
+func (m model) pageFramed() bool {
+	return m.taskScreen() && !m.glance && m.prompt != ":"
+}
+
+// pageTopRule is the rule under the title: ↑ at its left end while the
+// page is scrolled down.
+func (m model) pageTopRule() string {
+	if m.viewport.YOffset > 0 && m.width > 1 {
+		return m.styles.dim.Render("↑" + strings.Repeat("─", m.width-1))
+	}
+	return m.styles.dim.Render(strings.Repeat("─", m.width))
+}
+
+// pageBottomRule is the bottom rule carrying status (rendered), ↓ at its
+// left end while more of the page is below.
+func (m model) pageBottomRule(status string) string {
+	lead := "─── "
+	if !m.viewport.AtBottom() {
+		lead = "↓── "
+	}
+	if m.width < 8 || strings.TrimSpace(ansi.Strip(status)) == "" {
+		return m.styles.dim.Render(fit(strings.TrimRight(lead, " ")+strings.Repeat("─", max(0, m.width-3)), m.width))
+	}
+	status = ansi.Truncate(status, m.width-4-2, "…") // the lead, then a space and one ─ at least
+	rest := max(1, m.width-4-ansi.StringWidth(status)-1)
+	return m.styles.dim.Render(lead) + status + m.styles.dim.Render(" "+strings.Repeat("─", rest))
+}
+
+// pageFoot is footRows for the page frame: the input line when it says
+// something (or the edit notice's two lines), then the bottom rule with
+// the status or the message. spare is the rows the page gets over
+// bodyHeight, which counts two lines under the body.
+func (m model) pageFoot(footer, input string) (foot []string, spare int) {
+	status := footer
+	if _, _, ok := m.editNoticeLines(); ok && m.noticeShown() {
+		foot = []string{footer, input}
+		status = m.renderMarks(oneLine(m.pageStatus()), m.styles.dim)
+	} else if strings.TrimSpace(ansi.Strip(input)) != "" {
+		foot = []string{input}
+	}
+	if m.message != "" {
+		status = m.styles.dim.Render(messageSign) + status
+	}
+	foot = append(foot, m.pageBottomRule(status))
+	return foot, 2 - len(foot)
+}
+
+// pageHeight is how many rows the page gets between its rules: the body
+// less the header and the top rule, with the rows no input line takes.
+func (m model) pageHeight(t task.Task) int {
+	_, spare := m.footRows()
+	return max(1, m.viewHeight()+spare-len(m.detailHeader(t))-1)
+}
+
+// fitPage makes the page as tall as its frame leaves now: a prompt or a
+// confirm coming takes a row, its going gives it back. What the focus
+// marks, or the find's match, stays in sight; at the end it stays there.
+func (m *model) fitPage() {
+	t, ok := m.selected()
+	if !ok || !m.pageFramed() {
+		return
+	}
+	h := m.pageHeight(t)
+	if m.viewport.Height == h {
+		return
+	}
+	end := m.viewport.AtBottom() && m.viewport.YOffset > 0
+	_, e, marked := m.markedBlock()
+	seen := marked && e >= m.viewport.YOffset && e < m.viewport.YOffset+m.viewport.Height
+	m.viewport.Height = h
+	switch {
+	case end:
+		m.viewport.GotoBottom()
+	case seen && e >= m.viewport.YOffset+h:
+		m.viewport.SetYOffset(e - h + 1)
+	default:
+		m.viewport.SetYOffset(m.viewport.YOffset)
+	}
+	if len(m.find.hits) > 0 {
+		m.showHit()
+	}
 }
 
 // editNoticeLines are the two lines shown after an edit that left the task

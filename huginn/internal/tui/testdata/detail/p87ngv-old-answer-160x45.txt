@@ -41,8 +41,8 @@ Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 
 marks show in ASKED / requests as those do now; delivery as gmzd87. History file name, format and sigil are open design questions on this task. Candidate       
 sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c      
 comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.                                                
-Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
                                                                                                                                                                 
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
 == typing under question 2
 HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
@@ -87,8 +87,8 @@ RELEVANT DETAILS
 Supersedes the 08:56Z thread sketch (threads in ## Threads, rejected by Jørgen 09:05Z). Replaces ## Questions and ## Requests over time (q2adr8, hbgybn): open  
 marks show in ASKED / requests as those do now; delivery as gmzd87. History file name, format and sigil are open design questions on this task. Candidate       
 sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c      
-Task 1 of 1 · 0% · next · previous · Esc back                                                                                                                   
-                                                                                                                                                                
+comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.                                                
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Enter send · Alt-Enter new line · Esc cancel · F1 help                                                                                                          
 == question 2 answered
 HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
@@ -133,6 +133,6 @@ marks show in ASKED / requests as those do now; delivery as gmzd87. History file
 sigil: CriticMarkup ({==marked text==}{>>jhf: comment<<}), an existing plain-text review convention. TUI: a mark mode in the detail view selects a span; c      
 comment, ? question, r request; open marks are highlighted calmly (qh9ep1 check 9) and a key jumps between them.                                                
                                                                                                                                                                 
-answered p87ngv                                                                                                                                                 
-                                                                                                                                                                
+ACCEPTANCE                                                                                                                                                      
+↓── • answered p87ngv ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  

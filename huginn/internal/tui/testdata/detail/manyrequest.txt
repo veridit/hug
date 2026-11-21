@@ -6,7 +6,8 @@ created 2026-11-20 · updated 2026-11-20 · docs-page
   fix: hug task set aaaaaa --principle "..."                                    
 ────────────────────────────────────────────────────────────────────────────────
 Docs page                                                                       
-────────────────────────────────────────────────────────────────────────────────
+↑───────────────────────────────────────────────────────────────────────────────
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
 > ☐ 1. C                                                                        
                                                                                 
 no dependencies                                                                 
@@ -20,8 +21,7 @@ HISTORY
                                                                                 
 • 2026-11-20T16:12 request 1 by jhf (for aaaaaa, bbbbbb, cccccc)                
 • 2026-11-20T16:12 request 1 target bbbbbb resolved by crab                     
-Task 1 of 4 · 100% · next · previous · Esc back                                 
-                                                                                
+─── Task 1 of 4 · 100% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
 == link bbbbbb (resolved) at 80x24
 HUG · list › bbbbbb                                                             
@@ -31,7 +31,8 @@ created 2026-11-20 · updated 2026-11-20 · spike-fit
   fix: hug task set bbbbbb --principle "..."                                    
 ────────────────────────────────────────────────────────────────────────────────
 Spike fit                                                                       
-────────────────────────────────────────────────────────────────────────────────
+↑───────────────────────────────────────────────────────────────────────────────
+> ☐ 1. C                                                                        
                                                                                 
 no dependencies                                                                 
                                                                                 
@@ -45,8 +46,7 @@ HISTORY
                                                                                 
 • 2026-11-20T16:12 request 1 by jhf (see aaaaaa request 1)                      
 • 2026-11-20T16:12 resolved request 1 by crab                                   
-Task 2 of 4 · 100% · next · previous · Esc back                                 
-                                                                                
+─── Task 2 of 4 · 100% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
 == link cccccc (pending) at 80x24
 HUG · list › cccccc                                                             
@@ -56,7 +56,8 @@ created 2026-11-20 · updated 2026-11-20 · feature-quiet
   fix: hug task set cccccc --principle "..."                                    
 ────────────────────────────────────────────────────────────────────────────────
 Feature quiet                                                                   
-────────────────────────────────────────────────────────────────────────────────
+↑───────────────────────────────────────────────────────────────────────────────
+                                                                                
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
 > ☐ 1. C                                                                        
                                                                                 
@@ -70,6 +71,5 @@ REQUESTS
 HISTORY                                                                         
                                                                                 
 • 2026-11-20T16:12 request 1 by jhf (see aaaaaa request 1)                      
-Task 3 of 4 · 100% · next · previous · Esc back                                 
-                                                                                
+─── Task 3 of 4 · 100% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      

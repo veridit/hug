@@ -5,7 +5,8 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
   fix: hug task set 000001 --goal "one sentence" --details "..."
 ────────────────────────────────────────────────────────────────────────────────
 Feature task 01: make the terminal workflow observable with a deliberately long…
-────────────────────────────────────────────────────────────────────────────────
+↑───────────────────────────────────────────────────────────────────────────────
+
 fmt.Println("synthetic acceptance")
 
 PURPOSE
@@ -19,6 +20,5 @@ Synthetic fixture: 60 tasks, two files on 000001.
 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out
 > ☐ 1. First acceptance check
-Task 1 of 15 · 38% · next · previous · Esc back
-
+↓── Task 1 of 15 · 35% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …

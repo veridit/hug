@@ -1,0 +1,93 @@
+== 100x30 at the top
+HUG · overview › ASKED › p87ngv                                                          ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                 
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                       
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters…
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                            
+────────────────────────────────────────────────────────────────────────────────────────────────────
+> ? Should questions and requests both become threads, so the ## Questions and ## Requests sections 
+    are replaced (old ones migrated), or do threads sit beside them?                                
+    └ question 1 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Who may resolve a thread: only the person who opened it, or also the agent once it has acted on 
+    it?                                                                                             
+    └ question 2 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a
+    line in it)?                                                                                    
+    └ question 3 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked       
+    text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request:    
+    shorten<<}? Or do you want a hug-specific sigil?                                                
+    └ question 4 · crab · 1 min ago · answer                                                        
+                                                                                                    
+  ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md),
+    linked from the ticket, with each resolved mark as a dated entry quoting the original text, the 
+    exchange and the change made. Is that the right name and shape?                                 
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
+== 100x30 scrolled mid-page
+HUG · overview › ASKED › p87ngv                                                          ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                 
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                       
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters…
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                            
+↑───────────────────────────────────────────────────────────────────────────────────────────────────
+    └ question 3 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked       
+    text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request:    
+    shorten<<}? Or do you want a hug-specific sigil?                                                
+    └ question 4 · crab · 1 min ago · answer                                                        
+                                                                                                    
+  ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md),
+    linked from the ticket, with each resolved mark as a dated entry quoting the original text, the 
+    exchange and the change made. Is that the right name and shape?                                 
+    └ question 5 · crab · 1 min ago · answer                                                        
+                                                                                                    
+DESCRIPTION                                                                                         
+The ticket stays the crisp working document. A person or agent marks a piece of a task's text with  
+a comment, question or request that sits inline in the text, visible as text, with a recognizable   
+sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text    
+to the clarified result and removing the mark. The dialogue that led there (the mark, replies, who  
+and when) is appended to a history file attached to the task, never kept in the ticket.             
+                                                                                                    
+PURPOSE                                                                                             
+↓── Task 1 of 1 · 10% · next · previous · Esc back ─────────────────────────────────────────────────
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
+== 100x30 at the end
+HUG · overview › ASKED › p87ngv                                                          ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                 
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                       
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters…
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                            
+↑───────────────────────────────────────────────────────────────────────────────────────────────────
+│ chat history. Otherwise, the ticket will become bloated. The ticket has to stay crisp and clear.  
+│ So I think the questions and requests might need replacement, but they might appear in the text   
+│ so you can actually see them, just like text. We have to choose the sigils or how to recognize    
+│ them and act on them. And then, as they are resolved, the ticket is changed, and any history or   
+│ chat history is put into another document outside of the ticket. If we try to scram everything    
+│ into the ticket, I think it will be like if you make threads inside the ticket, it will become    
+│ bloated. And especially when things are complex, you will have longer and more intense chats,     
+│ which will bloat them even more. When what you need is clarity. And clarity is often to find the  
+│ succinctness in things and boil it down to its essence, not adding more text. So the text is the  
+│ tool to which we reach short clarity very often. That's why the messy part has to go out into a   
+│ different file. But I think the working document is the ticket itself. That's where the replies   
+│ come, it's picked up, and then the AI gets an instruction to lead with clarity in the ticket,     
+│ answer requests, do them, post any questions, and then put all of the prehistory provenance into  
+│ a suitably named asset that can grow with a penned                                                
+                                                                                                    
+• 2026-11-19T10:05 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)         
+• 2026-11-19T10:05 answer 1 acknowledged by crab                                                    
+• 2026-11-19T10:05 crab read the answer: hug task set p87ngv                                        
+• 2026-11-19T10:05 asked question 4 of jhf, 4 open (todo/ready -> todo/design)                      
+• 2026-11-19T10:05 asked question 5 of jhf, 5 open (todo/design -> todo/design)                     
+─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────────────────────────
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    

@@ -258,6 +258,9 @@ func TestCapturePromptGolden(t *testing.T) {
 		}{{"offered", asked}, {"typed", typed}, {"title", title}} {
 			lines := strings.Split(s.m.View(), "\n")
 			input, bar := lines[len(lines)-2], lines[len(lines)-1]
+			if s.m.pageFramed() {
+				input = lines[len(lines)-3] // over the page's bottom rule (4ddcwa)
+			}
 			golden = append(golden, s.name+": "+strings.TrimRight(ansi.Strip(input), " "), "  "+strconv.Quote(input), "  keys: "+strings.TrimRight(ansi.Strip(bar), " "))
 			if strings.Contains(input, "48;") {
 				t.Fatalf("%d %s: a background fill: %q", w, s.name, input)

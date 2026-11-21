@@ -19,6 +19,6 @@ Q
 no dependencies                                                                 
                                                                                 
 NOTES                                                                           
-match 1 of 3 · next · N previous · Esc clear                                    
 / row lay                                                                       
+↓── • match 1 of 3 · next · N previous · Esc clear ─────────────────────────────
 type find · Enter keep · ↑↓ match · Esc clear · F1 help                         

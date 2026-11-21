@@ -35,6 +35,6 @@ no dependencies
 
 
 
-Task 3 of 60 · 100% · next · previous · Esc back
 
+─── Task 3 of 60 · 100% · next · previous · Esc back ───────────────────────────────────────────────────────────────────────────────────────
 j/k scroll · edit · x drop · yank · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd · ? help …

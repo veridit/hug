@@ -20,8 +20,8 @@ p
 PRINCIPLE                                                                                           
 q                                                                                                   
                                                                                                     
-Task 1 of 2 · 0% · next · previous · Esc back                                                       
-                                                                                                    
+ACCEPTANCE                                                                                          
+↓── Task 1 of 2 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
 == typing under question 2
 HUG · overview › ASKED › aaaaaa                                                          ? 2 for you
@@ -45,8 +45,8 @@ p
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
-Task 1 of 2 · 0% · next · previous · Esc back                                                       
                                                                                                     
+↓── Task 1 of 2 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
 Enter send · Alt-Enter new line · Esc cancel · F1 help                                              
 == question 2 answered
 HUG · overview › ASKED › aaaaaa                                                          ? 2 for you
@@ -70,6 +70,6 @@ PRINCIPLE
 q                                                                                                   
                                                                                                     
 ACCEPTANCE                                                                                          
-answered aaaaaa                                                                                     
-                                                                                                    
+  ☑ 1. a                                                                                            
+↓── • answered aaaaaa ──────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    

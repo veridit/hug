@@ -1,0 +1,62 @@
+== moved
+HUG · overview › NEXT UP › bbbbbb · now IN PROGRESS                                                 
+[doing]  [feature]  [high]  group:root  assigned:jhf                                                
+created 2026-11-01 · updated 2026-11-01 · t                                                         
+────────────────────────────────────────────────────────────────────────────────────────────────────
+▸ Bravo task                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────
+DESCRIPTION                                                                                         
+g                                                                                                   
+                                                                                                    
+PURPOSE                                                                                             
+p                                                                                                   
+                                                                                                    
+PRINCIPLE                                                                                           
+q                                                                                                   
+                                                                                                    
+ACCEPTANCE                                                                                          
+  ☐ 1. one                                                                                          
+  ☐ 2. two                                                                                          
+                                                                                                    
+no dependencies                                                                                     
+                                                                                                    
+HISTORY                                                                                             
+                                                                                                    
+• 2026-11-20T09:50 todo -> doing/active (take)                                                      
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+─── • bbbbbb moved to IN PROGRESS ──────────────────────────────────────────────────────────────────
+j/k scroll · edit · done · wait · x drop · yank · h/l Tab next · New · up · request · / find …      
+== find kept
+HUG · overview › ASKED › p87ngv                                                          ? 1 for you
+[todo]  [design]  [feature]  group:root  unassigned                                                 
+created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                       
+⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters…
+  fix: hug task set p87ngv --goal "one sentence" --details "..."                                    
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Inline marks on a task's text; resolved dialogue moves to a history file                            
+────────────────────────────────────────────────────────────────────────────────────────────────────
+> ? Should questions and requests both become threads, so the ## Questions and ## Requests sections 
+    are replaced (old ones migrated), or do threads sit beside them?                                
+    └ question 1 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Who may resolve a thread: only the person who opened it, or also the agent once it has acted on 
+    it?                                                                                             
+    └ question 2 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Besides task text, should threads anchor to an attached file such as a mock sheet (a region or a
+    line in it)?                                                                                    
+    └ question 3 · crab · 10 min ago · answer                                                       
+                                                                                                    
+  ? Sigil: should marks use CriticMarkup, an existing plain-text review convention: {==marked       
+    text==}{>>jhf: why this?<<} for a comment or question, with a request tagged {>>jhf request:    
+    shorten<<}? Or do you want a hug-specific sigil?                                                
+    └ question 4 · crab · 1 min ago · answer                                                        
+                                                                                                    
+  ? History file: one append-only history.md per task in its files (.hug/tasks/p/p87ngv/history.md),
+    linked from the ticket, with each resolved mark as a dated entry quoting the original text, the 
+    exchange and the change made. Is that the right name and shape?                                 
+↓── • match 1 of 28 · next · N previous · Esc clear ────────────────────────────────────────────────
+next-, N previous match · / find again · Esc clear · ? help · quit                                  
