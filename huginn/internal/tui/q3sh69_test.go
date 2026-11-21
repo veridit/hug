@@ -261,6 +261,7 @@ func TestOneThingBlinks(t *testing.T) {
 	page := askedBoard(t)
 	page.width, page.height = 100, 40
 	page.resize()
+	page.styles.renderer.SetColorProfile(termenv.TrueColor)
 	page.pulse.live = true
 	page = openTask(t, page, "aaaaaa")
 	results := press(list, "/", "task", "enter")
@@ -377,5 +378,17 @@ func TestOnePulseChain(t *testing.T) {
 	// A key while the chain runs starts no second timer.
 	if _, c := key(m, "j"); c != nil {
 		t.Fatal("a key while the pulse runs started another timer")
+	}
+}
+
+// q3sh69: a terminal with no attributes at all (no colour found, NO_COLOR
+// unset: TERM=dumb, a pipe) draws both phases alike; the pulse then asks
+// for no tick at all.
+func TestNoPulseWithoutAttributes(t *testing.T) {
+	m := colourModel(t, 100, "list")
+	m.styles.renderer.SetColorProfile(termenv.Ascii)
+	m.pulse.live = true
+	if _, c := key(m, "j"); c != nil {
+		t.Fatal("a key started the pulse where its phases look alike")
 	}
 }

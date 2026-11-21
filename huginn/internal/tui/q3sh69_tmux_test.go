@@ -66,7 +66,9 @@ func TestTmuxFocusPulse(t *testing.T) {
 			env[i] = "NO_COLOR=" // the pulse is a colour and a weight
 		}
 	}
-	env = append(env, "COLORTERM=truecolor", "COLORFGBG=15;0")
+	// CI=true makes termenv take tmux for no terminal (Ascii, no bold at
+	// all); CLICOLOR_FORCE keeps the colour, as TestTmuxGolden does.
+	env = append(env, "COLORTERM=truecolor", "COLORFGBG=15;0", "CLICOLOR_FORCE=1")
 	quoted := make([]string, len(env))
 	for i, e := range env {
 		quoted[i] = shellQuote(e)

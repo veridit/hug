@@ -51,10 +51,11 @@ func (p pulse) tick() tea.Cmd {
 	return tea.Tick(pulseEvery, func(time.Time) tea.Msg { return pulseMsg{gen} })
 }
 
-// wantsPulse says whether the sign pulses now: it is drawn, and no text
-// cursor holds the screen.
+// wantsPulse says whether the sign pulses now: it is drawn, no text
+// cursor holds the screen, and its two phases differ (a terminal with no
+// attributes at all draws them alike: no tick for nothing).
 func (m model) wantsPulse() bool {
-	return m.pulse.live && m.pulsing()
+	return m.pulse.live && m.pulsing() && m.signIn(">", false) != m.signIn(">", true)
 }
 
 // pulsing says whether the sign moves here: no prompt or box takes text
