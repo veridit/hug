@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.98 - 2026-11-21
 
 - hug tui: a task's page sits between two rules (4ddcwa, Jørgen
   2026-11-20: "a line on the bottom of the screen where the ticket
