@@ -40,3 +40,5 @@ file:page-on.ansi (3481 bytes, sha256:198832ad) page-on
 file:page-off.ansi (3480 bytes, sha256:f5354fd1) page-off
 
 file:answer-box-on.ansi (2982 bytes, sha256:00aa32c7) answer-box-on
+
+file:answer-box-off.ansi (2955 bytes, sha256:1e53ab94) answer-box-off
