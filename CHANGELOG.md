@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.94 - 2026-11-21
 
 - hug tui's / search (5cjy88, Jørgen 2026-11-21: `/ k5q120` picked a task
   that only mentions k5q120, the arrows did nothing, and Enter jumped back
