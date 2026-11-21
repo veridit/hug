@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.99 - 2026-11-21
 
 - hug tui: `H` and `L` step onto "no column" past either end (hktdgs,
   Jørgen 2026-11-20: "an intermediate step between the last and the
