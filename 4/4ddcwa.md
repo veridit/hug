@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["ladybug"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzz7"
+rank: "zzzzzzzzzzz6"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-21T17:35"
