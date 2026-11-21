@@ -1782,7 +1782,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.requestKey()
 			case "u":
 				// u goes up one level, as Esc does in a task: back from a
-				// followed link, else to the list it was opened from
+				// followed link, else to the view it was opened from
 				// (9xfnwr, Jørgen 2026-11-16). In : sort u is the
 				// updated field; that prompt takes its keys before this.
 				// u goes up at once with a find on: only Esc clears it

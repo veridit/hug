@@ -48,7 +48,7 @@ Space       tick the check marked >
 h / l  Tab  previous / next stop: each task id, the page, checks, links, files  
 J / K       half a page down / up                                               
 n / p       next / previous task of the list                                    
-u / Esc     up: back from a followed id, else to the list                       
+u / Esc     up: back from a followed id, else to the view                       
 /           find in this task; n / N step the matches                           
 t / d / x   take / done / drop it                                               
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                  
@@ -87,7 +87,7 @@ j/k         scroll the page
 h / l  Tab  previous / next stop: each task id, the page, checks, links, files  
 J / K       half a page down / up                                               
 n / p       next / previous task of the list                                    
-u / Esc     up: back from a followed id, else to the list                       
+u / Esc     up: back from a followed id, else to the view                       
 /           find in this task; n / N step the matches                           
 t / d / x   take / done / drop it                                               
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                  
@@ -169,7 +169,7 @@ h / l  Tab  previous / next stop: each task id, the page, checks,      /        
             links, files                                               :              palette: commands with completion                     
 J / K       half a page down / up                                      : commands     overview, list, board, todo, doing, done, depends,    
 n / p       next / previous task of the list                                          dropped, state <s>, type <t>, priority <p>, group <g>,
-u / Esc     up: back from a followed id, else to the list                             tag <t>, assignee <a>, epic <id>, goto <id>, sort,    
+u / Esc     up: back from a followed id, else to the view                             tag <t>, assignee <a>, epic <id>, goto <id>, sort,    
 /           find in this task; n / N step the matches                                 grouping, lint, clear, help                           
 t / d / x   take / done / drop it                                      #              jump by id prefix or TASK-number alias                
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi         f              filter picker: s t p g l a e (state type priority …)  
@@ -192,7 +192,7 @@ h / l  Tab  previous / next stop: each task id, the page, checks,      v b      
             links, files                                               v !            view: lint                                            
 J / K       half a page down / up                                      /              find: Enter shows results, Tab keeps it as a filter   
 n / p       next / previous task of the list                           :              palette: commands with completion                     
-u / Esc     up: back from a followed id, else to the list              : commands     overview, list, board, todo, doing, done, depends,    
+u / Esc     up: back from a followed id, else to the view              : commands     overview, list, board, todo, doing, done, depends,    
 /           find in this task; n / N step the matches                                 dropped, state <s>, type <t>, priority <p>, group <g>,
 t / d / x   take / done / drop it                                                     tag <t>, assignee <a>, epic <id>, goto <id>, sort,    
 e           edit in $VISUAL, else $EDITOR, git core.editor, vi                        grouping, lint, clear, help                           

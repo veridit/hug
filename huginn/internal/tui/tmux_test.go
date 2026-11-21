@@ -329,8 +329,13 @@ func TestTmuxGolden(t *testing.T) {
 				send("#000001")
 				wait("JUMP TO ID")
 				special("Enter")
-				snapshot("detail", "HUG · repo · list › 000001") // the breadcrumb band (e3sevr)
+				// # opens over the view it is typed in (ht3cdx): the
+				// breadcrumb band names the overview and the section
+				// (e3sevr, 24403z), and Esc goes back there.
+				snapshot("detail", "HUG · repo · overview › NEXT UP › 000001")
 				special("Escape")
+				wait("HUG · repo · overview   ")
+				send("vl") // the frames after it are the list's
 				wait("HUG · repo · list")
 				send("#1785")
 				wait("JUMP TO ID")

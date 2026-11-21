@@ -134,7 +134,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 
 	// t on my own task: give it back, keeping its stage.
 	send("Escape")
-	wait("HUG · repo · list")
+	wait("HUG · repo · overview   ") // # opened it over the overview (ht3cdx)
 	send("#bbbbbb")
 	wait("JUMP TO ID")
 	send("Enter")
@@ -154,7 +154,7 @@ func TestTmuxTakeForReviewAndGiveBack(t *testing.T) {
 	}
 	// Taken for review and given back: todo/review again, review_by kept.
 	send("Escape")
-	wait("HUG · repo · list")
+	wait("HUG · repo · overview   ") // # opened it over the overview (ht3cdx)
 	send("#aaaaaa")
 	wait("JUMP TO ID")
 	send("Enter")

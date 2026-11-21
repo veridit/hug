@@ -1,5 +1,5 @@
 == before.md 
-HUG · list › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                              ? 1 for you
+HUG · overview › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                          ? 1 for you
 ────────────────────────────────────────────────────────────────────────────────────────────────────
                                                                                                     
 --------                                                                                            
@@ -30,7 +30,7 @@ which in practice happens late or never. .Request .by:jhf .at:2026-11-19T09:40Z 
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 j/k scroll · M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit
 == before.md M
-HUG · list › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                              ? 1 for you
+HUG · overview › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                          ? 1 for you
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 ---                                                                                                 
 id: w7tq3k                                                                                          
@@ -61,7 +61,7 @@ ask with the check's text.
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 j/k scroll · M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit  
 == long.txt 
-HUG · list › p87ngv › p/p87ngv/long.txt · 1.1 KiB · 3 of 3                               ? 1 for you
+HUG · overview › p87ngv › p/p87ngv/long.txt · 1.1 KiB · 3 of 3                           ? 1 for you
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 line 1 of 80                                                                                        
 line 2 of 80                                                                                        

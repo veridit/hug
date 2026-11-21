@@ -1,4 +1,4 @@
-HUG · repo · list › 000001
+HUG · repo · overview › NEXT UP › 000001
 [todo]  [feature]  [critical]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 ⚠ line 1: Goal is 247 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details (+1 more findin…
@@ -35,6 +35,6 @@ FILES (2)
   ⎘ bench/README.md  32 B
   ⎘ bench/results.tsv  12 B
 
-Task 1 of 60 · 0% · next · previous · Esc back
+Task 1 of 15 · 0% · next · previous · Esc back
 
 j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find …

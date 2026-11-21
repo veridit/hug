@@ -1,5 +1,5 @@
 == markdown
-HUG · repo · list › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                                                                                   ? 1 for you
+HUG · repo · overview › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                                                                               ? 1 for you
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 --------
@@ -46,7 +46,7 @@ Acceptance
 j/k scroll · M raw source · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                     hug dev
 
 == source
-HUG · repo · list › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                                                                                   ? 1 for you
+HUG · repo · overview › p87ngv › p/p87ngv/before.md · 1.8 KiB · 1 of 3                                                                               ? 1 for you
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ---
 id: w7tq3k
@@ -93,7 +93,7 @@ Code: huginn/internal/task lint (codes.go for the code name). Sibling rules: q2a
 j/k scroll · M Markdown · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                       hug dev
 
 == text
-HUG · repo · list › p87ngv › p/p87ngv/long.txt · 1.1 KiB · 2 of 3                                                                                    ? 1 for you
+HUG · repo · overview › p87ngv › p/p87ngv/long.txt · 1.1 KiB · 2 of 3                                                                                ? 1 for you
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 line 1 of 80
 line 2 of 80
@@ -140,7 +140,7 @@ line 41 of 80
 j/k scroll · next-, previous file · Enter edit · / find · u/Esc files · ? help · quit                                                                    hug dev
 
 == picture
-HUG · repo · list › p87ngv › p/p87ngv/shot.png · 67 B · 3 of 3                                                                                       ? 1 for you
+HUG · repo · overview › p87ngv › p/p87ngv/shot.png · 67 B · 3 of 3                                                                                   ? 1 for you
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 image, 67 B: this terminal draws no images (iTerm2 and kitty do): Enter opens it
 

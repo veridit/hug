@@ -4,6 +4,26 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: a filter, a sort and a new task keep the view you are in
+  (ht3cdx, Jørgen 2026-11-20: "I think I should just keep the view I'm
+  in"). Only choosing a view (`v o`, `v l`, `v b`, `v !`, `: list` ...)
+  changes it.
+  - The filter picker's Enter, `: todo` and `: state X` (and the other
+    `:` filters) filter the overview, board, list or lint view you are
+    in. Before, each went to the list. A section or column the filter
+    leaves empty says so on its title: `NEXT UP · rank order  [0] ·
+    None with state:dropped`.
+  - `S` then `c` (a new task with the screen), `#` and `: goto ID` open
+    the task over the view you are in. The breadcrumb names that view
+    and the task's section or column (`overview › NEXT UP › ID`), and
+    `n`, `p` and Esc follow it. Esc goes back there with the task
+    selected. Before, all three opened over the list.
+  - A sort from the `s` picker already kept the view; a test now holds
+    it in the overview and on the board.
+  - Help: `u / Esc` goes "up: back from a followed id, else to the view".
+
 ## v0.7.96 - 2026-11-21
 
 - hug task: a released board lock (run, queue, turn, probe) is free at

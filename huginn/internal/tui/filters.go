@@ -61,6 +61,50 @@ func (m *model) setFilter(name, value string) {
 	}
 	m.applyFilter()
 }
+
+// filterHere applies a filter in the view the reader is in (ht3cdx,
+// Jørgen 2026-11-20: "I think I should just keep the view I'm in"): only
+// choosing a view changes it. The selected task stays selected while the
+// filter keeps it; a section the filter empties says so on its title.
+func (m *model) filterHere(name, value string) {
+	t, ok := m.rowTask()
+	m.closeToRows()
+	m.setFilter(name, value)
+	if ok && m.follow(t.ID) {
+		return
+	}
+	// The task left: in this view the focus goes to the first section
+	// with rows when its own is empty; the empty ones say "None with"
+	// the filter.
+	if len(m.indices()) == 0 {
+		for p := 0; p < m.paneCount(); p++ {
+			if len(m.paneIndices(p)) > 0 {
+				m.pane = p
+				break
+			}
+		}
+	}
+	m.clamp()
+}
+
+// closeToRows is what a filter or a jump does in place of choosing the
+// list (ht3cdx): an open task closes to its rows, as Esc, and Enter's
+// results end, as a view switch ends them (5cjy88). The view and its
+// section stay.
+func (m *model) closeToRows() {
+	if m.resultsShown() {
+		m.dropSearch()
+		m.applyFilter()
+	}
+	m.detail = false
+	m.glance = false
+	m.find = findState{}
+	m.detailPath = ""
+	m.detailStack = nil
+	m.detailPane = 0
+	m.head = ""
+	m.slot = nil
+}
 func (m *model) removeChip() {
 	if len(m.chips) == 0 {
 		if m.query != "" {
@@ -196,10 +240,9 @@ func (m model) updateFilter(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 	case "enter":
 		if len(choices) > 0 {
-			m.setFilter(m.pickerField, choices[min(m.completion, len(choices)-1)])
 			m.prompt = ""
 			m.input.Blur()
-			m.setView("list")
+			m.filterHere(m.pickerField, choices[min(m.completion, len(choices)-1)])
 		}
 		return m, nil
 	}
@@ -259,15 +302,15 @@ func (m model) jumpChoices() []task.Task {
 	}
 	return choices
 }
+
+// openTask opens t over the view the reader is in (ht3cdx): S c, # and
+// goto, as Enter on its row. Its section or column there is the pane the
+// breadcrumb names and n, p and Esc follow (24403z); a task the view or the
+// filters leave out opens all the same, and Esc says why it has no row
+// (mcvfbz).
 func (m *model) openTask(t task.Task) {
-	// Jump is global, but returning from detail retains the user's filter context.
-	m.setView("list")
-	for i, v := range m.visible {
-		if v.Path == t.Path {
-			m.cursor = i
-			break
-		}
-	}
+	m.closeToRows()
+	m.follow(t.ID)
 	m.detailPath = t.Path
 	m.detail = true
 	m.startFocus()

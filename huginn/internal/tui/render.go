@@ -568,8 +568,9 @@ func (m model) overviewText() string {
 		cursor := m.rowCursor(p)
 		start, end := m.window(indices, cursor, m.scrollOf(p), per, m.selIn(p))
 		if len(indices) == 0 {
-			// Nothing to navigate to: None goes on the title line (h9zghj).
-			label += " · None"
+			// Nothing to navigate to: None goes on the title line (h9zghj),
+			// with the filter that emptied it (ht3cdx).
+			label += " · None" + m.noneWith()
 		} else {
 			label += shownLabel(indices, start, end)
 		}
@@ -618,6 +619,16 @@ func (m model) overviewText() string {
 		}
 	}
 	return strings.Join(lines, "\n")
+}
+
+// noneWith names the filters on an empty section's title: " with
+// state:todo" (ht3cdx: a filter that empties a section shows it empty,
+// with the filter named, in the view the reader is in); "" with none.
+func (m model) noneWith() string {
+	if text := m.chipText(); text != "" {
+		return " with " + text
+	}
+	return ""
 }
 
 // sectionBlank says whether a blank line follows overview section p: one
@@ -823,7 +834,7 @@ func (m model) boardText() string {
 		}
 		label := fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStates[p]), m.paneTotal(p))
 		if len(indices) == 0 {
-			label += " · None" // one line, as in the overview (h9zghj)
+			label += " · None" + m.noneWith() // one line, as in the overview (h9zghj)
 		}
 		label = m.styles.status[boardStates[p]].Bold(true).Render(fit(label, width)) // focus: its >, no bar (911j70)
 		heading := m.columns(width, true)

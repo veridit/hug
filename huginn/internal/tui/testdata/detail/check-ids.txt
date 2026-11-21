@@ -1,5 +1,5 @@
 == check id marked at 80
-HUG · list › MAINTA                                                  ? 1 for you
+HUG · overview › ASKED › MAINTA                                      ? 1 for you
 [doing]  [asked]  [feature]  group:root  assigned:wyvern · m                    
 created ########## · updated ########## · mainta                                
 ────────────────────────────────────────────────────────────────────────────────
@@ -56,11 +56,11 @@ HISTORY
                                                                                 
                                                                                 
                                                                                 
-Task 1 of 11 · 100% · next · previous · Esc back                                
+Task 1 of 1 · 100% · next · previous · Esc back                                 
                                                                                 
 j/k scroll · Enter open · h/l Tab next · answer · take · done · x drop · edit … 
 == check id marked at 140
-HUG · list › MAINTA                                                                                                              ? 1 for you
+HUG · overview › ASKED › MAINTA                                                                                                  ? 1 for you
 [doing]  [asked]  [feature]  group:root  assigned:wyvern · m                                                                                
 created ########## · updated ########## · mainta                                                                                            
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -117,6 +117,6 @@ HISTORY
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-Task 1 of 11 · 100% · next · previous · Esc back                                                                                            
+Task 1 of 1 · 100% · next · previous · Esc back                                                                                             
                                                                                                                                             
 j/k scroll · Enter open · h/l Tab next · answer · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task 

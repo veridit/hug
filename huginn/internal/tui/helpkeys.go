@@ -191,7 +191,7 @@ func (m model) taskHelp() helpSection {
 	rows = append(rows,
 		row("J / K", "half a page down / up", "J", "K"),
 		row("n / p", "next / previous task of the list", "n", "p"),
-		row("u / Esc", "up: back from a followed id, else to the list", "u"),
+		row("u / Esc", "up: back from a followed id, else to the view", "u"),
 		row("/", "find in this task; n / N step the matches", "/"),
 		row("t / d / x", "take / done / drop it", "t", "d", "x"),
 		row("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi", "e"),

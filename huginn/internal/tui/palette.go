@@ -353,8 +353,7 @@ func (m *model) executeCommand() bool {
 	case "overview", "list", "board", "lint":
 		m.setView(name)
 	case "todo", "doing", "done", "dropped", "depends":
-		m.setFilter("state", name)
-		m.setView("list")
+		m.filterHere("state", name) // in the view shown (ht3cdx)
 	case "state", "type", "priority", "group", "tag", "assignee", "epic":
 		if name == "epic" {
 			// Accept the bare id (or prefix) as well as "ID title".
@@ -370,8 +369,7 @@ func (m *model) executeCommand() bool {
 			m.message = "unknown " + name + ": " + arg
 			return false
 		}
-		m.setFilter(name, arg)
-		m.setView("list")
+		m.filterHere(name, arg) // in the view shown (ht3cdx)
 	case "goto":
 		t, err := task.Resolve(m.all, arg)
 		if err != nil {

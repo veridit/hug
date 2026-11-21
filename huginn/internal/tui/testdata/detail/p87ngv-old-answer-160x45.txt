@@ -1,5 +1,5 @@
 == opened
-HUG · list › p87ngv                                                                                                                                  ? 1 for you
+HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
 [todo]  [ready]  [feature]  group:root  unassigned                                                                                                              
 created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
 ⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                                     
@@ -45,7 +45,7 @@ Task 1 of 1 · 0% · next · previous · Esc back
                                                                                                                                                                 
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
 == typing under question 2
-HUG · list › p87ngv                                                                                                                                  ? 1 for you
+HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
 [todo]  [ready]  [feature]  group:root  unassigned                                                                                                              
 created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
 ⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                                     
@@ -91,7 +91,7 @@ Task 1 of 1 · 0% · next · previous · Esc back
                                                                                                                                                                 
 Enter send · Alt-Enter new line · Esc cancel · F1 help                                                                                                          
 == question 2 answered
-HUG · list › p87ngv                                                                                                                                  ? 1 for you
+HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
 [todo]  [design]  [feature]  group:root  unassigned                                                                                                             
 created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s                                                                                                   
 ⚠ line 1: Goal is 480 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                                     

@@ -173,7 +173,8 @@ func TestTmuxAskedTaskOpensOnItsQuestion(t *testing.T) {
 	a.send("Escape")
 	a.wait("tb0dra Esc goes back to the question (check 2)", tb0dra, inline...)
 	a.send("Escape")
-	a.wait("back to the rows", []string{"HUG · repo", "Rows 1–4 of 4"}, "→ agentsection-proposal.md")
+	// # opened it over the overview, so Esc goes back there (ht3cdx).
+	a.wait("back to the rows", []string{"HUG · repo · overview   4/4 tasks"}, "→ agentsection-proposal.md")
 
 	// hjbfzd: the oldest question is on check 5; check 6's has a file.
 	a.open("hjbfzd", "Screen capture: attach to a chosen task, pick one, or create a new task")
