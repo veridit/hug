@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzy"
+rank: "zzzzzzzzzzzx"
 created: 2026-11-21
 updated: 2026-11-21
 design_question: "v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?"
