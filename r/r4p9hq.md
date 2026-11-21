@@ -32,3 +32,5 @@ Shipped: q3sh69 checks 1, 2, 4 (88724001..dc737984, CI 44906215953 8/8). The > (
 ## Notes
 
 file:list-on.ansi (2841 bytes, sha256:fd29f725) list-on
+
+file:list-off.ansi (2840 bytes, sha256:f9ba6605) list-off
