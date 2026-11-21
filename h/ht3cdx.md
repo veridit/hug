@@ -4,7 +4,7 @@ title: "Filter, sort and creating a task keep the view you are in"
 state: "doing"
 type: "bug"
 priority: "high"
-assignee: ["hamster"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz1"
@@ -86,3 +86,4 @@ shipped in v0.7.97 (556473c)
 - 2026-11-20T11:18 resolved request 1 by crab
 - 2026-11-21T15:34 todo -> doing/active (take)
 - 2026-11-21T16:49 doing/active -> doing/asked (ask)
+- 2026-11-21T18:35 handed to crab: hamster's session ended (closed 2026-11-21 16:48)
