@@ -47,7 +47,7 @@ Replaces 8a0ybb check 9 (↑/↓ in the corners). Related: xt0qvf (where the sta
 
 ## Acceptance
 - [ ] Jørgen approves ANSI frames at 100x30 of a long task: at the top, scrolled mid-page, and at the end
-- [ ] The rule under the title shows ↑ at its left end exactly when the page is scrolled down (golden)
+- [x] The rule under the title shows ↑ at its left end exactly when the page is scrolled down (golden)
 - [ ] A bottom rule sits right above the global keys, starts with ↓ when more is below, and carries the page status; no blank line between page, rule and keys (golden 100x30 and 160x45)
 - [ ] Jørgen opens a long task after release and sees where it ends and that there is more
 
@@ -67,6 +67,7 @@ file:frame-2-mid-100x30.ans (3688 bytes, sha256:1bdcb20c) replaces sha256:77c362
 file:frame-4-mid-message-100x30.ans (3944 bytes, sha256:600fe7d3) replaces sha256:c8601952 recaptured 17:49Z in the same run as frame-1-top; same layout as before
 frames recaptured 17:49Z (crab review): the first frame-1-top was the page as opened, not the top: opening qpp30y focuses check 1 and openTop/showMarked (detail.go:1065-1070, ykta5g check 4) scrolls the page 1 line so the whole check is in view, hence ↑ and 4%. The old note 'opened at the top' on sha256:5265319c is wrong; the replacement sha256:9943caff is the true top (opened, then <): no ↑, PURPOSE in view, 0%. frame-3-end was unchanged by the rerun. The % on the rule is the page position, viewport.ScrollPercent() = YOffset/(lines-height), as before 4ddcwa (render.go pageStatus).
 ladybug: build on branch 4ddcwa, a19cd1d4 (ci/4ddcwa run 44933305676). render.go: pageTopRule (↑ when viewport.YOffset>0), pageBottomRule ('↓── ' while !AtBottom, else '─── '), pageFoot (footRows for the task page: input line only when it says something, then the bottom rule; the message replaces the status after a dim '• ', ↓ kept), pageHeight/fitPage (page = body less header, top rule and the lines under it). tui.go: syncDetail sizes the page with pageHeight; Update calls fitPage so a confirm/prompt takes a row and gives it back. Failing first on 626c81d0: 4ddcwa_test.go:81 'the row above the keys is not the bottom rule' (TestPageFrameArrowsAndStatus 100x30 and 160x45), :116 (ShortTask), :130 (MessageAndPrompt), :172 (DoesNotPulse). Goldens testdata/4ddcwa/page-frame-{100x30,160x45}.txt, message-100x30.txt, message-mid-page-{100x30,160x45}.txt. Lists' message line untouched (xt0qvf).
+check 2: TestPageFrameArrowsAndStatus (4ddcwa_test.go:62): ↑ on the top rule exactly when viewport.YOffset>0, at the top/mid-page/end, 100x30 and 160x45; goldens testdata/4ddcwa/page-frame-{100x30,160x45}.txt; a19cd1d4, CI 44933305676 8/8 success
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
 - 2026-11-21T18:44 doing/active -> doing/asked (ask)
