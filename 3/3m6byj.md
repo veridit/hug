@@ -49,5 +49,6 @@ file:after-2-enter-results.ansi (2546 bytes, sha256:e4a0d203) after: 2-enter-res
 file:after-3-esc-after-enter.ansi (3494 bytes, sha256:1310d9fe) after: 3-esc-after-enter
 
 
+shipped: tag v0.7.94 (feedab54), release.yml 44895643755 success, brew -> ../Cellar/hug/0.7.94/bin/hug, hug v0.7.94
 ## History
 - 2026-11-21T11:43 todo -> todo/design (ask)
