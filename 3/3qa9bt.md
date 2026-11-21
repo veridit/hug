@@ -1,15 +1,20 @@
 ---
 id: 3qa9bt
 title: "TestSettleWaitsOnProgressNotAClock/progressing overshoots on CI"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["giraffe"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-21
 updated: 2026-11-21
+doing_since: "2026-11-21T14:18"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Failures, verbatim: run 44907060648 (release v0.7.95, 2026-11-21 13:06Z) 'sync_t
 - [ ] After the fix, the same stress run passes 500 of 500 and CI is green twice
 
 ## Notes
+
+
+## History
+- 2026-11-21T14:18 todo -> doing/active (take)
