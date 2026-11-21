@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.96 - 2026-11-21
 
 - hug task: a released board lock (run, queue, turn, probe) is free at
   once, even while another goroutine of the same process is starting git
