@@ -36,3 +36,5 @@ file:1-typing-k5q120.ansi (2602 bytes, sha256:52530af6) before (v0.7.93): typing
 file:after-1-typing-k5q120.ansi (2481 bytes, sha256:8802fad2) after: 1-typing-k5q120
 
 file:after-2-enter-results.ansi (2546 bytes, sha256:e4a0d203) after: 2-enter-results
+
+file:after-3-esc-after-enter.ansi (3494 bytes, sha256:1310d9fe) after: 3-esc-after-enter
