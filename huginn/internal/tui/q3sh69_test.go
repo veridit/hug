@@ -344,3 +344,38 @@ func TestFocusPulseGolden(t *testing.T) {
 	add("NO_COLOR list off", pulseOff(t, plain), sel.ID)
 	goldenFile(t, "testdata/detail/focus-pulse.txt", strings.Join(golden, "\n")+"\n")
 }
+
+// q3sh69, the pulse's cost: one timer. A prompt opened and closed ends
+// the chain and starts a new one; a tick of the old chain is answered
+// with nothing, so two chains never run at once.
+func TestOnePulseChain(t *testing.T) {
+	m := colourModel(t, 100, "list")
+	m.pulse.live = true
+	m, first := key(m, "j")
+	if first == nil || !m.pulse.running {
+		t.Fatal("a key in the list started no pulse")
+	}
+	old := m.pulse.gen
+	// Opened, the prompt ends the chain at its next tick; closed, a new
+	// chain starts.
+	m = press(m, "/")
+	if next, again := pulseOnce(m); again != nil {
+		t.Fatal("the pulse ticks on under the / prompt")
+	} else {
+		m = next
+	}
+	m, restart := key(m, "esc")
+	if restart == nil || m.pulse.gen == old {
+		t.Fatalf("Esc: a new chain %v, gen %d (was %d)", restart != nil, m.pulse.gen, old)
+	}
+	// The old chain's tick, late: nothing, and the sign does not turn.
+	before := m.pulse
+	next, again := m.Update(pulseMsg{gen: old})
+	if again != nil || next.(model).pulse != before {
+		t.Fatalf("a stale tick was answered: next %v, pulse %+v (was %+v)", again != nil, next.(model).pulse, before)
+	}
+	// A key while the chain runs starts no second timer.
+	if _, c := key(m, "j"); c != nil {
+		t.Fatal("a key while the pulse runs started another timer")
+	}
+}
