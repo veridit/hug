@@ -21,3 +21,8 @@ func tryLock(f *os.File) (bool, error) {
 	}
 	return err == nil, err
 }
+
+func unlock(f *os.File) error {
+	ol := new(windows.Overlapped)
+	return windows.UnlockFileEx(windows.Handle(f.Fd()), 0, 1, 0, ol)
+}

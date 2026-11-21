@@ -31,3 +31,12 @@ func tryLock(f *os.File) (bool, error) {
 		return false, err
 	}
 }
+
+func unlock(f *os.File) error {
+	for {
+		err := unix.Flock(int(f.Fd()), unix.LOCK_UN)
+		if err != unix.EINTR {
+			return err
+		}
+	}
+}

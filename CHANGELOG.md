@@ -4,6 +4,18 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug task: a released board lock (run, queue, turn, probe) is free at
+  once, even while another goroutine of the same process is starting git
+  (3qa9bt). Release closed the lock file only, and a fork copies every
+  open file into the child until it runs git, so for a few milliseconds
+  the lock still looked held: in the MCP server or the TUI, a waiter or a
+  probe could take a finished pass for a running one. Release now unlocks
+  first. This was the cause of TestSettleWaitsOnProgressNotAClock
+  returning 1.5 to 3 s late on a fake clock (CI 44720742380, release
+  run 44907060648).
+
 ## v0.7.95 - 2026-11-21
 
 - hug tui: one blinking thing on screen (q3sh69, Jørgen 2026-11-20: "the
