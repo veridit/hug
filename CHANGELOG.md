@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.95 - 2026-11-21
 
 - hug tui: one blinking thing on screen (q3sh69, Jørgen 2026-11-20: "the
   greater than pulsating like it is a cursor"):
