@@ -191,7 +191,11 @@ func TestMarkerSkipsSharedColumns(t *testing.T) {
 	var marked []string
 	for n := 0; n < len(gridColumns)+1; n++ {
 		m = press(m, "L")
-		marked = append(marked, gridColumns[m.markedColumn()].field)
+		if i := m.markedColumn(); i >= 0 {
+			marked = append(marked, gridColumns[i].field)
+		} else {
+			marked = append(marked, "none") // the no-column stop past the last (hktdgs)
+		}
 	}
 	for _, f := range marked {
 		if f == "type" || f == "stage" {

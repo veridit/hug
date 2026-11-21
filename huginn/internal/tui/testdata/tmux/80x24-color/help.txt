@@ -9,7 +9,7 @@ PgDn / PgUp   page down / up
 Enter         open the task
 Space         mark the task, then the next row; the footer acts on the marked
 J / K         page down / up
-H / L         mark the previous / next column
+H / L         mark the previous / next column, none past either end
 o             order by the marked column: ▲ ▼ off
 t / d / x     take / done / drop the task
 e             edit in $VISUAL, else $EDITOR, git core.editor, vi

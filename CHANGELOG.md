@@ -4,6 +4,16 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: `H` and `L` step onto "no column" past either end (hktdgs,
+  Jørgen 2026-11-20: "an intermediate step between the last and the
+  first"). `L` on the last column and `H` on the first clear the column
+  marker, so the rows read as when the view opened; the next `L` marks
+  the first column and the next `H` the last. The same in the overview,
+  list and board. An order set with `o` stays. `o` and the sort picker's
+  `c` then say to mark a column first, as they do before any `H`/`L`.
+
 ## v0.7.98 - 2026-11-21
 
 - hug tui: a task's page sits between two rules (4ddcwa, Jørgen

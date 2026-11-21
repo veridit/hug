@@ -134,16 +134,21 @@ func TestNoTagsNoCell(t *testing.T) {
 
 // txjkrm check 6, as 911j70 has it: tags are no column, so the column
 // cursor never stands on them; from ID, L goes to TITLE, whose cell they
-// open. (Was: the cursor stands on TAGS and o orders by them.)
+// open. (Was: the cursor stands on TAGS and o orders by them.) Past
+// PRIORITY, L lands on no column, then on ID again (hktdgs).
 func TestTagsColumnCursor(t *testing.T) {
 	m, _ := tagRowBoard(t, 140)
 	var marked []string
-	for range len(gridColumns) {
+	for range len(gridColumns) + 1 {
 		m = press(m, "L")
-		marked = append(marked, gridColumns[m.markedColumn()].field)
+		if i := m.markedColumn(); i >= 0 {
+			marked = append(marked, gridColumns[i].field)
+		} else {
+			marked = append(marked, "none")
+		}
 	}
-	if got := strings.Join(marked, " "); got != "id title stage checks type priority id" {
-		t.Fatalf("L marks %s, want id title stage checks type priority, then id again", got)
+	if got := strings.Join(marked, " "); got != "id title stage checks type priority none id" {
+		t.Fatalf("L marks %s, want id title stage checks type priority, then none, then id again", got)
 	}
 }
 

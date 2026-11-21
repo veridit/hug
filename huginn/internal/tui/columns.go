@@ -69,8 +69,11 @@ func (m model) markedColumn() int {
 	return -1
 }
 
-// moveColumn moves the column cursor by delta over the columns shown,
-// wrapping. The first press marks the first column.
+// moveColumn moves the column cursor by delta over the columns shown.
+// The ring is (no column), col1 ... colN (hktdgs, Jørgen 2026-11-20
+// 12:07Z): from no column, as the view opens, L marks the first column
+// and H the last; L from the last and H from the first land on no
+// column again, the marker gone, before the next press goes on.
 func (m *model) moveColumn(delta int) {
 	c := m.columnLayout()
 	var shown []int
@@ -94,7 +97,12 @@ func (m *model) moveColumn(delta int) {
 	case at < 0:
 		at = len(shown) - 1
 	default:
-		at = (at + delta + len(shown)) % len(shown)
+		at += delta
+	}
+	if at < 0 || at >= len(shown) {
+		m.column = -1 // the no-column stop between the last and the first
+		m.showColumnHint()
+		return
 	}
 	m.column = shown[at]
 	m.showColumnHint()

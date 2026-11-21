@@ -7,7 +7,7 @@ PgDn / PgUp   page down / up
 Enter         open the task                                                     
 Space         mark the task, then the next row; the footer acts on the marked   
 J / K         page down / up                                                    
-H / L         mark the previous / next column                                   
+H / L         mark the previous / next column, none past either end             
 o             order by the marked column: ▲ ▼ off                               
 t / d / x     take / done / drop the task                                       
 e             edit in $VISUAL, else $EDITOR, git core.editor, vi                
@@ -144,7 +144,7 @@ Enter         open the task                                            /        
 Space         mark the task, then the next row; the footer acts on     :              palette: commands with completion                     
               the marked                                               : commands     overview, list, board, todo, doing, done, depends,    
 J / K         page down / up                                                          dropped, state <s>, type <t>, priority <p>, group <g>,
-H / L         mark the previous / next column                                         tag <t>, assignee <a>, epic <id>, goto <id>, sort,    
+H / L         mark the previous / next column, none past either end                   tag <t>, assignee <a>, epic <id>, goto <id>, sort,    
 o             order by the marked column: ▲ ▼ off                                     grouping, lint, clear, help                           
 t / d / x     take / done / drop the task                              #              jump by id prefix or TASK-number alias                
 e             edit in $VISUAL, else $EDITOR, git core.editor, vi       f              filter picker: s t p g l a e (state type priority …)  

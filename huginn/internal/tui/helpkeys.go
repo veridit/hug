@@ -223,7 +223,7 @@ func (m model) rowsHelp() helpSection {
 		rows = append(rows, row("h / l  Tab", "previous / next "+what, "h", "l", "tab", "shift+tab"))
 	}
 	rows = append(rows,
-		row("H / L", "mark the previous / next column", "H", "L"),
+		row("H / L", "mark the previous / next column, none past either end", "H", "L"), // hktdgs
 		row("o", "order by the marked column: ▲ ▼ off", "o"),
 		row("t / d / x", "take / done / drop the task", "t", "d", "x"),
 		row("e", "edit in $VISUAL, else $EDITOR, git core.editor, vi", "e"),
