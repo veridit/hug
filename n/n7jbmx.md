@@ -81,6 +81,7 @@ retriever 2026-11-18 13:35 (board check for crab, hatchling's session is gone): 
 file:n7jbmx-fresh-report.md (2659 bytes, sha256:642eb0c7) fresh held-out report (150 calls, Nov 19-20): every quality bar passes; live-load hook gate pending
 file:n7jbmx-fresh-noise-examples.md (3987 bytes, sha256:18ff1956) fresh set: 5 verbatim noise examples per arm
 crab 2026-11-21 00:37Z, fresh held-out run per hatchling's protocol (150 calls 11-19..11-20, 55 sessions, sqlite .backup snapshot, recall4 from main f2da2991, -asof, judge rubric unchanged, 296/296 pairs judged, 0 skipped). Shipped: useful 22.0/100 [13.6, 31.1], noise 5.3 [2.2, 9.1], precision 80%, noise vs default -113.3 [-133.1, -96.5]. Default: useful 63.3, noise 118.7, precision 35%. All four quality bars pass. Live-store hook p95 under load >100: PENDING (no such load since the run; timing on the live store writes shown-once rows into the live muninn.db, which needs Jørgen's yes). Copy-store timing at load 18.6 for reference only: p95 130.4 ms, max 272.4 ms. tool_recall stays off.
+crab 2026-11-21 12:37Z reassessment: no answer yet on check 4's question; 1-min load 9.0 (no period >100 since the fresh run at 00:37Z). Live-store timing not run. tool_recall stays off. Next reassessment in 24h.
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
