@@ -11,10 +11,15 @@ rank: "008"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-21T23:56"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_by: "crab"
+asked_check: "3"
+asked_what: "Jørgen steps past both ends with H and L and lands on no column"
+asked_for: "jhf"
+asked_since: "2026-11-22T00:23"
 ---
 
 ## Goal
@@ -42,6 +47,10 @@ Today (v0.7.90, huginn/internal/tui/columns.go moveColumn): the first H or L mar
   resolved 2026-11-20T13:10 by crab:
     Turned into a task: H/L get a 'no column' stop between the last and the first column, exactly as the view opens, instead of wrapping straight round. Check 2 is a key test in overview, list and board that must fail on today's code first; check 3 is your try after release. Queued in the TUI lane.
 
+## Questions
+- 2026-11-22T00:23 question 1 by crab to jhf (check 3):
+  Jørgen steps past both ends with H and L and lands on no column
+
 ## Notes
 
 file:screen-1307.ans (26090 bytes, sha256:9f2a756e) screen capture from hug tui
@@ -50,6 +59,8 @@ file:screen-1307.ans (26090 bytes, sha256:9f2a756e) screen capture from hug tui
 file:hktdgs-board-no-column-100x30.ans (7405 bytes, sha256:2b367130) Board at 100x30 (built binary at 1d864738, tmux capture-pane -e, seeded fixture): after 6 L from opening (id title checks type priority, then past priority) the column marker is gone, rows 1-27 byte-identical with ANSI to the board as it opened, footer 'H/L pick a column, then o orders by it'. One more L marks id again.
 Branch hktdgs @ 1d864738 (test e7000635 then fix). Failing first on main 8611f2b6: 'hktdgs_test.go:51: overview: L from the last column (assignee) marks id, want no column' (list: '(priority) marks id', board: '(priority) marks id'). Fix: huginn/internal/tui/columns.go moveColumn steps at+=delta; past either end sets m.column=-1. Every marker user goes through markedColumn(): footer hint, o, the s picker's c (currentColumn: dim 'mark one with H/L first' on no column, as at open), the header tint and the row > (cursorColumn), and the saved view state (reload.go saves no column when m.column<0). No other code keeps its own marker. Mutants 7/7 killed (M1 modulo wrap, M2-M4 the bound, M5 the -1, M6/M7 entry from none), columns.go sha restored. Goldens: only the help row 'H / L  mark the previous / next column, none past either end' (5 files). Old tests that pinned the wrap updated: TestTagsColumnCursor, TestMarkerSkipsSharedColumns. Local: go vet and go test ./... clean.
 check 2: CI run 44960662438 on 1d864738 (branch ci/hktdgs): 8/8 jobs success (secrets, bench, test ubuntu/macos/windows-latest, test-windows-cli rest/sync/shards). TestColumnMarkerHasANoColumnStop/{overview,list,board} failed on main 8611f2b6 ('hktdgs_test.go:51: overview: L from the last column (assignee) marks id, want no column') and passes on the fix; 7/7 mutants killed; frame hktdgs-board-no-column-100x30.ans attached.
+landed 1d86473 on main 2026-11-22: tui: H/L step onto no column past either end, the marker gone as when the view…
+shipped in v0.7.99 (1d86473)
 ## History
 - 2026-11-20T13:07 request 1 by jhf
 - 2026-11-20T13:07 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
@@ -57,3 +68,4 @@ check 2: CI run 44960662438 on 1d864738 (branch ci/hktdgs): 8/8 jobs success (se
 - 2026-11-20T13:10 request 1 in progress by crab: hug task set hktdgs
 - 2026-11-20T13:10 resolved request 1 by crab
 - 2026-11-21T23:56 todo -> doing/active (take)
+- 2026-11-22T00:23 doing/active -> doing/asked (ask)
