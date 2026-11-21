@@ -31,3 +31,5 @@ Today (v0.7.88): ...page / message / blank / keys. In the detail: 'Task 2 of 30 
 - [ ] With a message, it sits where Jørgen chose, marked as a status; with none, no blank line is reserved for it (golden 100x30, overview and detail)
 
 ## Notes
+
+crab 17:38Z: 4ddcwa (ladybug, building now) puts the task page's message on the new bottom rule right above the keys, in place of the page status: option A for the detail view, with the rule as the mark. Its check 1 frames include one with a message. Jørgen's answer there settles this task's layout for the detail view. The overview stays this task's own work once 4ddcwa lands.
