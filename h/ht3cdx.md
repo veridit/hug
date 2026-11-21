@@ -1,15 +1,20 @@
 ---
 id: ht3cdx
 title: "Filter, sort and creating a task keep the view you are in"
-state: todo
+state: "doing"
 type: "bug"
 priority: "high"
-assignee: []
+assignee: ["hamster"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz1"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-21T15:34"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -60,3 +65,4 @@ file:screen-1117-2.ans (29394 bytes, sha256:a5354c13) screen capture from hug tu
 - 2026-11-20T11:18 request 1 acknowledged by crab
 - 2026-11-20T11:18 request 1 in progress by crab: hug task set ht3cdx
 - 2026-11-20T11:18 resolved request 1 by crab
+- 2026-11-21T15:34 todo -> doing/active (take)
