@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-21
 updated: 2026-11-21
+design_since: "2026-11-21T14:05"
+design_asked_by: "crab"
+design_question: "v0.7.95: the \u003e where you are now pulses (bold accent, then dim, every 530 ms, no underline), and wherever you type an underscore blinks while the \u003e holds still. Frames attached (on/off for a list, a task page, the answer box). Does the pulse draw your eye without being restless?"
+design_for: "jhf"
+stage: "design"
 ---
 
 ## Goal
@@ -29,6 +34,10 @@ Shipped: q3sh69 checks 1, 2, 4 (88724001..dc737984, CI 44906215953 8/8). The > (
 ## Acceptance
 - [ ] Jørgen confirms the pulse draws his eye and only one thing moves
 
+## Questions
+- 2026-11-21T14:05 question 1 by crab to jhf (check 1):
+  v0.7.95: the > where you are now pulses (bold accent, then dim, every 530 ms, no underline), and wherever you type an underscore blinks while the > holds still. Frames attached (on/off for a list, a task page, the answer box). Does the pulse draw your eye without being restless?
+
 ## Notes
 
 file:list-on.ansi (2841 bytes, sha256:fd29f725) list-on
@@ -42,3 +51,7 @@ file:page-off.ansi (3480 bytes, sha256:f5354fd1) page-off
 file:answer-box-on.ansi (2982 bytes, sha256:00aa32c7) answer-box-on
 
 file:answer-box-off.ansi (2955 bytes, sha256:1e53ab94) answer-box-off
+
+
+## History
+- 2026-11-21T14:05 todo -> todo/design (ask)
