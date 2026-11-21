@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["crab"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzm"
+rank: "zzzzzzzzzzzc"
 created: 2026-11-20
 updated: 2026-11-20
 model: "claude-opus-5-5"
