@@ -4,6 +4,29 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: one blinking thing on screen (q3sh69, Jørgen 2026-11-20: "the
+  greater than pulsating like it is a cursor"):
+  - Where you are positioned, the focus sign pulses at the text cursor's
+    530 ms: the `>` before the current cell in overview, list and board,
+    `⋗` on a marked row, and the `>` of the focused check, question,
+    dependency, link or file in a task's page. It turns from the bold
+    accent to dim grey and back; under NO_COLOR from bold to faint. The
+    glyph stays, so you never lose your place.
+  - The `>` in a task's page is no longer underlined: an underline reads
+    as a key you can press.
+  - Wherever you can type, the text cursor blinks and the focus sign is
+    on and still: the answer and request box, and now the one-line
+    prompts too (`/`, `:`, `#`, the filter's field, find in a page), as
+    an underline at 530 ms instead of a still reversed block. On the `/`
+    results after Enter nothing is typed, so the `>` pulses there.
+  - The pulse is one timer, stopped while a prompt, box or `v` holds the
+    cursor and where no sign is shown (help, a file, a grab). A tick
+    never renders a page again.
+  - In a task's page `>` and End go to the bottom, `<` and Home to the
+    top, also while a check has the focus (checked in a real terminal).
+
 ## v0.7.94 - 2026-11-21
 
 - hug tui's / search (5cjy88, Jørgen 2026-11-21: `/ k5q120` picked a task

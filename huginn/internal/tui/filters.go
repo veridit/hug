@@ -152,7 +152,7 @@ func (m model) updateFilter(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				m.input.SetValue("")
 				m.input.Prompt = f.name + " "
 				m.completion = 0
-				return m, nil
+				return m, m.input.Focus() // the field takes text: its cursor blinks (q3sh69)
 			}
 		}
 		switch k {
@@ -164,6 +164,7 @@ func (m model) updateFilter(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.pickerField = filterFields[m.completion].name
 			m.completion = 0
 			m.input.Prompt = m.pickerField + " "
+			return m, m.input.Focus()
 		}
 		return m, nil
 	}

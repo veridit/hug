@@ -1,12 +1,12 @@
 == aaaaaa at 80
 <1;38;2;0;191;255>▸ ACCEPTANCE<0><38;2;135;149;168> · j/k or [ ] step · Space ticks · - strikes out                    <0>
-<1;4;38;2;0;191;255;4>><0> ? ☐ 2. b
+<1;38;2;0;191;255>><0> ? ☐ 2. b
 <38;2;138;201;135>  ☑ 1. a<0>
 == cccccc at 80
-<1;4;38;2;0;191;255;4>><0><38;2;255;179;84> ? which colour should the ASKED title take on a light terminal, given that the<0>
+<1;38;2;0;191;255>><0><38;2;255;179;84> ? which colour should the ASKED title take on a light terminal, given that the<0>
 == aaaaaa at 140
 <1;38;2;0;191;255>▸ ACCEPTANCE<0><38;2;135;149;168> · j/k or [ ] step · Space ticks · - strikes out                                                                                <0>
-<1;4;38;2;0;191;255;4>><0> ? ☐ 2. b
+<1;38;2;0;191;255>><0> ? ☐ 2. b
 <38;2;138;201;135>  ☑ 1. a<0>
 == cccccc at 140
-<1;4;38;2;0;191;255;4>><0><38;2;255;179;84> ? which colour should the ASKED title take on a light terminal, given that the warning colour already marks lint findings and the rows<0>
+<1;38;2;0;191;255>><0><38;2;255;179;84> ? which colour should the ASKED title take on a light terminal, given that the warning colour already marks lint findings and the rows<0>

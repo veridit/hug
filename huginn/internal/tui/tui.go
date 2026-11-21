@@ -235,6 +235,7 @@ type model struct {
 	// view letter follows (v o, v i, v b, v !).
 	column                             int
 	pendingV                           bool
+	pulse                              pulse  // the focus sign's pulse (q3sh69, pulse.go)
 	helpTyping                         bool   // typing a help search after "/"
 	helpQuery                          string // filters help rows by key or description
 	prompt, query, message, detailPath string
@@ -478,6 +479,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	next, cmd := m.step(msg)
 	if n, ok := next.(model); ok {
 		n.clearStaleMessage(before)
+		// The focus sign pulses where no text cursor blinks (q3sh69).
+		if pulse := n.afterPulse(msg); pulse != nil {
+			cmd = tea.Batch(cmd, pulse)
+		}
 		if n.detail && n.glance {
 			n.fitGlance() // the file has the rows no message takes (yp3c09)
 		}
@@ -497,6 +502,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) step(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case pulseMsg:
+		return m.onPulse(msg)
 	case glanceFormattedMsg:
 		m.glanceFormatted(msg)
 		return m.afterUpdate(nil)
@@ -575,10 +582,13 @@ func newModel(s *task.Store, o Options) model {
 func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	input := textinput.New()
 	input.CharLimit = 512
-	input.Cursor.SetMode(cursor.CursorStatic) // only the box cursor moves (qpp30y)
+	// Wherever you can type, the cursor blinks (q3sh69, Jørgen's rule;
+	// qpp30y had only the box's move): the focus sign is still then.
+	input.Cursor.SetMode(cursor.CursorBlink)
 	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, panes: &paneMemo{forYou: -1},
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	styleAnswerCursor(&m.answerBox, m.styles.cursor)
+	styleInputCursor(&m.input, m.styles.cursor)
 	m.vCursor = cursor.New() // blinks at bubbles' 530 ms, as the box's
 	m.ctx, m.cancel = context.WithCancel(ctx)
 	if o.Initial != nil {
@@ -1351,15 +1361,22 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	switch msg := msg.(type) {
 	case cursor.BlinkMsg:
-		// The answer or request box's cursor blinks (qpp30y), and the
-		// underlines of o l b ! while v waits (a82j3n); nothing else on
-		// screen does. The two never show at once: v in a box is text.
+		// The answer or request box's cursor blinks (qpp30y), the
+		// one-line prompt's (q3sh69), and the underlines of o l b !
+		// while v waits (a82j3n); the focus sign pulses only while none
+		// of them does (pulse.go). They never show at once: v in a box
+		// is text.
 		if m.pendingV {
 			var cmd tea.Cmd
 			m.vCursor, cmd = m.vCursor.Update(msg)
 			return m, cmd
 		}
 		m.vCursor.Blur() // v was answered: its last tick ends the blink
+		if m.textInput() && !m.boxPrompt() {
+			var cmd tea.Cmd
+			m.input, cmd = m.input.Update(msg)
+			return m, cmd
+		}
 		return m, m.blinkBox(msg)
 	case tea.WindowSizeMsg:
 		// Some PTYs report zero before their first usable size is available.

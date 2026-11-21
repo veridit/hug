@@ -272,7 +272,7 @@ func (m model) headText(r, p, width int, selected bool) string {
 	}
 	pointer := " "
 	if selected {
-		pointer = m.styles.rowCursor.Render(">") // the cursor's sign, no bar (911j70)
+		pointer = m.sign(">") // the cursor's sign, no bar (911j70); it pulses (q3sh69)
 	}
 	count := fmt.Sprintf("  [%d]", h.count)
 	label := ansi.Truncate(oneLine(m.headLabel(h.value)), max(0, width-2-2-len(count)), "…")

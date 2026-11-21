@@ -66,7 +66,7 @@ func (m model) filesLines(t task.Task) []string {
 		}
 		line := fmt.Sprintf("%s %s %s%s", pointer, fileMark, oneLine(name), size)
 		if pointer == ">" {
-			line = m.styles.selected.Render(fmt.Sprintf("%s %s %s", pointer, fileMark, oneLine(name)))
+			line = m.focusRow(fmt.Sprintf("%s %s %s", pointer, fileMark, oneLine(name)))
 		}
 		out = append(out, line)
 	}

@@ -275,9 +275,9 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	case selected && m.grab.active && (t.Path == m.grab.path || contains(m.grab.block, t.Path)):
 		pointer = "≡" // grabbed: it moves with j/k (3xcesq)
 	case selected && cur < 0 && marked:
-		pointer = m.styles.rowCursor.Render(cursorOnMark) // the cursor on a marked row: one sign (check 7)
+		pointer = m.sign(cursorOnMark) // the cursor on a marked row: one sign (check 7); it pulses (q3sh69)
 	case selected && cur < 0:
-		pointer = m.styles.rowCursor.Render(">")
+		pointer = m.sign(">")
 	case m.grab.active && contains(m.grab.block, t.Path):
 		pointer = m.styles.marked.Render("≡") // the rest of a grabbed block
 	case m.yanked != "" && t.ID == m.yanked:
@@ -346,7 +346,7 @@ func (m model) taskRowCols(t task.Task, width int, selected, compact bool, mark 
 	for _, g := range m.rowCells(compact, c) {
 		gap := g.at - lipgloss.Width(row)
 		if gap > 0 && g.col == cur {
-			row += strings.Repeat(" ", gap-1) + m.styles.rowCursor.Render(">")
+			row += strings.Repeat(" ", gap-1) + m.sign(">")
 		} else {
 			row += strings.Repeat(" ", max(0, gap))
 		}
@@ -1087,7 +1087,7 @@ func (m model) frameView() string {
 		content = strings.Join(append(append(top, body...), rule), "\n")
 	case m.detail:
 		if t, ok := m.selected(); ok {
-			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.viewport.View()
+			content = strings.Join(m.detailHeader(t), "\n") + "\n" + m.styles.dim.Render(strings.Repeat("─", m.width)) + "\n" + m.pulsePage(m.viewport.View())
 		}
 	case m.view == "overview":
 		content = m.overviewText()

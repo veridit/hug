@@ -97,7 +97,7 @@ func TestFocusedHeadingIsCalm(t *testing.T) {
 
 // kg07bt check 2: the focused asked check reads as a normal row: no
 // background fill, no bold, its text in the colour it has unfocused; the
-// > before it is the cursor, the one underlined accent cell. The same for
+// > before it is the focus sign (q3sh69: no underline; it pulses). The same for
 // a question that names no check. Focus and keys are unchanged.
 func TestFocusedAskedRowIsCalm(t *testing.T) {
 	for _, c := range []struct{ id, want, pane string }{
@@ -110,11 +110,12 @@ func TestFocusedAskedRowIsCalm(t *testing.T) {
 		m.styles.renderer.SetColorProfile(termenv.TrueColor)
 		m = openTask(t, m, c.id)
 		row := lineWith(t, m, c.want)
-		// The cursor: the > cell in theme.cursor, the answer box's cursor
-		// (qpp30y): one cursor style on screen.
-		cursor := m.styles.cursor.Render(">")
-		if !strings.HasPrefix(row, cursor) {
-			t.Fatalf("%s: the > is not the cursor %q: %q", c.id, cursor, row)
+		// The > is the focus sign, no underline (q3sh69 replaced
+		// kg07bt's theme.cursor: an underline reads as a key); it
+		// pulses, and opens drawn on (TestFocusSignPulsesInPage).
+		cursor := m.signIn(">", false)
+		if !strings.HasPrefix(row, cursor) || sgrAt(row, 0).underline {
+			t.Fatalf("%s: the > is not the focus sign %q: %q", c.id, cursor, row)
 		}
 		rest := strings.TrimPrefix(row, cursor)
 		if f := loud(sgrs(rest)); len(f) != 0 {

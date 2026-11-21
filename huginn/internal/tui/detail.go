@@ -897,7 +897,7 @@ func (m model) detailText(t task.Task) string {
 			// much visual noise"): a normal row, the > the one cursor.
 			checks = append(checks, m.cursorMark(label, m.checkStyle(a.Checked)))
 		} else if m.detailPane == focusAcceptance && i == m.acceptance {
-			checks = append(checks, m.styles.selected.Render(label))
+			checks = append(checks, m.focusRow(label))
 		} else if a.Struck {
 			// Struck out with a reason (sfa8w4): the text crossed through
 			// and dim, the decision after it.
@@ -938,7 +938,7 @@ func (m model) detailText(t task.Task) string {
 		}
 		line := fmt.Sprintf("%s ↳ %s %s [%s]%s %s", pointer, m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, m.markStyled(oneLine(d.Note), markAt(stopDepNote, i), false))
 		if pointer == ">" {
-			line = m.styles.selected.Render(ansi.Strip(line))
+			line = m.focusRow(ansi.Strip(line))
 		}
 		dependencies = append(dependencies, line)
 	}
@@ -967,7 +967,7 @@ func (m model) detailText(t task.Task) string {
 		}
 		line := fmt.Sprintf("%s ↳ %s %s [%s]", pointer, m.styles.status[m.place(c)].Render(oneLine(c.ID)), oneLine(c.Title), oneLine(m.place(c)))
 		if pointer == ">" {
-			line = m.styles.selected.Render(ansi.Strip(line))
+			line = m.focusRow(ansi.Strip(line))
 		}
 		children = append(children, line)
 	}
@@ -988,7 +988,7 @@ func (m model) detailText(t task.Task) string {
 			line = fmt.Sprintf("%s ↳ %s %s", pointer, m.styles.status[state].Render(oneLine(l.ID)), title)
 		}
 		if pointer == ">" {
-			line = m.styles.selected.Render(ansi.Strip(line))
+			line = m.focusRow(ansi.Strip(line))
 		}
 		links = append(links, line)
 	}
@@ -1194,14 +1194,14 @@ func (m *model) followDependency() {
 }
 
 // cursorMark draws a focused row calm (kg07bt): its text in style, as it
-// reads unfocused, and its leading > in theme.cursor, the answer box's
-// own look (qpp30y), so nothing else competes with it. It stays still:
-// the box's cursor is the one that blinks, once a opens it.
+// reads unfocused, and its leading > the focus sign, no underline (an
+// underline reads as a key, q3sh69). The sign is drawn on; it pulses
+// (pulsePage) until a opens the box, whose cursor then blinks alone.
 func (m model) cursorMark(label string, style lipgloss.Style) string {
 	lines := strings.Split(label, "\n")
 	for i, l := range lines {
 		if i == 0 && strings.HasPrefix(l, ">") {
-			lines[i] = m.styles.cursor.Render(">") + style.Render(l[1:])
+			lines[i] = m.signIn(">", false) + style.Render(l[1:])
 		} else {
 			lines[i] = style.Render(l)
 		}

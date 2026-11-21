@@ -73,8 +73,12 @@ func TestBoxCursorBlinksUnderline(t *testing.T) {
 	if cmd == nil {
 		t.Fatal("a returned no command: the cursor's blink never starts")
 	}
-	if m.input.Cursor.Mode() == cursor.CursorBlink {
-		t.Fatal("the one-line input blinks too: only the box cursor moves")
+	// q3sh69 (Jørgen's later rule, crab 11:06Z) changed qpp30y's 'only
+	// the box cursor moves': every text cursor blinks, the one-line
+	// input's too, and the focus sign is still while one does. With the
+	// box open the input is not focused: one thing blinks.
+	if m.input.Focused() {
+		t.Fatal("the one-line input is focused under the open box: two cursors")
 	}
 	on := m.answerLines()[0]
 	if !strings.Contains(on, "\x1b[4") && !strings.Contains(on, ";4m") && !strings.Contains(on, ";4;") {

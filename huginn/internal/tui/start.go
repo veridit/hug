@@ -161,6 +161,7 @@ var terminalSize = func() (width, height int, ok bool) {
 // 140-column terminal showed a 100-column first frame, CI 44132567751).
 func startModel(ctx context.Context, store *task.Store, opts Options) model {
 	m := newModelCtx(ctx, store, opts)
+	m.pulse.live = true // the focus sign pulses in the program (q3sh69)
 	if w, h, ok := terminalSize(); ok {
 		m.width, m.height = w, h
 		m.resize()
