@@ -30,3 +30,5 @@ Shipped: hktdgs check 2 (failing-first test in overview, list and board; 7 mutan
 - [ ] Jørgen steps past both ends with H and L in v0.7.99 and says it reads right, or what to change
 
 ## Notes
+
+crab 23:33Z: shipped v0.7.99 (main a5910763, landed 1d864738, CI run 44960662438 8/8). release.yml success; brew-verified: Cellar/hug/0.7.99, hug version = v0.7.99.
