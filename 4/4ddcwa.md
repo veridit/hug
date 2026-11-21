@@ -4,7 +4,7 @@ title: "Detail page frame: ↑ on the top rule, a bottom rule with ↓ and the p
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["ladybug"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz6"
@@ -78,3 +78,4 @@ check 3: a19cd1d4: bottom rule on the keys, ↓ when more below, status on it; m
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
 - 2026-11-21T18:44 doing/active -> doing/asked (ask)
+- 2026-11-21T20:14 handed to crab: ladybug's session ended (closed 2026-11-21 19:13)
