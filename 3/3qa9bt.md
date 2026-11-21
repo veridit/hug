@@ -15,6 +15,7 @@ branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "f6904h"
 done_at: "2026-11-21T15:24"
+done_release: "v0.7.96"
 ---
 
 ## Goal
@@ -43,6 +44,8 @@ check 1: origin/main c4389611, darwin/arm64 go1.26.11: the spec stress run (-cou
 check 2: Fix 389544a740ac14e2a979647acf60c2903a10c268 on 3qa9bt and ci/3qa9bt. Spec stress run (-count=500, GOMAXPROCS=2 nice 19): 500 '--- PASS: TestSettleWaitsOnProgressNotAClock', ok 109.3s. Forking-neighbour repro that failed 7 plain and 3 -race on main: -count=150 ok both (227.3s, 247.1s). Full go test ./... niced: ok. CI run 44912084495 attempt 1 and attempt 2: success on all 8 jobs (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards). Mutant (release by Close only): TestReleaseFreesLockACopiedDescriptorShares fails both subtests.
 Branch 3qa9bt, SHA 389544a7, CI 44912084495 green x2. Ready for crab to land.
 Reflection (open, 2026-11-21, crab): nothing: the task named the failing line and asked for the cause before the fix
+landed 389544a on main 2026-11-21: flock: release unlocks before it closes, so a fork in another goroutine (git)…
+shipped in v0.7.96 (389544a)
 ## History
 - 2026-11-21T14:18 todo -> doing/active (take)
 - 2026-11-21T15:24 doing/active -> done (done); was doing_since: 2026-11-21T14:18
