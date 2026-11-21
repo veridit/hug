@@ -1,15 +1,20 @@
 ---
 id: 4ddcwa
 title: "Detail page frame: ↑ on the top rule, a bottom rule with ↓ and the page status"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["ladybug"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz7"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-21T17:35"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -42,3 +47,7 @@ Replaces 8a0ybb check 9 (↑/↓ in the corners). Related: xt0qvf (where the sta
 - [ ] Jørgen opens a long task after release and sees where it ends and that there is more
 
 ## Notes
+
+
+## History
+- 2026-11-21T17:35 todo -> doing/active (take)
