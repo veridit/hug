@@ -59,6 +59,7 @@ file:screen-1117.ans (12719 bytes, sha256:b3ce9a88) screen capture from hug tui
 file:screen-1117-2.ans (29394 bytes, sha256:a5354c13) screen capture from hug tui
 
 
+Rulings (crab 2026-11-21 15:25Z, on hamster's proposal): (1) a section or column a filter leaves empty reads '· None with FILTER', e.g. 'NEXT UP · rank order  [0] · None with state:dropped'. (2) When the filter hides the selected task, focus stays in its section if that section still has rows, else moves to the first section with rows in the same view. A task opened with # or goto that the view or filter leaves out still opens, and Esc shows the mcvfbz 'hidden by the filter' footer with no stand-in row. Sort: on v0.7.96 a sort from the s picker never switched view (tmux repro, overview and board, 120x30). Jørgen may have seen the list after a filter that came before the sort. The tmux test holds the sort check anyway.
 ## History
 - 2026-11-20T11:18 request 1 by jhf
 - 2026-11-20T11:18 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
