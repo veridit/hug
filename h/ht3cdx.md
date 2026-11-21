@@ -42,7 +42,7 @@ Jørgen 2026-11-20 10:18Z (request 1, screenshots screen-1117.ans before, screen
 - [ ] ~~Verify Filter and sort change the view~~ (not relevant: replaced by checks 2-6, crab, 2026-11-20)
 - [x] In the overview and on the board, the filter picker's Enter and ': todo' / ': state X' apply the filter and leave the view unchanged (tmux test, fails on main first)
 - [x] In the overview and on the board, a sort from the s picker leaves the view unchanged (tmux test)
-- [ ] Creating a task with S from the overview opens it over the overview, and Esc returns to the overview with the new task selected (tmux test, fails on main first)
+- [x] Creating a task with S from the overview opens it over the overview, and Esc returns to the overview with the new task selected (tmux test, fails on main first)
 - [ ] # jump and ': goto ID' open the task over the current view, and Esc returns to that view (tmux test)
 - [ ] Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time
 
@@ -64,6 +64,7 @@ file:after-filter-1-applied.ans (2745 bytes, sha256:4d2aac3b) after (hamster, br
 file:after-create-2-esc.ans (3531 bytes, sha256:cb64d387) after (hamster, branch ht3cdx): overview, S c 'Foxtrot task' opened as 'overview › NEXT UP › ID', then Esc: the overview with the new task selected
 check 2: TestTmuxActionsKeepTheView/{overview,board}/2_filter (ht3cdx_tmux_test.go:134-156) and TestFilterFromATaskKeepsTheView (ht3cdx_test.go:13). On v0.7.96: 'overview: after the filter picker's Enter the view is not the overview: HUG · repo · list 3/5 tasks'. Pass on branch ht3cdx 556473cc, CI 44920278685 success (all 8 jobs)
 check 3: TestTmuxActionsKeepTheView/{overview,board}/3_sort (ht3cdx_tmux_test.go:157-162): s p Enter, then s r, keep the view. Passed on v0.7.96 too: the s picker never switched view (repro in a note). Pass on branch ht3cdx 556473cc, CI 44920278685 success (all 8 jobs)
+check 4: TestTmuxActionsKeepTheView/{overview,board}/4_create (ht3cdx_tmux_test.go:163-183). On v0.7.96: 'overview: S c did not open b0jarh over the overview (want "HUG · repo · overview › NEXT UP › b0jarh"): HUG · repo · list › b0jarh'. Pass on branch ht3cdx 556473cc, CI 44920278685 success (all 8 jobs). Frames frames/after-create-2-esc.ans attached
 ## History
 - 2026-11-20T11:18 request 1 by jhf
 - 2026-11-20T11:18 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
