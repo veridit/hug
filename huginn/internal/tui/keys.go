@@ -77,20 +77,23 @@ func (m model) barHints() []bkey.Binding {
 	case m.prompt == findPrompt:
 		hints = []bkey.Binding{hint("type", "find"), hint("Enter", "keep"), hint("↑↓", "match"), hint("Esc", "clear"), hint(m.helpKey(), "help")}
 	case m.prompt == "/":
-		hints = []bkey.Binding{hint("↑↓", "pick"), hint("Enter", "go to it"), hint("Tab", "keep as filter"), hint("Esc", "clear"), hint(m.helpKey(), "help")}
+		hints = []bkey.Binding{hint("↑↓", "pick"), hint("Enter", "results"), hint("Tab", "keep as filter"), hint("Esc", "cancel"), hint(m.helpKey(), "help")}
 	case m.boxPrompt():
 		hints = []bkey.Binding{hint("Enter", "send"), hint("Alt-Enter", "new line"), hint("Esc", "cancel"), hint(m.helpKey(), "help")}
 	case m.prompt != "":
 		hints = []bkey.Binding{hint("Enter", "submit"), hint("Esc", "cancel"), hint(m.helpKey(), "help")}
 	case m.detail:
 		hints = m.detailHints(m.width < 100)
+	case m.resultsShown():
+		// Enter's results (5cjy88): the keys that walk and leave them.
+		hints = []bkey.Binding{hint("j/k", "match"), hint("Enter", "open"), hint("Esc", "all tasks"), hint("m", "move"), hint("/", "refine"), hint("?", "help"), hint("q", "quit")}
 	default:
 		// h/l are the panes, as Tab and Shift-Tab are (e3sevr); the bar
 		// names h/l only, so 140 columns keep the version (rxr4z8, crab
 		// 21:26), and ? lists Tab.
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Space", "mark"), hint("Enter", "open"), hint("h/l", "pane"), hint("f/#", "filter/id"), hint("/", "find"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit"), hint("H/L", "column"), hint("o", "order"), hint("r", "request")}
 	}
-	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" && !m.pendingV && !m.picking {
+	if m.width < 100 && !m.help && m.prompt == "" && m.confirm == "" && !m.detail && !m.grab.active && m.yanked == "" && !m.pendingV && !m.picking && !m.resultsShown() {
 		hints = []bkey.Binding{hint("j/k", "move"), hint("Space", "mark"), hint("Enter", "open"), hint("f", "find"), hint("#", "id"), hint("/", "search"), hint(":", "cmd"), hint("?", "help"), hint("q", "quit")}
 	}
 	return hints

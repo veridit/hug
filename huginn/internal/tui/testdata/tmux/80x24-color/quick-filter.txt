@@ -19,6 +19,6 @@ type
 
 
 
-state=todo · Esc clears
+state=todo · F clears
 
 j/k ↑↓ pick · Enter add chip · type narrow · Esc back · F1 help       hug v0.0.0

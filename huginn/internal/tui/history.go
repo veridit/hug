@@ -147,6 +147,10 @@ func (m *model) historyKey(k string) bool {
 		return false
 	}
 	switch {
+	case k == "down" && m.prompt == "/":
+		// In / search ↓ always picks a match (5cjy88, crab 09:16Z): only
+		// ↑ recalls, in the empty prompt, and goes on back.
+		return false
 	case k == "up" || k == "down":
 		return m.recall(kind, k == "up")
 	case k == "enter" && m.prompt == findPrompt:

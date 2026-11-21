@@ -291,6 +291,7 @@ type handoff struct {
 	Scroll     int         `json:"scroll,omitempty"` // the open task's scroll
 	Chips      [][2]string `json:"chips,omitempty"`  // filters, in the order set
 	Query      string      `json:"query,omitempty"`
+	Results    bool        `json:"results,omitempty"` // Query is Enter's results, not a chip (5cjy88)
 	Sort       []sortSpec  `json:"sort,omitempty"`
 	Column     string      `json:"column,omitempty"`   // the column the cursor marks (bejd89)
 	Grouping   string      `json:"grouping,omitempty"` // "group" or "epic" (kx2ndm)
@@ -313,7 +314,7 @@ func (m model) rowID() string {
 }
 
 func (m model) handoff() handoff {
-	h := handoff{From: m.opts.Version, View: m.view, Pane: m.pane, Row: m.rowID(), Offset: m.offset, Query: m.query}
+	h := handoff{From: m.opts.Version, View: m.view, Pane: m.pane, Row: m.rowID(), Offset: m.offset, Query: m.query, Results: m.results}
 	if v := memoView(m.view); v >= 0 {
 		m.remember()
 		for p := range maxSections {
@@ -353,7 +354,7 @@ func (m *model) resume(h handoff) {
 	for _, c := range h.Chips {
 		m.setFilter(c[0], c[1])
 	}
-	m.query = h.Query
+	m.query, m.results = h.Query, h.Results && h.Query != ""
 	if slices.Contains(groupings, h.Grouping) {
 		m.grouping = h.Grouping
 	}

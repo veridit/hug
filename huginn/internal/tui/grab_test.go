@@ -212,7 +212,7 @@ func TestMoveFarRefusals(t *testing.T) {
 	if *commits != 0 || m.message != ids["Beta"]+" is not shown in the list (filtered): paste it where it is shown, or Esc forgets it" {
 		t.Fatalf("paste of a hidden task: commits %d %q", *commits, m.message)
 	}
-	m = press(m, "esc", "esc")
+	m = press(m, "esc", "F") // Esc forgets the yank, F the kept search (5cjy88)
 	m.setView("overview")
 	m.pane = sectionRecent
 	m.clamp()

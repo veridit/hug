@@ -58,6 +58,8 @@ func (m model) helpContext() string {
 		return "task"
 	case len(m.marks) > 0:
 		return "marked" // the actions on the marked first (rxr4z8 check 8)
+	case m.resultsShown():
+		return "results" // Enter's results (5cjy88)
 	}
 	return m.view
 }
@@ -93,9 +95,18 @@ func (m model) contextHelp() helpSection {
 	case "find":
 		return helpSection{"IN / FIND", []helpRow{
 			row("type", "find as you type"), row("field:value", "keep tasks with it: state:done type:bug group: tag: priority: assignee: epic:"),
-			row("↑↓", "pick a match"), row("Enter", "go to it", "enter"),
-			row("↑ empty", "recall earlier searches, ↑ again older, ↓ newer; Enter runs it"),
-			row("Tab", "keep it as a filter", "tab"), row("Esc", "clear", "esc"),
+			row("↑↓ ctrl-n/p", "pick a match, in every section", "ctrl+n"),
+			row("Enter", "show the results: j/k walk them, Esc then all tasks", "enter"),
+			row("↑ empty", "recall earlier searches, ↑ again older; Enter shows them"),
+			row("Tab", "keep it as a filter until F", "tab"), row("Esc", "cancel: back where / was pressed", "esc"),
+		}}
+	case "results":
+		return helpSection{"IN THE SEARCH RESULTS", []helpRow{
+			row("j/k ↑/↓", "next / previous match, section after section", "j", "k"), row("< >", "first / last match", "<", ">"),
+			row("Enter", "open the task; Esc comes back here", "enter"),
+			row("Esc", "all tasks, keeping the task selected", "esc"),
+			row("m", "move the task among all tasks", "m"),
+			row("/", "refine the search", "/"),
 		}}
 	case "findpage":
 		return helpSection{"IN / FIND IN THIS " + strings.ToUpper(m.pageNoun()), []helpRow{
@@ -242,7 +253,7 @@ func (m model) globalHelp() helpSection {
 		row("v l", "view: list", "v"),
 		row("v b", "view: board", "v"),
 		row("v !", "view: lint", "v"),
-		row("/", "live find; Enter goes to it, Tab keeps it as a filter", "/"),
+		row("/", "find: Enter shows results, Tab keeps it as a filter", "/"),
 		row(":", "palette: commands with completion", ":"),
 		row(": commands", "overview, list, board, todo, doing, done, depends, dropped, state <s>, type <t>, priority <p>, group <g>, tag <t>, assignee <a>, epic <id>, goto <id>, sort, grouping, lint, clear, help"),
 		row("#", "jump by id prefix or TASK-number alias", "#"),

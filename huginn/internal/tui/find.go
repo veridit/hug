@@ -295,7 +295,8 @@ func (m model) updateFind(k string) (model, bool) {
 			text := m.find.text
 			m.clearFind()
 			m.detail, m.glance = false, false
-			m.openInput("/", text)
+			m.openSearch(text)
+			m.input.SetValue(text)
 			m.searchTyped()
 			return m, true
 		}

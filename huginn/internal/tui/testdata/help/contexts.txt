@@ -21,7 +21,7 @@ v o            view: overview
 v l            view: list                                                       
 v b            view: board                                                      
 v !            view: lint                                                       
-/              live find; Enter goes to it, Tab keeps it as a filter            
+/              find: Enter shows results, Tab keeps it as a filter              
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
                <s>, type <t>, priority <p>, group <g>, tag <t>, assignee <a>,   
@@ -62,7 +62,7 @@ v o            view: overview
 v l            view: list                                                       
 v b            view: board                                                      
 v !            view: lint                                                       
-/              live find; Enter goes to it, Tab keeps it as a filter            
+/              find: Enter shows results, Tab keeps it as a filter              
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
                <s>, type <t>, priority <p>, group <g>, tag <t>, assignee <a>,   
@@ -100,7 +100,7 @@ v o            view: overview
 v l            view: list                                                       
 v b            view: board                                                      
 v !            view: lint                                                       
-/              live find; Enter goes to it, Tab keeps it as a filter            
+/              find: Enter shows results, Tab keeps it as a filter              
 :              palette: commands with completion                                
 : commands     overview, list, board, todo, doing, done, depends, dropped, state
                <s>, type <t>, priority <p>, group <g>, tag <t>, assignee <a>,   
@@ -140,7 +140,7 @@ j/k ↑/↓       move                                                     v o  
 < > Home End  top / bottom                                             v l            view: list                                            
 ctrl-d/u      half page down / up                                      v b            view: board                                           
 PgDn / PgUp   page down / up                                           v !            view: lint                                            
-Enter         open the task                                            /              live find; Enter goes to it, Tab keeps it as a filter 
+Enter         open the task                                            /              find: Enter shows results, Tab keeps it as a filter   
 Space         mark the task, then the next row; the footer acts on     :              palette: commands with completion                     
               the marked                                               : commands     overview, list, board, todo, doing, done, depends,    
 J / K         page down / up                                                          dropped, state <s>, type <t>, priority <p>, group <g>,
@@ -165,7 +165,7 @@ j/k         step through the checks                                    v o      
 [ ]         previous / next check                                      v l            view: list                                            
 Space       tick the check marked >                                    v b            view: board                                           
 -           strike it out as not relevant, with a reason               v !            view: lint                                            
-h / l  Tab  previous / next stop: each task id, the page, checks,      /              live find; Enter goes to it, Tab keeps it as a filter 
+h / l  Tab  previous / next stop: each task id, the page, checks,      /              find: Enter shows results, Tab keeps it as a filter   
             links, files                                               :              palette: commands with completion                     
 J / K       half a page down / up                                      : commands     overview, list, board, todo, doing, done, depends,    
 n / p       next / previous task of the list                                          dropped, state <s>, type <t>, priority <p>, group <g>,
@@ -190,7 +190,7 @@ Enter       open the task id marked ▸                                  v o    
 j/k         scroll the page                                            v l            view: list                                            
 h / l  Tab  previous / next stop: each task id, the page, checks,      v b            view: board                                           
             links, files                                               v !            view: lint                                            
-J / K       half a page down / up                                      /              live find; Enter goes to it, Tab keeps it as a filter 
+J / K       half a page down / up                                      /              find: Enter shows results, Tab keeps it as a filter   
 n / p       next / previous task of the list                           :              palette: commands with completion                     
 u / Esc     up: back from a followed id, else to the list              : commands     overview, list, board, todo, doing, done, depends,    
 /           find in this task; n / N step the matches                                 dropped, state <s>, type <t>, priority <p>, group <g>,

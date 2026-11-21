@@ -219,14 +219,25 @@ func TestEscAtEveryLevel(t *testing.T) {
 	if m.prompt != "" {
 		t.Fatal("picker fields did not close")
 	}
-	m = press(m, "/", "feature", "tab", "esc")
+	m = press(m, "/", "feature", "enter", "esc")
 	if m.query != "" || m.view != "list" {
-		t.Fatal("search was not cleared")
+		t.Fatal("search results were not left")
 	}
+	// A chip is kept until F or ⌫ (5cjy88, crab 09:16Z): Esc goes up a
+	// level with the chip still drawn.
+	m = press(m, "/", "feature", "tab", "esc")
+	if m.query != "feature" || m.view != "overview" {
+		t.Fatal("Esc with a kept search: not up a level with the chip kept")
+	}
+	m = press(m, "F", "v", "l")
 	m = commandLine(m, "todo")
 	m = press(m, "esc")
+	if m.filter.State != "todo" || m.view != "overview" {
+		t.Fatal("Esc with a chip: not up a level with the chip kept")
+	}
+	m = press(m, "F", "v", "l")
 	if m.filter.State != "" || m.view != "list" {
-		t.Fatal("chips not cleared")
+		t.Fatal("F did not clear the chip")
 	}
 	m = press(m, "#", "000", "esc")
 	if m.prompt != "" || m.view != "list" {

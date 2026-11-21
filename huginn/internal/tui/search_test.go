@@ -23,11 +23,14 @@ func searchBoard(t *testing.T) (model, map[string]string, *int) {
 	return moveBoard(t, titles...)
 }
 
-// mcvfbz check 1: search, then Esc (or Enter): the found task is selected
-// in the full view and on screen, in the overview, the list and the board.
+// mcvfbz check 1: search, then leave it: the found task is selected in the
+// full view and on screen, in the overview, the list and the board. Since
+// 5cjy88 Enter shows the results and Esc on them leaves (Esc while typing
+// cancels, TestSearchEscStepsBack); a view switch from the results leaves
+// too, keeping the task.
 func TestLeavingSearchKeepsFoundTask(t *testing.T) {
 	for _, view := range []string{"overview", "list", "board"} {
-		for _, leave := range []string{"esc", "enter"} {
+		for _, leave := range []string{"enter esc", "ctrl+n ctrl+p enter esc"} {
 			t.Run(view+" "+leave, func(t *testing.T) {
 				m, ids, _ := searchBoard(t)
 				zebra := ids["Zebra"]
@@ -43,7 +46,7 @@ func TestLeavingSearchKeepsFoundTask(t *testing.T) {
 				if sel, ok := m.selected(); !ok || sel.ID != zebra {
 					t.Fatalf("while typing: selected %v", sel.ID)
 				}
-				m = press(m, leave)
+				m = press(m, strings.Fields(leave)...)
 				sel, ok := m.selected()
 				if m.prompt != "" || m.query != "" || len(m.visible) != 60 {
 					t.Fatalf("search not left: prompt %q query %q, %d shown", m.prompt, m.query, len(m.visible))
@@ -63,11 +66,12 @@ func TestLeavingSearchKeepsFoundTask(t *testing.T) {
 	}
 }
 
-// ↑↓ pick another match while typing; leaving keeps the one picked.
+// ↑↓ pick another match while typing; leaving keeps the one picked
+// (Enter, then Esc on the results, 5cjy88).
 func TestSearchPickKeepsPick(t *testing.T) {
 	m, ids, _ := searchBoard(t)
 	m.setView("list")
-	m = press(m, "/", "Task 1", "down", "down", "esc")
+	m = press(m, "/", "Task 1", "down", "down", "enter", "esc")
 	if sel, _ := m.selected(); sel.ID != ids["Task 12"] {
 		t.Fatalf("selected %s, want Task 12 (%s)", sel.Title, ids["Task 12"])
 	}
@@ -89,8 +93,9 @@ func TestFoundTaskMovesAtOnce(t *testing.T) {
 	if got := shown(m)[48]; got != ids["Zebra"] {
 		t.Fatalf("row 49 is %s, want Zebra %s: %v", got, ids["Zebra"], shown(m))
 	}
-	// In NEXT UP too, where the move is relative to that section's rows.
-	m = press(nextUp(m), "/", "Zebra", "esc", "m", "k", "enter")
+	// In NEXT UP too, where the move is relative to that section's rows;
+	// Esc on the results first (5cjy88), then m.
+	m = press(nextUp(m), "/", "Zebra", "enter", "esc", "m", "k", "enter")
 	if *commits != 3 || !strings.HasPrefix(m.message, "moved "+ids["Zebra"]+" above ") {
 		t.Fatalf("NEXT UP K: %q (commits %d)", m.message, *commits)
 	}
@@ -101,7 +106,7 @@ func TestFoundTaskSortedSaysSortRank(t *testing.T) {
 	m, ids, _ := searchBoard(t)
 	m.setView("list")
 	m = press(sorted(m, "t"), "enter")
-	m = press(m, "/", "Zebra", "enter")
+	m = press(m, "/", "Zebra", "enter", "esc") // leaving the results says where it is (5cjy88)
 	if sel, _ := m.selected(); sel.ID != ids["Zebra"] || !strings.Contains(m.message, sortRefusal) {
 		t.Fatalf("selected %s, footer %q", sel.ID, m.message)
 	}
@@ -149,7 +154,8 @@ func TestFoundTaskHiddenByFilterSaysSo(t *testing.T) {
 	}
 }
 
-// A kept search (Tab) cleared with Esc keeps the task too.
+// A kept search (Tab) cleared with F keeps the task too. Esc does not
+// clear it (5cjy88, crab 09:16Z: a chip lasts until F or ⌫).
 func TestKeptSearchClearedKeepsTask(t *testing.T) {
 	m, ids, _ := searchBoard(t)
 	m.setView("list")
@@ -158,8 +164,14 @@ func TestKeptSearchClearedKeepsTask(t *testing.T) {
 		t.Fatalf("Tab did not keep the search: %q %d", m.query, len(m.visible))
 	}
 	m = press(m, "esc")
+	if m.query != "Zebra" {
+		t.Fatalf("Esc cleared the kept search")
+	}
+	m.setView("list")
+	m.follow(ids["Zebra"])
+	m = press(m, "F")
 	if sel, _ := m.selected(); m.query != "" || sel.ID != ids["Zebra"] {
-		t.Fatalf("Esc: query %q, selected %s", m.query, sel.ID)
+		t.Fatalf("F: query %q, selected %s", m.query, sel.ID)
 	}
 }
 

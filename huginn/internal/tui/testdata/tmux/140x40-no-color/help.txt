@@ -6,7 +6,7 @@ j/k ↑/↓       move                                                     v o  
 < > Home End  top / bottom                                             v l            view: list
 ctrl-d/u      half page down / up                                      v b            view: board
 PgDn / PgUp   page down / up                                           v !            view: lint
-Enter         open the task                                            /              live find; Enter goes to it, Tab keeps it as a filter
+Enter         open the task                                            /              find: Enter shows results, Tab keeps it as a filter
 Space         mark the task, then the next row; the footer acts on     :              palette: commands with completion
               the marked                                               : commands     overview, list, board, todo, doing, done, depends,
 J / K         page down / up                                                          dropped, state <s>, type <t>, priority <p>, group <g>,

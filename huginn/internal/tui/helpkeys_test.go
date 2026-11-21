@@ -141,6 +141,7 @@ func helpContexts(t *testing.T) map[string]model {
 	out["palette"] = press(m, ":")
 	out["filter"] = press(m, "f")
 	out["find"] = press(m, "/")
+	out["results"] = press(m, "/", "task", "enter") // Enter's results (5cjy88)
 	out["jump"] = press(m, "#")
 	out["confirm"] = press(m, "t")
 	return out

@@ -75,6 +75,25 @@ func (m *model) removeChip() {
 	})
 }
 func (m model) filterBar() string {
+	// Enter's results (5cjy88): not a chip, so no brackets; Esc ends
+	// them, and the chips (f) stay. While typing the search is not kept
+	// either: the same line, without Esc, which cancels there.
+	found := ""
+	typing := m.prompt == "/" && m.query != ""
+	if m.resultsShown() || typing {
+		noun := "matches"
+		if len(m.visible) == 1 {
+			noun = "match"
+		}
+		found = m.styles.dim.Render("found: ") + m.styles.accent.Render("/ "+oneLine(m.query)) + m.styles.dim.Render(fmt.Sprintf(" · %d %s", len(m.visible), noun))
+		if !typing {
+			found += m.styles.dim.Render(" · Esc all tasks")
+		}
+		if len(m.chips) == 0 {
+			return found
+		}
+		found = m.styles.dim.Render(" · ") + found
+	}
 	var chips []string
 	for _, c := range m.chips {
 		style := m.styles.accent
@@ -88,7 +107,7 @@ func (m model) filterBar() string {
 		}
 		chips = append(chips, style.Bold(true).Render("["+c.field+":"+oneLine(c.value)+" ×]"))
 	}
-	if m.query != "" {
+	if m.query != "" && !m.results && m.prompt != "/" {
 		chips = append(chips, m.styles.accent.Render("[/ "+oneLine(m.query)+"]"))
 	}
 	// The line that says what shapes the rows (ahejza): its letters f
@@ -100,6 +119,9 @@ func (m model) filterBar() string {
 		line += m.styles.dim.Render("none")
 	} else {
 		line += strings.Join(chips, " ") + m.styles.dim.Render(" ⌫ last · F clear")
+	}
+	if found != "" {
+		return line + found
 	}
 	return line + m.styles.dim.Render(" · ") + key.Render("s") + m.styles.dim.Render("ort: "+sortLabel(m.sort))
 }

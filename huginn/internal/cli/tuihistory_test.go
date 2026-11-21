@@ -63,11 +63,12 @@ func TestTUIHistorySurvivesReopen(t *testing.T) {
 	if h := read(); strings.Join(h.Search, ",") != "Alpha" || strings.Join(h.Command, ",") != "board" {
 		t.Fatalf("after the first hug tui: search %q command %q", h.Search, h.Command)
 	}
-	// Reopened: Up recalls Alpha; typed on, it is a new entry "Alpha 2"
-	// (with no recall it would be " 2", kept as "2").
-	session("/", up, " 2", "\r", ":", up, "\r")
-	if h := read(); strings.Join(h.Search, ",") != "Alpha,Alpha 2" || strings.Join(h.Command, ",") != "board" {
-		t.Fatalf("after the reopened hug tui: search %q command %q, want Alpha,Alpha 2 and board", h.Search, h.Command)
+	// Reopened: Up recalls Alpha; edited, it is a new entry "Alph" (with
+	// no recall it would be nothing). It still matches Alpha: Enter with no
+	// match keeps the / prompt open (5cjy88), where : and q are typed.
+	session("/", up, "\x7f", "\r", ":", up, "\r")
+	if h := read(); strings.Join(h.Search, ",") != "Alpha,Alph" || strings.Join(h.Command, ",") != "board" {
+		t.Fatalf("after the reopened hug tui: search %q command %q, want Alpha,Alph and board", h.Search, h.Command)
 	}
 	// Never on the task branch, never in its checkout.
 	board := filepath.Join(a.Cwd, TaskDir)

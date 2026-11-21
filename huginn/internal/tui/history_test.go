@@ -14,9 +14,11 @@ import (
 func TestSearchHistoryUpDown(t *testing.T) {
 	m, ids, _ := searchBoard(t)
 	m.setView("list")
-	m = press(m, "/", "Zebra", "enter")
-	m = press(m, "/", "Task 07", "enter")
-	m = press(m, "/", "Task 07", "enter") // no duplicates in a row
+	// Enter shows the results; Esc leaves them, so the next / is empty
+	// (5cjy88: / on the results refines the search shown).
+	m = press(m, "/", "Zebra", "enter", "esc")
+	m = press(m, "/", "Task 07", "enter", "esc")
+	m = press(m, "/", "Task 07", "enter", "esc") // no duplicates in a row
 	m = press(m, "/", "up")
 	if m.prompt != "/" || m.input.Value() != "Task 07" || m.query != "Task 07" {
 		t.Fatalf("Up in the empty / prompt: prompt %q value %q query %q, want the last search", m.prompt, m.input.Value(), m.query)
@@ -29,28 +31,25 @@ func TestSearchHistoryUpDown(t *testing.T) {
 	if m.input.Value() != "Zebra" {
 		t.Fatalf("Up at the oldest: value %q, want it to stay on Zebra", m.input.Value())
 	}
+	// ↓ never recalls in / (5cjy88, crab 09:16Z): it picks a match.
 	m = press(m, "down")
-	if m.input.Value() != "Task 07" {
-		t.Fatalf("Down: value %q, want Task 07", m.input.Value())
+	if m.input.Value() != "Zebra" {
+		t.Fatalf("Down: value %q, want Zebra still (↓ picks, never recalls)", m.input.Value())
 	}
-	m = press(m, "down")
-	if m.input.Value() != "" || m.query != "" || len(m.visible) != 60 {
-		t.Fatalf("Down past the newest: value %q query %q, %d shown; want the empty prompt", m.input.Value(), m.query, len(m.visible))
-	}
-	m = press(m, "up", "up", "enter")
+	m = press(m, "enter")
 	if sel, ok := m.selected(); m.prompt != "" || !ok || sel.ID != ids["Zebra"] {
 		t.Fatalf("Enter on the recalled Zebra: prompt %q, selected %q, want %s", m.prompt, sel.ID, ids["Zebra"])
 	}
 	// An edited recalled entry becomes a new entry; the old one stays.
-	m = press(m, "/", "up", "backspace", "backspace", "enter")
-	if m = press(m, "/", "up"); m.input.Value() != "Zeb" {
+	m = press(m, "esc", "/", "up", "backspace", "backspace", "enter")
+	if m = press(m, "esc", "/", "up"); m.input.Value() != "Zeb" {
 		t.Fatalf("after editing Zebra to Zeb: Up gives %q, want Zeb", m.input.Value())
 	}
 	if m = press(m, "up"); m.input.Value() != "Zebra" {
 		t.Fatalf("Up after Zeb: %q, want Zebra", m.input.Value())
 	}
-	// Esc leaves the search with the found task selected (mcvfbz): that
-	// search is kept too.
+	// Esc while typing cancels the search (5cjy88): what was typed is
+	// kept too.
 	m = press(m, "esc", "/", "Task 09", "esc", "/", "up")
 	if m.input.Value() != "Task 09" {
 		t.Fatalf("after / Task 09 Esc: Up gives %q, want Task 09", m.input.Value())
@@ -107,7 +106,7 @@ func TestCommandHistoryUpDown(t *testing.T) {
 func TestFindRecallsSearches(t *testing.T) {
 	m, id := findBoard(t)
 	m = press(m, "esc")
-	m = press(m, "/", "row layout", "enter")
+	m = press(m, "/", "row layout", "esc") // no task matches: Esc cancels, the text kept (5cjy88)
 	m = openTask(t, m, id)
 	m = press(m, "/", "up")
 	if m.prompt != findPrompt || m.input.Value() != "row layout" || len(m.find.hits) == 0 {

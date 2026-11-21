@@ -1188,14 +1188,27 @@ func (m model) footLines() (footerLine, inputLine string) {
 	}
 	if footer == "" {
 		filters := []string{}
-		for _, f := range []struct{ k, v string }{{"state", m.filter.State}, {"type", m.filter.Type}, {"group", m.filter.Group}, {"tag", m.filter.Label}, {"find", m.query}} {
+		find := m.query
+		if m.results || m.prompt == "/" {
+			find = "" // the prompt or the results line says it (5cjy88)
+		}
+		for _, f := range []struct{ k, v string }{{"state", m.filter.State}, {"type", m.filter.Type}, {"group", m.filter.Group}, {"tag", m.filter.Label}, {"find", find}} {
 			if f.v != "" {
 				filters = append(filters, f.k+"="+oneLine(f.v))
 			}
 		}
 		footer = "All tasks · : filters and commands"
 		if len(filters) > 0 {
-			footer = strings.Join(filters, " · ") + " · Esc clears"
+			// Esc clears no chip (5cjy88, crab 09:16Z): F does.
+			footer = strings.Join(filters, " · ") + " · F clears"
+		}
+		if place := m.matchPlace(); place != "" && (m.results || m.prompt == "/") {
+			// Where the pick is among the matches (5cjy88): "match 3 of 3
+			// in LINT".
+			footer = place
+			if len(filters) > 0 {
+				footer = strings.Join(filters, " · ") + " · " + place
+			}
 		}
 		if m.view == "overview" {
 			// The list explains ! and ↳ in its last row; the overview has

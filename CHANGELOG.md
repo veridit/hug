@@ -4,6 +4,35 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui's / search (5cjy88, Jørgen 2026-11-21: `/ k5q120` picked a task
+  that only mentions k5q120, the arrows did nothing, and Enter jumped back
+  to the board on the wrong task):
+  - Typing a task's id selects that task, in whatever section or column
+    it is, before tasks that only mention it.
+  - ↓ and ctrl-n/p pick among the matches in every section, not only the
+    one the cursor is in; ↑ too once a match is picked. ↑ in the empty
+    prompt still recalls earlier searches; ↓ no longer recalls in /.
+  - Enter closes the prompt and leaves the results on screen, under
+    `found: / k5q120 · 3 matches · Esc all tasks`. j/k walk every match
+    in order, section after section (RECENTLY DONE down into LINT), the
+    footer says `match 3 of 3 in LINT`, Enter opens one and Esc from it
+    comes back to the results. Before, Enter ended the search at once.
+  - Esc on the results shows all tasks with the picked task selected and
+    in view; m leaves the results the same way before it grabs, so the
+    task moves among its real neighbours; a view switch ends them too.
+  - Esc while typing cancels: the task, section and search you had before
+    / come back. Before, Esc kept the match.
+  - Enter with no match keeps the prompt open: `no match for X: edit it,
+    or Esc`.
+  - Tab still keeps the search as a filter chip `[/ k5q120]`; j/k walk
+    its matches across sections too.
+- Changed: Esc no longer clears a filter chip, / or f (since fdaeb27e it
+  cleared them all). A chip lasts until F (all) or ⌫ (the last); Esc on
+  the rows goes up a level, back to the overview, with the chip line still
+  drawn. The footer says `· F clears` where it said `· Esc clears`.
+
 ## v0.7.93 - 2026-11-20
 
 - In hug tui, an action that moves the open task out of the pane you

@@ -253,8 +253,14 @@ type model struct {
 	bulk []string
 	// requestIDs are the marked ids the open request box writes one
 	// request for (ec6z6j check 5), fixed when r opened it.
-	requestIDs             []string
-	hidden                 string   // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
+	requestIDs []string
+	hidden     string // with no row selected (cursor -1): the task kept, which a filter hides (mcvfbz)
+	// results: Enter left the search's matches on screen, not a kept
+	// filter (5cjy88, search.go); searchFrom is where / was pressed, for
+	// Esc while typing; searchPicked says ↑↓ picked a match, so ↑ picks.
+	results                bool
+	searchFrom             *searchReturn
+	searchPicked           bool
 	slot                   *slotGap // where the open task stood in its pane before it left it (24403z)
 	movedTo                string   // "<ID> moved to <SECTION>", the last write's note, which a receipt follows (24403z)
 	grab                   grabState
@@ -1061,6 +1067,18 @@ func (m model) selected() (task.Task, bool) {
 	return task.Task{}, false
 }
 func (m *model) setView(view string) {
+	if m.resultsShown() {
+		// A view switch ends the results; the picked task stays selected
+		// where the new view shows it (5cjy88). A Tab chip stays.
+		t, ok := m.rowTask()
+		m.dropSearch()
+		m.applyFilter()
+		defer func() {
+			if ok {
+				m.follow(t.ID)
+			}
+		}()
+	}
 	m.view = view
 	m.pane = 0
 	m.offset = 0
@@ -1110,6 +1128,10 @@ func (m model) detailPosition() string {
 	return ""
 }
 func (m *model) move(n int, absolute bool) {
+	if m.query != "" && memoView(m.view) >= 0 {
+		m.walk(n, absolute) // every match, across sections (5cjy88)
+		return
+	}
 	if m.grouping != "" && !m.detail {
 		m.moveRows(n, absolute) // headings are rows too (kx2ndm)
 		return
@@ -1217,6 +1239,7 @@ func (m *model) openInput(prompt, value string) tea.Cmd {
 func (m *model) clearFilters() { m.clearKeeping(false, m.dropFilters) }
 func (m *model) dropFilters() {
 	m.query = ""
+	m.results = false
 	m.filter = task.Filter{}
 	m.chips = nil
 }
@@ -1261,7 +1284,7 @@ func (m *model) back() {
 		m.input.CursorEnd()
 		m.completion = 0
 	case m.prompt == "/":
-		m.leaveSearch(false) // Esc clears the search, keeping the task (mcvfbz)
+		m.cancelSearch() // Esc while typing: back where / was pressed (5cjy88)
 	case m.prompt == findPrompt || (m.detail && m.prompt == "" && m.find.text != ""):
 		// Esc clears the find and its tints; the page stays where it is
 		// (4s3g5q check 4). The next Esc goes back.
@@ -1303,9 +1326,11 @@ func (m *model) back() {
 			// other task is selected in its place (mcvfbz).
 			m.hide(t)
 		}
-	case m.query != "" || m.filter != (task.Filter{}):
-		m.clearKeeping(true, m.dropFilters)
+	case m.resultsShown():
+		m.leaveResults(true) // all tasks, the picked one kept (5cjy88, mcvfbz)
 	case m.view != "overview":
+		// A chip is kept until F or ⌫ (5cjy88, crab 09:16Z): Esc goes up
+		// a level with the chip line still drawn.
 		m.setView("overview")
 	}
 }
@@ -1853,7 +1878,7 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.openTop()
 			}
 		case k == "/":
-			return m, m.openInput("/", m.query)
+			return m, m.openSearch(m.query) // refines a search shown (5cjy88)
 		case k == ":":
 			return m, m.openInput(":", "")
 		case k == "s":
@@ -1876,6 +1901,11 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case k == "m" && len(m.marks) > 0:
 			return m, m.markedKey(k) // the marked as one block (rxr4z8 check 4)
 		case k == "m":
+			if m.resultsShown() {
+				// Moved among its real neighbours, not the other
+				// matches (5cjy88, crab 09:30Z).
+				m.leaveResults(false)
+			}
 			m.startGrab()
 		case k == "#":
 			return m, m.openInput("#", "")
@@ -1923,7 +1953,7 @@ func (m model) updateInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if m.prompt == "#" {
 		return m.updateJump(msg)
 	}
-	if m.historyKey(k) { // Up/Down recall, Enter records (xfv9pw)
+	if !(m.prompt == "/" && m.searchPicked) && m.historyKey(k) { // Up/Down recall, Enter records (xfv9pw)
 		return m, nil
 	}
 	if m.prompt == "/" && m.updateSearch(k) {

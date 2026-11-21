@@ -35,6 +35,6 @@ Rows 1–2 of 2 · ! lint finding · ↳ epic · depends = a dependency is not d
 
 
 
-state=todo · type=feature · find=task · Esc clears
+state=todo · type=feature · find=task · F clears
 
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request     hug v0.0.0
