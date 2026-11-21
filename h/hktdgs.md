@@ -4,7 +4,7 @@ title: "H/L column marker: a 'no column' step between last and first"
 state: "doing"
 type: "feature"
 priority: "medium"
-assignee: ["hktdgs-engineer"]
+assignee: ["lobster"]
 labels: []
 group: ""
 rank: "008"
