@@ -38,5 +38,6 @@ Failures, verbatim: run 44907060648 (release v0.7.95, 2026-11-21 13:06Z) 'sync_t
 ## Notes
 
 
+Cause (giraffe, claude-opus-5-5): internal/flock/flock.go:28 and :46: release is f.Close() alone. flock(2) locks belong to the open file description; a parallel test in the same process that starts git (fork then exec) copies the fd table, and until that child execs, its copy keeps the lock. So after the writer's release(), bg.Busy() (Queued's TryAcquire .queue and RunHeld's TryAcquire .run, gitbranch/background.go:145-216) still reports held for a few real ms; each such settleWait poll (cli/sync_test.go:150) advances the synctest fake clock 50 ms at once, so 40-52 polls = the 2-2.6 s overshoot. Busy's own TryAcquire probes are inherited too and look held to the next poll. Stress: go test -run TestSettleWaitsOnProgressNotAClock -count=500, niced, on origin/main c4389611: ok 108.8s, no overshoot alone (no forks in that process); -count=100 with a parallel neighbour exec'ing /usr/bin/true: ok too. Direct probe (Exclusive, release, poll Busy under 8 goroutines exec'ing /usr/bin/true, darwin/arm64, GOMAXPROCS=2 nice 19): 'releases still held after close: 1218 of 2000, worst 108 polls'. Fix: unlock (LOCK_UN / UnlockFileEx) before Close, which frees the description whatever copies a fork holds.
 ## History
 - 2026-11-21T14:18 todo -> doing/active (take)
