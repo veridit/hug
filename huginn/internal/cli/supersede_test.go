@@ -21,7 +21,8 @@ func TestInstructionsStrikeSupersededChecks(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if !strings.Contains(string(b), "\n"+supersedeLine+"\n") {
+	// A Windows checkout may give AGENTS.md CRLF line endings.
+	if !strings.Contains(strings.ReplaceAll(string(b), "\r\n", "\n"), "\n"+supersedeLine+"\n") {
 		t.Fatalf("AGENTS.md lacks the supersede line %q", supersedeLine)
 	}
 }
