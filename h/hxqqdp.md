@@ -1,15 +1,20 @@
 ---
 id: hxqqdp
 title: "An old hug writing set --details adds a second Relevant details section"
-state: todo
+state: "doing"
 type: bug
 priority: ""
-assignee: []
+assignee: ["rooster"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-22
 updated: 2026-11-22
+doing_since: "2026-11-22T13:10"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Old binaries cannot be fixed; the new side can: Parse sees both headings, lint r
 - [ ] hug upgrade merges them into one '## Details', no text lost (test)
 
 ## Notes
+
+
+## History
+- 2026-11-22T13:10 todo -> doing/active (take)
