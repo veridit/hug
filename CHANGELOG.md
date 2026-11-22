@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.105 - 2026-11-22
 
 - hug tui: on a task's page, a long request now wraps under its own
   3-column indent instead of starting its next lines at column 0, so it
