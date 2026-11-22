@@ -30,3 +30,5 @@ Shipped 6q1d1t checks 1-2: SchemaVersion 31; a fingerprint test fails when what 
 - [ ] Jørgen restarts his long-running hug tui and hug mcp sessions, or says to leave them
 
 ## Notes
+
+crab 10:52Z: shipped v0.7.104 (main 142a5b90, landed a4e05130, CI run 45013140613 8/8). release.yml success; brew-verified: Cellar/hug/0.7.104, hug version = v0.7.104. hug task lint: no findings.
