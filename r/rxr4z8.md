@@ -99,7 +99,7 @@ shipped in v0.7.73 (4b49e10)
 file:screen-1138.ans (6901 bytes, sha256:8f2b42e1) screen capture from hug tui
 check 7: Jørgen 2026-11-20 10:39Z (request 1): 'the response here is cursor carrying a mark. That's what I want.' ⋗ stays.
 check 6: Jørgen 2026-11-20 10:39Z (request 1): 'So you can close that'.
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T06:18 todo -> doing/active (take)
 - 2026-11-18T06:19 doing/active -> doing/asked (ask)
