@@ -204,3 +204,29 @@ func TestFindOpensTheFoldHoldingIt(t *testing.T) {
 		t.Fatalf("the match is off the page: line %d, page %d+%d", h.line, m.viewport.YOffset, m.viewport.Height)
 	}
 }
+
+// 8a0ybb: answering one of several questions keeps the page: a long
+// section the reader opened stays open (the focus goes to the next
+// question, the page is not reopened).
+func TestAnswerKeepsOpenSections(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	m := stageBoard(t)
+	m.opts.User = "jhf"
+	for _, q := range []task.Question{{What: "First?", For: "jhf"}, {What: "Second?", For: "jhf"}} {
+		if _, err := m.store.Ask("aaaaaa", q, "nautilus"); err != nil {
+			t.Fatal(err)
+		}
+	}
+	m.refresh("")
+	m = openTask(t, m, "aaaaaa")
+	for n := 0; n < 20 && !strings.Contains(detailPlain(m), "▸ HISTORY"); n++ {
+		m = press(m, "shift+tab")
+	}
+	if m = press(m, "enter"); !strings.Contains(detailPlain(m), "⌄ HISTORY") && !strings.Contains(detailPlain(m), "▸ HISTORY (2) · Enter folds") {
+		t.Fatalf("HISTORY did not open:\n%s", detailPlain(m))
+	}
+	m = press(m, "a", "y", "e", "s", "enter")
+	if text := detailPlain(m); !strings.Contains(text, "asked question 2 of jhf") {
+		t.Fatalf("after answering, the History is folded again:\n%s", text)
+	}
+}
