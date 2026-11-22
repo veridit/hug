@@ -49,7 +49,7 @@ landed 28de94c on main 2026-11-19: tui: failing test, TestTmuxReload's waits acc
 landed bc217cb on main 2026-11-19: tui: TestTmuxReload compares only whole frames with no load running (hfkt1n)
 shipped in v0.7.73 (28de94c)
 crab: on main (ancestor of fac02994 verified): fix bc217cb3. Closed by the coordinator.
-Reflection (open, 2026-11-19, crab): nothing (coordinator closing on verified landing)
+Reflection (dismissed, 2026-11-19, crab): nothing (coordinator closing on verified landing)
 ## History
 - 2026-11-18T22:38 todo -> doing/active (take)
 - 2026-11-19T00:52 doing/active -> doing/waiting (wait)
