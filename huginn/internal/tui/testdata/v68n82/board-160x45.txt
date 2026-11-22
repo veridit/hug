@@ -1,0 +1,45 @@
+HUG · board   60/60 tasks · ! 2 broken · 35 advice                                                                                                              
+view: overview  list  board  !lint                                                            │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
+filter: none · sort: rank                                                                                                                                       
+─── TODO [8] ─────────────────────────  ─── DOING [15] ───────────────────────  ─── DEPENDS [7] ──────────────────────  ─── DONE [15] ────────────────────────  
+   ID       TITLE           ✓     T P      ID       TITLE           ✓     T P      ID       TITLE           ✓     T P      ID       TITLE           ✓     T P   
+  ·000001   ⎘2 Feature tas… ○ 2   F C     ·000002   Bug task 02: m… ◑ 1/2 B C     ·000005   Docs task 05: … ○ 2   D C      000003   Render compile…       F M   
+  ·000009   Spike task 09:… ○ 2   S H     ·000006   Feature task 0… ◑ 1/2 F H     !000013   Chore task 13:… ○ 2   C M      000007   Bug task 07: m… ● 2   B H   
+  ·000017   Bug task 17: m… ○ 2   B L     ·000010   Docs task 10: … ◑ 1/2 D H     ·000021   Feature task 2… ○ 2   F C      000011   Feature task 1… ● 2   F M   
+  ·000025   Docs task 25: … ○ 2   D C     ·000014   Spike task 14:… ◑ 1/2 S>M     ·000029   Spike task 29:… ○ 2   S H      000015   Docs task 15: … ● 2   D M   
+  ·000033   Chore task 33:… ○ 2   C M     ·000018   Chore task 18:… ◑ 1/2 C L     ·000037   Bug task 37: m… ○ 2   B L      000019   Spike task 19:… ● 2   S L   
+  ·000041   Feature task 4… ○ 2   F C     ·000022   Bug task 22: m… ◑ 1/2 B C     ·000045   Docs task 45: … ○ 2   D C      000023   Chore task 23:… ● 2   C C   
+  ·000049   Spike task 49:… ○ 2   S H     !000026   Feature task 2… ◑ 1/2 F H     ·000053   Chore task 53:… ○ 2   C M      000027   Bug task 27: m… ● 2   B H   
+  ·000057   Bug task 57: m… ○ 2   B L     ·000030   Docs task 30: … ◑ 1/2 D H                                              000031   Feature task 3… ● 2   F M   
+                                          ·000034   Spike task 34:… ◑ 1/2 S M                                              000035   Docs task 35: … ● 2   D M   
+                                          ·000038   Chore task 38:… ◑ 1/2 C L                                              000039   Spike task 39:… ● 2   S L   
+                                          ·000042   Bug task 42: m… ◑ 1/2 B C                                              000043   Chore task 43:… ● 2   C C   
+                                          ·000046   Feature task 4… ◑ 1/2 F H                                              000047   Bug task 47: m… ● 2   B H   
+                                          ·000050   Docs task 50: … ◑ 1/2 D H                                              000051   Feature task 5… ● 2   F M   
+                                          ·000054   Spike task 54:… ◑ 1/2 S M                                              000055   Docs task 55: … ● 2   D M   
+                                          ·000058   Chore task 58:… ◑ 1/2 C L                                              000059   Spike task 59:… ● 2   S L   
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                                                
+──────────────────────────────────────  ──────────────────────────────────────  ──────────────────────────────────────  ──────────────────────────────────────  
+Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low                                                                       
+Columns 1–4 of 5 · h/l reveals other columns                                                                                                                    
+H/L column · order by priority (▲)                                                                                                                              
+                                                                                                                                                                
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                   

@@ -1,0 +1,45 @@
+HUG · list   60/60 tasks · ! 2 broken · 35 advice                                                                                                               
+view: overview  list  board  !lint                                                            │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
+filter: none · sort: rank                                                                                                                                       
+─── TASKS  [60] · 1–36 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   ID       TITLE                                                                                                              STAGE     ✓     TYPE    PRIORITY 
+  ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long t… ready     ○ 2   feature critical 
+  ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                                    active    ◑ 1/2 bug     critical 
+   000003   terminal compiler · compiler Render compiler-lang task detail without storage markers                              done            feature medium   
+   000004   terminal runtime · runtime Spike task 04: make the terminal workflow observable                                    dropped         spike  >critical 
+  ·000005   terminal runtime · runtime Docs task 05: make the terminal workflow observable                                     depends   ○ 2   docs    critical 
+  ·000006   terminal runtime · runtime Feature task 06: make the terminal workflow observable                                  active    ◑ 1/2 feature high     
+   000007   terminal docs · docs Bug task 07: make the terminal workflow observable                                            done      ● 2   bug     high     
+   000008   terminal docs · docs Chore task 08: make the terminal workflow observable with a deliberately long title that mus… dropped         chore   high     
+  ·000009   terminal docs · docs Spike task 09: make the terminal workflow observable                                          ready     ○ 2   spike   high     
+  ·000010   terminal compiler · compiler Docs task 10: make the terminal workflow observable                                   active    ◑ 1/2 docs    high     
+   000011   terminal compiler · compiler Feature task 11: make the terminal workflow observable                                done      ● 2   feature medium   
+   000012   terminal compiler · compiler Bug task 12: make the terminal workflow observable                                    dropped         bug     medium   
+  !000013   terminal runtime · runtime Chore task 13: make the terminal workflow observable                                    depends   ○ 2   chore   medium   
+  ·000014   terminal runtime · runtime Spike task 14: make the terminal workflow observable                                    active    ◑ 1/2 spike   medium   
+   000015   terminal runtime · runtime Docs task 15: make the terminal workflow observable with a deliberately long title tha… done      ● 2   docs    medium   
+   000016   terminal docs · docs Feature task 16: make the terminal workflow observable                                        dropped         feature low      
+  ·000017   terminal docs · docs Bug task 17: make the terminal workflow observable                                            ready     ○ 2   bug     low      
+  ·000018   terminal docs · docs Chore task 18: make the terminal workflow observable                                          active    ◑ 1/2 chore   low      
+   000019   terminal compiler · compiler Spike task 19: make the terminal workflow observable                                  done      ● 2   spike   low      
+   000020   terminal compiler · compiler Docs task 20: make the terminal workflow observable                                   dropped         docs    low      
+  ·000021   terminal compiler · compiler Feature task 21: make the terminal workflow observable                                depends   ○ 2   feature critical 
+  ·000022   terminal runtime · runtime Bug task 22: make the terminal workflow observable with a deliberately long title that… active    ◑ 1/2 bug     critical 
+   000023   terminal runtime · runtime Chore task 23: make the terminal workflow observable                                    done      ● 2   chore   critical 
+   000024   terminal runtime · runtime Spike task 24: make the terminal workflow observable                                    dropped         spike   critical 
+  ·000025   terminal docs · docs Docs task 25: make the terminal workflow observable                                           ready     ○ 2   docs    critical 
+  !000026   terminal docs · docs Feature task 26: make the terminal workflow observable                                        depends   ◑ 1/2 feature high     
+   000027   terminal docs · docs Bug task 27: make the terminal workflow observable                                            done      ● 2   bug     high     
+   000028   terminal compiler · compiler Chore task 28: make the terminal workflow observable                                  dropped         chore   high     
+  ·000029   terminal compiler · compiler Spike task 29: make the terminal workflow observable with a deliberately long title … depends   ○ 2   spike   high     
+  ·000030   terminal compiler · compiler Docs task 30: make the terminal workflow observable                                   active    ◑ 1/2 docs    high     
+   000031   terminal runtime · runtime Feature task 31: make the terminal workflow observable                                  done      ● 2   feature medium   
+   000032   terminal runtime · runtime Bug task 32: make the terminal workflow observable                                      dropped         bug     medium   
+  ·000033   terminal runtime · runtime Chore task 33: make the terminal workflow observable                                    ready     ○ 2   chore   medium   
+  ·000034   terminal docs · docs Spike task 34: make the terminal workflow observable                                          active    ◑ 1/2 spike   medium   
+   000035   terminal docs · docs Docs task 35: make the terminal workflow observable                                           done      ● 2   docs    medium   
+   000036   terminal docs · docs Feature task 36: make the terminal workflow observable with a deliberately long title that m… dropped         feature low      
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+H/L column · order by priority (▲)                                                                                                                              
+                                                                                                                                                                
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                   
