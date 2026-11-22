@@ -15,6 +15,7 @@ doing_since: "2026-11-22T15:55"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+parent: "6mt4w8"
 ---
 
 ## Goal
