@@ -41,7 +41,7 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
 
 ## Acceptance
 - [x] Enter on a link to an attached file opens it in the file frame; Esc returns to the link (tmux test)
-- [ ] Enter on a link to a repo file with a section (e.g. docs/DESIGN.md#Imported data) opens it scrolled to that heading, from the board's worktree or the named branch (test)
+- [x] Enter on a link to a repo file with a section (e.g. docs/DESIGN.md#Imported data) opens it scrolled to that heading, from the board's worktree or the named branch (test)
 - [ ] Tab and Shift+Tab stop on every file link in the detail (test)
 - [ ] AGENTS.md and the setup template say: a document for one task is attached to that task; only decisions go into repo docs (test pins the wording)
 - [ ] A file named in plain text inside a question, check or note (e.g. 'MOCK.md', 'tui-100x30.txt') is recognised when the task has that file, and works as a link: one key shows it in line under the line that names it, another opens it in the file frame, Esc returns (tmux test on p87ngv's board copy)
@@ -72,6 +72,7 @@ file:zbdbtm-7-repo-file-at-section-100x30.ans (5016 bytes, sha256:6683d8c6) Ente
 file:zbdbtm-8-p87ngv-MOCK-in-line-100x30.ans (3924 bytes, sha256:f7877693) p87ngv question 6: plain 'MOCK.md' is a link; Space shows 12 rows in line, '30 more lines' (check 5)
 file:zbdbtm-9-p87ngv-MOCK-file-frame-100x30.ans (6193 bytes, sha256:480edd8d) p87ngv: Enter on MOCK.md opens it in the file frame, 1 of 6; Esc returns to the link (check 5)
 check 1: TestEnterOnAttachedFileLinkOpensFrame (unit) and TestTmuxTryItHereLinksOpen (tmux 100x30, real hug binary) on 90b689f2: Enter on ▸sample.txt shows 'sample.txt · 50 B · 2 of 2' in the file frame with key bar 'u/Esc link'; Esc returns with ▸sample.txt still marked. Frames file:zbdbtm-3-enter-file-frame-100x30.ans, file:zbdbtm-4-esc-back-to-link-100x30.ans. Mutants M4 (no open) and M5 (Esc to Files) killed.
+check 2: TestEnterOnSectionLinkOpensAtHeading and TestTmuxTryItHereLinksOpen on 90b689f2: Enter on docs/DESIGN.md#Personal vs shared memories opens 'docs/DESIGN.md · 9.8 KiB · repo' from the checkout hug tui runs in, first frame line 'Personal vs shared memories (gav9nw, decided 2026-11-18)'; same for sample-notes.md#Section two. Branch refs are not followed (no syntax names one until p87ngv's marks). Frame file:zbdbtm-7-repo-file-at-section-100x30.ans. Mutants M6, M15 killed.
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
