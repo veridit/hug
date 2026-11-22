@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.104 - 2026-11-22
 
 - hug task lint no longer reports a section-order finding on a task with
   `## Details` after an upgrade (6q1d1t, crab 2026-11-22). v0.7.102
