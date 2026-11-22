@@ -45,7 +45,7 @@ shipped in v0.7.73 (e8eca02)
 check 1: Shipped in v0.7.73 (f17745ad on main; tests-first e8eca029). TestShowMarksWithdrawnQuestion failed first ('question 1 is withdrawn but show does not say so'), passes after; show prints '  withdrawn <at> (<why>)'. CI 44420635338 success on all 8 jobs (0d494b92, same tree).
 check 2: Shipped in v0.7.73 (f17745ad). TestWithdrawnQuestionDrawnDim failed first ('question 1 not marked withdrawn with its time'); head now '· withdrawn 2026-11-17 09:50', text lines rendered with styles.dim. Mutants: no time / not dim both fail. No golden held '· withdrawn'. CI 44420635338 success.
 check 3: Shipped in v0.7.73 (f17745ad). TestAskedSkipsWithdrawnQuestion: one withdrawn + one open counts once (ASKED [3]); a task whose only question is withdrawn leaves ASKED (count 3 -> 2). Passed before the fix (ASKED uses OpenQuestions), so it pins; mutant Open() counting withdrawn fails it. CI 44420635338 success.
-Reflection (open, 2026-11-19, piglet): nothing misled: 'Ask each question on its own' (q2adr8 refusal) made me rephrase the re-ask as one choice; the gap was the bug itself, a withdrawn question drawn as open.
+Reflection (dismissed, 2026-11-19, piglet): nothing misled: 'Ask each question on its own' (q2adr8 refusal) made me rephrase the re-ask as one choice; the gap was the bug itself, a withdrawn question drawn as open.
 ## History
 - 2026-11-18T23:34 todo -> doing/active (take)
 - 2026-11-19T01:15 doing/active -> done (done); was doing_since: 2026-11-18T23:34
