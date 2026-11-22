@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-22
 updated: 2026-11-22
+design_for: "jhf"
+design_since: "2026-11-22T23:10"
+design_asked_by: "crab"
+design_question: "In hug's answer and request box these already work in v0.7.108 (tested in tmux): ctrl+w, ctrl+a, ctrl+e, ctrl+u, ctrl+k, alt+b, alt+f, alt+backspace, Home, End. Only ctrl+left and ctrl+right do nothing. Which keys failed for you, and in which board? If it was in Seid on p39w4a, every key there takes about a second (1tjq11), so the edit may have looked missing until the page caught up."
+stage: "design"
 ---
 
 ## Goal
@@ -37,4 +42,12 @@ Which key failed for Jørgen is asked in question 1.
 - [ ] F1 in the box lists the editing keys
 - [ ] Jørgen edits an answer with his keys after release
 
+## Questions
+- 2026-11-22T23:10 question 1 by crab to jhf (check 1):
+  In hug's answer and request box these already work in v0.7.108 (tested in tmux): ctrl+w, ctrl+a, ctrl+e, ctrl+u, ctrl+k, alt+b, alt+f, alt+backspace, Home, End. Only ctrl+left and ctrl+right do nothing. Which keys failed for you, and in which board? If it was in Seid on p39w4a, every key there takes about a second (1tjq11), so the edit may have looked missing until the page caught up.
+
 ## Notes
+
+
+## History
+- 2026-11-22T23:10 todo -> todo/design (ask)
