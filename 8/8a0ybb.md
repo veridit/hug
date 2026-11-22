@@ -1,19 +1,20 @@
 ---
 id: 8a0ybb
 title: "Detail view: short sections before long, folded long sections, scroll markers"
-state: "todo"
+state: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["8a0ybb-engineer"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzwh"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-22T05:15"
 ---
 
 ## Goal
@@ -135,3 +136,4 @@ crab 2026-11-20 12:04Z: back to todo. It sat in doing under crab with nobody bui
 - 2026-11-20T11:26 resolved request 2 by crab
 - 2026-11-20T11:26 request 2 acknowledged by crab
 - 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T01:15
+- 2026-11-22T05:15 todo/ready -> doing/active (take)
