@@ -119,6 +119,7 @@ file:order-a-opens-100x30.ans (3990 bytes, sha256:60f98ad0) frame (a) 8a0ybb as 
 file:order-b-folded-100x30.ans (3680 bytes, sha256:23a4b743) frame (b) the same page scrolled to its end (>): open requests, then the long sections folded to one line each: DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22)
 file:order-c-notes-open-100x30.ans (4541 bytes, sha256:ea7ccc81) frame (c) Shift-Tab to NOTES (27), Enter: opened, one entry a paragraph, the page shown from its heading; Enter again folds it
 file:order-v0.7.101-opens-100x30.ans (4488 bytes, sha256:cfbf0c38) comparison: the same page as v0.7.101 opens it: 12% down, inside the long Relevant details text, before Acceptance
+8a0ybb: the ↑/↓ scroll markers (old check 9) are covered by 4ddcwa, shipped in v0.7.98: the page sits between two rules, ↑ at the top rule's left end when scrolled down, ↓ at the bottom rule's left end when more is below. This task adds no other markers; the frames for check 12 show them (order-b-folded: ↑ on the top rule; order-a-opens: ↓ on the bottom rule).
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
