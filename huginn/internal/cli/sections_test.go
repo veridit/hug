@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-// jnaspy check 2: hug task show prints Purpose, Principle and Relevant
-// details after the goal and before the checks.
+// jnaspy check 2: hug task show prints Purpose, Principle and Details
+// after the goal and before the checks.
 func TestShowPrintsDescriptionBeforeChecks(t *testing.T) {
 	t.Parallel()
 	a := app(t)
@@ -19,7 +19,7 @@ func TestShowPrintsDescriptionBeforeChecks(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit %d:\n%s", code, out)
 	}
-	order := []string{"goal: Where we aim", "purpose: Why we aim", "principle: How we go", "relevant details: Facts that matter", "1. [ ] Observable check", "notes: "}
+	order := []string{"goal: Where we aim", "purpose: Why we aim", "principle: How we go", "details: Facts that matter", "1. [ ] Observable check", "notes: "}
 	at := -1
 	for _, want := range order {
 		i := strings.Index(out, want)

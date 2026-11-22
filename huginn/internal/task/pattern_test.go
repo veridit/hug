@@ -14,7 +14,7 @@ func TestNewWithPatternAndLint(t *testing.T) {
 	}
 	d, _ := s.Get(r.Task.ID)
 	b := string(d.Bytes())
-	for _, want := range []string{"## Goal\ng\n", "## Purpose\nwhy\n", "## Principle\nhow\n", "## Relevant details\nfacts\n", "## Acceptance"} {
+	for _, want := range []string{"## Goal\ng\n", "## Purpose\nwhy\n", "## Principle\nhow\n", "## Details\nfacts\n", "## Acceptance"} {
 		if !strings.Contains(b, want) {
 			t.Fatalf("missing %q in\n%s", want, b)
 		}

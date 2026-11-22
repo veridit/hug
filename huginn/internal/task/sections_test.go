@@ -182,3 +182,27 @@ func TestNewDependsOnGoesInOrder(t *testing.T) {
 		t.Fatalf("sections %s\n%s", got, e.Bytes())
 	}
 }
+
+// 8a0ybb check 13: a file with the old "## Relevant details" reads as
+// Details: its text in Texts, in canonical order where Details stands,
+// and SetSection writes into it rather than adding "## Details".
+func TestOldRelevantDetailsReadsAsDetails(t *testing.T) {
+	data := "---\nid: abc123\ntitle: Old\nstate: todo\n---\n\n## Goal\ng\n\n## Purpose\np\n\n## Relevant details\nold facts\n\n## Depends on\n\n## Acceptance\n- [ ] a\n"
+	d := Parse("a/abc123.md", []byte(data))
+	if got := d.Task.Texts.Description["Details"]; got != "old facts" {
+		t.Fatalf("Details %q", got)
+	}
+	if !InOrder(d.Task.Sections) {
+		t.Fatalf("out of order: %v", d.Task.Sections)
+	}
+	for _, f := range d.Findings {
+		if strings.Contains(f.Problem, "out of order") {
+			t.Fatalf("finding %q", f.Problem)
+		}
+	}
+	d.SetSection("Details", "new facts")
+	got := string(d.Bytes())
+	if !strings.Contains(got, "## Relevant details\nnew facts\n") || strings.Contains(got, "## Details") {
+		t.Fatalf("SetSection on an old file:\n%s", got)
+	}
+}

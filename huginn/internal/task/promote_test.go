@@ -68,7 +68,7 @@ func TestPromote(t *testing.T) {
 }
 
 // heype5 check 1: the child of a task with Purpose and Principle starts with
-// both (and Relevant details), so hug task lint reports it clean.
+// both (and Details), so hug task lint reports it clean.
 func TestPromoteChildLintsClean(t *testing.T) {
 	s := &Store{Root: t.TempDir()}
 	r, e := s.New(NewOptions{Title: "Source", Goal: "g", Purpose: "Why we do it.", Principle: "What we do and do not do.\n\nSecond paragraph.", Details: "Where to look.", Acceptance: []string{"first", "second"}})
@@ -83,7 +83,7 @@ func TestPromoteChildLintsClean(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	for sec, want := range map[string]string{"Purpose": "Why we do it.", "Principle": "What we do and do not do.\n\nSecond paragraph.", "Relevant details": "Where to look.\n\nPromoted from item 2 of task:" + r.Task.ID + ".", "Goal": "second"} {
+	for sec, want := range map[string]string{"Purpose": "Why we do it.", "Principle": "What we do and do not do.\n\nSecond paragraph.", "Details": "Where to look.\n\nPromoted from item 2 of task:" + r.Task.ID + ".", "Goal": "second"} {
 		if got := d.sectionText(sec); got != want {
 			t.Errorf("%s: %q, want %q", sec, got, want)
 		}
