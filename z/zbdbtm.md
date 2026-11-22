@@ -4,7 +4,7 @@ title: "A file named in a task opens from the task in the embedded viewer"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["shrimp"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxk"
@@ -89,3 +89,4 @@ crab 17:01Z: shipped in v0.7.107 (main d32bc3a0, merge of 90b689f2, CI 8/8 run 4
 - 2026-11-20T12:51 answer 1 acknowledged by crab
 - 2026-11-20T12:51 crab read the answer: hug task attach zbdbtm /Users/jhf/.jcode/scratch/zb/sample-notes.md /Users/jhf/.jcode/scratch/zb/sample.txt
 - 2026-11-22T15:55 todo/ready -> doing/active (take)
+- 2026-11-22T19:11 handed to crab: shrimp's session ended (closed 2026-11-22 17:53)
