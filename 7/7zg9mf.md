@@ -1,15 +1,20 @@
 ---
 id: 7zg9mf
 title: "Filters can be negated (!), and the list opens on 'state: not done'"
-state: todo
+state: "doing"
 type: "feature"
 priority: "medium"
-assignee: []
+assignee: ["7zg9mf-engineer"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzf"
 created: 2026-11-20
 updated: 2026-11-20
+doing_since: "2026-11-22T03:13"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -52,3 +57,4 @@ crab 02:14Z before staffing: check 4 said Esc clears the default; since v0.7.94 
 - 2026-11-20T13:34 request 1 acknowledged by crab
 - 2026-11-20T13:35 request 1 in progress by crab: hug task set 7zg9mf
 - 2026-11-20T13:35 resolved request 1 by crab
+- 2026-11-22T03:13 todo -> doing/active (take)
