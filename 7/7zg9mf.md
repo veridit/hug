@@ -51,6 +51,7 @@ file:screen-1334.ans (15300 bytes, sha256:a5fc83a1) screen capture from hug tui
 
 
 crab 02:14Z before staffing: check 4 said Esc clears the default; since v0.7.94 Esc keeps chips (5cjy88 ruling, Jørgen liked lasting chips), F clears all, ⌫ the last. Struck 4, added 6 with that. The details' 'Esc clears it' reads as F/⌫ now.
+file:1-list-opens.ansi (3113 bytes, sha256:b1665065) the list as it opens (0201dca6, hug binary in tmux 100x30, capture-pane -e): 'filter: [state:!done ×] ⌫ last · F clear', 4/5 tasks, cccccc (done) left out, the dropped bbbbbb kept, footer 'state=!done · F clears'
 ## History
 - 2026-11-20T13:34 request 1 by jhf
 - 2026-11-20T13:34 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
