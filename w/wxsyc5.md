@@ -45,7 +45,7 @@ check 1: Jørgen 18:19: keep the branch, provided memories are placed right (per
 landed cee68ee on main 2026-11-18: upgrade: the memory layout rename stays local unless the repo shares memories…
 shipped in v0.7.70 (cee68ee)
 check 2: crab 2026-11-20 12:04Z: hug mem remember ran in hug's repo at 10:28Z and 10:44Z today (v0.7.89/90 era, after the 34r1ft release); git ls-remote origin refs/heads/hug/memory = a9ba43773dd7 before and after, the 2026-11-18 20:30 commit; origin/hug/memory did not move.
-Reflection (open, 2026-11-20, crab): Its last check waited two days on a check I could run myself any time.
+Reflection (dismissed, 2026-11-20, crab): Its last check waited two days on a check I could run myself any time.
 ## History
 - 2026-11-18T16:36 todo -> doing/active (take)
 - 2026-11-18T16:36 doing/active -> doing/asked (ask)
