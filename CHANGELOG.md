@@ -4,6 +4,19 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug task lint no longer reports a section-order finding on a task with
+  `## Details` after an upgrade (6q1d1t, crab 2026-11-22). v0.7.102
+  renamed Relevant details to Details but kept the cache's schema, so a
+  `hug tui` or `hug mcp` still running from before had cached Details as
+  out of place, and the new hug served that finding as its own. The
+  cache rebuilds once on the first hug command after this upgrade; an
+  older hug still running keeps its own cache and does not fight it.
+  - A test now fails when what Parse makes of a task file changes (the
+    section order, a finding's text or code, a field the cache keeps)
+    and the cache's schema does not, with a `fix:` line to bump it.
+
 ## v0.7.103 - 2026-11-22
 
 - hug tui: `V` pastes the clipboard into a task as a file, the way `S`
