@@ -44,7 +44,7 @@ main 51e36090 (CI 44677696260, 8/8), CHANGELOG 57113899, merge 6fa18387, release
 
 check 1: release.yml 44678753259 success; brew upgrade: hug v0.7.87, hug/muninn/huginn -> ../Cellar/hug/0.7.87/bin/*
 Jørgen 2026-11-20 10:27Z (answer 1): 'Yes, they are' (z6cb03: broken tasks at the top of LINT, in view).
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-20T06:14 todo -> doing/active (take with p277bp)
 - 2026-11-20T06:14 doing/active -> doing/asked (ask)
