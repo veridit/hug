@@ -53,7 +53,7 @@ check 1: release.yml 44731952347 completed success; brew upgrade: 'hug v0.7.90',
 
 
 Jørgen 2026-11-20 12:35Z (answer 1): 'This is approved. I'm doing new improvements after this.'
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-20T13:07 todo -> todo/design (ask)
 - 2026-11-20T13:35 answered design, by jhf, for crab (todo/design -> todo/ready):
