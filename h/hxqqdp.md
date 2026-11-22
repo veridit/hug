@@ -38,5 +38,6 @@ Old binaries cannot be fixed; the new side can: Parse sees both headings, lint r
 ## Notes
 
 
+rooster 2026-11-22: branch hxqqdp = ci/hxqqdp at 668e6984 on origin/main 58849209 (tests 18c35765, 03c0d2c4 first; fix 668e6984). Order per crab 12:17Z: the ## Details text, a blank line, then the ## Relevant details text, no marker, in show/--json/MCP/TUI and upgrade. Failing on main code: task hxqqdp_test.go:29 'Details text "New hug wrote this.", want "New hug wrote this.\n\nOld hug wrote this."'; hxqqdp_test.go:64 'MergeDetails changed nothing'; cli details_test.go:88 'show hides a Details text'; tui hxqqdp_test.go:42 'Details text at 672, Relevant details text at 474: want both, Details first'. Fix: Document.sectionText joins both (promote.go), Parse adds old-layout 'two Details sections' at the Relevant details heading (fix: hug upgrade), Document.MergeDetails + Store.MergeDetailsAll, hug upgrade step commits 'hug upgrade: two Details sections merged in N tasks', TUI sectionText Details first. Cache SchemaVersion 31 -> 32; corpus x/x0both.md added (fingerprint on main code with it: 4169124b..., with fix: 5830158d...). Mutants 11/11 killed. Local go test ./... 42 ok. CI run 45022930847 pending. Live board: no file has both headings today.
 ## History
 - 2026-11-22T13:10 todo -> doing/active (take)
