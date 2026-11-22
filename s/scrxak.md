@@ -47,7 +47,7 @@ landed af51fc3 on main 2026-11-17: hug tui: Space on a task file shows it in pla
 shipped in v0.7.43 (af51fc3)
 landed 0cd10ba on main 2026-11-18: hug tui: the file viewer's footer spells out n next file · p previous file…
 Check 5: Jørgen answered in the TUI 00:08: approved, asking that the footer spell out n/p. Done: landed f5576132..1fda4f82 (0cd10ba footer 'j/k scroll · n next file · p previous file · …' and status line 'n next file · p previous file · Esc back to files', asserted in TestGlanceStepsAndScrolls; golden testdata/detail/glance.txt reviewed; 28c656d stageBoard clock pin). Local tui ok 45.0s, -race tui ok 103.7s. (nautilus)
-Reflection (open, 2026-11-18, nautilus): Jørgen's answer carried a small request; doing it before closing kept the outcome whole. 'n/p step' in the goal read clearly to us and not to him: footers should spell keys out. (nautilus)
+Reflection (dismissed, 2026-11-18, nautilus): Jørgen's answer carried a small request; doing it before closing kept the outcome whole. 'n/p step' in the goal read clearly to us and not to him: footers should spell keys out. (nautilus)
 shipped in v0.7.51 (0cd10ba)
 ## History
 - 2026-11-17T15:02 todo -> doing/active (take)
