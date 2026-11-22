@@ -175,3 +175,31 @@ func TestSpaceShowsFileInLine(t *testing.T) {
 		t.Fatalf("Esc did not fold the file away and keep the link:\n%s", page)
 	}
 }
+
+// zbdbtm: which words may name a file. A name inside a longer word (a
+// URL, an absolute path, task:ID/NAME, the front of history.sdo-to-be)
+// is none; a section runs to the end of the line, less a full stop.
+func TestFileWords(t *testing.T) {
+	for _, c := range []struct {
+		text string
+		want []string
+	}{
+		{"open sample.txt from here.", []string{"sample.txt"}},
+		{"An attachment link: file:sample-notes.md", []string{"sample-notes.md"}},
+		{"A section in it: sample-notes.md#Section two", []string{"sample-notes.md#Section two"}},
+		{"see docs/DESIGN.md#Imported data.", []string{"docs/DESIGN.md#Imported data"}},
+		{"(before.md, after.md, history.sdo-to-be, cli.txt)", []string{"before.md", "after.md", "cli.txt"}},
+		{"https://example.com/a.md and /abs/b.md and task:abc123/c.md", nil},
+		// Candidates only: "0.7" and "e.g" are words that might name a
+		// file; resolveFile makes them links only when the file exists.
+		{"version 0.7 and e.g. nothing", []string{"0.7", "e.g"}},
+	} {
+		var got []string
+		for _, w := range fileWords(c.text) {
+			got = append(got, w.shown)
+		}
+		if strings.Join(got, "|") != strings.Join(c.want, "|") {
+			t.Errorf("fileWords(%q) = %q, want %q", c.text, got, c.want)
+		}
+	}
+}
