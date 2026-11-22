@@ -20,6 +20,7 @@ asked_by: "ox"
 asked_check: "12"
 asked_what: "Is this the page order you want? Frames order-a-opens, order-b-folded and order-c-notes-open (100x30) show 8a0ybb opening on Purpose, Principle, Goal, then Acceptance, with no DESCRIPTION heading; at the end, the long sections fold to one line each, DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22), and Enter on one opens it. A 'long' section is always Details, the answered Questions, Notes and History, whatever their length; nothing else folds. order-v0.7.101-opens is today's page for comparison."
 asked_for: "jhf"
+parent: "9a479v"
 ---
 
 ## Goal
