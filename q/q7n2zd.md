@@ -10,12 +10,17 @@ group: ""
 rank: "zzzzzzzzzzxt"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-22T08:46"
 parent: "9s0vj3"
+asked_since: "2026-11-22T10:18"
+asked_by: "crab"
+asked_check: "5"
+asked_what: "Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES"
+asked_for: "jhf"
 ---
 
 ## Goal
@@ -46,6 +51,8 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
   Which key pastes the clipboard into a task: V (free today, next to S for screen), A (free, 'attach'), or another you prefer?
   answered 2026-11-20T12:52 by jhf:
     Yes, let's try uppercase V
+- 2026-11-22T10:18 question 2 by crab to jhf (check 5):
+  Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
 
 ## Notes
 
@@ -58,6 +65,10 @@ check 2: V in a task attaches paste-HHMM.png (PNG, osascript «class PNGf» / wl
 check 3: In a list V opens S's prompt 'Attach the clipboard to: ID · select · create'; Enter attaches to the offered row, s picks a row, c creates a task, Esc attaches nothing ('clipboard text (1 line) · not attached'). TestPasteInAListAsksAsSDoes and TestTmuxPasteClipboard. CI 45005912590 on 0f28cd8c: 8/8 success.
 check 4: Empty or blank clipboard, no clipboard tool (Windows: none; also Linux without DISPLAY/wl-paste/xclip), SSH_CONNECTION or SSH_TTY, not text, or a secret: no prompt, no file, no commit; message ends 'fix: hug task attach ID FILE' (secret adds --safe-reason). TestPasteRefusesWithAFix (task and list), TestClipboardSource, TestTmuxPasteClipboard (empty). CI 45005912590 on 0f28cd8c: 8/8 success.
 CI 45005912590 on 0f28cd8c: secrets, bench, test (ubuntu/macos/windows), test-windows-cli (sync/rest), test-windows-cli-shards: all success. Ready for crab to land; check 5 is Jørgen's after release.
+landed d9fdab4 on main 2026-11-22: tests first: V in hug tui pastes the clipboard into a task as a file, asks where…
+landed 7eb1ad4 on main 2026-11-22: hug tui: V pastes the clipboard into a task as a file; in a list it asks where…
+landed 0f28cd8 on main 2026-11-22: test: close two surviving mutants: blank clipboard text without an error is…
+shipped in v0.7.103 (d9fdab4)
 ## History
 - 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:23 doing/active -> doing/asked (ask)
@@ -69,3 +80,4 @@ CI 45005912590 on 0f28cd8c: secrets, bench, test (ubuntu/macos/windows), test-wi
 - 2026-11-20T12:52 crab read the answer: hug task check q7n2zd 1 "Jørgen 2026-11-20 11:52Z (answer 1): 'Yes, let's try uppercase V'. Key: V (provisional until bfxq93)."
 - 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T11:23; doing_with: p87ngv
 - 2026-11-22T08:46 todo/ready -> doing/active (take)
+- 2026-11-22T10:18 doing/active -> doing/asked (ask)
