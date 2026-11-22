@@ -42,7 +42,7 @@ check 1: dry run (push replaced by echo) replaying 5mmqjk 8610a01a on 50fa8681: 
 
 
 check 2: real landing of nmn6wf e98a12ac at 04:21Z printed 'CODE-DIFF IDENTICAL' / 'released lines removed: 0' / 'CHANGELOG IDENTICAL' / 'pushed ci/nmn6wf-rebased dceb95a0'
-Reflection (open, 2026-11-19, crab): I first blamed a rebase conflict for the cut entry. The fix only became obvious once I read the script's own extraction line, which was the actual cause.
+Reflection (dismissed, 2026-11-19, crab): I first blamed a rebase conflict for the cut entry. The fix only became obvious once I read the script's own extraction line, which was the actual cause.
 ## History
 - 2026-11-19T05:01 todo -> doing/active (take with p277bp)
 - 2026-11-19T05:22 doing/active -> done (done); was doing_since: 2026-11-19T05:01; doing_with: p277bp
