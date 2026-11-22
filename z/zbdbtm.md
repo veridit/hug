@@ -10,12 +10,17 @@ group: ""
 rank: "zzzzzzzzzzxk"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "active"
+stage: "asked"
 doing_since: "2026-11-22T15:55"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "6mt4w8"
+asked_what: "In v0.7.108 (brew upgrade veridit/tap/hug), open this task in hug tui. Details has TRY IT HERE with four names: sample.txt, file:sample-notes.md, sample-notes.md#Section two, docs/DESIGN.md#Personal vs shared memories. Tab to each: Space shows it under the line, Enter opens it at the section, Esc comes back. Do all four work for you?"
+asked_for: "jhf"
+asked_since: "2026-11-22T21:13"
+asked_by: "crab"
+asked_check: "7"
 ---
 
 ## Goal
@@ -54,6 +59,8 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
   For a file named in a task's text (e.g. MOCK.md in p87ngv's question): Space shows it in line under that line, Enter opens it in the file frame, Esc returns, matching Space and Enter in FILES today. Is that the right pair, or do you want a separate jump key (g)?
   answered 2026-11-20T12:51 by jhf:
     Let's try that and make sure you put it into this file as well so that when I review this task again when it is resolved I can use the task itself to check it
+- 2026-11-22T21:13 question 2 by crab to jhf (check 7):
+  In v0.7.108 (brew upgrade veridit/tap/hug), open this task in hug tui. Details has TRY IT HERE with four names: sample.txt, file:sample-notes.md, sample-notes.md#Section two, docs/DESIGN.md#Personal vs shared memories. Tab to each: Space shows it under the line, Enter opens it at the section, Esc comes back. Do all four work for you?
 
 ## Notes
 
@@ -90,3 +97,4 @@ crab 17:01Z: shipped in v0.7.107 (main d32bc3a0, merge of 90b689f2, CI 8/8 run 4
 - 2026-11-20T12:51 crab read the answer: hug task attach zbdbtm /Users/jhf/.jcode/scratch/zb/sample-notes.md /Users/jhf/.jcode/scratch/zb/sample.txt
 - 2026-11-22T15:55 todo/ready -> doing/active (take)
 - 2026-11-22T19:11 handed to crab: shrimp's session ended (closed 2026-11-22 17:53)
+- 2026-11-22T21:13 doing/active -> doing/asked (ask)
