@@ -1,0 +1,8 @@
+layout = 3
+
+[people.jhf]
+name = "Jørgen H. Fjeld"
+email = ["jorgen@veridit.no"]
+
+[board]
+coordinator = "crab"
