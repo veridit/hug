@@ -103,3 +103,25 @@ func TestWrongArgCountNamesTheCommand(t *testing.T) {
 		}
 	}
 }
+
+// y8we58 check 1 (tb0dra r1, crab: 'hug task check tb0dra 5 x' ticked a
+// check with evidence 'x'): evidence under 8 characters is refused with a
+// fix: line and writes nothing; 8 characters pass.
+func TestCheckRefusesShortEvidence(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	execute(t, a, "init")
+	id := execute(t, a, "new", "Short", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "one")["task"].(Reply)["id"].(string)
+	execute(t, a, "take", id, "--model", "test-model", "--as", "bonehound")
+	before := taskFile(t, a, id)
+	for _, ev := range []string{"x", "ok", "  done  ", "1234567"} {
+		code, out := runText(a, "check", id, "1", ev)
+		want := "fix: hug task check " + id + " 1 \"what shows it holds\"\n"
+		if code == 0 || !strings.Contains(out, "at least 8 characters") || !strings.HasSuffix(out, want) || taskFile(t, a, id) != before {
+			t.Fatalf("check with evidence %q: exit %d, file changed=%v, want refusal ending %q:\n%s", ev, code, taskFile(t, a, id) != before, want, out)
+		}
+	}
+	if code, out := runText(a, "check", id, "1", "12345678"); code != 0 || !strings.Contains(taskFile(t, a, id), "check 1: 12345678") {
+		t.Fatalf("8 characters: exit %d\n%s", code, out)
+	}
+}
