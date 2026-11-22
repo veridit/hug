@@ -75,6 +75,28 @@ func BusyFixes(id string) []string {
 	}
 }
 
+// MergedFixes are the ways out when the active task id has every check
+// settled (y8we58, cd63d1 r1): it is green and waits for its branch to
+// land, so the wait on the merge comes first, in place of the generic
+// wait "on what"; then done, and back to todo.
+func MergedFixes(id string) []string {
+	return []string{
+		"hug task wait " + id + ` "branch ` + id + ` merged"`,
+		"hug task done " + id,
+		"hug task set " + id + " --state todo && hug task note " + id + ` "why it goes back"`,
+	}
+}
+
+// AllSettled: t has acceptance checks and every one is ticked or struck.
+func AllSettled(t Task) bool {
+	for _, a := range t.Acceptance {
+		if !a.Settled() {
+			return false
+		}
+	}
+	return len(t.Acceptance) > 0
+}
+
 // DetourFix is the fourth way out of a refused take of ref (4tycwd): go
 // to ref as a detour; active waits on it as a dependency, so it is not
 // active work, and is active again when ref is done.
@@ -115,6 +137,9 @@ func (w Taker) args() string {
 // with are ways out.
 func busy(ref Task, who Taker, active Task, detour bool) *Error {
 	fixes := BusyFixes(active.ID)
+	if AllSettled(active) {
+		fixes = MergedFixes(active.ID)
+	}
 	value := who.Name + " is on " + active.ID + " (" + active.Title + "): one ticket in doing at a time"
 	if detour {
 		fixes = append(fixes, DetourFix(active.ID, ref.ID), WithFix(ref.ID, active.ID, who.args()))

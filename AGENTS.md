@@ -67,6 +67,8 @@ Start: hug task next, then hug task take ID --model MODEL (the model you are, e.
 claude-opus-5-5 or gpt-6.1-sol; a person: --model human; --as NAME adds your agent
 or session name, optional), then hug task show ID.
 While working: hug task check ID N with evidence, hug task note ID "evidence".
+A ruling that supersedes a check on another task: strike that check there,
+naming the ruling task's id (hug task strike ID N --reason "superseded by RULING-ID").
 Finish: hug task done ID when every acceptance check is ticked.
 Todos are your own next steps on the task you took, nothing else: details,
 evidence, waits and dependencies go in tasks (hug task note, hug task dep), never

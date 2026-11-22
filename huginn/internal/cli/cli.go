@@ -18,6 +18,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/veridit/hug/huginn/gitbranch"
 	"github.com/veridit/hug/huginn/internal/cache"
@@ -67,6 +68,10 @@ func (e *OperationError) Error() string { return e.Problem }
 
 func (e *UsageError) Error() string   { return e.Problem }
 func usage(problem, fix string) error { return &UsageError{problem, fix} }
+
+// MinEvidence is the fewest characters hug task check ID N "evidence"
+// takes (y8we58): 'x' or 'ok' says nothing about what shows a check holds.
+const MinEvidence = 8
 
 type App struct {
 	Cwd      string
@@ -1454,8 +1459,13 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			if evidence, e = a.textArg(f.args[2]); e != nil {
 				return nil, e
 			}
-			if strings.TrimSpace(evidence) == "" {
+			// y8we58 (tb0dra r1): evidence 'x' ticked a check. Evidence says
+			// what shows the check holds; under MinEvidence characters it
+			// cannot, so it is refused and nothing is written.
+			if ev := strings.TrimSpace(evidence); ev == "" {
 				return nil, usage("the evidence is empty", "hug task check "+f.args[0]+" "+f.args[1]+` "what shows it holds"`)
+			} else if n := utf8.RuneCountInString(ev); n < MinEvidence {
+				return nil, usage(fmt.Sprintf("the evidence %q is %d characters: evidence is at least %d characters and says what shows the check holds (a test name, a CI run, an output line)", ev, n, MinEvidence), "hug task check "+f.args[0]+" "+f.args[1]+` "what shows it holds"`)
 			}
 		}
 		r, e = s.s.CheckWith(f.args[0], n, evidence)

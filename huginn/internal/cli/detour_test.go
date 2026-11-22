@@ -44,7 +44,7 @@ func TestDetourThroughTheCLI(t *testing.T) {
 	if got := execute(t, a, "next", "--mine", "--as", "kestrel")["task"].(Reply)["id"]; got != second {
 		t.Fatalf("next --mine during the detour: %v, want %s", got, second)
 	}
-	execute(t, a, "check", second, "1", "ok", "--as", "kestrel")
+	execute(t, a, "check", second, "1", "detour done", "--as", "kestrel")
 	execute(t, a, "done", second, "--as", "kestrel", "--reflect", "nothing")
 	code, out = runText(a, "next", "--mine", "--as", "kestrel")
 	wantLine := first + " waiting on detour to " + second + "; was at step 2\n"

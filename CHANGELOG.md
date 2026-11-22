@@ -4,6 +4,21 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- `hug task check ID N "evidence"` now refuses evidence shorter than 8
+  characters (`x`, `ok`) and writes nothing; the error ends with
+  `fix: hug task check ID N "what shows it holds"`. The MCP `task_update`
+  check action follows the same rule (y8we58, from tb0dra).
+- When `hug task take` refuses because you already have a task in doing
+  and every check on it is ticked, the first `fix:` line is now
+  `hug task wait ID "branch ID merged"`: the task is green and waits for
+  its merge (y8we58, from cd63d1).
+- The instructions `hug setup` installs (and this repo's AGENTS.md) now
+  say: when a ruling on one task supersedes a check on another, strike
+  that check there with `hug task strike`, naming the ruling task's id,
+  so the link shows from the superseded task (y8we58, from h176dp).
+
 ## v0.7.107 - 2026-11-22
 
 - A file a task names opens from the task (zbdbtm). In `hug tui`, a

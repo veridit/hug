@@ -348,6 +348,8 @@ claude-opus-5-5 or gpt-6.1-sol; a person: --model human; --as NAME adds your age
 or session name, optional), then hug task show ID.
 While working: hug task check ID N "evidence" ticks check N and notes what shows it
 holds; hug task note ID "text" for anything else.
+A ruling that supersedes a check on another task: strike that check there,
+naming the ruling task's id (hug task strike ID N --reason "superseded by RULING-ID").
 Two tasks that ship together (one change or release): take the second with the
 first, hug task take B --with A --model MODEL; both are doing.
 Finish: hug task done ID when every acceptance check is ticked. Done asks whether
