@@ -18,14 +18,14 @@ import (
 	"github.com/veridit/hug/huginn/internal/task"
 )
 
-// schemaFingerprints maps each schema fingerprint to the SchemaVersion it
-// was recorded under: append-only, one line per bump, never edited (6q1d1t).
-// 30 was taken afterwards, on 4b1a5781 with this test copied in: every
-// commit from there to 0201dca6 has it, 99e99eb6 (8a0ybb) is the first
-// without.
+// schemaFingerprints is the fingerprint of each SchemaVersion: one line
+// per bump, never edited, so a reader sees when what a cache holds
+// changed (6q1d1t). 30's was taken afterwards, on 4b1a5781 with this test
+// copied in: every commit from there to 0201dca6 has it, 99e99eb6 (8a0ybb)
+// is the first that does not.
 var schemaFingerprints = map[string]string{
-	"f4e73995e99e72daf32a7a484c157ddaff7cc3059ff95f6480c78c7825c0a5b9": "30",
-	"d99149ebcf924c95d74b898fc67b6cbef660ff0b5c198a29eb0ee89d96c2db34": "31",
+	"30": "f4e73995e99e72daf32a7a484c157ddaff7cc3059ff95f6480c78c7825c0a5b9",
+	"31": "d99149ebcf924c95d74b898fc67b6cbef660ff0b5c198a29eb0ee89d96c2db34",
 }
 
 // schemaCorpus holds the task files whose parse the fingerprint covers.
@@ -139,20 +139,11 @@ func typeShape(t reflect.Type, seen map[reflect.Type]bool) string {
 // section-order finding.
 func TestSchemaFingerprint(t *testing.T) {
 	fp := schemaFingerprint(t)
-	versions := map[string]string{}
-	for f, v := range schemaFingerprints {
-		if other, ok := versions[v]; ok {
-			t.Errorf("SchemaVersion %s has two fingerprints, %s and %s: a fingerprint is recorded once, under a new SchemaVersion\nfix: keep the older line in schemaFingerprints and bump SchemaVersion in huginn/internal/cache/cache.go", v, other, f)
-		}
-		versions[v] = f
+	want, ok := schemaFingerprints[SchemaVersion]
+	if !ok {
+		t.Fatalf("SchemaVersion %s has no fingerprint\nfix: add %q: %q to schemaFingerprints in huginn/internal/cache/fingerprint_test.go", SchemaVersion, SchemaVersion, fp)
 	}
-	got, ok := schemaFingerprints[fp]
-	switch {
-	case !ok && versions[SchemaVersion] != "":
-		t.Fatalf("what a cache holds changed (parse rules, the parse of %s, or the cached record) and SchemaVersion is still %s: an older hug's cache-%s.db would be served as this one's\nfix: bump SchemaVersion in huginn/internal/cache/cache.go (with a comment for the change), then add %q: %q to schemaFingerprints in huginn/internal/cache/fingerprint_test.go", schemaCorpus, SchemaVersion, SchemaVersion, fp, "NEW")
-	case !ok:
-		t.Fatalf("SchemaVersion %s has no fingerprint\nfix: add %q: %q to schemaFingerprints in huginn/internal/cache/fingerprint_test.go", SchemaVersion, fp, SchemaVersion)
-	case got != SchemaVersion:
-		t.Fatalf("this fingerprint was recorded for SchemaVersion %s, and SchemaVersion is %s: a cache's contents changed back, or the version moved without a change\nfix: record %q for SchemaVersion %s in schemaFingerprints, or restore SchemaVersion %s", got, SchemaVersion, fp, SchemaVersion, got)
+	if fp != want {
+		t.Fatalf("what a cache holds changed (parse rules, the parse of %s, or the cached record) and SchemaVersion is still %s: an older hug's cache-%s.db would be served as this one's\nfix: bump SchemaVersion in huginn/internal/cache/cache.go with a comment for the change, then add \"NEW\": %q to schemaFingerprints in huginn/internal/cache/fingerprint_test.go", schemaCorpus, SchemaVersion, SchemaVersion, fp)
 	}
 }
