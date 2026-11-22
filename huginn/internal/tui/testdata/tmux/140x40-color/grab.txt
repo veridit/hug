@@ -1,6 +1,7 @@
 HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank
+─── TASKS  [60] · 1–31 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE    PRIORITY
   ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                active    ◑ 1/2 bug     critical
    000003   terminal compiler · compiler Render compiler-lang task detail without storage markers          done            feature medium
@@ -33,8 +34,7 @@ filter: none · sort: rank
   ·000029   terminal compiler · compiler Spike task 29: make the terminal workflow observable with a deli… depends   ○ 2   spike   high
   ·000030   terminal compiler · compiler Docs task 30: make the terminal workflow observable               active    ◑ 1/2 docs    high
    000031   terminal runtime · runtime Feature task 31: make the terminal workflow observable              done      ● 2   feature medium
-↓  000032   terminal runtime · runtime Bug task 32: make the terminal workflow observable                  dropped         bug     medium
-Rows 1–32 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Moving 000001 · row 3 of 60 in the list (was 1) · nothing written until Enter
 
 j/k move · < > top/bottom · Enter drop · Esc cancel                                                                               hug v0.0.0

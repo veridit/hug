@@ -73,7 +73,8 @@ func TestSectionTitlesShareStatusColours(t *testing.T) {
 				break
 			}
 		}
-		if !strings.HasPrefix(line, prefix(status)) {
+		// The title on its rule (v68n82): the rule's lead, then the title.
+		if _, title, ok := strings.Cut(line, "─── "+"\x1b[0m"); !ok || !strings.HasPrefix(title, prefix(status)) {
 			t.Errorf("%s title is not in the %s colour: %q", title, status, line)
 		}
 		if !strings.Contains(screen, m.styles.status[status].Render(status + " ")[:len(prefix(status))-len("\x1b[1m")]) {

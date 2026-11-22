@@ -1,7 +1,7 @@
 HUG · repo · board   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank
-> TODO [8]                                 DOING [15]
+─── TODO [8] ──────────────────────────  ─── DOING [15] · 1–13 shown ───────────
    ID       TITLE            ✓     T P      ID       TITLE            ✓     T P
 > ·000001   ⎘2 Feature task… ○ 2   F C     ·000002   Bug task 02: ma… ◑ 1/2 B C
   ·000009   Spike task 09: … ○ 2   S H     ·000006   Feature task 06… ◑ 1/2 F H
@@ -16,7 +16,7 @@ filter: none · sort: rank
                                            ·000042   Bug task 42: ma… ◑ 1/2 B C
                                            ·000046   Feature task 46… ◑ 1/2 F H
                                            ·000050   Docs task 50: m… ◑ 1/2 D H
-                                         ↓ ·000054   Spike task 54: … ◑ 1/2 S M
+───────────────────────────────────────  ↓──────────────────────────────────────
 T: F feature B bug C chore S spike D docs · P: C critical H high M medium L low
 Columns 1–2 of 5 · h/l reveals other columns
 All tasks · : filters and commands

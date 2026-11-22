@@ -1,6 +1,6 @@
 == 80
-  ASKED · for you  [0] · None                                                   
-> IN PROGRESS · assigned to  [13] · all active · all feature                    
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [13] · all active · all feature ─────────────────
 >  id····   Task 1 of the section              ○ 1   high       ann             
    id····   Task 2 of the section              ○ 1   low        bob             
    id····   Task 3 of the section              ○ 1   medium     ann             
@@ -14,11 +14,11 @@
    id····   Task 11 of the section             ○ 1   medium     ann             
    id····   Task 12 of the section             ○ 1   medium     bob             
    id····   Task 13 of the section             ○ 1   medium     ann             
-                                                                                
-  WAITING  [0] · None                                                           
+────────────────────────────────────────────────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────
 == 140
-  ASKED · for you  [0] · None                                                                                                               
-> IN PROGRESS · assigned to  [13] · all active · all feature                                                                                
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [13] · all active · all feature ─────────────────────────────────────────────────────────────────────────────
 >  id····   Task 1 of the section                                                                          ○ 1   high       ann             
    id····   Task 2 of the section                                                                          ○ 1   low        bob             
    id····   Task 3 of the section                                                                          ○ 1   medium     ann             
@@ -32,5 +32,5 @@
    id····   Task 11 of the section                                                                         ○ 1   medium     ann             
    id····   Task 12 of the section                                                                         ○ 1   medium     bob             
    id····   Task 13 of the section                                                                         ○ 1   medium     ann             
-                                                                                                                                            
-  WAITING  [0] · None                                                                                                                       
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

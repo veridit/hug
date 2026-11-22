@@ -162,7 +162,7 @@ func TestOneColourPerMeaning(t *testing.T) {
 		plain := ansi.Strip(l)
 		if at := strings.Index(plain, "DEPENDS ["); at >= 0 {
 			found = true
-			if !strings.Contains(l, calm+"m  DEPENDS [") && !strings.Contains(l, calm+"m> DEPENDS [") {
+			if !strings.Contains(l, calm+"mDEPENDS [") { // on its titled rule (v68n82)
 				t.Errorf("the DEPENDS heading is not calm %s: %q", calm, l)
 			}
 		}

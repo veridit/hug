@@ -1,7 +1,7 @@
 HUG · board   60/60 tasks · ! 2 broken · 35 advice                                                                                                              
 view: overview  list  board  !lint                                                            │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank                                                                                                                                       
-  TODO [8]                              > DOING [15]                              DEPENDS [7]                             DONE [15]                             
+─── TODO [8] ─────────────────────────  ─── DOING [15] ───────────────────────  ─── DEPENDS [7] ──────────────────────  ─── DONE [15] ────────────────────────  
    ID       TITLE           ✓     T P      ID       TITLE           ✓     T P      ID       TITLE           ✓     T P      ID       TITLE           ✓     T P   
   ·000001   ⎘2 Feature tas… ○ 2   F C     ·000002   Bug task 02: m… ◑ 1/2 B C     ·000005   Docs task 05: … ○ 2   D C      000003   Render compile…       F M   
   ·000009   Spike task 09:… ○ 2   S H     ·000006   Feature task 0… ◑ 1/2 F H     !000013   Chore task 13:… ○ 2   C M      000007   Bug task 07: m… ● 2   B H   
@@ -37,7 +37,7 @@ filter: none · sort: rank
                                                                                                                                                                 
                                                                                                                                                                 
                                                                                                                                                                 
-                                                                                                                                                                
+──────────────────────────────────────  ──────────────────────────────────────  ──────────────────────────────────────  ──────────────────────────────────────  
 Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low                                                                       
 Columns 1–4 of 5 · h/l reveals other columns                                                                                                                    
 H/L column · order by priority (▲)                                                                                                                              

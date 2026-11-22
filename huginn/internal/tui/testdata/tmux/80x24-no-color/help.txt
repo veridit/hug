@@ -19,6 +19,6 @@ c             clear all filters
 g             group rows: flat, group, epic, tag (tag: first listed tag)
 
 EVERYWHERE
-All tasks · : filters and commands
+All tasks · : filters and commands · ! lint finding · ↳ epic
 
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · quit

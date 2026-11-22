@@ -20,12 +20,16 @@ func overviewAt(t *testing.T, width, height int) model {
 }
 
 // shownRows counts the lines drawn under each section heading: a row
-// and, for one that waits, its second line (89y0b7).
+// and, for one that waits, its second line (89y0b7). The heading is on
+// the section's titled rule, and its end rule is no row (v68n82).
 func shownRows(m model) map[int]int {
 	out := map[int]int{}
 	p := -1
 	for _, line := range strings.Split(ansi.Strip(m.overviewText()), "\n") {
-		trimmed := strings.TrimLeft(line, "> ")
+		if endRule.MatchString(strings.TrimRight(line, " ")) {
+			continue
+		}
+		trimmed := strings.TrimLeft(line, "↑↓─ ")
 		for q, name := range overviewSections {
 			if strings.HasPrefix(trimmed, name) {
 				p = q

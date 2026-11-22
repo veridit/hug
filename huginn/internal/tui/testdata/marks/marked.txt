@@ -2,6 +2,7 @@
 HUG · list   60/60 tasks · ! 2 broken · 35 advice                               
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank                                                       
+─── TASKS  [60] · 1–15 shown · 3 marked ────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE    PRIORITY 
 ◆ ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical 
   ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2 bug     critical 
@@ -18,8 +19,7 @@ filter: none · sort: rank
   !000013   terminal runtime · Chore task 13:… depends   ○ 2   chore   medium   
   ·000014   terminal runtime · Spike task 14:… active    ◑ 1/2 spike   medium   
    000015   terminal runtime · Docs task 15: … done      ● 2   docs    medium   
-↓  000016   terminal docs · docs Feature task… dropped         feature low      
-Rows 1–16 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done  
+↓───────────────────────────────────────────────────────────────────────────────
 3 marked · move · edit · request · Esc unmark                                   
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
@@ -27,24 +27,24 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · overview   60/60 tasks · ! 2 broken · 35 advice                           
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank                                                       
-  ASKED · for you  [0] · None                                                   
-> IN PROGRESS · assigned to  [14] · 1–3 shown · all active                      
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [14] · 1–3 shown · all active ───────────────────
 > ·000002   terminal c… · Bug task 02… ◑ 1/2 bug     critical   alice · feat/te…
   ·000006   terminal r… · Feature tas… ◑ 1/2 feature high       bob · main      
-↓ ·000010   terminal c… · Docs task 1… ◑ 1/2 docs    high       bob             
-                                                                                
-  WAITING  [1]                                                                  
+  ·000010   terminal c… · Docs task 1… ◑ 1/2 docs    high       bob             
+↓───────────────────────────────────────────────────────────────────────────────
+─── WAITING  [1] ───────────────────────────────────────────────────────────────
   !000026   ter… · Feature tas… depends   ◑ 1/2 feature high       carol · feat…
-                                                                                
-  NEXT UP · rank order  [15] · 1–1 shown · 1 marked                             
+────────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [15] · 1–1 shown · 1 marked ──────────────────────────
 ◆ ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical 
-                                                                                
-  RECENTLY DONE · last closed  [30] · 1–1 shown · 2 marked                      
+↓───────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [30] · 1–1 shown · 2 marked ───────────────────
 ◆  000003   terminal compiler · Render compil… done            feature medium   
-                                                                                
-  LINT · tasks needing attention  [30] · 2 broken · 35 advice · 1–2 shown · 1 m…
+↓───────────────────────────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [30] · 2 broken · 35 advice · 1–1 shown · 1…
   !000013   terminal runtime · Chore task 13:… depends   ○ 2   chore   medium   
-↓ !000026   terminal docs · docs Feature task… depends   ◑ 1/2 feature high     
+↓───────────────────────────────────────────────────────────────────────────────
 3 marked · edit · request · Esc unmark                                          
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
@@ -52,6 +52,7 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · list   60/60 tasks · ! 2 broken · 35 advice                                                                                           
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank                                                                                                                   
+─── TASKS  [60] · 1–15 shown · 3 marked ────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE    PRIORITY 
 ◆ ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2   feature critical 
   ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                active    ◑ 1/2 bug     critical 
@@ -68,8 +69,7 @@ filter: none · sort: rank
   !000013   terminal runtime · runtime Chore task 13: make the terminal workflow observable                depends   ○ 2   chore   medium   
   ·000014   terminal runtime · runtime Spike task 14: make the terminal workflow observable                active    ◑ 1/2 spike   medium   
    000015   terminal runtime · runtime Docs task 15: make the terminal workflow observable with a deliber… done      ● 2   docs    medium   
-↓  000016   terminal docs · docs Feature task 16: make the terminal workflow observable                    dropped         feature low      
-Rows 1–16 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done                                                              
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 3 marked · move · edit · request · Esc unmark                                                                                               
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               
@@ -77,24 +77,24 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 HUG · overview   60/60 tasks · ! 2 broken · 35 advice                                                                                       
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank                                                                                                                   
-  ASKED · for you  [0] · None                                                                                                               
-> IN PROGRESS · assigned to  [14] · 1–3 shown · all active                                                                                  
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [14] · 1–3 shown · all active ───────────────────────────────────────────────────────────────────────────────
 > ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow obse… ◑ 1/2 bug     critical   alice · feat/terminal-000002
   ·000006   terminal runtime · runtime Feature task 06: make the terminal workflow ob… ◑ 1/2 feature high       bob · main                  
-↓ ·000010   terminal compiler · compiler Docs task 10: make the terminal workflow obs… ◑ 1/2 docs    high       bob                         
-                                                                                                                                            
-  WAITING  [1]                                                                                                                              
+  ·000010   terminal compiler · compiler Docs task 10: make the terminal workflow obs… ◑ 1/2 docs    high       bob                         
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── WAITING  [1] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
   !000026   terminal docs · docs Feature task 26: make the terminal workflo… depends   ◑ 1/2 feature high       carol · feat/terminal-000026
-                                                                                                                                            
-  NEXT UP · rank order  [15] · 1–1 shown · 1 marked                                                                                         
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [15] · 1–1 shown · 1 marked ──────────────────────────────────────────────────────────────────────────────────────
 ◆ ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2   feature critical 
-                                                                                                                                            
-  RECENTLY DONE · last closed  [30] · 1–1 shown · 2 marked                                                                                  
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [30] · 1–1 shown · 2 marked ───────────────────────────────────────────────────────────────────────────────
 ◆  000003   terminal compiler · compiler Render compiler-lang task detail without storage markers          done            feature medium   
-                                                                                                                                            
-  LINT · tasks needing attention  [30] · 2 broken · 35 advice · 1–2 shown · 1 marked                                                        
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [30] · 2 broken · 35 advice · 1–1 shown · 1 marked ─────────────────────────────────────────────────────
   !000013   terminal runtime · runtime Chore task 13: make the terminal workflow observable                depends   ○ 2   chore   medium   
-↓ !000026   terminal docs · docs Feature task 26: make the terminal workflow observable                    depends   ◑ 1/2 feature high     
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 3 marked · edit · request · Esc unmark                                                                                                      
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               
@@ -102,6 +102,7 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 HUG · list   60/60 tasks · ! 2 broken · 35 advice           
 view: overview  list  board  !lint                  │ todo 8
 filter: none · sort: rank                                   
+─── TASKS  [60] · 1–15 shown · 3 marked ────────────────────
    ID       TITLE                  STAGE     ✓     PRIORITY 
 ◆ ·000001   termin… · ⎘2 Feature … ready     ○ 2   critical 
   ·000002   termin… · Bug task 02… active    ◑ 1/2 critical 
@@ -118,8 +119,7 @@ filter: none · sort: rank
   !000013   termin… · Chore task … depends   ○ 2   medium   
   ·000014   termin… · Spike task … active    ◑ 1/2 medium   
    000015   termin… · Docs task 1… done      ● 2   medium   
-↓  000016   termin… · Feature tas… dropped         low      
-Rows 1–16 of 60 · ! lint finding · ↳ epic · depends = a dep…
+↓───────────────────────────────────────────────────────────
 3 marked · ? actions · Esc unmark                           
                                                             
 j/k move · Space mark · Enter open · find · # id · / search 
@@ -127,24 +127,24 @@ j/k move · Space mark · Enter open · find · # id · / search
 HUG · overview   60/60 tasks · ! 2 broken · 35 advice       
 view: overview  list  board  !lint                  │ todo 8
 filter: none · sort: rank                                   
-  ASKED · for you  [0] · None                               
-> IN PROGRESS · assigned to  [14] · 1–3 shown · all active  
+─── ASKED · for you  [0] · None ────────────────────────────
+─── IN PROGRESS · assigned to  [14] · 1–3 shown · all active
 > ·000002   termin… · Bug task 02… ◑ 1/2 critical   alice ·…
   ·000006   termin… · Feature tas… ◑ 1/2 high       bob · m…
-↓ ·000010   termin… · Docs task 1… ◑ 1/2 high       bob     
-                                                            
-  WAITING  [1]                                              
+  ·000010   termin… · Docs task 1… ◑ 1/2 high       bob     
+↓───────────────────────────────────────────────────────────
+─── WAITING  [1] ───────────────────────────────────────────
   !000026   termi… · Feature tas… depends   ◑ 1/2   carol ·…
-                                                            
-  NEXT UP · rank order  [15] · 1–1 shown · 1 marked         
+────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [15] · 1–1 shown · 1 marked ──────
 ◆ ·000001   termin… · ⎘2 Feature … ready     ○ 2   critical 
-                                                            
-  RECENTLY DONE · last closed  [30] · 1–1 shown · 2 marked  
+↓───────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [30] · 1–1 shown · 2 marked
 ◆  000003   termin… · Render comp… done            medium   
-                                                            
-  LINT · tasks needing attention  [30] · 2 broken · 35 advi…
+↓───────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [30] · 2 broken · 35 ad…
   !000013   termin… · Chore task … depends   ○ 2   medium   
-↓ !000026   termin… · Feature tas… depends   ◑ 1/2 high     
+↓───────────────────────────────────────────────────────────
 3 marked · ? actions · Esc unmark                           
                                                             
 j/k move · Space mark · Enter open · find · # id · / search 

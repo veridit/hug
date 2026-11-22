@@ -26,7 +26,7 @@ filter: none
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands                                                                  
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
                                                                                                     
 j/k ↑↓ pick · Enter add chip · type narrow · Esc back · ? help                                      
 == sort at 100x30
@@ -57,7 +57,7 @@ new: nothing picked yet, Enter or r gives rank
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands                                                                  
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
                                                                                                     
 j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
 == sort p, then j j at 100x30
@@ -88,7 +88,7 @@ new: priority ↓
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands                                                                  
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
                                                                                                     
 j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
 == filter ? at 100x30
@@ -119,7 +119,7 @@ ctrl-c  quit
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands                                                                  
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
                                                                                                     
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close                                
 == sort ? at 100x30
@@ -150,6 +150,6 @@ ctrl-c  quit
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands                                                                  
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
                                                                                                     
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close                                

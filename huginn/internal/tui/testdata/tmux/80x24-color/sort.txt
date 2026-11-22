@@ -1,6 +1,7 @@
 HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: priority ↓ · type
+─── TASKS  [60] · 1–15 shown ───────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE    PRIORITY
   ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical
   ·000021   terminal compiler · Feature task … depends   ○ 2   feature critical
@@ -17,8 +18,7 @@ filter: none · sort: priority ↓ · type
   ·000025   terminal docs · docs Docs task 25… ready     ○ 2   docs    critical
   ·000045   terminal docs · docs Docs task 45… depends   ○ 2   docs    critical
   ·000006   terminal runtime · Feature task 0… active    ◑ 1/2 feature high
-↓ !000026   terminal docs · docs Feature task… depends   ◑ 1/2 feature high
-Rows 1–16 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+↓───────────────────────────────────────────────────────────────────────────────
 sort: priority ↓ · type
 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …

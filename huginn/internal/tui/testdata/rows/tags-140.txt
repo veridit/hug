@@ -1,20 +1,20 @@
 HUG · list   5/5 tasks · ! 0 broken · 10 advice                                                                                             
 view: overview  list  board  !lint                                                       │ todo 4 · doing 0 · depends 1 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
+─── TASKS  [5] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE    PRIORITY 
 > ·eeeeee   Bare                                                                                           ready     ○ 1   chore   low      
   ·aaaaaa   parser · Lex the input                                                                         ready     ○ 1   bug     high     
   ·bbbbbb   parser compiler · Both areas                                                                   ready     ○ 1   feature high     
   ·cccccc   compiler codegen runt… · Long tags                                                             ready     ○ 1   feature medium   
   ·dddddd   zzz · Odd one                                                                                  depends   ○ 1   feature high     
-Rows 1–5 of 5 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-                                                                                                                                            
-All tasks · : filters and commands                                                                                                          
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done                                           
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               

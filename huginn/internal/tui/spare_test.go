@@ -46,9 +46,9 @@ var taskID = regexp.MustCompile(`(?m)^([>↑↓ ] [ ·!])[0-9a-z]{6}\b`) // the 
 func rowBudget(m model) int {
 	b := m.bodyHeight()
 	for p := range overviewSections {
-		b-- // its title
-		if n := len(m.paneRows(p)); n > 0 && p < len(overviewSections)-1 {
-			b-- // the blank after it
+		b-- // its titled rule
+		if n := len(m.paneRows(p)); n > 0 && (!sharedRules() || p == len(overviewSections)-1) {
+			b-- // its end rule (v68n82)
 		}
 	}
 	return b

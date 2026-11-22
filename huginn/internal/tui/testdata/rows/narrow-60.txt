@@ -2,25 +2,25 @@
 HUG · overview   5/5 tasks · ! 0 broken · 12 advice         
 view: overview  list  board  !lint        │ todo 2 · doing 2
 filter: none · sort: rank                                   
-  ASKED · for you  [0] · None                               
-> IN PROGRESS · assigned to  [2] · all active · all feature…
+─── ASKED · for you  [0] · None ────────────────────────────
+─── IN PROGRESS · assigned to  [2] · all active · all featu…
 > ·######   A very long title th… ○ 12      an-agent-with-a…
   ·######   数据库迁移：把所有的… ○ 12      an-agent-with-a…
-                                                            
-  WAITING  [0] · None                                       
-  NEXT UP · rank order  [2] · all ready                     
+────────────────────────────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────
+─── NEXT UP · rank order  [2] · all ready ──────────────────
   ·######   🚀🔥 emoji rocket fir… ○ 12    feature critical 
   ·######   files A very long tit… ○ 12    bug     high     
-                                                            
-  RECENTLY DONE · last closed  [1]                          
+────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [1] ───────────────────────
    ######   done A very long ti… done      ● 12    critical 
-                                                            
-  LINT · tasks needing attention  [4] · 0 broken · 12 advice
+────────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [4] · 0 broken · 12 adv…
   ·######   A very long title t… active    ○ 12    critical 
   ·######   数据库迁移：把所有…  active    ○ 12    critical 
   ·######   🚀🔥 emoji rocket f… ready     ○ 12    critical 
   ·######   files A very long t… ready     ○ 12    high     
-                                                            
+────────────────────────────────────────────────────────────
                                                             
                                                             
                                                             
@@ -33,13 +33,14 @@ j/k move · Space mark · Enter open · find · # id · / search
 HUG · list   5/5 tasks · ! 0 broken · 12 advice             
 view: overview  list  board  !lint        │ todo 2 · doing 2
 filter: none · sort: rank                                   
+─── TASKS  [5] ─────────────────────────────────────────────
    ID       TITLE                STAGE     ✓       PRIORITY 
 > ·######   A very long title t… active    ○ 12    critical 
   ·######   数据库迁移：把所有…  active    ○ 12    critical 
   ·######   🚀🔥 emoji rocket f… ready     ○ 12    critical 
    ######   done A very long ti… done      ● 12    critical 
   ·######   files A very long t… ready     ○ 12    high     
-Rows 1–5 of 5 · ! lint finding · ↳ epic · depends = a depen…
+────────────────────────────────────────────────────────────
                                                             
                                                             
                                                             
@@ -56,15 +57,14 @@ Rows 1–5 of 5 · ! lint finding · ↳ epic · depends = a depen…
                                                             
                                                             
                                                             
-                                                            
-All tasks · : filters and commands                          
+All tasks · : filters and commands · ! lint finding · ↳ epic
                                                             
 j/k move · Space mark · Enter open · find · # id · / search 
 == board at 60
 HUG · board   5/5 tasks · ! 0 broken · 12 advice            
 view: overview  list  board  !lint        │ todo 2 · doing 2
 filter: none · sort: rank                                   
-> TODO [2]                                                  
+─── TODO [2] ───────────────────────────────────────────────
    ID       TITLE                               ✓       T P 
 > ·######   🚀🔥 emoji rocket fire 🎉 A very l… ○ 12    F C 
   ·######   files A very long title that goes … ○ 12    B H 
@@ -85,7 +85,7 @@ filter: none · sort: rank
                                                             
                                                             
                                                             
-                                                            
+────────────────────────────────────────────────────────────
 T: F feature B bug C chore S spike D docs · P: C critical H…
 Columns 1–1 of 5 · h/l reveals other columns                
 All tasks · : filters and commands                          

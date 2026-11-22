@@ -2,6 +2,7 @@
 HUG · list   60/60 tasks · ! 2 broken · 35 advice                               
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: type                                                       
+─── TASKS  [60] · 1–21 shown ───────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE ▲  PRIORITY 
   ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical 
    000003   terminal compiler · Render compil… done            feature medium   
@@ -24,8 +25,7 @@ filter: none · sort: type
    000027   terminal docs · docs Bug task 27:… done      ● 2   bug     high     
    000032   terminal runtime · Bug task 32: m… dropped         bug     medium   
   ·000037   terminal compiler · Bug task 37: … depends   ○ 2   bug     low      
-↓ ·000042   terminal runtime · Bug task 42: m… active    ◑ 1/2 bug     critical 
-Rows 1–22 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done  
+↓───────────────────────────────────────────────────────────────────────────────
 H/L column · order by type (▼)                                                  
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
@@ -33,6 +33,7 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · list   60/60 tasks · ! 2 broken · 35 advice                                                                                           
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: type                                                                                                                   
+─── TASKS  [60] · 1–21 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE ▲  PRIORITY 
   ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2   feature critical 
    000003   terminal compiler · compiler Render compiler-lang task detail without storage markers          done            feature medium   
@@ -55,8 +56,7 @@ filter: none · sort: type
    000027   terminal docs · docs Bug task 27: make the terminal workflow observable                        done      ● 2   bug     high     
    000032   terminal runtime · runtime Bug task 32: make the terminal workflow observable                  dropped         bug     medium   
   ·000037   terminal compiler · compiler Bug task 37: make the terminal workflow observable                depends   ○ 2   bug     low      
-↓ ·000042   terminal runtime · runtime Bug task 42: make the terminal workflow observable                  active    ◑ 1/2 bug     critical 
-Rows 1–22 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done                                                              
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 H/L column · order by type (▼)                                                                                                              
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               

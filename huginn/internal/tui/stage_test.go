@@ -79,7 +79,8 @@ func section(view, name string) string {
 	}
 	var out []string
 	for _, line := range strings.Split(view[at:], "\n") {
-		if strings.TrimSpace(line) == "" {
+		// The section ends at its end rule (v68n82), or a blank line.
+		if strings.TrimSpace(line) == "" || endRule.MatchString(strings.TrimRight(line, " ")) {
 			break
 		}
 		out = append(out, line)
@@ -130,7 +131,7 @@ func TestRowsShowStage(t *testing.T) {
 			t.Errorf("%s has %d rows, want %d (one line each, nothing else):\n%s", name, n, len(ids), got)
 		}
 	}
-	if !regexp.MustCompile(`(?m)^  WAITING  \[4\] · all feature · all high\s*$`).MatchString(view) {
+	if !regexp.MustCompile(`(?m)^─── WAITING  \[4\] · all feature · all high ─+\s*$`).MatchString(view) {
 		t.Errorf("WAITING header is not 'WAITING  [4]' (what asks you is in ASKED, 41hhgn):\n%s", view)
 	}
 	// Check 4: no row the cursor is not on has a second line.

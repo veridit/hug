@@ -21,8 +21,9 @@ import (
 // sign > does (q3sh69).
 
 // titledRule matches a section's top rule: the lead (arrows, then the
-// rule), a space, the title, a space and the rule to the edge.
-var titledRule = regexp.MustCompile(`^(↓↑─|↑──|↓──|───) (.*\S) ─+$`)
+// rule), a space, the title, a space and the rule to the edge; a title
+// that fills a narrow column ends there.
+var titledRule = regexp.MustCompile(`^(↓↑─|↑──|↓──|───) (.*?\S)(?: ─+)?$`)
 
 // endRule matches a plain rule: a section's end, ↓ at its left end when
 // rows are hidden below.
@@ -34,10 +35,10 @@ var shownRange = regexp.MustCompile(`\[(\d+)\](?:.*· (\d+)–(\d+) shown)?`)
 
 // frameSection is one section as the screen draws it.
 type frameSection struct {
-	top, end   int // line numbers of the rules; end -1 when there is none
-	lead       string
-	title      string
-	rows       []string
+	top, end    int // line numbers of the rules; end -1 when there is none
+	lead        string
+	title       string
+	rows        []string
 	total, a, b int
 }
 

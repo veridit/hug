@@ -1,6 +1,7 @@
 HUG · list   60/60 tasks · ! 2 broken · 35 advice                                                                                                               
 view: overview  list  board  !lint                                                            │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank                                                                                                                                       
+─── TASKS  [60] · 1–36 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                                              STAGE     ✓     TYPE    PRIORITY 
   ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a deliberately long t… ready     ○ 2   feature critical 
   ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                                    active    ◑ 1/2 bug     critical 
@@ -38,8 +39,7 @@ filter: none · sort: rank
   ·000034   terminal docs · docs Spike task 34: make the terminal workflow observable                                          active    ◑ 1/2 spike   medium   
    000035   terminal docs · docs Docs task 35: make the terminal workflow observable                                           done      ● 2   docs    medium   
    000036   terminal docs · docs Feature task 36: make the terminal workflow observable with a deliberately long title that m… dropped         feature low      
-↓ ·000037   terminal compiler · compiler Bug task 37: make the terminal workflow observable                                    depends   ○ 2   bug     low      
-Rows 1–37 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                                  
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 H/L column · order by priority (▲)                                                                                                                              
                                                                                                                                                                 
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request                                   

@@ -2,18 +2,18 @@
 HUG · overview   7/7 tasks · ! 0 broken · ? 3 for you                           
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
-  ASKED · for you  [3] · 1–1 shown · all feature · all high                     
-↓  aaaaaa   Status colors: rows and sections… asked     ◑ 1/2   nautilus        
-                                                                                
-  IN PROGRESS · assigned to  [0] · None                                         
-  WAITING  [2] · 1–1 shown · all feature · all high · all nautilus              
-↓  bbbbbb   Release, then hug setup in seid-lang                review    ◑ 1/2 
-                                                                                
-> NEXT UP · rank order  [2] · all feature · all high                            
+─── ASKED · for you  [3] · 1–1 shown · all feature · all high ──────────────────
+   aaaaaa   Status colors: rows and sections… asked     ◑ 1/2   nautilus        
+↓───────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────
+─── WAITING  [2] · 1–1 shown · all feature · all high · all nautilus ───────────
+   bbbbbb   Release, then hug setup in seid-lang                review    ◑ 1/2 
+↓───────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [2] · all feature · all high ─────────────────────────
 >  ffffff   Depend on a group or epic                           ready     ◑ 1/2 
    gggggg   Answer a question in place                          deferred  ◑ 1/2 
-                                                                                
-  RECENTLY DONE · last closed  [0] · None                                       
+────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
@@ -21,18 +21,18 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                       
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-  ASKED · for you  [3] · 1–1 shown · all feature · all high                                                                                 
-↓  aaaaaa   Status colors: rows and sections share one subtle scheme                                      asked     ◑ 1/2   nautilus        
-                                                                                                                                            
-  IN PROGRESS · assigned to  [0] · None                                                                                                     
-  WAITING  [2] · 1–1 shown · all feature · all high · all nautilus                                                                          
-↓  bbbbbb   Release, then hug setup in seid-lang                                                                            review    ◑ 1/2 
-                                                                                                                                            
-> NEXT UP · rank order  [2] · all feature · all high                                                                                        
+─── ASKED · for you  [3] · 1–1 shown · all feature · all high ──────────────────────────────────────────────────────────────────────────────
+   aaaaaa   Status colors: rows and sections share one subtle scheme                                      asked     ◑ 1/2   nautilus        
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────────────────────────────────────────────────────────────────
+─── WAITING  [2] · 1–1 shown · all feature · all high · all nautilus ───────────────────────────────────────────────────────────────────────
+   bbbbbb   Release, then hug setup in seid-lang                                                                            review    ◑ 1/2 
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [2] · all feature · all high ─────────────────────────────────────────────────────────────────────────────────────
 >  ffffff   Depend on a group or epic                                                                                       ready     ◑ 1/2 
    gggggg   Answer a question in place                                                                                      deferred  ◑ 1/2 
-                                                                                                                                            
-  RECENTLY DONE · last closed  [0] · None                                                                                                   
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               

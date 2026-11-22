@@ -539,10 +539,11 @@ func TestCompletedRowsKeepIDAndLintColors(t *testing.T) {
 		}
 	}
 	m.setView("overview")
-	// The focused section's title says so with its > and its bold
-	// colour, never a background bar (911j70: one tint, on the row header).
-	if header := strings.Split(m.overviewText(), "\n")[m.pane]; strings.Contains(header, "48;2;") || !strings.HasPrefix(ansi.Strip(header), "> ") {
-		t.Fatal("selected overview pane has a background bar, or no >", header)
+	// The focused section's title says so with its bright rule and its
+	// bold colour, never a background bar (911j70: one tint, on the row
+	// header); the > is the row's alone (v68n82).
+	if header := strings.Split(m.overviewText(), "\n")[m.pane]; strings.Contains(header, "48;2;") || !strings.HasPrefix(ansi.Strip(header), "───") || !sgrAt(header, 0).bold {
+		t.Fatal("selected overview pane has a background bar, or no bright rule", header)
 	}
 	darkAccent := m.styles.accent.Render("badge")
 	m.styles.renderer.SetHasDarkBackground(false)

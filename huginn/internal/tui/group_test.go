@@ -158,7 +158,7 @@ func TestSpaceFoldsAHeading(t *testing.T) {
 	if !strings.Contains(s, "> ▸ later  [2]") || strings.Contains(s, "Launch posts") || strings.Contains(s, "Launch mail") {
 		t.Fatalf("folded: want '▸ later  [2]' and no later tasks:\n%s", s)
 	}
-	if !strings.Contains(s, "of 6") {
+	if !strings.Contains(s, "TASKS  [6]") { // the list's title rule (v68n82)
 		t.Fatalf("folded tasks still count in the list's total:\n%s", s)
 	}
 	// Actions refuse on a heading.

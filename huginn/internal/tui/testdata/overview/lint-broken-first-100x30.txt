@@ -1,7 +1,7 @@
-  ASKED · for you  [0] · None                                                                       
-  IN PROGRESS · assigned to  [0] · None                                                             
-  WAITING  [0] · None                                                                               
-> NEXT UP · rank order  [31] · 1–14 shown · all feature                                             
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [31] · 1–13 shown · all feature ──────────────────────────────────────────
 > ·######   Advice 01                                                      ready     ○ 1            
   ·######   Advice 02                                                      ready     ○ 1            
   ·######   Advice 03                                                      ready     ○ 1            
@@ -15,10 +15,10 @@
   ·######   Advice 11                                                      ready     ○ 1            
   ·######   Advice 12                                                      ready     ○ 1            
   ·######   Advice 13                                                      ready     ○ 1            
-↓ ·######   Advice 14                                                      ready     ○ 1            
-
-  RECENTLY DONE · last closed  [0] · None                                                           
-  LINT · tasks needing attention  [31] · 1 broken · 30 advice · 1–3 shown · all feature             
+↓───────────────────────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [31] · 1 broken · 30 advice · 1–3 shown · all feature ──────────
   !######   Broken last                                                    depends   ○ 1            
   ·######   Advice 01                                                      ready     ○ 1            
-↓ ·######   Advice 02                                                      ready     ○ 1            
+  ·######   Advice 02                                                      ready     ○ 1            
+↓───────────────────────────────────────────────────────────────────────────────────────────────────

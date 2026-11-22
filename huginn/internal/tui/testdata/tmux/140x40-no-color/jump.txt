@@ -35,6 +35,6 @@ JUMP TO ID · prefixes and TASK-number aliases
 
 
 
-All tasks · : filters and commands
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done
 
 Enter open · Tab complete · ↑↓ ^n/^p pick · Esc back · F1 help                                                                    hug v0.0.0

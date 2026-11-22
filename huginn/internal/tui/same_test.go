@@ -65,7 +65,7 @@ func TestSharedColumnMovesIntoHeading(t *testing.T) {
 				head = strings.TrimRight(line, " ")
 			}
 		}
-		if !strings.HasSuffix(head, "[13] · all active · all feature") {
+		if !strings.HasSuffix(strings.TrimRight(head, " ─"), "[13] · all active · all feature") { // on its titled rule (v68n82)
 			t.Fatalf("at %d the heading reads %q", w, head)
 		}
 		rows := section(view, "IN PROGRESS")
@@ -110,7 +110,7 @@ func TestSharedColumnMovesIntoHeading(t *testing.T) {
 }
 
 // 1bbe96 check 2: type, priority and owner move the same way; the list,
-// one section, says them after TITLE.
+// one section, says them on its title rule (v68n82; was after TITLE).
 func TestEverySharedColumnMoves(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
 	m := sameBoard(t, 4, 0, nil, nil)
@@ -137,14 +137,18 @@ func TestEverySharedColumnMoves(t *testing.T) {
 	l.resize()
 	l.setView("list")
 	screen := ansi.Strip(l.View())
-	header := ""
+	header, title := "", ""
 	for _, line := range strings.Split(screen, "\n") {
 		if strings.Contains(line, "TITLE") {
 			header = strings.TrimRight(line, " ")
 		}
+		if strings.Contains(line, "TASKS  [") {
+			title = strings.TrimRight(line, " ─")
+		}
 	}
-	if !strings.Contains(header, "STAGE") || strings.Contains(header, "TYPE") || strings.Contains(header, "PRIORITY") || !strings.HasSuffix(header, "· all feature · all medium") {
-		t.Fatalf("list header %q", header)
+	// The values go on the list's title rule, as on a section's (v68n82).
+	if !strings.Contains(header, "STAGE") || strings.Contains(header, "TYPE") || strings.Contains(header, "PRIORITY") || !strings.HasSuffix(title, "· all feature · all medium") {
+		t.Fatalf("list header %q, title rule %q", header, title)
 	}
 }
 

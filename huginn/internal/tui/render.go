@@ -236,18 +236,6 @@ func (m model) taskRow(t task.Task, width int, selected, compact bool) string {
 	return m.taskRowMark(t, width, selected, compact, "")
 }
 
-// scrollMark puts ↑ on the first shown row when rows are hidden above and ↓
-// on the last when rows are hidden below; the header's "a–b shown" gives the
-// count. The arrows use the pointer gutter, so they cost no lines.
-func scrollMark(n, start, end, total int) string {
-	switch {
-	case n == start && start > 0:
-		return "↑"
-	case n == end-1 && end < total:
-		return "↓"
-	}
-	return ""
-}
 func (m model) taskRowMark(t task.Task, width int, selected, compact bool, mark string) string {
 	return m.taskRowCols(t, width, selected, compact, mark, m.rowLayout(width, compact, 0, 0))
 }
@@ -481,39 +469,53 @@ func (m model) columnsOwner(width int, compact bool, c rowCols) string {
 func (m model) listText() string {
 	indices := m.paneRows(m.pane)
 	c := m.sectionLayout(m.pane) // the list is one section (1bbe96)
-	head := m.columnsOwner(m.width, false, c)
-	if same := m.sectionSame(m.pane); same.any() {
-		// The list has no section title: the column header says it,
-		// after TITLE, which gives the room.
-		// When TITLE and the label do not both fit, the label is cut,
-		// never the column names.
-		label := m.sameLabel(same, m.visible[m.rawPane(m.pane)[0]])
-		short := c
-		short.title = max(len("TITLE"), c.title-lipgloss.Width(label))
-		room := c.title - short.title
-		head = m.columnsOwner(m.width-room, false, short) + ansi.Truncate(label, room, "…")
+	// The list is one section in its frame (v68n82): the titled top rule,
+	// the column header, the rows, the end rule. Always focused, so its
+	// rules are bright.
+	label := fmt.Sprintf("TASKS  [%d]", m.paneTotal(m.pane))
+	style := m.styles.normal.Bold(true)
+	if m.view == "lint" {
+		broken := m.brokenCount()
+		label = fmt.Sprintf("%s  [%d] · %d broken · %d advice", overviewSections[sectionLint], m.paneTotal(m.pane), broken, len(m.findings)-broken)
+		style = m.sectionStyle(sectionLint)
 	}
-	lines := []string{head}
+	if len(indices) == 0 {
+		label += " · None" + m.noneWith()
+	}
+	rows := max(1, m.viewHeight()-3) // less the two rules and the column header
+	cur := m.rowCursor(m.pane)
+	start, end := m.window(indices, cur, 0, rows, m.cursor)
+	if len(indices) > 0 {
+		label += shownLabel(indices, start, end)
+	}
+	if n := m.marksIn(m.pane); n > 0 {
+		label += fmt.Sprintf(" · %d marked", n)
+	}
+	title := style.Render(label)
+	if same := m.sectionSame(m.pane); same.any() {
+		// A column the same on every task is said once, on the title
+		// rule, as in the overview (1bbe96).
+		title += m.sameLabel(same, m.visible[m.rawPane(m.pane)[0]])
+	}
+	lines := []string{m.sectionRule(ruleLead(len(indices) > 0 && start > 0, false), title, m.width, true)}
 	if len(indices) == 0 {
 		return strings.Join(append(lines, "No tasks match. :clear resets filters; N creates a task."), "\n")
 	}
-	cur := m.rowCursor(m.pane)
-	start, end := m.window(indices, cur, 0, max(1, m.viewHeight()-2), m.cursor)
-	for n, i := range indices[start:end] {
+	lines = append(lines, m.columnsOwner(m.width, false, c))
+	for _, i := range indices[start:end] {
 		if isHead(i) {
 			lines = append(lines, m.headText(i, m.pane, m.width, i == cur))
 			continue
 		}
 		t := m.visible[i]
-		lines = append(lines, m.taskRowCols(t, m.width, i == m.cursor, false, scrollMark(start+n, start, end, len(indices)), c))
+		lines = append(lines, m.taskRowCols(t, m.width, i == m.cursor, false, "", c))
 		if i == m.cursor {
 			if note := m.noteRow(t, m.width, true); note != "" {
 				lines = append(lines, note) // what it waits on, under the selected row (89y0b7, tje4sx)
 			}
 		}
 	}
-	a, b, _ := shownTasks(indices, start, end)
-	lines = append(lines, m.styles.dim.Render(fmt.Sprintf("Rows %d–%d of %d · ! lint finding · ↳ epic · depends = a dependency is not done", a, b, m.paneTotal(m.pane))))
+	lines = append(lines, m.sectionRule(ruleLead(false, end < len(indices)), "", m.width, true))
 	return strings.Join(lines, "\n")
 }
 
@@ -553,13 +555,10 @@ func (m model) overviewText() string {
 	names := overviewSections
 	rows := m.overviewRows()
 	var lines []string
+	below := false // the section above has rows hidden below: its ↓ (variant B)
 	for p, name := range names {
 		indices := m.paneRows(p)
-		pointer := "  "
-		if p == m.pane {
-			pointer = "> "
-		}
-		label := fmt.Sprintf("%s%s  [%d]", pointer, name, m.paneTotal(p))
+		label := fmt.Sprintf("%s  [%d]", name, m.paneTotal(p))
 		if p == sectionLint {
 			broken := m.brokenCount()
 			label += fmt.Sprintf(" · %d broken · %d advice", broken, len(m.findings)-broken)
@@ -568,7 +567,7 @@ func (m model) overviewText() string {
 		cursor := m.rowCursor(p)
 		start, end := m.window(indices, cursor, m.scrollOf(p), per, m.selIn(p))
 		if len(indices) == 0 {
-			// Nothing to navigate to: None goes on the title line (h9zghj),
+			// Nothing to navigate to: None goes on the title rule (h9zghj),
 			// with the filter that emptied it (ht3cdx).
 			label += " · None" + m.noneWith()
 		} else {
@@ -577,45 +576,46 @@ func (m model) overviewText() string {
 		if n := m.marksIn(p); n > 0 {
 			label += fmt.Sprintf(" · %d marked", n) // a mark out of sight is not forgotten (rxr4z8)
 		}
+		title := m.sectionStyle(p).Render(label)
 		// A column the same on every task of the section is said once,
 		// here, not drawn on each row (1bbe96).
-		same := m.sectionSame(p)
-		if !same.any() {
-			label = m.sectionStyle(p).Render(fit(label, m.width))
-		} else {
-			tail := m.sameLabel(same, m.visible[m.rawPane(p)[0]])
-			label = m.sectionStyle(p).Render(label) + tail + m.sectionStyle(p).Render(strings.Repeat(" ", max(0, m.width-lipgloss.Width(label)-lipgloss.Width(tail))))
-			label = fit(label, m.width)
+		if same := m.sectionSame(p); same.any() {
+			title += m.sameLabel(same, m.visible[m.rawPane(p)[0]])
 		}
-		lines = append(lines, label) // focus: its > and its bold colour, no bar (911j70)
+		// The titled top rule (v68n82): ↑ when rows are hidden above; in
+		// variant B it also ends the section above, with its ↓. The
+		// focused section's rules are bright, its title keeps its colour.
+		focus := p == m.pane || sharedRules() && p-1 == m.pane && len(m.paneRows(p-1)) > 0
+		up := len(indices) > 0 && start > 0
+		lines = append(lines, m.sectionRule(ruleLead(up, sharedRules() && below), title, m.width, focus))
 		// IN PROGRESS and WAITING rows share one layout with the owner cell
 		// (102bc0, tje4sx), without the columns the section shares.
 		doing := m.sectionLayout(p)
 		if p == m.pane && m.overviewHeading() && p != sectionLint && len(indices) > 0 {
 			lines = append(lines, m.columnsOwner(m.width, false, doing))
 		}
-		for n, i := range indices[start:end] {
+		for _, i := range indices[start:end] {
 			if isHead(i) {
 				lines = append(lines, m.headText(i, p, m.width, p == m.pane && i == cursor))
 				continue
 			}
-			mark := scrollMark(start+n, start, end, len(indices))
 			t := m.visible[i]
 			sel := p == m.pane && i == m.cursor
 			// Owners get a reserved column, the last, never lost behind a
 			// long title (x1t1t1).
-			lines = append(lines, m.taskRowCols(t, m.width, sel, false, mark, doing))
+			lines = append(lines, m.taskRowCols(t, m.width, sel, false, "", doing))
 			if sel {
 				if note := m.noteRow(t, m.width, true); note != "" {
 					lines = append(lines, note) // what it waits on, under the selected row (89y0b7, tje4sx)
 				}
 			}
 		}
-		if sectionBlank(p, len(indices), len(names)) {
-			// A blank parts a section with rows from the next; an empty
-			// one is its title alone ("· None"), and the last needs none
-			// (41hhgn: six sections fit 80x24).
-			lines = append(lines, "")
+		below = len(indices) > 0 && end < len(indices)
+		if len(indices) > 0 && (!sharedRules() || p == len(names)-1) {
+			// The end rule, ↓ when rows are hidden below. An empty section
+			// is its titled rule alone ("· None"): six sections fit 80x24
+			// (41hhgn).
+			lines = append(lines, m.sectionRule(ruleLead(false, below), "", m.width, p == m.pane))
 		}
 	}
 	return strings.Join(lines, "\n")
@@ -631,23 +631,14 @@ func (m model) noneWith() string {
 	return ""
 }
 
-// sectionBlank says whether a blank line follows overview section p: one
-// with rows, not the last. An empty one is its title alone ("· None"):
-// six sections fit 80x24 (41hhgn).
-func sectionBlank(p, rows, sections int) bool { return rows > 0 && p < sections-1 }
-
-// sectionChrome is the overview's lines that are not rows: each title and
-// the blanks between sections.
+// sectionChrome is the overview's lines that are not rows: the rules of
+// each section's frame (v68n82, overviewChrome).
 func (m model) sectionChrome() int {
-	n := len(overviewSections)
-	lines := 0
-	for p := range n {
-		lines++
-		if sectionBlank(p, len(m.paneRows(p)), n) {
-			lines++
-		}
+	rows := make([]int, len(overviewSections))
+	for p := range rows {
+		rows[p] = len(m.paneRows(p))
 	}
-	return lines
+	return overviewChrome(rows)
 }
 
 // sectionState is the status whose colour an overview section's title
@@ -817,26 +808,31 @@ func (m model) sectionRows(p int) int {
 	if m.view == "overview" {
 		return m.overviewRows()[p]
 	}
-	return max(1, m.viewHeight()-4) // a board column
+	return max(1, m.viewHeight()-5) // a board column, between its rules (v68n82)
 }
 func (m model) boardText() string {
 	count := min(len(boardStates), max(1, (m.width+2)/40))
 	first := min(max(0, m.pane-count+1), len(boardStates)-count)
 	width := max(1, (m.width-2*(count-1))/count)
 	cols := make([][]string, count)
-	rows := max(1, m.viewHeight()-4)
+	// A board section is a column, one status (v68n82): its titled top
+	// rule, its column header, its rows, its end rule. The end rules
+	// stand on one line under the tallest column's room, as a task's
+	// page keeps its bottom rule on the keys (4ddcwa).
+	rows := max(1, m.viewHeight()-5)
 	for c := 0; c < count; c++ {
 		p := first + c
 		indices := m.paneRows(p)
-		pointer := "  "
-		if p == m.pane {
-			pointer = "> "
-		}
-		label := fmt.Sprintf("%s%s [%d]", pointer, strings.ToUpper(boardStates[p]), m.paneTotal(p))
+		cursor := m.rowCursor(p)
+		start, end := m.window(indices, cursor, m.scrollOf(p), rows, m.selIn(p))
+		label := fmt.Sprintf("%s [%d]", strings.ToUpper(boardStates[p]), m.paneTotal(p))
 		if len(indices) == 0 {
 			label += " · None" + m.noneWith() // one line, as in the overview (h9zghj)
+		} else {
+			label += shownLabel(indices, start, end)
 		}
-		label = m.styles.status[boardStates[p]].Bold(true).Render(fit(label, width)) // focus: its >, no bar (911j70)
+		title := m.styles.status[boardStates[p]].Bold(true).Render(label)
+		top := m.sectionRule(ruleLead(len(indices) > 0 && start > 0, false), title, width, p == m.pane)
 		heading := m.columns(width, true)
 		if p != m.pane {
 			unmarked := m
@@ -846,16 +842,14 @@ func (m model) boardText() string {
 		if len(indices) == 0 {
 			heading = fit("", width)
 		}
-		cols[c] = append(cols[c], label, heading)
-		cursor := m.rowCursor(p)
-		start, end := m.window(indices, cursor, m.scrollOf(p), rows, m.selIn(p))
-		for n, i := range indices[start:end] {
+		cols[c] = append(cols[c], top, heading)
+		for _, i := range indices[start:end] {
 			if isHead(i) {
 				cols[c] = append(cols[c], m.headText(i, p, width, p == m.pane && i == cursor))
 				continue
 			}
 			sel := p == m.pane && i == m.cursor
-			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, sel, true, scrollMark(start+n, start, end, len(indices))))
+			cols[c] = append(cols[c], m.taskRowMark(m.visible[i], width, sel, true, ""))
 			if sel {
 				if note := m.noteRow(m.visible[i], width, true); note != "" {
 					cols[c] = append(cols[c], note)
@@ -865,6 +859,7 @@ func (m model) boardText() string {
 		for len(cols[c]) < rows+2 {
 			cols[c] = append(cols[c], fit("", width))
 		}
+		cols[c] = append(cols[c], m.sectionRule(ruleLead(false, end < len(indices)), "", width, p == m.pane))
 	}
 	var lines []string
 	for n := range cols[0] {
@@ -1224,11 +1219,15 @@ func (m model) footLines() (footerLine, inputLine string) {
 				footer = strings.Join(filters, " · ") + " · " + place
 			}
 		}
-		if m.view == "overview" {
-			// The list explains ! and ↳ in its last row; the overview has
-			// no such row, so its footer does (kx2ndm, Jørgen 2026-11-16:
-			// compact, no extra line).
+		if m.view == "overview" || m.view == "list" || m.view == "lint" {
+			// The overview has no row that explains ! and ↳, so its
+			// footer does (kx2ndm, Jørgen 2026-11-16: compact, no extra
+			// line); the list's last row did, and is its end rule now
+			// (v68n82), so it says them here too.
 			footer += " · ! lint finding · ↳ epic"
+			if tail := " · depends = a dependency is not done"; (m.view == "list" || m.view == "lint") && ansi.StringWidth(footer+tail) <= m.width {
+				footer += tail // the rest of the list's old last row, where it fits
+			}
 		}
 		if m.detail {
 			footer = m.pageStatus()

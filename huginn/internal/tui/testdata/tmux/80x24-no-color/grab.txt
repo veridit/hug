@@ -1,6 +1,7 @@
 HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank
+─── TASKS  [60] · 1–15 shown ───────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE    PRIORITY
   ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2 bug     critical
    000003   terminal compiler · Render compil… done            feature medium
@@ -17,8 +18,7 @@ filter: none · sort: rank
   !000013   terminal runtime · Chore task 13:… depends   ○ 2   chore   medium
   ·000014   terminal runtime · Spike task 14:… active    ◑ 1/2 spike   medium
    000015   terminal runtime · Docs task 15: … done      ● 2   docs    medium
-↓  000016   terminal docs · docs Feature task… dropped         feature low
-Rows 1–16 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+↓───────────────────────────────────────────────────────────────────────────────
 Moving 000001 · row 3 of 60 in the list (was 1) · nothing written until Enter
 
 j/k move · < > top/bottom · Enter drop · Esc cancel                   hug v0.0.0

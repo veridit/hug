@@ -1,7 +1,7 @@
 HUG · repo · board   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank
-> TODO [8]                                       DOING [15]                                     DEPENDS [7]
+─── TODO [8] ────────────────────────────────  ─── DOING [15] ──────────────────────────────  ─── DEPENDS [7] ─────────────────────────────
    ID       TITLE                  ✓     T P      ID       TITLE                  ✓     T P      ID       TITLE                  ✓     T P
 > ·000001   termin… · ⎘2 Feature … ○ 2   F C     ·000002   termin… · Bug task 02… ◑ 1/2 B C     ·000005   termin… · Docs task 0… ○ 2   D C
   ·000009   termin… · Spike task … ○ 2   S H     ·000006   termin… · Feature tas… ◑ 1/2 F H     !000013   termin… · Chore task … ○ 2   C M
@@ -32,7 +32,7 @@ filter: none · sort: rank
 
 
 
-
+─────────────────────────────────────────────  ─────────────────────────────────────────────  ─────────────────────────────────────────────
 Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low
 Columns 1–3 of 5 · h/l reveals other columns
 All tasks · : filters and commands

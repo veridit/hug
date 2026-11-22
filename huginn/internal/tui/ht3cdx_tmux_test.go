@@ -150,7 +150,7 @@ func keepView(t *testing.T, tmux func(...string) string, socket, dir, binary, vi
 		inView("': state dropped'", s)
 		// The focus goes to DROPPED, the first column with rows (crab
 		// 15:25Z); at 120 columns the board shows DEPENDS, DONE, DROPPED.
-		want := map[string]string{"overview": "NEXT UP · rank order  [0] · None with state:dropped", "board": "DONE [0] · None with state:dropped    > DROPPED [1]"}[view]
+		want := map[string]string{"overview": "NEXT UP · rank order  [0] · None with state:dropped", "board": "─── DONE [0] · None with state:dropped  ─── DROPPED [1]"}[view]
 		if !strings.Contains(s, want) {
 			t.Fatalf("%s: an empty section does not name the filter (want %q):\n%s", view, want, s)
 		}

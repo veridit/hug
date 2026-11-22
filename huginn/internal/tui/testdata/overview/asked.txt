@@ -2,23 +2,23 @@
 HUG · overview   7/7 tasks · ! 0 broken · ? 3 for you                           
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
 filter: none · sort: rank                                                       
-> ASKED · for you  [3] · all feature · all high                                 
+─── ASKED · for you  [3] · all feature · all high ──────────────────────────────
    cccccc   Warm cache under 50 ms            asked     ◑ 1/2   nautilus        
 >  aaaaaa   Status colors: rows and sections… asked     ◑ 1/2   nautilus        
    └─ asked: check 2 · look at the state/stage rows on your board …  since 09:50
    eeeeee   Tags listed per board             design    ◑ 1/2   unassigned      
-                                                                                
-  IN PROGRESS · assigned to  [0] · None                                         
-  WAITING  [2] · all feature · all high · all nautilus                          
+────────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────
+─── WAITING  [2] · all feature · all high · all nautilus ───────────────────────
    bbbbbb   Release, then hug setup in seid-lang                review    ◑ 1/2 
    dddddd   One set of variable names                           asked     ◑ 1/2 
-                                                                                
-  NEXT UP · rank order  [2] · all feature · all high                            
+────────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [2] · all feature · all high ─────────────────────────
    ffffff   Depend on a group or epic                           ready     ◑ 1/2 
    gggggg   Answer a question in place                          deferred  ◑ 1/2 
-                                                                                
-  RECENTLY DONE · last closed  [0] · None                                       
-  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None              
+────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────
+─── LINT · tasks needing attention  [0] · 0 broken · 0 advice · None ───────────
                                                                                 
                                                                                 
                                                                                 
@@ -33,23 +33,23 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · overview   7/7 tasks · ! 0 broken · ? 3 for you                                                                                       
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-> ASKED · for you  [3] · all feature · all high                                                                                             
+─── ASKED · for you  [3] · all feature · all high ──────────────────────────────────────────────────────────────────────────────────────────
    cccccc   Warm cache under 50 ms                                                                        asked     ◑ 1/2   nautilus        
 >  aaaaaa   Status colors: rows and sections share one subtle scheme                                      asked     ◑ 1/2   nautilus        
    └─ asked: check 2 · look at the state/stage rows on your board · nautilus                                                     since 09:50
    eeeeee   Tags listed per board                                                                         design    ◑ 1/2   unassigned      
-                                                                                                                                            
-  IN PROGRESS · assigned to  [0] · None                                                                                                     
-  WAITING  [2] · all feature · all high · all nautilus                                                                                      
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────────────────────────────────────────────────────────────────
+─── WAITING  [2] · all feature · all high · all nautilus ───────────────────────────────────────────────────────────────────────────────────
    bbbbbb   Release, then hug setup in seid-lang                                                                            review    ◑ 1/2 
    dddddd   One set of variable names                                                                                       asked     ◑ 1/2 
-                                                                                                                                            
-  NEXT UP · rank order  [2] · all feature · all high                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [2] · all feature · all high ─────────────────────────────────────────────────────────────────────────────────────
    ffffff   Depend on a group or epic                                                                                       ready     ◑ 1/2 
    gggggg   Answer a question in place                                                                                      deferred  ◑ 1/2 
-                                                                                                                                            
-  RECENTLY DONE · last closed  [0] · None                                                                                                   
-  LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                                                          
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [0] · 0 broken · 0 advice · None ───────────────────────────────────────────────────────────────────────
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

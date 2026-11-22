@@ -1,6 +1,7 @@
 HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: priority ↓ · type
+─── TASKS  [60] · 1–31 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE    PRIORITY
   ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2   feature critical
   ·000021   terminal compiler · compiler Feature task 21: make the terminal workflow observable            depends   ○ 2   feature critical
@@ -33,8 +34,7 @@ filter: none · sort: priority ↓ · type
   ·000050   terminal runtime · runtime Docs task 50: make the terminal workflow observable with a deliber… active    ◑ 1/2 docs    high
    000003   terminal compiler · compiler Render compiler-lang task detail without storage markers          done            feature medium
    000011   terminal compiler · compiler Feature task 11: make the terminal workflow observable            done      ● 2   feature medium
-↓  000031   terminal runtime · runtime Feature task 31: make the terminal workflow observable              done      ● 2   feature medium
-Rows 1–32 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 sort: priority ↓ · type
 
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request     hug v0.0.0

@@ -4,6 +4,28 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: each section sits between two rules, the frame of a task's
+  page (v68n82, Jørgen 2026-11-20: "a horizontal line that is split on
+  the section start ... and a horizontal line when the section ends").
+  - The top rule carries the section's title and count: `─── WAITING
+    [19] · 6–7 shown ───`. A rule ends the section. An empty section is
+    its titled rule alone (`· None`).
+  - `↑` and `↓` (rows hidden above, below) moved from the rows' gutter
+    to the left end of the rules, as on a task's page: `↑── WAITING …`,
+    `↓─────`.
+  - The focused section's rules are bright, the others dim. They do not
+    pulse: only the `>` does.
+  - In the overview the rules take the title line and the blank line
+    between sections, so it shows as many rows as before. The list is
+    one section, `TASKS [60] · 1–21 shown`; its last line, `Rows 1–21 of
+    60 · ! lint finding · …`, gives way to the end rule: the count is on
+    the title rule, and `! lint finding · ↳ epic` on the line under the
+    list, as in the overview. On the board a section is a
+    column: its titled rule over its header, its end rule under it, one
+    row fewer per column.
+
 ## v0.7.99 - 2026-11-21
 
 - hug tui: `H` and `L` step onto "no column" past either end (hktdgs,

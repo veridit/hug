@@ -1,12 +1,12 @@
 HUG · overview   0/0 tasks · ! 0 broken · * refreshing                                              
 view: overview  list  board  !lint               │ todo 0 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                           
-  ASKED · for you  [0] · None                                                                       
-  IN PROGRESS · assigned to  [0] · None                                                             
-  WAITING  [0] · None                                                                               
-  NEXT UP · rank order  [0] · None                                                                  
-  RECENTLY DONE · last closed  [0] · None                                                           
-> LINT · tasks needing attention  [0] · 0 broken · 0 advice · None                                  
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [0] · None ───────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [0] · 0 broken · 0 advice · None ───────────────────────────────
 reading the board: the first start builds the task cache: 1234 of 3630 files                        
                                                                                                     
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit …    

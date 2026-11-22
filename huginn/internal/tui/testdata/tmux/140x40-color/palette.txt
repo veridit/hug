@@ -1,6 +1,7 @@
 HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
 filter: none · sort: rank
+─── TASKS  [60] · 1–18 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE    PRIORITY
   ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2   feature critical
   ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                active    ◑ 1/2 bug     critical
@@ -20,8 +21,7 @@ filter: none · sort: rank
    000016   terminal docs · docs Feature task 16: make the terminal workflow observable                    dropped         feature low
   ·000017   terminal docs · docs Bug task 17: make the terminal workflow observable                        ready     ○ 2   bug     low
   ·000018   terminal docs · docs Chore task 18: make the terminal workflow observable                      active    ◑ 1/2 chore   low
-↓  000019   terminal compiler · compiler Spike task 19: make the terminal workflow observable              done      ● 2   spike   low
-Rows 1–19 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 : type
 GLOBAL

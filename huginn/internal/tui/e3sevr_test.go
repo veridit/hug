@@ -65,8 +65,11 @@ func TestGutterHoldsOnlyPointerAndArrows(t *testing.T) {
 		}
 		asked := strings.Split(section(screen, "ASKED"), "\n")
 		last := asked[len(asked)-1]
-		if !strings.HasPrefix(last, "↓") || strings.Contains(last, "?") || !strings.Contains(asked[0], "shown") {
-			t.Fatalf("at %d ASKED is not cut with ↓ on its last shown row, or it holds a ?: %q\n%s", w, last, screen)
+		// The ↓ is on the section's end rule, right under its last row
+		// (v68n82), never in the row's gutter.
+		end := strings.Split(screen[strings.Index(screen, strings.Join(asked, "\n"))+len(strings.Join(asked, "\n"))+1:], "\n")[0]
+		if !strings.HasPrefix(end, "↓──") || strings.HasPrefix(last, "↓") || strings.Contains(last, "?") || !strings.Contains(asked[0], "shown") {
+			t.Fatalf("at %d ASKED is not cut with ↓ on its end rule, or its last row holds a ? or ↓: %q, %q\n%s", w, last, end, screen)
 		}
 		golden = append(golden, "== overview at "+strconv.Itoa(w)+"x18, jhf", screen)
 	}

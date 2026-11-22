@@ -2,7 +2,8 @@
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group              
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
-   ID       TITLE                      ✓     PRIORITY  · all ready · all feature
+─── TASKS  [6] · all ready · all feature ───────────────────────────────────────
+   ID       TITLE                                                ✓     PRIORITY 
   ▾ no group  [2]                                                               
   ·LAUNCH   Launch                                               ○ 1            
   ·PLAIN0   Plain                                                ○ 1            
@@ -10,8 +11,7 @@ filter: none · sort: rank
   ▾ ops  [2]                                                                    
   ·OPS001   Ops one                                              ○ 1            
   ·OPS002   Ops two                                              ○ 1            
-Rows 1–4 of 6 · ! lint finding · ↳ epic · depends = a dependency is not done    
-                                                                                
+────────────────────────────────────────────────────────────────────────────────
                                                                                 
                                                                                 
                                                                                 
@@ -27,7 +27,8 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                          
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-   ID       TITLE                                                                                  ✓     PRIORITY  · all ready · all feature
+─── TASKS  [6] · all ready · all feature ───────────────────────────────────────────────────────────────────────────────────────────────────
+   ID       TITLE                                                                                                            ✓     PRIORITY 
   ▾ no group  [2]                                                                                                                           
   ·LAUNCH   Launch                                                                                                           ○ 1            
   ·PLAIN0   Plain                                                                                                            ○ 1            
@@ -35,8 +36,7 @@ filter: none · sort: rank
   ▾ ops  [2]                                                                                                                                
   ·OPS001   Ops one                                                                                                          ○ 1            
   ·OPS002   Ops two                                                                                                          ○ 1            
-Rows 1–4 of 6 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                
-                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
@@ -52,24 +52,24 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group          
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
-  ASKED · for you  [0] · None                                                   
-  IN PROGRESS · assigned to  [0] · None                                         
-  WAITING  [0] · None                                                           
-> NEXT UP · rank order  [5] · all ready · all feature                           
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [5] · all ready · all feature ────────────────────────
   ▾ later  [2]                                                                  
   ·POSTS0   ↳LAUNCH Launch posts                                 ○ 1            
   ·MAIL00   ↳LAUNCH Launch mail                                  ○ 1            
 > ▸ ops  [2]                                                                    
   ▾ no group  [1]                                                               
   ·PLAIN0   Plain                                                ○ 1            
-                                                                                
-  RECENTLY DONE · last closed  [0] · None                                       
-  LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–3 shown · all …
+────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────
+─── LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–2 shown · al…
   ▾ no group  [2]                                                               
   ·LAUNCH   Launch                                               ○ 1            
   ·PLAIN0   Plain                                                ○ 1            
   ▾ later  [2]                                                                  
-↓ ·POSTS0   ↳LAUNCH Launch posts                                 ○ 1            
+↓───────────────────────────────────────────────────────────────────────────────
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
@@ -77,24 +77,24 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                      
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-  ASKED · for you  [0] · None                                                                                                               
-  IN PROGRESS · assigned to  [0] · None                                                                                                     
-  WAITING  [0] · None                                                                                                                       
-> NEXT UP · rank order  [5] · all ready · all feature                                                                                       
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────────────────────────────────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [5] · all ready · all feature ────────────────────────────────────────────────────────────────────────────────────
   ▾ later  [2]                                                                                                                              
   ·POSTS0   ↳LAUNCH Launch posts                                                                                             ○ 1            
   ·MAIL00   ↳LAUNCH Launch mail                                                                                              ○ 1            
 > ▸ ops  [2]                                                                                                                                
   ▾ no group  [1]                                                                                                                           
   ·PLAIN0   Plain                                                                                                            ○ 1            
-                                                                                                                                            
-  RECENTLY DONE · last closed  [0] · None                                                                                                   
-  LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–3 shown · all ready · all feature                                          
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [6] · 0 broken · 12 advice · 1–2 shown · all ready · all feature ───────────────────────────────────────
   ▾ no group  [2]                                                                                                                           
   ·LAUNCH   Launch                                                                                                           ○ 1            
   ·PLAIN0   Plain                                                                                                            ○ 1            
   ▾ later  [2]                                                                                                                              
-↓ ·POSTS0   ↳LAUNCH Launch posts                                                                                             ○ 1            
+↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               
@@ -102,7 +102,7 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group             
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
-> TODO [6]                                 DOING [0] · None                     
+─── TODO [6] ──────────────────────────  ─── DOING [0] · None ──────────────────
    ID       TITLE            ✓     T P                                          
   ▾ no group  [2]                                                               
   ·LAUNCH   Launch           ○ 1   F                                            
@@ -117,7 +117,7 @@ filter: none · sort: rank
                                                                                 
                                                                                 
                                                                                 
-                                                                                
+───────────────────────────────────────  ───────────────────────────────────────
 T: F feature B bug C chore S spike D docs · P: C critical H high M medium L low 
 Columns 1–2 of 5 · h/l reveals other columns                                    
 All tasks · : filters and commands                                              
@@ -127,7 +127,7 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                         
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-> TODO [6]                                       DOING [0] · None                               DEPENDS [0] · None                          
+─── TODO [6] ────────────────────────────────  ─── DOING [0] · None ────────────────────────  ─── DEPENDS [0] · None ────────────────────── 
    ID       TITLE                  ✓     T P                                                                                                
   ▾ no group  [2]                                                                                                                           
   ·LAUNCH   Launch                 ○ 1   F                                                                                                  
@@ -142,7 +142,7 @@ filter: none · sort: rank
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-                                                                                                                                            
+─────────────────────────────────────────────  ─────────────────────────────────────────────  ───────────────────────────────────────────── 
 Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low                                                   
 Columns 1–3 of 5 · h/l reveals other columns                                                                                                
 All tasks · : filters and commands                                                                                                          
@@ -152,14 +152,14 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic               
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
-   ID       TITLE                      ✓     PRIORITY  · all ready · all feature
+─── TASKS  [6] · all ready · all feature ───────────────────────────────────────
+   ID       TITLE                                                ✓     PRIORITY 
 > ▸ ↳LAUNCH Launch  [3]                                                         
   ▾ no epic  [3]                                                                
   ·OPS001   ops Ops one                                          ○ 1            
   ·OPS002   ops Ops two                                          ○ 1            
   ·PLAIN0   Plain                                                ○ 1            
-Rows 1–3 of 6 · ! lint finding · ↳ epic · depends = a dependency is not done    
-                                                                                
+────────────────────────────────────────────────────────────────────────────────
                                                                                 
                                                                                 
                                                                                 
@@ -177,14 +177,14 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                           
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-   ID       TITLE                                                                                  ✓     PRIORITY  · all ready · all feature
+─── TASKS  [6] · all ready · all feature ───────────────────────────────────────────────────────────────────────────────────────────────────
+   ID       TITLE                                                                                                            ✓     PRIORITY 
 > ▸ ↳LAUNCH Launch  [3]                                                                                                                     
   ▾ no epic  [3]                                                                                                                            
   ·OPS001   ops Ops one                                                                                                      ○ 1            
   ·OPS002   ops Ops two                                                                                                      ○ 1            
   ·PLAIN0   Plain                                                                                                            ○ 1            
-Rows 1–3 of 6 · ! lint finding · ↳ epic · depends = a dependency is not done                                                                
-                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
@@ -202,24 +202,24 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic           
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
-  ASKED · for you  [0] · None                                                   
-  IN PROGRESS · assigned to  [0] · None                                         
-  WAITING  [0] · None                                                           
-> NEXT UP · rank order  [5] · all ready · all feature                           
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [5] · all ready · all feature ────────────────────────
 > ▸ ↳LAUNCH Launch  [2]                                                         
   ▾ no epic  [3]                                                                
   ·OPS001   ops Ops one                                          ○ 1            
   ·OPS002   ops Ops two                                          ○ 1            
   ·PLAIN0   Plain                                                ○ 1            
-                                                                                
-  RECENTLY DONE · last closed  [0] · None                                       
-  LINT · tasks needing attention  [6] · 0 broken · 12 advice · all ready · all …
+────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────
+─── LINT · tasks needing attention  [6] · 0 broken · 12 advice · all ready · al…
   ▸ ↳LAUNCH Launch  [3]                                                         
   ▾ no epic  [3]                                                                
   ·OPS001   ops Ops one                                          ○ 1            
   ·OPS002   ops Ops two                                          ○ 1            
   ·PLAIN0   Plain                                                ○ 1            
-                                                                                
+────────────────────────────────────────────────────────────────────────────────
 All tasks · : filters and commands · ! lint finding · ↳ epic                    
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
@@ -227,24 +227,24 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · overview   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                       
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-  ASKED · for you  [0] · None                                                                                                               
-  IN PROGRESS · assigned to  [0] · None                                                                                                     
-  WAITING  [0] · None                                                                                                                       
-> NEXT UP · rank order  [5] · all ready · all feature                                                                                       
+─── ASKED · for you  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── IN PROGRESS · assigned to  [0] · None ──────────────────────────────────────────────────────────────────────────────────────────────────
+─── WAITING  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── NEXT UP · rank order  [5] · all ready · all feature ────────────────────────────────────────────────────────────────────────────────────
 > ▸ ↳LAUNCH Launch  [2]                                                                                                                     
   ▾ no epic  [3]                                                                                                                            
   ·OPS001   ops Ops one                                                                                                      ○ 1            
   ·OPS002   ops Ops two                                                                                                      ○ 1            
   ·PLAIN0   Plain                                                                                                            ○ 1            
-                                                                                                                                            
-  RECENTLY DONE · last closed  [0] · None                                                                                                   
-  LINT · tasks needing attention  [6] · 0 broken · 12 advice · all ready · all feature                                                      
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+─── RECENTLY DONE · last closed  [0] · None ────────────────────────────────────────────────────────────────────────────────────────────────
+─── LINT · tasks needing attention  [6] · 0 broken · 12 advice · all ready · all feature ───────────────────────────────────────────────────
   ▸ ↳LAUNCH Launch  [3]                                                                                                                     
   ▾ no epic  [3]                                                                                                                            
   ·OPS001   ops Ops one                                                                                                      ○ 1            
   ·OPS002   ops Ops two                                                                                                      ○ 1            
   ·PLAIN0   Plain                                                                                                            ○ 1            
-                                                                                                                                            
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 All tasks · : filters and commands · ! lint finding · ↳ epic                                                                                
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               
@@ -252,7 +252,7 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic              
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
 filter: none · sort: rank                                                       
-> TODO [6]                                 DOING [0] · None                     
+─── TODO [6] ──────────────────────────  ─── DOING [0] · None ──────────────────
    ID       TITLE            ✓     T P                                          
 > ▸ ↳LAUNCH Launch  [3]                                                         
   ▾ no epic  [3]                                                                
@@ -267,7 +267,7 @@ filter: none · sort: rank
                                                                                 
                                                                                 
                                                                                 
-                                                                                
+───────────────────────────────────────  ───────────────────────────────────────
 T: F feature B bug C chore S spike D docs · P: C critical H high M medium L low 
 Columns 1–2 of 5 · h/l reveals other columns                                    
 All tasks · : filters and commands                                              
@@ -277,7 +277,7 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 HUG · board   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                          
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
 filter: none · sort: rank                                                                                                                   
-> TODO [6]                                       DOING [0] · None                               DEPENDS [0] · None                          
+─── TODO [6] ────────────────────────────────  ─── DOING [0] · None ────────────────────────  ─── DEPENDS [0] · None ────────────────────── 
    ID       TITLE                  ✓     T P                                                                                                
 > ▸ ↳LAUNCH Launch  [3]                                                                                                                     
   ▾ no epic  [3]                                                                                                                            
@@ -292,7 +292,7 @@ filter: none · sort: rank
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-                                                                                                                                            
+─────────────────────────────────────────────  ─────────────────────────────────────────────  ───────────────────────────────────────────── 
 Type: F feature B bug C chore S spike D docs · Priority: C critical H high M medium L low                                                   
 Columns 1–3 of 5 · h/l reveals other columns                                                                                                
 All tasks · : filters and commands                                                                                                          

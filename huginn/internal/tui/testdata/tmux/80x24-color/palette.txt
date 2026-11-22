@@ -1,6 +1,7 @@
 HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
 filter: none · sort: rank
+─── TASKS  [60] · 1–7 shown ────────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE    PRIORITY
   ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical
   ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2 bug     critical
@@ -9,8 +10,7 @@ filter: none · sort: rank
   ·000005   terminal runtime · Docs task 05: … depends   ○ 2   docs    critical
   ·000006   terminal runtime · Feature task 0… active    ◑ 1/2 feature high
    000007   terminal docs · docs Bug task 07:… done      ● 2   bug     high
-↓  000008   terminal docs · docs Chore task 0… dropped         chore   high
-Rows 1–8 of 60 · ! lint finding · ↳ epic · depends = a dependency is not done
+↓───────────────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────
 : type
 GLOBAL

@@ -35,6 +35,6 @@ g             group rows: flat, group, epic, tag (tag: first listed    N        
 
 
 
-All tasks · : filters and commands
+All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done
 
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close · quit                                                       hug v0.0.0

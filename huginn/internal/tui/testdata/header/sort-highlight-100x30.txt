@@ -26,6 +26,6 @@ now: rank (board order)
                                                                                                     
                                                                                                     
                                                                                                     
-\e[38;2;135;149;168mAll tasks · : filters and commands\e[0m                                                                  
+\e[38;2;135;149;168mAll tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done\e[0m   
                                                                                                     
 \e[1;38;2;0;191;255mj/k ↑↓\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mpick\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255mSpace\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168madd / flip\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255mEnter\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mapply\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255m⌫\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mremove last\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255mEsc\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mkeep order\e[0m\e[38;2;135;149;168m · \e[0m\e[1;38;2;0;191;255m?\e[0m\e[38;2;135;149;168m \e[0m\e[38;2;135;149;168mhelp\e[0m              
