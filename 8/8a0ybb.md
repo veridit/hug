@@ -4,7 +4,7 @@ title: "Detail view: short sections before long, folded long sections, scroll ma
 state: "doing"
 type: feature
 priority: "medium"
-assignee: ["8a0ybb-engineer"]
+assignee: ["ox"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzwh"
