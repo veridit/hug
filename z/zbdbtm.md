@@ -45,7 +45,7 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
 - [x] Tab and Shift+Tab stop on every file link in the detail (test)
 - [x] AGENTS.md and the setup template say: a document for one task is attached to that task; only decisions go into repo docs (test pins the wording)
 - [x] A file named in plain text inside a question, check or note (e.g. 'MOCK.md', 'tui-100x30.txt') is recognised when the task has that file, and works as a link: one key shows it in line under the line that names it, another opens it in the file frame, Esc returns (tmux test on p87ngv's board copy)
-- [ ] On zbdbtm itself (TRY IT HERE in Details), each of the four names opens: Space shows it in line, Enter in the file frame at the section, Esc returns (tmux test on a copy of this task)
+- [x] On zbdbtm itself (TRY IT HERE in Details), each of the four names opens: Space shows it in line, Enter in the file frame at the section, Esc returns (tmux test on a copy of this task)
 - [ ] Jørgen opens zbdbtm after release and tries the four links in TRY IT HERE
 
 ## Questions
@@ -76,6 +76,7 @@ check 2: TestEnterOnSectionLinkOpensAtHeading and TestTmuxTryItHereLinksOpen on 
 check 3: TestTabStopsOnEveryFileLink on 90b689f2: Tab and Shift+Tab each stop on all four TRY IT HERE links and never on notattached.txt or docs/NOPE.md#Nothing. Links are idStops (0ga6m0) in every scanned text, plus the open Questions record. Frame file:zbdbtm-1-tab-marks-link-100x30.ans. Mutants M1 (no stops), M2 (any plain name), M3 (any repo path) killed.
 check 4: AGENTS.md and agentSection (hug setup) both say: 'A document for one task is attached to that task (hug task attach ID FILE); only decisions go into repo docs.' Pinned by TestAgentsSayTaskDocumentsAreAttached (huginn/internal/cli/zbdbtm_test.go); mutant M14 killed.
 check 5: TestTmuxPlainFileNameInQuestionOpens on p87ngv's board copy (testdata/zbdbtm-board, files from hug/tasks 069928d0) on 90b689f2: in question 6, plain 'MOCK.md' is a Tab stop; Space shows '┌ MOCK.md · 6.0 KiB' and 12 rows in line, Space again closes; Enter opens 'MOCK.md · 6.0 KiB · 1 of 6'; Esc returns. Same for tui-100x30.txt. Frames file:zbdbtm-8-p87ngv-MOCK-in-line-100x30.ans, file:zbdbtm-9-p87ngv-MOCK-file-frame-100x30.ans. Mutants M11, M12, M13 killed.
+check 6: TestTmuxTryItHereLinksOpen on a copy of zbdbtm (hug/tasks 406a2cb2^, sample.txt and sample-notes.md attached) on 90b689f2: each of sample.txt, file:sample-notes.md, sample-notes.md#Section two and docs/DESIGN.md#Personal vs shared memories: Space shows it in line, Esc folds it, Enter opens it in the file frame with the section heading as its first line, Esc returns to the link. Frames file:zbdbtm-2-space-in-line-100x30.ans, file:zbdbtm-5-attachment-at-section-100x30.ans, file:zbdbtm-6-repo-file-in-line-100x30.ans.
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
