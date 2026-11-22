@@ -46,7 +46,7 @@ landed fbe3a41 on main 2026-11-19: capture: a long message is cut into parts, ne
 shipped in v0.7.75 (4dabf89)
 crab: landed on main (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75. The open check waits on the live machine after brew upgrade.
 check 3: capture_runs 8476 (2026-11-19T05:37:55Z, turn_end, v0.7.77) for session crab_1793783281662: no error, processed 992, 65 actions, skipped 'remaining messages deferred to next hook (budget)'. Before: 841 refusals 11-16..11-19 (8jcj3k), then truncation 8449/8453/8459/8460 (nmn6wf), then budget 8467/8468/8470 (a6xm8n).
-Reflection (open, 2026-11-19, crab): Each fix uncovered the next failure on the same live session: refusal (8jcj3k), then truncation (nmn6wf), then the hook budget (a6xm8n). Only checking the live capture_runs after each release found them; the unit tests could not.
+Reflection (dismissed, 2026-11-19, crab): Each fix uncovered the next failure on the same live session: refusal (8jcj3k), then truncation (nmn6wf), then the hook budget (a6xm8n). Only checking the live capture_runs after each release found them; the unit tests could not.
 ## History
 - 2026-11-19T02:30 todo -> doing/active (take)
 - 2026-11-19T02:36 doing/active -> doing/waiting (wait)
