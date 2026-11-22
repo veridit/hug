@@ -52,7 +52,7 @@ file:after-p87ngv-a-100x30.ans (3668 bytes, sha256:cd9adebd) 100x30 frames from 
 check 1: release.yml 44723208345 completed success; brew upgrade: 'hug v0.7.89', which hug -> ../Cellar/hug/0.7.89/bin/hug
 
 
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-20T12:02 todo -> todo/design (ask)
 - 2026-11-20T12:57 answered design, by crab, for crab (todo/design -> todo/ready):
