@@ -6,12 +6,26 @@ import (
 )
 
 // Canonical section order (jnaspy, Jørgen 2026-11-16): opening a task shows
-// what it is about first. Goal, Purpose, Principle, Relevant details, then
+// what it is about first. Goal, Purpose, Principle, Details, then
 // Depends on and Acceptance, then any other section in the order the file
 // has them, then Notes (appended, oldest first) and History last. The file
 // writer, hug task show, the TUI and MCP all use this order; hug upgrade
 // puts existing files in it without changing any section's text.
-var SectionOrder = []string{"Goal", "Purpose", "Principle", "Relevant details", "Depends on", "Acceptance"}
+var SectionOrder = []string{"Goal", "Purpose", "Principle", "Details", "Depends on", "Acceptance"}
+
+// OldDetails is the Details section's name before 8a0ybb (Jørgen
+// 2026-11-20: "Relevant details" is shortened to "Details"). A file with it
+// still reads: the section is Details wherever hug looks for it.
+const OldDetails = "Relevant details"
+
+// sectionName is the name hug knows a "## " heading by: Details for the
+// old "Relevant details", else the heading as written.
+func sectionName(heading string) string {
+	if strings.EqualFold(heading, OldDetails) {
+		return "Details"
+	}
+	return heading
+}
 
 // TailSections close a task, in this order, after every other section.
 var TailSections = []string{"Notes", "History"}
@@ -19,6 +33,7 @@ var TailSections = []string{"Notes", "History"}
 // sectionRank places a "## " heading: its index in SectionOrder, then other
 // sections, then TailSections.
 func sectionRank(name string) int {
+	name = sectionName(name)
 	for i, s := range SectionOrder {
 		if strings.EqualFold(s, name) {
 			return i
@@ -147,6 +162,19 @@ func (d *Document) Canonical() (data []byte, changed bool) {
 		}
 	}
 	return []byte(text), text != orig
+}
+
+// span is the lines of the "## name" section: Details is the old
+// "## Relevant details" in a file written before 8a0ybb.
+func (d *Document) span(name string) ([2]int, bool) {
+	if s, ok := d.sections[name]; ok {
+		return s, true
+	}
+	if name == "Details" {
+		s, ok := d.sections[OldDetails]
+		return s, ok
+	}
+	return [2]int{}, false
 }
 
 // SectionText is the body of the "## name" section, trimmed, or "".

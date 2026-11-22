@@ -1,0 +1,62 @@
+== opens
+HUG · overview › IN PROGRESS › 8a0ybb                                                               
+[doing]  [feature]  [medium]  group:root  assigned:ox · claude-opus-5-5 · main                      
+created 2026-11-19 · updated 2026-11-19 · detail-view-short-sections                                
+✓ crab answered question 2: Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled …
+  unread by bug                                                                                     
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Detail view: short sections before long, folded long sections, scroll markers                       
+────────────────────────────────────────────────────────────────────────────────────────────────────
+PURPOSE                                                                                             
+The value of a ticket should be on screen first; long reference text should not push it away.       
+                                                                                                    
+PRINCIPLE                                                                                           
+You land on your question, a file it names is a link on it, and the page reads short to long.       
+                                                                                                    
+GOAL                                                                                                
+A task's page reads Purpose, Principle, Goal, Acceptance, then short sections, then long ones       
+folded, with ↑/↓ when more is off screen.                                                           
+                                                                                                    
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
+> ☒ 1. Jørgen approves a mock of p87ngv's detail with FOR YOU first, the link, and the short-to-long
+       order (frames attached) (not relevant: the FOR YOU mock is replaced: Jørgen chose scroll-to- 
+       question, no FOR YOU block (request 1, 2026-11-20); new mock is check 10, crab, 2026-11-20)  
+  ☒ 2. Enter on a question's target opens that file in the file frame, or scrolls to that section or
+       check, in one key (test per target kind) (not relevant: taken over by p87ngv: marks point    
+       into files and sections, and you act on them where they are (Jørgen request 2, 2026-11-20),  
+       crab, 2026-11-20)                                                                            
+  ☒ 3. A task with asked_show no longer inlines the file above the question; the question shows its 
+       target as a link (golden) (not relevant: moved to qcq3tm (high), which ships ahead of the FOR
+↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · New · up · request · / find … 
+== at the end
+HUG · overview › IN PROGRESS › 8a0ybb                                                               
+[doing]  [feature]  [medium]  group:root  assigned:ox · claude-opus-5-5 · main                      
+created 2026-11-19 · updated 2026-11-19 · detail-view-short-sections                                
+✓ crab answered question 2: Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled …
+  unread by bug                                                                                     
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Detail view: short sections before long, folded long sections, scroll markers                       
+↑───────────────────────────────────────────────────────────────────────────────────────────────────
+2 and 3 are closed with your answer, and the order check is rewritten without FOR YOU (check 11).   
+2. jhf · 42 h ago · resolved                                                                        
+   And we're working on a much more intricate system of inline things where we use the new syntax   
+and everything. It's another ticket. So wouldn't that kind of replace this let's write something    
+special in the header, but we can jump down to the things and then you can interact with them where 
+you're at. So this is kind of moot at that point, being taken over by the other task?               
+   └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline  
+marks, so this task's jump check (2) and its land-on-the-question checks (5, 7, 10) are struck and  
+point there or to qcq3tm (the landing fix shipping now). What p87ngv does not cover stays here, now 
+medium priority: the section order (Purpose, Principle, Goal, Acceptance, short sections, then long 
+ones folded, check 11) and the ↑/↓ scroll markers (check 9). Title and Goal say just that. Check 12 
+is your look at frames of it.                                                                       
+                                                                                                    
+› DETAILS (5)                                                                                       
+                                                                                                    
+› QUESTIONS (3)                                                                                     
+                                                                                                    
+› NOTES (27)                                                                                        
+                                                                                                    
+› HISTORY (22)                                                                                      
+─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────────────────────────
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · New · up · request · / find … 

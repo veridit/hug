@@ -189,6 +189,11 @@ type model struct {
 	// among the questions that name no check (q2adr8); answerN is the
 	// number of the question the open answer box answers, 0 for none.
 	question, answerN int
+	// fold is the long section whose heading has the focus (focusFold),
+	// by place among folds; unfolded the long sections opened on this
+	// page, by key (8a0ybb). A new page opens with them all folded.
+	fold     int
+	unfolded map[string]bool
 	// glance: a file shown in the detail pane (scrxak); glanceHead is its
 	// "path · size · i of N" line, glanceBody its escaped text.
 	glance                 bool
@@ -1708,6 +1713,9 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.followLink()
 				case focusIDs:
 					m.followID()
+				case focusFold:
+					// Enter on a long section's heading opens it or folds it (8a0ybb).
+					m.toggleSection()
 				case focusFiles:
 					if m.markedPicture() {
 						// A picture opens in the system viewer, never the

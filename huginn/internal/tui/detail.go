@@ -606,6 +606,9 @@ func (m model) sections(t task.Task) []detailSection {
 			switch name {
 			case "goal":
 				name = "description"
+			case "relevant details":
+				// The name before 8a0ybb: the same section (task.OldDetails).
+				name = "details"
 			case "depends on":
 				name = "dependencies"
 			case "acceptance criteria":
@@ -634,13 +637,17 @@ const (
 	// the top of the details (0gztsy). One that names a check is focused
 	// on that check.
 	focusQuestion
+	// focusFold: a long section's heading, folded to one line until Enter
+	// opens it (8a0ybb).
+	focusFold
 )
 
 // startFocus is the focus a freshly opened task gets: the question it
 // asks you, on its check or its own block, whatever file it names
 // (qcq3tm); else its checks when it has any, otherwise the page.
 func (m *model) startFocus() {
-	m.acceptance, m.dependency, m.link, m.file, m.idAt = 0, 0, 0, 0, 0
+	m.acceptance, m.dependency, m.link, m.file, m.idAt, m.fold = 0, 0, 0, 0, 0, 0
+	m.unfolded = nil // a new page opens with its long sections folded (8a0ybb)
 	m.glance, m.glanceHead, m.glanceBody = false, "", ""
 	m.glanceReturn = nil
 	m.find = findState{} // a find is the page's: a new page starts without (4s3g5q)
@@ -740,7 +747,13 @@ func (m model) focusRing(t task.Task) []focusStop {
 	if len(m.filesOf(t)) > 0 {
 		ring = append(ring, focusStop{focusFiles, 0})
 	}
-	ids(stopSection, stopRequest, stopResolved, stopNotes, stopHistory)
+	ids(stopSection, stopRequest, stopResolved)
+	// The long sections, folded (8a0ybb): each heading a stop, and the
+	// ids in one only while it is open (idStops scans no folded text).
+	for k, f := range m.folds(t) {
+		ring = append(ring, focusStop{focusFold, k})
+		ids(f.stop)
+	}
 	return ring
 }
 
@@ -765,6 +778,10 @@ func (m model) ringAt(ring []focusStop) int {
 			}
 		case focusQuestion:
 			if s.index == m.question {
+				return k
+			}
+		case focusFold:
+			if s.index == m.fold {
 				return k
 			}
 		default:
@@ -806,6 +823,8 @@ func (m *model) cycleFocus(step int) {
 		m.idAt = s.index
 	case focusQuestion:
 		m.question = s.index
+	case focusFold:
+		m.fold = s.index
 	}
 }
 
@@ -852,12 +871,13 @@ func (m model) detailText(t task.Task) string {
 	markdown := func(where string, index int, s string) string {
 		return m.markStyled(m.markdown(s), markAt(where, index), true)
 	}
-	section(plain("Description"), markdown(stopText, 0, text("description")), "no description yet")
-	// What the task is about comes first (jnaspy): Purpose, Principle and
-	// Relevant details right under the goal, above the checks.
-	for i, name := range task.DescriptionSections {
-		section(plain(name), markdown(stopText, i+1, text(strings.ToLower(name))), "")
-	}
+	// The page reads short to long (8a0ybb, Jørgen 2026-11-20): why and
+	// how first, Purpose and Principle, then the Goal under its own name
+	// (there is no Description: it was the Goal), then the checks, the
+	// short sections, and last the long ones folded.
+	section(plain("Purpose"), markdown(stopText, 1, text("purpose")), "")
+	section(plain("Principle"), markdown(stopText, 2, text("principle")), "")
+	section(plain("Goal"), markdown(stopText, 0, text("description")), "no goal yet")
 	var checks []string
 	for i, a := range t.Acceptance {
 		q, mine := m.checkQuestion(t, i+1)
@@ -1011,16 +1031,164 @@ func (m model) detailText(t task.Task) string {
 		}
 		section(heading, strings.Join(reqs, "\n"), "")
 	}
-	// Questions (q2adr8): the record, each with its answer. One open and
-	// asked of you is at the top or under its check, with its a, so it
-	// is not drawn twice.
-	if qs := m.questionRecord(t); len(qs) > 0 {
-		section(plain("Questions"), strings.Join(qs, "\n"), "")
+	// The long sections last, each folded to its heading line until Enter
+	// opens it (8a0ybb): Details, the Questions record (q2adr8: each with
+	// its answer; one open and asked of you is at the top or under its
+	// check, not here), Notes, History.
+	for k, f := range m.folds(t) {
+		open := m.unfolded[f.key]
+		b.WriteString(m.foldLine(f, k, open) + "\n")
+		if !open {
+			b.WriteString("\n")
+			continue
+		}
+		b.WriteString(m.foldBody(t, f.key, sections, markAt) + "\n\n")
 	}
-	section(plain("Notes"), markdown(stopNotes, 0, text("notes")), "")
-	// History has no Links (links), so a task:ID there is marked too.
-	section(plain("History"), m.markStyled(m.markdown(text("history")), markAt(stopHistory, 0), false), "")
 	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
+}
+
+// foldBody is a long section's text as the page draws it open.
+func (m model) foldBody(t task.Task, key string, sections []detailSection, markAt func(string, int) string) string {
+	text := func(name string) string { return sectionText(sections, name) }
+	switch key {
+	case "details":
+		return m.markStyled(m.markdown(text("details")), markAt(stopDetails, 0), true)
+	case "questions":
+		return strings.Join(m.questionRecord(t), "\n")
+	case "notes":
+		// One entry a paragraph, as the heading counts them: written
+		// one a line, markdown would run them together.
+		return m.markStyled(m.markdown(entryParagraphs(text("notes"))), markAt(stopNotes, 0), true)
+	case "history":
+		// History has no Links (links), so a task:ID there is marked too.
+		return m.markStyled(m.markdown(text("history")), markAt(stopHistory, 0), false)
+	}
+	return ""
+}
+
+// foldText is a long section's text as drawn open, wrapped to the page,
+// for a find to look in (openFoldsHolding).
+func (m model) foldText(t task.Task, key string) string {
+	return wrap(m.foldBody(t, key, m.sections(t), func(string, int) string { return "" }), m.width)
+}
+
+// fold is one of a page's long sections (8a0ybb): Details, the Questions
+// record, Notes and History, always, whenever they have text; no other
+// section folds. key names it in m.unfolded, heading is what its line
+// says, count how many entries it holds, stop where its ids stand.
+type fold struct {
+	key, heading, stop string
+	count              int
+}
+
+// folds are t's long sections with text, in page order.
+func (m model) folds(t task.Task) []fold {
+	sections := m.sections(t)
+	text := func(name string) string { return strings.TrimSpace(sectionText(sections, name)) }
+	var out []fold
+	if s := text("details"); s != "" {
+		out = append(out, fold{key: "details", heading: "Details", stop: stopDetails, count: paragraphs(s)})
+	}
+	if n := m.recordCount(t); n > 0 {
+		out = append(out, fold{key: "questions", heading: "Questions", count: n})
+	}
+	if s := text("notes"); s != "" {
+		out = append(out, fold{key: "notes", heading: "Notes", stop: stopNotes, count: entries(s)})
+	}
+	if s := text("history"); s != "" {
+		out = append(out, fold{key: "history", heading: "History", stop: stopHistory, count: entries(s)})
+	}
+	return out
+}
+
+// paragraphs counts s's paragraphs: runs of lines between blank ones.
+func paragraphs(s string) int {
+	n, in := 0, false
+	for _, l := range strings.Split(s, "\n") {
+		if blank := strings.TrimSpace(l) == ""; !blank && !in {
+			n++
+			in = true
+		} else if blank {
+			in = false
+		}
+	}
+	return n
+}
+
+// entries counts a Notes or History text's entries: each line that does
+// not hang under the one before (an indented or blank line continues it).
+func entries(s string) int {
+	n := 0
+	for _, l := range strings.Split(s, "\n") {
+		if strings.TrimSpace(l) != "" && !strings.HasPrefix(l, " ") && !strings.HasPrefix(l, "\t") {
+			n++
+		}
+	}
+	return n
+}
+
+// entryParagraphs puts a blank line before each entry of a Notes text
+// (a line entries counts), outside fenced code, so each reads as its own
+// paragraph.
+func entryParagraphs(s string) string {
+	var out []string
+	fence := false
+	for i, l := range strings.Split(s, "\n") {
+		trimmed := strings.TrimSpace(l)
+		if strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "~~~") {
+			fence = !fence
+		}
+		if i > 0 && !fence && trimmed != "" && !strings.HasPrefix(l, " ") && !strings.HasPrefix(l, "\t") && out[len(out)-1] != "" {
+			out = append(out, "")
+		}
+		out = append(out, l)
+	}
+	return strings.Join(out, "\n")
+}
+
+// foldLine is a long section's heading with its count, NOTES (11): ›
+// before it folded, ⌄ open; focused, the ▸ every focused heading has and
+// what Enter does, dim.
+func (m model) foldLine(f fold, k int, open bool) string {
+	head := fmt.Sprintf("%s (%d)", strings.ToUpper(f.heading), f.count)
+	if m.detailPane == focusFold && m.fold == k {
+		hint := "Enter opens"
+		if open {
+			hint = "Enter folds"
+		}
+		return m.sectionHeading(head, hint, true)
+	}
+	sign := "› "
+	if open {
+		sign = "⌄ "
+	}
+	return m.styles.accent.Render(sign + head)
+}
+
+// toggleSection opens the focused long section, or folds it again; opened,
+// the page shows it from its heading (8a0ybb).
+func (m *model) toggleSection() {
+	t, ok := m.selected()
+	if !ok {
+		return
+	}
+	fs := m.folds(t)
+	if m.fold < 0 || m.fold >= len(fs) {
+		return
+	}
+	if m.unfolded == nil {
+		m.unfolded = map[string]bool{}
+	}
+	key := fs[m.fold].key
+	m.unfolded[key] = !m.unfolded[key]
+	m.syncDetail()
+	if s, _, ok := m.markedBlock(); ok {
+		if m.unfolded[key] {
+			m.viewport.SetYOffset(s)
+		} else {
+			m.showMarked()
+		}
+	}
 }
 
 // markRequests marks, in requestLines' lines, the id the focus is on in
@@ -1108,6 +1276,20 @@ func (m model) markedBlock() (int, int, bool) {
 	}
 	t, ok := m.selected()
 	if !ok {
+		return 0, 0, false
+	}
+	if m.detailPane == focusFold {
+		// The focused long section's heading line (8a0ybb).
+		fs := m.folds(t)
+		if m.fold < 0 || m.fold >= len(fs) {
+			return 0, 0, false
+		}
+		head := fmt.Sprintf("▸ %s (%d)", strings.ToUpper(fs[m.fold].heading), fs[m.fold].count)
+		for i, l := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
+			if strings.HasPrefix(l, head) {
+				return i, i, true
+			}
+		}
 		return 0, 0, false
 	}
 	// An id is marked ▸ where it stands, in the text (0ga6m0); in the
@@ -1217,6 +1399,22 @@ func (m model) checkStyle(checked bool) lipgloss.Style {
 		return m.styles.status["done"]
 	}
 	return m.styles.normal
+}
+
+// recordCount is how many questions the Questions record holds: every
+// one but those open and asked of the viewer (questionRecord).
+func (m model) recordCount(t task.Task) int {
+	mine := map[int]bool{}
+	for _, q := range m.askedAll(t) {
+		mine[q.n] = q.n > 0
+	}
+	n := 0
+	for _, q := range t.Questions {
+		if !mine[q.N] {
+			n++
+		}
+	}
+	return n
 }
 
 // questionRecord is the Questions section's lines: every question but

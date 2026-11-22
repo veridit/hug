@@ -9,7 +9,7 @@ import (
 
 // The Goal is one short sentence: where we aim (0pr03h, Jørgen 2026-11-19
 // 11:26Z: "AI tends to bloat, and that loses focus. We have to fight for
-// focus."). Everything else goes to Relevant details. hug task new and set
+// focus."). Everything else goes to Details. hug task new and set
 // refuse a Goal that breaks it; lint warns on one already on disk and never
 // rewrites it.
 

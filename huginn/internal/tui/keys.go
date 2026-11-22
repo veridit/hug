@@ -185,6 +185,8 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	case focusQuestion:
 		// a answers, named first: it is what the question is for (0gztsy).
 		hints = append(hints, hint("a", "answer"), hint("j/k", "scroll"))
+	case focusFold:
+		hints = append(hints, hint("Enter", "open/fold"), hint("j/k", "scroll"))
 	case focusFiles:
 		if m.markedPicture() {
 			hints = append(hints, hint("j/k", "file"), hint("Space", "show"), hint("Enter", "open in "+viewerName()))

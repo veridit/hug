@@ -8,7 +8,7 @@ created ########## · updated ########## · main
 ────────────────────────────────────────────────────────────────────────────────
 Main                                                                            
 ────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                     
+GOAL                                                                            
 Builds on task:LINKED and task:zzzzzz.                                          
                                                                                 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
@@ -21,13 +21,13 @@ LINKS
   ↳ LINKED Linked [todo]                                                        
   ↳ zzzzzz no task has this id                                                  
                                                                                 
-NOTES                                                                           
-waits on NOTED_ and zzzzzz first                                                
+› NOTES (1)                                                                     
                                                                                 
-HISTORY                                                                         
+› HISTORY (2)                                                                   
                                                                                 
-• ################ todo -> doing/active (take)                                  
-↓── Task 1 of 6 · 0% · next · previous · Esc back ──────────────────────────────
+                                                                                
+                                                                                
+─── Task 1 of 6 · 100% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
 == one task at 140
 HUG · list › state:!done › MAIN__                                                                                                           
@@ -39,7 +39,7 @@ created ########## · updated ########## · main
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Main                                                                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                                                                                 
+GOAL                                                                                                                                        
 Builds on task:LINKED and task:zzzzzz.                                                                                                      
                                                                                                                                             
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                                                                
@@ -52,13 +52,13 @@ LINKS
   ↳ LINKED Linked [todo]                                                                                                                    
   ↳ zzzzzz no task has this id                                                                                                              
                                                                                                                                             
-NOTES                                                                                                                                       
-waits on NOTED_ and zzzzzz first                                                                                                            
+› NOTES (1)                                                                                                                                 
                                                                                                                                             
-HISTORY                                                                                                                                     
+› HISTORY (2)                                                                                                                               
                                                                                                                                             
-• ################ todo -> doing/active (take)                                                                                              
-↓── Task 1 of 6 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                                            
+                                                                                                                                            
+─── Task 1 of 6 · 100% · next · previous · Esc back ────────────────────────────────────────────────────────────────────────────────────────
 j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find …                 
 == two stacked at 80
 HUG · list › state:!done › MAIN__ › DEP___                                      
@@ -67,7 +67,7 @@ created ########## · updated ########## · dep
 ────────────────────────────────────────────────────────────────────────────────
 Dep                                                                             
 ────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                     
+GOAL                                                                            
 g                                                                               
                                                                                 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
@@ -75,11 +75,11 @@ g
                                                                                 
 no dependencies                                                                 
                                                                                 
-HISTORY                                                                         
+› HISTORY (2)                                                                   
                                                                                 
-• ################ todo -> doing/active (take)                                  
-• ################ doing/active -> done (done); was doing_since: 2026-11-       
-17T17:50                                                                        
+                                                                                
+                                                                                
+                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -98,7 +98,7 @@ created ########## · updated ########## · dep
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Dep                                                                                                                                         
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                                                                                 
+GOAL                                                                                                                                        
 g                                                                                                                                           
                                                                                                                                             
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                                                                
@@ -106,10 +106,10 @@ g
                                                                                                                                             
 no dependencies                                                                                                                             
                                                                                                                                             
-HISTORY                                                                                                                                     
+› HISTORY (2)                                                                                                                               
                                                                                                                                             
-• ################ todo -> doing/active (take)                                                                                              
-• ################ doing/active -> done (done); was doing_since: ################                                                           
+                                                                                                                                            
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

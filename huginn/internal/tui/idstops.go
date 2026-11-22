@@ -34,7 +34,8 @@ const (
 	stopAnswer   = "answer"   // the unread answer in the header
 	stopTitle    = "title"    // the task's own title
 	stopQuestion = "question" // a question to you that names no check
-	stopText     = "text"     // Goal, Purpose, Principle, Relevant details: index 0..3
+	stopText     = "text"     // Goal, Purpose, Principle: index 0..2
+	stopDetails  = "details"  // Details, a long section: only while open (8a0ybb)
 	stopCheck    = "check"    // acceptance check index
 	stopAsked    = "asked"    // the question under check index
 	stopDeps     = "deps"
@@ -178,10 +179,11 @@ func (m model) idStops(t task.Task) []idStop {
 	}
 	sections := m.sections(t)
 	text := func(name string) string { return sectionText(sections, name) }
+	// Purpose, Principle, then the Goal, as the page reads (8a0ybb);
+	// Details is a long section, scanned below only while it is open.
+	add(stopText, 1, text("purpose"), true)
+	add(stopText, 2, text("principle"), true)
 	add(stopText, 0, text("description"), true)
-	for i, name := range task.DescriptionSections {
-		add(stopText, i+1, text(strings.ToLower(name)), true)
-	}
 	for i, a := range t.Acceptance {
 		add(stopCheck, i, checkText(a), true)
 		if cq, ok := m.checkQuestion(t, i+1); ok {
@@ -223,9 +225,19 @@ func (m model) idStops(t task.Task) []idStop {
 			add(stopResolved, i, r.Resolved.Text, true)
 		}
 	}
-	add(stopNotes, 0, text("notes"), true)
-	// History is not scanned for links (links), so task:ID there is a stop.
-	add(stopHistory, 0, text("history"), false)
+	// The long sections: their ids are stops only while they are open
+	// (8a0ybb); folded, the page shows none of their text.
+	open := func(key string) bool { return m.unfolded[key] }
+	if open("details") {
+		add(stopDetails, 0, text("details"), true)
+	}
+	if open("notes") {
+		add(stopNotes, 0, text("notes"), true)
+	}
+	if open("history") {
+		// History is not scanned for links (links), so task:ID there is a stop.
+		add(stopHistory, 0, text("history"), false)
+	}
 	return out
 }
 

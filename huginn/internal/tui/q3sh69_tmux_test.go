@@ -279,7 +279,9 @@ func pulseRepo(t *testing.T, dir, binary string) string {
 	for i, id := range []string{"aaaaaa", "tttttt", "zzzzzz"} {
 		body := "---\nid: \"" + id + "\"\ntitle: \"Task " + id + "\"\nstate: \"todo\"\ntype: \"feature\"\npriority: \"high\"\nlabels: []\nassignee: []\ncreated: \"2026-11-01\"\nupdated: \"2026-11-01\"\n---\n\n## Goal\ng\n\n## Purpose\np\n\n## Principle\nq\n\n## Acceptance\n- [ ] first\n- [ ] second\n"
 		if id == "tttttt" {
-			body += "\n## Notes\n" + notes.String()
+			// A long page to scroll: a section of its own, as Notes fold
+			// to one line (8a0ybb).
+			body += "\n## Log\n" + notes.String()
 		}
 		if err := os.WriteFile(filepath.Join(tasks, "0"+string(rune('a'+i))+"."+id+".t.md"), []byte(body), 0o644); err != nil {
 			t.Fatal(err)

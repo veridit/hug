@@ -152,7 +152,7 @@ func TestFilesOpenInEditorAndCommit(t *testing.T) {
 	m = openTask(t, m, "000001")
 	sel0, _ := m.selected()
 	// The whole page: FILES sits below the first screen once Purpose,
-	// Principle and Relevant details come first (jnaspy).
+	// Principle and Details come first (jnaspy).
 	text := ansi.Strip(m.detailText(sel0)) + "\n" + ansi.Strip(m.keyBar())
 	for _, want := range []string{"FILES (2)", "⎘ bench/README.md", "⎘ bench/results.tsv", "Edit files"} {
 		if !strings.Contains(text, want) {

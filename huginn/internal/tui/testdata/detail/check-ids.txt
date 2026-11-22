@@ -5,17 +5,14 @@ created ########## · updated ########## · mainta
 ────────────────────────────────────────────────────────────────────────────────
 Mainta                                                                          
 ────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                     
-Builds on GOALID.                                                               
-                                                                                
 PURPOSE                                                                         
 So PURPOS reads clearly.                                                        
                                                                                 
 PRINCIPLE                                                                       
 As PRINCI does.                                                                 
                                                                                 
-RELEVANT DETAILS                                                                
-Seen in DETAIL.                                                                 
+GOAL                                                                            
+Builds on GOALID.                                                               
                                                                                 
 ACCEPTANCE                                                                      
   ☐ 1. a                                                                        
@@ -30,12 +27,15 @@ REQUESTS
    Please look at REQUES too.                                                   
    └ crab: Done, as in RESOLV.                                                  
                                                                                 
-HISTORY                                                                         
+› DETAILS (1)                                                                   
                                                                                 
-• ################ todo -> doing/active (take)                                  
-• ################ doing/active -> doing/asked (ask)                            
-• ################ request 1 by jhf                                             
-• ################ resolved request 1 by crab                                   
+› HISTORY (4)                                                                   
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -66,17 +66,14 @@ created ########## · updated ########## · mainta
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Mainta                                                                                                                                      
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                                                                                 
-Builds on GOALID.                                                                                                                           
-                                                                                                                                            
 PURPOSE                                                                                                                                     
 So PURPOS reads clearly.                                                                                                                    
                                                                                                                                             
 PRINCIPLE                                                                                                                                   
 As PRINCI does.                                                                                                                             
                                                                                                                                             
-RELEVANT DETAILS                                                                                                                            
-Seen in DETAIL.                                                                                                                             
+GOAL                                                                                                                                        
+Builds on GOALID.                                                                                                                           
                                                                                                                                             
 ACCEPTANCE                                                                                                                                  
   ☐ 1. a                                                                                                                                    
@@ -91,12 +88,15 @@ REQUESTS
    Please look at REQUES too.                                                                                                               
    └ crab: Done, as in RESOLV.                                                                                                              
                                                                                                                                             
-HISTORY                                                                                                                                     
+› DETAILS (1)                                                                                                                               
                                                                                                                                             
-• ################ todo -> doing/active (take)                                                                                              
-• ################ doing/active -> doing/asked (ask)                                                                                        
-• ################ request 1 by jhf                                                                                                         
-• ################ resolved request 1 by crab                                                                                               
+› HISTORY (4)                                                                                                                               
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

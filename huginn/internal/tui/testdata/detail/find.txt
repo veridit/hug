@@ -4,21 +4,21 @@ created 2026-01-31 · updated 2026-01-31 · rows-board
 ────────────────────────────────────────────────────────────────────────────────
 Rows on the board                                                               
 ────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                     
-G                                                                               
-                                                                                
 PURPOSE                                                                         
 P                                                                               
                                                                                 
 PRINCIPLE                                                                       
 Q                                                                               
                                                                                 
+GOAL                                                                            
+G                                                                               
+                                                                                
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
 > ☐ 1. The row layout keeps its columns                                         
                                                                                 
 no dependencies                                                                 
                                                                                 
-NOTES                                                                           
+⌄ NOTES (3)                                                                     
 / row lay                                                                       
 ↓── • match 1 of 3 · next · N previous · Esc clear ─────────────────────────────
 type find · Enter keep · ↑↓ match · Esc clear · F1 help                         

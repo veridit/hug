@@ -277,6 +277,12 @@ func TestDependenciesAndAllSections(t *testing.T) {
 	}
 	m.refresh(a.Path)
 	m = press(m, "enter")
+	// History is a long section, folded to its count until Enter opens it
+	// (8a0ybb): Tab reaches its heading, the stop after the dependency.
+	if text := ansi.Strip(m.detailText(m.visible[m.cursor])); !strings.Contains(text, "› HISTORY (101)") || strings.Contains(text, "History line") {
+		t.Fatalf("History not folded to HISTORY (101):\n%s", text)
+	}
+	m = press(m, "tab", "tab", "enter")
 	text := m.detailText(m.visible[m.cursor])
 	for _, v := range []string{"[todo] open", "Full prose survives", "2026-11-10: created", "History line"} {
 		if !strings.Contains(text, v) {

@@ -73,7 +73,7 @@ func TestFocusedHeadingIsCalm(t *testing.T) {
 		t.Fatalf("focus pane %d, want the checks", m.detailPane)
 	}
 	focused := lineWith(t, m, "ACCEPTANCE")
-	other := lineWith(t, m, "DESCRIPTION")
+	other := lineWith(t, m, "GOAL")
 	if !strings.HasPrefix(ansi.Strip(focused), "▸ ACCEPTANCE") {
 		t.Fatalf("the focused heading lost its ▸: %q", ansi.Strip(focused))
 	}
@@ -91,7 +91,7 @@ func TestFocusedHeadingIsCalm(t *testing.T) {
 		return false
 	}
 	if bold(focused) != bold(other) {
-		t.Fatalf("ACCEPTANCE bold %v, DESCRIPTION bold %v: not the same weight\n%q\n%q", bold(focused), bold(other), focused, other)
+		t.Fatalf("ACCEPTANCE bold %v, GOAL bold %v: not the same weight\n%q\n%q", bold(focused), bold(other), focused, other)
 	}
 }
 

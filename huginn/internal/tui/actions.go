@@ -474,7 +474,9 @@ func (m *model) answer(text string) {
 	// Questions left (q2adr8): the > goes to the oldest still open, so
 	// the next a answers it.
 	if tk, ok := m.selected(); ok && err == nil && len(m.askedAll(tk)) > 0 {
+		open := m.unfolded // the same page: what the reader opened stays open (8a0ybb)
 		m.startFocus()
+		m.unfolded = open
 		m.syncDetail()
 	}
 }

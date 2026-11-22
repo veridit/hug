@@ -1,4 +1,10 @@
-DESCRIPTION
+PURPOSE
+Operators can see why the workflow exists.                                                        
+
+PRINCIPLE
+Show what the task is about before its checks.                                                    
+
+GOAL
 Deliver compiler-lang support with huginn and readable evidence.                                  
                                                                                                   
 • Preserve the public interface                                                                   
@@ -7,15 +13,6 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                                      
                                                                                                   
 fmt.Println("synthetic acceptance")                                                               
-
-PURPOSE
-Operators can see why the workflow exists.                                                        
-
-PRINCIPLE
-Show what the task is about before its checks.                                                    
-
-RELEVANT DETAILS
-Synthetic fixture: 60 tasks, two files on 000001.                                                 
 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
 > ☐ 1. First acceptance check
@@ -27,8 +24,8 @@ FILES (2)
   ⎘ bench/README.md  32 B
   ⎘ bench/results.tsv  12 B
 
-NOTES
-Evidence: integration tests are synthetic.                                                        
+› DETAILS (1)
 
-HISTORY
-2026-11-10: created by the terminal acceptance fixture.                                           
+› NOTES (1)
+
+› HISTORY (1)

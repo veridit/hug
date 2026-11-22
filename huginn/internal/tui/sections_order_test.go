@@ -9,9 +9,10 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
-// jnaspy check 1: the detail of a task with notes shows Goal (Description),
-// Purpose, Principle and Relevant details above Acceptance, and Notes then
-// History last. The whole detail text is the golden, beyond one screen.
+// jnaspy check 1, 8a0ybb check 11: the detail of a task with notes shows
+// Purpose, Principle and Goal above Acceptance (no DESCRIPTION heading), and
+// last Details, Notes and History folded to one line each. The whole
+// detail text is the golden, beyond one screen.
 func TestDetailSectionOrderGolden(t *testing.T) {
 	m := manyModel(t)
 	m.width, m.height = 100, 40
@@ -24,13 +25,13 @@ func TestDetailSectionOrderGolden(t *testing.T) {
 	text := ansi.Strip(m.detailText(sel))
 	var heads []string
 	for _, line := range strings.Split(text, "\n") {
-		for _, h := range []string{"DESCRIPTION", "PURPOSE", "PRINCIPLE", "RELEVANT DETAILS", "ACCEPTANCE", "DEPENDENCIES", "FILES (2)", "NOTES", "HISTORY"} {
-			if strings.HasPrefix(strings.TrimPrefix(line, "▸ "), h) {
+		for _, h := range []string{"DESCRIPTION", "PURPOSE", "PRINCIPLE", "GOAL", "RELEVANT DETAILS", "DETAILS", "ACCEPTANCE", "DEPENDENCIES", "FILES (2)", "NOTES", "HISTORY"} {
+			if strings.HasPrefix(strings.TrimPrefix(strings.TrimPrefix(line, "▸ "), "› "), h) {
 				heads = append(heads, h)
 			}
 		}
 	}
-	want := "DESCRIPTION|PURPOSE|PRINCIPLE|RELEVANT DETAILS|ACCEPTANCE|FILES (2)|NOTES|HISTORY"
+	want := "PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|FILES (2)|DETAILS|NOTES|HISTORY"
 	if got := strings.Join(heads, "|"); got != want {
 		t.Fatalf("sections %s, want %s\n%s", got, want, text)
 	}

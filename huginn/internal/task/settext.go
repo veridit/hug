@@ -14,7 +14,7 @@ func (d *Document) SetSection(name, text string) {
 		text = strings.ReplaceAll(text, "\n", d.newline)
 	}
 	lines := append([]string(nil), d.lines...)
-	if span, ok := d.sections[name]; ok {
+	if span, ok := d.span(name); ok {
 		end := span[1]
 		// Keep the trailing blank lines that separate it from the next heading.
 		for end > span[0]+1 && strings.TrimSpace(lines[end-1]) == "" {
@@ -84,7 +84,7 @@ func endSeparator(lines []string, at int, nl string) string {
 }
 
 // SectionFlags are the set flags that write a description section.
-var SectionFlags = map[string]string{"purpose": "Purpose", "principle": "Principle", "details": "Relevant details", "goal": "Goal"}
+var SectionFlags = map[string]string{"purpose": "Purpose", "principle": "Principle", "details": "Details", "goal": "Goal"}
 
 // SetText writes description sections and appends acceptance items in one
 // write: sections maps a section name to its new text.

@@ -50,15 +50,15 @@ Inline marks on a task's text; resolved dialogue moves to a history file
     exchange and the change made. Is that the right name and shape?                                 
     └ question 5 · crab · 1 min ago · answer                                                        
                                                                                                     
-DESCRIPTION                                                                                         
-The ticket stays the crisp working document. A person or agent marks a piece of a task's text with  
-a comment, question or request that sits inline in the text, visible as text, with a recognizable   
-sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text    
-to the clarified result and removing the mark. The dialogue that led there (the mark, replies, who  
-and when) is appended to a history file attached to the task, never kept in the ticket.             
-                                                                                                    
 PURPOSE                                                                                             
-↓── Task 1 of 1 · 10% · next · previous · Esc back ─────────────────────────────────────────────────
+Jørgen 2026-11-19 08:55Z: attach a request to a piece of the text in a mark mode, so the AI knows   
+exactly what it is about; questions today look like acceptance criteria. 09:05Z (answer 1 on this   
+task): threads inside the ticket would bloat it, and the conversation must not become the thing.    
+The ticket must stay crisp: clarity comes from boiling text down to its essence. The messy part     
+goes to a separate, suitably named history file in the task's files (provenance, chat history)      
+that grows by appending.                                                                            
+                                                                                                    
+↓── Task 1 of 1 · 17% · next · previous · Esc back ─────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
 == 100x30 at the end
 HUG · overview › ASKED › p87ngv                                                          ? 1 for you
@@ -69,25 +69,25 @@ created 2026-11-19 · updated 2026-11-19 · inline-marks-task-s
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Inline marks on a task's text; resolved dialogue moves to a history file                            
 ↑───────────────────────────────────────────────────────────────────────────────────────────────────
-│ chat history. Otherwise, the ticket will become bloated. The ticket has to stay crisp and clear.  
-│ So I think the questions and requests might need replacement, but they might appear in the text   
-│ so you can actually see them, just like text. We have to choose the sigils or how to recognize    
-│ them and act on them. And then, as they are resolved, the ticket is changed, and any history or   
-│ chat history is put into another document outside of the ticket. If we try to scram everything    
-│ into the ticket, I think it will be like if you make threads inside the ticket, it will become    
-│ bloated. And especially when things are complex, you will have longer and more intense chats,     
-│ which will bloat them even more. When what you need is clarity. And clarity is often to find the  
-│ succinctness in things and boil it down to its essence, not adding more text. So the text is the  
-│ tool to which we reach short clarity very often. That's why the messy part has to go out into a   
-│ different file. But I think the working document is the ticket itself. That's where the replies   
-│ come, it's picked up, and then the AI gets an instruction to lead with clarity in the ticket,     
-│ answer requests, do them, post any questions, and then put all of the prehistory provenance into  
-│ a suitably named asset that can grow with a penned                                                
+  ☐ 5. Jørgen approves a mock (task file before and after, CLI transcript, TUI frames at 100x30): a 
+       sentence marked with a request, the agent's change, the mark gone from the ticket and the    
+       exchange in the history file                                                                 
+  ☐ 6. Resolving a mark rewrites or keeps the marked text, removes the mark, and appends mark,      
+       replies, who and when to the history file; the ticket holds no dialogue afterwards (test)    
+  ☐ 7. Several questions in one call become separate inline marks, each answered on its own (test)  
+  ☐ 8. An open mark shows in the person's ASKED or the assignee's requests and is delivered as today
+       (gmzd87) (test)                                                                              
+  ☐ 9. The agent instructions say: lead with clarity in the ticket, act on or answer marks, post    
+       questions as marks, move the dialogue to the history file (fd0j4p wording)                   
+  ☐ 10. Jørgen marks a sentence in hug tui, the assignee resolves it, and the ticket reads clearer  
+        without a DM                                                                                
                                                                                                     
-• 2026-11-19T10:05 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)         
-• 2026-11-19T10:05 answer 1 acknowledged by crab                                                    
-• 2026-11-19T10:05 crab read the answer: hug task set p87ngv                                        
-• 2026-11-19T10:05 asked question 4 of jhf, 4 open (todo/ready -> todo/design)                      
-• 2026-11-19T10:05 asked question 5 of jhf, 5 open (todo/design -> todo/design)                     
+no dependencies                                                                                     
+                                                                                                    
+› DETAILS (1)                                                                                       
+                                                                                                    
+› NOTES (1)                                                                                         
+                                                                                                    
+› HISTORY (9)                                                                                       
 ─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    

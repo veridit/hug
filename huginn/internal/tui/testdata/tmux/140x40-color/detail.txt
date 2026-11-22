@@ -6,7 +6,13 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Feature task 01: make the terminal workflow observable with a deliberately long title that must truncate cleanly at the right edge 界 🤖
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION
+PURPOSE
+Operators can see why the workflow exists.
+
+PRINCIPLE
+Show what the task is about before its checks.
+
+GOAL
 Deliver compiler-lang support with huginn and readable evidence.
 
 • Preserve the public interface
@@ -15,15 +21,6 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification
 
 fmt.Println("synthetic acceptance")
-
-PURPOSE
-Operators can see why the workflow exists.
-
-PRINCIPLE
-Show what the task is about before its checks.
-
-RELEVANT DETAILS
-Synthetic fixture: 60 tasks, two files on 000001.
 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out
 > ☐ 1. First acceptance check
@@ -35,6 +32,9 @@ FILES (2)
   ⎘ bench/README.md  32 B
   ⎘ bench/results.tsv  12 B
 
-NOTES
+› DETAILS (1)
+
+› NOTES (1)
+
 ↓── Task 1 of 15 · 0% · next · previous · Esc back ─────────────────────────────────────────────────────────────────────────────────────────
 j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find …

@@ -47,8 +47,8 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 		parent = src.ID
 	}
 	// The Goal is the item, one sentence (0pr03h); where it came from goes
-	// to Relevant details, after the source's own.
-	details := strings.TrimSpace(d.sectionText("Relevant details") + "\n\nPromoted from item " + fmt.Sprint(n) + " of task:" + src.ID + ".")
+	// to Details, after the source's own.
+	details := strings.TrimSpace(d.sectionText("Details") + "\n\nPromoted from item " + fmt.Sprint(n) + " of task:" + src.ID + ".")
 	r, e := s.New(NewOptions{
 		Title:      title,
 		Goal:       text,
@@ -92,7 +92,7 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 
 // sectionText is the body of the "## name" section, trimmed, or "".
 func (d *Document) sectionText(name string) string {
-	span, ok := d.sections[name]
+	span, ok := d.span(name)
 	if !ok {
 		return ""
 	}

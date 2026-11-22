@@ -39,6 +39,12 @@ func TestWithdrawnQuestionDrawnDim(t *testing.T) {
 	if open := task.OpenQuestions(tk); len(open) != 1 || open[0].N != 2 {
 		t.Fatalf("open questions %+v, want question 2 alone", open)
 	}
+	// The withdrawn question is in the Questions record, a long section:
+	// opened here (8a0ybb), folded it is QUESTIONS (1).
+	if folded := ansi.Strip(m.detailText(tk)); !strings.Contains(folded, "› QUESTIONS (1)") || strings.Contains(folded, "withdrawn 2026-11-17") {
+		t.Fatalf("the record is not folded to QUESTIONS (1):\n%s", folded)
+	}
+	m = m.withUnfolded("questions")
 	color := m.detailText(tk)
 	page := ansi.Strip(color)
 	if !strings.Contains(page, "1. nautilus → you · 3 min ago · withdrawn 2026-11-17 09:50") {

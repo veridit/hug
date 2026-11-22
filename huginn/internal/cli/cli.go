@@ -597,7 +597,7 @@ func taskJSON(t task.Task, root string, ts []task.Task) Reply {
 	}
 	out["children"] = children
 	out["notes"] = ""
-	// Notes and Purpose, Principle and Relevant details (jnaspy) come from
+	// Notes and Purpose, Principle and Details (jnaspy) come from
 	// the parse that made t: ls fills them from the cache in one query
 	// (FillTexts), as ls at 10,000 tasks read and parsed every file again
 	// for them (44w1ev). A Task without them (one command about one task,
@@ -2318,9 +2318,6 @@ func childIndexFor(ts []task.Task) map[string][]task.Task {
 // descriptionKey is the JSON key of a description section: purpose,
 // principle, details (jnaspy; "details" as in hug task new --details).
 func descriptionKey(section string) string {
-	if section == "Relevant details" {
-		return "details"
-	}
 	return strings.ToLower(section)
 }
 

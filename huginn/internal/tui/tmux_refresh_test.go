@@ -118,8 +118,16 @@ func TestTmuxAutoRefresh(t *testing.T) {
 	keys("j", "Enter")
 	wait("HUG · repo · list ›", 5*time.Second) // the breadcrumb band (e3sevr)
 	run(binary, "task", "note", ids["Beta"], "note from another terminal")
-	took = wait("note from another terminal", 3*time.Second)
+	// The Notes are a long section, folded to their count (8a0ybb): the
+	// new one shows as NOTES (1), and Enter on that heading shows it.
+	took = wait("› NOTES (1)", 3*time.Second)
 	t.Logf("detail: shown %v after hug task note returned, no key pressed", took)
+	for n := 0; n < 8 && !strings.Contains(capture(), "▸ NOTES (1)"); n++ {
+		keys("BTab")
+		time.Sleep(100 * time.Millisecond)
+	}
+	keys("Enter")
+	wait("note from another terminal", 3*time.Second)
 	if !strings.Contains(capture(), "Beta") {
 		t.Fatal("the open detail is no longer Beta\n" + capture())
 	}

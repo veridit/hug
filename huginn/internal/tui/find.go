@@ -52,6 +52,9 @@ func (m *model) openFind() {
 func (m *model) findTyped() {
 	m.find.text = m.input.Value()
 	m.find.at = 0
+	if !m.glance {
+		m.openFoldsHolding(m.find.text)
+	}
 	m.refind()
 	start := m.viewport.YOffset
 	if start == 0 {
@@ -248,6 +251,44 @@ func (m *model) stepHit(step int) {
 	m.viewport.SetContent(m.tintHits(m.pageText()))
 	m.showHit()
 	m.message = m.findSays()
+}
+
+// openFoldsHolding opens each folded long section of the page whose text
+// holds text, as a find matches it (8a0ybb): a find reaches all the page,
+// a folded section too, and shows it open. A section opened stays open.
+func (m *model) openFoldsHolding(text string) {
+	t, ok := m.selected()
+	if !ok || strings.TrimSpace(text) == "" {
+		return
+	}
+	changed := false
+	for _, f := range m.folds(t) {
+		if m.unfolded[f.key] {
+			continue
+		}
+		open := m.withUnfolded(f.key)
+		if len(findIn(open.foldText(t, f.key), text)) > 0 {
+			if m.unfolded == nil {
+				m.unfolded = map[string]bool{}
+			}
+			m.unfolded[f.key], changed = true, true
+		}
+	}
+	if changed {
+		y := m.viewport.YOffset
+		m.syncDetail()
+		m.viewport.SetYOffset(y)
+	}
+}
+
+// withUnfolded is m with the long section key open, the rest as they are.
+func (m model) withUnfolded(key string) model {
+	open := map[string]bool{key: true}
+	for k, v := range m.unfolded {
+		open[k] = v
+	}
+	m.unfolded = open
+	return m
 }
 
 // findSays is the footer of a find: 'match K of M · n next · N previous ·

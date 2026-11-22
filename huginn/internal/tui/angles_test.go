@@ -21,6 +21,11 @@ func TestDetailShowsAngleBracketsLiterally(t *testing.T) {
 	m.refresh(alpha.Path)
 	m = selectRow(t, m, alpha.ID)
 	m = press(m, "enter")
+	// Notes fold (8a0ybb): Shift-Tab to the NOTES heading, Enter opens it.
+	for n := 0; n < 20 && !strings.Contains(detailPlain(m), "▸ NOTES"); n++ {
+		m = press(m, "shift+tab")
+	}
+	m = press(m, "enter")
 	view := ansi.Strip(m.View())
 	if !m.detail || !strings.Contains(view, note) {
 		t.Fatalf("note not shown as written: want %q in\n%s", note, view)

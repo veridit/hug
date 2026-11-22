@@ -8,7 +8,7 @@ created ########## · updated ########## · main
 ────────────────────────────────────────────────────────────────────────────────
 Main                                                                            
 ────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                     
+GOAL                                                                            
 Builds on task:LINKED and task:zzzzzz.                                          
                                                                                 
 ACCEPTANCE                                                                      
@@ -21,13 +21,13 @@ LINKS
   ↳ LINKED Linked [todo]                                                        
   ↳ zzzzzz no task has this id                                                  
                                                                                 
-NOTES                                                                           
-waits on NOTED_ and zzzzzz first                                                
+› NOTES (1)                                                                     
                                                                                 
-HISTORY                                                                         
+› HISTORY (2)                                                                   
                                                                                 
-• ################ todo -> doing/active (take)                                  
-• ################ doing/active -> doing/waiting (wait)                         
+                                                                                
+                                                                                
+                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -49,7 +49,7 @@ created ########## · updated ########## · main
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Main                                                                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                                                                                 
+GOAL                                                                                                                                        
 Builds on task:LINKED and task:zzzzzz.                                                                                                      
                                                                                                                                             
 ACCEPTANCE                                                                                                                                  
@@ -62,13 +62,13 @@ LINKS
   ↳ LINKED Linked [todo]                                                                                                                    
   ↳ zzzzzz no task has this id                                                                                                              
                                                                                                                                             
-NOTES                                                                                                                                       
-waits on NOTED_ and zzzzzz first                                                                                                            
+› NOTES (1)                                                                                                                                 
                                                                                                                                             
-HISTORY                                                                                                                                     
+› HISTORY (2)                                                                                                                               
                                                                                                                                             
-• ################ todo -> doing/active (take)                                                                                              
-• ################ doing/active -> doing/waiting (wait)                                                                                     
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

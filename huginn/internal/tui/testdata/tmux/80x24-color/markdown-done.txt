@@ -4,7 +4,7 @@ created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task
 ────────────────────────────────────────────────────────────────────────────────
 ▸ Render compiler-lang task detail without storage markers
 ────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION
+GOAL
 Provide compiler-lang support with huginn and clear sections.
 
 • Render Markdown, not source

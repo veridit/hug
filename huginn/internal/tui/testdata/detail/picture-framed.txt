@@ -15,7 +15,13 @@ Bug task 02: make the terminal workflow observable
     → colours-overview.ans · Enter shows                                        
     └ question 2 · alice · 10 min ago · answer                                  
                                                                                 
-DESCRIPTION                                                                     
+PURPOSE                                                                         
+Synthetic.                                                                      
+                                                                                
+PRINCIPLE                                                                       
+Synthetic.                                                                      
+                                                                                
+GOAL                                                                            
 Deliver compiler-lang support with huginn and readable evidence.                
                                                                                 
 • Preserve the public interface                                                 
@@ -24,12 +30,6 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                    
                                                                                 
 fmt.Println("synthetic acceptance")                                             
-                                                                                
-PURPOSE                                                                         
-Synthetic.                                                                      
-                                                                                
-PRINCIPLE                                                                       
-Synthetic.                                                                      
                                                                                 
 ACCEPTANCE                                                                      
   ☑ 1. First acceptance check                                                   
@@ -42,18 +42,18 @@ FILES (3)
   ⎘ rows.ans  102 B                                                             
   ⎘ shot.png  67 B                                                              
                                                                                 
-NOTES                                                                           
-Evidence: integration tests are synthetic.                                      
+› NOTES (4)                                                                     
                                                                                 
-file:rows.ans (102 bytes, sha256:9c947110) file:shot.png (67 bytes,             
-sha256:d0afbaf7) file:colours-overview.ans (2319 bytes, sha256:8668f233)        
+› HISTORY (3)                                                                   
                                                                                 
-HISTORY                                                                         
-2026-11-10: created by the terminal acceptance fixture.                         
                                                                                 
-• 2026-11-17T14:42 doing -> doing/asked (ask)                                   
-• 2026-11-17T14:42 asked question 2 of jhf, 2 open (doing/asked ->              
-doing/asked)                                                                    
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -75,7 +75,13 @@ Bug task 02: make the terminal workflow observable
     → colours-overview.ans · Enter shows                                                                                                    
     └ question 2 · alice · 10 min ago · answer                                                                                              
                                                                                                                                             
-DESCRIPTION                                                                                                                                 
+PURPOSE                                                                                                                                     
+Synthetic.                                                                                                                                  
+                                                                                                                                            
+PRINCIPLE                                                                                                                                   
+Synthetic.                                                                                                                                  
+                                                                                                                                            
+GOAL                                                                                                                                        
 Deliver compiler-lang support with huginn and readable evidence.                                                                            
                                                                                                                                             
 • Preserve the public interface                                                                                                             
@@ -84,12 +90,6 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                                                                                
                                                                                                                                             
 fmt.Println("synthetic acceptance")                                                                                                         
-                                                                                                                                            
-PURPOSE                                                                                                                                     
-Synthetic.                                                                                                                                  
-                                                                                                                                            
-PRINCIPLE                                                                                                                                   
-Synthetic.                                                                                                                                  
                                                                                                                                             
 ACCEPTANCE                                                                                                                                  
   ☑ 1. First acceptance check                                                                                                               
@@ -102,17 +102,17 @@ FILES (3)
   ⎘ rows.ans  102 B                                                                                                                         
   ⎘ shot.png  67 B                                                                                                                          
                                                                                                                                             
-NOTES                                                                                                                                       
-Evidence: integration tests are synthetic.                                                                                                  
+› NOTES (4)                                                                                                                                 
                                                                                                                                             
-file:rows.ans (102 bytes, sha256:9c947110) file:shot.png (67 bytes, sha256:d0afbaf7) file:colours-overview.ans (2319 bytes,                 
-sha256:8668f233)                                                                                                                            
+› HISTORY (3)                                                                                                                               
                                                                                                                                             
-HISTORY                                                                                                                                     
-2026-11-10: created by the terminal acceptance fixture.                                                                                     
                                                                                                                                             
-• 2026-11-17T14:42 doing -> doing/asked (ask)                                                                                               
-• 2026-11-17T14:42 asked question 2 of jhf, 2 open (doing/asked -> doing/asked)                                                             
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
+                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

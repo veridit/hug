@@ -14,7 +14,7 @@ import (
 // textBoard is qtj177's case (0ga6m0, Jørgen 11:45Z): Mainta is asked of
 // jhf about check 2, "Jørgen opens Checkd and says it reads clearly", and
 // the question names Askedq and Checkd again. Its Goal, Purpose,
-// Principle and Relevant details each name a task; a request names
+// Principle and Details each name a task; a request names
 // Reques and its account Resolv. Answrd carries carol's unread answer to
 // jhf naming Answer. Every title is six letters, as wide as an id.
 func textBoard(t *testing.T) (model, map[string]string) {
@@ -123,17 +123,18 @@ func TestTabReachesIDInCheckAndQuestion(t *testing.T) {
 	goldenFile(t, "testdata/detail/check-ids.txt", strings.Join(golden, "\n")+"\n")
 }
 
-// 0ga6m0 check 2: ids in Goal, Purpose, Principle, Relevant details, the
-// checks, the question under a check, a request and its account are
-// stops, in reading order; the ring has them where they stand (the
-// description's after the page, the checks' after the checks), and Tab
-// marks each where it stands. An unread answer's id is a stop in the
-// header, before the page.
+// 0ga6m0 check 2: ids in Purpose, Principle, Goal, the checks, the
+// question under a check, a request and its account are stops, in
+// reading order; the ring has them where they stand (the description's
+// after the page, the checks' after the checks), and Tab marks each where
+// it stands. An unread answer's id is a stop in the header, before the
+// page. Details is a long section, folded (8a0ybb): its id is a stop, after
+// the DETAILS heading, only once Enter opens it.
 func TestIDsInTextsAreStopsInReadingOrder(t *testing.T) {
 	m, ids := textBoard(t)
 	m = openTask(t, m, ids["Mainta"])
 	tk, _ := m.selected()
-	want := "text:Goalid text:Purpos text:Princi text:Detail check:Checkd asked:Askedq asked:Checkd request:Reques resolved:Resolv"
+	want := "text:Purpos text:Princi text:Goalid check:Checkd asked:Askedq asked:Checkd request:Reques resolved:Resolv"
 	if got := stopsOf(m, tk, ids); got != want {
 		t.Fatalf("stops\n %s\nwant\n %s", got, want)
 	}
@@ -141,13 +142,18 @@ func TestIDsInTextsAreStopsInReadingOrder(t *testing.T) {
 	for _, s := range m.focusRing(tk) {
 		ring = append(ring, strconv.Itoa(s.pane))
 	}
-	p, a, i := strconv.Itoa(focusPage), strconv.Itoa(focusAcceptance), strconv.Itoa(focusIDs)
-	if got, want := strings.Join(ring, " "), strings.Join([]string{p, i, i, i, i, a, i, i, i, i, i}, " "); got != want {
-		t.Fatalf("ring %s, want %s (page, 4 description ids, checks, 3 check ids, 2 request ids)", got, want)
+	p, a, i, f := strconv.Itoa(focusPage), strconv.Itoa(focusAcceptance), strconv.Itoa(focusIDs), strconv.Itoa(focusFold)
+	if got, want := strings.Join(ring, " "), strings.Join([]string{p, i, i, i, a, i, i, i, i, i, f, f}, " "); got != want {
+		t.Fatalf("ring %s, want %s (page, 3 description ids, checks, 3 check ids, 2 request ids, DETAILS and HISTORY folded)", got, want)
+	}
+	// Details opened, its id is a stop after its heading.
+	open := m.withUnfolded("details")
+	if got := stopsOf(open, tk, ids); got != want+" details:Detail" {
+		t.Fatalf("stops with Details open\n %s\nwant\n %s details:Detail", got, want)
 	}
 	// From the page, Tab marks each where it stands.
 	m.detailPane = focusPage
-	marks := []string{"Builds on ▸" + ids["Goalid"], "So ▸" + ids["Purpos"], "As ▸" + ids["Princi"], "Seen in ▸" + ids["Detail"],
+	marks := []string{"So ▸" + ids["Purpos"], "As ▸" + ids["Princi"], "Builds on ▸" + ids["Goalid"],
 		"", "opens ▸" + ids["Checkd"], "open ▸" + ids["Askedq"], "(or ▸" + ids["Checkd"], "at ▸" + ids["Reques"], "in ▸" + ids["Resolv"]}
 	for k, mark := range marks {
 		m = press(m, "tab")
@@ -168,11 +174,15 @@ func TestIDsInTextsAreStopsInReadingOrder(t *testing.T) {
 		t.Fatalf("Enter on the account's id opened %s", tk.ID)
 	}
 	// The answer jhf has not read names Answer: a stop in the header, and
-	// again in History, where the answer block stands too.
+	// again in History, where the answer block stands too, once History
+	// is open (8a0ybb: folded, it shows none of its text).
 	m = openTask(t, press(m, "esc", "esc"), ids["Answrd"])
 	tk, _ = m.selected()
-	if got := stopsOf(m, tk, ids); got != "answer:Answer history:Answer" {
-		t.Fatalf("Answrd stops %q, want answer:Answer history:Answer", got)
+	if got := stopsOf(m, tk, ids); got != "answer:Answer" {
+		t.Fatalf("Answrd stops %q, want answer:Answer", got)
+	}
+	if got := stopsOf(m.withUnfolded("history"), tk, ids); got != "answer:Answer history:Answer" {
+		t.Fatalf("Answrd stops with History open %q, want answer:Answer history:Answer", got)
 	}
 	m = press(m, "shift+tab")
 	m = press(m, "shift+tab")
@@ -200,7 +210,7 @@ func TestIDStopsOncePerPlace(t *testing.T) {
 	}
 	m.refresh("")
 	tk = mustTask(t, m, ids["Mainta"])
-	if got := stopsOf(m, tk, ids); !strings.HasSuffix(got, "resolved:Resolv notes:Goalid") {
+	if got := stopsOf(m.withUnfolded("notes"), tk, ids); !strings.HasSuffix(got, "resolved:Resolv notes:Goalid") {
 		t.Fatalf("an id twice in the Notes: stops %s, want one notes:Goalid last", got)
 	}
 }

@@ -8,14 +8,14 @@ Bravo task
 > ? pick one?                                                                                       
     └ crab · 3 min ago · answer                                                                     
                                                                                                     
-DESCRIPTION                                                                                         
-g                                                                                                   
-                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
+                                                                                                    
+GOAL                                                                                                
+g                                                                                                   
                                                                                                     
 ACCEPTANCE                                                                                          
   ☐ 1. one                                                                                          
@@ -23,9 +23,9 @@ ACCEPTANCE
                                                                                                     
 no dependencies                                                                                     
                                                                                                     
-HISTORY                                                                                             
+› HISTORY (1)                                                                                       
                                                                                                     
-• 2026-11-20T09:50 todo -> todo/design (ask)                                                        
+                                                                                                    
                                                                                                     
 ─── Task 2 of 5 · 100% · next · previous · Esc back ────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
@@ -36,14 +36,14 @@ created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Bravo task                                                                                          
 ────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                                         
-g                                                                                                   
-                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
+                                                                                                    
+GOAL                                                                                                
+g                                                                                                   
                                                                                                     
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
 > ☐ 1. one                                                                                          
@@ -67,14 +67,14 @@ created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Bravo task                                                                                          
 ────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                                         
-g                                                                                                   
-                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
+                                                                                                    
+GOAL                                                                                                
+g                                                                                                   
                                                                                                     
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
 > ☐ 1. one                                                                                          

@@ -78,7 +78,9 @@ func TestSeveralQuestionsEachAnswered(t *testing.T) {
 		t.Fatalf("open after answering 2: %+v", open)
 	}
 	after := ansi.Strip(m.View())
-	if afterPage := ansi.Strip(m.detailText(tk)); strings.Contains(afterPage, "? Keep folding") || !strings.Contains(afterPage, "└ jhf: yes, keep folding") || !strings.Contains(afterPage, "Is the mark sign right?") || !strings.Contains(afterPage, "Ship it today?") || answerActions(afterPage) != 2 {
+	// The answered question goes to the Questions record, a long section
+	// folded to QUESTIONS (1) until opened (8a0ybb).
+	if afterPage := ansi.Strip(m.withUnfolded("questions").detailText(tk)); strings.Contains(afterPage, "? Keep folding") || !strings.Contains(afterPage, "└ jhf: yes, keep folding") || !strings.Contains(afterPage, "Is the mark sign right?") || !strings.Contains(afterPage, "Ship it today?") || answerActions(afterPage) != 2 {
 		t.Fatalf("after answering 2:\n%s", afterPage)
 	}
 	if !strings.Contains(after, "> ? Is the mark sign right?") || !strings.Contains(after, "✓ jhf answered question 2: yes, keep folding") {

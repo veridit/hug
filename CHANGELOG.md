@@ -4,6 +4,29 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: a task's page reads short to long, so what the ticket is
+  for is on screen first and long reference text no longer pushes it
+  away (8a0ybb, Jørgen 2026-11-20).
+  - It opens on `PURPOSE`, `PRINCIPLE`, then the Goal under `GOAL`, then
+    `ACCEPTANCE`. The `DESCRIPTION` heading is gone: it was the Goal
+    under another name.
+  - Then the short sections (dependencies, children, links, files, open
+    requests), and last the long ones, each folded to one line with its
+    count: `› DETAILS (5)`, `› QUESTIONS (3)`, `› NOTES (27)`,
+    `› HISTORY (22)`. Details, the answered questions, Notes and History
+    always fold; nothing else does.
+  - `Tab` or `Shift-Tab` reaches a folded heading (`▸ NOTES (27) · Enter
+    opens`); `Enter` opens it and shows the page from its heading, one
+    note a paragraph; `Enter` again folds it. A task opens with them all
+    folded.
+- "Relevant details" is now "Details" (8a0ybb): `hug task new --details`
+  writes `## Details`, `hug task show` prints `details:`, hug tui heads it
+  `DETAILS`, and the agent instructions `hug setup` writes say "Details".
+  A task written before, with `## Relevant details`, reads the same, and
+  `hug task set --details` writes into that section.
+
 ## v0.7.101 - 2026-11-22
 
 - Filters can say "not" with `!` (7zg9mf, Jørgen 2026-11-20: "a way to

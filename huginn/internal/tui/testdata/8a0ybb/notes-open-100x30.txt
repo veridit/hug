@@ -1,0 +1,30 @@
+HUG · overview › IN PROGRESS › 8a0ybb                                                               
+[doing]  [feature]  [medium]  group:root  assigned:ox · claude-opus-5-5 · main                      
+created 2026-11-19 · updated 2026-11-19 · detail-view-short-sections                                
+✓ crab answered question 2: Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled …
+  unread by bug                                                                                     
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Detail view: short sections before long, folded long sections, scroll markers                       
+↑───────────────────────────────────────────────────────────────────────────────────────────────────
+▸ NOTES (27) · Enter folds                                                                          
+file:a-opens-100x30.ans (3882 bytes, sha256:11cf6864) mock (a) p87ngv as it opens for jhf (board    
+4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype           
+mock/8a0ybb f6641b2f                                                                                
+                                                                                                    
+file:a-opens-160x45.ans (7263 bytes, sha256:662c339f) mock (a) p87ngv as it opens for jhf (board    
+4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype           
+mock/8a0ybb f6641b2f                                                                                
+                                                                                                    
+file:a-opens-100x30.png (94733 bytes, sha256:ee14d316) mock (a) p87ngv as it opens for jhf (board   
+4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype           
+mock/8a0ybb f6641b2f                                                                                
+                                                                                                    
+file:a-opens-160x45.png (164808 bytes, sha256:c33314f4) mock (a) p87ngv as it opens for jhf (board  
+4f57778b, 11:23Z): FOR YOU first, its link to MOCK.md, then Purpose, Principle; prototype           
+mock/8a0ybb f6641b2f                                                                                
+                                                                                                    
+file:a2-scrolled-100x30.ans (3798 bytes, sha256:89006ecc) mock (a2) the same page scrolled with J:  
+Goal, Acceptance with ? on check 5, Files, long sections folded to one line                         
+                                                                                                    
+↓── Task 1 of 1 · 45% · next · previous · Esc back ─────────────────────────────────────────────────
+Enter open/fold · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request …    

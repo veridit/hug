@@ -44,7 +44,7 @@ func TestSetSaysEachFieldItWrote(t *testing.T) {
 		"goal: new goal",
 		"purpose: new purpose",
 		"principle: new principle",
-		"relevant details: new details",
+		"details: new details",
 		"tags: + parser",
 		"parent: " + epic,
 		"state: doing -> todo",

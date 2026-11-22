@@ -191,8 +191,10 @@ func TestChangeOnDiskAppears(t *testing.T) {
 			out := screen(m)
 			want := "Gamma renamed elsewhere"
 			if view == "detail" {
-				// The note is below the scrolled window; the content holds it.
-				out = m.detailText(m.mustSelected(t))
+				// The note is below the scrolled window, in the Notes, a
+				// long section the page folds (8a0ybb): opened, the content
+				// holds it.
+				out = m.withUnfolded("notes").detailText(m.mustSelected(t))
 				want = "note written by another terminal"
 			}
 			if !strings.Contains(out, want) {

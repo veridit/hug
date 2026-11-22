@@ -5,14 +5,14 @@ created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 ▸ Bravo task                                                                                        
 ────────────────────────────────────────────────────────────────────────────────────────────────────
-DESCRIPTION                                                                                         
-g                                                                                                   
-                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
+                                                                                                    
+GOAL                                                                                                
+g                                                                                                   
                                                                                                     
 ACCEPTANCE                                                                                          
   ☐ 1. one                                                                                          
@@ -20,9 +20,9 @@ ACCEPTANCE
                                                                                                     
 no dependencies                                                                                     
                                                                                                     
-HISTORY                                                                                             
+› HISTORY (1)                                                                                       
                                                                                                     
-• 2026-11-20T09:50 todo -> doing/active (take)                                                      
+                                                                                                    
                                                                                                     
                                                                                                     
                                                                                                     

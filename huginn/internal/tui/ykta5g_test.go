@@ -52,6 +52,10 @@ func jkModel(t *testing.T) model {
 	if tk, _ := m.selected(); tk.Title != "Main" {
 		t.Fatalf("opened %q, want Main", tk.Title)
 	}
+	// The notes make the page run past the screen: open, as Enter on
+	// their heading leaves them (8a0ybb: a page opens with them folded).
+	m = m.withUnfolded("notes")
+	m.syncDetail()
 	return m
 }
 

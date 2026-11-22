@@ -176,6 +176,8 @@ func (m model) taskHelp() helpSection {
 		rows = append(rows, row("Enter", "open the task id marked ▸", "enter"), row("j/k", "scroll the page", "j", "k"))
 	case focusQuestion:
 		rows = append(rows, row("j/k", "scroll the page", "j", "k"))
+	case focusFold:
+		rows = append(rows, row("Enter", "open the section, or fold it again", "enter"), row("j/k", "scroll the page", "j", "k"))
 	default:
 		rows = append(rows, row("j/k", "scroll the page", "j", "k"))
 	}

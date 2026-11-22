@@ -147,9 +147,13 @@ func idsReplacer(ids map[string]string) []string {
 // checks, dependencies, links and notes are one ring, in reading order,
 // around the end; Tab and l go forward, Shift-Tab and h back; an id that
 // resolves to no task is not a stop. An epic's children are stops too.
+// The Notes are a long section, folded (8a0ybb): its heading is a stop,
+// and the id in it one once Enter has opened it; here they are open.
 func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 	m, ids := idBoard(t)
 	m = openID(t, m, ids["Main"])
+	m = m.withUnfolded("notes")
+	m.syncDetail()
 	tk, _ := m.selected()
 	var got []string
 	for _, s := range m.idStops(tk) {
@@ -165,14 +169,27 @@ func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 	for _, s := range m.focusRing(tk) {
 		ring = append(ring, fmt.Sprint(s.pane))
 	}
-	if want := fmt.Sprint(focusIDs, focusIDs, focusPage, focusAcceptance, focusDeps, focusLinks, focusIDs); strings.Join(ring, " ") != want {
+	if want := fmt.Sprint(focusIDs, focusIDs, focusPage, focusAcceptance, focusDeps, focusLinks, focusFold, focusIDs, focusFold); strings.Join(ring, " ") != want {
 		t.Fatalf("ring %v, want %s", ring, want)
 	}
 	// From the checks (where Main opens) Tab visits the dependency, the
-	// link, the note's id, then wraps to the epic and the stage's id.
+	// link, the NOTES heading, the note's id, the HISTORY heading, then
+	// wraps to the epic and the stage's id.
 	marks := []string{"> ↳ " + ids["Dep"], "> ↳ " + ids["Linked"], "waits on ▸" + ids["Noted"] + " and zzzzzz", "epic:▸" + ids["Epic"], "waiting on after ▸" + ids["Blocker"]}
 	for i, mark := range marks {
 		m = press(m, "tab")
+		if i == 2 {
+			if !strings.Contains(detailPlain(m), "▸ NOTES (1) · Enter folds") {
+				t.Fatalf("Tab 3: not on the open NOTES heading:\n%s", detailPlain(m))
+			}
+			m = press(m, "tab")
+		}
+		if i == 3 {
+			if !strings.Contains(detailPlain(m), "▸ HISTORY (") {
+				t.Fatalf("Tab 5: not on the HISTORY heading:\n%s", detailPlain(m))
+			}
+			m = press(m, "tab")
+		}
 		m.height = 60 // the whole detail on screen
 		m.resize()
 		m.syncDetail()
@@ -183,16 +200,28 @@ func TestTabCyclesEveryIDInReadingOrder(t *testing.T) {
 	}
 	for i, mark := range []string{marks[3], marks[2], marks[1]} {
 		m = press(m, []string{"shift+tab", "h"}[i%2])
+		if i > 0 {
+			m = press(m, "shift+tab") // past the HISTORY, then the NOTES, heading
+		}
 		if screen := screenOf(m) + "\n" + detailPlain(m); !strings.Contains(screen, mark) {
 			t.Fatalf("Shift-Tab %d: no mark %q:\n%s", i+1, mark, screen)
 		}
 	}
-	// Enter on each kind opens it; Esc comes back.
-	for i, wantID := range []string{ids["Dep"], ids["Linked"], ids["Noted"], ids["Epic"], ids["Blocker"]} {
+	// Enter on each kind opens it; Esc comes back. A page opens with the
+	// Notes folded: l reaches NOTES, Enter opens it, l its id.
+	for i, c := range []struct {
+		wantID string
+		keys   []string
+	}{
+		{ids["Dep"], []string{"l"}},
+		{ids["Linked"], []string{"l", "l"}},
+		{ids["Noted"], []string{"l", "l", "l", "enter", "l"}},
+		{ids["Epic"], []string{"l", "l", "l", "l", "l"}},
+		{ids["Blocker"], []string{"l", "l", "l", "l", "l", "l"}},
+	} {
+		wantID := c.wantID
 		m = openID(t, press(m, "esc", "esc"), ids["Main"])
-		for range i + 1 {
-			m = press(m, "l")
-		}
+		m = press(m, c.keys...)
 		m = press(m, "enter")
 		if tk, _ := m.selected(); tk.ID != wantID {
 			t.Fatalf("stop %d: Enter opened %s, want %s", i+1, tk.ID, wantID)

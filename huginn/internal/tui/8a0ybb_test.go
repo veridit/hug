@@ -77,8 +77,12 @@ func TestPageReadsShortToLong(t *testing.T) {
 			if got := strings.Join(headings(text), "|"); got != want {
 				t.Fatalf("headings\n %s\nwant\n %s\n%s", got, want, text)
 			}
-			if strings.Contains(text, "DESCRIPTION") || strings.Contains(text, "RELEVANT DETAILS") {
-				t.Fatalf("an old heading is on the page:\n%s", text)
+			// The task's own text says "DESCRIPTION heading" (check 13): no
+			// line is that heading.
+			for _, l := range strings.Split(text, "\n") {
+				if h := strings.TrimPrefix(l, "▸ "); strings.HasPrefix(h, "DESCRIPTION") || strings.HasPrefix(h, "RELEVANT DETAILS") {
+					t.Fatalf("an old heading is on the page: %q\n%s", l, text)
+				}
 			}
 			for _, folded := range []string{
 				"Headings (Jørgen 2026-11-20 10:26Z on ddpxs8)", // Details
@@ -107,11 +111,13 @@ func TestPageReadsShortToLong(t *testing.T) {
 // text on the page; Enter again folds it. Each long section opens alone.
 func TestEnterOpensAFoldedSection(t *testing.T) {
 	m := fileBoard(t, "testdata/8a0ybb/8a0ybb.md", "8a0ybb", 100, 30)
-	for _, c := range []struct{ head, text string }{
-		{"NOTES (27)", "crab 01:21Z: reviewed the mock"},
-		{"HISTORY (22)", "handed to crab: bug's session ended"},
-		{"DETAILS (5)", "Headings (Jørgen 2026-11-20 10:26Z on ddpxs8)"},
-		{"QUESTIONS (3)", "1. crab → "},
+	// text: a line of the section, folded never on the page; first: its
+	// first line, on screen once opened.
+	for _, c := range []struct{ head, text, first string }{
+		{"NOTES (27)", "crab 01:21Z: reviewed the mock", "file:a-opens-100x30.ans (3882 bytes"},
+		{"HISTORY (22)", "handed to crab: bug's session ended", "todo -> todo/design (ask)"},
+		{"DETAILS (5)", "Headings (Jørgen 2026-11-20 10:26Z on ddpxs8)", "Headings (Jørgen 2026-11-20 10:26Z on ddpxs8)"},
+		{"QUESTIONS (3)", "1. crab → ", "1. crab → "},
 	} {
 		v := m
 		for n := 0; n < 80 && !strings.Contains(detailPlain(v), "▸ "+c.head); n++ {
@@ -129,7 +135,7 @@ func TestEnterOpensAFoldedSection(t *testing.T) {
 		if v.viewport.YOffset >= len(lines) || !strings.HasPrefix(lines[v.viewport.YOffset], "▸ "+c.head) {
 			t.Fatalf("opened %s: the page does not start at its heading (offset %d)", c.head, v.viewport.YOffset)
 		}
-		if !strings.Contains(ansi.Strip(v.View()), c.text) {
+		if !strings.Contains(ansi.Strip(v.View()), c.first) {
 			t.Fatalf("opened %s: its text is not on screen:\n%s", c.head, ansi.Strip(v.View()))
 		}
 		for _, other := range []string{"crab 01:21Z: reviewed the mock", "handed to crab: bug's session ended", "Headings (Jørgen 2026-11-20 10:26Z on ddpxs8)", "1. crab → "} {

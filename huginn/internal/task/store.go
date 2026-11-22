@@ -959,7 +959,9 @@ func (s *Store) Reslug(ref, slug string) (Result, error) {
 // DescriptionSections are the sections after Goal in the task description
 // pattern, in order (2026-11-16 vocabulary test: named sections +0.49 over
 // none; "Relevant details" equals "Details", "Constraints" scores worse).
-var DescriptionSections = []string{"Purpose", "Principle", "Relevant details"}
+// Details was "Relevant details" before 8a0ybb; a file with the old name
+// reads the same (OldDetails).
+var DescriptionSections = []string{"Purpose", "Principle", "Details"}
 
 func patternSections(o NewOptions) string {
 	out := ""
