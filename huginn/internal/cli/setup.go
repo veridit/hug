@@ -362,6 +362,9 @@ New work: hug task new "short title" --goal "..." --purpose "..." --principle ".
 Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
 and do not do), Details, then Acceptance. The Goal is one sentence of
 at most 140 characters; detail goes in Details. Titles stay under 80 characters.
+A document for one task is attached to that task (hug task attach ID FILE); only
+decisions go into repo docs. Name a file in the task's text (MOCK.md, or
+docs/DESIGN.md#Section) and hug tui opens it from there.
 Epics: hug task set ID --parent EPIC; hug task promote ID N turns item N into
 its own task. hug task ls --epic EPIC shows an epic and its children.
 MCP tools (hug mcp): task_list, task_show, task_new, task_next, task_take (model

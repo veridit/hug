@@ -173,6 +173,11 @@ func (m model) taskHelp() helpSection {
 		}
 		rows = append(rows, row("j/k", "step through the files", "j", "k"), row("Space", "show the file", " "), enter)
 	case focusIDs:
+		if _, ok := m.markedFile(t); ok {
+			// A file link (zbdbtm).
+			rows = append(rows, row("Space", "show the file marked ▸ in line, under its line; Space or Esc closes it", " "), row("Enter", "open the file marked ▸ in the file frame, at its #section; Esc comes back", "enter"))
+			break
+		}
 		rows = append(rows, row("Enter", "open the task id marked ▸", "enter"), row("j/k", "scroll the page", "j", "k"))
 	case focusQuestion:
 		rows = append(rows, row("j/k", "scroll the page", "j", "k"))

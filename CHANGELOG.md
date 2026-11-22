@@ -4,6 +4,24 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- A file a task names opens from the task (zbdbtm). In `hug tui`, a
+  file named anywhere in a task's text is a link: `file:NAME`, the plain
+  name of a file attached to the task (`MOCK.md`), or a file in the
+  repository, with an optional section (`docs/DESIGN.md#Imported data`).
+  Tab and Shift+Tab stop on each one, as on task ids. Space shows the
+  file in line, under the line that names it; Enter opens it in the file
+  frame, scrolled to the section; Esc comes back to the link. A word only
+  becomes a link when the task has that file or the repository has that
+  path, so ordinary words never do. A repository file is read from the
+  checkout `hug tui` runs in (a branch name is not followed yet). To try
+  it, open zbdbtm: its Details has a TRY IT HERE list with all four kinds.
+  Keys are provisional until bfxq93.
+- The agent instructions (`hug setup` and AGENTS.md) now say: a document
+  for one task is attached to that task; only decisions go into repo docs
+  (zbdbtm).
+
 ## v0.7.106 - 2026-11-22
 
 - A task with both `## Details` and `## Relevant details` no longer

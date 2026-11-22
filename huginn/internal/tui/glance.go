@@ -62,6 +62,9 @@ func escapeControls(s string) string {
 
 // glanceFile is the file the glance shows: the one marked > in Files.
 func (m model) glanceFile(t task.Task) (name string, i, n int) {
+	if m.glanceRepo != "" {
+		return m.glanceRepo, 0, 1 // a file of the checkout a link opened (zbdbtm)
+	}
 	files := m.filesOf(t)
 	if len(files) == 0 {
 		return "", 0, 0
@@ -102,12 +105,16 @@ func (m *model) showGlance() {
 	m.viewport.Height = m.glanceHeight()
 	m.viewport.SetContent(m.glanceBody)
 	m.viewport.GotoTop()
+	m.seekSection() // a link's #Section (zbdbtm); Markdown seeks once formatted
 }
 
 // glanceRead reads one file of t: the header line and the text.
 func (m *model) glanceRead(t task.Task, name string) (head, body string) {
 	_, i, n := m.glanceFile(t)
 	path, err := m.insideFolder(t, name)
+	if m.glanceRepo != "" {
+		path, err = m.filePath(t, fileLink{name: name, repo: true})
+	}
 	if err != nil {
 		return oneLine(name), err.Error()
 	}
@@ -116,6 +123,10 @@ func (m *model) glanceRead(t task.Task, name string) (head, body string) {
 		return oneLine(name), err.Error()
 	}
 	head = fmt.Sprintf("%s · %s · %d of %d", oneLine(task.FolderOf(t)+"/"+name), humanBytes(info.Size()), i+1, n)
+	if m.glanceRepo != "" {
+		// The checkout's file, not the task's: its path in the repo.
+		head = fmt.Sprintf("%s · %s · repo", oneLine(name), humanBytes(info.Size()))
+	}
 	if task.IsImageName(name) {
 		// An image shows in the frame too (2qndsd): the terminal draws it
 		// over the frame's rows (imageOverlay), or one line says why not.
@@ -149,6 +160,10 @@ func (m *model) stepGlance(step int) {
 	if !ok {
 		return
 	}
+	if m.glanceRepo != "" {
+		m.message = oneLine(m.glanceRepo) + " is the checkout's, not one of this task's files: Esc goes back to the link"
+		return
+	}
 	_, i, n := m.glanceFile(t)
 	next := i + step
 	if next < 0 || next >= n {
@@ -166,13 +181,14 @@ func (m *model) closeGlance() {
 	back := m.glanceReturn
 	m.glanceReturn = nil
 	m.glance = false
+	m.glanceRepo, m.glanceSection = "", ""
 	m.glanceImage = nil
 	m.picZoom, m.picX, m.picY = 0, 0, 0
 	m.glanceHead, m.glanceBody = "", ""
 	m.glanceMD = glanceMarkdown{}
 	m.find = findState{}
 	if back != nil {
-		m.detailPane, m.acceptance, m.question = back.pane, back.acceptance, back.question
+		m.detailPane, m.acceptance, m.question, m.idAt = back.pane, back.acceptance, back.question, back.idAt
 		m.syncDetail()
 		m.viewport.SetYOffset(back.offset)
 		m.showMarked()
@@ -187,6 +203,9 @@ func (m *model) closeGlance() {
 // page's scroll.
 type glanceReturn struct {
 	pane, acceptance, question, offset int
+	// idAt and link: a file link the file was opened from (zbdbtm).
+	idAt int
+	link bool
 }
 
 // showQuestionFile shows, in the file frame, the file the focused

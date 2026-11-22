@@ -85,6 +85,7 @@ func (m *model) glanceFormatted(msg glanceFormattedMsg) {
 	}
 	m.glanceMD.formatted, m.glanceMD.loading = msg.body, false
 	m.drawGlanceMarkdown()
+	m.seekSection() // the heading a link named, now it is drawn (zbdbtm)
 }
 
 // drawGlanceMarkdown also redoes an existing find against the text now

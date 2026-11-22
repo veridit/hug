@@ -206,6 +206,13 @@ type model struct {
 	// glanceReturn is where Esc goes from a file Enter showed from a
 	// question's link line (qcq3tm): back to that question, not Files.
 	glanceReturn *glanceReturn
+	// glanceRepo is the checkout's file the frame shows, "" for one of
+	// the task's; glanceSection the heading a link named, to scroll to
+	// once the file is drawn (zbdbtm).
+	glanceRepo, glanceSection string
+	// inline is the file Space shows in line under the link that names
+	// it (zbdbtm), nil for none.
+	inline *inlineFile
 	// picZoom is the zoom step of the picture shown (33v71x), picX, picY
 	// the corner of its crop, in pixels; 0, 0, 0 is fit.
 	picZoom, picX, picY int
@@ -1331,6 +1338,10 @@ func (m *model) back() {
 		// Up from a file is Files, with that file marked (scrxak), or
 		// the question whose link showed it (qcq3tm).
 		m.closeGlance()
+	case m.detail && m.inline != nil:
+		// A file shown in line folds away; the link stays marked (zbdbtm).
+		m.inline = nil
+		m.syncDetail()
 	case m.detail && len(m.detailStack) > 0:
 		m.detailPath = m.detailStack[len(m.detailStack)-1]
 		m.detailStack = m.detailStack[:len(m.detailStack)-1]
@@ -1656,6 +1667,12 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "u":
 				m.back()
 			case "enter":
+				if m.glanceRepo != "" {
+					// The checkout's file is read here, never edited from
+					// a task: its edits are code, not the task's (zbdbtm).
+					m.message = oneLine(m.glanceRepo) + " is the checkout's file, read only here: Esc goes back to the link\nfix: $EDITOR " + oneLine(m.glanceRepo)
+					break
+				}
 				return m, m.openFile()
 			case "E":
 				return m, m.openFolder()
@@ -1748,6 +1765,14 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// in the same frame (2qndsd).
 				if m.detailPane == focusFiles {
 					m.openGlance()
+				} else if t, ok := m.selected(); ok && m.detailPane == focusIDs {
+					// On a file link it shows the file in line, under the
+					// line that names it, or folds it away (zbdbtm).
+					if s, ok := m.markedFile(t); ok {
+						m.toggleInline(t, s)
+					} else {
+						m.message = "a task id has nothing to show in line: Enter opens it"
+					}
 				} else if m.detailPane == focusAcceptance {
 					m.requestAction(k, "")
 				} else if m.detailPane == focusQuestion {

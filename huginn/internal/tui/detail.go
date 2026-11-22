@@ -656,6 +656,7 @@ func (m *model) startFocus() {
 	m.unfolded = nil // a new page opens with its long sections folded (8a0ybb)
 	m.glance, m.glanceHead, m.glanceBody = false, "", ""
 	m.glanceReturn = nil
+	m.glanceRepo, m.glanceSection, m.inline = "", "", nil
 	m.find = findState{} // a find is the page's: a new page starts without (4s3g5q)
 	m.detailPane = focusPage
 	t, ok := m.selected()
@@ -819,6 +820,7 @@ func (m *model) cycleFocus(step int) {
 		at = (at + step + len(ring)) % len(ring)
 	}
 	s := ring[at]
+	m.inline = nil // a file shown in line belongs to the link it was shown from (zbdbtm)
 	m.detailPane = s.pane
 	switch s.pane {
 	case focusDeps:
@@ -1049,7 +1051,8 @@ func (m model) detailText(t task.Task) string {
 		}
 		b.WriteString(m.foldBody(t, f.key, sections, markAt) + "\n\n")
 	}
-	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
+	// A file Space shows in line, under the line naming it (zbdbtm).
+	return m.withInline(t, wrap(strings.TrimRight(b.String(), "\n"), m.width))
 }
 
 // hangRow is a Dependencies, Children, Links or Files row: prefix (the
@@ -1067,7 +1070,7 @@ func (m model) foldBody(t task.Task, key string, sections []detailSection, markA
 	case "details":
 		return m.markStyled(m.markdown(text("details")), markAt(stopDetails, 0), true)
 	case "questions":
-		return strings.Join(m.questionRecord(t), "\n")
+		return strings.Join(m.questionRecord(t, markAt), "\n")
 	case "notes":
 		// One entry a paragraph, as the heading counts them: written
 		// one a line, markdown would run them together.
@@ -1103,7 +1106,7 @@ func (m model) folds(t task.Task) []fold {
 		out = append(out, fold{key: "details", heading: "Details", stop: stopDetails, count: paragraphs(s)})
 	}
 	if n := m.recordCount(t); n > 0 {
-		out = append(out, fold{key: "questions", heading: "Questions", count: n})
+		out = append(out, fold{key: "questions", heading: "Questions", stop: stopRecord, count: n})
 	}
 	if s := text("notes"); s != "" {
 		out = append(out, fold{key: "notes", heading: "Notes", stop: stopNotes, count: entries(s)})
@@ -1275,7 +1278,7 @@ func (m model) markedBlock() (int, int, bool) {
 	marker := func(line string) bool { return strings.HasPrefix(line, "> ") }
 	id := false
 	if s, ok := m.markedStop(t); ok {
-		marker = func(line string) bool { return strings.Contains(line, "▸"+s.shown) }
+		marker = func(line string) bool { i, _ := markedRun(line, s.shown); return i >= 0 }
 		id = true
 	}
 	lines := strings.Split(ansi.Strip(m.detailText(t)), "\n")
@@ -1297,7 +1300,24 @@ func (m model) markedBlock() (int, int, bool) {
 			continue
 		}
 		end := i
-		// What hangs under an item is indented past the next item's
+		if id && m.inline != nil {
+			// A file shown in line under its link (zbdbtm) is part of
+			// the marked block: its box from ┌ to └, so the page shows it
+			// whole. A link the page wrapped has its box a line lower.
+			for j := i + 1; j < len(lines) && j <= i+2+inlineMax*4; j++ {
+				t := strings.TrimSpace(lines[j])
+				if strings.HasPrefix(t, "┌ ") || strings.HasPrefix(t, "│") {
+					continue
+				}
+				if strings.HasPrefix(t, "└ ") {
+					end = j
+					break
+				}
+				if j > i+1 {
+					break
+				}
+			}
+		} // What hangs under an item is indented past the next item's
 		// pointer column (2): wrapped text, the question (its blank
 		// lines between paragraphs are indented too), └ who asked.
 		for j := i + 1; !id && j < len(lines) && strings.HasPrefix(lines[j], "    "); j++ {
@@ -1381,32 +1401,28 @@ func (m model) checkStyle(checked bool) lipgloss.Style {
 
 // recordCount is how many questions the Questions record holds: every
 // one but those open and asked of the viewer (questionRecord).
-func (m model) recordCount(t task.Task) int {
+func (m model) recordCount(t task.Task) int { return len(m.recordQuestions(t)) }
+
+// recordQuestions are the questions the Questions record shows, in order.
+func (m model) recordQuestions(t task.Task) []task.AskedQuestion {
 	mine := map[int]bool{}
 	for _, q := range m.askedAll(t) {
 		mine[q.n] = q.n > 0
 	}
-	n := 0
+	var out []task.AskedQuestion
 	for _, q := range t.Questions {
 		if !mine[q.N] {
-			n++
+			out = append(out, q)
 		}
 	}
-	return n
+	return out
 }
 
 // questionRecord is the Questions section's lines: every question but
 // those open and asked of the viewer, each with its answer, or withdrawn.
-func (m model) questionRecord(t task.Task) []string {
-	mine := map[int]bool{}
-	for _, q := range m.askedAll(t) {
-		mine[q.n] = q.n > 0
-	}
+func (m model) questionRecord(t task.Task, markAt func(string, int) string) []string {
 	var out []string
-	for _, q := range t.Questions {
-		if mine[q.N] {
-			continue
-		}
+	for k, q := range m.recordQuestions(t) {
 		head := fmt.Sprintf("%d. %s → %s", q.N, oneLine(q.By), oneLine(m.name(q.To)))
 		if q.Check > 0 {
 			head += fmt.Sprintf(" · check %d", q.Check)
@@ -1430,9 +1446,12 @@ func (m model) questionRecord(t task.Task) []string {
 		if q.Answer == nil && q.Withdrawn != nil {
 			style = m.styles.dim
 		}
-		out = append(out, m.hangStyled("   ", safe(strings.TrimRight(q.Text, "\n")), 3, "", style)...)
+		// A file it names is a stop (zbdbtm), marked where it stands.
+		w := markAt(stopRecord, 2*k)
+		out = append(out, m.hangStyled("   ", markPlain(safe(strings.TrimRight(q.Text, "\n")), w, false), 3, w, style)...)
 		if a := q.Answer; a != nil {
-			out = append(out, m.hangStyled("   └ "+oneLine(a.By)+": ", safe(strings.TrimRight(a.Text, "\n")), 5, "", m.styles.status["done"])...)
+			w := markAt(stopRecord, 2*k+1)
+			out = append(out, m.hangStyled("   └ "+oneLine(a.By)+": ", markPlain(safe(strings.TrimRight(a.Text, "\n")), w, false), 5, w, m.styles.status["done"])...)
 		}
 	}
 	return out

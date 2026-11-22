@@ -144,6 +144,9 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		up := "files"
 		if m.glanceReturn != nil {
 			up = "question"
+			if m.glanceReturn.link {
+				up = "link" // a file link opened it (zbdbtm)
+			}
 		}
 		if m.glancePicture() {
 			// A picture (33v71x): zoom while the terminal draws it, scroll
@@ -181,6 +184,16 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 	case focusLinks:
 		hints = append(hints, hint("j/k", "link"), hint("Enter", "follow"))
 	case focusIDs:
+		if _, ok := m.markedFile(t); ok {
+			// A file link (zbdbtm): Space shows it in line, Enter in the
+			// file frame; open in line, Esc folds it.
+			if m.inline != nil {
+				hints = append(hints, hint("Space/Esc", "close"), hint("Enter", "open file"))
+			} else {
+				hints = append(hints, hint("Space", "show"), hint("Enter", "open file"))
+			}
+			break
+		}
 		hints = append(hints, hint("j/k", "scroll"), hint("Enter", "open"))
 	case focusQuestion:
 		// a answers, named first: it is what the question is for (0gztsy).

@@ -55,7 +55,7 @@ func TestWithdrawnQuestionDrawnDim(t *testing.T) {
 	}
 	// The record's own lines, wrapped and hung under 3 (cd63d1): every
 	// line of the withdrawn text dim.
-	record := m.questionRecord(tk)
+	record := m.questionRecord(tk, m.marked(tk))
 	for _, l := range []string{
 		"   which colour should the ASKED title take on a light terminal, given that the warning colour",
 		"   already marks lint findings and the rows there are long?",

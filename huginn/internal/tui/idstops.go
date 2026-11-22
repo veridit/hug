@@ -2,6 +2,7 @@ package tui
 
 import (
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 
@@ -46,6 +47,7 @@ const (
 	stopSection  = "section"  // any other section: index in m.sections
 	stopRequest  = "request"  // request index's text
 	stopResolved = "resolved" // request index's account
+	stopRecord   = "record"   // the Questions record, open: 2i a question's text, 2i+1 its answer (zbdbtm)
 	stopNotes    = "notes"
 	stopHistory  = "history"
 )
@@ -57,6 +59,11 @@ type idStop struct {
 	where, shown string
 	index        int
 	target       task.Task
+	// at is where the stop's word starts in the text scanned, to keep a
+	// text's ids and file links in reading order; file, for a file link
+	// (zbdbtm), the file it names, and then target is empty.
+	at   int
+	file *fileLink
 }
 
 // idWord is a word that may name a task: an id or an alias such as
@@ -80,7 +87,7 @@ func (m model) idsIn(t task.Task, text string, linked bool) []idStop {
 			continue
 		}
 		seen[strings.ToLower(target.ID)] = true
-		out = append(out, idStop{shown: w, target: target})
+		out = append(out, idStop{shown: w, target: target, at: loc[0]})
 	}
 	return out
 }
@@ -149,7 +156,11 @@ func (m model) stageWords(t task.Task) string {
 func (m model) idStops(t task.Task) []idStop {
 	var out []idStop
 	add := func(where string, index int, text string, linked bool) {
-		for _, s := range m.idsIn(t, text, linked) {
+		// The ids and the file links (zbdbtm) of one text, in the order
+		// it reads.
+		found := append(m.idsIn(t, text, linked), m.fileLinksIn(t, text)...)
+		sort.SliceStable(found, func(i, j int) bool { return found[i].at < found[j].at })
+		for _, s := range found {
 			s.where, s.index = where, index
 			out = append(out, s)
 		}
@@ -231,6 +242,14 @@ func (m model) idStops(t task.Task) []idStop {
 	if open("details") {
 		add(stopDetails, 0, text("details"), true)
 	}
+	if open("questions") {
+		for k, q := range m.recordQuestions(t) {
+			add(stopRecord, 2*k, safe(strings.TrimRight(q.Text, "\n")), false)
+			if q.Answer != nil {
+				add(stopRecord, 2*k+1, safe(strings.TrimRight(q.Answer.Text, "\n")), false)
+			}
+		}
+	}
 	if open("notes") {
 		add(stopNotes, 0, text("notes"), true)
 	}
@@ -279,6 +298,11 @@ func (m *model) followID() {
 	s, ok := m.markedStop(t)
 	if !ok {
 		m.message = "no task id marked: Tab or l steps to the next one"
+		return
+	}
+	if s.file != nil {
+		// A file link opens its file in the file frame (zbdbtm).
+		m.openFileLink(t, s)
 		return
 	}
 	m.detailStack = append(m.detailStack, t.Path)
@@ -337,30 +361,81 @@ func visible(s string) (string, []int) {
 // (idWord: in "x-abc123" abc123 is no word of its own), past escape
 // sequences, skipping task:ID when linked; -1 when there is none.
 func wordAt(s, w string, linked bool) int {
+	at, _, _ := markSpan(s, w, linked)
+	return at
+}
+
+// markSpan is where in s the stop shown as w stands: its offset, its
+// length in s (escape sequences inside it included) and the text it
+// shows there. A task id is a word as idsIn reads it; a file link
+// (zbdbtm) is a word as fileWords reads it, and when the page wrapped
+// it, its part on the first line. at is -1 when it is not in s.
+func markSpan(s, w string, linked bool) (at, n int, shown string) {
 	if w == "" {
-		return -1
+		return -1, 0, ""
 	}
-	v, at := visible(s)
+	v, pos := visible(s)
+	if idWord.FindString(w) != w {
+		var part *fileWord
+		for _, fw := range fileWords(v) {
+			if fw.shown == w {
+				part = &fw
+				break
+			}
+			// Wrapped, a section link shows its first line's part here:
+			// the name, # and the section's first words.
+			if part == nil && fw.section != "" && strings.HasPrefix(w, fw.shown) {
+				fw := fw
+				part = &fw
+			}
+		}
+		if part == nil {
+			return -1, 0, ""
+		}
+		start, end := pos[part.at], pos[part.at+len(part.shown)-1]+1
+		return start, end - start, part.shown
+	}
 	for _, loc := range idWord.FindAllStringIndex(v, -1) {
 		if v[loc[0]:loc[1]] != w || linked && taskPrefixed(v, loc[0]) {
 			continue
 		}
-		if i := at[loc[0]]; at[loc[1]-1]-i == len(w)-1 {
-			return i
+		if i := pos[loc[0]]; pos[loc[1]-1]-i == len(w)-1 {
+			return i, len(w), w
 		}
 	}
-	return -1
+	return -1, 0, ""
+}
+
+// markedRun is where in line l the mark ▸w stands, from ▸ to the end of
+// w, or of the part of w the line holds (a wrapped file link); i is -1
+// when l holds no ▸w.
+func markedRun(l, w string) (i, j int) {
+	if i = strings.Index(l, "▸"+w); i >= 0 {
+		return i, i + len("▸"+w)
+	}
+	first := strings.SplitN(w, " ", 2)[0]
+	if first == w {
+		return -1, 0
+	}
+	if i = strings.Index(l, "▸"+first); i < 0 {
+		return -1, 0
+	}
+	j = i + len("▸")
+	for k := 0; k < len(w) && j < len(l) && l[j] == w[k]; k++ {
+		j++
+	}
+	return i, j
 }
 
 // markWord draws the first word w in s marked: ▸ before it and the
 // selection tint, so it shows without colour too. rest styles the text
 // around it.
 func (m model) markWord(s, w string, rest func(string) string) string {
-	at := wordAt(s, w, false)
+	at, n, shown := markSpan(s, w, false)
 	if at < 0 {
 		return rest(s)
 	}
-	return rest(s[:at]) + m.styles.selected.Render("▸"+w) + rest(s[at+len(w):])
+	return rest(s[:at]) + m.styles.selected.Render("▸"+shown) + rest(s[at+n:])
 }
 
 // markPlain puts ▸ before the first word w in plain text s, before it is
@@ -378,13 +453,12 @@ func markPlain(s, w string, linked bool) string {
 // selection tint. Lines are styled one by one only when one is marked,
 // so an unmarked block renders as before.
 func (m model) styleMarked(s, w string, style lipgloss.Style) string {
-	if w == "" || !strings.Contains(s, "▸"+w) {
+	if w == "" || !strings.Contains(s, "▸"+strings.SplitN(w, " ", 2)[0]) {
 		return style.Render(s)
 	}
 	lines := strings.Split(s, "\n")
 	for k, l := range lines {
-		if i := strings.Index(l, "▸"+w); i >= 0 {
-			j := i + len("▸"+w)
+		if i, j := markedRun(l, w); i >= 0 {
 			lines[k] = renderSome(style, l[:i]) + m.styles.selected.Render(l[i:j]) + renderSome(style, l[j:])
 		} else {
 			lines[k] = style.Render(l)
@@ -404,11 +478,11 @@ func renderSome(style lipgloss.Style, s string) string {
 // Markdown, a request): ▸ and the selection tint, then the style in
 // force before it again.
 func (m model) markStyled(s, w string, linked bool) string {
-	at := wordAt(s, w, linked)
+	at, n, shown := markSpan(s, w, linked)
 	if at < 0 {
 		return s
 	}
-	return s[:at] + m.styles.selected.Render("▸"+w) + lastSGR(s[:at]) + s[at+len(w):]
+	return s[:at] + m.styles.selected.Render("▸"+shown) + lastSGR(s[:at]) + s[at+n:]
 }
 
 // lastSGR is the last colour sequence in s, "" after a reset.

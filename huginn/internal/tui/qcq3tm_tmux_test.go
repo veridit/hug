@@ -27,6 +27,9 @@ import (
 type askedTmux struct {
 	t    *testing.T
 	tmux func(args ...string) string
+	// frames, when set, is where save keeps each screen (zbdbtm), else
+	// $QCQ3TM_CAPTURES.
+	frames string
 }
 
 func newAskedTmux(t *testing.T, name string) *askedTmux {
@@ -132,10 +135,13 @@ func (a *askedTmux) wait(what string, want []string, gone ...string) string {
 // $QCQ3TM_CAPTURES, when set: the captures attached to qcq3tm.
 func (a *askedTmux) save(what string) {
 	dir := os.Getenv("QCQ3TM_CAPTURES")
+	if a.frames != "" {
+		dir = a.frames
+	}
 	if dir == "" {
 		return
 	}
-	name := strings.NewReplacer(" ", "-", "(", "", ")", "", "'", "", ",", "").Replace(what)
+	name := strings.NewReplacer(" ", "-", "(", "", ")", "", "'", "", ",", "", "/", "-", "#", "-", "▸", "").Replace(what)
 	ans := a.tmux("capture-pane", "-e", "-p", "-t", "q:0.0")
 	if err := os.WriteFile(filepath.Join(dir, name+".ans"), []byte(ans), 0o644); err != nil {
 		a.t.Fatal(err)

@@ -23,7 +23,7 @@ const tryItHere = `TRY IT HERE:
 
 Not links: notattached.txt and docs/NOPE.md#Nothing.`
 
-const sampleNotes = "# Sample notes\n\nA short file.\n\n## Section one\n\n" + "Line of section one.\n\n" + "## Section two\n\nThis is the section a link names.\n"
+var sampleNotes = "# Sample notes\n\nA short file.\n\n## Section one\n\n" + strings.Repeat("Line of section one.\n\n", 30) + "## Section two\n\nThis is the section a link names.\n" + strings.Repeat("\nMore of section two.\n", 30)
 
 // fileLinkModel opens such a task at 100x30, its Details open, the
 // checkout a folder holding docs/DESIGN.md.
