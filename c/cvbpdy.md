@@ -48,7 +48,7 @@ Before Seid turns on forbid_cite (crab 16:33): adding forbid_cite = [".jcode/scr
 landed 95079e0 on main 2026-11-17: hug task lint: a citation followed by ' (lost)' is a known gap; forbidden…
 hatchling 16:50, main CI 44127183886 on 95079e0: macos, windows, secrets, bench success; ubuntu failure from a data race in huginn/internal/tui TestQuitDoesNotWaitForWatchSetup (start_test.go:170 write vs start.go:98 read of watchStarter), present already on e582ab4 (main CI 44126454244 ubuntu failure) and fixed by d16fb54 on main. The cvbpdy diff touches no tui file.
 shipped in v0.7.43 (95079e0)
-Reflection (open, 2026-11-18, hatchling): The ticket held work for two repos: hug's lint and Seid's switch. An acceptance item that only another repo's owner can tick kept a shipped task open for a day. Splitting at filing time would have avoided it.
+Reflection (dismissed, 2026-11-18, hatchling): The ticket held work for two repos: hug's lint and Seid's switch. An acceptance item that only another repo's owner can tick kept a shipped task open for a day. Splitting at filing time would have avoided it.
 ## History
 - 2026-11-17T17:33 todo -> doing/active (take)
 - 2026-11-17T17:34 doing/active -> doing/waiting (wait)
