@@ -207,6 +207,8 @@ func TestPasteRefusesWithAFix(t *testing.T) {
 		says string
 	}{
 		{"empty", clip{}, errClipEmpty, "empty"},
+		// A reader that gives blank text without an error is empty too.
+		{"blank", clip{body: []byte(" \n\t\n")}, nil, "empty"},
 		{"no tool", clip{}, errClipNoTool, "no clipboard tool"},
 		{"ssh", clip{}, errClipSSH, "SSH"},
 		{"secret", secret, nil, "secret"},
@@ -270,6 +272,8 @@ func TestClipboardSource(t *testing.T) {
 		{"ssh tty", "linux", envOf("SSH_TTY", "/dev/pts/1", "WAYLAND_DISPLAY", "wayland-0"), all, errClipSSH, "", ""},
 		{"ssh beats the fake", "linux", envOf("SSH_TTY", "/dev/pts/1", "HUG_TEST_CLIPBOARD", "/tmp/fake-clip"), all, errClipSSH, "", ""},
 		{"windows", "windows", envOf(), all, errClipNoTool, "", ""},
+		// Windows has no reader yet, even with an X server's DISPLAY set.
+		{"windows with a display", "windows", envOf("DISPLAY", ":0", "WAYLAND_DISPLAY", "wayland-0"), all, errClipNoTool, "", ""},
 		{"macos", "darwin", envOf(), all, nil, "osascript -e the clipboard as «class PNGf»", "pbpaste"},
 		{"macos without pbpaste", "darwin", envOf(), has("osascript"), errClipNoTool, "", ""},
 		{"macos without osascript", "darwin", envOf(), has("pbpaste"), nil, "", "pbpaste"},
