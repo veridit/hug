@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168moverview › [1m[38;2;0;191;255mzbdbtm[0m[38;2;135;149;168m › [1m[38;2;0;191;255mdocs/DESIGN.md · 9.8 KiB · repo[0m                         [1m[38;2;255;179;84m? 1 for you
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255mPersonal vs shared memories (gav9nw, decided 2026-11-18)[0m[38;5;252m                                          [39m
+[38;5;252m                                                                                                  [39m
+[1m[38;5;252mDecision.[0m[38;5;252m A repository that shares memories (34r1ft: [38;2;201;214;227m[48;2;26;38;48mhug.toml [memory] share = true[38;5;252m[49m, absent means [39m
+[38;5;252mlocal) pushes a memory only when two checks both say push. A+: the capture extractor places the   [39m
+[38;5;252mmemory, with personal and other-project places added to the ones it has. B: a local rule at sync  [39m
+[38;5;252mholds back any line that names something outside the repository. Jørgen 19:40Z chose A+ and B     [39m
+[38;5;252mtogether, "unless someone clever can dream up something better". Before any repository opts in, A+[39m
+[38;5;252mis confirmed on fresh captures.                                                                   [39m
+[38;5;252m                                                                                                  [39m
+[1m[38;5;252mReason.[0m[38;5;252m A pushed memory cannot be taken back. [38;2;201;214;227m[48;2;26;38;48mhug mem forget[38;5;252m[49m keeps the line with its text and     [39m
+[38;2;201;214;227m[48;2;26;38;48mactive: false[38;5;252m[49m (all 22 retired lines on 1abcc497 still carry it), git history keeps every earlier  [39m
+[38;5;252mcommit, and another clone keeps its copy, since an import is a copy and not a mirror              [39m
+[38;5;252m([38;2;201;214;227m[48;2;26;38;48mingest/importer.go[38;5;252m[49m). So the leak rate decides. A memory held back that belonged is the cheap     [39m
+[38;5;252mmistake, released later by rescope. Of the 868 memories on hug's public [38;2;201;214;227m[48;2;26;38;48mhug/memory[38;5;252m[49m (1abcc497), 58 [39m
+[38;5;252m(6.7%) do not belong there: 29 personal, 16 about another project, 13 cross-project team rules.   [39m
+[38;5;252mThey got there because the extractor already places every capture (here, client or global, since  [39m
+[38;5;252mv0.4.0-31) but has no personal or other-project place and is told "when unsure choose here". In 21[39m
+[38;5;252mof 570 placed captures it named what the memory was about and still chose here ("Specific local   [39m
+[38;5;252mrepo path and access mode for this project").                                                     [39m
+[38;5;252m                                                                                                  [39m
+[1m[38;5;252mHow.[0m[38;5;252m No extra paid call: A+ uses the call capture already makes, and B uses no model.             [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252m• A+: the extractor's places gain [38;2;201;214;227m[48;2;26;38;48mpersonal[38;5;252m[49m (the person, his machine, home                         [39m
+[38;5;252mpaths) and [38;2;201;214;227m[48;2;26;38;48mproject:<other>[38;5;252m[49m / [38;2;201;214;227m[48;2;26;38;48mclient:<name>[38;5;252m[49m, resolved from the catalog                             [39m
+[38;2;201;214;227m[48;2;26;38;48mhug mem tidy place[38;5;252m[49m already builds. [38;2;201;214;227m[48;2;26;38;48mhere[38;5;252m[49m stays the repository. Team                                [39m
+[38;5;252mrules go to global until a team scope exists. [38;2;201;214;227m[48;2;26;38;48mhug mem remember --place[38;5;252m[49m                            [39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m scroll · [1m[38;2;0;191;255mM[0m[38;2;135;149;168m raw source · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext-, [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious file · [1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m edit · [1m[38;2;0;191;255m/[0m[38;2;135;149;168m find · [1m[38;2;0;191;255mu/Esc[0m[38;2;135;149;168m link · [1m[38;2;0;191;255m?[0m[38;2;135;149;168m help · [1;4m[38;2;0;191;255mq[0m[38;2;135;149;168muit[39m

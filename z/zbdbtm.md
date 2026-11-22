@@ -68,6 +68,7 @@ file:zbdbtm-3-enter-file-frame-100x30.ans (1487 bytes, sha256:afffdb48) Enter on
 file:zbdbtm-4-esc-back-to-link-100x30.ans (4261 bytes, sha256:743124be) Esc from the frame: back on the page with ▸sample.txt still marked (check 1)
 file:zbdbtm-5-attachment-at-section-100x30.ans (1923 bytes, sha256:9517b649) Enter on sample-notes.md#Section two: the file frame opens with 'Section two' as its first line (checks 2, 6)
 file:zbdbtm-6-repo-file-in-line-100x30.ans (4197 bytes, sha256:2e527281) Space on docs/DESIGN.md#Personal vs shared memories: that section of the repo file in line (check 6)
+file:zbdbtm-7-repo-file-at-section-100x30.ans (5016 bytes, sha256:6683d8c6) Enter on the repo link: docs/DESIGN.md · 9.8 KiB · repo, scrolled to 'Personal vs shared memories' (check 2)
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
