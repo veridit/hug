@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzz"
+rank: "zzzzzzzzzzzy"
 created: 2026-11-22
 updated: 2026-11-22
 design_question: "v0.7.104 is installed and lint is clean. Ten hug processes from before v0.7.102 still run: hug tui pids 78631 (since 11-17), 49453 (11-18), 34088 (11-19), and hug mcp 1402, 8265, 56816, 65214, 71259, 96239. They keep their old rules; one writing set --details would add a second 'Relevant details' section (hxqqdp). Will you restart them (quit those hug tui windows; restart the jcode sessions that own the mcp ones), or should I leave them?"
