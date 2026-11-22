@@ -46,6 +46,7 @@ landed 18c3576 on main 2026-11-22: tests first: a file with both ## Details and 
 landed 03c0d2c on main 2026-11-22: tests first: the old hug's Relevant details sits before ## Details; the page…
 landed 668e698 on main 2026-11-22: A file with both ## Details and ## Relevant details shows both texts (Details…
 shipped in v0.7.106 (18c3576)
+Reflection (open, 2026-11-22, crab): nothing misled; ram's report from 6q1d1t named the risk and the order ruling took one DM
 ## History
 - 2026-11-22T13:10 todo -> doing/active (take)
 - 2026-11-22T13:44 doing/active -> done (done, by release v0.7.106: every check holds); was doing_since: 2026-11-22T13:10
