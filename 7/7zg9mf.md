@@ -4,7 +4,7 @@ title: "Filters can be negated (!), and the list opens on 'state: not done'"
 state: "doing"
 type: "feature"
 priority: "medium"
-assignee: ["7zg9mf-engineer"]
+assignee: ["owl"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzf"
