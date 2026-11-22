@@ -74,7 +74,7 @@ crab 2026-11-20 10:54Z: reviewed (actions.go answerKey focusOn+revealAnswerBox; 
 file:screen-1255.ans (9067 bytes, sha256:d8f4a13a) screen capture from hug tui
 file:screen-1256.ans (11972 bytes, sha256:cb2a9d3f) screen capture from hug tui
 check 3: Jørgen 2026-11-20 11:57Z (request 2): 'Yes, it does ... it worked on this task after I reloaded.'
-Reflection (open, 2026-11-20, crab): His first screenshot came from a TUI still on the old release; the footer's 'v0.7.88 → v0.7.89' told me so, and I should check that first.
+Reflection (dismissed, 2026-11-20, crab): His first screenshot came from a TUI still on the old release; the footer's 'v0.7.88 → v0.7.89' told me so, and I should check that first.
 ## History
 - 2026-11-20T10:59 todo -> doing/active (take)
 - 2026-11-20T11:54 doing/active -> doing/asked (ask)
