@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.107 - 2026-11-22
 
 - A file a task names opens from the task (zbdbtm). In `hug tui`, a
   file named anywhere in a task's text is a link: `file:NAME`, the plain
