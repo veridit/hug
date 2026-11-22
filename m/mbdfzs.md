@@ -61,7 +61,7 @@ crab 2026-11-20 08:21Z, ps + lsof on Jørgen's machine (installed hug v0.7.87): 
 crab 2026-11-20 12:04Z ps: 4 hug mcp still run binaries older than the installed 0.7.90: pids 56816 (truth_tribe_and_treasure, since 11-15), 65214 (GenderedGames, 11-15), 1402 (~/.jcode, 11-18), 8265 (Brovs, 11-19). Check 3 still fails; those sessions need a restart.
 check 4: crab 2026-11-20 12:06Z, lsof on Jørgen's machine: pid 96239 'hug mcp', started 2026-11-18 23:52 (v0.7.70 era), now maps /opt/homebrew/Cellar/hug/0.7.89/bin/hug: it re-executed itself across upgrades. Not covered by this task: pids 56816 and 65214 (GenderedGames, truth_tribe_and_treasure) started 11-15 on 0.7.2, before re-exec existed (v0.7.54), and can only be restarted; pids 1402, 8265, 71259 map an unlinked '/hug' (old Cellar removed by brew cleanup) and have served no request since the upgrade.
 crab correction 12:06Z: for pids 1402, 8265 and 71259 'served no request since the upgrade' is my inference, not observed: I cannot see their requests. If one of them answers a request and still maps the unlinked /hug afterwards, the re-exec failed, and that would reopen this task. Way to see it: lsof -p PID | awk '$4=="txt"' after that session next uses memory.
-Reflection (open, 2026-11-20, crab): Check 3 was worded as all servers new after an upgrade, which the design never promised for idle servers; I let it wait two days instead of reading what it measured.
+Reflection (dismissed, 2026-11-20, crab): Check 3 was worded as all servers new after an upgrade, which the design never promised for idle servers; I let it wait two days instead of reading what it measured.
 ## History
 - 2026-11-18T02:44 todo -> doing/active (take)
 - 2026-11-18T03:38 doing/active -> doing/waiting (wait)
