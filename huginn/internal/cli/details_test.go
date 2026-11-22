@@ -60,3 +60,61 @@ func TestDetailsWordingForAgents(t *testing.T) {
 		t.Fatalf("help upgrade names Relevant details:\n%s", commandHelp("upgrade"))
 	}
 }
+
+// hxqqdp (ram 2026-11-22): an older hug (v0.7.101, running as hug tui or
+// hug mcp) writing set --details to a "## Details" file adds a second
+// section, "## Relevant details". Check 1: show and show --json print both
+// texts, the Details text first; lint reports the second heading, with
+// fix: hug upgrade. Check 2: hug upgrade merges them into one
+// "## Details", the old heading's text after, no text lost, and commits;
+// a second upgrade changes nothing.
+func TestBothDetailsHeadingsShownLintedMerged(t *testing.T) {
+	t.Parallel()
+	a := app(t)
+	r := execute(t, a, "new", "Both", "--goal", "Where we aim", "--purpose", "Why we aim", "--principle", "How we go", "--details", "New hug wrote this", "--accept", "Observable check")
+	id := r["task"].(Reply)["id"].(string)
+	m, _ := globID(filepath.Join(a.Cwd, TaskDir), id)
+	b, _ := os.ReadFile(m[0])
+	// What v0.7.101's set --details does to it: SetSection finds no
+	// "## Relevant details" and adds one in its own canonical place.
+	both := strings.Replace(string(b), "\n## Depends on\n", "\n## Relevant details\nOld hug wrote this\n\n## Depends on\n", 1)
+	if err := os.WriteFile(m[0], []byte(both), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	git(t, filepath.Join(a.Cwd, TaskDir), "commit", "-qam", "an old hug's set --details")
+	_, out := runText(a, "show", id)
+	if !strings.Contains(out, "\ndetails: New hug wrote this\n\nOld hug wrote this\n") {
+		t.Fatalf("show hides a Details text:\n%s", out)
+	}
+	if j := execute(t, a, "show", id, "--json")["task"].(Reply); j["details"] != "New hug wrote this\n\nOld hug wrote this" {
+		t.Fatalf("json details %q", j["details"])
+	}
+	code, out := runText(a, "lint", id)
+	if code == 0 || !strings.Contains(out, "[old-layout] two Details sections") || !strings.Contains(out, "hug upgrade") {
+		t.Fatalf("lint: exit %d\n%s", code, out)
+	}
+	did := func() string { return strings.Join(execute(t, a, "upgrade", "--apply")["upgrade"].([]string), "; ") }
+	if got := did(); !strings.Contains(got, "1 tasks with two Details sections merged") {
+		t.Fatalf("upgrade: %s", got)
+	}
+	after, _ := os.ReadFile(m[0])
+	if got := string(after); strings.Contains(got, "Relevant details") || strings.Count(got, "## Details\n") != 1 ||
+		!strings.Contains(got, "\n## Details\nNew hug wrote this\n\nOld hug wrote this\n\n## Depends on\n") {
+		t.Fatalf("merged file:\n%s", got)
+	}
+	if st := git(t, filepath.Join(a.Cwd, TaskDir), "status", "--porcelain"); st != "" {
+		t.Fatalf("not committed: %s", st)
+	}
+	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-1", "--format=%s"); log != "hug upgrade: two Details sections merged in 1 tasks" {
+		t.Fatalf("commit %q", log)
+	}
+	if code, out := runText(a, "lint", id); code != 0 || strings.Contains(out, "Details") {
+		t.Fatalf("lint after upgrade: exit %d\n%s", code, out)
+	}
+	if got := did(); strings.Contains(got, "Details") {
+		t.Fatalf("second upgrade: %s", got)
+	}
+	if again, _ := os.ReadFile(m[0]); string(again) != string(after) {
+		t.Fatal("second upgrade changed the file")
+	}
+}

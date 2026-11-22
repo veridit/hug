@@ -247,3 +247,7 @@ func TidyDiff(path string, before, after []byte) string {
 	}
 	return b.String()
 }
+
+// MergeDetails is the file with one "## Details" where an older hug left
+// both "## Details" and "## Relevant details" (hxqqdp). Not built yet.
+func (d *Document) MergeDetails() (data []byte, changed bool) { return d.Bytes(), false }
