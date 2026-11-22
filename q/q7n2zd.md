@@ -1,19 +1,20 @@
 ---
 id: q7n2zd
 title: "Paste the clipboard into a task as an attachment"
-state: "todo"
+state: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["q7n2zd-engineer"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxt"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+doing_since: "2026-11-22T08:46"
 ---
 
 ## Goal
@@ -60,3 +61,4 @@ crab 2026-11-20 12:04Z: back to todo. It sat in doing under crab with nobody bui
 - 2026-11-20T12:52 answer 1 acknowledged by crab
 - 2026-11-20T12:52 crab read the answer: hug task check q7n2zd 1 "Jørgen 2026-11-20 11:52Z (answer 1): 'Yes, let's try uppercase V'. Key: V (provisional until bfxq93)."
 - 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T11:23; doing_with: p87ngv
+- 2026-11-22T08:46 todo/ready -> doing/active (take)
