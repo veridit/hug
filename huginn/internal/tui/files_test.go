@@ -21,6 +21,9 @@ func TestMain(m *testing.M) {
 	fakeHug() // j2vwk0: the test binary as a hug that answers "version"
 	// No test writes the real clipboard or the terminal (5z4zt4).
 	clipboard = func(string, bool) error { return nil }
+	// Nor reads it (q7n2zd): V finds no clipboard tool unless a test
+	// gives it one.
+	readClipboard = func(func(string) string) (clip, error) { return clip{}, errClipNoTool }
 	// No test opens Preview (33v71x): the opener is a no-op, and every
 	// screen names the macOS viewer, so goldens read the same on each OS;
 	// TestPictureOpensInTheViewer checks each OS's argv.
