@@ -38,6 +38,9 @@ type findState struct {
 	text string
 	hits []findHit
 	at   int // the hit n / N stand on
+	// opened: the long sections this find opened (8a0ybb), folded again
+	// when what is typed no longer matches in them.
+	opened map[string]bool
 }
 
 // openFind starts a find on the page: the old one is forgotten.
@@ -255,24 +258,30 @@ func (m *model) stepHit(step int) {
 
 // openFoldsHolding opens each folded long section of the page whose text
 // holds text, as a find matches it (8a0ybb): a find reaches all the page,
-// a folded section too, and shows it open. A section opened stays open.
+// a folded section too, and shows it open. One the find opened folds again
+// once what is typed no longer matches there; one the reader opened stays.
 func (m *model) openFoldsHolding(text string) {
 	t, ok := m.selected()
-	if !ok || strings.TrimSpace(text) == "" {
+	if !ok {
 		return
 	}
 	changed := false
 	for _, f := range m.folds(t) {
-		if m.unfolded[f.key] {
-			continue
+		if m.unfolded[f.key] && !m.find.opened[f.key] {
+			continue // the reader opened it
 		}
 		open := m.withUnfolded(f.key)
-		if len(findIn(open.foldText(t, f.key), text)) > 0 {
-			if m.unfolded == nil {
-				m.unfolded = map[string]bool{}
-			}
-			m.unfolded[f.key], changed = true, true
+		holds := strings.TrimSpace(text) != "" && len(findIn(open.foldText(t, f.key), text)) > 0
+		if holds == m.unfolded[f.key] {
+			continue
 		}
+		if m.unfolded == nil {
+			m.unfolded = map[string]bool{}
+		}
+		if m.find.opened == nil {
+			m.find.opened = map[string]bool{}
+		}
+		m.unfolded[f.key], m.find.opened[f.key], changed = holds, holds, true
 	}
 	if changed {
 		y := m.viewport.YOffset

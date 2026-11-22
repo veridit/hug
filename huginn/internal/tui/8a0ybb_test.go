@@ -189,3 +189,18 @@ func TestNewTaskDetailsHeadedDetails(t *testing.T) {
 		t.Fatalf("Enter on DETAILS did not open it:\n%s", detailPlain(m))
 	}
 }
+
+// 8a0ybb: a find reaches a folded section too. / with text that is only
+// in the Notes opens the Notes and steps to the match; the Details, with
+// no match, stay folded.
+func TestFindOpensTheFoldHoldingIt(t *testing.T) {
+	m := fileBoard(t, "testdata/8a0ybb/8a0ybb.md", "8a0ybb", 100, 30)
+	m = typeFind(m, "machine load over 10")
+	text := detailPlain(m)
+	if len(m.find.hits) == 0 || !strings.Contains(text, "⌄ NOTES (27)") || !strings.Contains(text, "› DETAILS (5)") {
+		t.Fatalf("find did not open the Notes alone (hits %d):\n%s", len(m.find.hits), text)
+	}
+	if h := m.find.hits[m.find.at]; h.line < m.viewport.YOffset || h.line >= m.viewport.YOffset+m.viewport.Height {
+		t.Fatalf("the match is off the page: line %d, page %d+%d", h.line, m.viewport.YOffset, m.viewport.Height)
+	}
+}
