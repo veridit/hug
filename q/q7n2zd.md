@@ -52,6 +52,7 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
 check 1: Jørgen 2026-11-20 11:52Z (answer 1): 'Yes, let's try uppercase V'. Key: V (provisional until bfxq93).
 crab 2026-11-20 12:04Z: back to todo. It sat in doing under crab with nobody building it; it is queued for a worker (machine load over 10). Found in the 47sxn2 request-1 check.
 file:q7n2zd-task-after-V-100x30.ans (2600 bytes, sha256:bbc2b706) V in a task at 100x30: tmux capture-pane -e of the built binary (0f28cd8c) with HUG_TEST_CLIPBOARD as a fake clipboard holding two coloured lines; FILES shows paste-1006.ans at once and the rule says 'clipboard text (2 lines) · attached as paste-1006.ans to cccccc'
+pig (claude-opus-5-5) on branch q7n2zd/ci/q7n2zd: failing-first d9fdab47 (8 tests fail on stubs), change 7eb1ad49, mutant tests 0f28cd8c. V unbound on main 3b70c688 in every context (no "V" handler, picker letter or pickWriters entry). Local niced go test ./... green at 7eb1ad49; GOOS=windows go vet clean. 23/23 mutants killed. CI run 45005912590 on 0f28cd8c pending.
 ## History
 - 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:23 doing/active -> doing/asked (ask)
