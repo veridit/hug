@@ -66,7 +66,7 @@ landed a648520 on main 2026-11-18: hug tui: rows show group and epic; : grouping
 landed fbb38da on main 2026-11-18: hug tui: a reload keeps the heading under the cursor (kx2ndm)
 landed c5e058e on main 2026-11-18: hug tui: g groups rows at once; gg and G go, top and bottom are < > Home End…
 landed 8d409e2 on main 2026-11-18: hug tui: tmux goldens for grouping and g (kx2ndm)
-Reflection (open, 2026-11-18, nautilus): 'No magic group names' (Jørgen) guided well: it struck check 4 instead of special-casing 'later'. Gap: the ticket never named the key; the g/gg/G ruling took a park-and-wait round trip. The tmux load guard could not finish locally at load ~660, so the goldens came from CI GOT screens. (nautilus)
+Reflection (dismissed, 2026-11-18, nautilus): 'No magic group names' (Jørgen) guided well: it struck check 4 instead of special-casing 'later'. Gap: the ticket never named the key; the g/gg/G ruling took a park-and-wait round trip. The tmux load guard could not finish locally at load ~660, so the goldens came from CI GOT screens. (nautilus)
 shipped in v0.7.51 (a648520)
 ## History
 - 2026-11-17T21:59 todo -> doing/active (take)
