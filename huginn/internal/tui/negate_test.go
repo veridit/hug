@@ -95,6 +95,12 @@ func TestFilterPickerBangFlips(t *testing.T) {
 	if bar := ansi.Strip(m.keyBar()); !strings.Contains(bar, "! not") {
 		t.Fatalf("picker footer lacks '! not': %s", bar)
 	}
+	// The picker opens without it: ! then Esc out, and the next f picks
+	// the value itself.
+	m = press(manyModel(t), "F", "f", "!", "esc", "f", "s", "done", "enter")
+	if m.filter.State != "done" {
+		t.Fatalf("a new f kept the last picker's !: state %q", m.filter.State)
+	}
 }
 
 // 7zg9mf check 6: the list opens on 'state !done', a chip like any other;
@@ -134,10 +140,14 @@ func TestListOpensOnNotDone(t *testing.T) {
 	if m.filter.State != "" {
 		t.Fatalf("after F, the list came back with %q", m.filter.State)
 	}
-	// ⌫ on it, in a fresh session, does the same.
+	// ⌫ on it, in a fresh session, does the same, and it stays cleared.
 	m = press(manyModel(t), "backspace")
 	if m.filter.State != "" || !strings.Contains(ansi.Strip(m.filterBar()), "filter: none") {
 		t.Fatalf("⌫: filter %q", m.filter.State)
+	}
+	m = press(m, "v", "o", "v", "l")
+	if m.filter.State != "" {
+		t.Fatalf("after ⌫, the list came back with %q", m.filter.State)
 	}
 	// A filter of the reader's own in the list is kept across views, as
 	// any chip (5cjy88); the default is not.

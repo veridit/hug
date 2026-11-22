@@ -45,11 +45,9 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 	}
 	cols := []BoardColumn{{State: "todo"}, {State: "doing"}, {State: "done"}}
 	for _, t := range ts {
-		// The columns are the states: --state is not applied here, as before;
-		// the other filters, ! too (7zg9mf), are.
-		cut := filter
-		cut.State = ""
-		if !cut.Keeps(t, ts) {
+		// board takes no --state (its columns are the states); the other
+		// filters apply, ! too (7zg9mf).
+		if !filter.Keeps(t, ts) {
 			continue
 		}
 		for i := range cols {
