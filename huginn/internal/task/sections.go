@@ -224,6 +224,42 @@ func (s *Store) Tidy(dryRun bool) (changed []string, diff string, err error) {
 	return changed, b.String(), nil
 }
 
+// MergeDetailsAll merges, for hug upgrade, every task file an older hug
+// left with both "## Details" and "## Relevant details" (hxqqdp), with
+// MergeDetails: no text lost. It returns the paths it rewrote and their
+// diffs; with dryRun nothing is written, and a second run rewrites nothing.
+func (s *Store) MergeDetailsAll(dryRun bool) (changed []string, diff string, err error) {
+	ts, e := s.Tasks()
+	if e != nil {
+		return nil, "", e
+	}
+	var b strings.Builder
+	for _, t := range ts {
+		path, e := s.diskPath(t.Path)
+		if e != nil {
+			return changed, b.String(), e
+		}
+		raw, e := sharefile.ReadFile(path)
+		if e != nil {
+			return changed, b.String(), e
+		}
+		out, did := Parse(t.Path, raw).MergeDetails()
+		if !did {
+			continue
+		}
+		b.WriteString(TidyDiff(t.Path, raw, out))
+		changed = append(changed, t.Path)
+		if dryRun {
+			continue
+		}
+		s.Invalidate()
+		if e := AtomicWrite(path, out); e != nil {
+			return changed, b.String(), e
+		}
+	}
+	return changed, b.String(), nil
+}
+
 // TidyDiff shows what upgrade changed in one file: each removed line as
 // "- line", and the old and new section order when it moved sections.
 func TidyDiff(path string, before, after []byte) string {
@@ -248,6 +284,44 @@ func TidyDiff(path string, before, after []byte) string {
 	return b.String()
 }
 
+// bothDetails reports whether the file has both "## Details" and the old
+// "## Relevant details" (hxqqdp): a hug from before 8a0ybb, writing set
+// --details to a file a newer hug wrote, finds no "## Relevant details"
+// and adds one, so both hold text.
+func (d *Document) bothDetails() bool {
+	_, details := d.sections["Details"]
+	_, old := d.sections[OldDetails]
+	return details && old
+}
+
 // MergeDetails is the file with one "## Details" where an older hug left
-// both "## Details" and "## Relevant details" (hxqqdp). Not built yet.
-func (d *Document) MergeDetails() (data []byte, changed bool) { return d.Bytes(), false }
+// both headings (hxqqdp, crab 2026-11-22): the Details text, a blank line,
+// then the Relevant details text, no marker, every other line as it was.
+// changed is false, and the bytes the same, when the file has one or none.
+func (d *Document) MergeDetails() (data []byte, changed bool) {
+	if !d.bothDetails() {
+		return d.Bytes(), false
+	}
+	old := d.sections[OldDetails]
+	text := strings.TrimSpace(strings.Join(d.lines[old[0]+1:old[1]], ""))
+	// The old block goes, its heading and every line up to the next one.
+	lines := append(append([]string(nil), d.lines[:old[0]]...), d.lines[old[1]:]...)
+	if old[1] == len(d.lines) {
+		// It was last: the file ends as it did, on the block before it.
+		for len(lines) > 0 && strings.TrimSpace(lines[len(lines)-1]) == "" {
+			lines = lines[:len(lines)-1]
+		}
+		if n := len(lines); n > 0 && strings.HasSuffix(string(d.raw), "\n") && !strings.HasSuffix(lines[n-1], "\n") {
+			lines[n-1] += d.newline
+		}
+	}
+	merged := Parse(d.Task.Path, []byte(strings.Join(lines, "")))
+	if text != "" {
+		joined := merged.sectionText("Details")
+		if joined != "" {
+			joined += "\n\n"
+		}
+		merged.SetSection("Details", joined+text)
+	}
+	return merged.Bytes(), true
+}

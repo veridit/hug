@@ -91,12 +91,26 @@ func (s *Store) Promote(ref string, n int) (Result, error) {
 }
 
 // sectionText is the body of the "## name" section, trimmed, or "".
+// Details in a file with both headings (hxqqdp) is both texts, the
+// "## Details" one first, a blank line between: none is hidden.
 func (d *Document) sectionText(name string) string {
+	body := func(span [2]int) string {
+		return strings.TrimSpace(strings.Join(d.lines[span[0]+1:span[1]], ""))
+	}
+	if name == "Details" && d.bothDetails() {
+		var parts []string
+		for _, s := range []string{"Details", OldDetails} {
+			if t := body(d.sections[s]); t != "" {
+				parts = append(parts, t)
+			}
+		}
+		return strings.Join(parts, "\n\n")
+	}
 	span, ok := d.span(name)
 	if !ok {
 		return ""
 	}
-	return strings.TrimSpace(strings.Join(d.lines[span[0]+1:span[1]], ""))
+	return body(span)
 }
 
 // tickWaiting ticks every open item elsewhere that reads "done when

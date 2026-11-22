@@ -43,7 +43,7 @@ var Codes = []CodeInfo{
 	{"duplicate-section", "a section heading appears twice", Broken},
 	{"duplicate-field", "a header field appears twice", Broken},
 	{"missing-field", "id, title or state is missing", Broken},
-	{"old-layout", "the file says status: where state: goes, or waiting_for: where a question goes (a board from before the state: rename or the asked stage; hug upgrade moves it)", Broken},
+	{"old-layout", "the file says status: where state: goes, or waiting_for: where a question goes, or has both ## Details and ## Relevant details (a board from before the state: rename or the asked stage, or an older hug's set --details; hug upgrade moves or merges it)", Broken},
 	{"invalid-id", "the id is not 6 characters of 0-9 a-z", Broken},
 	{"id-mismatch", "the file name id differs from the header id", Broken},
 	{"unknown-state", "state is not todo, doing, done or dropped", Broken},

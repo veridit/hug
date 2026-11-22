@@ -541,6 +541,11 @@ func Parse(path string, data []byte) *Document {
 	if section != "" {
 		d.sections[section] = [2]int{sectionStart, len(d.lines)}
 	}
+	// An older hug's set --details on a "## Details" file (hxqqdp): both
+	// texts are read, the second heading is reported, hug upgrade merges.
+	if d.bothDetails() {
+		d.add(d.sections[OldDetails][0]+1, "old layout: two Details sections, \"## Details\" and \"## "+OldDetails+"\" (an older hug's set --details added the second; hug upgrade merges them)")
+	}
 	// A file from before 6ephqk step 4 says status: where state: goes.
 	// hug upgrade renames it; until then the task reads as its old state.
 	_, hasState := d.fields["state"]

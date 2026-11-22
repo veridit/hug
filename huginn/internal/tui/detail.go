@@ -532,12 +532,15 @@ func checkText(a task.Acceptance) string {
 }
 
 // sectionText is the text of every section called name, as the detail
-// draws it.
+// draws it. A file with both "## Details" and the old "## Relevant
+// details" (hxqqdp) shows both, the Details text first, as hug task show.
 func sectionText(sections []detailSection, name string) string {
 	var out []string
-	for _, s := range sections {
-		if s.name == name && strings.TrimSpace(s.text) != "" {
-			out = append(out, s.text)
+	for _, old := range []bool{false, true} {
+		for _, s := range sections {
+			if s.name == name && s.old == old && strings.TrimSpace(s.text) != "" {
+				out = append(out, s.text)
+			}
 		}
 	}
 	return strings.Join(out, "\n")
@@ -554,7 +557,10 @@ func otherSection(name string) bool {
 	return !contains([]string{"description", "acceptance", "dependencies", "notes", "history", "requests", "questions"}, name)
 }
 
-type detailSection struct{ name, text string }
+type detailSection struct {
+	name, text string
+	old        bool // headed by the name before 8a0ybb ("Relevant details")
+}
 
 // doc is t's parsed file: from the last reload, or read now and kept until
 // the next one (with Options.Lint a reload parses no file, 44w1ev).
@@ -574,7 +580,7 @@ func (m model) doc(t task.Task) *task.Document {
 func (m model) sections(t task.Task) []detailSection {
 	d := m.doc(t)
 	if d == nil {
-		return []detailSection{{"description", cleanMarkdown(t.Goal)}}
+		return []detailSection{{name: "description", text: cleanMarkdown(t.Goal)}}
 	}
 	raw := strings.Split(strings.ReplaceAll(cleanMarkdown(string(d.Bytes())), "\r\n", "\n"), "\n")
 	start := 0
@@ -602,19 +608,19 @@ func (m model) sections(t task.Task) []detailSection {
 			}
 		}
 		if fence == "" && strings.HasPrefix(line, "## ") {
-			name := strings.ToLower(strings.TrimSpace(line[3:]))
+			name, old := strings.ToLower(strings.TrimSpace(line[3:])), false
 			switch name {
 			case "goal":
 				name = "description"
 			case "relevant details":
 				// The name before 8a0ybb: the same section (task.OldDetails).
-				name = "details"
+				name, old = "details", true
 			case "depends on":
 				name = "dependencies"
 			case "acceptance criteria":
 				name = "acceptance"
 			}
-			out = append(out, detailSection{name: name})
+			out = append(out, detailSection{name: name, old: old})
 			continue
 		}
 		out[len(out)-1].text += line + "\n"

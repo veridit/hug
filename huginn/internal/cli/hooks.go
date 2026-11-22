@@ -419,10 +419,24 @@ func (a *App) runUpgrade(ctx context.Context, f flags) (Reply, error) {
 			tasks = append(tasks, would(fmt.Sprintf("%d tasks moved to state: (was status:)", len(changed))))
 			upgradeDiff += strings.Join(lines, "\n") + "\n"
 		}
+		// Two Details sections (hxqqdp): an older hug's set --details on a
+		// "## Details" file added "## Relevant details"; one "## Details"
+		// holds both texts, before the order is tidied.
+		changed, diff, e := s.s.MergeDetailsAll(dry)
+		if e == nil && len(changed) > 0 && !dry {
+			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: two Details sections merged in %d tasks", len(changed)))
+		}
+		if e != nil {
+			return nil, e
+		}
+		if len(changed) > 0 {
+			tasks = append(tasks, would(fmt.Sprintf("%d tasks with two Details sections merged into one (the Details text, then the Relevant details text)", len(changed))))
+			upgradeDiff += diff
+		}
 		// Section order (jnaspy): Goal, Purpose, Principle, Relevant
 		// details, Depends on, Acceptance, others, Notes, History, with each
 		// section's text unchanged; backlog leftovers go.
-		changed, diff, e := s.s.Tidy(dry)
+		changed, diff, e = s.s.Tidy(dry)
 		if e == nil && len(changed) > 0 && !dry {
 			e = s.r.Commit(changed, fmt.Sprintf("hug upgrade: backlog leftovers and section order in %d tasks", len(changed)))
 		}

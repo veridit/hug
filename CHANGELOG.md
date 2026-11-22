@@ -4,6 +4,24 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- A task with both `## Details` and `## Relevant details` no longer
+  hides one of them (hxqqdp, ram 2026-11-22). A hug from before v0.7.102
+  still running (`hug tui`, `hug mcp`) and writing `set --details` to a
+  file a newer hug wrote does not know `## Details`, so it adds a second
+  section, `## Relevant details`; v0.7.104 showed only the Details text.
+  - `hug task show`, `show --json`, MCP and `hug tui` show both texts: the
+    `## Details` text first, a blank line, then the `## Relevant details`
+    text.
+  - `hug task lint` reports it as `old-layout` ("two Details sections"),
+    with `fix: hug upgrade`.
+  - `hug upgrade` merges them into one `## Details` in the same order, no
+    text lost, and commits "hug upgrade: two Details sections merged in N
+    tasks"; a second run changes nothing. Restart the old `hug tui` and
+    `hug mcp` processes to stop new ones.
+  - The cache rebuilds once on the first hug command after this upgrade.
+
 ## v0.7.105 - 2026-11-22
 
 - hug tui: on a task's page, a long request now wraps under its own
