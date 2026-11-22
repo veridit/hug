@@ -4,7 +4,7 @@ title: "Paste the clipboard into a task as an attachment"
 state: "doing"
 type: feature
 priority: "medium"
-assignee: ["q7n2zd-engineer"]
+assignee: ["pig"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxt"
