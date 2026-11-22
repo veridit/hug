@@ -70,7 +70,7 @@ Landed on main 4e70099c (CI 44321337759, exact SHA, 6/6; code identical to mizar
 landed 872a2a4 on main 2026-11-18: Requests and answers reach the board coordinator by design (gmzd87)
 shipped in v0.7.64 (872a2a4)
 check 4: Jørgen 2026-11-20 10:30Z: 'It works ... So this one is closed.' His default-coordinator idea is filed as a new task.
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T12:34 todo -> doing/active (take)
 - 2026-11-18T15:11 doing/active -> doing/waiting (wait)
