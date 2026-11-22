@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzl"
+rank: "zzzzzzzzzzzd"
 created: 2026-11-22
 updated: 2026-11-22
 design_question: "v0.7.99 is installed. On the board, press L until you pass the last column: the marker goes away and the footer says 'H/L pick a column', as when the board opens. One more L marks the first column; H from the first column does the same the other way. Does that feel right, or what should change?"
