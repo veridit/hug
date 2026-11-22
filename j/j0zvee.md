@@ -47,7 +47,7 @@ landed c05a812 on main 2026-11-19: task, cli: failing tests, the same release cl
 landed 38f0eda on main 2026-11-19: task: one release close on two clones merges into one History line (j0zvee)
 shipped in v0.7.75 (c05a812)
 crab: landed on main as 38f0eda2 (stack tip fbe3a412, CI 44438198799 success 8/8); released in v0.7.75.
-Reflection (open, 2026-11-19, crab): nothing (coordinator closing on landed CI evidence)
+Reflection (dismissed, 2026-11-19, crab): nothing (coordinator closing on landed CI evidence)
 ## History
 - 2026-11-19T02:06 todo -> doing/active (take)
 - 2026-11-19T03:00 doing/active -> done (done, by release v0.7.75: every check holds); was doing_since: 2026-11-19T02:06
