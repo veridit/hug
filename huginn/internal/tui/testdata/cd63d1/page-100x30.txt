@@ -1,0 +1,80 @@
+== page
+PURPOSE
+The request should read as one block under its head line.                                         
+
+PRINCIPLE
+Indent after wrapping, not before; one rule for every indented block on the page.                 
+
+GOAL
+A request's text on a task's page keeps its 3-column indent on every wrapped line, not only the   
+first.                                                                                            
+
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
+> ☐ 1. A request and its answer wrap with their indent kept, at 100x30 (golden, fails on main first)
+
+DEPENDENCIES
+  ↳ w0rap1 The task this one waits on, with a title long enough to fill a row [todo] open the row
+    this note is on is long enough that the page has to wrap it, and its second line must hang under
+    the first
+  ⧗ when date 2099-01-01 WAITING · today is 2026-11-22 · wakes rooster
+
+CHILDREN (1)
+  ↳ w0rap1 The task this one waits on, with a title long enough to fill a row [todo]
+
+LINKS
+  ↳ w0rap1 The task this one waits on, with a title long enough to fill a row [todo]
+
+REQUESTS
+1. jhf · 42 h ago · resolved
+   And we're working on a much more intricate system of inline things where we use the new syntax
+   and everything. It's another ticket. So wouldn't that kind of replace this, being taken over by
+   the other task (task:w0rap1)?
+   └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline
+     marks, so this task's jump check and its land-on-the-question checks are struck and point
+     there.
+     A second line of the account, long enough to wrap as well on a page that is one hundred columns
+     wide.
+2. jhf · 6 min ago · pending, not sent
+   A short first line.
+   A second line of the request that runs on long enough that the page has to wrap it at a hundred
+   columns, twice.
+
+⌄ QUESTIONS (1)
+1. crab → ox · 43 h ago · answered
+   Your idea differs from the mock in question 2: the mock opens on a block at the top that lists
+   your questions as links; yours opens the page scrolled to the question where it sits.
+   └ ox: Scroll to the question; no block at the top. A second sentence makes this answer long
+     enough to wrap on a page a hundred columns wide.
+
+› HISTORY (1)
+== at the end
+HUG · overview › WAITING › cd63d1                                                                   
+[depends]  [bug]  [high]  group:root  assigned:rooster                                              
+created 2026-11-22 · updated 2026-11-22 · request-s-wrapped-lines                                   
+└─ depends on w0rap1, when date 2099-01-01  ▱▱ 0/2                                                  
+────────────────────────────────────────────────────────────────────────────────────────────────────
+A request's wrapped lines start at column 0 on a task's page                                        
+↑───────────────────────────────────────────────────────────────────────────────────────────────────
+LINKS                                                                                               
+  ↳ w0rap1 The task this one waits on, with a title long enough to fill a row [todo]                
+                                                                                                    
+REQUESTS                                                                                            
+1. jhf · 42 h ago · resolved                                                                        
+   And we're working on a much more intricate system of inline things where we use the new syntax   
+   and everything. It's another ticket. So wouldn't that kind of replace this, being taken over by  
+   the other task (task:w0rap1)?                                                                    
+   └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline  
+     marks, so this task's jump check and its land-on-the-question checks are struck and point      
+     there.                                                                                         
+     A second line of the account, long enough to wrap as well on a page that is one hundred columns
+     wide.                                                                                          
+2. jhf · 6 min ago · pending, not sent                                                              
+   A short first line.                                                                              
+   A second line of the request that runs on long enough that the page has to wrap it at a hundred  
+   columns, twice.                                                                                  
+                                                                                                    
+› QUESTIONS (1)                                                                                     
+                                                                                                    
+› HISTORY (1)                                                                                       
+─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────────────────────────
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · New · up · request · / find … 
