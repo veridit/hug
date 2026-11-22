@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.103 - 2026-11-22
 
 - hug tui: `V` pastes the clipboard into a task as a file, the way `S`
   attaches the screen (q7n2zd, Jørgen 2026-11-20). A terminal paste
