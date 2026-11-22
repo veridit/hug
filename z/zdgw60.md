@@ -44,7 +44,7 @@ CI 44429491626 (1ca07644) success on all 8 jobs: secrets, bench, test ubuntu/mac
 check 1: On main as e75e1593 (tests 4edade75), code-identical to 1ca07644 (diff of huginn/ between them empty). TestSetSaysWhatItWroteBeforeLint failed first ('want added check 2: VALUE before the lint block'), passes: 'added check 2: VALUE' prints before 'lint: 1 finding'. CI 44429491626 success, all 8 jobs.
 check 2: On main as e75e1593. TestSetSaysEachFieldItWrote: 11 lines for 11 changed fields (title, state, type, priority, assignee, parent, tags, goal, purpose, principle, relevant details) and 'unchanged: ...' on a repeat; failed first ('wrote lacks title: Old title -> New title'). CI 44429491626 success.
 check 3: On main as e75e1593. MCP TestNewAndUpdateReturnFindingsAndOneFix: task_update set returns wrote ['title: ...','purpose: Why now','added check 2: D']; failed first ('update set wrote: <nil>'). CI 44429491626 success.
-Reflection (open, 2026-11-19, piglet): nothing misled: the reflection's own reproduction (set --accept then a lint fix) made the failing-first test directly; the only surprise was that --state todo also clears the assignee, which the reply now says.
+Reflection (dismissed, 2026-11-19, piglet): nothing misled: the reflection's own reproduction (set --accept then a lint fix) made the failing-first test directly; the only surprise was that --state todo also clears the assignee, which the reply now says.
 landed 4edade7 on main 2026-11-19: test: a set says what it wrote before lint advice (zdgw60, failing)
 landed e75e159 on main 2026-11-19: hug task set says what it wrote before lint advice (zdgw60)
 shipped in v0.7.74 (4edade7)
