@@ -50,7 +50,7 @@ check 3: README.md Install, after the setup block: 'Tab completion for hug, hug 
 Speed acceptance (crab 01:01): accepted on CPU. Seid copy (2537 tasks, warm cache), load avg ~500: __complete task show '' process CPU median 76 ms, wall min 95-120 ms, wall median 159-200 ms; in-process Peek 23-43 ms. Re-measure on an idle machine: target under 150 ms warm wall. Crab asks Jørgen to TAB on Seid after release.
 Landed on main 5b6f0de7 (ff from 50fa8681); CI 44433709190 success 8/8. Ships in the next release.
 landed 5b6f0de on main 2026-11-19: hug completion bash|zsh|fish: one script for hug, hug task and hug mem (5mmqjk)
-Reflection (open, 2026-11-19, crab): nothing (coordinator closing on landed CI evidence)
+Reflection (dismissed, 2026-11-19, crab): nothing (coordinator closing on landed CI evidence)
 shipped in v0.7.75 (5b6f0de)
 ## History
 - 2026-11-18T23:58 todo -> doing/active (take with p277bp)
