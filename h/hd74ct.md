@@ -52,6 +52,8 @@ Build in huginn/internal/tui/sectionframe.go (sectionFrame, sectionRule); B is s
 ## Requests
 - 2026-11-22T22:31 request 1 by jhf:
   How about just showing the for the active section?
+  resolved 2026-11-22T22:32 by crab:
+    Turned into a task: only the focused section sits between rules; the others get a plain title line and no rules (sketch in Details). Check 2 is your pick from frames at 100x30, next to today's for comparison; that pick also settles v68n82 check 2 (A or B). A worker builds the frames first when the machine's load allows.
 
 ## Notes
 
@@ -63,3 +65,4 @@ file:screen-2230.ans (18179 bytes, sha256:caeb9471) screen capture from hug tui
 - 2026-11-22T22:31 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-22T22:31 request 1 acknowledged by crab
 - 2026-11-22T22:31 request 1 in progress by crab: hug task set hd74ct
+- 2026-11-22T22:32 resolved request 1 by crab
