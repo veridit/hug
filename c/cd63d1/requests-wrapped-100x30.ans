@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168moverview › WAITING › [1m[38;2;0;191;255mcd63d1[0m
+[1m[38;2;107;107;214m[depends][0m  [38;2;255;158;203m[bug][39m  [38;2;216;204;133m[high][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:rooster[0m
+[38;2;135;149;168mcreated 2026-11-22 · updated 2026-11-22 · request-s-wrapped-lines[39m
+[38;2;107;107;214m└─ depends on w0rap1, when date 2099-01-01  ▱▱ 0/2
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mA request's wrapped lines start at column 0 on a task's page
+[0m[38;2;135;149;168m↑───────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255mCHILDREN (1)[0m
+  ↳ [38;2;117;191;255mw0rap1[39m The task this one waits on, with a title long enough to fill a row [todo]
+
+[1m[38;2;0;191;255mREQUESTS[0m
+[38;2;135;149;168m1. jhf · 2 d ago · [38;2;138;201;135mresolved[39m
+   And we're working on a much more intricate system of inline things where we use the new syntax
+   and everything. It's another ticket. So wouldn't that kind of replace this, being taken over by
+   the other task (w0rap1)?
+[38;2;138;201;135m   └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline[39m
+[38;2;138;201;135m     marks, so this task's jump check and its land-on-the-question checks are struck and point[39m
+[38;2;138;201;135m     there.[39m
+[38;2;138;201;135m     A second line of the account, long enough to wrap as well on a page that is one hundred columns
+     wide.[39m
+[38;2;135;149;168m2. jhf · 7 h ago · [1m[38;2;0;191;255mpending, not sent[0m
+   A short first line.
+   A second line of the request that runs on long enough that the page has to wrap it at a hundred
+   columns, twice.
+
+[1m[38;2;0;191;255m› QUESTIONS (1)[0m
+
+[1m[38;2;0;191;255m› HISTORY (1)[0m
+[38;2;135;149;168m─── Task 1 of 1 · 100% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ────────────────────────────────────────────────
+[1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m check · [1m[38;2;0;191;255mSpace[0m[38;2;135;149;168m tick · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp · [1;4m[38;2;0;191;255mr[0m[38;2;135;149;168mequest · [1m[38;2;0;191;255m/[0m[38;2;135;149;168m find[39m [38;2;135;149;168m…[39m
