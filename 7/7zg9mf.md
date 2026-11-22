@@ -11,11 +11,16 @@ rank: "zzzzzzzzzzzf"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-22T03:13"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "0s652z"
+asked_by: "crab"
+asked_check: "5"
+asked_what: "Jørgen opens the list after release and sees only open work, and can flip a filter with !"
+asked_for: "jhf"
+asked_since: "2026-11-22T05:05"
 ---
 
 ## Goal
@@ -46,6 +51,10 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
   resolved 2026-11-20T13:35 by crab:
     Turned into a task: filters get a 'not', written with ! (': state !done', or ! in the f picker before or after choosing a value), shown on the filter line, and the CLI takes the same. The list view then opens with 'filter: state !done', so done tasks stay out until you clear it with Esc. Checks 2-4 are tests (the default one a tmux test), check 5 your look after release.
 
+## Questions
+- 2026-11-22T05:05 question 1 by crab to jhf (check 5):
+  Jørgen opens the list after release and sees only open work, and can flip a filter with !
+
 ## Notes
 
 file:screen-1334.ans (15300 bytes, sha256:a5fc83a1) screen capture from hug tui
@@ -60,6 +69,10 @@ CI run 44982838522 on ad61f852f34314d79cfce88abf3254de508d4d5e (branches 7zg9mf 
 check 2: ad61f852, CI 44982838522 all 8 green: TestNegatedFilterCommand (': state !done' and ': type !bug' keep every task but those, chip '[state:!done ×] [type:!bug ×]', '· None with state:!todo'), TestNegatedSearchTerm ('/ state:!done'), TestFilterNegation (task.Filter.Keeps, Next), TestNegatedFilters (hug task ls --state '!done', --type '!bug', both, search, next, board; bad value ends 'fix: hug task ls --state '\''!done'\'''), TestListTakesNegatedFilters (MCP task_list/task_search/task_next; '!don' refused). Failed first on d72f77ca. Mutants M1-M9, M6b, M21 caught.
 check 3: ad61f852, CI 44982838522 all 8 green: TestFilterPickerBangFlips: ! before the field, before the value and on the highlighted value each give !done; ! twice gives done; ! is never text ('done', not 'done!'); the row reads '> !done' with its count; footer '! not'; a new f starts without it. tmux: TestTmuxListOpensOnNotDone, frame 2-picker-not-done.ansi. Failed first on d72f77ca. Mutants M10, M11, M12 caught.
 check 6: ad61f852, CI 44982838522 all 8 green: TestTmuxListOpensOnNotDone (hug binary in tmux 100x30): v l opens on 'filter: [state:!done ×]', 4/5, done cccccc out; Esc from a task keeps it; Esc up to the overview shows 'filter: none' 5/5; F clears it to 'filter: none' with cccccc back and it stays cleared after v o v l. TestListOpensOnNotDone: the same, the board unfiltered, ⌫ clears it for the session, a reader's own state chip replaces it. TestReloadKeepsListDefault: R keeps it up, cleared or replaced. Frame 1-list-opens.ansi. Failed first on d72f77ca. Mutants M13-M20, M16 caught.
+landed 9d35298 on main 2026-11-22: test: negated filters (! in : and the f picker, CLI and MCP) and the list's…
+landed 0201dca on main 2026-11-22: filters can be negated with !, and the list opens on 'state !done' (7zg9mf)
+landed ad61f85 on main 2026-11-22: test: close three surviving mutants: the picker's ! resets on f, ⌫ retires the…
+shipped in v0.7.101 (9d35298)
 ## History
 - 2026-11-20T13:34 request 1 by jhf
 - 2026-11-20T13:34 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
@@ -67,3 +80,4 @@ check 6: ad61f852, CI 44982838522 all 8 green: TestTmuxListOpensOnNotDone (hug b
 - 2026-11-20T13:35 request 1 in progress by crab: hug task set 7zg9mf
 - 2026-11-20T13:35 resolved request 1 by crab
 - 2026-11-22T03:13 todo -> doing/active (take)
+- 2026-11-22T05:05 doing/active -> doing/asked (ask)
