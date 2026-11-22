@@ -32,6 +32,7 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
 - [ ] In the f picker, ! flips the highlighted value to its negation, before or after picking (key test)
 - [ ] ~~The list view opens with 'filter: state !done', and Esc clears it to 'filter: none' (tmux test)~~ (not relevant: Esc keeps filter chips since v0.7.94 (5cjy88); F clears all, ⌫ the last; replaced by check 6, crab, 2026-11-22)
 - [ ] Jørgen opens the list after release and sees only open work, and can flip a filter with !
+- [ ] The list view opens with 'filter: state !done' shown as a chip; F (or ⌫ on it) clears it to 'filter: none', and Esc does not, as for any chip since 5cjy88 (tmux test)
 
 ## Requests
 - 2026-11-20T13:34 request 1 by jhf:
