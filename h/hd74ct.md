@@ -2,8 +2,8 @@
 id: hd74ct
 title: "Overview: rules only around the focused section"
 state: todo
-type: feature
-priority: ""
+type: "feature"
+priority: "high"
 assignee: []
 labels: []
 group: ""
