@@ -70,6 +70,7 @@ file:zbdbtm-5-attachment-at-section-100x30.ans (1923 bytes, sha256:9517b649) Ent
 file:zbdbtm-6-repo-file-in-line-100x30.ans (4197 bytes, sha256:2e527281) Space on docs/DESIGN.md#Personal vs shared memories: that section of the repo file in line (check 6)
 file:zbdbtm-7-repo-file-at-section-100x30.ans (5016 bytes, sha256:6683d8c6) Enter on the repo link: docs/DESIGN.md · 9.8 KiB · repo, scrolled to 'Personal vs shared memories' (check 2)
 file:zbdbtm-8-p87ngv-MOCK-in-line-100x30.ans (3924 bytes, sha256:f7877693) p87ngv question 6: plain 'MOCK.md' is a link; Space shows 12 rows in line, '30 more lines' (check 5)
+file:zbdbtm-9-p87ngv-MOCK-file-frame-100x30.ans (6193 bytes, sha256:480edd8d) p87ngv: Enter on MOCK.md opens it in the file frame, 1 of 6; Esc returns to the link (check 5)
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):

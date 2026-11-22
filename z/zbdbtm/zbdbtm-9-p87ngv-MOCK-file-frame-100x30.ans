@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168moverview › [1m[38;2;0;191;255mp87ngv[0m[38;2;135;149;168m › [1m[38;2;0;191;255mp/p87ngv/MOCK.md · 6.0 KiB · 1 of 6[0m                     [1m[38;2;255;179;84m? 1 for you
+[0m[38;2;135;149;168mcheck 5 mock: rules per frame, syntax rules, 9 open questions
+────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255m[48;5;63mMock: inline marks and history.sdd (p87ngv check 5) [0m[38;5;252m                                              [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252mTask in the mock: [1mw7tq3k[0m[38;5;252m "Lint warns when an acceptance check reads like a question". It is made  [39m
+[38;5;252mup, and no product code was touched. Files: [38;2;201;214;227m[48;2;26;38;48mbefore.md[38;5;252m[49m (2 open marks) → [38;2;201;214;227m[48;2;26;38;48mafter.md[38;5;252m[49m (no marks) +      [39m
+[38;2;201;214;227m[48;2;26;38;48mhistory.sdd[38;5;252m[49m; [38;2;201;214;227m[48;2;26;38;48mcli.txt[38;5;252m[49m; [38;2;201;214;227m[48;2;26;38;48mtui-100x30.txt[38;5;252m[49m (7 frames, 30 rows × ≤100 cols each).                        [39m
+[38;5;252m                                                                                                  [39m
+[1m[38;2;0;191;255mSyntax rules the files follow[0m[38;5;252m                                                                     [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252m1. A mark is a thing: space-dot-Capital ([38;2;201;214;227m[48;2;26;38;48m.Request[38;5;252m[49m, [38;2;201;214;227m[48;2;26;38;48m.Question[38;5;252m[49m, [38;2;201;214;227m[48;2;26;38;48m.Comment[38;5;252m[49m; a reply is [38;2;201;214;227m[48;2;26;38;48m.Answer[38;5;252m[49m)       [39m
+[38;5;252mfollowed by [38;2;201;214;227m[48;2;26;38;48m.lowercase:value[38;5;252m[49m properties: [38;2;201;214;227m[48;2;26;38;48m.by .to .at .msg .prev .on .in[38;5;252m[49m.                          [39m
+[38;5;252m2. [1mSpace-dot-Capital starts a new thing in the run[0m[38;5;252m: [38;2;201;214;227m[48;2;26;38;48m .Question ... .Answer ...[38;5;252m[49m is a question with [39m
+[38;5;252mits answer.                                                                                       [39m
+[38;5;252m3. [38;2;201;214;227m[48;2;26;38;48m:.[1m[38;5;252m[49m + Capital is a constructor value[0m[38;5;252m: [38;2;201;214;227m[48;2;26;38;48m.prev:.Sentence[38;5;252m[49m. Such a value stands alone, so in [38;2;201;214;227m[48;2;26;38;48m.prev:.[38;5;252m [39m[49m
+[38;2;201;214;227m[48;2;26;38;48mSentence .msg:"..."[38;5;252m[49m the [38;2;201;214;227m[48;2;26;38;48m.msg[38;5;252m[49m belongs to the mark. If the value needs properties, use parentheses: [38;2;201;214;227m[48;2;26;38;48m.[39m[49m
+[38;2;201;214;227m[48;2;26;38;48mprev:(.Sentence .n:2)[38;5;252m[49m. Never write [38;2;201;214;227m[48;2;26;38;48m.prev:.Sentence .n:2[38;5;252m[49m.                                          [39m
+[38;5;252m4. [1mEnding:[0m[38;5;252m everything that continues a run starts with a dot ([38;2;201;214;227m[48;2;26;38;48m.x:[38;5;252m[49m, [38;2;201;214;227m[48;2;26;38;48m:.[38;5;252m[49m, or space-dot-Capital). The [39m
+[38;5;252mfirst token that starts any other way ends the run, and prose resumes.                            [39m
+[38;5;252m5. Anchor: [38;2;201;214;227m[48;2;26;38;48m.prev:.Sentence | .Word | .Paragraph | .Item[38;5;252m[49m is the unit just before the mark. With no [38;2;201;214;227m[48;2;26;38;48m.[39m[49m
+[38;2;201;214;227m[48;2;26;38;48mprev[38;5;252m[49m, the mark means [38;2;201;214;227m[48;2;26;38;48m.prev:.Sentence[38;5;252m[49m. [38;2;201;214;227m[48;2;26;38;48m.on:"words"[38;5;252m[49m narrows to a span inside that unit (used once:  [39m
+[38;5;252mmark 2). [38;2;201;214;227m[48;2;26;38;48m.in:"NAME#line"[38;5;252m[49m points into an attachment (cli.txt §9).                                  [39m
+[38;5;252m6. Strings: [38;2;201;214;227m[48;2;26;38;48m"..."[38;5;252m[49m. Text that is hard to quote goes in [38;2;201;214;227m[48;2;26;38;48m"""..."""[38;5;252m[49m, which may span lines. The closer [39m
+[38;5;252mis the first [38;2;201;214;227m[48;2;26;38;48m"""[38;5;252m[49m not followed by another [38;2;201;214;227m[48;2;26;38;48m"[38;5;252m[49m, so a quote may touch it ([38;2;201;214;227m[48;2;26;38;48mnor "Bør""""[38;5;252m[49m). [1mThis is hug's [0m
+[1m[38;5;252mrule, pending Seid[0m[38;5;252m: Seid's SYNTAX.md has no triple quotes yet. Shown in before.md (the answer) and[39m
+[38;5;252mhistory.sdd (the answer, plus a two-line resolve account).                                        [39m
+[38;5;252m7. [1mOne form for names and times, in the ticket and history.sdd alike: bare.[0m[38;5;252m [38;2;201;214;227m[48;2;26;38;48m.by:jhf .at:2026-11-[38;5;252m [49m [39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m scroll · [1m[38;2;0;191;255mM[0m[38;2;135;149;168m raw source · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext-, [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious file · [1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m edit · [1m[38;2;0;191;255m/[0m[38;2;135;149;168m find · [1m[38;2;0;191;255mu/Esc[0m[38;2;135;149;168m link · [1m[38;2;0;191;255m?[0m[38;2;135;149;168m help · [1;4m[38;2;0;191;255mq[0m[38;2;135;149;168muit[39m
