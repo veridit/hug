@@ -67,19 +67,19 @@ no dependencies
 REQUESTS                                                                                                                                                        
 1. jhf · 42 h ago · resolved                                                                                                                                    
    So look at the screenshot We scroll down to the question, but we're showing the file in line that doesn't make any sense, right? So we should have scrolled  
-to the question and the file would be then in display or linked to from the question So you have to clean this up and take it all the way and if we can't like  
-we can always scroll to the question can't we in this case wouldn't that be the thing to do                                                                     
+   to the question and the file would be then in display or linked to from the question So you have to clean this up and take it all the way and if we can't    
+   like we can always scroll to the question can't we in this case wouldn't that be the thing to do                                                             
    └ crab: Agreed: no FOR YOU block. Opening an asked task scrolls to the question, and a file it names is a link on it (Enter shows it, Esc returns). That part
-is qcq3tm, high, being built now (its checks 1-2). Here: old mock check 1 and the FOR YOU order check 6 are struck, the FOR YOU questions 2 and 3 are closed    
-with your answer, and the order check is rewritten without FOR YOU (check 11).                                                                                  
+     is qcq3tm, high, being built now (its checks 1-2). Here: old mock check 1 and the FOR YOU order check 6 are struck, the FOR YOU questions 2 and 3 are      
+     closed with your answer, and the order check is rewritten without FOR YOU (check 11).                                                                      
 2. jhf · 42 h ago · resolved                                                                                                                                    
    And we're working on a much more intricate system of inline things where we use the new syntax and everything. It's another ticket. So wouldn't that kind of 
-replace this let's write something special in the header, but we can jump down to the things and then you can interact with them where you're at. So this is    
-kind of moot at that point, being taken over by the other task?                                                                                                 
+   replace this let's write something special in the header, but we can jump down to the things and then you can interact with them where you're at. So this is 
+   kind of moot at that point, being taken over by the other task?                                                                                              
    └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline marks, so this task's jump check (2) and its land-on-the-    
-question checks (5, 7, 10) are struck and point there or to qcq3tm (the landing fix shipping now). What p87ngv does not cover stays here, now medium priority:  
-the section order (Purpose, Principle, Goal, Acceptance, short sections, then long ones folded, check 11) and the ↑/↓ scroll markers (check 9). Title and Goal  
-say just that. Check 12 is your look at frames of it.                                                                                                           
+     question checks (5, 7, 10) are struck and point there or to qcq3tm (the landing fix shipping now). What p87ngv does not cover stays here, now medium       
+     priority: the section order (Purpose, Principle, Goal, Acceptance, short sections, then long ones folded, check 11) and the ↑/↓ scroll markers (check 9).  
+     Title and Goal say just that. Check 12 is your look at frames of it.                                                                                       
                                                                                                                                                                 
 › DETAILS (5)                                                                                                                                                   
                                                                                                                                                                 

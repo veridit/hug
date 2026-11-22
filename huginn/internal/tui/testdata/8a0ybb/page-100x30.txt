@@ -38,18 +38,18 @@ created 2026-11-19 · updated 2026-11-19 · detail-view-short-sections
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Detail view: short sections before long, folded long sections, scroll markers                       
 ↑───────────────────────────────────────────────────────────────────────────────────────────────────
-2 and 3 are closed with your answer, and the order check is rewritten without FOR YOU (check 11).   
+     (check 11).                                                                                    
 2. jhf · 42 h ago · resolved                                                                        
    And we're working on a much more intricate system of inline things where we use the new syntax   
-and everything. It's another ticket. So wouldn't that kind of replace this let's write something    
-special in the header, but we can jump down to the things and then you can interact with them where 
-you're at. So this is kind of moot at that point, being taken over by the other task?               
+   and everything. It's another ticket. So wouldn't that kind of replace this let's write something 
+   special in the header, but we can jump down to the things and then you can interact with them    
+   where you're at. So this is kind of moot at that point, being taken over by the other task?      
    └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline  
-marks, so this task's jump check (2) and its land-on-the-question checks (5, 7, 10) are struck and  
-point there or to qcq3tm (the landing fix shipping now). What p87ngv does not cover stays here, now 
-medium priority: the section order (Purpose, Principle, Goal, Acceptance, short sections, then long 
-ones folded, check 11) and the ↑/↓ scroll markers (check 9). Title and Goal say just that. Check 12 
-is your look at frames of it.                                                                       
+     marks, so this task's jump check (2) and its land-on-the-question checks (5, 7, 10) are struck 
+     and point there or to qcq3tm (the landing fix shipping now). What p87ngv does not cover stays  
+     here, now medium priority: the section order (Purpose, Principle, Goal, Acceptance, short      
+     sections, then long ones folded, check 11) and the ↑/↓ scroll markers (check 9). Title and Goal
+     say just that. Check 12 is your look at frames of it.                                          
                                                                                                     
 › DETAILS (5)                                                                                       
                                                                                                     

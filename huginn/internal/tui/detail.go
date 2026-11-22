@@ -956,7 +956,7 @@ func (m model) detailText(t task.Task) string {
 		if d.OpenChildren > 0 {
 			flag += fmt.Sprintf(" (epic: %d open)", d.OpenChildren)
 		}
-		line := fmt.Sprintf("%s ↳ %s %s [%s]%s %s", pointer, m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, m.markStyled(oneLine(d.Note), markAt(stopDepNote, i), false))
+		line := m.hangRow(pointer+" ↳ ", fmt.Sprintf("%s %s [%s]%s %s", m.styles.status[state].Render(oneLine(d.ID)), oneLine(d.Title), oneLine(state), flag, m.markStyled(oneLine(d.Note), markAt(stopDepNote, i), false)))
 		if pointer == ">" {
 			line = m.focusRow(ansi.Strip(line))
 		}
@@ -970,11 +970,11 @@ func (m model) detailText(t task.Task) string {
 		if w.Met {
 			flag, style = " met", m.styles.status["done"]
 		}
-		line := fmt.Sprintf("  ⧗ when %s%s · %s", m.markStyled(oneLine(w.Text), markAt(stopWait, i), false), style.Render(flag), m.styles.dim.Render(oneLine(w.Seen)))
+		line := fmt.Sprintf("when %s%s · %s", m.markStyled(oneLine(w.Text), markAt(stopWait, i), false), style.Render(flag), m.styles.dim.Render(oneLine(w.Seen)))
 		if w.Wakes != "" {
 			line += m.styles.dim.Render(" · wakes " + oneLine(w.Wakes))
 		}
-		dependencies = append(dependencies, line)
+		dependencies = append(dependencies, m.hangRow("  ⧗ ", line))
 	}
 	section(m.sectionHeading("Dependencies", "j/k or [ ] step · Enter follows", m.detailPane == focusDeps), strings.Join(dependencies, "\n"), "no dependencies")
 	// Children: an epic's tasks, each one Tab away (4bwcgp).
@@ -985,7 +985,7 @@ func (m model) detailText(t task.Task) string {
 		if ok && marked.where == stopChildren && marked.index == i {
 			pointer = ">"
 		}
-		line := fmt.Sprintf("%s ↳ %s %s [%s]", pointer, m.styles.status[m.place(c)].Render(oneLine(c.ID)), oneLine(c.Title), oneLine(m.place(c)))
+		line := m.hangRow(pointer+" ↳ ", fmt.Sprintf("%s %s [%s]", m.styles.status[m.place(c)].Render(oneLine(c.ID)), oneLine(c.Title), oneLine(m.place(c))))
 		if pointer == ">" {
 			line = m.focusRow(ansi.Strip(line))
 		}
@@ -1003,9 +1003,9 @@ func (m model) detailText(t task.Task) string {
 		if l.Missing {
 			state, title = "depends", "no task has this id"
 		}
-		line := fmt.Sprintf("%s ↳ %s %s [%s]", pointer, m.styles.status[state].Render(oneLine(l.ID)), oneLine(title), oneLine(state))
+		line := m.hangRow(pointer+" ↳ ", fmt.Sprintf("%s %s [%s]", m.styles.status[state].Render(oneLine(l.ID)), oneLine(title), oneLine(state)))
 		if l.Missing {
-			line = fmt.Sprintf("%s ↳ %s %s", pointer, m.styles.status[state].Render(oneLine(l.ID)), title)
+			line = m.hangRow(pointer+" ↳ ", fmt.Sprintf("%s %s", m.styles.status[state].Render(oneLine(l.ID)), title))
 		}
 		if pointer == ">" {
 			line = m.focusRow(ansi.Strip(line))
@@ -1023,8 +1023,7 @@ func (m model) detailText(t task.Task) string {
 	}
 	// Requests (hbgybn): each verbatim, with its account once resolved;
 	// the box r opens sits at its end.
-	if reqs := m.requestLines(t); len(reqs) > 0 {
-		m.markRequests(t, reqs, markAt)
+	if reqs := m.requestLines(t, markAt); len(reqs) > 0 {
 		heading := plain("Requests")
 		if m.prompt == requestPrompt {
 			heading = m.sectionHeading("Requests", "Enter sends · Alt-Enter a new line · Esc cancels", true)
@@ -1045,6 +1044,14 @@ func (m model) detailText(t task.Task) string {
 		b.WriteString(m.foldBody(t, f.key, sections, markAt) + "\n\n")
 	}
 	return wrap(strings.TrimRight(b.String(), "\n"), m.width)
+}
+
+// hangRow is a Dependencies, Children, Links or Files row: prefix (the
+// pointer and its sign, 4 columns) then text, wrapped to the page and
+// hung under the text (cd63d1), so a long note never starts a line at
+// column 0.
+func (m model) hangRow(prefix, text string) string {
+	return strings.Join(hang(prefix, text, lipgloss.Width(prefix), m.width), "\n")
 }
 
 // foldBody is a long section's text as the page draws it open.
@@ -1187,41 +1194,6 @@ func (m *model) toggleSection() {
 			m.viewport.SetYOffset(s)
 		} else {
 			m.showMarked()
-		}
-	}
-}
-
-// markRequests marks, in requestLines' lines, the id the focus is on in
-// a request's text or its account: request i takes its head line, a line
-// per line of its text, then one per line of its account.
-func (m model) markRequests(t task.Task, lines []string, markAt func(string, int) string) {
-	at := 0
-	markIn := func(n int, w string) {
-		for k := at; k < min(at+n, len(lines)); k++ {
-			if marked := m.markStyled(lines[k], w, true); marked != lines[k] {
-				lines[k] = marked
-				break
-			}
-		}
-		at += n
-	}
-	for i, r := range t.Requests {
-		r = m.shownRequest(r)
-		// One stop list per request, as requestStopText reads it: a
-		// link's head (its home's id, ec6z6j check 4), the text, the
-		// targets line. A plain request's head names no task.
-		n := len(strings.Split(strings.TrimRight(r.Text, "\n"), "\n"))
-		if r.Home != nil {
-			n++
-		} else {
-			at++ // who and when
-		}
-		if r.Targets != nil {
-			n++
-		}
-		markIn(n, markAt(stopRequest, i))
-		if a := r.Resolved; a != nil {
-			markIn(len(strings.Split(strings.TrimRight(a.Text, "\n"), "\n")), markAt(stopResolved, i))
 		}
 	}
 }
@@ -1447,19 +1419,14 @@ func (m model) questionRecord(t task.Task) []string {
 			head += " · open"
 		}
 		out = append(out, m.styles.dim.Render(head))
-		for _, l := range strings.Split(strings.TrimRight(q.Text, "\n"), "\n") {
-			if q.Answer == nil && q.Withdrawn != nil {
-				out = append(out, m.styles.dim.Render("   "+safe(l)))
-				continue
-			}
-			out = append(out, "   "+safe(l))
+		// Each block hangs under its indent as a request's does (cd63d1).
+		style := m.styles.normal
+		if q.Answer == nil && q.Withdrawn != nil {
+			style = m.styles.dim
 		}
+		out = append(out, m.hangStyled("   ", safe(strings.TrimRight(q.Text, "\n")), 3, "", style)...)
 		if a := q.Answer; a != nil {
-			lines := strings.Split(strings.TrimRight(a.Text, "\n"), "\n")
-			out = append(out, m.styles.status["done"].Render("   └ "+oneLine(a.By)+": "+safe(lines[0])))
-			for _, l := range lines[1:] {
-				out = append(out, m.styles.status["done"].Render("     "+safe(l)))
-			}
+			out = append(out, m.hangStyled("   └ "+oneLine(a.By)+": ", safe(strings.TrimRight(a.Text, "\n")), 5, "", m.styles.status["done"])...)
 		}
 	}
 	return out

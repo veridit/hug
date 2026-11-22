@@ -4,6 +4,22 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: on a task's page, a long request now wraps under its own
+  3-column indent instead of starting its next lines at column 0, so it
+  reads as one block under its head line (cd63d1, ox 2026-11-22). The
+  indent was added before the page wrapped. Now every indented block is
+  wrapped first and indented after, by one rule:
+  - a request's text and its targets line (under 3), its account
+    `└ crab: ...` (under 5);
+  - the opened Questions record: a question's text (under 3) and its
+    answer `└ ox: ...` (under 5);
+  - Dependencies, Children, Links and Files rows: a long note or title
+    wraps under the text, after `↳ ` or `⧗ `.
+  - An id marked with Tab in a wrapped request still stands where it is,
+    and the line keeps to the page's width.
+
 ## v0.7.104 - 2026-11-22
 
 - hug task lint no longer reports a section-order finding on a task with

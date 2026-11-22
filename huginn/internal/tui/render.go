@@ -146,6 +146,32 @@ func fit(s string, width int) string {
 	s = ansi.Truncate(s, width, "…")
 	return s + strings.Repeat(" ", max(0, width-lipgloss.Width(s)))
 }
+
+// hang is body wrapped to the page, width columns, its first line after
+// prefix and every line it wraps to under indent columns (cd63d1): an
+// indented block is indented after wrapping, never before, or the page's
+// own wrap starts the rest of it at column 0. Each line of body is its own
+// paragraph, hung the same way. prefix and body may be styled.
+func hang(prefix, body string, indent, width int) []string {
+	// The first line has prefix's width, not indent's: the difference is
+	// held by non-breaking spaces glued to the first word while it wraps.
+	lead := strings.Repeat("\u00a0", max(0, ansi.StringWidth(prefix)-indent))
+	under := strings.Repeat(" ", indent)
+	var out []string
+	for i, para := range strings.Split(body, "\n") {
+		if i > 0 {
+			lead = ""
+		}
+		for j, l := range strings.Split(wrap(lead+para, max(10, width-indent)), "\n") {
+			if i == 0 && j == 0 {
+				out = append(out, prefix+strings.TrimPrefix(l, lead))
+			} else {
+				out = append(out, under+l)
+			}
+		}
+	}
+	return out
+}
 func wrap(s string, width int) string {
 	return ansi.Hardwrap(ansi.Wrap(strings.ReplaceAll(s, "\t", "    "), max(1, width), ""), max(1, width), false)
 }

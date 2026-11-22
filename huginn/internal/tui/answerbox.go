@@ -221,11 +221,24 @@ func (m model) requestCount(t task.Task) string {
 
 // requestLines are the REQUESTS section: each request with who and when,
 // its text verbatim, then its account once resolved, or "open"; with the
-// box open, the box last (hbgybn check 4).
-func (m model) requestLines(t task.Task) []string {
+// box open, the box last (hbgybn check 4). Each block is wrapped here and
+// hangs under its indent (cd63d1): the text and the targets under 3, the
+// account under 5. The id markAt names is marked before the wrap, so its
+// column is counted: request i's first in its head (a link's home, ec6z6j
+// check 4), text and targets, then its first in the account.
+func (m model) requestLines(t task.Task, markAt func(string, int) string) []string {
 	var out []string
-	for _, r := range t.Requests {
+	for i, r := range t.Requests {
 		r = m.shownRequest(r) // a link draws its home's text (ec6z6j check 4)
+		w := markAt(stopRequest, i)
+		marked := false
+		mark := func(s string) string {
+			if p := markPlain(s, w, true); !marked && p != s {
+				marked = true
+				return p
+			}
+			return s
+		}
 		head := fmt.Sprintf("%d. %s", r.N, oneLine(r.By))
 		if s := strings.TrimPrefix(since(r.At), " · "); s != "" {
 			head += " · " + s + " ago"
@@ -238,27 +251,34 @@ func (m model) requestLines(t task.Task) []string {
 		}
 		line := m.styles.dim.Render(head+" · ") + state
 		if home := requestHome(r); home != "" {
-			line += m.styles.dim.Render(" · " + home) // where it lives (ec6z6j check 4)
+			line += m.styleMarked(" · "+mark(home), w, m.styles.dim) // where it lives (ec6z6j check 4)
 		}
 		out = append(out, line)
-		for _, l := range strings.Split(strings.TrimRight(r.Text, "\n"), "\n") {
-			out = append(out, "   "+safe(l))
-		}
+		text := mark(safe(strings.TrimRight(r.Text, "\n")))
+		out = append(out, m.hangStyled("   ", text, 3, w, m.styles.normal)...)
 		if tg := requestTargets(r); tg != "" {
-			out = append(out, m.styles.dim.Render("   "+safe(tg))) // each target, pending or resolved
+			out = append(out, m.hangStyled("   ", mark(safe(tg)), 3, w, m.styles.dim)...) // each target, pending or resolved
 		}
 		if a := r.Resolved; a != nil {
-			lines := strings.Split(strings.TrimRight(a.Text, "\n"), "\n")
-			out = append(out, m.styles.status["done"].Render("   └ "+oneLine(a.By)+": "+safe(lines[0])))
-			for _, l := range lines[1:] {
-				out = append(out, m.styles.status["done"].Render("     "+safe(l)))
-			}
+			w := markAt(stopResolved, i)
+			account := markPlain(safe(strings.TrimRight(a.Text, "\n")), w, true)
+			out = append(out, m.hangStyled("   └ "+oneLine(a.By)+": ", account, 5, w, m.styles.status["done"])...)
 		}
 	}
 	if m.prompt == requestPrompt {
 		out = append(out, m.answerLines()...)
 	}
 	return out
+}
+
+// hangStyled is hang at the page's width, each line in style and the
+// ▸w markPlain put there in the selection tint.
+func (m model) hangStyled(prefix, body string, indent int, w string, style lipgloss.Style) []string {
+	lines := hang(prefix, body, indent, m.width)
+	for k, l := range lines {
+		lines[k] = m.styleMarked(l, w, style)
+	}
+	return lines
 }
 
 // revealAnswerBox scrolls the page so the question the open answer box

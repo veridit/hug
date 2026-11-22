@@ -64,9 +64,9 @@ func (m model) filesLines(t task.Task) []string {
 		if info, err := os.Stat(filepath.Join(m.store.Root, filepath.FromSlash(task.FolderOf(t)), filepath.FromSlash(name))); err == nil {
 			size = m.styles.dim.Render("  " + humanBytes(info.Size()))
 		}
-		line := fmt.Sprintf("%s %s %s%s", pointer, fileMark, oneLine(name), size)
+		line := m.hangRow(pointer+" "+fileMark+" ", oneLine(name)+size)
 		if pointer == ">" {
-			line = m.focusRow(fmt.Sprintf("%s %s %s", pointer, fileMark, oneLine(name)))
+			line = m.focusRow(m.hangRow(pointer+" "+fileMark+" ", oneLine(name)))
 		}
 		out = append(out, line)
 	}
