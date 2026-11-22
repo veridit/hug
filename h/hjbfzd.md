@@ -84,7 +84,7 @@ file:capture-wording-100x30.ans (2801 bytes, sha256:54dc7b78)
 file:screen-0952.ans (7458 bytes, sha256:7cd25fb2) screen capture from hug tui
 file:screen-1136.ans (17604 bytes, sha256:16d2046a) screen capture from hug tui
 Jørgen 2026-11-20 10:37Z (question 3): 'The current implementation is good and I like it and it's even more succinct than we outlined in this ticket so this ticket is done.' His note that opening an asked task shows the file on top instead of scrolling to the question is qcq3tm (high, cricket building it now, checks 1-2).
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T21:16 todo -> doing/active (take)
 - 2026-11-18T22:34 doing/active -> doing/waiting (wait)
