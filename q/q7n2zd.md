@@ -4,7 +4,7 @@ title: "Paste the clipboard into a task as an attachment"
 state: "doing"
 type: feature
 priority: "medium"
-assignee: ["pig"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxt"
@@ -81,3 +81,4 @@ shipped in v0.7.103 (d9fdab4)
 - 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T11:23; doing_with: p87ngv
 - 2026-11-22T08:46 todo/ready -> doing/active (take)
 - 2026-11-22T10:18 doing/active -> doing/asked (ask)
+- 2026-11-22T11:35 handed to crab: pig's session ended (closed 2026-11-22 10:18)
