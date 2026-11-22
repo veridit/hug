@@ -37,10 +37,47 @@ type pickReturn struct {
 }
 
 // openCapture asks where the capture goes, offering offer ("" for none).
+// The prompt names what goes: this screen (S) or the clipboard (V,
+// q7n2zd).
 func (m *model) openCapture(offer string) tea.Cmd {
 	m.captureTyped = false
 	m.message = m.capturedNote // what went to the clipboard, above the question
-	return m.openInput(capturePrompt, offer)
+	cmd := m.openInput(capturePrompt, offer)
+	m.input.Prompt = "Attach " + m.captureWhat() + " to: "
+	return cmd
+}
+
+// captureWhat is what is being attached: "this screen" (S) or "the
+// clipboard" (V).
+func (m model) captureWhat() string {
+	if m.captureKind == clipKind {
+		return "the clipboard"
+	}
+	return "this screen"
+}
+
+// captureNoun is the short form for the footers: "the screen" or "the
+// clipboard".
+func (m model) captureNoun() string {
+	if m.captureKind == clipKind {
+		return "the clipboard"
+	}
+	return "the screen"
+}
+
+// captureWhy is the attach note's reason, after hug task attach's name,
+// size and sha256.
+func (m model) captureWhy() string {
+	if m.captureKind == clipKind {
+		return "pasted from the clipboard in hug tui"
+	}
+	return "screen capture from hug tui"
+}
+
+// forgetCapture clears what S or V took.
+func (m *model) forgetCapture() {
+	m.captured, m.capturedNote, m.captureTyped = "", "", false
+	m.captureKind, m.captureExt = "", ""
 }
 
 // captureUntouched says whether s and c are keys: the field holds the
@@ -50,12 +87,17 @@ func (m model) captureUntouched() bool {
 }
 
 // captureName is the file name the capture takes in t: screen-HHMM.ans,
-// numbered from 2 when t has one already.
+// or paste-HHMM with V's extension (q7n2zd), numbered from 2 when t has
+// one already.
 func (m model) captureName(t task.Task) string {
-	base := "screen-" + m.captureStamp
-	name := base + ".ans"
+	prefix, ext := "screen-", ".ans"
+	if m.captureKind == clipKind {
+		prefix, ext = "paste-", m.captureExt
+	}
+	base := prefix + m.captureStamp
+	name := base + ext
 	for i := 2; m.hasFile(t, name); i++ {
-		name = fmt.Sprintf("%s-%d.ans", base, i)
+		name = fmt.Sprintf("%s-%d%s", base, i, ext)
 	}
 	return name
 }
@@ -63,7 +105,7 @@ func (m model) captureName(t task.Task) string {
 // dropCapture forgets the capture: only the copy stays.
 func (m *model) dropCapture() {
 	m.message = m.capturedNote + " · not attached"
-	m.captured, m.capturedNote, m.captureTyped = "", "", false
+	m.forgetCapture()
 }
 
 // captureMatches are the tasks whose id or alias starts with ref, by id.
@@ -104,7 +146,7 @@ func (m model) updateCapture(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case k == "c" && m.captureUntouched():
 		cmd := m.openInput(captureTitlePrompt, "")
-		m.input.Prompt = "new task with this screen, title: "
+		m.input.Prompt = "new task with " + m.captureWhat() + ", title: "
 		return m, cmd
 	case k == "tab":
 		if cs := m.captureMatches(value); len(cs) > 0 {
@@ -230,13 +272,13 @@ func (m *model) startPick() {
 }
 
 // pickFooter says what Enter does while picking.
-func pickFooter() string {
-	return "pick the task for the screen · Enter attaches it there · Esc not attached"
+func (m model) pickFooter() string {
+	return "pick the task for " + m.captureNoun() + " · Enter attaches it there · Esc not attached"
 }
 
 // pickWriters are the keys that write or start a write: none runs while
 // a task is picked for the capture.
-var pickWriters = []string{"t", "d", "x", "e", "m", "y", "P", "p", "r", "N", "S", "a", "w", "-", " "}
+var pickWriters = []string{"t", "d", "x", "e", "m", "y", "P", "p", "r", "N", "S", clipKey, "a", "w", "-", " "}
 
 // pickKey is a key while picking: Enter attaches, writers say what Enter
 // does. Every other key moves, finds or filters as in the rows.
@@ -245,7 +287,7 @@ func (m *model) pickKey(k string) bool {
 	case k == "enter":
 		t, ok := m.selected()
 		if !ok || m.head != "" {
-			m.message = "a heading is not a task: j/k select a task, Enter attaches the screen to it"
+			m.message = "a heading is not a task: j/k select a task, Enter attaches " + m.captureNoun() + " to it"
 			return true
 		}
 		name := m.captureName(t)
@@ -253,7 +295,7 @@ func (m *model) pickKey(k string) bool {
 		m.attachCapture(t, name)
 		return true
 	case slices.Contains(pickWriters, k):
-		m.message = "picking the task for the screen: Enter attaches it there · Esc not attached"
+		m.message = "picking the task for " + m.captureNoun() + ": Enter attaches it there · Esc not attached"
 		return true
 	}
 	return false
@@ -282,8 +324,9 @@ func (m *model) endPick() {
 // createForCapture makes a task titled title, as N does, with the capture
 // attached, in one commit, and opens it (hjbfzd check 3).
 func (m *model) createForCapture(title string) {
-	body, note := []byte(m.captured), m.capturedNote
-	m.captured, m.capturedNote, m.captureTyped = "", "", false
+	body, note, why := []byte(m.captured), m.capturedNote, m.captureWhy()
+	name := m.captureName(task.Task{})
+	m.forgetCapture()
 	release := m.hold()
 	r, err := m.store.New(task.NewOptions{Title: title, Goal: title, Acceptance: []string{"Verify " + title}})
 	if err != nil {
@@ -291,9 +334,8 @@ func (m *model) createForCapture(title string) {
 		m.message = note + " · not attached: " + err.Error()
 		return
 	}
-	name := "screen-" + m.captureStamp + ".ans"
 	said := "created " + r.Task.ID + " · " + note + " · attached as " + name
-	if _, _, e := m.store.Attach(r.Task.ID, name, body, "screen capture from hug tui", false); e != nil {
+	if _, _, e := m.store.Attach(r.Task.ID, name, body, why, false); e != nil {
 		said = "created " + r.Task.ID + " · " + note + " · not attached: " + e.Error()
 	}
 	if m.opts.Commit != nil {

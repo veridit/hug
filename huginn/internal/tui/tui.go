@@ -220,6 +220,8 @@ type model struct {
 	pickFrom        pickReturn
 	captureStamp    string
 	captureTyped    bool
+	captureKind     string                      // "" for S's screen, clipKind for V's paste (q7n2zd)
+	captureExt      string                      // the capture file's extension: .ans for a screen
 	hist            *promptHistory              // / and : history (xfv9pw, history.go)
 	files           map[string][]string         // task path -> its file names (zgr01t)
 	people          []task.Person               // hug.toml [people]: short names, long names, emails (89y0b7)
@@ -1581,6 +1583,11 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// (hjbfzd). While a task is picked for a capture, S is no new one.
 		if k == captureKey && !m.picking {
 			return m, m.capture()
+		}
+		// V pastes the clipboard (q7n2zd): in a task it attaches there, in
+		// a list it asks where as S does. While picking, it is a writer.
+		if k == clipKey && !m.picking {
+			return m, m.pasteClipboard()
 		}
 		// Picking a task for the capture (hjbfzd): Enter attaches, the
 		// writers say so, every other key is the rows' own.

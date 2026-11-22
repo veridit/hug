@@ -59,7 +59,7 @@ LINKS
                                                                                                                                             
                                                                                                                                             
 ─── Task 1 of 6 · 100% · next · previous · Esc back ────────────────────────────────────────────────────────────────────────────────────────
-j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find …                 
+j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find …       
 == two stacked at 80
 HUG · list › state:!done › MAIN__ › DEP___                                      
 [done]  [feature]  group:root  assigned:kestrel · m                             
@@ -121,4 +121,4 @@ no dependencies
                                                                                                                                             
                                                                                                                                             
 ─── Detail · 100% · Esc back ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
-j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find …                 
+j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find …       

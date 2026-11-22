@@ -79,4 +79,4 @@ LINKS
                                                                                                                                             
                                                                                                                                             
 ─── Task 1 of 6 · 100% · next · previous · Esc back ────────────────────────────────────────────────────────────────────────────────────────
-j/k scroll · Enter open · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task …        
+j/k scroll · Enter open · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task

@@ -33,6 +33,7 @@ Backspace / F  remove the last chip / clear all filters
 : sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
 S              copy the screen, attach: id, s select, c create                  
+V              paste the clipboard (image, text); in a list: id, s, c           
 r              request: ask the agents for a change; Enter sends                
 Enter / Esc    confirm / cancel every editing action                            
 e again        after an edit left a finding: edit at once                       
@@ -74,6 +75,7 @@ Backspace / F  remove the last chip / clear all filters
 : sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
 S              copy the screen, attach: id, s select, c create                  
+V              paste the clipboard (image, text); in a list: id, s, c           
 r              request: ask the agents for a change; Enter sends                
 Enter / Esc    confirm / cancel every editing action                            
 e again        after an edit left a finding: edit at once                       
@@ -112,6 +114,7 @@ Backspace / F  remove the last chip / clear all filters
 : sort         order by fields; s r or : sort rank goes back                    
 N              new task                                                         
 S              copy the screen, attach: id, s select, c create                  
+V              paste the clipboard (image, text); in a list: id, s, c           
 r              request: ask the agents for a change; Enter sends                
 Enter / Esc    confirm / cancel every editing action                            
 e again        after an edit left a finding: edit at once                       
@@ -153,6 +156,7 @@ y, P p        yank, then paste above / below                           Backspace
 c             clear all filters                                        : sort         order by fields; s r or : sort rank goes back         
 g             group rows: flat, group, epic, tag (tag: first listed    N              new task                                              
               tag)                                                     S              copy the screen, attach: id, s select, c create       
+                                                                       V              paste the clipboard (image, text); in a list: id, s, c
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
@@ -178,6 +182,7 @@ y           yank: P/p in the list paste it                             Backspace
 T           type palette                                               : sort         order by fields; s r or : sort rank goes back         
 E           its files folder in the editor                             N              new task                                              
                                                                        S              copy the screen, attach: id, s select, c create       
+                                                                       V              paste the clipboard (image, text); in a list: id, s, c
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            
@@ -203,6 +208,7 @@ T           type palette                                               s        
                                                                        : sort         order by fields; s r or : sort rank goes back         
                                                                        N              new task                                              
                                                                        S              copy the screen, attach: id, s select, c create       
+                                                                       V              paste the clipboard (image, text); in a list: id, s, c
                                                                        r              request: ask the agents for a change; Enter sends     
                                                                        Enter / Esc    confirm / cancel every editing action                 
                                                                        e again        after an edit left a finding: edit at once            

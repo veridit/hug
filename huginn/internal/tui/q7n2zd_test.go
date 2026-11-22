@@ -140,7 +140,7 @@ func TestPasteInAListAsksAsSDoes(t *testing.T) {
 		t.Fatalf("V in the list: prompt %q value %q message %q", asked.prompt, asked.input.Value(), asked.message)
 	}
 	bar := ansi.Strip(asked.View())
-	for _, want := range []string{"Attach the clipboard to: " + row.ID, "select", "create", "clipboard text (1 lines)"} {
+	for _, want := range []string{"Attach the clipboard to: " + row.ID, "select", "create", "clipboard text (1 line)"} {
 		if !strings.Contains(bar, want) {
 			t.Fatalf("the prompt lacks %q:\n%s", want, bar)
 		}

@@ -119,4 +119,4 @@ FILES (3)
                                                                                                                                             
                                                                                                                                             
 ─── Task 2 of 45 · 100% · next · previous · Esc back ───────────────────────────────────────────────────────────────────────────────────────
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find · next-, previous task 
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · Edit files · up · request · / find …            

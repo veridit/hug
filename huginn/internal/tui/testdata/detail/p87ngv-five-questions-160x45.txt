@@ -43,7 +43,7 @@ The ticket stays the crisp working document. A person or agent marks a piece of 
 text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified    
 result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in   
 ↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task · J/K ½ page · Esc back
 == question 2 focused
 HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
 [todo]  [design]  [feature]  group:root  unassigned                                                                                                             
@@ -89,7 +89,7 @@ The ticket stays the crisp working document. A person or agent marks a piece of 
 text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified    
 result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in   
 ↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task · J/K ½ page · Esc back
 == question 5 focused
 HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
 [todo]  [design]  [feature]  group:root  unassigned                                                                                                             
@@ -135,4 +135,4 @@ The ticket stays the crisp working document. A person or agent marks a piece of 
 text, visible as text, with a recognizable sigil. The agent picks marks up, acts or answers, and resolves each by rewriting the ticket text to the clarified    
 result and removing the mark. The dialogue that led there (the mark, replies, who and when) is appended to a history file attached to the task, never kept in   
 ↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task · J/K ½ page · Esc back

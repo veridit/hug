@@ -42,4 +42,4 @@ ACCEPTANCE
   ☐ 7. Several questions in one call become separate inline marks, each answered on its own (test)                                                              
   ☐ 8. An open mark shows in the person's ASKED or the assignee's requests and is delivered as today (gmzd87) (test)                                            
 ↓── • p87ngv moved to IN PROGRESS ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task · J/K ½ page · Esc back

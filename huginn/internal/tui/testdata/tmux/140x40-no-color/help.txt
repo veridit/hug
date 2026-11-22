@@ -19,13 +19,13 @@ y, P p        yank, then paste above / below                           Backspace
 c             clear all filters                                        : sort         order by fields; s r or : sort rank goes back
 g             group rows: flat, group, epic, tag (tag: first listed    N              new task
               tag)                                                     S              copy the screen, attach: id, s select, c create
+                                                                       V              paste the clipboard (image, text); in a list: id, s, c
                                                                        r              request: ask the agents for a change; Enter sends
                                                                        Enter / Esc    confirm / cancel every editing action
                                                                        e again        after an edit left a finding: edit at once
                                                                        ? / F1         this help (F1 in a text field); / finds in it
                                                                        Esc            back one level, never quits
                                                                        q / ctrl-c     quit (q only outside inputs)
-
 
 
 

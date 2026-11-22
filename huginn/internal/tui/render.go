@@ -1250,7 +1250,7 @@ func (m model) footLines() (footerLine, inputLine string) {
 			footer = m.paletteFooter()
 		}
 		if m.picking && m.prompt == "" {
-			footer = pickFooter() // hjbfzd: Enter attaches the screen
+			footer = m.pickFooter() // hjbfzd: Enter attaches the screen (or the clipboard, q7n2zd)
 		}
 	}
 	footerLine = m.renderMarks(oneLine(footer), m.styles.dim)

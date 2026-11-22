@@ -138,7 +138,7 @@ func TestTmuxPasteClipboard(t *testing.T) {
 	// A PNG on the clipboard is the image, not its text.
 	setClip(png1, "not this\n")
 	send("V")
-	s = wait(regexp.MustCompile(`clipboard image \(\d+ bytes\) · attached as paste-\d{4}\.png to cccccc`))
+	s = wait(regexp.MustCompile(`clipboard image \(\d+ B\) · attached as paste-\d{4}\.png to cccccc`))
 	// Plain text is .txt.
 	setClip(nil, "plain words\n")
 	send("V")
@@ -150,7 +150,12 @@ func TestTmuxPasteClipboard(t *testing.T) {
 	// Check 4: an empty clipboard says so with a fix: line; nothing more.
 	setClip(nil, "")
 	send("V")
-	wait(regexp.MustCompile(`(?s)the clipboard is empty.*fix: hug task attach cccccc FILE`))
+	// In a task the fix: line sits on the input line, above the message
+	// on the bottom rule.
+	s = wait(regexp.MustCompile(`the clipboard is empty`))
+	if !strings.Contains(s, "fix: hug task attach cccccc FILE") {
+		t.Fatalf("an empty clipboard shows no fix: line:\n%s", s)
+	}
 	if got := pastes(); len(got) != 3 {
 		t.Fatalf("an empty clipboard attached: %v", got)
 	}
@@ -165,7 +170,7 @@ func TestTmuxPasteClipboard(t *testing.T) {
 		t.Fatalf("the list's prompt lacks select and create:\n%s", s)
 	}
 	send("Escape")
-	wait(regexp.MustCompile(`clipboard text \(1 lines\) · not attached`))
+	wait(regexp.MustCompile(`clipboard text \(1 line\) · not attached`))
 	if got := pastes(); len(got) != 3 {
 		t.Fatalf("Esc attached: %v", got)
 	}
@@ -173,7 +178,8 @@ func TestTmuxPasteClipboard(t *testing.T) {
 	send("V")
 	wait(regexp.MustCompile(`Attach the clipboard to:`))
 	send("Enter")
-	wait(regexp.MustCompile(`attached as paste-\d{4}\.txt to [0-9a-z]{6}`))
+	// The offered row is cccccc, which has a paste this minute: -2.
+	wait(regexp.MustCompile(`attached as paste-\d{4}(-\d+)?\.txt to [0-9a-z]{6}`))
 	if got := pastes(); len(got) != 4 {
 		t.Fatalf("Enter in the list: %v", got)
 	}

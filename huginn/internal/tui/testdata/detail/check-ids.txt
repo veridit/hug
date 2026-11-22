@@ -119,4 +119,4 @@ REQUESTS
                                                                                                                                             
                                                                                                                                             
 ─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────────────────────────────────────────────────────────────────
-j/k scroll · Enter open · h/l Tab next · answer · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task 
+j/k scroll · Enter open · h/l Tab next · answer · take · done · x drop · edit · New · Screen · V paste · up · request · / find …            

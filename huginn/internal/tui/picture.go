@@ -327,6 +327,7 @@ func (m *model) capture() tea.Cmd {
 		rows = append(rows, trimPadding(l))
 	}
 	m.captured = strings.Join(rows, "\n") + "\n"
+	m.captureKind, m.captureExt = "", ".ans"
 	m.capturedNote = fmt.Sprintf("%s (%d lines)", copied, n)
 	m.captureStamp = captureNow().Format("1504")
 	offer := ""
@@ -346,15 +347,15 @@ func (m model) hasFile(t task.Task, name string) bool {
 	return false
 }
 
-// attachCapture attaches the captured frame to t as name (hjbfzd: the
-// task typed, offered or picked).
+// attachCapture attaches the captured frame or paste to t as name
+// (hjbfzd: the task typed, offered or picked; q7n2zd: V in a task).
 func (m *model) attachCapture(t task.Task, name string) {
 	body := []byte(m.captured)
-	note := m.capturedNote
-	m.captured, m.capturedNote, m.captureTyped = "", "", false
+	note, why := m.capturedNote, m.captureWhy()
+	m.forgetCapture()
 	// The attach and its commit hold the board turn (95ahtk).
 	defer m.hold()()
-	r, _, err := m.store.Attach(t.ID, name, body, "screen capture from hug tui", false)
+	r, _, err := m.store.Attach(t.ID, name, body, why, false)
 	if err != nil {
 		m.message = note + " · not attached: " + err.Error()
 		return

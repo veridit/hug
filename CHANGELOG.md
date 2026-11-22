@@ -4,6 +4,26 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- hug tui: `V` pastes the clipboard into a task as a file, the way `S`
+  attaches the screen (q7n2zd, Jørgen 2026-11-20). A terminal paste
+  carries text only, so `V` reads the clipboard itself: `osascript` and
+  `pbpaste` on macOS, `wl-paste` or `xclip` on Linux.
+  - A copied screenshot is attached as `paste-HHMM.png`, text with
+    colour as `paste-HHMM.ans`, other text as `paste-HHMM.txt`, with the
+    note `hug task attach` writes (name, size, sha256). FILES shows it at
+    once.
+  - Inside a task (its page or one of its files) `V` attaches there. In a
+    list it asks as `S` does: `Attach the clipboard to: ID · select ·
+    create`; `Esc` attaches nothing.
+  - An empty clipboard, no clipboard tool (Windows has none yet), an SSH
+    session, or text that is not text or looks like a secret attaches
+    nothing and says why, with `fix: hug task attach ID FILE`.
+  - `V` is on the task's key bar beside `S` at 140 columns, in `?` help,
+    and in the `:` palette as `paste`. The key is provisional until the
+    key review (bfxq93).
+
 ## v0.7.102 - 2026-11-22
 
 - hug tui: a task's page reads short to long, so what the ticket is

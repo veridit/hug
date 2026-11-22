@@ -220,6 +220,8 @@ func contextItemList() []ctxItem {
 			do:    func(m *model, _ task.Task, _ string) tea.Cmd { return m.openFolder() }},
 		{name: "screen", verb: "attach", desc: "Copy the screen, then attach it", keyList: captureKey, keyTask: captureKey, avail: always,
 			do: func(m *model, _ task.Task, _ string) tea.Cmd { m.capture(); return nil }},
+		{name: "paste", verb: "attach", desc: "Paste the clipboard as a file", keyList: clipKey, keyTask: clipKey, avail: always,
+			do: func(m *model, _ task.Task, _ string) tea.Cmd { return m.pasteClipboard() }},
 	}
 }
 

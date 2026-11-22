@@ -233,6 +233,8 @@ func (m model) detailHints(narrow bool) []bkey.Binding {
 		// like the rest, so ahead of navigation; on a narrower bar
 		// ? help names it, as - (sfa8w4).
 		hints = append(hints, hint("S", "screen"))
+		// V pastes the clipboard into the task (q7n2zd), beside S.
+		hints = append(hints, hint(clipKey, "paste"))
 	}
 	files := len(m.filesOf(t)) > 0
 	if files && !narrow {

@@ -20,7 +20,7 @@ TASK ALPHA_ Alpha
   t     take                 Take it: doing, yours                              
   x     drop                 Drop it, with why                                  
   e     edit                 Open it in the editor                              
-Palette · 25 choices, ALPHA_'s first · type to narrow · › opens a level         
+Palette · 26 choices, ALPHA_'s first · type to narrow · › opens a level         
                                                                                 
 Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                 
 == list, Beta selected, 80x24
@@ -45,7 +45,7 @@ TASK BETA__ Beta
   e   edit                 Open it in the editor                                
   r   request              Write a request to the agents                        
   y   yank                 Pick it up to paste elsewhere                        
-Palette · 22 choices, BETA__'s first · type to narrow · › opens a level         
+Palette · 23 choices, BETA__'s first · type to narrow · › opens a level         
                                                                                 
 Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                 
 == task, check 2 focused, 140x40
@@ -82,11 +82,11 @@ TASK ALPHA_ Alpha
         design ›                       A question before anyone starts                                                                      
         attach                         Attach a file or folder                                                                              
   S     screen                         Copy the screen, then attach it                                                                      
+  V     paste                          Paste the clipboard as a file                                                                        
 GLOBAL                                                                                                                                      
   v     view ›                         Overview, list, board, lint                                                                          
   f     filter ›                       Narrow the tasks by a field                                                                          
-  #     goto ›                         Open a task by id                                                                                    
-Palette · 25 choices, ALPHA_'s first · type to narrow · › opens a level                                                                     
+Palette · 26 choices, ALPHA_'s first · type to narrow · › opens a level                                                                     
                                                                                                                                             
 Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                                                                             
 == list, Beta selected, 140x40
@@ -120,13 +120,13 @@ TASK BETA__ Beta
       design ›                       A question before anyone starts                                                                        
       attach                         Attach a file or folder                                                                                
   S   screen                         Copy the screen, then attach it                                                                        
+  V   paste                          Paste the clipboard as a file                                                                          
 GLOBAL                                                                                                                                      
   v   view ›                         Overview, list, board, lint                                                                            
   f   filter ›                       Narrow the tasks by a field                                                                            
   #   goto ›                         Open a task by id                                                                                      
   s   sort                           Order rows by fields, then Enter                                                                       
   g   grouping                       Rows flat, by group, by epic, by tag: cycles                                                           
-  F   clear                          Back to every task, nothing narrowed                                                                   
-Palette · 22 choices, BETA__'s first · type to narrow · › opens a level                                                                     
+Palette · 23 choices, BETA__'s first · type to narrow · › opens a level                                                                     
                                                                                                                                             
 Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                                                                             

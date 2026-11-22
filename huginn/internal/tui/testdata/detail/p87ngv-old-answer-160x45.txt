@@ -43,7 +43,7 @@ ACCEPTANCE
   ☐ 4. Jørgen marks a sentence in hug tui and the assignee answers in that thread without a DM                                                                  
                                                                                                                                                                 
 ↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task · J/K ½ page · Esc back
 == typing under question 2
 HUG · overview › ASKED › p87ngv                                                                                                                      ? 1 for you
 [todo]  [ready]  [feature]  group:root  unassigned                                                                                                              
@@ -135,4 +135,4 @@ ACCEPTANCE
                                                                                                                                                                 
 no dependencies                                                                                                                                                 
 ↓── • answered p87ngv ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · up · request · / find · next-, previous task · J/K ½ page · Esc back · : cmd  
+answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task · J/K ½ page · Esc back

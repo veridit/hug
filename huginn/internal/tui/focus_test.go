@@ -197,6 +197,12 @@ func TestFocusHintsAreHonest(t *testing.T) {
 				if after = press(fresh, "S"); after.prompt != capturePrompt {
 					t.Fatalf("S did not ask where to attach: %q", after.message)
 				}
+			case "V":
+				// V reads the clipboard (q7n2zd); here TestMain's reader
+				// finds no tool, so it says so with a fix: line.
+				if after = press(fresh, "V"); !strings.Contains(after.message, "\nfix: hug task attach ") {
+					t.Fatalf("V said nothing with a fix: %q", after.message)
+				}
 			case "/":
 				if after = press(fresh, "/"); after.prompt != findPrompt {
 					t.Fatalf("/ shown but opened no find: %q", after.prompt)
