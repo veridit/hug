@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.106 - 2026-11-22
 
 - A task with both `## Details` and `## Relevant details` no longer
   hides one of them (hxqqdp, ram 2026-11-22). A hug from before v0.7.102
