@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.100 - 2026-11-22
 
 - hug tui: each section sits between two rules, the frame of a task's
   page (v68n82, Jørgen 2026-11-20: "a horizontal line that is split on
