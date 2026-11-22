@@ -46,7 +46,7 @@ check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/
 
 check 1: release.yml 44712289344 success; brew upgrade: hug v0.7.88, hug/muninn/huginn -> ../Cellar/hug/0.7.88/bin/*
 Jørgen 2026-11-20 10:43Z (answer 1): 'I think it does. It would have been simpler if you took some screenshots and added them to the files list of this one so I can just look at what you meant.' Lesson (crab): every release ask attaches ANSI frames (before and after) of what it asks about to the release ticket.
-Reflection (open, 2026-11-20, crab): My ask described a screen in words; a frame of it attached to the ticket would have let Jørgen answer at a glance.
+Reflection (dismissed, 2026-11-20, crab): My ask described a screen in words; a frame of it attached to the ticket would have let Jørgen answer at a glance.
 ## History
 - 2026-11-20T10:45 todo -> todo/design (ask)
 - 2026-11-20T10:45 todo/design -> doing/asked (take, 1 open question(s) kept); was design_asked_by: crab; design_for: jhf; design_question: 72n8m4 + yf39ya: after this release, does your overview stay free of 'shipped, but not done', with what waits on you in ASKED and not in IN PROGRESS? (The 2 broken left are the quoted-path false positive, 7j706s.); design_since: 2026-11-20T10:45
