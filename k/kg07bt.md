@@ -70,7 +70,7 @@ landed 3517e62 on main 2026-11-18: tui: a calm focused heading and asked row; th
 landed 4778ebf on main 2026-11-18: tui: the focused row's > is theme.cursor, the answer box's cursor (kg07bt)
 shipped in v0.7.66 (3517e62)
 file:screen-1132.ans (26114 bytes, sha256:449dc9ba) screen capture from hug tui
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-18T16:25 todo -> doing/active (take)
 - 2026-11-18T16:56 doing/active -> doing/waiting (wait)
