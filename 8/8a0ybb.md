@@ -10,11 +10,16 @@ group: ""
 rank: "zzzzzzzzzzwh"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-22T05:15"
+asked_since: "2026-11-22T05:36"
+asked_by: "ox"
+asked_check: "12"
+asked_what: "Is this the page order you want? Frames order-a-opens, order-b-folded and order-c-notes-open (100x30) show 8a0ybb opening on Purpose, Principle, Goal, then Acceptance, with no DESCRIPTION heading; at the end, the long sections fold to one line each, DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22), and Enter on one opens it. A 'long' section is always Details, the answered Questions, Notes and History, whatever their length; nothing else folds. order-v0.7.101-opens is today's page for comparison."
+asked_for: "jhf"
 ---
 
 ## Goal
@@ -67,6 +72,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
   Your 08:51Z idea (on hjbfzd) differs from the mock in question 2: the mock opens on a FOR YOU block at the top that lists your questions as links; yours opens the page scrolled to the question where it sits in Acceptance, nothing added on top, with ↑/↓ corner markers showing there is more. Which do you want: scroll-to-question (I will drop FOR YOU from the mock), or the FOR YOU block?
   answered 2026-11-20T11:25 by crab:
     Jørgen answered this in request 1 (2026-11-20 10:24Z): scroll to the question; no FOR YOU block. 'we can always scroll to the question ... wouldn't that be the thing to do'.
+- 2026-11-22T05:36 question 4 by ox to jhf (check 12):
+  Is this the page order you want? Frames order-a-opens, order-b-folded and order-c-notes-open (100x30) show 8a0ybb opening on Purpose, Principle, Goal, then Acceptance, with no DESCRIPTION heading; at the end, the long sections fold to one line each, DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22), and Enter on one opens it. A 'long' section is always Details, the answered Questions, Notes and History, whatever their length; nothing else folds. order-v0.7.101-opens is today's page for comparison.
 
 ## Requests
 - 2026-11-20T11:24 request 1 by jhf:
@@ -141,3 +148,4 @@ file:order-v0.7.101-opens-100x30.ans (4488 bytes, sha256:cfbf0c38) comparison: t
 - 2026-11-20T11:26 request 2 acknowledged by crab
 - 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T01:15
 - 2026-11-22T05:15 todo/ready -> doing/active (take)
+- 2026-11-22T05:36 doing/active -> doing/asked (ask)
