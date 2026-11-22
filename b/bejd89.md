@@ -51,7 +51,7 @@ landed f003cfc on main 2026-11-17: hug tui: Tab picks a column, o orders by it; 
 landed 2f5f206 on main 2026-11-17: Merge v0.7.46 into main (bejd89 and aad670d's 46ek1f wording stay under…
 shipped in v0.7.47 (f003cfc)
 Check 5: Jørgen answered in the TUI 00:10: 'sorting works in Statbus'; relayed by crab 00:27 (nautilus)
-Reflection (open, 2026-11-18, nautilus): The goal named the o/overview key conflict up front, which saved a wrong turn. Later e3sevr moved the column cursor from Tab to H/L; the ticket text still says Tab, which is history now. (nautilus)
+Reflection (dismissed, 2026-11-18, nautilus): The goal named the o/overview key conflict up front, which saved a wrong turn. Later e3sevr moved the column cursor from Tab to H/L; the ticket text still says Tab, which is history now. (nautilus)
 ## History
 - 2026-11-17T15:09 todo -> doing/active (take)
 - 2026-11-17T16:30 doing/active -> todo/ready (give back; was assignee: nautilus); was doing_since: 2026-11-17T15:09
