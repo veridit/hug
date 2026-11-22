@@ -110,6 +110,7 @@ file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 crab 2026-11-20 12:04Z: back to todo. It sat in doing under crab with nobody building it; it is queued for a worker (machine load over 10). Found in the 47sxn2 request-1 check.
 file:order-a-opens-100x30.ans (3990 bytes, sha256:60f98ad0) frame (a) 8a0ybb as it opens in the new order at 100x30 (branch 8a0ybb, built binary, tmux capture-pane -e on a throwaway copy of the board with a local bare remote): PURPOSE, PRINCIPLE, GOAL, then ACCEPTANCE; no DESCRIPTION heading
 file:order-b-folded-100x30.ans (3680 bytes, sha256:23a4b743) frame (b) the same page scrolled to its end (>): open requests, then the long sections folded to one line each: DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22)
+file:order-c-notes-open-100x30.ans (4541 bytes, sha256:ea7ccc81) frame (c) Shift-Tab to NOTES (27), Enter: opened, one entry a paragraph, the page shown from its heading; Enter again folds it
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
