@@ -4,7 +4,7 @@ title: "Filters can be negated (!), and the list opens on 'state: not done'"
 state: "doing"
 type: "feature"
 priority: "medium"
-assignee: ["owl"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzf"
@@ -81,3 +81,4 @@ shipped in v0.7.101 (9d35298)
 - 2026-11-20T13:35 resolved request 1 by crab
 - 2026-11-22T03:13 todo -> doing/active (take)
 - 2026-11-22T05:05 doing/active -> doing/asked (ask)
+- 2026-11-22T06:07 handed to crab: owl's session ended (closed 2026-11-22 05:05)
