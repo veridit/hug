@@ -96,7 +96,7 @@ func TestIndentedBlocksHangWhenWrapped(t *testing.T) {
 	page := detailPlain(m)
 	// Each block wraps at 100 (the fixture is written so): a request
 	// that did not wrap would prove nothing.
-	for _, s := range []string{"other task (task:w0rap1)?", "columns, twice.", "wide.", "this note is on", "enough to wrap on a page a hundred columns wide."} {
+	for _, s := range []string{"other task (w0rap1)?", "columns, twice.", "wide.", "this note is on", "enough to wrap on a page a hundred columns wide."} {
 		if !strings.Contains(page, s) {
 			t.Fatalf("no %q on the page:\n%s", s, page)
 		}
@@ -107,4 +107,39 @@ func TestIndentedBlocksHangWhenWrapped(t *testing.T) {
 	end := press(m, ">")
 	goldenFile(t, "testdata/cd63d1/page-100x30.txt",
 		"== page\n"+page+"\n== at the end\n"+ansi.Strip(end.View())+"\n")
+}
+
+// cd63d1: the id Tab is on in a wrapped request is marked where it
+// stands, ▸ before it, on a line that still hangs under 3 and fits the
+// page; the account's lines too. The mark is put before the wrap, so its
+// column is counted.
+func TestMarkedIDInWrappedRequestHangs(t *testing.T) {
+	m := hangBoard(t, 100, 30)
+	reached := false
+	for range 40 {
+		m = press(m, "tab")
+		if s, ok := m.markedStop(mustSelected(t, m)); ok && s.where == stopRequest && s.shown == "w0rap1" {
+			reached = true
+			break
+		}
+	}
+	if !reached {
+		t.Fatal("Tab never reaches w0rap1 in request 1's text")
+	}
+	page := detailPlain(m)
+	var at string
+	for _, l := range strings.Split(page, "\n") {
+		if ansi.StringWidth(l) > 100 {
+			t.Errorf("a line is wider than the page (%d): %q", ansi.StringWidth(l), l)
+		}
+		if strings.Contains(l, "▸w0rap1") {
+			at = l
+		}
+	}
+	if !strings.HasPrefix(at, "   ") || !strings.Contains(at, "(▸w0rap1)?") {
+		t.Fatalf("w0rap1 is not marked where it stands in request 1, hung under 3: %q\n%s", at, page)
+	}
+	if bad := hangLeft(page); len(bad) > 0 {
+		t.Errorf("marked, %d wrapped lines start left of their block's indent:\n%s", len(bad), strings.Join(bad, "\n"))
+	}
 }

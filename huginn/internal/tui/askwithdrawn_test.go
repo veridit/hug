@@ -53,10 +53,12 @@ func TestWithdrawnQuestionDrawnDim(t *testing.T) {
 	if !strings.Contains(page, "? should the ASKED title take the warning colour?") || answerActions(page) != 1 {
 		t.Fatalf("question 2 is not the one open block with its answer:\n%s", page)
 	}
-	// The record's own lines, before the page wraps them.
+	// The record's own lines, wrapped and hung under 3 (cd63d1): every
+	// line of the withdrawn text dim.
 	record := m.questionRecord(tk)
 	for _, l := range []string{
-		"   which colour should the ASKED title take on a light terminal, given that the warning colour already marks lint findings and the rows there are long?",
+		"   which colour should the ASKED title take on a light terminal, given that the warning colour",
+		"   already marks lint findings and the rows there are long?",
 		"   And should it differ under NO_COLOR?",
 	} {
 		dim := m.styles.dim.Render(l)

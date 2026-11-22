@@ -21,14 +21,11 @@ DEPENDENCIES
 CHILDREN (1)
   ↳ w0rap1 The task this one waits on, with a title long enough to fill a row [todo]
 
-LINKS
-  ↳ w0rap1 The task this one waits on, with a title long enough to fill a row [todo]
-
 REQUESTS
 1. jhf · 42 h ago · resolved
    And we're working on a much more intricate system of inline things where we use the new syntax
    and everything. It's another ticket. So wouldn't that kind of replace this, being taken over by
-   the other task (task:w0rap1)?
+   the other task (w0rap1)?
    └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline
      marks, so this task's jump check and its land-on-the-question checks are struck and point
      there.
@@ -55,14 +52,14 @@ created 2026-11-22 · updated 2026-11-22 · request-s-wrapped-lines
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 A request's wrapped lines start at column 0 on a task's page                                        
 ↑───────────────────────────────────────────────────────────────────────────────────────────────────
-LINKS                                                                                               
+CHILDREN (1)                                                                                        
   ↳ w0rap1 The task this one waits on, with a title long enough to fill a row [todo]                
                                                                                                     
 REQUESTS                                                                                            
 1. jhf · 42 h ago · resolved                                                                        
    And we're working on a much more intricate system of inline things where we use the new syntax   
    and everything. It's another ticket. So wouldn't that kind of replace this, being taken over by  
-   the other task (task:w0rap1)?                                                                    
+   the other task (w0rap1)?                                                                         
    └ crab: Yes, mostly. Jumping to the things and acting on them where they are is p87ngv's inline  
      marks, so this task's jump check and its land-on-the-question checks are struck and point      
      there.                                                                                         
