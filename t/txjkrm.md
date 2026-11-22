@@ -86,7 +86,7 @@ landed 3f5e89d on main 2026-11-18: gofmt tagrow_test.go (txjkrm)
 landed 4d7eec2 on main 2026-11-18: tui: tmux palette goldens with tags column (txjkrm x 05r3pg)
 shipped in v0.7.71 (3ce9119)
 kikazaru 22:37Z: shipped in v0.7.71 (3ce9119a, 3f5e89d9, 4d7eec2d). The owed question for Jørgen ('Seid's overview with tags right after the ID, as you asked: does it read right?', --show seid-overview-tags-row.txt) was not asked: hug task ask refuses a done task ('done -> doing/asked is not a move a command makes'); reopening is crab's call.
-Reflection (open, 2026-11-20, crab): kikazaru's question was overtaken by Jørgen's 911j70 ruling; he answered it and asked to close.
+Reflection (dismissed, 2026-11-20, crab): kikazaru's question was overtaken by Jørgen's 911j70 ruling; he answered it and asked to close.
 ## History
 - 2026-11-18T15:45 todo -> doing/active (take)
 - 2026-11-18T15:49 doing/active -> doing/asked (ask)
@@ -110,3 +110,4 @@ Reflection (open, 2026-11-20, crab): kikazaru's question was overtaken by Jørge
 - 2026-11-20T10:55 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T10:55 doing/active -> done (done); was doing_since: 2026-11-20T09:28; doing_with: 911j70
 - 2026-11-20T10:55 answer 2 acknowledged by crab
+- 2026-11-22T13:45 answer 2 in progress by crab: hug task reflections resolve txjkrm 1 dismissed
