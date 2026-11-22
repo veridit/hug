@@ -4,7 +4,7 @@ title: "Detail view: short sections before long, folded long sections, scroll ma
 state: "doing"
 type: feature
 priority: "medium"
-assignee: ["ox"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzwh"
@@ -159,3 +159,4 @@ shipped in v0.7.102 (790af7f)
 - 2026-11-20T13:04 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T01:15
 - 2026-11-22T05:15 todo/ready -> doing/active (take)
 - 2026-11-22T05:36 doing/active -> doing/asked (ask)
+- 2026-11-22T07:35 handed to crab: ox's session ended (closed 2026-11-22 06:17)
