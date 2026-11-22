@@ -65,6 +65,7 @@ Jørgen 2026-11-20 11:51Z (answer 1): 'Let's try that and make sure you put it i
 file:zbdbtm-1-tab-marks-link-100x30.ans (4261 bytes, sha256:d8319d67) Tab marks file:▸sample-notes.md in TRY IT HERE, a stop like a task id (check 3); key bar: Space show · Enter open file
 file:zbdbtm-2-space-in-line-100x30.ans (4167 bytes, sha256:3c4a2562) Space on ▸sample.txt: the file in line under its line, ┌ name · size, └ Enter opens it · Esc or Space closes (checks 5, 6)
 file:zbdbtm-3-enter-file-frame-100x30.ans (1487 bytes, sha256:afffdb48) Enter on sample.txt: the file frame, crumb zbdbtm › z/zbdbtm/sample.txt, key bar u/Esc link (check 1)
+file:zbdbtm-4-esc-back-to-link-100x30.ans (4261 bytes, sha256:743124be) Esc from the frame: back on the page with ▸sample.txt still marked (check 1)
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
