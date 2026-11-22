@@ -4,7 +4,7 @@ title: "H/L column marker: a 'no column' step between last and first"
 state: "doing"
 type: "feature"
 priority: "medium"
-assignee: ["lobster"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "008"
@@ -70,3 +70,4 @@ shipped in v0.7.99 (1d86473)
 - 2026-11-20T13:10 resolved request 1 by crab
 - 2026-11-21T23:56 todo -> doing/active (take)
 - 2026-11-22T00:23 doing/active -> doing/asked (ask)
+- 2026-11-22T01:53 handed to crab: lobster's session ended (closed 2026-11-22 00:22)
