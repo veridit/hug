@@ -44,6 +44,10 @@ Build in huginn/internal/tui/sectionframe.go (sectionFrame, sectionRule); B is s
 
 ## Acceptance
 - [ ] ~~Verify Too many horisontal lines?~~ (not relevant: replaced by checks 2-5 (crab, from request 1), crab, 2026-11-22)
+- [ ] Jørgen picks from ANSI frames at 100x30 (overview, WAITING focused and scrolled): rules only on the focused section, next to today's A for comparison
+- [ ] Only the focused section is drawn between its titled rule and end rule, with ↑/↓ on them; other sections show a plain title line and no rules; moving focus moves the rules (goldens 100x30 and 160x45)
+- [ ] v68n82 check 2 is settled from Jørgen's pick here (struck or ticked there, naming hd74ct)
+- [ ] Jørgen looks at the overview after release and finds the lines calm enough
 
 ## Requests
 - 2026-11-22T22:31 request 1 by jhf:
