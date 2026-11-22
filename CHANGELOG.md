@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.101 - 2026-11-22
 
 - Filters can say "not" with `!` (7zg9mf, Jørgen 2026-11-20: "a way to
   select a filter and then inverse it with an exclamation mark").
