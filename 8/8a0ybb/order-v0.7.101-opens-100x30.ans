@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168moverview › IN PROGRESS › [1m[38;2;0;191;255m8a0ybb[0m                                            [1m[38;2;255;179;84m? 24 for you
+[38;2;0;191;255m[doing][0m  [38;2;188;157;255m[feature][39m  [38;2;167;179;195m[medium][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255massigned:ox · claude-opus-5-5 · main[0m
+[38;2;135;149;168mcreated 2026-11-19 · updated 2026-11-19 · detail-view-short-sections[39m
+[1m[38;2;0;191;255m✓ crab answered question 2: Withdrawn by crab: this mock had the FOR YOU block, which Jørgen ruled …
+[0m[38;2;135;149;168m  unread by bug
+────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mDetail view: short sections before long, folded long sections, scroll markers
+[0m[38;2;135;149;168m↑───────────────────────────────────────────────────────────────────────────────────────────────────
+[38;5;252mshow their one-line summary (FILES (6), NOTES (12), HISTORY (40)). Calm rules (qh9ep1 check 9).   [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252mOpening a task that asks you something shows, under the title, a FOR YOU section with each open   [39m
+[38;5;252mquestion; each names its target (a file, a section, a check, a line in a file) and Enter on it    [39m
+[38;5;252mjumps straight there, a answers. The target file is shown only when you follow the link, never    [39m
+[38;5;252minlined at the top. Below that the ticket reads short to long: Purpose, Principle, Goal,          [39m
+[38;5;252mAcceptance, then Details, Files, Notes, History as one-line folded sections until opened. Code:   [39m
+[38;5;252mhuginn/internal/tui/detail.go (sections around 530-600 and 819-830, markedBlock 1060-1100),       [39m
+[38;5;252mpicture.go:248 questionPictureOf (asked_show inline). jnaspy set Goal, Purpose, Principle first;  [39m
+[38;5;252mthis changes the order to Purpose, Principle, Goal and folds reference sections. Open for Jørgen  [39m
+[38;5;252m(asked on this task): whether Goal stays as long as today or is cut to 1-2 sentences with the rest[39m
+[38;5;252min Details. Mock first (frames at 100x30 and 160x45 of p87ngv as it is now), approved before      [39m
+[38;5;252mbuild. Order (Jørgen 11:31Z): the DESCRIPTION heading goes; the sections are FOR YOU, Purpose,    [39m
+[38;5;252mPrinciple, Goal, Acceptance, then the short sections (Files, Depends on, Parent and children, open[39m
+[38;5;252mrequests), then the long ones: Relevant details, Notes, History.                                  [39m
+
+[1m[38;2;0;191;255m▸ ACCEPTANCE[0m[38;2;135;149;168m · j/k or [ ] step · Space ticks · - strikes out
+[1m[38;2;0;191;255m>[39m[48;2;22;54;73m ☒ 1. Jørgen approves a mock of p87ngv's detail with FOR YOU first, the link, and the short-to-long
+       order (frames attached) (not relevant: the FOR YOU mock is replaced: Jørgen chose scroll-to-[0m
+[1m[48;2;22;54;73m       question, no FOR YOU block (request 1, 2026-11-20); new mock is check 10, crab, 2026-11-20)[0m
+[38;2;135;149;168m↓── Task 1 of 1 · 12% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ─────────────────────────────────────────────────
+[1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m check · [1m[38;2;0;191;255mSpace[0m[38;2;135;149;168m tick · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mE[0m[38;2;135;149;168mdit files · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp[39m [38;2;135;149;168m…[39m
