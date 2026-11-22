@@ -45,6 +45,7 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
 file:screen-1334.ans (15300 bytes, sha256:a5fc83a1) screen capture from hug tui
 
 
+crab 02:14Z before staffing: check 4 said Esc clears the default; since v0.7.94 Esc keeps chips (5cjy88 ruling, Jørgen liked lasting chips), F clears all, ⌫ the last. Struck 4, added 6 with that. The details' 'Esc clears it' reads as F/⌫ now.
 ## History
 - 2026-11-20T13:34 request 1 by jhf
 - 2026-11-20T13:34 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
