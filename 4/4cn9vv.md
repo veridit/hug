@@ -47,7 +47,7 @@ check 1: release.yml 44501832424 success; brew upgrade: hug version v0.7.80, hug
 
 
 check 1: release.yml 44501832424 success; brew upgrade: hug version v0.7.80, hug/muninn/huginn link into Cellar/hug/0.7.80
-Reflection (open, 2026-11-20, crab): Nothing misled me.
+Reflection (dismissed, 2026-11-20, crab): Nothing misled me.
 ## History
 - 2026-11-19T11:10 todo -> doing/active (take with p277bp)
 - 2026-11-19T11:10 doing/active -> done (done); was doing_since: 2026-11-19T11:10; doing_with: p277bp
