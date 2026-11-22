@@ -1,5 +1,5 @@
 == home aaaaaa at 80x24
-HUG · list › aaaaaa                                                             
+HUG · list › state:!done › aaaaaa                                               
 [todo]  [feature]  group:root  unassigned                                       
 created 2026-11-20 · updated 2026-11-20 · docs-page                             
 ⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
@@ -24,7 +24,7 @@ HISTORY
 ─── Task 1 of 4 · 100% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
 == link bbbbbb (resolved) at 80x24
-HUG · list › bbbbbb                                                             
+HUG · list › state:!done › bbbbbb                                               
 [todo]  [feature]  group:root  unassigned                                       
 created 2026-11-20 · updated 2026-11-20 · spike-fit                             
 ⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
@@ -49,7 +49,7 @@ HISTORY
 ─── Task 2 of 4 · 100% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …      
 == link cccccc (pending) at 80x24
-HUG · list › cccccc                                                             
+HUG · list › state:!done › cccccc                                               
 [todo]  [feature]  group:root  unassigned                                       
 created 2026-11-20 · updated 2026-11-20 · feature-quiet                         
 ⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…

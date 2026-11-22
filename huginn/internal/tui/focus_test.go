@@ -375,7 +375,7 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 			t.Fatalf("the global band shows %q inside a task:\n%s", v, ansi.Strip(m.View()))
 		}
 	}
-	if got := crumb(m); got != "HUG · list › "+main.ID {
+	if got := crumb(m); got != "HUG · list › state:!done › "+main.ID { // the list's default chip (7zg9mf)
 		t.Fatalf("breadcrumb %q", got)
 	}
 	page := press(m, "l", "l")
@@ -383,7 +383,7 @@ func TestFocusTabBarShowsTrailInTask(t *testing.T) {
 		t.Fatalf("page focus: ▸ before the subject, not in the breadcrumb:\n%s", ansi.Strip(page.View()))
 	}
 	followed := press(m, "l", "enter")
-	if tk, _ := followed.selected(); crumb(followed) != "HUG · list › "+main.ID+" › "+tk.ID {
+	if tk, _ := followed.selected(); crumb(followed) != "HUG · list › state:!done › "+main.ID+" › "+tk.ID {
 		t.Fatalf("breadcrumb after following a dependency: %q", crumb(followed))
 	}
 	if back := press(m, "esc"); !strings.Contains(ansi.Strip(back.View()), "view: ") {

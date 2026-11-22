@@ -105,6 +105,7 @@ func TestSearchFieldStateDone(t *testing.T) {
 		{"gamma", []string{"Gamma task"}},
 	} {
 		got := press(newModel(m.store, m.opts), "/", c.query)
+		got.retireDefault() // every task: the list's default aside (7zg9mf)
 		got.setView("list")
 		got.applyFilter()
 		if strings.Join(sortedTitles(got.visible), ",") != strings.Join(c.want, ",") {

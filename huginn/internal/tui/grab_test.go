@@ -11,6 +11,7 @@ import (
 func grabBoard(t *testing.T) (model, []string, *int) {
 	t.Helper()
 	m, ids, commits := moveBoard(t, "A", "B", "C", "D", "E", "F")
+	m.retireDefault() // moves among every row, 'in the list' unfiltered (7zg9mf)
 	m.setView("list")
 	var order []string
 	for _, title := range []string{"A", "B", "C", "D", "E", "F"} {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -63,7 +62,7 @@ func (a *App) search(ctx context.Context, s *session, f flags, filter task.Filte
 
 // matchesFilter is the ls filter rule for one task.
 func matchesFilter(t task.Task, filter task.Filter, ts []task.Task) bool {
-	return !(filter.State != "" && t.State != filter.State || filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) || !task.InEpic(t, ts, filter.Epic))
+	return filter.Keeps(t, ts)
 }
 
 // writeSearch prints search results: one line per task (id, status, title),

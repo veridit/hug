@@ -1,5 +1,5 @@
 == 000002 asked_show colours-overview.ans at 80
-HUG · list › 000002                                                  ? 1 for you
+HUG · list › state:!done › 000002                                    ? 1 for you
 [doing]  [asked]  [bug]  [critical]  group:compiler  assigned:alice ·           
 feat/terminal-000002                                                            
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                      
@@ -57,10 +57,10 @@ doing/asked)
                                                                                 
                                                                                 
                                                                                 
-─── Task 2 of 60 · 100% · next · previous · Esc back ───────────────────────────
+─── Task 2 of 45 · 100% · next · previous · Esc back ───────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · up · request 
 == 000002 asked_show colours-overview.ans at 140
-HUG · list › 000002                                                                                                              ? 1 for you
+HUG · list › state:!done › 000002                                                                                                ? 1 for you
 [doing]  [asked]  [bug]  [critical]  group:compiler  assigned:alice · feat/terminal-000002                                                  
 created 2026-11-01 · updated 2026-11-10 · bug-item-02-make                                                                                  
 ⚠ line 1: Goal is 247 characters in 4 sentences: the Goal is one sentence of at most 140 characters; detail goes in Details                 
@@ -118,5 +118,5 @@ HISTORY
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-─── Task 2 of 60 · 100% · next · previous · Esc back ───────────────────────────────────────────────────────────────────────────────────────
+─── Task 2 of 45 · 100% · next · previous · Esc back ───────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · Edit files · up · request · / find · next-, previous task 

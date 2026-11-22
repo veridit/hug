@@ -80,6 +80,7 @@ func viewAt(m model, view string, w int) string {
 // the terminal's height, so nothing wrapped onto a line of its own.
 func TestRowsFitOneLineAtEveryWidth(t *testing.T) {
 	m := longBoard(t)
+	m.retireDefault() // every task's row, the done one too (7zg9mf)
 	for _, w := range []int{60, 80, 100, 140, 200} {
 		for _, view := range []string{"overview", "list", "board", "lint"} {
 			screen := viewAt(m, view, w)
@@ -147,6 +148,7 @@ func TestWideTitlesCutByDisplayWidth(t *testing.T) {
 // priority, then status.
 func TestNarrowRowsDropColumnsInOrder(t *testing.T) {
 	m := longBoard(t)
+	m.retireDefault() // every task's id, the done one too (7zg9mf)
 	m.width = 60
 	m.resize()
 	// The order, from wide to narrow, for a list row.

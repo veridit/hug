@@ -32,7 +32,7 @@ func parseSearch(query string) (terms []fieldTerm, words string) {
 	for _, w := range strings.Fields(query) {
 		name, value, ok := strings.Cut(w, ":")
 		field, known := searchFields[strings.ToLower(name)]
-		if !ok || !known || value == "" {
+		if base, _ := task.Not(value); !ok || !known || base == "" {
 			rest = append(rest, w)
 			continue
 		}
@@ -46,6 +46,10 @@ func parseSearch(query string) (terms []fieldTerm, words string) {
 // and state:depends all find what the board shows under that name.
 func (m model) fieldsMatch(t task.Task, terms []fieldTerm) bool {
 	for _, f := range terms {
+		// state:!done is every task but the done ones (7zg9mf): one mark,
+		// !, as in the f picker and ':'.
+		value, not := task.Not(f.value)
+		f := fieldTerm{f.field, value}
 		ok := false
 		switch f.field {
 		case "state":
@@ -63,7 +67,7 @@ func (m model) fieldsMatch(t task.Task, terms []fieldTerm) bool {
 		case "epic":
 			ok = task.InEpic(t, m.all, f.value) || epicPrefix(t, m.all, f.value)
 		}
-		if !ok {
+		if ok == not {
 			return false
 		}
 	}

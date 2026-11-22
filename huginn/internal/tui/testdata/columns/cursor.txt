@@ -1,61 +1,61 @@
 == list at 80
-HUG · list   60/60 tasks · ! 2 broken · 35 advice                               
+HUG · list   45/60 tasks · ! 2 broken · 35 advice                               
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
-filter: none · sort: type                                                       
-─── TASKS  [60] · 1–21 shown ───────────────────────────────────────────────────
+filter: [state:!done ×] ⌫ last · F clear · sort: type                           
+─── TASKS  [45] · 1–21 shown ───────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE ▲  PRIORITY 
-  ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical 
-   000003   terminal compiler · Render compil… done            feature medium   
+  ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2  >feature critical 
   ·000006   terminal runtime · Feature task 0… active    ◑ 1/2 feature high     
-   000011   terminal compiler · Feature task … done      ● 2   feature medium   
    000016   terminal docs · docs Feature task… dropped         feature low      
   ·000021   terminal compiler · Feature task … depends   ○ 2   feature critical 
   !000026   terminal docs · docs Feature task… depends   ◑ 1/2 feature high     
-   000031   terminal runtime · Feature task 3… done      ● 2   feature medium   
    000036   terminal docs · docs Feature task… dropped         feature low      
   ·000041   terminal runtime · Feature task 4… ready     ○ 2   feature critical 
   ·000046   terminal compiler · Feature task … active    ◑ 1/2 feature high     
-   000051   terminal runtime · Feature task 5… done      ● 2   feature medium   
    000056   terminal compiler · Feature task … dropped         feature low      
-  ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2>bug     critical 
-   000007   terminal docs · docs Bug task 07:… done      ● 2   bug     high     
+  ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2 bug     critical 
    000012   terminal compiler · Bug task 12: … dropped         bug     medium   
   ·000017   terminal docs · docs Bug task 17:… ready     ○ 2   bug     low      
   ·000022   terminal runtime · Bug task 22: m… active    ◑ 1/2 bug     critical 
-   000027   terminal docs · docs Bug task 27:… done      ● 2   bug     high     
    000032   terminal runtime · Bug task 32: m… dropped         bug     medium   
   ·000037   terminal compiler · Bug task 37: … depends   ○ 2   bug     low      
+  ·000042   terminal runtime · Bug task 42: m… active    ◑ 1/2 bug     critical 
+   000052   terminal docs · docs Bug task 52:… dropped         bug     medium   
+  ·000057   terminal compiler · Bug task 57: … ready     ○ 2   bug     low      
+   000008   terminal docs · docs Chore task 0… dropped         chore   high     
+  !000013   terminal runtime · Chore task 13:… depends   ○ 2   chore   medium   
+  ·000018   terminal docs · docs Chore task 1… active    ◑ 1/2 chore   low      
 ↓───────────────────────────────────────────────────────────────────────────────
 H/L column · order by type (▼)                                                  
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
 == list at 140
-HUG · list   60/60 tasks · ! 2 broken · 35 advice                                                                                           
-view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
-filter: none · sort: type                                                                                                                   
-─── TASKS  [60] · 1–21 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+HUG · list   45/60 tasks · ! 2 broken · 35 advice                                                                                           
+view: overview  list  board  !lint                                         │ todo 8 · doing 15 (1 depends) · depends 7 · done 0 · dropped 15
+filter: [state:!done ×] ⌫ last · F clear · sort: type                                                                                       
+─── TASKS  [45] · 1–21 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE ▲  PRIORITY 
-  ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2   feature critical 
-   000003   terminal compiler · compiler Render compiler-lang task detail without storage markers          done            feature medium   
+  ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2  >feature critical 
   ·000006   terminal runtime · runtime Feature task 06: make the terminal workflow observable              active    ◑ 1/2 feature high     
-   000011   terminal compiler · compiler Feature task 11: make the terminal workflow observable            done      ● 2   feature medium   
    000016   terminal docs · docs Feature task 16: make the terminal workflow observable                    dropped         feature low      
   ·000021   terminal compiler · compiler Feature task 21: make the terminal workflow observable            depends   ○ 2   feature critical 
   !000026   terminal docs · docs Feature task 26: make the terminal workflow observable                    depends   ◑ 1/2 feature high     
-   000031   terminal runtime · runtime Feature task 31: make the terminal workflow observable              done      ● 2   feature medium   
    000036   terminal docs · docs Feature task 36: make the terminal workflow observable with a deliberate… dropped         feature low      
   ·000041   terminal runtime · runtime Feature task 41: make the terminal workflow observable              ready     ○ 2   feature critical 
   ·000046   terminal compiler · compiler Feature task 46: make the terminal workflow observable            active    ◑ 1/2 feature high     
-   000051   terminal runtime · runtime Feature task 51: make the terminal workflow observable              done      ● 2   feature medium   
    000056   terminal compiler · compiler Feature task 56: make the terminal workflow observable            dropped         feature low      
-  ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                active    ◑ 1/2>bug     critical 
-   000007   terminal docs · docs Bug task 07: make the terminal workflow observable                        done      ● 2   bug     high     
+  ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                active    ◑ 1/2 bug     critical 
    000012   terminal compiler · compiler Bug task 12: make the terminal workflow observable                dropped         bug     medium   
   ·000017   terminal docs · docs Bug task 17: make the terminal workflow observable                        ready     ○ 2   bug     low      
   ·000022   terminal runtime · runtime Bug task 22: make the terminal workflow observable with a delibera… active    ◑ 1/2 bug     critical 
-   000027   terminal docs · docs Bug task 27: make the terminal workflow observable                        done      ● 2   bug     high     
    000032   terminal runtime · runtime Bug task 32: make the terminal workflow observable                  dropped         bug     medium   
   ·000037   terminal compiler · compiler Bug task 37: make the terminal workflow observable                depends   ○ 2   bug     low      
+  ·000042   terminal runtime · runtime Bug task 42: make the terminal workflow observable                  active    ◑ 1/2 bug     critical 
+   000052   terminal docs · docs Bug task 52: make the terminal workflow observable                        dropped         bug     medium   
+  ·000057   terminal compiler · compiler Bug task 57: make the terminal workflow observable with a delibe… ready     ○ 2   bug     low      
+   000008   terminal docs · docs Chore task 08: make the terminal workflow observable with a deliberately… dropped         chore   high     
+  !000013   terminal runtime · runtime Chore task 13: make the terminal workflow observable                depends   ○ 2   chore   medium   
+  ·000018   terminal docs · docs Chore task 18: make the terminal workflow observable                      active    ◑ 1/2 chore   low      
 ↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 H/L column · order by type (▼)                                                                                                              
                                                                                                                                             

@@ -1,5 +1,5 @@
 == task, check 2 focused, 80x24
-HUG · list › ALPHA_                                                             
+HUG · list › state:!done › ALPHA_                                               
 [todo]  [feature]  group:root  unassigned                                       
 created ########## · updated ########## · alpha                                 
 ⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
@@ -26,7 +26,7 @@ Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help
 == list, Beta selected, 80x24
 HUG · list   2/2 tasks · ! 0 broken · 4 advice                                  
 view: overview  list  board  !lint       │ todo 2 · doing 0 · depends 0 · done 0
-filter: none · sort: rank                                                       
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                           
 ─── TASKS  [2] · all ready · all feature ───────────────────────────────────────
    ID       TITLE                                                ✓     PRIORITY 
   ·ALPHA_   Alpha                                                ○ 2            
@@ -49,7 +49,7 @@ Palette · 22 choices, BETA__'s first · type to narrow · › opens a level
                                                                                 
 Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                 
 == task, check 2 focused, 140x40
-HUG · list › ALPHA_                                                                                                                         
+HUG · list › state:!done › ALPHA_                                                                                                           
 [todo]  [feature]  group:root  unassigned                                                                                                   
 created ########## · updated ########## · alpha                                                                                             
 ⚠ line 1: missing section Principle (what we do and do not do) (+1 more findings)                                                           
@@ -92,7 +92,7 @@ Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help
 == list, Beta selected, 140x40
 HUG · list   2/2 tasks · ! 0 broken · 4 advice                                                                                              
 view: overview  list  board  !lint                                                       │ todo 2 · doing 0 · depends 0 · done 0 · dropped 0
-filter: none · sort: rank                                                                                                                   
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                                                                       
 ─── TASKS  [2] · all ready · all feature ───────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                                            ✓     PRIORITY 
   ·ALPHA_   Alpha                                                                                                            ○ 2            

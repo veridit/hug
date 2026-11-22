@@ -44,8 +44,17 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	var mu sync.Mutex
 	str := func(desc string) map[string]any { return map[string]any{"type": "string", "description": desc} }
 	enum := func(values ...string) map[string]any { return map[string]any{"type": "string", "enum": values} }
+	// negatable is a filter's enum with each value's ! form too (7zg9mf):
+	// "!done" is every task but the done ones, as in hug task ls.
+	negatable := func(values ...string) map[string]any {
+		all := append([]string{}, values...)
+		for _, v := range values {
+			all = append(all, "!"+v)
+		}
+		return map[string]any{"type": "string", "enum": all, "description": "A value, or !value: every task but those"}
+	}
 	filters := func() map[string]any {
-		return map[string]any{"type": enum("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label"), "label": str("Label filter"), "group": str("Exact folder"), "epic": str("Epic id: that epic and its children"), "mine": map[string]any{"type": "boolean"}}
+		return map[string]any{"type": negatable("feature", "bug", "chore", "spike", "docs"), "priority": str("Priority label, or !label: all but those"), "label": str("Label filter, or !label: all but those"), "group": str("Exact folder, or !folder: all but it"), "epic": str("Epic id: that epic and its children"), "mine": map[string]any{"type": "boolean"}}
 	}
 	add := func(name, desc string, props map[string]any, required []string, build func(map[string]any) ([]string, error)) {
 		schema := map[string]any{"type": "object", "properties": props, "additionalProperties": false}
@@ -126,7 +135,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		return args
 	}
 	p := filters()
-	p["state"] = enum("todo", "doing", "done", "dropped")
+	p["state"] = negatable("todo", "doing", "done", "dropped")
 	add("list", "List tasks in rank order, including done and dropped unless filtered.", p, nil, func(m map[string]any) ([]string, error) {
 		return flags([]string{"ls"}, m, "type", "priority", "label", "group", "epic", "mine", "state"), nil
 	})
@@ -140,7 +149,7 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 		}
 		return flags(args, m, "all"), nil
 	})
-	sp["state"] = enum("todo", "doing", "done", "dropped")
+	sp["state"] = negatable("todo", "doing", "done", "dropped")
 	sp["query"] = str("Words to find, e.g. memory limit 137 or STATBUS-402; every word must match")
 	sp["limit"] = map[string]any{"type": "integer", "minimum": 1}
 	add("search", "Find tasks by words, best first (BM25 over id, aliases, title, goal, description, acceptance, notes; id, aliases and title count most). Each result has id, state, title, the field that matched and a snippet. Filters as in list.", sp, []string{"query"}, func(m map[string]any) ([]string, error) {

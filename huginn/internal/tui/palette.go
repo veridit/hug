@@ -183,11 +183,17 @@ func (m model) globalCompletions() []completion {
 		name = expandField(name)
 	}
 	var out []completion
-	// values lists a field's values that start with arg, as filter rows.
+	// values lists a field's values that start with arg, as filter rows;
+	// arg with ! first lists their ! forms (7zg9mf).
 	values := func(field, arg string) {
+		base, not := task.Not(arg)
+		mark := ""
+		if not {
+			mark = "!"
+		}
 		for _, v := range m.values(field) {
-			if strings.HasPrefix(strings.ToLower(v), strings.ToLower(arg)) {
-				out = append(out, completion{value: "filter " + field + " " + v, field: field, fieldValue: v})
+			if strings.HasPrefix(strings.ToLower(v), strings.ToLower(base)) {
+				out = append(out, completion{value: "filter " + field + " " + mark + v, field: field, fieldValue: mark + v})
 			}
 		}
 	}
@@ -355,21 +361,27 @@ func (m *model) executeCommand() bool {
 	case "todo", "doing", "done", "dropped", "depends":
 		m.filterHere("state", name) // in the view shown (ht3cdx)
 	case "state", "type", "priority", "group", "tag", "assignee", "epic":
+		// ': state !done' keeps every task but those (7zg9mf): the value
+		// is checked without its !, which the chip then shows.
+		base, not := task.Not(arg)
 		if name == "epic" {
 			// Accept the bare id (or prefix) as well as "ID title".
 			for _, v := range m.values("epic") {
 				id, _, _ := strings.Cut(v, " ")
-				if strings.HasPrefix(id, strings.ToLower(arg)) && arg != "" {
-					arg = v
+				if strings.HasPrefix(id, strings.ToLower(base)) && base != "" {
+					base = v
 					break
 				}
 			}
 		}
-		if !contains(m.values(name), arg) {
+		if !contains(m.values(name), base) {
 			m.message = "unknown " + name + ": " + arg
 			return false
 		}
-		m.filterHere(name, arg) // in the view shown (ht3cdx)
+		if not {
+			base = "!" + base
+		}
+		m.filterHere(name, base) // in the view shown (ht3cdx)
 	case "goto":
 		t, err := task.Resolve(m.all, arg)
 		if err != nil {

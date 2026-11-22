@@ -155,3 +155,42 @@ func TestListOpensOnNotDone(t *testing.T) {
 		t.Fatalf("overview after ': state todo' in the list: state %q", m.filter.State)
 	}
 }
+
+// The reload (R) keeps the list's default as it was (7zg9mf): up, cleared
+// with F, or replaced by a state chip of the reader's own.
+func TestReloadKeepsListDefault(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		keys  []string
+		state string
+	}{
+		{"default", nil, "!done"},
+		{"cleared", []string{"F"}, ""},
+		{"own", []string{":", "state todo", "enter"}, "todo"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			m := press(manyModel(t), tc.keys...)
+			fresh := newModel(m.store, m.opts)
+			fresh.resume(m.handoff())
+			if fresh.view != "list" || fresh.filter.State != tc.state || len(fresh.chips) != len(m.chips) {
+				t.Fatalf("resumed: view %s state %q chips %v; want list, %q, %v", fresh.view, fresh.filter.State, fresh.chips, tc.state, m.chips)
+			}
+			fresh = press(fresh, "v", "o")
+			if tc.name != "own" && fresh.filter.State != "" {
+				t.Fatalf("the overview after the reload shows %q", fresh.filter.State)
+			}
+		})
+	}
+}
+
+// / takes the same mark (0sw0dd's field:value): '/ state:!done' finds
+// every task but the done ones; '/ state:!' is a word, not a term.
+func TestNegatedSearchTerm(t *testing.T) {
+	m := press(manyModel(t), "F", "/", "state:!done", "enter")
+	if len(m.visible) == 0 || len(m.visible) == len(m.all) || !noneDone(m) {
+		t.Fatalf("/ state:!done: %d of %d shown, none done %v", len(m.visible), len(m.all), noneDone(m))
+	}
+	if terms, words := parseSearch("state:! x"); len(terms) != 0 || words != "state:! x" {
+		t.Fatalf("parseSearch(state:! x) = %v %q", terms, words)
+	}
+}

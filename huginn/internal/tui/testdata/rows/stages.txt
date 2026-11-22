@@ -63,7 +63,7 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 == list at 80
 HUG · list   7/7 tasks · ! 0 broken                                             
 view: overview  list  board  !lint    │ todo 3 · doing 4 (1 depends) · depends 0
-filter: none · sort: rank                                                       
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                           
 ─── TASKS  [7] · all feature · all high ────────────────────────────────────────
    ID       TITLE                                               STAGE     ✓     
 >  aaaaaa   Status colors: rows and sections share one subtle … active    ◑ 1/2 
@@ -88,7 +88,7 @@ filter: none · sort: rank
                                                                                 
                                                                                 
                                                                                 
-All tasks · : filters and commands · ! lint finding · ↳ epic                    
+state=!done · F clears · ! lint finding · ↳ epic                                
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  
 == overview at 140
@@ -156,7 +156,7 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 == list at 140
 HUG · list   7/7 tasks · ! 0 broken                                                                                                         
 view: overview  list  board  !lint                                           │ todo 3 · doing 4 (1 depends) · depends 0 · done 0 · dropped 0
-filter: none · sort: rank                                                                                                                   
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                                                                       
 ─── TASKS  [7] · all feature · all high ────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                                           STAGE     ✓     
 >  aaaaaa   Status colors: rows and sections share one subtle scheme                                                        active    ◑ 1/2 
@@ -181,6 +181,6 @@ filter: none · sort: rank
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             
-All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done                                           
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done                                                       
                                                                                                                                             
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order · request               

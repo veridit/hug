@@ -74,7 +74,7 @@ func TestKeyTableListNavigation(t *testing.T) {
 	// gg and G are gone (Jørgen 2026-11-17 23:37): G does nothing, and g
 	// groups the rows at once (kx2ndm), so gg is two toggles, not top.
 	m := press(manyModel(t), ">", "G")
-	if m.cursor != 59 || m.message != "" {
+	if m.cursor != len(m.visible)-1 || m.message != "" {
 		t.Fatal("G moved or spoke", m.cursor, m.message)
 	}
 	if m = press(m, "g"); m.grouping != "group" {
@@ -333,7 +333,7 @@ func TestPaletteCompletionAndCommands(t *testing.T) {
 }
 func TestQuickFilterChipsCountsAndShortcuts(t *testing.T) {
 	for _, tc := range []struct{ letter, field, value string }{{"s", "state", "todo"}, {"t", "type", "bug"}, {"p", "priority", "high"}, {"g", "group", "compiler"}, {"l", "tag", "terminal"}, {"a", "assignee", "alice"}} {
-		m := press(manyModel(t), "f", tc.letter, tc.value)
+		m := press(manyModel(t), "F", "f", tc.letter, tc.value) // the list's default aside (7zg9mf)
 		if len(m.filterChoices()) != 1 || m.valueCount(tc.field, tc.value) == 0 {
 			t.Fatal(tc, m.View())
 		}
@@ -443,7 +443,7 @@ func TestEveryEditRequiresConfirmation(t *testing.T) {
 }
 func TestMarkdownDetailFixedHeaderAndEmptySections(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
-	m := press(manyModel(t), "#", "1785", "enter")
+	m := press(manyModel(t), "F", "#", "1785", "enter") // 000003 is done: the list's default aside (7zg9mf)
 	m.width = 140
 	m.height = 40
 	m.resize()

@@ -14,7 +14,7 @@ func TestFilterLineNamesFilterAndSort(t *testing.T) {
 	t.Setenv("NO_COLOR", "1")
 	var golden []string
 	for _, w := range []int{80, 140} {
-		m := manyModel(t)
+		m := press(manyModel(t), "F") // 'filter: none': the list's default cleared (7zg9mf)
 		m.width, m.height = w, 24
 		m.resize()
 		line := strings.TrimRight(strings.Split(ansi.Strip(m.View()), "\n")[2], " ")
@@ -95,7 +95,7 @@ func TestFilterAndSortPickersLookAlike(t *testing.T) {
 	if !strings.HasPrefix(fp[0], "FILTER · ") || !strings.HasPrefix(sp[0], "SORT · ") {
 		t.Fatalf("headings: %q / %q", fp[0], sp[0])
 	}
-	if fp[1] != "filter: none" || sp[1] != "now: rank (board order)" {
+	if fp[1] != "filter: state:!done" || sp[1] != "now: rank (board order)" { // the list's default (7zg9mf)
 		t.Fatalf("second lines: %q / %q", fp[1], sp[1])
 	}
 	if !strings.HasPrefix(fp[2][1:], " s  state     todo, doing") || !strings.HasPrefix(sp[5], "  p  priority  critical first") {

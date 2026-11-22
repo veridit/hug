@@ -296,6 +296,9 @@ type handoff struct {
 	Column     string      `json:"column,omitempty"`   // the column the cursor marks (bejd89)
 	Grouping   string      `json:"grouping,omitempty"` // "group" or "epic" (kx2ndm)
 	Folded     []string    `json:"folded,omitempty"`   // the folded headings, by foldKey
+	// NoDefault: the list's default chip was cleared (7zg9mf); the chip
+	// itself is not in Chips, the list puts it up again.
+	NoDefault bool `json:"no_default,omitempty"`
 }
 
 type sortSpec struct {
@@ -329,8 +332,12 @@ func (m model) handoff() handoff {
 		}
 	}
 	for _, c := range m.chips {
+		if m.defaultShown && c.field == "state" {
+			continue // the list's default, not the reader's chip (7zg9mf)
+		}
 		h.Chips = append(h.Chips, [2]string{c.field, c.value})
 	}
+	h.NoDefault = !m.defaultOn
 	h.Grouping = m.grouping
 	for k := range m.folded {
 		h.Folded = append(h.Folded, k)
@@ -347,12 +354,17 @@ func (m model) handoff() handoff {
 
 // resume puts the TUI where h says, as far as the tasks still allow.
 func (m *model) resume(h handoff) {
+	if h.NoDefault {
+		m.retireDefault()
+	}
+	// The reader's chips first, so a state chip of theirs is there before
+	// the list would put its default up (7zg9mf).
+	for _, c := range h.Chips {
+		m.setFilter(c[0], c[1])
+	}
 	switch h.View {
 	case "overview", "list", "board", "lint":
 		m.setView(h.View)
-	}
-	for _, c := range h.Chips {
-		m.setFilter(c[0], c[1])
 	}
 	m.query, m.results = h.Query, h.Results && h.Query != ""
 	if slices.Contains(groupings, h.Grouping) {

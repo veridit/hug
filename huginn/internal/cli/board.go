@@ -45,7 +45,11 @@ func (a *App) runBoard(_ context.Context, s *session, f flags, filter task.Filte
 	}
 	cols := []BoardColumn{{State: "todo"}, {State: "doing"}, {State: "done"}}
 	for _, t := range ts {
-		if filter.Type != "" && t.Type != filter.Type || filter.Priority != "" && t.Priority != filter.Priority || filter.Group != "" && t.Group != filter.Group || filter.Label != "" && !slices.Contains(t.Labels, filter.Label) || filter.Mine != "" && !slices.Contains(t.Assignee, filter.Mine) || !task.InEpic(t, ts, filter.Epic) {
+		// The columns are the states: --state is not applied here, as before;
+		// the other filters, ! too (7zg9mf), are.
+		cut := filter
+		cut.State = ""
+		if !cut.Keeps(t, ts) {
 			continue
 		}
 		for i := range cols {

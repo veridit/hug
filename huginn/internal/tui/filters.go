@@ -20,6 +20,57 @@ var filterHints = map[string]string{
 	"assignee": "a person or agent, or (unassigned)", "epic": "an epic's children",
 }
 
+// keeps is one filter field's rule (7zg9mf): "" keeps every task, "X"
+// the tasks has says have X, "!X" every task but those.
+func keeps(filter string, has func(string) bool) bool {
+	if filter == "" {
+		return true
+	}
+	v, not := task.Not(filter)
+	return has(v) != not
+}
+
+// listDefault is the state filter the list opens on (7zg9mf, Jørgen
+// 2026-11-20): the open work, without the done tasks. A chip like any
+// other; F or ⌫ on it clears it for the session. It is the list's own:
+// the overview and the board have their own sections and never show it.
+const listDefault = "!done"
+
+// showListDefault puts the list's default chip up in the list, while the
+// reader has not cleared it and has no state filter of their own, and
+// takes it down in every other view.
+func (m *model) showListDefault() {
+	switch {
+	case m.view == "list" && m.defaultOn && !m.defaultShown && m.filter.State == "":
+		m.filter.State = listDefault
+		// First on the line, as when the list opens before any chip.
+		m.chips = append([]filterChip{{"state", listDefault}}, m.chips...)
+		m.defaultShown = true
+		m.applyFilter()
+	case m.view != "list" && m.defaultShown:
+		m.dropChip("state")
+		m.filter.State = ""
+		m.defaultShown = false
+		m.applyFilter()
+	}
+}
+
+// retireDefault ends the list's default for the session: the reader
+// cleared it in the list (F, or ⌫ on a state chip) or replaced it with a
+// state filter of their own while it was up. Clearing filters in another
+// view leaves it.
+func (m *model) retireDefault() { m.defaultOn, m.defaultShown = false, false }
+
+// dropChip removes the chip of field, if one is set.
+func (m *model) dropChip(field string) {
+	for i := 0; i < len(m.chips); i++ {
+		if m.chips[i].field == field {
+			m.chips = append(m.chips[:i], m.chips[i+1:]...)
+			return
+		}
+	}
+}
+
 func ownerMatches(t task.Task, value string) bool {
 	return value == "(unassigned)" && len(t.Assignee) == 0 || contains(t.Assignee, value)
 }
@@ -44,17 +95,15 @@ func (m *model) writeFilter(name, value string) {
 	case "assignee":
 		m.filter.Mine = value
 	case "epic":
-		// Values are "ID title"; the filter keeps the id.
+		// Values are "ID title"; the filter keeps the id, and its !.
 		m.filter.Epic, _, _ = strings.Cut(value, " ")
 	}
 }
 func (m *model) setFilter(name, value string) {
-	for i := 0; i < len(m.chips); i++ {
-		if m.chips[i].field == name {
-			m.chips = append(m.chips[:i], m.chips[i+1:]...)
-			break
-		}
+	if name == "state" && m.defaultShown {
+		m.retireDefault() // the reader's own state filter replaces the list's
 	}
+	m.dropChip(name)
 	m.writeFilter(name, value)
 	if value != "" {
 		m.chips = append(m.chips, filterChip{name, value})
@@ -113,6 +162,9 @@ func (m *model) removeChip() {
 		return
 	}
 	c := m.chips[len(m.chips)-1]
+	if c.field == "state" && (m.defaultShown || m.view == "list") {
+		m.retireDefault() // ⌫ on the list's state chip clears the default for the session
+	}
 	m.clearKeeping(false, func() {
 		m.chips = m.chips[:len(m.chips)-1]
 		m.writeFilter(c.field, "")
@@ -141,13 +193,14 @@ func (m model) filterBar() string {
 	var chips []string
 	for _, c := range m.chips {
 		style := m.styles.accent
+		value, _ := task.Not(c.value) // !done is drawn in done's colour, the ! says not
 		switch c.field {
 		case "state":
-			style = m.styles.status[c.value]
+			style = m.styles.status[value]
 		case "type":
-			style = m.styles.kind[c.value]
+			style = m.styles.kind[value]
 		case "priority":
-			style = m.styles.priority[c.value]
+			style = m.styles.priority[value]
 		}
 		chips = append(chips, style.Bold(true).Render("["+c.field+":"+oneLine(c.value)+" ×]"))
 	}
@@ -169,7 +222,19 @@ func (m model) filterBar() string {
 	}
 	return line + m.styles.dim.Render(" · ") + key.Render("s") + m.styles.dim.Render("ort: "+sortLabel(m.sort))
 }
-func (m *model) openFilter() tea.Cmd { m.pickerField = ""; return m.openInput("filter", "") }
+func (m *model) openFilter() tea.Cmd {
+	m.pickerField, m.pickerNot = "", false
+	return m.openInput("filter", "")
+}
+
+// pickedValue is the value Enter on choice adds: with ! pressed in the
+// picker, its negation (7zg9mf).
+func (m model) pickedValue(choice string) string {
+	if m.pickerNot {
+		return "!" + choice
+	}
+	return choice
+}
 func (m model) filterChoices() []string {
 	var values []string
 	for _, v := range m.values(m.pickerField) {
@@ -189,6 +254,12 @@ func (m model) valueCount(field, value string) int {
 }
 func (m model) updateFilter(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	k := msg.String()
+	if k == "!" {
+		// ! flips the value to its negation, before the field, before the
+		// value or on it; again flips it back (7zg9mf). It is never text.
+		m.pickerNot = !m.pickerNot
+		return m, nil
+	}
 	if m.pickerField == "" {
 		for _, f := range filterFields {
 			if k == f.letter {
@@ -242,7 +313,7 @@ func (m model) updateFilter(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if len(choices) > 0 {
 			m.prompt = ""
 			m.input.Blur()
-			m.filterHere(m.pickerField, choices[min(m.completion, len(choices)-1)])
+			m.filterHere(m.pickerField, m.pickedValue(choices[min(m.completion, len(choices)-1)]))
 		}
 		return m, nil
 	}
@@ -260,7 +331,11 @@ func (m model) filterText() string {
 	if len(set) > 0 {
 		now = strings.Join(set, " ")
 	}
-	lines := []string{m.styles.accent.Render("FILTER · a letter picks a field · j/k and Enter · Esc back"), m.styles.normal.Bold(true).Render("filter: " + now)}
+	not := ""
+	if m.pickerNot {
+		not = " · not: every task but the value picked"
+	}
+	lines := []string{m.styles.accent.Render("FILTER · a letter picks a field · j/k and Enter · ! not · Esc back" + not), m.styles.normal.Bold(true).Render("filter: " + now)}
 	if m.pickerField == "" {
 		for i, f := range filterFields {
 			line := "  " + f.letter + "  " + fit(f.name, 10) + m.styles.dim.Render(filterHints[f.name])
@@ -271,12 +346,13 @@ func (m model) filterText() string {
 		}
 		return strings.Join(lines, "\n")
 	}
-	lines = []string{m.styles.accent.Render("FILTER · " + m.pickerField + " · counts include your other filters"), m.input.View(), ""}
+	lines = []string{m.styles.accent.Render("FILTER · " + m.pickerField + not + " · counts include your other filters"), m.input.View(), ""}
 	choices := m.filterChoices()
 	rows := max(1, m.bodyHeight()-4)
 	start := max(0, m.completion-rows+1)
 	for i := start; i < min(len(choices), start+rows); i++ {
-		line := fmt.Sprintf("  %-24s %5d", oneLine(choices[i]), m.valueCount(m.pickerField, choices[i]))
+		value := m.pickedValue(choices[i]) // !done, with its count, while ! is on
+		line := fmt.Sprintf("  %-24s %5d", oneLine(value), m.valueCount(m.pickerField, value))
 		if i == m.completion {
 			line = m.styles.selected.Render("> " + line[2:])
 		}

@@ -1,8 +1,8 @@
 == 80
-HUG · list   60/60 tasks · ! 2 broken · 35 advice                               
+HUG · list   45/60 tasks · ! 2 broken · 35 advice                               
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
-filter: none · sort: rank                                                       
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                           
 == 140
-HUG · list   60/60 tasks · ! 2 broken · 35 advice                                                                                           
-view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
-filter: none · sort: rank                                                                                                                   
+HUG · list   45/60 tasks · ! 2 broken · 35 advice                                                                                           
+view: overview  list  board  !lint                                         │ todo 8 · doing 15 (1 depends) · depends 7 · done 0 · dropped 15
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                                                                       

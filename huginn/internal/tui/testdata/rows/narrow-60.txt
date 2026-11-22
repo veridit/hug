@@ -30,15 +30,14 @@ All tasks · : filters and commands · ! lint finding · ↳ epic
                                                             
 j/k move · Space mark · Enter open · find · # id · / search 
 == list at 60
-HUG · list   5/5 tasks · ! 0 broken · 12 advice             
+HUG · list   4/5 tasks · ! 0 broken · 12 advice             
 view: overview  list  board  !lint        │ todo 2 · doing 2
-filter: none · sort: rank                                   
-─── TASKS  [5] ─────────────────────────────────────────────
+filter: [state:!done ×] ⌫ last · F clear · sort: rank       
+─── TASKS  [4] ─────────────────────────────────────────────
    ID       TITLE                STAGE     ✓       PRIORITY 
 > ·######   A very long title t… active    ○ 12    critical 
   ·######   数据库迁移：把所有…  active    ○ 12    critical 
   ·######   🚀🔥 emoji rocket f… ready     ○ 12    critical 
-   ######   done A very long ti… done      ● 12    critical 
   ·######   files A very long t… ready     ○ 12    high     
 ────────────────────────────────────────────────────────────
                                                             
@@ -57,7 +56,8 @@ filter: none · sort: rank
                                                             
                                                             
                                                             
-All tasks · : filters and commands · ! lint finding · ↳ epic
+                                                            
+state=!done · F clears · ! lint finding · ↳ epic            
                                                             
 j/k move · Space mark · Enter open · find · # id · / search 
 == board at 60

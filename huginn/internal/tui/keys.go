@@ -69,7 +69,7 @@ func (m model) barHints() []bkey.Binding {
 	case m.prompt == "#":
 		hints = []bkey.Binding{hint("Enter", "open"), hint("Tab", "complete"), hint("↑↓ ^n/^p", "pick"), hint("Esc", "back"), hint(m.helpKey(), "help")}
 	case m.prompt == "filter":
-		hints = []bkey.Binding{hint("j/k ↑↓", "pick"), hint("Enter", "add chip"), hint("type", "narrow"), hint("Esc", "back"), hint(m.helpKey(), "help")}
+		hints = []bkey.Binding{hint("j/k ↑↓", "pick"), hint("Enter", "add chip"), hint("!", "not"), hint("type", "narrow"), hint("Esc", "back"), hint(m.helpKey(), "help")}
 	case m.prompt == "sort":
 		// The filter picker's movement keys first (17w9r6): the same
 		// words in both footers.

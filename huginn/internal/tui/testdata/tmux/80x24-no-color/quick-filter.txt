@@ -21,4 +21,4 @@ type
 
 state=todo · F clears · ! lint finding · ↳ epic
 
-j/k ↑↓ pick · Enter add chip · type narrow · Esc back · F1 help       hug v0.0.0
+j/k ↑↓ pick · Enter add chip · ! not · type narrow · Esc back · F1 help

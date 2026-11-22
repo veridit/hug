@@ -194,7 +194,7 @@ func TestTmuxFocusPulse(t *testing.T) {
 	wait("found: / T")
 	still("typing in /", watch(1500*time.Millisecond, sign("Task ", ">⋗")))
 	send("Escape")
-	wait("All tasks")
+	wait("state=!done · F clears") // the list's default chip stays (7zg9mf)
 	// The task's page: the asked check has the focus and its > pulses.
 	send("#", "tttttt", "Enter")
 	s = wait("> ? ☐ 2. second")

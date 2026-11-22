@@ -1,6 +1,6 @@
 HUG · list   5/5 tasks · ! 0 broken · 10 advice                                 
 view: overview  list  board  !lint       │ todo 4 · doing 0 · depends 1 · done 0
-filter: none · sort: rank                                                       
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                           
 ─── TASKS  [5] ─────────────────────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE    PRIORITY 
 > ·eeeeee   Bare                               ready     ○ 1   chore   low      
@@ -15,6 +15,6 @@ filter: none · sort: rank
                                                                                 
                                                                                 
                                                                                 
-All tasks · : filters and commands · ! lint finding · ↳ epic                    
+state=!done · F clears · ! lint finding · ↳ epic                                
                                                                                 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …  

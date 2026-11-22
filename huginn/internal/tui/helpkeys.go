@@ -80,7 +80,8 @@ func (m model) contextHelp() helpSection {
 		}}
 	case "filter":
 		return helpSection{"IN THE FILTER PICKER", []helpRow{
-			row("j/k ↑↓", "pick", "j", "k"), row("Enter", "add the chip", "enter"), row("type", "narrow the choices"), row("Esc", "back", "esc"),
+			row("j/k ↑↓", "pick", "j", "k"), row("Enter", "add the chip", "enter"), row("!", "not: every task but the value, before or after picking; again flips back", "!"),
+			row("type", "narrow the choices"), row("Esc", "back", "esc"),
 			row("fields", "s state, t type, p priority, g group, l tag, a assignee, e epic"),
 		}}
 	case "sort":

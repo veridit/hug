@@ -237,7 +237,8 @@ func TestBreadcrumbNamesThePane(t *testing.T) {
 		keys        []string
 	}{
 		{"overview", "HUG · overview › ASKED › bbbbbb", true, []string{"j", "enter"}},
-		{"list", "HUG · list › /state:todo › bbbbbb", false, []string{"v", "l", "/", "state:todo", "tab", "j", "enter"}},
+		// The list's crumb names its default chip too (7zg9mf).
+		{"list", "HUG · list › state:!done /state:todo › bbbbbb", false, []string{"v", "l", "/", "state:todo", "tab", "j", "enter"}},
 		{"board", "HUG · board › TODO › bbbbbb", false, []string{"v", "b", "j", "enter"}},
 	} {
 		m := slotBoard(t, c.ask, 0)

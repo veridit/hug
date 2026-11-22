@@ -1,4 +1,4 @@
-HUG · repo · list › 000003
+HUG · repo · list › state:!done › 000003 · now RECENTLY DONE
 [done]  [feature]  [medium]  group:compiler  unassigned
 created 2026-11-01 · updated 2026-11-10 · render-compiler-lang-task
 ────────────────────────────────────────────────────────────────────────────────
@@ -20,5 +20,5 @@ no dependencies
 
 
 
-─── Task 3 of 60 · 100% · next · previous · Esc back ───────────────────────────
+─── Detail · 100% · Esc back ───────────────────────────────────────────────────
 j/k scroll · edit · x drop · yank · up · request · / find · next-, previous task

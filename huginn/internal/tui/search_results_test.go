@@ -250,6 +250,7 @@ func TestSearchEnterShowsResults(t *testing.T) {
 // grabs in the full view, so the task moves among its real neighbours.
 func TestSearchResultsMoveAmongAll(t *testing.T) {
 	m, ids, commits := searchBoard(t)
+	m.retireDefault() // among all 60, 'in the list' unfiltered (7zg9mf)
 	m.setView("list")
 	m = press(m, "/", "Zebra", "enter")
 	if m.query != "Zebra" || m.prompt != "" {
@@ -347,7 +348,12 @@ func TestSearchTabKeepsChip(t *testing.T) {
 	}
 	for _, view := range []string{"l", "b", "o"} {
 		m = press(m, "v", view)
-		if m.query != target || !strings.Contains(ansi.Strip(m.View()), chip) {
+		// In the list the default chip comes first (7zg9mf).
+		want := chip
+		if view == "l" {
+			want = "filter: [state:!done ×] [/ " + target + "]"
+		}
+		if m.query != target || !strings.Contains(ansi.Strip(m.View()), want) {
 			t.Fatalf("after v %s: query %q\n%s", view, m.query, ansi.Strip(m.View()))
 		}
 	}
@@ -388,8 +394,9 @@ func TestSearchResultsEndOnViewSwitch(t *testing.T) {
 	m, ids := resultsBoard(t)
 	target := ids["Target"]
 	m = press(m, "/", target, "enter", "v", "l")
-	if m.query != "" || len(m.visible) != len(m.all) || selID(m) != target {
-		t.Fatalf("v l on the results: query %q, %d of %d shown, selected %s; want all tasks, %s selected", m.query, len(m.visible), len(m.all), selID(m), target)
+	// All tasks but the done ones: the list opens on its default (7zg9mf).
+	if m.query != "" || len(m.visible) != len(m.all)-2 || !noneDone(m) || selID(m) != target {
+		t.Fatalf("v l on the results: query %q, %d of %d shown, selected %s; want every task but the 2 done, %s selected", m.query, len(m.visible), len(m.all), selID(m), target)
 	}
 }
 

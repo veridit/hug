@@ -4,6 +4,27 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- Filters can say "not" with `!` (7zg9mf, Jørgen 2026-11-20: "a way to
+  select a filter and then inverse it with an exclamation mark").
+  - In hug tui, `: state !done` or `: type !bug` keeps every task but
+    those; the chip reads `[state:!done ×]`, and a section it empties
+    says `· None with state:!done`.
+  - In the `f` picker, `!` flips the value to "not", before you pick the
+    field, before you type the value, or on the highlighted value; `!`
+    again flips it back. The rows read `!done` with the count it leaves.
+  - In the terminal, `hug task ls --state '!done'` (quote the `!` for
+    the shell) does the same, as do `search`, `next`, `board` and the
+    MCP `task_list`, `task_search` and `task_next` tools. A typo after
+    the `!` ends with a fix that keeps it: `fix: hug task ls --state
+    '!done'`.
+- hug tui: the list opens on the open work, `filter: [state:!done ×]`,
+  so the done tasks stay out until you ask for them (7zg9mf). It is a
+  chip like any other: `F`, or `⌫` on it, clears it to `filter: none`
+  for the rest of the session, and `Esc` does not. The overview and the
+  board keep their own sections and are not filtered by it.
+
 ## v0.7.100 - 2026-11-22
 
 - hug tui: each section sits between two rules, the frame of a task's

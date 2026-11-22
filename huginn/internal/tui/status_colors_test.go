@@ -98,6 +98,7 @@ func TestNoColorReadsByText(t *testing.T) {
 	m.styles = newTheme()
 	m.width, m.height = 140, 40
 	m.resize()
+	m.retireDefault() // the done task's ● in the list: the default aside (7zg9mf)
 	m.setView("list")
 	screen := m.View()
 	if strings.Contains(screen, "\x1b[3") {

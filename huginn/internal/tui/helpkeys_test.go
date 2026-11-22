@@ -20,7 +20,7 @@ func state(m model) string {
 	return fmt.Sprintf("%s|%d|%d|%v|%s|%d|%d|%d|%d|%d|%d|%d|%q|%q|%q|%v|%v|%d|%d|%s|%v|%v|%v|%d|%s|%q|%v|%d|%d|%s",
 		m.view, m.pane, m.cursor, m.detail, m.detailPath, m.detailPane, m.acceptance, m.dependency, m.link, m.file, m.idAt, m.column,
 		m.message, m.confirm, m.prompt, m.help, m.glance, m.viewport.YOffset, len(m.detailStack), m.query, m.grab.active, m.pendingV, m.grouping+"/"+m.head,
-		len(m.sort), m.yanked, m.input.Value(), m.filter, loads, m.completion, m.pickerField) + fmt.Sprintf("|%v|%v|%v", m.columnHinted, m.glanceMD.raw, m.glanceMD.loading)
+		len(m.sort), m.yanked, m.input.Value(), m.filter, loads, m.completion, m.pickerField) + fmt.Sprintf("|%v|%v|%v|%v", m.columnHinted, m.glanceMD.raw, m.glanceMD.loading, m.pickerNot)
 }
 
 // pressed reports whether k did something in m: changed its state, or

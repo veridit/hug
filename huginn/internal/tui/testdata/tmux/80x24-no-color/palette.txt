@@ -1,24 +1,24 @@
-HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
+HUG · repo · list   45/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
-filter: none · sort: rank
-─── TASKS  [60] · 1–7 shown ────────────────────────────────────────────────────
+filter: [state:!done ×] ⌫ last · F clear · sort: rank
+─── TASKS  [45] · 1–7 shown ────────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE    PRIORITY
   ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical
   ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2 bug     critical
->  000003   terminal compiler · Render compil… done            feature medium
    000004   terminal runtime · Spike task 04:… dropped         spike   critical
   ·000005   terminal runtime · Docs task 05: … depends   ○ 2   docs    critical
   ·000006   terminal runtime · Feature task 0… active    ◑ 1/2 feature high
-   000007   terminal docs · docs Bug task 07:… done      ● 2   bug     high
+   000008   terminal docs · docs Chore task 0… dropped         chore   high
+  ·000009   terminal docs · docs Spike task 0… ready     ○ 2   spike   high
 ↓───────────────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────
 : type
 GLOBAL
->     filter type bug      12 tasks
-      filter type chore    11 tasks
-      filter type docs     12 tasks
-      filter type feature  13 tasks
-      filter type spike    12 tasks
-Palette · 5 choices · type to narrow · › opens a level
+>     filter type bug      9 tasks
+      filter type chore    9 tasks
+      filter type docs     9 tasks
+      filter type feature  9 tasks
+      filter type spike    9 tasks
+000003 is hidden by the filter state:!done: F clears it
 
 Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help       hug v0.0.0

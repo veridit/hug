@@ -1,24 +1,24 @@
-HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
+HUG · repo · list   45/60 tasks · ! 2 broken · 35 advice
 view: overview  list  board  !lint   │ todo 8 · doing 15 (1 depends) · depends 7
-filter: none · sort: rank
-─── TASKS  [60] · 1–15 shown ───────────────────────────────────────────────────
+filter: [state:!done ×] ⌫ last · F clear · sort: rank
+─── TASKS  [45] · 1–15 shown ───────────────────────────────────────────────────
    ID       TITLE                              STAGE     ✓     TYPE    PRIORITY
-  ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical
-> ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2 bug     critical
-   000003   terminal compiler · Render compil… done            feature medium
+> ·000001   terminal compiler · ⎘2 Feature ta… ready     ○ 2   feature critical
+  ·000002   terminal compiler · Bug task 02: … active    ◑ 1/2 bug     critical
    000004   terminal runtime · Spike task 04:… dropped         spike   critical
   ·000005   terminal runtime · Docs task 05: … depends   ○ 2   docs    critical
   ·000006   terminal runtime · Feature task 0… active    ◑ 1/2 feature high
-   000007   terminal docs · docs Bug task 07:… done      ● 2   bug     high
    000008   terminal docs · docs Chore task 0… dropped         chore   high
   ·000009   terminal docs · docs Spike task 0… ready     ○ 2   spike   high
   ·000010   terminal compiler · Docs task 10:… active    ◑ 1/2 docs    high
-   000011   terminal compiler · Feature task … done      ● 2   feature medium
    000012   terminal compiler · Bug task 12: … dropped         bug     medium
   !000013   terminal runtime · Chore task 13:… depends   ○ 2   chore   medium
   ·000014   terminal runtime · Spike task 14:… active    ◑ 1/2 spike   medium
-   000015   terminal runtime · Docs task 15: … done      ● 2   docs    medium
+   000016   terminal docs · docs Feature task… dropped         feature low
+  ·000017   terminal docs · docs Bug task 17:… ready     ○ 2   bug     low
+  ·000018   terminal docs · docs Chore task 1… active    ◑ 1/2 chore   low
+   000020   terminal compiler · Docs task 20:… dropped         docs    low
 ↓───────────────────────────────────────────────────────────────────────────────
-All tasks · : filters and commands · ! lint finding · ↳ epic
+state=!done · F clears · ! lint finding · ↳ epic
 
 j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? help …

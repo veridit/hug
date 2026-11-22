@@ -55,6 +55,36 @@ type Filter struct {
 	Me, Coordinator string
 }
 
+// Not splits a filter value into the value and whether it is negated: a
+// leading ! means every task but those with the value (7zg9mf), as in
+// 'hug task ls --state !done'. One mark, !, in the CLI, MCP and the TUI.
+func Not(value string) (string, bool) {
+	if rest, ok := strings.CutPrefix(value, "!"); ok {
+		return rest, true
+	}
+	return value, false
+}
+
+// matchValue is one field's filter rule: "" keeps all, "X" keeps X, "!X"
+// keeps all but X. has says whether the task has value.
+func matchValue(filter string, has func(string) bool) bool {
+	if filter == "" {
+		return true
+	}
+	v, not := Not(filter)
+	return has(v) != not
+}
+
+// Keeps reports whether f keeps t, the rule of ls, search and board: each
+// set field must hold, a !value field must not (7zg9mf). ts is the board,
+// for the epic.
+func (f Filter) Keeps(t Task, ts []Task) bool {
+	eq := func(field string) func(string) bool { return func(v string) bool { return field == v } }
+	return matchValue(f.State, eq(t.State)) && matchValue(f.Type, eq(t.Type)) && matchValue(f.Priority, eq(t.Priority)) &&
+		matchValue(f.Group, eq(t.Group)) && matchValue(f.Label, func(v string) bool { return contains(t.Labels, v) }) &&
+		(f.Mine == "" || contains(t.Assignee, f.Mine)) && InEpic(t, ts, f.Epic)
+}
+
 // InEpic reports whether t is the epic with id epic or one of its children.
 func InEpic(t Task, ts []Task, epic string) bool {
 	if epic == "" {
@@ -746,8 +776,12 @@ func (s *Store) transitionFull(ref, status, user, model string, at Place, reason
 	return r, e
 }
 func Next(tasks []Task, f Filter) (Result, error) {
-	if f.Type != "" && !contains(Types, f.Type) {
-		return Result{}, Invalid("type", f.Type, Types)
+	if typ, not := Not(f.Type); f.Type != "" && !contains(Types, typ) {
+		e := Invalid("type", f.Type, Types)
+		if not {
+			e.Closest = "!" + e.Closest
+		}
+		return Result{}, e
 	}
 	ts := append([]Task(nil), tasks...)
 	Sort(ts)
@@ -814,7 +848,7 @@ func Next(tasks []Task, f Filter) (Result, error) {
 		} else if len(t.Assignee) > 0 {
 			continue
 		}
-		if f.Type != "" && t.Type != f.Type || f.Priority != "" && t.Priority != f.Priority || f.Label != "" && !contains(t.Labels, f.Label) || f.Group != "" && t.Group != f.Group {
+		if !(Filter{Type: f.Type, Priority: f.Priority, Label: f.Label, Group: f.Group}).Keeps(t, nil) {
 			continue
 		}
 		return Result{Task: t, Next: hint(t)}, nil

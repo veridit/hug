@@ -914,9 +914,22 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 			return nil, e
 		}
 	}
-	if filter.Type != "" && !slices.Contains(task.Types, filter.Type) {
+	// A filter value may start with ! (7zg9mf): every task but those. Only
+	// the commands that filter take it; new and set write the value.
+	negatable := slices.Contains([]string{"ls", "search", "next", "board"}, cmd)
+	bare := func(v string) (string, string) {
+		if base, not := task.Not(v); not && negatable {
+			return base, "!"
+		}
+		return v, ""
+	}
+	if typ, not := bare(filter.Type); filter.Type != "" && !slices.Contains(task.Types, typ) {
 		e := task.Invalid("type", filter.Type, task.Types)
 		e.Fix = "hug task " + cmd + " --type " + e.Closest
+		if not != "" {
+			// Quoted: an interactive shell expands a bare !.
+			e.Fix = "hug task " + cmd + " --type '!" + e.Closest + "'"
+		}
 		if cmd == "set" && len(f.args) == 1 {
 			if d, err := s.s.Get(f.args[0]); err == nil {
 				e.ID = d.Task.ID
@@ -928,9 +941,12 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		return nil, e
 	}
-	if filter.State != "" && !slices.Contains(task.StateList, filter.State) {
+	if state, not := bare(filter.State); filter.State != "" && !slices.Contains(task.StateList, state) {
 		e := task.Invalid("state", filter.State, task.StateList)
 		e.Fix = "hug task ls --state " + e.Closest
+		if not != "" {
+			e.Fix = "hug task ls --state '!" + e.Closest + "'"
+		}
 		if cmd == "set" && len(f.args) == 1 {
 			if d, err := s.s.Get(f.args[0]); err == nil {
 				e.ID = d.Task.ID

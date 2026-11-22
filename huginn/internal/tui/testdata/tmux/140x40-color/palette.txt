@@ -1,40 +1,40 @@
-HUG · repo · list   60/60 tasks · ! 2 broken · 35 advice
-view: overview  list  board  !lint                                        │ todo 8 · doing 15 (1 depends) · depends 7 · done 15 · dropped 15
-filter: none · sort: rank
-─── TASKS  [60] · 1–18 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+HUG · repo · list   45/60 tasks · ! 2 broken · 35 advice
+view: overview  list  board  !lint                                         │ todo 8 · doing 15 (1 depends) · depends 7 · done 0 · dropped 15
+filter: [state:!done ×] ⌫ last · F clear · sort: rank
+─── TASKS  [45] · 1–18 shown ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                          STAGE     ✓     TYPE    PRIORITY
   ·000001   terminal compiler · compiler ⎘2 Feature task 01: make the terminal workflow observable with a… ready     ○ 2   feature critical
   ·000002   terminal compiler · compiler Bug task 02: make the terminal workflow observable                active    ◑ 1/2 bug     critical
->  000003   terminal compiler · compiler Render compiler-lang task detail without storage markers          done            feature medium
    000004   terminal runtime · runtime Spike task 04: make the terminal workflow observable                dropped         spike   critical
   ·000005   terminal runtime · runtime Docs task 05: make the terminal workflow observable                 depends   ○ 2   docs    critical
   ·000006   terminal runtime · runtime Feature task 06: make the terminal workflow observable              active    ◑ 1/2 feature high
-   000007   terminal docs · docs Bug task 07: make the terminal workflow observable                        done      ● 2   bug     high
    000008   terminal docs · docs Chore task 08: make the terminal workflow observable with a deliberately… dropped         chore   high
   ·000009   terminal docs · docs Spike task 09: make the terminal workflow observable                      ready     ○ 2   spike   high
   ·000010   terminal compiler · compiler Docs task 10: make the terminal workflow observable               active    ◑ 1/2 docs    high
-   000011   terminal compiler · compiler Feature task 11: make the terminal workflow observable            done      ● 2   feature medium
    000012   terminal compiler · compiler Bug task 12: make the terminal workflow observable                dropped         bug     medium
   !000013   terminal runtime · runtime Chore task 13: make the terminal workflow observable                depends   ○ 2   chore   medium
   ·000014   terminal runtime · runtime Spike task 14: make the terminal workflow observable                active    ◑ 1/2 spike   medium
-   000015   terminal runtime · runtime Docs task 15: make the terminal workflow observable with a deliber… done      ● 2   docs    medium
    000016   terminal docs · docs Feature task 16: make the terminal workflow observable                    dropped         feature low
   ·000017   terminal docs · docs Bug task 17: make the terminal workflow observable                        ready     ○ 2   bug     low
   ·000018   terminal docs · docs Chore task 18: make the terminal workflow observable                      active    ◑ 1/2 chore   low
+   000020   terminal compiler · compiler Docs task 20: make the terminal workflow observable               dropped         docs    low
+  ·000021   terminal compiler · compiler Feature task 21: make the terminal workflow observable            depends   ○ 2   feature critical
+  ·000022   terminal runtime · runtime Bug task 22: make the terminal workflow observable with a delibera… active    ◑ 1/2 bug     critical
+   000024   terminal runtime · runtime Spike task 24: make the terminal workflow observable                dropped         spike   critical
 ↓───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 : type
 GLOBAL
->     filter type bug                12 tasks
-      filter type chore              11 tasks
-      filter type docs               12 tasks
-      filter type feature            13 tasks
-      filter type spike              12 tasks
+>     filter type bug                9 tasks
+      filter type chore              9 tasks
+      filter type docs               9 tasks
+      filter type feature            9 tasks
+      filter type spike              9 tasks
 
 
 
 
 
-Palette · 5 choices · type to narrow · › opens a level
+000003 is hidden by the filter state:!done: F clears it
 
 Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help                                                                   hug v0.0.0

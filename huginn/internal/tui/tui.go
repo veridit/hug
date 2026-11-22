@@ -276,7 +276,12 @@ type model struct {
 	completion             int
 	chips                  []filterChip
 	pickerField            string
-	styles                 theme
+	pickerNot              bool // ! in the f picker: the value picked is negated (7zg9mf)
+	// defaultOn: the list still opens on its default chip, 'state !done'
+	// (7zg9mf), until F or ⌫ clears it or the reader sets a state
+	// filter; defaultShown: that chip is up now, in the list.
+	defaultOn, defaultShown bool
+	styles                  theme
 	// editNotice is the task file whose edit introduced lint findings: the
 	// notice shows the first one with its fix, and e reopens the editor,
 	// until Esc, another action, or the file is clean (rx74bp).
@@ -588,7 +593,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	// Wherever you can type, the cursor blinks (q3sh69, Jørgen's rule;
 	// qpp30y had only the box's move): the focus sign is still then.
 	input.Cursor.SetMode(cursor.CursorBlink)
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, panes: &paneMemo{forYou: -1},
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, panes: &paneMemo{forYou: -1}, defaultOn: true,
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	styleAnswerCursor(&m.answerBox, m.styles.cursor)
 	styleInputCursor(&m.input, m.styles.cursor)
@@ -809,19 +814,19 @@ func (m *model) applyFilter() {
 		}
 	}
 	for _, t := range m.all {
-		status := m.filter.State
 		// One place per task (zaec08): "depends" is todo with an open
-		// dependency, "todo" excludes it, "doing" keeps doing tasks that depend.
-		if status != "" && m.place(t) != status || m.filter.Type != "" && !optionalMatches(t.Type, m.filter.Type) || m.filter.Group != "" && !groupMatches(t.Group, m.filter.Group) {
+		// dependency, "todo" excludes it, "doing" keeps doing tasks that
+		// depend. A value with ! first keeps all but those (7zg9mf).
+		if !keeps(m.filter.State, func(v string) bool { return m.place(t) == v }) || !keeps(m.filter.Type, func(v string) bool { return optionalMatches(t.Type, v) }) || !keeps(m.filter.Group, func(v string) bool { return groupMatches(t.Group, v) }) {
 			continue
 		}
-		if m.filter.Label != "" && !contains(t.Labels, m.filter.Label) { // the tag filter (txjkrm)
+		if !keeps(m.filter.Label, func(v string) bool { return contains(t.Labels, v) }) { // the tag filter (txjkrm)
 			continue
 		}
-		if !task.InEpic(t, m.all, m.filter.Epic) {
+		if !keeps(m.filter.Epic, func(v string) bool { return task.InEpic(t, m.all, v) }) {
 			continue
 		}
-		if m.filter.Priority != "" && !optionalMatches(t.Priority, m.filter.Priority) || m.filter.Mine != "" && !ownerMatches(t, m.filter.Mine) {
+		if !keeps(m.filter.Priority, func(v string) bool { return optionalMatches(t.Priority, v) }) || !keeps(m.filter.Mine, func(v string) bool { return ownerMatches(t, v) }) {
 			continue
 		}
 		if words != "" && rank[t.Path] == 0 && !searchMatches(t, words) {
@@ -1105,6 +1110,7 @@ func (m *model) setView(view string) {
 	if view == "overview" {
 		m.firstPane() // ASKED is first and often empty (41hhgn)
 	}
+	m.showListDefault() // the list's 'state !done', up in the list only (7zg9mf)
 	m.clamp()
 }
 
@@ -1255,6 +1261,9 @@ func (m *model) dropFilters() {
 	m.results = false
 	m.filter = task.Filter{}
 	m.chips = nil
+	if m.defaultShown || m.view == "list" {
+		m.retireDefault() // F in the list clears its default for the session (7zg9mf)
+	}
 }
 func (m *model) back() {
 	switch {

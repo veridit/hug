@@ -30,7 +30,7 @@ HISTORY
 ─── Task 2 of 5 · 100% · next · previous · Esc back ────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · up · request · / find …    
 == list 100x30
-HUG · list › /state:todo › bbbbbb                                                                   
+HUG · list › state:!done /state:todo › bbbbbb                                                       
 [todo]  [feature]  [high]  group:root  unassigned                                                   
 created 2026-11-01 · updated 2026-11-01 · t                                                         
 ────────────────────────────────────────────────────────────────────────────────────────────────────

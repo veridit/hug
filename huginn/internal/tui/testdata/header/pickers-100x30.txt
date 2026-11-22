@@ -1,9 +1,9 @@
 == filter at 100x30
-HUG · filter   60/60 tasks · ! 2 broken · 35 advice                                                 
-view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
-filter: none · sort: rank                                                                           
-FILTER · a letter picks a field · j/k and Enter · Esc back                                          
-filter: none                                                                                        
+HUG · filter   45/60 tasks · ! 2 broken · 35 advice                                                 
+view: overview  list  board  !lint              │ todo 8 · doing 15 (1 depends) · depends 7 · done 0
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                               
+FILTER · a letter picks a field · j/k and Enter · ! not · Esc back                                  
+filter: state:!done                                                                                 
 > s  state     todo, doing, depends, done, dropped                                                  
   t  type      feature, bug, chore, spike, docs                                                     
   p  priority  critical, high, medium, low                                                          
@@ -26,13 +26,13 @@ filter: none
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done               
                                                                                                     
-j/k ↑↓ pick · Enter add chip · type narrow · Esc back · ? help                                      
+j/k ↑↓ pick · Enter add chip · ! not · type narrow · Esc back · ? help                              
 == sort at 100x30
-HUG · sort   60/60 tasks · ! 2 broken · 35 advice                                                   
-view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
-filter: none · sort: rank                                                                           
+HUG · sort   45/60 tasks · ! 2 broken · 35 advice                                                   
+view: overview  list  board  !lint              │ todo 8 · doing 15 (1 depends) · depends 7 · done 0
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                               
 SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back   
 now: rank (board order)                                                                             
 new: nothing picked yet, Enter or r gives rank                                                      
@@ -57,13 +57,13 @@ new: nothing picked yet, Enter or r gives rank
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done               
                                                                                                     
 j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
 == sort p, then j j at 100x30
-HUG · sort   60/60 tasks · ! 2 broken · 35 advice                                                   
-view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
-filter: none · sort: rank                                                                           
+HUG · sort   45/60 tasks · ! 2 broken · 35 advice                                                   
+view: overview  list  board  !lint              │ todo 8 · doing 15 (1 depends) · depends 7 · done 0
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                               
 SORT · a letter adds a field (then by), again flips it · j/k and Space · Enter applies · Esc back   
 now: rank (board order)                                                                             
 new: priority ↓                                                                                     
@@ -88,16 +88,17 @@ new: priority ↓
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done               
                                                                                                     
 j/k ↑↓ pick · Space add / flip · Enter apply · ⌫ remove last · Esc keep order · ? help              
 == filter ? at 100x30
-HUG · help   60/60 tasks · ! 2 broken · 35 advice                                                   
-view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
-filter: none · sort: rank                                                                           
+HUG · help   45/60 tasks · ! 2 broken · 35 advice                                                   
+view: overview  list  board  !lint              │ todo 8 · doing 15 (1 depends) · depends 7 · done 0
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                               
 IN THE FILTER PICKER                                                                                
 j/k ↑↓  pick                                                                                        
 Enter   add the chip                                                                                
+!       not: every task but the value, before or after picking; again flips back                    
 type    narrow the choices                                                                          
 Esc     back                                                                                        
 fields  s state, t type, p priority, g group, l tag, a assignee, e epic                             
@@ -118,14 +119,13 @@ ctrl-c  quit
                                                                                                     
                                                                                                     
                                                                                                     
-                                                                                                    
-All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done               
                                                                                                     
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close                                
 == sort ? at 100x30
-HUG · help   60/60 tasks · ! 2 broken · 35 advice                                                   
-view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
-filter: none · sort: rank                                                                           
+HUG · help   45/60 tasks · ! 2 broken · 35 advice                                                   
+view: overview  list  board  !lint              │ todo 8 · doing 15 (1 depends) · depends 7 · done 0
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                               
 IN THE SORT PICKER                                                                                  
 j/k ↑↓     pick                                                                                     
 Space      add the picked field, again flips it                                                     
@@ -150,6 +150,6 @@ ctrl-c  quit
                                                                                                     
                                                                                                     
                                                                                                     
-All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done               
                                                                                                     
 / find · j/k scroll · </> ends · PgUp/PgDn page · Esc back · ? close                                

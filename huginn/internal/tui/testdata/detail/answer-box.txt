@@ -1,5 +1,5 @@
 == answer box at 80
-HUG · list › eeeeee                                                  ? 1 for you
+HUG · list › state:!done › eeeeee                                    ? 1 for you
 [todo]  [design]  [feature]  [high]  group:root  unassigned
 created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────
@@ -14,7 +14,7 @@ g
 cursor on:  "  \x1b[1;38;2;0;191;255manswer:\x1b[0m \x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m                                                                    "
 cursor off: "  \x1b[1;38;2;0;191;255manswer:\x1b[0m                                                                      "
 == answer box at 140
-HUG · list › eeeeee                                                                                                              ? 1 for you
+HUG · list › state:!done › eeeeee                                                                                                ? 1 for you
 [todo]  [design]  [feature]  [high]  group:root  unassigned
 created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

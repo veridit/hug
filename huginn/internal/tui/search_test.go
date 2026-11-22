@@ -81,6 +81,7 @@ func TestSearchPickKeepsPick(t *testing.T) {
 // found task moves, among the full list's rows.
 func TestFoundTaskMovesAtOnce(t *testing.T) {
 	m, ids, commits := searchBoard(t)
+	m.retireDefault() // among all 60, 'in the list' unfiltered (7zg9mf)
 	m.setView("list")
 	m = press(m, "/", "Zebra", "enter", "m", "j", "enter")
 	if want := "moved " + ids["Zebra"] + " below " + ids["Task 51"] + ", row 51 of 60 in the list"; m.message != want || *commits != 1 {
@@ -134,7 +135,8 @@ func TestFoundTaskHiddenByFilterSaysSo(t *testing.T) {
 		t.Fatalf("selected %s instead of nothing", sel.Title)
 	}
 	screen := ansi.Strip(m.View())
-	if want := beta + " is hidden by the filter type:bug: F clears it"; !strings.Contains(screen, want) {
+	// The message names every chip, the list's default too (7zg9mf).
+	if want := beta + " is hidden by the filter state:!done type:bug: F clears it"; !strings.Contains(screen, want) {
 		t.Fatalf("footer lacks %q\n%s", want, screen)
 	}
 	// Nothing else is marked selected on screen.

@@ -1,5 +1,5 @@
-FILTER · a letter picks a field · j/k and Enter · Esc back
-filter: none
+FILTER · a letter picks a field · j/k and Enter · ! not · Esc back
+filter: state:!done
 > s  state     todo, doing, depends, done, dropped
   t  type      feature, bug, chore, spike, docs
   p  priority  critical, high, medium, low

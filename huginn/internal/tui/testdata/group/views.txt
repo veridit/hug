@@ -1,7 +1,7 @@
 == group · list · 80x24
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group              
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-filter: none · sort: rank                                                       
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                           
 ─── TASKS  [6] · all ready · all feature ───────────────────────────────────────
    ID       TITLE                                                ✓     PRIORITY 
   ▾ no group  [2]                                                               
@@ -26,7 +26,7 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 == group · list · 140x24
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by group                                                                          
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-filter: none · sort: rank                                                                                                                   
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                                                                       
 ─── TASKS  [6] · all ready · all feature ───────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                                            ✓     PRIORITY 
   ▾ no group  [2]                                                                                                                           
@@ -151,7 +151,7 @@ j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · 
 == epic · list · 80x24
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic               
 view: overview  list  board  !lint       │ todo 6 · doing 0 · depends 0 · done 0
-filter: none · sort: rank                                                       
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                           
 ─── TASKS  [6] · all ready · all feature ───────────────────────────────────────
    ID       TITLE                                                ✓     PRIORITY 
 > ▸ ↳LAUNCH Launch  [3]                                                         
@@ -176,7 +176,7 @@ j/k move · Space mark · Enter open · find · # id · / search · : cmd · ? h
 == epic · list · 140x24
 HUG · list   6/6 tasks · ! 0 broken · 12 advice · grouped by epic                                                                           
 view: overview  list  board  !lint                                                       │ todo 6 · doing 0 · depends 0 · done 0 · dropped 0
-filter: none · sort: rank                                                                                                                   
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                                                                       
 ─── TASKS  [6] · all ready · all feature ───────────────────────────────────────────────────────────────────────────────────────────────────
    ID       TITLE                                                                                                            ✓     PRIORITY 
 > ▸ ↳LAUNCH Launch  [3]                                                                                                                     

@@ -104,38 +104,38 @@ v: o overview · l list · b board · ! lint · Esc cancel
                                                                                                     
 Esc cancel · ? help                                                                                 
 == after v l
-view line: "\x1b[1;38;2;0;191;255mv\x1b[0m\x1b[38;2;135;149;168miew:\x1b[0m \x1b[38;2;135;149;168m\x1b[0m\x1b[1;38;2;201;179;255mo\x1b[0m\x1b[38;2;135;149;168mverview\x1b[0m\x1b[38;2;135;149;168m  \x1b[0m\x1b[1;4;38;2;201;179;255;4ml\x1b[0m\x1b[4;38;2;135;149;168;4mi\x1b[0m\x1b[4;38;2;135;149;168;4ms\x1b[0m\x1b[4;38;2;135;149;168;4mt\x1b[0m\x1b[38;2;135;149;168m  \x1b[0m\x1b[38;2;135;149;168m\x1b[0m\x1b[1;38;2;201;179;255mb\x1b[0m\x1b[38;2;135;149;168moard\x1b[0m\x1b[38;2;135;149;168m  \x1b[0m\x1b[1;38;2;201;179;255m!\x1b[0m\x1b[38;2;135;149;168mlint\x1b[0m             \x1b[38;2;135;149;168m│ \x1b[0m\x1b[38;2;117;191;255mtodo 8\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[38;2;0;191;255mdoing 15 (1 depends)\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[38;2;107;107;214mdepends 7\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[38;2;138;201;135mdone 15\x1b[0m"
-  text:    view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
+view line: "\x1b[1;38;2;0;191;255mv\x1b[0m\x1b[38;2;135;149;168miew:\x1b[0m \x1b[38;2;135;149;168m\x1b[0m\x1b[1;38;2;201;179;255mo\x1b[0m\x1b[38;2;135;149;168mverview\x1b[0m\x1b[38;2;135;149;168m  \x1b[0m\x1b[1;4;38;2;201;179;255;4ml\x1b[0m\x1b[4;38;2;135;149;168;4mi\x1b[0m\x1b[4;38;2;135;149;168;4ms\x1b[0m\x1b[4;38;2;135;149;168;4mt\x1b[0m\x1b[38;2;135;149;168m  \x1b[0m\x1b[38;2;135;149;168m\x1b[0m\x1b[1;38;2;201;179;255mb\x1b[0m\x1b[38;2;135;149;168moard\x1b[0m\x1b[38;2;135;149;168m  \x1b[0m\x1b[1;38;2;201;179;255m!\x1b[0m\x1b[38;2;135;149;168mlint\x1b[0m              \x1b[38;2;135;149;168m│ \x1b[0m\x1b[38;2;117;191;255mtodo 8\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[38;2;0;191;255mdoing 15 (1 depends)\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[38;2;107;107;214mdepends 7\x1b[0m\x1b[38;2;135;149;168m · \x1b[0m\x1b[38;2;138;201;135mdone 0\x1b[0m"
+  text:    view: overview  list  board  !lint              │ todo 8 · doing 15 (1 depends) · depends 7 · done 0
   cues:    B     B         U___  B      B
-  colours: a.... v.........v.....v......v....             ..******...aaaaaaaaaaaaaaaaaaaa...*********...*******
-HUG · list   60/60 tasks · ! 2 broken · 35 advice                                                   
-view: overview  list  board  !lint             │ todo 8 · doing 15 (1 depends) · depends 7 · done 15
-filter: none · sort: rank                                                                           
-─── TASKS  [60] · 1–21 shown ───────────────────────────────────────────────────────────────────────
+  colours: a.... v.........v.....v......v....              ..******...aaaaaaaaaaaaaaaaaaaa...*********...******
+HUG · list   45/60 tasks · ! 2 broken · 35 advice                                                   
+view: overview  list  board  !lint              │ todo 8 · doing 15 (1 depends) · depends 7 · done 0
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                               
+─── TASKS  [45] · 1–21 shown ───────────────────────────────────────────────────────────────────────
    ID       TITLE                                                  STAGE     ✓     TYPE    PRIORITY 
-  ·000001   terminal compiler · compiler ⎘2 Feature task 01: make… ready     ○ 2   feature critical 
-> ·000002   terminal compiler · compiler Bug task 02: make the te… active    ◑ 1/2 bug     critical 
-   000003   terminal compiler · compiler Render compiler-lang tas… done            feature medium   
+> ·000001   terminal compiler · compiler ⎘2 Feature task 01: make… ready     ○ 2   feature critical 
+  ·000002   terminal compiler · compiler Bug task 02: make the te… active    ◑ 1/2 bug     critical 
    000004   terminal runtime · runtime Spike task 04: make the te… dropped         spike   critical 
   ·000005   terminal runtime · runtime Docs task 05: make the ter… depends   ○ 2   docs    critical 
   ·000006   terminal runtime · runtime Feature task 06: make the … active    ◑ 1/2 feature high     
-   000007   terminal docs · docs Bug task 07: make the terminal w… done      ● 2   bug     high     
    000008   terminal docs · docs Chore task 08: make the terminal… dropped         chore   high     
   ·000009   terminal docs · docs Spike task 09: make the terminal… ready     ○ 2   spike   high     
   ·000010   terminal compiler · compiler Docs task 10: make the t… active    ◑ 1/2 docs    high     
-   000011   terminal compiler · compiler Feature task 11: make th… done      ● 2   feature medium   
    000012   terminal compiler · compiler Bug task 12: make the te… dropped         bug     medium   
   !000013   terminal runtime · runtime Chore task 13: make the te… depends   ○ 2   chore   medium   
   ·000014   terminal runtime · runtime Spike task 14: make the te… active    ◑ 1/2 spike   medium   
-   000015   terminal runtime · runtime Docs task 15: make the ter… done      ● 2   docs    medium   
    000016   terminal docs · docs Feature task 16: make the termin… dropped         feature low      
   ·000017   terminal docs · docs Bug task 17: make the terminal w… ready     ○ 2   bug     low      
   ·000018   terminal docs · docs Chore task 18: make the terminal… active    ◑ 1/2 chore   low      
-   000019   terminal compiler · compiler Spike task 19: make the … done      ● 2   spike   low      
    000020   terminal compiler · compiler Docs task 20: make the t… dropped         docs    low      
   ·000021   terminal compiler · compiler Feature task 21: make th… depends   ○ 2   feature critical 
+  ·000022   terminal runtime · runtime Bug task 22: make the term… active    ◑ 1/2 bug     critical 
+   000024   terminal runtime · runtime Spike task 24: make the te… dropped         spike   critical 
+  ·000025   terminal docs · docs Docs task 25: make the terminal … ready     ○ 2   docs    critical 
+  !000026   terminal docs · docs Feature task 26: make the termin… depends   ◑ 1/2 feature high     
+   000028   terminal compiler · compiler Chore task 28: make the … dropped         chore   high     
 ↓───────────────────────────────────────────────────────────────────────────────────────────────────
-All tasks · : filters and commands · ! lint finding · ↳ epic · depends = a dependency is not done   
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done               
                                                                                                     
 j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit …    
 == after v Esc
