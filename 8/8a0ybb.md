@@ -108,6 +108,7 @@ Jørgen 2026-11-20 08:51Z, on hjbfzd in v0.7.87 (two screenshots in crab console
 Jørgen 2026-11-20 09:58Z (tb0dra answer 1, screenshots tb0dra/screen-1057.ans and screen-1057-2.ans): third report of the same thing ('I've done this several times'): the question is not visible on open; the --show file is drawn inline at the top instead of scrolling down to the question with the file. He asks for higher priority. crab: raised to high; checks 3 and 8 are the fix and can ship ahead of the FOR YOU layout decision (question 3).
 file:screen-1123.ans (33913 bytes, sha256:cacfa027) screen capture from hug tui
 crab 2026-11-20 12:04Z: back to todo. It sat in doing under crab with nobody building it; it is queued for a worker (machine load over 10). Found in the 47sxn2 request-1 check.
+file:order-a-opens-100x30.ans (3990 bytes, sha256:60f98ad0) frame (a) 8a0ybb as it opens in the new order at 100x30 (branch 8a0ybb, built binary, tmux capture-pane -e on a throwaway copy of the board with a local bare remote): PURPOSE, PRINCIPLE, GOAL, then ACCEPTANCE; no DESCRIPTION heading
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
