@@ -76,8 +76,9 @@ func TestBothDetailsHeadingsShownLintedMerged(t *testing.T) {
 	m, _ := globID(filepath.Join(a.Cwd, TaskDir), id)
 	b, _ := os.ReadFile(m[0])
 	// What v0.7.101's set --details does to it: SetSection finds no
-	// "## Relevant details" and adds one in its own canonical place.
-	both := strings.Replace(string(b), "\n## Depends on\n", "\n## Relevant details\nOld hug wrote this\n\n## Depends on\n", 1)
+	// "## Relevant details" and inserts one before the first section
+	// ranked after it, "## Details", a heading that hug does not know.
+	both := strings.Replace(string(b), "\n## Details\n", "\n## Relevant details\nOld hug wrote this\n\n## Details\n", 1)
 	if err := os.WriteFile(m[0], []byte(both), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -89,9 +90,8 @@ func TestBothDetailsHeadingsShownLintedMerged(t *testing.T) {
 	if j := execute(t, a, "show", id, "--json")["task"].(Reply); j["details"] != "New hug wrote this\n\nOld hug wrote this" {
 		t.Fatalf("json details %q", j["details"])
 	}
-	code, out := runText(a, "lint", id)
-	if code == 0 || !strings.Contains(out, "[old-layout] two Details sections") || !strings.Contains(out, "hug upgrade") {
-		t.Fatalf("lint: exit %d\n%s", code, out)
+	if _, out := runText(a, "lint", id); !strings.Contains(out, "broken [old-layout] old layout: two Details sections") || !strings.Contains(out, "next: hug upgrade") {
+		t.Fatalf("lint:\n%s", out)
 	}
 	did := func() string { return strings.Join(execute(t, a, "upgrade", "--apply")["upgrade"].([]string), "; ") }
 	if got := did(); !strings.Contains(got, "1 tasks with two Details sections merged") {
@@ -105,8 +105,8 @@ func TestBothDetailsHeadingsShownLintedMerged(t *testing.T) {
 	if st := git(t, filepath.Join(a.Cwd, TaskDir), "status", "--porcelain"); st != "" {
 		t.Fatalf("not committed: %s", st)
 	}
-	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "-1", "--format=%s"); log != "hug upgrade: two Details sections merged in 1 tasks" {
-		t.Fatalf("commit %q", log)
+	if log := git(t, filepath.Join(a.Cwd, TaskDir), "log", "--format=%s"); !strings.Contains("\n"+log+"\n", "\nhug upgrade: two Details sections merged in 1 tasks\n") {
+		t.Fatalf("no merge commit:\n%s", log)
 	}
 	if code, out := runText(a, "lint", id); code != 0 || strings.Contains(out, "Details") {
 		t.Fatalf("lint after upgrade: exit %d\n%s", code, out)

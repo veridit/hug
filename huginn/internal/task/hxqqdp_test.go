@@ -10,10 +10,15 @@ import (
 // with "## Details" adds a second section, "## Relevant details". v0.7.104
 // read only the Details text, so what the old hug wrote was hidden.
 
-// bothDetails is a task file with both headings, as the old hug leaves it.
+// bothDetails is a task file with both headings, as the old hug leaves
+// it: its SetSection finds no "## Relevant details" and inserts one before
+// the first section ranked after it, "## Details", a name it does not know.
 const bothDetails = "---\nid: hxq001\ntitle: \"Both\"\nstate: \"todo\"\ntype: bug\npriority: \"medium\"\ncreated: 2026-11-22\nupdated: 2026-11-22\n---\n\n" +
-	"## Goal\nAim.\n\n## Purpose\nWhy.\n\n## Principle\nHow.\n\n## Details\nNew hug wrote this.\n\n" +
-	"## Depends on\n\n## Acceptance\n- [ ] a\n\n## Relevant details\nOld hug wrote this.\n"
+	"## Goal\nAim.\n\n## Purpose\nWhy.\n\n## Principle\nHow.\n\n## Relevant details\nOld hug wrote this.\n\n## Details\nNew hug wrote this.\n\n" +
+	"## Depends on\n\n## Acceptance\n- [ ] a\n"
+
+// oldBlock is what the old hug added.
+const oldBlock = "## Relevant details\nOld hug wrote this.\n\n"
 
 // hxqqdp check 1: Parse reads both texts as Details, the Details text
 // first, and reports the second heading with fix: hug upgrade.
@@ -28,25 +33,23 @@ func TestBothDetailsHeadingsReadAndLinted(t *testing.T) {
 	}
 	var found *Finding
 	for i, f := range d.Findings {
-		if strings.Contains(f.Problem, "Relevant details") {
+		if FindingCode(f.Problem) == "old-layout" {
 			found = &d.Findings[i]
 		}
 	}
 	if found == nil {
 		t.Fatalf("no finding names the second heading: %+v", d.Findings)
 	}
-	if found.Line != 28 || FindingCode(found.Problem) != "old-layout" || found.FixLine() != "hug upgrade" || found.Severity() != Broken {
+	if found.Line != 20 || !strings.Contains(found.Problem, "two Details sections") || FindingCode(found.Problem) != "old-layout" || found.FixLine() != "hug upgrade" || found.Severity() != Broken {
 		t.Fatalf("finding line %d code %s fix %q severity %s: %q", found.Line, FindingCode(found.Problem), found.FixLine(), found.Severity(), found.Problem)
 	}
 	// One heading, either name, is not a finding.
 	for _, one := range []string{
-		strings.Replace(bothDetails, "\n## Relevant details\nOld hug wrote this.\n", "\n", 1),
-		strings.Replace(strings.Replace(bothDetails, "## Details\nNew hug wrote this.\n\n", "", 1), "\n## Relevant details\nOld hug wrote this.\n", "\n", 1),
+		strings.Replace(bothDetails, oldBlock, "", 1),
+		strings.Replace(bothDetails, "## Details\nNew hug wrote this.\n\n", "", 1),
 	} {
-		for _, f := range Parse("h/hxq001.md", []byte(one)).Findings {
-			if strings.Contains(f.Problem, "etails") {
-				t.Fatalf("one Details heading reported: %q", f.Problem)
-			}
+		if fs := Parse("h/hxq001.md", []byte(one)).Findings; len(fs) != 0 {
+			t.Fatalf("one Details heading: findings %+v", fs)
 		}
 	}
 }
@@ -61,9 +64,8 @@ func TestMergeDetailsKeepsBothTexts(t *testing.T) {
 		t.Fatal("MergeDetails changed nothing")
 	}
 	got := string(out)
-	want := strings.Replace(strings.Replace(bothDetails, "\n## Relevant details\nOld hug wrote this.\n", "\n", 1),
+	want := strings.Replace(strings.Replace(bothDetails, oldBlock, "", 1),
 		"## Details\nNew hug wrote this.\n", "## Details\nNew hug wrote this.\n\nOld hug wrote this.\n", 1)
-	want = strings.TrimSuffix(want, "\n")
 	if got != want {
 		t.Fatalf("merged:\n%s\nwant:\n%s", got, want)
 	}
@@ -74,9 +76,15 @@ func TestMergeDetailsKeepsBothTexts(t *testing.T) {
 	if again, changed := d.MergeDetails(); changed || string(again) != got {
 		t.Fatalf("a second merge changed the file:\n%s", again)
 	}
-	one := strings.Replace(bothDetails, "\n## Relevant details\nOld hug wrote this.\n", "\n", 1)
+	one := strings.Replace(bothDetails, oldBlock, "", 1)
 	if _, changed := Parse("h/hxq001.md", []byte(one)).MergeDetails(); changed {
 		t.Fatal("a file with one Details heading was changed")
+	}
+	// The old block last in the file (an older order): the file still
+	// ends as it did, one newline.
+	last := strings.Replace(bothDetails, oldBlock, "", 1) + "\n" + strings.TrimSuffix(oldBlock, "\n")
+	if out, _ := Parse("h/hxq001.md", []byte(last)).MergeDetails(); string(out) != want {
+		t.Fatalf("merged, old block last:\n%q\nwant:\n%q", out, want)
 	}
 	// Relevant details alone (a file from before 8a0ybb) is read as it
 	// is, not renamed here.
