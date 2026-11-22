@@ -43,7 +43,7 @@ Build in huginn/internal/tui/sectionframe.go (sectionFrame, sectionRule); B is s
 ## Depends on
 
 ## Acceptance
-- [ ] Verify Too many horisontal lines?
+- [ ] ~~Verify Too many horisontal lines?~~ (not relevant: replaced by checks 2-5 (crab, from request 1), crab, 2026-11-22)
 
 ## Requests
 - 2026-11-22T22:31 request 1 by jhf:
