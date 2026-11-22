@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.108 - 2026-11-22
 
 - `hug task check ID N "evidence"` now refuses evidence shorter than 8
   characters (`x`, `ok`) and writes nothing; the error ends with
