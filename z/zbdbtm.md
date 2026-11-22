@@ -1,16 +1,20 @@
 ---
 id: zbdbtm
 title: "A file named in a task opens from the task in the embedded viewer"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["shrimp"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxk"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-22T15:55"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -66,3 +70,4 @@ Jørgen 2026-11-20 11:51Z (answer 1): 'Let's try that and make sure you put it i
 - 2026-11-20T12:51 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-20T12:51 answer 1 acknowledged by crab
 - 2026-11-20T12:51 crab read the answer: hug task attach zbdbtm /Users/jhf/.jcode/scratch/zb/sample-notes.md /Users/jhf/.jcode/scratch/zb/sample.txt
+- 2026-11-22T15:55 todo/ready -> doing/active (take)
