@@ -68,6 +68,7 @@ file:screen-2230.ans (18179 bytes, sha256:caeb9471) screen capture from hug tui
 file:frame-C-100x30.ans (6528 bytes, sha256:d342142c) hd74ct check 2, variant C (rules only around the focused section), 100x30, hug board copy, WAITING focused and scrolled (l l, 10 j), same keys as v68n82's frames: WAITING between its titled rule (↑) and end rule (↓), bright; the other 5 titles on plain dim lines with their counts; 2 rules; 16 task rows (A: 12)
 file:frame-A-100x30.ans (7810 bytes, sha256:064615ca) hd74ct check 2, for comparison: variant A (today, v0.7.109 default) from the same build, board and keys at 100x30: 11 rules; 12 task rows
 file:frame-C-160x45.ans (12469 bytes, sha256:165a4010) hd74ct check 2, variant C at 160x45, same board and keys: WAITING shows all 19 between its 2 rules, the other titles plain; 31 task rows (A: 27)
+file:frame-A-160x45.ans (15010 bytes, sha256:e41043b9) hd74ct check 2, for comparison: variant A at 160x45, same build, board and keys: 11 rules; 27 task rows
 ## History
 - 2026-11-22T22:31 request 1 by jhf
 - 2026-11-22T22:31 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
