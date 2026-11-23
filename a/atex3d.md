@@ -1,15 +1,20 @@
 ---
 id: atex3d
 title: "A dated wait's stage line leads with the date"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["elephant"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzli"
 created: 2026-11-24
 updated: 2026-11-24
+doing_since: "2026-11-24T00:02"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -30,3 +35,7 @@ From z2vmte check 5 (jhf request 2026-11-20 13:05). Today on main: timedwait.go:
 - [ ] A waiting task's stage line leads with the date: 'waiting until 2026-11-24 · on WHAT · since 11-18', with no second 'until' and no 'on the date' wording; the same in hug tui's header, its list row stage cell ('until 11-24') and hug task show (golden, test)
 
 ## Notes
+
+
+## History
+- 2026-11-24T00:02 todo -> doing/active (take)
