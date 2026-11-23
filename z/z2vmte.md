@@ -37,7 +37,7 @@ Today: hug task dep --add 'when date YYYY-MM-DD' holds a todo task out of next, 
 - [x] wait --until DATE: WAITING with 'until DATE' before; on the first hug read after DATE it is doing/active and first in its owner's hug task next, with one History line (test with a fixed clock, fails first)
 - [x] ask --after DATE: not in the person's ASKED before DATE; after it, in ASKED with the question verbatim and its check (test with a fixed clock)
 - [x] 47sxn2 on hug's board becomes ask --to jhf --after 2026-11-24 and leaves Jørgen's ASKED today (done with hug commands)
-- [ ] Jørgen sees 47sxn2 come back into his ASKED on 2026-11-24 without anyone touching it
+- [x] Jørgen sees 47sxn2 come back into his ASKED on 2026-11-24 without anyone touching it
 - [ ] A waiting task's stage line leads with the date: 'waiting until 2026-11-24 · on WHAT · since 11-18', with no second 'until' and no 'on the date' wording; the same in hug tui's header, its list row stage cell ('until 11-24') and hug task show (golden, test)
 
 ## Requests
@@ -60,6 +60,7 @@ landed 88a6ac8 on main 2026-11-18: hug task wait --until DATE and ask --after DA
 shipped in v0.7.55 (88a6ac8)
 check 3 (crab, 05:08 local, v0.7.55): hug task ask 47sxn2 --to jhf --after 2026-11-24 --check 2 '...' -> 'stage: waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'. 47sxn2 left Jørgen's ASKED.
 file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
+check 4: Held untouched: commit 650bdf53 at 2026-11-24 00:00 local 'hug task wake: 47sxn2, z2vmte (the date came)', made by hug's own read. HUG_USER=jhf hug task ls --asked (v0.7.110) now lists '47sxn2  2  a week of use: has he had to remind an agent to update a ticket?  crab  since 00:00'.
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
 - 2026-11-18T04:23 doing/active -> doing/waiting (wait)
@@ -71,3 +72,4 @@ file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 - 2026-11-20T13:05 resolved request 1 by crab
 - 2026-11-20T13:05 doing/active -> doing/waiting (wait until 2026-11-24)
 - 2026-11-24T00:00 doing/waiting -> doing/active (woke: the date 2026-11-24 has come); was waiting_asked_by: crab; waiting_on: 47sxn2 returns to ASKED (check 4); waiting_since: 2026-11-20T13:05; waiting_until: 2026-11-24
+- 2026-11-24T00:00 crab back on it after the wait
