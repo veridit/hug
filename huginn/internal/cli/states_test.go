@@ -26,9 +26,9 @@ func TestStatesCommandPrintsTree(t *testing.T) {
 			t.Errorf("lacks %q:\n%s", want, out)
 		}
 	}
-	code, out = runText(a, "states", "--json")
+	code, out, serr := runJSON(a, "states", "--json")
 	if code != 0 {
-		t.Fatalf("--json exit %d: %s", code, out)
+		t.Fatalf("--json exit %d: %s\nstderr:\n%s", code, out, serr)
 	}
 	var r struct {
 		States      []task.Node       `json:"states"`

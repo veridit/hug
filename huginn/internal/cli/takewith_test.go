@@ -109,9 +109,9 @@ func TestCheckOnUntakenTaskSaysTakeWith(t *testing.T) {
 		t.Fatalf("not ticked:\n%s", f)
 	}
 	var r map[string]any
-	_, js := runText(a, "check", second, "2", "--as", "sabertooth", "--model", "claude-opus-5-5", "--json")
+	_, js, serr := runJSON(a, "check", second, "2", "--as", "sabertooth", "--model", "claude-opus-5-5", "--json")
 	if e := json.Unmarshal([]byte(js), &r); e != nil || r["fix"] != strings.TrimSuffix(strings.TrimPrefix(want, "fix: "), "\n") {
-		t.Fatalf("json fix: %v\n%s", e, js)
+		t.Fatalf("json fix: %v\n%s\nstderr:\n%s", e, js, serr)
 	}
 	// Nothing active: the fix is a plain take.
 	execute(t, a, "wait", first, "CI run 1", "--as", "sabertooth")

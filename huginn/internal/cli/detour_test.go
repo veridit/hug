@@ -28,10 +28,10 @@ func TestDetourThroughTheCLI(t *testing.T) {
 	if code != 3 || !strings.Contains(out, "fix: "+detour+"\nfix: hug task take "+second+" --with "+first) || strings.Count(out, "\nfix: ") != 5 {
 		t.Fatalf("exit %d, want 3 and five fix: lines, the detour %q fourth:\n%s", code, detour, out)
 	}
-	code, out = runText(a, "take", second, "--model", "claude-opus-5-5", "--as", "kestrel", "--json")
+	code, out, serr := runJSON(a, "take", second, "--model", "claude-opus-5-5", "--as", "kestrel", "--json")
 	var r map[string]any
 	if e := json.Unmarshal([]byte(out), &r); e != nil || code != 3 {
-		t.Fatalf("exit %d: %v\n%s", code, e, out)
+		t.Fatalf("exit %d: %v\n%s\nstderr:\n%s", code, e, out, serr)
 	}
 	if fixes, _ := r["fixes"].([]any); len(fixes) != 5 || fixes[3] != detour || r["fix"] != "hug task done "+first {
 		t.Fatalf("json fixes: %s", out)
@@ -51,9 +51,9 @@ func TestDetourThroughTheCLI(t *testing.T) {
 	if code != 4 || !strings.Contains(out, "\n"+wantLine) || !strings.Contains(out, "nothing for kestrel to work on now") {
 		t.Fatalf("next --mine with only a wait: exit %d, want 4 listing %q:\n%s", code, wantLine, out)
 	}
-	code, out = runText(a, "next", "--mine", "--as", "kestrel", "--json")
+	code, out, serr = runJSON(a, "next", "--mine", "--as", "kestrel", "--json")
 	if e := json.Unmarshal([]byte(out), &r); e != nil || code != 4 {
-		t.Fatalf("exit %d: %v\n%s", code, e, out)
+		t.Fatalf("exit %d: %v\n%s\nstderr:\n%s", code, e, out, serr)
 	}
 	if ws, _ := r["waiting"].([]any); len(ws) != 1 || ws[0] != strings.TrimSuffix(wantLine, "\n") {
 		t.Fatalf("json waiting: %s", out)

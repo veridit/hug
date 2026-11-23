@@ -23,8 +23,8 @@ func TestStrikeThroughCLI(t *testing.T) {
 	if _, out := runText(a, "show", id); !strings.Contains(out, "2. [-] ~~no longer applies~~ (not relevant: the API changed, kestrel, "+today+")\n") || !strings.Contains(out, "1. [ ] holds\n") {
 		t.Fatalf("show:\n%s", out)
 	}
-	if _, out := runText(a, "ls", "--jsonl"); !strings.Contains(out, `"state":"struck"`) || !strings.Contains(out, `"reason":"the API changed"`) || !strings.Contains(out, `"state":"open"`) {
-		t.Fatalf("ls --jsonl:\n%s", out)
+	if _, out, serr := runJSON(a, "ls", "--jsonl"); !strings.Contains(out, `"state":"struck"`) || !strings.Contains(out, `"reason":"the API changed"`) || !strings.Contains(out, `"state":"open"`) {
+		t.Fatalf("ls --jsonl:\n%s\nstderr:\n%s", out, serr)
 	}
 	execute(t, a, "take", id)
 	if code, out := runText(a, "done", id); code != 3 || !strings.Contains(out, "1. holds") || strings.Contains(out, "2. no longer") || !strings.HasSuffix(out, "fix: hug task check "+id+" 1\n") {

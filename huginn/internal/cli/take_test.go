@@ -38,6 +38,15 @@ func runText(a *App, args ...string) (int, string) {
 	return a.Run(context.Background(), args), out.String()
 }
 
+// runJSON runs a --json or --jsonl command and returns stdout, the reply
+// to parse, apart from stderr, which only a failure message shows: a
+// stderr line before the JSON breaks the parse (tfe9nr).
+func runJSON(a *App, args ...string) (code int, stdout, stderr string) {
+	out, errs := &bytes.Buffer{}, &bytes.Buffer{}
+	a.Out, a.Err = out, errs
+	return a.Run(context.Background(), args), out.String(), errs.String()
+}
+
 func TestTakeWithoutModelFailsWithFix(t *testing.T) {
 	t.Parallel()
 	a, id := takeFixture(t)

@@ -232,9 +232,9 @@ func TestCatchUpBinaryAndConfigRecovery(t *testing.T) {
 					t.Fatalf("local config became active: %v\n%s", err, active)
 				}
 				head := git(t, bb, "rev-parse", "HEAD")
-				listCode, listOut := runText(b, "ls", "--jsonl")
+				listCode, listOut, listErr := runJSON(b, "ls", "--jsonl")
 				if rows := strings.Split(strings.TrimSpace(listOut), "\n"); listCode != 0 || len(rows) != len(ids) {
-					t.Fatalf("recovered files misparsed as tasks: %d != %d", len(rows), len(ids))
+					t.Fatalf("recovered files misparsed as tasks: %d != %d\nstderr:\n%s", len(rows), len(ids), listErr)
 				}
 				applyCatchup(t, b)
 				if git(t, bb, "rev-parse", "HEAD") != head {

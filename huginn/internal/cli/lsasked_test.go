@@ -88,12 +88,12 @@ func TestLsAskedListsQuestionsForCaller(t *testing.T) {
 	}
 
 	// --json and --jsonl: the same rows as objects.
-	code, out = runText(a, "ls", "--asked", "--json")
+	code, out, serr := runJSON(a, "ls", "--asked", "--json")
 	var r struct {
 		Asked []map[string]any `json:"asked"`
 	}
 	if e := json.Unmarshal([]byte(out), &r); e != nil || code != 0 || len(r.Asked) != 3 {
-		t.Fatalf("--json: exit %d %v\n%s", code, e, out)
+		t.Fatalf("--json: exit %d %v\n%s\nstderr:\n%s", code, e, out, serr)
 	}
 	if q := r.Asked[1]; q["id"] != ids["A"] || q["n"] != float64(1) || q["check"] != float64(1) || q["question"] != "Does check 1 hold on your machine?" || q["by"] != "nautilus" || q["since"] != "since 3 Jan" || q["to"] != "jhf" {
 		t.Fatalf("--json row 2: %v", q)
@@ -101,10 +101,10 @@ func TestLsAskedListsQuestionsForCaller(t *testing.T) {
 	if q := r.Asked[0]; q["check"] != float64(0) || !strings.Contains(q["question"].(string), "Second line stays out") {
 		t.Fatalf("--json row 1 (no check, the whole question): %v", q)
 	}
-	_, out = runText(a, "ls", "--asked", "--jsonl")
+	_, out, serr = runJSON(a, "ls", "--asked", "--jsonl")
 	lines := strings.Split(strings.TrimSpace(out), "\n")
 	if len(lines) != 3 || !strings.Contains(lines[0], `"id":"`+ids["B"]+`"`) {
-		t.Fatalf("--jsonl:\n%s", out)
+		t.Fatalf("--jsonl:\n%s\nstderr:\n%s", out, serr)
 	}
 }
 

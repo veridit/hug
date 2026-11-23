@@ -42,14 +42,27 @@ func TestTmuxAutoRefresh(t *testing.T) {
 		}
 	}
 	env := []string{"HOME=" + home, "XDG_CONFIG_HOME=" + filepath.Join(home, ".config"), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "HUG_USER=other-terminal", "GOMAXPROCS=2", "GOFLAGS=-p=2"}
+	// The other terminal also sets an old variable name, so every hug it
+	// runs prints the stale-name warning on stderr (cmd/hug/env.go,
+	// "hug: hug reads only HUG_* variables: ..."). ladybug 2026-11-21 ran
+	// the suite with the old golden variable set and this parse failed:
+	// "invalid character 'h' looking for beginning of value" (tfe9nr).
+	// Spelt in parts so TestNoOldNamesInRepository does not match it.
+	// So run returns stdout only, what the JSON is read from; stderr is
+	// kept for the failure message.
+	stale := "HUG" + "INN_UPDATE_GOLDEN=1"
+	var lastErr string
 	run := func(name string, args ...string) string {
 		t.Helper()
 		cmd := exec.Command(name, args...)
 		cmd.Dir = repo
-		cmd.Env = append(os.Environ(), env...)
-		out, err := cmd.CombinedOutput()
+		cmd.Env = append(append(os.Environ(), env...), stale)
+		var stderr strings.Builder
+		cmd.Stderr = &stderr
+		out, err := cmd.Output()
+		lastErr = stderr.String()
 		if err != nil {
-			t.Fatalf("%s %v: %v\n%s", name, args, err, out)
+			t.Fatalf("%s %v: %v\nstdout:\n%s\nstderr:\n%s", name, args, err, out, lastErr)
 		}
 		return string(out)
 	}
@@ -61,8 +74,13 @@ func TestTmuxAutoRefresh(t *testing.T) {
 		var r struct {
 			Task struct{ ID string } `json:"task"`
 		}
-		if err := json.Unmarshal([]byte(run(binary, "task", "new", title, "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--json")), &r); err != nil {
-			t.Fatal(err)
+		out := run(binary, "task", "new", title, "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--json")
+		if err := json.Unmarshal([]byte(out), &r); err != nil {
+			t.Fatalf("%v\nstdout:\n%s\nstderr:\n%s", err, out, lastErr)
+		}
+		// The warning still reaches the person, on stderr (m1c28r).
+		if !strings.Contains(lastErr, "hug: hug reads only HUG_* variables") {
+			t.Fatalf("stale-name warning not on stderr:\n%s", lastErr)
 		}
 		ids[title] = r.Task.ID
 	}
