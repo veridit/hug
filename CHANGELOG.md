@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.111 - 2026-11-24
 
 - A wait for a date says the date first, once. `hug task show`, the
   detail header and the focused row's second line in `hug tui`, and
