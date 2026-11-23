@@ -448,10 +448,10 @@ type flags struct {
 
 // allowedFlags are each command's flags beyond --json and --help, the
 // list parse accepts and completion offers (5mmqjk).
-var allowedFlags = map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree with", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model task", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "memory": "", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label tag state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "tags": "", "models": "", "upgrade": "apply machine tags min"}
+var allowedFlags = map[string]string{"install": "all-instances jcode-home dry-run", "uninstall": "all-instances jcode-home dry-run", "new": "type priority goal purpose principle details accept dep group label top after", "ls": "state type priority label group mine jsonl epic as model asked to", "search": "state type priority label group mine epic as model limit", "board": "type priority label group mine all epic wide as model", "next": "type priority label group mine epic as model", "take": "as model branch worktree with", "strike": "reason undo as model", "design": "clear as model for show", "wait": "as model on show until", "ask": "as model to check show after", "note": "as model", "check": "as model", "review": "as model by show", "answer": "as model", "request": "as model task", "resolve": "as model", "requests": "all as model", "coordinator": "clear", "memory": "", "done": "reflect as model", "reflections": "all by-instruction", "tui": "as model", "move": "before after top", "dep": "add remove", "set": "priority type label tag state title assignee parent goal purpose principle details accept", "import": "dry-run cite cleanup model", "show": "file", "lint": "code summary", "sync": "background-pass", "deduce": "since", "attach": "name note replace safe-reason content", "people": "name", "tags": "", "models": "", "upgrade": "apply machine tags min"}
 
 // boolFlags take no value.
-var boolFlags = []string{"json", "jsonl", "wide", "help", "mine", "top", "dry-run", "apply", "machine", "tags", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", "by-instruction", strings.TrimPrefix(SyncChildArg, "--")}
+var boolFlags = []string{"json", "jsonl", "wide", "help", "mine", "asked", "top", "dry-run", "apply", "machine", "tags", "cleanup", "all-instances", "all", "replace", "summary", "undo", "clear", "by-instruction", strings.TrimPrefix(SyncChildArg, "--")}
 
 func parse(args []string, allowed string, optionalValue ...string) (flags, error) {
 	f := flags{values: map[string][]string{}}
@@ -1017,6 +1017,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		}
 		if e = s.c.FillTexts(ctx, ts); e != nil {
 			return nil, e
+		}
+		// --asked (fthher): the open questions asked of the caller, or of
+		// --to NAME, one row per question, on the tasks the filters keep.
+		if f.has("asked") {
+			return a.lsAsked(ctx, s, f, filter, ts)
+		}
+		if to := f.get("to"); to != "" {
+			return nil, usage("--to names whose questions ls --asked lists; it needs --asked", "hug task ls --asked --to "+to)
 		}
 		out := []Reply{}
 		for _, t := range ts {
@@ -1937,6 +1945,14 @@ func (a *App) Run(ctx context.Context, args []string) int {
 		return 0
 	}
 	if isJSONL(args) {
+		// One question per line for ls --asked (fthher).
+		if rs, ok := reply["asked"].([]AskedRow); ok {
+			enc := json.NewEncoder(a.Out)
+			for _, r := range rs {
+				_ = enc.Encode(r)
+			}
+			return 0
+		}
 		// One task per line, for grep, head and jq -c pipelines.
 		if ts, ok := reply["tasks"].([]Reply); ok {
 			enc := json.NewEncoder(a.Out)
@@ -1986,6 +2002,9 @@ func (a *App) Run(ctx context.Context, args []string) int {
 	}
 	if rs, ok := reply["results"].([]Reply); ok {
 		writeSearch(a.Out, fmt.Sprint(reply["query"]), rs)
+	}
+	if rs, ok := reply["asked"].([]AskedRow); ok {
+		writeAsked(a.Out, rs, boardWidth(a.getenv("COLUMNS")))
 	}
 	if ts, ok := reply["tasks"].([]Reply); ok {
 		// Fixed-width columns first, the free-text title last, so the

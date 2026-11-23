@@ -69,8 +69,8 @@ func TestLsAskedListsQuestionsForCaller(t *testing.T) {
 	if strings.Contains(out, "Second line stays out") || strings.Contains(out, "Answered already") || strings.Contains(out, "C column") {
 		t.Fatalf("a second line, an answered question or another's question is listed:\n%s", out)
 	}
-	if !strings.Contains(out, "next: hug task answer "+ids["B"]+" 1 ") {
-		t.Fatalf("next does not answer the oldest:\n%s", out)
+	if !strings.Contains(out, "\n3 open questions for jhf, on 2 tasks\nnext: hug task answer "+ids["B"]+" 1 ") {
+		t.Fatalf("no count line, or next does not answer the oldest:\n%s", out)
 	}
 
 	// --to NAME: the questions asked of NAME; --as is who the caller is.

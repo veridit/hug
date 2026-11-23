@@ -31,7 +31,7 @@ func TestAskedAgreesWithForYou(t *testing.T) {
 				t.Errorf("%s board, %s: %d questions, the TUI's pages show %d", name, user, len(got), want)
 			}
 			for i := 1; i < len(got); i++ {
-				if got[i].At < got[i-1].At {
+				if askedBefore(got[i].At, got[i-1].At) {
 					t.Errorf("%s board, %s: not oldest first: %v", name, user, got)
 				}
 			}
