@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.109 - 2026-11-23
 
 - A big task's page answers keys at once again. On a 700 KB task with 750
   notes, one `j` took 0.36 s and a character typed in the answer or
