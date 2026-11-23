@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-23T15:02"
+parent: "ersks7"
 ---
 
 ## Goal
