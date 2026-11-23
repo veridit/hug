@@ -54,6 +54,7 @@ Daily count runbook (crab runs it from 2026-11-20; mizaru's wake cancelled). Com
 Daily count 2026-11-20T01:45Z (window since 2026-11-19T00:00Z, deduped per PREREG-DRAFT.md): top-level 1 notice in 1 session; child 0 in 0; deduped away 0; ready=False (needs >= 40 notices from >= 8 sessions). Next count 11-21 01:45Z; floor question to Jørgen if sessions < 8 by 11-26.
 daily count 2026-11-21 01:45Z (count_notices.py, window >= 2026-11-19T00:00Z, deduped per PREREG-DRAFT.md): 6 notices in 4 sessions (child 0, deduped away 0); bar is 40 from 8 sessions: not ready. 11-20 01:45Z was 1 in 1.
 crab 2026-11-22 01:46Z daily count: 42 notices in 5 top-level sessions (child 0, deduped 0); ready=False (needs >= 8 sessions). Per session: statbus rabbit 19, statbus hibiscus 16, brovs kikazaru 4, crab 2, brovs sheep 1. The count passed 40 but 35 of 42 (83%) come from two statbus sessions, so the session floor is what holds it back. History: 11-20 1/1, 11-21 6/4, 11-22 42/5. If still under 8 sessions on 11-26, ask Jørgen about the floor.
+crab 2026-11-23 02:15Z daily count (since 2026-11-19T00:00Z): top-level 77 notices in 6 sessions; child 0; deduped away 2; ready=False (needs 8 sessions). Per session: statbus hibiscus 42, statbus rabbit 19, brovs fox 7, brovs kikazaru 6, crab 2, brovs sheep 1. Two statbus sessions give 61 of 77. Next count 11-24 01:45Z; if still under 8 sessions on 11-26, ask Jørgen about the floor.
 ## History
 - 2026-11-19T02:24 todo -> doing/active (take with p277bp)
 - 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)
