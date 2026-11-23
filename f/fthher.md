@@ -4,7 +4,7 @@ title: "hug task ls cannot list the questions waiting for someone"
 state: "doing"
 type: feature
 priority: ""
-assignee: ["orangutan"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzc"
@@ -63,3 +63,4 @@ check 1: 97f74c64 on fthher and ci/fthher; CI https://github.com/veridit/hug/act
 ## History
 - 2026-11-23T13:00 todo -> doing/active (take)
 - 2026-11-23T14:23 doing/active -> doing/asked (ask)
+- 2026-11-23T15:33 handed to crab: orangutan's session ended (closed 2026-11-23 14:13)
