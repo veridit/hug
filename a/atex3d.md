@@ -37,5 +37,6 @@ From z2vmte check 5 (jhf request 2026-11-20 13:05). Today on main: timedwait.go:
 ## Notes
 
 
+crab ruling 23:07Z on elephant's questions: (1) the list STAGE cell is 10 wide (tui/stage.go:23, sized for 'deferred:'), and 'until 11-24' needs 11. Widening it would take 2 title cells from every row for a rare state, so a timed wait's cell reads 'til 11-24'. (2) 'since' keeps each surface's own format for every stage (show 'since 2026-11-18 05:08', tui 'since 18 Nov'); only the lead changes, to 'waiting until DATE · then ask NAME' or 'waiting until DATE · on WHY'. Jørgen is asked about both after release.
 ## History
 - 2026-11-24T00:02 todo -> doing/active (take)
