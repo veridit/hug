@@ -4,6 +4,30 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.110 - 2026-11-23
+
+- `hug task ls --asked` lists the questions waiting for you, one line per
+  open question, oldest first: task id, the check it is about (`-` for
+  none), the question's first line, who asked, and since when. It counts
+  what `hug tui` counts as `? N for you`, on the same board. `--to NAME`
+  lists those asked of someone else; `--state`, `--epic` and the other
+  `ls` filters still apply, and `--json`/`--jsonl` give the same rows as
+  objects. MCP `task_list` takes `asked` and `to`. Before, the flag did not
+  exist (`unknown flag --asked`). On this repository's board:
+
+  ```
+  $ hug task ls --asked
+  bxqtkt  -    approve the design (attached: bxqtkt.md), check 1, and answer Q1-Q6 at its end       calf      since 17 Nov
+  p277bp  3    Mascot artwork: the drafts are in your Grok Imagine library (prompts in docs/art/d…  crab      since 20 Nov
+  hpqt99  2    Decision 1, which client owns an imported memory: 1A keep today (you rescope by ha…  crab      since 20 Nov
+  ...
+  40 open questions for jhf, on 38 tasks
+  next: hug task answer bxqtkt "the answer"
+  ```
+
+  With none it says `no open questions for NAME` and ends with
+  `fix: hug task ls --asked --to NAME` (fthher).
+
 ## v0.7.109 - 2026-11-23
 
 - A big task's page answers keys at once again. On a 700 KB task with 750

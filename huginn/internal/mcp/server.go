@@ -136,8 +136,12 @@ func Register(s *sdk.Server, e Executor, prefix string) {
 	}
 	p := filters()
 	p["state"] = negatable("todo", "doing", "done", "dropped")
-	add("list", "List tasks in rank order, including done and dropped unless filtered.", p, nil, func(m map[string]any) ([]string, error) {
-		return flags([]string{"ls"}, m, "type", "priority", "label", "group", "epic", "mine", "state"), nil
+	// fthher: asked lists the open questions waiting for you (or for to),
+	// one row per question, oldest first, as hug task ls --asked.
+	p["asked"] = map[string]any{"type": "boolean", "description": "List the open questions asked of you (or of to) instead of tasks, oldest first"}
+	p["to"] = str("With asked: whose questions; default you")
+	add("list", "List tasks in rank order, including done and dropped unless filtered. With asked: the open questions waiting for you (to: for someone else), one per question.", p, nil, func(m map[string]any) ([]string, error) {
+		return flags([]string{"ls"}, m, "asked", "to", "type", "priority", "label", "group", "epic", "mine", "state"), nil
 	})
 	sp := filters()
 	// hbgybn: the open requests on the board, oldest first, each with its
