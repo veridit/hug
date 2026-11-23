@@ -1,15 +1,20 @@
 ---
 id: tfe9nr
 title: "TestTmuxAutoRefresh parses stderr as JSON from hug task new"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["camel"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz9"
 created: 2026-11-21
 updated: 2026-11-21
+doing_since: "2026-11-23T14:24"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Same pattern may exist in other tests that json.Unmarshal CombinedOutput: grep f
 - [ ] Other tests that unmarshal CombinedOutput are listed and fixed
 
 ## Notes
+
+
+## History
+- 2026-11-23T14:24 todo -> doing/active (take)
