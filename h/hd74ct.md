@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["hd74ct-worker"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzzw"
+rank: "zzzzzzzzzzzv"
 created: 2026-11-22
 updated: 2026-11-22
 doing_since: "2026-11-23T09:00"
