@@ -1,7 +1,7 @@
 ---
 id: z2vmte
 title: "Wait for a date: wait --until and ask --after, woken by hug"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["crab"]
@@ -10,11 +10,10 @@ group: ""
 rank: "zzzzzzzzzzlh"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T03:38"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-24T00:57"
 ---
 
 ## Goal
@@ -61,6 +60,7 @@ shipped in v0.7.55 (88a6ac8)
 check 3 (crab, 05:08 local, v0.7.55): hug task ask 47sxn2 --to jhf --after 2026-11-24 --check 2 '...' -> 'stage: waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'. 47sxn2 left Jørgen's ASKED.
 file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 check 4: Held untouched: commit 650bdf53 at 2026-11-24 00:00 local 'hug task wake: 47sxn2, z2vmte (the date came)', made by hug's own read. HUG_USER=jhf hug task ls --asked (v0.7.110) now lists '47sxn2  2  a week of use: has he had to remind an agent to update a ticket?  crab  since 00:00'.
+Reflection (open, 2026-11-24, crab): All 5 checks hold: c4 by hug's own wake at 00:00 local (650bdf53), c5 by atex3d in v0.7.111.
 ## History
 - 2026-11-18T03:38 todo -> doing/active (take)
 - 2026-11-18T04:23 doing/active -> doing/waiting (wait)
@@ -75,3 +75,4 @@ check 4: Held untouched: commit 650bdf53 at 2026-11-24 00:00 local 'hug task wak
 - 2026-11-24T00:00 crab back on it after the wait
 - 2026-11-24T00:01 doing/active -> doing/waiting (wait)
 - 2026-11-24T00:57 doing/waiting -> doing/active (resume); was waiting_asked_by: crab; waiting_on: atex3d done (check 5 promoted to it); waiting_since: 2026-11-24T00:01
+- 2026-11-24T00:57 doing/active -> done (done); was doing_since: 2026-11-18T03:38
