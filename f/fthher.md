@@ -11,11 +11,16 @@ rank: "zzzzzzzzzzzc"
 created: 2026-11-21
 updated: 2026-11-21
 doing_since: "2026-11-23T13:00"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "j2v40p"
+asked_for: "jhf"
+asked_since: "2026-11-23T14:23"
+asked_by: "crab"
+asked_check: "2"
+asked_what: "Run hug task ls --asked (v0.7.110). Same question as release ticket j2v40p; one answer ticks both."
 ---
 
 ## Goal
@@ -36,6 +41,10 @@ Candidate: hug task ls --asked [--to NAME] (default: the caller), one line per q
 - [x] hug task ls --asked lists the open questions asked of the caller, one per line with id and check (test)
 - [ ] Jørgen runs it and gets his list
 
+## Questions
+- 2026-11-23T14:23 question 1 by crab to jhf (check 2):
+  Run hug task ls --asked (v0.7.110). Same question as release ticket j2v40p; one answer ticks both.
+
 ## Notes
 
 
@@ -53,3 +62,4 @@ dswkgj  1    v0.7.92: answering a withdrawn question now says when and why it wa
 check 1: 97f74c64 on fthher and ci/fthher; CI https://github.com/veridit/hug/actions/runs/45179618266 8/8 success. Tests: TestLsAskedListsQuestionsForCaller, TestLsAskedEmptySaysSo, TestInstructionsNameLsAsked (cli), TestAskedAgreesWithForYou (tui: per-task count equals countForYou on stage/asked/withdrawn boards for jhf, Jørgen, nautilus, nobody), TestListTakesAsked (mcp). 13/13 mutants killed. Real board copy: 40 questions for jhf on 38 tasks, TUI countForYou 38.
 ## History
 - 2026-11-23T13:00 todo -> doing/active (take)
+- 2026-11-23T14:23 doing/active -> doing/asked (ask)
