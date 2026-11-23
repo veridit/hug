@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-23
 updated: 2026-11-23
+design_asked_by: "crab"
+design_question: "v0.7.109 is out (brew upgrade veridit/tap/hug; restart your hug tui windows to get it). In Seid, open p39w4a, scroll with j and k, and type an answer (Esc to leave it unsent if you like). In my test one j went from about 0.3 s to under 40 ms. Is it quick now for you?"
+design_for: "jhf"
+design_since: "2026-11-23T03:15"
+stage: "design"
 ---
 
 ## Goal
@@ -29,4 +34,12 @@ Main 3125fd29 (Release v0.7.109, merge of 8c16709c, CI 8/8 on that exact SHA). r
 ## Acceptance
 - [ ] Jørgen scrolls p39w4a in Seid and types an answer there, and finds it quick
 
+## Questions
+- 2026-11-23T03:15 question 1 by crab to jhf (check 1):
+  v0.7.109 is out (brew upgrade veridit/tap/hug; restart your hug tui windows to get it). In Seid, open p39w4a, scroll with j and k, and type an answer (Esc to leave it unsent if you like). In my test one j went from about 0.3 s to under 40 ms. Is it quick now for you?
+
 ## Notes
+
+
+## History
+- 2026-11-23T03:15 todo -> todo/design (ask)
