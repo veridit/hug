@@ -1,15 +1,20 @@
 ---
 id: fthher
 title: "hug task ls cannot list the questions waiting for someone"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["orangutan"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzc"
 created: 2026-11-21
 updated: 2026-11-21
+doing_since: "2026-11-23T13:00"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Candidate: hug task ls --asked [--to NAME] (default: the caller), one line per q
 - [ ] Jørgen runs it and gets his list
 
 ## Notes
+
+
+## History
+- 2026-11-23T13:00 todo -> doing/active (take)
