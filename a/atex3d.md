@@ -41,6 +41,7 @@ crab ruling 23:07Z on elephant's questions: (1) the list STAGE cell is 10 wide (
 check 1: 0c09d4ee on atex3d/ci/atex3d, CI 8/8 https://github.com/veridit/hug/actions/runs/45290106766. show: 'stage: waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08' (was 'waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'); wait --until: 'waiting until 2026-11-24 · on a week of use · since ...'. tui header '└─ waiting until 2026-11-24 · then ask jhf · since 18 Nov'; list STAGE cell 'til 11-24' (crab ruling 23:07Z: cell keeps 9 cells); 'since' keeps each surface's format (show 'since 2026-11-18 05:08', tui 'since 18 Nov'). Old v0.7.55 fields render the new way (tested). Tests: task TestWaitingLineLeadsWithTheDate, cli TestShowLeadsADatedWaitWithTheDate, tui TestDatedWaitLeadsWithTheDate (golden testdata/rows/dated-wait-120.txt) + TestOnlyAWaitSaysItsDateInTheCell; mutants 15/15 killed.
 landed 573c98b on main 2026-11-24: A dated wait's stage line leads with the date (atex3d)
 shipped in v0.7.111 (573c98b)
+Reflection (open, 2026-11-24, crab): Shipped in v0.7.111 (main ed882297, CI 45290106766 8/8). The crab ruling on the list cell ('til 11-24') and on keeping each surface's own 'since' goes to Jørgen on the release ticket.
 ## History
 - 2026-11-24T00:02 todo -> doing/active (take)
 - 2026-11-24T00:47 doing/active -> done (done, by release v0.7.111: every check holds); was doing_since: 2026-11-24T00:02
