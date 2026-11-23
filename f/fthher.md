@@ -38,5 +38,16 @@ Candidate: hug task ls --asked [--to NAME] (default: the caller), one line per q
 ## Notes
 
 
+Real board copy (git ls-files of .hug/tasks, 635 files, rsynced into scratch repo on hug/tasks; HUG_USER=jhf HUG_SYNC=off isolated HOME; binary from 97f74c64). hug task ls --asked: 40 open questions for jhf, on 38 tasks. TUI on the same copy (tui.newModel User jhf): countForYou=38 forYouCount=38, so '? 38 for you' = 38 tasks in ls --asked (a task may ask jhf twice: hpqt99 asks 3). Brief said 37 at 08:20Z; the board has moved since. Same 40/38 with HUG_USER unset (person by git email). First 10 lines:
+bxqtkt  -    approve the design (attached: bxqtkt.md), check 1, and answer Q1-Q6 at its end       calf      since 17 Nov
+p277bp  3    Mascot artwork: the drafts are in your Grok Imagine library (prompts in docs/art/d…  crab      since 20 Nov
+hpqt99  2    Decision 1, which client owns an imported memory: 1A keep today (you rescope by ha…  crab      since 20 Nov
+hpqt99  5    Import and export (Decision 3 in Details): import previews by default, --apply imp…  crab      since 20 Nov
+hpqt99  3    Decision 2, jcode memories: 2A keep reading jcode's files live, 2B import once and…  crab      since 20 Nov
+rnpdnm  3    5 of the 8 should never have been memories (memory-qualifiers.md). Option D: tight…  crab      since 20 Nov
+b8mk9s  5    Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typica…  crab      since 20 Nov
+kka3b1  1    v0.7.91: with rows marked, r opens one request box under the list and Enter sends …  crab      since 20 Nov
+dswkgj  1    v0.7.92: answering a withdrawn question now says when and why it was withdrawn and…  crab      since 20 Nov
+24403z  6    After you answer a task in ASKED it moves (here to NEXT UP). The breadcrumb keeps …  eagle     since 20 Nov
 ## History
 - 2026-11-23T13:00 todo -> doing/active (take)
