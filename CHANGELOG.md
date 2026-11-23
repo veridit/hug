@@ -4,6 +4,31 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.111 - 2026-11-24
+
+- A wait for a date says the date first, once. `hug task show`, the
+  detail header and the focused row's second line in `hug tui`, and
+  `hug task next --mine`'s list of waits read the same way. A task asked
+  with `hug task ask --after`, and one an older hug wrote that way, said:
+
+  ```
+  stage: waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24
+  ```
+
+  and now says:
+
+  ```
+  stage: waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08
+  ```
+
+  A `hug task wait ID --until 2026-11-24 "a week of use"` now reads
+  `waiting until 2026-11-24 · on a week of use · since ...`. In `hug tui`
+  the header read `└─ waiting on the date 2026-11-24, then ask jhf · until
+  24 Nov · since 18 Nov` and now reads `└─ waiting until 2026-11-24 · then
+  ask jhf · since 18 Nov`, and the row's STAGE cell says `til 11-24` in
+  place of `waiting`. A wait with no date reads as before. Nothing stored
+  on the task changes.
+
 ## v0.7.110 - 2026-11-23
 
 - `hug task ls --asked` lists the questions waiting for you, one line per

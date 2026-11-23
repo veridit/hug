@@ -2414,11 +2414,16 @@ func stageLine(t Reply) string {
 	}
 	switch stage {
 	case "waiting":
-		line := strings.TrimSpace("waiting on "+fields["waiting_on"]) + since("waiting_since")
-		if u := fields["waiting_until"]; u != "" {
-			line += " · until " + u
+		// A wait for a date leads with it (atex3d): "waiting until
+		// 2026-11-24 · then ask jhf · since 2026-11-18 05:08".
+		if until, rest, ok := task.DatedWait(fields); ok {
+			line := task.DatedWaitLine(until, rest)
+			if s := since("waiting_since"); s != "" {
+				line += " ·" + s
+			}
+			return line
 		}
-		return line
+		return strings.TrimSpace("waiting on "+fields["waiting_on"]) + since("waiting_since")
 	case "asked":
 		head := "asked " + fields["asked_for"]
 		if n := fields["asked_check"]; n != "" {

@@ -77,7 +77,7 @@ func TestNextMineSkipsWaiting(t *testing.T) {
 	if !errors.As(e, &te) || te.Kind != "nothing-matches" || te.ExitCode() != 4 {
 		t.Fatalf("next --mine with only waits: want nothing-matches (exit 4), got %v", e)
 	}
-	wantWaits := []string{a + " waiting on CI run 7", c + " waiting on a week of use · until 2026-11-24"}
+	wantWaits := []string{a + " waiting on CI run 7", c + " waiting until 2026-11-24 · on a week of use"} // atex3d: the date first
 	if strings.Join(te.Waiting, "|") != strings.Join(wantWaits, "|") {
 		t.Fatalf("waiting lines %q, want %q", te.Waiting, wantWaits)
 	}

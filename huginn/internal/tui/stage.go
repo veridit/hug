@@ -31,8 +31,14 @@ var now = time.Now
 // stays for the callers that pass a reason in place of the title.
 // Derived from the fields and the board (task.Stage), so a board hug
 // upgrade has not migrated yet shows the same stages.
+//
+// A wait for a date says the date in the cell, "til 11-24" (atex3d).
 func (m model) rowStage(t task.Task) (word, text string) {
-	return m.stageOf(t), ""
+	word = m.stageOf(t)
+	if c := untilCell(t.Fields["waiting_until"]); word == "waiting" && c != "" {
+		word = c
+	}
+	return word, ""
 }
 
 // dependsBar draws done of total as filled and empty cells, at most 5
