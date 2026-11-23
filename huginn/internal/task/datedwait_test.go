@@ -31,11 +31,25 @@ func TestWaitingLineLeadsWithTheDate(t *testing.T) {
 	if _, e := s.Wait(d, "CI run 7", "kestrel"); e != nil {
 		t.Fatal(e)
 	}
+	// The held question decides, whatever waiting_on says; with its ask
+	// fields gone, the stored "the date ..., " is still not shown.
+	front := func(id, fields string) {
+		body := "---\nid: \"" + id + "\"\ntitle: \"T\"\nstate: \"doing\"\nstage: \"waiting\"\nassignee: [\"crab\"]\nwaiting_since: \"2026-11-18T05:08\"\nwaiting_until: \"2026-11-24\"\n" + fields + "type: \"feature\"\npriority: \"medium\"\nlabels: []\ncreated: \"2026-11-01\"\nupdated: \"2026-11-01\"\n---\n\n## Goal\ng\n\n## Acceptance\n- [ ] a\n"
+		if e := os.WriteFile(filepath.Join(s.Root, id+".t.md"), []byte(body), 0o644); e != nil {
+			t.Fatal(e)
+		}
+	}
+	front("eeeeee", "waiting_ask_what: \"q?\"\nwaiting_ask_for: \"jhf\"\nwaiting_on: \"a week of use\"\n")
+	front("ffffff", "waiting_on: \"the date 2026-11-24, then ask jhf\"\n")
+	front("gggggg", "")
 	for id, want := range map[string]string{
 		a:        "aaaaaa waiting until 2026-11-24 · on a week of use",
 		b:        "bbbbbb waiting until 2026-11-24 · then ask jhf",
 		"cccccc": "cccccc waiting until 2026-11-24 · then ask jhf",
 		d:        "dddddd waiting on CI run 7", // no date: as before
+		"eeeeee": "eeeeee waiting until 2026-11-24 · then ask jhf",
+		"ffffff": "ffffff waiting until 2026-11-24 · then ask jhf",
+		"gggggg": "gggggg waiting until 2026-11-24",
 	} {
 		tk, _ := load(t, s, id)
 		if got := WaitingLine(tk); got != want {
