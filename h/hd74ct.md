@@ -1,15 +1,20 @@
 ---
 id: hd74ct
 title: "Overview: rules only around the focused section"
-state: todo
+state: "doing"
 type: "feature"
 priority: "high"
-assignee: []
+assignee: ["hd74ct-worker"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzw"
 created: 2026-11-22
 updated: 2026-11-22
+doing_since: "2026-11-23T09:00"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -66,3 +71,4 @@ file:screen-2230.ans (18179 bytes, sha256:caeb9471) screen capture from hug tui
 - 2026-11-22T22:31 request 1 acknowledged by crab
 - 2026-11-22T22:31 request 1 in progress by crab: hug task set hd74ct
 - 2026-11-22T22:32 resolved request 1 by crab
+- 2026-11-23T09:00 todo -> doing/active (take)
