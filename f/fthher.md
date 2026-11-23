@@ -32,7 +32,7 @@ Candidate: hug task ls --asked [--to NAME] (default: the caller), one line per q
 ## Depends on
 
 ## Acceptance
-- [ ] hug task ls --asked lists the open questions asked of the caller, one per line with id and check (test)
+- [x] hug task ls --asked lists the open questions asked of the caller, one per line with id and check (test)
 - [ ] Jørgen runs it and gets his list
 
 ## Notes
@@ -49,5 +49,6 @@ b8mk9s  5    Six layouts in Details, measured on your 18,615 memories. A day hol
 kka3b1  1    v0.7.91: with rows marked, r opens one request box under the list and Enter sends …  crab      since 20 Nov
 dswkgj  1    v0.7.92: answering a withdrawn question now says when and why it was withdrawn and…  crab      since 20 Nov
 24403z  6    After you answer a task in ASKED it moves (here to NEXT UP). The breadcrumb keeps …  eagle     since 20 Nov
+check 1: 97f74c64 on fthher and ci/fthher; CI https://github.com/veridit/hug/actions/runs/45179618266 8/8 success. Tests: TestLsAskedListsQuestionsForCaller, TestLsAskedEmptySaysSo, TestInstructionsNameLsAsked (cli), TestAskedAgreesWithForYou (tui: per-task count equals countForYou on stage/asked/withdrawn boards for jhf, Jørgen, nautilus, nobody), TestListTakesAsked (mcp). 13/13 mutants killed. Real board copy: 40 questions for jhf on 38 tasks, TUI countForYou 38.
 ## History
 - 2026-11-23T13:00 todo -> doing/active (take)
