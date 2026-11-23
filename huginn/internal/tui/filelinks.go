@@ -92,39 +92,56 @@ func (m model) fileLinksIn(t task.Task, text string) []idStop {
 	if !strings.Contains(text, ".") {
 		return nil
 	}
-	var out []idStop
+	return m.fileLinksOf(task.FolderOf(t)+"/", m.filesOf(t), text)
+}
+
+// scanFileLinks is fileLinksIn for a task whose folder (ending in /) and
+// files are given; until is when the oldest answer it had from the
+// checkout (repoFile) goes stale, zero when it asked none.
+func (m model) scanFileLinks(folder string, files []string, text string) (out []idStop, until time.Time) {
 	seen := map[string]bool{}
-	for _, w := range fileWords(text) {
+	for _, w := range m.fileWordsOf(text) {
 		if seen[w.shown] {
 			continue
 		}
-		l, ok := m.resolveFile(t, w)
+		l, ok, at := m.resolveFileAt(folder, files, w)
+		if !at.IsZero() && (until.IsZero() || at.Before(until)) {
+			until = at
+		}
 		if !ok {
 			continue
 		}
 		seen[w.shown] = true
 		out = append(out, idStop{shown: w.shown, at: w.at, file: &l})
 	}
-	return out
+	return out, until
 }
 
 // resolveFile says which file w names: one of t's files (by its name, or
 // a path that ends in its folder and name), else, unless written file:,
 // a regular file of the checkout.
 func (m model) resolveFile(t task.Task, w fileWord) (fileLink, bool) {
-	folder := task.FolderOf(t) + "/"
-	for _, f := range m.filesOf(t) {
+	l, ok, _ := m.resolveFileAt(task.FolderOf(t)+"/", m.filesOf(t), w)
+	return l, ok
+}
+
+// resolveFileAt is resolveFile for a task whose folder (ending in /) and
+// files are given; until is when the checkout's answer goes stale, zero
+// when the checkout was not asked.
+func (m model) resolveFileAt(folder string, files []string, w fileWord) (l fileLink, ok bool, until time.Time) {
+	for _, f := range files {
 		if w.name == f || strings.HasSuffix(w.name, "/"+folder+f) || w.name == folder+f {
-			return fileLink{name: f, section: w.section}, true
+			return fileLink{name: f, section: w.section}, true, time.Time{}
 		}
 	}
 	if w.prefixed || m.opts.Checkout == "" {
-		return fileLink{}, false
+		return fileLink{}, false, time.Time{}
 	}
-	if _, ok := repoFile(m.opts.Checkout, w.name); ok {
-		return fileLink{name: w.name, section: w.section, repo: true}, true
+	_, ok, until = repoFileUntil(m.opts.Checkout, w.name)
+	if !ok {
+		return fileLink{}, false, until
 	}
-	return fileLink{}, false
+	return fileLink{name: w.name, section: w.section, repo: true}, true, until
 }
 
 // repoFiles remembers, for a few seconds, which paths are regular files
@@ -144,15 +161,25 @@ type repoSeen struct {
 // repoFile is rel's path in checkout when it is a regular file there,
 // not outside it, not in .git or the task branch's folder.
 func repoFile(checkout, rel string) (string, bool) {
+	abs, ok, _ := repoFileUntil(checkout, rel)
+	return abs, ok
+}
+
+// repoFileFor is how long repoFile's answer holds.
+var repoFileFor = 3 * time.Second
+
+// repoFileUntil is repoFile, and until when its answer holds (zero: it
+// was decided without asking the disk, and always holds).
+func repoFileUntil(checkout, rel string) (string, bool, time.Time) {
 	clean := filepath.ToSlash(filepath.Clean(filepath.FromSlash(rel)))
 	if rel == "" || filepath.IsAbs(rel) || clean == ".." || strings.HasPrefix(clean, "../") || strings.HasPrefix(clean, ".git/") || strings.HasPrefix(clean, ".hug/") {
-		return "", false
+		return "", false, time.Time{}
 	}
 	key := checkout + "\x00" + clean
 	repoFiles.Lock()
 	defer repoFiles.Unlock()
-	if s, ok := repoFiles.seen[key]; ok && time.Since(s.at) < 3*time.Second {
-		return s.abs, s.ok
+	if s, ok := repoFiles.seen[key]; ok && time.Since(s.at) < repoFileFor {
+		return s.abs, s.ok, s.at.Add(repoFileFor)
 	}
 	if repoFiles.seen == nil || len(repoFiles.seen) > 4096 {
 		repoFiles.seen = map[string]repoSeen{}
@@ -161,7 +188,7 @@ func repoFile(checkout, rel string) (string, bool) {
 	info, err := os.Lstat(abs)
 	s := repoSeen{abs: abs, ok: err == nil && info.Mode().IsRegular(), at: time.Now()}
 	repoFiles.seen[key] = s
-	return s.abs, s.ok
+	return s.abs, s.ok, s.at.Add(repoFileFor)
 }
 
 // filePath is where l's file is on disk, checked: an attachment inside

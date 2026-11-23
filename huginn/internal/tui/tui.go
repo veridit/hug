@@ -171,6 +171,8 @@ type model struct {
 	stages          map[string]string // task.Stage by path, per load (46ek1f)
 	visibleGen      int               // bumped on every write of visible (46ek1f)
 	panes           *paneMemo         // paneIndices by visibleGen and view (46ek1f)
+	page            *pageMemo         // a task page's sections, ids and markdown (1tjq11)
+	board           int64             // which load m.all is from: boardSerial (1tjq11)
 	progressCols    int               // progressWidth, per load (46ek1f)
 	epics           map[string]bool   // lowercase ids of tasks with children
 	epicOf          map[string]string // task path -> its epic's id, per load (kx2ndm)
@@ -607,7 +609,7 @@ func newModelCtx(ctx context.Context, s *task.Store, o Options) model {
 	// Wherever you can type, the cursor blinks (q3sh69, Jørgen's rule;
 	// qpp30y had only the box's move): the focus sign is still then.
 	input.Cursor.SetMode(cursor.CursorBlink)
-	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, panes: &paneMemo{forYou: -1}, defaultOn: true,
+	m := model{store: s, opts: o, width: 100, height: 30, view: "overview", column: -1, input: input, answerBox: newAnswerBox(), closes: &closeLog{}, panes: &paneMemo{forYou: -1}, page: newPageMemo(), defaultOn: true,
 		viewport: viewport.New(100, 24), helpViewport: viewport.New(100, 24), helpModel: help.New(), styles: newTheme()}
 	styleAnswerCursor(&m.answerBox, m.styles.cursor)
 	styleInputCursor(&m.input, m.styles.cursor)
@@ -756,6 +758,7 @@ func (m *model) apply(sn snapshot, path string) {
 	}
 	ts := sn.tasks
 	m.all = ts
+	m.board = boardSerial.Add(1)
 	m.docs = sn.docs
 	if sn.readErr != nil {
 		m.message = sn.readErr.Error()

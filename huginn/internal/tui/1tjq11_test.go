@@ -83,7 +83,9 @@ func bigBoard(tb testing.TB) (model, string) {
 	if n := len(text); n < 650_000 || n > 760_000 {
 		tb.Fatalf("the big task is %d bytes, want about 700 KB", n)
 	}
-	m := newModel(s, Options{User: "jhf"})
+	// Run in a checkout, as hug tui is: a word that may name one of its
+	// files is looked up there.
+	m := newModel(s, Options{User: "jhf", Checkout: s.Root})
 	m.width, m.height = 180, 50
 	m.resize()
 	m = press(m, "#", id, "enter")
@@ -145,12 +147,27 @@ func TestBigTaskKeys(t *testing.T) {
 	if answer.prompt != answerPrompt {
 		t.Fatalf("a opened %q: %q", answer.prompt, answer.message)
 	}
+	// The Notes open, the page is a megabyte of text: Tab steps through
+	// the ids in it, j scrolls it.
+	notes := page
+	for n := 0; n < 80 && !strings.Contains(detailPlain(notes), "▸ NOTES"); n++ {
+		notes = press(notes, "shift+tab")
+	}
+	if notes = press(notes, "enter"); !strings.Contains(detailPlain(notes), "▸ NOTES (750) · Enter folds") {
+		t.Fatalf("the Notes did not open:\n%.2000s", detailPlain(notes))
+	}
+	// The megabyte page, wrapped in pieces and marked from the memo, is
+	// the page worked out whole, after a Tab and after a j.
+	sameAsOracle(t, press(notes, "tab"), "Tab in the open Notes")
+	sameAsOracle(t, press(notes, "tab", "j"), "j in the open Notes")
 	for _, c := range []struct {
 		name string
 		m    model
 		key  string
 	}{
 		{"j", page, "j"},
+		{"j, Notes open", notes, "j"},
+		{"tab, Notes open", notes, "tab"},
 		{"k", press(page, "j", "j"), "k"},
 		{"tab", page, "tab"},
 		{"request box", press(request, "w"), "x"},

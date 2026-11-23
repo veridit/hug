@@ -70,10 +70,8 @@ type idStop struct {
 // STATBUS-402. Only words that resolve exactly count (no prefix, no slug).
 var idWord = regexp.MustCompile(`[A-Za-z0-9][A-Za-z0-9_-]*[A-Za-z0-9]`)
 
-// idsIn are the tasks text names by id or alias, in order, each once,
-// never t itself. linked: the text is a section whose task:ID is a link
-// (links), so a task:ID there is its Links row, not a stop here.
-func (m model) idsIn(t task.Task, text string, linked bool) []idStop {
+// scanIDs is idsIn worked out (pageMemo keeps it per text).
+func (m model) scanIDs(t task.Task, text string, linked bool) []idStop {
 	var out []idStop
 	seen := map[string]bool{}
 	names := refWordsOf(m.all)
@@ -157,8 +155,8 @@ func (m model) idStops(t task.Task) []idStop {
 	var out []idStop
 	add := func(where string, index int, text string, linked bool) {
 		// The ids and the file links (zbdbtm) of one text, in the order
-		// it reads.
-		found := append(m.idsIn(t, text, linked), m.fileLinksIn(t, text)...)
+		// it reads: a slice of its own, since the memo's are sorted here.
+		found := append(append([]idStop(nil), m.idsIn(t, text, linked)...), m.fileLinksIn(t, text)...)
 		sort.SliceStable(found, func(i, j int) bool { return found[i].at < found[j].at })
 		for _, s := range found {
 			s.where, s.index = where, index
@@ -374,10 +372,29 @@ func markSpan(s, w string, linked bool) (at, n int, shown string) {
 	if w == "" {
 		return -1, 0, ""
 	}
+	return spanIn(scanVisible(s), w, linked)
+}
+
+// visibleText is a text's visible part (visible) and the words in it
+// that may name a task or a file, which markSpan looks for a stop in.
+type visibleText struct {
+	v     string
+	pos   []int
+	ids   [][]int
+	files []fileWord
+}
+
+func scanVisible(s string) *visibleText {
 	v, pos := visible(s)
+	return &visibleText{v: v, pos: pos, ids: idWord.FindAllStringIndex(v, -1), files: fileWords(v)}
+}
+
+// spanIn is markSpan in a scanned text.
+func spanIn(x *visibleText, w string, linked bool) (at, n int, shown string) {
+	v, pos := x.v, x.pos
 	if idWord.FindString(w) != w {
 		var part *fileWord
-		for _, fw := range fileWords(v) {
+		for _, fw := range x.files {
 			if fw.shown == w {
 				part = &fw
 				break
@@ -395,7 +412,7 @@ func markSpan(s, w string, linked bool) (at, n int, shown string) {
 		start, end := pos[part.at], pos[part.at+len(part.shown)-1]+1
 		return start, end - start, part.shown
 	}
-	for _, loc := range idWord.FindAllStringIndex(v, -1) {
+	for _, loc := range x.ids {
 		if v[loc[0]:loc[1]] != w || linked && taskPrefixed(v, loc[0]) {
 			continue
 		}
@@ -478,7 +495,7 @@ func renderSome(style lipgloss.Style, s string) string {
 // Markdown, a request): ▸ and the selection tint, then the style in
 // force before it again.
 func (m model) markStyled(s, w string, linked bool) string {
-	at, n, shown := markSpan(s, w, linked)
+	at, n, shown := m.markSpanOf(s, w, linked)
 	if at < 0 {
 		return s
 	}

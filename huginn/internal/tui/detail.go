@@ -80,9 +80,6 @@ func literalAngles(s string) string {
 func tagStart(c byte) bool {
 	return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '/' || c == '!' || c == '?'
 }
-func (m model) markdown(s string) string {
-	return renderMarkdown(s, m.width, m.styles.renderer.HasDarkBackground(), m.styles.renderer.ColorProfile())
-}
 
 // All inputs are values: file formatting can run off the UI thread without
 // reading the model or sharing its mutable terminal renderer (tmz060).
@@ -577,8 +574,11 @@ func (m model) doc(t task.Task) *task.Document {
 	return d
 }
 
-func (m model) sections(t task.Task) []detailSection {
-	d := m.doc(t)
+// sections are t's file split into its sections, as the page draws them
+// (worked out once per file: pageMemo).
+func (m model) sections(t task.Task) []detailSection { return m.facts(t).sections }
+
+func parseSections(t task.Task, d *task.Document) []detailSection {
 	if d == nil {
 		return []detailSection{{name: "description", text: cleanMarkdown(t.Goal)}}
 	}
@@ -1052,7 +1052,7 @@ func (m model) detailText(t task.Task) string {
 		b.WriteString(m.foldBody(t, f.key, sections, markAt) + "\n\n")
 	}
 	// A file Space shows in line, under the line naming it (zbdbtm).
-	return m.withInline(t, wrap(strings.TrimRight(b.String(), "\n"), m.width))
+	return m.withInline(t, m.wrapPage(strings.TrimRight(b.String(), "\n"), m.width))
 }
 
 // hangRow is a Dependencies, Children, Links or Files row: prefix (the
@@ -1099,20 +1099,19 @@ type fold struct {
 
 // folds are t's long sections with text, in page order.
 func (m model) folds(t task.Task) []fold {
-	sections := m.sections(t)
-	text := func(name string) string { return strings.TrimSpace(sectionText(sections, name)) }
+	f := m.facts(t) // the texts and their counts, once per file (pageMemo)
 	var out []fold
-	if s := text("details"); s != "" {
-		out = append(out, fold{key: "details", heading: "Details", stop: stopDetails, count: paragraphs(s)})
+	if f.details != "" {
+		out = append(out, fold{key: "details", heading: "Details", stop: stopDetails, count: f.detailsParagraphs})
 	}
 	if n := m.recordCount(t); n > 0 {
 		out = append(out, fold{key: "questions", heading: "Questions", stop: stopRecord, count: n})
 	}
-	if s := text("notes"); s != "" {
-		out = append(out, fold{key: "notes", heading: "Notes", stop: stopNotes, count: entries(s)})
+	if f.notes != "" {
+		out = append(out, fold{key: "notes", heading: "Notes", stop: stopNotes, count: f.notesEntries})
 	}
-	if s := text("history"); s != "" {
-		out = append(out, fold{key: "history", heading: "History", stop: stopHistory, count: entries(s)})
+	if f.history != "" {
+		out = append(out, fold{key: "history", heading: "History", stop: stopHistory, count: f.historyEntries})
 	}
 	return out
 }
@@ -1266,7 +1265,7 @@ func (m model) markedBlock() (int, int, bool) {
 			return 0, 0, false
 		}
 		head := fmt.Sprintf("▸ %s (%d)", strings.ToUpper(fs[m.fold].heading), fs[m.fold].count)
-		for i, l := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
+		for i, l := range m.pageLines(t) {
 			if strings.HasPrefix(l, head) {
 				return i, i, true
 			}
@@ -1281,7 +1280,7 @@ func (m model) markedBlock() (int, int, bool) {
 		marker = func(line string) bool { i, _ := markedRun(line, s.shown); return i >= 0 }
 		id = true
 	}
-	lines := strings.Split(ansi.Strip(m.detailText(t)), "\n")
+	lines := m.pageLines(t)
 	// The > is looked for under the focused section's ▸ heading: text
 	// above it with its own "> " rows is not the focus (zhvkmj check 5:
 	// Files had the focus, the page scrolled to a capture's rows, and

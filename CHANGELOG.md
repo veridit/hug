@@ -4,6 +4,16 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- A big task's page answers keys at once again. On a 700 KB task with 750
+  notes, one `j` took 0.36 s and a character typed in the answer or
+  request box 0.29 s; now each takes about 2 ms. On p39w4a in Seid (668 KB,
+  759 notes) one `j` went from 0.19 s to 6 ms. Tab through the open Notes
+  takes about 11 ms. `hug tui` now works out a task's sections, links, task
+  ids, file names and markdown once, when the task, the board or the width
+  changes, not again on every key. The page looks the same (1tjq11).
+
 ## v0.7.108 - 2026-11-22
 
 - `hug task check ID N "evidence"` now refuses evidence shorter than 8

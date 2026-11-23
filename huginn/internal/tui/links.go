@@ -20,9 +20,12 @@ type linkDetail struct {
 // links are the tasks t's text refers to as task:ID, in the order they
 // first appear in the file. The Depends on section is left out
 // (Dependencies lists it), so are History and a reference to t itself.
-func (m model) links(t task.Task) []linkDetail {
+func (m model) links(t task.Task) []linkDetail { return m.facts(t).links }
+
+// linksOf are the links of t's sections (pageMemo keeps them per file).
+func (m model) linksOf(t task.Task, sections []detailSection) []linkDetail {
 	var text []string
-	for _, s := range m.sections(t) {
+	for _, s := range sections {
 		if s.name != "dependencies" && s.name != "history" {
 			text = append(text, s.text)
 		}

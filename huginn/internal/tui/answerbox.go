@@ -301,7 +301,7 @@ func (m *model) revealRequestBox() {
 	if !ok {
 		return
 	}
-	for i, line := range strings.Split(ansi.Strip(m.detailText(t)), "\n") {
+	for i, line := range m.pageLines(t) {
 		if strings.HasPrefix(strings.TrimSpace(line), requestPrompt) {
 			if i < m.viewport.YOffset || i >= m.viewport.YOffset+m.viewport.Height {
 				m.viewport.SetYOffset(max(0, i-m.viewport.Height/2))

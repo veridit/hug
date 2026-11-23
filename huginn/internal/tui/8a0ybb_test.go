@@ -10,6 +10,7 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/cond"
 )
 
 // 8a0ybb (Jørgen 2026-11-20, requests 1 and 2): a task's page reads short
@@ -28,7 +29,10 @@ func fileBoard(t *testing.T, file, id string, w, h int) model {
 	old, oldTask := now, task.Now
 	at := func() time.Time { return time.Date(2026, 11, 22, 5, 36, 0, 0, time.Local) }
 	now, task.Now = at, at
-	t.Cleanup(func() { now, task.Now = old, oldTask })
+	// A wait checks against the world's clock (cond.State.Now), pinned
+	// too: a golden that shows "today is" holds on any day.
+	task.SetWorld(func() cond.State { return cond.State{Now: at()} })
+	t.Cleanup(func() { now, task.Now = old, oldTask; task.SetWorld(nil) })
 	s := &task.Store{Root: t.TempDir()}
 	b, err := os.ReadFile(file)
 	if err != nil {
