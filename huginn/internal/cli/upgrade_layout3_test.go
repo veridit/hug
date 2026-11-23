@@ -77,7 +77,7 @@ func TestUpgradeMovesBoardToLayout3(t *testing.T) {
 		t.Fatalf("a write on a layout-2 board: exit %d\n%s", code, out)
 	}
 	ls := func() string {
-		_, out := runText(a, "ls", "--jsonl")
+		_, out, _ := runJSON(a, "ls", "--jsonl")
 		var rows []string
 		for _, l := range strings.Split(strings.TrimSpace(out), "\n") {
 			for _, k := range []string{`"id":`, `"rank":`, `"group":`, `"state":`} {

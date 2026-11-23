@@ -28,10 +28,10 @@ func TestSecondTakeRefusedWithThreeFixLines(t *testing.T) {
 	if code != 3 || out != want {
 		t.Fatalf("exit %d, want 3 and\n%s\ngot\n%s", code, want, out)
 	}
-	code, out = runText(a, "take", second, "--model", "claude-opus-5-5", "--as", "kestrel", "--json")
+	code, out, serr := runJSON(a, "take", second, "--model", "claude-opus-5-5", "--as", "kestrel", "--json")
 	var r map[string]any
 	if e := json.Unmarshal([]byte(out), &r); e != nil || code != 3 {
-		t.Fatalf("exit %d: %v\n%s", code, e, out)
+		t.Fatalf("exit %d: %v\n%s\nstderr:\n%s", code, e, out, serr)
 	}
 	if fixes, _ := r["fixes"].([]any); len(fixes) != 5 || r["fix"] != "hug task done "+first || r["next"] != r["fix"] {
 		t.Fatalf("json: %s", out)

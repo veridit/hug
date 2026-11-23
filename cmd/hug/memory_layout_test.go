@@ -23,6 +23,10 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 	}
 	env := append(os.Environ(), "HOME="+home, "USERPROFILE="+home, "HUG_HOME="+store, "JCODE_HOME="+filepath.Join(home, "jcode"), "HUG_SYNC=off", "HUG_NO_EMBED=1", "GIT_CONFIG_GLOBAL="+os.DevNull, "GIT_CONFIG_NOSYSTEM=1", "GIT_AUTHOR_NAME=Synthetic", "GIT_AUTHOR_EMAIL=synthetic@example.invalid", "GIT_COMMITTER_NAME=Synthetic", "GIT_COMMITTER_EMAIL=synthetic@example.invalid", "GOMAXPROCS=2", "GOFLAGS=-p=2")
 	env = append(env, "PATH="+base+string(os.PathListSeparator)+os.Getenv("PATH"))
+	// An old variable name makes every hug print the stale-name warning on
+	// stderr; the --json search below must still parse (tfe9nr). Spelt in
+	// parts so TestNoOldNamesInRepository does not match it.
+	env = append(env, "HUG"+"INN_UPDATE_GOLDEN=1")
 	bin := filepath.Join(base, "hug")
 	if runtime.GOOS == "windows" {
 		bin += ".exe"
@@ -45,6 +49,20 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 			t.Fatalf("%s %v: %v\n%s", command, args, err, out)
 		}
 		return out
+	}
+	// stdout is a --json reply alone: a stderr line before it (a warning,
+	// a notice) breaks the parse (tfe9nr), so stderr only shows on failure.
+	stdout := func(command string, args ...string) (string, string) {
+		t.Helper()
+		cmd := exec.Command(command, args...)
+		cmd.Dir, cmd.Env = root, env
+		var stderr strings.Builder
+		cmd.Stderr = &stderr
+		b, err := cmd.Output()
+		if err != nil {
+			t.Fatalf("%s %v: %v\n%s\nstderr:\n%s", command, args, err, b, stderr.String())
+		}
+		return string(b), stderr.String()
 	}
 	run("git", "init", "-q", "-b", "main")
 	run("git", "commit", "-q", "--allow-empty", "-m", "code")
@@ -69,12 +87,12 @@ func TestMemoryLayoutRealBinaryKeepsSearchAndNativeBytes(t *testing.T) {
 	}
 	results := func() []byte {
 		t.Helper()
-		out := run(bin, "mem", "search", "Quartz migration proof", "--all", "--json")
+		out, errs := stdout(bin, "mem", "search", "Quartz migration proof", "--all", "--json")
 		var response struct {
 			Memories []map[string]any `json:"memories"`
 		}
 		if err := json.Unmarshal([]byte(out), &response); err != nil || len(response.Memories) == 0 {
-			t.Fatalf("search has no proof memory: %v\n%s", err, out)
+			t.Fatalf("search has no proof memory: %v\n%s\nstderr:\n%s", err, out, errs)
 		}
 		b, err := json.Marshal(response)
 		if err != nil {

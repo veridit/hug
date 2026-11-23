@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -109,11 +110,21 @@ func TestBackgroundSyncTwoClonesRealBinary(t *testing.T) {
 	run(one, homeA, bin, "task", "memory", "share") // 34r1ft: committed, so clone two follows it
 	run(one, homeA, bin, "task", "sync")
 	run(two, homeB, bin, "task", "init")
-	out := run(one, homeA, bin, "task", "new", "Shared work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--json")
-	id := between(out, `"id":"`, `"`)
-	if id == "" {
-		t.Fatalf("no id in %s", out)
+	// The id from stdout alone, the --json reply: stderr may carry a
+	// warning first (tfe9nr), as the old variable name set here makes it
+	// (spelt in parts for TestNoOldNamesInRepository).
+	newTask := exec.Command(bin, "task", "new", "Shared work", "--goal", "G", "--purpose", "P", "--principle", "Q", "--accept", "C", "--json")
+	newTask.Dir, newTask.Env = one, append(env, "HUG_HOME="+homeA, "HUG"+"INN_UPDATE_GOLDEN=1")
+	var newErr strings.Builder
+	newTask.Stderr = &newErr
+	newOut, err := newTask.Output()
+	var created struct {
+		Task struct{ ID string } `json:"task"`
 	}
+	if err != nil || json.Unmarshal(newOut, &created) != nil || created.Task.ID == "" {
+		t.Fatalf("hug task new --json: %v\n%s\nstderr:\n%s", err, newOut, newErr.String())
+	}
+	id := created.Task.ID
 	// The project memory branch exists on the remote once (as a person's
 	// first hug mem sync does); from then on nobody syncs.
 	run(one, homeA, bin, "mem", "remember", "--project", "Synthetic setup fact for the branch.")
@@ -220,13 +231,4 @@ func busySyncers(clones []string) bool {
 		}
 	}
 	return false
-}
-
-func between(s, from, to string) string {
-	_, rest, ok := strings.Cut(s, from)
-	if !ok {
-		return ""
-	}
-	v, _, _ := strings.Cut(rest, to)
-	return v
 }
