@@ -30,3 +30,5 @@ Main ed882297 (merge of c5925996 on 0c09d4ee), CI 45290106766 8/8, release.yml 4
 - [ ] Jørgen confirms the dated-wait line and its 'til 11-24' list cell read right
 
 ## Notes
+
+Shipped atex3d (worker elephant, Opus 5.5 high): 15 of 15 mutants caught, 1 new golden (rows/dated-wait-120.txt), no existing golden changed, no schema bump. Old tasks keep their stored fields and show the new line. Also in this release: tfe9nr (tests only). Before: 'stage: waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'. After: 'stage: waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08'. Two choices were crab's (23:07Z): the list STAGE cell stays 10 wide and says 'til 11-24' (no room for 'until'), and 'since' keeps each screen's own format.
