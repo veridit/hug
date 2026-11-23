@@ -30,7 +30,7 @@ func TestTimedWaitCommands(t *testing.T) {
 	if f := taskFile(t, a, w); !strings.Contains(f, `waiting_until: "2026-11-24"`) {
 		t.Fatalf("wait --until:\n%s", f)
 	}
-	if _, out := runText(a, "show", w); !strings.Contains(out, "· until 2026-11-24") {
+	if _, out := runText(a, "show", w); !strings.Contains(out, "stage: waiting until 2026-11-24 · on a week of use") { // atex3d: the date first
 		t.Fatalf("show before the date:\n%s", out)
 	}
 	if f := taskFile(t, a, q); strings.Contains(f, "\nasked_") {

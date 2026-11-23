@@ -142,18 +142,22 @@ func (m model) note(t task.Task) (head, text, stamp string) {
 		}
 		return head, strings.Join(parts, " · "), t.Fields["asked_since"]
 	case "waiting":
+		// A wait for a date leads with it (atex3d, Jørgen 2026-11-20
+		// 13:05): "waiting until 2026-11-24 · then ask jhf", never "on
+		// the date ..." or a second "until".
+		if until, rest, ok := task.DatedWait(t.Fields); ok {
+			if rest != "" {
+				rest = "· " + m.attachments(t, oneLine(rest))
+			}
+			return "waiting until " + oneLine(until), rest, t.Fields["waiting_since"]
+		}
 		who, what := m.waitingFor(t)
 		at := t.Fields["waiting_since"]
 		if v := t.Fields["asked_since"]; v != "" {
 			at = v
 		}
 		if who == "" {
-			note := m.attachments(t, oneLine(what))
-			// A wait for a date says when it ends (z2vmte).
-			if u := t.Fields["waiting_until"]; u != "" {
-				note += " · until " + untilDay(u)
-			}
-			return "waiting on", note, at
+			return "waiting on", m.attachments(t, oneLine(what)), at
 		}
 		return "waiting on " + m.name(who) + ":", m.attachments(t, oneLine(what)), at
 	case "review":
@@ -409,18 +413,15 @@ func (m model) withLongName(t task.Task, head string) string {
 	return head
 }
 
-// untilDay is a waiting_until date as a row says it: "24 Nov" (z2vmte),
-// the year only when it is not this one; the text as written when it is no
-// date.
-func untilDay(v string) string {
+// untilCell is a wait's STAGE cell when it waits for a date: "til 11-24"
+// (atex3d, crab 23:07Z: the cell keeps its 9 cells, so no "until" and no
+// year; the second line has the whole date). "" when v is no date.
+func untilCell(v string) string {
 	d, err := time.ParseInLocation("2006-01-02", strings.TrimSpace(v), time.Local)
 	if err != nil {
-		return v
+		return ""
 	}
-	if d.Year() != task.Now().Year() {
-		return d.Format("2 Jan 2006")
-	}
-	return d.Format("2 Jan")
+	return "til " + d.Format("01-02")
 }
 
 // tickedCheck says whether check n (as written in asked_check) of t is

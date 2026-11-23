@@ -860,13 +860,12 @@ func Next(tasks []Task, f Filter) (Result, error) {
 }
 
 // WaitingLine is a waiting task in one line: "ID waiting on WHAT", and
-// " · until DATE" for a timed wait.
+// for a wait with a date "ID waiting until DATE · on WHAT" (atex3d).
 func WaitingLine(t Task) string {
-	line := t.ID + " waiting on " + strings.Join(strings.Fields(t.Fields["waiting_on"]), " ")
-	if u := strings.TrimSpace(t.Fields["waiting_until"]); u != "" {
-		line += " · until " + u
+	if until, rest, ok := DatedWait(t.Fields); ok {
+		return t.ID + " " + DatedWaitLine(until, rest)
 	}
-	return line
+	return t.ID + " waiting on " + strings.Join(strings.Fields(t.Fields["waiting_on"]), " ")
 }
 func (s *Store) rename(d *Document, group, r, slug string) (Result, error) {
 	oldPath := d.Task.Path

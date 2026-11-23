@@ -50,6 +50,39 @@ func dayArg(id, flag, v, fix string) (string, error) {
 	return d.Format(dayLayout), nil
 }
 
+// DatedWait is a wait for a date as its stage line says it (atex3d,
+// Jørgen 2026-11-20 13:05): the date first, then what follows it. until is
+// waiting_until; rest is "then ask NAME" for a question held for the date
+// (waiting_ask_for), else "on WHY" (waiting_on), "" when it names
+// nothing: "waiting until 2026-11-24 · then ask jhf". ok is false for a
+// wait with no date. The stored waiting_on of ask --after, "the date
+// DATE, then ask NAME", is never shown: it is for an older hug.
+func DatedWait(f map[string]string) (until, rest string, ok bool) {
+	until = strings.TrimSpace(f["waiting_until"])
+	if until == "" {
+		return "", "", false
+	}
+	if who := strings.TrimSpace(f["waiting_ask_for"]); who != "" {
+		return until, "then ask " + strings.Join(strings.Fields(who), " "), true
+	}
+	on := strings.Join(strings.Fields(f["waiting_on"]), " ")
+	if r, cut := strings.CutPrefix(on, "the date "+until+", "); cut {
+		return until, r, true // its ask fields lost: "then ask NAME" as written
+	}
+	if on == "" {
+		return until, "", true
+	}
+	return until, "on " + on, true
+}
+
+// DatedWaitLine is DatedWait in one line: "waiting until DATE · REST".
+func DatedWaitLine(until, rest string) string {
+	if rest == "" {
+		return "waiting until " + until
+	}
+	return "waiting until " + until + " · " + rest
+}
+
 // dueDay says whether a waiting_until date has come.
 func dueDay(v string) bool {
 	if strings.TrimSpace(v) == "" {

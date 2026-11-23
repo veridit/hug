@@ -1,0 +1,60 @@
+HUG · list   5/5 tasks · ! 0 broken                                                                                     
+view: overview  list  board  !lint                                   │ todo 0 · doing 5 · depends 0 · done 0 · dropped 0
+filter: [state:!done ×] ⌫ last · F clear · sort: rank                                                                   
+─── TASKS  [5] · all feature · all high ────────────────────────────────────────────────────────────────────────────────
+   ID       TITLE                                                                                       STAGE     ✓     
+   aaaaaa   Look again after a week of use                                                              til 11-24 ◑ 1/2 
+   bbbbbb   Ask after a week of use                                                                     til 11-24 ◑ 1/2 
+>  cccccc   The board keeps itself true                                                                 til 11-24 ◑ 1/2 
+   └─ waiting until 2026-11-24 · then ask jhf                                                               since 18 Nov
+   dddddd   Warm cache under 50 ms                                                                      waiting   ◑ 1/2 
+   eeeeee   Status colors                                                                               active    ◑ 1/2 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+state=!done · F clears · ! lint finding · ↳ epic · depends = a dependency is not done                                   
+                                                                                                                        
+j/k move · Space mark · Enter open · h/l pane · filter · # id · / find · : cmd · ? help · quit · H/L column · order …   
+HUG · list › state:!done › cccccc                                                                                       
+[doing]  [feature]  [high]  group:root  assigned:crab                                                                   
+created 2026-11-01 · updated 2026-11-01 · t                                                                             
+└─ waiting until 2026-11-24 · then ask jhf · since 18 Nov                                                               
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+The board keeps itself true                                                                                             
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+PURPOSE                                                                                                                 
+p                                                                                                                       
+                                                                                                                        
+PRINCIPLE                                                                                                               
+q                                                                                                                       
+                                                                                                                        
+GOAL                                                                                                                    
+g                                                                                                                       
+                                                                                                                        
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                                            
+> ☑ 1. a                                                                                                                
+  ☐ 2. b                                                                                                                
+                                                                                                                        
+no dependencies                                                                                                         
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+─── Task 3 of 5 · 100% · next · previous · Esc back ────────────────────────────────────────────────────────────────────
+j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · up · request · / find …      
