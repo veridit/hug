@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.110 - 2026-11-23
 
 - `hug task ls --asked` lists the questions waiting for you, one line per
   open question, oldest first: task id, the check it is about (`-` for
