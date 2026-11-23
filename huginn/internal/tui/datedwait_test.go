@@ -115,3 +115,25 @@ func TestDatedWaitLeadsWithTheDate(t *testing.T) {
 	}
 	golden(t, filepath.Join("testdata", "rows", "dated-wait-120.txt"), "TestDatedWaitLeadsWithTheDate", strings.Join(shots, "\n")+"\n")
 }
+
+// atex3d: only a wait says its date in the STAGE cell; a task in another
+// stage with a waiting_until left over keeps its own word.
+func TestOnlyAWaitSaysItsDateInTheCell(t *testing.T) {
+	m := datedBoard(t)
+	// The stage comes from the fields (task.Stage): waiting_on makes a
+	// wait, review_by a review; waiting_until alone holds nothing.
+	for _, c := range []struct {
+		fields map[string]string
+		want   string
+	}{
+		{map[string]string{"waiting_on": "a week of use"}, "til 11-24"},
+		{map[string]string{}, "active"},
+		{map[string]string{"review_by": "crab"}, "review"},
+	} {
+		c.fields["waiting_until"] = "2026-11-24"
+		tk := task.Task{ID: "xxxxxx", State: "doing", Fields: c.fields}
+		if got, _ := m.rowStage(tk); got != c.want {
+			t.Errorf("%v: cell %q, want %q", c.fields, got, c.want)
+		}
+	}
+}
