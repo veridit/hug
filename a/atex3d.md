@@ -15,6 +15,7 @@ branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-24T00:47"
 done_release: "v0.7.111"
+parent: "ersks7"
 ---
 
 ## Goal
