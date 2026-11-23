@@ -11,10 +11,13 @@ rank: "zzzzzzzzzzlh"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T03:38"
-stage: "active"
+stage: "waiting"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+waiting_on: "atex3d done (check 5 promoted to it)"
+waiting_since: "2026-11-24T00:01"
+waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -73,3 +76,4 @@ check 4: Held untouched: commit 650bdf53 at 2026-11-24 00:00 local 'hug task wak
 - 2026-11-20T13:05 doing/active -> doing/waiting (wait until 2026-11-24)
 - 2026-11-24T00:00 doing/waiting -> doing/active (woke: the date 2026-11-24 has come); was waiting_asked_by: crab; waiting_on: 47sxn2 returns to ASKED (check 4); waiting_since: 2026-11-20T13:05; waiting_until: 2026-11-24
 - 2026-11-24T00:00 crab back on it after the wait
+- 2026-11-24T00:01 doing/active -> doing/waiting (wait)
