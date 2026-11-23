@@ -613,7 +613,14 @@ func (m model) overviewText() string {
 		// focused section's rules are bright, its title keeps its colour.
 		focus := p == m.pane || sharedRules() && p-1 == m.pane && len(m.paneRows(p-1)) > 0
 		up := len(indices) > 0 && start > 0
-		lines = append(lines, m.sectionRule(ruleLead(up, sharedRules() && below), title, m.width, focus))
+		if focusRules() && p != m.pane {
+			// Variant C (hd74ct): only the focused section sits between
+			// rules; another's title is a plain line, its count says what
+			// is hidden.
+			lines = append(lines, plainTitle(title, m.width))
+		} else {
+			lines = append(lines, m.sectionRule(ruleLead(up, sharedRules() && below), title, m.width, focus))
+		}
 		// IN PROGRESS and WAITING rows share one layout with the owner cell
 		// (102bc0, tje4sx), without the columns the section shares.
 		doing := m.sectionLayout(p)
@@ -637,7 +644,7 @@ func (m model) overviewText() string {
 			}
 		}
 		below = len(indices) > 0 && end < len(indices)
-		if len(indices) > 0 && (!sharedRules() || p == len(names)-1) {
+		if len(indices) > 0 && endRuleUnder(p, len(names), m.pane) {
 			// The end rule, ↓ when rows are hidden below. An empty section
 			// is its titled rule alone ("· None"): six sections fit 80x24
 			// (41hhgn).
@@ -664,7 +671,7 @@ func (m model) sectionChrome() int {
 	for p := range rows {
 		rows[p] = len(m.paneRows(p))
 	}
-	return overviewChrome(rows)
+	return overviewChrome(rows, m.pane)
 }
 
 // sectionState is the status whose colour an overview section's title

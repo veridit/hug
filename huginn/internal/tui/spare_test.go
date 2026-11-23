@@ -47,7 +47,7 @@ func rowBudget(m model) int {
 	b := m.bodyHeight()
 	for p := range overviewSections {
 		b-- // its titled rule
-		if n := len(m.paneRows(p)); n > 0 && (!sharedRules() || p == len(overviewSections)-1) {
+		if n := len(m.paneRows(p)); n > 0 && endRuleUnder(p, len(overviewSections), m.pane) {
 			b-- // its end rule (v68n82)
 		}
 	}

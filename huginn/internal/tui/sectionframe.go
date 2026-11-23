@@ -19,12 +19,27 @@ import (
 // sectionFrame is the overview's frame: "end", each section with its own
 // end rule (variant A, Jørgen's sketch, the default), or "shared", the
 // next section's titled rule doubling as the end of the one above and
-// the last section with an end rule (variant B, v68n82 check 2). A
-// string, so a build can pick B with -ldflags -X.
+// the last section with an end rule (variant B, v68n82 check 2), or
+// "focus", only the focused section between its titled rule and its end
+// rule and every other section's title on a plain line (variant C,
+// hd74ct, Jørgen 2026-11-22 21:30Z: 'just showing the for the active
+// section'). A string, so a build can pick B or C with -ldflags -X
+// github.com/veridit/hug/huginn/internal/tui.sectionFrame=focus.
 var sectionFrame = "end"
 
 // sharedRules says the overview draws variant B.
 func sharedRules() bool { return sectionFrame == "shared" }
+
+// focusRules says the overview draws variant C: rules only around the
+// focused section.
+func focusRules() bool { return sectionFrame == "focus" }
+
+// plainTitle is an unfocused section's title line in variant C: the
+// title where a rule would put it, after four blank cells, no dashes,
+// no arrows (its count '[19] · 1–3 shown' says rows are hidden).
+func plainTitle(title string, width int) string {
+	return ansi.Truncate("    "+title, width, "…")
+}
 
 // ruleLead is a rule's first four cells: the arrows, then the rule.
 // up is ↑ of the section the rule opens, down ↓ of the one it closes.
@@ -79,14 +94,28 @@ func (m model) sectionRule(lead, title string, width int, bright bool) string {
 
 // overviewChrome is how many lines of the overview are rules: each
 // section's top rule, and an end rule under each section with rows
-// (variant A) or under the last section when it has rows (B). An empty
-// section is its titled rule alone ("· None", h9zghj).
-func overviewChrome(rows []int) int {
+// (variant A) or under the last section when it has rows (B), or under
+// the focused section alone when it has rows (C; the others' titles are
+// a plain line each). An empty section is its titled rule alone ("·
+// None", h9zghj).
+func overviewChrome(rows []int, focus int) int {
 	lines := len(rows)
 	for p, n := range rows {
-		if n > 0 && (!sharedRules() || p == len(rows)-1) {
+		if n > 0 && endRuleUnder(p, len(rows), focus) {
 			lines++
 		}
 	}
 	return lines
+}
+
+// endRuleUnder says section p (of n, focus the focused one) with rows
+// gets an end rule: in A each, in B the last, in C the focused one.
+func endRuleUnder(p, n, focus int) bool {
+	switch {
+	case sharedRules():
+		return p == n-1
+	case focusRules():
+		return p == focus
+	}
+	return true
 }
