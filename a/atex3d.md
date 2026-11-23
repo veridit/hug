@@ -1,7 +1,7 @@
 ---
 id: atex3d
 title: "A dated wait's stage line leads with the date"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["elephant"]
@@ -10,11 +10,11 @@ group: ""
 rank: "zzzzzzzzzzli"
 created: 2026-11-24
 updated: 2026-11-24
-doing_since: "2026-11-24T00:02"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-24T00:47"
+done_release: "v0.7.111"
 ---
 
 ## Goal
@@ -39,5 +39,8 @@ From z2vmte check 5 (jhf request 2026-11-20 13:05). Today on main: timedwait.go:
 
 crab ruling 23:07Z on elephant's questions: (1) the list STAGE cell is 10 wide (tui/stage.go:23, sized for 'deferred:'), and 'until 11-24' needs 11. Widening it would take 2 title cells from every row for a rare state, so a timed wait's cell reads 'til 11-24'. (2) 'since' keeps each surface's own format for every stage (show 'since 2026-11-18 05:08', tui 'since 18 Nov'); only the lead changes, to 'waiting until DATE · then ask NAME' or 'waiting until DATE · on WHY'. Jørgen is asked about both after release.
 check 1: 0c09d4ee on atex3d/ci/atex3d, CI 8/8 https://github.com/veridit/hug/actions/runs/45290106766. show: 'stage: waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08' (was 'waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'); wait --until: 'waiting until 2026-11-24 · on a week of use · since ...'. tui header '└─ waiting until 2026-11-24 · then ask jhf · since 18 Nov'; list STAGE cell 'til 11-24' (crab ruling 23:07Z: cell keeps 9 cells); 'since' keeps each surface's format (show 'since 2026-11-18 05:08', tui 'since 18 Nov'). Old v0.7.55 fields render the new way (tested). Tests: task TestWaitingLineLeadsWithTheDate, cli TestShowLeadsADatedWaitWithTheDate, tui TestDatedWaitLeadsWithTheDate (golden testdata/rows/dated-wait-120.txt) + TestOnlyAWaitSaysItsDateInTheCell; mutants 15/15 killed.
+landed 573c98b on main 2026-11-24: A dated wait's stage line leads with the date (atex3d)
+shipped in v0.7.111 (573c98b)
 ## History
 - 2026-11-24T00:02 todo -> doing/active (take)
+- 2026-11-24T00:47 doing/active -> done (done, by release v0.7.111: every check holds); was doing_since: 2026-11-24T00:02
