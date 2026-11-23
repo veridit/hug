@@ -32,11 +32,12 @@ From z2vmte check 5 (jhf request 2026-11-20 13:05). Today on main: timedwait.go:
 ## Depends on
 
 ## Acceptance
-- [ ] A waiting task's stage line leads with the date: 'waiting until 2026-11-24 · on WHAT · since 11-18', with no second 'until' and no 'on the date' wording; the same in hug tui's header, its list row stage cell ('until 11-24') and hug task show (golden, test)
+- [x] A waiting task's stage line leads with the date: 'waiting until 2026-11-24 · on WHAT · since 11-18', with no second 'until' and no 'on the date' wording; the same in hug tui's header, its list row stage cell ('until 11-24') and hug task show (golden, test)
 
 ## Notes
 
 
 crab ruling 23:07Z on elephant's questions: (1) the list STAGE cell is 10 wide (tui/stage.go:23, sized for 'deferred:'), and 'until 11-24' needs 11. Widening it would take 2 title cells from every row for a rare state, so a timed wait's cell reads 'til 11-24'. (2) 'since' keeps each surface's own format for every stage (show 'since 2026-11-18 05:08', tui 'since 18 Nov'); only the lead changes, to 'waiting until DATE · then ask NAME' or 'waiting until DATE · on WHY'. Jørgen is asked about both after release.
+check 1: 0c09d4ee on atex3d/ci/atex3d, CI 8/8 https://github.com/veridit/hug/actions/runs/45290106766. show: 'stage: waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08' (was 'waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'); wait --until: 'waiting until 2026-11-24 · on a week of use · since ...'. tui header '└─ waiting until 2026-11-24 · then ask jhf · since 18 Nov'; list STAGE cell 'til 11-24' (crab ruling 23:07Z: cell keeps 9 cells); 'since' keeps each surface's format (show 'since 2026-11-18 05:08', tui 'since 18 Nov'). Old v0.7.55 fields render the new way (tested). Tests: task TestWaitingLineLeadsWithTheDate, cli TestShowLeadsADatedWaitWithTheDate, tui TestDatedWaitLeadsWithTheDate (golden testdata/rows/dated-wait-120.txt) + TestOnlyAWaitSaysItsDateInTheCell; mutants 15/15 killed.
 ## History
 - 2026-11-24T00:02 todo -> doing/active (take)
