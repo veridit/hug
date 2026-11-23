@@ -34,12 +34,13 @@ Same pattern may exist in other tests that json.Unmarshal CombinedOutput: grep f
 ## Acceptance
 - [x] A test that makes hug task new print a stderr line still parses (fails first with CombinedOutput)
 - [ ] The stderr line starting with 'h' is named, and either fixed or shown to be correct
-- [ ] Other tests that unmarshal CombinedOutput are listed and fixed
+- [x] Other tests that unmarshal CombinedOutput are listed and fixed
 
 ## Notes
 
 
 Inventory (check 3), branch tfe9nr 940afa84. Tests that parsed JSON out of a stdout+stderr mix, now stdout only, stderr shown on failure: (1) huginn/internal/tui/tmux_refresh_test.go:57 run used CombinedOutput, parsed at :65 (now :60 cmd.Output, parse :78). (2) cmd/hug/memory_layout_test.go:38 try/run CombinedOutput -> json.Unmarshal of mem search --json at :76 (now stdout helper :53, parse :95). (3) cmd/hug/sync_test.go:112 task new --json via CombinedOutput, id by substring between() (now cmd.Output + json.Unmarshal :113-125; between() removed, no other caller). (4) huginn/internal/cli runText (take_test.go:35) sets a.Out=a.Err=one buffer; 10 --json/--jsonl call sites parsed it, now runJSON (take_test.go:44): busy_test.go:31, catchup_preservation_test.go:235, detour_test.go:31 and :54, lsasked_test.go:91 and :104, states_test.go:29, strike_test.go:26, takewith_test.go:112, upgrade_layout3_test.go:80. Checked and left alone: mcp/*_test.go use CombinedOutput only for git fixtures and parse the MCP reply text; muninn/run runCLI (concurrent_writes_test.go:19) already splits stdout/stderr; notstored_test.go:24 merges but parses no JSON; install_test.go:30 merges but parses no JSON; memory_local_test.go:87 task memory --json only scanned for fix:/next: lines; deliverhook_test.go:105 captureSurface is stdout-only.
 check 1: TestTmuxAutoRefresh now sets an old variable name so hug task new --json prints 'hug: hug reads only HUG_* variables' on stderr. Failing first on 9d215df7 with CombinedOutput: tmux_refresh_test.go:72: invalid character 'h' looking for beginning of value. Fixed in 940afa84: run uses cmd.Output, stderr kept for the failure message and asserted to carry the warning. Mutant CombinedOutput back -> tmux_refresh_test.go:78 same error.
+check 3: Listed in the note on tfe9nr: 13 parse sites in 4 places fixed in 940afa84 (tmux_refresh_test.go:78, memory_layout_test.go:95, sync_test.go:113, and 10 cli call sites moved from runText to runJSON take_test.go:44). runjson_test.go pins runJSON with a real stderr line (hug setup: comparing .backlog/). Mutants: memory_layout CombinedOutput -> :102 invalid character 'h'; sync_test CombinedOutput -> :124 fails; runJSON merging -> runjson_test.go:34 fails.
 ## History
 - 2026-11-23T14:24 todo -> doing/active (take)
