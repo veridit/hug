@@ -11,14 +11,10 @@ rank: "zzzzzzzzzzlh"
 created: 2026-11-18
 updated: 2026-11-18
 doing_since: "2026-11-18T03:38"
-stage: "waiting"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-waiting_until: "2026-11-24"
-waiting_on: "47sxn2 returns to ASKED (check 4)"
-waiting_since: "2026-11-20T13:05"
-waiting_asked_by: "crab"
 ---
 
 ## Goal
@@ -74,3 +70,4 @@ file:screen-1304.ans (30551 bytes, sha256:82681517) screen capture from hug tui
 - 2026-11-20T13:05 request 1 in progress by crab: hug task resume z2vmte
 - 2026-11-20T13:05 resolved request 1 by crab
 - 2026-11-20T13:05 doing/active -> doing/waiting (wait until 2026-11-24)
+- 2026-11-24T00:00 doing/waiting -> doing/active (woke: the date 2026-11-24 has come); was waiting_asked_by: crab; waiting_on: 47sxn2 returns to ASKED (check 4); waiting_since: 2026-11-20T13:05; waiting_until: 2026-11-24
