@@ -1,0 +1,34 @@
+---
+id: hya1st
+title: "Task page reads small to large: Goal first, a short Details shown open"
+state: todo
+type: feature
+priority: "high"
+assignee: []
+labels: []
+group: ""
+rank: "zzzzzzzzzzzy"
+created: 2026-11-24
+updated: 2026-11-24
+---
+
+## Goal
+A task's page opens on its shortest section, the Goal, and grows toward the long ones; a short Details shows open, not folded.
+
+## Purpose
+Jørgen 2026-11-24 18:15Z on statbus kkj0mn (screenshot): 'the ordering seems off, it starts big and then shrinks, it should start small first? And DETAILS can show if not big? I.e. start auto expanded if small'.
+
+## Principle
+Small before large, so the page reads like a funnel. A section folds only when it is long enough to push the rest away; positions stay predictable from task to task.
+
+## Details
+Today (8a0ybb, shipped): PURPOSE, PRINCIPLE, GOAL, ACCEPTANCE, short sections, then DETAILS, NOTES, HISTORY always folded. On kkj0mn: Purpose 4 lines, Principle 2, Goal 1, and DETAILS (1) folded although it is 1 line. The Goal is one sentence of at most 140 characters by rule, so it is always the shortest. Variants for frames: (A) fixed Goal, Principle, Purpose; (B) Goal first, then Purpose and Principle shortest first. Details opens when it fits in 6 wrapped lines or fewer at the current width (provisional), else it folds as today. Notes and History stay folded. Supersedes 8a0ybb check 12 (its order frames).
+
+## Depends on
+
+## Acceptance
+- [ ] Jørgen picks the order from ANSI frames of kkj0mn and 8a0ybb at 100x30 (variants A and B, a short Details open, a long one folded)
+- [ ] The page shows the picked order; Details is open when it fits in the threshold and folded with its count when longer (golden 100x30 and 160x45, test at the threshold)
+- [ ] Jørgen confirms on his board after release
+
+## Notes
