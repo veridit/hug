@@ -23,7 +23,7 @@ Jørgen 2026-11-24 18:15Z on statbus kkj0mn (screenshot): 'the ordering seems of
 Small before large, so the page reads like a funnel. A section folds only when it is long enough to push the rest away; positions stay predictable from task to task.
 
 ## Details
-Today (8a0ybb, shipped): PURPOSE, PRINCIPLE, GOAL, ACCEPTANCE, short sections, then DETAILS, NOTES, HISTORY always folded. On kkj0mn: Purpose 4 lines, Principle 2, Goal 1, and DETAILS (1) folded although it is 1 line. The Goal is one sentence of at most 140 characters by rule, so it is always the shortest. Variants for frames: (A) fixed Goal, Principle, Purpose; (B) Goal first, then Purpose and Principle shortest first. Details opens when it fits in 6 wrapped lines or fewer at the current width (provisional), else it folds as today. Notes and History stay folded. Supersedes 8a0ybb check 12 (its order frames).
+Picked by Jørgen 18:23Z: GOAL, PURPOSE, PRINCIPLE, DETAILS, then ACCEPTANCE, the other short sections, then NOTES and HISTORY folded (the AGENTS.md writing order). Details opens when it fits in 6 wrapped lines or fewer at the current width (provisional), else it folds to one line with its count as today. Today (8a0ybb, shipped): PURPOSE, PRINCIPLE, GOAL, ACCEPTANCE, short sections, then DETAILS, NOTES, HISTORY always folded. On kkj0mn: Purpose 4 lines, Principle 2, Goal 1, and DETAILS (1) folded although it is 1 line. Supersedes 8a0ybb check 12.
 
 ## Depends on
 
