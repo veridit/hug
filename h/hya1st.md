@@ -35,3 +35,5 @@ Picked by Jørgen 18:23Z: GOAL, PURPOSE, PRINCIPLE, DETAILS, then ACCEPTANCE, th
 ## Notes
 
 check 1: Jørgen 18:23Z, without frames: 'Goal, Purpose, Principles, Details'. A fixed order, not variant A or B. Acceptance follows Details, as in AGENTS.md's writing order (Goal, Purpose, Principle, Relevant details, then Acceptance).
+
+Jørgen 18:24Z, why this order: 'I.e. What, Why, How, Notes (to explain those over)'. So Goal is the what, Purpose the why, Principle the how, and Details the notes that explain them. The section names stay as they are; this is only the reason for the order.
