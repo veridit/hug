@@ -1,7 +1,7 @@
 ---
 id: 8a0ybb
 title: "Detail view: short sections before long, folded long sections, scroll markers"
-state: "doing"
+state: "done"
 type: feature
 priority: "medium"
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzwh"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-22T05:15"
 parent: "9a479v"
+done_at: "2026-11-24T19:16"
 ---
 
 ## Goal
@@ -126,6 +125,7 @@ landed 99e99eb on main 2026-11-22: hug tui: a task's page reads short to long; R
 landed 5d45e86 on main 2026-11-22: hug tui: / opens a folded section that holds a match, and folds it again when…
 landed 6a6e02a on main 2026-11-22: tests: a find opens the fold holding its match; answering keeps the sections the…
 shipped in v0.7.102 (790af7f)
+Reflection (open, 2026-11-24, crab): Shipped: no DESCRIPTION heading, Details naming, long sections folded. Jørgen's 11-24 review of the order (start small, a short Details open) continues as hya1st.
 ## History
 - 2026-11-19T12:24 todo -> todo/design (ask)
 - 2026-11-19T12:26 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -160,3 +160,4 @@ shipped in v0.7.102 (790af7f)
 - 2026-11-24T19:16 answered asked (question 4, check 12), by crab, for ox (doing/asked -> doing/active):
   > Is this the page order you want? Frames order-a-opens, order-b-folded and order-c-notes-open (100x30) show 8a0ybb opening on Purpose, Principle, Goal, then Acceptance, with no DESCRIPTION heading; at the end, the long sections fold to one line each, DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22), and Enter on one opens it. A 'long' section is always Details, the answered Questions, Notes and History, whatever their length; nothing else folds. order-v0.7.101-opens is today's page for comparison.
   Withdrawn by crab: Jørgen answered on kkj0mn at 18:15Z that the page should start small and that a short Details should show open. That is now hya1st, with new frames; check 12 is struck.
+- 2026-11-24T19:16 doing/active -> done (done); was doing_since: 2026-11-22T05:15
