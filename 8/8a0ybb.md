@@ -10,16 +10,11 @@ group: ""
 rank: "zzzzzzzzzzwh"
 created: 2026-11-19
 updated: 2026-11-19
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-22T05:15"
-asked_since: "2026-11-22T05:36"
-asked_by: "ox"
-asked_check: "12"
-asked_what: "Is this the page order you want? Frames order-a-opens, order-b-folded and order-c-notes-open (100x30) show 8a0ybb opening on Purpose, Principle, Goal, then Acceptance, with no DESCRIPTION heading; at the end, the long sections fold to one line each, DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22), and Enter on one opens it. A 'long' section is always Details, the answered Questions, Notes and History, whatever their length; nothing else folds. order-v0.7.101-opens is today's page for comparison."
-asked_for: "jhf"
 parent: "9a479v"
 ---
 
@@ -75,6 +70,8 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
     Jørgen answered this in request 1 (2026-11-20 10:24Z): scroll to the question; no FOR YOU block. 'we can always scroll to the question ... wouldn't that be the thing to do'.
 - 2026-11-22T05:36 question 4 by ox to jhf (check 12):
   Is this the page order you want? Frames order-a-opens, order-b-folded and order-c-notes-open (100x30) show 8a0ybb opening on Purpose, Principle, Goal, then Acceptance, with no DESCRIPTION heading; at the end, the long sections fold to one line each, DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22), and Enter on one opens it. A 'long' section is always Details, the answered Questions, Notes and History, whatever their length; nothing else folds. order-v0.7.101-opens is today's page for comparison.
+  answered 2026-11-24T19:16 by crab:
+    Withdrawn by crab: Jørgen answered on kkj0mn at 18:15Z that the page should start small and that a short Details should show open. That is now hya1st, with new frames; check 12 is struck.
 
 ## Requests
 - 2026-11-20T11:24 request 1 by jhf:
@@ -160,3 +157,6 @@ shipped in v0.7.102 (790af7f)
 - 2026-11-22T05:15 todo/ready -> doing/active (take)
 - 2026-11-22T05:36 doing/active -> doing/asked (ask)
 - 2026-11-22T07:35 handed to crab: ox's session ended (closed 2026-11-22 06:17)
+- 2026-11-24T19:16 answered asked (question 4, check 12), by crab, for ox (doing/asked -> doing/active):
+  > Is this the page order you want? Frames order-a-opens, order-b-folded and order-c-notes-open (100x30) show 8a0ybb opening on Purpose, Principle, Goal, then Acceptance, with no DESCRIPTION heading; at the end, the long sections fold to one line each, DETAILS (5), QUESTIONS (3), NOTES (27), HISTORY (22), and Enter on one opens it. A 'long' section is always Details, the answered Questions, Notes and History, whatever their length; nothing else folds. order-v0.7.101-opens is today's page for comparison.
+  Withdrawn by crab: Jørgen answered on kkj0mn at 18:15Z that the page should start small and that a short Details should show open. That is now hya1st, with new frames; check 12 is struck.
