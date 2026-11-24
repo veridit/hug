@@ -57,7 +57,7 @@ Opening a task that asks you something shows, under the title, a FOR YOU section
 - [ ] ~~The detail page shows ↑ in a top corner when there is more above and ↓ in a bottom corner when there is more below, as the overview marks more rows (golden 100x30 scrolled mid-page)~~ (not relevant: replaced by 4ddcwa: ↑ on the top rule, ↓ and the page status on a bottom rule (Jørgen 2026-11-20), crab, 2026-11-20)
 - [ ] ~~Jørgen approves frames (ANSI at 100x30) of 8a0ybb's own detail: opened scrolled to its question with the file as a link, and the order Purpose, Principle, Goal, Acceptance, short sections, then long sections folded~~ (not relevant: the question landing is qcq3tm's; replaced by check 12, the order only, crab, 2026-11-20)
 - [x] No DESCRIPTION heading and no FOR YOU block; order is Purpose, Principle, Goal, Acceptance, short sections (Files, Depends on, Parent/children, requests), then Relevant details, Notes, History; long sections fold to one line until opened (golden 100x30 and 160x45)
-- [ ] Jørgen approves frames (ANSI at 100x30) of this task's page in the new order, the long sections folded, ↑/↓ markers shown
+- [ ] ~~Jørgen approves frames (ANSI at 100x30) of this task's page in the new order, the long sections folded, ↑/↓ markers shown~~ (not relevant: Jørgen 2026-11-24 18:15Z, on statbus kkj0mn: 'the ordering seems off, it starts big and then shrinks, it should start small first? And DETAILS can show if not big?'. The order and fold are redone as hya1st, with new frames., crab, 2026-11-24)
 - [x] The page has no DESCRIPTION heading: the Goal shows under GOAL, and 'Relevant details' is headed DETAILS in hug tui and hug task show; new tasks write '## Details' and both names still read (test, golden)
 
 ## Questions
