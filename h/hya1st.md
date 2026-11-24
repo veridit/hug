@@ -28,8 +28,10 @@ Today (8a0ybb, shipped): PURPOSE, PRINCIPLE, GOAL, ACCEPTANCE, short sections, t
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen picks the order from ANSI frames of kkj0mn and 8a0ybb at 100x30 (variants A and B, a short Details open, a long one folded)
+- [x] Jørgen picks the order from ANSI frames of kkj0mn and 8a0ybb at 100x30 (variants A and B, a short Details open, a long one folded)
 - [ ] The page shows the picked order; Details is open when it fits in the threshold and folded with its count when longer (golden 100x30 and 160x45, test at the threshold)
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
+
+check 1: Jørgen 18:23Z, without frames: 'Goal, Purpose, Principles, Details'. A fixed order, not variant A or B. Acceptance follows Details, as in AGENTS.md's writing order (Goal, Purpose, Principle, Relevant details, then Acceptance).
