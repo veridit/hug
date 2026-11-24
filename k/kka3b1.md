@@ -51,3 +51,4 @@ shipped: tag v0.7.91 (00a06a61), release.yml 44782605940 success, brew upgrade -
 - 2026-11-24T22:15 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > v0.7.91: with rows marked, r opens one request box under the list and Enter sends it for exactly those rows (frames attached; try it on your 4 LINT rows). Is that what you wanted?
   answered by ticking check 1
+- 2026-11-24T22:15 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
