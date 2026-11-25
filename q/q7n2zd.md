@@ -83,3 +83,4 @@ file:paste-1044.png (168007 bytes, sha256:57abc9d5) pasted from the clipboard in
 - 2026-11-25T10:44 answered asked (question 2, check 5), by jhf, for crab (doing/asked -> doing/active):
   > Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
   That worked beautifully. Thank you
+- 2026-11-25T10:44 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
