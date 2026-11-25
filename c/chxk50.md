@@ -1,7 +1,7 @@
 ---
 id: chxk50
 title: "Release v0.7.104: no stale lint finding after an upgrade"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzyq"
 created: 2026-11-22
 updated: 2026-11-22
-stage: "active"
-doing_since: "2026-11-25T13:03"
-doing_with: "hktdgs"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T13:03"
 ---
 
 ## Goal
@@ -46,6 +44,7 @@ Shipped 6q1d1t checks 1-2: SchemaVersion 31; a fingerprint test fails when what 
 crab 10:52Z: shipped v0.7.104 (main 142a5b90, landed a4e05130, CI run 45013140613 8/8). release.yml success; brew-verified: Cellar/hug/0.7.104, hug version = v0.7.104. hug task lint: no findings.
 
 
+Reflection (open, 2026-11-25, crab): My question asked Jørgen to restart processes and judge caching, which a test should decide. He lost confidence in the reload. Follow-up rvb3j5.
 ## History
 - 2026-11-22T11:52 todo -> todo/design (ask)
 - 2026-11-25T10:46 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
@@ -54,3 +53,4 @@ crab 10:52Z: shipped v0.7.104 (main 142a5b90, landed a4e05130, CI run 4501314061
 - 2026-11-25T10:46 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T13:03 todo/ready -> doing/active (take with hktdgs)
 - 2026-11-25T13:03 crab read the answer: hug task take chxk50
+- 2026-11-25T13:03 doing/active -> done (done); was doing_since: 2026-11-25T13:03; doing_with: hktdgs
