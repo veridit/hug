@@ -57,3 +57,4 @@ shipped: tag v0.7.95 (c4389611); release.yml 44907060648 attempt 1 failed on Tes
 - 2026-11-25T09:52 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > v0.7.95: the > where you are now pulses (bold accent, then dim, every 530 ms, no underline), and wherever you type an underscore blinks while the > holds still. Frames attached (on/off for a list, a task page, the answer box). Does the pulse draw your eye without being restless?
   Finally, it's so much better. Subtle one thing brings your attention, the one thing moving where you can enter something
+- 2026-11-25T09:52 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
