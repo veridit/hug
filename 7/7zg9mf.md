@@ -71,6 +71,7 @@ landed 9d35298 on main 2026-11-22: test: negated filters (! in : and the f picke
 landed 0201dca on main 2026-11-22: filters can be negated with !, and the list opens on 'state !done' (7zg9mf)
 landed ad61f85 on main 2026-11-22: test: close three surviving mutants: the picker's ! resets on f, ⌫ retires the…
 shipped in v0.7.101 (9d35298)
+Jørgen 2026-11-25 (check 5): 'It works beautifully, except that after I press exclamation mark, backspace will not remove it.' Cause on v0.7.112: ! toggles m.pickerNot (huginn/internal/tui/filters.go:260), which is not text, so Backspace (text editing) never clears it; only ! again does. Check 7 added for the fix; check 5 stays open until he tries it.
 ## History
 - 2026-11-20T13:34 request 1 by jhf
 - 2026-11-20T13:34 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
