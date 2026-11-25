@@ -51,7 +51,7 @@ Build in huginn/internal/tui/sectionframe.go (sectionFrame, sectionRule); B is s
 - [ ] ~~Verify Too many horisontal lines?~~ (not relevant: replaced by checks 2-5 (crab, from request 1), crab, 2026-11-22)
 - [x] Jørgen picks from ANSI frames at 100x30 (overview, WAITING focused and scrolled): rules only on the focused section, next to today's A for comparison
 - [ ] Only the focused section is drawn between its titled rule and end rule, with ↑/↓ on them; other sections show a plain title line and no rules; moving focus moves the rules (goldens 100x30 and 160x45)
-- [ ] v68n82 check 2 is settled from Jørgen's pick here (struck or ticked there, naming hd74ct)
+- [x] v68n82 check 2 is settled from Jørgen's pick here (struck or ticked there, naming hd74ct)
 - [ ] Jørgen looks at the overview after release and finds the lines calm enough
 
 ## Requests
@@ -78,6 +78,7 @@ file:frame-A-160x45.ans (15010 bytes, sha256:e41043b9) hd74ct check 2, for compa
 file:frame-C-asked-100x30.ans (6711 bytes, sha256:bcc2b9b4) hd74ct check 2, variant C at 100x30 with focus on ASKED (the first section, no keys): the rules sit around ASKED (↑ and ↓), WAITING and the rest are plain titles; 16 task rows
 hd74ct-worker: variant C built on branch hd74ct 7f94a9dd (from main 3125fd29, v0.7.109): sectionFrame="focus" in sectionframe.go (focusRules, plainTitle, endRuleUnder); A stays default; C picked with -ldflags -X github.com/veridit/hug/huginn/internal/tui.sectionFrame=focus. TestFocusRulesVariantC (100x30, 160x45, focus ASKED/IN PROGRESS/WAITING/NEXT UP): 1 titled rule + 1 end rule around the focused section, 5 plain titles, ↑/↓ exactly when rows hidden; fails with focusRules() forced false (hd74ct_test.go:45). No golden changed. Local go test ./... 42 ok, 0 FAIL. CI run 45136426821 on 7f94a9dd: 8/8 success. Frames attached (hug board copy, keys l l + 10 j as v68n82; task rows / rule lines): frame-C-100x30.ans 16 / 2, frame-A-100x30.ans 12 / 11, frame-C-160x45.ans 31 / 2, frame-A-160x45.ans 27 / 11, frame-C-asked-100x30.ans (focus ASKED, no keys) 16 / 2.
 check 2: Jørgen 2026-11-25 10:38 on v68n82: 'an option between them, where there are only lines for the currently active section, and the other one don't have lines, so more like A, but only lines for the active section' = variant C, built on branch hd74ct (7f94a9dd); and on 6njp77: 'the other task has my new follow-up'
+check 4: v68n82 check 2 struck naming hd74ct, from Jørgen's 2026-11-25 pick
 ## History
 - 2026-11-22T22:31 request 1 by jhf
 - 2026-11-22T22:31 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
