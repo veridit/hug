@@ -44,3 +44,4 @@ Main 3125fd29 (Release v0.7.109, merge of 8c16709c, CI 8/8 on that exact SHA). r
 - 2026-11-25T11:17 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > v0.7.109 is out (brew upgrade veridit/tap/hug; restart your hug tui windows to get it). In Seid, open p39w4a, scroll with j and k, and type an answer (Esc to leave it unsent if you like). In my test one j went from about 0.3 s to under 40 ms. Is it quick now for you?
   Again, I've just answered this. It is quick now. Why the second question? I don't know what to do now
+- 2026-11-25T11:17 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
