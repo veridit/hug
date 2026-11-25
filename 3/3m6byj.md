@@ -53,3 +53,4 @@ shipped: tag v0.7.94 (feedab54), release.yml 44895643755 success, brew -> ../Cel
 - 2026-11-25T09:52 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > v0.7.94: on statbus, / k5q120 now selects k5q120 in LINT; Enter shows the results and j/k walk every match; Esc returns to all tasks with k5q120 selected; Tab still keeps it as a filter. One change: Esc no longer clears filter chips (F clears all, ⌫ the last). Does search work the way you wanted, and is Esc keeping chips right?
   I don't understand the question about escape no longer clear filter chips It works the way I want now but when I press escape I go back and the same task is selected and so it clears the search why would it clear no it doesn't clear the search it adds the search and any other filter things as well isn't the search filtered this question is weird
+- 2026-11-25T09:52 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
