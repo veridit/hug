@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.112 - 2026-11-25
 
 - A task's page in `hug tui` reads small to large: GOAL first, then
   PURPOSE, PRINCIPLE and DETAILS, then ACCEPTANCE and the rest (hya1st).
