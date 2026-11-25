@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168moverview › NEXT UP › [1m[38;2;0;191;255mkkj0mp[0m
+[1m[38;2;117;191;255m[todo][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255munassigned[0m
+[38;2;135;149;168mcreated 2026-11-24 · updated 2026-11-24 · branch-fast-tests-fit[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mBranch fast-tests fit in their time limit: build images once, not per run
+[0m[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[38;2;0;191;255mGOAL[0m
+[38;5;252mA fast-tests run started by hand on a branch finishes within its job time limit with room to spare.[39m
+
+[1m[38;2;0;191;255mPURPOSE[0m
+[38;5;252mA dispatched branch run builds every image itself (docker compose up -d --build, 10-12 min) where [39m
+[38;5;252mmaster's runs pull prebuilt images (30 s); with timeout-minutes: 30 the job had no margin left.   [39m
+[38;5;252mRun                                                                                               [39m
+[38;5;252m45426056166 on feat/units-on-map (z2qt08) passed the SQL suite and live-database tests, then hit  [39m
+[38;5;252mthe                                                                                               [39m
+[38;5;252mlimit 11 s into its last step and showed as cancelled.                                            [39m
+
+[1m[38;2;0;191;255mPRINCIPLE[0m
+[38;5;252mThe branch run tests the same images it would ship; the limit stays a guard against hangs, not a  [39m
+[38;5;252mrace against image building.                                                                      [39m
+
+[1m[38;2;0;191;255m› DETAILS (4)[0m
+
+[1m[38;2;0;191;255m▸ ACCEPTANCE[0m[38;2;135;149;168m · j/k or [ ] step · Space ticks · - strikes out
+[1m[38;2;0;191;255m>[39m[48;2;22;54;73m ☐ 1. A dispatched fast-tests run on a branch with migrations finishes with conclusion success, its
+       Start services step under 3 minutes or its build step outside the test time limit[0m
+
+[38;2;135;149;168mno dependencies[39m
+[38;2;135;149;168m─── Task 3 of 3 · 100% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ────────────────────────────────────────────────
+[1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m check · [1m[38;2;0;191;255mSpace[0m[38;2;135;149;168m tick · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp · [1;4m[38;2;0;191;255mr[0m[38;2;135;149;168mequest · [1m[38;2;0;191;255m/[0m[38;2;135;149;168m find[39m [38;2;135;149;168m…[39m
