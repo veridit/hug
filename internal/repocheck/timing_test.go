@@ -26,8 +26,9 @@ import (
 // with time.Since(...), a time unit (time.Second ...) or a package
 // duration constant on one side, outside a for loop's condition (a poll
 // until a deadline waits for an event; it does not judge speed). Every
-// function of a _test.go file holding one calls timing.Budget(t), which
-// skips it under HUG_SKIP_TIMING=1, or is on notBudgets with the reason.
+// function of a _test.go file holding one calls timing.Budget(t) before
+// its first such comparison, which skips it under HUG_SKIP_TIMING=1, or is
+// on notBudgets with the reason.
 
 // notBudgets are functions the scan flags that judge no speed, by
 // path:function, never by pattern.
@@ -102,7 +103,13 @@ func mentionsDuration(e ast.Expr, consts map[string]bool) bool {
 type gatedFunc struct {
 	lines  []int
 	budget bool
+	first  token.Pos // the first wall-clock comparison
+	call   token.Pos // the first timing.Budget call
 }
+
+// late reports whether timing.Budget comes only after a comparison, too
+// late to skip it.
+func (g *gatedFunc) late() bool { return g.budget && g.call > g.first }
 
 func budgetGates(t *testing.T, root string, files []string) map[string]*gatedFunc {
 	t.Helper()
@@ -147,8 +154,8 @@ func budgetGates(t *testing.T, root string, files []string) map[string]*gatedFun
 					}
 				case *ast.CallExpr:
 					if s, ok := x.Fun.(*ast.SelectorExpr); ok {
-						if id, ok := s.X.(*ast.Ident); ok && id.Name+"."+s.Sel.Name == budgetCall {
-							g.budget = true
+						if id, ok := s.X.(*ast.Ident); ok && id.Name+"."+s.Sel.Name == budgetCall && (!g.budget || x.Pos() < g.call) {
+							g.budget, g.call = true, x.Pos()
 						}
 					}
 				case *ast.BinaryExpr:
@@ -159,6 +166,9 @@ func budgetGates(t *testing.T, root string, files []string) map[string]*gatedFun
 					case token.LSS, token.GTR, token.LEQ, token.GEQ:
 						if mentionsDuration(x.X, consts) || mentionsDuration(x.Y, consts) {
 							g.lines = append(g.lines, fset.Position(x.Pos()).Line)
+							if g.first == token.NoPos || x.Pos() < g.first {
+								g.first = x.Pos()
+							}
 						}
 					}
 				}
@@ -193,8 +203,11 @@ func TestEveryWallClockBudgetUsesTimingBudget(t *testing.T) {
 				used[key] = true
 				continue
 			}
+			rel, fn, _ := strings.Cut(key, ":")
+			if g.late() {
+				missing = append(missing, fmt.Sprintf("%s:%d: %s calls timing.Budget(t) only after its first wall-clock comparison, too late to skip it\nfix: move timing.Budget(t) to the top of %s, after any other t.Skip", rel, g.lines[0], fn, fn))
+			}
 			if !g.budget {
-				rel, fn, _ := strings.Cut(key, ":")
 				missing = append(missing, fmt.Sprintf("%s:%d: %s compares a measured time with a fixed one (lines %v) without calling timing.Budget(t)\nfix: add timing.Budget(t) (github.com/veridit/hug/internal/timing) at the top of %s, or list %q in notBudgets (internal/repocheck/timing_test.go) with why it judges no speed", rel, g.lines[0], fn, g.lines, fn, key))
 			}
 		}
