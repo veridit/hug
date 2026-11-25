@@ -1,7 +1,7 @@
 ---
 id: dswkgj
 title: "Release v0.7.92: answering never panics"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzxe"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "active"
-doing_since: "2026-11-25T13:00"
-doing_with: "hktdgs"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T13:01"
 ---
 
 ## Goal
@@ -49,6 +47,7 @@ shipped: tag v0.7.92 (e43211fa), release.yml 44801667959 success, brew -> ../Cel
 
 
 check 1: Jørgen 2026-11-25: 'the responses are sensible enough'; his note on brittle positional arguments is filed separately
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 2026-11-25
 ## History
 - 2026-11-20T20:31 todo -> todo/design (ask)
 - 2026-11-25T09:34 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
@@ -57,3 +56,4 @@ check 1: Jørgen 2026-11-25: 'the responses are sensible enough'; his note on br
 - 2026-11-25T09:34 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T13:00 todo/ready -> doing/active (take with hktdgs)
 - 2026-11-25T13:00 crab read the answer: hug task take dswkgj
+- 2026-11-25T13:01 doing/active -> done (done); was doing_since: 2026-11-25T13:00; doing_with: hktdgs
