@@ -1,7 +1,7 @@
 ---
 id: ht3cdx
 title: "Filter, sort and creating a task keep the view you are in"
-state: "doing"
+state: "done"
 type: "bug"
 priority: "high"
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzxr"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-21T15:34"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "r17z6z"
+done_at: "2026-11-25T10:26"
 ---
 
 ## Goal
@@ -76,6 +75,7 @@ check 5: TestTmuxActionsKeepTheView/{overview,board}/5_jump (ht3cdx_tmux_test.go
 landed 556473c on main 2026-11-21: tui: a filter, a sort and a new task keep the view you are in; S c, # and goto…
 shipped in v0.7.97 (556473c)
 check 6: Jørgen 2026-11-25 10:19: 'filter and sorting perfect works the way intended'. Creating a task: he found it only in the command palette, not among the shortcuts, so that part moves to the new task about N.
+Reflection (open, 2026-11-25, crab): nothing; Jørgen confirmed filter and sort. Creating a task he could not find among the shortcuts, now 6841af.
 ## History
 - 2026-11-20T11:18 request 1 by jhf
 - 2026-11-20T11:18 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
@@ -90,3 +90,4 @@ check 6: Jørgen 2026-11-25 10:19: 'filter and sorting perfect works the way int
   Sure So filter and sorting perfect works the way intended and creating a new task well if I only could do it I can find it in the command palette and I can't find it in the global shortcuts
 - 2026-11-25T10:19 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T10:25 crab read the answer: hug task check ht3cdx 6 "Jørgen 2026-11-25 10:19: 'filter and sorting perfect works the way intended'. Creating a task: he found it only in the …"
+- 2026-11-25T10:26 doing/active -> done (done); was doing_since: 2026-11-21T15:34
