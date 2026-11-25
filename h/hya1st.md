@@ -4,7 +4,7 @@ title: "Task page reads small to large: Goal first, a short Details shown open"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["rhino"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzl"
@@ -67,3 +67,4 @@ crab: shipped in v0.7.112 (main c1056b46, merge of c8b22551, CI 45591665551 8/8,
 ## History
 - 2026-11-25T09:31 todo -> doing/active (take)
 - 2026-11-25T11:19 doing/active -> doing/asked (ask)
+- 2026-11-25T12:55 handed to crab: rhino's session ended (closed 2026-11-25 11:17)
