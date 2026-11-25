@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.113 - 2026-11-25
 
 - `hug mcp` answers an app's first request (initialize) at once, and
   lists its tools at once, before memory has opened (vrx1ja). Claude
