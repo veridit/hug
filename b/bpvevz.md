@@ -12,15 +12,10 @@ created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-20T11:23"
 doing_with: "p87ngv"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "One day with mid-turn recall on (counted on check 1): 13 messages you typed into running turns were recalled, 10 got memories in the tool result (half a second each, 1 missed), and stale turn blocks halved (6 to 3). Before, those 13 got nothing. Make it the default? A: default on, remove the old off path. B: default on, keep the off switch. C: keep it opt-in. My pick: B."
-asked_for: "jhf"
-asked_since: "2026-11-21T11:29"
-asked_by: "crab"
-asked_check: "2"
 ---
 
 ## Goal
@@ -44,6 +39,8 @@ Switched on 2026-11-20 10:22Z: recall.jcode_midturn true in /Users/jhf/Library/A
 ## Questions
 - 2026-11-21T11:29 question 1 by crab to jhf (check 2):
   One day with mid-turn recall on (counted on check 1): 13 messages you typed into running turns were recalled, 10 got memories in the tool result (half a second each, 1 missed), and stale turn blocks halved (6 to 3). Before, those 13 got nothing. Make it the default? A: default on, remove the old off path. B: default on, keep the off switch. C: keep it opt-in. My pick: B.
+  answered 2026-11-25T09:50 by jhf:
+    A And always investigate if we can do it even faster or and if this works with all the tools we're testing with
 
 ## Notes
 
@@ -56,3 +53,6 @@ check 1: Counted 2026-11-21 10:28Z from ~/Library/Application Support/muninn/hoo
 - 2026-11-21T02:55 doing/active -> doing/waiting (wait)
 - 2026-11-21T11:28 doing/waiting -> doing/active (resume); was waiting_asked_by: crab; waiting_on: until 2026-11-21 10:22Z: a full day of mid-turn recall, then the count (check 1); waiting_since: 2026-11-21T02:55
 - 2026-11-21T11:29 doing/active -> doing/asked (ask)
+- 2026-11-25T09:50 answered asked (check 2), by jhf, for crab (doing/asked -> doing/active):
+  > One day with mid-turn recall on (counted on check 1): 13 messages you typed into running turns were recalled, 10 got memories in the tool result (half a second each, 1 missed), and stale turn blocks halved (6 to 3). Before, those 13 got nothing. Make it the default? A: default on, remove the old off path. B: default on, keep the off switch. C: keep it opt-in. My pick: B.
+  A And always investigate if we can do it even faster or and if this works with all the tools we're testing with
