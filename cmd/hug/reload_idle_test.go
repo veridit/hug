@@ -80,7 +80,9 @@ type brewRig struct {
 	ctx    context.Context
 }
 
-func keg(dir, v string) string { return filepath.Join(dir, "Cellar", "hug", v, "bin", "hug"+exeSuffix()) }
+func keg(dir, v string) string {
+	return filepath.Join(dir, "Cellar", "hug", v, "bin", "hug"+exeSuffix())
+}
 
 func mcpEnv(dir, home string) []string {
 	return append(os.Environ(), "HOME="+home, "USERPROFILE="+home, "HUG_HOME="+filepath.Join(dir, "mem"), "JCODE_HOME="+filepath.Join(home, "no-jcode"),

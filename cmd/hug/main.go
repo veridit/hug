@@ -38,7 +38,9 @@ Usage:
                             what every migration to the current hug would change (exit 5
                             if any); --apply does this board's, --apply --machine this
                             machine's too (hook and MCP configs, the memory store)
-  hug version
+  hug version [--running]   this hug's version; --running also lists every hug process
+                            running here (pid, what it runs, version, start, file) and
+                            flags one older than this hug (exit 5)
   hug completion bash|zsh|fish
                             the shell completion script; source <(hug completion zsh)
                             in ~/.zshrc (hug completion --help for bash and fish)
@@ -122,8 +124,7 @@ func run(name string, args []string) int {
 	case "setup", "tui", "upgrade":
 		return huginn.Main(args)
 	case "version", "--version":
-		fmt.Printf("hug %s\n", Version)
-		return 0
+		return runVersion(args[1:])
 	case "help", "-h", "--help":
 		fmt.Print(help)
 		fmt.Print("\n" + env.HelpText())
