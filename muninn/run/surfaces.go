@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -242,29 +243,150 @@ func uninstallCmd() *cobra.Command { return installLike(false) }
 // OpenMCP opens memory bound as "muninn mcp --jcode-home jcodeHome" would be,
 // starts the background reindex, and returns the server instructions plus a
 // function that adds the memory_* tools to a server. close releases the store.
+//
+// It returns at once (vrx1ja): opening the store can wait minutes on a
+// locked database (store.Open's schema waits busy_timeout under the init
+// lock, and several openers queue), and an app gives up on initialize after
+// 60 to 120 s. The store, embedder and binding open in the background; the
+// instructions come from a binding resolved without the database, and a
+// memory tool called before memory is ready answers that memory is still
+// opening, with a fix: line. The tools have the same names and schemas
+// either way.
 func OpenMCP(ctx context.Context, jcodeHome string) (instructions string, register func(*mcp.Server), closeFn func(), err error) {
-	a, err := app.Open(ctx)
+	pre, err := app.Preview()
 	if err != nil {
 		return "", nil, nil, err
 	}
 	cwd, _ := os.Getwd()
-	b := a.Bound(jcodeHome, cwd)
-	if b.Err != nil {
-		a.Close()
-		return "", nil, nil, b.Err
+	pb := pre.Bound(jcodeHome, cwd)
+	if pb.Err != nil {
+		return "", nil, nil, pb.Err
 	}
+	m := openMemory(ctx, jcodeHome, cwd)
+	register = func(s *mcp.Server) { mcpserver.RegisterLazy(s, m.get) }
+	return mcpserver.InstructionsFor(pb), register, m.close, nil
+}
+
+// mcpMemory is memory opening in the background for hug mcp.
+type mcpMemory struct {
+	ready   chan struct{} // closed when the open finished, either way
+	started time.Time
+
+	mu     sync.Mutex
+	a      *app.App
+	b      app.Binding
+	err    error
+	closed bool
+}
+
+// openRetry is the pause before memory opens again after a busy database.
+var openRetry = 5 * time.Second
+
+// busy says the store could not open only because another process held the
+// database (SQLITE_BUSY after busy_timeout): it opens later.
+func busy(err error) bool {
+	s := err.Error()
+	return strings.Contains(s, "SQLITE_BUSY") || strings.Contains(s, "database is locked")
+}
+
+func openMemory(ctx context.Context, jcodeHome, cwd string) *mcpMemory {
+	m := &mcpMemory{ready: make(chan struct{}), started: time.Now()}
 	go func() {
-		if _, err := a.Reindex(ctx); err != nil && ctx.Err() == nil {
-			fmt.Fprintln(os.Stderr, "hug mem: reindex:", err)
+		defer close(m.ready)
+		a, err := app.Open(ctx)
+		// A busy database is another hug writing (an index pass can hold it
+		// for minutes): try again, the tools say memory is still opening.
+		for err != nil && busy(err) && ctx.Err() == nil {
+			fmt.Fprintln(os.Stderr, "hug mcp: memory busy, opening again in", openRetry, ":", err)
+			select {
+			case <-ctx.Done():
+			case <-time.After(openRetry):
+			}
+			m.mu.Lock()
+			closed := m.closed
+			m.mu.Unlock()
+			if closed || ctx.Err() != nil {
+				break
+			}
+			a, err = app.Open(ctx)
 		}
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "hug mcp: memory unavailable:", err)
+			m.mu.Lock()
+			m.err = err
+			m.mu.Unlock()
+			return
+		}
+		b := a.Bound(jcodeHome, cwd)
+		if b.Err != nil {
+			fmt.Fprintln(os.Stderr, "hug mcp: memory unavailable:", b.Err)
+			a.Close()
+			m.mu.Lock()
+			m.err = b.Err
+			m.mu.Unlock()
+			return
+		}
+		b = mcpserver.Bind(a, b)
+		// Project memories reach the other clones in the background (0hkaa5).
+		// Set before the tools can see memory: a tool reads OnWrite.
+		project.SpawnSelf()
+		mcpserver.OnWrite = func(scope string) {
+			if scope == "" || shared(scope) {
+				project.Nudge(cwd)
+			}
+		}
+		m.mu.Lock()
+		if m.closed {
+			m.mu.Unlock()
+			a.Close()
+			return
+		}
+		m.a, m.b = a, b
+		m.mu.Unlock()
+		go func() {
+			if _, err := a.Reindex(ctx); err != nil && ctx.Err() == nil {
+				fmt.Fprintln(os.Stderr, "hug mem: reindex:", err)
+			}
+		}()
 	}()
-	b = mcpserver.Bind(a, b)
-	// Project memories reach the other clones in the background (0hkaa5).
-	project.SpawnSelf()
-	mcpserver.OnWrite = func(scope string) {
-		if scope == "" || shared(scope) {
-			project.Nudge(cwd)
-		}
+	return m
+}
+
+// memoryWait is how long a memory tool waits for memory still opening
+// before it answers that memory is opening: a normal open takes well under a
+// second (0.1-0.3 s measured on a 900 MB store), a blocked one minutes.
+const memoryWait = 5 * time.Second
+
+// get is the memory tools' Opener: the open memory, or an error that says
+// it is still opening (or why it failed), each with a fix: line.
+func (m *mcpMemory) get(ctx context.Context) (*app.App, app.Binding, error) {
+	t := time.NewTimer(memoryWait)
+	defer t.Stop()
+	select {
+	case <-m.ready:
+	case <-ctx.Done():
+		return nil, app.Binding{}, ctx.Err()
+	case <-t.C:
+		waited := time.Since(m.started).Round(time.Second)
+		return nil, app.Binding{}, fmt.Errorf("hug mcp: memory is still opening (%s so far; the memory database may be busy with another hug); the task_* tools work meanwhile\nfix: call this tool again in a minute; hug mem stats in a shell shows the store", waited)
 	}
-	return mcpserver.InstructionsFor(b), func(s *mcp.Server) { mcpserver.Register(s, a, b) }, func() { a.Close() }, nil
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.err != nil {
+		return nil, app.Binding{}, fmt.Errorf("hug mcp: memory is unavailable in this session: %w\nfix: run hug mem stats in a shell to see why, then restart this MCP server", m.err)
+	}
+	if m.closed {
+		return nil, app.Binding{}, fmt.Errorf("hug mcp: this server is closing\nfix: restart this MCP server")
+	}
+	return m.a, m.b, nil
+}
+
+func (m *mcpMemory) close() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.closed = true
+	if m.a != nil {
+		m.a.Close()
+		m.a = nil
+	}
 }

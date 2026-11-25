@@ -4,6 +4,23 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.113 - 2026-11-25
+
+- `hug mcp` answers an app's first request (initialize) at once, and
+  lists its tools at once, before memory has opened (vrx1ja). Claude
+  Desktop showed "hug could not be started for Cowork and Code
+  sessions" when hug took over 120 s to answer. That happened when it
+  started while another hug held the memory database: opening memory
+  waited 30 s on the locked database while holding a lock of its own,
+  so hug servers started together queued (measured: 30, 60, 90 and
+  121 s for four). Memory now opens in the background, and opens again
+  every 5 s while another hug holds the database, where before it gave
+  up for the whole session after 30 s. The task tools work at once. A
+  memory tool called before memory is ready answers after at most 5 s
+  that memory is still opening, with a `fix:` line, instead of
+  hanging, and works as before once memory is open. The tool names,
+  schemas and server instructions are the same as before.
+
 ## v0.7.112 - 2026-11-25
 
 - A task's page in `hug tui` reads small to large: GOAL first, then

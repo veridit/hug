@@ -76,7 +76,7 @@ func (b Binding) Refresh(a *App) Binding {
 }
 
 func (b Binding) withSources(a *App) Binding {
-	if b.Err == nil {
+	if b.Err == nil && a.DB != nil {
 		b.sourceClients, b.sourceScopes, b.Err = a.sourceClients(b.Client, b.legacyAll, b.legacyOwn)
 	}
 	return b
@@ -142,6 +142,17 @@ func (a *App) bound(jcodeHome, cwd string) Binding {
 			if i.Name != "global" {
 				names[i.Scope()] = true
 			}
+		}
+		// Without a database (Preview, vrx1ja) only the exclusions of other
+		// stores are missing; this binding's name and places are the same.
+		if a.DB == nil {
+			for s := range names {
+				b.Scopes = append(b.Scopes, "!"+s, "!"+s+":*")
+			}
+			sort.Strings(b.Scopes)
+			b.Scopes = append(b.Scopes, "!client:*")
+			b.writeScopes = append([]string{}, b.Scopes...)
+			return b
 		}
 		rows, err := a.DB.Query(`SELECT DISTINCT scope FROM units WHERE scope LIKE 'jcode@%'`)
 		if err != nil {

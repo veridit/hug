@@ -22,8 +22,10 @@ Tools: memory_* (search, remember, forget, recall, related, dream, stats) and
 task_* (list, show, new, update, next, take, done, lint, sync, types).
 Tasks work on the git repository in the current directory. --jcode-home binds
 memory to one jcode instance, as hug mem mcp --jcode-home does.
-If memory cannot open, the task tools are still served and the reason is
-logged to stderr.
+hug mcp answers at once; memory opens in the background. A memory tool
+called before it is open says memory is still opening. If memory cannot
+open, the task tools are still served, the memory tools say why, and the
+reason is logged to stderr.
 `
 
 // taskPrefix names the task tools in hug mcp (task_list, task_show, ...).

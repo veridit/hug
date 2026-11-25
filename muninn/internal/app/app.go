@@ -114,6 +114,17 @@ func pickEmbedder(ctx context.Context, cfg config.Config) (embed.Embedder, strin
 // Close releases the database.
 func (a *App) Close() error { return a.DB.Close() }
 
+// Preview is an App with the config but no database or embedder: enough to
+// name a binding and its places (Bound works on it) before Open, which can
+// wait on a locked database, returns (hug mcp's initialize, vrx1ja).
+func Preview() (*App, error) {
+	cfg, err := config.Load()
+	if err != nil {
+		return nil, err
+	}
+	return &App{Cfg: cfg}, nil
+}
+
 // JcodeInstances lists the jcode installations muninn indexes and hooks.
 func (a *App) JcodeInstances() []harness.JcodeInstance {
 	home, _ := os.UserHomeDir()
