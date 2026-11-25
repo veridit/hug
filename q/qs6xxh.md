@@ -30,6 +30,7 @@ Today (v0.7.112): Details folds when over 6 wrapped lines (hya1st); answered Que
 - [ ] Jørgen picks from ANSI frames of 8a0ybb at 100x30: which sections fold, and where H and L land
 - [ ] H and L on a task's page jump to the next and previous heading and open it if folded; j and k scroll past a folded section without opening it (tmux test)
 - [ ] A section folds only when taller than the page area, whatever its name; Acceptance of 8a0ybb shows open at 100x30 (golden)
+- [ ] Jørgen picks the jump keys from the frames: comma and period, or H and L
 
 ## Notes
 
