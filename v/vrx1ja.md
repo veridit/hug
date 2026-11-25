@@ -49,5 +49,6 @@ Who holds the write lock that long: every hug mcp start runs a background Reinde
 Timing of the failures: a release execs the new hug in every jcode hug mcp (jcode logs show the reloads; 9 hug mcp were running on 11-24). Claude restarts its hug only when it relaunches itself for a stealth update. main1.log 11-21: 16:27:22 'stealth-update', 16:27:30 'Launching MCP Server: hug', 16:30:31 'Failed to connect to hug: Request timed out ... timeout: 60000', then retries at 120000. All 4 failing starts follow such a relaunch.
 Gap: Claude does not log server stderr, so nothing records which process held the lock at each past failure. What is reproduced is the mechanism, up to 120.7 s: initialize waits behind memory open (the init lock, then 30 s per locked statement, one opener after another).
 The task cache SchemaVersion is not on the start path: RegisterMCP takes 0.001 s and the cache builds on the first task call.
+Failing-first test pushed: 841b2721 on vrx1ja, cmd/hug/mcp_open_test.go TestMCPAnswersBeforeMemoryOpens (memory db write-locked by the test, Ollama answering after 3 s). On main code: '--- FAIL: TestMCPAnswersBeforeMemoryOpens (3.03s)' 'mcp_open_test.go:142: hug mcp was not ready to answer initialize after 1 s: it waited 2.659s for memory'.
 ## History
 - 2026-11-25T12:54 todo -> doing/active (take)
