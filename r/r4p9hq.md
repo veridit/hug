@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzz4"
 created: 2026-11-21
 updated: 2026-11-21
-design_since: "2026-11-21T14:05"
-design_asked_by: "crab"
-design_question: "v0.7.95: the \u003e where you are now pulses (bold accent, then dim, every 530 ms, no underline), and wherever you type an underscore blinks while the \u003e holds still. Frames attached (on/off for a list, a task page, the answer box). Does the pulse draw your eye without being restless?"
-design_for: "jhf"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Shipped: q3sh69 checks 1, 2, 4 (88724001..dc737984, CI 44906215953 8/8). The > (
 ## Questions
 - 2026-11-21T14:05 question 1 by crab to jhf (check 1):
   v0.7.95: the > where you are now pulses (bold accent, then dim, every 530 ms, no underline), and wherever you type an underscore blinks while the > holds still. Frames attached (on/off for a list, a task page, the answer box). Does the pulse draw your eye without being restless?
+  answered 2026-11-25T09:52 by jhf:
+    Finally, it's so much better. Subtle one thing brings your attention, the one thing moving where you can enter something
 
 ## Notes
 
@@ -56,3 +54,6 @@ file:answer-box-off.ansi (2955 bytes, sha256:1e53ab94) answer-box-off
 shipped: tag v0.7.95 (c4389611); release.yml 44907060648 attempt 1 failed on TestSettleWaitsOnProgressNotAClock/progressing ('settleWait returned "" after 1m32.6s, want about 1m30s', unrelated to q3sh69, same failure on ci/qcq3tm 44720742380; filed 3qa9bt), attempt 2 success; brew -> ../Cellar/hug/0.7.95/bin/hug, hug v0.7.95
 ## History
 - 2026-11-21T14:05 todo -> todo/design (ask)
+- 2026-11-25T09:52 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > v0.7.95: the > where you are now pulses (bold accent, then dim, every 530 ms, no underline), and wherever you type an underscore blinks while the > holds still. Frames attached (on/off for a list, a task page, the answer box). Does the pulse draw your eye without being restless?
+  Finally, it's so much better. Subtle one thing brings your attention, the one thing moving where you can enter something
