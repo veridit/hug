@@ -61,6 +61,7 @@ landed 1d86473 on main 2026-11-22: tui: H/L step onto no column past either end,
 shipped in v0.7.99 (1d86473)
 check 3: Jørgen 2026-11-25: 'This works as advertised' (H/L land on no column past either end)
 Jørgen 2026-11-25 (on hktdgs and ta6fy6): 'I would like to see the columns despite not having one being selected ... in the current active section I can always see the columns ... I don't think we should hide the columns at any point.' Check 4 added.
+crab 2026-11-25: back to todo for a worker: check 4 (always show the columns).
 ## History
 - 2026-11-20T13:07 request 1 by jhf
 - 2026-11-20T13:07 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
