@@ -32,12 +32,13 @@ Today (cmd/hug/reload.go, mbdfzs): the reloader checks the binary only before it
 ## Depends on
 
 ## Acceptance
-- [ ] A test starts hug mcp, replaces its binary, sends nothing, and within 60 s the process runs the new binary and still answers on the same pipes
+- [x] A test starts hug mcp, replaces its binary, sends nothing, and within 60 s the process runs the new binary and still answers on the same pipes
 - [ ] hug lists the running hug processes with their versions (doctor or version), and flags one older than the installed hug
 - [ ] After the next release, no hug mcp on Jørgen's Mac runs an older hug after 2 minutes (crab checks with that command; Jørgen is not asked)
 
 ## Notes
 
 
+check 1: TestMCPReloadsWhileIdleAfterBrewUpgrade (cmd/hug/reload_idle_test.go): brew-shaped Cellar/hug/0.0.1 + bin/hug symlink; hug mcp started from bin/hug; symlink moved to Cellar/hug/0.0.2, old keg removed; no request sent; 'reloaded as hug 0.0.2-new (was 0.0.1-old), same connection' at 10.0 s; lsof shows same pid on the 0.0.2 keg; next task_list answers 0.0.2-new on the same pipes. Failing-first 65dbca1f: 'no reload within 60 s of the upgrade, with no request sent'. Branch rvb3j5 a7a1e4a6.
 ## History
 - 2026-11-25T21:32 todo -> doing/active (take)
