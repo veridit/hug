@@ -81,6 +81,7 @@ crab 2026-11-21 00:37Z, fresh held-out run per hatchling's protocol (150 calls 1
 crab 2026-11-21 12:37Z reassessment: no answer yet on check 4's question; 1-min load 9.0 (no period >100 since the fresh run at 00:37Z). Live-store timing not run. tool_recall stays off. Next reassessment in 24h.
 crab 2026-11-22 12:37Z reassessment: check 4 still unanswered; 1-min load 17.4 (not >100). No timing run; tool_recall stays off. Next reassessment 11-23 12:37Z.
 Jørgen 2026-11-25 09:49: yes, run the busy-load timing on the live store the next time the 1-min load passes 100 (writes a few 'shown once' rows under test session names). crab runs it then.
+crab 2026-11-25 09:29Z: live-store timing armed (bg 962706wyag, watcher scratch/recall4/n7jbmx/live/watch.sh, 72 h). HUG_HOME points data at the live store and a config copy with tool_recall on; the live config is untouched. 150 fresh calls, one hook process each, once at 1-min load < 20 and once at load > 100; results ordinary.json and busy.json there.
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
