@@ -88,3 +88,4 @@ hd74ct-worker: variant C built on branch hd74ct 7f94a9dd (from main 3125fd29, v0
 - 2026-11-25T13:22 answered asked (check 2), by jhf, for crab (doing/asked -> doing/active):
   > Open frame-C-100x30.ans next to frame-A-100x30.ans (attached; same board and keys, WAITING focused and scrolled). C: only the section you are in sits between two rules (↑ on its top rule, ↓ on its end rule); the others are a plain title line with their count, in their colour. C has 2 rules and 16 task rows at 100x30; today's A has 11 rules and 12 rows (160x45: 31 vs 27 rows). frame-C-asked-100x30.ans shows C with ASKED focused. Do you want C? (Your pick also settles v68n82's A or B.)
   Yes, I won't see, but I also want to always show the column headers, which I had another task for, so I'm guessing that will come
+- 2026-11-25T13:22 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
