@@ -1,7 +1,7 @@
 ---
 id: khq1fq
 title: "A timing test fails a release on a shared runner"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["boar"]
@@ -10,11 +10,11 @@ group: ""
 rank: "0000008"
 created: 2026-11-25
 updated: 2026-11-25
-doing_since: "2026-11-25T15:23"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T18:48"
+done_release: "v0.7.114"
 ---
 
 ## Goal
@@ -42,5 +42,10 @@ Branch khq1fq b3bc627e (ci/khq1fq run 45649108400). internal/timing.Budget(t) sk
 check 2: CI 45649108400 on b3bc627e, job test (macos-latest), step Test: '1tjq11_test.go:142: wall-clock budget TestBigTaskKeys: judged here (HUG_SKIP_TIMING is not 1)' then 'ok  github.com/veridit/hug/huginn/internal/tui 143.331s'; all 8 jobs success. macOS judged 13 budget tests, ubuntu 12 (-race skips TestBigTaskKeys).
 Check 1 open until the next tag: the release.yml run's Test step must print 13 lines '...: skipped under HUG_SKIP_TIMING=1 (release.yml); CI judges it', including 'wall-clock budget TestBigTaskKeys', and 'wall-clock budget tests skipped: 13'. Simulated locally with HUG_SKIP_TIMING=1 go test -v ./...: exit 0, 'wall-clock budget tests skipped: 13'. TestReleaseSkipsWallClockBudgets (internal/repocheck) fails if release.yml's go test step loses HUG_SKIP_TIMING=1.
 Check 1: v0.7.114 release.yml run 45666928084 (success) Test step printed '1tjq11_test.go:142: wall-clock budget TestBigTaskKeys: skipped under HUG_SKIP_TIMING=1 (release.yml); CI judges it' and 'wall-clock budget tests skipped: 13'. Brew: ../Cellar/hug/0.7.114/bin/hug, hug v0.7.114.
+landed b3b6dd7 on main 2026-11-25: repocheck: failing check, wall-clock budget tests run in release.yml (khq1fq)
+landed 3258760 on main 2026-11-25: Wall-clock budget tests skip in release.yml under HUG_SKIP_TIMING=1; CI judges…
+landed b3bc627 on main 2026-11-25: repocheck: timing.Budget must come before a test's first wall-clock comparison…
+shipped in v0.7.114 (b3b6dd7)
 ## History
 - 2026-11-25T15:23 todo -> doing/active (take)
+- 2026-11-25T18:48 doing/active -> done (done, by release v0.7.114: every check holds); was doing_since: 2026-11-25T15:23
