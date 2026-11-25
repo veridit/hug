@@ -11,16 +11,11 @@ rank: "zzzzzzzzzzxr"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-21T15:34"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "r17z6z"
-asked_for: "jhf"
-asked_since: "2026-11-21T16:49"
-asked_by: "crab"
-asked_check: "6"
-asked_what: "Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time"
 ---
 
 ## Goal
@@ -61,6 +56,8 @@ Jørgen 2026-11-20 10:18Z (request 1, screenshots screen-1117.ans before, screen
 ## Questions
 - 2026-11-21T16:49 question 1 by crab to jhf (check 6):
   Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time
+  answered 2026-11-25T10:19 by jhf:
+    Sure So filter and sorting perfect works the way intended and creating a new task well if I only could do it I can find it in the command palette and I can't find it in the global shortcuts
 
 ## Notes
 
@@ -87,3 +84,6 @@ shipped in v0.7.97 (556473c)
 - 2026-11-21T15:34 todo -> doing/active (take)
 - 2026-11-21T16:49 doing/active -> doing/asked (ask)
 - 2026-11-21T18:35 handed to crab: hamster's session ended (closed 2026-11-21 16:48)
+- 2026-11-25T10:19 answered asked (check 6), by jhf, for crab (doing/asked -> doing/active):
+  > Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time
+  Sure So filter and sorting perfect works the way intended and creating a new task well if I only could do it I can find it in the command palette and I can't find it in the global shortcuts
