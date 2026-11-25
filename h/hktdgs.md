@@ -11,15 +11,10 @@ rank: "008"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-21T23:56"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_by: "crab"
-asked_check: "3"
-asked_what: "Jørgen steps past both ends with H and L and lands on no column"
-asked_for: "jhf"
-asked_since: "2026-11-22T00:23"
 parent: "ta6fy6"
 ---
 
@@ -51,6 +46,8 @@ Today (v0.7.90, huginn/internal/tui/columns.go moveColumn): the first H or L mar
 ## Questions
 - 2026-11-22T00:23 question 1 by crab to jhf (check 3):
   Jørgen steps past both ends with H and L and lands on no column
+  answered 2026-11-25T10:22 by jhf:
+    This works as advertised except I would like to see the columns despite not having one being selected because sometimes because that is for clarity so in the current active section I can always see the columns and when I select the column I have the other markers that are also there but I don't think we should hide the columns at any point
 
 ## Notes
 
@@ -71,3 +68,6 @@ shipped in v0.7.99 (1d86473)
 - 2026-11-21T23:56 todo -> doing/active (take)
 - 2026-11-22T00:23 doing/active -> doing/asked (ask)
 - 2026-11-22T01:53 handed to crab: lobster's session ended (closed 2026-11-22 00:22)
+- 2026-11-25T10:22 answered asked (check 3), by jhf, for crab (doing/asked -> doing/active):
+  > Jørgen steps past both ends with H and L and lands on no column
+  This works as advertised except I would like to see the columns despite not having one being selected because sometimes because that is for clarity so in the current active section I can always see the columns and when I select the column I have the other markers that are also there but I don't think we should hide the columns at any point
