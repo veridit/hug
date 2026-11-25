@@ -69,6 +69,7 @@ landed d9fdab4 on main 2026-11-22: tests first: V in hug tui pastes the clipboar
 landed 7eb1ad4 on main 2026-11-22: hug tui: V pastes the clipboard into a task as a file; in a list it asks where…
 landed 0f28cd8 on main 2026-11-22: test: close two surviving mutants: blank clipboard text without an error is…
 shipped in v0.7.103 (d9fdab4)
+file:paste-1044.png (168007 bytes, sha256:57abc9d5) pasted from the clipboard in hug tui
 ## History
 - 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:23 doing/active -> doing/asked (ask)
