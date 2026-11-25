@@ -11,11 +11,7 @@ rank: "5"
 created: 2026-11-20
 updated: 2026-11-20
 parent: "9taa9d"
-stage: "design"
-design_for: "jhf"
-design_since: "2026-11-20T17:08"
-design_asked_by: "crab"
-design_question: "Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typically (busiest 2.1 MB); 15% of memories change on a later day. My pick is E: a today folder with one small file per memory, rolled by dream into one JSON Lines file per day. Pick A to F?"
+stage: "ready"
 ---
 
 ## Goal
@@ -102,6 +98,8 @@ Promoted from item 3 of task:9taa9d.
     Withdrawn by crab 2026-11-20: Jørgen's requests 3 and 4 added dated layouts; question 3 asks A to F.
 - 2026-11-20T17:08 question 3 by crab to jhf (check 5):
   Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typically (busiest 2.1 MB); 15% of memories change on a later day. My pick is E: a today folder with one small file per memory, rolled by dream into one JSON Lines file per day. Pick A to F?
+  answered 2026-11-25T09:45 by jhf:
+    I can't really answer that yet. This task was created and it only says we can do each one of the things we can do, but I don't see argument for why one thing is better than another thing, meaning a single source of truth, less I.O. to make edits, easier to coordinate between multiple agents writing at the same time, and so on and so forth. A single way of doing it, so it's more consistent and easier to test, or multiple ways of doing it. So it's like we have lined up all the choices, but we haven't lined up why one choice would give us something that another choice wouldn't. And I think the reasoning is also incorrect. I think I experienced problems of writing memories with multiple different clients at the same time. And I thought there is concurrency issues. We are waiting. Maybe we should have a better file design. And maybe we should have a design where we can link to memories and they're stable, these links.
 
 ## Notes
 
@@ -136,3 +134,6 @@ Promoted from item 3 of task:9taa9d.
 - 2026-11-20T17:08 todo/ready -> todo/design (ask)
 - 2026-11-20T17:08 resolved request 3 by crab
 - 2026-11-20T17:08 resolved request 4 by crab
+- 2026-11-25T09:45 answered design (question 3, check 5), by jhf, for crab (todo/design -> todo/ready):
+  > Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typically (busiest 2.1 MB); 15% of memories change on a later day. My pick is E: a today folder with one small file per memory, rolled by dream into one JSON Lines file per day. Pick A to F?
+  I can't really answer that yet. This task was created and it only says we can do each one of the things we can do, but I don't see argument for why one thing is better than another thing, meaning a single source of truth, less I.O. to make edits, easier to coordinate between multiple agents writing at the same time, and so on and so forth. A single way of doing it, so it's more consistent and easier to test, or multiple ways of doing it. So it's like we have lined up all the choices, but we haven't lined up why one choice would give us something that another choice wouldn't. And I think the reasoning is also incorrect. I think I experienced problems of writing memories with multiple different clients at the same time. And I thought there is concurrency issues. We are waiting. Maybe we should have a better file design. And maybe we should have a design where we can link to memories and they're stable, these links.
