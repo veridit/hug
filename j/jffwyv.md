@@ -1,16 +1,21 @@
 ---
 id: jffwyv
 title: "Release v0.7.106: a task with two Details sections shows both"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz"
 created: 2026-11-22
 updated: 2026-11-22
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-25T13:00"
+doing_with: "hktdgs"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -47,3 +52,5 @@ crab 12:53Z: shipped v0.7.106 (main 91927791, landed 668e6984, CI run 4502293084
   > v0.7.106 is installed. Nothing to try: it only matters if an old hug process writes Details (see chxk50). Close this ticket, or is there something you want checked?
   Close it
 - 2026-11-25T10:47 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-25T13:00 todo/ready -> doing/active (take with hktdgs)
+- 2026-11-25T13:00 crab read the answer: hug task take jffwyv
