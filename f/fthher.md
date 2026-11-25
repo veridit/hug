@@ -1,7 +1,7 @@
 ---
 id: fthher
 title: "hug task ls cannot list the questions waiting for someone"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzy5"
 created: 2026-11-21
 updated: 2026-11-21
-doing_since: "2026-11-23T13:00"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "j2v40p"
+done_at: "2026-11-25T14:09"
 ---
 
 ## Goal
@@ -59,6 +58,7 @@ dswkgj  1    v0.7.92: answering a withdrawn question now says when and why it wa
 check 1: 97f74c64 on fthher and ci/fthher; CI https://github.com/veridit/hug/actions/runs/45179618266 8/8 success. Tests: TestLsAskedListsQuestionsForCaller, TestLsAskedEmptySaysSo, TestInstructionsNameLsAsked (cli), TestAskedAgreesWithForYou (tui: per-task count equals countForYou on stage/asked/withdrawn boards for jhf, Jørgen, nautilus, nobody), TestListTakesAsked (mcp). 13/13 mutants killed. Real board copy: 40 questions for jhf on 38 tasks, TUI countForYou 38.
 crab 2026-11-25: the last check is confirmed through the release ticket's one question; crab ticks it from that answer.
 check 2: Jørgen 2026-11-25 on release ticket j2v40p: 'Sure, that's fine'
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 2026-11-25
 ## History
 - 2026-11-23T13:00 todo -> doing/active (take)
 - 2026-11-23T14:23 doing/active -> doing/asked (ask)
@@ -66,3 +66,4 @@ check 2: Jørgen 2026-11-25 on release ticket j2v40p: 'Sure, that's fine'
 - 2026-11-25T13:01 answered asked (check 2), by crab, for crab (doing/asked -> doing/active):
   > Run hug task ls --asked (v0.7.110). Same question as release ticket j2v40p; one answer ticks both.
   Withdrawn by crab 2026-11-25: the same question is on release ticket j2v40p; one answer there is enough (Jørgen: 'one question in one ticket is enough').
+- 2026-11-25T14:09 doing/active -> done (done); was doing_since: 2026-11-23T13:00
