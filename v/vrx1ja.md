@@ -1,15 +1,20 @@
 ---
 id: vrx1ja
 title: "Claude desktop: hug mcp can take over 120 s to answer initialize"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["vrx1ja-engineer"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzj"
 created: 2026-11-24
 updated: 2026-11-24
+doing_since: "2026-11-25T12:54"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Claude's mcp-server-hug.log: 7 starts from 11-14 to 11-22; 4 never got an initia
 - [ ] Jørgen sees no 'kunne ikke startes' popup for a week of releases
 
 ## Notes
+
+
+## History
+- 2026-11-25T12:54 todo -> doing/active (take)
