@@ -34,7 +34,7 @@ Which key failed for Jørgen is asked in question 1.
 
 ## Acceptance
 - [x] Jørgen names the keys that did not work for him (question 1)
-- [ ] ctrl+left and ctrl+right move a word in the box, and every key Jørgen names works (tmux test per key)
+- [ ] ~~ctrl+left and ctrl+right move a word in the box, and every key Jørgen names works (tmux test per key)~~ (not relevant: macOS takes ctrl+left/right for Spaces, so the terminal never sees them (Jørgen 2026-11-25); replaced by check 5, alt+left/right, crab, crab, 2026-11-25)
 - [ ] F1 in the box lists the editing keys
 - [ ] Jørgen edits an answer with his keys after release
 - [ ] In the box, alt+left and alt+right move a word too, since macOS takes ctrl+left/right for switching Spaces; F1 names them (tmux test)
