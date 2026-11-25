@@ -33,7 +33,7 @@ Shipped: 5vehza (withdrawn question: exit 2, 'question N on ID was withdrawn at 
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen confirms the two refusals read well
+- [x] Jørgen confirms the two refusals read well
 
 ## Questions
 - 2026-11-20T20:31 question 1 by crab to jhf (check 1):
@@ -48,6 +48,7 @@ file:v0.7.92-answer-sample.txt (2177 bytes, sha256:91951cc3) sample run on v0.7.
 shipped: tag v0.7.92 (e43211fa), release.yml 44801667959 success, brew -> ../Cellar/hug/0.7.92/bin/hug, hug v0.7.92
 
 
+check 1: Jørgen 2026-11-25: 'the responses are sensible enough'; his note on brittle positional arguments is filed separately
 ## History
 - 2026-11-20T20:31 todo -> todo/design (ask)
 - 2026-11-25T09:34 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
