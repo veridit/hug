@@ -11,16 +11,11 @@ rank: "zzzzzzzzzzy5"
 created: 2026-11-21
 updated: 2026-11-21
 doing_since: "2026-11-23T13:00"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "j2v40p"
-asked_for: "jhf"
-asked_since: "2026-11-23T14:23"
-asked_by: "crab"
-asked_check: "2"
-asked_what: "Run hug task ls --asked (v0.7.110). Same question as release ticket j2v40p; one answer ticks both."
 ---
 
 ## Goal
@@ -44,6 +39,8 @@ Candidate: hug task ls --asked [--to NAME] (default: the caller), one line per q
 ## Questions
 - 2026-11-23T14:23 question 1 by crab to jhf (check 2):
   Run hug task ls --asked (v0.7.110). Same question as release ticket j2v40p; one answer ticks both.
+  answered 2026-11-25T13:01 by crab:
+    Withdrawn by crab 2026-11-25: the same question is on release ticket j2v40p; one answer there is enough (Jørgen: 'one question in one ticket is enough').
 
 ## Notes
 
@@ -64,3 +61,6 @@ check 1: 97f74c64 on fthher and ci/fthher; CI https://github.com/veridit/hug/act
 - 2026-11-23T13:00 todo -> doing/active (take)
 - 2026-11-23T14:23 doing/active -> doing/asked (ask)
 - 2026-11-23T15:33 handed to crab: orangutan's session ended (closed 2026-11-23 14:13)
+- 2026-11-25T13:01 answered asked (check 2), by crab, for crab (doing/asked -> doing/active):
+  > Run hug task ls --asked (v0.7.110). Same question as release ticket j2v40p; one answer ticks both.
+  Withdrawn by crab 2026-11-25: the same question is on release ticket j2v40p; one answer there is enough (Jørgen: 'one question in one ticket is enough').
