@@ -48,3 +48,4 @@ shipped: tag v0.7.92 (e43211fa), release.yml 44801667959 success, brew -> ../Cel
 - 2026-11-25T09:34 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > v0.7.92: answering a withdrawn question now says when and why it was withdrawn and gives the command to ask again; a bare answer after the numbered questions answers the design question. Sample run attached. Do the two refusals read well?
   I think the responses are sensible enough. I do question the CLI. When you have positional arguments, I think it's quite brittle. That's the only thing I notice.
+- 2026-11-25T09:34 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
