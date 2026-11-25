@@ -34,7 +34,7 @@ Picked by Jørgen 18:23Z: GOAL, PURPOSE, PRINCIPLE, DETAILS, then ACCEPTANCE, th
 
 ## Acceptance
 - [x] Jørgen picks the order from ANSI frames of kkj0mn and 8a0ybb at 100x30 (variants A and B, a short Details open, a long one folded)
-- [ ] The page shows the picked order; Details is open when it fits in the threshold and folded with its count when longer (golden 100x30 and 160x45, test at the threshold)
+- [x] The page shows the picked order; Details is open when it fits in the threshold and folded with its count when longer (golden 100x30 and 160x45, test at the threshold)
 - [ ] Jørgen confirms on his board after release
 
 ## Notes
@@ -49,5 +49,6 @@ file:hya1st-page-100x30.ans (3669 bytes, sha256:fe42ea46) hya1st check 2: the ne
 file:hya1st-long-details-folded-100x30.ans (3598 bytes, sha256:7e492f92) hya1st check 2: a long Details (4 paragraphs, kkj0mp) folded to '› DETAILS (4)' after PRINCIPLE, 100x30, same binary and capture
 file:hya1st-long-details-opened-100x30.ans (3943 bytes, sha256:c41071fd) hya1st check 2: Shift-Tab from the checks to DETAILS, Enter opens it in place, ACCEPTANCE after its text
 file:mutants.md (2964 bytes, sha256:45ed8863) hya1st + 32ym01 mutants: 20 rules broken by hand, 20 killed (2 needed a test or a sharper mutant: see rows 9 and 15)
+check 2: c8b22551 on branch hya1st, CI run 45591665551 8/8 success (secrets, bench, test ubuntu/macos/windows, test-windows-cli sync/rest/shards). Page reads GOAL, PURPOSE, PRINCIPLE, DETAILS, ACCEPTANCE: TestPageReadsGoalPurposePrincipleDetails; Details open at 6 wrapped lines, folded '› DETAILS (N)' at 7, counted at the page width: TestDetailsOpenAtSixLinesFoldedAtSeven (six/seven/wide-at-100/wide-at-160); Tab/Shift-Tab, Enter on folded DETAILS, ring page-DETAILS-checks: TestTabFollowsGoalPurposePrincipleDetails; n/p: TestNextPreviousKeepTheDetailsRule; goldens testdata/hya1st/kkj0mn-100x30.txt (folded: kkj0mn's 1 paragraph wraps to 8 lines at 100) and kkj0mn-160x45.txt (open, 4 lines); 8a0ybb pins rewritten. Constant detailsOpenLines = 6 (detail.go). Mutants: mutants.md, 20/20 killed. Frames: hya1st-page-100x30.ans, hya1st-long-details-folded-100x30.ans, hya1st-long-details-opened-100x30.ans
 ## History
 - 2026-11-25T09:31 todo -> doing/active (take)
