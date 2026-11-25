@@ -47,7 +47,7 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
 - [x] AGENTS.md and the setup template say: a document for one task is attached to that task; only decisions go into repo docs (test pins the wording)
 - [x] A file named in plain text inside a question, check or note (e.g. 'MOCK.md', 'tui-100x30.txt') is recognised when the task has that file, and works as a link: one key shows it in line under the line that names it, another opens it in the file frame, Esc returns (tmux test on p87ngv's board copy)
 - [x] On zbdbtm itself (TRY IT HERE in Details), each of the four names opens: Space shows it in line, Enter in the file frame at the section, Esc returns (tmux test on a copy of this task)
-- [ ] Jørgen opens zbdbtm after release and tries the four links in TRY IT HERE
+- [x] Jørgen opens zbdbtm after release and tries the four links in TRY IT HERE
 
 ## Questions
 - 2026-11-20T11:12 question 1 by crab to jhf:
@@ -84,6 +84,7 @@ check 5: TestTmuxPlainFileNameInQuestionOpens on p87ngv's board copy (testdata/z
 check 6: TestTmuxTryItHereLinksOpen on a copy of zbdbtm (hug/tasks 406a2cb2^, sample.txt and sample-notes.md attached) on 90b689f2: each of sample.txt, file:sample-notes.md, sample-notes.md#Section two and docs/DESIGN.md#Personal vs shared memories: Space shows it in line, Esc folds it, Enter opens it in the file frame with the section heading as its first line, Esc returns to the link. Frames file:zbdbtm-2-space-in-line-100x30.ans, file:zbdbtm-5-attachment-at-section-100x30.ans, file:zbdbtm-6-repo-file-in-line-100x30.ans.
 shrimp 16:52Z: final SHA 90b689f2 on zbdbtm and ci/zbdbtm; CI https://github.com/veridit/hug/actions/runs/45045091960 8/8 success on that SHA. Checks 1-6 ticked; 7 is Jørgen's after release. Not merged or tagged: the coordinator lands it. Open: branch refs are not followed (no syntax names a branch until p87ngv's marks); a repo file opens read only (Enter in its frame says so, fix: $EDITOR PATH).
 crab 17:01Z: shipped in v0.7.107 (main d32bc3a0, merge of 90b689f2, CI 8/8 run 45045091960; brew gives hug v0.7.107). Release ticket 6mt4w8. Check 7 is Jørgen's.
+check 7: Jørgen 2026-11-25: 'Yes, it works well.'
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -99,3 +100,4 @@ crab 17:01Z: shipped in v0.7.107 (main d32bc3a0, merge of 90b689f2, CI 8/8 run 4
   > In v0.7.108 (brew upgrade veridit/tap/hug), open this task in hug tui. Details has TRY IT HERE with four names: sample.txt, file:sample-notes.md, sample-notes.md#Section two, docs/DESIGN.md#Personal vs shared memories. Tab to each: Space shows it under the line, Enter opens it at the section, Esc comes back. Do all four work for you?
   Yes, it works well.
 - 2026-11-25T10:54 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-25T11:21 crab read the answer: hug task check zbdbtm 7 "Jørgen 2026-11-25: 'Yes, it works well.'"
