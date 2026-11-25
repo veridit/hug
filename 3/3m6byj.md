@@ -33,7 +33,7 @@ Shipped: 5cjy88 (c05fb8d5 + 6ed006ff, CI 44894781379 8/8). Try it: brew upgrade 
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen confirms the search flow and the Esc-keeps-chips change
+- [x] Jørgen confirms the search flow and the Esc-keeps-chips change
 
 ## Questions
 - 2026-11-21T11:43 question 1 by crab to jhf (check 1):
@@ -53,6 +53,7 @@ file:after-3-esc-after-enter.ansi (3494 bytes, sha256:1310d9fe) after: 3-esc-aft
 
 
 shipped: tag v0.7.94 (feedab54), release.yml 44895643755 success, brew -> ../Cellar/hug/0.7.94/bin/hug, hug v0.7.94
+check 1: Jørgen 2026-11-25: 'It works the way I want now'. The Esc-and-chips part of the question confused him and he wants no change; crab withdraws that part rather than re-asking it.
 ## History
 - 2026-11-21T11:43 todo -> todo/design (ask)
 - 2026-11-25T09:52 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
