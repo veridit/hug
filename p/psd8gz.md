@@ -33,7 +33,7 @@ Main 3125fd29 (Release v0.7.109, merge of 8c16709c, CI 8/8 on that exact SHA). r
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen scrolls p39w4a in Seid and types an answer there, and finds it quick
+- [x] Jørgen scrolls p39w4a in Seid and types an answer there, and finds it quick
 
 ## Questions
 - 2026-11-23T03:15 question 1 by crab to jhf (check 1):
@@ -44,6 +44,7 @@ Main 3125fd29 (Release v0.7.109, merge of 8c16709c, CI 8/8 on that exact SHA). r
 ## Notes
 
 
+check 1: Jørgen 2026-11-25 on 1tjq11: 'Yes, quite nice and quick. Thank you' (and here: 'It is quick now')
 ## History
 - 2026-11-23T03:15 todo -> todo/design (ask)
 - 2026-11-25T11:17 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
