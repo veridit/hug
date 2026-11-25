@@ -3,7 +3,7 @@ id: mmfw71
 title: "hug tui left running does not pick up new releases"
 state: todo
 type: bug
-priority: ""
+priority: "high"
 assignee: []
 labels: []
 group: ""
