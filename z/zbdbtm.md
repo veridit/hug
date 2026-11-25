@@ -10,17 +10,12 @@ group: ""
 rank: "zzzzzzzzzzxk"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "asked"
+stage: "active"
 doing_since: "2026-11-22T15:55"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "6mt4w8"
-asked_what: "In v0.7.108 (brew upgrade veridit/tap/hug), open this task in hug tui. Details has TRY IT HERE with four names: sample.txt, file:sample-notes.md, sample-notes.md#Section two, docs/DESIGN.md#Personal vs shared memories. Tab to each: Space shows it under the line, Enter opens it at the section, Esc comes back. Do all four work for you?"
-asked_for: "jhf"
-asked_since: "2026-11-22T21:13"
-asked_by: "crab"
-asked_check: "7"
 ---
 
 ## Goal
@@ -61,6 +56,8 @@ Link forms, in the p87ngv mark syntax: .target:(.File .name:"design.md") for an 
     Let's try that and make sure you put it into this file as well so that when I review this task again when it is resolved I can use the task itself to check it
 - 2026-11-22T21:13 question 2 by crab to jhf (check 7):
   In v0.7.108 (brew upgrade veridit/tap/hug), open this task in hug tui. Details has TRY IT HERE with four names: sample.txt, file:sample-notes.md, sample-notes.md#Section two, docs/DESIGN.md#Personal vs shared memories. Tab to each: Space shows it under the line, Enter opens it at the section, Esc comes back. Do all four work for you?
+  answered 2026-11-25T10:54 by jhf:
+    Yes, it works well.
 
 ## Notes
 
@@ -98,3 +95,6 @@ crab 17:01Z: shipped in v0.7.107 (main d32bc3a0, merge of 90b689f2, CI 8/8 run 4
 - 2026-11-22T15:55 todo/ready -> doing/active (take)
 - 2026-11-22T19:11 handed to crab: shrimp's session ended (closed 2026-11-22 17:53)
 - 2026-11-22T21:13 doing/active -> doing/asked (ask)
+- 2026-11-25T10:54 answered asked (question 2, check 7), by jhf, for crab (doing/asked -> doing/active):
+  > In v0.7.108 (brew upgrade veridit/tap/hug), open this task in hug tui. Details has TRY IT HERE with four names: sample.txt, file:sample-notes.md, sample-notes.md#Section two, docs/DESIGN.md#Personal vs shared memories. Tab to each: Space shows it under the line, Enter opens it at the section, Esc comes back. Do all four work for you?
+  Yes, it works well.
