@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/veridit/hug/internal/timing"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/scopetest"
@@ -19,6 +20,7 @@ import (
 // Race-instrumented modernc SQLite is not a production performance measurement.
 // Functional capture/crash/scope tests still run with -race in the normal suite.
 func TestCaptureEightCandidatesOnTwentyThousandUnits(t *testing.T) {
+	timing.Budget(t)
 	f := scopetest.New(t)
 	source, _, _, err := f.App.DB.Source("jcode", f.Root+"/alpha/.jcode/memory/bulk.json")
 	if err != nil {

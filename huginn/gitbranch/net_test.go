@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/timing"
 )
 
 // 0hkaa5: a remote that never answers does not hang a command: the network
@@ -16,6 +18,7 @@ func TestNetworkCallTimesOut(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("uses a shell script as the ssh command")
 	}
+	timing.Budget(t)
 	root, _ := fixture(t, false)
 	// An ssh that never answers, a remote that uses it.
 	hang := filepath.Join(t.TempDir(), "hang-ssh")

@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/veridit/hug/internal/timing"
 	"github.com/veridit/hug/muninn/internal/extract"
 	"github.com/veridit/hug/muninn/internal/scopetest"
 )
@@ -17,6 +18,7 @@ import (
 // left; it was cut and the whole run, 83 and 88 actions in, was recorded as
 // failed ('context deadline exceeded', 'invalid extraction response').
 func TestCaptureHookDefersWhenBudgetCannotCoverCall(t *testing.T) {
+	timing.Budget(t)
 	f := scopetest.New(t)
 	b := f.Bind(t, "alpha")
 	var calls atomic.Int32

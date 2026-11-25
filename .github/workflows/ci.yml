@@ -42,12 +42,25 @@ jobs:
         # beside 30 packages on one 4-CPU runner its time measured the
         # runner's load, 323 s and 407 s for one tree (runs 44204301242,
         # 44206328950; 0sbvnq, crab 2026-11-18).
+        # Wall-clock budget tests (internal/timing) are judged here, never
+        # in release.yml (HUG_SKIP_TIMING=1 there, khq1fq): macOS judges
+        # them all, ubuntu's -race skips TestBigTaskKeys. -v only to list
+        # them: a pass prints each package's line and every budget judged,
+        # a failure the whole log.
         shell: bash
         run: |
           if [ "${{ matrix.os }}" = windows-latest ]; then
             go test $(go list ./... | grep -vx 'github.com/veridit/hug/huginn/internal/cli')
           else
-            go test ${{ matrix.os == 'ubuntu-latest' && '-race' || '' }} ./...
+            log="$RUNNER_TEMP/test.log"
+            go test -v ${{ matrix.os == 'ubuntu-latest' && '-race' || '' }} ./... > "$log" 2>&1 && ok=0 || ok=$?
+            if [ "$ok" = 0 ]; then
+              grep -E '^(ok|FAIL|\?) ' "$log"
+              grep -E 'wall-clock budget .*: judged here' "$log" || true
+            else
+              cat "$log"
+            fi
+            exit "$ok"
           fi
         env:
           CGO_ENABLED: "1"

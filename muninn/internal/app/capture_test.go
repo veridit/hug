@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/veridit/hug/internal/timing"
 	"github.com/veridit/hug/muninn/internal/app"
 	"github.com/veridit/hug/muninn/internal/extract"
 	"github.com/veridit/hug/muninn/internal/harness"
@@ -191,6 +192,7 @@ func TestCaptureClientRootBoundAndSecretDropped(t *testing.T) {
 }
 
 func TestCaptureDryRunPeriodicAndTimeout(t *testing.T) {
+	timing.Budget(t)
 	f := scopetest.New(t)
 	b := f.Bind(t, "alpha")
 	m := fakeCapture(t, f, line("fact", "medium", "Quartz uses the stable deployment protocol.", ""))

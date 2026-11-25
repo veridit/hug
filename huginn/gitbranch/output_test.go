@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/timing"
 )
 
 // lingeringGit puts a git first on PATH that runs the real git and, when its
@@ -38,6 +40,7 @@ func lingeringGit(t *testing.T, sub string) {
 // (TestDeduceTwoClonesOneLine). A process left holding the pipe opens the
 // same 2 s window without needing load.
 func TestGitAnswerOnceGitExits(t *testing.T) {
+	timing.Budget(t)
 	r := bornRepo(t, "main")
 	lingeringGit(t, "rev-parse")
 	start := time.Now()

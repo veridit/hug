@@ -11,6 +11,8 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/timing"
 )
 
 type fakeOllama struct {
@@ -118,6 +120,7 @@ func TestOllamaLegacyFallbackAndErrors(t *testing.T) {
 }
 
 func TestOllamaUnavailableIsFast(t *testing.T) {
+	timing.Budget(t)
 	// Nothing listens here: Available must say no quickly so hooks degrade.
 	o := NewOllama("http://127.0.0.1:1", "m", 0)
 	t0 := time.Now()
