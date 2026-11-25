@@ -82,3 +82,4 @@ shipped in v0.7.101 (9d35298)
 - 2026-11-25T10:40 answered asked (check 5), by jhf, for crab (doing/asked -> doing/active):
   > Jørgen opens the list after release and sees only open work, and can flip a filter with !
   It works beautifully, except that after I press exclamation mark, backspace will not remove it.
+- 2026-11-25T10:40 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
