@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzj"
 created: 2026-11-22
 updated: 2026-11-22
-design_question: "v0.7.104 is installed and lint is clean. Ten hug processes from before v0.7.102 still run: hug tui pids 78631 (since 11-17), 49453 (11-18), 34088 (11-19), and hug mcp 1402, 8265, 56816, 65214, 71259, 96239. They keep their old rules; one writing set --details would add a second 'Relevant details' section (hxqqdp). Will you restart them (quit those hug tui windows; restart the jcode sessions that own the mcp ones), or should I leave them?"
-design_for: "jhf"
-design_since: "2026-11-22T11:52"
-design_asked_by: "crab"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Shipped 6q1d1t checks 1-2: SchemaVersion 31; a fingerprint test fails when what 
 ## Questions
 - 2026-11-22T11:52 question 1 by crab to jhf (check 1):
   v0.7.104 is installed and lint is clean. Ten hug processes from before v0.7.102 still run: hug tui pids 78631 (since 11-17), 49453 (11-18), 34088 (11-19), and hug mcp 1402, 8265, 56816, 65214, 71259, 96239. They keep their old rules; one writing set --details would add a second 'Relevant details' section (hxqqdp). Will you restart them (quit those hug tui windows; restart the jcode sessions that own the mcp ones), or should I leave them?
+  answered 2026-11-25T10:46 by jhf:
+    I don't understand this. So when I open up the old Hug Tui sessions, I will reload them. But more importantly, MCP should always reload automatically. Asking me about that means you're questioning, or I no longer have confidence that we did that implementation appropriately. Not for you, but by itself, that it detects a new version and the MCP automatically reloads. And then this is a question about caching and linting. Surely this is something you have automated tests for, not something I can do easily
 
 ## Notes
 
@@ -45,3 +43,6 @@ crab 10:52Z: shipped v0.7.104 (main 142a5b90, landed a4e05130, CI run 4501314061
 
 ## History
 - 2026-11-22T11:52 todo -> todo/design (ask)
+- 2026-11-25T10:46 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > v0.7.104 is installed and lint is clean. Ten hug processes from before v0.7.102 still run: hug tui pids 78631 (since 11-17), 49453 (11-18), 34088 (11-19), and hug mcp 1402, 8265, 56816, 65214, 71259, 96239. They keep their old rules; one writing set --details would add a second 'Relevant details' section (hxqqdp). Will you restart them (quit those hug tui windows; restart the jcode sessions that own the mcp ones), or should I leave them?
+  I don't understand this. So when I open up the old Hug Tui sessions, I will reload them. But more importantly, MCP should always reload automatically. Asking me about that means you're questioning, or I no longer have confidence that we did that implementation appropriately. Not for you, but by itself, that it detects a new version and the MCP automatically reloads. And then this is a question about caching and linting. Surely this is something you have automated tests for, not something I can do easily
