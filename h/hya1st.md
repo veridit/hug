@@ -45,5 +45,6 @@ Jørgen 18:24Z, why this order: 'I.e. What, Why, How, Notes (to explain those ov
 
 
 failing-first 9e8b4875 (branch hya1st, on main ed882297): TestPageReadsGoalPurposePrincipleDetails 'hya1st_test.go:98: headings PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|DETAILS (1) want GOAL|PURPOSE|PRINCIPLE|DETAILS|ACCEPTANCE'; TestDetailsOpenAtSixLinesFoldedAtSeven 'hya1st_test.go:139: headings PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|DETAILS (4), want GOAL|PURPOSE|PRINCIPLE|DETAILS (4)|ACCEPTANCE'; TestTabFollowsGoalPurposePrincipleDetails 'hya1st_test.go:163: stops'; TestNextPreviousKeepTheDetailsRule FAIL; TestKkj0mnPageGolden 'hya1st_test.go:243: headings PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|DETAILS (1)'
+file:hya1st-page-100x30.ans (3669 bytes, sha256:fe42ea46) hya1st check 2: the new page at 100x30, built binary from branch hya1st e033dee2, tmux capture-pane -e -p (COLORFGBG=15;0), on a copy of statbus kkj0mn with a 1-line Details (kkj0ms): GOAL, PURPOSE, PRINCIPLE, DETAILS open, ACCEPTANCE
 ## History
 - 2026-11-25T09:31 todo -> doing/active (take)
