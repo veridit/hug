@@ -80,6 +80,7 @@ file:n7jbmx-fresh-noise-examples.md (3987 bytes, sha256:18ff1956) fresh set: 5 v
 crab 2026-11-21 00:37Z, fresh held-out run per hatchling's protocol (150 calls 11-19..11-20, 55 sessions, sqlite .backup snapshot, recall4 from main f2da2991, -asof, judge rubric unchanged, 296/296 pairs judged, 0 skipped). Shipped: useful 22.0/100 [13.6, 31.1], noise 5.3 [2.2, 9.1], precision 80%, noise vs default -113.3 [-133.1, -96.5]. Default: useful 63.3, noise 118.7, precision 35%. All four quality bars pass. Live-store hook p95 under load >100: PENDING (no such load since the run; timing on the live store writes shown-once rows into the live muninn.db, which needs Jørgen's yes). Copy-store timing at load 18.6 for reference only: p95 130.4 ms, max 272.4 ms. tool_recall stays off.
 crab 2026-11-21 12:37Z reassessment: no answer yet on check 4's question; 1-min load 9.0 (no period >100 since the fresh run at 00:37Z). Live-store timing not run. tool_recall stays off. Next reassessment in 24h.
 crab 2026-11-22 12:37Z reassessment: check 4 still unanswered; 1-min load 17.4 (not >100). No timing run; tool_recall stays off. Next reassessment 11-23 12:37Z.
+Jørgen 2026-11-25 09:49: yes, run the busy-load timing on the live store the next time the 1-min load passes 100 (writes a few 'shown once' rows under test session names). crab runs it then.
 ## History
 - 2026-11-18T05:32 todo -> doing/active (take)
 - 2026-11-18T06:24 doing/active -> doing/waiting (wait)
@@ -90,3 +91,4 @@ crab 2026-11-22 12:37Z reassessment: check 4 still unanswered; 1-min load 17.4 (
   > Tool-call recall passed every quality bar on fresh Nov 19-20 data (useful 22 per 100 calls, noise 5, 80% precise; report attached). The last gate is timing the hook on your live memory store while the Mac is above load 100. That run writes a few 'shown once' rows into the live muninn.db under test session names. May I run it the next time load passes 100?
   Yes
 - 2026-11-25T09:49 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
+- 2026-11-25T10:26 crab read the answer: hug task note n7jbmx "Jørgen 2026-11-25 09:49: yes, run the busy-load timing on the live store the next time the 1-min load passes 100 (write…"
