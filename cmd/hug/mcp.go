@@ -52,6 +52,9 @@ func runMCP(args []string) int {
 			return 2
 		}
 	}
+	// SIGHUP asks for a reload (rvb3j5): catch it before anything slow, so
+	// a nudge never ends the server it was meant to reload.
+	stdin := idleStdin(os.Stdin)
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	s, closeFn, err := newMCPServer(ctx, jcodeHome)
@@ -66,7 +69,7 @@ func runMCP(args []string) int {
 		return 1
 	}
 	r := newReloader(launchPath(), os.Stdout, os.Stderr)
-	go r.pump(os.Stdin, resumed)
+	go r.pump(stdin, resumed)
 	if err := s.Run(ctx, &sdk.IOTransport{Reader: r, Writer: r}); err != nil && ctx.Err() == nil {
 		fmt.Fprintln(os.Stderr, "hug mcp:", err)
 		return 1

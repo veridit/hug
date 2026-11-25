@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -42,6 +41,15 @@ const replayID = `"hug-reload-initialize"`
 // request is served by this binary and the reload is tried at the next one.
 var drainWait = 30 * time.Second
 
+// idleTick is how often a hug mcp with no traffic looks at its hug (rvb3j5).
+// A stat every 5 s costs nothing; a changed file reloads after it holds
+// still one more tick, so 5-10 s after an upgrade. A timer, not fsnotify:
+// brew moves the bin/hug symlink (a watch on the file it pointed at never
+// fires, and a watch on /opt/homebrew/bin fires for every formula, with a
+// kqueue fd per file there), while a stat of the launch path follows it
+// exactly as the exec does, the same on every system.
+var idleTick = 5 * time.Second
+
 type resumeState struct {
 	Init        []byte `json:"init,omitempty"`        // the client's initialize request
 	Initialized bool   `json:"initialized,omitempty"` // notifications/initialized was sent
@@ -77,12 +85,19 @@ type reloader struct {
 	init        []byte
 	initialized bool
 
-	exec func(path string, argv, env []string) error // nil: no exec (Windows)
-	exit func(int)
+	exec  func(path string, argv, env []string) error // nil: no exec (Windows)
+	exit  func(int)
+	probe func(path string) error
+
+	// The idle watch (rvb3j5), run by the pump goroutine only.
+	tick     time.Duration // how often an idle server looks at its hug
+	lastIdle time.Time
+	seen     fileID // a changed file seen once: reloaded when it holds still
+	nudged   bool   // SIGHUP: reload as soon as no request runs
 }
 
 func newReloader(launch string, out, logw io.Writer) *reloader {
-	r := &reloader{launch: launch, out: out, logw: logw, inflight: map[string]bool{}, exec: execHug, exit: os.Exit}
+	r := &reloader{launch: launch, out: out, logw: logw, inflight: map[string]bool{}, exec: execHug, exit: os.Exit, probe: probe, tick: idleTick}
 	r.cond = sync.NewCond(&r.mu)
 	r.pr, r.pw = io.Pipe()
 	if launch != "" {
@@ -201,47 +216,145 @@ func (r *reloader) Close() error { return nil }
 // Read is the server's stdin.
 func (r *reloader) Read(p []byte) (int, error) { return r.pr.Read(p) }
 
-// pump copies client lines to the server, reloading between requests.
+// idleSource is a stdin the pump can wait on without reading it (rvb3j5):
+// while it waits, no byte the client sent is held in this process, so an
+// idle reload hands the new hug everything read so far.
+type idleSource interface {
+	io.Reader
+	// wait blocks until there is something to read (ready), d passes, or a
+	// nudge (SIGHUP) arrives (nudged). An error means it cannot wait: the
+	// pump then reads as before and reloads only at a request.
+	wait(d time.Duration) (ready, nudged bool, err error)
+}
+
+// pump copies client lines to the server, reloading between requests and,
+// with an idleSource, while no request runs.
 func (r *reloader) pump(src io.Reader, resumed *resumeState) {
+	var pending []byte // read from src, not yet passed on: at most part of a line
 	if resumed != nil {
 		r.replay(resumed)
-		src = io.MultiReader(bytes.NewReader(resumed.Pending), src)
+		pending = append(pending, resumed.Pending...)
 	}
-	br := bufio.NewReaderSize(src, 1<<16)
+	ws, idle := src.(idleSource)
+	buf := make([]byte, 1<<16)
+	r.lastIdle = time.Now()
 	for {
-		line, err := br.ReadBytes('\n')
-		if len(line) > 0 {
-			ms := parseMsgs(line)
-			if r.newRequest(ms) && r.changed() {
-				r.reload(line, br)
+		for {
+			i := bytes.IndexByte(pending, '\n')
+			if i < 0 {
+				break
 			}
-			r.mu.Lock()
-			for _, m := range ms {
-				if m.request() {
-					r.inflight[m.key()] = true
-				}
-				if m.Method != nil && *m.Method == "initialize" && len(ms) == 1 {
-					r.init = append([]byte(nil), line...)
-				}
-				if m.Method != nil && *m.Method == "notifications/initialized" {
-					r.initialized = true
-				}
-				// A cancelled request gets no reply: it is not running.
-				if m.Method != nil && *m.Method == "notifications/cancelled" && len(m.Params.RequestID) > 0 {
-					delete(r.inflight, idKey(m.Params.RequestID))
-					r.cond.Broadcast()
-				}
-			}
-			r.mu.Unlock()
-			if _, werr := r.pw.Write(line); werr != nil {
+			line := append([]byte(nil), pending[:i+1]...)
+			if !r.serve(line, pending) {
 				return
 			}
+			pending = pending[i+1:]
 		}
+		pending = append([]byte(nil), pending...)
+		if idle {
+			d := r.tick - time.Since(r.lastIdle)
+			if d <= 0 {
+				r.idleCheck(pending, false) // also under steady notifications
+				continue
+			}
+			ready, nudged, err := ws.wait(d)
+			switch {
+			case err != nil:
+				fmt.Fprintf(r.logw, "hug mcp: cannot wait on stdin (%v); this hug reloads only at a request\n", err)
+				idle = false
+			case nudged:
+				r.idleCheck(pending, true)
+				continue
+			case !ready:
+				continue
+			}
+		}
+		n, err := src.Read(buf)
+		pending = append(pending, buf[:n]...)
 		if err != nil {
+			for len(pending) > 0 {
+				i := bytes.IndexByte(pending, '\n') + 1
+				if i == 0 {
+					i = len(pending)
+				}
+				if !r.serve(append([]byte(nil), pending[:i]...), pending) {
+					return
+				}
+				pending = pending[i:]
+			}
 			r.pw.Close()
 			return
 		}
 	}
+}
+
+// serve passes one line to the server; held is the line and every byte read
+// after it, which a reload hands on. false: the server is gone.
+func (r *reloader) serve(line, held []byte) bool {
+	ms := parseMsgs(line)
+	if r.newRequest(ms) && r.changed() {
+		r.reload(held)
+	}
+	r.mu.Lock()
+	for _, m := range ms {
+		if m.request() {
+			r.inflight[m.key()] = true
+		}
+		if m.Method != nil && *m.Method == "initialize" && len(ms) == 1 {
+			r.init = append([]byte(nil), line...)
+		}
+		if m.Method != nil && *m.Method == "notifications/initialized" {
+			r.initialized = true
+		}
+		// A cancelled request gets no reply: it is not running.
+		if m.Method != nil && *m.Method == "notifications/cancelled" && len(m.Params.RequestID) > 0 {
+			delete(r.inflight, idKey(m.Params.RequestID))
+			r.cond.Broadcast()
+		}
+	}
+	r.mu.Unlock()
+	_, werr := r.pw.Write(line)
+	return werr == nil
+}
+
+// idleCheck runs every tick whatever the client sends (rvb3j5), and at once
+// on SIGHUP: it looks at the hug the app started. A changed file that
+// has held still for a tick (a copy in progress does not count; SIGHUP does
+// not wait) is reloaded when no request is running and no message is half
+// read, with the same hand-over as at a request.
+func (r *reloader) idleCheck(partial []byte, nudged bool) {
+	r.lastIdle = time.Now()
+	if r.launch == "" {
+		if nudged {
+			fmt.Fprintf(r.logw, "hug mcp: SIGHUP: the hug file this server started from is unknown, so it cannot reload; this hug %s serves on\nfix: restart the app to start the installed hug\n", Version)
+		}
+		return
+	}
+	if nudged {
+		r.nudged = true
+	}
+	now := statID(r.launch)
+	if !r.changedTo(now) {
+		r.seen = fileID{}
+		if r.nudged {
+			r.nudged = false
+			fmt.Fprintf(r.logw, "hug mcp: SIGHUP: %s is unchanged; this hug %s serves on\n", r.launch, Version)
+		}
+		return
+	}
+	if !r.nudged && !now.same(r.seen) {
+		r.seen = now // changed: wait one more tick for it to hold still
+		return
+	}
+	r.mu.Lock()
+	busy := len(r.inflight)
+	r.mu.Unlock()
+	if busy > 0 || len(partial) > 0 {
+		return // a request is running or arriving: the next tick, or the request, reloads
+	}
+	r.nudged, r.seen = false, fileID{}
+	fmt.Fprintf(r.logw, "hug mcp: %s changed while no request ran\n", r.launch)
+	r.reload(nil)
 }
 
 func (r *reloader) newRequest(ms []msg) bool {
@@ -275,11 +388,14 @@ func (r *reloader) changed() bool {
 	if r.launch == "" {
 		return false
 	}
-	now := statID(r.launch)
-	if now.info == nil || now.same(r.start) || now.same(r.rejected) {
-		return false
-	}
-	return true
+	return r.changedTo(statID(r.launch))
+}
+
+// changedTo says now, the file the launch path leads to (a symlink is
+// followed: brew moves bin/hug to a new keg), is another hug than the one
+// this server started from, and not one that failed the probe.
+func (r *reloader) changedTo(now fileID) bool {
+	return now.info != nil && !now.same(r.start) && !now.same(r.rejected)
 }
 
 // drained waits until no request is running, at most d.
@@ -321,26 +437,25 @@ func withoutEnv(env []string, key string) []string {
 	return out
 }
 
-// reload hands the session to the changed hug, or returns to serve line here.
-func (r *reloader) reload(line []byte, br *bufio.Reader) {
+// reload hands the session to the changed hug, or returns to serve held
+// here. held is every byte read from the client and not yet served.
+func (r *reloader) reload(held []byte) {
 	if !r.drained(drainWait) {
 		fmt.Fprintf(r.logw, "hug mcp: %s changed, but requests are still running after %s; this hug serves on and reloads at a later request\n", r.launch, drainWait)
 		return
 	}
 	now := statID(r.launch)
 	if r.exec == nil {
-		buffered, _ := br.Peek(br.Buffered())
-		r.stopForRestart(append(append([]byte(nil), line...), buffered...))
+		r.stopForRestart(append([]byte(nil), held...))
 		return
 	}
-	if err := probe(r.launch); err != nil {
+	if err := r.probe(r.launch); err != nil {
 		r.rejected = now
 		fmt.Fprintf(r.logw, "hug mcp: %s changed, but it cannot take over this session (%v); this hug serves on\nfix: restart the app to start the installed hug\n", r.launch, err)
 		return
 	}
-	buffered, _ := br.Peek(br.Buffered())
 	r.mu.Lock()
-	st := resumeState{Init: r.init, Initialized: r.initialized, Pending: append(append([]byte(nil), line...), buffered...), From: Version}
+	st := resumeState{Init: r.init, Initialized: r.initialized, Pending: append([]byte(nil), held...), From: Version}
 	r.mu.Unlock()
 	b, _ := json.Marshal(st)
 	f, err := os.CreateTemp("", "hug-mcp-resume-*.json")

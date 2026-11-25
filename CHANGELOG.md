@@ -4,6 +4,43 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.115 - 2026-11-25
+
+- An idle `hug mcp` reloads into the installed hug within about 10 s
+  of an upgrade, without waiting for a request (rvb3j5). Until now it
+  looked at its binary only when a new request came in, so a server with
+  no traffic ran the old hug forever. On 2026-11-25 five Claude Desktop
+  servers from 11-22 still ran 0.7.108 after 0.7.112 was installed. Every
+  5 s it stats the path the app started (`/opt/homebrew/bin/hug`, followed
+  through the symlink brew moves to the new keg). When that leads to
+  another file that has held still for one more tick, and no request is
+  running and no message is half read, it reloads with the same drain,
+  probe and replayed initialize as at a request, on the same pid and
+  pipes. While idle it waits on stdin with poll(2) and reads nothing, so
+  every byte the client sends next goes to the new hug. It uses a timer,
+  not fsnotify: brew replaces a symlink in a shared folder, and a stat of
+  the launch path follows it exactly as the exec does. `kill -HUP PID`
+  makes it look at once (a hug mcp from this release on; older ones
+  exit on SIGHUP, so nothing sends it yet). With an unchanged hug it logs
+  `hug mcp: SIGHUP: PATH is unchanged; this hug X serves on`. Windows has
+  no exec and reloads at the next request, as before. Tested by building
+  two hugs into a brew-shaped Cellar, starting `bin/hug mcp`, moving the
+  symlink and removing the old keg, then sending nothing: the same pid
+  runs the 0.0.2 keg (per lsof or /proc) and answers on the same
+  connection (10.0 s on macOS).
+- `hug version --running` lists the hug processes running on this
+  machine: their pid, what each runs (`mcp`, `tui`, `task ls`,
+  `mem serve`, ...), version, start time and file. It flags one older
+  than this hug, says which, gives a `fix:` line, and exits 5 when it
+  finds one. The version comes from the Cellar path, or by asking a file
+  that has not changed since the process started. A file that was removed
+  or replaced is marked `(removed or replaced since it started)` and
+  flagged too, as `not the installed hug`: macOS then names the file only
+  `/hug`, with no version, but it is not the one installed now. It reads
+  `ps`, plus `lsof` on macOS or `/proc` on Linux. It never signals a
+  process. Elsewhere it says it is not supported, with a `fix:` line, and
+  exits 1.
+
 ## v0.7.114 - 2026-11-25
 
 - A release no longer fails on a test's wall-clock budget once CI has
