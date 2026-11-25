@@ -33,7 +33,7 @@ Main 6b8899ba (Release v0.7.108, merge of 570ac238, CI run 45048705221 8/8 on th
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen says whether 8 characters is the right minimum for evidence
+- [x] Jørgen says whether 8 characters is the right minimum for evidence
 
 ## Questions
 - 2026-11-22T18:40 question 1 by crab to jhf (check 1):
@@ -44,6 +44,7 @@ Main 6b8899ba (Release v0.7.108, merge of 570ac238, CI run 45048705221 8/8 on th
 ## Notes
 
 
+check 1: Jørgen 2026-11-25 on the 8-character minimum: 'Sure, let's try it'
 ## History
 - 2026-11-22T18:40 todo -> todo/design (ask)
 - 2026-11-25T11:15 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
