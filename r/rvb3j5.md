@@ -4,7 +4,7 @@ title: "An idle hug mcp reloads into a new hug without waiting for a request"
 state: "doing"
 type: bug
 priority: "high"
-assignee: ["jcode-rvb3j5"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "000001"
