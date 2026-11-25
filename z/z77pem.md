@@ -54,6 +54,7 @@ crab 20:44 local: 67d46348 accepted on review (CI 44377886910 6/6 incl. macOS re
 landed 24e329e on main 2026-11-18: hug names an MCP server too old to reload itself, to its own session (z77pem)
 shipped in v0.7.71 (24e329e)
 crab 2026-11-20 12:04Z: shipped in v0.7.71; check 2 waits on Jørgen's machine: 4 old hug mcp servers still run (see mbdfzs), so the stale-server line should show there now.
+crab 2026-11-25 12:28Z audit: shipped in v0.7.71 (24e329e7). Check 2 waits on Jørgen's machine showing the line, but the line only names servers older than v0.7.54; none run now (the oldest live hug mcp runs v0.7.108). The real gap Jørgen hit is servers that can reload but do not while idle: rvb3j5. Check 2 folds into rvb3j5's check 3 (crab checks the running versions after the next release).
 ## History
 - 2026-11-18T18:23 todo -> doing/active (take)
 - 2026-11-18T20:44 doing/active -> doing/waiting (wait)
