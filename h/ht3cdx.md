@@ -87,3 +87,4 @@ shipped in v0.7.97 (556473c)
 - 2026-11-25T10:19 answered asked (check 6), by jhf, for crab (doing/asked -> doing/active):
   > Jørgen applies a filter, a sort and creates a task from the overview, and stays in the overview each time
   Sure So filter and sorting perfect works the way intended and creating a new task well if I only could do it I can find it in the command palette and I can't find it in the global shortcuts
+- 2026-11-25T10:19 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
