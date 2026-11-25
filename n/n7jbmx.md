@@ -12,16 +12,11 @@ parent: "d634kr"
 group: ""
 rank: "zzzzzs"
 doing_since: "2026-11-18T05:32"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 aliases: ["recall-on-the-agent-s-tool"]
-asked_what: "Tool-call recall passed every quality bar on fresh Nov 19-20 data (useful 22 per 100 calls, noise 5, 80% precise; report attached). The last gate is timing the hook on your live memory store while the Mac is above load 100. That run writes a few 'shown once' rows into the live muninn.db under test session names. May I run it the next time load passes 100?"
-asked_for: "jhf"
-asked_since: "2026-11-21T01:37"
-asked_by: "crab"
-asked_check: "4"
 ---
 
 ## Goal
@@ -57,6 +52,8 @@ Plan for check 4 (the only open check): (1) after 2026-11-21T00:00Z, build 150 c
 ## Questions
 - 2026-11-21T01:37 question 1 by crab to jhf (check 4):
   Tool-call recall passed every quality bar on fresh Nov 19-20 data (useful 22 per 100 calls, noise 5, 80% precise; report attached). The last gate is timing the hook on your live memory store while the Mac is above load 100. That run writes a few 'shown once' rows into the live muninn.db under test session names. May I run it the next time load passes 100?
+  answered 2026-11-25T09:49 by jhf:
+    Yes
 
 ## Notes
 
@@ -89,3 +86,6 @@ crab 2026-11-22 12:37Z reassessment: check 4 still unanswered; 1-min load 17.4 (
 - 2026-11-18T12:24 request 1 by jhf
 - 2026-11-18T13:22 resolved request 1 by retriever
 - 2026-11-21T01:37 doing/waiting -> doing/asked (ask); was waiting_asked_by: hatchling; waiting_on: fresh held-out tool calls of 2026-11-19 and 11-20 (complete after 2026-11-21T00:00Z): build 150 with muninn/scripts/build_tool_set.py --from 2026-11-19 --to 2026-11-21 --n 150 --seed 1121 --first-id 400000, replay shipped and default with -asof on a fresh store copy, judge with judge_tool_set.py, decide check 4 against the bar; arm frozen in recall.ToolRequest.Shipped(); waiting_since: 2026-11-18T06:24
+- 2026-11-25T09:49 answered asked (check 4), by jhf, for crab (doing/asked -> doing/active):
+  > Tool-call recall passed every quality bar on fresh Nov 19-20 data (useful 22 per 100 calls, noise 5, 80% precise; report attached). The last gate is timing the hook on your live memory store while the Mac is above load 100. That run writes a few 'shown once' rows into the live muninn.db under test session names. May I run it the next time load passes 100?
+  Yes
