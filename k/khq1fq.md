@@ -46,7 +46,7 @@ landed b3b6dd7 on main 2026-11-25: repocheck: failing check, wall-clock budget t
 landed 3258760 on main 2026-11-25: Wall-clock budget tests skip in release.yml under HUG_SKIP_TIMING=1; CI judges…
 landed b3bc627 on main 2026-11-25: repocheck: timing.Budget must come before a test's first wall-clock comparison…
 shipped in v0.7.114 (b3b6dd7)
-Reflection (unanswered, 2026-11-25, crab)
+Reflection (open, 2026-11-25, crab): Gap: AGENTS.md 'Releases: add a CHANGELOG.md entry, tag vX.Y.Z, push; CI publishes' says nothing about a tag push GitHub drops during an outage (v0.7.114: no release run for 90 min until I deleted and re-pushed the tag), nor that a brew upgrade killed by a timeout leaves hug unlinked (v0.7.113).
 ## History
 - 2026-11-25T15:23 todo -> doing/active (take)
 - 2026-11-25T18:48 doing/active -> done (done, by release v0.7.114: every check holds); was doing_since: 2026-11-25T15:23
