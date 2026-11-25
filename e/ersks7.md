@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzw"
+rank: "zzzzzzzzzzzv"
 created: 2026-11-24
 updated: 2026-11-24
 design_question: "v0.7.111 is out (brew upgrade veridit/tap/hug). A wait for a date now leads with it: 'waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08' (before: 'waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'). In hug tui's list the stage cell says 'til 11-24', because 'until 11-24' does not fit the column. Does that read right to you, or would you rather widen the column (every title loses 2 characters)?"
