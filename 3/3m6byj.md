@@ -1,16 +1,21 @@
 ---
 id: 3m6byj
 title: "Release v0.7.94: / search lands on the task you typed"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxn"
 created: 2026-11-21
 updated: 2026-11-21
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-25T11:23"
+doing_with: "hktdgs"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -54,3 +59,5 @@ shipped: tag v0.7.94 (feedab54), release.yml 44895643755 success, brew -> ../Cel
   > v0.7.94: on statbus, / k5q120 now selects k5q120 in LINT; Enter shows the results and j/k walk every match; Esc returns to all tasks with k5q120 selected; Tab still keeps it as a filter. One change: Esc no longer clears filter chips (F clears all, ⌫ the last). Does search work the way you wanted, and is Esc keeping chips right?
   I don't understand the question about escape no longer clear filter chips It works the way I want now but when I press escape I go back and the same task is selected and so it clears the search why would it clear no it doesn't clear the search it adds the search and any other filter things as well isn't the search filtered this question is weird
 - 2026-11-25T09:52 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
+- 2026-11-25T11:23 todo/ready -> doing/active (take with hktdgs)
+- 2026-11-25T11:23 crab read the answer: hug task take 3m6byj
