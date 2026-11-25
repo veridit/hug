@@ -44,3 +44,4 @@ Main 6b8899ba (Release v0.7.108, merge of 570ac238, CI run 45048705221 8/8 on th
 - 2026-11-25T11:15 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > v0.7.108 is out. hug task check now refuses evidence under 8 characters, so 'x' or 'ok' no longer ticks a check (it says: fix: hug task check ID N "what shows it holds"). Is 8 characters the right minimum?
   Sure, let's try it
+- 2026-11-25T11:15 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
