@@ -39,7 +39,7 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
 - [x] Inside a task the key attaches a clipboard image as PNG and clipboard text as .txt (.ans with colour), with the attach note, and FILES shows it at once (tmux test with a fake clipboard)
 - [x] In a list the key asks attach to ID · select · create, as S does, and Esc attaches nothing (tmux test)
 - [x] An empty clipboard, no clipboard tool or an SSH session gives a message with a fix: line, nothing attached (test)
-- [ ] Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
+- [x] Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
 
 ## Questions
 - 2026-11-20T11:23 question 1 by crab to jhf (check 1):
@@ -67,6 +67,7 @@ landed 7eb1ad4 on main 2026-11-22: hug tui: V pastes the clipboard into a task a
 landed 0f28cd8 on main 2026-11-22: test: close two surviving mutants: blank clipboard text without an error is…
 shipped in v0.7.103 (d9fdab4)
 file:paste-1044.png (168007 bytes, sha256:57abc9d5) pasted from the clipboard in hug tui
+check 5: Jørgen 2026-11-25: 'That worked beautifully. Thank you'
 ## History
 - 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:23 doing/active -> doing/asked (ask)
@@ -84,3 +85,4 @@ file:paste-1044.png (168007 bytes, sha256:57abc9d5) pasted from the clipboard in
   > Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
   That worked beautifully. Thank you
 - 2026-11-25T10:44 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-25T11:21 crab read the answer: hug task check q7n2zd 5 "Jørgen 2026-11-25: 'That worked beautifully. Thank you'"
