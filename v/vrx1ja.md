@@ -32,7 +32,7 @@ Claude's mcp-server-hug.log: 7 starts from 11-14 to 11-22; 4 never got an initia
 ## Depends on
 
 ## Acceptance
-- [ ] A test holds the memory database write-locked (and makes the embedder slow) and hug mcp still answers initialize within 1 s; tools/list lists the task tools; a memory tool says memory is still opening, with a fix: line
+- [x] A test holds the memory database write-locked (and makes the embedder slow) and hug mcp still answers initialize within 1 s; tools/list lists the task tools; a memory tool says memory is still opening, with a fix: line
 - [x] The cause of the 46 s and >120 s starts is named with evidence (which step waited, how long)
 - [ ] Jørgen sees no 'kunne ikke startes' popup for a week of releases
 
@@ -51,5 +51,6 @@ Gap: Claude does not log server stderr, so nothing records which process held th
 The task cache SchemaVersion is not on the start path: RegisterMCP takes 0.001 s and the cache builds on the first task call.
 Failing-first test pushed: 841b2721 on vrx1ja, cmd/hug/mcp_open_test.go TestMCPAnswersBeforeMemoryOpens (memory db write-locked by the test, Ollama answering after 3 s). On main code: '--- FAIL: TestMCPAnswersBeforeMemoryOpens (3.03s)' 'mcp_open_test.go:142: hug mcp was not ready to answer initialize after 1 s: it waited 2.659s for memory'.
 check 2: Slow step: store.Open's schema exec waits busy_timeout (30 s) on a write-locked muninn.db WHILE holding muninn.db.init.lock, when a release adds schema. Store copy: 'VRX store: schema exec 30.318s' then 'memory unavailable: schema: database is locked (5) (SQLITE_BUSY)'; 4 hug mcp started together answered initialize at 30.437/60.538/90.627/120.730 s (init lock 30.2/60.3/90.4 s each). Holder: hug mcp's start-up Reindex runs in one BEGIN IMMEDIATE, a full pass held it 409.86 s on the copy. Held init lock alone: 19.268 s for a 20 s hold. Write lock with nothing to migrate: 0.185 s. Slow Ollama: +1.5 s (probe cap). Full numbers in the 2026-11-25 hippo note.
+check 1: 0d47af6e (branch vrx1ja and ci/vrx1ja), CI run 45625116019 8/8 success. cmd/hug/mcp_open_test.go TestMCPAnswersBeforeMemoryOpens: memory db write-locked by the test + Ollama answering after 3 s; newMCPServer returns and initialize answers in under 1 s, tools/list has task_* and memory_* (same JSON schemas before and after memory opens), memory_stats answers 'hug mcp: memory is still opening (...)' with a 'fix:' line, then works after release. It failed on main (841b2721): 'hug mcp was not ready to answer initialize after 1 s: it waited 2.659s for memory'. Real binary on the store copy, 4 openers + schema to add + write lock 100 s: initialize 0.072/0.067/0.066/0.070 s (was 30.4-120.7 s).
 ## History
 - 2026-11-25T12:54 todo -> doing/active (take)
