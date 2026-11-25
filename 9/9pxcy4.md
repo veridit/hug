@@ -32,3 +32,5 @@ Candidates (2026-11-25): deepseek-flash (today's default), claude-haiku-5-5, gpt
 - [ ] Jørgen picks the recommended order from the table
 
 ## Notes
+
+Jørgen 2026-11-25: Ollama now has inkling-2-mini:26b-a5b-nvfp4 (20 GB, coding/agentic), gemma4:26b, qwen3.8:27b, qwen3-coder:30b. Add Inkling 2 Mini as the local extraction candidate, timed under real load (the Mac often runs at load 50-150).
