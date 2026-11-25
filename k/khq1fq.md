@@ -1,15 +1,20 @@
 ---
 id: khq1fq
 title: "A timing test fails a release on a shared runner"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["khq1fq-engineer"]
 labels: []
 group: ""
 rank: "0000008"
 created: 2026-11-25
 updated: 2026-11-25
+doing_since: "2026-11-25T15:23"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ v0.7.113 release.yml run 45627554531 failed: TestBigTaskKeys 'tab, Notes open' p
 - [ ] CI still runs TestBigTaskKeys on macOS, shown by a ci.yml log line
 
 ## Notes
+
+
+## History
+- 2026-11-25T15:23 todo -> doing/active (take)
