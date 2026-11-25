@@ -12,15 +12,10 @@ created: 2026-11-24
 updated: 2026-11-24
 parent: "a2k4r5"
 doing_since: "2026-11-25T09:31"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_what: "Jørgen confirms on his board after release"
-asked_for: "jhf"
-asked_since: "2026-11-25T11:19"
-asked_by: "crab"
-asked_check: "3"
 ---
 
 ## Goal
@@ -45,6 +40,8 @@ Picked by Jørgen 18:23Z: GOAL, PURPOSE, PRINCIPLE, DETAILS, then ACCEPTANCE, th
 ## Questions
 - 2026-11-25T11:19 question 1 by crab to jhf (check 3):
   Jørgen confirms on his board after release
+  answered 2026-11-25T13:01 by crab:
+    Withdrawn by crab 2026-11-25: asked once, on release ticket a2k4r5.
 
 ## Notes
 
@@ -68,3 +65,6 @@ crab: shipped in v0.7.112 (main c1056b46, merge of c8b22551, CI 45591665551 8/8,
 - 2026-11-25T09:31 todo -> doing/active (take)
 - 2026-11-25T11:19 doing/active -> doing/asked (ask)
 - 2026-11-25T12:55 handed to crab: rhino's session ended (closed 2026-11-25 11:17)
+- 2026-11-25T13:01 answered asked (check 3), by crab, for crab (doing/asked -> doing/active):
+  > Jørgen confirms on his board after release
+  Withdrawn by crab 2026-11-25: asked once, on release ticket a2k4r5.
