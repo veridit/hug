@@ -38,7 +38,7 @@ Detect via ps + the executable path (Cellar version or deleted file). macOS/Linu
 
 ## Acceptance
 - [x] A test starts a fake old hug mcp (binary path under a Cellar version < 0.7.54) and the hook prints one line naming its pid and a fix: line
-- [ ] On Jørgen's machine the line names the stale servers, and after they restart it is gone
+- [ ] ~~On Jørgen's machine the line names the stale servers, and after they restart it is gone~~ (not relevant: no server older than v0.7.54 runs on Jørgen's Mac (2026-11-25); the live gap is idle reload, covered by rvb3j5 check 3, crab, crab, 2026-11-25)
 
 ## Notes
 
