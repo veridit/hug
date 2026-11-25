@@ -33,7 +33,7 @@ Shipped: 4ddcwa checks 2 and 3 (goldens 100x30 and 160x45, 10 mutants caught). T
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen opens a long task in v0.7.98 and says the frame reads right, or what to change
+- [x] Jørgen opens a long task in v0.7.98 and says the frame reads right, or what to change
 
 ## Questions
 - 2026-11-21T19:23 question 1 by crab to jhf (check 1):
@@ -44,6 +44,7 @@ Shipped: 4ddcwa checks 2 and 3 (goldens 100x30 and 160x45, 10 mutants caught). T
 ## Notes
 
 
+check 1: Jørgen 2026-11-25: 'Beautiful, thank you'
 ## History
 - 2026-11-21T19:23 todo -> todo/design (ask)
 - 2026-11-25T10:21 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
