@@ -89,3 +89,4 @@ crab 2026-11-22 12:37Z reassessment: check 4 still unanswered; 1-min load 17.4 (
 - 2026-11-25T09:49 answered asked (check 4), by jhf, for crab (doing/asked -> doing/active):
   > Tool-call recall passed every quality bar on fresh Nov 19-20 data (useful 22 per 100 calls, noise 5, 80% precise; report attached). The last gate is timing the hook on your live memory store while the Mac is above load 100. That run writes a few 'shown once' rows into the live muninn.db under test session names. May I run it the next time load passes 100?
   Yes
+- 2026-11-25T09:49 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
