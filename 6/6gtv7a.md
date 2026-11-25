@@ -1,15 +1,20 @@
 ---
 id: 6gtv7a
 title: "Memory store opens without a long write: no schema write when nothing is missing"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["raven-6gtv7a"]
 labels: []
 group: ""
 rank: "000001h"
 created: 2026-11-25
 updated: 2026-11-25
+doing_since: "2026-11-26T00:09"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ Measured on a store copy (vrx1ja notes): normal open 0.12-0.23 s; init lock held
 - [ ] With a table to add and the database write-locked by another process, a second opener does not wait behind the first's init lock (test with two openers)
 
 ## Notes
+
+
+## History
+- 2026-11-26T00:09 todo -> doing/active (take)
