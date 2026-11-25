@@ -4,7 +4,7 @@ title: "A timing test fails a release on a shared runner"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["khq1fq-engineer"]
+assignee: ["boar"]
 labels: []
 group: ""
 rank: "0000008"
