@@ -1,7 +1,7 @@
 ---
 id: wg59vb
 title: "Release v0.7.98: a task's page sits between two rules"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzy3"
 created: 2026-11-21
 updated: 2026-11-21
-stage: "active"
-doing_since: "2026-11-25T12:55"
-doing_with: "hktdgs"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T12:55"
 ---
 
 ## Goal
@@ -45,6 +43,7 @@ Shipped: 4ddcwa checks 2 and 3 (goldens 100x30 and 160x45, 10 mutants caught). T
 
 
 check 1: Jørgen 2026-11-25: 'Beautiful, thank you'
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 2026-11-25
 ## History
 - 2026-11-21T19:23 todo -> todo/design (ask)
 - 2026-11-25T10:21 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
@@ -53,3 +52,4 @@ check 1: Jørgen 2026-11-25: 'Beautiful, thank you'
 - 2026-11-25T10:21 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T12:55 todo/ready -> doing/active (take with hktdgs)
 - 2026-11-25T12:55 crab read the answer: hug task take wg59vb
+- 2026-11-25T12:55 doing/active -> done (done); was doing_since: 2026-11-25T12:55; doing_with: hktdgs
