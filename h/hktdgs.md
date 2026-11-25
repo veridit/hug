@@ -61,6 +61,7 @@ check 2: CI run 44960662438 on 1d864738 (branch ci/hktdgs): 8/8 jobs success (se
 landed 1d86473 on main 2026-11-22: tui: H/L step onto no column past either end, the marker gone as when the view…
 shipped in v0.7.99 (1d86473)
 check 3: Jørgen 2026-11-25: 'This works as advertised' (H/L land on no column past either end)
+Jørgen 2026-11-25 (on hktdgs and ta6fy6): 'I would like to see the columns despite not having one being selected ... in the current active section I can always see the columns ... I don't think we should hide the columns at any point.' Check 4 added.
 ## History
 - 2026-11-20T13:07 request 1 by jhf
 - 2026-11-20T13:07 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
