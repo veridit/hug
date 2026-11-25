@@ -48,5 +48,6 @@ failing-first 9e8b4875 (branch hya1st, on main ed882297): TestPageReadsGoalPurpo
 file:hya1st-page-100x30.ans (3669 bytes, sha256:fe42ea46) hya1st check 2: the new page at 100x30, built binary from branch hya1st e033dee2, tmux capture-pane -e -p (COLORFGBG=15;0), on a copy of statbus kkj0mn with a 1-line Details (kkj0ms): GOAL, PURPOSE, PRINCIPLE, DETAILS open, ACCEPTANCE
 file:hya1st-long-details-folded-100x30.ans (3598 bytes, sha256:7e492f92) hya1st check 2: a long Details (4 paragraphs, kkj0mp) folded to '› DETAILS (4)' after PRINCIPLE, 100x30, same binary and capture
 file:hya1st-long-details-opened-100x30.ans (3943 bytes, sha256:c41071fd) hya1st check 2: Shift-Tab from the checks to DETAILS, Enter opens it in place, ACCEPTANCE after its text
+file:mutants.md (2964 bytes, sha256:45ed8863) hya1st + 32ym01 mutants: 20 rules broken by hand, 20 killed (2 needed a test or a sharper mutant: see rows 9 and 15)
 ## History
 - 2026-11-25T09:31 todo -> doing/active (take)
