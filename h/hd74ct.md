@@ -1,17 +1,16 @@
 ---
 id: hd74ct
 title: "Overview: rules only around the focused section"
-state: "doing"
+state: "todo"
 type: "feature"
 priority: "high"
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "zzzzzzzzzzz5"
 created: 2026-11-22
 updated: 2026-11-22
-doing_since: "2026-11-23T09:00"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -92,3 +91,4 @@ check 4: v68n82 check 2 struck naming hd74ct, from Jørgen's 2026-11-25 pick
   Yes, I won't see, but I also want to always show the column headers, which I had another task for, so I'm guessing that will come
 - 2026-11-25T13:22 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T13:29 crab read the answer: hug task check hd74ct 2 "Jørgen 2026-11-25 10:38 on v68n82: 'an option between them, where there are only lines for the currently active section…"
+- 2026-11-25T13:29 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-23T09:00
