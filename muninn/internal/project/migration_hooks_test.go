@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/timing"
 )
 
 // legacyRepo is a git repository whose code branch tracks the old
@@ -41,6 +43,7 @@ func legacyRepo(t *testing.T) (root string, p Project, native string) {
 // commit without the trailer; and a hook that leaves a process holding
 // git's output kept CombinedOutput waiting for it (WaitDelay 0).
 func TestMigrationCommitRunsNoRepoHooks(t *testing.T) {
+	timing.Budget(t)
 	for _, tc := range []struct{ name, hook, script string }{
 		{"commit-msg refuses", "commit-msg", "#!/bin/sh\necho ran > \"$MARK\"\necho 'refused: no Model: trailer' >&2\nexit 1\n"},
 		{"post-commit leaves a process holding output", "post-commit", "#!/bin/sh\necho ran > \"$MARK\"\nsleep 20 &\nexit 0\n"},

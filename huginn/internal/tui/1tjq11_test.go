@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/veridit/hug/huginn/internal/task"
+	"github.com/veridit/hug/internal/timing"
 )
 
 // 1tjq11 (Jørgen 2026-11-22 21:37Z, 21:49Z): on a big task's page every
@@ -138,6 +139,7 @@ func TestBigTaskKeys(t *testing.T) {
 	if raceEnabled {
 		t.Skip("timing under -race measures the race detector")
 	}
+	timing.Budget(t)
 	page, _ := bigBoard(t)
 	request := press(page, "r")
 	if request.prompt != requestPrompt {

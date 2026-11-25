@@ -12,6 +12,8 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/timing"
 )
 
 const validLine = `{"category":"preference","content":"Use tabs in Go.","trust":"high"}`
@@ -84,6 +86,7 @@ func TestRunFakeLLMAndRedactedErrors(t *testing.T) {
 }
 
 func TestTimeoutAndOff(t *testing.T) {
+	timing.Budget(t)
 	var requests atomic.Int32
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { requests.Add(1); time.Sleep(200 * time.Millisecond) }))
 	defer s.Close()

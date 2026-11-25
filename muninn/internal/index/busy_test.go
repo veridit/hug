@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/veridit/hug/internal/timing"
 	"github.com/veridit/hug/muninn/internal/index"
 	"github.com/veridit/hug/muninn/internal/store"
 )
@@ -14,6 +15,7 @@ import (
 // A hook-mode pass must not queue behind another process's write
 // transaction (a long `muninn index`): it returns ErrBusy at once.
 func TestNoWaitReturnsBusyImmediately(t *testing.T) {
+	timing.Budget(t)
 	path := filepath.Join(t.TempDir(), "m.db")
 	writer, _ := store.Open(path)
 	defer writer.Close()

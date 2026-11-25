@@ -4,6 +4,21 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- A release no longer fails on a test's wall-clock budget once CI has
+  passed the same SHA (khq1fq). v0.7.113's release (run 45627554531)
+  failed on TestBigTaskKeys, `tab, Notes open` p50 53.8 ms over its
+  50 ms budget, after CI 45625116019 passed the same code 8/8, and brew
+  stayed on v0.7.112 until a rerun. The 13 tests that compare a measured
+  time with a fixed one now call `timing.Budget(t)` (internal/timing),
+  which skips them under `HUG_SKIP_TIMING=1`; release.yml sets it and
+  lists the tests it skipped. CI never sets it and lists each budget it
+  judged (macOS judges all 13). No budget changed. internal/repocheck
+  fails a test function that compares a measured time without calling
+  `timing.Budget`, a release.yml `go test` step without
+  `HUG_SKIP_TIMING=1`, and a ci.yml that sets it.
+
 ## v0.7.113 - 2026-11-25
 
 - `hug mcp` answers an app's first request (initialize) at once, and

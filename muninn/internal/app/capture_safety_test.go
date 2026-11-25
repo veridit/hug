@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/veridit/hug/internal/timing"
 	"github.com/veridit/hug/muninn/internal/scopetest"
 )
 
@@ -40,6 +41,7 @@ func TestCaptureSessionCannotChangeClientBinding(t *testing.T) {
 }
 
 func TestCaptureFinalObserverWaitsForLeaseWithinBudget(t *testing.T) {
+	timing.Budget(t)
 	f := scopetest.New(t)
 	b := f.Bind(t, "alpha")
 	m := fakeCapture(t, f, line("fact", "high", "Quartz final preference remains durable for deployments.", ""))

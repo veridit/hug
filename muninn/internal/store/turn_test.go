@@ -11,6 +11,8 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/veridit/hug/internal/timing"
 )
 
 // 2026-11-16 (me51r2): waiters behind a long holder got SQLITE_BUSY once
@@ -146,6 +148,7 @@ func TestWriteTurnStuckHolderIsNamed(t *testing.T) {
 // The turn is reentrant through its context, so nested write flows (forget
 // calls Reindex) do not wait on themselves; a hook's TryWriteTurn never waits.
 func TestWriteTurnNestsAndTryDoesNotWait(t *testing.T) {
+	timing.Budget(t)
 	path := filepath.Join(t.TempDir(), "m.db")
 	db, _ := Open(path)
 	defer db.Close()

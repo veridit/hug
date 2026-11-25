@@ -15,6 +15,7 @@ import (
 	"time"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/veridit/hug/internal/timing"
 	_ "modernc.org/sqlite"
 )
 
@@ -117,6 +118,7 @@ type mcpStart struct {
 // opening, with a fix: line, instead of hanging. Once the lock goes, memory
 // opens and the same tool works.
 func TestMCPAnswersBeforeMemoryOpens(t *testing.T) {
+	timing.Budget(t)
 	hugHome := mcpTestRepo(t)
 	slowEmbedder(t, hugHome, 3*time.Second)
 	release := heldStore(t, hugHome)

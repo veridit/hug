@@ -19,7 +19,26 @@ jobs:
       - name: No-secrets gate
         run: ./muninn/scripts/check-secrets.sh --all
       - name: Test
-        run: go test ./...
+        # A tag releases a SHA CI already passed: the wall-clock budget tests
+        # skip here (HUG_SKIP_TIMING=1, internal/timing), so a loaded runner
+        # cannot fail a release on speed. CI judges them (khq1fq: v0.7.113,
+        # run 45627554531, TestBigTaskKeys p50 53.8 ms over 50 ms after CI
+        # 45625116019 passed). -v only to list those skips: a pass prints
+        # each package's line and the skipped budgets, a failure the whole log.
+        shell: bash
+        run: |
+          log="$RUNNER_TEMP/test.log"
+          go test -v ./... > "$log" 2>&1 && ok=0 || ok=$?
+          if [ "$ok" = 0 ]; then
+            grep -E '^(ok|FAIL|\?) ' "$log"
+            grep 'skipped under HUG_SKIP_TIMING=1' "$log" || true
+            echo "wall-clock budget tests skipped: $(grep -c 'skipped under HUG_SKIP_TIMING=1' "$log")"
+          else
+            cat "$log"
+          fi
+          exit "$ok"
+        env:
+          HUG_SKIP_TIMING: "1"
       - name: Build all platforms
         run: ./scripts/build-release.sh "${GITHUB_REF_NAME}"
       - name: Publish
