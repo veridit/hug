@@ -56,3 +56,4 @@ check 1: Counted 2026-11-21 10:28Z from ~/Library/Application Support/muninn/hoo
 - 2026-11-25T09:50 answered asked (check 2), by jhf, for crab (doing/asked -> doing/active):
   > One day with mid-turn recall on (counted on check 1): 13 messages you typed into running turns were recalled, 10 got memories in the tool result (half a second each, 1 missed), and stale turn blocks halved (6 to 3). Before, those 13 got nothing. Make it the default? A: default on, remove the old off path. B: default on, keep the off switch. C: keep it opt-in. My pick: B.
   A And always investigate if we can do it even faster or and if this works with all the tools we're testing with
+- 2026-11-25T09:50 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
