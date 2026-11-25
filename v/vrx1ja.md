@@ -39,5 +39,15 @@ Claude's mcp-server-hug.log: 7 starts from 11-14 to 11-22; 4 never got an initia
 ## Notes
 
 
+Check 2 evidence (hippo, 2026-11-25). Setup: a copy of the live store made with sqlite3 .backup into the scratch folder vrx1ja-store (HUG_HOME pointed there, live store never written), hug v0.7.112 (c1056b46) with throwaway per-step timers, load 8-13.
+Baseline: initialize 0.15-0.26 s. Memory open takes 0.12-0.23 s: Bound 0.05-0.18 s, store.Open 0.002-0.007 s, pickEmbedder 0.03-0.05 s, task RegisterMCP 0.001 s.
+Write lock held by another process (BEGIN IMMEDIATE), nothing to migrate: initialize 0.185 s. Not the cause on its own.
+Ollama down: pickEmbedder 0.001 s. Ollama answering only after 10 s: pickEmbedder 1.502 s (capped by Available's 1.5 s timeout), initialize 1.588 s.
+Init lock muninn.db.init.lock held 20 s: 'VRX store: init lock 18.897s', initialize 19.268 s. flock has no timeout.
+THE SLOW STEP: store.Open's schema exec runs while another process holds the write lock, on a store that needs schema added (a release that adds a table; on the copy holds_ended was dropped). Result: 'VRX store: schema exec 30.318s', then 'hug mcp: memory unavailable: schema: database is locked (5) (SQLITE_BUSY)', initialize 30.398 s. It waits busy_timeout (30 s) WHILE HOLDING the init lock, so openers queue. 4 hug mcp started together answered initialize at 30.437 s, 60.538 s, 90.627 s and 120.730 s ('init lock 30.209s / 60.303s / 90.392s' plus 'schema exec ~30.3s' each). The 4th is past Claude's 120 s.
+Who holds the write lock that long: every hug mcp start runs a background Reindex inside one BEGIN IMMEDIATE. A full pass on the copy held it 409.86 s ('6m48.103s ... neighbors=6m14.24s').
+Timing of the failures: a release execs the new hug in every jcode hug mcp (jcode logs show the reloads; 9 hug mcp were running on 11-24). Claude restarts its hug only when it relaunches itself for a stealth update. main1.log 11-21: 16:27:22 'stealth-update', 16:27:30 'Launching MCP Server: hug', 16:30:31 'Failed to connect to hug: Request timed out ... timeout: 60000', then retries at 120000. All 4 failing starts follow such a relaunch.
+Gap: Claude does not log server stderr, so nothing records which process held the lock at each past failure. What is reproduced is the mechanism, up to 120.7 s: initialize waits behind memory open (the init lock, then 30 s per locked statement, one opener after another).
+The task cache SchemaVersion is not on the start path: RegisterMCP takes 0.001 s and the cache builds on the first task call.
 ## History
 - 2026-11-25T12:54 todo -> doing/active (take)
