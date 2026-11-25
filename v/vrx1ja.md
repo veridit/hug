@@ -11,10 +11,15 @@ rank: "000000i"
 created: 2026-11-24
 updated: 2026-11-24
 doing_since: "2026-11-25T12:54"
-stage: "active"
+stage: "asked"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+asked_for: "jhf"
+asked_since: "2026-11-25T14:50"
+asked_by: "crab"
+asked_check: "3"
+asked_what: "Jørgen sees no 'kunne ikke startes' popup for a week of releases"
 ---
 
 ## Goal
@@ -36,6 +41,10 @@ Claude's mcp-server-hug.log: 7 starts from 11-14 to 11-22; 4 never got an initia
 - [x] The cause of the 46 s and >120 s starts is named with evidence (which step waited, how long)
 - [ ] Jørgen sees no 'kunne ikke startes' popup for a week of releases
 
+## Questions
+- 2026-11-25T14:50 question 1 by crab to jhf (check 3):
+  Jørgen sees no 'kunne ikke startes' popup for a week of releases
+
 ## Notes
 
 
@@ -53,5 +62,9 @@ Failing-first test pushed: 841b2721 on vrx1ja, cmd/hug/mcp_open_test.go TestMCPA
 check 2: Slow step: store.Open's schema exec waits busy_timeout (30 s) on a write-locked muninn.db WHILE holding muninn.db.init.lock, when a release adds schema. Store copy: 'VRX store: schema exec 30.318s' then 'memory unavailable: schema: database is locked (5) (SQLITE_BUSY)'; 4 hug mcp started together answered initialize at 30.437/60.538/90.627/120.730 s (init lock 30.2/60.3/90.4 s each). Holder: hug mcp's start-up Reindex runs in one BEGIN IMMEDIATE, a full pass held it 409.86 s on the copy. Held init lock alone: 19.268 s for a 20 s hold. Write lock with nothing to migrate: 0.185 s. Slow Ollama: +1.5 s (probe cap). Full numbers in the 2026-11-25 hippo note.
 check 1: 0d47af6e (branch vrx1ja and ci/vrx1ja), CI run 45625116019 8/8 success. cmd/hug/mcp_open_test.go TestMCPAnswersBeforeMemoryOpens: memory db write-locked by the test + Ollama answering after 3 s; newMCPServer returns and initialize answers in under 1 s, tools/list has task_* and memory_* (same JSON schemas before and after memory opens), memory_stats answers 'hug mcp: memory is still opening (...)' with a 'fix:' line, then works after release. It failed on main (841b2721): 'hug mcp was not ready to answer initialize after 1 s: it waited 2.659s for memory'. Real binary on the store copy, 4 openers + schema to add + write lock 100 s: initialize 0.072/0.067/0.066/0.070 s (was 30.4-120.7 s).
 Mutants on 0d47af6e (each broken by hand, the test run, restored with git checkout; tree clean after): 1 initialize waits on memory (<-m.ready in OpenMCP): TestMCPAnswersBeforeMemoryOpens 'not ready to answer initialize after 1 s: it waited 2.647s'. 2 tools/list waits (middleware blocks tools/list on ready): 'tools/list answered 30.581s after start'. 3a memory tool before ready hangs (no 5 s timer): 'memory_stats while memory opens: context deadline exceeded (it must answer, not hang)'. 3b memory tool lies (error text without still-opening/fix:): 'want an error saying memory is still opening with a fix: line'. 4 ready never flips: 'memory never became ready after the lock went: ... still opening (1m7s so far ...)'. 4b busy open not retried: TestMCPMemoryOpensAfterALongLock 'with the lock held 33 s: want still opening, got isError=true'. 5 preview binding drifts (writeScopes !*): TestPreviewBindingNamesTheSamePlaces 'instructions differ'. 6 memory tools registered only once up: 'tools/list while memory opens lacks memory_search'. Real binary, store copy, write lock 70 s with schema to add: initialize 0.22 s, memory_stats 'still opening' at 5/20/35/50/65 s with fix:, ok at 99.7 s after release; stderr 'hug mcp: memory busy, opening again in 5s : schema: database is locked (5) (SQLITE_BUSY)'. Local full suite not run: load stayed 31-63 for 12 min (cap 20); CI 45625116019 ran it on 3 OSes incl. ubuntu -race.
+landed 841b272 on main 2026-11-25: hug mcp: failing test, initialize waits for a write-locked memory store (vrx1ja…
+landed 0d47af6 on main 2026-11-25: hug mcp: answer initialize before memory opens; memory opens in the background…
+shipped in v0.7.113 (841b272)
 ## History
 - 2026-11-25T12:54 todo -> doing/active (take)
+- 2026-11-25T14:50 doing/active -> doing/asked (ask)
