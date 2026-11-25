@@ -32,3 +32,5 @@ Today (v0.7.112): Details folds when over 6 wrapped lines (hya1st); answered Que
 - [ ] A section folds only when taller than the page area, whatever its name; Acceptance of 8a0ybb shows open at 100x30 (golden)
 
 ## Notes
+
+Jørgen 2026-11-25 10:42 (request 1 on 9a479v): 'a bit like when I jump to the active section in the overview, it expands' (a section opens when you land on it). 10:43 (request 2): 'I do wonder if we should use dot like comma and period to jump ... to different sections instead of uppercase H and uppercase L ... maybe those uppercase things are free'. On v0.7.112: comma and period are unbound everywhere in hug tui; H and L are bound only in lists (mark a column, tui.go:1936), free on a task page. Frames show both key pairs for him to pick; keys stay provisional until bfxq93.
