@@ -1,15 +1,20 @@
 ---
 id: rvb3j5
 title: "An idle hug mcp reloads into a new hug without waiting for a request"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["jcode-rvb3j5"]
 labels: []
 group: ""
 rank: "000001"
 created: 2026-11-25
 updated: 2026-11-25
+doing_since: "2026-11-25T21:32"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "rvb3j5"
+worktree: "/Users/jhf/.jcode/scratch/wt-rvb3j5"
 ---
 
 ## Goal
@@ -32,3 +37,7 @@ Today (cmd/hug/reload.go, mbdfzs): the reloader checks the binary only before it
 - [ ] After the next release, no hug mcp on Jørgen's Mac runs an older hug after 2 minutes (crab checks with that command; Jørgen is not asked)
 
 ## Notes
+
+
+## History
+- 2026-11-25T21:32 todo -> doing/active (take)
