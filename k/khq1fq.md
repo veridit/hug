@@ -38,5 +38,6 @@ v0.7.113 release.yml run 45627554531 failed: TestBigTaskKeys 'tab, Notes open' p
 ## Notes
 
 
+Branch khq1fq b3bc627e (ci/khq1fq run 45649108400). internal/timing.Budget(t) skips under HUG_SKIP_TIMING=1; 13 wall-clock budget tests call it; release.yml Test step sets it and prints 'wall-clock budget tests skipped: N'; ci.yml never sets it and prints 'wall-clock budget TestX: judged here'. Failing-first: b3b6dd74 repocheck failed 13 functions + release.yml step. Local HUG_SKIP_TIMING=1 go test -v ./...: exit 0, 'wall-clock budget tests skipped: 13'; plain: exit 0, 13 'judged here'. Mutants 11/11 killed (M11 Budget-after-gate survived first, killed after b3bc627e).
 ## History
 - 2026-11-25T15:23 todo -> doing/active (take)
