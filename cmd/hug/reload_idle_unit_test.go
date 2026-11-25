@@ -374,3 +374,22 @@ func TestIdlePumpWithoutLaunchDoesNotSpin(t *testing.T) {
 		t.Fatalf("%d waits in 300 ms at a 20 ms tick; want about 15", n)
 	}
 }
+
+// A request running when hug is upgraded holds the idle reload, but the
+// pump keeps reading meanwhile: when the client cancels it (no reply will
+// come), the reload goes ahead at the next tick, not after drainWait.
+func TestIdleReloadAfterCancelledRequest(t *testing.T) {
+	g := newIdleRig(t, 20*time.Millisecond)
+	g.initialize(t)
+	g.src.send(`{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"task_list"}}` + "\n")
+	time.Sleep(50 * time.Millisecond)
+	g.brewUpgrade(t)
+	time.Sleep(200 * time.Millisecond) // several ticks with request 2 running
+	g.src.send(`{"jsonrpc":"2.0","method":"notifications/cancelled","params":{"requestId":2}}` + "\n")
+	if _, ok := g.execd(3 * time.Second); !ok {
+		t.Fatalf("no reload after request 2 was cancelled; log:\n%s", g.log.String())
+	}
+	if !strings.Contains(g.server.String(), "notifications/cancelled") {
+		t.Errorf("the cancel never reached the server:\n%s", g.server.String())
+	}
+}
