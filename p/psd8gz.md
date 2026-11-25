@@ -1,7 +1,7 @@
 ---
 id: psd8gz
 title: "Release v0.7.109: a big task's page answers keys at once"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzc"
 created: 2026-11-23
 updated: 2026-11-23
-stage: "active"
-doing_since: "2026-11-25T13:00"
-doing_with: "hktdgs"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T13:01"
 ---
 
 ## Goal
@@ -45,6 +43,7 @@ Main 3125fd29 (Release v0.7.109, merge of 8c16709c, CI 8/8 on that exact SHA). r
 
 
 check 1: Jørgen 2026-11-25 on 1tjq11: 'Yes, quite nice and quick. Thank you' (and here: 'It is quick now')
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 2026-11-25
 ## History
 - 2026-11-23T03:15 todo -> todo/design (ask)
 - 2026-11-25T11:17 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
@@ -53,3 +52,4 @@ check 1: Jørgen 2026-11-25 on 1tjq11: 'Yes, quite nice and quick. Thank you' (a
 - 2026-11-25T11:17 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T13:00 todo/ready -> doing/active (take with hktdgs)
 - 2026-11-25T13:00 crab read the answer: hug task take psd8gz
+- 2026-11-25T13:01 doing/active -> done (done); was doing_since: 2026-11-25T13:00; doing_with: hktdgs
