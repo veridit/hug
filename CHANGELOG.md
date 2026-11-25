@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.115 - 2026-11-25
 
 - An idle `hug mcp` reloads into the installed hug within about 10 s
   of an upgrade, without waiting for a request (rvb3j5). Until now it
