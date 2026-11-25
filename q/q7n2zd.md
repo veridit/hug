@@ -1,7 +1,7 @@
 ---
 id: q7n2zd
 title: "Paste the clipboard into a task as an attachment"
-state: "doing"
+state: "done"
 type: feature
 priority: "medium"
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzwa"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-doing_since: "2026-11-22T08:46"
 parent: "9s0vj3"
+done_at: "2026-11-25T11:21"
 ---
 
 ## Goal
@@ -68,6 +67,7 @@ landed 0f28cd8 on main 2026-11-22: test: close two surviving mutants: blank clip
 shipped in v0.7.103 (d9fdab4)
 file:paste-1044.png (168007 bytes, sha256:57abc9d5) pasted from the clipboard in hug tui
 check 5: Jørgen 2026-11-25: 'That worked beautifully. Thank you'
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 11-25
 ## History
 - 2026-11-20T11:23 todo -> doing/active (take with p87ngv)
 - 2026-11-20T11:23 doing/active -> doing/asked (ask)
@@ -86,3 +86,4 @@ check 5: Jørgen 2026-11-25: 'That worked beautifully. Thank you'
   That worked beautifully. Thank you
 - 2026-11-25T10:44 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T11:21 crab read the answer: hug task check q7n2zd 5 "Jørgen 2026-11-25: 'That worked beautifully. Thank you'"
+- 2026-11-25T11:21 doing/active -> done (done); was doing_since: 2026-11-22T08:46
