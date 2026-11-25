@@ -142,9 +142,23 @@ var OnWrite = func(scope string) {}
 // Register adds the memory_* tools to s (used alone by muninn mcp, and next
 // to the task tools by hug mcp). opt must already be bound (see Bind).
 func Register(s *mcp.Server, a *app.App, opt Options) {
+	RegisterLazy(s, func(context.Context) (*app.App, Options, error) { return a, opt, nil })
+}
+
+// Opener gives a memory tool its app and binding when it is called. An
+// error is the tool's answer (hug mcp: memory is still opening, vrx1ja).
+type Opener func(ctx context.Context) (*app.App, Options, error)
+
+// RegisterLazy adds the same memory_* tools as Register, with the same
+// names and schemas, before memory is open: each call asks open first.
+func RegisterLazy(s *mcp.Server, open Opener) {
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_search", Description: "Search local memories (keyword + concept community + semantic). Use before answering questions about the user, their projects or past decisions."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in searchIn) (*mcp.CallToolResult, hitsOut, error) {
-			opt := opt.Refresh(a)
+			a, opt, err := open(ctx)
+			if err != nil {
+				return nil, hitsOut{}, err
+			}
+			opt = opt.Refresh(a)
 			if opt.Err != nil {
 				return nil, hitsOut{}, opt.Err
 			}
@@ -171,6 +185,10 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_remember", Description: "Store a durable memory: a rule, preference, decision or correction the user stated that will matter in future sessions. One fact per call. Ask: Would this still be true and useful in a different project? Use here (default, also when unsure) for this project, client across this client's projects, global for user-wide facts (only this client inside a client). Answer project-mention questions with place_reason or use here. Never store real secrets. If the reply says the text looks like it may hold a secret, judge it: remove the secret, or call again with safe_reason when it is safe. For a rule or pattern, say when it applies: when (the situation), when_not (look-alikes), case (scope, paths, tools); the content is then what is shown. A changed trigger on an existing note is a correction: name it in supersedes."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in rememberIn) (*mcp.CallToolResult, idOut, error) {
+			a, opt, err := open(ctx)
+			if err != nil {
+				return nil, idOut{}, err
+			}
 			ctx = app.WithFix(ctx, a.HarnessFix("mcp", in.Reason))
 			u, re, err := opt.RememberPlaced(ctx, a, in.Content, in.Category, in.Scope, in.Tags, in.SafeReason, in.Place, in.PlaceReason, app.RememberDecision{NewReason: in.NewReason, Reinforce: in.Reinforce, Type: in.Type, Holds: in.Holds, Supersedes: in.Supersedes, Trigger: in.triggerOf(), ClearTrigger: in.ClearTrigger})
 			if err != nil {
@@ -183,6 +201,10 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_forget", Description: "Retire a wrong or outdated memory by short id, unique prefix (4+ chars), or legacy id. Upstream harness notes are suppressed only in muninn, leaving upstream files unchanged. Follow with memory_remember for the correction."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in forgetIn) (*mcp.CallToolResult, idOut, error) {
+			a, opt, err := open(ctx)
+			if err != nil {
+				return nil, idOut{}, err
+			}
 			sessions := app.HarnessSessions()
 			if s := strings.TrimSpace(in.Session); s != "" {
 				sessions = append(sessions, "mcp:"+s)
@@ -199,7 +221,11 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_related", Description: "Nearest neighbours of a memory (precomputed, incremental kNN)."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, in relatedIn) (*mcp.CallToolResult, hitsOut, error) {
-			opt := opt.Refresh(a)
+			a, opt, err := open(ctx)
+			if err != nil {
+				return nil, hitsOut{}, err
+			}
+			opt = opt.Refresh(a)
 			if in.Limit <= 0 {
 				in.Limit = 8
 			}
@@ -230,7 +256,11 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 			Note    string `json:"note,omitempty" jsonschema:"what you did, for the undo trail"`
 			Session string `json:"session,omitempty" jsonschema:"the session id passed to memory_recall, if any"`
 		}) (*mcp.CallToolResult, dreamOut, error) {
-			opt := opt.Refresh(a)
+			a, opt, err := open(ctx)
+			if err != nil {
+				return nil, dreamOut{}, err
+			}
+			opt = opt.Refresh(a)
 			if opt.Err != nil {
 				return nil, dreamOut{}, opt.Err
 			}
@@ -252,6 +282,10 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 
 	mcp.AddTool(s, &mcp.Tool{Name: "memory_stats", Description: "Index statistics."},
 		func(ctx context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, app.IndexStats, error) {
+			a, opt, err := open(ctx)
+			if err != nil {
+				return nil, app.IndexStats{}, err
+			}
 			st, err := app.Stats(ctx, a, opt)
 			return text(st), st, err
 		})
@@ -262,7 +296,11 @@ func Register(s *mcp.Server, a *app.App, opt Options) {
 			Message string `json:"message"`
 			Session string `json:"session,omitempty" jsonschema:"stable id of the conversation; omit for a one-off lookup"`
 		}) (*mcp.CallToolResult, recall.Response, error) {
-			opt := opt.Refresh(a)
+			a, opt, err := open(ctx)
+			if err != nil {
+				return nil, recall.Response{}, err
+			}
+			opt = opt.Refresh(a)
 			if opt.Err != nil {
 				return nil, recall.Response{}, opt.Err
 			}

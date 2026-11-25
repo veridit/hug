@@ -165,10 +165,14 @@ func TestMCPAnswersBeforeMemoryOpens(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if d := time.Since(start); d > 2*time.Second {
+		t.Errorf("tools/list answered %s after start, want it without waiting for memory", d.Round(time.Millisecond))
+	}
 	var names []string
 	for _, tl := range tools.Tools {
 		names = append(names, tl.Name)
 	}
+	opening := toolSchemas(t, tools)
 	for _, want := range []string{"task_list", "task_new", "task_next", "task_show", "memory_search", "memory_remember", "memory_stats"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("tools/list while memory opens lacks %s: %v", want, names)
@@ -201,6 +205,78 @@ func TestMCPAnswersBeforeMemoryOpens(t *testing.T) {
 		}
 		if time.Now().After(deadline) {
 			t.Fatalf("memory never became ready after the lock went: %s", toolText(r))
+		}
+		time.Sleep(200 * time.Millisecond)
+	}
+	// Same tools, same schemas, once memory is up (vrx1ja: jcode and Claude
+	// see no difference but the timing).
+	up, err := cs.ListTools(ctx, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := toolSchemas(t, up); got != opening {
+		t.Errorf("tools/list changed once memory opened:\nwhile opening: %s\nonce up:       %s", opening, got)
+	}
+}
+
+// toolSchemas is every tool's name, input and output schema, as one string.
+func toolSchemas(t *testing.T, r *sdk.ListToolsResult) string {
+	t.Helper()
+	b, err := json.Marshal(r.Tools)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
+}
+
+// TestMCPMemoryOpensAfterALongLock: a write lock held past one busy_timeout
+// (an index pass holds it for minutes) leaves memory opening, not
+// unavailable for the session; it opens once the lock goes (vrx1ja).
+func TestMCPMemoryOpensAfterALongLock(t *testing.T) {
+	if testing.Short() {
+		t.Skip("holds the store past busy_timeout (30 s)")
+	}
+	hugHome := mcpTestRepo(t)
+	t.Setenv("HUG_NO_EMBED", "1")
+	release := heldStore(t, hugHome)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	s, closeFn, err := newMCPServer(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer closeFn()
+	srvT, cliT := sdk.NewInMemoryTransports()
+	if _, err := s.Connect(ctx, srvT, nil); err != nil {
+		t.Fatal(err)
+	}
+	cs, err := sdk.NewClient(&sdk.Implementation{Name: "t", Version: "0"}, nil).Connect(ctx, cliT, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cs.Close()
+	// Past one busy_timeout (store.BusyTimeout, 30 s): the first open has
+	// given up by now.
+	time.Sleep(33 * time.Second)
+	r, err := cs.CallTool(ctx, &sdk.CallToolParams{Name: "memory_stats", Arguments: map[string]any{}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out := toolText(r); !r.IsError || !strings.Contains(out, "memory is still opening") {
+		t.Fatalf("memory_stats with the lock held 33 s: want still opening, got isError=%v:\n%s", r.IsError, out)
+	}
+	release()
+	deadline := time.Now().Add(30 * time.Second)
+	for {
+		r, err := cs.CallTool(ctx, &sdk.CallToolParams{Name: "memory_stats", Arguments: map[string]any{}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !r.IsError {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("memory did not open after a lock held past busy_timeout: %s", toolText(r))
 		}
 		time.Sleep(200 * time.Millisecond)
 	}
