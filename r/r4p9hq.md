@@ -1,7 +1,7 @@
 ---
 id: r4p9hq
 title: "Release v0.7.95: the focus \u003e pulses, text cursors blink, one thing moves"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzxq"
 created: 2026-11-21
 updated: 2026-11-21
-stage: "active"
-doing_since: "2026-11-25T11:22"
-doing_with: "hktdgs"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T11:23"
 ---
 
 ## Goal
@@ -58,6 +56,7 @@ file:answer-box-off.ansi (2955 bytes, sha256:1e53ab94) answer-box-off
 
 shipped: tag v0.7.95 (c4389611); release.yml 44907060648 attempt 1 failed on TestSettleWaitsOnProgressNotAClock/progressing ('settleWait returned "" after 1m32.6s, want about 1m30s', unrelated to q3sh69, same failure on ci/qcq3tm 44720742380; filed 3qa9bt), attempt 2 success; brew -> ../Cellar/hug/0.7.95/bin/hug, hug v0.7.95
 check 1: Jørgen 2026-11-25: 'Finally, it's so much better. Subtle one thing brings your attention, the one thing moving where you can enter something'
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 2026-11-25
 ## History
 - 2026-11-21T14:05 todo -> todo/design (ask)
 - 2026-11-25T09:52 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
@@ -66,3 +65,4 @@ check 1: Jørgen 2026-11-25: 'Finally, it's so much better. Subtle one thing bri
 - 2026-11-25T09:52 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T11:21 crab read the answer: hug task check r4p9hq 1 "Jørgen 2026-11-25: 'Finally, it's so much better. Subtle one thing brings your attention, the one thing moving where yo…"
 - 2026-11-25T11:22 todo/ready -> doing/active (take with hktdgs)
+- 2026-11-25T11:23 doing/active -> done (done); was doing_since: 2026-11-25T11:22; doing_with: hktdgs
