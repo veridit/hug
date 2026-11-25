@@ -35,6 +35,8 @@ Switched on 2026-11-20 10:22Z: recall.jcode_midturn true in /Users/jhf/Library/A
 ## Acceptance
 - [x] A note counts, for the day after 11-20 10:22Z and the day before: mid-turn messages, those given a recall block, parked blocks gone stale, with the commands used
 - [x] Jørgen decides: default on (old path removed), default on (old path kept), or stays opt-in
+- [ ] Mid-turn recall is on by default and the old off path is removed (A, Jørgen's pick); CHANGELOG says so
+- [ ] Mid-turn recall timed per call and shown to work in jcode, Claude Code and Codex (the harnesses hug supports), with the numbers noted
 
 ## Questions
 - 2026-11-21T11:29 question 1 by crab to jhf (check 2):
