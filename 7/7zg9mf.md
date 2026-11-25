@@ -1,17 +1,16 @@
 ---
 id: 7zg9mf
 title: "Filters can be negated (!), and the list opens on 'state: not done'"
-state: "doing"
+state: "todo"
 type: "feature"
 priority: "medium"
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "000008"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-22T03:13"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -86,3 +85,4 @@ Jørgen 2026-11-25 (check 5): 'It works beautifully, except that after I press e
   It works beautifully, except that after I press exclamation mark, backspace will not remove it.
 - 2026-11-25T10:40 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T11:23 crab read the answer: hug task set 7zg9mf
+- 2026-11-25T13:22 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-22T03:13
