@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzz5"
 created: 2026-11-22
 updated: 2026-11-22
 doing_since: "2026-11-23T09:00"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_check: "2"
-asked_what: "Open frame-C-100x30.ans next to frame-A-100x30.ans (attached; same board and keys, WAITING focused and scrolled). C: only the section you are in sits between two rules (↑ on its top rule, ↓ on its end rule); the others are a plain title line with their count, in their colour. C has 2 rules and 16 task rows at 100x30; today's A has 11 rules and 12 rows (160x45: 31 vs 27 rows). frame-C-asked-100x30.ans shows C with ASKED focused. Do you want C? (Your pick also settles v68n82's A or B.)"
-asked_for: "jhf"
-asked_since: "2026-11-23T09:21"
-asked_by: "crab"
 ---
 
 ## Goal
@@ -68,6 +63,8 @@ Build in huginn/internal/tui/sectionframe.go (sectionFrame, sectionRule); B is s
 ## Questions
 - 2026-11-23T09:21 question 1 by crab to jhf (check 2):
   Open frame-C-100x30.ans next to frame-A-100x30.ans (attached; same board and keys, WAITING focused and scrolled). C: only the section you are in sits between two rules (↑ on its top rule, ↓ on its end rule); the others are a plain title line with their count, in their colour. C has 2 rules and 16 task rows at 100x30; today's A has 11 rules and 12 rows (160x45: 31 vs 27 rows). frame-C-asked-100x30.ans shows C with ASKED focused. Do you want C? (Your pick also settles v68n82's A or B.)
+  answered 2026-11-25T13:22 by jhf:
+    Yes, I won't see, but I also want to always show the column headers, which I had another task for, so I'm guessing that will come
 
 ## Notes
 
@@ -88,3 +85,6 @@ hd74ct-worker: variant C built on branch hd74ct 7f94a9dd (from main 3125fd29, v0
 - 2026-11-22T22:32 resolved request 1 by crab
 - 2026-11-23T09:00 todo -> doing/active (take)
 - 2026-11-23T09:21 doing/active -> doing/asked (ask)
+- 2026-11-25T13:22 answered asked (check 2), by jhf, for crab (doing/asked -> doing/active):
+  > Open frame-C-100x30.ans next to frame-A-100x30.ans (attached; same board and keys, WAITING focused and scrolled). C: only the section you are in sits between two rules (↑ on its top rule, ↓ on its end rule); the others are a plain title line with their count, in their colour. C has 2 rules and 16 task rows at 100x30; today's A has 11 rules and 12 rows (160x45: 31 vs 27 rows). frame-C-asked-100x30.ans shows C with ASKED focused. Do you want C? (Your pick also settles v68n82's A or B.)
+  Yes, I won't see, but I also want to always show the column headers, which I had another task for, so I'm guessing that will come
