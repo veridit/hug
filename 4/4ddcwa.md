@@ -42,7 +42,7 @@ Replaces 8a0ybb check 9 (↑/↓ in the corners). Related: xt0qvf (where the sta
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen approves ANSI frames at 100x30 of a long task: at the top, scrolled mid-page, and at the end
+- [x] Jørgen approves ANSI frames at 100x30 of a long task: at the top, scrolled mid-page, and at the end
 - [x] The rule under the title shows ↑ at its left end exactly when the page is scrolled down (golden)
 - [x] A bottom rule sits right above the global keys, starts with ↓ when more is below, and carries the page status; no blank line between page, rule and keys (golden 100x30 and 160x45)
 - [x] Jørgen opens a long task after release and sees where it ends and that there is more
@@ -73,6 +73,7 @@ crab 18:23Z: shipped in v0.7.98 (main 8611f2b6, brew-verified). Release ticket w
 check 2: a19cd1d4: TestPageFrameArrowsAndStatus :83 + goldens testdata/4ddcwa/page-frame-{100x30,160x45}; mutants M1/M2 caught; CI 8/8 on a19cd1d4; shipped v0.7.98
 check 3: a19cd1d4: bottom rule on the keys, ↓ when more below, status on it; message replaces only the status after a dim • (TestPageFrameMessageReplacesOnlyTheStatus); mutants M3-M9 caught; 26 goldens reviewed; CI 8/8; shipped v0.7.98
 check 4: Jørgen 2026-11-25 on wg59vb, after opening a long task in v0.7.98: 'Beautiful, thank you'
+check 1: Jørgen 2026-11-25 10:20 on the frames: 'I like it'
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
 - 2026-11-21T18:44 doing/active -> doing/asked (ask)
