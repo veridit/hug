@@ -65,7 +65,8 @@ func TestVersionRunningFlagsOlderHug(t *testing.T) {
 			t.Errorf("current server's row lacks %q:\n%s", want, same)
 		}
 	}
-	if strings.Contains(same, "older") {
+	// The flag phrases, not "older": macOS temp paths hold /var/folders/.
+	if strings.Contains(same, "older than this hug") || strings.Contains(same, "not the installed hug") {
 		t.Errorf("a server on this hug's version is flagged:\n%s", same)
 	}
 	if code != 5 {
