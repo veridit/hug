@@ -44,5 +44,6 @@ check 1: Jørgen 18:23Z, without frames: 'Goal, Purpose, Principles, Details'. A
 Jørgen 18:24Z, why this order: 'I.e. What, Why, How, Notes (to explain those over)'. So Goal is the what, Purpose the why, Principle the how, and Details the notes that explain them. The section names stay as they are; this is only the reason for the order.
 
 
+failing-first 9e8b4875 (branch hya1st, on main ed882297): TestPageReadsGoalPurposePrincipleDetails 'hya1st_test.go:98: headings PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|DETAILS (1) want GOAL|PURPOSE|PRINCIPLE|DETAILS|ACCEPTANCE'; TestDetailsOpenAtSixLinesFoldedAtSeven 'hya1st_test.go:139: headings PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|DETAILS (4), want GOAL|PURPOSE|PRINCIPLE|DETAILS (4)|ACCEPTANCE'; TestTabFollowsGoalPurposePrincipleDetails 'hya1st_test.go:163: stops'; TestNextPreviousKeepTheDetailsRule FAIL; TestKkj0mnPageGolden 'hya1st_test.go:243: headings PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|DETAILS (1)'
 ## History
 - 2026-11-25T09:31 todo -> doing/active (take)
