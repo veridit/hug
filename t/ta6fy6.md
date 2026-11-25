@@ -33,7 +33,7 @@ Shipped: hktdgs check 2 (failing-first test in overview, list and board; 7 mutan
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen steps past both ends with H and L in v0.7.99 and says it reads right, or what to change
+- [x] Jørgen steps past both ends with H and L in v0.7.99 and says it reads right, or what to change
 
 ## Questions
 - 2026-11-22T00:32 question 1 by crab to jhf (check 1):
@@ -46,6 +46,7 @@ Shipped: hktdgs check 2 (failing-first test in overview, list and board; 7 mutan
 crab 23:33Z: shipped v0.7.99 (main a5910763, landed 1d864738, CI run 44960662438 8/8). release.yml success; brew-verified: Cellar/hug/0.7.99, hug version = v0.7.99.
 
 
+check 1: Jørgen 2026-11-25: 'approved and working the way it is supposed to'; his caveat (always show the columns) is hktdgs check 4
 ## History
 - 2026-11-22T00:32 todo -> todo/design (ask)
 - 2026-11-25T10:23 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
