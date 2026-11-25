@@ -66,6 +66,7 @@ Mutants on 0d47af6e (each broken by hand, the test run, restored with git checko
 landed 841b272 on main 2026-11-25: hug mcp: failing test, initialize waits for a write-locked memory store (vrx1ja…
 landed 0d47af6 on main 2026-11-25: hug mcp: answer initialize before memory opens; memory opens in the background…
 shipped in v0.7.113 (841b272)
+Released in v0.7.113 (main 971d0acb, brew verified 14:07Z). Check 3's question now lives on release ticket f3k227 check 1 (one question per release); tick check 3 from that answer.
 ## History
 - 2026-11-25T12:54 todo -> doing/active (take)
 - 2026-11-25T14:50 doing/active -> doing/asked (ask)
