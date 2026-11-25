@@ -1,16 +1,21 @@
 ---
 id: ersks7
 title: "Release v0.7.111: a dated wait leads with the date"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzh"
 created: 2026-11-24
 updated: 2026-11-24
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-25T14:09"
+doing_with: "bpvevz"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -49,3 +54,4 @@ check 1: Jørgen 2026-11-25 13:25: the date-first wait is fine; he wants the dat
   I think the age-old month or day, day or month pops up in my mind now, but I think until three letter month abbreviation space day of the month would make sense to me as well or relative like wait three days and then absolute if further away than say a week or two weeks or something sensible for humans
 - 2026-11-25T13:25 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T14:09 crab read the answer: hug task check ersks7 1 "Jørgen 2026-11-25 13:25: the date-first wait is fine; he wants the date written as people say it, filed as its own task"
+- 2026-11-25T14:09 todo/ready -> doing/active (take with bpvevz)
