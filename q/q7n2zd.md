@@ -10,17 +10,12 @@ group: ""
 rank: "zzzzzzzzzzxt"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 doing_since: "2026-11-22T08:46"
 parent: "9s0vj3"
-asked_since: "2026-11-22T10:18"
-asked_by: "crab"
-asked_check: "5"
-asked_what: "Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES"
-asked_for: "jhf"
 ---
 
 ## Goal
@@ -53,6 +48,8 @@ How it reads the clipboard: an image cannot come through the terminal (Cmd+V sen
     Yes, let's try uppercase V
 - 2026-11-22T10:18 question 2 by crab to jhf (check 5):
   Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
+  answered 2026-11-25T10:44 by jhf:
+    That worked beautifully. Thank you
 
 ## Notes
 
@@ -83,3 +80,6 @@ file:paste-1044.png (168007 bytes, sha256:57abc9d5) pasted from the clipboard in
 - 2026-11-22T08:46 todo/ready -> doing/active (take)
 - 2026-11-22T10:18 doing/active -> doing/asked (ask)
 - 2026-11-22T11:35 handed to crab: pig's session ended (closed 2026-11-22 10:18)
+- 2026-11-25T10:44 answered asked (question 2, check 5), by jhf, for crab (doing/asked -> doing/active):
+  > Jørgen copies a screenshot in macOS, presses the key in a task, and sees it in FILES
+  That worked beautifully. Thank you
