@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzb"
 created: 2026-11-22
 updated: 2026-11-22
-design_question: "v0.7.99 is installed. On the board, press L until you pass the last column: the marker goes away and the footer says 'H/L pick a column', as when the board opens. One more L marks the first column; H from the first column does the same the other way. Does that feel right, or what should change?"
-design_for: "jhf"
-design_since: "2026-11-22T00:32"
-design_asked_by: "crab"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Shipped: hktdgs check 2 (failing-first test in overview, list and board; 7 mutan
 ## Questions
 - 2026-11-22T00:32 question 1 by crab to jhf (check 1):
   v0.7.99 is installed. On the board, press L until you pass the last column: the marker goes away and the footer says 'H/L pick a column', as when the board opens. One more L marks the first column; H from the first column does the same the other way. Does that feel right, or what should change?
+  answered 2026-11-25T10:23 by jhf:
+    Yes, this is approved and working the way it is supposed to. The caveat is what I responded in another ticket that I would like to always see the columns. And since the selection is clearly visible, subtly, I don't need to hide the columns themselves, just because none of them are selected.
 
 ## Notes
 
@@ -45,3 +43,6 @@ crab 23:33Z: shipped v0.7.99 (main a5910763, landed 1d864738, CI run 44960662438
 
 ## History
 - 2026-11-22T00:32 todo -> todo/design (ask)
+- 2026-11-25T10:23 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > v0.7.99 is installed. On the board, press L until you pass the last column: the marker goes away and the footer says 'H/L pick a column', as when the board opens. One more L marks the first column; H from the first column does the same the other way. Does that feel right, or what should change?
+  Yes, this is approved and working the way it is supposed to. The caveat is what I responded in another ticket that I would like to always see the columns. And since the selection is clearly visible, subtly, I don't need to hide the columns themselves, just because none of them are selected.
