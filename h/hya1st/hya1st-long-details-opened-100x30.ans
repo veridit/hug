@@ -1,0 +1,30 @@
+[1m[38;2;0;191;255mHUG · repo ·[0m [38;2;135;149;168moverview › NEXT UP › [1m[38;2;0;191;255mkkj0mp[0m
+[1m[38;2;117;191;255m[todo][0m  [38;2;188;157;255m[feature][39m  [38;2;135;149;168mgroup:root[39m  [1m[38;2;0;191;255munassigned[0m
+[38;2;135;149;168mcreated 2026-11-24 · updated 2026-11-24 · branch-fast-tests-fit[39m
+[38;2;135;149;168m────────────────────────────────────────────────────────────────────────────────────────────────────
+[1m[39mBranch fast-tests fit in their time limit: build images once, not per run
+[0m[38;2;135;149;168m↑───────────────────────────────────────────────────────────────────────────────────────────────────
+[39m
+[1m[38;2;0;191;255m▸ DETAILS (4)[0m[38;2;135;149;168m · Enter folds
+[38;5;252mOptions: let workflow_dispatch use the Images workflow's commit-tagged images when they exist     [39m
+[38;5;252m(fall                                                                                             [39m
+[38;5;252mback to build), cache the docker build layers, or give the build its own step outside the timed   [39m
+[38;5;252mtest budget.                                                                                      [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252m.github/workflows/fast-tests.yaml lines 146-151 (concurrency, timeout-minutes: 30) and 239-252    [39m
+[38;5;252m(Start                                                                                            [39m
+[38;5;252mservices).                                                                                        [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252mSeen 2026-11-24: Start services 15:30:28-15:42:05 on the branch vs 15:11:39-15:12:09 on master.   [39m
+[38;5;252m                                                                                                  [39m
+[38;5;252mRun 45426056166 on feat/units-on-map (z2qt08) passed the SQL suite and live-database tests, then  [39m
+[38;5;252mhit                                                                                               [39m
+[38;5;252mthe limit 11 s into its last step.                                                                [39m
+
+[1m[38;2;0;191;255mACCEPTANCE[0m
+  ☐ 1. A dispatched fast-tests run on a branch with migrations finishes with conclusion success, its
+       Start services step under 3 minutes or its build step outside the test time limit
+
+[38;2;135;149;168mno dependencies[39m
+[38;2;135;149;168m─── Task 3 of 3 · 100% · [1;4m[38;2;0;191;255mn[0m[38;2;135;149;168mext · [1;4m[38;2;0;191;255mp[0m[38;2;135;149;168mrevious · Esc back ────────────────────────────────────────────────
+[1m[38;2;0;191;255mEnter[0m[38;2;135;149;168m open/fold · [1m[38;2;0;191;255mj/k[0m[38;2;135;149;168m scroll · [1m[38;2;0;191;255mh/l Tab[0m[38;2;135;149;168m next · [1;4m[38;2;0;191;255mt[0m[38;2;135;149;168make · [1;4m[38;2;0;191;255md[0m[38;2;135;149;168mone · [1m[38;2;0;191;255mx[0m[38;2;135;149;168m drop · [1;4m[38;2;0;191;255me[0m[38;2;135;149;168mdit · [1;4m[38;2;0;191;255mN[0m[38;2;135;149;168mew · [1;4m[38;2;0;191;255mu[0m[38;2;135;149;168mp · [1;4m[38;2;0;191;255mr[0m[38;2;135;149;168mequest[39m [38;2;135;149;168m…[39m
