@@ -11,7 +11,11 @@ rank: "5"
 created: 2026-11-20
 updated: 2026-11-20
 parent: "9taa9d"
-stage: "ready"
+stage: "design"
+design_since: "2026-11-25T10:22"
+design_asked_by: "crab"
+design_question: "Rewritten from your answer: Details now judges each layout on your five needs, starting with the many-writer failures on your Mac (a lost memory on 11-10, 233 of 239 forgets failing on 11-16, 70 capture timeouts). My pick is C, one small file per memory: agents writing different memories never wait for each other, and the id is the file name, so links stay stable. Pick A to G?"
+design_for: "jhf"
 ---
 
 ## Goal
@@ -104,6 +108,8 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
   Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typically (busiest 2.1 MB); 15% of memories change on a later day. My pick is E: a today folder with one small file per memory, rolled by dream into one JSON Lines file per day. Pick A to F?
   answered 2026-11-25T09:45 by jhf:
     I can't really answer that yet. This task was created and it only says we can do each one of the things we can do, but I don't see argument for why one thing is better than another thing, meaning a single source of truth, less I.O. to make edits, easier to coordinate between multiple agents writing at the same time, and so on and so forth. A single way of doing it, so it's more consistent and easier to test, or multiple ways of doing it. So it's like we have lined up all the choices, but we haven't lined up why one choice would give us something that another choice wouldn't. And I think the reasoning is also incorrect. I think I experienced problems of writing memories with multiple different clients at the same time. And I thought there is concurrency issues. We are waiting. Maybe we should have a better file design. And maybe we should have a design where we can link to memories and they're stable, these links.
+- 2026-11-25T10:22 question 4 by crab to jhf (check 7):
+  Rewritten from your answer: Details now judges each layout on your five needs, starting with the many-writer failures on your Mac (a lost memory on 11-10, 233 of 239 forgets failing on 11-16, 70 capture timeouts). My pick is C, one small file per memory: agents writing different memories never wait for each other, and the id is the file name, so links stay stable. Pick A to G?
 
 ## Notes
 
@@ -143,3 +149,4 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
   I can't really answer that yet. This task was created and it only says we can do each one of the things we can do, but I don't see argument for why one thing is better than another thing, meaning a single source of truth, less I.O. to make edits, easier to coordinate between multiple agents writing at the same time, and so on and so forth. A single way of doing it, so it's more consistent and easier to test, or multiple ways of doing it. So it's like we have lined up all the choices, but we haven't lined up why one choice would give us something that another choice wouldn't. And I think the reasoning is also incorrect. I think I experienced problems of writing memories with multiple different clients at the same time. And I thought there is concurrency issues. We are waiting. Maybe we should have a better file design. And maybe we should have a design where we can link to memories and they're stable, these links.
 - 2026-11-25T09:45 answer 3 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T10:22 crab read the answer: hug task set b8mk9s
+- 2026-11-25T10:22 todo/ready -> todo/design (ask)
