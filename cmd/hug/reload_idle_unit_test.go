@@ -317,7 +317,7 @@ func TestRunningFromPSAndLsof(t *testing.T) {
 	if code != 5 {
 		t.Errorf("exit %d, want 5", code)
 	}
-	for _, want := range []string{"mcp: pid 8265 run an older hug", "tui: pid 32504 run an older hug", "fix: a hug mcp from this release on reloads", "/hug (removed or replaced since it started)", "version unknown"} {
+	for _, want := range []string{"mcp: pid 1402, 8265 run an older hug, or one no longer installed", "tui: pid 32504 run an older hug", "not the installed hug", "fix: a hug mcp from this release on reloads", "/hug (removed or replaced since it started)", "version unknown"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("lacks %q:\n%s", want, out)
 		}

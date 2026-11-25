@@ -39,7 +39,8 @@ var runningVersion = regexp.MustCompile(`/Cellar/(?:hug|huginn|muninn)/([^/]+)/`
 const runningUnsupportedFix = "fix: on this system, look for hug processes in the task manager (or: tasklist | findstr hug)"
 
 // versionRunning prints the running hug processes for goos: exit 0, 5 when
-// one runs a hug older than this one, 1 when it cannot list them.
+// one runs a hug older than this one or a file no longer installed, 1 when
+// it cannot list them.
 func versionRunning(w io.Writer, goos string) int {
 	if goos != "darwin" && goos != "linux" {
 		fmt.Fprintf(w, "hug version --running: listing running hug processes is not supported on %s\n%s\n", goos, runningUnsupportedFix)
@@ -55,7 +56,8 @@ func versionRunning(w io.Writer, goos string) int {
 	return printRunning(w, procs, Version)
 }
 
-// printRunning writes the table and the fix for any older hug.
+// printRunning writes the table and the fix for any process on an older
+// hug, or on a file removed or replaced since it started.
 func printRunning(w io.Writer, procs []runningProc, self string) int {
 	if len(procs) == 0 {
 		fmt.Fprintln(w, "no other hug process is running")
@@ -71,10 +73,16 @@ func printRunning(w io.Writer, procs []runningProc, self string) int {
 		if v == "" {
 			v = "?"
 		}
-		if selfOK && versionOlder(p.Version, self) {
+		switch {
+		case selfOK && versionOlder(p.Version, self):
 			note = "older than this hug (" + self + ")"
 			older[p.Runs] = append(older[p.Runs], p.PID)
-		} else if p.Version == "" {
+		case p.Gone:
+			// Its file is gone: whatever it runs, it is not the hug
+			// installed now (macOS then names it "/hug", no version).
+			note = "not the installed hug"
+			older[p.Runs] = append(older[p.Runs], p.PID)
+		case p.Version == "":
 			note = "version unknown"
 		}
 		exe := p.Exe
@@ -89,7 +97,6 @@ func printRunning(w io.Writer, procs []runningProc, self string) int {
 	tw.Flush()
 	if !selfOK {
 		fmt.Fprintf(w, "this hug is %s, a build with no release version: versions are not compared\n", self)
-		return 0
 	}
 	if len(older) == 0 {
 		return 0
@@ -100,7 +107,7 @@ func printRunning(w io.Writer, procs []runningProc, self string) int {
 	}
 	sort.Strings(kinds)
 	for _, k := range kinds {
-		fmt.Fprintf(w, "%s: pid %s run an older hug\n", k, joinPIDs(older[k]))
+		fmt.Fprintf(w, "%s: pid %s run an older hug, or one no longer installed\n", k, joinPIDs(older[k]))
 	}
 	if _, ok := older["mcp"]; ok {
 		fmt.Fprintln(w, "fix: a hug mcp from this release on reloads the installed hug by itself within a minute; an older one does not: restart it in its app (jcode: mcp action=reload server=hug; Claude, Codex: quit and reopen the app)")

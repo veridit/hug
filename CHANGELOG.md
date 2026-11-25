@@ -34,7 +34,9 @@ are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
   than this hug, says which, gives a `fix:` line, and exits 5 when it
   finds one. The version comes from the Cellar path, or by asking a file
   that has not changed since the process started. A file that was removed
-  or replaced is marked `(removed or replaced since it started)`. It reads
+  or replaced is marked `(removed or replaced since it started)` and
+  flagged too, as `not the installed hug`: macOS then names the file only
+  `/hug`, with no version, but it is not the one installed now. It reads
   `ps`, plus `lsof` on macOS or `/proc` on Linux. It never signals a
   process. Elsewhere it says it is not supported, with a `fix:` line, and
   exits 1.
