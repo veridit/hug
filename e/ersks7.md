@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzh"
 created: 2026-11-24
 updated: 2026-11-24
-design_question: "v0.7.111 is out (brew upgrade veridit/tap/hug). A wait for a date now leads with it: 'waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08' (before: 'waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'). In hug tui's list the stage cell says 'til 11-24', because 'until 11-24' does not fit the column. Does that read right to you, or would you rather widen the column (every title loses 2 characters)?"
-design_for: "jhf"
-design_since: "2026-11-24T00:57"
-design_asked_by: "crab"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Main ed882297 (merge of c5925996 on 0c09d4ee), CI 45290106766 8/8, release.yml 4
 ## Questions
 - 2026-11-24T00:57 question 1 by crab to jhf (check 1):
   v0.7.111 is out (brew upgrade veridit/tap/hug). A wait for a date now leads with it: 'waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08' (before: 'waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'). In hug tui's list the stage cell says 'til 11-24', because 'until 11-24' does not fit the column. Does that read right to you, or would you rather widen the column (every title loses 2 characters)?
+  answered 2026-11-25T13:25 by jhf:
+    I think the age-old month or day, day or month pops up in my mind now, but I think until three letter month abbreviation space day of the month would make sense to me as well or relative like wait three days and then absolute if further away than say a week or two weeks or something sensible for humans
 
 ## Notes
 
@@ -45,3 +43,6 @@ Shipped atex3d (worker elephant, Opus 5.5 high): 15 of 15 mutants caught, 1 new 
 
 ## History
 - 2026-11-24T00:57 todo -> todo/design (ask)
+- 2026-11-25T13:25 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > v0.7.111 is out (brew upgrade veridit/tap/hug). A wait for a date now leads with it: 'waiting until 2026-11-24 · then ask jhf · since 2026-11-18 05:08' (before: 'waiting on the date 2026-11-24, then ask jhf since 2026-11-18 05:08 · until 2026-11-24'). In hug tui's list the stage cell says 'til 11-24', because 'until 11-24' does not fit the column. Does that read right to you, or would you rather widen the column (every title loses 2 characters)?
+  I think the age-old month or day, day or month pops up in my mind now, but I think until three letter month abbreviation space day of the month would make sense to me as well or relative like wait three days and then absolute if further away than say a week or two weeks or something sensible for humans
