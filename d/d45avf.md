@@ -33,7 +33,7 @@ Which key failed for Jørgen is asked in question 1.
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen names the keys that did not work for him (question 1)
+- [x] Jørgen names the keys that did not work for him (question 1)
 - [ ] ctrl+left and ctrl+right move a word in the box, and every key Jørgen names works (tmux test per key)
 - [ ] F1 in the box lists the editing keys
 - [ ] Jørgen edits an answer with his keys after release
@@ -48,6 +48,7 @@ Which key failed for Jørgen is asked in question 1.
 ## Notes
 
 
+check 1: Jørgen 2026-11-25: 'It works. But notice that control left and control right don't do anything because they are tied to switching spaces' (macOS takes them before the terminal)
 ## History
 - 2026-11-22T23:10 todo -> todo/design (ask)
 - 2026-11-25T11:16 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
