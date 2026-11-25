@@ -39,6 +39,7 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
 - [ ] ~~The list view opens with 'filter: state !done', and Esc clears it to 'filter: none' (tmux test)~~ (not relevant: Esc keeps filter chips since v0.7.94 (5cjy88); F clears all, ⌫ the last; replaced by check 6, crab, 2026-11-22)
 - [ ] Jørgen opens the list after release and sees only open work, and can flip a filter with !
 - [x] The list view opens with 'filter: state !done' shown as a chip; F (or ⌫ on it) clears it to 'filter: none', and Esc does not, as for any chip since 5cjy88 (tmux test)
+- [ ] In the f picker, Backspace on an empty value removes a ! you pressed, before the field letter or the value (key test, fails on v0.7.112 first)
 
 ## Requests
 - 2026-11-20T13:34 request 1 by jhf:
@@ -83,3 +84,4 @@ shipped in v0.7.101 (9d35298)
   > Jørgen opens the list after release and sees only open work, and can flip a filter with !
   It works beautifully, except that after I press exclamation mark, backspace will not remove it.
 - 2026-11-25T10:40 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-25T11:23 crab read the answer: hug task set 7zg9mf
