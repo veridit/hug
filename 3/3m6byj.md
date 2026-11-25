@@ -1,7 +1,7 @@
 ---
 id: 3m6byj
 title: "Release v0.7.94: / search lands on the task you typed"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzxn"
 created: 2026-11-21
 updated: 2026-11-21
-stage: "active"
-doing_since: "2026-11-25T11:23"
-doing_with: "hktdgs"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T13:27"
 ---
 
 ## Goal
@@ -54,6 +52,7 @@ file:after-3-esc-after-enter.ansi (3494 bytes, sha256:1310d9fe) after: 3-esc-aft
 
 shipped: tag v0.7.94 (feedab54), release.yml 44895643755 success, brew -> ../Cellar/hug/0.7.94/bin/hug, hug v0.7.94
 check 1: Jørgen 2026-11-25: 'It works the way I want now'. The Esc-and-chips part of the question confused him and he wants no change; crab withdraws that part rather than re-asking it.
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen
 ## History
 - 2026-11-21T11:43 todo -> todo/design (ask)
 - 2026-11-25T09:52 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
@@ -62,3 +61,4 @@ check 1: Jørgen 2026-11-25: 'It works the way I want now'. The Esc-and-chips pa
 - 2026-11-25T09:52 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T11:23 todo/ready -> doing/active (take with hktdgs)
 - 2026-11-25T11:23 crab read the answer: hug task take 3m6byj
+- 2026-11-25T13:27 doing/active -> done (done); was doing_since: 2026-11-25T11:23; doing_with: hktdgs
