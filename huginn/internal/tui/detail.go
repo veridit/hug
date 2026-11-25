@@ -733,6 +733,13 @@ func (m model) focusRing(t task.Task) []focusStop {
 		ring = append(ring, focusStop{focusQuestion, k})
 	}
 	ids(stopQuestion, stopText)
+	// Details after the Principle (hya1st): short, its ids; long, its
+	// heading, then its ids while open.
+	folds := m.folds(t)
+	if len(folds) > 0 && folds[0].key == "details" {
+		ring = append(ring, focusStop{focusFold, 0})
+	}
+	ids(stopDetails)
 	if len(t.Acceptance) > 0 {
 		ring = append(ring, focusStop{focusAcceptance, 0})
 	}
@@ -757,7 +764,10 @@ func (m model) focusRing(t task.Task) []focusStop {
 	ids(stopSection, stopRequest, stopResolved)
 	// The long sections, folded (8a0ybb): each heading a stop, and the
 	// ids in one only while it is open (idStops scans no folded text).
-	for k, f := range m.folds(t) {
+	for k, f := range folds {
+		if f.key == "details" {
+			continue // after the Principle, above
+		}
 		ring = append(ring, focusStop{focusFold, k})
 		ids(f.stop)
 	}
@@ -879,13 +889,31 @@ func (m model) detailText(t task.Task) string {
 	markdown := func(where string, index int, s string) string {
 		return m.markStyled(m.markdown(s), markAt(where, index), true)
 	}
-	// The page reads short to long (8a0ybb, Jørgen 2026-11-20): why and
-	// how first, Purpose and Principle, then the Goal under its own name
-	// (there is no Description: it was the Goal), then the checks, the
-	// short sections, and last the long ones folded.
+	// The page reads small to large (hya1st, Jørgen 2026-11-24 18:23Z:
+	// "Goal, Purpose, Principles, Details"; 18:24Z "What, Why, How,
+	// Notes"): the Goal (what), Purpose (why), Principle (how), then
+	// Details (the notes that explain them), open when short, else folded
+	// in this place; then the checks, the short sections, and last the
+	// long ones folded.
+	section(plain("Goal"), markdown(stopText, 0, text("description")), "no goal yet")
 	section(plain("Purpose"), markdown(stopText, 1, text("purpose")), "")
 	section(plain("Principle"), markdown(stopText, 2, text("principle")), "")
-	section(plain("Goal"), markdown(stopText, 0, text("description")), "no goal yet")
+	folds := m.folds(t)
+	foldAt := func(k int) {
+		f := folds[k]
+		open := m.unfolded[f.key]
+		b.WriteString(m.foldLine(f, k, open) + "\n")
+		if !open {
+			b.WriteString("\n")
+			return
+		}
+		b.WriteString(m.foldBody(t, f.key, sections, markAt) + "\n\n")
+	}
+	if m.detailsShort(t) {
+		section(plain("Details"), m.foldBody(t, "details", sections, markAt), "")
+	} else if len(folds) > 0 && folds[0].key == "details" {
+		foldAt(0)
+	}
 	var checks []string
 	for i, a := range t.Acceptance {
 		q, mine := m.checkQuestion(t, i+1)
@@ -1039,17 +1067,14 @@ func (m model) detailText(t task.Task) string {
 		section(heading, strings.Join(reqs, "\n"), "")
 	}
 	// The long sections last, each folded to its heading line until Enter
-	// opens it (8a0ybb): Details, the Questions record (q2adr8: each with
-	// its answer; one open and asked of you is at the top or under its
-	// check, not here), Notes, History.
-	for k, f := range m.folds(t) {
-		open := m.unfolded[f.key]
-		b.WriteString(m.foldLine(f, k, open) + "\n")
-		if !open {
-			b.WriteString("\n")
-			continue
+	// opens it (8a0ybb): the Questions record (q2adr8: each with its
+	// answer; one open and asked of you is at the top or under its check,
+	// not here), Notes, History. A long Details folded above, after the
+	// Principle (hya1st).
+	for k, f := range folds {
+		if f.key != "details" {
+			foldAt(k)
 		}
-		b.WriteString(m.foldBody(t, f.key, sections, markAt) + "\n\n")
 	}
 	// A file Space shows in line, under the line naming it (zbdbtm).
 	return m.withInline(t, m.wrapPage(strings.TrimRight(b.String(), "\n"), m.width))
@@ -1088,10 +1113,28 @@ func (m model) foldText(t task.Task, key string) string {
 	return wrap(m.foldBody(t, key, m.sections(t), func(string, int) string { return "" }), m.width)
 }
 
-// fold is one of a page's long sections (8a0ybb): Details, the Questions
-// record, Notes and History, always, whenever they have text; no other
-// section folds. key names it in m.unfolded, heading is what its line
-// says, count how many entries it holds, stop where its ids stand.
+// detailsOpenLines is the most lines a Details text may take, wrapped at
+// the page's width, to show open (hya1st, Jørgen 2026-11-24: "DETAILS can
+// show if not big?"; 6 is provisional); a longer one folds to one line.
+const detailsOpenLines = 6
+
+// detailsShort: t's Details has text and fits in detailsOpenLines at the
+// page's width, so the page shows it open, under its plain heading, and
+// it is no fold.
+func (m model) detailsShort(t task.Task) bool {
+	f := m.facts(t)
+	if f.details == "" {
+		return false
+	}
+	text := strings.TrimRight(m.foldText(t, "details"), "\n ")
+	return len(strings.Split(text, "\n")) <= detailsOpenLines
+}
+
+// fold is one of a page's long sections (8a0ybb): Details when it is over
+// detailsOpenLines (hya1st), the Questions record, Notes and History,
+// whenever they have text; no other section folds. key names it in
+// m.unfolded, heading is what its line says, count how many entries it
+// holds, stop where its ids stand.
 type fold struct {
 	key, heading, stop string
 	count              int
@@ -1101,7 +1144,7 @@ type fold struct {
 func (m model) folds(t task.Task) []fold {
 	f := m.facts(t) // the texts and their counts, once per file (pageMemo)
 	var out []fold
-	if f.details != "" {
+	if f.details != "" && !m.detailsShort(t) {
 		out = append(out, fold{key: "details", heading: "Details", stop: stopDetails, count: f.detailsParagraphs})
 	}
 	if n := m.recordCount(t); n > 0 {

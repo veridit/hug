@@ -69,7 +69,7 @@ func TestNewNamesEveryMissingFlag(t *testing.T) {
 	a := app(t)
 	execute(t, a, "init")
 	code, out := runText(a, "new", "x")
-	want := "incomplete-task: missing Goal; missing section Purpose (why); missing section Principle (what we do and do not do); Acceptance requires at least one item\n" +
+	want := "incomplete-task: missing Goal; missing section Purpose (why); missing section Principle (how: what we do and do not do); Acceptance requires at least one item\n" +
 		`fix: hug task new "x" --goal "..." --purpose "..." --principle "..." --accept "observable check"` + "\n"
 	if code != 2 || out != want {
 		t.Fatalf("%d:\n%s\nwant:\n%s", code, out, want)

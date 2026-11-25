@@ -33,10 +33,11 @@ func TestPageShowsBothDetailsTexts(t *testing.T) {
 	m.width, m.height = 100, 30
 	m.resize()
 	m = openTask(t, m, r.Task.ID)
-	if page := detailPlain(m); !strings.Contains(page, "› DETAILS (2)") {
-		t.Fatalf("the Details fold does not count both texts:\n%s", page)
+	// Three lines, so open on the page (hya1st), both texts in it.
+	page := detailPlain(m)
+	if !strings.Contains(page, "\nDETAILS\n") || strings.Contains(page, "› DETAILS") {
+		t.Fatalf("the short Details is not open:\n%s", page)
 	}
-	page := detailPlain(m.withUnfolded("details"))
 	n, o := strings.Index(page, "New hug wrote this."), strings.Index(page, "Old hug wrote this.")
 	if n < 0 || o < 0 || o < n {
 		t.Fatalf("Details text at %d, Relevant details text at %d: want both, Details first:\n%s", n, o, page)

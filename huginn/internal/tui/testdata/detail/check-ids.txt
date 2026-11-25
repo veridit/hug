@@ -5,14 +5,17 @@ created ########## · updated ########## · mainta
 ────────────────────────────────────────────────────────────────────────────────
 Mainta                                                                          
 ────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                            
+Builds on GOALID.                                                               
+                                                                                
 PURPOSE                                                                         
 So PURPOS reads clearly.                                                        
                                                                                 
 PRINCIPLE                                                                       
 As PRINCI does.                                                                 
                                                                                 
-GOAL                                                                            
-Builds on GOALID.                                                               
+DETAILS                                                                         
+Seen in DETAIL.                                                                 
                                                                                 
 ACCEPTANCE                                                                      
   ☐ 1. a                                                                        
@@ -27,10 +30,7 @@ REQUESTS
    Please look at REQUES too.                                                   
    └ crab: Done, as in RESOLV.                                                  
                                                                                 
-› DETAILS (1)                                                                   
-                                                                                
 › HISTORY (4)                                                                   
-                                                                                
                                                                                 
                                                                                 
                                                                                 
@@ -66,14 +66,17 @@ created ########## · updated ########## · mainta
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Mainta                                                                                                                                      
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                                                                                        
+Builds on GOALID.                                                                                                                           
+                                                                                                                                            
 PURPOSE                                                                                                                                     
 So PURPOS reads clearly.                                                                                                                    
                                                                                                                                             
 PRINCIPLE                                                                                                                                   
 As PRINCI does.                                                                                                                             
                                                                                                                                             
-GOAL                                                                                                                                        
-Builds on GOALID.                                                                                                                           
+DETAILS                                                                                                                                     
+Seen in DETAIL.                                                                                                                             
                                                                                                                                             
 ACCEPTANCE                                                                                                                                  
   ☐ 1. a                                                                                                                                    
@@ -88,10 +91,7 @@ REQUESTS
    Please look at REQUES too.                                                                                                               
    └ crab: Done, as in RESOLV.                                                                                                              
                                                                                                                                             
-› DETAILS (1)                                                                                                                               
-                                                                                                                                            
 › HISTORY (4)                                                                                                                               
-                                                                                                                                            
                                                                                                                                             
                                                                                                                                             
                                                                                                                                             

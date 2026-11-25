@@ -229,6 +229,7 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 	instr := []string{}
 	backlogMentions := []string{}
 	stale := []string{}
+	oldRule := []string{}
 	for _, name := range []string{"AGENTS.md", "CLAUDE.md"} {
 		raw, e := os.ReadFile(filepath.Join(root, name))
 		if e != nil {
@@ -243,11 +244,20 @@ func (a *App) runSetup(ctx context.Context, f flags) (Reply, error) {
 		}
 		if sec, ok := taskSection(text); ok && sec != strings.TrimSpace(agentSection) {
 			stale = append(stale, name)
+			if strings.Contains(strings.Join(strings.Fields(sec), " "), task.OldSectionsRule) {
+				oldRule = append(oldRule, name)
+			}
 		}
 	}
 	instrDo := agentInstructionsEdit(backlogMentions)
 	if len(backlogMentions) == 0 && len(stale) > 0 {
-		instrDo = "in " + strings.Join(stale, " and ") + ", replace the \"## Tasks: hug\" section (up to the next ## heading) with this one, then show the diff:\n" + agentSection
+		section := "replace the \"## Tasks: hug\" section (up to the next ## heading) with this one, then show the diff:\n" + agentSection
+		instrDo = "in " + strings.Join(stale, " and ") + ", " + section
+		if len(oldRule) > 0 {
+			// The sentence that names each section's job changed (32ym01):
+			// that edit first, word for word, then the rest of the section.
+			instrDo = "in " + strings.Join(oldRule, " and ") + ", replace the sentence \"" + task.OldSectionsRule + "\" with \"" + task.SectionsRule + "\"; for the rest, in " + strings.Join(stale, " and ") + ", " + section
+		}
 	}
 	add("agent instructions", len(instr) > 0 && len(backlogMentions) == 0 && len(stale) == 0,
 		"AGENTS.md (and CLAUDE.md if present) tell agents to track work with hug tasks, in this hug's words",
@@ -361,9 +371,9 @@ in todos, and another agent's work is never your todo. When your todos run out,
 finish the task and run hug task next: an empty todo list means take the next
 task, not blocked.
 New work: hug task new "short title" --goal "..." --purpose "..." --principle "..." --details "..." --accept "observable check".
-Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
-and do not do), Details, then Acceptance. The Goal is one sentence of
-at most 140 characters; detail goes in Details. Titles stay under 80 characters.
+` + task.SectionsRule + `
+The Goal is one sentence of at most 140 characters; detail goes in Details.
+Titles stay under 80 characters.
 A document for one task is attached to that task (hug task attach ID FILE); only
 decisions go into repo docs. Name a file in the task's text (MOCK.md, or
 docs/DESIGN.md#Section) and hug tui opens it from there.

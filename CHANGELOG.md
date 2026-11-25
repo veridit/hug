@@ -4,6 +4,26 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.112 - 2026-11-25
+
+- A task's page in `hug tui` reads small to large: GOAL first, then
+  PURPOSE, PRINCIPLE and DETAILS, then ACCEPTANCE and the rest (hya1st).
+  It used to open on PURPOSE and PRINCIPLE, with the Goal third and
+  DETAILS always folded at the bottom. Now a Details that fits in 6
+  lines at the window's width is shown open, and a longer one folds to
+  `› DETAILS (N)` in the same place, after PRINCIPLE. Tab and Shift-Tab
+  step through the page in that order. NOTES and HISTORY still fold at
+  the end.
+- The instructions for agents now say what each section of a task is
+  for, in one sentence (32ym01): "Describe a task with Goal (what: where
+  we aim), Purpose (why), Principle (how: what we do and do not do),
+  Details (notes that explain those), then Acceptance." AGENTS.md, the
+  section `hug task setup` gives, `hug task help new` and the MCP
+  `task_new` tool all say it, and lint names a missing Principle as
+  `missing section Principle (how: what we do and do not do)`. In a
+  repository whose AGENTS.md still has the old sentence, `hug task setup`
+  lists the update as an open step, with the old sentence and the new.
+
 ## v0.7.111 - 2026-11-24
 
 - A wait for a date says the date first, once. `hug task show`, the

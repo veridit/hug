@@ -12,12 +12,6 @@ Bug task 02: make the terminal workflow observable
     → rows.ans · Enter shows                                                    
     └ alice · 10 min ago · answer                                               
                                                                                 
-PURPOSE                                                                         
-Synthetic.                                                                      
-                                                                                
-PRINCIPLE                                                                       
-Synthetic.                                                                      
-                                                                                
 GOAL                                                                            
 Deliver compiler-lang support with huginn and readable evidence.                
                                                                                 
@@ -27,6 +21,12 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                    
                                                                                 
 fmt.Println("synthetic acceptance")                                             
+                                                                                
+PURPOSE                                                                         
+Synthetic.                                                                      
+                                                                                
+PRINCIPLE                                                                       
+Synthetic.                                                                      
 ↓── Task 2 of 45 · 0% · next · previous · Esc back ─────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · up · request 
 == 000002 Enter at 80
@@ -73,12 +73,6 @@ Bug task 02: make the terminal workflow observable
     → rows.ans · Enter shows                                                                                                                
     └ alice · 10 min ago · answer                                                                                                           
                                                                                                                                             
-PURPOSE                                                                                                                                     
-Synthetic.                                                                                                                                  
-                                                                                                                                            
-PRINCIPLE                                                                                                                                   
-Synthetic.                                                                                                                                  
-                                                                                                                                            
 GOAL                                                                                                                                        
 Deliver compiler-lang support with huginn and readable evidence.                                                                            
                                                                                                                                             
@@ -88,6 +82,12 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                                                                                
                                                                                                                                             
 fmt.Println("synthetic acceptance")                                                                                                         
+                                                                                                                                            
+PURPOSE                                                                                                                                     
+Synthetic.                                                                                                                                  
+                                                                                                                                            
+PRINCIPLE                                                                                                                                   
+Synthetic.                                                                                                                                  
                                                                                                                                             
 ↓── Task 2 of 45 · 0% · next · previous · Esc back ─────────────────────────────────────────────────────────────────────────────────────────
 answer · j/k scroll · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · Edit files · up · request · / find …            

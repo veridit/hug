@@ -6,8 +6,8 @@ Tags listed per board
 > ? design: drop type from the rows, keep it, or show it only when not feature?                     
     └ crab · 8 min ago · answer                                                                     
                                                                                                     
-PURPOSE                                                                                             
-p                                                                                                   
+GOAL                                                                                                
+g                                                                                                   
 == typing
 [todo]  [design]  [feature]  [high]  group:root  unassigned
 created 2026-11-01 · updated 2026-11-01 · t
@@ -17,7 +17,7 @@ Tags listed per board
     └ crab · 8 min ago                                                                              
     answer: drop it                                                                                 
                                                                                                     
-PURPOSE                                                                                             
+GOAL                                                                                                
 == answered
 [todo]  [feature]  [high]  group:root  unassigned
 created 2026-11-01 · updated 2026-11-01 · t
@@ -25,8 +25,8 @@ created 2026-11-01 · updated 2026-11-01 · t
   unread by crab                                                                                    
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Tags listed per board                                                                               
+GOAL                                                                                                
+g                                                                                                   
+                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
-                                                                                                    
-PRINCIPLE                                                                                           
-q                                                                                                   

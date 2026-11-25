@@ -8,8 +8,8 @@ Warm cache under 50 ms
     And should it differ under NO_COLOR?                                        
     └ nautilus · 3 min ago · answer                                             
                                                                                 
-PURPOSE                                                                         
-p                                                                               
+GOAL                                                                            
+g                                                                               
                                                                                 
 == cccccc at 140
 [doing]  [asked]  [feature]  [high]  group:root  assigned:nautilus
@@ -21,6 +21,6 @@ Warm cache under 50 ms
     And should it differ under NO_COLOR?                                                                                                    
     └ nautilus · 3 min ago · answer                                                                                                         
                                                                                                                                             
-PURPOSE                                                                                                                                     
-p                                                                                                                                           
+GOAL                                                                                                                                        
+g                                                                                                                                           
                                                                                                                                             

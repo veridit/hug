@@ -9,8 +9,8 @@ Tags listed per board
     └ crab · 8 min ago
     answer:
 
-PURPOSE
-p
+GOAL
+g
 cursor on:  "  \x1b[1;38;2;0;191;255manswer:\x1b[0m \x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m                                                                    "
 cursor off: "  \x1b[1;38;2;0;191;255manswer:\x1b[0m                                                                      "
 == answer box at 140
@@ -24,7 +24,7 @@ Tags listed per board
     └ crab · 8 min ago
     answer:
 
-PURPOSE
-p
+GOAL
+g
 cursor on:  "  \x1b[1;38;2;0;191;255manswer:\x1b[0m \x1b[0m\x1b[38;2;0;191;255;4m \x1b[0m                                                                                                                                "
 cursor off: "  \x1b[1;38;2;0;191;255manswer:\x1b[0m                                                                                                                                  "
