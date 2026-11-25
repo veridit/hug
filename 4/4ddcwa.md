@@ -79,3 +79,4 @@ check 3: a19cd1d4: bottom rule on the keys, ↓ when more below, status on it; m
 - 2026-11-25T10:20 answered asked (check 1), by jhf, for ladybug (doing/asked -> doing/active):
   > Open the four attached frames at 100x30 (top, mid-page, end, and mid-page with a message): do the ↑ on the rule under the title, the bottom rule '↓── Task 1 of 2 · 29% · next · previous · Esc back ───' right on the keys, and a message like '• prtwm2 moved to IN PROGRESS' taking the status's place on that rule (↓ kept) read right? Your answer also settles xt0qvf's layout for the task page.
   I like it
+- 2026-11-25T10:20 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
