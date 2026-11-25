@@ -1,16 +1,21 @@
 ---
 id: dswkgj
 title: "Release v0.7.92: answering never panics"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxe"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-25T13:00"
+doing_with: "hktdgs"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -49,3 +54,5 @@ shipped: tag v0.7.92 (e43211fa), release.yml 44801667959 success, brew -> ../Cel
   > v0.7.92: answering a withdrawn question now says when and why it was withdrawn and gives the command to ask again; a bare answer after the numbered questions answers the design question. Sample run attached. Do the two refusals read well?
   I think the responses are sensible enough. I do question the CLI. When you have positional arguments, I think it's quite brittle. That's the only thing I notice.
 - 2026-11-25T09:34 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
+- 2026-11-25T13:00 todo/ready -> doing/active (take with hktdgs)
+- 2026-11-25T13:00 crab read the answer: hug task take dswkgj
