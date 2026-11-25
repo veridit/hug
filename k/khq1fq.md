@@ -32,7 +32,7 @@ v0.7.113 release.yml run 45627554531 failed: TestBigTaskKeys 'tab, Notes open' p
 ## Depends on
 
 ## Acceptance
-- [ ] release.yml skips wall-clock budget tests, shown by its log on the next release
+- [x] release.yml skips wall-clock budget tests, shown by its log on the next release
 - [x] CI still runs TestBigTaskKeys on macOS, shown by a ci.yml log line
 
 ## Notes
