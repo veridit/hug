@@ -10,7 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzl"
 created: 2026-11-24
 updated: 2026-11-24
-parent: "9a479v"
+parent: "a2k4r5"
 doing_since: "2026-11-25T09:31"
 stage: "asked"
 model: "claude-opus-5-5"
