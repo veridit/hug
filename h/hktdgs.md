@@ -36,6 +36,7 @@ Today (v0.7.90, huginn/internal/tui/columns.go moveColumn): the first H or L mar
 - [ ] ~~Verify Ability to select no column~~ (not relevant: replaced by checks 2-3, crab, 2026-11-20)
 - [x] In overview, list and board, L from the last shown column and H from the first land on no column (marker gone, as at open); the next press goes on to the first or last (key test, fails on main first)
 - [x] Jørgen steps past both ends with H and L and lands on no column
+- [ ] Column headings stay shown in the active section with no column marked; marking one only adds its marker (golden at 100x30, fails on v0.7.112 first)
 
 ## Requests
 - 2026-11-20T13:07 request 1 by jhf:
