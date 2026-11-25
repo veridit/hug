@@ -34,7 +34,7 @@ Candidate: hug task ls --asked [--to NAME] (default: the caller), one line per q
 
 ## Acceptance
 - [x] hug task ls --asked lists the open questions asked of the caller, one per line with id and check (test)
-- [ ] Jørgen runs it and gets his list
+- [x] Jørgen runs it and gets his list
 
 ## Questions
 - 2026-11-23T14:23 question 1 by crab to jhf (check 2):
@@ -58,6 +58,7 @@ dswkgj  1    v0.7.92: answering a withdrawn question now says when and why it wa
 24403z  6    After you answer a task in ASKED it moves (here to NEXT UP). The breadcrumb keeps …  eagle     since 20 Nov
 check 1: 97f74c64 on fthher and ci/fthher; CI https://github.com/veridit/hug/actions/runs/45179618266 8/8 success. Tests: TestLsAskedListsQuestionsForCaller, TestLsAskedEmptySaysSo, TestInstructionsNameLsAsked (cli), TestAskedAgreesWithForYou (tui: per-task count equals countForYou on stage/asked/withdrawn boards for jhf, Jørgen, nautilus, nobody), TestListTakesAsked (mcp). 13/13 mutants killed. Real board copy: 40 questions for jhf on 38 tasks, TUI countForYou 38.
 crab 2026-11-25: the last check is confirmed through the release ticket's one question; crab ticks it from that answer.
+check 2: Jørgen 2026-11-25 on release ticket j2v40p: 'Sure, that's fine'
 ## History
 - 2026-11-23T13:00 todo -> doing/active (take)
 - 2026-11-23T14:23 doing/active -> doing/asked (ask)
