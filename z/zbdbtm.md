@@ -1,7 +1,7 @@
 ---
 id: zbdbtm
 title: "A file named in a task opens from the task in the embedded viewer"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzvq"
 created: 2026-11-20
 updated: 2026-11-20
-stage: "active"
-doing_since: "2026-11-22T15:55"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "6mt4w8"
+done_at: "2026-11-25T11:21"
 ---
 
 ## Goal
@@ -85,6 +84,7 @@ check 6: TestTmuxTryItHereLinksOpen on a copy of zbdbtm (hug/tasks 406a2cb2^, sa
 shrimp 16:52Z: final SHA 90b689f2 on zbdbtm and ci/zbdbtm; CI https://github.com/veridit/hug/actions/runs/45045091960 8/8 success on that SHA. Checks 1-6 ticked; 7 is Jørgen's after release. Not merged or tagged: the coordinator lands it. Open: branch refs are not followed (no syntax names a branch until p87ngv's marks); a repo file opens read only (Enter in its frame says so, fix: $EDITOR PATH).
 crab 17:01Z: shipped in v0.7.107 (main d32bc3a0, merge of 90b689f2, CI 8/8 run 45045091960; brew gives hug v0.7.107). Release ticket 6mt4w8. Check 7 is Jørgen's.
 check 7: Jørgen 2026-11-25: 'Yes, it works well.'
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 11-25
 ## History
 - 2026-11-20T11:12 todo -> todo/design (ask)
 - 2026-11-20T12:51 answered design, by jhf, for crab (todo/design -> todo/ready):
@@ -101,3 +101,4 @@ check 7: Jørgen 2026-11-25: 'Yes, it works well.'
   Yes, it works well.
 - 2026-11-25T10:54 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T11:21 crab read the answer: hug task check zbdbtm 7 "Jørgen 2026-11-25: 'Yes, it works well.'"
+- 2026-11-25T11:21 doing/active -> done (done); was doing_since: 2026-11-22T15:55
