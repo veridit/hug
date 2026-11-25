@@ -1,7 +1,7 @@
 ---
 id: ersks7
 title: "Release v0.7.111: a dated wait leads with the date"
-state: "doing"
+state: "done"
 type: chore
 priority: ""
 assignee: ["crab"]
@@ -10,12 +10,10 @@ group: ""
 rank: "zzzzzzzzzzzh"
 created: 2026-11-24
 updated: 2026-11-24
-stage: "active"
-doing_since: "2026-11-25T14:09"
-doing_with: "bpvevz"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-25T14:09"
 ---
 
 ## Goal
@@ -47,6 +45,7 @@ Shipped atex3d (worker elephant, Opus 5.5 high): 15 of 15 mutants caught, 1 new 
 
 
 check 1: Jørgen 2026-11-25 13:25: the date-first wait is fine; he wants the date written as people say it, filed as its own task
+Reflection (open, 2026-11-25, crab): nothing; confirmed by Jørgen 2026-11-25
 ## History
 - 2026-11-24T00:57 todo -> todo/design (ask)
 - 2026-11-25T13:25 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
@@ -55,3 +54,4 @@ check 1: Jørgen 2026-11-25 13:25: the date-first wait is fine; he wants the dat
 - 2026-11-25T13:25 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-25T14:09 crab read the answer: hug task check ersks7 1 "Jørgen 2026-11-25 13:25: the date-first wait is fine; he wants the date written as people say it, filed as its own task"
 - 2026-11-25T14:09 todo/ready -> doing/active (take with bpvevz)
+- 2026-11-25T14:09 doing/active -> done (done); was doing_since: 2026-11-25T14:09; doing_with: bpvevz
