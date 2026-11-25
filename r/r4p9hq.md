@@ -1,16 +1,21 @@
 ---
 id: r4p9hq
 title: "Release v0.7.95: the focus \u003e pulses, text cursors blink, one thing moves"
-state: todo
+state: "doing"
 type: chore
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzxq"
 created: 2026-11-21
 updated: 2026-11-21
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-25T11:22"
+doing_with: "hktdgs"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -60,3 +65,4 @@ check 1: Jørgen 2026-11-25: 'Finally, it's so much better. Subtle one thing bri
   Finally, it's so much better. Subtle one thing brings your attention, the one thing moving where you can enter something
 - 2026-11-25T09:52 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T11:21 crab read the answer: hug task check r4p9hq 1 "Jørgen 2026-11-25: 'Finally, it's so much better. Subtle one thing brings your attention, the one thing moving where yo…"
+- 2026-11-25T11:22 todo/ready -> doing/active (take with hktdgs)
