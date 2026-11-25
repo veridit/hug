@@ -1,6 +1,6 @@
 ---
 id: b8mk9s
-title: "Design: how hug stores memories on disk (one file, per day, per memory)"
+title: "Design: how hug stores memories, so many agents can write at once"
 state: todo
 type: feature
 priority: "high"
@@ -15,49 +15,52 @@ stage: "ready"
 ---
 
 ## Goal
-Jørgen picks how hug stores memories on disk, from one big file to dated JSON Lines files, and how retired ones are cleaned up.
+Jørgen picks how hug stores memories, judged on one truth, small writes, many writers at once, one way, and stable links.
 
 ## Purpose
-Each remember should write a few hundred bytes, not rewrite an 18.6 MB file.
+Agents writing memories at the same time have lost writes, failed and waited on each other, and a link to a memory must not break.
 
 ## Principle
-Decide on the consequences first; nothing is built until Jørgen picks.
+Judge every layout on the same five needs, with the record; pick one way of storing, not several; nothing is built until Jørgen picks.
 
 ## Relevant details
-TODAY
-- All memories are one file on your Mac: ~/Library/Application Support/muninn/memories.json (18.6 MB, 18,615 memories on 2026-11-20). muninn.db (805 MB) is the search index built from it.
-- Every remember, forget, dedupe, rescope or import rewrites the whole file (SaveNative: write all 18,615, temp file, rename), under one lock every session waits on. 7 code paths call it (ingest/native.go, importer.go, lock.go, twins.go, app/correction.go, rescope_batch.go, tidy_duplicates.go).
-- Retiring sets active: false in the same file. Nothing ever deletes retired memories.
-- Memories change after the day they were made: 2,825 of 18,615 (15%) were updated on a later day (strength, retire, rescope). Any dated layout has to handle that.
-- Spread over time: 141 days with memories since 2026-06-03. A day holds a median of 38 KB (busiest 2.1 MB, 2026-11-19); a week a median of 351 KB (busiest 3.9 MB).
-- The shared hug/memory branch is separate: one memories.jsonl, one line per memory sorted by id (255 KB in this repo). git merges it line by line already. Out of scope here.
+YOUR FIVE NEEDS (Jørgen 2026-11-25 09:45): one source of truth; small writes; many agents writing at once; one way of doing it (consistent, easy to test); stable links to memories.
 
-THE OPTIONS (all keep muninn.db as the search index, rebuilt from the files)
-A. Keep memories.json as is. No work; every write stays 18.6 MB and growing.
-B. One append-only JSON Lines file. Each write appends one line; dream rewrites (compacts) it now and then. Small writes, but compaction still rewrites everything.
-C. One file per memory (memory/<id>.md). Small writes; 18,615 files, slow for git, Spotlight and backups; the largest migration.
-D. One JSON Lines file per day (memory/2026/11/2026-11-20.jsonl, by the day a memory was made). 141 files. A new memory rewrites only today's file (median 38 KB). A change to an old memory rewrites its day's file (up to 2.1 MB), 9x smaller than today.
-E. (Jørgen, request 4) A today folder with one small file per memory (memory/today/<id>.json); dream rolls each finished day into its dated JSON Lines file as in D. A change to an old memory is written into today as a newer copy (same id, later 'updated' wins) and folded into its day file by dream. So every write is a few hundred bytes in today/, and cleaning up the current day is deleting files. Cost: dream does more (fold changes, delete old retired lines), and reading must merge today/ over the day files.
-F. As E but by week: a current-week folder, past weeks as one JSON Lines file each (24 files, median 351 KB, busiest 3.9 MB). Fewer files, larger rewrites when dream folds changes in.
+WHAT WENT WRONG WITH MANY WRITERS (the record on your Mac)
+- 2026-11-10: two writers at once lost a memory (29 of 30 survived). Patched by a lock: every write now queues (muninn/internal/ingest/lock.go).
+- 2026-11-16, seid: 233 of 239 forgets failed with "database is locked" (SQLITE_BUSY). Patched by a second queue, the write turn (muninn/internal/store/turn.go).
+- hook.log: 70 captures failed with class=timeout (47 on 11-06, 11 on 11-07, 3 on 11-18, 7 on 11-19, 2 on 11-22); 6 "reindex: database is locked" on 11-04.
+- 2026-11-06: duplicate repair changed 74 memory ids (native-repairs.log), so links to those 74 broke.
+So the fixes so far are queues. Agents no longer lose writes, but they wait for each other, and each write still rewrites the whole file.
+
+TODAY
+- Two stores: memories.json (21.4 MB, 21,949 memories, 538 retired, on 2026-11-25) is the truth; muninn.db (896 MB) is the search index, rebuilt from it, and can fall behind it.
+- Every remember, forget or tidy reads and rewrites all 21.4 MB, holding a lock the whole time, and then waits for the index's write turn.
+- A memory's link is its 6-letter id (21,948 of 21,949), made from where it came from, so it does not change on edit.
+
+THE OPTIONS, AGAINST YOUR NEEDS
+| | One truth | Size of one write | Many writers at once | One way | Stable links |
+|---|---|---|---|---|---|
+| A as is | json + index | 21.4 MB | all queue on one lock | yes | id |
+| B one append-only file | file + index | one line; compaction rewrites all | appends barely wait; compaction stops everyone | two: append, compact | id |
+| C one file per memory | files + index | about 1 KB | two different memories never wait for each other | yes | id = file name |
+| D one file per day | files + index | today's file, up to 2.1 MB | same-day writers queue | yes | id, but where it lives depends on its date |
+| E today folder, then day files | files + index | about 1 KB | today never waits; dream's folding stops everyone | two: today, day files | id |
+| F as E, by week | files + index | about 1 KB; folds up to 3.9 MB | as E | two | id |
+| G no memories.json: muninn.db is the truth | yes, one store | one row | one writer at a time, short turns | yes | id |
+In every option A to F, the index update still waits for the write turn, so the index is the next queue to shorten.
+
+CRAB'S PICK: C
+- It is the only file layout where agents writing different memories never wait for each other. A write is one small file, replaced in one step.
+- The file name is the id, so a link is a path that never moves; retire moves it to _retired/.
+- One way: no folding or compaction step to get right and test.
+- Cost: 21,949 small files (Spotlight and Time Machine see many files), and a one-time migration.
+- G is the choice if one store matters more than files; it goes against your 2026-11-11 decision that files are the truth (memory j9jdkh).
 
 CLEANING UP RETIRED MEMORIES (any option)
-- dream deletes retired memories older than N days (30 proposed, a setting). In D, E and F it only rewrites the day or week files that hold them.
+- dream deletes retired memories older than N days (30 proposed, a setting; check 6).
 
-CRAB'S READING
-- E gives the smallest writes with few files, and keeps today (the part that changes most) easy to tidy. D is the simplest step from today's code. Day files over week files: median 38 KB versus 351 KB.
-- Both D and E keep one rule from today: a memory's id never changes, so the shared branch and imports keep working.
-
-OPEN FOR JØRGEN
-- Pick A to F (question on check 5).
-- How many days a retired memory is kept (check 6).
-
-Previous Purpose: Jørgen 2026-11-18 (request 1 on this task): the goal is a unified, easy-to-navigate, non-confusing CLI and system. The decision behind it is his of 2026-11-11 (memory j9jdkh, docs/DESIGN.md): one tool named hug for memory, tasks and messages, files on branches as the truth, and memory file-oriented too (one Markdown file per memory) so humans can edit it and git merges stay clean.
-Previous Principle: Consistency through a clean sweep: once we decide hug is the thing, we change everything at once (commands, help, messages, docs, branches, folders, tests, every project's setup), never a mix of old and new names left behind.
-Previous Details: A unified, easy-to-navigate, non-confusing CLI and system: one hug binary with tasks, memories and messages; .hug/<kind>/ on branches hug/<kind>; muninn and huginn kept only as compatibility aliases.
-
-Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 tasks on branch hug/tasks at .hug/tasks (this repo and seid-lang migrated). Open: memories still live in the SQLite store. On main the sync branch is still muninn-notes (muninn/internal/project/project.go:39); commit c16b7fd6 (2026-11-18, on lane branches, not yet on main) moves project memory to hug/memory through an explicit layout upgrade, and this repo already has a hug/memory branch. Jørgen names it 'memory', not 'memories' (note 2026-11-16). Item 3 (one file per memory, retire = move to _retired/) needs a design talk with him before building. Children: 34r1ft (per-repo memory setting), gav9nw (personal vs shared).
-
-Promoted from item 3 of task:9taa9d.
+Earlier version, kept as record: the six layouts A-F with day and week sizes measured on 2026-11-20 (141 days; median day 38 KB, busiest 2.1 MB; median week 351 KB, busiest 3.9 MB); 2,825 of 18,615 memories (15%) changed on a later day. Out of scope: the shared hug/memory branch file (memories.jsonl, one line per memory), which git already merges line by line.
 
 ## Depends on
 
@@ -68,6 +71,7 @@ Promoted from item 3 of task:9taa9d.
 - [ ] ~~Jørgen picks: keep memories.json as is, make it append-only JSON Lines, or one file per memory~~ (not relevant: replaced by check 5, which adds per-day, today-folder and per-week layouts (Jørgen's requests 3 and 4), crab, 2026-11-20)
 - [ ] Jørgen picks a storage layout: A (as is), B (one append-only file), C (file per memory), D (file per day), E (today folder, then day files) or F (as E, by week)
 - [ ] Jørgen sets how many days a retired memory is kept before hug mem dream deletes it (30 proposed)
+- [ ] Jørgen picks a layout, A to G, judged on his five needs (table in Details)
 
 ## Requests
 - 2026-11-20T13:11 request 1 by jhf:
@@ -138,3 +142,4 @@ Promoted from item 3 of task:9taa9d.
   > Six layouts in Details, measured on your 18,615 memories. A day holds 38 KB typically (busiest 2.1 MB); 15% of memories change on a later day. My pick is E: a today folder with one small file per memory, rolled by dream into one JSON Lines file per day. Pick A to F?
   I can't really answer that yet. This task was created and it only says we can do each one of the things we can do, but I don't see argument for why one thing is better than another thing, meaning a single source of truth, less I.O. to make edits, easier to coordinate between multiple agents writing at the same time, and so on and so forth. A single way of doing it, so it's more consistent and easier to test, or multiple ways of doing it. So it's like we have lined up all the choices, but we haven't lined up why one choice would give us something that another choice wouldn't. And I think the reasoning is also incorrect. I think I experienced problems of writing memories with multiple different clients at the same time. And I thought there is concurrency issues. We are waiting. Maybe we should have a better file design. And maybe we should have a design where we can link to memories and they're stable, these links.
 - 2026-11-25T09:45 answer 3 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
+- 2026-11-25T10:22 crab read the answer: hug task set b8mk9s
