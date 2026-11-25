@@ -1,16 +1,21 @@
 ---
 id: 7tnbqf
 title: "Release v0.7.108: short evidence refused, wait-for-merge hint, superseded checks"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzz3"
 created: 2026-11-22
 updated: 2026-11-22
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-25T13:00"
+doing_with: "hktdgs"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -45,3 +50,5 @@ Main 6b8899ba (Release v0.7.108, merge of 570ac238, CI run 45048705221 8/8 on th
   > v0.7.108 is out. hug task check now refuses evidence under 8 characters, so 'x' or 'ok' no longer ticks a check (it says: fix: hug task check ID N "what shows it holds"). Is 8 characters the right minimum?
   Sure, let's try it
 - 2026-11-25T11:15 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
+- 2026-11-25T13:00 todo/ready -> doing/active (take with hktdgs)
+- 2026-11-25T13:00 crab read the answer: hug task take 7tnbqf
