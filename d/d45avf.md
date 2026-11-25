@@ -52,3 +52,4 @@ Which key failed for Jørgen is asked in question 1.
 - 2026-11-25T11:16 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > In hug's answer and request box these already work in v0.7.108 (tested in tmux): ctrl+w, ctrl+a, ctrl+e, ctrl+u, ctrl+k, alt+b, alt+f, alt+backspace, Home, End. Only ctrl+left and ctrl+right do nothing. Which keys failed for you, and in which board? If it was in Seid on p39w4a, every key there takes about a second (1tjq11), so the edit may have looked missing until the page caught up.
   It works But notice that control left and control right don't do anything because they are tied to switching spaces
+- 2026-11-25T11:16 answer 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
