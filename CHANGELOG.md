@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.114 - 2026-11-25
 
 - A release no longer fails on a test's wall-clock budget once CI has
   passed the same SHA (khq1fq). v0.7.113's release (run 45627554531)
