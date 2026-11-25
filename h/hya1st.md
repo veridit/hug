@@ -1,16 +1,21 @@
 ---
 id: hya1st
 title: "Task page reads small to large: Goal first, a short Details shown open"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["rhino"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-24
 updated: 2026-11-24
 parent: "9a479v"
+doing_since: "2026-11-25T09:31"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -37,3 +42,7 @@ Picked by Jørgen 18:23Z: GOAL, PURPOSE, PRINCIPLE, DETAILS, then ACCEPTANCE, th
 check 1: Jørgen 18:23Z, without frames: 'Goal, Purpose, Principles, Details'. A fixed order, not variant A or B. Acceptance follows Details, as in AGENTS.md's writing order (Goal, Purpose, Principle, Relevant details, then Acceptance).
 
 Jørgen 18:24Z, why this order: 'I.e. What, Why, How, Notes (to explain those over)'. So Goal is the what, Purpose the why, Principle the how, and Details the notes that explain them. The section names stay as they are; this is only the reason for the order.
+
+
+## History
+- 2026-11-25T09:31 todo -> doing/active (take)
