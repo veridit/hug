@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzm"
 created: 2026-11-22
 updated: 2026-11-22
-design_asked_by: "crab"
-design_question: "v0.7.106 is installed. Nothing to try: it only matters if an old hug process writes Details (see chxk50). Close this ticket, or is there something you want checked?"
-design_for: "jhf"
-design_since: "2026-11-22T13:52"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Shipped hxqqdp checks 1-2: show, --json, MCP and the TUI show both texts (Detail
 ## Questions
 - 2026-11-22T13:52 question 1 by crab to jhf (check 1):
   v0.7.106 is installed. Nothing to try: it only matters if an old hug process writes Details (see chxk50). Close this ticket, or is there something you want checked?
+  answered 2026-11-25T10:47 by jhf:
+    Close it
 
 ## Notes
 
@@ -45,3 +43,6 @@ crab 12:53Z: shipped v0.7.106 (main 91927791, landed 668e6984, CI run 4502293084
 
 ## History
 - 2026-11-22T13:52 todo -> todo/design (ask)
+- 2026-11-25T10:47 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > v0.7.106 is installed. Nothing to try: it only matters if an old hug process writes Details (see chxk50). Close this ticket, or is there something you want checked?
+  Close it
