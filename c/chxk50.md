@@ -33,7 +33,7 @@ Shipped 6q1d1t checks 1-2: SchemaVersion 31; a fingerprint test fails when what 
 ## Depends on
 
 ## Acceptance
-- [ ] Jørgen restarts his long-running hug tui and hug mcp sessions, or says to leave them
+- [ ] ~~Jørgen restarts his long-running hug tui and hug mcp sessions, or says to leave them~~ (not relevant: Jørgen 2026-11-25: not his to check; MCP must reload by itself and a test must prove it. Moved to rvb3j5, crab, crab, 2026-11-25)
 
 ## Questions
 - 2026-11-22T11:52 question 1 by crab to jhf (check 1):
