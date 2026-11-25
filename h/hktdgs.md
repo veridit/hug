@@ -71,3 +71,4 @@ shipped in v0.7.99 (1d86473)
 - 2026-11-25T10:22 answered asked (check 3), by jhf, for crab (doing/asked -> doing/active):
   > Jørgen steps past both ends with H and L and lands on no column
   This works as advertised except I would like to see the columns despite not having one being selected because sometimes because that is for clarity so in the current active section I can always see the columns and when I select the column I have the other markers that are also there but I don't think we should hide the columns at any point
+- 2026-11-25T10:22 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
