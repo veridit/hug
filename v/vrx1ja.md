@@ -20,6 +20,7 @@ asked_since: "2026-11-25T14:50"
 asked_by: "crab"
 asked_check: "3"
 asked_what: "Jørgen sees no 'kunne ikke startes' popup for a week of releases"
+parent: "f3k227"
 ---
 
 ## Goal
