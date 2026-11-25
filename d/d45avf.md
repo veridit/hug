@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzzr"
 created: 2026-11-22
 updated: 2026-11-22
-design_for: "jhf"
-design_since: "2026-11-22T23:10"
-design_asked_by: "crab"
-design_question: "In hug's answer and request box these already work in v0.7.108 (tested in tmux): ctrl+w, ctrl+a, ctrl+e, ctrl+u, ctrl+k, alt+b, alt+f, alt+backspace, Home, End. Only ctrl+left and ctrl+right do nothing. Which keys failed for you, and in which board? If it was in Seid on p39w4a, every key there takes about a second (1tjq11), so the edit may have looked missing until the page caught up."
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -45,9 +41,14 @@ Which key failed for Jørgen is asked in question 1.
 ## Questions
 - 2026-11-22T23:10 question 1 by crab to jhf (check 1):
   In hug's answer and request box these already work in v0.7.108 (tested in tmux): ctrl+w, ctrl+a, ctrl+e, ctrl+u, ctrl+k, alt+b, alt+f, alt+backspace, Home, End. Only ctrl+left and ctrl+right do nothing. Which keys failed for you, and in which board? If it was in Seid on p39w4a, every key there takes about a second (1tjq11), so the edit may have looked missing until the page caught up.
+  answered 2026-11-25T11:16 by jhf:
+    It works But notice that control left and control right don't do anything because they are tied to switching spaces
 
 ## Notes
 
 
 ## History
 - 2026-11-22T23:10 todo -> todo/design (ask)
+- 2026-11-25T11:16 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > In hug's answer and request box these already work in v0.7.108 (tested in tmux): ctrl+w, ctrl+a, ctrl+e, ctrl+u, ctrl+k, alt+b, alt+f, alt+backspace, Home, End. Only ctrl+left and ctrl+right do nothing. Which keys failed for you, and in which board? If it was in Seid on p39w4a, every key there takes about a second (1tjq11), so the edit may have looked missing until the page caught up.
+  It works But notice that control left and control right don't do anything because they are tied to switching spaces
