@@ -11,15 +11,10 @@ rank: "zzzzzzzzzzxv"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-21T17:35"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
-asked_since: "2026-11-21T18:44"
-asked_by: "ladybug"
-asked_check: "1"
-asked_what: "Open the four attached frames at 100x30 (top, mid-page, end, and mid-page with a message): do the ↑ on the rule under the title, the bottom rule '↓── Task 1 of 2 · 29% · next · previous · Esc back ───' right on the keys, and a message like '• prtwm2 moved to IN PROGRESS' taking the status's place on that rule (↓ kept) read right? Your answer also settles xt0qvf's layout for the task page."
-asked_for: "jhf"
 parent: "wg59vb"
 ---
 
@@ -55,6 +50,8 @@ Replaces 8a0ybb check 9 (↑/↓ in the corners). Related: xt0qvf (where the sta
 ## Questions
 - 2026-11-21T18:44 question 1 by ladybug to jhf (check 1):
   Open the four attached frames at 100x30 (top, mid-page, end, and mid-page with a message): do the ↑ on the rule under the title, the bottom rule '↓── Task 1 of 2 · 29% · next · previous · Esc back ───' right on the keys, and a message like '• prtwm2 moved to IN PROGRESS' taking the status's place on that rule (↓ kept) read right? Your answer also settles xt0qvf's layout for the task page.
+  answered 2026-11-25T10:20 by jhf:
+    I like it
 
 ## Notes
 
@@ -79,3 +76,6 @@ check 3: a19cd1d4: bottom rule on the keys, ↓ when more below, status on it; m
 - 2026-11-21T17:35 todo -> doing/active (take)
 - 2026-11-21T18:44 doing/active -> doing/asked (ask)
 - 2026-11-21T20:14 handed to crab: ladybug's session ended (closed 2026-11-21 19:13)
+- 2026-11-25T10:20 answered asked (check 1), by jhf, for ladybug (doing/asked -> doing/active):
+  > Open the four attached frames at 100x30 (top, mid-page, end, and mid-page with a message): do the ↑ on the rule under the title, the bottom rule '↓── Task 1 of 2 · 29% · next · previous · Esc back ───' right on the keys, and a message like '• prtwm2 moved to IN PROGRESS' taking the status's place on that rule (↓ kept) read right? Your answer also settles xt0qvf's layout for the task page.
+  I like it
