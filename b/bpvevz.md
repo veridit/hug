@@ -1,18 +1,16 @@
 ---
 id: bpvevz
 title: "Mid-turn recall: after a day on, decide whether it is the default"
-state: "doing"
+state: "todo"
 type: chore
 priority: "medium"
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "000a"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-20T11:23"
-doing_with: "p87ngv"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -61,3 +59,4 @@ check 2: Jørgen 2026-11-25 picked A: default on, old off path removed; 'and alw
   A And always investigate if we can do it even faster or and if this works with all the tools we're testing with
 - 2026-11-25T09:50 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T13:02 crab read the answer: hug task check bpvevz 2 "Jørgen 2026-11-25 picked A: default on, old off path removed; 'and always investigate if we can do it even faster ... a…"
+- 2026-11-25T14:10 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-20T11:23; doing_with: p87ngv
