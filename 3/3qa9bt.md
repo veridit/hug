@@ -7,7 +7,7 @@ priority: "high"
 assignee: ["giraffe"]
 labels: []
 group: ""
-rank: "zzzzzzzzzzz5"
+rank: "zzzzzzzzzzxs"
 created: 2026-11-21
 updated: 2026-11-21
 model: "claude-opus-5-5"

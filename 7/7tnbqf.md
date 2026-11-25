@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzo"
+rank: "zzzzzzzzzzz3"
 created: 2026-11-22
 updated: 2026-11-22
 stage: "ready"
