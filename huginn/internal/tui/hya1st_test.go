@@ -176,9 +176,19 @@ func TestTabFollowsGoalPurposePrincipleDetails(t *testing.T) {
 		t.Fatalf("Shift-Tab from the checks does not come back to Details:\n%s", detailPlain(m))
 	}
 
-	// A long Details: its heading is a stop after Principle's text.
+	// A long Details: its heading is a stop after Principle's text, the
+	// only one (the ring is the page, DETAILS, the checks: no second
+	// DETAILS stop at the end).
 	l, lids := detailsBoard(t, 100, 30, map[string]string{"Long": sevenLines})
 	l = openTask(t, l, lids["Long"])
+	lt, _ := l.selected()
+	var ring []string
+	for _, s := range l.focusRing(lt) {
+		ring = append(ring, fmt.Sprint(s.pane))
+	}
+	if got, want := strings.Join(ring, " "), fmt.Sprint(focusPage, focusFold, focusAcceptance); got != want {
+		t.Fatalf("ring %s, want %s (page, DETAILS, checks)", got, want)
+	}
 	l.detailPane = focusPage
 	if l = press(l, "tab"); !strings.Contains(detailPlain(l), "▸ DETAILS (4) · Enter opens") {
 		t.Fatalf("Tab from the title does not reach the folded DETAILS:\n%s", detailPlain(l))
