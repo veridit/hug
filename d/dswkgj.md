@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzys"
 created: 2026-11-20
 updated: 2026-11-20
-design_question: "v0.7.92: answering a withdrawn question now says when and why it was withdrawn and gives the command to ask again; a bare answer after the numbered questions answers the design question. Sample run attached. Do the two refusals read well?"
-design_for: "jhf"
-design_since: "2026-11-20T20:31"
-design_asked_by: "crab"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,6 +33,8 @@ Shipped: 5vehza (withdrawn question: exit 2, 'question N on ID was withdrawn at 
 ## Questions
 - 2026-11-20T20:31 question 1 by crab to jhf (check 1):
   v0.7.92: answering a withdrawn question now says when and why it was withdrawn and gives the command to ask again; a bare answer after the numbered questions answers the design question. Sample run attached. Do the two refusals read well?
+  answered 2026-11-25T09:34 by jhf:
+    I think the responses are sensible enough. I do question the CLI. When you have positional arguments, I think it's quite brittle. That's the only thing I notice.
 
 ## Notes
 
@@ -47,3 +45,6 @@ shipped: tag v0.7.92 (e43211fa), release.yml 44801667959 success, brew -> ../Cel
 
 ## History
 - 2026-11-20T20:31 todo -> todo/design (ask)
+- 2026-11-25T09:34 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > v0.7.92: answering a withdrawn question now says when and why it was withdrawn and gives the command to ask again; a bare answer after the numbered questions answers the design question. Sample run attached. Do the two refusals read well?
+  I think the responses are sensible enough. I do question the CLI. When you have positional arguments, I think it's quite brittle. That's the only thing I notice.
