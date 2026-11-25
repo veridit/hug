@@ -63,6 +63,7 @@ Built on branch hya1st (not merged, no tag): final SHA c8b22551, CI run 45591665
 Frames correction: the binary for the three hya1st-*.ans frames was built at 10:01Z from the worktree at c8b22551 (not e033dee2 as their notes say); c8b22551 changes only hya1st_test.go, so the code is the same.
 landed e033dee on main 2026-11-25: A task's page reads Goal, Purpose, Principle, Details (open at 6 lines or…
 shipped in v0.7.112 (e033dee)
+crab: shipped in v0.7.112 (main c1056b46, merge of c8b22551, CI 45591665551 8/8, release.yml 45593553415, brew hug v0.7.112). Release ticket a2k4r5.
 ## History
 - 2026-11-25T09:31 todo -> doing/active (take)
 - 2026-11-25T11:19 doing/active -> doing/asked (ask)
