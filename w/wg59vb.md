@@ -10,11 +10,7 @@ group: ""
 rank: "zzzzzzzzzzz9"
 created: 2026-11-21
 updated: 2026-11-21
-design_question: "v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?"
-design_for: "jhf"
-design_since: "2026-11-21T19:23"
-design_asked_by: "crab"
-stage: "design"
+stage: "ready"
 ---
 
 ## Goal
@@ -37,9 +33,14 @@ Shipped: 4ddcwa checks 2 and 3 (goldens 100x30 and 160x45, 10 mutants caught). T
 ## Questions
 - 2026-11-21T19:23 question 1 by crab to jhf (check 1):
   v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?
+  answered 2026-11-25T10:21 by jhf:
+    Beautiful, thank you
 
 ## Notes
 
 
 ## History
 - 2026-11-21T19:23 todo -> todo/design (ask)
+- 2026-11-25T10:21 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
+  > v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?
+  Beautiful, thank you
