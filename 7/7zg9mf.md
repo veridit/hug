@@ -11,16 +11,11 @@ rank: "zzzzzzzzzzyc"
 created: 2026-11-20
 updated: 2026-11-20
 doing_since: "2026-11-22T03:13"
-stage: "asked"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "0s652z"
-asked_by: "crab"
-asked_check: "5"
-asked_what: "Jørgen opens the list after release and sees only open work, and can flip a filter with !"
-asked_for: "jhf"
-asked_since: "2026-11-22T05:05"
 ---
 
 ## Goal
@@ -54,6 +49,8 @@ Today (v0.7.90): filter is one value per field (task.Filter in huginn/internal/t
 ## Questions
 - 2026-11-22T05:05 question 1 by crab to jhf (check 5):
   Jørgen opens the list after release and sees only open work, and can flip a filter with !
+  answered 2026-11-25T10:40 by jhf:
+    It works beautifully, except that after I press exclamation mark, backspace will not remove it.
 
 ## Notes
 
@@ -82,3 +79,6 @@ shipped in v0.7.101 (9d35298)
 - 2026-11-22T03:13 todo -> doing/active (take)
 - 2026-11-22T05:05 doing/active -> doing/asked (ask)
 - 2026-11-22T06:07 handed to crab: owl's session ended (closed 2026-11-22 05:05)
+- 2026-11-25T10:40 answered asked (check 5), by jhf, for crab (doing/asked -> doing/active):
+  > Jørgen opens the list after release and sees only open work, and can flip a filter with !
+  It works beautifully, except that after I press exclamation mark, backspace will not remove it.
