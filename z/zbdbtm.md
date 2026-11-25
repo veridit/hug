@@ -98,3 +98,4 @@ crab 17:01Z: shipped in v0.7.107 (main d32bc3a0, merge of 90b689f2, CI 8/8 run 4
 - 2026-11-25T10:54 answered asked (question 2, check 7), by jhf, for crab (doing/asked -> doing/active):
   > In v0.7.108 (brew upgrade veridit/tap/hug), open this task in hug tui. Details has TRY IT HERE with four names: sample.txt, file:sample-notes.md, sample-notes.md#Section two, docs/DESIGN.md#Personal vs shared memories. Tab to each: Space shows it under the line, Enter opens it at the section, Esc comes back. Do all four work for you?
   Yes, it works well.
+- 2026-11-25T10:54 answer 2 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
