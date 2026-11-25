@@ -1,16 +1,21 @@
 ---
 id: wg59vb
 title: "Release v0.7.98: a task's page sits between two rules"
-state: todo
+state: "doing"
 type: feature
 priority: ""
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "zzzzzzzzzzy3"
 created: 2026-11-21
 updated: 2026-11-21
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-25T12:55"
+doing_with: "hktdgs"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -45,3 +50,5 @@ Shipped: 4ddcwa checks 2 and 3 (goldens 100x30 and 160x45, 10 mutants caught). T
   > v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?
   Beautiful, thank you
 - 2026-11-25T10:21 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
+- 2026-11-25T12:55 todo/ready -> doing/active (take with hktdgs)
+- 2026-11-25T12:55 crab read the answer: hug task take wg59vb
