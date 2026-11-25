@@ -123,18 +123,18 @@ func TestTabReachesIDInCheckAndQuestion(t *testing.T) {
 	goldenFile(t, "testdata/detail/check-ids.txt", strings.Join(golden, "\n")+"\n")
 }
 
-// 0ga6m0 check 2: ids in Purpose, Principle, Goal, the checks, the
+// 0ga6m0 check 2: ids in Goal, Purpose, Principle, the checks, the
 // question under a check, a request and its account are stops, in
 // reading order; the ring has them where they stand (the description's
 // after the page, the checks' after the checks), and Tab marks each where
 // it stands. An unread answer's id is a stop in the header, before the
-// page. Details is a long section, folded (8a0ybb): its id is a stop, after
-// the DETAILS heading, only once Enter opens it.
+// page. Details, one line here, is open after the Principle (hya1st): its
+// id is a stop there; only HISTORY is folded.
 func TestIDsInTextsAreStopsInReadingOrder(t *testing.T) {
 	m, ids := textBoard(t)
 	m = openTask(t, m, ids["Mainta"])
 	tk, _ := m.selected()
-	want := "text:Purpos text:Princi text:Goalid check:Checkd asked:Askedq asked:Checkd request:Reques resolved:Resolv"
+	want := "text:Goalid text:Purpos text:Princi details:Detail check:Checkd asked:Askedq asked:Checkd request:Reques resolved:Resolv"
 	if got := stopsOf(m, tk, ids); got != want {
 		t.Fatalf("stops\n %s\nwant\n %s", got, want)
 	}
@@ -143,17 +143,12 @@ func TestIDsInTextsAreStopsInReadingOrder(t *testing.T) {
 		ring = append(ring, strconv.Itoa(s.pane))
 	}
 	p, a, i, f := strconv.Itoa(focusPage), strconv.Itoa(focusAcceptance), strconv.Itoa(focusIDs), strconv.Itoa(focusFold)
-	if got, want := strings.Join(ring, " "), strings.Join([]string{p, i, i, i, a, i, i, i, i, i, f, f}, " "); got != want {
-		t.Fatalf("ring %s, want %s (page, 3 description ids, checks, 3 check ids, 2 request ids, DETAILS and HISTORY folded)", got, want)
-	}
-	// Details opened, its id is a stop after its heading.
-	open := m.withUnfolded("details")
-	if got := stopsOf(open, tk, ids); got != want+" details:Detail" {
-		t.Fatalf("stops with Details open\n %s\nwant\n %s details:Detail", got, want)
+	if got, want := strings.Join(ring, " "), strings.Join([]string{p, i, i, i, i, a, i, i, i, i, i, f}, " "); got != want {
+		t.Fatalf("ring %s, want %s (page, 3 description ids, the Details id, checks, 3 check ids, 2 request ids, HISTORY folded)", got, want)
 	}
 	// From the page, Tab marks each where it stands.
 	m.detailPane = focusPage
-	marks := []string{"So ▸" + ids["Purpos"], "As ▸" + ids["Princi"], "Builds on ▸" + ids["Goalid"],
+	marks := []string{"Builds on ▸" + ids["Goalid"], "So ▸" + ids["Purpos"], "As ▸" + ids["Princi"], "Seen in ▸" + ids["Detail"],
 		"", "opens ▸" + ids["Checkd"], "open ▸" + ids["Askedq"], "(or ▸" + ids["Checkd"], "at ▸" + ids["Reques"], "in ▸" + ids["Resolv"]}
 	for k, mark := range marks {
 		m = press(m, "tab")

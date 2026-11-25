@@ -36,7 +36,7 @@ const (
 	stopTitle    = "title"    // the task's own title
 	stopQuestion = "question" // a question to you that names no check
 	stopText     = "text"     // Goal, Purpose, Principle: index 0..2
-	stopDetails  = "details"  // Details, a long section: only while open (8a0ybb)
+	stopDetails  = "details"  // Details: shown open when short, else only while opened (hya1st)
 	stopCheck    = "check"    // acceptance check index
 	stopAsked    = "asked"    // the question under check index
 	stopDeps     = "deps"
@@ -188,11 +188,15 @@ func (m model) idStops(t task.Task) []idStop {
 	}
 	sections := m.sections(t)
 	text := func(name string) string { return sectionText(sections, name) }
-	// Purpose, Principle, then the Goal, as the page reads (8a0ybb);
-	// Details is a long section, scanned below only while it is open.
+	// Goal, Purpose, Principle, then Details, as the page reads (hya1st):
+	// a short Details is on the page; a long one is folded, its ids
+	// stops only while it is open (8a0ybb).
+	add(stopText, 0, text("description"), true)
 	add(stopText, 1, text("purpose"), true)
 	add(stopText, 2, text("principle"), true)
-	add(stopText, 0, text("description"), true)
+	if m.detailsShort(t) || m.unfolded["details"] {
+		add(stopDetails, 0, text("details"), true)
+	}
 	for i, a := range t.Acceptance {
 		add(stopCheck, i, checkText(a), true)
 		if cq, ok := m.checkQuestion(t, i+1); ok {
@@ -237,9 +241,6 @@ func (m model) idStops(t task.Task) []idStop {
 	// The long sections: their ids are stops only while they are open
 	// (8a0ybb); folded, the page shows none of their text.
 	open := func(key string) bool { return m.unfolded[key] }
-	if open("details") {
-		add(stopDetails, 0, text("details"), true)
-	}
 	if open("questions") {
 		for k, q := range m.recordQuestions(t) {
 			add(stopRecord, 2*k, safe(strings.TrimRight(q.Text, "\n")), false)

@@ -11,14 +11,14 @@ Status colors: rows and sections share one subtle scheme
   ? Keep folding on grouped headings?                                                               
     └ question 2 · nautilus · 3 min ago · answer                                                    
                                                                                                     
+GOAL                                                                                                
+g                                                                                                   
+                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
-                                                                                                    
-GOAL                                                                                                
-g                                                                                                   
                                                                                                     
 ACCEPTANCE                                                                                          
 ↓── Task 1 of 2 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
@@ -37,14 +37,14 @@ Status colors: rows and sections share one subtle scheme
     └ question 2 · nautilus · 3 min ago                                                             
     answer: yes, keep folding                                                                       
                                                                                                     
+GOAL                                                                                                
+g                                                                                                   
+                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
-                                                                                                    
-GOAL                                                                                                
-g                                                                                                   
                                                                                                     
 ↓── Task 1 of 2 · 0% · next · previous · Esc back ──────────────────────────────────────────────────
 Enter send · Alt-Enter new line · Esc cancel · F1 help                                              
@@ -60,14 +60,14 @@ Status colors: rows and sections share one subtle scheme
 > ? Is the mark sign right?                                                                         
     └ question 1 · nautilus · 3 min ago · answer                                                    
                                                                                                     
+GOAL                                                                                                
+g                                                                                                   
+                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
-                                                                                                    
-GOAL                                                                                                
-g                                                                                                   
                                                                                                     
 ACCEPTANCE                                                                                          
   ☑ 1. a                                                                                            

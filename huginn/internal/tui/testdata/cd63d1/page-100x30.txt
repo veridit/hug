@@ -1,13 +1,13 @@
 == page
+GOAL
+A request's text on a task's page keeps its 3-column indent on every wrapped line, not only the   
+first.                                                                                            
+
 PURPOSE
 The request should read as one block under its head line.                                         
 
 PRINCIPLE
 Indent after wrapping, not before; one rule for every indented block on the page.                 
-
-GOAL
-A request's text on a task's page keeps its 3-column indent on every wrapped line, not only the   
-first.                                                                                            
 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
 > ☐ 1. A request and its answer wrap with their indent kept, at 100x30 (golden, fails on main first)

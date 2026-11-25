@@ -3,7 +3,7 @@ HUG · list › state:!done › MAIN__
 [doing]  [feature]  group:root  assigned:wyvern · m  epic:EPIC__                
 created ########## · updated ########## · main                                  
 └─ waiting on after ▸BLOCKE (crab 17:52) · since ##:##                          
-⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
+⚠ line 1: missing section Principle (how: what we do and do not do) (+1 more fi…
   fix: hug task set MAIN__ --principle "..."                                    
 ────────────────────────────────────────────────────────────────────────────────
 Main                                                                            
@@ -44,7 +44,7 @@ HUG · list › state:!done › MAIN__
 [doing]  [feature]  group:root  assigned:wyvern · m  epic:EPIC__                                                                            
 created ########## · updated ########## · main                                                                                              
 └─ waiting on after ▸BLOCKE (crab 17:52) · since ##:##                                                                                      
-⚠ line 1: missing section Principle (what we do and do not do) (+1 more findings)                                                           
+⚠ line 1: missing section Principle (how: what we do and do not do) (+1 more findings)                                                      
   fix: hug task set MAIN__ --principle "..."                                                                                                
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Main                                                                                                                                        

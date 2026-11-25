@@ -76,9 +76,9 @@ in todos, and another agent's work is never your todo. When your todos run out,
 finish the task and run hug task next: an empty todo list means take the next
 task, not blocked.
 New work: hug task new "short title" --goal "..." --purpose "..." --principle "..." --details "..." --accept "observable check".
-Describe a task with Goal (where we aim), Purpose (why), Principle (what we do
-and do not do), Details, then Acceptance. The Goal is one sentence of
-at most 140 characters; detail goes in Details. Titles stay under 80 characters.
+Describe a task with Goal (what: where we aim), Purpose (why), Principle (how: what we do and do not do), Details (notes that explain those), then Acceptance.
+The Goal is one sentence of at most 140 characters; detail goes in Details.
+Titles stay under 80 characters.
 A document for one task is attached to that task (hug task attach ID FILE); only
 decisions go into repo docs. Name a file in the task's text (MOCK.md, or
 docs/DESIGN.md#Section) and hug tui opens it from there.

@@ -2,7 +2,7 @@
 HUG · list › state:!done › ALPHA_                                               
 [todo]  [feature]  group:root  unassigned                                       
 created ########## · updated ########## · alpha                                 
-⚠ line 1: missing section Principle (what we do and do not do) (+1 more finding…
+⚠ line 1: missing section Principle (how: what we do and do not do) (+1 more fi…
   fix: hug task set ALPHA_ --principle "..."                                    
 ────────────────────────────────────────────────────────────────────────────────
 Alpha                                                                           
@@ -52,7 +52,7 @@ Tab/Enter complete/run · ↑↓ ^n/^p pick · Esc up/close · F1 help
 HUG · list › state:!done › ALPHA_                                                                                                           
 [todo]  [feature]  group:root  unassigned                                                                                                   
 created ########## · updated ########## · alpha                                                                                             
-⚠ line 1: missing section Principle (what we do and do not do) (+1 more findings)                                                           
+⚠ line 1: missing section Principle (how: what we do and do not do) (+1 more findings)                                                      
   fix: hug task set ALPHA_ --principle "..."                                                                                                
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Alpha                                                                                                                                       

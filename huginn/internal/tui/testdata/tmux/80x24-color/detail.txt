@@ -6,19 +6,19 @@ created 2026-11-01 · updated 2026-11-10 · feature-item-01-make
 ────────────────────────────────────────────────────────────────────────────────
 Feature task 01: make the terminal workflow observable with a deliberately long…
 ↑───────────────────────────────────────────────────────────────────────────────
-Show what the task is about before its checks.
-
-GOAL
-Deliver compiler-lang support with huginn and readable evidence.
-
-• Preserve the public interface
-• See the guide https://example.invalid/guide for the synthetic contract.
-
-Verification
 
 fmt.Println("synthetic acceptance")
 
+PURPOSE
+Operators can see why the workflow exists.
+
+PRINCIPLE
+Show what the task is about before its checks.
+
+DETAILS
+Synthetic fixture: 60 tasks, two files on 000001.
+
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out
 > ☐ 1. First acceptance check
-↓── Task 1 of 15 · 24% · next · previous · Esc back ────────────────────────────
+↓── Task 1 of 15 · 39% · next · previous · Esc back ────────────────────────────
 j/k check · Space tick · h/l Tab next · take · done · x drop · edit · up …

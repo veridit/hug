@@ -50,10 +50,11 @@ func TestDetailsSectionNameAndOldName(t *testing.T) {
 }
 
 // 8a0ybb check 13: what agents read names the section Details: the
-// AGENTS.md section hug setup writes and the MCP set field.
+// AGENTS.md section hug setup writes and the MCP set field (the sentence
+// itself is 32ym01's, TestSectionsRuleWording).
 func TestDetailsWordingForAgents(t *testing.T) {
 	flat := strings.Join(strings.Fields(agentSection), " ")
-	if !strings.Contains(flat, "Principle (what we do and do not do), Details, then Acceptance.") || strings.Contains(agentSection, "Relevant details") {
+	if !strings.Contains(flat, "Principle (how: what we do and do not do), Details (notes that explain those), then Acceptance.") || strings.Contains(agentSection, "Relevant details") {
 		t.Fatalf("agentSection:\n%s", agentSection)
 	}
 	if strings.Contains(commandHelp("upgrade"), "Relevant details") {

@@ -32,10 +32,10 @@ func DescriptionProblems(title, goal string, hasPurpose, hasPrinciple bool, acce
 		out = append(out, p)
 	}
 	if !hasPurpose {
-		out = append(out, Problem{"missing-section", "missing section Purpose (why)", `--purpose "..."`})
+		out = append(out, Problem{"missing-section", "missing section Purpose (" + PurposeJob + ")", `--purpose "..."`})
 	}
 	if !hasPrinciple {
-		out = append(out, Problem{"missing-section", "missing section Principle (what we do and do not do)", `--principle "..."`})
+		out = append(out, Problem{"missing-section", "missing section Principle (" + PrincipleJob + ")", `--principle "..."`})
 	}
 	if acceptance == 0 {
 		out = append(out, Problem{"no-acceptance", "Acceptance requires at least one item", `--accept "observable check"`})

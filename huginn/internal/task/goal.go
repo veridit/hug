@@ -20,6 +20,25 @@ const MaxGoal = 140
 // it; a test pins it in each.
 const GoalRule = "The Goal is one sentence of at most 140 characters; detail goes in Details."
 
+// SectionsRule names each section's job in the order a task is written
+// and its page reads (32ym01, Jørgen 2026-11-24 18:24Z: "What, Why, How,
+// Notes (to explain those over)"; a trial, judged on clarity and
+// shortness). AGENTS.md, hug setup's template, help new and MCP task_new
+// say it in these words; a test pins each.
+const SectionsRule = "Describe a task with Goal (" + GoalJob + "), Purpose (" + PurposeJob + "), Principle (" + PrincipleJob + "), Details (notes that explain those), then Acceptance."
+
+// The jobs SectionsRule gives the sections; lint names a missing section
+// with its job in the same words.
+const (
+	GoalJob      = "what: where we aim"
+	PurposeJob   = "why"
+	PrincipleJob = "how: what we do and do not do"
+)
+
+// OldSectionsRule is the sentence before SectionsRule (v0.7.103 to
+// v0.7.111); hug setup lists replacing it as an open step.
+const OldSectionsRule = "Describe a task with Goal (where we aim), Purpose (why), Principle (what we do and do not do), Details, then Acceptance."
+
 // goalFlag is the fix for a Goal that breaks the rule.
 const goalFlag = `--goal "one sentence" --details "..."`
 

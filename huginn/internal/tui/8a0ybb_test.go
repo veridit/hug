@@ -13,13 +13,16 @@ import (
 	"github.com/veridit/hug/internal/cond"
 )
 
-// 8a0ybb (Jørgen 2026-11-20, requests 1 and 2): a task's page reads short
-// to long. Purpose, Principle, the Goal under GOAL (no DESCRIPTION
-// heading), Acceptance, the short sections, then the long ones, Details,
-// the Questions record, Notes and History, each folded to one line with
-// its count until Enter on its heading opens it. The fixture is 8a0ybb's
-// own file as it was when the check 12 frames were taken (2026-11-22
-// 05:36), with its old "## Relevant details" heading.
+// 8a0ybb (Jørgen 2026-11-20, requests 1 and 2), reordered by hya1st
+// (Jørgen 2026-11-24 18:23Z: "Goal, Purpose, Principles, Details"): a
+// task's page reads small to large. The Goal under GOAL (no DESCRIPTION
+// heading), Purpose, Principle, Details (open when 6 lines or fewer at
+// the page's width, else folded in that place), Acceptance, the short
+// sections, then the long ones, the Questions record, Notes and History,
+// each folded to one line with its count until Enter on its heading
+// opens it. The fixture is 8a0ybb's own file as it was when the check 12
+// frames were taken (2026-11-22 05:36), with its old "## Relevant
+// details" heading; its Details is long, so folded.
 
 // fileBoard is a board holding one task file, copied from testdata, at
 // w x h with the clock pinned, its page open.
@@ -77,7 +80,7 @@ func TestPageReadsShortToLong(t *testing.T) {
 		t.Run(fmt.Sprintf("%dx%d", w, h), func(t *testing.T) {
 			m := fileBoard(t, "testdata/8a0ybb/8a0ybb.md", "8a0ybb", w, h)
 			text := detailPlain(m)
-			want := "PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|REQUESTS|DETAILS (5)|QUESTIONS (3)|NOTES (27)|HISTORY (22)"
+			want := "GOAL|PURPOSE|PRINCIPLE|DETAILS (5)|ACCEPTANCE|REQUESTS|QUESTIONS (3)|NOTES (27)|HISTORY (22)"
 			if got := strings.Join(headings(text), "|"); got != want {
 				t.Fatalf("headings\n %s\nwant\n %s\n%s", got, want, text)
 			}
@@ -166,7 +169,8 @@ func TestEnterOpensAFoldedSection(t *testing.T) {
 }
 
 // 8a0ybb check 13: a task hug task new writes has "## Details", and its
-// page heads it DETAILS, as the old "## Relevant details" reads.
+// page heads it DETAILS, as the old "## Relevant details" reads. Short,
+// it is open after the Principle (hya1st), its text on the page.
 func TestNewTaskDetailsHeadedDetails(t *testing.T) {
 	s := &task.Store{Root: t.TempDir()}
 	r, err := s.New(task.NewOptions{Title: "Fresh", Goal: "Aim.", Purpose: "Why.", Principle: "How.", Details: "Facts that matter.", Acceptance: []string{"a"}})
@@ -183,14 +187,8 @@ func TestNewTaskDetailsHeadedDetails(t *testing.T) {
 	m := newModel(s, Options{User: "jhf"})
 	m = openTask(t, m, r.Task.ID)
 	text := detailPlain(m)
-	if got := strings.Join(headings(text), "|"); got != "PURPOSE|PRINCIPLE|GOAL|ACCEPTANCE|DETAILS (1)" {
+	if got := strings.Join(headings(text), "|"); got != "GOAL|PURPOSE|PRINCIPLE|DETAILS|ACCEPTANCE" || !strings.Contains(text, "\nDETAILS\nFacts that matter.") {
 		t.Fatalf("headings %s:\n%s", got, text)
-	}
-	for n := 0; n < 10 && !strings.Contains(detailPlain(m), "▸ DETAILS"); n++ {
-		m = press(m, "tab")
-	}
-	if m = press(m, "enter"); !strings.Contains(detailPlain(m), "Facts that matter.") {
-		t.Fatalf("Enter on DETAILS did not open it:\n%s", detailPlain(m))
 	}
 }
 

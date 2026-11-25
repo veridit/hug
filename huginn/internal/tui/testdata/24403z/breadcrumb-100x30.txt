@@ -8,14 +8,14 @@ Bravo task
 > ? pick one?                                                                                       
     └ crab · 3 min ago · answer                                                                     
                                                                                                     
+GOAL                                                                                                
+g                                                                                                   
+                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
-                                                                                                    
-GOAL                                                                                                
-g                                                                                                   
                                                                                                     
 ACCEPTANCE                                                                                          
   ☐ 1. one                                                                                          
@@ -36,14 +36,14 @@ created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Bravo task                                                                                          
 ────────────────────────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                                                
+g                                                                                                   
+                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
-                                                                                                    
-GOAL                                                                                                
-g                                                                                                   
                                                                                                     
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
 > ☐ 1. one                                                                                          
@@ -67,14 +67,14 @@ created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 Bravo task                                                                                          
 ────────────────────────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                                                
+g                                                                                                   
+                                                                                                    
 PURPOSE                                                                                             
 p                                                                                                   
                                                                                                     
 PRINCIPLE                                                                                           
 q                                                                                                   
-                                                                                                    
-GOAL                                                                                                
-g                                                                                                   
                                                                                                     
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
 > ☐ 1. one                                                                                          

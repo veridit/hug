@@ -5,14 +5,14 @@ created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────
 Status colors: rows and sections share one subtle scheme                        
 ────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                            
+g                                                                               
+                                                                                
 PURPOSE                                                                         
 p                                                                               
                                                                                 
 PRINCIPLE                                                                       
 q                                                                               
-                                                                                
-GOAL                                                                            
-g                                                                               
                                                                                 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                    
   ☑ 1. a                                                                        
@@ -36,14 +36,14 @@ created 2026-11-01 · updated 2026-11-01 · t
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Status colors: rows and sections share one subtle scheme                                                                                    
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                                                                                        
+g                                                                                                                                           
+                                                                                                                                            
 PURPOSE                                                                                                                                     
 p                                                                                                                                           
                                                                                                                                             
 PRINCIPLE                                                                                                                                   
 q                                                                                                                                           
-                                                                                                                                            
-GOAL                                                                                                                                        
-g                                                                                                                                           
                                                                                                                                             
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                                                                
   ☑ 1. a                                                                                                                                    

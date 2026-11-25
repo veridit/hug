@@ -15,12 +15,6 @@ Bug task 02: make the terminal workflow observable
     → colours-overview.ans · Enter shows                                        
     └ question 2 · alice · 10 min ago · answer                                  
                                                                                 
-PURPOSE                                                                         
-Synthetic.                                                                      
-                                                                                
-PRINCIPLE                                                                       
-Synthetic.                                                                      
-                                                                                
 GOAL                                                                            
 Deliver compiler-lang support with huginn and readable evidence.                
                                                                                 
@@ -30,6 +24,12 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                    
                                                                                 
 fmt.Println("synthetic acceptance")                                             
+                                                                                
+PURPOSE                                                                         
+Synthetic.                                                                      
+                                                                                
+PRINCIPLE                                                                       
+Synthetic.                                                                      
                                                                                 
 ACCEPTANCE                                                                      
   ☑ 1. First acceptance check                                                   
@@ -75,12 +75,6 @@ Bug task 02: make the terminal workflow observable
     → colours-overview.ans · Enter shows                                                                                                    
     └ question 2 · alice · 10 min ago · answer                                                                                              
                                                                                                                                             
-PURPOSE                                                                                                                                     
-Synthetic.                                                                                                                                  
-                                                                                                                                            
-PRINCIPLE                                                                                                                                   
-Synthetic.                                                                                                                                  
-                                                                                                                                            
 GOAL                                                                                                                                        
 Deliver compiler-lang support with huginn and readable evidence.                                                                            
                                                                                                                                             
@@ -90,6 +84,12 @@ Deliver compiler-lang support with huginn and readable evidence.
 Verification                                                                                                                                
                                                                                                                                             
 fmt.Println("synthetic acceptance")                                                                                                         
+                                                                                                                                            
+PURPOSE                                                                                                                                     
+Synthetic.                                                                                                                                  
+                                                                                                                                            
+PRINCIPLE                                                                                                                                   
+Synthetic.                                                                                                                                  
                                                                                                                                             
 ACCEPTANCE                                                                                                                                  
   ☑ 1. First acceptance check                                                                                                               

@@ -86,7 +86,7 @@ const (
 	sevenLines = "First note.\n\nSecond note.\n\nThird note.\n\nFourth note."
 	// Three paragraphs, the last 3 lines at 100 columns (7 lines,
 	// folded) and 2 at 160 (6 lines, open).
-	widthBound = "First note.\n\nSecond note.\n\nThird note is long enough to wrap twice at a hundred columns, since it says rather more than two lines of a page that narrow can hold, and once at wide."
+	widthBound = "First note.\n\nSecond note.\n\nThird note is long enough to wrap twice at a hundred columns, since it says rather more than two lines of a page that narrow can hold, and only once on a wide page of a hundred and sixty columns, which holds it in two lines."
 )
 
 // hya1st check 2: the order, Details open in its place when short.
@@ -231,15 +231,22 @@ func TestNextPreviousKeepTheDetailsRule(t *testing.T) {
 }
 
 // hya1st: kkj0mn as Jørgen saw it (statbus hug/tasks 2026-11-24): a
-// one-line Goal, a four-line Purpose, a two-line Principle and a
-// three-line Details, open. Golden at 100x30 and 160x45.
+// one-line Goal, a longer Purpose, a two-line Principle, then Details:
+// one paragraph that the page draws in 8 lines at 100 columns (folded)
+// and 4 at 160 (open). Golden at 100x30 and 160x45.
 func TestKkj0mnPageGolden(t *testing.T) {
-	for _, size := range [][2]int{{100, 30}, {160, 45}} {
-		w, h := size[0], size[1]
+	for _, c := range []struct {
+		w, h  int
+		heads string
+	}{
+		{100, 30, "GOAL|PURPOSE|PRINCIPLE|DETAILS (1)|ACCEPTANCE"},
+		{160, 45, "GOAL|PURPOSE|PRINCIPLE|DETAILS|ACCEPTANCE"},
+	} {
+		w, h := c.w, c.h
 		t.Run(fmt.Sprintf("%dx%d", w, h), func(t *testing.T) {
 			m := fileBoard(t, "testdata/hya1st/kkj0mn.md", "kkj0mn", w, h)
 			text := detailPlain(m)
-			if got, want := strings.Join(headings(text), "|"), "GOAL|PURPOSE|PRINCIPLE|DETAILS|ACCEPTANCE"; got != want {
+			if got, want := strings.Join(headings(text), "|"), c.heads; got != want {
 				t.Fatalf("headings %s, want %s:\n%s", got, want, text)
 			}
 			goldenFile(t, fmt.Sprintf("testdata/hya1st/kkj0mn-%dx%d.txt", w, h), ansi.Strip(m.View())+"\n")

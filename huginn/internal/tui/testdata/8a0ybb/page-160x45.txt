@@ -7,14 +7,16 @@ created 2026-11-19 · updated 2026-11-19 · detail-view-short-sections
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Detail view: short sections before long, folded long sections, scroll markers                                                                                   
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                                                                                                            
+A task's page reads Purpose, Principle, Goal, Acceptance, then short sections, then long ones folded, with ↑/↓ when more is off screen.                         
+                                                                                                                                                                
 PURPOSE                                                                                                                                                         
 The value of a ticket should be on screen first; long reference text should not push it away.                                                                   
                                                                                                                                                                 
 PRINCIPLE                                                                                                                                                       
 You land on your question, a file it names is a link on it, and the page reads short to long.                                                                   
                                                                                                                                                                 
-GOAL                                                                                                                                                            
-A task's page reads Purpose, Principle, Goal, Acceptance, then short sections, then long ones folded, with ↑/↓ when more is off screen.                         
+› DETAILS (5)                                                                                                                                                   
                                                                                                                                                                 
 ▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                                                                                    
 > ☒ 1. Jørgen approves a mock of p87ngv's detail with FOR YOU first, the link, and the short-to-long order (frames attached) (not relevant: the FOR YOU mock is 
@@ -40,8 +42,6 @@ A task's page reads Purpose, Principle, Goal, Acceptance, then short sections, t
   ☒ 9. The detail page shows ↑ in a top corner when there is more above and ↓ in a bottom corner when there is more below, as the overview marks more rows      
        (golden 100x30 scrolled mid-page) (not relevant: replaced by 4ddcwa: ↑ on the top rule, ↓ and the page status on a bottom rule (Jørgen 2026-11-20), crab,
        2026-11-20)                                                                                                                                              
-  ☒ 10. Jørgen approves frames (ANSI at 100x30) of 8a0ybb's own detail: opened scrolled to its question with the file as a link, and the order Purpose,         
-        Principle, Goal, Acceptance, short sections, then long sections folded (not relevant: the question landing is qcq3tm's; replaced by check 12, the order 
 ↓── Task 1 of 1 · 0% · next · previous · Esc back ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 j/k check · Space tick · - strike out · h/l Tab next · take · done · x drop · edit · New · Screen · V paste · up · request · / find · next-, previous task …    
 == at the end
@@ -53,6 +53,8 @@ created 2026-11-19 · updated 2026-11-19 · detail-view-short-sections
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Detail view: short sections before long, folded long sections, scroll markers                                                                                   
 ↑───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       (golden 100x30 scrolled mid-page) (not relevant: replaced by 4ddcwa: ↑ on the top rule, ↓ and the page status on a bottom rule (Jørgen 2026-11-20), crab,
+       2026-11-20)                                                                                                                                              
   ☒ 10. Jørgen approves frames (ANSI at 100x30) of 8a0ybb's own detail: opened scrolled to its question with the file as a link, and the order Purpose,         
         Principle, Goal, Acceptance, short sections, then long sections folded (not relevant: the question landing is qcq3tm's; replaced by check 12, the order 
         only, crab, 2026-11-20)                                                                                                                                 
@@ -80,8 +82,6 @@ REQUESTS
      question checks (5, 7, 10) are struck and point there or to qcq3tm (the landing fix shipping now). What p87ngv does not cover stays here, now medium       
      priority: the section order (Purpose, Principle, Goal, Acceptance, short sections, then long ones folded, check 11) and the ↑/↓ scroll markers (check 9).  
      Title and Goal say just that. Check 12 is your look at frames of it.                                                                                       
-                                                                                                                                                                
-› DETAILS (5)                                                                                                                                                   
                                                                                                                                                                 
 › QUESTIONS (3)                                                                                                                                                 
                                                                                                                                                                 

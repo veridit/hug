@@ -1,0 +1,30 @@
+HUG · overview › NEXT UP › kkj0mn                                                                   
+[todo]  [feature]  group:root  unassigned                                                           
+created 2026-11-24 · updated 2026-11-24 · branch-fast-tests-fit                                     
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Branch fast-tests fit in their time limit: build images once, not per run                           
+────────────────────────────────────────────────────────────────────────────────────────────────────
+GOAL                                                                                                
+A fast-tests run started by hand on a branch finishes within its job time limit with room to spare. 
+                                                                                                    
+PURPOSE                                                                                             
+A dispatched branch run builds every image itself (docker compose up -d --build, 10-12 min) where   
+master's runs pull prebuilt images (30 s); with timeout-minutes: 30 the job had no margin left.     
+Run                                                                                                 
+45426056166 on feat/units-on-map (z2qt08) passed the SQL suite and live-database tests, then hit    
+the                                                                                                 
+limit 11 s into its last step and showed as cancelled.                                              
+                                                                                                    
+PRINCIPLE                                                                                           
+The branch run tests the same images it would ship; the limit stays a guard against hangs, not a    
+race against image building.                                                                        
+                                                                                                    
+› DETAILS (1)                                                                                       
+                                                                                                    
+▸ ACCEPTANCE · j/k or [ ] step · Space ticks · - strikes out                                        
+> ☐ 1. A dispatched fast-tests run on a branch with migrations finishes with conclusion success, its
+       Start services step under 3 minutes or its build step outside the test time limit            
+                                                                                                    
+no dependencies                                                                                     
+─── Task 1 of 1 · 100% · next · previous · Esc back ────────────────────────────────────────────────
+j/k check · Space tick · h/l Tab next · take · done · x drop · edit · New · up · request · / find … 
