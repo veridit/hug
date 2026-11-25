@@ -1,17 +1,16 @@
 ---
 id: hktdgs
 title: "H/L column marker: a 'no column' step between last and first"
-state: "doing"
+state: "todo"
 type: "feature"
 priority: "medium"
-assignee: ["crab"]
+assignee: []
 labels: []
 group: ""
 rank: "008"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-21T23:56"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
@@ -76,3 +75,4 @@ Jørgen 2026-11-25 (on hktdgs and ta6fy6): 'I would like to see the columns desp
   This works as advertised except I would like to see the columns despite not having one being selected because sometimes because that is for clarity so in the current active section I can always see the columns and when I select the column I have the other markers that are also there but I don't think we should hide the columns at any point
 - 2026-11-25T10:22 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T13:02 crab read the answer: hug task check hktdgs 3 "Jørgen 2026-11-25: 'This works as advertised' (H/L land on no column past either end)"
+- 2026-11-25T13:03 doing/active -> todo/ready (give back; was assignee: crab); was doing_since: 2026-11-21T23:56
