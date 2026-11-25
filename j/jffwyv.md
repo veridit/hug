@@ -33,7 +33,7 @@ Shipped hxqqdp checks 1-2: show, --json, MCP and the TUI show both texts (Detail
 ## Depends on
 
 ## Acceptance
-- [ ] Nothing to try; Jørgen says close, or names what to check
+- [x] Nothing to try; Jørgen says close, or names what to check
 
 ## Questions
 - 2026-11-22T13:52 question 1 by crab to jhf (check 1):
@@ -46,6 +46,7 @@ Shipped hxqqdp checks 1-2: show, --json, MCP and the TUI show both texts (Detail
 crab 12:53Z: shipped v0.7.106 (main 91927791, landed 668e6984, CI run 45022930847 8/8). release.yml success; brew-verified: Cellar/hug/0.7.106, hug version = v0.7.106. hug task lint: no findings.
 
 
+check 1: Jørgen 2026-11-25: 'Close it'
 ## History
 - 2026-11-22T13:52 todo -> todo/design (ask)
 - 2026-11-25T10:47 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
