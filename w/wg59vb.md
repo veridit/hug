@@ -44,3 +44,4 @@ Shipped: 4ddcwa checks 2 and 3 (goldens 100x30 and 160x45, 10 mutants caught). T
 - 2026-11-25T10:21 answered design (check 1), by jhf, for crab (todo/design -> todo/ready):
   > v0.7.98 is installed. Open a long task (for example qpp30y) and press J a few times: the rule under the title gets ↑, and the bottom rule right on the keys reads '↓── Task 1 of 2 · 29% · next · previous · Esc back'. Press t on a todo task, and the message '• ID moved to IN PROGRESS' takes the status's place. Does it read right, or what should change?
   Beautiful, thank you
+- 2026-11-25T10:21 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
