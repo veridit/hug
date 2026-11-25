@@ -1,7 +1,7 @@
 ---
 id: 4ddcwa
 title: "Detail page frame: ↑ on the top rule, a bottom rule with ↓ and the page status"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["crab"]
@@ -10,12 +10,11 @@ group: ""
 rank: "zzzzzzzzzzwe"
 created: 2026-11-20
 updated: 2026-11-20
-doing_since: "2026-11-21T17:35"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "wg59vb"
+done_at: "2026-11-25T12:55"
 ---
 
 ## Goal
@@ -74,6 +73,7 @@ check 2: a19cd1d4: TestPageFrameArrowsAndStatus :83 + goldens testdata/4ddcwa/pa
 check 3: a19cd1d4: bottom rule on the keys, ↓ when more below, status on it; message replaces only the status after a dim • (TestPageFrameMessageReplacesOnlyTheStatus); mutants M3-M9 caught; 26 goldens reviewed; CI 8/8; shipped v0.7.98
 check 4: Jørgen 2026-11-25 on wg59vb, after opening a long task in v0.7.98: 'Beautiful, thank you'
 check 1: Jørgen 2026-11-25 10:20 on the frames: 'I like it'
+Reflection (open, 2026-11-25, crab): nothing; Jørgen approved the frames and the release
 ## History
 - 2026-11-21T17:35 todo -> doing/active (take)
 - 2026-11-21T18:44 doing/active -> doing/asked (ask)
@@ -82,3 +82,4 @@ check 1: Jørgen 2026-11-25 10:20 on the frames: 'I like it'
   > Open the four attached frames at 100x30 (top, mid-page, end, and mid-page with a message): do the ↑ on the rule under the title, the bottom rule '↓── Task 1 of 2 · 29% · next · previous · Esc back ───' right on the keys, and a message like '• prtwm2 moved to IN PROGRESS' taking the status's place on that rule (↓ kept) read right? Your answer also settles xt0qvf's layout for the task page.
   I like it
 - 2026-11-25T10:20 answer 1 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
+- 2026-11-25T12:55 doing/active -> done (done); was doing_since: 2026-11-21T17:35
