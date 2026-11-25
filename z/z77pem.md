@@ -1,7 +1,7 @@
 ---
 id: z77pem
 title: "hug names running MCP servers too old to reload themselves"
-state: "doing"
+state: "done"
 type: feature
 priority: ""
 assignee: ["crab"]
@@ -10,14 +10,10 @@ group: ""
 rank: "zzzzzzzzzzqc"
 created: 2026-11-18
 updated: 2026-11-18
-doing_since: "2026-11-18T18:23"
-stage: "waiting"
 model: "claude-opus-5-5"
 branch: "ec6z6j"
 worktree: "/Users/jhf/.jcode/scratch/ec6z6j"
-waiting_on: "check 2: release with 67d46348 and Jørgen's machine shows the stale-server line (crab stacks z77pem)"
-waiting_since: "2026-11-18T20:44"
-waiting_asked_by: "mizaru"
+done_at: "2026-11-25T13:28"
 ---
 
 ## Goal
@@ -55,7 +51,9 @@ landed 24e329e on main 2026-11-18: hug names an MCP server too old to reload its
 shipped in v0.7.71 (24e329e)
 crab 2026-11-20 12:04Z: shipped in v0.7.71; check 2 waits on Jørgen's machine: 4 old hug mcp servers still run (see mbdfzs), so the stale-server line should show there now.
 crab 2026-11-25 12:28Z audit: shipped in v0.7.71 (24e329e7). Check 2 waits on Jørgen's machine showing the line, but the line only names servers older than v0.7.54; none run now (the oldest live hug mcp runs v0.7.108). The real gap Jørgen hit is servers that can reload but do not while idle: rvb3j5. Check 2 folds into rvb3j5's check 3 (crab checks the running versions after the next release).
+Reflection (open, 2026-11-25, crab): Its last check waited on a situation that no longer happens; I should have re-read it against the running processes earlier.
 ## History
 - 2026-11-18T18:23 todo -> doing/active (take)
 - 2026-11-18T20:44 doing/active -> doing/waiting (wait)
 - 2026-11-19T04:22 handed to crab: mizaru's session ended (closed 2026-11-19 03:11)
+- 2026-11-25T13:28 doing/waiting -> done (done); was doing_since: 2026-11-18T18:23; waiting_asked_by: mizaru; waiting_on: check 2: release with 67d46348 and Jørgen's machine shows the stale-server line (crab stacks z77pem); waiting_since: 2026-11-18T20:44
