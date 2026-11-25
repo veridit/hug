@@ -32,3 +32,5 @@ Today (v0.7.112): hug task new prints the task and 'next: hug task take ID' only
 - [ ] AGENTS.md and hug setup's New work line say to place a new task by priority, pinned by a test
 
 ## Notes
+
+Jørgen 2026-11-25 13:07Z: 'If you set a priority, it should automatically respect that when inserting it.' Check 2 is the rule: --priority on new places the task by priority (above the first lower-priority todo task), with no extra flag; --top and --after still override.
