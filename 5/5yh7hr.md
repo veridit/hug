@@ -1,6 +1,6 @@
 ---
 id: 5yh7hr
-title: "A worker's review request reaches the coordinator's live session"
+title: "Review starts by itself when a worker ticks its last check"
 state: todo
 type: feature
 priority: "high"
