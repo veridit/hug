@@ -33,7 +33,7 @@ TODAY (2026-11-25): hug mem stats says embedder 'nomic-embed-text @ http://127.0
 
 ## Acceptance
 - [x] Each embedder replayed on the same frozen message set from a store copy (recall4), with its re-embed time, index size and per-call latency recorded
-- [ ] Useful and noise per 100 messages judged blind for nomic, qwen3-embedding:0.6b and embeddinggemma-2:270m, with confidence intervals; a winner only on a CI-clear gain, confirmed on fresh data
+- [x] Useful and noise per 100 messages judged blind for nomic, qwen3-embedding:0.6b and embeddinggemma-2:270m, with confidence intervals; a winner only on a CI-clear gain, confirmed on fresh data
 - [ ] Jørgen decides from the table whether to switch the default
 - [ ] The index records the embedder model and vector length it was built with, and a query with another model or length re-embeds or refuses with a fix: line (test)
 
@@ -55,6 +55,7 @@ Harness check: the nomic arm reproduces RECALL4 `default` exactly on 199/200 dev
 147/147 fresh messages (identical hit lists).
 
 check 1: store copy (frozen snapshot, 20,764 texts) re-embedded per model: nomic 560 s, qwen3 1329 s, gemma2 714 s active; index MB 125.9/220.0/107.5/59.4/125.9/59.4; query embed p95 ms nomic 101, qwen3 321, gemma2 180 (dt02yw/reembed, latency, real/*.size.json; recall4 a5df9478, CI run 45803351521 8/8)
+check 2: blind RECALL4 judge, 904 new pairs, session-cluster CIs: qwen3@1024 useful +19.1 [+5.9,+31.5] dev+ho and +36.7 [+26.3,+55.7] fresh; fresh noise -37.4 [-119.5,+2.6] (not clear), short-message noise +44.6 [+16.3,+71.9]; no unconditional winner (dt02yw/RESULTS.md)
 ## Result table (dev+held-out n=277 | fresh n=147). Per 100 messages, 95% session-cluster bootstrap
 
 | arm | useful/100 dev+ho [CI] | noise/100 dev+ho [CI] | useful/100 fresh [CI] | noise/100 fresh [CI] | p50 / p95 query embed ms | re-embed 20,764 texts (active) | index MB (20,764) |
