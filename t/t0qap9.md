@@ -1,33 +1,32 @@
 ---
 id: t0qap9
-title: "The start-up reindex writes in small transactions, never one of minutes"
-state: "doing"
+title: "No hug holds a memory lock while computing: index work runs outside both locks"
+state: "todo"
 type: bug
 priority: "high"
-assignee: ["hedgehog"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "000001q"
 created: 2026-11-25
 updated: 2026-11-25
-doing_since: "2026-11-26T01:59"
-stage: "active"
+stage: "ready"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
-hug's background reindex commits in batches of a few seconds each, so no hug holds the memory write lock for minutes.
+Memory writes never wait on index work: compute runs outside the write turn and SQLite lock; each lock hold is seconds.
 
 ## Purpose
-hippo 2026-11-25 (vrx1ja): every hug mcp starts a background reindex in one write transaction; a full pass held the write lock 409.9 s on a store copy, which is what other hugs waited on.
+hedgehog 2026-11-26 on a store copy: a full reindex held the SQLite write lock 297.5 s in one stretch (4m30 of it neighbour lists), and holds hug's write turn the whole pass, so remember, forget and capture wait up to 20 min.
 
 ## Principle
-Short transactions; each batch is safe to stop between, so a crash or a stop loses at most one batch.
+Compute without locks, write in short steps. Keep the neighbour lists and topic groups exactly as today (same results); change only when and how they are written. Jørgen 2026-11-26: hold the locks short and fix all the other findings.
 
 ## Details
-From vrx1ja: the reindex runs inside one write transaction (muninn index pipeline). Related: n7jbmx's hook p95 699 ms at load 116, and xhfte0 (SQLITE_BUSY on concurrent deletes despite 30 s wait). Fix: commit every N units or every ~2 s; measure the lock hold time before and after on a store copy.
+Findings to fix (hedgehog note above): (1) App.Reindex holds the write turn for the whole pass, embed included (app/app.go:164-191); (2) Ollama embed calls run inside the transaction (EmbedDirty); (3) a remember runs a full Reindex after its write (binding.go:778, 839); (4) UpdateNeighbors does per-unit SQL inside the pass (pipeline.go:528-705); (5) Run wraps the whole pass in one BEGIN IMMEDIATE (pipeline.go:203-230). Community detection (DF-Louvain) needs all of a pass's concept deltas at once: compute in memory, then write. Once the index lives in its own database (sibling task under b8mk9s), the full rebuild builds beside and swaps; this task makes the incremental path short-locked in either layout.
 
 ## Depends on
 
@@ -80,3 +79,4 @@ Test patterns to reuse: index/busy_test.go, knn_test.go (bruteNeighbors, neighbo
 Checks 1 and 2 are not ticked.
 ## History
 - 2026-11-26T01:59 todo -> doing/active (take)
+- 2026-11-26T09:17 doing/active -> todo/ready (give back; was assignee: hedgehog); was doing_since: 2026-11-26T01:59
