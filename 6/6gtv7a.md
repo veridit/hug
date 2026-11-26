@@ -4,7 +4,7 @@ title: "Memory store opens without a long write: no schema write when nothing is
 state: "doing"
 type: bug
 priority: "high"
-assignee: ["kangaroo"]
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "000001h"
