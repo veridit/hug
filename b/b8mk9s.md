@@ -155,3 +155,4 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
 - 2026-11-26T09:17 answered design (question 4, check 7), by jhf, for crab (todo/design -> todo/ready):
   > Rewritten from your answer: Details now judges each layout on your five needs, starting with the many-writer failures on your Mac (a lost memory on 11-10, 233 of 239 forgets failing on 11-16, 70 capture timeouts). My pick is C, one small file per memory: agents writing different memories never wait for each other, and the id is the file name, so links stay stable. Pick A to G?
   C: one file per memory, in subdirectories so no directory holds too many files, with two databases: memories (many writers, short writes) and a derived index (one writer, built beside and swapped in). Jørgen 2026-11-26 08:16 in chat.
+- 2026-11-26T09:17 answer 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
