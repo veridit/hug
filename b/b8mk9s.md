@@ -153,3 +153,4 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
 - 2026-11-25T10:22 crab read the answer: hug task set b8mk9s
 - 2026-11-25T10:22 todo/ready -> todo/design (ask)
 - 2026-11-26T08:20 request 5 by jhf
+- 2026-11-26T08:20 request 5 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
