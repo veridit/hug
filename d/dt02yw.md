@@ -32,7 +32,7 @@ TODAY (2026-11-25): hug mem stats says embedder 'nomic-embed-text @ http://127.0
 ## Depends on
 
 ## Acceptance
-- [ ] Each embedder replayed on the same frozen message set from a store copy (recall4), with its re-embed time, index size and per-call latency recorded
+- [x] Each embedder replayed on the same frozen message set from a store copy (recall4), with its re-embed time, index size and per-call latency recorded
 - [ ] Useful and noise per 100 messages judged blind for nomic, qwen3-embedding:0.6b and embeddinggemma-2:270m, with confidence intervals; a winner only on a CI-clear gain, confirmed on fresh data
 - [ ] Jørgen decides from the table whether to switch the default
 - [ ] The index records the embedder model and vector length it was built with, and a query with another model or length re-embeds or refuses with a fix: line (test)
