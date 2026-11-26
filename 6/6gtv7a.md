@@ -14,6 +14,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-26T01:56"
+done_release: "v0.7.116"
 ---
 
 ## Goal
@@ -42,6 +43,10 @@ check 1: 627b0ba7, CI 45730059023 8/8. muninn/internal/store/open_nowait_test.go
 check 2: 627b0ba7, CI 45730059023 8/8. TestOpenersDoNotQueueBehindALockedSchemaUpdate: holds_ended dropped, another connection holds BEGIN IMMEDIATE throughout, 2 openers: init lock free at 1.5 s, both return at 5.038 s with 'schema: memory store busy: this hug has schema to add and gave up after 5.037s: database is locked (5) (SQLITE_BUSY) / held by: ... / fix: retry in a minute (hug mem stats); hug mcp opens memory again by itself' (main: init lock held at 1.5 s, 2 of 2 not returned after 10s). Bound 10 s = MigrateWait 5 s + CI slack; 5 s fits the recall hook's 8 s budget and the 15 s Claude/Codex hook timeout. Store copy, write lock 70 s, 2 openers: main 30.609 s + 1m1.289 s, now 5.009 s + 5.014 s. Lock released at 1 s: both open at 1.04/1.09 s. hug mcp's busy() retries on store.ErrBusy (TestMCPRetriesAnOpenBehindTheInitLock). Mutants 'hold init lock across waits', 'busy_timeout 30 s in BEGIN', 'MigrateWait 30 s', 'no fix: line', 'mcp ignores ErrBusy' killed.
 crab review: landed 627b0ba7 (CI 45730059023, 8/8 jobs success) as main 29ced89c, v0.7.116; release.yml 45731254681 success; brew ../Cellar/hug/0.7.116/bin/hug, 'hug v0.7.116'.
 Reflection (open, 2026-11-26, crab): nothing: the task's Details named the fix exactly (check sqlite_master first; release the init lock before waiting) and the worker followed it.
+landed 60e62c3 on main 2026-11-26: store: failing tests, Open writes and waits under the init lock when nothing is…
+landed bc18b28 on main 2026-11-26: store: Open reads first, writes only what is missing, never waits under the init…
+landed 627b0ba on main 2026-11-26: store: a new store's first open switches to WAL under the init lock (6gtv7a)
+shipped in v0.7.116 (60e62c3)
 ## History
 - 2026-11-26T00:09 todo -> doing/active (take)
 - 2026-11-26T01:56 doing/active -> done (done); was doing_since: 2026-11-26T00:09
