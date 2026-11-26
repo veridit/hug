@@ -1,15 +1,20 @@
 ---
 id: dt02yw
 title: "Measure qwen3-embedding and embeddinggemma-2 against nomic for recall"
-state: todo
+state: "doing"
 type: feature
 priority: "medium"
-assignee: []
+assignee: ["dt02yw-engineer"]
 labels: []
 group: ""
 rank: "003"
 created: 2026-11-25
 updated: 2026-11-25
+doing_since: "2026-11-26T09:01"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -35,3 +40,7 @@ TODAY (2026-11-25): hug mem stats says embedder 'nomic-embed-text @ http://127.0
 ## Notes
 
 Jørgen 2026-11-25 10:39Z: all three support Matryoshka truncation (qwen3-embedding:0.6b 1024, embeddinggemma-2:270m 768, nomic 768): keep the first N dims, then L2-renormalize; same N for documents and queries; 512 is almost free, 256 a good balance, 128 a noticeable loss. His default proposal: qwen3-embedding:0.6b at 512 or 256. Arms to measure: nomic 768 (today), qwen3 at 1024, 512 and 256, gemma-2 at 768 and 256. Each arm records model and length with the index (in the pipeline hash), so a query never meets vectors of another length. Truncation of one embedding run needs no re-embed, so one qwen3 pass gives all three qwen3 arms.
+
+
+## History
+- 2026-11-26T09:01 todo -> doing/active (take)
