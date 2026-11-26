@@ -1,17 +1,22 @@
 ---
 id: b8mk9s
 title: "Design: how hug stores memories, so many agents can write at once"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["crab"]
 labels: []
 group: ""
 rank: "5"
 created: 2026-11-20
 updated: 2026-11-20
 parent: "9taa9d"
-stage: "ready"
+stage: "active"
+doing_since: "2026-11-26T09:31"
+doing_with: "rvb3j5"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -158,3 +163,4 @@ check 6: Jørgen 2026-11-26 08:30 in chat: deleted memory kept 30 days, yes
   C: one file per memory, in subdirectories so no directory holds too many files, with two databases: memories (many writers, short writes) and a derived index (one writer, built beside and swapped in). Jørgen 2026-11-26 08:16 in chat.
 - 2026-11-26T09:17 answer 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-26T09:17 crab read the answer: hug task check b8mk9s 7
+- 2026-11-26T09:31 todo/ready -> doing/active (take with rvb3j5)
