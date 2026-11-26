@@ -1,7 +1,7 @@
 ---
 id: b8mk9s
 title: "Design: how hug stores memories, so many agents can write at once"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["crab"]
@@ -11,12 +11,10 @@ rank: "5"
 created: 2026-11-20
 updated: 2026-11-20
 parent: "9taa9d"
-stage: "active"
-doing_since: "2026-11-26T09:31"
-doing_with: "rvb3j5"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-26T09:31"
 ---
 
 ## Goal
@@ -120,6 +118,7 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
 
 
 check 6: Jørgen 2026-11-26 08:30 in chat: deleted memory kept 30 days, yes
+Reflection (open, 2026-11-26, crab): nothing: asking one decision per check with a table on his five needs got a pick; the earlier six-layout question did not.
 ## History
 - 2026-11-20T13:11 request 1 by jhf
 - 2026-11-20T13:11 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
@@ -164,3 +163,4 @@ check 6: Jørgen 2026-11-26 08:30 in chat: deleted memory kept 30 days, yes
 - 2026-11-26T09:17 answer 4 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
 - 2026-11-26T09:17 crab read the answer: hug task check b8mk9s 7
 - 2026-11-26T09:31 todo/ready -> doing/active (take with rvb3j5)
+- 2026-11-26T09:31 doing/active -> done (done); was doing_since: 2026-11-26T09:31; doing_with: rvb3j5

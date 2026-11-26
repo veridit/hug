@@ -32,7 +32,7 @@ Done: v0.7.0 (2026-11-13) one hug binary, v0.7.1 one hug mcp server, v0.7.3 task
 ## Acceptance
 - [x] hug setup, hug task ..., hug memory ... work; one MCP server
 - [x] branches hug/tasks and hug/memories; huginn branch migrated in muninn, huginn, seid-lang
-- [ ] done when task:b8mk9s is done (memories stored one Markdown file per memory, retire = move to _retired/)
+- [x] done when task:b8mk9s is done (memories stored one Markdown file per memory, retire = move to _retired/)
 
 ## Requests
 - 2026-11-18T12:00 request 1 by jhf:
