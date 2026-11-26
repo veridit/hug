@@ -4,6 +4,21 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## v0.7.116 - 2026-11-26
+
+- Opening the memory store reads first and writes only what is missing
+  (6gtv7a). A current store now opens with no write statement and no
+  lock: until now every open ran the whole schema (61 write statements)
+  under `muninn.db.init.lock`, so a hug that held that lock held up every
+  hook, `hug mem` command and `hug mcp` behind it (a 20 s hold: 18.99 s
+  open before, 0.002 s now). With a table to add and another process
+  holding the write lock (an index pass can hold it for minutes), an open
+  waited SQLite's 30 s busy timeout while holding the init lock, so
+  openers queued 30, 60, 90 and 121 s (vrx1ja). Now it tries the init lock
+  and the write lock without waiting, lets both go between tries, and gives
+  up after 5 s with a `memory store busy` error that ends in a `fix:` line;
+  `hug mcp` opens memory again by itself, and the next open adds the table.
+
 ## v0.7.115 - 2026-11-25
 
 - An idle `hug mcp` reloads into the installed hug within about 10 s

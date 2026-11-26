@@ -3,9 +3,11 @@ package store
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -264,7 +266,11 @@ func Open(path string) (*DB, error) {
 	}
 	// Memories are private: create the database owner-only before SQLite does
 	// (SQLite would apply the umask, typically 0644), and tighten existing files.
+	fresh := false
 	if f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0o600); err == nil {
+		if fi, err := f.Stat(); err == nil && fi.Size() == 0 {
+			fresh = true
+		}
 		f.Close()
 	}
 	for _, p := range []string{path, path + "-wal", path + "-shm"} {
@@ -289,80 +295,270 @@ func Open(path string) (*DB, error) {
 		return nil, err
 	}
 	db.SetMaxOpenConns(1) // single writer; WAL lets other processes read
-	// Two processes creating the schema at once got SQLITE_BUSY despite
-	// busy_timeout (2026-11-10, two first runs in parallel). Take turns.
-	unlockInit, err := flock.Acquire(path + ".init.lock")
+	d := &DB{DB: db, Path: path}
+	// Read first, write only what is missing (6gtv7a). A store this hug has
+	// opened before needs nothing: Open then runs reads only, takes no lock,
+	// and a writer elsewhere (an index pass holds the write lock for minutes)
+	// cannot hold it up, since WAL readers never wait on a writer.
+	//
+	// A new, empty file goes straight to migrate: its first connection switches
+	// it to WAL, and two first runs switching at once got SQLITE_BUSY without
+	// the busy handler (2026-11-10), so that happens under the init lock.
+	missing := []string{"everything (new store)"}
+	if !fresh {
+		missing, err = d.readMissing()
+	}
 	if err != nil {
 		db.Close()
-		return nil, err
+		return nil, fmt.Errorf("schema: %w", ExplainBusy(path, err))
 	}
-	_, err = db.Exec(schema)
-	if err == nil {
-		err = oldHugView(db)
-	}
-	unlockInit()
-	if err != nil {
-		db.Close()
-		return nil, fmt.Errorf("schema: %w", err)
-	}
-	// One-time backfill for indexes written before the sketches table existed.
-	var have, want int
-	db.QueryRow(`SELECT EXISTS(SELECT 1 FROM sketches), EXISTS(SELECT 1 FROM embeddings)`).Scan(&have, &want)
-	if have == 0 && want == 1 {
-		if _, err := db.Exec(`INSERT OR IGNORE INTO sketches(content_hash, pipeline_hash, sketch)
-		  SELECT content_hash, pipeline_hash, sketch FROM embeddings`); err != nil {
-			db.Close()
-			return nil, fmt.Errorf("backfill sketches: %w", err)
-		}
-	}
-	db.QueryRow(`SELECT EXISTS(SELECT 1 FROM qvecs), EXISTS(SELECT 1 FROM embeddings)`).Scan(&have, &want)
-	if have == 0 && want == 1 {
-		if _, err := db.Exec(`INSERT OR IGNORE INTO qvecs(content_hash, pipeline_hash, qvec)
-		  SELECT content_hash, pipeline_hash, qvec FROM embeddings`); err != nil {
-			db.Close()
-			return nil, fmt.Errorf("backfill qvecs: %w", err)
-		}
-	}
-	db.QueryRow(`SELECT EXISTS(SELECT 1 FROM unit_communities), EXISTS(SELECT 1 FROM communities)`).Scan(&have, &want)
-	if have == 0 && want == 1 {
-		if _, err := db.Exec(`INSERT INTO unit_communities(community_id, unit_id, n)
-		  SELECT c.community_id, uc.unit_id, COUNT(*) FROM unit_concepts uc
-		  JOIN communities c ON c.concept_id=uc.concept_id GROUP BY 1, 2`); err != nil {
-			db.Close()
-			return nil, fmt.Errorf("backfill unit_communities: %w", err)
-		}
-	}
-	returnDB := &DB{DB: db, Path: path}
-	if err := returnDB.migrateMemoryType(); err != nil {
-		db.Close()
-		return nil, err
-	}
-	if err := returnDB.addUnitColumn("holds"); err != nil {
-		db.Close()
-		return nil, err
-	}
-	// mtrigger (jrj1vq): the when-then trigger; "trigger" is an SQL keyword.
-	if err := returnDB.addUnitColumn("mtrigger"); err != nil {
-		db.Close()
-		return nil, err
-	}
-	// Rescope rows in the fix trail (j13xs0): where a memory moved from and to.
-	for _, col := range []string{"old_scope", "new_scope", "mode"} {
-		if err := returnDB.addColumn("memory_fixes", col); err != nil {
+	if len(missing) > 0 {
+		if err := d.migrate(); err != nil {
 			db.Close()
 			return nil, err
 		}
 	}
+	return d, nil
+}
+
+// schemaObjects are the names schema creates, in its order.
+var schemaObjects = func() []string {
+	var names []string
+	for _, m := range regexp.MustCompile(`CREATE (?:VIRTUAL )?(?:TABLE|INDEX|TRIGGER|VIEW) IF NOT EXISTS (\w+)`).FindAllStringSubmatch(schema, -1) {
+		names = append(names, m[1])
+	}
+	return names
+}()
+
+const (
+	textColumn = `TEXT NOT NULL DEFAULT ''`
+	intColumn  = `INTEGER NOT NULL DEFAULT 0`
+)
+
+// columnMigrations are the columns added to tables after they first shipped.
+var columnMigrations = []struct{ table, col, decl string }{
+	{"units", "mtype", textColumn}, // memory type (2026-11-15)
+	{"units", "holds", textColumn}, // 2026-11-16
+	// mtrigger (jrj1vq): the when-then trigger; "trigger" is an SQL keyword.
+	{"units", "mtrigger", textColumn},
+	// Rescope rows in the fix trail (j13xs0): where a memory moved from and to.
+	{"memory_fixes", "old_scope", textColumn},
+	{"memory_fixes", "new_scope", textColumn},
+	{"memory_fixes", "mode", textColumn},
 	// When a recalled memory reached the agent (x8zzzn).
-	if err := returnDB.addIntColumn("injections", "delivered_ns"); err != nil {
-		db.Close()
+	{"injections", "delivered_ns", intColumn},
+}
+
+// backfills copy rows into a table added after its source table had data.
+// need is true exactly when fill would add a row, so a store it ran on
+// never needs it again (else every open would write).
+var backfills = []struct{ name, need, fill string }{
+	// One-time backfill for indexes written before the sketches table existed.
+	{"sketches", `SELECT NOT EXISTS(SELECT 1 FROM sketches) AND EXISTS(SELECT 1 FROM embeddings)`,
+		`INSERT OR IGNORE INTO sketches(content_hash, pipeline_hash, sketch)
+	  SELECT content_hash, pipeline_hash, sketch FROM embeddings`},
+	{"qvecs", `SELECT NOT EXISTS(SELECT 1 FROM qvecs) AND EXISTS(SELECT 1 FROM embeddings)`,
+		`INSERT OR IGNORE INTO qvecs(content_hash, pipeline_hash, qvec)
+	  SELECT content_hash, pipeline_hash, qvec FROM embeddings`},
+	{"unit_communities", `SELECT NOT EXISTS(SELECT 1 FROM unit_communities) AND EXISTS(SELECT 1 FROM unit_concepts uc JOIN communities c ON c.concept_id=uc.concept_id)`,
+		`INSERT INTO unit_communities(community_id, unit_id, n)
+	  SELECT c.community_id, uc.unit_id, COUNT(*) FROM unit_concepts uc
+	  JOIN communities c ON c.concept_id=uc.concept_id GROUP BY 1, 2`},
+}
+
+// readMissing is missingSchema with no lock held. A read can still get
+// SQLITE_BUSY while another first run switches a just-created file to WAL
+// (the switch locks the file, and SQLite answers without its busy handler):
+// it tries again, for at most MigrateWait.
+func (d *DB) readMissing() ([]string, error) {
+	start := time.Now()
+	for {
+		missing, err := d.missingSchema()
+		if err == nil || !isBusy(err) || time.Since(start) >= MigrateWait {
+			return missing, err
+		}
+		time.Sleep(migratePoll)
+	}
+}
+
+// missingSchema lists what Open must still write: schema objects, the
+// view that names the fix to an old hug, columns, backfills, short ids.
+// It only reads. Empty means the store is current.
+func (d *DB) missingSchema() ([]string, error) {
+	rows, err := d.Query(`SELECT name, type, COALESCE(sql, '') FROM sqlite_master`)
+	if err != nil {
 		return nil, err
 	}
-	if err := returnDB.migrateShortIDs(); err != nil {
-		db.Close()
-		return nil, fmt.Errorf("short ids: %w", err)
+	type object struct{ typ, sql string }
+	have := map[string]object{}
+	for rows.Next() {
+		var name string
+		var o object
+		if err := rows.Scan(&name, &o.typ, &o.sql); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		have[name] = o
 	}
-	return returnDB, nil
+	err = rows.Err()
+	rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	var missing []string
+	for _, name := range schemaObjects {
+		if _, ok := have[name]; !ok {
+			missing = append(missing, name)
+		}
+	}
+	// graph_state still the gob table waits for its first writer
+	// (index.moveGraph); a plain view becomes OldHugView.
+	if g, ok := have["graph_state"]; ok && g.typ == "view" && g.sql != OldHugView {
+		missing = append(missing, "graph_state view for old hugs")
+	}
+	if len(missing) > 0 {
+		return missing, nil // the rest is checked under the write lock
+	}
+	for _, c := range columnMigrations {
+		var n int
+		if err := d.QueryRow(`SELECT count(*) FROM pragma_table_info(?) WHERE name=?`, c.table, c.col).Scan(&n); err != nil {
+			return nil, err
+		}
+		if n == 0 {
+			missing = append(missing, c.table+"."+c.col)
+		}
+	}
+	for _, b := range backfills {
+		var need bool
+		if err := d.QueryRow(b.need).Scan(&need); err != nil {
+			return nil, err
+		}
+		if need {
+			missing = append(missing, "backfill "+b.name)
+		}
+	}
+	if d.GetMeta("shortids_schema") != "2" {
+		missing = append(missing, "short ids")
+	}
+	return missing, nil
+}
+
+// ErrBusy is wrapped by an Open that gave up because another hug process
+// held the database or the schema update while this one had schema to add:
+// it opens later (hug mcp tries again by itself).
+var ErrBusy = errors.New("memory store busy")
+
+// MigrateWait is how long Open tries to add missing schema while another
+// process holds the database (or the init lock) before it gives up with
+// ErrBusy. Long enough to pass a short write (a remember or forget takes
+// about 1.5 s, turn.go), short enough for the recall hook's 8 s budget
+// and the 15 s Claude and Codex give a hook. An index pass that holds the
+// lock for minutes is not waited out: the old open waited busy_timeout,
+// 30 s, holding the init lock, so openers queued 30, 60, 90 and 121 s
+// (vrx1ja).
+var MigrateWait = 5 * time.Second
+
+// migratePoll is the pause between tries, with no lock held.
+var migratePoll = 50 * time.Millisecond
+
+// migrate adds what missingSchema found, in one IMMEDIATE transaction under
+// the init lock (older hugs take it for their schema exec). Neither lock is
+// waited on while the other is held: the init lock is only tried, the
+// transaction begins with busy_timeout 0, and on SQLITE_BUSY both are let go
+// before the pause.
+func (d *DB) migrate() error {
+	start := time.Now()
+	var busyErr error
+	for {
+		release, ok, err := flock.TryAcquire(d.Path + ".init.lock")
+		if err != nil {
+			return err
+		}
+		if ok {
+			err = d.migrateOnce()
+			release()
+			if err == nil || !isBusy(err) {
+				return err
+			}
+			busyErr = err
+		}
+		if waited := time.Since(start); waited >= MigrateWait {
+			return d.schemaBusy(waited, busyErr)
+		}
+		time.Sleep(migratePoll)
+	}
+}
+
+func isBusy(err error) bool {
+	s := err.Error()
+	return strings.Contains(s, "SQLITE_BUSY") || strings.Contains(s, "database is locked")
+}
+
+// schemaBusy is the error of an Open that gave up on a busy store.
+func (d *DB) schemaBusy(waited time.Duration, cause error) error {
+	if cause == nil {
+		cause = errors.New("another hug process holds " + filepath.Base(d.Path) + ".init.lock (it is updating the schema)")
+	}
+	held := "held by: another hug process (a write outside the queue, or an older hug updating the schema)"
+	fix := "fix: retry in a minute (hug mem stats); hug mcp opens memory again by itself"
+	if h, ok := TurnHolder(d.Path); ok {
+		held = "held by: " + h.String()
+		fix = fmt.Sprintf("fix: wait for pid %d to finish, then retry (hug mem stats)", h.PID)
+	}
+	return fmt.Errorf("schema: %w: this hug has schema to add and gave up after %v: %w\n%s\n%s",
+		ErrBusy, waited.Round(time.Millisecond), cause, held, fix)
+}
+
+// migrateOnce takes the write lock without waiting and adds what is missing.
+func (d *DB) migrateOnce() (err error) {
+	if _, err := d.Exec(`PRAGMA busy_timeout=0`); err != nil {
+		return err
+	}
+	defer d.Exec(`PRAGMA busy_timeout=` + strconv.Itoa(BusyTimeout))
+	if _, err := d.Exec(`BEGIN IMMEDIATE`); err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			d.Exec(`ROLLBACK`)
+		}
+	}()
+	// Another opener may have added it all while this one waited.
+	missing, err := d.missingSchema()
+	if err != nil {
+		return err
+	}
+	if len(missing) == 0 {
+		_, err = d.Exec(`COMMIT`)
+		return err
+	}
+	if _, err := d.Exec(schema); err != nil {
+		return fmt.Errorf("schema: %w", err)
+	}
+	if err := oldHugView(d.DB); err != nil {
+		return fmt.Errorf("schema: %w", err)
+	}
+	for _, b := range backfills {
+		var need bool
+		if err := d.QueryRow(b.need).Scan(&need); err != nil {
+			return fmt.Errorf("backfill %s: %w", b.name, err)
+		}
+		if need {
+			if _, err := d.Exec(b.fill); err != nil {
+				return fmt.Errorf("backfill %s: %w", b.name, err)
+			}
+		}
+	}
+	for _, c := range columnMigrations {
+		if err := d.addTypedColumn(c.table, c.col, c.decl); err != nil {
+			return err
+		}
+	}
+	if err := d.migrateShortIDs(); err != nil {
+		return fmt.Errorf("short ids: %w", err)
+	}
+	_, err = d.Exec(`COMMIT`)
+	return err
 }
 
 // Source looks up or creates a source row and returns its id and stat.
@@ -562,28 +758,9 @@ func (d *DB) UntypedUnits(limit int) ([]Unit, error) {
 	return out, nil
 }
 
-// migrateMemoryType adds units.mtype (memory type, 2026-11-15) to databases
-// created before it. Idempotent; runs on every open, independent of the
-// shortids schema version (which existing databases have already passed).
-func (d *DB) migrateMemoryType() error { return d.addUnitColumn("mtype") }
-
-// addUnitColumn adds a text column (NOT NULL, default empty) to units when a
-// database created before it lacks it (mtype 2026-11-15, holds 2026-11-16,
-// mtrigger 2026-11-18).
-// Idempotent and safe against a concurrent opener.
-func (d *DB) addUnitColumn(col string) error { return d.addColumn("units", col) }
-
-// addColumn adds a text column (NOT NULL, default empty) to table when a
-// database created before it lacks it. table and col are constants.
-func (d *DB) addColumn(table, col string) error {
-	return d.addTypedColumn(table, col, `TEXT NOT NULL DEFAULT ''`)
-}
-
-// addIntColumn adds an integer column (NOT NULL, default 0), as addColumn.
-func (d *DB) addIntColumn(table, col string) error {
-	return d.addTypedColumn(table, col, `INTEGER NOT NULL DEFAULT 0`)
-}
-
+// addTypedColumn adds a column to table when a database created before it
+// lacks it (columnMigrations). table, col and decl are constants. Open runs
+// it inside its write transaction.
 func (d *DB) addTypedColumn(table, col, decl string) error {
 	rows, err := d.Query(`PRAGMA table_info(` + table + `)`)
 	if err != nil {
