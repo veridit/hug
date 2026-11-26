@@ -51,5 +51,6 @@ landed a7a1e4a on main 2026-11-25: hug version --running: flag a process whose h
 landed dc36580 on main 2026-11-25: hug version --running test: match the flag phrases, not 'older' (/var/folders)…
 shipped in v0.7.115 (65dbca1)
 handed on after v0.7.115: check 3 open, jcode-rvb3j5's active work
+crab 2026-11-26 22:15Z recheck, 'hug version --running' exit=5: same pids as 25 Nov 22:43Z. Now on v0.7.116 (moved by the reload-at-request that older hugs already had): 8265 (was 0.7.113), 49138 (was 0.7.108), 95583 (was 0.7.114). Still old: 40384, 58480, 62272, 96140 on 0.7.108 (Claude desktop's, started 11-22, idle) and 1402, 91085 '?' (file removed). These cannot reload while idle; each needs one restart by its app. Check 3 stays open.
 ## History
 - 2026-11-25T21:32 todo -> doing/active (take)
