@@ -27,7 +27,7 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 ## Depends on
 
 ## Acceptance
-- [ ] hug task review ID --by crab hands crab's live session one line naming the task and the reviewer step (test)
+- [ ] ~~hug task review ID --by crab hands crab's live session one line naming the task and the reviewer step (test)~~ (not relevant: replaced by check 4: review starts automatically on the last tick, not by a command the worker must run, crab, 2026-11-26)
 - [ ] History records the review as delivered or not delivered with the reason (test)
 - [ ] Ticking a check sends nothing (test)
 - [ ] A worker ticking its last own check moves the task to doing/review with review_by the coordinator, without any extra command (test)
