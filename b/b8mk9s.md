@@ -70,7 +70,7 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
 - [ ] ~~If one file per memory: Jørgen sets how many days a retired file is kept before hug mem dream deletes it (30 proposed)~~ (not relevant: replaced by check 6, which applies to every layout, not only one file per memory, crab, 2026-11-20)
 - [ ] ~~Jørgen picks: keep memories.json as is, make it append-only JSON Lines, or one file per memory~~ (not relevant: replaced by check 5, which adds per-day, today-folder and per-week layouts (Jørgen's requests 3 and 4), crab, 2026-11-20)
 - [ ] ~~Jørgen picks a storage layout: A (as is), B (one append-only file), C (file per memory), D (file per day), E (today folder, then day files) or F (as E, by week)~~ (not relevant: replaced by check 7: Jørgen 2026-11-25 asked that the layouts be judged on his five needs, with G (muninn.db as the one truth) added, crab, crab, 2026-11-25)
-- [ ] Jørgen sets how many days a retired memory is kept before hug mem dream deletes it (30 proposed)
+- [x] Jørgen sets how many days a retired memory is kept before hug mem dream deletes it (30 proposed)
 - [x] Jørgen picks a layout, A to G, judged on his five needs (table in Details)
 
 ## Requests
@@ -114,6 +114,7 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
 ## Notes
 
 
+check 6: Jørgen 2026-11-26 08:30 in chat: deleted memory kept 30 days, yes
 ## History
 - 2026-11-20T13:11 request 1 by jhf
 - 2026-11-20T13:11 request 1 delivered to crab (session_crab_1793783281662_44ffaee927a8a9d5)
