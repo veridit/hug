@@ -33,6 +33,11 @@ Findings to fix (hedgehog note above): (1) App.Reindex holds the write turn for 
 ## Acceptance
 - [ ] On a store copy, a full reindex never holds the write lock longer than 5 s at a time (measured, numbers noted)
 - [ ] A memory write from another process during a full reindex succeeds within 5 s (test)
+- [ ] On a store copy, a full reindex never holds the SQLite write lock or the write turn longer than 5 s at a time (lockprobe, numbers noted)
+- [ ] A remember from another process during a full reindex succeeds within 5 s (test)
+- [ ] No embed call runs inside a write transaction or under the write turn (test)
+- [ ] A remember no longer runs a full reindex; it indexes only what it wrote (test)
+- [ ] Neighbour lists and topic groups after a reindex equal today's on the same store (test)
 
 ## Notes
 
