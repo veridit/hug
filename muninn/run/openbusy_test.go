@@ -30,7 +30,19 @@ func TestMCPRetriesAnOpenBehindTheInitLock(t *testing.T) {
 	old := store.MigrateWait
 	store.MigrateWait = 200 * time.Millisecond
 	defer func() { store.MigrateWait = old }()
-	_, err = store.Open(path)
+	errc := make(chan error, 1)
+	go func() {
+		d, err := store.Open(path)
+		if err == nil {
+			d.Close()
+		}
+		errc <- err
+	}()
+	select {
+	case err = <-errc:
+	case <-time.After(5 * time.Second):
+		t.Fatal("open with the init lock held elsewhere and MigrateWait 200 ms had not returned after 5 s: it waits on the init lock")
+	}
 	if err == nil {
 		t.Fatal("open with the init lock held and a table to add: want an error")
 	}

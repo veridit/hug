@@ -266,7 +266,11 @@ func Open(path string) (*DB, error) {
 	}
 	// Memories are private: create the database owner-only before SQLite does
 	// (SQLite would apply the umask, typically 0644), and tighten existing files.
+	fresh := false
 	if f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0o600); err == nil {
+		if fi, err := f.Stat(); err == nil && fi.Size() == 0 {
+			fresh = true
+		}
 		f.Close()
 	}
 	for _, p := range []string{path, path + "-wal", path + "-shm"} {
@@ -296,7 +300,14 @@ func Open(path string) (*DB, error) {
 	// opened before needs nothing: Open then runs reads only, takes no lock,
 	// and a writer elsewhere (an index pass holds the write lock for minutes)
 	// cannot hold it up, since WAL readers never wait on a writer.
-	missing, err := d.missingSchema()
+	//
+	// A new, empty file goes straight to migrate: its first connection switches
+	// it to WAL, and two first runs switching at once got SQLITE_BUSY without
+	// the busy handler (2026-11-10), so that happens under the init lock.
+	missing := []string{"everything (new store)"}
+	if !fresh {
+		missing, err = d.readMissing()
+	}
 	if err != nil {
 		db.Close()
 		return nil, fmt.Errorf("schema: %w", ExplainBusy(path, err))
@@ -353,6 +364,21 @@ var backfills = []struct{ name, need, fill string }{
 		`INSERT INTO unit_communities(community_id, unit_id, n)
 	  SELECT c.community_id, uc.unit_id, COUNT(*) FROM unit_concepts uc
 	  JOIN communities c ON c.concept_id=uc.concept_id GROUP BY 1, 2`},
+}
+
+// readMissing is missingSchema with no lock held. A read can still get
+// SQLITE_BUSY while another first run switches a just-created file to WAL
+// (the switch locks the file, and SQLite answers without its busy handler):
+// it tries again, for at most MigrateWait.
+func (d *DB) readMissing() ([]string, error) {
+	start := time.Now()
+	for {
+		missing, err := d.missingSchema()
+		if err == nil || !isBusy(err) || time.Since(start) >= MigrateWait {
+			return missing, err
+		}
+		time.Sleep(migratePoll)
+	}
 }
 
 // missingSchema lists what Open must still write: schema objects, the
