@@ -94,6 +94,8 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
   or keeping one today folder with one file per memory and then as we aggregate it goes into a dated JSON line file for that day. Yes, dreaming and removing old things becomes slower. Writing and cleaning up the current day becomes faster. That's also an option or current week and past weeks is also an option.
   resolved 2026-11-20T17:08 by crab:
     Added as option E (today folder with one small file per memory; dream rolls finished days into a dated JSON Lines file, and changes to old memories wait in today as newer copies until dream folds them in) and F (the same by week: 24 files, median 351 KB, busiest 3.9 MB). Title, Goal and Purpose now name the real gain: small writes. Check 5 is the A-F pick, check 6 the retired-days setting for any layout. My pick is E (question 3).
+- 2026-11-26T08:20 request 5 by jhf:
+  I wonder if we can do something crazy. And by crazy, I mean somehow group the memories so that we get an SQ light database committed with the memories so that instead of having one big SQLite database for all and then you have to scan everything, you can, when things are not changing, just read the SQLite database and it synchronizes with its subdirectory. Bit like a fan-out tree. And then you open a reduced set of SQLite databases and aggregate from them. I'm not sure that even makes sense
 
 ## Questions
 - 2026-11-20T13:12 question 1 by crab to jhf (check 2):
@@ -150,3 +152,4 @@ Earlier version, kept as record: the six layouts A-F with day and week sizes mea
 - 2026-11-25T09:45 answer 3 delivered to crab (session_crab_1795558631109_253787e0f5d2bbbb)
 - 2026-11-25T10:22 crab read the answer: hug task set b8mk9s
 - 2026-11-25T10:22 todo/ready -> todo/design (ask)
+- 2026-11-26T08:20 request 5 by jhf
