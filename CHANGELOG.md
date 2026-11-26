@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.116 - 2026-11-26
 
 - Opening the memory store reads first and writes only what is missing
   (6gtv7a). A current store now opens with no write statement and no
