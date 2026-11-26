@@ -1,15 +1,20 @@
 ---
 id: t0qap9
 title: "The start-up reindex writes in small transactions, never one of minutes"
-state: todo
+state: "doing"
 type: bug
 priority: "high"
-assignee: []
+assignee: ["t0qap9-engineer"]
 labels: []
 group: ""
 rank: "000001q"
 created: 2026-11-25
 updated: 2026-11-25
+doing_since: "2026-11-26T01:59"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -31,3 +36,7 @@ From vrx1ja: the reindex runs inside one write transaction (muninn index pipelin
 - [ ] A memory write from another process during a full reindex succeeds within 5 s (test)
 
 ## Notes
+
+
+## History
+- 2026-11-26T01:59 todo -> doing/active (take)
