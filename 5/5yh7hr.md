@@ -32,5 +32,7 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 - [ ] ~~Ticking a check sends nothing (test)~~ (not relevant: replaced by check 7: only the last tick notifies, crab, 2026-11-26)
 - [ ] A worker ticking its last own check moves the task to doing/review with review_by the coordinator, without any extra command (test)
 - [ ] A task whose assignee is the coordinator does not enter review by itself (test)
+- [ ] The coordinator's live session gets one line naming the task when it enters review (test)
+- [ ] Ticks before the last send nothing (test)
 
 ## Notes
