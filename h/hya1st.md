@@ -62,6 +62,7 @@ landed e033dee on main 2026-11-25: A task's page reads Goal, Purpose, Principle,
 shipped in v0.7.112 (e033dee)
 crab: shipped in v0.7.112 (main c1056b46, merge of c8b22551, CI 45591665551 8/8, release.yml 45593553415, brew hug v0.7.112). Release ticket a2k4r5.
 crab 2026-11-25: the last check is confirmed through the release ticket's one question; crab ticks it from that answer.
+crab: check 3 holds; asked once on release ticket a2k4r5 check 1 (one question per release); tick from that answer.
 ## History
 - 2026-11-25T09:31 todo -> doing/active (take)
 - 2026-11-25T11:19 doing/active -> doing/asked (ask)
