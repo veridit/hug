@@ -2,6 +2,7 @@ package run
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -23,6 +24,7 @@ import (
 	"github.com/veridit/hug/muninn/internal/harness"
 	"github.com/veridit/hug/muninn/internal/mcpserver"
 	"github.com/veridit/hug/muninn/internal/project"
+	"github.com/veridit/hug/muninn/internal/store"
 	"github.com/veridit/hug/muninn/internal/tui"
 	"github.com/veridit/hug/muninn/internal/web"
 )
@@ -283,8 +285,12 @@ type mcpMemory struct {
 var openRetry = 5 * time.Second
 
 // busy says the store could not open only because another process held the
-// database (SQLITE_BUSY after busy_timeout): it opens later.
+// database (SQLITE_BUSY after busy_timeout), or held the schema update while
+// this hug had schema to add (store.ErrBusy, 6gtv7a): it opens later.
 func busy(err error) bool {
+	if errors.Is(err, store.ErrBusy) {
+		return true
+	}
 	s := err.Error()
 	return strings.Contains(s, "SQLITE_BUSY") || strings.Contains(s, "database is locked")
 }

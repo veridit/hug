@@ -93,22 +93,19 @@ func unitIdentity(kind, path, scope, key, origin string) string {
 	return scope + "/" + key
 }
 
+// migrateShortIDs gives every unit a short id (sid) and origin, once
+// (meta shortids_schema=2).
+//
+// Open runs it inside its IMMEDIATE transaction (store.migrateOnce): it
+// holds the write lock while it reads the schema, so several hooks opening
+// an old database at once cannot race on a deferred-transaction upgrade.
+// Open has not published this single-connection pool yet; the caller
+// commits.
 func (d *DB) migrateShortIDs() error {
-	if d.GetMeta("shortids_schema") == "2" {
-		return nil
-	}
-	// Open has not published this single-connection pool yet. Acquire the
-	// write lock before reading schema, avoiding deferred-transaction upgrade
-	// races when several hooks open an old database at the same time.
 	tx := d.DB
-	if _, err := tx.Exec(`BEGIN IMMEDIATE`); err != nil {
-		return err
-	}
-	defer tx.Exec(`ROLLBACK`)
 	var version string
 	if err := tx.QueryRow(`SELECT value FROM meta WHERE key='shortids_schema'`).Scan(&version); err == nil && version == "2" {
-		_, err = tx.Exec(`COMMIT`)
-		return err
+		return nil
 	}
 	rows, err := tx.Query(`PRAGMA table_info(units)`)
 	if err != nil {
@@ -211,10 +208,7 @@ func (d *DB) migrateShortIDs() error {
 			return err
 		}
 	}
-	if _, err := tx.Exec(`INSERT INTO meta(key,value) VALUES('shortids_schema','2') ON CONFLICT(key) DO UPDATE SET value=excluded.value`); err != nil {
-		return err
-	}
-	_, err = tx.Exec(`COMMIT`)
+	_, err = tx.Exec(`INSERT INTO meta(key,value) VALUES('shortids_schema','2') ON CONFLICT(key) DO UPDATE SET value=excluded.value`)
 	return err
 }
 
