@@ -54,6 +54,7 @@ other pair came from a copy of the recall4 judgment cache.
 Harness check: the nomic arm reproduces RECALL4 `default` exactly on 199/200 dev, 76/77 held-out and
 147/147 fresh messages (identical hit lists).
 
+check 1: store copy (frozen snapshot, 20,764 texts) re-embedded per model: nomic 560 s, qwen3 1329 s, gemma2 714 s active; index MB 125.9/220.0/107.5/59.4/125.9/59.4; query embed p95 ms nomic 101, qwen3 321, gemma2 180 (dt02yw/reembed, latency, real/*.size.json; recall4 a5df9478, CI run 45803351521 8/8)
 ## Result table (dev+held-out n=277 | fresh n=147). Per 100 messages, 95% session-cluster bootstrap
 
 | arm | useful/100 dev+ho [CI] | noise/100 dev+ho [CI] | useful/100 fresh [CI] | noise/100 fresh [CI] | p50 / p95 query embed ms | re-embed 20,764 texts (active) | index MB (20,764) |
