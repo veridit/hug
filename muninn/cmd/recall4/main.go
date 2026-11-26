@@ -132,23 +132,72 @@ func main() {
 	input := flag.String("input", "", "replay JSON")
 	name := flag.String("variant", "baseline", "variant, parts joined with +")
 	asof := flag.Bool("asof", false, "each message sees only memories last written before its timestamp")
+	// Embedder arms (dt02yw, arm.go).
+	mode := flag.String("mode", "replay", "replay | reembed | buildarm | latency | qvecs")
+	scratch := flag.String("scratch", "recall4", "scratch folder under $JCODE_SCRATCH_DIR that -db must be in")
+	armModel := flag.String("embed-model", "", "Ollama embedding model for this arm (default: the configured one, as before)")
+	dim := flag.Int("dim", 0, "Matryoshka length: keep the first N dimensions, then L2-renormalise (0 = full)")
+	qprefix := flag.String("qprefix", "", "query prefix of the arm")
+	dprefix := flag.String("dprefix", "", "document prefix of the arm")
+	affine := flag.String("affine", "", "a,b: map the arm's cosine c to a*c+b (nomic scale) so the configured gates apply")
+	vectors := flag.String("vectors", "", "buildarm: the store copy reembed wrote the arm's full vectors to")
+	maxLoad := flag.Float64("max-load", 20, "reembed: pause while the 1-minute load average is above this (0 = never)")
 	flag.Parse()
-	root := filepath.Join(os.Getenv("JCODE_SCRATCH_DIR"), "recall4")
+	root := filepath.Join(os.Getenv("JCODE_SCRATCH_DIR"), *scratch)
+	if *scratch == "" || strings.Contains(*scratch, "..") || strings.ContainsRune(*scratch, filepath.Separator) {
+		panic("-scratch must be one folder name under $JCODE_SCRATCH_DIR")
+	}
+	cfg, err := config.Load()
+	must(err)
+	ar := arm{Model: *armModel, Dim: *dim, QPrefix: *qprefix, DPrefix: *dprefix}
+	ar.A, ar.B = parseAffine(*affine)
+	if ar.Model != "" {
+		// The name is recorded as the embedder model, so the pipeline hash
+		// differs per arm. It must not match a PromptsFor family.
+		ar.Name = fmt.Sprintf("arm:%s@%d/%s", ar.Model, ar.Dim, *affine)
+	}
+	if *mode == "latency" || *mode == "qvecs" {
+		data, err := os.ReadFile(*input)
+		must(err)
+		var messages []message
+		must(json.Unmarshal(data, &messages))
+		if *mode == "latency" {
+			writeJSON(latency(messages, ar, cfg.OllamaURL))
+		} else {
+			writeJSON(qvecs(messages, embed.NewOllama(cfg.OllamaURL, ar.Model, 0), ar.QPrefix))
+		}
+		return
+	}
 	abs, _ := filepath.Abs(*dbpath)
 	if os.Getenv("JCODE_SCRATCH_DIR") == "" || !strings.HasPrefix(abs, root+string(filepath.Separator)) {
-		panic("database must be under $JCODE_SCRATCH_DIR/recall4")
+		panic("database must be under $JCODE_SCRATCH_DIR/" + *scratch)
 	}
 	db, err := store.Open(abs)
 	must(err)
 	defer db.Close()
+	switch *mode {
+	case "reembed":
+		writeJSON(reembed(db, ar, cfg.OllamaURL, *maxLoad))
+		return
+	case "buildarm":
+		writeJSON(buildarm(db, ar, *vectors))
+		return
+	case "replay":
+	default:
+		panic("unknown -mode " + *mode)
+	}
 	_, err = db.Exec(`DELETE FROM injections`)
-	must(err)
-	cfg, err := config.Load()
 	must(err)
 	ctx := context.Background()
 	qdir := filepath.Join(root, "real", "qvec")
 	must(os.MkdirAll(qdir, 0o700))
-	em := cachedEmbed{embed.NewOllama(cfg.OllamaURL, cfg.EmbedModel, 0), qdir}
+	var em embed.Embedder = cachedEmbed{embed.NewOllama(cfg.OllamaURL, cfg.EmbedModel, 0), qdir}
+	if ar.Model != "" {
+		if db.GetMeta("pipeline_hash") != index.PipelineHash(ar.Name) {
+			panic("the store holds no vectors of this arm: run -mode buildarm with the same -embed-model, -dim, -affine first")
+		}
+		em = armEmbed{cachedEmbed{embed.NewOllama(cfg.OllamaURL, ar.Model, 0), qdir}, ar}
+	}
 	s := &search.Searcher{DB: db, Embedder: em}
 	a := &app.App{Cfg: cfg, DB: db, Searcher: s, Embedder: em}
 	o := a.RecallOptions()

@@ -4,6 +4,14 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
+## Unreleased
+
+- The recall4 replay harness measures other embedders (dt02yw, harness only):
+  `-embed-model`, `-dim` (keep the first N dimensions, then L2-renormalise),
+  `-qprefix`/`-dprefix`, `-affine a,b` (map an arm's cosine onto the scale
+  the recall gates were tuned on), and modes `reembed`, `buildarm`, `latency`
+  and `qvecs`. No product change.
+
 ## v0.7.116 - 2026-11-26
 
 - Opening the memory store reads first and writes only what is missing
