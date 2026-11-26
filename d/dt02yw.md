@@ -56,6 +56,7 @@ Harness check: the nomic arm reproduces RECALL4 `default` exactly on 199/200 dev
 
 check 1: store copy (frozen snapshot, 20,764 texts) re-embedded per model: nomic 560 s, qwen3 1329 s, gemma2 714 s active; index MB 125.9/220.0/107.5/59.4/125.9/59.4; query embed p95 ms nomic 101, qwen3 321, gemma2 180 (dt02yw/reembed, latency, real/*.size.json; recall4 a5df9478, CI run 45803351521 8/8)
 check 2: blind RECALL4 judge, 904 new pairs, session-cluster CIs: qwen3@1024 useful +19.1 [+5.9,+31.5] dev+ho and +36.7 [+26.3,+55.7] fresh; fresh noise -37.4 [-119.5,+2.6] (not clear), short-message noise +44.6 [+16.3,+71.9]; no unconditional winner (dt02yw/RESULTS.md)
+Jørgen 2026-11-26 17:01: do not switch yet. 'More hits' is not the goal; precision is (fewer, only the ones that count). Precision (relevant / shown), from RESULTS.md: dev+ho nomic 52%, qwen3@1024 67%, qwen3@512 64%, gemma2@768 59%; fresh nomic 16%, qwen3@1024 35%, qwen3@512 32%, gemma2@768 20%. Shown per message is about the same for every arm (fresh 1.9-2.0 except gemma2 2.5). Fresh: nomic shows nothing on 40% of messages, qwen3@1024 on 21%. Next measurement should fix the count shown (or tune each arm's gate to the same precision) and compare at equal precision.
 ## Result table (dev+held-out n=277 | fresh n=147). Per 100 messages, 95% session-cluster bootstrap
 
 | arm | useful/100 dev+ho [CI] | noise/100 dev+ho [CI] | useful/100 fresh [CI] | noise/100 fresh [CI] | p50 / p95 query embed ms | re-embed 20,764 texts (active) | index MB (20,764) |
