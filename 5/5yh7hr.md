@@ -10,6 +10,7 @@ group: ""
 rank: "0000001"
 created: 2026-11-26
 updated: 2026-11-26
+parent: "erv680"
 ---
 
 ## Goal
