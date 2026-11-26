@@ -4,7 +4,7 @@ title: "The start-up reindex writes in small transactions, never one of minutes"
 state: "doing"
 type: bug
 priority: "high"
-assignee: ["t0qap9-engineer"]
+assignee: ["hedgehog"]
 labels: []
 group: ""
 rank: "000001q"
