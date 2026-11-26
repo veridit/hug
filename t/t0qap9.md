@@ -31,7 +31,7 @@ Findings to fix (hedgehog note above): (1) App.Reindex holds the write turn for 
 ## Depends on
 
 ## Acceptance
-- [ ] On a store copy, a full reindex never holds the write lock longer than 5 s at a time (measured, numbers noted)
+- [ ] ~~On a store copy, a full reindex never holds the write lock longer than 5 s at a time (measured, numbers noted)~~ (not relevant: replaced by check 3, which also covers the write turn, crab, 2026-11-26)
 - [ ] A memory write from another process during a full reindex succeeds within 5 s (test)
 - [ ] On a store copy, a full reindex never holds the SQLite write lock or the write turn longer than 5 s at a time (lockprobe, numbers noted)
 - [ ] A remember from another process during a full reindex succeeds within 5 s (test)
