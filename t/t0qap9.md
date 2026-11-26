@@ -38,5 +38,6 @@ From vrx1ja: the reindex runs inside one write transaction (muninn index pipelin
 ## Notes
 
 
+hedgehog: baseline measured on store copy (vrx1ja clone, hug v0.7.116): one write-lock hold 297.5 s (lockprobe n_stretches 1), index 4m57s, neighbors=4m30s. Designing batched commits now.
 ## History
 - 2026-11-26T01:59 todo -> doing/active (take)
