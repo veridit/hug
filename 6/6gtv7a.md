@@ -38,5 +38,6 @@ Measured on a store copy (vrx1ja notes): normal open 0.12-0.23 s; init lock held
 ## Notes
 
 
+Branch 6gtv7a (= ci/6gtv7a) 627b0ba7. Failing-first 60e62c3f on main code: 'TestOpenWritesNothingWhenNothingIsMissing: Open of a fully migrated store ran 61 write statements, want none'; 'TestOpenSkipsTheInitLockWhenNothingIsMissing: waited 3.004s for the init lock'; 'TestOpenersDoNotQueueBehindALockedSchemaUpdate: at 1.5 s an opener held muninn.db.init.lock ... 2 of 2 openers had not returned after 10s'; 'TestOpenGivesUpOnAHeldInitLock: Open waited 10s'. Fix bc18b28c+627b0ba7: Open reads sqlite_master/pragma_table_info/meta (missingSchema); only when something is missing it TryAcquires the init lock, BEGIN IMMEDIATE with busy_timeout 0, adds all in one tx, lets both locks go on SQLITE_BUSY, gives up after MigrateWait 5 s with store.ErrBusy + held by: + fix: line; hug mcp busy() retries on ErrBusy. Store copy (990 MB vrx1ja-store, cp -c), before e51f93d9 / after: plain open 2 ms / 2 ms; write lock held: 2 ms / 1 ms; init lock held 20 s: 18.987 s / 2 ms; holds_ended dropped + write lock 70 s, 2 openers: 30.609 s + 1m1.289 s (SQLITE_BUSY) / 5.009 s + 5.014 s (memory store busy ... fix:); upgrade after release 11 ms, next open 2 ms. 11 mutants, 10 killed (table in report).
 ## History
 - 2026-11-26T00:09 todo -> doing/active (take)
