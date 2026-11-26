@@ -39,3 +39,5 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 - [ ] An assigned agent with no live session gets it at its next session start, and the coordinator is told it was not delivered live (test)
 
 ## Notes
+
+Jørgen 2026-11-26 22:01: route requests and answers to the assigned agent first. Today Deliver always pushes to the coordinator (huginn/internal/cli/deliver.go:152-176, 'to you as the board coordinator'); the assignee sees it only as a board cue at its next tool call or message (muninn/internal/recall/boardcue.go:861-875 requestFor), so an idle or stopped worker never hears it.
