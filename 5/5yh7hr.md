@@ -35,5 +35,7 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 - [ ] A task whose assignee is the coordinator does not enter review by itself (test)
 - [ ] The coordinator's live session gets one line naming the task when it enters review (test)
 - [ ] Ticks before the last send nothing (test)
+- [ ] A request or answer on a task an agent is doing is pushed to that agent's live session; the coordinator gets it only when that agent has no live session, and History says which (test)
+- [ ] An assigned agent with no live session gets it at its next session start, and the coordinator is told it was not delivered live (test)
 
 ## Notes
