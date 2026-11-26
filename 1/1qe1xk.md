@@ -27,6 +27,7 @@ index.db holds vectors, full-text search, concepts and communities, and neighbou
 
 ## Depends on
 
+- t0qap9
 ## Acceptance
 - [ ] A full rebuild runs while another process remembers and searches, and neither waits more than 1 s (test)
 - [ ] A crash mid-rebuild leaves the old index in use and the next run starts clean (test)
