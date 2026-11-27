@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.118 - 2026-11-27
 
 - Review starts by itself (5yh7hr). When the agent doing a task ticks its last own check (what is left open is a person's, or nothing) on a board with a coordinator, hug moves the task to doing/review with `review_by` the coordinator and hands the coordinator's live session one line naming the task and `hug task answer ID "looks right"`; History says `review 1 delivered to crab (SESSION)` or `not delivered to crab: REASON`, and a session that was not live gets it at its next start. Earlier ticks tell nobody, and the coordinator's own tasks do not enter review by themselves. A doing task whose checks all hold without a review (changes asked, a check struck last) says `next: hug task review ID --by COORDINATOR`, not done. Requests and answers on a task an agent is doing now go to that agent's live session first; the coordinator gets them only when that agent has none, with a line saying so, and the agent's next session gets them at its start. History names who had it.
 
