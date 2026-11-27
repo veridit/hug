@@ -41,7 +41,7 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 - [x] The coordinator's live session gets one line naming the task when it enters review (test)
 - [x] Ticks before the last send nothing (test)
 - [x] A request or answer on a task an agent is doing is pushed to that agent's live session; the coordinator gets it only when that agent has no live session, and History says which (test)
-- [ ] An assigned agent with no live session gets it at its next session start, and the coordinator is told it was not delivered live (test)
+- [x] An assigned agent with no live session gets it at its next session start, and the coordinator is told it was not delivered live (test)
 
 ## Notes
 
@@ -55,5 +55,6 @@ check 5: evidence: TestCoordinatorsTaskNoReview: crab's last tick on its own tas
 check 6: evidence: TestLastTickStartsReview: the fake jcode daemon gets exactly 1 message, to crab's live session, one line: 'hug: wolf ticked the last own check of ID (Review by itself) on board ...: it is in review by you. Read it (hug task show ID), then answer: hug task answer ID "looks right" (or what to change) [hug ID review 1 ...]'; review_receipt 'pending, delivered to crab (SID)'. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
 check 7: evidence: TestLastTickStartsReview: after wolf's first tick the daemon has 0 messages, no review_receipt, stage active, no review_by; after the hand-over a tick by jhf in review adds none (still 1). DeliveryFlow claim 'earlier ticks tell nobody' checked in TestDeliveryInstructionsMatchCode. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
 check 8: evidence: TestRequestGoesToDoerFirst: wolf live -> receipt 'pending, delivered to wolf (SID)', message 'to you as the agent doing it', History 'request 1 delivered to wolf', nothing to crab or crab's pending; wolf not live -> receipt 'pending, delivered to crab (SID); not delivered live to wolf, who is doing it: REASON', History has both 'request 2 not delivered to wolf: REASON' and 'request 2 delivered to crab'; an answer goes to wolf too; a todo task's request to crab. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
+check 9: evidence: TestDoerGetsItAtNextSession: no wolf session -> crab's message has 'Not delivered live to wolf, who is doing it (no jcode session named wolf on this machine): hug hands it to wolf's next session when it starts.'; wolf's pending holds 1 item; after crab's ack, DeliverPending at wolf's next session delivers 'ID request 1' once ('to you as the agent doing it'), History 'request 1 delivered to wolf (SID)'; a request resolved before wolf starts is not handed over. TestOwedTo covers the rule. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
 ## History
 - 2026-11-27T06:21 todo -> doing/active (take)
