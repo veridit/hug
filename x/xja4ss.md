@@ -41,6 +41,8 @@ The report (Seid agent, 2026-11-27): its todos had become a second activity log;
   Recall: when a newer memory replaces an older one, should hug retire the older one at once, and label each recalled row as a standing rule or a note from one run, with its source? It would be measured on replayed messages before shipping. Yes or no?
 - 2026-11-27T13:37 question 2 by crab to jhf (check 2):
   Should hug task show (and the TUI detail) start with three lines: who has it, the next step, and what it waits on, before the notes? Yes or no?
+- 2026-11-27T13:37 question 3 by crab to jhf (check 3):
+  Should giving a task back be one command, hug task give ID "where it stands", instead of set --state todo plus a note? Yes or no?
 
 ## Notes
 
@@ -48,3 +50,4 @@ The report (Seid agent, 2026-11-27): its todos had become a second activity log;
 ## History
 - 2026-11-27T13:37 todo -> todo/design (ask)
 - 2026-11-27T13:37 asked question 2 of jhf, 2 open (todo/design -> todo/design)
+- 2026-11-27T13:37 asked question 3 of jhf, 3 open (todo/design -> todo/design)
