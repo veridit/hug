@@ -60,6 +60,15 @@ type BoardTask struct {
 	// Asked: a question on the task is open to someone (72n8m4). hug task
 	// done refuses it, so the done line is not offered.
 	Asked bool
+	// Step is the step due on the task now, from hug (task.StepOf, erv680):
+	// its kind, who it is due for, the cue's text and its one command, the
+	// same next: the CLI and MCP give. Kind "" when the source did not say.
+	Step BoardStep
+}
+
+// BoardStep is the step due on a board task (huginn task.Step).
+type BoardStep struct {
+	Kind, For, Next, Cue string
 }
 
 // BoardOutcome is an answer's outcome: Stage and By of the answer, For the
@@ -201,11 +210,11 @@ func (e *Engine) BoardCue(session, msg, brk string, now time.Time, src BoardSour
 		}
 		// An answer is said once (its key names the answer), never held
 		// back by the hourly rate: a person is waiting on the agent.
-		if (c.kind == "answer" || c.kind == "request" || c.kind == "answered") && e.boardDue(session, c.key(), RepeatEvery, now) {
+		if once[c.kind] && e.boardDue(session, c.key(), RepeatEvery, now) {
 			e.boardMark(session, c.key(), now)
 			return c.line, c.kind
 		}
-		if c.kind != "answer" && c.kind != "request" && c.kind != "answered" && e.boardDue(session, rate, BoardEvery, now) && e.boardDue(session, c.key(), RepeatEvery, now) {
+		if !once[c.kind] && e.boardDue(session, rate, BoardEvery, now) && e.boardDue(session, c.key(), RepeatEvery, now) {
 			e.boardMark(session, rate, now)
 			e.boardMark(session, c.key(), now)
 			return c.line, c.kind
@@ -300,6 +309,8 @@ type detection struct {
 	edits   bool
 	hasMine bool
 	mineAll []BoardTask // doing for the session with every check ticked
+	checks  []BoardTask // doing for the session with no acceptance check (erv680)
+	steps   []BoardTask // a review or ship step due for the session (erv680)
 	owned   []BoardTask // doing, worked by the session, assigned to another name (v3k6cp)
 	self    string      // the session's name, from the harness
 	working []BoardTask // todo tasks the session checked or noted
@@ -322,6 +333,11 @@ type candidate struct{ kind, id, line string }
 
 // key names the line for RepeatEvery: the kind and the task it is about.
 func (c candidate) key() string { return c.kind + ":" + c.id }
+
+// once are the kinds said once per RepeatEvery, never held back by the
+// hourly rate: someone waits on them (an answer, a request, an outcome),
+// or another role's step is due (erv680: a review, ship it).
+var once = map[string]bool{"answer": true, "request": true, "answered": true, "review": true, "ship": true}
 
 // RepeatEvery limits the same line about the same task per session: an
 // ignored line said again every hour is noise (held-out replay: one seid
@@ -353,11 +369,25 @@ func (d detection) candidates(editTurns int64, model string) []candidate {
 			out = append(out, candidate{"request", fmt.Sprintf("%s#%d", t.ID, r.N), fmt.Sprintf("Task board: %s asks on %s: \"%s\" (request %d). Act on it, then: hug task resolve %s %d \"what changed\"", r.By, t.ID, Truncate(oneLine(r.Text), 300), r.N, t.ID, r.N)})
 		}
 	}
+	// A step another role waits on (erv680): the review for the reviewer,
+	// ship it for the coordinator, once each.
+	for _, t := range d.steps {
+		out = append(out, candidate{t.Step.Kind, t.ID, "Task board: " + t.Step.Cue})
+	}
 	for _, t := range d.owned {
 		out = append(out, candidate{"owner", t.ID, fmt.Sprintf("Task board: you are working on %s but the board says %s. If it is yours now: hug task set %s --assignee %s", t.ID, strings.Join(t.Assignee, ", "), t.ID, d.self)})
 	}
+	// Taken with no acceptance check (erv680 check 1): writing them is
+	// the step, before the work.
+	for _, t := range d.checks {
+		out = append(out, candidate{"checks", t.ID, "Task board: " + t.Step.Cue})
+	}
 	for _, t := range d.mineAll {
-		out = append(out, candidate{"done", t.ID, fmt.Sprintf("Task board: every check of %s holds (%s). Close it: hug task done %s", t.ID, short(t.Title), t.ID)})
+		line := fmt.Sprintf("Task board: every check of %s holds (%s). Close it: hug task done %s", t.ID, short(t.Title), t.ID)
+		if t.Step.Kind == "done" && t.Step.Cue != "" {
+			line = "Task board: " + t.Step.Cue
+		}
+		out = append(out, candidate{"done", t.ID, line})
 	}
 	for _, t := range d.working {
 		out = append(out, candidate{"work", t.ID, fmt.Sprintf("Task board: you are working on %s but it is %s. hug task take %s --model %s", t.ID, t.State, t.ID, model)})
@@ -449,14 +479,35 @@ func (e *Engine) detect(session, msg string, in *BoardInput) detection {
 			if t.State == "doing" {
 				d.own[t.ID] = true
 			}
-			// Not while a question on it is open (72n8m4: the cue offered
-			// done on ddpxs8, 4cn9vv and gvkpzt as they waited on jhf).
-			if t.Checks > 0 && t.Open == 0 && !t.Asked {
+			// The step hug derives says what is due (erv680); a source
+			// that gives none (an older board, a replay) falls back to
+			// the counts, as a task the board still shows todo does (the
+			// take commit lands after the turn starts).
+			switch t.Step.Kind {
+			case "checks":
+				d.checks = append(d.checks, t)
+			case "done":
 				d.mineAll = append(d.mineAll, t)
+			case "", "take":
+				// Not while a question on it is open (72n8m4: the cue
+				// offered done on ddpxs8, 4cn9vv and gvkpzt as they
+				// waited on jhf).
+				if t.Checks > 0 && t.Open == 0 && !t.Asked {
+					d.mineAll = append(d.mineAll, t)
+				}
 			}
 		}
 	}
 	d.self = self.Name
+	// A step due for another role than the owner's (erv680): the review
+	// for its reviewer, ship it for the coordinator. Said to that session
+	// only, by its name.
+	for _, t := range in.Tasks {
+		if (t.Step.Kind == "review" || t.Step.Kind == "ship") && self.Name != "" && strings.EqualFold(strings.TrimSpace(t.Step.For), self.Name) {
+			d.steps = append(d.steps, t)
+			d.touched[t.ID] = true
+		}
+	}
 	for _, t := range in.Tasks {
 		if t.Answer != nil && self.Name != "" && strings.EqualFold(strings.TrimSpace(strings.TrimPrefix(t.Answer.For, "@")), self.Name) {
 			d.answers = append(d.answers, t)

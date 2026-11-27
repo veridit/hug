@@ -1067,7 +1067,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		if files == nil {
 			files = []task.File{}
 		}
-		return Reply{"task": taskJSON(d.Task, s.r.Dir, ts), "files": files, "next": task.NextHint(d.Task)}.withLint(s, d.Task).withIdle(s, d.Task), nil
+		return Reply{"task": taskJSON(d.Task, s.r.Dir, ts), "files": files, "next": task.NextAt(d.Task, s.r.Dir, s.s.Actor)}.withLint(s, d.Task).withIdle(s, d.Task), nil
 	case "attach":
 		if len(f.args) < 2 && !(len(f.args) == 1 && f.has("content")) {
 			return nil, usage("attach needs a task and at least one file", `hug task attach ID FILE... [--name NAME] [--note "what this shows"] [--replace]`)
@@ -1169,7 +1169,7 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 				return nil, e
 			}
 			reply = lintReply(reply, mine, "detail", code)
-			reply["next"] = task.NextHint(d.Task)
+			reply["next"] = task.NextAt(d.Task, s.r.Dir, s.s.Actor)
 			if len(mine) > 0 {
 				reply["next"] = task.CombinedFix(d.Task.ID, mine)
 			}

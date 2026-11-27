@@ -17,6 +17,11 @@ var TypeDescriptions = []TypeInfo{
 // NextHint returns the concrete follow-up command for this task's state.
 func NextHint(t Task) string { return hint(t) }
 
+// NextAt is NextHint on the board at root, for who: the ship step names
+// the project's own way (hug.toml [board] ship, erv680), and a step due
+// for another role is not who's (Step.NextFor).
+func NextAt(t Task, root, who string) string { return StepAt(t, root).NextFor(who) }
+
 // Get resolves human input once and reads the authoritative document.
 func (s *Store) Get(ref string) (*Document, error) { d, _, e := s.load(ref); return d, e }
 
@@ -26,5 +31,9 @@ func (s *Store) Next(f Filter) (Result, error) {
 	if e != nil {
 		return Result{}, e
 	}
-	return Next(ts, f)
+	r, e := Next(ts, f)
+	if e == nil && r.Task.ID != "" && r.Next == hint(r.Task) {
+		r.Next = StepAt(r.Task, s.Root).NextFor(f.Me)
+	}
+	return r, e
 }

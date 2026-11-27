@@ -48,6 +48,9 @@ type Task struct {
 	// Outcome is what the asker did first after the newest answer (41hhgn
 	// check 11), for the coordinator's cue.
 	Outcome *task.Outcome
+	// Step is the step due on it now (task.StepOf, erv680): the board cue
+	// says Step.Cue to Step.For, the same next: the CLI and MCP give.
+	Step task.Step
 }
 
 // Finding is one open lint finding (findings on done or dropped tasks are
@@ -234,7 +237,7 @@ func Open(ctx context.Context, cwd string) (*Snapshot, error) {
 		c.Close()
 		return nil, err
 	}
-	s := &Snapshot{Tasks: convert(ts), Place: p, close: c.Close, common: common}
+	s := &Snapshot{Tasks: convert(ts, task.StepConfigOf(root)), Place: p, close: c.Close, common: common}
 	s.Coordinator, _ = task.Coordinator(root)
 	s.lint = func() ([]task.Finding, []task.Task, error) {
 		fs, err := c.Lint(ctx)
@@ -283,15 +286,15 @@ func (f *Files) Snapshot() *Snapshot {
 		ts = append(ts, d.Task)
 	}
 	task.Sort(ts)
-	return &Snapshot{Tasks: convert(ts), lint: func() ([]task.Finding, []task.Task, error) { return task.Lint(docs), ts, nil },
+	return &Snapshot{Tasks: convert(ts, task.StepConfig{}), lint: func() ([]task.Finding, []task.Task, error) { return task.Lint(docs), ts, nil },
 		reflect: func() ([]Reflection, error) { return openReflections(ts), nil }}
 }
 
-func convert(ts []task.Task) []Task {
+func convert(ts []task.Task, c task.StepConfig) []Task {
 	out := make([]Task, 0, len(ts))
 	for _, t := range ts {
 		x := Task{ID: t.ID, Title: t.Title, State: t.State, Path: t.Path, Assignee: t.Assignee, Model: t.Model,
-			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer, Requests: task.OpenRequests(t), Outcome: t.Outcome, Asked: task.HasOpenQuestion(t)}
+			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer, Requests: task.OpenRequests(t), Outcome: t.Outcome, Asked: task.HasOpenQuestion(t), Step: task.StepOf(t, c)}
 		for _, a := range t.Acceptance {
 			if !a.Settled() {
 				x.Open++
