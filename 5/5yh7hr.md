@@ -1,16 +1,21 @@
 ---
 id: 5yh7hr
 title: "Review starts by itself when a worker ticks its last check"
-state: todo
+state: "doing"
 type: feature
 priority: "high"
-assignee: []
+assignee: ["5yh7hr-engineer"]
 labels: []
 group: ""
 rank: "0000001"
 created: 2026-11-26
 updated: 2026-11-26
 parent: "erv680"
+doing_since: "2026-11-27T06:21"
+stage: "active"
+model: "claude-opus-5-5"
+branch: "main"
+worktree: "/Users/jhf/Projects/hug"
 ---
 
 ## Goal
@@ -41,3 +46,7 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 ## Notes
 
 Jørgen 2026-11-26 22:01: route requests and answers to the assigned agent first. Today Deliver always pushes to the coordinator (huginn/internal/cli/deliver.go:152-176, 'to you as the board coordinator'); the assignee sees it only as a board cue at its next tool call or message (muninn/internal/recall/boardcue.go:861-875 requestFor), so an idle or stopped worker never hears it.
+
+
+## History
+- 2026-11-27T06:21 todo -> doing/active (take)
