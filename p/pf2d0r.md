@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzy"
 created: 2026-11-27
 updated: 2026-11-27
+design_question: "v0.7.118 is installed. When you write a request or answer on a task, it now goes first to the agent doing that task. If that agent is not running, today you get it twice over: I (the coordinator) get it now, and the agent gets it again when it next starts. Keep that (reply 'both'), or should I only hear that it is waiting, and the agent alone act on it (reply 'agent')?"
+design_for: "jhf"
+design_since: "2026-11-27T08:28"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -29,4 +34,12 @@ Shipped: 5yh7hr (flamingo b762d3ff..1994a83a, CI 45955815297 8/8; main b5e4450c;
 ## Acceptance
 - [ ] Jørgen chooses: an item for an agent that is not live goes to both (as today) or waits for that agent alone
 
+## Questions
+- 2026-11-27T08:28 question 1 by crab to jhf (check 1):
+  v0.7.118 is installed. When you write a request or answer on a task, it now goes first to the agent doing that task. If that agent is not running, today you get it twice over: I (the coordinator) get it now, and the agent gets it again when it next starts. Keep that (reply 'both'), or should I only hear that it is waiting, and the agent alone act on it (reply 'agent')?
+
 ## Notes
+
+
+## History
+- 2026-11-27T08:28 todo -> todo/design (ask)
