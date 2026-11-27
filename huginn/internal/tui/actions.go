@@ -163,6 +163,14 @@ func (m *model) executeAction() tea.Cmd {
 					m.message = m.movedOr("checked "+r.Task.ID+" "+strconv.Itoa(n), "after the release: "+did)
 					return nil
 				}
+				// The doer's last own tick hands it to review by the
+				// coordinator, who is told once (5yh7hr), as the CLI does.
+				if by, _ := m.store.StartReview(t.ID, m.me()); by != "" {
+					m.finish(r, err, action)
+					m.message = m.movedOr("checked "+r.Task.ID+" "+strconv.Itoa(n), "in review by "+by)
+					m.deliver(r, err, "review", m.me())
+					return nil
+				}
 			}
 		} else {
 			d, e := m.store.Get(t.ID)

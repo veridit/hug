@@ -97,6 +97,11 @@ func boardTasksFor(ts []board.Task, name string) []recall.BoardTask {
 		if board.OutcomeDeliveredTo(t.Outcome, name) {
 			out[i].Outcome = nil
 		}
+		// The review hug handed to name (5yh7hr) is in its transcript:
+		// the cue does not say the review step to it again.
+		if t.Step.Kind == "review" && board.ReviewDeliveredTo(t.Review, name) {
+			out[i].Step = recall.BoardStep{}
+		}
 	}
 	return out
 }

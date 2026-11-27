@@ -225,16 +225,18 @@ func TestStepOverATasksLife(t *testing.T) {
 				t.Fatalf("after check 1: next %q", cli)
 			}
 
-			// 3. Every check holds: close it (5yh7hr makes this the
-			// review step later).
+			// 3. The last own tick puts it in review by the coordinator by
+			// itself (5yh7hr): the owner's next is other work, the
+			// reviewer's the answer, with no hug task review in between.
 			cli = w.next("wolf", "check", id, "2", "evidence: test two")
-			same("every check holds", "wolf", cli, "hug task done "+id)
+			if cli != "hug task next" {
+				t.Fatalf("owner after its last tick: next %q, want hug task next", cli)
+			}
+			if _, m := w.mcpNext(id, "wolf"); m["task"].(map[string]any)["stage"] != "review" {
+				t.Fatalf("after the last tick: stage %v, want review", m["task"].(map[string]any)["stage"])
+			}
 
 			// 4. In review: the reviewer's step, not the owner's.
-			cli = w.next("wolf", "review", id, "--by", "crab")
-			if cli != "hug task next" {
-				t.Fatalf("owner after asking for review: next %q, want hug task next", cli)
-			}
 			review := "hug task answer " + id + ` "looks right"`
 			same("in review", "crab", w.next("crab", "show", id), review)
 			if line, kind := w.cue("crab"); kind != "review" || !strings.HasPrefix(line, "Task board: wolf asks you to review "+id) {
@@ -291,9 +293,20 @@ func TestStepChangesAskedIsNoApproval(t *testing.T) {
 	id := regexp.MustCompile(`"id":\s*"([a-z0-9]{6})"`).FindStringSubmatch(w.hug("new", "Self guiding", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "a holds", "--json"))[1]
 	w.as("wolf", "take", id, "--model", "m")
 	w.as("wolf", "check", id, "1", "evidence: test a")
-	w.as("wolf", "review", id, "--by", "crab")
-	if cli := w.next("crab", "answer", id, "rename the flag, then ask again"); cli != "hug task done "+id {
-		t.Fatalf("changes asked: next %q", cli)
+	// The answer asks for changes: the owner's step is to make them and
+	// hand it back for review (5yh7hr), never done.
+	handBack := "hug task review " + id + " --by crab"
+	if cli := w.next("crab", "answer", id, "rename the flag, then ask again"); cli != handBack {
+		t.Fatalf("changes asked: next %q, want %q", cli, handBack)
+	}
+	if n := w.next("wolf", "show", id); n != handBack {
+		t.Fatalf("owner after changes asked: next %q", n)
+	}
+	// The owner hears the answer first (3jtfw9); once it has acted on it,
+	// the step is the hand-back.
+	w.as("wolf", "note", id, "renamed the flag")
+	if line, kind := w.cue("wolf"); kind != "done" || !strings.HasSuffix(line, "Hand it to crab for review: "+handBack) {
+		t.Fatalf("owner's cue after changes asked: %q %q", kind, line)
 	}
 	if line, kind := w.cue("crab"); kind == "ship" || strings.Contains(line, "ship it") {
 		t.Fatalf("changes asked, the coordinator hears ship it: %q", line)

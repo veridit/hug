@@ -121,7 +121,9 @@ func TestPendingAnswerReachesCoordinatorsNextSession(t *testing.T) {
 	execute(t, a, "take", id, "--as", "nautilus", "--model", "m")
 	execute(t, a, "ask", id, "--to", "jhf", "--check", "2", "type stays, or drop?", "--as", "nautilus")
 	r := execute(t, a, "answer", id, "drop it\nthe column says it", "--as", "jhf")
-	if got := r["receipt"].(string); got != "pending, not delivered: no jcode session named crab on this machine" {
+	// Neither nautilus, doing it, nor crab has a session (5yh7hr): both
+	// are owed it at their next session; this test follows crab's.
+	if got := r["receipt"].(string); got != "pending, not delivered: no jcode session named crab on this machine; not delivered live to nautilus, who is doing it: no jcode session named nautilus on this machine" {
 		t.Fatalf("offline answer: receipt %q", got)
 	}
 	crab := jc.session(t, "crab", 3000, true)

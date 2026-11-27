@@ -279,6 +279,10 @@ type Task struct {
 	// coordinator, each with its receipt. Read from History.
 	AnswerCount int    `json:"answer_count,omitempty"`
 	Answers     []Item `json:"answers,omitempty"`
+	// Review is the review hug handed to the task's reviewer when it
+	// entered review (5yh7hr), with its receipt; nil when it is not in
+	// review. Read from History.
+	Review *Item `json:"review_item,omitempty"`
 	// Woken is whether the newest History line is a timed wait ending
 	// (z2vmte): nothing has moved the task since; next --mine puts it
 	// first. Read from History, never written.
