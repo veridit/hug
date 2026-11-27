@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzz"
 created: 2026-11-27
 updated: 2026-11-27
+design_asked_by: "crab"
+design_question: "Recall: when a newer memory replaces an older one, should hug retire the older one at once, and label each recalled row as a standing rule or a note from one run, with its source? It would be measured on replayed messages before shipping. Yes or no?"
+design_for: "jhf"
+design_since: "2026-11-27T13:37"
+stage: "design"
 ---
 
 ## Goal
@@ -31,4 +36,12 @@ The report (Seid agent, 2026-11-27): its todos had become a second activity log;
 - [ ] Q2: hug task show starts with owner, next step and what it waits on (yes/no)
 - [ ] Q3: hug task give ID 'where it stands' gives a task back in one command (yes/no)
 
+## Questions
+- 2026-11-27T13:37 question 1 by crab to jhf (check 1):
+  Recall: when a newer memory replaces an older one, should hug retire the older one at once, and label each recalled row as a standing rule or a note from one run, with its source? It would be measured on replayed messages before shipping. Yes or no?
+
 ## Notes
+
+
+## History
+- 2026-11-27T13:37 todo -> todo/design (ask)
