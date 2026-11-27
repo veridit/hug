@@ -1,7 +1,7 @@
 ---
 id: t0qap9
 title: "No hug holds a memory lock while computing: index work runs outside both locks"
-state: "todo"
+state: "doing"
 type: bug
 priority: "high"
 assignee: ["dolphin"]
@@ -10,11 +10,12 @@ group: ""
 rank: "0000003"
 created: 2026-11-25
 updated: 2026-11-25
-stage: "ready"
+stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 parent: "9taa9d"
+doing_since: "2026-11-27T15:47"
 ---
 
 ## Goal
@@ -86,3 +87,4 @@ Checks 1 and 2 are not ticked.
 ## History
 - 2026-11-26T01:59 todo -> doing/active (take)
 - 2026-11-26T09:17 doing/active -> todo/ready (give back; was assignee: hedgehog); was doing_since: 2026-11-26T01:59
+- 2026-11-27T15:47 todo/ready -> doing/active (take)
