@@ -34,3 +34,5 @@ Today (count on a copy of memories.json, 2026-11-27): 23,960 memories, 551 retir
 - [ ] No index work for a retired memory: EmbedDirty (indexer.go:356) embeds only active units, and no neighbour list holds a retired one (test)
 
 ## Notes
+
+crab 2026-11-27 12:48Z, read-only on the live index: units active=0: 1156 (active 39948). Dream (dream.go:376), recall/search (search.go:310) and neighbour rebuild (pipeline.go:355) filter active=1, and a retire clears concepts and anchors (indexer.go:174-185). Not filtered: EmbedDirty's query (indexer.go:356-358) has no active filter, so retired units are embedded too: all 1156 retired units have an embedding, which costs on every model switch (dt02yw) and ~4 MB of vectors. 1 retired unit is still in a neighbour list.
