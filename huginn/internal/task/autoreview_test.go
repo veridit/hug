@@ -1,6 +1,7 @@
 package task
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -142,5 +143,48 @@ func TestOwedTo(t *testing.T) {
 	}
 	if d := inReview(""); d.Task.Review == nil || d.Task.Review.Receipt.NotDelivered == "" {
 		t.Errorf("Task.Review: %+v", d.Task.Review)
+	}
+}
+
+// StartReview moves the doer's task to doing/review by the coordinator
+// once, with the History line; a shipped task is the release step's
+// (AfterTick), so it stays out of review.
+func TestStartReview(t *testing.T) {
+	s, id := newStore(t)
+	if e := SetCoordinator(s.Root, "crab"); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := s.Take(id, "wolf"); e != nil {
+		t.Fatal(e)
+	}
+	if by, e := s.StartReview(id, "wolf"); by != "" || e != nil {
+		t.Fatalf("with its check open: %q %v", by, e)
+	}
+	if _, e := s.CheckWith(id, 1, ""); e != nil {
+		t.Fatal(e)
+	}
+	shipped, _ := s.New(NewOptions{Title: "Shipped", Goal: "g", Acceptance: []string{"a"}})
+	if _, e := s.Take(shipped.Task.ID, "otter"); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := s.Note(shipped.Task.ID, "shipped in v0.7.1 (1111111)"); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := s.CheckWith(shipped.Task.ID, 1, ""); e != nil {
+		t.Fatal(e)
+	}
+	if by, e := s.StartReview(shipped.Task.ID, "otter"); by != "" || e != nil {
+		t.Fatalf("a shipped task entered review: %q %v", by, e)
+	}
+	by, e := s.StartReview(id, "wolf")
+	if by != "crab" || e != nil {
+		t.Fatalf("StartReview = %q %v", by, e)
+	}
+	d, _ := s.Get(id)
+	if d.Task.Stage != "review" || d.Task.Fields["review_by"] != "crab" || !strings.Contains(string(d.Bytes()), " doing/active -> doing/review (review: wolf ticked the last own check)") {
+		t.Fatalf("after StartReview:\n%s", d.Bytes())
+	}
+	if by, _ := s.StartReview(id, "wolf"); by != "" {
+		t.Fatalf("a second StartReview moved it again: %q", by)
 	}
 }

@@ -213,8 +213,12 @@ func TestRequestGoesToDoerFirst(t *testing.T) {
 	if sid != wolf || !strings.Contains(msg, "hug: jhf wrote request 1 on "+id+" (Review by itself) on board ") || !strings.Contains(msg, ", to you as the agent doing it:\n  rename the flag\n") {
 		t.Fatalf("message to %s:\n%s", sid, msg)
 	}
-	if f := taskFile(t, a, id); !strings.Contains(f, " request 1 delivered to wolf ("+wolf+")") || strings.Contains(f, "request 1 delivered to crab") {
+	if f := taskFile(t, a, id); !strings.Contains(f, " request 1 delivered to wolf ("+wolf+")") || strings.Contains(f, "request 1 delivered to crab") || strings.Contains(f, "request 1 not delivered to crab") {
 		t.Fatalf("History:\n%s", f)
+	}
+	// crab was not told, and nothing waits for crab's next session.
+	if ents, _ := os.ReadDir(filepath.Join(jc.home, "hug-inbox", "pending", "crab")); len(ents) != 0 {
+		t.Fatalf("crab's pending folder holds %d items", len(ents))
 	}
 	// wolf not live: crab gets it, told wolf did not.
 	jc.mu.Lock()

@@ -241,12 +241,11 @@ func (a *App) Deliver(store *task.Store, root, board, id, kind, by string, commi
 	if agent := a.doer(root, d.Task, kind, by, coord); agent != "" {
 		at := try(agent, "")
 		tries = append(tries, at)
-		if at.reason == "" {
-			coord = "" // the agent doing it has it: nobody else is told
-		} else {
+		if at.reason != "" {
 			missed = missedLine(agent, at.reason)
 		}
 	}
+	// The agent doing it has it live: nobody else is told.
 	if len(tries) == 0 || tries[0].reason != "" {
 		switch {
 		case coord != "" && strings.EqualFold(coord, strings.TrimSpace(by)):
