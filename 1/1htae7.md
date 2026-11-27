@@ -31,5 +31,6 @@ Today (count on a copy of memories.json, 2026-11-27): 23,960 memories, 551 retir
 - [ ] Dream deletes retired memories older than the setting (default 30 days) and keeps younger ones (test)
 - [ ] On a copy of the live store, the 89 retired before 2026-10-28 are gone and every active memory is unchanged (counts noted)
 - [ ] The days are a setting; hug mem config shows it
+- [ ] No index work for a retired memory: EmbedDirty (indexer.go:356) embeds only active units, and no neighbour list holds a retired one (test)
 
 ## Notes
