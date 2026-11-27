@@ -4,9 +4,12 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## v0.7.117 - 2026-11-27
+## Unreleased
 
 - Review starts by itself (5yh7hr). When the agent doing a task ticks its last own check (what is left open is a person's, or nothing) on a board with a coordinator, hug moves the task to doing/review with `review_by` the coordinator and hands the coordinator's live session one line naming the task and `hug task answer ID "looks right"`; History says `review 1 delivered to crab (SESSION)` or `not delivered to crab: REASON`, and a session that was not live gets it at its next start. Earlier ticks tell nobody, and the coordinator's own tasks do not enter review by themselves. A doing task whose checks all hold without a review (changes asked, a check struck last) says `next: hug task review ID --by COORDINATOR`, not done. Requests and answers on a task an agent is doing now go to that agent's live session first; the coordinator gets them only when that agent has none, with a line saying so, and the agent's next session gets them at its start. History names who had it.
+
+## v0.7.117 - 2026-11-27
+
 - hug names the step due now, for the role it is due for (erv680). One function derives it from the task's state, and the CLI's `next:` line, the MCP result's `next` and the board cue all say it, with one command. A task taken with no acceptance checks says to write them first (`next: hug task set ID --accept "observable check"`, and a `now:` line: they are its work items). A task in review is the reviewer's step (`hug task answer ID "looks right"`), told to the reviewer's session; the owner's `next:` is `hug task next`. After the reviewer answers "looks right" (an answer approves only when all it says is looks right, looks good, approved, lgtm, ok, yes or ship it; "looks right, but rename X" asks for a change) the step is ship it, the project's own way, told to the coordinator: `ship it, as hug.toml says: LINE; once it has shipped: hug task done ID` with `[board] ship = "LINE"` in hug.toml, else `ship it, as your AGENTS.md says; ...`. hug names the stage, never a procedure of its own.
 
 ## v0.7.116 - 2026-11-26
