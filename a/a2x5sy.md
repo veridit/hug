@@ -7,7 +7,7 @@ priority: ""
 assignee: []
 labels: []
 group: ""
-rank: "zzzzzzzzzzzx"
+rank: "zzzzzzzzzzzu"
 created: 2026-11-27
 updated: 2026-11-27
 design_question: "v0.7.117 is installed. After a review, hug now tells the coordinator to ship once the reviewer's answer approves. Today an answer approves when all it says is 'looks right', 'ok', 'lgtm', 'yes' or similar; anything more ('looks right, but rename X') counts as a change request. Keep it like that, or have reviewers type an explicit 'hug task approve ID'? Reply 'words' or 'approve'."
