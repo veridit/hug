@@ -4,7 +4,7 @@ title: "Review starts by itself when a worker ticks its last check"
 state: "doing"
 type: feature
 priority: "high"
-assignee: ["5yh7hr-engineer"]
+assignee: ["flamingo"]
 labels: []
 group: ""
 rank: "0000001"
