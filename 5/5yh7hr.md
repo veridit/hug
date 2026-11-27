@@ -34,7 +34,7 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 
 ## Acceptance
 - [ ] ~~hug task review ID --by crab hands crab's live session one line naming the task and the reviewer step (test)~~ (not relevant: replaced by check 4: review starts automatically on the last tick, not by a command the worker must run, crab, 2026-11-26)
-- [ ] History records the review as delivered or not delivered with the reason (test)
+- [x] History records the review as delivered or not delivered with the reason (test)
 - [ ] ~~Ticking a check sends nothing (test)~~ (not relevant: replaced by check 7: only the last tick notifies, crab, 2026-11-26)
 - [ ] A worker ticking its last own check moves the task to doing/review with review_by the coordinator, without any extra command (test)
 - [ ] A task whose assignee is the coordinator does not enter review by itself (test)
@@ -49,5 +49,6 @@ Jørgen 2026-11-26 22:01: route requests and answers to the assigned agent first
 
 
 mutants (12, all killed; script $JCODE_SCRATCH_DIR/mutate.py, run niced, targeted tests in task, cli, muninn/run): M1 ReviewDue ignores own open checks KILLED (TestReviewDue, TestLastTickStartsReview, TestStepOverATasksLife); M2 coordinator may review own task KILLED (TestReviewDue, TestCoordinatorsTaskNoReview); M3 any ticker starts review KILLED (TestReviewDue, TestCoordinatorsTaskNoReview, TestShippedPersonCheckIsAsked); M4 review not delivered after tick KILLED (TestLastTickStartsReview, TestReviewNotDelivered); M5 doer skipped, always coordinator KILLED (TestRequestGoesToDoerFirst, TestDoerGetsItAtNextSession); M6 coordinator told even when doer live: first SURVIVED (equivalent: coord reset was dead code, removed), re-targeted at the guard, KILLED (TestRequestGoesToDoerFirst asserts no crab line, no crab pending); M7 missed line dropped KILLED (TestRequestGoesToDoerFirst, TestDoerGetsItAtNextSession); M8 OwedTo doer owed only while pending KILLED (TestOwedTo, TestDoerGetsItAtNextSession); M9 OwedTo ignores delivered-to-name KILLED (TestOwedTo); M10 StepOf hand-over removed KILLED (TestStepHandsToReview, TestStepChangesAskedIsNoApproval); M11 cue repeats delivered review KILLED (TestBoardCueSkipsDeliveredReview); M12 shipped task enters review: first SURVIVED, TestStartReview added, KILLED.
+check 2: evidence: TestReviewNotDelivered (huginn/internal/cli/autoreview_test.go) asserts History 'review 1 not delivered to crab: crab's jcode session SID is not live in a jcode daemon' and 'no jcode session named crab on this machine', and 'review 1 delivered to crab (SID)' at crab's next session; TestLastTickStartsReview asserts 'review 1 delivered to crab (SID)'. GOMAXPROCS=2 GOFLAGS=-p=2 nice -n 19 go test -race ./huginn/internal/cli/ -> 'ok  github.com/veridit/hug/huginn/internal/cli 274.495s' (commit e122d180)
 ## History
 - 2026-11-27T06:21 todo -> doing/active (take)
