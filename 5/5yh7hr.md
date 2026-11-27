@@ -40,7 +40,7 @@ Today hug delivers live only requests, answers and outcomes (huginn/internal/cli
 - [x] A task whose assignee is the coordinator does not enter review by itself (test)
 - [x] The coordinator's live session gets one line naming the task when it enters review (test)
 - [x] Ticks before the last send nothing (test)
-- [ ] A request or answer on a task an agent is doing is pushed to that agent's live session; the coordinator gets it only when that agent has no live session, and History says which (test)
+- [x] A request or answer on a task an agent is doing is pushed to that agent's live session; the coordinator gets it only when that agent has no live session, and History says which (test)
 - [ ] An assigned agent with no live session gets it at its next session start, and the coordinator is told it was not delivered live (test)
 
 ## Notes
@@ -54,5 +54,6 @@ check 4: evidence: TestLastTickStartsReview: wolf's check 2 (its last own, check
 check 5: evidence: TestCoordinatorsTaskNoReview: crab's last tick on its own task leaves stage active, next 'hug task done ID'; a tick by otter on seal's task and a board with no coordinator stay active; TestReviewDue cases 'the coordinator ticks its own' and 'the coordinator does it too'. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
 check 6: evidence: TestLastTickStartsReview: the fake jcode daemon gets exactly 1 message, to crab's live session, one line: 'hug: wolf ticked the last own check of ID (Review by itself) on board ...: it is in review by you. Read it (hug task show ID), then answer: hug task answer ID "looks right" (or what to change) [hug ID review 1 ...]'; review_receipt 'pending, delivered to crab (SID)'. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
 check 7: evidence: TestLastTickStartsReview: after wolf's first tick the daemon has 0 messages, no review_receipt, stage active, no review_by; after the hand-over a tick by jhf in review adds none (still 1). DeliveryFlow claim 'earlier ticks tell nobody' checked in TestDeliveryInstructionsMatchCode. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
+check 8: evidence: TestRequestGoesToDoerFirst: wolf live -> receipt 'pending, delivered to wolf (SID)', message 'to you as the agent doing it', History 'request 1 delivered to wolf', nothing to crab or crab's pending; wolf not live -> receipt 'pending, delivered to crab (SID); not delivered live to wolf, who is doing it: REASON', History has both 'request 2 not delivered to wolf: REASON' and 'request 2 delivered to crab'; an answer goes to wolf too; a todo task's request to crab. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
 ## History
 - 2026-11-27T06:21 todo -> doing/active (take)
