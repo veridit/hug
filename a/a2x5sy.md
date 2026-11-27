@@ -10,6 +10,11 @@ group: ""
 rank: "zzzzzzzzzzzx"
 created: 2026-11-27
 updated: 2026-11-27
+design_question: "v0.7.117 is installed. After a review, hug now tells the coordinator to ship once the reviewer's answer approves. Today an answer approves when all it says is 'looks right', 'ok', 'lgtm', 'yes' or similar; anything more ('looks right, but rename X') counts as a change request. Keep it like that, or have reviewers type an explicit 'hug task approve ID'? Reply 'words' or 'approve'."
+design_for: "jhf"
+design_since: "2026-11-27T06:43"
+design_asked_by: "crab"
+stage: "design"
 ---
 
 ## Goal
@@ -29,4 +34,12 @@ Shipped: erv680 (raccoon ebebcaab; crab review fix bb1518d1: 'looks right, but r
 ## Acceptance
 - [ ] Jørgen chooses how a reviewer approves: the answer words as today, or an explicit hug task approve ID
 
+## Questions
+- 2026-11-27T06:43 question 1 by crab to jhf (check 1):
+  v0.7.117 is installed. After a review, hug now tells the coordinator to ship once the reviewer's answer approves. Today an answer approves when all it says is 'looks right', 'ok', 'lgtm', 'yes' or similar; anything more ('looks right, but rename X') counts as a change request. Keep it like that, or have reviewers type an explicit 'hug task approve ID'? Reply 'words' or 'approve'.
+
 ## Notes
+
+
+## History
+- 2026-11-27T06:43 todo -> todo/design (ask)
