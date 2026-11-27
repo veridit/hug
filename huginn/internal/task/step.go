@@ -193,18 +193,30 @@ type Approval struct {
 	Text string `json:"text"`
 }
 
-// approvalWords are the first clauses of a review answer that approve it
-// ("looks right", the answer hug task review's help names). Anything else
-// ("looks right but rename X") is what to change.
+// approvalWords are the clauses of a review answer that approve it
+// ("looks right", the answer hug task review's help names). An answer
+// approves only when every clause is one of them: anything more ("looks
+// right, but rename X", "ok. one thing: ...") is what to change, so a
+// change request never reads as ship it.
 var approvalWords = map[string]bool{"looks right": true, "looks good": true, "approved": true, "approve": true, "lgtm": true, "ok": true, "okay": true, "yes": true, "ship it": true}
 
-var firstClause = regexp.MustCompile(`^[^,.;:!\n]*`)
+var clauseBreak = regexp.MustCompile(`[,.;:!\n]+`)
 
-// Approves reports whether a review answer approves: its first clause,
-// case and spaces aside, is one of approvalWords.
+// Approves reports whether a review answer approves: it has a clause, and
+// every clause, case and spaces aside, is one of approvalWords.
 func Approves(text string) bool {
-	c := strings.Join(strings.Fields(strings.ToLower(firstClause.FindString(strings.TrimSpace(text)))), " ")
-	return approvalWords[c]
+	seen := false
+	for _, c := range clauseBreak.Split(text, -1) {
+		c = strings.Join(strings.Fields(strings.ToLower(c)), " ")
+		if c == "" {
+			continue
+		}
+		if !approvalWords[c] {
+			return false
+		}
+		seen = true
+	}
+	return seen
 }
 
 // moveLine is a History move: "- STAMP FROM -> TO ...".
