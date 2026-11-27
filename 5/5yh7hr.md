@@ -15,6 +15,7 @@ model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
 done_at: "2026-11-27T08:28"
+done_release: "v0.7.118"
 ---
 
 ## Goal
@@ -58,6 +59,9 @@ check 9: evidence: TestDoerGetsItAtNextSession: no wolf session -> crab's messag
 CI run 45955815297 on 1994a83a7f11b8379cf45f403b18bcca2b30a397 (branches 5yh7hr and ci/5yh7hr, rebased on origin/main c54b3324 v0.7.117): completed success, 8/8 jobs green (secrets, bench, test macos/ubuntu/windows, test-windows-cli rest/sync/shards). Not merged; for crab's review.
 crab review 2026-11-27 07:17Z: hands-on on 1994a83a build, scratch board, isolated HOME (no real sessions): tick 1 -> 'next: hug task check ID 2', no review; last tick -> 'every own check holds: ID is in review by crab (doing/review)', History '- doing/active -> doing/review (review: wolf ticked the last own check)' and 'review 1 not delivered to crab: no jcode session named crab on this machine'; crab next 'hug task answer ID "looks right"', wolf next 'hug task next'; crab answers 'rename the flag' -> stage active, wolf next 'hug task review ID --by crab'. Shipped v0.7.118: tested SHA 1994a83a (CI 45955815297 8/8), CHANGELOG 008cc976, main b5e4450c, release.yml 45957504080 success, brew 'hug v0.7.118'. Flamingo's questions 2-5 noted, not asked (defaults stand: a [people] name is a person; reviewer is the coordinator; coordinator's own task closes with done). Question 1 asked on the v0.7.118 release ticket.
 Reflection (unanswered, 2026-11-27, crab)
+landed b762d3f on main 2026-11-27: task: review starts by itself on the worker's last own tick; requests go to the…
+landed e122d18 on main 2026-11-27: task: tests kill the review-by-itself mutants; drop dead coord reset (5yh7hr)
+shipped in v0.7.118 (b762d3f)
 ## History
 - 2026-11-27T06:21 todo -> doing/active (take)
 - 2026-11-27T08:28 doing/active -> done (done); was doing_since: 2026-11-27T06:21
