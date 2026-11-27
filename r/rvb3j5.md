@@ -53,5 +53,6 @@ shipped in v0.7.115 (65dbca1)
 handed on after v0.7.115: check 3 open, jcode-rvb3j5's active work
 crab 2026-11-26 22:15Z recheck, 'hug version --running' exit=5: same pids as 25 Nov 22:43Z. Now on v0.7.116 (moved by the reload-at-request that older hugs already had): 8265 (was 0.7.113), 49138 (was 0.7.108), 95583 (was 0.7.114). Still old: 40384, 58480, 62272, 96140 on 0.7.108 (Claude desktop's, started 11-22, idle) and 1402, 91085 '?' (file removed). These cannot reload while idle; each needs one restart by its app. Check 3 stays open.
 crab 2026-11-27 05:42Z, first live upgrade since v0.7.115: brew upgrade to v0.7.117 at 05:42:14Z; at 05:42:50Z 'hug version --running' shows pids 8265, 49138, 92915 (all v0.7.116 before) on 0.7.117 by themselves, no restart. Still old (pre-0.7.115, cannot self-reload): 1402 '?', 40384, 58480, 62272 (0.7.108), all jcode servers.
+crab 2026-11-27 12:00Z: 58480 (seid-lang jcode) now 0.7.118 after a reload. Still old: 1402 '?' (default jcode server), 40384 (truth_tribe_and_treasure jcode), 62272 (GenderedGames jcode), all 0.7.108 or removed. 4 of 7 mcps on 0.7.118 and they followed both upgrades today by themselves.
 ## History
 - 2026-11-25T21:32 todo -> doing/active (take)
