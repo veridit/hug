@@ -25,6 +25,14 @@ func Guide(action string, t Task, ts []Task) []string {
 		// holds checks, details, waits and dependencies (tzc9hb, Jørgen
 		// 2026-11-16: todo lists that copied the board became walls of
 		// "blocked" items). Two lines at most.
+		if len(t.Acceptance) == 0 {
+			// No checks yet (erv680 check 1): they are its work items
+			// (Jørgen 2026-11-26: one list), written before the work.
+			return []string{
+				fmt.Sprintf("%s has no acceptance checks: write them first, one observable check each; they are its work items: %s (again for each check)", t.ID, AcceptFix(t.ID)),
+				fmt.Sprintf("then, as each check holds: hug task check %s N \"evidence\"", t.ID),
+			}
+		}
 		return []string{
 			fmt.Sprintf("todos: your own next steps on %s, each named with the id (\"%s: ...\"); a wait, a dependency or another agent's work is not a todo: hug task note %s \"...\", hug task dep %s --add OTHER", t.ID, t.ID, t.ID, t.ID),
 			fmt.Sprintf("as each check holds: hug task check %s N \"evidence\"; todos done: hug task done %s, then hug task next", t.ID, t.ID),

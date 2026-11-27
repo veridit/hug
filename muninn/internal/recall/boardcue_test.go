@@ -716,3 +716,35 @@ func TestBoardAnswerOutcomeToCoordinator(t *testing.T) {
 		t.Fatalf("heard with no coordinator set: %q", line)
 	}
 }
+
+// erv680: a step another role waits on (a review, ship it) reaches the
+// session it is for, once per task, not held back by the hourly rate: two
+// reviews in one hour are both said; another session hears neither.
+func TestBoardStepForAnotherRole(t *testing.T) {
+	now := time.Date(2026, 11, 27, 10, 0, 0, 0, time.UTC)
+	step := func(id, kind string) recall.BoardTask {
+		cue := "wolf asks you to review " + id + " (x): read it, then answer looks right, or what to change: hug task answer " + id + ` "looks right"`
+		if kind == "ship" {
+			cue = "crab approved " + id + " (x): ship it, as your AGENTS.md says; once it has shipped: hug task done " + id
+		}
+		return recall.BoardTask{ID: id, Title: "x", State: "doing", Assignee: []string{"wolf"}, Checks: 1, Open: 0,
+			Step: recall.BoardStep{Kind: kind, For: "crab", Cue: cue}}
+	}
+	in := recall.BoardInput{Tasks: []recall.BoardTask{step("aaaaaa", "review"), step("bbbbbb", "review"), step("cccccc", "ship")}, Coordinator: "crab", Self: recall.BoardSelf{Name: "crab"}}
+	e := boardEngine(t)
+	var said []string
+	for i := 0; i < 4; i++ {
+		line, kind := e.BoardCue("s", "go on", "", now.Add(time.Duration(i)*time.Minute), src(in))
+		if line != "" {
+			said = append(said, kind+" "+line)
+		}
+	}
+	if len(said) != 3 || !strings.Contains(said[0], "review Task board: wolf asks you to review aaaaaa") || !strings.Contains(said[1], "review Task board: wolf asks you to review bbbbbb") || !strings.HasPrefix(said[2], "ship Task board: crab approved cccccc") {
+		t.Fatalf("crab heard %q", said)
+	}
+	other := in
+	other.Self = recall.BoardSelf{Name: "wolf"}
+	if line, kind := boardEngine(t).BoardCue("s", "go on", "", now, src(other)); kind == "review" || kind == "ship" {
+		t.Fatalf("wolf heard crab's step: %q %q", kind, line)
+	}
+}

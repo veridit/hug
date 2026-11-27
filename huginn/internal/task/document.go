@@ -283,6 +283,10 @@ type Task struct {
 	// (z2vmte): nothing has moved the task since; next --mine puts it
 	// first. Read from History, never written.
 	Woken bool `json:"woken,omitempty"`
+	// Approval is the reviewer's answer that approved it (erv680), nil
+	// before one or after a new review: its next step is ship it. Read
+	// from History, never written.
+	Approval *Approval `json:"approval,omitempty"`
 }
 
 // Texts of one task file, see Task.Texts.
@@ -602,6 +606,7 @@ func Parse(path string, data []byte) *Document {
 	d.Task.Goal = strings.ToValidUTF8(stripBacklogMarkers(d.Task.Goal), "\ufffd")
 	d.Task.Answer, d.Task.Outcome = readAnswers(d.historyLines())
 	d.Task.Woken = woken(d.historyLines())
+	d.Task.Approval = readApproval(d.historyLines())
 	d.Findings = append(d.Findings, untilFindings(d.Task)...)
 	d.Task.Requests = parseRequests(d.requestLines())
 	d.Task.Questions = parseQuestions(d.questionLines())

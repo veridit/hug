@@ -244,26 +244,14 @@ func (s *Store) load(ref string) (*Document, []Task, error) {
 	}
 	return Parse(t.Path, b), ts, nil
 }
-func hint(t Task) string {
-	switch t.State {
-	case "todo":
-		return "hug task take " + t.ID
-	case "doing":
-		for n, a := range t.Acceptance {
-			if !a.Settled() {
-				return fmt.Sprintf("hug task check %s %d", t.ID, n+1)
-			}
-		}
-		// Every check holds but a question is open (72n8m4): done would
-		// refuse, so the next thing is other work while the answer comes.
-		if HasOpenQuestion(t) {
-			return "hug task next"
-		}
-		return "hug task done " + t.ID
-	default:
-		return "hug task next"
-	}
-}
+
+// hint is the next: line of a write on t: the step due now (StepOf,
+// erv680), the same one the board cue says.
+func hint(t Task) string { return StepOf(t, StepConfig{}).Next }
+
+// s.hint is hint with the board's hug.toml at root, for the step that
+// reads it (ship it, after an approval), as the Store's actor sees it.
+func (s *Store) hint(t Task) string { return StepAt(t, s.Root).NextFor(s.Actor) }
 func (s *Store) finish(d *Document, changed bool) (Result, error) {
 	if changed && Staged(d.Task) {
 		// Every write keeps a staged file's stage right: a check, a note,
@@ -294,9 +282,9 @@ func (s *Store) finish(d *Document, changed bool) (Result, error) {
 		if e := s.refreshWritten(d.Task.Path); e != nil {
 			return Result{}, e
 		}
-		return Result{Task: d.Task, Changed: changed, Next: hint(d.Task), Outcome: outcome}, nil
+		return Result{Task: d.Task, Changed: changed, Next: s.hint(d.Task), Outcome: outcome}, nil
 	}
-	return Result{Task: d.Task, Changed: changed, Next: hint(d.Task)}, nil
+	return Result{Task: d.Task, Changed: changed, Next: s.hint(d.Task)}, nil
 }
 func safeGroup(g string) error {
 	if filepath.IsAbs(g) || g == ".." || strings.HasPrefix(filepath.Clean(g), ".."+string(filepath.Separator)) || strings.Contains(g, "\\") {

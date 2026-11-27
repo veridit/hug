@@ -87,6 +87,11 @@ func (a *App) take(ctx context.Context, s *session, ref string, who taker) (task
 	// todos are written from (tzc9hb).
 	if e == nil && result.Changed {
 		result.Next = "hug task show " + result.Task.ID
+		// A task with no acceptance check has no work items yet (erv680
+		// check 1): writing them is the step, before anything else.
+		if st := task.StepOf(result.Task, task.StepConfig{}); st.Kind == task.StepChecks {
+			result.Next = st.Next
+		}
 	}
 	// The board says who is working (v3k6cp): a name other than the
 	// harness session's is taken as given, and said, so a coordinator's
