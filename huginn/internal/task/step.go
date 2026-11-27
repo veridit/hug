@@ -22,7 +22,7 @@ const (
 	StepChecks = "checks" // doing with no acceptance check: the owner writes them
 	StepCheck  = "check"  // doing with an open check: the owner works and ticks it
 	StepReview = "review" // in review: the reviewer answers
-	StepDone   = "done"   // every check holds: the owner closes it (5yh7hr: review starts here)
+	StepDone   = "done"   // every check holds: the owner closes it, or hands it to the coordinator for review (5yh7hr)
 	StepShip   = "ship"   // a reviewer approved: ship it, the project's way
 	StepAnswer = "answer" // every check holds, a question is open: its answer comes first
 	StepNone   = "next"   // done or dropped: the next task
@@ -111,13 +111,24 @@ func (s Step) NextFor(who string) string {
 }
 
 // StepAt is StepOf with root's hug.toml, read only when the step needs it
-// (an approved task): every write's next: goes through here.
+// (an approved task, or a doing task whose every check holds: review or
+// done, 5yh7hr): every write's next: goes through here.
 func StepAt(t Task, root string) Step {
 	var c StepConfig
-	if t.Approval != nil {
+	if t.Approval != nil || t.State == "doing" && len(t.Acceptance) > 0 && allSettled(t) {
 		c = StepConfigOf(root)
 	}
 	return StepOf(t, c)
+}
+
+// allSettled: every acceptance check of t is ticked or struck.
+func allSettled(t Task) bool {
+	for _, a := range t.Acceptance {
+		if !a.Settled() {
+			return false
+		}
+	}
+	return true
 }
 
 // StepOf is the step due on t now (see Step).
@@ -177,8 +188,16 @@ func StepOf(t Task, c StepConfig) Step {
 		return Step{Kind: StepShip, For: who, Next: next,
 			Cue: a.By + " approved " + t.ID + " (" + title + "): " + next}
 	}
-	// 5yh7hr: when review starts by itself on the last tick, this is the
-	// step that hands the task to its reviewer instead.
+	// Every check holds and no reviewer approved (5yh7hr): on a board with
+	// a coordinator who is not the owner, the task goes to review, not to
+	// done. The owner's last tick does that by itself (StartReview); this
+	// is the step when no tick did (a review that asked for changes, a
+	// check struck last): hand it to the coordinator.
+	if c.Coordinator != "" && owner != "" && t.Approval == nil && !IsAssignee(t, c.Coordinator) {
+		next := "hug task review " + t.ID + " --by " + c.Coordinator
+		return Step{Kind: StepDone, For: owner, Next: next,
+			Cue: "every check of " + t.ID + " holds (" + title + "). Hand it to " + c.Coordinator + " for review: " + next}
+	}
 	next := "hug task done " + t.ID
 	return Step{Kind: StepDone, For: owner, Next: next,
 		Cue: "every check of " + t.ID + " holds (" + title + "). Close it: " + next}

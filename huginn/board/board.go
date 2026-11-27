@@ -51,6 +51,9 @@ type Task struct {
 	// Step is the step due on it now (task.StepOf, erv680): the board cue
 	// says Step.Cue to Step.For, the same next: the CLI and MCP give.
 	Step task.Step
+	// Review is the review hug handed to the task's reviewer (5yh7hr),
+	// with its receipt; nil when it is not in review.
+	Review *task.Item
 }
 
 // Finding is one open lint finding (findings on done or dropped tasks are
@@ -294,7 +297,7 @@ func convert(ts []task.Task, c task.StepConfig) []Task {
 	out := make([]Task, 0, len(ts))
 	for _, t := range ts {
 		x := Task{ID: t.ID, Title: t.Title, State: t.State, Path: t.Path, Assignee: t.Assignee, Model: t.Model,
-			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer, Requests: task.OpenRequests(t), Outcome: t.Outcome, Asked: task.HasOpenQuestion(t), Step: task.StepOf(t, c)}
+			Branch: t.Branch, Worktree: t.Worktree, Parent: t.Parent, Checks: len(t.Acceptance), Answer: t.Answer, Requests: task.OpenRequests(t), Outcome: t.Outcome, Asked: task.HasOpenQuestion(t), Step: task.StepOf(t, c), Review: t.Review}
 		for _, a := range t.Acceptance {
 			if !a.Settled() {
 				x.Open++
@@ -334,6 +337,17 @@ func (g repoGit) Diff(_ context.Context, a, b string) ([]cache.Change, error) {
 func DeliveredTo(r task.Request, name string) bool {
 	name = strings.TrimSpace(name)
 	if name == "" || !strings.EqualFold(r.Receipt.To, name) {
+		return false
+	}
+	return r.Receipt.Delivered != "" || r.Receipt.State != task.ReceiptPending
+}
+
+// ReviewDeliveredTo is DeliveredTo for the review hug handed to the
+// task's reviewer when it entered review (5yh7hr): the board cue does not
+// say the review step again to the session that has it.
+func ReviewDeliveredTo(r *task.Item, name string) bool {
+	name = strings.TrimSpace(name)
+	if r == nil || name == "" || !strings.EqualFold(r.Receipt.To, name) {
 		return false
 	}
 	return r.Receipt.Delivered != "" || r.Receipt.State != task.ReceiptPending

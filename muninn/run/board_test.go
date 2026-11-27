@@ -206,3 +206,56 @@ func TestBoardCueSkipsDeliveredOutcome(t *testing.T) {
 		}
 	}
 }
+
+// 5yh7hr: a review hug already delivered to the reviewer's session (or
+// that session acknowledged) is not said again by the board cue; one that
+// could not be delivered still is, once.
+func TestBoardCueSkipsDeliveredReview(t *testing.T) {
+	for _, tc := range []struct {
+		receipt string
+		said    bool
+	}{
+		{"- 2026-11-27T10:00 review 1 delivered to crab (session_crab_1_aa)\n", false},
+		{"- 2026-11-27T10:00 review 1 not delivered to crab: no jcode session named crab on this machine\n- 2026-11-27T10:05 review 1 acknowledged by crab\n", false},
+		{"- 2026-11-27T10:00 review 1 not delivered to crab: no jcode session named crab on this machine\n", true},
+	} {
+		repo := t.TempDir()
+		git := func(dir string, args ...string) {
+			t.Helper()
+			c := exec.Command("git", append([]string{"-C", dir}, args...)...)
+			c.Env = append(os.Environ(), "GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@e", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@e")
+			if out, err := c.CombinedOutput(); err != nil {
+				t.Fatalf("git %v: %v\n%s", args, err, out)
+			}
+		}
+		git(repo, "init", "-q", "-b", "main")
+		git(repo, "commit", "-q", "--allow-empty", "-m", "init")
+		git(repo, "worktree", "add", "-q", "--orphan", "-b", "hug/tasks", ".hug/tasks")
+		md := "---\nid: \"abc123\"\ntitle: \"Tags\"\nstate: \"doing\"\nstage: \"review\"\nassignee: [\"wolf\"]\nreview_by: \"crab\"\n---\n\n## Goal\nG\n\n## Acceptance\n- [x] one\n\n" +
+			"## History\n- 2026-11-27T10:00 doing/active -> doing/review (review: wolf ticked the last own check)\n" + tc.receipt
+		if err := os.WriteFile(filepath.Join(repo, ".hug/tasks/a.abc123.tags.md"), []byte(md), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		git(filepath.Join(repo, ".hug/tasks"), "add", "-A")
+		git(filepath.Join(repo, ".hug/tasks"), "commit", "-q", "-m", "t")
+		s, err := board.Open(context.Background(), repo)
+		if err != nil || s == nil {
+			t.Fatalf("open: %v %v", s, err)
+		}
+		if ts := boardTasksFor(s.Tasks, "otter"); len(ts) != 1 || ts[0].Step.Kind != "review" {
+			t.Fatalf("another session lost the step: %+v", ts)
+		}
+		in := recall.BoardInput{Tasks: boardTasksFor(s.Tasks, "crab"), Coordinator: "crab", Self: recall.BoardSelf{Name: "crab"}}
+		db, err := store.Open(filepath.Join(t.TempDir(), "m.db"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		e := &recall.Engine{DB: db}
+		line, _ := e.BoardCue("s", "go on", "", time.Now(), func(time.Time, bool) *recall.BoardInput { c := in; return &c })
+		db.Close()
+		s.Close()
+		if said := strings.Contains(line, "asks you to review abc123"); said != tc.said {
+			t.Fatalf("receipt %q: review said %v, want %v: %q", tc.receipt, said, tc.said, line)
+		}
+	}
+}

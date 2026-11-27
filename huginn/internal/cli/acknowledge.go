@@ -160,8 +160,9 @@ func transcriptHas(base string, items []harness.InboxItem, since time.Time) map[
 	return seen
 }
 
-// DeliverPending is the coordinator's next session picking up what could
-// not reach it (bbxdd7): hug's hook in jcode session sid (JCODE_HOME home)
+// DeliverPending is a session's name picking up, at its next session,
+// what could not reach it live (bbxdd7; 5yh7hr: the agent doing a task
+// too, not only the coordinator): hug's hook in jcode session sid (JCODE_HOME home)
 // at its turn's start. For each item waiting for the session's name
 // (home/hug-inbox/pending/NAME/), still pending and not delivered on its
 // task, it hands the item to this session through the daemon, as
@@ -212,8 +213,7 @@ func deliverPendingItem(ctx context.Context, home, sid string, getenv func(strin
 		return "", nil // the task is gone: nothing to deliver
 	}
 	item := task.Item{Kind: it.Kind, N: it.N}
-	r, ok := d.ItemReceipt(item)
-	if !ok || r.State != task.ReceiptPending || r.Delivered != "" {
+	if !d.OwedTo(item, it.To) {
 		return "", nil
 	}
 	by, text := "", ""
@@ -238,10 +238,7 @@ func deliverPendingItem(ctx context.Context, home, sid string, getenv func(strin
 	}
 	it.Token = newToken(d.Task.ID, item)
 	ss := harness.Session{ID: sid, Home: home}
-	msg := deliverMessage(it.Board, d.Task, item, by, text, answer, it.Token, targets)
-	if it.Kind == "outcome" {
-		msg = outcomeMessage(it.Board, d.Task, it.Token)
-	}
+	msg := itemMessage(it.Board, d.Task, item, by, text, answer, it.Token, targets, it.To, it.Missed)
 	took, _, err := harness.DeliverTo(ss, getenv, msg, it)
 	if err != nil || !took {
 		return "", err
@@ -255,8 +252,9 @@ func deliverPendingItem(ctx context.Context, home, sid string, getenv func(strin
 	return d.Task.ID + " " + item.Name(), nil
 }
 
-// stillOwed reports whether it is still pending and undelivered on its
-// task (a read outside the turn: only to drop a stale pending file).
+// stillOwed reports whether it is still owed to it.To on its task
+// (Document.OwedTo; a read outside the turn: only to drop a stale
+// pending file).
 func stillOwed(ctx context.Context, it harness.InboxItem) bool {
 	a := &App{Cwd: it.Board, In: strings.NewReader(""), Out: io.Discard, Err: io.Discard}
 	s, err := a.open(ctx)
@@ -268,6 +266,5 @@ func stillOwed(ctx context.Context, it harness.InboxItem) bool {
 	if err != nil {
 		return false
 	}
-	r, ok := d.ItemReceipt(task.Item{Kind: it.Kind, N: it.N})
-	return ok && r.State == task.ReceiptPending && r.Delivered == ""
+	return d.OwedTo(task.Item{Kind: it.Kind, N: it.N}, it.To)
 }

@@ -268,10 +268,13 @@ func SessionName(sid string) string {
 type InboxItem struct {
 	Board string `json:"board"` // the board's repository (main worktree)
 	Task  string `json:"task"`
-	Kind  string `json:"kind"` // request or answer
+	Kind  string `json:"kind"` // request, answer, outcome or review
 	N     int    `json:"n"`
-	To    string `json:"to"`    // the coordinator's name
+	To    string `json:"to"`    // who it is for: the agent doing the task, the coordinator or the reviewer
 	Token string `json:"token"` // in the message, nowhere else
+	// Missed: the coordinator's copy of an item the agent doing the task
+	// could not take live (5yh7hr), the line saying so.
+	Missed string `json:"missed,omitempty"`
 }
 
 // InboxDir is the inbox folder of session in jcode home.

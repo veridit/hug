@@ -28,6 +28,7 @@ var schemaFingerprints = map[string]string{
 	"31": "d99149ebcf924c95d74b898fc67b6cbef660ff0b5c198a29eb0ee89d96c2db34",
 	"32": "5830158daac53a2126430b36c2691c945f0763ce3753494a2b6c83af215919f4",
 	"33": "7b55fdc229d4efa883a4a6374c673b2848107789deb05445fd1e816cdc5188e7",
+	"34": "427994045d47e80fcb78d07f3c363b26c95db1410105a9450aba7c5d50138d72",
 }
 
 // schemaCorpus holds the task files whose parse the fingerprint covers.

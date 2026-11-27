@@ -230,9 +230,12 @@ func TestRequestReachesCoordinator(t *testing.T) {
 	}
 }
 
-// gmzd87 (Jørgen 11:59Z): a person's answer goes the same way, to the
-// coordinator even when a worker asked, with the question, the answer
-// verbatim, who asked and the next command.
+// gmzd87 (Jørgen 11:59Z): a person's answer goes the same way, with the
+// question, the answer verbatim, who asked and the next command. 5yh7hr
+// (Jørgen 2026-11-26 22:01) narrowed "to the coordinator even when a
+// worker asked": the agent doing the task hears first, and the
+// coordinator only when that agent has no live session, as here
+// (nautilus has none), told so.
 func TestAnswerReachesCoordinator(t *testing.T) {
 	t.Parallel()
 	jc := newFakeJcode(t)
@@ -245,7 +248,7 @@ func TestAnswerReachesCoordinator(t *testing.T) {
 	execute(t, a, "take", id, "--as", "nautilus", "--model", "m")
 	execute(t, a, "ask", id, "--to", "jhf", "--check", "2", "type stays, or drop?", "--as", "nautilus")
 	r := execute(t, a, "answer", id, "drop it\nthe column says it", "--as", "jhf")
-	if r["receipt"] != "pending, delivered to crab ("+crab+")" {
+	if r["receipt"] != "pending, delivered to crab ("+crab+"); not delivered live to nautilus, who is doing it: no jcode session named nautilus on this machine" {
 		t.Fatalf("receipt: %v", r["receipt"])
 	}
 	msgs := jc.messages()
@@ -302,7 +305,8 @@ func TestTickAnswerReachesCoordinator(t *testing.T) {
 		t.Fatalf("another check answered: %v", r)
 	}
 	r := execute(t, a, "check", id, "2")
-	if r["receipt"] != "pending, delivered to crab ("+crab+")" {
+	// nautilus, doing it, has no live session (5yh7hr): crab has it, told so.
+	if r["receipt"] != "pending, delivered to crab ("+crab+"); not delivered live to nautilus, who is doing it: no jcode session named nautilus on this machine" {
 		t.Fatalf("receipt: %v", r["receipt"])
 	}
 	if st := r["task"].(Reply)["stage"]; st != "active" {

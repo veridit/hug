@@ -88,11 +88,17 @@ func TestOutcomeOfTickAnswerReachesCoordinator(t *testing.T) {
 	if got := r["outcome_receipt"]; got != "pending, delivered to crab ("+crab+")" {
 		t.Fatalf("outcome receipt %v", got)
 	}
+	// nautilus's tick of check 1 was its last own check too: the task went
+	// to review by crab (5yh7hr), one line, between the answer and the
+	// outcome.
 	msgs := jc.messages()
-	if len(msgs) != 2 {
+	if len(msgs) != 3 {
 		t.Fatalf("daemon got %q", msgs)
 	}
-	if _, msg, _ := strings.Cut(msgs[1], "\x00"); !strings.Contains(msg, "hug: nautilus acted on jhf's answer on "+id+" (Tags), check 2,") || !strings.Contains(msg, ": hug task check "+id+" 1 (the answer: \"answered by ticking check 2\"). hug task show "+id) {
+	if _, msg, _ := strings.Cut(msgs[1], "\x00"); !strings.HasPrefix(msg, "hug: nautilus ticked the last own check of "+id+" (Tags)") {
+		t.Fatalf("review message:\n%s", msg)
+	}
+	if _, msg, _ := strings.Cut(msgs[2], "\x00"); !strings.Contains(msg, "hug: nautilus acted on jhf's answer on "+id+" (Tags), check 2,") || !strings.Contains(msg, ": hug task check "+id+" 1 (the answer: \"answered by ticking check 2\"). hug task show "+id) {
 		t.Fatalf("outcome message:\n%s", msg)
 	}
 }

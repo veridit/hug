@@ -38,6 +38,9 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 	// on every path: wait for it, not for a clock (awht8w, as in
 	// TestRequestReachesCoordinator).
 	waitAck := func() { <-acked }
+	// reviewMsgs: what the tick that started a review sent (5yh7hr).
+	var reviewMsgs int
+	naut7000 := "session_nautilus_7000_00ab"
 	// Each claim: a phrase DeliveryFlow must contain, and the check that
 	// the code does it. They run in order on one board.
 	claims := []struct {
@@ -60,10 +63,11 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 				t.Fatalf("next gave %v", got)
 			}
 		}},
-		{"reach the board coordinator (hug task coordinator NAME) by hug itself", func(t *testing.T) {
+		{"reach the agent doing the task, else the board coordinator (hug task coordinator NAME), by hug itself", func(t *testing.T) {
 			execute(t, a, "coordinator", "crab")
 		}},
-		{"hug hands it at once to the coordinator's live session", func(t *testing.T) {
+		{"(or nobody does the task) to the coordinator's", func(t *testing.T) {
+			// Nobody does it yet (todo): the coordinator's session.
 			n := len(jc.messages())
 			r := execute(t, a, "request", id, "make it per board", "--as", "jhf")
 			if r["receipt"] != "pending, delivered to crab ("+crab+")" || len(jc.messages()) != n+1 {
@@ -77,7 +81,7 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 				t.Fatalf("History:\n%s", f)
 			}
 		}},
-		{"The coordinator's session acknowledges it on receipt (hug's hook)", func(t *testing.T) {
+		{"The receiving session acknowledges it on receipt (hug's hook)", func(t *testing.T) {
 			if d, _ := (&task.Store{Root: a.Cwd + "/" + TaskDir}).Get(id); d == nil || d.Task.Requests[1].Receipt.State != task.ReceiptAcknowledged {
 				t.Fatalf("request 2 not acknowledged: %+v", d.Task.Requests[1].Receipt)
 			}
@@ -106,10 +110,24 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 			// TestAnswerReachesCoordinator and tui TestDeliverFromBoxes.
 			execute(t, a, "take", id, "--as", "nautilus", "--model", "m")
 			execute(t, a, "ask", id, "--to", "jhf", "ok?", "--as", "nautilus")
-			if r := execute(t, a, "answer", id, "yes", "--as", "jhf"); r["receipt"] != "pending, delivered to crab ("+crab+")" {
+			if r := execute(t, a, "answer", id, "yes", "--as", "jhf"); r["receipt"] != "pending, delivered to crab ("+crab+"); not delivered live to nautilus, who is doing it: no jcode session named nautilus on this machine" {
 				t.Fatalf("answer receipt %v", r["receipt"])
 			}
 			waitAck()
+		}},
+		{"; when that agent has none", func(t *testing.T) {
+			// The answer above: nautilus, doing it, has no session, so crab
+			// has it.
+			if f := taskFile(t, a, id); !strings.Contains(f, " answer 1 not delivered to nautilus: no jcode session named nautilus on this machine") || !strings.Contains(f, " answer 1 delivered to crab ("+crab+")") {
+				t.Fatalf("History:\n%s", f)
+			}
+		}},
+		{"saying it was not delivered live to that agent", func(t *testing.T) {
+			msgs := jc.messages()
+			_, msg, _ := strings.Cut(msgs[len(msgs)-1], "\x00")
+			if !strings.Contains(msg, "Not delivered live to nautilus, who is doing it (no jcode session named nautilus on this machine)") {
+				t.Fatalf("crab's message:\n%s", msg)
+			}
 		}},
 		{"(an answer: the asker's next write", func(t *testing.T) {
 			a.Env["HUG_USER"] = "nautilus"
@@ -179,7 +197,7 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 				t.Fatalf("receipt %v", r["receipt"])
 			}
 		}},
-		{"What no live session could take goes to the coordinator's next session when it starts, once (hug's hook)", func(t *testing.T) {
+		{"What no live session could take goes to that name's next session when it starts, once (hug's hook)", func(t *testing.T) {
 			// "while away" (above) found crab not live. crab's next
 			// session starts: its hook hands it over, once (bbxdd7).
 			n := len(jc.messages())
@@ -224,6 +242,13 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 			jc.live[lobster], jc.live[crab] = false, false
 			jc.mu.Unlock()
 		}},
+		{", the agent's doing the task too", func(t *testing.T) {
+			// nautilus's answer (above) waits for nautilus's next session:
+			// TestDoerGetsItAtNextSession follows it there.
+			if ents, _ := os.ReadDir(filepath.Join(jc.home, "hug-inbox", "pending", "nautilus")); len(ents) == 0 {
+				t.Fatalf("nothing waits for nautilus's next session")
+			}
+		}},
 		{"No agent polls.", func(t *testing.T) {
 			// Delivery is in the write: every message above reached the
 			// daemon inside the command that wrote the item (counted
@@ -231,6 +256,48 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 			// hook acks inside the coordinator's own turn.
 			if n := len(jc.messages()); n != 5 {
 				t.Fatalf("daemon got %d messages, want 5 (request 2, answer 1, outcome 1, requests 3 and 4 at crab's next starts)", n)
+			}
+		}},
+		{"hug hands it at once to the live session of the agent doing it", func(t *testing.T) {
+			// nautilus, doing it, is live now: the request is its, crab
+			// hears nothing.
+			naut := jc.session(t, "nautilus", 7000, true)
+			n := len(jc.messages())
+			r := execute(t, a, "request", id, "for the doer", "--as", "jhf")
+			if r["receipt"] != "pending, delivered to nautilus ("+naut+")" || len(jc.messages()) != n+1 {
+				t.Fatalf("receipt %v, daemon messages %d", r["receipt"], len(jc.messages()))
+			}
+			waitAck()
+			jc.mu.Lock()
+			jc.live[naut] = false
+			jc.mu.Unlock()
+		}},
+		{"A worker's last own tick (every open check left is a person's, or none) puts its task in review by the coordinator (doing/review)", func(t *testing.T) {
+			// TestLastTickStartsReview; here: otter's last tick on the task
+			// it does puts it in review by crab.
+			jc.mu.Lock()
+			jc.live[crab] = true
+			jc.mu.Unlock()
+			rid := execute(t, a, "new", "R", "--goal", "g", "--purpose", "p", "--principle", "q", "--accept", "one", "--accept", "two")["task"].(Reply)["id"].(string)
+			execute(t, a, "take", rid, "--as", "otter", "--model", "m")
+			n := len(jc.messages())
+			if r := execute(t, a, "check", rid, "1", "evidence: test one", "--as", "otter"); r["review_receipt"] != nil || len(jc.messages()) != n {
+				t.Fatalf("the first tick told someone: %v", r["review_receipt"])
+			}
+			r := execute(t, a, "check", rid, "2", "evidence: test two", "--as", "otter")
+			if tk := r["task"].(Reply); tk["stage"] != "review" || r["review_receipt"] != "pending, delivered to crab ("+crab+")" {
+				t.Fatalf("stage %v, receipt %v", tk["stage"], r["review_receipt"])
+			}
+			reviewMsgs = len(jc.messages()) - n
+			waitAck()
+		}},
+		{", whose session hug tells in one line the same way; earlier ticks tell nobody.", func(t *testing.T) {
+			if reviewMsgs != 1 {
+				t.Fatalf("the review told %d messages, want 1", reviewMsgs)
+			}
+			msgs := jc.messages()
+			if _, msg, _ := strings.Cut(msgs[len(msgs)-1], "\x00"); strings.Contains(msg, "\n") || !strings.Contains(msg, "it is in review by you") {
+				t.Fatalf("review message:\n%s", msg)
 			}
 		}},
 		{"or ticks the check a question to them is about (that tick is their answer)", func(t *testing.T) {
@@ -244,7 +311,7 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 			a.Env["HUG_USER"] = "jhf"
 			r := execute(t, a, "check", tid, "1")
 			a.Env["HUG_USER"] = "tester"
-			if r["receipt"] != "pending, delivered to crab ("+crab+")" {
+			if r["receipt"] != "pending, delivered to crab ("+crab+"); not delivered live to nautilus, who is doing it: nautilus's jcode session "+naut7000+" is not live in a jcode daemon" {
 				t.Fatalf("tick receipt %v", r["receipt"])
 			}
 			waitAck()
@@ -261,7 +328,7 @@ func TestDeliveryInstructionsMatchCode(t *testing.T) {
 	// What is left must be glue, not an unchecked claim.
 	for _, w := range strings.FieldsFunc(rest, func(r rune) bool { return strings.ContainsRune(" ,.:;()\"", r) }) {
 		switch w {
-		case "Requests", "and", "answers", "", "it", "the", "a", "is":
+		case "Requests", "and", "answers", "", "it", "the", "a", "is", "to", "else":
 			continue
 		}
 		t.Errorf("DeliveryFlow says %q with no check for it here; rest: %q", w, rest)

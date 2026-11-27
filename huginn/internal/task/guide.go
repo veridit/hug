@@ -40,6 +40,11 @@ func Guide(action string, t Task, ts []Task) []string {
 	case "check":
 		// next: already names the following check or done; add only the
 		// todo bookkeeping that next: cannot say.
+		if open == 0 && t.State == "doing" && t.Stage == "review" {
+			// The last tick put it in review (5yh7hr): the reviewer
+			// answers; the owner's todos on it are done.
+			return []string{"in review by " + strings.TrimSpace(t.Fields["review_by"]) + ": tick its todos off and take other work; the answer comes to you"}
+		}
 		if open == 0 {
 			return []string{"every check holds: close it, and tick its todo off"}
 		}

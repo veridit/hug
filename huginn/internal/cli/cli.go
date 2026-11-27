@@ -966,6 +966,8 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 	// setBefore is the task before a set, so the reply says what it wrote
 	// (zdgw60).
 	var setBefore *setSnapshot
+	// reviewStarted: a check's tick handed the task to review (5yh7hr).
+	var reviewStarted bool
 	switch cmd {
 	case "init":
 		if e = f.count(0); e != nil {
@@ -1487,6 +1489,18 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 				}
 				r.Warnings = append(r.Warnings, "after the release: "+did)
 			}
+			// The doer's last own tick hands the task to review by the
+			// coordinator (5yh7hr), told below, after the commit.
+			if by, x := s.s.StartReview(r.Task.ID, a.actor(f)); x != nil {
+				return nil, x
+			} else if by != "" {
+				if d, x := s.s.Get(r.Task.ID); x == nil {
+					r.Task = d.Task
+				}
+				r.Next = task.NextAt(r.Task, s.r.Dir, s.s.Actor)
+				r.Said = "every own check holds: " + r.Task.ID + " is in review by " + by + " (doing/review); " + by + " answers it"
+				reviewStarted = true
+			}
 		}
 	case "strike":
 		if e = f.count(2); e != nil {
@@ -1707,6 +1721,14 @@ func (a *App) Execute(ctx context.Context, args []string) (reply Reply, err erro
 		receipt, e = a.Deliver(s.s, s.r.Dir, s.r.Root, r.Task.ID, kind, a.actor(f), s.commit)
 		if e == nil && receipt != "" {
 			reply["receipt"] = receipt
+		}
+	}
+	// A tick that handed the task to review tells its reviewer, once
+	// (5yh7hr): earlier ticks send nothing.
+	if e == nil && reviewStarted {
+		var rv string
+		if rv, e = a.Deliver(s.s, s.r.Dir, s.r.Root, r.Task.ID, "review", a.actor(f), s.commit); e == nil && rv != "" {
+			reply["review_receipt"] = rv
 		}
 	}
 	// The asker's first write after an answer is its outcome (41hhgn check

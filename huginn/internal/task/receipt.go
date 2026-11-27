@@ -80,7 +80,7 @@ func (r Receipt) Label() string {
 }
 
 var (
-	receiptLine   = regexp.MustCompile(`^- (\S+) ((?:request|answer|outcome) \d+) (delivered to|not delivered to|not delivered|acknowledged by|in progress by)(?: ([^\s:()]+))?(?: \((\S+)\))?(?:: (.*))?$`)
+	receiptLine   = regexp.MustCompile(`^- (\S+) ((?:request|answer|outcome|review) \d+) (delivered to|not delivered to|not delivered|acknowledged by|in progress by)(?: ([^\s:()]+))?(?: \((\S+)\))?(?:: (.*))?$`)
 	answerHeadAny = regexp.MustCompile(`^- \S+ answered \w+`)
 )
 
@@ -200,6 +200,12 @@ func readReceipts(t *Task, history []string) {
 			continue
 		}
 		t.Answers = append(t.Answers, Item{Kind: "answer", N: n, Receipt: r})
+	}
+	// The review hug handed to its reviewer (5yh7hr), while the task is in
+	// it: the board cue does not say it again to a session that has it.
+	t.Review = nil
+	if n := reviewCount(history); n > 0 && ownHolds(*t, "review") {
+		t.Review = &Item{Kind: "review", N: n, Receipt: get("review " + strconv.Itoa(n))}
 	}
 	// An outcome is told, not acted on: acknowledged is as far as it goes.
 	if o := t.Outcome; o != nil && o.N > 0 {
@@ -362,6 +368,9 @@ func hasItem(d *Document, item Item) bool {
 		// check 11). Only the newest answer's outcome is read.
 		o := d.Task.Outcome
 		return o != nil && o.N == item.N
+	case "review":
+		// The Nth move into review (5yh7hr).
+		return item.N >= 1 && item.N <= reviewCount(d.historyLines())
 	}
 	return false
 }
@@ -388,6 +397,11 @@ func (d *Document) ItemReceipt(item Item) (Receipt, bool) {
 		return Receipt{State: ReceiptPending}, true
 	case "outcome":
 		if r := d.Task.Outcome.Receipt; r != nil {
+			return *r, true
+		}
+		return Receipt{State: ReceiptPending}, true
+	case "review":
+		if r := receipts(d.historyLines())[item.Name()]; r != nil {
 			return *r, true
 		}
 		return Receipt{State: ReceiptPending}, true
