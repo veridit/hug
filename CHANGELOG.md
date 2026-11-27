@@ -4,7 +4,7 @@ Releases are tagged `vX.Y.Z` and ship one `hug` binary. Earlier part releases
 are in [muninn/CHANGELOG.md](muninn/CHANGELOG.md) and the `muninn-v*` and
 `huginn-v*` tags.
 
-## Unreleased
+## v0.7.117 - 2026-11-27
 
 - hug names the step due now, for the role it is due for (erv680). One function derives it from the task's state, and the CLI's `next:` line, the MCP result's `next` and the board cue all say it, with one command. A task taken with no acceptance checks says to write them first (`next: hug task set ID --accept "observable check"`, and a `now:` line: they are its work items). A task in review is the reviewer's step (`hug task answer ID "looks right"`), told to the reviewer's session; the owner's `next:` is `hug task next`. After the reviewer answers "looks right" (an answer approves only when all it says is looks right, looks good, approved, lgtm, ok, yes or ship it; "looks right, but rename X" asks for a change) the step is ship it, the project's own way, told to the coordinator: `ship it, as hug.toml says: LINE; once it has shipped: hug task done ID` with `[board] ship = "LINE"` in hug.toml, else `ship it, as your AGENTS.md says; ...`. hug names the stage, never a procedure of its own.
 
