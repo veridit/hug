@@ -4,7 +4,7 @@ title: "No hug holds a memory lock while computing: index work runs outside both
 state: "todo"
 type: bug
 priority: "high"
-assignee: ["crab"]
+assignee: ["dolphin"]
 labels: []
 group: ""
 rank: "0000003"
