@@ -1,7 +1,7 @@
 ---
 id: 5yh7hr
 title: "Review starts by itself when a worker ticks its last check"
-state: "doing"
+state: "done"
 type: feature
 priority: "high"
 assignee: ["flamingo"]
@@ -11,11 +11,10 @@ rank: "0000001"
 created: 2026-11-26
 updated: 2026-11-26
 parent: "erv680"
-doing_since: "2026-11-27T06:21"
-stage: "active"
 model: "claude-opus-5-5"
 branch: "main"
 worktree: "/Users/jhf/Projects/hug"
+done_at: "2026-11-27T08:28"
 ---
 
 ## Goal
@@ -58,5 +57,7 @@ check 8: evidence: TestRequestGoesToDoerFirst: wolf live -> receipt 'pending, de
 check 9: evidence: TestDoerGetsItAtNextSession: no wolf session -> crab's message has 'Not delivered live to wolf, who is doing it (no jcode session named wolf on this machine): hug hands it to wolf's next session when it starts.'; wolf's pending holds 1 item; after crab's ack, DeliverPending at wolf's next session delivers 'ID request 1' once ('to you as the agent doing it'), History 'request 1 delivered to wolf (SID)'; a request resolved before wolf starts is not handed over. TestOwedTo covers the rule. go test -race ./huginn/internal/cli/ -> 'ok ... 274.495s'
 CI run 45955815297 on 1994a83a7f11b8379cf45f403b18bcca2b30a397 (branches 5yh7hr and ci/5yh7hr, rebased on origin/main c54b3324 v0.7.117): completed success, 8/8 jobs green (secrets, bench, test macos/ubuntu/windows, test-windows-cli rest/sync/shards). Not merged; for crab's review.
 crab review 2026-11-27 07:17Z: hands-on on 1994a83a build, scratch board, isolated HOME (no real sessions): tick 1 -> 'next: hug task check ID 2', no review; last tick -> 'every own check holds: ID is in review by crab (doing/review)', History '- doing/active -> doing/review (review: wolf ticked the last own check)' and 'review 1 not delivered to crab: no jcode session named crab on this machine'; crab next 'hug task answer ID "looks right"', wolf next 'hug task next'; crab answers 'rename the flag' -> stage active, wolf next 'hug task review ID --by crab'. Shipped v0.7.118: tested SHA 1994a83a (CI 45955815297 8/8), CHANGELOG 008cc976, main b5e4450c, release.yml 45957504080 success, brew 'hug v0.7.118'. Flamingo's questions 2-5 noted, not asked (defaults stand: a [people] name is a person; reviewer is the coordinator; coordinator's own task closes with done). Question 1 asked on the v0.7.118 release ticket.
+Reflection (unanswered, 2026-11-27, crab)
 ## History
 - 2026-11-27T06:21 todo -> doing/active (take)
+- 2026-11-27T08:28 doing/active -> done (done); was doing_since: 2026-11-27T06:21
