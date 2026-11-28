@@ -229,15 +229,15 @@ func reindexGoldenScenario(t *testing.T) string {
 // the pipeline meta.
 func dumpIndex(t *testing.T, db *store.DB, dir string) string {
 	t.Helper()
-	unit := `(s.kind || ':' || replace(s.path, '` + dir + `', '') || '#' || u.key)`
+	unit := `(s.kind || ':' || replace(replace(s.path, '` + dir + `', ''), char(92), '/') || '#' || u.key)`
 	var sb strings.Builder
 	for _, q := range []struct{ name, sql string }{
-		{"sources", `SELECT kind || ' ' || replace(path, '` + dir + `', '') FROM sources ORDER BY 1`},
+		{"sources", `SELECT kind || ' ' || replace(replace(path, '` + dir + `', ''), char(92), '/') FROM sources ORDER BY 1`},
 		{"units", `SELECT ` + unit + ` || ' ' || u.active || ' ' || u.ident || ' ' || u.content_hash FROM units u JOIN sources s ON s.id=u.source_id ORDER BY 1`},
 		{"concepts", `SELECT ` + unit + ` || ' ' || group_concat(c.term, ',') FROM (SELECT uc.unit_id, c.term FROM unit_concepts uc JOIN concepts c ON c.id=uc.concept_id ORDER BY c.term) c
 		  JOIN units u ON u.id=c.unit_id JOIN sources s ON s.id=u.source_id GROUP BY u.id ORDER BY 1`},
 		{"neighbors", `SELECT ` + unit + ` || ' ' || group_concat(nb, ' ') FROM (
-		  SELECT n.unit_id, (vs.kind || ':' || replace(vs.path, '` + dir + `', '') || '#' || v.key) || '=' || printf('%.6f', n.sim) AS nb
+		  SELECT n.unit_id, (vs.kind || ':' || replace(replace(vs.path, '` + dir + `', ''), char(92), '/') || '#' || v.key) || '=' || printf('%.6f', n.sim) AS nb
 		  FROM neighbors n JOIN units v ON v.id=n.nbr_id JOIN sources vs ON vs.id=v.source_id ORDER BY n.unit_id, n.sim DESC, n.nbr_id) x
 		  JOIN units u ON u.id=x.unit_id JOIN sources s ON s.id=u.source_id GROUP BY u.id ORDER BY 1`},
 		{"communities", `SELECT cc.term || ' ' || g.term FROM communities m JOIN concepts cc ON cc.id=m.concept_id
