@@ -1,6 +1,7 @@
 package index_test
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -48,6 +49,7 @@ func TestReindexMatchesGolden(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v (HUG_UPDATE_GOLDEN=1 writes it)", err)
 	}
+	want = bytes.ReplaceAll(want, []byte("\r\n"), []byte("\n")) // a Windows checkout may turn LF into CRLF
 	if got != string(want) {
 		gl, wl := strings.Split(got, "\n"), strings.Split(string(want), "\n")
 		for i := 0; i < len(gl) || i < len(wl); i++ {
